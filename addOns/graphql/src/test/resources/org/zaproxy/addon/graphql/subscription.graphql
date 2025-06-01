@@ -1,0 +1,12 @@
+type Query {
+    id: ID
+}
+
+type Subscription {
+    newMessage(roomId: ID): Message
+}
+
+type Message {
+    sender: String
+    text: String
+}

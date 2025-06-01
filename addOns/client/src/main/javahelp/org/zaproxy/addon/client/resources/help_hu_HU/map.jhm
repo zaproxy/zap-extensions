@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE map
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Map Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/map_1_0.dtd">
+
+<map version="1.0">
+    <mapID target="addon.client-icon" url="contents/images/application-browser.png" />
+    <mapID target="addon.client" url="contents/client.html" />
+    <mapID target="addon.client.auto" url="contents/automation.html" />
+    <mapID target="addon.client.spider" url="contents/spider.html" />
+    <mapID target="addon.client.pscan" url="contents/pscan.html" />
+    <mapID target="addon.client.ajaxscan" url="contents/ajax-scan.html" />
+    <mapID target="addon.client.fxprofile" url="contents/firefox-profile.html" />
+    <mapID target="addon.client.internals" url="contents/internals.html" />
+</map>

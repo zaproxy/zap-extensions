@@ -4,7 +4,127 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- Maintenance changes.
+- Use a scrollbar in the Default Category combo box instead of making the options panel larger (Issue 8923).
 
+## [13.15.0] - 2025-01-09
+### Changed
+- Update minimum ZAP version to 2.16.0.
+
+## [13.14.0] - 2024-10-07
+### Changed
+- Maintenance changes.
+- Replace library used for regex payload generation, to address performance and compatibility issues.
+
+## [13.13.0] - 2024-05-07
+### Added
+- Support for menu weights (Issue 8369)
+### Changed
+- Update minimum ZAP version to 2.15.0.
+- Maintenance changes.
+
+## [13.12.0] - 2023-10-12
+### Changed
+- Update minimum ZAP version to 2.14.0.
+
+## [13.11.0] - 2023-10-04
+### Changed
+- Maintenance changes.
+
+### Fixed
+- Show actual contents of the message after edits (Issue 7947).
+
+## [13.10.0] - 2023-07-11
+### Changed
+- Update minimum ZAP version to 2.13.0.
+- Maintenance changes.
+- Default number of threads to 2 * processor count.
+
+## [13.9.0] - 2023-01-03
+### Changed
+- Maintenance changes.
+
+### Fixed
+- Prevent exception if no display (Issue 3978).
+
+## [13.8.0] - 2022-10-27
+### Changed
+- Update minimum ZAP version to 2.12.0.
+- Maintenance changes.
+
+## [13.7.0] - 2022-09-23
+### Changed
+- Allow circular redirects always.
+- Maintenance changes.
+
+## [13.6.0] - 2022-01-14
+### Added
+- An option to edit the selected message - note this will clear any defined fuzz locations
+- Fuzzer statistics
+
+### Changed
+- Update minimum ZAP version to 2.11.1.
+
+## [13.5.0] - 2021-11-04
+### Changed
+- Enhanced the help entry for the Options tab in the main fuzz dialog.
+
+### Fixed
+- Ensure the "Follow Redirects" option is displayed.
+
+## [13.4.0] - 2021-10-14
+### Added
+- A right click (context menu) item to facilitate adding a fuzz message to the Sites Tree and History panel (Issue 1437).
+
+### Fixed
+- The 'Delay when Fuzzing (in milliseconds)' value can now also properly be controlled from the main fuzz window, and the options value won't be overridden (Issue 6651).
+
+## [13.3.0] - 2021-10-06
+### Fixed
+- The Numberzz payload generator should not set the increment to zero when creating subsequent payloads.
+- Correct spelling mistake in the initial message shown in the Fuzzer tab.
+
+### Changed
+- Maintenance changes.
+- The 'Delay when Fuzzing (in milliseconds)' value can now be up to an hour (3,600,000ms), and the control was changed from a slider to a spinner (Issue 6651).
+- Updated the fuzzer options documentation (Issue 6791).
+- Fixed title caps on items in the Fuzzer options panel (Issue 2000).
+- Update minimum ZAP version to 2.11.0.
+
+## [13.2.0] - 2021-06-01
+### Changed
+- Now using 2.10 logging infrastructure (Log4j 2.x).
+- Maintenance changes.
+- Update dependency (Issue 4751).
+
+### Fixed
+- Update results panels when Look and Feel changes (Issue 6479).
+- Correct payload count from file.
+- Show Add Payload dialogue above the Payloads dialogue.
+
+## [13.1.0] - 2020-12-15
+### Changed
+- Maintenance changes.
+- Prevent adding null fuzz handlers, which would cause exceptions when selecting the fuzz message.
+- Update minimum ZAP version to 2.10.0.
+
+## [13.0.1] - 2020-09-08
+### Fixed
+ - Fix exception when saving the options with no default category selected (Issue 6136).
+
+## [13.0.0] - 2020-08-17
+### Added
+ - Allow to add fuzz specific message components and views to fuzzer dialogue.
+
+### Fixed
+ - Correctly handle other HTTP message locations.
+ - Fixed error when missing getRequiredParamsNames and getOptionalParamsNames
+ 
+### Changed
+- Update minimum ZAP version to 2.9.0.
+- Use semantic versioning.
+- Maintenance changes.
 
 ## [12] - 2020-01-17
 ### Added
@@ -104,5 +224,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[13.15.0]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.15.0
+[13.14.0]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.14.0
+[13.13.0]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.13.0
+[13.12.0]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.12.0
+[13.11.0]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.11.0
+[13.10.0]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.10.0
+[13.9.0]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.9.0
+[13.8.0]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.8.0
+[13.7.0]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.7.0
+[13.6.0]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.6.0
+[13.5.0]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.5.0
+[13.4.0]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.4.0
+[13.3.0]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.3.0
+[13.2.0]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.2.0
+[13.1.0]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.1.0
+[13.0.1]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.0.1
+[13.0.0]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.0.0
 [12]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v12
 [11]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v11

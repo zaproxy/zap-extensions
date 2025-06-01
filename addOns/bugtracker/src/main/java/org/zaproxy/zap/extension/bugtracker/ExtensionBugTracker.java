@@ -19,34 +19,21 @@
  */
 package org.zaproxy.zap.extension.bugtracker;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.control.Control;
-import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
-import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.extension.alert.ExtensionAlert;
 
 /** A ZAP Extension to help user raise issues in bug trackers from within ZAP. */
 public class ExtensionBugTracker extends ExtensionAdaptor {
 
     public static final String NAME = "ExtensionBugTracker";
-    public Set<Alert> alerts = null;
 
     protected static final String PREFIX = "bugtracker";
 
-    private static final String RESOURCE = "/org/zaproxy/zap/extension/bugtracker/resources";
-
-    private List<BugTracker> bugTrackers = new ArrayList<BugTracker>();
+    private List<BugTracker> bugTrackers = new ArrayList<>();
     private PopupSemiAutoIssue popupMsgRaiseSemiAuto;
-
-    private static final Logger LOGGER = Logger.getLogger(ExtensionBugTracker.class);
 
     public ExtensionBugTracker() {
         super(NAME);
@@ -69,21 +56,18 @@ public class ExtensionBugTracker extends ExtensionAdaptor {
         BugTrackerBugzilla bugzillaTracker = new BugTrackerBugzilla();
         extensionHook.addOptionsParamSet(bugzillaTracker.getOptions());
 
-        if (getView() != null) {
+        if (hasView()) {
             addBugTracker(githubTracker);
             addBugTracker(bugzillaTracker);
-            View.getSingleton()
-                    .getOptionsDialog("")
-                    .addParamPanel(
-                            new String[] {Constant.messages.getString("bugtracker.name")},
-                            githubTracker.getOptionsPanel(),
-                            true);
-            View.getSingleton()
-                    .getOptionsDialog("")
-                    .addParamPanel(
-                            new String[] {Constant.messages.getString("bugtracker.name")},
-                            bugzillaTracker.getOptionsPanel(),
-                            true);
+            String[] parent = new String[] {Constant.messages.getString("bugtracker.name")};
+            extensionHook
+                    .getView()
+                    .getOptionsDialog()
+                    .addParamPanel(parent, githubTracker.getOptionsPanel(), true);
+            extensionHook
+                    .getView()
+                    .getOptionsDialog()
+                    .addParamPanel(parent, bugzillaTracker.getOptionsPanel(), true);
             extensionHook.getHookMenu().addPopupMenuItem(getPopupMsgRaiseSemiAuto());
         }
     }
@@ -96,6 +80,14 @@ public class ExtensionBugTracker extends ExtensionAdaptor {
     @Override
     public void unload() {
         super.unload();
+
+        if (hasView()) {
+            bugTrackers.forEach(
+                    bugTracker ->
+                            getView()
+                                    .getOptionsDialog()
+                                    .removeParamPanel(bugTracker.getOptionsPanel()));
+        }
     }
 
     private PopupSemiAutoIssue getPopupMsgRaiseSemiAuto() {
@@ -104,27 +96,16 @@ public class ExtensionBugTracker extends ExtensionAdaptor {
                     new PopupSemiAutoIssue(
                             this, Constant.messages.getString(PREFIX + ".popup.issue.semi"));
         }
-        popupMsgRaiseSemiAuto.setExtension(
-                Control.getSingleton().getExtensionLoader().getExtension(ExtensionAlert.class));
         return popupMsgRaiseSemiAuto;
     }
 
     @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
+    public String getUIName() {
+        return Constant.messages.getString("bugtracker.name");
     }
 
     @Override
     public String getDescription() {
         return Constant.messages.getString(PREFIX + ".desc");
-    }
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_EXTENSIONS_PAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
     }
 }

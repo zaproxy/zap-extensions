@@ -23,7 +23,7 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
@@ -44,6 +44,7 @@ import org.zaproxy.zap.view.widgets.UsersMultiSelectTable;
  * <p>If the un-authenticated user was selected, it is returned in the {@link ScanStartOptions} as
  * <code>null</code>.
  */
+@SuppressWarnings("serial")
 public class AccessControlScanOptionsDialog extends StandardFieldsDialog {
 
     private static final long serialVersionUID = -4540976404891062951L;
@@ -70,15 +71,14 @@ public class AccessControlScanOptionsDialog extends StandardFieldsDialog {
     public void init(Context context) {
         this.removeAllFields();
 
-        usersSelectTable = new UsersMultiSelectTable(context.getIndex());
-        unauthenticatedUser = new User(context.getIndex(), UNAUTHENTICATED_USER_NAME);
+        usersSelectTable = new UsersMultiSelectTable(context.getId());
+        unauthenticatedUser = new User(context.getId(), UNAUTHENTICATED_USER_NAME);
         usersSelectTable.addCustomUser(unauthenticatedUser);
 
         this.addContextSelectField(FIELD_CONTEXT, context);
         this.addTableField(FIELD_USERS, usersSelectTable);
         this.addCheckBoxField(FIELD_RAISE_ALERTS, true);
         this.addComboField(FIELD_ALERTS_RISK, Alert.MSG_RISK, Alert.MSG_RISK[Alert.RISK_HIGH]);
-        this.addPadding();
     }
 
     @Override
@@ -90,21 +90,21 @@ public class AccessControlScanOptionsDialog extends StandardFieldsDialog {
     public void save() {
         // In this case, the 'Save' action corresponds to starting a scan with the specified options
         AccessControlScanStartOptions startOptions = new AccessControlScanStartOptions();
-        startOptions.targetContext =
-                ((ContextSelectComboBox) getField(FIELD_CONTEXT)).getSelectedContext();
-        startOptions.targetUsers = usersSelectTable.getSelectedUsers();
+        startOptions.setTargetContext(
+                ((ContextSelectComboBox) getField(FIELD_CONTEXT)).getSelectedContext());
+        startOptions.setTargetUsers(usersSelectTable.getSelectedUsers());
         // If the un-authenticated user was selected, replace it with a 'null' user
-        if (startOptions.targetUsers.remove(unauthenticatedUser)) {
-            startOptions.targetUsers.add(null);
+        if (startOptions.getTargetUsers().remove(unauthenticatedUser)) {
+            startOptions.getTargetUsers().add(null);
         }
-        startOptions.raiseAlerts = ((JCheckBox) getField(FIELD_RAISE_ALERTS)).isSelected();
+        startOptions.setRaiseAlerts(((JCheckBox) getField(FIELD_RAISE_ALERTS)).isSelected());
         // Just to make sure we have a reference here to MSG_RISK for taking care when refactoring
         // and that this still works if somehow the connection between index and value is lost, we
         // perform a quick search
         @SuppressWarnings("unchecked")
         String selectedAlertRisk =
                 (String) ((JComboBox<String>) getField(FIELD_ALERTS_RISK)).getSelectedItem();
-        startOptions.alertRiskLevel = ArrayUtils.indexOf(Alert.MSG_RISK, selectedAlertRisk);
+        startOptions.setAlertRiskLevel(ArrayUtils.indexOf(Alert.MSG_RISK, selectedAlertRisk));
         extension.startScan(startOptions);
     }
 

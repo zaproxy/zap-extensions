@@ -1,0 +1,23 @@
+openapi: 3.0.0
+info:
+  title: Example Spec
+  version: 1.0.0
+servers:
+  - url: http://localhost:@@@PORT@@@
+paths:
+  /example:
+    post:
+      summary: Example Endpoint
+      description: This is an example endpoint.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                foo: bar
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: { }

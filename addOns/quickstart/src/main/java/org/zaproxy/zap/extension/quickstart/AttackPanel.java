@@ -19,17 +19,13 @@
  */
 package org.zaproxy.zap.extension.quickstart;
 
-import java.awt.Color;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.net.URL;
 import java.util.List;
 import javax.swing.Box;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -47,12 +43,13 @@ import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zap.view.NodeSelectDialog;
 
+@SuppressWarnings("serial")
 public class AttackPanel extends QuickStartSubPanel {
     private static final long serialVersionUID = 1L;
 
     private static final String DEFAULT_VALUE_URL_FIELD = "http://";
 
-    private JCheckBox spiderCheckBox;
+    private ImageIcon icon;
     private JButton attackButton;
     private JButton stopButton;
     private JComboBox<String> urlField;
@@ -62,6 +59,10 @@ public class AttackPanel extends QuickStartSubPanel {
     private JPanel contentPanel;
     private JLabel lowerPadding;
     private int paddingY;
+
+    private TraditionalSpider traditionalSpider;
+    private JLabel traditionalSpiderLabel;
+    private int traditionalSpiderY;
 
     /** Optional class that adds the ajax spider - may be added after init or not at all */
     private PlugableSpider plugableSpider;
@@ -82,8 +83,7 @@ public class AttackPanel extends QuickStartSubPanel {
 
     @Override
     public JPanel getDescriptionPanel() {
-        JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBackground(Color.WHITE);
+        JPanel panel = new QuickStartBackgroundPanel();
         panel.add(
                 QuickStartHelper.getWrappedLabel("quickstart.attack.panel.message1"),
                 LayoutHelper.getGBC(0, 0, 2, 1.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
@@ -100,8 +100,7 @@ public class AttackPanel extends QuickStartSubPanel {
     @Override
     public JPanel getContentPanel() {
         if (contentPanel == null) {
-            contentPanel = new JPanel(new GridBagLayout());
-            contentPanel.setBackground(Color.WHITE);
+            contentPanel = new QuickStartBackgroundPanel();
             int formPanelY = 0;
 
             contentPanel.add(
@@ -117,35 +116,32 @@ public class AttackPanel extends QuickStartSubPanel {
                                     View.class.getResource("/resource/icon/16/094.png")))); // Globe
             // icon
             selectButton.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            NodeSelectDialog nsd =
-                                    new NodeSelectDialog(View.getSingleton().getMainFrame());
-                            SiteNode node = null;
+                    e -> {
+                        NodeSelectDialog nsd =
+                                new NodeSelectDialog(View.getSingleton().getMainFrame());
+                        SiteNode node = null;
+                        try {
+                            node =
+                                    Model.getSingleton()
+                                            .getSession()
+                                            .getSiteTree()
+                                            .findNode(
+                                                    new URI(
+                                                            getUrlField()
+                                                                    .getSelectedItem()
+                                                                    .toString(),
+                                                            false));
+                        } catch (Exception e2) {
+                            // Ignore
+                        }
+                        node = nsd.showDialog(node);
+                        if (node != null && node.getHistoryReference() != null) {
                             try {
-                                node =
-                                        Model.getSingleton()
-                                                .getSession()
-                                                .getSiteTree()
-                                                .findNode(
-                                                        new URI(
-                                                                getUrlField()
-                                                                        .getSelectedItem()
-                                                                        .toString(),
-                                                                false));
-                            } catch (Exception e2) {
+                                getUrlField()
+                                        .setSelectedItem(
+                                                node.getHistoryReference().getURI().toString());
+                            } catch (Exception e1) {
                                 // Ignore
-                            }
-                            node = nsd.showDialog(node);
-                            if (node != null && node.getHistoryReference() != null) {
-                                try {
-                                    getUrlField()
-                                            .setSelectedItem(
-                                                    node.getHistoryReference().getURI().toString());
-                                } catch (Exception e1) {
-                                    // Ignore
-                                }
                             }
                         }
                     });
@@ -154,15 +150,7 @@ public class AttackPanel extends QuickStartSubPanel {
             urlSelectPanel.add(selectButton, LayoutHelper.getGBC(1, 0, 1, 0.0D));
             contentPanel.add(urlSelectPanel, LayoutHelper.getGBC(2, formPanelY, 3, 0.25D));
 
-            contentPanel.add(
-                    new JLabel(Constant.messages.getString("quickstart.label.tradspider")),
-                    LayoutHelper.getGBC(
-                            1, ++formPanelY, 1, 0.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
-            contentPanel.add(
-                    getSpiderCheckBox(),
-                    LayoutHelper.getGBC(
-                            2, formPanelY, 1, 0.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
-
+            traditionalSpiderY = ++formPanelY;
             plugableSpiderY = ++formPanelY;
 
             JPanel buttonPanel = QuickStartHelper.getHorizontalPanel();
@@ -196,23 +184,35 @@ public class AttackPanel extends QuickStartSubPanel {
         return progressLabel;
     }
 
-    private JCheckBox getSpiderCheckBox() {
-        if (spiderCheckBox == null) {
-            spiderCheckBox = new JCheckBox();
-            spiderCheckBox.setSelected(
-                    getExtensionQuickStart().getQuickStartParam().isTradSpiderEnabled());
-            spiderCheckBox.addActionListener(
-                    new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent arg0) {
-                            getExtensionQuickStart()
-                                    .getQuickStartParam()
-                                    .setTradSpiderEnabled(spiderCheckBox.isSelected());
-                        }
-                    });
+    public void setTraditionalSpider(TraditionalSpider traditionalSpider) {
+        if (traditionalSpider == null) {
+            contentPanel.remove(traditionalSpiderLabel);
+            traditionalSpiderLabel = null;
+            contentPanel.remove(this.traditionalSpider.getComponent());
+        } else {
+            traditionalSpiderLabel = new JLabel(traditionalSpider.getLabel());
+            contentPanel.add(
+                    traditionalSpiderLabel,
+                    LayoutHelper.getGBC(
+                            1,
+                            traditionalSpiderY,
+                            1,
+                            0.0D,
+                            DisplayUtils.getScaledInsets(5, 5, 5, 5)));
+            contentPanel.add(
+                    traditionalSpider.getComponent(),
+                    LayoutHelper.getGBC(
+                            2,
+                            traditionalSpiderY,
+                            1,
+                            0.0D,
+                            DisplayUtils.getScaledInsets(5, 5, 5, 5)));
         }
-        return spiderCheckBox;
+
+        this.traditionalSpider = traditionalSpider;
+
+        validate();
+        repaint();
     }
 
     public void addPlugableSpider(PlugableSpider plugableSpider) {
@@ -263,6 +263,7 @@ public class AttackPanel extends QuickStartSubPanel {
             case safe:
             case protect:
                 this.getUrlField().setEnabled(false);
+                this.getUrlField().setModel(new DefaultComboBoxModel<>());
                 this.getUrlField()
                         .setSelectedItem(
                                 Constant.messages.getString("quickstart.field.url.disabled.mode"));
@@ -272,6 +273,7 @@ public class AttackPanel extends QuickStartSubPanel {
             case standard:
             case attack:
                 this.getUrlField().setEnabled(true);
+                this.getUrlField().setModel(getUrlModel());
                 this.getUrlField().setSelectedItem(DEFAULT_VALUE_URL_FIELD);
                 this.selectButton.setEnabled(true);
                 this.getAttackButton().setEnabled(true);
@@ -281,7 +283,7 @@ public class AttackPanel extends QuickStartSubPanel {
 
     private JComboBox<String> getUrlField() {
         if (urlField == null) {
-            urlField = new JComboBox<String>();
+            urlField = new JComboBox<>();
             urlField.setEditable(true);
             urlField.setModel(getUrlModel());
             setRecentUrls();
@@ -291,7 +293,7 @@ public class AttackPanel extends QuickStartSubPanel {
 
     protected DefaultComboBoxModel<String> getUrlModel() {
         if (urlModel == null) {
-            urlModel = new DefaultComboBoxModel<String>();
+            urlModel = new DefaultComboBoxModel<>();
         }
         return urlModel;
     }
@@ -330,19 +332,16 @@ public class AttackPanel extends QuickStartSubPanel {
                     Constant.messages.getString("quickstart.button.tooltip.attack"));
 
             attackButton.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            if (!spiderCheckBox.isSelected()
-                                    && (plugableSpider == null || !plugableSpider.isSelected())) {
-                                getExtensionQuickStart()
-                                        .getView()
-                                        .showWarningDialog(
-                                                Constant.messages.getString(
-                                                        "quickstart.url.warning.nospider"));
-                            } else {
-                                attackUrl();
-                            }
+                    e -> {
+                        if ((traditionalSpider == null || !traditionalSpider.isSelected())
+                                && (plugableSpider == null || !plugableSpider.isSelected())) {
+                            getExtensionQuickStart()
+                                    .getView()
+                                    .showWarningDialog(
+                                            Constant.messages.getString(
+                                                    "quickstart.url.warning.nospider"));
+                        } else {
+                            attackUrl();
                         }
                     });
         }
@@ -363,13 +362,7 @@ public class AttackPanel extends QuickStartSubPanel {
                     Constant.messages.getString("quickstart.button.tooltip.stop"));
             stopButton.setEnabled(false);
 
-            stopButton.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            stopAttack();
-                        }
-                    });
+            stopButton.addActionListener(e -> stopAttack());
         }
         return stopButton;
     }
@@ -384,6 +377,16 @@ public class AttackPanel extends QuickStartSubPanel {
             this.getUrlField().requestFocusInWindow();
             return false;
         }
+        if (plugableSpider != null
+                && plugableSpider.requireStdSpider()
+                && (traditionalSpider == null || !traditionalSpider.isSelected())) {
+            getExtensionQuickStart()
+                    .getView()
+                    .showWarningDialog(
+                            Constant.messages.getString("quickstart.url.warning.needspider"));
+            return false;
+        }
+
         String urlStr = item.toString();
         URL url;
         try {
@@ -402,7 +405,9 @@ public class AttackPanel extends QuickStartSubPanel {
         getAttackButton().setEnabled(false);
         getStopButton().setEnabled(true);
 
-        getExtensionQuickStart().attack(url, spiderCheckBox.isSelected());
+        getExtensionQuickStart()
+                .attack(url, traditionalSpider != null && traditionalSpider.isSelected());
+        setSpiderButtonsEnabled(false);
         return true;
     }
 
@@ -416,10 +421,20 @@ public class AttackPanel extends QuickStartSubPanel {
         stopButton.setEnabled(false);
     }
 
+    private void setSpiderButtonsEnabled(boolean enabled) {
+        if (traditionalSpider != null) {
+            traditionalSpider.setEnabled(enabled);
+        }
+        if (plugableSpider != null) {
+            plugableSpider.setEnabled(enabled);
+        }
+    }
+
     protected void notifyProgress(AttackThread.Progress progress) {
         this.notifyProgress(progress, null);
     }
 
+    @SuppressWarnings("fallthrough")
     protected void notifyProgress(AttackThread.Progress progress, String msg) {
         if (msg == null) {
             msg = Constant.messages.getString("quickstart.progress." + progress.name());
@@ -429,8 +444,6 @@ public class AttackPanel extends QuickStartSubPanel {
 
         switch (progress) {
             case complete:
-                getAttackButton().setEnabled(true);
-                getStopButton().setEnabled(false);
                 ExtensionAlert extAlert =
                         ((ExtensionAlert)
                                 Control.getSingleton()
@@ -439,11 +452,11 @@ public class AttackPanel extends QuickStartSubPanel {
                 if (extAlert != null) {
                     extAlert.setAlertTabFocus();
                 }
-                break;
             case failed:
             case stopped:
                 getAttackButton().setEnabled(true);
                 getStopButton().setEnabled(false);
+                setSpiderButtonsEnabled(true);
                 break;
             default:
                 break;
@@ -451,7 +464,6 @@ public class AttackPanel extends QuickStartSubPanel {
     }
 
     public void optionsLoaded(QuickStartParam quickStartParam) {
-        this.getSpiderCheckBox().setSelected(quickStartParam.isTradSpiderEnabled());
         setRecentUrls();
     }
 
@@ -461,7 +473,16 @@ public class AttackPanel extends QuickStartSubPanel {
 
     @Override
     public ImageIcon getIcon() {
-        return ExtensionQuickStart.ZAP_ICON;
+        if (icon == null) {
+            icon =
+                    DisplayUtils.getScaledIcon(
+                            new ImageIcon(
+                                    getClass()
+                                            .getResource(
+                                                    ExtensionQuickStart.RESOURCES
+                                                            + "/zap64x64.png")));
+        }
+        return icon;
     }
 
     @Override

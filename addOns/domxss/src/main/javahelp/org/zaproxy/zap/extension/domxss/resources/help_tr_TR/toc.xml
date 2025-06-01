@@ -6,7 +6,9 @@
 <toc version="2.0">
 	<tocitem text="ZAP Kullanıcı Kılavuzu" tocid="toplevelitem">
 		<tocitem text="Eklentiler" tocid="addons">
-			<tocitem text="DOX XSS Aktif Tarama Kuralı" target="domxss"/>
+			<tocitem text="DOX XSS Aktif Tarama Kuralı" target="domxss">
+				<tocitem text="About" target="domxss.about"/>
+			</tocitem>
 		</tocitem>
 	</tocitem>
 </toc>

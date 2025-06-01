@@ -19,7 +19,8 @@
  */
 package org.zaproxy.zap.extension.scripts;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
@@ -27,10 +28,12 @@ import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.view.popup.ExtensionPopupMenuComponent;
 import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
 
+@SuppressWarnings("serial")
 public class InvokeScriptWithHttpMessageMenu extends PopupMenuItemHttpMessageContainer {
 
     private static final long serialVersionUID = 2282358266003940700L;
-    private static Logger logger = Logger.getLogger(InvokeScriptWithHttpMessageMenu.class);
+    private static final Logger LOGGER =
+            LogManager.getLogger(InvokeScriptWithHttpMessageMenu.class);
 
     private ExtensionScriptsUI extension;
     private ScriptWrapper script;
@@ -53,7 +56,7 @@ public class InvokeScriptWithHttpMessageMenu extends PopupMenuItemHttpMessageCon
 
     @Override
     public void performAction(HttpMessage msg) {
-        logger.debug("Invoke script with " + msg.getRequestHeader().getURI());
+        LOGGER.debug("Invoke script with {}", msg.getRequestHeader().getURI());
         // Execute in another thread to not occupy the EDT.
         new ScriptExecutorThread(extension, script, msg).start();
     }

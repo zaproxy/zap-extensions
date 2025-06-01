@@ -26,15 +26,17 @@ import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 
+@SuppressWarnings("serial")
 public class PopupMenuPortCopy extends ExtensionPopupMenuItem implements ClipboardOwner {
 
     private static final long serialVersionUID = 1L;
     private ExtensionPortScan extension = null;
-    private static Logger log = Logger.getLogger(PopupMenuPortCopy.class);
+    private static final Logger LOGGER = LogManager.getLogger(PopupMenuPortCopy.class);
 
     /** */
     public PopupMenuPortCopy() {
@@ -42,7 +44,9 @@ public class PopupMenuPortCopy extends ExtensionPopupMenuItem implements Clipboa
         initialize();
     }
 
-    /** @param label */
+    /**
+     * @param label
+     */
     public PopupMenuPortCopy(String label) {
         super(label);
         initialize();
@@ -53,28 +57,23 @@ public class PopupMenuPortCopy extends ExtensionPopupMenuItem implements Clipboa
         this.setText(Constant.messages.getString("ports.copy.popup"));
 
         this.addActionListener(
-                new java.awt.event.ActionListener() {
-
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent e) {
-
-                        if (extension.getPortScanPanel().isResultsSelectionEmpty()) {
-                            return;
-                        }
-
-                        List<PortScanResultEntry> results =
-                                extension.getPortScanPanel().getSelectedResults();
-
-                        StringBuilder sb = new StringBuilder();
-                        for (PortScanResultEntry result : results) {
-                            sb.append(result.getPort());
-                            sb.append('\t');
-                            sb.append(result.getDescription());
-
-                            sb.append('\n');
-                        }
-                        setClipboardContents(sb.toString());
+                e -> {
+                    if (extension.getPortScanPanel().isResultsSelectionEmpty()) {
+                        return;
                     }
+
+                    List<PortScanResultEntry> results =
+                            extension.getPortScanPanel().getSelectedResults();
+
+                    StringBuilder sb = new StringBuilder();
+                    for (PortScanResultEntry result : results) {
+                        sb.append(result.getPort());
+                        sb.append('\t');
+                        sb.append(result.getDescription());
+
+                        sb.append('\n');
+                    }
+                    setClipboardContents(sb.toString());
                 });
     }
 
@@ -94,7 +93,7 @@ public class PopupMenuPortCopy extends ExtensionPopupMenuItem implements Clipboa
                 }
 
             } catch (Exception e) {
-                log.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
             return true;
         }

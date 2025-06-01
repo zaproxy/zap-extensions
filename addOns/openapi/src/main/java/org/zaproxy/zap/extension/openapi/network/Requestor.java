@@ -23,31 +23,37 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.httpclient.URI;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
+import org.zaproxy.zap.network.HttpRedirectionValidator;
+import org.zaproxy.zap.network.HttpRequestConfig;
+import org.zaproxy.zap.users.User;
 
 public class Requestor {
 
     private final int initiator;
-    private List<RequesterListener> listeners = new ArrayList<RequesterListener>();
+    private List<RequesterListener> listeners = new ArrayList<>();
     private HttpSender sender;
-    private static final Logger LOG = Logger.getLogger(Requestor.class);
+    private final HttpRequestConfig requestConfig;
+    private static final Logger LOGGER = LogManager.getLogger(Requestor.class);
 
     public Requestor(int initiator) {
         this.initiator = initiator;
-        sender =
-                new HttpSender(
-                        Model.getSingleton().getOptionsParam().getConnectionParam(),
-                        true,
-                        initiator);
+        sender = new HttpSender(initiator);
+        requestConfig =
+                HttpRequestConfig.builder().setRedirectionValidator(new MessageHandler()).build();
     }
 
     public List<String> run(List<RequestModel> requestsModel) {
-        List<String> errors = new ArrayList<String>();
+        return run(null, requestsModel);
+    }
+
+    public List<String> run(User user, List<RequestModel> requestsModel) {
+        List<String> errors = new ArrayList<>();
         try {
             for (RequestModel requestModel : requestsModel) {
                 String url = requestModel.getUrl();
@@ -61,18 +67,11 @@ public class Requestor {
                         .getRequestHeader()
                         .setContentLength(httpRequest.getRequestBody().length());
 
-                try {
-                    sender.sendAndReceive(httpRequest, true);
+                httpRequest.setRequestingUser(user);
 
-                    for (RequesterListener listener : listeners) {
-                        try {
-                            listener.handleMessage(httpRequest, initiator);
-                        } catch (Exception e) {
-                            // Dont add handler errors to the list returned - these are assumed to
-                            // be handler specific
-                            LOG.error(e.getMessage(), e);
-                        }
-                    }
+                try {
+
+                    sender.sendAndReceive(httpRequest, requestConfig);
                 } catch (IOException e) {
                     errors.add(
                             Constant.messages.getString(
@@ -80,12 +79,12 @@ public class Requestor {
                                     url,
                                     e.getClass().getName(),
                                     e.getMessage()));
-                    LOG.debug(e.getMessage(), e);
+                    LOGGER.debug(e.getMessage(), e);
                 }
             }
         } catch (IOException e) {
             errors.add(e.getMessage());
-            LOG.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
         return errors;
     }
@@ -98,7 +97,7 @@ public class Requestor {
             try {
                 listener.handleMessage(httpRequest, initiator);
             } catch (Exception e) {
-                LOG.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
         return httpRequest.getResponseBody().toString();
@@ -110,5 +109,29 @@ public class Requestor {
 
     public void removeListener(RequesterListener listener) {
         this.listeners.remove(listener);
+    }
+
+    public void setUser(User user) {
+        sender.setUser(user);
+    }
+
+    /** Notifies the {@link #listeners} of the messages sent. */
+    private class MessageHandler implements HttpRedirectionValidator {
+
+        @Override
+        public void notifyMessageReceived(HttpMessage message) {
+            for (RequesterListener listener : listeners) {
+                try {
+                    listener.handleMessage(message, initiator);
+                } catch (Exception e) {
+                    LOGGER.error(e.getMessage(), e);
+                }
+            }
+        }
+
+        @Override
+        public boolean isValid(URI redirection) {
+            return true;
+        }
     }
 }

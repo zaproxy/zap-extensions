@@ -21,27 +21,20 @@ package org.zaproxy.zap.extension.zest.dialogs;
 
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JButton;
-import javax.swing.JLabel;
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import org.apache.log4j.Logger;
-import org.mozilla.zest.core.v1.ZestAuthentication;
-import org.mozilla.zest.core.v1.ZestHttpAuthentication;
-import org.mozilla.zest.core.v1.ZestJSON;
-import org.mozilla.zest.core.v1.ZestScript;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.extension.encoder.Base64;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpHeader;
@@ -54,7 +47,11 @@ import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.view.StandardFieldsDialog;
+import org.zaproxy.zest.core.v1.ZestAuthentication;
+import org.zaproxy.zest.core.v1.ZestHttpAuthentication;
+import org.zaproxy.zest.core.v1.ZestScript;
 
+@SuppressWarnings("serial")
 public class ZestScriptsDialog extends StandardFieldsDialog {
 
     private static final String FIELD_TITLE = "zest.dialog.script.label.title";
@@ -72,7 +69,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
     private static final String FIELD_LOAD = "zest.dialog.script.label.load";
     private static final String FIELD_DEBUG = "zest.dialog.script.label.debug";
 
-    private static final Logger logger = Logger.getLogger(ZestScriptsDialog.class);
+    private static final Logger LOGGER = LogManager.getLogger(ZestScriptsDialog.class);
 
     private static final long serialVersionUID = 1L;
 
@@ -94,7 +91,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
     private ScriptTokensTableModel paramsModel = null;
     private ZestParameterDialog parmaDialog = null;
 
-    private List<HttpMessage> deferedMessages = new ArrayList<HttpMessage>();
+    private List<HttpMessage> deferredMessages = new ArrayList<>();
 
     public ZestScriptsDialog(ExtensionZest ext, Frame owner, Dimension dim) {
         super(
@@ -147,7 +144,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
         }
         this.addTextField(0, FIELD_TITLE, script.getTitle());
         if (this.chooseType) {
-            List<String> types = new ArrayList<String>();
+            List<String> types = new ArrayList<>();
             for (ScriptType st : extension.getExtScript().getScriptTypes()) {
                 if (st.hasCapability(ScriptType.CAPABILITY_APPEND)) {
                     types.add(Constant.messages.getString(st.getI18nKey()));
@@ -164,7 +161,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
                                     .getI18nKey()),
                     false);
         }
-        this.addReadOnlyField(0, FIELD_FILE, "", false);
+        this.addTextFieldReadOnly(0, FIELD_FILE, "");
         this.addComboField(0, FIELD_PREFIX, this.getSites(), script.getPrefix(), true);
         this.addCheckBoxField(0, FIELD_LOAD, scriptWrapper.isLoadOnStart());
         this.addMultilineField(0, FIELD_DESC, script.getDescription());
@@ -173,12 +170,12 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
         if (scriptWrapper.getFile() != null) {
             this.setFieldValue(FIELD_FILE, scriptWrapper.getFile().getAbsolutePath());
             // Add tooltip in case file name is longer than the dialog
-            ((JLabel) this.getField(FIELD_FILE))
+            ((JComponent) this.getField(FIELD_FILE))
                     .setToolTipText(scriptWrapper.getFile().getAbsolutePath());
         }
         this.getParamsModel().setValues(script.getParameters().getVariables());
 
-        List<JButton> buttons = new ArrayList<JButton>();
+        List<JButton> buttons = new ArrayList<>();
         buttons.add(getAddButton());
         buttons.add(getModifyButton());
         buttons.add(getRemoveButton());
@@ -223,14 +220,11 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
             this.addButton =
                     new JButton(Constant.messages.getString("zest.dialog.script.button.add"));
             this.addButton.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            ZestParameterDialog dialog = getParamDialog();
-                            if (!dialog.isVisible()) {
-                                dialog.init(scriptWrapper, "", "", true, -1, true);
-                                dialog.setVisible(true);
-                            }
+                    e -> {
+                        ZestParameterDialog dialog = getParamDialog();
+                        if (!dialog.isVisible()) {
+                            dialog.init(scriptWrapper, "", "", true, -1, true);
+                            dialog.setVisible(true);
                         }
                     });
         }
@@ -243,21 +237,18 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
                     new JButton(Constant.messages.getString("zest.dialog.script.button.modify"));
             this.modifyButton.setEnabled(false);
             this.modifyButton.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            ZestParameterDialog dialog = getParamDialog();
-                            if (!dialog.isVisible()) {
-                                int row = getParamsTable().getSelectedRow();
-                                dialog.init(
-                                        scriptWrapper,
-                                        (String) getParamsModel().getValueAt(row, 0),
-                                        (String) getParamsModel().getValueAt(row, 1),
-                                        false,
-                                        row,
-                                        true);
-                                dialog.setVisible(true);
-                            }
+                    e -> {
+                        ZestParameterDialog dialog = getParamDialog();
+                        if (!dialog.isVisible()) {
+                            int row = getParamsTable().getSelectedRow();
+                            dialog.init(
+                                    scriptWrapper,
+                                    (String) getParamsModel().getValueAt(row, 0),
+                                    (String) getParamsModel().getValueAt(row, 1),
+                                    false,
+                                    row,
+                                    true);
+                            dialog.setVisible(true);
                         }
                     });
         }
@@ -271,17 +262,14 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
             this.removeButton.setEnabled(false);
             final ZestScriptsDialog parent = this;
             this.removeButton.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            if (JOptionPane.OK_OPTION
-                                    == View.getSingleton()
-                                            .showConfirmDialog(
-                                                    parent,
-                                                    Constant.messages.getString(
-                                                            "zest.dialog.script.remove.confirm"))) {
-                                getParamsModel().remove(getParamsTable().getSelectedRow());
-                            }
+                    e -> {
+                        if (JOptionPane.OK_OPTION
+                                == View.getSingleton()
+                                        .showConfirmDialog(
+                                                parent,
+                                                Constant.messages.getString(
+                                                        "zest.dialog.script.remove.confirm"))) {
+                            getParamsModel().remove(getParamsTable().getSelectedRow());
                         }
                     });
         }
@@ -297,9 +285,9 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
     }
 
     private List<String> getSites() {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         list.add(""); // Always start with the blank option
-        SiteNode siteRoot = (SiteNode) Model.getSingleton().getSession().getSiteTree().getRoot();
+        SiteNode siteRoot = Model.getSingleton().getSession().getSiteTree().getRoot();
         if (siteRoot != null && siteRoot.getChildCount() > 0) {
             SiteNode child = (SiteNode) siteRoot.getFirstChild();
             while (child != null) {
@@ -317,20 +305,17 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
             paramsTable
                     .getSelectionModel()
                     .addListSelectionListener(
-                            new ListSelectionListener() {
-                                @Override
-                                public void valueChanged(ListSelectionEvent e) {
-                                    if (getParamsTable().getSelectedRowCount() == 0) {
-                                        modifyButton.setEnabled(false);
-                                        removeButton.setEnabled(false);
-                                    } else if (getParamsTable().getSelectedRowCount() == 1) {
-                                        modifyButton.setEnabled(true);
-                                        removeButton.setEnabled(true);
-                                    } else {
-                                        modifyButton.setEnabled(false);
-                                        // TODO allow multiple deletions?
-                                        removeButton.setEnabled(false);
-                                    }
+                            e -> {
+                                if (getParamsTable().getSelectedRowCount() == 0) {
+                                    modifyButton.setEnabled(false);
+                                    removeButton.setEnabled(false);
+                                } else if (getParamsTable().getSelectedRowCount() == 1) {
+                                    modifyButton.setEnabled(true);
+                                    removeButton.setEnabled(true);
+                                } else {
+                                    modifyButton.setEnabled(false);
+                                    // TODO allow multiple deletions?
+                                    removeButton.setEnabled(false);
                                 }
                             });
         }
@@ -363,11 +348,11 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
             try {
                 script.setPrefix(this.getStringValue(FIELD_PREFIX));
             } catch (MalformedURLException e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
 
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         for (String nv[] : getParamsModel().getValues()) {
             map.put(nv[0], nv[1]);
         }
@@ -375,7 +360,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
 
         scriptWrapper.setName(script.getTitle());
         scriptWrapper.setDescription(script.getDescription());
-        scriptWrapper.setContents(ZestJSON.toString(script));
+        scriptWrapper.setContents(extension.convertElementToString(script));
         scriptWrapper.setLoadOnStart(this.getBoolValue(FIELD_LOAD));
         scriptWrapper.setDebug(this.getBoolValue(FIELD_DEBUG));
 
@@ -391,7 +376,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
                 scriptWrapper.setIncLengthAssertion(this.getBoolValue(FIELD_LENGTH));
                 scriptWrapper.setLengthApprox(this.getIntValue(FIELD_APPROX));
 
-                Map<String, String> tokens = new HashMap<String, String>();
+                Map<String, String> tokens = new HashMap<>();
                 for (String[] nv : getParamsModel().getValues()) {
                     tokens.put(nv[0], nv[1]);
                 }
@@ -399,7 +384,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
                 script.getParameters().setVariable(tokens);
 
                 // Just support one auth for now
-                script.setAuthentication(new ArrayList<ZestAuthentication>());
+                script.setAuthentication(new ArrayList<>());
                 if (!this.isEmptyField(FIELD_AUTH_SITE)) {
                     ZestHttpAuthentication zha = new ZestHttpAuthentication();
                     zha.setSite(this.getStringValue(FIELD_AUTH_SITE));
@@ -411,13 +396,12 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
             }
 
             scriptNode = extension.add(scriptWrapper, false);
-            // Add any defered messages
-            for (HttpMessage msg : deferedMessages) {
-                logger.debug(
-                        "Adding defered message: " + msg.getRequestHeader().getURI().toString());
+            // Add any deferred messages
+            for (HttpMessage msg : deferredMessages) {
+                LOGGER.debug("Adding deferred message: {}", msg.getRequestHeader().getURI());
                 extension.addToParent(scriptNode, msg, null);
             }
-            deferedMessages.clear();
+            deferredMessages.clear();
         }
         extension.updated(scriptNode);
         this.saved = true;
@@ -455,8 +439,8 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
         return null;
     }
 
-    public void addDeferedMessage(HttpMessage msg) {
-        this.deferedMessages.add(msg);
+    public void addDeferredMessage(HttpMessage msg) {
+        this.deferredMessages.add(msg);
 
         if (this.isEmptyField(FIELD_AUTH_SITE)) {
             try {
@@ -465,7 +449,8 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
                 String auth = header.getHeader(HttpHeader.AUTHORIZATION);
                 if (auth != null && auth.length() > 0) {
                     if (auth.toLowerCase().startsWith("basic ")) {
-                        String userPword = new String(Base64.decode(auth.substring(6)));
+                        String userPword =
+                                new String(Base64.getDecoder().decode(auth.substring(6)));
                         int colon = userPword.indexOf(":");
                         if (colon > 0) {
                             this.setFieldValue(FIELD_AUTH_SITE, header.getHostName());
@@ -475,7 +460,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
                     }
                 }
             } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
     }

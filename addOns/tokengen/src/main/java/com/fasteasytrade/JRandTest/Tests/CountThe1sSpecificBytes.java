@@ -43,6 +43,7 @@ public class CountThe1sSpecificBytes extends CountThe1s
 	/**
 	 * @see com.fasteasytrade.JRandTest.Tests.CountThe1s#setParameters()
 	 */
+	@Override
 	public void setParameters()
 	{
 		testStream = false;

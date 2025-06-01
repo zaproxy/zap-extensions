@@ -23,43 +23,49 @@ import java.awt.Component;
 import javax.swing.ImageIcon;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.log4j.Logger;
-import org.mozilla.zest.core.v1.ZestActionFail;
-import org.mozilla.zest.core.v1.ZestActionGlobalVariableRemove;
-import org.mozilla.zest.core.v1.ZestActionGlobalVariableSet;
-import org.mozilla.zest.core.v1.ZestActionIntercept;
-import org.mozilla.zest.core.v1.ZestActionInvoke;
-import org.mozilla.zest.core.v1.ZestActionPrint;
-import org.mozilla.zest.core.v1.ZestActionScan;
-import org.mozilla.zest.core.v1.ZestActionSleep;
-import org.mozilla.zest.core.v1.ZestAssertion;
-import org.mozilla.zest.core.v1.ZestAssignment;
-import org.mozilla.zest.core.v1.ZestClientAssignCookie;
-import org.mozilla.zest.core.v1.ZestClientElementAssign;
-import org.mozilla.zest.core.v1.ZestClientElementClear;
-import org.mozilla.zest.core.v1.ZestClientElementClick;
-import org.mozilla.zest.core.v1.ZestClientElementSendKeys;
-import org.mozilla.zest.core.v1.ZestClientElementSubmit;
-import org.mozilla.zest.core.v1.ZestClientLaunch;
-import org.mozilla.zest.core.v1.ZestClientSwitchToFrame;
-import org.mozilla.zest.core.v1.ZestClientWindowClose;
-import org.mozilla.zest.core.v1.ZestClientWindowHandle;
-import org.mozilla.zest.core.v1.ZestClientWindowOpenUrl;
-import org.mozilla.zest.core.v1.ZestComment;
-import org.mozilla.zest.core.v1.ZestConditional;
-import org.mozilla.zest.core.v1.ZestControlLoopBreak;
-import org.mozilla.zest.core.v1.ZestControlLoopNext;
-import org.mozilla.zest.core.v1.ZestControlReturn;
-import org.mozilla.zest.core.v1.ZestElement;
-import org.mozilla.zest.core.v1.ZestExpression;
-import org.mozilla.zest.core.v1.ZestLoop;
-import org.mozilla.zest.core.v1.ZestRequest;
-import org.mozilla.zest.core.v1.ZestStatement;
+import org.apache.commons.text.StringEscapeUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.OverlayIcon;
+import org.zaproxy.zest.core.v1.ZestActionFail;
+import org.zaproxy.zest.core.v1.ZestActionGlobalVariableRemove;
+import org.zaproxy.zest.core.v1.ZestActionGlobalVariableSet;
+import org.zaproxy.zest.core.v1.ZestActionIntercept;
+import org.zaproxy.zest.core.v1.ZestActionInvoke;
+import org.zaproxy.zest.core.v1.ZestActionPrint;
+import org.zaproxy.zest.core.v1.ZestActionScan;
+import org.zaproxy.zest.core.v1.ZestActionSleep;
+import org.zaproxy.zest.core.v1.ZestAssertion;
+import org.zaproxy.zest.core.v1.ZestAssignment;
+import org.zaproxy.zest.core.v1.ZestClientAssignCookie;
+import org.zaproxy.zest.core.v1.ZestClientElementAssign;
+import org.zaproxy.zest.core.v1.ZestClientElementClear;
+import org.zaproxy.zest.core.v1.ZestClientElementClick;
+import org.zaproxy.zest.core.v1.ZestClientElementMouseOver;
+import org.zaproxy.zest.core.v1.ZestClientElementScroll;
+import org.zaproxy.zest.core.v1.ZestClientElementScrollTo;
+import org.zaproxy.zest.core.v1.ZestClientElementSendKeys;
+import org.zaproxy.zest.core.v1.ZestClientElementSubmit;
+import org.zaproxy.zest.core.v1.ZestClientLaunch;
+import org.zaproxy.zest.core.v1.ZestClientScreenshot;
+import org.zaproxy.zest.core.v1.ZestClientSwitchToFrame;
+import org.zaproxy.zest.core.v1.ZestClientWindowClose;
+import org.zaproxy.zest.core.v1.ZestClientWindowHandle;
+import org.zaproxy.zest.core.v1.ZestClientWindowOpenUrl;
+import org.zaproxy.zest.core.v1.ZestClientWindowResize;
+import org.zaproxy.zest.core.v1.ZestComment;
+import org.zaproxy.zest.core.v1.ZestConditional;
+import org.zaproxy.zest.core.v1.ZestControlLoopBreak;
+import org.zaproxy.zest.core.v1.ZestControlLoopNext;
+import org.zaproxy.zest.core.v1.ZestControlReturn;
+import org.zaproxy.zest.core.v1.ZestElement;
+import org.zaproxy.zest.core.v1.ZestExpression;
+import org.zaproxy.zest.core.v1.ZestLoop;
+import org.zaproxy.zest.core.v1.ZestRequest;
+import org.zaproxy.zest.core.v1.ZestStatement;
 
 /**
  * Custom renderer for {@link ZestScriptsPanel} to set custom icons and tooltips. If you want
@@ -187,6 +193,21 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
                     new ImageIcon(
                             ZestTreeCellRenderer.class.getResource(
                                     "/org/zaproxy/zap/extension/zest/resources/icons/mouse.png")));
+    private static final ImageIcon CLIENT_ELEMENT_MOUSEOVER_ICON =
+            DisplayUtils.getScaledIcon(
+                    new ImageIcon(
+                            ZestTreeCellRenderer.class.getResource(
+                                    "/org/zaproxy/zap/extension/zest/resources/icons/application-cursor.png")));
+    private static final ImageIcon CLIENT_ELEMENT_SCROLL_ICON =
+            DisplayUtils.getScaledIcon(
+                    new ImageIcon(
+                            ZestTreeCellRenderer.class.getResource(
+                                    "/org/zaproxy/zap/extension/zest/resources/icons/ui-scroll-pane.png")));
+    private static final ImageIcon CLIENT_ELEMENT_SCROLL_TO_ICON =
+            DisplayUtils.getScaledIcon(
+                    new ImageIcon(
+                            ZestTreeCellRenderer.class.getResource(
+                                    "/org/zaproxy/zap/extension/zest/resources/icons/ui-scroll-pane.png")));
     private static final ImageIcon CLIENT_ELEMENT_SEND_KEYS_ICON =
             DisplayUtils.getScaledIcon(
                     new ImageIcon(
@@ -198,6 +219,11 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
                             ZestTreeCellRenderer.class.getResource(
                                     "/org/zaproxy/zap/extension/zest/resources/icons/ui-text-field-submit.png")));
 
+    private static final ImageIcon CLIENT_SCREENSHOT_ICON =
+            DisplayUtils.getScaledIcon(
+                    new ImageIcon(
+                            ZestTreeCellRenderer.class.getResource(
+                                    "/org/zaproxy/zap/extension/zest/resources/icons/camera.png")));
     private static final ImageIcon CLIENT_FRAME_SWITCH_ICON =
             DisplayUtils.getScaledIcon(
                     new ImageIcon(
@@ -218,6 +244,11 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
                     new ImageIcon(
                             ZestTreeCellRenderer.class.getResource(
                                     "/org/zaproxy/zap/extension/zest/resources/icons/application-arrow.png")));
+    private static final ImageIcon CLIENT_WINDOW_RESIZE_ICON =
+            DisplayUtils.getScaledIcon(
+                    new ImageIcon(
+                            ZestTreeCellRenderer.class.getResource(
+                                    "/org/zaproxy/zap/extension/zest/resources/icons/application-resize.png")));
     private static final ImageIcon CLIENT_WINDOW_CLOSE_ICON =
             DisplayUtils.getScaledIcon(
                     new ImageIcon(
@@ -252,7 +283,7 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
 
     private static final long serialVersionUID = -4278691012245035225L;
 
-    private static final Logger logger = Logger.getLogger(ZestTreeCellRenderer.class);
+    private static final Logger LOGGER = LogManager.getLogger(ZestTreeCellRenderer.class);
 
     public ZestTreeCellRenderer() {}
 
@@ -278,7 +309,7 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
 
             if (obj != null && obj instanceof ZestScriptWrapper) {
                 OverlayIcon icon =
-                        new OverlayIcon(DisplayUtils.getScaledIcon(ExtensionZest.ZEST_ICON));
+                        new OverlayIcon(DisplayUtils.getScaledIcon(ExtensionZest.getZestIcon()));
                 ZestScriptWrapper script = (ZestScriptWrapper) obj;
 
                 // Copied from ScriptsTreeCellRenderer as we want to add an additional overlay
@@ -353,7 +384,7 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
                         // Ensure newlines work while not allow any other nasties to get displayed
                         String tooltip =
                                 "<html>"
-                                        + StringEscapeUtils.escapeHtml(
+                                        + StringEscapeUtils.escapeHtml4(
                                                         ((ZestComment) za).getComment())
                                                 .replace("\n", "<br>")
                                         + "</html>";
@@ -376,12 +407,20 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
                         setIcon(CLIENT_ELEMENT_CLEAR_ICON);
                     } else if (za instanceof ZestClientElementClick) {
                         setIcon(CLIENT_ELEMENT_CLICK_ICON);
+                    } else if (za instanceof ZestClientElementMouseOver) {
+                        setIcon(CLIENT_ELEMENT_MOUSEOVER_ICON);
+                    } else if (za instanceof ZestClientElementScroll) {
+                        setIcon(CLIENT_ELEMENT_SCROLL_ICON);
+                    } else if (za instanceof ZestClientElementScrollTo) {
+                        setIcon(CLIENT_ELEMENT_SCROLL_TO_ICON);
                     } else if (za instanceof ZestClientElementSendKeys) {
                         setIcon(CLIENT_ELEMENT_SEND_KEYS_ICON);
                     } else if (za instanceof ZestClientElementSubmit) {
                         setIcon(CLIENT_ELEMENT_SUBMIT_ICON);
                     } else if (za instanceof ZestClientLaunch) {
                         setIcon(CLIENT_WINDOW_OPEN_ICON);
+                    } else if (za instanceof ZestClientScreenshot) {
+                        setIcon(CLIENT_SCREENSHOT_ICON);
                     } else if (za instanceof ZestClientSwitchToFrame) {
                         setIcon(CLIENT_FRAME_SWITCH_ICON);
                     } else if (za instanceof ZestClientWindowHandle) {
@@ -390,10 +429,12 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
                         setIcon(CLIENT_WINDOW_CLOSE_ICON);
                     } else if (za instanceof ZestClientWindowOpenUrl) {
                         setIcon(CLIENT_WINDOW_OPEN_URL_ICON);
+                    } else if (za instanceof ZestClientWindowResize) {
+                        setIcon(CLIENT_WINDOW_RESIZE_ICON);
                     } else {
-                        logger.error(
-                                "Unrecognised element element class="
-                                        + zew.getElement().getClass().getCanonicalName());
+                        LOGGER.error(
+                                "Unrecognised element class={}",
+                                zew.getElement().getClass().getCanonicalName());
                     }
                 }
             }

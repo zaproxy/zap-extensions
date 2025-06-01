@@ -24,8 +24,8 @@ import java.util.Iterator;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import javax.swing.SwingWorker;
-import org.apache.log4j.Logger;
-import org.parosproxy.paros.model.Model;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
@@ -44,14 +44,11 @@ public class TokenGenerator extends SwingWorker<Void, Void> {
     private long requestDelayDuration;
     private TimeUnit requestDelayTimeUnit;
     private boolean shouldRemoveCookie = false;
-    private static Logger log = Logger.getLogger(TokenGenerator.class);
+    private static final Logger LOGGER = LogManager.getLogger(TokenGenerator.class);
 
     private HttpSender getHttpSender() {
         if (httpSender == null) {
-            // TODO Replace with HttpSender.TOKEN_GENERATOR_INITIATOR when available.
-            httpSender =
-                    new HttpSender(
-                            Model.getSingleton().getOptionsParam().getConnectionParam(), true, 12);
+            httpSender = new HttpSender(HttpSender.TOKEN_GENERATOR_INITIATOR);
         }
         return httpSender;
     }
@@ -61,7 +58,7 @@ public class TokenGenerator extends SwingWorker<Void, Void> {
         try {
             generate();
         } catch (Throwable e) {
-            log.error("An error occurred during token generation:", e);
+            LOGGER.error("An error occurred during token generation:", e);
         }
         return null;
     }
@@ -101,11 +98,11 @@ public class TokenGenerator extends SwingWorker<Void, Void> {
             try {
                 this.getHttpSender().sendAndReceive(msg, true);
             } catch (SocketTimeoutException ste) {
-                log.debug(
-                        "A timout occurred while sending a request to generate a token. Reducing sent count, initiating supplemental request.");
+                LOGGER.debug(
+                        "A timeout occurred while sending a request to generate a token. Reducing sent count, initiating supplemental request.");
                 i--;
             } catch (Exception e) {
-                log.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
             this.extension.addTokenResult(msg, targetToken);
         }

@@ -20,24 +20,23 @@
 package org.zaproxy.zap.extension.zest.menu;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import org.mozilla.zest.core.v1.ZestContainer;
-import org.mozilla.zest.core.v1.ZestControl;
-import org.mozilla.zest.core.v1.ZestControlLoopBreak;
-import org.mozilla.zest.core.v1.ZestControlLoopNext;
-import org.mozilla.zest.core.v1.ZestControlReturn;
-import org.mozilla.zest.core.v1.ZestElement;
-import org.mozilla.zest.core.v1.ZestLoop;
-import org.mozilla.zest.core.v1.ZestRequest;
-import org.mozilla.zest.core.v1.ZestScript;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
+import org.zaproxy.zest.core.v1.ZestContainer;
+import org.zaproxy.zest.core.v1.ZestControl;
+import org.zaproxy.zest.core.v1.ZestControlLoopBreak;
+import org.zaproxy.zest.core.v1.ZestControlLoopNext;
+import org.zaproxy.zest.core.v1.ZestControlReturn;
+import org.zaproxy.zest.core.v1.ZestElement;
+import org.zaproxy.zest.core.v1.ZestLoop;
+import org.zaproxy.zest.core.v1.ZestRequest;
+import org.zaproxy.zest.core.v1.ZestScript;
 
+@SuppressWarnings("serial")
 public class ZestAddControlPopupMenu extends ExtensionPopupMenuItem {
 
     private static final long serialVersionUID = 2282358266003940700L;
@@ -132,21 +131,17 @@ public class ZestAddControlPopupMenu extends ExtensionPopupMenuItem {
                         Constant.messages.getString("zest.control.add.popup"),
                         ZestZapUtils.toUiString(za, false));
         menu.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        if (za instanceof ZestControlReturn) {
-                            extension
-                                    .getDialogManager()
-                                    .showZestControlDialog(parent, child, req, za, true);
-                        } else {
-                            // The other controls dont have anything to edit, so just add them
-                            // straight in.
-                            extension.addToParent(parent, za);
-                        }
+                e -> {
+                    if (za instanceof ZestControlReturn) {
+                        extension
+                                .getDialogManager()
+                                .showZestControlDialog(parent, child, req, za, true);
+                    } else {
+                        // The other controls dont have anything to edit, so just add them
+                        // straight in.
+                        extension.addToParent(parent, za);
                     }
                 });
-        menu.setMenuIndex(this.getMenuIndex());
         View.getSingleton().getPopupList().add(menu);
     }
 

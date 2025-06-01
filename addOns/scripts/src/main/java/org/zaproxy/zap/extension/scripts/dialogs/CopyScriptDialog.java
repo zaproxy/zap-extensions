@@ -26,6 +26,7 @@ import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.scripts.ExtensionScriptsUI;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
+@SuppressWarnings("serial")
 public class CopyScriptDialog extends StandardFieldsDialog {
 
     private static final String FIELD_NAME = "scripts.dialog.script.label.name";

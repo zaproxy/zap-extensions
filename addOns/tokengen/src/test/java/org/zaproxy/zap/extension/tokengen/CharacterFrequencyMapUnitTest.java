@@ -19,20 +19,20 @@
  */
 package org.zaproxy.zap.extension.tokengen;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertThat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /** Unit test for {@link CharacterFrequencyMap}. */
-public class CharacterFrequencyMapUnitTest {
+class CharacterFrequencyMapUnitTest {
 
     @Test
-    public void shouldFailCharacterUniformityWithoutTokens() throws Exception {
+    void shouldFailCharacterUniformityWithoutTokens() throws Exception {
         // Given
         CharacterFrequencyMap cfm = new CharacterFrequencyMap();
         // When
@@ -48,7 +48,7 @@ public class CharacterFrequencyMapUnitTest {
     }
 
     @Test
-    public void shouldFailCharacterUniformityIfTokenCharsAreNotUniform() throws Exception {
+    void shouldFailCharacterUniformityIfTokenCharsAreNotUniform() throws Exception {
         // Given
         CharacterFrequencyMap cfm = new CharacterFrequencyMap();
         for (int i = 0; i < 1000; i++) {
@@ -78,7 +78,7 @@ public class CharacterFrequencyMapUnitTest {
     }
 
     @Test
-    public void shouldPassCharacterUniformityIfTokensCharsAreUniform() throws Exception {
+    void shouldPassCharacterUniformityIfTokensCharsAreUniform() throws Exception {
         // Given
         CharacterFrequencyMap cfm = new CharacterFrequencyMap();
         cfm.addToken("ABC");

@@ -32,14 +32,8 @@ import java.util.Vector;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.prefs.Preferences;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpState;
-import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
-import org.apache.commons.httpclient.NTCredentials;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.apache.commons.httpclient.auth.AuthScope;
-import org.apache.commons.httpclient.protocol.Protocol;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class Manager implements ProcessChecker.ProcessUpdate {
 
@@ -65,8 +59,8 @@ public class Manager implements ProcessChecker.ProcessUpdate {
     private String startPoint;
     private boolean doDirs, doFiles;
     private int totalDone = 0;
-    private Vector workers = new Vector(100, 10);
-    private Vector parseWorkers = new Vector(100, 10);
+    private Vector<Worker> workers = new Vector<>(100, 10);
+    private Vector<HTMLparse> parseWorkers = new Vector<>(100, 10);
     private String[] charSet;
     private int maxLen, minLen;
     boolean pureBrute = false;
@@ -80,27 +74,14 @@ public class Manager implements ProcessChecker.ProcessUpdate {
     // used to record the total number of dirs that have been found
     // set to 1 as we there must always at least 1
     private int totalDirsFound = 1;
-    public Vector HTTPheaders = new Vector(10, 5);
-    // proxy detials
-    private boolean useProxy = false;
-    private String proxyHost = "";
-    private int proxyPort = 0;
-    // proxy credentials detials
-    private boolean useProxyAuth = false;
-    private String proxyUsername = "";
-    private String proxyPassword = "";
-    private String proxyRealm = "";
     // setting for using a blank extention
     private boolean blankExt = false;
     // store of all extention that are to be tested
-    private Vector extToUse = new Vector(10, 5);
-    // variable for httpclient
-    private HttpClient httpclient;
-    private HttpState initialState;
-    private Vector producedBasesCases = new Vector(10, 10);
+    private Vector<ExtToCheck> extToUse = new Vector<>(10, 5);
+    private Vector<BaseCase> producedBasesCases = new Vector<>(10, 10);
     // used to store all the links that have parsed, will not contain a list a all items, processed
     // as this will consume to much memory.  There for there is a chance of some duplication.
-    private Vector processedLinks = new Vector(100, 100);
+    private Vector<String> processedLinks = new Vector<>(100, 100);
     // not all base case requests are processed so this will ensure the stats stay correct
     private int baseCaseCounterCorrection = 0;
     // used to store the value of items that will have been skipped
@@ -112,15 +93,9 @@ public class Manager implements ProcessChecker.ProcessUpdate {
     // exts that are not to be added to the work queue if found by the HTML parser
     public Vector<String> extsToMiss = new Vector<>(10, 10);
     // Vector to store all the html elements that are to be parsed.
-    public Vector elementsToParse = new Vector(10, 10);
+    public Vector<HTMLelementToParse> elementsToParse = new Vector<>(10, 10);
     // Used to store a string of what we are currently processing
     private String currentlyProcessing = "";
-    // variables used to store information about the http athentifcation that is to be used
-    private boolean useHTTPauth = false;
-    private String userName = "";
-    private String password = "";
-    private String realmDomain = "";
-    private String authType = "";
     // Variables to store information used for the URL fuzzing
     private String urlFuzzStart;
     private String urlFuzzEnd;
@@ -162,11 +137,11 @@ public class Manager implements ProcessChecker.ProcessUpdate {
     /*
      * this stores all the regexes that have been used when we get inconsistent base cases
      */
-    private Vector<String> failCaseRegexes = new Vector(10, 10);
+    private Vector<String> failCaseRegexes = new Vector<>(10, 10);
     /*
      * Vector to store results when we are running in headless mode
      */
-    Vector<HeadlessResult> headlessResult = new Vector<HeadlessResult>(100, 100);
+    Vector<HeadlessResult> headlessResult = new Vector<>(100, 100);
 
     /*
      * stores of information used to transer data to the gui when started with console args
@@ -183,10 +158,12 @@ public class Manager implements ProcessChecker.ProcessUpdate {
     private boolean onlyUnderStartPoint = true;
 
     /* Logger object for the class */
-    private static final Logger LOG = Logger.getLogger(Manager.class);
+    private static final Logger LOGGER = LogManager.getLogger(Manager.class);
+
+    private final SimpleHttpClient httpClient;
 
     // ZAP: Changed to public to allow it to be extended
-    public Manager() {
+    public Manager(SimpleHttpClient httpClient) {
         elementsToParse.addElement(new HTMLelementToParse("a", "href"));
         elementsToParse.addElement(new HTMLelementToParse("img", "src"));
         elementsToParse.addElement(new HTMLelementToParse("form", "action"));
@@ -201,10 +178,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
          */
         loadPrefs();
 
-        /*
-         * create the httpclient
-         */
-        createHttpClient();
+        this.httpClient = httpClient;
     }
 
     // set up dictionay based attack with normal start
@@ -220,7 +194,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
             boolean doFiles,
             boolean recursive,
             boolean blankExt,
-            Vector extToUse) {
+            Vector<ExtToCheck> extToUse) {
         totalDone = 0;
         this.startPoint = startPoint;
         this.inputFile = inputFile;
@@ -244,22 +218,17 @@ public class Manager implements ProcessChecker.ProcessUpdate {
             // gui.addResult(new ResultsTableObject("Dir", url.getPath(), "---", "Scanning",
             // url.toString(), "Start point of testing", null, null, this.recursive, null));
         } catch (MalformedURLException ex) {
-            LOG.error("Bad URL", ex);
+            LOGGER.error("Bad URL", ex);
         }
 
-        LOG.info("Starting dir/file list based brute forcing");
+        LOGGER.info("Starting dir/file list based brute forcing");
 
-        setpUpHttpClient();
         createTheThreads();
         workGen = new WorkerGenerator(this);
     }
 
     public Vector<HeadlessResult> getHeadlessResult() {
         return headlessResult;
-    }
-
-    public HttpClient getHttpclient() {
-        return httpclient;
     }
 
     // setup for purebrute force with normal start
@@ -301,12 +270,11 @@ public class Manager implements ProcessChecker.ProcessUpdate {
             // gui.addResult(new ResultsTableObject("Dir", url.getPath(), "---", "Scanning",
             // url.toString(), "Start point of testing", null, null, this.recursive, null));
         } catch (MalformedURLException ex) {
-            LOG.error("Bad URL", ex);
+            LOGGER.error("Bad URL", ex);
         }
 
-        LOG.info("Starting dir/file pure brute forcing");
+        LOGGER.info("Starting dir/file pure brute forcing");
 
-        setpUpHttpClient();
         createTheThreads();
         workGenBrute = new BruteForceWorkGenerator(this);
     }
@@ -334,9 +302,8 @@ public class Manager implements ProcessChecker.ProcessUpdate {
 
         urlFuzz = true;
 
-        LOG.info("Starting URL fuzz");
+        LOGGER.info("Starting URL fuzz");
 
-        setpUpHttpClient();
         createTheThreads();
         workGenFuzz = new WorkerGeneratorURLFuzz(this);
     }
@@ -380,79 +347,10 @@ public class Manager implements ProcessChecker.ProcessUpdate {
 
         pureBrutefuzz = true;
 
-        LOG.info("Starting URL fuzz");
+        LOGGER.info("Starting URL fuzz");
 
-        setpUpHttpClient();
         createTheThreads();
         workGenBruteFuzz = new BruteForceURLFuzz(this);
-    }
-
-    private void createHttpClient() {
-        Protocol protocol = Protocol.getProtocol("https");
-        if (protocol == null) {
-            // ZAP: Dont override an existing protocol - it causes problems with ZAP
-            Protocol easyhttps = new Protocol("https", new EasySSLProtocolSocketFactory(), 443);
-            Protocol.registerProtocol("https", easyhttps);
-        }
-        initialState = new HttpState();
-
-        MultiThreadedHttpConnectionManager connectionManager =
-                new MultiThreadedHttpConnectionManager();
-        connectionManager.getParams().setDefaultMaxConnectionsPerHost(1000);
-        connectionManager.getParams().setMaxTotalConnections(1000);
-
-        // connectionManager.set
-
-        httpclient = new HttpClient(connectionManager);
-        // httpclient.
-
-    }
-
-    private void setpUpHttpClient() {
-        if (httpclient != null) {
-            // add the proxy setting is required
-            if (this.isUseProxy()) {
-                httpclient
-                        .getHostConfiguration()
-                        .setProxy(this.getProxyHost(), this.getProxyPort());
-                if (this.isUseProxyAuth()) {
-                    httpclient
-                            .getState()
-                            .setProxyCredentials(
-                                    this.getProxyRealm(),
-                                    this.getProxyHost(),
-                                    new UsernamePasswordCredentials(
-                                            this.getProxyUsername(), this.getProxyPassword()));
-                }
-            }
-
-            httpclient
-                    .getHttpConnectionManager()
-                    .getParams()
-                    .setConnectionTimeout(Config.connectionTimeout * 1000);
-            httpclient.setState(initialState);
-            httpclient.getParams().setParameter("http.useragent", Config.userAgent);
-
-            /*
-             * Code to deal with http auth
-             *
-             */
-
-            if (useHTTPauth) {
-                // Credentials creds = new Credentials();
-                // creds.
-                NTCredentials ntCreds =
-                        new NTCredentials(this.userName, this.password, "", this.realmDomain);
-                httpclient.getState().setCredentials(AuthScope.ANY, ntCreds);
-            }
-
-            /*
-             * Custom code to add ntlm auth
-             */
-
-            // NTCredentials ntCreds = new NTCredentials("username", "password", "", "");
-            // httpclient.getState().setCredentials(AuthScope.ANY, ntCreds);
-        }
     }
 
     private void createTheThreads() {
@@ -472,23 +370,23 @@ public class Manager implements ProcessChecker.ProcessUpdate {
             parseWorkers.addElement(new HTMLparse(this));
         }
         // work queue
-        workQueue = new ArrayBlockingQueue<WorkUnit>(workerCount * 3);
+        workQueue = new ArrayBlockingQueue<>(workerCount * 3);
 
         // dir to be processed
-        dirQueue = new ArrayBlockingQueue<DirToCheck>(100000);
+        dirQueue = new ArrayBlockingQueue<>(100000);
 
         // queue to hold a list of items to parsed
-        parseQueue = new ArrayBlockingQueue<HTMLparseWorkUnit>(200000);
+        parseQueue = new ArrayBlockingQueue<>(200000);
 
         timer = new Timer();
 
         // add the fist string on to the queue
         try {
-            Vector tempext = extToUse;
+            Vector<ExtToCheck> tempext = extToUse;
             // extToUse.clone().
             dirQueue.put(new DirToCheck(startPoint, tempext));
         } catch (InterruptedException e) {
-            LOG.debug(e);
+            LOGGER.debug(e);
         }
     }
 
@@ -503,10 +401,10 @@ public class Manager implements ProcessChecker.ProcessUpdate {
             processedLinks.clear();
 
             task = new ProcessChecker(this);
-            timer.scheduleAtFixedRate(task, 1000L, 1000L);
+            timer.scheduleAtFixedRate(task, 0L, 1000L);
 
             task2 = new ProcessEnd(this);
-            timer.scheduleAtFixedRate(task2, 30000L, 30000L);
+            timer.scheduleAtFixedRate(task2, 0L, 10000L);
 
             // start the pure brute force thread
             if (pureBrute) {
@@ -529,14 +427,14 @@ public class Manager implements ProcessChecker.ProcessUpdate {
 
             // add the worker and parseWorker threads
             for (int i = 0; i < workers.size(); i++) {
-                Thread workerThread = new Thread(((Worker) workers.elementAt(i)));
+                Thread workerThread = new Thread((workers.elementAt(i)));
                 workerThread.setName("DirBuster-Worker");
                 workerThread.start();
-                ((HTMLparse) parseWorkers.elementAt(i)).start();
+                parseWorkers.elementAt(i).start();
             }
 
         } catch (Exception e) {
-            LOG.error(e);
+            LOGGER.error(e);
         }
     }
 
@@ -603,11 +501,11 @@ public class Manager implements ProcessChecker.ProcessUpdate {
 
                     // hack to prevent getting an instance of the main extToUse and its contents!
 
-                    Vector tempExtToUse = new Vector(10, 10);
+                    Vector<ExtToCheck> tempExtToUse = new Vector<>(10, 10);
                     // tempExtToUse = extToUse.clone();
 
                     for (int a = 0; a < extToUse.size(); a++) {
-                        ExtToCheck oldExtToCheck = (ExtToCheck) extToUse.elementAt(a);
+                        ExtToCheck oldExtToCheck = extToUse.elementAt(a);
                         ExtToCheck tempExtToCheck =
                                 new ExtToCheck(oldExtToCheck.getName(), oldExtToCheck.toCheck());
                         tempExtToUse.addElement(tempExtToCheck);
@@ -642,11 +540,11 @@ public class Manager implements ProcessChecker.ProcessUpdate {
 
                     // hack to prevent getting an instance of the main extToUse and its contents!
 
-                    Vector tempExtToUse = new Vector(10, 10);
+                    Vector<ExtToCheck> tempExtToUse = new Vector<>(10, 10);
                     // tempExtToUse = extToUse.clone();
 
                     for (int a = 0; a < extToUse.size(); a++) {
-                        ExtToCheck oldExtToCheck = (ExtToCheck) extToUse.elementAt(a);
+                        ExtToCheck oldExtToCheck = extToUse.elementAt(a);
                         ExtToCheck tempExtToCheck =
                                 new ExtToCheck(oldExtToCheck.getName(), oldExtToCheck.toCheck());
                         tempExtToUse.addElement(tempExtToCheck);
@@ -665,9 +563,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
                 }
             }
 
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Dir found: " + url.getFile() + " - " + statusCode);
-            }
+            LOGGER.debug("Dir found: {} - {}", url.getFile(), statusCode);
 
             // add to list of items that have already processed
             addParsedLink(url.getPath());
@@ -675,7 +571,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
             headlessResult.addElement(
                     new HeadlessResult(url.getFile(), statusCode, HeadlessResult.DIR));
         } catch (InterruptedException e) {
-            LOG.debug(e);
+            LOGGER.debug(e);
             return;
         }
     }
@@ -697,9 +593,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
             String rawResponce,
             BaseCase baseCaseObj) {
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("File found: " + url.getFile() + " - " + statusCode);
-        }
+        LOGGER.debug("File found: {} - {}", url.getFile(), statusCode);
 
         addParsedLink(url.getPath());
 
@@ -710,7 +604,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
     public synchronized void foundError(URL url, String reason) {
         headlessResult.addElement(
                 new HeadlessResult(url.getFile() + ":" + reason, -1, HeadlessResult.ERROR));
-        LOG.warn(url.toString() + " - " + reason);
+        LOGGER.warn("{} - {}", url, reason);
     }
 
     public String getInputFile() {
@@ -725,6 +619,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
         return extention;
     }
 
+    @Override
     public void isAlive() {}
 
     public synchronized void workDone() {
@@ -757,17 +652,17 @@ public class Manager implements ProcessChecker.ProcessUpdate {
 
     public void pause() {
         for (int a = 0; a < workers.size(); a++) {
-            synchronized ((Worker) workers.elementAt(a)) {
-                ((Worker) workers.elementAt(a)).pause();
+            synchronized (workers.elementAt(a)) {
+                workers.elementAt(a).pause();
             }
         }
     }
 
     public void unPause() {
         for (int a = 0; a < workers.size(); a++) {
-            synchronized ((Worker) workers.elementAt(a)) {
-                ((Worker) workers.elementAt(a)).unPause();
-                ((Worker) workers.elementAt(a)).notify();
+            synchronized (workers.elementAt(a)) {
+                workers.elementAt(a).unPause();
+                workers.elementAt(a).notify();
             }
         }
     }
@@ -789,7 +684,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
     }
 
     // TODO: check how  youAreFinished() is called and when it is called
-    public void youAreFinished() {
+    public synchronized void youAreFinished() {
 
         // clear all the queue
         workQueue.clear();
@@ -820,20 +715,20 @@ public class Manager implements ProcessChecker.ProcessUpdate {
 
         // stop all the workers;
         for (int a = 0; a < workers.size(); a++) {
-            synchronized ((Worker) workers.elementAt(a)) {
-                ((Worker) workers.elementAt(a)).stopThread();
+            synchronized (workers.elementAt(a)) {
+                workers.elementAt(a).stopThread();
             }
         }
 
         // stops all the parsers
         for (int a = 0; a < this.parseWorkers.size(); a++) {
-            synchronized ((HTMLparse) parseWorkers.elementAt(a)) {
-                ((HTMLparse) parseWorkers.elementAt(a)).stopWorking();
-                ((HTMLparse) parseWorkers.elementAt(a)).notify();
+            synchronized (parseWorkers.elementAt(a)) {
+                parseWorkers.elementAt(a).stopWorking();
+                parseWorkers.elementAt(a).notify();
             }
         }
 
-        LOG.info("DirBuster Stopped");
+        LOGGER.info("DirBuster Stopped");
 
         /*
          * reset the all the markers for what type of test we are doing
@@ -843,15 +738,15 @@ public class Manager implements ProcessChecker.ProcessUpdate {
         pureBrutefuzz = false;
     }
 
-    public double getTotalPass() {
+    public synchronized double getTotalPass() {
         return totalPass;
     }
 
-    public void setTotalPass(double totalPass) {
+    public synchronized void setTotalPass(double totalPass) {
         this.totalPass = totalPass;
     }
 
-    public int getTotalDirsFound() {
+    public synchronized int getTotalDirsFound() {
         return totalDirsFound;
     }
 
@@ -859,7 +754,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
         return workerCount;
     }
 
-    public Vector getWorkers() {
+    public Vector<Worker> getWorkers() {
         return workers;
     }
 
@@ -880,7 +775,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
             int threadid = currentNumber + i;
             workers.addElement(new Worker(threadid, this));
 
-            new Thread((Worker) workers.elementAt(threadid)).start();
+            new Thread(workers.elementAt(threadid)).start();
         }
         workerCount = currentNumber + number;
     }
@@ -896,7 +791,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
         }
 
         for (int a = currentNumber - 1; a >= (currentNumber - number); a--) {
-            ((Worker) workers.elementAt(a)).stopThread();
+            workers.elementAt(a).stopThread();
             workers.remove(a);
         }
         workerCount = currentNumber - number;
@@ -926,7 +821,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
 
                     totalDirsFound--;
                 } else {
-                    LOG.warn("Failed to remove " + processWork + " from dir queue");
+                    LOGGER.warn("Failed to remove {} from dir queue", processWork);
                 }
             }
         }
@@ -940,7 +835,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
             dirQueue.put(new DirToCheck(dir, extToUse));
             totalDirsFound++;
         } catch (InterruptedException ex) {
-            LOG.debug(ex);
+            LOGGER.debug(ex);
             return;
         }
     }
@@ -955,83 +850,19 @@ public class Manager implements ProcessChecker.ProcessUpdate {
         try {
             parseQueue.put(parseWorkUnit);
         } catch (InterruptedException ex) {
-            LOG.debug(ex);
+            LOGGER.debug(ex);
         }
-    }
-
-    public boolean isUseProxy() {
-        return useProxy;
-    }
-
-    public String getProxyHost() {
-        return proxyHost;
-    }
-
-    public void setProxyHost(String proxyHost) {
-        this.proxyHost = proxyHost;
-    }
-
-    public void setUseProxy(boolean useProxy) {
-        this.useProxy = useProxy;
-    }
-
-    public int getProxyPort() {
-        return proxyPort;
-    }
-
-    public void setProxyPort(int proxyPort) {
-        this.proxyPort = proxyPort;
-    }
-
-    public boolean isUseProxyAuth() {
-        return useProxyAuth;
-    }
-
-    public String getProxyUsername() {
-        return proxyUsername;
-    }
-
-    public String getProxyPassword() {
-        return proxyPassword;
-    }
-
-    public String getProxyRealm() {
-        return proxyRealm;
-    }
-
-    public void setProxyPassword(String proxyPassword) {
-        this.proxyPassword = proxyPassword;
-    }
-
-    public void setProxyRealm(String proxyRealm) {
-        this.proxyRealm = proxyRealm;
-    }
-
-    public void setProxyUsername(String proxyUsername) {
-        this.proxyUsername = proxyUsername;
-    }
-
-    public void setUseProxyAuth(boolean useProxyAuth) {
-        this.useProxyAuth = useProxyAuth;
     }
 
     public boolean isBlankExt() {
         return blankExt;
     }
 
-    public void addHTTPheader(HTTPHeader header) {
-        HTTPheaders.addElement(header);
-    }
-
-    public Vector getHTTPHeaders() {
-        return HTTPheaders;
-    }
-
     public void addExt(ExtToCheck ext) {
         extToUse.addElement(ext);
     }
 
-    public Vector getExtToUse() {
+    public Vector<ExtToCheck> getExtToUse() {
         return extToUse;
     }
 
@@ -1039,7 +870,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
 
         try {
             for (int a = 0; a < producedBasesCases.size(); a++) {
-                BaseCase tempBaseCase = (BaseCase) producedBasesCases.elementAt(a);
+                BaseCase tempBaseCase = producedBasesCases.elementAt(a);
 
                 if (tempBaseCase.getBaseCaseURL().equals(new URL(base))
                         && tempBaseCase.isDir() == isDir) {
@@ -1078,7 +909,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
         return baseCaseCounterCorrection;
     }
 
-    public int getParsedLinksProcessed() {
+    public synchronized int getParsedLinksProcessed() {
         return parsedLinksProcessed;
     }
 
@@ -1090,7 +921,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
         if (Config.caseInsensativeMode) {
 
             for (int a = 0; a < processedLinks.size(); a++) {
-                if (link.equalsIgnoreCase((String) processedLinks.elementAt(a))) {
+                if (link.equalsIgnoreCase(processedLinks.elementAt(a))) {
                     return false;
                 }
             }
@@ -1124,7 +955,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
         parsedLinksProcessed++;
     }
 
-    public int getNumberOfBaseCasesProduced() {
+    public synchronized int getNumberOfBaseCasesProduced() {
         return numberOfBaseCasesProduced;
     }
 
@@ -1133,7 +964,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
         baseCaseCounterCorrection++;
     }
 
-    public Vector getElementsToParse() {
+    public Vector<HTMLelementToParse> getElementsToParse() {
         return elementsToParse;
     }
 
@@ -1141,7 +972,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
         numberOfBaseCasesProduced++;
     }
 
-    public Vector getParseWorkers() {
+    public Vector<HTMLparse> getParseWorkers() {
         return parseWorkers;
     }
 
@@ -1171,44 +1002,12 @@ public class Manager implements ProcessChecker.ProcessUpdate {
         this.currentlyProcessing = currentlyProcessing;
     }
 
-    public void addToWorkCorrection(int amount) {
+    public synchronized void addToWorkCorrection(int amount) {
         workAmountCorrection = workAmountCorrection + amount;
     }
 
-    public String getAuthType() {
-        return authType;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getRealmDomain() {
-        return realmDomain;
-    }
-
-    public boolean isUseHTTPauth() {
-        return useHTTPauth;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public int getWorkAmountCorrection() {
+    public synchronized int getWorkAmountCorrection() {
         return workAmountCorrection;
-    }
-
-    public void setAuthDetails(String username, String password, String realmDomain, String type) {
-        this.userName = username;
-        this.password = password;
-        this.realmDomain = realmDomain;
-        this.authType = type;
-        this.useHTTPauth = true;
-    }
-
-    public void setDoNotUseAuth() {
-        this.useHTTPauth = false;
     }
 
     public String getUrlFuzzEnd() {
@@ -1249,7 +1048,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
 
     public boolean areWorkersAlive() {
         for (int a = 0; a < workers.size(); a++) {
-            if (((Worker) workers.elementAt(a)).isWorking()) {
+            if (workers.elementAt(a).isWorking()) {
                 // there is a worker still working so break
                 return true;
             }
@@ -1351,5 +1150,9 @@ public class Manager implements ProcessChecker.ProcessUpdate {
 
     public void setOnlyUnderStartPoint(boolean onlyUnderStartPoint) {
         this.onlyUnderStartPoint = onlyUnderStartPoint;
+    }
+
+    public SimpleHttpClient getHttpClient() {
+        return httpClient;
     }
 }

@@ -24,6 +24,7 @@ import java.util.List;
 import javax.swing.table.AbstractTableModel;
 import org.parosproxy.paros.Constant;
 
+@SuppressWarnings("serial")
 public class CookiesTableModel extends AbstractTableModel {
 
     private static final long serialVersionUID = 1L;
@@ -35,7 +36,7 @@ public class CookiesTableModel extends AbstractTableModel {
         Constant.messages.getString("zest.cookies.table.path")
     };
 
-    private List<String[]> values = new ArrayList<String[]>();
+    private List<String[]> values = new ArrayList<>();
 
     /** */
     public CookiesTableModel() {

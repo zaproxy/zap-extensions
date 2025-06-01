@@ -6,7 +6,9 @@
 <toc version="2.0">
 	<tocitem text="Zap Kullanım Kılavuzu" tocid="toplevelitem">
 		<tocitem text="Eklentiler" tocid="addons">
-			<tocitem text="Yerine geçen" image="replacer-icon" target="replacer"/>
+			<tocitem text="Yerine geçen" image="replacer-icon" target="replacer">
+				<tocitem text="Automation" target="replacer.automation" />
+			</tocitem>
 		</tocitem>
 	</tocitem>
 </toc>

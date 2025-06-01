@@ -25,7 +25,8 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
@@ -37,9 +38,12 @@ import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
  */
 public class FileStringPayloadGenerator implements StringPayloadGenerator {
 
-    private static final Logger LOGGER = Logger.getLogger(FileStringPayloadGenerator.class);
+    private static final Logger LOGGER = LogManager.getLogger(FileStringPayloadGenerator.class);
 
     public static final String DEFAULT_COMMENT_TOKEN = "#";
+
+    /** The value that indicates there's no limit when reading the payloads from the file. */
+    public static final int NO_LIMIT = 0;
 
     /** The source of payloads. */
     private final Path file;
@@ -56,7 +60,7 @@ public class FileStringPayloadGenerator implements StringPayloadGenerator {
     private final String commentToken;
 
     public FileStringPayloadGenerator(Path file) {
-        this(file, -1);
+        this(file, NO_LIMIT);
     }
 
     /**
@@ -111,21 +115,19 @@ public class FileStringPayloadGenerator implements StringPayloadGenerator {
         if (numberOfPayloads > 0) {
             this.numberOfPayloads = numberOfPayloads;
         } else {
-            int calculatedNumberOfPayloads = -1;
+            long calculatedNumberOfPayloads = 0;
             try {
                 calculatedNumberOfPayloads =
-                        calculateNumberOfPayloads(
+                        calculateNumberOfPayloadsImpl(
                                 file,
                                 charset,
                                 limit,
                                 commentToken,
                                 ignoreTrimmedEmptyLines,
-                                ignoreFirstLine);
-            } catch (IOException e) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug(
-                            "Failed to calculate the number of payloads from the file " + file, e);
-                }
+                                ignoreFirstLine,
+                                true);
+            } catch (IOException ignore) {
+                // Does not happen.
             }
             this.numberOfPayloads = calculatedNumberOfPayloads;
         }
@@ -139,8 +141,28 @@ public class FileStringPayloadGenerator implements StringPayloadGenerator {
             boolean ignoreTrimmedEmptyLines,
             boolean ignoreFirstLine)
             throws IOException {
+        return calculateNumberOfPayloadsImpl(
+                file,
+                charset,
+                limit,
+                commentToken,
+                ignoreTrimmedEmptyLines,
+                ignoreFirstLine,
+                false);
+    }
+
+    private static int calculateNumberOfPayloadsImpl(
+            Path file,
+            Charset charset,
+            long limit,
+            String commentToken,
+            boolean ignoreTrimmedEmptyLines,
+            boolean ignoreFirstLine,
+            boolean ignoreException)
+            throws IOException {
         boolean checkCommentedLines = !commentToken.isEmpty();
         int count = 0;
+
         try (BufferedReader reader = Files.newBufferedReader(file, charset)) {
             if (ignoreFirstLine) {
                 reader.readLine();
@@ -149,7 +171,7 @@ public class FileStringPayloadGenerator implements StringPayloadGenerator {
             boolean lineValid;
             String line = null;
             while ((line = reader.readLine()) != null) {
-                if (limit >= 0 && count >= limit) {
+                if (limit > NO_LIMIT && count >= limit) {
                     break;
                 }
 
@@ -163,6 +185,10 @@ public class FileStringPayloadGenerator implements StringPayloadGenerator {
                 if (lineValid) {
                     count++;
                 }
+            }
+        } catch (IOException e) {
+            if (!ignoreException) {
+                throw e;
             }
         }
         return count;
@@ -296,9 +322,7 @@ public class FileStringPayloadGenerator implements StringPayloadGenerator {
             try {
                 reader.close();
             } catch (IOException ignore) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Failed to close file " + file, ignore);
-                }
+                LOGGER.debug("Failed to close file {}", file, ignore);
             }
         }
     }

@@ -20,17 +20,17 @@
 package org.zaproxy.zap.extension.saml;
 
 import java.io.IOException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.HistoryReference;
-import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 
 public class SAMLResender {
 
-    private static Logger log = Logger.getLogger(SAMLResender.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(SAMLResender.class);
 
     private SAMLResender() {}
 
@@ -40,11 +40,7 @@ public class SAMLResender {
      * @param msg The message to be sent
      */
     public static void resendMessage(final HttpMessage msg) throws SAMLException {
-        HttpSender sender =
-                new HttpSender(
-                        Model.getSingleton().getOptionsParam().getConnectionParam(),
-                        true,
-                        HttpSender.MANUAL_REQUEST_INITIATOR);
+        HttpSender sender = new HttpSender(HttpSender.MANUAL_REQUEST_INITIATOR);
         try {
             sender.sendAndReceive(msg, true);
             if (!msg.getResponseHeader().isEmpty()) {
@@ -59,7 +55,7 @@ public class SAMLResender {
             }
 
         } catch (IOException e) {
-            log.error(e.getMessage());
+            LOGGER.error(e.getMessage());
             throw new SAMLException("Message sending failed", e);
         }
     }

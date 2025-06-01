@@ -20,19 +20,19 @@
 package org.zaproxy.zap.extension.replacer;
 
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import javax.swing.JCheckBox;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.extension.replacer.ReplacerParamRule.MatchType;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
+@SuppressWarnings("serial")
 public class ReplaceRuleAddDialog extends StandardFieldsDialog {
 
     private static final long serialVersionUID = 1L;
@@ -43,11 +43,13 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
     private static final String[] ADV_TAB_LABELS = {FIRST_TAB, INITIATORS_TAB};
 
     protected static final String DESC_FIELD = "replacer.label.desc";
+    protected static final String URL_FIELD = "replacer.label.url";
     protected static final String MATCH_STR_FIELD = "replacer.label.matchstr";
     protected static final String MATCH_TYPE_FIELD = "replacer.label.matchtype";
     protected static final String REGEX_FIELD = "replacer.label.regex";
     protected static final String REPLACEMENT_FIELD = "replacer.label.replace";
     protected static final String ENABLE_FIELD = "replacer.label.enable";
+    protected static final String ENABLE_TOKEN_PROCESSING = "replacer.label.tokenprocessing";
     protected static final String INIT_TYPE_SUMMARY_FIELD = "replacer.label.initsummary";
 
     protected static final String INIT_TYPE_ALL_FIELD = "replacer.label.init.all";
@@ -62,17 +64,12 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
     protected static final String INIT_TYPE_USER_FIELD = "replacer.label.init.user";
     protected static final String INIT_TYPE_TOKEN_GEN_FIELD = "replacer.label.init.tokengen";
 
-    private ReplacerParam replacerParam;
     private ReplacerParamRule rule;
     private OptionsReplacerTableModel replacerModel;
 
     public ReplaceRuleAddDialog(
-            Window owner,
-            String title,
-            ReplacerParam replacerParam,
-            OptionsReplacerTableModel replacerModel) {
+            Window owner, String title, OptionsReplacerTableModel replacerModel) {
         super(owner, title, DisplayUtils.getScaledDimension(500, 350), ADV_TAB_LABELS, true);
-        this.replacerParam = replacerParam;
         this.replacerModel = replacerModel;
         initFields();
     }
@@ -84,18 +81,22 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
 
         this.removeAllFields();
         this.addTextField(0, DESC_FIELD, "");
+        this.addTextField(0, URL_FIELD, "");
         this.addComboField(0, MATCH_TYPE_FIELD, getMatchTypes(), selectedStr);
 
+        boolean stringMatchType = true;
         if (ReplacerParamRule.MatchType.REQ_HEADER.equals(selectedMatchType)) {
             this.addComboField(0, MATCH_STR_FIELD, getDefaultRequestHeaders(), "", true);
             this.addCheckBoxField(0, REGEX_FIELD, false);
             // Only support exact matches with headers
             this.getField(REGEX_FIELD).setEnabled(false);
+            stringMatchType = false;
         } else if (ReplacerParamRule.MatchType.RESP_HEADER.equals(selectedMatchType)) {
             this.addComboField(0, MATCH_STR_FIELD, getDefaultResponseHeaders(), "", true);
             this.addCheckBoxField(0, REGEX_FIELD, false);
             // Only support exact matches with headers
             this.getField(REGEX_FIELD).setEnabled(false);
+            stringMatchType = false;
         } else {
             this.addTextField(0, MATCH_STR_FIELD, "");
             this.addCheckBoxField(0, REGEX_FIELD, false);
@@ -104,6 +105,8 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
         this.addTextField(0, REPLACEMENT_FIELD, "");
         this.addReadOnlyField(0, INIT_TYPE_SUMMARY_FIELD, "", false);
         this.addCheckBoxField(0, ENABLE_FIELD, false);
+        this.addCheckBoxField(0, ENABLE_TOKEN_PROCESSING, false);
+        getField(ENABLE_TOKEN_PROCESSING).setEnabled(stringMatchType);
         this.addPadding(0);
 
         this.addCheckBoxField(1, INIT_TYPE_ALL_FIELD, true);
@@ -124,23 +127,11 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
 
         this.addFieldListener(
                 MATCH_TYPE_FIELD,
-                new ActionListener() {
-
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        save();
-                        initFields();
-                    }
+                e -> {
+                    saveImpl();
+                    initFields();
                 });
-        this.addFieldListener(
-                INIT_TYPE_ALL_FIELD,
-                new ActionListener() {
-
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        setUpInitiatorFields();
-                    }
-                });
+        this.addFieldListener(INIT_TYPE_ALL_FIELD, e -> setUpInitiatorFields());
     }
 
     private void setUpInitiatorFields() {
@@ -180,18 +171,11 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
         return this.replacerModel;
     }
 
-    public ReplacerParam getReplacerParam() {
-        return replacerParam;
-    }
-
-    public void setReplacerParam(ReplacerParam replacerParam) {
-        this.replacerParam = replacerParam;
-    }
-
     private void setRule(ReplacerParamRule rule, MatchType selectedMatchType) {
         this.rule = rule;
         if (rule != null) {
             this.setFieldValue(DESC_FIELD, rule.getDescription());
+            this.setFieldValue(URL_FIELD, rule.getUrl());
             if (selectedMatchType != null) {
                 // overrides the one set
                 this.setFieldValue(MATCH_TYPE_FIELD, matchTypeToStr(selectedMatchType));
@@ -202,6 +186,7 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
             this.setFieldValue(REGEX_FIELD, rule.isMatchRegex());
             this.setFieldValue(REPLACEMENT_FIELD, rule.getReplacement());
             this.setFieldValue(ENABLE_FIELD, rule.isEnabled());
+            this.setFieldValue(ENABLE_TOKEN_PROCESSING, rule.isTokenProcessingEnabled());
             if (rule.appliesToAllInitiators()) {
                 this.setFieldValue(INIT_TYPE_ALL_FIELD, true);
             } else {
@@ -249,37 +234,41 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
 
     @Override
     public void save() {
+        saveImpl();
+    }
+
+    public void saveImpl() {
         List<Integer> initiators = null;
-        if (!getBoolValue(INIT_TYPE_ALL_FIELD)) {
-            initiators = new ArrayList<Integer>();
-            if (getBoolValue(INIT_TYPE_PROXY_FIELD)) {
+        if (Boolean.FALSE.equals(getBoolValue(INIT_TYPE_ALL_FIELD))) {
+            initiators = new ArrayList<>();
+            if (Boolean.TRUE.equals(getBoolValue(INIT_TYPE_PROXY_FIELD))) {
                 initiators.add(HttpSender.PROXY_INITIATOR);
             }
-            if (getBoolValue(INIT_TYPE_SPIDER_FIELD)) {
+            if (Boolean.TRUE.equals(getBoolValue(INIT_TYPE_SPIDER_FIELD))) {
                 initiators.add(HttpSender.SPIDER_INITIATOR);
             }
-            if (getBoolValue(INIT_TYPE_SCANNER_FIELD)) {
+            if (Boolean.TRUE.equals(getBoolValue(INIT_TYPE_SCANNER_FIELD))) {
                 initiators.add(HttpSender.ACTIVE_SCANNER_INITIATOR);
             }
-            if (getBoolValue(INIT_TYPE_BRUTE_FIELD)) {
+            if (Boolean.TRUE.equals(getBoolValue(INIT_TYPE_BRUTE_FIELD))) {
                 initiators.add(HttpSender.FORCED_BROWSE_INITIATOR);
             }
-            if (getBoolValue(INIT_TYPE_FUZZER_FIELD)) {
+            if (Boolean.TRUE.equals(getBoolValue(INIT_TYPE_FUZZER_FIELD))) {
                 initiators.add(HttpSender.FUZZER_INITIATOR);
             }
-            if (getBoolValue(INIT_TYPE_SPIDER_AJAX_FIELD)) {
+            if (Boolean.TRUE.equals(getBoolValue(INIT_TYPE_SPIDER_AJAX_FIELD))) {
                 initiators.add(HttpSender.AJAX_SPIDER_INITIATOR);
             }
-            if (getBoolValue(INIT_TYPE_AUTH_FIELD)) {
+            if (Boolean.TRUE.equals(getBoolValue(INIT_TYPE_AUTH_FIELD))) {
                 initiators.add(HttpSender.AUTHENTICATION_INITIATOR);
             }
-            if (getBoolValue(INIT_TYPE_AC_FIELD)) {
+            if (Boolean.TRUE.equals(getBoolValue(INIT_TYPE_AC_FIELD))) {
                 initiators.add(HttpSender.ACCESS_CONTROL_SCANNER_INITIATOR);
             }
-            if (getBoolValue(INIT_TYPE_USER_FIELD)) {
+            if (Boolean.TRUE.equals(getBoolValue(INIT_TYPE_USER_FIELD))) {
                 initiators.add(HttpSender.MANUAL_REQUEST_INITIATOR);
             }
-            if (getBoolValue(INIT_TYPE_TOKEN_GEN_FIELD)) {
+            if (Boolean.TRUE.equals(getBoolValue(INIT_TYPE_TOKEN_GEN_FIELD))) {
                 initiators.add(HttpSender.TOKEN_GENERATOR_INITIATOR);
             }
         }
@@ -287,16 +276,21 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
         rule =
                 new ReplacerParamRule(
                         this.getStringValue(DESC_FIELD),
+                        this.getStringValue(URL_FIELD),
                         this.getSelectedMatchType(),
                         this.getStringValue(MATCH_STR_FIELD),
                         this.getBoolValue(REGEX_FIELD),
                         this.getStringValue(REPLACEMENT_FIELD),
                         initiators,
-                        this.getBoolValue(ENABLE_FIELD));
+                        this.getBoolValue(ENABLE_FIELD),
+                        this.getBoolValue(ENABLE_TOKEN_PROCESSING));
     }
 
     protected String checkIfUnique() {
-        if (this.replacerModel.containsRule(this.getStringValue(DESC_FIELD))) {
+        // this.replacerModel will be null when used with the AF - plans may be run on other systems
+        // or delete all existing rules
+        if (this.replacerModel != null
+                && this.replacerModel.containsRule(this.getStringValue(DESC_FIELD))) {
             return Constant.messages.getString("replacer.add.warning.existdesc");
         }
         return null;
@@ -307,10 +301,17 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
         if (this.isEmptyField(DESC_FIELD)) {
             return Constant.messages.getString("replacer.add.warning.nodesc");
         }
+        if (!isEmptyField(URL_FIELD)) {
+            try {
+                Pattern.compile(getStringValue(URL_FIELD));
+            } catch (PatternSyntaxException e) {
+                return Constant.messages.getString("replacer.add.warning.badurlregex");
+            }
+        }
         if (this.isEmptyField(MATCH_STR_FIELD)) {
             return Constant.messages.getString("replacer.add.warning.nomatch");
         }
-        if (this.getBoolValue(REGEX_FIELD)) {
+        if (Boolean.TRUE.equals(this.getBoolValue(REGEX_FIELD))) {
             // Check the regex is valid
             try {
                 Pattern.compile(this.getStringValue(MATCH_STR_FIELD));
@@ -318,6 +319,16 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
                 return Constant.messages.getString("replacer.add.warning.badregex");
             }
         }
+        if (Boolean.TRUE.equals(this.getBoolValue(ENABLE_TOKEN_PROCESSING))) {
+            List<String> tokens =
+                    ExtensionReplacer.parseReplacementTokens(
+                            this.getStringValue(REPLACEMENT_FIELD));
+
+            if (tokens.isEmpty()) {
+                return Constant.messages.getString("replacer.add.warning.tokmissing");
+            }
+        }
+
         return checkIfUnique();
     }
 
@@ -327,7 +338,7 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
     }
 
     private List<String> getMatchTypes() {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         list.add(matchTypeToStr(ReplacerParamRule.MatchType.REQ_HEADER));
         list.add(matchTypeToStr(ReplacerParamRule.MatchType.REQ_HEADER_STR));
         list.add(matchTypeToStr(ReplacerParamRule.MatchType.REQ_BODY_STR));
@@ -339,7 +350,7 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
 
     private List<String> getDefaultRequestHeaders() {
         // Taken from https://en.wikipedia.org/wiki/List_of_HTTP_header_fields
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         list.add("Accept");
         list.add("Accept-Charset");
         list.add("Accept-Datetime");
@@ -395,7 +406,7 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
 
     private List<String> getDefaultResponseHeaders() {
         // Taken from https://en.wikipedia.org/wiki/List_of_HTTP_header_fields
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         list.add("Access-Control-Allow-Origin");
         list.add("Accept-Patch");
         list.add("Accept-Ranges");
@@ -431,7 +442,7 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
         list.add("Trailer");
         list.add("Transfer-Encoding");
         list.add("TSV");
-        list.add("Uprade");
+        list.add("Upgrade");
         list.add("Vary");
         list.add("Via");
         list.add("Warning");
@@ -472,11 +483,31 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
         }
     }
 
+    /**
+     * Allows callers to specify that rules added will always be enabled.
+     *
+     * @param enableEnabled
+     */
+    public void setEnableEnabled(boolean enableEnabled) {
+        JCheckBox enabledField = (JCheckBox) this.getField(ENABLE_FIELD);
+        if (!enableEnabled) {
+            enabledField.setSelected(true);
+        }
+        enabledField.setEnabled(enableEnabled);
+    }
+
     public void clear() {
         this.rule = null;
+        setEnableEnabled(true);
         this.setFieldValue(DESC_FIELD, "");
         this.setFieldValue(MATCH_STR_FIELD, "");
         this.setFieldValue(REPLACEMENT_FIELD, "");
         this.setFieldValue(ENABLE_FIELD, false);
+        this.setFieldValue(ENABLE_TOKEN_PROCESSING, false);
+    }
+
+    @Override
+    public String getHelpIndex() {
+        return "replacer";
     }
 }

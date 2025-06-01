@@ -19,19 +19,27 @@
  */
 package org.zaproxy.zap.extension.pscanrulesAlpha;
 
-import java.io.IOException;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.htmlparser.jericho.Source;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
-import org.parosproxy.paros.extension.encoder.Base64;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.pscan.PassiveScanThread;
+import org.parosproxy.paros.network.HttpResponseHeader;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /**
@@ -40,9 +48,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  *
  * @author 70pointer@gmail.com
  */
-public class Base64Disclosure extends PluginPassiveScanner {
-
-    private PassiveScanThread parent = null;
+public class Base64Disclosure extends PluginPassiveScanner implements CommonPassiveScanRuleInfo {
 
     /**
      * a set of patterns used to identify Base64 encoded data. Set a minimum length to reduce false
@@ -54,17 +60,17 @@ public class Base64Disclosure extends PluginPassiveScanner {
     // static Pattern base64Pattern = Pattern.compile("[a-zA-Z0-9\\+\\\\/]{30,}={1,2}");
     // static Pattern base64Pattern = Pattern.compile("[a-zA-Z0-9\\+\\\\/]{30,}={0,2}");
     static Set<Pattern> base64Patterns =
-            new LinkedHashSet<Pattern>(); // the order of patterns is important. most specific first
+            new LinkedHashSet<>(); // the order of patterns is important. most specific first
 
     static {
         // base64Patterns.add(Pattern.compile("[a-zA-Z0-9\\+\\\\/]{30,}={0,2}"));
         // base64Patterns.add(Pattern.compile("[a-zA-Z0-9\\-_]{30,}={0,2}"));  //used in JWT - file
         // and URL safe variant of Base64 alphabet
         base64Patterns.add(Pattern.compile("[a-zA-Z0-9\\+\\\\/\\-_]{30,}={0,2}"));
-    };
+    }
 
     /**
-     * patterns used to identify strings withut each of the given character sets which is used to
+     * patterns used to identify strings without each of the given character sets which is used to
      * calculate the probability of this occurring, and eliminate potential Base64 strings which are
      * extremely improbable
      */
@@ -76,30 +82,29 @@ public class Base64Disclosure extends PluginPassiveScanner {
     static Pattern uppercasePattern = Pattern.compile("[A-Z]");
 
     /** the logger. logs stuff. strange that! */
-    private static Logger log = Logger.getLogger(Base64Disclosure.class);
+    private static final Logger LOGGER = LogManager.getLogger(Base64Disclosure.class);
 
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanalpha.base64disclosure.";
 
-    /**
-     * gets the name of the scanner
-     *
-     * @return
-     */
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
+                                CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED));
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
+
+    private static final List<String> IGNORED_HEADERS =
+            Arrays.asList("ETag", "Authorization", "X-ChromeLogger-Data", "X-ChromePhp-Data");
+
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
-    }
-
-    /**
-     * scans the HTTP request sent (in fact, does nothing)
-     *
-     * @param msg
-     * @param id
-     */
-    @Override
-    public void scanHttpRequestSend(HttpMessage msg, int id) {
-        // TODO: implement checks for base64 encoding in the request?
     }
 
     /**
@@ -112,19 +117,28 @@ public class Base64Disclosure extends PluginPassiveScanner {
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 
-        // DEBUG only
-        // log.setLevel(Level.DEBUG);
+        LOGGER.debug("Checking message {} for Base64 encoded data", msg);
 
-        if (log.isDebugEnabled()) log.debug("Checking message " + msg + " for Base64 encoded data");
+        HttpResponseHeader responseHdr;
+        try {
+            responseHdr = new HttpResponseHeader(msg.getResponseHeader().toString());
+            for (String hdr : IGNORED_HEADERS) {
+                responseHdr.setHeader(hdr, null);
+            }
+        } catch (HttpMalformedHeaderException e1) {
+            LOGGER.debug("Failed to copy response header", e1);
+            // Set a placeholder so that the body is still analyzed
+            responseHdr = new HttpResponseHeader();
+        }
 
-        // get the body contents as a String, so we can match against it
-        String responseheader = msg.getResponseHeader().getHeadersAsString();
+        // get the contents as a String, so we can match against it
+        String responseheader = responseHdr.getHeadersAsString();
         String responsebody = msg.getResponseBody().toString();
         String[] responseparts = {responseheader, responsebody};
 
         // for each pattern..
         for (Pattern pattern : base64Patterns) {
-            if (log.isDebugEnabled()) log.debug("Trying Base64 Pattern: " + pattern);
+            LOGGER.debug("Trying Base64 Pattern: {}", pattern);
             for (String haystack : responseparts) {
                 Matcher matcher = pattern.matcher(haystack);
                 while (matcher.find()) {
@@ -138,16 +152,13 @@ public class Base64Disclosure extends PluginPassiveScanner {
                         tempbase64evidence = tempbase64evidence.replace('_', '/');
 
                         // decode the data
-                        decodeddata = Base64.decode(tempbase64evidence);
-                    } catch (IOException e) {
+                        decodeddata = Base64.getDecoder().decode(tempbase64evidence);
+                    } catch (IllegalArgumentException e) {
                         // it's not actually Base64. so skip it.
-                        if (log.isDebugEnabled())
-                            log.debug(
-                                    "["
-                                            + tempbase64evidence
-                                            + "] (modified from ["
-                                            + base64evidence
-                                            + "]) could not be decoded as Base64 data");
+                        LOGGER.debug(
+                                "[{}] (modified from [{}]) could not be decoded as Base64 data",
+                                tempbase64evidence,
+                                base64evidence);
                         continue;
                     }
 
@@ -181,21 +192,21 @@ public class Base64Disclosure extends PluginPassiveScanner {
                     // set the threshold percentage based on what threshold was set by the user
                     float probabilityThreshold = 0.0F; // 0% probability threshold
                     switch (this.getAlertThreshold()) {
-                            // 50% probability threshold (ie, "on balance of probability")
+                        // 50% probability threshold (ie, "on balance of probability")
                         case HIGH:
                             probabilityThreshold = 0.50F;
                             break;
-                            // 25% probability threshold
+                        // 25% probability threshold
                         case MEDIUM:
                             probabilityThreshold = 0.25F;
                             break;
-                            // 10% probability threshold
+                        // 10% probability threshold
                         case LOW:
                             probabilityThreshold = 0.10F;
                             break;
-                            // 0% probability threshold (all structurally valid Base64 data is
-                            // considered, regardless of how improbable  it is given character
-                            // frequencies, etc.)
+                        // 0% probability threshold (all structurally valid Base64 data is
+                        // considered, regardless of how improbable  it is given character
+                        // frequencies, etc.)
                         default:
                     }
 
@@ -212,54 +223,40 @@ public class Base64Disclosure extends PluginPassiveScanner {
                             (noLowerInString && probabilityOfNoLowerInString < probabilityThreshold)
                             || (noUpperInString
                                     && probabilityOfNoUpperInString < probabilityThreshold)) {
-                        if (log.isTraceEnabled()) {
-                            log.trace(
-                                    "The following candidate Base64 has been excluded on probabilistic grounds: ["
-                                            + base64evidence
-                                            + "] ");
-                            if (noDigitInString)
-                                log.trace(
-                                        "The candidate Base64 has no digit characters, and the the probability of this occurring for a string of this length is "
-                                                + (probabilityOfNoDigitInString * 100)
-                                                + "%. The threshold is "
-                                                + (probabilityThreshold * 100)
-                                                + "%");
-                            if (noAlphaInString)
-                                log.trace(
-                                        "The candidate Base64 has no alphabetic characters, and the the probability of this occurring for a string of this length is "
-                                                + (probabilityOfNoAlphaInString * 100)
-                                                + "%. The threshold is "
-                                                + (probabilityThreshold * 100)
-                                                + "%");
-                            // if (noOtherInString)
-                            //	log.trace("The candidate Base64 has no 'other' characters, and the
-                            // the probability of this occurring for a string of this length is "+
-                            // (probabilityOfNoOtherInString * 100) + "%. The threshold is "+
-                            // (probabilityThreshold *100)+ "%");
-                            if (noLowerInString)
-                                log.trace(
-                                        "The candidate Base64 has no lowercase characters, and the the probability of this occurring for a string of this length is "
-                                                + (probabilityOfNoLowerInString * 100)
-                                                + "%. The threshold is "
-                                                + (probabilityThreshold * 100)
-                                                + "%");
-                            if (noUpperInString)
-                                log.trace(
-                                        "The candidate Base64 has no uppercase characters, and the the probability of this occurring for a string of this length is "
-                                                + (probabilityOfNoUpperInString * 100)
-                                                + "%. The threshold is "
-                                                + (probabilityThreshold * 100)
-                                                + "%");
-                        }
+
+                        LOGGER.trace(
+                                "The following candidate Base64 has been excluded on probabilistic grounds: [{}] ",
+                                base64evidence);
+                        if (noDigitInString)
+                            LOGGER.trace(
+                                    "The candidate Base64 has no digit characters, and the probability of this occurring for a string of this length is {}%. The threshold is {}%",
+                                    probabilityOfNoDigitInString * 100, probabilityThreshold * 100);
+                        if (noAlphaInString)
+                            LOGGER.trace(
+                                    "The candidate Base64 has no alphabetic characters, and the probability of this occurring for a string of this length is {}%. The threshold is {}%",
+                                    probabilityOfNoAlphaInString * 100, probabilityThreshold * 100);
+                        // if (noOtherInString)
+                        // LOGGER.trace("The candidate Base64 has no 'other' characters, and the
+                        // probability of this occurring for a string of this length is {}%. The
+                        // threshold is {}%",probabilityOfNoOtherInString *
+                        // 100,probabilityThreshold *100);
+                        if (noLowerInString)
+                            LOGGER.trace(
+                                    "The candidate Base64 has no lowercase characters, and the probability of this occurring for a string of this length is {}%. The threshold is {}%",
+                                    probabilityOfNoLowerInString * 100, probabilityThreshold * 100);
+
+                        if (noUpperInString)
+                            LOGGER.trace(
+                                    "The candidate Base64 has no uppercase characters, and the probability of this occurring for a string of this length is {}%. The threshold is {}%",
+                                    probabilityOfNoUpperInString * 100, probabilityThreshold * 100);
+
                         continue;
                     }
 
-                    if (log.isDebugEnabled())
-                        log.debug(
-                                "Found a match for Base64, of length "
-                                        + base64evidence.length()
-                                        + ":"
-                                        + base64evidence);
+                    LOGGER.debug(
+                            "Found a match for Base64, of length {}:{}",
+                            base64evidence.length(),
+                            base64evidence);
 
                     // so it's valid Base64.  Is it valid .NET ViewState data?
                     // This will be true for both __VIEWSTATE and __EVENTVALIDATION data, although
@@ -271,68 +268,38 @@ public class Base64Disclosure extends PluginPassiveScanner {
                         // TODO: decode __EVENTVALIDATION data
                         ViewStateDecoder viewstatedecoded = new ViewStateDecoder();
                         try {
-                            if (log.isDebugEnabled())
-                                log.debug(
-                                        "The following Base64 string has a ViewState preamble: ["
-                                                + base64evidence
-                                                + "]");
+
+                            LOGGER.debug(
+                                    "The following Base64 string has a ViewState preamble: [{}]",
+                                    base64evidence);
                             viewstatexml = viewstatedecoded.decodeAsXML(base64evidence.getBytes());
-                            if (log.isDebugEnabled())
-                                log.debug(
-                                        "The data was successfully decoded as ViewState data of length "
-                                                + viewstatexml.length()
-                                                + ": "
-                                                + viewstatexml);
+
+                            LOGGER.debug(
+                                    "The data was successfully decoded as ViewState data of length {}: {}",
+                                    viewstatexml.length(),
+                                    viewstatexml);
                             validviewstate = true;
 
                             // is the ViewState protected by a MAC?
                             Matcher hmaclessmatcher =
-                                    ViewStateDecoder.patternNoHMAC.matcher(viewstatexml);
+                                    ViewStateDecoder.PATTERN_NO_HMAC.matcher(viewstatexml);
                             macless = hmaclessmatcher.find();
 
-                            if (log.isDebugEnabled()) log.debug("MAC-less??? " + macless);
+                            LOGGER.debug("MAC-less??? {}", macless);
                         } catch (Exception e) {
                             // no need to do anything here.. just don't set "validviewstate" to true
                             // :)
-                            // e.printStackTrace();
-                            if (log.isDebugEnabled())
-                                log.debug(
-                                        "The Base64 value ["
-                                                + base64evidence
-                                                + "] has a valid ViewState pre-amble, but is not a valid viewstate. It may be an EVENTVALIDATION value, is not yet decodable.");
+                            LOGGER.debug(
+                                    "The Base64 value [{}] has a valid ViewState pre-amble, but is not a valid viewstate. It may be an EVENTVALIDATION value, is not yet decodable.",
+                                    base64evidence);
                         }
                     }
 
-                    if (validviewstate == true) {
-                        if (log.isDebugEnabled())
-                            log.debug("Raising a ViewState informational alert");
+                    if (validviewstate) {
+                        LOGGER.debug("Raising a ViewState informational alert");
 
                         // raise an (informational) Alert with the human readable ViewState data
-                        Alert alert =
-                                new Alert(
-                                        getPluginId(),
-                                        Alert.RISK_INFO,
-                                        Alert.CONFIDENCE_MEDIUM,
-                                        Constant.messages.getString(
-                                                "pscanalpha.base64disclosure.viewstate.name"));
-                        alert.setDetail(
-                                Constant.messages.getString(
-                                        "pscanalpha.base64disclosure.viewstate.desc"),
-                                msg.getRequestHeader().getURI().toString(),
-                                "", // param
-                                "", // attack
-                                Constant.messages.getString(
-                                        "pscanalpha.base64disclosure.viewstate.extrainfo",
-                                        viewstatexml), // other info
-                                Constant.messages.getString(
-                                        "pscanalpha.base64disclosure.viewstate.soln"),
-                                Constant.messages.getString(
-                                        "pscanalpha.base64disclosure.viewstate.refs"),
-                                viewstatexml, // evidence
-                                200, // Information Exposure,
-                                13, // Information Leakage
-                                msg);
-                        parent.raiseAlert(id, alert);
+                        createViewStateAlert(viewstatexml).raise();
                         if (!macless && !AlertThreshold.LOW.equals(getAlertThreshold())) {
                             return;
                         }
@@ -340,31 +307,7 @@ public class Base64Disclosure extends PluginPassiveScanner {
                         // if the ViewState is not protected by a MAC, alert it as a High, cos we
                         // can mess with the parameters for sure..
                         if (macless) {
-                            Alert alertmacless =
-                                    new Alert(
-                                            getPluginId(),
-                                            Alert.RISK_HIGH,
-                                            Alert.CONFIDENCE_MEDIUM,
-                                            Constant.messages.getString(
-                                                    "pscanalpha.base64disclosure.viewstatewithoutmac.name"));
-                            alertmacless.setDetail(
-                                    Constant.messages.getString(
-                                            "pscanalpha.base64disclosure.viewstatewithoutmac.desc"),
-                                    msg.getRequestHeader().getURI().toString(),
-                                    "", // param
-                                    "", // attack
-                                    Constant.messages.getString(
-                                            "pscanalpha.base64disclosure.viewstatewithoutmac.extrainfo",
-                                            viewstatexml), // other info
-                                    Constant.messages.getString(
-                                            "pscanalpha.base64disclosure.viewstatewithoutmac.soln"),
-                                    Constant.messages.getString(
-                                            "pscanalpha.base64disclosure.viewstatewithoutmac.refs"),
-                                    viewstatexml,
-                                    642, // CWE-642 = External Control of Critical State Data
-                                    13, // Information Leakage
-                                    msg);
-                            parent.raiseAlert(id, alertmacless);
+                            createMaclessAlert(viewstatexml).raise();
                             if (!AlertThreshold.LOW.equals(getAlertThreshold())) {
                                 return;
                             }
@@ -372,31 +315,13 @@ public class Base64Disclosure extends PluginPassiveScanner {
                         // TODO: if the ViewState contains sensitive data, alert it (particularly if
                         // running over HTTP)
                     } else {
-                        if (log.isDebugEnabled()) log.debug("Raising a Base64 informational alert");
+                        LOGGER.debug("Raising a Base64 informational alert");
 
                         // the Base64 decoded data is not a valid ViewState (even though it may have
-                        // a valid ViewStatet pre-amble)
+                        // a valid ViewState pre-amble)
                         // so treat it as normal Base64 data, and raise an informational alert.
                         if (base64evidence.length() > 0) {
-                            Alert alert =
-                                    new Alert(
-                                            getPluginId(),
-                                            Alert.RISK_INFO,
-                                            Alert.CONFIDENCE_MEDIUM,
-                                            getName());
-                            alert.setDetail(
-                                    getDescription(),
-                                    msg.getRequestHeader().getURI().toString(),
-                                    "", // param
-                                    null,
-                                    getExtraInfo(msg, base64evidence, decodeddata), // other info
-                                    getSolution(),
-                                    getReference(),
-                                    base64evidence,
-                                    200, // Information Exposure,
-                                    13, // Information Leakage
-                                    msg);
-                            parent.raiseAlert(id, alert);
+                            createBase64Alert(base64evidence, decodeddata).raise();
                             if (!AlertThreshold.LOW.equals(getAlertThreshold())) {
                                 return;
                             }
@@ -407,62 +332,83 @@ public class Base64Disclosure extends PluginPassiveScanner {
         }
     }
 
-    /**
-     * sets the parent
-     *
-     * @param parent
-     */
-    @Override
-    public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+    private AlertBuilder createBasicAlert(String alertRef) {
+        return newAlert()
+                .setRisk(Alert.RISK_INFO)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setCweId(319) // CWE-319: Cleartext Transmission of Sensitive Information
+                .setWascId(13) // Information Leakage
+                .setAlertRef(getPluginId() + alertRef);
     }
 
-    /**
-     * get the id of the scanner
-     *
-     * @return
-     */
+    private AlertBuilder createViewStateAlert(String viewstatexml) {
+        return createBasicAlert("-1")
+                .setName(Constant.messages.getString("pscanalpha.base64disclosure.viewstate.name"))
+                .setDescription(
+                        Constant.messages.getString("pscanalpha.base64disclosure.viewstate.desc"))
+                .setSolution(
+                        Constant.messages.getString("pscanalpha.base64disclosure.viewstate.soln"))
+                .setReference(
+                        Constant.messages.getString("pscanalpha.base64disclosure.viewstate.refs"))
+                .setEvidence(viewstatexml);
+    }
+
+    private AlertBuilder createMaclessAlert(String viewstatexml) {
+        return createBasicAlert("-2")
+                .setName(
+                        Constant.messages.getString(
+                                "pscanalpha.base64disclosure.viewstatewithoutmac.name"))
+                .setRisk(Alert.RISK_HIGH)
+                .setDescription(
+                        Constant.messages.getString(
+                                "pscanalpha.base64disclosure.viewstatewithoutmac.desc"))
+                .setSolution(
+                        Constant.messages.getString(
+                                "pscanalpha.base64disclosure.viewstatewithoutmac.soln"))
+                .setReference(
+                        Constant.messages.getString(
+                                "pscanalpha.base64disclosure.viewstatewithoutmac.refs"))
+                .setEvidence(viewstatexml)
+                .setCweId(642); // CWE-642 = External Control of Critical State
+        // Data
+    }
+
+    private AlertBuilder createBase64Alert(String evidence, byte[] data) {
+        return createBasicAlert("-3")
+                .setDescription(getDescription())
+                .setOtherInfo(new String(data))
+                .setSolution(getSolution())
+                .setReference(getReference())
+                .setEvidence(evidence);
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                createViewStateAlert("").build(),
+                createMaclessAlert("").build(),
+                createBase64Alert("", new byte[] {}).build());
+    }
+
     @Override
     public int getPluginId() {
         return 10094;
     }
 
-    /**
-     * get the description of the alert
-     *
-     * @return
-     */
-    private String getDescription() {
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
+    }
+
+    private static String getDescription() {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
-    /**
-     * get the solution for the alert
-     *
-     * @return
-     */
-    private String getSolution() {
+    private static String getSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
-    /**
-     * gets references for the alert
-     *
-     * @return
-     */
-    private String getReference() {
+    private static String getReference() {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
-    }
-
-    /**
-     * gets extra information associated with the alert
-     *
-     * @param msg
-     * @param arg0
-     * @return
-     */
-    private String getExtraInfo(HttpMessage msg, String evidence, byte[] decodeddata) {
-        return Constant.messages.getString(
-                MESSAGE_PREFIX + "extrainfo", evidence, new String(decodeddata));
     }
 }

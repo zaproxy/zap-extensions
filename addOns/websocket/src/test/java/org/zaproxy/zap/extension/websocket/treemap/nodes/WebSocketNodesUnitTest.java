@@ -19,14 +19,15 @@
  */
 package org.zaproxy.zap.extension.websocket.treemap.nodes;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.httpclient.URI;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.zaproxy.zap.extension.websocket.ExtensionWebSocket;
@@ -40,14 +41,14 @@ import org.zaproxy.zap.extension.websocket.treemap.nodes.contents.RootContent;
 import org.zaproxy.zap.extension.websocket.treemap.nodes.namers.WebSocketSimpleNodeNamer;
 import org.zaproxy.zap.extension.websocket.treemap.nodes.structural.TreeNode;
 
-public class WebSocketNodesUnitTest extends WebSocketAddonTestUtils {
+class WebSocketNodesUnitTest extends WebSocketAddonTestUtils {
 
     private WebSocketNode rootFolder;
     private WebSocketSimpleNodeNamer namer;
     private static URI defaultHostName;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() throws Exception {
         setUpMessages();
 
         namer = new WebSocketSimpleNodeNamer();
@@ -61,8 +62,7 @@ public class WebSocketNodesUnitTest extends WebSocketAddonTestUtils {
     }
 
     @Test
-    public void shouldAddParentsAndChildren()
-            throws DatabaseException, HttpMalformedHeaderException {
+    void shouldAddParentsAndChildren() throws DatabaseException, HttpMalformedHeaderException {
 
         // Given
         WebSocketChannelDTO channel = getWebSocketChannelDTO(1, defaultHostName.toString());
@@ -76,13 +76,13 @@ public class WebSocketNodesUnitTest extends WebSocketAddonTestUtils {
                         hostNode, new MessageContent(namer, getTextOutgoingMessage("TestMessage")));
 
         // Then
-        Assert.assertEquals(rootFolder.getChildren().get(0), hostNode);
-        Assert.assertEquals(hostNode.getParent(), rootFolder);
-        Assert.assertEquals(hostNode.getChildren().get(0), messageNode);
+        assertEquals(rootFolder.getChildren().get(0), hostNode);
+        assertEquals(hostNode.getParent(), rootFolder);
+        assertEquals(hostNode.getChildren().get(0), messageNode);
     }
 
     @Test
-    public void shouldGetContent() throws DatabaseException, HttpMalformedHeaderException {
+    void shouldGetContent() throws DatabaseException, HttpMalformedHeaderException {
         // Given
         WebSocketChannelDTO channel = getWebSocketChannelDTO(1, defaultHostName.toString());
         WebSocketMessageDTO message = getTextOutgoingMessage(channel, "TestMessage", 1);
@@ -94,11 +94,11 @@ public class WebSocketNodesUnitTest extends WebSocketAddonTestUtils {
         WebSocketNode messageNode = new WebSocketNode(hostNode, new MessageContent(namer, message));
 
         // Then
-        Assert.assertEquals(messageNode.getMessage().id, message.id);
+        assertEquals(messageNode.getMessage().getId(), message.getId());
     }
 
     @Test
-    public void shouldGetMessages() throws DatabaseException, HttpMalformedHeaderException {
+    void shouldGetMessages() throws DatabaseException, HttpMalformedHeaderException {
         // Given
         WebSocketChannelDTO channel = getWebSocketChannelDTO(1, defaultHostName.toString());
 
@@ -124,13 +124,13 @@ public class WebSocketNodesUnitTest extends WebSocketAddonTestUtils {
 
         // Then
         for (int i = 0; i < expectedMessages.size(); i++) {
-            Assert.assertEquals(expectedMessages.get(i).id, messagesFromRoot.get(i).id);
-            Assert.assertEquals(expectedMessages.get(i).id, messagesFromHost.get(i).id);
+            assertEquals(expectedMessages.get(i).getId(), messagesFromRoot.get(i).getId());
+            assertEquals(expectedMessages.get(i).getId(), messagesFromHost.get(i).getId());
         }
     }
 
     @Test
-    public void shouldGetAllHostNodes() throws DatabaseException, HttpMalformedHeaderException {
+    void shouldGetAllHostNodes() throws DatabaseException, HttpMalformedHeaderException {
         // Given
         ArrayList<TreeNode> expectedHostNodes = new ArrayList<>();
         WebSocketChannelDTO channel;
@@ -144,6 +144,6 @@ public class WebSocketNodesUnitTest extends WebSocketAddonTestUtils {
         }
 
         // Then
-        Assert.assertThat(rootFolder.getHostNodes(new ArrayList<>()), is(expectedHostNodes));
+        assertThat(rootFolder.getHostNodes(new ArrayList<>()), is(expectedHostNodes));
     }
 }

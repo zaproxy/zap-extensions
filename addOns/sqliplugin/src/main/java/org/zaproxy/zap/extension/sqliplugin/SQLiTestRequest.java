@@ -20,7 +20,7 @@
  */
 package org.zaproxy.zap.extension.sqliplugin;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 
 /**
  * Service class used to store test's abstract request payload, and any other elements useful to
@@ -68,7 +68,9 @@ public class SQLiTestRequest {
     private static final String TAG_REQUEST_CHAR = "char";
     private static final String TAG_REQUEST_COLUMNS = "columns";
 
-    /** @param value */
+    /**
+     * @param value
+     */
     protected SQLiTestRequest(Element el) {
         this();
 

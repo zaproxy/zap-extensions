@@ -26,6 +26,7 @@ import javax.swing.table.AbstractTableModel;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.view.View;
 
+@SuppressWarnings("serial")
 public class AbstractTableModelAsAbstractColumnTableModelWrapper<T> {
 
     private final AbstractTableModel abstractTableModel;
@@ -84,14 +85,7 @@ public class AbstractTableModelAsAbstractColumnTableModelWrapper<T> {
 
     public void addModels(final List<T> models) {
         if (View.isInitialised() && !EventQueue.isDispatchThread()) {
-            EventQueue.invokeLater(
-                    new Runnable() {
-
-                        @Override
-                        public void run() {
-                            addModels(models);
-                        }
-                    });
+            EventQueue.invokeLater(() -> addModels(models));
 
             return;
         }
@@ -106,14 +100,7 @@ public class AbstractTableModelAsAbstractColumnTableModelWrapper<T> {
 
     public void addModel(final T model) {
         if (View.isInitialised() && !EventQueue.isDispatchThread()) {
-            EventQueue.invokeLater(
-                    new Runnable() {
-
-                        @Override
-                        public void run() {
-                            addModel(model);
-                        }
-                    });
+            EventQueue.invokeLater(() -> addModel(model));
 
             return;
         }
@@ -124,13 +111,7 @@ public class AbstractTableModelAsAbstractColumnTableModelWrapper<T> {
 
     public void removeAllModels() {
         if (View.isInitialised() && !EventQueue.isDispatchThread()) {
-            EventQueue.invokeLater(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            removeAllModels();
-                        }
-                    });
+            EventQueue.invokeLater(this::removeAllModels);
             return;
         }
 

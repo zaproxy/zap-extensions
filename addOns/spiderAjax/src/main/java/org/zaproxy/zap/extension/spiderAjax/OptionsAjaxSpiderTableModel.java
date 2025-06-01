@@ -24,6 +24,7 @@ import java.util.List;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.view.AbstractMultipleOptionsTableModel;
 
+@SuppressWarnings("serial")
 public class OptionsAjaxSpiderTableModel
         extends AbstractMultipleOptionsTableModel<AjaxSpiderParamElem> {
 
@@ -47,7 +48,9 @@ public class OptionsAjaxSpiderTableModel
         return elems;
     }
 
-    /** @param elems The elems to set. */
+    /**
+     * @param elems The elems to set.
+     */
     public void setElems(List<AjaxSpiderParamElem> elems) {
         this.elems = new ArrayList<>(elems.size());
 

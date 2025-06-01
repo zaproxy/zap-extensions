@@ -20,36 +20,36 @@
 package org.zaproxy.zap.extension.zest.menu;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.log4j.Logger;
-import org.mozilla.zest.core.v1.ZestConditional;
-import org.mozilla.zest.core.v1.ZestContainer;
-import org.mozilla.zest.core.v1.ZestElement;
-import org.mozilla.zest.core.v1.ZestLoop;
-import org.mozilla.zest.core.v1.ZestLoopClientElements;
-import org.mozilla.zest.core.v1.ZestLoopFile;
-import org.mozilla.zest.core.v1.ZestLoopInteger;
-import org.mozilla.zest.core.v1.ZestLoopRegex;
-import org.mozilla.zest.core.v1.ZestLoopString;
-import org.mozilla.zest.core.v1.ZestStatement;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
+import org.zaproxy.zest.core.v1.ZestConditional;
+import org.zaproxy.zest.core.v1.ZestContainer;
+import org.zaproxy.zest.core.v1.ZestElement;
+import org.zaproxy.zest.core.v1.ZestLoop;
+import org.zaproxy.zest.core.v1.ZestLoopClientElements;
+import org.zaproxy.zest.core.v1.ZestLoopFile;
+import org.zaproxy.zest.core.v1.ZestLoopInteger;
+import org.zaproxy.zest.core.v1.ZestLoopRegex;
+import org.zaproxy.zest.core.v1.ZestLoopString;
+import org.zaproxy.zest.core.v1.ZestStatement;
 
+@SuppressWarnings("serial")
 public class ZestAddLoopPopupMenu extends ExtensionPopupMenuItem {
 
     private static final long serialVersionUID = -8433923894855139684L;
 
     private ExtensionZest extension;
 
-    private static final Logger logger = Logger.getLogger(ZestAddConditionPopupMenu.class);
+    private static final Logger LOGGER = LogManager.getLogger(ZestAddConditionPopupMenu.class);
 
     /** This method initializes */
     public ZestAddLoopPopupMenu(ExtensionZest extension) {
@@ -102,7 +102,7 @@ public class ZestAddLoopPopupMenu extends ExtensionPopupMenuItem {
         try {
             createPopupAddActionMenu(parent, children, stmt, new ZestLoopFile());
         } catch (IOException e) {
-            logger.debug(e.getMessage(), e);
+            LOGGER.debug(e.getMessage(), e);
         }
         createPopupAddActionMenu(parent, children, stmt, new ZestLoopInteger());
         createPopupAddActionMenu(parent, children, stmt, new ZestLoopClientElements());
@@ -119,15 +119,10 @@ public class ZestAddLoopPopupMenu extends ExtensionPopupMenuItem {
                         Constant.messages.getString("zest.loop.add.popup"),
                         ZestZapUtils.toUiString(za, false));
         menu.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
+                e ->
                         extension
                                 .getDialogManager()
-                                .showZestLoopDialog(parent, children, stmt, za, true, false);
-                    }
-                });
-        menu.setMenuIndex(this.getMenuIndex());
+                                .showZestLoopDialog(parent, children, stmt, za, true, false));
         View.getSingleton().getPopupList().add(menu);
     }
 

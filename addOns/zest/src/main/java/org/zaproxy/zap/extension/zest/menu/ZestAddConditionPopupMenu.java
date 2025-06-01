@@ -20,30 +20,10 @@
 package org.zaproxy.zap.extension.zest.menu;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 import javax.swing.JMenuItem;
-import org.mozilla.zest.core.v1.ZestConditional;
-import org.mozilla.zest.core.v1.ZestContainer;
-import org.mozilla.zest.core.v1.ZestElement;
-import org.mozilla.zest.core.v1.ZestExpression;
-import org.mozilla.zest.core.v1.ZestExpressionAnd;
-import org.mozilla.zest.core.v1.ZestExpressionClientElementExists;
-import org.mozilla.zest.core.v1.ZestExpressionEquals;
-import org.mozilla.zest.core.v1.ZestExpressionIsInteger;
-import org.mozilla.zest.core.v1.ZestExpressionLength;
-import org.mozilla.zest.core.v1.ZestExpressionOr;
-import org.mozilla.zest.core.v1.ZestExpressionRegex;
-import org.mozilla.zest.core.v1.ZestExpressionResponseTime;
-import org.mozilla.zest.core.v1.ZestExpressionStatusCode;
-import org.mozilla.zest.core.v1.ZestExpressionURL;
-import org.mozilla.zest.core.v1.ZestRequest;
-import org.mozilla.zest.core.v1.ZestStatement;
-import org.mozilla.zest.core.v1.ZestStructuredExpression;
-import org.mozilla.zest.core.v1.ZestVariables;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.view.View;
@@ -51,18 +31,34 @@ import org.zaproxy.zap.extension.httppanel.view.syntaxhighlight.HttpPanelSyntaxH
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
+import org.zaproxy.zest.core.v1.ZestConditional;
+import org.zaproxy.zest.core.v1.ZestContainer;
+import org.zaproxy.zest.core.v1.ZestElement;
+import org.zaproxy.zest.core.v1.ZestExpression;
+import org.zaproxy.zest.core.v1.ZestExpressionAnd;
+import org.zaproxy.zest.core.v1.ZestExpressionClientElementExists;
+import org.zaproxy.zest.core.v1.ZestExpressionEquals;
+import org.zaproxy.zest.core.v1.ZestExpressionIsInteger;
+import org.zaproxy.zest.core.v1.ZestExpressionLength;
+import org.zaproxy.zest.core.v1.ZestExpressionOr;
+import org.zaproxy.zest.core.v1.ZestExpressionRegex;
+import org.zaproxy.zest.core.v1.ZestExpressionResponseTime;
+import org.zaproxy.zest.core.v1.ZestExpressionStatusCode;
+import org.zaproxy.zest.core.v1.ZestExpressionURL;
+import org.zaproxy.zest.core.v1.ZestRequest;
+import org.zaproxy.zest.core.v1.ZestStatement;
+import org.zaproxy.zest.core.v1.ZestStructuredExpression;
+import org.zaproxy.zest.core.v1.ZestVariables;
 
-// import org.mozilla.zest.core.v1.ZestExpressionOr;
-// import org.mozilla.zest.core.v1.ZestExpressionLength;
+// import org.zaproxy.zest.core.v1.ZestExpressionOr;
+// import org.zaproxy.zest.core.v1.ZestExpressionLength;
 
+@SuppressWarnings("serial")
 public class ZestAddConditionPopupMenu extends ExtensionPopupMenuItem {
 
     private static final long serialVersionUID = 2282358266003940700L;
 
     private ExtensionZest extension;
-
-    // private static final Logger logger =
-    // Logger.getLogger(ZestAddConditionPopupMenu.class);
 
     /** This method initializes */
     public ZestAddConditionPopupMenu(ExtensionZest extension) {
@@ -264,58 +260,48 @@ public class ZestAddConditionPopupMenu extends ExtensionPopupMenuItem {
                             ZestZapUtils.toUiString(ze, false));
         }
         menu.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
+                e -> {
+                    if (ze != null) {
+                        extension
+                                .getDialogManager()
+                                .showZestExpressionDialog(
+                                        parent, nodes, stmt, ze, true, false, true);
+                    } else if (stmt instanceof ZestRequest) {
+                        ScriptNode parent2 = extension.getSelectedZestNode().getParent();
+                        ScriptNode childNode = extension.getSelectedZestNode();
+                        ZestStatement existingChild = stmt;
+                        ZestStatement newChild = new ZestConditional(new ZestExpressionAnd());
+                        extension.addAfterRequest(parent2, childNode, existingChild, newChild);
+                    } else {
+                        // add a new empty conditional with no dialog
+                        extension.addToParent(
+                                extension.getSelectedZestNode(),
+                                new ZestConditional(new ZestExpressionAnd()));
+                    }
+                });
+        final List<JMenuItem> mainPopupMenuItems = View.getSingleton().getPopupList();
+        mainPopupMenuItems.add(menu);
+        if (menu2 != null) {
+            menu2.addActionListener(
+                    e -> {
                         if (ze != null) {
                             extension
                                     .getDialogManager()
                                     .showZestExpressionDialog(
                                             parent, nodes, stmt, ze, true, false, true);
                         } else if (stmt instanceof ZestRequest) {
-                            ScriptNode parent = extension.getSelectedZestNode().getParent();
+                            ScriptNode parent2 = extension.getSelectedZestNode().getParent();
                             ScriptNode childNode = extension.getSelectedZestNode();
                             ZestStatement existingChild = stmt;
-                            ZestStatement newChild = new ZestConditional(new ZestExpressionAnd());
-                            extension.addAfterRequest(parent, childNode, existingChild, newChild);
+                            ZestStatement newChild = new ZestConditional(new ZestExpressionOr());
+                            extension.addAfterRequest(parent2, childNode, existingChild, newChild);
                         } else {
                             // add a new empty conditional with no dialog
                             extension.addToParent(
                                     extension.getSelectedZestNode(),
-                                    new ZestConditional(new ZestExpressionAnd()));
-                        }
-                    }
-                });
-        final List<JMenuItem> mainPopupMenuItems = View.getSingleton().getPopupList();
-        menu.setMenuIndex(this.getMenuIndex());
-        mainPopupMenuItems.add(menu);
-        if (menu2 != null) {
-            menu2.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            if (ze != null) {
-                                extension
-                                        .getDialogManager()
-                                        .showZestExpressionDialog(
-                                                parent, nodes, stmt, ze, true, false, true);
-                            } else if (stmt instanceof ZestRequest) {
-                                ScriptNode parent = extension.getSelectedZestNode().getParent();
-                                ScriptNode childNode = extension.getSelectedZestNode();
-                                ZestStatement existingChild = stmt;
-                                ZestStatement newChild =
-                                        new ZestConditional(new ZestExpressionOr());
-                                extension.addAfterRequest(
-                                        parent, childNode, existingChild, newChild);
-                            } else {
-                                // add a new empty conditional with no dialog
-                                extension.addToParent(
-                                        extension.getSelectedZestNode(),
-                                        new ZestConditional(new ZestExpressionOr()));
-                            }
+                                    new ZestConditional(new ZestExpressionOr()));
                         }
                     });
-            menu2.setMenuIndex(this.getMenuIndex());
             mainPopupMenuItems.add(menu2);
         }
     }

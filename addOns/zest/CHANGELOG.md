@@ -1,10 +1,191 @@
 # Changelog
 All notable changes to this add-on will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+
+## [48.6.0] - 2025-05-20
+### Added
+- Client element waitForMsec parameter.
+
+### Changed
+- Update Zest library to 0.29.0:
+  - Allow to access the `WebElement` referenced by a `ZestClientElement`.
+  - Add new `waitForMsec` parameter to all client elements.
+  - Change `ZestClientElementClick`, `ZestClientElementSendKeys`, and `ZestClientElementSubmit` to wait for the element to also be enabled when using `waitForMsec`.
+  - Update Selenium to version 4.32.0.
+  - Change `ZestClientElementClick` to click on the position of the element instead of the element itself when obscured, to better reproduce a manual click.
+  - Change `ZestClientElementScrollTo` to only scroll to the element when not already in view and to scroll with `nearest` vertical alignment, to ensure the element is kept visible.
+- Allow to copy the script's file system path from the Edit Zest Script dialogue.
+
+### Fixed
+- Print statements should print to the relevant script Output tab.
+- Recording client Zest scripts.
+
+## [48.5.0] - 2025-03-25
+### Changed
+- Use TOTP data defined under user credentials during authentication when available.
+- Update Zest library to 0.25.0:
+  - Update Selenium to version 4.30.0.
+- Depend on newer version of Common Library add-on.
+
+## [48.4.0] - 2025-02-27
+### Changed
+- Update Zest library to 0.24.0:
+  - Update Selenium to version 4.29.0.
+  - Remove workaround that was now causing exceptions.
+
+## [48.3.0] - 2025-02-07
+### Changed
+- Enable ZAP API in the authentication runner so ZAP browser extension callbacks work.
+
+## [48.2.0] - 2025-02-04
+### Added
+- Firefox to recorder.
+- Added support for custom script authentication.
+
+### Changed
+- Record script order to be alphabetical.
+
+### Fixed
+- Record Client Submit statement.
+
+## [48.1.0] - 2025-01-23
+### Changed
+- Use ZAP for launching Firefox and Chrome.
+- Update Zest library to 0.23.0:
+  - Update Selenium to version 4.28.0.
+  - Update minimum Java version to 17.
+
+## [48.0.0] - 2025-01-10
+### Added
+- Allow other add-ons to create a Zest script from a list of messages.
+
+### Changed
+- Update minimum ZAP version to 2.16.0.
+- Use Semantic Version.
+- Maintenance changes.
+- Depend on Passive Scanner add-on (Issue 7959).
+
+## [47] - 2024-09-24
+### Fixed
+- Correctly handle added scripts with no engine name.
+
+## [46] - 2024-06-28
+### Added
+- Document the engine name in the help page.
+
+### Changed
+- Use script engines from ZAP when executing scripts.
+- Update Zest library to 0.22.0:
+  - Update Selenium to version 4.22.0.
+
+## [45] - 2024-05-07
+### Changed
+- Update minimum ZAP version to 2.15.0.
+- Update Zest library to 0.21.0:
+  - Update Selenium to version 4.20.0.
+  - Update HtmlUnit to major version 3.
+
+## [44] - 2024-04-11
+### Added
+- Support for menu weights (Issue 8369)
+
+### Changed
+- Update minimum `scripts` add-on version to 45.1.0.
+- Maintenance changes.
+
+## [43] - 2023-12-19
+### Changed
+- Move "Zest" under "Scripts > Engine" in the Options panel list.
+
+## [42] - 2023-10-12
+### Changed
+- Update minimum ZAP version to 2.14.0.
+- Update Zest library to 0.20.0:
+  - Update Selenium to version 4.14.0.
+
+## [41] - 2023-09-26
+### Added
+- Allow rendering Zest scripts in YAML. The format (JSON/YAML) may be changed via the Zest Options screen.
+
+### Changed
+- Depend on Common Library add-on.
+- Maintenance changes.
+
+## [40] - 2023-09-11
+### Added 
+- Client support to record Zest scripts.
+
+### Changed
+- Maintenance changes.
+
+### Fixed
+- Resolved the browser window focus loss problem during the recording of Zest scripts.
+
+## [39] - 2023-07-11
+### Added 
+- Dialogs for scroll, scrollTo, window resize and mouse over.
+
+### Changed
+- Update minimum ZAP version to 2.13.0.
+- Update Zest library to 0.18.0:
+  - Update Selenium to version 4.
+  - jBrowserDriver (JBD), Opera, and PhantomJS are no longer supported (no longer being actively maintained).
+  - Add client statements for Scroll, MouseOver, and Window Resize events.
+- Maintenance changes.
+
+## [38] - 2023-01-03
+### Changed
+- Maintenance changes.
+
+### Fixed
+- Prevent exception if no display (Issue 3978).
+
+## [37] - 2022-10-27
+### Changed
+- Update minimum ZAP version to 2.12.0.
+- Update Zest library to 0.16.0:
+  - Search script engines also by extension not just by name when invoking scripts otherwise it could miss some engines (e.g. Jython).
+- Maintenance changes.
+
+## [36] - 2022-09-23
+### Changed
+- Update minimum ZAP version to 2.11.1.
+- Use Network add-on to proxy client authentication requests.
+- Maintenance changes.
+
+## [35] - 2021-10-06
+### Changed
+- Maintenance changes.
+- Update minimum ZAP version to 2.11.0.
+
+## [34] - 2021-04-22
+### Changed
+- Depend on Script Console add-on, it's required to work with Zest scripts (Issue 2656).
+- Clear Zest Results Panel when new script is added.
+- Update minimum ZAP version to 2.10.0.
+
+### Fixed
+- Track modifications done to the scripts to refresh the cached ones (Issue 6558).
+
+## [33] - 2020-11-27
+### Added
+- Allow to create a screenshot from the browser, using the context menu `Add Zest Client` > `Screenshot`.
+
+### Changed
+- Update minimum ZAP version to 2.9.0.
+- Update Zest library to 0.15.0:
+  - Do not follow redirects when disabled;
+  - Reduce the changes done to the requests sent.
+- Maintenance changes.
+
+### Fixed
+- Make sure the header fields are separated with CRLF when edited in the UI.
+- Handle client requests when authenticating (Issue 5940).
 
 ## [32] - 2020-01-24
 ### Changed
@@ -29,7 +210,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 of an element or the value of an attribute.
 
 ### Changed
-- Update Zest library to 0.14.0 (Issue 4797). Refer to its [CHANGELOG](https://github.com/mozilla/zest/blob/0.14.0/CHANGELOG.md#changelog) for full set of changes.
+- Update Zest library to 0.14.0 (Issue 4797). Refer to its [CHANGELOG](https://github.com/zaproxy/zest/blob/0.14.0/CHANGELOG.md#changelog) for full set of changes.
 - Send sequence messages with ZAP so that they make use of ZAP features e.g. authentication, HTTP
 Sender scripts. (Issue 5590)
 - Set timestamp from/to Zest requests.
@@ -123,7 +304,7 @@ Sender scripts. (Issue 5590)
 - Fix exception while opening a dialogue.
 - Cannot use auth script in daemon mode (Issue 2294).
 - Support httpsender scripts (Issue 2293).
-- Cant paste variable into new request dialog (Issue 2007).
+- Can't paste variable into new request dialog (Issue 2007).
 - Script context menu has duplicated items (Issue 2106).
 - Exception while adding Zest Condition (Issue 2296).
 - Should not be able to delete THEN statement (Issue 2295).
@@ -225,6 +406,28 @@ Sender scripts. (Issue 5590)
 
 - Updated for 2.1.0
 
+[48.6.0]: https://github.com/zaproxy/zap-extensions/releases/zest-v48.6.0
+[48.5.0]: https://github.com/zaproxy/zap-extensions/releases/zest-v48.5.0
+[48.4.0]: https://github.com/zaproxy/zap-extensions/releases/zest-v48.4.0
+[48.3.0]: https://github.com/zaproxy/zap-extensions/releases/zest-v48.3.0
+[48.2.0]: https://github.com/zaproxy/zap-extensions/releases/zest-v48.2.0
+[48.1.0]: https://github.com/zaproxy/zap-extensions/releases/zest-v48.1.0
+[48.0.0]: https://github.com/zaproxy/zap-extensions/releases/zest-v48.0.0
+[47]: https://github.com/zaproxy/zap-extensions/releases/zest-v47
+[46]: https://github.com/zaproxy/zap-extensions/releases/zest-v46
+[45]: https://github.com/zaproxy/zap-extensions/releases/zest-v45
+[44]: https://github.com/zaproxy/zap-extensions/releases/zest-v44
+[43]: https://github.com/zaproxy/zap-extensions/releases/zest-v43
+[42]: https://github.com/zaproxy/zap-extensions/releases/zest-v42
+[41]: https://github.com/zaproxy/zap-extensions/releases/zest-v41
+[40]: https://github.com/zaproxy/zap-extensions/releases/zest-v40
+[39]: https://github.com/zaproxy/zap-extensions/releases/zest-v39
+[38]: https://github.com/zaproxy/zap-extensions/releases/zest-v38
+[37]: https://github.com/zaproxy/zap-extensions/releases/zest-v37
+[36]: https://github.com/zaproxy/zap-extensions/releases/zest-v36
+[35]: https://github.com/zaproxy/zap-extensions/releases/zest-v35
+[34]: https://github.com/zaproxy/zap-extensions/releases/zest-v34
+[33]: https://github.com/zaproxy/zap-extensions/releases/zest-v33
 [32]: https://github.com/zaproxy/zap-extensions/releases/zest-v32
 [31]: https://github.com/zaproxy/zap-extensions/releases/zest-v31
 [30]: https://github.com/zaproxy/zap-extensions/releases/zest-v30

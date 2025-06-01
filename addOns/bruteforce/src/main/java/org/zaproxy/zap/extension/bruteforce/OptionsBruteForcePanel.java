@@ -32,18 +32,17 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JSlider;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.FileCopier;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.commonlib.Constants;
+import org.zaproxy.zap.utils.ZapNumberSpinner;
 import org.zaproxy.zap.utils.ZapTextField;
-import org.zaproxy.zap.view.PositiveValuesSlider;
 
+@SuppressWarnings("serial")
 public class OptionsBruteForcePanel extends AbstractParamPanel {
 
     private static final String MESSAGE_PREFIX = "bruteforce.options.";
@@ -53,11 +52,12 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
     private JCheckBox checkBoxRecursive = null;
     private JComboBox<ForcedBrowseFile> defaultFileList = null;
     private JButton addFileButton = null;
+    private JCheckBox checkBoxBrowseFilesWithoutExtension = null;
     private JCheckBox checkBoxBrowseFiles = null;
     private ZapTextField txtFileExtensions = null;
-    private JLabel threadsLabel;
     private ZapTextField txtFileExtensionsToMiss = null;
     private ZapTextField txtFailCaseString = null;
+    private ZapNumberSpinner spinnerThreadsPerScan = null;
 
     public OptionsBruteForcePanel(ExtensionBruteForce extension) {
         super();
@@ -65,7 +65,6 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
         initialize();
     }
 
-    private JSlider sliderThreadsPerScan = null;
     /** This method initializes this */
     private void initialize() {
         this.setLayout(new CardLayout());
@@ -89,6 +88,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             JLabel jLabelExtensions = new JLabel();
             JLabel jLabelExtensionsToMiss = new JLabel();
             JLabel jLabelFailCaseString = new JLabel();
+            JLabel jLabelThreads = new JLabel();
 
             GridBagConstraints gridBagConstraintsThreadsLable = new GridBagConstraints();
             GridBagConstraints gridBagConstraintsThreadsSlider = new GridBagConstraints();
@@ -97,6 +97,8 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             GridBagConstraints gridBagConstraintsAddFileLable = new GridBagConstraints();
             GridBagConstraints gridBagConstraintsAddFileButton = new GridBagConstraints();
             GridBagConstraints gridBagConstraintsX = new GridBagConstraints();
+            GridBagConstraints gridBagConstraintsBrowseFilesWithoutExtensionCheckBox =
+                    new GridBagConstraints();
             GridBagConstraints gridBagConstraintsBrowseFilesCheckBox = new GridBagConstraints();
             GridBagConstraints gridBagConstraintsFileExtensionsLabel = new GridBagConstraints();
             GridBagConstraints gridBagConstraintsFileExtensionsList = new GridBagConstraints();
@@ -118,29 +120,32 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
                     Constant.messages.getString(MESSAGE_PREFIX + "label.extensionsToMiss"));
             jLabelFailCaseString.setText(
                     Constant.messages.getString(MESSAGE_PREFIX + "label.failCaseString"));
+            jLabelThreads.setText(Constant.messages.getString(MESSAGE_PREFIX + "label.threads"));
+
+            int rowNumber = 2;
 
             gridBagConstraintsThreadsLable.gridx = 0;
-            gridBagConstraintsThreadsLable.gridy = 2;
+            gridBagConstraintsThreadsLable.gridy = rowNumber;
             gridBagConstraintsThreadsLable.ipadx = 0;
             gridBagConstraintsThreadsLable.ipady = 0;
             gridBagConstraintsThreadsLable.anchor = GridBagConstraints.NORTHWEST;
             gridBagConstraintsThreadsLable.fill = GridBagConstraints.HORIZONTAL;
             gridBagConstraintsThreadsLable.insets = new Insets(2, 2, 2, 2);
             gridBagConstraintsThreadsLable.weightx = 1.0D;
-            gridBagConstraintsThreadsLable.gridwidth = 2;
+            gridBagConstraintsThreadsLable.gridwidth = 1;
 
-            gridBagConstraintsThreadsSlider.gridx = 0;
-            gridBagConstraintsThreadsSlider.gridy = 3;
+            gridBagConstraintsThreadsSlider.gridx = 1;
+            gridBagConstraintsThreadsSlider.gridy = rowNumber;
             gridBagConstraintsThreadsSlider.weightx = 1.0;
             gridBagConstraintsThreadsSlider.fill = GridBagConstraints.HORIZONTAL;
             gridBagConstraintsThreadsSlider.ipadx = 0;
             gridBagConstraintsThreadsSlider.ipady = 0;
             gridBagConstraintsThreadsSlider.anchor = GridBagConstraints.NORTHWEST;
             gridBagConstraintsThreadsSlider.insets = new Insets(2, 2, 2, 2);
-            gridBagConstraintsThreadsSlider.gridwidth = 2;
+            gridBagConstraintsThreadsSlider.gridwidth = 1;
 
             gridBagConstraintsRecursiveCheckBox.gridx = 0;
-            gridBagConstraintsRecursiveCheckBox.gridy = 4;
+            gridBagConstraintsRecursiveCheckBox.gridy = ++rowNumber;
             gridBagConstraintsRecursiveCheckBox.weightx = 1.0;
             gridBagConstraintsRecursiveCheckBox.fill = GridBagConstraints.HORIZONTAL;
             gridBagConstraintsRecursiveCheckBox.ipadx = 0;
@@ -150,7 +155,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             gridBagConstraintsRecursiveCheckBox.gridwidth = 2;
 
             gridBagConstraintsDefaultFileLable.gridx = 0;
-            gridBagConstraintsDefaultFileLable.gridy = 5;
+            gridBagConstraintsDefaultFileLable.gridy = ++rowNumber;
             gridBagConstraintsDefaultFileLable.weightx = 1.0;
             gridBagConstraintsDefaultFileLable.fill = GridBagConstraints.HORIZONTAL;
             gridBagConstraintsDefaultFileLable.ipadx = 0;
@@ -160,7 +165,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             gridBagConstraintsDefaultFileLable.gridwidth = 1;
 
             gridBagConstraintsDefaultFlieList.gridx = 1;
-            gridBagConstraintsDefaultFlieList.gridy = 5;
+            gridBagConstraintsDefaultFlieList.gridy = rowNumber;
             gridBagConstraintsDefaultFlieList.weightx = 1.0;
             gridBagConstraintsDefaultFlieList.fill = GridBagConstraints.HORIZONTAL;
             gridBagConstraintsDefaultFlieList.ipadx = 0;
@@ -170,7 +175,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             gridBagConstraintsDefaultFlieList.gridwidth = 1;
 
             gridBagConstraintsAddFileLable.gridx = 0;
-            gridBagConstraintsAddFileLable.gridy = 6;
+            gridBagConstraintsAddFileLable.gridy = ++rowNumber;
             gridBagConstraintsAddFileLable.weightx = 1.0;
             gridBagConstraintsAddFileLable.fill = GridBagConstraints.HORIZONTAL;
             gridBagConstraintsAddFileLable.ipadx = 0;
@@ -180,7 +185,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             gridBagConstraintsAddFileLable.gridwidth = 1;
 
             gridBagConstraintsAddFileButton.gridx = 1;
-            gridBagConstraintsAddFileButton.gridy = 6;
+            gridBagConstraintsAddFileButton.gridy = rowNumber;
             gridBagConstraintsAddFileButton.weightx = 1.0;
             gridBagConstraintsAddFileButton.fill = GridBagConstraints.HORIZONTAL;
             gridBagConstraintsAddFileButton.ipadx = 0;
@@ -189,8 +194,20 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             gridBagConstraintsAddFileButton.insets = new Insets(2, 2, 2, 2);
             gridBagConstraintsAddFileButton.gridwidth = 1;
 
+            gridBagConstraintsBrowseFilesWithoutExtensionCheckBox.gridx = 0;
+            gridBagConstraintsBrowseFilesWithoutExtensionCheckBox.gridy = ++rowNumber;
+            gridBagConstraintsBrowseFilesWithoutExtensionCheckBox.weightx = 1.0;
+            gridBagConstraintsBrowseFilesWithoutExtensionCheckBox.fill =
+                    GridBagConstraints.HORIZONTAL;
+            gridBagConstraintsBrowseFilesWithoutExtensionCheckBox.ipadx = 0;
+            gridBagConstraintsBrowseFilesWithoutExtensionCheckBox.ipady = 0;
+            gridBagConstraintsBrowseFilesWithoutExtensionCheckBox.anchor =
+                    GridBagConstraints.NORTHWEST;
+            gridBagConstraintsBrowseFilesWithoutExtensionCheckBox.insets = new Insets(2, 2, 2, 2);
+            gridBagConstraintsBrowseFilesWithoutExtensionCheckBox.gridwidth = 2;
+
             gridBagConstraintsBrowseFilesCheckBox.gridx = 0;
-            gridBagConstraintsBrowseFilesCheckBox.gridy = 7;
+            gridBagConstraintsBrowseFilesCheckBox.gridy = ++rowNumber;
             gridBagConstraintsBrowseFilesCheckBox.weightx = 1.0;
             gridBagConstraintsBrowseFilesCheckBox.fill = GridBagConstraints.HORIZONTAL;
             gridBagConstraintsBrowseFilesCheckBox.ipadx = 0;
@@ -200,7 +217,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             gridBagConstraintsBrowseFilesCheckBox.gridwidth = 2;
 
             gridBagConstraintsFileExtensionsLabel.gridx = 0;
-            gridBagConstraintsFileExtensionsLabel.gridy = 8;
+            gridBagConstraintsFileExtensionsLabel.gridy = ++rowNumber;
             gridBagConstraintsFileExtensionsLabel.weightx = 1.0;
             gridBagConstraintsFileExtensionsLabel.fill = GridBagConstraints.HORIZONTAL;
             gridBagConstraintsFileExtensionsLabel.ipadx = 0;
@@ -210,7 +227,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             gridBagConstraintsFileExtensionsLabel.gridwidth = 1;
 
             gridBagConstraintsFileExtensionsList.gridx = 1;
-            gridBagConstraintsFileExtensionsList.gridy = 8;
+            gridBagConstraintsFileExtensionsList.gridy = rowNumber;
             gridBagConstraintsFileExtensionsList.weightx = 1.0;
             gridBagConstraintsFileExtensionsList.fill = GridBagConstraints.HORIZONTAL;
             gridBagConstraintsFileExtensionsList.ipadx = 0;
@@ -220,7 +237,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             gridBagConstraintsFileExtensionsList.gridwidth = 1;
 
             gridBagConstraintsExtensionsToMissLabel.gridx = 0;
-            gridBagConstraintsExtensionsToMissLabel.gridy = 9;
+            gridBagConstraintsExtensionsToMissLabel.gridy = ++rowNumber;
             gridBagConstraintsExtensionsToMissLabel.weightx = 1.0;
             gridBagConstraintsExtensionsToMissLabel.fill = GridBagConstraints.HORIZONTAL;
             gridBagConstraintsExtensionsToMissLabel.ipadx = 0;
@@ -230,7 +247,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             gridBagConstraintsExtensionsToMissLabel.gridwidth = 1;
 
             gridBagConstraintsExtensionsToMissList.gridx = 1;
-            gridBagConstraintsExtensionsToMissList.gridy = 9;
+            gridBagConstraintsExtensionsToMissList.gridy = rowNumber;
             gridBagConstraintsExtensionsToMissList.weightx = 1.0;
             gridBagConstraintsExtensionsToMissList.fill = GridBagConstraints.HORIZONTAL;
             gridBagConstraintsExtensionsToMissList.ipadx = 0;
@@ -240,7 +257,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             gridBagConstraintsExtensionsToMissList.gridwidth = 1;
 
             gridBagConstraintsFailCaseStringLabel.gridx = 0;
-            gridBagConstraintsFailCaseStringLabel.gridy = 10;
+            gridBagConstraintsFailCaseStringLabel.gridy = ++rowNumber;
             gridBagConstraintsFailCaseStringLabel.weightx = 1.0;
             gridBagConstraintsFailCaseStringLabel.fill = GridBagConstraints.HORIZONTAL;
             gridBagConstraintsFailCaseStringLabel.ipadx = 0;
@@ -250,7 +267,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             gridBagConstraintsFailCaseStringLabel.gridwidth = 1;
 
             gridBagConstraintsFailCaseString.gridx = 1;
-            gridBagConstraintsFailCaseString.gridy = 10;
+            gridBagConstraintsFailCaseString.gridy = rowNumber;
             gridBagConstraintsFailCaseString.weightx = 1.0;
             gridBagConstraintsFailCaseString.fill = GridBagConstraints.HORIZONTAL;
             gridBagConstraintsFailCaseString.ipadx = 0;
@@ -260,7 +277,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             gridBagConstraintsFailCaseString.gridwidth = 1;
 
             gridBagConstraintsX.gridx = 0;
-            gridBagConstraintsX.gridy = 11;
+            gridBagConstraintsX.gridy = ++rowNumber;
             gridBagConstraintsX.anchor = GridBagConstraints.NORTHWEST;
             gridBagConstraintsX.fill = GridBagConstraints.BOTH;
             gridBagConstraintsX.insets = new Insets(2, 2, 2, 2);
@@ -269,14 +286,17 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             gridBagConstraintsX.gridwidth = 2;
 
             jLabelx.setText(BruteForceParam.EMPTY_STRING);
-            panelPortScan.add(getThreadsLabel(), gridBagConstraintsThreadsLable);
-            panelPortScan.add(getSliderThreadsPerScan(), gridBagConstraintsThreadsSlider);
+            panelPortScan.add(jLabelThreads, gridBagConstraintsThreadsLable);
+            panelPortScan.add(getSpinnerThreadsPerScan(), gridBagConstraintsThreadsSlider);
             panelPortScan.add(getCheckBoxRecursive(), gridBagConstraintsRecursiveCheckBox);
             panelPortScan.add(jLabelDefaultFile, gridBagConstraintsDefaultFileLable);
             panelPortScan.add(getDefaultFileList(), gridBagConstraintsDefaultFlieList);
             panelPortScan.add(jLabelAddFile, gridBagConstraintsAddFileLable);
             panelPortScan.add(getAddFileButton(), gridBagConstraintsAddFileButton);
             panelPortScan.add(getCheckBoxBrowseFiles(), gridBagConstraintsBrowseFilesCheckBox);
+            panelPortScan.add(
+                    getcheckBoxBrowseFilesWithoutExtension(),
+                    gridBagConstraintsBrowseFilesWithoutExtensionCheckBox);
             panelPortScan.add(jLabelExtensions, gridBagConstraintsFileExtensionsLabel);
             panelPortScan.add(getTxtFileExtensions(), gridBagConstraintsFileExtensionsList);
             panelPortScan.add(jLabelExtensionsToMiss, gridBagConstraintsExtensionsToMissLabel);
@@ -286,18 +306,6 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             panelPortScan.add(jLabelx, gridBagConstraintsX);
         }
         return panelPortScan;
-    }
-
-    private JLabel getThreadsLabel() {
-        if (threadsLabel == null) {
-            threadsLabel = new JLabel();
-        }
-        return threadsLabel;
-    }
-
-    private void setThreadsLabelValue(int value) {
-        getThreadsLabel()
-                .setText(Constant.messages.getString(MESSAGE_PREFIX + "label.threads", value));
     }
 
     private JComboBox<ForcedBrowseFile> getDefaultFileList() {
@@ -336,17 +344,21 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
         OptionsParam options = (OptionsParam) obj;
         BruteForceParam param = options.getParamSet(BruteForceParam.class);
         if (param == null) {
-            getSliderThreadsPerScan().setValue(BruteForceParam.DEFAULT_THREAD_PER_SCAN);
+            getSpinnerThreadsPerScan().setValue(Constants.getDefaultThreadCount());
             getCheckBoxRecursive().setSelected(BruteForceParam.DEFAULT_RECURSIVE);
             getCheckBoxBrowseFiles().setSelected(BruteForceParam.DEFAULT_BROWSE_FILES);
+            getcheckBoxBrowseFilesWithoutExtension()
+                    .setSelected(BruteForceParam.DEFAULT_BROWSE_FILES_WITHOUT_EXTENSION);
             getTxtFileExtensions().setEnabled(BruteForceParam.DEFAULT_BROWSE_FILES);
             getTxtExtensionsToMiss().setText(BruteForceParam.DEFAULT_EXTENSIONS_TO_MISS);
             getTxtFailCaseString().setText(BruteForceParam.DEFAULT_FAIL_CASE_STRING);
         } else {
-            getSliderThreadsPerScan().setValue(param.getThreadPerScan());
+            getSpinnerThreadsPerScan().setValue(param.getThreadPerScan());
             getCheckBoxRecursive().setSelected(param.getRecursive());
             getDefaultFileList().setSelectedItem(param.getDefaultFile());
             getCheckBoxBrowseFiles().setSelected(param.isBrowseFiles());
+            getcheckBoxBrowseFilesWithoutExtension()
+                    .setSelected(param.isBrowseFilesWithoutExtension());
             getTxtFileExtensions().setEnabled(param.isBrowseFiles());
             getTxtFileExtensions().setText(param.getFileExtensions());
             getTxtExtensionsToMiss().setText(param.getExtensionsToMiss());
@@ -375,13 +387,15 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             param = new BruteForceParam();
             options.addParamSet(param);
         }
-        param.setThreadPerScan(getSliderThreadsPerScan().getValue());
+        param.setThreadPerScan(getSpinnerThreadsPerScan().getValue());
         param.setRecursive(getCheckBoxRecursive().isSelected());
 
         ForcedBrowseFile selectedDefaultFile =
                 (ForcedBrowseFile) getDefaultFileList().getSelectedItem();
         param.setDefaultFile(selectedDefaultFile);
         extension.setDefaultFile(selectedDefaultFile);
+
+        param.setBrowseFilesWithoutExtension(getcheckBoxBrowseFilesWithoutExtension().isSelected());
 
         param.setBrowseFiles(getCheckBoxBrowseFiles().isSelected());
         if (getTxtFileExtensions().getText() != null) {
@@ -403,32 +417,12 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
         }
     }
 
-    /**
-     * This method initializes sliderThreadsPerHost
-     *
-     * @return JSlider
-     */
-    private JSlider getSliderThreadsPerScan() {
-        if (sliderThreadsPerScan == null) {
-            sliderThreadsPerScan =
-                    new PositiveValuesSlider(
-                            BruteForceParam.DEFAULT_THREAD_PER_SCAN,
-                            BruteForceParam.MAXIMUM_THREADS_PER_SCAN);
-            sliderThreadsPerScan.setSnapToTicks(false);
-            sliderThreadsPerScan.setMinorTickSpacing(2);
-            sliderThreadsPerScan.setMajorTickSpacing(20);
-
-            sliderThreadsPerScan.addChangeListener(
-                    new ChangeListener() {
-
-                        @Override
-                        public void stateChanged(ChangeEvent e) {
-                            setThreadsLabelValue(getSliderThreadsPerScan().getValue());
-                        }
-                    });
-            setThreadsLabelValue(sliderThreadsPerScan.getValue());
+    private ZapNumberSpinner getSpinnerThreadsPerScan() {
+        if (spinnerThreadsPerScan == null) {
+            spinnerThreadsPerScan =
+                    new ZapNumberSpinner(1, Constants.getDefaultThreadCount(), Integer.MAX_VALUE);
         }
-        return sliderThreadsPerScan;
+        return spinnerThreadsPerScan;
     }
 
     private JButton getAddFileButton() {
@@ -436,75 +430,82 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             addFileButton =
                     new JButton(Constant.messages.getString(MESSAGE_PREFIX + "button.addfile"));
             addFileButton.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            JFileChooser fcCommand = new JFileChooser();
-                            fcCommand.setFileFilter(
-                                    new FileFilter() {
-                                        @Override
-                                        public String getDescription() {
-                                            return Constant.messages.getString(
-                                                    MESSAGE_PREFIX + "title");
-                                        }
-
-                                        @Override
-                                        public boolean accept(File f) {
-                                            return true;
-                                        }
-                                    });
-
-                            // Copy the file into the 'home' dirbuster directory
-                            int state = fcCommand.showOpenDialog(null);
-
-                            if (state == JFileChooser.APPROVE_OPTION) {
-                                FileCopier copier = new FileCopier();
-                                File newFile =
-                                        new File(
-                                                Constant.getInstance().DIRBUSTER_CUSTOM_DIR
-                                                        + File.separator
-                                                        + fcCommand.getSelectedFile().getName());
-                                if (newFile.exists()
-                                        || extension
-                                                .getFileNamesList()
-                                                .contains(newFile.getName())) {
-                                    View.getSingleton()
-                                            .showWarningDialog(
-                                                    Constant.messages.getString(
-                                                            "bruteforce.add.duplicate.error"));
-
-                                } else if (!newFile.getParentFile().canWrite()) {
-                                    View.getSingleton()
-                                            .showWarningDialog(
-                                                    Constant.messages.getString(
-                                                                    "bruteforce.add.dirperms.error")
-                                                            + newFile.getParentFile()
-                                                                    .getAbsolutePath());
-
-                                } else {
-                                    try {
-                                        copier.copy(fcCommand.getSelectedFile(), newFile);
-                                        // Refresh list in panel
-                                        extension.refreshFileList();
-                                        // Refresh the list in this popup
-                                        refreshFileList();
-                                        View.getSingleton()
-                                                .showMessageDialog(
-                                                        Constant.messages.getString(
-                                                                "bruteforce.add.ok"));
-                                    } catch (IOException e1) {
-                                        View.getSingleton()
-                                                .showWarningDialog(
-                                                        Constant.messages.getString(
-                                                                        "bruteforce.add.fail.error")
-                                                                + e1.getMessage());
+                    e -> {
+                        JFileChooser fcCommand = new JFileChooser();
+                        fcCommand.setFileFilter(
+                                new FileFilter() {
+                                    @Override
+                                    public String getDescription() {
+                                        return Constant.messages.getString(
+                                                MESSAGE_PREFIX + "title");
                                     }
+
+                                    @Override
+                                    public boolean accept(File f) {
+                                        return true;
+                                    }
+                                });
+
+                        // Copy the file into the 'home' dirbuster directory
+                        int state = fcCommand.showOpenDialog(null);
+
+                        if (state == JFileChooser.APPROVE_OPTION) {
+                            FileCopier copier = new FileCopier();
+                            File newFile =
+                                    new File(
+                                            Constant.getInstance().DIRBUSTER_CUSTOM_DIR
+                                                    + File.separator
+                                                    + fcCommand.getSelectedFile().getName());
+                            if (newFile.exists()
+                                    || extension.getFileNamesList().contains(newFile.getName())) {
+                                View.getSingleton()
+                                        .showWarningDialog(
+                                                Constant.messages.getString(
+                                                        "bruteforce.add.duplicate.error"));
+
+                            } else if (!newFile.getParentFile().canWrite()) {
+                                View.getSingleton()
+                                        .showWarningDialog(
+                                                Constant.messages.getString(
+                                                                "bruteforce.add.dirperms.error")
+                                                        + newFile.getParentFile()
+                                                                .getAbsolutePath());
+
+                            } else {
+                                try {
+                                    copier.copy(fcCommand.getSelectedFile(), newFile);
+                                    // Refresh list in panel
+                                    extension.refreshFileList();
+                                    // Refresh the list in this popup
+                                    refreshFileList();
+                                    View.getSingleton()
+                                            .showMessageDialog(
+                                                    Constant.messages.getString(
+                                                            "bruteforce.add.ok"));
+                                } catch (IOException e1) {
+                                    View.getSingleton()
+                                            .showWarningDialog(
+                                                    Constant.messages.getString(
+                                                                    "bruteforce.add.fail.error")
+                                                            + e1.getMessage());
                                 }
                             }
                         }
                     });
         }
         return addFileButton;
+    }
+
+    private JCheckBox getcheckBoxBrowseFilesWithoutExtension() {
+        if (checkBoxBrowseFilesWithoutExtension == null) {
+            checkBoxBrowseFilesWithoutExtension = new JCheckBox();
+            checkBoxBrowseFilesWithoutExtension.setText(
+                    Constant.messages.getString(
+                            MESSAGE_PREFIX + "label.browsefileswithoutextension"));
+            checkBoxBrowseFilesWithoutExtension.setSelected(
+                    BruteForceParam.DEFAULT_BROWSE_FILES_WITHOUT_EXTENSION);
+        }
+        return checkBoxBrowseFilesWithoutExtension;
     }
 
     private JCheckBox getCheckBoxBrowseFiles() {
@@ -514,13 +515,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
                     Constant.messages.getString(MESSAGE_PREFIX + "label.browsefiles"));
             checkBoxBrowseFiles.setSelected(BruteForceParam.DEFAULT_BROWSE_FILES);
             checkBoxBrowseFiles.addActionListener(
-                    new java.awt.event.ActionListener() {
-
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            txtFileExtensions.setEnabled(checkBoxBrowseFiles.isSelected());
-                        }
-                    });
+                    e -> txtFileExtensions.setEnabled(checkBoxBrowseFiles.isSelected()));
         }
         return checkBoxBrowseFiles;
     }
@@ -547,7 +542,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
     }
 
     public int getThreadPerScan() {
-        return this.sliderThreadsPerScan.getValue();
+        return getSpinnerThreadsPerScan().getValue();
     }
 
     public boolean getRecursive() {

@@ -20,26 +20,16 @@
 package org.zaproxy.zap.extension.quickstart;
 
 import java.net.URL;
-import java.net.UnknownHostException;
-import javax.swing.SwingUtilities;
-import org.apache.commons.httpclient.URI;
-import org.apache.commons.httpclient.URIException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
-import org.parosproxy.paros.extension.history.ExtensionHistory;
-import org.parosproxy.paros.model.HistoryReference;
-import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteNode;
-import org.parosproxy.paros.network.ConnectionParam;
-import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpSender;
-import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.zap.extension.ascan.ActiveScan;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
-import org.zaproxy.zap.extension.spider.ExtensionSpider;
-import org.zaproxy.zap.extension.spider.SpiderScan;
 import org.zaproxy.zap.model.Target;
+import org.zaproxy.zap.network.HttpRequestConfig;
+import org.zaproxy.zap.utils.Stats;
 
 public class AttackThread extends Thread {
 
@@ -56,12 +46,15 @@ public class AttackThread extends Thread {
 
     private ExtensionQuickStart extension;
     private URL url;
-    private HttpSender httpSender = null;
+    private TraditionalSpider traditionalSpider;
     private PlugableSpider plugableSpider;
     private boolean stopAttack = false;
     private boolean useStdSpider;
 
-    private static final Logger logger = Logger.getLogger(AttackThread.class);
+    private static final Logger LOGGER = LogManager.getLogger(AttackThread.class);
+
+    private static final HttpRequestConfig REQ_CONFIG =
+            HttpRequestConfig.builder().setFollowRedirects(true).build();
 
     public AttackThread(ExtensionQuickStart ext, boolean useStdSpider) {
         super("ZAP-QuickStart-AttackThread");
@@ -73,6 +66,10 @@ public class AttackThread extends Thread {
         this.url = url;
     }
 
+    public void setTraditionalSpider(TraditionalSpider traditionalSpider) {
+        this.traditionalSpider = traditionalSpider;
+    }
+
     public void setPlugableSpider(PlugableSpider plugableSpider) {
         this.plugableSpider = plugableSpider;
     }
@@ -82,49 +79,47 @@ public class AttackThread extends Thread {
         stopAttack = false;
         boolean completed = false;
         try {
+            Stats.incCounter("stats.quickstart.attack");
             extension.notifyProgress(Progress.started);
-            SiteNode startNode = this.accessNode(this.url);
+            SiteNode startNode = this.extension.accessNode(this.url, REQ_CONFIG, true);
 
             if (startNode == null) {
-                logger.debug("Failed to access URL " + url);
+                LOGGER.debug("Failed to access URL {}", url);
                 // Dont notify progress here - it will have been done where we know more about
                 // the problem
                 return;
             }
             if (stopAttack) {
-                logger.debug("Attack stopped manually");
+                LOGGER.debug("Attack stopped manually");
                 extension.notifyProgress(Progress.stopped);
                 return;
             }
             Target target = new Target(startNode);
             target.setRecurse(true);
+            if (plugableSpider != null) {
+                plugableSpider.init();
+            }
             if (this.useStdSpider) {
 
-                ExtensionSpider extSpider =
-                        (ExtensionSpider)
-                                Control.getSingleton()
-                                        .getExtensionLoader()
-                                        .getExtension(ExtensionSpider.NAME);
-                int spiderId;
-                if (extSpider == null) {
-                    logger.error("No spider");
+                if (traditionalSpider == null) {
+                    LOGGER.error("No spider");
                     extension.notifyProgress(Progress.failed);
                     return;
-                } else {
-                    extension.notifyProgress(Progress.spider);
-                    spiderId = extSpider.startScan(target.getDisplayName(), target, null, null);
                 }
+
+                extension.notifyProgress(Progress.spider);
+                TraditionalSpider.Scan spiderScan =
+                        traditionalSpider.startScan(target.getDisplayName(), target);
 
                 // Give some time to the spider to finish to setup and start itself.
                 sleep(1500);
 
                 try {
-                    SpiderScan spiderScan = extSpider.getScan(spiderId);
                     // Wait for the spider to complete
                     while (!spiderScan.isStopped()) {
                         sleep(500);
                         if (this.stopAttack) {
-                            extSpider.stopScan(spiderId);
+                            spiderScan.stopScan();
                             break;
                         }
                         extension.notifyProgress(Progress.spider, spiderScan.getProgress());
@@ -133,7 +128,7 @@ public class AttackThread extends Thread {
                     // Ignore
                 }
                 if (stopAttack) {
-                    logger.debug("Attack stopped manually");
+                    LOGGER.debug("Attack stopped manually");
                     extension.notifyProgress(Progress.stopped);
                     return;
                 }
@@ -143,7 +138,7 @@ public class AttackThread extends Thread {
             }
 
             if (stopAttack) {
-                logger.debug("Attack stopped manually");
+                LOGGER.debug("Attack stopped manually");
                 extension.notifyProgress(Progress.stopped);
                 return;
             }
@@ -175,6 +170,7 @@ public class AttackThread extends Thread {
                 // www.example.com/app1)
                 // Go up a level
                 startNode = startNode.getParent();
+                target.setStartNode(startNode);
             }
 
             ExtensionActiveScan extAscan =
@@ -184,7 +180,7 @@ public class AttackThread extends Thread {
                                     .getExtension(ExtensionActiveScan.NAME);
             int scanId;
             if (extAscan == null) {
-                logger.error("No active scanner");
+                LOGGER.error("No active scanner");
                 extension.notifyProgress(Progress.failed);
                 return;
             } else {
@@ -208,7 +204,7 @@ public class AttackThread extends Thread {
             completed = true;
 
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             extension.notifyProgress(
                     Progress.failed,
                     Constant.messages.getString(
@@ -217,114 +213,13 @@ public class AttackThread extends Thread {
             if (!completed) {
                 // Already handled
             } else if (stopAttack) {
-                logger.debug("Attack stopped manually");
+                LOGGER.debug("Attack stopped manually");
                 extension.notifyProgress(Progress.stopped);
             } else {
-                logger.debug("Attack completed");
+                LOGGER.debug("Attack completed");
                 extension.notifyProgress(Progress.complete);
             }
         }
-    }
-
-    private SiteNode accessNode(URL url) {
-        SiteNode startNode = null;
-        // Request the URL
-        try {
-            final HttpMessage msg =
-                    new HttpMessage(
-                            new URI(url.toString(), true),
-                            extension.getModel().getOptionsParam().getConnectionParam());
-            getHttpSender().sendAndReceive(msg, true);
-
-            if (msg.getResponseHeader().getStatusCode() != HttpStatusCode.OK) {
-                extension.notifyProgress(
-                        Progress.failed,
-                        Constant.messages.getString(
-                                "quickstart.progress.failed.code",
-                                msg.getResponseHeader().getStatusCode()));
-
-                return null;
-            }
-
-            if (msg.getResponseHeader().isEmpty()) {
-                extension.notifyProgress(Progress.failed);
-                return null;
-            }
-
-            ExtensionHistory extHistory =
-                    ((ExtensionHistory)
-                            Control.getSingleton()
-                                    .getExtensionLoader()
-                                    .getExtension(ExtensionHistory.NAME));
-            extHistory.addHistory(msg, HistoryReference.TYPE_PROXIED);
-
-            SwingUtilities.invokeAndWait(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            // Needs to be done on the EDT
-                            Model.getSingleton()
-                                    .getSession()
-                                    .getSiteTree()
-                                    .addPath(msg.getHistoryRef());
-                        }
-                    });
-
-            for (int i = 0; i < 10; i++) {
-                startNode =
-                        Model.getSingleton()
-                                .getSession()
-                                .getSiteTree()
-                                .findNode(new URI(url.toString(), false));
-                if (startNode != null) {
-                    break;
-                }
-                try {
-                    sleep(200);
-                } catch (InterruptedException e) {
-                    // Ignore
-                }
-            }
-        } catch (UnknownHostException e1) {
-            ConnectionParam connectionParam =
-                    Model.getSingleton().getOptionsParam().getConnectionParam();
-            if (connectionParam.isUseProxyChain()
-                    && connectionParam.getProxyChainName().equalsIgnoreCase(e1.getMessage())) {
-                extension.notifyProgress(
-                        Progress.failed,
-                        Constant.messages.getString(
-                                "quickstart.progress.failed.badhost.proxychain", e1.getMessage()));
-            } else {
-                extension.notifyProgress(
-                        Progress.failed,
-                        Constant.messages.getString(
-                                "quickstart.progress.failed.badhost", e1.getMessage()));
-            }
-        } catch (URIException e) {
-            extension.notifyProgress(
-                    Progress.failed,
-                    Constant.messages.getString(
-                            "quickstart.progress.failed.reason", e.getMessage()));
-        } catch (Exception e1) {
-            logger.error(e1.getMessage(), e1);
-            extension.notifyProgress(
-                    Progress.failed,
-                    Constant.messages.getString(
-                            "quickstart.progress.failed.reason", e1.getMessage()));
-            return null;
-        }
-        return startNode;
-    }
-
-    private HttpSender getHttpSender() {
-        if (httpSender == null) {
-            httpSender =
-                    new HttpSender(
-                            Model.getSingleton().getOptionsParam().getConnectionParam(),
-                            true,
-                            HttpSender.MANUAL_REQUEST_INITIATOR);
-        }
-        return httpSender;
     }
 
     public void stopAttack() {

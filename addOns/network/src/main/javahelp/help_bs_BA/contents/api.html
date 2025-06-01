@@ -1,0 +1,268 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>Network API</TITLE>
+</HEAD>
+<BODY>
+	<H1>Network API</H1>
+	The following operations are added to the API:
+
+	<h3>Actions</h3>
+	<ul>
+		<li>
+			addAlias (name* enabled): Adds an alias for the local servers/proxies.
+			<ul>
+				<li>name: The name of the alias.</li>
+				<li>enabled: The enabled state, true or false.</li>
+			</ul>
+		</li>
+		<li>
+			addHttpProxyExclusion (host* enabled): Adds a host to be excluded from the HTTP proxy.
+			<ul>
+				<li>host: The value of the host, a regular expression.</li>
+				<li>enabled: The enabled state, true or false.</li>
+			</ul>
+		</li>
+		<li>
+			addLocalServer (address* port* api proxy behindNat decodeResponse removeAcceptEncoding): Adds a local server/proxy.
+			<ul>
+				<li>address: The address of the local server/proxy.</li>
+				<li>port: The port of the local server/proxy.</li>
+				<li>api: If the ZAP API is available, true or false.</li>
+				<li>proxy: If the local server should proxy, true or false.</li>
+				<li>behindNat: If the local server is behind NAT, true or false.</li>
+				<li>decodeResponse: If the response should be decoded, true or false.</li>
+				<li>removeAcceptEncoding: If the request header Accept-Encoding should be removed, true or false.</li>
+			</ul>
+		</li>
+		<li>
+			addPassThrough (authority* enabled): Adds an authority to pass-through the local proxies.
+			<ul>
+				<li>authority: The value of the authority, can be a regular expression.</li>
+				<li>enabled: The enabled state, true or false.</li>
+			</ul>
+		</li>
+		<li>
+			addPkcs12ClientCertificate (filePath* password* index): Adds a client certificate contained in a PKCS#12 file, the certificate is automatically set as active and used.
+			<ul>
+				<li>filePath: The file path.</li>
+				<li>password: The password for the file.</li>
+				<li>index: The index of the certificate in the file, defaults to 0.</li>
+			</ul>
+		</li>
+		<li>
+			addRateLimitRule (description* enabled* matchRegex matchString requestsPerSecond* groupBy*): Adds a rule to the rate limiter.
+			<ul>
+				<li>description: A description that allows you to identify the rule. Each rule must have a unique description.</li>
+				<li>enabled: The enabled state, true or false.</li>
+				<li>matchRegex: Determines if matchString is a regular expression or a plain string: true or false.</li>
+				<li>matchString: A plain string match is handled based on DNS conventions. If the string has one or two components. If matchRegex is true, this is a regular expression.</li>
+				<li>requestsPerSecond: The maximum number of requests per second.</li>
+				<li>groupBy: How to group hosts when applying rate limiting: rule or host</li>
+			</ul>
+		</li>
+		<li>generateRootCaCert: Generates a new Root CA certificate, used to issue server certificates.</li>
+		<li>importRootCaCert (filePath*): Imports a Root CA certificate to be used to issue server certificates.
+			<ul>
+				<li>filePath: The file system path to the PEM file, containing the certificate and private key.</li>
+			</ul>
+		</li>
+		<li>
+			removeAlias (name*): Removes an alias.
+			<ul>
+				<li>name: The name of the alias.</li>
+			</ul>
+		</li>
+		<li>
+			removeHttpProxyExclusion (host*): Removes an HTTP proxy exclusion.
+			<ul>
+				<li>host: The value of the host.</li>
+			</ul>
+		</li>
+		<li>
+			removeLocalServer (address* port*): Removes a local server/proxy.
+			<ul>
+				<li>address: The address of the local server/proxy.</li>
+				<li>port: The port of the local server/proxy.</li>
+			</ul>
+		</li>
+		<li>
+			removePassThrough (authority*):  Removes a pass-through.
+			<ul>
+				<li>authority: The value of the authority.</li>
+			</ul>
+		</li>
+		<li>
+			removeRateLimitRule (description*):  Removes a rule from the rate limiter.
+			<ul>
+				<li>description: The description of the rule.</li>
+			</ul>
+		</li>
+		<li>
+			setAliasEnabled (name* enabled): Sets whether or not an alias is enabled.
+			<ul>
+				<li>name: The name of the alias.</li>
+				<li>enabled: The enabled state, true or false.</li>
+			</ul>
+		</li>
+		<li>
+			setConnectionTimeout (timeout*): Sets the timeout, for reads and connects.
+			<ul>
+				<li>timeout: The timeout, in seconds.</li>
+			</ul>
+		</li>
+		<li>
+			setDefaultUserAgent (userAgent*): Sets the default user-agent.
+			<ul>
+				<li>userAgent: The default user-agent.</li>
+			</ul>
+		</li>
+		<li>
+			setDnsTtlSuccessfulQueries (ttl*): Sets the TTL of successful DNS queries.
+			<ul>
+				<li>ttl: The TTL, in seconds. Negative number, cache forever. Zero, disables caching. Positive number, the number of seconds the successful DNS queries will be cached.</li>
+			</ul>
+		</li>
+		<li>
+			setHttpProxy (host* port* realm username password): Sets the HTTP proxy configuration.
+			<ul>
+				<li>host: The host, name or address.</li>
+				<li>port: The port.</li>
+				<li>realm: The authentication realm.</li>
+				<li>username: The user name.</li>
+				<li>password: The password.</li>
+			</ul>
+		</li>
+		<li>
+			setHttpProxyAuthEnabled (enabled*): Sets whether or not the HTTP proxy authentication is enabled.
+			<ul>
+				<li>enabled: The enabled state, true or false.</li>
+			</ul>
+		</li>
+		<li>
+			setHttpProxyEnabled (enabled*): Sets whether or not the HTTP proxy is enabled.
+			<ul>
+				<li>enabled: The enabled state, true or false.</li>
+			</ul>
+		</li>
+		<li>
+			setHttpProxyExclusionEnabled (host* enabled*): Sets whether or not an HTTP proxy exclusion is enabled.
+			<ul>
+				<li>host: The value of the host.</li>
+				<li>enabled: The enabled state, true or false.</li>
+			</ul>
+		</li>
+		<li>
+			setPassThroughEnabled (authority* enabled): Sets whether or not a pass-through is enabled.
+			<ul>
+				<li>authority: The value of the authority.</li>
+				<li>enabled: The enabled state, true or false.</li>
+			</ul>
+		</li>
+		<li>
+			setRateLimitRuleEnabled (description*, enabled*): Set enabled state for a rate limit rule.
+			<ul>
+				<li>description: The description of the rule.</li>
+				<li>enabled: The enabled state, true or false.</li>
+			</ul>
+		</li>
+		<li>
+			setRootCaCertValidity (validity*): Sets the Root CA certificate validity. Used when generating a new Root CA certificate.
+			<ul>
+				<li>validity: The number of days that the generated Root CA certificate will be valid for.</li>
+			</ul>
+		</li>
+		<li>
+			setServerCertValidity (validity*): Sets the server certificate validity. Used when generating server certificates.
+			<ul>
+				<li>validity: The number of days that the generated server certificates will be valid for.</li>
+			</ul>
+		</li>
+		<li>
+			setSocksProxy (host* port* version useDns username password): Sets the SOCKS proxy configuration.
+			<ul>
+				<li>host: The host, name or address.</li>
+				<li>port: The port.</li>
+				<li>version: The SOCKS version.</li>
+				<li>useDns: If the names should be resolved by the SOCKS proxy, true or false.</li>
+				<li>username: The user name.</li>
+				<li>password: The password.</li>
+			</ul>
+		</li>
+		<li>
+			setSocksProxyEnabled (enabled*): Sets whether or not the SOCKS proxy is enabled.
+			<ul>
+				<li>enabled: The enabled state, true or false.</li>
+			</ul>
+		</li>
+		<li>
+			setUseClientCertificate (use*): Sets whether or not to use the active client certificate.
+			<ul>
+				<li>use: The use state, true or false.</li>
+			</ul>
+		</li>
+		<li>
+			setUseGlobalHttpState (use*): Sets whether or not to use the global HTTP state.
+			<ul>
+				<li>use: The use state, true or false.</li>
+			</ul>
+		</li>
+	</ul>
+
+	<h3>Views</h3>
+	<ul>
+		<li>getAliases: Gets the aliases used to identify the local servers/proxies.</li>
+		<li>getConnectionTimeout: Gets the connection timeout, in seconds.</li>
+		<li>getDefaultUserAgent: Gets the default user-agent.</li>
+		<li>getDnsTtlSuccessfulQueries: Gets the TTL (in seconds) of successful DNS queries.</li>
+		<li>getHttpProxy: Gets the HTTP proxy.</li>
+		<li>getHttpProxyExclusions: Gets the HTTP proxy exclusions.</li>
+		<li>getLocalServers: Gets the local servers/proxies.</li>
+		<li>getPassThroughs: Gets the authorities that will pass-through the local proxies.</li>
+		<li>getRateLimitRules: Gets the rate limit rules.</li>
+		<li>getRootCaCertValidity: Gets the Root CA certificate validity, in days. Used when generating a new Root CA certificate.</li>
+		<li>getServerCertValidity:  Gets the server certificate validity, in days. Used when generating server certificates.</li>
+		<li>getSocksProxy: Gets the SOCKS proxy.</li>
+		<li>isHttpProxyAuthEnabled: Tells whether or not the HTTP proxy authentication is enabled.</li>
+		<li>isHttpProxyEnabled: Tells whether or not the HTTP proxy is enabled.</li>
+		<li>isSocksProxyEnabled: Tells whether or not the SOCKS proxy is enabled.</li>
+		<li>isUseGlobalHttpState: Tells whether or not to use global HTTP state.</li>
+	</ul>
+
+	<h3>Other</h3>
+	<ul>
+		<li>
+			proxy.pac: Provides a PAC file, proxying through the main proxy.
+		</li>
+		<li>rootCaCert: Gets the Root CA certificate used to issue server certificates. Suitable to import into client applications (e.g. browsers).</li>
+		<li>
+			setProxy (proxy*): Sets the HTTP proxy configuration.
+			<ul>
+				<li>proxy: The JSON object containing the HTTP proxy configuration.</li>
+			</ul>
+		</li>
+	</ul>
+
+	<h3>Shortcuts</h3>
+	<ul>
+		<li>proxy.pac: Provides a PAC file, proxying through the main proxy.</li>
+		<li>
+			setproxy: Sets the HTTP proxy configuration.
+			<ul>
+				<li>Request body: The JSON object containing the HTTP proxy configuration.</li>
+			</ul>
+		</li>
+	</ul>
+
+	<H2>See also</H2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="network.html">Network</a></td>
+			<td>the introduction to Network add-on</td>
+		</tr>
+	</table>
+
+</BODY>
+</HTML>

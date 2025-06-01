@@ -1,0 +1,14 @@
+name: Authentication Report - JSON
+format: JSON
+mode: TEXT
+extension: json
+sections:
+ - summary
+ - afenv
+ - statistics
+ - diagnostics
+ - diagnosticsmessages
+ - diagnosticsscreenshots
+ - diagnosticswebelements
+ - diagnosticslocalstorage
+ - diagnosticssessionstorage

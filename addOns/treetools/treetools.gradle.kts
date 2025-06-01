@@ -1,12 +1,10 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "8"
 description = "Tools to add functionality to the tree view."
 
 zapAddOn {
     addOnName.set("TreeTools")
     addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.5.0")
 
     manifest {
         author.set("Carl Sampson")
@@ -16,5 +14,11 @@ zapAddOn {
             baseName.set("help%LC%.helpset")
             localeToken.set("%LC%")
         }
+    }
+}
+
+crowdin {
+    configuration {
+        tokens.put("%helpPath%", "")
     }
 }

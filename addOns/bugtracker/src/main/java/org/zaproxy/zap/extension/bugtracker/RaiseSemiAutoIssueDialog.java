@@ -21,8 +21,6 @@ package org.zaproxy.zap.extension.bugtracker;
 
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -31,6 +29,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
+@SuppressWarnings("serial")
 public class RaiseSemiAutoIssueDialog extends StandardFieldsDialog {
 
     private static final long serialVersionUID = -3223449799557586758L;
@@ -44,9 +43,7 @@ public class RaiseSemiAutoIssueDialog extends StandardFieldsDialog {
     public RaiseSemiAutoIssueDialog(ExtensionBugTracker ext, Frame owner, Dimension dim) {
         super(owner, "bugtracker.dialog.semi.title", dim);
         this.extension = ext;
-        this.alerts = ext.alerts;
         bugTrackers = extension.getBugTrackers();
-        initialize();
     }
 
     public void setAlert(Set<Alert> alerts) {
@@ -63,7 +60,7 @@ public class RaiseSemiAutoIssueDialog extends StandardFieldsDialog {
     }
 
     public void addTrackerList(String value) {
-        List<String> trackerNames = new ArrayList<String>();
+        List<String> trackerNames = new ArrayList<>();
         for (BugTracker bugTracker : bugTrackers) {
             trackerNames.add(bugTracker.getName());
         }
@@ -72,14 +69,7 @@ public class RaiseSemiAutoIssueDialog extends StandardFieldsDialog {
             bugTracker.setDialog(this);
             bugTracker.setDetails(alerts);
         }
-        this.addFieldListener(
-                FIELD_TRACKER_LIST,
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        updateTrackerFields();
-                    }
-                });
+        this.addFieldListener(FIELD_TRACKER_LIST, e -> updateTrackerFields());
     }
 
     public void updateTrackerFields() {
@@ -111,5 +101,6 @@ public class RaiseSemiAutoIssueDialog extends StandardFieldsDialog {
         return null;
     }
 
+    @Override
     public void save() {}
 }

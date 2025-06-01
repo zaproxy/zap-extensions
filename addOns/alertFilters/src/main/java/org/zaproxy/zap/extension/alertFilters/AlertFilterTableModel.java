@@ -26,6 +26,7 @@ import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.view.AbstractMultipleOptionsTableModel;
 
 /** A table model for holding a set of AlertFilter, for a {@link Context}. */
+@SuppressWarnings("serial")
 public class AlertFilterTableModel extends AbstractMultipleOptionsTableModel<AlertFilter> {
 
     /** The Constant defining the table column names. */
@@ -77,7 +78,7 @@ public class AlertFilterTableModel extends AbstractMultipleOptionsTableModel<Ale
             case 0:
                 return af.isEnabled();
             case 1:
-                return ExtensionAlertFilters.getRuleNameForId(af.getRuleId());
+                return ExtensionAlertFilters.getScanRulesInfo().getNameById(af.getRuleId());
             case 2:
                 return af.getUrl();
             case 3:

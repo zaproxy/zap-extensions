@@ -25,17 +25,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
-import org.mozilla.zest.core.v1.ZestConditional;
-import org.mozilla.zest.core.v1.ZestExpression;
-import org.mozilla.zest.core.v1.ZestExpressionClientElementExists;
-import org.mozilla.zest.core.v1.ZestExpressionEquals;
-import org.mozilla.zest.core.v1.ZestExpressionIsInteger;
-import org.mozilla.zest.core.v1.ZestExpressionLength;
-import org.mozilla.zest.core.v1.ZestExpressionRegex;
-import org.mozilla.zest.core.v1.ZestExpressionResponseTime;
-import org.mozilla.zest.core.v1.ZestExpressionStatusCode;
-import org.mozilla.zest.core.v1.ZestExpressionURL;
-import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.zap.extension.script.ScriptNode;
@@ -43,7 +32,19 @@ import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
+import org.zaproxy.zest.core.v1.ZestConditional;
+import org.zaproxy.zest.core.v1.ZestExpression;
+import org.zaproxy.zest.core.v1.ZestExpressionClientElementExists;
+import org.zaproxy.zest.core.v1.ZestExpressionEquals;
+import org.zaproxy.zest.core.v1.ZestExpressionIsInteger;
+import org.zaproxy.zest.core.v1.ZestExpressionLength;
+import org.zaproxy.zest.core.v1.ZestExpressionRegex;
+import org.zaproxy.zest.core.v1.ZestExpressionResponseTime;
+import org.zaproxy.zest.core.v1.ZestExpressionStatusCode;
+import org.zaproxy.zest.core.v1.ZestExpressionURL;
+import org.zaproxy.zest.core.v1.ZestStatement;
 
+@SuppressWarnings("serial")
 public class ZestExpressionDialog extends StandardFieldsDialog implements ZestDialog {
 
     private static final String FIELD_REGEX = "zest.dialog.condition.label.regex";
@@ -124,7 +125,7 @@ public class ZestExpressionDialog extends StandardFieldsDialog implements ZestDi
             this.addTextField(FIELD_VALUE, za.getValue());
             this.addCheckBoxField(FIELD_EXACT, za.isCaseExact());
 
-            ZestZapUtils.setMainPopupMenu(this.getField(FIELD_VALUE));
+            setFieldMainPopupMenu(FIELD_VALUE);
 
         } else if (expression instanceof ZestExpressionStatusCode) {
             ZestExpressionStatusCode za = (ZestExpressionStatusCode) expression;
@@ -155,7 +156,7 @@ public class ZestExpressionDialog extends StandardFieldsDialog implements ZestDi
 
             // Pull down of all the valid window ids
             List<String> windowIds =
-                    new ArrayList<String>(script.getZestScript().getClientWindowHandles());
+                    new ArrayList<>(script.getZestScript().getClientWindowHandles());
             Collections.sort(windowIds);
             this.addComboField(
                     ZestClientElementDialog.FIELD_WINDOW_HANDLE, windowIds, zc.getWindowHandle());
@@ -171,14 +172,14 @@ public class ZestExpressionDialog extends StandardFieldsDialog implements ZestDi
                     ZestClientElementDialog.FIELD_ELEMENT_TYPE, getElementTypeFields(), clientType);
             this.addTextField(ZestClientElementDialog.FIELD_ELEMENT, zc.getElement());
 
-            ZestZapUtils.setMainPopupMenu(this.getField(ZestClientElementDialog.FIELD_ELEMENT));
+            setFieldMainPopupMenu(ZestClientElementDialog.FIELD_ELEMENT);
         }
         this.addCheckBoxField(FIELD_INVERSE, expression.isInverse());
         this.addPadding();
     }
 
     private List<String> getElementTypeFields() {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         for (String type : ZestClientElementDialog.ELEMENT_TYPES) {
             list.add(
                     Constant.messages.getString(
@@ -205,7 +206,7 @@ public class ZestExpressionDialog extends StandardFieldsDialog implements ZestDi
     }
 
     private List<String> getVariableNames() {
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         list.addAll(script.getZestScript().getVariableNames());
         Collections.sort(list);
         return list;
@@ -221,7 +222,7 @@ public class ZestExpressionDialog extends StandardFieldsDialog implements ZestDi
     }
 
     private List<String> strToList(String str) {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         for (String el : str.split("\n")) {
             if (el.length() > 0) {
                 list.add(el);

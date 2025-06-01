@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>
+OpenAPI Automation Framework Support
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Поддержка инфраструктуры автоматизации OpenAPI </H1>
+Это дополнение поддерживает Automation Framework. 
+<br><br>
+Надстройка добавит определения OpenAPI, если они будут найдены во время поиска, но рекомендуется добавлять их явно через URL-адрес или локальный файл, если они доступны. 
+<br><br>
+Параметр targetUrl работает одинаково для <a href="openapi.html">'Формата целевого URL'</a>. 
+
+<H2>Задание: openapi </H2>
+Задание openapi позволяет импортировать определения OpenAPI через URL-адрес или файл. 
+<p>
+It is covered in the video: <a href="https://youtu.be/xuP00Ri460k">ZAP Chat 11 Automation Framework Part 5 - APIs</a>.
+<pre>
+  - type: openapi                      # OpenAPI definition import
+    parameters:
+      apiFile:                         # String: Local file containing the OpenAPI definition, default: null, no definition will be imported
+      apiUrl:                          # String: URL containing the OpenAPI definition, default: null, no definition will be imported
+      context:                         # String: Context to use when importing the OpenAPI definition, default: first context.
+      user:                            # String: An optional user to use for authentication, must be defined in the env.
+      targetUrl:                       # String: URL which overrides the target defined in the definition, default: null, the target will not be overridden
+</pre>
+
+</BODY>
+</HTML>

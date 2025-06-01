@@ -6,7 +6,7 @@
 <toc version="2.0">
 	<tocitem text="دليل المستخدم" tocid="toplevelitem">
 		<tocitem text="إضافات" tocid="addons">
-			<tocitem text="شكل معالج" image="fhandler-icon" target="fhandler"/>
+			<tocitem text="Value Generator" image="fhandler-icon" target="fhandler"/>
 		</tocitem>
 	</tocitem>
 </toc>

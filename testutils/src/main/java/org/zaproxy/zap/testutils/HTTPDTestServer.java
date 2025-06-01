@@ -25,12 +25,14 @@ import java.util.List;
 
 public class HTTPDTestServer extends NanoHTTPD {
 
-    private List<NanoServerHandler> handlers = new ArrayList<NanoServerHandler>();
+    private List<NanoServerHandler> handlers = new ArrayList<>();
+    private List<String> requestedUris = new ArrayList<>();
 
     private NanoServerHandler handler404 =
             new NanoServerHandler("") {
                 @Override
                 protected Response serve(IHTTPSession session) {
+                    consumeBody(session);
                     return newFixedLengthResponse(
                             Response.Status.NOT_FOUND,
                             MIME_HTML,
@@ -42,9 +44,15 @@ public class HTTPDTestServer extends NanoHTTPD {
         super(port);
     }
 
+    public List<String> getRequestedUris() {
+        return requestedUris;
+    }
+
     @Override
     public Response serve(IHTTPSession session) {
         String uri = session.getUri();
+        requestedUris.add(uri);
+
         for (NanoServerHandler handler : handlers) {
             if (uri.startsWith(handler.getName())) {
                 return handler.serve(session);

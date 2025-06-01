@@ -1,0 +1,131 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>Spider</title>
+</head>
+<body>
+	<h1>Spider</h1>
+	<p>The Spider is a tool that is used to automatically discover new
+		resources (URLs) on a particular Site. It begins with a list of URLs
+		to visit, called the seeds, which depends on how the Spider is
+		started. The Spider then visits these URLs, it identifies all the
+		hyperlinks in the page and adds them to the list of URLs to visit and
+		the process continues recursively as long as new resources are found.
+	</p>
+
+	<p>The Spider can be configured and started using the <a href="dialog.html">Spider dialogue</a>.</p>
+
+	<p>During the processing of an URL, the Spider makes a request to
+		fetch the resource and then parses the response, identifying
+		hyperlinks. It currently has the following behavior when processing
+		types of responses:</p>
+
+	<h4>HTML</h4>
+	Processes the specific tags, identifying links to new resources:
+	<ul>
+		<li>Base - Proper handling</li>
+		<li>A, Link, Area, Base - 'href' attribute</li>
+		<li>Applet, Audio, Embed, Frame, IFrame, Input, Script, Img, Video - 'src' attribute</li>
+		<li>Blockquote - 'cite' attribute</li>
+		<li>Meta - 'http-equiv' for 'location', 'refresh' and 'Content-Security-Policy', 'name' for 'msapplication-config'</li>
+		<li>Applet - 'codebase', 'archive' attributes</li>
+		<li>Img - 'longdesc', 'lowsrc', 'dynsrc', 'srcset' attributes</li>
+		<li>Isindex - 'action' attribute</li>
+		<li>Object - 'codebase', 'data' attributes</li>
+		<li>Param - 'value' attribute</li>
+		<li>Svg - 'href' and 'xlink:href' attributes of 'image' and 'script' elements</li>
+		<li>Table - 'background' attribute</li>
+		<li>Video - 'poster' attribute</li>
+		<li>Form - proper handling of Forms with both GET and POST
+			method. The fields values are generated validly, including <a
+			href="http://www.w3schools.com/html5/html5_form_input_types.asp">HTML
+				5.0 input types</a> 'form', 'formaction', 'formmethod' attributes of buttons
+			are also respected.
+		</li>
+		<li>Comments - Valid tags found in comments are also analyzed, if
+			specified in the <a href="options.html">Options
+				Spider screen</a>
+		</li>
+		<li>Import - 'implementation' attribute</li>
+		<li>Inline string - 'p', 'title', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', and 'blockquote' tags</li>
+	</ul>
+
+	<h4>Robots.txt file</h4>
+	If set in the
+	<a href="options.html">Options Spider
+		screen</a>, it also analyzes the 'Robots.txt' file and tries to identify
+	new resources using the specified rules. It has to be mentioned that
+	the Spider does not follow the rules specified in the 'Robots.txt'
+	file.
+
+	<h4>sitemap.xml file</h4>
+	If set in the <a href="options.html">Options Spider screen</a>, 
+	the Spider also analyzes the 'sitemap.xml' file and tries to identify
+	new resources.
+
+	<h4>SVN metadata files</h4>
+	If set in the <a href="options.html">Options Spider screen</a>,
+	the Spider should also parse SVN metadata files and tries to 
+	identify new resources.
+	
+	<h4>Git metadata files</h4>
+	If set in the <a href="options.html">Options Spider screen</a>,
+	the Spider should also parse Git metadata files and tries to 
+	identify new resources.
+
+	<h4>.DS_Store files</h4>
+	If set in the <a href="options.html">Options Spider screen</a>,
+	the Spider should also parse .DS_Store files and tries to 
+	identify new resources.
+
+	<h4>OData Atom Format</h4>
+	OData content using the Atom format is currently supported. All included links 
+	(relative or absolute) are processed.
+
+	<h4>SVG Files</H4>
+	SVG image files are parsed to identify HREF attributes and extract/resolve any contained links.
+
+	<h4>Non-HTML Text Response</h4>
+	Text responses are parsed scanning for the URL pattern
+
+	<h4>Non-Text Response</h4>
+	Currently, the Spider does not process this type of resources.
+
+	<h2>Other Aspects</h2>
+	<ul>
+	<li> When checking if an URL was already visited, the behaviour regarding how
+	parameters are handled can be configured on the Spider Options screen.
+	</li>
+	<li> When checking if an URL was already visited, there are a few common parameters
+	which are ignored: jsessionid, phpsessid, aspsessionid, utm_*
+	</li>
+	<li> The Spider's behaviour regarding cookies depends on how the Spider is started and which options are enabled. For more
+	details refer to the Spider Options screen.
+	</li>
+	</ul>
+	<p>
+		The spider is configured using the <a
+			href="options.html">Spider Options screen</a>.
+	</p>
+
+	<h2>See also</h2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="options.html">Spider
+					Options screen</a></td>
+			<td>for an overview of the Spider Options</td>
+		</tr>
+	</table>
+
+<H2>Official Videos</H2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+<td><a href="https://play.sonatype.com/watch/rLq2nvgbuGwVn2BX9gA8r2">ZAP In Ten: Explore Your Applications</a> (10:36)</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+<td><a href="https://youtu.be/mz2nhYpU-sw">ZAP Deep Dive: Exploring Applications: Standard Spider</a> (34:35)</td></tr>
+</table>
+
+</body>
+</html>

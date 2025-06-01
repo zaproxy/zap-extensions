@@ -19,10 +19,6 @@
  */
 package org.zaproxy.zap.extension.groovy;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.swing.ImageIcon;
 import org.parosproxy.paros.Constant;
@@ -38,13 +34,10 @@ public class ExtensionGroovy extends ExtensionAdaptor {
     public static final String NAME = "ExtensionGroovy";
     public static final int EXTENSION_ORDER = 83;
     public static final ImageIcon GROOVY_ICON;
-    private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES;
+    private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES =
+            List.of(ExtensionScript.class);
 
     static {
-        List<Class<? extends Extension>> dependencies = new ArrayList<>(1);
-        dependencies.add(ExtensionScript.class);
-        EXTENSION_DEPENDENCIES = Collections.unmodifiableList(dependencies);
-
         GROOVY_ICON =
                 View.isInitialised()
                         ? new ImageIcon(
@@ -90,11 +83,6 @@ public class ExtensionGroovy extends ExtensionAdaptor {
     }
 
     @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
-    }
-
-    @Override
     public String getUIName() {
         return Constant.messages.getString("groovy.name");
     }
@@ -102,15 +90,6 @@ public class ExtensionGroovy extends ExtensionAdaptor {
     @Override
     public String getDescription() {
         return Constant.messages.getString("groovy.desc");
-    }
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_HOMEPAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
     }
 
     @Override

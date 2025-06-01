@@ -55,6 +55,7 @@ public class BinaryRankTestFor6x8Matrices extends Base {
 	/**
 	 * @see com.fasteasytrade.JRandTest.Tests.Base#help()
 	 */
+	@Override
 	public void help() {
 		puts("\n\t|-------------------------------------------------------------|");
 		puts("\t|This is the BINARY RANK TEST for 6x8 matrices.  From each of |");
@@ -71,6 +72,7 @@ public class BinaryRankTestFor6x8Matrices extends Base {
 	/**
 	 * @see com.fasteasytrade.JRandTest.Tests.Base#test(java.lang.String)
 	 */
+	@Override
 	public void test(String filename) throws Exception {
 
 		setParameters();

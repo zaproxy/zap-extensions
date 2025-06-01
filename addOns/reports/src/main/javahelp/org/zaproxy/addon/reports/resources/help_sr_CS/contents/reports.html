@@ -1,0 +1,144 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>Report Generation</TITLE>
+</HEAD>
+<BODY>
+	<H1>Report Generation</H1>
+	This add-on allows you to generate a
+	<a href="templates.html">variety of reports</a> in a flexible and
+	extensible way.
+	<p>It provides a dialog that can be accessed via menu "Report /
+		Generate Report..." menu item or via the "Generate Report..." toolbar
+		button.</p>
+	<p>
+		It also supports the <a href="automation.html">Automation
+			Framework</a>.
+
+	</p>
+	<H1>Generate Report Dialog</H1>
+
+	<H2>Scope Fields</H2>
+	The Scope tab has the following fields:
+
+	<H3>Report Title</H3>
+	The title that will be used in the report.
+
+	<H3>Report Name</H3>
+	The filename that will be used for the report. This name can include
+	the following patterns:
+	<ul>
+		<li><code>{{</code><i>date/time pattern</i> <code>}}</code> Any
+			Java Date/Time pattern, e.g. <code>yyyy-MM-dd</code></li>
+		<li><code>[[site]]</code> The name of the first site selected</li>
+	</ul>
+	The name will be automatically updated with the site selected and
+	extension for the report type.
+	<p>To change the default name used change the 'Report Name Pattern'
+
+	</p>
+	<H3>Report Directory</H3>
+	The directory into which the report will be written. This directory
+	will be selected when the dialog is next opened.
+
+	<H3>Description</H3>
+	The description that will be included in the report.
+
+	<H3>Contexts</H3>
+	A list of all of the Contexts currently available. Select one or more
+	to only include alerts and other information from those contexts in the
+	report. You can use the shift or control keys to select and unselect
+	more than one context.
+	<p>By default all contexts will be included.</p>
+	<H3>Sites</H3>
+	A list of all of the Sites currently available. Select one or more to
+	only include alerts and other information from those sites in the
+	report. You can use the shift or control keys to select and unselect
+	more than one site.
+	<p>By default all sites will be included.</p>
+	<p>If you select sites that are not in the contexts that you have
+		also selected then no data will be included in the report.</p>
+	<H3>Generate If No Alerts</H3>
+	By default the dialog will prevent you from generating a report with no
+	alerts. Select this check box if you do want to generate a report with
+	no alerts.
+
+	<H3>Display Report</H3>
+	If selected then ZAP will attempt to open the report using the default
+	program used by your operating system for that report type.
+
+	<H2>Template Fields</H2>
+	The Template tab has the following fields:
+
+	<H3>Template</H3>
+	A pulldown containing all of the available templates. The template
+	names include the format that they will be generated in, e.g. HTML, MD,
+	PDF etc.
+
+	<H3>Theme</H3>
+	Templates may optionally define 'themes' - typically different colours
+	and styles which apply to the same content. If any themes are defined
+	for the selected template then you can select them here.
+
+	<H3>Sections</H3>
+	Templates may optionally define 'sections' - parts of the report which
+	can be included or excluded. If the selected template defines sections
+	then a checkbox for each section will be displayed here. By default all
+	checkboxes will be selected. If you unselect any of the sections then
+	they will not be included in the report.
+
+	<H2>Filter Fields</H2>
+	The Filter tab has the following fields:
+
+	<H3>Include Risks</H3>
+	Include alerts with the selected risks.
+
+	<H3>Include Confidences</H3>
+	Include alerts with the selected confidences.
+
+	<H2>Options Fields</H2>
+	The Options tab has the following fields:
+
+	<H3>Report Name Pattern</H3>
+	The pattern that will be used to generate the report name.
+
+	<H3>Template Directory</H3>
+	The directory from which templates will be loaded. You should not
+	typically need to change unless you are designing new reports, in which
+	case it can be useful to change to point to your local source code
+	reports directory. The "reports" folder in your ZAP home directory is
+	used by default.
+
+	<H2>See also</H2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="templates.html">Templates</a></td>
+			<td>for details of the templates currently available</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="create.html">Creating Reports</a></td>
+			<td>for details on how to create and edit your own reports</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="automation.html">Report Generation Automation
+					Framework Support</a></td>
+			<td>for more details about the Automation Framework Support</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="api.html">Report Generation API</a></td>
+			<td>for more details about the Reports API</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="about.html">About</a></td>
+			<td>for more details of this add-on</td>
+		</tr>
+	</table>
+
+</BODY>
+</HTML>
+

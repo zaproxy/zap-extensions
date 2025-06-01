@@ -1,10 +1,10 @@
+import org.zaproxy.gradle.addon.AddOnPlugin
 import org.zaproxy.gradle.addon.AddOnStatus
 import org.zaproxy.gradle.tasks.ProcessSvnDiggerFiles
 
-version = "4"
 description = "SVN Digger files which can be used with ZAP forced browsing"
 
-val svndiggerDir = file("$buildDir/zapAddOn/homeFiles/")
+val svndiggerDir = layout.buildDirectory.dir("zapAddOn/homeFiles/")
 val processFiles by tasks.registering(ProcessSvnDiggerFiles::class) {
     outputDir.set(svndiggerDir)
 }
@@ -12,7 +12,6 @@ val processFiles by tasks.registering(ProcessSvnDiggerFiles::class) {
 zapAddOn {
     addOnName.set("SVN Digger Files")
     addOnStatus.set(AddOnStatus.RELEASE)
-    zapVersion.set("2.5.0")
 
     manifest {
         author.set("ZAP Dev Team")
@@ -23,6 +22,17 @@ zapAddOn {
             baseName.set("help%LC%.helpset")
             localeToken.set("%LC%")
         }
+    }
+}
+
+tasks.named(AddOnPlugin.GENERATE_MANIFEST_TASK_NAME) {
+    dependsOn(processFiles)
+}
+
+crowdin {
+    configuration {
+        file.set(file("$rootDir/gradle/crowdin-help-only.yml"))
+        tokens.put("%helpPath%", "")
     }
 }
 

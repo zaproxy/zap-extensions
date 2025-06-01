@@ -1,5 +1,5 @@
 {
-  "about": "This is a Zest script. For more details about Zest visit https://developer.mozilla.org/en-US/docs/Zest",
+  "about": "This is a Zest script. For more details about Zest visit https://github.com/zaproxy/zest/",
   "zestVersion": "0.3",
   "title": "Replace in request body.zst",
   "description": "Change the \u0027assign\u0027 statement to match your required \u0027original\u0027 and \u0027replacement\u0027 strings.",

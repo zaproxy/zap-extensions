@@ -19,89 +19,95 @@
  */
 package org.zaproxy.zap.extension.zest;
 
-import java.awt.Component;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.apache.log4j.Logger;
-import org.mozilla.zest.core.v1.ZestActionFail;
-import org.mozilla.zest.core.v1.ZestActionGlobalVariableRemove;
-import org.mozilla.zest.core.v1.ZestActionGlobalVariableSet;
-import org.mozilla.zest.core.v1.ZestActionIntercept;
-import org.mozilla.zest.core.v1.ZestActionInvoke;
-import org.mozilla.zest.core.v1.ZestActionPrint;
-import org.mozilla.zest.core.v1.ZestActionScan;
-import org.mozilla.zest.core.v1.ZestActionSleep;
-import org.mozilla.zest.core.v1.ZestAssertion;
-import org.mozilla.zest.core.v1.ZestAssignCalc;
-import org.mozilla.zest.core.v1.ZestAssignFieldValue;
-import org.mozilla.zest.core.v1.ZestAssignFromElement;
-import org.mozilla.zest.core.v1.ZestAssignGlobalVariable;
-import org.mozilla.zest.core.v1.ZestAssignRandomInteger;
-import org.mozilla.zest.core.v1.ZestAssignRegexDelimiters;
-import org.mozilla.zest.core.v1.ZestAssignReplace;
-import org.mozilla.zest.core.v1.ZestAssignString;
-import org.mozilla.zest.core.v1.ZestAssignStringDelimiters;
-import org.mozilla.zest.core.v1.ZestClientAssignCookie;
-import org.mozilla.zest.core.v1.ZestClientElementAssign;
-import org.mozilla.zest.core.v1.ZestClientElementClear;
-import org.mozilla.zest.core.v1.ZestClientElementClick;
-import org.mozilla.zest.core.v1.ZestClientElementSendKeys;
-import org.mozilla.zest.core.v1.ZestClientElementSubmit;
-import org.mozilla.zest.core.v1.ZestClientLaunch;
-import org.mozilla.zest.core.v1.ZestClientSwitchToFrame;
-import org.mozilla.zest.core.v1.ZestClientWindowClose;
-import org.mozilla.zest.core.v1.ZestClientWindowHandle;
-import org.mozilla.zest.core.v1.ZestClientWindowOpenUrl;
-import org.mozilla.zest.core.v1.ZestComment;
-import org.mozilla.zest.core.v1.ZestConditional;
-import org.mozilla.zest.core.v1.ZestControlLoopBreak;
-import org.mozilla.zest.core.v1.ZestControlLoopNext;
-import org.mozilla.zest.core.v1.ZestControlReturn;
-import org.mozilla.zest.core.v1.ZestElement;
-import org.mozilla.zest.core.v1.ZestExpressionAnd;
-import org.mozilla.zest.core.v1.ZestExpressionClientElementExists;
-import org.mozilla.zest.core.v1.ZestExpressionEquals;
-import org.mozilla.zest.core.v1.ZestExpressionIsInteger;
-import org.mozilla.zest.core.v1.ZestExpressionLength;
-import org.mozilla.zest.core.v1.ZestExpressionOr;
-import org.mozilla.zest.core.v1.ZestExpressionRegex;
-import org.mozilla.zest.core.v1.ZestExpressionResponseTime;
-import org.mozilla.zest.core.v1.ZestExpressionStatusCode;
-import org.mozilla.zest.core.v1.ZestExpressionURL;
-import org.mozilla.zest.core.v1.ZestLoopClientElements;
-import org.mozilla.zest.core.v1.ZestLoopFile;
-import org.mozilla.zest.core.v1.ZestLoopInteger;
-import org.mozilla.zest.core.v1.ZestLoopRegex;
-import org.mozilla.zest.core.v1.ZestLoopString;
-import org.mozilla.zest.core.v1.ZestRequest;
-import org.mozilla.zest.core.v1.ZestResponse;
-import org.mozilla.zest.core.v1.ZestRuntime;
-import org.mozilla.zest.core.v1.ZestScript;
-import org.mozilla.zest.core.v1.ZestStatement;
-import org.mozilla.zest.core.v1.ZestVariables;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
-import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.script.ScriptNode;
+import org.zaproxy.zest.core.v1.ZestActionFail;
+import org.zaproxy.zest.core.v1.ZestActionGlobalVariableRemove;
+import org.zaproxy.zest.core.v1.ZestActionGlobalVariableSet;
+import org.zaproxy.zest.core.v1.ZestActionIntercept;
+import org.zaproxy.zest.core.v1.ZestActionInvoke;
+import org.zaproxy.zest.core.v1.ZestActionPrint;
+import org.zaproxy.zest.core.v1.ZestActionScan;
+import org.zaproxy.zest.core.v1.ZestActionSleep;
+import org.zaproxy.zest.core.v1.ZestAssertion;
+import org.zaproxy.zest.core.v1.ZestAssignCalc;
+import org.zaproxy.zest.core.v1.ZestAssignFieldValue;
+import org.zaproxy.zest.core.v1.ZestAssignFromElement;
+import org.zaproxy.zest.core.v1.ZestAssignGlobalVariable;
+import org.zaproxy.zest.core.v1.ZestAssignRandomInteger;
+import org.zaproxy.zest.core.v1.ZestAssignRegexDelimiters;
+import org.zaproxy.zest.core.v1.ZestAssignReplace;
+import org.zaproxy.zest.core.v1.ZestAssignString;
+import org.zaproxy.zest.core.v1.ZestAssignStringDelimiters;
+import org.zaproxy.zest.core.v1.ZestClientAssignCookie;
+import org.zaproxy.zest.core.v1.ZestClientElementAssign;
+import org.zaproxy.zest.core.v1.ZestClientElementClear;
+import org.zaproxy.zest.core.v1.ZestClientElementClick;
+import org.zaproxy.zest.core.v1.ZestClientElementMouseOver;
+import org.zaproxy.zest.core.v1.ZestClientElementScroll;
+import org.zaproxy.zest.core.v1.ZestClientElementScrollTo;
+import org.zaproxy.zest.core.v1.ZestClientElementSendKeys;
+import org.zaproxy.zest.core.v1.ZestClientElementSubmit;
+import org.zaproxy.zest.core.v1.ZestClientLaunch;
+import org.zaproxy.zest.core.v1.ZestClientScreenshot;
+import org.zaproxy.zest.core.v1.ZestClientSwitchToFrame;
+import org.zaproxy.zest.core.v1.ZestClientWindowClose;
+import org.zaproxy.zest.core.v1.ZestClientWindowHandle;
+import org.zaproxy.zest.core.v1.ZestClientWindowOpenUrl;
+import org.zaproxy.zest.core.v1.ZestClientWindowResize;
+import org.zaproxy.zest.core.v1.ZestComment;
+import org.zaproxy.zest.core.v1.ZestConditional;
+import org.zaproxy.zest.core.v1.ZestControlLoopBreak;
+import org.zaproxy.zest.core.v1.ZestControlLoopNext;
+import org.zaproxy.zest.core.v1.ZestControlReturn;
+import org.zaproxy.zest.core.v1.ZestElement;
+import org.zaproxy.zest.core.v1.ZestExpressionAnd;
+import org.zaproxy.zest.core.v1.ZestExpressionClientElementExists;
+import org.zaproxy.zest.core.v1.ZestExpressionEquals;
+import org.zaproxy.zest.core.v1.ZestExpressionIsInteger;
+import org.zaproxy.zest.core.v1.ZestExpressionLength;
+import org.zaproxy.zest.core.v1.ZestExpressionOr;
+import org.zaproxy.zest.core.v1.ZestExpressionRegex;
+import org.zaproxy.zest.core.v1.ZestExpressionResponseTime;
+import org.zaproxy.zest.core.v1.ZestExpressionStatusCode;
+import org.zaproxy.zest.core.v1.ZestExpressionURL;
+import org.zaproxy.zest.core.v1.ZestLoopClientElements;
+import org.zaproxy.zest.core.v1.ZestLoopFile;
+import org.zaproxy.zest.core.v1.ZestLoopInteger;
+import org.zaproxy.zest.core.v1.ZestLoopRegex;
+import org.zaproxy.zest.core.v1.ZestLoopString;
+import org.zaproxy.zest.core.v1.ZestRequest;
+import org.zaproxy.zest.core.v1.ZestResponse;
+import org.zaproxy.zest.core.v1.ZestRuntime;
+import org.zaproxy.zest.core.v1.ZestScript;
+import org.zaproxy.zest.core.v1.ZestStatement;
+import org.zaproxy.zest.core.v1.ZestVariables;
 
 public class ZestZapUtils {
 
     private static final String ZEST_VAR_VALID_CHRS = "-:.";
 
-    private static final Logger log = Logger.getLogger(ZestZapUtils.class);
+    private static final Logger LOGGER = LogManager.getLogger(ZestZapUtils.class);
 
     /**
      * A map to convert labels to calc operations.
@@ -131,7 +137,7 @@ public class ZestZapUtils {
 
         if (za instanceof ZestScript) {
             ZestScript zs = (ZestScript) za;
-            return indexStr + Constant.messages.getString("zest.element.script", zs.getTitle());
+            return indexStr + zs.getTitle();
         } else if (za instanceof ZestRequest) {
             ZestRequest zr = (ZestRequest) za;
             if (zr.getUrl() != null) {
@@ -145,8 +151,7 @@ public class ZestZapUtils {
             }
         } else if (za instanceof ZestResponse) {
             ZestResponse zr = (ZestResponse) za;
-            return indexStr
-                    + Constant.messages.getString("zest.element.response", zr.getStatusCode());
+            return indexStr + zr.getStatusCode();
 
         } else if (za instanceof ZestAssertion) {
             ZestAssertion zas = (ZestAssertion) za;
@@ -323,7 +328,7 @@ public class ZestZapUtils {
         } else if (za instanceof ZestLoopString) {
             ZestLoopString zals = (ZestLoopString) za;
             if (incParams) {
-                // Build up a list of the linitial values
+                // Build up a list of the initial values
                 StringBuilder vals = new StringBuilder();
                 for (String val : zals.getValues()) {
                     if (vals.length() > 0) {
@@ -743,6 +748,47 @@ public class ZestZapUtils {
                 return indexStr
                         + Constant.messages.getString("zest.element.clientElementClick.title");
             }
+        } else if (za instanceof ZestClientElementMouseOver) {
+            ZestClientElementMouseOver zcl = (ZestClientElementMouseOver) za;
+            if (incParams) {
+                return indexStr
+                        + Constant.messages.getString(
+                                "zest.element.clientElementMouseOver",
+                                zcl.getWindowHandle(),
+                                zcl.getType(),
+                                zcl.getElement());
+            } else {
+                return indexStr
+                        + Constant.messages.getString("zest.element.clientElementMouseOver.title");
+            }
+        } else if (za instanceof ZestClientElementScroll) {
+            ZestClientElementScroll zcl = (ZestClientElementScroll) za;
+            if (incParams) {
+                return indexStr
+                        + Constant.messages.getString(
+                                "zest.element.clientElementScroll",
+                                zcl.getWindowHandle(),
+                                zcl.getType(),
+                                zcl.getElement(),
+                                String.valueOf(zcl.getX()),
+                                String.valueOf(zcl.getY()));
+            } else {
+                return indexStr
+                        + Constant.messages.getString("zest.element.clientElementScroll.title");
+            }
+        } else if (za instanceof ZestClientElementScrollTo) {
+            ZestClientElementScrollTo zcl = (ZestClientElementScrollTo) za;
+            if (incParams) {
+                return indexStr
+                        + Constant.messages.getString(
+                                "zest.element.clientElementScrollTo",
+                                zcl.getWindowHandle(),
+                                zcl.getType(),
+                                zcl.getElement());
+            } else {
+                return indexStr
+                        + Constant.messages.getString("zest.element.clientElementScrollTo.title");
+            }
         } else if (za instanceof ZestClientElementSendKeys) {
             ZestClientElementSendKeys zcl = (ZestClientElementSendKeys) za;
             if (incParams) {
@@ -770,6 +816,37 @@ public class ZestZapUtils {
                 return indexStr
                         + Constant.messages.getString("zest.element.clientElementSubmit.title");
             }
+        } else if (za instanceof ZestClientScreenshot) {
+            ZestClientScreenshot zcs = (ZestClientScreenshot) za;
+            if (!incParams) {
+                return indexStr
+                        + Constant.messages.getString("zest.element.clientScreenshot.title");
+            }
+
+            String varName = zcs.getVariableName();
+            String fileName = extractFileName(zcs.getFilePath());
+            if (varName == null || varName.isEmpty()) {
+                return indexStr
+                        + Constant.messages.getString(
+                                "zest.element.clientScreenshot.file",
+                                zcs.getWindowHandle(),
+                                fileName);
+            }
+
+            if (fileName.isEmpty()) {
+                return indexStr
+                        + Constant.messages.getString(
+                                "zest.element.clientScreenshot.var",
+                                zcs.getWindowHandle(),
+                                varName);
+            }
+
+            return indexStr
+                    + Constant.messages.getString(
+                            "zest.element.clientScreenshot.filevar",
+                            zcs.getWindowHandle(),
+                            fileName,
+                            varName);
         } else if (za instanceof ZestClientSwitchToFrame) {
             ZestClientSwitchToFrame zcl = (ZestClientSwitchToFrame) za;
             if (incParams) {
@@ -821,11 +898,44 @@ public class ZestZapUtils {
                 return indexStr
                         + Constant.messages.getString("zest.element.clientWindowOpenUrl.title");
             }
+        } else if (za instanceof ZestClientWindowResize) {
+            ZestClientWindowResize zcl = (ZestClientWindowResize) za;
+            if (incParams) {
+                return indexStr
+                        + Constant.messages.getString(
+                                "zest.element.clientWindowResize",
+                                zcl.getWindowHandle(),
+                                String.valueOf(zcl.getX()),
+                                String.valueOf(zcl.getY()));
+            } else {
+                return indexStr
+                        + Constant.messages.getString("zest.element.clientWindowResize.title");
+            }
         }
 
         return indexStr
                 + Constant.messages.getString(
                         "zest.element.unknown", za.getClass().getCanonicalName());
+    }
+
+    private static String extractFileName(String filePath) {
+        if (filePath == null || filePath.isEmpty()) {
+            return "";
+        }
+
+        Path file;
+        try {
+            file = Paths.get(filePath);
+        } catch (InvalidPathException e) {
+            LOGGER.warn("Failed to parse the file path: {}", filePath, e);
+            return "";
+        }
+
+        Path fileName = file.getFileName();
+        if (fileName == null) {
+            return "";
+        }
+        return fileName.toString();
     }
 
     public static String toUiFailureString(ZestAssertion za, ZestRuntime runtime) {
@@ -899,17 +1009,21 @@ public class ZestZapUtils {
 
     public static HttpMessage toHttpMessage(ZestRequest request, ZestResponse response)
             throws URIException, HttpMalformedHeaderException {
-        if (request == null || request.getUrl() == null) {
+        if (request == null) {
             return null;
         }
-        HttpMessage msg = new HttpMessage(new URI(request.getUrl().toString(), false));
+        String url = request.getUrl() != null ? request.getUrl().toString() : request.getUrlToken();
+        if (url == null) {
+            return null;
+        }
+        HttpMessage msg = new HttpMessage(new URI(url, false));
         msg.setTimeSentMillis(request.getTimestamp());
         if (request.getHeaders() != null) {
             try {
                 msg.setRequestHeader(
                         msg.getRequestHeader().getPrimeHeader() + "\r\n" + request.getHeaders());
             } catch (HttpMalformedHeaderException e) {
-                log.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
         msg.getRequestHeader().setMethod(request.getMethod());
@@ -920,7 +1034,7 @@ public class ZestZapUtils {
             try {
                 msg.setResponseHeader(new HttpResponseHeader(response.getHeaders()));
             } catch (Exception e) {
-                log.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
             msg.setResponseBody(response.getBody());
             msg.setTimeElapsedMillis((int) response.getResponseTimeInMs());
@@ -930,8 +1044,12 @@ public class ZestZapUtils {
     }
 
     public static ZestResponse toZestResponse(HttpMessage msg) throws MalformedURLException {
+        return toZestResponse(new URL(msg.getRequestHeader().getURI().toString()), msg);
+    }
+
+    private static ZestResponse toZestResponse(URL url, HttpMessage msg) {
         return new ZestResponse(
-                new URL(msg.getRequestHeader().getURI().toString()),
+                url,
                 msg.getResponseHeader().toString(),
                 msg.getResponseBody().toString(),
                 msg.getResponseHeader().getStatusCode(),
@@ -947,56 +1065,35 @@ public class ZestZapUtils {
     public static ZestRequest toZestRequest(
             HttpMessage msg, boolean replaceTokens, boolean incAllHeaders, ZestParam params)
             throws MalformedURLException, HttpMalformedHeaderException, SQLException {
-        if (replaceTokens) {
-            ZestRequest req = new ZestRequest();
-            req.setTimestamp(msg.getTimeSentMillis());
-            req.setMethod(msg.getRequestHeader().getMethod());
-            if (msg.getRequestHeader().getURI() != null) {
-                req.setUrl(new URL(msg.getRequestHeader().getURI().toString()));
-            }
-            req.setUrlToken(correctTokens(msg.getRequestHeader().getURI().toString()));
+        ZestRequest req = new ZestRequest();
+        var uri = msg.getRequestHeader().getURI();
+        if (uri == null) {
+            throw new HttpMalformedHeaderException("The request header does not have a URI.");
+        }
 
-            if (incAllHeaders) {
-                setAllHeaders(req, msg);
-            } else {
-                setHeaders(req, msg, true, params.getIgnoredHeaders());
-            }
+        req.setUrl(new URL(uri.toString()));
+        if (replaceTokens) {
+            req.setUrlToken(correctTokens(uri.toString()));
             req.setData(correctTokens(msg.getRequestBody().toString()));
-            req.setFollowRedirects(false);
-            if (params.isIncludeResponses()) {
-                req.setResponse(
-                        new ZestResponse(
-                                req.getUrl(),
-                                msg.getResponseHeader().toString(),
-                                msg.getResponseBody().toString(),
-                                msg.getResponseHeader().getStatusCode(),
-                                msg.getTimeElapsedMillis()));
-            }
-            return req;
 
         } else {
-            ZestRequest req = new ZestRequest();
-            req.setTimestamp(msg.getTimeSentMillis());
-            req.setUrl(new URL(msg.getRequestHeader().getURI().toString()));
-            req.setMethod(msg.getRequestHeader().getMethod());
-            if (incAllHeaders) {
-                setAllHeaders(req, msg);
-            } else {
-                setHeaders(req, msg, true, params.getIgnoredHeaders());
-            }
             req.setData(msg.getRequestBody().toString());
-            req.setFollowRedirects(false);
-            if (params.isIncludeResponses()) {
-                req.setResponse(
-                        new ZestResponse(
-                                req.getUrl(),
-                                msg.getResponseHeader().toString(),
-                                msg.getResponseBody().toString(),
-                                msg.getResponseHeader().getStatusCode(),
-                                msg.getTimeElapsedMillis()));
-            }
-            return req;
         }
+
+        req.setMethod(msg.getRequestHeader().getMethod());
+        req.setTimestamp(msg.getTimeSentMillis());
+        if (incAllHeaders) {
+            setAllHeaders(req, msg);
+        } else {
+            setHeaders(req, msg, true, params.getIgnoredHeaders());
+        }
+
+        req.setFollowRedirects(false);
+        if (params.isIncludeResponses()) {
+            req.setResponse(toZestResponse(req.getUrl(), msg));
+        }
+
+        return req;
     }
 
     private static void setHeaders(
@@ -1049,11 +1146,10 @@ public class ZestZapUtils {
         if (node.getUserObject() instanceof ZestElementWrapper) {
             return ((ZestElementWrapper) node.getUserObject()).getElement();
         }
-        log.debug(
-                "getElement "
-                        + node.getNodeName()
-                        + " Unrecognised class: "
-                        + node.getUserObject().getClass().getCanonicalName());
+        LOGGER.debug(
+                "getElement {} Unrecognised class: {}",
+                node.getNodeName(),
+                node.getUserObject().getClass().getCanonicalName());
         return null;
     }
 
@@ -1075,30 +1171,6 @@ public class ZestZapUtils {
             return ((ZestElementWrapper) node.getUserObject()).getShadowLevel();
         }
         return 0;
-    }
-
-    // TODO remove once targeting core version that allows to set the pop up menu into the fields of
-    // StandardFieldsDialog.
-    public static void setMainPopupMenu(Component component) {
-        if (component instanceof JComponent) {
-            ((JComponent) component).setComponentPopupMenu(getPopupMenu());
-        }
-    }
-
-    private static JPopupMenu getPopupMenu() {
-        if (popupMenu == null) {
-            popupMenu =
-                    new JPopupMenu() {
-
-                        private static final long serialVersionUID = 1L;
-
-                        @Override
-                        public void show(Component invoker, int x, int y) {
-                            View.getSingleton().getPopupMenu().show(invoker, x, y);
-                        }
-                    };
-        }
-        return popupMenu;
     }
 
     public static boolean isValidVariableName(String name) {

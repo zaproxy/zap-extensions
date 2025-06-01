@@ -1,0 +1,12 @@
+  - type: requestor                    # Used to send specific requests to targets
+    parameters:
+      user:                            # String: An optional user to use for authenticated requests, must be defined in the env
+    requests:                          # A list of requests to make
+      - url:                           # String: A mandatory URL of the request to be made
+        name:                          # String: Optional name for the request, for documentation only
+        method:                        # String: A non-empty request method, default: GET
+        httpVersion:                   # String: The HTTP version to send the request with, default: HTTP/1.1
+        headers:                       # An optional list of additional headers to include in the request
+            # - "header1:value1"
+        data:                          # String: Optional data to send in the request body, supports vars
+        responseCode:                  # Int: An optional, expected response code against which the actual response code will be matched

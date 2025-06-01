@@ -2,13 +2,15 @@
 
 // * Based on org.zaproxy.zap.extension.pscanrules.ApplicationErrorScanner
 // * Application error strings are equal to:
-// ** https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrules/src/main/resources/org/zaproxy/zap/extension/pscanrules/resources/application_errors.xml
+// ** https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/resources/org/zaproxy/zap/extension/pscanrules/resources/application_errors.xml
 
 // Author: Manos Kirtas (manolis.kirt@gmail.com)
 
 OPCODE_TEXT = 0x1;
 RISK_MEDIUM = 2;
 CONFIDENCE_MEDIUM = 2;
+
+var WebSocketPassiveScript = Java.type('org.zaproxy.zap.extension.websocket.pscan.scripts.WebSocketPassiveScript');
 
 var microsoftDbErrors = [/Microsoft OLE DB Provider for ODBC Drivers/igm,
                                            /Microsoft OLE DB Provider for SQL Server/igm,
@@ -131,7 +133,7 @@ regexErrors.forEach(function(pattern){
 
 function scan(helper,msg) {
 
-    if(msg.opcode != OPCODE_TEXT || msg.isOutgoing){
+    if(msg.getOpcode() != OPCODE_TEXT || msg.isOutgoing()){
         return;
     }
     var message = String(msg.getReadablePayload());
@@ -154,9 +156,14 @@ function scan(helper,msg) {
 }
 
 function raiseAlert(helper, evidence){
-    helper.newAlert()
+    createAlertBuilder(helper, evidence).raise();
+}
+
+function createAlertBuilder(helper, evidence){
+    return helper.newAlert()
+        .setPluginId(getId())
         .setRiskConfidence(RISK_MEDIUM, CONFIDENCE_MEDIUM)
-        .setName("Application Error Disclosure via WebSockets (script)")
+        .setName("Application Error Disclosure via WebSockets")
         .setDescription("This payload contains an error/warning message that\
  may disclose sensitive information like the location of the file\
  that produced the unhandled exception. This information can be used\
@@ -168,8 +175,11 @@ function raiseAlert(helper, evidence){
  details on the server side and not exposing them to the user.")
         .setEvidence(evidence)
         .setCweId(209) // Information Exposure Through an Error Message
-        .setWascId(13) // Information Leakage
-        .raise();
+        .setWascId(13); // Information Leakage
+}
+
+function getExampleAlerts(){
+    return [createAlertBuilder(WebSocketPassiveScript.getExampleHelper(), "").build().getAlert()];
 }
 
 function getName(){

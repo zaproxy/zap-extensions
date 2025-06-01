@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE index PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Index Version 1.0//EN" "http://java.sun.com/products/javahelp/index_2_0.dtd">
+<index version="2.0">
+    <indexitem text="oast" target="oast"/>
+    <indexitem text="oast tab" target="oast.tab"/>
+    <indexitem text="oast options" target="oast.options"/>
+    <indexitem text="oast services" target="oast.services"/>
+    <indexitem text="oast boast" target="oast.boast"/>
+    <indexitem text="oast boast options" target="oast.boast.options"/>
+    <indexitem text="oast callbacks" target="oast.callbacks"/>
+    <indexitem text="oast callbacks options" target="oast.callbacks.options"/>
+    <indexitem text="oast interactsh" target="oast.interactsh"/>
+    <indexitem text="oast interactsh options" target="oast.interactsh.options"/>
+</index>

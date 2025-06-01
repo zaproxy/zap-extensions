@@ -39,11 +39,6 @@ public class ExtensionHttpPanelJsonView extends ExtensionAdaptor {
 
     public static final String NAME = "ExtensionHttpPanelJsonView";
 
-    @Override
-    public String getAuthor() {
-        return "Juha Kivekäs";
-    }
-
     public ExtensionHttpPanelJsonView() {
         super(NAME);
     }
@@ -52,7 +47,7 @@ public class ExtensionHttpPanelJsonView extends ExtensionAdaptor {
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
-        if (getView() != null) {
+        if (hasView()) {
             HttpPanelManager panelManager = HttpPanelManager.getInstance();
             // add the view factories for http requests and responses
             panelManager.addRequestViewFactory(
@@ -79,7 +74,7 @@ public class ExtensionHttpPanelJsonView extends ExtensionAdaptor {
 
     @Override
     public void unload() {
-        if (getView() != null) {
+        if (hasView()) {
             HttpPanelManager panelManager = HttpPanelManager.getInstance();
             // remove views and their factories
             panelManager.removeRequestViewFactory(

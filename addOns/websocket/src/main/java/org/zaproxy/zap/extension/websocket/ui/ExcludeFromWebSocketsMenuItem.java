@@ -20,7 +20,8 @@
 package org.zaproxy.zap.extension.websocket.ui;
 
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.model.Model;
@@ -34,10 +35,11 @@ import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
  * Menu Item for Popup. Used in WebSockets tab, when you click on some message with right mouse
  * button.
  */
+@SuppressWarnings("serial")
 public class ExcludeFromWebSocketsMenuItem extends WebSocketMessagesPopupMenuItem {
     private static final long serialVersionUID = 2208451830578743381L;
 
-    private static final Logger logger = Logger.getLogger(ExcludeFromWebSocketsMenuItem.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExcludeFromWebSocketsMenuItem.class);
 
     private ExtensionWebSocket extWs;
 
@@ -61,7 +63,7 @@ public class ExcludeFromWebSocketsMenuItem extends WebSocketMessagesPopupMenuIte
             try {
                 extWs.setChannelIgnoreList(ignoreList);
             } catch (WebSocketException e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
             View.getSingleton()
                     .showSessionDialog(
@@ -102,7 +104,7 @@ public class ExcludeFromWebSocketsMenuItem extends WebSocketMessagesPopupMenuIte
         }
 
         WebSocketChannelDTO channel = new WebSocketChannelDTO();
-        channel.id = message.channel.id;
+        channel.setId(message.getChannel().getId());
 
         try {
             List<WebSocketChannelDTO> channels = extWs.getChannels(channel);
@@ -110,7 +112,7 @@ public class ExcludeFromWebSocketsMenuItem extends WebSocketMessagesPopupMenuIte
                 return channels.get(0);
             }
         } catch (DatabaseException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
 
         return null;

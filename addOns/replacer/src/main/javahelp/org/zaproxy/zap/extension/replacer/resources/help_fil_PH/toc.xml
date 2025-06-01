@@ -6,7 +6,9 @@
 <toc version="2.0">
 	<tocitem text="Gabay sa Tagagamit ng ZAP" tocid="toplevelitem">
 		<tocitem text="Mga Add On" tocid="addons">
-			<tocitem text="Ang palitan" image="replacer-icon" target="replacer"/>
+			<tocitem text="Ang palitan" image="replacer-icon" target="replacer">
+				<tocitem text="Automation" target="replacer.automation" />
+			</tocitem>
 		</tocitem>
 	</tocitem>
 </toc>

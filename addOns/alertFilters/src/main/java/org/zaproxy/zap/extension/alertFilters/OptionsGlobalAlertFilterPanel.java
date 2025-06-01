@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.alertFilters;
 
 import java.awt.BorderLayout;
+import java.awt.Window;
 import java.util.ArrayList;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.OptionsParam;
@@ -32,11 +33,12 @@ public class OptionsGlobalAlertFilterPanel extends AbstractParamPanel {
     private final AlertFilterTableModel alertFilterModel = new AlertFilterTableModel();
     private final AlertFiltersMultipleOptionsPanel alertFilterOptionsPanel;
 
-    public OptionsGlobalAlertFilterPanel(ExtensionAlertFilters extension) {
+    public OptionsGlobalAlertFilterPanel(ExtensionAlertFilters extension, Window owner) {
         super();
         this.setName(Constant.messages.getString("alertFilters.global.options.title"));
         this.setLayout(new BorderLayout());
-        alertFilterOptionsPanel = new AlertFiltersMultipleOptionsPanel(extension, alertFilterModel);
+        alertFilterOptionsPanel =
+                new AlertFiltersMultipleOptionsPanel(extension, owner, alertFilterModel);
         this.add(alertFilterOptionsPanel);
     }
 
@@ -44,7 +46,7 @@ public class OptionsGlobalAlertFilterPanel extends AbstractParamPanel {
     public void initParam(Object obj) {
         OptionsParam optionsParam = (OptionsParam) obj;
         GlobalAlertFilterParam param = optionsParam.getParamSet(GlobalAlertFilterParam.class);
-        alertFilterModel.setAlertFilters(new ArrayList<AlertFilter>(param.getGlobalAlertFilters()));
+        alertFilterModel.setAlertFilters(new ArrayList<>(param.getGlobalAlertFilters()));
         alertFilterOptionsPanel.setRemoveWithoutConfirmation(!param.isConfirmRemoveFilter());
     }
 

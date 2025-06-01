@@ -24,21 +24,22 @@ import java.awt.Frame;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.mozilla.zest.core.v1.ZestClientElement;
-import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
-import org.zaproxy.zap.extension.zest.ZestZapUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
+import org.zaproxy.zest.core.v1.ZestClientElement;
+import org.zaproxy.zest.core.v1.ZestStatement;
 
+@SuppressWarnings("serial")
 public abstract class ZestClientElementDialog extends StandardFieldsDialog implements ZestDialog {
 
     protected static final String FIELD_WINDOW_HANDLE = "zest.dialog.client.label.windowHandle";
     protected static final String FIELD_ELEMENT_TYPE = "zest.dialog.client.label.elementType";
     protected static final String FIELD_ELEMENT = "zest.dialog.client.label.element";
     protected static final String FIELD_ATTRIBUTE = "zest.dialog.client.label.attribute";
+    protected static final String FIELD_WAIT_FOR_MSEC = "zest.dialog.client.label.waitForMsec";
 
     protected static String ELEMENT_TYPE_PREFIX = "zest.dialog.client.elementType.label.";
     protected static String[] ELEMENT_TYPES = {
@@ -77,8 +78,7 @@ public abstract class ZestClientElementDialog extends StandardFieldsDialog imple
         this.removeAllFields();
 
         // Pull down of all the valid window ids
-        List<String> windowIds =
-                new ArrayList<String>(script.getZestScript().getClientWindowHandles());
+        List<String> windowIds = new ArrayList<>(script.getZestScript().getClientWindowHandles());
         Collections.sort(windowIds);
         this.addComboField(FIELD_WINDOW_HANDLE, windowIds, client.getWindowHandle());
 
@@ -89,12 +89,13 @@ public abstract class ZestClientElementDialog extends StandardFieldsDialog imple
         }
         this.addComboField(FIELD_ELEMENT_TYPE, getElementTypeFields(), clientType);
         this.addTextField(FIELD_ELEMENT, client.getElement());
+        this.addNumberField(FIELD_WAIT_FOR_MSEC, 0, Integer.MAX_VALUE, client.getWaitForMsec());
 
-        ZestZapUtils.setMainPopupMenu(this.getField(FIELD_ELEMENT));
+        setFieldMainPopupMenu(FIELD_ELEMENT);
     }
 
     private List<String> getElementTypeFields() {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         for (String type : ELEMENT_TYPES) {
             list.add(Constant.messages.getString(ELEMENT_TYPE_PREFIX + type));
         }
@@ -141,6 +142,7 @@ public abstract class ZestClientElementDialog extends StandardFieldsDialog imple
         client.setWindowHandle(this.getStringValue(FIELD_WINDOW_HANDLE));
         client.setType(getSelectedElementType());
         client.setElement(this.getStringValue(FIELD_ELEMENT));
+        client.setWaitForMsec(this.getIntValue(FIELD_WAIT_FOR_MSEC));
 
         this.saveFields();
 

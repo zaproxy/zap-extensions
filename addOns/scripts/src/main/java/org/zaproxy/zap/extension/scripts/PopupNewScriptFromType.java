@@ -26,7 +26,7 @@ import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptType;
 
-/** ZAP: New Popup Menu Alert Delete */
+@SuppressWarnings("serial")
 public class PopupNewScriptFromType extends ExtensionPopupMenuItem {
 
     private static final long serialVersionUID = 1L;
@@ -42,7 +42,9 @@ public class PopupNewScriptFromType extends ExtensionPopupMenuItem {
         initialize();
     }
 
-    /** @param label */
+    /**
+     * @param label
+     */
     public PopupNewScriptFromType(String label) {
         super(label);
     }
@@ -52,13 +54,9 @@ public class PopupNewScriptFromType extends ExtensionPopupMenuItem {
         this.setText(Constant.messages.getString("scripts.instantiate.popup"));
 
         this.addActionListener(
-                new java.awt.event.ActionListener() {
-
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent e) {
-                        if (type != null) {
-                            instantiateType(type);
-                        }
+                e -> {
+                    if (type != null) {
+                        instantiateType(type);
                     }
                 });
     }

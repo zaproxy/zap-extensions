@@ -34,7 +34,7 @@
 
 package com.fasteasytrade.JRandTest.IO;
 
-import java.io.*;
+import java.io.FileInputStream;
 
 /**
  * @author Zur Aougav
@@ -67,6 +67,7 @@ public class FileAlgoRandomStream extends FileRandomStream implements
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.AlgoRandomStream#setupKeys()
 	 */
+	@Override
 	public void setupKeys() {
 		publicKey = new byte[publicKeyLength];
 		privateKey = new byte[privateKeyLength];
@@ -75,9 +76,9 @@ public class FileAlgoRandomStream extends FileRandomStream implements
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.AlgoRandomStream#setPublicKeyFromFile(java.lang.String)
 	 */
+	@Override
 	public void setPublicKeyFromFile(String f) {
-		try {
-			FileInputStream fis = new FileInputStream(f);
+		try (FileInputStream fis = new FileInputStream(f)) {
 			fis.read(publicKey);
 		} catch (Exception e) {
 			System.out.println(e);
@@ -87,6 +88,7 @@ public class FileAlgoRandomStream extends FileRandomStream implements
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.AlgoRandomStream#setPublicKey(byte[])
 	 */
+	@Override
 	public void setPublicKey(byte[] k) {
 		if (k == null)
 			return;
@@ -97,9 +99,9 @@ public class FileAlgoRandomStream extends FileRandomStream implements
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.AlgoRandomStream#setPrivateKeyFromFile(java.lang.String)
 	 */
+	@Override
 	public void setPrivateKeyFromFile(String f) {
-		try {
-			FileInputStream fis = new FileInputStream(f);
+		try (FileInputStream fis = new FileInputStream(f)) {
 			fis.read(privateKey);
 		} catch (Exception e) {
 			System.out.println(e);
@@ -109,6 +111,7 @@ public class FileAlgoRandomStream extends FileRandomStream implements
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.AlgoRandomStream#setPrivateKey(byte[])
 	 */
+	@Override
 	public void setPrivateKey(byte[] k) {
 		if (k == null)
 			return;
@@ -121,6 +124,7 @@ public class FileAlgoRandomStream extends FileRandomStream implements
 	 * 
 	 * @see com.fasteasytrade.JRandTest.IO.AlgoRandomStream#setup()
 	 */
+	@Override
 	public void setup() {
 	}
 
@@ -128,6 +132,7 @@ public class FileAlgoRandomStream extends FileRandomStream implements
 	 * @param s
 	 *            set algorithm input filename file
 	 */
+	@Override
 	public void setFilename(String s) {
 		filename = s;
 	}
@@ -135,6 +140,7 @@ public class FileAlgoRandomStream extends FileRandomStream implements
 	/**
 	 * @return algorithm input filename file
 	 */
+	@Override
 	public String getFilename() {
 		return filename;
 	}
@@ -142,6 +148,7 @@ public class FileAlgoRandomStream extends FileRandomStream implements
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.RandomStream#readByte()
 	 */
+	@Override
 	public byte readByte() throws Exception {
 		return super.readByte();
 	}
@@ -149,6 +156,7 @@ public class FileAlgoRandomStream extends FileRandomStream implements
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.RandomStream#readInt()
 	 */
+	@Override
 	public int readInt() throws Exception {
 		return super.readInt();
 	}
@@ -156,6 +164,7 @@ public class FileAlgoRandomStream extends FileRandomStream implements
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.RandomStream#readLong()
 	 */
+	@Override
 	public long readLong() throws Exception {
 		return super.readLong();
 	}

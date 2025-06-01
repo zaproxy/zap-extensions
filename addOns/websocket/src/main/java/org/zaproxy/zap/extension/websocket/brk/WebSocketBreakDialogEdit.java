@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.websocket.brk;
 
 import java.awt.HeadlessException;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.regex.PatternSyntaxException;
 import org.parosproxy.paros.Constant;
@@ -28,6 +27,7 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.websocket.WebSocketMessage.Direction;
 import org.zaproxy.zap.extension.websocket.ui.ChannelSortedListModel;
 
+@SuppressWarnings("serial")
 public class WebSocketBreakDialogEdit extends WebSocketBreakDialog {
     private static final long serialVersionUID = 1L;
 
@@ -57,13 +57,9 @@ public class WebSocketBreakDialogEdit extends WebSocketBreakDialog {
     protected ActionListener getActionListenerCancel() {
         if (actionListenerCancel == null) {
             actionListenerCancel =
-                    new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            breakpoint = null;
-                            dispose();
-                        }
+                    e -> {
+                        breakpoint = null;
+                        dispose();
                     };
         }
         return actionListenerCancel;
@@ -73,24 +69,20 @@ public class WebSocketBreakDialogEdit extends WebSocketBreakDialog {
     protected ActionListener getActionListenerSubmit() {
         if (actionListenerSubmit == null) {
             actionListenerSubmit =
-                    new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent evt) {
-                            try {
-                                breakPointsManager.editBreakpoint(
-                                        breakpoint, getWebSocketBreakpointMessage());
-                                breakpoint = null;
-                                dispose();
-                            } catch (PatternSyntaxException e) {
-                                // show popup
-                                View.getSingleton()
-                                        .showWarningDialog(
-                                                Constant.messages.getString(
-                                                        "websocket.invalidpattern"));
-                                wsUiHelper.getPatternTextField().grabFocus();
-                                return;
-                            }
+                    evt -> {
+                        try {
+                            breakPointsManager.editBreakpoint(
+                                    breakpoint, getWebSocketBreakpointMessage());
+                            breakpoint = null;
+                            dispose();
+                        } catch (PatternSyntaxException e) {
+                            // show popup
+                            View.getSingleton()
+                                    .showWarningDialog(
+                                            Constant.messages.getString(
+                                                    "websocket.invalidpattern"));
+                            wsUiHelper.getPatternTextField().grabFocus();
+                            return;
                         }
                     };
         }

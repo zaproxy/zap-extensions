@@ -22,13 +22,13 @@ package org.zaproxy.zap.extension.formhandler;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import javax.swing.JCheckBox;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SortOrder;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.utils.ZapLabel;
 import org.zaproxy.zap.view.AbstractMultipleOptionsTablePanel;
 
 public class OptionsFormHandlerPanel extends AbstractParamPanel {
@@ -37,15 +37,11 @@ public class OptionsFormHandlerPanel extends AbstractParamPanel {
 
     private FormHandlerMultipleOptionsPanel fieldsOptionsPanel;
 
-    private OptionsFormHandlerTableModel formHandlerModel = null;
+    private OptionsFormHandlerTableModel formHandlerModel;
 
     public OptionsFormHandlerPanel() {
         super();
-        initialize();
-    }
 
-    /** This method initializes this */
-    private void initialize() {
         this.setName(Constant.messages.getString("formhandler.options.title"));
         this.setLayout(new GridBagLayout());
 
@@ -55,9 +51,11 @@ public class OptionsFormHandlerPanel extends AbstractParamPanel {
         gbc.anchor = GridBagConstraints.LINE_START;
         gbc.fill = GridBagConstraints.BOTH;
 
-        this.add(
-                new JLabel(Constant.messages.getString("formhandler.options.label.description")),
-                gbc);
+        ZapLabel label =
+                new ZapLabel(Constant.messages.getString("formhandler.options.label.description"));
+        label.setLineWrap(true);
+        label.setWrapStyleWord(true);
+        this.add(label, gbc);
 
         fieldsOptionsPanel = new FormHandlerMultipleOptionsPanel(getFormHandlerModel());
 
@@ -119,10 +117,8 @@ public class OptionsFormHandlerPanel extends AbstractParamPanel {
                 Constant.messages.getString(
                         "formhandler.options.dialog.field.remove.checkbox.label");
 
-        private DialogAddField addDialog = null;
-        private DialogModifyField modifyDialog = null;
-
-        private OptionsFormHandlerTableModel model;
+        private DialogAddField addDialog;
+        private DialogModifyField modifyDialog;
 
         public FormHandlerMultipleOptionsPanel(OptionsFormHandlerTableModel model) {
             super(model);
@@ -143,6 +139,9 @@ public class OptionsFormHandlerPanel extends AbstractParamPanel {
             addDialog.setVisible(true);
 
             FormHandlerParamField field = addDialog.getField();
+            if (field != null) {
+                ExtensionFormHandler.incStat(ExtensionFormHandler.STATS_ADD, field);
+            }
             addDialog.clear();
 
             return field;
@@ -162,6 +161,7 @@ public class OptionsFormHandlerPanel extends AbstractParamPanel {
             modifyDialog.clear();
 
             if (!field.equals(e)) {
+                ExtensionFormHandler.incStat(ExtensionFormHandler.STATS_MODIFY, field);
                 return field;
             }
 
@@ -169,7 +169,7 @@ public class OptionsFormHandlerPanel extends AbstractParamPanel {
         }
 
         @Override
-        public boolean showRemoveDialogue(FormHandlerParamField e) {
+        public boolean showRemoveDialogue(FormHandlerParamField field) {
             JCheckBox removeWithoutConfirmationCheckBox =
                     new JCheckBox(REMOVE_DIALOG_CHECKBOX_LABEL);
             Object[] messages = {REMOVE_DIALOG_TEXT, " ", removeWithoutConfirmationCheckBox};
@@ -189,7 +189,7 @@ public class OptionsFormHandlerPanel extends AbstractParamPanel {
 
             if (option == JOptionPane.OK_OPTION) {
                 setRemoveWithoutConfirmation(removeWithoutConfirmationCheckBox.isSelected());
-
+                ExtensionFormHandler.incStat(ExtensionFormHandler.STATS_REMOVE, field);
                 return true;
             }
 

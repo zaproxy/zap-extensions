@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.tokengen;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -31,7 +29,8 @@ import java.util.concurrent.TimeUnit;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
@@ -58,7 +57,7 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
     private GenerateTokensDialog genTokensDialog = null;
     private AnalyseTokensDialog analyseTokensDialog = null;
 
-    private TokenParam tokenParam = null;;
+    private TokenParam tokenParam = null;
     private TokenOptionsPanel tokenOptionsPanel;
 
     private List<TokenGenerator> generators = Collections.emptyList();
@@ -66,7 +65,7 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
     private CharacterFrequencyMap cfm = null;
     private boolean manuallyStopped = false;
 
-    private static Logger log = Logger.getLogger(ExtensionTokenGen.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionTokenGen.class);
 
     /** */
     public ExtensionTokenGen() {
@@ -88,7 +87,7 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
 
         extensionHook.addOptionsParamSet(getTokenParam());
 
-        if (getView() != null) {
+        if (hasView()) {
             // Register our popup menu item, as long as we're not running as a daemon
             extensionHook.getHookMenu().addPopupMenuItem(getPopupTokenGen());
             extensionHook.getHookView().addStatusPanel(getTokenPanel());
@@ -108,7 +107,7 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
     public void unload() {
         stopTokenGeneration();
 
-        if (getView() != null) {
+        if (hasView()) {
             if (analyseTokensDialog != null) {
                 analyseTokensDialog.dispose();
             }
@@ -310,7 +309,7 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
         }
 
         this.cfm = new CharacterFrequencyMap();
-        log.debug("startTokenGeneration " + msg.getRequestHeader().getURI() + " # " + numGen);
+        LOGGER.debug("startTokenGeneration {} # {}", msg.getRequestHeader().getURI(), numGen);
         this.getTokenPanel().scanStarted(numGen);
 
         int numThreads = this.getTokenParam().getThreadsPerScan();
@@ -335,10 +334,10 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
 
     protected void generatorStopped(TokenGenerator gen) {
         this.runningGenerators--;
-        log.debug("generatorStopped runningGenerators " + runningGenerators);
+        LOGGER.debug("generatorStopped runningGenerators {}", runningGenerators);
 
         if (this.runningGenerators <= 0) {
-            log.debug("generatorStopped scanFinished");
+            LOGGER.debug("generatorStopped scanFinished");
             this.getTokenPanel().scanFinshed();
 
             if (!manuallyStopped) {
@@ -367,22 +366,8 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
     }
 
     @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
-    }
-
-    @Override
     public String getDescription() {
         return getMessages().getString("tokengen.desc");
-    }
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_EXTENSIONS_PAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
     }
 
     private class SessionChangedListenerImpl implements SessionChangedListener {

@@ -23,9 +23,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import net.sf.json.JSONObject;
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.model.Model;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Text;
 import org.zaproxy.zap.extension.api.ApiAction;
 import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiException.Type;
@@ -37,11 +43,12 @@ import org.zaproxy.zap.extension.api.ApiResponseSet;
 import org.zaproxy.zap.extension.api.ApiView;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.utils.ApiUtils;
+import org.zaproxy.zap.utils.XMLStringUtil;
 
 /** The API for manipulating {@link AlertFilter alert filters}. */
 public class AlertFilterAPI extends ApiImplementor {
 
-    private static final Logger log = Logger.getLogger(AlertFilterAPI.class);
+    private static final Logger LOGGER = LogManager.getLogger(AlertFilterAPI.class);
 
     private static final String PREFIX = "alertFilter";
 
@@ -52,6 +59,12 @@ public class AlertFilterAPI extends ApiImplementor {
     private static final String ACTION_REMOVE_ALERT_FILTER = "removeAlertFilter";
     private static final String ACTION_ADD_GLOBAL_ALERT_FILTER = "addGlobalAlertFilter";
     private static final String ACTION_REMOVE_GLOBAL_ALERT_FILTER = "removeGlobalAlertFilter";
+    private static final String ACTION_APPLY_ALL = "applyAll";
+    private static final String ACTION_APPLY_CONTEXT = "applyContext";
+    private static final String ACTION_APPLY_GLOBAL = "applyGlobal";
+    private static final String ACTION_TEST_ALL = "testAll";
+    private static final String ACTION_TEST_CONTEXT = "testContext";
+    private static final String ACTION_TEST_GLOBAL = "testGlobal";
 
     private static final String PARAM_CONTEXT_ID = "contextId";
     private static final String PARAM_RULE_ID = "ruleId";
@@ -64,6 +77,7 @@ public class AlertFilterAPI extends ApiImplementor {
     private static final String PARAM_ATTACK_IS_REGEX = "attackIsRegex";
     private static final String PARAM_EVIDENCE = "evidence";
     private static final String PARAM_EVIDENCE_IS_REGEX = "evidenceIsRegex";
+    private static final String PARAM_METHODS = "methods";
     private static final String PARAM_ENABLED = "enabled";
 
     private ExtensionAlertFilters extension;
@@ -77,16 +91,10 @@ public class AlertFilterAPI extends ApiImplementor {
         super();
         this.extension = extension;
 
-        ApiView alertFilterList =
-                new ApiView(VIEW_ALERT_FILTER_LIST, new String[] {PARAM_CONTEXT_ID});
-        alertFilterList.setDescriptionTag("alertFilters.api.view.alertFilterList");
-        this.addApiView(alertFilterList);
+        this.addApiView(new ApiView(VIEW_ALERT_FILTER_LIST, new String[] {PARAM_CONTEXT_ID}));
+        this.addApiView(new ApiView(VIEW_GLOBAL_ALERT_FILTER_LIST));
 
-        ApiView globalAlertFilterList = new ApiView(VIEW_GLOBAL_ALERT_FILTER_LIST);
-        globalAlertFilterList.setDescriptionTag("alertFilters.api.view.globalAlertFilterList");
-        this.addApiView(globalAlertFilterList);
-
-        ApiAction addAlertFilter =
+        this.addApiAction(
                 new ApiAction(
                         ACTION_ADD_ALERT_FILTER,
                         new String[] {PARAM_CONTEXT_ID, PARAM_RULE_ID, PARAM_NEW_LEVEL},
@@ -100,11 +108,9 @@ public class AlertFilterAPI extends ApiImplementor {
                             PARAM_ATTACK_IS_REGEX,
                             PARAM_EVIDENCE,
                             PARAM_EVIDENCE_IS_REGEX,
-                        });
-        addAlertFilter.setDescriptionTag("alertFilters.api.action.addAlertFilter");
-        this.addApiAction(addAlertFilter);
-
-        ApiAction removeAlertFilter =
+                            PARAM_METHODS,
+                        }));
+        this.addApiAction(
                 new ApiAction(
                         ACTION_REMOVE_ALERT_FILTER,
                         new String[] {PARAM_CONTEXT_ID, PARAM_RULE_ID, PARAM_NEW_LEVEL},
@@ -118,11 +124,9 @@ public class AlertFilterAPI extends ApiImplementor {
                             PARAM_ATTACK_IS_REGEX,
                             PARAM_EVIDENCE,
                             PARAM_EVIDENCE_IS_REGEX,
-                        });
-        removeAlertFilter.setDescriptionTag("alertFilters.api.action.removeAlertFilter");
-        this.addApiAction(removeAlertFilter);
-
-        ApiAction addGlobalAlertFilter =
+                            PARAM_METHODS,
+                        }));
+        this.addApiAction(
                 new ApiAction(
                         ACTION_ADD_GLOBAL_ALERT_FILTER,
                         new String[] {PARAM_RULE_ID, PARAM_NEW_LEVEL},
@@ -136,11 +140,9 @@ public class AlertFilterAPI extends ApiImplementor {
                             PARAM_ATTACK_IS_REGEX,
                             PARAM_EVIDENCE,
                             PARAM_EVIDENCE_IS_REGEX,
-                        });
-        addGlobalAlertFilter.setDescriptionTag("alertFilters.api.action.addGlobalAlertFilter");
-        this.addApiAction(addGlobalAlertFilter);
-
-        ApiAction removeGlobalAlertFilter =
+                            PARAM_METHODS,
+                        }));
+        this.addApiAction(
                 new ApiAction(
                         ACTION_REMOVE_GLOBAL_ALERT_FILTER,
                         new String[] {PARAM_RULE_ID, PARAM_NEW_LEVEL},
@@ -154,10 +156,14 @@ public class AlertFilterAPI extends ApiImplementor {
                             PARAM_ATTACK_IS_REGEX,
                             PARAM_EVIDENCE,
                             PARAM_EVIDENCE_IS_REGEX,
-                        });
-        removeGlobalAlertFilter.setDescriptionTag(
-                "alertFilters.api.action.removeGlobalAlertFilter");
-        this.addApiAction(removeGlobalAlertFilter);
+                            PARAM_METHODS,
+                        }));
+        this.addApiAction(new ApiAction(ACTION_APPLY_ALL));
+        this.addApiAction(new ApiAction(ACTION_APPLY_CONTEXT));
+        this.addApiAction(new ApiAction(ACTION_APPLY_GLOBAL));
+        this.addApiAction(new ApiAction(ACTION_TEST_ALL));
+        this.addApiAction(new ApiAction(ACTION_TEST_CONTEXT));
+        this.addApiAction(new ApiAction(ACTION_TEST_GLOBAL));
     }
 
     @Override
@@ -166,8 +172,13 @@ public class AlertFilterAPI extends ApiImplementor {
     }
 
     @Override
+    protected String getI18nPrefix() {
+        return ExtensionAlertFilters.PREFIX;
+    }
+
+    @Override
     public ApiResponse handleApiView(String name, JSONObject params) throws ApiException {
-        log.debug("handleApiView " + name + " " + params.toString());
+        LOGGER.debug("handleApiView {} {}", name, params);
         Context context;
 
         switch (name) {
@@ -175,9 +186,7 @@ public class AlertFilterAPI extends ApiImplementor {
                 ApiResponseList listResponse = new ApiResponseList(name);
                 context = ApiUtils.getContextByParamId(params, PARAM_CONTEXT_ID);
                 List<AlertFilter> afs =
-                        extension
-                                .getContextAlertFilterManager(context.getIndex())
-                                .getAlertFilters();
+                        extension.getContextAlertFilterManager(context.getId()).getAlertFilters();
 
                 for (AlertFilter af : afs) {
                     listResponse.addItem(buildResponseFromAlertFilter(af, true));
@@ -200,7 +209,7 @@ public class AlertFilterAPI extends ApiImplementor {
 
     @Override
     public ApiResponse handleApiAction(String name, JSONObject params) throws ApiException {
-        log.debug("handleApiAction " + name + " " + params.toString());
+        LOGGER.debug("handleApiAction {} {}", name, params);
 
         AlertFilter af;
         Context context;
@@ -209,8 +218,8 @@ public class AlertFilterAPI extends ApiImplementor {
                 context = ApiUtils.getContextByParamId(params, PARAM_CONTEXT_ID);
                 af =
                         new AlertFilter(
-                                context.getIndex(),
-                                ApiUtils.getIntParam(params, PARAM_RULE_ID),
+                                context.getId(),
+                                params.getString(PARAM_RULE_ID),
                                 ApiUtils.getIntParam(params, PARAM_NEW_LEVEL),
                                 ApiUtils.getOptionalStringParam(params, PARAM_URL),
                                 getParam(params, PARAM_URL_IS_REGEX, false),
@@ -220,17 +229,18 @@ public class AlertFilterAPI extends ApiImplementor {
                                 getParam(params, PARAM_ATTACK_IS_REGEX, false),
                                 ApiUtils.getOptionalStringParam(params, PARAM_EVIDENCE),
                                 getParam(params, PARAM_EVIDENCE_IS_REGEX, false),
+                                getMethods(params),
                                 getParam(params, PARAM_ENABLED, true));
 
                 // TODO more validation, esp url!
-                extension.getContextAlertFilterManager(context.getIndex()).addAlertFilter(af);
+                extension.getContextAlertFilterManager(context.getId()).addAlertFilter(af);
                 return ApiResponseElement.OK;
             case ACTION_REMOVE_ALERT_FILTER:
                 context = ApiUtils.getContextByParamId(params, PARAM_CONTEXT_ID);
                 af =
                         new AlertFilter(
-                                context.getIndex(),
-                                ApiUtils.getIntParam(params, PARAM_RULE_ID),
+                                context.getId(),
+                                params.getString(PARAM_RULE_ID),
                                 ApiUtils.getIntParam(params, PARAM_NEW_LEVEL),
                                 ApiUtils.getOptionalStringParam(params, PARAM_URL),
                                 getParam(params, PARAM_URL_IS_REGEX, false),
@@ -240,10 +250,9 @@ public class AlertFilterAPI extends ApiImplementor {
                                 getParam(params, PARAM_ATTACK_IS_REGEX, false),
                                 ApiUtils.getOptionalStringParam(params, PARAM_EVIDENCE),
                                 getParam(params, PARAM_EVIDENCE_IS_REGEX, false),
+                                getMethods(params),
                                 getParam(params, PARAM_ENABLED, true));
-                if (extension
-                        .getContextAlertFilterManager(context.getIndex())
-                        .removeAlertFilter(af)) {
+                if (extension.getContextAlertFilterManager(context.getId()).removeAlertFilter(af)) {
                     return ApiResponseElement.OK;
                 }
 
@@ -253,7 +262,7 @@ public class AlertFilterAPI extends ApiImplementor {
                 af =
                         new AlertFilter(
                                 -1,
-                                ApiUtils.getIntParam(params, PARAM_RULE_ID),
+                                params.getString(PARAM_RULE_ID),
                                 ApiUtils.getIntParam(params, PARAM_NEW_LEVEL),
                                 ApiUtils.getOptionalStringParam(params, PARAM_URL),
                                 getParam(params, PARAM_URL_IS_REGEX, false),
@@ -263,6 +272,7 @@ public class AlertFilterAPI extends ApiImplementor {
                                 getParam(params, PARAM_ATTACK_IS_REGEX, false),
                                 ApiUtils.getOptionalStringParam(params, PARAM_EVIDENCE),
                                 getParam(params, PARAM_EVIDENCE_IS_REGEX, false),
+                                getMethods(params),
                                 getParam(params, PARAM_ENABLED, true));
 
                 // TODO more validation, esp url!
@@ -280,7 +290,7 @@ public class AlertFilterAPI extends ApiImplementor {
                 af =
                         new AlertFilter(
                                 -1,
-                                ApiUtils.getIntParam(params, PARAM_RULE_ID),
+                                params.getString(PARAM_RULE_ID),
                                 ApiUtils.getIntParam(params, PARAM_NEW_LEVEL),
                                 ApiUtils.getOptionalStringParam(params, PARAM_URL),
                                 getParam(params, PARAM_URL_IS_REGEX, false),
@@ -290,6 +300,7 @@ public class AlertFilterAPI extends ApiImplementor {
                                 getParam(params, PARAM_ATTACK_IS_REGEX, false),
                                 ApiUtils.getOptionalStringParam(params, PARAM_EVIDENCE),
                                 getParam(params, PARAM_EVIDENCE_IS_REGEX, false),
+                                getMethods(params),
                                 getParam(params, PARAM_ENABLED, true));
                 if (extension.getParam().removeFilter(af)) {
                     try {
@@ -301,9 +312,63 @@ public class AlertFilterAPI extends ApiImplementor {
                 }
                 return ApiResponseElement.FAIL;
 
+            case ACTION_APPLY_ALL:
+                Map<String, Integer> applyCountsMap = new HashMap<>(2, 1);
+                applyCountsMap.put(ACTION_TEST_GLOBAL, applyGlobalAlertFilters(false));
+                applyCountsMap.put(ACTION_TEST_CONTEXT, applyContextAlertFilters(false));
+                return new ApiResponseSet<>(name, applyCountsMap);
+
+            case ACTION_APPLY_CONTEXT:
+                return new ApiResponseElement(
+                        name, String.valueOf(applyContextAlertFilters(false)));
+
+            case ACTION_APPLY_GLOBAL:
+                return new ApiResponseElement(name, String.valueOf(applyGlobalAlertFilters(false)));
+
+            case ACTION_TEST_ALL:
+                Map<String, Integer> testCountsMap = new HashMap<>(2, 1);
+                testCountsMap.put(ACTION_TEST_GLOBAL, applyGlobalAlertFilters(true));
+                testCountsMap.put(ACTION_TEST_CONTEXT, applyContextAlertFilters(true));
+                return new ApiResponseSet<>(name, testCountsMap);
+
+            case ACTION_TEST_CONTEXT:
+                return new ApiResponseElement(name, String.valueOf(applyContextAlertFilters(true)));
+
+            case ACTION_TEST_GLOBAL:
+                return new ApiResponseElement(name, String.valueOf(applyGlobalAlertFilters(true)));
+
             default:
                 throw new ApiException(Type.BAD_ACTION);
         }
+    }
+
+    private static Set<String> getMethods(JSONObject params) {
+        String value = ApiUtils.getOptionalStringParam(params, PARAM_METHODS);
+        if (value == null) {
+            return Set.of();
+        }
+        return Set.of(value.split(",", -1));
+    }
+
+    private int applyContextAlertFilters(boolean testOnly) {
+        return Model.getSingleton().getSession().getContexts().stream()
+                .map(
+                        ctx ->
+                                extension
+                                        .getContextAlertFilterManager(ctx.getId())
+                                        .getAlertFilters()
+                                        .stream()
+                                        .filter(AlertFilter::isEnabled)
+                                        .map(f -> extension.applyAlertFilter(f, testOnly))
+                                        .collect(Collectors.summingInt(Integer::intValue)))
+                .collect(Collectors.summingInt(Integer::intValue));
+    }
+
+    private int applyGlobalAlertFilters(boolean testOnly) {
+        return extension.getParam().getGlobalAlertFilters().stream()
+                .filter(AlertFilter::isEnabled)
+                .map(f -> extension.applyAlertFilter(f, testOnly))
+                .collect(Collectors.summingInt(Integer::intValue));
     }
 
     /**
@@ -313,11 +378,11 @@ public class AlertFilterAPI extends ApiImplementor {
      * @return the api response
      */
     private ApiResponse buildResponseFromAlertFilter(AlertFilter af, boolean includeContext) {
-        Map<String, String> fields = new HashMap<>();
+        Map<String, Object> fields = new HashMap<>();
         if (includeContext) {
             fields.put(PARAM_CONTEXT_ID, Integer.toString(af.getContextId()));
         }
-        fields.put(PARAM_RULE_ID, Integer.toString(af.getRuleId()));
+        fields.put(PARAM_RULE_ID, af.getRuleId());
         fields.put(PARAM_NEW_LEVEL, Integer.toString(af.getNewRisk()));
         fields.put(PARAM_URL, af.getUrl());
         fields.put(PARAM_URL_IS_REGEX, Boolean.toString(af.isUrlRegex()));
@@ -327,8 +392,40 @@ public class AlertFilterAPI extends ApiImplementor {
         fields.put(PARAM_ATTACK_IS_REGEX, Boolean.toString(af.isAttackRegex()));
         fields.put(PARAM_EVIDENCE, af.getEvidence());
         fields.put(PARAM_EVIDENCE_IS_REGEX, Boolean.toString(af.isEvidenceRegex()));
+        fields.put(PARAM_METHODS, af.getMethods());
         fields.put(PARAM_ENABLED, Boolean.toString(af.isEnabled()));
-        ApiResponseSet<String> response = new ApiResponseSet<>("alertFilter", fields);
-        return response;
+        return new AlertFilterResponseSet<>("alertFilter", fields);
+    }
+
+    private static class AlertFilterResponseSet<T> extends ApiResponseSet<T> {
+
+        AlertFilterResponseSet(String name, Map<String, T> values) {
+            super(name, values);
+        }
+
+        @Override
+        public void toXML(Document doc, Element parent) {
+            parent.setAttribute("type", "set");
+            for (Map.Entry<String, T> val : getValues().entrySet()) {
+                Element el = doc.createElement(val.getKey());
+                if ("methods".equals(val.getKey())) {
+                    el.setAttribute("type", "list");
+                    @SuppressWarnings("unchecked")
+                    Set<String> methods = (Set<String>) val.getValue();
+                    for (String method : methods) {
+                        Element element = doc.createElement("method");
+                        element.appendChild(
+                                doc.createTextNode(XMLStringUtil.escapeControlChrs(method)));
+
+                        el.appendChild(element);
+                    }
+                } else {
+                    String textValue = val.getValue() == null ? "" : val.getValue().toString();
+                    Text text = doc.createTextNode(XMLStringUtil.escapeControlChrs(textValue));
+                    el.appendChild(text);
+                }
+                parent.appendChild(el);
+            }
+        }
     }
 }

@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>
+警报过滤器自动化框架支持
+</TITLE>
+</HEAD>
+<BODY>
+<H1>警报过滤器自动化框架支持</H1>
+这个附加组件支持自动化框架。
+
+<H2>Job: alertFilter</H2>
+这个警报过滤器作业允许您定义全局和上下文特定的警报过滤器。
+<p>
+这个视频中有所介绍：<a href="https://youtu.be/1fcpU54N-mA">ZAP 第8章 自动化框架 第二部分 - 环境</a>.
+<pre>
+  - type: alertFilter                  # 用于更改警报的风险级别
+    parameters:
+      deleteGlobalAlerts: true         # 布尔值，如果为真则删除所有现有的全局警报，默认为假
+    alertFilters:                      # 被应用的alertFilters列表
+      - ruleId:                        # 整型: 必须填写，为扫描规则 ID 或警报引用
+        newRisk:                       # 字符串: 必须为新的风险级别, 以下值之一: 'False Positive', 'Info', 'Low', 'Medium', 'High'
+        context:                       # 字符串: 可选, 上下文名称, 若为空则会创建一个全局警报过滤器
+        url:                           # 字符串: 可选, 与警报匹配的字符串，支持环境变量
+        urlRegex:                      # 布尔值: 可选, 如果为真则URL是一个正则表达式
+        parameter:                     # 字符串: 可选, 与警报参数字段匹配的字符串
+        parameterRegex:                # 布尔值: 可选, 如果为真则参数是一个正则表达式，支持环境变量
+        attack:                        # 字符串: 可选, 与警报攻击字段匹配的字符串
+        attackRegex:                   # 布尔值: 可选, 若为真则攻击是一个正则表达式
+        evidence:                      # 字符串: 可选, 与警报证据字段匹配的字符串
+        evidenceRegex:                 # 布尔值: 可选, 若为真则证据是一个正则表达式
+</pre>
+
+</BODY>
+</HTML>

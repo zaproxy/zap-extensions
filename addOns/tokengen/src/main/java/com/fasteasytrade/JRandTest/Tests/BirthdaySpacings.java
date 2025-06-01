@@ -43,6 +43,7 @@ public class BirthdaySpacings extends Base {
 	/**
 	 * @see com.fasteasytrade.JRandTest.Tests.Base#help()
 	 */
+	@Override
 	public void help() {
 		puts("\n\t|-------------------------------------------------------------|");
 		puts("\t|           This is the BIRTHDAY SPACINGS TEST                |");
@@ -68,6 +69,7 @@ public class BirthdaySpacings extends Base {
 	/**
 	 * @see com.fasteasytrade.JRandTest.Tests.Base#test(java.lang.String)
 	 */
+	@Override
 	public void test(String filename) throws Exception {
 
 		final int no_obs = 500;

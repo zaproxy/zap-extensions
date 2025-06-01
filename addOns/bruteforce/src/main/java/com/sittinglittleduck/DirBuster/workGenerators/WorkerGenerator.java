@@ -22,12 +22,12 @@
 package com.sittinglittleduck.DirBuster.workGenerators;
 
 import com.sittinglittleduck.DirBuster.BaseCase;
-import com.sittinglittleduck.DirBuster.Config;
 import com.sittinglittleduck.DirBuster.DirToCheck;
 import com.sittinglittleduck.DirBuster.ExtToCheck;
 import com.sittinglittleduck.DirBuster.GenBaseCase;
-import com.sittinglittleduck.DirBuster.HTTPHeader;
+import com.sittinglittleduck.DirBuster.HttpStatus;
 import com.sittinglittleduck.DirBuster.Manager;
+import com.sittinglittleduck.DirBuster.SimpleHttpClient.HttpMethod;
 import com.sittinglittleduck.DirBuster.WorkUnit;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -38,9 +38,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Vector;
 import java.util.concurrent.BlockingQueue;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.HeadMethod;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /** Produces the work to be done, when we are reading from a list */
 public class WorkerGenerator implements Runnable {
@@ -55,10 +54,9 @@ public class WorkerGenerator implements Runnable {
     private String started;
     private boolean stopMe = false;
     private boolean skipCurrent = false;
-    HttpClient httpclient;
 
     /* Logger Object for the class */
-    private static final Logger LOG = Logger.getLogger(WorkerGenerator.class);
+    private static final Logger LOGGER = LogManager.getLogger(WorkerGenerator.class);
 
     /**
      * Creates a new instance of WorkerGenerator
@@ -79,16 +77,14 @@ public class WorkerGenerator implements Runnable {
         // extToCheck = manager.getExtToUse();
         inputFile = manager.getInputFile();
         firstPart = manager.getFirstPartOfURL();
-
-        httpclient = manager.getHttpclient();
     }
 
     /** Thread run method */
+    @Override
     public void run() {
         String currentDir = "/";
-        int failcode = 404;
         String line;
-        Vector extToCheck = new Vector(10, 5);
+        Vector<ExtToCheck> extToCheck = new Vector<>(10, 5);
         boolean recursive = true;
         int passTotal = 0;
 
@@ -108,9 +104,9 @@ public class WorkerGenerator implements Runnable {
 
             manager.setTotalPass(passTotal);
         } catch (FileNotFoundException ex) {
-            LOG.error(String.format("File '%s' not found!", inputFile), ex);
+            LOGGER.error("File '{}' not found!", inputFile, ex);
         } catch (IOException ex) {
-            LOG.error(ex);
+            LOGGER.error(ex);
         }
         // -------------------------------------------------
 
@@ -119,41 +115,25 @@ public class WorkerGenerator implements Runnable {
             try {
                 URL headurl = new URL(firstPart);
 
-                HeadMethod httphead = new HeadMethod(headurl.toString());
+                int responceCode =
+                        manager.getHttpClient()
+                                .send(HttpMethod.HEAD, headurl.toString())
+                                .getStatusCode();
 
-                // set the custom HTTP headers
-                Vector HTTPheaders = manager.getHTTPHeaders();
-                for (int a = 0; a < HTTPheaders.size(); a++) {
-                    HTTPHeader httpHeader = (HTTPHeader) HTTPheaders.elementAt(a);
-                    /*
-                     * Host header has to be set in a different way!
-                     */
-                    if (httpHeader.getHeader().startsWith("Host:")) {
-                        httphead.getParams().setVirtualHost(httpHeader.getValue());
-                    } else {
-                        httphead.setRequestHeader(httpHeader.getHeader(), httpHeader.getValue());
-                    }
-                }
-
-                httphead.setFollowRedirects(Config.followRedirects);
-                int responceCode = httpclient.executeMethod(httphead);
-
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Response code for head check = " + responceCode);
-                }
+                LOGGER.debug("Response code for head check = {}", responceCode);
 
                 // if the responce code is method not implemented or if the head requests return
                 // 400!
-                if (responceCode == 501 || responceCode == 400 || responceCode == 405) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug(
-                                "Changing to GET only HEAD test returned 501(method no implmented) or a 400");
-                    }
+                if (responceCode == HttpStatus.NOT_IMPLEMENTED
+                        || responceCode == HttpStatus.BAD_REQUEST
+                        || responceCode == HttpStatus.METHOD_NOT_ALLOWED) {
+                    LOGGER.debug(
+                            "Changing to GET only HEAD test returned 501(method no implmented) or a 400");
                     // switch the mode to just GET requests
                     manager.setAuto(false);
                 }
             } catch (IOException e) {
-                LOG.error(e);
+                LOGGER.error(e);
             }
         }
 
@@ -183,7 +163,7 @@ public class WorkerGenerator implements Runnable {
 
                 manager.setCurrentlyProcessing(currentDir);
             } catch (InterruptedException e) {
-                LOG.debug(e);
+                LOGGER.debug(e);
             }
             started = currentDir;
 
@@ -198,7 +178,7 @@ public class WorkerGenerator implements Runnable {
                     baseCaseObj =
                             GenBaseCase.genBaseCase(manager, firstPart + currentDir, true, null);
                 } catch (IOException e) {
-                    LOG.error(e);
+                    LOGGER.error(e);
                 }
 
                 // end of dir fail case
@@ -213,8 +193,8 @@ public class WorkerGenerator implements Runnable {
                             new BufferedReader(
                                     new InputStreamReader(new FileInputStream(inputFile)));
 
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Generating dir list for " + firstPart);
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Generating dir list for {}", firstPart);
                     }
 
                     URL currentURL;
@@ -233,18 +213,14 @@ public class WorkerGenerator implements Runnable {
                             currentURL = new URL(firstPart + currentDir);
                             // System.out.println("first part = " + firstPart);
                             // System.out.println("current dir = " + currentDir);
-                            workQueue.put(new WorkUnit(currentURL, true, "GET", baseCaseObj, null));
-                            if (LOG.isDebugEnabled()) {
-                                LOG.debug(
-                                        "1 adding dir to work list "
-                                                + method
-                                                + " "
-                                                + currentDir.toString());
-                            }
+                            workQueue.put(
+                                    new WorkUnit(
+                                            currentURL, true, HttpMethod.GET, baseCaseObj, null));
+                            LOGGER.debug("1 adding dir to work list {} {}", method, currentDir);
                         } catch (MalformedURLException ex) {
-                            LOG.debug("Bad URL", ex);
+                            LOGGER.debug("Bad URL", ex);
                         } catch (InterruptedException ex) {
-                            LOG.debug(ex);
+                            LOGGER.debug(ex);
                         }
                     } // end of dealing with first item
                     int dirsProcessed = 0;
@@ -264,13 +240,13 @@ public class WorkerGenerator implements Runnable {
                             line = line.trim();
                             line = makeItemsafe(line);
                             try {
-                                String method;
+                                HttpMethod method;
                                 if (manager.getAuto()
                                         && !baseCaseObj.useContentAnalysisMode()
                                         && !baseCaseObj.isUseRegexInstead()) {
-                                    method = "HEAD";
+                                    method = HttpMethod.HEAD;
                                 } else {
-                                    method = "GET";
+                                    method = HttpMethod.GET;
                                 }
 
                                 currentURL = new URL(firstPart + currentDir + line + "/");
@@ -283,19 +259,13 @@ public class WorkerGenerator implements Runnable {
                                 workQueue.put(
                                         new WorkUnit(currentURL, true, method, baseCaseObj, line));
                                 // System.out.println("Gen finshed adding to queue");
-                                if (LOG.isDebugEnabled()) {
-                                    LOG.debug(
-                                            "2 adding dir to work list "
-                                                    + method
-                                                    + " "
-                                                    + currentURL.toString());
-                                }
+                                LOGGER.debug("2 adding dir to work list {} {}", method, currentURL);
                             } catch (MalformedURLException e) {
                                 // TODO deal with bad line
                                 // e.printStackTrace();
                                 // do nothing if it's malformed, I dont care about them!
                             } catch (InterruptedException e) {
-                                LOG.debug(e);
+                                LOGGER.debug(e);
                             }
 
                             // if there is a call to stop the work gen then stop!
@@ -306,9 +276,9 @@ public class WorkerGenerator implements Runnable {
                         }
                     } // end of while
                 } catch (FileNotFoundException e) {
-                    LOG.error(String.format("File '%s' not found!", inputFile), e);
+                    LOGGER.error("File '{}' not found!", inputFile, e);
                 } catch (IOException e) {
-                    LOG.error(e);
+                    LOGGER.error(e);
                 }
             }
 
@@ -321,7 +291,7 @@ public class WorkerGenerator implements Runnable {
                 // loop for all the different file extentions
                 for (int b = 0; b < extToCheck.size(); b++) {
                     // only test if we are surposed to
-                    ExtToCheck extTemp = (ExtToCheck) extToCheck.elementAt(b);
+                    ExtToCheck extTemp = extToCheck.elementAt(b);
 
                     if (extTemp.toCheck()) {
 
@@ -338,7 +308,7 @@ public class WorkerGenerator implements Runnable {
                                     GenBaseCase.genBaseCase(
                                             manager, firstPart + currentDir, false, fileExtention);
                         } catch (IOException e) {
-                            LOG.error(e);
+                            LOGGER.error(e);
                         }
 
                         // if the manager has sent the stop command then exit
@@ -365,13 +335,13 @@ public class WorkerGenerator implements Runnable {
                                     line = line.trim();
                                     line = makeItemsafe(line);
                                     try {
-                                        String method;
+                                        HttpMethod method;
                                         if (manager.getAuto()
                                                 && !baseCaseObj.useContentAnalysisMode()
                                                 && !baseCaseObj.isUseRegexInstead()) {
-                                            method = "HEAD";
+                                            method = HttpMethod.HEAD;
                                         } else {
-                                            method = "GET";
+                                            method = HttpMethod.GET;
                                         }
 
                                         URL currentURL =
@@ -389,18 +359,15 @@ public class WorkerGenerator implements Runnable {
                                                         method,
                                                         baseCaseObj,
                                                         line));
-                                        if (LOG.isDebugEnabled()) {
-                                            LOG.debug(
-                                                    "adding file to work list "
-                                                            + method
-                                                            + " "
-                                                            + currentURL.toString());
-                                        }
+                                        LOGGER.debug(
+                                                "adding file to work list {} {}",
+                                                method,
+                                                currentURL);
                                     } catch (MalformedURLException e) {
                                         // e.printStackTrace();
                                         // again do nothing as I dont care
                                     } catch (InterruptedException e) {
-                                        LOG.debug(e);
+                                        LOGGER.debug(e);
                                     }
 
                                     if (stopMe) {
@@ -411,9 +378,9 @@ public class WorkerGenerator implements Runnable {
                             } // end of while
                             // }
                         } catch (FileNotFoundException e) {
-                            LOG.error(String.format("File '%s' not found!", inputFile), e);
+                            LOGGER.error("File '{}' not found!", inputFile, e);
                         } catch (IOException e) {
-                            LOG.error(e);
+                            LOGGER.error(e);
                         }
                     }
                 } // end of file ext loop
@@ -424,7 +391,7 @@ public class WorkerGenerator implements Runnable {
             try {
                 Thread.sleep(200);
             } catch (InterruptedException ex) {
-                LOG.debug(ex);
+                LOGGER.debug(ex);
             }
         } // end of main while
         // System.out.println("Gen FINISHED!");

@@ -39,6 +39,7 @@ import org.zaproxy.zap.extension.plugnhack.ExtensionPlugNHack;
 import org.zaproxy.zap.extension.plugnhack.MonitoredPagesManager;
 import org.zaproxy.zap.view.LayoutHelper;
 
+@SuppressWarnings("serial")
 public abstract class ClientBreakDialog extends AbstractDialog {
 
     private static final long serialVersionUID = 1L;
@@ -205,7 +206,7 @@ public abstract class ClientBreakDialog extends AbstractDialog {
 
     private JComboBox<String> getTypesCombo() {
         if (typesCombo == null) {
-            typesCombo = new JComboBox<String>();
+            typesCombo = new JComboBox<>();
             resetTypesCombo();
         }
         return typesCombo;
@@ -224,7 +225,7 @@ public abstract class ClientBreakDialog extends AbstractDialog {
 
     private JComboBox<String> getClientsCombo() {
         if (clientsCombo == null) {
-            clientsCombo = new JComboBox<String>();
+            clientsCombo = new JComboBox<>();
             resetClientsCombo();
         }
         return clientsCombo;

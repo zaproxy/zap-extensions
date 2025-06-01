@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.fuzz;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.SwingUtilities;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -32,6 +30,7 @@ import org.zaproxy.zap.view.messagecontainer.SelectableContentMessageContainer;
 import org.zaproxy.zap.view.popup.ExtensionPopupMenuComponent;
 import org.zaproxy.zap.view.popup.ExtensionPopupMenuItemMessageContainer;
 
+@SuppressWarnings("serial")
 public class FuzzMessagePopupMenuItem extends ExtensionPopupMenuItemMessageContainer {
 
     private static final long serialVersionUID = 1L;
@@ -46,13 +45,9 @@ public class FuzzMessagePopupMenuItem extends ExtensionPopupMenuItemMessageConta
         this.extension = extension;
 
         addActionListener(
-                new ActionListener() {
-
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        action.perform();
-                        action = null;
-                    }
+                e -> {
+                    action.perform();
+                    action = null;
                 });
     }
 

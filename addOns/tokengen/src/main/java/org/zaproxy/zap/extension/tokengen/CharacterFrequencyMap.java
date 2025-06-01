@@ -69,7 +69,7 @@ public class CharacterFrequencyMap {
         for (char chr : token.toCharArray()) {
             allChrs.add(chr);
             if (charsPerPosn.get(index) == null) {
-                charsPerPosn.put(index, new HashSet<Character>());
+                charsPerPosn.put(index, new HashSet<>());
             }
             charsPerPosn.get(index).add(chr);
             Integer intVal = map.get(chr);

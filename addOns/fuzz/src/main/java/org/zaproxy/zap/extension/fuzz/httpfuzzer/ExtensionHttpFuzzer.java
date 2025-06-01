@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.fuzz.httpfuzzer;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
@@ -45,6 +44,7 @@ import org.zaproxy.zap.extension.fuzz.httpfuzzer.processors.UserHttpFuzzerMessag
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.processors.tagcreator.HttpFuzzerMessageProcessorTagStateHighlighter;
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.processors.tagcreator.HttpFuzzerMessageProcessorTagUIHandler;
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.ui.HttpFuzzAttackPopupMenuItem;
+import org.zaproxy.zap.extension.fuzz.httpfuzzer.ui.HttpFuzzResultToHistoryPopupMenuItem;
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.ui.HttpFuzzerResultStateHighlighter;
 import org.zaproxy.zap.extension.fuzz.messagelocations.MessageLocationReplacers;
 import org.zaproxy.zap.extension.script.ExtensionScript;
@@ -56,16 +56,8 @@ import org.zaproxy.zap.extension.users.ExtensionUserManagement;
 
 public class ExtensionHttpFuzzer extends ExtensionAdaptor {
 
-    private static final ImageIcon HTTP_FUZZER_PROCESSOR_SCRIPT_ICON =
-            new ImageIcon(ZAP.class.getResource("/resource/icon/16/script-fuzz.png"));
-
-    private static final List<Class<? extends Extension>> DEPENDENCIES;
-
-    static {
-        List<Class<? extends Extension>> dependencies = new ArrayList<>(1);
-        dependencies.add(ExtensionFuzz.class);
-        DEPENDENCIES = Collections.unmodifiableList(dependencies);
-    }
+    private static final List<Class<? extends Extension>> DEPENDENCIES =
+            List.of(ExtensionFuzz.class);
 
     private HttpFuzzerHandler httpFuzzerHandler;
 
@@ -78,6 +70,11 @@ public class ExtensionHttpFuzzer extends ExtensionAdaptor {
     }
 
     @Override
+    public String getUIName() {
+        return Constant.messages.getString("fuzz.httpfuzzer.name");
+    }
+
+    @Override
     public String getDescription() {
         return Constant.messages.getString("fuzz.httpfuzzer.description");
     }
@@ -85,11 +82,6 @@ public class ExtensionHttpFuzzer extends ExtensionAdaptor {
     @Override
     public List<Class<? extends Extension>> getDependencies() {
         return DEPENDENCIES;
-    }
-
-    @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
     }
 
     @Override
@@ -116,7 +108,11 @@ public class ExtensionHttpFuzzer extends ExtensionAdaptor {
                     new ScriptType(
                             HttpFuzzerProcessorScript.TYPE_NAME,
                             "fuzz.httpfuzzer.script.type.fuzzerprocessor",
-                            HTTP_FUZZER_PROCESSOR_SCRIPT_ICON,
+                            hasView()
+                                    ? new ImageIcon(
+                                            ZAP.class.getResource(
+                                                    "/resource/icon/16/script-fuzz.png"))
+                                    : null,
                             true,
                             true);
             extensionScript.registerScriptType(scriptType);
@@ -134,12 +130,15 @@ public class ExtensionHttpFuzzer extends ExtensionAdaptor {
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionFuzz.class);
         extensionFuzz.addFuzzerHandler(httpFuzzerHandler);
 
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook
                     .getHookMenu()
                     .addPopupMenuItem(
                             new HttpFuzzAttackPopupMenuItem(extensionFuzz, httpFuzzerHandler));
 
+            extensionHook
+                    .getHookMenu()
+                    .addPopupMenuItem(new HttpFuzzResultToHistoryPopupMenuItem());
             ExtensionSearch extensionSearch =
                     Control.getSingleton().getExtensionLoader().getExtension(ExtensionSearch.class);
             if (extensionSearch != null) {
@@ -188,11 +187,11 @@ public class ExtensionHttpFuzzer extends ExtensionAdaptor {
             extensionSearch.removeCustomHttpSearcher(httpFuzzerSearcher);
         }
 
-        if (getView() != null) {
+        if (hasView()) {
             ExtensionScript extensionScript =
                     Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
             if (extensionScript != null) {
-                extensionScript.removeScripType(scriptType);
+                extensionScript.removeScriptType(scriptType);
             }
         }
     }

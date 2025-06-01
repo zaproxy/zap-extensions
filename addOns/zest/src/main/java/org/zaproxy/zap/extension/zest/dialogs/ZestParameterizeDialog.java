@@ -21,14 +21,15 @@ package org.zaproxy.zap.extension.zest.dialogs;
 
 import java.awt.Dimension;
 import java.awt.Frame;
-import org.mozilla.zest.core.v1.ZestRequest;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
+import org.zaproxy.zest.core.v1.ZestRequest;
 
+@SuppressWarnings("serial")
 public class ZestParameterizeDialog extends StandardFieldsDialog {
 
     private static final String FIELD_REPLACE_STRING = "zest.dialog.parameterize.label.repstring";
@@ -68,7 +69,7 @@ public class ZestParameterizeDialog extends StandardFieldsDialog {
 
     @Override
     public void save() {
-        this.extension.perameterize(
+        this.extension.parameterize(
                 script,
                 node,
                 request,

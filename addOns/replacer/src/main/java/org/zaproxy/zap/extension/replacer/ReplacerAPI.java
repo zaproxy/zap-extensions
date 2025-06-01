@@ -46,14 +46,16 @@ public class ReplacerAPI extends ApiImplementor {
     private static final String ACTION_REMOVE_RULE = "removeRule";
     private static final String ACTION_SET_ENABLED = "setEnabled";
 
-    private static final String PARAM_DESC = "description";
+    private static final String DESC = "description";
+
+    private static final String ENABLED = "enabled";
+    private static final String MATCH_TYPE = "matchType";
+    private static final String MATCH_REGEX = "matchRegex";
+    private static final String MATCH_STRING = "matchString";
+    private static final String REPLACEMENT = "replacement";
+    private static final String INITIATORS = "initiators";
     private static final String PARAM_BOOL = "bool";
-    private static final String PARAM_ENABLED = "enabled";
-    private static final String PARAM_MATCH_TYPE = "matchType";
-    private static final String PARAM_MATCH_REGEX = "matchRegex";
-    private static final String PARAM_MATCH_STRING = "matchString";
-    private static final String PARAM_REPLACEMENT = "replacement";
-    private static final String PARAM_INITIATORS = "initiators";
+    private static final String URL = "url";
 
     private ExtensionReplacer extension = null;
 
@@ -70,17 +72,11 @@ public class ReplacerAPI extends ApiImplementor {
         this.addApiAction(
                 new ApiAction(
                         ACTION_ADD_RULE,
-                        new String[] {
-                            PARAM_DESC,
-                            PARAM_ENABLED,
-                            PARAM_MATCH_TYPE,
-                            PARAM_MATCH_REGEX,
-                            PARAM_MATCH_STRING
-                        },
-                        new String[] {PARAM_REPLACEMENT, PARAM_INITIATORS}));
+                        new String[] {DESC, ENABLED, MATCH_TYPE, MATCH_REGEX, MATCH_STRING},
+                        new String[] {REPLACEMENT, INITIATORS, URL}));
 
-        this.addApiAction(new ApiAction(ACTION_REMOVE_RULE, new String[] {PARAM_DESC}));
-        this.addApiAction(new ApiAction(ACTION_SET_ENABLED, new String[] {PARAM_DESC, PARAM_BOOL}));
+        this.addApiAction(new ApiAction(ACTION_REMOVE_RULE, new String[] {DESC}));
+        this.addApiAction(new ApiAction(ACTION_SET_ENABLED, new String[] {DESC, PARAM_BOOL}));
     }
 
     @Override
@@ -90,18 +86,14 @@ public class ReplacerAPI extends ApiImplementor {
 
     @Override
     public ApiResponse handleApiView(String name, JSONObject params) throws ApiException {
-        ApiResponse response = ApiResponseElement.OK;
-
         if (VIEW_RULES.equals(name)) {
             ApiResponseList rules = new ApiResponseList(name);
             for (ReplacerParamRule rule : extension.getParams().getRules()) {
                 rules.addItem(this.ruleToResponse(rule));
             }
-            response = rules;
-        } else {
-            throw new ApiException(ApiException.Type.BAD_VIEW);
+            return rules;
         }
-        return response;
+        throw new ApiException(ApiException.Type.BAD_VIEW);
     }
 
     @Override
@@ -110,10 +102,8 @@ public class ReplacerAPI extends ApiImplementor {
         if (ACTION_SET_ENABLED.equals(name)) {
             if (!extension
                     .getParams()
-                    .setEnabled(
-                            params.getString(PARAM_DESC),
-                            this.getParam(params, PARAM_BOOL, false))) {
-                throw new ApiException(ApiException.Type.DOES_NOT_EXIST, "description");
+                    .setEnabled(params.getString(DESC), this.getParam(params, PARAM_BOOL, false))) {
+                throw new ApiException(ApiException.Type.DOES_NOT_EXIST, DESC);
             }
             try {
                 this.extension.getParams().getConfig().save();
@@ -121,50 +111,57 @@ public class ReplacerAPI extends ApiImplementor {
                 throw new ApiException(ApiException.Type.INTERNAL_ERROR);
             }
         } else if (ACTION_ADD_RULE.equals(name)) {
-            String desc = params.getString(PARAM_DESC);
+            String desc = params.getString(DESC);
             if (this.extension.getParams().getRule(desc) != null) {
-                throw new ApiException(ApiException.Type.ALREADY_EXISTS, PARAM_DESC);
+                throw new ApiException(ApiException.Type.ALREADY_EXISTS, DESC);
             }
 
             MatchType type;
             try {
-                type = MatchType.valueOf(params.getString(PARAM_MATCH_TYPE));
+                type = MatchType.valueOf(params.getString(MATCH_TYPE));
             } catch (IllegalArgumentException e1) {
-                throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, PARAM_MATCH_TYPE, e1);
+                throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, MATCH_TYPE, e1);
             }
-            String matchString = params.getString(PARAM_MATCH_STRING);
+            String matchString = params.getString(MATCH_STRING);
             boolean matchRegex;
             try {
-                matchRegex = params.getBoolean(PARAM_MATCH_REGEX);
+                matchRegex = params.getBoolean(MATCH_REGEX);
             } catch (JSONException e) {
-                throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, PARAM_MATCH_REGEX, e);
+                throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, MATCH_REGEX, e);
             }
             if (matchRegex) {
                 try {
                     Pattern.compile(matchString);
                 } catch (PatternSyntaxException e) {
-                    throw new ApiException(
-                            ApiException.Type.ILLEGAL_PARAMETER, PARAM_MATCH_STRING, e);
+                    throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, MATCH_STRING, e);
                 }
             }
             List<Integer> initiators = null;
-            String initString = this.getParam(params, PARAM_INITIATORS, "");
+            String initString = this.getParam(params, INITIATORS, "");
             if (initString.length() > 0) {
-                initiators = new ArrayList<Integer>();
+                initiators = new ArrayList<>();
                 try {
                     for (String str : initString.split(",")) {
                         initiators.add(Integer.parseInt(str.trim()));
                     }
                 } catch (NumberFormatException e) {
-                    throw new ApiException(
-                            ApiException.Type.ILLEGAL_PARAMETER, PARAM_INITIATORS, e);
+                    throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, INITIATORS, e);
                 }
             }
             boolean enabled;
             try {
-                enabled = params.getBoolean(PARAM_ENABLED);
+                enabled = params.getBoolean(ENABLED);
             } catch (JSONException e) {
-                throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, PARAM_ENABLED, e);
+                throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, ENABLED, e);
+            }
+
+            String url = getParam(params, URL, "");
+            if (!url.isEmpty()) {
+                try {
+                    Pattern.compile(url);
+                } catch (PatternSyntaxException e) {
+                    throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, URL, e);
+                }
             }
 
             this.extension
@@ -172,12 +169,14 @@ public class ReplacerAPI extends ApiImplementor {
                     .addRule(
                             new ReplacerParamRule(
                                     desc,
+                                    url,
                                     type,
                                     matchString,
                                     matchRegex,
-                                    getParam(params, PARAM_REPLACEMENT, ""),
+                                    getParam(params, REPLACEMENT, ""),
                                     initiators,
-                                    enabled));
+                                    enabled,
+                                    false));
 
             try {
                 this.extension.getParams().getConfig().save();
@@ -186,8 +185,8 @@ public class ReplacerAPI extends ApiImplementor {
             }
 
         } else if (ACTION_REMOVE_RULE.equals(name)) {
-            if (!extension.getParams().removeRule(params.getString(PARAM_DESC))) {
-                throw new ApiException(ApiException.Type.DOES_NOT_EXIST, PARAM_DESC);
+            if (!extension.getParams().removeRule(params.getString(DESC))) {
+                throw new ApiException(ApiException.Type.DOES_NOT_EXIST, DESC);
             }
             try {
                 this.extension.getParams().getConfig().save();
@@ -201,13 +200,14 @@ public class ReplacerAPI extends ApiImplementor {
     }
 
     private ApiResponse ruleToResponse(ReplacerParamRule rule) {
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("description", rule.getDescription());
-        map.put("enabled", Boolean.toString(rule.isEnabled()));
-        map.put("matchType", rule.getMatchType().name());
-        map.put("matchRegex", Boolean.toString(rule.isMatchRegex()));
-        map.put("matchString", rule.getMatchString());
-        map.put("replacement", rule.getReplacement());
+        Map<String, String> map = new HashMap<>();
+        map.put(DESC, rule.getDescription());
+        map.put(URL, rule.getUrl());
+        map.put(ENABLED, Boolean.toString(rule.isEnabled()));
+        map.put(MATCH_TYPE, rule.getMatchType().name());
+        map.put(MATCH_REGEX, Boolean.toString(rule.isMatchRegex()));
+        map.put(MATCH_STRING, rule.getMatchString());
+        map.put(REPLACEMENT, rule.getReplacement());
         StringBuilder sb = new StringBuilder();
         if (rule.getInitiators() != null) {
             for (Integer init : rule.getInitiators()) {
@@ -217,7 +217,7 @@ public class ReplacerAPI extends ApiImplementor {
                 sb.append(init);
             }
         }
-        map.put("initiators", sb.toString());
-        return new ApiResponseSet<String>("rule", map);
+        map.put(INITIATORS, sb.toString());
+        return new ApiResponseSet<>("rule", map);
     }
 }

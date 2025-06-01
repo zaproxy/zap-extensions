@@ -19,8 +19,14 @@
  */
 package org.zaproxy.zap.extension.alertFilters;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.model.Model;
@@ -36,7 +42,7 @@ public class AlertFilter extends Enableable {
 
     // Use -1 for global alert filters
     private int contextId;
-    private int ruleId;
+    private String ruleId;
     // Use -1 as false positive
     private int newRisk;
     private String parameter;
@@ -47,14 +53,17 @@ public class AlertFilter extends Enableable {
     private boolean isAttackRegex;
     private String evidence;
     private boolean isEvidenceRegex;
+    private Set<String> methods;
 
-    private static final Logger log = Logger.getLogger(AlertFilter.class);
+    private static final Logger LOGGER = LogManager.getLogger(AlertFilter.class);
 
-    public AlertFilter() {}
+    public AlertFilter() {
+        methods = Set.of();
+    }
 
     public AlertFilter(
             int contextId,
-            int ruleId,
+            String ruleId,
             int newRisk,
             String url,
             boolean isUrlRegex,
@@ -77,7 +86,7 @@ public class AlertFilter extends Enableable {
 
     public AlertFilter(
             int contextId,
-            int ruleId,
+            String ruleId,
             int newRisk,
             String url,
             boolean isUrlRegex,
@@ -87,6 +96,36 @@ public class AlertFilter extends Enableable {
             boolean isAttackRegex,
             String evidence,
             boolean isEvidenceRegex,
+            boolean enabled) {
+        this(
+                contextId,
+                ruleId,
+                newRisk,
+                url,
+                isUrlRegex,
+                parameter,
+                isParameterRegex,
+                attack,
+                isAttackRegex,
+                evidence,
+                isEvidenceRegex,
+                Set.of(),
+                enabled);
+    }
+
+    public AlertFilter(
+            int contextId,
+            String ruleId,
+            int newRisk,
+            String url,
+            boolean isUrlRegex,
+            String parameter,
+            boolean isParameterRegex,
+            String attack,
+            boolean isAttackRegex,
+            String evidence,
+            boolean isEvidenceRegex,
+            Set<String> methods,
             boolean enabled) {
         super();
         this.contextId = contextId;
@@ -100,17 +139,19 @@ public class AlertFilter extends Enableable {
         this.isAttackRegex = isAttackRegex;
         this.evidence = evidence;
         this.isEvidenceRegex = isEvidenceRegex;
+        setMethods(methods);
         this.setEnabled(enabled);
     }
 
     public AlertFilter(int contextId, Alert alert) {
         super();
         this.contextId = contextId;
-        this.ruleId = alert.getPluginId();
+        this.ruleId = alert.getAlertRef();
         this.parameter = alert.getParam();
         this.url = alert.getUri();
         this.attack = alert.getAttack();
         this.evidence = alert.getEvidence();
+        this.methods = Set.of(alert.getMethod());
         this.setEnabled(true);
     }
 
@@ -122,11 +163,11 @@ public class AlertFilter extends Enableable {
         this.contextId = contextId;
     }
 
-    public int getRuleId() {
+    public String getRuleId() {
         return ruleId;
     }
 
-    public void setRuleId(int ruleId) {
+    public void setRuleId(String ruleId) {
         this.ruleId = ruleId;
     }
 
@@ -223,6 +264,25 @@ public class AlertFilter extends Enableable {
         this.isEvidenceRegex = isEvidenceRegex;
     }
 
+    public Set<String> getMethods() {
+        return methods;
+    }
+
+    public void setMethods(Set<String> methods) {
+        if (methods == null || methods.isEmpty()) {
+            this.methods = Set.of();
+            return;
+        }
+
+        this.methods =
+                methods.stream()
+                        .filter(Objects::nonNull)
+                        .map(String::trim)
+                        .filter(e -> !e.isEmpty())
+                        .map(e -> e.toUpperCase(Locale.ROOT))
+                        .collect(Collectors.toUnmodifiableSet());
+    }
+
     /**
      * Encodes the AlertFilter in a String. Fields that contain strings are Base64 encoded.
      *
@@ -254,7 +314,16 @@ public class AlertFilter extends Enableable {
         }
         out.append(FIELD_SEPARATOR);
         out.append(alertFilter.isEvidenceRegex()).append(FIELD_SEPARATOR);
-        // log.debug("Encoded AlertFilter: " + out.toString());
+        if (!alertFilter.methods.isEmpty()) {
+            String methods =
+                    alertFilter.methods.stream()
+                            .map(m -> m.getBytes(StandardCharsets.UTF_8))
+                            .map(Base64::encodeBase64String)
+                            .collect(Collectors.joining(FIELD_SEPARATOR));
+            out.append(Base64.encodeBase64String(methods.getBytes(StandardCharsets.UTF_8)));
+        }
+        out.append(FIELD_SEPARATOR);
+        // LOGGER.debug("Encoded AlertFilter: {}", out.toString());
         return out.toString();
     }
 
@@ -272,7 +341,7 @@ public class AlertFilter extends Enableable {
             alertFilter = new AlertFilter();
             alertFilter.setContextId(contextId);
             alertFilter.setEnabled(Boolean.parseBoolean(pieces[0]));
-            alertFilter.setRuleId(Integer.parseInt(pieces[1]));
+            alertFilter.setRuleId(pieces[1]);
             alertFilter.setNewRisk(Integer.parseInt(pieces[2]));
             alertFilter.setUrl(new String(Base64.decodeBase64(pieces[3])));
             alertFilter.setUrlRegex(Boolean.parseBoolean(pieces[4]));
@@ -285,11 +354,24 @@ public class AlertFilter extends Enableable {
                 alertFilter.setEvidence(new String(Base64.decodeBase64(pieces[9])));
                 alertFilter.setEvidenceRegex(Boolean.parseBoolean(pieces[10]));
             }
+            if (pieces.length > 11) {
+                alertFilter.setMethods(
+                        Set.of(
+                                        new String(
+                                                        Base64.decodeBase64(pieces[11]),
+                                                        StandardCharsets.UTF_8)
+                                                .split(FIELD_SEPARATOR))
+                                .stream()
+                                .map(Base64::decodeBase64)
+                                .map(m -> new String(m, StandardCharsets.UTF_8))
+                                .collect(Collectors.toSet()));
+            }
         } catch (Exception ex) {
-            log.error("An error occured while decoding alertFilter from: " + encodedString, ex);
+            LOGGER.error(
+                    "An error occurred while decoding alertFilter from: {}", encodedString, ex);
             return null;
         }
-        // log.debug("Decoded alertFilter: " + alertFilter);
+        // LOGGER.debug("Decoded alertFilter: {}", alertFilter);
         return alertFilter;
     }
 
@@ -299,20 +381,17 @@ public class AlertFilter extends Enableable {
 
     public boolean appliesToAlert(Alert alert, boolean ignoreContext) {
         if (!isEnabled()) {
-            if (log.isDebugEnabled()) {
-                log.debug("Filter disabled");
-            }
+            LOGGER.debug("Filter disabled");
             return false;
         }
-        if (getRuleId() != alert.getPluginId()) {
-            // rule ids dont match
-            if (log.isDebugEnabled()) {
-                log.debug(
-                        "Filter didnt match plugin id: "
-                                + getRuleId()
-                                + " != "
-                                + alert.getPluginId());
-            }
+        if (!getRuleId().equals(String.valueOf(alert.getPluginId()))
+                && !getRuleId().equals(alert.getAlertRef())) {
+            LOGGER.debug(
+                    "Filter didn't match scan rule ID and alert ref: {} != {} && {} != {}",
+                    getRuleId(),
+                    alert.getPluginId(),
+                    getRuleId(),
+                    alert.getAlertRef());
             return false;
         }
         if (!ignoreContext && this.contextId != -1) {
@@ -335,6 +414,9 @@ public class AlertFilter extends Enableable {
                 "Evidence", getEvidence(), isEvidenceRegex(), alert.getEvidence())) {
             return false;
         }
+        if (!methods.isEmpty() && !methods.contains(alert.getMethod().toUpperCase(Locale.ROOT))) {
+            return false;
+        }
         return true;
     }
 
@@ -343,27 +425,16 @@ public class AlertFilter extends Enableable {
         if (paramValue != null && paramValue.length() > 0) {
             if (isRegex) {
                 if (!targetValue.matches(paramValue)) {
-                    if (log.isDebugEnabled()) {
-                        log.debug(
-                                "Filter didnt match "
-                                        + paramName
-                                        + " regex: "
-                                        + paramValue
-                                        + " : "
-                                        + targetValue);
-                    }
+                    LOGGER.debug(
+                            "Filter didn't match {} regex: {} : {}",
+                            paramName,
+                            paramValue,
+                            targetValue);
                     return false;
                 }
             } else if (!paramValue.equals(targetValue)) {
-                if (log.isDebugEnabled()) {
-                    log.debug(
-                            "Filter didnt match "
-                                    + paramName
-                                    + " : "
-                                    + paramValue
-                                    + " : "
-                                    + targetValue);
-                }
+                LOGGER.debug(
+                        "Filter didn't match {} : {} : {}", paramName, paramValue, targetValue);
                 return false;
             }
         }
@@ -383,8 +454,9 @@ public class AlertFilter extends Enableable {
         result = prime * result + (isUrlRegex ? 1231 : 1237);
         result = prime * result + newRisk;
         result = prime * result + ((parameter == null) ? 0 : parameter.hashCode());
-        result = prime * result + ruleId;
+        result = prime * result + (ruleId == null ? 0 : ruleId.hashCode());
         result = prime * result + ((url == null) ? 0 : url.hashCode());
+        result = prime * result + methods.hashCode();
         return result;
     }
 
@@ -409,10 +481,15 @@ public class AlertFilter extends Enableable {
         if (parameter == null) {
             if (other.parameter != null) return false;
         } else if (!parameter.equals(other.parameter)) return false;
-        if (ruleId != other.ruleId) return false;
+        if (!Objects.equals(ruleId, other.ruleId)) {
+            return false;
+        }
         if (url == null) {
             if (other.url != null) return false;
         } else if (!url.equals(other.url)) return false;
+        if (!methods.equals(other.methods)) {
+            return false;
+        }
         return true;
     }
 }

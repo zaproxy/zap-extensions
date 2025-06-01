@@ -21,8 +21,6 @@ package org.zaproxy.zap.extension.accessControl;
 
 import java.awt.Dimension;
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,19 +33,26 @@ import java.util.TreeSet;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.db.RecordContext;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionHookView;
 import org.parosproxy.paros.extension.SessionChangedListener;
-import org.parosproxy.paros.extension.report.ReportGenerator;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.view.View;
@@ -58,6 +63,7 @@ import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.Access
 import org.zaproxy.zap.extension.accessControl.view.AccessControlScanOptionsDialog;
 import org.zaproxy.zap.extension.accessControl.view.AccessControlStatusPanel;
 import org.zaproxy.zap.extension.accessControl.view.ContextAccessControlPanel;
+import org.zaproxy.zap.extension.alert.ExampleAlertProvider;
 import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
 import org.zaproxy.zap.extension.authorization.ExtensionAuthorization;
 import org.zaproxy.zap.extension.users.ExtensionUserManagement;
@@ -73,9 +79,12 @@ import org.zaproxy.zap.view.ContextPanelFactory;
  * applications.
  */
 public class ExtensionAccessControl extends ExtensionAdaptor
-        implements SessionChangedListener, ContextPanelFactory, ContextDataFactory {
+        implements SessionChangedListener,
+                ContextPanelFactory,
+                ContextDataFactory,
+                ExampleAlertProvider {
 
-    private static Logger log = Logger.getLogger(ExtensionAccessControl.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionAccessControl.class);
 
     public static final String CONTEXT_CONFIG_ACCESS_RULES =
             Context.CONTEXT_CONFIG + ".accessControl.rules";
@@ -86,16 +95,11 @@ public class ExtensionAccessControl extends ExtensionAdaptor
     public static final String NAME = "ExtensionAccessControl";
 
     /** The list of extensions this depends on. */
-    private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES;
-
-    static {
-        // Prepare a list of Extensions on which this extension depends
-        List<Class<? extends Extension>> dependencies = new ArrayList<>(1);
-        dependencies.add(ExtensionUserManagement.class);
-        dependencies.add(ExtensionAuthentication.class);
-        dependencies.add(ExtensionAuthorization.class);
-        EXTENSION_DEPENDENCIES = Collections.unmodifiableList(dependencies);
-    }
+    private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES =
+            List.of(
+                    ExtensionUserManagement.class,
+                    ExtensionAuthentication.class,
+                    ExtensionAuthorization.class);
 
     /** The status panel used by the extension. */
     private AccessControlStatusPanel statusPanel;
@@ -112,8 +116,6 @@ public class ExtensionAccessControl extends ExtensionAdaptor
     /** The scanner threads manager. */
     private AccessControlScannerThreadManager threadManager;
 
-    private AccessControlAPI api;
-
     public ExtensionAccessControl() {
         super(NAME);
         this.setOrder(601);
@@ -129,10 +131,9 @@ public class ExtensionAccessControl extends ExtensionAdaptor
         extensionHook.addContextDataFactory(this);
         extensionHook.addSessionListener(this);
 
-        this.api = new AccessControlAPI(this);
-        extensionHook.addApiImplementor(this.api);
+        extensionHook.addApiImplementor(new AccessControlAPI(this));
 
-        if (getView() != null) {
+        if (hasView()) {
             ExtensionHookView viewHook = extensionHook.getHookView();
             viewHook.addStatusPanel(getStatusPanel());
             viewHook.addContextPanelFactory(this);
@@ -174,29 +175,15 @@ public class ExtensionAccessControl extends ExtensionAdaptor
                 activeActions.add(
                         MessageFormat.format(
                                 activeActionPrefix,
-                                scan.getStartOptions().targetContext.getName()));
+                                scan.getStartOptions().getTargetContext().getName()));
             }
         }
         return activeActions;
     }
 
     @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
-    }
-
-    @Override
     public String getDescription() {
         return Constant.messages.getString("accessControl.desc");
-    }
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_EXTENSIONS_PAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
     }
 
     @Override
@@ -213,10 +200,10 @@ public class ExtensionAccessControl extends ExtensionAdaptor
 
     @Override
     public AbstractContextPropertiesPanel getContextPanel(Context context) {
-        ContextAccessControlPanel panel = this.contextPanelsMap.get(context.getIndex());
+        ContextAccessControlPanel panel = this.contextPanelsMap.get(context.getId());
         if (panel == null) {
-            panel = new ContextAccessControlPanel(this, context.getIndex());
-            this.contextPanelsMap.put(context.getIndex(), panel);
+            panel = new ContextAccessControlPanel(this, context.getId());
+            this.contextPanelsMap.put(context.getId(), panel);
         }
         return panel;
     }
@@ -246,10 +233,10 @@ public class ExtensionAccessControl extends ExtensionAdaptor
      */
     @SuppressWarnings("fallthrough")
     public void startScan(AccessControlScanStartOptions startOptions) {
-        int contextId = startOptions.targetContext.getIndex();
+        int contextId = startOptions.getTargetContext().getId();
         AccessControlScannerThread scannerThread = threadManager.getScannerThread(contextId);
         if (scannerThread.isRunning()) {
-            log.warn("Access control scan already running for context: " + contextId);
+            LOGGER.warn("Access control scan already running for context: {}", contextId);
             throw new IllegalStateException("A scan is already running for context: " + contextId);
         }
 
@@ -257,10 +244,10 @@ public class ExtensionAccessControl extends ExtensionAdaptor
             case safe:
                 throw new IllegalStateException("Access control scan is not allowed in Safe mode.");
             case protect:
-                if (!startOptions.targetContext.isInScope()) {
+                if (!startOptions.getTargetContext().isInScope()) {
                     throw new IllegalStateException(
                             "Access control scan is not allowed with a context out of scope when in Protected mode: "
-                                    + startOptions.targetContext.getName());
+                                    + startOptions.getTargetContext().getName());
                 }
             case standard:
             case attack:
@@ -269,7 +256,7 @@ public class ExtensionAccessControl extends ExtensionAdaptor
         }
 
         scannerThread = threadManager.recreateScannerThreadIfHasRun(contextId);
-        if (getView() != null) {
+        if (hasView()) {
             scannerThread.addScanListener(getStatusPanel());
         }
         scannerThread.setStartOptions(startOptions);
@@ -291,7 +278,7 @@ public class ExtensionAccessControl extends ExtensionAdaptor
 
     @Override
     public void sessionChanged(Session session) {
-        if (getView() != null) {
+        if (hasView()) {
             getStatusPanel().contextsChanged();
             getStatusPanel().reset();
         }
@@ -301,7 +288,7 @@ public class ExtensionAccessControl extends ExtensionAdaptor
         // move to the "loadContextData()" method
         if (session != null) {
             for (Context c : session.getContexts()) {
-                ContextAccessRulesManager m = contextManagers.get(c.getIndex());
+                ContextAccessRulesManager m = contextManagers.get(c.getId());
                 if (m != null) {
                     m.reloadContextSiteTree(session);
                 }
@@ -321,7 +308,7 @@ public class ExtensionAccessControl extends ExtensionAdaptor
             this.threadManager.stopAllScannerThreads();
         } else if (Mode.protect.equals(mode)) {
             for (AccessControlScannerThread scan : threadManager.getAllThreads()) {
-                if (scan.isRunning() && !scan.getStartOptions().targetContext.isInScope()) {
+                if (scan.isRunning() && !scan.getStartOptions().getTargetContext().isInScope()) {
                     scan.stopScan();
                 }
             }
@@ -344,42 +331,42 @@ public class ExtensionAccessControl extends ExtensionAdaptor
         // Localization
         Element localizationElement = doc.createElement("localization");
         rootElement.appendChild(localizationElement);
-        ReportGenerator.addChildTextNode(
+        addChildTextNode(
                 doc,
                 localizationElement,
                 "title",
                 Constant.messages.getString("accessControl.report.title"));
-        ReportGenerator.addChildTextNode(
+        addChildTextNode(
                 doc,
                 localizationElement,
                 "url",
                 Constant.messages.getString("accessControl.report.table.header.url"));
-        ReportGenerator.addChildTextNode(
+        addChildTextNode(
                 doc,
                 localizationElement,
                 "method",
                 Constant.messages.getString("accessControl.report.table.header.method"));
-        ReportGenerator.addChildTextNode(
+        addChildTextNode(
                 doc,
                 localizationElement,
                 "authorization",
                 Constant.messages.getString("accessControl.report.table.header.authorization"));
-        ReportGenerator.addChildTextNode(
+        addChildTextNode(
                 doc,
                 localizationElement,
                 "access-control",
                 Constant.messages.getString("accessControl.report.table.header.accessControl"));
-        ReportGenerator.addChildTextNode(
+        addChildTextNode(
                 doc,
                 localizationElement,
                 "show-all",
                 Constant.messages.getString("accessControl.report.button.all"));
-        ReportGenerator.addChildTextNode(
+        addChildTextNode(
                 doc,
                 localizationElement,
                 "show-valid",
                 Constant.messages.getString("accessControl.report.button.valid"));
-        ReportGenerator.addChildTextNode(
+        addChildTextNode(
                 doc,
                 localizationElement,
                 "show-illegal",
@@ -401,23 +388,20 @@ public class ExtensionAccessControl extends ExtensionAdaptor
         }
 
         // Create a sorted list of users based on id (null/unauthenticated user first)
-        List<User> users = new ArrayList<>(scanThread.getStartOptions().targetUsers);
+        List<User> users = new ArrayList<>(scanThread.getStartOptions().getTargetUsers());
         Collections.sort(
                 users,
-                new Comparator<User>() {
-                    @Override
-                    public int compare(User o1, User o2) {
-                        if (o1 == o2) {
-                            return 0;
-                        }
-                        if (o1 == null) {
-                            return -1;
-                        }
-                        if (o2 == null) {
-                            return 1;
-                        }
-                        return o1.getId() - o2.getId();
+                (o1, o2) -> {
+                    if (o1 == o2) {
+                        return 0;
                     }
+                    if (o1 == null) {
+                        return -1;
+                    }
+                    if (o2 == null) {
+                        return 1;
+                    }
+                    return o1.getId() - o2.getId();
                 });
         // ... and add the list of users in the report
         Element usersElement = doc.createElement("users");
@@ -432,20 +416,17 @@ public class ExtensionAccessControl extends ExtensionAdaptor
 
         // Prepare a comparator that keeps scan results in order based on the user id
         Comparator<AccessControlResultEntry> resultsComparator =
-                new Comparator<AccessControlScannerThread.AccessControlResultEntry>() {
-                    @Override
-                    public int compare(AccessControlResultEntry o1, AccessControlResultEntry o2) {
-                        if (o1.getUser() == o2.getUser()) {
-                            return 0;
-                        }
-                        if (o1.getUser() == null) {
-                            return -1;
-                        }
-                        if (o2.getUser() == null) {
-                            return 1;
-                        }
-                        return o1.getUser().getId() - o2.getUser().getId();
+                (o1, o2) -> {
+                    if (o1.getUser() == o2.getUser()) {
+                        return 0;
                     }
+                    if (o1.getUser() == null) {
+                        return -1;
+                    }
+                    if (o2.getUser() == null) {
+                        return 1;
+                    }
+                    return o1.getUser().getId() - o2.getUser().getId();
                 };
         Map<String, TreeSet<AccessControlResultEntry>> uriResults =
                 new HashMap<>(scanResults.size());
@@ -491,6 +472,13 @@ public class ExtensionAccessControl extends ExtensionAdaptor
         return doc;
     }
 
+    private static void addChildTextNode(
+            Document doc, Element parent, String nodeName, String text) {
+        Element child = doc.createElement(nodeName);
+        child.appendChild(doc.createTextNode(text));
+        parent.appendChild(child);
+    }
+
     /**
      * Generate an access control report for the provided context id and save it in the output file.
      *
@@ -500,7 +488,7 @@ public class ExtensionAccessControl extends ExtensionAdaptor
      */
     public File generateAccessControlReport(int contextId, File outputFile)
             throws ParserConfigurationException {
-        log.debug("Generating report for context " + contextId + " to: " + outputFile);
+        LOGGER.debug("Generating report for context {} to: {}", contextId, outputFile);
 
         // The path for the XSL file
         File xslFile =
@@ -509,8 +497,33 @@ public class ExtensionAccessControl extends ExtensionAdaptor
                         "xml" + File.separator + "reportAccessControl.html.xsl");
 
         // Generate the report
-        return ReportGenerator.XMLToHtml(
+        return XMLToHtml(
                 generateLastScanXMLReport(contextId), xslFile.getAbsolutePath(), outputFile);
+    }
+
+    private static File XMLToHtml(Document xmlDocument, String infilexsl, File outFile) {
+        File stylesheet = null;
+
+        outFile = new File(outFile.getAbsolutePath());
+        try {
+            stylesheet = new File(infilexsl);
+
+            DOMSource source = new DOMSource(xmlDocument);
+
+            // Use a Transformer for output
+            TransformerFactory tFactory = TransformerFactory.newInstance();
+            StreamSource stylesource = new StreamSource(stylesheet);
+            Transformer transformer = tFactory.newTransformer(stylesource);
+
+            // Make the transformation and write to the output file
+            StreamResult result = new StreamResult(outFile.getPath());
+            transformer.transform(source, result);
+
+        } catch (TransformerException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+
+        return outFile;
     }
 
     /**
@@ -537,10 +550,10 @@ public class ExtensionAccessControl extends ExtensionAdaptor
      * @return the user access rules manager
      */
     public ContextAccessRulesManager getContextAccessRulesManager(Context context) {
-        ContextAccessRulesManager manager = contextManagers.get(context.getIndex());
+        ContextAccessRulesManager manager = contextManagers.get(context.getId());
         if (manager == null) {
             manager = new ContextAccessRulesManager(context);
-            contextManagers.put(context.getIndex(), manager);
+            contextManagers.put(context.getId(), manager);
         }
         return manager;
     }
@@ -558,11 +571,11 @@ public class ExtensionAccessControl extends ExtensionAdaptor
 
     @Override
     public void discardContext(Context ctx) {
-        ContextAccessControlPanel panel = this.contextPanelsMap.remove(ctx.getIndex());
+        ContextAccessControlPanel panel = this.contextPanelsMap.remove(ctx.getId());
         if (panel != null) {
             panel.unload();
         }
-        this.contextManagers.remove(ctx.getIndex());
+        this.contextManagers.remove(ctx.getId());
     }
 
     @Override
@@ -572,9 +585,9 @@ public class ExtensionAccessControl extends ExtensionAdaptor
         try {
             serializedRules =
                     session.getContextDataStrings(
-                            context.getIndex(), RecordContext.TYPE_ACCESS_CONTROL_RULE);
+                            context.getId(), RecordContext.TYPE_ACCESS_CONTROL_RULE);
         } catch (Exception e) {
-            log.error("Unable to load access control rules for context: " + context.getIndex(), e);
+            LOGGER.error("Unable to load access control rules for context: {}", context.getId(), e);
             return;
         }
 
@@ -590,13 +603,13 @@ public class ExtensionAccessControl extends ExtensionAdaptor
     @Override
     public void persistContextData(Session session, Context context) {
         try {
-            ContextAccessRulesManager contextManager = contextManagers.get(context.getIndex());
+            ContextAccessRulesManager contextManager = contextManagers.get(context.getId());
             if (contextManager != null) {
                 List<String> serializedRules = contextManager.exportSerializedRules();
                 // Save only if we have anything to save
                 if (!serializedRules.isEmpty()) {
                     session.setContextData(
-                            context.getIndex(),
+                            context.getId(),
                             RecordContext.TYPE_ACCESS_CONTROL_RULE,
                             serializedRules);
                     return;
@@ -605,15 +618,15 @@ public class ExtensionAccessControl extends ExtensionAdaptor
 
             // If we don't have any rules, force delete any previous values
             session.clearContextDataForType(
-                    context.getIndex(), RecordContext.TYPE_ACCESS_CONTROL_RULE);
+                    context.getId(), RecordContext.TYPE_ACCESS_CONTROL_RULE);
         } catch (Exception e) {
-            log.error("Unable to persist access rules for context: " + context.getIndex(), e);
+            LOGGER.error("Unable to persist access rules for context: {}", context.getId(), e);
         }
     }
 
     @Override
     public void exportContextData(Context ctx, Configuration config) {
-        ContextAccessRulesManager contextManager = contextManagers.get(ctx.getIndex());
+        ContextAccessRulesManager contextManager = contextManagers.get(ctx.getId());
         if (contextManager != null) {
             List<String> serializedRules = contextManager.exportSerializedRules();
             config.setProperty(CONTEXT_CONFIG_ACCESS_RULES_RULE, serializedRules);
@@ -665,5 +678,14 @@ public class ExtensionAccessControl extends ExtensionAdaptor
         }
 
         return result;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return AccessControlAlertsProcessor.getExampleAlerts();
+    }
+
+    public String getHelpLink() {
+        return "https://www.zaproxy.org/docs/desktop/addons/access-control-testing/#alerts";
     }
 }

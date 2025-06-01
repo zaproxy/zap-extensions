@@ -21,23 +21,26 @@ package org.zaproxy.zap.extension.openapi.generators;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.zaproxy.addon.commonlib.ValueProvider;
 
 public class Generators {
 
     private ValueGenerator valueGenerator;
     private ArrayGenerator arrayGenerator;
+    private MapGenerator mapGenerator;
 
     private BodyGenerator bodyGenerator;
     private DataGenerator dataGenerator;
     private PathGenerator pathGenerator;
-    private List<String> errorMessages = new ArrayList<String>();
+    private List<String> errorMessages = new ArrayList<>();
 
-    public Generators(org.zaproxy.zap.model.ValueGenerator valueGenerator) {
-        this.valueGenerator = new ValueGenerator(valueGenerator);
+    public Generators(ValueProvider valueProvider) {
+        this.valueGenerator = new ValueGenerator(valueProvider);
         this.dataGenerator = new DataGenerator(this);
         this.bodyGenerator = new BodyGenerator(this);
         this.arrayGenerator = new ArrayGenerator(this.dataGenerator);
         this.pathGenerator = new PathGenerator(this.dataGenerator);
+        this.mapGenerator = new MapGenerator(this.dataGenerator);
     }
 
     public ArrayGenerator getArrayGenerator() {
@@ -66,5 +69,9 @@ public class Generators {
 
     public ValueGenerator getValueGenerator() {
         return this.valueGenerator;
+    }
+
+    public MapGenerator getMapGenerator() {
+        return mapGenerator;
     }
 }

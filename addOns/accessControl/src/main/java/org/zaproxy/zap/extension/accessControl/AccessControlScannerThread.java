@@ -23,7 +23,8 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.db.DatabaseException;
@@ -72,9 +73,9 @@ public class AccessControlScannerThread
          */
         ILLEGAL(Constant.messages.getString("accessControl.scanResult.illegal")),
         /**
-         * This result is associated to nodes whose corresponding corresponding {@link AccessRule}
-         * is {@link AccessRule#UNKNOWN} so we cannot make any assumption regarding the validity of
-         * the access to the resource.
+         * This result is associated to nodes whose corresponding {@link AccessRule} is {@link
+         * AccessRule#UNKNOWN} so we cannot make any assumption regarding the validity of the access
+         * to the resource.
          */
         UNKNOWN(Constant.messages.getString("accessControl.scanResult.unknown"));
 
@@ -89,9 +90,9 @@ public class AccessControlScannerThread
         public String toString() {
             return localizedName;
         }
-    };
+    }
 
-    private static final Logger log = Logger.getLogger(AccessControlScannerThread.class);
+    private static final Logger LOGGER = LogManager.getLogger(AccessControlScannerThread.class);
 
     /** The HTTP sender used to effectively send the data. */
     private HttpSender httpSender;
@@ -116,15 +117,11 @@ public class AccessControlScannerThread
         this.alertsProcessor = new AccessControlAlertsProcessor(getStartOptions());
         this.targetUsers = getStartOptions().targetUsers;
         this.accessRulesManager =
-                extension.getContextAccessRulesManager(getStartOptions().targetContext.getIndex());
+                extension.getContextAccessRulesManager(getStartOptions().targetContext.getId());
         this.authorizationDetection =
                 getStartOptions().targetContext.getAuthorizationDetectionMethod();
         // Initialize the HTTP sender
-        this.httpSender =
-                new HttpSender(
-                        Model.getSingleton().getOptionsParam().getConnectionParam(),
-                        true,
-                        HttpSender.ACCESS_CONTROL_SCANNER_INITIATOR);
+        this.httpSender = new HttpSender(HttpSender.ACCESS_CONTROL_SCANNER_INITIATOR);
         // Do not follow redirections because we want to check the initial response
         httpSender.setFollowRedirect(false);
 
@@ -136,9 +133,9 @@ public class AccessControlScannerThread
         try {
             notifyScanStarted();
             scanImpl();
-            log.debug("Access control scan succesfully completed.");
+            LOGGER.debug("Access control scan successfully completed.");
         } catch (Exception e) {
-            log.error("An error occurred while scanning:", e);
+            LOGGER.error("An error occurred while scanning:", e);
         } finally {
             setScanProgress(getScanMaximumProgress());
             setRunningState(false);
@@ -153,12 +150,10 @@ public class AccessControlScannerThread
 
         // And set up the state accordingly
         this.setScanMaximumProgress(targetNodes.size() + 1);
-        if (log.isDebugEnabled()) {
-            log.debug(
-                    String.format(
-                            "Starting Access Control scan for %d URLs and %d users",
-                            targetNodes.size(), targetUsers.size()));
-        }
+        LOGGER.debug(
+                "Starting Access Control scan for {} URLs and {} users",
+                targetNodes.size(),
+                targetUsers.size());
 
         int progress = 0;
 
@@ -179,9 +174,9 @@ public class AccessControlScannerThread
             try {
                 originalMessage = sn.getHistoryReference().getHttpMessage();
             } catch (Exception ex) {
-                log.error(
-                        "An error has occurred while loading history reference message:"
-                                + ex.getMessage(),
+                LOGGER.error(
+                        "An error has occurred while loading history reference message: {}",
+                        ex.getMessage(),
                         ex);
             }
 
@@ -212,13 +207,10 @@ public class AccessControlScannerThread
     }
 
     private void attackNode(SiteTreeNode stn, HttpMessage originalMessage, User user) {
-        if (log.isDebugEnabled()) {
-            log.debug(
-                    "Attacking node: '"
-                            + originalMessage.getRequestHeader().getURI()
-                            + "' as user: "
-                            + (user != null ? user.getName() : "unauthenticated"));
-        }
+        LOGGER.debug(
+                "Attacking node: '{}' as user: {}",
+                originalMessage.getRequestHeader().getURI(),
+                user != null ? user.getName() : "unauthenticated");
         // Clone the original message and send it from the point of view of the user
         HttpMessage scanMessage = originalMessage.cloneRequest();
         scanMessage.setRequestingUser(user);
@@ -226,9 +218,9 @@ public class AccessControlScannerThread
         try {
             httpSender.sendAndReceive(scanMessage);
         } catch (IOException e) {
-            log.error(
-                    "Error occurred while sending/receiving access control testing message to:"
-                            + scanMessage.getRequestHeader().getURI(),
+            LOGGER.error(
+                    "Error occurred while sending/receiving access control testing message to: {}",
+                    scanMessage.getRequestHeader().getURI(),
                     e);
             return;
         }
@@ -245,9 +237,9 @@ public class AccessControlScannerThread
                             HistoryReference.TYPE_ACCESS_CONTROL,
                             scanMessage);
         } catch (HttpMalformedHeaderException | DatabaseException e) {
-            log.error(
-                    "An error has occurred while saving AccessControl testing message in HistoryReference: "
-                            + e.getMessage(),
+            LOGGER.error(
+                    "An error has occurred while saving AccessControl testing message in HistoryReference: {}",
+                    e.getMessage(),
                     e);
             return;
         }
@@ -314,18 +306,51 @@ public class AccessControlScannerThread
      * testing.
      */
     public static class AccessControlScanStartOptions implements ScanStartOptions {
-        public Context targetContext;
-        public List<User> targetUsers;
-        public boolean raiseAlerts;
+        private Context targetContext;
+        private List<User> targetUsers;
+        private boolean raiseAlerts;
+
         /**
          * Defines the risk level with which alerts should be raised and corresponds to the alert
          * levels from {@link Alert#MSG_RISK}, such as {@link Alert#RISK_HIGH}.
          */
-        public int alertRiskLevel;
+        private int alertRiskLevel;
 
         public AccessControlScanStartOptions() {
             super();
-            this.targetUsers = new LinkedList<User>();
+            this.targetUsers = new LinkedList<>();
+        }
+
+        public Context getTargetContext() {
+            return targetContext;
+        }
+
+        public void setTargetContext(Context targetContext) {
+            this.targetContext = targetContext;
+        }
+
+        public List<User> getTargetUsers() {
+            return targetUsers;
+        }
+
+        public void setTargetUsers(List<User> targetUsers) {
+            this.targetUsers = targetUsers;
+        }
+
+        public boolean isRaiseAlerts() {
+            return raiseAlerts;
+        }
+
+        public void setRaiseAlerts(boolean raiseAlerts) {
+            this.raiseAlerts = raiseAlerts;
+        }
+
+        public int getAlertRiskLevel() {
+            return alertRiskLevel;
+        }
+
+        public void setAlertRiskLevel(int alertRiskLevel) {
+            this.alertRiskLevel = alertRiskLevel;
         }
     }
 

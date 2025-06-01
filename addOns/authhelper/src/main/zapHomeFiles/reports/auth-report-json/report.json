@@ -1,0 +1,110 @@
+{[#th:block th:with="rptData=${reportData.getReportObject('authdata')}"]
+	"@programName": [[${programName}]],
+	"@version": [[${zapVersion}]],
+	"@generated": [[${generatedString}]],
+	"site":  [[(${rptData.getSite()})]]
+	[#th:block th:if="${reportData.isIncludeSection('summary')}"]
+	,"summaryItems": [[#th:block th:each="sumItem, sumState: ${rptData.getSummaryItems()}"][#th:block th:if="${! sumState.first}"],[/th:block]
+		{
+			"description": [[${sumItem.description}]],
+			"passed": [[${sumItem.passed}]],
+			"key": [[${sumItem.key}]]
+		}[/th:block]
+	]
+	[#th:block th:if="${rptData.hasFailureDetails()}"]
+	,"failureReasons": [[#th:block th:each="failureItem, failureState: ${rptData.getFailureDetails()}"][#th:block th:if="${!failureState.first}"],[/th:block]
+		{
+			"key": [[${failureItem.getKey()}]],
+			"description": [[${failureItem.getDetail()}]]
+		}[/th:block]
+	]
+	[/th:block]
+	[/th:block]
+	[#th:block th:if="${reportData.isIncludeSection('afenv')}"]
+	,"afEnv": [[${rptData.getAfEnv()}]]
+	[/th:block]
+	,"afPlanErrors": [[#th:block th:each="afError, afErrorState: ${rptData.getAfPlanErrors()}"][#th:block th:if="${! afErrorState.first}"],[/th:block]
+		[[${afError}]][/th:block]
+	]
+	[#th:block th:if="${reportData.isIncludeSection('statistics')}"]
+	,"statistics": [[#th:block th:each="statItem, statState: ${rptData.getStatistics()}"][#th:block th:if="${! statState.first}"],[/th:block]
+		{
+			"key": [[${statItem.key}]],
+			"scope": [[${statItem.scope}]],
+			"value": [[${statItem.value}]]
+		}[/th:block]
+	]
+	[/th:block]
+	[#th:block th:if="${reportData.isIncludeSection('diagnostics')}" th:with="diagnostics=${rptData.diagnostics}"]
+	,"diagnostics": [[#th:block th:each="entry, state: ${diagnostics}"][#th:block th:if="${! state.first}"],[/th:block]
+		{
+			"created": [[${entry.createTimestamp}]],
+			"authenticationMethod": [[${entry.authenticationMethod}]],
+			"context": [[${entry.context}]],
+			"user": [[${entry.user}]],
+			"script": [[${entry.script}]]
+			
+			[#th:block th:with="steps=${entry.steps}"]
+			,"steps": [[#th:block th:each="step, state: ${steps}"][#th:block th:if="${! state.first}"],[/th:block]
+				{
+					"id": [[${step.id}]],
+					"created": [[${step.createTimestamp}]],
+					"url": [[${step.url}]],
+					"description": [[${step.description}]]
+					[#th:block th:with="webElement=${step.webElement}"][#th:block th:if="${webElement}"]
+					,"webElement": {
+						"formIndex": [[${webElement.formIndex}]],
+						"tagName": [[${webElement.tagName}]],
+						"attributeType":  [[${webElement.attributeType}]],
+						"attributeId": [[${webElement.attributeId}]],
+						"attributeName": [[${webElement.attributeName}]],
+						"attributeValue":  [[${webElement.attributeValue}]],
+						"text":  [[${webElement.text}]],
+						"displayed": [[${webElement.displayed}]],
+						"enabled": [[${webElement.enabled}]]
+					}[/th:block][/th:block]
+					[#th:block th:if="${reportData.isIncludeSection('diagnosticswebelements')}" th:with="webElements=${step.webElements}"]
+					,"webElements": [[#th:block th:each="webElement, state: ${webElements}"][#th:block th:if="${! state.first}"],[/th:block]
+						{
+							"formIndex": [[${webElement.formIndex}]],
+							"tagName": [[${webElement.tagName}]],
+							"attributeType":  [[${webElement.attributeType}]],
+							"attributeId": [[${webElement.attributeId}]],
+							"attributeName": [[${webElement.attributeName}]],
+							"attributeValue":  [[${webElement.attributeValue}]],
+							"text":  [[${webElement.text}]],
+							"displayed": [[${webElement.displayed}]],
+							"enabled": [[${webElement.enabled}]]
+						}[/th:block]
+					][/th:block][#th:block th:if="${reportData.isIncludeSection('diagnosticsscreenshots') && step.screenshot}" th:with="screenshot=${step.screenshot}"]
+					,"screenshot": [[${screenshot.data}]]
+					[/th:block][#th:block th:if="${reportData.isIncludeSection('diagnosticslocalstorage')}" th:with="storage=${step.getBrowserLocalStorage()}"]
+					,"localStorage": [[#th:block th:each="entry, state: ${storage}"][#th:block th:if="${! state.first}"],[/th:block]
+						{
+							"created": [[${entry.createTimestamp}]],
+							"key": [[${entry.key}]],
+							"value": [[${entry.value}]]
+						}[/th:block]
+					][/th:block][#th:block th:if="${reportData.isIncludeSection('diagnosticssessionstorage')}" th:with="storage=${step.getBrowserSessionStorage()}"]
+					,"sessionStorage": [[#th:block th:each="entry, state: ${storage}"][#th:block th:if="${! state.first}"],[/th:block]
+						{
+							"created": [[${entry.createTimestamp}]],
+							"key": [[${entry.key}]],
+							"value": [[${entry.value}]]
+						}[/th:block]
+					][/th:block][#th:block th:if="${reportData.isIncludeSection('diagnosticsmessages')}" th:with="messages=${step.messages}"]
+					,"messages": [[#th:block th:each="entry, state: ${messages}" th:with="message=${helper.getHttpMessage(entry.messageId)}"][#th:block th:if="${! state.first}"],[/th:block]
+						{[#th:block th:if="${message}"]
+							"created": [[${entry.createTimestamp}]],
+							"initiator": [[${entry.initiator}]],
+							"requestHeader": [[${message.requestHeader.toString()}]],
+							"requestBody": [[${message.requestBody.toString()}]],
+							"responseHeader": [[${message.responseHeader.toString()}]],
+							"responseBody": [[${message.responseBody.toString()}]][/th:block]
+						}[/th:block]
+					][/th:block]
+				}[/th:block]
+			][/th:block]
+		}[/th:block]
+	][/th:block]
+[/th:block]}

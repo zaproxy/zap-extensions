@@ -1,29 +1,50 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "15.2.0"
 description = "WebDriver provider and includes HtmlUnit browser"
+
+val selenium by configurations.creating
+configurations.api { extendsFrom(selenium) }
 
 zapAddOn {
     addOnName.set("Selenium")
     addOnStatus.set(AddOnStatus.RELEASE)
-    zapVersion.set("2.7.0")
 
     manifest {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/selenium/")
+
+        dependencies {
+            addOns {
+                register("network") {
+                    version.set(">=0.2.0")
+                }
+                register("commonlib") {
+                    version.set(">=1.23.0")
+                }
+            }
+        }
+
+        bundledLibs {
+            libs.from(selenium)
+        }
     }
 
     apiClientGen {
         api.set("org.zaproxy.zap.extension.selenium.SeleniumAPI")
-        options.set("org.zaproxy.zap.extension.selenium.SeleniumOptions")
         messages.set(file("src/main/resources/org/zaproxy/zap/extension/selenium/resources/Messages.properties"))
     }
 }
 
 dependencies {
-    api("org.seleniumhq.selenium:selenium-server:3.141.59")
-    api("org.seleniumhq.selenium:htmlunit-driver:2.36.0")
-    api("com.codeborne:phantomjsdriver:1.4.4")
+    compileOnly(libs.log4j.core)
+
+    var seleniumVersion = "4.32.0"
+    selenium("org.seleniumhq.selenium:selenium-java:$seleniumVersion")
+    selenium("org.seleniumhq.selenium:htmlunit3-driver:4.30.0")
+    implementation(libs.log4j.slf4j)
+
+    zapAddOn("commonlib")
+    zapAddOn("network")
 
     testImplementation(project(":testutils"))
 }

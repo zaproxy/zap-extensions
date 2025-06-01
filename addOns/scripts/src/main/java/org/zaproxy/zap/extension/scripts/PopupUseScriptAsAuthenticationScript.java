@@ -23,7 +23,8 @@ import java.awt.Component;
 import java.text.MessageFormat;
 import javax.swing.JOptionPane;
 import javax.swing.JTree;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
@@ -45,9 +46,11 @@ import org.zaproxy.zap.view.popup.ExtensionPopupMenuComponent;
  * The Popup that allows users to set, for a Context, the authentication method to Script-Based
  * Authentication and directly load the Authentication script.
  */
+@SuppressWarnings("serial")
 public class PopupUseScriptAsAuthenticationScript extends ExtensionPopupMenuItem {
 
-    private static final Logger log = Logger.getLogger(PopupUseScriptAsAuthenticationScript.class);
+    private static final Logger LOGGER =
+            LogManager.getLogger(PopupUseScriptAsAuthenticationScript.class);
     private static final long serialVersionUID = -9073920896139520588L;
 
     /** The Constant menu name. */
@@ -79,7 +82,7 @@ public class PopupUseScriptAsAuthenticationScript extends ExtensionPopupMenuItem
                                 .getExtensionLoader()
                                 .getExtension(ExtensionAuthentication.NAME);
         if (authExtension == null) {
-            log.info(
+            LOGGER.info(
                     "Use Script For Authentication Popup disabled: The Authentication extension is not enabled.");
             return false;
         }
@@ -89,7 +92,7 @@ public class PopupUseScriptAsAuthenticationScript extends ExtensionPopupMenuItem
                 authExtension.getAuthenticationMethodTypeForIdentifier(
                         ScriptBasedAuthenticationMethodType.METHOD_IDENTIFIER);
         if (scriptType == null) {
-            log.info(
+            LOGGER.info(
                     "Use Script For Authentication Popup disabled: The ScriptBasedAuthentication method type is not registered.");
             return false;
         }
@@ -106,21 +109,18 @@ public class PopupUseScriptAsAuthenticationScript extends ExtensionPopupMenuItem
     public PopupUseScriptAsAuthenticationScript(ExtensionScriptsUI extension, Context ctx) {
         super();
         this.extension = extension;
-        this.contextId = ctx.getIndex();
+        this.contextId = ctx.getId();
 
         this.setText(MessageFormat.format(MENU_NAME, ctx.getName()));
         this.addActionListener(
-                new java.awt.event.ActionListener() {
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent e) {
-                        ScriptWrapper script =
-                                PopupUseScriptAsAuthenticationScript.this
-                                        .extension
-                                        .getScriptsPanel()
-                                        .getSelectedScript();
-                        if (script != null) {
-                            performAction(script);
-                        }
+                e -> {
+                    ScriptWrapper script =
+                            PopupUseScriptAsAuthenticationScript.this
+                                    .extension
+                                    .getScriptsPanel()
+                                    .getSelectedScript();
+                    if (script != null) {
+                        performAction(script);
                     }
                 });
     }
@@ -180,9 +180,9 @@ public class PopupUseScriptAsAuthenticationScript extends ExtensionPopupMenuItem
 
         // Do the work/changes on the UI shared context
         if (uiSharedContext.getAuthenticationMethod() instanceof ScriptBasedAuthenticationMethod) {
-            log.info(
-                    "Selected Authentication script via popup menu. Changing existing Script-Based Authentication instance for Context "
-                            + contextId);
+            LOGGER.info(
+                    "Selected Authentication script via popup menu. Changing existing Script-Based Authentication instance for Context {}",
+                    contextId);
             ScriptBasedAuthenticationMethod method =
                     (ScriptBasedAuthenticationMethod) uiSharedContext.getAuthenticationMethod();
             try {
@@ -204,9 +204,9 @@ public class PopupUseScriptAsAuthenticationScript extends ExtensionPopupMenuItem
                             ContextAuthenticationPanel.buildName(this.contextId),
                             false);
         } else {
-            log.info(
-                    "Selected Authentication script via popup menu. Creating new Script-Based Authentication instance for Context "
-                            + this.contextId);
+            LOGGER.info(
+                    "Selected Authentication script via popup menu. Creating new Script-Based Authentication instance for Context {}",
+                    this.contextId);
             ScriptBasedAuthenticationMethod method =
                     new ScriptBasedAuthenticationMethodType().createAuthenticationMethod(contextId);
 
@@ -222,7 +222,7 @@ public class PopupUseScriptAsAuthenticationScript extends ExtensionPopupMenuItem
                 return;
             }
             if (!confirmUsersDeletion(uiSharedContext)) {
-                log.debug("Cancelled change of authentication type.");
+                LOGGER.debug("Cancelled change of authentication type.");
                 return;
             }
 
@@ -237,17 +237,12 @@ public class PopupUseScriptAsAuthenticationScript extends ExtensionPopupMenuItem
                             Model.getSingleton().getSession(),
                             ContextAuthenticationPanel.buildName(this.contextId),
                             false,
-                            new Runnable() {
-
-                                @Override
-                                public void run() {
-                                    // Removing the users from the 'shared context' (the UI)
-                                    // will cause their removal at
-                                    // save as well
-                                    if (getUsersExtension() != null)
-                                        getUsersExtension()
-                                                .removeSharedContextUsers(uiSharedContext);
-                                }
+                            () -> {
+                                // Removing the users from the 'shared context' (the UI)
+                                // will cause their removal at
+                                // save as well
+                                if (getUsersExtension() != null)
+                                    getUsersExtension().removeSharedContextUsers(uiSharedContext);
                             });
         }
     }
@@ -284,7 +279,7 @@ public class PopupUseScriptAsAuthenticationScript extends ExtensionPopupMenuItem
                         && script.getTypeName()
                                 .equals(ScriptBasedAuthenticationMethodType.SCRIPT_TYPE_AUTH);
             } catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.debug(e);
             }
         }
         return false;

@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>
+Import/Export
+</TITLE>
+</HEAD>
+<BODY>
+
+<H1>Import/Export</H1>
+
+This add-on allows you to import and export ZAP data in a range of formats.
+<p>
+It supports the <a href="automation.html">Automation Framework</a>.
+
+<H2>Menus</H2>
+
+<H3>Copy URLs</H3>
+A context menu item to Copy URLs to the system clipboard.
+
+<H3>Save Selected Entries as HAR (HTTP Archive File)</H3>
+A context menu item to save the selected HTTP messages in HAR format.
+
+<H3>Save Raw Message</H3>
+Provides a context menu to save content of HTTP messages as binary.
+(While the files will probably open in a simple editor it may have null characters or malformed bytes.)
+
+<H3>Save XML Message</H3>
+Provides a context menu to save content of HTTP messages as XML.
+
+<H3>Import HAR (HTTP Archive File)</H3>
+An option to import messages from a HTTP Archive (HAR), available via the 'Import' menu.
+
+<strong>Note</strong>: The following modifications may be made when importing a HAR (HTTP Archive File):
+<ul>
+  <li>Missing HTTP Version - If the message is missing the httpVersion attribute it will be set to "HTTP/1.1".</li>
+  <li>HTTP Version 3 - If the message has its httpVersion attribute set as "h3", "http/3", "http/3.0" it will be set to "HTTP/2".</li>
+  <li>Carriage return (CR) or Line feed (LF) in Headers - If the message contains headers with CR or LF, the CRLF(s) will be removed.</li>
+</ul>
+
+<H3>Import Log File</H3>
+Allows you to import log files from ModSecurity and files previously exported from ZAP.
+
+<H3>Import URLs</H3>
+An option to import a file of URLs is available via the 'Import' menu ('Import a File Containing URLs'). The file must be plain text with one URL per line.
+Blank lines and lines starting with # will be ignored.
+
+<H3>Tools / Prune Sites Tree...</H3>
+This allows you to prune URLs from the Sites Tree using a file in the <a href="sitestreeformat.html">Sites Tree format</a>
+
+<H2>Export</H2>
+The add-on also adds a top level "Export" menu, providing the following functionality.
+
+<H3>Save Messages...</H3>
+This allows you to save requests and responses to a text file. <br/>
+Select the messages to save in the History tab (including multi-select).
+
+<H3>Save Responses...</H3>
+This allows you to save a specific responses to a file. <br/>
+Select the relevant message in the History tab - 
+note that binary responses (such as images) can be saved as well as text responses.
+
+<H3>Save Sites Tree...</H3>
+This allows you to save the Sites Tree in the <a href="sitestreeformat.html">Sites Tree format</a>
+
+<H3>Save All URLs...</H3>
+This allows you to save all the accessed URLs to a text or HTML file. <br/>
+This can be used, amongst other things, to compare the URLs available to users with 
+different roles or permissions on the same system.
+(Also consider leveraging the Access Control Testing add-on.)
+This functionality is also available via the right-click context menu in the Sites tree panel.
+
+<H3>Save URLs...</H3>
+All URLs in the Sites tree that fall within the selected node are exported. This functionality is
+also available from the right-click menu when used on a Site or Context node in the Sites tree panel.
+
+<H2>ZAP API</H2>
+This add-on also exposes various ZAP API endpoints to facilitate programmatic use of the functionality.
+
+<H3>Actions</H3>
+<ul>
+  <li><code>exportSitesTree (filePath* )</code> Exports the Sites Tree in the Sites Tree YAML format.</li>
+  <li><code>importHar (filePath* )</code> Imports a HAR file.</li>
+  <li><code>importModsec2Logs (filePath* )</code> Imports ModSecurity2 logs from the file with the given file system path.</li>
+  <li><code>importUrls (filePath* )</code> Imports URLs (one per line) from the file with the given file system path.</li>
+  <li><code>importZapLogs (filePath* )</code> Imports previously exported ZAP messages from the file with the given file system path.</li>
+  <li><code>pruneSitesTree (filePath* )</code> Prunes the Sites Tree based on a file in the Sites Tree YAML format.</li>
+</ul>
+
+<H3>Others</H3>
+  <li><code>exportHar (baseurl start count )</code> Gets the HTTP messages sent through/by ZAP, in HAR format, optionally filtered by URL and paginated with 'start' position and 'count' of messages</li>
+  <li><code>exportHarById (ids* )</code> Gets the HTTP messages with the given IDs, in HAR format.</li>
+  <li><code>sendHarRequest (request* followRedirects )</code> Sends the first HAR request entry, optionally following redirections. Returns, in HAR format, the request sent and response received and followed redirections, if any. The Mode is enforced when sending the request (and following redirections), custom manual requests are not allowed in 'Safe' mode nor in 'Protected' mode if out of scope.</li>
+</ul>
+
+</BODY>
+</HTML>

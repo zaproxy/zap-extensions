@@ -20,9 +20,12 @@
 package org.zaproxy.zap.extension.sequence;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
 import java.text.MessageFormat;
-import org.apache.log4j.Logger;
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.script.ExtensionScript;
@@ -30,13 +33,15 @@ import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.script.SequenceScript;
+import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 
+@SuppressWarnings("serial")
 public class SequencePopupMenuItem extends ExtensionPopupMenuItem {
 
     private static final long serialVersionUID = 1L;
 
     private final ExtensionScript extScript;
-    public static final Logger logger = Logger.getLogger(SequencePopupMenuItem.class);
+    private static final Logger LOGGER = LogManager.getLogger(SequencePopupMenuItem.class);
     private ExtensionSequence extension = null;
 
     public SequencePopupMenuItem(ExtensionSequence extension, ExtensionScript extensionScript) {
@@ -51,36 +56,52 @@ public class SequencePopupMenuItem extends ExtensionPopupMenuItem {
                 extension.getMessages().getString("sequence.popupmenuitem.activeScanSequence"));
 
         this.addActionListener(
-                new java.awt.event.ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        try {
-                            ScriptWrapper wrapper =
-                                    (ScriptWrapper)
-                                            extScript
-                                                    .getScriptUI()
-                                                    .getSelectedNode()
-                                                    .getUserObject();
-                            SequenceScript scr =
-                                    extScript.getInterface(wrapper, SequenceScript.class);
-                            if (scr != null) {
-                                extension.setDirectScanScript(wrapper);
-                                scr.scanSequence();
-                            } else {
-                                String msg =
-                                        extension
-                                                .getMessages()
-                                                .getString(
-                                                        "sequence.popupmenuitem.script.error.interface");
-                                View.getSingleton()
-                                        .showMessageDialog(
-                                                MessageFormat.format(msg, wrapper.getName()));
+                e -> {
+                    try {
+                        ScriptWrapper wrapper =
+                                (ScriptWrapper)
+                                        extScript.getScriptUI().getSelectedNode().getUserObject();
+                        SequenceScript scr = extScript.getInterface(wrapper, SequenceScript.class);
+                        if (scr != null && wrapper instanceof ZestScriptWrapper) {
+                            List<Object> contextSpecificObjects = new ArrayList<>();
+                            try {
+                                contextSpecificObjects.add(extension.getDefaultScanPolicy());
+                            } catch (ConfigurationException e4) {
+                                // Ignore
                             }
-                        } catch (Exception ex) {
-                            logger.warn(
-                                    "An exception occurred while starting an active scan for a sequence script:",
-                                    ex);
+
+                            StdActiveScanRunner zzr =
+                                    new StdActiveScanRunner(
+                                            (ZestScriptWrapper) wrapper,
+                                            null,
+                                            null,
+                                            contextSpecificObjects);
+
+                            new Thread(
+                                            () -> {
+                                                try {
+                                                    zzr.run(null, null);
+                                                } catch (Exception e1) {
+                                                    LOGGER.error(e1.getMessage(), e1);
+                                                }
+                                            },
+                                            "ZAP-Seq-ActiveScan-" + wrapper.getName())
+                                    .start();
+
+                        } else {
+                            String msg =
+                                    extension
+                                            .getMessages()
+                                            .getString(
+                                                    "sequence.popupmenuitem.script.error.interface");
+                            View.getSingleton()
+                                    .showMessageDialog(
+                                            MessageFormat.format(msg, wrapper.getName()));
                         }
+                    } catch (Exception ex) {
+                        LOGGER.warn(
+                                "An exception occurred while starting an active scan for a sequence script:",
+                                ex);
                     }
                 });
     }

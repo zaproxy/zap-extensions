@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE helpset PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp HelpSet Version 2.0//EN" "http://java.sun.com/products/javahelp/helpset_2_0.dtd">
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE helpset PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp HelpSet Version 2.0//EN" "http://java.sun.com/products/javahelp/helpset_2_0.dtd">
 <helpset version="2.0" xml:lang="ja-JP">
   <title>DOM XSS Active Scan Rule | ZAP Extension</title>
 
@@ -10,21 +9,21 @@
 
   <view>
     <name>TOC</name>
-    <label>Contents</label>
+    <label>コンテンツ</label>
     <type>org.zaproxy.zap.extension.help.ZapTocView</type>
     <data>toc.xml</data>
   </view>
 
   <view>
     <name>Index</name>
-    <label>Index</label>
+    <label>インデックス</label>
     <type>javax.help.IndexView</type>
     <data>index.xml</data>
   </view>
 
   <view>
     <name>Search</name>
-    <label>Search</label>
+    <label>検索</label>
     <type>javax.help.SearchView</type>
     <data engine="com.sun.java.help.search.DefaultSearchEngine">
       JavaHelpSearch
@@ -33,7 +32,7 @@
 
   <view>
     <name>Favorites</name>
-    <label>Favorites</label>
+    <label>お気に入り</label>
     <type>javax.help.FavoritesView</type>
   </view>
 </helpset>

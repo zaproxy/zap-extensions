@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>
+Import/Export
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Save Selected Entries as HAR (HTTP Archive File)</H1>
+A context menu item to save the selected HTTP messages in HAR format.
+
+<H1>Save Raw Message</H1>
+Provides a context menu to save content of HTTP messages as binary.
+
+<H1>Save XML Message</H1>
+Provides a context menu to save content of HTTP messages as XML.
+
+<H1>Import HAR (HTTP Archive File)</H1>
+An option to import messages from a HTTP Archive (HAR), available via the 'Import' menu.
+
+<H1>Import Log File</H1>
+Allows you to import log files from ModSecurity and files previously exported from ZAP.
+
+<H1>Import URLs</H1>
+An option to import a file of URLs is available via the 'Import' menu ('Import a File Containing URLs'). The file must be plain text with one URL per line.
+Blank lines and lines starting with # will be ignored.
+
+<H1>ZAP API</H1>
+This add-on also exposes various ZAP API endpoints to facilitate programmatic use of the functionality.
+<ul>
+  <li><code>/exim/importHar (filePath*)</code></li>
+  <li><code>/exim/importModsec2Logs (filePath*)</code></li>
+  <li><code>/exim/importUrls (filePath*)</code></li>
+  <li><code>/exim/importZapLogs (filePath*)</code></li>
+</ul>
+
+</BODY>
+</HTML>

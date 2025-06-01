@@ -1,13 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:figma="http://www.figma.com/figma/ns">
-  <desc>
-    Created using Figma
-  </desc>
-  <g style="mix-blend-mode:normal" figma:type="frame">
-    <use fill="#4353ff" xlink:href="#a" style="mix-blend-mode:normal" figma:type="rounded-rectangle"/>
-    <use fill="#FFF" xlink:href="#b" transform="translate(3.424 4.68)" style="mix-blend-mode:normal" figma:type="vector"/>
-  </g>
-  <defs>
-    <path id="a" d="M0 2C0 .89543.89543 0 2 0h12c1.1046 0 2 .89543 2 2v12c0 1.1046-.8954 2-2 2H2c-1.10457 0-2-.8954-2-2V2z"/>
-    <path id="b" d="M7.412 2.024S6.6 4.568 6.54 4.784C6.516 4.572 5.924 0 5.924 0 4.54 0 3.804.984 3.412 2.024c0 0-.988 2.552-1.068 2.764-.004-.2-.152-2.74-.152-2.74C2.108.772.944 0 0 0l1.136 6.924c1.448-.004 2.228-.984 2.636-2.028 0 0 .868-2.252.904-2.352.008.096.624 4.38.624 4.38 1.452 0 2.236-.916 2.656-1.92L9.992 0C8.556 0 7.8.98 7.412 2.024z"/>
-  </defs>
+<svg width="1080" height="1081" viewBox="0 0 1080 1081" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect y="0.710938" width="1080" height="1080" fill="#146EF5"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M898.312 330.711L683.467 750.711H481.667L571.579 576.645H567.545C493.368 672.937 382.694 736.326 225 750.711V579.054C225 579.054 325.88 573.095 385.185 510.745H225V330.714H405.031V478.787L409.072 478.77L482.639 330.714H618.791V477.848L622.832 477.842L699.159 330.711H898.312Z" fill="white"/>
 </svg>

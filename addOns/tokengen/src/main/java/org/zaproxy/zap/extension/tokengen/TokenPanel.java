@@ -22,9 +22,6 @@ package org.zaproxy.zap.extension.tokengen;
 import java.awt.CardLayout;
 import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import javax.swing.ImageIcon;
@@ -37,8 +34,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
-import javax.swing.KeyStroke;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.AbstractPanel;
@@ -51,6 +48,7 @@ import org.zaproxy.zap.view.ScanStatus;
 import org.zaproxy.zap.view.ZapToggleButton;
 import org.zaproxy.zap.view.widgets.WritableFileChooser;
 
+@SuppressWarnings("serial")
 public class TokenPanel extends AbstractPanel {
 
     private static final long serialVersionUID = 1L;
@@ -85,29 +83,19 @@ public class TokenPanel extends AbstractPanel {
 
     private ScanStatus scanStatus = null;
 
-    private static Logger log = Logger.getLogger(TokenPanel.class);
+    private static final Logger LOGGER = LogManager.getLogger(TokenPanel.class);
 
     public TokenPanel(ExtensionTokenGen extension, TokenParam tokenParam) {
         super();
         this.extension = extension;
-        initialize();
-    }
-
-    /** This method initializes this */
-    @SuppressWarnings("deprecation")
-    private void initialize() {
         this.setLayout(new CardLayout());
         this.setSize(474, 251);
         this.setName(extension.getMessages().getString("tokengen.panel.title"));
         this.setIcon(new ImageIcon(getClass().getResource("/resource/icon/fugue/barcode.png")));
         this.setDefaultAccelerator(
-                KeyStroke.getKeyStroke(
-                        // TODO Remove warn suppression and use View.getMenuShortcutKeyStroke with
-                        // newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
-                        KeyEvent.VK_T,
-                        Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
-                                | KeyEvent.SHIFT_DOWN_MASK,
-                        false));
+                this.extension
+                        .getView()
+                        .getMenuShortcutKeyStroke(KeyEvent.VK_T, KeyEvent.SHIFT_DOWN_MASK, false));
         this.setMnemonic(Constant.messages.getChar("tokengen.panel.mnemonic"));
         this.add(getPanelCommand(), getPanelCommand().getName());
 
@@ -157,6 +145,7 @@ public class TokenPanel extends AbstractPanel {
         }
         return panelCommand;
     }
+
     /**/
 
     private javax.swing.JToolBar getPanelToolbar() {
@@ -252,13 +241,7 @@ public class TokenPanel extends AbstractPanel {
             stopScanButton.setIcon(
                     new ImageIcon(getClass().getResource("/resource/icon/16/142.png")));
             stopScanButton.setEnabled(false);
-            stopScanButton.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            stopScan();
-                        }
-                    });
+            stopScanButton.addActionListener(e -> stopScan());
         }
         return stopScanButton;
     }
@@ -279,13 +262,7 @@ public class TokenPanel extends AbstractPanel {
             pauseScanButton.setRolloverSelectedIcon(
                     new ImageIcon(getClass().getResource("/resource/icon/16/131.png")));
             pauseScanButton.setEnabled(false);
-            pauseScanButton.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            pauseScan();
-                        }
-                    });
+            pauseScanButton.addActionListener(e -> pauseScan());
         }
         return pauseScanButton;
     }
@@ -297,13 +274,7 @@ public class TokenPanel extends AbstractPanel {
                     extension.getMessages().getString("tokengen.toolbar.button.load"));
             loadButton.setIcon(new ImageIcon(getClass().getResource("/resource/icon/16/047.png")));
             loadButton.setEnabled(true);
-            loadButton.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            loadTokens();
-                        }
-                    });
+            loadButton.addActionListener(e -> loadTokens());
         }
         return loadButton;
     }
@@ -315,13 +286,7 @@ public class TokenPanel extends AbstractPanel {
                     extension.getMessages().getString("tokengen.toolbar.button.save"));
             saveButton.setIcon(new ImageIcon(getClass().getResource("/resource/icon/16/096.png")));
             saveButton.setEnabled(false);
-            saveButton.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            saveTokens();
-                        }
-                    });
+            saveButton.addActionListener(e -> saveTokens());
         }
         return saveButton;
     }
@@ -385,13 +350,7 @@ public class TokenPanel extends AbstractPanel {
             return;
         }
         try {
-            EventQueue.invokeLater(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            addTokenResult(msg);
-                        }
-                    });
+            EventQueue.invokeLater(() -> addTokenResult(msg));
         } catch (Exception e) {
         }
     }
@@ -409,7 +368,7 @@ public class TokenPanel extends AbstractPanel {
     }
 
     private void stopScan() {
-        log.debug("Stopping token generation");
+        LOGGER.debug("Stopping token generation");
         extension.stopTokenGeneration();
     }
 
@@ -435,7 +394,7 @@ public class TokenPanel extends AbstractPanel {
                 View.getSingleton()
                         .showWarningDialog(
                                 extension.getMessages().getString("tokengen.generate.load.error"));
-                log.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
     }
@@ -467,17 +426,17 @@ public class TokenPanel extends AbstractPanel {
                 View.getSingleton()
                         .showWarningDialog(
                                 extension.getMessages().getString("tokengen.generate.save.error"));
-                log.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
     }
 
     private void pauseScan() {
         if (getPauseScanButton().getModel().isSelected()) {
-            log.debug("Pausing token generation");
+            LOGGER.debug("Pausing token generation");
             extension.pauseTokenGeneration();
         } else {
-            log.debug("Resuming token generation");
+            LOGGER.debug("Resuming token generation");
             extension.resumeTokenGeneration();
         }
     }

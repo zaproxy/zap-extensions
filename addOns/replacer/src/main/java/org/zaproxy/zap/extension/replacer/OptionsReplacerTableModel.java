@@ -24,6 +24,7 @@ import java.util.List;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.view.AbstractMultipleOptionsTableModel;
 
+@SuppressWarnings("serial")
 public class OptionsReplacerTableModel
         extends AbstractMultipleOptionsTableModel<ReplacerParamRule> {
 
@@ -57,11 +58,6 @@ public class OptionsReplacerTableModel
         }
 
         fireTableDataChanged();
-    }
-
-    @Override
-    public void addElement(ReplacerParamRule rule) {
-        super.addElement(rule);
     }
 
     @Override
@@ -109,11 +105,9 @@ public class OptionsReplacerTableModel
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        if (columnIndex == 0) {
-            if (aValue instanceof Boolean) {
-                rules.get(rowIndex).setEnabled(((Boolean) aValue).booleanValue());
-                fireTableCellUpdated(rowIndex, columnIndex);
-            }
+        if (columnIndex == 0 && aValue instanceof Boolean) {
+            rules.get(rowIndex).setEnabled(((Boolean) aValue).booleanValue());
+            fireTableCellUpdated(rowIndex, columnIndex);
         }
     }
 

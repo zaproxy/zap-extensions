@@ -19,21 +19,26 @@
  */
 package org.zaproxy.zap.extension.quickstart.ajaxspider;
 
-import java.awt.Color;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.net.URI;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 import javax.swing.Box;
 import javax.swing.ComboBoxModel;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.model.Model;
+import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
+import org.zaproxy.zap.ZAP;
+import org.zaproxy.zap.eventBus.Event;
+import org.zaproxy.zap.eventBus.EventConsumer;
+import org.zaproxy.zap.extension.alert.AlertEventPublisher;
 import org.zaproxy.zap.extension.quickstart.PlugableSpider;
+import org.zaproxy.zap.extension.quickstart.QuickStartBackgroundPanel;
 import org.zaproxy.zap.extension.quickstart.QuickStartParam;
 import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.ProvidedBrowserUI;
@@ -42,29 +47,104 @@ import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderParam;
 import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderTarget;
 import org.zaproxy.zap.extension.spiderAjax.ExtensionAjax;
 import org.zaproxy.zap.utils.DisplayUtils;
-import org.zaproxy.zap.utils.ZapXmlConfiguration;
 import org.zaproxy.zap.view.LayoutHelper;
 
 public class AjaxSpiderExplorer implements PlugableSpider {
 
+    public enum Select {
+        NEVER(0),
+        MODERN(1),
+        ALWAYS(2);
+
+        private int index;
+
+        private Select(int idx) {
+            index = idx;
+        }
+
+        public int getIndex() {
+            return index;
+        }
+
+        @Override
+        public String toString() {
+            return Constant.messages.getString(
+                    "quickstart.select." + name().toLowerCase(Locale.ROOT));
+        }
+    }
+
+    private static final String MODERN_APP_PLUGIN_ID = "10109";
+
     private ExtensionQuickStartAjaxSpider extension;
-    private JCheckBox selectCheckBox;
     private JComboBox<ProvidedBrowserUI> browserComboBox;
+    private JComboBox<Select> selectComboBox;
+    private EventConsumerImpl eventConsumer;
+    private boolean isModern;
+
     private JPanel panel;
 
     public AjaxSpiderExplorer(ExtensionQuickStartAjaxSpider extension) {
         this.extension = extension;
     }
 
+    @Override
+    public void init() {
+        isModern = false;
+        eventConsumer = new EventConsumerImpl();
+        ZAP.getEventBus()
+                .registerConsumer(
+                        eventConsumer,
+                        AlertEventPublisher.getPublisher().getPublisherName(),
+                        AlertEventPublisher.ALERT_ADDED_EVENT);
+    }
+
     public ExtensionAjax getExtAjax() {
         return Control.getSingleton().getExtensionLoader().getExtension(ExtensionAjax.class);
     }
 
+    public ExtensionPassiveScan2 getExtPscan() {
+        return Control.getSingleton()
+                .getExtensionLoader()
+                .getExtension(ExtensionPassiveScan2.class);
+    }
+
     @Override
     public void startScan(URI uri) {
+        int selInd = this.getSelectComboBox().getSelectedIndex();
+
+        // Save the settings for next time
+        QuickStartParam qsParam = extension.getExtQuickStart().getQuickStartParam();
+        qsParam.setAjaxSpiderSelection(((Select) selectComboBox.getSelectedItem()).name());
+        qsParam.setAjaxSpiderDefaultBrowser(browserComboBox.getSelectedItem().toString());
+
+        if (selInd == Select.NEVER.getIndex()) {
+            ZAP.getEventBus().unregisterConsumer(eventConsumer);
+            return;
+        }
+        if (selInd == Select.MODERN.getIndex()) {
+            // Only run if modern - keep monitoring for the relevant alert until the passive scan
+            // queue empties
+            ExtensionPassiveScan2 extPscan = getExtPscan();
+            while (extPscan.getRecordsToScan() > 0) {
+                if (isModern) {
+                    break;
+                }
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    // Ignore
+                }
+            }
+            if (!isModern) {
+                ZAP.getEventBus().unregisterConsumer(eventConsumer);
+                return;
+            }
+        }
+        ZAP.getEventBus().unregisterConsumer(eventConsumer);
+
         ExtensionAjax extAjax = this.getExtAjax();
-        AjaxSpiderParam options = new AjaxSpiderParam();
-        options.load(new ZapXmlConfiguration());
+        AjaxSpiderParam options =
+                Model.getSingleton().getOptionsParam().getParamSet(AjaxSpiderParam.class).clone();
         ProvidedBrowserUI browserUi = (ProvidedBrowserUI) getBrowserComboBox().getSelectedItem();
         options.setBrowserId(browserUi.getBrowser().getId());
         AjaxSpiderTarget.Builder builder =
@@ -74,6 +154,22 @@ public class AjaxSpiderExplorer implements PlugableSpider {
         builder.setSubtreeOnly(false);
         builder.setOptions(options);
         extAjax.startScan(builder.build());
+    }
+
+    /** Monitors the alert added events for the Modern App Detection rule: 10109. */
+    private class EventConsumerImpl implements EventConsumer {
+        @Override
+        public void eventReceived(Event event) {
+            if (isModern) {
+                // No need to check anything
+                return;
+            } else if (event.getEventType().equals(AlertEventPublisher.ALERT_ADDED_EVENT)) {
+                Map<String, String> params = event.getParameters();
+                if (MODERN_APP_PLUGIN_ID.equals(params.get(AlertEventPublisher.PLUGIN_ID))) {
+                    isModern = true;
+                }
+            }
+        }
     }
 
     @Override
@@ -86,43 +182,21 @@ public class AjaxSpiderExplorer implements PlugableSpider {
         return Constant.messages.getString("quickstart.label.ajaxspider");
     }
 
-    private JCheckBox getSelectCheckBox() {
-        if (selectCheckBox == null) {
-            selectCheckBox = new JCheckBox();
-            selectCheckBox.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent arg0) {
-                            getBrowserComboBox().setEnabled(selectCheckBox.isSelected());
-                            extension
-                                    .getExtQuickStart()
-                                    .getQuickStartParam()
-                                    .setAjaxSpiderEnabled(selectCheckBox.isSelected());
-                        }
-                    });
+    private JComboBox<Select> getSelectComboBox() {
+        if (selectComboBox == null) {
+            selectComboBox = new JComboBox<>();
+            Stream.of(Select.values()).forEach(s -> selectComboBox.addItem(s));
         }
-        return selectCheckBox;
+        return selectComboBox;
     }
 
     private JComboBox<ProvidedBrowserUI> getBrowserComboBox() {
         if (browserComboBox == null) {
-            browserComboBox = new JComboBox<ProvidedBrowserUI>();
+            browserComboBox = new JComboBox<>();
             ProvidedBrowsersComboBoxModel model =
                     extension.getExtSelenium().createProvidedBrowsersComboBoxModel();
             model.setIncludeUnconfigured(false);
             browserComboBox.setModel(model);
-            browserComboBox.addActionListener(
-                    new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent arg0) {
-                            extension
-                                    .getExtQuickStart()
-                                    .getQuickStartParam()
-                                    .setAjaxSpiderDefaultBrowser(
-                                            browserComboBox.getSelectedItem().toString());
-                        }
-                    });
 
             String defaultBrowserId = Browser.FIREFOX_HEADLESS.getId();
             Optional<ProvidedBrowserUI> defaultItem =
@@ -139,10 +213,9 @@ public class AjaxSpiderExplorer implements PlugableSpider {
     @Override
     public JPanel getPanel() {
         if (panel == null) {
-            panel = new JPanel(new GridBagLayout());
-            panel.setBackground(Color.WHITE);
+            panel = new QuickStartBackgroundPanel();
             panel.add(
-                    getSelectCheckBox(),
+                    getSelectComboBox(),
                     LayoutHelper.getGBC(0, 0, 1, 0.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
             panel.add(
                     new JLabel(Constant.messages.getString("quickstart.label.withbrowser")),
@@ -160,7 +233,8 @@ public class AjaxSpiderExplorer implements PlugableSpider {
 
     @Override
     public boolean isSelected() {
-        return getSelectCheckBox().isSelected();
+        // Always 'enabled', as this class decides if it runs or not
+        return true;
     }
 
     @Override
@@ -168,8 +242,19 @@ public class AjaxSpiderExplorer implements PlugableSpider {
         return this.getExtAjax().isSpiderRunning();
     }
 
+    @Override
+    public void setEnabled(boolean val) {
+        // Nothing to do
+    }
+
     public void optionsLoaded(QuickStartParam quickStartParam) {
-        getSelectCheckBox().setSelected(quickStartParam.isAjaxSpiderEnabled());
+        Select select = Select.MODERN;
+        try {
+            select = Select.valueOf(quickStartParam.getAjaxSpiderSelection());
+        } catch (Exception e) {
+            // Ignore
+        }
+        getSelectComboBox().setSelectedItem(select);
         String def = quickStartParam.getAjaxSpiderDefaultBrowser();
         if (def == null || def.length() == 0) {
             // no default
@@ -183,5 +268,10 @@ public class AjaxSpiderExplorer implements PlugableSpider {
                 break;
             }
         }
+    }
+
+    @Override
+    public boolean requireStdSpider() {
+        return this.getSelectComboBox().getSelectedIndex() != Select.ALWAYS.getIndex();
     }
 }

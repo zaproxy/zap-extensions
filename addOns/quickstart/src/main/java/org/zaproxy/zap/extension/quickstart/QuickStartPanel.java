@@ -21,15 +21,14 @@ package org.zaproxy.zap.extension.quickstart;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.ComboBoxModel;
@@ -38,8 +37,8 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EtchedBorder;
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.ScrollableSizeHint;
@@ -48,14 +47,13 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.model.OptionsParam;
 import org.zaproxy.zap.ZAP;
-import org.zaproxy.zap.extension.tab.Tab;
 import org.zaproxy.zap.utils.DesktopUtils;
 import org.zaproxy.zap.utils.DisplayUtils;
-import org.zaproxy.zap.utils.FontUtils;
-import org.zaproxy.zap.utils.FontUtils.Size;
+import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.view.LayoutHelper;
 
-public class QuickStartPanel extends AbstractPanel implements Tab {
+@SuppressWarnings("serial")
+public class QuickStartPanel extends AbstractPanel {
 
     private static final long serialVersionUID = 1L;
 
@@ -75,31 +73,23 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
     private JXPanel newsPanel;
 
     private NewsItem newsItem;
+    private static ImageIcon zapByCxIcon;
 
     public QuickStartPanel(ExtensionQuickStart extension) {
         super();
         this.extension = extension;
-        initialize();
-    }
-
-    @SuppressWarnings("deprecation")
-    private void initialize() {
         this.setShowByDefault(true);
         this.setIcon(
                 new ImageIcon(
                         ZAP.class.getResource("/resource/icon/16/147.png"))); // 'lightning' icon
-        // TODO Use getMenuShortcutKeyMaskEx() (and remove warn suppression) when
-        // targeting Java 10+
         this.setDefaultAccelerator(
-                KeyStroke.getKeyStroke(
-                        KeyEvent.VK_Q,
-                        Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
-                                | KeyEvent.SHIFT_DOWN_MASK,
-                        false));
+                this.extension
+                        .getView()
+                        .getMenuShortcutKeyStroke(KeyEvent.VK_Q, KeyEvent.SHIFT_DOWN_MASK, false));
         this.setMnemonic(Constant.messages.getChar("quickstart.panel.mnemonic"));
         this.setLayout(new BorderLayout());
 
-        panelContent = new JXPanel(new GridBagLayout());
+        panelContent = new QuickStartBackgroundPanel();
         panelContent.setScrollableHeightHint(ScrollableSizeHint.FIT);
 
         jScrollPane = new JScrollPane();
@@ -112,15 +102,9 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 
         this.add(jScrollPane, BorderLayout.CENTER);
 
-        panelContent.setBackground(Color.white);
         panelContent.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
-
-        JLabel topTitle = new JLabel(Constant.messages.getString("quickstart.top.panel.title"));
-        topTitle.setBackground(Color.WHITE);
-        topTitle.setFont(FontUtils.getFont(Size.much_larger));
-        topTitle.setHorizontalAlignment(SwingConstants.CENTER);
         panelContent.add(
-                topTitle,
+                new TitlePanel(Constant.messages.getString("quickstart.top.panel.title")),
                 LayoutHelper.getGBC(
                         0,
                         panelY,
@@ -129,7 +113,7 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
                         0.0D,
                         GridBagConstraints.BOTH,
                         GridBagConstraints.CENTER,
-                        new Insets(0, 0, 0, 0)));
+                        new Insets(5, 5, 5, 5)));
         panelContent.add(
                 QuickStartHelper.getWrappedLabel("quickstart.top.panel.message1"),
                 LayoutHelper.getGBC(0, ++panelY, 4, 1.0D, new Insets(5, 5, 5, 5)));
@@ -141,7 +125,7 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
                 LayoutHelper.getGBC(0, ++panelY, 4, 1.0D, new Insets(5, 5, 5, 5))); // Spacer
 
         buttonPanel = new JPanel(new FlowLayout());
-        buttonPanel.setBackground(Color.white);
+        buttonPanel.setBackground(panelContent.getBackground());
         buttonPanel.add(this.getAttackButton());
         buttonPanel.add(this.getExploreButton());
         buttonPanel.add(this.getLearnMoreButton());
@@ -154,6 +138,52 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 
         getAttackPanel().setMode(Control.getSingleton().getMode());
         getLearnMorePanel();
+    }
+
+    public static ImageIcon getZapByCxIcon() {
+        if (zapByCxIcon == null) {
+            zapByCxIcon =
+                    DisplayUtils.getScaledIcon(
+                            new ImageIcon(
+                                    QuickStartPanel.class.getResource(
+                                            ExtensionQuickStart.RESOURCES
+                                                    + "/ZAP_by_Checkmarx_logo.png")));
+        }
+        return zapByCxIcon;
+    }
+
+    protected static JLabel getOsfImageLabel() {
+        JLabel label = new JLabel();
+        label.setIcon(getZapByCxIcon());
+        label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        label.addMouseListener(
+                new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        Stats.incCounter("stats.ui.link.cx");
+                        DesktopUtils.openUrlInBrowser("https://checkmarx.com/");
+                    }
+                });
+        return label;
+    }
+
+    @Override
+    public void updateUI() {
+        super.updateUI();
+        if (panelContent != null) {
+            SwingUtilities.updateComponentTreeUI(panelContent);
+            Color color = QuickStartBackgroundPanel.getBackgroundColor(true);
+            buttonPanel.setBackground(color);
+
+            SwingUtilities.updateComponentTreeUI(attackPanel);
+            SwingUtilities.updateComponentTreeUI(learnMorePanel);
+            if (defaultExplorePanel != null) {
+                SwingUtilities.updateComponentTreeUI(defaultExplorePanel);
+            }
+            if (explorePanel != null) {
+                SwingUtilities.updateComponentTreeUI(explorePanel);
+            }
+        }
     }
 
     public void backToMainPanel() {
@@ -178,13 +208,7 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
                     Constant.messages.getString("quickstart.top.button.tooltip.attack"));
             attackButton.setPreferredSize(DisplayUtils.getScaledDimension(150, 120));
 
-            attackButton.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            jScrollPane.setViewportView(getAttackPanel());
-                        }
-                    });
+            attackButton.addActionListener(e -> jScrollPane.setViewportView(getAttackPanel()));
         }
         return attackButton;
     }
@@ -209,12 +233,7 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
             learnMoreButton.setPreferredSize(DisplayUtils.getScaledDimension(150, 120));
 
             learnMoreButton.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            jScrollPane.setViewportView(getLearnMorePanel());
-                        }
-                    });
+                    e -> jScrollPane.setViewportView(getLearnMorePanel()));
         }
         return learnMoreButton;
     }
@@ -239,14 +258,11 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
             exploreButton.setPreferredSize(DisplayUtils.getScaledDimension(150, 120));
 
             exploreButton.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            if (explorePanel != null) {
-                                jScrollPane.setViewportView(explorePanel);
-                            } else {
-                                jScrollPane.setViewportView(getDefaultExplorePanel());
-                            }
+                    e -> {
+                        if (explorePanel != null) {
+                            jScrollPane.setViewportView(explorePanel);
+                        } else {
+                            jScrollPane.setViewportView(getDefaultExplorePanel());
                         }
                     });
         }
@@ -266,6 +282,12 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
         this.explorePanel = panel;
     }
 
+    public void setTraditionalSpider(TraditionalSpider traditionalSpider) {
+        if (this.attackPanel != null) {
+            this.attackPanel.setTraditionalSpider(traditionalSpider);
+        }
+    }
+
     public void addPlugableSpider(PlugableSpider pe) {
         if (this.attackPanel != null) {
             this.attackPanel.addPlugableSpider(pe);
@@ -283,7 +305,7 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
     }
 
     public void optionsChanged(OptionsParam optionsParam) {
-        this.getDefaultExplorePanel().optionsChanged(optionsParam);
+        this.getDefaultExplorePanel().optionsChanged();
         this.getAttackPanel().optionsChanged(optionsParam);
     }
 
@@ -293,8 +315,7 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 
     private JXPanel getNewsPanel() {
         if (newsPanel == null) {
-            newsPanel = new JXPanel(new GridBagLayout());
-            newsPanel.setBackground(Color.WHITE);
+            newsPanel = new QuickStartBackgroundPanel();
             if (newsItem != null) {
                 this.showNews(newsItem);
             }
@@ -304,45 +325,39 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 
     private void showNews(NewsItem newsItem) {
 
-        JXPanel innerPanel = new JXPanel(new GridBagLayout());
+        JXPanel innerPanel = new QuickStartBackgroundPanel();
 
-        CloseButton closeButton = new CloseButton();
-        JPanel closePanel = new JPanel(new GridBagLayout());
-        closePanel.setBackground(Color.WHITE);
-        closePanel.add(new JLabel(""), LayoutHelper.getGBC(0, 0, 1, 1.0D)); // Spacer
-        closePanel.add(closeButton, LayoutHelper.getGBC(1, 0, 1, 0.0D));
-        closeButton.setVerticalAlignment(SwingConstants.TOP);
-        closeButton.addActionListener(
-                new ActionListener() {
-
-                    @Override
-                    public void actionPerformed(ActionEvent arg0) {
-                        newsPanel.setVisible(false);
-                        extension.getQuickStartParam().setClearedNewsItem(newsItem.getId());
-                    }
-                });
-
-        JButton learnMoreButton =
+        JButton newsLearnMoreButton =
                 new JButton(Constant.messages.getString("quickstart.button.news"));
-        learnMoreButton.addActionListener(
-                new ActionListener() {
-
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        DesktopUtils.openUrlInBrowser(newsItem.getUri());
-                    }
+        newsLearnMoreButton.addActionListener(
+                e -> {
+                    Stats.incCounter("stats.quickstart.news." + newsItem.getId());
+                    DesktopUtils.openUrlInBrowser(newsItem.getUri());
                 });
 
         innerPanel.setBorder(
                 BorderFactory.createTitledBorder(
                         BorderFactory.createLineBorder(Color.RED),
                         Constant.messages.getString("quickstart.label.news")));
-        innerPanel.setBackground(Color.WHITE);
         innerPanel.add(
                 new JLabel(newsItem.getText()),
                 LayoutHelper.getGBC(0, 0, 1, 0.0D, new Insets(5, 5, 5, 5)));
-        innerPanel.add(learnMoreButton, LayoutHelper.getGBC(1, 0, 1, 0.0D, new Insets(5, 5, 5, 5)));
-        innerPanel.add(closeButton, LayoutHelper.getGBC(2, 0, 1, 0.0D));
+        innerPanel.add(
+                newsLearnMoreButton, LayoutHelper.getGBC(1, 0, 1, 0.0D, new Insets(5, 5, 5, 5)));
+
+        if (!newsItem.isFixed()) {
+            CloseButton closeButton = new CloseButton();
+            JPanel closePanel = new QuickStartBackgroundPanel();
+            closePanel.add(new JLabel(""), LayoutHelper.getGBC(0, 0, 1, 1.0D)); // Spacer
+            closePanel.add(closeButton, LayoutHelper.getGBC(1, 0, 1, 0.0D));
+            closeButton.setVerticalAlignment(SwingConstants.TOP);
+            closeButton.addActionListener(
+                    e -> {
+                        newsPanel.setVisible(false);
+                        extension.getQuickStartParam().setClearedNewsItem(newsItem.getId());
+                    });
+            innerPanel.add(closeButton, LayoutHelper.getGBC(2, 0, 1, 0.0D));
+        }
 
         newsPanel.add(
                 new JLabel(""),
@@ -360,7 +375,7 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
         if (this.newsPanel != null) {
             this.showNews(newsItem);
         }
-    };
+    }
 
     class CloseButton extends JButton {
         private static final long serialVersionUID = 1L;

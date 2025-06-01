@@ -21,20 +21,21 @@ package org.zaproxy.zap.extension.zest.menu;
 
 import java.awt.Component;
 import java.util.List;
-import org.apache.log4j.Logger;
-import org.mozilla.zest.core.v1.ZestScript;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
+import org.zaproxy.zest.core.v1.ZestScript;
 
-/** ZAP: New Popup Menu Alert Delete */
+@SuppressWarnings("serial")
 public class ZestPopupZestDelete extends ExtensionPopupMenuItem {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Logger logger = Logger.getLogger(ZestPopupZestDelete.class);
+    private static final Logger LOGGER = LogManager.getLogger(ZestPopupZestDelete.class);
 
     private ExtensionZest extension = null;
 
@@ -45,7 +46,9 @@ public class ZestPopupZestDelete extends ExtensionPopupMenuItem {
         initialize();
     }
 
-    /** @param label */
+    /**
+     * @param label
+     */
     public ZestPopupZestDelete(String label) {
         super(label);
     }
@@ -55,13 +58,9 @@ public class ZestPopupZestDelete extends ExtensionPopupMenuItem {
         this.setText(Constant.messages.getString("zest.delete.popup"));
 
         this.addActionListener(
-                new java.awt.event.ActionListener() {
-
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent e) {
-                        for (ScriptNode node : extension.getSelectedZestNodes()) {
-                            deleteNode(node);
-                        }
+                e -> {
+                    for (ScriptNode node : extension.getSelectedZestNodes()) {
+                        deleteNode(node);
                     }
                 });
     }
@@ -98,7 +97,7 @@ public class ZestPopupZestDelete extends ExtensionPopupMenuItem {
                 }
                 return true;
             } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
         return false;

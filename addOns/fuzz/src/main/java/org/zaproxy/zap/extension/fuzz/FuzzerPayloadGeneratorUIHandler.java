@@ -56,6 +56,7 @@ import org.jdesktop.swingx.search.SearchFactory;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.fuzz.ExtensionFuzz.FuzzersDirChangeListener;
 import org.zaproxy.zap.extension.fuzz.FuzzerPayloadGeneratorUIHandler.FuzzerPayloadGeneratorUI;
+import org.zaproxy.zap.extension.fuzz.impl.Utils;
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.FileStringPayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.PayloadGenerator;
@@ -67,8 +68,6 @@ import org.zaproxy.zap.model.MessageLocation;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 import org.zaproxy.zap.view.JCheckBoxTree;
-import org.zaproxy.zap.view.JCheckBoxTree.CheckChangeEvent;
-import org.zaproxy.zap.view.JCheckBoxTree.CheckChangeEventListener;
 
 public class FuzzerPayloadGeneratorUIHandler
         implements PayloadGeneratorUIHandler<
@@ -107,7 +106,7 @@ public class FuzzerPayloadGeneratorUIHandler
             implements PayloadGeneratorUI<DefaultPayload, FuzzerPayloadGenerator> {
 
         private final List<FuzzerPayloadSource> selectedFuzzers;
-        private int numberOfPayloads;
+        private long numberOfPayloads;
 
         private Path file;
         private String description;
@@ -175,10 +174,11 @@ public class FuzzerPayloadGeneratorUIHandler
         @Override
         public long getNumberOfPayloads() {
             if (numberOfPayloads == -1) {
-                numberOfPayloads = 0;
-                for (FuzzerPayloadSource selectedFuzzer : selectedFuzzers) {
-                    numberOfPayloads += selectedFuzzer.getPayloadGenerator().getNumberOfPayloads();
-                }
+                numberOfPayloads =
+                        Utils.sum(
+                                selectedFuzzers.stream()
+                                        .map(FuzzerPayloadSource::getPayloadGenerator)
+                                        .mapToLong(PayloadGenerator::getNumberOfPayloads));
             }
             return numberOfPayloads;
         }
@@ -261,14 +261,7 @@ public class FuzzerPayloadGeneratorUIHandler
         public FuzzerPayloadGeneratorUIPanel(ExtensionFuzz extensionFuzz) {
             this.extensionFuzz = extensionFuzz;
 
-            this.fuzzersDirChangeListener =
-                    new FuzzersDirChangeListener() {
-
-                        @Override
-                        public void fuzzersDirChanged(FuzzersDir fuzzersDir) {
-                            createFileFuzzersCheckBoxTreeModel();
-                        }
-                    };
+            this.fuzzersDirChangeListener = e -> createFileFuzzersCheckBoxTreeModel();
 
             addPanel = new JPanel();
 
@@ -351,13 +344,7 @@ public class FuzzerPayloadGeneratorUIHandler
                 fileFuzzersCheckBoxTree.setShowsRootHandles(true);
                 fileFuzzersCheckBoxTree.setSelectionModel(new DefaultTreeSelectionModel());
                 fileFuzzersCheckBoxTree.addCheckChangeEventListener(
-                        new CheckChangeEventListener() {
-
-                            @Override
-                            public void checkStateChanged(CheckChangeEvent e) {
-                                updatePayloadsPreviewTextArea();
-                            }
-                        });
+                        e -> updatePayloadsPreviewTextArea());
                 fileFuzzersCheckBoxTree.setVisibleRowCount(10);
 
                 treeSearchable = new TreeSearchable(fileFuzzersCheckBoxTree);
@@ -404,8 +391,9 @@ public class FuzzerPayloadGeneratorUIHandler
             fileFuzzersCheckBoxTree.collapseAll();
 
             TreePath treePath = null;
-            if (!extensionFuzz.getFuzzOptions().isCustomDefaultCategory()) {
-                String defaultCategory = extensionFuzz.getFuzzOptions().getDefaultCategoryName();
+            String defaultCategory = extensionFuzz.getFuzzOptions().getDefaultCategoryName();
+            if (defaultCategory != null
+                    && !extensionFuzz.getFuzzOptions().isCustomDefaultCategory()) {
                 root = (DefaultMutableTreeNode) fileFuzzersCheckBoxTree.getModel().getRoot();
                 @SuppressWarnings("unchecked")
                 Enumeration<TreeNode> nodes = root.breadthFirstEnumeration();

@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE map
+        PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Map Version 1.0//EN"
+        "http://java.sun.com/products/javahelp/map_1_0.dtd">
+
+<map version="1.0">
+    <mapID target="oast-icon" url="contents/images/oast.png"/>
+    <mapID target="oast" url="contents/oast.html"/>
+    <mapID target="oast.api" url="contents/api.html"/>
+    <mapID target="oast.tab" url="contents/tab.html"/>
+    <mapID target="oast.options" url="contents/options.html"/>
+    <mapID target="oast.services" url="contents/services/services.html"/>
+    <mapID target="oast.boast" url="contents/services/boast/boast.html"/>
+    <mapID target="oast.boast.options" url="contents/services/boast/options.html"/>
+    <mapID target="oast.callbacks" url="contents/services/callbacks/callbacks.html"/>
+    <mapID target="oast.callbacks.options" url="contents/services/callbacks/options.html"/>
+    <mapID target="oast.interactsh" url="contents/services/interactsh/interactsh.html"/>
+    <mapID target="oast.interactsh.options" url="contents/services/interactsh/options.html"/>
+</map>

@@ -6,18 +6,19 @@
 Estadísticas de Autenticación
 </title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 <h1>Estadísticas de Autenticación</h1>
 Este complemento registra estadísticas relacionadas con autenticación en todos los contextos que estén al alcance.<br>
 Las estadísticas son guradadas en base a sitio y cobertura:
 <table>
-<tr><td>stats.auth.<i>component</i>.state.nothtml</td><td>Respuestas no HTML (que es poco probable que tengan indicadores de inicio y cierre de sesión)</td></tr>
-<tr><td>stats.auth.<i>component</i>.state.notsuccess</td><td>Respuestas HTML fallidas (que es poco probable que tengan indicadores de inicio y cierre de sesión)</td></tr>
-<tr><td>stats.auth.<i>component</i>.state.noindicator</td><td>No hay indicadores de inicio y cierre de sesión definidos</td></tr>
-<tr><td>stats.auth.<i>component</i>.state.loggedinandout</td><td>Hay indicadores tanto de inicio como de cierre de sesión</td></tr>
-<tr><td>stats.auth.<i>component</i>.state.loggedin</td><td>Solo se encuentra disponible el indicado de inicio de sesión</td></tr>
-<tr><td>stats.auth.<i>component</i>.state.loggedout</td><td>Solo se encuentra disponible el indicado de cierre de sesión</td></tr>
-<tr><td>stats.auth.<i>component</i>.state.unknown</td><td>Ninguno de los indicadores de inicio o cierre de inicio de sesión están presentes</td></tr>
+<tr><td>stats.auth.<i>component</i>.state.noauth</td><td>The context does not have an authentication method</td></tr>
+<tr><td>stats.auth.<i>component</i>.state.nothtml</td><td>Non HTML responses (which are unlikely to have logged in/out indicators)</td></tr>
+<tr><td>stats.auth.<i>component</i>.state.notsuccess</td><td>Unsuccessful HTML responses (which are unlikely to have logged in/out indicators)</td></tr>
+<tr><td>stats.auth.<i>component</i>.state.noindicator</td><td>No logged in/out indicators have been defined</td></tr>
+<tr><td>stats.auth.<i>component</i>.state.loggedinandout</td><td>Both the logged in and out indicators present</td></tr>
+<tr><td>stats.auth.<i>component</i>.state.loggedin</td><td>Just the logged in indicator present</td></tr>
+<tr><td>stats.auth.<i>component</i>.state.loggedout</td><td>Just the logged out indicator present</td></tr>
+<tr><td>stats.auth.<i>component</i>.state.unknown</td><td>Neither the logged in or out indicators present</td></tr>
 </table>
 El componente puede ser:
 <table>

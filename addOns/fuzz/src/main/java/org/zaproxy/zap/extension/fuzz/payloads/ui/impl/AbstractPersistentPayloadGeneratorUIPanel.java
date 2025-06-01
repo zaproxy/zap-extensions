@@ -21,8 +21,6 @@ package org.zaproxy.zap.extension.fuzz.payloads.ui.impl;
 
 import java.awt.Component;
 import java.awt.HeadlessException;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -35,7 +33,8 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.view.View;
@@ -54,7 +53,7 @@ public abstract class AbstractPersistentPayloadGeneratorUIPanel<
         implements PayloadGeneratorUIPanel<T, T2, T3> {
 
     private static final Logger LOGGER =
-            Logger.getLogger(AbstractPersistentPayloadGeneratorUIPanel.class);
+            LogManager.getLogger(AbstractPersistentPayloadGeneratorUIPanel.class);
 
     private static final String SAVE_BUTTON_LABEL =
             Constant.messages.getString("fuzz.payloads.generators.save.button");
@@ -80,16 +79,12 @@ public abstract class AbstractPersistentPayloadGeneratorUIPanel<
                                 AbstractPersistentPayloadGeneratorUIPanel.class.getResource(
                                         "/resource/icon/16/096.png"))));
         saveButton.addActionListener(
-                new ActionListener() {
-
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        T2 payloadGenerator = getPayloadGenerator();
-                        if (payloadGenerator != null) {
-                            Path file = getFile();
-                            if (file != null) {
-                                saveToFile(payloadGenerator, file);
-                            }
+                e -> {
+                    T2 payloadGenerator = getPayloadGenerator();
+                    if (payloadGenerator != null) {
+                        Path file = getFile();
+                        if (file != null) {
+                            saveToFile(payloadGenerator, file);
                         }
                     }
                 });
@@ -201,10 +196,10 @@ public abstract class AbstractPersistentPayloadGeneratorUIPanel<
                     JOptionPane.showMessageDialog(
                             this,
                             Constant.messages.getString(
-                                    "fuzz.payloads.generators.save.dialog.warnFileNoWritePermisson.message",
+                                    "fuzz.payloads.generators.save.dialog.warnFileNoWritePermission.message",
                                     selectedFile.getAbsolutePath()),
                             Constant.messages.getString(
-                                    "fuzz.payloads.generators.save.dialog.warnFileNoWritePermisson.title"),
+                                    "fuzz.payloads.generators.save.dialog.warnFileNoWritePermission.title"),
                             JOptionPane.WARNING_MESSAGE);
                     return;
                 }
@@ -227,10 +222,10 @@ public abstract class AbstractPersistentPayloadGeneratorUIPanel<
                 JOptionPane.showMessageDialog(
                         this,
                         Constant.messages.getString(
-                                "fuzz.payloads.generators.save.dialog.warnDirNoWritePermisson.message",
+                                "fuzz.payloads.generators.save.dialog.warnDirNoWritePermission.message",
                                 selectedFile.getParentFile().getAbsolutePath()),
                         Constant.messages.getString(
-                                "fuzz.payloads.generators.save.dialog.warnDirNoWritePermisson.title"),
+                                "fuzz.payloads.generators.save.dialog.warnDirNoWritePermission.title"),
                         JOptionPane.WARNING_MESSAGE);
                 return;
             }

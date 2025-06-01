@@ -21,16 +21,15 @@ package org.zaproxy.zap.extension.zest.dialogs;
 
 import java.awt.Dimension;
 import java.awt.Frame;
-import org.mozilla.zest.core.v1.ZestClientElement;
-import org.mozilla.zest.core.v1.ZestClientElementSendKeys;
-import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
-import org.zaproxy.zap.extension.zest.ZestZapUtils;
+import org.zaproxy.zest.core.v1.ZestClientElement;
+import org.zaproxy.zest.core.v1.ZestClientElementSendKeys;
+import org.zaproxy.zest.core.v1.ZestStatement;
 
-public class ZestClientElementSendKeysDialog extends ZestClientElementDialog implements ZestDialog {
+public class ZestClientElementSendKeysDialog extends ZestClientElementDialog {
 
     private static final String FIELD_VALUE = "zest.dialog.client.label.value";
 
@@ -60,7 +59,7 @@ public class ZestClientElementSendKeysDialog extends ZestClientElementDialog imp
                     Constant.messages.getString("zest.dialog.clientElementSendKeys.edit.title"));
         }
 
-        ZestZapUtils.setMainPopupMenu(this.getField(FIELD_VALUE));
+        setFieldMainPopupMenu(FIELD_VALUE);
     }
 
     @Override

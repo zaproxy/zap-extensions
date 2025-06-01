@@ -1,0 +1,3 @@
+type Query {
+    getLyrics (song: String!, artist: String!): String
+}

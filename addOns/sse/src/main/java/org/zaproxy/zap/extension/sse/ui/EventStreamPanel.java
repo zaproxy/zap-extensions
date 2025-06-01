@@ -25,8 +25,6 @@ import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.HashSet;
 import java.util.Set;
 import javax.swing.ImageIcon;
@@ -38,7 +36,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
@@ -66,11 +65,12 @@ import org.zaproxy.zap.view.ZapToggleButton;
  * Represents the Server-Sent Events tab. It listens to all Event Streams and displays events
  * accordingly.
  */
+@SuppressWarnings("serial")
 public class EventStreamPanel extends AbstractPanel implements EventStreamObserver {
 
     private static final long serialVersionUID = -4518225363808518571L;
 
-    private static final Logger logger = Logger.getLogger(EventStreamPanel.class);
+    private static final Logger LOGGER = LogManager.getLogger(EventStreamPanel.class);
 
     /** Observe messages after storage handler was called. */
     public static final int EVENT_STREAM_OBSERVING_ORDER =
@@ -88,7 +88,7 @@ public class EventStreamPanel extends AbstractPanel implements EventStreamObserv
                 new ImageIcon(
                         ExtensionServerSentEvents.class.getResource(
                                 "resources/download-cloud.png"));
-    };
+    }
 
     private JToolBar panelToolbar = null;
 
@@ -280,14 +280,10 @@ public class EventStreamPanel extends AbstractPanel implements EventStreamObserv
             optionsButton.setIcon(
                     new ImageIcon(EventStreamPanel.class.getResource("/resource/icon/16/041.png")));
             optionsButton.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
+                    e ->
                             Control.getSingleton()
                                     .getMenuToolsControl()
-                                    .options(Constant.messages.getString("sse.panel.title"));
-                        }
-                    });
+                                    .options(Constant.messages.getString("sse.panel.title")));
         }
         return optionsButton;
     }
@@ -302,14 +298,7 @@ public class EventStreamPanel extends AbstractPanel implements EventStreamObserv
             filterButton.setToolTipText(Constant.messages.getString("sse.filter.button.filter"));
 
             final EventStreamPanel panel = this;
-            filterButton.addActionListener(
-                    new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            panel.showFilterDialog();
-                        }
-                    });
+            filterButton.addActionListener(e -> panel.showFilterDialog());
         }
         return filterButton;
     }
@@ -346,7 +335,7 @@ public class EventStreamPanel extends AbstractPanel implements EventStreamObserv
             //						try {
             //                            msg = handshakeRef.getHttpMessage();
             //                        } catch (Exception e) {
-            //                        	logger.warn(e.getMessage(), e);
+            //                        	LOGGER.warn(e.getMessage(), e);
             //                            return;
             //                        }
             //						showHandshakeMessage(msg);
@@ -451,16 +440,10 @@ public class EventStreamPanel extends AbstractPanel implements EventStreamObserv
             if (EventQueue.isDispatchThread()) {
                 updateStreamState(state, stream);
             } else {
-                EventQueue.invokeAndWait(
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                updateStreamState(state, stream);
-                            }
-                        });
+                EventQueue.invokeAndWait(() -> updateStreamState(state, stream));
             }
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -544,7 +527,7 @@ public class EventStreamPanel extends AbstractPanel implements EventStreamObserv
     /**
      * Shows filter dialog
      *
-     * @return 1 is returned if applied, -1 when dialog was reseted.
+     * @return 1 is returned if applied, -1 when dialog was reset.
      */
     protected int showFilterDialog() {
         EventStreamViewFilterDialog dialog = getFilterDialog();
@@ -624,7 +607,7 @@ public class EventStreamPanel extends AbstractPanel implements EventStreamObserv
         //				}
         //				channelSelect.setSelectedIndex(index);
         //			} catch (SQLException e) {
-        //				logger.error(e.getMessage(), e);
+        //				LOGGER.error(e.getMessage(), e);
         //			}
         //		}
     }
@@ -641,7 +624,7 @@ public class EventStreamPanel extends AbstractPanel implements EventStreamObserv
 
         // check if message is filtered out
         EventStreamViewFilter filter = getFilterDialog().getFilter();
-        if (filter.isBlacklisted(event)) {
+        if (filter.isDenylisted(event)) {
             // make it visible by resetting filter
             filter.reset();
             setFilterStatus();
@@ -673,15 +656,12 @@ public class EventStreamPanel extends AbstractPanel implements EventStreamObserv
             } else {
                 try {
                     EventQueue.invokeAndWait(
-                            new Runnable() {
-                                @Override
-                                public void run() {
-                                    pause();
-                                    reset();
-                                }
+                            () -> {
+                                pause();
+                                reset();
                             });
                 } catch (Exception e) {
-                    logger.error(e.getMessage(), e);
+                    LOGGER.error(e.getMessage(), e);
                 }
             }
         }
@@ -741,24 +721,20 @@ public class EventStreamPanel extends AbstractPanel implements EventStreamObserv
                     Constant.messages.getString("history.scope.button.selected"));
 
             scopeButton.addActionListener(
-                    new java.awt.event.ActionListener() {
+                    e -> {
+                        // show channels only in scope in JComboBox (select element)
+                        boolean isShowJustInScope = scopeButton.isSelected();
 
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            // show channels only in scope in JComboBox (select element)
-                            boolean isShowJustInScope = scopeButton.isSelected();
+                        //					channelsModel.setShowJustInScope(isShowJustInScope);
+                        //					if (!channelsModel.contains(channelSelect.getSelectedItem())) {
+                        //						// select first entry, if selected item does no longer appear in
+                        // drop-down
+                        //						channelSelect.setSelectedIndex(0);
+                        //					}
 
-                            //					channelsModel.setShowJustInScope(isShowJustInScope);
-                            //					if (!channelsModel.contains(channelSelect.getSelectedItem())) {
-                            //						// select first entry, if selected item does no longer appear in
-                            // drop-down
-                            //						channelSelect.setSelectedIndex(0);
-                            //					}
-
-                            // show messages only from channels in scope
-                            getFilterDialog().getFilter().setShowJustInScope(isShowJustInScope);
-                            applyFilter();
-                        }
+                        // show messages only from channels in scope
+                        getFilterDialog().getFilter().setShowJustInScope(isShowJustInScope);
+                        applyFilter();
                     });
         }
         return scopeButton;

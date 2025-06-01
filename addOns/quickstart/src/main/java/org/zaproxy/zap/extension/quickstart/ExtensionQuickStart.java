@@ -20,10 +20,8 @@
 package org.zaproxy.zap.extension.quickstart;
 
 import java.awt.Container;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.StringReader;
-import java.lang.reflect.Method;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -31,34 +29,53 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Locale;
 import java.util.Vector;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 import javax.swing.ComboBoxModel;
-import javax.swing.ImageIcon;
+import javax.swing.SwingUtilities;
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.tree.ConfigurationNode;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.extension.CommandLineArgument;
 import org.parosproxy.paros.extension.CommandLineListener;
+import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.OptionsChangedListener;
 import org.parosproxy.paros.extension.SessionChangedListener;
-import org.parosproxy.paros.extension.report.ReportLastScan;
+import org.parosproxy.paros.extension.history.ExtensionHistory;
+import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.model.Session;
+import org.parosproxy.paros.model.SiteNode;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.Version;
+import org.zaproxy.addon.callhome.ExtensionCallHome;
+import org.zaproxy.addon.callhome.InvalidServiceUrlException;
+import org.zaproxy.addon.network.ExtensionNetwork;
+import org.zaproxy.addon.network.common.ZapUnknownHostException;
+import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
+import org.zaproxy.addon.reports.ExtensionReports;
+import org.zaproxy.zap.ZAP;
+import org.zaproxy.zap.ZAP.ProcessType;
+import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.ext.ExtensionExtension;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
-import org.zaproxy.zap.utils.DisplayUtils;
+import org.zaproxy.zap.extension.quickstart.AttackThread.Progress;
+import org.zaproxy.zap.network.HttpRequestConfig;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 public class ExtensionQuickStart extends ExtensionAdaptor
@@ -66,54 +83,46 @@ public class ExtensionQuickStart extends ExtensionAdaptor
 
     public static final String NAME = "ExtensionQuickStart";
     public static final String RESOURCES = "/org/zaproxy/zap/extension/quickstart/resources";
-    public static ImageIcon ZAP_ICON =
-            DisplayUtils.getScaledIcon(
-                    new ImageIcon(
-                            QuickStartSubPanel.class.getResource(RESOURCES + "/zap64x64.png")));
-    public static ImageIcon HUD_ICON =
-            DisplayUtils.getScaledIcon(
-                    new ImageIcon(
-                            QuickStartSubPanel.class.getResource(
-                                    RESOURCES + "/hud_logo_64px.png")));
-    public static ImageIcon HELP_ICON =
-            DisplayUtils.getScaledIcon(
-                    new ImageIcon(QuickStartSubPanel.class.getResource(RESOURCES + "/help.png")));
-    public static ImageIcon ONLINE_DOC_ICON =
-            DisplayUtils.getScaledIcon(
-                    new ImageIcon(
-                            QuickStartSubPanel.class.getResource(
-                                    RESOURCES + "/document-globe.png")));
-    public static ImageIcon PDF_DOC_ICON =
-            DisplayUtils.getScaledIcon(
-                    new ImageIcon(
-                            QuickStartSubPanel.class.getResource(
-                                    RESOURCES + "/document-pdf-text.png")));
 
-    protected static final String SCRIPT_CONSOLE_HOME_PAGE = Constant.ZAP_HOMEPAGE;
-
-    private static final String DEFAULT_NEWS_PAGE_URL_PREFIX = "https://bit.ly/owaspzap-news-";
-    private static final String DEV_NEWS_PAGE = "dev";
-
-    private static final Logger LOGGER = Logger.getLogger(ExtensionQuickStart.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionQuickStart.class);
 
     private QuickStartPanel quickStartPanel = null;
     private AttackThread attackThread = null;
+    private TraditionalSpider traditionalSpider;
     private PlugableSpider plugableSpider;
     private PlugableHud hudProvider;
     private QuickStartParam quickStartParam;
+    private HttpSender httpSender;
 
-    private CommandLineArgument[] arguments = new CommandLineArgument[3];
+    private CommandLineArgument[] arguments = new CommandLineArgument[4];
     private static final int ARG_QUICK_URL_IDX = 0;
     private static final int ARG_QUICK_OUT_IDX = 1;
     private static final int ARG_QUICK_PROGRESS_IDX = 2;
+    private static final int ARG_ZAPIT_URL_IDX = 3;
     private static final String SPIN_CHRS = "|/-\\|/-\\";
 
     private boolean runningFromCmdLine = false;
     private boolean showProgress = false;
     private int spinner = 0;
 
+    private ExtensionReports extReport;
+
+    private static final List<Class<? extends Extension>> DEPENDENCIES =
+            List.of(
+                    ExtensionPassiveScan2.class,
+                    ExtensionAlert.class,
+                    ExtensionReports.class,
+                    ExtensionNetwork.class);
+
+    private CompletableFuture<Void> newsFetcherFuture;
+
     public ExtensionQuickStart() {
         super(NAME);
+    }
+
+    @Override
+    public List<Class<? extends Extension>> getDependencies() {
+        return DEPENDENCIES;
     }
 
     @Override
@@ -128,7 +137,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor
         extensionHook.addOptionsChangedListener(this);
         extensionHook.addOptionsParamSet(getQuickStartParam());
 
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.getHookView().addWorkPanel(getQuickStartPanel());
 
             ExtensionHelp.enableHelpKey(getQuickStartPanel(), "quickstart");
@@ -143,87 +152,81 @@ public class ExtensionQuickStart extends ExtensionAdaptor
         return true;
     }
 
+    private ZapXmlConfiguration getNews()
+            throws ConfigurationException, IOException, InvalidServiceUrlException {
+        return Control.getSingleton()
+                .getExtensionLoader()
+                .getExtension(ExtensionCallHome.class)
+                .getNewsData();
+    }
+
     @Override
     public void optionsLoaded() {
         super.optionsLoaded();
         if (View.isInitialised()) {
             getQuickStartPanel().optionsLoaded(this.getQuickStartParam());
         }
+    }
 
-        // Check for silent mode - only available in 2.8.0 so must use reflection for now
+    @Override
+    public void postInit() {
+        if (Constant.isSilent()) {
+            LOGGER.info("Shh! No check-for-news - silent mode enabled");
+            return;
+        }
+
+        newsFetcherFuture = CompletableFuture.runAsync(this::fetchNews);
+    }
+
+    private void fetchNews() {
         try {
-            Method isSilentMethod = Constant.class.getMethod("isSilent");
-            Object res = isSilentMethod.invoke(null);
-            if (res instanceof Boolean) {
-                if ((Boolean) res) {
-                    LOGGER.info("Shh! No check-for-news - silent mode enabled");
-                    return;
+            ZapXmlConfiguration xmlNews = getNews();
+            if (!hasView()) {
+                return;
+            }
+
+            String zapLocale = Constant.getLocale().toString();
+
+            ConfigurationNode newsNode = getFirstChildNode(xmlNews.getRoot(), "news");
+            if (newsNode != null) {
+                String id = getFirstChildNodeString(newsNode, "id");
+                ConfigurationNode localeNode = getFirstChildNode(newsNode, zapLocale);
+                if (localeNode == null) {
+                    localeNode = getFirstChildNode(newsNode, "default");
+                }
+                if (localeNode != null) {
+                    String itemText = getFirstChildNodeString(localeNode, "item");
+                    String fixedStr = getFirstChildNodeString(localeNode, "fixed");
+
+                    if (itemText != null && itemText.length() > 0) {
+                        announceNews(
+                                new NewsItem(
+                                        id,
+                                        itemText,
+                                        new URI(getFirstChildNodeString(localeNode, "link"), true),
+                                        Boolean.parseBoolean(fixedStr)));
+                    }
                 }
             }
         } catch (Exception e) {
-            // Ignore
+            LOGGER.debug("Failed to read news : {}", e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void unload() {
+        if (newsFetcherFuture == null) {
+            return;
         }
 
-        new Thread("ZAP-NewsFetcher") {
-            @Override
-            public void run() {
-                // Try to read the news page
-                HttpMessage msg;
-                String newsPageUrl = getNewsPageURL();
-                try {
-                    HttpSender httpSender =
-                            new HttpSender(
-                                    Model.getSingleton().getOptionsParam().getConnectionParam(),
-                                    true,
-                                    HttpSender.CHECK_FOR_UPDATES_INITIATOR);
-                    httpSender.setFollowRedirect(true);
-                    msg =
-                            new HttpMessage(
-                                    new URI(newsPageUrl, true),
-                                    Model.getSingleton().getOptionsParam().getConnectionParam());
-                    httpSender.sendAndReceive(msg, true);
-                    if (msg.getResponseHeader().getStatusCode() == HttpStatusCode.OK) {
-                        String zapLocale = Constant.getLocale().toString();
-
-                        // Safely parse the XML
-                        ZapXmlConfiguration xmlNews = new ZapXmlConfiguration();
-                        xmlNews.load(new StringReader(msg.getResponseBody().toString()));
-
-                        ConfigurationNode newsNode = getFirstChildNode(xmlNews.getRoot(), "news");
-                        if (newsNode != null) {
-                            String id = getFirstChildNodeString(newsNode, "id");
-                            ConfigurationNode localeNode = getFirstChildNode(newsNode, zapLocale);
-                            if (localeNode == null) {
-                                localeNode = getFirstChildNode(newsNode, "default");
-                            }
-                            if (localeNode != null) {
-                                String itemText = getFirstChildNodeString(localeNode, "item");
-
-                                if (itemText != null && itemText.length() > 0) {
-                                    announceNews(
-                                            new NewsItem(
-                                                    id,
-                                                    itemText,
-                                                    new URI(
-                                                            getFirstChildNodeString(
-                                                                    localeNode, "link"),
-                                                            true)));
-                                }
-                            }
-                        }
-
-                    } else {
-                        LOGGER.debug(
-                                "Response from "
-                                        + newsPageUrl
-                                        + " : "
-                                        + msg.getResponseHeader().getStatusCode());
-                    }
-                } catch (Exception e) {
-                    LOGGER.debug("Failed to read from " + newsPageUrl + " : " + e.getMessage(), e);
-                }
-            }
-        }.start();
+        try {
+            newsFetcherFuture.get();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            LOGGER.warn("Interrupted while waiting for the news fetcher, exceptions might occur.");
+        } catch (ExecutionException e) {
+            LOGGER.warn("An error occurred while waiting for the news fetcher:", e);
+        }
     }
 
     private ConfigurationNode getFirstChildNode(ConfigurationNode node, String childName) {
@@ -242,26 +245,9 @@ public class ExtensionQuickStart extends ExtensionAdaptor
         return null;
     }
 
-    private String getNewsPageURL() {
-        String page = DEV_NEWS_PAGE;
-        if (!Constant.isDevBuild() && !Constant.isDailyBuild()) {
-            // Converts the ZAP version to something like 2-8
-            try {
-                Version zapVersion = new Version(Constant.PROGRAM_VERSION);
-                page = zapVersion.getMajorVersion() + "-" + zapVersion.getMinorVersion();
-            } catch (IllegalArgumentException e) {
-                LOGGER.error("Failed to parse ZAP version " + Constant.PROGRAM_VERSION, e);
-            }
-        }
-
-        return DEFAULT_NEWS_PAGE_URL_PREFIX + page;
-    }
-
     private void announceNews(NewsItem newsItem) {
-        if (View.isInitialised()) {
-            if (!this.getQuickStartParam().getClearedNewsItem().equals(newsItem.getId())) {
-                getQuickStartPanel().announceNews(newsItem);
-            }
+        if (!this.getQuickStartParam().getClearedNewsItem().equals(newsItem.getId())) {
+            getQuickStartPanel().announceNews(newsItem);
         }
     }
 
@@ -275,6 +261,13 @@ public class ExtensionQuickStart extends ExtensionAdaptor
     public void setLaunchPanel(QuickStartSubPanel panel) {
         if (quickStartPanel != null) {
             quickStartPanel.setExplorePanel(panel);
+        }
+    }
+
+    public void setTraditionalSpider(TraditionalSpider spider) {
+        this.traditionalSpider = spider;
+        if (quickStartPanel != null) {
+            quickStartPanel.setTraditionalSpider(traditionalSpider);
         }
     }
 
@@ -298,16 +291,14 @@ public class ExtensionQuickStart extends ExtensionAdaptor
             quickStartPanel.setName(Constant.messages.getString("quickstart.panel.title"));
             // Force it to be the first one
             quickStartPanel.setTabIndex(0);
+            if (this.traditionalSpider != null) {
+                quickStartPanel.setTraditionalSpider(traditionalSpider);
+            }
             if (this.plugableSpider != null) {
                 quickStartPanel.addPlugableSpider(this.plugableSpider);
             }
         }
         return quickStartPanel;
-    }
-
-    @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
     }
 
     @Override
@@ -320,23 +311,92 @@ public class ExtensionQuickStart extends ExtensionAdaptor
         return Constant.messages.getString("quickstart.name");
     }
 
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_HOMEPAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
-    }
-
     public void attack(URL url, boolean useStdSpider) {
         if (attackThread != null && attackThread.isAlive()) {
             return;
         }
         attackThread = new AttackThread(this, useStdSpider);
         attackThread.setURL(url);
+        attackThread.setTraditionalSpider(traditionalSpider);
         attackThread.setPlugableSpider(plugableSpider);
         attackThread.start();
+    }
+
+    protected SiteNode accessNode(URL url, HttpRequestConfig config, boolean successOnly) {
+        SiteNode startNode = null;
+        // Request the URL
+        try {
+            final HttpMessage msg = new HttpMessage(new URI(url.toString(), true));
+            getHttpSender().sendAndReceive(msg, config);
+            getHttpSender().setUseGlobalState(false);
+
+            if (successOnly && !HttpStatusCode.isSuccess(msg.getResponseHeader().getStatusCode())) {
+                notifyProgress(
+                        Progress.failed,
+                        Constant.messages.getString(
+                                "quickstart.progress.failed.code",
+                                msg.getResponseHeader().getStatusCode()));
+
+                return null;
+            }
+
+            if (msg.getResponseHeader().isEmpty()) {
+                notifyProgress(Progress.failed);
+                return null;
+            }
+
+            ExtensionHistory extHistory =
+                    ((ExtensionHistory)
+                            Control.getSingleton()
+                                    .getExtensionLoader()
+                                    .getExtension(ExtensionHistory.NAME));
+            extHistory.addHistory(msg, HistoryReference.TYPE_PROXIED);
+
+            FutureTask<SiteNode> addSiteNodeTask =
+                    new FutureTask<>(
+                            () ->
+                                    Model.getSingleton()
+                                            .getSession()
+                                            .getSiteTree()
+                                            .addPath(msg.getHistoryRef()));
+
+            SwingUtilities.invokeLater(addSiteNodeTask);
+            startNode = addSiteNodeTask.get();
+
+        } catch (ZapUnknownHostException e1) {
+            if (e1.isFromOutgoingProxy()) {
+                notifyProgress(
+                        Progress.failed,
+                        Constant.messages.getString(
+                                "quickstart.progress.failed.badhost.proxychain", e1.getMessage()));
+            } else {
+                notifyProgress(
+                        Progress.failed,
+                        Constant.messages.getString(
+                                "quickstart.progress.failed.badhost", e1.getMessage()));
+            }
+        } catch (URIException e) {
+            notifyProgress(
+                    Progress.failed,
+                    Constant.messages.getString(
+                            "quickstart.progress.failed.reason", e.getMessage()));
+        } catch (Exception e1) {
+            LOGGER.error(e1.getMessage(), e1);
+            notifyProgress(
+                    Progress.failed,
+                    Constant.messages.getString(
+                            "quickstart.progress.failed.reason", e1.getMessage()));
+            return null;
+        }
+        return startNode;
+    }
+
+    private HttpSender getHttpSender() {
+        if (httpSender == null) {
+            httpSender = new HttpSender(HttpSender.MANUAL_REQUEST_INITIATOR);
+            httpSender.setUseGlobalState(false);
+        }
+        return httpSender;
     }
 
     public void notifyProgress(AttackThread.Progress progress) {
@@ -431,7 +491,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor
 
     @Override
     public void sessionModeChanged(Mode mode) {
-        if (getView() != null) {
+        if (hasView()) {
             this.getQuickStartPanel().getAttackPanel().setMode(mode);
         }
     }
@@ -478,22 +538,58 @@ public class ExtensionQuickStart extends ExtensionAdaptor
                     quickAttacker.handleNoSavedReport();
                 }
             }
+        } else if (arguments[ARG_ZAPIT_URL_IDX].isEnabled()) {
+            if (!ProcessType.cmdline.equals(ZAP.getProcessType())) {
+                // For now only support the command line
+                LOGGER.warn(
+                        Constant.messages.getString("quickstart.cmdline.zapit.error.notCmdLine"));
+                return;
+            }
+            Vector<String> params = arguments[ARG_ZAPIT_URL_IDX].getArguments();
+            for (String param : params) {
+                ZapItScan reconScan = new ZapItScan(this);
+                String paramLc = param.toLowerCase(Locale.ROOT);
+                if (!paramLc.startsWith(HttpHeader.SCHEME_HTTP)
+                        && !paramLc.startsWith(HttpHeader.SCHEME_HTTPS)) {
+                    // Scheme not specified, try both HTTP(S)
+                    reconScan.recon(HttpHeader.SCHEME_HTTP + param);
+                    reconScan.recon(HttpHeader.SCHEME_HTTPS + param);
+                } else {
+                    reconScan.recon(param);
+                }
+            }
+
         } else {
             return;
         }
     }
 
-    private void saveReportTo(Path file) throws Exception {
-        try (BufferedWriter writer = Files.newBufferedWriter(file, StandardCharsets.UTF_8)) {
-            writer.write(getScanReport());
+    private ExtensionReports getExtReport() {
+        if (extReport == null) {
+            extReport =
+                    Control.getSingleton()
+                            .getExtensionLoader()
+                            .getExtension(ExtensionReports.class);
         }
+        return extReport;
     }
 
-    private String getScanReport() throws Exception {
-        ReportLastScan report = new ReportLastScan();
-        StringBuilder rpt = new StringBuilder();
-        report.generate(rpt, getModel());
-        return rpt.toString();
+    private void saveScanReport(Path path) throws Exception {
+        String template;
+        String fileName = path.toString();
+        String fileNameLc = fileName.toLowerCase();
+
+        if (fileNameLc.endsWith(".html")) {
+            template = "traditional-html";
+        } else if (fileNameLc.endsWith(".md")) {
+            template = "traditional-md";
+        } else if (fileNameLc.endsWith(".json")) {
+            template = "traditional-json";
+        } else {
+            template = "traditional-xml";
+        }
+
+        getExtReport().generateReport(template, fileName, "ZAP Report", "", false);
     }
 
     private CommandLineArgument[] getCommandLineArguments() {
@@ -503,7 +599,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor
                         1,
                         null,
                         "",
-                        "-quickurl [target url]: "
+                        "-quickurl <target url>   "
                                 + Constant.messages.getString("quickstart.cmdline.url.help"));
         arguments[ARG_QUICK_OUT_IDX] =
                 new CommandLineArgument(
@@ -511,7 +607,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor
                         1,
                         null,
                         "",
-                        "-quickout [output filename]: "
+                        "-quickout <filename>     "
                                 + Constant.messages.getString("quickstart.cmdline.out.help"));
         arguments[ARG_QUICK_PROGRESS_IDX] =
                 new CommandLineArgument(
@@ -519,8 +615,16 @@ public class ExtensionQuickStart extends ExtensionAdaptor
                         0,
                         null,
                         "",
-                        "-quickprogress: "
+                        "-quickprogress:          "
                                 + Constant.messages.getString("quickstart.cmdline.progress.help"));
+        arguments[ARG_ZAPIT_URL_IDX] =
+                new CommandLineArgument(
+                        "-zapit",
+                        1,
+                        null,
+                        "",
+                        "-zapit <target url>      "
+                                + Constant.messages.getString("quickstart.cmdline.zapiturl.help"));
         return arguments;
     }
 
@@ -593,7 +697,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor
                 return;
             }
             try {
-                saveReportTo(file);
+                saveScanReport(file);
                 View.getSingleton()
                         .showMessageDialog(
                                 Constant.messages.getString(
@@ -650,7 +754,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor
             }
 
             try {
-                saveReportTo(file);
+                saveScanReport(file);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -660,7 +764,10 @@ public class ExtensionQuickStart extends ExtensionAdaptor
         public void handleNoSavedReport() {
             try {
                 // Just output to stdout
-                System.out.println(getScanReport());
+                Path tmpFile = Files.createTempFile("ZAP-cmd-line-report", ".tmp");
+                saveScanReport(tmpFile);
+                System.out.println(new String(Files.readAllBytes(tmpFile), StandardCharsets.UTF_8));
+                tmpFile.toFile().delete();
             } catch (Exception e) {
                 e.printStackTrace();
             }

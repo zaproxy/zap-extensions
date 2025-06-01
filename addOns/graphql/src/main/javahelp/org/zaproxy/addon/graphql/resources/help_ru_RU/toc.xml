@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE toc PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN" "http://java.sun.com/products/javahelp/toc_2_0.dtd">
+<toc version="2.0">
+	<tocitem text="Руководство пользователя ZAP " tocid="toplevelitem">
+		<tocitem text="Дополнения" tocid="addons">
+			<tocitem text="Поддержка GraphQL " image="graphql-icon" target="graphql">
+				<tocitem text="Параметры" image="graphql-icon" target="graphql.options"/>
+				<tocitem text="Variant" image="graphql-icon" target="graphql.variant"/>
+				<tocitem text="Автоматизация " image="graphql-icon" target="graphql.automation"/>
+				<tocitem text="Alerts" image="graphql-icon" target="graphql.alerts"/>
+			</tocitem>
+		</tocitem>
+	</tocitem>
+</toc>

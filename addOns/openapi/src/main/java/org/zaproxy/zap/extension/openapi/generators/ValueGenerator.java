@@ -21,41 +21,38 @@ package org.zaproxy.zap.extension.openapi.generators;
 
 import java.util.Collections;
 import java.util.HashMap;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.zaproxy.addon.commonlib.ValueProvider;
 
 /** A wrapper around the core ValueGenerator class */
 public class ValueGenerator {
 
-    private org.zaproxy.zap.model.ValueGenerator coreValGen;
+    private static final Logger LOGGER = LogManager.getLogger(ValueGenerator.class);
 
-    private static final Logger LOG = Logger.getLogger(ValueGenerator.class);
+    private ValueProvider valueProvider;
 
-    public ValueGenerator(org.zaproxy.zap.model.ValueGenerator coreValGen) {
-        this.coreValGen = coreValGen;
+    public ValueGenerator(ValueProvider valueProvider) {
+        this.valueProvider = valueProvider;
     }
 
     public String getValue(String name, String type, String defaultValue) {
         if (defaultValue == null) {
             defaultValue = "";
         }
-        if (coreValGen == null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug(
-                        "Name : "
-                                + name
-                                + " Type : "
-                                + type
-                                + " Default : "
-                                + defaultValue
-                                + " Returning default value");
-            }
+        if (valueProvider == null) {
+            LOGGER.debug(
+                    "Name : {} Type : {} Default : {} Returning default value",
+                    name,
+                    type,
+                    defaultValue);
             return defaultValue;
         }
 
-        HashMap<String, String> fieldAtts = new HashMap<String, String>();
+        HashMap<String, String> fieldAtts = new HashMap<>();
         fieldAtts.put("Control Type", type == null ? "" : type);
         String value =
-                coreValGen.getValue(
+                valueProvider.getValue(
                         null,
                         null,
                         name,
@@ -64,17 +61,8 @@ public class ValueGenerator {
                         Collections.<String, String>emptyMap(),
                         fieldAtts);
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(
-                    "Name : "
-                            + name
-                            + " Type : "
-                            + type
-                            + " Default : "
-                            + defaultValue
-                            + " Returning : "
-                            + value);
-        }
+        LOGGER.debug(
+                "Name : {} Type : {} Default : {} Returning : {}", name, type, defaultValue, value);
 
         return value;
     }

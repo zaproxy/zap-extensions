@@ -6,7 +6,9 @@
 <toc version="2.0">
 	<tocitem text="Gabay ng Tagagamit ng ZAP" tocid="toplevelitem">
 		<tocitem text="Mga Add On" tocid="addons">
-			<tocitem text="Tagabuo ng Token" image="tokengen-icon" target="tokengen"/>
+			<tocitem text="Tagabuo ng Token" image="tokengen-icon" target="tokengen">
+				<tocitem text="Options" target="tokengen.options" />
+			</tocitem>
 		</tocitem>
 	</tocitem>
 </toc>

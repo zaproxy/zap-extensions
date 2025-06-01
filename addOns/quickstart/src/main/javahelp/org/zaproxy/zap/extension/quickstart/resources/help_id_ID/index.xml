@@ -7,5 +7,6 @@
     <!-- index entries are merged (sorted) into core index -->
 	<indexitem text="mulai cepat" target="quickstart" />
 	<indexitem text="baris perintah ringkas" target="quickstart.cmdline" />
-	<indexitem text="sebuah Pilihan Peluncuran Ringkas" target="quickstart.launch.options" />
+	<indexitem text="quick start zapit scan" target="quickstart.zapit" />
+	<indexitem text="quick start launch options" target="quickstart.launch.options" />
 </index>

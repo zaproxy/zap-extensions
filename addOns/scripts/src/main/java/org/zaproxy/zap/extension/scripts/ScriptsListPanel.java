@@ -35,6 +35,7 @@ import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DropMode;
 import javax.swing.GroupLayout;
@@ -45,6 +46,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JToolBar;
 import javax.swing.JTree;
 import javax.swing.ToolTipManager;
 import javax.swing.TransferHandler;
@@ -52,7 +54,8 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.AbstractPanel;
@@ -78,19 +81,19 @@ import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zap.view.ScanPanel2;
 import org.zaproxy.zap.view.widgets.WritableFileChooser;
 
+@SuppressWarnings("serial")
 public class ScriptsListPanel extends AbstractPanel {
 
     public static final String TREE = "ScriptListTree";
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(ScriptsListPanel.class);
+    private static final Logger LOGGER = LogManager.getLogger(ScriptsListPanel.class);
 
     private ExtensionScriptsUI extension = null;
 
     private javax.swing.JPanel listPanel = null;
     private javax.swing.JToolBar panelToolbar = null;
     private JButton loadButton = null;
-    private JButton saveButton = null;
     private JButton newScriptButton = null;
     private JButton optionsButton = null;
 
@@ -101,23 +104,21 @@ public class ScriptsListPanel extends AbstractPanel {
     private LoadScriptDialog loadScriptDialog = null;
     private EditScriptDialog editScriptDialog = null;
     private CopyScriptDialog copyScriptDialog = null;
+    private boolean allowFocus = true;
 
     private HttpMessage lastMessageDisplayed = null;
 
-    private List<Class<?>> disabledScriptDialogs = new ArrayList<Class<?>>();
+    private List<Class<?>> disabledScriptDialogs = new ArrayList<>();
 
     private ScriptTreeTransferHandler stth = new ScriptTreeTransferHandler();
 
     public ScriptsListPanel(ExtensionScriptsUI extension) {
         super();
         this.extension = extension;
-        initialize();
-    }
 
-    private void initialize() {
         this.setLayout(new CardLayout());
         this.setName(Constant.messages.getString("scripts.list.panel.title"));
-        this.setIcon(ExtensionScriptsUI.ICON);
+        this.setIcon(ExtensionScriptsUI.getIcon());
         this.setDefaultAccelerator(
                 extension
                         .getView()
@@ -148,24 +149,19 @@ public class ScriptsListPanel extends AbstractPanel {
         return listPanel;
     }
 
-    private javax.swing.JToolBar getPanelToolbar() {
+    private JToolBar getPanelToolbar() {
         if (panelToolbar == null) {
-
-            panelToolbar = new javax.swing.JToolBar();
-            panelToolbar.setLayout(new GridBagLayout());
+            panelToolbar = new JToolBar();
             panelToolbar.setEnabled(true);
             panelToolbar.setFloatable(false);
             panelToolbar.setRollover(true);
-            panelToolbar.setPreferredSize(new Dimension(800, 30));
             panelToolbar.setFont(FontUtils.getFont("Dialog"));
             panelToolbar.setName("ScriptsListToolbar");
 
-            int i = 1;
-            panelToolbar.add(getLoadButton(), LayoutHelper.getGBC(i++, 0, 1, 0.0D));
-            panelToolbar.add(getSaveButton(), LayoutHelper.getGBC(i++, 0, 1, 0.0D));
-            panelToolbar.add(getNewScriptButton(), LayoutHelper.getGBC(i++, 0, 1, 0.0D));
-            panelToolbar.add(new JLabel(), LayoutHelper.getGBC(i++, 0, 1, 1.0D)); // spacer
-            panelToolbar.add(getOptionsButton(), LayoutHelper.getGBC(i++, 0, 1, 0.0D));
+            panelToolbar.add(getNewScriptButton());
+            panelToolbar.add(getLoadButton());
+            panelToolbar.add(Box.createHorizontalGlue());
+            panelToolbar.add(getOptionsButton());
         }
         return panelToolbar;
     }
@@ -181,43 +177,9 @@ public class ScriptsListPanel extends AbstractPanel {
             loadButton.setToolTipText(
                     Constant.messages.getString("scripts.list.toolbar.button.load"));
 
-            loadButton.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            loadScript();
-                        }
-                    });
+            loadButton.addActionListener(e -> loadScript());
         }
         return loadButton;
-    }
-
-    private JButton getSaveButton() {
-        if (saveButton == null) {
-            saveButton = new JButton();
-            saveButton.setIcon(
-                    DisplayUtils.getScaledIcon(
-                            new ImageIcon(
-                                    ZAP.class.getResource(
-                                            "/resource/icon/16/096.png")))); // 'diskette' icon
-            saveButton.setToolTipText(
-                    Constant.messages.getString("scripts.list.toolbar.button.save"));
-            saveButton.setEnabled(false);
-
-            saveButton.addActionListener(
-                    new java.awt.event.ActionListener() {
-
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            ScriptWrapper script = getSelectedScript();
-                            if (script == null) {
-                                return;
-                            }
-                            saveScript(script);
-                        }
-                    });
-        }
-        return saveButton;
     }
 
     private JButton getNewScriptButton() {
@@ -231,14 +193,7 @@ public class ScriptsListPanel extends AbstractPanel {
             newScriptButton.setToolTipText(
                     Constant.messages.getString("scripts.list.toolbar.button.new"));
 
-            newScriptButton.addActionListener(
-                    new java.awt.event.ActionListener() {
-
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            showNewScriptDialog((ScriptWrapper) null);
-                        }
-                    });
+            newScriptButton.addActionListener(e -> showNewScriptDialog((ScriptWrapper) null));
         }
         return newScriptButton;
     }
@@ -254,14 +209,10 @@ public class ScriptsListPanel extends AbstractPanel {
                     Constant.messages.getString("scripts.list.toolbar.button.options"));
 
             optionsButton.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
+                    e ->
                             Control.getSingleton()
                                     .getMenuToolsControl()
-                                    .options(Constant.messages.getString("scripts.options.title"));
-                        }
-                    });
+                                    .options(Constant.messages.getString("scripts.options.title")));
         }
         return optionsButton;
     }
@@ -358,10 +309,8 @@ public class ScriptsListPanel extends AbstractPanel {
         if (script.getFile() != null) {
             try {
                 extension.getExtScript().saveScript(script);
-                this.setButtonStates();
                 ((ScriptTreeModel) this.getTree().getModel())
                         .nodeChanged(this.getSelectedScriptNode());
-
             } catch (IOException e1) {
                 View.getSingleton()
                         .showWarningDialog(
@@ -402,10 +351,8 @@ public class ScriptsListPanel extends AbstractPanel {
 
                 try {
                     extension.getExtScript().saveScript(script);
-                    this.setButtonStates();
                     ((ScriptTreeModel) this.getTree().getModel())
                             .nodeChanged(this.getSelectedScriptNode());
-
                 } catch (IOException e1) {
                     View.getSingleton()
                             .showWarningDialog(
@@ -460,7 +407,7 @@ public class ScriptsListPanel extends AbstractPanel {
     }
 
     private static void handleExceptionLoadingScript(Exception e, File file) {
-        logger.error(e.getMessage(), e);
+        LOGGER.error(e.getMessage(), e);
         View.getSingleton()
                 .showWarningDialog(
                         Constant.messages.getString("file.load.error")
@@ -512,7 +459,7 @@ public class ScriptsListPanel extends AbstractPanel {
     }
 
     protected List<ScriptNode> getSelectedNodes() {
-        List<ScriptNode> nodes = new ArrayList<ScriptNode>();
+        List<ScriptNode> nodes = new ArrayList<>();
 
         if (tree.getSelectionPaths() != null) {
             for (TreePath t : tree.getSelectionPaths()) {
@@ -521,26 +468,6 @@ public class ScriptsListPanel extends AbstractPanel {
         }
 
         return nodes;
-    }
-
-    protected void setButtonStates() {
-        ScriptNode node = (ScriptNode) tree.getLastSelectedPathComponent();
-
-        // Loop up to support tree based scripts
-        ScriptWrapper script = null;
-        while (node != null) {
-            if (node.getUserObject() instanceof ScriptWrapper) {
-                script = (ScriptWrapper) node.getUserObject();
-                break;
-            }
-            node = node.getParent();
-        }
-
-        if (script != null) {
-            this.getSaveButton().setEnabled(script.isChanged() && script.getEngine() != null);
-        } else {
-            this.getSaveButton().setEnabled(false);
-        }
     }
 
     private JScrollPane getJScrollPane() {
@@ -658,19 +585,12 @@ public class ScriptsListPanel extends AbstractPanel {
                             }
                         }
                     });
-            tree.addTreeSelectionListener(
-                    new javax.swing.event.TreeSelectionListener() {
-                        @Override
-                        public void valueChanged(javax.swing.event.TreeSelectionEvent e) {
-                            selectionChanged();
-                        }
-                    });
+            tree.addTreeSelectionListener(e -> selectionChanged());
         }
         return tree;
     }
 
     private void selectionChanged() {
-        setButtonStates();
         ScriptNode node = getSelectedNode();
         while (node != null) {
             if (node.getUserObject() != null) {
@@ -681,7 +601,8 @@ public class ScriptsListPanel extends AbstractPanel {
                         if (node.isTemplate()) {
                             extension.displayTemplate((ScriptWrapper) node.getUserObject());
                         } else {
-                            extension.displayScript((ScriptWrapper) node.getUserObject());
+                            extension.displayScript(
+                                    (ScriptWrapper) node.getUserObject(), allowFocus);
                         }
                     }
                     break;
@@ -718,10 +639,16 @@ public class ScriptsListPanel extends AbstractPanel {
     }
 
     public void showInTree(ScriptNode node, boolean expand) {
+        showInTree(node, expand, true);
+    }
+
+    public void showInTree(ScriptNode node, boolean expand, boolean allowFocus) {
         TreeNode[] path = node.getPath();
         TreePath tp = new TreePath(path);
         getTree().setExpandsSelectedPaths(true);
+        this.allowFocus = allowFocus;
         getTree().setSelectionPath(tp);
+        this.allowFocus = true;
         getTree().scrollPathToVisible(tp);
         if (expand) {
             getTree().expandPath(tp);

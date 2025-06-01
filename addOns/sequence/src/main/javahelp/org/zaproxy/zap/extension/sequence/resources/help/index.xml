@@ -4,5 +4,6 @@
          "http://java.sun.com/products/javahelp/index_2_0.dtd">
 
 <index version="2.0">
-	<indexitem text="sequence" target="sequence" />
+	<indexitem text="sequence" target="addon.sequence" />
+	<indexitem text="sequence automation" target="addon.sequence.automation" />
 </index>

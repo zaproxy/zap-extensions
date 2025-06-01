@@ -21,34 +21,37 @@ package org.zaproxy.zap.extension.zest;
 
 import javax.script.ScriptException;
 import net.htmlparser.jericho.Source;
-import org.apache.log4j.Logger;
-import org.mozilla.zest.core.v1.ZestRequest;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.pscan.PassiveScript;
-import org.zaproxy.zap.extension.pscan.scanner.ScriptsPassiveScanner;
+import org.zaproxy.addon.network.ExtensionNetwork;
+import org.zaproxy.zap.extension.scripts.scanrules.PassiveScript;
+import org.zaproxy.zap.extension.scripts.scanrules.PassiveScriptHelper;
+import org.zaproxy.zest.core.v1.ZestRequest;
 
 public class ZestPassiveRunner extends ZestZapRunner implements PassiveScript {
 
     private ZestScriptWrapper script = null;
-    private ScriptsPassiveScanner sps = null;
+    private PassiveScriptHelper helper;
     private HttpMessage msg = null;
     private ExtensionZest extension = null;
 
-    private Logger logger = Logger.getLogger(ZestPassiveRunner.class);
+    private static final Logger LOGGER = LogManager.getLogger(ZestPassiveRunner.class);
 
-    public ZestPassiveRunner(ExtensionZest extension, ZestScriptWrapper script) {
-        super(extension, script);
+    public ZestPassiveRunner(
+            ExtensionZest extension, ExtensionNetwork extensionNetwork, ZestScriptWrapper script) {
+        super(extension, extensionNetwork, script);
         this.extension = extension;
         // this.runner = this.getExtension().getRunner(script);
         this.script = script;
     }
 
     @Override
-    public void scan(ScriptsPassiveScanner scriptsPassiveScanner, HttpMessage msg, Source source)
+    public void scan(PassiveScriptHelper helper, HttpMessage msg, Source source)
             throws ScriptException {
-        logger.debug("Zest PassiveScan script: " + this.script.getName());
-        this.sps = scriptsPassiveScanner;
+        LOGGER.debug("Zest PassiveScan script: {}", this.script.getName());
+        this.helper = helper;
         this.msg = msg;
 
         try {
@@ -66,19 +69,12 @@ public class ZestPassiveRunner extends ZestZapRunner implements PassiveScript {
     @Override
     public void alertFound(Alert alert) {
         // Override this as we can put in more info from the script and message
-        sps.raiseAlert(
-                alert.getRisk(),
-                alert.getConfidence(),
-                alert.getName(),
-                script.getDescription(),
-                msg.getRequestHeader().getURI().toString(),
-                "",
-                "",
-                "",
-                "",
-                "",
-                -1,
-                -1,
-                msg);
+        helper.newAlert()
+                .setRisk(alert.getRisk())
+                .setConfidence(alert.getConfidence())
+                .setName(alert.getName())
+                .setDescription(script.getDescription())
+                .setMessage(msg)
+                .raise();
     }
 }

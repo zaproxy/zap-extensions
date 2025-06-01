@@ -35,13 +35,13 @@ public class ExtensionAscanRulesAlpha extends ExtensionAdaptor {
     }
 
     @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
+    public String getName() {
+        return "ExtensionAscanRulesAlpha";
     }
 
     @Override
-    public String getName() {
-        return "ExtensionAscanRulesAlpha";
+    public String getUIName() {
+        return Constant.messages.getString("ascanalpha.name");
     }
 
     @Override

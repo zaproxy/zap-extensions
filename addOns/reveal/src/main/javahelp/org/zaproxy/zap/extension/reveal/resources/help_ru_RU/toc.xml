@@ -4,9 +4,9 @@
          "http://java.sun.com/products/javahelp/toc_2_0.dtd">
 
 <toc version="2.0">
-	<tocitem text="ZAP User Guide" tocid="toplevelitem">
-		<tocitem text="Add Ons" tocid="addons">
-			<tocitem text="Reveal" image="addon.reveal.images.enabled" target="addon.reveal.concepts"/>
+	<tocitem text="Руководство пользователя ZAP " tocid="toplevelitem">
+		<tocitem text="Дополнения" tocid="addons">
+			<tocitem text="Раскрытие" image="addon.reveal.images.enabled" target="addon.reveal.concepts"/>
 		</tocitem>
 	</tocitem>
 </toc>

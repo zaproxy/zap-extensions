@@ -1,0 +1,73 @@
+.roundContainer {
+  box-shadow: 0px 0px 70px #222;
+  -moz-box-shadow: 0px 0px 70px #222;
+  -webkit-box-shadow: 0px 0px 70px #222;
+  border-radius: 15px;
+  -moz-border-radius: 15px;
+  -webkit-border-radius: 15px;
+  background-color: #fff;
+  margin: 0px auto;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #fff;
+  padding: 10px;
+  margin-top: 40px;
+  padding-bottom: 70px;
+  font: 15px arial, sans-serif;
+  width: 70%;
+  min-height: 400px;
+  position: relative;
+}
+
+.buttonsDiv {
+  position: absolute;
+  bottom: 60px;
+  width: 100%;
+}
+
+.indexDiv {
+  position: absolute;
+  left: 20px;
+}
+
+.prevNextDiv {
+  position: absolute;
+  right: 20px;
+}
+
+h1 {
+  color: blue;
+  text-align: center;
+}
+
+button {
+  background-color: blue;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+}
+
+button-disabled {
+  background-color: grey;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.frameskey {
+  position: absolute;
+  font-size: small;
+  top: 50%;
+}
+
+.notifcationtext {
+  color: red;
+  position: absolute;
+  bottom: 50px;
+  right: 5px;
+}

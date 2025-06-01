@@ -4,17 +4,21 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>Tela de opções de aplicações</title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 	<h1>Tela de opções de aplicações</h1>
 	<p>
-		Esta tela permite que você configure <a href="concepts.html">aplicações</a> que podem ser chamadas pelo ZAP.<br> Por padrão, há não há aplicativos disponíveis, você precisa adicionar todos aqueles que você deseja usar.
+		Esta tela permite que você configure <a href="concepts.html">aplicações</a> that
+		can be invoked.<br> By default there are no applications available, you need to add
+		all of the applications that you want to use.
 	<h3>Nome para exibição</h3>
 	O nome que será usado para esta aplicação no ZAP.
 	<br>
 
 	<h3>Comando completo</h3>
 	O caminho completo do aplicativo que você deseja chamar.
-	<br> Apenas um comando pode ser especificado. Se você deseja executar vários comandos de uma vez, ou configurar as variáveis ambientais, deve criar um script ou arquivo em lotes e invocá-lo de dentro do ZAP.
+	<br> Only one command can be specified. If you want to run multiple commands in one
+	go, or set up environmental variables, then you should create a script or batch file and
+	then invoke this from ZAP.
 
 	<h3>Parâmetros</h3>
 	Os parâmetros que ZAP deve passar para o comando.
@@ -49,6 +53,18 @@
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td>%postdata%</td>
 			<td>os dados de postagem enviados, caso existam, com newlines substituídas por "\n"</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%msgid%</td>
+			<td>the HTTP message id to fetch data from the API (/JSON/core/view/message/?id=$msgid), 
+				does not alway exist, will return -1 if no message id
+			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%header-{{ header }}%</td>
+			<td>the request header by name (if any), e.g. <code>%header-user-agent%</code> would return the value of the User-Agent header</td>
 		</tr>
 	</table>
 	Então, se um comando aceita uma URL, usando '-u' você pode especificar parâmetros como: '-u %url%'

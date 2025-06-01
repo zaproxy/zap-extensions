@@ -24,7 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpMessage;
 
 /**
@@ -65,7 +66,7 @@ public class SQLiUnionEngine {
     private int uColsStop;
     private String uChars;
 
-    private SQLInjectionPlugin plugin;
+    private SQLInjectionScanRule plugin;
     private SQLiTest test;
     private int where;
 
@@ -74,10 +75,12 @@ public class SQLiUnionEngine {
     private int exploitColumnsCount;
 
     // Logger instance
-    private static final Logger log = Logger.getLogger(SQLiUnionEngine.class);
+    private static final Logger LOGGER = LogManager.getLogger(SQLiUnionEngine.class);
 
-    /** @param plugin */
-    public SQLiUnionEngine(SQLInjectionPlugin plugin) {
+    /**
+     * @param plugin
+     */
+    public SQLiUnionEngine(SQLInjectionScanRule plugin) {
         this.plugin = plugin;
         this.where = SQLiPayloadManager.WHERE_ORIGINAL;
     }
@@ -166,12 +169,9 @@ public class SQLiUnionEngine {
                 exploitMessage = msg;
 
                 if (plugin.wasLastRequestDBMSError() && count > 1) {
-                    log.warn(
-                            "combined UNION/error-based SQL injection case found on column "
-                                    + (position + 1)
-                                    + "."
-                                    + "Maybe could be found a column with better characteristics "
-                                    + "using a direct testing tool");
+                    LOGGER.warn(
+                            "combined UNION/error-based SQL injection case found on column {}.Maybe could be found a column with better characteristics using a direct testing tool",
+                            position + 1);
                 }
 
                 return true;
@@ -182,7 +182,7 @@ public class SQLiUnionEngine {
     }
 
     // ------------------------------------------
-    // Internal contants for payload management
+    // Internal constants for payload management
     // ------------------------------------------
     private static final String PREFIX_REGEX = "(?:\\s+(?:FIRST|SKIP)\\s+\\d+)*";
     private static final Pattern SELECT_CASE_PATTERN =
@@ -505,7 +505,7 @@ public class SQLiUnionEngine {
      * master..sysxlogins
      *
      * @param fields fields string to be processed
-     * @return fields string nulled, casted and concatened
+     * @return fields string nulled, casted and concatenated
      */
     private String getNullCastAndConcatenatedFields(String fields) {
 
@@ -718,7 +718,7 @@ public class SQLiUnionEngine {
             query = query.substring(0, query.indexOf(intoRegExp));
         }
 
-        // remove the working table if exixts
+        // remove the working table if exists
         if (fromTable != null) {
             int fromTableIndex = unionQuery.lastIndexOf(fromTable);
             if (fromTableIndex == unionQuery.length() - fromTable.length()) {
@@ -834,14 +834,8 @@ public class SQLiUnionEngine {
         int found = -1;
 
         if (orderByTest(1) && !orderByTest(Integer.parseInt(SQLiPayloadManager.randomInt()))) {
-            if (log.isDebugEnabled()) {
-                log.debug(
-                        "ORDER BY technique seems to be usable. "
-                                + "This should reduce the time needed "
-                                + "to find the right number "
-                                + "of query columns. Automatically extending the "
-                                + "range for current UNION query injection technique test");
-            }
+            LOGGER.debug(
+                    "ORDER BY technique seems to be usable. This should reduce the time needed to find the right number of query columns. Automatically extending the range for current UNION query injection technique test");
 
             int lowCols = 1;
             int highCols = ORDER_BY_STEP;
@@ -931,9 +925,7 @@ public class SQLiUnionEngine {
         if (lowerCount == 1) {
             int found = orderByTechnique();
             if (found >= 0) {
-                if (log.isDebugEnabled()) {
-                    log.debug("target url appears to have " + found + " column in query");
-                }
+                LOGGER.debug("target url appears to have {} column in query", found);
                 return found;
             }
         }

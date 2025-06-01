@@ -24,6 +24,7 @@ import java.util.List;
 import javax.swing.table.AbstractTableModel;
 import org.parosproxy.paros.Constant;
 
+@SuppressWarnings("serial")
 public class ScriptTokensTableModel extends AbstractTableModel {
 
     private static final long serialVersionUID = 1L;
@@ -33,7 +34,7 @@ public class ScriptTokensTableModel extends AbstractTableModel {
         Constant.messages.getString("zest.tokens.table.value")
     };
 
-    private List<String[]> values = new ArrayList<String[]>();
+    private List<String[]> values = new ArrayList<>();
     private boolean directlyEditable = false;
 
     /** */

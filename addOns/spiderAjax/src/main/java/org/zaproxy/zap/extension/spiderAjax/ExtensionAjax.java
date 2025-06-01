@@ -19,20 +19,20 @@
  */
 package org.zaproxy.zap.extension.spiderAjax;
 
-import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import javax.swing.ImageIcon;
-import javax.swing.KeyStroke;
 import javax.swing.tree.TreeNode;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
@@ -46,8 +46,11 @@ import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
+import org.zaproxy.zap.extension.spiderAjax.internal.ContextDataManager;
+import org.zaproxy.zap.extension.spiderAjax.internal.PopupMenuItemSpiderDialogWithContext;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.Target;
 import org.zaproxy.zap.utils.DisplayUtils;
@@ -60,18 +63,11 @@ import org.zaproxy.zap.view.ZapMenuItem;
  */
 public class ExtensionAjax extends ExtensionAdaptor {
 
-    private static final Logger logger = Logger.getLogger(ExtensionAjax.class);
     public static final int PROXY_LISTENER_ORDER = ProxyListenerLog.PROXY_LISTENER_ORDER + 1;
     public static final String NAME = "ExtensionSpiderAjax";
 
-    private static final List<Class<? extends Extension>> DEPENDENCIES;
-
-    static {
-        List<Class<? extends Extension>> dependencies = new ArrayList<>(1);
-        dependencies.add(ExtensionSelenium.class);
-
-        DEPENDENCIES = Collections.unmodifiableList(dependencies);
-    }
+    private static final List<Class<? extends Extension>> DEPENDENCIES =
+            List.of(ExtensionSelenium.class, ExtensionNetwork.class);
 
     private SpiderPanel spiderPanel = null;
     private PopupMenuAjaxSite popupMenuSpiderSite = null;
@@ -83,6 +79,12 @@ public class ExtensionAjax extends ExtensionAdaptor {
     private SpiderListener spiderListener;
     private AjaxSpiderAPI ajaxSpiderApi;
     private AjaxSpiderParam ajaxSpiderParam;
+    private ExtensionNetwork extensionNetwork;
+
+    private ContextDataManager contextDataManager;
+    private List<AuthenticationHandler> authHandlers = new ArrayList<>();
+
+    private ImageIcon icon;
 
     /**
      * initializes the extension
@@ -99,8 +101,40 @@ public class ExtensionAjax extends ExtensionAdaptor {
     public void init() {
         super.init();
 
+        // Prevent Crawljax from logging too many, not so useful, INFO messages.
+        setLogLevel(
+                List.of(
+                        "com.crawljax.core.Crawler",
+                        "com.crawljax.core.UnfiredCandidateActions",
+                        "com.crawljax.core.state.StateMachine"),
+                Level.WARN);
+        setLogLevel(List.of("com.crawljax.forms.FormHandler"), Level.OFF);
+
         ajaxSpiderApi = new AjaxSpiderAPI(this);
         this.ajaxSpiderApi.addApiOptions(getAjaxSpiderParam());
+    }
+
+    private static void setLogLevel(List<String> classnames, Level level) {
+        boolean updateLoggers = false;
+        LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
+        Configuration configuration = ctx.getConfiguration();
+        for (String classname : classnames) {
+            LoggerConfig loggerConfig = configuration.getLoggerConfig(classname);
+            if (!classname.equals(loggerConfig.getName())) {
+                configuration.addLogger(
+                        classname,
+                        LoggerConfig.newBuilder()
+                                .withLoggerName(classname)
+                                .withLevel(level)
+                                .withConfig(configuration)
+                                .build());
+                updateLoggers = true;
+            }
+        }
+
+        if (updateLoggers) {
+            ctx.updateLoggers();
+        }
     }
 
     /**
@@ -112,19 +146,31 @@ public class ExtensionAjax extends ExtensionAdaptor {
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
+        contextDataManager = new ContextDataManager(getModel(), getView(), extensionHook);
+
         extensionHook.addApiImplementor(ajaxSpiderApi);
         extensionHook.addOptionsParamSet(getAjaxSpiderParam());
 
         extensionHook.addSessionListener(new SpiderSessionChangedListener());
 
-        if (getView() != null) {
+        if (hasView()) {
 
             extensionHook.getHookView().addStatusPanel(getSpiderPanel());
             extensionHook.getHookView().addOptionPanel(getOptionsSpiderPanel());
             extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuAjaxSite());
+            extensionHook
+                    .getHookMenu()
+                    .addPopupMenuItem(new PopupMenuItemSpiderDialogWithContext(this));
             extensionHook.getHookMenu().addToolsMenuItem(getMenuItemCustomScan());
             ExtensionHelp.enableHelpKey(getSpiderPanel(), "addon.spiderajax.tab");
         }
+
+        extensionNetwork =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionNetwork.class);
+    }
+
+    public ContextDataManager getContextDataManager() {
+        return contextDataManager;
     }
 
     @Override
@@ -134,18 +180,33 @@ public class ExtensionAjax extends ExtensionAdaptor {
 
     @Override
     public void unload() {
-        if (getView() != null) {
-            getSpiderPanel().stopScan();
+        if (hasView()) {
             getSpiderPanel().unload();
+
+            SpiderEventPublisher.unregisterPublisher();
 
             getView()
                     .getMainFrame()
                     .getMainFooterPanel()
                     .removeFooterToolbarRightLabel(
                             getSpiderPanel().getScanStatus().getCountLabel());
+
+            if (spiderDialog != null) {
+                spiderDialog.dispose();
+            }
         }
 
+        contextDataManager.unload();
+
         super.unload();
+    }
+
+    @Override
+    public void stop() {
+        if (hasView()) {
+            stopScan();
+        }
+        ajaxSpiderApi.stopSpider();
     }
 
     @Override
@@ -173,20 +234,37 @@ public class ExtensionAjax extends ExtensionAdaptor {
         if (spiderPanel == null) {
             spiderPanel = new SpiderPanel(this);
             spiderPanel.setName(this.getMessages().getString("spiderajax.panel.title"));
-            spiderPanel.setIcon(
-                    new ImageIcon(getClass().getResource("/resource/icon/16/spiderAjax.png")));
+            spiderPanel.setIcon(getIcon());
         }
         return spiderPanel;
     }
 
-    AjaxSpiderParam getAjaxSpiderParam() {
+    /**
+     * Gets the icon for the AJAX spider related functionality.
+     *
+     * <p>Should not be called if there's no view.
+     *
+     * @return the icon, never {@code null}.
+     */
+    public ImageIcon getIcon() {
+        if (icon == null) {
+            icon =
+                    DisplayUtils.getScaledIcon(
+                            getClass().getResource("/resource/icon/16/spiderAjax.png"));
+        }
+        return icon;
+    }
+
+    public AjaxSpiderParam getAjaxSpiderParam() {
         if (ajaxSpiderParam == null) {
             ajaxSpiderParam = new AjaxSpiderParam();
         }
         return ajaxSpiderParam;
     }
 
-    /** @return the PopupMenuAjaxSite object */
+    /**
+     * @return the PopupMenuAjaxSite object
+     */
     private PopupMenuAjaxSite getPopupMenuAjaxSite() {
         if (popupMenuSpiderSite == null) {
             popupMenuSpiderSite =
@@ -196,34 +274,25 @@ public class ExtensionAjax extends ExtensionAdaptor {
         return popupMenuSpiderSite;
     }
 
-    @SuppressWarnings("deprecation")
     private ZapMenuItem getMenuItemCustomScan() {
         if (menuItemCustomScan == null) {
             menuItemCustomScan =
                     new ZapMenuItem(
                             "spiderajax.menu.tools.label",
-                            KeyStroke.getKeyStroke(
-                                    KeyEvent.VK_X,
-                                    // TODO Use getMenuShortcutKeyMaskEx() (and remove warn
-                                    // suppression) when targeting Java 10+
-                                    Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
-                                            | KeyEvent.ALT_DOWN_MASK,
-                                    false));
+                            getView()
+                                    .getMenuShortcutKeyStroke(
+                                            KeyEvent.VK_X, KeyEvent.ALT_DOWN_MASK, false));
             menuItemCustomScan.setEnabled(Control.getSingleton().getMode() != Mode.safe);
+            menuItemCustomScan.setIcon(getIcon());
 
-            menuItemCustomScan.addActionListener(
-                    new java.awt.event.ActionListener() {
-
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            showScanDialog(null);
-                        }
-                    });
+            menuItemCustomScan.addActionListener(e -> showScanDialog((Target) null));
         }
         return menuItemCustomScan;
     }
 
-    /** @return */
+    /**
+     * @return
+     */
     private OptionsAjaxSpider getOptionsSpiderPanel() {
         if (optionsAjaxSpider == null) {
             ExtensionSelenium extSelenium =
@@ -238,15 +307,19 @@ public class ExtensionAjax extends ExtensionAdaptor {
     }
 
     public void showScanDialog(SiteNode node) {
+        showScanDialog(node == null ? null : new Target(node));
+    }
+
+    public void showScanDialog(Target target) {
         if (spiderDialog == null) {
             spiderDialog =
                     new AjaxSpiderDialog(
                             this,
                             View.getSingleton().getMainFrame(),
                             DisplayUtils.getScaledDimension(700, 500));
-            spiderDialog.init(new Target(node));
-        } else if (node != null) {
-            spiderDialog.init(new Target(node));
+            spiderDialog.init(target);
+        } else if (target != null) {
+            spiderDialog.init(target);
         } else {
             spiderDialog.updateBrowsers();
         }
@@ -274,7 +347,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
      * @param target the target that will be spidered
      * @return a {@code String} containing the display name, never {@code null}
      */
-    String createDisplayName(AjaxSpiderTarget target) {
+    public String createDisplayName(AjaxSpiderTarget target) {
         if (target.isSubtreeOnly()) {
             return abbreviateDisplayName(
                     HttpPrefixUriValidator.getNormalisedPrefix(target.getStartUri().toString()));
@@ -340,7 +413,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
      */
     @SuppressWarnings("fallthrough")
     public void startScan(String displayName, AjaxSpiderTarget target, SpiderListener listener) {
-        if (getView() != null) {
+        if (hasView()) {
             switch (Control.getSingleton().getMode()) {
                 case safe:
                     throw new IllegalStateException("Scans are not allowed in Safe mode");
@@ -388,42 +461,37 @@ public class ExtensionAjax extends ExtensionAdaptor {
         return null;
     }
 
-    /** @param ignoredRegexs */
+    /**
+     * @param ignoredRegexs
+     */
     public void setExcludeList(List<String> ignoredRegexs) {
         this.excludeList = ignoredRegexs;
     }
 
-    /** @return the exclude list */
+    /**
+     * @return the exclude list
+     */
     public List<String> getExcludeList() {
         return excludeList;
     }
 
-    /** @return the author */
-    @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
-    }
-
-    /** @return description of the plugin */
+    /**
+     * @return description of the plugin
+     */
     @Override
     public String getDescription() {
         return this.getMessages().getString("spiderajax.desc");
     }
 
-    /** @return the url of the proj */
     @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_HOMEPAGE);
-        } catch (MalformedURLException e) {
-            logger.error(e);
-            return null;
-        }
+    public String getUIName() {
+        return Constant.messages.getString("spiderajax.name");
     }
 
-    SpiderThread createSpiderThread(
+    public SpiderThread createSpiderThread(
             String displayName, AjaxSpiderTarget target, SpiderListener spiderListener) {
-        SpiderThread spiderThread = new SpiderThread(displayName, target, this, spiderListener);
+        SpiderThread spiderThread =
+                new SpiderThread(displayName, target, this, spiderListener, extensionNetwork);
         spiderThread.addSpiderListener(getSpiderListener());
 
         return spiderThread;
@@ -442,6 +510,18 @@ public class ExtensionAjax extends ExtensionAdaptor {
         }
     }
 
+    public void addAuthenticationHandler(AuthenticationHandler handler) {
+        authHandlers.add(handler);
+    }
+
+    public void removeAuthenticationHandler(AuthenticationHandler handler) {
+        authHandlers.remove(handler);
+    }
+
+    protected List<AuthenticationHandler> getAuthenticationHandlers() {
+        return Collections.unmodifiableList(authHandlers);
+    }
+
     public boolean isSpiderRunning() {
         return spiderRunning;
     }
@@ -458,7 +538,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
         @Override
         public void sessionAboutToChange(Session session) {
             ajaxSpiderApi.reset();
-            if (getView() != null) {
+            if (hasView()) {
                 getSpiderPanel().reset();
                 if (spiderDialog != null) {
                     spiderDialog.reset();
@@ -471,7 +551,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
 
         @Override
         public void sessionModeChanged(Mode mode) {
-            if (getView() != null) {
+            if (hasView()) {
                 getSpiderPanel().sessionModeChanged(mode);
                 getMenuItemCustomScan().setEnabled(mode != Mode.safe);
             }

@@ -4,12 +4,18 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- Update minimum ZAP version to 2.16.0.
+
+## [6] - 2023-03-13
 ### Added
 - Add info and repo URLs.
 
 ### Changed
-- Update minimum ZAP version to 2.5.0.
+- Update minimum ZAP version to 2.12.0.
 - Maintenance changes.
+- Make missing JavaFX logging less verbose in regular use.
+- Update help with the requirements to use the add-on.
 
 ## 5 - 2017-07-21
 
@@ -34,3 +40,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[6]: https://github.com/zaproxy/zap-extensions/releases/browserView-v6

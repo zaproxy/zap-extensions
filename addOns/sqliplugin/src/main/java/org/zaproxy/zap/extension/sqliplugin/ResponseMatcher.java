@@ -58,19 +58,25 @@ public class ResponseMatcher {
         negativeLogic = false;
     }
 
-    /** @param strA */
+    /**
+     * @param strA
+     */
     public void setInjectedResponse(String a) {
         this.strA = a;
     }
 
-    /** @param strB */
+    /**
+     * @param strB
+     */
     public void setOriginalResponse(String b) {
         this.strB = b;
         this.fullBCount.clear();
         matchRatio = -1;
     }
 
-    /** @param replacementMode */
+    /**
+     * @param replacementMode
+     */
     public void setLogic(int replacementMode) {
         this.negativeLogic = (replacementMode == SQLiPayloadManager.WHERE_NEGATIVE);
     }

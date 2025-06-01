@@ -19,36 +19,17 @@
  */
 package org.zaproxy.zap.extension.viewstate;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
-import org.zaproxy.zap.extension.brk.ExtensionBreak;
 import org.zaproxy.zap.extension.httppanel.component.split.request.RequestSplitComponent;
 import org.zaproxy.zap.extension.httppanel.component.split.response.ResponseSplitComponent;
 import org.zaproxy.zap.extension.httppanel.view.HttpPanelView;
-import org.zaproxy.zap.extension.httppanel.view.hex.ExtensionHttpPanelHexView;
 import org.zaproxy.zap.view.HttpPanelManager;
 import org.zaproxy.zap.view.HttpPanelManager.HttpPanelViewFactory;
 
 public class ExtensionHttpPanelViewStateView extends ExtensionAdaptor {
 
-    private static final List<Class<?>> EXTENSION_DEPENDENCIES;
-
-    static {
-        // Prepare a list of Extensions on which this extension depends
-        List<Class<?>> dependencies = new ArrayList<>(1);
-        dependencies.add(ExtensionBreak.class);
-        dependencies.add(ExtensionHttpPanelHexView.class);
-        EXTENSION_DEPENDENCIES = Collections.unmodifiableList(dependencies);
-    }
-
-    private static Logger logger = Logger.getLogger(ExtensionHttpPanelViewStateView.class);
     public static final String NAME = "ExtensionHttpPanelViewStateView";
 
     public ExtensionHttpPanelViewStateView() {
@@ -66,7 +47,7 @@ public class ExtensionHttpPanelViewStateView extends ExtensionAdaptor {
     }
 
     private void initViewFactories() {
-        if (getView() != null) {
+        if (hasView()) {
             HttpPanelManager.getInstance()
                     .addRequestViewFactory(
                             RequestSplitComponent.NAME, new RequestSplitBodyViewStateViewFactory());
@@ -90,7 +71,7 @@ public class ExtensionHttpPanelViewStateView extends ExtensionAdaptor {
 
     @Override
     public void unload() {
-        if (getView() != null) {
+        if (hasView()) {
             HttpPanelManager panelManager = HttpPanelManager.getInstance();
             panelManager.removeRequestViewFactory(
                     RequestSplitComponent.NAME, RequestSplitBodyViewStateViewFactory.NAME);
@@ -151,22 +132,8 @@ public class ExtensionHttpPanelViewStateView extends ExtensionAdaptor {
     }
 
     @Override
-    public String getAuthor() {
-        return Constant.messages.getString("viewstate.author");
-    }
-
-    @Override
     public String getDescription() {
         return Constant.messages.getString("viewstate.desc");
-    }
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_EXTENSIONS_PAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
     }
 
     /** No database tables used, so all supported */

@@ -6,7 +6,7 @@
 Replacer
 </title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 <h1>Replacer</h1>
 The replacer is an easy way to replace strings in requests and responses.
 <p>
@@ -54,15 +54,18 @@ The string that will be used to identify what should be replaced - see Match Typ
 <h3>Match Regex</h3>
 If set then the Match String will be treated as a regex expression.
 This option is disabled when matching actual headers.
+Hexadecimal bytes are represented with "\x00 - \xFF" (for example "abc\x01\x02\x03def").
 
 <h3>Replacement String</h3>
 The new string that will replace the specified selection.
+Hexadecimal bytes are represented with "\x00 - \xFF".
+The literal string "\x00" can be kept with "\\x00".
 
 <h3>Enable</h3>
 If not set then the rule will not apply.
 
-<h3>Advanced</h3>
-If set then an additional tab will be show which allows you to specify which 'initiators' the rule should apply to.
+<h3>Initiators tab</h3>
+Allows you to specify which 'initiators' the rule should apply to.
 Each ZAP component which can send and receive messages is a separate initiator, so this gives you a very fine grain
 control over exactly when the rule should apply.
 

@@ -19,7 +19,8 @@
  */
 package org.zaproxy.zap.extension.websocket.treemap;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zaproxy.zap.extension.websocket.WebSocketMessage;
 import org.zaproxy.zap.extension.websocket.WebSocketObserver;
 import org.zaproxy.zap.extension.websocket.WebSocketProxy;
@@ -31,7 +32,7 @@ import org.zaproxy.zap.extension.websocket.treemap.nodes.structural.TreeNode;
 
 public class WebSocketTreeMap implements WebSocketObserver {
 
-    private static final Logger LOGGER = Logger.getLogger(WebSocketTreeMap.class);
+    private static final Logger LOGGER = LogManager.getLogger(WebSocketTreeMap.class);
 
     private static final int OBSERVER_ORDER = WebSocketStorage.WEBSOCKET_OBSERVING_ORDER + 1;
 
@@ -54,9 +55,7 @@ public class WebSocketTreeMap implements WebSocketObserver {
 
             result = nodeFactory.getMessageTreeNode(webSocketMessage.getDTO());
 
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug(nodeFactory.getRoot());
-            }
+            LOGGER.debug(nodeFactory.getRoot());
         }
 
         return result;
@@ -81,9 +80,7 @@ public class WebSocketTreeMap implements WebSocketObserver {
                         "Can't get Handshake message to add a new connection to WebSocket Tree Map");
             }
 
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug(nodeFactory.getRoot());
-            }
+            LOGGER.debug(nodeFactory.getRoot());
         }
 
         return result;

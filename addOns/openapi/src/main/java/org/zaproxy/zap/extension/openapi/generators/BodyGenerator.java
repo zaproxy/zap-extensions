@@ -19,22 +19,45 @@
  */
 package org.zaproxy.zap.extension.openapi.generators;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import io.swagger.v3.core.util.Json;
+import io.swagger.v3.oas.models.examples.Example;
+import io.swagger.v3.oas.models.headers.Header;
 import io.swagger.v3.oas.models.media.ArraySchema;
+import io.swagger.v3.oas.models.media.BinarySchema;
 import io.swagger.v3.oas.models.media.ComposedSchema;
+import io.swagger.v3.oas.models.media.Encoding;
+import io.swagger.v3.oas.models.media.MediaType;
+import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import org.apache.log4j.Logger;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class BodyGenerator {
 
     private Generators generators;
     private DataGenerator dataGenerator;
-    private static final Logger LOG = Logger.getLogger(BodyGenerator.class);
+    private static final Logger LOGGER = LogManager.getLogger(BodyGenerator.class);
+    private static final List<String> PRIMITIVE_TYPES =
+            Arrays.asList("boolean", "integer", "number", "string");
+    public static final String TEXT_FILE_CONTENTS =
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus eu tortor efficitur";
+    public static final String IMAGE_FILE_CONTENTS =
+            new String(
+                    new byte[] {110, -12, 34, -18, 11, 69, 20, 11, 51, 26, 27, 14},
+                    StandardCharsets.UTF_8);
 
     public BodyGenerator(Generators generators) {
         this.generators = generators;
@@ -66,14 +89,22 @@ public class BodyGenerator {
                         }
                     });
 
+    public String generate(MediaType mediaType) {
+        String exampleBody = extractExampleBody(mediaType);
+        return exampleBody == null ? this.generate(mediaType.getSchema()) : exampleBody;
+    }
+
     public String generate(Schema<?> schema) {
-        boolean isArray = schema instanceof ArraySchema;
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Generate body for object " + schema.getName());
+        if (schema == null) {
+            return "";
         }
 
-        if (isArray) {
+        LOGGER.debug("Generate body for object {}", schema.getName());
+
+        if (schema instanceof ArraySchema) {
             return generateFromArraySchema((ArraySchema) schema);
+        } else if (schema instanceof BinarySchema) {
+            return generateFromBinarySchema((BinarySchema) schema, false);
         }
 
         @SuppressWarnings("rawtypes")
@@ -91,8 +122,7 @@ public class BodyGenerator {
             resolveNotSchema(schema);
         }
 
-        // primitive type, or schema without properties
-        if (schema.getType() == null || schema.getType().equals("object")) {
+        if (!PRIMITIVE_TYPES.contains(schema.getType())) {
             schema.setType("string");
         }
 
@@ -100,9 +130,28 @@ public class BodyGenerator {
     }
 
     private String generateFromArraySchema(ArraySchema schema) {
-        StringBuilder json = new StringBuilder();
-        json.append(generate(schema.getItems()));
-        return createJsonArrayWith(json.toString());
+        if (schema.getExample() instanceof String) {
+            return (String) schema.getExample();
+        }
+
+        if (schema.getExample() instanceof Iterable) {
+            try {
+                return Json.mapper().writeValueAsString(schema.getExample());
+            } catch (JsonProcessingException e) {
+                LOGGER.warn(
+                        "Failed to encode Example Object. Falling back to default example generation",
+                        e);
+            }
+        }
+
+        return createJsonArrayWith(generate(schema.getItems()));
+    }
+
+    private static String generateFromBinarySchema(BinarySchema schema, boolean image) {
+        if (image) {
+            return IMAGE_FILE_CONTENTS;
+        }
+        return TEXT_FILE_CONTENTS;
     }
 
     @SuppressWarnings("rawtypes")
@@ -121,7 +170,7 @@ public class BodyGenerator {
             json.append(SYNTAX.get(Element.PROPERTY_CONTAINER));
             json.append(SYNTAX.get(Element.INNER_SEPARATOR));
             String value;
-            if (dataGenerator.isSupported(property.getValue().getType())) {
+            if (dataGenerator.isSupported(property.getValue())) {
                 value = dataGenerator.generateBodyValue(property.getKey(), property.getValue());
             } else {
 
@@ -132,6 +181,9 @@ public class BodyGenerator {
                                         property.getKey(),
                                         property.getValue().getType(),
                                         generate(property.getValue()));
+                if ("string".equals(property.getValue().getType()) && !value.startsWith("\"")) {
+                    value = "\"" + value + "\"";
+                }
             }
             json.append(value);
         }
@@ -159,7 +211,7 @@ public class BodyGenerator {
             return schema.getAnyOf().get(0);
         }
         // Should not be reached, allOf schema is resolved by the parser
-        LOG.error("Unknown composed schema type: " + schema);
+        LOGGER.error("Unknown composed schema type: {}", schema);
         return null;
     }
 
@@ -183,6 +235,9 @@ public class BodyGenerator {
 
     @SuppressWarnings("rawtypes")
     public String generateForm(Schema<?> schema) {
+        if (schema == null) {
+            return "";
+        }
         Map<String, Schema> properties = schema.getProperties();
         if (properties != null) {
             StringBuilder formData = new StringBuilder();
@@ -200,6 +255,98 @@ public class BodyGenerator {
         return "";
     }
 
+    @SuppressWarnings("rawtypes")
+    public String generateMultiPart(Schema<?> schema, Map<String, Encoding> encoding) {
+        if (schema == null) {
+            return "";
+        }
+        String boundary = UUID.randomUUID().toString();
+        Map<String, Schema> properties = schema.getProperties();
+        if (properties != null) {
+            StringBuilder multipartData = new StringBuilder();
+            for (Map.Entry<String, Schema> property : properties.entrySet()) {
+                Schema propertySchema = property.getValue();
+                multipartData.append("--" + boundary);
+                multipartData.append("\r\n");
+                multipartData.append("Content-Disposition");
+                multipartData.append(": ");
+                multipartData.append("form-data");
+                multipartData.append("; ");
+                multipartData.append("name=");
+                multipartData.append("\"");
+                multipartData.append(property.getKey());
+                multipartData.append("\"");
+                if (propertySchema instanceof BinarySchema) {
+                    multipartData.append("; ");
+                    multipartData.append("filename=");
+                    multipartData.append("\"");
+                    multipartData.append("SampleZAPFile");
+                    multipartData.append("\"");
+                }
+                multipartData.append("\r\n");
+
+                Encoding propertyEncoding;
+                String propertyContentType = null;
+                Map<String, Header> propertyHeaders = null;
+
+                if (encoding != null) {
+                    propertyEncoding = encoding.get(property.getKey());
+                    if (propertyEncoding != null) {
+                        propertyContentType = propertyEncoding.getContentType();
+                        propertyHeaders = propertyEncoding.getHeaders();
+                    }
+                }
+
+                if (propertyContentType == null) {
+                    propertyContentType = getPropertyContentType(propertySchema);
+                }
+                multipartData.append("Content-Type");
+                multipartData.append(": ");
+                multipartData.append(propertyContentType);
+                multipartData.append("\r\n");
+
+                if (propertyHeaders != null) {
+                    for (Map.Entry<String, Header> header : propertyHeaders.entrySet()) {
+                        String headerName = header.getKey();
+                        multipartData.append(headerName);
+                        multipartData.append(": ");
+                        multipartData.append(
+                                dataGenerator.generateValue(
+                                        headerName, header.getValue().getSchema(), false));
+                        multipartData.append("\r\n");
+                    }
+                }
+
+                multipartData.append("\r\n");
+                if (propertyContentType.contains("image")) {
+                    multipartData.append(
+                            generateFromBinarySchema(((BinarySchema) propertySchema), true));
+                } else {
+                    multipartData.append(generate(propertySchema));
+                }
+                multipartData.append("\r\n");
+            }
+            multipartData.append("--" + boundary + "--");
+            return multipartData.toString();
+        }
+        return "";
+    }
+
+    private static String getPropertyContentType(Schema<?> schema) {
+        String type;
+
+        if (schema instanceof ObjectSchema) {
+            type = "application/json";
+        } else if (schema instanceof BinarySchema) {
+            type = "application/octet-stream";
+        } else if (schema instanceof ArraySchema) {
+            type = getPropertyContentType(((ArraySchema) schema).getItems());
+        } else {
+            type = "text/plain";
+        }
+        return type;
+    }
+
     private static String urlEncode(String string) {
         try {
             return URLEncoder.encode(string, StandardCharsets.UTF_8.name());
@@ -207,5 +354,20 @@ public class BodyGenerator {
             // Shouldn't happen, standard charset.
             return "";
         }
+    }
+
+    @SuppressWarnings("rawtypes")
+    private static String extractExampleBody(MediaType mediaType) {
+        return Optional.ofNullable(mediaType.getExamples())
+                .map(Map::values)
+                .map(Collection::stream)
+                .map(stream -> stream.map(Example::getValue).filter(Objects::nonNull).findFirst())
+                .orElse(Optional.ofNullable(mediaType.getExample()))
+                .map(Object::toString)
+                .orElse(
+                        Optional.ofNullable(mediaType.getSchema())
+                                .map(Schema::getExample)
+                                .map(Object::toString)
+                                .orElse(null));
     }
 }

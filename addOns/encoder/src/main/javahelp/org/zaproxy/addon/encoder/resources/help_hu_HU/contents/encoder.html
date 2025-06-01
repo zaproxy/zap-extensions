@@ -1,0 +1,262 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>
+Encode / Decode / Hash dialog
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Encode / Decode / Hash dialog</H1>
+
+<p>
+This allows you to encode, decode or hash text.
+
+<H2>Common Fields</H2>
+The dialog has one field that is common to all of the tabs:
+
+<H3>Text to be encoded/decoded/hashed:</H3>
+This field is for the text that you want to be encoded, decoded or hashed.<br/>
+If any text is selected when the dialog is invoked then it will be put in this field.
+The other fields will be updated dynamically if you change the text<br/>
+
+<H2>Toolbar</H2>
+
+<ul>
+  <li><img src="../../ui-tab--plus.png"></src> Add New Tab - Adds a new tab to the dialog.</li>
+  <li><img src="../../ui-tab--delete.png"></src> Remove Selected Tab - Removes the selected (or current) tab from the dialog.</li>
+  <li><img src="../../ui-output--plus.png"></src> Add Output Panel to Current Tab - Adds an output panel to the current tab.</li>
+  <li>Reset - Reset all the tabs/panels to their default state.</li>
+  <li>Options - Will open the options dialog, with the focus set to the Encode/Decode/Hash options panel.</li>
+  <li>Help - Will open the User Guide, with the content pane preset to the Encode/Decode/Hash add-on's help page.</li>
+</ul>
+
+<H2>Output Panel(s) Context Menu</H2>
+
+<ul>
+  <li>Find - Brings up a standard input dialog to allow searching within a text area.</li>
+  <li>Copy - Standard copy functionality.</li>
+  <li>Paste - Standard paste functionality.</li>
+  <li>Delete Output Panel - Removes the relevant output text area.</li>
+  <li>Replace Input Text - Replaces the input text content, based on the selection or full content of
+  the relevant output text area. (Only active if the text area has content.)</li>
+</ul>
+
+<H2>Default Dialog Tabs & Panels</H2>
+In its default state the Encode/Decode/Hash dialog displays tabs and output panels with the following setup:
+
+<H3>Encode tab fields</H3>
+
+<ul>
+  <li>Base 64 Encode</li>
+  <li>Base 64 URL Encode</li>
+  <li>URL Encode</li>
+  <li>Full URL Encode</li>
+  <li>ASCII Hex Encode</li>
+  <li>HTML Encode</li>
+  <li>Full HTML Encode</li>
+  <li>JavaScript Encode</li>
+</ul>
+
+<H3>Decode tab fields</H3>
+
+<ul>
+  <li>Base 64 Decode</li>
+  <li>Base 64 URL Decode</li>
+  <li>URL Decode</li>
+  <li>Full URL Decode</li>
+  <li>ASCII Hex Decode</li>
+  <li>HTML Decode</li>
+  <li>JavaScript Decode</li>
+</ul>
+
+<H3>Hash tab fields</H3>
+
+<ul>
+  <li>SHA256 Hash</li>
+  <li>SHA1 Hash</li>
+  <li>MD5 Hash</li>
+</ul>
+
+<H3>Illegal UTF-8</H3>
+
+<ul>
+  <li>2 byte</li>
+  <li>3 byte</li>
+  <li>4 byte</li>
+</ul>
+
+<H3>Unicode</H3>
+
+<ul>
+  <li>Escaped Text</li>
+  <li>Unescaped Text</li>
+</ul>
+
+<H2>Predefined Encode / Decode / Hash Processors</H2>
+
+<H3>Encoders</H3>
+
+<H4>2 byte Illegal UTF-8</H4>
+Will display with an illegal UTF-8 character sequence with 2 bytes.
+
+<H4>3 byte Illegal UTF-8</H4>
+Will display illegal UTF-8 character sequence with 3 bytes.
+
+<H4>4 byte Illegal UTF-8</H4>
+Will display an illegal UTF-8 character sequence with 4 bytes.
+
+<H4>ASCII Hex Encode</H4>
+Will display the ASCII hex encoding of the text you enter.
+
+<H3>Base 64 Encode</H3>
+Will display the base 64 encoding of the text you enter.<br/>
+
+<H3>Base 64 URL Encode</H3>
+Will display the base 64 URL encoding of the text you enter. Base64URL is a modification to the primary base 64 standard
+the purpose of which is the ability to use the encoding result as filename or URL address. Base64URL is described in 
+<a href="https://tools.ietf.org/html/rfc4648">RFC 4648</a>, which notes that the standard base 64 alphabet includes characters that are invalid for 
+URLs and file names (for example: plus sign and question mark are problematic). 
+The main standard will encode <code>&lt;&lt;???&gt;&gt;</code> to <code>PDw/Pz8+Pg==</code> while Base64URL will convert it to <code>PDw_Pz8-Pg</code>.
+
+<H4>Escaped Unicode Text</H4>
+Will display escaped Unicode characters. For example, the text
+<code>A&ccedil;ores</code> would be encoded as <code>%u0041%u00e7%u006f%u0072%u0065%u0073</code>.
+
+<H4>HTML Encode</H4>
+Will display the HTML encoding of the text you enter. For example, the text
+<code>&quot;pi&ntilde;ata&quot;</code> would be encoded as <code>&amp;quot;pi&amp;ntilde;ata&amp;quot;</code>.
+
+<H4>Full HTML Encode</H4>
+Will display the full HTML encoding of the text you enter. For example, the text <code>&lt;script&gt;</code> would be encoded as <code>&amp;#60;&amp;#115;&amp;#99;&amp;#114;&amp;#105;&amp;#112;&amp;#116;&amp;#62;</code>
+
+<H4>JavaScript Encode</H4>
+Will display escaped JavaScript literals of the text you enter. For example, the text
+<code>&quot;2&#65504;&quot;</code> would be encoded as <code>\&quot;2\uFFE0\&quot;</code>.
+
+<H4>URL Encode</H4>
+Will display the URL encoding of the text you enter.
+
+<H4>Full URL Encode</H4>
+Will display the full URL encoding of the text you enter (all characters converted to HEX and percent prepended).
+
+<H4>Unescaped Unicode Text</H4>
+Will display the unescaped Unicode characters. For example, the text
+<code>%u0041%u00e7%u006f%u0072%u0065%u0073</code> would be decoded as <code>A&ccedil;ores</code>.
+
+<H4>Morse Code Encoder</H4>
+Will display dits (.) and dahs (-) and word breaks (/) representing the provided Alpha Numeric (including space) input.
+For example, the text <code>SOS SOS</code> would be encoded as <code>... --- .../... --- ...</code>.
+
+<H3>Decoders</H3>
+
+<H4>ASCII Hex Decode</H4>
+Will display the ASCII hex decoding of the text you enter.<br/>
+If there is no valid decoding then the field will be disabled.
+
+<H4>Base 64 Decode</H4>
+Will display the base 64 decoding of the text you enter.<br/>
+Leveraging a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Base64.html#getMimeDecoder()">Mime decoder</a> to handle wrapped lines.
+
+<H4>Base 64 URL Decode</H4>
+Will display the base 64 URL decoding of the text you enter. Base64URL is a modification to the primary base 64 standard 
+the purpose of which is the ability to use the encoding result as filename or URL address. Base64URL is described in 
+<a href="https://tools.ietf.org/html/rfc4648">RFC 4648</a>, which notes that the standard base 64 alphabet includes characters that are invalid for 
+URLs and file names (for example: plus sign and question mark are problematic). 
+
+<H4>HTML Decode</H4>
+Will display the HTML decoding of the text you enter. For example, the text
+<code>&amp;quot;pi&amp;ntilde;ata&amp;quot;</code> would be decoded as <code>&quot;pi&ntilde;ata&quot;</code>.
+
+<H4>JavaScript Decode</H4>
+Will display the unescaped JavaScript literals of the text you enter. For example, the text
+<code>\&quot;2\uFFE0\&quot;</code> would be decoded as <code>&quot;2&#65504;&quot;</code>.
+
+<H4>URL Decode</H4>
+Will display the URL decoding of the text you enter.
+
+<H4>Full URL Decode</H4>
+Will display the URL decoding of the text you enter (percent signs removed and HEX decoded).
+
+<H4>Morse Code Decoder</H4>
+Will display Alpha Numeric (including space) output representing the provided morse code input.
+For example, the text <code>... --- .../... --- ...</code> would be encoded as <code>SOS SOS</code>.
+
+<H3>Hashers</H3>
+
+<H4>MD5 Hash</H4>
+Will display the MD5 hash of the text you enter.
+
+<H4>SHA1 Hash</H4>
+Will display the SHA1 hash of the text you enter.
+
+<H4>SHA256 Hash</H4>
+Will display the SHA256 hash of the text you enter.
+
+<H2>Other Processors</H2>
+The following processors can also be added to any tab.
+
+<H3>Custom</H3>
+Custom "Encode/Decode" scripts can be created/added to the Scripts Tree and used by custom Output Panels. They should return <code>EncodeDecodeResult</code> objects as indicated by the templates. However,
+in the event that users aren't careful in doing so will return other data types leveraging their <code>toString()</code> implementation (which may or may not be useful/obvious at first glance).
+
+<H3>Utility</H3>
+
+<H4>To Lower Case</H4>
+Converts the input to all lower case characters.
+
+<H4>Remove Whitespace</H4>
+Removes all whitespace characters from the text, based on <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Character.html#isWhitespace(char)">Character.isWhiteSpace(char)</a>.
+
+<H4>Reverse</H4>
+Reverses the order of the input.
+
+<H4>To Upper Case</H4>
+Converts the input to all upper case characters.
+
+<H4>ASCify</H4>
+Converts text removing accents/diacritics/ligatures (perhaps not fully, due to operation in compatibility mode) leaving only ASCII characters.
+Examples:
+<ukl>
+  <li><code>Tĥïŝ ĩš â fůňķŷ Šťŕĭńġ: ﬁ. étrange.</code> becomes <code>This is a funky String: fi. etrange.</code>.>br></li>
+  <li><code>鸟儿</code> becomes an empty string (all characters are dropped).</li>
+<ul>
+
+See also:<br>
+<ul>
+    <li><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/text/Normalizer.html">Normalizer JavaDoc</a>. </li>
+    <li><a href="https://en.wikipedia.org/wiki/Transliteration">Wikipedia: Transliteration</a></li>
+</ul>
+
+<H3>Miscellaneous</H3>
+
+<H4>PowerShell Encode</H4>
+Converted to UTF-16LE and base64 encoded. Equivalent to one of the following examples (encoding "dir"):
+<p>
+<code> printf "dir"| iconv -t UTF-16LE | base64 -w 0 -</code>
+<br>
+<pre>
+<code>
+$command = 'dir'
+$bytes = [System.Text.Encoding]::Unicode.GetBytes($command)
+$encodedCommand = [Convert]::ToBase64String($bytes)
+echo $encodedCommand
+</code>
+</pre>
+<br>
+Resulting in: <code>ZABpAHIA</code>.
+<p>
+Which can be leveraged via something like the following (where <code>$encodedCommand</code> is set to the encoded value <code>ZABpAHIA</code>):<br>
+<code>powershell -exec bypass -enc $encodedCommand</code>
+
+<H2>Accessed via</H2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
+Tools menu 'Encode/Decode/Hash...' item</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
+Many text areas such as the Output tab, Scripts console, Request and Response panels via 'Encode/Decode/Hash...' 
+right click menu item</td></tr>
+</table>
+
+</BODY>
+</HTML>

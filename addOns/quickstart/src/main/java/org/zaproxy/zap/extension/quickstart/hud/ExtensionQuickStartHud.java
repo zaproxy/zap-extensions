@@ -20,10 +20,9 @@
 package org.zaproxy.zap.extension.quickstart.hud;
 
 import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.Extension;
@@ -39,7 +38,7 @@ import org.zaproxy.zap.extension.quickstart.PlugableHud;
 public class ExtensionQuickStartHud extends ExtensionAdaptor implements PlugableHud {
 
     public static final String NAME = "ExtensionQuickStartHud";
-    private static final Logger LOGGER = Logger.getLogger(ExtensionQuickStartHud.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionQuickStartHud.class);
 
     private static final String EXTENSION_HUD_CLASSNAME =
             "org.zaproxy.zap.extension.hud.ExtensionHUD";
@@ -59,11 +58,12 @@ public class ExtensionQuickStartHud extends ExtensionAdaptor implements Plugable
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
-        if (getView() != null) {
+        if (hasView()) {
             this.getExtQuickStart().setHudProvider(this);
         }
     }
 
+    @Override
     public boolean isHudEnabled() {
         try {
             if (isEnabledMethod == null) {
@@ -81,6 +81,7 @@ public class ExtensionQuickStartHud extends ExtensionAdaptor implements Plugable
         return false;
     }
 
+    @Override
     public void setHudEnabledForDesktop(boolean enabled) {
         try {
             Method methodSetEnabled =
@@ -91,6 +92,7 @@ public class ExtensionQuickStartHud extends ExtensionAdaptor implements Plugable
         }
     }
 
+    @Override
     public boolean isInScopeOnly() {
         try {
             Method methodGetHudParam = getExtHudClass().getMethod("getHudParam");
@@ -112,33 +114,19 @@ public class ExtensionQuickStartHud extends ExtensionAdaptor implements Plugable
 
     @Override
     public void unload() {
-        if (getView() != null) {
+        if (hasView()) {
             this.getExtQuickStart().setHudProvider(null);
         }
     }
 
     @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
-    }
-
-    @Override
     public String getDescription() {
-        return Constant.messages.getString("quickstart.launch.desc");
+        return Constant.messages.getString("quickstart.hud.desc");
     }
 
     @Override
     public String getUIName() {
-        return Constant.messages.getString("quickstart.launch.name");
-    }
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_HOMEPAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
+        return Constant.messages.getString("quickstart.hud.name");
     }
 
     public ExtensionQuickStart getExtQuickStart() {
@@ -161,6 +149,7 @@ public class ExtensionQuickStartHud extends ExtensionAdaptor implements Plugable
                 .getExtensionByClassName(EXTENSION_HUD_CLASSNAME);
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public List<String> getSupportedBrowserIds() {
         try {

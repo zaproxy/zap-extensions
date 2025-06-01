@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>ZAP Test Server</title>
+	<link href="/tutorial.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="roundContainer">
+	<h1>Login Page where the Password Field is Added, JSON Response, the submit key does not work</H1>
+	<h2>Login</h2>
+	
+	<div id="result"></div>
+
+	<form>
+	<table id="table" style="border: none;">
+	<tr>
+		<td>Username:
+		<td><input id="user" name="user" type="text"></td>
+	</tr>
+	<tr>
+		<td></td>
+		<td><button id="next" onclick="addpasswd();">Next</button></td>
+	</tr>
+	</table>
+	</form>
+	<p>
+	Test credentials:
+	<ul>
+		<li>username = test@test.com
+		<li>password = password123
+	</ul>
+	
+</div>
+<script>
+function addpasswd() {
+	document.getElementById("table").deleteRow(1); // Next button
+	
+	// Add password row
+	var row = document.getElementById("table").insertRow(1);
+	row.insertCell(0).innerText = "Password:";
+	var pwdField = document.createElement("input");
+	pwdField.setAttribute("id", "password");
+	pwdField.setAttribute("name", "password");
+	pwdField.setAttribute("type", "password");
+	row.insertCell(1).appendChild(pwdField);
+	
+	// Add login button
+	row = document.getElementById("table").insertRow(2);
+	row.insertCell(0).innerText = "";
+	var loginButton = document.createElement("button");
+	loginButton.setAttribute("id", "login");
+	loginButton.setAttribute("value", "submit");
+	loginButton.setAttribute("type", "button");
+	loginButton.setAttribute("onclick", "submitform();");
+	var loginText = document.createTextNode("Login");
+	loginButton.appendChild(loginText);
+	row.insertCell(1).appendChild(loginButton);
+
+	document.getElementById("password").focus();
+}
+
+function resetform() {
+	document.getElementById("table").deleteRow(2); // Login line
+	document.getElementById("table").deleteRow(1); // Password line
+
+	// Add next row
+	var row = document.getElementById("table").insertRow(1);
+	row.insertCell(0).innerText = "";
+	var nextButton = document.createElement("button");
+	nextButton.setAttribute("id", "next");
+	nextButton.setAttribute("value", "submit");
+	nextButton.setAttribute("type", "button");
+	nextButton.setAttribute("onclick", "addpasswd();");
+	nextButton.onkeydown = function(e){
+		if (e.keyCode == 13) {
+			// Handle return key
+			addpasswd();
+		}
+	};
+	var nextText = document.createTextNode("Next");
+	nextButton.appendChild(nextText);
+	row.insertCell(1).appendChild(nextButton);
+
+	document.getElementById("user").focus();
+}
+
+function submitform() {
+	// Remove previous messages
+	let element = document.getElementById("result");
+	while (element.firstChild) {
+		element.removeChild(element.firstChild);
+	}
+
+	// Make the login request
+	var xhr = new XMLHttpRequest();
+	var url = "login";
+	xhr.open("POST", url, true);
+	xhr.setRequestHeader("Content-Type", "application/json");
+	xhr.onreadystatechange = function () {
+	    if (xhr.readyState === 4 && xhr.status === 200) {
+	        var json = JSON.parse(xhr.responseText);
+	        
+	        if (json.result === "OK") {
+	        	sessionStorage.setItem("accesstoken", json.accesstoken);
+	        	window.location.replace("home.html");
+	        } else {
+	        	const h3 = document.createElement("h3");
+	        	const textNode = document.createTextNode("Username or password incorrect");
+	        	h3.appendChild(textNode);
+	        	document.getElementById("result").appendChild(h3);
+	        	resetform();
+	        }
+	    }
+	};
+	var data = JSON.stringify({
+		"user": document.getElementById("user").value,
+		"password": document.getElementById("password").value});
+	xhr.send(data);
+}
+
+document.getElementById('user').onkeydown = function(e){
+	if (e.keyCode == 13) {
+		// Handle return key
+		addpasswd();
+	}
+};
+
+document.getElementById("user").focus();
+
+</script>
+</body>
+</html>

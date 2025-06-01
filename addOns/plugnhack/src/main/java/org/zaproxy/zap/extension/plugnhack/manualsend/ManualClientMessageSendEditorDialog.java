@@ -23,25 +23,25 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.HeadlessException;
 import java.awt.Insets;
+import java.io.IOException;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
-import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.extension.manualrequest.ManualRequestEditorDialog;
-import org.parosproxy.paros.extension.manualrequest.MessageSender;
 import org.parosproxy.paros.model.Model;
+import org.zaproxy.addon.requester.MessageEditorPanel;
 import org.zaproxy.zap.extension.httppanel.HttpPanel;
 import org.zaproxy.zap.extension.httppanel.HttpPanelRequest;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.extension.plugnhack.ClientMessage;
-import org.zaproxy.zap.view.ZapMenuItem;
+import org.zaproxy.zap.extension.plugnhack.ExtensionPlugNHack;
 
 /** Send custom crafted WebSocket messages. */
-public class ManualClientMessageSendEditorDialog extends ManualRequestEditorDialog {
+@SuppressWarnings("serial")
+public class ManualClientMessageSendEditorDialog extends MessageEditorPanel {
 
     private static final long serialVersionUID = -5830450800029295419L;
 
-    private ClientMessagePanelSender sender;
+    private ExtensionPlugNHack extension;
 
     private HttpPanelRequest requestPanel;
     private ClientMessagePanel wsMessagePanel;
@@ -49,11 +49,10 @@ public class ManualClientMessageSendEditorDialog extends ManualRequestEditorDial
     private JToolBar controlToolbar;
 
     public ManualClientMessageSendEditorDialog(
-            ClientMessagePanelSender sender, boolean isSendEnabled, String configurationKey)
+            ExtensionPlugNHack extension, boolean isSendEnabled, String configurationKey)
             throws HeadlessException {
         super(isSendEnabled, configurationKey);
-        this.sender = sender;
-        this.setTitle(Constant.messages.getString("plugnhack.resend.dialog.title"));
+        this.extension = extension;
 
         initialize();
     }
@@ -78,18 +77,18 @@ public class ManualClientMessageSendEditorDialog extends ManualRequestEditorDial
     }
 
     @Override
-    public Class<? extends Message> getMessageType() {
-        return ClientMessage.class;
-    }
-
-    @Override
     public Message getMessage() {
-        ClientMessage message = (ClientMessage) getRequestPanel().getMessage();
+        ClientMessage message = (ClientMessage) getMessagePanel().getMessage();
 
         // set metadata first (opcode, channel, direction)
         wsMessagePanel.setMetadata(message);
 
         return message;
+    }
+
+    @Override
+    protected void sendMessage(Message message) throws IOException {
+        extension.resend((ClientMessage) message);
     }
 
     @Override
@@ -99,17 +98,12 @@ public class ManualClientMessageSendEditorDialog extends ManualRequestEditorDial
             return;
         }
 
-        getRequestPanel().setMessage(message);
+        getMessagePanel().setMessage(message);
         wsMessagePanel.setMessageMetadata(message);
     }
 
     @Override
-    protected MessageSender getMessageSender() {
-        return sender;
-    }
-
-    @Override
-    protected HttpPanelRequest getRequestPanel() {
+    protected HttpPanelRequest getMessagePanel() {
         if (requestPanel == null) {
             requestPanel = new ClientMessageSendPanel(true, configurationKey);
             requestPanel.setEnableViewSelect(true);
@@ -121,7 +115,7 @@ public class ManualClientMessageSendEditorDialog extends ManualRequestEditorDial
     @Override
     protected Component getManualSendPanel() {
         if (wsMessagePanel == null) {
-            wsMessagePanel = new ClientMessagePanel(getControlToolbar(), getRequestPanel());
+            wsMessagePanel = new ClientMessagePanel(getControlToolbar(), getMessagePanel());
 
             wsMessagePanel.addEndButton(getBtnSend());
             wsMessagePanel.addSeparator();
@@ -138,31 +132,8 @@ public class ManualClientMessageSendEditorDialog extends ManualRequestEditorDial
     }
 
     @Override
-    protected void saveConfig() {
+    public void saveConfig() {
         wsMessagePanel.saveConfig();
-    }
-
-    @Override
-    public ZapMenuItem getMenuItem() {
-        // Not supported
-        return null;
-        /*
-        if (menuItem == null) {
-        	menuItem = new JMenuItem();
-        	menuItem.setText("TODO Not supported!"); // TODO Constant.messages.getString("plugnhack.resend.menu"));
-        	menuItem.addActionListener(new ActionListener() {
-
-        		@Override
-        		public void actionPerformed(ActionEvent e) {
-        			Message message = getMessage();
-        			if (message != null) {
-        				setVisible(true);
-        		    }
-        		}
-        	});
-        }
-        return menuItem;
-        */
     }
 
     @Override

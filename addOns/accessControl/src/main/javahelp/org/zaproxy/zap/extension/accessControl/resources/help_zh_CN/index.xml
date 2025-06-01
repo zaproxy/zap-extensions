@@ -5,7 +5,7 @@
 
 <index version="2.0">
     <!-- index entries are merged (sorted) into core index -->
-	<indexitem text="access control" target="accessControl.concepts" />
-	<indexitem text="access control tab" target="accessControl.tab" />
-	<indexitem text="access control context options" target="accessControl.contextOptions" />
+	<indexitem text="访问控制" target="accessControl.concepts" />
+	<indexitem text="访问控制标签" target="accessControl.tab" />
+	<indexitem text="访问控制上下文选项" target="accessControl.contextOptions" />
 </index>

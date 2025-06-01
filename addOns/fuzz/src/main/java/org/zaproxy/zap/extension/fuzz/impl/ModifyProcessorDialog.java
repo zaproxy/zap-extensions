@@ -31,6 +31,7 @@ import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.PayloadProcessorUIP
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 import org.zaproxy.zap.view.AbstractFormDialog;
 
+@SuppressWarnings("serial")
 public class ModifyProcessorDialog<
                 T0 extends Payload,
                 T1 extends PayloadProcessor<T0>,

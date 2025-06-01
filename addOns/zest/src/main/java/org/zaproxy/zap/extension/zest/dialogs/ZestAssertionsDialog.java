@@ -25,12 +25,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
-import org.mozilla.zest.core.v1.ZestAssertion;
-import org.mozilla.zest.core.v1.ZestExpressionEquals;
-import org.mozilla.zest.core.v1.ZestExpressionLength;
-import org.mozilla.zest.core.v1.ZestExpressionRegex;
-import org.mozilla.zest.core.v1.ZestExpressionStatusCode;
-import org.mozilla.zest.core.v1.ZestRequest;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.zap.extension.script.ScriptNode;
@@ -38,7 +32,14 @@ import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
+import org.zaproxy.zest.core.v1.ZestAssertion;
+import org.zaproxy.zest.core.v1.ZestExpressionEquals;
+import org.zaproxy.zest.core.v1.ZestExpressionLength;
+import org.zaproxy.zest.core.v1.ZestExpressionRegex;
+import org.zaproxy.zest.core.v1.ZestExpressionStatusCode;
+import org.zaproxy.zest.core.v1.ZestRequest;
 
+@SuppressWarnings("serial")
 public class ZestAssertionsDialog extends StandardFieldsDialog implements ZestDialog {
 
     private static final String FIELD_VARIABLE = "zest.dialog.assert.label.variable";
@@ -109,7 +110,7 @@ public class ZestAssertionsDialog extends StandardFieldsDialog implements ZestDi
             this.addCheckBoxField(FIELD_EXACT, za.isCaseExact());
             this.addCheckBoxField(FIELD_INVERSE, za.isInverse());
 
-            ZestZapUtils.setMainPopupMenu(this.getField(FIELD_VALUE));
+            setFieldMainPopupMenu(FIELD_VALUE);
 
         } else if (assertion.getRootExpression() instanceof ZestExpressionRegex) {
             ZestExpressionRegex za = (ZestExpressionRegex) assertion.getRootExpression();
@@ -122,7 +123,7 @@ public class ZestAssertionsDialog extends StandardFieldsDialog implements ZestDi
     }
 
     private List<String> getVariableNames() {
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         list.addAll(script.getZestScript().getVariableNames());
         Collections.sort(list);
         return list;

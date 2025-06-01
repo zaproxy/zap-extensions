@@ -183,6 +183,7 @@ public abstract class TreeNode implements Comparable<TreeNode> {
         }
         return list;
     }
+
     /**
      * This is like {@link TreeNode#iterateOverLeaf(TreeNode, Function, List)} but it is used when
      * the function returns a batch of results.

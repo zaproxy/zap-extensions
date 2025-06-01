@@ -20,13 +20,13 @@
 package org.zaproxy.zap.extension.openapi.v2;
 
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import fi.iki.elonen.NanoHTTPD;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.extension.openapi.AbstractServerTest;
@@ -37,10 +37,10 @@ import org.zaproxy.zap.extension.openapi.network.RequesterListener;
 import org.zaproxy.zap.extension.openapi.network.Requestor;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
-public class OpenApiPrimitivesInBodyUnitTest extends AbstractServerTest {
+class OpenApiPrimitivesInBodyUnitTest extends AbstractServerTest {
 
     @Test
-    public void shouldExploreBodiesWithPrimitiveValues()
+    void shouldExploreBodiesWithPrimitiveValues()
             throws NullPointerException, IOException, SwaggerException {
         String test = "/OpenApi_defn_body_with_primitives/";
 
@@ -70,7 +70,7 @@ public class OpenApiPrimitivesInBodyUnitTest extends AbstractServerTest {
         Converter converter =
                 new SwaggerConverter(
                         requestor.getResponseBody(defnMsg.getRequestHeader().getURI()), null);
-        final Map<String, String> accessedUrls = new HashMap<String, String>();
+        final Map<String, String> accessedUrls = new HashMap<>();
         RequesterListener listener =
                 new RequesterListener() {
                     @Override
@@ -83,7 +83,7 @@ public class OpenApiPrimitivesInBodyUnitTest extends AbstractServerTest {
                     }
                 };
         requestor.addListener(listener);
-        requestor.run(converter.getRequestModels());
+        requestor.run(converter.getRequestModels(null));
 
         checkRequests(accessedUrls, "localhost:" + nano.getListeningPort());
     }

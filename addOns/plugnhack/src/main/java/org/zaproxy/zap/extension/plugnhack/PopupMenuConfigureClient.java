@@ -20,19 +20,19 @@
 package org.zaproxy.zap.extension.plugnhack;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.JList;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 
+@SuppressWarnings("serial")
 public class PopupMenuConfigureClient extends ExtensionPopupMenuItem {
 
     private static final long serialVersionUID = 1L;
     private ExtensionPlugNHack extension = null;
     private JList<MonitoredPage> clientsList = null;
-    private static Logger log = Logger.getLogger(PopupMenuConfigureClient.class);
+    private static final Logger LOGGER = LogManager.getLogger(PopupMenuConfigureClient.class);
 
     public PopupMenuConfigureClient(ExtensionPlugNHack extension) {
         super(Constant.messages.getString("plugnhack.clientconf.popup"));
@@ -44,13 +44,10 @@ public class PopupMenuConfigureClient extends ExtensionPopupMenuItem {
 
     private void initialize() {
         this.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent evt) {
-                        MonitoredPage page = clientsList.getSelectedValue();
-                        if (page != null) {
-                            extension.showClientConfigDialog(page);
-                        }
+                e -> {
+                    MonitoredPage page = clientsList.getSelectedValue();
+                    if (page != null) {
+                        extension.showClientConfigDialog(page);
                     }
                 });
     }
@@ -70,7 +67,7 @@ public class PopupMenuConfigureClient extends ExtensionPopupMenuItem {
                 }
 
             } catch (Exception e) {
-                log.warn(e.getMessage(), e);
+                LOGGER.warn(e.getMessage(), e);
             }
             return true;
         }

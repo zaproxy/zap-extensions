@@ -145,7 +145,7 @@ public class WebSocketFuzzer extends AbstractFuzzer<WebSocketMessageDTO> {
                     utils.setCurrentProcessorName(messageProcessor.getName());
                     messageProcessor.processMessage(utils, message);
                 } catch (ProcessingException e) {
-                    logger.warn(
+                    LOGGER.warn(
                             "Error while executing a processor, it will not be called again:", e);
                     it.remove();
                 }

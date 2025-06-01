@@ -23,7 +23,7 @@ var workpanel = new abstractpanel()
  */
 function install(helper) {
   if (helper.getView()) {
-    // The icons bundled with ZAP are listed here https://github.com/zaproxy/zaproxy/tree/develop/zap/src/main/resources/resource
+    // The icons bundled with ZAP are listed here https://github.com/zaproxy/zaproxy/tree/main/zap/src/main/resources/resource
     var imageicon = Java.type("javax.swing.ImageIcon");
     selectpanel.setName('Select Example')
     selectpanel.setIcon(org.zaproxy.zap.utils.DisplayUtils.getScaledIcon(

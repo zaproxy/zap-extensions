@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.alertFilters;
 
 import java.awt.CardLayout;
 import java.awt.GridBagLayout;
+import java.awt.Window;
 import javax.swing.JLabel;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Session;
@@ -28,12 +29,14 @@ import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.view.AbstractContextPropertiesPanel;
 import org.zaproxy.zap.view.LayoutHelper;
 
+@SuppressWarnings("serial")
 public class ContextAlertFilterPanel extends AbstractContextPropertiesPanel {
 
     private AlertFiltersMultipleOptionsPanel alertFilterOptionsPanel;
     private ContextAlertFilterManager contextManager;
     private AlertFilterTableModel alertFilterTableModel;
     private ExtensionAlertFilters extension;
+    private Window owner;
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -3920598166129639573L;
@@ -41,9 +44,10 @@ public class ContextAlertFilterPanel extends AbstractContextPropertiesPanel {
     private static final String PANEL_NAME =
             Constant.messages.getString("alertFilters.panel.title");
 
-    public ContextAlertFilterPanel(ExtensionAlertFilters extension, int contextId) {
+    public ContextAlertFilterPanel(ExtensionAlertFilters extension, Window owner, int contextId) {
         super(contextId);
         this.extension = extension;
+        this.owner = owner;
         this.contextManager = extension.getContextAlertFilterManager(contextId);
         initialize();
     }
@@ -55,7 +59,7 @@ public class ContextAlertFilterPanel extends AbstractContextPropertiesPanel {
 
     private void initialize() {
         this.setLayout(new CardLayout());
-        this.setName(getPanelName(getContextIndex()));
+        this.setName(getPanelName(getContextId()));
         this.setLayout(new GridBagLayout());
 
         this.add(
@@ -64,7 +68,7 @@ public class ContextAlertFilterPanel extends AbstractContextPropertiesPanel {
 
         alertFilterTableModel = new AlertFilterTableModel();
         alertFilterOptionsPanel =
-                new AlertFiltersMultipleOptionsPanel(extension, alertFilterTableModel);
+                new AlertFiltersMultipleOptionsPanel(extension, this.owner, alertFilterTableModel);
         this.add(alertFilterOptionsPanel, LayoutHelper.getGBC(0, 1, 1, 1.0d, 1.0d));
     }
 

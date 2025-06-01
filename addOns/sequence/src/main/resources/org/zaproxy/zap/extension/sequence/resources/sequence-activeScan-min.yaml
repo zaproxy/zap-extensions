@@ -1,0 +1,3 @@
+  - type: sequence-activeScan                  # Active scans one or all sequences.
+    parameters:
+      sequence:                                # String: The name of the sequence, or empty to active scan all sequences.

@@ -120,7 +120,7 @@ public class WebSocketFuzzerHandler implements FuzzerHandler<WebSocketMessageDTO
                                 View.getSingleton().getMainFrame(),
                                 defaultOptions,
                                 message,
-                                message.isOutgoing,
+                                message.isOutgoing(),
                                 new WebSocketFuzzerHandlerOptionsPanel(),
                                 new WebSocketFuzzerMessageProcessorCollection(
                                         message, messageProcessors));
@@ -189,7 +189,10 @@ public class WebSocketFuzzerHandler implements FuzzerHandler<WebSocketMessageDTO
 
     private String createFuzzerName(WebSocketMessageDTO message) {
         StringBuilder strBuilder = new StringBuilder();
-        strBuilder.append(message.channel.host).append(" #").append(message.channel.id);
+        strBuilder
+                .append(message.getChannel().getHost())
+                .append(" #")
+                .append(message.getChannel().getId());
         if (strBuilder.length() > 30) {
             strBuilder.setLength(27);
             strBuilder.append("...");

@@ -19,16 +19,17 @@
  */
 package org.zaproxy.zap.extension.websocket.utility;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class Utf8UtilUnitTest {
+class Utf8UtilUnitTest {
 
     @Test
-    public void shouldEncodeEmptyBytesToEmptyString() throws Exception {
+    void shouldEncodeEmptyBytesToEmptyString() throws Exception {
         // given
         byte[] utf8 = new byte[0];
         // when
@@ -37,17 +38,16 @@ public class Utf8UtilUnitTest {
         assertThat(s, is(equalTo("")));
     }
 
-    @Test(expected = InvalidUtf8Exception.class)
-    public void shouldFailOnGivenInvalidUtf8Bytes() throws Exception {
+    @Test
+    void shouldFailOnGivenInvalidUtf8Bytes() throws Exception {
         // given
         byte[] invalidUtf8 = new byte[] {-1};
-        // when
-        Utf8Util.encodePayloadToUtf8(invalidUtf8);
-        // then InvalidUtf8Exception
+        // when / then
+        assertThrows(InvalidUtf8Exception.class, () -> Utf8Util.encodePayloadToUtf8(invalidUtf8));
     }
 
     @Test
-    public void shouldEncodeSimpleUtf8Bytes() throws Exception {
+    void shouldEncodeSimpleUtf8Bytes() throws Exception {
         // given
         byte[] utf8 = new byte[] {49, 50, 51};
         // when

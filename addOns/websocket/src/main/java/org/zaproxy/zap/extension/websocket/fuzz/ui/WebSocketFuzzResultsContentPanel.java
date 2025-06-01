@@ -26,7 +26,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.fuzz.FuzzResultsContentPanel;
@@ -35,6 +36,7 @@ import org.zaproxy.zap.extension.websocket.fuzz.WebSocketFuzzer;
 import org.zaproxy.zap.extension.websocket.fuzz.WebSocketFuzzerListener;
 import org.zaproxy.zap.utils.StickyScrollbarAdjustmentListener;
 
+@SuppressWarnings("serial")
 public class WebSocketFuzzResultsContentPanel extends JPanel
         implements FuzzResultsContentPanel<WebSocketMessageDTO, WebSocketFuzzer> {
 
@@ -42,7 +44,8 @@ public class WebSocketFuzzResultsContentPanel extends JPanel
 
     public static final String RESULTS_PANEL_NAME = "websocketFuzzerResultsContentPanel";
 
-    private static final Logger logger = Logger.getLogger(WebSocketFuzzResultsContentPanel.class);
+    private static final Logger LOGGER =
+            LogManager.getLogger(WebSocketFuzzResultsContentPanel.class);
 
     private static final WebSocketFuzzMessagesViewModel EMPTY_RESULTS_MODEL =
             new WebSocketFuzzMessagesViewModel(-1, null);
@@ -115,16 +118,9 @@ public class WebSocketFuzzResultsContentPanel extends JPanel
     public void clear() {
         if (!EventQueue.isDispatchThread()) {
             try {
-                EventQueue.invokeAndWait(
-                        new Runnable() {
-
-                            @Override
-                            public void run() {
-                                clear();
-                            }
-                        });
+                EventQueue.invokeAndWait(this::clear);
             } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
             return;
         }

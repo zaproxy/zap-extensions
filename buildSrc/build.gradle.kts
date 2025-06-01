@@ -1,6 +1,7 @@
 plugins {
     `kotlin-dsl`
-    id("com.diffplug.gradle.spotless") version "3.20.0"
+    id("com.diffplug.spotless") version "6.25.0"
+    id("org.zaproxy.common") version "0.5.0"
 }
 
 repositories {
@@ -8,9 +9,8 @@ repositories {
 }
 
 spotless {
-    java {
-        licenseHeaderFile(file("../gradle/spotless/license.java"))
-        googleJavaFormat().aosp()
+    kotlin {
+        ktlint()
     }
 
     kotlinGradle {
@@ -18,17 +18,10 @@ spotless {
     }
 }
 
-tasks.withType<JavaCompile>().configureEach {
-    options.encoding = "utf-8"
-    options.compilerArgs = listOf("-Xlint:all", "-Xlint:-path", "-Xlint:-options", "-Werror")
-}
-
 dependencies {
-    implementation("io.github.bonigarcia:webdrivermanager:3.7.1")
-    implementation("com.diffplug.spotless:spotless-plugin-gradle:3.20.0")
-}
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    implementation("commons-codec:commons-codec:1.15")
+    implementation("io.github.bonigarcia:webdrivermanager:5.7.0") {
+        exclude("com.fasterxml.jackson.core")
+    }
+    implementation("com.diffplug.spotless:spotless-plugin-gradle:6.25.0")
 }

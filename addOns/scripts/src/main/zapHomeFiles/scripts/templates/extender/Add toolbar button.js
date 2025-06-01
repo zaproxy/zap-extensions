@@ -5,6 +5,7 @@
 // See the other templates for examples on how to do add different functionality. 
 
 // Script variable to use when uninstalling
+var SwingConstants = Java.type("javax.swing.SwingConstants");
 var jbutton = Java.type("javax.swing.JButton");
 var button = new jbutton();
 
@@ -20,7 +21,7 @@ var button = new jbutton();
 function install(helper) {
   if (helper.getView()) {
     var imageicon = Java.type("javax.swing.ImageIcon");
-    // The icons bundled with ZAP are listed here https://github.com/zaproxy/zaproxy/tree/develop/zap/src/main/resources/resource
+    // The icons bundled with ZAP are listed here https://github.com/zaproxy/zaproxy/tree/main/zap/src/main/resources/resource
     button.setIcon(org.zaproxy.zap.utils.DisplayUtils.getScaledIcon(
        new imageicon(org.zaproxy.zap.ZAP.class.getResource("/resource/icon/16/035.png"))));
     button.setToolTipText("An example button");
@@ -51,14 +52,14 @@ function uninstall(helper) {
 }
 
 function create_window() {
-  // based on https://github.com/zaproxy/community-scripts/blob/master/standalone/window_creation_template.js
+  // based on https://github.com/zaproxy/community-scripts/blob/main/standalone/window_creation_template.js
   var absframe = Java.type("org.parosproxy.paros.view.AbstractFrame");
   var jpanel = Java.type("javax.swing.JPanel");
   var jlabel = Java.type("javax.swing.JLabel");
   var jmenubar = Java.type("javax.swing.JMenuBar");
   var jmenu = Java.type("javax.swing.JMenu");
   var jmenuitem = Java.type("javax.swing.JMenuItem");
-  var window = new absframe(){};
+  var window = new absframe();
   window.setAlwaysOnTop(false);
   window.setSize(500, 500);
   var menubar = new jmenubar();
@@ -70,8 +71,8 @@ function create_window() {
   menubar.add(menu);
   window.setJMenuBar(menubar);
   var lbl = new jlabel("A Label");
-  lbl.setHorizontalAlignment(jlabel.CENTER);
-  lbl.setVerticalAlignment(jlabel.CENTER);
+  lbl.setHorizontalAlignment(SwingConstants.CENTER);
+  lbl.setVerticalAlignment(SwingConstants.CENTER);
   window.setContentPane(lbl);
   window.setVisible(true);
 }

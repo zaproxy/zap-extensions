@@ -1,0 +1,129 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>Connection</TITLE>
+</HEAD>
+<BODY>
+	<H1>Connection</H1>
+
+	<H2>General</H2>
+	This tab allows you to configure the general connection options.
+
+	<H3>Timeout (in seconds)</H3>
+	Allows to configure the connection and read timeout, a higher timeout allows to test slower applications.
+	<br>Default: <code>20</code>.
+
+	<H3>Default User Agent</H3>
+	The user agent that should be used when creating HTTP messages (for example, spider messages or CONNECT
+	requests to the HTTP proxy).
+
+	<H3>Use Global HTTP State</H3>
+	Allows the usage of a global HTTP state, to keep track of cookies and HTTP authentication.<br/>
+	This option must be selected to enable the "Use current tracking session" option in the
+	Manual Request Editor dialogs.<br/>
+	Session tracking ensures that any requests are sent with the latest session details.<br/>
+	For example you may record a session when logged in as one user and then logout and login as another user.<br/>
+	If you resend a request from the first session without session tracking then it will use the cookies from
+	the first session.<br/>
+	If you resend the same request with session tracking then it will use the cookies from the second session.
+	<br>Default: <code>unselected</code>.
+
+	<H3>DNS</H3>
+	<H4>TTL Successful Queries (in seconds)</H4>
+	Defines for how long the successful DNS queries should be cached:<ul>
+	<li>Negative number, cache forever;</li>
+	<li>Zero, disables caching;</li>
+	<li>Positive number, the number of seconds the queries will be cached.</li></ul>
+	<br>Default: <code>30</code>.
+	<br><strong>Note:</strong> Changes are applied after a restart.
+
+	<H3>Security Protocols</H3>
+	Allows to choose the SSL/TLS versions enabled for outgoing connections (for example, to servers). At least
+	one version must be enabled, versions unsupported by the JRE will be unselected and disabled.
+	<br>The option SSLv2Hello must be selected in conjunction with at least one SSL/TLS version.
+	<br>Default: All protocols supported.
+
+	<H3>Enable unsafe SSL/TLS renegotiation</H3>
+	Allows unsafe SSL/TLS renegotiations (<a href="https://nvd.nist.gov/vuln/detail/CVE-2009-3555">CVE-2009-3555</a>) for
+	compatibility with older servers.<br/>
+	<strong>Note:</strong> The option must be set before establishing any HTTPS connection, a ZAP restart might be required.
+	<br>Default: <code>unselected</code>.
+
+	<H2>HTTP Proxy</H2>
+	This tab allows you to configure an outgoing HTTP proxy. This is often required in a corporate environment.
+	<H3>Enabled</H3>
+	Enables the usage of the configured HTTP proxy.
+	<br>Default: <code>unselected</code>.
+	<H3>Host</H3>
+	The host name or address of the HTTP proxy.
+	<br>Default: <code>localhost</code>.
+	<H3>Port</H3>
+	The port of the HTTP proxy.
+	<br>Default: <code>8090</code>.
+	<H3>Authenticate</H3>
+	Enables the usage of the authentication credentials, to authenticate to the HTTP proxy.
+	<H3>Realm</H3>
+	The authentication realm.
+	<br>Default: none.
+	<H3>User Name</H3>
+	The user name. It is required.
+	<br>Default: none.
+	<H3>Password</H3>
+	The password.
+	<br>Default: none.
+	<br><strong>Note:</strong> Stored in clear text in the configuration file, if allowed.
+	<H3>Store Password</H3>
+	Allows to store the password in the configuration file. If not allowed ZAP prompts for the password during start up, it can still
+	be changed in this panel.
+	<br>Default: <code>selected</code>.
+	<H3>Exclusions</H3>
+	The hosts that should be excluded from the HTTP proxy. The <code>host</code> is a regular expression matched against the requested host name.
+
+	<H2>SOCKS Proxy</H2>
+	This tab allows you to configure an outgoing SOCKS proxy, by default the SOCKS proxy configuration applies to all connections made by ZAP,
+	taking precedence over the HTTP proxy.
+	<p>
+	The SOCKS proxy system properties (e.g. <code>socksProxyHost</code>, <code>socksProxyPort</code>) take precedence over the persisted
+	configurations for compatibility with older ZAP versions. ZAP will use and display the values of the system's properties when defined at
+	startup, the configurations can still be changed in this panel.
+	<p><strong>Note:</strong> Loopback addresses (e.g. <code>localhost</code>, <code>127.0.01</code>, <code>::1</code>) are not proxied through
+	the SOCKS proxy, the connections will be done directly.
+	<H3>Enabled</H3>
+	Enables the usage of the configured SOCKS proxy.
+	<br>Default: <code>unselected</code>, unless the SOCKS proxy system properties are defined, in which case it is <code>selected</code>.
+	<H3>Host</H3>
+	The host name or address of the SOCKS proxy.
+	<br>Default: <code>localhost</code>.
+	<H3>Port</H3>
+	The port of the SOCKS proxy.
+	<br>Default: <code>1080</code>.
+	<H3>Version</H3>
+	The version of the SOCKS proxy.
+	<br>Default: <code>5</code>.
+	<H3>Use SOCKS' DNS</H3>
+	If the host names should be resolved by the SOCKS proxy. Requires a version 5 SOCKS proxy.
+	<br>This might lead to connection failures if the SOCKS proxy is not able to resolve the host name (e.g. use of names that are defined in a
+	<code>hosts</code> file).
+	<br>Default: <code>selected</code>.
+	<H3>Authentication</H3>
+	The following fields allow to configure the authentication credentials for the SOCKS proxy.
+	<H4>User Name</H4>
+	The user name.
+	<br>Default: none.
+	<H4>Password</H4>
+	The password.
+	<br>Default: none.
+	<br><strong>Note:</strong> Stored in clear text in the configuration file.
+
+	<H2>See also</H2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="../network.html">Network</a></td>
+			<td>the introduction to Network add-on</td>
+		</tr>
+	</table>
+
+</BODY>
+</HTML>

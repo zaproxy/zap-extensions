@@ -22,13 +22,14 @@ package org.zaproxy.zap.extension.selenium;
 import java.util.List;
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 
 /**
  * A {@code ComboBoxModel} of {@link ProvidedBrowserUI}s.
  *
  * @since 1.1.0
  */
+@SuppressWarnings("serial")
 public class ProvidedBrowsersComboBoxModel extends AbstractListModel<ProvidedBrowserUI>
         implements ComboBoxModel<ProvidedBrowserUI> {
 

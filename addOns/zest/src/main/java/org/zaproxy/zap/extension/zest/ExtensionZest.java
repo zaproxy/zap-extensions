@@ -21,12 +21,9 @@ package org.zaproxy.zap.extension.zest;
 
 import java.awt.Component;
 import java.awt.EventQueue;
-import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -46,29 +43,8 @@ import javax.swing.JToolBar;
 import net.htmlparser.jericho.Source;
 import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.URI;
-import org.apache.log4j.Logger;
-import org.mozilla.zest.core.v1.ZestActionFail;
-import org.mozilla.zest.core.v1.ZestAssertion;
-import org.mozilla.zest.core.v1.ZestAssignFieldValue;
-import org.mozilla.zest.core.v1.ZestClientElementClick;
-import org.mozilla.zest.core.v1.ZestClientElementSendKeys;
-import org.mozilla.zest.core.v1.ZestClientLaunch;
-import org.mozilla.zest.core.v1.ZestClientWindowHandle;
-import org.mozilla.zest.core.v1.ZestConditional;
-import org.mozilla.zest.core.v1.ZestContainer;
-import org.mozilla.zest.core.v1.ZestElement;
-import org.mozilla.zest.core.v1.ZestExpression;
-import org.mozilla.zest.core.v1.ZestExpressionLength;
-import org.mozilla.zest.core.v1.ZestExpressionStatusCode;
-import org.mozilla.zest.core.v1.ZestFieldDefinition;
-import org.mozilla.zest.core.v1.ZestLoop;
-import org.mozilla.zest.core.v1.ZestRequest;
-import org.mozilla.zest.core.v1.ZestResponse;
-import org.mozilla.zest.core.v1.ZestScript;
-import org.mozilla.zest.core.v1.ZestStatement;
-import org.mozilla.zest.core.v1.ZestStructuredExpression;
-import org.mozilla.zest.core.v1.ZestVariables;
-import org.mozilla.zest.impl.ZestScriptEngineFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
@@ -82,45 +58,65 @@ import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.network.ExtensionNetwork;
+import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
 import org.zaproxy.zap.control.AddOn;
 import org.zaproxy.zap.extension.anticsrf.AntiCsrfToken;
 import org.zaproxy.zap.extension.anticsrf.ExtensionAntiCSRF;
 import org.zaproxy.zap.extension.httppanel.Message;
-import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptEventListener;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
+import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.zest.ZestResultsTableModel.ZestResultsTableEntry;
 import org.zaproxy.zap.extension.zest.dialogs.ZestDialogManager;
+import org.zaproxy.zap.extension.zest.internal.DefaultRequestValueReplacer;
+import org.zaproxy.zap.extension.zest.internal.NoopRequestValueReplacer;
+import org.zaproxy.zap.extension.zest.internal.RequestValueReplacer;
+import org.zaproxy.zap.extension.zest.internal.ScriptReorderer;
 import org.zaproxy.zap.extension.zest.menu.ZestMenuManager;
+import org.zaproxy.zap.utils.ZapXmlConfiguration;
 import org.zaproxy.zap.view.ZapToggleButton;
+import org.zaproxy.zest.core.v1.ZestActionFail;
+import org.zaproxy.zest.core.v1.ZestAssertion;
+import org.zaproxy.zest.core.v1.ZestAssignFieldValue;
+import org.zaproxy.zest.core.v1.ZestClientElementClick;
+import org.zaproxy.zest.core.v1.ZestClientElementSendKeys;
+import org.zaproxy.zest.core.v1.ZestClientLaunch;
+import org.zaproxy.zest.core.v1.ZestClientWindowHandle;
+import org.zaproxy.zest.core.v1.ZestConditional;
+import org.zaproxy.zest.core.v1.ZestContainer;
+import org.zaproxy.zest.core.v1.ZestElement;
+import org.zaproxy.zest.core.v1.ZestExpression;
+import org.zaproxy.zest.core.v1.ZestExpressionLength;
+import org.zaproxy.zest.core.v1.ZestExpressionStatusCode;
+import org.zaproxy.zest.core.v1.ZestFieldDefinition;
+import org.zaproxy.zest.core.v1.ZestJSON;
+import org.zaproxy.zest.core.v1.ZestLoop;
+import org.zaproxy.zest.core.v1.ZestRequest;
+import org.zaproxy.zest.core.v1.ZestResponse;
+import org.zaproxy.zest.core.v1.ZestScript;
+import org.zaproxy.zest.core.v1.ZestStatement;
+import org.zaproxy.zest.core.v1.ZestStructuredExpression;
+import org.zaproxy.zest.core.v1.ZestVariables;
+import org.zaproxy.zest.core.v1.ZestYaml;
+import org.zaproxy.zest.impl.ZestScriptEngineFactory;
 
 public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, ScriptEventListener {
 
     public static final String NAME = "ExtensionZest";
-    public static final ImageIcon ZEST_ICON =
-            new ImageIcon(
-                    ExtensionZest.class.getResource(
-                            "/org/zaproxy/zap/extension/zest/resources/icons/fruit-orange.png"));
-
-    private static final ImageIcon RECORD_OFF_ICON =
-            new ImageIcon(
-                    ExtensionZest.class.getResource(
-                            "/org/zaproxy/zap/extension/zest/resources/icons/cassette.png"));
-    private static final ImageIcon RECORD_ON_ICON =
-            new ImageIcon(
-                    ExtensionZest.class.getResource(
-                            "/org/zaproxy/zap/extension/zest/resources/icons/cassette-red.png"));
+    private static ImageIcon zestIcon;
 
     public static final String HTTP_HEADER_X_SECURITY_PROXY = "X-Security-Proxy";
     public static final String VALUE_RECORD = "record";
 
-    private static final Logger logger = Logger.getLogger(ExtensionZest.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionZest.class);
 
-    private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES;
+    private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES =
+            List.of(ExtensionScript.class, ExtensionNetwork.class, ExtensionSelenium.class);
 
     private ZestParam param = null;
     private OptionsZestPanel optionsZestPanel = null;
@@ -138,7 +134,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     private ExtensionAntiCSRF extAcsrf = null;
     private ZestScript lastRunScript = null;
     private HttpMessage lastSelectedMessage = null;
-    private Map<String, String> acsrfTokenToVar = new HashMap<String, String>();
+    private Map<String, String> acsrfTokenToVar = new HashMap<>();
 
     private ZestFuzzerDelegate fuzzerMessenger = null;
     private ScriptNode scriptNodeRecording = null;
@@ -148,20 +144,31 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     private boolean cutNodes = false;
 
     // Client side recording
-    private Map<String, String> clientUrlToWindowHandle = new HashMap<String, String>();
+    private Map<String, String> clientUrlToWindowHandle = new HashMap<>();
     private String startRecordingUrl = null;
     private int recordingWinId = 0;
     private ScriptNode recordingNode = null;
+    private boolean clientRecordingActive;
+    private ZestClientRecorderHelper zestClientHelper;
+    private ScriptReorderer scriptReorderer;
 
-    static {
-        List<Class<? extends Extension>> dependencies = new ArrayList<>(1);
-        dependencies.add(ExtensionScript.class);
-        EXTENSION_DEPENDENCIES = Collections.unmodifiableList(dependencies);
-    }
+    private ExtensionNetwork extensionNetwork;
+    private Method displayScriptMethod;
+    private Method selectNodeMethod;
 
     public ExtensionZest() {
         super(NAME);
         this.setOrder(73); // Almost looks like ZE ;)
+    }
+
+    public static ImageIcon getZestIcon() {
+        if (zestIcon == null) {
+            zestIcon =
+                    new ImageIcon(
+                            ExtensionZest.class.getResource(
+                                    "/org/zaproxy/zap/extension/zest/resources/icons/fruit-orange.png"));
+        }
+        return zestIcon;
     }
 
     @Override
@@ -170,12 +177,17 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
 
         extensionHook.addOptionsParamSet(getParam());
 
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.addProxyListener(this);
             extensionHook.addSessionListener(new ViewSessionChangedListener());
 
             extensionHook.getHookView().addStatusPanel(this.getZestResultsPanel());
-            extensionHook.getHookView().addOptionPanel(getOptionsPanel());
+
+            String[] scriptEngineNode = {
+                Constant.messages.getString("options.script.title"),
+                Constant.messages.getString("scripts.options.engine.title")
+            };
+            getView().getOptionsDialog().addParamPanel(scriptEngineNode, getOptionsPanel(), true);
 
             this.dialogManager = new ZestDialogManager(this, this.getExtScript().getScriptUI());
             new ZestMenuManager(this, extensionHook);
@@ -204,7 +216,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
             this.zestEngineFactory = new ZestScriptEngineFactory();
             se = zestEngineFactory.getScriptEngine();
         }
-        zestEngineWrapper = new ZestEngineWrapper(se, defaultTemplates);
+        zestEngineWrapper = new ZestEngineWrapper(zestEngineFactory, defaultTemplates);
         this.getExtScript().registerScriptEngineWrapper(zestEngineWrapper);
 
         this.getExtScript().addListener(this);
@@ -214,6 +226,25 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
             this.getExtScript().getScriptUI().addRenderer(ZestElementWrapper.class, renderer);
             this.getExtScript().getScriptUI().addRenderer(ZestScriptWrapper.class, renderer);
             this.getExtScript().getScriptUI().disableScriptDialog(ZestScriptWrapper.class);
+        }
+        try {
+            displayScriptMethod =
+                    this.getExtScript()
+                            .getScriptUI()
+                            .getClass()
+                            .getDeclaredMethod("displayScript", ScriptWrapper.class, boolean.class);
+        } catch (Exception e) {
+            LOGGER.debug("Unable to find displayScript method with allowFocus", e);
+        }
+        try {
+            selectNodeMethod =
+                    this.getExtScript()
+                            .getScriptUI()
+                            .getClass()
+                            .getDeclaredMethod(
+                                    "selectNode", ScriptNode.class, boolean.class, boolean.class);
+        } catch (Exception e) {
+            LOGGER.debug("Unable to find selectNode method with allowFocus", e);
         }
     }
 
@@ -261,7 +292,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
 
             } catch (Exception e) {
                 // Its an older version, so just dont try to use it
-                e.printStackTrace();
+                LOGGER.debug(e);
             }
         }
     }
@@ -279,7 +310,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
 
     @Override
     public void optionsLoaded() {
-        if (getView() == null || EventQueue.isDispatchThread()) {
+        if (!hasView() || EventQueue.isDispatchThread()) {
             // Convert scripts loaded on start into real Zest scripts
             for (ScriptType type : this.getExtScript().getScriptTypes()) {
                 for (ScriptWrapper script : this.getExtScript().getScripts(type)) {
@@ -289,14 +320,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
                 }
             }
         } else {
-            EventQueue.invokeLater(
-                    new Runnable() {
-
-                        @Override
-                        public void run() {
-                            optionsLoaded();
-                        }
-                    });
+            EventQueue.invokeLater(this::optionsLoaded);
         }
     }
 
@@ -311,10 +335,11 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
 
     @Override
     public void unload() {
-        if (getView() != null) {
+        if (hasView()) {
             View view = View.getSingleton();
             view.removeMainToolbarButton(getRecordButton());
             view.removeMainToolbarSeparator(getToolbarSeparator());
+            view.getOptionsDialog().removeParamPanel(getOptionsPanel());
             dialogManager.unload();
         }
 
@@ -403,22 +428,27 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     private JToggleButton getRecordButton() {
         if (recordButton == null) {
             recordButton = new ZapToggleButton();
-            recordButton.setIcon(RECORD_OFF_ICON);
-            recordButton.setSelectedIcon(RECORD_ON_ICON);
+            recordButton.setIcon(
+                    new ImageIcon(
+                            getClass()
+                                    .getResource(
+                                            "/org/zaproxy/zap/extension/zest/resources/icons/cassette.png")));
+            recordButton.setSelectedIcon(
+                    new ImageIcon(
+                            getClass()
+                                    .getResource(
+                                            "/org/zaproxy/zap/extension/zest/resources/icons/cassette-red.png")));
             recordButton.setToolTipText(
                     Constant.messages.getString("zest.toolbar.button.record.off"));
             recordButton.setSelectedToolTipText(
                     Constant.messages.getString("zest.toolbar.button.record.on"));
 
             recordButton.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            if (recordButton.isSelected()) {
-                                getDialogManager().showZestRecordScriptDialog(null);
-                            } else {
-                                cancelScriptRecording();
-                            }
+                    e -> {
+                        if (recordButton.isSelected()) {
+                            getDialogManager().showZestRecordScriptDialog(null);
+                        } else {
+                            cancelScriptRecording();
                         }
                     });
         }
@@ -471,7 +501,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
         this.refreshMessage();
     }
 
-    public void perameterize(
+    public void parameterize(
             ZestScriptWrapper script,
             ScriptNode node,
             ZestRequest request,
@@ -533,28 +563,18 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     }
 
     @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
-    }
-
-    @Override
     public String getDescription() {
         return Constant.messages.getString("zest.desc");
     }
 
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_HOMEPAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
+    public ScriptNode add(ZestScriptWrapper script, boolean display) {
+        return add(script, display, true);
     }
 
-    public ScriptNode add(ZestScriptWrapper script, boolean display) {
-        logger.debug("add script " + script.getName());
+    public ScriptNode add(ZestScriptWrapper script, boolean display, boolean allowFocus) {
+        LOGGER.debug("add script {}", script.getName());
         ScriptNode node = this.getExtScript().addScript(script, display);
-        this.display(script, node, true);
+        this.display(script, node, true, allowFocus);
         if (script.isRecording()) {
             scriptNodeRecording = node;
             // OK, I admit I dont know why this line is required .. but it is ;)
@@ -565,9 +585,14 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     }
 
     public void display(ZestScriptWrapper script, ScriptNode node, boolean expand) {
+        display(script, node, expand, true);
+    }
+
+    public void display(
+            ZestScriptWrapper script, ScriptNode node, boolean expand, boolean allowFocus) {
         if (View.isInitialised() && this.getExtScript().getScriptUI() != null) {
-            this.getExtScript().getScriptUI().selectNode(node, expand);
-            this.getExtScript().getScriptUI().displayScript(script);
+            selectNode(node, expand, allowFocus);
+            displayScript(script, allowFocus);
         }
     }
 
@@ -575,7 +600,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
         if (node == null) {
             return;
         }
-        logger.debug("Display node=" + node.getNodeName() + " expand=" + expand);
+        LOGGER.debug("Display node={} expand={}", node.getNodeName(), expand);
         if (View.isInitialised() && this.getExtScript().getScriptUI() != null) {
             this.getExtScript()
                     .getScriptUI()
@@ -585,23 +610,53 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     }
 
     public void updated(ScriptNode node) {
+        updated(node, true);
+    }
+
+    public void updated(ScriptNode node, boolean allowFocus) {
         if (node == null) {
             return;
         }
-        logger.debug("Updated node=" + node.getNodeName());
+        LOGGER.debug("Updated node={}", node.getNodeName());
         this.getZestTreeModel().update(node);
         ZestScriptWrapper sw = this.getZestTreeModel().getScriptWrapper(node);
+        sw.incModCount();
         sw.setChanged(true);
 
         if (this.getExtScript().getScriptUI() != null
                 && this.getExtScript().getScriptUI().isScriptDisplayed(sw)) {
             // We need to do this to prevent the UI slating any changes
-            this.getExtScript().getScriptUI().displayScript(sw);
+            displayScript(sw, allowFocus);
         }
     }
 
+    private void displayScript(ZestScriptWrapper sw, boolean allowFocus) {
+        if (displayScriptMethod != null) {
+            try {
+                displayScriptMethod.invoke(this.getExtScript().getScriptUI(), sw, allowFocus);
+                return;
+            } catch (Exception e) {
+                LOGGER.debug("Error while invoking displayScript Method with allowFocus", e);
+            }
+        }
+        this.getExtScript().getScriptUI().displayScript(sw);
+    }
+
+    private void selectNode(ScriptNode node, boolean expand, boolean allowFocus) {
+        if (selectNodeMethod != null) {
+            try {
+                selectNodeMethod.invoke(
+                        this.getExtScript().getScriptUI(), node, expand, allowFocus);
+                return;
+            } catch (Exception e) {
+                LOGGER.debug("Error while invoking selectNode Method with allowFocus", e);
+            }
+        }
+        this.getExtScript().getScriptUI().selectNode(node, expand);
+    }
+
     public List<ScriptNode> getAllZestScriptNodes() {
-        List<ScriptNode> list = new ArrayList<ScriptNode>();
+        List<ScriptNode> list = new ArrayList<>();
 
         for (ScriptType type : this.getExtScript().getScriptTypes()) {
             for (ScriptNode node : this.getExtScript().getTreeModel().getNodes(type.getName())) {
@@ -614,7 +669,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     }
 
     public List<ScriptNode> getZestScriptNodes(String type) {
-        List<ScriptNode> list = new ArrayList<ScriptNode>();
+        List<ScriptNode> list = new ArrayList<>();
 
         for (ScriptNode node : this.getExtScript().getTreeModel().getNodes(type)) {
             if (ZestZapUtils.isZestNode(node)) {
@@ -637,7 +692,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     }
 
     public List<ScriptWrapper> getZestScripts(String type) {
-        List<ScriptWrapper> list = new ArrayList<ScriptWrapper>();
+        List<ScriptWrapper> list = new ArrayList<>();
         for (ScriptWrapper sw : this.getExtScript().getScripts(type)) {
             if (sw.getEngineName().equals(ZestScriptEngineFactory.NAME)) {
                 list.add(sw);
@@ -650,24 +705,23 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
         try {
             this.addToParent(parent, sn.getHistoryReference().getHttpMessage(), prefix);
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
     public void addToParent(ScriptNode parent, HttpMessage msg, String prefix) {
         if (parent == null) {
             // They're gone for the 'new script' option...
-            logger.debug("addToParent parent=null msg=" + msg.getRequestHeader().getURI());
+            LOGGER.debug("addToParent parent=null msg={}", msg.getRequestHeader().getURI());
             this.dialogManager.showZestEditScriptDialog(null, null, prefix, true);
             if (msg != null) {
-                this.dialogManager.addDeferedMessage(msg);
+                this.dialogManager.addDeferredMessage(msg);
             }
         } else {
-            logger.debug(
-                    "addToParent parent="
-                            + parent.getNodeName()
-                            + " msg="
-                            + msg.getRequestHeader().getURI());
+            LOGGER.debug(
+                    "addToParent parent={} msg={}",
+                    parent.getNodeName(),
+                    msg.getRequestHeader().getURI());
 
             try {
                 ZestRequest req = ZestZapUtils.toZestRequest(msg, false, this.getParam());
@@ -695,18 +749,10 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
                 }
 
                 if (zsw.isIncStatusCodeAssertion()) {
-                    req.addAssertion(
-                            new ZestAssertion(
-                                    new ZestExpressionStatusCode(
-                                            msg.getResponseHeader().getStatusCode())));
+                    addStatusCodeAssertion(msg, req);
                 }
                 if (zsw.isIncLengthAssertion()) {
-                    req.addAssertion(
-                            new ZestAssertion(
-                                    new ZestExpressionLength(
-                                            ZestVariables.RESPONSE_BODY,
-                                            getResponseBodyLength(msg),
-                                            zsw.getLengthApprox())));
+                    addLengthAssertion(msg, req, zsw.getLengthApprox());
                 }
 
                 if (getExtACSRF() != null) {
@@ -715,11 +761,10 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
                     for (AntiCsrfToken acsrf : acsrfTokens) {
                         String var = acsrfTokenToVar.get(acsrf.getValue());
                         if (var != null) {
-                            logger.debug(
-                                    "Replacing ACSRF value "
-                                            + acsrf.getValue()
-                                            + " with variable "
-                                            + var);
+                            LOGGER.debug(
+                                    "Replacing ACSRF value {} with variable {}",
+                                    acsrf.getValue(),
+                                    var);
                             this.replaceInRequest(
                                     req,
                                     acsrf.getValue(),
@@ -750,11 +795,10 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
                         fd.setFieldName(acsrf.getName());
                         // Record mapping of value to variable name for later
                         // replacement
-                        logger.debug(
-                                "Recording ACSRF value "
-                                        + acsrf.getValue()
-                                        + " against variable "
-                                        + zafv.getVariableName());
+                        LOGGER.debug(
+                                "Recording ACSRF value {} against variable {}",
+                                acsrf.getValue(),
+                                zafv.getVariableName());
                         acsrfTokenToVar.put(acsrf.getValue(), zafv.getVariableName());
                         zafv.setFieldDefinition(fd);
                         this.addToParent(parent, zafv);
@@ -765,9 +809,22 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
                 this.display(reqNode, false);
 
             } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
+    }
+
+    private static void addLengthAssertion(HttpMessage msg, ZestRequest req, int approx) {
+        req.addAssertion(
+                new ZestAssertion(
+                        new ZestExpressionLength(
+                                ZestVariables.RESPONSE_BODY, getResponseBodyLength(msg), approx)));
+    }
+
+    private static void addStatusCodeAssertion(HttpMessage msg, ZestRequest req) {
+        req.addAssertion(
+                new ZestAssertion(
+                        new ZestExpressionStatusCode(msg.getResponseHeader().getStatusCode())));
     }
 
     private static int getResponseBodyLength(HttpMessage message) {
@@ -826,7 +883,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     }
 
     public final ScriptNode addToParent(ScriptNode parent, ZestExpression newExp) {
-        logger.debug("addToParent parent=" + parent.getNodeName() + " new=" + newExp.toString());
+        LOGGER.debug("addToParent parent={} new={}", parent.getNodeName(), newExp);
         ScriptNode node;
         ZestElement parentZe = ZestZapUtils.getElement(parent);
         if (parentZe instanceof ZestConditional) {
@@ -861,8 +918,13 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
 
     public final ScriptNode addToParent(
             ScriptNode parent, ZestStatement newChild, boolean display) {
-        logger.debug(
-                "addToParent parent=" + parent.getNodeName() + " new=" + newChild.getElementType());
+        return addToParent(parent, newChild, display, true);
+    }
+
+    public final ScriptNode addToParent(
+            ScriptNode parent, ZestStatement newChild, boolean display, boolean allowFocus) {
+        LOGGER.debug(
+                "addToParent parent={} new={}", parent.getNodeName(), newChild.getElementType());
         ScriptNode node;
         ZestElement parentElement = ZestZapUtils.getElement(parent);
         if (parentElement instanceof ZestScript) {
@@ -891,7 +953,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
             throw new IllegalArgumentException(
                     "Unexpected parent node: " + parentElement + " " + parent.getNodeName());
         }
-        this.updated(node);
+        this.updated(node, allowFocus);
         if (display) {
             this.display(node, false);
         }
@@ -903,13 +965,11 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
             ScriptNode childNode,
             ZestStatement existingChild,
             ZestStatement newChild) {
-        logger.debug(
-                "addAfterRequest parent="
-                        + parent.getNodeName()
-                        + " existing="
-                        + existingChild.getElementType()
-                        + " new="
-                        + newChild.getElementType());
+        LOGGER.debug(
+                "addAfterRequest parent={} existing={} new={}",
+                parent.getNodeName(),
+                existingChild.getElementType(),
+                newChild.getElementType());
 
         if (ZestZapUtils.getElement(parent) instanceof ZestScript) {
             return this.addAfterRequest(
@@ -956,13 +1016,11 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
             ScriptNode childNode,
             ZestStatement existingChild,
             ZestStatement newChild) {
-        logger.debug(
-                "addAfterRequest parent="
-                        + parent.getNodeName()
-                        + " existing="
-                        + existingChild.getElementType()
-                        + " new="
-                        + newChild.getElementType());
+        LOGGER.debug(
+                "addAfterRequest parent={} existing={} new={}",
+                parent.getNodeName(),
+                existingChild.getElementType(),
+                newChild.getElementType());
 
         if (ZestZapUtils.getElement(parent) instanceof ZestScript) {
             return this.addBeforeRequest(
@@ -1023,7 +1081,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
                     this.getZestResultsPanel().getModel().fireTableRowsUpdated(row, row);
                 }
             } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
     }
@@ -1074,7 +1132,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
             next = (ScriptNode) next.getNextSibling();
         }
         if (next == null) {
-            logger.error("Cant move node down " + node.getNodeName());
+            LOGGER.error("Can't move node down {}", node.getNodeName());
             return;
         }
         if (ZestZapUtils.getElement(node) instanceof ZestScript) {
@@ -1231,14 +1289,11 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
                     // TODO check script prefix??
 
                     EventQueue.invokeLater(
-                            new Runnable() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        addToParent(getRecordingNode(), msg, null);
-                                    } catch (Exception e) {
-                                        logger.error(e.getMessage(), e);
-                                    }
+                            () -> {
+                                try {
+                                    addToParent(getRecordingNode(), msg, null);
+                                } catch (Exception e) {
+                                    LOGGER.error(e.getMessage(), e);
                                 }
                             });
 
@@ -1255,14 +1310,11 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
                         .toString()
                         .startsWith(zsw.getZestScript().getPrefix())) {
                     EventQueue.invokeLater(
-                            new Runnable() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        addToParent(node, msg, null);
-                                    } catch (Exception e) {
-                                        logger.error(e.getMessage(), e);
-                                    }
+                            () -> {
+                                try {
+                                    addToParent(node, msg, null);
+                                } catch (Exception e) {
+                                    LOGGER.error(e.getMessage(), e);
                                 }
                             });
                 }
@@ -1304,17 +1356,13 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
             ScriptNode beforeChild,
             ScriptNode afterChild) {
         if (cnpNodes != null && cnpNodes.size() > 0) {
-            logger.debug(
-                    "pasteToNode parent="
-                            + parent.getNodeName()
-                            + " num children="
-                            + cnpNodes.size()
-                            + " cut="
-                            + cutNodes
-                            + " before="
-                            + beforeChild
-                            + " after = "
-                            + afterChild);
+            LOGGER.debug(
+                    "pasteToNode parent={} num children={} cut={} before={} after = {}",
+                    parent.getNodeName(),
+                    cnpNodes.size(),
+                    cutNodes,
+                    beforeChild,
+                    afterChild);
             if (ZestZapUtils.getElement(cnpNodes.get(0)) instanceof ZestExpression) {
                 pasteExpressionsToNode(parent);
             } else {
@@ -1328,7 +1376,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
                     }
                     if (ZestZapUtils.getShadowLevel(cnpNodes.get(i)) == 0
                             && (stmt.isPassive()
-                                    || !ExtensionPassiveScan.SCRIPT_TYPE_PASSIVE.equals(
+                                    || !ExtensionPassiveScan2.SCRIPT_TYPE_PASSIVE.equals(
                                             script.getTypeName()))) {
                         // Dont paste non passive statements into a passive script
                         if (afterChild != null) {
@@ -1407,13 +1455,13 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
 
         ZestScriptWrapper script = this.getZestTreeModel().getScriptWrapper(node);
 
-        if (ExtensionPassiveScan.SCRIPT_TYPE_PASSIVE.equals(script.getType().getName())) {
+        if (ExtensionPassiveScan2.SCRIPT_TYPE_PASSIVE.equals(script.getType().getName())) {
             isPassive = true;
         }
 
         for (ScriptNode cnpNode : this.cnpNodes) {
             if (cnpNode.isNodeDescendant(node)) {
-                // Cant paste into a descendant of one of the cut/copied nodes
+                // Can't paste into a descendant of one of the cut/copied nodes
                 return false;
             }
             if (isPassive && !this.canPasteIntoPassiveElement(cnpNode)) {
@@ -1444,7 +1492,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
 
             View.getSingleton().displayMessage(lastSelectedMessage);
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -1457,7 +1505,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     }
 
     public List<ScriptNode> getSelectedZestNodes() {
-        List<ScriptNode> list = new ArrayList<ScriptNode>();
+        List<ScriptNode> list = new ArrayList<>();
         if (this.getExtScript().getScriptUI() == null) {
             return list;
         }
@@ -1478,7 +1526,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
         int lastRow = this.getZestResultsPanel().getModel().getRowCount() - 1;
         ZestResultWrapper zrw = this.getZestResultsPanel().getModel().getHistoryReference(lastRow);
         zrw.setPassed(false);
-        // TODO use toUiFailureString varient?
+        // TODO use toUiFailureString variant?
         // zrw.setMessage(ZestZapUtils.toUiFailureString(za, response));
         zrw.setMessage(e.getMessage());
         this.getZestResultsPanel().getModel().fireTableRowsUpdated(lastRow, lastRow);
@@ -1496,14 +1544,11 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
             final ZestClientLaunch launch = new ZestClientLaunch(handle, "firefox", url);
 
             EventQueue.invokeLater(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                addToParent(getRecordingNode(), launch);
-                            } catch (Exception e) {
-                                logger.error(e.getMessage(), e);
-                            }
+                    () -> {
+                        try {
+                            addToParent(getRecordingNode(), launch);
+                        } catch (Exception e) {
+                            LOGGER.error(e.getMessage(), e);
                         }
                     });
         }
@@ -1515,14 +1560,11 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
             final ZestClientWindowHandle winHandle = new ZestClientWindowHandle(handle, url, false);
 
             EventQueue.invokeLater(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                addToParent(getRecordingNode(), winHandle);
-                            } catch (Exception e) {
-                                logger.error(e.getMessage(), e);
-                            }
+                    () -> {
+                        try {
+                            addToParent(getRecordingNode(), winHandle);
+                        } catch (Exception e) {
+                            LOGGER.error(e.getMessage(), e);
                         }
                     });
         }
@@ -1545,12 +1587,30 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
         return windowHandle;
     }
 
+    public ZestElement convertStringToElement(String string) {
+        return "YAML".equals(getParam().getScriptFormat())
+                ? ZestYaml.fromString(string)
+                : ZestJSON.fromString(string);
+    }
+
+    public String convertElementToString(ZestElement element) {
+        return "YAML".equals(getParam().getScriptFormat())
+                ? ZestYaml.toString(element)
+                : ZestJSON.toString(element);
+    }
+
     public void startClientRecording(String uri) {
         clientUrlToWindowHandle.clear();
         startRecordingUrl = uri;
         recordingWinId = 0;
+        scriptReorderer = new ScriptReorderer(this::addClientZestStatement);
         // And turn off the recording button, at least for now
         this.getRecordButton().setSelected(false);
+        clientRecordingActive = true;
+    }
+
+    public void stopClientRecording() {
+        clientRecordingActive = false;
     }
 
     public void setRecordingNode(ScriptNode node) {
@@ -1598,7 +1658,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
 
                 if (key.length() > 1) {
                     // Ignore all 'control' keys, at least initially
-                    logger.debug("Client recording, ignoring " + key);
+                    LOGGER.debug("Client recording, ignoring {}", key);
                 } else {
                     if (getRecordingNode().getChildCount() > 0) {
                         // We get key presses one at a time - try to combine them up where possible
@@ -1629,38 +1689,70 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
                 }
             }
         } catch (Exception e1) {
-            logger.error(e1.getMessage(), e1);
+            LOGGER.error(e1.getMessage(), e1);
         }
 
-        if (stmt != null) {
-            final ZestStatement stmtFinal = stmt;
-
-            EventQueue.invokeLater(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                addToParent(clientRecordingNode, stmtFinal, false);
-                            } catch (Exception e) {
-                                logger.error(e.getMessage(), e);
-                            }
-                        }
-                    });
-        }
+        addClientZestStatement(stmt);
     }
+
+    public void addClientZestStatementFromString(String stmt) throws Exception {
+        if (!isClientRecordingActive()) {
+            return;
+        }
+        scriptReorderer.recordStatement(JSONObject.fromObject(stmt));
+    }
+
+    private void addClientZestStatement(ZestStatement stmt) {
+        EventQueue.invokeLater(
+                () -> {
+                    try {
+                        addToParent(getRecordingNode(), stmt, false, false);
+                    } catch (Exception e) {
+                        LOGGER.error(e.getMessage(), e);
+                    }
+                });
+    }
+
+    public boolean isClientRecordingActive() {
+        return clientRecordingActive;
+    }
+
+    public void setClientHelper(ZestClientRecorderHelper zestClientHelper) {
+        this.zestClientHelper = zestClientHelper;
+    }
+
+    public boolean isClientAccessible() {
+        if (zestClientHelper == null) {
+            return false;
+        }
+        return zestClientHelper.isClientActive();
+    }
+
     /**/
     @Override
     public void preInvoke(ScriptWrapper script) {
         ScriptEngineWrapper ewrap =
                 this.getExtScript().getEngineWrapper(ZestScriptEngineFactory.NAME);
         if (ewrap == null) {
-            logger.error("Failed to find engine Mozilla Zest");
+            LOGGER.error("Failed to find engine Mozilla Zest");
         } else if (script instanceof ZestScriptWrapper) {
             this.getZestScriptEngineFactory()
-                    .setRunner(new ZestZapRunner(this, (ZestScriptWrapper) script));
+                    .setRunner(
+                            new ZestZapRunner(
+                                    this, getExtensionNetwork(), (ZestScriptWrapper) script));
             clearResults();
             this.lastRunScript = ((ZestScriptWrapper) script).getZestScript();
         }
+    }
+
+    private ExtensionNetwork getExtensionNetwork() {
+        if (extensionNetwork == null) {
+            extensionNetwork =
+                    Control.getSingleton()
+                            .getExtensionLoader()
+                            .getExtension(ExtensionNetwork.class);
+        }
+        return extensionNetwork;
     }
 
     public void clearResults() {
@@ -1677,12 +1769,12 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
 
     @Override
     public void scriptAdded(ScriptWrapper script, boolean display) {
-        if (script.getEngineName().equals(ZestScriptEngineFactory.NAME)) {
+        if (ZestScriptEngineFactory.NAME.equals(script.getEngineName())) {
 
             ScriptNode typeNode =
                     this.getExtScript().getTreeModel().getTypeNode(script.getTypeName());
             if (typeNode == null) {
-                logger.error("Failed to find type node: " + script.getTypeName());
+                LOGGER.error("Failed to find type node: {}", script.getTypeName());
 
                 typeNode =
                         this.getExtScript()
@@ -1690,7 +1782,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
                                 .getTypeNode(ExtensionScript.TYPE_STANDALONE);
             }
 
-            logger.debug("Adding Zest script to tree");
+            LOGGER.debug("Adding Zest script to tree");
 
             ZestScriptWrapper zsw;
             if (script instanceof ZestScriptWrapper) {
@@ -1711,6 +1803,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
                 this.updated(parentNode);
                 this.display(zsw, parentNode, true);
                 this.dialogManager.showZestEditScriptDialog(parentNode, zsw, false);
+                this.getZestResultsPanel().getModel().clear();
             }
         }
     }
@@ -1745,12 +1838,12 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
          *
          * ScriptNode typeNode = this.getExtScript().getTreeModel()
          * .getTypeNode(script.getTypeName()); if (typeNode == null) {
-         * logger.error("Failed to find type node: " + script.getTypeName());
+         * LOGGER.error("Failed to find type node: {}", script.getTypeName());
          *
          * typeNode = this.getExtScript().getTreeModel()
          * .getTypeNode(ExtensionScript.TYPE_STANDALONE); }
          *
-         * logger.debug("Adding Zest script to tree");
+         * LOGGER.debug("Adding Zest script to tree");
          *
          * ZestScriptWrapper zsw = new ZestScriptWrapper(script); if
          * (zsw.getName() == null) { zsw.setName(script.getName()); }
@@ -1808,14 +1901,89 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     }
 
     /**
-     * Return all of the requests in the script ScriptWrapper is deliberately used to make it easier
-     * to call this method by reflection
+     * Creates a script with the given name, type, and messages as {@code ZestRequest}s.
+     *
+     * @param name the name of the script.
+     * @param type the type of the script.
+     * @param messages the messages that will be added to the script.
+     * @param options the options for the script creation.
+     * @return the created script.
+     * @since 48.0.0
+     * @throws IllegalArgumentException if there are any problems with the inputs (e.g. no messages)
+     * @throws IllegalStateException if unable to create the script (e.g. duplicated script name).
+     */
+    public ScriptWrapper createScript(
+            String name, ScriptType type, List<HttpMessage> messages, CreateScriptOptions options) {
+        if (messages == null || messages.isEmpty()) {
+            throw new IllegalArgumentException("The messages should not be null nor empty.");
+        }
+
+        ZestParam conversionOptions = getParam(options);
+        ZestScript sz = new ZestScript();
+        sz.setTitle(name);
+        RequestValueReplacer requestValueReplacer =
+                options.isReplaceRequestValues()
+                        ? new DefaultRequestValueReplacer(getModel().getSession())
+                        : NoopRequestValueReplacer.getInstance();
+        for (var msg : messages) {
+            if (msg == null) {
+                throw new IllegalArgumentException("A message should not be null.");
+            }
+            try {
+                ZestRequest request = requestValueReplacer.process(sz, msg, conversionOptions);
+                if (options.isAddStatusAssertion()) {
+                    addStatusCodeAssertion(msg, request);
+                }
+                if (options.isAddLengthAssertion()) {
+                    addLengthAssertion(msg, request, options.getLengthApprox());
+                }
+                sz.add(request);
+            } catch (Exception e) {
+                throw new IllegalArgumentException(
+                        "Failed to convert message to ZestRequest: " + e.getMessage(), e);
+            }
+        }
+
+        ScriptWrapper sw = new ScriptWrapper();
+        sw.setName(sz.getTitle());
+        sw.setDescription(sz.getDescription());
+        sw.setContents(convertElementToString(sz));
+        sw.setType(type);
+        sw.setEngine(getZestEngineWrapper());
+
+        ZestScriptWrapper zsw = new ZestScriptWrapper(sw);
+        try {
+            add(zsw, false);
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to add the script: " + e.getMessage(), e);
+        }
+        return zsw;
+    }
+
+    private ZestParam getParam(CreateScriptOptions options) {
+        switch (options.getIncludeResponses()) {
+            case ALWAYS:
+            case NEVER:
+                ZestParam copy = new ZestParam(getParam());
+                copy.load(new ZapXmlConfiguration());
+                copy.setIncludeResponses(
+                        options.getIncludeResponses()
+                                == CreateScriptOptions.IncludeResponses.ALWAYS);
+                return copy;
+
+            default:
+                return getParam();
+        }
+    }
+
+    /**
+     * Return all of the requests in the script.
      *
      * @param script
      * @return
      */
     public List<HttpMessage> getAllRequestsInScript(ScriptWrapper script) {
-        ArrayList<HttpMessage> requests = new ArrayList<HttpMessage>();
+        ArrayList<HttpMessage> requests = new ArrayList<>();
 
         if (!(script instanceof ZestScriptWrapper)) {
             throw new InvalidParameterException(script.getClass().getCanonicalName());
@@ -1830,9 +1998,9 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
                     requests.add(scrMessage);
                 }
             } catch (Exception e) {
-                logger.debug(
-                        "Exception occurred while fetching HttpMessages from sequence script: "
-                                + e.getMessage());
+                LOGGER.debug(
+                        "Exception occurred while fetching HttpMessages from sequence script: {}",
+                        e.getMessage());
             }
         }
         return requests;

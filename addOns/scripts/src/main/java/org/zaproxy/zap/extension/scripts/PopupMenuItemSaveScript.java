@@ -32,6 +32,7 @@ import org.zaproxy.zap.view.popup.ExtensionPopupMenuComponent;
 /**
  * An {@link ExtensionPopupMenuItem} that allows to save the script selected in the Scripts tree.
  */
+@SuppressWarnings("serial")
 public class PopupMenuItemSaveScript extends ExtensionPopupMenuItem {
 
     private static final long serialVersionUID = 1L;
@@ -61,13 +62,9 @@ public class PopupMenuItemSaveScript extends ExtensionPopupMenuItem {
         this.scriptsPanel = scriptsPanel;
 
         this.addActionListener(
-                new java.awt.event.ActionListener() {
-
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent e) {
-                        PopupMenuItemSaveScript.this.scriptsPanel.saveScript(selectedScript);
-                        selectedScript = null;
-                    }
+                e -> {
+                    PopupMenuItemSaveScript.this.scriptsPanel.saveScript(selectedScript);
+                    selectedScript = null;
                 });
     }
 

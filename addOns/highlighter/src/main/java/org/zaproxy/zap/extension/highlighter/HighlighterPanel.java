@@ -37,6 +37,7 @@ import org.zaproxy.zap.view.HighlighterManager;
 /*
  * The main highlighter tab, used to configure highlights in the HighlightManager
  */
+@SuppressWarnings("serial")
 public class HighlighterPanel extends AbstractPanel implements ActionListener {
     private static final long serialVersionUID = -1085991554138327045L;
     private JPanel mainPanel;
@@ -47,7 +48,7 @@ public class HighlighterPanel extends AbstractPanel implements ActionListener {
     private HighlightEntryLineUi panelLineExtra;
     private HighlightSearchEntry extraHighlight;
 
-    private static String BUTTON_APPLY = "Appy";
+    private static String BUTTON_APPLY = "Apply";
 
     public HighlighterPanel(ExtensionHighlighter extensionHighlighter) {
         init();
@@ -113,10 +114,10 @@ public class HighlighterPanel extends AbstractPanel implements ActionListener {
 
         // Line >0: Content
         int n = 1;
-        LinkedList<HighlightSearchEntry> newEntrys = highlighter.getHighlights();
+        LinkedList<HighlightSearchEntry> newEntries = highlighter.getHighlights();
         panelList = new LinkedList<>();
 
-        for (HighlightSearchEntry entry : newEntrys) {
+        for (HighlightSearchEntry entry : newEntries) {
             HighlightEntryLineUi panelLine = new HighlightEntryLineUi(userGridPanel, n++, entry);
             panelList.add(panelLine);
         }
@@ -128,25 +129,25 @@ public class HighlighterPanel extends AbstractPanel implements ActionListener {
     }
 
     private void applyAll() {
-        LinkedList<HighlightSearchEntry> entrys = new LinkedList<>();
+        LinkedList<HighlightSearchEntry> entries = new LinkedList<>();
 
         // Save all UI elements
         for (HighlightEntryLineUi panelLine : panelList) {
             panelLine.save();
             HighlightSearchEntry entry = panelLine.getHighlightEntry();
             if (entry.getToken().length() > 0) {
-                entrys.add(entry);
+                entries.add(entry);
             }
         }
 
         // The new line
         panelLineExtra.save();
         if (extraHighlight.getToken().length() > 0) {
-            entrys.add(panelLineExtra.getHighlightEntry());
+            entries.add(panelLineExtra.getHighlightEntry());
         }
 
         // Store them in the highlight manager
-        highlighter.reinitHighlights(entrys);
+        highlighter.reinitHighlights(entries);
 
         // highlighter.writeConfigFile();
         reinit();

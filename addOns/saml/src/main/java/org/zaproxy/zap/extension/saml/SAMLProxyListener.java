@@ -19,7 +19,8 @@
  */
 package org.zaproxy.zap.extension.saml;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.core.proxy.ProxyListener;
 import org.parosproxy.paros.network.HttpMessage;
 
@@ -27,7 +28,7 @@ public class SAMLProxyListener implements ProxyListener {
 
     private SAMLConfiguration configuration;
 
-    protected static final Logger log = Logger.getLogger(SAMLProxyListener.class.getName());
+    protected static final Logger LOGGER = LogManager.getLogger(SAMLProxyListener.class);
 
     public SAMLProxyListener() {
         configuration = SAMLConfiguration.getInstance();
@@ -53,17 +54,17 @@ public class SAMLProxyListener implements ProxyListener {
                     boolean changed =
                             samlMessage.changeAttributeValueTo(attribute.getName(), value);
                     if (changed) {
-                        log.debug(attribute.getName() + ": value changed to " + value);
+                        LOGGER.debug("{}: value changed to {}", attribute.getName(), value);
                     }
                 }
 
                 // change the original message
-                HttpMessage changedMessege = samlMessage.getChangedMessage();
-                if (changedMessege != message) {
+                HttpMessage changedMessage = samlMessage.getChangedMessage();
+                if (changedMessage != message) {
                     // check for reference, if they are same the message is already changed,
                     // else the header and body are changed
-                    message.setRequestBody(changedMessege.getRequestBody());
-                    message.setRequestHeader(changedMessege.getRequestHeader());
+                    message.setRequestBody(changedMessage.getRequestBody());
+                    message.setRequestHeader(changedMessage.getRequestHeader());
                 }
 
             } catch (SAMLException ignored) {

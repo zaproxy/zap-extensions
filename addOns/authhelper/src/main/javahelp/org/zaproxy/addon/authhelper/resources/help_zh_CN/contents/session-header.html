@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+Header Based Session Management
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Header Based Session Management</H1>
+
+This <a href="authhelper.html">add-on</a> adds a new session management type which supports an arbitrary number
+of headers.
+<p>
+If used in conjunction with <a href="browser-auth.html">Browser Based Authentication</a> then it will also maintain all
+of the cookies set as part of authentication.
+<p>
+The header values can include the following tokens:
+
+<table>
+<tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td><code>{%json:path.to.data%}</code></td>
+        <td>JSON authentication response data</td>
+</tr>
+<tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td><code>{%env:env_var%}</code></td>
+        <td>Environmental variable</td>
+</tr>
+<tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td><code>{%script:glob_var%}</code></td>
+        <td>Global script variable</td>
+</tr>
+<tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td><code>{%header:env_var%}</code></td>
+        <td>Authentication response header</td>
+</tr>
+<tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td><code>{%url:key%}</code></td>
+        <td>Authentication URL param</td>
+</tr>
+</table>
+
+<H2>Automation Framework</H2>
+
+Header Based Session Management can be configured in the environment section of an Automation Framework plan using:
+<pre>
+      sessionManagement:
+        method: "headers"
+        parameters:                    #  list of header: value pairs which can include any of the tokens defined above, e.g.
+          Authorization: "Bearer: {%json:AuthenticationResult.AccessToken%}"
+</pre>
+
+<H2>API</H2>
+
+Header Based Session Management can be configured via the ZAP API, using the following parameters:
+<pre>
+    contextId
+    methodName
+    methodConfigParams
+</pre>
+For example:
+<table border="1">
+  <tr><td>contextId</td><td>1</td></tr>
+  <tr><td>methodName</td><td>headerBasedSessionManagement</td></tr>
+  <tr><td>methodConfigParams</td><td>headers=Authorization:Bearer 8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918</td></tr>
+</table>
+<p>
+When adding Header Based Session Management via the API the <code>headers</code> parameter is a string of 
+<code>header:value</code> pairs separated by newline characters: <code>\n</code>.
+<p>
+Note that due to restrictions in the core:
+<ul>
+<li>Existing contexts are not updated in the GUI if you add or remove this add-on
+<li>Header based Session Management cannot be added to a context via the API (unless used with ZAP 2.16.1 or later)
+</ul>
+These restrictions will be addressed in a future release. 
+
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/authhelper/src/main/java/org/zaproxy/addon/authhelper/HeaderBasedSessionManagementMethodType.java">HeaderBasedSessionManagementMethodType.java</a>
+
+</BODY>
+</HTML>

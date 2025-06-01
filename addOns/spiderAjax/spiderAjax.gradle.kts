@@ -1,22 +1,50 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "23.2.0"
-description = "Allows you to spider sites that make heavy use of JavaScript using Crawljax"
-
-repositories {
-    maven(url = uri("https://oss.sonatype.org/content/repositories/snapshots/"))
+plugins {
+    id("eclipse")
 }
+
+eclipse {
+    classpath {
+        minusConfigurations.plusAssign(
+            configurations.detachedConfiguration(
+                dependencies.create("net.bytebuddy:byte-buddy:1.8.15"),
+            ),
+        )
+    }
+}
+
+description = "Allows you to spider sites that make heavy use of JavaScript using Crawljax"
 
 zapAddOn {
     addOnName.set("Ajax Spider")
     addOnStatus.set(AddOnStatus.RELEASE)
-    zapVersion.set("2.8.0")
 
     manifest {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/ajax-spider/")
+        extensions {
+            register("org.zaproxy.zap.extension.spiderAjax.automation.ExtensionAjaxAutomation") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.zap.extension.spiderAjax.automation"))
+                }
+                dependencies {
+                    addOns {
+                        register("automation") {
+                            version.set(">=0.42.0")
+                        }
+                    }
+                }
+            }
+        }
         dependencies {
             addOns {
+                register("commonlib") {
+                    version.set(">= 1.23.0 & < 2.0.0")
+                }
+                register("network") {
+                    version.set(">=0.11.0")
+                }
                 register("selenium") {
                     version.set("15.*")
                 }
@@ -24,10 +52,11 @@ zapAddOn {
         }
     }
 
-    val apiGenClasspath = configurations.detachedConfiguration(
-        dependencies.create("org.zaproxy:zap:2.8.0"),
-        dependencies.create(parent!!.childProjects.get("selenium")!!)
-    )
+    val apiGenClasspath =
+        configurations.detachedConfiguration(
+            dependencies.create("org.zaproxy:zap:${zapVersion.get()}"),
+            dependencies.create(parent!!.childProjects.get("selenium")!!),
+        )
 
     apiClientGen {
         api.set("org.zaproxy.zap.extension.spiderAjax.AjaxSpiderAPI")
@@ -41,25 +70,31 @@ zapAddOn {
 }
 
 dependencies {
-    compileOnly(parent!!.childProjects.get("selenium")!!)
-    implementation(files("lib/crawljax-core-3.7.jar"))
+    zapAddOn("selenium")
+    zapAddOn("automation")
+    zapAddOn("commonlib")
+    zapAddOn("network")
+
+    compileOnly(libs.log4j.core)
+
+    implementation(files("lib/crawljax-core-3.7.1.jar"))
     implementation("commons-math:commons-math:1.2")
     implementation("com.codahale.metrics:metrics-core:3.0.2")
-    implementation("com.google.code.findbugs:jsr305:3.0.0")
-    implementation("com.google.inject.extensions:guice-assistedinject:3.0") {
+    implementation("com.google.code.findbugs:jsr305:3.0.2")
+    implementation("com.google.inject.extensions:guice-assistedinject:5.0.1") {
         // Not needed.
         exclude(group = "org.sonatype.sisu.inject", module = "cglib")
     }
     implementation("net.jcip:jcip-annotations:1.0")
-    implementation("net.sourceforge.nekohtml:nekohtml:1.9.21") {
-        // Not needed.
-        exclude(group = "xerces", module = "xercesImpl")
-    }
-    implementation("org.slf4j:jcl-over-slf4j:1.7.6")
-    implementation("org.slf4j:jul-to-slf4j:1.7.6")
-    implementation("org.slf4j:slf4j-log4j12:1.7.6") {
+    implementation("net.sourceforge.nekohtml:nekohtml:1.9.22")
+    implementation("org.slf4j:jcl-over-slf4j:1.7.32")
+    implementation("org.slf4j:jul-to-slf4j:1.7.32")
+    implementation("org.slf4j:slf4j-log4j12:1.7.32") {
         // Provided by ZAP.
         exclude(group = "log4j", module = "log4j")
     }
-    implementation("xmlunit:xmlunit:1.5")
+    implementation("xmlunit:xmlunit:1.6")
+
+    testImplementation(libs.log4j.core)
+    testImplementation(project(":testutils"))
 }

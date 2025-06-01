@@ -1,8 +1,13 @@
+# Misc
+#-----
+.DS_Store
+
 # Gradle
 #-------
 .gradle
 /build
 /buildSrc/build
+/buildSrc/.kotlin
 /addOns/**/build
 /testutils/build
 /sharedutils/build
@@ -28,6 +33,7 @@
 *.classpath
 *.project
 *.settings
+.factorypath
 /bin
 /buildSrc/bin
 /addOns/**/bin
@@ -38,3 +44,7 @@
 # --------
 .nb-gradle
 .nb-gradle-properties
+
+# VS Code
+# -------
+.vscode

@@ -24,7 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import net.sf.json.JSONObject;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
@@ -60,7 +61,7 @@ public class AccessControlAPI extends ApiImplementor {
     private static final String PARAM_UNAUTH_USER = "scanAsUnAuthUser";
     private static final String PARAM_FILENAME = "fileName";
 
-    private static final Logger LOGGER = Logger.getLogger(AccessControlAPI.class);
+    private static final Logger LOGGER = LogManager.getLogger(AccessControlAPI.class);
 
     /** Provided only for API client generator usage. */
     public AccessControlAPI() {
@@ -100,7 +101,8 @@ public class AccessControlAPI extends ApiImplementor {
 
                 AccessControlScanStartOptions startOptions = new AccessControlScanStartOptions();
 
-                startOptions.targetContext = ApiUtils.getContextByParamId(params, PARAM_CONTEXT_ID);
+                startOptions.setTargetContext(
+                        ApiUtils.getContextByParamId(params, PARAM_CONTEXT_ID));
 
                 Mode mode = Control.getSingleton().getMode();
                 if (Mode.safe.equals(mode)) {
@@ -108,14 +110,13 @@ public class AccessControlAPI extends ApiImplementor {
                             ApiException.Type.MODE_VIOLATION,
                             Constant.messages.getString(
                                     "accessControl.scanOptions.error.mode.safe"));
-                } else if (Mode.protect.equals(mode)) {
-                    if (!startOptions.targetContext.isInScope()) {
-                        throw new ApiException(
-                                ApiException.Type.MODE_VIOLATION,
-                                Constant.messages.getString(
-                                        "accessControl.scanOptions.error.mode.protected",
-                                        startOptions.targetContext.getName()));
-                    }
+                } else if (Mode.protect.equals(mode)
+                        && !startOptions.getTargetContext().isInScope()) {
+                    throw new ApiException(
+                            ApiException.Type.MODE_VIOLATION,
+                            Constant.messages.getString(
+                                    "accessControl.scanOptions.error.mode.protected",
+                                    startOptions.getTargetContext().getName()));
                 }
 
                 if (usersExtension == null) {
@@ -125,7 +126,7 @@ public class AccessControlAPI extends ApiImplementor {
                                     .getExtension(ExtensionUserManagement.class);
                 }
 
-                List<User> users = new ArrayList<User>();
+                List<User> users = new ArrayList<>();
 
                 String[] commaSeparatedUserIDs =
                         ApiUtils.getNonEmptyStringParam(params, PARAM_USER_ID).split("\\s*,\\s*");
@@ -143,7 +144,7 @@ public class AccessControlAPI extends ApiImplementor {
                     User userToAdd =
                             usersExtension
                                     .getContextUserAuthManager(
-                                            startOptions.targetContext.getIndex())
+                                            startOptions.getTargetContext().getId())
                                     .getUserById(userID);
                     if (userToAdd != null) {
                         users.add(userToAdd);
@@ -154,19 +155,19 @@ public class AccessControlAPI extends ApiImplementor {
                     }
                 }
 
-                startOptions.targetUsers = users;
+                startOptions.setTargetUsers(users);
 
                 // Add unauthenticated user
                 if (params.optBoolean(PARAM_UNAUTH_USER, false)) {
-                    startOptions.targetUsers.add(null);
+                    startOptions.getTargetUsers().add(null);
                 }
 
-                startOptions.raiseAlerts = params.optBoolean(PARAM_RAISE_ALERT, true);
+                startOptions.setRaiseAlerts(params.optBoolean(PARAM_RAISE_ALERT, true));
 
-                startOptions.alertRiskLevel =
-                        params.optInt(PARAM_ALERT_RISK_LEVEL, Alert.RISK_HIGH);
-                if (!(startOptions.alertRiskLevel >= Alert.RISK_INFO
-                        && startOptions.alertRiskLevel <= Alert.RISK_HIGH)) {
+                startOptions.setAlertRiskLevel(
+                        params.optInt(PARAM_ALERT_RISK_LEVEL, Alert.RISK_HIGH));
+                if (!(startOptions.getAlertRiskLevel() >= Alert.RISK_INFO
+                        && startOptions.getAlertRiskLevel() <= Alert.RISK_HIGH)) {
                     throw new ApiException(
                             ApiException.Type.ILLEGAL_PARAMETER,
                             "The parsed Alert Risk Level was outside the range: "
@@ -197,7 +198,7 @@ public class AccessControlAPI extends ApiImplementor {
 
                 // Have to add the check because ReportGenerator.XMLToHtml() won't raise an
                 // exception
-                if (reportFile.exists() == false || reportFile.canWrite() == false) {
+                if (!reportFile.exists() || !reportFile.canWrite()) {
                     String writeFailedMessage =
                             "Error writing report to file " + reportFile.getPath();
                     LOGGER.error(writeFailedMessage);
@@ -219,7 +220,7 @@ public class AccessControlAPI extends ApiImplementor {
             case VIEW_GET_SCAN_PROGRESS:
                 LOGGER.debug("Access control get scan progress called");
 
-                contextId = ApiUtils.getContextByParamId(params, PARAM_CONTEXT_ID).getIndex();
+                contextId = ApiUtils.getContextByParamId(params, PARAM_CONTEXT_ID).getId();
 
                 String scanStatus;
                 try {
@@ -234,7 +235,7 @@ public class AccessControlAPI extends ApiImplementor {
             case VIEW_GET_SCAN_STATUS:
                 LOGGER.debug("Access control get scan status called");
 
-                contextId = ApiUtils.getContextByParamId(params, PARAM_CONTEXT_ID).getIndex();
+                contextId = ApiUtils.getContextByParamId(params, PARAM_CONTEXT_ID).getId();
 
                 result = new ApiResponseElement(name, extension.getScanStatus(contextId));
                 break;

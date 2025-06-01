@@ -21,9 +21,11 @@ package org.zaproxy.zap.extension.zest.menu;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.SiteNode;
+import org.zaproxy.addon.commonlib.MenuWeights;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.view.popup.PopupMenuItemSiteNodeContainer;
 
+@SuppressWarnings("serial")
 public class ZestRecordFromNodePopupMenu extends PopupMenuItemSiteNodeContainer {
 
     private static final long serialVersionUID = 2282358266003940700L;
@@ -44,5 +46,10 @@ public class ZestRecordFromNodePopupMenu extends PopupMenuItemSiteNodeContainer 
     @Override
     protected void performAction(SiteNode node) {
         extension.getDialogManager().showZestRecordScriptDialog(node);
+    }
+
+    @Override
+    public int getWeight() {
+        return MenuWeights.MENU_SCRIPT_ZEST_RECORD_WEIGHT;
     }
 }

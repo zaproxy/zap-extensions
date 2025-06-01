@@ -56,12 +56,12 @@ public class TextWebSocketMessageLocationReplacer
             throw new IllegalStateException("Replacer not initialised.");
         }
 
-        if (!(message.payload instanceof String)) {
+        if (!(message.getPayload() instanceof String)) {
             // TODO: Exclude popup menu or support fuzzing binary payloads - why not?
             return copyMessage(message);
         }
 
-        Replacer replacer = new Replacer((String) message.payload);
+        Replacer replacer = new Replacer((String) message.getPayload());
         for (MessageLocationReplacement<?> replacement : replacements) {
             MessageLocation location = replacement.getMessageLocation();
             if (!(location instanceof TextWebSocketMessageLocation)) {
@@ -76,8 +76,8 @@ public class TextWebSocketMessageLocationReplacer
         }
 
         WebSocketFuzzMessageDTO replacedMessage = copyMessage(message);
-        replacedMessage.payload = replacer.toString();
-        replacedMessage.payloadLength = Integer.valueOf(replacer.length());
+        replacedMessage.setPayload(replacer.toString());
+        replacedMessage.setPayloadLength(Integer.valueOf(replacer.length()));
 
         return replacedMessage;
     }

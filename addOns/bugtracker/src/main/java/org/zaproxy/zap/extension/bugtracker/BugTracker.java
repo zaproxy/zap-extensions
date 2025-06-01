@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.bugtracker;
 import java.util.Set;
 import javax.swing.JPanel;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.view.AbstractParamPanel;
 
 public abstract class BugTracker {
 
@@ -38,4 +39,6 @@ public abstract class BugTracker {
     public abstract void createDialogs();
 
     public abstract String raise(RaiseSemiAutoIssueDialog dialog);
+
+    public abstract AbstractParamPanel getOptionsPanel();
 }

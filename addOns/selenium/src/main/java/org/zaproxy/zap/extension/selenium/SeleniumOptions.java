@@ -19,17 +19,31 @@
  */
 package org.zaproxy.zap.extension.selenium;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import org.apache.commons.configuration.ConversionException;
-import org.apache.commons.lang.Validate;
-import org.apache.log4j.Logger;
+import org.apache.commons.configuration.HierarchicalConfiguration;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.Validate;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.ie.InternetExplorerDriverService;
-import org.openqa.selenium.phantomjs.PhantomJSDriverService;
+import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.common.VersionedAbstractParam;
 import org.zaproxy.zap.extension.api.ZapApiIgnore;
+import org.zaproxy.zap.extension.selenium.internal.BrowserArgument;
 
 /**
  * Manages the Selenium configurations saved in the configuration file.
@@ -37,6 +51,7 @@ import org.zaproxy.zap.extension.api.ZapApiIgnore;
  * <p>It allows to change, programmatically, the following options:
  *
  * <ul>
+ *   <li>The path to Chrome binary;
  *   <li>The path to ChromeDriver;
  *   <li>The path to Firefox binary;
  *   <li>The path to Firefox driver (geckodriver);
@@ -45,20 +60,23 @@ import org.zaproxy.zap.extension.api.ZapApiIgnore;
  */
 public class SeleniumOptions extends VersionedAbstractParam {
 
-    private static final Logger LOGGER = Logger.getLogger(SeleniumOptions.class);
-
+    public static final String CHROME_BINARY_SYSTEM_PROPERTY = "zap.selenium.webdriver.chrome.bin";
     public static final String CHROME_DRIVER_SYSTEM_PROPERTY =
             ChromeDriverService.CHROME_DRIVER_EXE_PROPERTY;
     public static final String FIREFOX_BINARY_SYSTEM_PROPERTY =
             "zap.selenium.webdriver.firefox.bin";
     public static final String FIREFOX_DRIVER_SYSTEM_PROPERTY = "webdriver.gecko.driver";
-    /** @deprecated IE is no longer supported. */
+
+    /**
+     * @deprecated IE is no longer supported.
+     */
     @Deprecated
     public static final String IE_DRIVER_SYSTEM_PROPERTY =
             InternetExplorerDriverService.IE_DRIVER_EXE_PROPERTY;
 
-    public static final String PHANTOM_JS_BINARY_SYSTEM_PROPERTY =
-            PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY;
+    private static final File[] NO_FILES = {};
+
+    private static final Logger LOGGER = LogManager.getLogger(SeleniumOptions.class);
 
     /**
      * The current version of the configurations. Used to keep track of configuration changes
@@ -69,7 +87,7 @@ public class SeleniumOptions extends VersionedAbstractParam {
      * @see #CONFIG_VERSION_KEY
      * @see #updateConfigsImpl(int)
      */
-    private static final int CURRENT_CONFIG_VERSION = 2;
+    private static final int CURRENT_CONFIG_VERSION = 3;
 
     /** The base key for all selenium configurations. */
     private static final String SELENIUM_BASE_KEY = "selenium";
@@ -81,17 +99,38 @@ public class SeleniumOptions extends VersionedAbstractParam {
      */
     private static final String CONFIG_VERSION_KEY = SELENIUM_BASE_KEY + VERSION_ATTRIBUTE;
 
+    /** The configuration key to read/write the path Chrome binary. */
+    private static final String CHROME_BINARY_KEY = SELENIUM_BASE_KEY + ".chromeBinary";
+
+    private static final String CHROME_ARGS_KEY = SELENIUM_BASE_KEY + ".chromeArgs.arg";
+
+    private static final String ARG_KEY = "argument";
+    private static final String ENABLED_KEY = "enabled";
+
+    private static final String CONFIRM_REMOVE_BROWSER_ARG =
+            SELENIUM_BASE_KEY + ".confirmRemoveBrowserArg";
+
     /** The configuration key to read/write the path to ChromeDriver. */
     private static final String CHROME_DRIVER_KEY = SELENIUM_BASE_KEY + ".chromeDriver";
 
     /** The configuration key to read/write the path Firefox binary. */
     private static final String FIREFOX_BINARY_KEY = SELENIUM_BASE_KEY + ".firefoxBinary";
 
+    private static final String FIREFOX_ARGS_KEY = SELENIUM_BASE_KEY + ".firefoxArgs.arg";
+
     /** The configuration key to read/write the path Firefox driver (geckodriver). */
     private static final String FIREFOX_DRIVER_KEY = SELENIUM_BASE_KEY + ".firefoxDriver";
 
-    /** The configuration key to read/write the path PhantomJS binary. */
-    private static final String PHANTOM_JS_BINARY_KEY = SELENIUM_BASE_KEY + ".phantomJsBinary";
+    private static final String FIREFOX_PROFILE_KEY = SELENIUM_BASE_KEY + ".firefoxProfile";
+
+    private static final String DISABLED_EXTENSIONS_KEY = SELENIUM_BASE_KEY + ".disabledExts";
+
+    private static final String EXTENSIONS_LAST_DIR_KEY = SELENIUM_BASE_KEY + ".lastDir";
+
+    private final File extensionsDir;
+
+    /** The path to Chrome binary. */
+    private String chromeBinaryPath = "";
 
     /** The path to ChromeDriver. */
     private String chromeDriverPath = "";
@@ -102,8 +141,21 @@ public class SeleniumOptions extends VersionedAbstractParam {
     /** The path to Firefox driver (geckodriver). */
     private String firefoxDriverPath = "";
 
-    /** The path to PhantomJS binary. */
-    private String phantomJsBinaryPath = "";
+    private String firefoxDefaultProfile = "";
+
+    private List<Object> disabledExtensions;
+
+    private String lastDirectory;
+
+    private Map<String, List<BrowserArgument>> browserArguments = new HashMap<>();
+    private boolean confirmRemoveBrowserArgument = true;
+
+    public SeleniumOptions() {
+        extensionsDir = new File(Constant.getZapHome() + "/selenium/extensions/");
+
+        browserArguments.put(Browser.CHROME.getId(), new ArrayList<>(0));
+        browserArguments.put(Browser.FIREFOX.getId(), new ArrayList<>(0));
+    }
 
     @Override
     @ZapApiIgnore
@@ -119,6 +171,15 @@ public class SeleniumOptions extends VersionedAbstractParam {
 
     @Override
     protected void parseImpl() {
+        try {
+            Files.createDirectories(extensionsDir.toPath());
+        } catch (IOException e) {
+            LOGGER.error("Failed to create the extensions directory:", e);
+        }
+
+        chromeBinaryPath =
+                readSystemPropertyWithOptionFallback(
+                        CHROME_BINARY_SYSTEM_PROPERTY, CHROME_BINARY_KEY);
         chromeDriverPath =
                 getWebDriverPath(Browser.CHROME, CHROME_DRIVER_SYSTEM_PROPERTY, CHROME_DRIVER_KEY);
         firefoxBinaryPath =
@@ -128,9 +189,17 @@ public class SeleniumOptions extends VersionedAbstractParam {
                 getWebDriverPath(
                         Browser.FIREFOX, FIREFOX_DRIVER_SYSTEM_PROPERTY, FIREFOX_DRIVER_KEY);
 
-        phantomJsBinaryPath =
-                readSystemPropertyWithOptionFallback(
-                        PHANTOM_JS_BINARY_SYSTEM_PROPERTY, PHANTOM_JS_BINARY_KEY);
+        firefoxDefaultProfile = getConfig().getString(FIREFOX_PROFILE_KEY, "");
+
+        disabledExtensions = getConfig().getList(DISABLED_EXTENSIONS_KEY);
+
+        lastDirectory = getConfig().getString(EXTENSIONS_LAST_DIR_KEY);
+
+        browserArguments = new HashMap<>();
+        browserArguments.put(Browser.CHROME.getId(), readBrowserArguments(CHROME_ARGS_KEY));
+        browserArguments.put(Browser.FIREFOX.getId(), readBrowserArguments(FIREFOX_ARGS_KEY));
+
+        confirmRemoveBrowserArgument = getBoolean(CONFIRM_REMOVE_BROWSER_ARG, true);
     }
 
     /**
@@ -154,7 +223,7 @@ public class SeleniumOptions extends VersionedAbstractParam {
                 saveAndSetSystemProperty(optionKey, systemProperty, bundledPath);
                 return bundledPath;
             }
-        } else if (Browser.isBundledWebDriverPath(path)) {
+        } else {
             Path driver = Paths.get(path);
             if (!Files.exists(driver) || !Browser.ensureExecutable(driver)) {
                 saveAndSetSystemProperty(optionKey, systemProperty, "");
@@ -180,14 +249,9 @@ public class SeleniumOptions extends VersionedAbstractParam {
     private String readSystemPropertyWithOptionFallback(String systemProperty, String optionKey) {
         String value = System.getProperty(systemProperty);
         if (value == null) {
-            try {
-                value = getConfig().getString(optionKey, "");
-                if (!value.isEmpty()) {
-                    System.setProperty(systemProperty, value);
-                }
-            } catch (ConversionException e) {
-                LOGGER.error("Failed to read '" + optionKey + "'", e);
-                value = "";
+            value = getString(optionKey, "");
+            if (!value.isEmpty()) {
+                System.setProperty(systemProperty, value);
             }
         } else {
             getConfig().setProperty(optionKey, value);
@@ -201,6 +265,36 @@ public class SeleniumOptions extends VersionedAbstractParam {
             case 1:
                 getConfig().clearProperty("selenium.ieDriver");
                 break;
+            case 2:
+                getConfig().clearProperty("selenium.phantomJsBinary");
+                break;
+            default:
+        }
+    }
+
+    /**
+     * Gets the path to Chrome binary.
+     *
+     * @return the path to Chrome binary, or empty if not set.
+     */
+    public String getChromeBinaryPath() {
+        return chromeBinaryPath;
+    }
+
+    /**
+     * Sets the path to Chrome binary.
+     *
+     * @param chromeBinaryPath the path to Chrome binary, or empty if not known.
+     * @throws IllegalArgumentException if {@code chromeBinaryPath} is {@code null}.
+     */
+    public void setChromeBinaryPath(String chromeBinaryPath) {
+        Validate.notNull(chromeBinaryPath, "Parameter chromeBinaryPath must not be null.");
+
+        if (!this.chromeBinaryPath.equals(chromeBinaryPath)) {
+            this.chromeBinaryPath = chromeBinaryPath;
+
+            saveAndSetSystemProperty(
+                    CHROME_BINARY_KEY, CHROME_BINARY_SYSTEM_PROPERTY, chromeBinaryPath);
         }
     }
 
@@ -295,6 +389,20 @@ public class SeleniumOptions extends VersionedAbstractParam {
         }
     }
 
+    public String getFirefoxDefaultProfile() {
+        return firefoxDefaultProfile;
+    }
+
+    public void setFirefoxDefaultProfile(String firefoxDefaultProfile) {
+        Validate.notNull(
+                firefoxDefaultProfile, "Parameter firefoxDefaultProfile must not be null.");
+
+        if (!this.firefoxDefaultProfile.equals(firefoxDefaultProfile)) {
+            this.firefoxDefaultProfile = firefoxDefaultProfile;
+            this.getConfig().setProperty(FIREFOX_PROFILE_KEY, this.firefoxDefaultProfile);
+        }
+    }
+
     /**
      * Gets the path to IEDriverServer.
      *
@@ -322,9 +430,11 @@ public class SeleniumOptions extends VersionedAbstractParam {
      * Gets the path to PhantomJS binary.
      *
      * @return the path to PhantomJS binary, or empty if not set.
+     * @deprecated No longer supported.
      */
+    @Deprecated(since = "15.13.0", forRemoval = true)
     public String getPhantomJsBinaryPath() {
-        return phantomJsBinaryPath;
+        return "";
     }
 
     /**
@@ -332,15 +442,205 @@ public class SeleniumOptions extends VersionedAbstractParam {
      *
      * @param phantomJsBinaryPath the path to PhantomJS binary, or empty if not known.
      * @throws IllegalArgumentException if {@code phantomJsBinaryPath} is {@code null}.
+     * @deprecated No longer supported.
      */
+    @Deprecated(since = "15.13.0", forRemoval = true)
     public void setPhantomJsBinaryPath(String phantomJsBinaryPath) {
-        Validate.notNull(phantomJsBinaryPath, "Parameter phantomJsBinaryPath must not be null.");
+        // Nothing to do.
+    }
 
-        if (!this.phantomJsBinaryPath.equals(phantomJsBinaryPath)) {
-            this.phantomJsBinaryPath = phantomJsBinaryPath;
+    public List<BrowserExtension> getEnabledBrowserExtensions(Browser browser) {
+        return this.getBrowserExtensions().stream()
+                .filter(BrowserExtension::isEnabled)
+                .filter(be -> be.getBrowser() == browser)
+                .collect(Collectors.toList());
+    }
 
-            saveAndSetSystemProperty(
-                    PHANTOM_JS_BINARY_KEY, PHANTOM_JS_BINARY_SYSTEM_PROPERTY, phantomJsBinaryPath);
+    public List<BrowserExtension> getBrowserExtensions() {
+        List<BrowserExtension> list = new ArrayList<>();
+        if (extensionsDir.exists() && extensionsDir.isDirectory()) {
+            // Always read these from filestore so we always pickup new files
+            for (File file : extensionsDir.listFiles()) {
+                Path path = file.toPath();
+                if (BrowserExtension.isBrowserExtension(path)) {
+                    BrowserExtension ext = new BrowserExtension(path);
+                    ext.setEnabled(
+                            !this.disabledExtensions.contains(ext.getPath().toFile().getName()));
+                    list.add(ext);
+                }
+            }
         }
+        return list;
+    }
+
+    public void setBrowserExtensions(List<BrowserExtension> exts) {
+        this.disabledExtensions.clear();
+        // Delete any that are not in the list
+        for (File file : getFiles(extensionsDir)) {
+            Path path = file.toPath();
+            if (BrowserExtension.isBrowserExtension(path)) {
+                boolean found = false;
+                for (BrowserExtension ext : exts) {
+                    if (ext.getPath().equals(path)) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    try {
+                        Files.delete(file.toPath());
+                    } catch (IOException e) {
+                        LOGGER.error(
+                                "Failed to delete browser extension {}", file.getAbsoluteFile(), e);
+                    }
+                }
+            }
+        }
+        // Copy any newly added extensions
+        for (BrowserExtension ext : exts) {
+            File f = ext.getPath().toFile();
+            if (!f.getParentFile().equals(extensionsDir)) {
+                File target = new File(extensionsDir, f.getName());
+                try {
+                    FileUtils.copyFileToDirectory(f, extensionsDir, false);
+                } catch (Exception e) {
+                    LOGGER.error(
+                            "Failed to copy browser extension {} to {} ",
+                            f.getAbsolutePath(),
+                            target.getAbsolutePath(),
+                            e);
+                }
+            }
+            if (!ext.isEnabled()) {
+                this.disabledExtensions.add(ext.getPath().toFile().getName());
+            }
+        }
+        this.getConfig().setProperty(DISABLED_EXTENSIONS_KEY, this.disabledExtensions);
+    }
+
+    private static File[] getFiles(File file) {
+        File[] files = file.listFiles();
+        if (files != null) {
+            return files;
+        }
+        return NO_FILES;
+    }
+
+    public String getLastDirectory() {
+        return lastDirectory;
+    }
+
+    public void setLastDirectory(String lastDirectory) {
+        this.lastDirectory = lastDirectory;
+        this.getConfig().setProperty(EXTENSIONS_LAST_DIR_KEY, this.lastDirectory);
+    }
+
+    void setConfirmRemoveBrowserArgument(boolean confirmRemove) {
+        this.confirmRemoveBrowserArgument = confirmRemove;
+        getConfig().setProperty(CONFIRM_REMOVE_BROWSER_ARG, confirmRemoveBrowserArgument);
+    }
+
+    boolean isConfirmRemoveBrowserArgument() {
+        return confirmRemoveBrowserArgument;
+    }
+
+    List<BrowserArgument> getBrowserArguments(String browser) {
+        validateBrowser(browser);
+
+        return Collections.unmodifiableList(browserArguments.get(browser));
+    }
+
+    private void validateBrowser(String browser) {
+        if (!browserArguments.containsKey(browser)) {
+            throw new IllegalArgumentException(
+                    "Browser should be one of: " + browserArguments.keySet());
+        }
+    }
+
+    void addBrowserArgument(String browser, BrowserArgument argument) {
+        validateBrowser(browser);
+        Objects.requireNonNull(argument);
+
+        getBrowserArgumentsImpl(browser).add(argument);
+        persistBrowserArguments(browser);
+    }
+
+    private List<BrowserArgument> getBrowserArgumentsImpl(String browser) {
+        return browserArguments.computeIfAbsent(browser, e -> new ArrayList<>());
+    }
+
+    boolean setBrowserArgumentEnabled(String browser, String argument, boolean enabled) {
+        validateBrowser(browser);
+        String trimmedArgument = Objects.requireNonNull(argument).trim();
+
+        for (Iterator<BrowserArgument> it = getBrowserArgumentsImpl(browser).iterator();
+                it.hasNext(); ) {
+            BrowserArgument arg = it.next();
+            if (trimmedArgument.equals(arg.getArgument())) {
+                arg.setEnabled(enabled);
+                persistBrowserArguments(browser);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    boolean removeBrowserArgument(String browser, String argument) {
+        validateBrowser(browser);
+        String trimmedArgument = Objects.requireNonNull(argument).trim();
+
+        for (Iterator<BrowserArgument> it = getBrowserArgumentsImpl(browser).iterator();
+                it.hasNext(); ) {
+            if (trimmedArgument.equals(it.next().getArgument())) {
+                it.remove();
+                persistBrowserArguments(browser);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void setBrowserArguments(String browser, List<BrowserArgument> arguments) {
+        validateBrowser(browser);
+
+        browserArguments.put(browser, copy(arguments));
+        persistBrowserArguments(browser);
+    }
+
+    private static List<BrowserArgument> copy(List<BrowserArgument> arguments) {
+        Objects.requireNonNull(arguments);
+        return arguments.stream().map(BrowserArgument::new).collect(Collectors.toList());
+    }
+
+    private void persistBrowserArguments(String browser) {
+        String baseKey =
+                Browser.CHROME.getId().equals(browser) ? CHROME_ARGS_KEY : FIREFOX_ARGS_KEY;
+        List<BrowserArgument> arguments = browserArguments.get(browser);
+        ((HierarchicalConfiguration) getConfig()).clearTree(baseKey);
+
+        for (int i = 0, size = arguments.size(); i < size; ++i) {
+            String elementBaseKey = baseKey + "(" + i + ").";
+            BrowserArgument arg = arguments.get(i);
+
+            getConfig().setProperty(elementBaseKey + ARG_KEY, arg.getArgument());
+            getConfig().setProperty(elementBaseKey + ENABLED_KEY, arg.isEnabled());
+        }
+    }
+
+    private List<BrowserArgument> readBrowserArguments(String baseKey) {
+        List<HierarchicalConfiguration> fields =
+                ((HierarchicalConfiguration) getConfig()).configurationsAt(baseKey);
+        List<BrowserArgument> arguments = new ArrayList<>(fields.size());
+        for (HierarchicalConfiguration sub : fields) {
+            try {
+                String argument = sub.getString(ARG_KEY, "");
+                if (!argument.isBlank()) {
+                    arguments.add(new BrowserArgument(argument, sub.getBoolean(ENABLED_KEY, true)));
+                }
+            } catch (ConversionException e) {
+                LOGGER.warn("An error occurred while reading the browser argument:", e);
+            }
+        }
+        return arguments;
     }
 }

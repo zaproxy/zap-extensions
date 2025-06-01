@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+  <TITLE>
+    Automation Framework - requestor Job
+  </TITLE>
+</HEAD>
+<BODY>
+<H1>Automation Framework - requestor Job</H1>
+
+This job sends specifically crafted requests to a target url, with a custom request method and body. The user can also specify
+an expected response code, against which the actual response is compared, and the user is warned in case it does not match. The user can add additional headers to the request e.g. Authorization Tokens, etc.
+<p>
+It is covered in the video: <a href="https://youtu.be/4phnMy9iCPY">ZAP Chat 09 Automation Framework Part 3 - Requests</a>.
+
+<H2>YAML</H2>
+
+<pre>
+  - type: requestor                    # Used to send specific requests to targets
+    parameters:
+      user:                            # String: An optional user to use for authenticated requests, must be defined in the env
+    requests:                          # A list of requests to make
+      - url:                           # String: A mandatory URL of the request to be made
+        name:                          # String: Optional name for the request, for documentation only
+        method:                        # String: A non-empty request method, default: GET
+        httpVersion:                   # String: The HTTP version to send the request with, default: HTTP/1.1
+        headers:                       # An optional list of additional headers to include in the request
+            - "header1:value1"
+        data:                          # String: Optional data to send in the request body, supports vars
+        responseCode:                  # Int: An optional, expected response code against which the actual response code will be matched
+</pre>
+
+</BODY>
+</HTML>

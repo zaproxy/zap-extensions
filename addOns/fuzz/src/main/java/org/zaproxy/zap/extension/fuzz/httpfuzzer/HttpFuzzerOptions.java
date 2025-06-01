@@ -26,20 +26,17 @@ public class HttpFuzzerOptions extends FuzzerOptions {
     private final boolean followRedirects;
     private final boolean showRedirectMessages;
     private final int maximumRedirects;
-    private final boolean allowCircularRedirects;
 
     public HttpFuzzerOptions(
             FuzzerOptions baseOptions,
             boolean followRedirects,
             boolean showRedirectMessages,
-            int maximumRedirects,
-            boolean allowCircularRedirects) {
+            int maximumRedirects) {
         super(baseOptions);
 
         this.followRedirects = followRedirects;
         this.showRedirectMessages = showRedirectMessages;
         this.maximumRedirects = maximumRedirects;
-        this.allowCircularRedirects = allowCircularRedirects;
     }
 
     public boolean isFollowRedirects() {
@@ -52,9 +49,5 @@ public class HttpFuzzerOptions extends FuzzerOptions {
 
     public int getMaximumRedirects() {
         return maximumRedirects;
-    }
-
-    public boolean isAllowCircularRedirects() {
-        return allowCircularRedirects;
     }
 }

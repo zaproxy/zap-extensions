@@ -24,6 +24,7 @@ import java.util.List;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.view.AbstractMultipleOrderedOptionsBaseTableModel;
 
+@SuppressWarnings("serial")
 public class ProcessorsTableModel
         extends AbstractMultipleOrderedOptionsBaseTableModel<PayloadProcessorTableEntry> {
 

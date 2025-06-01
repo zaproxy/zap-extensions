@@ -21,33 +21,24 @@ package org.zaproxy.zap.extension.frontendscanner;
 
 import java.awt.EventQueue;
 import java.awt.event.ItemEvent;
+import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 import javax.swing.ImageIcon;
-import net.htmlparser.jericho.Element;
-import net.htmlparser.jericho.OutputDocument;
-import net.htmlparser.jericho.Source;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
-import org.parosproxy.paros.core.proxy.ProxyListener;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
-import org.parosproxy.paros.extension.history.ProxyListenerLog;
-import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
-import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
@@ -57,7 +48,7 @@ import org.zaproxy.zap.view.ZapToggleButton;
  * A ZAP extension which allow to run scripts in the browser to detect vulnerabilities in web
  * applications relying heavily on Javascript.
  */
-public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyListener {
+public class ExtensionFrontEndScanner extends ExtensionAdaptor {
 
     // The name is public so that other extensions can access it
     public static final String NAME = "ExtensionFrontEndScanner";
@@ -79,20 +70,14 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyL
     private ScriptType passiveScriptType;
     private ExtensionScript extensionScript;
 
-    private FrontEndScannerOptions options;
     private FrontEndScannerAPI api;
+    private FrontEndScannerOptions options;
+    private FrontEndScannerProxyListener proxyListener;
 
-    private static final Logger LOGGER = Logger.getLogger(ExtensionFrontEndScanner.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionFrontEndScanner.class);
 
-    private static final List<Class<? extends Extension>> DEPENDENCIES;
-
-    static {
-        List<Class<? extends Extension>> dependencies = new ArrayList<>(2);
-        dependencies.add(ExtensionAlert.class);
-        dependencies.add(ExtensionScript.class);
-
-        DEPENDENCIES = Collections.unmodifiableList(dependencies);
-    }
+    private static final List<Class<? extends Extension>> DEPENDENCIES =
+            List.of(ExtensionAlert.class, ExtensionScript.class);
 
     public ExtensionFrontEndScanner() {
         super(NAME);
@@ -107,6 +92,8 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyL
         this.api = new FrontEndScannerAPI(this);
         this.api.addApiOptions(options);
 
+        this.proxyListener = new FrontEndScannerProxyListener(api, options);
+
         this.extensionScript =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
     }
@@ -115,12 +102,12 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyL
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
-        extensionHook.addProxyListener(this);
+        extensionHook.addProxyListener(this.proxyListener);
 
         extensionHook.addOptionsParamSet(options);
         extensionHook.addApiImplementor(api);
 
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.getHookView().addMainToolBarComponent(getFrontEndScannerButton());
             options.addPropertyChangeListener(
                     "enabled",
@@ -151,7 +138,7 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyL
 
     @Override
     public void optionsLoaded() {
-        if (getView() != null) {
+        if (hasView()) {
             EventQueue.invokeLater(
                     () -> getFrontEndScannerButton().setSelected(options.isEnabled()));
         }
@@ -176,85 +163,13 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyL
     public void unload() {
         super.unload();
 
-        this.extensionScript.removeScripType(activeScriptType);
-        this.extensionScript.removeScripType(passiveScriptType);
-    }
-
-    @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
+        this.extensionScript.removeScriptType(activeScriptType);
+        this.extensionScript.removeScriptType(passiveScriptType);
     }
 
     @Override
     public String getDescription() {
         return Constant.messages.getString(PREFIX + ".desc");
-    }
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_EXTENSIONS_PAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
-    }
-
-    @Override
-    public boolean onHttpRequestSend(HttpMessage msg) {
-        return true;
-    }
-
-    @Override
-    public boolean onHttpResponseReceive(HttpMessage msg) {
-        if (options.isEnabled() && msg.getResponseHeader().isHtml()) {
-            try {
-                String html = msg.getResponseBody().toString();
-
-                Source document = new Source(html);
-                List<Element> heads = document.getAllElements("head");
-                Element head = heads.isEmpty() ? null : heads.get(0);
-
-                if (head != null && msg.getHistoryRef() != null) {
-                    String host = msg.getRequestHeader().getHeader("host");
-                    String frontEndApiUrl =
-                            API.getInstance().getCallBackUrl(this.api, "https://" + host);
-
-                    int historyReferenceId = msg.getHistoryRef().getHistoryId();
-
-                    StringBuilder injectedContentBuilder =
-                            new StringBuilder(200)
-                                    .append("<script src='")
-                                    .append(frontEndApiUrl)
-                                    .append("?action=getFile")
-                                    .append("&filename=front-end-scanner.js")
-                                    .append("&historyReferenceId=")
-                                    .append(historyReferenceId)
-                                    .append("'></script>");
-
-                    String injectedContent = injectedContentBuilder.toString();
-
-                    OutputDocument newResponseBody = new OutputDocument(document);
-                    int insertPosition = head.getChildElements().get(0).getBegin();
-                    newResponseBody.insert(insertPosition, injectedContent);
-
-                    msg.getResponseBody().setBody(newResponseBody.toString());
-
-                    int newLength = msg.getResponseBody().length();
-                    msg.getResponseHeader().setContentLength(newLength);
-                } else {
-                    LOGGER.debug("<head></head> is missing in the response");
-                }
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage(), e);
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public int getArrangeableListenerOrder() {
-        // Need to run after the HistoryReference has been saved to the database
-        return ProxyListenerLog.PROXY_LISTENER_ORDER + 42;
     }
 
     @Override
@@ -280,7 +195,7 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyL
     }
 
     private ImageIcon createIcon(String path) {
-        if (getView() == null) {
+        if (!hasView()) {
             return null;
         }
         return new ImageIcon(ExtensionFrontEndScanner.class.getResource(path));
@@ -292,22 +207,19 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyL
 
         try (Stream<Path> scriptFilePaths = Files.list(scriptFolderPath)) {
             scriptFilePaths
-                    .map(path -> path.toFile())
-                    .filter(file -> file.isFile())
+                    .map(Path::toFile)
+                    .filter(File::isFile)
                     .map(
-                            file -> {
-                                return new ScriptWrapper(
-                                        file.getName(), "", "Null", scriptType, true, file);
-                            })
-                    .map(scriptWrapper -> loadScript(scriptWrapper))
-                    .filter(maybeScriptWrapper -> maybeScriptWrapper.isPresent())
-                    .map(maybeScriptWrapper -> maybeScriptWrapper.get())
+                            file ->
+                                    new ScriptWrapper(
+                                            file.getName(), "", "Null", scriptType, true, file))
+                    .map(this::loadScript)
+                    .filter(Optional<ScriptWrapper>::isPresent)
+                    .map(Optional<ScriptWrapper>::get)
                     // Keep scripts are not registered yet.
                     .filter(
-                            scriptWrapper -> {
-                                return this.extensionScript.getScript(scriptWrapper.getName())
-                                        == null;
-                            })
+                            scriptWrapper ->
+                                    this.extensionScript.getScript(scriptWrapper.getName()) == null)
                     .forEach(scriptWrapper -> this.extensionScript.addScript(scriptWrapper, false));
         } catch (NoSuchFileException e) {
             return;

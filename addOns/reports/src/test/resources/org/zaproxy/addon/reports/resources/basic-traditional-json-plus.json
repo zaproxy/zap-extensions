@@ -1,0 +1,67 @@
+{
+    "@programName": "ZAP",
+    "@version": "Dev Build",
+    "@generated": "Thu, 20 Oct 2022 17:10:46",
+    "site":[ 
+        {
+            "@name": "http://example.com",
+            "@host": "example.com",
+            "@port": "80",
+            "@ssl": "false",
+            "alerts": [ 
+                {
+                    "pluginid": "1",
+                    "alertRef": "1",
+                    "alert": "XSS",
+                    "name": "XSS",
+                    "riskcode": "3",
+                    "confidence": "2",
+                    "riskdesc": "!reports.report.risk.3! (!reports.report.confidence.2!)",
+                    "desc": "<p>XSS Description</p>",
+                    "instances":[ 
+                        {
+                            "id": "-1",
+                            "uri": "http://example.com/example_3",
+                            "method": "GET",
+                            "param": "Test Param",
+                            "attack": "Test \"Attack\\\"",
+                            "evidence": "Test <p>Evidence",
+                            "otherinfo": "Test 'Other\\",
+                            "request-header": "GET http://example.com/example_3 HTTP/1.1\r\nhost: example.com\r\nuser-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:92.0) Gecko/20100101 Firefox/92.0\r\npragma: no-cache\r\ncache-control: no-cache\r\n\r\n",
+                            "request-body": "Test Request Body",
+                            "response-header": "HTTP/1.0 0\r\n\r\n",
+                            "response-body": "Test Response Body"
+                        },
+                        {
+                            "id": "-1",
+                            "uri": "http://example.com/example_3",
+                            "method": "GET",
+                            "param": "Test Param",
+                            "attack": "Test \"Attack\\\"",
+                            "evidence": "Test <p>Evidence",
+                            "otherinfo": "Test Another 'Other\\",
+                            "request-header": "GET http://example.com/example_3 HTTP/1.1\r\nhost: example.com\r\nuser-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:92.0) Gecko/20100101 Firefox/92.0\r\npragma: no-cache\r\ncache-control: no-cache\r\n\r\n",
+                            "request-body": "Test Request Body",
+                            "response-header": "HTTP/1.0 0\r\n\r\n",
+                            "response-body": "Test Response Body"
+                        }
+                    ],
+                    "count": "2",
+                    "solution": "<p>Test Solution</p>",
+                    "otherinfo": "<p>Test 'Other\\</p>",
+                    "reference": "<p>Test Reference</p>",
+                    "cweid": "123",
+                    "wascid": "456",
+                    "sourceid": "0",
+                    "tags":[ 
+                        {
+                            "tag": "tagkey",
+                            "link": "tagvalue"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+

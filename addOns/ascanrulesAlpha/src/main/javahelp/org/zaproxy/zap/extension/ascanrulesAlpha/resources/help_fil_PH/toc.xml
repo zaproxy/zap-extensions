@@ -6,7 +6,7 @@
 <toc version="2.0">
 	<tocitem text="ZAP Gabay sa Gagamit" tocid="toplevelitem">
 		<tocitem text="Magdagdag ng Ons" tocid="addons">
-			<tocitem text="Aktibong Pag-Scan Panuntunan - alpha" image="ascanalpha-icon" target="ascanalpha"/>
+			<tocitem text="Active Scan Rules - Alpha" image="ascanalpha-icon" target="ascanalpha"/>
 		</tocitem>
 	</tocitem>
 </toc>

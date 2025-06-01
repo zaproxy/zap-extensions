@@ -19,19 +19,19 @@
  */
 package org.zaproxy.zap.extension.viewstate.zap.utils;
 
-import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
 import net.htmlparser.jericho.Source;
 import net.htmlparser.jericho.StartTag;
-import org.apache.log4j.Logger;
-import org.parosproxy.paros.extension.encoder.Base64;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class ASPViewState extends ViewState {
 
-    private static Logger logger = Logger.getLogger(ASPViewState.class);
+    private static final Logger LOGGER = LogManager.getLogger(ASPViewState.class);
     public static final String KEY = "ASP";
 
     private boolean isValid = true;
@@ -157,7 +157,7 @@ public class ASPViewState extends ViewState {
     }
 
     public String encode(byte[] plain) {
-        this.value = Base64.encodeBytes(plain);
+        this.value = Base64.getEncoder().encodeToString(plain);
         return this.value;
     }
 
@@ -167,9 +167,9 @@ public class ASPViewState extends ViewState {
 
     public byte[] decode(String base64) {
         try {
-            return Base64.decode(base64);
-        } catch (IOException e) {
-            logger.error("Could not decode ASPViewState: " + e.getMessage(), e);
+            return Base64.getDecoder().decode(base64);
+        } catch (IllegalArgumentException e) {
+            LOGGER.error("Could not decode ASPViewState: {}", e.getMessage(), e);
             return base64.getBytes();
         }
     }

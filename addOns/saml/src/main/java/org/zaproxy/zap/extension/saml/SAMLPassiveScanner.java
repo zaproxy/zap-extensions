@@ -23,7 +23,6 @@ import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public class SAMLPassiveScanner extends PluginPassiveScanner {
@@ -35,11 +34,6 @@ public class SAMLPassiveScanner extends PluginPassiveScanner {
             Constant.messages.getString("saml.passivescanner.otherinfo");
     private static final String REFS = Constant.messages.getString("saml.passivescanner.refs");
 
-    private PassiveScanThread parent;
-
-    @Override
-    public void scanHttpRequestSend(HttpMessage msg, int id) {}
-
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         scanMessage(msg, id);
@@ -48,35 +42,21 @@ public class SAMLPassiveScanner extends PluginPassiveScanner {
     private void scanMessage(HttpMessage msg, int id) {
         SAMLInspectionResult samlInspectionResult = SAMLUtils.inspectMessage(msg);
         if (samlInspectionResult.hasSAMLMessage()) {
-            addTag(id);
-            raiseAlert(msg, id, samlInspectionResult);
+            addHistoryTag("SAML");
+            raiseAlert(samlInspectionResult);
         }
     }
 
-    private void addTag(int id) {
-        parent.addTag(id, "SAML");
-    }
-
-    private void raiseAlert(HttpMessage msg, int id, SAMLInspectionResult samlInspectionResult) {
-        Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIDENCE_MEDIUM, NAME);
-        alert.setDetail(
-                DESCRIPTION,
-                msg.getRequestHeader().getURI().toString(),
-                samlInspectionResult.getEvidence().getName(),
-                "",
-                OTHER_INFO,
-                "",
-                REFS,
-                samlInspectionResult.getEvidence().getValue(),
-                0,
-                0,
-                msg);
-        parent.raiseAlert(id, alert);
-    }
-
-    @Override
-    public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+    private void raiseAlert(SAMLInspectionResult samlInspectionResult) {
+        newAlert()
+                .setRisk(Alert.RISK_INFO)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(DESCRIPTION)
+                .setOtherInfo(OTHER_INFO)
+                .setReference(REFS)
+                .setParam(samlInspectionResult.getEvidence().getName())
+                .setEvidence(samlInspectionResult.getEvidence().getValue())
+                .raise();
     }
 
     @Override

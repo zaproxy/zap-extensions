@@ -24,9 +24,6 @@ import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.HashSet;
 import java.util.Set;
@@ -40,8 +37,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
-import javax.swing.KeyStroke;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
@@ -72,11 +69,12 @@ import org.zaproxy.zap.view.ZapToggleButton;
  * Represents the WebSockets tab. It listens to all WebSocket channels and displays messages
  * accordingly.
  */
+@SuppressWarnings("serial")
 public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
 
     private static final long serialVersionUID = -2853099315338427006L;
 
-    private static final Logger logger = Logger.getLogger(WebSocketPanel.class);
+    private static final Logger LOGGER = LogManager.getLogger(WebSocketPanel.class);
 
     /** Observe messages after storage handler was called. */
     public static final int WEBSOCKET_OBSERVING_ORDER =
@@ -115,7 +113,7 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
                         new ImageIcon(
                                 WebSocketPanel.class.getResource(
                                         "/resource/icon/fugue/plug-connect-target.png")));
-    };
+    }
 
     private JToolBar panelToolbar = null;
 
@@ -180,16 +178,11 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
     }
 
     /** Sets up the graphical representation of this tab. */
-    @SuppressWarnings("deprecation")
     private void initializePanel() {
         setName(Constant.messages.getString("websocket.panel.title"));
-        // TODO Use getMenuShortcutKeyMaskEx() (and remove warn suppression) when targeting Java 10+
         setDefaultAccelerator(
-                KeyStroke.getKeyStroke(
-                        KeyEvent.VK_W,
-                        Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
-                                | KeyEvent.SHIFT_DOWN_MASK,
-                        false));
+                View.getSingleton()
+                        .getMenuShortcutKeyStroke(KeyEvent.VK_W, KeyEvent.SHIFT_DOWN_MASK, false));
         setMnemonic(Constant.messages.getChar("websocket.panel.mnemonic"));
 
         setLayout(new GridBagLayout());
@@ -288,28 +281,23 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
             channelSelect.setRenderer(new ComboBoxChannelRenderer());
             channelSelect.setMaximumRowCount(8);
             channelSelect.addActionListener(
-                    new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-
-                            WebSocketChannelDTO channel =
-                                    (WebSocketChannelDTO) channelSelect.getSelectedItem();
-                            if (channel != null && channel.id != null) {
-                                // has valid element selected + a valid reference
-                                useModel(channel.id);
-                            } else {
-                                useJoinedModel();
-                            }
-
-                            if (channel != null && channel.historyId != null) {
-                                getShowHandshakeButton().setEnabled(true);
-                            } else {
-                                getShowHandshakeButton().setEnabled(false);
-                            }
-
-                            messagesView.revalidate();
+                    e -> {
+                        WebSocketChannelDTO channel =
+                                (WebSocketChannelDTO) channelSelect.getSelectedItem();
+                        if (channel != null && channel.getId() != null) {
+                            // has valid element selected + a valid reference
+                            useModel(channel.getId());
+                        } else {
+                            useJoinedModel();
                         }
+
+                        if (channel != null && channel.getHistoryId() != null) {
+                            getShowHandshakeButton().setEnabled(true);
+                        } else {
+                            getShowHandshakeButton().setEnabled(false);
+                        }
+
+                        messagesView.revalidate();
                     });
         }
         return channelSelect;
@@ -326,14 +314,10 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
                                     WebSocketPanel.class.getResource(
                                             "/resource/icon/16/041.png"))));
             optionsButton.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
+                    e ->
                             Control.getSingleton()
                                     .getMenuToolsControl()
-                                    .options(Constant.messages.getString("websocket.panel.title"));
-                        }
-                    });
+                                    .options(Constant.messages.getString("websocket.panel.title")));
         }
         return optionsButton;
     }
@@ -350,14 +334,7 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
                     Constant.messages.getString("websocket.filter.button.filter"));
 
             final WebSocketPanel panel = this;
-            filterButton.addActionListener(
-                    new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            panel.showFilterDialog();
-                        }
-                    });
+            filterButton.addActionListener(e -> panel.showFilterDialog());
         }
         return filterButton;
     }
@@ -385,23 +362,19 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
 
             final JComboBox<WebSocketChannelDTO> channelSelect = this.channelSelect;
             handshakeButton.addActionListener(
-                    new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent evt) {
-                            WebSocketChannelDTO channel =
-                                    (WebSocketChannelDTO) channelSelect.getSelectedItem();
-                            HistoryReference handshakeRef = channel.getHandshakeReference();
-                            if (handshakeRef != null) {
-                                HttpMessage msg;
-                                try {
-                                    msg = handshakeRef.getHttpMessage();
-                                } catch (Exception e) {
-                                    logger.warn(e.getMessage(), e);
-                                    return;
-                                }
-                                showHandshakeMessage(msg);
+                    evt -> {
+                        WebSocketChannelDTO channel =
+                                (WebSocketChannelDTO) channelSelect.getSelectedItem();
+                        HistoryReference handshakeRef = channel.getHandshakeReference();
+                        if (handshakeRef != null) {
+                            HttpMessage msg;
+                            try {
+                                msg = handshakeRef.getHttpMessage();
+                            } catch (Exception e) {
+                                LOGGER.warn(e.getMessage(), e);
+                                return;
                             }
+                            showHandshakeMessage(msg);
                         }
                     });
         }
@@ -437,13 +410,7 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
 
             final WebSocketBreakpointsUiManagerInterface brkManager = this.brkManager;
             brkButton.addActionListener(
-                    new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            brkManager.handleAddBreakpoint(new WebSocketMessageDTO());
-                        }
-                    });
+                    e -> brkManager.handleAddBreakpoint(new WebSocketMessageDTO()));
         }
         return brkButton;
     }
@@ -509,16 +476,10 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
             if (EventQueue.isDispatchThread()) {
                 updateChannelsState(state, channel);
             } else {
-                EventQueue.invokeAndWait(
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                updateChannelsState(state, channel);
-                            }
-                        });
+                EventQueue.invokeAndWait(() -> updateChannelsState(state, channel));
             }
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -527,12 +488,12 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
         boolean isNewChannel = false;
 
         synchronized (connectedChannelIds) {
-            boolean isConnectedChannel = connectedChannelIds.contains(channel.id);
+            boolean isConnectedChannel = connectedChannelIds.contains(channel.getId());
 
             switch (state) {
                 case CLOSED:
-                    if (isConnectedChannel && channel.endTimestamp != null) {
-                        connectedChannelIds.remove(channel.id);
+                    if (isConnectedChannel && channel.getEndTimestamp() != null) {
+                        connectedChannelIds.remove(channel.getId());
 
                         // updates icon
                         channelsModel.updateElement(channel);
@@ -541,15 +502,15 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
 
                 case EXCLUDED:
                     // remove from UI
-                    connectedChannelIds.remove(channel.id);
+                    connectedChannelIds.remove(channel.getId());
                     channelsModel.removeElement(channel);
 
                     messagesModel.fireTableDataChanged();
                     break;
 
                 case OPEN:
-                    if (!isConnectedChannel && channel.endTimestamp == null) {
-                        connectedChannelIds.add(channel.id);
+                    if (!isConnectedChannel && channel.getEndTimestamp() == null) {
+                        connectedChannelIds.add(channel.getId());
                         channelsModel.addElement(channel);
                         isNewChannel = true;
                     }
@@ -557,7 +518,7 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
 
                 case INCLUDED:
                     // add to UI (probably again)
-                    connectedChannelIds.add(channel.id);
+                    connectedChannelIds.add(channel.getId());
                     channelsModel.addElement(channel);
 
                     messagesModel.fireTableDataChanged();
@@ -610,7 +571,7 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
     /**
      * Shows filter dialog
      *
-     * @return 1 is returned if applied, -1 when dialog was reseted.
+     * @return 1 is returned if applied, -1 when dialog was reset.
      */
     protected int showFilterDialog() {
         WebSocketMessagesViewFilterDialog dialog = getFilterDialog();
@@ -690,7 +651,7 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
                 }
                 channelSelect.setSelectedIndex(index);
             } catch (DatabaseException e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
     }
@@ -700,14 +661,15 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
 
         // show channel if not already active
         Integer activeChannelId = messagesModel.getActiveChannelId();
-        if (message.channel.id != null && !message.channel.id.equals(activeChannelId)) {
-            messagesModel.setActiveChannel(message.channel.id);
-            channelSelectModel.setSelectedChannelId(message.channel.id);
+        if (message.getChannel().getId() != null
+                && !message.getChannel().getId().equals(activeChannelId)) {
+            messagesModel.setActiveChannel(message.getChannel().getId());
+            channelSelectModel.setSelectedChannelId(message.getChannel().getId());
         }
 
         // check if message is filtered out
         WebSocketMessagesViewFilter filter = getFilterDialog().getFilter();
-        if (filter.isBlacklisted(message)) {
+        if (filter.isDenylisted(message)) {
             // make it visible by resetting filter
             filter.reset();
             setFilterStatus();
@@ -739,15 +701,12 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
             } else {
                 try {
                     EventQueue.invokeAndWait(
-                            new Runnable() {
-                                @Override
-                                public void run() {
-                                    pause();
-                                    reset();
-                                }
+                            () -> {
+                                pause();
+                                reset();
                             });
                 } catch (Exception e) {
-                    logger.error(e.getMessage(), e);
+                    LOGGER.error(e.getMessage(), e);
                 }
             }
         }
@@ -811,24 +770,20 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
                     Constant.messages.getString("history.scope.button.selected"));
 
             scopeButton.addActionListener(
-                    new java.awt.event.ActionListener() {
+                    e -> {
+                        // show channels only in scope in JComboBox (select element)
+                        boolean isShowJustInScope = scopeButton.isSelected();
 
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            // show channels only in scope in JComboBox (select element)
-                            boolean isShowJustInScope = scopeButton.isSelected();
-
-                            channelsModel.setShowJustInScope(isShowJustInScope);
-                            if (!channelsModel.contains(channelSelect.getSelectedItem())) {
-                                // select first entry, if selected item does no longer appear in
-                                // drop-down
-                                channelSelect.setSelectedIndex(0);
-                            }
-
-                            // show messages only from channels in scope
-                            getFilterDialog().getFilter().setShowJustInScope(isShowJustInScope);
-                            applyFilter();
+                        channelsModel.setShowJustInScope(isShowJustInScope);
+                        if (!channelsModel.contains(channelSelect.getSelectedItem())) {
+                            // select first entry, if selected item does no longer appear in
+                            // drop-down
+                            channelSelect.setSelectedIndex(0);
                         }
+
+                        // show messages only from channels in scope
+                        getFilterDialog().getFilter().setShowJustInScope(isShowJustInScope);
+                        applyFilter();
                     });
         }
         return scopeButton;

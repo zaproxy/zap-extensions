@@ -1,0 +1,73 @@
+--- # ZAP automation configuration file, for more details see https://www.zaproxy.org/docs/automate/automation-framework/
+env:                                   # The environment, mandatory
+  contexts :                           # List of 1 or more contexts, mandatory
+    - name: context 1                  # Name to be used to refer to this context in other jobs, mandatory
+      urls:                            # A mandatory list of top level urls, everything under each url will be included
+      includePaths:                    # An optional list of regexes to include
+      excludePaths:                    # An optional list of regexes to exclude
+  vars:                                # List of 0 or more variables, can be used in urls and selected other parameters
+  parameters:
+    failOnError: true                  # If set exit on an error         
+    failOnWarning: false               # If set exit on a warning
+    continueOnFailure: false           # Continue running all jobs, even if one fails
+    progressToStdout: true             # If set will write job progress to stdout
+
+jobs:
+  - type: activeScan-config                # Configures the settings of the active scanner.
+    parameters:
+      maxRuleDurationInMins:               # Int: The max time in minutes any individual rule will be allowed to run for, default: 0 unlimited
+      maxScanDurationInMins:               # Int: The max time in minutes the active scanner will be allowed to run for, default: 0 unlimited
+      maxAlertsPerRule:                    # Int: Maximum number of alerts to raise per rule, default: 0 unlimited
+      defaultPolicy:                       # String: The name of the default scan policy to use, default: Default Policy
+
+  - type: activeScan-policy            # Defines a new active scan policy which can be used by later activeScan related jobs
+    parameters:
+      name:                            # String: Name of the policy, mandatory
+    policyDefinition:                  # The policy definition
+      defaultStrength:                 # String: The default Attack Strength for all rules, one of Low, Medium, High, Insane (not recommended), default: Medium
+      defaultThreshold:                # String: The default Alert Threshold for all rules, one of Off, Low, Medium, High, default: Medium
+      rules:                           # A list of one or more active scan rules and associated settings which override the defaults
+      - id:                            # Int: The rule id as per https://www.zaproxy.org/docs/alerts/
+        name:                          # Comment: The name of the rule for documentation purposes - this is not required or actually used
+        strength:                      # String: The Attack Strength for this rule, one of Low, Medium, High, Insane, default: Medium
+        threshold:                     # String: The Alert Threshold for this rule, one of Off, Low, Medium, High, default: Medium
+
+  - type: requestor                    # Used to send specific requests to targets
+    parameters:
+      user:                            # String: An optional user to use for authenticated requests, must be defined in the env
+    requests:                          # A list of requests to make
+      - url:                           # String: A mandatory URL of the request to be made
+
+  - type: delay                        # Pause the plan for a set period of time or event (file created, programmatic method called, API endpoint called)
+    parameters:
+      time:                            # String: The time to wait, format any of ['hh:mm:ss', 'mm:ss', 'ss'], default: 0
+      fileName:                        # String: Name of a file which will cause the job to end early if created, default: empty
+
+  - type: activeScan                   # The active scanner - this actively attacks the target so should only be used with permission
+    parameters:
+      context:                         # String: Name of the context to attack, default: first context
+      user:                            # String: An optional user to use for authentication, must be defined in the env
+      policy:                          # String: Name of the scan policy to be used, default: Default Policy
+      maxRuleDurationInMins:           # Int: The max time in minutes any individual rule will be allowed to run for, default: 0 unlimited
+      maxScanDurationInMins:           # Int: The max time in minutes the active scanner will be allowed to run for, default: 0 unlimited
+    tests:
+      - name: 'test one'                       # Name of the test, optional
+        type: alert                            # Specifies that the test is of type 'alert'
+        action: passIfPresent/passIfAbsent     # String: The condition (presence/absence) of the alert, default: passIfAbsent  
+        scanRuleId:                            # Integer: The id of the scanRule which generates the alert, mandatory  
+        alertName:                             # String: The name of the alert generated, optional
+        url: http://www.example.com/path       # String: The url of the request corresponding to the alert generated, optional
+        method:                                # String: The method of the request corresponding to the alert generated, optional
+        attack:                                # String: The actual attack which generated the alert, optional
+        param:                                 # String: The parameter which was modified to generate the alert, optional
+        evidence:                              # String: The evidence corresponding to the alert generated, optional
+        confidence:                            # String: The confidence of the alert, one of 'False Positive', 'Low', 'Medium', 'High', 'Confirmed', optional
+        risk:                                  # String: The risk of the alert, one of 'Informational', 'Low', 'Medium', 'High', optional
+        otherInfo:                             # String: Addional information corresponding to the alert, optional
+        onFail: 'info'                         # String: One of 'warn', 'error', 'info', mandatory
+
+  - type: exitStatus                   # Sets the exit code based on scan results
+    parameters:
+      errorLevel:                      # String: Informational, Low, Medium, High, default: not set
+      warnLevel:                       # String: Informational, Low, Medium, High, default: not set
+

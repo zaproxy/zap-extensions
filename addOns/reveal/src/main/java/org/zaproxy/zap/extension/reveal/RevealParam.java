@@ -19,13 +19,9 @@
  */
 package org.zaproxy.zap.extension.reveal;
 
-import org.apache.commons.configuration.ConversionException;
-import org.apache.log4j.Logger;
 import org.zaproxy.zap.common.VersionedAbstractParam;
 
 public class RevealParam extends VersionedAbstractParam {
-
-    private static final Logger logger = Logger.getLogger(RevealParam.class);
 
     /**
      * The version of the configurations. Used to keep track of configurations changes between
@@ -57,30 +53,18 @@ public class RevealParam extends VersionedAbstractParam {
 
     @Override
     protected void parseImpl() {
-        try {
-            reveal = getConfig().getBoolean(PARAM_REVEAL_STATE, PARAM_REVEAL_STATE_DEFAULT_VALUE);
-        } catch (ConversionException e) {
-            logger.error("Error while loading the reveal state: " + e.getMessage(), e);
-        }
+        reveal = getBoolean(PARAM_REVEAL_STATE, PARAM_REVEAL_STATE_DEFAULT_VALUE);
     }
 
     @Override
     protected void updateConfigsImpl(int fileVersion) {
         // When in ZAP "core"
         if (fileVersion == NO_CONFIG_VERSION) {
-            try {
-                final String oldKey = "view.reveal";
-                boolean oldValue = getConfig().getBoolean(oldKey, false);
-                getConfig().clearProperty(oldKey);
+            final String oldKey = "view.reveal";
+            boolean oldValue = getBoolean(oldKey, false);
+            getConfig().clearProperty(oldKey);
 
-                getConfig().setProperty(PARAM_REVEAL_STATE, Boolean.valueOf(oldValue));
-            } catch (ConversionException e) {
-                logger.error(
-                        "Error while updating the reveal state from old version ["
-                                + fileVersion
-                                + "]",
-                        e);
-            }
+            getConfig().setProperty(PARAM_REVEAL_STATE, Boolean.valueOf(oldValue));
         }
     }
 

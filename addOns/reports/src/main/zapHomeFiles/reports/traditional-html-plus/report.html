@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title th:text="${reportTitle}">Report Title</title>
+<link th:href="${resources + '/common.css'}" href="resources/common.css"
+	rel="stylesheet" type="text/css">
+<link th:href="${resources + '/' + reportData.theme + '.css'}"
+	href="resources/dark.css" rel="stylesheet" type="text/css">
+<script th:src="${resources + '/Chart.min.js'}"
+	src="resources/Chart.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+    function showHide(id, blockDisplay) {
+        showHideElement(id + "reqh", blockDisplay);
+        showHideElement(id + "reqb", blockDisplay);
+        showHideElement(id + "resph", blockDisplay);
+        showHideElement(id + "respb", blockDisplay);
+        showHideElement(id + "reqrh", blockDisplay);
+        showHideElement(id + "reqrb", blockDisplay);
+        showHideElement(id + "resprh", blockDisplay);
+        showHideElement(id + "resprb", blockDisplay);
+        showHideElement(id + "reqhdr", blockDisplay);
+        showHideElement(id + "resphdr", blockDisplay);
+    }
+    function showHideElement(id, blockDisplay) {
+        var x = document.getElementById(id);
+        var displayType = blockDisplay ? "block" : "table-cell";
+        if (x.style.display === "none") {
+            x.style.display = displayType;
+        } else {
+            x.style.display = "none";
+        }
+    }
+</script>
+<link rel="stylesheet" th:href="${resources + '/Chart.min.css'}"
+	href="resources/Chart.min.css">
+</head>
+<body>
+	<h1>
+		<!-- The ZAP Logo -->
+		<img th:src="${resources + '/zap-by-checkmarx.png'}"
+			src="resources/zap-by-checkmarx.png" alt="">
+		<th:block th:text="${reportTitle}">Report Title</th:block>
+	</h1>
+	<p />
+	<th:block
+		th:each="desc, state: ${#strings.arraySplit(description, '\n')}">
+		<th:block th:text="${desc}"></th:block>
+		<br th:if="${!state.last}" />
+	</th:block>
+
+	<h3>
+		<th:block
+			th:text="#{report.generated(${#dates.format(new java.util.Date(), 'EEE, d MMM yyyy HH:mm:ss')})}">Date, time</th:block>
+	</h3>
+	<h3>
+		<th:block th:text="#{report.zapVersion(${zapVersion})}">ZAP Version</th:block>
+	</h3>
+	<h4>
+		ZAP by <a href="https://checkmarx.com/">Checkmarx</a>
+	</h4>
+	<th:block th:if="${reportData.isIncludeSection('chart')}">
+		<canvas id="summaryChart" width="550" height="300"
+			style="border: 1px solid"></canvas>
+		<script th:inline="javascript" type="text/javascript">
+            /*<![CDATA[*/
+            var title = /*[[#{report.template.chart}]]*/"Alert chart";
+            var labels = [
+            /*[[${helper.getRiskString(3)}]]*/"High",
+            /*[[${helper.getRiskString(2)}]]*/"Medium",
+            /*[[${helper.getRiskString(1)}]]*/"Low",
+            /*[[${helper.getRiskString(0)}]]*/"Info" ];
+            var data = [
+            /*[[${alertCounts.get(3)}]]*/3,
+            /*[[${alertCounts.get(2)}]]*/2,
+            /*[[${alertCounts.get(1)}]]*/1,
+            /*[[${alertCounts.get(0)}]]*/0 ];
+            /*]]>*/
+            new Chart(document.getElementById("summaryChart"),
+                    {
+                        "type" : "bar",
+                        "data" : {
+                            "labels" : labels,
+                            "datasets" : [ {
+                                "label" : title,
+                                "data" : data,
+                                "fill" : false,
+                                "backgroundColor" : [ "red", "orange",
+                                        "yellow", "blue" ],
+                                "borderWidth" : 1
+                            } ]
+                        },
+                        "options" : {
+                            "scales" : {
+                                "yAxes" : [ {
+                                    "ticks" : {
+                                        "beginAtZero" : true
+                                    }
+                                } ]
+                            },
+                            responsive : false
+                        }
+                    });
+        </script>
+		<p></p>
+	</th:block>
+
+	<th:block th:if="${reportData.isIncludeSection('alertcount')}">
+		<h3 th:text="#{report.alerts.summary}" class="left-header">Summary
+			of Alerts</h3>
+		<table class="summary">
+			<tr>
+				<th th:text="#{report.alerts.summary.risklevel}" width="45%"
+					height="24">Risk Level</th>
+				<th th:text="#{report.alerts.summary.numalerts}" width="55%"
+					align="center">Number of Alerts</th>
+			</tr>
+			<tr th:each="i : ${#numbers.sequence(3, -1, -1)}"
+				th:if="${reportData.isIncludeRisk(i)}">
+				<td th:class="${'risk-' + i}">
+					<div th:text="${helper.getRiskString(i)}">Risk</div>
+				</td>
+				<td align="center">
+					<div th:text="${alertCounts.get(i)} ?: '0'">Count</div>
+				</td>
+			</tr>
+		</table>
+		<div class="spacer-lg"></div>
+	</th:block>
+
+	<th:block th:if="${reportData.isIncludeSection('sequencedetails')}">
+		<th:block
+			th:if="${reportData.reportObjects.get('seqAScanData') != null}">
+			<h3 th:text="#{report.sequences.summary.name}">Summary of
+				Sequences</h3>
+			<p class="smallnote" th:text="#{report.sequences.summary.note}">Summary
+				Note</p>
+
+			<th:block
+				th:each="seq, seqState: ${reportData.reportObjects.get('seqAScanData').seqData}">
+				<table class="summary100">
+					<tr>
+						<td class="tdconstrainer"></td>
+						<td class="tdconstrainer"></td>
+						<td class="tdconstrainer"></td>
+						<td class="tdconstrainer"></td>
+						<td class="tdconstrainer"></td>
+						<td class="tdconstrainer"></td>
+						<td class="tdconstrainer"></td>
+						<td class="tdconstrainer"></td>
+						<td class="tdconstrainer"></td>
+						<td class="tdconstrainer"></td>
+						<td class="tdconstrainer"></td>
+					</tr>
+					<th:block th:each="step, stepState: ${seq.getSteps()}"
+						th:with="stepId=('step-' + ${seqState.index} + ${stepState.index})">
+						<th:block
+							th:if="${stepState.index} % 10 == 0 or ${stepState.index} == 0">
+							<tr>
+						</th:block>
+						<td th:if="${stepState.index} == 0">
+							<a 
+								th:href="'#' + ${seq.sequenceName}"
+								th:text="${seq.sequenceName}">sequenceName</a>
+						</td>
+						<td th:if="${stepState.index} != 0 and ${stepState.index} % 10 == 0">&nbsp</td>
+						<td th:class="(${step.isPass()} ? 'pass' : 'fail')"
+							th:with="riskLvl=(${step.getHighestAlert()})">
+						<a class="alwayswhite"
+							th:href="'#' + ${stepId}"
+							th:text="' ' + (${stepState.index} + 1)">step</a>
+						<span th:if="${riskLvl &gt; 0}"
+							th:class="'alert-' + ${step.getHighestAlert() + 'a'}"
+							th:text="' - '">flag</span><span
+				 				th:text="(${riskLvl &gt; 0} ? ${helper.getRiskString(riskLvl)} : '')">risk</span>
+						</td>
+						<th:block
+							th:if="(${stepState.index} + 1) % 10 == 0 or ${stepState.last}">
+							</tr>
+						</th:block>
+					</th:block>
+				</table>
+			</th:block>
+		</th:block>
+	</th:block>
+
+	<th:block th:if="${reportData.isIncludeSection('instancecount')}">
+		<h3 th:text="#{report.alerts.list}">Alerts</h3>
+		<table class="alerts">
+			<tr>
+				<th th:text="#{report.alerts.list.name}" width="60%" height="24">Name</th>
+				<th th:text="#{report.alerts.list.risklevel}" width="20%"
+					align="center">Risk Level</th>
+				<th th:text="#{report.alerts.list.numinstances}" width="20%"
+					align="center">Number of Instances</th>
+			</tr>
+			<tr th:each="alert: ${alertTree.children}">
+				<td><a th:href="'#plugin-' + ${alert.userObject.pluginId}"
+					th:text="${alert.nodeName}" href="#plugin-pluginId">Alert Name</a></td>
+				<td align="center" th:class="${'risk-' + alert.risk}"
+					th:text="${helper.getRiskString(alert.risk)}">Risk</td>
+				<td align="center" th:text="${alert.childCount}">Count</td>
+			</tr>
+		</table>
+		<div class="spacer-lg"></div>
+	</th:block>
+
+	<th:block th:if="${reportData.isIncludeSection('passingrules')}">
+		<h3 th:text="#{report.template.pass.list}">Passing Rules</h3>
+		<table class="alerts">
+			<tr>
+				<th th:text="#{report.alerts.list.name}" width="55%" height="24">Name</th>
+				<th th:text="#{report.template.pass.type}" width="15%"
+					align="center">Type</th>
+				<th th:text="#{report.template.pass.threshold}" width="15%"
+					align="center">Threshold</th>
+				<th th:text="#{report.template.pass.strength}" width="15%"
+					align="center">Strength</th>
+			</tr>
+			<th:block
+				th:if="${reportData.reportObjects.get('activeScanData') != null}">
+				<th:block
+					th:each="ascan : ${reportData.reportObjects.get('activeScanData').allRuleData}">
+					<tr th:if="${alertCountsByRule.get(ascan.id) == null}">
+						<td><a
+							th:href="'https://www.zaproxy.org/docs/alerts/' + ${ascan.id} + '/'"
+							th:if="${ascan.id &gt;= 0}" th:text="${ascan.name}">Alert
+								Name</a></td>
+						<td th:text="#{report.template.pass.type.active}" align="center">Active</td>
+						<td align="center" th:text="${ascan.threshold}">Threshold</td>
+						<td align="center" th:text="${ascan.strength}">Strength</td>
+					</tr>
+				</th:block>
+			</th:block>
+			<th:block
+				th:if="${reportData.reportObjects.get('passiveScanData2') != null}">
+				<th:block
+					th:each="pscan : ${reportData.reportObjects.get('passiveScanData2').allRuleData}">
+					<tr th:if="${alertCountsByRule.get(pscan.id) == null}">
+						<td><a
+							th:href="${'https://www.zaproxy.org/docs/alerts/' + pscan.id + '/'}"
+							th:if="${pscan.id &gt;= 0}" th:text="${pscan.name}">Alert
+								Name</a></td>
+						<td th:text="#{report.template.pass.type.passive}" align="center">Passive</td>
+						<td align="center" th:text="${pscan.threshold}">Threshold</td>
+						<td align="center">-</td>
+					</tr>
+				</th:block>
+			</th:block>
+		</table>
+		<div class="spacer-lg"></div>
+	</th:block>
+
+	<h2 th:text="#{report.sites.title}">Sites</h2>
+
+	<strong>Number of Sites tree nodes actively scanned:</strong>
+	<th:block
+		th:text="${reportData.reportObjects.get('activeScanData') != null ? reportData.reportObjects.get('activeScanData').numberScannedNodes : 0}">42</th:block>
+
+	<th:block th:each="site: ${reportData.sites}">
+		<h3 th:text="${site}">Site</h3>
+		<th:block th:if="${reportData.isIncludeSection('statistics')}">
+			<table class="summary">
+				<tr>
+					<th width="45%" height="24"
+						th:text="#{report.template.stats.httpcode}">HTTP Response
+						Code</th>
+					<th width="55%" align="center"
+						th:text="#{report.template.stats.respcount}">Number of
+						Responses</th>
+				</tr>
+
+				<th:block
+					th:each="stat : ${helper.getSiteStats(site, 'stats.code.')}">
+					<tr th:with="httpcode=${stat.key.substring(11)}">
+						<td><a
+							th:href="${'https://developer.mozilla.org/docs/Web/HTTP/Status/' + httpcode}"
+							th:text="${httpcode + ' ' + helper.getHttpStatusCodeString(httpcode)}"
+							href="https://developer.mozilla.org/docs/Web/HTTP/Status/200">Code</a>
+						</td>
+						<td align="center">
+							<div th:text="${stat.value}">Count</div>
+						</td>
+					</tr>
+					<th:block th:if="${stat.key.startsWith('stats.auth.')}"
+						th:with="hasAuth=${true}">
+					</th:block>
+				</th:block>
+			</table>
+			<div class="spacer-lg"></div>
+			<h4 th:if="${!helper.hasSiteStats(site, 'stats.auth.')}"
+				th:text="#{report.template.stats.auth.none}">No Authentication
+				Statistics Found</h4>
+			<table class="summary"
+				th:if="${helper.hasSiteStats(site, 'stats.auth.')}">
+				<tr>
+					<th width="45%" height="24" th:text="#{report.template.stats.auth}">Authentications
+						Statistics</th>
+					<th width="55%" align="center"
+						th:text="#{report.template.stats.respcount}">Number of
+						Responses</th>
+				</tr>
+				<th:block
+					th:each="stat : ${helper.getSiteStats(site, 'stats.auth.')}">
+					<tr>
+						<td>
+							<div th:text="${helper.getStatisticsString(stat.key)}">Statistic</div>
+						</td>
+						<td align="center">
+							<div th:text="${stat.value}">Count</div>
+						</td>
+					</tr>
+				</th:block>
+			</table>
+		</th:block>
+		<th:block
+			th:if="${reportData.reportObjects.get('wappalyzerData') != null &amp;&amp; reportData.reportObjects.get('wappalyzerData').getTechnologyForSite(site).size() &gt; 0}">
+			<table class="summary">
+				<tr>
+					<th th:text="#{report.template.tech.name}">Technology</th>
+					<th th:text="#{report.template.tech.version}">Version</th>
+					<th th:text="#{report.template.tech.categories}">Categories</th>
+					<th th:text="#{report.template.tech.implies}">Implies</th>
+				</tr>
+
+				<th:block
+					th:each="tech : ${reportData.reportObjects.get('wappalyzerData').getTechnologyForSite(site)}">
+					<tr>
+						<td>
+							<div th:text="${tech.name}">Name</div>
+						</td>
+						<td>
+							<div th:text="${tech.version}">Version</div>
+						</td>
+						<td><th:block th:each="category : ${tech.categories}">
+								<div th:text="${category}">Category</div>
+							</th:block></td>
+						<td><th:block th:each="imply : ${tech.implies}">
+								<div th:text="${imply}">Imply</div>
+							</th:block></td>
+					</tr>
+				</th:block>
+			</table>
+		</th:block>
+
+		<th:block
+			th:if="${reportData.isIncludeSection('params') &amp;&amp; reportData.reportObjects.get('paramsData') != null &amp;&amp; reportData.reportObjects.get('paramsData').getSiteParameters(site)}">
+			<table class="summary">
+				<tr>
+					<th th:text="#{report.template.params.name}">Name</th>
+					<th th:text="#{report.template.params.type}">Type</th>
+					<th th:text="#{report.template.params.flags}">Flags</th>
+					<th th:text="#{report.template.params.times}">Times Used</th>
+					<th th:text="#{report.template.params.values}"># Values</th>
+				</tr>
+
+				<th:block
+					th:each="param : ${reportData.reportObjects.get('paramsData').getSortedSiteParams(site)}">
+					<tr>
+						<td>
+							<div th:text="${param.name}">Name</div>
+						</td>
+						<td>
+							<div
+								th:text="${reportData.reportObjects.get('paramsData').getTypeString(param.type)}">Type</div>
+						</td>
+						<td><th:block th:each="flag : ${param.flags}">
+								<div th:text="${flag}">Flag</div>
+							</th:block></td>
+						<td>
+							<div th:text="${param.timesUsed}">Times Used</div>
+						</td>
+						<td>
+							<div th:text="${param.values.size}"># Values</div>
+						</td>
+					</tr>
+				</th:block>
+			</table>
+		</th:block>
+
+		<div class="spacer-lg"></div>
+	</th:block>
+
+	<th:block th:if="${reportData.isIncludeSection('alertdetails')}">
+		<h3 th:text="#{report.alerts.detail}">Alert Detail</h3>
+		<th:block th:each="alert: ${alertTree.children}">
+			<table class="results">
+				<tr height="24">
+					<th width="20%" th:class="${'risk-' + alert.risk}"><a
+						th:id="${'plugin-' + alert.userObject.pluginId}"></a>
+						<div th:text="${helper.getRiskString(alert.risk)}">Risk</div></th>
+					<th th:text="${alert.nodeName}" th:class="${'risk-' + alert.risk}">Alert
+						Name</th>
+				</tr>
+				<tr>
+					<td th:text="#{report.alerts.detail.description}" width="20%">Description</td>
+					<td width="80%"><th:block
+							th:each="desc, state: ${#strings.arraySplit(alert.userObject.description, '\n')}">
+							<div th:text="${desc}">Description</div>
+							<br th:if="${!state.last}" />
+						</th:block></td>
+				</tr>
+				<TR vAlign="top">
+					<TD colspan="2"></TD>
+				</TR>
+				<th:block th:each="instance: ${alert.children}">
+					<tr>
+						<td th:text="#{report.alerts.detail.url}" width="20%"
+							class="indent1">URL</td>
+						<td width="80%"><a th:href="${instance.userObject.uri}"
+							th:text="${instance.userObject.uri}" href="url.html">URL</a></td>
+					</tr>
+					<tr>
+						<td th:text="#{report.alerts.detail.method}" width="20%"
+							class="indent2">Method</td>
+						<td th:text="${instance.userObject.method}" width="80%">Method</td>
+					</tr>
+					<tr>
+						<td th:text="#{report.alerts.detail.param}" width="20%"
+							class="indent2">Param</td>
+						<td th:text="${instance.userObject.param}" width="80%">Param</td>
+					</tr>
+					<tr>
+						<td th:text="#{report.alerts.detail.attack}" width="20%"
+							class="indent2">Attack</td>
+						<td th:text="${instance.userObject.attack}" width="80%">Attack</td>
+					</tr>
+					<tr>
+						<td th:text="#{report.alerts.detail.evidence}" width="20%"
+							class="indent2">Evidence</td>
+						<td th:text="${instance.userObject.evidence}" width="80%">Evidence</td>
+					</tr>
+					<tr>
+						<td th:text="#{report.alerts.detail.otherinfo}" width="20%"
+							class="indent2">Other Info</td>
+						<td th:text="${instance.userObject.otherinfo}" width="80%">Other
+							Info</td>
+					</tr>
+					<tr data-th-if="${instance.userObject.message}">
+						<td width="20%" class="indent2">
+							<div th:id="${'alert-' + instance.userObject.alertId}">
+								<a
+									th:onclick="'showHide(\'alert-' + ${instance.userObject.alertId} + '\', true);'"
+									th:href="'#alert-' + ${instance.userObject.alertId}"
+									th:text="#{report.alerts.detail.showhide}">Show/hide</a>
+							</div>
+						</td>
+						<td width="80%"></td>
+					</tr>
+					<tr data-th-if="${instance.userObject.message}">
+						<td width="20%" class="indent2"><th:block
+								th:text="#{report.alerts.detail.request.header}">Request Header</th:block>
+							<th:block
+								th:text="#{report.size(${instance.userObject.message.requestHeader.toString.length})}">Size</th:block>
+						</td>
+						<td width="80%">
+							<div th:id="${'alert-' + instance.userObject.alertId + 'reqh'}"
+								style="display: none;">
+								<th:block
+									th:each="desc, state: ${#strings.arraySplit(instance.userObject.message.requestHeader, '\n')}">
+									<th:block th:text="${desc}">Request Header</th:block>
+									<br th:if="${!state.last}" />
+								</th:block>
+							</div>
+						</td>
+					</tr>
+					<tr data-th-if="${instance.userObject.message}">
+						<td width="20%" class="indent2"><th:block
+								th:text="#{report.alerts.detail.request.body}">Request Body</th:block>
+							<th:block
+								th:text="#{report.size(${instance.userObject.message.requestBody.length})}">Size</th:block>
+						</td>
+						<td width="80%">
+							<div th:id="${'alert-' + instance.userObject.alertId + 'reqb'}"
+								style="display: none;">
+								<th:block
+									th:each="desc, state: ${#strings.arraySplit(instance.userObject.message.requestBody, '\n')}">
+									<th:block th:text="${desc}">Request Body</th:block>
+									<br th:if="${!state.last}" />
+								</th:block>
+							</div>
+						</td>
+					</tr>
+					<tr data-th-if="${instance.userObject.message}">
+						<td width="20%" class="indent2"><th:block
+								th:text="#{report.alerts.detail.response.header}">Response Header</th:block>
+							<th:block
+								th:text="#{report.size(${instance.userObject.message.responseHeader.toString.length})}">Size</th:block>
+						</td>
+						<td width="80%">
+							<div th:id="${'alert-' + instance.userObject.alertId + 'resph'}"
+								style="display: none;">
+								<th:block
+									th:each="desc, state: ${#strings.arraySplit(instance.userObject.message.responseHeader, '\n')}">
+									<th:block th:text="${desc}">Response Header</th:block>
+									<br th:if="${!state.last}" />
+								</th:block>
+							</div>
+						</td>
+					</tr>
+					<tr data-th-if="${instance.userObject.message}">
+						<td width="20%" class="indent2"><th:block
+								th:text="#{report.alerts.detail.response.body}">Response Body</th:block>
+							<th:block
+								th:text="#{report.size(${instance.userObject.message.responseBody.length})}">Size</th:block>
+						</td>
+						<td width="80%">
+							<div th:id="${'alert-' + instance.userObject.alertId + 'respb'}"
+								style="display: none;">
+								<th:block
+									th:each="desc, state: ${#strings.arraySplit(instance.userObject.message.responseBody, '\n')}">
+									<th:block th:text="${desc}">Response Body</th:block>
+									<br th:if="${!state.last}" />
+								</th:block>
+							</div>
+						</td>
+					</tr>
+				</th:block>
+				<tr>
+					<td th:text="#{report.alerts.detail.instances}" width="20%">Instances</td>
+					<td th:text="${alert.childCount}" width="80%">Instances</td>
+				</tr>
+				<tr>
+					<td th:text="#{report.alerts.detail.solution}" width="20%">Solution</td>
+					<td width="80%"><th:block
+							th:each="soln, state: ${#strings.arraySplit(alert.userObject.solution, '\n')}">
+							<div th:text="${soln}">Solution</div>
+							<br th:if="${!state.last}" />
+						</th:block></td>
+				</tr>
+				<tr>
+					<td th:text="#{report.alerts.detail.reference}" width="20%">Reference</td>
+					<td width="80%"><th:block
+							th:each="ref, state: ${#strings.arraySplit(alert.userObject.reference, '\n')}">
+							<a th:href="${ref}" th:text="${ref}" href="ref.html">Ref</a>
+							<br th:if="${!state.last}" />
+						</th:block></td>
+				</tr>
+				<tr>
+					<td th:text="#{report.alerts.detail.tags}" width="20%">Tags</td>
+					<td width="80%"><th:block
+							th:each="entry, state: ${alert.userObject.tags}">
+
+							<th:block
+								th:if="${entry.value.startsWith('https://') or entry.value.startsWith('http://')}">
+								<a th:href="${entry.value}" th:text="${entry.key}"></a>
+							</th:block>
+							<th:block
+								th:if="${! entry.value.startsWith('https://') and ! entry.value.startsWith('http://')}">
+								<th:block th:text="${entry.key}"></th:block>
+							=
+							<th:block th:text="${entry.value}"></th:block>
+							</th:block>
+							<br th:if="${!state.last}" />
+						</th:block></td>
+				</tr>
+				<tr>
+					<td th:text="#{report.alerts.detail.cweid}" width="20%">CWE Id</td>
+					<td width="80%"><a
+						th:href="'https://cwe.mitre.org/data/definitions/' + ${alert.userObject.cweId} + '.html'"
+						th:if="${alert.userObject.cweId &gt; 0}"
+						th:text="${alert.userObject.cweId}" href="cwe.html">CWE Id</a></td>
+				</tr>
+				<tr>
+					<td th:text="#{report.alerts.detail.wascid}" width="20%">WASC
+						Id</td>
+					<td width="80%"><th:block
+							th:if="${alert.userObject.wascId &gt; 0}"
+							th:text="${alert.userObject.wascId}">WASC Id</th:block></td>
+				</tr>
+				<tr>
+					<td th:text="#{report.alerts.detail.pluginid}" width="20%">Plugin
+						Id</td>
+					<td width="80%"><a
+						th:href="'https://www.zaproxy.org/docs/alerts/' + ${alert.userObject.pluginId} + '/'"
+						th:if="${alert.userObject.pluginId &gt;= 0}"
+						th:text="${alert.userObject.pluginId}" href="plugin.html">Plugin
+							Id</a></td>
+				</tr>
+			</table>
+			<div class="spacer"></div>
+		</th:block>
+	</th:block>
+
+	<th:block th:if="${reportData.isIncludeSection('sequencedetails')}">
+		<th:block
+			th:if="${reportData.reportObjects.get('seqAScanData') != null}">
+			<h3 th:text="#{report.sequences.details.name}">Sequences Details</h3>
+			<p class="smallnote" th:text="#{report.sequences.details.note}">details
+				note</p>
+
+			<th:block
+				th:each="seq, seqState: ${reportData.reportObjects.get('seqAScanData').seqData}">
+
+				<h4 th:id="${seq.sequenceName}" th:text="${seq.sequenceName}">sequenceName</h4>
+				<div class="lm2">
+					<th:block th:each="step, stepState: ${seq.getSteps()}" th:with="stepId=('step-' + ${seqState.index} + ${stepState.index})">
+
+						<h4 th:id="${stepId}">
+							<th:block
+								th:text="#{report.sequences.step.label} + ' ' + ${stepState.index + 1} + ': ' + ${step.getOriginalMsg().getRequestHeader().getMethod()} + ' - '">sequence heading</th:block>
+							<a
+								th:href="${step.getOriginalMsg().getRequestHeader().getURI().toString()}"
+								th:text="${step.getOriginalMsg().getRequestHeader().getURI().toString()}">URL</a>
+						</h4>
+
+						<div class="lm2">
+
+							<span th:text="#{report.sequences.step.result}">Result</span> <span
+								th:text="${step.getResult()}">result</span><br> <span
+								th:if="${step.getAlerts().size() &gt; 0}"
+								th:text="#{report.sequences.step.alerts}">Alerts</span>
+							<div class="lm2" th:if="${step.getAlerts().size() &gt; 0}">
+								<th:block th:each="alert: ${step.getAlerts()}">
+									<span th:class="'alert-' + ${alert.getRisk() + 'b'}">&nbsp;<span>
+											<a th:href="'#plugin-' + ${alert.getPluginId()}"
+											th:text="${alert.getName()}" href="#plugin-pluginId">Alert
+												Name</a>
+									</span></span>
+								</th:block>
+							</div>
+
+							<table class="summary80">
+								<th colspan="2" th:text="#{report.sequences.step.original}" style="width: 50%">Original</th>
+								<th colspan="2" th:text="#{report.sequences.step.replay}" style="width: 50%">Replay</th>
+								<tr>
+									<td th:text="#{report.sequences.step.req.header}">reqHdr</td>
+									<td
+										th:text="${step.getOriginalMsg().getRequestHeader().toString().length()}">origReqHdrSize</td>
+									<td th:text="#{report.sequences.step.req.header}">reqHdr</td>
+									<td
+										th:text="${step.getReplayMsg().getRequestHeader().toString().length()}">replayReqHdrSize</td>
+								</tr>
+								<tr>
+									<td th:text="#{report.sequences.step.req.body}">reqBody</td>
+									<td
+										th:text="${step.getOriginalMsg().getRequestBody().length()}">origReqBodySize</td>
+									<td th:text="#{report.sequences.step.req.body}">reqBody</td>
+									<td th:text="${step.getReplayMsg().getRequestBody().length()}">replayReqBodySize</td>
+								</tr>
+								<tr>
+									<td th:text="#{report.sequences.step.resp.header}">respHdr</td>
+									<td
+										th:text="${step.getOriginalMsg().getResponseHeader().toString().length()}">origRespHdrSize</td>
+									<td th:text="#{report.sequences.step.resp.header}">respHdr</td>
+									<td
+										th:text="${step.getReplayMsg().getResponseHeader().toString().length()}">replayRespHdrSize</td>
+								</tr>
+								<tr>
+									<td th:text="#{report.sequences.step.resp.body}">respBody</td>
+									<td
+										th:text="${step.getOriginalMsg().getResponseBody().length()}">origRespBodySize</td>
+									<td th:text="#{report.sequences.step.resp.body}">respBody</td>
+									<td th:text="${step.getReplayMsg().getResponseBody().length()}">replayRespBodySize</td>
+								</tr>
+							</table>
+
+							<table class="summary80">
+								<td colspan="2" th:id="${stepId}" style="text-align: center; width: 50%"><a
+									th:onclick="'showHide(\'step-' + ${seqState.index} + ${stepState.index} + '\', false);'"
+									th:href="'#' + ${stepId}"
+									th:text="#{report.sequences.step.showhide}">Show/hide</a></td>
+								<tr>
+									<td colspan="2" th:id="${stepId} + 'reqhdr'"
+										style="display: none; text-align: center;"
+										th:text="#{report.sequences.step.request}">Request</td>
+								</tr>
+								<tr>
+									<td th:id="${stepId} + 'reqh'" style="display: none;"><th:block
+											th:each="desc, state: ${#strings.arraySplit(step.getOriginalMsg().getRequestHeader().toString(), '\n')}">
+											<th:block th:text="${desc}">Orig Request Header</th:block>
+											<br th:if="${!state.last}" />
+										</th:block></td>
+									<td th:id="${stepId} + 'reqrh'" style="display: none;"><th:block
+											th:each="desc, state: ${#strings.arraySplit(step.getReplayMsg().getRequestHeader().toString(), '\n')}">
+											<th:block th:text="${desc}">Replay Request Header</th:block>
+											<br th:if="${!state.last}" />
+										</th:block></td>
+								</tr>
+								<tr>
+									<td th:id="${stepId} + 'reqb'" style="display: none;"><th:block
+											th:each="desc, state: ${#strings.arraySplit(step.getOriginalMsg().getRequestBody().toString(), '\n')}">
+											<th:block th:text="${desc}">Original Request Body</th:block>
+											<br th:if="${!state.last}" />
+										</th:block></td>
+									<td th:id="${stepId} + 'reqrb'" style="display: none;"><th:block
+											th:each="desc, state: ${#strings.arraySplit(step.getReplayMsg().getRequestBody().toString(), '\n')}">
+											<th:block th:text="${desc}">Replay Request Body</th:block>
+											<br th:if="${!state.last}" />
+										</th:block></td>
+								</tr>
+								<tr>
+									<td colspan="2" th:id="${stepId} + 'resphdr'"
+										style="display: none; text-align: center;"
+										th:text="#{report.sequences.step.response}">Response</td>
+								</tr>
+								<tr>
+									<td th:id="${stepId} + 'resph'" style="display: none;"><th:block
+											th:each="desc, state: ${#strings.arraySplit(step.getOriginalMsg().getResponseHeader().toString(), '\n')}">
+											<th:block th:text="${desc}">Orig Response Header</th:block>
+											<br th:if="${!state.last}" />
+										</th:block></td>
+									<td th:id="${stepId} + 'resprh'" style="display: none;"><th:block
+											th:each="desc, state: ${#strings.arraySplit(step.getReplayMsg().getResponseHeader().toString(), '\n')}">
+											<th:block th:text="${desc}">Replay Response Header</th:block>
+											<br th:if="${!state.last}" />
+										</th:block></td>
+								</tr>
+								<tr>
+									<td th:id="${stepId} + 'respb'" style="display: none;"><th:block
+											th:each="desc, state: ${#strings.arraySplit(step.getOriginalMsg().getResponseBody().toString(), '\n')}">
+											<th:block th:text="${desc}">Orig Response Body</th:block>
+											<br th:if="${!state.last}" />
+										</th:block></td>
+									<td th:id="${stepId} + 'resprb'" style="display: none;"><th:block
+											th:each="desc, state: ${#strings.arraySplit(step.getReplayMsg().getResponseBody().toString(), '\n')}">
+											<th:block th:text="${desc}">Replay Response Body</th:block>
+											<br th:if="${!state.last}" />
+										</th:block></td>
+								</tr>
+							</table>
+						</div>
+						<div class="spacer"></div>
+					</th:block>
+				</div>
+			</th:block>
+
+			<div class="spacer-lg"></div>
+
+		</th:block>
+	</th:block>
+
+</body>
+</html>
+

@@ -21,32 +21,41 @@ package org.zaproxy.zap.extension.soap;
 
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import javax.swing.JFileChooser;
-import javax.swing.SwingUtilities;
-import javax.swing.filechooser.FileNameExtensionFilter;
+import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.db.Database;
+import org.parosproxy.paros.db.DatabaseException;
+import org.parosproxy.paros.db.DatabaseUnsupportedException;
+import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
-import org.parosproxy.paros.model.Model;
-import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.extension.spider.ExtensionSpider;
+import org.parosproxy.paros.extension.SessionChangedListener;
+import org.parosproxy.paros.model.Session;
+import org.zaproxy.addon.commonlib.ExtensionCommonlib;
+import org.zaproxy.addon.commonlib.ValueProvider;
+import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.view.ZapMenuItem;
 
 public class ExtensionImportWSDL extends ExtensionAdaptor {
 
     public static final String NAME = "ExtensionImportWSDL";
+    public static final String STATS_ADDED_URLS = "soap.urls.added";
 
+    private static final List<Class<? extends Extension>> DEPENDENCIES =
+            List.of(ExtensionCommonlib.class);
+
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionImportWSDL.class);
     private static final String THREAD_PREFIX = "ZAP-Import-WSDL-";
 
-    private ZapMenuItem menuImportLocalWSDL = null;
-    private ZapMenuItem menuImportUrlWSDL = null;
+    private ZapMenuItem menuImportWsdl;
+    private ImportDialog importDialog;
     private int threadId = 1;
 
-    private WSDLCustomParser parser = new WSDLCustomParser();
-    private WSDLSpider spiderParser;
+    private final TableWsdl table = new TableWsdl();
+    private final WSDLCustomParser parser = new WSDLCustomParser(this::getValueProvider, table);
 
     public ExtensionImportWSDL() {
         super(NAME);
@@ -54,107 +63,104 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
     }
 
     @Override
+    public List<Class<? extends Extension>> getDependencies() {
+        return DEPENDENCIES;
+    }
+
+    private ValueProvider getValueProvider() {
+        return Control.getSingleton()
+                .getExtensionLoader()
+                .getExtension(ExtensionCommonlib.class)
+                .getValueProvider();
+    }
+
+    public WSDLCustomParser getParser() {
+        return parser;
+    }
+
+    @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
         extensionHook.addApiImplementor(new SoapAPI(this));
+        extensionHook.addVariant(VariantSoap.class);
 
-        if (getView() != null) {
-            extensionHook.getHookMenu().addImportMenuItem(getMenuImportLocalWSDL());
-            extensionHook.getHookMenu().addImportMenuItem(getMenuImportUrlWSDL());
+        if (hasView()) {
+            extensionHook.getHookMenu().addImportMenuItem(getMenuImportWsdl());
+            extensionHook.addSessionListener(
+                    new SessionChangedListener() {
+                        @Override
+                        public void sessionAboutToChange(Session session) {
+                            if (importDialog != null) {
+                                importDialog.clearFields();
+                            }
+                        }
 
-            /*
-             * Custom spider parser is added in order to explore not only WSDL files, but
-             * also their WSDL endpoints.
-             */
-            ExtensionSpider spider =
-                    Control.getSingleton().getExtensionLoader().getExtension(ExtensionSpider.class);
-            if (spider != null) {
-                spiderParser = new WSDLSpider();
-                spider.addCustomParser(spiderParser);
-            }
+                        @Override
+                        public void sessionChanged(Session session) {}
+
+                        @Override
+                        public void sessionScopeChanged(Session session) {}
+
+                        @Override
+                        public void sessionModeChanged(Control.Mode mode) {}
+                    });
+        }
+    }
+
+    @Override
+    public void postInit() {
+        ExtensionScript extScript =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
+        String scriptName = "SOAP Support.js";
+        if (extScript != null && extScript.getScript(scriptName) != null) {
+            extScript.removeScript(extScript.getScript(scriptName));
         }
     }
 
     @Override
     public void unload() {
         super.unload();
-        /* Destroys current ImportWSDL singleton instance. */
-        ImportWSDL.destroy();
-
-        if (spiderParser != null) {
-            Control.getSingleton()
-                    .getExtensionLoader()
-                    .getExtension(ExtensionSpider.class)
-                    .removeCustomParser(spiderParser);
+        if (importDialog != null) {
+            importDialog.dispose();
         }
     }
 
-    /* Menu option to import a local WSDL file. */
-    private ZapMenuItem getMenuImportLocalWSDL() {
-        if (menuImportLocalWSDL == null) {
-            menuImportLocalWSDL =
+    @Override
+    public void databaseOpen(Database db) throws DatabaseException, DatabaseUnsupportedException {
+        db.addDatabaseListener(table);
+        table.databaseOpen(db.getDatabaseServer());
+    }
+
+    protected TableWsdl getTable() {
+        return table;
+    }
+
+    private ZapMenuItem getMenuImportWsdl() {
+        if (menuImportWsdl == null) {
+            menuImportWsdl =
                     new ZapMenuItem(
                             "soap.topmenu.import.importWSDL",
-                            getView()
-                                    .getMenuShortcutKeyStroke(
-                                            KeyEvent.VK_I, KeyEvent.SHIFT_DOWN_MASK, false));
-            menuImportLocalWSDL.setToolTipText(
+                            getView().getMenuShortcutKeyStroke(KeyEvent.VK_J, 0, false));
+            menuImportWsdl.setToolTipText(
                     Constant.messages.getString("soap.topmenu.import.importWSDL.tooltip"));
-
-            menuImportLocalWSDL.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            // Prompt for a WSDL file.
-                            final JFileChooser chooser =
-                                    new JFileChooser(
-                                            Model.getSingleton()
-                                                    .getOptionsParam()
-                                                    .getUserDirectory());
-                            FileNameExtensionFilter filter =
-                                    new FileNameExtensionFilter(
-                                            Constant.messages.getString(
-                                                    "soap.topmenu.import.importWSDL.filter.description"),
-                                            "wsdl");
-                            chooser.setFileFilter(filter);
-                            int rc = chooser.showOpenDialog(View.getSingleton().getMainFrame());
-                            if (rc == JFileChooser.APPROVE_OPTION) {
-                                fileUrlWSDLImport(chooser.getSelectedFile());
-                            }
+            menuImportWsdl.addActionListener(
+                    e -> {
+                        if (importDialog == null) {
+                            importDialog = new ImportDialog(getView().getMainFrame(), this);
                         }
+                        importDialog.setVisible(true);
                     });
         }
-        return menuImportLocalWSDL;
+        return menuImportWsdl;
     }
 
-    /* Menu option to import a WSDL file from a given URL. */
-    private ZapMenuItem getMenuImportUrlWSDL() {
-        if (menuImportUrlWSDL == null) {
-            menuImportUrlWSDL =
-                    new ZapMenuItem(
-                            "soap.topmenu.import.importRemoteWSDL",
-                            getView().getMenuShortcutKeyStroke(KeyEvent.VK_J, 0, false));
-            menuImportUrlWSDL.setToolTipText(
-                    Constant.messages.getString("soap.topmenu.import.importRemoteWSDL.tooltip"));
+    public void syncImportWsdlUrl(final String url) {
+        parser.syncImportWsdlUrl(url);
+    }
 
-            final ExtensionImportWSDL shadowCopy = this;
-            menuImportUrlWSDL.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            SwingUtilities.invokeLater(
-                                    new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            new ImportFromUrlDialog(
-                                                    View.getSingleton().getMainFrame(), shadowCopy);
-                                        }
-                                    });
-                        }
-                    });
-        }
-        return menuImportUrlWSDL;
+    public void syncImportWsdlFile(final File file) {
+        parser.syncImportWsdlFile(file);
     }
 
     /* Called from external classes in a threaded mode. */
@@ -172,21 +178,17 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
     }
 
     @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
+    public boolean supportsDb(String type) {
+        return Database.DB_TYPE_HSQLDB.equals(type);
+    }
+
+    @Override
+    public String getUIName() {
+        return Constant.messages.getString("soap.name");
     }
 
     @Override
     public String getDescription() {
         return Constant.messages.getString("soap.desc");
-    }
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_HOMEPAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
     }
 }

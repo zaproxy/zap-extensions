@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.fuzz.httpfuzzer.ui;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.MenuWeights;
 import org.zaproxy.zap.extension.fuzz.ExtensionFuzz;
 import org.zaproxy.zap.extension.fuzz.FuzzerUIUtils;
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.HttpFuzzer;
@@ -28,6 +29,7 @@ import org.zaproxy.zap.extension.fuzz.httpfuzzer.HttpFuzzerHandler;
 import org.zaproxy.zap.view.messagecontainer.http.HttpMessageContainer;
 import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
 
+@SuppressWarnings("serial")
 public class HttpFuzzAttackPopupMenuItem extends PopupMenuItemHttpMessageContainer {
 
     private static final long serialVersionUID = 1L;
@@ -55,8 +57,13 @@ public class HttpFuzzAttackPopupMenuItem extends PopupMenuItemHttpMessageContain
     }
 
     @Override
-    public int getParentMenuIndex() {
-        return ATTACK_MENU_INDEX;
+    public int getParentWeight() {
+        return MenuWeights.MENU_ATTACK_WEIGHT;
+    }
+
+    @Override
+    public int getWeight() {
+        return MenuWeights.MENU_ATTACK_FUZZ_WEIGHT;
     }
 
     @Override

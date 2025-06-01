@@ -71,7 +71,7 @@ public class NanoWebSocketConnection extends NanoWSD.WebSocket {
      * Sends a ping message to the client. Ping payload defined by {@link
      * NanoWebSocketConnection#setPingMessage(byte[])}
      */
-    protected boolean ping() {
+    protected synchronized boolean ping() {
         try {
             if (isPongReceived()) {
                 super.ping(pingPayload);
@@ -137,7 +137,7 @@ public class NanoWebSocketConnection extends NanoWSD.WebSocket {
     }
 
     public List<WebSocketFrame> getListOfIncomingMessages() {
-        return new ArrayList<WebSocketFrame>(incomingMessages);
+        return new ArrayList<>(incomingMessages);
     }
 
     class Scheduling {
@@ -159,6 +159,7 @@ public class NanoWebSocketConnection extends NanoWSD.WebSocket {
         }
 
         class SendPing extends TimerTask {
+            @Override
             public void run() {
                 if (!ping()) {
                     pingTimer.cancel();
@@ -167,6 +168,7 @@ public class NanoWebSocketConnection extends NanoWSD.WebSocket {
         }
 
         class SendMessage extends TimerTask {
+            @Override
             public void run() {
                 synchronized (outgoingMessages) {
                     try {

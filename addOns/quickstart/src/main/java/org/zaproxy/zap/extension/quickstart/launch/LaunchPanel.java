@@ -19,13 +19,13 @@
  */
 package org.zaproxy.zap.extension.quickstart.launch;
 
-import java.awt.Color;
+import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 import javax.swing.ComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -40,12 +40,14 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteNode;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.eventBus.Event;
 import org.zaproxy.zap.eventBus.EventConsumer;
 import org.zaproxy.zap.extension.quickstart.ExtensionQuickStart;
 import org.zaproxy.zap.extension.quickstart.PlugableHud;
+import org.zaproxy.zap.extension.quickstart.QuickStartBackgroundPanel;
 import org.zaproxy.zap.extension.quickstart.QuickStartHelper;
 import org.zaproxy.zap.extension.quickstart.QuickStartPanel;
 import org.zaproxy.zap.extension.quickstart.QuickStartSubPanel;
@@ -54,9 +56,11 @@ import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.selenium.ProvidedBrowserUI;
 import org.zaproxy.zap.extension.selenium.ProvidedBrowsersComboBoxModel;
 import org.zaproxy.zap.utils.DisplayUtils;
+import org.zaproxy.zap.utils.ZapLabel;
 import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zap.view.NodeSelectDialog;
 
+@SuppressWarnings("serial")
 public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
 
     private static final long serialVersionUID = 1L;
@@ -65,9 +69,12 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
     private static final String EVENT_HUD_ENABLED_FOR_DESKTOP = "desktop.enabled";
     private static final String EVENT_HUD_DISABLED_FOR_DESKTOP = "desktop.disabled";
 
+    private static final Predicate<String> SCHEME_PREDICATE =
+            Pattern.compile("(?i)^https?://").asPredicate();
+
+    private ImageIcon icon;
     private ExtensionQuickStartLaunch extLaunch;
     private JXPanel contentPanel;
-    private JButton selectButton;
     private JComboBox<String> urlField;
     private JButton launchButton;
     private JComboBox<ProvidedBrowserUI> browserComboBox;
@@ -76,7 +83,11 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
     private JCheckBox hudCheckbox;
     private JLabel hudIsInScopeOnly;
     private JLabel exploreLabel;
+    private ZapLabel footerLabel;
+    private ZapLabel footerLabelAdditional;
+    private JButton selectButton;
     private int hudOffset;
+    private Boolean canLaunch;
 
     public LaunchPanel(
             ExtensionQuickStartLaunch extLaunch,
@@ -88,9 +99,8 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
                 .registerConsumer(
                         this,
                         "org.zaproxy.zap.extension.hud.HudEventPublisher",
-                        new String[] {
-                            EVENT_HUD_ENABLED_FOR_DESKTOP, EVENT_HUD_DISABLED_FOR_DESKTOP
-                        });
+                        EVENT_HUD_ENABLED_FOR_DESKTOP,
+                        EVENT_HUD_DISABLED_FOR_DESKTOP);
     }
 
     @Override
@@ -100,8 +110,7 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
 
     @Override
     public JPanel getDescriptionPanel() {
-        JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBackground(Color.WHITE);
+        JPanel panel = new QuickStartBackgroundPanel();
         panel.add(
                 QuickStartHelper.getWrappedLabel("quickstart.launch.panel.message1"),
                 LayoutHelper.getGBC(0, 0, 2, 1.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
@@ -123,18 +132,8 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
         return Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class);
     }
 
-    @Override
-    public JPanel getContentPanel() {
-        if (this.contentPanel == null) {
-            contentPanel = new JXPanel(new GridBagLayout());
-            contentPanel.setScrollableHeightHint(ScrollableSizeHint.PREFERRED_STRETCH);
-            contentPanel.setBackground(Color.white);
-            int offset = 0;
-            contentPanel.add(
-                    new JLabel(Constant.messages.getString("quickstart.label.exploreurl")),
-                    LayoutHelper.getGBC(0, ++offset, 1, 0.0D, new Insets(5, 5, 5, 5)));
-
-            JPanel urlSelectPanel = new JPanel(new GridBagLayout());
+    private JButton getSelectButton() {
+        if (selectButton == null) {
             selectButton = new JButton(Constant.messages.getString("all.button.select"));
             selectButton.setIcon(
                     DisplayUtils.getScaledIcon(
@@ -142,41 +141,53 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
                                     View.class.getResource("/resource/icon/16/094.png")))); // Globe
             // icon
             selectButton.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            NodeSelectDialog nsd =
-                                    new NodeSelectDialog(View.getSingleton().getMainFrame());
-                            SiteNode node = null;
+                    e -> {
+                        NodeSelectDialog nsd =
+                                new NodeSelectDialog(View.getSingleton().getMainFrame());
+                        SiteNode node = null;
+                        try {
+                            node =
+                                    Model.getSingleton()
+                                            .getSession()
+                                            .getSiteTree()
+                                            .findNode(
+                                                    new URI(
+                                                            getUrlField()
+                                                                    .getSelectedItem()
+                                                                    .toString(),
+                                                            false));
+                        } catch (Exception e2) {
+                            // Ignore
+                        }
+                        node = nsd.showDialog(node);
+                        if (node != null && node.getHistoryReference() != null) {
                             try {
-                                node =
-                                        Model.getSingleton()
-                                                .getSession()
-                                                .getSiteTree()
-                                                .findNode(
-                                                        new URI(
-                                                                getUrlField()
-                                                                        .getSelectedItem()
-                                                                        .toString(),
-                                                                false));
-                            } catch (Exception e2) {
+                                getUrlField()
+                                        .setSelectedItem(
+                                                node.getHistoryReference().getURI().toString());
+                            } catch (Exception e1) {
                                 // Ignore
-                            }
-                            node = nsd.showDialog(node);
-                            if (node != null && node.getHistoryReference() != null) {
-                                try {
-                                    getUrlField()
-                                            .setSelectedItem(
-                                                    node.getHistoryReference().getURI().toString());
-                                } catch (Exception e1) {
-                                    // Ignore
-                                }
                             }
                         }
                     });
+        }
+        return selectButton;
+    }
+
+    @Override
+    public JPanel getContentPanel() {
+        if (this.contentPanel == null) {
+            contentPanel = new QuickStartBackgroundPanel();
+            contentPanel.setScrollableHeightHint(ScrollableSizeHint.PREFERRED_STRETCH);
+            int offset = 0;
+            contentPanel.add(
+                    new JLabel(Constant.messages.getString("quickstart.label.exploreurl")),
+                    LayoutHelper.getGBC(0, ++offset, 1, 0.0D, new Insets(5, 5, 5, 5)));
+
+            JPanel urlSelectPanel = new JPanel(new GridBagLayout());
 
             urlSelectPanel.add(this.getUrlField(), LayoutHelper.getGBC(0, 0, 1, 0.5D));
-            urlSelectPanel.add(selectButton, LayoutHelper.getGBC(1, 0, 1, 0.0D));
+            urlSelectPanel.add(getSelectButton(), LayoutHelper.getGBC(1, 0, 1, 0.0D));
             contentPanel.add(urlSelectPanel, LayoutHelper.getGBC(1, offset, 3, 0.25D));
 
             contentPanel.add(
@@ -202,13 +213,9 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
             } else {
                 hudCheckbox.setSelected(hud.isHudEnabled());
                 hudCheckbox.addActionListener(
-                        new ActionListener() {
-
-                            @Override
-                            public void actionPerformed(ActionEvent ev) {
-                                hud.setHudEnabledForDesktop(hudCheckbox.isSelected());
-                                setBrowserOptions(hudCheckbox.isSelected());
-                            }
+                        e -> {
+                            hud.setHudEnabledForDesktop(hudCheckbox.isSelected());
+                            setBrowserOptions(hudCheckbox.isSelected());
                         });
             }
         }
@@ -250,16 +257,26 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
             launchButton.setToolTipText(
                     Constant.messages.getString("quickstart.button.tooltip.launch"));
 
-            launchButton.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            getExtQuickStart().getQuickStartParam().addRecentUrl(getUrlValue());
-                            extLaunch.launchBrowser(getSelectedBrowser(), getUrlValue());
-                        }
-                    });
+            launchButton.addActionListener(e -> launchBrowser(true));
         }
         return launchButton;
+    }
+
+    private void launchBrowser(boolean addToRecentList) {
+        String url = getUrlValue();
+        if (addToRecentList) {
+            getExtQuickStart().getQuickStartParam().addRecentUrl(url);
+        }
+        extLaunch.launchBrowser(getSelectedBrowser(), url);
+    }
+
+    /**
+     * Launches the browser with the URL specified in the panel, if any.
+     *
+     * <p>The URL is <strong>not</strong> added to the list of recent URLs.
+     */
+    public void launchBrowser() {
+        launchBrowser(false);
     }
 
     public void postInit() {
@@ -279,8 +296,7 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
             }
         }
 
-        JPanel hudPanel = new JPanel(new GridBagLayout());
-        hudPanel.setBackground(Color.WHITE);
+        JPanel hudPanel = new QuickStartBackgroundPanel();
         hudPanel.add(getHudCheckbox(), LayoutHelper.getGBC(0, 0, 1, 0));
         hudPanel.add(getHudIsInScopeOnly(), LayoutHelper.getGBC(1, 0, 1, 0));
         hudPanel.add(new JLabel(), LayoutHelper.getGBC(1, 0, 2, 1.0));
@@ -290,7 +306,7 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
         PlugableHud hud = getExtQuickStart().getHudProvider();
         if (hud != null) {
             // Build up a model just with the browsers supported by the HUD
-            List<ProvidedBrowserUI> hudBrowsers = new ArrayList<ProvidedBrowserUI>();
+            List<ProvidedBrowserUI> hudBrowsers = new ArrayList<>();
             List<String> browserIds = hud.getSupportedBrowserIds();
             for (int i = 0; i < allBrowserModel.getSize(); i++) {
                 ProvidedBrowserUI browser = allBrowserModel.getElementAt(i);
@@ -303,21 +319,21 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
         }
     }
 
-    protected String getSelectedBrowser() {
+    private String getSelectedBrowser() {
         return getBrowserComboBox().getSelectedItem().toString();
     }
 
-    protected String getUrlValue() {
-        Object item = getUrlField().getSelectedItem();
-        if (item != null) {
-            return item.toString();
+    private String getUrlValue() {
+        String item = (String) getUrlField().getSelectedItem();
+        if (item != null && !SCHEME_PREDICATE.test(item)) {
+            item = HttpHeader.SCHEME_HTTP + item;
         }
-        return null;
+        return item;
     }
 
     private JComboBox<String> getUrlField() {
         if (urlField == null) {
-            urlField = new JComboBox<String>();
+            urlField = new JComboBox<>();
             urlField.setEditable(true);
             urlField.setModel(this.getExtensionQuickStart().getUrlModel());
         }
@@ -326,20 +342,15 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
 
     private JComboBox<ProvidedBrowserUI> getBrowserComboBox() {
         if (browserComboBox == null) {
-            browserComboBox = new JComboBox<ProvidedBrowserUI>();
+            browserComboBox = new JComboBox<>();
             allBrowserModel = getExtSelenium().createProvidedBrowsersComboBoxModel();
             allBrowserModel.setIncludeHeadless(false);
             allBrowserModel.setIncludeUnconfigured(false);
             browserComboBox.setModel(allBrowserModel);
             browserComboBox.addActionListener(
-                    new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent ae) {
+                    e ->
                             extLaunch.setToolbarButtonIcon(
-                                    browserComboBox.getSelectedItem().toString());
-                        }
-                    });
+                                    browserComboBox.getSelectedItem().toString()));
         }
         return browserComboBox;
     }
@@ -372,6 +383,20 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
         return exploreLabel;
     }
 
+    private ZapLabel getFooterLabel() {
+        if (footerLabel == null) {
+            footerLabel = QuickStartHelper.getWrappedLabel();
+        }
+        return footerLabel;
+    }
+
+    private ZapLabel getFooterLabelAdditional() {
+        if (footerLabelAdditional == null) {
+            footerLabelAdditional = QuickStartHelper.getWrappedLabel();
+        }
+        return footerLabelAdditional;
+    }
+
     @Override
     public void eventReceived(Event event) {
         if (event.getEventType().equals(EVENT_HUD_ENABLED_FOR_DESKTOP)) {
@@ -383,20 +408,67 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
 
     @Override
     public ImageIcon getIcon() {
-        return ExtensionQuickStart.HUD_ICON;
+        if (icon == null) {
+            icon =
+                    DisplayUtils.getScaledIcon(
+                            new ImageIcon(
+                                    getClass()
+                                            .getResource(
+                                                    ExtensionQuickStart.RESOURCES
+                                                            + "/hud_logo_64px.png")));
+        }
+        return icon;
     }
 
     @Override
     public JPanel getFooterPanel() {
-        JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBackground(Color.WHITE);
+        JPanel panel = new QuickStartBackgroundPanel();
+        panel.add(getFooterLabel(), LayoutHelper.getGBC(0, 0, 5, 1.0D, new Insets(5, 5, 5, 5)));
         panel.add(
-                new JLabel(Constant.messages.getString("quickstart.panel.launch.manual")),
-                LayoutHelper.getGBC(0, 0, 5, 1.0D, new Insets(5, 5, 5, 5)));
+                getFooterLabelAdditional(),
+                LayoutHelper.getGBC(0, 1, 5, 1.0D, new Insets(5, 5, 5, 5)));
         return panel;
     }
 
     public void optionsChanged() {
         this.setHudIsInScopeOnlyText();
+        this.setForContainers();
+    }
+
+    private void setForContainers() {
+        boolean canLaunchNow =
+                !Constant.isInContainer()
+                        || Model.getSingleton()
+                                .getOptionsParam()
+                                .getViewParam()
+                                .isAllowAppIntegrationInContainers();
+        if (this.canLaunch == null || !this.canLaunch.equals(canLaunchNow)) {
+            if (canLaunchNow) {
+                getFooterLabel()
+                        .setText(Constant.messages.getString("quickstart.panel.launch.manual"));
+                getFooterLabel().setFont(getFooterLabel().getFont().deriveFont(Font.PLAIN));
+                getFooterLabelAdditional().setText("");
+                getFooterLabelAdditional().setVisible(false);
+            } else {
+                getFooterLabel()
+                        .setText(Constant.messages.getString("quickstart.panel.launch.container"));
+                getFooterLabel().setFont(getFooterLabel().getFont().deriveFont(Font.BOLD));
+                getFooterLabelAdditional().setVisible(true);
+                getFooterLabelAdditional()
+                        .setText(
+                                Constant.messages.getString(
+                                        "quickstart.panel.launch.container.additional"));
+            }
+            this.getUrlField().setEnabled(canLaunchNow);
+            this.getHudCheckbox().setEnabled(canLaunchNow);
+            this.getLaunchButton().setEnabled(canLaunchNow);
+            this.getSelectButton().setEnabled(canLaunchNow);
+            this.getBrowserComboBox().setEnabled(canLaunchNow);
+            this.canLaunch = canLaunchNow;
+        }
+    }
+
+    void unload() {
+        ZAP.getEventBus().unregisterConsumer(this);
     }
 }

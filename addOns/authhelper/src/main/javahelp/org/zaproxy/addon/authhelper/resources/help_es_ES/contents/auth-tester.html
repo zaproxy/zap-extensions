@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+Authentication Tester Dialog
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Authentication Tester Dialog</H1>
+
+This dialog allows you to test if ZAP can authenticate and automatically handle the session handling
+and verification for a site given only the login page and credentials.
+
+<H2>Fields</H2>
+
+The following fields are provided:
+
+<H3>Login URL</H3>
+The URL of the login page. It is mandatory and must start with "http://" or "https://".
+The URL does not have to be in the Sites Tree, but must be accessible to ZAP.
+
+<H3>Context</H3>
+The name of the context which will be configured to handle the authentication.
+If the context already exists then it will be deleted and recreated.
+
+<H3>Username</H3>
+The username to use for authentication. 
+The username and password must be valid for the login to work.
+
+<H3>Password</H3>
+The password to use for authentication.
+The username and password must be valid for the login to work.
+
+<H3>Browser</H3>
+The browser to use for authentication.
+The browser you choose will need to be installed and be able to be launched from ZAP.
+
+<H3>Time to Wait (seconds)</H3>
+The number of seconds to wait after submitting the login form before closing the browser.
+If the browser is closed before the application has loaded then ZAP may not be able to identify
+the session handling or find a suitable verification URL.
+
+<H3>Demo Mode</H3>
+
+This just adds 2 second delays between filling in each field and before submitting the form.
+It has no other effect than making it easier to see what is going on when a non-headless browser is used.
+
+<H3>Record Diagnostics</H3>
+Enables the recording of diagnostic data during the authentication. Refer to the <a href="auth-report-json.html">Authentication Report</a> for more details on the diagnostics.
+
+<H3>Reset Button</H3>
+The reset button allows you to reset all the fields on the Test tab, and disable all Steps in the Steps tab (steps are only disabled not removed as recreating them might be tedious).
+
+<H2>Results Panel</H2>
+
+The results panel show the progress and what has been identified. All elements need to be identified in order for 
+ZAP to be able to automatically handle authentication for this site.
+
+<H2>Diagnostics Tab</H2>
+
+The Diagnostics tab will contain a summary of the requests and responses sent and received as part of the 
+authentication testing. It is recommended that you do not perform any other operations in ZAP while testing the 
+authentication otherwise that may result in unrelated messages being recorded.
+<p>
+Only the absolute minimum information is recorded, and host name and parameter values are replaced by safe tokens.
+You can copy all of the data and review it to make sure it does not include any sensitive data 
+before you share it with us.
+<p>
+Is ZAP fails to detect either the Username or Password field then we will need more details about the login page.
+If you can share that with us then it will it much easier to debug.
+<p>
+If ZAP detects both of the required fields then please share the data from the diagnostic tab with us - 
+we will hopefully be able to diagnose what's going wrong with just that information.
+
+</BODY>
+</HTML>

@@ -2,54 +2,33 @@
 <html>
 <head>
 <title>
-Context Alert Filters
+Фильтры предупреждений 
 </title>
 </head>
-<body bgcolor="#ffffff">
-<h1>Context Alert Filters</h1>
+<body>
+<h1>Фильтры предупреждений </h1>
 <p>
-Context Alert Filters allow you to automatically override the risk levels
-of any alerts raised by the active and passive scan rules within a context.
-</p>
+Фильтры предупреждений позволяют автоматически отменять уровни риска
+любых предупреждений, вызванных активным и пассивным сканированием. 
 <p>
-This add-on adds an 'Alert Filters' panel to the contexts dialog.<br>
-The panel shows a list of all of the Alert filters along with buttons for 
-adding, removing, and deleting them.
-</p>
-<p>
-To use this add-on you will need to:
+Существует 2 различных типа фильтра предупреждений: 
+
 <ul>
-<li>Add your application to a context</li>
-<li>Open the Session Properties dialog (eg by double clicking on the context)</li>
-<li>Select the contexts' 'Alert filters' panel</li>
-<li>Click 'Add' and fill in the details for each alert you want to override</li>
+<li><a href="contextAlertFilter.html">Фильтры контекстных предупреждений </a></li>
+<li><a href="globalAlertFilter.html">Глобальные Фильтры Предупреждений </a></li>
 </ul>
-Note: The alert filters will only be applied to new alerts, not to any alerts that were
-already present when the filter was created. 
+
+Фильтры предупреждений также можно определить в  <a href="automation.html">Платформа автоматизации </a>.
+
 </p>
 <p>
-The 'add' and 'modify' dialogs have the following fields: 
-
-<h3>Alert</h3>
-A pull down containing all of the active and passive alert rules currently installed.
-
-<h3>New Risk Level</h3>
-The new risk level to be assigned to any alerts raised that match the criteria defined by the rule.
- 
-<h3>URL</h3>
-An optional URL.<br>
-If specified then this rule will be applied if the URL matches the URL of a raised alert.<br>
-
-<h3>URL is Regex?</h3>
-If set and a URL is specified then the URL will be treated as a regex expression when compared with the URL of the alert.<br>
-If it is not set then any specified URL must exactly match the URL of the alert.
-
-<h3>Parameter</h3>
-An optional parameter.<br>
-If specified then this rule will be applied if the parameter exactly matches the parameter of a raised alert.<br>
-
-<h3>Enabled</h3>
-If set then this rule will be applied to all alerts raise against the given context.
+Самый простой способ создать фильтры предупреждений - щелкнуть предупреждение правой кнопкой мыши и выбрать
+параметр «Создать фильтр предупреждений ...».  Это отобразит
+<a href="alertFilterDialog.html"> Диалог фильтра предупреждений </a>. <br>
+Вы также можете создать фильтр предупреждений вручную. 
+</p>
+По умолчанию фильтры предупреждений применяются только к новым предупреждениям,
+но вы можете как протестировать, так и применить фильтры предупреждений к существующим предупреждениям. 
 
 </body>
 </html>

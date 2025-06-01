@@ -4,74 +4,68 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>Selenium</title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 	<h1>Selenium</h1>
 
-	<p>The Selenium add-on provides WebDrivers, for other add-ons, to invoke and remotely
-		control web browsers. It's also bundled the HtmlUnit web browser, an headless Java based
-		web browser.
-	<p>The add-on also adds a right click option to ZAP panels that list URLs (such at the History and Sites tree)
-	which allows you to open the selected URL in any of the supported browsers.
+	<p>Надстройка Selenium предоставляет Веб-Драйверы (WebDrivers), вызвать и удаленно
+управлять веб-браузерами. 
+Он также включает в себя HtmlUnit веб-браузер , headless Java зависимости
+веб-браузера. 
 
-	<h2>Supported Browsers</h2>
+		
+	<p>Он добавляет тип сценария «Selenium» — эти сценарии вызываются всякий раз, когда селен (selenium) запускает браузер,
+например, для Ajax Spider или для ручного просмотра.  
+	
+	<p>The add-on also adds a right click option to ZAP panels that list URLs (such as the History and Sites tree)
+	which allows you to open the selected URL in any of the supported browsers. Скрипты Selenium имеют доступ к
+запущенный браузер и может взаимодействовать с ним, например, запускать сценарии JavaScript, получать доступ к URL-адресам, заполнять формы, нажимать кнопки... 
+	<br><strong>Примечание.</strong> Сценарии Selenium выполняются синхронно для AJAX Spider, чтобы предотвратить помехи.
+с помощью сканера позже, скрипты должны получить доступ к требуемым URL-адресам. 
+
+	<h2>Поддерживаемые браузеры</h2> 
 
 	
-	<p>The following web browsers are supported:
+	<p>Поддерживаются следующие веб-браузеры: 
 	<table border="2">
 		<tr>
-			<th>Name</th>
-			<th>ID</th>
-			<th>Requirements/Notes</th>
+			<th>Имя</th>
+			<th>Идентификатор</th>
+			<th>Требования/примечания </th>
 		</tr>
 		<tr>
 			<td>Chrome</td>
 			<td>chrome</td>
-			<td>The following versions are known to work: 59 and 60 (older versions might work
-				too). Requires ChromeDriver, if not on the system's PATH, it can be set in the
-				options. For more information on ChromeDriver and how to obtain it refer to the <a
-				href="https://sites.google.com/a/chromium.org/chromedriver/">ChromeDriver website</a>.
+			<td>Известно, что работают следующие версии: 59 и 60 (более старые версии могут работать
+тоже).  Требуется ChromeDriver, если его нет в системном PATH, его можно установить в
+опциях.  Для получения дополнительной информации о ChromeDriver и о том, как его получить, посетите <a
+				href="https://sites.google.com/a/chromium.org/chromedriver/">веб-сайт ChromeDriver</a>. .
 			</td>
+		</tr>
+		<tr>
+			<td>Chrome Headless</td>
+			<td>chrome-headless</td>
+			<td>Запускает Chrome без графического интерфейса (GUI). </td>
 		</tr>
 		<tr>
 			<td>Firefox</td>
 			<td>firefox</td>
-			<td>The following versions are known to work: 45 (ESR), 46, 47.0.1, 54, and 55 (older
-				versions might work too). Some versions are known to not work, for example, 47.0. Newer
-				versions (&ge; 48) require geckodriver, it can be set in the options. For more
-				information on geckodriver and how to obtain it refer to the <a
-				href="https://github.com/mozilla/geckodriver">geckodriver website</a> (see footer note
-				for caveat when using geckodriver).
+			<td>Известно, что работают следующие версии: 45 (ESR), 46, 47.0.1, 54 и 55 (старые версии).
+версии тоже могут работать).  Известно, что некоторые версии не работают, например, 47.0.0. Новее
+версии (> 48) требуют geckodriver, его можно установить в настройках.  Для большей
+информации о geckodriver и о том, как его получить, см. на <a
+				href="https://github.com/mozilla/geckodriver">веб-сайте geckodriver</a> (см. примечание в нижнем колонтитуле
+для предостережения при использовании geckodriver). 
 			</td>
+		</tr>
+		<tr>
+			<td>Firefox Headless</td>
+			<td>firefox-headless</td>
+			<td>Запускает Firefox без графического интерфейса (GUI). </td>
 		</tr>
 		<tr>
 			<td>HtmlUnit</td>
 			<td>htmlunit</td>
-			<td>Bundled browser, does not have any requirement.</td>
-		</tr>
-		<tr>
-			<td>Internet Explorer</td>
-			<td>ie</td>
-			<td>The following version is known to work: 11 (older versions might work too).
-				Requires IEDriverServer, if not on the system's PATH, it can be set in the options.
-				For more information on IEDriverServer refer to the <a
-				href="https://code.google.com/p/selenium/wiki/InternetExplorerDriver">IEDriverServer
-					website</a> (see footer note for caveat when using Internet Explorer).
-			</td>
-		</tr>
-		<tr>
-			<td>Opera</td>
-			<td>opera</td>
-			<td>Temporarily not working.</td>
-		</tr>
-		<tr>
-			<td>PhantomJS</td>
-			<td>phantomjs</td>
-			<td>The following version is known to work: 2.1.1 (older versions might work too).
-				Requires PhantomJS binary, if not on the system's PATH, it can be set in the options.
-				For more information on PhantomJS and how to obtain it refer to the <a
-				href="http://phantomjs.org/">PhantomJS website</a> (see footer note for caveat when
-				using PhantomJS).
-			</td>
+			<td>Браузер в комплекте, не предъявляет никаких требований. </td>
 		</tr>
 		<tr>
 			<td>Safari</td>
@@ -79,42 +73,25 @@
 			<td>&nbsp;</td>
 		</tr>
 	</table>
-	<p>To use Firefox, Chrome, Internet Explorer, Opera, PhantomJS and Safari, you must
-		have them installed in your system. The ID of the browser can be used to choose the
-		browser when configuring ZAP through the command line or using the ZAP API (for example,
-		to set the AJAX Spider to use one or other browser).
+	<p>To use Firefox, Chrome, and Safari, you must
+		have them installed in your system. ID браузера можно использовать для выбора
+браузере при настройке ZAP через командную строку или с помощью ZAP API (например,
+настроить AJAX Spider на использование того или иного браузера). 
 	<p>
-		Some of the requirements (e.g. WebDrivers) of the browsers can be configured in the <a
-			href="options.html">Options Selenium screen</a>.
+		Некоторые требования (например, веб-драйверы) для браузеров можно настроить на экране <a
+			href="options.html">Параметры Selenium</a>. 
 
-	<h2>Bundled WebDrivers</h2>
-	ZAP provides add-ons with the WebDrivers, when those add-ons are installed ZAP will
-	attempt to use those bundled WebDrivers by default. Some OSs might not have a WebDriver
-	for some of the browsers, in those cases ZAP will inform, in the options panel, that
-	there's no bundled WebDriver available. The bundled WebDrivers can also be (re)set with
-	the 'Bundled' button (for example, if another WebDriver was manually set). Not all
-	browser versions are supported with the bundled WebDrivers, it's recommended that
-	newer/latest versions of the browsers be used whenever possible.
+	<h2>Связанные веб-драйверы</h2>
+ZAP предоставляет надстройки с WebDrivers, когда эти надстройки установлены, ZAP
+попытается  использовать эти связанные WebDrivers по умолчанию.  Некоторые ОС могут не иметь WebDriver
+для некоторых браузеров в этих случаях ZAP сообщит на панели параметров, что
+нет доступного связанного WebDriver.  Входящие в комплект WebDrivers также можно (пере)установить с помощью
+кнопка «В комплекте» (например, если вручную был установлен другой WebDriver).  Не все
+версии браузера поддерживаются встроенными веб-драйверами, рекомендуется
+по возможности использовать более новые/последние версии браузеров. 
 
 	<p>
 		<strong>Note:</strong> ZAP add-ons can add additional browsers.
-
-	<p>
-		<strong>Firefox/geckodriver Note:</strong> There's an issue (<a
-			href="https://bugzilla.mozilla.org/show_bug.cgi?id=1103196">Bug 1103196</a>) that
-		prevents HTTPS sites from being used in versions &ge; 48 and &lt; 52.
-	<p>
-		<strong>PhantomJS Note:</strong> There's an issue (<a
-			href="https://github.com/ariya/phantomjs/issues/11342">Issue #11342</a>) that prevents
-		sites at localhost, 127.0.0.1 and ::1 from being proxied through ZAP. Until a fix is
-		available is advised to not use it in those cases. Some add-ons might choose to show
-		warning message when that happens. As workaround one could define, in the <code>hosts</code>
-		file, a domain name mapping to the local address and use that domain name instead.
-	<p>
-		<strong>Internet Explorer Note:</strong> Not all versions of Internet Explorer work out
-		of the box, refer to the <a
-			href="https://code.google.com/p/selenium/wiki/InternetExplorerDriver#Required_Configuration">IEDriverServer
-			website</a> for more details on how to configure them.
 
 	<h2>See also</h2>
 	<table>

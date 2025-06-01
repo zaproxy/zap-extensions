@@ -33,7 +33,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.db.Database;
@@ -46,7 +47,6 @@ import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.PersistentConnectionListener;
-import org.zaproxy.zap.ZapGetMethod;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.extension.httppanel.component.HttpPanelComponentInterface;
@@ -60,9 +60,6 @@ import org.zaproxy.zap.extension.sse.ui.httppanel.component.EventStreamComponent
 import org.zaproxy.zap.extension.sse.ui.httppanel.models.ByteEventStreamPanelViewModel;
 import org.zaproxy.zap.extension.sse.ui.httppanel.models.StringEventStreamPanelViewModel;
 import org.zaproxy.zap.extension.sse.ui.httppanel.views.EventStreamSyntaxHighlightTextView;
-import org.zaproxy.zap.extension.sse.ui.httppanel.views.large.EventStreamLargeEventUtil;
-import org.zaproxy.zap.extension.sse.ui.httppanel.views.large.EventStreamLargePayloadView;
-import org.zaproxy.zap.extension.sse.ui.httppanel.views.large.EventStreamLargetPayloadViewModel;
 import org.zaproxy.zap.view.HttpPanelManager;
 import org.zaproxy.zap.view.HttpPanelManager.HttpPanelComponentFactory;
 import org.zaproxy.zap.view.HttpPanelManager.HttpPanelDefaultViewSelectorFactory;
@@ -78,7 +75,7 @@ import org.zaproxy.zap.view.HttpPanelManager.HttpPanelViewFactory;
 public class ExtensionServerSentEvents extends ExtensionAdaptor
         implements PersistentConnectionListener, SessionChangedListener {
 
-    private static final Logger logger = Logger.getLogger(ExtensionServerSentEvents.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionServerSentEvents.class);
     public static final int HANDSHAKE_LISTENER = 10;
 
     /** Name of this extension. */
@@ -122,7 +119,7 @@ public class ExtensionServerSentEvents extends ExtensionAdaptor
 
         extensionHook.addSessionListener(this);
 
-        if (getView() != null) {
+        if (hasView()) {
 
             // setup SSE tab
             EventStreamPanel tab = getEventStreamTab();
@@ -180,13 +177,8 @@ public class ExtensionServerSentEvents extends ExtensionAdaptor
                 storage.setTable(table);
             }
         } catch (DatabaseException e) {
-            logger.warn(e.getMessage(), e);
+            LOGGER.warn(e.getMessage(), e);
         }
-    }
-
-    @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
     }
 
     @Override
@@ -200,13 +192,17 @@ public class ExtensionServerSentEvents extends ExtensionAdaptor
      * @param msg Contains request & response headers.
      * @param remoteReader Content arrives continuously and is forwarded to local client.
      * @param localWriter Received content is written here.
+     * @param socket the socket of the connection.
      */
     public void addEventStream(
-            HttpMessage msg, final InputStream remoteReader, final OutputStream localWriter) {
+            HttpMessage msg,
+            final InputStream remoteReader,
+            final OutputStream localWriter,
+            Socket socket) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(remoteReader, charset));
         BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(localWriter, charset));
 
-        EventStreamProxy proxy = new EventStreamProxy(msg, reader, writer);
+        EventStreamProxy proxy = new EventStreamProxy(msg, reader, writer, socket);
         synchronized (observers) {
             for (EventStreamObserver observer : observers) {
                 proxy.addObserver(observer);
@@ -222,14 +218,16 @@ public class ExtensionServerSentEvents extends ExtensionAdaptor
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public boolean onHandshakeResponse(
-            HttpMessage httpMessage, Socket inSocket, ZapGetMethod method) {
+            HttpMessage httpMessage, Socket inSocket, org.zaproxy.zap.ZapGetMethod method) {
         boolean keepSocketOpen = false;
 
         if (httpMessage.isEventStream()) {
-            logger.debug("Got Server-Sent Events stream.");
+            LOGGER.debug("Got Server-Sent Events stream.");
 
-            ZapGetMethod handshakeMethod = (ZapGetMethod) httpMessage.getUserObject();
+            org.zaproxy.zap.ZapGetMethod handshakeMethod =
+                    (org.zaproxy.zap.ZapGetMethod) httpMessage.getUserObject();
             if (handshakeMethod != null) {
                 keepSocketOpen = true;
 
@@ -241,13 +239,13 @@ public class ExtensionServerSentEvents extends ExtensionAdaptor
                     inSocket.setTcpNoDelay(true);
                     inSocket.setKeepAlive(true);
 
-                    addEventStream(httpMessage, inputStream, inSocket.getOutputStream());
+                    addEventStream(httpMessage, inputStream, inSocket.getOutputStream(), inSocket);
                 } catch (IOException e) {
-                    logger.warn(e.getMessage(), e);
+                    LOGGER.warn(e.getMessage(), e);
                     keepSocketOpen = false;
                 }
             } else {
-                logger.error("Was not able to retrieve input stream.");
+                LOGGER.error("Was not able to retrieve input stream.");
             }
         }
 
@@ -315,14 +313,6 @@ public class ExtensionServerSentEvents extends ExtensionAdaptor
         // replace the normal Text views with the ones that use syntax highlighting
         viewFactory = new SyntaxHighlightTextViewFactory();
         manager.addResponseViewFactory(EventStreamComponent.NAME, viewFactory);
-
-        // support large payloads on incoming and outgoing messages
-        viewFactory = new EventStreamLargePayloadViewFactory();
-        manager.addResponseViewFactory(EventStreamComponent.NAME, viewFactory);
-
-        viewSelectorFactory = new EventStreamLargeEventDefaultViewSelectorFactory();
-        manager.addResponseDefaultViewSelectorFactory(
-                EventStreamComponent.NAME, viewSelectorFactory);
     }
 
     private void clearUpWorkPanel() {
@@ -346,12 +336,6 @@ public class ExtensionServerSentEvents extends ExtensionAdaptor
         // replace the normal Text views with the ones that use syntax highlighting
         manager.removeResponseViewFactory(
                 EventStreamComponent.NAME, SyntaxHighlightTextViewFactory.NAME);
-
-        // support large payloads on incoming and outgoing messages
-        manager.removeResponseViewFactory(
-                EventStreamComponent.NAME, EventStreamLargeEventDefaultViewSelectorFactory.NAME);
-        manager.removeResponseDefaultViewSelectorFactory(
-                EventStreamComponent.NAME, EventStreamLargeEventDefaultViewSelectorFactory.NAME);
     }
 
     /**
@@ -480,87 +464,6 @@ public class ExtensionServerSentEvents extends ExtensionAdaptor
         @Override
         public String getName() {
             return NAME;
-        }
-    }
-
-    private static final class EventStreamLargePayloadViewFactory implements HttpPanelViewFactory {
-
-        public static final String NAME = "EventStreamLargePayloadViewFactory";
-
-        @Override
-        public HttpPanelView getNewView() {
-            return new EventStreamLargePayloadView(new EventStreamLargetPayloadViewModel());
-        }
-
-        @Override
-        public Object getOptions() {
-            return null;
-        }
-
-        @Override
-        public String getName() {
-            return NAME;
-        }
-    }
-
-    private static final class EventStreamLargeEventDefaultViewSelectorFactory
-            implements HttpPanelDefaultViewSelectorFactory {
-
-        public static final String NAME = "EventStreamLargeEventDefaultViewSelectorFactory";
-
-        private static HttpPanelDefaultViewSelector defaultViewSelector = null;
-
-        private HttpPanelDefaultViewSelector getDefaultViewSelector() {
-            if (defaultViewSelector == null) {
-                createViewSelector();
-            }
-            return defaultViewSelector;
-        }
-
-        private synchronized void createViewSelector() {
-            if (defaultViewSelector == null) {
-                defaultViewSelector = new EventStreamLargePayloadDefaultViewSelector();
-            }
-        }
-
-        @Override
-        public HttpPanelDefaultViewSelector getNewDefaultViewSelector() {
-            return getDefaultViewSelector();
-        }
-
-        @Override
-        public Object getOptions() {
-            return null;
-        }
-
-        @Override
-        public String getName() {
-            return NAME;
-        }
-    }
-
-    private static final class EventStreamLargePayloadDefaultViewSelector
-            implements HttpPanelDefaultViewSelector {
-
-        @Override
-        public String getName() {
-            return "EventStreamLargePayloadDefaultViewSelector";
-        }
-
-        @Override
-        public boolean matchToDefaultView(Message aMessage) {
-            return EventStreamLargeEventUtil.isLargeEvent(aMessage);
-        }
-
-        @Override
-        public String getViewName() {
-            return EventStreamLargePayloadView.NAME;
-        }
-
-        @Override
-        public int getOrder() {
-            // has to come before HexDefaultViewSelector
-            return 15;
         }
     }
 }

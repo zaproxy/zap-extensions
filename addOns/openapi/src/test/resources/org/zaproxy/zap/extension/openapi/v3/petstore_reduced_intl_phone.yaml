@@ -1,0 +1,25 @@
+openapi: "3.0.0"
+servers:
+  - url: http://localhost:@@@PORT@@@/
+paths:
+  /pets:
+    post:
+      description: For https://github.com/zaproxy/zaproxy/issues/6644
+      operationId: addPet
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              properties:
+                name:
+                  type: string
+                tag:
+                  type: string
+                phoneNumber:
+                  type: string
+                  description: Cell Phone Number
+                  example: '+15555555555'
+      responses:
+        default:
+          content:
+            text/plain: {}

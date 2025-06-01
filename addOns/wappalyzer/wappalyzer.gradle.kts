@@ -1,30 +1,56 @@
-version = "17"
-description = "Technology detection using Wappalyzer: wappalyzer.com"
+import org.zaproxy.gradle.addon.AddOnStatus
+
+description = "Technology detection using various fingerprints and identifiers."
 
 zapAddOn {
-    addOnName.set("Wappalyzer - Technology Detection")
-    zapVersion.set("2.7.0")
+    addOnName.set("Technology Detection")
+    addOnStatus.set(AddOnStatus.RELEASE)
 
     manifest {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/technology-detection/")
+        extensions {
+            register("org.zaproxy.zap.extension.wappalyzer.automation.ExtensionWappalyzerAutomation") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.zap.extension.wappalyzer.automation"))
+                }
+                dependencies {
+                    addOns {
+                        register("automation") {
+                            version.set(">=0.31.0")
+                        }
+                    }
+                }
+            }
+        }
+        dependencies {
+            addOns {
+                register("commonlib") {
+                    version.set(">= 1.17.0 & < 2.0.0")
+                }
+                register("pscan") {
+                    version.set(">= 0.1.0 & < 1.0.0")
+                }
+            }
+        }
     }
 
     apiClientGen {
-        api.set("org.zaproxy.zap.extension.wappalyzer.WappalyzerAPI")
+        api.set("org.zaproxy.zap.extension.wappalyzer.TechApi")
         messages.set(file("src/main/resources/org/zaproxy/zap/extension/wappalyzer/resources/Messages.properties"))
     }
 }
 
 dependencies {
-    implementation("com.google.re2j:re2j:1.2")
+    zapAddOn("automation")
+    zapAddOn("commonlib")
+    zapAddOn("pscan")
 
-    val batikVersion = "1.12"
-    implementation("org.apache.xmlgraphics:batik-anim:$batikVersion")
-    implementation("org.apache.xmlgraphics:batik-bridge:$batikVersion")
-    implementation("org.apache.xmlgraphics:batik-ext:$batikVersion")
-    implementation("org.apache.xmlgraphics:batik-gvt:$batikVersion")
-    implementation("org.apache.xmlgraphics:batik-util:$batikVersion")
+    compileOnly(libs.log4j.core)
+
+    implementation("com.google.re2j:re2j:1.7")
+    implementation("com.github.weisj:jsvg:1.4.0")
+    implementation("org.jsoup:jsoup:1.17.2")
 
     testImplementation(project(":testutils"))
 }

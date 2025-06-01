@@ -6,7 +6,9 @@
 <toc version="2.0">
 	<tocitem text="Guia do Usuário do ZAP" tocid="toplevelitem">
 		<tocitem text="Complementos" tocid="addons">
-			<tocitem text="Regra de Scan ativo DOM XSS" target="domxss"/>
+			<tocitem text="Regra de Scan ativo DOM XSS" target="domxss">
+				<tocitem text="About" target="domxss.about"/>
+			</tocitem>
 		</tocitem>
 	</tocitem>
 </toc>

@@ -67,6 +67,6 @@ public class BugTrackerBugzillaOptionsPanel extends AbstractParamPanel {
 
     @Override
     public String getHelpIndex() {
-        return "addon.alertFilter";
+        return "addon.bugtracker.bugtracker";
     }
 }

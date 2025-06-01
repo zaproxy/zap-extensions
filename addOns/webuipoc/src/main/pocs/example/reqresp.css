@@ -1,0 +1,21 @@
+
+table { 
+    table-layout:fixed;
+    width: 100%;
+}
+
+div {
+    overflow-x: auto;
+}
+
+tr {
+    vertical-align: top
+}
+
+td { 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    word-wrap: break-word;
+    width: 50%;
+}
+

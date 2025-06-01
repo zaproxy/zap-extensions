@@ -19,42 +19,59 @@
  */
 package org.zaproxy.zap.extension.formhandler;
 
+import java.util.Locale;
+import java.util.Objects;
 import org.zaproxy.zap.utils.Enableable;
 
 class FormHandlerParamField extends Enableable {
 
     private String name;
     private String value;
+    private boolean regex;
 
     public FormHandlerParamField() {
-        this("", "", false);
+        this("", "", false, false);
     }
 
     public FormHandlerParamField(String name) {
-        this(name, "", true);
+        this(name, "", true, false);
     }
 
     public FormHandlerParamField(String name, String value) {
-        this(name, value, true);
+        this(name, value, true, false);
     }
 
-    public FormHandlerParamField(String name, String value, boolean enabled) {
+    public FormHandlerParamField(String name, String value, boolean enabled, boolean regex) {
         super(enabled);
 
-        this.name = name.toLowerCase();
+        Objects.requireNonNull(name);
+        Objects.requireNonNull(value);
+        this.regex = regex; // Set regex prior to handling name
+        this.name = handleName(name);
         this.value = value;
     }
 
     public FormHandlerParamField(FormHandlerParamField field) {
-        this(field.name, field.value, field.isEnabled());
+        this(field.name, field.value, field.isEnabled(), field.isRegex());
     }
 
     public String getName() {
         return name;
     }
 
+    private String handleName(String name) {
+        return regex ? name : name.toLowerCase(Locale.ROOT);
+    }
+
     public void setName(String name) {
-        this.name = name;
+        this.name = handleName(name);
+    }
+
+    public boolean hasName(String fieldName) {
+        if (isRegex()) {
+            return name.equals(fieldName);
+        }
+        return name.equalsIgnoreCase(fieldName);
     }
 
     public String getValue() {
@@ -65,27 +82,56 @@ class FormHandlerParamField extends Enableable {
         this.value = value;
     }
 
+    public boolean isRegex() {
+        return regex;
+    }
+
+    public void setRegex(boolean regex) {
+        this.regex = regex;
+    }
+
+    @Override
+    public String toString() {
+        return this.getName()
+                + " with value: "
+                + this.getValue()
+                + " enabled: "
+                + this.isEnabled()
+                + " regex: "
+                + this.isRegex();
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((value == null) ? 0 : value.hashCode());
+        result = prime * result + name.hashCode();
+        result = prime * result + value.hashCode();
         return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (!super.equals(obj)) return false;
-        if (getClass() != obj.getClass()) return false;
+        if (obj == null) {
+            return false;
+        }
+        if (this == obj) {
+            return true;
+        }
+        if (!super.equals(obj)) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
         FormHandlerParamField other = (FormHandlerParamField) obj;
-        if (name == null) {
-            if (other.name != null) return false;
-        } else if (!name.equals(other.name)) return false;
-        if (value == null) {
-            if (other.value != null) return false;
-        } else if (!value.equals(other.value)) return false;
-        return true;
+        if (hasName(other.getName())) {
+            return equalAttributes(other);
+        }
+        return false;
+    }
+
+    private boolean equalAttributes(FormHandlerParamField other) {
+        return value.equals(other.value) && isRegex() == other.isRegex();
     }
 }

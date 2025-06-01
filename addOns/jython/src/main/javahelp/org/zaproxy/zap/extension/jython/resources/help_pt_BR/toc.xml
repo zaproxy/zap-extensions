@@ -6,7 +6,9 @@
 <toc version="2.0">
 	<tocitem text="Zap - Guia do Usuário" tocid="toplevelitem">
 		<tocitem text="Complementos" tocid="addons">
-			<tocitem text="Scripts Python" image="python-logo" target="jython"/>
+			<tocitem text="Scripts Python" image="python-logo" target="jython">
+				<tocitem text="Options" target="jython.options" />
+			</tocitem>
 		</tocitem>
 	</tocitem>
 </toc>

@@ -24,12 +24,13 @@ import java.util.List;
 import java.util.Set;
 import org.apache.commons.configuration.ConversionException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zaproxy.zap.common.VersionedAbstractParam;
 
 public class GlobalAlertFilterParam extends VersionedAbstractParam {
 
-    private static final Logger logger = Logger.getLogger(GlobalAlertFilterParam.class);
+    private static final Logger LOGGER = LogManager.getLogger(GlobalAlertFilterParam.class);
 
     /**
      * The version of the configurations. Used to keep track of configurations changes between
@@ -54,6 +55,7 @@ public class GlobalAlertFilterParam extends VersionedAbstractParam {
     private static final String FILTER_ATTACK_IS_REGEX_KEY = "attackregex";
     private static final String FILTER_EVIDENCE_KEY = "evidence";
     private static final String FILTER_EVIDENCE_IS_REGEX_KEY = "evidenceregex";
+    private static final String FILTER_METHOD_KEY = "methods.method";
     private static final String FILTER_ENABLED_KEY = "enabled";
 
     private static final String CONFIRM_REMOVE_FILTER_KEY =
@@ -67,6 +69,11 @@ public class GlobalAlertFilterParam extends VersionedAbstractParam {
 
     public Set<AlertFilter> getGlobalAlertFilters() {
         return alertFilters;
+    }
+
+    public void deleteGlobalAlertFilters() {
+        alertFilters.clear();
+        this.saveGlobalAlertFilters();
     }
 
     public void setGlobalAlertFilters(List<AlertFilter> filters) {
@@ -99,6 +106,12 @@ public class GlobalAlertFilterParam extends VersionedAbstractParam {
                     .setProperty(
                             elementBaseKey + FILTER_EVIDENCE_IS_REGEX_KEY,
                             filter.isEvidenceRegex());
+            int j = 0;
+            for (String method : filter.getMethods()) {
+                String methodKey = elementBaseKey + FILTER_METHOD_KEY + "(" + j + ")";
+                getConfig().setProperty(methodKey, method);
+                j++;
+            }
             getConfig().setProperty(elementBaseKey + FILTER_ENABLED_KEY, filter.isEnabled());
             i++;
         }
@@ -144,10 +157,14 @@ public class GlobalAlertFilterParam extends VersionedAbstractParam {
                             .configurationsAt(ALL_ALERT_FILTERS_KEY);
             this.alertFilters = new HashSet<>();
             for (HierarchicalConfiguration sub : fields) {
+                Set<String> methods = new HashSet<>();
+                for (HierarchicalConfiguration method : sub.configurationsAt(FILTER_METHOD_KEY)) {
+                    methods.add(method.getString(""));
+                }
                 alertFilters.add(
                         new AlertFilter(
                                 -1,
-                                sub.getInt(FILTER_RULE_ID_KEY),
+                                sub.getString(FILTER_RULE_ID_KEY),
                                 sub.getInt(FILTER_NEW_RISK_KEY),
                                 sub.getString(FILTER_URL_KEY, null),
                                 sub.getBoolean(FILTER_URL_IS_REGEX_KEY, false),
@@ -157,10 +174,11 @@ public class GlobalAlertFilterParam extends VersionedAbstractParam {
                                 sub.getBoolean(FILTER_ATTACK_IS_REGEX_KEY, false),
                                 sub.getString(FILTER_EVIDENCE_KEY, null),
                                 sub.getBoolean(FILTER_EVIDENCE_IS_REGEX_KEY, false),
+                                methods,
                                 sub.getBoolean(FILTER_ENABLED_KEY, false)));
             }
         } catch (ConversionException e) {
-            logger.error("Error while loading global alert filters: " + e.getMessage(), e);
+            LOGGER.error("Error while loading global alert filters: {}", e.getMessage(), e);
         }
 
         this.confirmRemoveFilter = getBoolean(CONFIRM_REMOVE_FILTER_KEY, true);

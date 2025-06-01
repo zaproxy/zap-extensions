@@ -27,11 +27,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import org.apache.log4j.Logger;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
 
 /**
  * Manager class for the overall boundaries and testing plugins. Load element definitions from an
@@ -50,7 +51,7 @@ public class SQLiPayloadManager {
     public static final int TECHNIQUE_UNION = 6;
 
     // Map for technique retrieval
-    public static final Map<Integer, String> SQLI_TECHNIQUES = new HashMap<>();
+    static final Map<Integer, String> SQLI_TECHNIQUES = new HashMap<>();
 
     static {
         SQLI_TECHNIQUES.put(TECHNIQUE_BOOLEAN, "boolean-based blind");
@@ -66,6 +67,7 @@ public class SQLiPayloadManager {
     public static final int WHERE_NEGATIVE = 2;
     public static final int WHERE_REPLACE = 3;
 
+    private static final Random RAND = new Random();
     // Initialization elements for payload generation
     public static final String charsStart = ":" + randomString(3, true, null) + ":";
     public static final String charsStop = ":" + randomString(3, true, null) + ":";
@@ -93,7 +95,7 @@ public class SQLiPayloadManager {
     private List<SQLiBoundary> boundaries;
     private List<SQLiTest> tests;
 
-    private static final Logger log = Logger.getLogger(SQLiPayloadManager.class);
+    private static final Logger LOGGER = LogManager.getLogger(SQLiPayloadManager.class);
 
     // Singleton variable
     private static SQLiPayloadManager instance;
@@ -109,14 +111,14 @@ public class SQLiPayloadManager {
                 instance = new SQLiPayloadManager();
 
             } catch (IOException | JDOMException ex) {
-                log.error("Cannot initialize the Payload database instance", ex);
+                LOGGER.error("Cannot initialize the Payload database instance", ex);
             }
         }
 
         return instance;
     }
 
-    /** Inner contructor used to create the Singleton */
+    /** Inner constructor used to create the Singleton */
     private SQLiPayloadManager() throws IOException, JDOMException {
         boundaries = new ArrayList<>();
         tests = new ArrayList<>();
@@ -138,7 +140,7 @@ public class SQLiPayloadManager {
         }
 
         // Log current execution
-        // log.info("Loaded " + boundaries.size() + " boundary elements");
+        // LOGGER.info("Loaded {} boundary elements", boundaries.size());
         is.close();
 
         // Load all payloads from resources
@@ -151,7 +153,7 @@ public class SQLiPayloadManager {
         }
 
         // Log current execution
-        // log.info("Loaded " + tests.size() + " payload elements");
+        // LOGGER.info("Loaded {} payload elements", tests.size());
         is.close();
     }
 
@@ -174,18 +176,17 @@ public class SQLiPayloadManager {
     }
 
     /**
-     * Get a random integer value of lenght digits
+     * Get a random integer value of length digits
      *
      * @param length the number of digits of this integer
      * @return the integer value
      */
     public static String randomInt(int length) {
-        Random rand = new Random();
         StringBuilder result = new StringBuilder();
-        result.append((char) (rand.nextInt(9) + '1'));
+        result.append((char) (RAND.nextInt(9) + '1'));
 
         for (int i = 1; i < length; i++) {
-            result.append((char) (rand.nextInt(10) + '0'));
+            result.append((char) (RAND.nextInt(10) + '0'));
         }
 
         return result.toString();
@@ -201,15 +202,14 @@ public class SQLiPayloadManager {
     }
 
     /**
-     * Get a randomly built string with exactly lenght chars
+     * Get a randomly built string with exactly length chars
      *
      * @param length the number of chars of this string
      * @param lowerCase get only lowercase chars
      * @param alphabet set the alphabet to use
-     * @return a string element containing exactly "lenght" characters
+     * @return a string element containing exactly "length" characters
      */
     public static String randomString(int length, boolean lowerCase, String alphabet) {
-        Random rand = new Random();
         StringBuilder result = new StringBuilder();
 
         if (alphabet == null) {
@@ -220,7 +220,7 @@ public class SQLiPayloadManager {
         }
 
         for (int i = 0; i < length; i++) {
-            result.append(alphabet.charAt(rand.nextInt(alphabet.length())));
+            result.append(alphabet.charAt(RAND.nextInt(alphabet.length())));
         }
 
         return result.toString();

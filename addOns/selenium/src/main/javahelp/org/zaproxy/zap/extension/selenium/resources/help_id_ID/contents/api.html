@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>Selenium API</title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 	<h1>Selenium API</h1>
 
 	API 'selenium' mengizinkan untuk mengatur dan melihat path ke WebDrivers dan biner yang dibutuhkan.
@@ -18,64 +18,83 @@
 			<th>Deskripsi</th>
 		</tr>
 		<tr>
+			<td>getBrowserArguments</td>
+			<td>lihat</td>
+			<td>browser*</td>
+			<td>Gets the browser arguments.</td>
+		</tr>
+		<tr>
+			<td>optionChromeBinaryPath</td>
+			<td>lihat</td>
+			<td></td>
+			<td>Returns the current path to Chrome binary</td>
+		</tr>
+		<tr>
 			<td>optionChromeDriverPath</td>
 			<td>lihat</td>
 			<td></td>
-			<td>Kembalikan path saat ini ke ChromeDriver</td>
+			<td>Returns the current path to ChromeDriver</td>
 		</tr>
 		<tr>
-			<td>opsi Firefox Biner Jalan</td>
+			<td>optionFirefoxBinaryPath</td>
 			<td>lihat</td>
 			<td></td>
-			<td>Kembalikan path saat ini ke biner Firefox</td>
+			<td>Returns the current path to Firefox binary</td>
 		</tr>
 		<tr>
 			<td>optionFirefoxDriverPath</td>
-			<td>lihat</td>
+			<td>view</td>
 			<td></td>
-			<td>Kembalikan path saat ini ke driver Firefox (geckodriver)</td>
+			<td>Returns the current path to Firefox driver (geckodriver)</td>
 		</tr>
 		<tr>
-			<td>optionIeDriverPath</td>
-			<td>lihat</td>
-			<td></td>
-			<td>Kembalikan path saat ini ke IEDriverServer</td>
+			<td>addBrowserArgument</td>
+			<td>tindakan</td>
+			<td>browser* argument* enabled</td>
+			<td>Adds a browser argument.</td>
+		</tr>
+
+		<tr>
+			<td>launchBrowser</td>
+			<td>tindakan</td>
+			<td>browser*</td>
+			<td>Launches a browser proxying through ZAP, for manual usage.</td>
 		</tr>
 		<tr>
-			<td>optionPhantomJsBinaryPath</td>
-			<td>lihat</td>
-			<td></td>
-			<td>Kembalikan path saat ini ke biner PhantomJS</td>
+			<td>removeBrowserArgument</td>
+			<td>tindakan</td>
+			<td>browser* argument*</td>
+			<td>Removes a browser argument.</td>
+		</tr>
+		<tr>
+			<td>setBrowserArgumentEnabled</td>
+			<td>action</td>
+			<td>browser* argument* enabled* </td>
+			<td>Sets whether or not a browser argument is enabled.</td>
+		</tr>
+		<tr>
+			<td>setOptionChromeBinaryPath</td>
+			<td>action</td>
+			<td>String*</td>
+			<td>Sets the current path to Chrome binary</td>
 		</tr>
 		<tr>
 			<td>setOptionChromeDriverPath</td>
-			<td>tindakan</td>
+			<td>action</td>
 			<td>String*</td>
-			<td>Tetapkan path saat ini ke ChromeDriver</td>
+			<td>Sets the current path to ChromeDriver</td>
 		</tr>
 		<tr>
 			<td>setOptionFirefoxBinaryPath</td>
-			<td>tindakan</td>
+			<td>action</td>
 			<td>String*</td>
-			<td>Menetapkan jalur saat ini ke biner Firefox</td>
+			<td>Sets the current path to Firefox binary</td>
 		</tr>
 		<tr>
 			<td>setOptionFirefoxDriverPath</td>
-			<td>tindakan</td>
+			<td>action</td>
 			<td>String*</td>
-			<td>Menetapkan jalur saat ini untuk driver Firefox (geckodriver)</td>
-		</tr>
-		<tr>
-			<td>setOptionIeDriverPath</td>
-			<td>tindakan</td>
-			<td>String*</td>
-			<td>Menetapkan jalur saat ini ke IEDriverServer</td>
-		</tr>
-		<tr>
-			<td>setOptionPhantomJsBinaryPath</td>
-			<td>tindakan</td>
-			<td>String*</td>
-			<td>Menetapkan jalur saat ini ke biner PhantomJS</td>
+			<td>Sets the current path to Firefox driver (geckodriver)</td>
 		</tr>
 	</table>
 	Parameter berbintang adalah wajib

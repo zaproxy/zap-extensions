@@ -23,7 +23,6 @@ import org.zaproxy.zap.utils.EnableableInterface;
 
 public class CustomPayload implements EnableableInterface {
 
-    private int id;
     private boolean enabled;
     private String category;
     private String payload;
@@ -33,18 +32,9 @@ public class CustomPayload implements EnableableInterface {
     }
 
     public CustomPayload(boolean enabled, String category, String payload) {
-        this(-1, enabled, category, payload);
-    }
-
-    public CustomPayload(int id, boolean enabled, String category, String payload) {
-        this.id = id;
         this.enabled = enabled;
         this.category = category;
         this.payload = payload;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public void setCategory(String category) {
@@ -73,11 +63,7 @@ public class CustomPayload implements EnableableInterface {
         return payload;
     }
 
-    public int getId() {
-        return id;
-    }
-
     public CustomPayload copy() {
-        return new CustomPayload(id, enabled, category, payload);
+        return new CustomPayload(enabled, category, payload);
     }
 }

@@ -19,7 +19,9 @@
  */
 package org.zaproxy.zap.extension.sse;
 
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -27,31 +29,32 @@ import static org.mockito.Mockito.when;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.net.Socket;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
-import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 
 /** Unit test for {@link EventStreamListener}. */
-@RunWith(MockitoJUnitRunner.class)
-public class EventStreamListenerUnitTest {
+@ExtendWith(MockitoExtension.class)
+class EventStreamListenerUnitTest {
 
     @Test
-    public void shouldFireProcessEventOnce() throws IOException {
+    void shouldFireProcessEventOnce() throws IOException {
         // Given
         final String event1 = "data:blub";
 
         // When
         BufferedReader readerMock = getReaderMockForStream(prepareEventStreamLines(event1));
-        EventStreamProxy proxyMock = Mockito.mock(EventStreamProxy.class);
+        EventStreamProxy proxyMock = mock(EventStreamProxy.class);
+        Socket socket = mock(Socket.class);
 
-        EventStreamListener listener = new EventStreamListener(proxyMock, readerMock);
+        EventStreamListener listener = new EventStreamListener(proxyMock, readerMock, socket);
         listener.run();
 
         // Then
@@ -59,7 +62,7 @@ public class EventStreamListenerUnitTest {
     }
 
     @Test
-    public void shouldFireProcessEventMultipleTimes() throws IOException {
+    void shouldFireProcessEventMultipleTimes() throws IOException {
         // Given
         final String event1 = ": test stream";
         final String event2 = "data: first event\nid: 1";
@@ -69,9 +72,10 @@ public class EventStreamListenerUnitTest {
         // When
         BufferedReader readerMock =
                 getReaderMockForStream(prepareEventStreamLines(event1, event2, event3, event4));
-        EventStreamProxy proxyMock = Mockito.mock(EventStreamProxy.class);
+        EventStreamProxy proxyMock = mock(EventStreamProxy.class);
+        Socket socket = mock(Socket.class);
 
-        EventStreamListener listener = new EventStreamListener(proxyMock, readerMock);
+        EventStreamListener listener = new EventStreamListener(proxyMock, readerMock, socket);
         listener.run();
 
         // Then
@@ -83,15 +87,16 @@ public class EventStreamListenerUnitTest {
     }
 
     @Test
-    public void shouldFireProcessEventOnceForComplexEvent() throws IOException {
+    void shouldFireProcessEventOnceForComplexEvent() throws IOException {
         // Given
         final String event1 = "event: foo\ndata: first event\nid: 1";
 
         // When
         BufferedReader readerMock = getReaderMockForStream(prepareEventStreamLines(event1));
-        EventStreamProxy proxyMock = Mockito.mock(EventStreamProxy.class);
+        EventStreamProxy proxyMock = mock(EventStreamProxy.class);
+        Socket socket = mock(Socket.class);
 
-        EventStreamListener listener = new EventStreamListener(proxyMock, readerMock);
+        EventStreamListener listener = new EventStreamListener(proxyMock, readerMock, socket);
         listener.run();
 
         // Then
@@ -99,38 +104,53 @@ public class EventStreamListenerUnitTest {
     }
 
     @Test
-    public void shouldNotFireProcessEventForAnIncompleteEvent() throws IOException {
+    void shouldNotFireProcessEventForAnIncompleteEvent() throws IOException {
         // Given
-        LinkedList<String> streamLines = new LinkedList<String>();
+        LinkedList<String> streamLines = new LinkedList<>();
         streamLines.add("data:blub");
         streamLines.add("id: 9982");
 
         // When
         BufferedReader readerMock = getReaderMockForStream(streamLines);
-        EventStreamProxy proxyMock = Mockito.mock(EventStreamProxy.class);
+        EventStreamProxy proxyMock = mock(EventStreamProxy.class);
+        Socket socket = mock(Socket.class);
 
-        EventStreamListener listener = new EventStreamListener(proxyMock, readerMock);
+        EventStreamListener listener = new EventStreamListener(proxyMock, readerMock, socket);
         listener.run();
 
         // Then
-        verify(proxyMock, never()).processEvent(Mockito.anyString());
+        verify(proxyMock, never()).processEvent(anyString());
     }
 
     @Test
-    public void shouldFireProcessEventOnAnEmptyEvent() throws IOException {
+    void shouldFireProcessEventOnAnEmptyEvent() throws IOException {
         // Given
-        LinkedList<String> streamLines = new LinkedList<String>();
+        LinkedList<String> streamLines = new LinkedList<>();
         streamLines.add("");
 
         // When
         BufferedReader readerMock = getReaderMockForStream(streamLines);
-        EventStreamProxy proxyMock = Mockito.mock(EventStreamProxy.class);
+        EventStreamProxy proxyMock = mock(EventStreamProxy.class);
+        Socket socket = mock(Socket.class);
 
-        EventStreamListener listener = new EventStreamListener(proxyMock, readerMock);
+        EventStreamListener listener = new EventStreamListener(proxyMock, readerMock, socket);
         listener.run();
 
         // Then
         verify(proxyMock, times(1)).processEvent("");
+    }
+
+    @Test
+    void shouldAbortMethodWhenClosing() throws IOException {
+        // Given
+        EventStreamProxy proxyMock = mock(EventStreamProxy.class);
+        BufferedReader readerMock = mock(BufferedReader.class);
+        Socket socket = mock(Socket.class);
+        EventStreamListener listener = new EventStreamListener(proxyMock, readerMock, socket);
+        // When
+        listener.close();
+        // Then
+        verify(socket).close();
     }
 
     /**
@@ -143,7 +163,7 @@ public class EventStreamListenerUnitTest {
      */
     private BufferedReader getReaderMockForStream(final List<String> streamLines)
             throws IOException {
-        BufferedReader readerMock = Mockito.mock(BufferedReader.class);
+        BufferedReader readerMock = mock(BufferedReader.class);
 
         when(readerMock.readLine())
                 .thenAnswer(

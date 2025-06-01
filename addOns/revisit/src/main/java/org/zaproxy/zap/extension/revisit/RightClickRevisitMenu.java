@@ -31,6 +31,7 @@ import org.zaproxy.zap.view.popup.PopupMenuItemSiteNodeContainer;
  *
  * This class is defines the popup menu item.
  */
+@SuppressWarnings("serial")
 public class RightClickRevisitMenu extends PopupMenuItemSiteNodeContainer {
 
     private static final long serialVersionUID = 1L;

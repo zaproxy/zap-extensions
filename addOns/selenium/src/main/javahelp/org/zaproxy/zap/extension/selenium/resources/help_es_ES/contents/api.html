@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>Selenium API</title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 	<h1>API Selenium</h1>
 
 	La API "selenium" permite fijar y ver las rutas a los WebDrivers requeridos y
@@ -19,64 +19,83 @@
 			<th>Descripción</th>
 		</tr>
 		<tr>
+			<td>getBrowserArguments</td>
+			<td>vista</td>
+			<td>browser*</td>
+			<td>Gets the browser arguments.</td>
+		</tr>
+		<tr>
+			<td>optionChromeBinaryPath</td>
+			<td>vista</td>
+			<td></td>
+			<td>Returns the current path to Chrome binary</td>
+		</tr>
+		<tr>
 			<td>optionChromeDriverPath</td>
 			<td>vista</td>
 			<td></td>
-			<td>Devuelve la ruta actual a ChromeDriver</td>
+			<td>Returns the current path to ChromeDriver</td>
 		</tr>
 		<tr>
 			<td>optionFirefoxBinaryPath</td>
 			<td>vista</td>
 			<td></td>
-			<td>Devuelve la ruta actual a los archivos binarios Firefox</td>
+			<td>Returns the current path to Firefox binary</td>
 		</tr>
 		<tr>
 			<td>optionFirefoxDriverPath</td>
-			<td>vista</td>
+			<td>view</td>
 			<td></td>
-			<td>Devuelve la ruta actual a la ruta Firefox driver (geckodriver)</td>
+			<td>Returns the current path to Firefox driver (geckodriver)</td>
 		</tr>
 		<tr>
-			<td>optionIeDriverPath</td>
-			<td>vista</td>
-			<td></td>
-			<td>Devuelve la ruta actual a IEDriverServer</td>
+			<td>addBrowserArgument</td>
+			<td>acción</td>
+			<td>browser* argument* enabled</td>
+			<td>Adds a browser argument.</td>
+		</tr>
+
+		<tr>
+			<td>launchBrowser</td>
+			<td>acción</td>
+			<td>browser*</td>
+			<td>Launches a browser proxying through ZAP, for manual usage.</td>
 		</tr>
 		<tr>
-			<td>optionPhantomJsBinaryPath</td>
-			<td>vista</td>
-			<td></td>
-			<td>Devuelve la ruta actual a los archivos binarios PhantomJS</td>
+			<td>removeBrowserArgument</td>
+			<td>acción</td>
+			<td>browser* argument*</td>
+			<td>Removes a browser argument.</td>
+		</tr>
+		<tr>
+			<td>setBrowserArgumentEnabled</td>
+			<td>action</td>
+			<td>browser* argument* enabled* </td>
+			<td>Sets whether or not a browser argument is enabled.</td>
+		</tr>
+		<tr>
+			<td>setOptionChromeBinaryPath</td>
+			<td>action</td>
+			<td>String*</td>
+			<td>Sets the current path to Chrome binary</td>
 		</tr>
 		<tr>
 			<td>setOptionChromeDriverPath</td>
-			<td>acción</td>
-			<td>String</td>
-			<td>Establece la ruta actual a ChromeDriver</td>
+			<td>action</td>
+			<td>String*</td>
+			<td>Sets the current path to ChromeDriver</td>
 		</tr>
 		<tr>
 			<td>setOptionFirefoxBinaryPath</td>
-			<td>acción</td>
+			<td>action</td>
 			<td>String*</td>
-			<td>Establece la ruta actual a los archivos binarios Firefox</td>
+			<td>Sets the current path to Firefox binary</td>
 		</tr>
 		<tr>
 			<td>setOptionFirefoxDriverPath</td>
-			<td>acción</td>
+			<td>action</td>
 			<td>String*</td>
 			<td>Sets the current path to Firefox driver (geckodriver)</td>
-		</tr>
-		<tr>
-			<td>setOptionIeDriverPath</td>
-			<td>action</td>
-			<td>String*</td>
-			<td>Sets the current path to IEDriverServer</td>
-		</tr>
-		<tr>
-			<td>setOptionPhantomJsBinaryPath</td>
-			<td>action</td>
-			<td>String*</td>
-			<td>Sets the current path to PhantomJS binary</td>
 		</tr>
 	</table>
 	Los parámetros señalados son obligatorios

@@ -6,7 +6,7 @@
 <toc version="2.0">
     <tocitem text="ZAP User Guide" tocid="toplevelitem">
         <tocitem text="Add Ons" tocid="addons">
-            <tocitem text="FuzzDB Files" target="fuzzdb"/>
+            <tocitem text="FuzzDB Files" image="fuzzdb-icon" target="fuzzdb"/>
         </tocitem>
     </tocitem>
 </toc>

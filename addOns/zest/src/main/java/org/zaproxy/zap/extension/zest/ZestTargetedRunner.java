@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.zest;
 
 import javax.script.ScriptException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.zap.extension.script.TargetedScript;
 
 public class ZestTargetedRunner extends ZestZapRunner implements TargetedScript {
@@ -28,8 +29,9 @@ public class ZestTargetedRunner extends ZestZapRunner implements TargetedScript 
     private ExtensionZest extension = null;
     private ZestScriptWrapper script = null;
 
-    public ZestTargetedRunner(ExtensionZest extension, ZestScriptWrapper script) {
-        super(extension, script);
+    public ZestTargetedRunner(
+            ExtensionZest extension, ExtensionNetwork extensionNetwork, ZestScriptWrapper script) {
+        super(extension, extensionNetwork, script);
         this.extension = extension;
         this.script = script;
     }

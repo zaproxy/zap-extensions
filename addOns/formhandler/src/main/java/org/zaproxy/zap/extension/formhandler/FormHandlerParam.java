@@ -20,19 +20,30 @@
 package org.zaproxy.zap.extension.formhandler;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import org.apache.commons.configuration.ConversionException;
+import org.apache.commons.configuration.FileConfiguration;
 import org.apache.commons.configuration.HierarchicalConfiguration;
-import org.apache.log4j.Logger;
-import org.parosproxy.paros.common.AbstractParam;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.Constant;
+import org.zaproxy.zap.common.VersionedAbstractParam;
 import org.zaproxy.zap.extension.api.ZapApiIgnore;
 
-public class FormHandlerParam extends AbstractParam {
+public class FormHandlerParam extends VersionedAbstractParam {
 
-    private static final Logger logger = Logger.getLogger(FormHandlerParam.class);
+    private static final Logger LOGGER = LogManager.getLogger(FormHandlerParam.class);
+
+    /**
+     * The version of the configurations. Used to keep track of configurations changes between
+     * releases, if updates are needed.
+     *
+     * <p>It only needs to be updated for configurations changes (not releases of the add-on).
+     */
+    private static final int PARAM_CURRENT_VERSION = 1;
 
     private static final String FORM_HANDLER_BASE_KEY = "formhandler";
 
@@ -41,40 +52,79 @@ public class FormHandlerParam extends AbstractParam {
     private static final String TOKEN_NAME_KEY = "fieldId";
     private static final String TOKEN_VALUE_KEY = "value";
     private static final String TOKEN_ENABLED_KEY = "enabled";
+    private static final String TOKEN_REGEX_KEY = "regex";
     private static final String CONFIRM_REMOVE_TOKEN_KEY =
             FORM_HANDLER_BASE_KEY + ".confirmRemoveField";
 
-    private List<FormHandlerParamField> fields = null;
-    private List<String> enabledFieldsNames = null;
+    protected static final List<FormHandlerParamField> DEFAULT_FIELDS_ORIGINAL =
+            List.of(
+                    new FormHandlerParamField("color", "#ffffff"),
+                    new FormHandlerParamField("email", "zaproxy@example.com"),
+                    new FormHandlerParamField("name", "ZAP"),
+                    new FormHandlerParamField("password", "ZAP"),
+                    new FormHandlerParamField("phone", "9999999999"),
+                    new FormHandlerParamField("url", "https://zap.example.com"));
+    protected static final List<FormHandlerParamField> DEFAULT_FIELDS_V1 =
+            List.of(
+                    new FormHandlerParamField(
+                            "(?i)_?back[-_]?(?:link|uri|url)?",
+                            "https://zap.example.com",
+                            true,
+                            true),
+                    new FormHandlerParamField("(?i)_?bg[-_]?colou?r", "#FFFFFF", true, true),
+                    new FormHandlerParamField("(?i)_?query|find|keyword", "ZAP", true, true),
+                    new FormHandlerParamField(
+                            "(?i)_?search[-_]?(?:term|word|param|parameter|string|text|value|keyword|query)?",
+                            "ZAP",
+                            true,
+                            true),
+                    new FormHandlerParamField(
+                            "(?i)_?amount|amt|count|qty|quantity", "3", true, true),
+                    new FormHandlerParamField("(?i)_?lang|language", "en", true, true),
+                    new FormHandlerParamField(
+                            "(?i)_?locale[-_]?(?:code)?",
+                            Constant.getSystemsLocale().toLanguageTag(),
+                            true,
+                            true),
+                    new FormHandlerParamField(
+                            "(?i)_?(?:comment|subject|summary)?",
+                            "Zaproxy dolore alias impedit expedita quisquam.",
+                            true,
+                            true),
+                    new FormHandlerParamField(
+                            "(?i)_?(?:description|message|(?:email|post)?[-_]?content)?",
+                            "Zaproxy alias impedit expedita quisquam pariatur exercitationem. Nemo rerum eveniet dolores rem quia dignissimos.",
+                            true,
+                            true),
+                    new FormHandlerParamField("(?i)_?state", "Oklahoma", true, true),
+                    new FormHandlerParamField("(?i)_?city", "East Romaineburgh", true, true),
+                    new FormHandlerParamField(
+                            "(?i)_?address[_-]?1?", "688 Zaproxy Ridge", true, true),
+                    new FormHandlerParamField("(?i)_?address[_-]?2", "Suite 473", true, true));
+
+    private List<FormHandlerParamField> fields;
+    private List<String> enabledFieldsNames;
 
     private boolean confirmRemoveField = true;
 
-    private static final Map<String, String> DEFAULT_KEY_VALUE_PAIRS =
-            new HashMap<String, String>();
-
-    static {
-        DEFAULT_KEY_VALUE_PAIRS.put("color", "#ffffff");
-        DEFAULT_KEY_VALUE_PAIRS.put("email", "foo-bar@example.com");
-        DEFAULT_KEY_VALUE_PAIRS.put("name", "ZAP");
-        DEFAULT_KEY_VALUE_PAIRS.put("password", "ZAP");
-        DEFAULT_KEY_VALUE_PAIRS.put("phone", "9999999999");
-        DEFAULT_KEY_VALUE_PAIRS.put("url", "https://www.example.com");
-    }
-
     @Override
-    protected void parse() {
+    protected void parseImpl() {
         try {
-            List<HierarchicalConfiguration> fields =
+            List<HierarchicalConfiguration> configFields =
                     ((HierarchicalConfiguration) getConfig()).configurationsAt(ALL_TOKENS_KEY);
-            this.fields = new ArrayList<>(fields.size());
-            enabledFieldsNames = new ArrayList<>(fields.size());
-            List<String> tempFieldsNames = new ArrayList<>(fields.size());
-            for (HierarchicalConfiguration sub : fields) {
+            this.fields = new ArrayList<>(configFields.size());
+            enabledFieldsNames = new ArrayList<>(configFields.size());
+            List<String> tempFieldsNames = new ArrayList<>(configFields.size());
+            for (HierarchicalConfiguration sub : configFields) {
                 String value = sub.getString(TOKEN_VALUE_KEY, "");
                 String name = sub.getString(TOKEN_NAME_KEY, "");
+                boolean regex = sub.getBoolean(TOKEN_REGEX_KEY, false);
                 if (!"".equals(name) && !tempFieldsNames.contains(name)) {
                     boolean enabled = sub.getBoolean(TOKEN_ENABLED_KEY, true);
-                    this.fields.add(new FormHandlerParamField(name, value, enabled));
+                    if (regex && !validateRegex(name)) {
+                        continue;
+                    }
+                    this.fields.add(new FormHandlerParamField(name, value, enabled, regex));
                     tempFieldsNames.add(name);
                     if (enabled) {
                         enabledFieldsNames.add(name);
@@ -82,28 +132,25 @@ public class FormHandlerParam extends AbstractParam {
                 }
             }
         } catch (ConversionException e) {
-            logger.error("Error while loading key-value pair fields: " + e.getMessage(), e);
-            this.fields = new ArrayList<>(DEFAULT_KEY_VALUE_PAIRS.size());
-            this.enabledFieldsNames = new ArrayList<>(DEFAULT_KEY_VALUE_PAIRS.size());
+            LOGGER.error("Error while loading key-value pair fields: {}", e.getMessage(), e);
+            List<FormHandlerParamField> fieldsToAdd = new ArrayList<>();
+            fieldsToAdd.addAll(DEFAULT_FIELDS_ORIGINAL);
+            fieldsToAdd.addAll(DEFAULT_FIELDS_V1);
+            setFields(fieldsToAdd);
         }
 
-        if (this.fields.size() == 0) {
-            // Grab the entry for every set in the map
-            for (Map.Entry<String, String> entry : DEFAULT_KEY_VALUE_PAIRS.entrySet()) {
-                // Store the key and value of that entry in variables
-                String name = entry.getKey();
-                String value = entry.getValue();
-                this.fields.add(new FormHandlerParamField(name, value));
-                this.enabledFieldsNames.add(name);
-            }
-        }
+        this.confirmRemoveField = getBoolean(CONFIRM_REMOVE_TOKEN_KEY, true);
+    }
 
+    private static boolean validateRegex(String regex) {
         try {
-            this.confirmRemoveField = getConfig().getBoolean(CONFIRM_REMOVE_TOKEN_KEY, true);
-        } catch (ConversionException e) {
-            logger.error(
-                    "Error while loading the confirm remove field option: " + e.getMessage(), e);
+            Pattern.compile(regex);
+        } catch (PatternSyntaxException pse) {
+            LOGGER.warn("Invalid Form Handler regex: {}", regex);
+            LOGGER.debug(pse, pse);
+            return false;
         }
+        return true;
     }
 
     @ZapApiIgnore
@@ -114,27 +161,32 @@ public class FormHandlerParam extends AbstractParam {
     @ZapApiIgnore
     public void setFields(List<FormHandlerParamField> fields) {
         this.fields = new ArrayList<>(fields);
-
         ((HierarchicalConfiguration) getConfig()).clearTree(ALL_TOKENS_KEY);
+        this.enabledFieldsNames = addFields(fields, 0);
+    }
 
-        ArrayList<String> enabledFields = new ArrayList<>(fields.size());
-        for (int i = 0, size = fields.size(); i < size; ++i) {
+    private List<String> addFields(List<FormHandlerParamField> collection, int offset) {
+        ArrayList<String> enabledFields = new ArrayList<>();
+        for (int i = offset, j = 0, size = collection.size(); j < size; ++i, j++) {
             String elementBaseKey = ALL_TOKENS_KEY + "(" + i + ").";
-            FormHandlerParamField field = fields.get(i);
+            FormHandlerParamField field = collection.get(j);
 
-            getConfig().setProperty(elementBaseKey + TOKEN_NAME_KEY, field.getName().toLowerCase());
+            getConfig().setProperty(elementBaseKey + TOKEN_NAME_KEY, field.getName());
             getConfig().setProperty(elementBaseKey + TOKEN_VALUE_KEY, field.getValue());
             getConfig()
                     .setProperty(
                             elementBaseKey + TOKEN_ENABLED_KEY, Boolean.valueOf(field.isEnabled()));
+            getConfig()
+                    .setProperty(
+                            elementBaseKey + TOKEN_REGEX_KEY, Boolean.valueOf(field.isRegex()));
 
             if (field.isEnabled()) {
-                enabledFields.add(field.getName().toLowerCase());
+                enabledFields.add(field.getName());
             }
         }
 
         enabledFields.trimToSize();
-        this.enabledFieldsNames = enabledFields;
+        return enabledFields;
     }
 
     /**
@@ -157,9 +209,10 @@ public class FormHandlerParam extends AbstractParam {
             }
         }
 
-        this.fields.add(new FormHandlerParamField(name, value));
+        FormHandlerParamField field = new FormHandlerParamField(name, value);
+        this.fields.add(field);
 
-        this.enabledFieldsNames.add(name);
+        this.enabledFieldsNames.add(field.getName());
     }
 
     /**
@@ -177,7 +230,7 @@ public class FormHandlerParam extends AbstractParam {
 
         for (Iterator<FormHandlerParamField> it = fields.iterator(); it.hasNext(); ) {
             FormHandlerParamField field = it.next();
-            if (name.equalsIgnoreCase(field.getName())) {
+            if (field.hasName(name)) {
                 it.remove();
                 if (field.isEnabled()) {
                     this.enabledFieldsNames.remove(name);
@@ -185,21 +238,6 @@ public class FormHandlerParam extends AbstractParam {
                 break;
             }
         }
-    }
-
-    /**
-     * Gets the value for the field {@code name} by searching through all existing fields
-     *
-     * @param name the name of the field being queried.
-     * @return the value of the field
-     */
-    public String getField(String name) {
-        for (FormHandlerParamField field : fields) {
-            if (field.getName().equalsIgnoreCase(name)) {
-                return field.getValue();
-            }
-        }
-        return null;
     }
 
     public List<String> getEnabledFieldsNames() {
@@ -211,13 +249,32 @@ public class FormHandlerParam extends AbstractParam {
      * the current list then it will return its value
      *
      * @param name the name of the field that is being checked
-     * @return string of the enabled field's value
+     * @return string of the enabled field's value, or null if no match
      */
     public String getEnabledFieldValue(String name) {
+        String value = checkSimpleMatches(name);
+        return value == null ? checkRegexMatches(name) : value;
+    }
+
+    private String checkSimpleMatches(String name) {
         for (FormHandlerParamField field : fields) {
-            if (field.getName().equalsIgnoreCase(name) && field.isEnabled()) {
-                String value = field.getValue();
-                return value;
+            if (!field.isEnabled() || field.isRegex()) {
+                continue;
+            }
+            if (field.getName().equalsIgnoreCase(name)) {
+                return field.getValue();
+            }
+        }
+        return null;
+    }
+
+    private String checkRegexMatches(String name) {
+        for (FormHandlerParamField field : fields) {
+            if (!field.isEnabled() || !field.isRegex()) {
+                continue;
+            }
+            if (name.matches(field.getName())) {
+                return field.getValue();
             }
         }
         return null;
@@ -232,5 +289,33 @@ public class FormHandlerParam extends AbstractParam {
     public void setConfirmRemoveField(boolean confirmRemove) {
         this.confirmRemoveField = confirmRemove;
         getConfig().setProperty(CONFIRM_REMOVE_TOKEN_KEY, Boolean.valueOf(confirmRemoveField));
+    }
+
+    @Override
+    protected String getConfigVersionKey() {
+        return FORM_HANDLER_BASE_KEY + VERSION_ATTRIBUTE;
+    }
+
+    @Override
+    protected int getCurrentVersion() {
+        return PARAM_CURRENT_VERSION;
+    }
+
+    @Override
+    protected void updateConfigsImpl(int fileVersion) {
+        switch (fileVersion) {
+            case NO_CONFIG_VERSION:
+                List<FormHandlerParamField> fieldsToAdd = new ArrayList<>();
+                int count = countFields(getConfig());
+                if (count == 0) {
+                    fieldsToAdd.addAll(DEFAULT_FIELDS_ORIGINAL);
+                }
+                fieldsToAdd.addAll(DEFAULT_FIELDS_V1);
+                addFields(fieldsToAdd, count);
+        }
+    }
+
+    private static int countFields(FileConfiguration c) {
+        return ((HierarchicalConfiguration) c).configurationsAt(ALL_TOKENS_KEY).size();
     }
 }

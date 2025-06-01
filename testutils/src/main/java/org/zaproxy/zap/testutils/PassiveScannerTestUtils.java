@@ -19,19 +19,34 @@
  */
 package org.zaproxy.zap.testutils;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.emptyOrNullString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.DynamicTest.dynamicTest;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.withSettings;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import net.htmlparser.jericho.Source;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.TestFactory;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.alert.ExtensionAlert;
-import org.zaproxy.zap.extension.pscan.PassiveScanThread;
+import org.zaproxy.zap.extension.alert.ExampleAlertProvider;
+import org.zaproxy.zap.extension.pscan.PassiveScanActions;
+import org.zaproxy.zap.extension.pscan.PassiveScanData;
 import org.zaproxy.zap.extension.pscan.PassiveScanner;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -41,31 +56,44 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  *
  * @param <T> the type of the passive scanner.
  */
-public abstract class PassiveScannerTestUtils<T extends PassiveScanner> extends TestUtils {
+public abstract class PassiveScannerTestUtils<T extends PassiveScanner> extends TestUtils
+        implements ScanRuleTests {
 
     protected T rule;
-    protected PassiveScanThread parent;
+    protected PassiveScanActions actions;
+    protected PassiveScanData passiveScanData;
     protected List<Alert> alertsRaised;
 
-    public PassiveScannerTestUtils() {
-        super();
-    }
-
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         setUpZap();
 
+        passiveScanData =
+                mock(PassiveScanData.class, withSettings().strictness(Strictness.LENIENT));
         alertsRaised = new ArrayList<>();
-        parent =
-                new PassiveScanThread(null, null, new ExtensionAlert(), null) {
-                    @Override
-                    public void raiseAlert(int id, Alert alert) {
-                        defaultAssertions(alert);
-                        alertsRaised.add(alert);
-                    }
-                };
+        actions = mock(PassiveScanActions.class, withSettings().strictness(Strictness.LENIENT));
+        doAnswer(
+                        invocation -> {
+                            Alert alert = invocation.getArgument(1);
+
+                            defaultAssertions(alert);
+                            alertsRaised.add(alert);
+                            return null;
+                        })
+                .when(actions)
+                .raiseAlert(any(), any());
+
         rule = createScanner();
-        rule.setParent(parent);
+        rule.setPassiveScanActions(actions);
+
+        if (rule instanceof PluginPassiveScanner) {
+            ((PluginPassiveScanner) rule).setHelper(passiveScanData);
+        }
+    }
+
+    @Override
+    public Object getScanRule() {
+        return rule;
     }
 
     protected void defaultAssertions(Alert alert) {
@@ -79,12 +107,80 @@ public abstract class PassiveScannerTestUtils<T extends PassiveScanner> extends 
         assertThat(
                 "Passive rules should not raise alerts with attack field.",
                 alert.getAttack(),
-                isEmptyOrNullString());
+                is(emptyOrNullString()));
     }
 
     protected abstract T createScanner();
 
+    protected void scanHttpRequestSend(HttpMessage msg) {
+        init(msg);
+        rule.scanHttpRequestSend(msg, -1);
+    }
+
+    private void init(HttpMessage msg) {
+        msg.setHistoryRef(mock(HistoryReference.class));
+        given(passiveScanData.getMessage()).willReturn(msg);
+    }
+
+    protected void scanHttpResponseReceive(HttpMessage msg) {
+        init(msg);
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+    }
+
     protected Source createSource(HttpMessage msg) {
         return new Source(msg.getResponseBody().toString());
+    }
+
+    @TestFactory
+    Collection<DynamicTest> commonScanRuleTests() {
+        List<DynamicTest> commonTests = new ArrayList<>();
+        if (rule instanceof PluginPassiveScanner) {
+            commonTests.add(testScanRuleHasName());
+        }
+        if (rule instanceof ExampleAlertProvider) {
+            commonTests.add(testExampleAlerts());
+        }
+        return commonTests;
+    }
+
+    private DynamicTest testScanRuleHasName() {
+        return dynamicTest(
+                "shouldHaveI18nNonEmptyName",
+                () -> {
+                    setUp();
+                    shouldHaveI18nNonEmptyName();
+                });
+    }
+
+    private DynamicTest testExampleAlerts() {
+        return dynamicTest(
+                "shouldHaveExampleAlerts",
+                () -> {
+                    setUp();
+                    shouldHaveExampleAlerts();
+                });
+    }
+
+    private void shouldHaveI18nNonEmptyName() {
+        // Given / When
+        String name = rule.getName();
+        // Then
+        assertThat(name, is(not(emptyOrNullString())));
+        assertThat(
+                "Name does not seem to be i18n'ed, not found in the resource bundle: " + name,
+                extensionResourceBundle.keySet().stream()
+                        .map(extensionResourceBundle::getString)
+                        .anyMatch(str -> str.equals(name)));
+    }
+
+    private void shouldHaveExampleAlerts() {
+        // Given / When
+        List<Alert> alerts = assertDoesNotThrow(((ExampleAlertProvider) rule)::getExampleAlerts);
+        // Then
+        if (alerts == null) {
+            return;
+        }
+        assertThat(alerts, is(not(empty())));
+        alerts.forEach(this::defaultAssertions);
     }
 }

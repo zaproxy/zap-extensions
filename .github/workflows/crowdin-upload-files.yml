@@ -1,0 +1,25 @@
+name: Crowdin Upload Files
+
+on:
+  workflow_dispatch:
+    inputs:
+      ids:
+        description: 'Add-on IDs'
+        required: true
+
+jobs:
+  upload:
+    name: Upload Files
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: 17
+    - name: Upload Files
+      env:
+        CROWDIN_AUTH_TOKEN: ${{ secrets.ZAPBOT_CROWDIN_TOKEN }}
+        ADD_ON_IDS: ${{ github.event.inputs.ids }}
+      run: ./gradlew :addOns:crowdinUploadSourceFiles

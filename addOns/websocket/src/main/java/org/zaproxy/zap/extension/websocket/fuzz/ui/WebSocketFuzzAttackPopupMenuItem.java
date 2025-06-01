@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.websocket.fuzz.ui;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.fuzz.ExtensionFuzz;
 import org.zaproxy.zap.extension.fuzz.FuzzerUIUtils;
@@ -31,6 +29,7 @@ import org.zaproxy.zap.view.messagecontainer.MessageContainer;
 import org.zaproxy.zap.view.popup.ExtensionPopupMenuComponent;
 import org.zaproxy.zap.view.popup.ExtensionPopupMenuItemMessageContainer;
 
+@SuppressWarnings("serial")
 public class WebSocketFuzzAttackPopupMenuItem extends ExtensionPopupMenuItemMessageContainer {
 
     private static final long serialVersionUID = 3515657836446348454L;
@@ -49,15 +48,11 @@ public class WebSocketFuzzAttackPopupMenuItem extends ExtensionPopupMenuItemMess
         this.fuzzerHandler = fuzzerHandler;
 
         addActionListener(
-                new ActionListener() {
-
-                    @Override
-                    public void actionPerformed(ActionEvent evt) {
-                        try {
-                            performAction();
-                        } finally {
-                            resetState();
-                        }
+                e -> {
+                    try {
+                        performAction();
+                    } finally {
+                        resetState();
                     }
                 });
     }
@@ -70,11 +65,6 @@ public class WebSocketFuzzAttackPopupMenuItem extends ExtensionPopupMenuItemMess
     @Override
     public String getParentMenuName() {
         return Constant.messages.getString("attack.site.popup");
-    }
-
-    @Override
-    public int getParentMenuIndex() {
-        return ATTACK_MENU_INDEX;
     }
 
     @Override

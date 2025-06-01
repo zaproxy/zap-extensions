@@ -21,22 +21,23 @@ package org.zaproxy.zap.extension.zest.menu;
 
 import java.awt.Component;
 import javax.swing.JTree;
-import org.apache.log4j.Logger;
-import org.mozilla.zest.core.v1.ZestControl;
-import org.mozilla.zest.core.v1.ZestScript;
-import org.mozilla.zest.core.v1.ZestStatement;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
+import org.zaproxy.zest.core.v1.ZestControl;
+import org.zaproxy.zest.core.v1.ZestScript;
+import org.zaproxy.zest.core.v1.ZestStatement;
 
-/** ZAP: New Popup Menu Alert Delete */
+@SuppressWarnings("serial")
 public class ZestPopupZestMove extends ExtensionPopupMenuItem {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Logger logger = Logger.getLogger(ZestPopupZestMove.class);
+    private static final Logger LOGGER = LogManager.getLogger(ZestPopupZestMove.class);
 
     private ExtensionZest extension = null;
     private boolean up;
@@ -49,7 +50,9 @@ public class ZestPopupZestMove extends ExtensionPopupMenuItem {
         initialize();
     }
 
-    /** @param label */
+    /**
+     * @param label
+     */
     public ZestPopupZestMove(String label) {
         super(label);
     }
@@ -63,15 +66,12 @@ public class ZestPopupZestMove extends ExtensionPopupMenuItem {
         }
 
         this.addActionListener(
-                new java.awt.event.ActionListener() {
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent e) {
-                        for (ScriptNode node : extension.getSelectedZestNodes()) {
-                            if (up) {
-                                extension.moveNodeUp(node);
-                            } else {
-                                extension.moveNodeDown(node);
-                            }
+                e -> {
+                    for (ScriptNode node : extension.getSelectedZestNodes()) {
+                        if (up) {
+                            extension.moveNodeUp(node);
+                        } else {
+                            extension.moveNodeDown(node);
                         }
                     }
                 });
@@ -95,12 +95,12 @@ public class ZestPopupZestMove extends ExtensionPopupMenuItem {
                     } else if ((ZestZapUtils.getElement(node) instanceof ZestScript)) {
                         return false;
                     } else if (ZestZapUtils.getShadowLevel(node) > 0) {
-                        // Cant move these
+                        // Can't move these
                         /* TODO
                         } else if ((ZestZapUtils.getElement(node) instanceof ZestControl)) {
                         	return false;
                         } else if (ZestTreeElement.isSubclass(node.getZestElement(), ZestTreeElement.Type.COMMON_TESTS)) {
-                        	// Cantmove these either
+                        	// Can't move these either
                         	 */
                     } else if (up) {
                         ScriptNode prev = (ScriptNode) node.getPreviousSibling();
@@ -138,7 +138,7 @@ public class ZestPopupZestMove extends ExtensionPopupMenuItem {
                     return true;
                 }
             } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
         return false;

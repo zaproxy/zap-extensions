@@ -34,9 +34,12 @@ import javax.swing.JScrollPane;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.selenium.ProvidedBrowsersComboBoxModel;
+import org.zaproxy.zap.extension.spiderAjax.internal.ScopeCheckComponent;
 import org.zaproxy.zap.utils.ZapNumberSpinner;
 
+@SuppressWarnings("serial")
 public class OptionsAjaxSpider extends AbstractParamPanel {
 
     private static final long serialVersionUID = -1350537974139536669L;
@@ -57,6 +60,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
     private JCheckBox clickDefaultElems = null;
     private JCheckBox clickElemsOnce = null;
     private JCheckBox randomInputs = null;
+    private JCheckBox enableExtensions;
 
     private JLabel browsers = null;
     private JLabel depth = null;
@@ -64,6 +68,10 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
     private JLabel maxDuration = null;
     private JLabel eventWait = null;
     private JLabel reloadWait = null;
+
+    private ScopeCheckComponent scopeCheckComponent;
+    private AllowedResourcesPanel allowedResourcesPanel;
+    private AllowedResourcesTableModel allowedResourcesTableModel;
 
     private ResourceBundle resourceBundle;
 
@@ -139,12 +147,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
             clickDefaultElems.setText(
                     resourceBundle.getString("spiderajax.proxy.local.label.defaultElems"));
             clickDefaultElems.addItemListener(
-                    new java.awt.event.ItemListener() {
-                        @Override
-                        public void itemStateChanged(java.awt.event.ItemEvent e) {
-                            setClickElemsEnabled(ItemEvent.DESELECTED == e.getStateChange());
-                        }
-                    });
+                    e -> setClickElemsEnabled(ItemEvent.DESELECTED == e.getStateChange()));
         }
         return clickDefaultElems;
     }
@@ -163,6 +166,15 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
             randomInputs.setText(resourceBundle.getString("spiderajax.options.label.randominputs"));
         }
         return randomInputs;
+    }
+
+    private JCheckBox getEnableExtensions() {
+        if (enableExtensions == null) {
+            enableExtensions = new JCheckBox();
+            enableExtensions.setText(
+                    resourceBundle.getString("spiderajax.options.label.enableexts"));
+        }
+        return enableExtensions;
     }
 
     /** */
@@ -184,10 +196,16 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
         getClickDefaultElems().setSelected(ajaxSpiderParam.isClickDefaultElems());
         getClickElemsOnce().setSelected(ajaxSpiderParam.isClickElemsOnce());
         getRandomInputs().setSelected(ajaxSpiderParam.isRandomInputs());
+        getEnableExtensions().setSelected(ajaxSpiderParam.isEnableExtensions());
 
         setClickElemsEnabled(!ajaxSpiderParam.isClickDefaultElems());
 
         browsersComboBoxModel.setSelectedBrowser(ajaxSpiderParam.getBrowserId());
+        allowedResourcesPanel.setRemoveWithoutConfirmation(
+                !ajaxSpiderParam.isConfirmRemoveAllowedResource());
+        allowedResourcesTableModel.setAllowedResources(ajaxSpiderParam.getAllowedResources());
+
+        scopeCheckComponent.setScopeCheck(ajaxSpiderParam.getScopeCheck());
     }
 
     /** This method validates the parameters before saving them. */
@@ -196,10 +214,10 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 
     @Override
     public void saveParam(Object obj) throws Exception {
-        ;
         OptionsParam optionsParam = (OptionsParam) obj;
         AjaxSpiderParam ajaxSpiderParam = optionsParam.getParamSet(AjaxSpiderParam.class);
 
+        ajaxSpiderParam.setEnableExtensions(enableExtensions.isSelected());
         ajaxSpiderParam.setClickElemsOnce(getClickElemsOnce().isSelected());
         ajaxSpiderParam.setClickDefaultElems(getClickDefaultElems().isSelected());
         ajaxSpiderParam.setRandomInputs(getRandomInputs().isSelected());
@@ -210,8 +228,14 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
         ajaxSpiderParam.setEventWait(eventWaitNumberSpinner.getValue().intValue());
         ajaxSpiderParam.setReloadWait(reloadWaitNumberSpinner.getValue().intValue());
         ajaxSpiderParam.setElems(getAjaxSpiderClickModel().getElements());
+        ajaxSpiderParam.setConfirmRemoveElem(!elemsOptionsPanel.isRemoveWithoutConfirmation());
 
         ajaxSpiderParam.setBrowserId(browsersComboBoxModel.getSelectedItem().getBrowser().getId());
+        ajaxSpiderParam.setConfirmRemoveAllowedResource(
+                !allowedResourcesPanel.isRemoveWithoutConfirmation());
+        ajaxSpiderParam.setAllowedResources(allowedResourcesTableModel.getElements());
+
+        ajaxSpiderParam.setScopeCheck(scopeCheckComponent.getScopeCheck());
     }
 
     /**
@@ -246,15 +270,14 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
             gbc.gridy = 0;
             gbc.weightx = 1.0;
             gbc.weighty = 1.0;
-            gbc.gridwidth = 2;
+            gbc.gridwidth = 1;
             gbc.insets = new java.awt.Insets(2, 2, 2, 2);
             gbc.anchor = GridBagConstraints.LINE_START;
             innerPanel.add(
                     new JLabel(resourceBundle.getString("spiderajax.proxy.local.label.browsers")),
                     gbc);
 
-            gbc.gridy++;
-            gbc.gridwidth = 1;
+            gbc.gridx = 1;
             innerPanel.add(new JComboBox<>(browsersComboBoxModel), gbc);
 
             // Number of browsers Option
@@ -318,6 +341,12 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
             gbc.anchor = GridBagConstraints.LINE_END;
             innerPanel.add(getReloadWaitNumberSpinner(), gbc);
 
+            // Enable extensions
+            gbc.gridx = 0;
+            gbc.gridy++;
+            gbc.anchor = GridBagConstraints.LINE_START;
+            innerPanel.add(getEnableExtensions(), gbc);
+
             // Click Once Option
             gbc.gridx = 0;
             gbc.gridy++;
@@ -347,6 +376,19 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
             gbc.insets = new java.awt.Insets(2, 2, 2, 2);
             innerPanel.add(elemsOptionsPanel, gbc);
 
+            gbc.gridy++;
+            gbc.weighty = 0.0D;
+            scopeCheckComponent = new ScopeCheckComponent();
+            innerPanel.add(scopeCheckComponent.getComponent(), gbc);
+
+            gbc.weighty = 1.0D;
+            gbc.gridy++;
+            allowedResourcesTableModel = new AllowedResourcesTableModel();
+            allowedResourcesPanel =
+                    new AllowedResourcesPanel(
+                            View.getSingleton().getOptionsDialog(null), allowedResourcesTableModel);
+            innerPanel.add(allowedResourcesPanel, gbc);
+
             JScrollPane scrollPane = new JScrollPane(innerPanel);
             scrollPane.setBorder(BorderFactory.createEmptyBorder());
 
@@ -363,7 +405,9 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
         return ajaxSpiderClickModel;
     }
 
-    /** @return the help file of the plugin */
+    /**
+     * @return the help file of the plugin
+     */
     @Override
     public String getHelpIndex() {
         return "addon.spiderajax.options";

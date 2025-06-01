@@ -24,6 +24,7 @@ import java.util.List;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.view.AbstractMultipleOptionsTableModel;
 
+@SuppressWarnings("serial")
 public class OptionsInvokeTableModel extends AbstractMultipleOptionsTableModel<InvokableApp> {
 
     private static final long serialVersionUID = 1L;
@@ -34,7 +35,7 @@ public class OptionsInvokeTableModel extends AbstractMultipleOptionsTableModel<I
         Constant.messages.getString("invoke.options.table.header.command"),
         Constant.messages.getString("invoke.options.table.header.directory"),
         Constant.messages.getString("invoke.options.table.header.parameters"),
-        Constant.messages.getString("invoke.options.table.header.ouput"),
+        Constant.messages.getString("invoke.options.table.header.output"),
         Constant.messages.getString("invoke.options.table.header.toNote")
     };
 
@@ -46,7 +47,9 @@ public class OptionsInvokeTableModel extends AbstractMultipleOptionsTableModel<I
         super();
     }
 
-    /** @param apps The listAuth to set. */
+    /**
+     * @param apps The listAuth to set.
+     */
     public void setListInvokableApps(List<InvokableApp> apps) {
         this.listApps = new ArrayList<>(apps.size());
 

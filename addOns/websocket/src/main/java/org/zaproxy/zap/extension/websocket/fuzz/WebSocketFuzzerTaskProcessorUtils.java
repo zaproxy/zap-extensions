@@ -20,7 +20,8 @@
 package org.zaproxy.zap.extension.websocket.fuzz;
 
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zaproxy.zap.extension.websocket.WebSocketFuzzMessageDTO;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 import org.zaproxy.zap.extension.websocket.WebSocketProxy;
@@ -28,7 +29,8 @@ import org.zaproxy.zap.extension.websocket.WebSocketProxy.Initiator;
 
 public class WebSocketFuzzerTaskProcessorUtils {
 
-    private static final Logger LOGGER = Logger.getLogger(WebSocketFuzzerTaskProcessorUtils.class);
+    private static final Logger LOGGER =
+            LogManager.getLogger(WebSocketFuzzerTaskProcessorUtils.class);
 
     private final WebSocketFuzzer websocketFuzzer;
     private final WebSocketMessageDTO originalMessage;
@@ -73,7 +75,7 @@ public class WebSocketFuzzerTaskProcessorUtils {
 
     public boolean sendMessage(String message, boolean includeInResults) {
         WebSocketProxy wsProxy =
-                websocketFuzzer.getWebSocketProxies().get(originalMessage.channel.id);
+                websocketFuzzer.getWebSocketProxies().get(originalMessage.getChannel().getId());
         if (wsProxy == null) {
             websocketFuzzer.stopScan();
             return false;
@@ -85,8 +87,8 @@ public class WebSocketFuzzerTaskProcessorUtils {
             originalMessage.copyInto(newMessage);
 
             newMessage.fuzzId = websocketFuzzer.getId();
-            newMessage.payload = message;
-            newMessage.payloadLength = Integer.valueOf(message.length());
+            newMessage.setPayload(message);
+            newMessage.setPayloadLength(Integer.valueOf(message.length()));
             newMessage.fuzz = "";
 
             if (wsProxy.send(newMessage, Initiator.FUZZER)) {
@@ -102,7 +104,7 @@ public class WebSocketFuzzerTaskProcessorUtils {
             }
             return true;
         } catch (Exception e) {
-            LOGGER.warn("Failed to send WebSocket message, cause: " + e.getMessage());
+            LOGGER.warn("Failed to send WebSocket message, cause: {}", e.getMessage());
         }
         return false;
     }

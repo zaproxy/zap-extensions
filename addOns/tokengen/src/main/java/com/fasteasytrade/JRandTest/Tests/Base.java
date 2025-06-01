@@ -34,10 +34,14 @@
 
 package com.fasteasytrade.JRandTest.Tests;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Vector;
 
-import com.fasteasytrade.JRandTest.IO.*;
-import com.fasteasytrade.JRandTest.Utils.*;
+import com.fasteasytrade.JRandTest.IO.OutputDestination;
+import com.fasteasytrade.JRandTest.IO.RandomStream;
+import com.fasteasytrade.JRandTest.Utils.Derf;
 
 /**
  * Base class for all test classes.
@@ -52,8 +56,8 @@ public class Base {
 
 	private boolean hasBeenRun = false;
 	private Result result = Result.FAIL;
-	private List<String> details = new ArrayList<String>();
-	private List<String> errors = new ArrayList<String>();
+	private List<String> details = new ArrayList<>();
+	private List<String> errors = new ArrayList<>();
 	
 	final public double PI = Math.PI; // 3.141592653589793;
 

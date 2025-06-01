@@ -1,0 +1,6 @@
+  - type: export          # Exports data into a file
+    parameters:
+      context:            # String: Name of the context from which to export. Default: first context
+      type:               # String: One of 'har', 'url', 'yaml'. Default: 'har'
+      source:             # String: One of 'history', 'sitestree', 'all'. Default: 'history'
+      fileName:           # String: Name/path to the file

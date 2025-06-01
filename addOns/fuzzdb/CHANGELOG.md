@@ -4,12 +4,34 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- Update minimum ZAP version to 2.16.0.
+
+## [9] - 2022-09-23
+### Changed
+- Updated RAFT lists based on more recent SecLists contributions
+- Update minimum ZAP version to 2.11.1.
+
+## [8] - 2021-10-07
+### Changed
+- Update minimum ZAP version to 2.11.0.
+
+### Fixed
+ - Terminology
+
+## [7] - 2020-06-30
+### Removed
+- Removed 'attack' sub-folder and content, all of which is being migrated to the 'FuzzDB Offensive' add-on due to AV triggers (Issue 5972).
+
+## [6] - 2020-04-14
 ### Added
 - Add help.
 - Add repo URL.
 
 ### Changed
+- Update minimum ZAP version to 2.9.0.
 - Change info URL to link to the site.
+- Updated from upstream.
 
 ## [5] - 2019-06-27
 ### Changed
@@ -34,4 +56,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 First version.
 
+[9]: https://github.com/zaproxy/zap-extensions/releases/fuzzdb-v9
+[8]: https://github.com/zaproxy/zap-extensions/releases/fuzzdb-v8
+[7]: https://github.com/zaproxy/zap-extensions/releases/fuzzdb-v7
+[6]: https://github.com/zaproxy/zap-extensions/releases/fuzzdb-v6
 [5]: https://github.com/zaproxy/zap-extensions/releases/fuzzdb-v5

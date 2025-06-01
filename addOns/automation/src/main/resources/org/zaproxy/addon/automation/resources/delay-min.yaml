@@ -1,0 +1,4 @@
+  - type: delay                        # Pause the plan for a set period of time or event (file created, programmatic method called, API endpoint called)
+    parameters:
+      time:                            # String: The time to wait, format any of ['hh:mm:ss', 'mm:ss', 'ss'], default: 0
+      fileName:                        # String: Name of a file which will cause the job to end early if created, default: empty

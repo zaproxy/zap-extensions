@@ -22,22 +22,29 @@ package org.zaproxy.zap.extension.scripts;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.event.KeyListener;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.text.StyleContext;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
+import org.parosproxy.paros.extension.OptionsChangedListener;
+import org.parosproxy.paros.model.OptionsParam;
 import org.zaproxy.zap.extension.scripts.autocomplete.ScriptAutoCompleteKeyListener;
 import org.zaproxy.zap.utils.FontUtils;
+import org.zaproxy.zap.utils.ZapLabel;
 
-public class CommandPanel extends AbstractPanel {
+@SuppressWarnings("serial")
+public class CommandPanel extends AbstractPanel implements OptionsChangedListener {
 
     private static final long serialVersionUID = -947074835463140074L;
+
     /** Max amount of data(byte) before editor usage is disable */
     private static final int EDITOR_SCRIPT_MAX_SIZE_THRESHOLD = 1_000_000;
+
     /** Max amount of data(byte) before highlight feature is deactivated */
     private static final int HIGHLIGHT_SCRIPT_MAX_SIZE_THRESHOLD = 500_000;
 
@@ -49,23 +56,23 @@ public class CommandPanel extends AbstractPanel {
     private boolean largeScriptContentSet = false;
     private String largeScriptContent = "";
     private JPanel largeScriptPanel = new JPanel(new BorderLayout());
-    private JLabel largeScriptLabel = new JLabel();
+    private ZapLabel largeScriptLabel;
 
     /** */
     public CommandPanel(KeyListener listener) {
         super();
         this.listener = listener;
-        initialize();
-    }
 
-    /** This method initializes this */
-    private void initialize() {
         this.setLayout(new CardLayout());
         this.setName("ConsoleCommandPanel");
 
         this.add(getJScrollPane(), getJScrollPane().getName());
-        largeScriptPanel.add(largeScriptLabel);
+        largeScriptLabel = new ZapLabel();
+        largeScriptLabel.setLineWrap(true);
+        largeScriptLabel.setWrapStyleWord(true);
+        largeScriptPanel.add(new JScrollPane(largeScriptLabel));
     }
+
     /**
      * This method initializes jScrollPane
      *
@@ -99,7 +106,7 @@ public class CommandPanel extends AbstractPanel {
     }
 
     @Override
-    public void addKeyListener(KeyListener l) {
+    public synchronized void addKeyListener(KeyListener l) {
         // Don't do anything, the (only) listener is specified through the constructor.
     }
 
@@ -125,7 +132,7 @@ public class CommandPanel extends AbstractPanel {
     protected void setCommandScript(String str) {
         setCommandScriptContent(str);
         getTxtOutput().discardAllEdits();
-        getTxtOutput().requestFocus();
+        getTxtOutput().requestFocusInWindow();
     }
 
     protected void setCommandCursorPosition(int offset) {
@@ -142,6 +149,10 @@ public class CommandPanel extends AbstractPanel {
 
     void unload() {
         getTxtOutput().unload();
+    }
+
+    void setScriptTooltip(String tooltip) {
+        getTxtOutput().setToolTipText(tooltip);
     }
 
     public void setEditable(boolean editable) {
@@ -180,5 +191,19 @@ public class CommandPanel extends AbstractPanel {
             this.remove(largeScriptPanel);
             this.add(getJScrollPane(), getJScrollPane().getName());
         }
+    }
+
+    @Override
+    public void optionsChanged(OptionsParam mainOptions) {
+        optionsChanged(mainOptions.getParamSet(ScriptConsoleOptions.class));
+    }
+
+    void optionsChanged(ScriptConsoleOptions options) {
+        var font =
+                StyleContext.getDefaultStyleContext()
+                        .getFont(options.getFontName(), Font.PLAIN, options.getFontSize());
+        getTxtOutput().setFont(font);
+        getTxtOutput().setTabSize(options.getTabSize());
+        getTxtOutput().setTabsEmulated(!options.isUseTabCharacter());
     }
 }

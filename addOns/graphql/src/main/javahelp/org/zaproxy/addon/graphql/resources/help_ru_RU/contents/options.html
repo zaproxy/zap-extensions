@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>GraphQL Options</TITLE>
+</HEAD>
+<BODY>
+	<H1>Параметры GraphQL </H1>
+
+	В этом документе «запрос» может относиться к запросу GraphQL, подписке или мутации. 
+
+	<h2>Query Generator Configuration</h2>
+
+	The query generator uses the imported schema to generate queries for the target endpoint.
+	If enabled, it may be configured with the following options.
+
+	<h3>Maximum Query Depth</h3>
+	
+	The maximum depth of a generated query.
+
+	<h3> Lenient Maximum Query Depth </h3>
+
+	If enabled, this option prevents invalid queries by allowing additional depth for fields with no leaf types.
+	If disabled, Maximum Query Depth is enforced strictly, even if it means generating an invalid query.
+
+	<h3> Additional Query Depth </h3>
+
+	The value for this option is used only if the "Lenient Maximum Query Depth" option is enabled.
+	The maximum additional depth used to search for leaf-type fields.
+	If a leaf type is not found, the generated query may be invalid and a message is logged.
+
+	<h3>Maximum Arguments Depth</h3>
+	
+	The maximum depth of specified arguments. This is useful when a field has an input object as an argument.
+
+	<h3>Specify Optional Arguments</h3>
+	
+	If this option is selected then optional (nullable) arguments will be specified too.
+
+	<h3>Specify Arguments</h3>
+
+	Choose how the field arguments should be added in the generated query,
+	<ul>
+		<li>В линию</li>
+		<li>Использование переменных </li>
+		<li>Оба (Both) — каждый запрос будет отправлен дважды, один раз со встроенными аргументами и один раз с переменными. </li>
+	</ul>
+
+	<h3>Generate Query For</h3>
+	
+	A separate query may be generated for either of the following in the provided schema,
+	<ul>
+		<li>каждый лист, то есть каждый скаляр или перечисление; </li>
+		<li>каждое поле под корневым типом операции (запрос, мутация или подписка); или </li>
+		<li>каждый тип корневой операции. </li>
+	</ul>
+
+	<h3>Request Method</h3>
+	
+	The requests made to the endpoint can be of the following types:
+
+	<ul>
+		<li>Запрос POST с телом JSON (тип содержимого: application/json) </li>
+		<li>Запрос POST с запросом GraphQL в теле (Content-Type: application/graphql) </li>
+		<li>Запрос GET с добавленным к нему запросом в строке запроса </li>
+	</ul>
+
+	<h2>See also</h2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="graphql.html">GraphQL</a></td>
+			<td>для обзора надстройки GraphQL. </td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="variant.html">GraphQL Variant</a></td>
+			<td>for information about the GraphQL variant.</td>
+		</tr>
+        <tr>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <td><a href="automation.html">GraphQL автоматизация </a></td>
+            <td>для получения информации о поддержке платформы автоматизации. </td>
+        </tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="alerts.html">GraphQL Alerts</a></td>
+			<td>for information about alerts raised by the add-on.</td>
+		</tr>
+	</table>
+
+</BODY>
+</HTML>

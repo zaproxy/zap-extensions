@@ -20,23 +20,22 @@
 package org.zaproxy.zap.extension.scripts;
 
 import java.awt.Component;
-import java.awt.Font;
+import java.io.IOException;
 import java.util.List;
 import java.util.Vector;
 import javax.swing.Action;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import javax.swing.JViewport;
-import org.apache.commons.configuration.FileConfiguration;
 import org.fife.ui.rsyntaxtextarea.AbstractTokenMakerFactory;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+import org.fife.ui.rsyntaxtextarea.Theme;
 import org.fife.ui.rtextarea.RTextArea;
-import org.fife.ui.rtextarea.RTextScrollPane;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.utils.FontUtils;
+import org.zaproxy.addon.commonlib.MenuWeights;
+import org.zaproxy.zap.utils.DisplayUtils;
 
 public class SyntaxHighlightTextArea extends RSyntaxTextArea {
 
@@ -60,19 +59,8 @@ public class SyntaxHighlightTextArea extends RSyntaxTextArea {
             Constant.messages.getString("scripts.syntaxtext.syntax.html");
     public static final String CSS_SYNTAX_LABEL =
             Constant.messages.getString("scripts.syntaxtext.syntax.css");
-
-    private static final String ANTI_ALIASING = "aa";
-    private static final String SHOW_LINE_NUMBERS = "linenumbers";
-    private static final String CODE_FOLDING = "codefolding";
-    private static final String WORD_WRAP = "wordwrap";
-    private static final String HIGHLIGHT_CURRENT_LINE = "highlightline";
-    private static final String FADE_CURRENT_HIGHLIGHT_LINE = "fadehighlightline";
-    private static final String SHOW_WHITESPACE_CHARACTERS = "whitespaces";
-    private static final String SHOW_NEWLINE_CHARACTERS = "newlines";
-    private static final String MARK_OCCURRENCES = "markocurrences";
-    private static final String ROUNDED_SELECTION_EDGES = "roundedselection";
-    private static final String BRACKET_MATCHING = "bracketmatch";
-    private static final String ANIMATED_BRACKET_MATCHING = "animatedbracketmatch";
+    private static final String KOTLIN_SYNTAX_LABEL =
+            Constant.messages.getString("scripts.syntaxtext.syntax.kotlin");
 
     private Vector<SyntaxStyle> syntaxStyles;
 
@@ -85,6 +73,11 @@ public class SyntaxHighlightTextArea extends RSyntaxTextArea {
     private TextAreaMenuItem undoAction = null;
     private TextAreaMenuItem redoAction = null;
     private TextAreaMenuItem selectAllAction = null;
+
+    private static final String RESOURCE_DARK = "/org/fife/ui/rsyntaxtextarea/themes/dark.xml";
+    private static final String RESOURCE_LIGHT = "/org/fife/ui/rsyntaxtextarea/themes/default.xml";
+
+    private Boolean darkLaF;
 
     public SyntaxHighlightTextArea() {
         setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_NONE);
@@ -99,6 +92,7 @@ public class SyntaxHighlightTextArea extends RSyntaxTextArea {
         addSyntaxStyle(SCALA_SYNTAX_LABEL, SyntaxConstants.SYNTAX_STYLE_SCALA);
         addSyntaxStyle(HTML_SYNTAX_LABEL, SyntaxConstants.SYNTAX_STYLE_HTML);
         addSyntaxStyle(CSS_SYNTAX_LABEL, SyntaxConstants.SYNTAX_STYLE_CSS);
+        addSyntaxStyle(KOTLIN_SYNTAX_LABEL, SyntaxConstants.SYNTAX_STYLE_KOTLIN);
 
         initActions();
 
@@ -128,112 +122,17 @@ public class SyntaxHighlightTextArea extends RSyntaxTextArea {
         setCloseMarkupTags(false);
         setClearWhitespaceLinesEnabled(false);
 
-        Font font;
-        if (!FontUtils.isDefaultFontSet()) {
-            // Use default RSyntaxTextArea font instead but with correct font size.
-            font = FontUtils.getFont(this.getFont().getFontName());
+        if (DisplayUtils.isDarkLookAndFeel()) {
+            darkLaF = true;
+            setLookAndFeel(true);
         } else {
-            font = FontUtils.getFont(Font.PLAIN);
+            darkLaF = false;
         }
-        this.setFont(font);
     }
 
     @Override
     protected JPopupMenu createPopupMenu() {
         return null;
-    }
-
-    public void loadConfiguration(String key, FileConfiguration fileConfiguration) {
-        setAntiAliasingEnabled(
-                fileConfiguration.getBoolean(key + ANTI_ALIASING, this.getAntiAliasingEnabled()));
-
-        Component c = getParent();
-        if (c instanceof JViewport) {
-            c = c.getParent();
-            if (c instanceof RTextScrollPane) {
-                final RTextScrollPane scrollPane = (RTextScrollPane) c;
-                scrollPane.setLineNumbersEnabled(
-                        fileConfiguration.getBoolean(
-                                key + SHOW_LINE_NUMBERS, scrollPane.getLineNumbersEnabled()));
-
-                setCodeFoldingEnabled(
-                        fileConfiguration.getBoolean(
-                                key + CODE_FOLDING, this.isCodeFoldingEnabled()));
-                scrollPane.setFoldIndicatorEnabled(this.isCodeFoldingEnabled());
-            }
-        }
-
-        setLineWrap(fileConfiguration.getBoolean(key + WORD_WRAP, this.getLineWrap()));
-
-        setHighlightCurrentLine(
-                fileConfiguration.getBoolean(
-                        key + HIGHLIGHT_CURRENT_LINE, this.getHighlightCurrentLine()));
-        setFadeCurrentLineHighlight(
-                fileConfiguration.getBoolean(
-                        key + FADE_CURRENT_HIGHLIGHT_LINE, this.getFadeCurrentLineHighlight()));
-
-        setWhitespaceVisible(
-                fileConfiguration.getBoolean(
-                        key + SHOW_WHITESPACE_CHARACTERS, this.isWhitespaceVisible()));
-        setEOLMarkersVisible(
-                fileConfiguration.getBoolean(
-                        key + SHOW_NEWLINE_CHARACTERS, this.getEOLMarkersVisible()));
-
-        setMarkOccurrences(
-                fileConfiguration.getBoolean(key + MARK_OCCURRENCES, this.getMarkOccurrences()));
-
-        setRoundedSelectionEdges(
-                fileConfiguration.getBoolean(
-                        key + ROUNDED_SELECTION_EDGES, this.getRoundedSelectionEdges()));
-
-        setBracketMatchingEnabled(
-                fileConfiguration.getBoolean(
-                        key + BRACKET_MATCHING, this.isBracketMatchingEnabled()));
-        setAnimateBracketMatching(
-                fileConfiguration.getBoolean(
-                        key + ANIMATED_BRACKET_MATCHING, this.getAnimateBracketMatching()));
-    }
-
-    public void saveConfiguration(String key, FileConfiguration fileConfiguration) {
-        fileConfiguration.setProperty(
-                key + ANTI_ALIASING, Boolean.valueOf(this.getAntiAliasingEnabled()));
-
-        Component c = getParent();
-        if (c instanceof JViewport) {
-            c = c.getParent();
-            if (c instanceof RTextScrollPane) {
-                final RTextScrollPane scrollPane = (RTextScrollPane) c;
-                fileConfiguration.setProperty(
-                        key + SHOW_LINE_NUMBERS,
-                        Boolean.valueOf(scrollPane.getLineNumbersEnabled()));
-                fileConfiguration.setProperty(
-                        key + CODE_FOLDING, Boolean.valueOf(this.isCodeFoldingEnabled()));
-            }
-        }
-
-        fileConfiguration.setProperty(key + WORD_WRAP, Boolean.valueOf(this.getLineWrap()));
-
-        fileConfiguration.setProperty(
-                key + HIGHLIGHT_CURRENT_LINE, Boolean.valueOf(this.getHighlightCurrentLine()));
-        fileConfiguration.setProperty(
-                key + FADE_CURRENT_HIGHLIGHT_LINE,
-                Boolean.valueOf(this.getFadeCurrentLineHighlight()));
-
-        fileConfiguration.setProperty(
-                key + SHOW_WHITESPACE_CHARACTERS, Boolean.valueOf(this.isWhitespaceVisible()));
-        fileConfiguration.setProperty(
-                key + SHOW_NEWLINE_CHARACTERS, Boolean.valueOf(this.getEOLMarkersVisible()));
-
-        fileConfiguration.setProperty(
-                key + MARK_OCCURRENCES, Boolean.valueOf(this.getMarkOccurrences()));
-
-        fileConfiguration.setProperty(
-                key + ROUNDED_SELECTION_EDGES, Boolean.valueOf(this.getRoundedSelectionEdges()));
-
-        fileConfiguration.setProperty(
-                key + BRACKET_MATCHING, Boolean.valueOf(this.isBracketMatchingEnabled()));
-        fileConfiguration.setProperty(
-                key + ANIMATED_BRACKET_MATCHING, Boolean.valueOf(this.getAnimateBracketMatching()));
     }
 
     public Vector<SyntaxStyle> getSyntaxStyles() {
@@ -249,15 +148,23 @@ public class SyntaxHighlightTextArea extends RSyntaxTextArea {
             syntaxMenu = new SyntaxMenu();
             viewMenu = new ViewMenu();
 
-            undoAction = new TextAreaMenuItem(RTextArea.UNDO_ACTION, true, false);
-            redoAction = new TextAreaMenuItem(RTextArea.REDO_ACTION, false, true);
+            undoAction = new TextAreaMenuItem(RTextArea.UNDO_ACTION, MenuWeights.MENU_UNDO_WEIGHT);
+            redoAction = new TextAreaMenuItem(RTextArea.REDO_ACTION, MenuWeights.MENU_REDO_WEIGHT);
 
-            cutAction = new TextAreaMenuItem(RTextArea.CUT_ACTION, false, false);
-            copyAction = new TextAreaMenuItem(RTextArea.COPY_ACTION, false, false);
-            pasteAction = new TextAreaMenuItem(RTextArea.PASTE_ACTION, false, false);
-            deleteAction = new TextAreaMenuItem(RTextArea.DELETE_ACTION, false, true);
+            cutAction =
+                    new TextAreaMenuItem(RTextArea.CUT_ACTION, MenuWeights.MENU_EDIT_CUT_WEIGHT);
+            copyAction =
+                    new TextAreaMenuItem(RTextArea.COPY_ACTION, MenuWeights.MENU_EDIT_COPY_WEIGHT);
+            pasteAction =
+                    new TextAreaMenuItem(
+                            RTextArea.PASTE_ACTION, MenuWeights.MENU_EDIT_PASTE_WEIGHT);
+            deleteAction =
+                    new TextAreaMenuItem(
+                            RTextArea.DELETE_ACTION, MenuWeights.MENU_EDIT_DELETE_WEIGHT);
 
-            selectAllAction = new TextAreaMenuItem(RTextArea.SELECT_ALL_ACTION, false, false);
+            selectAllAction =
+                    new TextAreaMenuItem(
+                            RTextArea.SELECT_ALL_ACTION, MenuWeights.MENU_SECECT_ALL_WEIGHT);
             final List<JMenuItem> mainPopupMenuItems = View.getSingleton().getPopupList();
 
             mainPopupMenuItems.add(syntaxMenu);
@@ -272,6 +179,32 @@ public class SyntaxHighlightTextArea extends RSyntaxTextArea {
             mainPopupMenuItems.add(deleteAction);
 
             mainPopupMenuItems.add(selectAllAction);
+        }
+    }
+
+    private void setLookAndFeel(boolean dark) {
+        try {
+            Theme theme =
+                    Theme.load(
+                            this.getClass()
+                                    .getResourceAsStream(dark ? RESOURCE_DARK : RESOURCE_LIGHT));
+
+            theme.apply(this);
+        } catch (IOException e) {
+            // Ignore
+        }
+    }
+
+    @Override
+    public void updateUI() {
+        super.updateUI();
+        if (darkLaF != null && darkLaF != DisplayUtils.isDarkLookAndFeel()) {
+            if (DisplayUtils.isDarkLookAndFeel()) {
+                darkLaF = true;
+            } else {
+                darkLaF = false;
+            }
+            setLookAndFeel(darkLaF);
         }
     }
 
@@ -323,15 +256,11 @@ public class SyntaxHighlightTextArea extends RSyntaxTextArea {
         private static final long serialVersionUID = -8369459846515841057L;
 
         private int actionId;
-        private boolean precedeWithSeparator;
-        private boolean succeedWithSeparator;
+        private int weight;
 
-        public TextAreaMenuItem(
-                int actionId, boolean precedeWithSeparator, boolean succeedWithSeparator)
-                throws IllegalArgumentException {
+        public TextAreaMenuItem(int actionId, int weight) throws IllegalArgumentException {
             this.actionId = actionId;
-            this.precedeWithSeparator = precedeWithSeparator;
-            this.succeedWithSeparator = succeedWithSeparator;
+            this.weight = weight;
             Action action = RTextArea.getAction(actionId);
             if (action == null) {
                 throw new IllegalArgumentException("Action not found with id: " + actionId);
@@ -365,18 +294,13 @@ public class SyntaxHighlightTextArea extends RSyntaxTextArea {
         }
 
         @Override
-        public boolean precedeWithSeparator() {
-            return precedeWithSeparator;
-        }
-
-        @Override
-        public boolean succeedWithSeparator() {
-            return succeedWithSeparator;
-        }
-
-        @Override
         public boolean isSafe() {
             return true;
+        }
+
+        @Override
+        public int getWeight() {
+            return weight;
         }
     }
 }

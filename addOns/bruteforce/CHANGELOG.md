@@ -6,6 +6,57 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [17] - 2025-01-09
+### Changed
+- Update minimum ZAP version to 2.16.0.
+
+## [16] - 2024-05-07
+### Added
+- Support for menu weights (Issue 8369).
+
+### Changed
+- Update minimum ZAP version to 2.15.0.
+- Maintenance changes.
+
+### Fixed
+- Help content typos.
+
+## [15] - 2023-10-12
+### Changed
+- Update minimum ZAP version to 2.14.0.
+- Maintenance changes.
+
+## [14] - 2023-07-11
+### Changed
+- Update minimum ZAP version to 2.13.0.
+
+## [13] - 2023-06-06
+### Changed
+- Maintenance changes.
+- Default number of threads to 2 * processor count.
+
+## [12] - 2022-10-27
+### Changed
+- Update minimum ZAP version to 2.12.0.
+- Maintenance changes.
+
+## [11] - 2021-10-06
+### Changed
+- Send HTTP messages with ZAP, making use of all its features (e.g. user authentication, custom user-agent, HTTP Sender scripts) (Issues 173 and 3060).
+- Now using 2.10 logging infrastructure (Log4j 2.x).
+- Maintenance changes.
+- Update minimum ZAP version to 2.11.0.
+
+## [10] - 2020-12-15
+
+### Added
+- Added option and functionality to find files without extension. (Issue 5883)
+
+### Changed
+- Update minimum ZAP version to 2.10.0.
+- Ensure requests are counted and progress updated (Issue 5437).
+- Updated owasp.org references (Issue 5962).
+
 ## [9] - 2020-01-17
 ### Changed
 - Now targets ZAP 2.8.0.
@@ -63,5 +114,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release as an add-on, previously bundled with ZAP core.
 
+[17]: https://github.com/zaproxy/zap-extensions/releases/bruteforce-v17
+[16]: https://github.com/zaproxy/zap-extensions/releases/bruteforce-v16
+[15]: https://github.com/zaproxy/zap-extensions/releases/bruteforce-v15
+[14]: https://github.com/zaproxy/zap-extensions/releases/bruteforce-v14
+[13]: https://github.com/zaproxy/zap-extensions/releases/bruteforce-v13
+[12]: https://github.com/zaproxy/zap-extensions/releases/bruteforce-v12
+[11]: https://github.com/zaproxy/zap-extensions/releases/bruteforce-v11
+[10]: https://github.com/zaproxy/zap-extensions/releases/bruteforce-v10
 [9]: https://github.com/zaproxy/zap-extensions/releases/bruteforce-v9
 [8]: https://github.com/zaproxy/zap-extensions/releases/bruteforce-v8

@@ -1,0 +1,47 @@
+name: Create Retirejs Update PR
+
+on:
+  schedule:
+    - cron:  '0 4 2 * *'
+  workflow_dispatch:
+
+jobs:
+  create_pr:
+    name: Create Pull Request
+    runs-on: ubuntu-latest
+    steps:
+    - name: Build Feature Branch and Raise PR
+      run: |
+        # Setup git details
+        export GITHUB_USER=zapbot
+        git config --global user.email "12745184+zapbot@users.noreply.github.com"
+        git config --global user.name $GITHUB_USER
+        # Clone repos
+        git clone https://github.com/RetireJS/retire.js.git --depth 1
+        git clone -o upstream https://github.com/zaproxy/zap-extensions.git
+        cd zap-extensions
+        git remote add origin https://github.com/$GITHUB_USER/zap-extensions.git
+        cd ../retire.js
+        # Setup env vars for later
+        SRC_BASE="RetireJS/retire.js@"$(git log -1 --format=format:%h)
+        BRANCH="retirejs-update"
+        SHORT_DATE="$(date +"%Y-%m-%d")"
+        export GITHUB_TOKEN=${{ secrets.ZAPBOT_TOKEN }}
+        # Build the feature branch
+        cd ../zap-extensions
+        git checkout -b $BRANCH
+        cd ..
+        cp -f retire.js/repository/jsrepository.json zap-extensions/addOns/retire/src/main/resources/org/zaproxy/addon/retire/resources
+        cd zap-extensions
+        ## Update the index to be sure git is aware of changes
+        git update-index -q --refresh
+        ## If there are changes: comment, commit, PR
+        if ! git diff-index --quiet HEAD --; then 
+          ./gradlew :addOns:retire:updateChangelog --change="- Updated with upstream retire.js pattern changes."
+          git remote set-url origin https://$GITHUB_USER:$GITHUB_TOKEN@github.com/$GITHUB_USER/zap-extensions.git
+          git add .
+          git commit -m "retire.js Update $SHORT_DATE" -m "Updates based on $SRC_BASE" --signoff
+          git push --set-upstream origin $BRANCH --force
+          # Open the PR
+          gh pr create -f
+        fi

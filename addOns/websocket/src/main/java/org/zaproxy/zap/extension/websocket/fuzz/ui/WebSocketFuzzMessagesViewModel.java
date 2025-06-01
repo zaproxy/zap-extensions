@@ -23,7 +23,8 @@ import java.awt.EventQueue;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.TableModel;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.db.DatabaseException;
 import org.zaproxy.zap.extension.websocket.WebSocketFuzzMessageDTO;
@@ -36,10 +37,11 @@ import org.zaproxy.zap.extension.websocket.ui.WebSocketMessagesViewModel;
  * This {@link TableModel} is also backed by the database, but has got some additional columns.
  * Moreover, erroneous entries are stored into an extra {@link List}.
  */
+@SuppressWarnings("serial")
 public class WebSocketFuzzMessagesViewModel extends WebSocketMessagesViewModel {
     private static final long serialVersionUID = 5435325545219552543L;
 
-    private static final Logger logger = Logger.getLogger(WebSocketFuzzMessagesViewModel.class);
+    private static final Logger LOGGER = LogManager.getLogger(WebSocketFuzzMessagesViewModel.class);
 
     /** Names of new columns. */
     private static final String[] COLUMN_NAMES = {
@@ -70,13 +72,17 @@ public class WebSocketFuzzMessagesViewModel extends WebSocketMessagesViewModel {
         this.currentFuzzId = currentFuzzId;
     }
 
-    /** @return number of columns */
+    /**
+     * @return number of columns
+     */
     @Override
     public int getColumnCount() {
         return COLUMN_COUNT;
     }
 
-    /** @return name of the given column index */
+    /**
+     * @return name of the given column index
+     */
     @Override
     public String getColumnName(int columnIndex) {
         final int totalParent = WebSocketMessagesViewModel.COLUMN_COUNT;
@@ -112,7 +118,9 @@ public class WebSocketFuzzMessagesViewModel extends WebSocketMessagesViewModel {
         return super.getRealValueAt(message, columnIndex);
     }
 
-    /** @return type of column for given column index */
+    /**
+     * @return type of column for given column index
+     */
     @Override
     public Class<?> getColumnClass(int columnIndex) {
         switch (columnIndex) {
@@ -183,14 +191,7 @@ public class WebSocketFuzzMessagesViewModel extends WebSocketMessagesViewModel {
     public void addResult(final WebSocketFuzzResult result, int count, boolean forceRefresh) {
         final WebSocketFuzzMessageDTO message = result.getWebSocketMessage();
         if (message.state == WebSocketFuzzMessageDTO.State.ERROR) {
-            EventQueue.invokeLater(
-                    new Runnable() {
-
-                        @Override
-                        public void run() {
-                            addErroneousWebSocketMessage(message);
-                        }
-                    });
+            EventQueue.invokeLater(() -> addErroneousWebSocketMessage(message));
         } else {
             try {
                 getTable().insertMessage(message);
@@ -201,7 +202,7 @@ public class WebSocketFuzzMessagesViewModel extends WebSocketMessagesViewModel {
                     }
                 }
             } catch (DatabaseException e) {
-                logger.warn("Failed to persist fuzzer message:", e);
+                LOGGER.warn("Failed to persist fuzzer message:", e);
             }
         }
     }

@@ -27,8 +27,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.model.HistoryReference;
@@ -44,13 +45,14 @@ import org.zaproxy.zap.view.table.AbstractCustomColumnHistoryReferencesTableMode
 import org.zaproxy.zap.view.table.AbstractHistoryReferencesTableEntry;
 import org.zaproxy.zap.view.table.DefaultHistoryReferencesTableEntry;
 
+@SuppressWarnings("serial")
 public class HttpFuzzerResultsTableModel
         extends AbstractCustomColumnHistoryReferencesTableModel<
                 HttpFuzzerResultsTableModel.FuzzResultTableEntry> {
 
     private static final long serialVersionUID = -7711293371478878302L;
 
-    private static final Logger logger = Logger.getLogger(HttpFuzzerResultsTableModel.class);
+    private static final Logger LOGGER = LogManager.getLogger(HttpFuzzerResultsTableModel.class);
 
     private static final Column[] COLUMNS =
             new Column[] {
@@ -95,31 +97,24 @@ public class HttpFuzzerResultsTableModel
                             ? result.getHttpMessage().getHistoryRef()
                             : new HistoryReference(
                                     Model.getSingleton().getSession(),
-                                    // TODO Replace 20 with HistoryReference.TYPE_FUZZER_TEMPORARY
-                                    // once available.
-                                    20,
+                                    HistoryReference.TYPE_FUZZER_TEMPORARY,
                                     result.getHttpMessage());
 
             EventQueue.invokeLater(
-                    new Runnable() {
-
-                        @Override
-                        public void run() {
-                            final int row = results.size();
-                            idsToRows.put(
-                                    Integer.valueOf(href.getHistoryId()), Integer.valueOf(row));
-                            results.add(
-                                    new FuzzResultTableEntry(
-                                            href,
-                                            result.getTaskId(),
-                                            result.getType(),
-                                            result.getCustomStates(),
-                                            result.getPayloads()));
-                            fireTableRowsInserted(row, row);
-                        }
+                    () -> {
+                        final int row = results.size();
+                        idsToRows.put(Integer.valueOf(href.getHistoryId()), Integer.valueOf(row));
+                        results.add(
+                                new FuzzResultTableEntry(
+                                        href,
+                                        result.getTaskId(),
+                                        result.getType(),
+                                        result.getCustomStates(),
+                                        result.getPayloads()));
+                        fireTableRowsInserted(row, row);
                     });
         } catch (HttpMalformedHeaderException | DatabaseException e) {
-            logger.error("Failed to persist (and show) the message:", e);
+            LOGGER.error("Failed to persist (and show) the message:", e);
         }
     }
 
@@ -362,7 +357,7 @@ public class HttpFuzzerResultsTableModel
                     }
                 }
             } catch (HttpMalformedHeaderException | DatabaseException e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
         return searchResults;

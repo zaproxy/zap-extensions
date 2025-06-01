@@ -1,0 +1,28 @@
+<svg class="infinite-scroll-illo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 520" width="200" height="200">
+<style>
+	.infinite-scroll-illo__page {
+		stroke: #036;
+		stroke-width: 20;
+    	stroke-miterlimit: 10;
+	}
+	.infinite-scroll-illo__page--back{
+		fill: white;
+	}
+	.infinite-scroll-illo__page--front1 {
+    	fill: #C25;
+	}
+	.infinite-scroll-illo__page--front2 {
+    	fill: #E62;
+	}
+	.infinite-scroll-illo__page--front3 {
+    	fill: #EA0;
+	}
+</style>
+<path class="infinite-scroll-illo__page infinite-scroll-illo__page--back" d="M90,110H10V90c0-22,18-40,40-40h40V110z"/>
+<path class="infinite-scroll-illo__page infinite-scroll-illo__page--front1" d="M270,90L270,90c0-22-18-40-40-40h0H50h0c22,0,40,18,40,40v0v0v160h180V90z"/>
+<path class="infinite-scroll-illo__page infinite-scroll-illo__page--front2" d="M170,330v-20H90v20v0c0,22,18,40,40,40h0h40V330z"/>
+<path class="infinite-scroll-illo__page infinite-scroll-illo__page--back" d="M350,150H210c-22,0-40,18-40,40v140v0c0,22-18,40-40,40h0h220V150z"/>
+<path class="infinite-scroll-illo__page infinite-scroll-illo__page--front3" d="M430,470V270H250v160c0,22,18,40,40,40H430z"/>
+<path class="infinite-scroll-illo__page infinite-scroll-illo__page--front2" d="M250,190v20h180v-20c0-22-18-40-40-40H210h0C232,150,250,168,250,190L250,190z"/>
+<path class="infinite-scroll-illo__page infinite-scroll-illo__page--back" d="M330,410v20v0c0,22-18,40-40,40h0h180c22,0,40-18,40-40v-20H330z"/>
+</svg>

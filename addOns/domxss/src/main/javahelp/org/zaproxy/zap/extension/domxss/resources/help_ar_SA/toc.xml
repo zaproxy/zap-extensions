@@ -6,7 +6,9 @@
 <toc version="2.0">
 	<tocitem text="دليل المستخدم" tocid="toplevelitem">
 		<tocitem text="إضافات" tocid="addons">
-			<tocitem text="دوم XSS المسح الضوئي النشطة القاعدة" target="domxss"/>
+			<tocitem text="دوم XSS المسح الضوئي النشطة القاعدة" target="domxss">
+				<tocitem text="About" target="domxss.about"/>
+			</tocitem>
 		</tocitem>
 	</tocitem>
 </toc>

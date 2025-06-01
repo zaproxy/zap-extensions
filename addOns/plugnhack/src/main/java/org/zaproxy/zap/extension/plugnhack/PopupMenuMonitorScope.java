@@ -23,13 +23,16 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
 
+@SuppressWarnings("serial")
 public class PopupMenuMonitorScope extends PopupMenuItemHttpMessageContainer {
 
     private static final long serialVersionUID = 1L;
     private MonitoredPagesManager mpm = null;
     private boolean monitored = false;
 
-    /** @param label */
+    /**
+     * @param label
+     */
     public PopupMenuMonitorScope(MonitoredPagesManager mpm) {
         super(Constant.messages.getString("plugnhack.menu.monitor.inscope"));
         this.mpm = mpm;

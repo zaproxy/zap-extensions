@@ -25,7 +25,8 @@ import java.security.MessageDigest;
 import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.api.API;
@@ -39,7 +40,7 @@ import org.zaproxy.zap.extension.api.ApiResponseElement;
 
 public class PlugNHackAPI extends ApiImplementor {
 
-    private static Logger logger = Logger.getLogger(PlugNHackAPI.class);
+    private static final Logger LOGGER = LogManager.getLogger(PlugNHackAPI.class);
     private static final String PREFIX = "pnh";
     private static final String ACTION_MONITOR = "monitor";
     private static final String ACTION_ORACLE = "oracle";
@@ -61,7 +62,9 @@ public class PlugNHackAPI extends ApiImplementor {
         this(null);
     }
 
-    /** @param ext */
+    /**
+     * @param ext
+     */
     public PlugNHackAPI(ExtensionPlugNHack ext) {
 
         extension = ext;
@@ -80,7 +83,9 @@ public class PlugNHackAPI extends ApiImplementor {
         this.addApiShortcut(OTHER_MANIFEST);
     }
 
-    /** @return */
+    /**
+     * @return
+     */
     @Override
     public String getPrefix() {
         return PREFIX;
@@ -104,7 +109,7 @@ public class PlugNHackAPI extends ApiImplementor {
 
             ApiResponse resp = this.extension.messageReceived(new ClientMessage(id, json));
             if (response != null) {
-                // logger.debug("Returning " + response.toString(0));
+                // LOGGER.debug("Returning {}", response.toString(0));
                 response = resp;
             }
 
@@ -145,7 +150,7 @@ public class PlugNHackAPI extends ApiImplementor {
             try {
                 String manifestUrl = "/manifest/";
                 String xpiUrl = "/OTHER/pnh/other/fx_pnh.xpi/";
-                String welcomePage = ExtensionPlugNHack.getStringReource("resources/welcome.html");
+                String welcomePage = ExtensionPlugNHack.getStringResource("resources/welcome.html");
                 // Replace the dynamic parts
                 welcomePage =
                         welcomePage
@@ -231,7 +236,7 @@ public class PlugNHackAPI extends ApiImplementor {
                 msg.setResponseBody(welcomePage);
 
             } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
 
             return msg;
@@ -240,7 +245,7 @@ public class PlugNHackAPI extends ApiImplementor {
             try {
                 String manifest =
                         this.replaceApiTokens(
-                                ExtensionPlugNHack.getStringReource("resources/manifest.json"));
+                                ExtensionPlugNHack.getStringResource("resources/manifest.json"));
 
                 msg.setResponseHeader(
                         "HTTP/1.1 200 OK\r\n"
@@ -255,7 +260,7 @@ public class PlugNHackAPI extends ApiImplementor {
                 msg.setResponseBody(manifest);
 
             } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
 
             return msg;
@@ -264,7 +269,7 @@ public class PlugNHackAPI extends ApiImplementor {
             try {
                 String service =
                         this.replaceApiTokens(
-                                ExtensionPlugNHack.getStringReource("resources/service.json"));
+                                ExtensionPlugNHack.getStringResource("resources/service.json"));
 
                 msg.setResponseHeader(
                         "HTTP/1.1 200 OK\r\n"
@@ -279,7 +284,7 @@ public class PlugNHackAPI extends ApiImplementor {
                 msg.setResponseBody(service);
 
             } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
 
             return msg;
@@ -310,7 +315,7 @@ public class PlugNHackAPI extends ApiImplementor {
                                 + "\r\n");
 
             } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
                 throw new ApiException(ApiException.Type.INTERNAL_ERROR);
 
             } finally {
@@ -366,7 +371,7 @@ public class PlugNHackAPI extends ApiImplementor {
             if ((RequestType.action.equals(type)
                             && (ACTION_MONITOR.equals(name) || ACTION_ORACLE.equals(name)))
                     || (RequestType.other.equals(type) && OTHER_MANIFEST.equals(name))) {
-                logger.debug("Adding CORS header for " + origin);
+                LOGGER.debug("Adding CORS header for {}", origin);
                 msg.getResponseHeader().addHeader("Access-Control-Allow-Origin", origin);
             }
         }
@@ -383,7 +388,7 @@ public class PlugNHackAPI extends ApiImplementor {
             }
 
         } catch (URIException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             throw new ApiException(ApiException.Type.INTERNAL_ERROR);
         }
 
@@ -414,7 +419,7 @@ public class PlugNHackAPI extends ApiImplementor {
             return sb.toString();
 
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             throw new ApiException(ApiException.Type.INTERNAL_ERROR);
 
         } finally {
@@ -436,7 +441,7 @@ public class PlugNHackAPI extends ApiImplementor {
         // Sanity check the json config files are valid!
         // JSON json;
 
-        // String manifest = ExtensionPlugNHack.getStringReource("resources/manifest.json");
+        // String manifest = ExtensionPlugNHack.getStringResource("resources/manifest.json");
         // System.out.println("Manifest = " + manifest);
         // json = JSONSerializer.toJSON(manifest);
         // System.out.println("Manifest OK? " + json);
@@ -465,7 +470,7 @@ public class PlugNHackAPI extends ApiImplementor {
             System.out.println("Digest(in hex format):: " + sb.toString());
 
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             throw new ApiException(ApiException.Type.INTERNAL_ERROR);
 
         } finally {

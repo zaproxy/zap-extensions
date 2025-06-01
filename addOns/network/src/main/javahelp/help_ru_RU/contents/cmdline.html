@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>Command Line</TITLE>
+</HEAD>
+<BODY>
+	<H1>командная строка</H1>
+
+	The Network add-on supports the following command line options:
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>-certload</td>
+			<td>Загружает корневой сертификат ЦС (Root CA certificate) из указанного файла. </td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>-certpubdump</td>
+			<td>Сбрасывает сертификат Root CA в указанный файл, это удобно для импорта в браузеры. </td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>-certfulldump</td>
+			<td>Сбрасывает сертификат Root CA и закрытый ключ в указанный файл, это подходит для импорта в ZAP. </td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>-host</td>
+			<td>Overrides the host of the main proxy, specified in the configuration file.</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>-port</td>
+			<td>Overrides the port of the main proxy, specified in the configuration file.</td>
+		</tr>
+	</table>
+
+	<H3>Local Servers/Proxies</H3>
+	When ZAP is running in command line mode (i.e. <code>-cmd</code>) only the main proxy is started, for example, to proxy integration tests
+	or access the ZAP API.
+	If unable to start the main proxy in command line mode or in daemon mode (i.e. <code>-daemon</code>) ZAP is terminated, when running with
+	GUI an appropriate warning is shown instead.
+
+	<H2>Смотрите также </H2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="network.html">Сеть</a></td>
+			<td>введение в сетевое дополнение </td>
+		</tr>
+	</table>
+
+</BODY>
+</HTML>

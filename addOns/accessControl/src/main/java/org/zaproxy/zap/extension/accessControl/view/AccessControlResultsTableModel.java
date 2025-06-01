@@ -21,7 +21,7 @@ package org.zaproxy.zap.extension.accessControl.view;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.AccessControlNodeResult;
 import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.AccessControlResultEntry;
@@ -35,6 +35,7 @@ import org.zaproxy.zap.view.table.AbstractHistoryReferencesTableEntry;
  * The table model for access control testing results. This table is used in the status panel of the
  * Access Control extension.
  */
+@SuppressWarnings("serial")
 public class AccessControlResultsTableModel
         extends AbstractCustomColumnHistoryReferencesTableModel<AccessControlResultsTableEntry> {
 
@@ -86,7 +87,7 @@ public class AccessControlResultsTableModel
     @Override
     public void refreshEntryRow(int historyReferenceId) {
         // Nothing to refresh
-        Logger.getLogger(getClass()).warn("'Refresh' should not be called...");
+        LogManager.getLogger(getClass()).warn("'Refresh' should not be called...");
     }
 
     @Override
@@ -110,7 +111,8 @@ public class AccessControlResultsTableModel
 
     @Override
     public int getEntryRowIndex(int historyReferenceId) {
-        Logger.getLogger(getClass()).warn("Non optimal implemented method should not be called...");
+        LogManager.getLogger(getClass())
+                .warn("Non optimal implemented method should not be called...");
         for (int i = 0; i < entries.size(); i++) {
             if (entries.get(i).getHistoryId() == historyReferenceId) {
                 return i;

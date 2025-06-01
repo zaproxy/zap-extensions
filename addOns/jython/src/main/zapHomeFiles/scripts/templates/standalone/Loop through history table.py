@@ -5,10 +5,9 @@ Standalone scripts have no template.
 They are only evaluated when you run them.
 """ 
 
-from org.parosproxy.paros.control import Control
 from org.parosproxy.paros.extension.history import ExtensionHistory
 
-extHist = Control.getSingleton().getExtensionLoader().getExtension(ExtensionHistory.NAME) 
+extHist = control.getExtensionLoader().getExtension(ExtensionHistory.NAME)
 if (extHist != None):
   i=1
   # Loop through the history table, printing out the history id and the URL

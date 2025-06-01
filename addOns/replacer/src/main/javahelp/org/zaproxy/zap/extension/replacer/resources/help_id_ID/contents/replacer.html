@@ -6,69 +6,118 @@
 Menggantikan
 </title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 <h1>Menggantikan</h1>
 Cara mudah untuk mengganti string dalam permintaan dan tanggapan.
 <p>
 Hal ini dapat diakses melalui Opsi dan secara default ini dapat diakses secara cepat melalui '&lt;ctrl&gt; R' hotkey.
 <p>
-Yang Replacer Pilihan panel memungkinkan anda untuk menentukan banyak aturan pengganti yang anda butuhkan.<br>
-Setiap aturan yang ditentukan oleh bidang-bidang berikut:
-<h3>Deskripsi</h3>
-Deskripsi yang memungkinkan anda untuk mengidentifikasi aturan.
+It also supports the <a href="automation.html">Automation Framework</a>.
+<p>
+The Replacer Options panel allows you to define as many replacement rules as you need.<br>
+Each rule is defined by the following fields:
+<h3>Description</h3>
+A description that allows you to identify the rule.
 
-<h3>Jenis Pencocokan</h3>
-Mungkin salah satu dari:
+<h3>URL</h3>
+A regular expression to match the URL of the message, if empty the rule applies to all messages.<br>
+For example, allows to restrict the rules to certain domains when providing authentication credentials.
 
-<h4>Header Permintaan (akan menambahkan jika tidak hadir)</h4>
-Dalam hal ini 'Mencocokkan String' akan diperlakukan sebagai nama header. 
-Jika header hadir maka nilainya akan diganti dengan teks pengganti. 
-Jika penggantian teks kosong maka header akan dihapus (jika ada).
-Jika header tidak hadir dan penggantian teks tidak kosong maka header akan ditambahkan.
+<h3>Match Type</h3>
+May be one of:
+
+<h4>Request Header (will add if not present)</h4>
+In this case the 'Match String' will be treated as a header name. 
+If the header is present then its value will be replaced by the replacement text. 
+If the replacement text is empty then the header will be removed (if present).
+If the header is not present and the replacement text is not empty then the header will be added.
 
 <h4>Request Header String</h4>
-Dalam hal ini 'Mencocokkan String' akan diperlakukan sebagai string atau regex ekspresi.
-Jika hadir di header permintaan maka akan diganti dengan teks pengganti.
+In this case the 'Match String' will be treated as a string or regex expression.
+If it is present in the request header then it will be replaced by the replacement text.
 
-<h4>Permintaan Tubuh String</h4>
-Dalam hal ini 'Mencocokkan String' akan diperlakukan sebagai string atau regex ekspresi.
-Jika hal ini hadir dalam permintaan tubuh maka akan diganti dengan teks pengganti.
+<h5>Host Header</h5>
+Both the Request Header and Request Header String match types can change/remove the Host header, while sending the message to the original request-target.
+
+<h4>Request Body String</h4>
+In this case the 'Match String' will be treated as a string or regex expression.
+If it is present in the request body then it will be replaced by the replacement text.
 
 <h4>Response Header (will add if not present)</h4>
 In this case the 'Match String' will be treated as a header name. 
-Jika header hadir maka nilainya akan diganti dengan teks pengganti. 
-Jika penggantian teks kosong maka header akan dihapus (jika ada).
-Jika header tidak hadir dan penggantian teks tidak kosong maka header akan ditambahkan.
+If the header is present then its value will be replaced by the replacement text. 
+If the replacement text is empty then the header will be removed (if present).
+If the header is not present and the replacement text is not empty then the header will be added.
 
-<h4>Respon Header String</h4>
-Dalam hal ini 'Mencocokkan String' akan diperlakukan sebagai string atau regex ekspresi.
-Jika hadir di respon header maka akan diganti dengan teks pengganti.
+<h4>Response Header String</h4>
+In this case the 'Match String' will be treated as a string or regex expression.
+If it is present in the response header then it will be replaced by the replacement text.
 
-<h4>Respon Tubuh String</h4>
-Dalam hal ini 'Mencocokkan String' akan diperlakukan sebagai string atau regex ekspresi.
-Jika hal ini hadir dalam respon tubuh maka akan diganti dengan teks pengganti.
+<h4>Response Body String</h4>
+In this case the 'Match String' will be treated as a string or regex expression.
+If it is present in the response body then it will be replaced by the replacement text.
 
-<h3>Pertandingan String</h3>
-String yang akan digunakan untuk mengidentifikasi apa yang harus diganti - melihat Jenis Pencocokan untuk rincian.
+<h3>Match String</h3>
+The string that will be used to identify what should be replaced - see Match Type for details.
 
-<h3>Pertandingan Regex</h3>
-Jika diatur kemudian Mencocokkan String akan diperlakukan sebagai regex ekspresi.
-Opsi ini dinonaktifkan ketika pencocokan header.
+<h3>Match Regex</h3>
+If set then the Match String will be treated as a regex expression.
+This option is disabled when matching actual headers.
+Hexadecimal bytes are represented with "\x00 - \xFF" (for example "abc\x01\x02\x03def").
 
-<h3>String Pengganti</h3>
-String baru yang akan menggantikan ditentukan pilihan.
+<h3>Replacement String</h3>
+<p>
+The new string that will replace the specified selection.
+Hexadecimal bytes are represented with "\x00 - \xFF".
+The literal string "\x00" can be kept with "\\x00".
+</p>
 
-<h3>Aktifkan</h3>
-Jika tidak diatur maka aturan tersebut tidak akan berlaku.
+<h3>Enable</h3>
+If not set then the rule will not apply.
 
-<h3>Maju</h3>
-Jika diatur kemudian tab tambahan akan menunjukkan yang memungkinkan anda untuk menentukan yang 'penggagas' aturan harus berlaku untuk.
-Masing-masing ZAP komponen yang dapat mengirim dan menerima pesan terpisah inisiator, sehingga ini akan memberikan anda sangat baik biji-bijian
-kontrol atas persis ketika aturan harus diterapkan.
+<h3>Token Processing</h3>
+<p>
+When enabled, the Replacement String may contain a single token which is replaced with a dynamic value:
+</p>
+<table>
+	<tr>
+		<th>Token</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>{{RINT|MIN|MAX}}</td>
+		<td>
+			<p>Random Integer. <code>MIN</code> and <code>MAX</code> are each optional.</p> 
+			<p><code>MIN</code> defaults to <code>0</code></p>
+			<p><code>MAX</code> defaults to <a href="https://docs.oracle.com/javase/8/docs/api/constant-values.html#java.lang.Integer.MAX_VALUE">Integer.maxValue</a></p>
+		</td>
+	</tr>
+	<tr>
+		<td>{{UUID}}</td>
+		<td>Random UUID generated using <a href="https://docs.oracle.com/javase/8/docs/api/java/util/UUID.html#randomUUID--">java.util.UUID.randomUUID()</a></td>
+	</tr>
+	<tr>
+		<td>{{TICKS}}</td>
+		<td>Unix epoch milliseconds using <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/System.html#currentTimeMillis--">System.currentTimeMillis()</a></td>
+	</tr>
+</table> 
+<p>
+<strong>Note:</strong> This option applies only to the following Match Types:
+<ul>
+	<li>Request Header String</li>
+	<li>Request Body String</li>
+	<li>Response Header String</li>
+	<li>Response Body String</li>
+</ul>
+
+<h3>Initiators tab</h3>
+Allows you to specify which 'initiators' the rule should apply to.
+Each ZAP component which can send and receive messages is a separate initiator, so this gives you a very fine grain
+control over exactly when the rule should apply.
 
 <p>
-Jika anda membutuhkan lebih mengontrol kapan dan bagaimana teks harus diganti maka anda dapat menggunakan ZAP Script Konsol yang
-memberi anda kontrol penuh atas ZAP pesan.
+If you need even more control over when and how text should be replaced then you can use the ZAP Script Console which
+gives you complete control over the ZAP messages.
 
 </body>
 </html>

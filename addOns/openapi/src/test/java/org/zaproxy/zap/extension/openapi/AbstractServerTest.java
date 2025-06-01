@@ -19,11 +19,12 @@
  */
 package org.zaproxy.zap.extension.openapi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
-import org.junit.After;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  * Base class for OpenAPI tests that require a server.
@@ -33,14 +34,13 @@ import org.junit.After;
  */
 public abstract class AbstractServerTest extends AbstractOpenApiTest {
 
-    @Override
-    public void setup() throws Exception {
-        super.setup();
+    @BeforeEach
+    void init() throws Exception {
         startServer();
     }
 
-    @After
-    public void teardown() {
+    @AfterEach
+    void teardown() {
         stopServer();
     }
 
@@ -76,8 +76,6 @@ public abstract class AbstractServerTest extends AbstractOpenApiTest {
         assertEquals("name=name&status=status", accessedUrls.get("POST " + baseUrl + "/pet/10"));
         assertTrue(accessedUrls.containsKey("DELETE " + baseUrl + "/pet/10"));
         assertEquals("", accessedUrls.get("DELETE " + baseUrl + "/pet/10"));
-        assertTrue(accessedUrls.containsKey("POST " + baseUrl + "/pet/10/uploadImage"));
-        assertEquals("", accessedUrls.get("POST " + baseUrl + "/pet/10/uploadImage"));
         assertTrue(accessedUrls.containsKey("GET " + baseUrl + "/store/inventory"));
         assertEquals("", accessedUrls.get("GET " + baseUrl + "/store/inventory"));
         assertTrue(accessedUrls.containsKey("POST " + baseUrl + "/store/order"));
@@ -118,6 +116,6 @@ public abstract class AbstractServerTest extends AbstractOpenApiTest {
         assertTrue(accessedUrls.containsKey("DELETE " + baseUrl + "/user/username"));
         assertEquals("", accessedUrls.get("DELETE " + baseUrl + "/user/username"));
         // And that there arent any spurious ones
-        assertEquals(20, accessedUrls.size());
+        assertEquals(19, accessedUrls.size());
     }
 }

@@ -19,8 +19,10 @@
  */
 package org.zaproxy.zap.extension.sse;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -28,85 +30,82 @@ import static org.mockito.Mockito.when;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.utils.I18N;
 
 /**
  * Various examples were taken from the official documentation: {@link
  * http://www.w3.org/TR/eventsource/#processField}.
- *
- * @throws IOException
  */
-@RunWith(MockitoJUnitRunner.class)
-public class EventStreamProxyUnitTest extends BaseEventStreamTest {
+@ExtendWith(MockitoExtension.class)
+class EventStreamProxyUnitTest extends BaseEventStreamTest {
 
-    @BeforeClass
-    public static void beforeClass() {
+    @BeforeAll
+    static void beforeClass() {
         // ServerSentEvent relies on this attribute to be initialized
-        Constant.messages = Mockito.mock(I18N.class);
+        Constant.messages = mock(I18N.class);
     }
 
     @Test
-    public void shouldForwardEventWhenAllObserversReturnTrue() throws IOException {
+    void shouldForwardEventWhenAllObserversReturnTrue() throws IOException {
         // Given
-        BufferedWriter writer = Mockito.mock(BufferedWriter.class);
-        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer);
+        BufferedWriter writer = mock(BufferedWriter.class);
+        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer, null);
 
         // create mock observer
-        EventStreamObserver mockObserver = Mockito.mock(EventStreamObserver.class);
-        when(mockObserver.onServerSentEvent(Mockito.any(ServerSentEvent.class))).thenReturn(true);
+        EventStreamObserver mockObserver = mock(EventStreamObserver.class);
+        when(mockObserver.onServerSentEvent(any(ServerSentEvent.class))).thenReturn(true);
         proxy.addObserver(mockObserver);
 
         // When
         proxy.processEvent("data:blub");
 
         // Then
-        verify(writer, times(1)).write(Mockito.any(String.class));
+        verify(writer, times(1)).write(any(String.class));
     }
 
     @Test
-    public void shouldNotForwardEventWhenAtLeastOneObserverReturnsFalse() throws IOException {
+    void shouldNotForwardEventWhenAtLeastOneObserverReturnsFalse() throws IOException {
         // Given
-        BufferedWriter writer = Mockito.mock(BufferedWriter.class);
-        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer);
+        BufferedWriter writer = mock(BufferedWriter.class);
+        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer, null);
 
         // create mock observer
-        EventStreamObserver mockObserver = Mockito.mock(EventStreamObserver.class);
-        when(mockObserver.onServerSentEvent(Mockito.any(ServerSentEvent.class))).thenReturn(false);
+        EventStreamObserver mockObserver = mock(EventStreamObserver.class);
+        when(mockObserver.onServerSentEvent(any(ServerSentEvent.class))).thenReturn(false);
         proxy.addObserver(mockObserver);
 
         // When
         proxy.processEvent("data:blub");
 
         // Then
-        verify(writer, never()).write(Mockito.any(String.class));
+        verify(writer, never()).write(any(String.class));
     }
 
     @Test
-    public void shouldForwardEventWithoutObservers() throws IOException {
+    void shouldForwardEventWithoutObservers() throws IOException {
         // Given
-        BufferedWriter writer = Mockito.mock(BufferedWriter.class);
-        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer);
+        BufferedWriter writer = mock(BufferedWriter.class);
+        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer, null);
 
         // When
         proxy.processEvent("data:blub");
 
         // Then
-        verify(writer, times(1)).write(Mockito.any(String.class));
+        verify(writer, times(1)).write(any(String.class));
     }
 
     @Test
-    public void shouldInformObserversWithRightObjectFromSingleEventLine() throws IOException {
+    void shouldInformObserversWithRightObjectFromSingleEventLine() throws IOException {
         // Given
         final String data = "blub";
         final String eventStream = "data:" + data;
-        BufferedWriter writer = Mockito.mock(BufferedWriter.class);
-        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer);
+        BufferedWriter writer = mock(BufferedWriter.class);
+        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer, null);
 
         // When
         ServerSentEvent event = proxy.processEvent(eventStream);
@@ -119,11 +118,11 @@ public class EventStreamProxyUnitTest extends BaseEventStreamTest {
     }
 
     @Test
-    public void shouldInformObserversWithRightObjectFromMultipleEventLines() throws IOException {
+    void shouldInformObserversWithRightObjectFromMultipleEventLines() throws IOException {
         // Given
         final String eventStream = "data: YHOO\ndata: +2\ndata: 10";
-        BufferedWriter writer = Mockito.mock(BufferedWriter.class);
-        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer);
+        BufferedWriter writer = mock(BufferedWriter.class);
+        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer, null);
 
         // When
         ServerSentEvent event = proxy.processEvent(eventStream);
@@ -133,11 +132,11 @@ public class EventStreamProxyUnitTest extends BaseEventStreamTest {
     }
 
     @Test
-    public void shouldNotIgnoreCommentsButForwardInContrastToSpecification() throws IOException {
+    void shouldNotIgnoreCommentsButForwardInContrastToSpecification() throws IOException {
         // Given
         final String eventStream = ": test stream";
-        BufferedWriter writer = Mockito.mock(BufferedWriter.class);
-        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer);
+        BufferedWriter writer = mock(BufferedWriter.class);
+        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer, null);
 
         // When
         ServerSentEvent event = proxy.processEvent(eventStream);
@@ -147,11 +146,11 @@ public class EventStreamProxyUnitTest extends BaseEventStreamTest {
     }
 
     @Test
-    public void shouldProcessLastEventId() throws IOException {
+    void shouldProcessLastEventId() throws IOException {
         // Given
         final String eventStream = "data: first event\nid: 2";
-        BufferedWriter writer = Mockito.mock(BufferedWriter.class);
-        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer);
+        BufferedWriter writer = mock(BufferedWriter.class);
+        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer, null);
 
         // When
         ServerSentEvent event = proxy.processEvent(eventStream);
@@ -163,11 +162,11 @@ public class EventStreamProxyUnitTest extends BaseEventStreamTest {
     }
 
     @Test
-    public void shouldProcessEmptyLastEventId() throws IOException {
+    void shouldProcessEmptyLastEventId() throws IOException {
         // Given
         final String eventStream = "data:second event\nid";
-        BufferedWriter writer = Mockito.mock(BufferedWriter.class);
-        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer);
+        BufferedWriter writer = mock(BufferedWriter.class);
+        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer, null);
 
         // When
         ServerSentEvent event = proxy.processEvent(eventStream);
@@ -178,11 +177,29 @@ public class EventStreamProxyUnitTest extends BaseEventStreamTest {
     }
 
     @Test
-    public void shouldRemoveFirstWhitespaceFromLineAfterColon() throws IOException {
+    void shouldProcessEmptyLastEventIdWithEventData() throws IOException {
+        // Given
+        final String eventStream = "data: blub\nid:\nevent: welcome";
+
+        BufferedWriter writer = mock(BufferedWriter.class);
+        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer, null);
+
+        // When
+        ServerSentEvent event = proxy.processEvent(eventStream);
+
+        // Then
+        assertThat(event.getData(), is("blub"));
+        assertThat(event.getEventType(), is("welcome"));
+        assertThat(event.getLastEventId(), is(""));
+        assertThat(event.getRawEvent(), is(eventStream));
+    }
+
+    @Test
+    void shouldRemoveFirstWhitespaceFromLineAfterColon() throws IOException {
         // Given
         final String eventStream = "data:  third event";
-        BufferedWriter writer = Mockito.mock(BufferedWriter.class);
-        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer);
+        BufferedWriter writer = mock(BufferedWriter.class);
+        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer, null);
 
         // When
         ServerSentEvent event = proxy.processEvent(eventStream);
@@ -192,11 +209,11 @@ public class EventStreamProxyUnitTest extends BaseEventStreamTest {
     }
 
     @Test
-    public void shouldReturnEmptyObjectWhenCalledWithEmptyData() throws IOException {
+    void shouldReturnEmptyObjectWhenCalledWithEmptyData() throws IOException {
         // Given
         final String eventStream = "data";
-        BufferedWriter writer = Mockito.mock(BufferedWriter.class);
-        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer);
+        BufferedWriter writer = mock(BufferedWriter.class);
+        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer, null);
 
         // When
         ServerSentEvent event = proxy.processEvent(eventStream);
@@ -207,11 +224,11 @@ public class EventStreamProxyUnitTest extends BaseEventStreamTest {
     }
 
     @Test
-    public void shouldReturnANewlineOfData() throws IOException {
+    void shouldReturnANewlineOfData() throws IOException {
         // Given
         final String eventStream = "data\ndata";
-        BufferedWriter writer = Mockito.mock(BufferedWriter.class);
-        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer);
+        BufferedWriter writer = mock(BufferedWriter.class);
+        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer, null);
 
         // When
         ServerSentEvent event = proxy.processEvent(eventStream);
@@ -222,11 +239,11 @@ public class EventStreamProxyUnitTest extends BaseEventStreamTest {
     }
 
     @Test
-    public void shouldExtractEventType() throws IOException {
+    void shouldExtractEventType() throws IOException {
         // Given
         final String eventStream = "event: server-time\ndata: 1357651178";
-        BufferedWriter writer = Mockito.mock(BufferedWriter.class);
-        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer);
+        BufferedWriter writer = mock(BufferedWriter.class);
+        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer, null);
 
         // When
         ServerSentEvent event = proxy.processEvent(eventStream);
@@ -237,11 +254,11 @@ public class EventStreamProxyUnitTest extends BaseEventStreamTest {
     }
 
     @Test
-    public void shouldExtractRetryTime() throws IOException {
+    void shouldExtractRetryTime() throws IOException {
         // Given
         final String eventStream = "retry: 10000";
-        BufferedWriter writer = Mockito.mock(BufferedWriter.class);
-        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer);
+        BufferedWriter writer = mock(BufferedWriter.class);
+        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer, null);
 
         // When
         ServerSentEvent event = proxy.processEvent(eventStream);

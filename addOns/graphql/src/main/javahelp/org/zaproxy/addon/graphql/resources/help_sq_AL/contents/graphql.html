@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>
+GraphQL Support
+</TITLE>
+</HEAD>
+<BODY>
+<H1>GraphQL Support</H1>
+This add-on allows you to import GraphQL definitions and send queries generated from them.
+<br><br>
+The add-on will automatically detect any GraphQL definitions and spider them as long as they are in scope. <br>
+The spider is supported on ZAP 2.10.0 and later.
+
+<H2>UI</H2>
+2 menu items are added to the Import menu:
+<ul>
+<li>Import a GraphQL schema from a File</li>
+<li>Import a GraphQL schema from a URL</li>
+</ul>
+
+<h3>Endpoint URL Format</h3>
+The Endpoint URL has the following format:<br>
+<code>scheme://authority/path</code><br>
+with all URI components mandatory when importing from file.
+
+<h3>Options Panel</h3>
+A GraphQL Options Panel is added under Tools -> Options -> GraphQL.
+These options allow you to control the output of the Query Generator.
+
+<H2>API</H2>
+The following operations are added to the API:
+<h3> Views </h3>
+<ul>
+<li> optionArgsType </li>
+<li> optionMaxArgsDepth </li>
+<li> optionMaxQueryDepth </li>
+<li> optionOptionalArgsEnabled </li>
+<li> optionQuerySplitType </li>
+<li> optionRequestMethod </li>
+</ul>
+
+<h3> Actions </h3>
+<ul>
+<li> importFile (endurl*, file*) </li>
+<li> importUrl (endurl*, url) </li>
+<li> setOptionArgsType (String*) </li>
+<li> setOptionMaxArgsDepth (Integer*) </li>
+<li> setOptionMaxQueryDepth (Integer*) </li>
+<li> setOptionOptionalArgsEnabled (Boolean*) </li>
+<li> setOptionQuerySplitType (String*) </li>
+<li> setOptionRequestMethod (String*) </li>
+</ul>
+<code>endurl</code> supports the <code>Endpoint URL</code> format explained earlier.
+
+The definitions will be imported synchronously and any warnings will be returned.
+
+<H2>Command Line</H2>
+The following Command Line options are added:
+<ul>
+<li>-graphqlfile &lt;filename&gt;  : Imports a GraphQL definition from a File</li>
+<li>-graphqlurl &lt;url&gt;  : Imports a GraphQL definition from a URL</li>
+<li>-graphqlendurl &lt;url&gt;  : Sets the Endpoint URL</li>
+</ul>
+
+The definitions will be imported synchronously and any warnings will be displayed on the command line.
+
+<H2>See also</H2>
+<table>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td><a href="options.html">GraphQL Options</a></td>
+        <td>for information about the optional parameters.</td>
+    </tr>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td><a href="script.html">GraphQL Script</a></td>
+        <td>for information about the bundled script.</td>
+    </tr>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td><a href="automation.html">GraphQL Automation</a></td>
+        <td>for information about the automation framework support.</td>
+    </tr>
+</table>
+
+</BODY>
+</HTML>

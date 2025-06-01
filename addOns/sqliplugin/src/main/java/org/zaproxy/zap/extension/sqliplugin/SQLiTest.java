@@ -22,14 +22,14 @@ package org.zaproxy.zap.extension.sqliplugin;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.jdom.Element;
+import org.jdom2.Element;
 
 /**
  * Service class used to store a test element parsed from the XML payload configuration file
  *
  * @author yhawke (2013)
  */
-public class SQLiTest {
+class SQLiTest {
 
     /*
      * Tag: <test>
@@ -147,7 +147,9 @@ public class SQLiTest {
     private static final String TAG_RESPONSE = "response";
     private static final String TAG_DETAILS = "details";
 
-    /** @param el */
+    /**
+     * @param el
+     */
     protected SQLiTest(Element el) {
         this();
 
@@ -226,7 +228,9 @@ public class SQLiTest {
         }
     }
 
-    /** @return */
+    /**
+     * @return
+     */
     public int getLevel() {
         return level;
     }
@@ -258,7 +262,9 @@ public class SQLiTest {
         return result;
     }
 
-    /** @return */
+    /**
+     * @return
+     */
     public boolean matchClause(SQLiBoundary boundary) {
         for (int testClause : clauses) {
             if ((testClause == 0) || boundary.matchClause(testClause)) {
@@ -269,7 +275,9 @@ public class SQLiTest {
         return false;
     }
 
-    /** @return */
+    /**
+     * @return
+     */
     public boolean matchWhere(SQLiBoundary boundary) {
         for (int testWhere : where) {
             if (boundary.matchWhere(testWhere)) {
@@ -280,12 +288,16 @@ public class SQLiTest {
         return false;
     }
 
-    /** @return */
+    /**
+     * @return
+     */
     public List<Integer> getWhere() {
         return where;
     }
 
-    /** @return */
+    /**
+     * @return
+     */
     public List<Integer> getClauseList() {
         return clauses;
     }
@@ -298,37 +310,51 @@ public class SQLiTest {
         return where.isEmpty() || where.contains(testWhere);
     }
 
-    /** @return */
+    /**
+     * @return
+     */
     public String getTitle() {
         return title;
     }
 
-    /** @return */
+    /**
+     * @return
+     */
     public int getStype() {
         return stype;
     }
 
-    /** @return */
+    /**
+     * @return
+     */
     public int getRisk() {
         return risk;
     }
 
-    /** @return */
+    /**
+     * @return
+     */
     public String getVector() {
         return vector;
     }
 
-    /** @return */
+    /**
+     * @return
+     */
     public SQLiTestRequest getRequest() {
         return request;
     }
 
-    /** @return */
+    /**
+     * @return
+     */
     public SQLiTestResponse getResponse() {
         return response;
     }
 
-    /** @return */
+    /**
+     * @return
+     */
     public SQLiTestDetails getDetails() {
         return details;
     }

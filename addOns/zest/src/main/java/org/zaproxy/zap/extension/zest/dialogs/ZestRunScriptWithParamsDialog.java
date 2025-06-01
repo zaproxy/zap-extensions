@@ -26,14 +26,16 @@ import java.util.Map;
 import java.util.Map.Entry;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
-import org.apache.log4j.Logger;
-import org.mozilla.zest.core.v1.ZestScript;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.extension.zest.ZestZapRunner;
 import org.zaproxy.zap.view.StandardFieldsDialog;
+import org.zaproxy.zest.core.v1.ZestScript;
 
+@SuppressWarnings("serial")
 public class ZestRunScriptWithParamsDialog extends StandardFieldsDialog implements ZestDialog {
 
     private static final String FIELD_PARAMS = "zest.dialog.run.label.params";
@@ -46,7 +48,7 @@ public class ZestRunScriptWithParamsDialog extends StandardFieldsDialog implemen
     private JTable paramsTable = null;
     private ScriptTokensTableModel paramsModel = null;
 
-    private static final Logger logger = Logger.getLogger(ZestRunScriptWithParamsDialog.class);
+    private static final Logger LOGGER = LogManager.getLogger(ZestRunScriptWithParamsDialog.class);
 
     public ZestRunScriptWithParamsDialog(ExtensionZest ext, Frame owner, Dimension dim) {
         super(owner, "zest.dialog.run.title", dim);
@@ -92,7 +94,7 @@ public class ZestRunScriptWithParamsDialog extends StandardFieldsDialog implemen
     }
 
     public Map<String, String> getParams() {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         for (String[] param : this.getParamsModel().getValues()) {
             map.put(param[0], param[1]);
         }
@@ -102,14 +104,11 @@ public class ZestRunScriptWithParamsDialog extends StandardFieldsDialog implemen
     @Override
     public void save() {
         SwingUtilities.invokeLater(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            runner.run(script, getParams());
-                        } catch (Exception e) {
-                            logger.error(e.getMessage(), e);
-                        }
+                () -> {
+                    try {
+                        runner.run(script, getParams());
+                    } catch (Exception e) {
+                        LOGGER.error(e.getMessage(), e);
                     }
                 });
     }

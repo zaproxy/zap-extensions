@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.bugtracker;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,7 +29,8 @@ import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SortOrder;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kohsuke.github.GHIssueBuilder;
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GitHub;
@@ -51,7 +50,7 @@ public class BugTrackerGithub extends BugTracker {
     private String FIELD_ASSIGNEE_MANUAL = "bugtracker.trackers.github.issue.assignee.manual";
     private String FIELD_ASSIGNEE_LIST = "bugtracker.trackers.github.issue.assignee.list";
     private String FIELD_USERNAME = "bugtracker.trackers.github.issue.username";
-    private String FIELD_PASSWORD = "bugtracker.trackers.github.issue.password";
+    private String FIELD_TOKEN = "bugtracker.trackers.github.issue.token";
     private String FIELD_GITHUB_CONFIG = "bugtracker.trackers.github.issue.config";
     private String titleIssue = null;
     private String bodyIssue = null;
@@ -60,34 +59,32 @@ public class BugTrackerGithub extends BugTracker {
     private BugTrackerGithubTableModel githubModel = null;
     private RaiseSemiAutoIssueDialog dialog = null;
 
-    private static final Logger log = Logger.getLogger(BugTrackerGithub.class);
+    private static final Logger LOGGER = LogManager.getLogger(BugTrackerGithub.class);
 
-    public BugTrackerGithub() {
-        initializeConfigTable();
-    }
-
+    @Override
     public void setDetails(Set<Alert> alerts) {
         setTitle(alerts);
         setBody(alerts);
         setLabels(alerts);
     }
 
+    @Override
     public void setDialog(RaiseSemiAutoIssueDialog dialog) {
         this.dialog = dialog;
     }
 
-    public void initializeConfigTable() {
-        githubPanel = new BugTrackerGithubMultipleOptionsPanel(getGithubModel());
-    }
-
+    @Override
     public JPanel getConfigPanel() {
+        if (githubPanel == null) {
+            githubPanel = new BugTrackerGithubMultipleOptionsPanel(getGithubModel());
+        }
         return githubPanel;
     }
 
+    @Override
     public void createDialogs() {
         List<BugTrackerGithubConfigParams> configs = getOptions().getConfigs();
-        Set<String> collaborators = new HashSet<String>();
-        List<String> configNames = new ArrayList<String>();
+        List<String> configNames = new ArrayList<>();
         for (BugTrackerGithubConfigParams config : configs) {
             configNames.add(config.getName());
         }
@@ -98,24 +95,17 @@ public class BugTrackerGithub extends BugTracker {
         dialog.addMultilineField(FIELD_BODY, getBody());
         dialog.addTextField(FIELD_LABELS, getLabels());
         dialog.addTextField(FIELD_ASSIGNEE_MANUAL, "");
-        dialog.addComboField(FIELD_ASSIGNEE_LIST, new ArrayList<String>(), "");
+        dialog.addComboField(FIELD_ASSIGNEE_LIST, new ArrayList<>(), "");
         dialog.addTextField(FIELD_USERNAME, "");
-        dialog.addTextField(FIELD_PASSWORD, "");
+        dialog.addTextField(FIELD_TOKEN, "");
         updateAssigneeList();
-        dialog.addFieldListener(
-                FIELD_GITHUB_CONFIG,
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        updateAssigneeList();
-                    }
-                });
+        dialog.addFieldListener(FIELD_GITHUB_CONFIG, e -> updateAssigneeList());
     }
 
     public void updateAssigneeList() {
         try {
             String currentItem = dialog.getStringValue(FIELD_GITHUB_CONFIG);
-            Set<String> collaborators = new HashSet<String>();
+            Set<String> collaborators = new HashSet<>();
             List<BugTrackerGithubConfigParams> configs = getOptions().getConfigs();
             for (BugTrackerGithubConfigParams config : configs) {
                 if (config.getName().equals(currentItem)) {
@@ -126,12 +116,12 @@ public class BugTrackerGithub extends BugTracker {
                         repoFormatted = repoFormatted.split("https://www.github.com/")[1];
                     }
                     collaborators =
-                            getCollaborators(config.getName(), config.getPassword(), repoFormatted);
+                            getCollaborators(config.getName(), config.getToken(), repoFormatted);
                     if (collaborators != null && collaborators.size() > 0) {
-                        List<String> assignees = new ArrayList<String>(collaborators);
+                        List<String> assignees = new ArrayList<>(collaborators);
                         dialog.setComboFields(FIELD_ASSIGNEE_LIST, assignees, "");
                     } else {
-                        List<String> assignees = new ArrayList<String>();
+                        List<String> assignees = new ArrayList<>();
                         dialog.setComboFields(FIELD_ASSIGNEE_LIST, assignees, "");
                     }
                 }
@@ -269,18 +259,18 @@ public class BugTrackerGithub extends BugTracker {
         return this.labelsIssue;
     }
 
-    public Set<String> getCollaborators(String username, String password, String repo)
+    public Set<String> getCollaborators(String username, String token, String repo)
             throws IOException {
-        GitHub github = GitHub.connectUsingPassword(username, password);
+        GitHub github = GitHub.connect(username, token);
         Set<String> collaborators = null;
         try {
             GHRepository repository = github.getRepository(repo);
             collaborators = repository.getCollaboratorNames();
         } catch (ArrayIndexOutOfBoundsException e) {
-            log.debug(Constant.messages.getString("bugtracker.trackers.github.issue.msg.repo"));
+            LOGGER.debug(Constant.messages.getString("bugtracker.trackers.github.issue.msg.repo"));
         } catch (HttpException e) {
             String response = e.toString();
-            log.debug(response);
+            LOGGER.debug(response);
             if (response.contains("Unauthorized")) {
                 View.getSingleton()
                         .showWarningDialog(
@@ -300,9 +290,9 @@ public class BugTrackerGithub extends BugTracker {
             String labels,
             String assignee,
             String username,
-            String password)
+            String token)
             throws IOException {
-        GitHub github = GitHub.connectUsingPassword(username, password);
+        GitHub github = GitHub.connect(username, token);
         try {
             GHRepository repository = github.getRepository(repo);
             GHIssueBuilder issue = repository.createIssue(title);
@@ -315,11 +305,11 @@ public class BugTrackerGithub extends BugTracker {
             issue.create();
             return null;
         } catch (ArrayIndexOutOfBoundsException e) {
-            log.debug(e.toString());
+            LOGGER.debug(e.toString());
             return Constant.messages.getString("bugtracker.trackers.github.issue.msg.repo");
         } catch (HttpException e) {
             String response = e.toString();
-            log.debug(response);
+            LOGGER.debug(response);
             if (response.contains("Unauthorized")) {
                 return Constant.messages.getString("bugtracker.trackers.github.issue.msg.auth");
             } else {
@@ -342,11 +332,11 @@ public class BugTrackerGithub extends BugTracker {
                     raiseOnTracker(repo, title, body, labels, assignee, username, password);
             return response;
         } catch (FileNotFoundException e) {
-            log.debug(e.toString());
+            LOGGER.debug(e.toString());
             return Constant.messages.getString("bugtracker.trackers.github.issue.msg.repo");
         } catch (IOException e) {
             String response = e.toString();
-            log.debug(response);
+            LOGGER.debug(response);
             if (response.contains("missing_field")) {
                 return Constant.messages.getString("bugtracker.trackers.github.issue.msg.missing");
             } else if (response.contains("invalid")) {
@@ -357,6 +347,7 @@ public class BugTrackerGithub extends BugTracker {
         }
     }
 
+    @Override
     public String raise(RaiseSemiAutoIssueDialog dialog) {
         String repo, title, body, labels, assignee, username, password, configGithub;
         repo = dialog.getStringValue(FIELD_REPO);
@@ -365,14 +356,14 @@ public class BugTrackerGithub extends BugTracker {
         labels = dialog.getStringValue(FIELD_LABELS);
         assignee = dialog.getStringValue(FIELD_ASSIGNEE_MANUAL);
         username = dialog.getStringValue(FIELD_USERNAME);
-        password = dialog.getStringValue(FIELD_PASSWORD);
+        password = dialog.getStringValue(FIELD_TOKEN);
         configGithub = dialog.getStringValue(FIELD_GITHUB_CONFIG);
         if (repo.equals("") || username.equals("") || password.equals("")) {
             List<BugTrackerGithubConfigParams> configs = getOptions().getConfigs();
             for (BugTrackerGithubConfigParams config : configs) {
                 if (config.getName().equals(configGithub)) {
                     username = config.getName();
-                    password = config.getPassword();
+                    password = config.getToken();
                 }
             }
         }
@@ -397,11 +388,11 @@ public class BugTrackerGithub extends BugTracker {
                     raiseOnTracker(repo, title, body, labels, assignee, username, password);
             return response;
         } catch (FileNotFoundException e) {
-            log.debug(e.toString());
+            LOGGER.debug(e.toString());
             return Constant.messages.getString("bugtracker.trackers.github.issue.msg.repo");
         } catch (IOException e) {
             String response = e.toString();
-            log.debug(response);
+            LOGGER.debug(response);
             if (response.contains("missing_field")) {
                 return Constant.messages.getString("bugtracker.trackers.github.issue.msg.missing");
             } else if (response.contains("invalid")) {
@@ -412,10 +403,12 @@ public class BugTrackerGithub extends BugTracker {
         }
     }
 
+    @Override
     public String getName() {
         return NAME;
     }
 
+    @Override
     public String getId() {
         return NAME.toLowerCase();
     }
@@ -544,6 +537,7 @@ public class BugTrackerGithub extends BugTracker {
 
     private BugTrackerGithubOptionsPanel optionsPanel;
 
+    @Override
     public BugTrackerGithubOptionsPanel getOptionsPanel() {
         if (optionsPanel == null) {
             optionsPanel = new BugTrackerGithubOptionsPanel();

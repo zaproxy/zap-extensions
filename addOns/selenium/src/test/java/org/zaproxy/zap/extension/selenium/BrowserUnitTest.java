@@ -19,35 +19,34 @@
  */
 package org.zaproxy.zap.extension.selenium;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /** Unit test for {@link Browser}. */
-public class BrowserUnitTest {
+class BrowserUnitTest {
 
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowExceptionWhenGettingBrowserWithNullId() {
+    @Test
+    void shouldThrowExceptionWhenGettingBrowserWithNullId() {
         // Given
         String id = null;
-        // When
-        Browser.getBrowserWithId(id);
-        // Then = Exception
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowExceptionWhenGettingBrowserWithEmptyId() {
-        // Given
-        String id = "";
-        // When
-        Browser.getBrowserWithId(id);
-        // Then = Exception
+        // When / Then
+        assertThrows(NullPointerException.class, () -> Browser.getBrowserWithId(id));
     }
 
     @Test
-    public void shouldReturnChromeWhenGettingBrowserWithChromeId() {
+    void shouldThrowExceptionWhenGettingBrowserWithEmptyId() {
+        // Given
+        String id = "";
+        // When / Then
+        assertThrows(IllegalArgumentException.class, () -> Browser.getBrowserWithId(id));
+    }
+
+    @Test
+    void shouldReturnChromeWhenGettingBrowserWithChromeId() {
         // Given
         String chromeId = "chrome";
         // When
@@ -58,7 +57,7 @@ public class BrowserUnitTest {
     }
 
     @Test
-    public void shouldReturnFirefoxWhenGettingBrowserWithFirefoxId() {
+    void shouldReturnFirefoxWhenGettingBrowserWithFirefoxId() {
         // Given
         String firefoxId = "firefox";
         // When
@@ -69,7 +68,7 @@ public class BrowserUnitTest {
     }
 
     @Test
-    public void shouldReturnHtmlUnitWhenGettingBrowserWithHtmlUnitId() {
+    void shouldReturnHtmlUnitWhenGettingBrowserWithHtmlUnitId() {
         // Given
         String htmlUnitId = "htmlunit";
         // When
@@ -80,29 +79,7 @@ public class BrowserUnitTest {
     }
 
     @Test
-    public void shouldReturnOperaWhenGettingBrowserWithOperaId() {
-        // Given
-        String operaId = "opera";
-        // When
-        Browser retrievedBrowser = Browser.getBrowserWithId(operaId);
-        // Then
-        assertThat(retrievedBrowser, is(equalTo(Browser.OPERA)));
-        assertThat(operaId, is(equalTo(Browser.OPERA.getId())));
-    }
-
-    @Test
-    public void shouldReturnPhantomJSWhenGettingBrowserWithPhantomJSId() {
-        // Given
-        String phantomJSId = "phantomjs";
-        // When
-        Browser retrievedBrowser = Browser.getBrowserWithId(phantomJSId);
-        // Then
-        assertThat(retrievedBrowser, is(equalTo(Browser.PHANTOM_JS)));
-        assertThat(phantomJSId, is(equalTo(Browser.PHANTOM_JS.getId())));
-    }
-
-    @Test
-    public void shouldReturnSafariWhenGettingBrowserWithSafariId() {
+    void shouldReturnSafariWhenGettingBrowserWithSafariId() {
         // Given
         String safariId = "safari";
         // When
@@ -113,7 +90,7 @@ public class BrowserUnitTest {
     }
 
     @Test
-    public void shouldReturnFailSafeBrowserWhenGettingBrowserWithUnknownId() {
+    void shouldReturnFailSafeBrowserWhenGettingBrowserWithUnknownId() {
         // Given
         String unknowId = "unknowId";
         // When
@@ -123,7 +100,7 @@ public class BrowserUnitTest {
     }
 
     @Test
-    public void shouldReturnHtmlUnitBrowserWhenGettingFailSafeBrowser() {
+    void shouldReturnHtmlUnitBrowserWhenGettingFailSafeBrowser() {
         // Given / When
         Browser failSafeBrowser = Browser.getFailSafeBrowser();
         // Then

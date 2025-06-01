@@ -25,6 +25,8 @@ import javax.swing.JPanel;
 /** Interface to allow the Ajax Spider to be plugged into the Quick Start panels */
 public interface PlugableSpider {
 
+    void init();
+
     void startScan(URI uri);
 
     void stopScan();
@@ -36,4 +38,8 @@ public interface PlugableSpider {
     boolean isSelected();
 
     boolean isRunning();
+
+    void setEnabled(boolean val);
+
+    boolean requireStdSpider();
 }

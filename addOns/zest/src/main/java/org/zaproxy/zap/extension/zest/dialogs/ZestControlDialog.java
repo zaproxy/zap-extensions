@@ -21,17 +21,17 @@ package org.zaproxy.zap.extension.zest.dialogs;
 
 import java.awt.Dimension;
 import java.awt.Frame;
-import org.mozilla.zest.core.v1.ZestControl;
-import org.mozilla.zest.core.v1.ZestControlReturn;
-import org.mozilla.zest.core.v1.ZestRequest;
-import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
-import org.zaproxy.zap.extension.zest.ZestZapUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
+import org.zaproxy.zest.core.v1.ZestControl;
+import org.zaproxy.zest.core.v1.ZestControlReturn;
+import org.zaproxy.zest.core.v1.ZestRequest;
+import org.zaproxy.zest.core.v1.ZestStatement;
 
+@SuppressWarnings("serial")
 public class ZestControlDialog extends StandardFieldsDialog implements ZestDialog {
 
     private static final String FIELD_VALUE = "zest.dialog.return.label.value";
@@ -76,7 +76,7 @@ public class ZestControlDialog extends StandardFieldsDialog implements ZestDialo
         if (control instanceof ZestControlReturn) {
             ZestControlReturn za = (ZestControlReturn) control;
             this.addTextField(FIELD_VALUE, za.getValue());
-            ZestZapUtils.setMainPopupMenu(this.getField(FIELD_VALUE));
+            setFieldMainPopupMenu(FIELD_VALUE);
         }
         this.addPadding();
     }

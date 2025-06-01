@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+Automation Framework - Environment
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Automation Framework - Environment</H1>
+
+This section of the YAML configuration file defines the applications which the rest of the jobs can act on.
+<p>
+The Automation Framework supports a subset of the <a href="authentication.html">authentication</a> mechanisms supported by ZAP.
+
+<pre>
+env:                                   # The environment, mandatory
+  contexts :                           # List of 1 or more contexts, mandatory
+    - name: context 1                  # Name to be used to refer to this context in other jobs, mandatory
+      urls:                            # A mandatory list of top level urls, everything under each url will be included
+      includePaths:                    # An optional list of regexes to include
+      excludePaths:                    # An optional list of regexes to exclude
+      authentication:
+        method:                        # String, one of 'manual', 'http' - in time will cover all methods supported by ZAP
+        parameters:
+          hostname:                    # String, only for 'http' method
+          port:                        # Int, only for 'http' method
+          realm:                       # String, only for 'http' method
+        verification:
+          method:                      # String, one of 'response', 'request', 'both', 'poll'
+          loggedInRegex:               # String, regex pattern for determining if logged in
+          loggedOutRegex:              # String, regex pattern for determining if logged out
+          pollFrequency:               # Int, the poll frequency, only for 'poll' verification
+          pollUnits:                   # String, the poll units, one of 'requests', 'seconds', only for 'poll' verification
+          pollUrl:                     # String, the URL to poll, only for 'poll' verification
+          pollPostData:                # String, post dat to include in the poll, only for 'poll' verification
+          pollAdditionalHeaders:       # List of additional headers for poll request, only for 'poll' verification
+          - header:                    # The header name
+            value:                     # The header value
+      sessionManagement:
+        method:                        # String, one of 'cookie', 'http', 'script'
+        script:                        # String, path to script, only for 'script' session management
+        scriptEngine:                  # String, the name of the script engine to use, only for 'script' session management
+      users:                           # List of one or more users to use for authentication
+      - name:                          # String, the name to be used by the jobs
+        username:                      # String, the username to use when authenticating, vars supported
+        password:                      # String, the password to use when authenticating, vars supported
+  vars:                                # List of 0 or more custom variables to be used throughout the config file
+    myVarOne: CustomConfigVarOne       # Can be used as ${myVarOne} anywhere throughout the config
+    myVarTwo: ${myVarOne}.VarTwo       # Can refer other vars    
+  parameters:
+    failOnError: true                  # If set exit on an error         
+    failOnWarning: false               # If set exit on a warning
+    progressToStdout: true             # If set will write job progress to stdout
+</pre>
+
+System environment variables can also be used in the config in the same manner as above. In case there are two variables
+with the same name, the value of the system variable would be preferred.   
+
+</BODY>
+</HTML>
+

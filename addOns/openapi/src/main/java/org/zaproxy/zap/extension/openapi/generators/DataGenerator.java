@@ -19,22 +19,30 @@
  */
 package org.zaproxy.zap.extension.openapi.generators;
 
+import io.swagger.v3.oas.models.examples.Example;
 import io.swagger.v3.oas.models.media.ArraySchema;
+import io.swagger.v3.oas.models.media.BooleanSchema;
+import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.DateSchema;
 import io.swagger.v3.oas.models.media.DateTimeSchema;
+import io.swagger.v3.oas.models.media.FileSchema;
+import io.swagger.v3.oas.models.media.IntegerSchema;
+import io.swagger.v3.oas.models.media.MapSchema;
+import io.swagger.v3.oas.models.media.NumberSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.parameters.Parameter;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.log4j.Logger;
+import java.util.Objects;
+import java.util.Optional;
 
 public class DataGenerator {
 
     private Generators generators;
-    private static final Logger LOG = Logger.getLogger(DataGenerator.class);
 
     public DataGenerator(Generators generators) {
         this.generators = generators;
@@ -49,36 +57,65 @@ public class DataGenerator {
                             put("number", "1.2");
                             put("string", "\"John Doe\"");
                             put("boolean", "true");
-                            put("array", "");
-                            put("file", "\u0800");
-                            put("ref", "ref");
                         }
                     });
 
-    public boolean isSupported(String type) {
-        return TYPES.get(type) != null;
+    public boolean isSupported(Schema<?> schema) {
+        return schema instanceof ArraySchema
+                || schema instanceof BooleanSchema
+                || schema instanceof FileSchema
+                || schema instanceof IntegerSchema
+                || schema instanceof MapSchema
+                || schema instanceof NumberSchema
+                || schema instanceof StringSchema;
     }
 
     public String generate(String name, Parameter parameter) {
-        List<String> enumValues = null;
-        if (parameter.getSchema() instanceof StringSchema) {
-            enumValues = ((StringSchema) (parameter.getSchema())).getEnum();
-        }
-        String defaultValue = generateDefaultValue(enumValues, parameter.getSchema().getDefault());
+        String defaultValue = generateDefaultValue(parameter);
         return generateParam(name, defaultValue, parameter);
     }
 
-    private static String generateDefaultValue(List<String> anEnum, Object defaultValue) {
-        if (defaultValue != null) {
-            String strValue = defaultValue.toString();
+    private static String generateDefaultValue(Parameter parameter) {
+        if (parameter.getSchema() == null) {
+            return "";
+        }
+        String value = getDefaultValue(parameter.getSchema());
+        if (value != null) {
+            return value;
+        }
+        String example = extractExample(parameter);
+        if (example != null) {
+            return example;
+        }
+        return "";
+    }
+
+    private static String extractExample(Parameter parameter) {
+        return Optional.ofNullable(parameter.getExamples())
+                .map(Map::values)
+                .map(Collection::stream)
+                .map(stream -> stream.map(Example::getValue).filter(Objects::nonNull).findFirst())
+                .orElse(Optional.ofNullable(parameter.getExample()))
+                .map(Object::toString)
+                .orElse(
+                        Optional.ofNullable(parameter.getSchema().getExample())
+                                .map(Object::toString)
+                                .orElse(null));
+    }
+
+    private static String getDefaultValue(Schema<?> schema) {
+        if (schema.getDefault() != null) {
+            String strValue = schema.getDefault().toString();
             if (!strValue.isEmpty()) {
                 return strValue;
             }
         }
-        if (anEnum != null && !anEnum.isEmpty()) {
-            return anEnum.get(0);
+
+        List<?> enumValues = schema.getEnum();
+        if (enumValues != null && !enumValues.isEmpty()) {
+            return String.valueOf(enumValues.get(0));
         }
-        return "";
+        return null;
     }
 
     private String generateParam(String name, String example, Parameter parameter) {
@@ -86,7 +123,16 @@ public class DataGenerator {
         if (example != null && !example.isEmpty()) {
             return example;
         }
-        if (isArray(parameter.getSchema().getType())) {
+
+        Content content = parameter.getContent();
+        if (content != null) {
+            if (content.containsKey("application/json")) {
+                return generators.getBodyGenerator().generate(content.get("application/json"));
+            }
+            return getExampleValue(parameter);
+        }
+
+        if (isArray(getType(parameter.getSchema()))) {
             return generateArrayValue(name, parameter);
         }
 
@@ -97,8 +143,11 @@ public class DataGenerator {
             }
         }
 
-        return getExampleValue(
-                isPath(parameter.getIn()), parameter.getSchema().getType(), parameter.getName());
+        return getExampleValue(parameter);
+    }
+
+    private static String getType(Schema<?> schema) {
+        return schema == null ? null : schema.getType();
     }
 
     private String generateArrayValue(String name, Parameter parameter) {
@@ -117,24 +166,36 @@ public class DataGenerator {
     }
 
     public String generateBodyValue(String name, Schema<?> property) {
-        if (isArray(property.getType())) {
+        if (isArray(property)) {
             return generators
                     .getArrayGenerator()
                     .generate(name, (ArraySchema) property, "csv", false);
+        }
+        if (isMap(property)) {
+            if (property.getAdditionalProperties() instanceof Schema) {
+                return generators.getMapGenerator().generate(TYPES, property);
+            } else if (property.getProperties() != null && !property.getProperties().isEmpty()) {
+                return generators.getBodyGenerator().generate(property);
+            } else {
+                return "";
+            }
         }
         return generateValue(name, property, false);
     }
 
     public String generateValue(String name, Schema<?> schema, boolean isPath) {
-        String value = "";
-        if (isEnumValue(schema)) {
-            value = getEnumValue(schema);
-        }
-        if (isDateTime(schema)) {
-            value = "1970-01-01T00:00:00.001Z";
-        }
-        if (isDate(schema)) {
-            value = "1970-01-01";
+        String value = getDefaultValue(schema);
+
+        if (value == null || value.isEmpty()) {
+            if (schema.getExample() != null) {
+                value = schema.getExample().toString();
+            } else if (isDateTime(schema)) {
+                value = "1970-01-01T00:00:00.001Z";
+            } else if (isDate(schema)) {
+                value = "1970-01-01";
+            } else {
+                value = "";
+            }
         }
 
         value = generators.getValueGenerator().getValue(name, schema.getType(), value);
@@ -150,6 +211,15 @@ public class DataGenerator {
             value = generators.getBodyGenerator().generate(schema);
         }
         return value;
+    }
+
+    private String getExampleValue(Parameter parameter) {
+        String in = parameter.getIn();
+        String type = getType(parameter.getSchema());
+        if ("cookie".equals(in) && "string".equals(type)) {
+            return "JohnDoe";
+        }
+        return getExampleValue(isPath(in), type, parameter.getName());
     }
 
     private String getExampleValue(boolean isPath, String type, String name) {
@@ -177,23 +247,6 @@ public class DataGenerator {
         return TYPES.get(type);
     }
 
-    public boolean isEnumValue(Schema<?> schema) {
-        if (schema instanceof StringSchema) {
-            if (((StringSchema) schema).getEnum() != null) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public String getEnumValue(Schema<?> schema) {
-        String value = "";
-        if (isEnumValue(schema)) {
-            value = ((StringSchema) schema).getEnum().get(0);
-        }
-        return value;
-    }
-
     public boolean isPath(String type) {
         return type.equals("query") || type.equals("path");
     }
@@ -202,11 +255,23 @@ public class DataGenerator {
         return "array".equals(type);
     }
 
+    private static boolean isArray(Schema<?> schema) {
+        return schema instanceof ArraySchema;
+    }
+
     public boolean isDateTime(Schema<?> schema) {
         return schema instanceof DateTimeSchema;
     }
 
     public boolean isDate(Schema<?> schema) {
         return schema instanceof DateSchema;
+    }
+
+    private static boolean isMap(Schema<?> schema) {
+        return schema instanceof MapSchema;
+    }
+
+    public Generators getGenerators() {
+        return generators;
     }
 }

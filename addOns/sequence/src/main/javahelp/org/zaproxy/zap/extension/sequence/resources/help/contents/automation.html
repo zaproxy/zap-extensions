@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+    <TITLE>
+        Automation Framework Support
+    </TITLE>
+</HEAD>
+<BODY>
+
+<H1>Automation Framework Support</H1>
+This add-on supports the Automation Framework.
+<br><br>
+
+<H2>Job: sequence-import</H2>
+The <code>sequence-import</code> job allows you to create a Sequence from an HAR file.
+<pre>
+  - type: sequence-import      # Imports a sequence from a HAR file.
+    parameters:
+      name:                    # The name by which the seq will be known in ZAP.
+      path:                    # The full/relative path to the HAR file to import.
+      assertCode:              # Boolean, if true add status code assertion.
+      assertLength:            # Integer, if supplied then add approx len assertion (value between 0 and 100).
+</pre>
+
+This job will automatically detect any HTTP Form parameters that are used in future requests and add Zest assignments to handle them.
+
+<H2>Job: sequence-activeScan</H2>
+The <code>sequence-activeScan</code> job allows you to active scan sequences.
+<pre>
+  - type: sequence-activeScan                  # Active scans one or all sequences.
+    parameters:
+      sequence:                                # String: The name of the sequence, or empty to active scan all sequences.
+      context:                                 # String: Context to use when active scanning, default: first context.
+      user:                                    # String: An optional user to use for authentication, must be defined in the env.
+      policy:                                  # String: Name of the scan policy to be used, default: Sequence.
+    policyDefinition:                          # The policy definition - only used if the 'policy' is not set
+      defaultStrength:                         # String: The default Attack Strength for all rules, one of Low, Medium, High, Insane (not recommended), default: Medium
+      defaultThreshold:                        # String: The default Alert Threshold for all rules, one of Off, Low, Medium, High, default: Medium
+      rules:                                   # A list of one or more active scan rules and associated settings which override the defaults
+      - id:                                    # Int: The rule id as per https://www.zaproxy.org/docs/alerts/
+        name:                                  # Comment: The name of the rule for documentation purposes - this is not required or actually used
+        strength:                              # String: The Attack Strength for this rule, one of Low, Medium, High, Insane, default: Medium
+        threshold:                             # String: The Alert Threshold for this rule, one of Off, Low, Medium, High, default: Medium
+    tests:
+      - name: 'test one'                       # Name of the test, optional
+        type: alert                            # Specifies that the test is of type 'alert'
+        action: passIfPresent/passIfAbsent     # String: The condition (presence/absence) of the alert, default: passIfAbsent
+        scanRuleId:                            # Integer: The id of the scanRule which generates the alert, mandatory
+        alertName:                             # String: The name of the alert generated, optional
+        url: http://www.example.com/path       # String: The url of the request corresponding to the alert generated, optional
+        method:                                # String: The method of the request corresponding to the alert generated, optional
+        attack:                                # String: The actual attack which generated the alert, optional
+        param:                                 # String: The parameter which was modified to generate the alert, optional
+        evidence:                              # String: The evidence corresponding to the alert generated, optional
+        confidence:                            # String: The confidence of the alert, one of 'False Positive', 'Low', 'Medium', 'High', 'Confirmed', optional
+        risk:                                  # String: The risk of the alert, one of 'Informational', 'Low', 'Medium', 'High', optional
+        otherInfo:                             # String: Addional information corresponding to the alert, optional
+        onFail: 'info'                         # String: One of 'warn', 'error', 'info', mandatory
+</pre>
+
+<strong>Note</strong>: Unless the <code>defaultThreshold</code> of the <code>policyDefinition</code> is <code>OFF</code> all rules will be enabled to start with.
+
+</BODY>
+</HTML>

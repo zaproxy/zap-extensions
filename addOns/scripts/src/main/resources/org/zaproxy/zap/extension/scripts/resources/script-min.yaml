@@ -1,0 +1,8 @@
+  - type: script
+    parameters:
+      action:                    # String: The executed action - available actions: add, remove, run, loaddir, enable, disable
+      type:                      # String: The type of the script
+      engine:                    # String: The script engine to use - can be used to override the default engine for the file extension
+      name:                      # String: The name of the script, defaults to the file name
+      source:                    # String: The full or relative path, must be readable
+      target:                    # String: The URL to be invoked for "targeted" script type

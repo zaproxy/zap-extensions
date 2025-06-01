@@ -24,10 +24,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.control.Control;
 import org.zaproxy.zap.extension.httppanel.view.syntaxhighlight.HttpPanelSyntaxHighlightTextArea;
 import org.zaproxy.zap.extension.httppanel.view.syntaxhighlight.HttpPanelSyntaxHighlightTextView;
-import org.zaproxy.zap.extension.plugnhack.ExtensionPlugNHack;
 import org.zaproxy.zap.extension.plugnhack.httppanel.models.StringClientPanelViewModel;
 import org.zaproxy.zap.extension.search.SearchMatch;
 
@@ -59,20 +57,12 @@ public class ClientSyntaxHighlightTextView extends HttpPanelSyntaxHighlightTextV
 
         private static ClientTokenMakerFactory tokenMakerFactory = null;
 
-        private final ExtensionPlugNHack extension;
-
         public ClientSyntaxHighlightTextArea() {
             addSyntaxStyle(CSS, SyntaxConstants.SYNTAX_STYLE_CSS);
             addSyntaxStyle(HTML, SyntaxConstants.SYNTAX_STYLE_HTML);
             addSyntaxStyle(JAVASCRIPT, SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT);
             addSyntaxStyle(JSON, SyntaxConstants.SYNTAX_STYLE_JSON);
             addSyntaxStyle(XML, SyntaxConstants.SYNTAX_STYLE_XML);
-
-            this.extension =
-                    (ExtensionPlugNHack)
-                            Control.getSingleton()
-                                    .getExtensionLoader()
-                                    .getExtension(ExtensionPlugNHack.NAME);
         }
 
         @Override

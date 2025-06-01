@@ -19,11 +19,11 @@
  */
 package org.zaproxy.zap.testutils;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 import java.net.URL;
@@ -35,10 +35,17 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /** Verifies that script templates are parsed without errors. */
-public abstract class AbstractVerifyScriptTemplates {
+public abstract class AbstractVerifyScriptTemplates extends TestUtils {
+
+    @Override
+    @BeforeEach
+    protected void setUpZap() throws Exception {
+        super.setUpZap();
+    }
 
     @Test
     public void shouldParseTemplates() throws Exception {

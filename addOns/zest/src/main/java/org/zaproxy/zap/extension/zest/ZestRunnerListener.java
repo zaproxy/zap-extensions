@@ -19,9 +19,9 @@
  */
 package org.zaproxy.zap.extension.zest;
 
-import org.mozilla.zest.core.v1.ZestActionFailException;
-import org.mozilla.zest.core.v1.ZestAssignFailException;
-import org.mozilla.zest.core.v1.ZestInvalidCommonTestException;
+import org.zaproxy.zest.core.v1.ZestActionFailException;
+import org.zaproxy.zest.core.v1.ZestAssignFailException;
+import org.zaproxy.zest.core.v1.ZestInvalidCommonTestException;
 
 public interface ZestRunnerListener {
 

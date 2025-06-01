@@ -1,0 +1,12 @@
+<html>
+
+<body>
+  <h1>XSS test case with text and input value</h1>
+  <form method="POST" action="/text-and-input-value">
+    <input name="input" type="text" id="input" value="@@@name1@@@">
+    <button type="submit">POST</button>
+  </form>
+  <div>You submitted: @@@name2@@@</div>
+</body>
+
+</html>

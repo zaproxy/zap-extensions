@@ -19,14 +19,17 @@
  */
 package org.zaproxy.zap.extension.websocket.treemap.nodes.content;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.zaproxy.zap.extension.websocket.ExtensionWebSocket;
@@ -35,18 +38,20 @@ import org.zaproxy.zap.extension.websocket.WebSocketChannelDTO;
 import org.zaproxy.zap.extension.websocket.WebSocketMessage;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 import org.zaproxy.zap.extension.websocket.treemap.nodes.WebSocketNode;
-import org.zaproxy.zap.extension.websocket.treemap.nodes.contents.*;
+import org.zaproxy.zap.extension.websocket.treemap.nodes.contents.HostFolderContent;
+import org.zaproxy.zap.extension.websocket.treemap.nodes.contents.MessageContent;
+import org.zaproxy.zap.extension.websocket.treemap.nodes.contents.RootContent;
 import org.zaproxy.zap.extension.websocket.treemap.nodes.namers.WebSocketSimpleNodeNamer;
 import org.zaproxy.zap.extension.websocket.treemap.nodes.structural.TreeNode;
 
-public class MessageContentUnitTest extends WebSocketAddonTestUtils {
+class MessageContentUnitTest extends WebSocketAddonTestUtils {
 
     private WebSocketSimpleNodeNamer namer;
     private static URI defaultHostName;
     TreeNode root;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() throws Exception {
         this.setUpMessages();
         namer = new WebSocketSimpleNodeNamer();
         defaultHostName = new URI("hostname", true);
@@ -59,7 +64,7 @@ public class MessageContentUnitTest extends WebSocketAddonTestUtils {
     }
 
     @Test
-    public void shouldMessagesBeEquals() {
+    void shouldMessagesBeEquals() {
 
         // Given
         WebSocketChannelDTO channel1 = getWebSocketChannelDTO(1, defaultHostName.toString());
@@ -75,11 +80,11 @@ public class MessageContentUnitTest extends WebSocketAddonTestUtils {
         MessageContent messageContent2 = new MessageContent(namer, message2);
 
         // Then
-        Assert.assertEquals(0, messageContent1.compareTo(messageContent2));
+        assertEquals(0, messageContent1.compareTo(messageContent2));
     }
 
     @Test
-    public void shouldMessageShouldBeGreater() {
+    void shouldMessageShouldBeGreater() {
 
         // Given
         WebSocketChannelDTO channel1 = getWebSocketChannelDTO(1, defaultHostName.toString());
@@ -95,12 +100,12 @@ public class MessageContentUnitTest extends WebSocketAddonTestUtils {
         MessageContent messageContent2 = new MessageContent(namer, message2);
 
         // Then
-        Assert.assertTrue(messageContent1.compareTo(messageContent2) < 0);
-        Assert.assertTrue(messageContent2.compareTo(messageContent1) > 0);
+        assertTrue(messageContent1.compareTo(messageContent2) < 0);
+        assertTrue(messageContent2.compareTo(messageContent1) > 0);
     }
 
     @Test
-    public void shouldNotBeEqualWithDifferentDirection() {
+    void shouldNotBeEqualWithDifferentDirection() {
 
         // Given
         WebSocketChannelDTO channel1 = getWebSocketChannelDTO(1, defaultHostName.toString());
@@ -116,12 +121,12 @@ public class MessageContentUnitTest extends WebSocketAddonTestUtils {
         MessageContent messageContent2 = new MessageContent(namer, message2);
 
         // Then
-        Assert.assertTrue(messageContent1.compareTo(messageContent2) != 0);
-        Assert.assertTrue(messageContent2.compareTo(messageContent1) != 0);
+        assertNotEquals(0, messageContent1.compareTo(messageContent2));
+        assertNotEquals(0, messageContent2.compareTo(messageContent1));
     }
 
     @Test
-    public void shouldCloneBeTheSame() {
+    void shouldCloneBeTheSame() {
 
         // Given
         MessageContent messageContent =
@@ -138,13 +143,12 @@ public class MessageContentUnitTest extends WebSocketAddonTestUtils {
         MessageContent cloneContent = new MessageContent(messageContent);
 
         // Then
-        Assert.assertEquals(0, messageContent.compareTo(cloneContent));
-        Assert.assertEquals(0, cloneContent.compareTo(messageContent));
+        assertEquals(0, messageContent.compareTo(cloneContent));
+        assertEquals(0, cloneContent.compareTo(messageContent));
     }
 
     @Test
-    public void shouldGetHostNode()
-            throws URIException, DatabaseException, HttpMalformedHeaderException {
+    void shouldGetHostNode() throws URIException, DatabaseException, HttpMalformedHeaderException {
 
         // Given
         URI hostUri1 = new URI("https", null, defaultHostName.toString(), -1, "/first");
@@ -161,12 +165,12 @@ public class MessageContentUnitTest extends WebSocketAddonTestUtils {
         List<TreeNode> actualHostList = messageNode.getHostNodes(new ArrayList<>());
 
         // Then
-        Assert.assertEquals(1, actualHostList.size());
-        Assert.assertEquals(hostNode, actualHostList.get(0));
+        assertEquals(1, actualHostList.size());
+        assertEquals(hostNode, actualHostList.get(0));
     }
 
     @Test
-    public void shouldGetMessagesPerHost()
+    void shouldGetMessagesPerHost()
             throws URIException, DatabaseException, HttpMalformedHeaderException {
         String[] hosts = {"hostname_1", "hostname_2"};
         ArrayList<TreeNode> hostNodes = new ArrayList<>();
@@ -199,7 +203,7 @@ public class MessageContentUnitTest extends WebSocketAddonTestUtils {
                 root.getMessagesPerHost(new HashMap<>()).get(hostNodes.get(1));
 
         // Then
-        Assert.assertEquals(3, messagesHost1.size());
-        Assert.assertEquals(2, messagesHost2.size());
+        assertEquals(3, messagesHost1.size());
+        assertEquals(2, messagesHost2.size());
     }
 }

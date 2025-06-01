@@ -20,16 +20,16 @@
 package org.zaproxy.zap.extension.zest.menu;
 
 import java.awt.Component;
-import org.mozilla.zest.core.v1.ZestComment;
-import org.mozilla.zest.core.v1.ZestContainer;
-import org.mozilla.zest.core.v1.ZestElement;
-import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
+import org.zaproxy.zest.core.v1.ZestComment;
+import org.zaproxy.zest.core.v1.ZestContainer;
+import org.zaproxy.zest.core.v1.ZestElement;
+import org.zaproxy.zest.core.v1.ZestStatement;
 
-/** ZAP: New Popup Menu Alert Delete */
+@SuppressWarnings("serial")
 public class ZestAddCommentPopupMenu extends ExtensionPopupMenuItem {
 
     private static final long serialVersionUID = 1L;
@@ -46,7 +46,9 @@ public class ZestAddCommentPopupMenu extends ExtensionPopupMenuItem {
         initialize();
     }
 
-    /** @param label */
+    /**
+     * @param label
+     */
     public ZestAddCommentPopupMenu(String label) {
         super(label);
     }
@@ -56,16 +58,11 @@ public class ZestAddCommentPopupMenu extends ExtensionPopupMenuItem {
         this.setText(Constant.messages.getString("zest.comment.popup"));
 
         this.addActionListener(
-                new java.awt.event.ActionListener() {
-
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent e) {
+                e ->
                         extension
                                 .getDialogManager()
                                 .showZestCommentDialog(
-                                        parent, child, stmt, new ZestComment(), true);
-                    }
-                });
+                                        parent, child, stmt, new ZestComment(), true));
     }
 
     @Override

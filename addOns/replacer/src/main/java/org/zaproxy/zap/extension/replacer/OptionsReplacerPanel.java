@@ -32,6 +32,7 @@ import org.parosproxy.paros.view.AbstractParamPanel;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.view.AbstractMultipleOptionsTablePanel;
 
+@SuppressWarnings("serial")
 public class OptionsReplacerPanel extends AbstractParamPanel {
 
     public static final String PANEL_NAME = Constant.messages.getString("replacer.options.title");
@@ -43,10 +44,7 @@ public class OptionsReplacerPanel extends AbstractParamPanel {
 
     public OptionsReplacerPanel() {
         super();
-        initialize();
-    }
 
-    private void initialize() {
         this.setName(PANEL_NAME);
         this.setLayout(new GridBagLayout());
 
@@ -142,7 +140,6 @@ public class OptionsReplacerPanel extends AbstractParamPanel {
                         new ReplaceRuleAddDialog(
                                 (Window) View.getSingleton().getOptionsDialog(null),
                                 "replacer.add.title",
-                                replacerParam,
                                 (OptionsReplacerTableModel) model);
                 addDialog.pack();
             }
@@ -159,7 +156,6 @@ public class OptionsReplacerPanel extends AbstractParamPanel {
                         new ReplaceRuleModifyDialog(
                                 (Window) View.getSingleton().getOptionsDialog(null),
                                 "replacer.modify.title",
-                                replacerParam,
                                 (OptionsReplacerTableModel) model);
                 modifyDialog.pack();
             }

@@ -22,12 +22,13 @@
 
 package com.sittinglittleduck.DirBuster;
 
+import com.sittinglittleduck.DirBuster.SimpleHttpClient.HttpMethod;
 import java.net.URL;
 
 public class WorkUnit {
     private URL urlToGet;
     private boolean isDir;
-    private String method;
+    private HttpMethod method;
     // private String basecase = null;
     // private boolean comparebase = false;
 
@@ -36,9 +37,10 @@ public class WorkUnit {
 
     // the item used to produce the check
     private String itemToCheck;
+
     /** Creates a new instance of WorkUnit */
     public WorkUnit(
-            URL url, boolean isDir, String method, BaseCase baseCaseObj, String itemToCheck) {
+            URL url, boolean isDir, HttpMethod method, BaseCase baseCaseObj, String itemToCheck) {
         urlToGet = url;
         this.isDir = isDir;
         this.method = method;
@@ -54,7 +56,7 @@ public class WorkUnit {
         return isDir;
     }
 
-    public String getMethod() {
+    public HttpMethod getMethod() {
         return method;
     }
 

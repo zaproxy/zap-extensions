@@ -19,11 +19,7 @@
  */
 package org.zaproxy.zap.extension.onlineMenu;
 
-import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
-import java.net.MalformedURLException;
-import java.net.URL;
-import javax.swing.KeyStroke;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
@@ -40,10 +36,8 @@ public class ExtensionOnlineMenu extends ExtensionAdaptor {
     public static final String ZAP_HOMEPAGE = "https://www.zaproxy.org/";
     public static final String ZAP_EXTENSIONS_PAGE = "https://www.zaproxy.org/addons/";
     public static final String ZAP_DOWNLOADS_PAGE = "https://www.zaproxy.org/download/";
-    public static final String ZAP_WIKI_PAGE = "https://github.com/zaproxy/zaproxy/wiki";
     public static final String ZAP_FAQ_PAGE = "https://www.zaproxy.org/faq/";
-    public static final String ZAP_NEWSLETTERS_PAGE =
-            "https://github.com/zaproxy/zaproxy/wiki/Newsletters";
+    public static final String ZAP_VIDEOS_PAGE = "https://www.zaproxy.org/videos/";
     public static final String ZAP_USER_GROUP_PAGE =
             "https://groups.google.com/group/zaproxy-users";
     public static final String ZAP_DEV_GROUP_PAGE =
@@ -63,110 +57,51 @@ public class ExtensionOnlineMenu extends ExtensionAdaptor {
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
-        if (getView() != null) {
+        if (hasView()) {
             // Homepage
-            @SuppressWarnings("deprecation")
             ZapMenuItem menuHomepage =
                     new ZapMenuItem(
                             "onlineMenu.home",
-                            // TODO Use getMenuShortcutKeyMaskEx() (and remove warn suppression)
-                            // when targeting Java 10+
-                            KeyStroke.getKeyStroke(
-                                    KeyEvent.VK_Z,
-                                    Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(),
-                                    false));
+                            getView().getMenuShortcutKeyStroke(KeyEvent.VK_Z, 0, false));
             menuHomepage.setEnabled(DesktopUtils.canOpenUrlInBrowser());
-            menuHomepage.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            DesktopUtils.openUrlInBrowser(ZAP_HOMEPAGE);
-                        }
-                    });
+            menuHomepage.addActionListener(e -> DesktopUtils.openUrlInBrowser(ZAP_HOMEPAGE));
             extensionHook.getHookMenu().addOnlineMenuItem(menuHomepage);
 
             // Extensions
             ZapMenuItem menuExtPage = new ZapMenuItem("onlineMenu.ext");
             menuExtPage.setEnabled(DesktopUtils.canOpenUrlInBrowser());
-            menuExtPage.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            DesktopUtils.openUrlInBrowser(ZAP_EXTENSIONS_PAGE);
-                        }
-                    });
+            menuExtPage.addActionListener(e -> DesktopUtils.openUrlInBrowser(ZAP_EXTENSIONS_PAGE));
             extensionHook.getHookMenu().addOnlineMenuItem(menuExtPage);
-
-            // Wiki
-            ZapMenuItem menuWiki = new ZapMenuItem("onlineMenu.wiki");
-            menuWiki.setEnabled(DesktopUtils.canOpenUrlInBrowser());
-            menuWiki.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            DesktopUtils.openUrlInBrowser(ZAP_WIKI_PAGE);
-                        }
-                    });
-            extensionHook.getHookMenu().addOnlineMenuItem(menuWiki);
 
             // FAQ
             ZapMenuItem menuFAQ = new ZapMenuItem("onlineMenu.faq");
             menuFAQ.setEnabled(DesktopUtils.canOpenUrlInBrowser());
-            menuFAQ.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            DesktopUtils.openUrlInBrowser(ZAP_FAQ_PAGE);
-                        }
-                    });
+            menuFAQ.addActionListener(e -> DesktopUtils.openUrlInBrowser(ZAP_FAQ_PAGE));
             extensionHook.getHookMenu().addOnlineMenuItem(menuFAQ);
 
-            // Newsletters
-            ZapMenuItem menuNews = new ZapMenuItem("onlineMenu.news");
-            menuNews.setEnabled(DesktopUtils.canOpenUrlInBrowser());
-            menuNews.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            DesktopUtils.openUrlInBrowser(ZAP_NEWSLETTERS_PAGE);
-                        }
-                    });
-            extensionHook.getHookMenu().addOnlineMenuItem(menuNews);
+            // Videos
+            ZapMenuItem menuVideos = new ZapMenuItem("onlineMenu.videos");
+            menuVideos.setEnabled(DesktopUtils.canOpenUrlInBrowser());
+            menuVideos.addActionListener(e -> DesktopUtils.openUrlInBrowser(ZAP_VIDEOS_PAGE));
+            extensionHook.getHookMenu().addOnlineMenuItem(menuVideos);
 
             // UserGroup
             ZapMenuItem menuUserGroup = new ZapMenuItem("onlineMenu.usergroup");
             menuUserGroup.setEnabled(DesktopUtils.canOpenUrlInBrowser());
             menuUserGroup.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            DesktopUtils.openUrlInBrowser(ZAP_USER_GROUP_PAGE);
-                        }
-                    });
+                    e -> DesktopUtils.openUrlInBrowser(ZAP_USER_GROUP_PAGE));
             extensionHook.getHookMenu().addOnlineMenuItem(menuUserGroup);
 
             // DevGroup
             ZapMenuItem menuDevGroup = new ZapMenuItem("onlineMenu.devgroup");
             menuDevGroup.setEnabled(DesktopUtils.canOpenUrlInBrowser());
-            menuDevGroup.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            DesktopUtils.openUrlInBrowser(ZAP_DEV_GROUP_PAGE);
-                        }
-                    });
+            menuDevGroup.addActionListener(e -> DesktopUtils.openUrlInBrowser(ZAP_DEV_GROUP_PAGE));
             extensionHook.getHookMenu().addOnlineMenuItem(menuDevGroup);
 
             // Issues
             ZapMenuItem menuIssues = new ZapMenuItem("onlineMenu.issues");
             menuIssues.setEnabled(DesktopUtils.canOpenUrlInBrowser());
-            menuIssues.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            DesktopUtils.openUrlInBrowser(ZAP_ISSUES_PAGE);
-                        }
-                    });
+            menuIssues.addActionListener(e -> DesktopUtils.openUrlInBrowser(ZAP_ISSUES_PAGE));
             extensionHook.getHookMenu().addOnlineMenuItem(menuIssues);
         }
     }
@@ -177,21 +112,7 @@ public class ExtensionOnlineMenu extends ExtensionAdaptor {
     }
 
     @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
-    }
-
-    @Override
     public String getDescription() {
         return Constant.messages.getString(PREFIX + ".desc");
-    }
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_EXTENSIONS_PAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
     }
 }

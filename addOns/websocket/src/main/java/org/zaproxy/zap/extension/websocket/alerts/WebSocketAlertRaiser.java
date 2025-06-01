@@ -56,6 +56,7 @@ public class WebSocketAlertRaiser extends WebSocketAlertBuilder {
      * @see WebSocketAlertRaiser#setSource(Alert.Source)
      * @see WebSocketAlertRaiser#setName(String)
      */
+    @Override
     public WebSocketAlertWrapper raise() {
         WebSocketAlertWrapper webSocketAlert = super.build();
         alertThread.raiseAlert(webSocketAlert);

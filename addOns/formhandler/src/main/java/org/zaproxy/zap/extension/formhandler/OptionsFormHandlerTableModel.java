@@ -24,6 +24,7 @@ import java.util.List;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.view.AbstractMultipleOptionsTableModel;
 
+@SuppressWarnings("serial")
 public class OptionsFormHandlerTableModel
         extends AbstractMultipleOptionsTableModel<FormHandlerParamField> {
 
@@ -32,6 +33,7 @@ public class OptionsFormHandlerTableModel
     private static final String[] COLUMN_NAMES = {
         Constant.messages.getString("formhandler.options.table.column.enabled"),
         Constant.messages.getString("formhandler.options.table.column.field"),
+        Constant.messages.getString("formhandler.options.table.column.regex"),
         Constant.messages.getString("formhandler.options.table.column.value")
     };
 
@@ -48,7 +50,9 @@ public class OptionsFormHandlerTableModel
         return fields;
     }
 
-    /** @param fields The fields to set. */
+    /**
+     * @param fields The fields to set.
+     */
     public void setFields(List<FormHandlerParamField> fields) {
         this.fields = new ArrayList<>(fields.size());
 
@@ -71,7 +75,7 @@ public class OptionsFormHandlerTableModel
 
     @Override
     public Class<?> getColumnClass(int c) {
-        if (c == 0) {
+        if (c == 0 || c == 2) {
             return Boolean.class;
         }
         return String.class;
@@ -95,6 +99,8 @@ public class OptionsFormHandlerTableModel
             case 1:
                 return getElement(rowIndex).getName();
             case 2:
+                return Boolean.valueOf(getElement(rowIndex).isRegex());
+            case 3:
                 return getElement(rowIndex).getValue();
         }
         return null;
@@ -102,11 +108,9 @@ public class OptionsFormHandlerTableModel
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        if (columnIndex == 0) {
-            if (aValue instanceof Boolean) {
-                fields.get(rowIndex).setEnabled(((Boolean) aValue).booleanValue());
-                fireTableCellUpdated(rowIndex, columnIndex);
-            }
+        if (columnIndex == 0 && aValue instanceof Boolean) {
+            fields.get(rowIndex).setEnabled(((Boolean) aValue).booleanValue());
+            fireTableCellUpdated(rowIndex, columnIndex);
         }
     }
 }

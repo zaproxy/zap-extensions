@@ -30,7 +30,7 @@ import org.zaproxy.zap.extension.websocket.ui.WebSocketMessagesView;
 import org.zaproxy.zap.extension.websocket.ui.WebSocketMessagesViewModel;
 
 /**
- * The fuzzing tab with its WebSocket messsages view differs slightly from the messages view in the
+ * The fuzzing tab with its WebSocket messages view differs slightly from the messages view in the
  * WebSockets tab, as there are 2 more columns here.
  *
  * <p>Moreover it is not backed by the database but a {@link List}. You have to add messages

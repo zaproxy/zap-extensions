@@ -21,13 +21,14 @@ package org.zaproxy.zap.extension.zest.menu;
 
 import java.awt.Component;
 import javax.swing.text.JTextComponent;
-import org.mozilla.zest.core.v1.ZestVariables;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.view.popup.ExtensionPopupMenuComponent;
+import org.zaproxy.zest.core.v1.ZestVariables;
 
+@SuppressWarnings("serial")
 public class ZestPasteVariableMenu extends ExtensionPopupMenuItem {
 
     private static final long serialVersionUID = 2282358266003940700L;
@@ -48,14 +49,10 @@ public class ZestPasteVariableMenu extends ExtensionPopupMenuItem {
 
     protected void initialize() {
         this.addActionListener(
-                new java.awt.event.ActionListener() {
-
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent e) {
-                        ZestVariables vars = script.getZestScript().getParameters();
-                        lastInvoker.replaceSelection(
-                                vars.getTokenStart() + variable + vars.getTokenEnd());
-                    }
+                e -> {
+                    ZestVariables vars = script.getZestScript().getParameters();
+                    lastInvoker.replaceSelection(
+                            vars.getTokenStart() + variable + vars.getTokenEnd());
                 });
     }
 

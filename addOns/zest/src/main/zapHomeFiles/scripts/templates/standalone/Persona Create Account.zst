@@ -1,5 +1,5 @@
 {
-  "about": "This is a Zest script. For more details about Zest visit https://developer.mozilla.org/en-US/docs/Zest",
+  "about": "This is a Zest script. For more details about Zest visit https://github.com/zaproxy/zest/",
   "zestVersion": "0.8",
   "title": "Persona Create Account",
   "description": "Create a new Persona account using a random Mailinator email address.\nThe script logs into Mailinator to click on the confirmation email.",

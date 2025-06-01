@@ -19,37 +19,22 @@
  */
 package org.zaproxy.zap.extension.spiderAjax;
 
-import javax.swing.ImageIcon;
-import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.model.SiteNode;
+import org.zaproxy.addon.commonlib.MenuWeights;
 import org.zaproxy.zap.view.messagecontainer.http.HttpMessageContainer;
 import org.zaproxy.zap.view.popup.PopupMenuItemSiteNodeContainer;
 
+@SuppressWarnings("serial")
 public class PopupMenuAjaxSite extends PopupMenuItemSiteNodeContainer {
 
     private static final long serialVersionUID = 1L;
     private ExtensionAjax extension = null;
-    private static Logger logger = Logger.getLogger(PopupMenuAjaxSite.class);
 
-    /** @param label */
     public PopupMenuAjaxSite(String label, ExtensionAjax extension) {
         super(label);
-        this.setIcon(new ImageIcon(getClass().getResource("/resource/icon/16/spiderAjax.png")));
+        this.setIcon(extension.getIcon());
         this.extension = extension;
-    }
-
-    /** @return */
-    private ExtensionAjax getExtensionSpider() {
-        if (extension == null) {
-            extension =
-                    (ExtensionAjax)
-                            Control.getSingleton()
-                                    .getExtensionLoader()
-                                    .getExtension(ExtensionAjax.NAME);
-        }
-        return extension;
     }
 
     /** */
@@ -64,10 +49,14 @@ public class PopupMenuAjaxSite extends PopupMenuItemSiteNodeContainer {
         return Constant.messages.getString("attack.site.popup");
     }
 
-    /** */
     @Override
-    public int getParentMenuIndex() {
-        return ATTACK_MENU_INDEX;
+    public int getParentWeight() {
+        return MenuWeights.MENU_ATTACK_WEIGHT;
+    }
+
+    @Override
+    public int getWeight() {
+        return MenuWeights.MENU_ATTACK_AJAX_WEIGHT;
     }
 
     /** */
@@ -90,9 +79,6 @@ public class PopupMenuAjaxSite extends PopupMenuItemSiteNodeContainer {
     /** */
     @Override
     public boolean isEnableForInvoker(Invoker invoker, HttpMessageContainer httpMessageContainer) {
-        if (getExtensionSpider() == null) {
-            return false;
-        }
         switch (invoker) {
             case ALERTS_PANEL:
             case ACTIVE_SCANNER_PANEL:

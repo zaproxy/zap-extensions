@@ -19,9 +19,9 @@
  */
 package org.zaproxy.zap.extension.custompayloads;
 
-public abstract class EditableColumn<T> extends Column<T> {
+abstract class EditableColumn<T> extends Column<T> {
 
-    public EditableColumn(Class<?> columnClass, String name) {
+    EditableColumn(Class<?> columnClass, String name) {
         super(columnClass, name);
     }
 
@@ -32,7 +32,7 @@ public abstract class EditableColumn<T> extends Column<T> {
 
     public abstract void setValue(T model, Object value);
 
-    public Column<T> AsReadonly() {
+    public Column<T> asReadonly() {
         return new Column<T>(this.columnClass, this.nameKey) {
 
             @Override

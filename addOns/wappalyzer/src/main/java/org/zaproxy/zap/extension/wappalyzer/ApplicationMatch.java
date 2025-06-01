@@ -27,10 +27,12 @@ public class ApplicationMatch {
 
     private Application application;
     private Set<String> versions;
+    private Set<String> evidences;
 
     public ApplicationMatch(Application application) {
         this.application = application;
         this.versions = new HashSet<>();
+        this.evidences = new HashSet<>();
     }
 
     public Application getApplication() {
@@ -47,5 +49,13 @@ public class ApplicationMatch {
 
     public Set<String> getVersions() {
         return versions;
+    }
+
+    public void addEvidence(String evidence) {
+        evidences.add(evidence);
+    }
+
+    public Set<String> getEvidences() {
+        return evidences;
     }
 }

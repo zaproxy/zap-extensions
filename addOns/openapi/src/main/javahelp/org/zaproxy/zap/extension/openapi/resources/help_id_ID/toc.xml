@@ -3,7 +3,9 @@
 <toc version="2.0">
 	<tocitem text="Panduan Pengguna ZAP" tocid="toplevelitem">
 		<tocitem text="Tambahkan Ons" tocid="addons">
-			<tocitem text="Buka spesifikasi-spesifikasi API" image="openapi-icon" target="openapi"/>
+			<tocitem text="OpenAPI Support" image="openapi-icon" target="openapi">
+				<tocitem text="Automation" target="openapi.automation"/>
+			</tocitem>
 		</tocitem>
 	</tocitem>
 </toc>

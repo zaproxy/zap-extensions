@@ -5,17 +5,18 @@
 Passive Scan Rules - Alpha
 </TITLE>
 </HEAD>
-<BODY BGCOLOR="#ffffff">
+<BODY>
 <H1>Passive Scan Rules - Alpha</H1>
-The following alpha quality passive scan rules are included in this add-on:
+
+The following alpha status passive scan rules are included in this add-on:
 
 <H2>An example passive scan rule which loads data from a file</H2>
 This implements an example passive scan rule that loads strings from a file that the user can edit.<br>
-For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
+For more details see: <a href="https://www.zaproxy.org/blog/2014-04-03-hacking-zap-3-passive-scan-rules/">Hacking ZAP Part 3: Passive Scan Rules</a>.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/ExampleFilePassiveScanner.java">ExampleFilePassiveScanner.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/ExampleFilePassiveScanRule.java">ExampleFilePassiveScanRule.java</a>
 
-<H2>Base64 Disclosure</H2>
+<H2 id="id-10094">Base64 Disclosure</H2>
 <ul>
  <li><b>ASP.NET ViewState Disclosure:</b> An ASP.NET ViewState was disclosed by the application/web server</li>
  <li><b>ASP.NET ViewState Integrity:</b> The application does not use a Message Authentication Code (MAC) to protect the integrity of the ASP.NET ViewState, which can be tampered with by a malicious client</li>
@@ -23,65 +24,73 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addO
 </ul>
 <strong>Note:</strong> At Low Threshold all occurrences within each response will be included.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/Base64Disclosure.java">Base64Disclosure.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/Base64Disclosure.java">Base64Disclosure.java</a><br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10094/">10094</a>.
 
-<H2>Content Cacheability</H2>
-This scanner analyzes the cache control and pragma headers in HTTP traffic and resports on the cacheability of the requests from a RFC7234 point of view.
+<H2>Example Passive Scan Rule: Denial of Service</H2>
+This implements a very simple example passive scan rule.<br>
+For more details see: <a href="https://www.zaproxy.org/blog/2014-04-03-hacking-zap-3-passive-scan-rules/">Hacking ZAP Part 3: Passive Scan Rules</a>.
 <p>
-Alerts generated:
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/ExampleSimplePassiveScanRule.java">ExampleSimplePassiveScanRule.java</a>
+
+<H2 id="id-90005">Fetch Metadata Request Headers Scan Rule</H2>
+Fetch Metadata Request headers are HTTP request headers that provide additional information about a request's origin.
+This additional information helps the server to implement resource isolation policy, allowing external sites to request only
+those resources that are intended for sharing, and that are used appropriately. This approach can help mitigate common
+cross-site web vulnerabilities such as CSRF, Cross-site Script Inclusion, timing attacks, and cross-origin information leaks.
+The Fetch Metadata Request headers are:
 <ul>
- <li><b>Non-Storable Content</b></li>
- <li><b>Storable but Non-Cacheable Content</b></li>
- <li><b>Storable and Cacheable Content</b></li>
+ <li>Sec-Fetch-Site</li>
+ <li>Sec-Fetch-Mode</li>
+ <li>Sec-Fetch-Dest</li>
+ <li>Sec-Fetch-User</li>
+</ul>
+(from <a href="https://developer.mozilla.org/en-US/docs/Glossary/Fetch_metadata_request_header">Fetch Metadata Headers</a>)
+
+<p>
+Sec-Fetch-Site indicates the relationship between a request initiator's origin and the origin of requested resource.
+(from <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Sec-Fetch-Site">Sec-Fetch-Site</a>)
+
+<p>
+Sec-Fetch-Mode allows the server to distinguish between requests originating from a user navigating between HTML
+pages and requests to load images and other resources.
+(from <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Sec-Fetch-Mode">Sec-Fetch-Mode</a>)
+
+<p>
+Sec-Fetch-Dest indicates where and how the requested resource will be used.
+(from <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Sec-Fetch-Dest">Sec-Fetch-Dest</a>)
+
+<p>
+Sec-Fetch-User is only sent for requests initiated by user activation.
+(from <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Sec-Fetch-User">Sec-Fetch-User</a>)
+
+<p>
+ Alerts generated:
+<ul>
+ <li><b>Sec-Fetch-Site Header is Missing</b></li>
+ <li><b>Sec-Fetch-Site Header Has an Invalid Value</b></li>
+ <li><b>Sec-Fetch-Mode Header is Missing</b></li>
+ <li><b>Sec-Fetch-Mode Header Has an Invalid Value</b></li>
+ <li><b>Sec-Fetch-Dest Header is Missing</b></li>
+ <li><b>Sec-Fetch-Dest Header Has an Invalid Value</b></li>
+ <li><b>Sec-Fetch-User Header is Missing</b></li>
+ <li><b>Sec-Fetch-User Header Has an Invalid Value</b></li>
 </ul>
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/CacheableScanner.java">CacheableScanner.java</a>
+ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/FetchMetadataRequestHeadersScanRule.java">FetchMetadataRequestHeadersScanRule.java</a><br>
+ Alert ID: <a href="https://www.zaproxy.org/docs/alerts/90005/">90005</a>.
 
-<H2>Example Passive Scanner: Denial of Service</H2>
-This implements a very simple example passive scan rule.<br>
-For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
-<p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/ExampleSimplePassiveScanner.java">ExampleSimplePassiveScanner.java</a>
+<H2 id="id-110009">Full Path Disclosure Scan Rule</H2>
+<p>A Full Path Disclosure vulnerability is where the path to the root of the application providing valuable information for attackers.
+Examples of Full Path Disclosure Vulnerabilities are : /home/omg/htdocs/file/ or C:\Users\username\server\
+</p>
+<p>The attacker could use this path to steal credentials or other private information. For more information visit : <a href="https://owasp.org/www-community/attacks/Full_Path_Disclosure">OWASP article.</a></p>
 
-<H2>Feature Policy Header Not Set</H2>
-This scanner checks the HTTP response headers (on HTML and JavaScript responses) for inclusion of a "Feature-Policy" header, 
-and alerts if one is not found.<br>
-Redirects are ignored except at the Low threshold.
-<p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/FeaturePolicyScanner.java">FeaturePolicyScanner.java</a>
-
-<H2>In Page Banner Information Leak</H2>
-Analyzes response body content for the presence of web or application server banners (when the responses have error status codes).<br>
-If the Threshold is Low then status 200 - Ok responses are analyzed as well.<br>
-The presence of such banners may facilitate more targeted attacks against known vulnerabilities.
-<p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/InPageBannerInfoLeakScanner.java">InPageBannerInfoLeakScanner.java</a>
-
-<H2>Java Serialization Object</H2>
-Java Serialization Object (JSO) is a way to save and exchange objects between Java applications.<br>
-Different problems are associated with JSO. Sensitive data can leak to the stream of bytes.<br>
-An attacker can also modify the data and exploit JSO to do a Remote Code Execution on the server.<br>
-JSO should not be used by Java programs. Strong controls must be done on serialized data.<br>
-JSO are a type of vulnerabilities associated to A8:2017-Insecure Deserialization.
-<p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/JsoScanner.java">JsoScanner.java</a>
-
-<H2>Modern Web Application</H2>
-This raises an informational alert if a site appears to be a modern web application.<br>
-It does not indicate any potential vulnerabilities but it could indicate that the ajax spider might be more effective at exploring this site compared to the traditional spider.
-<p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/ModernAppDetectionScanner.java">ModernAppDetectionScanner.java</a>
-
-<H2>Source Code Disclosure</H2>
-Application Source Code was disclosed by the web server
-<p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/SourceCodeDisclosureScanner.java">SourceCodeDisclosureScanner.java</a>
-
-<H2>Sub Resource Integrity Attribute Missing</H2>
-This scanner checks whether the integrity attribute in the script or the link element served by an external resource (for example: CDN) is missing.<br>
-It helps mitigate an attack where the CDN has been compromised and content has been replaced by malicious content.<br>
-<p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/SubResourceIntegrityAttributeScanner.java">SubResourceIntegrityAttributeScanner.java</a>
+<p>Latest code:
+ <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/FullPathDisclosureScanRule.java">FullPathDisclosureScanRule.java</a>
+ <br>
+ Alert ID: <a href="https://www.zaproxy.org/docs/alerts/110009/">110009</a>.
+</p>
 
 </BODY>
 </HTML>

@@ -21,27 +21,15 @@ package org.zaproxy.zap.extension.zest;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.apache.log4j.Logger;
-import org.mozilla.zest.core.v1.ZestAction;
-import org.mozilla.zest.core.v1.ZestActionFail;
-import org.mozilla.zest.core.v1.ZestActionFailException;
-import org.mozilla.zest.core.v1.ZestActionIntercept;
-import org.mozilla.zest.core.v1.ZestActionScan;
-import org.mozilla.zest.core.v1.ZestAssertFailException;
-import org.mozilla.zest.core.v1.ZestAssertion;
-import org.mozilla.zest.core.v1.ZestAssignFailException;
-import org.mozilla.zest.core.v1.ZestAssignment;
-import org.mozilla.zest.core.v1.ZestClient;
-import org.mozilla.zest.core.v1.ZestClientFailException;
-import org.mozilla.zest.core.v1.ZestInvalidCommonTestException;
-import org.mozilla.zest.core.v1.ZestRequest;
-import org.mozilla.zest.core.v1.ZestResponse;
-import org.mozilla.zest.core.v1.ZestScript;
-import org.mozilla.zest.core.v1.ZestStatement;
-import org.mozilla.zest.impl.ZestBasicRunner;
+import javax.script.ScriptEngine;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.WebDriver;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.HostProcess;
@@ -52,18 +40,42 @@ import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.network.ExtensionNetwork;
+import org.zaproxy.addon.network.server.ServerInfo;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.ascan.ScanPolicy;
 import org.zaproxy.zap.extension.ruleconfig.ExtensionRuleConfig;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
+import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptUI;
 import org.zaproxy.zap.extension.script.ScriptVars;
+import org.zaproxy.zap.extension.selenium.Browser;
+import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
+import org.zaproxy.zest.core.v1.ZestAction;
+import org.zaproxy.zest.core.v1.ZestActionFail;
+import org.zaproxy.zest.core.v1.ZestActionFailException;
+import org.zaproxy.zest.core.v1.ZestActionIntercept;
+import org.zaproxy.zest.core.v1.ZestActionScan;
+import org.zaproxy.zest.core.v1.ZestAssertFailException;
+import org.zaproxy.zest.core.v1.ZestAssertion;
+import org.zaproxy.zest.core.v1.ZestAssignFailException;
+import org.zaproxy.zest.core.v1.ZestAssignment;
+import org.zaproxy.zest.core.v1.ZestClient;
+import org.zaproxy.zest.core.v1.ZestClientFailException;
+import org.zaproxy.zest.core.v1.ZestClientLaunch;
+import org.zaproxy.zest.core.v1.ZestInvalidCommonTestException;
+import org.zaproxy.zest.core.v1.ZestRequest;
+import org.zaproxy.zest.core.v1.ZestResponse;
+import org.zaproxy.zest.core.v1.ZestScript;
+import org.zaproxy.zest.core.v1.ZestStatement;
+import org.zaproxy.zest.impl.ZestBasicRunner;
 
 public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 
-    private static final Logger log = Logger.getLogger(ZestZapRunner.class);
+    private static final Logger LOGGER = LogManager.getLogger(ZestZapRunner.class);
 
     private static final int ZEST_HISTORY_REFERENCE_TYPE = HistoryReference.TYPE_ZEST_SCRIPT;
     private static final int FAIL_ACTION_PLUGIN_ID = 50004;
@@ -71,6 +83,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
     private static Field fieldOutputWriter;
 
     private ExtensionZest extension;
+    private final ExtensionNetwork extensionNetwork;
     private ZestScriptWrapper wrapper = null;
     private HttpMessage target = null;
     private ZestResultWrapper lastResult = null;
@@ -81,16 +94,19 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 
     private boolean scanning = false;
 
-    private List<Alert> alerts = new ArrayList<Alert>();;
+    private List<Alert> alerts = new ArrayList<>();
 
+    private final ExtensionScript extensionScript;
     private ScriptUI scriptUI;
 
-    /** */
-    public ZestZapRunner(ExtensionZest extension, ZestScriptWrapper wrapper) {
+    public ZestZapRunner(
+            ExtensionZest extension, ExtensionNetwork extensionNetwork, ZestScriptWrapper wrapper) {
         super(Default.TIMEOUT_IN_SECONDS, true);
-        log.debug("Constructor");
+        LOGGER.debug("Constructor");
         this.extension = extension;
+        this.extensionNetwork = extensionNetwork;
         this.wrapper = wrapper;
+        extensionScript = extension.getExtScript();
         this.scriptUI = extension.getExtScript().getScriptUI();
         this.setScriptEngineFactory(extension.getZestScriptEngineFactory());
 
@@ -98,17 +114,38 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
         this.setStopOnTestFail(false);
 
         // Always proxy via ZAP
-        this.setProxy(
-                Model.getSingleton().getOptionsParam().getProxyParam().getProxyIp(),
-                Model.getSingleton().getOptionsParam().getProxyParam().getProxyPort());
+        ServerInfo serverInfo = extensionNetwork.getMainProxyServerInfo();
+        this.setProxy(serverInfo.getAddress(), serverInfo.getPort());
+    }
+
+    @Override
+    public ScriptEngine getScriptEngine(String extension) {
+        String name = extensionScript.getEngineNameForExtension(extension);
+        if (name == null) {
+            return null;
+        }
+
+        try {
+            return extensionScript.getEngineWrapper(name).getEngine();
+        } catch (InvalidParameterException e) {
+            LOGGER.debug("Failed to get the engine.", e);
+        }
+        return null;
+    }
+
+    protected ExtensionNetwork getExtensionNetwork() {
+        return extensionNetwork;
     }
 
     @Override
     public String run(ZestScript script, Map<String, String> params)
-            throws ZestAssertFailException, ZestActionFailException, IOException,
-                    ZestInvalidCommonTestException, ZestAssignFailException,
+            throws ZestAssertFailException,
+                    ZestActionFailException,
+                    IOException,
+                    ZestInvalidCommonTestException,
+                    ZestAssignFailException,
                     ZestClientFailException {
-        log.debug("Run script " + script.getTitle());
+        LOGGER.debug("Run script {}", script.getTitle());
         // Check for any missing parameters
         boolean missingParams = false;
         for (String[] vars : script.getParameters().getVariables()) {
@@ -147,10 +184,13 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 
     @Override
     public String run(ZestScript script, ZestRequest target, Map<String, String> params)
-            throws ZestAssertFailException, ZestActionFailException, IOException,
-                    ZestInvalidCommonTestException, ZestAssignFailException,
+            throws ZestAssertFailException,
+                    ZestActionFailException,
+                    IOException,
+                    ZestInvalidCommonTestException,
+                    ZestAssignFailException,
                     ZestClientFailException {
-        log.debug("Run script " + script.getTitle());
+        LOGGER.debug("Run script {}", script.getTitle());
         if (wrapper.getWriter() != null) {
             super.setOutputWriter(wrapper.getWriter());
         } else if (scriptUI != null && !hasOutputWriter()) {
@@ -197,7 +237,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
     }
 
     private void notifyActionFailed(ZestActionFailException e) {
-        log.debug("notifyActionFailed", e);
+        LOGGER.debug("notifyActionFailed", e);
         if (e.getAction() instanceof ZestActionFail) {
             int risk = Alert.RISK_LOW;
             ZestActionFail zaf = (ZestActionFail) e.getAction();
@@ -210,19 +250,14 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
             } else if (ZestActionFail.Priority.HIGH.name().equals(zaf.getPriority())) {
                 risk = Alert.RISK_HIGH;
             }
-            Alert alert =
-                    new Alert(FAIL_ACTION_PLUGIN_ID, risk, Alert.CONFIDENCE_MEDIUM, e.getMessage());
-
-            if (lastHref != null) {
-                alert.setHistoryRef(lastHref);
-                try {
-                    alert.setUri(lastHref.getURI().toString());
-                    alert.setMessage(lastHref.getHttpMessage());
-                } catch (Exception e1) {
-                    log.error(e1.getMessage(), e1);
-                }
-            }
-            this.alertFound(alert);
+            Alert.Builder alertBuilder =
+                    Alert.builder()
+                            .setPluginId(FAIL_ACTION_PLUGIN_ID)
+                            .setRisk(risk)
+                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                            .setName(e.getMessage())
+                            .setHistoryRef(lastHref);
+            this.alertFound(alertBuilder.build());
         }
 
         if (View.isInitialised()) {
@@ -245,7 +280,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
     }
 
     private void notifyAssignFailed(ZestAssignFailException e) {
-        log.debug("notifyAssignFailed", e);
+        LOGGER.debug("notifyAssignFailed", e);
         if (View.isInitialised()) {
             if (scriptUI != null && scriptUI.isScriptDisplayed(wrapper)) {
                 if (!hasSameScriptType(wrapper.getZestScript(), ZestScript.Type.Passive)) {
@@ -264,9 +299,13 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
     @Override
     public ZestResponse runStatement(
             ZestScript script, ZestStatement stmt, ZestResponse lastResponse)
-            throws ZestAssertFailException, ZestActionFailException, ZestInvalidCommonTestException,
-                    IOException, ZestAssignFailException, ZestClientFailException {
-        log.debug("runStatement " + stmt.getElementType());
+            throws ZestAssertFailException,
+                    ZestActionFailException,
+                    ZestInvalidCommonTestException,
+                    IOException,
+                    ZestAssignFailException,
+                    ZestClientFailException {
+        LOGGER.debug("runStatement {}", stmt.getElementType());
         while (this.isPaused() && !this.isStop) {
             try {
                 Thread.sleep(200);
@@ -283,7 +322,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
     @Override
     public String handleAction(ZestScript script, ZestAction action, ZestResponse lastResponse)
             throws ZestActionFailException {
-        log.debug("handleAction " + action.getElementType());
+        LOGGER.debug("handleAction {}", action.getElementType());
         if (action instanceof ZestActionScan) {
             this.invokeScan(script, (ZestActionScan) action);
         } else if (action instanceof ZestActionIntercept) {
@@ -306,7 +345,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
     public String handleAssignment(
             ZestScript script, ZestAssignment assign, ZestResponse lastResponse)
             throws ZestAssignFailException {
-        log.debug("handleAssignment " + assign.getElementType());
+        LOGGER.debug("handleAssignment {}", assign.getElementType());
         try {
             return super.handleAssignment(script, assign, lastResponse);
         } catch (ZestAssignFailException e) {
@@ -318,7 +357,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
     @Override
     public void handleResponse(ZestRequest request, ZestResponse response)
             throws ZestAssertFailException {
-        log.debug("handleResponse " + request.getElementType());
+        LOGGER.debug("handleResponse {}", request.getElementType());
         try {
             HttpMessage msg = ZestZapUtils.toHttpMessage(request, response);
 
@@ -331,7 +370,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 
             lastResult = zrw;
 
-            if (request.getAssertions().size() == 0) {
+            if (request.getAssertions().isEmpty()) {
                 zrw.setPassed(true);
             } else {
                 for (ZestAssertion za : request.getAssertions()) {
@@ -347,7 +386,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
             this.notifyResponse(zrw);
 
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -355,11 +394,75 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
     public String handleClient(ZestScript script, ZestClient client)
             throws ZestClientFailException {
         try {
+            if (client instanceof ZestClientLaunch clientLaunch) {
+                String res = this.launchClient(clientLaunch);
+                if (res != null) {
+                    return res;
+                }
+            }
             return super.handleClient(script, client);
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             return null;
         }
+    }
+
+    private String launchClient(ZestClientLaunch clientLaunch) {
+        ExtensionSelenium extSel =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class);
+        Browser browser = null;
+
+        if ("Firefox".equalsIgnoreCase(clientLaunch.getBrowserType())) {
+            if (clientLaunch.isHeadless()) {
+                browser = Browser.FIREFOX_HEADLESS;
+            } else {
+                browser = Browser.FIREFOX;
+            }
+        } else if ("Chrome".equalsIgnoreCase(clientLaunch.getBrowserType())) {
+            if (clientLaunch.isHeadless()) {
+                browser = Browser.CHROME_HEADLESS;
+            } else {
+                browser = Browser.CHROME;
+            }
+        } else {
+            LOGGER.debug(
+                    "Browser not launched by ZAP, passing to Zest {}",
+                    clientLaunch.getBrowserType());
+            return null;
+        }
+
+        LOGGER.debug("Browser being launched by ZAP {}", clientLaunch.getBrowserType());
+        String url = clientLaunch.getUrl();
+        if (StringUtils.isNotEmpty(url)) {
+            url = replaceVariablesInString(url, true);
+        }
+        WebDriver wd;
+        String proxy = this.getProxy();
+        if (StringUtils.isNotEmpty(proxy) && proxy.indexOf(':') > 0) {
+            // Proxy should be host:port
+            String[] proxyArray = proxy.split(":");
+            wd =
+                    extSel.getWebDriver(
+                            HttpSender.PROXY_INITIATOR,
+                            browser.getId(),
+                            proxyArray[0],
+                            Integer.parseInt(proxyArray[1]));
+            if (wd != null && StringUtils.isNotEmpty(url)) {
+                wd.get(url);
+            }
+        } else {
+            wd = extSel.getProxiedBrowser(browser.getId(), url);
+        }
+
+        if (wd != null) {
+            this.addWebDriver(clientLaunch.getWindowHandle(), wd);
+            LOGGER.debug(
+                    "Browser launched by ZAP {} {}",
+                    clientLaunch.getBrowserType(),
+                    clientLaunch.getWindowHandle());
+            return clientLaunch.getWindowHandle();
+        }
+        return null;
     }
 
     private ScanPolicy getDefaultScanPolicy() {
@@ -376,8 +479,8 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
     }
 
     private void invokeScan(ZestScript script, ZestActionScan scan) throws ZestActionFailException {
-        log.debug("invokeScan " + scan.getElementType());
-        this.alerts = new ArrayList<Alert>();
+        LOGGER.debug("invokeScan {}", scan.getElementType());
+        this.alerts = new ArrayList<>();
 
         ScannerParam scannerParam = new ScannerParam();
         RuleConfigParam ruleConfigParam = null;
@@ -386,12 +489,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
         if (extRC != null) {
             ruleConfigParam = extRC.getRuleConfigParam();
         }
-        Scanner scanner =
-                new Scanner(
-                        scannerParam,
-                        Model.getSingleton().getOptionsParam().getConnectionParam(),
-                        getDefaultScanPolicy(),
-                        ruleConfigParam);
+        Scanner scanner = new Scanner(scannerParam, getDefaultScanPolicy(), ruleConfigParam);
         scanner.setScanChildren(false);
         scanner.addScannerListener(this);
 
@@ -488,7 +586,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
             this.notifyResponse(zrw);
 
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -498,7 +596,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 
     @Override
     public String getVariable(String name) {
-        if (log.isDebugEnabled()) {
+        if (LOGGER.isDebugEnabled()) {
             String value = super.getVariable(name);
             String val = value;
             if (value != null) {
@@ -507,7 +605,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
                     val = val.substring(0, 100) + "...";
                 }
             }
-            log.debug("getVariable " + name + " : " + val);
+            LOGGER.debug("getVariable {} : {}", name, val);
 
             return value;
         } else {
@@ -517,7 +615,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 
     @Override
     public void setVariable(String name, String value) {
-        if (log.isDebugEnabled()) {
+        if (LOGGER.isDebugEnabled()) {
             String val = value;
             if (value != null) {
                 val = value.replace("\n", " ");
@@ -525,7 +623,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
                     val = val.substring(0, 100) + "...";
                 }
             }
-            log.debug("setVariable " + name + " = " + val);
+            LOGGER.debug("setVariable {} = {}", name, val);
             super.setVariable(name, value);
         } else {
             super.setVariable(name, value);

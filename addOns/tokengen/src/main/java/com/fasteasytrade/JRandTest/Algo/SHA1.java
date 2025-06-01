@@ -139,6 +139,7 @@ public final class SHA1 extends Cipher implements Cloneable {
 		reset = true;
 	}
 
+	@Override
 	public Object clone() {
 		SHA1 u = null;
 		try {

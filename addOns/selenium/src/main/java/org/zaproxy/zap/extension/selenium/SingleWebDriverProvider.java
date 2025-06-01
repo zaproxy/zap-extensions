@@ -57,12 +57,14 @@ public interface SingleWebDriverProvider {
      * @param requesterId the ID of the (ZAP) component that's requesting the {@code WebDriver}.
      * @param proxyAddress the address of the proxy.
      * @param proxyPort the port of the proxy.
+     * @param enableExtensions if true then optional browser extensions will be enabled
      * @return the {@code WebDriver} to the provided browser, proxying through the given address and
      *     port.
      * @throws IllegalArgumentException if {@code proxyAddress} is {@code null} or empty, or if
      *     {@code proxyPort} is not a valid port number (between 1 and 65535).
      */
-    WebDriver getWebDriver(int requesterId, String proxyAddress, int proxyPort);
+    WebDriver getWebDriver(
+            int requesterId, String proxyAddress, int proxyPort, boolean enableExtensions);
 
     /**
      * Gets a warning message that indicates the possible cause of the failure that prevented the

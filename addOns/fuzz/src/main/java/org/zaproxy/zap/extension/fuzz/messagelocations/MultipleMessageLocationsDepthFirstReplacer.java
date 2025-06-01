@@ -24,7 +24,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.model.InvalidMessageException;
 
@@ -32,7 +33,7 @@ public class MultipleMessageLocationsDepthFirstReplacer<T extends Message>
         implements MultipleMessageLocationsReplacer<T> {
 
     private static final Logger LOGGER =
-            Logger.getLogger(MultipleMessageLocationsDepthFirstReplacer.class);
+            LogManager.getLogger(MultipleMessageLocationsDepthFirstReplacer.class);
 
     private MessageLocationReplacer<T> replacer;
     private List<MessageLocationReplacementGenerator<?, ?>> replacementGenerators;
@@ -148,9 +149,7 @@ public class MultipleMessageLocationsDepthFirstReplacer<T extends Message>
             try {
                 generator.close();
             } catch (Exception e) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Failed to close the replacement generator:", e);
-                }
+                LOGGER.debug("Failed to close the replacement generator:", e);
             }
         }
     }

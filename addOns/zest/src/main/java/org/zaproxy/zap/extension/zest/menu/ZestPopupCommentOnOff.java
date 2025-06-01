@@ -21,21 +21,22 @@ package org.zaproxy.zap.extension.zest.menu;
 
 import java.awt.Component;
 import java.util.List;
-import org.apache.log4j.Logger;
-import org.mozilla.zest.core.v1.ZestScript;
-import org.mozilla.zest.core.v1.ZestStatement;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
+import org.zaproxy.zest.core.v1.ZestScript;
+import org.zaproxy.zest.core.v1.ZestStatement;
 
-/** ZAP: New Popup Menu Alert Delete */
+@SuppressWarnings("serial")
 public class ZestPopupCommentOnOff extends ExtensionPopupMenuItem {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Logger logger = Logger.getLogger(ZestPopupCommentOnOff.class);
+    private static final Logger LOGGER = LogManager.getLogger(ZestPopupCommentOnOff.class);
 
     private ExtensionZest extension = null;
     private boolean comment = false;
@@ -47,7 +48,9 @@ public class ZestPopupCommentOnOff extends ExtensionPopupMenuItem {
         initialize();
     }
 
-    /** @param label */
+    /**
+     * @param label
+     */
     public ZestPopupCommentOnOff(String label) {
         super(label);
     }
@@ -63,13 +66,10 @@ public class ZestPopupCommentOnOff extends ExtensionPopupMenuItem {
         */
 
         this.addActionListener(
-                new java.awt.event.ActionListener() {
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent e) {
-                        for (ScriptNode node : extension.getSelectedZestNodes()) {
-                            if (ZestZapUtils.getElement(node) instanceof ZestStatement) {
-                                extension.setEnabled(node, comment);
-                            }
+                e -> {
+                    for (ScriptNode node : extension.getSelectedZestNodes()) {
+                        if (ZestZapUtils.getElement(node) instanceof ZestStatement) {
+                            extension.setEnabled(node, comment);
                         }
                     }
                 });
@@ -93,13 +93,13 @@ public class ZestPopupCommentOnOff extends ExtensionPopupMenuItem {
                         this.setEnabled(false);
                         return false;
                     } else if ((ZestZapUtils.getElement(node) instanceof ZestScript)) {
-                        // Cant comment the whole script
+                        // Can't comment the whole script
                         this.setEnabled(false);
                         return false;
                     } else if (ZestZapUtils.getShadowLevel(node) > 0) {
                         // Ignore these
                     } else if (!(ZestZapUtils.getElement(node) instanceof ZestStatement)) {
-                        // Cant comment these
+                        // Can't comment these
                         this.setEnabled(false);
                         break;
                     } else {
@@ -117,7 +117,7 @@ public class ZestPopupCommentOnOff extends ExtensionPopupMenuItem {
 
                 return true;
             } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
         return false;
