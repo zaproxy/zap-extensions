@@ -132,7 +132,7 @@ public class ImageLocationScanRule extends PluginPassiveScanner {
                 || extension.equals("tiff")
                 || extension.equals("tif")) {
 
-            String hasGPS = ILS.scanForLocationInImage(msg.getResponseBody().getBytes(), false);
+            String hasGPS = ILS.scanForLocationInImage(msg.getResponseBody().getBytes(), ILS.OutputFormat.out_text);
 
             if (!hasGPS.isEmpty()) {
                 buildAlert(hasGPS).raise();
