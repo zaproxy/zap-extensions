@@ -112,6 +112,7 @@ public class ImageLocationScanner extends PluginPassiveScanner {
         if (CT.startsWith("image/jpeg") || CT.startsWith("image/jpg") 
                 || extension.equals("jpeg") || extension.equals("jpg")  
                 || CT.startsWith("image/png")   || extension.equals("png")  
+                || CT.startsWith("image/heif")  || extension.equals("heif")  
                 || CT.startsWith("image/tiff")  || extension.equals("tiff") || extension.equals("tif")
                 ) {
 		
