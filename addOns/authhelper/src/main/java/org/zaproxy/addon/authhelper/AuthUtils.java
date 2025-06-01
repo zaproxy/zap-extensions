@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -815,7 +816,7 @@ public class AuthUtils {
     public static List<Pair<String, String>> getHeaderTokens(
             HttpMessage msg, List<SessionToken> tokens, boolean incCookies) {
         List<Pair<String, String>> list = new ArrayList<>();
-        for (SessionToken token : tokens) {
+        for (SessionToken token : new TreeSet<>(tokens)) {
             for (HttpHeaderField header : msg.getRequestHeader().getHeaders()) {
                 if (HttpHeader.COOKIE.equalsIgnoreCase(header.getName())) {
                     // Handle cookies below so we can separate them out
