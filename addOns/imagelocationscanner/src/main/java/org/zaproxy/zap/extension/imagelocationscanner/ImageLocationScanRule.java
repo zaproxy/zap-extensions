@@ -49,7 +49,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  *
  * @author Jay Ball / github: veggiespam / twitter: @veggiespam / www.veggiespam.com
  * @license Apache License 2.0
- * @version 1.1
+ * @version 1.2
  * @see https://www.veggiespam.com/ils/
  */
 public class ImageLocationScanRule extends PluginPassiveScanner {
@@ -116,7 +116,7 @@ public class ImageLocationScanRule extends PluginPassiveScanner {
         }
 
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("\tCT: {} url: {} fileName: {} ext: {}", CT, url, fileName, extension);
+            LOGGER.debug("\tCT: {} ext: {} url: {} fileName: {}", CT, extension, url, fileName);
         }
 
         // everything is already lowercase
@@ -126,6 +126,8 @@ public class ImageLocationScanRule extends PluginPassiveScanner {
                 || extension.equals("jpg")
                 || CT.startsWith("image/png")
                 || extension.equals("png")
+                || CT.startsWith("image/heif")
+                || extension.equals("heif")
                 || CT.startsWith("image/tiff")
                 || extension.equals("tiff")
                 || extension.equals("tif")) {
