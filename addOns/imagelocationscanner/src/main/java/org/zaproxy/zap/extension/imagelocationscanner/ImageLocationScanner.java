@@ -45,7 +45,7 @@ import com.veggiespam.imagelocationscanner.ILS;
  * 
  * @author  Jay Ball / github: veggiespam / twitter: @veggiespam / www.veggiespam.com
  * @license Apache License 2.0
- * @version 1.1
+ * @version 1.2
  * @see https://www.veggiespam.com/ils/
  */
 public class ImageLocationScanner extends PluginPassiveScanner {
@@ -105,7 +105,7 @@ public class ImageLocationScanner extends PluginPassiveScanner {
         }
 
         if (logger.isDebugEnabled()) {
-		    logger.debug("\tCT: " + CT + " url: " + url + " fileName: " + fileName + " ext: " + extension);
+		    logger.debug("\tCT: " + CT  + " ext: " + extension + " url: " + url + " fileName: " + fileName);
         }
         
         // everything is already lowercase
@@ -116,7 +116,7 @@ public class ImageLocationScanner extends PluginPassiveScanner {
                 || CT.startsWith("image/tiff")  || extension.equals("tiff") || extension.equals("tif")
                 ) {
 		
-			String hasGPS = ILS.scanForLocationInImage(msg.getResponseBody().getBytes(), false);
+			String hasGPS = ILS.scanForLocationInImage(msg.getResponseBody().getBytes(), ILS.OutputFormat.out_text);
 			
 			if (! hasGPS.isEmpty()) {
 				Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIDENCE_MEDIUM, getAlertTitle());
