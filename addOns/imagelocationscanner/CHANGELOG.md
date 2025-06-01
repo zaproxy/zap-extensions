@@ -5,13 +5,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Added
-- Add info and repo URLs.
-- Updated to Image Location and Privacy Scanner version 1.1; merged from [source](https://github.com/veggiespam/ImageLocationScanner) 
+- Updated to Image Location and Privacy Scanner version 1.2; merged from [source](https://github.com/veggiespam/ImageLocationScanner)
+    - Updated dependency Metadata Extractor to 2.19.0
+    - Added support for scanning HEIF image format used by modern iPhone images
+    - Minor safety update to fix theoretical missed file close by [@kingthorin](https://github.com/kingthorin) in [#22](https://github.com/veggiespam/ImageLocationScanner/issues/22) 
+    - Added support for Samsung, more Reconyxs, & Sony camera proprietary privacy leakage 
+    - Added detection for a few new information leakage tags in currently supported cameras.
+    - Added GPS elevation detection
 - The rule has been tagged of interest to Penetration Testers and QA.
 
 ### Changed
 - Depends on an updated version of the Common Library add-on.
 - Update minimum ZAP version to 2.16.0.
+- Removed XMP support as it was too buggy.
 
 ## [5] - 2024-04-11
 ### Changed
