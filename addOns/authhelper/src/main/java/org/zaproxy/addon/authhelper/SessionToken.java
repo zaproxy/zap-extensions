@@ -20,6 +20,7 @@
 package org.zaproxy.addon.authhelper;
 
 import java.util.Locale;
+import java.util.Objects;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 
 public class SessionToken {
@@ -71,5 +72,27 @@ public class SessionToken {
 
     public String getToken() {
         return source + ":" + key;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(key, source, value);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        SessionToken other = (SessionToken) obj;
+        return Objects.equals(key, other.key)
+                && Objects.equals(source, other.source)
+                && Objects.equals(value, other.value);
     }
 }
