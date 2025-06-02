@@ -20,7 +20,6 @@
 package org.zaproxy.addon.authhelper;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -82,7 +81,7 @@ public class SessionDetectionScanRule extends PluginPassiveScanner {
                 msg.getRequestHeader().getURI());
         if (!requestTokens.isEmpty()) {
             // The request is using at least one session token, do we know where they come from?
-            Set<SessionToken> foundTokens = new HashSet<>();
+            List<SessionToken> foundTokens = new ArrayList<>();
             for (SessionToken st : requestTokens) {
                 SessionToken sourceToken = AuthUtils.containsSessionToken(st.getValue());
                 if (sourceToken != null) {
@@ -123,10 +122,9 @@ public class SessionDetectionScanRule extends PluginPassiveScanner {
                     foundTokens.forEach(t -> LOGGER.debug("Found tokens {}", t.getToken()));
                 }
                 List<Context> contextList = AuthUtils.getRelatedContexts(msg);
-                List<SessionToken> foundTokensList = new ArrayList<>(foundTokens);
                 SessionManagementRequestDetails smDetails =
                         new SessionManagementRequestDetails(
-                                msg, foundTokensList, Alert.CONFIDENCE_MEDIUM);
+                                msg, foundTokens, Alert.CONFIDENCE_MEDIUM);
 
                 for (Context context : contextList) {
                     if (isBetterAutoDetectSessionMagagement(context, smDetails)) {
@@ -139,8 +137,7 @@ public class SessionDetectionScanRule extends PluginPassiveScanner {
                                 new HeaderBasedSessionManagementMethodType();
                         HeaderBasedSessionManagementMethod method =
                                 type.createSessionManagementMethod(context.getId());
-                        method.setHeaderConfigs(
-                                AuthUtils.getHeaderTokens(msg, foundTokensList, true));
+                        method.setHeaderConfigs(AuthUtils.getHeaderTokens(msg, foundTokens, true));
 
                         context.setSessionManagementMethod(method);
                         Stats.incCounter("stats.auth.configure.session.header");
