@@ -19,7 +19,6 @@
  */
 package org.zaproxy.zap.extension.imagelocationscanner;
 
-import com.veggiespam.imagelocationscanner.ILS;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 
