@@ -36,8 +36,9 @@ the picture. ZAP screenshot is shown below.</li>
 
 <h2>Usage Notes</h2>
 <ul>
-    <li>Before ZAP 2.7.x, you must manually enabled image scanning with: Tools → Options → Display → Process images in the HTTP requests/responses pane.</li>
-    <li>If you have images disabled in Global Exclude URL, then any passive image scanner, like ILS, will be unable to see the images and report on privacy issues.</li>
+    <li>Before ZAP 2.7.x, you must manually enabled image scanning with: Tools → Options → Display → "Process images in the HTTP requests/responses" for ILS to function at all.</li>
+    <li>By default, ZAP hides images in the history, but ILS stills scan these images for findings.  If an alert is triggered, then the image and its alerts will appear in the Alerts tab but not in the History tab.  To show images in the history, both with alerts and without, enable with "Process images in the HTTP" as above.</li>
+    <li>If you have image processing completely disabled via Tools → Options → Network → Global Exclusions → Extension - Image (née Global Exclude URL), then any passive image scanner, like ILS, will be unable to see the images and report on privacy issues - thus disuse this feature with images so ILS can function.</li>
 </ul>
 
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/tree/main/addOns/imagelocationscanner">ZAP Extension "imagelocationscanner" Source</a> <br/>
