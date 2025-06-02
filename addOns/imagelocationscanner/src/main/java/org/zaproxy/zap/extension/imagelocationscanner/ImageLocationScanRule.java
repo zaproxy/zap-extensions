@@ -193,10 +193,14 @@ public class ImageLocationScanRule extends PluginPassiveScanner {
 
     @Override
     public List<Alert> getExampleAlerts() {
-        // Real world example of a Panasonic camera image with GPS and face recognition data.
-        // Source
+        List<Alert> alerts = new ArrayList<>();
+
+        // Single line example
+        // String gpsDetails = "\n  Location:: \n    Exif_GPS: 40° 50' 19\", -74° 12' 33\"";
+
+        // Multi-line, real-world example: Panasonic camera image with GPS and face recognition from
         // https://raw.githubusercontent.com/drewnoakes/metadata-extractor-images/master/jpg/Panasonic%20DMC-TZ10.jpg
-        final String MULTILINE_EXAMPLE_ALERT =
+        final String gpsDetails =
                 "\n"
                         + "  Location::\n"
                         + "    Exif_GPS: 53° 8' 49.65\", 8° 10' 45.1\"\n"
@@ -206,12 +210,6 @@ public class ImageLocationScanRule extends PluginPassiveScanner {
                         + "  Privacy::\n"
                         + "    Panasonic: Face Recognition Info = Face 1: x: 142 y: 120 width: 76 height: 76 name: NIELS age: 31 years 7 months 15 days\n"
                         + "    Panasonic: Internal Serial Number = F541005110191";
-
-        List<Alert> alerts = new ArrayList<>();
-        // Single line sample
-        // String gpsDetails = "\n  Location:: \n    Exif_GPS: 40° 50' 19\", -74° 12' 33\"";
-
-        String gpsDetails = MULTILINE_EXAMPLE_ALERT;
 
         alerts.add(buildAlert(gpsDetails).build());
         return alerts;
