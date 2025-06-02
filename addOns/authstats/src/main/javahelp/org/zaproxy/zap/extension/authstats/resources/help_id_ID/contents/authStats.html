@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Statistik Otentikasi
+</title>
+</head>
+<body>
+<h1>Statistik Otentikasi</h1>
+Pengaya ini merekam otentikasi terkait statistik untuk semua konteks yang berada dalam ruang lingkup.<br>
+Statistik direkam pada setiap basis situs dan menutupi:
+<table>
+<tr><td>stats.auth.<i>component</i>.state.noauth</td><td>The context does not have an authentication method</td></tr>
+<tr><td>stats.auth.<i>component</i>.state.nothtml</td><td>Non HTML responses (which are unlikely to have logged in/out indicators)</td></tr>
+<tr><td>stats.auth.<i>component</i>.state.notsuccess</td><td>Unsuccessful HTML responses (which are unlikely to have logged in/out indicators)</td></tr>
+<tr><td>stats.auth.<i>component</i>.state.noindicator</td><td>No logged in/out indicators have been defined</td></tr>
+<tr><td>stats.auth.<i>component</i>.state.loggedinandout</td><td>Both the logged in and out indicators present</td></tr>
+<tr><td>stats.auth.<i>component</i>.state.loggedin</td><td>Just the logged in indicator present</td></tr>
+<tr><td>stats.auth.<i>component</i>.state.loggedout</td><td>Just the logged out indicator present</td></tr>
+<tr><td>stats.auth.<i>component</i>.state.unknown</td><td>Neither the logged in or out indicators present</td></tr>
+</table>
+Komeponen bisa:
+<table>
+<tr><td>ascan</td><td>Pemindai Aktif</td></tr>
+<tr><td>auth</td><td>Otentikasi</td></tr>
+<tr><td>fuzz</td><td>Fuzzer</td></tr>
+<tr><td>manual</td><td>Permintaan manual</td></tr>
+<tr><td>Proxy</td><td>Permintaan proxy</td></tr>
+<tr><td>laba-laba</td><td>Laba-laba</td></tr>
+<tr><td><i>id</i></td><td>Integer pengenal dari komponen lain yang tidak tercantum di atas</td></tr>
+</table>
+<p>
+statistik bisa diakses melalui API ZAP.
+</p>
+<p>
+
+Ikon untuk add-on ini berasal dari
+<a href="https://github.com/yusukekamiyamane/fugue-icons">Ikon Fugue</a> 
+<a href="https://github.com/yusukekamiyamane/fugue-icons/blob/master/icons/chart.png">chart.png</a> dan
+<a href="https://github.com/yusukekamiyamane/fugue-icons/blob/master/icons/lock-small.png">locl-small.png</a>
+
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Payloads dialog
+</title>
+</head>
+<body>
+<h1>Payloads dialog</h1>
+This allows you to select the payload generators to use when <a href="concepts.html">fuzzing</a> a request.
+<br><br>
+Payload generators generate the raw attacks that the fuzzer submits to the target application.
+<br><br>
+The following types of generators are provided by default:
+<ul>
+<li>Empty/Null - generates the selected payload multiple times, leaving the message without changes. This payload generator is useful to send multiple messages that are later processed, for example, with a <a href="httpmessageprocessors.html">Fuzzer HTTP Processor (Script)</a>.</li>
+<li>File - select any local file for one off attacks</li>
+<li>File Fuzzers - select any combination of the fuzzing files registered with ZAP, e.g. via add-ons like fuzzdb</li>
+<li>Numberzz - allows to easily generate a sequence of numbers, with custom increment</li>
+<li>Regex - generate attacks based on regex patterns</li>
+<li>Strings - raw strings, which can be entered manually or pasted in</li>
+<li>Script - custom scripts that can generate any payloads required</li>
+<li>Json - generate attacks by fuzzing the provided json</li>
+</ul>
+You can write custom payload generator scripts - these can supply any payloads that you need.
+<br><br>
+Add-ons can also define additional payload generators.
+<br><br>
+The 'Processors...' button launches the <a href="processors.html">Payload Processors dialog</a> which allows you to
+configure payload processors that just apply to the palyload generator you have selected.
+<br>
+
+<h2>Accessed via</h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="dialogue.html">Fuzzer dialog</a> 'Add...' button</td></tr>
+</table>
+
+<h2>See also</h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Fuzzer concepts</a></td></tr>
+</table>
+
+</body>
+</html>

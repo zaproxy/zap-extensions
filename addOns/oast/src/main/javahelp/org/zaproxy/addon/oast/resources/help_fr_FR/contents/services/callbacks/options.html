@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+    <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+    <title>
+        Callback Options
+    </title>
+</head>
+<body>
+<h1>Callback Options</h1>
+<p>
+    The Callback Options screen allows you to configure the address used to detect vulnerabilities that allow an
+    attacker to call remote URLs.<br>
+    In previous versions the ZAP API was used for this purpose, but from 2.6.0 onwards a separate endpoint is used so
+    that target systems no longer need access to the API.
+</p>
+
+<h3>Local Address (e.g. 0.0.0.0)</h3>
+
+The local address that ZAP will listen on for incoming connections.
+The default value of '0.0.0.0' means that ZAP will listen on all available local addresses.
+
+<h3>Remote Address</h3>
+
+The address that will be specified in the relevant attacks.
+This address must be accessible from the target system.
+You can use the Test URL to check that this is the case.
+
+<h3>Random Port</h3>
+
+By default ZAP will use a different port each time it is run.
+If you need to use the same port (for example to allow access through firewalls) then uncheck this option.
+
+<h3>Specify Port</h3>
+
+If the Random Port option is unchecked then this is the port that ZAP will listen on.
+It must be different to the other ports ZAP uses, for example the port it uses for proxying connections.
+
+<h3>Test URL</h3>
+
+This is the test URL that you can try to access from remote systems.
+All accesses to the Test URL will be recorded in the ZAP log file at INFO level.
+If you are using the ZAP UI then accesses will also be shown in the Output tab, as
+well as the <a href="../../tab.html">OAST tab</a>.
+
+<h2>See also</h2>
+<table>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>
+            <a href="../../tab.html">OAST Tab</a></td>
+        <td>&nbsp;</td>
+    </tr>
+</table>
+
+</body>
+</html>

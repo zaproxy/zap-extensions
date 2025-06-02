@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE toc PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN" "http://java.sun.com/products/javahelp/toc_2_0.dtd">
+<toc version="2.0">
+    <tocitem text="ZAP User Guide" tocid="toplevelitem">
+        <tocitem text="Add Ons" tocid="addons">
+            <tocitem text="OAST Support" image="oast-icon" target="oast">
+                <tocitem text="Tab" target="oast.tab"/>
+                <tocitem text="Options" target="oast.options"/>
+                <tocitem text="Services" target="oast.services">
+                    <tocitem text="BOAST" target="oast.boast">
+                        <tocitem text="Options" target="oast.boast.options"/>
+                    </tocitem>
+                    <tocitem text="Callbacks" target="oast.callbacks">
+                        <tocitem text="Options" target="oast.callbacks.options"/>
+                    </tocitem>
+                    <tocitem text="Interactsh" target="oast.interactsh">
+                        <tocitem text="Options" target="oast.interactsh.options"/>
+                    </tocitem>
+                </tocitem>
+            </tocitem>
+        </tocitem>
+    </tocitem>
+</toc>

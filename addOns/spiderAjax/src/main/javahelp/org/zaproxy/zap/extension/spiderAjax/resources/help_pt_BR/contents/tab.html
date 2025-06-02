@@ -1,0 +1,195 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Aba do Spider Ajax</title>
+</head>
+<body>
+	<h1>Aba do Spider Ajax</h1>
+	<p>
+		A aba do spider AJAX aranha mostra o conjunto de URIs encontrado pelo <a href="concepts.html">Spider AJAX</a>.
+	</p>
+	<br /> Para cada request, você pode ver:
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>O índice do request - cada solicitação é numerada, começando em 1</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>O timestamp do request</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>O método HTML, por exemplo, GET ou POST</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>A URL solicitada</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>O código de status da resposta HTTP</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>Um breve resumo do que significa o código de resposta HTTP</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>O tempo que levou toda a solicitação</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>O tamanho do cabeçalho de resposta</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>O tamanho do corpo da resposta</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><i>Alertas</i> sobre o request
+			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>Quaisquer <i>notas</i> que você tiver adicionado ao pedido
+			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>Qualquer <i>Tags</i> que você adicionou ao pedido
+			</td>
+		</tr>
+	</table>
+
+	Um request selecionado será exibido na
+	<i>Aba de Request</i> e
+	<i>Na Aba de Respostas</i> acima.
+	<br />
+
+	<h2>Menu do botão direito</h2>
+	Clicar com o botão direito em um nó faz aparecer um menu que lhe permitirá:
+
+	<h3>Atacar</h3>
+	O menu de ataque tem os seguintes submenus:
+	<h4>Varredura Ativa de Site</h4>
+	Isto irá iniciar uma
+	<i>Varredura Ativa</i> de todo o site contido no nó selecionado.
+	<br /> A 
+	<i>aba da varredura ativa</i> vai aparecer e irá mostrar o progresso da varredura.
+	<br />
+
+	<h4>Nó da Varredura ativa</h4>
+	Isto irá iniciar uma
+	<i>Varredura Ativa</i> apenas no nó selecionado.
+	<br /> A
+	<i>aba da varredura ativa</i> vai aparecer e irá mostrar o progresso da varredura.
+	<br />
+
+	<h4>Usar o Spider no site</h4>
+	Isto irá iniciar uma varredura do
+	<i>Spider</i> de todo o site contido no nó selecionado.
+	<br /> A
+	<i>Aba do Spider</i> vai aparecer e irá mostrar o progresso da varredura.
+	<br />
+
+	<h4>Site com Navegação Forçada</h4>
+	Isto irá iniciar uma navegação
+	<i>forçada</i> de todo o site contendo o nó selecionado.
+	<br /> A aba
+	<i>navegação forçada</i> vai aparecer e irá mostrar o progresso da varredura.
+	<br />
+
+	<h4>Diretório com navegação forçada</h4>
+	Isto irá iniciar uma navegação
+	<i>forçada</i> no diretório selecionado.
+	<br /> A aba
+	<i>navegação forçada</i> vai aparecer e irá mostrar o progresso da varredura.
+	<br />
+
+	<h4>Diretório (e subdirs) com navegação forçada</h4>
+	Isto irá iniciar uma navegação
+	<i>forçada</i> no diretório selecionado e todos os subdiretórios encontrados.
+	<br /> A aba
+	<i>navegação forçada</i> vai aparecer e irá mostrar o progresso da varredura.
+	<br />
+
+	<h3>Exclusões</h3>
+	Este menu possui os seguintes submenus:
+
+	<h4>Proxy</h4>
+	Isto irá excluir do proxy os nós selecionados. Eles ainda passarão pelo ZAP, mas não serão exibidos em qualquer uma das guias.
+	<br /> Isto pode ser usado para ignorar URLs que você sabe que não são relevantes para o sistema que você está testando.
+	<br /> Os nós podem ser incluídos novamente através do
+	<i>diálogo de</i> Propriedades da Sessão
+
+	<h4>Scanner</h4>
+	Isto irá impedir que os nós selecionados entrem na varredura ativa.
+	<br /> Os nós podem ser incluídos novamente através do
+	<i>diálogo de</i> Propriedades da Sessão
+
+	<h4>Spider</h4>
+	Isto irá impedir que os nós selecionados sejam percorridos pelo spider.
+	<br /> Os nós podem ser incluídos novamente através do
+	<i>diálogo de</i> Propriedades da Sessão
+
+	<h3>Executar a aplicação</h3>
+	Este menu permite a você
+	<i>Invocar aplicações</i> que você tenha configurado através da
+	<i>Tela de opções de aplicações</i> que também é acessível via o submenu 'Configurar aplicações...'.
+
+	<h3>Gerenciar Tags...</h3>
+	Isso irá abrir o diálogo
+	<i>Gerenciar Tags</i> que permite a você alterar as
+	<i>tags</i> associadas com a solicitação.
+
+	<h3>Notas...</h3>
+	Isso irá abrir o diálogo
+	<i>Acrescentar nota</i> que permite a você gravar
+	<i>notas</i> relacionada com a solicitação.
+
+	<h3>Interrupção...</h3>
+	Isso irá abrir o diálogo
+	<i>Adicionar ponto de interrupção</i> que permite a você definir um ponto de interrupção naquela URL.
+	<br />
+
+	<h3>Alertas para este nó</h3>
+	Se a URL selecionada tem
+	<i>alertas</i> associados a ela, então eles serão listados aqui neste menu.
+	<br> Selecionar um dos alertas fará com que ele seja exibido.
+
+	<h3>Reenviar...</h3>
+	Isso irá abrir o 
+	<i>Diálogo de reenvio</i> que lhe permite reenviar o request depois de fazer quaisquer alterações que você deseje.
+
+	<h3>Novo Alerta...</h3>
+	Isso irá abrir o 
+	<i>Diálogo Acrescentar Alerta</i> que permite a você registrar manualmente um novo
+	<i>Alerta</i> para um request.
+
+	<h3>Ver no Navegador</h3>
+	Isto irá abrir a URL do nó selecionado em seu navegador padrão.
+
+	<h2>Veja também</h2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="concepts.html">AJAX Spider</a></td>
+			<td>para uma visão geral do AJAX Spider</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="options.html">Tela de opções do AJAX Spider</a></td>
+			<td>para uma visão geral das opções do AJAX Spider</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="scandialog.html">Diálogo do Spider Ajax</a></td>
+			<td>para uma visão geral do Diálogo do Spider AJAX</td>
+		</tr>
+	</table>
+
+</body>
+</html>

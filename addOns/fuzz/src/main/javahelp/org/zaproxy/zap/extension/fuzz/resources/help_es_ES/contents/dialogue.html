@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Diálogo Fuzzer
+</title>
+</head>
+<body>
+<h1>Diálogo Fuzzer</h1>
+Esto le permite seleccionar los fuzzers para usar cuando <a href="concepts.html">fuzzing </a> haga una solicitud. 
+
+<h3>Pestaña de ubicaciones de Fuzz</h3>
+Para configurar el fuzzing:<br/>
+<ul>
+<li>Resalte una cadena que desee difuminar en la pestaña de Ubicaciones de Fuzz</li>
+<li>Haga clic en el botón 'Agregar...' para abrir el <a href="payloads.html"> cuadro de diálogo</></li>
+<li>Agregue las cargas útiles que desea usar</li>
+<li>Haga clic en el botón 'Procesadores...' para abrir el <a href="locations.html"> diálogo de Procesadores de Ubicación </> (si es necesario)</li>
+<li>Haga clic en el botón 'Comenzar Fuzzer' para iniciar el fuzzing</li>
+<li>Los resultados se mostrarán en la pestaña <a href="tab.html"> Fuzzer </> y los seleccionarán para ver las solicitudes y respuestas completas.</li>
+</ul>
+You can also search for strings in the fuzz results using the 'Search' tab.
+<p>
+Click on the 'Edit' button to edit the message you have selected for fuzzing.
+Note that this will remove all of the fuzz locations that you have defined.
+<p>
+You will need to 'Save' the message before you can define new fuzz locations.
+
+<h3>Options tab</h3>
+This tab allows you to configure the options to be used when fuzzing. See the main <a href="options.html">options help</a> for more details.
+
+<h4>Follow Redirects</h4>
+Indicates whether or not the Fuzzer should follow redirect responses (only visible for HTTP messages).
+
+<h3>Message Processors tab</h3>
+Message Processors can access and change the messages being fuzzed, control the fuzzing process, and interact with the ZAP UI.<br>
+The message processors available depend on the type of message being fuzzed, this add-on includes the <a href="httpmessageprocessors.html">default HTTP Messages processors</a>.
+<p>
+Add-ons can also define additional payload generators.
+
+<h2>Accessed via</h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Request tab</td><td>'Fuzz...' right click menu item</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Sites and History tab</td><td>Attack > Fuzz... menu items</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Tools menu </td><td>Attack > Fuzz... menu item</td></tr>
+</table>
+
+<h2>See also</h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Fuzzer concepts</a></td></tr>
+</table>
+
+</body>
+</html>

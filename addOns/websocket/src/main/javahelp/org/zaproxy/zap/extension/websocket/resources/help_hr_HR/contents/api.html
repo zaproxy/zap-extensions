@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>
+WebSocket API
+</TITLE>
+</HEAD>
+<BODY>
+<H1>WebSocket API</H1>
+
+<h2>Views</h2>
+	<h3>channels</h3>
+		Returns all of the registered web socket channels.
+
+	<h3>message</h3>
+	
+		Mandatory Parameters:
+		<ul>
+		<li>channelId: the channel identifier</li>
+		<li>messageId: the message identifier</li>
+		</ul>
+		Returns full details of the specified message.<br>
+		The 'channelId' and 'messageId' can be discovered via the 'messages' view.
+
+	<h3>messages</h3>
+	
+		Optional Parameters:
+		<ul>
+		<li>channelId: the channel identifier</li>
+		<li>start: the offset to start returning messages from, starting from 0.</li>
+		<li>count: the number of messages to return.</li>
+		<li>payloadPreviewLength: the maximum number bytes to return for the payload contents.</li>
+		</ul>
+		Returns a list of all of the messages that meet the given criteria - by default all messages are returned<br>
+		The channelId can be discovered via the 'channels' view.<br>
+		The 'start' and 'count' parameters can be used to page through the messages<br>
+		The 'payloadPreviewLength' can be used to restrict the size of the data returned.<br>
+
+<h2>Actions</h2>
+
+	<h3>sendTextMessage</h3>
+	
+		Mandatory Parameters:
+		<ul>
+		<li>channelId: the channel identifier</li>
+		<li>outgoing: 'True' if the message is to be sent to the server and 'False' if it is to be sent to the client</li>
+		<li>message: the message to send</li>
+		</ul>
+		Sends the specified message on the specified channel.<br>
+		The channelId can be discovered via the 'channels' view.<br>
+
+</BODY>
+</HTML>

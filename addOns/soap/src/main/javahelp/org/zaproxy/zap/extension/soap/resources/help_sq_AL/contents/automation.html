@@ -1,0 +1,26 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+    <TITLE>
+        SOAP Automation Framework Support
+    </TITLE>
+</HEAD>
+<BODY>
+
+<H1>SOAP Automation Framework Support</H1>
+This add-on supports the Automation Framework.
+<br><br>
+The add-on will import WSDL files containing SOAP endpoints if they are found while spidering but adding them explicitly via a URL or local file is recommended if they are available.
+
+<H2>Job: soap</H2>
+The soap job allows you to import WSDL files locally or from a URL.
+<pre>
+  - type: soap                         # SOAP WSDL import
+    parameters:
+      wsdlFile:                        # String: Local file path of the WSDL, default: null, no definition will be imported
+      wsdlUrl:                         # String: URL pointing to the WSDL, default: null, no definition will be imported
+</pre>
+
+</BODY>
+</HTML>

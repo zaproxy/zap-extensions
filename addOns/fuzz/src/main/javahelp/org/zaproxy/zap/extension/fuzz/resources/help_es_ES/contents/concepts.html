@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Fuzzing
+</title>
+</head>
+<body>
+<h1>Fuzzing</h1>
+<p>
+Fuzzing is a technique of submitting lots of data to a target (often in the form of invalid or unexpected inputs).
+</p>
+<p>
+ZAP allows you to fuzz any request using:
+<ul>
+<li>A built-in set of payloads</li>
+<li>Carga útil definida por complementos opcionales</li>
+<li>Guiones personalizados</li>
+</ul>
+</p>
+Para acceder al <a href="dialogue.html">Diálogo Fuzzer</a> tu también puedes:
+<ul>
+<li>Haga clic con el botón derecho en una de las pestañas de ZAP (como Historial o Sitios) y seleccione "Ataque / Fuzz"</li>
+<li>Resalta una cadena en la pestaña Solicitud, haz clic con el botón derecho y selecciona "Fuz"</li>
+<li>Seleccione el elemento de menú "Herramientas / Fuzz..." y luego seleccione la solicitud que desea difuminar</li>
+</ul>
+
+<h3>Generadores de carga útil</h3>
+Payload Generators generate the raw values or attacks that the fuzzer submits to the target application.
+<br><br>
+Se administran a través de <a href="payloads.html">Diálogo de cargas útiles</a>.
+
+<h3>Procesadores de carga útil</h3>
+Los procesadores de carga útil se pueden usar para cambiar cargas útiles específicas antes de que se envíen.
+<br><br>
+Se administran a través de <a href="processors.html">Diálogo de procesadores de carga útil</a>.
+
+<h3>Procesadores de ubicación Fuzz</h3>
+Los procesadores de ubicación Fuzz se pueden usar para cambiar todas las cargas antes de enviarlas.
+<br><br>
+Se administran a través de <a href="locations.html">Diálogo de procesadores de carga útil</a>.
+
+<h3>Procesadores de mensajes</h3>
+Message Processors can access and change the messages being fuzzed, control the fuzzing process, and interact with the ZAP UI.
+<br><br>
+Se administran a través de <a href="dialogue.html">Diálogo Fuzzer</a> Pestaña de Procesadores de mensajes.
+
+<p>
+Some of this functionality is based on code from the OWASP JBroFuzz project and includes files from the fuzzdb project.<br/>
+Note that some fuzzdb files have been left out as they cause common anti-virus scanners to flag them as containing viruses.<br/>
+You can replace them (and upgrade fuzzdb) by downloading the latest version of fuzzdb and expanding it in the 'fuzzers' library.
+</p>
+
+<h2>Vease también</h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="options.html">Pantalla de opciones Fuzzer</a></td></tr>
+</table>
+
+</body>
+</html>

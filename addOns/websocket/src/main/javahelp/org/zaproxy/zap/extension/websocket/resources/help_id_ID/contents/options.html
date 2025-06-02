@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Pilihan spesifik WebSocket
+</title>
+</head>
+<body>
+<h1>Pilihan khusus Websocket</h1>
+<p>
+Layar ini memungkinkan anda untuk mengkonfigurasi WebSocket pilihan:
+
+<h3>Ke depan semua</h3>
+Jika anda tidak tertarik dalam WebSockets komunikasi, tetapi anda ingin untuk memungkinkan pesan-pesan yang dikirim kembali &amp; sebagainya melalui ZAP, maka anda harus mengaktifkan opsi ini.
+Akibatnya tidak ada pesan akan disimpan dalam session database. Selain itu ada pesan akan muncul di WebSockets tab. Pengaturan ini dapat berguna jika anda harus berurusan dengan kinerja yang kritis WebSocket koneksi dan anda tidak tertarik apa yang sedang dikirim.
+<br><br>
+Jika anda ingin mengabaikan salah satu saluran tertentu, memeriksa WebSocket tertentu <i>Properti Sesi</i>.
+
+
+<h3>Istirahat pada semuanya</h3>
+Dalam <i>Selaan</i> toolbar, terdapat dua tombol:
+<ul>
+	<li><img src="images/105.png" align="bottom" width="16" height="16" />&nbsp;&nbsp;<i>Atur selaan pada semua permintaan</i></li>
+	<li><img src="images/106.png" align="bottom" width="16" height="16" />&nbsp;&nbsp;<i>Atur selaan pada semua respon</i></li>
+</ul>
+Ketika anda mengaktifkan opsi ini, maka semua keluar (masing-masing masuk) WebSocket pesan juga tertangkap oleh tombol kontrol.
+<br><br>
+Secara default opsi ini dinonaktifkan. Dalam hal ini hanya HTTP pesan yang tertangkap, tetapi anda dapat menambahkan eksplisit breakpoints pada WebSocket komunikasi dalam <a href="tab.html">WebSocket tab</a>. 
+
+
+<h3>Istirahat di Ping &amp; Pong pesan</h3>
+<i>PING</i> dan <i>PONG</i> pesan yang sering digunakan oleh WebSocket server untuk menentukan kesehatan dari koneksi saat ini. Jika anda menangkap masuk <i>PING</i> pesan, browser ini tidak dapat kembali <i>PONG</i> pesan segera, sehingga yang buruk latency nilai.
+<br><br>
+Jika opsi ini dinonaktifkan, tidak ada <i>PING</i> atau <i>PONG</i> pesan yang tertangkap ketika anda:
+<ul>
+	<li>atur titik-selaan pada <u>semua permintaan</u> or <u>semua respon</u>, <i>atau</i></li>
+	<li>langkah melalui untuk permintaan berikutnya atau respon dan Sebuah <i>PING</i> atau <i>PONG</i> pesan tiba</li>
+</ul>
+Pengaturan ini tidak mempengaruhi breakpoints yang ditetapkan secara eksplisit pada <i>PING</i> or <i>PONG</i> pesan-pesan. Anda dapat melihat eksplisit seperti breakpoints di <i>Tab titik-selaan</i>.
+
+<h3>Hapus header <code>Sec-WebSocket-Extensions</code></h3>
+Mengizinkan untuk menghapus header HTTP <code>Sec-WebSocket-Extensions</code> dari jabat tangan yang pesan, jadi tidak ada transformasi yang dilakukan
+untuk WebSocket pesan yang dikirim/diterima.<br>
+Pilihan ini harus selalu diaktifkan kecuali klien atau server yang diuji membutuhkan mereka. Dengan WebSocket
+pesan mungkin tidak diproses dengan benar oleh ZAP ketika ekstensi yang digunakan.
+
+</body>
+</html>

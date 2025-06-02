@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Diálogo do Spider Ajax</title>
+</head>
+<body>
+<h1>Diálogo do Spider Ajax</h1>
+
+Esta caixa de diálogo lança o spider AJAX. 
+
+<h2>Escopo</h2>
+A primeira aba permite que você mude características importantes, como:
+
+<h3>Starting Point</h3>
+
+A URL de onde o spider AJAX irá iniciar o rastreamento, ou um contexto (caso em que será utilizado um dos URLs que estão no contexto como ponto de partida).
+
+<h3>Contexto</h3>
+Permite para selecionar o contexto a ser percorrido.
+
+<h3>Usuário</h3>
+Permite selecionar um dos usuários disponíveis a partir do contexto selecionado, para executar a varredura como um usuário (ZAP irá (re) autenticar como esse usuário sempre que necessário).
+
+<h3>Just In Scope</h3>
+
+Se definido, em seguida, quaisquer URLs que estão fora do escopo serão ignoradas.
+<p>
+<strong>Nota:</strong> A opção <code>Just In Scope</code> é mutuamente exclusiva com a opção <code>Contexto</code> , se um é usado o outro é ignorado.
+
+<h3>Só subárvore do spider</h3>
+Se definido, em seguida, o spider só irá acessar os recursos que estão sob o ponto de partida (URI).
+Ao avaliar se um recurso é encontrado dentro da subárvore especificada, o spider considera apenas os componentes esquema, host, porta e caminho do URI.
+
+<h3>Browser</h3>
+
+O tipo de navegador para usar.<br>
+Navegadores só serão mostrados se a ZAP tem configuração suficiente para executá-los.<br>
+Eles ainda podem falhar ao executar se os navegadores não podem ser encontrados ou se as informações de configuração estão incorretas.
+
+<h3>Show Advanced Options</h3>
+
+Se selecionado, então a guia de opções será mostrada.
+
+<h2>Opções</h2>
+Essa guia permite que você altere opções, incluindo:
+
+<h3>Number of Browser Windows to Open</h3>
+Você pode configurar o número de janelas para ser usado pelo spider AJAX.<br>
+Quanto mais janelas, mais rápido o processo será.
+
+<h3>Maximum Crawl Depth</h3>
+A profundidade máxima que o rastreador pode chegar. Zero significa profundidade ilimitada.
+
+<h3>Maximum Crawl States</h3>
+O número máximo de Estados que o rastreador deve percorrer. Zero significa ilimitado. 
+
+<h3>Maximum Duration</h3>
+O tempo máximo que o rastreador pode ser executado. Zero significa ilimitado tempo de execução.
+
+<h3>Event Wait Time</h3>
+O tempo de espera após um evento de lado do cliente é disparado.
+
+<h3>Reload Wait Time</h3>
+O tempo de espera depois que URL é carregada.
+
+<h3>Allowed Resources</h3>
+The list of allowed resources. The allowed resources are always fetched even if out of scope, allowing to include necessary resources (e.g. scripts) from 3rd-parties.
+	
+	<h2>Veja também</h2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="concepts.html">AJAX Spider</a></td>
+			<td>for an overview of the AJAX Spider</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="tab.html">Aba do Spider Ajax</a></td>
+			<td>para uma visão geral da aba do Spider AJAX</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="options.html">Tela de opções do spider AJAX</a></td>
+			<td>para uma visão geral das opções do Spider AJAX</td>
+		</tr>
+	</table>
+
+</body>
+</html>

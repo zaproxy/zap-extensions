@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>ZAPit</TITLE>
+</HEAD>
+<BODY>
+	<H1>ZAPit</H1>
+	Quick Start add-on supports the following <a href="cmdline.html">Command Line</a> option to perform
+	a quick 'reconnaissance' scan of the URL specified.
+	<p>
+	You can specify multiple URLs by specifying the option multiple times:
+	<ul>
+	<li><code>-zapit https://www.example1.com -zapit http://example2.com/ -cmd</code>
+	</ul>
+	The <code>-cmd</code> option must be specified, if it is not then the <code>-zapit</code> option will be ignored.
+	<p>
+	If you do not specify a URL beginning with either <code>http://</code> or <code>https://</code> then ZAP will 
+	scan both of those schemes.
+	<p>
+	The ZAPit Scan will start a new ZAP session before it performs a scan, so do not start ZAP with a session that you want to keep.
+	<p>
+	The ZAPit scan currently:
+	<ol>
+	<li>Makes one request to the target URL
+	<li>Reports key details about all of the requests and responses made (e.g. due to redirects)
+	<li>Reports any technology found by the 
+	<a href="https://www.zaproxy.org/docs/desktop/addons/technology-detection/">Technology Detection</a> add-on (if installed)
+	<li>Reports a summary of the alerts found
+	<li>Reports some stats from the root URL
+	</ol>
+	<p>
+	Example output:	 
+	<pre>
+ZAPit scan of https://www.example.com
+Requests:
+	https://www.example.com
+		Request took 325 msec
+		Response code 200 (OK)
+		Response body size 1,256 bytes
+		No request cookies
+		No response cookies
+Technology:
+	Amazon ECS
+	Amazon Web Services
+	Azure
+	Azure CDN
+	Docker
+Number of alerts: 9
+	Medium: Content Security Policy (CSP) Header Not Set : ""
+	Medium: Missing Anti-clickjacking Header : "x-frame-options"
+	Low: Permissions Policy Header Not Set : ""
+	Low: Server Leaks Version Information via "Server" HTTP Response Header Field : "ECS (dcb/7EC9)"
+	Low: Strict-Transport-Security Header Not Set : ""
+	Low: X-Content-Type-Options Header Missing : "x-content-type-options"
+	Informational: Re-examine Cache-control Directives : "max-age=604800"
+	Informational: Retrieved from Cache : "HIT"
+	Informational: Storable and Cacheable Content : "max-age=604800"
+Root page stats:
+	Content type: text/html; charset=UTF-8
+	Number of HTML tags: 24
+	Number of HTML links: 1
+	Number of HTML forms: 0
+	Number of HTML input fields: 0
+	</pre>
+
+	This feature is at an early stage and more enhancements are planned.
+
+	<H2>See also</H2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="quickstart.html">Quick Start</a></td>
+			<td>the introduction to Quick Start</td>
+		</tr>
+	</table>
+
+</BODY>
+</HTML>

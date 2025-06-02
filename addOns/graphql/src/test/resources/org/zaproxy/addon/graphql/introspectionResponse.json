@@ -1,0 +1,34 @@
+{
+  "data": {
+    "__schema": {
+      "queryType": {
+        "name": "Query"
+      },
+      "types": [
+        {
+          "kind": "OBJECT",
+          "name": "Query",
+          "fields": [
+            {
+              "name": "searchSongsByLyrics",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String"
+              },
+              "args": [
+                {
+                  "name": "lyrics",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String"
+                  },
+                  "defaultValue": "\"Never gonna give you up\""
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

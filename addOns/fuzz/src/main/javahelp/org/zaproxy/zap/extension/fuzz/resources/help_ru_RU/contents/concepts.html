@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Фаззинг
+</title>
+</head>
+<body>
+<h1>Фаззинг</h1>
+<p>
+Fuzzing is a technique of submitting lots of data to a target (often in the form of invalid or unexpected inputs).
+</p>
+<p>
+ZAP allows you to fuzz any request using:
+<ul>
+<li>A built-in set of payloads</li>
+<li>Полезные нагрузки, определенные дополнительными дополнениями </li>
+<li>Пользовательские сценарии </li>
+</ul>
+</p>
+К доступу  <a href="dialogue.html">Диалог фаззера</a> вы также можете: 
+<ul>
+<li>Щелкните правой кнопкой мыши запрос на одном из вкладок ZAP (например, история или сайты) и выберите «Атаку / Fuzz ...» </li>
+<li>Выделите строку на вкладке «Запрос», щелкните правой кнопкой мыши и выберите «FUZZ ...» </li>
+<li>Выберите пункт меню «Инструменты / Fuzz ...», а затем выберите запрос, который вы хотите FUZZ </li>
+</ul>
+
+<h3>Генераторы полезной нагрузки </h3>
+Payload Generators generate the raw values or attacks that the fuzzer submits to the target application.
+<br><br>
+Они управляютя через  <a href="payloads.html">Диалог полезных нагрузок </a>.
+
+<h3>Процессоры полезной нагрузки </h3>
+Процессоры полезной нагрузки могут быть использованы для изменения определенных полезных нагрузок, прежде чем они будут представлены. 
+<br><br>
+Они  управляются
+через  <a href="processors.html">Диалог процессоров полезной нагрузки </a>.
+
+<h3>Процессоры местоположения Fuzz </h3>
+Процессоры местоположения Fuzz могут быть использованы для изменения всех полезных нагрузок, прежде чем они будут представлены. 
+<br><br>
+Они управляютя через  <a href="locations.html">Диалог процессоров местоположения </a>.
+
+<h3>Процессоры сообщений </h3>
+Message Processors can access and change the messages being fuzzed, control the fuzzing process, and interact with the ZAP UI.
+<br><br>
+Они  управляются
+через  <a href="dialogue.html">Диалог фаззера</a> «Процессоры сообщения» вкладка. 
+
+<p>
+Some of this functionality is based on code from the OWASP JBroFuzz project and includes files from the fuzzdb project.<br/>
+Note that some fuzzdb files have been left out as they cause common anti-virus scanners to flag them as containing viruses.<br/>
+You can replace them (and upgrade fuzzdb) by downloading the latest version of fuzzdb and expanding it in the 'fuzzers' library.
+</p>
+
+<h2>Смотрите также </h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="options.html">Экран параметров Фаззер</a></td></tr>
+</table>
+
+</body>
+</html>

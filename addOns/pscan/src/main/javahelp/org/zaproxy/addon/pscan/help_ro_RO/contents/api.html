@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>Passive Scanner API</TITLE>
+</HEAD>
+<BODY>
+	<H1>Passive Scanner API</H1>
+	The following operations are added to the API:
+
+	<h3>Actions</h3>
+	<ul>
+		<li>
+			clearQueue: Clears the passive scan queue.
+		</li>
+		<li>
+			disableAllScanners: Disables all passive scan rules.
+		</li>
+		<li>
+			disableAllTags: Disables all passive scan tags.
+		</li>
+		<li>
+			disableScanners (ids*): Disables passive scan rules.
+			<ul>
+				<li>ids: A comma separated list of scan rule IDs.</li>
+			</ul>
+		</li>
+		<li>
+			enableAllScanners: Enables all passive scan rules.
+		</li>
+		<li>
+			enableAllTags: Enables all passive scan tags.
+		</li>
+		<li>
+			enableScanners (ids*): Enables passive scan rules.
+			<ul>
+				<li>ids: A comma separated list of scan rule IDs.</li>
+			</ul>
+		</li>
+		<li>
+			setEnabled (enabled*): Sets whether or not the passive scanning is enabled (Note: the enabled state is not persisted).
+			<ul>
+				<li>enabled: The enabled state, true or false.</li>
+			</ul>
+		</li>
+		<li>
+			setMaxAlertsPerRule (maxAlerts*): Sets the maximum number of alerts a passive scan rule can raise.
+			<ul>
+				<li>maxAlerts: The maximum number of alerts.</li>
+			</ul>
+		</li>
+		<li>
+			setScanOnlyInScope (onlyInScope*): Sets whether or not the passive scan should be performed only on messages that are in scope.
+			<ul>
+				<li>onlyInScope: The scan state, true or false.</li>
+			</ul>
+		</li>
+		<li>
+			setScannerAlertThreshold (id* alertThreshold*): Sets the alert threshold of a passive scan rule.
+			<ul>
+				<li>id: The ID of the scan rule.</li>
+				<li>alertThreshold: The alert threshold: OFF, DEFAULT, LOW, MEDIUM and HIGH</li>
+			</ul>
+		</li>
+	</ul>
+
+	<h3>Views</h3>
+	<ul>
+		<li>currentTasks: Shows information about the passive scan tasks currently being run (if any).</li>
+		<li>maxAlertsPerRule: Gets the maximum number of alerts a passive scan rule should raise.</li>
+		<li>recordsToScan: The number of records the passive scanner still has to scan.</li>
+		<li>scanOnlyInScope: Tells whether or not the passive scan should be performed only on messages that are in scope.</li>
+		<li>scanners: Lists all passive scan rules with their ID, name, enabled state, and alert threshold.</li>
+	</ul>
+
+	<H2>See also</H2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="pscan.html">Passive Scanner</a></td>
+			<td>the introduction to Passive Scanner add-on</td>
+		</tr>
+	</table>
+
+</BODY>
+</HTML>

@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<title>
+Revisitar
+</title>
+</head>
+<body>
+<h1>Revisitar</h1>
+<p>
+¿Alguna vez has deseado ser capaz de navegar una aplicación que probaste con ZAP en un momento específico, quizás cuando no tienes acceso a ella, o después de que haya sido modificada de alguna forma?<br>
+Si es así ¡entonces este complemento es para ti!
+</p>
+<p>
+Este complemento te permite decirle a ZAP que devuelva el contenido del historial ZAP entre fechas específicas en lugar de redirigir las solicitudes al sitio-<br>
+Esto te permite aparentar que navegas y usas un sitio web al que ya no tienes acceso.<br>
+También te permite ver cómo se veía el sito en un momento específico, lo que es útil si la aplicación ha cambiado desde entonces.<br>
+<br>
+Cuando se regresan páginas desde el historial de ZAP, éstas se le insertan pies de página flotantes en el HTML para proveer una señal visual de que estas páginas se generan desde ZAP.<br>
+ZAP devolverá páginas que fueron el resultado de solicitudes tanto GET como POST siempre y cuando encuentre las que coincidan.<br>
+Las páginas solo coinciden si todos los parámetros URL y POST son los mismos, ignorando el pedido de cualquier token CSRF conocido.
+<br>
+Si no se consigue una página que coincida en el historial entonces devolverá un error 404 personalizado que incluirá vínculos a la misma página si esta ha sido invocada con parámetros distintos o fiera del periodo de tiempo especificado.<br>
+<br>
+Este complemento añade menus de clic derecho en el mapa del sitio:
+</p>
+<h3>Habilitar Revisitar</h3>
+Cuando se selecciona, un mensaje emergente aparecerá preguntando por los tiempos iniciales y finales que se utilizarán.<br>
+El tiempo de inicio se fija de forma predeterminada al momento de la primera solicitud en la sesión.<br>
+El tiempo de finalización se fija de forma predeterminada al momento de la última solicitud en la sesión.<br>
+Si cualquiera de los elementos de tiempo (por ejemplo "día del mes") no son cambiados, entonces esos elementos se deshabilitarán.<br>
+Si el botón OK del cuadro de dialogo se presiona entonces la funcionalidad de revisitar será habilitada para el sitio seleccionado, y un ícono de calendario será agregado al nodo del sitio en el árbol del historial.
+
+<h3>Deshabilitar Revisitar</h3>
+Cuando se selecciona, la funcionalidad de revisitar será deshabilitada para el sitio seleccionado.
+
+<h2>API</h2>
+El complemento es compatible con los siguientes puntos de conexión API:<br><br>
+revisit / view / revisitList devuelve la lista de sitios con revisitar habilitado<br>
+revisit / action / revisitSiteOn Activa revisitar para el sitio especificado.
+Las fechas deben tener el formato: "AAAA/MM/dd HH:mm:ss"<br> 
+revisit / action / revisitSiteOff  Deshabilita revisitar para el sitio especificado
+
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>
+        Тестирование контроля доступа 
+    </title>
+</head>
+<body>
+<h1>Тестирование контроля доступа </h1>
+
+<p>
+    Это дополнение позволяет пользователям сравнивать, какие части веб-приложения доступны для некоторых пользователей, осуществлять контроль доступа
+     тестирование и выявление потенциальных проблем с контролем доступа.  Он позволяет настраивать правила доступа и проводит полный
+     атака, направленная на выявление разделов веб-приложения, доступных для неавторизованных клиентов. 
+</p>
+
+<p>
+    Следует объяснить две основные концепции, связанные с этим дополнением: <b>правила доступа</b> и <b>тестирование.
+     процедура</b> .
+</p>
+
+<h2>Access Rules</h2>
+
+<p>
+    Чтобы выявить потенциальные проблемы с контролем доступа, ZAP должен знать, какие части веб-приложения
+     должен быть доступен для какого пользователя.  В ZAP эти правила называются <i>Правила доступа</i> и обычно имеют
+     значение: «<i>Страница A должна/не должна быть доступна пользователю X</i>». 
+</p>
+
+<p>Правила настроены для контекста, и для каждого пользователя этого контекста каждый узел сайта (веб-страница) будет
+     связано с одним из следующих значений: </p>
+<ul>
+    <li><b>Разрешено</b> - ресурс <b>может</b> быть доступен Пользователю, к которому относится правило. </li>
+    <li><b>Запрещено</b> - ресурс <b>не должен</b> быть доступен Пользователю, на которого ссылается правило. </li>
+    <li><b>Неизвестно</b> – <b>нет информации</b> о том, должен или не должен быть доступен ресурс.
+         Пользователю, к которому относится правило 
+    </li>
+</ul>
+
+<p>
+    Чтобы упростить процесс определения правил доступа, ZAP использует древовидную структуру URL-адресов. 
+    При анализе правил используется алгоритм вывода для обнаружения правил соответствия для каждого узла на основе его
+     parent в URL-адресе, если не определены конкретные правила.  Это означает, что при настройке правил доступа только 1
+     правило должно быть установлено явно для всего поддерева, в то время как для других узлов правила выводятся.  Подробнее
+     об этом можно узнать на странице справки <a href="contextOptions.html">Параметры контекста</a> контроля доступа. </td>
+</p>
+
+<h2>Testing procedure</h2>
+
+<p> В целом, чтобы полностью выполнить тестирование управления доступом для веб-приложения, следующие шаги должны быть
+     последовало: </p>
+<ul>
+    <li>тестер определяет набор Пользователей и то, как они аутентифицируются; 
+    </li>
+    <li>тестер определяет, как ZAP может идентифицировать неавторизованные запросы (через панель авторизации в сеансе
+         Характеристики); 
+    </li>
+    <li>веб-приложение исследуется либо вручную, либо через Паук; </li>
+    <li>тестер определяет правила доступа для каждого из пользователей, связанных с контекстом, в основном сообщая ZAP
+         какие части веб-приложения должны быть доступны тем или иным пользователям; 
+    </li>
+    <li>«атака» выполняется ZAP, пытаясь получить доступ к каждому URL-адресу веб-приложения с точки зрения каждого
+         Пользователь; 
+    </li>
+    <li>на соответствующей вкладке «Статус» отображаются результаты, показывающие, к каким страницам был успешно получен доступ
+         какие пользователи и отмечая случаи, когда правила доступа не соблюдались. 
+    </li>
+</ul>
+<strong>Примечание: </strong> Тестирование контроля доступа не допускается в  <code>Безопасный</code> режим ни  <code>Защищённый</code> если контекст не входит в область действия. 
+
+<h2 id="alerts">Alerts</h2>
+
+The following Alerts may be raised by the add-on:
+
+<h3 id="id-10101">Access Control Issue - Improper Authentication</h3>
+
+    Insufficient Authentication occurs when a web site permits an attacker to access sensitive content or functionality without 
+    having to properly authenticate. Web-based administration tools are a good example of web sites providing access to sensitive functionality. 
+    Depending on the specific online resource, these web applications should not be directly accessible without requiring the user to properly verify 
+    their identity.
+    <p>
+    Latest Code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/accessControl/src/main/java/org/zaproxy/zap/extension/accessControl/AccessControlScannerThread.java">AccessControlScannerThread.java</a>
+    <br>
+    Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10101/">10101</a>.
+
+<h3 id="id-10102">Access Control Issue - Improper Authorization</h3>
+
+    Insufficient Authorization results when an application does not perform adequate authorization checks to ensure that the user is performing a 
+    function or accessing data in a manner consistent with the security policy. Authorization procedures should enforce what a user, service or 
+    application is permitted to do. When a user is authenticated to a web site, it does not necessarily mean that the user should have full access 
+    to all content and functionality.
+    <p>
+    Latest Code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/accessControl/src/main/java/org/zaproxy/zap/extension/accessControl/AccessControlScannerThread.java">AccessControlScannerThread.java</a>
+    <br>
+    Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10102/">10102</a>.
+
+<h2>API</h2>
+
+Надстройка предоставляет следующие конечные точки API: 
+
+<h3>Действия</h3>
+	<h4>Сканировать</h4>
+	Запускает сканирование контроля доступа с заданным идентификатором контекста и идентификатором пользователя (может быть списком идентификаторов, разделенных запятыми).  
+	(Необязательные параметры: логическое значение, указывающее, следует ли включать неаутентифицированного пользователя (по умолчанию false), логическое значение
+определение того, выдаются ли предупреждения (по умолчанию — true), и уровень риска для предупреждений (по умолчанию — высокий).)
+[ <strong>Примечание: </strong>Это предполагает, что правила контроля доступа были ранее установлены через графический интерфейс ZAP, а необходимый контекст экспортирован/импортирован.] 
+
+	<h4>writeHTMLreport</h4>
+	Создает отчет об управлении доступом для данного идентификатора контекста и сохраняет его на основе предоставленного имени файла (пути). 
+
+<h3>Просмотры</h3>
+	<h4>getScanProgress</h4>
+	Получает ход сканирования контроля доступа (целое число в процентах) для данного идентификатора контекста. 
+
+	<h4>getScanStatus</h4>
+	Получает статус проверки контроля доступа (строка описания) для данного идентификатора контекста. 
+
+<h2>Смотрите также </h2>
+<table>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>
+            <a href="tab.html">Вкладка «Тестирование контроля доступа» </a></td>
+        <td>для описания вкладки состояния, используемой надстройкой </td>
+    </tr>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>
+            <a href="contextOptions.html">Параметры контекста управления доступом </a></td>
+        <td>чтобы узнать о связанных параметрах контекста </td>
+    </tr>
+</table>
+
+</body>
+</html>

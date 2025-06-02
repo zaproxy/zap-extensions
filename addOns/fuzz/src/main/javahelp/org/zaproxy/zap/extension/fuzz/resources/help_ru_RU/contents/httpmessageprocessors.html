@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+HTTP-сообщение
+Процессоров
+</title>
+</head>
+<body>
+<h1>HTTP-сообщения </h1>
+HTTP Message Processors can access and change the HTTP messages being fuzzed, control the fuzzing process, and interact with the ZAP UI.
+<p>
+Встроенные процессоры сообщений HTTP включают в себя: 
+
+<h3>Anti-CSRF Token Refresher </h3>
+Позволяет обновлять токены против CSRF, содержащиеся в запросе. Токены Anti-CSRF должны быть правильно обнаружены ZAP, чтобы иметь возможность
+Используйте этот процессор. <br>
+Для получения дополнительной информации обратитесь к странице справки «Начало работы»> «Особенности»> «Anti CSRF Tokens». <br>
+<strong>Примечание: </strong> Этот процессор автоматически добавляется в список процессоров, если были обнаружены токены против CSRF. 
+
+<h3>Fuzzer HTTP-процессор (скрипт) </h3>
+Позволяет выбрать включенный
+Фаззер HTTP-процессор сценарии.
+Сценарии позволяют: 
+<ul>
+<li>Получить список полезных нагрузок </li>
+<li>Остановить фаззинг</li>
+<li>Увеличьте количество ошибок </li>
+<li>Отправить новые сообщения </li>
+<li>Добавить сообщения на вкладку «Результаты» </li>
+<li> Установите пользовательские «state» сообщения в <a href="tab.html"> Фаззер вкладка</a></li>
+<li>Повышать оповещения </li>
+</ul>
+
+Сценарии могут включать в себя как требуемые, так и необязательные параметры, которые будут предложены значения, для которых пользователь будет предложено предоставить, когда процессор добавляется к фаззеру. 
+Имена параметров определены в скрипте (ах) через методы  <code>getRequiredParamsNames</code> и <code>getOptionalParamsNames</code>, каждый, из которых
+Просто верните массив строк, представляющих имена параметров. 
+
+<h3>Payload Reflection Detector</h3>
+Указывает в столбце состояний таблицы результатов, если одна из инъекционных полезных нагрузок была найдена в ответе, используя « <img src="images/reflected_icon.png"> Отражённые<br>
+<strong>Примечание: </strong> Этот процессор автоматически добавляется в список процессоров. 
+
+<h3>Запросить длину содержимого обновления </h3>
+Обновления (или добавляет, если еще не присутствуют)  <code>Длина содержимого (Content-Length)</code> Запросить заголовок с длиной тела запроса,
+Для всех методов запроса. Никаких изменений не выполняется, если размер тела запроса равен нулю, а заголовок еще не присутствует. <br>
+<strong>Примечание: </strong> Этот процессор автоматически добавляется в список процессоров. 
+
+<h3>Создатель тегов </h3>
+Allows to add custom ‘tags’, based on contents of the response, to the State column of the results table.
+
+<h3>Процессор сообщений пользователей</h3>
+Allows to fuzz as a user, using one of the users defined in the Contexts that include the HTTP message being fuzzed. Users must
+exist to be able to select and add this processor.
+
+<p>
+Другие надстройки могут определить дополнительные процессоры сообщений HTTP. 
+
+<h2>Доступ через </h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="dialogue.html">Фаззер Диалог </a> под вкладкой Процессоров Сообщений </td></tr>
+</table>
+
+<h2>Смотрите также </h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Концепции Фаззер</a></td></tr>
+</table>
+
+</body>
+</html>

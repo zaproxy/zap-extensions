@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+BeanShell Konsolu
+</title>
+</head>
+<body>
+<h1>Bean Shell Konsolu</h1>
+<p>
+	BeanShell, BeanShell komut dosyalarını yürütmek için kullanılabilen interaktif bir Java kabuğu. Bunlar komut dosyaları, Java sözdiziminden birçok öğe kullanan basitleştirilmiş bir Java formudur, ancak daha basit bir betik biçimidir. Tüm Java kodları da geçerli BeanShell kodudur.<br/> BeanShell entegrasyonu OWASP ZAP işlevleri ve veri kümesi kullanarak komut dosyası yazmanızı sağlar. Bu, web uygulamalarını analiz etmek için çok güçlü bir özellik olabilir.
+</p>
+<h2>BeanShell Konsolu</h2>
+<p>
+	Konsol Araçlar menüsünden başlatılır ve üst yarısı etkileşimli BeanShell konsolu ve alt yarısı basit bir metin düzenleyicisi olan bölünmüş bir ekran içerir. Karmaşık komut dosyaları için Java editörü kullanmanızı tavsiye ediyoruz. Komut dosyaları yüklenebilir, kaydedilebilir ve editörden değerlendirilebilir.
+	BeanShell başladığında ZAP'tan birkaç obje kullanabilirsiniz, şöyle ki:
+	<ul>
+	<li><i> Model </> adlı nesne vasıtasıyla <i> Model </></li>
+	<li>site Ağacı site nesnesi aracılığıyla mevcut sitelerin ağacı</li>
+	<li>şunun bir örneği <pre>Http Göndericisi</pre> aracılığıyla <i>gönderen</i> nesne</li>
+	</ul>
+	BeanShell'in esnek bir şekilde yazılmış olduğuna dikkat edin. Bu sebeple, değişkenleri kullanmadan önce bildirim yapmak gerekli değildir - bu komut dosyaları normal Java'ya göre biraz daha özlü yapar. Elbette ki, türünü tanımlamak istiyorsanız yapabilirsiniz.
+</p>
+<h2>Site Haritası Kullanımı</h2>
+<p>
+	Yararlı ve tipik bir şeyle başlayalım: Tüm site düğümlerinin tekrarını yapın ve dosyanın olup olmadığını kontrol edin. Bunu gerçekleştiren bir komut dosyası oluşturulmuştur,yükleyi seçin ve example.tree.bsh dosyasını seçiniz. Değerlendir'e tıklamadan önce, ilk olarak ağacı doldurmak için ZAP yardımı ile bir siteye göz atın:
+	<br/><br/>
+	Şimdi, düzenleyicideki betiği yürütmek için değerlendirmeye tıklayın. Herhangi bir hata yoksa, 
+hemen şu komutları kullanarak komut dosyasında tanımlanmış nesneyi kullanmaya başlayabilirsiniz:
+	<pre>
+	t = Tree();
+	</pre>
+	Yeni bir Ağaç nesnesi ortaya çıkartır ve oluşturduğu t'ye referans olarak atar.
+	<pre>
+	t.find(sites.getRoot(), "index.html");
+	</pre>
+	T üstünde bulunan arama yöntemini çağırın, bu SiteNode'u ilk olarak argüman ve ikinci olarak bir kaynak olarak alır. Bu koşulda,yöntem ağacın tüm düğümleri boyunca tekrarlanacaktır,çünkü kökten başladık ve index.html dosyalarını bulacağız.
+	<br/><br/>
+	Tüm düğümlerde bunu tekrarlamak yerine, findChild yöntemi sayesinde belirli bir düğüm başlatmayı seçebiliriz, örn:
+	<br/><br/>
+	Bu, ZAP içindeki BeanShell'in gücü konusunda bizlere fikir verecektir. Fakat tam olarak faydalanmak için dahili API ve BeanShell'in özelliklerini kullanmayı öğrenmemiz gerekecektir. BeanShell, bütün iç obje ve yöntemlere-hatta özel olanlara bile- tam erişime izin verecek şekilde kurulmuştur.
+</p>
+<h2>Basit HTTP İsteği</h2>
+<p>
+	Bir sonraki örnekte, etkileşimli konsolda doğrudan doğruya bir HTTP isteği oluşturup gönderiyoruz: BeanShell'in gücünü tamamıyla kullanmak için, ZAP içeriklerine hakim olmalısınız.
+	Gönderen nesne Manuel İstek Editörü tarafından kullanılanla aynıdır. Bu sebeble ZAP yapılandırılmasında ki belirlenmiş proxy ayarlarını otomatik olarak alır.
+	TODO: POSTA Örneği
+</p>
+<h2>İpuçları</h2>
+<p>
+	Belirtilen değişkenleri, yöntemleri veya nesneleri ayırmak için unset (String) komutunu kullanın. Bu geçerli isim alanında yöntem bildirimi değişikliği yapmak istiyorsanız kullanışlıdır. Komutun bir nesne değil seri argümanı aldığına dikkat edin, yani yukarıda kullandığımız t nesnesinin ayarını kaldırmak için, unset(“t”);not ve unset(t); olmalıdır
+</p>
+<p>
+	Orijinal belge: Stephen de Veries
+</p>
+
+</body>
+</html>

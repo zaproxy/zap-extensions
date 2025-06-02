@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Aba do Console de Script</title>
+</head>
+<body>
+<h1>Aba do Console de Script</h1>
+<p>
+O Console de Scripts permite que você escreva scripts que são executados dentro do ZAP.<br/>
+Ele é composto de:
+<ul>
+<li>Uma barra de ferramentas</li>
+<li>A text area (top) in which you can write your scripts</li>
+<li>An output text area (bottom) for debug and error messages, with "print" statements.</li>
+</ul>
+To create a new script or to load or switch scripts see the <a href="tree.html">Aba da Árvore de Scripts</a>.
+<p>
+Right-click in the script area for display and editing options.
+<p>
+In ZAP versions after 2.7.0 if the script currently displayed in the console is changed by another program then you 
+will be given the option to keep the script in the console or replace it with the changed script.<br>
+If a script is changed by another program when it is not being displayed and has not previously been changed in the script console 
+then that script will be loaded and the new contents will be used when the script is run.
+<p>
+Templates can be viewed in the console but cannot be edited.<br/>
+
+<h2>Toolbar Buttons</h2>
+
+<h3>Save Script</h3>
+This button allows you to save the script currently displayed in the console to a file.<br/>
+The shortcut `ctrl+S` (or `cmd+S` on macOS) may also be used for this purpose.<br/>
+
+<h3>Enable / Disable Script</h3>
+This button may be used to enable or disable the script currently displayed in the console.<br/>
+
+<h3>Run and Stop Buttons</h3>
+You can run 'Stand Alone' scripts using the 'Run' button on the tab toolbar.<br/>
+All other types of scripts will be run when enabled or if explicitly invoked.<br/>
+
+<h3>Auto-complete</h3>
+The console supports a limited form of auto-complete, controlled by a button on the toolbar.<br/>
+When enabled a popup will be shown when you type the name of one of the defined parameters followed by a dot -
+this will show you all of the methods available for you to call. 
+Selecting one of them will insert the method and parameters into your script.
+If you type another dot immediately after the method call then you will be shown another prompt for the methods
+available to the return type, if any. You will be able to keep expanding the types returned until you start typing something else.
+ 
+
+<h2>See also</h2>
+<table>
+<tr>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+	<td><a href="scripts.html">The Scripts add-on</a></td><td></td>
+</tr>
+<tr>
+    <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+	<td><a href="tree.html">The Scripts 'tree' tab</a></td><td></td>
+</tr>
+</table>
+
+</body>
+</html>

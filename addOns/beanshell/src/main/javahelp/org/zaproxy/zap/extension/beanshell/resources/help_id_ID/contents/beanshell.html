@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Kacang Shell Console
+</title>
+</head>
+<body>
+<h1>Kacang Shell Console</h1>
+<p>
+	BeanShell adalah sebuah shell Java interaktif yang bisa digunakan untuk mengeksekusi skrip BeanShell. Skrip ini adalah bentuk Java yang disederhanakan yang menggunakan banyak elemen dari sintaks Java, namun lebih sederhana format scripting. Semua kode Java juga merupakan kode BeanShell yang valid.<br/>
+	Integrasi BeanShell di dalam OWASP ZAP memungkinkan anda untuk menulis skrip menggunakan fungsi ZAP dan
+	data set. Ini bisa menjadi fitur yang sangat kuat untuk menganalisa aplikasi web.
+</p>
+<h2>Konsol BeanShell</h2>
+<p>
+	Konsol dimulai dari menu alat, dan berisi layar split dimana bagian atas adalah
+konsol BeanShell interaktif dan separuh bawahnya adalah editor teks sederhana. Untuk naskah yang kompleks, kamu didorong untuk menggunakan editor Java. Skrip dapat dimuat, disimpan dan dievaluasi melalui editor.
+	Ketika BeanShell memulai sejumlah objek dari ZAP yang tersedia untuk digunakan, dinamakan:
+	<ul>
+	<li><i>Model</i> tunggal, melalui objek yang bernama <i>model</i></li>
+	<li><i>SiteTree</i> pohon dari situs saat ini melalui objek <i>sites</i></li>
+	<li>suatu instansi dari <pre>HttpSender</pre> melalui <i>pengirim</i> objek</li>
+	</ul>
+	Perhatikan bahwa BeanShell diketik dengan bebas. Oleh karena itu, tidak perlu mendeklarasikan variabel sebelumnya menggunakannya - ini membuat skrip sedikit lebih ringkas dari pada Java biasa. Namun tentu saja jika anda mau menentukan tipe yang anda bisa.
+</p>
+<h2>Menggunakan Peta Situs</h2>
+<p>
+	Mari kita mulai dengan sesuatu yang berguna dan khas: iterate melalui semua node situs dan periksa adanya sebuah berkas. Script yang telah dibuat untuk menyelesaikan hal ini, pilih Load dan pilih
+contoh.pohon.bsh file. Sebelum mengklik Mengevaluasi, pertama kali browsing ke sebuah situs melalui ZAP untuk mengisi pohon:
+	<br/><br/>
+	Sekarang klik evaluasi untuk mengeksekusi skrip yang ada pada penyunting. Jika tidak ada kesalahan, maka sekarang anda bisa memulai penggunaan objek yang didefinisikan dalam skrip dengan mengeluarkan perintah sebagai berikut:
+	<pre>
+	t = Tree();
+	</pre>
+	Yang membangun sebuah Pohon baru objek dan memberikan referensi untuk t.
+	<pre>
+	t.menemukan(sites.getRoot(), "index.html");
+	</pre>
+	Panggil metode pencarian pada t, dimana mengambil SiteNode sebagai pendapat pertama dan sumber daya untuk menemukan yang kedua. Dalam kasus ini, metode tersebut akan mengiterasi melalui semua node di dalam pohon, karena kita memulainya di
+	akar, dan akan mencari berkas index.html.
+	<br/><br/>
+	Daripada mengiterasi melalui semua node, kita dapat memilih untuk memulai sebuah node yang ditentukan dengan menggunakan
+	metode findChild contoh:
+	<br/><br/>
+	Ini seharusnya memberi anda beberapa ide tentang kekuatan BeanShell di ZAP. Namun untuk memanfaatkannya sepenuhnya, anda harus membiasakan diri anda dengan API internal dan fitur BeanShell. BeanShell telah ditetapkan sehingga memungkinkan akses penuh ke semua objek dan metode internal - bahkan yang pribadi sekalipun.
+</p>
+<h2>Permintaan HTTP Sederhana</h2>
+<p>
+	Pada contoh selanjutnya, kami membuat dan mengirim permintaan HTTP langsung di konsol interaktif: Untuk memanfaatkan kekuatan BeanShell sepenuhnya, anda seharusnya dapat membiasakan diri anda dengan internal ZAP.
+	Objek pengirim adalah contoh yang sama seperti yang digunakan oleh Permintaan Penyunting Manual dan oleh sebab itu akan secara otomatis menggunakan pengaturan proxy yang diatur dalam konfigurasi ZAP.
+	<br/><br/>
+	TODO: contoh POST
+</p>
+<h2>Tips</h2>
+<p>
+	Gunakan perintah unset(String) untuk membatalkan aturan pada variabel yang dideklarasikan, metode atau objek. Hal ini berguna jika anda ingin mengganti metode deklarasi di saat namespace. Catatan bahwa perintah tersebut mengambil sebuah
+	argumen String, bukan sebuah Object, jadi untuk membatalkan aturan objek t yang kita gunakan di atas, seharusnya: unset(“t”); dan
+	bukan unset(t);
+</p>
+<p>
+	Dokumen asli oleh: Stephen de Vries
+</p>
+
+</body>
+</html>

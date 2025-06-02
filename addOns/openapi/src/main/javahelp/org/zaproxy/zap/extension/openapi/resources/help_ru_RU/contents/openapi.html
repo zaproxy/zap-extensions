@@ -1,0 +1,117 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Поддержка OpenAPI 
+</title>
+</head>
+<body>
+<h1>Поддержка OpenAPI </h1>
+Это дополнение позволяет просматривать и импортировать определения OpenAPI (Swagger) версий 1.2, 2.0 и 3.0. 
+<br>
+<strong>Примечание: </strong> Генерация содержимого XML в настоящее время не поддерживается. 
+<br><br>
+Надстройка автоматически обнаружит любые определения OpenAPI и просканирует их, пока они находятся в области действия. 
+<br><br>
+Он также поддерживает  <a href="automation.html">Платформа автоматизации </a>.
+
+<h2>Интерфейс</h2>
+A menu item is added to the Import menu:
+<ul>
+<li>Import an OpenAPI definition</li>
+</ul>
+The dialogue allows overriding the server URL present in the OpenAPI definition (or specify one if not present) through the Target URL field.
+The import progress is shown in the progress tab.
+
+<h3>Context</h3>
+The dialogues also allow selecting a Context, optionally. If a context is selected,
+<ul>
+    <li>each imported endpoint is included in the context, unless its URL matches an already existing <em>Include in Context</em> regex entry.</li>
+    <li>the imported spec is saved to the session database</li>
+    <li>data driven nodes are generated for endpoints with path parameters</li>
+</ul>
+<strong>Note:</strong> Endpoints excluded by the Context will not be imported.
+
+<h3>User</h3>
+The dialogues also allow selecting a User, optionally, to do authenticated imports.
+
+<h3>Target URL Format</h3>
+The Target URL has the following format:<br>
+<code>scheme://authority/path</code><br>
+with all URI components optional. Note: while all URI components are optional the scheme and authority become mandatory when not importing from URL and the definition does not specify them (for example, it has no servers or schemes).<br>
+Following some examples, overriding:
+<ul>
+<li>The authority and path: <code>localhost/api/</code></li>
+<li>Just the scheme: <code>https://</code></li>
+<li>Just the authority: <code>qa.example.com:9090</code></li>
+<li>Just the path: <code>/dev/v3/</code></li>
+</ul>
+
+<h2>API</h2>
+The following operations are added to the API:
+<ul>
+<li>ACTION importFile (file, target, contextId, userId)</li>
+<li>ACTION importUrl (url, hostOverride, contextId, userId)</li>
+</ul>
+Both <code>Цель</code> and <code>hostOverride</code> support the <code>Целевой URL </code> format explained earlier.
+
+The definitions will be imported synchronously and any warnings will be returned.
+
+<h2>Data Driven Nodes</h2>
+When the OpenAPI definition contains path parameters, and a context is specified during importing, the add-on will
+automatically generate data driven nodes. If no context is specified, no data driven nodes are generated.
+
+For example, the following OpenAPI definition will result in at least one data driven node.
+
+<pre>
+    ...
+    /users/v1/{username}/email:
+      ...
+      parameters:
+        - name: username
+          in: path
+          description: username to update email
+          required: true
+          schema:
+            type: string
+    ...
+</pre>
+
+The following nodes are added to the Sites Tree for the above endpoint:
+<pre>
+Sites
+└── http://example.com
+    └── users
+        └── v1
+            └── «username»
+                └── email
+</pre>
+
+The imported OpenAPI definition is persisted to the session database. When the session is reloaded, the definition is
+used to generate the data driven nodes and mark them for future requests.
+
+<h2>Command Line</h2>
+The following Command Line options are added:
+<ul>
+<li>-openapifile &lt;filename&gt;  : Imports an OpenAPI definition from the specified file name</li>
+<li>-openapiurl &lt;url&gt;  : Imports an OpenAPI definition from the specified URL</li>
+<li>-openapitargeturl &lt;url&gt;  : The Target URL, to override the server URL present in the OpenAPI definition</li>
+</ul>
+
+The definitions will be imported synchronously and any warnings will be displayed on the command line.
+
+<h2>User Specified Values</h2>
+Default values are used when importing OpenAPI definitions.<br>
+These can be overridden using the Form Handler add-on which allows you to specify your own values.<br>
+In most cases these will be simple values (like strings and integers) but in some cases you may need to specify structured values,
+e.g. <pre>{ "id": 0, "name": "Freda" }</pre>
+
+<h2>Statistics</h2>
+The add-on maintains the following statistics:
+<ul>
+    <li>openapi.urls.added : The total number of URLs added when importing OpenAPI definitions</li>
+</ul>
+
+</body>
+</html>

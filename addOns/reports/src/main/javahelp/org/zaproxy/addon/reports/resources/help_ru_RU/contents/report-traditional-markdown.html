@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>Traditional Markdown Report</TITLE>
+</HEAD>
+<BODY>
+	<H1>Традиционный отчет уценки</H1>
+
+	<H3>Образец</H3>
+	<H4>
+		Header
+		<code>Risk (Confidence)</code>
+	</H4>
+	This header is a combination identifier, showing Risk followed by
+	Confidence. For example
+	<code>High (Medium)</code>
+	, would indicate a High risk issue identified with Medium confidence.
+	<pre>
+
+# ZAP by Checkmarx Scanning Report
+
+## Summary of Alerts
+
+| Risk Level | Number of Alerts |
+| --- | --- |
+| High | 2 |
+| Medium | 4 |
+| Low | 8 |
+| Informational | 6 |
+
+## Alerts
+
+| Name | Risk Level | Number of Instances |
+| --- | --- | --- |
+| Anti-CSRF Tokens Check | High | 10 |
+| Cross Site Scripting (Reflected) | High | 2 |
+| Buffer Overflow | Medium | 529 |
+| Content Security Policy (CSP) Header Not Set | Medium | 58 |
+| Example Passive Scan Rule: Denial of Service | Medium | 7 |
+| X-Frame-Options Header Not Set | Medium | 55 |
+| Absence of Anti-CSRF Tokens | Low | 73 |
+| Application Error Disclosure | Low | 1 |
+| Cookie No HttpOnly Flag | Low | 1 |
+| Cookie without SameSite Attribute | Low | 2 |
+| In Page Banner Information Leak | Low | 3 |
+| Information Disclosure - Debug Error Messages | Low | 1 |
+| Permissions Policy Header Not Set | Low | 59 |
+| X-Content-Type-Options Header Missing | Low | 62 |
+| Information Disclosure - Suspicious Comments | Informational | 58 |
+| Loosely Scoped Cookie | Informational | 3 |
+| Modern Web Application | Informational | 33 |
+| Non-Storable Content | Informational | 2 |
+| Storable and Cacheable Content | Informational | 64 |
+| User Controllable HTML Element Attribute (Potential XSS) | Informational | 32 |
+
+## Alert Detail
+
+### [ Anti-CSRF Tokens Check ](https://www.zaproxy.org/docs/alerts/20012/)
+
+##### High (Medium)
+
+### Description
+
+A cross-site request forgery is an attack that involves forcing a victim to send an HTTP request to a target destination without their knowledge or intent in order to perform an action as the victim. The underlying cause is application functionality using predictable URL/form actions in a repeatable way. Суть атаки заключается в том, что CSRF использует доверие веб-сайта к пользователю.  Напротив, межсайтовый скриптинг (XSS) использует доверие пользователя к веб-сайту.  Как и XSS, CSRF-атаки не обязательно являются межсайтовыми, но могут быть таковыми.  Подделка межсайтовых запросов также известна как CSRF, XSRF, атака в один клик, сессионная езда, запутанный заместитель и морской прибой. 
+
+Атаки CSRF эффективны в ряде ситуаций, в том числе:
+     * Жертва имеет активный сеанс на целевом сайте. 
+    * Жертва аутентифицируется через HTTP-аутентификацию на целевом сайте. 
+    * Жертва находится в той же локальной сети, что и целевой сайт. 
+
+CSRF в основном использовался для выполнения действий против целевого сайта с использованием привилегий жертвы, но недавно были обнаружены методы раскрытия информации путем получения доступа к ответу.  Риск раскрытия информации резко возрастает, когда целевой сайт уязвим для XSS, потому что XSS может использоваться как платформа для CSRF, позволяя атаке действовать в рамках политики того же происхождения. 
+
+* URL: http://localhost:8080/bodgeit/advanced.jsp
+  * Method: `GET`
+  * Parameter: ``
+  * Attack: ``
+  * Evidence: `&lt;form id="advanced" name="advanced" method="POST" onsubmit="return validateForm(this);false;"&gt;`
+  * Other Info: ``
+* URL: http://localhost:8080/bodgeit/advanced.jsp
+  * Method: `GET`
+  * Parameter: ``
+  * Attack: ``
+  * Evidence: `&lt;form id="query" name="advanced" method="POST"&gt;`
+  * Other Info: ``
+* URL: http://localhost:8080/bodgeit/basket.jsp
+  * Method: `GET`
+  * Parameter: ``
+  * Attack: ``
+  * Evidence: `&lt;form action="basket.jsp" method="post"&gt;`
+  * Other Info: ``
+
+</pre>
+
+</BODY>
+</HTML>
+

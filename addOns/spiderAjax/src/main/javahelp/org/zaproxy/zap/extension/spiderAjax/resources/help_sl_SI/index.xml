@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE index
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Index Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/index_2_0.dtd">
+
+<index version="2.0">
+    <indexitem text="AJAX pajek" target="addon.spiderajax.concepts" />
+    <indexitem text="AJAX Spider automation" target="addon.spiderajax.automate"/>
+    <indexitem text="AJAX Spider dialog" target="addon.spiderajax.dialog"/>
+    <indexitem text="AJAX Spider tab" target="addon.spiderajax.tab"/>
+</index>

@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Fuzzing
+</title>
+</head>
+<body>
+<h1>Fuzzing</h1>
+<p>
+Fuzzing is a technique of submitting lots of data to a target (often in the form of invalid or unexpected inputs).
+</p>
+<p>
+ZAP allows you to fuzz any request using:
+<ul>
+<li>A built-in set of payloads</li>
+<li>İsteğe bağlı eklentiler tarafından tanımlanan yükler</li>
+<li>Özel komut dosyaları</li>
+</ul>
+</p>
+Şuna erişim için <a href="dialogue.html">Fuzzer penceresi</a> birini yapabilirsiniz:
+<ul>
+<li>ZAP sekmelerinden birinde (Geçmiş veya Siteler gibi) bir istemi sağ tıklayın ve şunu seçin “Attack / Fuzz…"</li>
+<li>İstek sekmesinde bir dizi belirleyin, ona sağ tıklayın ve "Fuzz…" u seçin</li>
+<li>"Tools / Fuzz..." menü öğesini seçin ve sonra fuzz işlemini yapmak istediğiniz isteği seçin</li>
+</ul>
+
+<h3>Yük Jeneratörleri</h3>
+Payload Generators generate the raw values or attacks that the fuzzer submits to the target application.
+<br><br>
+Onlar aracılığıyla yönetilirler <a href="payloads.html">Yük taşıma diyaloğu</a>.
+
+<h3>Yükleme İşlemcileri</h3>
+Yük Yükü İşlemcileri, belirli yükleri gönderilmeden önce değiştirmek için kullanılabilir.
+<br><br>
+Onlar aracılığıyla yönetilirler <a href="processors.html">Payload İşlemcileri iletişim kutusu</a>.
+
+<h3>Fuzz Konum İşlemcileri</h3>
+Fuzz Location Processors, gönderilen tüm yükleri değiştirmeden önce kullanılabilir.
+<br><br>
+Onlar aracılığıyla yönetilirler <a href="locations.html">Konum İşlemcileri iletişim kutusu</a>.
+
+<h3>Mesaj İşlemcileri</h3>
+Message Processors can access and change the messages being fuzzed, control the fuzzing process, and interact with the ZAP UI.
+<br><br>
+Onlar aracılığıyla yönetilirler <a href="dialogue.html">Fuzzer diyaloğu</a> 'Mesaj İşlemcileri' sekmesi.
+
+<p>
+Some of this functionality is based on code from the OWASP JBroFuzz project and includes files from the fuzzdb project.<br/>
+Note that some fuzzdb files have been left out as they cause common anti-virus scanners to flag them as containing viruses.<br/>
+You can replace them (and upgrade fuzzdb) by downloading the latest version of fuzzdb and expanding it in the 'fuzzers' library.
+</p>
+
+<h2>Ayrıca bakınız</h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="options.html">Fuzzer seçenekleri ekranı</a></td></tr>
+</table>
+
+</body>
+</html>

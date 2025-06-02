@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Zorunlu Göz Atma Seçenekleri Ekranı</title>
+</head>
+<body>
+	<h1>Zorla Göz At ayarlar ekranı</h1>
+	<p>
+		This screen allows you to configure the <a href="concepts.html">Forced Browse</a>
+		options:
+	<h3>Concurrent scanning threads per host</h3>
+	The number of threads the scanner will use per host.
+	<br> Increasing the number of threads will speed up the scan but may put extra
+	strain on the computer ZAP is running on and the target host.
+
+	<h3>Recursive</h3>
+	If checked then the scanner will recurse through all of the sub-directories found.
+	<br>Bu uzun zaman alabilir.
+
+	<h3>Default file</h3>
+	The default file selected when ZAP starts.
+
+	<h3>Add custom Forced Browse file</h3>
+	Allows you to add your own files to be used when brute forcing files and directories.
+	<br>Bunlar her satırda bir dosya veya dizin adı olan metin dosyaları olmaldır.
+	<br> Dosyalar, ZAP girişinin altındaki 'dirbuster' dizinine dahil edilir.
+
+    <h3>Force Browse files without extension</h3>
+    If selected then in addition to brute forcing directories, files without extension will also be brute forced.
+    <br> The URI of the file to be brute forced is derived by appending to the base path the entries of the selected forced browse text file.
+    <br> By default this option is unchecked.
+    <br> Enabling this will increase the scanning time.
+
+	<h3>Force Browse files</h3>
+	If checked then in addition to brute forcing directories, the files will also be brute forced.
+    <br> The URI of the file to be brute forced is derived by appending given extensions to the entries of selected forced browse text file.
+    <br> Users do not need to worry whether the entry already ends with an extension or not. The conflict is handled internally.
+    <br> By default this option is unchecked.
+    <br> Enabling this will increase the scanning time.
+    
+    <h3>File extensions</h3>
+    If Force Browse files option is checked, then you can specify the file extensions that need to be brute forced.
+    <br> When specifying multiple extensions separate each extension with a comma(,).
+    <br> If no value is specified, "php" will be used as the default extension.
+    
+    <h3>File extensions to ignore</h3>
+    The scanner parses the response body to filter existing links.
+    <br> The extracted links are then used to make new requests.
+    <br> If file extensions to ignore is specified then links ending with those extensions are ignored from making requests.
+    <br> When specifying multiple extensions separate each extension with a comma(,).
+    <br> By default, this is set to "jpg, gif, jpeg, ico, tiff, png, bmp".
+    
+    <h3>Fail Case String</h3>
+    The scanner will request for every file type in every directory that it finds with the given fail case string appended.
+    <br> The response from this page is used to determine whether or not a guessed file/directory is there.
+    <br> By default, this is set to "thereIsNoWayThat-You-CanBeThere".
+    <br> If you’re getting strange results, consider changing this.
+  
+</body>
+</html>

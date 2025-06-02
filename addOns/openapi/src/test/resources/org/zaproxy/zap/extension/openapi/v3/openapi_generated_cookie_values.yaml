@@ -1,0 +1,52 @@
+openapi: 3.0.0
+servers:
+  - url: http://localhost:@@@PORT@@@/
+paths:
+  /parameters/cookie/boolean:
+    get:
+      operationId: parameters/cookie/boolean
+      parameters:
+      - in: cookie
+        name: Name
+        schema:
+          type: boolean
+      responses:
+        default:
+          content:
+            text/plain: {}
+  /parameters/cookie/integer:
+    get:
+      operationId: parameters/cookie/integer
+      parameters:
+      - in: cookie
+        name: Name
+        schema:
+          type: integer
+      responses:
+        default:
+          content:
+            text/plain: {}
+  /parameters/cookie/number:
+    get:
+      operationId: parameters/cookie/number
+      parameters:
+      - in: cookie
+        name: Name
+        schema:
+          type: number
+      responses:
+        default:
+          content:
+            text/plain: {}
+  /parameters/cookie/string:
+    get:
+      operationId: parameters/cookie/string
+      parameters:
+      - in: cookie
+        name: Name
+        schema:
+          type: string
+      responses:
+        default:
+          content:
+            text/plain: {}

@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<title>
+主动扫描规则 - alpha 版
+</title>
+</head>
+<body>
+<h1>主动扫描规则 - alpha 版</h1>
+本插件包含以下alpha版本的主动扫描规则：
+
+<h2>一个从文件加载数据的主动扫描规则示例</h2>
+该示例实现了一个主动扫描规则，从一个用户可以编辑的文件中加载字符串。<br>
+更多详情，请参阅： 
+<a href="https://www.zaproxy.org/blog/2014-04-30-hacking-zap-4-active-scan-rules/">Hacking ZAP 第 4 部分：主动扫描规则</a>.
+<p>
+最新代码: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/ExampleFileActiveScanRule.java">ExampleFileActiveScanRule.java</a>
+
+<h2>主动扫描规则示例： 拒绝服务</h2>
+这实现了一个非常简单的主动扫描规则示例。<br>
+更多详情，请参阅：
+<a href="https://www.zaproxy.org/blog/2014-04-30-hacking-zap-4-active-scan-rules/">Hacking ZAP 第 4 部分：主动扫描规则</a>.
+<p>
+最新代码: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/ExampleSimpleActiveScanRule.java">ExampleSimpleActiveScanRule.java</a>
+
+<h2 id="id-40015">LDAP 注入</h2>
+可能存在LDAP 注入。 攻击者有可能绕过身份验证控制，查看和修改 LDAP 目录中的任意数据。
+跳过最初导致客户端或服务器错误响应状态代码的信息。
+<p>
+最新代码: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/LdapInjectionScanRule.java">LdapInjectionScanRule.java</a>
+<br>
+警报 ID: <a href="https://www.zaproxy.org/docs/alerts/40015/">40015</a>.
+
+<h2 id="id-40033">NoSQL 注入 - MongoDB</h2>
+此规则尝试识别特定于 MongoDB 的 NoSQL 注入漏洞。 它尝试各种类型的攻击，包括：基于布尔 (boolean)的攻击、基于错误的攻击、基于时间的攻击和绕过身份验证的攻击。 
+它不包括基于时间的攻击。 如果扫描配置为包括 JSON 参数变体，它还会尝试 JSON 参数特定负载。
+<p>
+最新代码: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/MongoDbInjectionScanRule.java">MongoDbInjectionScanRule.java</a>
+<br>
+警报 ID: <a href="https://www.zaproxy.org/docs/alerts/40033/">40033</a>.
+
+<h2 id="id-90039">NoSQL 注入 - MongoDB（基于时间）</h2>
+此规则尝试仅使用基于时间的攻击来识别 MongoDB 特定 NoSQL 注入漏洞。
+<p>
+最新代码： <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/MongoDbInjectionTimingScanRule.java">MongoDbInjectionTimingScanRule.java</a>
+<br>
+警报 ID: <a href="https://www.zaproxy.org/docs/alerts/90039/">90039</a>.
+
+<h2 id="id-40039">Web缓存欺骗</h2>
+此规则尝试识别 Web 缓存欺骗漏洞。它会检查附加到原始 URI 的静态路径是否可用于泄漏敏感的用户信息。
+<ul>
+    <li>使用此规则前，用户必须通过身份验证</li>
+</ul>
+最新代码： <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/WebCacheDeceptionScanRule.java">WebCacheDeceptionScanRule.java</a>
+<br>
+警报 ID: <a href="https://www.zaproxy.org/docs/alerts/40039/">40039</a>.
+
+</body>
+</html>

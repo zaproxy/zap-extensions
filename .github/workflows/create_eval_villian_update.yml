@@ -1,0 +1,44 @@
+name: Create Eval Villain Update PR
+
+on:
+  schedule:
+    - cron:  '0 3 2 * *'
+  workflow_dispatch:
+
+jobs:
+  create_pr:
+    name: Create Pull Request
+    runs-on: ubuntu-latest
+    steps:
+    - name: Build Feature Branch and Raise PR
+      run: |
+        # Setup git details
+        export GITHUB_USER=zapbot
+        git config --global user.email "12745184+zapbot@users.noreply.github.com"
+        git config --global user.name $GITHUB_USER
+        # Download extension and Clone repo
+        curl -L https://addons.mozilla.org/firefox/downloads/latest/eval-villain/addon-3904727-latest.xpi --output eval_villain-latest-fx.xpi
+        git clone -o upstream https://github.com/zaproxy/zap-extensions.git
+        cd zap-extensions
+        git remote add origin https://github.com/$GITHUB_USER/zap-extensions.git
+        # Setup env vars for later
+        BRANCH="eval-villian-update"
+        SHORT_DATE="$(date +"%Y-%m-%d")"
+        export GITHUB_TOKEN=${{ secrets.ZAPBOT_TOKEN }}
+        # Build the feature branch
+        git checkout -b $BRANCH
+        rm -rf addOns/evalvillain/src/main/zapHomeFiles/selenium/extensions/*.xpi
+        cp -f ../eval_villain-latest-fx.xpi addOns/evalvillain/src/main/zapHomeFiles/selenium/extensions/eval_villain-latest-fx.xpi
+        ## Update the index to be sure git is aware of changes
+        git update-index -q --refresh
+        ## If there are changes: comment, commit, PR
+        if ! git diff-index --quiet HEAD --; then
+          ./gradlew :addOns:evalvillain:updateChangelog --change="- Updated with new version of Eval Villain."
+          ./gradlew :aO:evalvillain:prepareRelease
+          git remote set-url origin https://$GITHUB_USER:$GITHUB_TOKEN@github.com/$GITHUB_USER/zap-extensions.git
+          git add .
+          git commit -m "Eval Villain Update $SHORT_DATE" -m "Updates based on https://addons.mozilla.org/firefox/addon/eval-villain/" --signoff
+          git push --set-upstream origin $BRANCH --force
+          # Open the PR
+          gh pr create -f
+        fi

@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Ang pagpapatunay na mga istatistika
+</title>
+</head>
+<body>
+<h1>Ang pagpapatunay na mga istastika</h1>
+Ang add-on na ito na mga talaan na pagpapatunay na kaugnay sa mga istatistika para sa lahat ng mga konteksto na nasa scope.<br>
+Ang mga istatistika na natala sa bawat site basis at cover:
+<table>
+<tr><td>stats.auth.<i>component</i>.state.noauth</td><td>The context does not have an authentication method</td></tr>
+<tr><td>stats.auth.<i>component</i>.state.nothtml</td><td>Non HTML responses (which are unlikely to have logged in/out indicators)</td></tr>
+<tr><td>stats.auth.<i>component</i>.state.notsuccess</td><td>Unsuccessful HTML responses (which are unlikely to have logged in/out indicators)</td></tr>
+<tr><td>stats.auth.<i>component</i>.state.noindicator</td><td>No logged in/out indicators have been defined</td></tr>
+<tr><td>stats.auth.<i>component</i>.state.loggedinandout</td><td>Both the logged in and out indicators present</td></tr>
+<tr><td>stats.auth.<i>component</i>.state.loggedin</td><td>Just the logged in indicator present</td></tr>
+<tr><td>stats.auth.<i>component</i>.state.loggedout</td><td>Just the logged out indicator present</td></tr>
+<tr><td>stats.auth.<i>component</i>.state.unknown</td><td>Neither the logged in or out indicators present</td></tr>
+</table>
+Ang component ay pwedeng:
+<table>
+<tr><td>ang ascan</td><td>Ang aktibong scanner</td></tr>
+<tr><td>ang auth</td><td>Ang pagpapatunay</td></tr>
+<tr><td>ang fuzz</td><td>Ang Fuzzer</td></tr>
+<tr><td>ang mano-mano</td><td>Ang mano-mano na mga hiling</td></tr>
+<tr><td>ang proxy</td><td>Ang nakaproxy na mga hiling</td></tr>
+<tr><td>ang spider</td><td>Ang Spider</td></tr>
+<tr><td><i>ang id</i></td><td>Ang integer na identifier sa ibang component ay hindi nakalista sa itaas</td></tr>
+</table>
+<p>
+ang mga istatistika ay pwedeng ma-access gamit ang ZAP API.
+</p>
+<p>
+
+Ang icon para sa add-on na ito ay naka-derived mula sa 
+<a href="https://github.com/yusukekamiyamane/fugue-icons">Fugue na mga icon</a> 
+<a href="https://github.com/yusukekamiyamane/fugue-icons/blob/master/icons/chart.png">chart.png</a> and
+<a href="https://github.com/yusukekamiyamane/fugue-icons/blob/master/icons/lock-small.png">locl-small.png</a>
+
+</body>
+</html>

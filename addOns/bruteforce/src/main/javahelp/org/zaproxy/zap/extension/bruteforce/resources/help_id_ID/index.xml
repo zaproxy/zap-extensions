@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE index
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Index Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/index_2_0.dtd">
+
+<index version="2.0">
+	<indexitem text="Penjalajahan paksa" target="addon.bruteforce.concepts" />
+	<indexitem text="Opsi-opsi penjelajahan paksa" target="addon.bruteforce.options" />
+	<indexitem text="Tab Paksa Jelajah" target="addon.bruteforce.tab" />
+</index>

@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Zest</title>
+</head>
+<body>
+<h1>Zest</h1>
+<p>
+Zest is an experimental specialized scripting language (also known as a domain-specific language) 
+originally developed by the Mozilla security team and is intended to be used in web oriented security tools.
+<p>
+Ela está incluída no ZAP por default.<br>
+
+<h2>Engine Name</h2>
+The engine is named <code>Mozilla Zest</code>, which should be used when manually/programmatically configuring ZAP.
+
+<h2>Criando scripts em Zest</h2>
+
+Há várias maneiras de criar scripts em Zest:
+
+<h3>Botão de gravar um novo script em Zest</h3>
+<ul>
+<li>Aperte o botão "Gravar um novo script Zest" na barra de ferramentas principal</li>
+<li>Digite um nome apropriado para o seu script na caixa de diálogo 'Adicionar um Script do Zest'</li>
+<li>Selecione o prefixo que você deseja registrar os requests, ou deixe em branco para gravar todos eles</li>
+<li>Pressione o botão 'Salvar'</li>
+<li>O botão 'Gravar um novo script Zest' vai ficar pressionado, mudar para 'Gravando um novo script Zest' e mostrar um ícone vermelho.</li>
+</ul>
+O novo script Zest aparecerá na aba Scripts com um ícone vermelho de 'gravação'.<br>
+Qualquer request que você fizer com o prefixo especificado será adicionado ao script.<br>
+Pressione novamente 'Gravando um novo script Zest' para interromper a gravação dos requests.<br>
+Observe que desta forma você só pode gravar scripts Zest 'Stand Alone'. Se quiser criar outros tipos de scripts Zest você deve usar outro mecanismo.
+<br><br>
+Você também pode clicar com o botão direito do mouse em qualquer script Zest stand alone e assim usar os botões 'Iniciar gravação' e 'Parar gravação'.
+<br><br>
+There are two primary methods for script recording: server-side and client-side. For client-side recording, we leverage the ZAP browser extension and a dedicated client add-on. 
+<br>
+This combination allows us to efficiently capture and save user interactions in Zest scripts. 
+
+<h3> Novo Botão de Script</h3>
+<ul>
+<li>Navegue até a aba 'Árvore de Scripts'</li>
+<li>Pressione o botão 'Novo script'</li>
+<li>Digite um nome apropriado para o seu script na caixa de diálogo 'Novo Script'</li>
+<li>Selecione o tipo de script (veja a página de ajuda do complemento de Scripts para mais detalhes)</li>
+<li>Selecione o mecanismo de script do Zest</li>
+<li>Selecione um dos templates (se interessar)</li>
+<li>Pressione o botão 'Salvar'</li>
+</ul>
+Qualquer tipo de script Zest pode ser criado assim.
+
+<h3>Clicando com botão direito num template Zest </h3>
+<ul>
+<li>Navegue até a aba 'Árvore de Scripts'</li>
+<li>Expanda o nó de 'Templates' e encontre um template que você deseja usar</li>
+<li>Clique com o botão direito no template e selecione ' novo Script.... '</li>
+<li>Pressione o botão 'Salvar'</li>
+</ul>
+Any type of Zest script can be created this way.
+
+<h3>Requests com o botão direito do mouse </h3>
+<ul>
+<li>Navegue até qualquer aba que mostre requests, tais como a aba de histórico</li>
+<li>Selecione um ou mais requeste</li>
+<li>Clique com o botão direito sobre eles</li>
+<li>Selecione o menu 'Adicionar Script Zest', que permite a você selecionar um script Stand Alone existente ou criar um novo</li>
+</ul>
+Note that you can only add request to 'Stand Alone' Zest scripts.
+
+<h3>Plug-n-Hack</h3>
+If you are using a recent version of Firefox then you can create Zest scripts from within your browser.<br>
+<ul>
+<li>Aperte o botão de 'Plug-n-Hack' na guia 'Quick Start' do ZAP</li>
+<li>Instale o Complemento Plug-n-Hack para Firefox e aceite todos os diálogos com OK/Sim</li>
+<li>Pressione 'Shift F2' no Firefox para acessar a barra de ferramentas do desenvolvedor</li>
+<li>Digite 'zap record on global' para iniciar a gravação de um novo script Zest</li>
+<li>Quaisquer requests que você fizer através do ZAP serão adicionados para o script</li>
+<li>Digite 'zap record off global' para encerrar a gravação do script</li>
+</ul>
+Note that you can only record 'Stand Alone' Zest scripts in this way. If you want to create other types of Zest script you must use another mechanism.
+
+<h2>Editando scripts Zest</h2>
+Zest scripts are edited graphically in the Scripts tree tab.<br>
+Each statement is a node in the tree - double click nodes to edit the statement properties.<br>
+You can add, move and remove statements via right clicking the Zest nodes.<br>
+You can also add requests to 'Stand alone' Zest scripts by right clicking the requests in any of the other tabs.<br>
+There are also some right click options available when you select text in the Request or Response tabs.<br>
+<br>
+Zest includes a set of 'built in' variables as well as allowing you to declare your own.<br>
+A right click menu is provided (where relevant) in the edit dialogs to allow you to paste in any of the available variable names.<br>
+
+<h2>Authentication Scripts</h2>
+Authentication scripts can use a custom ZAP variable, called <code>TOTP</code>, to send a value to an input field with a TOTP code generated from the user's credentials TOTP data.
+
+<h2>Links externos</h2>
+<table>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+	<td><a href="https://github.com/zaproxy/zest/">https://github.com/zaproxy/zest/</a></td>
+	<td>The Zest GitHub repository, including details of the language</td>
+</tr>
+</table>
+
+</body>
+</html>

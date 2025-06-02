@@ -1,0 +1,121 @@
+<?xml version="1.0" standalone="no"?>
+<!-- 
+File structured thanks to fuzzdb and other
+Internet resources regarding application errors
+Elaborated by yhawke 2013
+-->
+<Patterns>
+  <!-- Microsoft SQL Server errors -->
+  <Pattern type="string">Microsoft OLE DB Provider for ODBC Drivers</Pattern>
+  <Pattern type="string">Microsoft OLE DB Provider for SQL Server</Pattern>
+  <Pattern type="string">ODBC Microsoft Access Driver</Pattern>
+  <Pattern type="string">ODBC SQL Server Driver</Pattern>
+  <!-- mysql errors -->
+  <Pattern type="string">supplied argument is not a valid MySQL result</Pattern>
+  <Pattern type="string">Invalid parameter type</Pattern>
+  <Pattern type="string">You have an error in your SQL syntax</Pattern>
+  <Pattern type="string">Incorrect column name</Pattern>
+  <Pattern type="string">Can't find record in</Pattern>
+  <Pattern type="string">Unknown table</Pattern>
+  <Pattern type="string">Incorrect column specifier for column</Pattern>
+  <Pattern type="string">Column count doesn't match value count at row</Pattern>
+  <Pattern type="string">Unclosed quotation mark before the character string</Pattern>
+  <Pattern type="string">java.lang.NumberFormatException: For input string:</Pattern>
+  <Pattern type="string">): encountered SQLException [</Pattern>
+  <Pattern type="string">Unexpected end of command in statement [</Pattern>
+  <Pattern type="string">Invalid SQL:</Pattern>
+  <Pattern type="string">ERROR: parser: parse error at or near</Pattern>
+  <Pattern type="string">[ODBC Informix driver][Informix]</Pattern>
+  <Pattern type="string">[Microsoft][ODBC Microsoft Access 97 Driver]</Pattern>
+  <Pattern type="string">[SQL Server Driver][SQL Server]Line 1: Incorrect syntax near</Pattern>
+  <Pattern type="string">SQL command not properly ended</Pattern>
+  <Pattern type="string">unexpected end of SQL command</Pattern>
+  <Pattern type="string">Supplied argument is not a valid PostgreSQL result</Pattern>
+  <Pattern type="string">internal error [IBM][CLI Driver][DB2/6000]</Pattern>
+  <Pattern type="string">Error Occurred While Processing Request</Pattern>
+  <Pattern type="string">internal error</Pattern>
+  <Pattern type="string">A syntax error has occurred</Pattern>
+  <Pattern type="string">ADODB.Field error</Pattern>
+  <Pattern type="string">ASP.NET is configured to show verbose error messages</Pattern>
+  <Pattern type="string">ASP.NET_SessionId</Pattern>
+  <Pattern type="string">Active Server Pages error</Pattern>
+  <Pattern type="string">An illegal character has been found in the statement</Pattern>
+  <Pattern type="string">An unexpected token "END-OF-STATEMENT" was found</Pattern>
+  <Pattern type="string">Can't connect to local</Pattern>
+  <Pattern type="string">Custom Error Message</Pattern>
+  <Pattern type="string">DB2 Driver</Pattern>
+  <Pattern type="string">DB2 Error</Pattern>
+  <Pattern type="string">DB2 ODBC</Pattern>
+  <Pattern type="string">Disallowed Parent Path</Pattern>
+  <Pattern type="string">Error Diagnostic Information</Pattern>
+  <Pattern type="string">Error Message : Error loading required libraries.</Pattern>
+  <Pattern type="string">Error Report</Pattern>
+  <Pattern type="string">Error converting data type varchar to numeric</Pattern>
+  <Pattern type="string">Internal Server Error</Pattern>
+  <Pattern type="string">Invalid Path Character</Pattern>
+  <Pattern type="string">Invalid procedure call or argument</Pattern>
+  <Pattern type="string">Invision Power Board Database Error</Pattern>
+  <Pattern type="string">JDBC Driver</Pattern>
+  <Pattern type="string">JDBC Error</Pattern>
+  <Pattern type="string">JDBC MySQL</Pattern>
+  <Pattern type="string">JDBC Oracle</Pattern>
+  <Pattern type="string">JDBC SQL</Pattern>
+  <Pattern type="string">Microsoft VBScript compilation error</Pattern>
+  <Pattern type="string">Microsoft VBScript error</Pattern>
+  <Pattern type="string">MySQL Driver</Pattern>
+  <Pattern type="string">MySQL Error</Pattern>
+  <Pattern type="string">MySQL ODBC</Pattern>
+  <Pattern type="string">ODBC DB2</Pattern>
+  <Pattern type="string">ODBC Driver</Pattern>
+  <Pattern type="string">ODBC Error</Pattern>
+  <Pattern type="string">ODBC Oracle</Pattern>
+  <Pattern type="string">OLE/DB provider returned message</Pattern>
+  <Pattern type="string">Oracle DB2</Pattern>
+  <Pattern type="string">Oracle Driver</Pattern>
+  <Pattern type="string">Oracle Error</Pattern>
+  <Pattern type="string">Oracle ODBC</Pattern>
+  <Pattern type="string">PHP Error</Pattern>
+  <Pattern type="string">PHP Parse error</Pattern>
+  <Pattern type="string">PHP Warning</Pattern>
+  <Pattern type="string">Parent Directory</Pattern>
+  <Pattern type="string">Permission denied: 'GetObject'</Pattern>
+  <Pattern type="string">PostgreSQL query failed: ERROR: parser: parse error</Pattern>
+  <Pattern type="string">The script whose uid is</Pattern>
+  <Pattern type="string">Type mismatch</Pattern>
+  <Pattern type="string">Unable to jump to row</Pattern>
+  <Pattern type="string">Unterminated string constant</Pattern>
+  <Pattern type="string">Warning: Cannot modify header information - headers already sent</Pattern>
+  <Pattern type="string">Warning: Supplied argument is not a valid File-Handle resource in</Pattern>
+  <Pattern type="string">Warning: mysql_query()</Pattern>
+  <Pattern type="string">Warning: pg_connect(): Unable to connect to PostgreSQL server: FATAL</Pattern>
+  <Pattern type="string">data source=</Pattern>
+  <Pattern type="string">invalid query</Pattern>
+  <Pattern type="string">is not allowed to access</Pattern>
+  <Pattern type="string">mySQL error with query</Pattern>
+  <Pattern type="string">on MySQL result index</Pattern>
+  <Pattern type="string">server object error</Pattern>
+  <Pattern type="string">SyntaxError: Unexpected token</Pattern>
+  <Pattern type="regex">(?i)Line\s\d+:\sIncorrect\ssyntax\snear\s'[^']*'</Pattern>
+  <Pattern type="regex">(?i)pg_query\(\)[:]*\squery\sfailed:\serror:\s</Pattern>
+  <Pattern type="regex">(?i)'[^']*'\sis\snull\sor\snot\san\sobject</Pattern>
+  <Pattern type="regex">(?i)ORA\-\d{4,5}:\s</Pattern>
+  <Pattern type="regex">(?i)Microsoft\sJET\sDatabase\sEngine\s\([^\)]*\)&lt;br&gt;Syntax\serror(.*)\sin\squery\sexpression\s'.*\.&lt;br&gt;&lt;b&gt;.*,\sline\s\d+&lt;/b&gt;&lt;br&gt;</Pattern>
+  <Pattern type="regex">(?i)&lt;h2&gt;\s&lt;i&gt;Syntax\serror\s(\([^\)]*\))?(in\sstring)?\sin\squery\sexpression\s'[^\.]*\.&lt;/i&gt;\s&lt;/h2&gt;&lt;/span&gt;</Pattern>
+  <Pattern type="regex">(?i)&lt;font\sface=\"Arial\"\ssize=2&gt;Syntax\serror\s(.*)?in\squery\sexpression\s'(.*)\.&lt;/font&gt;</Pattern>
+  <Pattern type="regex">(?i)&lt;b&gt;Warning&lt;/b&gt;:\s\spg_exec\(\)\s\[\&lt;a\shref='function.pg\-exec\'\&gt;function\.pg-exec\&lt;/a&gt;\]\:\sQuery failed:\sERROR:\s\ssyntax error at or near \&amp;quot\;\\\&amp;quot; at character \d+ in\s&lt;b&gt;.*&lt;/b&gt;</Pattern>
+  <Pattern type="regex">(?i)System\.Data\.OleDb\.OleDbException\:\sSyntax\serror\s\([^)]*?\)\sin\squery\sexpression\s.*</Pattern>
+  <Pattern type="regex">(?i)System\.Data\.OleDb\.OleDbException\:\sSyntax\serror\sin\sstring\sin\squery\sexpression\s</Pattern>
+  <Pattern type="regex">&lt;font style="COLOR: black; FONT: 8pt/11pt verdana"&gt;\s+(\[Macromedia\]\[SQLServer\sJDBC\sDriver\]\[SQLServer\]|Syntax\serror\sin\sstring\sin\squery\sexpression\s)</Pattern>
+  <Pattern type="regex">(?i)The Error Occurred in &lt;b&gt;(.*): line.*&lt;\/b&gt;&lt;br&gt;</Pattern>
+  <Pattern type="regex">(?i)The error occurred while processing.*Template: (.*) &lt;br&gt;.</Pattern>
+  <Pattern type="regex">(?i)The error occurred while processing.*in the template file (.*)\.&lt;\/p&gt;&lt;br&gt;</Pattern>
+  <Pattern type="regex">(?i)&lt;span&gt;&lt;H1&gt;Server\sError\sin\s'[^']*'\sApplication\.&lt;hr\swidth=100%\ssize=1\scolor=silver&gt;&lt;/H1&gt;</Pattern>
+  <Pattern type="regex">(?i)&lt;title&gt;Invalid\sfile\sname\sfor\smonitoring:\s'([^']*)'\.\sFile\snames\sfor\smonitoring\smust\shave\sabsolute\spaths\,\sand\sno\swildcards\.&lt;/title&gt;</Pattern>
+  <Pattern type="regex">(?i)&lt;b&gt;(Warning|Fatal\serror|Parse\serror)&lt;/b&gt;:\s+.*?\sin\s&lt;b&gt;.*?&lt;/b&gt;\son\sline\s&lt;b&gt;\d*?&lt;/b&gt;&lt;br\s/&gt;</Pattern>
+  <Pattern type="regex">(?:Unknown database '.*?')|(?:No database selected)|(?:Table '.*?' doesn't exist)|(?:You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '.*?' at line .*?)</Pattern>
+  <Pattern type="regex">Exception report.*message.*description.*exception.*note.*</Pattern>
+  <Pattern type="regex">(?i)&lt;head&gt;&lt;title&gt;JRun Servlet Error&lt;/title&gt;&lt;/head&gt;</Pattern>
+  <Pattern type="regex">(?i)&lt;h1&gt;Servlet\sError:\s\w+?&lt;/h1&gt;</Pattern>
+  <Pattern type="regex">(?i)Servlet\sError&lt;/title&gt;</Pattern>
+</Patterns>
+

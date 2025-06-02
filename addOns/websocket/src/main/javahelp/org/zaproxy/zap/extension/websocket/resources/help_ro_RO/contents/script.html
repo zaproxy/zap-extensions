@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>
+WebSocket Scripts
+</TITLE>
+</HEAD>
+<BODY>
+<H1>WebSocket Scripts</H1>
+
+<h2>WebSocket Sender</h2>
+
+WebSocket Sender scripts are called before forwarding the WebSocket message frame to the server or client and can access and change any WebSocket message that is proxied via ZAP.<br>
+They are initially disabled, to enable them right click the relevant script in the Scripts tree and select "enable".<br>
+A template script is provided which gives details of the methods and parameters supported. 
+
+<h2>Fuzzer WebSocket Processor</h2>
+
+Fuzzer WebSocket Processor scripts are called before forwarding a fuzzed WebSocket message to the client/server. The payloads will have already been injected at this point.<br>
+A template script is provided which gives details of the methods and parameters supported. 
+
+<h2>WebSocket Passive Rules</h2>
+
+WebSocket Passive Scan scripts are called every time a WebSocket message frame is transmitted over a WebSocket connection. Scripts can access WebSocket messages in order to examine the payload and raise an alert.<br>
+All of the default scripts are registered and enabled on start up. If you do not want them to run by default then right click the relevant scripts and select 'disable'.
+If you delete them then they will be added and enabled again when you restart ZAP.<br>
+Template scripts are provided which give details of the methods and parameters supported.<br>
+In the <a href="pscanrules.html#scripts">WebSocket Passive Scan Rules</a> section, there are descriptions for scripts which are included by default in the add-on.
+
+</BODY>
+</HTML>
+

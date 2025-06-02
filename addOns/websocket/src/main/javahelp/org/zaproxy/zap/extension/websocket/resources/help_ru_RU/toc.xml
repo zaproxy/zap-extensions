@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE toc
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN"
+         "http://java.sun.com/products/javahelp/toc_2_0.dtd">
+
+<toc version="2.0">
+	<tocitem text="Руководство пользователя ZAP " tocid="toplevelitem">
+		<tocitem text="Дополнения" tocid="addons">
+			<tocitem text="WebSockets" image="html5connectivity" target="websocket.introduction" >
+         		<tocitem text="Вкладка" target="websocket.tab"/>
+				<tocitem text="Параметры" target="websocket.options"/>
+				<tocitem text="Свойства сессии" target="websocket.sessionProperties"/>
+				<tocitem text="Сценарии" target="websocket.script"/>
+				<tocitem text="API" target="websocket.api"/>
+        <tocitem text="Правила Пассивного Сканирования" target="websocket.pscanrules"/>
+				<tocitem text="О программе" target="websocket.about"/>
+			</tocitem>
+		</tocitem>
+	</tocitem>
+</toc>

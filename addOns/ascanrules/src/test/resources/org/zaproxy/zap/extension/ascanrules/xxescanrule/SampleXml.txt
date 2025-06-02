@@ -1,0 +1,18 @@
+<comments>
+    <comment>
+    <text>testOne
+    </text>
+    </comment>
+
+    <comment>
+    <text>  testTwo  </text>
+    </comment>
+    <comment>
+
+<otherValue>A</otherValue>
+<otherValue>testThree</otherValue>
+<otherValue>C</otherValue>
+
+<otherValue>D</otherValue>
+    </comment>
+</comments>

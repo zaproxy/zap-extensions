@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>AJAX Örümcek diyaloğu</title>
+</head>
+<body>
+<h1>AJAX Örümcek penceresi</h1>
+
+Bu pencere AJAX Örümcek'i başlatır. 
+
+<h2>Kapsam</h2>
+İlk sekme şunlar gibi önemli özellikleri değiştirmenize olanak sağlar:
+
+<h3>Starting Point</h3>
+
+AJAX Örümcek'in taramaya başlayacağı URL ya da içerik (bu durumda içerikte başlangıç noktası olan URL'lerden biri kullanılır).
+
+<h3>İçerik</h3>
+Taranacak İçeriğin seçimini sağlar.
+
+<h3>Kullanıcı</h3>
+Kullanıcı olarak örümcek taramasını uygulamak için seçili içerikte mevcut kullanıcılardan birini seçmeye olanak sağlar (ZAP gerektiğinde o kullanıcı olarak (tekrar) doğrulama yapacaktır).
+
+<h3>Just In Scope</h3>
+
+Eğer bu ayarlanmışsa, kapsam dışındaki tüm URL'ler yok sayılacaktır.
+<p>
+<strong>Not:</strong> Seçenek <code>Just In Scope</code> şununla birlikte özeldir <code>İçerik</code> seçenek, birisi kullanıldıysa diğeri göz ardı edilir.
+
+<h3>Sadece Örümcek Alt Ağacı</h3>
+Eğer bu ayarlanmışsa, örümcek sadece başlangıç noktası altındaki kaynaklara erişecektir (URI).
+Eğer değerlendirirken belirtilen alt ağaç içinde bir kaynak bulunursa, örümcek sadece URI'nın şema, sunucu, bağlantı noktası ve yol bileşenlerini dikkate alır.
+
+<h3>Tarayıcı</h3>
+
+Kullanılacak tarayıcı türü.<br>
+Tarayıcılar ancak ZAP'in onları çalıştırmak için yeterli yapılandırması varsa gösterilecektir.<br>
+Eğer tarayıcılar bulunamazsa veya yapılandırma bilgisi yanlışsa, onları çalıştırmak yine de başarısız olabilir.
+
+<h3>Show Advanced Options</h3>
+
+Eğer seçiliyse, Seçenekler sekmesi gösterilir.
+
+<h2>Seçenekler</h2>
+Bu sekme şu seçenekleri değiştirmenizi sağlar:
+
+<h3>Number of Browser Windows to Open</h3>
+AJAX Örümcek tarafından kullanılacak pencere sayısını ayarlayabilirsiniz.<br>
+Pencere sayısı arttıkça işlem daha hızlı olur.
+
+<h3>Maximum Crawl Depth</h3>
+Tarayıcının ulaşabileceği maksimum derinlik. Sıfır sınırsız derinlik anlamına gelir.
+
+<h3>Maximum Crawl States</h3>
+Tarayıcının taraması gereken maksimum durum sayısını ifade eder. Sıfır sınırsız tarama durumu anlamına gelir. 
+
+<h3>Maximum Duration</h3>
+Tarayıcının çalışması için izin verilen maksimum süre. Sıfır sınırsız çalışma süresi anlamına gelir.
+
+<h3>Event Wait Time</h3>
+Bir istemci tarafı olayı tetiklendikten sonra beklenecek süre.
+
+<h3>Reload Wait Time</h3>
+URL yüklendikten sonra beklenecek süre.
+
+<h3>Allowed Resources</h3>
+The list of allowed resources. The allowed resources are always fetched even if out of scope, allowing to include necessary resources (e.g. scripts) from 3rd-parties.
+	
+	<h2>Ayrıca görüntüleyin</h2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="concepts.html">AJAX Spider</a></td>
+			<td>for an overview of the AJAX Spider</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="tab.html">AJAX Örümcek sekmesi</a></td>
+			<td>AJAX Örümcek Sekmesinin bir genel görünümü için</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="options.html">AJAX Ağ Seçenek Ekranı</a></td>
+			<td>AJAX Örümcek Seçeneklerinin bir genel görünümü için</td>
+		</tr>
+	</table>
+
+</body>
+</html>

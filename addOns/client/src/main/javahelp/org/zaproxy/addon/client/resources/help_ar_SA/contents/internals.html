@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+Client Side Integration - Internals
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Client Side Integration - Internals</H1>
+
+<H2>Browser Extension</H2>
+
+This <a href="client.html">add-on</a> depends on a <a href="https://github.com/zaproxy/browser-extension">ZAP browser extension</a> which runs in Firefox and Chrome - 
+if this extension is not present then this add-on will not be able to do anything.
+<p>
+The browser extension needs to be able to communicate with ZAP, 
+but it must do it in a secure way so that malicious targets cannot abuse the API end points that this add-on defines.
+Passing configuration details to browser extensions can be tricky, 
+and so this is done in 2 different ways depending on how the browsers are launched.
+
+<H2>ZAP Browser Launch</H2>
+
+If Firefox or Chrome are launched from ZAP with this add-on enabled then it automatically adds the ZAP browser extension.
+The add-on also opens a callback URL like: <pre>http://zap/zapCallBackUrl/12345678901234567890</pre> - this URL is regenerated
+every time ZAP is started and is considered safe as it is impractical for malicious targets to discover.
+<p>
+The browser extension detects URLs of this format in the context script 
+<a href="https://github.com/zaproxy/browser-extension/blob/main/source/ContentScript/index.ts">index.ts</a> 
+and then uses this URL to pass data from the browser back to ZAP.
+
+<H2>Manual Browser Launch</H2>
+
+If you launch Firefox or Chrome in any other way then you will need to install the browser extension yourself from:
+
+<ul>
+<li><a href="https://addons.mozilla.org/en-GB/firefox/addon/zap-browser-extension/">Firefox Add-Ons</a>
+<li><a href="https://chrome.google.com/webstore/detail/zap-browser-extension/oeadiegekjdlhpooeidmimgnmbfllehp">Chrome Web Store</a>
+</ul>
+
+Once installed you will need to configure the ZAP browser extension manually. In Firefox or Chrome:
+
+<ul>
+<li>Click the Extensions button
+<li>Select the 'ZAP Browser Extension'
+<li>Update the extension Preferences screen
+</ul>
+
+You will need to configure:
+
+<ul>
+<li>ZAP API URL: the default is <pre>http://zap/</pre> and should work in all cases, but you can also use the host and port ZAP is listening on, e.g. <pre>http://localhost:8080</pre>
+<li>ZAP API Key: you can find this in the ZAP API Options screen
+</ul>
+
+You can leave the ZAP API Key blank if you have turned off the API Key in ZAP, but this is only recommended in a safe environment where you trust the websites you will be accessing via ZAP.
+
+</BODY>
+</HTML>

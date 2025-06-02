@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Batas Perintah</title>
+</head>
+<body>
+	<h1>Baris Perintah</h1>
+	Zap mendukung pilihan garis perintah berikut ini:
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>-quickurl</td>
+			<td>Menentukan URL dari aplikasi target yang akan diserang.</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>-quickout</td>
+			<td>Specifies the file to write the report to. The report format will depend on the file extension - supported file extensions are 
+			<pre>.html</pre>, <pre>.json</pre>, <pre>.md</pre>, <pre>.xml</pre>. If none of these extensions are used then the format will be XML. 
+			If not set in 'inline' and daemon modes the report is written to default output stream.</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>-quickprogress</td>
+			<td>Tampilkan bar perkembangan ascii, jika dimulai dengan bendera -cmd.</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>-zapit</td>
+			<td>Perform a quick <a href="zapit.html">'ZAPit'</a> 'reconnaissance' scan of URL specified, the -cmd flag must also be set.</td>
+		</tr>
+	</table>
+
+	<br>
+	<p>Contoh:
+	<ul>
+		<li>Start ZAP in 'inline' mode with ascii progress bars, attack the target application http://example.com/
+			and write the report to default output stream: <pre>-cmd -quickurl http://example.com/ -quickprogress</pre>
+		</li>
+		<li>Start ZAP with UI, attack the target application http://example.com/ and save
+			the report to a file: <pre>-quickurl http://example.com/ -quickout /path/to/report.xml</pre>
+		</li>
+	</ul>
+
+	<h2>Lihat juga</h2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="quickstart.html">Mulai Cepat</a></td>
+			<td>the introduction to Quick Start</td>
+		</tr>
+	</table>
+
+</body>
+</html>

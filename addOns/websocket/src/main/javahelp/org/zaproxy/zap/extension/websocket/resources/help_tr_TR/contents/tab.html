@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+WebSocket sekmesi
+</title>
+</head>
+<body>
+<h1>WebSocket sekmesi</h1>
+
+<p>
+WebSockets sekmesi WebSocket bağlantılarından gelen tüm mesajları görüntüler. 
+ZAP aktif durumdayken, WebSockets'i eylem halinde görmek için, örneğin şurayı ziyaret edin: <a href="http://browserquest.mozilla.org/">Mozilla BrowserQuest</a>.
+</p>
+
+<h2>Filtreler</h2>
+	<h3>Kanal Seçici</h3>
+		Bir belirli Websocket kanalına veya tümüne giden mesajların görüntülenmesini kısıtlayabilirsiniz.
+		<br>
+		Eğer özel bir kanalı seçersenız, o zaman <i>El sıkışma göster</i> butonu
+		(<img src="images/handshake.png" align="bottom" width="16" height="16" />)
+		aktif hale gelir. Tıkladığınızda, karşılık gelen HTTP el sıkışması
+		İstek/Yanıt sekmesinde gösterilir.
+
+	<h3>Filtre Diyaloğu</h3>
+		Filtre diyaloğunda (<img src="images/054.png" align="bottom" width="16" height="16" />)
+		hangi mesajların görüntüleneceğini ayrıca kontrol edebilirsiniz.
+
+<br><br>
+<h2>Kesme Noktaları</h2>
+	Özel kesme noktaları koyabilirsin kullanarak <i>Özel Kesme Noktası Ekle</i>
+	buton (<img src="images/break_add.png" align="bottom" width="16" height="16" />).
+	<br>
+	Alternatif olarak kullanabilirsiniz <i>Sağ tık menü</i>.
+
+<br><br>
+<h2>Sağ tık menüsü</h2>
+	Bir WebSocket menüsüne sağ tıklama şunu yapmanızı sağlayacak bir menü getirecektir:
+
+	<h3>WebSocket'dan hariç tut</h3>
+		WebSocket bağlantıları, WebSockets sekmesinden çıkartılabilir, dışlanan bir URL ekleyerek
+		<i>Oturum Özellikleri</i>. Bu öğeye tıklamak, önceden girilen URL ile oturum özelliklerini getirir.
+		Bir WebSocket bağlantısını hariç tutmak bağlantının kapanmasıyla sonuçlanmayacaktır fakat onları daha fazla işlem yapmadan iletmeyle sonuçlanacaktır.
+
+	<h3>Kırılma...</h3>
+		Bu şunu öne çıkaracak
+		<i>Kırılma Noktası Ekle penceresi</i> özel bir kırılma noktası koymanıza izin verir.
+</body>
+</html>

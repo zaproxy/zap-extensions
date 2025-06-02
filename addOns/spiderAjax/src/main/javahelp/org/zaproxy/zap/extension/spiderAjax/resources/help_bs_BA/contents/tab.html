@@ -1,0 +1,200 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>AJAX Spider taba</title>
+</head>
+<body>
+	<h1>AJAX Spider taba</h1>
+	<p>
+		The AJAX Spider tab shows you the set of unique URIs found by <a href="concepts.html">AJAX
+			Spider</a>.
+	</p>
+	<br /> Za svaki zahtjev možete vidjeti:
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>Indeks Zahtjev - svaki zahtjev je numerisan, počevši od 1</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>The request timestamp</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>HTML metod, npr.GET ili POST</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>URL zahtjevani</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>The HTTP response status code</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>Kratki sažetak onoga šta kod HTTP odgovora znači</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>Dužina vremena koliko čitavi zahtjev traje</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>The size of the response header</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>The size of the response body</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>Any <i>Alerts</i> on the request
+			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>Any <i>Notes</i> you have added to request
+			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>Any <i>Tags</i> you have added to request
+			</td>
+		</tr>
+	</table>
+
+	SOdaberi zahtjeve koji će se prikazati u
+	<i>Zahtjevi tab</i> and
+	<i>Tab odgovora</i> iznad.
+	<br />
+
+	<h2>Desni klik meni</h2>
+	Desni klik na nod će prikazati meni koji će vam dopustiti da:
+
+	<h3>Napad</h3>
+	Napad meni ima sljedeće podmenije:
+	<h4>Active Scan Site</h4>
+	This will initiate an
+	<i>Aktivno Skeniranje</i> of the whole of the site containing the selected node.
+	<br /> The
+	<i>Aktivni Sken tab</i> will be display and will show the progress of the scan.
+	<br />
+
+	<h4>Aktivno Skeniranje Noda</h4>
+	This will initiate an
+	<i>Aktivno Skeniranje</i> of just the node selected.
+	<br /> The
+	<i>Aktivni Sken tab</i> will be display and will show the progress of the scan.
+	<br />
+
+	<h4>Spider Site</h4>
+	This will initiate a
+	<i>pauk</i> of the whole of the site containing the selected node.
+	<br /> The
+	<i>Pauk tab</i> will be display and will show the progress of the scan.
+	<br />
+
+	<h4>Forced Browse Site</h4>
+	This will initiate a
+	<i>forced browse</i> of the whole of the site containing the selected node.
+	<br /> The
+	<i>Forsirano Pregledavanje tab</i> will be display and will show the progress of the scan.
+	<br />
+
+	<h4>Forced Browse Directory</h4>
+	This will initiate a
+	<i>forced browse</i> on the selected directory.
+	<br /> The
+	<i>Forsirano Pregledavanje tab</i> will be displayed and will show the progress of the scan.
+	<br />
+
+	<h4>Forced Browse Directory (and children)</h4>
+	This will initiate a
+	<i>forced browse</i> on the selected directory and all children found.
+	<br /> The
+	<i>Forsirano Pregledavanje tab</i> will be displayed and will show the progress of the scan.
+	<br />
+
+	<h3>Isključi iz</h3>
+	This menu has the following submenus:
+
+	<h4>Proxy</h4>
+	This will exclude the selected nodes from the proxy. They will still be proxied via ZAP
+	but will not be shown in any of the tabs.
+	<br /> This can be used to ignore URLs that you know are not relevant to the system you
+	are currently testing.
+	<br /> The nodes can be included again via the
+	<i>Svojstva Sesije</i> dialog
+
+	<h4>Skener</h4>
+	This will prevent the selected nodes from being actively scanned.
+	<br /> The nodes can be included again via the
+	<i>Svojstva Sesije</i> dialog
+
+	<h4>Pauk</h4>
+	This will prevent the selected nodes from being spidered.
+	<br /> The nodes can be included again via the
+	<i>Svojstva Sesije</i> dialog
+
+	<h3>Pokreni aplikaciju</h3>
+	This menu allows you to
+	<i>invoke applications</i> that you have configured via the
+	<i>Opcije Aplikacija prikaz</i> which is also accessible via the 'Configure
+	applications...' submenu.
+
+	<h3>Upravljaj Tagovima...</h3>
+	This will bring up the
+	<i>Upravljaj Tagovima dijalog</i> which allows you to change the
+	<i>tagovi</i> associated with the request.
+
+	<h3>Zabilješka...</h3>
+	This will bring up the
+	<i>Dodaj Zabilješku dijalog</i> which allows you to record
+	<i>zabilješke</i> related to the request.
+
+	<h3>Prekid...</h3>
+	This will bring up the
+	<i>Dodaj Tačku Prekida dijalog</i> which allows you to set a break point on that URL.
+	<br />
+
+	<h3>Upozorenja za ovaj nod</h3>
+	If the URL selected has
+	<i>upozorenja</i> associated with it then they will be listed under this menu.
+	<br> Selecting one of the alerts will cause it to be displayed.
+
+	<h3>Ponovno...</h3>
+	This will bring up the
+	<i>Ponovno slanje dijalog</i> which allows you to resend the request after making any changes to
+	it that you want to.
+
+	<h3>Novo Upozorenje...</h3>
+	This will bring up the
+	<i>Dodaj Upozorenje dijalog</i> which allows you to manually record a new
+	<i>Alert</i> against this request.
+
+	<h3>Otvori URL u Pretraživaču</h3>
+	This will open the URL of the selected node in your default browser.
+
+	<h2>Još vidjeti</h2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="concepts.html">AJAX Pauka</a></td>
+			<td>for an overview of the AJAX Spider</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="options.html">Ekran Opcija AJAX Pauka</a></td>
+			<td>za pregled AJAX Pauk Opcija</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="scandialog.html">AJAX Spider dialog</a></td>
+			<td>for an overview of the AJAX Spider Dialog</td>
+		</tr>
+	</table>
+
+</body>
+</html>

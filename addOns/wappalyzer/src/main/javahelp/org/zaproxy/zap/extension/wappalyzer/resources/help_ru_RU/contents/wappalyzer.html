@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Technology Detection</title>
+</head>
+<body>
+<h1>Technology Detection</h1>
+<p>
+The Technology Detection add-on uses various patterns and finger prints to detect the technologies used by applications.<p>
+Он работает очень похоже на надстройки браузера Wappalyzer со следующими исключениями: 
+<ul>
+<li>Он не использует «глобальные переменные JavaScript», так как их трудно протестировать без «полного» браузера. </li>
+<li>Он не показывает уверенность - это еще предстоит сделать </li>
+<li>Это не соответствует технологиям на основе свойств DOM, так как некоторые свойства устанавливаются JavaScript в браузере после того, как ответ прошел через ZAP. </li>
+<li>Это позволяет вам увидеть «доказательства», используемые для обнаружения технологий. </li>
+</ul>
+
+<h2>Вкладка «Технологии» </h2>
+На этой вкладке отображаются все обнаруженные технологии для выбранного сайта. <br>
+Щелчок правой кнопкой мыши по технологии отобразит меню «Показать доказательства», в котором находятся все регулярные выражения, используемые для ее обнаружения. <br>
+При выборе регулярного выражения вы переключитесь на вкладку «Поиск» и выполните поиск по истории для этого регулярного выражения. Примечание. Если выбрано несколько строк
+меню не будет отображаться. 
+<p>
+Beside the site selection drop down is an Export button which can be used to export a CSV (comma separated values) file based on the
+table information currently being displayed.
+<p>
+The toolbar also includes:
+<ul>
+  <li>An enable/disable toggle button which controls whether the technology detection passive scan rule is functioning or not. This enabled state is persisted between ZAP sessions.</li>
+<ul>
+
+<h2>Reporting</h2>
+
+Technology data is available to reports via the 
+<a href="https://github.com/zaproxy/zap-extensions/tree/main/addOns/wappalyzer/src/main/java/org/zaproxy/zap/extension/wappalyzer/automation/TechJobResultData.java">TechJobResultData</a> class.
+
+<h2>External Links</h2>
+<table>
+<tr>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+	<td><a href="https://github.com/enthec/webappanalyzer">Enthec Webappanalyzer</a></td>
+	<td>This project is a continuation of the iconic Wappalyzer that went private in August 2023.</td>
+</tr>
+<tr>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+	<td><a href="https://www.wappalyzer.com/">https://www.wappalyzer.com/</a></td>
+	<td>The Wappalyzer Homepage</td>
+</tr>
+<tr>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+	<td>https://github.com/wappalyzer/wappalyzer</td>
+	<td>As of early August 2023 the Wappalyzer Repository is no longer public.</td>
+</tr>
+</table>
+
+</body>
+</html>

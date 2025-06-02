@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>ZAP Test Server</title>
+	<link href="/tutorial.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="roundContainer">
+	<h1>ZAP Test Server</H1>
+	<h2>Sequence Performence Test</h2>
+	
+	A sequence of forms that must be accessed in order.<br>
+	A unique id for each sequence is maintained in a hidden "seqId" parameter.<br>
+	The sequence step id is held both in a hidden "seqStep" parameter and is associated with the sequence id on
+	the server.
+	<p>
+	<ul>
+	<li><a href="/seq">..</a>
+	<li><a href="seq">Start Sequence</a>
+	</ul>
+
+	The test characteristics can be changed via the following static method calls:
+
+	<ul>
+	<li><pre>org.zaproxy.addon.dev.seq.performance.SequencePage.setNumberOfSteps(int)</pre>
+	<li><pre>org.zaproxy.addon.dev.seq.performance.SequencePage.setNumberOfFields(int)</pre>
+	<li><pre>org.zaproxy.addon.dev.seq.performance.SequencePage.setCheckSequence(boolean)</pre>
+	</ul>
+	
+
+	<div class="buttonsDiv">
+		<a href="/"><button>Index page</button></a>
+	</div>
+</div>
+
+</body>
+</html>

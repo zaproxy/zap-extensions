@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>选项应用程序屏幕</title>
+</head>
+<body>
+	<h1>选项应用程序屏幕</h1>
+	<p>
+		此屏幕允许您配置 <a href="concepts.html">应用程序</a> that
+		can be invoked.<br> By default there are no applications available, you need to add
+		all of the applications that you want to use.
+	<h3>显示名称</h3>
+	将在ZAP中用于此应用程序的名称。
+	<br>
+
+	<h3>完整的命令</h3>
+	要调用的应用程序的完整路径。
+	<br> Only one command can be specified. If you want to run multiple commands in one
+	go, or set up environmental variables, then you should create a script or batch file and
+	then invoke this from ZAP.
+
+	<h3>参数</h3>
+	ZAP应传递给命令的参数。
+	<br> 下列标记可用于传递参数：
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%url%</td>
+			<td>完整的url，例如"http://localhost/test?a=b"</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%site%</td>
+			<td>站点，例如："http://localhost:8080/"</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%host%</td>
+			<td>主机名，例如"本地主机"</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%port%</td>
+			<td>the port, e.g. '80'</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%cookie%</td>
+			<td>请求标头中的第一个cookie字段（如果有）</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%postdata%</td>
+			<td>the POST data sent, if any, with any newlines replaced with "\n"</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%msgid%</td>
+			<td>the HTTP message id to fetch data from the API (/JSON/core/view/message/?id=$msgid), 
+				does not alway exist, will return -1 if no message id
+			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%header-{{ header }}%</td>
+			<td>the request header by name (if any), e.g. <code>%header-user-agent%</code> would return the value of the User-Agent header</td>
+		</tr>
+	</table>
+	So if a command accepted a URL using '-u' you would specify the parameters as: '-u %url%'
+
+	<h3>捕获输出</h3>
+	如果选中，则命令运行，并且它生成的任何输出都将显示在
+	<i>输出选项卡</i>.
+	<br> You should always use this option when running scripts or commands that do not
+	have a UI.
+	<br> You can also use this option for troubleshooting - if an application does not
+	run as expected then copy the command run and try it from a command line prompt.
+
+	<h3>Output to Note</h3>
+	If checked then any output will be appended to a
+	<i>备注</i> attached to the relevant
+	<i>历史记录选项卡</i> 记录。
+	<br> Note that some nodes in the
+	<i>站点选项卡</i> 没有关联
+	<i>历史记录选项卡</i> records - for those nodes this option will have no effect.
+
+</body>
+</html>

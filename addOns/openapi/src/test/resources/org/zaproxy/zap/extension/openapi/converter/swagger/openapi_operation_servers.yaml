@@ -1,0 +1,80 @@
+openapi: 3.0.0
+info:
+  title: Operations with servers
+  version: 1.0.0
+servers:
+  - url: http://server0.localhost/
+paths:
+  /operation/without/servers:
+    get:
+      operationId: operation/without/servers
+      responses:
+        default:
+          description:
+          content:
+            text/plain: {}
+  /operations/with/servers:
+    get:
+      operationId: operation/get
+      servers:
+        - url: http://server1.localhost/
+      responses:
+        default:
+          description:
+          content:
+            text/plain: {}
+    post:
+      operationId: operation/post
+      servers:
+        - url: http://server2.localhost/v1/
+        - url: http://server3.localhost/
+      responses:
+        default:
+          description:
+          content:
+            text/plain: {}
+    put:
+      operationId: operation/put
+      servers:
+        - url: http://server4.localhost/
+      responses:
+        default:
+          description:
+          content:
+            text/plain: {}
+    head:
+      operationId: operation/head
+      servers:
+        - url: http://server5.localhost/
+      responses:
+        default:
+          description:
+          content:
+            text/plain: {}
+    options:
+      operationId: operation/options
+      servers:
+        - url: http://server6.localhost/
+      responses:
+        default:
+          description:
+          content:
+            text/plain: {}
+    delete:
+      operationId: operation/delete
+      servers:
+        - url: http://server7.localhost/
+      responses:
+        default:
+          description:
+          content:
+            text/plain: {}
+    patch:
+      operationId: operation/patch
+      servers:
+        - url: http://server8.localhost/
+      responses:
+        default:
+          description:
+          content:
+            text/plain: {}

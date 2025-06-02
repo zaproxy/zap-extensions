@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE map
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Map Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/map_1_0.dtd">
+
+<map version="1.0">
+	<mapID target="flags-icon" url="contents/images/flags.png" />
+    <mapID target="addon.alertFilter" url="contents/alertFilter.html" />
+    <mapID target="addon.contextAlertFilter" url="contents/contextAlertFilter.html" />
+    <mapID target="addon.globalAlertFilter" url="contents/globalAlertFilter.html" />
+    <mapID target="addon.automation" url="contents/automation.html" />
+</map>

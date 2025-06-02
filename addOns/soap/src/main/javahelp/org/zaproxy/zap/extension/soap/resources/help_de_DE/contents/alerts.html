@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>SOAP Alerts</title>
+</head>
+<body>
+<h1>SOAP Alerts</h1>
+<p> The following alerts are raised by the SOAP add-on. </p>
+<table>
+    <tr>
+        <th>Alert Reference
+        <th>Name
+        <th>Description
+        <th>Latest Code
+    <tr id="id-90026">
+        <td><a href="https://www.zaproxy.org/docs/alerts/90026/">90026</a>
+        <td>Action Spoofing
+        <td>SOAP requests contain some sort of operation that is 
+        later executed by the web application. This operation can be found 
+        in the first child element of the SOAP Body. However, if HTTP is used 
+        to transport the SOAP message the SOAP standard allows the use of an 
+        additional HTTP header element called SOAPAction. This header element 
+        contains the name of the executed operation. It is supposed to inform 
+        the receiving web service of what operation is contained in the SOAP 
+        Body, without having to do any XML parsing. This optimization can 
+        be used by an attacker to mount an attack, since certain web service 
+        frameworks determine the operation to be executed solely on the 
+        information contained in the SOAPAction header field. 
+        <td><a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/soap/src/main/java/org/zaproxy/zap/extension/soap/SOAPActionSpoofingActiveScanRule.java">SOAPActionSpoofingActiveScanRule.java</a>
+    <tr id="id-90029">
+        <td><a href="https://www.zaproxy.org/docs/alerts/90029/">90029</a>
+        <td>SOAP XML Injection
+        <td>During an "XML Injection" an attacker tries to add or manipulate 
+        various XML Tags in the SOAP message aiming to manipulate the XML 
+        structure. Usually a successful XML injection results in the 
+        execution of a restricted or unintended operation. Depending on the 
+        executed operation various security or business controls might be 
+        violated.
+        <td><a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/soap/src/main/java/org/zaproxy/zap/extension/soap/SOAPXMLInjectionActiveScanRule.java">SOAPXMLInjectionActiveScanRule.java</a>
+    <tr id="id-90030">
+        <td><a href="https://www.zaproxy.org/docs/alerts/90030/">90030</a>
+        <td>WSDL File Detection
+        <td>This alert is raised when the passive scanner detects a WSDL file.
+        <td><a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/soap/src/main/java/org/zaproxy/zap/extension/soap/WSDLFilePassiveScanRule.java">WSDLFilePassiveScanRule.java</a>
+</table>
+
+<h2>See also</h2>
+<table>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;
+        <td><a href="soap.html">SOAP</a>
+        <td>for an overview of the SOAP support add-on.
+    </tr>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;
+        <td><a href="automation.html">SOAP Automation</a>
+        <td>for information about the automation framework support.
+    </tr>
+</table>
+</body>
+</html>

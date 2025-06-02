@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<title>
+Mga Patakaran sa Aktibong Pag-scan ng DOM XSS
+</title>
+</head>
+<body>
+<h1>Mga Patakaran sa Aktibong Pag-scan ng DOM XSS</h1>
+<p>
+Ang patakaran ng aktibong pag-scan para sa pagtuklas ng mga kahinaan ng DOM XSS.
+<p>
+It launches browser windows and sends attack payloads to all of the relevant DOM elements.<br>
+As it launches browser windows it will take significantly longer than other (non browser based) rules. 
+</p>
+<p>
+This version supports Firefox (the default) and Chrome. They can be run with GUI or headless (default), it can be changed with
+the rule <code>rules.domxss.browserid</code>, via the Options 'Rule configuration' panel, with values
+<code>firefox</code>, <code>firefox-headless</code>, <code>chrome</code> and <code>chrome-headless</code>.
+
+<h3>Strengths and Thresholds</h3>
+The following Attack Strengths are supported, and related directly to the number of attack payloads used
+for URL fragment and form input field injections (eg: <code>http://example.com/index.html?foo=bar#injection</code>):
+<ul>
+<li>LOW: 1 attack payloads 
+<li>MEDIUM: 3 attack payloads 
+<li>HIGHT: 6 mga kargamento ng atake 
+<li>INSANE: 9 attack payloads 
+</ul>
+The scanner will also attempt URL/query parameter injections which are not impacted by the selected strength.
+</p>
+<p>
+Ang patakaran ay magtatala lamang ng isang kahinaan ng DOM XSS kada noda, maliban kung ang LOW Alert threshold ay ginamit, kung saan susubukan nito ang lahat ng tinukoy na mga kargamento. 
+
+<h3>Exclusions</h3>
+The rule will block the browser it launches from accessing any URLs that are excluded by:
+<ul>
+<li>Global Exclusions
+<li>Context Exclusions, if invoked with the relevant context
+</ul>
+
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/domxss/src/main/java/org/zaproxy/zap/extension/domxss/DomXssScanRule.java">DomXssScanRule.java</a>
+
+</body>
+</html>

@@ -1,0 +1,43 @@
+openapi: 3.0.0
+paths:
+  /pets:
+    patch:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PetByType'
+      responses:
+        '200':
+          description: Updated
+    get:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PetByAge'
+      responses:
+        '200':
+          description: Updated
+
+components:
+  schemas:          
+    PetByType:
+      type: object
+      properties:
+        pet_type:
+          not:
+            type: integer
+      required:
+        - pet_type
+
+    PetByAge:
+      type: object
+      properties: 
+        age:
+          not:
+            type: string
+        nickname: 
+          type: string
+      required:
+        - age

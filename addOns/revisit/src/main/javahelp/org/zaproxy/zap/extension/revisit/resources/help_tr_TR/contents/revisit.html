@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<title>
+Tekrar ziyaret et
+</title>
+</head>
+<body>
+<h1>Tekrar ziyaret et</h1>
+<p>
+Belirli bir zamanda ZAP ile test ettiğiniz bir uygulamaya, belki de ona erişiminiz olmadığı zamanda veya bir şekilde değiştirildikten sonra, göz atabilmeyi hiç istediniz mi?<br>
+Eğer istediyseniz o zaman bu eklenti sizin için!
+</p>
+<p>
+Eklenti, ZAP'ı, ZAP geçmişi içerisindeki içeriği, istekleri siteye iletmek yerine, 
+belirtilen tarihler arasında geri dönmesini sağlamanıza izin verir.<br>
+Bu durum sizin, artık erişime sahip olmadığınız bir web sitesine göz atmanıza ve kullanmanıza olanak tanır.<br>
+Ayrıca, belirli zamanlar arasında nasıl göründüğünü görmenizi sağlar; 
+bu, uygulama değiştiğinden beri kullanışlıdır<br>
+<br>
+ZAP geçmişinden sayfalar döndürülürken, tarih sayfalı altbilgiler HTML sayfalarına, 
+bu sayfaların ZAP'den üretildiğine dair görsel ipucu vermek üzere enjekte edilir.<br>
+ZAP, GET ve POST istekleri eşleşenleri bulduğu sürece sayfaları döndürür.<br>
+Sayfa, yalnızca tüm URL ve POST parametreleri aynı olduğunda, istek ve bilinen CSRF tokenları yoksayılırsa eşleşir.<br>
+Geçmişte eşleşen herhangi bir sayfa bulunamazsa, özel bir 404 sayfası döndürülecektir ve 
+farklı parametrelerle veya belirtilen zaman periyodunun dışında çağrılmışsa, aynı sayfaya bağlantılar içerecektir.<br>
+<br>
+Bu eklenti sağ tıklama menülerini sitenin ağacına ekler:
+</p>
+<h3>Tekrar Ziyareti Etkinleştir</h3>
+Seçildiğinde kullanılacak başlangıç ve bitiş zamanını soran bir açılır pencere gösterilir.<br>
+Başlangıç zamanı oturumdaki ilk isteğin zamanına varsayılan olarak ayarlanır.<br>
+Bitiş zamanı oturumdaki son isteğin zamanına varsayılan olarak ayarlanır.<br>
+Eğer herhangi bir zaman öğesi (örneğin 'ayın günü') değiştirilmemişse, bu öğeler devre dışı bırakılır.<br>
+Eğer penceredeki TAMAM butonuna basılırsa, tekrar ziyaret işlevi seçili site için etkinleştirilir ve bir 'takvim' ikonu Geçmiş ağacındaki site düğümüne eklenir.
+
+<h3>Tekrar Ziyareti Devre Dışı Bırak</h3>
+Seçildiğinde tekrar ziyaret işlevi seçili site için devre dışı bırakılır.
+
+<h2>API</h2>
+Eklenti aşağıdaki API bitiş noktalarını destekler:<br><br>
+revisit / view / revisitList tekrar ziyaret için etkinleştirilen sitelerin listesini döndürür<br>
+revisit / action / revisitSiteOn Belirtilen site için tekrar ziyareti etkinleştirir. Tarihlerde şu biçim kullanılmalıdır: "yyyy/MM/dd HH:mm:ss"<br> 
+revisit / action / revisitSiteOff Belirtilen site için tekrar ziyaret etmeyi devre dışı bırakır
+
+</body>
+</html>

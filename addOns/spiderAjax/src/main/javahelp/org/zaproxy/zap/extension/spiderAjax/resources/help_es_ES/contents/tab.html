@@ -1,0 +1,198 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Pestaña AJAX Spider</title>
+</head>
+<body>
+	<h1>Pestaña AJAX Spider</h1>
+	<p>
+		The AJAX Spider tab shows you the set of unique URIs found by <a href="concepts.html">AJAX
+			Spider</a>.
+	</p>
+	<br /> Por cada petición podrá observar:
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>El index de la petición - cada petición está numerada, empezando por el número 1</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>The request timestamp</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>El método HTML, por ejemplo GET o POST</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>La URL solicitada</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>The HTTP response status code</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>Un breve resumen de lo que significa el código de respuesta HTTP</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>La duración total de la solicitud</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>El tamaño del encabezado de respuesta</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>El tamaño del cuerpo de respuesta</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>Any <i>Alerts</i> on the request
+			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>Any <i>Notes</i> you have added to request
+			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>Any <i>Tags</i> you have added to request
+			</td>
+		</tr>
+	</table>
+
+	Al seleccionar una petición, ésta será mostrada en la 
+	<i>pestaña Petición</i> y en la 
+	<i>pestaña Respuesta</i> ubicadas mas arriba.
+	<br />
+
+	<h2>Menú de botón derecho</h2>
+	Al hacer click derecho sobre un nodo se abrirá un menú que le permitirá:
+
+	<h3>Atacar</h3>
+	El menú de ataque tiene los siguientes submenús:
+	<h4>Escaneo de sitio Activo</h4>
+	Esto iniciará un
+	<i>Escaneo Activo</i> en todo el sitio contenido en el nodo seleccionado.
+	<br /> Se mostrará la
+	<i>Pestaña de Escaneo Activo</i> indicando el progreso del escaneo.
+	<br />
+
+	<h4>Nodo de escaneo Activo</h4>
+	Esto iniciará un
+	<i>Escaneo Activo</i> solo en el nodo seleccionado.
+	<br /> Se mostrará la
+	<i>Pestaña de Escaneo Activo</i> indicando el progreso del escaneo.
+	<br />
+
+	<h4>Sitio Spider</h4>
+	Esto iniciará un
+	<i>spider</i> en todo el sitio contenido en el nodo seleccionado.
+	<br /> Se mostrará la
+	<i>Spider tab</i> indicando el progreso del escaneo.
+	<br />
+
+	<h4>Sitio de navegación predefinida</h4>
+	Esto iniciará un
+	<i>navegación forzada</i> en todo el sitio contenido en el nodo seleccionado.
+	<br /> Se mostrará la
+	<i>pestaña de Navegación Predefinida</i> indicando el progreso del escaneo.
+	<br />
+
+	<h4>Directorio de navegación definido</h4>
+	Esto iniciará un
+	<i>navegación forzada</i> en el directorio seleccionado.
+	<br /> Se mostrará la
+	<i>pestaña de Navegación Predefinida</i> indicando el progreso del escaneo.
+	<br />
+
+	<h4>Directorio de navegación definido (e hijos)</h4>
+	Esto iniciará un
+	<i>navegación forzada</i> en el directorio seleccionado y en cualquier directorio hijo encontrado.
+	<br /> Se mostrará la
+	<i>pestaña de Navegación Predefinida</i> indicando el progreso del escaneo.
+	<br />
+
+	<h3>Excluir de</h3>
+	Este menú tiene los siguientes submenús:
+
+	<h4>Proxy</h4>
+	This will exclude the selected nodes from the proxy. They will still be proxied via ZAP
+	but will not be shown in any of the tabs.
+	<br /> Esto puede ser utilizado para ignorar URLs que sabe que no son relevantes para el sistema que está probando.
+	<br /> Los nodos pueden ser incluidos a través del cuadro de dialogo
+	<i>Propiedades de la Sesión</i> .
+
+	<h4>Escáner</h4>
+	Esto evitará que los nodos seleccionados sean escaneados activamente.
+	<br /> Los nodos pueden ser incluidos a través del cuadro de dialogo
+	<i>Propiedades de la Sesión</i> .
+
+	<h4>Spider(Araña)</h4>
+	Esto evitará que los nodos seleccionados sean rastreados.
+	<br /> Los nodos pueden ser incluidos a través del cuadro de dialogo
+	<i>Propiedades de la Sesión</i> .
+
+	<h3>Ejecutar aplicación</h3>
+	Este menú le permite
+	<i>invocar aplicaciones</i> that you have configured via the
+	<i>Pantalla de opciones de aplicaciones</i> which is also accessible via the 'Configure
+	applications...' submenu.
+
+	<h3>Administrar Tags...</h3>
+	Esto hará que aparezca el cuadro de dialogo 
+	<i>Gestionar Etiquetas</i> que le permite cambiar las
+	<i>etiquetas</i> asociadas a la solicitud.
+
+	<h3>Nota...</h3>
+	Esto hará que aparezca el cuadro de dialogo 
+	<i>Agregar Nota</i> que le permitirá guardar
+	<i>notas</i> related to the request.
+
+	<h3>Parada...</h3>
+	Esto hará que aparezca el cuadro de dialogo 
+	<i>Add Break Point dialog</i> which allows you to set a break point on that URL.
+	<br />
+
+	<h3>Alertas para este nodo</h3>
+	Si la URL seleccionada tiene
+	<i>alertas</i> asociadas a ella entonces serán listadas en este menú.
+	<br> Seleccionar una alerta hará que se muestre en pantalla.
+
+	<h3>Reenviar...</h3>
+	Esto hará que aparezca el cuadro de dialogo 
+	<i>Reenviar</i> que le permite reenviar la solicitud después de hacer cualquier cambio que desee.
+
+	<h3>Nueva alerta...</h3>
+	Esto hará que aparezca el cuadro de dialogo 
+	<i>Añadir Alerta,</i> el que le permitirá agregar una nueva
+	<i>Alert</i> de forma automática en la petición.
+
+	<h3>Ver en el navegador</h3>
+	La dirección URL del nodo seleccionado se abrirá en el navegador por defecto.
+
+	<h2>Vease también</h2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="concepts.html">AJAX Spider</a></td>
+			<td>Para una vista general sobre el Spider AJAX</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="options.html">Pantalla de opciones del Spider AJAX</a></td>
+			<td>Para una vista general sobre las opciones del Spider AJAX</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="scandialog.html">AJAX Spider dialog</a></td>
+			<td>for an overview of the AJAX Spider Dialog</td>
+		</tr>
+	</table>
+
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Consola BeanShell
+</title>
+</head>
+<body>
+<h1>Consola BeanShell</h1>
+<p>
+	La BeanShell es un shell interactivo de Java que puede ser utilizado para ejecutar secuencias de comandos de BeanShell. Estas secuencias de comandos, o scripts, son una forma simplificada de Java que utiliza muchos elementos de la sintaxis de Java, pero en un formato de comandos más simple. Todo el código Java funciona también como código BeanShell.<br/>
+La integración de BeanShell en OWASP ZAP le permite crear scripts utilizando las funciones de ZAP y el conjunto de datos. Esta puede ser una característica muy poderosa para analizar aplicaciones web.
+</p>
+<h2>BeanShell Consola</h2>
+<p>
+	La consola se inicia desde el menú de Herramientas, y contiene una pantalla dividida en donde la mitad superior es la consola BeanShell interactiva y la mitad inferior es un simple editor de texto. Para scripts complejos, te recomendamos utilizar el editor de Java. Los scripts pueden ser cargados, guardados y evaluados desde el editor.
+	Cuando el BeanShell se inicia, un número de objetos de ZAP se encuentran disponibles para su uso, entre ellos:
+	<ul>
+	<li>el <i>Modelo</i> singleton, a través del objeto llamado <i>modelo</i></li>
+	<li>el mapa de sitio web <i>SiteTree</i> de los sitios actuales a través del objeto <i>sites</i></li>
+	<li>una instancia de <pre>HttpSender</pre> a través de el objeto <i>sender</i>  </li>
+	</ul>
+	Note que el BeanShell está escrito de forma holgada. Por lo tanto, no es necesario declarar variables antes de usarlas, esto hace a los scripts un poco más concisos que en el Java regular. Pero por su puesto, si deseas definir el tipo, puedes hacerlo.
+</p>
+<h2>Utilizando el mapa de sitio web</h2>
+<p>
+	Empecemos con algo útil y común: iterar a través de todos los nodos de sitios y verificar si un archivo existe. Ya ha sido creado un script capaz de lograr esto, elige cargar y selecciona el archivo example.tree.bsh. Antes de hacer clic en Evaluar, primero navega a un sitio a través de ZAP para ingresar datos en el mapa:
+	<br/><br/>
+	Ahora has clic en evaluar para ejecutar el script que está en el editor. Si no hay errores, entonces ya puedes empezar a utilizar el objeto definido en script utilizando estos comandos:
+	<pre>
+	t = Tree();
+	</pre>
+	El cual construye un nuevo objeto Tree y le asigna una referencia a t.
+	<pre>
+	t.find(sites.getRoot(), "index.html");
+	</pre>
+	Llama el método find en t, el cual toma un SiteNode como su primer argumento y un recurso qué encontrar como el segundo. En este caso, el método iterará a través de todos los nodos en el mapa, debido a que iniciamos en la raíz, y encontrará archivos index.html.
+	<br/><br/>
+	En lugar de iterar a través de todos los nodos, podemos elegir empezar en un nodo específico haciendo uso del método findChild por ejemplo.:
+	<br/><br/>
+	Esto debería darle una idea del poder de BeanShell en ZAP. Pero para explotarlo por completo, va a necesitar familiarizarse con la API interna y las características de BeanShell. El BeanShell ha sido configurado para permitir acceso completo a todos los objetos y métodos internos, incluso los privados.
+</p>
+<h2>Petición HTTP simple</h2>
+<p>
+	En siguiente ejemplo, creamos y enviamos una solicitud HTTP directamente en la consola interactiva: Para poder aprovechar todas las capacidades de BeanShell, debería familiarizarse con el funcionamiento interno de ZAP.
+	El objeto sender es la misma instancia utilizada por el Editor Manual de Solicitudes y por lo tanto utilizará automáticamente los ajustes de proxy establecidas en la configuración de ZAP.
+	<br/><br/>PARA HACER: Ejemplo POST
+</p>
+<h2>Consejos</h2>
+<p>
+	Use el comando unsed(String) para liberar cualquier variable, método o objeto declarado. Esto es útil si desea reemplazar la declaración de un método en el espacio de variables actual. Tenga en cuenta que el comando toma un argumento de tipo String, no un Object, así que para liberar el objeto t que utilizamos más arriba, se deberá utillizar utilizar: unset("t"); y no unset(t);
+</p>
+<p>
+	Documento original por: Stephen de Vries
+</p>
+
+</body>
+</html>

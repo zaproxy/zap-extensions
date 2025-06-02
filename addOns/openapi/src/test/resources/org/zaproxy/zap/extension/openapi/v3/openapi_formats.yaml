@@ -1,0 +1,31 @@
+openapi: 3.0.0
+info:
+  title: "Definition with warning (missing version)."
+  version: "0.1"
+servers:
+  - url: http://localhost:@@@PORT@@@/
+paths:
+  /json-schema:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                datetime:
+                  type: string
+                  format: date-time
+                duration:
+                  type: string
+                  format: duration
+                uri:
+                  type: string
+                  format: uri
+      responses:
+        200:
+          content:
+            application/json: {}

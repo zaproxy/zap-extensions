@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>AJAX Spider dialog</title>
+</head>
+<body>
+<h1>Dialogo de araña AJAX</h1>
+
+Éste dialogo lanza la araña AJAX. 
+
+<h2>Ámbito</h2>
+La primera pestaña te permite cambiar características principales como:
+
+<h3>Starting Point</h3>
+
+El URL al que la araña AJAX se empezará a gatear desde, (en calquier manera va a ser usada por uno de los URL que se encuentran en contexto al inicio de la calle como punto de salida).
+
+<h3>contexto</h3>
+Permite seleccionar el contexto para ver alguna araña.
+
+<h3>Usuario</h3>
+Permite seleccionar uno de los usuarios disponibles del contexto seleccinado, para llevar a cabo escaneos de araña como un usuario (ZAP reautenticará al uuario tantas veces sea necesario).
+
+<h3>Just In Scope</h3>
+
+De configurarse, ninguna URLs, las cuales se encuentran fuera de alcance, serán ignoradas.
+<p>
+<strong>Nota:</strong> La opción <code>Just In Scope</code> es mutuamente exclusiva con <code>Contexto</code> opción, si uno está usado el otro debería estar libre.
+
+<h3>Solo sub-arboles de Araña</h3>
+Si se configura después entonces la araña solo accederá a los recursos que hay bajo el punto de incio (URI).
+Cuándo se evalúa si un recurso es encontrado entre el sub-árbol especificado, ñla araña solo considera el componente de esquema, el host y la ruta de componentes de URI.
+
+<h3>Navegador</h3>
+
+El tipo de navegador para usar.<br>
+Los navegadores sólo aparecerán si ZAP tiene suficiente configuración para correrlos.<br>
+Estos todavía podrían fallar para correr, si los navegadores se encuentran colapsados o si la configuración es incorrecta.
+
+<h3>Show Advanced Options</h3>
+
+De ser seleccionada, la pestaña de opciones será mostrada.
+
+<h2>Opciones</h2>
+Esta pestaña te permite cambiar opciones, incluyendo ninguna update:
+
+<h3>Number of Browser Windows to Open</h3>
+Pudes configurar el numero de ventanas a ser usadas por la araña AJAX.<br>
+Mientras mas ventanas, más rápido será el proceso.
+
+<h3>Maximum Crawl Depth</h3>
+La máxima profundidad que el crawler puede alcanzar, cero representa una vista ilimitada.
+
+<h3>Maximum Crawl States</h3>
+The maximum number of states that the crawler should crawl. Zero means unlimited crawl states. 
+
+<h3>Maximum Duration</h3>
+The maximum time that the crawler is allowed to run. Zero means unlimited running time.
+
+<h3>Event Wait Time</h3>
+The time to wait after a client side event is fired.
+
+<h3>Reload Wait Time</h3>
+The time to wait after URL is loaded.
+
+<h3>Allowed Resources</h3>
+The list of allowed resources. The allowed resources are always fetched even if out of scope, allowing to include necessary resources (e.g. scripts) from 3rd-parties.
+	
+	<h2>See also</h2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="concepts.html">AJAX Spider</a></td>
+			<td>for an overview of the AJAX Spider</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="tab.html">AJAX Spider tab</a></td>
+			<td>for an overview of the AJAX Spider Tab</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="options.html">Options AJAX Spider screen</a></td>
+			<td>sobrevista de las opciones de araña</td>
+		</tr>
+	</table>
+
+</body>
+</html>

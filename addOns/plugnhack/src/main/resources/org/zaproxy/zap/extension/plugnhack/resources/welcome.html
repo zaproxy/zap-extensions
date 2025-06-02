@@ -1,0 +1,143 @@
+<html>
+<head>
+<title>{{MSG.TITLE}}</title>
+<style type="text/css">
+a.button {
+    text-decoration: none;
+    background-color: #EEEEEE;
+    color: #333333;
+    padding: 2px 6px 2px 6px;
+    border-top: 1px solid #CCCCCC;
+    border-right: 1px solid #333333;
+    border-bottom: 1px solid #333333;
+    border-left: 1px solid #CCCCCC;
+}
+</style>
+</head>
+<body>
+<script type="application/javascript">
+<!--
+function install (aEvent)
+{
+  for (var a = aEvent.target; a.href === undefined;) a = a.parentNode;
+  var params = {
+    "Foo": { URL: aEvent.target.href,
+             IconURL: aEvent.target.getAttribute("iconURL"),
+             Hash: aEvent.target.getAttribute("hash"),
+             toString: function () { return this.URL; }
+    }
+  };
+  InstallTrigger.install(params);
+
+  return false;
+}
+-->
+</script>
+  <h1>{{MSG.HEADER}}</h1>
+  <p>{{MSG.INTRO1}}</p>
+  <p></p>
+  <p>{{MSG.INTRO2}}</p>
+  <p>
+
+  <div id="messages">
+    <div id="setup" style="display:none">
+      <p>{{MSG.SETUP1}}</p>
+      <p>
+      	{{MSG.SETUP2}}
+      	
+      	<b><a class="button" href="{{ROOT}}{{XPIURL}}"
+    hash="sha1:{{HASH}}" onclick="return install(event);">{{MSG.FIREFOX}}</a></b>
+	  </p>
+	</div>
+    <div id="in_progress" style="display:none">
+      <p>{{MSG.PROGRESS}}</p>
+    </div>
+    <div id="success" style="display:none">
+      <p id="successMessage">{{MSG.SUCCESS}}</p>
+    </div>
+    <div id="failure" style="display:none">
+      <p id="failureMessage">{{MSG.FAILURE}}</p>
+    </div>
+    <div id="activated" style="display:none">
+      <p>{{MSG.ACTIVATED}}</p>
+      <p id="activatedMessage">{{MSG.ACTIVATED}}</p>
+    </div>
+    <div id="actions">
+      <p>
+      <button id="btn">{{MSG.BUTTON}}</button>
+      </p>
+  	</div>
+  </div>
+  </p>
+
+</body>
+<script>
+  var detected = false;
+  var elements = ['setup','in_progress','success','failure','activated','actions'];
+  var manifest = {"detail":{"url":"{{ROOT}}{{MANIFESTURL}}"}};
+  // only show UI for the named elements
+  var showUI = function(visible,data){
+    function replaceTextContent(node, message) {
+      while(node.firstChild) {
+        node.removeChild(node.firstChild);
+      }
+      node.appendChild(document.createTextNode(message));
+    }
+    for(var idx in elements){
+      var elementName = elements[idx];
+      var displayElement = document.getElementById(elements[idx]);
+      var messageElement = document.getElementById(elements[idx]+'Message');
+      if (-1 != visible.indexOf(elementName)) {
+        if(data && data[elementName]) {
+          replaceTextContent(messageElement, data[elementName]);
+        }
+        displayElement.style.display = 'inline';
+      } else {
+        displayElement.style.display = 'none';
+      }
+    }
+  };
+  // event listener for button press
+  var click = function(event) {
+    var evt = new CustomEvent('ConfigureSecTool', manifest);
+    document.dispatchEvent(evt);
+    setTimeout(function() {
+      if (!detected) {
+        showUI(['setup']);
+     }
+    },1000);
+  };
+  // event listener for configuration started event
+  var started = function(event) {
+    console.log('configuration has started');
+    showUI(['in_progress']);
+    detected = true;
+  };
+  // event listener for configuration failed event
+  // use this to let the user know something has gone wrong
+  var failed = function(event) {
+    console.log('configuration has failed');
+    var detail = event.detail ? JSON.parse(event.detail) : null;
+    showUI(['failure','actions'], detail);
+  };
+  // event listener for configuration succeeded
+  // use this to show a success message to a user in your welcome doc
+  var succeeded = function(event) {
+    console.log('configuration has succeeded');
+    showUI(['success']);
+  };
+  // event listener for browser support activated
+  var activated = function(event) {
+    console.log('activation has occurred');
+    showUI(['activated','actions']);
+  };
+  // hook event listener into button
+  var btn = document.getElementById('btn');
+  btn.addEventListener('click',click,false);
+  // Hook configuration event listeners into the document
+  document.addEventListener('ConfigureSecToolStarted',started,false);
+  document.addEventListener('ConfigureSecToolFailed',failed,false);
+  document.addEventListener('ConfigureSecToolActivated',activated,false);
+  document.addEventListener('ConfigureSecToolSucceeded',succeeded,false);
+</script>
+</html>

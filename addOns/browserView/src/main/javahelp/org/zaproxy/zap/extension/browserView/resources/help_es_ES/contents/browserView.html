@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Vista de navegador
+</title>
+</head>
+<body>
+<h1>Vista de navegador</h1>
+<p>
+	El complemento de vista de navegador añade la opción de renderizar respuestas HTML como un navegador.
+</p>
+<p>
+	Puede ser seleccionado mediante la pestaña de respuesta en la barra de herramientas.
+</p>
+
+<h2>Requirements</h2>
+JavaFX is required to use this add-on, it can be obtained, for example, from <a href="https://gluonhq.com/products/javafx/">Gluon HQ</a>.
+<p>
+Once obtained ZAP needs to be configured to use JavaFX, which can be done with the following JVM arguments replacing with the appropriate path to the JavaFX's lib directory:
+<br>
+<code>
+--module-path /path/to/javafx/lib/ --add-modules javafx.swing,javafx.web
+</code>
+<p>
+If ZAP is launched with the default startup scripts the JVM arguments can be specified through the JVM options panel.
+
+</body>
+</html>

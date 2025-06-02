@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Zest</title>
+</head>
+<body>
+<h1>Zest</h1>
+<p>
+Zest is an experimental specialized scripting language (also known as a domain-specific language) 
+originally developed by the Mozilla security team and is intended to be used in web oriented security tools.
+<p>
+It is included by default with ZAP.<br>
+
+<h2>Creating Zest scripts</h2>
+
+There are a variety of ways to create Zest scripts:
+
+<h3>Record a new Zest script Button</h3>
+<ul>
+<li>Press the 'Record a new Zest script' button on the main toolbar</li>
+<li>Type in a suitable name for your script in the 'Add a Zest Script' dialog</li>
+<li>Select the prefix you want to record requests for, or leave blank to record all requests</li>
+<li>Press the 'Save' button</li>
+<li>The 'Record a new Zest script' button will stay pressed, change to 'Recording a new Zest script' and show a red icon.</li>
+</ul>
+The new Zest script will be shown in the Scripts tab with a red 'recording' icon.<br>
+Any requests that you make underneath the specified prefix will be added to the script.<br>
+Press the 'Recording a new Zest script' again to stop recording the requests.<br>
+Note that you can only record 'Stand Alone' Zest scripts in this way. If you want to create other types of Zest script you must use another mechanism.
+<br><br>
+You can also right click any Stand Alone Zest script and use the 'Start recording' and 'Stop recording' buttons. 
+
+<h3>New Script Button</h3>
+<ul>
+<li>Navigate to the Scripts tree tab</li>
+<li>Press the 'New Script...' button</li>
+<li>Type in a suitable name for your script in the 'New Script' dialog</li>
+<li>Select the script type (see the Scripts add-on help page for more details)</li>
+<li>Select the Zest script engine</li>
+<li>Select one of the templates (if relevant)</li>
+<li>Press the 'Save' button</li>
+</ul>
+Any type of Zest script can be created this way.
+
+<h3>Right clicking a Zest template</h3>
+<ul>
+<li>Navigate to the Scripts tree tab</li>
+<li>Expand the 'Templates' node and find a template you want to use</li>
+<li>Right click on the template and select 'New Script...'</li>
+<li>Press the 'Save' button</li>
+</ul>
+Any type of Zest script can be created this way.
+
+<h3>Right clicking requests</h3>
+<ul>
+<li>Navigate to any tab that shows requests, such as the History tab</li>
+<li>Select one or more requests</li>
+<li>Right click on them</li>
+<li>Select the 'Add to Zest Script' menu which allows you to select an existing Stand Alone script or create a new one</li>
+</ul>
+Note that you can only add request to 'Stand Alone' Zest scripts.
+
+<h3>Plug-n-Hack</h3>
+If you are using a recent version of Firefox then you can create Zest scripts from within your browser.<br>
+<ul>
+<li>Press the 'Plug-n-Hack' button on the ZAP 'Quick Start' tab</li>
+<li>Install the Plug-n-Hack Firefox Add-on and accept all of the dialogs</li>
+<li>Press 'Shift F2' in Firefox to access the Developer Toolbar</li>
+<li>Type 'zap record on global' to start recording a new Zest script</li>
+<li>Any requests you make through ZAP will be added to the script</li>
+<li>Type 'zap record off global' to stop recording the script</li>
+</ul>
+Note that you can only record 'Stand Alone' Zest scripts in this way. If you want to create other types of Zest script you must use another mechanism.
+
+<h2>Editing Zest scripts</h2>
+Zest scripts are edited graphically in the Scripts tree tab.<br>
+Each statement is a node in the tree - double click nodes to edit the statement properties.<br>
+You can add, move and remove statements via right clicking the Zest nodes.<br>
+You can also add requests to 'Stand alone' Zest scripts by right clicking the requests in any of the other tabs.<br>
+There are also some right click options available when you select text in the Request or Response tabs.<br>
+<br>
+Zest includes a set of 'built in' variables as well as allowing you to declare your own.<br>
+A right click menu is provided (where relevant) in the edit dialogs to allow you to paste in any of the available variable names.<br>
+
+<h2>External links</h2>
+<table>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+	<td><a href="https://github.com/zaproxy/zest/">https://github.com/zaproxy/zest/</a></td>
+	<td>The Zest GitHub repository, including details of the language</td>
+</tr>
+</table>
+
+</body>
+</html>

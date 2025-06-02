@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Pestaña WebSocket
+</title>
+</head>
+<body>
+<h1>Pestaña WebSocket</h1>
+
+<p>
+La pestaña WebSockets muestra todos los mensajes de las conexiones WebSocket. Mientras que ZAP está activa, visita por ejemplo: <a href="http://browserquest.mozilla.org/">Mozilla's BrowserQuest</a> para ver WebSockets en acción.
+</p>
+
+<h2>Filtros</h2>
+	<h3>Selector de canal</h3>
+		Se puede limitar la visualización de mensajes a uno o todos los canales WebSocket específicos.
+		<br>
+		Si selecciona un canal específico, entonces el <i>botón Mostrar protocolo de enlace</i> (<img src="images/handshake.png" align="bottom" width="16" height="16" />) se habilita. Cuando se hace clic sobre el, el protocolo de enlace HTTP correspondiente se muestra en la pestaña Solicitud/Respuesta.
+
+	<h3>Cuadro de diálogo de filtro</h3>
+		En el cuadro de diálogo de filtro (<img src="images/054.png" align="bottom" width="16" height="16" />) se puede controlar aun más cuales mensajes son mostrados.
+
+<br><br>
+<h2>Puntos de interrupción</h2>
+	Se pueden establecer puntos de interrupción utilizando el botón <i>Agregar puntos de interrupción personalizados</i>
+	(<img src="images/break_add.png" align="bottom" width="16" height="16" />).
+	<br>
+	También se puede utilizar el <i>Menú de clic derecho</i>.
+
+<br><br>
+<h2>Menú de clic derecho</h2>
+	Al hacer clic derecho sobre un mensaje WebSocket se abrirá un menú que le permitirá:
+
+	<h3>Excluir de WebSocket</h3>
+		Las conexiones WebSocket pueden excluirse de la pestaña WebSockets al agregar un URL excluido a las
+		<i>Propiedades de la Sesión</i>. Al hacer clic en este elemento, abre las propiedades de la sesión con el URL ya precargado.
+		Excluir una conexión WebSocket no resultará en el cierre de la conexión, sino será reenviada sin que se siga procesando.
+
+	<h3>Interrupción...</h3>
+		Esto hará que aparezca el cuadro de dialogo 
+		<i>Add Break Point dialog</i> que permite configurar un punto de interrupción personalizado.
+</body>
+</html>

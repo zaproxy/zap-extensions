@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Zest</title>
+</head>
+<body>
+<h1>Zest</h1>
+<p>
+Zest is an experimental specialized scripting language (also known as a domain-specific language) 
+originally developed by the Mozilla security team and is intended to be used in web oriented security tools.
+<p>
+Ini termasuk secara default dengan ZAP.<br>
+
+<h2>Engine Name</h2>
+The engine is named <code>Mozilla Zest</code>, which should be used when manually/programmatically configuring ZAP.
+
+<h2>Membuat skrip Zest</h2>
+
+Ada berbagai cara untuk membuat skrip Zest:
+
+<h3>Tombol Rekam sebuah skrip Zest baru</h3>
+<ul>
+<li>Tekan tombol 'Rekam sebuah skrip Zest baru' pada toolbar utama</li>
+<li>Ketik nama yang cocok untuk skrip Anda di dialog 'Tambah sebuah skrip Zest'</li>
+<li>Pilih awalan yang anda inginkan untuk mencatat permintaan, atau biarkan kosong untuk mencatat semua permintaan</li>
+<li>Tekan tombol 'Simpan'</li>
+<li>Tombol 'Rekam sebuah skrip Zest baru' akan tetap ditekan, berubah menjadi 'Sedang merekam sebuah skrip Zest baru' dan menampilkan ikon merah.</li>
+</ul>
+Skrip Zest baru akan ditampilkan di tab Skrip dengan ikon merah 'merekam'.<br>
+Setiap permintaan yang Anda buat di bawah prefiks yang dinyatakan akan ditambahkan ke skrip.<br>
+Tekan tombol 'Sedang merekam sebuah skrip Zest baru' lagi untuk berhenti merekam permintaan.<br>
+Perhatikan bahwa anda hanya dapat merekam 'Stand Alone' Semangat script dengan cara ini. Jika anda ingin membuat jenis lain dari Semangat script anda harus menggunakan mekanisme lain.
+<br><br>
+Anda juga dapat klik kanan setiap Stand Alone Semangat script dan menggunakan 'Start recording' dan 'Stop recording' tombol.
+<br><br>
+There are two primary methods for script recording: server-side and client-side. For client-side recording, we leverage the ZAP browser extension and a dedicated client add-on. 
+<br>
+This combination allows us to efficiently capture and save user interactions in Zest scripts. 
+
+<h3>Tombol Skrip Baru</h3>
+<ul>
+<li>Navigasi ke tab pohon Skrip</li>
+<li>Tekan tombol 'Skrip Baru...'</li>
+<li>Ketik suatu nama yang cocok untuk skrip Anda di dialog 'Skrip Baru'</li>
+<li>Pilih jenis script (lihat Script add-on halaman bantuan untuk informasi lebih lanjut)</li>
+<li>Pilih mesin skrip Zest</li>
+<li>Pilih salah satu template (jika relevan)</li>
+<li>Tekan tombol 'Simpan'</li>
+</ul>
+Setiap jenis dari skrip Zest bisa dibuat melalui cara ini.
+
+<h3>Klik kanan template Zest</h3>
+<ul>
+<li>Arahkan ke tab pohon Skrip</li>
+<li>Perluas node 'Templates' dan cari sebuah template yang anda ingin gunakan</li>
+<li>Klik kanan pada template dan pilih 'New Script...'</li>
+<li>Tekan tombol 'Save'</li>
+</ul>
+Any type of Zest script can be created this way.
+
+<h3>Klik kanan permintaan</h3>
+<ul>
+<li>Arahkan ke tab mana saja yang menampilkan permintaan, seperti tab riwayat</li>
+<li>Pilih satu permintaan atau lebih</li>
+<li>Klik kanan pada mereka</li>
+<li>Pilih menu 'Tambah ke Zest Script' yang akan memungkinkan anda untuk memilih Stand Alone Script yang ada atau buat yang baru</li>
+</ul>
+Note that you can only add request to 'Stand Alone' Zest scripts.
+
+<h3>Plug-n-Hack</h3>
+If you are using a recent version of Firefox then you can create Zest scripts from within your browser.<br>
+<ul>
+<li>Tekan tombol 'Plug-n-Hack' pada tab 'Quick Start' ZAP</li>
+<li>Memasang Add-on Plug-n-Hack Firefox dan terima semua dialog</li>
+<li>Tekan 'Shift F2' dalam Firefox untuk mengakses Toolbal pengembang</li>
+<li>Tuliskan 'zap record on global' untuk mulai merekam Zest script baru</li>
+<li>Setiap permintaan yang anda buat melalui Zap akan ditambahkan ke script</li>
+<li>Ketik 'zap record off global' untuk menghentikan rekaman script</li>
+</ul>
+Note that you can only record 'Stand Alone' Zest scripts in this way. If you want to create other types of Zest script you must use another mechanism.
+
+<h2>Menyunting skrip Zest</h2>
+Zest scripts are edited graphically in the Scripts tree tab.<br>
+Each statement is a node in the tree - double click nodes to edit the statement properties.<br>
+You can add, move and remove statements via right clicking the Zest nodes.<br>
+You can also add requests to 'Stand alone' Zest scripts by right clicking the requests in any of the other tabs.<br>
+There are also some right click options available when you select text in the Request or Response tabs.<br>
+<br>
+Zest includes a set of 'built in' variables as well as allowing you to declare your own.<br>
+A right click menu is provided (where relevant) in the edit dialogs to allow you to paste in any of the available variable names.<br>
+
+<h2>Authentication Scripts</h2>
+Authentication scripts can use a custom ZAP variable, called <code>TOTP</code>, to send a value to an input field with a TOTP code generated from the user's credentials TOTP data.
+
+<h2>Tautan eksternal</h2>
+<table>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+	<td><a href="https://github.com/zaproxy/zest/">https://github.com/zaproxy/zest/</a></td>
+	<td>The Zest GitHub repository, including details of the language</td>
+</tr>
+</table>
+
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+WebSocket specific options
+</title>
+</head>
+<body>
+<h1>WebSocket specific options</h1>
+<p>
+This screen allows you to configure the WebSocket options:
+
+<h3>Forward all</h3>
+If you're not interested in WebSockets communication, but you want to allow its messages being sent back &amp; forth through ZAP, then you should enable this option.
+As a result no message will be stored in the session database. Moreover no message will appear in the WebSockets tab. This setting can be useful if you have to deal with performance critical WebSocket connections and you're not interested what is being sent.
+<br><br>
+If you want to ignore just one specific channel, check out the WebSocket specific <i>Właściwości sesji</i>.
+
+
+<h3>Break on all</h3>
+In the <i>Zatrzymania</i> toolbar, there are two buttons:
+<ul>
+	<li><img src="images/105.png" align="bottom" width="16" height="16" />&nbsp;&nbsp;<i>Set break on all requests</i></li>
+	<li><img src="images/106.png" align="bottom" width="16" height="16" />&nbsp;&nbsp;<i>Set break on all responses</i></li>
+</ul>
+When you enable this option, then all outgoing (respectively incoming) WebSocket messages are also caught by these control buttons.
+<br><br>
+By default this option is disabled. In this case only HTTP messages are caught, but you can add explicit breakpoints on WebSocket communication in the <a href="tab.html">WebSocket tab</a>. 
+
+
+<h3>Break on Ping &amp; Pong messages</h3>
+<i>PING</i> i <i>PONG</i> messages are often used by WebSocket servers to determine the health of the current connection. If you catch an incoming <i>PING</i> message, the browser is not able to return a <i>PONG</i> message immediately, resulting in a bad latency value.
+<br><br>
+If this option is disabled no <i>PING</i> lub <i>PONG</i> message is caught when you:
+<ul>
+	<li>set a breakpoint on <u>all requests</u> or <u>all responses</u>, <i>or</i></li>
+	<li>step through to the next request or response and a <i>PING</i> or <i>PONG</i> message arrives</li>
+</ul>
+This setting does not affect breakpoints that are set explicitly on <i>PING</i> lub <i>PONG</i> messages. You can view such explicit breakpoints in the <i>Breakpoints tab</i>.
+
+<h3>Remove <code>Sec-WebSocket-Extensions</code> header</h3>
+Allows to remove the HTTP header <code>Sec-WebSocket-Extensions</code> from handshake messages, so no transformations are done
+to the WebSocket messages sent/received.<br>
+This option should always be enabled unless the client or the server under test requires them. The WebSocket
+messages might not be correctly processed by ZAP when extensions are used.
+
+</body>
+</html>

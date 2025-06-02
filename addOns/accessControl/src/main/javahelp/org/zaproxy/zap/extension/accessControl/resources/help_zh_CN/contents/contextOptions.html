@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>
+        访问控制上下文选项
+    </title>
+</head>
+<body>
+<h1>访问控制上下文选项</h1>
+
+<p>
+    打开会话属性对话框时，访问控制上下文选项会作为每个上下文的面板出现。 该面板允许 ZAP 用户为每个上下文中的每个用户定义访问规则 (Access Rules)。
+</p>
+
+<p>
+    如 <a href="concepts.html">概念</a>页面所述，ZAP 正在使用基于树形结构的 URL。 因此，在配置访问规则时，只需为整个子树明确设置一条规则，而其他节点的规则都是推断出来的。 可以为每个用户的上下文中的任何节点设置三种可能的值：
+</p>
+<ul>
+    <li><b>允许 (Allowed)</b> - 节点的规则<i>明确</i>设置为允许</li>
+    <li><b>禁止 (Denied)</b> - 节点的规则<i>明确</i>设置为禁止</li>
+    <li><b>继承 (Inherited)</b> - 节点的规则是根据最接近的父节点推断出来的，该父节点有明确设置的规则
+    </li>
+</ul>
+
+<p>默认情况下，任意节点的规则值为 <i>继承 (Inherited)</i>，根节点的规则值为 <i>未知  (Unknown)</i>。
+    因此，对于没有显式配置规则的父节点，推断规则将默认为
+    <i>未知  (Unknown)</i>.</p>
+
+<h2>参阅：</h2>
+<table>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>
+            <a href="concepts.html">访问控制测试概念</a></td>
+        <td>访问控制测试的简要介绍</td>
+    </tr>
+</table>
+
+</body>
+</html>

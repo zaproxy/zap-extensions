@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Fuzzing
+</title>
+</head>
+<body>
+<h1>Fuzzing</h1>
+<p>
+Fuzzing is a technique of submitting lots of data to a target (often in the form of invalid or unexpected inputs).
+</p>
+<p>
+ZAP allows you to fuzz any request using:
+<ul>
+<li>A built-in set of payloads</li>
+<li>Muatan yang didefinisikan oleh opsional add-ons</li>
+<li>Skrip kustom</li>
+</ul>
+</p>
+Untuk mengakses <a href="dialogue.html">Dialog fuzzer</a> anda juga dapat:
+<ul>
+<li>Klik kanan permintaan di salah satu tab ZAP (seperti Sejarah atau Situs) dan pilih "Serangan / Fuzz..."</li>
+<li>Sorot sebuah string dalam tab Permintaan, klik kanan dan pilih "Fuzz..."</li>
+<li>Pilih item menu "Tools / Fuzz..." lalu pilih permintaan yang ingin Anda ubah</li>
+</ul>
+
+<h3>Generator Payload</h3>
+Payload Generators generate the raw values or attacks that the fuzzer submits to the target application.
+<br><br>
+Mereka berhasil melalui <a href="payloads.html">Payloads dialog</a>.
+
+<h3>Prosesor Payload</h3>
+Muatan Prosesor dapat digunakan untuk mengubah muatan tertentu sebelum mereka diserahkan.
+<br><br>
+Mereka berhasil melalui <a href="processors.html">Dialog Prosesor Payload</a>.
+
+<h3>Lokasi Prosesor Fuzz</h3>
+Fuzz Lokasi Prosesor dapat digunakan untuk mengubah semua muatan sebelum mereka diserahkan.
+<br><br>
+Mereka berhasil melalui <a href="locations.html">Lokasi Prosesor dialog</a>.
+
+<h3>Prosesor Pesan</h3>
+Message Processors can access and change the messages being fuzzed, control the fuzzing process, and interact with the ZAP UI.
+<br><br>
+Mereka berhasil melalui <a href="dialogue.html">Dialog fuzzer</a> 'Pesan Prosessor' tab.
+
+<p>
+Some of this functionality is based on code from the OWASP JBroFuzz project and includes files from the fuzzdb project.<br/>
+Note that some fuzzdb files have been left out as they cause common anti-virus scanners to flag them as containing viruses.<br/>
+You can replace them (and upgrade fuzzdb) by downloading the latest version of fuzzdb and expanding it in the 'fuzzers' library.
+</p>
+
+<h2>Lihat juga</h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="options.html">Telah mengirimkan hasil pengeditan pilihan layar</a></td></tr>
+</table>
+
+</body>
+</html>

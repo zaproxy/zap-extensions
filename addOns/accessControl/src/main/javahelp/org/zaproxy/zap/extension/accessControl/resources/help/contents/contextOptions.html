@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+    <TITLE>
+        Access Control Context Options
+    </TITLE>
+</HEAD>
+<BODY>
+<H1>Access Control Context Options</H1>
+
+<p>
+    The Access Control Context options are present as a panel for each Context when opening the Session Properties
+    dialog. This panel allows ZAP users to define the Access Rules for each User of each Context.
+</p>
+
+<p>
+    As mentioned on the <a href="concepts.html">concepts</a> page, ZAP is making use of the tree-based
+    structure of URLs. So, when configuring the access rules, only 1 rule needs to be set explicitly for an entire
+    subtree, while for the other nodes rules are inferred. Three possible values can be set for any node in Context for
+    each User:
+</p>
+<ul>
+    <li><b>Allowed</b> - The rule for the node is <i>explicitly</i> set as Allowed</li>
+    <li><b>Denied</b> - The rule for the node is <i>explicitly</i> set as Denied</li>
+    <li><b>Inherited</b> - The rule for the node is inferred based on the closest parent with an explicitly set rule
+    </li>
+</ul>
+
+<p>By default, the rules for any node has an <i>Inherited</i> value and the root node has a value of <i>Unknown</i>.
+    Thus, for any node without a parent with an explicitly configured rule, the inferred rule will default to
+    <i>Unknown</i>.</p>
+
+<H2>See also</H2>
+<table>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>
+            <a href="concepts.html">Access Control Testing concepts</a></td>
+        <td>for a short introduction to Access Control Testing</td>
+    </tr>
+</table>
+
+</BODY>
+</HTML>

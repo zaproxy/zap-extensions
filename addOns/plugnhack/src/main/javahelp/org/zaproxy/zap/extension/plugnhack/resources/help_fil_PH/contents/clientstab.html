@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Plug-n-Hack kliyente tab
+</title>
+</head>
+<body>
+<h1>Mga Plug-n-Hack Client tab</h1>
+<p>
+	Hinahayaan ka ng Plug-n-Hack na subaybayan ang mga kaganapan ng client (browser) upang matulungan ang mga pagsubok na mga application ng HTML5. <br>
+Upang masuportahan ang malawak na hanay ng mga modernong browser hangga't maaari ito ay ipinatupad sa pamamagitan ng pag-inject ng javascript
+sa tugon na ibinalik sa browser. <br>
+Dahil nangangahulugan ito ng pagpapalit ng tugon ang pag-andar na ito ay dapat na manu-manong pinapagana. 
+</p>
+<p>
+	Tanggapin ang mga pangyayari sa kliyente:
+	<ul>
+	<li>I-access ang mga pahina na gusto mong imonitor habang nagsisilbing proxy para sa pamamagitan ng ZAP</li>
+	<li>Mag-right click sa may-katuturang mga (mga) node sa puno ng Mga Site at piliin ang 'Subaybayan ang mga kliyente -> Isama ang subtree'</li>
+	<li>Pumilitin ang iyong browser na i-reload ang mga pahinang iyon</li>
+	<li>Client events (such as postMessage, click, mouseover, etc.) will then be listed in this tab - select them to see the full details.</li>
+	</ul>
+</p>
+<p>
+	Ang injected javascript ay nagpapadala ng tibok ng puso sa ZAP, kaya maaaring ipakita ng ZAP ang lahat ng mga 'aktibong' kliyente sa tab na ito.
+Sa kasong ito ang 'aktibong' mga kliyente ay mga pahina na kasalukuyang bukas sa isang tab ng browser.
+Maaari mong i-edit at muling ipahiwatig ang anumang kaganapan sa pamamagitan ng isang item sa right click menu hangga't aktibo ang orihinal na kliyente.<br>
+</p>
+<p>
+	Maaari mo ring maharang at baguhin ang postMessages sa mabilisang.
+Ang mga mensahe ng client ay naharang kung ang pindutan ng 'break sa lahat ng mga kahilingan' ay pinili sa tuktok na toolbar ng antas.
+Maaari ka ring magtakda ng mga custom breakpoints ng client sa pamamagitan ng isang pindutan sa tab na Kliyente. <br>Ang paraan na nananawagang ang ZAP API na naman ang flag ng kaugnay na atake sa mga UI - ang mga ito ay nakumpirma DOM XSS kahinaan, kahit na (tulad ng dati) dapat mong tingnan ay talagang sila pinagsasamantalahan ang application mo ay pagsubok nang walang isang kasangkapan tulad ng ZAP.<br>
+
+</p>
+
+</body>
+</html>

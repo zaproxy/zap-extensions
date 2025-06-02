@@ -1,0 +1,20 @@
+env:
+  contexts:
+    - name: example
+      urls: 
+      - https://www.example.com/
+  parameters:
+    failOnError: true                  
+    failOnWarning: false               
+    progressToStdout: false         
+    continueOnFailure: true   
+
+jobs:
+  - type: job1
+    parameters:
+
+  - type: job2
+    parameters:
+
+  - type: job3
+    parameters:

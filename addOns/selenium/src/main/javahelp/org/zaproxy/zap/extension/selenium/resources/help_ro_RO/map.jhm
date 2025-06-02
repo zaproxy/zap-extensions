@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE map
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Map Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/map_1_0.dtd">
+
+<map version="1.0">
+    <mapID target="addon.selenium.icon" url="contents/images/selenium.png" />
+    <mapID target="addon.selenium.intro" url="contents/intro.html" />
+    <mapID target="addon.selenium.options" url="contents/options.html" />
+    <mapID target="addon.selenium.api" url="contents/api.html" />
+</map>

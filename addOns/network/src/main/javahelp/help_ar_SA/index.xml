@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE index PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Index Version 1.0//EN" "http://java.sun.com/products/javahelp/index_2_0.dtd">
+<index version="2.0">
+    <indexitem text="Network" target="addon.network"/>
+    <indexitem text="Network API" target="addon.network.api"/>
+    <indexitem text="Network Command Line" target="addon.network.cmdline"/>
+    <indexitem text="Network Options" target="addon.network.options"/>
+</index>

@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+HTTP Mesaj İşlemcileri
+</title>
+</head>
+<body>
+<h1>HTTP Mesaj İşlemcileri</h1>
+HTTP Message Processors can access and change the HTTP messages being fuzzed, control the fuzzing process, and interact with the ZAP UI.
+<p>
+Yerleşik HTTP Mesaj İşlemcileri'nde bulunanlar:
+
+<h3>Anti-CSRF Token Yenileyici</h3>
+Talepte bulunan anti-CSRF token'larını yenilemeye yarar. Bu işlemcinin kullanılabilmesi için anti-CSRF token'larının ZAP tarafından düzgünce algılanması gerekmektedir.<br>
+Daha fazla bilgi için "Başlarken" > "Öne Çıkanlar" > "Anti CSRF Token'ları" yardım sayfasına danışın.<br>
+<strong>Not:</strong> Eğer anti-CSRF token'ları algılanırsa, bu işlemci otomatik olarak işlemciler listesine eklenir.
+
+<h3>Fuzzer HTTP İşemcisi (Script)</h3>
+Etkinleştirilmiş Fuzzer HTTP İşlemcisi script'lerini seçmeye yarar. Bu script'ler şunları yapmanızı sağlar:
+<ul>
+<li>Payload'ların listesini edinme</li>
+<li>Fuzzing'i durdurma</li>
+<li>Hata sayımını arttır</li>
+<li>Yeni mesajlar gönder</li>
+<li>Sonuçlar sekmesine yeni mesajlar ekle</li>
+<li><a href="tab.html">Fuzzer sekmesi</a>ne özel 'durum' mesajları ayarı</li>
+<li>Uyarıları yükselt</li>
+</ul>
+
+Scripts can include both Required and Optional parameters the values for which the user will be prompted to provide when the Processor is added to the fuzzer.
+The parameter names are defined within the script(s) via the methods <code>getRequiredParamsNames</code> and <code>getOptionalParamsNames</code>, each of which
+simply return an array of strings representing the parameters names.
+
+<h3>Payload Yansıma Algılayıcısı</h3>
+Indicates in the State column of results table if one of the injected payloads were found in the response, using "<img src="images/reflected_icon.png"> Reflected".<br>
+<strong>Not:</strong> This processor is automatically added to the list of processors.
+
+<h3>İstek İçerik-Uzunluğu Güncelleyici</h3>
+Updates (or adds, if not already present) the <code>Content-Length</code> request header with the length of the request body,
+for all request methods. No change is done if the size of the request body is zero and the header is not already present.<br>
+<strong>Not:</strong> This processor is automatically added to the list of processors.
+
+<h3>Etiket Yaratıcı</h3>
+Allows to add custom ‘tags’, based on contents of the response, to the State column of the results table.
+
+<h3>Kullanıcı Mesaj İşlemcisi</h3>
+Allows to fuzz as a user, using one of the users defined in the Contexts that include the HTTP message being fuzzed. Users must
+exist to be able to select and add this processor.
+
+<p>
+Diğer eklentiler ek HTTP Mesaj İşlemcileri tanımlayabilir.
+
+<h2>Aracılığıyla erişildi</h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="dialogue.html">Fuzzer dialog</a> Mesaj İşlemcileri sekmesi altında</td></tr>
+</table>
+
+<h2>Ayrıca bakın</h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Fuzzer kavramları</a></td></tr>
+</table>
+
+</body>
+</html>

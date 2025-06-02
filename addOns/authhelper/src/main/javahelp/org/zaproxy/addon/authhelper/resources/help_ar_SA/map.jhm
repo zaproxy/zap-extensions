@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE map
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Map Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/map_1_0.dtd">
+
+<map version="1.0">
+	<mapID target="authhelper-icon" url="contents/images/hand-padlock.png" />
+    <mapID target="authhelper" url="contents/authhelper.html" />
+    <mapID target="authhelper.auth-req-id" url="contents/auth-req-id.html" />
+    <mapID target="authhelper.autodetect-auth" url="contents/autodetect-auth.html" />
+    <mapID target="authhelper.browser-auth" url="contents/browser-auth.html" />
+    <mapID target="authhelper.client-script-auth" url="contents/client-script.html" />
+    <mapID target="authhelper.session-mgmt-id" url="contents/session-mgmt-id.html" />
+    <mapID target="authhelper.autodetect-session" url="contents/autodetect-session.html" />
+    <mapID target="authhelper.session-header" url="contents/session-header.html" />
+    <mapID target="authhelper.verification-id" url="contents/verification-id.html" />
+    <mapID target="authhelper.auth-tester" url="contents/auth-tester.html" />
+    <mapID target="authhelper.report-templates" url="contents/reports.html" />
+</map>

@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Fuzzing
+</title>
+</head>
+<body>
+<h1>Fuzzing</h1>
+<p>
+Fuzzing is a technique of submitting lots of invalid or unexpected data to a target.
+</p>
+<p>
+ZAP allows you to fuzz any request still using:
+<ul>
+<li>A build in set of payloads</li>
+<li>Payloads defined by optional add-ons</li>
+<li>Custom scripts</li>
+</ul>
+</p>
+To access the <a href="dialogue.html">Fuzzer dialog</a> you can either:
+<ul>
+<li>Right click a request in one of the ZAP tabs (such as the History or Sites) and select “Attack / Fuzz…”</li>
+<li>Highlight a string in the Request tab, right click it and select “Fuzz…”</li>
+<li>Select the “Tools / Fuzz…” menu item and then select the request you want to fuzz</li>
+</ul>
+
+<h3>Payload Generators</h3>
+Payload Generators generate the raw attacks that the fuzzer submits to the target application.
+<br><br>
+They are managed via the <a href="payloads.html">Payloads dialog</a>
+
+<h3>Payload Processors</h3>
+Payload Processors can be used to change specific payloads before they are submitted.
+<br><br>
+They are managed via the <a href="processors.html">Payload Processors dialog</a>
+
+<h3>Fuzz Location Processors</h3>
+Fuzz Location Processors can be used to change all of the payloads before they are submitted.
+<br><br>
+They are managed via the <a href="locations.html">Location Processors dialog</a>
+
+<h3>Message Processors</h3>
+Message Processors can access and change the messages being fuzzed, control the fuzzing process and interact with the ZAP UI.
+<br><br>
+They are managed via the <a href="dialogue.html">Fuzzer dialog</a> 'Message Processors' tab.
+
+<p>
+This functionality is based on code from the OWASP JBroFuzz project and includes files from the fuzzdb project.<br/>
+Note that some fuzzdb files have been left out as they cause common anti virus scanners to flag them as containing viruses.<br/>
+You can replace them (and upgrade fuzzdb) by downloading the latest version of fuzzdb and expanding it in the 'fuzzers' library.
+</p>
+
+
+<h2>See also</h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="options.html">Fuzzer options screen</a></td></tr>
+</table>
+
+
+
+</body>
+</html>

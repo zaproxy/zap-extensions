@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>
+        Opções de contexto de controle de acesso
+    </title>
+</head>
+<body>
+<h1>Opções de contexto de controle de acesso</h1>
+
+<p>
+    As opções de contexto de controle de acesso estão presentes como um painel para cada contexto, ao se abrir a caixa de diálogo Propriedades da sessão. Este painel permite aos usuários do ZAP definirem as regras de acesso para cada usuário de cada contexto.
+</p>
+
+<p>
+    Como mencionado na página de <a href="concepts.html">conceitos</a>, o ZAP está fazendo uso da estrutura baseada em árvore de URLs. Então, ao configurar as regras de acesso, apenas uma regra precisa ser definida explicitamente para uma subárvore inteira, enquanto para os outros nós regras são inferidas. Três valores possíveis podem ser definidos para qualquer nó de contexto para cada usuário:
+</p>
+<ul>
+    <li><b>Permitido</b> - a regra para o nó é <i>explicitamente</i> definida como Permitido</li>
+    <li><b>Negado</b> - a regra para o nó é <i>explicitamente</i> definida como negado</li>
+    <li><b>Herdada</b> - a regra para o nó é inferida com base no pai mais próximo com uma regra definida explicitamente
+    </li>
+</ul>
+
+<p>Por padrão, as regras para qualquer nó possuem um valor <i>herdado</i> e o nó de raiz tem um valor <i>desconhecido</i>.
+    Assim, para qualquer nó sem um pai com uma regra explicitamente configurada, a regra inferida padrão será <i>desconhecido</i>.</p>
+
+<h2>Leia também</h2>
+<table>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>
+            <a href="concepts.html">Conceitos de testes de controle de acesso</a></td>
+        <td>para uma breve introdução a testes de controle de acesso</td>
+    </tr>
+</table>
+
+</body>
+</html>

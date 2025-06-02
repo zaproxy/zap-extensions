@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+WebSocket特定的选项
+</title>
+</head>
+<body>
+<h1>WebSocket特定选项</h1>
+<p>
+此屏幕允许您配置WebSocket选项：
+
+<h3>转发所有</h3>
+如果您对WebSockets通信不感兴趣，但您希望允许其消息被发送回来&amp; 通过ZAP，那么您应该启用这个选项。
+因此信息不会存储在会话数据库中。 此外，WebSockets选项卡中不会出现任何消息。 如果您必须处理性能至关重要的WebSocket连接，并且您对发送的内容不感兴趣，则此设置可能非常有用。
+<br><br>
+如果您想要忽略一个特定通道，请查看WebSocket特定的 <i>会话属性</i>.
+
+
+<h3>全部中断</h3>
+在 <i>中断</i> 工具栏，有两个按钮：
+<ul>
+	<li><img src="images/105.png" align="bottom" width="16" height="16" />&nbsp;&nbsp;<i>在所有请求中设置断点</i></li>
+	<li><img src="images/106.png" align="bottom" width="16" height="16" />&nbsp;&nbsp;<i>在所有响应中设置断点</i></li>
+</ul>
+当您启用此选项时，所有传出（分别传入）的WebSockets消息也被这些控制按钮捕获。
+<br><br>
+默认情况下，此选项被禁用。在这种情况下，只有HTTP消息被捕获，但您可以在WebSockets通信中添加明确的断点 <a href="tab.html">WebSocket选项卡</a>. 
+
+
+<h3>Break on Ping &amp; Pong messages</h3>
+<i>PING</i> 和 <i>PONG</i> 消息通常被WebSocket服务器用来确定当前连接的运行状况。如果你捕获传入 <i>PING</i> 消息，浏览器无法立即返回 <i>PONG</i> 消息，从而导致滞后时间值错误。
+<br><br>
+如果禁用此选项 <i>PING</i> 或者 <i>PONG</i> message is caught when you:
+<ul>
+	<li>在<u>所有请求</u>或<u>所有响应</u>、<i>或</i>上设置断点</li>
+	<li>step through to the next request or response and a <i>PING</i> or <i>PONG</i> message arrives</li>
+</ul>
+此设置不影响显式设置的断点 <i>PING</i> 或者 <i>PONG</i> 消息，您可以查看这样的显式断点在 <i>断点选项卡</i>.
+
+<h3>删除<code>Sec-WebSocket-Extension</code>标题</h3>
+允许删除HTTP标题 <code>Sec-WebSocket-Extensions</code> 从握手消息，因此不会对发送/接受的WebSocket消息进行转换。<br>
+应始终启动此选项，除非正在测试的客户端或者服务器需要它们。当使用扩展时，WebSocket消息可能无法通过ZAP正确处理。
+
+</body>
+</html>

@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE index
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Index Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/index_2_0.dtd">
+
+<index version="2.0">
+    <!-- index entries are merged (sorted) into core index -->
+	<indexitem text="Alert Filters" target="addon.alertFilter" />
+	<indexitem text="Context alert Filters" target="addon.contextAlertFilter" />
+	<indexitem text="Global Alert Filters" target="addon.globalAlertFilter" />
+	<indexitem text="Automation" target="addon.automation" />
+</index>

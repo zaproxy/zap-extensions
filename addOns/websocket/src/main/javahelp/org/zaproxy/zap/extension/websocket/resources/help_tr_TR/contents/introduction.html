@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+WebSockets
+</title>
+</head>
+<body>
+<h1>WebSockets</h1>
+<p>
+WebSockets web uygulamaları veya web siteleri tarafından bir web sitesi kurmak için kullanılabilir.
+Çift yönlü (iki yönlü), tam çift yönlü iletişim kanalı
+tek bir TCP bağlantısı.<br>
+Geliştiricilerin gerçekleştirmesini sağlayan hafif bir protokole sahiptir.
+Gerçek zamanlı kullanım örnekleri. WebSockets AJAX, http uzun anket veya Comet yoğun kullanımında bir alternatif sağlar.<br>
+</p>
+<p>
+İlk HTTP tabanlı el sıkışma sonrasında, TCP bağlantısı açık tutulur,
+buda uygulamanın &amp; yollamasını ve keyfi veri yollamasını sağlar. Genelde WebSocket şifrelenmiş kanalları port 80 ve 443 kullanılır.
+</p>
+<p>
+WebSocket standardı şu adreste tanımlanmıştır
+<dl>
+	<dt><a href="http://www.w3.org/TR/websockets/">WebSocket API (http://www.w3.org/TR/websockets/)</a></dt>
+	<dd>tarayıcılarda arayüzü belirtir</dd>
+	<dt><a href="https://tools.ietf.org/html/rfc6455">WebSocket Protokolü (RFC6455) (https://tools.ietf.org/html/rfc6455)</a></dt>
+	<dd>webSocket framelerini ve yapılandırılmalarını TCP üzerinden belirler</dd>
+</dl>
+<p>
+ZAP şunları yapabilir:
+<ul>
+	<li>webSocket mesajlarına müdahale eder ve onları gösterir</li>
+	<li>bazı belirli WebSocket mesajları için breakpointler oluşturur ve ayarlar</li>
+	<li>webSocket mesajlarını fuzz'lar (tarayıcıya ve server'lara bir çok geçersiz ve beklenmedik veri yollaması yapar)</li>
+  <li>passively scan WebSocket messages and raise alerts with scripts</li>
+</ul>
+
+WebSocket mesajları, WebSockets tab tarafından <a href="tab.html">Gösterilir</a>.<br><br>
+
+The WebSocket add-on adds new <a href="script.html">scripts</a> and additional endpoints to the ZAP <a href="api.html">API</a>
+
+</body>
+</html>

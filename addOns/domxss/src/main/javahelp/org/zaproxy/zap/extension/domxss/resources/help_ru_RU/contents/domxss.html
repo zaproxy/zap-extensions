@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<title>
+Правило активного сканирования DOM XSS 
+</title>
+</head>
+<body>
+<h1>Правило активного сканирования DOM XSS </h1>
+<p>
+Правило Active Scan для обнаружения уязвимостей DOM XSS. 
+<p>
+Он запускает окна браузера и отправляет полезные данные для атаки всем соответствующим элементам DOM.<br>
+Поскольку он запускает окна браузера, это займет значительно больше времени, чем другие (не основанные на браузере) правила.  
+</p>
+<p>
+This version supports Firefox (the default) and Chrome. They can be run with GUI or headless (default), it can be changed with
+the rule <code>rules.domxss.browserid</code>, via the Options 'Rule configuration' panel, with values
+<code>firefox</code>, <code>firefox-headless</code>, <code>chrome</code> and <code>chrome-headless</code>.
+
+<h3>Strengths and Thresholds</h3>
+Поддерживаются следующие силы атаки, которые напрямую связаны с количеством используемых полезных нагрузок атаки.
+для фрагмента URL и ввода полей формы (например:  <code>http://example.com/index.html?foo=bar#injection</code>):
+<ul>
+<li>НИЗКИЙ: 1 атакующая полезная нагрузка  
+<li>СРЕДНЯЯ: 3 единицы атаки  
+<li>ВЫСОКИЙ: 6 полезных нагрузок атаки  
+<li>БЕЗУМИЕ: 9 полезных нагрузок атаки  
+</ul>
+Сканер также попытается внедрить параметры URL/запроса, на которые не влияет выбранная сила. 
+</p>
+<p>
+Правило будет сообщать только об одной уязвимости DOM XSS на узел, если только не установлен НИЗКИЙ порог оповещения.
+используется, и в этом случае он будет продолжать пробовать все указанные полезные нагрузки.  
+
+<h3>Exclusions</h3>
+The rule will block the browser it launches from accessing any URLs that are excluded by:
+<ul>
+<li>Global Exclusions
+<li>Context Exclusions, if invoked with the relevant context
+</ul>
+
+<p>
+Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/domxss/src/main/java/org/zaproxy/zap/extension/domxss/DomXssScanRule.java">DomXssScanRule.java</a> 
+
+</body>
+</html>

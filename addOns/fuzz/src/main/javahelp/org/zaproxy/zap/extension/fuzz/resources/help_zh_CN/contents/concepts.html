@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+模糊化
+</title>
+</head>
+<body>
+<h1>模糊化</h1>
+<p>
+Fuzzing is a technique of submitting lots of data to a target (often in the form of invalid or unexpected inputs).
+</p>
+<p>
+ZAP allows you to fuzz any request using:
+<ul>
+<li>A built-in set of payloads</li>
+<li>Payloads defined by optional add-ons</li>
+<li>自定义脚本</li>
+</ul>
+</p>
+为了访问 <a href="dialogue.html">Fuzzer对话框</a> you can either:
+<ul>
+<li>右键单击其中一个ZAP选项卡中的请求(如历史记录或站点) 然后选择"攻击/模糊…"</li>
+<li>在请求选项卡中突出显示一个字符串，右键单击它并选择"模糊…"</li>
+<li>选择"工具/模糊…"菜单项并选择您想要模糊的请求</li>
+</ul>
+
+<h3>有效载荷生成器</h3>
+Payload Generators generate the raw values or attacks that the fuzzer submits to the target application.
+<br><br>
+They are managed via the <a href="payloads.html">有效负载对话框</a>.
+
+<h3>有效负载处理器</h3>
+有效负载处理器可用于在提交之前更改指定的负载。
+<br><br>
+They are managed via the <a href="processors.html">有效负载处理器对话框</a>.
+
+<h3>模糊位置处理器</h3>
+模糊位置处理器可用于在提交之前更改所有有效负载。
+<br><br>
+They are managed via the <a href="locations.html">位置处理器对话框</a>.
+
+<h3>消息处理器</h3>
+Message Processors can access and change the messages being fuzzed, control the fuzzing process, and interact with the ZAP UI.
+<br><br>
+They are managed via the <a href="dialogue.html">Fuzzer对话框</a> "消息处理器"选项卡。
+
+<p>
+Some of this functionality is based on code from the OWASP JBroFuzz project and includes files from the fuzzdb project.<br/>
+Note that some fuzzdb files have been left out as they cause common anti-virus scanners to flag them as containing viruses.<br/>
+You can replace them (and upgrade fuzzdb) by downloading the latest version of fuzzdb and expanding it in the 'fuzzers' library.
+</p>
+
+<h2>另请参阅</h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="options.html">Fuzzer选项屏</a></td></tr>
+</table>
+
+</body>
+</html>

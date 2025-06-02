@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE toc
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN"
+         "http://java.sun.com/products/javahelp/toc_2_0.dtd">
+
+<toc version="2.0">
+	<tocitem text="ZAP User Guide" tocid="toplevelitem">
+		<tocitem text="Add Ons" tocid="addons">
+			<tocitem text="Report Generation" image="reports-icon"
+				target="reports">
+				<tocitem text="Templates" target="reports.templates" />
+				<tocitem text="Automation" target="reports.automation" />
+				<tocitem text="Creating Reports" target="reports.create" />
+				<tocitem text="About" target="reports.about" />
+				<tocitem text="API" target="reports.api" />
+			</tocitem>
+		</tocitem>
+	</tocitem>
+</toc>

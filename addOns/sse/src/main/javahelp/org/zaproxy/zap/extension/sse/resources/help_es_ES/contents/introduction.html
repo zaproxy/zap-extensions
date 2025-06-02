@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Eventos enviados por el servidor
+</title>
+</head>
+<body>
+<h1>Eventos enviados por el servidor</h1>
+<p>
+	Los eventos enviados por el servidor pueden ser utilizados por aplicaciones web o sitios web para configurar un canal de comunicación uni direccional (una vía) sobre una sola conexión TCP.
+	<br><br>Puede utilizarlo para notificaciones push de un servidor a un cliente de navegador.
+	Los eventos enviados por el servidor a veces proveen una alternativa a usos como Ajax, HTTP Long Polling o Comet.
+	<br><br>
+	In the browser you can use Server-Sent Events via the <i>EventSource API</i>.
+	Esta API le pertenece a HTML5 y es estandarizado mediante W3C:
+	<a href="http://www.w3.org/TR/eventsource/">http://www.w3.org/TR/eventsource/</a>
+</p>
+<br>
+<p>
+ZAP es capaz de:
+<ul>
+	<li>interceptar y mostrar eventos enviados por el servidor</li>
+	<!-- <li>set breakpoints on specific types of WebSocket messages</li>
+	<li>fuzz WebSocket messages (send lots of invalid or unexpected data to a browser or server)</li>
+	 -->
+</ul>
+
+Los eventos enviados por el servidor son mostrados dentro del <a href="tab.html">Server-Sent Events tab</a>.
+</p>
+
+</body>
+</html>

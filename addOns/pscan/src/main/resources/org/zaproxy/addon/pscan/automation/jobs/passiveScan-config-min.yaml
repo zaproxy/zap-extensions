@@ -1,0 +1,5 @@
+  - type: passiveScan-config           # Passive scan configuration
+    parameters:
+      maxAlertsPerRule: 10             # Int: Maximum number of alerts to raise per rule
+      scanOnlyInScope: true            # Bool: Only scan URLs in scope (recommended)
+      maxBodySizeInBytesToScan:        # Int: Maximum body size to scan, default: 0 - will scan all messages

@@ -1,0 +1,22 @@
+<svg width="140" height="230" viewBox="0 0 300 467" fill="none" xmlns="http://www.w3.org/2000/svg" class="relative z-10 mx-auto animate-float" aria-label="Floating UI logo (a cute smiling red balloon)">
+    <path d="M142 348.5C141 361.167 141.6 390.3 152 405.5C165 424.5 178 456.5 181 464.5" stroke="black" stroke-width="5" stroke-linecap="round" class="animate-string" style="transform-origin:40% 92%"> </path>
+    <path d="M140.844 339.077C142.001 337.094 144.867 337.094 146.025 339.077L151.297 348.107C152.465 350.107 151.022 352.62 148.706 352.62H138.162C135.846 352.62 134.404 350.107 135.572 348.107L140.844 339.077Z" fill="#AD3A56"> </path>
+    <path d="M300 161.326C300 251.5 220.707 328.146 143.939 343.13C66.6667 329.145 4.0404 244.736 -1.52588e-05 158.329C1.54128e-07 64.93 76.2185 0 154.04 0C231.862 0 300 63.4316 300 161.326Z" fill="url(#paint0_radial_201_2)"> </path>
+    <ellipse cx="76.7677" cy="184.801" rx="25.2525" ry="24.9731" fill="#CD0031" fill-opacity="0.5"> </ellipse>
+    <ellipse cx="214.141" cy="184.801" rx="25.2525" ry="24.9731" fill="#CD0031" fill-opacity="0.4"> </ellipse>
+    <ellipse cx="191.919" cy="163.823" rx="13.1313" ry="12.986" fill="#222222"> </ellipse>
+    <ellipse cx="98.9899" cy="163.823" rx="13.1313" ry="12.986" fill="#222222"> </ellipse>
+    <mask id="mask0_201_2" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="123" y="180" width="46" height="32">
+        <path d="M123.232 183.805C123.232 182.148 124.575 180.805 126.232 180.805H165.687C167.344 180.805 168.687 182.148 168.687 183.805V208.772C168.687 210.429 167.344 211.772 165.687 211.772H126.232C124.575 211.772 123.232 210.429 123.232 208.772V183.805Z" fill="#C4C4C4"> </path>
+    </mask>
+    <g mask="url(#mask0_201_2)">
+        <path d="M168.687 182.304C168.687 194.717 158.512 204.779 145.96 204.779C133.408 204.779 123.232 194.717 123.232 182.304C123.232 169.891 133.408 159.828 145.96 159.828C158.512 159.828 168.687 169.891 168.687 182.304Z" fill="#222222"> </path>
+    </g>
+    <defs>
+        <radialGradient id="paint0_radial_201_2" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(32.3232 221.761) rotate(-30.6138) scale(283.446 246.147)">
+            <stop stop-color="#FF3767"> </stop>
+            <stop offset="0.807292" stop-color="#F36D76"> </stop>
+            <stop offset="1" stop-color="#FFE1DA"> </stop>
+        </radialGradient>
+    </defs>
+</svg>

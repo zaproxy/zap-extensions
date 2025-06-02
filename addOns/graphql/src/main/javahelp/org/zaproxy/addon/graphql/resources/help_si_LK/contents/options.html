@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>GraphQL Options</TITLE>
+</HEAD>
+<BODY>
+	<H1>GraphQL Options</H1>
+
+	In this document, a 'Query' may refer to a GraphQL query, subscription or mutation.
+
+	<h2>Maximum Query Depth</h2>
+	
+	The maximum depth of a generated query.
+
+	<h2> Lenient Maximum Query Depth </h2>
+
+	If enabled, this option prevents invalid queries by allowing additional depth for fields with no leaf types.
+	If disabled, Maximum Query Depth is enforced strictly, even if it means generating an invalid query.
+
+	<h2> Additional Query Depth </h2>
+
+	The value for this option is used only if the "Lenient Maximum Query Depth" option is enabled.
+	The maximum additional depth used to search for leaf-type fields.
+	If a leaf type is not found, the generated query may be invalid and a message is logged.
+
+	<h2>Maximum Arguments Depth</h2>
+	
+	The maximum depth of specified arguments. This is useful when a field has an input object as an argument.
+
+	<h2>Specify Optional Arguments</h2>
+	
+	If this option is selected then optional (nullable) arguments will be specified too.
+
+	<h2>Specify Arguments</h2>
+
+	Choose how the field arguments should be added in the generated query,
+	<ul>
+		<li>Inline</li>
+		<li>Using Variables</li>
+		<li>Both - each query will be sent twice, once with inline arguments and once with variables</li>
+	</ul>
+
+	<h2>Generate Query For</h2>
+	
+	A separate query may be generated for either of the following in the provided schema, 
+	<ul>
+		<li>each Leaf, that is, each scalar or enum;</li>
+		<li>each field under a root operation type (Query, Mutation or Subscription); or</li>
+		<li>each root operation type.</li>
+	</ul>
+
+	<h2>Request Method</h2>
+	
+	The requests made to the endpoint can be of the following types:
+
+	<ul>
+		<li>A POST request with a JSON body (Content-Type: application/json)</li>
+		<li>A POST request with a GraphQL query in the body (Content-Type: application/graphql)</li>
+		<li>A GET request with the query appended to it in a query string</li>
+	</ul>
+
+	<h2>See also</h2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="graphql.html">GraphQL</a></td>
+			<td>for an overview of the GraphQL add-on.</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="script.html">GraphQL Script</a></td>
+			<td>for information about the bundled script.</td>
+		</tr>
+        <tr>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <td><a href="automation.html">GraphQL Automation</a></td>
+            <td>for information about the automation framework support.</td>
+        </tr>
+	</table>
+
+</BODY>
+</HTML>

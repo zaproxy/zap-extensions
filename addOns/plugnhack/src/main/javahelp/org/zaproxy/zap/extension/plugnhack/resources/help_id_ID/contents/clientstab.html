@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Tab Plug-n-Hack Klien
+</title>
+</head>
+<body>
+<h1>Tab Plug-n-Hack Klien</h1>
+<p>
+	Plug-n-Hack membolehkan anda untuk memonitori klien (browser) peristiwa di dalam urutan untuk membantu menguji aplikasi HTML5.<br>
+	Di dalam urutan untuk mendukung berbagai lebarnya sebuah jangkauan dari browser modern semoga ini bisa dilakukan dengan cara menyuntikkan javascript
+	ke dalam respon pengembalian kepada browser.<br>
+	Seperti itu sarana untuk merubah respon fungsinya ini harus diaktifkan secara manual. 
+</p>
+<p>
+	Untuk menerima acara klien:
+	<ul>
+	<li>Akses halaman yang ingin anda pantau melakukan proxy melalui ZAP</li>
+	<li>Klik kanan di bagian node(s) yang relevan di Situs pohon dan pilih 'Monitor klien -> Termasuk sub'</li>
+	<li>Paksa browser anda untuk memuat ulang halaman</li>
+	<li>Client events (such as postMessage, click, mouseover, etc.) will then be listed in this tab - select them to see the full details.</li>
+	</ul>
+</p>
+<p>
+	Javascript yang disuntikkan mengirimkan detak jantung ke ZAP, jadi ZAP dapat menampilkan semua klien 'aktif' di tab ini.<br>
+Dalam kasus ini klien 'aktif' adalah halaman yang saat ini terbuka di tab browser.<br>
+Anda dapat mengedit dan mengirim ulang acara apapun melalui item menu klik kanan asalkan klien asli aktif.<br>
+</p>
+<p>
+	Anda juga bisa mencegat dan merubah posPesan dengan cepat.<br>
+	Pesan klien yang dicegat jika 'pemutusan di semua permintaan' tombol yang dipilih pada tingkat atas toolbar.<br> 
+	Anda juga dapat mengatur kustom klien titik istirahat melalui sebuah tombol pada tab Klien.<br>
+	<br>
+	Anda bisa fuzz posPesan di dalam cara yang sama seperti apapun pesan lainnya - menyorot string yang anda ingin fuzz dalam Permintaan tab, klik kanan dan pilih "Fuzz".<br>
+	Pilihan ini hanya menjadi tersedia apabila pihak browser masih memiliki halaman yang terbuka,sebagai PnH mengirim beban berbayar kepada browser.<br>
+	Standar 'XSS' beban berbayar yang bisa digunakan untuk mendeteksi DOM kerentanan XSS, tetapi anda akan membutuhkan untuk secara manual memantau UI untuk melihat apakah ada dari mereka yang sukses.<br>
+	<br>
+	PnH juga menambahkan sebuah Kustom fuzzing file yang bernama "PlugnHack DOM XSS Oracle".<br>
+	File ini berdasarkan pada OWASP XSS cheatsheet dan memohon sebuah metode 'xss' JavaScript yang diinjeksikan ke dalam halaman. <br>
+Metode ini memanggil API ZAP yang pada gilirannya menandai serangan yang relevan di UI - ini dikonfirmasi kerentanan DOM XSS,
+Meskipun (seperti biasa), Anda harus memeriksa apakah benar-benar dapat dieksploitasi dalam aplikasi yang Anda uji tanpa alat seperti ZAP.<br>
+
+</p>
+
+</body>
+</html>

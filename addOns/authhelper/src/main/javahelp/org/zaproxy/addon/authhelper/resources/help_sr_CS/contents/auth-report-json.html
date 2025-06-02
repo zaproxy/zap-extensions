@@ -1,0 +1,392 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>Authentication Report - JSON</TITLE>
+</HEAD>
+<BODY>
+	<H1>Authentication Report - JSON</H1>
+
+	This is a specialized report which details how authentication handling worked for the given site.
+	<p>
+	You must specify the site you want the report for otherwise no data will be generated.
+	<p>
+	This report is designed to be run after attempting to access at least one authenticated URL with the
+	authentication method set up correctly and with valid credentials.<br>
+	Session handling and verification can be left as "autodetect" - this report will detail how effective that was.
+
+	<H3>Sections</H3>
+
+	<table>
+		<tr>
+			<th align="left">Section</th>
+			<th align="left">ID</th>
+		</tr>
+		<tr>
+			<td>Summary</td>
+			<td>summary</td>
+		</tr>
+		<tr>
+			<td>Automation Framework Environment</td>
+			<td>afenv</td>
+		</tr>
+		<tr>
+			<td>Statistics</td>
+			<td>statistics</td>
+		</tr>
+
+		<tr>
+			<td>Diagnostics</td>
+			<td>diagnostics</td>
+		</tr>
+		<tr>
+			<td>HTTP Messages for Diagnostics</td>
+			<td>diagnosticsmessages</td>
+		</tr>
+		<tr>
+			<td>Local Storage for Diagnostics</td>
+			<td>diagnosticslocalstorage</td>
+		</tr>
+		<tr>
+			<td>Screenshots for Diagnostics</td>
+			<td>diagnosticsscreenshots</td>
+		</tr>
+		<tr>
+			<td>Session Storage for Diagnostics</td>
+			<td>diagnosticssessionstorage</td>
+		</tr>
+		<tr>
+			<td>Web Elements for Diagnostics</td>
+			<td>diagnosticswebelements</td>
+		</tr>
+	</table>
+
+	<H3>Summary</H3>
+	The following summary items are used:
+
+	<table>
+		<tr>
+			<th align="left">Key</th>
+			<th align="left">Passed</th>
+			<th align="left">Description</th>
+		</tr>
+		<tr>
+			<td>auth.summary.auth</td>
+			<td>false</td>
+			<td>Authentication failed</td>
+		</tr>
+		<tr>
+			<td>auth.summary.auth</td>
+			<td>true</td>
+			<td>Authentication appeared to work</td>
+		</tr>
+		<tr>
+			<td>auth.summary.password</td>
+			<td>false</td>
+			<td>Password field not identified</td>
+		</tr>
+		<tr>
+			<td>auth.summary.password</td>
+			<td>true</td>
+			<td>Password field identified</td>
+		</tr>
+		<tr>
+			<td>auth.summary.session</td>
+			<td>false</td>
+			<td>Session Handling not identified</td>
+		</tr>
+		<tr>
+			<td>auth.summary.session</td>
+			<td>true</td>
+			<td>Session Handling identified</td>
+		</tr>
+		<tr>
+			<td>auth.summary.username</td>
+			<td>false</td>
+			<td>Username field not identified</td>
+		</tr>
+		<tr>
+			<td>auth.summary.username</td>
+			<td>true</td>
+			<td>Username field identified</td>
+		</tr>
+		<tr>
+			<td>auth.summary.verif</td>
+			<td>false</td>
+			<td>Verification URL not identified</td>
+		</tr>
+		<tr>
+			<td>auth.summary.verif</td>
+			<td>true</td>
+			<td>Verification URL identified</td>
+		</tr>
+	</table>
+
+	<H4>Failure Details</H3>
+	The following failure detail items are used:
+
+	<table>
+		<tr>
+			<th align="left">Key</th>
+			<th align="left">Description</th>
+		</tr>
+		<tr>
+			<td>auth.failure.overall</td>
+			<td>All authentication elements passed yet authentication was deemed a failure in the end.</td>
+		</tr>
+		<tr>
+			<td>auth.failure.pass_count</td>
+			<td>No successful browser logins.</td>
+		</tr>
+		<tr>
+			<td>auth.failure.session_mgmt</td>
+			<td>Failed to identify session management.</td>
+		</tr>
+		<tr>
+			<td>auth.failure.login_failures</td>
+			<td>One or more failed logins.</td>
+		</tr>
+		<tr>
+			<td>auth.failure.no_successful_logins</td>
+			<td>No successful browser logins.</td>
+		</tr>
+		<tr>
+			<td>auth.failure.verif_ident</td>
+			<td>Failed to identify verification URL.</td>
+		</tr>
+	</table>
+
+	<H3>Automation Framework Environment</H3>
+	
+	This is the <a href="https://www.zaproxy.org/docs/desktop/addons/automation-framework/environment/">Automation Framework environment</a>
+	that can be used to recreate the context being tested.
+	<p>
+	If you have set the Session Management or Verification to "autodetect" and ZAP successfully detected them then the
+	environment will have been updated with the values that ZAP has detected. 
+
+	<H3>Statistics</H3>
+	
+	These are all of the statistics that have been recorded by ZAP.<br>
+	For more details of what they mean see 
+	<a href="https://www.zaproxy.org/docs/internal-statistics/">https://www.zaproxy.org/docs/internal-statistics/</a>
+
+	<H3>Diagnostics</H3>
+	The <a href="browser-auth.html">Browser Based</a> and <a href="client-script.html">Client Script</a> authentication methods allow to record diagnostic data, which can be included in the Authentication Report, to help diagnose authentication problems.
+	<p>
+	Diagnostic data can also be recorded with the <a href="auth-tester.html">Authentication Tester Dialog</a>.
+	<p>
+	The report will contain an array of diagnostic objects, one for each recorded authentication attempt. The diagnostic objet has the authentication method used, the name of the context and user, and each step performed during the authentication.
+<pre>
+	"diagnostics": [
+		{
+			"created": "0000-00-00T00:00:00.000000Z",
+			"authenticationMethod": "Browser-based Authentication",
+			"context": "Context Name",
+			"user": "User Name",
+			"steps": [
+				{ … }
+			]
+		}
+	]
+</pre>
+
+	<p>
+	Each step has at least the URL and the description, it can, optionally, contain also the input element that's being acted upon (e.g. username field being filled).
+<pre>
+	{
+		"created": "0000-00-00T00:00:00.000000Z",
+		"url": "http://example.com/login/",
+		"description": "Auto Fill Username",
+		"webElement": {
+			"formIndex": 1,
+			"attributeType": "text",
+			"attributeId": "email",
+			"attributeName": "email",
+			"attributeValue": "",
+			"text": "",
+			"displayed": true,
+			"enabled": true
+		}
+		…
+	}
+</pre>
+	More data can be included in each step depending on the additional diagnostics sections enabled for the report.
+
+	<H4>HTTP Messages for Diagnostics</H4>
+	When this section is enabled the step can, optionally, include HTTP messages that were sent during the step. Each message contains the request/response headers and bodies.
+<pre>
+	"messages": [
+		{
+			"created": "0000-00-00T00:00:00.000000Z",
+			"requestHeader": "GET http://example.com/login HTTP/1.1",
+			"requestBody": "",
+			"responseHeader": "HTTP/1.1 200 OK",
+			"responseBody": ""
+		}
+	]
+</pre>
+
+	<H4>Local Storage for Diagnostics</H4>
+	When this section is enabled the step can, optionally, include the browser's local storage.
+<pre>
+	"localStorage": [
+		{
+			"created": "0000-00-00T00:00:00.000000Z",
+			"key": "key",
+			"value": "value"
+		}
+	]
+</pre>
+
+	<H4>Screenshots for Diagnostics</H4>
+	When this section is enabled the step can, optionally, include a screenshot of the page with the image data Base64 encoded.
+<pre>
+	"screenshot": "…"
+</pre>
+
+	<H4>Session Storage for Diagnostics</H4>
+	When this section is enabled the step can, optionally, include the browser's session storage.
+<pre>
+	"sessionStorage": [
+		{
+			"created": "0000-00-00T00:00:00.000000Z",
+			"key": "key",
+			"value": "value"
+		}
+	]
+</pre>
+
+	<H4>Web Elements for Diagnostics</H4>
+	When this section is enabled the step can, optionally, include all the input elements present in the page.
+<pre>
+	"webElements": [
+		{
+			"formIndex": 0,
+			"attributeType": "text",
+			"attributeId": "id",
+			"attributeName": "name",
+			"attributeValue": "",
+			"text": "",
+			"displayed": true,
+			"enabled": true
+		}
+	]
+</pre>
+
+	<H3>Sample</H3>
+<pre>
+{
+	"@programName": "ZAP",
+	"@version": "Dev Build",
+	"@generated": "Mon, 10 Feb 2025 17:27:23",
+	"site":  "http:\/\/localhost:9091"
+	,"summaryItems": [
+		{
+			"description": "Authentication appeared to work",
+			"passed": true,
+			"key": "auth.summary.auth"
+		},
+		{
+			"description": "Username field identified",
+			"passed": true,
+			"key": "auth.summary.username"
+		},
+		{
+			"description": "Password field identified",
+			"passed": true,
+			"key": "auth.summary.password"
+		},
+		{
+			"description": "Session Handling identified",
+			"passed": true,
+			"key": "auth.summary.session"
+		},
+		{
+			"description": "Verification URL identified",
+			"passed": true,
+			"key": "auth.summary.verif"
+		}
+	]
+	,"failureReasons": [
+		{
+			"key": "auth.failure.no_successful_logins",
+			"description": "No successful logins."
+		}
+	]
+	,"afEnv": "env:\n  contexts:\n  - name: simple-json-bearer-cookie\n    urls:\n    - http:\/\/localhost:9091\/auth\/simple-json-bearer-cookie\n    includePaths:\n    - http:\/\/localhost:9091\/auth\/simple-json-bearer-cookie.*\n    authentication:\n      method: browser\n      parameters:\n        loginPageUrl: http:\/\/localhost:9091\/auth\/simple-json-bearer-cookie\/\n        loginPageWait: 5\n        browserId: firefox-headless\n        steps: []\n      verification:\n        method: poll\n        loggedInRegex: \\Q 200 OK\\E\n        loggedOutRegex: \\Q 403 Forbidden\\E\n        pollFrequency: 0\n        pollUnits: seconds\n        pollUrl: http:\/\/localhost:9091\/auth\/simple-json-bearer-cookie\/user\n        pollPostData: \"\"\n    sessionManagement:\n      method: headers\n      parameters:\n        Authorization: \"Bearer {%json:accesstoken%}\"\n        Cookie: \"token={%json:accesstoken%}\"\n    technology: {}\n    structure: {}\n    users:\n    - name: test\n      credentials:\n        password: password123\n        username: test@test.com\n  parameters: {}\n"
+	,"statistics": [
+		{
+			"key": "stats.auth.browser.foundfields",
+			"scope": "site",
+			"value": 1
+		},
+		{
+			"key": "stats.auth.browser.passed",
+			"scope": "site",
+			"value": 1
+		},
+		{
+			"key": "stats.auth.configure.session.header",
+			"scope": "global",
+			"value": 1
+		},
+		{
+			"key": "stats.auth.configure.verification",
+			"scope": "global",
+			"value": 1
+		},
+		{
+			"key": "stats.auth.detect.auth.json",
+			"scope": "global",
+			"value": 5
+		},
+		{
+			"key": "stats.auth.detect.session.accesstoken",
+			"scope": "global",
+			"value": 5
+		},
+		{
+			"key": "stats.auth.detect.session.authorization",
+			"scope": "global",
+			"value": 1
+		},
+		{
+			"key": "stats.auth.detect.session.token",
+			"scope": "global",
+			"value": 7
+		},
+		{
+			"key": "stats.auth.session.set.header",
+			"scope": "global",
+			"value": 20
+		},
+		{
+			"key": "stats.auth.sessiontoken.accesstoken",
+			"scope": "site",
+			"value": 9
+		},
+		{
+			"key": "stats.auth.sessiontoken.token",
+			"scope": "site",
+			"value": 6
+		},
+		{
+			"key": "stats.auth.sessiontokens.max",
+			"scope": "global",
+			"value": 2
+		},
+		{
+			"key": "stats.auth.state.loggedin",
+			"scope": "site",
+			"value": 2
+		},
+		{
+			"key": "stats.auth.success",
+			"scope": "site",
+			"value": 1
+		}
+	]
+}
+</pre>
+</BODY>
+</HTML>
+

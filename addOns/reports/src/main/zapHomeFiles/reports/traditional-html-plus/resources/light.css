@@ -1,0 +1,19 @@
+body {
+	color: #000;
+}
+
+th {
+	background-color: #666666;
+}
+
+td {
+	background-color: #e8e8e8;
+}
+
+.summary th {
+	color: #FFF;
+}
+
+.alerts th {
+	color: #FFF;
+}

@@ -1,0 +1,36 @@
+openapi: 3.0.0
+info:
+  title: Paths with servers
+  version: 1.0.0
+servers:
+  - url: http://server0.localhost/
+paths:
+  /path/without/servers:
+    get:
+      operationId: path/without/servers
+      responses:
+        default:
+          description:
+          content:
+            text/plain: {}
+  /path/with/server:
+    servers:
+      - url: http://server1.localhost/
+    get:
+      operationId: path/with/server
+      responses:
+        default:
+          description:
+          content:
+            text/plain: {}
+  /path/with/servers:
+    servers:
+      - url: http://server2.localhost/v1/
+      - url: http://server3.localhost/
+    get:
+      operationId: path/with/servers
+      responses:
+        default:
+          description:
+          content:
+            text/plain: {}

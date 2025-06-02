@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Puwersang Pag-browse na tab</title>
+</head>
+<body>
+	<h1>Puwersang Pag-browse na tab</h1>
+
+	Ang Puwersang Pag-browse na tab ay magpapahintulot sa iyo na isagawa ang
+	<a href="concepts.html">Puwersang Pag-browse</a> na pagscan sa kahit anong mga sayt na
+	na-akses.
+	<br>
+	<br> Ang mga sayt ay maaring mapili gamit ang toolbar o ang
+	<i>Mga sayt na tab</i>.
+	<br> Any sites that have have been or are currently being scanned are marked in
+	bold in the toolbar Sites pulldown control.
+	<br> Ang toolbar ay nagbibigay ng hanay ng mga button na magpapahintulot sa iyo na simulan, itigil, i-pause at
+	ipagpatuloy ang pag-scan.
+	<br> Ang progresong bar ay magpapakita kung gaano na kalayo ang pagscan sa napiling site.
+	<br> Ang 'Kasalukuyang mga scan' na balyu ay magpipikita kung gaano karaming mga scan ang kasalukuyang aktibo -	ang pag-hover
+	sa ibabaw ng balyung ito ay magpapakita ng listahan ng mga sayt na na-scan sa isang popup.
+	<br> The toolbar also includes a button to export the displayed content as CSV.
+
+	<h2>Kanang pagpindot ng menu</h2>
+	Right clicking on one or more rows will bring up a menu which will allow you to:
+
+	<h3>Magbukod mula</h3>
+	This menu has the following submenus:
+
+	<h4>Proxy</h4>
+	This will exclude the selected nodes from the proxy. They will still be proxied via ZAP
+	but will not be shown in any of the tabs.
+	<br /> This can be used to ignore URLs that you know are not relevant to the system you
+	are currently testing.
+	<br /> The nodes can be included again via the
+	<i>Mga Katangian ng Sesyon</i> dialog
+
+	<h4>Taga-scan</h4>
+	This will prevent the selected notes from being actively scanned.
+	<br /> The nodes can be included again via the
+	<i>Mga Katangian ng Sesyon</i> dialog
+
+	<h4>Ispayder</h4>
+	This will prevent the selected nodes from being spidered.
+	<br /> The nodes can be included again via the
+	<i>Mga Katangian ng Sesyon</i> dialog
+
+	<h3>Pagkopya</h3>
+	This will copy the selected URLs to the clipboard.
+
+	<h3>Muling ipadala...</h3>
+	This will bring up the
+	<i>Muling pagpapadala na diyalogo</i> which allows you to resend the request after making any changes to
+	it that you want to.
+
+	<h3>Bagong Alerto...</h3>
+	This will bring up the
+	<i>Magdagdag ng Alerto na diyalogo</i> which allows you to manually record a new
+	<i>alerto</i> against this request.
+
+	<h3>Buksan ang URL sa Browser</h3>
+	This will open the URL of the selected node in your default browser.
+
+	<h3>Gumawa ng anti CSRF na pangtest na form</h3>
+	This will open a URL which will give you a generated form for testing for CSRF issues.
+	<br> It will only be enabled for POST requests, if the API is enabled and if Java
+	supports the opening of URLs in a browser on your platform.
+
+	<h2>Tingnan din</h2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="options.html">Mga Pagpipilian sa Puwersang Pag-browse na screen</a></td>
+			<td>para sa mga detalye ng puwersang pag-browse na kompigurasyon</td>
+		</tr>
+	</table>
+
+</body>
+</html>

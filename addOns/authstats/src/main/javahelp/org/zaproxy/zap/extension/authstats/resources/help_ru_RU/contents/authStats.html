@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Статистика аутентификации
+</title>
+</head>
+<body>
+<h1>Статистика аутентификации </h1>
+Эта надстройка записывает статистику, связанную с аутентификацией, для всех контекстов, входящих в область действия. <br>
+Статистика ведется для каждого сайта и охватывает: 
+<table>
+<tr><td>stats.auth.<i>компонент</i>.state.noauth</td><td>В контексте нет метода аутентификации </td></tr>
+<tr><td>stats.auth. <i> компонент </i> .state.nothtml </td><td>Ответы не в формате HTML (которые вряд ли содержат индикаторы входа / выхода) </td></tr>
+<tr><td>stats.auth. <i> компонент </i> .state.notsuccess </td><td>Неудачные HTML-ответы (которые, скорее всего, не связаны с индикаторами входа / выхода) </td></tr>
+<tr><td>stats.auth. <i> компонент </i> .state.noindicator </td><td>Индикаторы входа / выхода не определены </td></tr>
+<tr><td>stats.auth. <i> компонент </i> .state.loggedinandout </td><td>Индикаторы входа и выхода присутствуют. </td></tr>
+<tr><td>stats.auth. <i> компонент </i> .state.loggedin </td><td>Присутствует только индикатор авторизации. </td></tr>
+<tr><td>stats.auth. <i> компонент </i> .state.loggedout </td><td>Присутствует только отключенный индикатор </td></tr>
+<tr><td>stats.auth. <i>  компонент</i> .state.unknown </td><td>Индикаторы входа или выхода отсутствуют </td></tr>
+</table>
+Компонент может быть: 
+<table>
+<tr><td>сканирование </td><td>активным сканером</td></tr>
+<tr><td>авторизация </td><td>Аутентификация</td></tr>
+<tr><td>фаззинг</td><td>Фаззер</td></tr>
+<tr><td>Вручную</td><td>Ручные запросы </td></tr>
+<tr><td>Прокси-сервер</td><td>Прокси-запросы </td></tr>
+<tr><td>паук </td><td>Паук</td></tr>
+<tr><td><i>id</i></td><td>Целочисленный идентификатор другого компонента, не указанного выше </td></tr>
+</table>
+<p>
+статистику можно получить через ZAP API. 
+</p>
+<p>
+
+Значок этого дополнения был получен из
+<a href="https://github.com/yusukekamiyamane/fugue-icons"> Иконки фуги </a>
+<a href="https://github.com/yusukekamiyamane/fugue-icons/blob/master/icons/chart.png"> chart.png </a> и
+<a href="https://github.com/yusukekamiyamane/fugue-icons/blob/master/icons/lock-small.png"> locl-small.png </a> 
+
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+Automation Framework
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Automation Framework</H1>
+This add-on provides a framework that allows ZAP to be automated in an easy and flexible way.
+<p>
+It provides the following command line options:
+<ul>
+<li>-autorun &lt;filename&gt;		Run the automation jobs specified in the file.
+<li>-autogenmin &lt;filename&gt;	Generate template automation file with the key parameters.
+<li>-autogenmax &lt;filename&gt;	Generate template automation file with all parameters.
+<li>-autogenconf &lt;filename&gt;	Generate template automation file using the current configuration.
+</ul>
+
+If the <code>-autorun</code> option is used with the ZAP <code>-cmd</code> option then the ZAP exit value will be set as follows: 
+<ul>
+<li>0 - The plan completed successfully with no errors or warnings
+<li>1 - The plan reported one or more errors
+<li>2 - The plan reported no errors but one or more warnings
+</ul>
+Whether the plan completed after encountering errors or warnings will depend on the settings used in the <a href="environment.html">environment</a>.
+<p>
+To use the automation framework:
+<ol>
+<li>Generate a template automation file using one of the <code>-autogen*</code> command line options
+<li>Edit the file to match your requirements
+<li>Run the file using the <code>-autorun</code> commandline option e.g. <code>./zap.sh -cmd -autorun config.yaml</code>
+</ol>
+
+In most cases it is recommended to also use the <code>-cmd</code> command line option so that the ZAP desktop is not displayed 
+and ZAP exits as soon as it has finished generating or running the jobs defined in the file.
+However you can choose to run Automation Framework jobs using the ZAP desktop to help you debug issues.
+
+<H2>Authentication</H2>
+The Automation Framework supports a subset of the <a href="authentication.html">authentication</a> mechanisms supported by ZAP.
+
+<H2>GUI</H2>
+A <a href="gui.html">GUI</a> is under development and provides an ever increasing set of features.
+
+<H2>API</H2>
+The following API endpoints are provided by this add-on:
+<ul>
+<li>Action: runPlan(filePath) - loads and asynchronously runs the plan in the specified file, returning a planId</li>
+<li>View: planProgress(planId) - returns the progress details for the specified planId</li>
+</ul>
+If the ZAP desktop is being used then the plan will also be shown in the GUI to make it easier to diagnose any problems.
+
+<H2>Environment</H2>
+The <a href="environment.html">environment</a> section of the file defines the applications which the rest of the jobs can act on.
+
+<H2>Jobs</H2>
+The following automation jobs are supported by this add-on:
+<ul>
+<li><a href="job-addons.html">addOns</a> - add-on management</li>
+<li><a href="job-delay.html">delay</a> - pauses the plan for a specified period of time or a specific condition is met</li>
+<li><a href="job-pscanconf.html">passiveScan-config</a> - passive scan configuration</li>
+<li><a href="job-pscanwait.html">passiveScan-wait</a> - waits for the passive scanner to finish processing the current queue</li>
+<li><a href="job-requestor.html">requestor</a> - crafts specific requests to send to the corresponding targets</li>
+<li><a href="job-spider.html">spider</a> - runs the traditional spider</li>
+<li><a href="job-ascan.html">activeScan</a> - runs the active scanner</li>
+</ul>
+<p>
+<a href="tests.html">Job tests</a> can be added to jobs to check that the jobs have performed as expected.
+<p>
+
+This framework is plugable and so other add-ons may add support for other jobs, see the 
+<a href="https://www.zaproxy.org/docs/automate/automation-framework/">Automation Framework</a> website pages for a more complete list.
+<p>
+The 'min' and 'max' templates include comments giving more information about the fields.
+</BODY>
+</HTML>
+

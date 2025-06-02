@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Forced Browse tab</title>
+</head>
+<body>
+	<h1>Forced Browse tab</h1>
+
+	Forced Browse sekmesi, size, erişilen tüm siteler üzerinden Forced Browse taraması
+	<a href="concepts.html">Yapmanızı</a> sağlar.
+	<br>
+	<br> Siteler araç çubuğu veya
+	<i>Siteler sekmesinden seçilebilir</i>.
+	<br> Any sites that have have been or are currently being scanned are marked in
+	bold in the toolbar Sites pulldown control.
+	<br> Araç çubuğu taramayı başlatmaya, durdurmaya, duraklatmaya ve devam ettirmeye yarayan bir kaç buton sağlar.
+	<br> Bir ilerleme çubuğu seçili sitenin tarama işleminin ne kadar ilerlediğini gösterir.
+	<br> 'Geçerli taramalar' değeri şu anda kaç tane taramanın aktif durumda olduğunu ifade eder -
+	bu değerin üzerine gelindiği zaman, açılır pencerede taranmış olan sitelerin bir listesi gösterilir.
+	<br> The toolbar also includes a button to export the displayed content as CSV.
+
+	<h2>Sağ tuş menüsü</h2>
+	Right clicking on one or more rows will bring up a menu which will allow you to:
+
+	<h3>Şunun dışında bırak</h3>
+	This menu has the following submenus:
+
+	<h4>Vekil sunucu</h4>
+	This will exclude the selected nodes from the proxy. They will still be proxied via ZAP
+	but will not be shown in any of the tabs.
+	<br /> This can be used to ignore URLs that you know are not relevant to the system you
+	are currently testing.
+	<br /> The nodes can be included again via the
+	<i>Oturum Özellikleri</i> dialog
+
+	<h4>Tarayıcı</h4>
+	This will prevent the selected notes from being actively scanned.
+	<br /> The nodes can be included again via the
+	<i>Oturum Özellikleri</i> dialog
+
+	<h4>Ağ</h4>
+	This will prevent the selected nodes from being spidered.
+	<br /> The nodes can be included again via the
+	<i>Oturum Özellikleri</i> dialog
+
+	<h3>Kopyala</h3>
+	This will copy the selected URLs to the clipboard.
+
+	<h3>Tekrar gönder...</h3>
+	This will bring up the
+	<i>Değişiklik yaptıktan sonra</i> which allows you to resend the request after making any changes to
+	it that you want to.
+
+	<h3>Yeni Uyarı...</h3>
+	This will bring up the
+	<i>Buda</i> which allows you to manually record a new
+	<i>uyarı</i> against this request.
+
+	<h3>URL'yi Tarayıcıda Aç</h3>
+	This will open the URL of the selected node in your default browser.
+
+	<h3>Antı CSRF test formu oluştur</h3>
+	This will open a URL which will give you a generated form for testing for CSRF issues.
+	<br> It will only be enabled for POST requests, if the API is enabled and if Java
+	supports the opening of URLs in a browser on your platform.
+
+	<h2>Ayrıca şurayı inceleyebilirsiniz</h2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="options.html">Options Forced Browse screen</a></td>
+			<td>buradan forced browse yapılandırması hakkında detaylı bilgi alabilirsiniz</td>
+		</tr>
+	</table>
+
+</body>
+</html>

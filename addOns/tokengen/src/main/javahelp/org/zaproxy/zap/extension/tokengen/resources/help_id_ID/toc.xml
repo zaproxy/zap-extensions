@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE toc
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN"
+         "http://java.sun.com/products/javahelp/toc_2_0.dtd">
+
+<toc version="2.0">
+	<tocitem text="Paduan Pengguna ZAP" tocid="toplevelitem">
+		<tocitem text="Tambahan" tocid="addons">
+			<tocitem text="Token Generator" image="tokengen-icon" target="tokengen">
+				<tocitem text="Options" target="tokengen.options" />
+			</tocitem>
+		</tocitem>
+	</tocitem>
+</toc>

@@ -1,0 +1,195 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>AJAX Ağ sekmesi</title>
+</head>
+<body>
+	<h1>AJAX Örümcek sekmesi</h1>
+	<p>
+		AJAX Örümcek sekmesi <a href="concepts.html">AJAX Örümcek</a> tarafından bulunmuş bir dizi eşsiz URL'yi size gösterir.
+	</p>
+	<br /> Her istek için görebilecekleriniz:
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>İstek indisi - Her istek 1'den başlayarak numaralandırılır</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>İstek zaman damgası</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>HTML yöntemi, örn. GET ya da POST</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>İstenen URL</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>HTTP yanıtı durum kodu</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>HTTP yanıt kodunun ne anlama geldiğinin kısa bir özeti</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>Tüm isteğin aldığı süre</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>Yanıt başlığının boyutu</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>Yanıt gövdesinin boyutu</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>İstek üzerindeki tüm <i>Uyarılar</i>
+			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>İsteğe eklediğiniz tüm <i>Notlar</i>
+			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>İsteğe eklediğiniz tüm <i>Etiketler</i>
+			</td>
+		</tr>
+	</table>
+
+	Seçilen sorgular şurada gösterilecek
+	<i>İstek sekmesi</i> ve
+	<i>Cevap sekmesi</i> yukarıda.
+	<br />
+
+	<h2>Sağ tık menüsü</h2>
+	Bir düğüme sağ tıklamak şunları yapmanızı sağlayan bir menü getirir:
+
+	<h3>Saldırı</h3>
+	Saldırı menüsünde aşağıdaki alt menüler vardır:
+	<h4>Aktif Tarama Sitesi</h4>
+	Bu başlatılacak bir
+	<i>Aktif Tarama</i> seçili düğümü içeren sitenin tamamının.
+	<br />  
+	<i>Aktif Tarama sekmesi</i> görüntülenecek ve taramanın ilerlemesini gösterecek.
+	<br />
+
+	<h4>Aktif Tarama Düğümü</h4>
+	Bu başlatılacak bir
+	<i>Aktif Tarama</i> yalnızca seçilen düğümün.
+	<br /> The
+	<i>Aktif Tarama sekmesi</i> taramayı ekranda gösterecek ve tarama döngüsünü gösterecek.
+	<br />
+
+	<h4>Ağ Sitesi</h4>
+	Bu başlatılacak bir
+	<i>örümcek</i> seçili düğümü içeren sitenin tamamını.
+	<br /> O
+	<i>Ağ sekmesi</i> tarama ve taramanın ilerlemesi ekranda gösterilecek
+	<br />
+
+	<h4>Siteye zorla gözat</h4>
+	Bu başlatacak bir
+	<i>zorla göz at</i> seçilen düğümü içeren sitenin tamamı.
+	<br /> O
+	<i>Zorla Göz At sekmesi</i> tarama ve taramanın ilerlemesi ekranda gösterilecek.
+	<br />
+
+	<h4>Zorla Gözat Dizini</h4>
+	Bu başlatacak bir
+	<i>zorla göz at</i> seçili dizinde.
+	<br /> O
+	<i>Zorla Göz At sekmesi</i> görüntülenir ve taramanın ilerleme durumu gösterilir.
+	<br />
+
+	<h4>Zorla Göz At Dizini (ve çocuklar)</h4>
+	Bu başlatılacak bir
+	<i>zorla göz at</i> seçili dizin ve bulunan tüm çocuklarda.
+	<br /> O
+	<i>Zorla Göz At sekmesi</i> görüntülenir ve taramanın ilerleme durumu gösterilir.
+	<br />
+
+	<h3>Şunun dışında bırak</h3>
+	Bu menü aşağıdaki alt menülere sahiptir:
+
+	<h4>Proxy</h4>
+	Bu, seçilen düğümleri proxy dışında tutacaktır. ZAP ile hala proxylenmiş olacaklar fakat herhangi bir sekmede gösterilmeyecekler.
+	<br /> Bu, şu anda test etmekte olduğunuz sistem ile ilişkili olmadığını bildiğiniz URL'leri yok saymak için kullanılabilir.
+	<br /> Düğümler şunun aracılığıyla tekrar dahil edilebilir
+	<i>Session Properties</i> pencere
+
+	<h4>Tarayıcı</h4>
+	Bu seçili düğümlerin aktif olarak taranmasını önler.
+	<br /> Düğümler şunun aracılığıyla tekrar dahil edilebilir
+	<i>Session Properties</i> pencere
+
+	<h4>Örümcek</h4>
+	Bu, seçili düğümleri örümceğin taramasını engeller.
+	<br /> Düğüm şunun aracılığıyla tekrardan dahil edilebilir
+	<i>Oturum Özellikleri</i> pencere
+
+	<h3>Uygulamayı çalıştır</h3>
+	Bu menü size şunun imkanını sağlar
+	<i>uygulamaları çalıştır</i> üzerinden yapılandırdığınız
+	<i>Seçenek Uygulamaları Ekranı</i> 'Uygulamaları yapılandır...' alt menüsünden de erişilebilir.
+
+	<h3>Etiketleri Yönet...</h3>
+	Bu şunu öne çıkaracak
+	<i>Sekme pencerelerini yönet</i> şunu değiştirmenize imkan verir
+	<i>etiketler</i> sorgu ile eşleştirilmiş.
+
+	<h3>Not olarak...</h3>
+	Bu şunu öne çıkaracak
+	<i>Not penceresi ekle</i> şunu kaydetmenizi sağlar
+	<i>notlar</i> istek ile bağlantılı.
+
+	<h3>Kırılma...</h3>
+	Bu şunu öne çıkaracak
+	<i>Kırılma Noktası diyaloğu ekle</i> o URL'e bir durma noktası ayarlamanıza izin verir.
+	<br />
+
+	<h3>Bu düğüm için uyarılar</h3>
+	Eğer seçili URL, 
+	<i>uyarılar</i> onunla ilişkilendirildikten sonra bu menü altında listelenirler.
+	<br> Uyarılardan birini seçmek, görüntülenmesine sebep olacaktır.
+
+	<h3>Tekrar gönder...</h3>
+	Bu şunu öne çıkaracak
+	<i>Diyaloğu yeniden gönder</i> istediğiniz herhangi bir değişiklik yaptıktan sonra isteği tekrar göndermenize imkan verir.
+
+	<h3>Yeni Uyarı...</h3>
+	Bu şunu öne çıkaracak
+	<i>Uyarı penceresi ekle</i> el ile yeni bir kayıt etmenizi sağlar
+	<i>Uyarı</i> bu isteğe karşı.
+
+	<h3>Tarayıcıda URL Aç</h3>
+	Bu, seçili düğümün URL'sini varsayılan tarayıcınızda açar.
+
+	<h2>Ayrıca bakınız</h2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="concepts.html">AJAX Ağ</a></td>
+			<td>AJAX Ağının genel bir görünümü için</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="options.html">AJAX Ağ Ekran Seçenekleri</a></td>
+			<td>AJAX Ağ Seçeneklerinin genel bir görünümü için</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="scandialog.html">AJAX Ağ penceresi</a></td>
+			<td>AJAX Ağ penceresinin genel bir görünümü için</td>
+		</tr>
+	</table>
+
+</body>
+</html>

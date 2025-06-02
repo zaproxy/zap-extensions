@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Ang Bean Shell na Console
+</title>
+</head>
+<body>
+<h1>Bean Shell Console</h1>
+<p>
+	Ang BeanShell ay isang Interactive na Java shell na maaring gamitin para paganahin ang Beanshell na mga iskrip. Ang mga
+Iskrip na ito ay pormang simple ng Java na gumagamit ng maraming elemento mula sa Java syntax, ngunit na sa pinaka simpleng scripting na format. All Java code is also valid BeanShell code.<br/>
+	BeanShell integration in OWASP ZAP enables you to write scripts using the ZAP functions and
+	data set. Ito ay maaring maging isang napakalakas na tampok para sa pagsusuri ng mga web aplikasyon.
+</p>
+<h2>Ang BeanShell Console</h2>
+<p>
+	Ang console ay nag-uumpisa mula sa Tool menu, at naglalaman ng isang split screen na kung saan ang itaas na bahagi ay ang interactive BeanShell console at ang ibabang bahagi ay isang simpleng text editor. Para sa mga complex na mga script, ikaw ay
+	hinimuk na gamitin ang Java editor. Ang mga script ay pwedeng ma-load, naligtas at nasuri mula sa editor.
+	Kapag ang BeanShell ay nagsimula sa isang numero ng mga bagay mula sa ZAP ay magagamit para sa paggamit, namely:
+	<ul>
+	<li>ang <i>Modelo</i> singleton, sa pamamagitan ng object na nakapangalan<i>modelo</i></li>
+	<li>ang <i>SiteTree</i> tree sa kasalukuyang mga site sa pamamagitan ng <i>mga site</i> na object</li>
+	<li>isang instance sa <pre>Ang HttpSender</pre> sa pamamagitan ng <i>ang nagpadala</i> object</li>
+	</ul>
+	Pansinin na ang BeanShell ay maluwag na uri. Samakatuwid, ito ay hindi kinakailangan upang ipahayag ang mga variable bago
+	gamitin ang mga ito - dahil ito ang mga script na medyo maikli kaysa regulat na Java. At siyempre, kung hindi mo gusto
+	itukoy ang uri ay pwede.
+</p>
+<h2>Ang paggamit sa Mapa sa site</h2>
+<p>
+	Tayo ay mag-umpisa ng anumang magagamit at tipikal: Ulitin sa pamamagitan ng lahat ng mga site node at suriin sa mga meron na sa file. Ang script ay nalikha na at natapos na ito, piliin ang Load at pumili sa example.tree.bsh na file. Bago ang pag-click sa Evaluate, ang unang browse sa isang site sa pamamagitan ng ZAP para ma-populate:
+	<br/><br/>
+	Ngayon i-click ang evaluate para magsagawa ng script na nasa editor. Kung walang mga mali, saka ikaw ay pwedeng mag-umpisa gamit ang object defined na nasa script sa pamamagitan ng issuing sa mga command na ito:
+	<pre>
+	t = Tree();
+	</pre>
+	Alin ang gumagawa ng bagong Tree object at nagtakda sa isang kaukulan nito.
+	<pre>
+	t.find(sites.getRoot(), "index.html");
+	</pre>
+	Tawagin ang paghahanap na pamamaraan nito, para sa isang SiteNode gaya ng unang argumento at isang resource para hanapin gaya ng segundo. Sa ganitong case, ang merhod ay ulitin sa pamamagitan ng lahat ng mga node sa tree, dahil tayo ay makapagsimula sa root, at maghanap ng index.html na mga file.
+	<br/><br/>
+	Sa halip na ulitin sa pamamgitan ng lahat ng mga node, tayo ay pwedeng pumili sa pag-start ng isang tiyak na node sa pamamagitan ng paggamit sa findChild na pammaaraan e.g.:
+	<br/><br/>
+	Ito ay dapat magbigay sayo ng ilang ideya ng kapangyarihan ng BeanShell sa ZAP. Ngunit lubos na kasakapanin ito, kailangan mong pag-aralang mabuti ang mga panloob na API at mga BeanShell na mga tampok. Ang Beanshell ang naging setup para mabigyan na ganap na access sa lahat ng mga panloob na mga bagay ay mga pamamaraan - maging pribadong isa.
+</p>
+<h2>Ang Simpleng HTTP na hiling</h2>
+<p>
+	Sa susunod na halimbawa, tayo ay maglikha at magpadala ng HTTP na tugon nang direkta sa interactive console: Upang lubos na magamit ang kapangyarihan ng BeanShell, ikaw ay dapat pag-aralan ang ZAP na mga panloob.
+	Ang nagpadala na object ay parehong instance sa paggamit ng Manual Request Editor at nga awtomatiko na gumamit ng proxy na mga setting na nagtakda sa ZAP na configurasyon.
+	<br/><br/> TODO: POST na halimbawa
+</p>
+<h2>Mga tip</h2>
+<p>
+	Gamitin ang unset(String) command para ma-unset ang anumang idineklarang mga variable, mga pamamaraan o mga bagay. Ito ay kapaki-pakinabang kung gusto mong palitan ang isang paraan na pagpapahayag sa kasalukuyang namespace. Tandaan na ang utos ay tumatagal ng isang String argumento, hindi isang bagay, kaya sa pag-unset sa bagay na ginagamit natin sa itaas, ito ay dapat: unset(“t”); at hindi unset(t);
+</p>
+<p>
+	Ang orihinal na dokumento sa: Stephen de Vries
+</p>
+
+</body>
+</html>

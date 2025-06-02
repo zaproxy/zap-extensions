@@ -1,0 +1,8 @@
+name: Traditional Markdown Report
+format: Markdown
+mode: TEXT
+extension: md
+sections:
+ - alertcount
+ - instancecount
+ - alertdetails

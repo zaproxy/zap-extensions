@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+WebSocket tab
+</title>
+</head>
+<body>
+<h1>WebSocket tab</h1>
+
+<p>
+WebSocket tab memperlihatkan semua pesan dari WebSocket koneksi.
+Sementara ZAP adalah aktif, kunjungi misalnya: <a href="http://browserquest.mozilla.org/">Mozilla PencarianBrowser</a>
+untuk melihat WebSocket pada aktifitas.
+</p>
+
+<h2>Filter</h2>
+	<h3>Pemilih Saluran</h3>
+		Anda bisa membatasi tampilan dari pesan untuk suatu tertentu WebSocket
+		saluran atau semuanya.
+		<br>
+		Jika anda memilih sebuah saluran tertentu, maka <i>Menunjukkan jabat tangan</i> tombol
+		(<img src="images/handshake.png" align="bottom" width="16" height="16" />)
+		diaktifkan. Saat anda mengkliknya, HTTP handshake yang sesuai
+		ditampilkan dalam tab Permintaan/Respon.
+
+	<h3>Dialog Penyaring</h3>
+		Dalam dialog penyaring (<img src="images/054.png" align="bottom" width="16" height="16" />)
+		anda dapat mengontrol lebih jauh dimana pesan-pesan ditampilkan.
+
+<br><br>
+<h2>Titik-selaan</h2>
+	Anda dapat mengatur kustom titik istirahat menggunakan <i>Tambahkan Titik-Selaan Pilihan</i>
+	tombol (<img src="images/break_add.png" align="bottom" width="16" height="16" />).
+	<br>
+	Alternatifnya anda bisa menggunakan <i>Klik kanan menu</i>.
+
+<br><br>
+<h2>Menu klik kanan</h2>
+	Klik kanan pada pesan WebSocket akan memunculkan menu yang akan mengizinkan anda untuk:
+
+	<h3>Tidak termasuk dari WebSocket</h3>
+		Koneksi WebSocket dapat dikecualikan dari tab WebSocket dengan menambahkan
+		sebuah URL pengecualian ke
+		<i>Properti Sesi</i>. Klik pada item ini, akan menampilkan sesi properti dengan URL yang sudah terisi.
+		Pengecualian koneksi WebSocket tidak akan berakibat pada penutupan
+		koneksi, melainkan dalam meneruskan tanpa memproses lebih lanjut.
+
+	<h3>Break...</h3>
+		Ini akan memunculkan
+		<i>Tambahkan dialog Titik Selaan</i> yang memungkinkan anda untuk mengatur break point Khusus.
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Selenyum Seçenekler ekranı</title>
+</head>
+<body>
+	<h1>Selenyum Seçenekler ekranı</h1>
+
+	Bu ekran, bazı WebDriverların gereksinimlerini ayarlamanızı sağlar.
+	<br />
+	<h2>Configuration Options</h2>
+	<h3>WebDrivers</h3>
+	<table border="2">
+		<tr>
+			<th>Field</th>
+			<th>Details</th>
+			<th>Default</th>
+			<th>Config File</th>
+		</tr>
+		<tr>
+			<td>ChromeDriver</td>
+			<td>This allows you to select the location of ChromeDriver.</td>
+			<td align="center">The path to the bundled WebDriver, if available.</td>
+			<td>Key: <code>selenium.chromeDriver</code><br>Value: file system path to the ChromeDriver</td>
+		</tr>
+		<tr>
+			<td>geckodriver</td>
+			<td>This allows you to select the location of geckodriver (Firefox driver).</td>
+			<td align="center">The path to the bundled WebDriver, if available.</td>
+			<td>Key: <code>selenium.firefoxDriver</code><br>Value: file system path to the geckodriver</td>
+		</tr>
+	</table>
+
+	<h3>Binaries</h3>
+	<table border="2">
+		<tr>
+			<th>Field</th>
+			<th>Details</th>
+			<th>Default</th>
+			<th>Config File</th>
+		</tr>
+		<tr>
+			<td>Chrome</td>
+			<td>This allows you to select the location of Chrome binary (for example, to use
+				a version other than the system default).</td>
+			<td align="center">(None)</td>
+			<td>Key: <code>selenium.chromeBinary</code><br>Value: file system path to the Chrome binary</td>
+		</tr>
+		<tr>
+			<td>Firefox</td>
+			<td>This allows you to select the location of Firefox binary (for example, to use
+				a version other than the system default).</td>
+			<td align="center">(None)</td>
+			<td>Key: <code>selenium.firefoxBinary</code><br>Value: file system path to the Firefox binary</td>
+		</tr>
+	</table>
+	<strong>Not:</strong> It's also possible to set the above locations (binaries and
+	WebDrivers) using Java system properties, in which case the above options will be
+	overridden and those values shown instead.
+
+	<p>
+	More details about the bundled WebDrivers can be found on the overview page.
+
+	<h4>Browser Arguments</h4>
+	Both Chrome and Firefox binaries can have additional (CLI) arguments specified through the <code>Arguments...</code> button.
+
+	<p>
+	<strong>Note:</strong> Adding invalid arguments might cause the browser to fail to start. ZAP already adds some arguments (e.g. headless).
+
+	<h4>Browser Profiles</h4>
+	You can choose which Firefox profile to use by default.
+	The <code>&lt;temporary&gt;</code> profile is one which is created by Selenium each time the browser is launched.
+	<p>
+	<strong>Note:</strong> The 'client' add-on creates a profile called zap-client-profile - 
+	if you choose another profile then the Client add-on will not work without manual configuration.
+
+	<h3>Browser Extensions</h3>
+
+	You can add, remove, enable, or disable browser extensions via the relevant buttons on this screen.
+	Supported browsers and file extensions are:
+	<ul>
+	<li>Firefox: .xpi
+	<li>Chrome: .crx
+	</ul>
+	Add-ons can also add new browser extensions. If you delete a browser extension via this screen then it will be added again 
+	by the add-on so either just disable it or uninstall the add-on to remove the browser extension.
+
+	<h2>See also</h2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="intro.html">Selenium</a></td>
+			<td>for an overview of the Selenium add-on</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="api.html">API</a></td>
+			<td>for an overview of the Selenium API</td>
+		</tr>
+	</table>
+
+</body>
+</html>

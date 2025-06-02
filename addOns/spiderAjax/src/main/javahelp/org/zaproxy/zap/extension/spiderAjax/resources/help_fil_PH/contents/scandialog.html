@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Diyalogo ng AJAX Spider</title>
+</head>
+<body>
+<h1>Diyalogo ng AJAX Spider</h1>
+
+Itong diyalogo ay naglulunsad ng AJAX Spider. 
+
+<h2>Saklaw</h2>
+Ang unang tab na ito ay nagpapahintulot sa iyo upang baguhin ang mga pangunahin tampok tulad ng:
+
+<h3>Starting Point</h3>
+
+Ang URL na kung saan ang AJAX spider ay magsisimula na gumapang mula, o ang isang konteksto (sa kung saan ang caso ay ginagamit ang isa sa URL na nasa konteksto bilang panimulang punto).
+
+<h3>Konteksto</h3>
+Nagpapahintulot upang piliin ang konteksto para maging spidered.
+
+<h3>Gumagamit</h3>
+Nagpapahintulot upang pumili ng isa sa mga gumagamit na bakante mula sa napiling konteksto, para magsagawa sa spider scan bilang gumagamit (ZAP will (re) ay nagpapatunay bilang isang gumagamit kung kinakailangan).
+
+<h3>Just In Scope</h3>
+
+Kung itakda pagkatapos ng anumang URL kung saan ang nasa labas ng saklaw ay hindi papansinin.
+<p>
+<strong>Tandaan:</strong> Ang pagpipilian <code>Just In Scope</code> ay pare-pareho eksklusibo sa <code>Konteksto</code> sa pagpipilian, kung ang isa ay nagamit ang iba ay hindi papansinin.
+
+<h3>Spider Subtree lamang</h3>
+Kung itakda at pagkatapos ang spider ay papasok lamang sa mapagkunan na nasa ilalim ng panimulang punto (URI).
+Kapag sinusuri kung ang mapagkunan ay matagpuan sa loob ng tinukoy na subtree, ang spider ay itinuturing lamang ang pamamaraan, host, port, at path na mga bahagi sa URI.
+
+<h3>Browser</h3>
+
+Ang uri ng browser para gamitin.<br>
+Ang mga browser lang ang ipapakita kung ang ZAP ay sapat sa pagsasaayos ng takbo sa kanila.<br>
+Maaari ito ay huminto sa pagtakbo kung ang mga browser ay hindi matagpuan o kung ang pagsasaayos ng impormasyon ay hindi tama.
+
+<h3>Show Advanced Options</h3>
+
+Kung napili ito ang mga pagpipilian tab ay dapat ipakita.
+
+<h2>Mga opsyon</h2>
+Ang tab na ito ay napapahitulot sa iyo na baguhin ang mga kasama sa pagpipilian:
+
+<h3>Number of Browser Windows to Open</h3>
+Pwede mong ma-configure ang bilang ng mga window na gagamitin sa AJAX Spider.<br>
+Masmaraming window, masmagiging mabilis ang proseso.
+
+<h3>Maximum Crawl Depth</h3>
+Ang pinakamataas na lalim ng crawler na pweding maabot. Zero ibig sabihin ay walang hanggan ang lalim.
+
+<h3>Maximum Crawl States</h3>
+Ang pinakamataas na bilang ng estado sa crawler ay crawl. Zero ibig sabihin ay walang katapusan ang estado ng crawl. 
+
+<h3>Maximum Duration</h3>
+Ang pinakamahabang oras na pinahintulutan sa pagtakbo ng crawler. Zero ibig sabihin ay walang hanggan na pagtakbo ng oras.
+
+<h3>Event Wait Time</h3>
+Matapos maghintay ang panig ng kliyente ang kaganapan ay inalis.
+
+<h3>Reload Wait Time</h3>
+Ang paghihintay ng oras matapos maloadan ang URL.
+
+<h3>Allowed Resources</h3>
+The list of allowed resources. The allowed resources are always fetched even if out of scope, allowing to include necessary resources (e.g. scripts) from 3rd-parties.
+	
+	<h2>Tingnan din</h2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="concepts.html">AJAX Spider</a></td>
+			<td>for an overview of the AJAX Spider</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="tab.html">AJAX Spider tab</a></td>
+			<td>para sa kabuoan ng AJAX Spider Tab</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="options.html">Mga pagpipilian sa AJAX Spider iskren</a></td>
+			<td>para sa kabuoan ng pag pipilian ng AJAX Spider</td>
+		</tr>
+	</table>
+
+</body>
+</html>

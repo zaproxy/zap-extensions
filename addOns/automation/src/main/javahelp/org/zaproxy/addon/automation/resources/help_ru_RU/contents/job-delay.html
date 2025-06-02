@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+Automation Framework - delay Job
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Платформа автоматизации — задержка задания </H1>
+
+Это задание ожидает определенное время, если не выполняется одно из определенных условий.<br>
+Его можно использовать для ожидания прохождения регрессионных тестов через ZAP, чтобы более тщательно изучить ваше приложение. 
+<p>
+It is covered in the video: <a href="https://youtu.be/hcftgjz_Vgc">ZAP Chat 12 Automation Framework Part 6 - Delays and Active Scan</a>.
+<p>
+Параметр времени поддерживает форматы <code>чч:мм:сс</code>, <code>мм:сс</code> и <code>сс</code>, поэтому «5» — это 5 секунд,
+«1:30» — это одна минута и 30 секунд, а «2:20:30» — это 2 часа, 20 минут и 30 секунд. 
+<p>
+Поддерживаемые условия: 
+<ul>
+<li>Создание файла, заданного необязательным параметром fileName. 
+<li>Вызов статического метода: <code>org.zaproxy.addon.automation.jobs.DelayJob.setEndJob(true);</code> 
+<li>Calling the API end point: <code>automation / action / endDelayJob</code>
+</ul>
+
+<H2>YAML</H2>
+
+<pre>
+  - type: delay                        # Приостановить выполнение плана на определенный период времени или событие (создание файла, вызов статического метода, вызов конечной точки API) 
+    parameters:
+      time:                            # String: Время ожидания, формат любой из ['чч:мм:сс', 'мм:сс', 'сс'], по умолчанию: 0 
+      fileName:                        # String: Имя файла, создание которого приведет к досрочному завершению задания, по умолчанию: пусто 
+</pre>
+
+</BODY>
+</HTML>

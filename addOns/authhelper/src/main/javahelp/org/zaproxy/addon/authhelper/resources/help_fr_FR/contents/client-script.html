@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+Client Script Authentication
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Client Script Authentication</H1>
+
+This <a href="authhelper.html">add-on</a> adds a new authentication type which uses a browser to login to the target website.
+<p>
+This functionality leverages Zest scripts (which may have been recorded via the ZAP Browser Extension) to login.
+<p>
+
+<H2>Automation Framework</H2>
+
+Client Script Authentication can be configured in the environment section of an Automation Framework plan using:
+<pre>
+      authentication:
+        method: "client"
+        parameters:
+          script: /path/to/RecordedAuth.zst  # String, the path to the Zest login script
+          scriptEngine: Mozilla Zest         # The script engine used for the login script
+          diagnostics:                       # Bool, enables the recording of diagnostic data during the authentication. Default: false.
+</pre>
+
+<p>
+Refer to the <a href="auth-report-json.html">Authentication Report</a> for more details on the diagnostics.
+
+<H2>Client Spider and AJAX Spider Integration</H2>
+
+The Client or AJAX Spider will automatically login if a user is specified which is in a context that uses Client Script Authentication.
+<p>
+Note that this uses the Selenium integration detailed below, so any browsers launched manually will also be logged in if the 
+Client or AJAX spider is performing an authenticated scan using Client Script Authentication.
+
+<H2>Selenium Integration</H2>
+
+Any browsers launched by ZAP can be configured to always first login using the details configured in a context.
+<p>
+Note that due to restrictions in the core:
+<ul>
+<li>Existing contexts are not updated in the GUI if you add or remove this add-on
+<li>Client Script Based Authentication cannot be added to a context via the API (unless used with ZAP 2.16.1 or later)
+</ul>
+These restrictions will be addressed in a future release. 
+
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/authhelper/src/main/java/org/zaproxy/addon/authhelper/ClientScriptBasedAuthenticationMethodType.java">ClientScriptBasedAuthenticationMethodType.java</a>
+
+</BODY>
+</HTML>

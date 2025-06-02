@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+SOAP Support
+</title>
+</head>
+<body>
+<h1>SOAP Support</h1>
+Este complemento importa y escanea archivos WSDL que contienen puntos de conexión SOAP.
+<br><br>
+It also supports the <a href="automation.html">Automation Framework</a>.
+
+<h2>Importar</h2>
+The add-on will automatically detect any SOAP definitions and spider them as long as they are in scope.
+<br><br>
+A menu item is added to the Import menu:
+<ul>
+<li>Import a WSDL File</li>
+</ul>
+Operations to import a WSDL file from the local filesystem or from a URL are also available via the API.
+<br><br>
+<b>NOTE:</b> As of version 6 of this add-on, only encoded URLs are supported.
+
+<h3>Form Handler Add-on Support</h3>
+The SOAP add-on supports overriding default parameter values based on field names via the Form Handler add-on.
+For example,
+<br>
+<img src="images/formHandlerExample.png" alt="Form Handler Example" width="300">
+
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/tree/main/addOns/soap">SOAP Support</a>
+
+<h2>Statistics</h2>
+This add-on maintains the following statistics:
+<ul>
+    <li>soap.urls.added: The total number of URLs (or SOAP Actions) added from imported WSDL files.</li>
+</ul>
+
+<h2>See also</h2>
+<table>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;
+        <td><a href="alerts.html">Alert & Rule Details</a>
+        <td>for details of the Alerts and rules for the SOAP support add-on.
+    </tr>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;
+        <td><a href="automation.html">SOAP Automation</a>
+        <td>for information about the automation framework support.
+    </tr>
+</table>
+
+</body>
+</html>

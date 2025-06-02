@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE map
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Map Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/map_1_0.dtd">
+
+<map version="1.0">
+	<mapID target="addon.plugnhack.plug" url="contents/images/plug.png" />
+    <mapID target="addon.plugnhack.plugnhack" url="contents/plugnhack.html" />
+    <mapID target="addon.plugnhack.pnhclients" url="contents/clientstab.html" />
+</map>

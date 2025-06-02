@@ -1,0 +1,20 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Propiedades de la sesión específica de WebSocket
+</title>
+</head>
+<body>
+<h1>Propiedades de la sesión específica de WebSocket</h1>
+<p>
+<h2>Exclude from WebSocket</h2>
+Esto permite administrar los URLs donde la comunicación WebSocket no se ha procesado en ZAP.
+<br>
+A pesar de que todos los mensajes de los URLs excluidos hayan sido reenvidados, nada se almacena ni se pueden visualizar en la interfaz del usuario.
+Esta característica es útil para conexiones WebSocket de alto volumen y rendimiento crítico.
+<br>
+Se puede diferenciar el puerto para un dominio determinado, utilizando por ejemplo: <i>example.com:443</i> para excluir las conexiones WebSocket de example.com solamente en el puerto 443.
+</body>
+</html>

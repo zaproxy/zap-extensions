@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE index
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Index Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/index_2_0.dtd">
+
+<index version="2.0">
+	<indexitem text="Məcburi İzləmə" target="addon.bruteforce.concepts" />
+	<indexitem text="Məcburi İzləmə seçimləri" target="addon.bruteforce.options" />
+	<indexitem text="Forced Browse Tab" target="addon.bruteforce.tab" />
+</index>

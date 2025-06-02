@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+HTTP 消息处理器
+</title>
+</head>
+<body>
+<h1>HTTP消息处理器</h1>
+HTTP Message Processors can access and change the HTTP messages being fuzzed, control the fuzzing process, and interact with the ZAP UI.
+<p>
+内置HTTP消息处理器包括:
+
+<h3>Anti-CSRF Token Refresher</h3>
+允许刷新请求中包含的反CDRF令牌。必须通过ZAP正确检测到反CSRF令牌才能使用此处理器。<br>
+有关详情，请参阅帮助页面"入门">"功能">"反CSRF令牌"。<br>
+<strong>注意:</strong> 如果检测到反CSRF令牌，此处理器将自动添加到处理器列表中。
+
+<h3>Fuzzer HTTP处理器(脚本)</h3>
+允许选择启动的Fuzzer HTTP 处理器脚本。脚本允许您:
+<ul>
+<li>获取有效负载列表</li>
+<li>停止模糊</li>
+<li>增加错误计数</li>
+<li>发送新消息</li>
+<li>将消息添加到结果选项卡</li>
+<li>在<a href="tab.html">Fuzzer选项卡</a>中设置自定义"状态"消息</li>
+<li>引发警报</li>
+</ul>
+
+Scripts can include both Required and Optional parameters the values for which the user will be prompted to provide when the Processor is added to the fuzzer.
+The parameter names are defined within the script(s) via the methods <code>getRequiredParamsNames</code> and <code>getOptionalParamsNames</code>, each of which
+simply return an array of strings representing the parameters names.
+
+<h3>有效负载反射探测器</h3>
+Indicates in the State column of results table if one of the injected payloads were found in the response, using "<img src="images/reflected_icon.png"> Reflected".<br>
+<strong>注意:</strong> This processor is automatically added to the list of processors.
+
+<h3>请求内容长度更新器</h3>
+Updates (or adds, if not already present) the <code>Content-Length</code> request header with the length of the request body,
+for all request methods. No change is done if the size of the request body is zero and the header is not already present.<br>
+<strong>注意:</strong> This processor is automatically added to the list of processors.
+
+<h3>Tag Creator</h3>
+Allows to add custom ‘tags’, based on contents of the response, to the State column of the results table.
+
+<h3>用户消息处理器</h3>
+Allows to fuzz as a user, using one of the users defined in the Contexts that include the HTTP message being fuzzed. Users must
+exist to be able to select and add this processor.
+
+<p>
+其他附件可以定义另外的HTTP消息处理器。
+
+<h2>通过访问</h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>消息处理器选项卡下的<a href="dialogue.html">Fuzzer对话框</a></td></tr>
+</table>
+
+<h2>另请参阅</h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Fuzzer概念</a></td></tr>
+</table>
+
+</body>
+</html>

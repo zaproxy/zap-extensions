@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE toc
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN"
+         "http://java.sun.com/products/javahelp/toc_2_0.dtd">
+
+<toc version="2.0">
+	<tocitem text="ZAP User Guide" tocid="toplevelitem">
+		<tocitem text="Accessoires" tocid="addons">
+			<tocitem text="Événements envoyés par le serveur" target="sse.introduction" image="html5connectivity" >
+				<tocitem text="Tab" target="sse.tab"/>
+			</tocitem>
+		</tocitem>
+	</tocitem>
+</toc>

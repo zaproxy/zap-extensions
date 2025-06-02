@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Payloads diyaloğu
+</title>
+</head>
+<body>
+<h1>Payload'lar diyaloğu</h1>
+Bu size ekstra güç üreticisini kullanmanıza izin verir <a href="concepts.html">belirsizleştirmek</a> bir sorgu.
+<br><br>
+Payload generators generate the raw values or attacks that the fuzzer submits to the target application.
+<br><br>
+Aşağıdaki üretici tipleri varsayılan olarak sağlanır:
+<ul>
+<li>Boş/Sıfır - seçili ek gücü birçok kez mesaji değiştirmeden üretir. Bu yük üreticisi sonradan işlenen çoklu mesaj gönderimi için kullanışlıdır, örneğin, bir <a href="httpmessageprocessors.html">Fuzzer HTTP İşlemci (Script)</a> ile.</li>
+<li>Dosya - yerel dosyalarınızdan birini bir defaya mahsus bir saldırı için seçiniz</li>
+<li>File Fuzzers - select any combination of the fuzzing files registered with ZAP, e.g. via add-ons like fuzzdb</li>
+<li>Numberzz - özel artışla bir dizi sayı üretmesine olanak tanır</li>
+<li>Regex - regex desenlerine dayalı saldırılar üretir</li>
+<li>Dizeler - el ile girilebilen veya yapıştırılan işlenmemiş dizeler</li>
+<li>Komut dosyası - gerekli yük üretebilen özel komut dosyaları</li>
+<li>Json - generate attacks by fuzzing the provided json</li>
+</ul>
+Özel yük üretici scriptleri yazabilirsiniz - bunlar ihtiyacınız olan her yükü sağlayabilir.
+<br><br>
+Eklentiler ek yük üreticileri olarak da tanımlanır.
+<br><br>
+'İşlemciler...' düğmesi <a href="processors.html">Payload İşlemciler iletişim kutusu</a> which allows you to
+configure payload processors that just apply to the payload generator you have selected.
+<br>
+
+<h2>Via ya erişildi</h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="dialogue.html"> Fuzzer iletişim kutusu </> 'Ekle...' düğmesi</td></tr>
+</table>
+
+<h2>Ayrıca bakınız</h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Fuzzer kavramları</a></td></tr>
+</table>
+
+</body>
+</html>

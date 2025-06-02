@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>
+        Erişim Kontrolü İçerik Seçenekleri
+    </title>
+</head>
+<body>
+<h1>Erişim Kontrolü İçerik Seçenekleri</h1>
+
+<p>
+    Erişim Kontrolü Durum seçenekleri Oturum Özellikleri'ni açarken her Durum için bir panel olarak bulunur
+  diyalogu. Bu panel, ZAP kullanıcılarının her Bağlamın her Kullanıcısı için Erişim Kurallarını tanımlamalarına izin verir.
+</p>
+
+<p>
+    <a href="concepts.html">Konsepler</a> sayfasında belirtildiği gibi ZAP, URL'lerin ağaç temelli yapısından faydalanıyor. Böylece, erişim kurallarını yapılandırırken, diğer düğümler için sadece 1 kural çıkarsa da sadece bir alt ağacı açıkça ayarlamanız gerekir. Durumdaki herhangi bir düğüm için üç olası değer ayarlanabiliyor:
+     her Kullanıcıda:
+</p>
+<ul>
+    <li><b>İzin Verilen</b> - Düğüm kuralı için <i>açıkça</i> izin verilebilir olduğunu ayarla</li>
+    <li><b>Reddedilen</b> - Düğüm kuralı için <i>açıkça</i> reddedilebilir olduğunu ayarla</li>
+    <li><b>Miras</b> - Düğüm kuralı için <1>açıkça</1>belirlenmiş bir kuralla en yakın ebeveynine temel alarak ayarlanır
+    </li>
+</ul>
+
+<p>Varsayılan olarak, herhangi bir düğüm kuralları için <i>Reddedilen</i> değerde ve kök ise <i>Bilinmeyen</i> değerdedir.
+    Böylece, açıkça yapılandırılmış kurallı bir ebeveyni olmayan herhangi bir düğüm çıkarılmış kural varsayılan olarak <i> Bilinmeyen</i>.</p>
+
+<h2>Ayrıca bakınız</h2>
+<table>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>
+            <a href="concepts.html">Erişim Konrol Testi</a></td>
+        <td>erişim Kontrol Testine kısa bir giriş</td>
+    </tr>
+</table>
+
+</body>
+</html>

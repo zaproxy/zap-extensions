@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Mga WebSocket
+</title>
+</head>
+<body>
+<h1>Mga WebSocket</h1>
+<p>
+Mga websocket ay maaring gamitin ng mga aplikasyon sa web o mga web site para i-setup ang isang bi-directional (dalawang-panig), buong duplex na komunikasyon channel sa ibabaw ng isang solong TCP koneksyon.<br>
+Ito ay nagtatambok ng isang magaan na protocol, na nagpapahintulot sa mga developer upang mapagtanto ang mga realname na paggamit ng mga kaso. Mga Websocket ay nagbibigay ng alternatibong paggamit ng mabigat na paggamit sa Ajax, HTTP Long Polling o Comet.<br>
+</p>
+<p>
+Pagkatapos ng isang paunang HTTP batay sa pakikipagkamay, ang TCP koneksyon ay nakabukas palagi, nagpapahintulot sa mga aplikasyon na magpadala &amp; tumatanggap ng di-makatwirang datos. Madalas ang port 80 at 443 para sa encrypted na mga websocket channel ay ginagamit.
+</p>
+<p>
+Ang WebSocket na pamantayan ay tinukoy sa
+<dl>
+	<dt><a href="http://www.w3.org/TR/websockets/">Ang WebSocket API (http://www.w3.org/TR/websockets/)</a></dt>
+	<dd>tumutukoy sa interface sa mga browser</dd>
+	<dt><a href="https://tools.ietf.org/html/rfc6455">Ang WebSocket Protocol (RFC6455) (https://tools.ietf.org/html/rfc6455)</a></dt>
+	<dd>naglalarawan sa istraktura sa WebSocket na mga frame sa TCP</dd>
+</dl>
+<p>
+Ang ZAP ay may kakayahan na:
+<ul>
+	<li>maharang ay nagpakita ng WebSocket na mga mensahe</li>
+	<li>nagtakda ng mga breakpoint sa tiyak na mga uri sa WebSocket na mga mensahe</li>
+	<li>fuzz WebSocket na mga mensahe (nagpapadala ng mga maraming hindi balido o di-inaasahang datos sa isang browser o server)</li>
+  <li>passively scan WebSocket messages and raise alerts with scripts</li>
+</ul>
+
+Ang WebSocket na mga mensahe ay makikita sa loob ng <a href="tab.html">Mga WebSocket na tab</a>.<br><br>
+
+The WebSocket add-on adds new <a href="script.html">scripts</a> and additional endpoints to the ZAP <a href="api.html">API</a>
+
+</body>
+</html>

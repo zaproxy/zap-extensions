@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+Call Home
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Llamadas a Casa</H1>
+Este complemento se utilizará para todas las "llamadas a casa". 
+<p>
+Actualmente admite:
+
+<H2>Verificar Actualizaciones</H2>
+La llamada "Verificar actualizaciones" se utiliza para obtener la información más reciente sobre ZAP y los complementos publicados. 
+Es un complemento obligatorio desde ZAP 2.12.0, ya que esta función es utilizada por el núcleo de ZAP.
+
+<H2>Novedades</H2>
+La llamada de "Novedades" se utiliza para obtener la última información sobre ZAP, la cual se muestra en el panel de inicio rápido de ZAP en el escritorio. 
+
+<H2>Telemetría</H2>
+La llamada de telemetría informa sobre los complementos que se están utilizando y algunas estadísticas internas de ZAP.
+Nunca recopilará detalles de los sitios en los que se utiliza ZAP, detalles de las vulnerabilidades o información personal identificable (PII).
+<p>
+Para obtener más información, consulta la publicación del blog sobre  <a href="https://www.zaproxy.org/blog/2021-10-25-zap-telemetry-plans/">Planes de telemetría de ZAP</a>.
+
+<H2>Opción de línea de comandos: -notel</H2>
+Si se especifica <code>-notel</code> en la línea de comandos, no se realizarán llamadas de telemetría. Las otras llamadas no se verán afectadas.
+Tampoco se realizarán llamadas de telemetría si se utiliza la opción de línea de comandos estándar <code> -silent</code> ZAP.
+
+<H2>Panel de opciones de llamada a casa</H2>
+Este panel te permite activar y desactivar el soporte de telemetría.
+<p>
+También muestra el último conjunto de datos de telemetría transmitidos. 
+Los datos de telemetría también se registran en el archivo de registro de ZAP con el nivel DEBUG.
+</BODY>
+</HTML>

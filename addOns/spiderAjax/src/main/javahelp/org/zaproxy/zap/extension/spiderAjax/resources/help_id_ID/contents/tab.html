@@ -1,0 +1,195 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Tab Spider AJAX</title>
+</head>
+<body>
+	<h1>Tab Spider AJAX</h1>
+	<p>
+		Tab Spider AJAX menampilkan atur dari URL unik yang ditemukan oleh <a href="concepts.html">AJAX Spider</a>.
+	</p>
+	<br /> Untuk setiap permintaan yang dapat anda lihat:
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>Indeks permintaan - setiap permintaan yang diberi nomor, dimulai dari 1</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>Cap waktu permintaan</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>Metode HTML, misalnya GET atau POST</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>URL yang diminta</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>Kode status tanggapan HTTP</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>Ringkasan singkat tentang apa arti dari kode tanggapan HTTP</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>Lamanya seluruh waktu permintaan mengambil</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>Ukuran dari tanggapan header</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>Ukuran dari tanggapan tubuh</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>Setiap <i>Peringatan</i> pada permintaan tersebut
+			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>Setiap <i>Catatan</i> anda telah menambahkan ke permintaan
+			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>Setiap <i>Tag</i> anda telah menambahkan ke permintaan
+			</td>
+		</tr>
+	</table>
+
+	Memilih sebuah permintaan yang akan menampilkannya di
+	<i>Tab permintaan</i> dan
+	<i>Tab tanggapan</i> atas.
+	<br />
+
+	<h2>Menu klik kanan</h2>
+	Mengklik kanan pada sebuah node akan memunculkan menu yang memungkinkan anda untuk:
+
+	<h3>Serang</h3>
+	Menu Attack memiliki beberapa submenu berikut:
+	<h4>Situs pindai Aktif</h4>
+	Ini akan memulai sebuah
+	<i>Scan Aktif</i> dari keseluruhan situs yang berisi simpul yang dipilih.
+	<br /> Itu
+	<i>Tab Pindai Aktif</i> akan ditampilkan dan akan menunjukkan kemajuan dari pemindaian.
+	<br />
+
+	<h4>Node pindai aktif</h4>
+	Ini akan memulai sebuah
+	<i>Scan Aktif</i> hanya simpul saja yang dipilih.
+	<br /> Itu
+	<i>Tab Pindai Aktif</i> akan ditampilkan dan akan menunjukkan kemajuan dari pemindaian.
+	<br />
+
+	<h4>Situs Spider</h4>
+	Ini akan memulai sebuah
+	<i>laba laba</i> dari keseluruhan situs yang berisi simpul yang dipilih.
+	<br /> Itu
+	<i>Tab Laba-laba</i> akan ditampilkan dan akan menunjukkan kemajuan dari pemindaian.
+	<br />
+
+	<h4>Paksa Situs Browser</h4>
+	Ini akan memulai sebuah
+	<i>jelajahi paksa</i> dari keseluruhan situs yang berisi simpul yang dipilih.
+	<br /> Itu
+	<i>Paksa tab Browser</i> akan ditampilkan dan akan menunjukkan kemajuan dari pemindaian.
+	<br />
+
+	<h4>Paksa jelajahi direktori</h4>
+	Ini akan memulai sebuah
+	<i>jelajahi paksa</i> pada direktori yang dipilih.
+	<br /> Itu
+	<i>Paksa tab Browser</i> akan ditampilkan dan akan menunjukkan kemajuan dari pemindaian.
+	<br />
+
+	<h4>Paksa jelajahi Direktori (dan anak-anak)</h4>
+	Ini akan memulai sebuah
+	<i>jelajahi paksa</i> pada direktori yang dipilih dan semua anak yang ditemukan.
+	<br /> Itu
+	<i>Paksa tab Browser</i> akan ditampilkan dan akan menunjukkan kemajuan dari pemindaian.
+	<br />
+
+	<h3>Keluarkan dari</h3>
+	Menu ini memiliki beberapa submenu berikut:
+
+	<h4>Proxy</h4>
+	Ini akan mengecualikan simpul yang dipilih dari proxy. Mereka masih tetap di proxy melalui ZAP tapi tidak akan ditunjukkan di tab mana pun.
+	<br /> Ini bisa digunakan untuk mengabaikan URL yang anda tahu itu tidak relevan dengan sistem yang sedang anda uji.
+	<br /> Simpul bisa dimasukkan lagi melalui
+	<i>Properti Sesi</i> dialog
+
+	<h4>Pemindai</h4>
+	Ini akan mencegah agar simpul yang dipilih tidak aktif dipindai.
+	<br /> Simpul bisa dimasukkan lagi melalui
+	<i>Properti Sesi</i> dialog
+
+	<h4>Laba-laba</h4>
+	Ini akan mencegah simpul yang dipilih agar tidak dijelajahi.
+	<br /> Simpul bisa dimasukkan lagi melalui
+	<i>Properti Sesi</i> dialog
+
+	<h3>Jalankan aplikasi</h3>
+	Menu ini memungkinkan anda untuk
+	<i>memanggil aplikasi</i> yang telah anda konfigurasikan melalui
+	<i>Pilihan layar aplikasi</i> yang ini juga dapat diakses melalui 'Konfigurasikan aplikasi... 'submenu.
+
+	<h3>Tangani Tags...</h3>
+	Ini akan memunculkan
+	<i>Mengelola tag dialog</i> yang memungkinkan anda untuk mengubahnya
+	<i>tag</i> terkait dengan permintaan.
+
+	<h3>Catatan...</h3>
+	Ini akan memunculkan
+	<i>Tambahkan Catatan dialog</i> yang memungkinkan anda untuk merekam
+	<i>catatan</i> terkait permintaan.
+
+	<h3>Istirahat...</h3>
+	Ini akan memunculkan
+	<i>Tambahkan titik temu dialog</i> yang memungkinkan anda untuk mengatur sebuah titik temu pada URL itu.
+	<br />
+
+	<h3>Lansiran untuk simpul ini</h3>
+	Jika URL yang dipilih telah
+	<i>peringatan</i> terkait dengan itu maka mereka akan menjadi terdaftar di bawah menu ini.
+	<br> Memilih salah satu dari peringatan maka akan menyebabkannya untuk ditampilkan.
+
+	<h3>Kirim ulang...</h3>
+	Ini akan memunculkan
+	<i>Kirim ulang dialog</i> yang memungkinkan anda untuk mengirim ulang permintaan tersebut setelah melakukan setiap perubahan yang anda inginkan.
+
+	<h3>Peringatan Baru...</h3>
+	Ini akan memunculkan
+	<i>Menambahkan dialog peringatan</i> yang memungkinkan anda untuk merekam yang baru secara manual
+	<i>Peringatan</i> melawan permintaan ini.
+
+	<h3>Tampilan dalam Browser</h3>
+	Ini akan membuka simpul URL yang dipilih di browser bawaan anda.
+
+	<h2>Lihat juga</h2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="concepts.html">Laba-laba AJAX</a></td>
+			<td>untuk sebuah ikhtisar dari Spider AJAX</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="options.html">Pilihan layar Spider AJAX</a></td>
+			<td>untuk sebuah ikhtisar dari Pilihan Spider AJAX</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="scandialog.html">Dialog Spider AJAX</a></td>
+			<td>untuk sebuah ikhtisar dari AJAX Spider Dialog</td>
+		</tr>
+	</table>
+
+</body>
+</html>

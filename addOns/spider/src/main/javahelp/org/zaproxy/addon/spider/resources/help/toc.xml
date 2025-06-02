@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE toc
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN"
+         "http://java.sun.com/products/javahelp/toc_2_0.dtd">
+
+<toc version="2.0">
+    <tocitem text="ZAP User Guide" tocid="toplevelitem">
+        <tocitem text="Add Ons" tocid="addons">
+            <tocitem text="Spider" image="addon.spider.icon" target="addon.spider">
+                <tocitem text="Automation" target="addon.spider.automation"/>
+                <tocitem text="Dialog" target="addon.spider.dialog"/>
+                <tocitem text="Tab" target="addon.spider.tab"/>
+                <tocitem text="Options" target="addon.spider.options"/>
+            </tocitem>
+        </tocitem>
+    </tocitem>
+</toc>

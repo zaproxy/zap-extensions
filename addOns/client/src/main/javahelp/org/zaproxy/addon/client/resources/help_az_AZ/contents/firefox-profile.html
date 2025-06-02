@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+Client Side Integration - Firefox Profile
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Client Side Integration - Firefox Profile</H1>
+
+This <a href="client.html">add-on</a> creates a Firefox profile called 'zap-client-profile' and sets it as the default profile that ZAP will use.
+This profile enables the ZAP Firefox extension for all sites.
+<p>
+If you choose to use another profile then you will need to manually approve the ZAP extension for every
+site you use it for, every time you launch a browser from ZAP.
+<p>
+This is a Firefox restriction - for more details see Bugzilla
+<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1836309">Bug 183609</a>.
+
+<H2>Custom Containers</H2>
+
+If you want to use the ZAP Firefox extension in your own containers then you may find that it does not work out of the box.
+<p>
+It should work fine in the <a href="https://www.zaproxy.org/docs/docker/">ZAP Docker Images</a> as the 
+'zap-client-profile' is added to them.
+If you create your own container images then you may need to include it as well.
+<p>
+For more information see
+<ul>
+<li>The Docker <a href="https://github.com/zaproxy/zaproxy/tree/main/docker/firefox">firefox</a> directory
+<li>The nightly <a href="https://github.com/zaproxy/zaproxy/blob/main/docker/Dockerfile-live">docker build file</a>
+</ul>
+
+</BODY>
+</HTML>

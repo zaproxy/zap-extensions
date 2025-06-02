@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Fuzzing
+</title>
+</head>
+<body>
+<h1>Fuzzing ou Difusão</h1>
+<p>
+Fuzzing is a technique of submitting lots of data to a target (often in the form of invalid or unexpected inputs).
+</p>
+<p>
+ZAP allows you to fuzz any request using:
+<ul>
+<li>A built-in set of payloads</li>
+<li>Payloads definidos pelos complementos opcionais</li>
+<li>Scripts personalizados</li>
+</ul>
+</p>
+Para acesso ao <a href="dialogue.html">diálogo do difusor/fuzzer</a> você pode:
+<ul>
+<li>usar no botão direito do mouse um request em uma das abas do ZAP (como Histórico ou Sites) e selecionar "Ataque / Fuzz...."</li>
+<li>Destacar uma seqüência de caracteres na guia de solicitação, clicar com o botão direito e selecionar "Fuzz..."</li>
+<li>Selecionar o item de menu "Ferramentas / Fuzz...." e a solicitação que você deseja em fuzz</li>
+</ul>
+
+<h3>Geradores de payload</h3>
+Payload Generators generate the raw values or attacks that the fuzzer submits to the target application.
+<br><br>
+Eles são gerenciados por meio do <a href="payloads.html">diálogo de cargas/payloads</a>.
+
+<h3>Processadores de carga</h3>
+Processadores de carga podem ser usados para alterar as cargas específicas antes de serem enviadas.
+<br><br>
+Eles são gerenciados por meio do <a href="processors.html">diálogo de processadores de carga</a>.
+
+<h3>Processadores locais de Fuzz</h3>
+Processadores locais de fuzz podem ser usados para alterar todas as cargas antes de serem enviadas.
+<br><br>
+Eles são gerenciados por meio do <a href="locations.html">diálogo de processadores locais</a>.
+
+<h3>Processadores de mensagem</h3>
+Message Processors can access and change the messages being fuzzed, control the fuzzing process, and interact with the ZAP UI.
+<br><br>
+Eles são gerenciados por meio da aba <a href="dialogue.html">'Processadores de Mensagem' no</a> diálogo Fuzzer.
+
+<p>
+Some of this functionality is based on code from the OWASP JBroFuzz project and includes files from the fuzzdb project.<br/>
+Note that some fuzzdb files have been left out as they cause common anti-virus scanners to flag them as containing viruses.<br/>
+You can replace them (and upgrade fuzzdb) by downloading the latest version of fuzzdb and expanding it in the 'fuzzers' library.
+</p>
+
+<h2>Veja também</h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="options.html">Tela de opções do difusor/fuzzer</a></td></tr>
+</table>
+
+</body>
+</html>

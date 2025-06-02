@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+WebSocket özel seçenekleri
+</title>
+</head>
+<body>
+<h1>WebSocket özel seçenekleri</h1>
+<p>
+Bu ekran şu WebSocket seçeneklerini yapılandırmanıza olanak verir:
+
+<h3>Tümünü ilet</h3>
+Eğer WebSockets iletişimi ile ilgilenmiyorsanız fakat mesajlarının ZAP vasıtasıyla geri &amp; ileri gönderilmesine izin vermek istiyorsanız, bu seçeneği etkinleştirmelisiniz.
+Sonuç olarak oturum veritabanında hiçbir mesaj saklanmayacaktır. Ayrıca WebSocket sekmesinde hiçbir ileti görünmez. Bu ayar, performans kritik WebSocket bağlantılarıyla uğraşmanız gerekiyorsa ve neyin gönderildiğiyle ilgilenmiyorsanız yararlı olabilir.
+<br><br>
+WebSocket'e özel belirli bir kanalı yok saymak isterseniz <i>Oturum Özellikleri</i>.
+
+
+<h3>Hepsini kes</h3>
+İçinde <i>Dur</i> araç çübuğu, iki tuşlu:
+<ul>
+	<li><img src="images/105.png" align="bottom" width="16" height="16" />&nbsp;&nbsp;<i>Bütün isteklerde durmayı ayarlayın</i></li>
+	<li><img src="images/106.png" align="bottom" width="16" height="16" />&nbsp;&nbsp;<i>Bütün cevaplarda durmayı ayarlayın</i></li>
+</ul>
+Bu seçeneği etkinleştirdiğinizde, giden (sırasıyla gelen) WebSocket mesajları da bu kontrol düğmeleri tarafından yakalanır.
+<br><br>
+Varsayılanlar tarafından bu ayar kapatıldı. Bu durumda yalnızca HTTP iletileri yakalanır ancak WebSocket iletişiminde açık kesme noktaları ekleyebilirsiniz <a href="tab.html">WebSocket sekmesi</a>. 
+
+
+<h3>Ping &amp; Pong mesajlarında kes</h3>
+<i>PING</i> ve <i>PONG</i> mesajları, WebSocket sunucuları tarafından geçerli bağlantının sağlığını saptamak için sık sık kullanılır. Eğer gelen bir yakalarsanız <i>PING</i> iletisi, tarayıcı geri döndürememektedir bir <i>PONG</i> mesajı hemen göndererek hatalı gecikme değeri oluşturur.
+<br><br>
+Eğer seçenekteki hayır devre dışı bırakılırsa <i>PING</i> veya <i>PONG</i> iletisi yakaladığın zaman:
+<ul>
+	<li><u>tüm istekler</u> veya <u>tüm yanıtlar</u> için bir kesme noktası ayarlayın <i>ya da</i></li>
+	<li>bir sonraki isteğe ya da cevaba geçin ve bir PING ya da PONG mesaj varır</li>
+</ul>
+Bu ayar açıkça belirlenen kesme noktalarını etkilemez <i>PING</i> veya <i>PONG</i> mesajları. Bu tür açık kesme noktalarını görüntüleyebilirsiniz <i>Breakpoints sekmesinde</i>.
+
+<h3>Sec-WebSocket-Uzantıları üstbilgisini kaldırın</h3>
+HTTP bağlantısını kaldırmaya izin verir <code>Sec-WebSocket-Uzantıları</code> el sıkışma mesajlarından, bu nedenle gönderilen/alınan WebSocket mesajlarına dönüştürme yapılmaz.<br>
+Bu seçenek, istemci veya test edilen sunucu gerektirmediği sürece daima etkinleştirilmelidir. Uzantılar kullanılırken WebSocket iletileri ZAP tarafından doğru şekilde işlenemeyebilir.
+
+</body>
+</html>

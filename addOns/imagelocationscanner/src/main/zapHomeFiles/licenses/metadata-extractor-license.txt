@@ -1,0 +1,4 @@
+The metadata extractor is distributed under the terms of the Apache 2.0 license.
+
+@see https://github.com/drewnoakes/metadata-extractor/blob/master/LICENSE-2.0.txt
+@see https://github.com/drewnoakes/metadata-extractor/blob/66834cd5be83b6491fce269c7c42d5672d592e7c/LICENSE-2.0.txt

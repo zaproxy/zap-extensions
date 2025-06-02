@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>
+        Opciones de Contexto de Control de Acceso
+    </title>
+</head>
+<body>
+<h1>Opciones Access Control Context</h1>
+
+<p>
+    Las Access Control Context están presentes como un panel para cada contexto cuando se abre el cuadro de diálogo Propiedades de la sesión. Este panel permite a los usuarios ZAP definir las reglas de acceso para cada usuario de cada contexto.
+</p>
+
+<p>
+    Como se mencionó en la página de <a href="concepts.html">concepts</a>, ZAP está haciendo uso de la estructura basada en el árbol de direcciones URL. Por lo tanto, al configurar las reglas de acceso, sólo 1 regla debe establecerse explícitamente para un subtree entero, mientras que para los otros nodos se infieren las reglas. Tres valores posibles pueden ajustarse para cualquier nodo en contexto para cada usuario:
+</p>
+<ul>
+    <li><b>Permitido</b> - La regla para el nodo es <i>explícitamente</i> configurado como Permitido</li>
+    <li><b>Rechazado</b> - La regla para el nodo es <i>explícitamente</i> configurado como Rechazado</li>
+    <li><b>Heredado</b> - La regla para el nodo es inferida basada en el padre mas cercano con una regla explícitamente configurada
+    </li>
+</ul>
+
+<p>Por defecto, las reglas para cada nodo tienen un valor <i>heredado</i> y el nodo raíz tiene el valor de <i>Desconocido</i>.
+    Así, para cualquier nodo sin un padre con reglas configuradas explícitamente, la regla inferida será por defecto     <i>Desconocida</i>.</p>
+
+<h2>Vease también</h2>
+<table>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>
+            <a href="concepts.html">Conceptos de Prueba de Control de Acceso</a></td>
+        <td>para una introducción corta del Access Control Testing</td>
+    </tr>
+</table>
+
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Opciones específicas de Websocket
+</title>
+</head>
+<body>
+<h1>Opciones específicas de Websocket</h1>
+<p>
+Esta pantalla permite configurar las opciones WebSocket:
+
+<h3>Reenviar todo</h3>
+Si no se está interesado en la comunicación WebSocket, pero se desea permitir que los mensajes vayan y vengan a través de ZAP, entonces se debe habilitar esta opción.
+Como resultado ningún mensaje se almacenará en la base de datos de la sesión. Por otra parte ningún mensaje aparecerá en la pestaña de WebSockets. Esta opción puede ser útil si hay que lidiar con las conexiones WebSocket de rendimiento crítico y no se está interesado en lo que se está enviando.
+<br><br>
+Si se desea ignorar solamente un canal específico, compruebe las <i>Propiedades de la Sesión</i>.
+
+
+<h3>Break on all</h3>
+En la barra de herramientas <i>Punto de interrupción</i> , hay dos botones:
+<ul>
+	<li><img src="images/105.png" align="bottom" width="16" height="16" />&nbsp;&nbsp;<i>Set break on all requests</i></li>
+	<li><img src="images/106.png" align="bottom" width="16" height="16" />&nbsp;&nbsp;<i>Set break on all responses</i></li>
+</ul>
+Cuando se habilita esta opción, todos los mensajes Websocket salientes ( y los entrantes respectivos) son capturados por estos botones de control.
+<br><br>
+Por defecto esta opción está deshabilitada. En este caso solo los mensajes HTTP son capturados, pero se puede agregar un punto de interrupción explícito en la comunicación WebSocket en la pestaña <a href="tab.html">WebSocket</a>. 
+
+
+<h3>Break on Ping &amp; Pong messages</h3>
+<i>Los mensajes PING</i> y <i>PONG</i> son utilizados frecuentemente por los servidores WebSocket para determinar el estado de mantenimiento de la conexión actual. Si se captura un mensaje <i>PING</i> entrante, el navegador no es capaz de devolver un mensaje <i>PONG</i> inmediatamente, dando por resultado un valor de mala latencia.
+<br><br>
+Si esta opción está deshabilitada, ningún mensaje <i>PING</i> o <i>PONG</i> será capturado cuando:
+<ul>
+	<li>se configure un punto de interrupción en <u>all requests</u> o <u>all responses</u>, <i>o</i></li>
+	<li>se pase a través de la siguiente solicitud o respuesta y un mensaje <i>PING</i> or <i>PONG</i> llegue</li>
+</ul>
+Esta configuración no afecta los puntos de interrupción ya configurados explícitamente en <i>Los mensajes PING</i> o <i>PONG</i> . Se pueden visualizar estos puntos de interrupción explícitos en la <i>pestaña Breakpoints</i>.
+
+<h3>Eliminar el encabezado <code>Sec-WebSocket-Extensions</code></h3>
+Permite eliminar el encabezado HTTP <code>Sec-WebSocket-Extensions</code> desde los mensajes de protocolo de enlace, de manera que ninguna transformación se hace a los mensajes enviados/recibidos de WebSocket.<br>
+Esta opción siempre debe activarse a menos que el cliente o el servidor a prueba los necesite. Los mensajes de WebSocket podrían no ser correctamente procesados por ZAP cuando se utilizan extensiones.
+
+</body>
+</html>

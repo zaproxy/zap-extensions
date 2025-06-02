@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Uygulamalar ekranı seçenekleri</title>
+</head>
+<body>
+	<h1>Uygulamalar ekranı seçenekleri</h1>
+	<p>
+		Bu ekran sizin <a href="concepts.html">çağırılabilir uygulamaları</a> that
+		can be invoked.<br> By default there are no applications available, you need to add
+		all of the applications that you want to use.
+	<h3>Ekran Adı</h3>
+	Bu uygulamanın ZAP'ta kullanılacak adı.
+	<br>
+
+	<h3>Tam Komut</h3>
+	Çağırmak istediğiniz uygulamanın tam yolu.
+	<br> Only one command can be specified. If you want to run multiple commands in one
+	go, or set up environmental variables, then you should create a script or batch file and
+	then invoke this from ZAP.
+
+	<h3>Parametreler</h3>
+	ZAP'ın komuta geçmesi gereken parametreler.
+	<br> Aşağıda bulunan etiketler parametreleri iletmek amacıyla kullanılabilir:
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%url%</td>
+			<td>tam url, 'http://localhost/test?a=b'</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%site%</td>
+			<td>site, 'http://localhost:8080/' </td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%host%</td>
+			<td>ana makine adı, örn. 'localhost'</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%port%</td>
+			<td>port, örn. '80'</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%cookie%</td>
+			<td>(eğer varsa) istek başlığında bulunan ilk çerez alanı</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%postdata%</td>
+			<td>Gönderilen POST verileri, eğer varsa, yeni satırlarla birlikte "\n" ile değiştirilir</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%msgid%</td>
+			<td>the HTTP message id to fetch data from the API (/JSON/core/view/message/?id=$msgid), 
+				does not alway exist, will return -1 if no message id
+			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%header-{{ header }}%</td>
+			<td>the request header by name (if any), e.g. <code>%header-user-agent%</code> would return the value of the User-Agent header</td>
+		</tr>
+	</table>
+	Yani bir komut bir URL'yi '-u' kullanarak kabul ettiyse, parametreleri şu şekilde belirtirsiniz: '-u %url%'
+
+	<h3>Çıkış Yakalama</h3>
+	Eğer seçili ise o halde komutu çalıştırır ve onun ürettiği çıktılar gösterilir
+	<i>Çıkış sekmesi</i>.
+	<br> You should always use this option when running scripts or commands that do not
+	have a UI.
+	<br> You can also use this option for troubleshooting - if an application does not
+	run as expected then copy the command run and try it from a command line prompt.
+
+	<h3>Not çıktısı</h3>
+	Eğer herhangi bir çıktı eklenirse
+	<i>Not</i> ilgiliye bağlı
+	<i>Geçmiş sekmesi</i> kaydet.
+	<br> Not olarak bazı düğümler
+	<i>Siteler sekmesi</i> ilişkili değil
+	<i>Geçmiş sekmesi</i> kayıtlar - bu düğümler için bu seçenek bir etkiye sahip olmayacaktır.
+
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<title>
+Active Scan Rules - Alpha
+</title>
+</head>
+<body>
+<h1>Active Scan Rules - Alpha</h1>
+The following alpha quality active scan rules are included in this add-on:
+
+<h2>An example active scan rule which loads data from a file</h2>
+This implements an example active scan rule that loads strings from a file that the user can edit.<br>
+For more details see: 
+<a href="https://www.zaproxy.org/blog/2014-04-30-hacking-zap-4-active-scan-rules/">Hacking ZAP Part 4: Active Scan Rules</a>.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/ExampleFileActiveScanRule.java">ExampleFileActiveScanRule.java</a>
+
+<h2>Example Active Scan Rule: Denial of Service</h2>
+This implements a very simple example active scan rule.<br>
+For more details see: 
+<a href="https://www.zaproxy.org/blog/2014-04-30-hacking-zap-4-active-scan-rules/">Hacking ZAP Part 4: Active Scan Rules</a>.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/ExampleSimpleActiveScanRule.java">ExampleSimpleActiveScanRule.java</a>
+
+<h2>LDAP Injection</h2>
+LDAP Injection may be possible. It may be possible for an attacker to bypass authentication controls, and to view and modify arbitrary data in the LDAP directory.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/LdapInjectionScanRule.java">LdapInjectionScanRule.java</a>
+
+<h2>NoSQL Injection - MongoDB</h2>
+This rule attempts to identify MongoDB specific NoSQL Injection vulnerabilities. It attempts various types of attacks including: boolean based, error based, time based, and authentication bypass. 
+It will also attempt JSON parameter specific payloads if the scan is configured to include JSON parameter variants.
+
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/MongoDbInjectionScanRule.java">MongoDbInjectionScanRule.java</a>
+
+<h2>CORS Header</h2>
+This rule attempts to identify CORS headers and also CORS misconfiguration. The CORS is considered as misconfigured when it allows all origins, origins with weaker protocols and null origin.<br>
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/CorsScanRule.java">CorsScanRule.java</a>
+
+<h2>Web Cache Deception</h2>
+This rule attempts to identify Web Cache Deception vulnerabilities. It checks whether a static path appended to original URIs can be used to leak sensitive user information or not.
+<ul>
+    <li>User must be authenticated before using this rule</li>
+</ul>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/WebCacheDeceptionScanRule.java">WebCacheDeceptionScanRule.java</a>
+
+<h2>Java Spring Actuators</h2>
+This rule attempts to identify if the Spring Actuators are enabled. Tests for the default /actuator/health route in the application.
+
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/SpringActuatorScanRule.java">SpringActuatorScanRule.java</a>
+
+<h2>Log4Shell (CVE-2021-44228 and CVE-2021-45046)</h2>
+This rule attempts to discover the Log4Shell (<a href="https://www.cve.org/CVERecord?id=CVE-2021-44228">CVE-2021-44228</a> and <a href="https://www.cve.org/CVERecord?id=CVE-2021-45046">CVE-2021-45046</a>) vulnerabilities.
+It relies on the OAST add-on to generate out-of-band payloads and verify DNS interactions.
+We recommend that this scan rule is used with header injection enabled for maximum coverage.
+
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/Log4ShellScanRule.java">Log4ShellScanRule.java</a>
+
+</body>
+</html>

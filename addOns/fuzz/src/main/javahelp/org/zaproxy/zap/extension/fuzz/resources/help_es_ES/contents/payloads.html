@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Diálogo de cargas útiles
+</title>
+</head>
+<body>
+<h1>Diálogo de cargas útiles</h1>
+Esto le permite seleccionar los generadores de carga útil para usarse cuando <a href="concepts.html">fuzzing</a> lo solicite.
+<br><br>
+Payload generators generate the raw values or attacks that the fuzzer submits to the target application.
+<br><br>
+Los siguientes tipos de generadores se proporcionan por defecto:
+<ul>
+<li>Vacío / nulo: genera la carga seleccionada varias veces, dejando el mensaje sin cambios. Este generador de carga útil es útil para enviar mensajes múltiples que luego se procesan, por ejemplo, con un <a href="httpmessageprocessors.html"> Procesador HTTP Fuzzer (Script) </>.</li>
+<li>Archivo: seleccione cualquier archivo local para realizar ataques únicos</li>
+<li>File Fuzzers - select any combination of the fuzzing files registered with ZAP, e.g. via add-ons like fuzzdb</li>
+<li>Numberzz - permite generar fácilmente una secuencia de números, con incrementos personalizados</li>
+<li>Regex: genera ataques basados en patrones de expresiones regulares</li>
+<li>Cadenas: cadenas sin formato, que pueden ingresarse manualmente o pegarse en</li>
+<li>Script: scripts personalizados que pueden generar cualquier carga útil requerida</li>
+<li>Json - generate attacks by fuzzing the provided json</li>
+</ul>
+Puede escribir scripts de generador de carga útil personalizados; estos pueden suministrar cualquier carga útil que necesite.
+<br><br>
+Los complementos también pueden definir generadores de carga adicionales.
+<br><br>
+El botón 'Procesadores...' inicia el <a href="processors.html">Diálogo de procesadores de carga útil</a> which allows you to
+configure payload processors that just apply to the payload generator you have selected.
+<br>
+
+<h2>Acceso a través de</h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="dialogue.html"> Diálogo Fuzzer </> botón 'Agregar...'</td></tr>
+</table>
+
+<h2>Véase también</h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Conceptos Fuzzer</a></td></tr>
+</table>
+
+</body>
+</html>

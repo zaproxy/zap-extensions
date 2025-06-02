@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE index
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Index Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/index_2_0.dtd">
+
+<index version="2.0">
+    <!-- index entries are merged (sorted) into core index -->
+    <indexitem text="websocket" target="websocket.introduction" />
+    <indexitem text="websocket api" target="websocket.api" />
+    <indexitem text="websocket scripts ( сценарии)" target="websocket.script" />
+    <indexitem text="websocket pscans" target="websocket.pscanrules" />
+    <indexitem text="websocket tab (вкладка)" target="websocket.tab" />
+    <indexitem text="websocket options (параметры)" target="websocket.options" />
+    <indexitem text="свойства сеанса веб-сокета " target="websocket.sessionProperties" />
+</index>

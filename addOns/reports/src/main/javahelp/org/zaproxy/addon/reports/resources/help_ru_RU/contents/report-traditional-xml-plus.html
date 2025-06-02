@@ -1,0 +1,198 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>Traditional XML Report with Requests and Responses</TITLE>
+</HEAD>
+<BODY>
+	<H1>Traditional XML Report with Requests and Responses</H1>
+
+	<H3>Sample</H3>
+	<H4>About riskdesc</H4>
+	riskdesc - Is a combination identifier, showing Risk followed by
+	Confidence (in brackets). For example
+	<code>High (Medium)</code>
+	would indicate a High risk issue identified with Medium confidence.
+	<pre>
+        &lt;?xml version=&quot;1.0&quot;?&gt;
+        &lt;OWASPZAPReport version=&quot;2.11.1&quot; generated=&quot;Fr., 30 Sep. 2022 08:40:35&quot;&gt;
+                        &lt;site name=&quot;http://localhost:8080&quot; host=&quot;localhost&quot; port=&quot;8080&quot; ssl=&quot;false&quot;&gt;
+                                &lt;alerts&gt;
+                                        
+                                                &lt;alertitem&gt;
+                                                        &lt;pluginid&gt;90027&lt;/pluginid&gt;
+                                                        &lt;alertRef&gt;90027&lt;/alertRef&gt;
+                                                        &lt;alert&gt;Cookie Slack Detector&lt;/alert&gt;
+                                                        &lt;name&gt;Cookie Slack Detector&lt;/name&gt;
+                                                        &lt;riskcode&gt;1&lt;/riskcode&gt;
+                                                        &lt;confidence&gt;1&lt;/confidence&gt;
+                                                        &lt;riskdesc&gt;Low (Low)&lt;/riskdesc&gt;
+                                                        &lt;confidencedesc&gt;Low&lt;/confidencedesc&gt;
+                                                        &lt;desc&gt;Repeated GET requests: drop a different cookie each time, followed by normal request with all cookies to stabilize session, compare responses against original baseline GET. This can reveal areas where cookie based authentication/attributes are not actually enforced.&lt;/desc&gt;
+                                                        &lt;instances&gt;
+                                                                
+                                                                        &lt;instance&gt;
+                                                                                &lt;uri&gt;http://localhost:8080/bodgeit/js&lt;/uri&gt;
+                                                                                &lt;method&gt;GET&lt;/method&gt;
+                                                                                &lt;param&gt;&lt;/param&gt;
+                                                                                &lt;attack&gt;&lt;/attack&gt;
+                                                                                &lt;evidence&gt;&lt;/evidence&gt;
+                                                                                &lt;otherinfo&gt;&lt;/otherinfo&gt;
+                                                                                &lt;requestheader&gt;GET http://localhost:8080/bodgeit/js HTTP/1.1
+        Host: localhost:8080
+        User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:105.0) Gecko/20100101 Firefox/105.0
+        Accept: */*
+        Accept-Language: de,en-US;q=0.7,en;q=0.3
+        Connection: keep-alive
+        Referer: https://localhost:8080/bodgeit/
+        Cookie: JSESSIONID=9E75E26E50F681208096FFAA0B566901
+        Sec-Fetch-Dest: script
+        Sec-Fetch-Mode: no-cors
+        Sec-Fetch-Site: same-origin
+        Content-Length: 0
+        
+        &lt;/requestheader&gt;
+                                                                                &lt;requestbody&gt;&lt;/requestbody&gt;
+                                                                                &lt;responseheader&gt;HTTP/1.1 302 Found
+        Server: Apache-Coyote/1.1
+        Location: /bodgeit/js/
+        Content-Length: 0
+        Date: Fri, 30 Sep 2022 06:40:17 GMT
+        
+        &lt;/responseheader&gt;
+                                                                                &lt;responsebody&gt;&lt;/responsebody&gt;
+                                                                        &lt;/instance&gt;
+                                                                
+                                                                
+                                                                        &lt;instance&gt;
+                                                                                &lt;uri&gt;http://localhost:8080/bodgeit/js/util.js&lt;/uri&gt;
+                                                                                &lt;method&gt;GET&lt;/method&gt;
+                                                                                &lt;param&gt;&lt;/param&gt;
+                                                                                &lt;attack&gt;&lt;/attack&gt;
+                                                                                &lt;evidence&gt;&lt;/evidence&gt;
+                                                                                &lt;otherinfo&gt;&lt;/otherinfo&gt;
+                                                                                &lt;requestheader&gt;GET http://localhost:8080/bodgeit/js/util.js HTTP/1.1
+        Host: localhost:8080
+        User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:105.0) Gecko/20100101 Firefox/105.0
+        Accept: */*
+        Accept-Language: de,en-US;q=0.7,en;q=0.3
+        Connection: keep-alive
+        Referer: https://localhost:8080/bodgeit/
+        Cookie: JSESSIONID=9E75E26E50F681208096FFAA0B566901
+        Sec-Fetch-Dest: script
+        Sec-Fetch-Mode: no-cors
+        Sec-Fetch-Site: same-origin
+        Content-Length: 0
+        
+        &lt;/requestheader&gt;
+                                                                                &lt;requestbody&gt;&lt;/requestbody&gt;
+                                                                                &lt;responseheader&gt;HTTP/1.1 200 OK
+        Server: Apache-Coyote/1.1
+        Accept-Ranges: bytes
+        ETag: W/&amp;quot;1812-1343651578000&amp;quot;
+        Last-Modified: Mon, 30 Jul 2012 12:32:58 GMT
+        Content-Type: application/javascript
+        Content-Length: 1812
+        Date: Fri, 30 Sep 2022 06:40:17 GMT
+        
+        &lt;/responseheader&gt;
+                                                                                &lt;responsebody&gt;
+        function loadfile(filename){
+                var filetype = filename.split(&amp;apos;.&amp;apos;).pop();
+                switch (filetype){
+                case &amp;quot;js&amp;quot;:
+                        var insert=document.createElement(&amp;apos;script&amp;apos;)
+                        insert.setAttribute(&amp;quot;type&amp;quot;,&amp;quot;text/javascript&amp;quot;)
+                        insert.setAttribute(&amp;quot;src&amp;quot;, filename)
+                        break;
+                case &amp;apos;css&amp;apos;:
+                var insert=document.createElement(&amp;quot;link&amp;quot;);
+                insert.setAttribute(&amp;quot;type&amp;quot;, &amp;quot;text/css&amp;quot;)
+                insert.setAttribute(&amp;quot;href&amp;quot;, filename)
+                insert.setAttribute(&amp;quot;rel&amp;quot;, &amp;quot;stylesheet&amp;quot;)
+                break;
+                }
+                if (typeof insert!=&amp;quot;undefined&amp;quot;)
+                document.getElementsByTagName(&amp;quot;head&amp;quot;)[0].appendChild(insert);
+                return false;
+        }
+        
+        
+        ////The following is from:
+        //http://stackoverflow.com/questions/316781/how-to-build-query-string-with-javascript
+        
+        function form_to_params( form )
+        {
+                var output = &amp;quot;&amp;quot;;
+                var length = form.elements.length
+                for( var i = 0; i &amp;lt; length; i++ )
+                {
+                element = form.elements[i]
+        
+                if(element.tagName == &amp;apos;TEXTAREA&amp;apos; )
+                {
+                        output += &amp;quot;|&amp;quot; + element.name + &amp;quot;:&amp;quot; + element.value; 
+                }
+                else if( element.tagName == &amp;apos;INPUT&amp;apos; )
+                {
+                        switch(element.type){
+                        case &amp;apos;radio&amp;apos;:
+                        case &amp;apos;checkbox&amp;apos;:
+                                if(element.checked &amp;amp;&amp;amp; !element.value){
+                                output += &amp;quot;|&amp;quot; + element.name + &amp;quot;:on&amp;quot;;
+                                break;
+                                }
+                        case &amp;apos;text&amp;apos;:
+                        case &amp;apos;hidden&amp;apos;:
+                        case &amp;apos;password&amp;apos;:
+                                if(element.value)
+                                output += &amp;quot;|&amp;quot; + element.name + &amp;quot;:&amp;quot; + element.value;
+                        break;     
+                        }
+                }
+                }
+                return output.substring(1);
+        }
+        
+        
+        function htmlEntities(str) {
+                return String(str).replace(/&amp;amp;/g, &amp;apos;&amp;amp;amp;&amp;apos;).replace(/&amp;lt;/g, &amp;apos;&amp;amp;lt;&amp;apos;).replace(/&amp;gt;/g, &amp;apos;&amp;amp;gt;&amp;apos;).replace(/&amp;quot;/g, &amp;apos;&amp;amp;quot;&amp;apos;);
+        }&lt;/responsebody&gt;
+                                                                        &lt;/instance&gt;
+                                                                
+                                                        &lt;/instances&gt;
+                                                        &lt;count&gt;3&lt;/count&gt;
+                                                        &lt;solution&gt;&lt;/solution&gt;
+                                                        &lt;otherinfo&gt;NOTE: Because of its name this cookie may be important, but dropping it appears to have no effect: [JSESSIONID] 
+        Cookies that don&amp;apos;t have expected effects can reveal flaws in application logic. In the worst case, this can reveal where authentication via cookie token(s) is not actually enforced.
+        These cookies affected the response: 
+        These cookies did NOT affect the response: JSESSIONID
+        &lt;/otherinfo&gt;
+                                                        &lt;reference&gt;http://projects.webappsec.org/Fingerprinting
+        &lt;/reference&gt;
+                                                        &lt;cweid&gt;200&lt;/cweid&gt;
+                                                        &lt;wascid&gt;45&lt;/wascid&gt;
+                                                        &lt;sourceid&gt;2420&lt;/sourceid&gt;
+                                                        &lt;tags&gt;
+                                                                &lt;tag&gt;
+                                                                        &lt;tag&gt;OWASP_2017_A06 &lt;/tag&gt;
+                                                                        &lt;link&gt;https://owasp.org/www-project-top-ten/2017/A6_2017-Security_Misconfiguration.html &lt;/link&gt;
+                                                                &lt;/tag&gt;
+                                                                &lt;tag&gt;
+                                                                        &lt;tag&gt;OWASP_2021_A05 &lt;/tag&gt;
+                                                                        &lt;link&gt;https://owasp.org/Top10/A05_2021-Security_Misconfiguration/ &lt;/link&gt;
+                                                                &lt;/tag&gt;
+                                                                &lt;tag&gt;
+                                                                        &lt;tag&gt;WSTG-v42-SESS-02 &lt;/tag&gt;
+                                                                        &lt;link&gt;https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/06-Session_Management_Testing/02-Testing_for_Cookies_Attributes &lt;/link&gt;
+                                                                &lt;/tag&gt;
+
+                                                        &lt;/tags&gt;
+                                                &lt;/alertitem&gt;
+                                &lt;/alerts&gt;
+                        &lt;/site&gt;
+        &lt;/OWASPZAPReport&gt;                
+</pre>
+
+</BODY>
+</HTML>
+

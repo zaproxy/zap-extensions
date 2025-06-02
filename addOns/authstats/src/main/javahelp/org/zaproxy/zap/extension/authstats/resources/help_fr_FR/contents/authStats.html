@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Authentication Statistics
+</title>
+</head>
+<body>
+<h1>Authentication Statistics</h1>
+This add-on records authentication related statistics for all contexts that are in scope.<br>
+The statistics are recorded on a per site basis and cover:
+<table>
+<tr><td>stats.auth.<i>component</i>.state.noauth</td><td>The context does not have an authentication method</td></tr>
+<tr><td>stats.auth.<i>component</i>.state.nothtml</td><td>Non HTML responses (which are unlikely to have logged in/out indicators)</td></tr>
+<tr><td>stats.auth.<i>component</i>.state.notsuccess</td><td>Unsuccessful HTML responses (which are unlikely to have logged in/out indicators)</td></tr>
+<tr><td>stats.auth.<i>component</i>.state.noindicator</td><td>No logged in/out indicators have been defined</td></tr>
+<tr><td>stats.auth.<i>component</i>.state.loggedinandout</td><td>Both the logged in and out indicators present</td></tr>
+<tr><td>stats.auth.<i>component</i>.state.loggedin</td><td>Just the logged in indicator present</td></tr>
+<tr><td>stats.auth.<i>component</i>.state.loggedout</td><td>Just the logged out indicator present</td></tr>
+<tr><td>stats.auth.<i>component</i>.state.unknown</td><td>Neither the logged in or out indicators present</td></tr>
+</table>
+The component can be:
+<table>
+<tr><td>ascan</td><td>Active Scanner</td></tr>
+<tr><td>auth</td><td>Authentication</td></tr>
+<tr><td>fuzz</td><td>Fuzzer</td></tr>
+<tr><td>manual</td><td>Manual requests</td></tr>
+<tr><td>proxy</td><td>Proxied requests</td></tr>
+<tr><td>spider</td><td>Spider</td></tr>
+<tr><td><i>id</i></td><td>The integer identifier of another component not listed above</td></tr>
+</table>
+<p>
+the statistics can be accessed via the ZAP API.
+</p>
+<p>
+
+The icon for this add-on was derived from the 
+<a href="https://github.com/yusukekamiyamane/fugue-icons">Fugue icons</a> 
+<a href="https://github.com/yusukekamiyamane/fugue-icons/blob/master/icons/chart.png">chart.png</a> and
+<a href="https://github.com/yusukekamiyamane/fugue-icons/blob/master/icons/lock-small.png">locl-small.png</a>
+
+</body>
+</html>

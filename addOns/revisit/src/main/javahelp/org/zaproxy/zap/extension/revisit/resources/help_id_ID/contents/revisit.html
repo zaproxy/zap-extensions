@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<title>
+Kembali
+</title>
+</head>
+<body>
+<h1>Kembali</h1>
+<p>
+Pernahkah anda menginginkan untuk bisa menelusuri sebuah aplikasi anda tes dengan ZAP pada sebuah waktu tertentu, 
+mungkin ketika anda tidak memiliki akses ke sana, atau setelah dirubah dalam beberapa cara?<br>
+Jika demikian maka add-on ini adalah untuk anda!
+</p>
+<p>
+Add-on mengizinkan anda untuk memberi instruksi ZAP untuk mengembalikan konten dari ZAP antara riwayat tertentu
+tanggal daripada meneruskan permintaan ke situs.<br>
+Hal ini mengizinkan anda untuk melihat browser dan dan menggunakan sebuah situs web anda yang tidak lagi memiliki akses ke.<br>
+Hal ini juga mengizinkan anda untuk melihat apapun yang tampak seperti di antara waktu-waktu tertentu, yang berguna jika 
+aplikasi telah berubah sejak.<br>
+<br>
+Ketika mengembalikan halaman dari ZAP riwayat pengembangan footer yang disuntikkan ke dalam halaman HTML untuk
+memberikan sebuah petunjuk visual yang halaman ini dihasilkan dari ZAP.<br>
+ZAP akan kembali ke halaman-halaman yang merupakan hasil dari investasi GET dan permintaan POST asalkan menemukan sesuatu yang sesuai.<br>
+Halaman ini hanya cocok jika semua URL dan parameter POST yang sama, mengabaikan perintah dan apa saja yang dikenal CSRF token.<br>
+Jika tidak ada halaman yang cocok bisa ditemukan dalam riwayat kemudian kustom 404 halaman yang akan dikembalikan
+memasukkan link ke halaman yang sama jika ia telah dipanggil dengan parameter yang berbeda atau di luar periode waktu yang ditentukan.<br>
+<br>
+Add-on ini ditambahkan klik kanan menu untuk Situs pohon:
+</p>
+<h3>Aktifkan kembali</h3>
+Ketika memilih sebuah popup akan muncul yang meminta untuk mulai dan akhir untuk digunakan.<br>
+Waktu mulai default saat pertama permintaan di sesi ini.<br>
+Akhir waktu default untuk saat permintaan terakhir dalam sesi ini.<br>
+Jika salah satu elemen waktu (misalnya 'bulan') tidak berubah maka elemen tersebut akan dinonaktifkan.<br>
+Jika dialog tombol OK ditekan maka kembali fungsi akan diaktifkan untuk situs yang dipilih, dan ikon 'kalender' ditambahkan ke situs node dalam Sejarah pohon.
+
+<h3>Nonaktifkan Kembali</h3>
+Ketika dipilih maka kembali fungsi akan dinonaktifkan untuk situs yang dipilih.
+
+<h2>API</h2>
+Menambahkan pada mendukung API titik akhir berikut:<br><br>
+kembali / melihat / kembali lis maka daftar situs dapat diaktifkan<br>
+mengunjungi kembali / tindakan / mengunjungikembalisitusOn Berbalik mengunjungi kembali pada untuk situs tertentu. Tanggal harus menggunakan format: "yyyy/MM/dd HH:mm:ss"<br> 
+kembali / tindakan / kunjungi kembali Situs Off Ternyata kembali off untuk situs tertentu
+
+</body>
+</html>

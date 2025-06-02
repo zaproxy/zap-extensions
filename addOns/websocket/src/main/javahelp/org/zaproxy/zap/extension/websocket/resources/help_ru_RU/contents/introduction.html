@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+WebSockets
+</title>
+</head>
+<body>
+<h1>WebSockets</h1>
+<p>
+WebSockets можно использовать веб-приложениями или веб-сайтами для настройки
+двунаправленные (двусторонние), полный канал дуплексного связи над
+Одиночное соединение TCP. <br>
+Он имеет легкий протокол, позволяющий разработчикам реализовать
+случаи использования в реальном времени.  Websockets также предоставляют альтернативу
+Тяжелое использование AJAX, HTTP длинного опроса или кометы. <br>
+</p>
+<p>
+После первоначального рукопожатия на основе HTTP соединение TCP остается открытым,
+разрешение приложений для отправки & AMP; получать произвольные данные. Часто порт
+80 или 443 для зашифрованных каналов WebSocket используются. 
+</p>
+<p>
+The WebSocket standard is defined in
+<dl>
+	<dt><a href="http://www.w3.org/TR/websockets/">The WebSocket API (http://www.w3.org/TR/websockets/)</a></dt>
+	<dd>Определяет интерфейс в браузерах </dd>
+	<dt><a href="https://tools.ietf.org/html/rfc6455">The WebSocket Protocol (RFC6455) (https://tools.ietf.org/html/rfc6455)</a></dt>
+	<dd>Описывает структуру рамок Websocket на TCP </dd>
+</dl>
+<p>
+ZAP может: 
+<ul>
+	<li>Перехватить и показать сообщения WebSocket </li>
+	<li>Установить точки останова на определенные типы сообщений Websocket </li>
+	<li>fuzz Websocket cообщения (отправьте много недействительных или неожиданных данных в браузер или сервер) </li>
+  <li>Пассивно сканировать сообщения WebSocket и повышать оповещения со скриптами </li>
+</ul>
+
+Сообщения Websocket отображаются в пределах  <a href="tab.html">Вкладки WebSockets </a>.<br><br>
+
+Настройка WebSocket добавляет новый  <a href="script.html">Сценарии</a> и дополнительные конечные точки на ZAP <a href="api.html">API</a>
+
+</body>
+</html>

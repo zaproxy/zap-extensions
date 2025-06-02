@@ -1,0 +1,117 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Selenium API</title>
+</head>
+<body>
+	<h1>Selenium API </h1>
+
+	API selenium позволяет задавать и просматривать пути к необходимым веб-драйверам ( WebDrivers ) и
+двоичный ( бинарным). 
+
+	<h2>Действия/представления API </h2>
+	<table border="2">
+		<tr>
+			<th>Имя:</th>
+			<th>Тип</th>
+			<th>Параметры</th>
+			<th>Описание</th>
+		</tr>
+		<tr>
+			<td>getBrowserArguments</td>
+			<td>просмотр</td>
+			<td>browser*</td>
+			<td>Gets the browser arguments.</td>
+		</tr>
+		<tr>
+			<td>optionChromeBinaryPath</td>
+			<td>просмотр</td>
+			<td></td>
+			<td>Returns the current path to Chrome binary</td>
+		</tr>
+		<tr>
+			<td>optionChromeDriverPath</td>
+			<td>просмотр</td>
+			<td></td>
+			<td>Returns the current path to ChromeDriver</td>
+		</tr>
+		<tr>
+			<td>optionFirefoxBinaryPath</td>
+			<td>просмотр</td>
+			<td></td>
+			<td>Returns the current path to Firefox binary</td>
+		</tr>
+		<tr>
+			<td>optionFirefoxDriverPath</td>
+			<td>view</td>
+			<td></td>
+			<td>Returns the current path to Firefox driver (geckodriver)</td>
+		</tr>
+		<tr>
+			<td>addBrowserArgument</td>
+			<td>действие</td>
+			<td>browser* argument* enabled</td>
+			<td>Adds a browser argument.</td>
+		</tr>
+
+		<tr>
+			<td>launchBrowser</td>
+			<td>действие</td>
+			<td>browser*</td>
+			<td>Launches a browser proxying through ZAP, for manual usage.</td>
+		</tr>
+		<tr>
+			<td>removeBrowserArgument</td>
+			<td>действие</td>
+			<td>browser* argument*</td>
+			<td>Removes a browser argument.</td>
+		</tr>
+		<tr>
+			<td>setBrowserArgumentEnabled</td>
+			<td>action</td>
+			<td>browser* argument* enabled* </td>
+			<td>Sets whether or not a browser argument is enabled.</td>
+		</tr>
+		<tr>
+			<td>setOptionChromeBinaryPath</td>
+			<td>action</td>
+			<td>String*</td>
+			<td>Sets the current path to Chrome binary</td>
+		</tr>
+		<tr>
+			<td>setOptionChromeDriverPath</td>
+			<td>action</td>
+			<td>String*</td>
+			<td>Sets the current path to ChromeDriver</td>
+		</tr>
+		<tr>
+			<td>setOptionFirefoxBinaryPath</td>
+			<td>action</td>
+			<td>String*</td>
+			<td>Sets the current path to Firefox binary</td>
+		</tr>
+		<tr>
+			<td>setOptionFirefoxDriverPath</td>
+			<td>action</td>
+			<td>String*</td>
+			<td>Sets the current path to Firefox driver (geckodriver)</td>
+		</tr>
+	</table>
+	Параметры, отмеченные звездочкой, являются обязательными. 
+	<h2>Смотрите также </h2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="intro.html">Selenium</a></td>
+			<td>для обзора надстройки Selenium </td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="options.html">Параметры Selenium экрана </a></td>
+			<td>для обзора опций Selenium </td>
+		</tr>
+	</table>
+
+</body>
+</html>

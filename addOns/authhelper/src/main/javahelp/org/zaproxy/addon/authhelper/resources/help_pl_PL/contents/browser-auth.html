@@ -1,0 +1,127 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+Browser Based Authentication
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Browser Based Authentication</H1>
+
+This <a href="authhelper.html">add-on</a> adds a new authentication method which uses a browser to login to the target website.
+<p>
+The authentication method requires the login URL and user credentials to perform the authentication. By default it automatically attempts to
+find suitable fields for the username and for the password, in the same page and multiple pages (i.e. password field is only made visible when
+the username has been entered).
+<p>
+The plan is to keep enhancing this authentication method to handle all of the most commonly used login page formats.
+If it does not work with your application's login page then please inform the ZAP team via the 
+<a href="https://groups.google.com/group/zaproxy-users">ZAP User Group</a> giving as many details as possible.
+
+<h3>Authentication Steps</h3>
+When the authentication method is not able to find suitable fields, or requires extra steps they can be manually specified by the user. The following steps are supported:
+<table>
+  <tr><th>Name</th><th>Type</th><th>Description</th></tr>
+  <tr><td>Auto Steps</td><td><code>AUTO_STEPS</code></td><td>Indicates that the authentication method should perform the steps that does by default, to identify and fill the required fields (if not already). This is useful when the authentication method is able to find and submit the fields but other required steps must happen before or after.</td></tr>
+  <tr><td>Click Element</td><td><code>CLICK</code></td><td>Clicks a web element, for example, to access the login form or dismiss a popup.</td>
+  <tr><td>Fill Custom Field</td><td><code>CUSTOM_FIELD</code></td><td>Fills a custom field with the given value, for example, choose a realm or organisation department in the login form.</td>
+  <tr><td>Fill Password Field</td><td><code>PASSWORD</code></td><td>Fills the password in a field, for when no suitable field was automatically identified.</td>
+  <tr><td>Fill TOTP Field</td><td><code>TOTP_FIELD</code></td><td>Fills a TOTP field.</td>
+  <tr><td>Fill Username Field</td><td><code>USERNAME</code></td><td>Fills the username in a field, for when no suitable field was automatically identified.</td>
+  <tr><td>Send Escape</td><td><code>ESCAPE</code></td><td>Sends the escape to the web element, for example, to dismiss a popup.</td>
+  <tr><td>Send Return</td><td><code>RETURN</code></td><td>Sends return to the web element, for example, to submit the login form.</td>
+</table>
+
+Each step is executed sequentially in the order they are specified. Steps that act on a web element need to be identified with either its CSS Selector or XPath, both of which can be obtained, for example, through browser dev tools.
+Those steps have a timeout which allow to wait up to the given number of milliseconds for the web element to be shown and be interactable (when the login page takes some time to load).
+
+<h3>Session Identification</h3>
+The response containing the session token is identified by choosing the first response following a login which contains any of:
+<ul>
+<li>An <code>Authorization</code> header
+<li>JSON data with an element called <code>AccessToken</code> or <code>token</code> - case is ignored
+</ul>
+
+<H2>Automation Framework</H2>
+
+Browser Based Authentication can be configured in the environment section of an Automation Framework plan using:
+<pre>
+      authentication:
+        method: "browser"
+        parameters:
+          loginPageUrl:                # String, the URL of the login page, mandatory
+          loginPageWait:               # Int, the time in seconds to wait after the login form has been submitted, default: 5
+          browserId:                   # String, Browser Id to use, default: firefox-headless
+          diagnostics:                 # Bool, enables the recording of diagnostic data during the authentication. Default: false.
+          steps:                       # List of custom steps.
+          - description:               # String, the description of the step.
+            type:                      # The type of the step, one of: AUTO_STEPS, CLICK, CUSTOM_FIELD, ESCAPE, PASSWORD, RETURN, TOTP_FIELD, USERNAME
+            cssSelector:               # String, the CSS Selector to the web element.
+            xpath:                     # String, the XPath to the web element.
+            value:                     # String, the value to fill in the web element.
+            timeout:                   # Int, the number of milliseconds to wait for the web element. Default: 1000
+</pre>
+
+<p>
+Refer to the <a href="auth-report-json.html">Authentication Report</a> for more details on the diagnostics.
+
+<p>
+Note the TOTP data is defined under the user credentials:
+<pre>
+      credentials:
+        username: …
+        password: …
+        totp:
+          secret:          # String, the secret.
+          period:          # Int, the period. Default: 30
+          digits:          # Int, the number of digits. Default: 6
+          algorithm:       # String, the algorithm. Default: SHA1
+</pre>
+
+<H2>AJAX Spider Integration</H2>
+
+The AJAX Spider will automatically login if a user is specified which is in a context that uses Browser Based Authentication.
+<p>
+Note that this uses the Selenium integration detailed below, so any browsers launched manually will also be logged in if the 
+AJAX spider is performing an authenticated scan using Browser Based Authentication.
+
+<H2>Selenium Integration</H2>
+
+Any browsers launched by ZAP can be configured to always first login using the details configured in a context.
+This is disabled by default.
+
+<p>
+
+This feature can be controlled by the following static methods, which are used by the AJAX Spider and can also be called from scripts.
+
+<pre>
+org.zaproxy.addon.authhelper.AuthUtils.enableBrowserAuthentication(Context context, String userName)
+</pre>
+This method will enable browser authentication whenever a browser is launched, for the given context and user.
+An exception will be thrown if the context is not configured for browser based authentication or if the user is not found.
+
+<pre>
+org.zaproxy.addon.authhelper.AuthUtils.enableBrowserAuthentication()
+</pre>
+This method will enable browser authentication whenever a browser is launched.
+The context is configured for browser based authentication with a valid user will be chosen.
+
+<pre>
+org.zaproxy.addon.authhelper.AuthUtils.disableBrowserAuthentication()
+</pre>
+This method will disable browser authentication when browser is launched.
+
+<p>
+
+Note that due to restrictions in the core:
+<ul>
+<li>Existing contexts are not updated in the GUI if you add or remove this add-on
+<li>Browser Based Authentication cannot be added to a context via the API (unless used with ZAP 2.16.1 or later)
+</ul>
+These restrictions will be addressed in a future release. 
+
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/authhelper/src/main/java/org/zaproxy/addon/authhelper/BrowserBasedAuthenticationMethodType.java">BrowserBasedAuthenticationMethodType.java</a>
+
+</BODY>
+</HTML>

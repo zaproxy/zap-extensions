@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Payloads dialog
+</title>
+</head>
+<body>
+<h1>Payloads dialog</h1>
+Hal ini memungkinkan anda untuk memilih payload generator untuk gunakan ketika <a href="concepts.html">fuzzing</a> sebuah permintaan.
+<br><br>
+Payload generators generate the raw values or attacks that the fuzzer submits to the target application.
+<br><br>
+Jenis generator berikut disediakan oleh default:
+<ul>
+<li>Kosong/tidak ada - Menghasilkan muatan yang terpilih Beberapa kali, meninggalkan pesan tanpa perubahan. Muatan generator ini berguna untuk mengirim beberapa pesan yang kemudian diproses, misalnya, dengan <a href="httpmessageprocessors.html"> Fuzzer HTTP Prosesor (Script)</a>.</li>
+<li>File - pilih setiap file lokal untuk satu kali serangan</li>
+<li>File Fuzzers - select any combination of the fuzzing files registered with ZAP, e.g. via add-ons like fuzzdb</li>
+<li>Numberzz- memungkinkan dengan mudah menghasilkan urutan angka, dengan kenaikan kostum</li>
+<li>Regex - menghasilkan beberapa serangan pada pola regex</li>
+<li>String - string baku, yang mana bisa dimasukkan secara manual atau disisipkan di</li>
+<li>Skrip - skrip khusus yang dapat menghasilkan muatan apapun yang diminta</li>
+<li>Json - generate attacks by fuzzing the provided json</li>
+</ul>
+Anda dapat menulis kustom muatan generator script - ini dapat menyediakan semua muatan yang anda butuhkan.
+<br><br>
+Add-ons bisa juga mendefinisikan generator beban muatan tambahan.
+<br><br>
+The 'Processors...' button launches the <a href="processors.html">Payload Processors dialog</a> which allows you to
+configure payload processors that just apply to the payload generator you have selected.
+<br>
+
+<h2>Diakses melalui</h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="dialogue.html">Fuzzer dialog</a> 'Add...' button</td></tr>
+</table>
+
+<h2>Lihat juga</h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Fuzzer concepts</a></td></tr>
+</table>
+
+</body>
+</html>

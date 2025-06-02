@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+WebSockets
+</title>
+</head>
+<body>
+<h1>WebSockets</h1>
+<p>
+Websockets dapat digunakan oleh aplikasi web atau situs web untuk menyiapkan 
+bi-diretional (dua-arah), saluran lengkap komunikasi duplex melalui
+koneksi TCP tunggal.<br>
+Dilengkapi dengan protokol ringan, memungkinkan pengembang untuk menyadari kasus penggunaan sebenarnya. WebSockets juga memberikan alternatif untuk 
+berat penggunaan Ajax, HTTP Panjang Polling atau Komet.<br>
+</p>
+<p>
+Setelah awal berbasis HTTP jabat tangan, koneksi TCP tetap terbuka,
+memungkinkan aplikasi untuk mengirim &amp; menerima data yang sewenang-wenang. Sering pelabuhan
+80 atau 443 untuk dienkripsi WebSocket saluran yang digunakan.
+</p>
+<p>
+Dengan WebSocket standar didefinisikan dalam
+<dl>
+	<dt><a href="http://www.w3.org/TR/websockets/">The WebSocket API (http://www.w3.org/TR/websockets/)</a></dt>
+	<dd>menentukan interface dalam browser</dd>
+	<dt><a href="https://tools.ietf.org/html/rfc6455">The WebSocket Protocol (RFC6455) (https://tools.ietf.org/html/rfc6455)</a></dt>
+	<dd>menggambarkan struktur bingkai Websocket pada TCP</dd>
+</dl>
+<p>
+ZAP mampu untuk:
+<ul>
+	<li>mencegat dan menampilkan pesan Websocket</li>
+	<li>mengatur breakpoint pada jenis tertentu pesan Websocket</li>
+	<li>mengaburkan pesan Websocket (Mengirim banyak data tidak valid atau tidak terduga ke browser atau server)</li>
+  <li>passively scan WebSocket messages and raise alerts with scripts</li>
+</ul>
+
+Pesan Websocket ditampilkan dalam <a href="tab.html">Tab Websocket</a>.<br><br>
+
+The WebSocket add-on adds new <a href="script.html">scripts</a> and additional endpoints to the ZAP <a href="api.html">API</a>
+
+</body>
+</html>

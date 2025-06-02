@@ -1,0 +1,4 @@
+  - type: sequence-import      # Imports a sequence from a HAR file.
+    parameters:
+      name:                    # The name by which the seq will be known in ZAP.
+      path:                    # The full/relative path to the HAR file to import.

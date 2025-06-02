@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+有效负载对话框
+</title>
+</head>
+<body>
+<h1>有效负载对话框</h1>
+这允许您选择要使用的有效负载生成器，当 <a href="concepts.html">模糊化</a> 一个请求。
+<br><br>
+Payload generators generate the raw values or attacks that the fuzzer submits to the target application.
+<br><br>
+默认情况下提供以下类型的生成器：
+<ul>
+<li>Empty/Null(空/空)-多次生成选定的有效负载，留下未更改的信息。 此有效负载生成器可用于发送多个稍后处理的消息，例如，使用<a href="httpmessageprocessors.html">Fuzzer HTTP 处理器(脚本).</li>
+<li>文件-选择任何本地文件进行一次关闭攻击</li>
+<li>File Fuzzers - select any combination of the fuzzing files registered with ZAP, e.g. via add-ons like fuzzdb</li>
+<li>Numbers-允许使用自定义增量轻松生成数字序列</li>
+<li>正则表达式-基于正则表达式模式生成攻击</li>
+<li>字符串-原始字符串，它可以手动输入或粘贴到</li>
+<li>脚本-可以生成任何需要的有效负载的自定义脚本</li>
+<li>Json - generate attacks by fuzzing the provided json</li>
+</ul>
+您可以编写自定义有效负载生成器脚本-这些可以提供您所需要的任何有效负载。
+<br><br>
+附件还可以定义附加的有效负载生成器。
+<br><br>
+"处理器..."按钮启动 <a href="processors.html">有效负载处理器对话框</a> which allows you to
+configure payload processors that just apply to the payload generator you have selected.
+<br>
+
+<h2>通过访问</h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="dialogue.html">Fuzzer对话框</a>"添加..."按钮</td></tr>
+</table>
+
+<h2>另请参阅</h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Fuzzer概念</a></td></tr>
+</table>
+
+</body>
+</html>

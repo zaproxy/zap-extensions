@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+    <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+    <title>
+        Вкладка OAST 
+    </title>
+</head>
+<body>
+<h1>Вкладка OAST </h1>
+
+<p>На этой вкладке отображается сводка внеполосных сообщений, обнаруженных ZAP. </p>
+
+<h2>Сообщения</h2>
+
+Для каждого сообщения вы можете увидеть: 
+
+<table>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>Идентификатор (id)</td>
+    </tr>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>Временная метка полученного запроса. </td>
+    </tr>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>Метод, связанный с запросом (GET, POST и т. д.) </td>
+    </tr>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>URL-адрес </td>
+    </tr>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>Обработчик — компонент, который перехватил запрос обратного вызова или ответил на него. </td>
+    </tr>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>Источник — адрес отправителя исходного запроса. </td>
+    </tr>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>Referer — значение HTTP-заголовка <em>Referer</em> (если он был включен в запрос). </td>
+    </tr>
+</table>
+
+<h2>Кнопки</h2>
+<table>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>Очистить сообщения </td>
+        <td>Очищает все сообщения в таблице. </td>
+    </tr>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>Опрос сейчас </td>
+        <td>Опрашивает все зарегистрированные службы и сбрасывает время до следующего опроса.  Это означает, что если опрос
+             частота установлена на 120 секунд, и вы нажимаете кнопку с оставшимися 30 секундами, следующий автоматический
+             опрос произойдет через 120 секунд. 
+        </td>
+    </tr>
+</table>
+
+<h2>Indicators</h2>
+The OAST Tab contains status indicators for external OAST services. A grey colour indicates that the service has not
+been registered yet. A green colour indicates that the service is registered and is being polled. If the service is
+registered as an active scan service, a small flame icon is added to the bottom right corner of the indicator. The
+timestamp next to the service name is updated whenever the service is polled.
+
+<h2>See also</h2>
+<table>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>
+            <a href="oast.html">Поддержка OAST </a></td>
+        <td>&nbsp;</td>
+    </tr>
+</table>
+
+</body>
+</html>

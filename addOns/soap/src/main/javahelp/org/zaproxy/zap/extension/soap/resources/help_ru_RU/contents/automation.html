@@ -1,0 +1,28 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+    <TITLE>
+        SOAP Automation Framework Support
+    </TITLE>
+</HEAD>
+<BODY>
+
+<H1>Поддержка платформы автоматизации SOAP</H1>
+Это дополнение поддерживает Automation Framework. 
+<br><br>
+Надстройка будет импортировать файлы WSDL, содержащие конечные точки SOAP, если они будут найдены во время поиска, но рекомендуется добавлять их явно через URL-адрес или локальный файл, если они доступны. 
+
+<H2>Задание:soap</H2>
+Задание soap позволяет импортировать файлы WSDL локально или по URL-адресу. 
+<p>
+It is covered in the video: <a href="https://youtu.be/xuP00Ri460k">ZAP Chat 11 Automation Framework Part 5 - APIs</a>.
+<pre>
+  - type: soap                         # SOAP WSDL импорт
+    parameters:
+      wsdlFile:                        # String: Путь к локальному файлу WSDL, по умолчанию: null, определение не будет импортировано. 
+      wsdlUrl:                         # String: URL-адрес, указывающий на WSDL, по умолчанию: null, определение не будет импортировано. 
+</pre>
+
+</BODY>
+</HTML>

@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Mga pagpipilian ng mga Aplikasyon na skrin</title>
+</head>
+<body>
+	<h1>Mga pagpipilian ng mga Aplikasyon na skrin</h1>
+	<p>
+		Ang iskrin na ito ay magpapahintulot sa iyo na ikompigyura ang <a href="concepts.html">mga aplikasyon</a> that
+		can be invoked.<br> By default there are no applications available, you need to add
+		all of the applications that you want to use.
+	<h3>Ipakita ang Pangalan</h3>
+	Ang pangalan na magagamit sa aplikasyong ito sa ZAP.
+	<br>
+
+	<h3>Ang Kabuuang Utos</h3>
+	Ang kabuuang daanan ng aplikasyon na gusto mong tawagin.
+	<br> Only one command can be specified. If you want to run multiple commands in one
+	go, or set up environmental variables, then you should create a script or batch file and
+	then invoke this from ZAP.
+
+	<h3>Mga parameter</h3>
+	Ang mga parameter na dapat mapasa ng ZAP patungo sa utos.
+	<br> Ang sumusunod na mga tag ay maaring magamit upang mapasa ang mga parameter:
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%url%</td>
+			<td>sa kabuuang url, e.g 'http://localhost/test?a=b'</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%site%</td>
+			<td>ang sayt, e.g. 'http://localhost:8080/'</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%host%</td>
+			<td>ang hostname, e.g. 'localhost'</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%port%</td>
+			<td>ang port, e.g. '80'</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%cookie%</td>
+			<td>ang unang cookie na field mula sa rekwest na header (kung mayroon)</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%postdata%</td>
+			<td>ang POST na datos na napadala, kung mayroon, na mayroong kahit anong mga newline na ipinagpalit ng "\n"</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%msgid%</td>
+			<td>the HTTP message id to fetch data from the API (/JSON/core/view/message/?id=$msgid), 
+				does not alway exist, will return -1 if no message id
+			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%header-{{ header }}%</td>
+			<td>the request header by name (if any), e.g. <code>%header-user-agent%</code> would return the value of the User-Agent header</td>
+		</tr>
+	</table>
+	Kaya kung ang utos ay tumanggap ng isang URL gamit ang '-u' ikaw ay magtutukoy ng mga parameter bilang: '-u%url%'
+
+	<h3>Pagkuha ng Output</h3>
+	Kung susuriin ay mapapatakbo ang utos at ang kahit anong mga output na magagawa nito ay makikita sa
+	<i>Tab ng pag-output</i>.
+	<br> You should always use this option when running scripts or commands that do not
+	have a UI.
+	<br> You can also use this option for troubleshooting - if an application does not
+	run as expected then copy the command run and try it from a command line prompt.
+
+	<h3>Mag-output patungo sa Note</h3>
+	Kung nasuri ay ang kahit anong na-output ay madudugtong sa
+	<i>Note</i> na nakakabit sa may-katuturang
+	<i>Pagkasaysayan ng tab</i> na talaan.
+	<br> Tandaan na ang ibang mga noda sa loob ng
+	<i>Mga Sayt na tab</i> ay walang kaugnay
+	<i>Na Tab ng Kasaysayan</i> na mga talaan - para sa mga noda ang pagpipiliang ito ay magkakaroon ng walang epekto.
+
+</body>
+</html>

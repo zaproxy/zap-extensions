@@ -1,0 +1,30 @@
+name: Release Add-On
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'addOns/**/gradle.properties'
+
+jobs:
+  release:
+    name: Build and Release Add-On
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        persist-credentials: false
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: 17
+    - name: Generate Release State
+      run: ./gradlew :addOns:generateReleaseStateLastCommit
+    - name: Build and Release Add-On
+      env:
+        ZAPBOT_TOKEN: ${{ secrets.ZAPBOT_TOKEN }}
+        CROWDIN_AUTH_TOKEN: ${{ secrets.ZAPBOT_CROWDIN_TOKEN }}
+      run: ./gradlew -Dorg.gradle.jvmargs=-Xmx4g :addOns:releaseAddOn

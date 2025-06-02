@@ -1,0 +1,97 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>GraphQL Alerts</title>
+</head>
+<body>
+<h1 id="id-50007">GraphQL Alerts</h1>
+<p> The following alerts are raised by the GraphQL add-on. </p>
+<table>
+    <tr>
+        <th>Alert Reference
+        <th>Name
+        <th>Description
+        <th>Latest Code
+    <tr>
+        <td><a href="https://www.zaproxy.org/docs/alerts/50007-1/">50007-1</a>
+        <td>GraphQL Endpoint Supports Introspection
+        <td>This alert is raised when the spider discovers a GraphQL endpoint that supports introspection.
+        <td><a href="https://github.com/zaproxy/zap-extensions/tree/main/addOns/graphql/src/main/java/org/zaproxy/addon/graphql/GraphQlParser.java">GraphQlParser.java</a>
+    <tr>
+        <td><a href="https://www.zaproxy.org/docs/alerts/50007-2/">50007-2</a>
+        <td>GraphQL Server Implementation Identified
+        <td>This alert is raised when the GraphQL implementation used by the server is identified. It utilises
+            fingerprinting techniques adapted from the tool <a href="https://github.com/dolevf/graphw00f">graphw00f</a>.<br>
+            <strong>Note:</strong> If the Tech Detection (Wappalyzer) add-on is installed the fingerprinter will also add identified GraphQL Engines to the Technology tab/data. 
+        <td><a href="https://github.com/zaproxy/zap-extensions/tree/main/addOns/graphql/src/main/java/org/zaproxy/addon/graphql/GraphQlFingerprinter.java">GraphQlFingerprinter.java</a>
+</table>
+
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/50007/">50007</a>.
+
+<h2 id="engines">Supported Engines</h2>
+
+<ul>
+  <li>Absinthe - https://github.com/absinthe-graphql/absinthe</li>
+  <li>Agoo - https://github.com/ohler55/agoo</li>
+  <li>Apollo - https://github.com/apollographql/apollo-server</li>
+  <li>Ariadne - https://github.com/mirumee/ariadne</li>
+  <li>AWS AppSync - https://aws.amazon.com/appsync</li>
+  <li>caliban - https://github.com/ghostdogpr/caliban</li>
+  <li>Dgraph - https://github.com/dgraph-io/dgraph</li>
+  <li>Diana.jl - https://github.com/neomatrixcode/Diana.jl</li>
+  <li>Directus - https://github.com/directus/directus</li>
+  <li>gqlgen - https://github.com/99designs/gqlgen</li>
+  <li>Graphene - https://github.com/graphql-python/graphene</li>
+  <li>GraphQL by PoP - https://github.com/leoloso/PoP/tree/master/layers/GraphQLByPoP</li>
+  <li>GraphQL.NET - https://github.com/graphql-dotnet/graphql-dotnet</li>
+  <li>graphql-flutter - https://github.com/zino-app/graphql-flutter</li>
+  <li>graphql-go - https://github.com/graphql-go/graphql</li>
+  <li>graphql-java - https://github.com/graphql-java/graphql-java</li>
+  <li>graphql-php - https://github.com/webonyx/graphql-php</li>
+  <li>graphql-ruby - https://github.com/rmosolgo/graphql-ruby</li>
+  <li>GraphQL Yoga - https://github.com/dotansimha/graphql-yoga</li>
+  <li>Hasura - https://github.com/hasura/graphql-engine</li>
+  <li>Hot Chocolate - https://chillicream.com/docs/hotchocolate/v13</li>
+  <li>HyperGraphQL - https://github.com/hypergraphql/hypergraphql</li>
+  <li>Inigo - https://inigo.io</li>
+  <li>jaal - https://github.com/appointy/jaal</li>
+  <li>Juniper - https://github.com/graphql-rust/juniper</li>
+  <li>lacinia - https://github.com/walmartlabs/lacinia</li>
+  <li>Lighthouse - https://github.com/nuwave/lighthouse</li>
+  <li>mercurius - https://github.com/mercurius-js/mercurius</li>
+  <li>morpheus-graphql - https://github.com/morpheusgraphql/morpheus-graphql</li>
+  <li>pg_graphql - https://supabase.github.io/pg_graphql</li>
+  <li>Sangria - https://github.com/sangria-graphql/sangria</li>
+  <li>Strawberry - https://github.com/strawberry-graphql/strawberry</li>
+  <li>tailcall - https://tailcall.run</li>
+  <li>tartiflette - https://github.com/tartiflette/tartiflette</li>
+  <li>WPGraphQL WordPress Plugin - https://github.com/wp-graphql/wp-graphql</li>
+</ul>
+
+<h2>See also</h2>
+<table>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;
+        <td><a href="graphql.html">GraphQL</a>
+        <td>for an overview of the GraphQL add-on.
+    </tr>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;
+        <td><a href="options.html">GraphQL Options</a>
+        <td>for information about the optional parameters.
+    </tr>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;
+        <td><a href="automation.html">GraphQL Automation</a>
+        <td>for information about the automation framework support.
+    </tr>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td><a href="variant.html">GraphQL Variant</a></td>
+        <td>for information about the GraphQL variant.</td>
+    </tr>
+</table>
+</body>
+</html>

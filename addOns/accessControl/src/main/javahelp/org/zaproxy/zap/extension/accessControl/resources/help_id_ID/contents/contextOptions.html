@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>
+        Akses Kontrol Konteks Pilihan
+    </title>
+</head>
+<body>
+<h1>Akses Kontrol Konteks Pilihan</h1>
+
+<p>
+    Akses Kontrol Konteks pilihan hadir sebagai panel untuk masing-masing Konteks ketika membuka Sesi dialog Properties. Panel ini memungkinkan pengguna ZAP untuk menentukan Aturan Akses untuk setiap Pengguna masing-masing Konteks.
+</p>
+
+<p>
+    Seperti yang disebutkan pada halaman <a href="concepts.html">konsep</a>, ZAP sedang menyusun penggunaan dari pohon-berdasarkan
+    struktur dari URL. Jadi, ketika mengkonfigurasi aturan akses, hanya 1 aturan yang harus ditetapkan secara eksplisit untuk seluruh sub pohon, sedangkan untuk node lain aturannya disimpulkan. Tiga nilai yang mungkin dapat diatur untuk setiap node dalam Konteks untuk setiap Pengguna:
+</p>
+<ul>
+    <li><b>Diizinkan</b> - Peraturan untuk node itu <i>secara eksplisit</i> diatur sebagai Diizinkan</li>
+    <li><b>Ditolak</b> - Peraturan untuk node itu<i>secara eksplisit</i> diatur sebagai Ditolak</li>
+    <li><b> Warisan </> - Aturan untuk simpul disimpulkan berdasarkan induk terdekat dengan aturan yang ditetapkan secara eksplisit.
+    </li>
+</ul>
+
+<p>Secara default, aturan untuk setiap node memiliki nilai <i> Warisan </> dan simpul akar memiliki nilai <i> Tidak diketahui </> .
+    Dengan demikian, untuk setiap node tanpa orang tua dengan aturan yang secara eksplisit dikonfigurasi,  aturan yang disimpulkan akan menjadi default <i>Tidak diketahui</i>.</p>
+
+<h2>Lihat juga</h2>
+<table>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>
+            <a href="concepts.html">Akses Kontrol Pengujian konsep</a></td>
+        <td>untuk pengenalan singkat untuk Akses Kontrol Pengujian</td>
+    </tr>
+</table>
+
+</body>
+</html>

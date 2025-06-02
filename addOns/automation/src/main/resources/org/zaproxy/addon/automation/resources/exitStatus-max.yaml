@@ -1,0 +1,7 @@
+  - type: exitStatus                   # Sets the exit code based on scan results
+    parameters:
+      errorLevel:                      # String: Informational, Low, Medium, High, default: not set
+      warnLevel:                       # String: Informational, Low, Medium, High, default: not set
+      okExitValue:                     # Integer: Exit value if all ok, default 0
+      errorExitValue:                  # Integer: Exit value if there are errors, default 1
+      warnExitValue:                   # Integer: Exit value if there are warnings, default 2

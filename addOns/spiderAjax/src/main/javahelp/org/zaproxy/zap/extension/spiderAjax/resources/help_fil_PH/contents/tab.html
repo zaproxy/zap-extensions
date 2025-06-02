@@ -1,0 +1,197 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>AJAX Spider tab</title>
+</head>
+<body>
+	<h1>AJAX Spider tab</h1>
+	<p>
+		Ang AJAX Spider tab ay nagpapakita sayo ng kakaibang URls natagpuan ng <a href="concepts.html">AJAX
+			Spider</a>.
+	</p>
+	<br /> Para sa bawat hiling na maaari mong makikita:
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>Ang hiling ng index-bawat hiling ay may numero, nagsisimula sa 1</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>Ang hiling ng timestamp</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>Ang HTML na pamamaraan, e.g. GET o POST</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>Ang kahilingan ng URL</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>Ang tugon ng estado code sa HTTP</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>Ang maikling buod ng kung ano ang ibig sabihin ng HTTP response code</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>Ang haba ng oras na kinuha ng buong request</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>Ang sukat sa tugon ng header</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>Ang sukat sa tugon ng body</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>Anumang<i>Alerts</i> sa kahilingan
+			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>Anuman <i>Notes</i> ay kaylangan idagdag sakahilingan
+			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>Anuman <i>Tags</i> ay kaylangan idagdag sa kahiligan
+			</td>
+		</tr>
+	</table>
+
+	Ang mga napiling kahilingan ay ipapakita sa
+	<i>Request tab</i> at
+	<i>Response tab</i> above.
+	<br />
+
+	<h2>Right klick menu</h2>
+	Ang pag right klick ng node ay magdadala sayo papunta sa menu kung saan papahintulutan ka nito:
+
+	<h3>Atake</h3>
+	Ang atake menu ay sumusunod sa mga submenu:
+	<h4>Ang aktibo eskan site</h4>
+	Ito ay pasimula sa
+	<i>Aktibong iskan</i> ang lahat ng site ay naglalaman ng napiling node.
+	<br /> Ang
+	<i>Aktibong iskan tab</i> ay magiging display at ipapakita ang pag unlad ng iskan.
+	<br />
+
+	<h4>Aktibong Iskan Node</h4>
+	Ito ay pasimula ng isang
+	<i>Aktibong iskan</i> na laman ng node na napili.
+	<br /> Ang
+	<i>Aktibong Iskan tab</i> ay magiging display at ipapakita ang pag unlad ng iskan.
+	<br />
+
+	<h4>Spider Site</h4>
+	Ito ay pasimula ng
+	<i>spider</i> ang buong site ay naglalaman ng napiling node.
+	<br /> Ang
+	<i>Spider tab</i> ay magiging display at ipapakita ang pag unlad ng iskan.
+	<br />
+
+	<h4>Forced Browse Site</h4>
+	Ito ay pasimula ng
+	<i>forced browse</i> ang kabuoan ng site ay naglalaman ng napiling node.
+	<br /> Ang
+	<i>Forced Browse tab</i> ay magiging display at ipapakita ang pag unlad ng iskan.
+	<br />
+
+	<h4>Forced Browse Directory</h4>
+	Ito at pasimula ng
+	<i>forced browse</i> na napili ng derektoryo.
+	<br /> Ang
+	<i>Forced Browse tab</i> ay dinisplay at nagpapakita sa pag unlad ng iskan.
+	<br />
+
+	<h4>Forced Browse Directory (at mga bata)</h4>
+	Ito ay pasimula ng
+	<i>forced browse</i> sa napiling derektoryo at ang lahat ng mga bata ay natagpuan.
+	<br /> Ang
+	<i>Forced Browse tab</i> ito ay dinisplay at pinagpakita ang pag unlad ng iskan.
+	<br />
+
+	<h3>Ibukod mula</h3>
+	Itong menu ay sumosunod sa mga submenu:
+
+	<h4>Proxy</h4>
+	Ito ay magbubukod ng mga napiling mga nodes galing sa proxy. Ito ay mananatiling proxied galing sa ZAP ngunit hindi ipinakita sa kahit anong tabs.
+	<br /> Ito ay pweding gamitin upang hindi mapansin ang mga URL na alam mong walang kaugnayan sa kasalukuyan mong sinusuri.
+	<br /> Ang nodes ay magiging kasama ulit sa pamamagitan ng
+	<i>Mga katangian ng sesyon</i> diyalogo
+
+	<h4>Iskaner</h4>
+	Ito ang nagpipigil sa pagpili ng mga node upang maging aktibong iskan.
+	<br /> Ang nodes ay maaaring maisama muli sa pamamagitan ng
+	<i>Mga katangian ng sesyon</i> diyalogo
+
+	<h4>Spider</h4>
+	Ito ay pumipigil sa napiling nodes mula sa pagiging spidered.
+	<br /> Ang mga nodes ay maaaring maisama ulit sa pamamagitan ng
+	<i>Mga katangian ng sesyon</i> diyalogo
+
+	<h3>Pagpapatakbo ng aplikasyon</h3>
+	Ang talaan ay nagbibigay pahintulot sayo na
+	<i>tumawag sa aplikasyon</i> na maaari mong isayos sa pamamagitan ng
+	<i>Pagpili sa aplikasyon ng iskren</i> na maaari din mapuntahan sa pamamagitan ng pagkumpigura ng mga aplikasyon... 'submenu.
+
+	<h3>Namamahala ng mga Tags...</h3>
+	Dadalhin nito paitaas ang
+	<i>Namamahala sa diyalogo ng mga tag</i> na nagbibigay sayo ng pahintuloy upang palitan ang
+	<i>mga tag</i> na nauugnay sa kahilingan.
+
+	<h3>Tandaan...</h3>
+	Dadalhin nito ang
+	<i>Nadagdag na diyalogo sa talaan</i> na magbibigay ng pahintulot sayo na itala ang
+	<i>mga paalala</i> na may kaugnayan sa kahilingan.
+
+	<h3>Break...</h3>
+	Dadalhin nito paitaas ang
+	<i>Nadagdag na dayalogo sa Break Point</i> na magpapahintulot sa iyo na magtakda ng break point sa URL.
+	<br />
+
+	<h3>Alerto sa mga node na ito</h3>
+	Kung ang pinili ng URL ay may
+	<i>mga alerto</i> kaugnay nito at magkakaroon sila ng listahan sa ilalim ng menu na ito.
+	<br> Pinipili ang isa sa mga alerto na magiging dahilan upang maipakita ito.
+
+	<h3>Ipadala Muli...</h3>
+	Dadalhin nito paitaas ang
+	<i>Diyalogong pinadala muli</i> na nagpapahitulot sa iyo upang muling ipadala ang kahilingan pagkatapos gumawa ng anumang mga pagbabago sa mga
+ito na gusto mo.
+
+	<h3>Bagong Alerto...</h3>
+	Dadalin nito paitaas ang
+	<i>Nadagdag na diyalogo aa alert</i> na nagpapahintulot sayo na manumanung i-rekord ang isang bagong
+	<i>Alert</i> laban sa hiling na ito.
+
+	<h3>Buksan ang URL sa Browser</h3>
+	Bubuksan nito ang URL sa napiling node sa iyong default browser.
+
+	<h2>Tignan din</h2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="concepts.html">AJAX spider</a></td>
+			<td>para sa kabuoan ng AJAX spider</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="options.html">Mga pagpipilian sa skren ng AJAX Spider</a></td>
+			<td>para sa pangkalahatang ideya ng pagpipilian sa AJAX Spider</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="scandialog.html">AJAX Spider diyalogo</a></td>
+			<td>para sa kabuoang diyalogo ng AJAX Spider</td>
+		</tr>
+	</table>
+
+</body>
+</html>

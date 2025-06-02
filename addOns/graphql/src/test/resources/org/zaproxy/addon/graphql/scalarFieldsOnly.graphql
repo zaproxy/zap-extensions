@@ -1,0 +1,7 @@
+type Query {
+    name: String
+    id: ID
+    age: Int
+    height: Float
+    human: Boolean
+}

@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Script Console</title>
+</head>
+<body>
+<h1>Script Console</h1>
+<p>
+The Script Console add-on allows you to run scripts that can be embedded within ZAP and can access internal ZAP data structures.<br/>
+Soporta cualquier lenguaje de programación que soporte JSR 223 (http://www.jcp.org/en/jsr/detail?id=223) , incluyendo:
+<ul>
+<li>ECMAScript / JavaScript (using <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/scripting/nashorn/">Nashorn engine</a>, included by default)</li>
+<li>Zest <a href="https://developer.mozilla.org/en-US/docs/zest">https://developer.mozilla.org/en-US/docs/zest</a> (included by default)</li>
+<li>Groovy <a href="http://groovy-lang.org/">http://groovy-lang.org/</a></li>
+<li>Python <a href="http://www.jython.org">http://www.jython.org</a></li>
+<li>Ruby - <a href="http://jruby.org/">http://jruby.org/</a></li>
+<li>and many more...</li> 
+</ul>
+
+<strong>WARNING - scripts run with the same permissions as ZAP, so do not run any scripts that you do not trust!</strong>
+
+<h2>Script Types</h2>
+Distintos tipos de scripts son soportados:
+<ul>
+<li>Indepedientes - los scripts independientes y solo son ejecutados cuando son iniciados manualmente</li>
+<li>Reglas Activas - éstas corren como parte del Escáner Activo y pueden ser individualmente activadas</li>
+<li>Reglas Pasivas - éstas corren como parte del Escáner Pasivo y pueden ser individualmente activadas</li> 
+<li>Proxy - these run 'inline', can change every request and response and can be individually enabled. They can also trigger break points</li> 
+<li>Remitente HTTP- los scripts que se ejecutan en cada solicitud o respuesta enviada o recibida por ZAP. Esto incluye los mensajes con proxy, los mensajes enviados durante el escáner activo, el fuzzer,...</li>
+<li>Targeted - scripts that are invoked with a target URL and are only run when your start them manually</li>
+<li>Authentication - scripts that are invoked when authentication is performed for a Context. To be used, they need to
+be selected when configuring the Script-Based Authentication Method for a Context. </li> 
+<li>Script Input Vector - scripts for defining exactly what ZAP should attack</li>
+<li>Extender - scripts which can add new functionality, including graphical elements and new API end points</li>
+</ul>
+<strong>Note:</strong> Add-ons can add additional types of scripts, which should be described in the help of the corresponding add-on.
+<p>
+All scripts that are run automatically are initially 'disabled' - you must enable them via the <a href="tree.html">The Scripts 'tree' tab</a>
+before they will run.<br/>
+If an error occurs when they run then they will be disabled.<br/>
+When you select the script then the last error will be shown in the <a href="console.html">Script Console tab</a>.<br/>
+Targeted scripts can be invoked by right clicking on a record in the Sites or History tabs and selecting the 'Invoke with script...' menu item.
+</p>
+<p>
+
+All scripting languages can be used for all script types, but only those languages that have been downloaded from the ZAP Marketplace
+will typically have templates. However you may well be able to adapt a template for another language.<br/>
+If your favourite language is not available on the Marketplace then please raise a new issue via the "Online/Report an issue" menu item.<br/>
+</p>
+
+<h2>Variables Globales</h2>
+Las variables pueden ser compartidas entre todos los scripts vía la clase org.zaproxy.zap.extension.script.ScriptVars.<br/>
+For example in JavaScript you can use this class as follows:<br/><br/>
+<code>
+org.zaproxy.zap.extension.script.ScriptVars.setGlobalVar("var.name","value")<br/>
+org.zaproxy.zap.extension.script.ScriptVars.getGlobalVar("var.name")<br/>
+</code>
+
+<h2>Variables de Código</h2>
+Las variables pueden ser compartidas entre invocaciones separadas del mismo script vía la misma clase de org.zaproxy.zap.extension.script.ScriptVars.<br/>
+For example in JavaScript you can use this class as follows:<br/><br/>
+<code>
+org.zaproxy.zap.extension.script.ScriptVars.setScriptVar(this.context, "var.name","value")<br/>
+org.zaproxy.zap.extension.script.ScriptVars.getScriptVar(this.context, "var.name")<br/>
+</code>
+<br/>
+Note that these methods are only usable from scripting languages that provide access to the ScriptContext (like JavaScript).
+For other scripting languages (in ZAP versions after 2.7.0) the variables can be accessed/set by manually specifying
+the name of the script:<br/><br/>
+<code>
+org.zaproxy.zap.extension.script.ScriptVars.setScriptVar("ScriptName", "var.name","value")<br/>
+org.zaproxy.zap.extension.script.ScriptVars.getScriptVar("ScriptName", "var.name")<br/>
+</code>
+
+<h2>Custom Global/Script Variables</h2>
+Newer versions of ZAP (after 2.8.0) allow to set custom global/script variables, which can be of any type not
+just strings, for example, lists, maps.<br/>
+In JavaScript they are accessed/set as follows:<br/><br/>
+<code>
+var ScriptVars = Java.type("org.zaproxy.zap.extension.script.ScriptVars")
+
+ScriptVars.setScriptCustomVar(this.context, "var.name", {x: 1, y: 3})
+print(ScriptVars.getScriptCustomVar(this.context, "var.name").y) // Prints 3
+
+ScriptVars.setGlobalCustomVar("var.name", ["A", "B", "C", "D"])
+print(ScriptVars.getGlobalCustomVar("var.name")[2]) // Prints C
+</code>
+
+<h2>See also</h2>
+<table>
+<tr>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+	<td><a href="console.html">The Script Console tab</a></td><td></td>
+</tr>
+<tr>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+	<td><a href="tree.html">The Scripts 'tree' tab</a></td><td></td>
+</tr>
+</table>
+
+<h2>External links</h2>
+<table>
+<tr>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+	<td><a href="https://github.com/zaproxy/zaproxy/wiki/InternalDetails">https://github.com/zaproxy/zaproxy/wiki/InternalDetails</a></td>
+	<td>ZAP internal objects</td></tr>
+<tr>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+	<td><a href="https://javadoc.io/doc/org.zaproxy/zap">https://javadoc.io/doc/org.zaproxy/zap</a></td>
+	<td>ZAP javadocs</td>
+</tr>
+<tr>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+	<td><a href="https://wiki.openjdk.java.net/display/Nashorn/Rhino+Migration+Guide">https://wiki.openjdk.java.net/display/Nashorn/Rhino+Migration+Guide</a></td>
+	<td>Rhino Migration Guide</td>
+</tr>
+</table>
+
+</body>
+</html>

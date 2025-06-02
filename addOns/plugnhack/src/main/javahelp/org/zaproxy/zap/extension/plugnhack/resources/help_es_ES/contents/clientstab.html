@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Plug-n-Hack Clients tab
+</title>
+</head>
+<body>
+<h1>Pestaña Plug-n-Hack Clients</h1>
+<p>
+	Plug-n-Hack permite supervisar los eventos del cliente (navegador) para ayudar a probar las aplicaciones HTML5.<br> Para soportar tantos navegadores modernos como sea posible, esto se implementa al inyecta javascript en las respuestas devueltas al navegador.<br> Lo que significa que al cambiar la respuesta esta funcionalidad debe ser habilitada manualmente. 
+</p>
+<p>
+	Para recibir eventos del cliente:
+	<ul>
+	<li>Acceda a las páginas que se deseen monitorear mientras se usa un proxy a través ZAP</li>
+	<li>Haga clic derecho en los nodos relevantes en el árbol de Sitios y seleccione "Monitorear clientes -> Incluir subárbol"</li>
+	<li>Obligue al navegador a cargar esas páginas</li>
+	<li>Client events (such as postMessage, click, mouseover, etc.) will then be listed in this tab - select them to see the full details.</li>
+	</ul>
+</p>
+<p>
+	El javascript inyectado envía un latido a ZAP para que ZAP pueda mostrar todos los clientes "activos" en esta pestaña.<br> En este caso, los clientes "activos" son páginas que están actualmente abiertas en la pestaña del navegador.<br> Se puede editar y reenviar cualquier evento haciendo clic derecho el elemento menú siempre y cuando que el cliente original esté activo.<br>
+</p>
+<p>
+	También se pueden interceptar y cambiar los postMessages en camino.<br> Los mensajes de Cliente son interceptado si se selecciona el botón "interrumpir todas las solicitudes" el el nivel superior de la barra de herramientas. <br> También se pueden configurar puntos de interrupción de cliente a través del botón de la pestaña Clientes. <br> <br> Se puede hacer fuzz a los postMessages de la misma manera que cualquier otro mensaje. Resalte la cadena que desea hacerle fuzz en la pestaña Solicitud, haga clic derecho y seleccione "Fuzz".<br> Esta opción solo estará disponible si el navegador relevante todavía tiene esa página abierta, mientras que PnH envía las cargas al navegador.<br>
+Las cargas estándares "XSS" pueden ser utilizadas para detectar vulnerabilidades DOM XSS, pero se necesita monitorear manualmente la Interfaz del Usuario para ver si cualquiera de ellas es exitosa. <br><br> PnH también añade un archivo de fuzzing personalizado llamado "PlugnHack DOM XSS Oracle".<br> Esta archivo está basado en el listado OWASP XSS e invoca un método JavaScript "xss" que se inyecta en la página. <br>Este método invoca a la API de ZAP, que a su vez indica el ataque correspondiente en la interfaz de usuario - estas son vulnerabilidades de XSS DOM confirmadas, aunque (como siempre) se debe comprobar que realmente puedan ser vulnerados en la aplicación que se está probando sin una herramienta como ZAP.<br>
+
+</p>
+
+</body>
+</html>

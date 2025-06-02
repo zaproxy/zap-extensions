@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Aba de clientes plug-n-Hack
+</title>
+</head>
+<body>
+<h1>Aba de clientes plug-n-Hack</h1>
+<p>
+	O Plug-n-Hack permite que você monitore eventos do navegador (o cliente) para ajudar a testar aplicações HTML5. <br>Para poder dar o maior suporte possível a uma ampla gama de navegadores modernos, isso é implementado injetando-se javascript em respostas retornadas ao navegador. <br>Como isso significa alterar a resposta, essa funcionalidade tem que ser habilitada manualmente. 
+</p>
+<p>
+	Para receber eventos de cliente:
+	<ul>
+	<li>Acesse as páginas que você deseja monitorar ao acessá-las através do ZAP</li>
+	<li>Clique com o botão direito no(s) nó (s) relevante(s) da árvore de Sites e selecione 'Monitorar clientes-> Incluir sub-árvore'</li>
+	<li>Force o browser a recarregar as páginas</li>
+	<li>Client events (such as postMessage, click, mouseover, etc.) will then be listed in this tab - select them to see the full details.</li>
+	</ul>
+</p>
+<p>
+	O javascript injetado envia um heartbeat (um aviso) ao ZAP, para que o ZAP possa exibir todos os clientes 'ativos' nesta aba <br>Neste caso, clientes 'ativos' são páginas abertas em uma aba de navegador <br>Você pode editar e reenviar qualquer evento através de um item de menu de clique direito, enquanto o cliente está ativo.<br>
+</p>
+<p>
+	Você também pode interceptar e alterar postMessages com o ZAP em funcionamento. <br>Mensagens de cliente são interceptadas se o botão 'pausar em todas as solicitações' estiver selecionado na barra de ferramentas superior. <br>Você também pode definir pontos de interrupção personalizados no cliente através de um botão na própria aba de Clientes <br><br>Você pode também fazer fuzz (difusão) de postMessages assim como com qualquer outra mensagem - selecione a string na qual você deseja fazer fuzz na aba de request, clique com o botão direito e selecione "Fuzz". <br>  Esta opção só estará disponível se o navegador focalizado ainda tiver essa página aberta, já que o Plug-n-Hack/PnH envia as cargas/payloads ao navegador. <br>Payloads padrão 'XSS' podem ser usadas para detectar vulnerabilidades XSS DOM, mas você precisará monitorar a interface do usuário para ver se deu certo. <br><br>O PnH traz um arquivo de difusão personalizado chamado "PlugnHack DOM XSS Oracle". <br>  Este arquivo é baseado no cheatsheet OWASP XSS e invoca um método JavaScript 'xss' que é injetado a página. <br>Este método chama a API ZAP, que por sua vez, sinaliza o ataque na interface de usuário - essas vulnerabilidades XSS DOM confirmadas, embora (como sempre) você deva verificar o que realmente pode ser explorado na aplicação que você está testando sem utilizar uma ferramenta como o ZAP.<br>
+
+</p>
+
+</body>
+</html>

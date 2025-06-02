@@ -1,0 +1,105 @@
+name: Create Webdriver Update PR
+
+on:
+  schedule:
+    - cron:  '0 23 * * *'
+  workflow_dispatch:
+    inputs:
+      chrome_version:
+        description: 'ChromeDriver version?'
+        required: false
+        default: 'cxx'
+      gecko_version:
+        description: 'geckodriver version?'
+        required: false
+        default: 'gxx'
+
+jobs:
+  create_pr:
+    name: Create Pull Request
+    runs-on: ubuntu-latest
+    steps:
+    - name: Build Feature Branch and Raise PR
+      run: |
+        sudo apt install jq -y
+        # Setup git details
+        export GITHUB_USER=zapbot
+        git config --global user.email "12745184+zapbot@users.noreply.github.com"
+        git config --global user.name $GITHUB_USER
+        # Clone repos
+        git clone -o upstream https://github.com/zaproxy/zap-extensions.git
+        cd zap-extensions
+        git remote add origin https://github.com/$GITHUB_USER/zap-extensions.git
+        # Setup env vars for later
+        BRANCH="webdriver-update"
+        export GITHUB_TOKEN=${{ secrets.ZAPBOT_TOKEN }}
+        IS_UPDT=0
+        # Get ChromeDriver version
+        CHROME_INPUT="${{ github.event.inputs.chrome_version }}"
+        echo $CHROME_INPUT
+        CHROME_INPUT=${CHROME_INPUT:-"cxx" }
+        echo $CHROME_INPUT
+        if [ $CHROME_INPUT == "cxx" ]; then
+          CHROME_VERS=$(curl -s https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions.json|jq -r .channels.Stable.version)
+        else
+          CHROME_VERS=${{ github.event.inputs.chrome_version }}
+        fi
+        echo $CHROME_VERS
+        # Get geckodriver version
+        GECKO_INPUT="${{ github.event.inputs.gecko_version }}"
+        echo $GECKO_INPUT
+        GECKO_INPUT=${GECKO_INPUT:-"gxx" }
+        echo $GECKO_INPUT
+        if [ $GECKO_INPUT == "gxx" ]; then
+          GECKO_VERS=$(curl -s https://api.github.com/repos/mozilla/geckodriver/releases/latest|jq -r .name)
+        else
+          GECKO_VERS=${{ github.event.inputs.gecko_version }}
+        fi
+        echo $GECKO_VERS
+        # Build the feature branch
+        git checkout -b $BRANCH
+        git remote set-url origin https://$GITHUB_USER:$GITHUB_TOKEN@github.com/$GITHUB_USER/zap-extensions.git
+        # Update ChromeDriver version strings in help and build file
+        sed -i -e 's|val chromeDriverVersion = "[0-9\.]*"|val chromeDriverVersion = "'"$CHROME_VERS"'"|g' addOns/webdrivers/webdrivers.gradle.kts
+        sed -i -e "s|Chrome - ChromeDriver [0-9\.]*</li>|Chrome - ChromeDriver $CHROME_VERS</li>|g" addOns/webdrivers/webdriverlinux/src/main/javahelp/org/zaproxy/zap/extension/webdriverlinux/resources/help/contents/webdriverlinux.html
+        sed -i -e "s|Chrome - ChromeDriver [0-9\.]*</li>|Chrome - ChromeDriver $CHROME_VERS</li>|g" addOns/webdrivers/webdrivermacos/src/main/javahelp/org/zaproxy/zap/extension/webdrivermacos/resources/help/contents/webdrivermacos.html
+        sed -i -e "s|Chrome - ChromeDriver [0-9\.]*</li>|Chrome - ChromeDriver $CHROME_VERS</li>|g" addOns/webdrivers/webdriverwindows/src/main/javahelp/org/zaproxy/zap/extension/webdriverwindows/resources/help/contents/webdriverwindows.html
+        git update-index -q --refresh
+        # If there are changes update changelog, and commit
+        if ! git diff-index --quiet HEAD --; then
+          IS_UPDT=1
+         ./gradlew :addOn:webdrivers:webdriverlinux:updateChangelog --change="- Update ChromeDriver to $CHROME_VERS."
+         ./gradlew :addOn:webdrivers:webdrivermacos:updateChangelog --change="- Update ChromeDriver to $CHROME_VERS."
+         ./gradlew :addOn:webdrivers:webdriverwindows:updateChangelog --change="- Update ChromeDriver to $CHROME_VERS."
+          git add .
+          git commit -m "Webdriver Update" -m "ChromeDriver update to $CHROME_VERS" --signoff
+        fi
+        # Update geckodriver version strings in help and build file
+        sed -i -e 's|val geckodriverVersion = "[0-9\.]*"|val geckodriverVersion = "'"$GECKO_VERS"'"|g' addOns/webdrivers/webdrivers.gradle.kts
+        sed -i -e "s|Firefox - geckodriver [0-9\.]*</li>|Firefox - geckodriver $GECKO_VERS</li>|g" addOns/webdrivers/webdriverlinux/src/main/javahelp/org/zaproxy/zap/extension/webdriverlinux/resources/help/contents/webdriverlinux.html
+        sed -i -e "s|Firefox - geckodriver [0-9\.]*</li>|Firefox - geckodriver $GECKO_VERS</li>|g" addOns/webdrivers/webdrivermacos/src/main/javahelp/org/zaproxy/zap/extension/webdrivermacos/resources/help/contents/webdrivermacos.html
+        sed -i -e "s|Firefox - geckodriver [0-9\.]*</li>|Firefox - geckodriver $GECKO_VERS</li>|g" addOns/webdrivers/webdriverwindows/src/main/javahelp/org/zaproxy/zap/extension/webdriverwindows/resources/help/contents/webdriverwindows.html
+        git update-index -q --refresh
+        # If there are changes update changelog, and commit
+        if ! git diff-index --quiet HEAD --; then
+          IS_UPDT=1
+          ./gradlew :addOn:webdrivers:webdriverlinux:updateChangelog --change="- Update geckodriver to $GECKO_VERS."
+          ./gradlew :addOn:webdrivers:webdrivermacos:updateChangelog --change="- Update geckodriver to $GECKO_VERS."
+          ./gradlew :addOn:webdrivers:webdriverwindows:updateChangelog --change="- Update geckodriver to $GECKO_VERS."
+          git add .
+          git commit -m "Webdriver Update" -m "geckodriver update to $GECKO_VERS" --signoff
+        fi
+        if [ "$CHROME_VERS" == "null" ] || [ "$GECKO_VERS" == "null" ]; then
+          echo "Could not retrieve one (or both) of the new version identifiers"
+          exit
+        fi
+        ## If there are changes: push and PR
+        if [ $IS_UPDT -eq 1 ]; then
+          ./gradlew :aO:webdrivers:webdriverlinux:prepareRelease
+          ./gradlew :aO:webdrivers:webdrivermacos:prepareRelease
+          ./gradlew :aO:webdrivers:webdriverwindows:prepareRelease
+          git commit -a --amend --no-edit --signoff
+          git push --set-upstream origin $BRANCH --force
+          # Open the PR
+          gh pr create -f
+        fi

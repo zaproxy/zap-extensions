@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Aba de WebSocket
+</title>
+</head>
+<body>
+<h1>Aba de WebSocket</h1>
+
+<p>
+A aba de WebSockets exibe todas as mensagens de conexões de WebSockets. Com o ZAP ativo, visite por exemplo <a href="http://browserquest.mozilla.org/">BrowserQuest da Mozilla</a> para ver WebSockets em ação.
+</p>
+
+<h2>Filtros</h2>
+	<h3>Seletor de canais</h3>
+		Você pode restringir a exibição de mensagens para um canal específico de WebSocket ou para todos.
+		<br>
+		Se você selecionar um canal específico, em seguida, o <i>botão "Mostrar Handshake"</i> se torna<img src="images/handshake.png" align="bottom" width="16" height="16" />ativado. Quando você clicar nele, o Handshake HTTP correspondente é mostrado na aba de Request/Response.
+
+	<h3>Diálogo de filtro</h3>
+		No diálogo Filtro (<img src="images/054.png" align="bottom" width="16" height="16" />) você pode controlar melhor as mensagens que são exibidas.
+
+<br><br>
+<h2>Pontos de interrupção</h2>
+	Você pode definir pontos de interrupção personalizados usando <i>Adicionar pontos de interrupção personalizados</i>
+	(botão<img src="images/break_add.png" align="bottom" width="16" height="16" />).
+	<br>
+	Como alternativa, você pode usar o <i>Menu do botão direito</i>.
+
+<br><br>
+<h2>Menu do botão direito</h2>
+	Clicar com o botão direito sobre uma mensagem de WebSockets faz aparecer um menu que lhe permitirá:
+
+	<h3>Excluir da WebSocket</h3>
+		Conexões WebSocket podem ser excluídas da guia WebSockets adicionando um URL excluído para
+		<i>Propriedades da Sessão</i>. Clicar neste item exibe as propriedades da sessão com a URL preenchida.
+		Excluir uma conexão WebSocket não resultará no encerramento da conexão, mas em encaminhá-la sem processamento adicional.
+
+	<h3>Interrupção...</h3>
+		Isso irá abrir o diálogo
+		<i>Adicionar ponto de interrupção</i> que lhe permite configurar um ponto de interrupção personalizado.
+</body>
+</html>

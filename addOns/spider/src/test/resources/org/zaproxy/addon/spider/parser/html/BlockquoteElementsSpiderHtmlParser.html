@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<base href="http://example.com/sample/">
+<meta charset="UTF-8">
+<title>Blockquote Elements - Spider HTML Parser</title>
+</head>
+<body>
+
+<blockquote cite="//blockquote.example.com/base/scheme">sub-domain using base scheme</blockquote><br />
+<blockquote cite="http://blockquote.example.com:8000/b">sub-domain (http)</blockquote><br />
+<blockquote cite="https://blockquote.example.com/c?a=b#fragment">sub-domain (https)</blockquote><br />
+<blockquote cite="blockquote/relative">relative</blockquote><br />
+<blockquote cite="">relative (same page)</blockquote><br />
+<blockquote cite="/blockquote/absolute">absolute</blockquote><br />
+<blockquote cite="ftp://blockquote.example.com/">ftp</blockquote><br />
+
+Ignored:<br />
+<blockquote>no cite</blockquote><br />
+<blockquote cite="mailto:blockquote@example.com">mailto:</blockquote><br />
+<blockquote cite="javascript:hello();">javascript:</blockquote><br />
+<blockquote cite="scheme://blockquote.example.com/invalid">scheme:</blockquote>
+
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Procesadores de mensajes
+</title>
+</head>
+<body>
+<h1>Procesadores de mensajes HTTP</h1>
+HTTP Message Processors can access and change the HTTP messages being fuzzed, control the fuzzing process, and interact with the ZAP UI.
+<p>
+Los procesadores de mensajes HTTP incorporados incluyen:
+
+<h3>Actualización de Token Anti-CSRF</h3>
+Permite actualizar los tokens anti-CSRF contenidos en la solicitud. Los tokens anti-CSRF deben ser detectados correctamente por ZAP para poder usar este procesador.<br>
+Para obtener más información, consulte la página de ayuda "Cómo empezar"> "Funciones"> "Fichas antis de CSRF".<br>
+<strong>Nota:</strong> Este procesador se añade automáticamente a la lista de procesadores, si se detectaron tokens anti-CSRF.
+
+<h3>Procesador (Script) Fuzzer HTTP</h3>
+Permite seleccionar las secuencias de comandos del procesador Fuzzer HTTP habilitadas. Los scripts le permiten:
+<ul>
+<li>Obtener la lista de cargas útiles</li>
+<li>Detener el fuzzing</li>
+<li>Aumenta el recuento de errores</li>
+<li>Enviando mensajes nuevos</li>
+<li>Agregar mensajes a la pestaña de resultados</li>
+<li>Establezca mensajes de estado personalizados en la pestaña <a href="tab.html"> Fuzzer </ 0></li>
+<li>Levantar alertas</li>
+</ul>
+
+Scripts can include both Required and Optional parameters the values for which the user will be prompted to provide when the Processor is added to the fuzzer.
+The parameter names are defined within the script(s) via the methods <code>getRequiredParamsNames</code> and <code>getOptionalParamsNames</code>, each of which
+simply return an array of strings representing the parameters names.
+
+<h3>Detector de reflexión de carga útil</h3>
+Indicates in the State column of results table if one of the injected payloads were found in the response, using "<img src="images/reflected_icon.png"> Reflected".<br>
+<strong>Nota:</strong> This processor is automatically added to the list of processors.
+
+<h3>Solicitud de actualización de longitud de contenido</h3>
+Updates (or adds, if not already present) the <code>Content-Length</code> request header with the length of the request body,
+for all request methods. No change is done if the size of the request body is zero and the header is not already present.<br>
+<strong>Nota:</strong> This processor is automatically added to the list of processors.
+
+<h3>Creador de etiqueta</h3>
+Allows to add custom ‘tags’, based on contents of the response, to the State column of the results table.
+
+<h3>Procesador de mensajes del usuario</h3>
+Allows to fuzz as a user, using one of the users defined in the Contexts that include the HTTP message being fuzzed. Users must
+exist to be able to select and add this processor.
+
+<p>
+Otros complementos pueden definir procesadores de mensajes HTTP adicionales.
+
+<h2>Acceso a través de</h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="dialogue.html"> Diálogo Fuzzer </ 0> en la pestaña Procesadores de mensajes</td></tr>
+</table>
+
+<h2>Véase también</h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Conceptos Fuzzer</a></td></tr>
+</table>
+
+</body>
+</html>

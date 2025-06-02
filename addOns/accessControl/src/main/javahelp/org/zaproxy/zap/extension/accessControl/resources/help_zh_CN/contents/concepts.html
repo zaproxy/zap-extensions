@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>
+        访问控制测试
+    </title>
+</head>
+<body>
+<h1>访问控制测试</h1>
+
+<p>
+    这个插件使用户能够比较Web应用程序（Web-application）的哪些部分可用于某些用户，进行访问控制测试并识别潜在的访问控制问题。 它允许配置访问规则，并进行全面攻击，目的是帮助识别Web应用程序中可被未经授权的客户端访问的部分。
+</p>
+
+<p>
+    与这个插件相关的两个主要概念解释如下： <b>访问规则</b>和<b>测试过程</b>.
+</p>
+
+<h2>访问规则</h2>
+
+<p>
+    为了确定潜在的访问控制问题，ZAP需要知道Web应用程序的哪些部分应该由哪个用户访问。 在 ZAP 中，这些规则的名称是： <i>访问规则</i>，通常具有以下含义： “<i>PageA应该/不应该由UserX访问</i>”。
+</p>
+
+<p>规则是为上下文配置的，对于该上下文的每个用户，每个站点节点（Web页面）将与下列值之一相关联：</p>
+<ul>
+    <li><b>允许</b>-该规则所引用的用户<b>可以</b>访问该资源。</li>
+    <li><b>拒绝</b>-该规则所引用的用户<b>不应该</b>访问该资源</li>
+    <li><b>未知</b>-对于该规则所引用的用户应该或不应该访问该资源，<b>无明确信息</b>进行说明。
+    </li>
+</ul>
+
+<p>
+    为了简化访问规则的定义过程，ZAP利用了基于树的URL结构。
+    在分析规则时，如果没有定义特定的规则，推理算法将根据URL中的父节点检测每个节点的匹配规则。 这意味着，在配置访问规则时，只需要为整个子树显式设置一个规则，而对于其它节点规则则可以进行推断得出 有关详细信息，请参阅访问控制<a href="contextOptions.html">上下文选项</a>帮助页面。</td>
+</p>
+
+<h2>测试过程</h2>
+
+<p> 作为一个整体，为了充分执行Web应用程序的访问控制测试，请您遵循如下所示的步骤：</p>
+<ul>
+    <li>测试人员定义一组用户以及他们如何进行身份验证；
+    </li>
+    <li>测试人员定义ZAP如何识别未经授权的请求（通过会话属性中的授权面板）；
+    </li>
+    <li>Web应用程序的探索要么手动要么通过Spider；</li>
+    <li>测试人员定义与上下文相关的每个用户的访问规则，让ZAP基本上知道Web应用程序的哪些部分应该被哪些用户访问；
+    </li>
+    <li>ZAP通过尝试从每个用户的角度访问Web应用程序的每个URL来执行“攻击”；
+    </li>
+    <li>在相应的“状态”选项卡中，显示结果，显示哪些用户成功访问哪些页面，并标记未遵循访问规则的情况。
+    </li>
+</ul>
+<strong>备注：</strong> 访问控制测试不被允许在 <code>安全</code> 模式或 <code>受保护</code> 模式下执行，如果上下文不在范围内的话。
+
+<h2 id="alerts">警告</h2>
+
+下列警告可能会由插件引起：
+
+<h3 id="id-10101">访问控制-非法认证</h3>
+
+    当一个 Web 站点允许攻击者访问敏感内容或功能而无需正确验证时，判定为身份验证不足。 基于Web的管理工具是Web站点提供对敏感功能访问能力的很好的例子。 
+    考虑到具体的网络资源，这些Web应用不应被用户在没有正确验证身份的情况下直接访问。
+    <p>
+    Latest Code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/accessControl/src/main/java/org/zaproxy/zap/extension/accessControl/AccessControlScannerThread.java">AccessControlScannerThread.java</a>
+    <br>
+    Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10101/">10101</a>.
+
+<h3 id="id-10102">访问控制 - 非法授权</h3>
+
+当一个应用没有执行授权检查，以确保用户执行功能或访问数据的行为符合安全策略时，非法授权就会发生。 授权程序应当明确哪些行为是一个用户、服务或者应用可以进行的。 当一个用户被一个网站认证通过，这并不一定意味着该用户有访问所有内容和功能的权限。
+    <p>
+    Latest Code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/accessControl/src/main/java/org/zaproxy/zap/extension/accessControl/AccessControlScannerThread.java">AccessControlScannerThread.java</a>
+    <br>
+    Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10102/">10102</a>.
+
+<h2>API（应用程序接口）</h2>
+
+该插件提供以下API端点：
+
+<h3>API 操作</h3>
+	<h4>scan</h4>
+	启动一个访问控制扫描，用给定的上下文ID和用户ID（可以使逗号分隔的ID列表）。 
+	(可选参数：boolean 是否包含未验证用户(默认: false), boolean 是否发出警报(默认: true), 警报的风险级别(默认: High))<strong>备注：</strong>前提是之前已通过 ZAP gui 建立了访问控制规则，并导出/导入了必要的上下文。
+
+	<h4>writeHTMLreport</h4>
+	为给定的上下文 ID 生成访问控制报告，并根据提供的文件名（路径）保存报告。
+
+<h3>API 查看</h3>
+	<h4>getScanProgress</h4>
+	获取给定上下文 ID 的访问控制扫描进度（百分比整数）。
+
+	<h4>getScanStatus</h4>
+	获取给定上下文 ID 的访问控制扫描状态（描述字符串）。
+
+<h2>参阅：</h2>
+<table>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>
+            <a href="tab.html">访问控制测试选项卡</a></td>
+        <td>了解加载项使用的状态标签的说明</td>
+    </tr>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>
+            <a href="contextOptions.html">访问控制上下文选项</a></td>
+        <td>了解相关的上下文选项</td>
+    </tr>
+</table>
+
+</body>
+</html>

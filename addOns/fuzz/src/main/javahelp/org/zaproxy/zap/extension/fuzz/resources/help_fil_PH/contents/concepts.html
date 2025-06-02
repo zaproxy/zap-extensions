@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Fuzzing
+</title>
+</head>
+<body>
+<h1>Pag-fuzz</h1>
+<p>
+Fuzzing is a technique of submitting lots of data to a target (often in the form of invalid or unexpected inputs).
+</p>
+<p>
+ZAP allows you to fuzz any request using:
+<ul>
+<li>A built-in set of payloads</li>
+<li>Ang mga payload ay nakatutukoy sa pamamagitan ng opsyonal na mga add-on</li>
+<li>Pagtangkilik ng mga iskripto</li>
+</ul>
+</p>
+Para i-access ang <a href="dialogue.html">Pagfuzz ng dayalog</a> ikaw rin ay maaari:
+<ul>
+<li>I-right click ang isang kahilingan ng isa sa ZAP na mga tab (tulad ng kasaysayan o mga site) at napiling "Attack / Fuzz..."</li>
+<li>I-highlight ang isang hanay na hiniling na tab, I-right click ito at piliin ang "Fuzz..."</li>
+<li>Piliin ang "Mga kasangkapan / Fuzz..." menu ng aytem at piliin ang kahilingan na gusto mo sa Fuzz</li>
+</ul>
+
+<h3>Mga Generator ng Payload</h3>
+Payload Generators generate the raw values or attacks that the fuzzer submits to the target application.
+<br><br>
+Sila ay namamahala sa pamamagitan ng <a href="payloads.html">Mga payload dayalog</a>.
+
+<h3>Mga prosesor ng payload</h3>
+Mga prosesor ng payload ay maaaring magamit para mapalitan ang tiyak na mga payload bago sila magpasa.
+<br><br>
+Sila'y namamahala sa pamamagitan ng <a href="processors.html">Mga proseso ng payload dayalog</a>.
+
+<h3>Ang lokasyon ng mga prosesor ng Fuzz</h3>
+Ang lokasyon ng Fuzz ng mga prosesor ay maaaring gamitin para palitan ang lahat ng mga payload bago ito i-submit.
+<br><br>
+Pinamamahalaan nila ito sa pamamagitan ng <a href="locations.html">Lokasyon ng prosesor ng dayalogo</a>.
+
+<h3>Ang mga mensahe ng prosesor</h3>
+Message Processors can access and change the messages being fuzzed, control the fuzzing process, and interact with the ZAP UI.
+<br><br>
+Pinamamahalaan nila ito sa pamamagitan ng <a href="dialogue.html">Dayalogo ng Fuzz</a> 'Mga mensahe ng prosesor' tab.
+
+<p>
+Some of this functionality is based on code from the OWASP JBroFuzz project and includes files from the fuzzdb project.<br/>
+Note that some fuzzdb files have been left out as they cause common anti-virus scanners to flag them as containing viruses.<br/>
+You can replace them (and upgrade fuzzdb) by downloading the latest version of fuzzdb and expanding it in the 'fuzzers' library.
+</p>
+
+<h2>Tignan din</h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="options.html">Opsyon screen ng Fuzzer</a></td></tr>
+</table>
+
+</body>
+</html>

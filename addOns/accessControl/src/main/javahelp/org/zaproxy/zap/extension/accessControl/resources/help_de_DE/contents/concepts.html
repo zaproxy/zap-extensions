@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>
+        Access Control Testing
+    </title>
+</head>
+<body>
+<h1>Access Control Testing</h1>
+
+<p>
+    Mit diesem Add-on können Benutzer vergleichen, welche Teile einer Webanwendung für bestimmte Benutzer zugänglich sind, Zugangskontrolltests durchführen und potenzielle Probleme bei der Zugangskontrolle erkennen. Es ermöglicht die Konfiguration von Zugriffsregeln und führt einen vollständigen Angriff durch, um die Bereiche einer Webanwendung zu identifizieren, die für nicht autorisierte Clients zugänglich sind.
+</p>
+
+<p>
+    Es gibt zwei Hauptkonzepte im Zusammenhang mit diesem Add-on, die erklärt werden sollten: die <b>Zugangsregeln</b> und das <b>Testverfahren</b>.
+</p>
+
+<h2>Access Rules</h2>
+
+<p>
+    Um mögliche Probleme bei der Zugriffskontrolle zu erkennen, muss ZAP wissen, welche Teile der Webanwendung welcher Benutzer auf welche Teile der Webanwendung zugreifen darf. In ZAP heißen diese Regeln: Zugriffsregeln haben im Allgemeinen die Bedeutung: "<i>SeiteA soll/kann nicht von BenutzerX aufgerufen werden</i>".
+</p>
+
+<p>Die Regeln werden für einen Kontext konfiguriert, und für jeden Benutzer dieses Kontexts wird jeder Site-Knoten (Webseite) mit einem der folgenden Werte verknüpft:</p>
+<ul>
+    <li><b>Allowed</b> - der Benutzer, auf den sich die Regel bezieht, <b>kann</b> auf die Ressource zugreifen</li>
+    <li><b>Denied</b> - der Benutzer, auf den sich die Regel bezieht, <b>darf nicht</b> auf die Ressource zugreifen</li>
+    <li><b>Unknown</b> - es gibt <b>keine Informationen</b> darüber, ob die Ressource für den Benutzer, auf den sich die Regel bezieht, zugänglich sein soll oder nicht
+    </li>
+</ul>
+
+<p>
+    Um den Prozess der Definition von Zugriffsregeln zu vereinfachen, nutzt das ZAP die Baumstruktur von URLs.
+    Bei der Analyse der Regeln wird ein Inferenz-Algorithmus verwendet, um die übereinstimmenden Regeln für jeden Knoten auf der Grundlage seiner Vorgänger in der URL zu ermitteln, wenn keine besonderen Regeln definiert sind. Dies bedeutet, dass bei der Konfiguration der Zugriffsregeln nur eine Regel explizit für einen gesamten Teilbaum festgelegt werden muss, während die anderen Knoten Regeln daraus abgeleitet werden. Mehr Details dazu finden Sie auf der Hilfeseite Access Control <a href="contextOptions.html">Context options</a>.</td>
+</p>
+
+<h2>Testing procedure</h2>
+
+<p> Um die Zugriffskontrolle für eine Webanwendung vollständig zu testen, sollten die folgenden Schritte befolgt werden:</p>
+<ul>
+    <li>der Tester definiert eine Reihe von Benutzern und wie sie sich authentifizieren;
+    </li>
+    <li>der Tester definiert, wie ZAP nicht autorisierte Anfragen identifizieren kann (über das "Authorization panel" in den Session Properties);
+    </li>
+    <li>die Webanwendung wird entweder manuell oder über den Spider durchsucht;</li>
+    <li>der Tester definiert die Zugriffsregeln für jeden dem Kontext zugeordneten Benutzer, so dass ZAP im Grunde weiß welche Teile der Webanwendung von welchen Benutzern genutzt werden dürfen;
+    </li>
+    <li>ein "Angriff" wird von ZAP durchgeführt, indem versucht wird, auf jede URL der Webanwendung aus der Sicht eines jeden Benutzers zuzugreifen;
+    </li>
+    <li>in der entsprechenden Tab "Status" werden die Ergebnisse angezeigt, die zeigen, welche Seiten von welchen Benutzern erfolgreich aufgerufen wurden, welche Benutzer erfolgreich auf die Seiten zugegriffen haben, und markiert die Fälle, in denen die Zugriffsregeln nicht eingehalten wurden.
+    </li>
+</ul>
+<strong>Hinweis:</strong> Zugriffskontrolltests sind weder im <code>Abgesicherten</code> Modus, noch im <code>Geschützten</code> Modus zulässig, wenn sich der Kontext nicht im Geltungsbereich befindet.
+
+<h2 id="alerts">Alerts</h2>
+
+The following Alerts may be raised by the add-on:
+
+<h3 id="id-10101">Access Control Issue - Improper Authentication</h3>
+
+    Insufficient Authentication occurs when a web site permits an attacker to access sensitive content or functionality without 
+    having to properly authenticate. Web-based administration tools are a good example of web sites providing access to sensitive functionality. 
+    Depending on the specific online resource, these web applications should not be directly accessible without requiring the user to properly verify 
+    their identity.
+    <p>
+    Latest Code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/accessControl/src/main/java/org/zaproxy/zap/extension/accessControl/AccessControlScannerThread.java">AccessControlScannerThread.java</a>
+    <br>
+    Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10101/">10101</a>.
+
+<h3 id="id-10102">Access Control Issue - Improper Authorization</h3>
+
+    Insufficient Authorization results when an application does not perform adequate authorization checks to ensure that the user is performing a 
+    function or accessing data in a manner consistent with the security policy. Authorization procedures should enforce what a user, service or 
+    application is permitted to do. When a user is authenticated to a web site, it does not necessarily mean that the user should have full access 
+    to all content and functionality.
+    <p>
+    Latest Code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/accessControl/src/main/java/org/zaproxy/zap/extension/accessControl/AccessControlScannerThread.java">AccessControlScannerThread.java</a>
+    <br>
+    Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10102/">10102</a>.
+
+<h2>API</h2>
+
+Das Addon bietet die folgenden API-Endpunkte:
+
+<h3>Aktionen</h3>
+	<h4>scan</h4>
+	Startet eine Zugriffskontrollprüfung mit der angegebenen Kontext-ID und Benutzer-ID (kann eine durch Kommata getrennte Liste von IDs sein). 
+	Startet eine Zugriffskontrollprüfung mit der angegebenen Kontext-ID und Benutzer-ID (kann eine durch Kommata getrennte Liste von IDs sein). <strong>Hinweis:</strong> Dies setzt voraus, dass die Zugriffskontrollregeln zuvor über die ZAP-GUI erstellt und der erforderliche Kontext exportiert/importiert wurde.
+
+	<h4>writeHTMLreport</h4>
+	Erzeugt einen Zugriffskontrollbericht für die angegebene Kontext-ID und speichert ihn unter dem angegebenen Dateinamen (Pfad).
+
+<h3>Ansichten</h3>
+	<h4>getScanProgress</h4>
+	Ermittelt den Fortschritt der Zugriffskontrollprüfung (ganzzahliger Prozentsatz) für die angegebene Kontext-ID.
+
+	<h4>getScanStatus</h4>
+	Ruft den Status der Zugriffskontrollprüfung (Beschreibungs-String) für die angegebene Kontext-ID ab.
+
+<h2>Siehe auch:</h2>
+<table>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>
+            <a href="tab.html">Access Control Testing Tab</a></td>
+        <td>für eine Beschreibung der vom Add-on verwendeten Status-Tab</td>
+    </tr>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>
+            <a href="contextOptions.html">Access Control Context options</a></td>
+        <td>um mehr über die entsprechenden Kontextoptionen zu erfahren</td>
+    </tr>
+</table>
+
+</body>
+</html>

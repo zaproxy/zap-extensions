@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Zest</title>
+</head>
+<body>
+<h1>Zest</h1>
+<p>
+Zest is an experimental specialized scripting language (also known as a domain-specific language) 
+originally developed by the Mozilla security team and is intended to be used in web oriented security tools.
+<p>
+これは、標準のZAPに含まれています。<br>
+
+<h2>Engine Name</h2>
+The engine is named <code>Mozilla Zest</code>, which should be used when manually/programmatically configuring ZAP.
+
+<h2>Zestスクリプトの作り方</h2>
+
+様々なZestスクリプトを作成する方法があります。
+
+<h3>Zestスクリプトの記録ボタン</h3>
+<ul>
+<li>メインツールバーの「新しいZestスクリプトの記録」ボタンを押します。</li>
+<li>「Zestスクリプトの追加」ダイアログでスクリプトの名前を入力します。</li>
+<li>プレフィックスを選択して特定のリクエストのみを記録するか、空白のままにし、すべてのリクエストを記録します。</li>
+<li>セーブボタンをクリックします</li>
+<li>「新しいZestスクリプトの記録」ボタンが押されたままになり、 「新しいZestスクリプトの記録中」に変わり、赤いアイコンになります。</li>
+</ul>
+新しいZestスクリプトは、スクリプトタブに赤い「記録」アイコンで表示されます。<br>
+指定されたプレフィックスにマッチするすべてのリクエストが、スクリプトに追加されます。<br>
+リクエストの記録を停止するには、もう一度「新しいZestスクリプトの記録」を押してください。<br>
+この方法では、「スタンドアロン」 Zestスクリプトしか記録できないことに注意してください。 他のタイプのZestスクリプトを作成する場合は、別のメカニズムを使用する必要があります。
+<br><br>
+任意のスタンドアロンZestスクリプトを右クリックし、「記録の開始」と「記録の停止」ボタンを使用することもできます。
+<br><br>
+There are two primary methods for script recording: server-side and client-side. For client-side recording, we leverage the ZAP browser extension and a dedicated client add-on. 
+<br>
+This combination allows us to efficiently capture and save user interactions in Zest scripts. 
+
+<h3>新しいスクリプトボタンをクリック</h3>
+<ul>
+<li>スクリプトツリータブに移動します</li>
+<li>新しいスクリプトボタンをクリックします</li>
+<li>新しいスクリプトダイアログで適切な名前を入力します</li>
+<li>スクリプトタイプを選択します(詳細はスクリプトアドオンのヘルプを参照)</li>
+<li>Zestスクリプトエンジンを選択します</li>
+<li>テンプレートを一つ選択します(該当する場合)</li>
+<li>セーブボタンをクリックします</li>
+</ul>
+どんなタイプのZestスクリプトもこの方法で作成することができます。
+
+<h3>Zestテンプレートを右クリック</h3>
+<ul>
+<li>スクリプトツリータブに移動します</li>
+<li>「テンプレート」ノードを展開し、使用するテンプレートを探します。</li>
+<li>テンプレートを右クリックし、 「新しいスクリプト・・・」を選択します。</li>
+<li>セーブボタンをクリックします</li>
+</ul>
+Any type of Zest script can be created this way.
+
+<h3>リクエストを右クリック</h3>
+<ul>
+<li>「履歴」タブなどのリクエストが表示されているタブに移動します。</li>
+<li>1つ、または複数のリクエストを選択します。</li>
+<li>選択範囲を右クリックします。</li>
+<li>「Zest スクリプトの追加」メニューを選択すると、既存のスタンドアロンスクリプトを選択したり、新しいスタンドアロンスクリプトを作成したりすることができます。</li>
+</ul>
+Note that you can only add request to 'Stand Alone' Zest scripts.
+
+<h3>Plug-n-Hack</h3>
+If you are using a recent version of Firefox then you can create Zest scripts from within your browser.<br>
+<ul>
+<li>ZAP 'クイックスタート'タブの 「Plug-n-Hack」ボタンを押します。</li>
+<li>Plug-n-Hack Firefoxアドオンをインストールし、すべてのダイアログを受け入れます。</li>
+<li>Firefoxで 'Shift F2'を押してDeveloper Toolbarにアクセスしてください。</li>
+<li>新しいZestスクリプトの記録を開始するために、 「zap record on global」と入力します。</li>
+<li>ZAPを通じて行ったリクエストがすべてスクリプトに追加されます。</li>
+<li>「zap record off global」と入力してスクリプトの記録を停止します。</li>
+</ul>
+Note that you can only record 'Stand Alone' Zest scripts in this way. If you want to create other types of Zest script you must use another mechanism.
+
+<h2>Zestスクリプトの編集</h2>
+Zest scripts are edited graphically in the Scripts tree tab.<br>
+Each statement is a node in the tree - double click nodes to edit the statement properties.<br>
+You can add, move and remove statements via right clicking the Zest nodes.<br>
+You can also add requests to 'Stand alone' Zest scripts by right clicking the requests in any of the other tabs.<br>
+There are also some right click options available when you select text in the Request or Response tabs.<br>
+<br>
+Zest includes a set of 'built in' variables as well as allowing you to declare your own.<br>
+A right click menu is provided (where relevant) in the edit dialogs to allow you to paste in any of the available variable names.<br>
+
+<h2>Authentication Scripts</h2>
+Authentication scripts can use a custom ZAP variable, called <code>TOTP</code>, to send a value to an input field with a TOTP code generated from the user's credentials TOTP data.
+
+<h2>外部リンク</h2>
+<table>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+	<td><a href="https://github.com/zaproxy/zest/">https://github.com/zaproxy/zest/</a></td>
+	<td>The Zest GitHub repository, including details of the language</td>
+</tr>
+</table>
+
+</body>
+</html>

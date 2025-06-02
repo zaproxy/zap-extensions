@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+Automation Framework - spider Job
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Automation Framework - spider Job</H1>
+
+This job runs the traditional spider. This is fast but does not handle modern applications as effectively.
+<p>
+By default this job will spider the first context defined in the <a href="environment.html">environment</a> and so none of the parameters are mandatory.
+<p>
+This job supports <a href="test-monitor.html">monitor</a> tests.
+
+<H2>YAML</H2>
+
+<pre>
+  - type: spider                       # The traditional spider - fast but doesnt handle modern apps so well
+    parameters:
+      context:                         # String: Name of the context to spider, default: first context
+      user:                            # String: An optional user to use for authentication, must be defined in the env
+      url:                             # String: Url to start spidering from, default: first context URL
+      maxDuration:                     # Int: The max time in minutes the spider will be allowed to run for, default: 0 unlimited
+      maxDepth:                        # Int: The maximum tree depth to explore, default 5
+      maxChildren:                     # Int: The maximum number of children to add to each node in the tree
+      acceptCookies:                   # Bool: Whether the spider will accept cookies, default: true
+      handleODataParametersVisited:    # Bool: Whether the spider will handle OData responses, default: false
+      handleParameters:                # Enum [ignore_completely, ignore_value, use_all]: How query string parameters are used when checking if a URI has already been visited, default: use_all
+      maxParseSizeBytes:               # Int: The max size of a response that will be parsed, default: 2621440 - 2.5 Mb
+      parseComments:                   # Bool: Whether the spider will parse HTML comments in order to find URLs, default: true
+      parseGit:                        # Bool: Whether the spider will parse Git metadata in order to find URLs, default: false
+      parseRobotsTxt:                  # Bool: Whether the spider will parse 'robots.txt' files in order to find URLs, default: true
+      parseSitemapXml:                 # Bool: Whether the spider will parse 'sitemap.xml' files in order to find URLs, default: true
+      parseSVNEntries:                 # Bool: Whether the spider will parse SVN metadata in order to find URLs, default: false
+      postForm:                        # Bool: Whether the spider will submit POST forms, default: true
+      processForm:                     # Bool: Whether the spider will process forms, default: true
+      requestWaitTime:                 # Int: The time between the requests sent to a server in milliseconds, default: 200
+      sendRefererHeader:               # Bool: Whether the spider will send the referer header, default: true
+      threadCount:                     # Int: The number of spider threads, default: 2
+      userAgent:                       # String: The user agent to use in requests, default: '' - use the default ZAP one 
+    tests:
+      - name: 'At least 100 URLs found'                 # String: Name of the test, default: statistic + operator + value
+        type: 'stats'                                   # String: Type of test, only 'stats' is supported for now
+        statistic: 'automation.spider.urls.added'       # String: Name of an integer / long statistic, currently supported: 'automation.spider.urls.added'
+        operator: '>='                                  # String ['==', '!=', '>=', '>', '<', '<=']: Operator used for testing
+        value: 100                                      # Int: Change this to the number of URLs you expect to find
+        onFail: 'info'                                  # String: One of 'warn', 'error', 'info', mandatory
+</pre>
+
+</BODY>
+</HTML>
+

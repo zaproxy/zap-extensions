@@ -1,0 +1,13 @@
+<html>
+<script>var='@@@name1@@@'</script>
+
+<body>
+  <h1>XSS test case with script tag and input value</h1>
+  <form method="POST" action="/script-and-input-value">
+    <input name="input" type="text" id="input" value="@@@name2@@@">
+    <button type="submit">POST</button>
+  </form>
+  <div>You submitted: 0W45pz4p</div>
+</body>
+
+</html>

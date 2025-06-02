@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Options Applications screen</title>
+</head>
+<body>
+	<h1>Options Applications screen</h1>
+	<p>
+		この画面が設定できるのは <a href="concepts.html">applications</a> that
+		can be invoked.<br> By default there are no applications available, you need to add
+		all of the applications that you want to use.
+	<h3>表示する名前</h3>
+	The name that will be used for this application in ZAP.
+	<br>
+
+	<h3>実行するコマンド</h3>
+	The full path of the application you want to invoke.
+	<br> Only one command can be specified. If you want to run multiple commands in one
+	go, or set up environmental variables, then you should create a script or batch file and
+	then invoke this from ZAP.
+
+	<h3>パラメータ</h3>
+	The parameters that ZAP should pass to the command.
+	<br> The following tags may be used to pass parameters:
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%url%</td>
+			<td>the full url, e.g. 'http://localhost/test?a=b'</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%site%</td>
+			<td>the site, e.g. 'http://localhost:8080/'</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%host%</td>
+			<td>the hostname, e.g. 'localhost'</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%port%</td>
+			<td>the port, e.g. '80'</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%cookie%</td>
+			<td>the first cookie field from the request header (if any)</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%postdata%</td>
+			<td>the POST data sent, if any, with any newlines replaced with "\n"</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%msgid%</td>
+			<td>the HTTP message id to fetch data from the API (/JSON/core/view/message/?id=$msgid), 
+				does not alway exist, will return -1 if no message id
+			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%header-{{ header }}%</td>
+			<td>the request header by name (if any), e.g. <code>%header-user-agent%</code> would return the value of the User-Agent header</td>
+		</tr>
+	</table>
+	So if a command accepted a URL using '-u' you would specify the parameters as: '-u %url%'
+
+	<h3>出力結果のキャプチャ</h3>
+	If checked then the command run and any output it generates will be displayed on the
+	<i>アウトプットタブ</i>.
+	<br> You should always use this option when running scripts or commands that do not
+	have a UI.
+	<br> You can also use this option for troubleshooting - if an application does not
+	run as expected then copy the command run and try it from a command line prompt.
+
+	<h3>Output to Note</h3>
+	If checked then any output will be appended to a
+	<i>Note</i> attached to the relevant
+	<i>履歴タブ</i> record.
+	<br> Note that some nodes in the
+	<i>サイトタブ</i> do not have associated
+	<i>履歴タブ</i> records - for those nodes this option will have no effect.
+
+</body>
+</html>

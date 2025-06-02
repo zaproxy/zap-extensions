@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Mga Processor ng Mensahe ng HTTP
+</title>
+</head>
+<body>
+<h1>Mga Processor ng Mensahe ng HTTP</h1>
+HTTP Message Processors can access and change the HTTP messages being fuzzed, control the fuzzing process, and interact with the ZAP UI.
+<p>
+Ang mga built-in na mga processor ng mensahe ng HTTP ay kinabibilangan ng:
+
+<h3>Anti-CSRF Token Refresher</h3>
+Nagpapahintulot upang i-refresh ang mga token ng anti-CSRF na nakapaloob sa kahilingan. Ang mga token ng anti-CSRF ay dapat maayos na natukoy ng ZAP para magawang magamit ang processor na ito.<br>
+Para sa karagdagang impormasyon, konsultahin ang pahina ng tulong na "Pagsisimula" > "Mga Tampok" > "Anti CSRF Tokens".<br>
+<strong>Paalala:</strong> Ang processor na ito ay awtomatikong idinagdag sa listahan ng mga processor, kapag ang mga token ng anti-CSRF ay natukoy.
+
+<h3>Fuzzer HTTP Processor (Script)</h3>
+Nagpapahintulot na pumili ng gumaganang script ng Fuzzer HTTP Processor. Ang script na ito ay nagpapahintulot sa iyo na:
+<ul>
+<li>Kumuha ng listahan ng mga kargamento</li>
+<li>Ihinto ang pagpa-fuzz</li>
+<li>Lakihan ang bilang ng kamalian</li>
+<li>Magpadala ng mga bagong mensahe</li>
+<li>Magdagdag ng mga mensahe sa tab ng mga Resulta</li>
+<li>Itakda ang pasadyang mensahe ng 'estado' sa <a href="tab.html">tab ng Fuzzer</a></li>
+<li>Magtaas ng mga alerto</li>
+</ul>
+
+Scripts can include both Required and Optional parameters the values for which the user will be prompted to provide when the Processor is added to the fuzzer.
+The parameter names are defined within the script(s) via the methods <code>getRequiredParamsNames</code> and <code>getOptionalParamsNames</code>, each of which
+simply return an array of strings representing the parameters names.
+
+<h3>Detektor ng Panganganinag ng Kargamento</h3>
+Indicates in the State column of results table if one of the injected payloads were found in the response, using "<img src="images/reflected_icon.png"> Reflected".<br>
+<strong>Paalala:</strong> This processor is automatically added to the list of processors.
+
+<h3>Taga-update ng haba ng nilalaman ng kahilingan</h3>
+Updates (or adds, if not already present) the <code>Content-Length</code> request header with the length of the request body,
+for all request methods. No change is done if the size of the request body is zero and the header is not already present.<br>
+<strong>Paalala:</strong> This processor is automatically added to the list of processors.
+
+<h3>Tagapaglikha ng Tag</h3>
+Allows to add custom ‘tags’, based on contents of the response, to the State column of the results table.
+
+<h3>Processor ng Mensahe ng Gumagamit</h3>
+Allows to fuzz as a user, using one of the users defined in the Contexts that include the HTTP message being fuzzed. Users must
+exist to be able to select and add this processor.
+
+<p>
+Ang ibang mga add-on ay maaaring magtukoy ng karagdagang processor ng mga mensahe ng HTTP.
+
+<h2>Na-access sa pamamagitan ng</h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="dialogue.html">Diyalogo ng Fuzzer</a> sa ilalim ng tab ng Processor ng Mensahe</td></tr>
+</table>
+
+<h2>Tingnan din</h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Mga konsepto ng Fuzzer</a></td></tr>
+</table>
+
+</body>
+</html>

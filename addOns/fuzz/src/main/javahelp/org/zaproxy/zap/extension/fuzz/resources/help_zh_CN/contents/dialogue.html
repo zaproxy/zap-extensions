@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Fuzzer对话框
+</title>
+</head>
+<body>
+<h1>Fuzzer对话框</h1>
+这允许您选择要使用的fuzzers <a href="concepts.html">模糊化 </a> 一个请求。 
+
+<h3>模糊位置选项卡</h3>
+配置模糊:<br/>
+<ul>
+<li>在模糊位置选项卡中突出显示您想要模糊的字符串</li>
+<li>单击"添加..."按钮以启动<a href="payloads.html">有效负载对话框</a></li>
+<li>添加您想使用的有效负载</li>
+<li>单击"处理器..."按钮以启动<a href="locations.html">位置处理器对话框</a>(如果需要)</li>
+<li>点击"启动Fuzzer"按钮开始模糊</li>
+<li>结果将在<a href="tab.html">Fuzzer选项卡</a>中列出，选择它们以查看完整的请求和响应。</li>
+</ul>
+You can also search for strings in the fuzz results using the 'Search' tab.
+<p>
+Click on the 'Edit' button to edit the message you have selected for fuzzing.
+Note that this will remove all of the fuzz locations that you have defined.
+<p>
+You will need to 'Save' the message before you can define new fuzz locations.
+
+<h3>Options tab</h3>
+This tab allows you to configure the options to be used when fuzzing. See the main <a href="options.html">options help</a> for more details.
+
+<h4>Follow Redirects</h4>
+Indicates whether or not the Fuzzer should follow redirect responses (only visible for HTTP messages).
+
+<h3>Message Processors tab</h3>
+Message Processors can access and change the messages being fuzzed, control the fuzzing process, and interact with the ZAP UI.<br>
+The message processors available depend on the type of message being fuzzed, this add-on includes the <a href="httpmessageprocessors.html">default HTTP Messages processors</a>.
+<p>
+Add-ons can also define additional payload generators.
+
+<h2>Accessed via</h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Request tab</td><td>'Fuzz...' right click menu item</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Sites and History tab</td><td>Attack > Fuzz... menu items</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Tools menu </td><td>Attack > Fuzz... menu item</td></tr>
+</table>
+
+<h2>See also</h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Fuzzer concepts</a></td></tr>
+</table>
+
+</body>
+</html>

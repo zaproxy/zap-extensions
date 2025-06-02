@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Tela de opções de aplicações</title>
+</head>
+<body>
+	<h1>Tela de opções de aplicações</h1>
+	<p>
+		Esta tela permite que você configure <a href="concepts.html">aplicações</a> that
+		can be invoked.<br> By default there are no applications available, you need to add
+		all of the applications that you want to use.
+	<h3>Nome para exibição</h3>
+	O nome que será usado para esta aplicação no ZAP.
+	<br>
+
+	<h3>Comando completo</h3>
+	O caminho completo do aplicativo que você deseja chamar.
+	<br> Only one command can be specified. If you want to run multiple commands in one
+	go, or set up environmental variables, then you should create a script or batch file and
+	then invoke this from ZAP.
+
+	<h3>Parâmetros</h3>
+	Os parâmetros que ZAP deve passar para o comando.
+	<br> As seguintes tags podem ser usadas para passar parâmetros:
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%url%</td>
+			<td>a url completa - por exemplo, 'http://localhost/test?a=b'</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%site%</td>
+			<td>o site - por exemplo, ' http://localhost:8080/ /'</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%host%</td>
+			<td>o nome do host - por exemplo, 'localhost'</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%port%</td>
+			<td>a porta - por exemplo, '80'</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%cookie%</td>
+			<td>o primeiro campo de cookie do cabeçalho da solicitação (se houver)</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%postdata%</td>
+			<td>os dados de postagem enviados, caso existam, com newlines substituídas por "\n"</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%msgid%</td>
+			<td>the HTTP message id to fetch data from the API (/JSON/core/view/message/?id=$msgid), 
+				does not alway exist, will return -1 if no message id
+			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%header-{{ header }}%</td>
+			<td>the request header by name (if any), e.g. <code>%header-user-agent%</code> would return the value of the User-Agent header</td>
+		</tr>
+	</table>
+	Então, se um comando aceita uma URL, usando '-u' você pode especificar parâmetros como: '-u %url%'
+
+	<h3>Capturar as Saídas</h3>
+	Se marcada, o comando é executado e qualquer saída gerada é exibida na
+	<i>Aba da saída</i>.
+	<br> You should always use this option when running scripts or commands that do not
+	have a UI.
+	<br> You can also use this option for troubleshooting - if an application does not
+	run as expected then copy the command run and try it from a command line prompt.
+
+	<h3>Saída para Anotação</h3>
+	Se marcada, em seguida, qualquer saída será anexada a uma
+	<i>Nota</i> anexada ao registro da
+	<i>Aba de histórico</i> .
+	<br> Note que alguns nós na
+	<i>Aba de Sites</i> não têm uma
+	<i>Aba de histórico</i> com registros associados - para esses nós esta opção não tem efeito, não funciona.
+
+</body>
+</html>

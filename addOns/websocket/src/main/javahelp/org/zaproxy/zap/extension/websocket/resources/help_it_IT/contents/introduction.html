@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+WebSockets
+</title>
+</head>
+<body>
+<h1>WebSockets</h1>
+<p>
+WebSockets can be used by web applications or web sites to setup a
+bi-directional (two-way), full duplex communication channel over a
+single TCP connection.<br>
+It features a lightweight protocol, allowing developers to realize
+realtime use cases. WebSockets do also provide an alternative to 
+heavy use of Ajax, HTTP Long Polling or Comet.<br>
+</p>
+<p>
+After an initial HTTP based handshake, the TCP connection is kept open,
+allowing applications to send &amp; receive arbitrary data. Often port
+80 or 443 for encrypted WebSocket channels are used.
+</p>
+<p>
+The WebSocket standard is defined in
+<dl>
+	<dt><a href="http://www.w3.org/TR/websockets/">The WebSocket API (http://www.w3.org/TR/websockets/)</a></dt>
+	<dd>specifies the interface in browsers</dd>
+	<dt><a href="https://tools.ietf.org/html/rfc6455">The WebSocket Protocol (RFC6455) (https://tools.ietf.org/html/rfc6455)</a></dt>
+	<dd>describes the structure of WebSocket frames upon TCP</dd>
+</dl>
+<p>
+ZAP is able to:
+<ul>
+	<li>intercept and show WebSocket messages</li>
+	<li>set breakpoints on specific types of WebSocket messages</li>
+	<li>fuzz WebSocket messages (send lots of invalid or unexpected data to a browser or server)</li>
+  <li>passively scan WebSocket messages and raise alerts with scripts</li>
+</ul>
+
+WebSocket messages are displayed within the <a href="tab.html">WebSockets tab</a>.<br><br>
+
+The WebSocket add-on adds new <a href="script.html">scripts</a> and additional endpoints to the ZAP <a href="api.html">API</a>
+
+</body>
+</html>

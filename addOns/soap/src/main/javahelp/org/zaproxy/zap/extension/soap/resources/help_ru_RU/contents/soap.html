@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Поддержка SOAP 
+</title>
+</head>
+<body>
+<h1>Поддержка SOAP </h1>
+Это дополнение импортирует и сканирует файлы WSDL, содержащие конечные точки SOAP. 
+<br><br>
+Он также поддерживает  <a href="automation.html">Платформа автоматизации </a>.
+
+<h2>Импортирование</h2>
+Надстройка автоматически обнаружит любые определения SOAP и просканирует их, пока они находятся в области действия. 
+<br><br>
+A menu item is added to the Import menu:
+<ul>
+<li>Import a WSDL File</li>
+</ul>
+Operations to import a WSDL file from the local filesystem or from a URL are also available via the API.
+<br><br>
+<b>ПРИМЕЧАНИЯ</b> Начиная с версии 6 этого дополнения поддерживаются только закодированные URL-адреса. 
+
+<h3>Поддержка надстройки обработчика форм </h3>
+Надстройка SOAP поддерживает переопределение значений параметров по умолчанию на основе имен полей через надстройку обработчика форм.
+Например, 
+<br>
+<img src="images/formHandlerExample.png" alt="Пример обработчика формы " width="300">
+
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/tree/main/addOns/soap">SOAP Support</a>
+
+<h2>Статистика </h2>
+Это дополнение поддерживает следующую статистику: 
+<ul>
+    <li>soap.urls.added: общее количество URL-адресов (или действий SOAP), добавленных из импортированных файлов WSDL. </li>
+</ul>
+
+<h2>See also</h2>
+<table>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;
+        <td><a href="alerts.html">Alert & Rule Details</a>
+        <td>for details of the Alerts and rules for the SOAP support add-on.
+    </tr>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;
+        <td><a href="automation.html">SOAP Automation</a>
+        <td>for information about the automation framework support.
+    </tr>
+</table>
+
+</body>
+</html>

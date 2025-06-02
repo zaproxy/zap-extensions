@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+    <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+    <title>
+        OAST Tab
+    </title>
+</head>
+<body>
+<h1>OAST Tab</h1>
+
+<p>This tab shows a summary of the out-of-band messages discovered by ZAP.</p>
+
+<h2>Messages</h2>
+
+For each message, you can see:
+
+<table>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>An Id</td>
+    </tr>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>The Timestamp of the received request.</td>
+    </tr>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>The Method associated with the request (GET, POST, etc.)</td>
+    </tr>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>The URL</td>
+    </tr>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>The Handler - The component which caught or responded to the callback request.</td>
+    </tr>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>The Source - The address of the original request sender.</td>
+    </tr>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>The Referer - The value of the HTTP <em>Referer</em> header (if one was included in the request).</td>
+    </tr>
+</table>
+
+<h2>Buttons</h2>
+<table>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>Clear Messages</td>
+        <td>Clears all messages in the table.</td>
+    </tr>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>Poll Now</td>
+        <td>Polls all registered services and resets the time to next polling. This means that if the polling
+            frequency is set to 120 seconds, and you click on the button with 30 seconds remaining, the next automatic
+            polling will occur after 120 seconds.
+        </td>
+    </tr>
+</table>
+
+<h2>See also</h2>
+<table>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>
+            <a href="oast.html">OAST Support</a></td>
+        <td>&nbsp;</td>
+    </tr>
+</table>
+
+</body>
+</html>

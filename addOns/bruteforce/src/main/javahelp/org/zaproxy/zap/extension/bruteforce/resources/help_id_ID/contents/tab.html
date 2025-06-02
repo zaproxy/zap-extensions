@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Tab Paksa Jelajah</title>
+</head>
+<body>
+	<h1>Forced Browse tab</h1>
+
+	Paksa tab Browsing yang memungkinkan anda untuk melakukan
+	<a href="concepts.html">Penjalajahan paksa</a> pindai pada setiap situs yang telah
+diakses.
+	<br>
+	<br> Situs yang dapat dipilih melalui toolbar atau
+	<i>Situs tab</i>.
+	<br> Any sites that have have been or are currently being scanned are marked in
+	bold in the toolbar Sites pulldown control.
+	<br> Toolbar menyediakan sebuah set tombol-tombol yang memungkinkan anda untuk start, stop, pause dan resume scan.
+	<br> Sebuah progress bar menunjukkan seberapa jauh scan dari situs yang dipilih telah berkembang.
+	<br> 'Nilai memindai' saat ini menunjukkan berapa banyak pemindaian yang aktif saat ini - melayang di atas nilai ini akan menampilkan daftar situs yang di pindai dalam popup.
+	<br> The toolbar also includes a button to export the displayed content as CSV.
+
+	<h2>Klik kanan menu</h2>
+	Right clicking on one or more rows will bring up a menu which will allow you to:
+
+	<h3>Keluarkan dari</h3>
+	This menu has the following submenus:
+
+	<h4>Proksi</h4>
+	This will exclude the selected nodes from the proxy. They will still be proxied via ZAP
+	but will not be shown in any of the tabs.
+	<br /> This can be used to ignore URLs that you know are not relevant to the system you
+	are currently testing.
+	<br /> The nodes can be included again via the
+	<i>Properti Sesi</i> dialog
+
+	<h4>Pemindai</h4>
+	This will prevent the selected notes from being actively scanned.
+	<br /> The nodes can be included again via the
+	<i>Properti Sesi</i> dialog
+
+	<h4>Laba-laba</h4>
+	This will prevent the selected nodes from being spidered.
+	<br /> The nodes can be included again via the
+	<i>Properti Sesi</i> dialog
+
+	<h3>Salin</h3>
+	This will copy the selected URLs to the clipboard.
+
+	<h3>Kirim ulang...</h3>
+	This will bring up the
+	<i>Kirim ulang dialog</i> which allows you to resend the request after making any changes to
+	it that you want to.
+
+	<h3>Peringatan Baru...</h3>
+	This will bring up the
+	<i>Tambah dialog Peringatan</i> which allows you to manually record a new
+	<i>waspada</i> against this request.
+
+	<h3>Tampilan dalam Browser</h3>
+	This will open the URL of the selected node in your default browser.
+
+	<h3>Hasilkan formulir tes anti CSRF</h3>
+	This will open a URL which will give you a generated form for testing for CSRF issues.
+	<br> It will only be enabled for POST requests, if the API is enabled and if Java
+	supports the opening of URLs in a browser on your platform.
+
+	<h2>Lihat juga</h2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="options.html">Pilihan Terpaksa Menjelajahi layar</a></td>
+			<td>untuk rincian dipaksa browse konfigurasi</td>
+		</tr>
+	</table>
+
+</body>
+</html>

@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<OWASPZAPReport programName="ZAP" version="Dev Build" generated="Mon, 11 Mar 2024 17:44:48">
+	
+		<site name="http://example.com" host="example.com" port="80" ssl="false">
+			<alerts>
+				
+					<alertitem>
+						<pluginid>1</pluginid>
+						<alertRef>1</alertRef>
+						<alert>XSS</alert>
+						<name>XSS</name>
+						<riskcode>3</riskcode>
+						<confidence>2</confidence>
+						<riskdesc>!reports.report.risk.3! (!reports.report.confidence.2!)</riskdesc>
+						<confidencedesc>!reports.report.confidence.2!</confidencedesc>
+						<desc>&lt;p&gt;XSS Description&lt;/p&gt;</desc>
+						<instances>
+							
+								<instance>
+									<uri>http://example.com/example_3</uri>
+									<method>GET</method>
+									<param>Test Param</param>
+									<attack>Test &quot;Attack\&quot;</attack>
+									<evidence>Test &lt;p&gt;Evidence</evidence>
+									<otherinfo>Test &apos;Other\</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://example.com/example_3</uri>
+									<method>GET</method>
+									<param>Test Param</param>
+									<attack>Test &quot;Attack\&quot;</attack>
+									<evidence>Test &lt;p&gt;Evidence</evidence>
+									<otherinfo>Test Another &apos;Other\</otherinfo>
+								</instance>
+							
+						</instances>
+						<count>2</count>
+						<solution>&lt;p&gt;Test Solution&lt;/p&gt;</solution>
+						<otherinfo>&lt;p&gt;Test &apos;Other\&lt;/p&gt;</otherinfo>
+						<reference>&lt;p&gt;Test Reference&lt;/p&gt;</reference>
+						<cweid>123</cweid>
+						<wascid>456</wascid>
+						<sourceid>0</sourceid>
+					</alertitem>
+				
+			</alerts>
+		</site>
+	
+</OWASPZAPReport>

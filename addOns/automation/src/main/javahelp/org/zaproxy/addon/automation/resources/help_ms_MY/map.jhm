@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE map
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Map Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/map_1_0.dtd">
+
+<map version="1.0">
+	<mapID target="automation-icon" url="contents/images/robot.png" />
+    <mapID target="automation" url="contents/automation.html" />
+    <mapID target="automation.gui" url="contents/gui.html" />
+    <mapID target="automation.options" url="contents/options.html" />
+    <mapID target="automation.env" url="contents/environment.html" />
+    <mapID target="automation.auth" url="contents/authentication.html" />
+    <mapID target="automation.addons" url="contents/job-addons.html" />
+    <mapID target="automation.ascan" url="contents/job-ascan.html" />
+    <mapID target="automation.ascanconfig" url="contents/job-ascanconfig.html" />
+    <mapID target="automation.ascanpolicy" url="contents/job-ascanpolicy.html" />
+    <mapID target="automation.delay" url="contents/job-delay.html" />
+    <mapID target="automation.exitstatus" url="contents/job-exitstatus.html" />
+    <mapID target="automation.requestor" url="contents/job-requestor.html" />
+    <mapID target="automation.about" url="contents/about.html" />
+    <mapID target="automation.tests" url="contents/tests.html" />
+    <mapID target="automation.tests.alert" url="contents/test-alert.html" />
+    <mapID target="automation.tests.monitor" url="contents/test-monitor.html" />
+    <mapID target="automation.tests.stats" url="contents/test-stats.html" />
+    <mapID target="automation.tests.url" url="contents/test-url.html" />
+</map>

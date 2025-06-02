@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE map
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Map Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/map_1_0.dtd">
+
+<map version="1.0">
+    <mapID target="addon.requester" url="contents/requester.html" />
+    <mapID target="addon.requester.dialogs" url="contents/dialogs.html" />
+    <mapID target="addon.requester.icon" url="contents/images/icon.png" />
+    <mapID target="addon.requester.icon.dialog" url="contents/images/hand.png" />
+    <mapID target="addon.requester.options" url="contents/options/options.html" />
+    <mapID target="addon.requester.tab" url="contents/tab.html" />
+</map>

@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Диалог фаззера
+</title>
+</head>
+<body>
+<h1>Диалог фаззера</h1>
+Это позволяет вам выбрать фаззеры для использования, когда  <a href="concepts.html">фаззинг </a> запрос. 
+
+<h3>Местоположение FUZZ
+вкладка </h3>
+Чтобы настроить фаззинг: <br/>
+<ul>
+<li>Выделите строку, которую вы хотите FUZZ
+в Tab Puzz Locations </li>
+<li>Нажмите кнопку «Добавить ...», чтобы запустить диалог полезных нагрузок <a href="payloads.html"> </> </li>
+<li>Добавьте полезные нагрузки, которые вы хотите использовать </li>
+<li>Нажмите кнопку «Процессоры ...», чтобы запустить диалоговое окно процессоров <a href="locations.html"> location </> (если требуется) </li>
+<li>Нажмите на кнопку «Пуск», чтобы начать попадание </li>
+<li>Результаты будут затем перечислены в<a href="tab.html">Фаззер вкладка</a> выберите их, чтобы увидеть полные запросы и ответы. </li>
+</ul>
+You can also search for strings in the fuzz results using the 'Search' tab.
+<p>
+Нажмите на кнопку «Редактировать», чтобы редактировать сообщение, которое вы выбрали для незма.
+Обратите внимание, что это удалит все определенные вами местоположения FUZZ. 
+<p>
+Вам нужно будет «сохранить» сообщение, прежде чем вы сможете определить новые местоположения FUZZ. 
+
+<h3> Вкладка Опции </>
+Эта вкладка позволяет настроить параметры, которые будут использоваться при фаззинге.  См. Основные <a href="options.html"> Параметры помощи </> для более подробной информации. 
+
+<h4>Следуйте перенаправленным </h4>
+Указывает, следует ли нет Фаззеру следовать перенаправленным ответами (видимым только для HTTP-сообщений). 
+
+<h3>Message Processors tab</h3>
+Message Processors can access and change the messages being fuzzed, control the fuzzing process, and interact with the ZAP UI.<br>
+The message processors available depend on the type of message being fuzzed, this add-on includes the <a href="httpmessageprocessors.html">default HTTP Messages processors</a>.
+<p>
+Add-ons также может определить дополнительные генераторы полезных нагрузок. 
+
+<h2>Доступ через </h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Вкладка запроса </td><td>«FUZZ ...» щелкните правой кнопкой мыши Пункт меню </td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Сайты и вкладка истории </td><td>Атака> Фазз ... пункты меню </td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Меню инструментов </td><td>Атака> Фазз ... пункты меню </td></tr>
+</table>
+
+<h2>Смотрите также</h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Концепции Фаззер</a></td></tr>
+</table>
+
+</body>
+</html>

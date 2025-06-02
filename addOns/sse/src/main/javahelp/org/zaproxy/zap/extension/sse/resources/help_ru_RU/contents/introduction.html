@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+События, отправленные сервером
+</title>
+</head>
+<body>
+<h1>События, отправленные сервером</h1>
+<p>
+	События, отправленные сервером, могут использоваться веб-приложениями или веб-сайтами для настройки
+однонаправленный (односторонний) канал связи по одному TCP-соединению. 
+	<br><br>
+Вы можете использовать его для push-уведомлений с сервера на клиент браузера. 
+	События, отправленные сервером, иногда представляют собой альтернативу
+использования Ajax, HTTP Long Polling или Comet. 
+	<br><br>
+В браузере вы можете использовать события, отправленные сервером, через <i>EventSource API</i>. 
+	Этот API принадлежит HTML5 и стандартизирован W3C:
+<a href="http://www.w3.org/TR/eventsource/">http://www.w3.org/TR/eventsource/</a> 
+</p>
+<br>
+<p>
+ZAP может: 
+<ul>
+	<li>перехватывать и показывать события, отправленные сервером </li>
+	<!-- <li>set breakpoints on specific types of WebSocket messages</li>
+	<li>fuzz WebSocket messages (send lots of invalid or unexpected data to a browser or server)</li>
+	 -->
+</ul>
+
+События, отправленные сервером, отображаются в  <a href="tab.html">Вкладка «Отправленные сервером события» </a>.
+</p>
+
+</body>
+</html>

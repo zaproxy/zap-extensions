@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>ZAP Test Server</title>
+	<link href="/tutorial.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<h1>Simple Home Page</H1>
+<div class="roundContainer">
+	<div id="message"></div>
+</div>
+
+<script>
+function getuser() {
+	var xhr = new XMLHttpRequest();
+	var url = "user";
+	xhr.open("GET", url, true);
+	xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("accesstoken"));
+	xhr.onreadystatechange = function () {
+	    if (xhr.readyState === 4 && xhr.status === 200) {
+	        var json = JSON.parse(xhr.responseText);
+	        
+	        if (json.result === "OK") {
+	        	const h2 = document.createElement("h2");
+	        	const textNode = document.createTextNode("Hello " + json.user);
+	        	h2.appendChild(textNode);
+	        	document.getElementById("message").appendChild(h2);
+	        } else {
+	        	window.location.replace("index.html");
+	        }
+	    }
+	};
+	xhr.send(null);
+}
+window.addEventListener("load", (event) => {
+	  getuser();
+	});
+
+</script>
+
+</body>
+</html>

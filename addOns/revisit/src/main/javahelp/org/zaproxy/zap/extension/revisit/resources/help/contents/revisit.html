@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+Revisit
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Revisit</H1>
+<p>
+Have you ever wanted to be able to browse an application you tested with ZAP at a specific time, 
+perhaps when you dont have access to it, or after its been changed in some way?<br>
+If so then this add-on is for you!
+</p>
+<p>
+The add-on allows you to instruct ZAP to return content from the ZAP history between specified
+dates rather than forwarding the requests to the site.<br>
+This allows you to apparently browse and use a website that you no longer have access to.<br>
+It also allows you to see what it looked like at between specific times, which is useful if 
+the application has since changed.<br>
+<br>
+When returning pages from the ZAP history floating footers are injected into HTML pages to
+give a visual clue that these pages are generated from ZAP.<br>
+ZAP will return pages that were the result of both GET and POST requests as long as it finds ones that match.<br>
+Pages only match if all URL and POST parameters are the same, ignoring the order and any known CSRF tokens.<br>
+If no matching page can be found in the history then a custom 404 page is returned which will
+include links to the same page if it has been invoked with different parameters or outside of the time period specified.<br>
+<br>
+This add-on adds right click menus to the Sites tree:
+</p>
+<H3>Enable Revisit</H3>
+When selected a popup will be shown which asks for the start and end times to be used.<br>
+The start time defaults to the time of the first request in the session.<br>
+The end time defaults to the time of the last request in the session.<br>
+If any of the time elements (for example 'day of the month') have not changed then those elements will be disabled.<br>
+If the dialog OK button is pressed then the revisit functionality will be enabled for the selected site,
+and a 'calendar' icon added to the site node in the History tree.
+
+<H3>Disable Revisit</H3>
+When selected then the revisit functionality will be disabled for the selected site.
+
+<H2>API</H2>
+The add on supports the following API endpoints:<br><br>
+revisit / view / revisitList Returns the list of sites enabled for revisit<br>
+revisit / action / revisitSiteOn Turns revisit on for the specified site. Dates must use the format: "yyyy/MM/dd HH:mm:ss"<br> 
+revisit / action / revisitSiteOff  Turns revisit off for the specified site
+
+</BODY>
+</HTML>

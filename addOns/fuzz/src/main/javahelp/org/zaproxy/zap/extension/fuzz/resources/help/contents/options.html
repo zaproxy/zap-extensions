@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>
+Options Fuzz screen
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Options Fuzzer screen</H1>
+<p>
+This screen allows you to configure the <a href="concepts.html">fuzzing</a> options:
+
+<H3>Default Category</H3>
+The category that will initially be selected when the <a href="dialogue.html">Fuzz dialog</a> is displayed.
+
+<H3>Add Custom Fuzz File</H3>
+Allows you to add your own files to be used when fuzzing.<br>
+These should be text files with one payload per line.<br>
+Files are added to the 'fuzzers' directory underneath the ZAP home directory.
+
+<H3>Finished Fuzzers in UI</H3>
+It defines the numbers of fuzzers (that have completed their execution)
+visible in the fuzzer tab.
+
+<H3>Retries on IO Error</H3>
+The number of retries when an input/output error occurs sending a request to the target.
+
+<H3>Max. Errors Allowed</H3>
+If the number of errors exceed this limit, the fuzzer will stop its execution.
+
+<H3>Payload Replacement Strategy</H3>
+Rules defined to control the order that multiple payload lists are iterated.
+
+<H3>Concurrent Scanning Threads per Scan</H3>
+The number of threads the fuzzer will use per scan.<br>
+Increasing the number of threads will speed up the scan but may put extra strain on the computer ZAP is running on as well as the target.
+
+<H3>Delay when Fuzzing (in milliseconds)</H3>
+The number of milliseconds between requests by the fuzzer to the target host, usually done to
+avoid getting blocked by the target or if the target implements some sort of throttling requirement.
+
+<H2>See also</H2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Fuzzer concepts</a></td></tr>
+</table>
+
+</BODY>
+</HTML>

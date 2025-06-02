@@ -1,0 +1,13 @@
+type Query {
+  thread: Thread
+}
+
+type Thread {
+  id: ID
+  message: Message
+}
+
+type Message {
+  text: String
+  thread: Thread
+}

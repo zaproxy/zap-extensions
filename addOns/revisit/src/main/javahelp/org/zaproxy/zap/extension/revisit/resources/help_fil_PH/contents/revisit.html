@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<title>
+Revisit
+</title>
+</head>
+<body>
+<h1>Bisitahing Muli</h1>
+<p>
+Ginusto mo ba na magawang mag-browse sa isang aplikasyon na iyong nasubukan kasama ng ZAP sa isang partikular na oras, marahil kung wala kang access dito, o pagkatapos ito ay naging bago sa ilang paraan?<br> kung sa gayon itong add-on ay para sayo!
+</p>
+<p>
+Ang add-on ay pumapayag na turuan ang ZAP upang ibalik ang nilalaman mula sa kasaysan ng ZAP sa pagitan ng tinukoy na petsa kaysa magpadala ng mga kahilingan sa site.<br> Pinapayagan ka nito na makapag-browse ka at gumamit ng isang website na hindi mo na mai-access.<br>Pinapayagan ka rin nito na makita kung ano ang istura nito sa pagitan ng partikular na mga oras, kung saan nakakatulong ito kung ang aplikasyon ay nabago na.<br> <br> Kung ibabalik na amg mga pahina mula sa kasaysayan ng floating footer ay iniksyon sa mga pahina ng HTML upang bigyan ang isang palatandaan na nakikita sa mga pahina na nabuo mula sa ZAP.<br> Ang ZAP ay muling babalik sa mga pahina ng resulta sa parehong GET and POST na mga kahilingan hangga't makakita ng isang kapareha.<br> Ang mga pahina ay maipapareha lamang kung ang lahat ng URL at POST ng mga parametro ay magkakapareho, huwag pansinin ang ano man ayos at pagkilala ng mga CSRF token,<br> kung walang makikitang magkapareho sa kasaysayan pagkatapos ang isang pasadyang pahina ng 404 ay bumabalik kung saan ay ang mga link ay isinasama sa magkaparehong pahina kung ito ay nanawagan sa magkaibang mga parametro sa labas ng tinutukoy na haba ng panahon.<br><br> Ang add-on na ito idinadagdag sa right click ng mga pagpipilian sa mga puno ng sayt:
+</p>
+<h3>Paganahin ang Revisit</h3>
+Ang piniling popup ay makikita kapag hinihingi ang simula at katapusan ng pag gamit.<br>
+Ang mga kakulangan ng oras sa pag uumpisa sa oras unang kahilingan na nasa sesyon.<br>
+Ang kakulangan ng oras ng pagtatapos sa oras ng huling kahilingan na nasa sesyon.<br>
+Kapag ang mga elemento na napili ay hindi nabago (halimbawa 'araw ng buwan') kasunod nito ang mga elemento ay hindi pagaganahin.<br>
+Kung ang diyalogo ng OK na buton ay napindot pagkatapos ay ang pagpapatakbo sa revisit ay gumagana sa mga napiling sayt.
+
+<h3>Hindi Pinagana ang Revisit</h3>
+Kapag napili pagkatapos ang pag papatakbo sa revisit ay hindi gagana sa mga napiling sayt.
+
+<h2>Ang API</h2>
+Ang mga suporta na idadagdag sa sumusunod ng mga endpoint ng API:<br><br>
+ang revisit / view/ revisitlist ay bumabalik sa mga listahan ng mga sayt na pinagana sa revisit<br>
+ang revisit / action /revisitSiteon ay lumiliko sa mga tinukoy na sayt. Ang dapat na gamiting ayos ng petsa ay: "yyy/MM/dd HH:mm:ss"<br> 
+ang revisit / action revisitSiteOff ay lumiliko ang revisit mula sa mha tinutukoy na sayt
+
+</body>
+</html>

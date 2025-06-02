@@ -1,0 +1,167 @@
+--- # ZAP automation configuration file, for more details see https://www.zaproxy.org/docs/automate/automation-framework/
+env:                                   # The environment, mandatory
+  contexts :                           # List of 1 or more contexts, mandatory
+    - name: context 1                  # Name to be used to refer to this context in other jobs, mandatory
+      urls:                            # A mandatory list of top level urls, everything under each url will be included
+      includePaths:                    # An optional list of regexes to include
+      excludePaths:                    # An optional list of regexes to exclude
+      authentication:
+        method:                        # String, one of 'manual', 'http', 'form', 'json' or 'script'
+        parameters:                    # May include any required for scripts. All of the parameters support vars except for the port 
+          hostname:                    # String, only for 'http' authentication
+          port:                        # Int, only for 'http' authentication
+          realm:                       # String, only for 'http' authentication
+          loginPageUrl:                # String, the login page URL to read prior to making the request, only for 'form' or 'json' authentication
+          loginRequestUrl:             # String, the login URL to request, only for 'form' or 'json' authentication
+          loginRequestBody:            # String, the login request body - if not supplied a GET request will be used, only for 'form' or 'json' authentication
+          script:                      # String, path to script, only for 'script' authentication
+          scriptEngine:                # String, the name of the script engine to use, only for 'script' authentication
+        verification:
+          method:                      # String, one of 'response', 'request', 'both', 'poll'
+          loggedInRegex:               # String, regex pattern for determining if logged in
+          loggedOutRegex:              # String, regex pattern for determining if logged out
+          pollFrequency:               # Int, the poll frequency, only for 'poll' verification
+          pollUnits:                   # String, the poll units, one of 'requests', 'seconds', only for 'poll' verification
+          pollUrl:                     # String, the URL to poll, only for 'poll' verification
+          pollPostData:                # String, post dat to include in the poll, only for 'poll' verification
+          pollAdditionalHeaders:       # List of additional headers for poll request, only for 'poll' verification
+          - header:                    # The header name
+            value:                     # The header value
+      sessionManagement:
+        method:                        # String, one of 'cookie', 'http', 'script'
+        parameters:                    # List of 0 or more parameters - may include any required for scripts
+          script:                      # String, path to script, only for 'script' session management
+          scriptEngine:                # String, the name of the script engine to use, only for 'script' session management
+      technology:
+        exclude:                       # List of tech to exclude, as per https://www.zaproxy.org/techtags/ (just use last names)
+        include:                       # List of tech to include, should only be used when targeting specific techs, the exclude takes precedence when configuring the context.
+      structure:
+        structuralParameters:          # List of names of structural parameters.
+      users:                           # List of one or more users available to use for authentication
+      - name:                          # String, the name to be used by the jobs
+        credentials:                   # List of user credentials - may include any required for scripts, vars supported
+          username:                    # String, the username to use when authenticating
+          password:                    # String, the password to use when authenticating
+  vars:                                # List of 0 or more variables, can be used in urls and selected other parameters
+  parameters:
+    failOnError: true                  # If set exit on an error         
+    failOnWarning: false               # If set exit on a warning
+    continueOnFailure: false           # Continue running all jobs, even if one fails
+    progressToStdout: true             # If set will write job progress to stdout
+  proxy:                               # Optional upstream proxy settings
+    hostname:                          # String, the proxy host
+    port:                              # Int, the proxy port
+    realm:                             # String, the proxy realm
+    username:                          # String, the proxy username
+    password:                          # String, the proxy password
+
+jobs:
+  - type: activeScan-config                # Configures the settings of the active scanner.
+    parameters:
+      maxRuleDurationInMins:               # Int: The max time in minutes any individual rule will be allowed to run for, default: 0 unlimited
+      maxScanDurationInMins:               # Int: The max time in minutes the active scanner will be allowed to run for, default: 0 unlimited
+      maxAlertsPerRule:                    # Int: Maximum number of alerts to raise per rule, default: 0 unlimited
+      defaultPolicy:                       # String: The name of the default scan policy to use, default: Default Policy
+      handleAntiCSRFTokens:                # Bool: If set then automatically handle anti CSRF tokens, default: false
+      injectPluginIdInHeader:              # Bool: If set then the relevant rule ID will be injected into the X-ZAP-Scan-ID header of each request, default: false
+      threadPerHost:                       # Int: The max number of threads per host, default: 2 * Number of available processor cores
+    inputVectors:                          # The input vectors used during the active scan.
+      urlQueryStringAndDataDrivenNodes:    # Configures the scanning of query parameters and DDNs.
+         enabled:                          # Bool: If query parameters and DDNs scanning should be enabled. Default: true
+         addParam:                         # Bool: If a query parameter should be added if none present. Default: false
+         odata:                            # Bool: If OData query filters should be scanned. Default: true
+      postData:                            # Configures the scanning of request bodies.
+        enabled:                           # Bool: If enabled. Default: true
+        multiPartFormData:                 # Bool: If multipart form data bodies should be scanned. Default: true
+        xml:                               # Bool: If XML bodies should be scanned. Default: true
+        json:                              # Configures the scanning of JSON bodies.
+          enabled:                         # Bool: If JSON scanning should be enabled. Default: true
+          scanNullValues:                  # Bool: If null values should be scanned. Default: false
+        googleWebToolkit:                  # Bool: If GWT scanning should be enabled. Default: false
+        directWebRemoting:                 # Bool: If DWR scanning should be enabled. Default: false
+      urlPath:                             # Bool: If URL path segments should be scanned. Default: false
+      httpHeaders:                         # Configures the scanning of HTTP headers.
+        enabled:                           # Bool: If HTTP header scanning should be enabled. Default: false
+        allRequests:                       # Bool: If set then the headers of requests that do not include any parameters will be scanned. Default: false
+      cookieData:                          # Configures the scanning of cookies.
+        enabled:                           # Bool: If enabled. Default: false
+        encodeCookieValues:                # Bool: If cookie values should be encoded. Default: false
+      scripts:                             # Bool: If Input Vector scripts should be used. Default: true
+
+  - type: activeScan-policy            # Defines a new active scan policy which can be used by later activeScan related jobs
+    parameters:
+      name:                            # String: Name of the policy, mandatory
+    policyDefinition:                  # The policy definition
+      defaultStrength:                 # String: The default Attack Strength for all rules, one of Low, Medium, High, Insane (not recommended), default: Medium
+      defaultThreshold:                # String: The default Alert Threshold for all rules, one of Off, Low, Medium, High, default: Medium
+      rules:                           # A list of one or more active scan rules and associated settings which override the defaults
+      - id:                            # Int: The rule id as per https://www.zaproxy.org/docs/alerts/
+        name:                          # Comment: The name of the rule for documentation purposes - this is not required or actually used
+        strength:                      # String: The Attack Strength for this rule, one of Low, Medium, High, Insane, default: Medium
+        threshold:                     # String: The Alert Threshold for this rule, one of Off, Low, Medium, High, default: Medium
+
+  - type: requestor                    # Used to send specific requests to targets
+    parameters:
+      user:                            # String: An optional user to use for authenticated requests, must be defined in the env
+    requests:                          # A list of requests to make
+      - url:                           # String: A mandatory URL of the request to be made
+        name:                          # String: Optional name for the request, for documentation only
+        method:                        # String: A non-empty request method, default: GET
+        httpVersion:                   # String: The HTTP version to send the request with, default: HTTP/1.1
+        headers:                       # An optional list of additional headers to include in the request
+            # - "header1:value1"
+        data:                          # String: Optional data to send in the request body, supports vars
+        responseCode:                  # Int: An optional, expected response code against which the actual response code will be matched
+
+  - type: delay                        # Pause the plan for a set period of time or event (file created, programmatic method called, API endpoint called)
+    parameters:
+      time:                            # String: The time to wait, format any of ['hh:mm:ss', 'mm:ss', 'ss'], default: 0
+      fileName:                        # String: Name of a file which will cause the job to end early if created, default: empty
+
+  - type: activeScan                   # The active scanner - this actively attacks the target so should only be used with permission
+    parameters:
+      context:                         # String: Name of the context to attack, default: first context
+      user:                            # String: An optional user to use for authentication, must be defined in the env
+      policy:                          # String: Name of the scan policy to be used, default: Default Policy
+      maxRuleDurationInMins:           # Int: The max time in minutes any individual rule will be allowed to run for, default: 0 unlimited
+      maxScanDurationInMins:           # Int: The max time in minutes the active scanner will be allowed to run for, default: 0 unlimited
+      addQueryParam:                   # Bool: If set will add an extra query parameter to requests that do not have one, default: false
+      defaultPolicy:                   # String: The name of the default scan policy to use, default: Default Policy
+      delayInMs:                       # Int: The delay in milliseconds between each request, use to reduce the strain on the target, default 0
+      handleAntiCSRFTokens:            # Bool: If set then automatically handle anti CSRF tokens, default: false
+      injectPluginIdInHeader:          # Bool: If set then the relevant rule Id will be injected into the X-ZAP-Scan-ID header of each request, default: false
+      scanHeadersAllRequests:          # Bool: If set then the headers of requests that do not include any parameters will be scanned, default: false
+      threadPerHost:                   # Int: The max number of threads per host, default: 2 * Number of available processor cores
+      maxAlertsPerRule:                # Int: Maximum number of alerts to raise per rule, default: 0 unlimited
+    policyDefinition:                  # The policy definition - only used if the 'policy' is not set
+      defaultStrength:                 # String: The default Attack Strength for all rules, one of Low, Medium, High, Insane (not recommended), default: Medium
+      defaultThreshold:                # String: The default Alert Threshold for all rules, one of Off, Low, Medium, High, default: Medium
+      rules:                           # A list of one or more active scan rules and associated settings which override the defaults
+      - id:                            # Int: The rule id as per https://www.zaproxy.org/docs/alerts/
+        name:                          # Comment: The name of the rule for documentation purposes - this is not required or actually used
+        strength:                      # String: The Attack Strength for this rule, one of Low, Medium, High, Insane, default: Medium
+        threshold:                     # String: The Alert Threshold for this rule, one of Off, Low, Medium, High, default: Medium
+    tests:
+      - name: 'test one'                       # Name of the test, optional
+        type: alert                            # Specifies that the test is of type 'alert'
+        action: passIfPresent/passIfAbsent     # String: The condition (presence/absence) of the alert, default: passIfAbsent  
+        scanRuleId:                            # Integer: The id of the scanRule which generates the alert, mandatory  
+        alertName:                             # String: The name of the alert generated, optional
+        url: http://www.example.com/path       # String: The url of the request corresponding to the alert generated, optional
+        method:                                # String: The method of the request corresponding to the alert generated, optional
+        attack:                                # String: The actual attack which generated the alert, optional
+        param:                                 # String: The parameter which was modified to generate the alert, optional
+        evidence:                              # String: The evidence corresponding to the alert generated, optional
+        confidence:                            # String: The confidence of the alert, one of 'False Positive', 'Low', 'Medium', 'High', 'Confirmed', optional
+        risk:                                  # String: The risk of the alert, one of 'Informational', 'Low', 'Medium', 'High', optional
+        otherInfo:                             # String: Addional information corresponding to the alert, optional
+        onFail: 'info'                         # String: One of 'warn', 'error', 'info', mandatory
+
+  - type: exitStatus                   # Sets the exit code based on scan results
+    parameters:
+      errorLevel:                      # String: Informational, Low, Medium, High, default: not set
+      warnLevel:                       # String: Informational, Low, Medium, High, default: not set
+      okExitValue:                     # Integer: Exit value if all ok, default 0
+      errorExitValue:                  # Integer: Exit value if there are errors, default 1
+      warnExitValue:                   # Integer: Exit value if there are warnings, default 2
+

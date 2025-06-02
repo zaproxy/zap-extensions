@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Командная строка </title>
+</head>
+<body>
+	<h1>командная строка</h1>
+	Надстройка Quick Start поддерживает следующие параметры командной строки: 
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>-quickurl</td>
+			<td>Указывает URL-адрес целевого приложения, которое будет атаковано. </td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>-quickout</td>
+			<td>Указывает файл для записи отчета. Формат отчета будет зависеть от расширения файла. Поддерживаемые расширения файлов:  
+			<pre>.html</pre>, <pre>.json</pre>, <pre>.md</pre>, <pre>.xml</pre>. Если ни одно из этих расширений не используется, формат будет XML.
+Если не установлено в режимах «встроенный» и демона, отчет записывается в выходной поток по умолчанию. </td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>-quickprogress</td>
+			<td>Показывать индикаторы выполнения ascii, если запущен с флагом -cmd. </td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>-zapit</td>
+			<td>Perform a quick <a href="zapit.html">'ZAPit'</a> 'reconnaissance' scan of URL specified, the -cmd flag must also be set.</td>
+		</tr>
+	</table>
+
+	<br>
+	<p>Примеры:
+	<ul>
+		<li>Запустите ZAP во встроенном режиме с индикаторами выполнения ascii, атакуйте целевое приложение http://example.com/
+и напишите отчет в выходной поток по умолчанию:  <pre>cmd -quickurl http://example.com/ -quickprogress</pre>
+		</li>
+		<li>Запустите ZAP с пользовательским интерфейсом, атакуйте целевое приложение http://example.com/ и сохраните
+отчет в файл:  <pre>-quickurl http://example.com/ -quickout /path/to/report.xml</pre>
+		</li>
+	</ul>
+
+	<h2>Смотрите также </h2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="quickstart.html">Быстрый старт</a></td>
+			<td>the introduction to Quick Start</td>
+		</tr>
+	</table>
+
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Options Selenium screen</title>
+</head>
+<body>
+	<h1>Options Selenium screen</h1>
+
+	This screen allows you to setup the requirements of some of the WebDrivers.
+	<br />
+	<h2>Configuration Options</h2>
+	<h3>WebDrivers</h3>
+	<table border="2">
+		<tr>
+			<th>Field</th>
+			<th>Details</th>
+			<th>Default</th>
+			<th>Config File</th>
+		</tr>
+		<tr>
+			<td>ChromeDriver</td>
+			<td>This allows you to select the location of ChromeDriver.</td>
+			<td align="center">The path to the bundled WebDriver, if available.</td>
+			<td>Key: <code>selenium.chromeDriver</code><br>Value: file system path to the ChromeDriver</td>
+		</tr>
+		<tr>
+			<td>geckodriver</td>
+			<td>This allows you to select the location of geckodriver (Firefox driver).</td>
+			<td align="center">The path to the bundled WebDriver, if available.</td>
+			<td>Key: <code>selenium.firefoxDriver</code><br>Value: file system path to the geckodriver</td>
+		</tr>
+	</table>
+
+	<h3>Binaries</h3>
+	<table border="2">
+		<tr>
+			<th>Field</th>
+			<th>Details</th>
+			<th>Default</th>
+			<th>Config File</th>
+		</tr>
+		<tr>
+			<td>Firefox</td>
+			<td>This allows you to select the location of Firefox binary (for example, to use
+				a version other than the system default).</td>
+			<td align="center">(None)</td>
+			<td>Key: <code>selenium.firefoxBinary</code><br>Value: file system path to the Firefox binary</td>
+		</tr>
+		<tr>
+			<td>PhantomJS</td>
+			<td>This allows you to select the location of PhantomJS binary.</td>
+			<td align="center">(None)</td>
+			<td>Key: <code>selenium.phantomJsBinary</code><br>Value: file system path to the PhantomJS binary</td>
+		</tr>
+	</table>
+	<strong>Note:</strong> It's also possible to set the above locations (binaries and
+	WebDrivers) using Java system properties, in which case the above options will be
+	overridden and those values shown instead.
+
+	<p>
+	More details about the bundled WebDrivers can be found on the overview page.
+
+	<h3>Browser Extensions</h3>
+
+	You can add, remove, enable, or disable browser extensions via the relevant buttons on this screen.
+	Supported browsers and file extensions are:
+	<ul>
+	<li>Firefox: .xpi
+	<li>Chrome: .crx
+	</ul>
+	Add-ons can also add new browser extensions. If you delete a browser extension via this screen then it will be added again 
+	by the add-on so either just disable it or uninstall the add-on to remove the browser extension.
+
+	<h2>See also</h2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="intro.html">Selenium</a></td>
+			<td>for an overview of the Selenium add-on</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="api.html">API</a></td>
+			<td>for an overview of the Selenium API</td>
+		</tr>
+	</table>
+
+</body>
+</html>

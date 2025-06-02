@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Plug-n-Hack İstemciler sekmesi
+</title>
+</head>
+<body>
+<h1>Plug-n-Hack İstemciler sekmesi</h1>
+<p>
+	Plug-n-Hack, HTML5 uygulamalarının test edilmesine yardımcı olmak için istemci (tarayıcı) olaylarını izlemenize izin verir.<br>
+ Modern tarayıcıları mümkün olduğunca geniş bir yelpazede desteklemek için tarayıcıya verilen yanıtta 
+ javascript enjekte edilerek uygulanır. <br>
+ Yanıt değişikliği anlamına geldiğinden, bu işlevsellik manuel olarak etkinleştirmelidir. 
+</p>
+<p>
+	İstemci olaylarını almak için:
+	<ul>
+	<li>ZAP aracılığıyla proxy işlemi yaparken izlemek istediğiniz sayfalara ulaşın</li>
+	<li>Siteler ağacındaki ilgili düğüm(ler) sağ tıklayın ve 'Monitör istemcileri -> Alt ağacı ekle'yi seçin</li>
+	<li>Bu sayfaları tekrar yüklemesi için tarayıcınızı zorlayın</li>
+	<li>Client events (such as postMessage, click, mouseover, etc.) will then be listed in this tab - select them to see the full details.</li>
+	</ul>
+</p>
+<p>
+	Enjekte edilen javascript ZAP'a bir kalp atışı gönderdiğinden, ZAP bu 'aktif' tüm istemcileri bu sekmede gösterebilir.<br>
+Bu durumda 'etkin' istemciler mevcut bir tarayıcı sekmesinde açık olan sayfalardır.<br>
+Orijinal istemci etkin olduğu sürece herhangi bir etkinliği sağ tıklama menüsü öğesi üzerinden düzenleyebilir ve yeniden gönderebilirsiniz.<br>
+</p>
+<p>
+	Ayrıca postMessages'i anında engelleyebilir ve değiştirebilirsiniz.<br>
+ Üst düzey araç çubuğunda ‘Tüm istekleri kes’ butonu seçilirse istemci mesajları engellenir.<br>
+ Özel istemci kesme noktalarını İstemciler sekmesindeki bir düğme ile de ayarlayabilirsiniz.<br>
+ <br>
+ postMessages'ı diğerleri gibi herhangi bir mesajla aynı şekilde türetebilirsiniz - fuzz'lamak istediğiniz dizeyi İstek sekmesinde vurgulayın, sağ tıklayın ve “Fuzz”'ı seçin.<br>
+ Bu seçenek yalnızca, tarayıcıya PnH yükleri gönderdiğinden ilgili tarayıcı o sayfayı açmışsa kullanılabilir.<br>
+ Standart ‘XSS’ yükleri, DOM XSS güvenlik açıklarını tespit etmek için kullanılabilir, ancak bunların herhangi birinin başarılı olup olmadığını görmek için kullanıcı arayüzünü manuel olarak izlemeniz 
+ gerekecektir.<br>
+<br>
+PnH ayrıca “PlugnHack DOM XSS Oracle” adlı bir Özel fuzz dosyası ekliyor.<br>
+Bu dosya OWASP XSS cheatsheet'e dayanmaktadır ve sayfaya enjekte edilen bir 'xss' JavaScript yöntemini çağırır. <br>
+Bu yöntem, kullanıcı arabirimindeki ilgili saldırıyı işaretleyen ZAP API'sini çağırır; bunlar (her zaman olduğu gibi), ZAP gibi bir araç olmadan test etmekte olduğunuz uygulamada gerçekten de kullanılabileceğini kontrol etmeniz gerekirken, DOM XSS'e ait güvenlik açıklarını doğrular.<br>
+
+</p>
+
+</body>
+</html>

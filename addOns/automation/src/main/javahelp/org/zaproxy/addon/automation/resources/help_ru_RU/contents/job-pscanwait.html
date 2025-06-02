@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+Automation Framework - passiveScan-wait Job
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Платформа автоматизации — задание пассивного сканирования с ожиданием </H1>
+
+Это задание ожидает, пока пассивный сканер завершит сканирование запросов и ответов в текущей очереди. 
+Обычно это задание следует запускать после заданий, которые исследуют ваше приложение, таких как задания паука или те, которые импортируют определения API. 
+Если какие-либо другие запросы отправляются ZAP или проксируются через ZAP после выполнения этого задания, они будут обработаны пассивным сканером. 
+Вы можете запускать эту работу столько раз, сколько вам нужно. 
+<p>
+It is covered in the video: <a href="https://youtu.be/hcftgjz_Vgc">ZAP Chat 12 Automation Framework Part 6 - Delays and Active Scan</a>.
+
+<H2>YAML</H2>
+
+<pre>
+  - type: passiveScan-wait             # Пассивный сканер дождитесь завершения пассивного сканера 
+    parameters:
+      maxDuration: 5                   # Int: Максимальное время ожидания пассивного сканера, по умолчанию: 0 неограниченно 
+</pre>
+
+<H2>Данные задания </H2>
+Следующий класс будет доступен для надстроек, предоставляющих доступ к данным задания, таких как надстройка Reporting. 
+Обратите внимание, что в этом случае данные взяты из включенных в данный момент правил пассивного сканирования, независимо от того, использовались ли они в результате Automation Framework, пользовательского интерфейса или API. 
+<ul>
+<li>Ключ: <code>passiveScanData</code> 
+<li>Класс: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/automation/src/main/java/org/zaproxy/addon/automation/jobs/PassiveScanJobResultData.java">PassiveScanJobResultData</a> 
+</ul>
+
+</BODY>
+</HTML>
+

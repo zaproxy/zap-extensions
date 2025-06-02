@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>Network API</TITLE>
+</HEAD>
+<BODY>
+	<H1>Network API</H1>
+	The following operations are added to the API:
+
+	<h3>Actions</h3>
+	<ul>
+		<li>generateRootCaCert: Generates a new Root CA certificate, used to issue server certificates.</li>
+		<li>importRootCaCert (filePath*): Imports a Root CA certificate to be used to issue server certificates.
+			<ul>
+				<li>filePath: The file system path to the PEM file, containing the certificate and private key.</li>
+			</ul>
+		</li>
+		<li>
+			<strong>Note:</strong> This endpoint is only available in weekly releases and versions after 2.11.
+			<br>
+			setRootCaCertValidity (validity*): Sets the Root CA certificate validity. Used when generating a new Root CA certificate.
+			<ul>
+				<li>validity: The number of days that the generated Root CA certificate will be valid for.</li>
+			</ul>
+		</li>
+		<li>
+			<strong>Note:</strong> This endpoint is only available in weekly releases and versions after 2.11.
+			<br>
+			setServerCertValidity (validity*): Sets the server certificate validity. Used when generating server certificates.
+			<ul>
+				<li>validity: The number of days that the generated server certificates will be valid for.</li>
+			</ul>
+		</li>
+	</ul>
+
+	<h3>Views</h3>
+	<strong>Note:</strong> These endpoints are only available in weekly releases and versions after 2.11.
+	<ul>
+		<li>getRootCaCertValidity: Gets the Root CA certificate validity, in days. Used when generating a new Root CA certificate.</li>
+		<li>getServerCertValidity:  Gets the server certificate validity, in days. Used when generating server certificates.</li>
+	</ul>
+
+	<h3>Other</h3>
+	<ul>
+		<li>rootCaCert: Gets the Root CA certificate used to issue server certificates. Suitable to import into client applications (e.g. browsers).</li>
+	</ul>
+
+	<H2>See also</H2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="network.html">Network</a></td>
+			<td>the introduction to Network add-on</td>
+		</tr>
+	</table>
+
+</BODY>
+</HTML>
