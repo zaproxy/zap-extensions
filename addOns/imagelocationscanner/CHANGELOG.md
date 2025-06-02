@@ -17,7 +17,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Depends on an updated version of the Common Library add-on.
 - Update minimum ZAP version to 2.16.0.
-- Removed XMP support as it was too buggy.
+
+### Removed
+- No longer support XMP as it was too buggy.
 
 ## [5] - 2024-04-11
 ### Changed
