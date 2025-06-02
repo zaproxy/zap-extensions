@@ -182,7 +182,7 @@ public class ImageLocationScanRule extends PluginPassiveScanner {
         return newAlert()
                 .setName(getAlertTitle())
                 .setRisk(Alert.RISK_INFO)
-                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setConfidence(Alert.CONFIDENCE_HIGH)
                 .setDescription(getDescription())
                 .setSolution(getSolution())
                 .setReference(getReference())
