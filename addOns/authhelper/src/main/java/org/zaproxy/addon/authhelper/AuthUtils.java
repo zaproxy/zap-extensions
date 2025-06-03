@@ -322,11 +322,7 @@ public class AuthUtils {
     }
 
     private static String getAttribute(WebElement element, String name) {
-        String value = element.getDomAttribute(name);
-        if (value != null) {
-            return value;
-        }
-        return element.getDomProperty(name);
+        return element.getAttribute(name);
     }
 
     private static Stream<WebElement> displayed(List<WebElement> elements) {
