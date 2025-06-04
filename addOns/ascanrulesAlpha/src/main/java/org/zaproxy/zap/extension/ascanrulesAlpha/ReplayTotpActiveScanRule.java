@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrulesAlpha;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,16 +98,24 @@ public class ReplayTotpActiveScanRule extends AbstractHostPlugin
                 if (!context.browserAuthMethod.wasAuthTestSucessful()) {
                     return;
                 }
+
+                List<AuthenticationStep> testSteps = new ArrayList<>();
+                for (AuthenticationStep step : context.authSteps) {
+                    if (step.getType() == AuthenticationStep.Type.TOTP_FIELD) {
+                        AuthenticationStep cloned = new AuthenticationStep(step); // clone original
+                        cloned.setUserProvidedTotp(validTotpCode); // override value
+                        testSteps.add(cloned);
+                    } else {
+                        testSteps.add(step);
+                    }
+                }
+
+                context.browserAuthMethod.setAuthenticationSteps(testSteps);
+                Thread.sleep(30_000);
+                context.browserAuthMethod.authenticate(context.sessionManagementMethod, context.credentials, context.user);
+                 boolean webSessionRedo =
+                    context.browserAuthMethod.wasAuthTestSucessful();
                 // Check for passcode reuse vulnerability
-                boolean webSessionRedo =
-                        testAuthenticatSession(
-                                context.totpStep,
-                                validTotpCode,
-                                context.authSteps,
-                                context.browserAuthMethod,
-                                context.sessionManagementMethod,
-                                context.credentials,
-                                context.user);
                 if (webSessionRedo) {
                     buildAlert(
                                     "TOTP Replay Attack Vulnerability",
@@ -117,40 +126,7 @@ public class ReplayTotpActiveScanRule extends AbstractHostPlugin
                 }
 
             } else {
-                // Check if user provided previously( or is static currently valid ) valid code &
-                // check
-                // if initial authentication works with normal
-                // passcode
-                if (context.totpStep.getValue() != null || !context.totpStep.getValue().isEmpty()) {
-                    if (context.totpStep.getType() == AuthenticationStep.Type.TOTP_FIELD)
-                        context.totpStep.setUserProvidedTotp(context.totpStep.getValue());
-                    WebSession webSession =
-                            context.browserAuthMethod.authenticate(
-                                    context.sessionManagementMethod,
-                                    context.credentials,
-                                    context.user);
-                    if (webSession == null || !context.browserAuthMethod.wasAuthTestSucessful()) {
-                        return;
-                    }
-                    // Check for passcode reuse vulnerability
-                    boolean webSessionRedo =
-                            testAuthenticatSession(
-                                    context.totpStep,
-                                    context.totpStep.getValue(),
-                                    context.authSteps,
-                                    context.browserAuthMethod,
-                                    context.sessionManagementMethod,
-                                    context.credentials,
-                                    context.user);
-                    if (webSessionRedo) {
-                        buildAlert(
-                                        "TOTP Replay Attack Vulnerability",
-                                        "The application is vulnerable to replay attacks, allowing attackers to reuse previously intercepted TOTP codes to authenticate.",
-                                        "Ensure that TOTP codes are validated only once per session and are invalidated after use.",
-                                        msg)
-                                .raise();
-                    }
-                }
+                return;
             }
 
         } catch (Exception e) {
@@ -158,21 +134,6 @@ public class ReplayTotpActiveScanRule extends AbstractHostPlugin
         }
     }
 
-    private boolean testAuthenticatSession(
-            AuthenticationStep totpStep,
-            String newTotpValue,
-            List<AuthenticationStep> authSteps,
-            BrowserBasedAuthenticationMethod browserAuthMethod,
-            SessionManagementMethod sessionManagementMethod,
-            UsernamePasswordAuthenticationCredentials credentials,
-            User user) {
-        if (totpStep.getType() == AuthenticationStep.Type.TOTP_FIELD)
-            totpStep.setUserProvidedTotp(newTotpValue);
-        else totpStep.setValue(newTotpValue);
-        browserAuthMethod.setAuthenticationSteps(authSteps);
-        browserAuthMethod.authenticate(sessionManagementMethod, credentials, user);
-        return browserAuthMethod.wasAuthTestSucessful();
-    }
 
     private AlertBuilder buildAlert(
             String name, String description, String solution, HttpMessage msg) {

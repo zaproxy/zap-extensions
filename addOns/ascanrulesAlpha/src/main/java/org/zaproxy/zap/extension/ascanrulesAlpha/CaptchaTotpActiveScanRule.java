@@ -130,8 +130,11 @@ public class CaptchaTotpActiveScanRule extends AbstractHostPlugin
             };
             for (String keyword : captchaKeywords) {
                 for (HttpMessage response : messages) {
+                    String contentType = response.getResponseHeader().getHeader("Content-Type");
+                        if (contentType == null || !contentType.toLowerCase().contains("text")) {
+                            continue;
+                        }
                     if (response.getResponseBody().toString().toLowerCase().contains(keyword)) {
-                        LOGGER.error("Captcha detected");
                         captchaDetected = true;
                         return;
                     }
@@ -150,14 +153,15 @@ public class CaptchaTotpActiveScanRule extends AbstractHostPlugin
             };
             for (String keyword : lockoutKeywords) {
                 for (HttpMessage response : messages) {
+                    String contentType = response.getResponseHeader().getHeader("Content-Type");
+                        if (contentType == null || !contentType.toLowerCase().contains("text")) {
+                            continue;
+                        }
                     if (response.getResponseBody().toString().toLowerCase().contains(keyword)) {
-                        LOGGER.error("lockout detected");
-                        LOGGER.error("keyword" + keyword);
                         lockoutDetected = true;
                         return;
                     } else if (response.getResponseHeader().getStatusCode() == 403) {
                         lockoutDetected = true;
-                        LOGGER.error("lockout detected");
                         return;
                     }
                 }

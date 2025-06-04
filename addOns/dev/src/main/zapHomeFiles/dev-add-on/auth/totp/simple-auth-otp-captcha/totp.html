@@ -51,9 +51,8 @@ function submitTOTP() {
 	        	h3.appendChild(textNode);
 	        	document.getElementById("result").appendChild(h3);
 	        }
-			if (json.newCaptcha) {
-	            document.getElementById("captchaValue").textContent = json.newCaptcha;
-	        }
+			// Always set captcha to static value
+	        document.getElementById("captchaValue").textContent = "captcha123";
 	    }
 	};
 	var data = JSON.stringify({
@@ -84,6 +83,7 @@ window.addEventListener("load", function () {
     if (code) {
         document.getElementById("totpCodeDisplay").textContent = code;
     }
+    document.getElementById("captchaValue").textContent = "captcha123";
 });
 </script>
 </body>

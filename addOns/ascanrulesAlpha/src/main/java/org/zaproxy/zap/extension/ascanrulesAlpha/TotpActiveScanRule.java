@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrulesAlpha;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -96,16 +97,24 @@ public class TotpActiveScanRule extends AbstractHostPlugin implements CommonActi
                             "8888888",
                             "88888888");
             // Test passcodes (check format- RFC-6238 (6,7,8)
+            
+
             for (String code : backupPasscodes) {
+                List<AuthenticationStep> testSteps = new ArrayList<>();
+                for (AuthenticationStep step : context.authSteps) {
+                    if (step.getType() == AuthenticationStep.Type.TOTP_FIELD) {
+                        AuthenticationStep clone = new AuthenticationStep(step);
+                        clone.setUserProvidedTotp(code);  // override with test code
+                        testSteps.add(clone);
+                    } else {
+                        testSteps.add(step);
+                    }
+                }
+
+                context.browserAuthMethod.setAuthenticationSteps(testSteps);
+                context.browserAuthMethod.authenticate(context.sessionManagementMethod, context.credentials, context.user);
                 boolean webSessionNew =
-                        testAuthenticatSession(
-                                context.totpStep,
-                                code,
-                                context.authSteps,
-                                context.browserAuthMethod,
-                                context.sessionManagementMethod,
-                                context.credentials,
-                                context.user);
+                        context.browserAuthMethod.wasAuthTestSucessful();
 
                 if (webSessionNew) {
                     buildAlert(
@@ -123,21 +132,7 @@ public class TotpActiveScanRule extends AbstractHostPlugin implements CommonActi
         }
     }
 
-    private boolean testAuthenticatSession(
-            AuthenticationStep totpStep,
-            String newTotpValue,
-            List<AuthenticationStep> authSteps,
-            BrowserBasedAuthenticationMethod browserAuthMethod,
-            SessionManagementMethod sessionManagementMethod,
-            UsernamePasswordAuthenticationCredentials credentials,
-            User user) {
-        if (totpStep.getType() == AuthenticationStep.Type.TOTP_FIELD)
-            totpStep.setUserProvidedTotp(newTotpValue);
-        else totpStep.setValue(newTotpValue);
-        browserAuthMethod.setAuthenticationSteps(authSteps);
-        browserAuthMethod.authenticate(sessionManagementMethod, credentials, user);
-        return browserAuthMethod.wasAuthTestSucessful();
-    }
+   
 
     private AlertBuilder buildAlert(
             String name, String description, String solution, HttpMessage msg) {

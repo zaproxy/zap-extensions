@@ -19,7 +19,6 @@
  */
 package org.zaproxy.addon.dev.auth.totp.simpleAuthTotpCaptcha;
 
-import java.util.concurrent.ConcurrentHashMap;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import org.apache.logging.log4j.LogManager;
@@ -34,7 +33,6 @@ public class OpenApiWithCaptchaOtpVerificationPage extends TestPage {
 
     private static final Logger LOGGER =
             LogManager.getLogger(OpenApiWithCaptchaOtpVerificationPage.class);
-    private static final ConcurrentHashMap<String, String> captchaStore = new ConcurrentHashMap<>();
 
     public OpenApiWithCaptchaOtpVerificationPage(TestProxyServer server) {
         super(server, "user");
@@ -73,17 +71,15 @@ public class OpenApiWithCaptchaOtpVerificationPage extends TestPage {
             }
         }
 
-        // Validate CAPTCHA
-        String expectedCaptcha = captchaStore.remove(token);
-        boolean isCaptchaValid = expectedCaptcha != null && expectedCaptcha.equals(captcha);
+        // Validate CAPTCHA (static)
+        boolean isCaptchaValid = "captcha123".equals(captcha);
 
         LOGGER.debug(
-                "Token: {} user: {} TOTP: {} CAPTCHA: {} Expected CAPTCHA: {}",
+                "Token: {} user: {} TOTP: {} CAPTCHA: {}",
                 token,
                 user,
                 totp,
-                captcha,
-                expectedCaptcha);
+                captcha);
 
         if (user != null && totp != null && getParent().validateTotp(token, totp) && isCaptchaValid) {
             response.put("result", "OK");
@@ -93,10 +89,8 @@ public class OpenApiWithCaptchaOtpVerificationPage extends TestPage {
             response.put("result", "FAIL");
         }
 
-        // Generate a new CAPTCHA for the next request
-        String newCaptcha = "captcha" + (int) (Math.random() * 10000);
-        captchaStore.put(token, newCaptcha);
-        response.put("newCaptcha", newCaptcha);
+        // Always return the static captcha
+        response.put("newCaptcha", "captcha123");
 
         this.getServer().setJsonResponse(response, msg);
     }

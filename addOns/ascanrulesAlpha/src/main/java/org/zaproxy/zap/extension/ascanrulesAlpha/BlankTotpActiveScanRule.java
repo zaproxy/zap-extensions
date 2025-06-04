@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrulesAlpha;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +59,7 @@ public class BlankTotpActiveScanRule extends AbstractHostPlugin
 
     @Override
     public int getCategory() {
-        return Category.INFO_GATHER;
+        return Category.MISC;
     }
 
     @Override
@@ -82,16 +83,26 @@ public class BlankTotpActiveScanRule extends AbstractHostPlugin
                 return;
             }
 
-            // Check for blank passcode vulnerability
+            List<AuthenticationStep> mutableAuthSteps = new ArrayList<>(context.authSteps);
+
+            AuthenticationStep testStep = new AuthenticationStep();
+            testStep.setType(AuthenticationStep.Type.CUSTOM_FIELD);
+            testStep.setXpath(context.totpStep.getXpath());
+            testStep.setCssSelector(context.totpStep.getCssSelector());
+            testStep.setValue("");
+
+            for (int i = 0; i < mutableAuthSteps.size(); i++) {
+                AuthenticationStep step = mutableAuthSteps.get(i);
+                if (step.getType() == AuthenticationStep.Type.TOTP_FIELD) {
+                    mutableAuthSteps.set(i, testStep); // Replace the TOTP step with the test step
+                    break;
+                }
+            }
+            context.browserAuthMethod.setAuthenticationSteps(mutableAuthSteps);
+            context.browserAuthMethod.authenticate(context.sessionManagementMethod, context.credentials, context.user);
             boolean webSessionBlankCode =
-                    testAuthenticatSession(
-                            context.totpStep,
-                            "",
-                            context.authSteps,
-                            context.browserAuthMethod,
-                            context.sessionManagementMethod,
-                            context.credentials,
-                            context.user);
+                    context.browserAuthMethod.wasAuthTestSucessful();
+
             if (webSessionBlankCode) {
                 buildAlert(
                                 "Blank Passcode Vulnerability",
@@ -103,22 +114,6 @@ public class BlankTotpActiveScanRule extends AbstractHostPlugin
         } catch (Exception e) {
             LOGGER.error("Error in TOTP Page Scan Rule: {}", e.getMessage(), e);
         }
-    }
-
-    private boolean testAuthenticatSession(
-            AuthenticationStep totpStep,
-            String newTotpValue,
-            List<AuthenticationStep> authSteps,
-            BrowserBasedAuthenticationMethod browserAuthMethod,
-            SessionManagementMethod sessionManagementMethod,
-            UsernamePasswordAuthenticationCredentials credentials,
-            User user) {
-        if (totpStep.getType() == AuthenticationStep.Type.TOTP_FIELD)
-            totpStep.setUserProvidedTotp(newTotpValue);
-        else totpStep.setValue(newTotpValue);
-        browserAuthMethod.setAuthenticationSteps(authSteps);
-        browserAuthMethod.authenticate(sessionManagementMethod, credentials, user);
-        return browserAuthMethod.wasAuthTestSucessful();
     }
 
     private AlertBuilder buildAlert(

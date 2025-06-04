@@ -79,7 +79,6 @@ public final class ClientSideHandler implements HttpMessageHandler {
     }
 
     public List<Integer> getHttpMessagesIds() {
-        LOGGER.error("List HTTP MEssageID size ", httpMessageHistoryIds.size());
         return new ArrayList<>(httpMessageHistoryIds);
     }
 
