@@ -210,7 +210,7 @@ class SessionDetectionScanRuleUnitTest extends PassiveScannerTest<SessionDetecti
         assertThat(alertsRaised.get(0).getUri(), is(equalTo("https://example0/login.jsp")));
         assertThat(alertsRaised.get(0).getMethod(), is(equalTo("GET")));
         assertThat(alertsRaised.get(0).getEvidence(), is(equalTo("JSESSIONID")));
-        assertThat(alertsRaised.get(0).getOtherInfo(), is(equalTo("\ncookie:JSESSIONID")));
+        assertThat(alertsRaised.get(0).getOtherInfo(), is(equalTo("cookie:JSESSIONID")));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
     }
 
@@ -239,17 +239,17 @@ class SessionDetectionScanRuleUnitTest extends PassiveScannerTest<SessionDetecti
         assertThat(alertsRaised.get(0).getUri(), is(equalTo("https://example0/login")));
         assertThat(alertsRaised.get(0).getMethod(), is(equalTo("GET")));
         assertThat(alertsRaised.get(0).getEvidence(), is(equalTo("session")));
-        assertThat(alertsRaised.get(0).getOtherInfo(), is(equalTo("\ncookie:session")));
+        assertThat(alertsRaised.get(0).getOtherInfo(), is(equalTo("cookie:session")));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
         assertThat(alertsRaised.get(1).getUri(), is(equalTo("https://example0/dashboard")));
         assertThat(alertsRaised.get(1).getMethod(), is(equalTo("GET")));
         assertThat(alertsRaised.get(1).getEvidence(), is(equalTo("session")));
-        assertThat(alertsRaised.get(1).getOtherInfo(), is(equalTo("\ncookie:session")));
+        assertThat(alertsRaised.get(1).getOtherInfo(), is(equalTo("cookie:session")));
         assertThat(alertsRaised.get(1).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
         assertThat(alertsRaised.get(2).getUri(), is(equalTo("https://example0/login")));
         assertThat(alertsRaised.get(2).getMethod(), is(equalTo("GET")));
         assertThat(alertsRaised.get(2).getEvidence(), is(equalTo("session")));
-        assertThat(alertsRaised.get(2).getOtherInfo(), is(equalTo("\ncookie:session")));
+        assertThat(alertsRaised.get(2).getOtherInfo(), is(equalTo("cookie:session")));
         assertThat(alertsRaised.get(2).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
     }
 
@@ -277,7 +277,7 @@ class SessionDetectionScanRuleUnitTest extends PassiveScannerTest<SessionDetecti
         assertThat(alertsRaised.size(), is(equalTo(1)));
         assertThat(alertsRaised.get(0).getUri(), is(equalTo("https://example0/auth")));
         assertThat(alertsRaised.get(0).getEvidence(), is(equalTo("PHPSESSID")));
-        assertThat(alertsRaised.get(0).getOtherInfo(), is(equalTo("\ncookie:PHPSESSID")));
+        assertThat(alertsRaised.get(0).getOtherInfo(), is(equalTo("cookie:PHPSESSID")));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
     }
 
@@ -307,7 +307,7 @@ class SessionDetectionScanRuleUnitTest extends PassiveScannerTest<SessionDetecti
         assertThat(alertsRaised.get(0).getEvidence(), is(equalTo("session")));
         assertThat(
                 alertsRaised.get(0).getOtherInfo(),
-                is(equalTo("\ncookie:session\ncookie:AWSALBCORS\ncookie:AWSALB")));
+                is(equalTo("cookie:session\ncookie:AWSALBCORS\ncookie:AWSALB")));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
     }
 
@@ -335,21 +335,21 @@ class SessionDetectionScanRuleUnitTest extends PassiveScannerTest<SessionDetecti
         assertThat(alertsRaised.size(), is(equalTo(3)));
         assertThat(alertsRaised.get(0).getUri(), is(equalTo("https://example0/sign_in")));
         assertThat(alertsRaised.get(0).getEvidence(), is(equalTo("_mastodon_session")));
-        assertThat(alertsRaised.get(0).getOtherInfo(), is(equalTo("\ncookie:_mastodon_session")));
+        assertThat(alertsRaised.get(0).getOtherInfo(), is(equalTo("cookie:_mastodon_session")));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
 
         assertThat(alertsRaised.get(1).getUri(), is(equalTo("https://example0/")));
         assertThat(alertsRaised.get(1).getEvidence(), is(equalTo("_session_id")));
         assertThat(
                 alertsRaised.get(1).getOtherInfo(),
-                is(equalTo("\ncookie:_session_id\ncookie:_mastodon_session")));
+                is(equalTo("cookie:_session_id\ncookie:_mastodon_session")));
         assertThat(alertsRaised.get(1).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
 
         assertThat(alertsRaised.get(2).getUri(), is(equalTo("https://example0/")));
         assertThat(alertsRaised.get(2).getEvidence(), is(equalTo("_session_id")));
         assertThat(
                 alertsRaised.get(2).getOtherInfo(),
-                is(equalTo("\ncookie:_session_id\ncookie:_mastodon_session")));
+                is(equalTo("cookie:_session_id\ncookie:_mastodon_session")));
         assertThat(alertsRaised.get(2).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
     }
 

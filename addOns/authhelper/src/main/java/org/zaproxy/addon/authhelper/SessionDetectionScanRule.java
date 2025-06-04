@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import net.htmlparser.jericho.Source;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -174,9 +175,6 @@ public class SessionDetectionScanRule extends PluginPassiveScanner {
     }
 
     protected AlertBuilder getAlert(SessionManagementRequestDetails smDetails) {
-        StringBuilder sb = new StringBuilder();
-        smDetails.getTokens().stream().forEach(t -> sb.append("\n").append(t.getToken()));
-
         // Base param and evidence on the first token - there will always be at least one
         SessionToken token = smDetails.getTokens().get(0);
 
@@ -190,7 +188,10 @@ public class SessionDetectionScanRule extends PluginPassiveScanner {
                 .setSolution(Constant.messages.getString("authhelper.session-detect.soln"))
                 .setReference(
                         "https://www.zaproxy.org/docs/desktop/addons/authentication-helper/session-mgmt-id")
-                .setOtherInfo(sb.toString());
+                .setOtherInfo(
+                        smDetails.getTokens().stream()
+                                .map(SessionToken::getToken)
+                                .collect(Collectors.joining("\n")));
     }
 
     @Override

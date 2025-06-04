@@ -28,6 +28,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Wait for the detection of the session method in Client Script Based Authentication method.
 - Include the name of the interaction in the Client Script Based Authentication diagnostics.
 - Clear fields before sending keys for Browser Based Authentication, including when using steps.
+- Do not add an empty line to the start of the Other Info of Session Management Response Identified scan rule's alerts.
 
 ### Fixed
 - Correct descriptions of the Zest script steps in the Authentication Report.
