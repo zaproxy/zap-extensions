@@ -23,6 +23,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
@@ -102,6 +103,10 @@ class SessionDetectionScanRuleUnitTest extends PassiveScannerTest<SessionDetecti
         Session session = mock(Session.class);
         given(session.getContextsForUrl(anyString())).willReturn(Arrays.asList(context));
         given(model.getSession()).willReturn(session);
+
+        history = new ArrayList<>();
+        historyProvider = new TestHistoryProvider();
+        AuthUtils.setHistoryProvider(historyProvider);
 
         String body = "Response Body";
         String token = "12345678901234567890";
@@ -196,6 +201,9 @@ class SessionDetectionScanRuleUnitTest extends PassiveScannerTest<SessionDetecti
                 DiagnosticDataLoader.loadTestData(
                         this.getResourcePath("internal/bodgeit.diags").toFile());
 
+        history = new ArrayList<>();
+        historyProvider = new TestHistoryProvider();
+        AuthUtils.setHistoryProvider(historyProvider);
         // When
         msgs.forEach(
                 msg -> {
@@ -353,12 +361,88 @@ class SessionDetectionScanRuleUnitTest extends PassiveScannerTest<SessionDetecti
         assertThat(alertsRaised.get(2).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
     }
 
+    @Test
+    void shouldFindTokenWhenOneIsPreviouslyUnknown() throws Exception {
+        // Given
+        Constant.messages = mock(I18N.class);
+        model = mock(Model.class);
+        extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
+
+        history = new ArrayList<>();
+        historyProvider = new TestHistoryProvider();
+        AuthUtils.setHistoryProvider(historyProvider);
+
+        Control.initSingletonForTesting(model, extensionLoader);
+        Model.setSingletonForTesting(model);
+
+        Session session = mock(Session.class);
+        given(session.getContextsForUrl(anyString())).willReturn(Arrays.asList());
+        given(model.getSession()).willReturn(session);
+
+        String cookie = "67890123456789012345";
+        String jwtValue = "bearer 677890123456789012345-677890123456789012345";
+        String jwt = "{\"jwt\":\"%s\"}".formatted(jwtValue);
+        HttpMessage msg =
+                new HttpMessage(
+                        new HttpRequestHeader(
+                                """
+                                POST / HTTP/1.1\r
+                                Header1: Value1\r
+                                Header2: Value2\r
+                                cookie: jsessionid=%s\r
+                                Host: example.com\r\n\r\n"""),
+                        new HttpRequestBody(
+                                "{\"username\":\"FakeUserName@example.com\",\"password\":\"F4keP4ssw0rd\"}"),
+                        new HttpResponseHeader(
+                                "HTTP/1.1 200 OK\r\ncontent-type: application/json\r\n"),
+                        new HttpResponseBody(jwt));
+
+        HttpMessage msg2 =
+                new HttpMessage(
+                        new HttpRequestHeader(
+                                """
+                                GET /home HTTP/1.1\r
+                                Header1: Value1\r
+                                Header2: Value2\r
+                                cookie: jsessionid=%s\r
+                                x-auth-token: %s\r
+                                Host: example.com\r\n\r\n"""
+                                        .formatted(cookie, jwtValue)),
+                        new HttpRequestBody(""),
+                        new HttpResponseHeader("HTTP/1.1 200 OK\r\n"),
+                        new HttpResponseBody("<html></html>"));
+
+        List<HttpMessage> msgs = List.of(msg, msg2);
+        historyProvider.addAuthMessageToHistory(msg);
+        historyProvider.addAuthMessageToHistory(msg2);
+        AuthUtils.recordSessionToken(
+                new SessionToken(SessionToken.COOKIE_SOURCE, "jsessionid", cookie));
+        SessionDetectionScanRule rule = this.createScanner();
+
+        // When
+        msgs.forEach(
+                m -> {
+                    PassiveScanData helper = new PassiveScanData(m);
+                    rule.setHelper(helper);
+                    rule.setPassiveScanActions(actions);
+                    rule.scanHttpResponseReceive(m, 1, null);
+                });
+
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+        Alert expected = alertsRaised.get(0);
+        assertThat(expected.getParam(), is(equalTo("jwt")));
+        assertThat(expected.getOtherInfo(), is(equalTo("json:jwt")));
+    }
+
     class TestHistoryProvider extends HistoryProvider {
         @Override
         public void addAuthMessageToHistory(HttpMessage msg) {
             history.add(msg);
             int id = history.size() - 1;
-            HistoryReference href = mock(HistoryReference.class);
+            HistoryReference href =
+                    mock(HistoryReference.class, withSettings().strictness(Strictness.LENIENT));
             given(href.getHistoryId()).willReturn(id);
             msg.setHistoryRef(href);
         }
