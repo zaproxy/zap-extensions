@@ -58,7 +58,6 @@ import org.apache.commons.httpclient.URI;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -150,25 +149,7 @@ class AuthUtilsUnitTest extends TestUtils {
 
         // Then
         assertThat(field, is(notNullValue()));
-        assertThat(field.getDomAttribute("type"), is(equalTo("text")));
-    }
-
-    @Test
-    void shouldReturnUserTextFieldByDomProperty() throws Exception {
-        // Given
-        List<WebElement> inputElements = new ArrayList<>();
-        inputElements.add(new TestWebElement("input", "password"));
-        TestWebElement inputField = new TestWebElement("input", "text");
-        inputField.setUseDomProperty(true);
-        inputElements.add(inputField);
-        inputElements.add(new TestWebElement("input", "checkbox"));
-
-        // When
-        WebElement field = AuthUtils.getUserField(null, inputElements, null);
-
-        // Then
-        assertThat(field, is(notNullValue()));
-        assertThat(field.getDomAttribute("type"), is(equalTo("text")));
+        assertThat(field.getAttribute("type"), is(equalTo("text")));
     }
 
     @Test
@@ -191,7 +172,7 @@ class AuthUtilsUnitTest extends TestUtils {
 
         // Then
         assertThat(field, is(notNullValue()));
-        assertThat(field.getDomAttribute("type"), is(equalTo("text")));
+        assertThat(field.getAttribute("type"), is(equalTo("text")));
         assertThat(field.isDisplayed(), is(equalTo(true)));
     }
 
@@ -207,7 +188,7 @@ class AuthUtilsUnitTest extends TestUtils {
 
         // Then
         assertThat(field, is(notNullValue()));
-        assertThat(field.getDomAttribute("type"), is(equalTo("customtype")));
+        assertThat(field.getAttribute("type"), is(equalTo("customtype")));
         assertThat(field.isDisplayed(), is(equalTo(true)));
     }
 
@@ -227,7 +208,7 @@ class AuthUtilsUnitTest extends TestUtils {
 
         // Then
         assertThat(field, is(notNullValue()));
-        assertThat(field.getDomAttribute("type"), is(equalTo("customtype")));
+        assertThat(field.getAttribute("type"), is(equalTo("customtype")));
         assertThat(field.isDisplayed(), is(equalTo(true)));
     }
 
@@ -244,7 +225,7 @@ class AuthUtilsUnitTest extends TestUtils {
 
         // Then
         assertThat(field, is(notNullValue()));
-        assertThat(field.getDomAttribute("type"), is(equalTo("email")));
+        assertThat(field.getAttribute("type"), is(equalTo("email")));
     }
 
     @Test
@@ -261,7 +242,7 @@ class AuthUtilsUnitTest extends TestUtils {
 
         // Then
         assertThat(field, is(notNullValue()));
-        assertThat(field.getDomAttribute("id"), is(equalTo("email")));
+        assertThat(field.getAttribute("id"), is(equalTo("email")));
     }
 
     @Test
@@ -278,7 +259,7 @@ class AuthUtilsUnitTest extends TestUtils {
 
         // Then
         assertThat(field, is(notNullValue()));
-        assertThat(field.getDomAttribute("name"), is(equalTo("username")));
+        assertThat(field.getAttribute("name"), is(equalTo("username")));
     }
 
     @Test
@@ -309,25 +290,7 @@ class AuthUtilsUnitTest extends TestUtils {
 
         // Then
         assertThat(field, is(notNullValue()));
-        assertThat(field.getDomAttribute("type"), is(equalTo("password")));
-    }
-
-    @Test
-    void shouldReturnPasswordFieldByDomProperty() throws Exception {
-        // Given
-        List<WebElement> inputElements = new ArrayList<>();
-        inputElements.add(new TestWebElement("input", "email"));
-        inputElements.add(new TestWebElement("input", "checkbox"));
-        TestWebElement inputField = new TestWebElement("input", "password");
-        inputField.setUseDomProperty(true);
-        inputElements.add(inputField);
-
-        // When
-        WebElement field = AuthUtils.getPasswordField(inputElements);
-
-        // Then
-        assertThat(field, is(notNullValue()));
-        assertThat(field.getDomAttribute("type"), is(equalTo("password")));
+        assertThat(field.getAttribute("type"), is(equalTo("password")));
     }
 
     @Test
@@ -350,7 +313,7 @@ class AuthUtilsUnitTest extends TestUtils {
 
         // Then
         assertThat(field, is(notNullValue()));
-        assertThat(field.getDomAttribute("type"), is(equalTo("password")));
+        assertThat(field.getAttribute("type"), is(equalTo("password")));
         assertThat(field.isDisplayed(), is(equalTo(true)));
     }
 
@@ -1112,6 +1075,54 @@ class AuthUtilsUnitTest extends TestUtils {
             assertThat(field, is(notNullValue()));
             assertThat(field.getDomAttribute("name"), is(equalTo("randomB")));
         }
+
+        @TestTemplate
+        void shouldReturnUserTextFieldByDomProperty(WebDriver wd) {
+            // Given
+            pageContent =
+                    () ->
+                            """
+                                <input type="password" />
+                                <input id="id" />
+                                <input type="checkbox" />
+                                <script>
+                                    document.getElementById("id").type = "text";
+                                </script>
+                             """;
+            wd.get(url);
+            List<WebElement> inputElements = wd.findElements(By.xpath("//input"));
+
+            // When
+            WebElement field = AuthUtils.getUserField(null, inputElements, null);
+
+            // Then
+            assertThat(field, is(notNullValue()));
+            assertThat(field.getDomProperty("type"), is(equalTo("text")));
+        }
+
+        @TestTemplate
+        void shouldReturnPasswordFieldByDomProperty(WebDriver wd) {
+            // Given
+            pageContent =
+                    () ->
+                            """
+                                <input type="email" />
+                                <input type="checkbox" />
+                                <input id="id" />
+                                <script>
+                                    document.getElementById("id").type = "password";
+                                </script>
+                             """;
+            wd.get(url);
+            List<WebElement> inputElements = wd.findElements(By.xpath("//input"));
+
+            // When
+            WebElement field = AuthUtils.getPasswordField(inputElements);
+
+            // Then
+            assertThat(field, is(notNullValue()));
+            assertThat(field.getDomProperty("type"), is(equalTo("password")));
+        }
     }
 
     static class LoginLinkVerification extends TestUtils {
@@ -1239,8 +1250,6 @@ class AuthUtilsUnitTest extends TestUtils {
         private String id;
         private String name;
         @Setter private boolean displayed = true;
-        @Setter private boolean useDomAttribute = true;
-        @Setter private boolean useDomProperty;
 
         TestWebElement(String tag, String type) {
             this.tag = tag;
@@ -1276,14 +1285,7 @@ class AuthUtilsUnitTest extends TestUtils {
         }
 
         @Override
-        public String getDomAttribute(String name) {
-            if (useDomAttribute) {
-                return getAttributeImpl(name);
-            }
-            return null;
-        }
-
-        private String getAttributeImpl(String name) {
+        public String getAttribute(String name) {
             switch (name) {
                 case "id":
                     return id;
@@ -1294,20 +1296,6 @@ class AuthUtilsUnitTest extends TestUtils {
                 default:
                     return null;
             }
-        }
-
-        @Override
-        public @Nullable String getDomProperty(String name) {
-            if (useDomProperty) {
-                return getAttributeImpl(name);
-            }
-            return null;
-        }
-
-        @Override
-        @Deprecated
-        public String getAttribute(String name) {
-            return null;
         }
 
         @Override
