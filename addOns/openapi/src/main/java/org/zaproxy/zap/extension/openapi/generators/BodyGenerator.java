@@ -332,6 +332,44 @@ public class BodyGenerator {
         return "";
     }
 
+    @SuppressWarnings("rawtypes")
+    public String generateXml(Schema<?> schema) {
+        if (schema == null) {
+            return "";
+        }
+
+        StringBuilder xml = new StringBuilder();
+        String elementName = null;
+        generateXmlElements(schema, xml);
+        return xml.toString();
+    }
+
+    @SuppressWarnings("rawtypes")
+    private void generateXmlElements(Schema<?> schema, StringBuilder xml) {
+        for (Map.Entry<String, Schema> property : schema.getProperties().entrySet()) {
+            String elementName = property.getKey();
+            xml.append("<");
+            xml.append(elementName);
+            xml.append(">");
+
+            if (property.getValue().getProperties() != null) {
+                generateXmlElements(property.getValue(), xml);
+            } else {
+                String value = dataGenerator.generateValue(elementName, property.getValue(), false);
+                if ("string".equalsIgnoreCase(property.getValue().getType())
+                        && value.startsWith("\"")
+                        && value.endsWith("\"")) {
+                    value = value.substring(1, value.length() - 1); // Remove surrounding quotes
+                }
+                xml.append(value);
+            }
+
+            xml.append("</");
+            xml.append(elementName);
+            xml.append(">\n");
+        }
+    }
+
     private static String getPropertyContentType(Schema<?> schema) {
         String type;
 
