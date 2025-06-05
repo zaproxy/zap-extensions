@@ -58,6 +58,27 @@
 					</alertitem>
 				</th:block>
 			</alerts>
+			<th:block
+				th:if="${reportData.isIncludeSection('statistics')}">
+				<statistics>
+					<th:block th:each="stat: ${helper.getSiteStats(site, '')}">
+						<statistic>
+							<key th:text="${stat.key}"></key>
+							<value th:text="${stat.value}"></value>
+						</statistic>
+					</th:block>
+				</statistics>
+			</th:block>
 		</site>
+	</th:block>
+	<th:block th:if="${reportData.isIncludeSection('statistics')}">
+		<statistics>
+			<th:block th:each="stat: ${helper.getGlobalStats('')}">
+				<statistic>
+					<key th:text="${stat.key}"></key>
+					<value th:text="${stat.value}"></value>
+				</statistic>
+			</th:block>
+		</statistics>
 	</th:block>
 </OWASPZAPReport>
