@@ -294,7 +294,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
                 .raise();
     }
 
-    private boolean performDirectAttack(HttpMessage msg, String param, String value) {
+    private boolean performDirectAttack(HttpMessage msg, String param) {
         for (String scriptAlert : GENERIC_SCRIPT_ALERT_LIST) {
             List<HtmlContext> contexts2 =
                     performAttack(
@@ -322,8 +322,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
         return false;
     }
 
-    private boolean performTagAttack(
-            HtmlContext context, HttpMessage msg, String param, String value) {
+    private boolean performTagAttack(HtmlContext context, HttpMessage msg, String param) {
 
         if (context.isInScriptAttribute()) {
             // Good chance this will be vulnerable
@@ -955,7 +954,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
                 contexts = hca.getHtmlContexts(value + Constant.getEyeCatcher(), null, 0);
             }
             if (contexts.isEmpty()) {
-                attackWorked = performDirectAttack(msg, param, value);
+                attackWorked = performDirectAttack(msg, param);
             }
 
             for (HtmlContext context : contexts) {
@@ -966,7 +965,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
                 }
                 if (context.getTagAttribute() != null) {
                     // its in a tag attribute - lots of attack vectors possible
-                    attackWorked = performTagAttack(context, msg, param, value);
+                    attackWorked = performTagAttack(context, msg, param);
 
                 } else if (context.isInAttributeName()) {
 

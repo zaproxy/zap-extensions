@@ -2152,8 +2152,7 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
                         } else {
                             response = getHtml("NoInput.html");
                         }
-                        Response resp = newFixedLengthResponse(response);
-                        return resp;
+                        return newFixedLengthResponse(response);
                     }
                 });
 
