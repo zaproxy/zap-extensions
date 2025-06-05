@@ -55,6 +55,9 @@ public class SessionDetectionScanRule extends PluginPassiveScanner {
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
+        if (!AuthUtils.isRelevantToAuth(msg)) {
+            return;
+        }
         Map<String, SessionToken> responseTokens = AuthUtils.getResponseSessionTokens(msg);
 
         if (!responseTokens.isEmpty()) {

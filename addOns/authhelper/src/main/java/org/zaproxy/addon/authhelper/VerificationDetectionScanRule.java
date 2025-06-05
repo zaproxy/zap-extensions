@@ -22,6 +22,7 @@ package org.zaproxy.addon.authhelper;
 import java.util.List;
 import java.util.Set;
 import net.htmlparser.jericho.Source;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -41,6 +42,17 @@ public class VerificationDetectionScanRule extends PluginPassiveScanner {
     private static final VerificationComparator COMPARATOR =
             VerificationRequestDetails.getComparator();
 
+    static final List<String> COMMON_LOGOUT_STRINGS =
+            List.of(
+                    "logout",
+                    "logoff",
+                    "signout",
+                    "signoff",
+                    "log-out",
+                    "sign-out",
+                    "log-off",
+                    "sign-off");
+
     @Override
     public int getPluginId() {
         return PLUGIN_ID;
@@ -54,7 +66,7 @@ public class VerificationDetectionScanRule extends PluginPassiveScanner {
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 
-        if (!AuthUtils.isRelevantToAuth(msg)) {
+        if (!AuthUtils.isRelevantToAuth(msg) || seemsToBeLogoutMessage(msg)) {
             return;
         }
         if (!HttpRequestHeader.GET.equals(msg.getRequestHeader().getMethod())
@@ -91,6 +103,13 @@ public class VerificationDetectionScanRule extends PluginPassiveScanner {
                 }
             }
         }
+    }
+
+    private static boolean seemsToBeLogoutMessage(HttpMessage msg) {
+        String[] urlPath = {""};
+        urlPath[0] = msg.getRequestHeader().getURI().getEscapedPathQuery();
+        return COMMON_LOGOUT_STRINGS.stream()
+                .anyMatch(keyword -> StringUtils.containsIgnoreCase(urlPath[0], keyword));
     }
 
     protected AlertBuilder getAlert(VerificationRequestDetails verifDetails) {
