@@ -47,14 +47,14 @@ import org.zaproxy.addon.dev.auth.simpleJsonBearerDiffCookies.SimpleJsonBearerDi
 import org.zaproxy.addon.dev.auth.simpleJsonBearerJsCookie.SimpleJsonBearerJsCookieDir;
 import org.zaproxy.addon.dev.auth.simpleJsonCookie.SimpleJsonCookieDir;
 import org.zaproxy.addon.dev.auth.sso1.SSO1RootDir;
-import org.zaproxy.addon.dev.auth.uuidLogin.UuidLoginRootDir;
-import org.zaproxy.addon.dev.csrf.basic.BasicCsrfDir;
 import org.zaproxy.addon.dev.auth.totp.simpleAuthTotpBlankCodeVuln.OpenApiWithBlankOtpSimpleAuthDir;
 import org.zaproxy.addon.dev.auth.totp.simpleAuthTotpCaptcha.OpenApiWithCaptchaOtpSimpleAuthDir;
 import org.zaproxy.addon.dev.auth.totp.simpleAuthTotpCommonBackupCodeVuln.OpenApiWithCommonOtpSimpleAuthDir;
 import org.zaproxy.addon.dev.auth.totp.simpleAuthTotpLockout.OpenApiWithLockoutOtpSimpleAuthDir;
 import org.zaproxy.addon.dev.auth.totp.simpleAuthTotpReplayVuln.OpenApiWithReplayOtpSimpleAuthDir;
 import org.zaproxy.addon.dev.auth.totp.simpleAuthWithOTP.OpenApiWithOtpSimpleAuthDir;
+import org.zaproxy.addon.dev.auth.uuidLogin.UuidLoginRootDir;
+import org.zaproxy.addon.dev.csrf.basic.BasicCsrfDir;
 import org.zaproxy.addon.dev.seq.performance.PerformanceDir;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
