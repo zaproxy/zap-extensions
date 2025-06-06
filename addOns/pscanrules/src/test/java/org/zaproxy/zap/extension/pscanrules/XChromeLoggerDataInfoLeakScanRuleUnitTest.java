@@ -36,6 +36,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 
 class XChromeLoggerDataInfoLeakScanRuleUnitTest
         extends PassiveScannerTest<XChromeLoggerDataInfoLeakScanRule> {
@@ -133,7 +134,7 @@ class XChromeLoggerDataInfoLeakScanRuleUnitTest
         // Given / When
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(tags.size(), is(equalTo(3)));
+        assertThat(tags.size(), is(equalTo(5)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getTag()),
                 is(equalTo(true)));
@@ -143,6 +144,8 @@ class XChromeLoggerDataInfoLeakScanRuleUnitTest
         assertThat(
                 tags.containsKey(CommonAlertTag.WSTG_V42_INFO_05_CONTENT_LEAK.getTag()),
                 is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.QA_STD.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getValue())));
@@ -164,7 +167,7 @@ class XChromeLoggerDataInfoLeakScanRuleUnitTest
 
         Alert alert = alerts.get(0);
         Map<String, String> tags1 = alert.getTags();
-        assertThat(tags1.size(), is(equalTo(4)));
+        assertThat(tags1.size(), is(equalTo(6)));
         assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_HIGH)));
         assertThat(alert.getCweId(), is(equalTo(532)));
         assertThat(tags1, hasKey("CWE-532"));
@@ -174,6 +177,8 @@ class XChromeLoggerDataInfoLeakScanRuleUnitTest
         assertThat(
                 tags1.containsKey(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getTag()),
                 is(equalTo(true)));
+        assertThat(tags1.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
+        assertThat(tags1.containsKey(PolicyTag.QA_STD.getTag()), is(equalTo(true)));
     }
 
     @Test

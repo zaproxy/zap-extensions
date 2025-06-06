@@ -21,6 +21,7 @@ package org.zaproxy.addon.client;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -56,6 +57,41 @@ public class ClientOptions extends VersionedAbstractParam {
     private static final String MAX_DURATION_KEY = CLIENT_BASE_KEY + ".maxDuration";
     private static final String MAX_CHILDREN_KEY = CLIENT_BASE_KEY + ".maxChildren";
     private static final String MAX_SCANS_IN_UI_KEY = CLIENT_BASE_KEY + ".maxScansInUI";
+    private static final String SCOPE_CHECK_KEY = CLIENT_BASE_KEY + ".scopeCheck";
+
+    public enum ScopeCheck {
+        FLEXIBLE,
+        STRICT;
+
+        private final String label;
+
+        ScopeCheck() {
+            label =
+                    Constant.messages.getString(
+                            "client.options.label.scope." + name().toLowerCase(Locale.ROOT));
+        }
+
+        @Override
+        public String toString() {
+            return label;
+        }
+
+        public static ScopeCheck getDefault() {
+            return FLEXIBLE;
+        }
+
+        public static ScopeCheck parse(String value) {
+            if (value == null || value.isBlank()) {
+                return getDefault();
+            }
+
+            try {
+                return valueOf(value.toUpperCase(Locale.ROOT));
+            } catch (Exception e) {
+                return getDefault();
+            }
+        }
+    }
 
     private String browserId;
     private int threadCount;
@@ -69,6 +105,7 @@ public class ClientOptions extends VersionedAbstractParam {
     private int maxDepth = DEFAULT_MAX_DEPTH;
     private int maxDuration;
     private int maxScansInUi = 5;
+    private ScopeCheck scopeCheck = ScopeCheck.getDefault();
 
     @Override
     public ClientOptions clone() {
@@ -87,6 +124,7 @@ public class ClientOptions extends VersionedAbstractParam {
         this.maxDepth = getInt(MAX_DEPTH_KEY, DEFAULT_MAX_DEPTH);
         this.maxDuration = getInt(MAX_DURATION_KEY, 0);
         this.maxScansInUi = getInt(MAX_SCANS_IN_UI_KEY, 5);
+        this.scopeCheck = getEnum(SCOPE_CHECK_KEY, ScopeCheck.getDefault());
 
         try {
             pscanRulesDisabled =
@@ -235,5 +273,18 @@ public class ClientOptions extends VersionedAbstractParam {
     public void setMaxScansInUi(int maxScansInUi) {
         this.maxScansInUi = maxScansInUi;
         getConfig().setProperty(MAX_SCANS_IN_UI_KEY, maxScansInUi);
+    }
+
+    public ScopeCheck getScopeCheck() {
+        return scopeCheck;
+    }
+
+    public void setScopeCheck(String scopeCheck) {
+        setScopeCheck(ScopeCheck.parse(scopeCheck));
+    }
+
+    public void setScopeCheck(ScopeCheck scopeCheck) {
+        this.scopeCheck = scopeCheck == null ? ScopeCheck.getDefault() : scopeCheck;
+        getConfig().setProperty(SCOPE_CHECK_KEY, this.scopeCheck.name());
     }
 }

@@ -4,7 +4,12 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- The WSDL passive scan rule has been tagged of interest to Penetration Testers and QA.
+- The included active scan rules have been tagged of interest to Penetration Testers.
 
+### Changed
+- Depends on an updated version of the Common Library add-on.
 
 ## [24] - 2025-01-10
 ### Changed

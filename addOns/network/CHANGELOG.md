@@ -5,7 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- A typo in the help with regard to Transparent Proxying.
 
+### Changed
+- Default Global Exclusions patterns:
+    - All case insensitive (Issue 8930).
+    - Fix a naming mistake in "ExtParam - .NET adx resources (SR/WR.adx?d=)" adx should have been axd.
+    - Extend Image related patterns to include svg and webp.
+    - Extend Audio/Video patterns to include webm.
+- Change default log level of cookies processing to error to avoid flooding the logs with warnings when the cookies are rejected/invalid.
 
 ## [0.21.0] - 2025-03-04
 ### Fixed

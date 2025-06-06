@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import net.htmlparser.jericho.Source;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -61,18 +62,11 @@ public class SessionDetectionScanRule extends PluginPassiveScanner {
             SessionManagementRequestDetails smDetails =
                     new SessionManagementRequestDetails(
                             msg, new ArrayList<>(responseTokens.values()), Alert.CONFIDENCE_MEDIUM);
-            getAlert(smDetails).raise();
             LOGGER.debug(
                     "Found {} response session token(s) in {}",
                     responseTokens.size(),
                     msg.getRequestHeader().getURI());
-            smDetails
-                    .getTokens()
-                    .forEach(
-                            t -> {
-                                AuthUtils.recordSessionToken(t);
-                                Stats.incCounter("stats.auth.detect.session." + t.getKey());
-                            });
+            processSessionMgmtDetailsTokens(smDetails);
         }
         Set<SessionToken> requestTokens = AuthUtils.getRequestSessionTokens(msg);
         LOGGER.debug(
@@ -84,36 +78,24 @@ public class SessionDetectionScanRule extends PluginPassiveScanner {
             List<SessionToken> foundTokens = new ArrayList<>();
             for (SessionToken st : requestTokens) {
                 SessionToken sourceToken = AuthUtils.containsSessionToken(st.getValue());
-                if (sourceToken != null) {
+                if (sourceToken == null) {
+                    SessionManagementRequestDetails smrd =
+                            AuthUtils.findSessionTokenSource(st.getValue());
+                    if (smrd != null) {
+                        processSessionMgmtDetailsTokens(smrd);
+                        foundTokens.addAll(smrd.getTokens());
+                    } else {
+                        LOGGER.debug("Failed to find source of {}", st.getKey());
+                    }
+                } else {
                     foundTokens.add(sourceToken);
                     LOGGER.debug("Found source of {}", st.getKey());
-                } else {
-                    LOGGER.debug("Failed to find source of {}", st.getKey());
                 }
             }
             LOGGER.debug(
                     "Found a total of {} request token(s) in {}",
                     foundTokens.size(),
                     msg.getRequestHeader().getURI());
-
-            if (foundTokens.isEmpty()) {
-                // These are not 'known' session tokens, see if we can find any of them
-                for (SessionToken st : requestTokens) {
-                    SessionManagementRequestDetails smrd =
-                            AuthUtils.findSessionTokenSource(st.getValue());
-                    if (smrd != null) {
-                        // Yes, found the token in a 'non standard' place
-                        getAlert(smrd).raise();
-                        LOGGER.debug(
-                                "Found {} 'unknown' response session token(s) in {}",
-                                responseTokens.size(),
-                                msg.getRequestHeader().getURI());
-
-                        Stats.incCounter("stats.auth.detect.session." + st.getKey());
-                        foundTokens.addAll(smrd.getTokens());
-                    }
-                }
-            }
             if (!foundTokens.isEmpty()) {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug(
@@ -153,9 +135,20 @@ public class SessionDetectionScanRule extends PluginPassiveScanner {
                 LOGGER.debug(
                         "Failed to find source of session management tokens in {}:",
                         msg.getRequestHeader().getURI());
-                requestTokens.forEach((st) -> LOGGER.debug("Missed token {}", st.getToken()));
+                requestTokens.forEach(st -> LOGGER.debug("Missed token {}", st.getToken()));
             }
         }
+    }
+
+    private void processSessionMgmtDetailsTokens(SessionManagementRequestDetails smDetails) {
+        getAlert(smDetails).raise();
+        smDetails
+                .getTokens()
+                .forEach(
+                        t -> {
+                            AuthUtils.recordSessionToken(t);
+                            Stats.incCounter("stats.auth.detect.session." + t.getKey());
+                        });
     }
 
     /**
@@ -174,9 +167,6 @@ public class SessionDetectionScanRule extends PluginPassiveScanner {
     }
 
     protected AlertBuilder getAlert(SessionManagementRequestDetails smDetails) {
-        StringBuilder sb = new StringBuilder();
-        smDetails.getTokens().stream().forEach(t -> sb.append("\n").append(t.getToken()));
-
         // Base param and evidence on the first token - there will always be at least one
         SessionToken token = smDetails.getTokens().get(0);
 
@@ -185,12 +175,15 @@ public class SessionDetectionScanRule extends PluginPassiveScanner {
                 .setRisk(Alert.RISK_INFO)
                 .setConfidence(smDetails.getConfidence())
                 .setParam(token.getKey())
-                .setEvidence(token.getValue())
+                .setEvidence(token.getKey())
                 .setDescription(Constant.messages.getString("authhelper.session-detect.desc"))
                 .setSolution(Constant.messages.getString("authhelper.session-detect.soln"))
                 .setReference(
                         "https://www.zaproxy.org/docs/desktop/addons/authentication-helper/session-mgmt-id")
-                .setOtherInfo(sb.toString());
+                .setOtherInfo(
+                        smDetails.getTokens().stream()
+                                .map(SessionToken::getToken)
+                                .collect(Collectors.joining("\n")));
     }
 
     @Override

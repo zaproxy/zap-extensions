@@ -30,7 +30,7 @@ zapAddOn {
         dependencies {
             addOns {
                 register("commonlib") {
-                    version.set(">=1.31.0")
+                    version.set(">=1.32.0")
                 }
                 register("pscan") {
                     version.set(">= 0.1.0 & < 1.0.0")

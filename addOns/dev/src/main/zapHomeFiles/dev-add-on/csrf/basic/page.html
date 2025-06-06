@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>ZAP Test Server</title>
+	<link href="/tutorial.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="roundContainer">
+	<h1>ZAP Test Server</H1>
+	<h2>CSRF Basic Test Page</h2>
+
+	<form method="post">
+	<input type="hidden" id="csrf_token" name="csrf_token" value="<!-- CSRF -->" />
+	<table>
+	<!-- TABLE -->
+	<tr><td></td><td><input type="submit" value="Submit" /></td></tr>
+	</table>
+	</form>
+
+	<div class="buttonsDiv">
+		<a href="/"><button>Index page</button></a>
+	</div>
+</div>
+
+</body>
+</html>

@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /**
@@ -66,15 +68,18 @@ public class HeartBleedScanRule extends PluginPassiveScanner implements CommonPa
     private static final String MESSAGE_PREFIX = "pscanrules.heartbleed.";
 
     private static final String CVE = "CVE-2014-0160";
-    private static final Map<String, String> ALERT_TAGS = new HashMap<>();
+    private static final Map<String, String> ALERT_TAGS;
 
     static {
-        ALERT_TAGS.putAll(
+        Map<String, String> alertTags = new HashMap<>();
+        alertTags.putAll(
                 CommonAlertTag.toMap(
                         CommonAlertTag.OWASP_2021_A06_VULN_COMP,
                         CommonAlertTag.OWASP_2017_A09_VULN_COMP,
                         CommonAlertTag.WSTG_V42_CRYP_01_TLS));
-        CommonAlertTag.putCve(ALERT_TAGS, CVE);
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
+        CommonAlertTag.putCve(alertTags, CVE);
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
     }
 
     @Override

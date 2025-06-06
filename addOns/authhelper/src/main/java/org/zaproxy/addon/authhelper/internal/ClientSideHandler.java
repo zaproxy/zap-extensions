@@ -60,7 +60,6 @@ public final class ClientSideHandler implements HttpMessageHandler {
     private final User user;
     private UsernamePasswordAuthenticationCredentials authCreds;
     private AuthRequestDetails authReq;
-    private HttpMessage fallbackMsg;
     private int firstHrefId;
     private List<Integer> httpMessageHistoryIds = new ArrayList<>();
 
@@ -69,8 +68,8 @@ public final class ClientSideHandler implements HttpMessageHandler {
     public ClientSideHandler(User user) {
         this.user = user;
         if (user.getAuthenticationCredentials()
-                instanceof UsernamePasswordAuthenticationCredentials authCreds) {
-            this.authCreds = authCreds;
+                instanceof UsernamePasswordAuthenticationCredentials authCred) {
+            this.authCreds = authCred;
         }
     }
 
@@ -169,7 +168,7 @@ public final class ClientSideHandler implements HttpMessageHandler {
             authReq = candidate;
         }
 
-        Set<SessionToken> reqSessionTokens = AuthUtils.getRequestSessionTokens(msg);
+        Set<SessionToken> reqSessionTokens = AuthUtils.getRequestSessionTokens(msg, headerConfigs);
         Set<SessionToken> unkSessionTokens = new HashSet<>();
         for (SessionToken token : reqSessionTokens) {
             if (!SessionToken.COOKIE_SOURCE.equals(token.getSource())) {
@@ -225,10 +224,6 @@ public final class ClientSideHandler implements HttpMessageHandler {
             return false;
         }
         return smrd1.getTokens().size() > smrd2.getTokens().size();
-    }
-
-    public HttpMessage getFallbackMsg() {
-        return fallbackMsg;
     }
 
     protected static List<Pair<String, String>> extractKeyValuePairs(String input) {

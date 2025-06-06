@@ -39,6 +39,7 @@ public abstract class ZestClientElementDialog extends StandardFieldsDialog imple
     protected static final String FIELD_ELEMENT_TYPE = "zest.dialog.client.label.elementType";
     protected static final String FIELD_ELEMENT = "zest.dialog.client.label.element";
     protected static final String FIELD_ATTRIBUTE = "zest.dialog.client.label.attribute";
+    protected static final String FIELD_WAIT_FOR_MSEC = "zest.dialog.client.label.waitForMsec";
 
     protected static String ELEMENT_TYPE_PREFIX = "zest.dialog.client.elementType.label.";
     protected static String[] ELEMENT_TYPES = {
@@ -88,6 +89,7 @@ public abstract class ZestClientElementDialog extends StandardFieldsDialog imple
         }
         this.addComboField(FIELD_ELEMENT_TYPE, getElementTypeFields(), clientType);
         this.addTextField(FIELD_ELEMENT, client.getElement());
+        this.addNumberField(FIELD_WAIT_FOR_MSEC, 0, Integer.MAX_VALUE, client.getWaitForMsec());
 
         setFieldMainPopupMenu(FIELD_ELEMENT);
     }
@@ -140,6 +142,7 @@ public abstract class ZestClientElementDialog extends StandardFieldsDialog imple
         client.setWindowHandle(this.getStringValue(FIELD_WINDOW_HANDLE));
         client.setType(getSelectedElementType());
         client.setElement(this.getStringValue(FIELD_ELEMENT));
+        client.setWaitForMsec(this.getIntValue(FIELD_WAIT_FOR_MSEC));
 
         this.saveFields();
 

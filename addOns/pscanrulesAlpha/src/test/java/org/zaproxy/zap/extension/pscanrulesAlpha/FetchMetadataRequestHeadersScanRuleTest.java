@@ -22,11 +22,15 @@ package org.zaproxy.zap.extension.pscanrulesAlpha;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 
 class FetchMetadataRequestHeadersScanRuleTest
         extends PassiveScannerTest<FetchMetadataRequestHeadersScanRule> {
@@ -222,6 +226,20 @@ class FetchMetadataRequestHeadersScanRuleTest
         assertThat(alert.getAlertRef(), equalTo(alertRef));
         assertThat(alert.getRisk(), equalTo(Alert.RISK_INFO));
         assertThat(alert.getConfidence(), equalTo(Alert.CONFIDENCE_HIGH));
+    }
+
+    @Test
+    void shouldReturnExpectedMappings() {
+        // Given / When
+        Map<String, String> tags = rule.getAlertTags();
+        // Then
+        assertThat(tags.size(), is(equalTo(2)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.WSTG_V42_SESS_05_CSRF.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
+        assertThat(
+                tags.get(CommonAlertTag.WSTG_V42_SESS_05_CSRF.getTag()),
+                is(equalTo(CommonAlertTag.WSTG_V42_SESS_05_CSRF.getValue())));
     }
 
     @Override

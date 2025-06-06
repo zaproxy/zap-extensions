@@ -4,7 +4,11 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Fixed
+- The content length is now properly set on responses which have been modified (Issue 8947).
 
+### Changed
+- Maintenance changes.
 
 ## [9] - 2025-01-10
 ### Changed

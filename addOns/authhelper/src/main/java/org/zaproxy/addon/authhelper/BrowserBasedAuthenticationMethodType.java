@@ -29,6 +29,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -158,10 +159,10 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
             HttpSender temp = getHttpSender();
             Object obj = MethodUtils.invokeMethod(temp, true, "getContext");
 
-            if (obj instanceof HttpSenderContextApache) {
+            if (obj instanceof HttpSenderContextApache hsca) {
                 return FieldUtils.readField(
                         HttpSenderContextApache.class.getDeclaredField("localCookieStore"),
-                        (HttpSenderContextApache) obj,
+                        hsca,
                         true);
             }
         } catch (Exception e) {
@@ -374,6 +375,10 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
 
                 HttpMessage authMsg = handler.getAuthMsg();
                 if (authMsg != null) {
+                    diags.recordStep(
+                            authMsg,
+                            Constant.messages.getString(
+                                    "authhelper.auth.method.diags.steps.authmessage"));
                     // Update the session as it may have changed
                     for (int i = 0; i < AuthUtils.getWaitLoopCount(); i++) {
                         // The session management method is set via a pscan rule, so make sure it is
@@ -403,7 +408,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
                         user.setAuthenticatedSession(session);
                     }
 
-                    AuthUtils.checkLoginLinkVerification(httpSender, user, session, loginPageUrl);
+                    AuthUtils.checkLoginLinkVerification(httpSender, user, loginPageUrl);
 
                     if (this.isAuthenticated(authMsg, user, true)) {
                         diags.recordStep(
@@ -443,12 +448,9 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
                     Constant.messages.getString("authentication.output.failure", this.loginPageUrl)
                             + "\n");
 
-            HttpMessage fallbackMsg = handler.getFallbackMsg();
             diags.recordStep(
-                    fallbackMsg,
-                    Constant.messages.getString("authhelper.auth.method.diags.steps.fallback"));
-            // We don't expect this to work, but it will prevent some NPEs
-            return sessionManagementMethod.extractWebSession(fallbackMsg);
+                    Constant.messages.getString("authhelper.auth.method.diags.steps.emptysession"));
+            return sessionManagementMethod.createEmptyWebSession();
         }
 
         @Override
@@ -733,6 +735,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
         private ZapTextField loginUrlField;
         private JComboBox<BrowserUI> browserCombo;
         private ZapNumberSpinner loginUrlWait;
+        private JCheckBox diagnostics;
         private StepsPanel stepsPanel;
 
         public BrowserBasedAuthenticationMethodOptionsPanel(Context context) {
@@ -746,43 +749,36 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
 
             // Add behaviour for Node Select dialog
             selectButton.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            NodeSelectDialog nsd =
-                                    new NodeSelectDialog(View.getSingleton().getMainFrame());
-                            // Try to pre-select the node according to what has been inserted in the
-                            // fields
-                            SiteNode node = null;
-                            if (loginUrlField.getText().trim().length() > 0)
-                                try {
-                                    node =
-                                            Model.getSingleton()
-                                                    .getSession()
-                                                    .getSiteTree()
-                                                    .findNode(
-                                                            new URI(
-                                                                    loginUrlField.getText(),
-                                                                    false));
-                                } catch (Exception e2) {
-                                    // Ignore. It means we could not properly get a node for the
-                                    // existing
-                                    // value and does not have any harmful effects
-                                }
+                    e -> {
+                        NodeSelectDialog nsd =
+                                new NodeSelectDialog(View.getSingleton().getMainFrame());
+                        // Try to pre-select the node according to what has been inserted in the
+                        // fields
+                        SiteNode node = null;
+                        if (!loginUrlField.getText().trim().isEmpty())
+                            try {
+                                node =
+                                        Model.getSingleton()
+                                                .getSession()
+                                                .getSiteTree()
+                                                .findNode(new URI(loginUrlField.getText(), false));
+                            } catch (Exception e2) {
+                                // Ignore. It means we could not properly get a node for the
+                                // existing value and does not have any harmful effects
+                            }
 
-                            // Show the dialog and wait for input
-                            node = nsd.showDialog(node);
-                            if (node != null && node.getHistoryReference() != null) {
-                                try {
-                                    LOGGER.debug(
-                                            "Selected Browser Based Auth Login URL via dialog: {}",
-                                            node.getHistoryReference().getURI());
+                        // Show the dialog and wait for input
+                        node = nsd.showDialog(node);
+                        if (node != null && node.getHistoryReference() != null) {
+                            try {
+                                LOGGER.debug(
+                                        "Selected Browser Based Auth Login URL via dialog: {}",
+                                        node.getHistoryReference().getURI());
 
-                                    loginUrlField.setText(
-                                            node.getHistoryReference().getURI().toString());
-                                } catch (Exception e1) {
-                                    LOGGER.error(e1.getMessage(), e1);
-                                }
+                                loginUrlField.setText(
+                                        node.getHistoryReference().getURI().toString());
+                            } catch (Exception e1) {
+                                LOGGER.error(e1.getMessage(), e1);
                             }
                         }
                     });
@@ -816,17 +812,29 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
             this.add(browserSelectLabel, LayoutHelper.getGBC(0, 2, 1, 1.0d, 0.0d));
             this.add(browserCombo, LayoutHelper.getGBC(1, 2, 1, 1.0d, 0.0d));
 
-            loginUrlWait = new ZapNumberSpinner(1, DEFAULT_PAGE_WAIT, Integer.MAX_VALUE);
+            int y = 3;
+            loginUrlWait = new ZapNumberSpinner(0, DEFAULT_PAGE_WAIT, Integer.MAX_VALUE);
             JLabel loginWaitLabel =
                     new JLabel(
                             Constant.messages.getString(
                                     "authhelper.auth.method.browser.label.loginWait"));
             loginWaitLabel.setLabelFor(loginUrlWait);
-            this.add(loginWaitLabel, LayoutHelper.getGBC(0, 3, 1, 1.0d, 0.0d));
-            this.add(loginUrlWait, LayoutHelper.getGBC(1, 3, 1, 1.0d, 0.0d));
+            this.add(loginWaitLabel, LayoutHelper.getGBC(0, y, 1, 1.0d, 0.0d));
+            this.add(loginUrlWait, LayoutHelper.getGBC(1, y, 1, 1.0d, 0.0d));
+            y++;
+
+            diagnostics = new JCheckBox();
+            JLabel diagnosticsLabel =
+                    new JLabel(
+                            Constant.messages.getString(
+                                    "authhelper.auth.method.browser.label.diagnostics"));
+            diagnosticsLabel.setLabelFor(diagnostics);
+            add(diagnosticsLabel, LayoutHelper.getGBC(0, y, 1, 1.0d, 0.0d));
+            add(diagnostics, LayoutHelper.getGBC(1, y, 1, 1.0d, 0.0d));
+            y++;
 
             stepsPanel = new StepsPanel(View.getSingleton().getSessionDialog(), false);
-            add(stepsPanel.getPanel(), LayoutHelper.getGBC(0, 4, 2, 1.0d, 1.0d));
+            add(stepsPanel.getPanel(), LayoutHelper.getGBC(0, y, 2, 1.0d, 1.0d));
         }
 
         @Override
@@ -846,6 +854,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
                     .setBrowserId(
                             ((BrowserUI) browserCombo.getSelectedItem()).getBrowser().getId());
             getMethod().setLoginPageWait(loginUrlWait.getValue());
+            getMethod().setDiagnostics(diagnostics.isSelected());
             authenticationMethod.setAuthenticationSteps(stepsPanel.getSteps());
         }
 
@@ -857,6 +866,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
             ((BrowsersComboBoxModel) this.browserCombo.getModel())
                     .setSelectedBrowser(this.authenticationMethod.getBrowserId());
             this.loginUrlWait.setValue(authenticationMethod.getLoginPageWait());
+            diagnostics.setSelected(authenticationMethod.isDiagnostics());
             stepsPanel.setSteps(authenticationMethod.getAuthenticationSteps());
         }
 

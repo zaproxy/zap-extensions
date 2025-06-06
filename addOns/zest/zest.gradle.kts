@@ -49,7 +49,7 @@ dependencies {
     zapAddOn("scripts")
     zapAddOn("selenium")
 
-    api("org.zaproxy:zest:0.25.0") {
+    api("org.zaproxy:zest:0.29.0") {
         // Provided by commonlib add-on.
         exclude(group = "com.fasterxml.jackson.core")
         exclude(group = "com.fasterxml.jackson.dataformat")

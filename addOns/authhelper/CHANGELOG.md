@@ -4,7 +4,46 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Add configuration support for the wait time after Client Script Based Authentication.
+- Include the Web Element being interacted with in the Client Script Based Authentication diagnostics.
+- Allow to enable authentication diagnostics for Client Script and Browser Based Authentication through the GUI.
+- Automation Framework errors to the Authentication Report.
+- Replace TOTP token during Client Script Based Authentication.
+- Include more diagnostics in Client Script and Browser Based Authentication methods.
+- Improve Authentication Report:
+  - Add the ID of the step to make it easier to match with extracted screenshots.
+  - Include the script used by the Client Script Based Authentication.
+  - Add the initiator to the HTTP Messages to know what those messages correspond to.
+  - Include the tag name of the Web Element, now collecting `button`s along with `input`s.
+- Detection of session tokens in non standard headers.
 
+### Changed
+- Warn when the recorded script used with Client Script Based Authentication does not launch a browser.
+- Updated to depend on Zest add-on 48.6.0.
+- Maintenance changes.
+- Depend on reports 0.39.0 to include AF errors.
+- Use Header Based Session Management configuration to find a better candidate authentication message with Client Script and Browser Based Authentication methods.
+- Client Script authentication to refresh the page of no suitable verification URL found.
+- Wait for the detection of the session method in Client Script Based Authentication method.
+- Include the name of the interaction in the Client Script Based Authentication diagnostics.
+- Clear fields before sending keys for Browser Based Authentication, including when using steps.
+- Do not add an empty line to the start of the Other Info of Session Management Response Identified scan rule's alerts.
+
+### Fixed
+- Correct descriptions of the Zest script steps in the Authentication Report.
+- Fix loading/saving of Client Script Based Authentication through the GUI.
+- Inject user credentials into the script when running the Client Script Based Authentication browser integration.
+- Delay when recording diagnostics.
+- Allow to use zero login page wait for Client Script and Browser Based Authentication methods through the GUI.
+- Ensure Client Script Based Authentication method has a clean state when reauthenticating.
+- Handle missing username field in Browser Based Authentication.
+- Correct the processing of cookies with the same name in Header Based Session Management method.
+- Correct redirection handling when checking verification URLs.
+- Verification URL comparison.
+- Use the session token from JSON string response.
+- Do not auto configure the Header Based Session Management method with duplicated session tokens.
+- Ensure that auth messages with both known and unknown Session tokens are correctly processed.
 
 ## [0.25.0] - 2025-03-25
 ### Changed

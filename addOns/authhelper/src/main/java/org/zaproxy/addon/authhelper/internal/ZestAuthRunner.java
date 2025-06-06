@@ -19,21 +19,36 @@
  */
 package org.zaproxy.addon.authhelper.internal;
 
+import java.io.IOException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
+import org.zaproxy.addon.commonlib.internal.TotpSupport;
+import org.zaproxy.zap.users.User;
+import org.zaproxy.zest.core.v1.ZestActionFailException;
+import org.zaproxy.zest.core.v1.ZestAssertFailException;
+import org.zaproxy.zest.core.v1.ZestAssignFailException;
 import org.zaproxy.zest.core.v1.ZestClient;
+import org.zaproxy.zest.core.v1.ZestClientElementSendKeys;
 import org.zaproxy.zest.core.v1.ZestClientFailException;
 import org.zaproxy.zest.core.v1.ZestClientLaunch;
 import org.zaproxy.zest.core.v1.ZestClientWindowClose;
+import org.zaproxy.zest.core.v1.ZestInvalidCommonTestException;
+import org.zaproxy.zest.core.v1.ZestResponse;
 import org.zaproxy.zest.core.v1.ZestScript;
+import org.zaproxy.zest.core.v1.ZestStatement;
 import org.zaproxy.zest.impl.ZestBasicRunner;
 
 public class ZestAuthRunner extends ZestBasicRunner {
 
     private static final Logger LOGGER = LogManager.getLogger(ZestAuthRunner.class);
 
+    private static final String TOTP_VAR_NAME = "TOTP";
+
     private WebDriver webDriver;
+
+    private String totpVar;
+    private User user;
 
     public ZestAuthRunner() {
         super();
@@ -41,6 +56,14 @@ public class ZestAuthRunner extends ZestBasicRunner {
 
     public void setWebDriver(WebDriver webDriver) {
         this.webDriver = webDriver;
+    }
+
+    public void setup(User user, ZestScript script) {
+        this.user = user;
+        totpVar =
+                script.getParameters().getTokenStart()
+                        + TOTP_VAR_NAME
+                        + script.getParameters().getTokenEnd();
     }
 
     @Override
@@ -59,5 +82,22 @@ public class ZestAuthRunner extends ZestBasicRunner {
             return null;
         }
         return super.handleClient(script, client);
+    }
+
+    @Override
+    public ZestResponse runStatement(
+            ZestScript script, ZestStatement stmt, ZestResponse lastResponse)
+            throws ZestAssertFailException,
+                    ZestActionFailException,
+                    ZestInvalidCommonTestException,
+                    IOException,
+                    ZestAssignFailException,
+                    ZestClientFailException {
+        if (stmt instanceof ZestClientElementSendKeys sendKeys
+                && totpVar.equals(sendKeys.getValue())) {
+            String code = TotpSupport.getCode(user.getAuthenticationCredentials());
+            setVariable(TOTP_VAR_NAME, code);
+        }
+        return super.runStatement(script, stmt, lastResponse);
     }
 }

@@ -139,12 +139,12 @@ public class ExtensionSelenium extends ExtensionAdaptor {
      * A list containing all of the WebDrivers opened, so that they can be closed when ZAP is
      * closed.
      */
-    private static List<WebDriver> webDrivers = new ArrayList<>();
+    private static List<WebDriver> webDrivers = Collections.synchronizedList(new ArrayList<>());
 
     private List<WeakReference<ProvidedBrowsersComboBoxModel>> providedBrowserComboBoxModels =
             new ArrayList<>();
 
-    private List<BrowserHook> browserHooks = new ArrayList<>();
+    private List<BrowserHook> browserHooks = Collections.synchronizedList(new ArrayList<>());
 
     private ExtensionScript extScript;
 
@@ -296,13 +296,14 @@ public class ExtensionSelenium extends ExtensionAdaptor {
 
     @Override
     public void destroy() {
-        for (WebDriver wd : webDrivers) {
-            try {
-                wd.quit();
-            } catch (Exception ex) {
-                // Ignore - the user might well have already closed the browser
-            }
-        }
+        webDrivers.forEach(
+                wd -> {
+                    try {
+                        wd.quit();
+                    } catch (Exception ex) {
+                        // Ignore - the user might well have already closed the browser
+                    }
+                });
         webDrivers.clear();
     }
 
@@ -1024,11 +1025,13 @@ public class ExtensionSelenium extends ExtensionAdaptor {
     }
 
     private static void addChromeArguments(ChromeOptions options) {
-        List<String> arguments =
-                getSeleniumOptions().getBrowserArguments(Browser.CHROME.getId()).stream()
-                        .filter(BrowserArgument::isEnabled)
-                        .map(BrowserArgument::getArgument)
-                        .collect(Collectors.toList());
+        List<String> arguments = new ArrayList<>();
+        // FIXME https://github.com/SeleniumHQ/selenium/issues/15788
+        arguments.add("--disable-features=DisableLoadExtensionCommandLineSwitch");
+        getSeleniumOptions().getBrowserArguments(Browser.CHROME.getId()).stream()
+                .filter(BrowserArgument::isEnabled)
+                .map(BrowserArgument::getArgument)
+                .forEach(arguments::add);
         if (!arguments.isEmpty()) {
             options.addArguments(arguments);
         }

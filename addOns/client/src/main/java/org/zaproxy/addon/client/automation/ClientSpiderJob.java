@@ -38,6 +38,7 @@ import org.zaproxy.addon.automation.ContextWrapper;
 import org.zaproxy.addon.automation.jobs.JobData;
 import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.addon.client.ClientOptions;
+import org.zaproxy.addon.client.ClientOptions.ScopeCheck;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.addon.client.spider.ClientSpider;
 import org.zaproxy.addon.commonlib.Constants;
@@ -284,6 +285,7 @@ public class ClientSpiderJob extends AutomationJob {
         private Integer initialLoadTime = ClientOptions.DEFAULT_INITIAL_LOAD_TIME;
         private Integer pageLoadTime = ClientOptions.DEFAULT_PAGE_LOAD_TIME;
         private Integer shutdownTime = ClientOptions.DEFAULT_SHUTDOWN_TIME;
+        private String scopeCheck = ScopeCheck.getDefault().toString();
 
         public Parameters() {}
     }

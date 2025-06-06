@@ -25,6 +25,7 @@ import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.dev.DevUtils;
 import org.zaproxy.addon.dev.TestPage;
 import org.zaproxy.addon.dev.TestProxyServer;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
@@ -69,7 +70,7 @@ public class PasswordNewPageLoginPage extends TestPage {
                 LOGGER.error(e.getMessage(), e);
             }
         } else {
-            getServer().redirect("index.html", msg);
+            DevUtils.setRedirect(msg, "index.html");
         }
     }
 

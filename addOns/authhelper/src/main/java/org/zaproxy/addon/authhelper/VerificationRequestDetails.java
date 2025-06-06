@@ -49,7 +49,7 @@ public class VerificationRequestDetails {
         this.token = null;
     }
 
-    private String urlEncode(String str) {
+    private static String urlEncode(String str) {
         try {
             return URLEncoder.encode(str, StandardCharsets.UTF_8.name());
         } catch (UnsupportedEncodingException e) {
@@ -74,9 +74,9 @@ public class VerificationRequestDetails {
             for (User user : users) {
                 AuthenticationCredentials creds = user.getAuthenticationCredentials();
                 if (creds instanceof UsernamePasswordAuthenticationCredentials upCreds) {
-                    if (msg.getRequestBody()
-                            .toString()
-                            .contains(urlEncode(upCreds.getPassword()))) {
+                    String body = msg.getRequestBody().toString();
+                    String pwd = upCreds.getPassword();
+                    if (body.contains(pwd) || body.contains(urlEncode(pwd))) {
                         passwordInData = true;
                     }
                     if (responseBody.contains(upCreds.getUsername())) {

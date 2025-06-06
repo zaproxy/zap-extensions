@@ -4,7 +4,12 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- The extension now has a user friendly name for use in the GUI.
+- Depends on an updated version of the Common Library add-on.
 
+### Added
+- All rules have been tagged of interest to Penetration Testers.
 
 ## [58] - 2025-03-04
 ### Changed

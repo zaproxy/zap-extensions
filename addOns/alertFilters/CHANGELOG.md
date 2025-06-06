@@ -4,7 +4,12 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- Use the alert reference for statistics.
+- Workaround core issue that prevents the filters to be correctly applied (Issue 8888).
 
+### Added
+- Added parameter descriptions for the ZAP API.
 
 ## [23] - 2025-01-09
 ### Changed

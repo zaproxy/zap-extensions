@@ -28,10 +28,16 @@ import static org.hamcrest.Matchers.not;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.zaproxy.addon.network.internal.GlobalExclusion;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
@@ -215,6 +221,55 @@ class GlobalExclusionsOptionsUnitTest {
         assertExclusion(0, "Name", "Value", false);
     }
 
+    @Test
+    void shouldHaveAllDefaultExclusionsCaseInsensitive() {
+        // Given / When
+        List<GlobalExclusion> exclusions = options.getGlobalExclusions();
+        // Then
+        Map<String, String> patterns = new HashMap<>();
+        exclusions.forEach(ex -> patterns.put(ex.getName(), ex.getValue()));
+        List<String> errors = new ArrayList<>();
+        patterns.entrySet()
+                .forEach(
+                        entry -> {
+                            if (!entry.getValue().startsWith("(?i)")) {
+                                errors.add(entry.getKey());
+                            }
+                        });
+        assertThat(errors, is(empty()));
+    }
+
+    private static Stream<Arguments> getConfigsForVersion2Upgrade() {
+        return Stream.of(Arguments.of(getNoVersionConfig()), Arguments.of(getVersion1Config()));
+    }
+
+    @ParameterizedTest
+    @MethodSource("getConfigsForVersion2Upgrade")
+    void shouldMakeExpectedChangesOnUpdateToVersion2(String oldConf) {
+        // Given
+        config = configWith(oldConf);
+        // When
+        options.load(config);
+        // Then
+        assertThat(options.getGlobalExclusions(), hasSize(4));
+        assertExclusion(
+                0,
+                "Extension - Image (ends with .extension)",
+                "(?i)^.*\\.(?:gif|jpe?g|png|ico|icns|bmp|svg|webp)$",
+                true);
+        assertExclusion(
+                1,
+                "ExtParam - Audio/Video (extension plus ?params=values)",
+                "(?i)^[^\\?]*\\.(?:mp[34]|mpe?g|m4[ap]|aac|avi|mov|wmv|og[gav]|webm)\\?.*$",
+                false);
+        assertExclusion(2, "Not Default", "^.*foo$", false);
+        assertExclusion(
+                3,
+                "ExtParam - .NET axd resources (SR/WR.axd?d=)",
+                "(?i)^[^\\?]*/(?:WebResource|ScriptResource)\\.axd\\?d=.*$",
+                false);
+    }
+
     private static GlobalExclusion exclusion(String name, String value, boolean enabled) {
         return new GlobalExclusion(name, value, enabled);
     }
@@ -246,5 +301,65 @@ class GlobalExclusionsOptionsUnitTest {
             throw new RuntimeException(e);
         }
         return config;
+    }
+
+    private static String getNoVersionConfig() {
+        return """
+               <globalexcludeurl>
+                   <url_list>
+                       <url>
+                           <regex>^.*\\.(?:gif|jpe?g|png|ico|icns|bmp)$</regex>
+                           <description>Extension - Image (ends with .extension)</description>
+                           <enabled>true</enabled>
+                       </url>
+                       <url>
+                           <regex>^[^\\?]*\\.(?:mp[34]|mpe?g|m4[ap]|aac|avi|mov|wmv|og[gav])\\?.*$</regex>
+                           <description>ExtParam - Audio/Video (extension plus ?params=values)</description>
+                           <enabled>false</enabled>
+                       </url>
+                       <url>
+                           <regex>^.*foo$</regex>
+                           <description>Not Default</description>
+                           <enabled>false</enabled>
+                       </url>
+                       <url>
+                           <regex>^[^\\?]*/(?:WebResource|ScriptResource)\\.axd\\?d=.*$</regex>
+                           <description>ExtParam - .NET adx resources (SR/WR.adx?d=)</description>
+                           <enabled>false</enabled>
+                       </url>
+                   </url_list>
+                   <confirmRemoveToken>true</confirmRemoveToken>
+               </globalexcludeurl>""";
+    }
+
+    private static String getVersion1Config() {
+        return """
+               <network>
+                   <globalExclusions version=\"1\">
+                       <exclusions>
+                           <confirmRemove>true</confirmRemove>
+                           <exclusion>
+                               <name>Extension - Image (ends with .extension)</name>
+                               <value>^.*\\.(?:gif|jpe?g|png|ico|icns|bmp)$</value>
+                               <enabled>true</enabled>
+                           </exclusion>
+                           <exclusion>
+                               <name>ExtParam - Audio/Video (extension plus ?params=values)</name>
+                               <value>^[^\\?]*\\.(?:mp[34]|mpe?g|m4[ap]|aac|avi|mov|wmv|og[gav])\\?.*$</value>
+                               <enabled>false</enabled>
+                           </exclusion>
+                           <exclusion>
+                               <name>Not Default</name>
+                               <value>^.*foo$</value>
+                               <enabled>false</enabled>
+                           </exclusion>
+                           <exclusion>
+                               <name>ExtParam - .NET adx resources (SR/WR.adx?d=)</name>
+                               <value>^[^\\?]*/(?:WebResource|ScriptResource)\\.axd\\?d=.*$</value>
+                               <enabled>false</enabled>
+                           </exclusion>
+                       </exclusions>
+                   </globalExclusions>
+               </network>""";
     }
 }

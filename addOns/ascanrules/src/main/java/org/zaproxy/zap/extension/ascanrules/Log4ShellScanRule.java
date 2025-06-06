@@ -60,6 +60,7 @@ public class Log4ShellScanRule extends AbstractAppParamPlugin implements CommonA
         CommonAlertTag.putCve(alertTags, CVE_44228);
         CommonAlertTag.putCve(alertTags, CVE_45046);
         alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
     }
 

@@ -19,9 +19,11 @@
  */
 package org.zaproxy.addon.authhelper;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Transaction;
 import org.apache.logging.log4j.LogManager;
@@ -33,6 +35,7 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
@@ -46,6 +49,7 @@ import org.zaproxy.addon.authhelper.internal.db.DiagnosticScreenshot;
 import org.zaproxy.addon.authhelper.internal.db.DiagnosticStep;
 import org.zaproxy.addon.authhelper.internal.db.DiagnosticWebElement;
 import org.zaproxy.addon.authhelper.internal.db.TableJdo;
+import org.zaproxy.zap.extension.zest.ZestZapUtils;
 import org.zaproxy.zap.network.HttpSenderListener;
 import org.zaproxy.zest.core.v1.ZestClientElement;
 import org.zaproxy.zest.core.v1.ZestClientElementClear;
@@ -69,12 +73,22 @@ public class AuthenticationDiagnostics implements AutoCloseable {
 
     public AuthenticationDiagnostics(
             boolean enabled, String authenticationMethod, String context, String user) {
+        this(enabled, authenticationMethod, context, user, null);
+    }
+
+    public AuthenticationDiagnostics(
+            boolean enabled,
+            String authenticationMethod,
+            String context,
+            String user,
+            String script) {
         this.enabled = enabled;
         if (!enabled) {
             return;
         }
 
         diagnostic = new Diagnostic(authenticationMethod, context, user);
+        diagnostic.setScript(script);
         diagnostic.setCreateTimestamp(Instant.now());
 
         createStep();
@@ -94,7 +108,7 @@ public class AuthenticationDiagnostics implements AutoCloseable {
                         if (!AuthUtils.isRelevantToAuthDiags(msg)) {
                             return;
                         }
-                        addMessageToStep(msg);
+                        addMessageToStep(msg, initiator);
                     }
 
                     @Override
@@ -106,6 +120,10 @@ public class AuthenticationDiagnostics implements AutoCloseable {
     }
 
     private void addMessageToStep(HttpMessage msg) {
+        addMessageToStep(msg, 0);
+    }
+
+    private void addMessageToStep(HttpMessage msg, int initiator) {
         try {
             HistoryReference ref =
                     new HistoryReference(
@@ -117,6 +135,7 @@ public class AuthenticationDiagnostics implements AutoCloseable {
             message.setCreateTimestamp(Instant.now());
             message.setStep(currentStep);
             message.setMessageId(ref.getHistoryId());
+            message.setInitiator(initiator);
             currentStep.getMessages().add(message);
         } catch (HttpMalformedHeaderException | DatabaseException e) {
             LOGGER.warn("Failed to persist message:", e);
@@ -137,20 +156,26 @@ public class AuthenticationDiagnostics implements AutoCloseable {
             if (stmt instanceof ZestClientLaunch launch) {
                 ZestClientScreenshotDiag screenshotDiag = new ZestClientScreenshotDiag();
                 screenshotDiag.setWindowHandle(launch.getWindowHandle());
-                screenshotDiag.setDescription("authhelper.auth.method.diags.zest.open");
+                screenshotDiag.setDescription(
+                        Constant.messages.getString("authhelper.auth.method.diags.zest.open"));
                 i += 1;
                 zestScript.getStatements().add(i, screenshotDiag);
             } else if (stmt instanceof ZestClientElement element) {
                 ZestClientScreenshotDiag screenshotDiag = new ZestClientScreenshotDiag();
+                screenshotDiag.setClientElement(element);
                 screenshotDiag.setWindowHandle(element.getWindowHandle());
-                screenshotDiag.setDescription("authhelper.auth.method.diags.zest.interaction");
+                screenshotDiag.setDescription(
+                        Constant.messages.getString(
+                                "authhelper.auth.method.diags.zest.interaction",
+                                ZestZapUtils.toUiString(element, false)));
                 i += 1;
                 zestScript.getStatements().add(i, screenshotDiag);
             } else if (stmt instanceof ZestClientWindowClose close) {
                 ZestClientScreenshotDiag screenshotDiag = new ZestClientScreenshotDiag();
                 screenshotDiag.setWindowHandle(close.getWindowHandle());
                 zestScript.getStatements().add(i, screenshotDiag);
-                screenshotDiag.setDescription("authhelper.auth.method.diags.zest.close");
+                screenshotDiag.setDescription(
+                        Constant.messages.getString("authhelper.auth.method.diags.zest.close"));
                 i += 1;
             }
         }
@@ -191,11 +216,13 @@ public class AuthenticationDiagnostics implements AutoCloseable {
             currentStep.setScreenshot(screenshot);
         }
 
-        List<WebElement> inputs = wd.findElements(By.xpath("//input"));
-        List<WebElement> forms = wd.findElements(By.xpath("//form"));
+        List<WebElement> foundElements =
+                resetWait(wd, () -> wd.findElements(By.xpath("//input|//button")));
+        List<WebElement> forms = resetWait(wd, () -> wd.findElements(By.xpath("//form")));
+
         currentStep.setWebElement(createDiagnosticWebElement(wd, forms, element));
-        for (WebElement input : inputs) {
-            DiagnosticWebElement field = createDiagnosticWebElement(wd, forms, input);
+        for (WebElement foundElement : foundElements) {
+            DiagnosticWebElement field = createDiagnosticWebElement(wd, forms, foundElement);
             if (field != null) {
                 currentStep.getWebElements().add(field);
             }
@@ -210,7 +237,23 @@ public class AuthenticationDiagnostics implements AutoCloseable {
         createStep();
     }
 
-    private <T> void processStorage(JavascriptExecutor je, DiagnosticBrowserStorageItem.Type type) {
+    /**
+     * Reset the webdriver implicit wait - use when you want the current state and don't want any
+     * delays.
+     */
+    private static <T> T resetWait(WebDriver wd, Supplier<? extends T> function) {
+        Duration duration = wd.manage().timeouts().getImplicitWaitTimeout();
+        wd.manage().timeouts().implicitlyWait(Duration.ofMillis(0));
+        try {
+            return function.get();
+        } catch (Exception e) {
+            return null;
+        } finally {
+            wd.manage().timeouts().implicitlyWait(duration);
+        }
+    }
+
+    private void processStorage(JavascriptExecutor je, DiagnosticBrowserStorageItem.Type type) {
         @SuppressWarnings("unchecked")
         List<Map<String, String>> storage =
                 (List<Map<String, String>>) je.executeScript(type.getScript());
@@ -232,7 +275,7 @@ public class AuthenticationDiagnostics implements AutoCloseable {
                 .forEach(currentStep.getBrowserStorageItems()::add);
     }
 
-    private DiagnosticWebElement createDiagnosticWebElement(
+    private static DiagnosticWebElement createDiagnosticWebElement(
             WebDriver wd, List<WebElement> forms, WebElement element) {
         if (element == null) {
             return null;
@@ -250,6 +293,7 @@ public class AuthenticationDiagnostics implements AutoCloseable {
                 }
             }
 
+            diagElement.setTagName(element.getTagName());
             diagElement.setAttributeType(getAttribute(element, "type"));
             diagElement.setAttributeId(getAttribute(element, "id"));
             diagElement.setAttributeName(getAttribute(element, "name"));
@@ -265,18 +309,26 @@ public class AuthenticationDiagnostics implements AutoCloseable {
         }
     }
 
+    private void finishCurrentStep(String url, String description) {
+        currentStep.setCreateTimestamp(Instant.now());
+        currentStep.setUrl(url);
+        currentStep.setDescription(description);
+        createStep();
+    }
+
+    public void recordStep(String description) {
+        if (!enabled) {
+            return;
+        }
+        finishCurrentStep("", description);
+    }
+
     public void recordStep(HttpMessage message, String description) {
         if (!enabled) {
             return;
         }
-
-        currentStep.setCreateTimestamp(Instant.now());
-        currentStep.setUrl(message.getRequestHeader().getURI().toString());
-        currentStep.setDescription(description);
-
         addMessageToStep(message);
-
-        createStep();
+        finishCurrentStep(message.getRequestHeader().getURI().toString(), description);
     }
 
     private static String getAttribute(WebElement element, String name) {
@@ -313,14 +365,44 @@ public class AuthenticationDiagnostics implements AutoCloseable {
 
         private String description;
 
+        private ZestClientElement element;
+
+        public void setClientElement(ZestClientElement element) {
+            this.element = element;
+        }
+
         public void setDescription(String description) {
             this.description = description;
         }
 
         @Override
         public String invoke(ZestRuntime runtime) throws ZestClientFailException {
-            recordStep(runtime.getWebDriver(this.getWindowHandle()), description);
+            recordStep(
+                    runtime.getWebDriver(this.getWindowHandle()),
+                    description,
+                    getWebElement(runtime, element));
             return null;
+        }
+
+        private WebElement getWebElement(ZestRuntime runtime, ZestClientElement element) {
+            if (element == null) {
+                return null;
+            }
+
+            WebDriver wd = runtime.getWebDriver(this.getWindowHandle());
+            if (wd == null) {
+                return null;
+            }
+
+            return resetWait(
+                    wd,
+                    () -> {
+                        try {
+                            return element.getWebElement(runtime);
+                        } catch (ZestClientFailException e) {
+                            return null;
+                        }
+                    });
         }
     }
 }

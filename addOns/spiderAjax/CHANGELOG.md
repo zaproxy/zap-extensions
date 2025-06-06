@@ -4,7 +4,14 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Allow to configure how the scope is checked, either Flexible or Strict, to allow or not access to out of scope domains.
 
+### Changed
+- Maintenance changes.
+
+### Fixed
+- Allow access to domains out of context (e.g. SSO) when using Client Script and Browser Based Authentication.
 
 ## [23.23.0] - 2025-03-25
 ### Changed

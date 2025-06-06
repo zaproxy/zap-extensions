@@ -27,6 +27,7 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.authhelper.VerificationRequestDetails.VerificationComparator;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.model.Context;
@@ -54,6 +55,11 @@ public class VerificationDetectionScanRule extends PluginPassiveScanner {
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 
         if (!AuthUtils.isRelevantToAuth(msg)) {
+            return;
+        }
+        if (!HttpRequestHeader.GET.equals(msg.getRequestHeader().getMethod())
+                && !HttpRequestHeader.POST.equals(msg.getRequestHeader().getMethod())) {
+            // These are the only 2 methods currently supported
             return;
         }
 

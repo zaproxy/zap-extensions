@@ -45,7 +45,7 @@ import org.openqa.selenium.WebElement;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.testutils.TestUtils;
 
-public class LoginLinkDetectorUnitTest extends TestUtils {
+class LoginLinkDetectorUnitTest extends TestUtils {
 
     @RegisterExtension static SeleniumJupiter seleniumJupiter = new SeleniumJupiter();
 

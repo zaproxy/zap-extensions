@@ -42,7 +42,9 @@ import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
+import org.zaproxy.zap.extension.zest.ZestStatementFromJson;
 import org.zaproxy.zap.view.StandardFieldsDialog;
+import org.zaproxy.zest.core.v1.ZestClientLaunch;
 import org.zaproxy.zest.core.v1.ZestScript;
 import org.zaproxy.zest.impl.ZestScriptEngineFactory;
 
@@ -261,6 +263,15 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
             }
             String url = this.getStringValue(FIELD_CLIENT_NODE);
             String browser = this.getStringValue(FIELD_BROWSER);
+            extension.addToParent(
+                    scriptNode,
+                    new ZestClientLaunch(
+                            ZestStatementFromJson.WINDOW_HANDLE_BROWSER_EXTENSION,
+                            browser,
+                            url.toLowerCase(Locale.ROOT),
+                            false),
+                    false,
+                    false);
             extension.startClientRecording(url);
             Thread browserThread =
                     new Thread(() -> launchBrowser(url, browser), THREAD_PREFIX + threadId++);

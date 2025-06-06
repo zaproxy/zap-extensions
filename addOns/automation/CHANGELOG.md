@@ -4,7 +4,18 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Add support for the wait time of the Client Script Based Authentication.
 
+### Changed
+- Maintenance changes.
+- Adjusted further dialog, progress, and log messages with regard to preventing inclusion of commas in scan rule ID numbers. As well as ensuring consistency in use of ID (full caps) for table column headings, and the Add Add-ons dialog.
+
+### Fixed
+- Correctly handle missing script engines.
+- Correct error messages of the statistics test.
+- Allow to use zero login page wait for Client Script and Browser Based Authentication methods.
+- Ensure log and progress messages related to scripts and script engines are not all referred to as session management related.
 
 ## [0.49.0] - 2025-03-25
 ### Added

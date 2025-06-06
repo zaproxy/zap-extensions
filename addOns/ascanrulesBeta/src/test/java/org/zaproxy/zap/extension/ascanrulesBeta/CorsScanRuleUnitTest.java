@@ -72,7 +72,7 @@ class CorsScanRuleUnitTest extends ActiveScannerTest<CorsScanRule> {
         // When
         rule.scan();
         // Then
-        assertExpectedAlert(Alert.RISK_INFO);
+        assertExpectedAlert(Alert.RISK_INFO, "dummyValue");
     }
 
     @ParameterizedTest
@@ -85,7 +85,7 @@ class CorsScanRuleUnitTest extends ActiveScannerTest<CorsScanRule> {
         // When
         rule.scan();
         // Then
-        assertExpectedAlert(Alert.RISK_MEDIUM);
+        assertExpectedAlert(Alert.RISK_MEDIUM, origin);
     }
 
     @ParameterizedTest
@@ -98,7 +98,7 @@ class CorsScanRuleUnitTest extends ActiveScannerTest<CorsScanRule> {
         // When
         rule.scan();
         // Then
-        assertExpectedAlert(Alert.RISK_HIGH);
+        assertExpectedAlert(Alert.RISK_HIGH, origin);
     }
 
     @Test
@@ -110,7 +110,7 @@ class CorsScanRuleUnitTest extends ActiveScannerTest<CorsScanRule> {
         // When
         rule.scan();
         // Then
-        assertExpectedAlert(Alert.RISK_MEDIUM);
+        assertExpectedAlert(Alert.RISK_MEDIUM, "*");
     }
 
     @Test
@@ -122,7 +122,7 @@ class CorsScanRuleUnitTest extends ActiveScannerTest<CorsScanRule> {
         // Then
         assertThat(cwe, is(equalTo(942)));
         assertThat(wasc, is(equalTo(14)));
-        assertThat(tags.size(), is(equalTo(5)));
+        assertThat(tags.size(), is(equalTo(6)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
                 is(equalTo(true)));
@@ -133,6 +133,7 @@ class CorsScanRuleUnitTest extends ActiveScannerTest<CorsScanRule> {
                 tags.containsKey(CommonAlertTag.WSTG_V42_CLNT_07_CORS.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.QA_STD.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.QA_FULL.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getValue())));
@@ -144,10 +145,17 @@ class CorsScanRuleUnitTest extends ActiveScannerTest<CorsScanRule> {
                 is(equalTo(CommonAlertTag.WSTG_V42_CLNT_07_CORS.getValue())));
     }
 
-    private void assertExpectedAlert(int risk) {
+    private void assertExpectedAlert(int risk, String evidence) {
         assertThat(alertsRaised, hasSize(1));
         Alert alert = alertsRaised.get(0);
         assertEquals(risk, alert.getRisk());
+        if (evidence.equals("REFLECT")) {
+            assertThat(
+                    alert.getEvidence().startsWith("access-control-allow-origin: http://"),
+                    is(true));
+        } else {
+            assertEquals("access-control-allow-origin: " + evidence, alert.getEvidence());
+        }
     }
 
     private static class CorsResponse extends NanoServerHandler {

@@ -23,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public class ViewstateScanRule extends PluginPassiveScanner implements CommonPassiveScanRuleInfo {
@@ -44,10 +46,17 @@ public class ViewstateScanRule extends PluginPassiveScanner implements CommonPas
     private static final String MESSAGE_PREFIX = "pscanrules.viewstate.";
     private static final int PLUGIN_ID = 10032;
 
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
-                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
+                                CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG));
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     private static Pattern hiddenFieldPattern = Pattern.compile("__.*");
 
@@ -151,7 +160,7 @@ public class ViewstateScanRule extends PluginPassiveScanner implements CommonPas
                                 new ViewstateAnalyzerResult(ViewstateAnalyzerPattern.IPADDRESS) {
                                     @Override
                                     public Set<String> getResultExtract() {
-                                        return Collections.emptySet();
+                                        return Set.of("192.168.1.1");
                                     }
                                 })
                         .build());
@@ -160,7 +169,7 @@ public class ViewstateScanRule extends PluginPassiveScanner implements CommonPas
                                 new ViewstateAnalyzerResult(ViewstateAnalyzerPattern.EMAIL) {
                                     @Override
                                     public Set<String> getResultExtract() {
-                                        return Collections.emptySet();
+                                        return Set.of("test@example.com");
                                     }
                                 })
                         .build());

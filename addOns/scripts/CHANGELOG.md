@@ -4,8 +4,27 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- Maintenance changes.
+
+### Fixed
+- Loop when trying to extract an underlying script exception.
+
+## [45.11.0] - 2025-04-11
+### Fixed
+- NPE when using scripts with no UI.
+
+## [45.10.0] - 2025-04-09
 ### Fixed
 - NPE when using some scripts after re-installing the scripts add-on.
+- Correct error message of the Automation Framework job.
+- Templates and Zest scripts were not being shown in the editor (Issue 8922).
+
+### Added
+- Standardized Policy Tags to the base Scripts Passive Scanner.
+
+### Changed
+- Depends on an updated version of the Common Library add-on.
 
 ## [45.9.0] - 2025-03-25
 ### Fixed
@@ -366,6 +385,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[45.11.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.11.0
+[45.10.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.10.0
 [45.9.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.9.0
 [45.8.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.8.0
 [45.7.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.7.0

@@ -4,7 +4,19 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Some Postgres error messages in the SQL Injection scan rule.
+- All rules have been tagged of interest to Penetration Testers.
 
+### Changed
+- SQL Injection scan rule to start using ComparableResponse - part of the work to reduce False Positives.
+- Depends on an updated version of the Common Library add-on.
+- Due to it being 2025 and the mass adoption of HTTPS: De-prioritized plain HTTP payloads in the External Redirect scan rule.
+
+### Fixed
+- SQL Injection scan rule to treat a 500 response to an SQLi attack as a likely vulnerability.
+- Use location header in SQL injection response comparisons (Issue 8651).
+- Addressed False Negative with simple allow list handling in the External Redirect scan rule.
 
 ## [71] - 2025-03-04
 ### Fixed

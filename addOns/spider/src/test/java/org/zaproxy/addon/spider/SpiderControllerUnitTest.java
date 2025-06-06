@@ -53,6 +53,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.addon.spider.SpiderParam.HandleParametersOption;
 import org.zaproxy.addon.spider.parser.SpiderResourceFound;
 import org.zaproxy.zap.testutils.TestUtils;
 
@@ -63,6 +64,7 @@ class SpiderControllerUnitTest extends TestUtils {
     private long sessionId;
     private Session session;
 
+    private SpiderParam spiderParam;
     private Spider spider;
     private SpiderController spiderController;
 
@@ -75,7 +77,9 @@ class SpiderControllerUnitTest extends TestUtils {
 
         spider = mock(Spider.class);
 
-        given(spider.getSpiderParam()).willReturn(new SpiderParam());
+        spiderParam = mock(SpiderParam.class);
+        given(spiderParam.getHandleParameters()).willReturn(HandleParametersOption.USE_ALL);
+        given(spider.getSpiderParam()).willReturn(spiderParam);
         Model model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
         given(spider.getModel()).willReturn(model);
 
@@ -280,6 +284,45 @@ class SpiderControllerUnitTest extends TestUtils {
         SpiderResourceFound spiderResourceFound2 =
                 createGetSpiderResourceFoundWithHeaders(
                         "https://example.com/test.html", 2, false, requestHeadersWithDuplicates);
+        // When
+        spiderController.resourceFound(spiderResourceFound1);
+        spiderController.resourceFound(spiderResourceFound2);
+        // Then
+        verify(spider).submitTask(any());
+    }
+
+    @Test
+    void shouldSubmitPostMoreThanOnceForDifferentRelevantParametersIgnoringIrrelevant() {
+        // Given
+        SpiderResourceFound spiderResourceFound1 =
+                createBasicPostSpiderResourceFound(
+                        "https://example.com/test.html", "relevant=123&irrelevant=123", 1);
+        SpiderResourceFound spiderResourceFound2 =
+                createBasicPostSpiderResourceFound(
+                        "https://example.com/test.html", "relevant=123&irrelevant=456", 1);
+        SpiderResourceFound spiderResourceFound3 =
+                createBasicPostSpiderResourceFound(
+                        "https://example.com/test.html", "relevant=456&irrelevant=789", 1);
+        given(spiderParam.isIrrelevantUrlParameter("irrelevant")).willReturn(true);
+        given(spiderParam.isIrrelevantUrlParameter("relevant")).willReturn(false);
+        // When
+        spiderController.resourceFound(spiderResourceFound1);
+        spiderController.resourceFound(spiderResourceFound2);
+        spiderController.resourceFound(spiderResourceFound3);
+        // Then
+        verify(spider, times(2)).submitTask(any());
+    }
+
+    @Test
+    void shouldNotSubmitPostMoreThanOnceForDifferentIrrelevantParameters() {
+        // Given
+        SpiderResourceFound spiderResourceFound1 =
+                createBasicPostSpiderResourceFound(
+                        "https://example.com/test.html", "irrelevant=123", 1);
+        SpiderResourceFound spiderResourceFound2 =
+                createBasicPostSpiderResourceFound(
+                        "https://example.com/test.html", "irrelevant=456", 1);
+        given(spiderParam.isIrrelevantUrlParameter("irrelevant")).willReturn(true);
         // When
         spiderController.resourceFound(spiderResourceFound1);
         spiderController.resourceFound(spiderResourceFound2);

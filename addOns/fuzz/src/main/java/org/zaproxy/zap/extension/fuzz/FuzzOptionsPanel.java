@@ -39,7 +39,9 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.LayoutStyle;
 import javax.swing.filechooser.FileFilter;
@@ -84,6 +86,14 @@ public class FuzzOptionsPanel extends AbstractParamPanel {
         customCategoryName = resourceBundle.getString("fuzz.category.custom");
 
         defaultCategoryComboBox = new JComboBox<>();
+        defaultCategoryComboBox.setPrototypeDisplayValue("Name of Some Category");
+        Object comp =
+                defaultCategoryComboBox.getUI().getAccessibleChild(defaultCategoryComboBox, 0);
+        if (comp instanceof JPopupMenu popup) {
+            JScrollPane scrollPane = (JScrollPane) popup.getComponent(0);
+            scrollPane.setHorizontalScrollBar(new JScrollBar(JScrollBar.HORIZONTAL));
+            scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        }
         JLabel defaultCategoryLabel =
                 new JLabel(resourceBundle.getString("fuzz.options.label.category"));
         defaultCategoryLabel.setLabelFor(defaultCategoryComboBox);

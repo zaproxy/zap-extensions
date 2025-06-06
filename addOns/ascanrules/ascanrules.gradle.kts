@@ -13,7 +13,7 @@ zapAddOn {
         dependencies {
             addOns {
                 register("commonlib") {
-                    version.set(">= 1.29.0 & < 2.0.0")
+                    version.set(">= 1.32.0 & < 2.0.0")
                 }
                 register("network") {
                     version.set(">= 0.3.0")
@@ -51,7 +51,6 @@ dependencies {
     zapAddOn("network")
     zapAddOn("oast")
 
-    implementation("com.googlecode.java-diff-utils:diffutils:1.3.0")
     implementation("org.bitbucket.mstrobel:procyon-compilertools:0.6.0")
 
     testImplementation(parent!!.childProjects.get("commonlib")!!.sourceSets.test.get().output)

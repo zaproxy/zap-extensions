@@ -29,7 +29,8 @@ public interface SpiderListener {
         OUT_OF_SCOPE,
         OUT_OF_CONTEXT,
         EXCLUDED,
-        IO_ERROR
+        IO_ERROR,
+        THIRD_PARTY,
     }
 
     void spiderStarted();

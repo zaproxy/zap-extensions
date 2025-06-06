@@ -26,6 +26,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -631,11 +632,13 @@ public class JobUtils {
             }
             if (wrapper == null) {
                 // Register the script
-                ScriptEngineWrapper engineWrapper = extScript.getEngineWrapper(engineName);
+                ScriptEngineWrapper engineWrapper = getEngineWrapper(extScript, engineName);
                 if (engineWrapper == null) {
                     progress.error(
                             Constant.messages.getString(
-                                    "automation.error.env.sessionmgmt.engine.bad", engineName));
+                                    "automation.error.script.engine.bad",
+                                    engineName,
+                                    file.getAbsolutePath()));
                 } else {
                     ScriptType scriptType = extScript.getScriptType(type);
                     LOGGER.debug("Loading script {}", file.getAbsolutePath());
@@ -654,13 +657,20 @@ public class JobUtils {
                     } catch (IOException e) {
                         progress.error(
                                 Constant.messages.getString(
-                                        "automation.error.env.sessionmgmt.script.bad",
-                                        file.getAbsolutePath()));
+                                        "automation.error.script.bad", file.getAbsolutePath()));
                     }
                 }
             }
         }
         return wrapper;
+    }
+
+    private static ScriptEngineWrapper getEngineWrapper(ExtensionScript extension, String name) {
+        try {
+            return extension.getEngineWrapper(name);
+        } catch (InvalidParameterException e) {
+            return null;
+        }
     }
 
     public static File getFile(String name, AutomationPlan plan) {

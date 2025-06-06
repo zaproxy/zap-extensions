@@ -30,7 +30,6 @@ import java.time.temporal.ChronoUnit;
 import net.sf.json.JSON;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.dev.api.openapi.simpleAuth.OpenApiSimpleAuthDir;
@@ -44,8 +43,12 @@ import org.zaproxy.addon.dev.auth.passwordNewPage.PasswordNewPageDir;
 import org.zaproxy.addon.dev.auth.simpleJson.SimpleJsonDir;
 import org.zaproxy.addon.dev.auth.simpleJsonBearer.SimpleJsonBearerDir;
 import org.zaproxy.addon.dev.auth.simpleJsonBearerCookie.SimpleJsonBearerCookieDir;
+import org.zaproxy.addon.dev.auth.simpleJsonBearerDiffCookies.SimpleJsonBearerDiffCookiesDir;
 import org.zaproxy.addon.dev.auth.simpleJsonBearerJsCookie.SimpleJsonBearerJsCookieDir;
 import org.zaproxy.addon.dev.auth.simpleJsonCookie.SimpleJsonCookieDir;
+import org.zaproxy.addon.dev.auth.sso1.SSO1RootDir;
+import org.zaproxy.addon.dev.auth.uuidLogin.UuidLoginRootDir;
+import org.zaproxy.addon.dev.csrf.basic.BasicCsrfDir;
 import org.zaproxy.addon.dev.auth.totp.simpleAuthTotpBlankCodeVuln.OpenApiWithBlankOtpSimpleAuthDir;
 import org.zaproxy.addon.dev.auth.totp.simpleAuthTotpCaptcha.OpenApiWithCaptchaOtpSimpleAuthDir;
 import org.zaproxy.addon.dev.auth.totp.simpleAuthTotpCommonBackupCodeVuln.OpenApiWithCommonOtpSimpleAuthDir;
@@ -57,6 +60,7 @@ import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 import org.zaproxy.addon.network.server.Server;
+import org.zaproxy.zap.network.HttpSenderListener;
 
 public class TestProxyServer {
 
@@ -64,6 +68,8 @@ public class TestProxyServer {
     public static final String STATUS_FORBIDDEN = "403 Forbidden";
     public static final String STATUS_NOT_FOUND = "404 Not Found";
     public static final String STATUS_REDIRECT = "302 Found";
+
+    public static final String CONTENT_TYPE_HTML_UTF8 = "text/html; charset=UTF-8";
 
     private static final Logger LOGGER = LogManager.getLogger(TestProxyServer.class);
 
@@ -82,16 +88,23 @@ public class TestProxyServer {
 
         TestDirectory authDir = new TestDirectory(this, "auth");
         authDir.addDirectory(new SimpleJsonDir(this, "simple-json"));
+        authDir.addDirectory(new SimpleJsonDir(this, "simple-json-blocking-ui"));
+        authDir.addDirectory(new SimpleJsonDir(this, "simple-json-blocking-ui-scroll-fields"));
+        authDir.addDirectory(new SimpleJsonDir(this, "simple-json-existing-values"));
         authDir.addDirectory(new SimpleJsonBearerDir(this, "simple-json-bearer"));
         authDir.addDirectory(new NonStdJsonBearerDir(this, "non-std-json-bearer"));
         authDir.addDirectory(new SimpleJsonBearerCookieDir(this, "simple-json-bearer-cookie"));
         authDir.addDirectory(new SimpleJsonBearerJsCookieDir(this, "simple-json-bearer-js-cookie"));
+        authDir.addDirectory(
+                new SimpleJsonBearerDiffCookiesDir(this, "simple-json-bearer-js-diff-cookies"));
         authDir.addDirectory(new SimpleJsonCookieDir(this, "simple-json-cookie"));
         authDir.addDirectory(new PasswordAddedJsonDir(this, "password-added-json"));
         authDir.addDirectory(new PasswordHiddenJsonDir(this, "password-hidden-json"));
         authDir.addDirectory(new PasswordNewPageDir(this, "password-new-page"));
         authDir.addDirectory(new PasswordAddedNoSubmitDir(this, "password-added-nosubmit"));
         authDir.addDirectory(new JsonMultipleCookiesDir(this, "json-multiple-cookies"));
+        authDir.addDirectory(new SSO1RootDir(this, "sso1"));
+        authDir.addDirectory(new UuidLoginRootDir(this, "uuid-login"));
         TestDirectory totpDir = new TestDirectory(this, "totp");
         authDir.addDirectory(totpDir);
         totpDir.addDirectory(new OpenApiWithOtpSimpleAuthDir(this, "simple-auth-with-otp"));
@@ -112,9 +125,15 @@ public class TestProxyServer {
         openapiDir.addDirectory(new OpenApiSimpleAuthDir(this, "simple-auth"));
         openapiDir.addDirectory(new OpenApiSimpleUnauthDir(this, "simple-unauth"));
 
+        TestDirectory csrfDir = new TestDirectory(this, "csrf");
+        TestDirectory csrfBasicDir = new BasicCsrfDir(this, "basic");
+        csrfDir.addDirectory(csrfBasicDir);
+
         TestDirectory htmlDir = new TestDirectory(this, "html");
+        TestDirectory elStoreDir = new TestDirectory(this, "elements");
         TestDirectory locStoreDir = new TestDirectory(this, "localStorage");
         TestDirectory sessStoreDir = new TestDirectory(this, "sessionStorage");
+        htmlDir.addDirectory(elStoreDir);
         htmlDir.addDirectory(locStoreDir);
         htmlDir.addDirectory(sessStoreDir);
 
@@ -123,6 +142,7 @@ public class TestProxyServer {
 
         root.addDirectory(authDir);
         root.addDirectory(apiDir);
+        root.addDirectory(csrfDir);
         root.addDirectory(htmlDir);
         root.addDirectory(seqDir);
     }
@@ -177,6 +197,7 @@ public class TestProxyServer {
         File f = new File(sb.toString());
 
         if (!f.exists()) {
+            LOGGER.debug("No such file {}", f.getAbsolutePath());
             return null;
         }
         // Quick way to read a small text file
@@ -232,6 +253,10 @@ public class TestProxyServer {
         return sb.toString();
     }
 
+    public void handleFile(String name, HttpMessage msg) {
+        handleFile(root, name, msg);
+    }
+
     public void handleFile(TestDirectory dir, String name, HttpMessage msg) {
         try {
             String body = getTextFile(dir, name);
@@ -284,13 +309,16 @@ public class TestProxyServer {
         }
     }
 
-    public void redirect(String url, HttpMessage msg) {
-        try {
-            msg.setResponseHeader(getDefaultResponseHeader(STATUS_REDIRECT, "text/html", 0));
-            msg.getResponseHeader().setHeader(HttpHeader.LOCATION, url);
-        } catch (HttpMalformedHeaderException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
+    public void addDomainListener(String domain, HttpSenderListener listener) {
+        this.extension.addDomainListener(domain, listener);
+    }
+
+    public String getHost() {
+        return extension.getDevParam().getTestHost();
+    }
+
+    public int getPort() {
+        return extension.getDevParam().getTestPort();
     }
 
     private class TestListener implements HttpMessageHandler {
