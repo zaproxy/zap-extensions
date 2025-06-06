@@ -106,7 +106,6 @@ public class TestProxyServer {
         totpDir.addDirectory(
                 new OpenApiWithCommonOtpSimpleAuthDir(this, "simple-auth-otp-common-codes-vuln"));
 
-
         TestDirectory apiDir = new TestDirectory(this, "api");
         TestDirectory openapiDir = new TestDirectory(this, "openapi");
         apiDir.addDirectory(openapiDir);

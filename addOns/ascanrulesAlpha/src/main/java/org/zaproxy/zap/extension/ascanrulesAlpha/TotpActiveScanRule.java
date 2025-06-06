@@ -99,7 +99,7 @@ public class TotpActiveScanRule extends AbstractHostPlugin implements CommonActi
                 for (AuthenticationStep step : context.authSteps) {
                     if (step.getType() == AuthenticationStep.Type.TOTP_FIELD) {
                         AuthenticationStep clone = new AuthenticationStep(step);
-                        clone.setUserProvidedTotp(code); 
+                        clone.setUserProvidedTotp(code);
                         testSteps.add(clone);
                     } else {
                         testSteps.add(step);
