@@ -98,8 +98,8 @@ public class ReplayTotpActiveScanRule extends AbstractHostPlugin
                 List<AuthenticationStep> testSteps = new ArrayList<>();
                 for (AuthenticationStep step : context.authSteps) {
                     if (step.getType() == AuthenticationStep.Type.TOTP_FIELD) {
-                        AuthenticationStep cloned = new AuthenticationStep(step); // clone original
-                        cloned.setUserProvidedTotp(validTotpCode); // override value
+                        AuthenticationStep cloned = new AuthenticationStep(step); 
+                        cloned.setUserProvidedTotp(validTotpCode); 
                         testSteps.add(cloned);
                     } else {
                         testSteps.add(step);

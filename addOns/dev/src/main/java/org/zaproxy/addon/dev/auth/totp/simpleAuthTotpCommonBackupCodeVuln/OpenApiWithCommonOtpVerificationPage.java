@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.dev.auth.totp.simpleAuthTotpReplayVuln;
+package org.zaproxy.addon.dev.auth.totp.simpleAuthTotpCommonBackupCodeVuln;
 
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
@@ -29,12 +29,12 @@ import org.zaproxy.addon.dev.TestPage;
 import org.zaproxy.addon.dev.TestProxyServer;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 
-public class OpenApiWithReplayOtpVerificationPage extends TestPage {
+public class OpenApiWithCommonOtpVerificationPage extends TestPage {
 
     private static final Logger LOGGER =
-            LogManager.getLogger(OpenApiWithReplayOtpVerificationPage.class);
+            LogManager.getLogger(OpenApiWithCommonOtpVerificationPage.class);
 
-    public OpenApiWithReplayOtpVerificationPage(TestProxyServer server) {
+    public OpenApiWithCommonOtpVerificationPage(TestProxyServer server) {
         super(server, "user");
     }
 
@@ -80,7 +80,7 @@ public class OpenApiWithReplayOtpVerificationPage extends TestPage {
     }
 
     @Override
-    public OpenApiWithReplayOtpSimpleAuthDir getParent() {
-        return (OpenApiWithReplayOtpSimpleAuthDir) super.getParent();
+    public OpenApiWithCommonOtpSimpleAuthDir getParent() {
+        return (OpenApiWithCommonOtpSimpleAuthDir) super.getParent();
     }
 }

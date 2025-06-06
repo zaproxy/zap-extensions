@@ -17,62 +17,52 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.dev.auth.totp.simpleAuthTotpReplayVuln;
+package org.zaproxy.addon.dev.auth.totp.simpleAuthTotpCommonBackupCodeVuln;
 
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.dev.TestPage;
 import org.zaproxy.addon.dev.TestProxyServer;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 
-public class OpenApiWithReplayOtpVerificationPage extends TestPage {
+public class OpenApiWithCommonOtpLoginPage extends TestPage {
 
-    private static final Logger LOGGER =
-            LogManager.getLogger(OpenApiWithReplayOtpVerificationPage.class);
+    private static final Logger LOGGER = LogManager.getLogger(OpenApiWithCommonOtpLoginPage.class);
 
-    public OpenApiWithReplayOtpVerificationPage(TestProxyServer server) {
-        super(server, "user");
+    public OpenApiWithCommonOtpLoginPage(TestProxyServer server) {
+        super(server, "login");
     }
 
     @Override
     public void handleMessage(HttpMessageHandlerContext ctx, HttpMessage msg) {
-        String method = msg.getRequestHeader().getMethod();
-        String token = msg.getRequestHeader().getHeader(HttpHeader.AUTHORIZATION);
-        String user = getParent().getUser(token);
-        JSONObject response = new JSONObject();
+        String username = null;
+        String password = null;
 
-        if ("GET".equalsIgnoreCase(method)) {
-            if (user != null && getParent().isTokenVerified(token)) {
-                response.put("result", "OK");
-                response.put("user", user);
-            } else {
-                response.put("result", "FAIL");
-            }
-            this.getServer().setJsonResponse(response, msg);
-            return;
-        }
-
-        String totp = null;
         if (msg.getRequestHeader().hasContentType("json")) {
             String postData = msg.getRequestBody().toString();
+            JSONObject jsonObject;
             try {
-                JSONObject jsonObject = JSONObject.fromObject(postData);
-                totp = jsonObject.getString("code");
+                jsonObject = JSONObject.fromObject(postData);
+                username = jsonObject.getString("user");
+                password = jsonObject.getString("password");
             } catch (JSONException e) {
                 LOGGER.debug("Unable to parse as JSON: {}", postData, e);
             }
         }
 
-        LOGGER.debug("Token: {} user: {} TOTP: {}", token, user, totp);
+        JSONObject response = new JSONObject();
+        if (getParent().isValid(username, password)) {
 
-        if (user != null && totp != null && getParent().validateTotp(token, totp)) {
             response.put("result", "OK");
-            response.put("user", user);
-            getParent().markTokenVerified(token);
+            String token = getParent().getToken(username);
+            getParent().setUser(token, username);
+            String totp = getParent().generateAndStoreTotp(token);
+            response.put("accesstoken", token);
+            response.put("totp", totp);
+
         } else {
             response.put("result", "FAIL");
         }
@@ -80,7 +70,7 @@ public class OpenApiWithReplayOtpVerificationPage extends TestPage {
     }
 
     @Override
-    public OpenApiWithReplayOtpSimpleAuthDir getParent() {
-        return (OpenApiWithReplayOtpSimpleAuthDir) super.getParent();
+    public OpenApiWithCommonOtpSimpleAuthDir getParent() {
+        return (OpenApiWithCommonOtpSimpleAuthDir) super.getParent();
     }
 }
