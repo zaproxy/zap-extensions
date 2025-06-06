@@ -33,6 +33,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.apache.logging.log4j.LogManager;
@@ -76,6 +77,7 @@ public class AuthenticationData extends AutomationData {
     public static final String PARAM_LOGIN_REQUEST_URL = "loginRequestUrl";
     public static final String PARAM_LOGIN_REQUEST_BODY = "loginRequestBody";
     public static final String PARAM_SCRIPT = "script";
+    public static final String PARAM_SCRIPT_INLINE = "scriptInline";
     public static final String PARAM_SCRIPT_ENGINE = "scriptEngine";
 
     // TODO: Plan to change once the core supports dynamic methods better
@@ -149,14 +151,7 @@ public class AuthenticationData extends AutomationData {
             LOGGER.debug("Matched client script class");
             if (sw != null) {
                 setMethod(METHOD_CLIENT);
-                parameters.put(PARAM_SCRIPT, sw.getFile().getAbsolutePath());
-                parameters.put(PARAM_SCRIPT_ENGINE, sw.getEngineName());
-                @SuppressWarnings("unchecked")
-                Map<String, String> paramValues =
-                        (Map<String, String>) JobUtils.getPrivateField(authMethod, "paramValues");
-                for (Entry<String, String> entry : paramValues.entrySet()) {
-                    parameters.put(entry.getKey(), entry.getValue());
-                }
+                extractAuthScriptParameters(authMethod, sw, parameters);
                 JobUtils.addPrivateField(parameters, PARAM_LOGIN_PAGE_WAIT, authMethod);
             }
         } else if (authMethod instanceof ScriptBasedAuthenticationMethod scriptAuthMethod) {
@@ -165,15 +160,7 @@ public class AuthenticationData extends AutomationData {
                             JobUtils.getPrivateField(scriptAuthMethod, PRIVATE_FIELD_SCRIPT);
             if (sw != null) {
                 setMethod(AuthenticationData.METHOD_SCRIPT);
-                parameters.put(PARAM_SCRIPT, sw.getFile().getAbsolutePath());
-                parameters.put(PARAM_SCRIPT_ENGINE, sw.getEngineName());
-                @SuppressWarnings("unchecked")
-                Map<String, String> paramValues =
-                        (Map<String, String>)
-                                JobUtils.getPrivateField(scriptAuthMethod, "paramValues");
-                for (Entry<String, String> entry : paramValues.entrySet()) {
-                    parameters.put(entry.getKey(), entry.getValue());
-                }
+                extractAuthScriptParameters(authMethod, sw, parameters);
             }
         } else if (authMethod != null
                 && authMethod
@@ -206,6 +193,22 @@ public class AuthenticationData extends AutomationData {
         }
         if (authMethod != null) {
             setVerification(new VerificationData(context));
+        }
+    }
+
+    private static void extractAuthScriptParameters(
+            AuthenticationMethod authMethod, ScriptWrapper sw, Map<String, Object> parameters) {
+        if (sw.getFile() != null) {
+            parameters.put(PARAM_SCRIPT, sw.getFile().getAbsolutePath());
+        } else {
+            parameters.put(PARAM_SCRIPT_INLINE, sw.getContents());
+        }
+        parameters.put(PARAM_SCRIPT_ENGINE, sw.getEngineName());
+        @SuppressWarnings("unchecked")
+        Map<String, String> paramValues =
+                (Map<String, String>) JobUtils.getPrivateField(authMethod, "paramValues");
+        for (Entry<String, String> entry : paramValues.entrySet()) {
+            parameters.put(entry.getKey(), entry.getValue());
         }
     }
 
@@ -283,7 +286,12 @@ public class AuthenticationData extends AutomationData {
         } else {
             LinkedHashMap<?, ?> dataMap = (LinkedHashMap<?, ?>) data;
             JobUtils.applyParamsToObject(
-                    dataMap, this, "authentication", new String[] {VERIFICATION_ELEMENT}, progress);
+                    dataMap,
+                    this,
+                    "authentication",
+                    new String[] {VERIFICATION_ELEMENT},
+                    List.of(PARAM_SCRIPT_INLINE),
+                    progress);
 
             if (!StringUtils.isEmpty(method)
                     && !validMethods.contains(method.toLowerCase(Locale.ROOT))) {
@@ -419,75 +427,36 @@ public class AuthenticationData extends AutomationData {
                     context.setAuthenticationMethod(jsonAuthMethod);
                     break;
                 case AuthenticationData.METHOD_CLIENT:
-                    File clientScript =
-                            JobUtils.getFile(
-                                    parameters.getOrDefault(PARAM_SCRIPT, "").toString(),
-                                    env.getPlan());
-                    if (!clientScript.exists() || !clientScript.canRead()) {
-                        progress.error(
-                                Constant.messages.getString(
-                                        "automation.error.env.auth.script.bad",
-                                        clientScript.getAbsolutePath()));
-                    } else {
-                        ScriptWrapper sw =
-                                JobUtils.getScriptWrapper(
-                                        clientScript,
-                                        ScriptBasedAuthenticationMethodType.SCRIPT_TYPE_AUTH,
-                                        parameters.getOrDefault(PARAM_SCRIPT_ENGINE, "").toString(),
-                                        progress);
-
+                    ScriptWrapper sw = getAuthScriptWrapper(progress, env, parameters);
+                    if (sw != null) {
                         AuthenticationMethodType clientScriptType =
                                 extAuth.getAuthenticationMethodTypeForIdentifier(8);
                         LOGGER.info("Loaded client script auth method type {}.", clientScriptType);
                         AuthenticationMethod clientScriptMethod =
                                 clientScriptType.createAuthenticationMethod(context.getId());
 
-                        if (sw == null) {
-                            LOGGER.error(
-                                    "Error setting script authentication - failed to find script wrapper");
-                            progress.error(
-                                    Constant.messages.getString(
-                                            "automation.error.env.auth.script.bad",
-                                            clientScript.getAbsolutePath()));
-                        } else {
-                            JobUtils.setPrivateField(
-                                    clientScriptMethod,
-                                    "diagnostics",
-                                    parameters.getOrDefault(PARAM_DIAGNOSTICS, false));
+                        JobUtils.setPrivateField(
+                                clientScriptMethod,
+                                "diagnostics",
+                                parameters.getOrDefault(PARAM_DIAGNOSTICS, false));
 
-                            try {
-                                MethodUtils.invokeMethod(clientScriptMethod, "loadScript", sw);
-                            } catch (Exception e) {
-                                LOGGER.error(e.getMessage(), e);
-                            }
-                            JobUtils.setPrivateField(
-                                    clientScriptMethod, "paramValues", getScriptParameters(env));
-
-                            setLoginPageWait(clientScriptMethod, getParameters());
-
-                            reloadAuthenticationMethod(clientScriptMethod, progress);
-                            context.setAuthenticationMethod(clientScriptMethod);
+                        try {
+                            MethodUtils.invokeMethod(clientScriptMethod, "loadScript", sw);
+                        } catch (Exception e) {
+                            LOGGER.error(e.getMessage(), e);
                         }
+                        JobUtils.setPrivateField(
+                                clientScriptMethod, "paramValues", getScriptParameters(env));
+
+                        setLoginPageWait(clientScriptMethod, getParameters());
+
+                        reloadAuthenticationMethod(clientScriptMethod, progress);
+                        context.setAuthenticationMethod(clientScriptMethod);
                     }
                     break;
                 case AuthenticationData.METHOD_SCRIPT:
-                    File f =
-                            JobUtils.getFile(
-                                    parameters.getOrDefault(PARAM_SCRIPT, "").toString(),
-                                    env.getPlan());
-                    if (!f.exists() || !f.canRead()) {
-                        progress.error(
-                                Constant.messages.getString(
-                                        "automation.error.env.auth.script.bad",
-                                        f.getAbsolutePath()));
-                    } else {
-                        ScriptWrapper sw =
-                                JobUtils.getScriptWrapper(
-                                        f,
-                                        ScriptBasedAuthenticationMethodType.SCRIPT_TYPE_AUTH,
-                                        parameters.getOrDefault(PARAM_SCRIPT_ENGINE, "").toString(),
-                                        progress);
-
+                    sw = getAuthScriptWrapper(progress, env, parameters);
+                    if (sw != null) {
                         AuthenticationMethodType scriptType =
                                 new ScriptBasedAuthenticationMethodType();
                         LOGGER.debug("Loaded script auth method type");
@@ -495,25 +464,16 @@ public class AuthenticationData extends AutomationData {
                         AuthenticationMethod scriptMethod =
                                 scriptType.createAuthenticationMethod(context.getId());
 
-                        if (sw == null) {
-                            LOGGER.error(
-                                    "Error setting script authentication - failed to find script wrapper");
-                            progress.error(
-                                    Constant.messages.getString(
-                                            "automation.error.env.auth.script.bad",
-                                            f.getAbsolutePath()));
-                        } else {
-                            try {
-                                MethodUtils.invokeMethod(scriptMethod, "loadScript", sw);
-                            } catch (Exception e) {
-                                LOGGER.error(e.getMessage(), e);
-                            }
-                            JobUtils.setPrivateField(
-                                    scriptMethod, "paramValues", getScriptParameters(env));
-
-                            reloadAuthenticationMethod(scriptMethod, progress);
-                            context.setAuthenticationMethod(scriptMethod);
+                        try {
+                            MethodUtils.invokeMethod(scriptMethod, "loadScript", sw);
+                        } catch (Exception e) {
+                            LOGGER.error(e.getMessage(), e);
                         }
+                        JobUtils.setPrivateField(
+                                scriptMethod, "paramValues", getScriptParameters(env));
+
+                        reloadAuthenticationMethod(scriptMethod, progress);
+                        context.setAuthenticationMethod(scriptMethod);
                     }
                     break;
                 case AuthenticationData.METHOD_BROWSER:
@@ -591,6 +551,59 @@ public class AuthenticationData extends AutomationData {
         if (this.verification != null) {
             this.verification.initAuthenticationVerification(context, progress);
         }
+    }
+
+    private static ScriptWrapper getAuthScriptWrapper(
+            AutomationProgress progress,
+            AutomationEnvironment env,
+            Map<String, Object> parameters) {
+        return getScriptWrapper(progress, env, parameters, "automation.error.env.auth.script.bad");
+    }
+
+    private static ScriptWrapper getScriptWrapper(
+            AutomationProgress progress,
+            AutomationEnvironment env,
+            Map<String, Object> parameters,
+            String errorKey) {
+
+        String script = parameters.getOrDefault(PARAM_SCRIPT, "").toString();
+        String scriptInline = parameters.getOrDefault(PARAM_SCRIPT_INLINE, "").toString();
+
+        if (StringUtils.isNotBlank(scriptInline)) {
+            if (StringUtils.isNotBlank(script)) {
+                progress.warn(
+                        Constant.messages.getString("automation.error.env.script.inline.file"));
+            }
+
+            String scriptName = "ScriptInline-" + RandomStringUtils.secure().nextAlphanumeric(5);
+            return JobUtils.getScriptWrapper(
+                    scriptName,
+                    scriptInline,
+                    ScriptBasedAuthenticationMethodType.SCRIPT_TYPE_AUTH,
+                    parameters.getOrDefault(PARAM_SCRIPT_ENGINE, "").toString(),
+                    progress);
+        }
+
+        if (StringUtils.isNotBlank(script)) {
+            File file =
+                    JobUtils.getFile(
+                            parameters.getOrDefault(PARAM_SCRIPT, "").toString(), env.getPlan());
+
+            if (!file.exists() || !file.canRead()) {
+                progress.error(Constant.messages.getString(errorKey, file.getAbsolutePath()));
+                return null;
+            }
+
+            return JobUtils.getScriptWrapper(
+                    file,
+                    ScriptBasedAuthenticationMethodType.SCRIPT_TYPE_AUTH,
+                    parameters.getOrDefault(PARAM_SCRIPT_ENGINE, "").toString(),
+                    progress);
+        }
+
+        progress.error(
+                Constant.messages.getString("automation.error.env.script.inline.file.missing"));
+        return null;
     }
 
     private static void setLoginPageWait(Object method, Map<String, Object> parameters) {

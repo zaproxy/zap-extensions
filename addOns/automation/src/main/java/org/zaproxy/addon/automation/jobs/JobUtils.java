@@ -32,6 +32,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -220,12 +221,22 @@ public class JobUtils {
         return null;
     }
 
+    public static void applyParamsToObject(
+            Map<?, ?> testData,
+            Object object,
+            String objectName,
+            String[] ignore,
+            AutomationProgress progress) {
+        applyParamsToObject(testData, object, objectName, ignore, List.of(), progress);
+    }
+
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static void applyParamsToObject(
             Map<?, ?> testData,
             Object object,
             String objectName,
             String[] ignore,
+            List<String> trim,
             AutomationProgress progress) {
         if (testData == null || object == null) {
             return;
@@ -301,7 +312,7 @@ public class JobUtils {
                                             "automation.info.setparam",
                                             objectName, // TODO changed param
                                             key,
-                                            toStringValue(value)));
+                                            toStringValue(value, trim)));
                         } catch (Exception e) {
                             progress.error(
                                     Constant.messages.getString(
@@ -329,8 +340,14 @@ public class JobUtils {
         }
     }
 
-    private static Object toStringValue(Object value) {
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private static Object toStringValue(Object value, List<String> trim) {
         if (value == null || !value.getClass().isArray()) {
+            if (!trim.isEmpty() && value instanceof Map map) {
+                Map trimmedMap = new LinkedHashMap<>(map);
+                trim.forEach(name -> trimmedMap.replace(name, "..."));
+                return trimmedMap;
+            }
             return value;
         }
         return Arrays.toString((Object[]) value);
@@ -663,6 +680,41 @@ public class JobUtils {
             }
         }
         return wrapper;
+    }
+
+    public static ScriptWrapper getScriptWrapper(
+            String scriptName,
+            String contents,
+            String type,
+            String engineName,
+            AutomationProgress progress) {
+        ExtensionScript extScript =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
+        if (extScript == null) {
+            return null;
+        }
+
+        ScriptEngineWrapper engineWrapper = getEngineWrapper(extScript, engineName);
+        if (engineWrapper == null) {
+            progress.error(
+                    Constant.messages.getString(
+                            "automation.error.script.engine.bad", engineName, scriptName));
+            return null;
+        }
+
+        ScriptType scriptType = extScript.getScriptType(type);
+        try {
+            ScriptWrapper sw =
+                    new ScriptWrapper(scriptName, "", engineWrapper, scriptType, true, null);
+            sw.setContents(contents);
+
+            ScriptNode scriptNode = extScript.addScript(sw, false);
+            return (ScriptWrapper) scriptNode.getUserObject();
+        } catch (InvalidParameterException e) {
+            progress.error(Constant.messages.getString("automation.error.script.bad", scriptName));
+        }
+
+        return null;
     }
 
     private static ScriptEngineWrapper getEngineWrapper(ExtensionScript extension, String name) {
