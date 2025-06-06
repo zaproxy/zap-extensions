@@ -7,8 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Update Selenium to version 4.33.0.
+
 ### Fixed
 - Prevent concurrent modification exceptions.
+- Restore loading of extensions with newer Chrome versions.
 
 ## [15.36.0] - 2025-03-25
 ### Changed
