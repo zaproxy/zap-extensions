@@ -3,7 +3,7 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2018 The ZAP Development Team
+ * Copyright 2025 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,6 +47,12 @@ import org.zaproxy.addon.dev.auth.simpleJsonBearerDiffCookies.SimpleJsonBearerDi
 import org.zaproxy.addon.dev.auth.simpleJsonBearerJsCookie.SimpleJsonBearerJsCookieDir;
 import org.zaproxy.addon.dev.auth.simpleJsonCookie.SimpleJsonCookieDir;
 import org.zaproxy.addon.dev.auth.sso1.SSO1RootDir;
+import org.zaproxy.addon.dev.auth.totp.simpleAuthTotpBlankCodeVuln.OpenApiWithBlankOtpSimpleAuthDir;
+import org.zaproxy.addon.dev.auth.totp.simpleAuthTotpCaptcha.OpenApiWithCaptchaOtpSimpleAuthDir;
+import org.zaproxy.addon.dev.auth.totp.simpleAuthTotpCommonBackupCodeVuln.OpenApiWithCommonOtpSimpleAuthDir;
+import org.zaproxy.addon.dev.auth.totp.simpleAuthTotpLockout.OpenApiWithLockoutOtpSimpleAuthDir;
+import org.zaproxy.addon.dev.auth.totp.simpleAuthTotpReplayVuln.OpenApiWithReplayOtpSimpleAuthDir;
+import org.zaproxy.addon.dev.auth.totp.simpleAuthWithOTP.OpenApiWithOtpSimpleAuthDir;
 import org.zaproxy.addon.dev.auth.uuidLogin.UuidLoginRootDir;
 import org.zaproxy.addon.dev.csrf.basic.BasicCsrfDir;
 import org.zaproxy.addon.dev.seq.performance.PerformanceDir;
@@ -99,6 +105,19 @@ public class TestProxyServer {
         authDir.addDirectory(new JsonMultipleCookiesDir(this, "json-multiple-cookies"));
         authDir.addDirectory(new SSO1RootDir(this, "sso1"));
         authDir.addDirectory(new UuidLoginRootDir(this, "uuid-login"));
+        TestDirectory totpDir = new TestDirectory(this, "totp");
+        authDir.addDirectory(totpDir);
+        totpDir.addDirectory(new OpenApiWithOtpSimpleAuthDir(this, "simple-auth-with-otp"));
+        totpDir.addDirectory(
+                new OpenApiWithBlankOtpSimpleAuthDir(this, "simple-auth-otp-blank-code-vuln"));
+        totpDir.addDirectory(
+                new OpenApiWithLockoutOtpSimpleAuthDir(this, "simple-auth-otp-lockout"));
+        totpDir.addDirectory(
+                new OpenApiWithCaptchaOtpSimpleAuthDir(this, "simple-auth-otp-captcha"));
+        totpDir.addDirectory(
+                new OpenApiWithReplayOtpSimpleAuthDir(this, "simple-auth-otp-replay-vuln"));
+        totpDir.addDirectory(
+                new OpenApiWithCommonOtpSimpleAuthDir(this, "simple-auth-otp-common-codes-vuln"));
 
         TestDirectory apiDir = new TestDirectory(this, "api");
         TestDirectory openapiDir = new TestDirectory(this, "openapi");

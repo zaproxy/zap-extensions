@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>ZAP Test Server</title>
+	<link href="/tutorial.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="roundContainer">
+	<h1>Enter TOTP Passcode</h1>
+	
+	<div id="result"></div>
+
+	<form onsubmit="return false;">
+	<table style="border: none;">
+	<tr>
+		<td>TOTP Passcode:</td>
+		<td><input id="totp" name="totp" type="text"></td>
+	</tr>
+	<tr>
+		<td></td>
+		<td><button id="submit" type="button" value="submit" onclick="submitTOTP();">Submit</button></td>
+	</tr>
+	</table>
+	</form>
+	<p><strong>Your TOTP Code:</strong> <span id="totpCodeDisplay"></span></p>
+</div>
+<script>
+function submitTOTP() {
+	// Make the TOTP verification request
+	var xhr = new XMLHttpRequest();
+	var url = "user";
+	xhr.open("POST", url, true);
+	xhr.setRequestHeader("Authorization", sessionStorage.getItem("accesstoken"));
+	xhr.setRequestHeader("Content-Type", "application/json");
+	xhr.onreadystatechange = function () {
+	    if (xhr.readyState === 4 && xhr.status === 200) {
+	        var json = JSON.parse(xhr.responseText);
+	        if (json.result === "OK") {
+	        	window.location.replace("home.html");
+	        } else {
+	        	const h3 = document.createElement("h3");
+	        	const textNode = document.createTextNode("TOTP incorrect");
+	        	h3.appendChild(textNode);
+	        	document.getElementById("result").appendChild(h3);
+	        }
+	    }
+	};
+	var data = JSON.stringify({
+		"code": document.getElementById("totp").value
+		
+	});
+	xhr.send(data);
+}
+
+document.getElementById('totp').onkeydown = function(e){
+    if (e.key === "Enter" || e.keyCode == 13) {
+        // Handle return key
+		e.preventDefault();
+        submitTOTP();
+    }
+};
+
+window.addEventListener("load", function () {
+    const code = sessionStorage.getItem("totpcode");
+    if (code) {
+        document.getElementById("totpCodeDisplay").textContent = code;
+    }
+});
+</script>
+</body>
+</html>

@@ -202,6 +202,11 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
         private String browserId = DEFAULT_BROWSER_ID;
         private int loginPageWait = DEFAULT_PAGE_WAIT;
         private List<AuthenticationStep> authenticationSteps = List.of();
+        private boolean authTestSucessful = false;
+
+        public boolean wasAuthTestSucessful() {
+            return authTestSucessful;
+        }
 
         public BrowserBasedAuthenticationMethod() {}
 
@@ -212,6 +217,32 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
             this.loginPageWait = method.loginPageWait;
             authenticationSteps =
                     method.getAuthenticationSteps().stream().map(AuthenticationStep::new).toList();
+        }
+
+        public List<HttpMessage> getRecordedHttpMessages() {
+            if (handler != null) {
+                List<Integer> historyIds = handler.getHttpMessagesIds();
+                List<HttpMessage> messages = new ArrayList<>();
+                for (int historyId : historyIds) {
+                    try {
+                        HttpMessage msg = handler.getHistoryProvider().getHttpMessage(historyId);
+                        if (msg != null) {
+                            messages.add(msg);
+                        }
+                    } catch (Exception e) {
+                        LOGGER.error(
+                                "Failed to retrieve HttpMessage for History ID: " + historyId, e);
+                    }
+                }
+                return messages;
+            }
+            return new ArrayList<>();
+        }
+
+        public void resetRecordedHttpMessages() {
+            if (handler != null) {
+                handler.resetHttpMessages();
+            }
         }
 
         @Override
@@ -302,6 +333,8 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
                 User user) {
             if (handler != null) {
                 handler.resetAuthMsg();
+                handler.resetHttpMessages();
+                authTestSucessful = false;
             }
             if (this.loginPageWait > 0) {
                 AuthUtils.setTimeToWaitMs(TimeUnit.SECONDS.toMillis(loginPageWait));
@@ -385,6 +418,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
                         // Let the user know it worked
                         AuthenticationHelper.notifyOutputAuthSuccessful(authMsg);
                         user.getAuthenticationState().setLastAuthFailure("");
+                        authTestSucessful = true;
                     } else {
                         diags.recordStep(
                                 authMsg,

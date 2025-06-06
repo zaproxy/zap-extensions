@@ -1,5 +1,9 @@
 description = "An add-on to help with development of ZAP."
 
+repositories {
+    mavenCentral()
+}
+
 zapAddOn {
     addOnName.set("Dev Add-on")
 
@@ -20,6 +24,9 @@ zapAddOn {
                 register("network") {
                     version.set(">=0.7.0")
                 }
+                register("authhelper") {
+                    version.set(">=0.26.0") // Or whichever version you need
+                }
             }
         }
     }
@@ -28,9 +35,14 @@ zapAddOn {
 dependencies {
     zapAddOn("network")
     zapAddOn("commonlib")
+    zapAddOn("authhelper")
 
     compileOnly(libs.log4j.core)
 
     testImplementation(project(":testutils"))
     testImplementation(libs.log4j.core)
+}
+
+tasks.named("compileJava") {
+    dependsOn(":addOns:authhelper:enhance")
 }
