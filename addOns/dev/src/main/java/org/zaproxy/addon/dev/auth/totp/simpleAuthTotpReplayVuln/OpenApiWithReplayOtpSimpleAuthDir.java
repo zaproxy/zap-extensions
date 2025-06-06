@@ -17,24 +17,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.dev.auth.totp.simpleAuthWithOTP;
+package org.zaproxy.addon.dev.auth.totp.simpleAuthTotpReplayVuln;
 
 import java.util.HashMap;
 import java.util.Map;
 import org.zaproxy.addon.dev.TestAuthDirectory;
 import org.zaproxy.addon.dev.TestProxyServer;
 import org.zaproxy.addon.dev.auth.totp.TestTotp;
+import org.zaproxy.addon.dev.auth.totp.simpleAuthWithOTP.OpenApiWithOtpLoginPage;
+import org.zaproxy.addon.dev.auth.totp.simpleAuthWithOTP.OpenApiWithOtpTestApiPage;
+import org.zaproxy.addon.dev.auth.totp.simpleAuthWithOTP.OpenApiWithOtpVerificationPage;
 
 /**
  * A directory which contains an OpenAPI spec. The spec is available unauthenticated but the
  * endpoint it describes can only be accessed when a valid Authentication header is supplied. The
  * login page uses one JSON request to login endpoint. The token is returned in a standard field.
  */
-public class OpenApiWithOtpSimpleAuthDir extends TestAuthDirectory {
+public class OpenApiWithReplayOtpSimpleAuthDir extends TestAuthDirectory {
     private Map<String, Boolean> verifiedTokens = new HashMap<>();
     private Map<String, String> tokenToUserMap = new HashMap<>();
     private final Map<String, UsedOtpInfo> usedTotpCodes = new HashMap<>();
-    private final Map<String, String> lastTotpCodes = new HashMap<>();
 
     private static class UsedOtpInfo {
         String otpCode;
@@ -46,7 +48,7 @@ public class OpenApiWithOtpSimpleAuthDir extends TestAuthDirectory {
         }
     }
 
-    public OpenApiWithOtpSimpleAuthDir(TestProxyServer server, String name) {
+    public OpenApiWithReplayOtpSimpleAuthDir(TestProxyServer server, String name) {
         super(server, name);
         this.addPage(new OpenApiWithOtpLoginPage(server));
         this.addPage(new OpenApiWithOtpVerificationPage(server));
@@ -61,28 +63,26 @@ public class OpenApiWithOtpSimpleAuthDir extends TestAuthDirectory {
         return verifiedTokens.getOrDefault(token, false);
     }
 
-   public String generateAndStoreTotp(String token) {
-    String newCode = TestTotp.generateCurrentCode();
-
-    String lastCode = lastTotpCodes.get(token);
-    if (newCode.equals(lastCode)) {
-        newCode = "198755"; // Fallback static code
+    public String generateAndStoreTotp(String token) {
+        String code = TestTotp.generateCurrentCode();
+        return code;
     }
 
-    lastTotpCodes.put(token, newCode);
-    return newCode;
-}
-
     public boolean validateTotp(String token, String code) {
-        // Reject if this exact code was already used for this token
         UsedOtpInfo lastUsed = usedTotpCodes.get(token);
-        if (lastUsed != null && lastUsed.otpCode.equals(code)) {
-            return false; // Replay detected
+
+        if (lastUsed != null) {
+            if (lastUsed.otpCode.equals(code)) {
+                long now = System.currentTimeMillis();
+                long elapsed = now - lastUsed.usedAtMillis;
+                if (elapsed < 30_000) {
+                    return false;
+                }
+            }
         }
 
         boolean valid = TestTotp.isCodeValid(code);
         if (valid) {
-            // Store this TOTP as used for this token
             usedTotpCodes.put(token, new UsedOtpInfo(code, System.currentTimeMillis()));
         }
 

@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.dev.auth.totp.simpleAuthTotpCaptcha;
+package org.zaproxy.addon.dev.auth.totp.simpleAuthTotpReplayVuln;
 
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
@@ -29,12 +29,12 @@ import org.zaproxy.addon.dev.TestPage;
 import org.zaproxy.addon.dev.TestProxyServer;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 
-public class OpenApiWithCaptchaOtpVerificationPage extends TestPage {
+public class OpenApiWithReplayOtpVerificationPage extends TestPage {
 
     private static final Logger LOGGER =
-            LogManager.getLogger(OpenApiWithCaptchaOtpVerificationPage.class);
+            LogManager.getLogger(OpenApiWithReplayOtpVerificationPage.class);
 
-    public OpenApiWithCaptchaOtpVerificationPage(TestProxyServer server) {
+    public OpenApiWithReplayOtpVerificationPage(TestProxyServer server) {
         super(server, "user");
     }
 
@@ -46,6 +46,7 @@ public class OpenApiWithCaptchaOtpVerificationPage extends TestPage {
         JSONObject response = new JSONObject();
 
         if ("GET".equalsIgnoreCase(method)) {
+            // Check token validity for GET
             if (user != null && getParent().isTokenVerified(token)) {
                 response.put("result", "OK");
                 response.put("user", user);
@@ -56,45 +57,32 @@ public class OpenApiWithCaptchaOtpVerificationPage extends TestPage {
             return;
         }
 
+        // TOTP validation
         String totp = null;
-        String captcha = null;
-
         if (msg.getRequestHeader().hasContentType("json")) {
             String postData = msg.getRequestBody().toString();
-            JSONObject jsonObject;
             try {
-                jsonObject = JSONObject.fromObject(postData);
+                JSONObject jsonObject = JSONObject.fromObject(postData);
                 totp = jsonObject.getString("code");
-                captcha = jsonObject.getString("captcha");
             } catch (JSONException e) {
                 LOGGER.debug("Unable to parse as JSON: {}", postData, e);
             }
         }
 
-        // Validate CAPTCHA (static)
-        boolean isCaptchaValid = "captcha123".equals(captcha);
+        LOGGER.debug("Token: {} user: {} TOTP: {}", token, user, totp);
 
-        LOGGER.debug("Token: {} user: {} TOTP: {} CAPTCHA: {}", token, user, totp, captcha);
-
-        if (user != null
-                && totp != null
-                && getParent().validateTotp(token, totp)
-                && isCaptchaValid) {
+        if (user != null && totp != null && getParent().validateTotp(token, totp)) {
             response.put("result", "OK");
             response.put("user", user);
             getParent().markTokenVerified(token);
         } else {
             response.put("result", "FAIL");
         }
-
-        // Always return the static captcha
-        response.put("newCaptcha", "captcha123");
-
         this.getServer().setJsonResponse(response, msg);
     }
 
     @Override
-    public OpenApiWithCaptchaOtpSimpleAuthDir getParent() {
-        return (OpenApiWithCaptchaOtpSimpleAuthDir) super.getParent();
+    public OpenApiWithReplayOtpSimpleAuthDir getParent() {
+        return (OpenApiWithReplayOtpSimpleAuthDir) super.getParent();
     }
 }
