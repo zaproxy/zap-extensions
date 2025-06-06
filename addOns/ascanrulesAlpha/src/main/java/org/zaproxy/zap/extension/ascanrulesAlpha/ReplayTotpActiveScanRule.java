@@ -30,12 +30,8 @@ import org.parosproxy.paros.core.scanner.AbstractHostPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType.BrowserBasedAuthenticationMethod;
 import org.zaproxy.addon.authhelper.internal.AuthenticationStep;
-import org.zaproxy.zap.authentication.UsernamePasswordAuthenticationCredentials;
-import org.zaproxy.zap.session.SessionManagementMethod;
 import org.zaproxy.zap.session.WebSession;
-import org.zaproxy.zap.users.User;
 
 public class ReplayTotpActiveScanRule extends AbstractHostPlugin
         implements CommonActiveScanRuleInfo {
@@ -111,10 +107,9 @@ public class ReplayTotpActiveScanRule extends AbstractHostPlugin
                 }
 
                 context.browserAuthMethod.setAuthenticationSteps(testSteps);
-                Thread.sleep(30_000);
-                context.browserAuthMethod.authenticate(context.sessionManagementMethod, context.credentials, context.user);
-                 boolean webSessionRedo =
-                    context.browserAuthMethod.wasAuthTestSucessful();
+                context.browserAuthMethod.authenticate(
+                        context.sessionManagementMethod, context.credentials, context.user);
+                boolean webSessionRedo = context.browserAuthMethod.wasAuthTestSucessful();
                 // Check for passcode reuse vulnerability
                 if (webSessionRedo) {
                     buildAlert(
@@ -133,7 +128,6 @@ public class ReplayTotpActiveScanRule extends AbstractHostPlugin
             LOGGER.error("Error in TOTP Page Scan Rule: {}", e.getMessage(), e);
         }
     }
-
 
     private AlertBuilder buildAlert(
             String name, String description, String solution, HttpMessage msg) {

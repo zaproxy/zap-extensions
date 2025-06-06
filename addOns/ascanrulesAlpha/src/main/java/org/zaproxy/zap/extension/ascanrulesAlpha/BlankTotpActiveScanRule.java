@@ -30,11 +30,7 @@ import org.parosproxy.paros.core.scanner.AbstractHostPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType.BrowserBasedAuthenticationMethod;
 import org.zaproxy.addon.authhelper.internal.AuthenticationStep;
-import org.zaproxy.zap.authentication.UsernamePasswordAuthenticationCredentials;
-import org.zaproxy.zap.session.SessionManagementMethod;
-import org.zaproxy.zap.users.User;
 
 public class BlankTotpActiveScanRule extends AbstractHostPlugin
         implements CommonActiveScanRuleInfo {
@@ -99,9 +95,9 @@ public class BlankTotpActiveScanRule extends AbstractHostPlugin
                 }
             }
             context.browserAuthMethod.setAuthenticationSteps(mutableAuthSteps);
-            context.browserAuthMethod.authenticate(context.sessionManagementMethod, context.credentials, context.user);
-            boolean webSessionBlankCode =
-                    context.browserAuthMethod.wasAuthTestSucessful();
+            context.browserAuthMethod.authenticate(
+                    context.sessionManagementMethod, context.credentials, context.user);
+            boolean webSessionBlankCode = context.browserAuthMethod.wasAuthTestSucessful();
 
             if (webSessionBlankCode) {
                 buildAlert(

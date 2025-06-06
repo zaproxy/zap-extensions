@@ -55,8 +55,7 @@ public class OpenApiWithBlankOtpSimpleAuthDir extends TestAuthDirectory {
     }
 
     public boolean validateTotp(String token, String code) {
-        if ( code == null || code.trim().isEmpty())
-            return true; 
+        if (code == null || code.trim().isEmpty()) return true;
         return TestTotp.isCodeValid(code);
     }
 

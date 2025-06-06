@@ -17,7 +17,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.zaproxy.addon.dev.auth.totp;
 
 import org.zaproxy.addon.authhelper.internal.AuthenticationStep;

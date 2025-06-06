@@ -49,6 +49,7 @@ import org.zaproxy.addon.dev.auth.simpleJsonCookie.SimpleJsonCookieDir;
 import org.zaproxy.addon.dev.auth.totp.simpleAuthTotpBlankCodeVuln.OpenApiWithBlankOtpSimpleAuthDir;
 import org.zaproxy.addon.dev.auth.totp.simpleAuthTotpCaptcha.OpenApiWithCaptchaOtpSimpleAuthDir;
 import org.zaproxy.addon.dev.auth.totp.simpleAuthTotpLockout.OpenApiWithLockoutOtpSimpleAuthDir;
+import org.zaproxy.addon.dev.auth.totp.simpleAuthTotpReplayVuln.OpenApiWithReplayOtpSimpleAuthDir;
 import org.zaproxy.addon.dev.auth.totp.simpleAuthWithOTP.OpenApiWithOtpSimpleAuthDir;
 import org.zaproxy.addon.dev.seq.performance.PerformanceDir;
 import org.zaproxy.addon.network.ExtensionNetwork;
@@ -99,6 +100,8 @@ public class TestProxyServer {
                 new OpenApiWithLockoutOtpSimpleAuthDir(this, "simple-auth-otp-lockout"));
         totpDir.addDirectory(
                 new OpenApiWithCaptchaOtpSimpleAuthDir(this, "simple-auth-otp-captcha"));
+        totpDir.addDirectory(
+                new OpenApiWithReplayOtpSimpleAuthDir(this, "simple-auth-otp-replay-vuln"));
 
         TestDirectory apiDir = new TestDirectory(this, "api");
         TestDirectory openapiDir = new TestDirectory(this, "openapi");

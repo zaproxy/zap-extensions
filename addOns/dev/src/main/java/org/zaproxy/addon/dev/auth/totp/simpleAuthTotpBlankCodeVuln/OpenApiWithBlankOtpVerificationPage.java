@@ -71,7 +71,7 @@ public class OpenApiWithBlankOtpVerificationPage extends TestPage {
 
         LOGGER.debug("Token: {} user: {} TOTP: {}", token, user, totp);
 
-        if (user != null && getParent().validateTotp(token, totp) ) {
+        if (user != null && getParent().validateTotp(token, totp)) {
             // Vulnerability: bypass TOTP check if passcode is blank
             response.put("result", "OK");
             response.put("user", user);

@@ -30,11 +30,7 @@ import org.parosproxy.paros.core.scanner.AbstractHostPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType.BrowserBasedAuthenticationMethod;
 import org.zaproxy.addon.authhelper.internal.AuthenticationStep;
-import org.zaproxy.zap.authentication.UsernamePasswordAuthenticationCredentials;
-import org.zaproxy.zap.session.SessionManagementMethod;
-import org.zaproxy.zap.users.User;
 
 public class TotpActiveScanRule extends AbstractHostPlugin implements CommonActiveScanRuleInfo {
     private static final String MESSAGE_PREFIX = "ascanalpha.commtotp.";
@@ -97,14 +93,13 @@ public class TotpActiveScanRule extends AbstractHostPlugin implements CommonActi
                             "8888888",
                             "88888888");
             // Test passcodes (check format- RFC-6238 (6,7,8)
-            
 
             for (String code : backupPasscodes) {
                 List<AuthenticationStep> testSteps = new ArrayList<>();
                 for (AuthenticationStep step : context.authSteps) {
                     if (step.getType() == AuthenticationStep.Type.TOTP_FIELD) {
                         AuthenticationStep clone = new AuthenticationStep(step);
-                        clone.setUserProvidedTotp(code);  // override with test code
+                        clone.setUserProvidedTotp(code); // override with test code
                         testSteps.add(clone);
                     } else {
                         testSteps.add(step);
@@ -112,9 +107,9 @@ public class TotpActiveScanRule extends AbstractHostPlugin implements CommonActi
                 }
 
                 context.browserAuthMethod.setAuthenticationSteps(testSteps);
-                context.browserAuthMethod.authenticate(context.sessionManagementMethod, context.credentials, context.user);
-                boolean webSessionNew =
-                        context.browserAuthMethod.wasAuthTestSucessful();
+                context.browserAuthMethod.authenticate(
+                        context.sessionManagementMethod, context.credentials, context.user);
+                boolean webSessionNew = context.browserAuthMethod.wasAuthTestSucessful();
 
                 if (webSessionNew) {
                     buildAlert(
@@ -131,8 +126,6 @@ public class TotpActiveScanRule extends AbstractHostPlugin implements CommonActi
             LOGGER.error("Error in TOTP Page Scan Rule: {}", e.getMessage(), e);
         }
     }
-
-   
 
     private AlertBuilder buildAlert(
             String name, String description, String solution, HttpMessage msg) {

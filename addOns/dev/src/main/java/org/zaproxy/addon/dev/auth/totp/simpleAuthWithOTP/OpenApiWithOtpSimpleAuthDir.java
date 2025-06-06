@@ -32,17 +32,15 @@ import org.zaproxy.addon.dev.auth.totp.TestTotp;
  */
 public class OpenApiWithOtpSimpleAuthDir extends TestAuthDirectory {
     private Map<String, Boolean> verifiedTokens = new HashMap<>();
-    private Map<String, String> tokenToUserMap = new HashMap<>();
+    private final Map<String, String> tokenToUserMap = new HashMap<>();
     private final Map<String, UsedOtpInfo> usedTotpCodes = new HashMap<>();
-    private final Map<String, String> lastTotpCodes = new HashMap<>();
+    private final Map<String, String> lastTotpPerUser = new HashMap<>();
 
     private static class UsedOtpInfo {
         String otpCode;
-        long usedAtMillis;
 
-        UsedOtpInfo(String otpCode, long usedAtMillis) {
+        UsedOtpInfo(String otpCode) {
             this.otpCode = otpCode;
-            this.usedAtMillis = usedAtMillis;
         }
     }
 
@@ -61,29 +59,38 @@ public class OpenApiWithOtpSimpleAuthDir extends TestAuthDirectory {
         return verifiedTokens.getOrDefault(token, false);
     }
 
-   public String generateAndStoreTotp(String token) {
-    String newCode = TestTotp.generateCurrentCode();
-
-    String lastCode = lastTotpCodes.get(token);
-    if (newCode.equals(lastCode)) {
-        newCode = "198755"; // Fallback static code
-    }
-
-    lastTotpCodes.put(token, newCode);
-    return newCode;
-}
-
-    public boolean validateTotp(String token, String code) {
-        // Reject if this exact code was already used for this token
-        UsedOtpInfo lastUsed = usedTotpCodes.get(token);
-        if (lastUsed != null && lastUsed.otpCode.equals(code)) {
-            return false; // Replay detected
+    public String generateAndStoreTotp(String token) {
+        String username = tokenToUserMap.get(token);
+        if (username == null) {
+            return "ERROR";
         }
 
-        boolean valid = TestTotp.isCodeValid(code);
+        String newCode = TestTotp.generateCurrentCode();
+        String lastCode = lastTotpPerUser.get(username);
+
+        if (newCode.equals(lastCode)) {
+            lastTotpPerUser.put(username, "198755");
+            return "198755";
+        }
+
+        lastTotpPerUser.put(username, newCode);
+        return newCode;
+    }
+
+    public boolean validateTotp(String token, String code) {
+        String username = tokenToUserMap.get(token);
+        if (username == null) {
+            return false;
+        }
+
+        UsedOtpInfo lastUsed = usedTotpCodes.get(username);
+        if (lastUsed != null && lastUsed.otpCode.equals(code)) {
+            return false; // Replay for same user
+        }
+
+        boolean valid = (TestTotp.isCodeValid(code) || code.equals("198755"));
         if (valid) {
-            // Store this TOTP as used for this token
-            usedTotpCodes.put(token, new UsedOtpInfo(code, System.currentTimeMillis()));
+            usedTotpCodes.put(username, new UsedOtpInfo(code));
         }
 
         return valid;

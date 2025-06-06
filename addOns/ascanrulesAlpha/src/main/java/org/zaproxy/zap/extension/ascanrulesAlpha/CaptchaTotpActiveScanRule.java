@@ -131,9 +131,9 @@ public class CaptchaTotpActiveScanRule extends AbstractHostPlugin
             for (String keyword : captchaKeywords) {
                 for (HttpMessage response : messages) {
                     String contentType = response.getResponseHeader().getHeader("Content-Type");
-                        if (contentType == null || !contentType.toLowerCase().contains("text")) {
-                            continue;
-                        }
+                    if (contentType == null || !contentType.toLowerCase().contains("text")) {
+                        continue;
+                    }
                     if (response.getResponseBody().toString().toLowerCase().contains(keyword)) {
                         captchaDetected = true;
                         return;
@@ -154,9 +154,9 @@ public class CaptchaTotpActiveScanRule extends AbstractHostPlugin
             for (String keyword : lockoutKeywords) {
                 for (HttpMessage response : messages) {
                     String contentType = response.getResponseHeader().getHeader("Content-Type");
-                        if (contentType == null || !contentType.toLowerCase().contains("text")) {
-                            continue;
-                        }
+                    if (contentType == null || !contentType.toLowerCase().contains("text")) {
+                        continue;
+                    }
                     if (response.getResponseBody().toString().toLowerCase().contains(keyword)) {
                         lockoutDetected = true;
                         return;
