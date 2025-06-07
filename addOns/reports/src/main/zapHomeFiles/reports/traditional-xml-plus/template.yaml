@@ -2,3 +2,5 @@ name: Traditional XML Report with requests and responses
 format: XML
 mode: XML
 extension: xml
+sections:
+ - statistics

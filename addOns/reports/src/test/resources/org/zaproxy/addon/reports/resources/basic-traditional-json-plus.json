@@ -1,7 +1,7 @@
 {
     "@programName": "ZAP",
     "@version": "Dev Build",
-    "@generated": "Thu, 20 Oct 2022 17:10:46",
+    "@generated": "Thu, 5 Jun 2025 16:12:29",
     "site":[ 
         {
             "@name": "http://example.com",
@@ -60,8 +60,12 @@
                         }
                     ]
                 }
-            ]
+            ],
+            "statistics":{ 
+            }
         }
-    ]
+    ],
+    "statistics":{ 
+    }
 }
 
