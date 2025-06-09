@@ -138,6 +138,18 @@ public class ReportHelper {
         return !getSiteStats(site, prefix).isEmpty();
     }
 
+    public static Map<String, Long> getGlobalStats(String prefix) {
+        ExtensionStats extStats =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionStats.class);
+        if (extStats != null) {
+            InMemoryStats stats = extStats.getInMemoryStats();
+            if (stats != null) {
+                return stats.getStats(prefix);
+            }
+        }
+        return Collections.emptyMap();
+    }
+
     public static List<Alert> getAlertsForSite(AlertNode rootNode, String site) {
         List<Alert> list = new ArrayList<>();
 

@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Added
 - The Automation Framework progress to the report data when run via an AF job.
+- Statistics to the traditional extended JSON and XML reports.
 
 ### Fixed
 - Correct error messages of the Automation Framework job.
