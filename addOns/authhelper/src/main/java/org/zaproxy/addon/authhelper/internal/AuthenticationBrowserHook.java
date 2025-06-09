@@ -21,6 +21,7 @@ package org.zaproxy.addon.authhelper.internal;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
@@ -82,6 +83,11 @@ public class AuthenticationBrowserHook implements BrowserHook {
             ZestScript zs = csaMethod.getZestScript();
             runner.setup(user, zs);
             runner.run(zs, paramsValues);
+
+            int sleepTime = csaMethod.getLoginPageWait();
+            if (sleepTime > 0) {
+                AuthUtils.sleep(TimeUnit.SECONDS.toMillis(sleepTime));
+            }
         } catch (Exception e) {
             LOGGER.warn(
                     "An error occurred while trying to execute the Client Script Authentication script: {}",
