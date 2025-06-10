@@ -30,6 +30,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.authhelper.VerificationRequestDetails.VerificationComparator;
+import org.zaproxy.addon.commonlib.AuthConstants;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.model.Context;
 
@@ -96,7 +97,7 @@ public class VerificationDetectionScanRule extends PluginPassiveScanner {
 
     private static boolean isPoorCandidate(HttpMessage msg) {
         String escapedPathQuery = msg.getRequestHeader().getURI().getEscapedPathQuery();
-        return AuthUtils.POOR_CANDIDATE_INDICATORS.stream()
+        return AuthConstants.getAuthRelatedIndicators().stream()
                 .anyMatch(keyword -> StringUtils.containsIgnoreCase(escapedPathQuery, keyword));
     }
 
