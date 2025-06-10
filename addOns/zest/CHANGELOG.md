@@ -5,7 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-
+### Changed
+- Update Zest library to 0.30.0:
+  - Update Selenium to version 4.33.0.
+  - Send RETURN key if submit fails for input elements not in a form.
 
 ## [48.6.0] - 2025-05-20
 ### Added
