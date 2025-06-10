@@ -155,6 +155,41 @@ public class AuthUtils {
                                 }
                             })
                     .build();
+
+    /**
+     * A list of commonly used string in authentication request URLs. A URL containing any of these
+     * strings as well as a recognised user and password parameter will be treated as a high
+     * confidence match.
+     */
+    static final List<String> AUTH_URL_SEGMENTS =
+            List.of("login", "signin", "sign-in", "inloggen", "accueil");
+
+    /**
+     * A list of commonly used string in register request URLs. A URL containing any of these
+     * strings NOT be counted as an authentication request even if there are recognised user and
+     * password parameters.
+     */
+    static final List<String> REGISTER_URL_SEGMENTS = List.of("register", "signup", "sign-up");
+
+    /** A list of URL path or query strings which are poor candidates for verification. */
+    static final Set<String> POOR_CANDIDATE_INDICATORS;
+
+    static {
+        POOR_CANDIDATE_INDICATORS = new HashSet<>();
+        POOR_CANDIDATE_INDICATORS.addAll(
+                List.of(
+                        "logout",
+                        "logoff",
+                        "signout",
+                        "signoff",
+                        "log-out",
+                        "sign-out",
+                        "log-off",
+                        "sign-off"));
+        POOR_CANDIDATE_INDICATORS.addAll(AUTH_URL_SEGMENTS);
+        POOR_CANDIDATE_INDICATORS.addAll(REGISTER_URL_SEGMENTS);
+    }
+
     static final int MAX_UNAUTH_REDIRECTIONS = 50;
 
     private static AuthenticationBrowserHook browserHook;
