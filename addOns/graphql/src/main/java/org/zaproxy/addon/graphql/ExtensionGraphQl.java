@@ -307,6 +307,7 @@ public class ExtensionGraphQl extends ExtensionAdaptor
                 GraphQlParser.createIntrospectionAlert().build(),
                 GraphQlFingerprinter.createFingerprintingAlert(
                                 new DiscoveredGraphQlEngine("example", uri))
-                        .build());
+                        .build(),
+                GraphQlCycleDetector.getExampleAlert());
     }
 }
