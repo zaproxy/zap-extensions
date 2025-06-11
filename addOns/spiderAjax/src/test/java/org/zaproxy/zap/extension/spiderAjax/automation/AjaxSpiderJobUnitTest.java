@@ -166,6 +166,8 @@ class AjaxSpiderJobUnitTest {
                   maxCrawlStates: 14
                   randomInputs: false
                   reloadWait: 3000
+                  scopeCheck: Flexbile
+                  logoutAvoidance: true
                 """;
         Yaml yaml = new Yaml();
         Object data = yaml.load(yamlStr);
@@ -193,6 +195,8 @@ class AjaxSpiderJobUnitTest {
         assertThat(job.getParameters().getMaxCrawlStates(), is(equalTo(14)));
         assertThat(job.getParameters().getRandomInputs(), is(equalTo(Boolean.FALSE)));
         assertThat(job.getParameters().getReloadWait(), is(equalTo(3000)));
+        assertThat(job.getParameters().getScopeCheck(), is(equalTo("Flexbile")));
+        assertThat(job.getParameters().getLogoutAvoidance(), is(equalTo(Boolean.TRUE)));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.hasErrors(), is(equalTo(false)));
     }
@@ -207,7 +211,7 @@ class AjaxSpiderJobUnitTest {
                 job.getConfigParameters(new AjaxSpiderParamWrapper(), job.getParamMethodName());
 
         // Then
-        assertThat(params.size(), is(equalTo(11)));
+        assertThat(params.size(), is(equalTo(12)));
         assertThat(params.containsKey("maxDuration"), is(equalTo(true)));
         assertThat(params.containsKey("browserId"), is(equalTo(true)));
         assertThat(params.containsKey("clickDefaultElems"), is(equalTo(true)));
@@ -220,6 +224,7 @@ class AjaxSpiderJobUnitTest {
         assertThat(params.containsKey("randomInputs"), is(equalTo(true)));
         assertThat(params.containsKey("reloadWait"), is(equalTo(true)));
         assertThat(params.containsKey("enableExtensions"), is(equalTo(true)));
+        assertThat(params.containsKey("logoutAvoidance"), is(equalTo(true)));
     }
 
     private static class AjaxSpiderParamWrapper {

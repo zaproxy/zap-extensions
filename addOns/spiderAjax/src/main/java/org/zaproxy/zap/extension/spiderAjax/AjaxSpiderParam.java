@@ -189,6 +189,8 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
 
     public static final boolean DEFAULT_ENABLE_EXTENSIONS = false;
 
+    public static final boolean DEFAULT_LOGOUT_AVOIDANCE = false;
+
     private static final String ALL_ALLOWED_RESOURCES_KEY =
             AJAX_SPIDER_BASE_KEY + ".allowedResources.allowedResource";
 
@@ -205,6 +207,8 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
                             AllowedResource.createDefaultPattern("^http.*\\.js(?:\\?.*)?$")),
                     new AllowedResource(
                             AllowedResource.createDefaultPattern("^http.*\\.css(?:\\?.*)?$")));
+
+    private static final String LOGOUT_AVOIDANCE_KEY = ".logoutAvoidance";
 
     private int numberOfBrowsers;
     private int maxCrawlDepth;
@@ -229,6 +233,7 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
     private List<AllowedResource> allowedResources = Collections.emptyList();
 
     private ScopeCheck scopeCheck = ScopeCheck.getDefault();
+    private boolean logoutAvoidance;
 
     @Override
     public AjaxSpiderParam clone() {
@@ -335,6 +340,7 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
         confirmRemoveAllowedResource = getBoolean(CONFIRM_REMOVE_ALLOWED_RESOURCE, true);
 
         scopeCheck = getEnum(SCOPE_CHECK_KEY, ScopeCheck.getDefault());
+        logoutAvoidance = getBoolean(LOGOUT_AVOIDANCE_KEY, DEFAULT_LOGOUT_AVOIDANCE);
     }
 
     @SuppressWarnings({"fallthrough"})
@@ -613,5 +619,14 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
     public void setScopeCheck(ScopeCheck scopeCheck) {
         this.scopeCheck = scopeCheck == null ? ScopeCheck.getDefault() : scopeCheck;
         getConfig().setProperty(SCOPE_CHECK_KEY, this.scopeCheck.name());
+    }
+
+    public void setLogoutAvoidance(boolean value) {
+        this.logoutAvoidance = value;
+        getConfig().setProperty(LOGOUT_AVOIDANCE_KEY, Boolean.valueOf(value));
+    }
+
+    public boolean isLogoutAvoidance() {
+        return logoutAvoidance;
     }
 }

@@ -105,6 +105,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
         setLogLevel(
                 List.of(
                         "com.crawljax.core.Crawler",
+                        "com.crawljax.core.CandidateElementExtractor",
                         "com.crawljax.core.UnfiredCandidateActions",
                         "com.crawljax.core.state.StateMachine"),
                 Level.WARN);
