@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Ignore irrelevant parameters in request bodies (`x-www-form-urlencoded`) (Related to Issue 7771).
 - Skip all URIs with `javascript` schemes.
 
+### Added
+- Add an option to allow users to indicate the Spider should attempt to avoid logout related paths/functionality.
+
 ## [0.14.0] - 2025-03-25
 ### Changed
 - Maintenance changes.

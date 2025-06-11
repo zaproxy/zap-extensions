@@ -466,6 +466,7 @@ public class SpiderJob extends AutomationJob {
         private Boolean sendRefererHeader = true;
         private Integer threadCount = Constants.getDefaultThreadCount();
         private String userAgent = "";
+        private Boolean logoutAvoidance = SpiderParam.DEFAULT_LOGOUT_AVOIDANCE;
         // These 2 fields are deprecated
         private Boolean failIfFoundUrlsLessThan;
         private Boolean warnIfFoundUrlsLessThan;
