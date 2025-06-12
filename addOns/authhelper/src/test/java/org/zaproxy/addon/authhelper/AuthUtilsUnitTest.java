@@ -68,6 +68,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.EnumSource.Mode;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
@@ -401,6 +402,21 @@ class AuthUtilsUnitTest extends TestUtils {
         assertThat(tokens.size(), is(equalTo(1)));
         assertSessionToken(
                 tokens.get("json:"), SessionToken.JSON_SOURCE, "", "example-session-token");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"", " ", "  ", " \t", "\n"})
+    void shouldNotExtractJsonSessionTokenInBlankString(String value) throws Exception {
+        // Given
+        HttpMessage msg = new HttpMessage(new URI("https://example.com/test", true));
+        msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "blah-blah-json");
+        msg.getResponseBody().setBody("\"" + value + "\"");
+
+        // When
+        Map<String, SessionToken> tokens = AuthUtils.getResponseSessionTokens(msg);
+
+        // Then
+        assertThat(tokens.size(), is(equalTo(0)));
     }
 
     private static void assertSessionToken(
