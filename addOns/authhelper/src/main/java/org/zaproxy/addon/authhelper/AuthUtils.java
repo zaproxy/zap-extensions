@@ -801,10 +801,12 @@ public class AuthUtils {
 
     private static boolean extractJsonString(Map<String, SessionToken> map, String response) {
         if (response.startsWith("\"") && JSONUtils.isString(response)) {
-            addToMap(
-                    map,
-                    new SessionToken(
-                            SessionToken.JSON_SOURCE, "", JSONUtils.stripQuotes(response)));
+            String value = JSONUtils.stripQuotes(response);
+            if (value.isBlank()) {
+                return true;
+            }
+
+            addToMap(map, new SessionToken(SessionToken.JSON_SOURCE, "", value));
             return true;
         }
         return false;
