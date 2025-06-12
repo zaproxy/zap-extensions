@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Set;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
+import org.apache.commons.lang3.StringUtils;
+import org.zaproxy.addon.commonlib.AuthConstants;
 import org.zaproxy.addon.spider.DomainAlwaysInScopeMatcher;
 import org.zaproxy.zap.model.Context;
 
@@ -36,6 +38,7 @@ import org.zaproxy.zap.model.Context;
  *   <li>the resource protocol/scheme must be 'HTTP' or 'HTTPs'.
  *   <li>the resource must be found in the scope (domain) of the spidering process.
  *   <li>the resource must be not be excluded by user request - exclude list.
+ *   <li>handles/enforces the "Logout avoidance" option.
  * </ul>
  */
 public class DefaultFetchFilter extends FetchFilter {
@@ -47,6 +50,8 @@ public class DefaultFetchFilter extends FetchFilter {
 
     /** The exclude list. */
     private List<String> excludeList;
+
+    private boolean logoutAvoidance;
 
     private Context scanContext;
 
@@ -73,6 +78,18 @@ public class DefaultFetchFilter extends FetchFilter {
                 String host = uri.getHost();
                 if (!isDomainInScope(host) && !isDomainAlwaysInScope(host)) {
                     return FetchStatus.OUT_OF_SCOPE;
+                }
+            }
+
+            if (logoutAvoidance) {
+                String escapedPathQuery = uri.getEscapedPathQuery();
+                if (escapedPathQuery != null
+                        && AuthConstants.getAuthRelatedIndicators().stream()
+                                .anyMatch(
+                                        keyword ->
+                                                StringUtils.containsIgnoreCase(
+                                                        escapedPathQuery, keyword))) {
+                    return FetchStatus.LOGOUT_AVOIDANCE;
                 }
             }
 
@@ -181,5 +198,9 @@ public class DefaultFetchFilter extends FetchFilter {
      */
     public void setScanContext(Context scanContext) {
         this.scanContext = scanContext;
+    }
+
+    public void setLogoutAvoidance(boolean avoidLogout) {
+        this.logoutAvoidance = avoidLogout;
     }
 }
