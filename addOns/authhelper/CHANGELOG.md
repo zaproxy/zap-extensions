@@ -32,6 +32,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Update the Client Script Based Authentication help page with the new Automation Framework `scriptInline` field.
 - The Authentication Request Detection and Session Management Detection scan rules now skip resources (images, css, js, etc) which are unlikely to be relevant.
 - The Verification Detection scan rule now skips messages that seem related to login/logout/registration functionality.
+- Now depends on minimum Common Library version 1.33.0.
 
 ### Fixed
 - Correct descriptions of the Zest script steps in the Authentication Report.

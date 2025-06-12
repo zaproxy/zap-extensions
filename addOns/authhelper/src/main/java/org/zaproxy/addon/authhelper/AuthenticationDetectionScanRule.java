@@ -41,6 +41,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.authhelper.AuthenticationRequestDetails.AuthDataType;
+import org.zaproxy.addon.commonlib.AuthConstants;
 import org.zaproxy.zap.extension.anticsrf.AntiCsrfToken;
 import org.zaproxy.zap.extension.anticsrf.ExtensionAntiCSRF;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
@@ -122,7 +123,7 @@ public class AuthenticationDetectionScanRule extends PluginPassiveScanner {
         if (userParam != null && passwordParam != null) {
             String urlLc = msg.getRequestHeader().getURI().toString().toLowerCase(Locale.ROOT);
 
-            if (AuthUtils.REGISTER_URL_SEGMENTS.stream().anyMatch(urlLc::contains)) {
+            if (AuthConstants.getRegistrationIndicators().stream().anyMatch(urlLc::contains)) {
                 // It looks like a registration request
                 LOGGER.debug("Assumed register request: {} ", msg.getRequestHeader().getURI());
                 Stats.incCounter("stats.auth.detect.register");
@@ -138,7 +139,8 @@ public class AuthenticationDetectionScanRule extends PluginPassiveScanner {
                                 type,
                                 msg.getRequestHeader().getHeader(HttpHeader.REFERER),
                                 getAntiCsrfTokens(msg),
-                                AuthUtils.AUTH_URL_SEGMENTS.stream().anyMatch(urlLc::contains)
+                                AuthConstants.getLoginIndicators().stream()
+                                                .anyMatch(urlLc::contains)
                                         ? Alert.CONFIDENCE_HIGH
                                         : Alert.CONFIDENCE_LOW);
 

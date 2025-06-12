@@ -42,6 +42,7 @@ import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.AuthConstants;
 import org.zaproxy.zap.model.Context;
 
 /** Unit test for {@link VerificationDetectionScanRule}. */
@@ -61,7 +62,7 @@ class VerificationDetectionScanRuleUnitTest
         return BASE_URLS.stream()
                 .flatMap(
                         url ->
-                                AuthUtils.POOR_CANDIDATE_INDICATORS.stream()
+                                AuthConstants.getAuthRelatedIndicators().stream()
                                         // Format the URL with the indicator
                                         .map(url::formatted));
     }
