@@ -305,7 +305,7 @@ public class SpiderHtmlParser extends SpiderParser {
         String basePath = "";
         if (baseUrlElements.length > 3) {
             basePath = baseUrlElements[3];
-            if (basePath.length() > 0) {
+            if (!basePath.isEmpty()) {
                 basePath = "/" + basePath + "/";
             }
         }
@@ -321,7 +321,7 @@ public class SpiderHtmlParser extends SpiderParser {
                     if (baseTagSet) {
                         if (foundMatch.charAt(0) == '/'
                                 && foundMatch.indexOf("//") != 0
-                                && (basePath.length() == 0 || !foundMatch.startsWith(basePath))) {
+                                && (basePath.isEmpty() || !foundMatch.startsWith(basePath))) {
                             // Do not trim first slash off if it starts with the basePath
                             // This is to prevent matching text with the same path and then looping
                             // down

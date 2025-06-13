@@ -644,27 +644,28 @@ class SpiderJobUnitTest extends TestUtils {
     @Test
     void shouldVerifyAllOfTheParameters() {
         String yamlStr =
-                "parameters:\n"
-                        + "  context: context1\n"
-                        + "  url: url1\n"
-                        + "  maxDuration: 2\n"
-                        + "  maxDepth: 2\n"
-                        + "  maxChildren: 2\n"
-                        + "  acceptCookies: true\n"
-                        + "  handleODataParametersVisited: true\n"
-                        + "  handleParameters: ignore_completely\n"
-                        + "  maxParseSizeBytes: 2\n"
-                        + "  parseComments: true\n"
-                        + "  parseGit: true\n"
-                        + "  parseDsStore: true\n"
-                        + "  parseRobotsTxt: true\n"
-                        + "  parseSitemapXml: true\n"
-                        + "  parseSVNEntries: true\n"
-                        + "  postForm: true\n"
-                        + "  processForm: true\n"
-                        + "  sendRefererHeader: true\n"
-                        + "  threadCount: 2\n"
-                        + "  userAgent: ua2";
+                """
+                parameters:
+                    context: context1
+                    url: url1
+                    maxDuration: 2
+                    maxDepth: 2
+                    maxChildren: 2
+                    acceptCookies: true
+                    handleODataParametersVisited: true
+                    handleParameters: ignore_completely
+                    maxParseSizeBytes: 2
+                    parseComments: true
+                    parseGit: true
+                    parseDsStore: true
+                    parseRobotsTxt: true
+                    parseSitemapXml: true
+                    parseSVNEntries: true
+                    postForm: true
+                    processForm: true
+                    sendRefererHeader: true
+                    threadCount: 2
+                    userAgent: ua2""";
         AutomationProgress progress = new AutomationProgress();
         Yaml yaml = new Yaml();
         Object data = yaml.load(yamlStr);
@@ -721,10 +722,11 @@ class SpiderJobUnitTest extends TestUtils {
     @Test
     void shouldWarnOnDeprecatedFields() {
         String yamlStr =
-                "parameters:\n"
-                        + "  context: context1\n"
-                        + "  failIfFoundUrlsLessThan: true\n"
-                        + "  warnIfFoundUrlsLessThan: true";
+                """
+            parameters:
+              context: context1
+              failIfFoundUrlsLessThan: true
+              warnIfFoundUrlsLessThan: true""";
         AutomationProgress progress = new AutomationProgress();
         Yaml yaml = new Yaml();
         Object data = yaml.load(yamlStr);
@@ -772,7 +774,12 @@ class SpiderJobUnitTest extends TestUtils {
 
     @Test
     void shouldWarnOnUnknownFields() {
-        String yamlStr = "parameters:\n" + "  context: context1\n" + "  unknown: true\n";
+        String yamlStr =
+                """
+            parameters:
+              context: context1
+              unknown: true
+            """;
         AutomationProgress progress = new AutomationProgress();
         Yaml yaml = new Yaml();
         Object data = yaml.load(yamlStr);

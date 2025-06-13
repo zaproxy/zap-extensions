@@ -21,6 +21,7 @@ package org.zaproxy.addon.spider;
 
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -489,8 +490,8 @@ public class ExtensionSpider2 extends ExtensionAdaptor implements ScanController
         } else if (target.getStartNode() == null) {
             if (customConfigurations != null) {
                 for (Object customConfiguration : customConfigurations) {
-                    if (customConfiguration instanceof URI) {
-                        return abbreviateDisplayName(((URI) customConfiguration).toString());
+                    if (customConfiguration instanceof URI uri) {
+                        return abbreviateDisplayName(uri.toString());
                     }
                 }
             }
@@ -508,8 +509,8 @@ public class ExtensionSpider2 extends ExtensionAdaptor implements ScanController
     private HttpPrefixFetchFilter getUriPrefixFecthFilter(Object[] customConfigurations) {
         if (customConfigurations != null) {
             for (Object customConfiguration : customConfigurations) {
-                if (customConfiguration instanceof HttpPrefixFetchFilter) {
-                    return (HttpPrefixFetchFilter) customConfiguration;
+                if (customConfiguration instanceof HttpPrefixFetchFilter prefixFetchFilter) {
+                    return prefixFetchFilter;
                 }
             }
         }
@@ -630,8 +631,8 @@ public class ExtensionSpider2 extends ExtensionAdaptor implements ScanController
                 if (node == null) {
                     continue;
                 }
-                if (node instanceof StructuralSiteNode) {
-                    SiteNode siteNode = ((StructuralSiteNode) node).getSiteNode();
+                if (node instanceof StructuralSiteNode ssNode) {
+                    SiteNode siteNode = ssNode.getSiteNode();
                     if (!siteNode.isIncludedInScope()) {
                         return node.getURI().toString();
                     }
@@ -645,10 +646,10 @@ public class ExtensionSpider2 extends ExtensionAdaptor implements ScanController
         }
         if (contextSpecificObjects != null) {
             for (Object obj : contextSpecificObjects) {
-                if (obj instanceof URI) {
-                    String uri = ((URI) obj).toString();
-                    if (!isTargetUriInScope(uri)) {
-                        return uri;
+                if (obj instanceof URI uri) {
+                    String uriStr = uri.toString();
+                    if (!isTargetUriInScope(uriStr)) {
+                        return uriStr;
                     }
                 }
             }
@@ -758,7 +759,7 @@ public class ExtensionSpider2 extends ExtensionAdaptor implements ScanController
                             "menu.tools.spider",
                             getView()
                                     .getMenuShortcutKeyStroke(
-                                            KeyEvent.VK_S, KeyEvent.ALT_DOWN_MASK, false));
+                                            KeyEvent.VK_S, InputEvent.ALT_DOWN_MASK, false));
             menuItemCustomScan.setEnabled(Control.getSingleton().getMode() != Mode.safe);
 
             menuItemCustomScan.addActionListener(e -> showSpiderDialog((Target) null));

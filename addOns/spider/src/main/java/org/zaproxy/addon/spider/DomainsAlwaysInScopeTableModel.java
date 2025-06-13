@@ -79,8 +79,8 @@ class DomainsAlwaysInScopeTableModel
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        if (columnIndex == 0 && aValue instanceof Boolean) {
-            domainsInScope.get(rowIndex).setEnabled((Boolean) aValue);
+        if (columnIndex == 0 && aValue instanceof Boolean val) {
+            domainsInScope.get(rowIndex).setEnabled(val);
             fireTableCellUpdated(rowIndex, columnIndex);
         }
     }

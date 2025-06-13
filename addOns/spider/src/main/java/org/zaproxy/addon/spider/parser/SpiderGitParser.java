@@ -198,14 +198,15 @@ public class SpiderGitParser extends SpiderParser {
                         ++n;
                         byte byteRead = dataBuffer.get();
                         entryBytesRead++;
-                        if (n == 1) // zero the msb of the first byte read
-                        removeNfromPreviousName =
+                        if (n == 1) { // zero the msb of the first byte read
+                            removeNfromPreviousName =
                                     (removeNfromPreviousName << 8)
                                             | (0xFF & (byteRead & msbunsetmask));
-                        else // set the msb of subsequent bytes read
-                        removeNfromPreviousName =
+                        } else { // set the msb of subsequent bytes read
+                            removeNfromPreviousName =
                                     (removeNfromPreviousName << 8)
                                             | (0xFF & (byteRead | msbsetmask));
+                        }
                         if ((byteRead & msbsetmask) == 0)
                             msbSet = false; // break if msb is NOT set in the byte
                     }
@@ -283,7 +284,7 @@ public class SpiderGitParser extends SpiderParser {
 
                 // Git does not store entries for directories, but just files/symlinks/Git links, so
                 // no need to handle directories here, unlike with SVN, for instance.
-                if (indexEntryName != null && indexEntryName.length() > 0) {
+                if (indexEntryName != null && !indexEntryName.isEmpty()) {
                     getLogger()
                             .info(
                                     "Found file/symbolic link/gitlink {} in the Git entries file",
