@@ -107,14 +107,14 @@ public class SpiderScanController implements ScanController<SpiderScan> {
                     if (obj instanceof SpiderParam) {
                         LOGGER.debug("Setting custom spider params");
                         spiderParams = (SpiderParam) obj;
-                    } else if (obj instanceof SpiderParser) {
-                        customSpiderParsers.add((SpiderParser) obj);
-                    } else if (obj instanceof FetchFilter) {
-                        customFetchFilters.add((FetchFilter) obj);
-                    } else if (obj instanceof ParseFilter) {
-                        customParseFilters.add((ParseFilter) obj);
-                    } else if (obj instanceof URI) {
-                        startUri = (URI) obj;
+                    } else if (obj instanceof SpiderParser parser) {
+                        customSpiderParsers.add(parser);
+                    } else if (obj instanceof FetchFilter fetchFilter) {
+                        customFetchFilters.add(fetchFilter);
+                    } else if (obj instanceof ParseFilter parseFilter) {
+                        customParseFilters.add(parseFilter);
+                    } else if (obj instanceof URI uri) {
+                        startUri = uri;
                     } else {
                         LOGGER.error(
                                 "Unexpected contextSpecificObject: {}",
