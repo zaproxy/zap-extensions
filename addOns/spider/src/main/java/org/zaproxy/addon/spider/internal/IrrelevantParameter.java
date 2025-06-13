@@ -60,7 +60,7 @@ public class IrrelevantParameter extends Enableable {
         this.pattern = other.pattern;
     }
 
-    public String getValue() {
+    public String getName() {
         if (isRegex()) {
             return pattern.pattern();
         }
