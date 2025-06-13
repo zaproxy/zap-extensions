@@ -49,6 +49,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Do not auto configure the Header Based Session Management method with duplicated session tokens.
 - Ensure that auth messages with both known and unknown Session tokens are correctly processed.
 - Respect Client Script Based Authentication's Login Page Wait when authenticating in browsers (e.g. AJAX Spider).
+- Correct handling of JSON arrays in the Authentication Request Identified scan rule.
 
 ## [0.25.0] - 2025-03-25
 ### Changed
