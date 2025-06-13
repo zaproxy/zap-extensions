@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Add the initiator to the HTTP Messages to know what those messages correspond to.
   - Include the tag name of the Web Element, now collecting `button`s along with `input`s.
 - Detection of session tokens in non standard headers.
+- Search for username/password fields under shadow DOMs with Browser Based Authentication.
 
 ### Changed
 - Warn when the recorded script used with Client Script Based Authentication does not launch a browser.

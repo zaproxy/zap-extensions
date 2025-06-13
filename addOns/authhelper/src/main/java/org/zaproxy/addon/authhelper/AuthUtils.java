@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -57,6 +58,8 @@ import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.NoSuchShadowRootException;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
@@ -138,6 +141,10 @@ public class AuthUtils {
     private static final int AUTH_PAGE_SLEEP_IN_MSECS = 2000;
 
     private static final Logger LOGGER = LogManager.getLogger(AuthUtils.class);
+
+    private static final By ALL_SELECTOR = By.cssSelector("*");
+
+    private static final String INPUT_TAG = "input";
 
     private static final HttpRequestConfig REDIRECT_NOTIFIER_CONFIG =
             HttpRequestConfig.builder()
@@ -522,7 +529,7 @@ public class AuthUtils {
                 break;
             }
 
-            List<WebElement> inputElements = wd.findElements(By.xpath("//input"));
+            List<WebElement> inputElements = getInputElements(wd, i > 2);
             pwdField = getPasswordField(inputElements);
             userField = getUserField(wd, inputElements, pwdField);
 
@@ -595,6 +602,32 @@ public class AuthUtils {
         }
         incStatsCounter(loginPageUrl, AUTH_BROWSER_FAILED_STATS);
         return false;
+    }
+
+    static List<WebElement> getInputElements(WebDriver wd, boolean includeShadow) {
+        List<WebElement> selectedElements = wd.findElements(By.cssSelector(INPUT_TAG));
+        if (!includeShadow && !selectedElements.isEmpty()) {
+            return selectedElements;
+        }
+
+        Set<WebElement> allSelectedElements = new LinkedHashSet<>(selectedElements);
+        addAllInputElements(wd.findElements(ALL_SELECTOR), allSelectedElements);
+        return new ArrayList<>(allSelectedElements);
+    }
+
+    private static void addAllInputElements(
+            List<WebElement> sourceElements, Set<WebElement> elements) {
+        for (WebElement element : sourceElements) {
+            try {
+                if (INPUT_TAG.equalsIgnoreCase(element.getTagName())) {
+                    elements.add(element);
+                }
+
+                addAllInputElements(element.getShadowRoot().findElements(ALL_SELECTOR), elements);
+            } catch (StaleElementReferenceException | NoSuchShadowRootException e) {
+                // Nothing to do.
+            }
+        }
     }
 
     public static void fillField(WebElement field, String value) {
