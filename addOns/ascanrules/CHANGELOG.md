@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - SQL Injection scan rule to start using ComparableResponse - part of the work to reduce False Positives.
 - Depends on an updated version of the Common Library add-on.
 - Due to it being 2025 and the mass adoption of HTTPS: De-prioritized plain HTTP payloads in the External Redirect scan rule.
+- Maintenance changes.
 
 ### Fixed
 - SQL Injection scan rule to treat a 500 response to an SQLi attack as a likely vulnerability.
