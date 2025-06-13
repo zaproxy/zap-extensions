@@ -26,7 +26,6 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.TreeSet;
 import net.htmlparser.jericho.Source;
-import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
@@ -237,7 +236,8 @@ public class AuthenticationDetectionScanRule extends PluginPassiveScanner {
         return null;
     }
 
-    void extractJsonStrings(JSON json, String parent, TreeSet<HtmlParameter> params) {
+    private static void extractJsonStrings(
+            Object json, String parent, TreeSet<HtmlParameter> params) {
         if (json instanceof JSONObject jObj) {
             for (Object key : jObj.keySet()) {
                 Object obj = jObj.get(key);
@@ -254,7 +254,7 @@ public class AuthenticationDetectionScanRule extends PluginPassiveScanner {
         } else if (json instanceof JSONArray jArr) {
             Object[] oa = jArr.toArray();
             for (int i = 0; i < oa.length; i++) {
-                extractJsonStrings(jArr, parent + "[" + i + "]", params);
+                extractJsonStrings(oa[i], parent + "[" + i + "]", params);
             }
         }
     }
