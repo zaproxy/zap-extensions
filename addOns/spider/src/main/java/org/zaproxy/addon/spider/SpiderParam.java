@@ -117,7 +117,7 @@ public class SpiderParam extends VersionedAbstractParam {
     private static final String IRRELEVANT_PARAMETERS_KEY = "spider.irrelevantParameters";
     private static final String ALL_IRRELEVANT_PARAMETERS_KEY =
             IRRELEVANT_PARAMETERS_KEY + ".irrelevantParameter";
-    private static final String IRRELEVANT_PARAMETER_VALUE_KEY = "name";
+    private static final String IRRELEVANT_PARAMETER_NAME_KEY = "name";
     private static final String IRRELEVANT_PARAMETER_REGEX_KEY = "regex";
     private static final String IRRELEVANT_PARAMETER_ENABLED_KEY = "enabled";
     private static final String CONFIRM_REMOVE_IRRELEVANT_PARAMETER =
@@ -1102,7 +1102,7 @@ public class SpiderParam extends VersionedAbstractParam {
 
             getConfig()
                     .setProperty(
-                            elementBaseKey + IRRELEVANT_PARAMETER_VALUE_KEY, parameter.getValue());
+                            elementBaseKey + IRRELEVANT_PARAMETER_NAME_KEY, parameter.getName());
             getConfig()
                     .setProperty(
                             elementBaseKey + IRRELEVANT_PARAMETER_REGEX_KEY, parameter.isRegex());
@@ -1127,7 +1127,7 @@ public class SpiderParam extends VersionedAbstractParam {
         this.irrelevantParameters = new ArrayList<>(fields.size());
         ArrayList<IrrelevantParameter> parametersEnabled = new ArrayList<>(fields.size());
         for (HierarchicalConfiguration sub : fields) {
-            String value = sub.getString(IRRELEVANT_PARAMETER_VALUE_KEY, "");
+            String value = sub.getString(IRRELEVANT_PARAMETER_NAME_KEY, "");
             if ("".equals(value)) {
                 LOGGER.warn(
                         "Failed to read an irrelevant parameter entry, required value is empty.");

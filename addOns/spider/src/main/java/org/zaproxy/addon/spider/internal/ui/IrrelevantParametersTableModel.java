@@ -35,7 +35,7 @@ class IrrelevantParametersTableModel
     private static final String[] COLUMN_NAMES = {
         Constant.messages.getString("spider.options.irrelevantparameter.table.header.enabled"),
         Constant.messages.getString("spider.options.irrelevantparameter.table.header.regex"),
-        Constant.messages.getString("spider.options.irrelevantparameter.table.header.value")
+        Constant.messages.getString("spider.options.irrelevantparameter.table.header.name")
     };
 
     private static final int COLUMN_COUNT = COLUMN_NAMES.length;
@@ -74,7 +74,7 @@ class IrrelevantParametersTableModel
             case 1:
                 return getElement(rowIndex).isRegex();
             case 2:
-                return getElement(rowIndex).getValue();
+                return getElement(rowIndex).getName();
             default:
                 return null;
         }

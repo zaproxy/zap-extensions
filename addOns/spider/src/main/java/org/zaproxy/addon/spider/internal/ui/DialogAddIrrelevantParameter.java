@@ -152,12 +152,12 @@ class DialogAddIrrelevantParameter extends AbstractFormDialog {
 
     @Override
     protected void performAction() {
-        String value = getNameTextField().getText();
+        String name = getNameTextField().getText();
         if (getRegexCheckBox().isSelected()) {
-            Pattern pattern = IrrelevantParameter.createPattern(value);
+            Pattern pattern = IrrelevantParameter.createPattern(name);
             irrelevantParameter = new IrrelevantParameter(pattern);
         } else {
-            irrelevantParameter = new IrrelevantParameter(value);
+            irrelevantParameter = new IrrelevantParameter(name);
         }
 
         irrelevantParameter.setEnabled(getEnabledCheckBox().isSelected());
