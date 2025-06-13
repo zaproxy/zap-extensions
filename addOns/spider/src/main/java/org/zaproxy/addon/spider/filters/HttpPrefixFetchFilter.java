@@ -234,13 +234,8 @@ public class HttpPrefixFetchFilter extends FetchFilter {
      *     false} otherwise
      */
     private static boolean isDefaultHttpOrHttpsPort(String scheme, int port) {
-        if (port == DEFAULT_HTTP_PORT && isHttp(scheme)) {
-            return true;
-        }
-        if (port == DEFAULT_HTTPS_PORT && isHttps(scheme)) {
-            return true;
-        }
-        return false;
+        return (port == DEFAULT_HTTP_PORT && isHttp(scheme))
+                || (port == DEFAULT_HTTPS_PORT && isHttps(scheme));
     }
 
     /**
