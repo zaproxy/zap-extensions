@@ -1102,7 +1102,7 @@ public class SpiderParam extends VersionedAbstractParam {
 
             getConfig()
                     .setProperty(
-                            elementBaseKey + IRRELEVANT_PARAMETER_VALUE_KEY, parameter.getValue());
+                            elementBaseKey + IRRELEVANT_PARAMETER_VALUE_KEY, parameter.getName());
             getConfig()
                     .setProperty(
                             elementBaseKey + IRRELEVANT_PARAMETER_REGEX_KEY, parameter.isRegex());
