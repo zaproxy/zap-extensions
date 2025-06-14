@@ -49,7 +49,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  *
  * @author Jay Ball / github: veggiespam / twitter: @veggiespam / www.veggiespam.com
  * @license Apache License 2.0
- * @version 1.1
+ * @version 1.2
  * @see https://www.veggiespam.com/ils/
  */
 public class ImageLocationScanRule extends PluginPassiveScanner {
@@ -116,7 +116,7 @@ public class ImageLocationScanRule extends PluginPassiveScanner {
         }
 
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("\tCT: {} url: {} fileName: {} ext: {}", CT, url, fileName, extension);
+            LOGGER.debug("\tCT: {} ext: {} url: {} fileName: {}", CT, extension, url, fileName);
         }
 
         // everything is already lowercase
@@ -126,11 +126,15 @@ public class ImageLocationScanRule extends PluginPassiveScanner {
                 || extension.equals("jpg")
                 || CT.startsWith("image/png")
                 || extension.equals("png")
+                || CT.startsWith("image/heif")
+                || extension.equals("heif")
                 || CT.startsWith("image/tiff")
                 || extension.equals("tiff")
                 || extension.equals("tif")) {
 
-            String hasGPS = ILS.scanForLocationInImage(msg.getResponseBody().getBytes(), false);
+            String hasGPS =
+                    ILS.scanForLocationInImage(
+                            msg.getResponseBody().getBytes(), ILS.OutputFormat.out_text);
 
             if (!hasGPS.isEmpty()) {
                 buildAlert(hasGPS).raise();
@@ -178,7 +182,7 @@ public class ImageLocationScanRule extends PluginPassiveScanner {
         return newAlert()
                 .setName(getAlertTitle())
                 .setRisk(Alert.RISK_INFO)
-                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setConfidence(Alert.CONFIDENCE_HIGH)
                 .setDescription(getDescription())
                 .setSolution(getSolution())
                 .setReference(getReference())
@@ -190,7 +194,23 @@ public class ImageLocationScanRule extends PluginPassiveScanner {
     @Override
     public List<Alert> getExampleAlerts() {
         List<Alert> alerts = new ArrayList<>();
-        String gpsDetails = "\n  Location:: \n    Exif_GPS: 40° 50' 19\", -74° 12' 33\"";
+
+        // Single line example
+        // String gpsDetails = "\n  Location:: \n    Exif_GPS: 40° 50' 19\", -74° 12' 33\"";
+
+        // Multi-line, real-world example: Panasonic camera image with GPS and face recognition from
+        // https://raw.githubusercontent.com/drewnoakes/metadata-extractor-images/master/jpg/Panasonic%20DMC-TZ10.jpg
+        final String gpsDetails =
+                "\n"
+                        + "  Location::\n"
+                        + "    Exif_GPS: 53° 8' 49.65\", 8° 10' 45.1\"\n"
+                        + "    Panasonic: City = OLDENBURG (OLDB.)\n"
+                        + "    Panasonic: Country = GERMANY\n"
+                        + "    Panasonic: State = OLDENBURG (OLDB.)\n"
+                        + "  Privacy::\n"
+                        + "    Panasonic: Face Recognition Info = Face 1: x: 142 y: 120 width: 76 height: 76 name: NIELS age: 31 years 7 months 15 days\n"
+                        + "    Panasonic: Internal Serial Number = F541005110191";
+
         alerts.add(buildAlert(gpsDetails).build());
         return alerts;
     }
