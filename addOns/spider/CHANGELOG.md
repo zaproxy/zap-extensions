@@ -9,9 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Include anti-csrf tokens as part of irrelevant parameters.
 - Ignore irrelevant parameters in request bodies (`x-www-form-urlencoded`) (Related to Issue 7771).
 - Skip all URIs with `javascript` schemes.
+- Changed to title caps on the Irrelevant Parameters table "title" in the Options dialog (Issue 2000).
 
 ### Added
 - Add an option to allow users to indicate the Spider should attempt to avoid logout related paths/functionality.
+
+### Fixed
+- An incorrect column name in the Irrelevant Parameters table used by the Options dialog (Domain should have been Name).
 
 ## [0.14.0] - 2025-03-25
 ### Changed
