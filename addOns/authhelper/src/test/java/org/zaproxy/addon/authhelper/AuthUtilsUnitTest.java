@@ -24,6 +24,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.BDDMockito.given;
@@ -984,6 +985,29 @@ class AuthUtilsUnitTest extends TestUtils {
 
     static class BrowserTest extends TestUtils {
 
+        private static final String HTML_SHADOM_DOM =
+                """
+                    <div id="host-a"></div>
+                    <input id="host-input-a" />
+                    <div id="host-b"></div>
+                    <div>
+                        <input id="host-input-b" />
+                    </div>
+
+                    <script>
+                        function addShadowInput(hostSelector, inputId, mode) {
+                          const host = document.querySelector(hostSelector);
+                          const shadow = host.attachShadow({ mode: mode });
+                          const input = document.createElement("input");
+                          input.id = inputId;
+                          shadow.appendChild(input);
+                        }
+
+                        addShadowInput("#host-a", "shadow-input-open", "open" );
+                        addShadowInput("#host-b", "shadow-input-closed", "closed" );
+                    </script>
+                """;
+
         @RegisterExtension static SeleniumJupiter seleniumJupiter = new SeleniumJupiter();
 
         private String url;
@@ -1035,7 +1059,7 @@ class AuthUtilsUnitTest extends TestUtils {
                                 </form>
                              """;
             wd.get(url);
-            List<WebElement> inputElements = wd.findElements(By.xpath("//input"));
+            List<WebElement> inputElements = AuthUtils.getInputElements(wd, false);
             WebElement pwdField = AuthUtils.getPasswordField(inputElements);
             // When
             WebElement field = AuthUtils.getUserField(wd, inputElements, pwdField);
@@ -1058,7 +1082,7 @@ class AuthUtilsUnitTest extends TestUtils {
                                 </form>
                              """;
             wd.get(url);
-            List<WebElement> inputElements = wd.findElements(By.xpath("//input"));
+            List<WebElement> inputElements = AuthUtils.getInputElements(wd, false);
             WebElement pwdField = AuthUtils.getPasswordField(inputElements);
             // When
             WebElement field = AuthUtils.getUserField(wd, inputElements, pwdField);
@@ -1082,7 +1106,7 @@ class AuthUtilsUnitTest extends TestUtils {
                                 </form>
                              """;
             wd.get(url);
-            List<WebElement> inputElements = wd.findElements(By.xpath("//input"));
+            List<WebElement> inputElements = AuthUtils.getInputElements(wd, false);
             WebElement pwdField = AuthUtils.getPasswordField(inputElements);
             // When
             WebElement field = AuthUtils.getUserField(wd, inputElements, pwdField);
@@ -1106,7 +1130,7 @@ class AuthUtilsUnitTest extends TestUtils {
                                 </script>
                              """;
             wd.get(url);
-            List<WebElement> inputElements = wd.findElements(By.xpath("//input"));
+            List<WebElement> inputElements = AuthUtils.getInputElements(wd, false);
 
             // When
             WebElement field = AuthUtils.getUserField(null, inputElements, null);
@@ -1130,7 +1154,7 @@ class AuthUtilsUnitTest extends TestUtils {
                                 </script>
                              """;
             wd.get(url);
-            List<WebElement> inputElements = wd.findElements(By.xpath("//input"));
+            List<WebElement> inputElements = AuthUtils.getInputElements(wd, false);
 
             // When
             WebElement field = AuthUtils.getPasswordField(inputElements);
@@ -1138,6 +1162,42 @@ class AuthUtilsUnitTest extends TestUtils {
             // Then
             assertThat(field, is(notNullValue()));
             assertThat(field.getDomProperty("type"), is(equalTo("password")));
+        }
+
+        @TestTemplate
+        void shouldReturnInputElementsUnderShadowDom(WebDriver wd) {
+            // Given
+            pageContent = () -> HTML_SHADOM_DOM;
+            wd.get(url);
+
+            // When
+            List<WebElement> inputElements = AuthUtils.getInputElements(wd, true);
+
+            // Then
+            assertThat(inputElements, hasSize(4));
+            assertId(inputElements.get(0), "host-input-a");
+            assertId(inputElements.get(1), "host-input-b");
+            assertId(inputElements.get(2), "shadow-input-open");
+            assertId(inputElements.get(3), "shadow-input-closed");
+        }
+
+        @TestTemplate
+        void shouldNotReturnInputElementsUnderShadowDomIfNotWanted(WebDriver wd) {
+            // Given
+            pageContent = () -> HTML_SHADOM_DOM;
+            wd.get(url);
+
+            // When
+            List<WebElement> inputElements = AuthUtils.getInputElements(wd, false);
+
+            // Then
+            assertThat(inputElements, hasSize(2));
+            assertId(inputElements.get(0), "host-input-a");
+            assertId(inputElements.get(1), "host-input-b");
+        }
+
+        private static void assertId(WebElement element, String id) {
+            assertThat(element.getAttribute("id"), is(equalTo(id)));
         }
     }
 
