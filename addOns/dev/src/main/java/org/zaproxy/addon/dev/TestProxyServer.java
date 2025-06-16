@@ -85,6 +85,7 @@ public class TestProxyServer {
         authDir.addDirectory(new SimpleJsonDir(this, "simple-json-blocking-ui"));
         authDir.addDirectory(new SimpleJsonDir(this, "simple-json-blocking-ui-scroll-fields"));
         authDir.addDirectory(new SimpleJsonDir(this, "simple-json-existing-values"));
+        authDir.addDirectory(new SimpleJsonDir(this, "simple-json-shadow-dom"));
         authDir.addDirectory(new SimpleJsonBearerDir(this, "simple-json-bearer"));
         authDir.addDirectory(new NonStdJsonBearerDir(this, "non-std-json-bearer"));
         authDir.addDirectory(new SimpleJsonBearerCookieDir(this, "simple-json-bearer-cookie"));
