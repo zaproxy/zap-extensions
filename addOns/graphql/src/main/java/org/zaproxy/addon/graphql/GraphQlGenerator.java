@@ -67,10 +67,23 @@ public class GraphQlGenerator {
 
     public GraphQlGenerator(
             ValueProvider valueProvider, String sdl, Requestor requestor, GraphQlParam param) {
+        this(
+                valueProvider,
+                UnExecutableSchemaGenerator.makeUnExecutableSchema(new SchemaParser().parse(sdl)),
+                requestor,
+                param);
+    }
+
+    public GraphQlGenerator(
+            ValueProvider valueProvider,
+            GraphQLSchema schema,
+            Requestor requestor,
+            GraphQlParam param) {
         this.valueProvider = valueProvider;
-        schema = UnExecutableSchemaGenerator.makeUnExecutableSchema(new SchemaParser().parse(sdl));
+        this.schema = schema;
         this.requestor = requestor;
         this.param = param;
+        this.inlineArgsEnabled = param.getArgsType() == GraphQlParam.ArgsTypeOption.INLINE;
     }
 
     /** Send three requests to check which service methods are available. */
@@ -490,8 +503,7 @@ public class GraphQlGenerator {
         return null;
     }
 
-    private void addArguments(
-            StringBuilder query, JSONObject variables, GraphQLFieldDefinition field) {
+    void addArguments(StringBuilder query, JSONObject variables, GraphQLFieldDefinition field) {
         addArguments(query, variables, null, field);
     }
 
