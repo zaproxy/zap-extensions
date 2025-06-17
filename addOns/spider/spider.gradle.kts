@@ -74,6 +74,7 @@ val japicmp by tasks.existing(JapicmpTask::class) {
             "org.zaproxy.addon.spider.SpiderParam#setRequestWaitTime(int)",
             "org.zaproxy.addon.spider.parser.ParseContext#ParseContext(org.zaproxy.addon.spider.SpiderParam," +
                 "org.zaproxy.zap.model.ValueGenerator,org.parosproxy.paros.network.HttpMessage,java.lang.String,int)",
+            "org.zaproxy.addon.spider.internal.IrrelevantParameter#getValue()",
         )
 }
 
