@@ -9,6 +9,7 @@
 			<tocitem text="Client Side Integration" image="client-icon" target="addon.client">
 				<tocitem text="Automation" target="addon.client.auto"/>
 				<tocitem text="Spider" target="addon.client.spider"/>
+				<tocitem text="Spider API" target="addon.client.spider.api"/>
 				<tocitem text="Passive Scanning" target="addon.client.pscan"/>
 				<tocitem text="AJAX Spider Enhancement" target="addon.client.ajaxscan"/>
 				<tocitem text="Firefox Profile" target="addon.client.fxprofile"/>
