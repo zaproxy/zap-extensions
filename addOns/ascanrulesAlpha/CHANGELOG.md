@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 - Rules (as applicable) have been tagged in relation to HIPAA and PCI DSS.
+- The Web Cache Deception scan rule now has a CWE reference.
 
 ## [49] - 2025-06-20
 ### Changed

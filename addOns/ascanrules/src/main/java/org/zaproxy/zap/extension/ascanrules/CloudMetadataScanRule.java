@@ -204,6 +204,11 @@ public class CloudMetadataScanRule extends AbstractHostPlugin implements CommonA
     }
 
     @Override
+    public int getCweId() {
+        return 1230; // CWE-1230: Exposure of Sensitive Information Through Metadata
+    }
+
+    @Override
     public List<Alert> getExampleAlerts() {
         return List.of(createAlert(null, "www.example.com").build());
     }

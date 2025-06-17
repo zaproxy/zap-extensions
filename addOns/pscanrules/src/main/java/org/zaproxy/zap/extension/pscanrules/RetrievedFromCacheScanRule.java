@@ -149,6 +149,7 @@ public class RetrievedFromCacheScanRule extends PluginPassiveScanner
                 .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
                 .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
                 .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
+                .setCweId(525) // CWE-525: Use of Web Browser Cache Containing Sensitive Information
                 .setEvidence(evidence)
                 // If compliant Other Info: "Age" header implies a HTTP/1.1 compliant cache server.
                 .setOtherInfo(
