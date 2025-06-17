@@ -156,7 +156,9 @@ public class LinkTargetScanRule extends PluginPassiveScanner implements CommonPa
                 .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
                 .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
                 .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
-                .setEvidence(evidence);
+                .setEvidence(evidence)
+                // CWE-1022: Use of Web Link to Untrusted Target with window.opener Access
+                .setCweId(1022);
     }
 
     @Override

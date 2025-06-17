@@ -211,8 +211,7 @@ public class SOAPXMLInjectionActiveScanRule extends AbstractAppParamPlugin
 
     @Override
     public int getCweId() {
-        // The CWE id
-        return 0;
+        return 91; // CWE-91: XML Injection
     }
 
     @Override

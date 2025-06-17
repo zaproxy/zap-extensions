@@ -204,6 +204,11 @@ public class ForbiddenBypassScanRule extends AbstractAppPlugin {
     }
 
     @Override
+    public int getCweId() {
+        return 348; // CWE-348: Use of Less Trusted Source
+    }
+
+    @Override
     public List<Alert> getExampleAlerts() {
         List<Alert> alerts = new ArrayList<>();
         try {

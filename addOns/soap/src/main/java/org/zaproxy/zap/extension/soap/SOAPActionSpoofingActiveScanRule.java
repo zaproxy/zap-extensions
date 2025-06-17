@@ -307,8 +307,7 @@ public class SOAPActionSpoofingActiveScanRule extends AbstractAppPlugin
 
     @Override
     public int getCweId() {
-        // The CWE id
-        return 0;
+        return 451; // CWE-451: User Interface (UI) Misrepresentation of Critical Information
     }
 
     @Override
