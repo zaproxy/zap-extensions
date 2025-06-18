@@ -91,6 +91,9 @@ import org.zaproxy.zap.network.HttpRequestConfig;
 import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.Pair;
 import org.zaproxy.zap.utils.Stats;
+import org.zaproxy.zest.core.v1.ZestComment;
+import org.zaproxy.zest.core.v1.ZestScript;
+import org.zaproxy.zest.core.v1.ZestStatement;
 
 public class AuthUtils {
 
@@ -145,6 +148,8 @@ public class AuthUtils {
     private static final By ALL_SELECTOR = By.cssSelector("*");
 
     private static final String INPUT_TAG = "input";
+
+    private static final String RECORDING_LOGOUT = "ZAP Recording LOGOUT";
 
     private static final HttpRequestConfig REDIRECT_NOTIFIER_CONFIG =
             HttpRequestConfig.builder()
@@ -1361,5 +1366,17 @@ public class AuthUtils {
                 || host.contains("google-analytics")
                 || host.contains("mozilla")
                 || host.contains("safebrowsing-cache"));
+    }
+
+    public static void disableLogoutStatements(ZestScript zestScript) {
+        boolean disable = false;
+        for (ZestStatement stmt : zestScript.getStatements()) {
+            if (disable) {
+                stmt.setEnabled(false);
+            } else if (stmt instanceof ZestComment comment
+                    && RECORDING_LOGOUT.equals(comment.getComment())) {
+                disable = true;
+            }
+        }
     }
 }
