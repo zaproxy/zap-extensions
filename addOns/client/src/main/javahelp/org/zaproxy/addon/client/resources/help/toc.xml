@@ -8,6 +8,7 @@
 		<tocitem text="Add Ons" tocid="addons">
 			<tocitem text="Client Side Integration" image="client-icon" target="addon.client">
 				<tocitem text="Automation" target="addon.client.auto"/>
+				<tocitem text="Recording" target="addon.client.record"/>
 				<tocitem text="Spider" target="addon.client.spider"/>
 				<tocitem text="Spider API" target="addon.client.spider.api"/>
 				<tocitem text="Passive Scanning" target="addon.client.pscan"/>
