@@ -125,7 +125,7 @@ class Text4ShellScanRuleUnitTest extends ActiveScannerTest<Text4ShellScanRule> {
         // Then
         assertThat(cwe, is(equalTo(117)));
         assertThat(wasc, is(equalTo(20)));
-        assertThat(tags.size(), is(equalTo(9)));
+        assertThat(tags.size(), is(equalTo(11)));
 
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getTag()),
@@ -136,6 +136,8 @@ class Text4ShellScanRuleUnitTest extends ActiveScannerTest<Text4ShellScanRule> {
         assertThat(
                 tags.containsKey(CommonAlertTag.WSTG_V42_INPV_11_CODE_INJ.getTag()),
                 is(equalTo(true)));
+        assertThat(tags.containsKey(CommonAlertTag.HIPAA.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(CommonAlertTag.PCI_DSS.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(ExtensionOast.OAST_ALERT_TAG_KEY), is(equalTo(true)));
         assertThat(tags.containsKey(Text4ShellScanRule.CVE), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.QA_FULL.getTag()), is(equalTo(true)));

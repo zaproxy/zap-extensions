@@ -91,12 +91,14 @@ class SsrfScanRuleUnitTest extends ActiveScannerTest<SsrfScanRule> {
         // Then
         assertThat(cwe, is(equalTo(918)));
         assertThat(wasc, is(equalTo(20)));
-        assertThat(tags.size(), is(equalTo(7)));
+        assertThat(tags.size(), is(equalTo(9)));
 
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A10_SSRF.getTag()), is(equalTo(true)));
         assertThat(
                 tags.containsKey(CommonAlertTag.WSTG_V42_INPV_19_SSRF.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(CommonAlertTag.HIPAA.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(CommonAlertTag.PCI_DSS.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(ExtensionOast.OAST_ALERT_TAG_KEY), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.QA_FULL.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.DEV_FULL.getTag()), is(equalTo(true)));

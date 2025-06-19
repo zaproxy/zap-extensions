@@ -74,7 +74,9 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin
                         CommonAlertTag.toMap(
                                 CommonAlertTag.OWASP_2021_A03_INJECTION,
                                 CommonAlertTag.OWASP_2017_A01_INJECTION,
-                                CommonAlertTag.WSTG_V42_INPV_06_LDAPI));
+                                CommonAlertTag.WSTG_V42_INPV_06_LDAPI,
+                                CommonAlertTag.HIPAA,
+                                CommonAlertTag.PCI_DSS));
         alertTags.put(PolicyTag.PENTEST.getTag(), "");
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
     }

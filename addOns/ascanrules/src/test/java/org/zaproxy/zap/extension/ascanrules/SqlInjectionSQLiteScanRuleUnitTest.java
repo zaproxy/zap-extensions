@@ -197,7 +197,7 @@ class SqlInjectionSQLiteScanRuleUnitTest extends ActiveScannerTest<SqlInjectionS
         // Then
         assertThat(cwe, is(equalTo(89)));
         assertThat(wasc, is(equalTo(19)));
-        assertThat(tags.size(), is(equalTo(5)));
+        assertThat(tags.size(), is(equalTo(7)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(true)));
@@ -206,6 +206,8 @@ class SqlInjectionSQLiteScanRuleUnitTest extends ActiveScannerTest<SqlInjectionS
                 is(equalTo(true)));
         assertThat(
                 tags.containsKey(CommonAlertTag.WSTG_V42_INPV_05_SQLI.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(CommonAlertTag.HIPAA.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(CommonAlertTag.PCI_DSS.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.QA_FULL.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
         assertThat(

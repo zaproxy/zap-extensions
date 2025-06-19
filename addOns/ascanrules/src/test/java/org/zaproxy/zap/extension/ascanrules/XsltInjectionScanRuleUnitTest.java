@@ -151,13 +151,15 @@ class XsltInjectionScanRuleUnitTest extends ActiveScannerTest<XsltInjectionScanR
         // Then
         assertThat(cwe, is(equalTo(91)));
         assertThat(wasc, is(equalTo(23)));
-        assertThat(tags.size(), is(equalTo(10)));
+        assertThat(tags.size(), is(equalTo(12)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(true)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2017_A01_INJECTION.getTag()),
                 is(equalTo(true)));
+        assertThat(tags.containsKey(CommonAlertTag.HIPAA.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(CommonAlertTag.PCI_DSS.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.API.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.DEV_STD.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.DEV_FULL.getTag()), is(equalTo(true)));
