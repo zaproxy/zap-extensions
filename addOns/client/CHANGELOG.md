@@ -7,9 +7,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Client Spider scope check.
 - Added optional parameters for Page Load Time and Max Crawl Depth to the Client Spider API.
+- Recording advice and guidance.
 
 ### Changed
-- Updated Chrome and Firefox extensions to v0.1.2.
+- Updated Chrome and Firefox extensions to v0.1.3.
 
 ### Fixed
 - Client Spider to allow all requests while authenticating.
