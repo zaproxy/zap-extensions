@@ -47,6 +47,7 @@ import org.zaproxy.addon.dev.auth.simpleJsonBearerDiffCookies.SimpleJsonBearerDi
 import org.zaproxy.addon.dev.auth.simpleJsonBearerJsCookie.SimpleJsonBearerJsCookieDir;
 import org.zaproxy.addon.dev.auth.simpleJsonCookie.SimpleJsonCookieDir;
 import org.zaproxy.addon.dev.auth.sso1.SSO1RootDir;
+import org.zaproxy.addon.dev.auth.sso2.SSO2RootDir;
 import org.zaproxy.addon.dev.auth.uuidLogin.UuidLoginRootDir;
 import org.zaproxy.addon.dev.csrf.basic.BasicCsrfDir;
 import org.zaproxy.addon.dev.seq.performance.PerformanceDir;
@@ -99,6 +100,7 @@ public class TestProxyServer {
         authDir.addDirectory(new PasswordAddedNoSubmitDir(this, "password-added-nosubmit"));
         authDir.addDirectory(new JsonMultipleCookiesDir(this, "json-multiple-cookies"));
         authDir.addDirectory(new SSO1RootDir(this, "sso1"));
+        authDir.addDirectory(new SSO2RootDir(this, "sso2"));
         authDir.addDirectory(new UuidLoginRootDir(this, "uuid-login"));
 
         TestDirectory apiDir = new TestDirectory(this, "api");
