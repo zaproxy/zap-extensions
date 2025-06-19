@@ -110,6 +110,8 @@ public class SeleniumOptions extends VersionedAbstractParam {
     private static final String CONFIRM_REMOVE_BROWSER_ARG =
             SELENIUM_BASE_KEY + ".confirmRemoveBrowserArg";
 
+    private static final String DEV_BROWSER_DEBUG = SELENIUM_BASE_KEY + ".devBrowserDebug";
+
     /** The configuration key to read/write the path to ChromeDriver. */
     private static final String CHROME_DRIVER_KEY = SELENIUM_BASE_KEY + ".chromeDriver";
 
@@ -149,6 +151,7 @@ public class SeleniumOptions extends VersionedAbstractParam {
 
     private Map<String, List<BrowserArgument>> browserArguments = new HashMap<>();
     private boolean confirmRemoveBrowserArgument = true;
+    private boolean devBrowserDebug = true;
 
     public SeleniumOptions() {
         extensionsDir = new File(Constant.getZapHome() + "/selenium/extensions/");
@@ -200,6 +203,7 @@ public class SeleniumOptions extends VersionedAbstractParam {
         browserArguments.put(Browser.FIREFOX.getId(), readBrowserArguments(FIREFOX_ARGS_KEY));
 
         confirmRemoveBrowserArgument = getBoolean(CONFIRM_REMOVE_BROWSER_ARG, true);
+        devBrowserDebug = getBoolean(DEV_BROWSER_DEBUG, false);
     }
 
     /**
@@ -542,6 +546,15 @@ public class SeleniumOptions extends VersionedAbstractParam {
 
     boolean isConfirmRemoveBrowserArgument() {
         return confirmRemoveBrowserArgument;
+    }
+
+    public boolean isDevBrowserDebug() {
+        return devBrowserDebug;
+    }
+
+    public void setDevBrowserDebug(boolean devBrowserDebug) {
+        this.devBrowserDebug = devBrowserDebug;
+        getConfig().setProperty(DEV_BROWSER_DEBUG, devBrowserDebug);
     }
 
     List<BrowserArgument> getBrowserArguments(String browser) {

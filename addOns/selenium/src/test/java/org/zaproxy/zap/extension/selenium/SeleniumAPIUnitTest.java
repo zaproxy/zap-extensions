@@ -86,8 +86,8 @@ class SeleniumAPIUnitTest extends TestUtils {
         // Given / When
         api = new SeleniumAPI(options, extension);
         // Then
-        assertThat(api.getApiActions(), hasSize(12));
-        assertThat(api.getApiViews(), hasSize(10));
+        assertThat(api.getApiActions(), hasSize(13));
+        assertThat(api.getApiViews(), hasSize(11));
         assertThat(api.getApiOthers(), hasSize(0));
     }
 

@@ -31,6 +31,7 @@ import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.ParallelGroup;
 import javax.swing.GroupLayout.SequentialGroup;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -45,6 +46,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.TitledBorder;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
 import org.zaproxy.zap.extension.selenium.internal.BrowserArgumentsDialog;
@@ -88,6 +90,7 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
     private final OptionsBrowserExtensionsTableModel browserExtModel;
     private final AtomicBoolean confirmRemoveBrowserArgument;
     private final String temporaryBrowserProfile;
+    private final JCheckBox devBrowserDebugCheckbox;
     private static String directory;
 
     private ExtensionSelenium extSelenium;
@@ -329,6 +332,26 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
         browserExtLayout.setVerticalGroup(
                 browserExtLayout.createSequentialGroup().addComponent(browserExtOptionsPanel));
 
+        JPanel devPanel = new JPanel();
+        GroupLayout devLayout = new GroupLayout(devPanel);
+        devPanel.setLayout(devLayout);
+        devLayout.setAutoCreateGaps(true);
+        devLayout.setAutoCreateContainerGaps(true);
+
+        devPanel.setBorder(
+                BorderFactory.createTitledBorder(
+                        null,
+                        resourceBundle.getString("selenium.options.dev.title"),
+                        TitledBorder.DEFAULT_JUSTIFICATION,
+                        TitledBorder.DEFAULT_POSITION,
+                        FontUtils.getFont(FontUtils.Size.standard)));
+        devBrowserDebugCheckbox =
+                new JCheckBox(resourceBundle.getString("selenium.options.dev.browserdebug"), true);
+        devLayout.setHorizontalGroup(
+                devLayout.createSequentialGroup().addComponent(devBrowserDebugCheckbox));
+        devLayout.setVerticalGroup(
+                devLayout.createSequentialGroup().addComponent(devBrowserDebugCheckbox));
+
         JPanel innerPanel = new JPanel();
         GroupLayout layout = new GroupLayout(innerPanel);
         innerPanel.setLayout(layout);
@@ -336,16 +359,24 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
         layout.setAutoCreateGaps(true);
         layout.setAutoCreateContainerGaps(true);
 
-        layout.setHorizontalGroup(
+        ParallelGroup pGroup =
                 layout.createParallelGroup()
                         .addComponent(driversPanel)
                         .addComponent(binariesPanel)
-                        .addComponent(browserExtPanel));
-        layout.setVerticalGroup(
+                        .addComponent(browserExtPanel);
+        SequentialGroup sGroup =
                 layout.createSequentialGroup()
                         .addComponent(driversPanel)
                         .addComponent(binariesPanel)
-                        .addComponent(browserExtPanel));
+                        .addComponent(browserExtPanel);
+
+        if (Constant.isDevBuild()) {
+            pGroup.addComponent(devPanel);
+            sGroup.addComponent(devPanel);
+        }
+
+        layout.setHorizontalGroup(pGroup);
+        layout.setVerticalGroup(sGroup);
 
         setLayout(new BorderLayout());
         add(
@@ -519,6 +550,9 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
         confirmRemoveBrowserArgument.set(seleniumOptions.isConfirmRemoveBrowserArgument());
 
         browserExtModel.setExtensions(seleniumOptions.getBrowserExtensions());
+        if (Constant.isDevBuild()) {
+            devBrowserDebugCheckbox.setSelected(seleniumOptions.isDevBrowserDebug());
+        }
         directory = seleniumOptions.getLastDirectory();
     }
 
@@ -579,6 +613,9 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
         seleniumOptions.setLastDirectory(directory);
 
         seleniumOptions.setConfirmRemoveBrowserArgument(confirmRemoveBrowserArgument.get());
+        if (Constant.isDevBuild()) {
+            seleniumOptions.setDevBrowserDebug(devBrowserDebugCheckbox.isSelected());
+        }
     }
 
     @Override

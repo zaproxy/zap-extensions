@@ -68,6 +68,7 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpSender;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.addon.network.server.ServerInfo;
 import org.zaproxy.zap.extension.AddonFilesChangedListener;
@@ -1050,6 +1051,12 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         return driver;
     }
 
+    private static boolean isBrowserDebug() {
+        return View.isInitialised()
+                && Constant.isDevMode()
+                && getSeleniumOptions().isDevBrowserDebug();
+    }
+
     private static WebDriver getWebDriverImpl(
             int requester,
             Browser browser,
@@ -1062,7 +1069,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
             case CHROME_HEADLESS:
                 ChromeOptions chromeOptions = new ChromeOptions();
                 chromeOptions.setCapability(BIDI_CAPABILITIY, true);
-                if (enableExtensions) {
+                if (enableExtensions && !isBrowserDebug()) {
                     addChromeExtensions(chromeOptions);
                 }
                 setCommonOptions(chromeOptions, proxyAddress, proxyPort);
@@ -1078,7 +1085,15 @@ public class ExtensionSelenium extends ExtensionAdaptor {
 
                 addChromeArguments(chromeOptions);
                 consumer.accept(chromeOptions);
-                return configureDriver(new ChromeDriver(chromeOptions));
+                ChromeDriver chromeDriver = new ChromeDriver(chromeOptions);
+                if (isBrowserDebug()) {
+                    chromeDriver.get("chrome://extensions");
+                    View.getSingleton()
+                            .showMessageDialog(
+                                    Constant.messages.getString(
+                                            "selenium.warn.message.browser.debug"));
+                }
+                return configureDriver(chromeDriver);
             case FIREFOX:
             case FIREFOX_HEADLESS:
                 FirefoxOptions firefoxOptions = new FirefoxOptions();
@@ -1148,7 +1163,13 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                 }
 
                 FirefoxDriver driver = new FirefoxDriver(firefoxOptions);
-                if (enableExtensions) {
+                if (isBrowserDebug()) {
+                    driver.get("about:debugging#/runtime/this-firefox");
+                    View.getSingleton()
+                            .showMessageDialog(
+                                    Constant.messages.getString(
+                                            "selenium.warn.message.browser.debug"));
+                } else if (enableExtensions) {
                     addFirefoxExtensions(driver);
                 }
                 return configureDriver(driver);
