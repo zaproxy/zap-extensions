@@ -61,7 +61,9 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
                         CommonAlertTag.toMap(
                                 CommonAlertTag.OWASP_2021_A03_INJECTION,
                                 CommonAlertTag.OWASP_2017_A07_XSS,
-                                CommonAlertTag.WSTG_V42_INPV_01_REFLECTED_XSS));
+                                CommonAlertTag.WSTG_V42_INPV_01_REFLECTED_XSS,
+                                CommonAlertTag.HIPAA,
+                                CommonAlertTag.PCI_DSS));
         alertTags.put(PolicyTag.DEV_CICD.getTag(), "");
         alertTags.put(PolicyTag.DEV_STD.getTag(), "");
         alertTags.put(PolicyTag.DEV_FULL.getTag(), "");

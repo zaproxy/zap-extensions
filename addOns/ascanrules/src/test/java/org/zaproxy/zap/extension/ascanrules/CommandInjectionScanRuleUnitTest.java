@@ -95,7 +95,7 @@ class CommandInjectionScanRuleUnitTest extends ActiveScannerTest<CommandInjectio
         // Then
         assertThat(cwe, is(equalTo(78)));
         assertThat(wasc, is(equalTo(31)));
-        assertThat(tags.size(), is(equalTo(11)));
+        assertThat(tags.size(), is(equalTo(13)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(true)));
@@ -105,6 +105,8 @@ class CommandInjectionScanRuleUnitTest extends ActiveScannerTest<CommandInjectio
         assertThat(
                 tags.containsKey(CommonAlertTag.WSTG_V42_INPV_12_COMMAND_INJ.getTag()),
                 is(equalTo(true)));
+        assertThat(tags.containsKey(CommonAlertTag.HIPAA.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(CommonAlertTag.PCI_DSS.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.API.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.DEV_CICD.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.DEV_STD.getTag()), is(equalTo(true)));
