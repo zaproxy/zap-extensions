@@ -19,12 +19,20 @@
  */
 package org.zaproxy.addon.authhelper;
 
+import java.awt.Component;
 import java.awt.Frame;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
+import java.io.File;
+import java.lang.reflect.Field;
+import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -38,6 +46,7 @@ import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.openqa.selenium.WebDriver;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -46,6 +55,8 @@ import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.authhelper.AutoDetectSessionManagementMethodType.AutoDetectSessionManagementMethod;
 import org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType.BrowserBasedAuthenticationMethod;
+import org.zaproxy.addon.authhelper.ClientScriptBasedAuthenticationMethodType.ClientScriptBasedAuthenticationMethod;
+import org.zaproxy.addon.authhelper.internal.AuthenticationBrowserHook;
 import org.zaproxy.addon.authhelper.internal.AuthenticationStep;
 import org.zaproxy.addon.authhelper.internal.StepsPanel;
 import org.zaproxy.addon.commonlib.internal.TotpSupport;
@@ -54,11 +65,19 @@ import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.authentication.AuthenticationMethod;
 import org.zaproxy.zap.authentication.AuthenticationMethod.AuthCheckingStrategy;
 import org.zaproxy.zap.authentication.AuthenticationMethodType;
+import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType;
 import org.zaproxy.zap.authentication.UsernamePasswordAuthenticationCredentials;
+import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
+import org.zaproxy.zap.extension.script.ExtensionScript;
+import org.zaproxy.zap.extension.script.ScriptNode;
+import org.zaproxy.zap.extension.script.ScriptWrapper;
+import org.zaproxy.zap.extension.selenium.BrowserHook;
 import org.zaproxy.zap.extension.selenium.BrowserUI;
 import org.zaproxy.zap.extension.selenium.BrowsersComboBoxModel;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.users.ExtensionUserManagement;
+import org.zaproxy.zap.extension.zest.ExtensionZest;
+import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.SessionStructure;
 import org.zaproxy.zap.session.SessionManagementMethod;
@@ -74,6 +93,8 @@ import org.zaproxy.zap.utils.ZapTextField;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zap.view.StandardFieldsDialog;
+import org.zaproxy.zest.core.v1.ZestScript;
+import org.zaproxy.zest.impl.ZestScriptEngineFactory;
 
 @SuppressWarnings("serial")
 public class AuthTestDialog extends StandardFieldsDialog {
@@ -82,6 +103,8 @@ public class AuthTestDialog extends StandardFieldsDialog {
 
     private static final String CONTEXT_LABEL = "authhelper.auth.test.dialog.label.context";
     private static final String LOGIN_URL_LABEL = "authhelper.auth.test.dialog.label.loginurl";
+    private static final String METHOD_LABEL = "authhelper.auth.test.dialog.label.method";
+    private static final String SCRIPT_LABEL = "authhelper.auth.test.dialog.label.script";
     private static final String PASSWORD_LABEL = "authhelper.auth.test.dialog.label.password";
     private static final String USERNAME_LABEL = "authhelper.auth.test.dialog.label.username";
     private static final String BROWSER_LABEL = "authhelper.auth.test.dialog.label.browser";
@@ -94,6 +117,10 @@ public class AuthTestDialog extends StandardFieldsDialog {
 
     private static final String FOUND_STR =
             Constant.messages.getString("authhelper.auth.test.dialog.results.found");
+    private static final String METHOD_BROWSER_STR =
+            Constant.messages.getString("authhelper.auth.test.dialog.label.method.browser");
+    private static final String METHOD_SCRIPT_STR =
+            Constant.messages.getString("authhelper.auth.test.dialog.label.method.script");
 
     private static final ImageIcon GREY_BALL =
             DisplayUtils.getScaledIcon(ZAP.class.getResource("/resource/icon/16/159.png"));
@@ -111,6 +138,10 @@ public class AuthTestDialog extends StandardFieldsDialog {
     private JLabel sessionIdLabel = new JLabel();
     private JLabel verifIdLabel = new JLabel();
     private JButton[] extraButtons;
+    private JComboBox<String> scriptField;
+    private JButton recordButton;
+
+    private List<String> scriptNames;
 
     private StepsPanel stepsPanel;
 
@@ -121,12 +152,13 @@ public class AuthTestDialog extends StandardFieldsDialog {
     private BrowsersComboBoxModel browserComboModel;
 
     private ExtensionAuthhelper ext;
+    private ExtensionScript extensionScript;
 
     public AuthTestDialog(ExtensionAuthhelper ext, Frame owner) {
         super(
                 owner,
                 "authhelper.auth.test.dialog.title",
-                DisplayUtils.getScaledDimension(600, 480),
+                DisplayUtils.getScaledDimension(600, 550),
                 new String[] {
                     "authhelper.auth.test.dialog.tab.test",
                     "authhelper.auth.test.dialog.tab.steps",
@@ -141,8 +173,65 @@ public class AuthTestDialog extends StandardFieldsDialog {
                 0,
                 CONTEXT_LABEL,
                 Constant.messages.getString("authhelper.auth.test.dialog.default-context"));
-        this.addTextField(0, USERNAME_LABEL, params.getUsername());
-        this.addPasswordField(0, PASSWORD_LABEL, "");
+
+        extensionScript =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
+
+        if (isClientScriptSupported()) {
+            this.addComboField(
+                    0,
+                    METHOD_LABEL,
+                    new String[] {METHOD_BROWSER_STR, METHOD_SCRIPT_STR},
+                    METHOD_BROWSER_STR);
+            this.addFieldListener(METHOD_LABEL, e -> setMethodState());
+        } else {
+            this.addComboField(
+                    0, METHOD_LABEL, new String[] {METHOD_BROWSER_STR}, METHOD_BROWSER_STR);
+        }
+
+        scriptField = new JComboBox<>();
+        setScriptNames();
+        recordButton =
+                new JButton(
+                        Constant.messages.getString("authhelper.auth.test.dialog.button.record"));
+        recordButton.addActionListener(
+                l -> {
+                    String url = this.getStringValue(LOGIN_URL_LABEL).toLowerCase(Locale.ROOT);
+                    if (url.isBlank()) {
+                        View.getSingleton()
+                                .showWarningDialog(
+                                        AuthTestDialog.this,
+                                        Constant.messages.getString(
+                                                "authhelper.auth.test.dialog.error.nourl"));
+                        return;
+                    }
+                    ExtensionZest extZest = AuthUtils.getExtension(ExtensionZest.class);
+
+                    ScriptWrapper sw = new ScriptWrapper();
+                    sw.setEngine(extZest.getZestEngineWrapper());
+                    sw.setEngineName(ZestScriptEngineFactory.NAME);
+                    sw.setType(
+                            extensionScript.getScriptType(
+                                    ScriptBasedAuthenticationMethodType.SCRIPT_TYPE_AUTH));
+                    ZestScriptWrapper scriptWrapper = new ZestScriptWrapper(sw);
+
+                    ZestScript script = scriptWrapper.getZestScript();
+
+                    script.setTitle(this.getScriptName(url));
+                    scriptWrapper.setName(script.getTitle());
+                    scriptWrapper.setContents(extZest.convertElementToString(script));
+                    scriptWrapper.setLoadOnStart(true);
+
+                    ScriptNode scriptNode = extZest.add(scriptWrapper, false, false);
+                    extZest.updated(scriptNode, false);
+                    extZest.setRecordingNode(scriptNode);
+
+                    extZest.startClientRecording(
+                            scriptNode, browserComboModel.getSelectedItem().getName(), url);
+                    setScriptNames();
+                });
+
+        this.addCustomComponent(0, SCRIPT_LABEL, getSideBySidePanel(scriptField, recordButton));
 
         ExtensionSelenium extSel =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class);
@@ -150,6 +239,9 @@ public class AuthTestDialog extends StandardFieldsDialog {
         browserComboModel = extSel.createBrowsersComboBoxModel();
         browserComboModel.setSelectedBrowser(params.getBrowser());
         this.addComboField(0, BROWSER_LABEL, browserComboModel);
+
+        this.addTextField(0, USERNAME_LABEL, params.getUsername());
+        this.addPasswordField(0, PASSWORD_LABEL, "");
         this.addNumberField(0, WAIT_LABEL, 0, Integer.MAX_VALUE, params.getWait());
         this.addCheckBoxField(0, DEMO_LABEL, params.isDemoMode());
         this.addCheckBoxField(0, RECORD_DIAGNOSTICS_LABEL, params.isRecordDiagnostics());
@@ -185,9 +277,82 @@ public class AuthTestDialog extends StandardFieldsDialog {
 
         ZapTextField text = (ZapTextField) this.getField(LOGIN_URL_LABEL);
         text.setText(params.getLoginUrl());
+        setMethodState();
 
         this.setHideOnSave(false);
         this.pack();
+    }
+
+    private String getScriptName(String urlStr) {
+        String base = urlStr;
+        try {
+            URI url = new URI(urlStr, true);
+            base = url.getHost();
+        } catch (Exception e) {
+            // Ignore
+        }
+        String scriptName = base;
+        if (scriptNames != null) {
+            int i = 2;
+            while (scriptNames.contains(scriptName)) {
+                scriptName = base + i++;
+            }
+        }
+        return scriptName;
+    }
+
+    /**
+     * Sets the names of the valid scripts in the Client Script Field. It will select the first
+     * "new" script that it finds, on the basis that this is likely to be the one the user has just
+     * started recording.
+     */
+    private void setScriptNames() {
+        List<String> prevNames = scriptNames;
+        scriptField.removeAllItems();
+        List<ScriptWrapper> scripts =
+                extensionScript.getScripts(ScriptBasedAuthenticationMethodType.SCRIPT_TYPE_AUTH);
+        scriptNames =
+                scripts.stream()
+                        .filter(s -> s.getEngineName().contains("Zest"))
+                        .map(ScriptWrapper::getName)
+                        .toList();
+        for (String script : scriptNames) {
+            scriptField.addItem(script);
+        }
+        if (prevNames != null && prevNames.size() > 0) {
+            for (String script : scriptNames) {
+                if (!prevNames.contains(script)) {
+                    scriptField.setSelectedItem(script);
+                    break;
+                }
+            }
+        }
+    }
+
+    // FIXME use parent method once ZAP 2.17 is released
+    private static JPanel getSideBySidePanel(Component c1, Component c2) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridBagLayout());
+        panel.add(
+                c1,
+                LayoutHelper.getGBC(
+                        0, 0, 1, 1.0D, 0.0D, GridBagConstraints.BOTH, new Insets(0, 0, 0, 2)));
+        panel.add(
+                c2,
+                LayoutHelper.getGBC(
+                        1, 0, 1, 0.0D, 0.0D, GridBagConstraints.BOTH, new Insets(0, 2, 0, 0)));
+        return panel;
+    }
+
+    private void setMethodState() {
+        boolean isBrowserAuth = isBrowserAuth();
+
+        scriptField.setEnabled(!isBrowserAuth);
+        recordButton.setEnabled(!isBrowserAuth);
+        this.getField(PASSWORD_LABEL).setEnabled(isBrowserAuth);
+        this.getField(USERNAME_LABEL).setEnabled(isBrowserAuth);
+        this.getField(WAIT_LABEL).setEnabled(isBrowserAuth);
+        this.getField(DEMO_LABEL).setEnabled(isBrowserAuth);
     }
 
     @Override
@@ -255,6 +420,29 @@ public class AuthTestDialog extends StandardFieldsDialog {
         verifIdLabel.setIcon(GREY_BALL);
     }
 
+    private boolean isBrowserAuth() {
+        return this.getStringValue(METHOD_LABEL).equals(METHOD_BROWSER_STR);
+    }
+
+    private boolean isClientScriptSupported() {
+        ExtensionAuthentication extAuth =
+                Control.getSingleton()
+                        .getExtensionLoader()
+                        .getExtension(ExtensionAuthentication.class);
+        return extAuth.getAuthenticationMethodTypeForIdentifier(8) != null;
+    }
+
+    private ClientScriptBasedAuthenticationMethod getClientAuthMethod() {
+        ExtensionAuthentication extAuth =
+                Control.getSingleton()
+                        .getExtensionLoader()
+                        .getExtension(ExtensionAuthentication.class);
+        ClientScriptBasedAuthenticationMethodType clientScriptType =
+                (ClientScriptBasedAuthenticationMethodType)
+                        extAuth.getAuthenticationMethodTypeForIdentifier(8);
+        return clientScriptType.createAuthenticationMethod(0);
+    }
+
     private void authenticate() {
         StatsListener statsListener = null;
         boolean demoMode = getBoolValue(DEMO_LABEL);
@@ -280,21 +468,57 @@ public class AuthTestDialog extends StandardFieldsDialog {
             context.addIncludeInContextRegex(
                     SessionStructure.getHostName(new URI(loginUrl, false)) + ".*");
 
-            // Set up browser based auth
-            BrowserBasedAuthenticationMethod am =
-                    ExtensionAuthhelper.BROWSER_BASED_AUTH_TYPE.createAuthenticationMethod(
-                            context.getId());
-            am.setLoginPageUrl(loginUrl);
-            am.setDiagnostics(getBoolValue(RECORD_DIAGNOSTICS_LABEL));
-
             JComboBox<?> browserCombo = (JComboBox<?>) this.getField(BROWSER_LABEL);
             String browserId = ((BrowserUI) browserCombo.getSelectedItem()).getBrowser().getId();
-            am.setBrowserId(browserId);
-            am.setLoginPageWait(this.getIntValue(WAIT_LABEL));
-            am.setAuthenticationSteps(
-                    stepsPanel.getSteps().stream().filter(AuthenticationStep::isEnabled).toList());
-            reloadAuthenticationMethod(am);
-            context.setAuthenticationMethod(am);
+            // Set up browser based auth
+            AuthenticationMethod am;
+            if (isBrowserAuth()) {
+                BrowserBasedAuthenticationMethod bam =
+                        ExtensionAuthhelper.BROWSER_BASED_AUTH_TYPE.createAuthenticationMethod(
+                                context.getId());
+                bam.setLoginPageUrl(loginUrl);
+                bam.setDiagnostics(getBoolValue(RECORD_DIAGNOSTICS_LABEL));
+
+                bam.setBrowserId(browserId);
+                bam.setLoginPageWait(this.getIntValue(WAIT_LABEL));
+                bam.setAuthenticationSteps(
+                        stepsPanel.getSteps().stream()
+                                .filter(AuthenticationStep::isEnabled)
+                                .toList());
+                reloadAuthenticationMethod(bam);
+                context.setAuthenticationMethod(bam);
+                am = bam;
+            } else {
+                ClientScriptBasedAuthenticationMethod csam = getClientAuthMethod();
+
+                ScriptWrapper scriptWrapper =
+                        extensionScript.getScript((String) scriptField.getSelectedItem());
+                if (scriptWrapper.getFile() == null) {
+                    // Newly recorded, but we need it to have been saved
+                    File f =
+                            Paths.get(
+                                            Constant.getZapHome(),
+                                            ExtensionScript.SCRIPTS_DIR,
+                                            ExtensionScript.SCRIPTS_DIR,
+                                            scriptWrapper.getTypeName(),
+                                            scriptWrapper.getName() + ".zst")
+                                    .toFile();
+                    scriptWrapper.setFile(f);
+                    extensionScript.saveScript(scriptWrapper);
+                }
+                csam.setScriptWrapper(scriptWrapper);
+                csam.setDiagnostics(getBoolValue(RECORD_DIAGNOSTICS_LABEL));
+                csam.setLoginPageWait(this.getIntValue(WAIT_LABEL));
+
+                Map<String, String> map = new HashMap<>();
+                map.put("script", scriptWrapper.getFile().getAbsolutePath());
+                map.put("scriptEngine", scriptWrapper.getEngineName());
+                setPrivateField(csam, "paramValues", map);
+
+                reloadAuthenticationMethod(csam);
+                context.setAuthenticationMethod(csam);
+                am = csam;
+            }
 
             // Set up user
             User user = new User(context.getId(), username);
@@ -359,15 +583,27 @@ public class AuthTestDialog extends StandardFieldsDialog {
             Stats.addListener(statsListener);
 
             WebDriver wd = null;
+            BrowserHook clientBrowserHook = null;
             try {
                 try {
-                    AuthUtils.enableBrowserAuthentication(context, username);
+                    if (isBrowserAuth()) {
+                        AuthUtils.enableBrowserAuthentication(context, username);
+                    } else {
+                        clientBrowserHook = new AuthenticationBrowserHook(context, user);
+                        AuthUtils.getExtension(ExtensionSelenium.class)
+                                .registerBrowserHook(clientBrowserHook);
+                    }
                 } catch (Exception e) {
                     // Must be already set, not a real problem
                 }
                 wd = extSel.getProxiedBrowser(browserId);
             } finally {
-                AuthUtils.disableBrowserAuthentication();
+                if (isBrowserAuth()) {
+                    AuthUtils.disableBrowserAuthentication();
+                } else if (clientBrowserHook != null) {
+                    AuthUtils.getExtension(ExtensionSelenium.class)
+                            .deregisterBrowserHook(clientBrowserHook);
+                }
 
                 if (wd != null) {
                     wd.quit();
@@ -441,6 +677,30 @@ public class AuthTestDialog extends StandardFieldsDialog {
                 AuthUtils.setDemoMode(false);
             }
             ext.enableAuthDiagCollector(false);
+        }
+    }
+
+    public static void setPrivateField(Object obj, String fieldName, Object value) {
+        try {
+            // Have to use reflection on private field :(
+            Field field = getClassField(obj, obj.getClass(), fieldName);
+            if (field != null) {
+                FieldUtils.writeField(field, obj, value, true);
+            }
+        } catch (Exception e) {
+            // Ignore
+        }
+    }
+
+    private static Field getClassField(Object obj, Class<?> c, String fieldName) {
+        if (c == null) {
+            // We've walked all the way up the hierarchy
+            return null;
+        }
+        try {
+            return c.getDeclaredField(fieldName);
+        } catch (Exception e) {
+            return getClassField(obj, c.getSuperclass(), fieldName);
         }
     }
 
@@ -549,7 +809,7 @@ public class AuthTestDialog extends StandardFieldsDialog {
 
     @Override
     public String validateFields() {
-        String url = this.getStringValue(LOGIN_URL_LABEL).toLowerCase();
+        String url = this.getStringValue(LOGIN_URL_LABEL).toLowerCase(Locale.ROOT);
         if (url.isBlank()) {
             return Constant.messages.getString("authhelper.auth.test.dialog.error.nourl");
         }
@@ -559,11 +819,13 @@ public class AuthTestDialog extends StandardFieldsDialog {
         if (this.getStringValue(CONTEXT_LABEL).isBlank()) {
             return Constant.messages.getString("authhelper.auth.test.dialog.error.nocontext");
         }
-        if (this.getStringValue(USERNAME_LABEL).isBlank()) {
-            return Constant.messages.getString("authhelper.auth.test.dialog.error.nouser");
-        }
-        if (this.getStringValue(PASSWORD_LABEL).isBlank()) {
-            return Constant.messages.getString("authhelper.auth.test.dialog.error.nopassword");
+        if (this.isBrowserAuth()) {
+            if (this.getStringValue(USERNAME_LABEL).isBlank()) {
+                return Constant.messages.getString("authhelper.auth.test.dialog.error.nouser");
+            }
+            if (this.getStringValue(PASSWORD_LABEL).isBlank()) {
+                return Constant.messages.getString("authhelper.auth.test.dialog.error.nopassword");
+            }
         }
         return null;
     }

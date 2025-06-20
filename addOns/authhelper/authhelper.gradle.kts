@@ -22,6 +22,9 @@ zapAddOn {
                         register("spiderAjax") {
                             version.set(">=23.22.0")
                         }
+                        register("zest") {
+                            version.set(">=48.8.0")
+                        }
                     }
                 }
             }
