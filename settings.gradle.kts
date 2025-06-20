@@ -72,6 +72,7 @@ var addOns =
         "jsonview",
         "jython",
         "kotlin",
+        "llm",
         "network",
         "oast",
         "onlineMenu",
