@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [24] - 2025-06-20
 ### Changed
 - Use the alert reference for statistics.
 - Workaround core issue that prevents the filters to be correctly applied (Issue 8888).
@@ -154,6 +154,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[24]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v24
 [23]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v23
 [22]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v22
 [21]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v21

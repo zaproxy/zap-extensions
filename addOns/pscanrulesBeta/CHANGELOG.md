@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [44] - 2025-06-20
 ### Changed
 - Dropped period from extension name used in the GUI.
 - Depends on an updated version of the Common Library add-on.
@@ -364,6 +364,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[44]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v44
 [43]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v43
 [42]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v42
 [41]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v41

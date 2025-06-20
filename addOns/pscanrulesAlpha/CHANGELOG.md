@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [45] - 2025-06-20
 ### Added
 - All rules have been tagged of interest to Penetration Testers, as well as adding tags associated with DEV or QA applicability.
 
@@ -379,6 +379,7 @@ As well as Alert Refs where applicable (Issues 6119 & 7100).
 - Updated User Controlled Open Redirect, Cookie and Charset rules after testing with
 - http://www.testcases.org/watcher/ test pages.
 
+[45]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v45
 [44]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v44
 [43]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v43
 [42]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v42

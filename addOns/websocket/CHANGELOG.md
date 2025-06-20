@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [33] - 2025-06-20
 ### Changed
 - Add website alert links to the help page (Issue 8189).
 - Replace usage of CWE-200 for the following rules (Issue 8712):
@@ -239,6 +239,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[33]: https://github.com/zaproxy/zap-extensions/releases/websocket-v33
 [32]: https://github.com/zaproxy/zap-extensions/releases/websocket-v32
 [31]: https://github.com/zaproxy/zap-extensions/releases/websocket-v31
 [30]: https://github.com/zaproxy/zap-extensions/releases/websocket-v30

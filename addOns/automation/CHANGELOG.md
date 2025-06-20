@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.50.0] - 2025-06-20
 ### Added
 - Add support for the wait time of the Client Script Based Authentication.
 - Allow to inline scripts for Script and Client Script Based Authentication.
@@ -506,6 +506,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.50.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.50.0
 [0.49.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.49.0
 [0.48.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.48.0
 [0.47.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.47.0
