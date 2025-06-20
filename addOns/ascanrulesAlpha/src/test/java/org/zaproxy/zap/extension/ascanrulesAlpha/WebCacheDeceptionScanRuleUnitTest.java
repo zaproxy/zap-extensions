@@ -175,7 +175,9 @@ class WebCacheDeceptionScanRuleUnitTest extends ActiveScannerTest<WebCacheDecept
     void shouldReturnExpectedMappings() {
         // Given / When
         Map<String, String> tags = rule.getAlertTags();
+        int cwe = rule.getCweId();
         // Then
+        assertThat(cwe, is(equalTo(444)));
         assertThat(tags.size(), is(equalTo(4)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),

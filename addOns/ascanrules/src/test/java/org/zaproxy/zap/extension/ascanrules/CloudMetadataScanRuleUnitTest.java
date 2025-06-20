@@ -189,6 +189,7 @@ class CloudMetadataScanRuleUnitTest extends ActiveScannerTest<CloudMetadataScanR
         Alert alert1 = alerts.get(0);
         assertThat(alert1.getRisk(), is(equalTo(Alert.RISK_HIGH)));
         assertThat(alert1.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(alert1.getCweId(), is(equalTo(1230)));
     }
 
     private static NanoServerHandler createHandler(
