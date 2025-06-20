@@ -83,7 +83,7 @@ class ApplicationErrorScanRuleUnitTest extends PassiveScannerTest<ApplicationErr
         // Given / When
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(tags.size(), is(equalTo(6)));
+        assertThat(tags.size(), is(equalTo(8)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(true)));
@@ -95,6 +95,8 @@ class ApplicationErrorScanRuleUnitTest extends PassiveScannerTest<ApplicationErr
         assertThat(
                 tags.containsKey(CommonAlertTag.WSTG_V42_ERRH_02_STACK.getTag()),
                 is(equalTo(true)));
+        assertThat(tags.containsKey(CommonAlertTag.HIPAA.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(CommonAlertTag.PCI_DSS.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.QA_STD.getTag()), is(equalTo(true)));
         assertThat(
@@ -119,7 +121,7 @@ class ApplicationErrorScanRuleUnitTest extends PassiveScannerTest<ApplicationErr
         Map<String, String> tags = alert.getTags();
         // Then
         assertThat(alerts.size(), is(equalTo(1)));
-        assertThat(tags.size(), is(equalTo(8)));
+        assertThat(tags.size(), is(equalTo(10)));
         assertThat(tags, hasKey("CWE-550"));
         assertThat(tags, hasKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()));
         assertThat(tags, hasKey(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()));

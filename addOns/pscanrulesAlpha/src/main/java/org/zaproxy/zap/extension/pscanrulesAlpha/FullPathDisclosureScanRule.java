@@ -58,7 +58,8 @@ public class FullPathDisclosureScanRule extends PluginPassiveScanner
                 new HashMap<>(
                         CommonAlertTag.toMap(
                                 CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
-                                CommonAlertTag.WSTG_V42_ERRH_01_ERR));
+                                CommonAlertTag.WSTG_V42_ERRH_01_ERR,
+                                CommonAlertTag.PCI_DSS));
         alertTags.put(PolicyTag.PENTEST.getTag(), "");
         alertTags.put(PolicyTag.DEV_STD.getTag(), "");
         alertTags.put(PolicyTag.QA_STD.getTag(), "");

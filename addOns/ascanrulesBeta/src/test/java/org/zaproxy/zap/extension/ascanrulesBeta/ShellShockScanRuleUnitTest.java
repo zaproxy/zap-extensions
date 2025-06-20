@@ -54,7 +54,7 @@ class ShellShockScanRuleUnitTest extends ActiveScannerTest<ShellShockScanRule> {
         // Then
         assertThat(cwe, is(equalTo(78)));
         assertThat(wasc, is(equalTo(31)));
-        assertThat(tags.size(), is(equalTo(4)));
+        assertThat(tags.size(), is(equalTo(6)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getTag()),
                 is(equalTo(true)));
@@ -64,6 +64,8 @@ class ShellShockScanRuleUnitTest extends ActiveScannerTest<ShellShockScanRule> {
         assertThat(
                 tags.containsKey(CommonAlertTag.WSTG_V42_INPV_12_COMMAND_INJ.getTag()),
                 is(equalTo(true)));
+        assertThat(tags.containsKey(CommonAlertTag.HIPAA.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(CommonAlertTag.PCI_DSS.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getTag()),

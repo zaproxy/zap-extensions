@@ -62,7 +62,9 @@ public class PaddingOracleScanRule extends AbstractAppParamPlugin
                         CommonAlertTag.toMap(
                                 CommonAlertTag.OWASP_2021_A02_CRYPO_FAIL,
                                 CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
-                                CommonAlertTag.WSTG_V42_CRYP_02_PADDING_ORACLE));
+                                CommonAlertTag.WSTG_V42_CRYP_02_PADDING_ORACLE,
+                                CommonAlertTag.HIPAA,
+                                CommonAlertTag.PCI_DSS));
         alertTags.put(PolicyTag.QA_FULL.getTag(), "");
         alertTags.put(PolicyTag.PENTEST.getTag(), "");
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
