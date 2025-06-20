@@ -206,6 +206,8 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
 
         private boolean diagnostics;
 
+        private ScriptWrapper scriptWrapper;
+
         public void setDiagnostics(boolean diagnostics) {
             this.diagnostics = diagnostics;
         }
@@ -222,7 +224,14 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
             return loginPageWait;
         }
 
-        protected ScriptWrapper getScriptTemp() {
+        public void setScriptWrapper(ScriptWrapper wrapper) {
+            this.scriptWrapper = wrapper;
+        }
+
+        private ScriptWrapper getScriptTemp() {
+            if (scriptWrapper != null) {
+                return scriptWrapper;
+            }
             try {
                 return (ScriptWrapper) scriptField.get(this);
             } catch (Exception ignore) {
@@ -230,7 +239,7 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
             return null;
         }
 
-        protected void setScriptTemp(ClientScriptBasedAuthenticationMethod method) {
+        private void setScriptTemp(ClientScriptBasedAuthenticationMethod method) {
             try {
                 scriptField.set(method, getScriptTemp());
             } catch (Exception ignore) {

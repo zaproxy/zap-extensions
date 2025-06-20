@@ -43,7 +43,7 @@ public class ExtensionAuthhelperClient extends ExtensionAdaptor {
     private BrowserBasedAuthHandler authHandler;
     private ClientScriptBasedAuthHandler scriptAuthHandler;
 
-    protected static final ClientScriptBasedAuthenticationMethodType CLIENT_SCRIPT_BASED_AUTH_TYPE =
+    public static final ClientScriptBasedAuthenticationMethodType CLIENT_SCRIPT_BASED_AUTH_TYPE =
             new ClientScriptBasedAuthenticationMethodType();
 
     public ExtensionAuthhelperClient() {
