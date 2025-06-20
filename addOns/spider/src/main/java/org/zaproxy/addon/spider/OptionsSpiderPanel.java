@@ -390,11 +390,7 @@ public class OptionsSpiderPanel extends AbstractParamPanel {
                     new ChangeListener() {
                         @Override
                         public void stateChanged(ChangeEvent ev) {
-                            if (chkProcessForm.isSelected()) {
-                                chkPostForm.setEnabled(true);
-                            } else {
-                                chkPostForm.setEnabled(false);
-                            }
+                            chkPostForm.setEnabled(chkProcessForm.isSelected());
                         }
                     });
         }
