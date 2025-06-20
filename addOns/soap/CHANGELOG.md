@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [25] - 2025-06-20
 ### Added
 - The WSDL passive scan rule has been tagged of interest to Penetration Testers and QA.
 - The included active scan rules have been tagged of interest to Penetration Testers.
@@ -182,6 +182,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[25]: https://github.com/zaproxy/zap-extensions/releases/soap-v25
 [24]: https://github.com/zaproxy/zap-extensions/releases/soap-v24
 [23]: https://github.com/zaproxy/zap-extensions/releases/soap-v23
 [22]: https://github.com/zaproxy/zap-extensions/releases/soap-v22
