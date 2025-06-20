@@ -154,7 +154,8 @@ public class SqlInjectionOracleScanRule extends AbstractAppParamPlugin
                         CommonAlertTag.toMap(
                                 CommonAlertTag.OWASP_2021_A03_INJECTION,
                                 CommonAlertTag.OWASP_2017_A01_INJECTION,
-                                CommonAlertTag.WSTG_V42_INPV_05_SQLI));
+                                CommonAlertTag.WSTG_V42_INPV_05_SQLI,
+                                CommonAlertTag.TEST_TIMING));
         alertTags.put(PolicyTag.DEV_FULL.getTag(), "");
         alertTags.put(PolicyTag.QA_STD.getTag(), "");
         alertTags.put(PolicyTag.QA_FULL.getTag(), "");

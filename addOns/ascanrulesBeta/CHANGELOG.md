@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 - All rules have been tagged of interest to Penetration Testers.
+- The Shell Shock scan rule now has the TEST_TIMING alert tag.
 
 ## [58] - 2025-03-04
 ### Changed
