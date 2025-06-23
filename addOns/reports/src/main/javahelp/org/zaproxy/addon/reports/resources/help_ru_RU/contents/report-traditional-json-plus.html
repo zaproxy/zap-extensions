@@ -6,6 +6,23 @@
 <BODY>
 	<H1>Традиционный отчет JSON с запросами и ответами</H1>
 
+	<H3>Sections</H3>
+
+	<table>
+		<tr>
+			<th align="left">Section</th>
+			<th align="left">ID</th>
+		</tr>
+		<tr>
+			<td>Statistics</td>
+			<td>statistics</td>
+		</tr>
+		<tr>
+			<td>Sequence Details</td>
+			<td>sequencedetails</td>
+		</tr>
+	</table>
+
 	<H3>Образец</H3>
 	<H4>About riskdesc</H4>
 	riskdesc - Is a combination identifier, showing Risk followed by
@@ -80,6 +97,18 @@
                         }
                     ]
                 },
+                ...
+            ],
+            "statistics": {
+                "site.specific.stat.a": 1,
+                "site.specific.stat.b": 2
+            }
+        }
+    ],
+    "statistics": {
+        "global.stat.a": 1,
+        "global.stat.b": 2
+    }
 
 </pre>
 

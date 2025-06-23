@@ -38,8 +38,19 @@ to specify exactly what should be scanned.<br>
 	<p>For each URI found you can see:
 	<ul>
 		<li>Processed - Whether the URI was processed by the Spider or
-			was skipped from fetching because of a rule (e.g. it was out of
-			scope)</li>
+			was skipped from fetching because of a rule. Skipped reasons include:
+		<ul>
+			<li><img align="bottom" alt="no parse" src="images/red_dot.png">Out 
+				of Context - the message was not part of the targetted context</li>
+			<li><img align="bottom" alt="no parse" src="images/red_dot.png">Out 
+				of Scope - the message was not in scope</li>
+			<li><img align="bottom" alt="no parse" src="images/red_dot.png">Illegal
+				Protocol - the message was neither HTTP nor HTTPS</li>
+			<li><img align="bottom" alt="no parse" src="images/red_dot.png">User
+				Rules - the message was skipped due to user defined exclude</li>
+			<li><img align="bottom" alt="no parse" src="images/red_dot.png">Logout
+				Avoidance - the message was skipped because the user indicated that logout related paths/functionality should be avoided</li>
+		</ul></li>
 		<li>Method - The HTTP method, e.g. GET or POST, through which the
 			resource should be accessed</li>
 		<li>URI - the resource found</li>
