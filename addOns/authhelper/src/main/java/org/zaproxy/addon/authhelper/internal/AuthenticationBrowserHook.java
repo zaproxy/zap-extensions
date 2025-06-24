@@ -81,6 +81,7 @@ public class AuthenticationBrowserHook implements BrowserHook {
             paramsValues.put(USERNAME, credentials.getParam(USERNAME));
             paramsValues.put(PASSWORD, credentials.getParam(PASSWORD));
             ZestScript zs = csaMethod.getZestScript();
+            AuthUtils.disableLogoutStatements(zs);
             runner.setup(user, zs);
             runner.run(zs, paramsValues);
 
