@@ -72,7 +72,7 @@ class CorsScanRuleUnitTest extends ActiveScannerTest<CorsScanRule> {
         // When
         rule.scan();
         // Then
-        assertExpectedAlert(Alert.RISK_INFO);
+        assertExpectedAlert(Alert.RISK_INFO, "dummyValue");
     }
 
     @ParameterizedTest
@@ -85,7 +85,7 @@ class CorsScanRuleUnitTest extends ActiveScannerTest<CorsScanRule> {
         // When
         rule.scan();
         // Then
-        assertExpectedAlert(Alert.RISK_MEDIUM);
+        assertExpectedAlert(Alert.RISK_MEDIUM, origin);
     }
 
     @ParameterizedTest
@@ -98,7 +98,7 @@ class CorsScanRuleUnitTest extends ActiveScannerTest<CorsScanRule> {
         // When
         rule.scan();
         // Then
-        assertExpectedAlert(Alert.RISK_HIGH);
+        assertExpectedAlert(Alert.RISK_HIGH, origin);
     }
 
     @Test
@@ -110,7 +110,7 @@ class CorsScanRuleUnitTest extends ActiveScannerTest<CorsScanRule> {
         // When
         rule.scan();
         // Then
-        assertExpectedAlert(Alert.RISK_MEDIUM);
+        assertExpectedAlert(Alert.RISK_MEDIUM, "*");
     }
 
     @Test
@@ -145,10 +145,17 @@ class CorsScanRuleUnitTest extends ActiveScannerTest<CorsScanRule> {
                 is(equalTo(CommonAlertTag.WSTG_V42_CLNT_07_CORS.getValue())));
     }
 
-    private void assertExpectedAlert(int risk) {
+    private void assertExpectedAlert(int risk, String evidence) {
         assertThat(alertsRaised, hasSize(1));
         Alert alert = alertsRaised.get(0);
         assertEquals(risk, alert.getRisk());
+        if (evidence.equals("REFLECT")) {
+            assertThat(
+                    alert.getEvidence().startsWith("access-control-allow-origin: http://"),
+                    is(true));
+        } else {
+            assertEquals("access-control-allow-origin: " + evidence, alert.getEvidence());
+        }
     }
 
     private static class CorsResponse extends NanoServerHandler {

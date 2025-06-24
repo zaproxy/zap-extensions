@@ -25,6 +25,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.authhelper.VerificationRequestDetails.VerificationComparator;
 import org.zaproxy.zap.authentication.AuthenticationMethod;
@@ -64,7 +65,7 @@ public class VerificationDetectionProcessor implements Runnable {
         VerificationRequestDetails currentDetails =
                 AuthUtils.getVerificationDetailsForContext(context.getId());
 
-        if (currentDetails == null || COMPARATOR.compare(details, currentDetails) == 0) {
+        if (currentDetails == null || COMPARATOR.compare(details, currentDetails) <= 0) {
             return;
         }
 
@@ -113,33 +114,56 @@ public class VerificationDetectionProcessor implements Runnable {
                 }
                 rule.getAlert(details).raise();
 
-                // Update the context
-                AuthenticationMethod authMethod = context.getAuthenticationMethod();
-                authMethod.setAuthCheckingStrategy(AuthCheckingStrategy.POLL_URL);
-                authMethod.setPollUrl(details.getMsg().getRequestHeader().getURI().toString());
-                authMethod.setLoggedInIndicatorPattern(loggedInIndicator);
-                authMethod.setLoggedOutIndicatorPattern(loggedOutIndicator);
-                authMethod.setPollData(details.getMsg().getRequestBody().toString());
-
-                String contentType =
-                        details.getMsg().getRequestHeader().getHeader(HttpHeader.CONTENT_TYPE);
-                if (contentType != null) {
-                    authMethod.setPollHeaders(HttpHeader.CONTENT_TYPE + ": " + contentType);
-                }
-                AuthUtils.setVerificationDetailsForContext(context.getId(), details);
-                Stats.incCounter("stats.auth.configure.verification");
+                updateContext(loggedInIndicator, loggedOutIndicator);
             }
         } catch (IOException e) {
             LOGGER.debug(e.getMessage(), e);
         }
     }
 
+    private synchronized void updateContext(String loggedInIndicator, String loggedOutIndicator) {
+        if (COMPARATOR.compare(details, AuthUtils.getVerificationDetailsForContext(context.getId()))
+                <= 0) {
+            // Double check another thread hasnt set a better one in the meantime
+            return;
+        }
+
+        // Update the context
+        AuthenticationMethod authMethod = context.getAuthenticationMethod();
+        authMethod.setAuthCheckingStrategy(AuthCheckingStrategy.POLL_URL);
+        authMethod.setPollUrl(details.getMsg().getRequestHeader().getURI().toString());
+        authMethod.setLoggedInIndicatorPattern(loggedInIndicator);
+        authMethod.setLoggedOutIndicatorPattern(loggedOutIndicator);
+        authMethod.setPollData(details.getMsg().getRequestBody().toString());
+
+        String contentType = details.getMsg().getRequestHeader().getHeader(HttpHeader.CONTENT_TYPE);
+        if (contentType != null) {
+            authMethod.setPollHeaders(HttpHeader.CONTENT_TYPE + ": " + contentType);
+        }
+        AuthUtils.setVerificationDetailsForContext(context.getId(), details);
+        Stats.incCounter("stats.auth.configure.verification");
+    }
+
     private VerificationRequestDetails repeatRequest(VerificationRequestDetails vrd, boolean auth)
             throws IOException {
-        HttpMessage msg = vrd.getMsg().cloneRequest();
-        if (!auth) {
-            msg.getRequestHeader().setHeader(HttpHeader.AUTHORIZATION, null);
-            msg.getRequestHeader().setHeader(HttpHeader.COOKIE, null);
+        HttpMessage msg;
+        if (auth) {
+            msg = vrd.getMsg().cloneRequest();
+        } else {
+            HttpRequestHeader origReqHeader = vrd.getMsg().getRequestHeader();
+            msg =
+                    new HttpMessage(
+                            new HttpRequestHeader(
+                                    origReqHeader.getMethod(),
+                                    origReqHeader.getURI(),
+                                    origReqHeader.getVersion()));
+            msg.getRequestHeader()
+                    .setHeader(
+                            HttpRequestHeader.CONTENT_TYPE,
+                            origReqHeader.getHeader(HttpRequestHeader.CONTENT_TYPE));
+
+            msg.getRequestBody().setBody(vrd.getMsg().getRequestBody().getBytes());
+            msg.getRequestHeader().setContentLength(msg.getRequestBody().length());
         }
         httpSender.sendAndReceive(msg);
         return new VerificationRequestDetails(msg, vrd.getToken(), context);

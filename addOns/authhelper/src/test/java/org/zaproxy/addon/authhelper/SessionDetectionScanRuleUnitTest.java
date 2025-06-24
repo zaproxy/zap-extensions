@@ -19,10 +19,11 @@
  */
 package org.zaproxy.addon.authhelper;
 
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
@@ -35,6 +36,8 @@ import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.quality.Strictness;
 import org.parosproxy.paros.Constant;
@@ -45,6 +48,7 @@ import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
@@ -102,6 +106,10 @@ class SessionDetectionScanRuleUnitTest extends PassiveScannerTest<SessionDetecti
         Session session = mock(Session.class);
         given(session.getContextsForUrl(anyString())).willReturn(Arrays.asList(context));
         given(model.getSession()).willReturn(session);
+
+        history = new ArrayList<>();
+        historyProvider = new TestHistoryProvider();
+        AuthUtils.setHistoryProvider(historyProvider);
 
         String body = "Response Body";
         String token = "12345678901234567890";
@@ -196,6 +204,9 @@ class SessionDetectionScanRuleUnitTest extends PassiveScannerTest<SessionDetecti
                 DiagnosticDataLoader.loadTestData(
                         this.getResourcePath("internal/bodgeit.diags").toFile());
 
+        history = new ArrayList<>();
+        historyProvider = new TestHistoryProvider();
+        AuthUtils.setHistoryProvider(historyProvider);
         // When
         msgs.forEach(
                 msg -> {
@@ -209,8 +220,8 @@ class SessionDetectionScanRuleUnitTest extends PassiveScannerTest<SessionDetecti
         assertThat(alertsRaised.size(), is(equalTo(1)));
         assertThat(alertsRaised.get(0).getUri(), is(equalTo("https://example0/login.jsp")));
         assertThat(alertsRaised.get(0).getMethod(), is(equalTo("GET")));
-        assertThat(alertsRaised.get(0).getEvidence(), is(equalTo("sanitizedtoken0")));
-        assertThat(alertsRaised.get(0).getOtherInfo(), is(equalTo("\ncookie:JSESSIONID")));
+        assertThat(alertsRaised.get(0).getEvidence(), is(equalTo("JSESSIONID")));
+        assertThat(alertsRaised.get(0).getOtherInfo(), is(equalTo("cookie:JSESSIONID")));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
     }
 
@@ -238,18 +249,18 @@ class SessionDetectionScanRuleUnitTest extends PassiveScannerTest<SessionDetecti
         assertThat(alertsRaised.size(), is(equalTo(3)));
         assertThat(alertsRaised.get(0).getUri(), is(equalTo("https://example0/login")));
         assertThat(alertsRaised.get(0).getMethod(), is(equalTo("GET")));
-        assertThat(alertsRaised.get(0).getEvidence(), is(equalTo("sanitizedtoken17")));
-        assertThat(alertsRaised.get(0).getOtherInfo(), is(equalTo("\ncookie:session")));
+        assertThat(alertsRaised.get(0).getEvidence(), is(equalTo("session")));
+        assertThat(alertsRaised.get(0).getOtherInfo(), is(equalTo("cookie:session")));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
         assertThat(alertsRaised.get(1).getUri(), is(equalTo("https://example0/dashboard")));
         assertThat(alertsRaised.get(1).getMethod(), is(equalTo("GET")));
-        assertThat(alertsRaised.get(1).getEvidence(), is(equalTo("sanitizedtoken25")));
-        assertThat(alertsRaised.get(1).getOtherInfo(), is(equalTo("\ncookie:session")));
+        assertThat(alertsRaised.get(1).getEvidence(), is(equalTo("session")));
+        assertThat(alertsRaised.get(1).getOtherInfo(), is(equalTo("cookie:session")));
         assertThat(alertsRaised.get(1).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
         assertThat(alertsRaised.get(2).getUri(), is(equalTo("https://example0/login")));
         assertThat(alertsRaised.get(2).getMethod(), is(equalTo("GET")));
-        assertThat(alertsRaised.get(2).getEvidence(), is(equalTo("sanitizedtoken25")));
-        assertThat(alertsRaised.get(2).getOtherInfo(), is(equalTo("\ncookie:session")));
+        assertThat(alertsRaised.get(2).getEvidence(), is(equalTo("session")));
+        assertThat(alertsRaised.get(2).getOtherInfo(), is(equalTo("cookie:session")));
         assertThat(alertsRaised.get(2).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
     }
 
@@ -276,8 +287,8 @@ class SessionDetectionScanRuleUnitTest extends PassiveScannerTest<SessionDetecti
         // Then
         assertThat(alertsRaised.size(), is(equalTo(1)));
         assertThat(alertsRaised.get(0).getUri(), is(equalTo("https://example0/auth")));
-        assertThat(alertsRaised.get(0).getEvidence(), is(equalTo("sanitizedtoken10")));
-        assertThat(alertsRaised.get(0).getOtherInfo(), is(equalTo("\ncookie:PHPSESSID")));
+        assertThat(alertsRaised.get(0).getEvidence(), is(equalTo("PHPSESSID")));
+        assertThat(alertsRaised.get(0).getOtherInfo(), is(equalTo("cookie:PHPSESSID")));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
     }
 
@@ -304,10 +315,10 @@ class SessionDetectionScanRuleUnitTest extends PassiveScannerTest<SessionDetecti
         // Then
         assertThat(alertsRaised.size(), is(equalTo(1)));
         assertThat(alertsRaised.get(0).getUri(), is(equalTo("https://example0/login")));
-        assertThat(alertsRaised.get(0).getEvidence(), is(equalTo("sanitizedtoken1")));
+        assertThat(alertsRaised.get(0).getEvidence(), is(equalTo("session")));
         assertThat(
                 alertsRaised.get(0).getOtherInfo(),
-                is(equalTo("\ncookie:session\ncookie:AWSALBCORS\ncookie:AWSALB")));
+                is(equalTo("cookie:session\ncookie:AWSALBCORS\ncookie:AWSALB")));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
     }
 
@@ -334,23 +345,130 @@ class SessionDetectionScanRuleUnitTest extends PassiveScannerTest<SessionDetecti
         // Then
         assertThat(alertsRaised.size(), is(equalTo(3)));
         assertThat(alertsRaised.get(0).getUri(), is(equalTo("https://example0/sign_in")));
-        assertThat(alertsRaised.get(0).getEvidence(), is(equalTo("sanitizedtoken0")));
-        assertThat(alertsRaised.get(0).getOtherInfo(), is(equalTo("\ncookie:_mastodon_session")));
+        assertThat(alertsRaised.get(0).getEvidence(), is(equalTo("_mastodon_session")));
+        assertThat(alertsRaised.get(0).getOtherInfo(), is(equalTo("cookie:_mastodon_session")));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
 
         assertThat(alertsRaised.get(1).getUri(), is(equalTo("https://example0/")));
-        assertThat(alertsRaised.get(1).getEvidence(), is(equalTo("sanitizedtoken5")));
+        assertThat(alertsRaised.get(1).getEvidence(), is(equalTo("_session_id")));
         assertThat(
                 alertsRaised.get(1).getOtherInfo(),
-                is(equalTo("\ncookie:_session_id\ncookie:_mastodon_session")));
+                is(equalTo("cookie:_session_id\ncookie:_mastodon_session")));
         assertThat(alertsRaised.get(1).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
 
         assertThat(alertsRaised.get(2).getUri(), is(equalTo("https://example0/")));
-        assertThat(alertsRaised.get(2).getEvidence(), is(equalTo("sanitizedtoken4747")));
+        assertThat(alertsRaised.get(2).getEvidence(), is(equalTo("_session_id")));
         assertThat(
                 alertsRaised.get(2).getOtherInfo(),
-                is(equalTo("\ncookie:_session_id\ncookie:_mastodon_session")));
+                is(equalTo("cookie:_session_id\ncookie:_mastodon_session")));
         assertThat(alertsRaised.get(2).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+    }
+
+    @Test
+    void shouldFindTokenWhenOneIsPreviouslyUnknown() throws Exception {
+        // Given
+        Constant.messages = mock(I18N.class);
+        model = mock(Model.class);
+        extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
+
+        history = new ArrayList<>();
+        historyProvider = new TestHistoryProvider();
+        AuthUtils.setHistoryProvider(historyProvider);
+
+        Control.initSingletonForTesting(model, extensionLoader);
+        Model.setSingletonForTesting(model);
+
+        Session session = mock(Session.class);
+        given(session.getContextsForUrl(anyString())).willReturn(Arrays.asList());
+        given(model.getSession()).willReturn(session);
+
+        String cookie = "67890123456789012345";
+        String jwtValue = "bearer 677890123456789012345-677890123456789012345";
+        String jwt = "{\"jwt\":\"%s\"}".formatted(jwtValue);
+        HttpMessage msg =
+                new HttpMessage(
+                        new HttpRequestHeader(
+                                """
+                                POST / HTTP/1.1\r
+                                Header1: Value1\r
+                                Header2: Value2\r
+                                cookie: jsessionid=%s\r
+                                Host: example.com\r\n\r\n"""),
+                        new HttpRequestBody(
+                                "{\"username\":\"FakeUserName@example.com\",\"password\":\"F4keP4ssw0rd\"}"),
+                        new HttpResponseHeader(
+                                "HTTP/1.1 200 OK\r\ncontent-type: application/json\r\n"),
+                        new HttpResponseBody(jwt));
+
+        HttpMessage msg2 =
+                new HttpMessage(
+                        new HttpRequestHeader(
+                                """
+                                GET /home HTTP/1.1\r
+                                Header1: Value1\r
+                                Header2: Value2\r
+                                cookie: jsessionid=%s\r
+                                x-auth-token: %s\r
+                                Host: example.com\r\n\r\n"""
+                                        .formatted(cookie, jwtValue)),
+                        new HttpRequestBody(""),
+                        new HttpResponseHeader("HTTP/1.1 200 OK\r\n"),
+                        new HttpResponseBody("<html></html>"));
+
+        List<HttpMessage> msgs = List.of(msg, msg2);
+        historyProvider.addAuthMessageToHistory(msg);
+        historyProvider.addAuthMessageToHistory(msg2);
+        AuthUtils.recordSessionToken(
+                new SessionToken(SessionToken.COOKIE_SOURCE, "jsessionid", cookie));
+        SessionDetectionScanRule rule = this.createScanner();
+
+        // When
+        msgs.forEach(
+                m -> {
+                    PassiveScanData helper = new PassiveScanData(m);
+                    rule.setHelper(helper);
+                    rule.setPassiveScanActions(actions);
+                    rule.scanHttpResponseReceive(m, 1, null);
+                });
+
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+        Alert expected = alertsRaised.get(0);
+        assertThat(expected.getParam(), is(equalTo("jwt")));
+        assertThat(expected.getOtherInfo(), is(equalTo("json:jwt")));
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "Blah",
+                "text/css",
+                "text/javascript",
+                "image/png",
+                "image/svg+xml",
+                "font/ttf"
+            })
+    void shouldIgnoreUnknownOrUnwantedContentTypes(String contentType)
+            throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET https://www.example.com/login/ HTTP/1.1");
+        msg.getRequestHeader().setHeader(HttpHeader.CONTENT_TYPE, contentType);
+        msg.getRequestHeader().setHeader(HttpHeader.REFERER, "https://www.example.com/");
+        msg.setResponseBody("<html></html>");
+        msg.setResponseHeader(
+                """
+                HTTP/1.1 200 OK\r
+                Server: Apache-Coyote/1.1\r
+                Content-Type: text/html;charset=ISO-8859-1\r
+                Content-Length: %s\r\n\r
+                """
+                        .formatted(msg.getResponseBody().length()));
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised, hasSize(0));
     }
 
     class TestHistoryProvider extends HistoryProvider {
@@ -358,7 +476,8 @@ class SessionDetectionScanRuleUnitTest extends PassiveScannerTest<SessionDetecti
         public void addAuthMessageToHistory(HttpMessage msg) {
             history.add(msg);
             int id = history.size() - 1;
-            HistoryReference href = mock(HistoryReference.class);
+            HistoryReference href =
+                    mock(HistoryReference.class, withSettings().strictness(Strictness.LENIENT));
             given(href.getHistoryId()).willReturn(id);
             msg.setHistoryRef(href);
         }

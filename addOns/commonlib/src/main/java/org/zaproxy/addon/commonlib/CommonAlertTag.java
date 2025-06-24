@@ -387,7 +387,23 @@ public enum CommonAlertTag {
      *
      * @since 1.22.0
      */
-    TEST_TIMING("TEST_TIMING", "");
+    TEST_TIMING("TEST_TIMING", ""),
+
+    /**
+     * Indicates that the scan rule has been mapped to the PCI DSS standard.
+     *
+     * @since 1.34.0
+     */
+    PCI_DSS("PCI_DSS", "https://www.pcisecuritystandards.org/standards/pci-dss/"),
+
+    /**
+     * Indicates that the scan rule has been mapped to the HIPAA standard.
+     *
+     * @since 1.34.0
+     */
+    HIPAA(
+            "HIPAA",
+            "https://www.hhs.gov/hipaa/for-professionals/privacy/laws-regulations/index.html");
 
     private String tag;
     private String value;

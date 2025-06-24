@@ -22,12 +22,15 @@ package org.zaproxy.addon.authhelper;
 import java.util.List;
 import java.util.Set;
 import net.htmlparser.jericho.Source;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.authhelper.VerificationRequestDetails.VerificationComparator;
+import org.zaproxy.addon.commonlib.AuthConstants;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.model.Context;
 
@@ -53,7 +56,12 @@ public class VerificationDetectionScanRule extends PluginPassiveScanner {
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 
-        if (!AuthUtils.isRelevantToAuth(msg)) {
+        if (!AuthUtils.isRelevantToAuth(msg) || isPoorCandidate(msg)) {
+            return;
+        }
+        if (!HttpRequestHeader.GET.equals(msg.getRequestHeader().getMethod())
+                && !HttpRequestHeader.POST.equals(msg.getRequestHeader().getMethod())) {
+            // These are the only 2 methods currently supported
             return;
         }
 
@@ -85,6 +93,12 @@ public class VerificationDetectionScanRule extends PluginPassiveScanner {
                 }
             }
         }
+    }
+
+    private static boolean isPoorCandidate(HttpMessage msg) {
+        String escapedPathQuery = msg.getRequestHeader().getURI().getEscapedPathQuery();
+        return AuthConstants.getAuthRelatedIndicators().stream()
+                .anyMatch(keyword -> StringUtils.containsIgnoreCase(escapedPathQuery, keyword));
     }
 
     protected AlertBuilder getAlert(VerificationRequestDetails verifDetails) {

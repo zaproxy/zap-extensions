@@ -21,9 +21,11 @@ package org.zaproxy.zap.extension.spiderAjax.internal;
 
 import java.util.List;
 import java.util.Objects;
+import lombok.ToString;
 import org.zaproxy.zap.utils.EnableableInterface;
 
 /** A (clickable) element excluded from crawling. */
+@ToString
 public class ExcludedElement implements EnableableInterface {
 
     /**

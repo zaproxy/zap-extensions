@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<OWASPZAPReport programName="ZAP" version="Dev Build" generated="Thu, 20 Oct 2022 17:11:39">
+<OWASPZAPReport programName="ZAP" version="Dev Build" generated="Thu, 5 Jun 2025 16:15:14">
 	
 		<site name="http://example.com" host="example.com" port="80" ssl="false">
 			<alerts>
@@ -36,7 +36,8 @@ cache-control: no-cache
 </responseheader>
 									<responsebody>Test Response Body</responsebody>
 								</instance>
-								
+							
+							
 								<instance>
 									<uri>http://example.com/example_3</uri>
 									<method>GET</method>
@@ -77,6 +78,16 @@ cache-control: no-cache
 					</alertitem>
 				
 			</alerts>
+			
+				<statistics>
+					
+				</statistics>
+			
 		</site>
+	
+	
+		<statistics>
+			
+		</statistics>
 	
 </OWASPZAPReport>

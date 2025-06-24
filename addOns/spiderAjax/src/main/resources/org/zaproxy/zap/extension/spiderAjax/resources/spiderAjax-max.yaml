@@ -18,6 +18,8 @@
       reloadWait:                      # Int: The time in milliseconds to wait after the URL is loaded, default: 1000
       elements:                        # A list of HTML elements to click - will be ignored unless clickDefaultElems is false
       excludedElements:                # A list of HTML elements to exclude from click.
+      scopeCheck:                      # String: How the scope is checked, either 'Strict' or 'Flexible', default: 'Strict'
+      logoutAvoidance:                 # Bool: When enabled, the spider will avoid clicking common logout elements, default: false
       
     tests:
       - name: 'At least X URLs found'        # String: Name of the test, default: statistic + operator + value

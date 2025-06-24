@@ -61,6 +61,8 @@ public class ClientSpiderApi extends ApiImplementor {
     private static final String PARAM_SUBTREE_ONLY = "subtreeOnly";
     private static final String PARAM_URL = "url";
     private static final String PARAM_USER_NAME = "userName";
+    private static final String PARAM_MAX_CRAWL_DEPTH = "maxCrawlDepth";
+    private static final String PARAM_PAGE_LOAD_TIME = "pageLoadTime";
 
     private final ExtensionClientIntegration extension;
 
@@ -80,7 +82,9 @@ public class ClientSpiderApi extends ApiImplementor {
                                 PARAM_URL,
                                 PARAM_CONTEXT_NAME,
                                 PARAM_USER_NAME,
-                                PARAM_SUBTREE_ONLY)));
+                                PARAM_SUBTREE_ONLY,
+                                PARAM_MAX_CRAWL_DEPTH,
+                                PARAM_PAGE_LOAD_TIME)));
 
         addApiAction(new ApiAction(ACTION_STOP_SCAN, List.of(PARAM_SCAN_ID)));
 
@@ -141,6 +145,13 @@ public class ClientSpiderApi extends ApiImplementor {
 
         ClientOptions options = extension.getClientParam().clone();
         options.setBrowserId(getBrowser(params));
+
+        if (params.containsKey(PARAM_MAX_CRAWL_DEPTH)) {
+            options.setMaxDepth(ApiUtils.getIntParam(params, PARAM_MAX_CRAWL_DEPTH));
+        }
+        if (params.containsKey(PARAM_PAGE_LOAD_TIME)) {
+            options.setPageLoadTimeInSecs(ApiUtils.getIntParam(params, PARAM_PAGE_LOAD_TIME));
+        }
 
         User user = getUser(params, context);
 
@@ -244,7 +255,7 @@ public class ClientSpiderApi extends ApiImplementor {
         switch (name) {
             case VIEW_STATUS:
                 ClientSpider scan = getClientSpider(params);
-                int progress = scan.isStopped() ? 100 : scan.getProgress();
+                int progress = scan.isStopped() ? 100 : Math.min(scan.getProgress(), 99);
                 return new ApiResponseElement(name, Integer.toString(progress));
 
             default:

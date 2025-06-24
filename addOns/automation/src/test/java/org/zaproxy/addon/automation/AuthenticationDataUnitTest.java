@@ -20,10 +20,17 @@
 package org.zaproxy.addon.automation;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.sameInstance;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
@@ -31,13 +38,15 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Locale;
 import java.util.Map;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.extension.ExtensionLoader;
+import org.parosproxy.paros.model.Model;
 import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.zap.authentication.AuthenticationMethod;
 import org.zaproxy.zap.authentication.FormBasedAuthenticationMethodType;
@@ -46,12 +55,17 @@ import org.zaproxy.zap.authentication.HttpAuthenticationMethodType.HttpAuthentic
 import org.zaproxy.zap.authentication.JsonBasedAuthenticationMethodType;
 import org.zaproxy.zap.authentication.JsonBasedAuthenticationMethodType.JsonBasedAuthenticationMethod;
 import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType;
+import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType.AuthenticationScriptV2;
 import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType.ScriptBasedAuthenticationMethod;
+import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
+import org.zaproxy.zap.extension.script.ExtensionScript;
+import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
+import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.model.Context;
-import org.zaproxy.zap.utils.I18N;
+import org.zaproxy.zap.testutils.TestUtils;
 
-class AuthenticationDataUnitTest {
+class AuthenticationDataUnitTest extends TestUtils {
 
     private static final String TEST_URL_1 = "https://www.example.com/login1";
     private static final String TEST_URL_2 = "https://www.example.com/login2";
@@ -59,10 +73,21 @@ class AuthenticationDataUnitTest {
     private static final String TEST_JSON_DATA =
             "{\"email\":\"{%username%}\",\"password\":\"{%password%}\"}";
 
+    private static ExtensionLoader extensionLoader;
+
+    @BeforeEach
+    void setupEach() throws Exception {
+        setUpZap();
+
+        extensionLoader = mock(ExtensionLoader.class);
+        Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
+
+        mockMessages(new ExtensionAutomation());
+    }
+
     @Test
     void shouldCreateDataFromContextWithNoAuth() {
         // Given
-        Constant.messages = new I18N(Locale.ENGLISH);
         Context context = mock(Context.class);
 
         // When
@@ -82,7 +107,6 @@ class AuthenticationDataUnitTest {
         httpAuthMethod.setHostname("https://www.example.com");
         httpAuthMethod.setRealm("realm");
         httpAuthMethod.setPort(123);
-        Constant.messages = new I18N(Locale.ENGLISH);
         Context context = mock(Context.class);
         given(context.getAuthenticationMethod()).willReturn(httpAuthMethod);
 
@@ -114,7 +138,6 @@ class AuthenticationDataUnitTest {
         JobUtils.setPrivateField(
                 formAuthMethod, AuthenticationData.PARAM_LOGIN_REQUEST_BODY, TEST_FORM_DATA);
 
-        Constant.messages = new I18N(Locale.ENGLISH);
         Context context = mock(Context.class);
         given(context.getAuthenticationMethod()).willReturn(formAuthMethod);
 
@@ -146,7 +169,6 @@ class AuthenticationDataUnitTest {
         JobUtils.setPrivateField(
                 jsonAuthMethod, AuthenticationData.PARAM_LOGIN_REQUEST_BODY, TEST_FORM_DATA);
 
-        Constant.messages = new I18N(Locale.ENGLISH);
         Context context = mock(Context.class);
         given(context.getAuthenticationMethod()).willReturn(jsonAuthMethod);
 
@@ -168,7 +190,6 @@ class AuthenticationDataUnitTest {
     @Test
     void shouldCreateDataFromContextWithScriptAuth() throws IOException {
         // Given
-        Constant.messages = new I18N(Locale.ENGLISH);
         ScriptBasedAuthenticationMethodType scriptType = new ScriptBasedAuthenticationMethodType();
         ScriptBasedAuthenticationMethod scriptAuthMethod =
                 scriptType.createAuthenticationMethod(-1);
@@ -176,6 +197,8 @@ class AuthenticationDataUnitTest {
         ScriptWrapper scriptWrapper = mock(ScriptWrapper.class);
         File scriptFile = File.createTempFile("scriptAuthTest", ".js");
         given(scriptWrapper.getFile()).willReturn(scriptFile);
+        String engineName = "Engine Name";
+        given(scriptWrapper.getEngineName()).willReturn(engineName);
 
         Map<String, String> paramValues = new HashMap<>();
         paramValues.put("field1", "value1");
@@ -189,12 +212,53 @@ class AuthenticationDataUnitTest {
 
         // When
         AuthenticationData data = new AuthenticationData(context);
-        Map<String, Object> params = data.getParameters();
 
         // Then
         assertThat(data.getVerification(), is(notNullValue()));
         assertThat(data.getMethod(), is(equalTo("script")));
-        // The script should be returned as well but mocking everything required is hard :/
+        Map<String, Object> params = data.getParameters();
+        assertThat(
+                params.get(AuthenticationData.PARAM_SCRIPT).toString(),
+                allOf(containsString("scriptAuthTest"), endsWith(".js")));
+        assertThat(params.get(AuthenticationData.PARAM_SCRIPT_INLINE), is(nullValue()));
+        assertThat(params.get(AuthenticationData.PARAM_SCRIPT_ENGINE), is(equalTo(engineName)));
+        assertThat(params.get("field1"), is(equalTo("value1")));
+        assertThat(params.get("field2"), is(equalTo("value2")));
+    }
+
+    @Test
+    void shouldCreateDataFromContextWithScriptAuthUnsavedFile() throws IOException {
+        // Given
+        ScriptBasedAuthenticationMethodType scriptType = new ScriptBasedAuthenticationMethodType();
+        ScriptBasedAuthenticationMethod scriptAuthMethod =
+                scriptType.createAuthenticationMethod(-1);
+
+        ScriptWrapper scriptWrapper = mock(ScriptWrapper.class);
+        String scriptContent = "Script Content";
+        given(scriptWrapper.getContents()).willReturn(scriptContent);
+        String engineName = "Engine Name";
+        given(scriptWrapper.getEngineName()).willReturn(engineName);
+
+        Map<String, String> paramValues = new HashMap<>();
+        paramValues.put("field1", "value1");
+        paramValues.put("field2", "value2");
+
+        JobUtils.setPrivateField(scriptAuthMethod, "script", scriptWrapper);
+        JobUtils.setPrivateField(scriptAuthMethod, "paramValues", paramValues);
+
+        Context context = mock(Context.class);
+        given(context.getAuthenticationMethod()).willReturn(scriptAuthMethod);
+
+        // When
+        AuthenticationData data = new AuthenticationData(context);
+
+        // Then
+        assertThat(data.getVerification(), is(notNullValue()));
+        assertThat(data.getMethod(), is(equalTo("script")));
+        Map<String, Object> params = data.getParameters();
+        assertThat(params.get(AuthenticationData.PARAM_SCRIPT), is(nullValue()));
+        assertThat(params.get(AuthenticationData.PARAM_SCRIPT_INLINE), is(equalTo(scriptContent)));
+        assertThat(params.get(AuthenticationData.PARAM_SCRIPT_ENGINE), is(equalTo(engineName)));
         assertThat(params.get("field1"), is(equalTo("value1")));
         assertThat(params.get("field2"), is(equalTo("value2")));
     }
@@ -203,7 +267,6 @@ class AuthenticationDataUnitTest {
     @CsvSource({"realm,realm", ",''", "'',''"})
     void shouldInitContextWithHttpAuth(String realm, String expectedRealm) {
         // Given
-        Constant.messages = new I18N(Locale.ENGLISH);
         Context context = new Context(null, -1);
 
         AuthenticationData data = new AuthenticationData();
@@ -236,7 +299,6 @@ class AuthenticationDataUnitTest {
     @Test
     void shouldInitContextWithFormAuth() {
         // Given
-        Constant.messages = new I18N(Locale.ENGLISH);
         Context context = new Context(null, -1);
 
         AuthenticationData data = new AuthenticationData();
@@ -268,7 +330,6 @@ class AuthenticationDataUnitTest {
     @Test
     void shouldInitContextWithJsonAuth() {
         // Given
-        Constant.messages = new I18N(Locale.ENGLISH);
         Context context = new Context(null, -1);
 
         AuthenticationData data = new AuthenticationData();
@@ -298,6 +359,100 @@ class AuthenticationDataUnitTest {
     }
 
     @Test
+    void shouldInitContextWithScriptAuthWithInlinedContent() throws Exception {
+        // Given
+        Context context = new Context(null, -1);
+        ExtensionScript extensionScript = mock(ExtensionScript.class);
+        given(extensionLoader.getExtension(ExtensionScript.class)).willReturn(extensionScript);
+        given(extensionLoader.getExtension(ExtensionAuthentication.class))
+                .willReturn(mock(ExtensionAuthentication.class));
+
+        ScriptWrapper sw = mock(ScriptWrapper.class);
+        given(sw.getName()).willReturn("ScriptName");
+        ScriptNode node = mock(ScriptNode.class);
+        given(node.getUserObject()).willReturn(sw);
+        given(extensionScript.addScript(any(), eq(false))).willReturn(node);
+        ScriptEngineWrapper scriptEngine = mock(ScriptEngineWrapper.class);
+        String scriptEngineName = "EngineName";
+        given(extensionScript.getEngineWrapper(scriptEngineName)).willReturn(scriptEngine);
+        AuthenticationScriptV2 authScript = mock(AuthenticationScriptV2.class);
+        given(authScript.getRequiredParamsNames()).willReturn(new String[0]);
+        given(authScript.getOptionalParamsNames()).willReturn(new String[0]);
+        given(extensionScript.getInterface(sw, AuthenticationScriptV2.class))
+                .willReturn(authScript);
+
+        AuthenticationData data = new AuthenticationData();
+        data.setMethod("script");
+        data.getParameters().put(AuthenticationData.PARAM_SCRIPT_INLINE, "Script Content");
+        data.getParameters().put(AuthenticationData.PARAM_SCRIPT_ENGINE, scriptEngineName);
+
+        AutomationProgress progress = new AutomationProgress();
+        AutomationEnvironment env = new AutomationEnvironment(progress);
+
+        // When
+        data.initContextAuthentication(context, progress, env);
+
+        // Then
+        AuthenticationMethod authMethod = context.getAuthenticationMethod();
+        assertThat(authMethod, is(notNullValue()));
+        assertThat(authMethod.getClass(), is(equalTo(ScriptBasedAuthenticationMethod.class)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(
+                JobUtils.getPrivateField(authMethod, AuthenticationData.PARAM_SCRIPT),
+                is(sameInstance(sw)));
+    }
+
+    @Test
+    void shouldInitContextWithScriptAuthAndWarnOnScriptAndScriptInline() throws Exception {
+        // Given
+        Context context = new Context(null, -1);
+        ExtensionScript extensionScript = mock(ExtensionScript.class);
+        given(extensionLoader.getExtension(ExtensionScript.class)).willReturn(extensionScript);
+        given(extensionLoader.getExtension(ExtensionAuthentication.class))
+                .willReturn(mock(ExtensionAuthentication.class));
+
+        ScriptWrapper sw = mock(ScriptWrapper.class);
+        given(sw.getName()).willReturn("ScriptName");
+        ScriptNode node = mock(ScriptNode.class);
+        given(node.getUserObject()).willReturn(sw);
+        given(extensionScript.addScript(any(), eq(false))).willReturn(node);
+        ScriptEngineWrapper scriptEngine = mock(ScriptEngineWrapper.class);
+        String scriptEngineName = "EngineName";
+        given(extensionScript.getEngineWrapper(scriptEngineName)).willReturn(scriptEngine);
+        AuthenticationScriptV2 authScript = mock(AuthenticationScriptV2.class);
+        given(authScript.getRequiredParamsNames()).willReturn(new String[0]);
+        given(authScript.getOptionalParamsNames()).willReturn(new String[0]);
+        given(extensionScript.getInterface(sw, AuthenticationScriptV2.class))
+                .willReturn(authScript);
+
+        AuthenticationData data = new AuthenticationData();
+        data.setMethod("script");
+        data.getParameters().put(AuthenticationData.PARAM_SCRIPT, "/path/to/some-file");
+        data.getParameters().put(AuthenticationData.PARAM_SCRIPT_INLINE, "Script Content");
+        data.getParameters().put(AuthenticationData.PARAM_SCRIPT_ENGINE, scriptEngineName);
+
+        AutomationProgress progress = new AutomationProgress();
+        AutomationEnvironment env = new AutomationEnvironment(progress);
+
+        // When
+        data.initContextAuthentication(context, progress, env);
+
+        // Then
+        AuthenticationMethod authMethod = context.getAuthenticationMethod();
+        assertThat(authMethod, is(notNullValue()));
+        assertThat(authMethod.getClass(), is(equalTo(ScriptBasedAuthenticationMethod.class)));
+        assertThat(
+                JobUtils.getPrivateField(authMethod, AuthenticationData.PARAM_SCRIPT),
+                is(sameInstance(sw)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(
+                progress.getWarnings(),
+                contains(
+                        "Only one of 'scriptInline' or 'script' should be specified, not both. Using 'scriptInline' value."));
+    }
+
+    @Test
     void shouldFailOnInvalidAuthData() {
         // Given
         AutomationProgress progress = new AutomationProgress();
@@ -308,13 +463,12 @@ class AuthenticationDataUnitTest {
         // Then
         assertThat(progress.hasErrors(), is(true));
         assertThat(progress.getErrors().size(), is(1));
-        assertThat(progress.getErrors().get(0), is("!automation.error.env.badauth!"));
+        assertThat(progress.getErrors().get(0), is("Invalid authentication in context: bad data"));
     }
 
     @Test
     void shouldFailOnInvalidAuthMethod() {
         // Given
-        Constant.messages = new I18N(Locale.ENGLISH);
         AutomationProgress progress = new AutomationProgress();
         LinkedHashMap<String, Object> data = new LinkedHashMap<>();
         data.put("method", "badmethod");
@@ -325,7 +479,9 @@ class AuthenticationDataUnitTest {
         // Then
         assertThat(progress.hasErrors(), is(true));
         assertThat(progress.getErrors().size(), is(1));
-        assertThat(progress.getErrors().get(0), is("!automation.error.env.auth.type.bad!"));
+        assertThat(
+                progress.getErrors().get(0),
+                is("Invalid authentication method: {method=badmethod}"));
     }
 
     @ParameterizedTest
@@ -339,7 +495,6 @@ class AuthenticationDataUnitTest {
             })
     void shouldFailOnBadStringParams(String param) {
         // Given
-        Constant.messages = new I18N(Locale.ENGLISH);
         AutomationProgress progress = new AutomationProgress();
         LinkedHashMap<String, Object> data = new LinkedHashMap<>();
         LinkedHashMap<String, Object> params = new LinkedHashMap<>();
@@ -352,13 +507,14 @@ class AuthenticationDataUnitTest {
         // Then
         assertThat(progress.hasErrors(), is(true));
         assertThat(progress.getErrors().size(), is(1));
-        assertThat(progress.getErrors().get(0), is("!automation.error.env.auth.field.bad!"));
+        assertThat(
+                progress.getErrors().get(0),
+                is("Invalid authentication %s: {parameters={%s={}}}".formatted(param, param)));
     }
 
     @Test
     void shouldFailOnBadPortParam() {
         // Given
-        Constant.messages = new I18N(Locale.ENGLISH);
         AutomationProgress progress = new AutomationProgress();
         LinkedHashMap<String, Object> data = new LinkedHashMap<>();
         LinkedHashMap<String, Object> params = new LinkedHashMap<>();
@@ -371,6 +527,8 @@ class AuthenticationDataUnitTest {
         // Then
         assertThat(progress.hasErrors(), is(true));
         assertThat(progress.getErrors().size(), is(1));
-        assertThat(progress.getErrors().get(0), is("!automation.error.env.auth.field.bad!"));
+        assertThat(
+                progress.getErrors().get(0),
+                is("Invalid authentication port: {parameters={port=not a num}}"));
     }
 }

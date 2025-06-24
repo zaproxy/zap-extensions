@@ -180,20 +180,20 @@ public class ExtensionReveal extends ExtensionAdaptor implements ProxyListener {
 
         List<Element> formElements = src.getAllElements(HTMLElementName.FORM);
 
-        if (formElements != null && formElements.size() > 0) {
+        if (!formElements.isEmpty()) {
             // Loop through all of the FORM tags
             LOGGER.debug("Found {} forms", formElements.size());
 
             for (Element formElement : formElements) {
                 List<Element> elements = formElement.getAllElements();
 
-                if (elements != null && elements.size() > 0) {
+                if (!elements.isEmpty()) {
                     // Loop through all of the elements
                     LOGGER.debug("Found {} inputs", elements.size());
                     for (Element element : elements) {
                         Attributes attrs = element.getAttributes();
 
-                        if (attrs != null && attrs.size() > 0) {
+                        if (attrs != null && !attrs.isEmpty()) {
                             Iterator<Attribute> iter = attrs.iterator();
                             while (iter.hasNext()) {
                                 Attribute att = iter.next();

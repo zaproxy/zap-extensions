@@ -26,12 +26,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -46,6 +48,7 @@ import net.htmlparser.jericho.Source;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
+import net.sf.json.util.JSONUtils;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang3.StringUtils;
@@ -55,6 +58,8 @@ import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.NoSuchShadowRootException;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
@@ -137,6 +142,10 @@ public class AuthUtils {
 
     private static final Logger LOGGER = LogManager.getLogger(AuthUtils.class);
 
+    private static final By ALL_SELECTOR = By.cssSelector("*");
+
+    private static final String INPUT_TAG = "input";
+
     private static final HttpRequestConfig REDIRECT_NOTIFIER_CONFIG =
             HttpRequestConfig.builder()
                     .setRedirectionValidator(
@@ -153,6 +162,7 @@ public class AuthUtils {
                                 }
                             })
                     .build();
+
     static final int MAX_UNAUTH_REDIRECTIONS = 50;
 
     private static AuthenticationBrowserHook browserHook;
@@ -320,11 +330,7 @@ public class AuthUtils {
     }
 
     private static String getAttribute(WebElement element, String name) {
-        String value = element.getDomAttribute(name);
-        if (value != null) {
-            return value;
-        }
-        return element.getDomProperty(name);
+        return element.getAttribute(name);
     }
 
     private static Stream<WebElement> displayed(List<WebElement> elements) {
@@ -523,7 +529,7 @@ public class AuthUtils {
                 break;
             }
 
-            List<WebElement> inputElements = wd.findElements(By.xpath("//input"));
+            List<WebElement> inputElements = getInputElements(wd, i > 2);
             pwdField = getPasswordField(inputElements);
             userField = getUserField(wd, inputElements, pwdField);
 
@@ -596,6 +602,32 @@ public class AuthUtils {
         }
         incStatsCounter(loginPageUrl, AUTH_BROWSER_FAILED_STATS);
         return false;
+    }
+
+    static List<WebElement> getInputElements(WebDriver wd, boolean includeShadow) {
+        List<WebElement> selectedElements = wd.findElements(By.cssSelector(INPUT_TAG));
+        if (!includeShadow && !selectedElements.isEmpty()) {
+            return selectedElements;
+        }
+
+        Set<WebElement> allSelectedElements = new LinkedHashSet<>(selectedElements);
+        addAllInputElements(wd.findElements(ALL_SELECTOR), allSelectedElements);
+        return new ArrayList<>(allSelectedElements);
+    }
+
+    private static void addAllInputElements(
+            List<WebElement> sourceElements, Set<WebElement> elements) {
+        for (WebElement element : sourceElements) {
+            try {
+                if (INPUT_TAG.equalsIgnoreCase(element.getTagName())) {
+                    elements.add(element);
+                }
+
+                addAllInputElements(element.getShadowRoot().findElements(ALL_SELECTOR), elements);
+            } catch (StaleElementReferenceException | NoSuchShadowRootException e) {
+                // Nothing to do.
+            }
+        }
     }
 
     public static void fillField(WebElement field, String value) {
@@ -761,7 +793,9 @@ public class AuthUtils {
         }
 
         String responseData = msg.getResponseBody().toString();
-        if (msg.getResponseHeader().isJson() && StringUtils.isNotBlank(responseData)) {
+        if (msg.getResponseHeader().isJson()
+                && StringUtils.isNotBlank(responseData)
+                && !extractJsonString(map, responseData)) {
             Map<String, SessionToken> tokens = new HashMap<>();
             try {
                 try {
@@ -798,10 +832,23 @@ public class AuthUtils {
         return map;
     }
 
+    private static boolean extractJsonString(Map<String, SessionToken> map, String response) {
+        if (response.startsWith("\"") && JSONUtils.isString(response)) {
+            String value = JSONUtils.stripQuotes(response);
+            if (value.isBlank()) {
+                return true;
+            }
+
+            addToMap(map, new SessionToken(SessionToken.JSON_SOURCE, "", value));
+            return true;
+        }
+        return false;
+    }
+
     public static List<Pair<String, String>> getHeaderTokens(
             HttpMessage msg, List<SessionToken> tokens, boolean incCookies) {
         List<Pair<String, String>> list = new ArrayList<>();
-        for (SessionToken token : tokens) {
+        for (SessionToken token : new TreeSet<>(tokens)) {
             for (HttpHeaderField header : msg.getRequestHeader().getHeaders()) {
                 if (HttpHeader.COOKIE.equalsIgnoreCase(header.getName())) {
                     // Handle cookies below so we can separate them out
@@ -844,7 +891,9 @@ public class AuthUtils {
     public static Map<String, SessionToken> getAllTokens(HttpMessage msg, boolean incReqCookies) {
         Map<String, SessionToken> tokens = new HashMap<>();
         String responseData = msg.getResponseBody().toString();
-        if (msg.getResponseHeader().isJson() && StringUtils.isNotBlank(responseData)) {
+        if (msg.getResponseHeader().isJson()
+                && StringUtils.isNotBlank(responseData)
+                && !extractJsonString(tokens, responseData)) {
             // Extract json response data
             try {
                 try {
@@ -909,8 +958,8 @@ public class AuthUtils {
     }
 
     /**
-     * Returns all of the identified session tokens in a request. This method looks for
-     * Authorization headers and cookies with a value over a minimum length.
+     * Returns all of the identified session tokens in a request. This method looks for any headers
+     * with "auth" in their names and cookies with a value over a minimum length.
      *
      * @param msg the message containing the request to check
      * @return all of the identified session tokens in the request.
@@ -919,18 +968,27 @@ public class AuthUtils {
         return getRequestSessionTokens(msg, List.of());
     }
 
+    private static boolean isAuthHeader(String name) {
+        return name.toLowerCase(Locale.ROOT).contains("auth");
+    }
+
     public static Set<SessionToken> getRequestSessionTokens(
             HttpMessage msg, List<Pair<String, String>> headerConfigs) {
         Set<SessionToken> map = new HashSet<>();
-        List<String> authHeaders = msg.getRequestHeader().getHeaderValues(HttpHeader.AUTHORIZATION);
-        for (String header : authHeaders) {
-            map.add(new SessionToken(SessionToken.HEADER_SOURCE, HttpHeader.AUTHORIZATION, header));
-        }
+        msg.getRequestHeader().getHeaders().stream()
+                .filter(h -> isAuthHeader(h.getName()))
+                .forEach(
+                        h ->
+                                map.add(
+                                        new SessionToken(
+                                                SessionToken.HEADER_SOURCE,
+                                                h.getName(),
+                                                h.getValue())));
+
         if (headerConfigs != null) {
             for (Pair<String, String> entry : headerConfigs) {
                 String name = entry.first;
-                if (HttpHeader.AUTHORIZATION.equalsIgnoreCase(name)
-                        || HttpHeader.COOKIE.equalsIgnoreCase(name)) {
+                if (isAuthHeader(name) || HttpHeader.COOKIE.equalsIgnoreCase(name)) {
                     continue;
                 }
 

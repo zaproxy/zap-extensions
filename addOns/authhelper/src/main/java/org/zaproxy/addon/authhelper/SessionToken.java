@@ -20,9 +20,10 @@
 package org.zaproxy.addon.authhelper;
 
 import java.util.Locale;
+import java.util.Objects;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 
-public class SessionToken {
+public class SessionToken implements Comparable<SessionToken> {
 
     public static final String COOKIE_SOURCE = "cookie";
     public static final String ENV_SOURCE = "env";
@@ -71,5 +72,54 @@ public class SessionToken {
 
     public String getToken() {
         return source + ":" + key;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(key, source, value);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        SessionToken other = (SessionToken) obj;
+        return Objects.equals(key, other.key)
+                && Objects.equals(source, other.source)
+                && Objects.equals(value, other.value);
+    }
+
+    @Override
+    public int compareTo(SessionToken o) {
+        int result = compareStrings(source, o.source);
+        if (result != 0) {
+            return result;
+        }
+
+        result = compareStrings(key, o.key);
+        if (result != 0) {
+            return result;
+        }
+
+        return compareStrings(value, value);
+    }
+
+    private static int compareStrings(String string, String otherString) {
+        if (string == null) {
+            if (otherString == null) {
+                return 0;
+            }
+            return -1;
+        } else if (otherString == null) {
+            return 1;
+        }
+        return string.compareTo(otherString);
     }
 }

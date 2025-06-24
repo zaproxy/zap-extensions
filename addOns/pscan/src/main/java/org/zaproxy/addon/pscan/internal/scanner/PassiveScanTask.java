@@ -222,6 +222,8 @@ public class PassiveScanTask implements Runnable {
                     // Ignore
                 }
             }
+        } catch (Throwable e) {
+            LOGGER.error("An error occurred while scanning the record {}", href.getHistoryId(), e);
         } finally {
             completed = true;
             stopTime = System.currentTimeMillis();

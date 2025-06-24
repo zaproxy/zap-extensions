@@ -36,6 +36,7 @@ env:                                   # The environment, mandatory
           loginRequestUrl:             # String, the login URL to request, only for 'form' or 'json' authentication
           loginRequestBody:            # String, the login request body - if not supplied a GET request will be used, only for 'form' or 'json' authentication
           script:                      # String, path to script, only for 'script' authentication
+          scriptInline:                # String, the full script (may be multi-line) - supply this or 'script' not both. Only for 'script' authentication
           scriptEngine:                # String, the name of the script engine to use, only for 'script' authentication
         verification:
           method:                      # String, one of 'response', 'request', 'both', 'poll'

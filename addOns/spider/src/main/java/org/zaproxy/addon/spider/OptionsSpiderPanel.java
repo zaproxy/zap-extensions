@@ -81,6 +81,7 @@ public class OptionsSpiderPanel extends AbstractParamPanel {
     private JCheckBox handleODataSpecificParameters;
     private JCheckBox chkSendRefererHeader;
     private JCheckBox chkAcceptCookies;
+    private JCheckBox chkLogoutAvoidance;
     private DomainsAlwaysInScopeMultipleOptionsPanel domainsAlwaysInScopePanel;
     private DomainsAlwaysInScopeTableModel domainsAlwaysInScopeTableModel;
     private IrrelevantParametersMultipleOptionsPanel irrelevantQueryParametersPanel;
@@ -186,6 +187,7 @@ public class OptionsSpiderPanel extends AbstractParamPanel {
             innerPanel.add(getChkParseGit(), gbc);
             innerPanel.add(getChkParseDsStore(), gbc);
             innerPanel.add(getHandleODataSpecificParameters(), gbc);
+            innerPanel.add(getChkLogoutAvoidance(), gbc);
 
             innerPanel.add(
                     new JLabel(
@@ -232,6 +234,7 @@ public class OptionsSpiderPanel extends AbstractParamPanel {
         getChkParseDsStore().setSelected(param.isParseDsStore());
         getComboHandleParameters().setSelectedItem(param.getHandleParameters());
         getHandleODataSpecificParameters().setSelected(param.isHandleODataParametersVisited());
+        getChkLogoutAvoidance().setSelected(param.isLogoutAvoidance());
         getIrrelevantQueryParametersPanel()
                 .setIrrelevantParameters(param.getIrrelevantParameters());
         getIrrelevantQueryParametersPanel()
@@ -264,6 +267,7 @@ public class OptionsSpiderPanel extends AbstractParamPanel {
         param.setHandleParameters(
                 (HandleParametersOption) getComboHandleParameters().getSelectedItem());
         param.setHandleODataParametersVisited(getHandleODataSpecificParameters().isSelected());
+        param.setLogoutAvoidance(getChkLogoutAvoidance().isSelected());
         param.setIrrelevantParameters(
                 getIrrelevantQueryParametersPanel().getIrrelevantParameters());
         param.setConfirmRemoveIrrelevantParameter(
@@ -342,6 +346,15 @@ public class OptionsSpiderPanel extends AbstractParamPanel {
                             Constant.messages.getString("spider.options.label.acceptcookies"));
         }
         return chkAcceptCookies;
+    }
+
+    private JCheckBox getChkLogoutAvoidance() {
+        if (chkLogoutAvoidance == null) {
+            chkLogoutAvoidance =
+                    new JCheckBox(
+                            Constant.messages.getString("spider.options.label.logoutavoidance"));
+        }
+        return chkLogoutAvoidance;
     }
 
     /**

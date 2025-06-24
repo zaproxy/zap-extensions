@@ -71,6 +71,7 @@ public class SpiderJobDialog extends StandardFieldsDialog {
     private static final String SEND_REFERER_PARAM = "spider.automation.dialog.sendreferer";
     private static final String THREAD_COUNT_PARAM = "spider.automation.dialog.threadcount";
     private static final String USER_AGENT_PARAM = "spider.automation.dialog.useragent";
+    private static final String LOGOUT_AVOIDANCE_PARAM = "spider.automation.dialog.logoutAvoidance";
 
     private SpiderJob job;
     private DefaultComboBoxModel<SpiderParam.HandleParametersOption> handleParamsModel;
@@ -212,6 +213,10 @@ public class SpiderJobDialog extends StandardFieldsDialog {
                 2,
                 SEND_REFERER_PARAM,
                 JobUtils.unBox(this.job.getParameters().getSendRefererHeader()));
+        this.addCheckBoxField(
+                2,
+                LOGOUT_AVOIDANCE_PARAM,
+                JobUtils.unBox(this.job.getParameters().getLogoutAvoidance()));
         this.addTextField(2, USER_AGENT_PARAM, this.job.getParameters().getUserAgent());
 
         this.addPadding(2);
@@ -272,6 +277,7 @@ public class SpiderJobDialog extends StandardFieldsDialog {
             this.job.getParameters().setProcessForm(this.getBoolValue(PROCESS_FORM_PARAM));
             this.job.getParameters().setSendRefererHeader(this.getBoolValue(SEND_REFERER_PARAM));
             this.job.getParameters().setUserAgent(this.getStringValue(USER_AGENT_PARAM));
+            this.job.getParameters().setLogoutAvoidance(this.getBoolValue(LOGOUT_AVOIDANCE_PARAM));
 
             Object hpoObj = handleParamsModel.getSelectedItem();
             if (hpoObj instanceof SpiderParam.HandleParametersOption) {

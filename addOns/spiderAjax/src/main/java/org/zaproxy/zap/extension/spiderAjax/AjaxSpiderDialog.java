@@ -66,6 +66,8 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
     private static final String FIELD_DURATION = "spiderajax.options.label.maxduration";
     private static final String FIELD_EVENT_WAIT = "spiderajax.options.label.eventwait";
     private static final String FIELD_RELOAD_WAIT = "spiderajax.options.label.reloadwait";
+    private static final String FIELD_LOGOUT_AVOIDANCE =
+            "spiderajax.scandialog.label.logoutAvoidance";
 
     private static final Logger LOGGER = LogManager.getLogger(AjaxSpiderDialog.class);
     private static final long serialVersionUID = 1L;
@@ -187,6 +189,9 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
         scopeCheckComponent = new ScopeCheckComponent();
         scopeCheckComponent.setScopeCheck(params.getScopeCheck());
         addCustomComponent(1, scopeCheckComponent.getComponent());
+
+        addCheckBoxField(1, FIELD_LOGOUT_AVOIDANCE, params.isLogoutAvoidance());
+
         allowedResourcesTableModel.setAllowedResources(params.getAllowedResources());
         AllowedResourcesPanel allowedResourcesPanel =
                 new AllowedResourcesPanel(this, allowedResourcesTableModel);
@@ -371,6 +376,7 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
             params.setAllowedResources(allowedResourcesTableModel.getElements());
 
             params.setScopeCheck(scopeCheckComponent.getScopeCheck());
+            params.setLogoutAvoidance(getBoolValue(FIELD_LOGOUT_AVOIDANCE));
         }
 
         URI startUri = null;

@@ -5,6 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Depends on an updated version of the Common Library add-on.
+
+### Added
+- Rules (as applicable) have been tagged in relation to HIPAA and PCI DSS.
+
+## [59] - 2025-06-20
+### Changed
 - The extension now has a user friendly name for use in the GUI.
 - Depends on an updated version of the Common Library add-on.
 
@@ -573,6 +580,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[59]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v59
 [58]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v58
 [57]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v57
 [56]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v56

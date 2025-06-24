@@ -1025,11 +1025,13 @@ public class ExtensionSelenium extends ExtensionAdaptor {
     }
 
     private static void addChromeArguments(ChromeOptions options) {
-        List<String> arguments =
-                getSeleniumOptions().getBrowserArguments(Browser.CHROME.getId()).stream()
-                        .filter(BrowserArgument::isEnabled)
-                        .map(BrowserArgument::getArgument)
-                        .collect(Collectors.toList());
+        List<String> arguments = new ArrayList<>();
+        // FIXME https://github.com/SeleniumHQ/selenium/issues/15788
+        arguments.add("--disable-features=DisableLoadExtensionCommandLineSwitch");
+        getSeleniumOptions().getBrowserArguments(Browser.CHROME.getId()).stream()
+                .filter(BrowserArgument::isEnabled)
+                .map(BrowserArgument::getArgument)
+                .forEach(arguments::add);
         if (!arguments.isEmpty()) {
             options.addArguments(arguments);
         }

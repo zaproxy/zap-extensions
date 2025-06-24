@@ -38,9 +38,14 @@ import org.zaproxy.addon.dev.TestDirectory;
 import org.zaproxy.addon.dev.TestProxyServer;
 
 /**
- * A test app which uses multiple domains: start.sso1.zap Redirects to the sso domain sso.sso1.zap
- * Handles the login, generates a token used by both the app and the api app.sso1.zap The actual app
- * (cannot be accessed except via sso) api.sso1.zap An API used by the app
+ * A test app which uses multiple domains:
+ *
+ * <ul>
+ *   <li>start.sso1.zap Redirects to the sso domain
+ *   <li>sso.sso1.zap Handles the login, generates a token used by both the app and the api
+ *   <li>app.sso1.zap The actual app (cannot be accessed except via sso)
+ *   <li>api.sso1.zap An API used by the app
+ * </ul>
  */
 public class SSO1RootDir extends TestAuthDirectory {
 
@@ -123,9 +128,9 @@ public class SSO1RootDir extends TestAuthDirectory {
                                 msg.setResponseBody(body);
                                 if (!redirect) {
                                     msg.setResponseHeader(
-                                            new HttpResponseHeader(
-                                                    "HTTP/1.1 200 OK\r\n"
-                                                            + "Content-Type: text/html; charset=UTF-8"));
+                                            TestProxyServer.getDefaultResponseHeader(
+                                                    TestProxyServer.CONTENT_TYPE_HTML_UTF8,
+                                                    msg.getResponseBody().length()));
                                 }
                             }
                         } catch (Exception e) {
@@ -149,17 +154,17 @@ public class SSO1RootDir extends TestAuthDirectory {
 
                                 msg.setResponseBody(body);
                                 msg.setResponseHeader(
-                                        new HttpResponseHeader(
-                                                "HTTP/1.1 200 OK\r\n"
-                                                        + "Content-Type: text/html; charset=UTF-8"));
+                                        TestProxyServer.getDefaultResponseHeader(
+                                                TestProxyServer.CONTENT_TYPE_HTML_UTF8,
+                                                msg.getResponseBody().length()));
                             } else if (TEST_PAGES.contains(page)) {
                                 String body = server.getTextFile(SSO1RootDir.this, "app-test.html");
 
                                 msg.setResponseBody(body);
                                 msg.setResponseHeader(
-                                        new HttpResponseHeader(
-                                                "HTTP/1.1 200 OK\r\n"
-                                                        + "Content-Type: text/html; charset=UTF-8"));
+                                        TestProxyServer.getDefaultResponseHeader(
+                                                TestProxyServer.CONTENT_TYPE_HTML_UTF8,
+                                                msg.getResponseBody().length()));
                             }
                         } catch (Exception e) {
                             LOGGER.error(e.getMessage(), e);

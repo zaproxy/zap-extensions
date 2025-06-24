@@ -68,7 +68,10 @@ public class SpiderScan implements ScanListenner, SpiderListener, GenericScanner
 
     private static final EnumSet<FetchStatus> FETCH_STATUS_OUT_OF_SCOPE =
             EnumSet.of(
-                    FetchStatus.OUT_OF_SCOPE, FetchStatus.OUT_OF_CONTEXT, FetchStatus.USER_RULES);
+                    FetchStatus.OUT_OF_SCOPE,
+                    FetchStatus.OUT_OF_CONTEXT,
+                    FetchStatus.USER_RULES,
+                    FetchStatus.LOGOUT_AVOIDANCE);
 
     private final Lock lock;
 

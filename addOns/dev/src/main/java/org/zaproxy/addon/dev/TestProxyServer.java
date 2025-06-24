@@ -43,9 +43,12 @@ import org.zaproxy.addon.dev.auth.passwordNewPage.PasswordNewPageDir;
 import org.zaproxy.addon.dev.auth.simpleJson.SimpleJsonDir;
 import org.zaproxy.addon.dev.auth.simpleJsonBearer.SimpleJsonBearerDir;
 import org.zaproxy.addon.dev.auth.simpleJsonBearerCookie.SimpleJsonBearerCookieDir;
+import org.zaproxy.addon.dev.auth.simpleJsonBearerDiffCookies.SimpleJsonBearerDiffCookiesDir;
 import org.zaproxy.addon.dev.auth.simpleJsonBearerJsCookie.SimpleJsonBearerJsCookieDir;
 import org.zaproxy.addon.dev.auth.simpleJsonCookie.SimpleJsonCookieDir;
 import org.zaproxy.addon.dev.auth.sso1.SSO1RootDir;
+import org.zaproxy.addon.dev.auth.sso2.SSO2RootDir;
+import org.zaproxy.addon.dev.auth.uuidLogin.UuidLoginRootDir;
 import org.zaproxy.addon.dev.csrf.basic.BasicCsrfDir;
 import org.zaproxy.addon.dev.seq.performance.PerformanceDir;
 import org.zaproxy.addon.network.ExtensionNetwork;
@@ -60,6 +63,8 @@ public class TestProxyServer {
     public static final String STATUS_FORBIDDEN = "403 Forbidden";
     public static final String STATUS_NOT_FOUND = "404 Not Found";
     public static final String STATUS_REDIRECT = "302 Found";
+
+    public static final String CONTENT_TYPE_HTML_UTF8 = "text/html; charset=UTF-8";
 
     private static final Logger LOGGER = LogManager.getLogger(TestProxyServer.class);
 
@@ -81,10 +86,13 @@ public class TestProxyServer {
         authDir.addDirectory(new SimpleJsonDir(this, "simple-json-blocking-ui"));
         authDir.addDirectory(new SimpleJsonDir(this, "simple-json-blocking-ui-scroll-fields"));
         authDir.addDirectory(new SimpleJsonDir(this, "simple-json-existing-values"));
+        authDir.addDirectory(new SimpleJsonDir(this, "simple-json-shadow-dom"));
         authDir.addDirectory(new SimpleJsonBearerDir(this, "simple-json-bearer"));
         authDir.addDirectory(new NonStdJsonBearerDir(this, "non-std-json-bearer"));
         authDir.addDirectory(new SimpleJsonBearerCookieDir(this, "simple-json-bearer-cookie"));
         authDir.addDirectory(new SimpleJsonBearerJsCookieDir(this, "simple-json-bearer-js-cookie"));
+        authDir.addDirectory(
+                new SimpleJsonBearerDiffCookiesDir(this, "simple-json-bearer-js-diff-cookies"));
         authDir.addDirectory(new SimpleJsonCookieDir(this, "simple-json-cookie"));
         authDir.addDirectory(new PasswordAddedJsonDir(this, "password-added-json"));
         authDir.addDirectory(new PasswordHiddenJsonDir(this, "password-hidden-json"));
@@ -92,6 +100,8 @@ public class TestProxyServer {
         authDir.addDirectory(new PasswordAddedNoSubmitDir(this, "password-added-nosubmit"));
         authDir.addDirectory(new JsonMultipleCookiesDir(this, "json-multiple-cookies"));
         authDir.addDirectory(new SSO1RootDir(this, "sso1"));
+        authDir.addDirectory(new SSO2RootDir(this, "sso2"));
+        authDir.addDirectory(new UuidLoginRootDir(this, "uuid-login"));
 
         TestDirectory apiDir = new TestDirectory(this, "api");
         TestDirectory openapiDir = new TestDirectory(this, "openapi");

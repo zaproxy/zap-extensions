@@ -70,6 +70,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
     private JLabel reloadWait = null;
 
     private ScopeCheckComponent scopeCheckComponent;
+    private JCheckBox logoutAvoidance;
     private AllowedResourcesPanel allowedResourcesPanel;
     private AllowedResourcesTableModel allowedResourcesTableModel;
 
@@ -206,6 +207,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
         allowedResourcesTableModel.setAllowedResources(ajaxSpiderParam.getAllowedResources());
 
         scopeCheckComponent.setScopeCheck(ajaxSpiderParam.getScopeCheck());
+        logoutAvoidance.setSelected(ajaxSpiderParam.isLogoutAvoidance());
     }
 
     /** This method validates the parameters before saving them. */
@@ -236,6 +238,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
         ajaxSpiderParam.setAllowedResources(allowedResourcesTableModel.getElements());
 
         ajaxSpiderParam.setScopeCheck(scopeCheckComponent.getScopeCheck());
+        ajaxSpiderParam.setLogoutAvoidance(logoutAvoidance.isSelected());
     }
 
     /**
@@ -380,6 +383,12 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
             gbc.weighty = 0.0D;
             scopeCheckComponent = new ScopeCheckComponent();
             innerPanel.add(scopeCheckComponent.getComponent(), gbc);
+
+            gbc.gridy++;
+            logoutAvoidance =
+                    new JCheckBox(
+                            resourceBundle.getString("spiderajax.options.label.logoutavoidance"));
+            innerPanel.add(logoutAvoidance, gbc);
 
             gbc.weighty = 1.0D;
             gbc.gridy++;

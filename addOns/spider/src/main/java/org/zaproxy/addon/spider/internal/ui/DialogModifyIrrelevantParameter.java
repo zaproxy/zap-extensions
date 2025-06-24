@@ -48,7 +48,7 @@ class DialogModifyIrrelevantParameter extends DialogAddIrrelevantParameter {
 
     @Override
     protected void init() {
-        getNameTextField().setText(irrelevantParameter.getValue());
+        getNameTextField().setText(irrelevantParameter.getName());
         getNameTextField().discardAllEdits();
 
         getRegexCheckBox().setSelected(irrelevantParameter.isRegex());

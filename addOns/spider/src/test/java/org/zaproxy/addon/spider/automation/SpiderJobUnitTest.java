@@ -158,7 +158,7 @@ class SpiderJobUnitTest extends TestUtils {
                 job.getConfigParameters(new SpiderParamWrapper(), job.getParamMethodName());
 
         // Then
-        assertThat(params.size(), is(equalTo(18)));
+        assertThat(params.size(), is(equalTo(19)));
         assertThat(params.containsKey("maxDuration"), is(equalTo(true)));
         assertThat(params.containsKey("maxDepth"), is(equalTo(true)));
         assertThat(params.containsKey("maxChildren"), is(equalTo(true)));
@@ -177,6 +177,7 @@ class SpiderJobUnitTest extends TestUtils {
         assertThat(params.containsKey("sendRefererHeader"), is(equalTo(true)));
         assertThat(params.containsKey("threadCount"), is(equalTo(true)));
         assertThat(params.containsKey("userAgent"), is(equalTo(true)));
+        assertThat(params.containsKey("logoutAvoidance"), is(equalTo(true)));
     }
 
     private static class SpiderParamWrapper {

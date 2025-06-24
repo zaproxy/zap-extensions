@@ -67,7 +67,8 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
                         CommonAlertTag.toMap(
                                 CommonAlertTag.OWASP_2021_A03_INJECTION,
                                 CommonAlertTag.OWASP_2017_A01_INJECTION,
-                                CommonAlertTag.WSTG_V42_CLNT_04_OPEN_REDIR));
+                                CommonAlertTag.WSTG_V42_CLNT_04_OPEN_REDIR,
+                                CommonAlertTag.HIPAA));
         alertTags.put(PolicyTag.API.getTag(), "");
         alertTags.put(PolicyTag.DEV_CICD.getTag(), "");
         alertTags.put(PolicyTag.DEV_STD.getTag(), "");
@@ -80,6 +81,7 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
     }
 
     private static final int PLUGIN_ID = 20019;
+    private static final String ORIGINAL_VALUE_PLACEHOLDER = "@@@original@@@";
 
     // ZAP: Added multiple redirection types
     public static final int NO_REDIRECT = 0x00;
@@ -101,13 +103,18 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
     /** The various (prioritized) payload to try */
     private static final String[] REDIRECT_TARGETS = {
         REDIRECT_SITE,
-        HttpHeader.SCHEME_HTTP + REDIRECT_SITE,
         HttpHeader.SCHEME_HTTPS + REDIRECT_SITE,
         HttpHeader.SCHEME_HTTPS + REDIRECT_SITE.replace(".", "%2e"), // Double encode the dots
         "5;URL='https://" + REDIRECT_SITE + "'",
         "URL='http://" + REDIRECT_SITE + "'",
-        HttpHeader.SCHEME_HTTP + "\\" + REDIRECT_SITE,
+        // Simple allow list bypass, ex: https://evil.com?<original_value>
+        // Where "original_value" is whatever the parameter value initially was, ex:
+        // https://good.expected.com
+        HttpHeader.SCHEME_HTTPS + REDIRECT_SITE + "/?" + ORIGINAL_VALUE_PLACEHOLDER,
+        "5;URL='https://" + REDIRECT_SITE + "/?" + ORIGINAL_VALUE_PLACEHOLDER + "'",
         HttpHeader.SCHEME_HTTPS + "\\" + REDIRECT_SITE,
+        HttpHeader.SCHEME_HTTP + "\\" + REDIRECT_SITE,
+        HttpHeader.SCHEME_HTTP + REDIRECT_SITE,
         "//" + REDIRECT_SITE,
         "\\\\" + REDIRECT_SITE,
         "HtTp://" + REDIRECT_SITE,
@@ -223,7 +230,10 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
                 return;
             }
 
-            payload = REDIRECT_TARGETS[h];
+            payload =
+                    REDIRECT_TARGETS[h].contains(ORIGINAL_VALUE_PLACEHOLDER)
+                            ? REDIRECT_TARGETS[h].replace(ORIGINAL_VALUE_PLACEHOLDER, value)
+                            : REDIRECT_TARGETS[h];
 
             // Get a new copy of the original message (request only) for each parameter value to try
             HttpMessage testMsg = getNewMsg();

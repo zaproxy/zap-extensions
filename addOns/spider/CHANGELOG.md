@@ -5,10 +5,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+
+## [0.15.0] - 2025-06-20
 ### Changed
 - Include anti-csrf tokens as part of irrelevant parameters.
 - Ignore irrelevant parameters in request bodies (`x-www-form-urlencoded`) (Related to Issue 7771).
 - Skip all URIs with `javascript` schemes.
+- Changed to title caps on the Irrelevant Parameters table "title" in the Options dialog (Issue 2000).
+
+### Added
+- Add an option to allow users to indicate the Spider should attempt to avoid logout related paths/functionality.
+
+### Fixed
+- An incorrect column name in the Irrelevant Parameters table used by the Options dialog (Domain should have been Name).
 
 ## [0.14.0] - 2025-03-25
 ### Changed
@@ -126,6 +136,7 @@ The following table illustrates the changes versus the previous core release(s) 
 |                                                                                                                                         | SVG image files are parsed to identify HREF attributes and extract/resolve any contained links. (Issue 4984)                                                                                                        |
 |                                                                                                                                         | Irrelevant Parameters - Allows to manage the parameters that should be removed when canonicalising the URLs found. The session token names defined in the HTTP Sessions options are taken into account and removed (Issue 4388). |
 
+[0.15.0]: https://github.com/zaproxy/zap-extensions/releases/spider-v0.15.0
 [0.14.0]: https://github.com/zaproxy/zap-extensions/releases/spider-v0.14.0
 [0.13.0]: https://github.com/zaproxy/zap-extensions/releases/spider-v0.13.0
 [0.12.0]: https://github.com/zaproxy/zap-extensions/releases/spider-v0.12.0

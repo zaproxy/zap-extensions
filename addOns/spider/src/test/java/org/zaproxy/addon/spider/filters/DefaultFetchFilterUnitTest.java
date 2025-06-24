@@ -229,6 +229,30 @@ class DefaultFetchFilterUnitTest {
         assertThat(status, is(equalTo(FetchStatus.VALID)));
     }
 
+    @Test
+    void shouldFilterLogoutUriWhenAvoidLogout() {
+        // Given
+        filter.setScanContext(contextInScope(true));
+        filter.setLogoutAvoidance(true);
+        URI uri = createUri("http://example.com/logout");
+        // When
+        FetchStatus status = filter.checkFilter(uri);
+        // Then
+        assertThat(status, is(equalTo(FetchStatus.LOGOUT_AVOIDANCE)));
+    }
+
+    @Test
+    void shouldNotFilterLogoutUriWhenNotAvoidLogout() {
+        // Given
+        filter.setScanContext(contextInScope(true));
+        filter.setLogoutAvoidance(false);
+        URI uri = createUri("http://example.com/logout");
+        // When
+        FetchStatus status = filter.checkFilter(uri);
+        // Then
+        assertThat(status, is(equalTo(FetchStatus.VALID)));
+    }
+
     private static URI createUri(String uri) {
         try {
             return new URI(uri, true);

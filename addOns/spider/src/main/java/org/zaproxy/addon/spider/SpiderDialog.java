@@ -68,6 +68,7 @@ public class SpiderDialog extends StandardFieldsDialog {
     private static final String FIELD_PARSE_GIT = "spider.custom.label.parseGit";
     private static final String FIELD_PARSE_DS_STORE = "spider.custom.label.parseDsStore";
     private static final String FIELD_HANDLE_ODATA = "spider.custom.label.handleOdata";
+    private static final String FIELD_LOGOUT_AVOIDANCE = "spider.custom.label.logoutAvoidance";
 
     private static final Logger LOGGER = LogManager.getLogger(SpiderDialog.class);
 
@@ -147,6 +148,7 @@ public class SpiderDialog extends StandardFieldsDialog {
         this.addCheckBoxField(1, FIELD_PARSE_DS_STORE, getSpiderParam().isParseDsStore());
         this.addCheckBoxField(
                 1, FIELD_HANDLE_ODATA, getSpiderParam().isHandleODataParametersVisited());
+        this.addCheckBoxField(1, FIELD_LOGOUT_AVOIDANCE, getSpiderParam().isLogoutAvoidance());
         this.addPadding(1);
 
         if (!getBoolValue(FIELD_PROCESS_FORMS)) {
@@ -341,6 +343,7 @@ public class SpiderDialog extends StandardFieldsDialog {
             spiderParam.setParseDsStore(this.getBoolValue(FIELD_PARSE_DS_STORE));
             spiderParam.setHandleODataParametersVisited(this.getBoolValue(FIELD_HANDLE_ODATA));
             spiderParam.setThreadCount(extension.getSpiderParam().getThreadCount());
+            spiderParam.setLogoutAvoidance(this.getBoolValue(FIELD_LOGOUT_AVOIDANCE));
 
             contextSpecificObjects.add(spiderParam);
         }

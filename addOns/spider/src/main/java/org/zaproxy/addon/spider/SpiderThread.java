@@ -475,6 +475,8 @@ public class SpiderThread extends ScanThread implements SpiderListener {
                 return Constant.messages.getString("spider.table.flags.illegalprotocol");
             case USER_RULES:
                 return Constant.messages.getString("spider.table.flags.userrules");
+            case LOGOUT_AVOIDANCE:
+                return Constant.messages.getString("spider.table.flags.logoutavoidance");
             default:
                 return status.toString();
         }

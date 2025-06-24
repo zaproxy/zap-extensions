@@ -93,7 +93,9 @@ public class MongoDbInjectionTimingScanRule extends AbstractAppParamPlugin
                                 CommonAlertTag.OWASP_2021_A03_INJECTION,
                                 CommonAlertTag.OWASP_2017_A01_INJECTION,
                                 CommonAlertTag.WSTG_V42_INPV_05_SQLI,
-                                CommonAlertTag.TEST_TIMING));
+                                CommonAlertTag.TEST_TIMING,
+                                CommonAlertTag.HIPAA,
+                                CommonAlertTag.PCI_DSS));
         alertTags.put(PolicyTag.PENTEST.getTag(), "");
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
     }

@@ -27,6 +27,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.withSettings;
@@ -84,6 +85,8 @@ import org.zaproxy.zap.extension.alert.AlertNode;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.extension.sequence.StdActiveScanRunner.SequenceStepData;
 import org.zaproxy.zap.extension.sequence.automation.SequenceAScanJobResultData;
+import org.zaproxy.zap.extension.stats.ExtensionStats;
+import org.zaproxy.zap.extension.stats.InMemoryStats;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.I18N;
@@ -107,6 +110,7 @@ class ExtensionReportsUnitTest extends TestUtils {
     private static final String HTML_REPORT_PASSING_RULES_SECTION_TITLE = "Passing Rules";
 
     private List<String> logEvents;
+    private ExtensionLoader extensionLoader;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -114,7 +118,7 @@ class ExtensionReportsUnitTest extends TestUtils {
 
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
-        ExtensionLoader extensionLoader =
+        extensionLoader =
                 mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
         Model.getSingleton().getOptionsParam().load(new ZapXmlConfiguration());
@@ -920,6 +924,46 @@ class ExtensionReportsUnitTest extends TestUtils {
         checkAlert(site.getJSONObject(0));
     }
 
+    @Test
+    void shouldGenerateValidJsonReportWithStats() throws Exception {
+        // Given
+        Template template = getTemplateFromYamlFile("traditional-json-plus");
+        String fileName = "traditional-json-plus-stats";
+        File f = File.createTempFile(fileName, template.getExtension());
+        InMemoryStats stats = new InMemoryStats();
+        ExtensionStats extStats =
+                mock(ExtensionStats.class, withSettings().strictness(Strictness.LENIENT));
+        given(extensionLoader.getExtension(ExtensionStats.class)).willReturn(extStats);
+        given(extStats.getInMemoryStats()).willReturn(stats);
+
+        stats.counterInc("http://example.com", "site.a", 1);
+        stats.counterInc("http://example.com", "site.b", 2);
+        stats.counterInc("global.x", 3);
+        stats.counterInc("global.y", 4);
+
+        // When
+        File r = generateReportWithAlerts(template, f);
+        String report = new String(Files.readAllBytes(r.toPath()));
+
+        JSONObject json = JSONObject.fromObject(report);
+        JSONArray site = json.getJSONArray("site");
+
+        // Then
+        assertThat(json.getString("@version"), is(equalTo("Dev Build")));
+        assertThat(json.getString("@generated").length(), is(greaterThan(20)));
+        assertThat(site.size(), is(equalTo(1)));
+        checkAlert(site.getJSONObject(0));
+        assertThat(site.getJSONObject(0).containsKey("statistics"), is(equalTo(true)));
+        assertThat(site.getJSONObject(0).getJSONObject("statistics").size(), is(equalTo(2)));
+        assertThat(site.getJSONObject(0).getJSONObject("statistics").get("site.a"), is(equalTo(1)));
+        assertThat(site.getJSONObject(0).getJSONObject("statistics").get("site.b"), is(equalTo(2)));
+
+        assertThat(json.containsKey("statistics"), is(equalTo(true)));
+        assertThat(json.getJSONObject("statistics").size(), is(equalTo(2)));
+        assertThat(json.getJSONObject("statistics").get("global.x"), is(equalTo(3)));
+        assertThat(json.getJSONObject("statistics").get("global.y"), is(equalTo(4)));
+    }
+
     private static File generateReportWithSequence(Template template, File f)
             throws IOException, DocumentException {
         ExtensionReports extRep = new ExtensionReports();
@@ -928,6 +972,7 @@ class ExtensionReportsUnitTest extends TestUtils {
         reportData.setDescription("Test Description");
         reportData.setIncludeAllConfidences(true);
         reportData.setIncludeAllRisks(true);
+        reportData.addSection("sequencedetails");
 
         AlertNode root = new AlertNode(0, "Test");
         reportData.setAlertTreeRootNode(root);
@@ -1667,6 +1712,51 @@ class ExtensionReportsUnitTest extends TestUtils {
         assertThat(root.getNodeName(), is(equalTo("OWASPZAPReport")));
         assertThat(root.getAttribute("version"), is(equalTo("Dev Build")));
         assertThat(root.getAttribute("generated").length(), is(greaterThan(20)));
+    }
+
+    @Test
+    void shouldGenerateValidXmlPlusReportWithStats() throws Exception {
+        // Given
+        Template template = getTemplateFromYamlFile("traditional-xml-plus");
+        String fileName = "basic-traditional-xml-plus";
+        File f = File.createTempFile(fileName, template.getExtension());
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        DocumentBuilder db = dbf.newDocumentBuilder();
+
+        InMemoryStats stats = new InMemoryStats();
+        ExtensionStats extStats =
+                mock(ExtensionStats.class, withSettings().strictness(Strictness.LENIENT));
+        given(extensionLoader.getExtension(ExtensionStats.class)).willReturn(extStats);
+        given(extStats.getInMemoryStats()).willReturn(stats);
+
+        stats.counterInc("http://example.com", "site.a", 1);
+        stats.counterInc("http://example.com", "site.b", 2);
+        stats.counterInc("global.x", 3);
+        stats.counterInc("global.y", 4);
+
+        // When
+        File r = generateReportWithAlerts(template, f);
+        Document doc = db.parse(r);
+        Element root = doc.getDocumentElement();
+
+        // Then
+        checkXmlAlert(doc, true);
+        assertThat(root.getNodeName(), is(equalTo("OWASPZAPReport")));
+        assertThat(root.getAttribute("version"), is(equalTo("Dev Build")));
+        assertThat(root.getAttribute("generated").length(), is(greaterThan(20)));
+
+        NodeList sites = doc.getElementsByTagName("site");
+
+        assertThat(sites.getLength(), is(equalTo(1)));
+        assertThat(sites.item(0).getChildNodes().getLength(), is(equalTo(5)));
+        assertThat(sites.item(0).getChildNodes().item(3).getNodeName(), is(equalTo("statistics")));
+        assertThat(
+                sites.item(0).getChildNodes().item(3).getChildNodes().getLength(), is(equalTo(5)));
+
+        assertThat(root.getChildNodes().getLength(), is(equalTo(5)));
+        assertThat(root.getChildNodes().item(3).getNodeName(), is(equalTo("statistics")));
+        assertThat(root.getChildNodes().item(3).getChildNodes().getLength(), is(equalTo(5)));
     }
 
     @ParameterizedTest

@@ -45,7 +45,9 @@ public abstract class FetchFilter {
         /** The uri has an illegal protocol. */
         ILLEGAL_PROTOCOL,
         /** The uri is skipped because of user rules. */
-        USER_RULES
+        USER_RULES,
+        /** The uri is skipped because it seems to be related to logout functionality. */
+        LOGOUT_AVOIDANCE
     }
 
     private final Logger logger = LogManager.getLogger(getClass());

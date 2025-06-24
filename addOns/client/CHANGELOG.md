@@ -4,14 +4,20 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [0.16.0] - 2025-06-20
 ### Added
 - Client Spider scope check.
+- Added optional parameters for Page Load Time and Max Crawl Depth to the Client Spider API.
+- Recording advice and guidance.
 
 ### Changed
-- Updated Chrome and Firefox extensions to v0.0.13.
+- Updated Chrome and Firefox extensions to v0.1.3.
 
 ### Fixed
 - Client Spider to allow all requests while authenticating.
+- Ensure that the `clientSpider` API endpoint `status` returns 100(%) only when finished.
 
 ## [0.15.0] - 2025-03-25
 ### Added
@@ -142,6 +148,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.16.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.16.0
 [0.15.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.15.0
 [0.14.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.14.0
 [0.13.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.13.0

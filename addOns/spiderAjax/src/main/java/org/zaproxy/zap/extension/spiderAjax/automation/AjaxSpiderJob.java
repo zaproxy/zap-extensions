@@ -548,6 +548,7 @@ public class AjaxSpiderJob extends AutomationJob {
         private List<ExcludedElementAuto> excludedElements = List.of();
 
         private String scopeCheck = ScopeCheck.getDefault().toString();
+        private Boolean logoutAvoidance = AjaxSpiderParam.DEFAULT_LOGOUT_AVOIDANCE;
 
         // These 2 fields are deprecated
         private Boolean failIfFoundUrlsLessThan;

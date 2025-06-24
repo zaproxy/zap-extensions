@@ -414,12 +414,9 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
                     Constant.messages.getString("authentication.output.failure", this.loginPageUrl)
                             + "\n");
 
-            HttpMessage fallbackMsg = handler.getFallbackMsg();
             diags.recordStep(
-                    fallbackMsg,
-                    Constant.messages.getString("authhelper.auth.method.diags.steps.fallback"));
-            // We don't expect this to work, but it will prevent some NPEs
-            return sessionManagementMethod.extractWebSession(fallbackMsg);
+                    Constant.messages.getString("authhelper.auth.method.diags.steps.emptysession"));
+            return sessionManagementMethod.createEmptyWebSession();
         }
 
         @Override

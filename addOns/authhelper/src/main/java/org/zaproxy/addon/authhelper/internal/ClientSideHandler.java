@@ -58,7 +58,6 @@ public final class ClientSideHandler implements HttpMessageHandler {
     private final User user;
     private UsernamePasswordAuthenticationCredentials authCreds;
     private AuthRequestDetails authReq;
-    private HttpMessage fallbackMsg;
     private int firstHrefId;
 
     @Setter private HistoryProvider historyProvider = new HistoryProvider();
@@ -195,10 +194,6 @@ public final class ClientSideHandler implements HttpMessageHandler {
             return false;
         }
         return smrd1.getTokens().size() > smrd2.getTokens().size();
-    }
-
-    public HttpMessage getFallbackMsg() {
-        return fallbackMsg;
     }
 
     protected static List<Pair<String, String>> extractKeyValuePairs(String input) {

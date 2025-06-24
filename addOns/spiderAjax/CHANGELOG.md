@@ -4,8 +4,12 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [23.24.0] - 2025-06-20
 ### Added
 - Allow to configure how the scope is checked, either Flexible or Strict, to allow or not access to out of scope domains.
+- Allow to avoid logout elements.
 
 ### Changed
 - Maintenance changes.
@@ -349,6 +353,7 @@ By default it allows files with extension `.js` and `.css`.
 
 
 
+[23.24.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.24.0
 [23.23.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.23.0
 [23.22.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.22.0
 [23.21.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.21.0

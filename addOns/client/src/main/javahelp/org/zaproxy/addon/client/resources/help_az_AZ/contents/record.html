@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+Client Side Integration
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Recording Client Side Scripts</H1>
+
+The ZAP Browser extensions allow you to record all of the actions you take in the browser as a Zest script. 
+They can be used to record things like authentication scripts or other complex interactions.
+Zest scripts can be replayed in ZAP, whether in the desktop or in automation.
+<p>
+The "full" ZAP Browser Extension is automatically added to Firefox and Chrome browsers launched from ZAP.
+<p>
+You can also manually install these add-on, or the cut down "Browser Recorder" extensions:
+
+<ul>
+<li>Firefox <a href="https://addons.mozilla.org/en-GB/firefox/addon/zap-browser-extension">ZAP by Checkmarx Browser Extension</a>
+<li>Firefox <a href="https://addons.mozilla.org/en-GB/firefox/addon/zap-by-checkmarx-recorder/">ZAP by Checkmarx Browser Recorder</a>
+<li>Chrome <a href="https://chromewebstore.google.com/detail/zap-by-checkmarx-browser/cgkggmillbmmpokepnicllalaohphffo">ZAP by Checkmarx Browser Extension</a>
+<li>Chrome <a href="https://chromewebstore.google.com/detail/zap-by-checkmarx-recorder/belmenkmkfloppjbbgibipmgcmnkaiki">ZAP by Checkmarx Browser Recorder</a>
+</ul>
+
+The Browser Recorder extension only allows you to record a Zest script and will not attempt to communicate with ZAP.
+<p>
+The ZAP Browser extensions all include detailed help via the popup panel.
+
+<h2>Recording from ZAP</h2>
+The easiest way to record a client side script from ZAP is to use the "Record Zest Script" dialog.<br>
+You will need to change the "Record Type" to "Client (browser) side script" and supply a valid URL.<br>
+ZAP will launch your chosen browser and record the Zest statements in the Script Console as you perform actions in the browser.
+
+<h2>Recorder Advice and Guidance</h2>
+If you are going to use the recorded script for authentication then you need to make sure that the browser
+will be in the same state as when it is launched from ZAP.
+<p>
+If the login URL is static then you can open that page before starting to record.<br>
+If the URL is dynamic then you should enter a suitable static URL in the Recorder Dialog. This URL will then
+be recorded in the script and the browser will handle the dynamic redirects as required.
+<p>
+In all cases you should start to record before dismissing any dialogs, such as cookie warnings and other disclaimers,
+as ZAP will need to do the same things.
+<p>
+It is often better to use private/incognito mode when recording so that the browser will not have any existing 
+application state.
+<p>
+The 'buttons' on some modern web apps can be complicated HTML components that are sometimes hard to click on using automation.
+If your forms can be submitted using the RETURN key then that is often a better option to use when recording.
+
+</BODY>
+</HTML>

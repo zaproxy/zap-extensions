@@ -64,11 +64,25 @@ import org.zaproxy.addon.network.server.Server;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderParam.ScopeCheck;
 import org.zaproxy.zap.extension.spiderAjax.SpiderListener.ResourceState;
+import org.zaproxy.zap.extension.spiderAjax.internal.ExcludedElement;
 import org.zaproxy.zap.model.ScanEventPublisher;
 import org.zaproxy.zap.network.HttpResponseBody;
 import org.zaproxy.zap.users.User;
 
 public class SpiderThread implements Runnable {
+
+    private static final List<String> LOG_OUT_TEXT =
+            List.of("logout", "logoff", "signout", "signoff");
+
+    private static final List<String> LOG_OUT_ELEMENTS = List.of("a", "span", "button");
+
+    private static final String XPATH_LOG_OUT_EXCLUDE =
+            "//%s[contains(translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ -', 'abcdefghijklmnopqrstuvwxyz'), '%s')]";
+
+    private static final List<ExcludedElement> LOG_OUT_EXCLUDED_ELEMENTS =
+            LOG_OUT_ELEMENTS.stream()
+                    .flatMap(e -> LOG_OUT_TEXT.stream().map(t -> logoutExclude(e, t)))
+                    .toList();
 
     private final String displayName;
     private final AjaxSpiderTarget target;
@@ -168,6 +182,13 @@ public class SpiderThread implements Runnable {
         outOfScopeResponseHeader = responseHeader;
     }
 
+    private static ExcludedElement logoutExclude(String element, String text) {
+        ExcludedElement excluded = new ExcludedElement();
+        excluded.setElement(element);
+        excluded.setXpath(XPATH_LOG_OUT_EXCLUDE.formatted(element, text));
+        return excluded;
+    }
+
     /**
      * @return the SpiderThread object
      */
@@ -211,6 +232,15 @@ public class SpiderThread implements Runnable {
             for (String elem : target.getOptions().getElemsNames()) {
                 configurationBuilder.crawlRules().click(elem);
             }
+        }
+
+        if (target.getOptions().isLogoutAvoidance()) {
+            LOG_OUT_EXCLUDED_ELEMENTS.forEach(
+                    e ->
+                            configurationBuilder
+                                    .crawlRules()
+                                    .dontClick(e.getElement())
+                                    .underXPath(e.getXpath()));
         }
 
         for (var excludedElement : target.getExcludedElements()) {

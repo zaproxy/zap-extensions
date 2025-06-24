@@ -90,6 +90,8 @@ public class AjaxSpiderJobDialog extends StandardFieldsDialog {
             "spiderajax.automation.dialog.ajaxspider.randominputs";
     private static final String CLICK_ELEMS_HEADER =
             "spiderajax.automation.dialog.ajaxspider.clickelems";
+    private static final String LOGOUT_AVOIDANCE_PARAM =
+            "spiderajax.scandialog.label.logoutAvoidance";
 
     private AjaxSpiderMultipleOptionsPanel elemsOptionsPanel;
 
@@ -219,6 +221,13 @@ public class AjaxSpiderJobDialog extends StandardFieldsDialog {
         // Advanced tab
         getScopeCheckComponent().setScopeCheck(job.getParameters().getScopeCheck());
         addCustomComponent(2, getScopeCheckComponent().getComponent());
+
+        addCheckBoxField(
+                2,
+                LOGOUT_AVOIDANCE_PARAM,
+                getBool(
+                        job.getParameters().getLogoutAvoidance(),
+                        AjaxSpiderParam.DEFAULT_LOGOUT_AVOIDANCE));
 
         this.addNumberField(
                 2,
@@ -389,6 +398,7 @@ public class AjaxSpiderJobDialog extends StandardFieldsDialog {
 
         if (this.getBoolValue(FIELD_ADVANCED)) {
             job.getParameters().setScopeCheck(getScopeCheckComponent().getScopeCheck().toString());
+            job.getParameters().setLogoutAvoidance(getBoolValue(LOGOUT_AVOIDANCE_PARAM));
             this.job.getParameters().setMaxCrawlStates(this.getIntValue(MAX_CRAWL_STATES_PARAM));
             this.job.getParameters().setEventWait(this.getIntValue(EVENT_WAIT_PARAM));
             this.job.getParameters().setReloadWait(this.getIntValue(RELOAD_WAIT_PARAM));

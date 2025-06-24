@@ -103,6 +103,8 @@ public class SpiderParam extends VersionedAbstractParam {
     /** The Constant SPIDER_HANDLE_ODATA_PARAMETERS. */
     private static final String SPIDER_HANDLE_ODATA_PARAMETERS = "spider.handleODataParameters";
 
+    private static final String LOGOUT_AVOIDANCE = "spider.logoutAvoidance";
+
     private static final String DOMAIN_ALWAYS_IN_SCOPE_KEY = "spider.domainsAlwaysInScope";
     private static final String ALL_DOMAINS_ALWAYS_IN_SCOPE_KEY =
             DOMAIN_ALWAYS_IN_SCOPE_KEY + ".domainAlwaysInScope";
@@ -115,7 +117,7 @@ public class SpiderParam extends VersionedAbstractParam {
     private static final String IRRELEVANT_PARAMETERS_KEY = "spider.irrelevantParameters";
     private static final String ALL_IRRELEVANT_PARAMETERS_KEY =
             IRRELEVANT_PARAMETERS_KEY + ".irrelevantParameter";
-    private static final String IRRELEVANT_PARAMETER_VALUE_KEY = "name";
+    private static final String IRRELEVANT_PARAMETER_NAME_KEY = "name";
     private static final String IRRELEVANT_PARAMETER_REGEX_KEY = "regex";
     private static final String IRRELEVANT_PARAMETER_ENABLED_KEY = "enabled";
     private static final String CONFIRM_REMOVE_IRRELEVANT_PARAMETER =
@@ -151,6 +153,8 @@ public class SpiderParam extends VersionedAbstractParam {
     private ExtensionHttpSessions extensionHttpSessions;
 
     private ExtensionAntiCSRF extensionAntiCSRF;
+
+    public static final boolean DEFAULT_LOGOUT_AVOIDANCE = false;
 
     /**
      * This option is used to define how the parameters are used when checking if an URI was already
@@ -231,6 +235,8 @@ public class SpiderParam extends VersionedAbstractParam {
      * known URL *
      */
     private boolean handleODataParametersVisited;
+
+    private boolean logoutAvoidance;
 
     /** The maximum duration in minutes that the spider is allowed to run for, 0 meaning no limit */
     private int maxDuration;
@@ -367,6 +373,8 @@ public class SpiderParam extends VersionedAbstractParam {
         loadIrrelevantParameters();
         this.confirmRemoveIrrelevantParameter =
                 getBoolean(CONFIRM_REMOVE_IRRELEVANT_PARAMETER, true);
+
+        this.logoutAvoidance = getBoolean(LOGOUT_AVOIDANCE, DEFAULT_LOGOUT_AVOIDANCE);
     }
 
     @Override
@@ -1094,7 +1102,7 @@ public class SpiderParam extends VersionedAbstractParam {
 
             getConfig()
                     .setProperty(
-                            elementBaseKey + IRRELEVANT_PARAMETER_VALUE_KEY, parameter.getValue());
+                            elementBaseKey + IRRELEVANT_PARAMETER_NAME_KEY, parameter.getName());
             getConfig()
                     .setProperty(
                             elementBaseKey + IRRELEVANT_PARAMETER_REGEX_KEY, parameter.isRegex());
@@ -1119,7 +1127,7 @@ public class SpiderParam extends VersionedAbstractParam {
         this.irrelevantParameters = new ArrayList<>(fields.size());
         ArrayList<IrrelevantParameter> parametersEnabled = new ArrayList<>(fields.size());
         for (HierarchicalConfiguration sub : fields) {
-            String value = sub.getString(IRRELEVANT_PARAMETER_VALUE_KEY, "");
+            String value = sub.getString(IRRELEVANT_PARAMETER_NAME_KEY, "");
             if ("".equals(value)) {
                 LOGGER.warn(
                         "Failed to read an irrelevant parameter entry, required value is empty.");
@@ -1166,5 +1174,14 @@ public class SpiderParam extends VersionedAbstractParam {
         this.confirmRemoveIrrelevantParameter = confirmRemove;
         getConfig()
                 .setProperty(CONFIRM_REMOVE_IRRELEVANT_PARAMETER, confirmRemoveIrrelevantParameter);
+    }
+
+    public boolean isLogoutAvoidance() {
+        return logoutAvoidance;
+    }
+
+    public void setLogoutAvoidance(boolean avoidLogout) {
+        this.logoutAvoidance = avoidLogout;
+        getConfig().setProperty(LOGOUT_AVOIDANCE, Boolean.toString(avoidLogout));
     }
 }

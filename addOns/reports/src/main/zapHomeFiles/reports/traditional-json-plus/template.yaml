@@ -2,3 +2,6 @@ name: Traditional JSON Report with requests and responses
 format: JSON
 mode: TEXT
 extension: json
+sections:
+ - statistics
+ - sequencedetails

@@ -35,6 +35,8 @@ When the authentication method is not able to find suitable fields, or requires 
 Each step is executed sequentially in the order they are specified. Steps that act on a web element need to be identified with either its CSS Selector or XPath, both of which can be obtained, for example, through browser dev tools.
 Those steps have a timeout which allow to wait up to the given number of milliseconds for the web element to be shown and be interactable (when the login page takes some time to load).
 
+The <code>CUSTOM_FIELD</code>, <code>PASSWORD</code> and <code>USERNAME</code> steps all clear any existing values from the corresponding field, so you will need to specify the full value you want.
+
 <h3>Session Identification</h3>
 The response containing the session token is identified by choosing the first response following a login which contains any of:
 <ul>

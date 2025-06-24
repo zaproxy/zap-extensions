@@ -5,6 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Depends on an updated version of the Common Library add-on.
+
+### Added
+- Rules (as applicable) have been tagged in relation to HIPAA and PCI DSS.
+
+## [49] - 2025-06-20
+### Changed
 - Update minimum ZAP version to 2.16.0.
 - Maintenance changes.
 - Depends on an updated version of the Common Library add-on.
@@ -387,6 +394,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version, including persistent XSS tests
 
+[49]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v49
 [48]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v48
 [47]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v47
 [46]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v46

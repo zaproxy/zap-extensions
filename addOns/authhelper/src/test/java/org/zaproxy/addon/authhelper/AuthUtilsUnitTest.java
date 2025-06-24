@@ -24,6 +24,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.BDDMockito.given;
@@ -58,7 +59,6 @@ import org.apache.commons.httpclient.URI;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -69,6 +69,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.EnumSource.Mode;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
@@ -150,25 +151,7 @@ class AuthUtilsUnitTest extends TestUtils {
 
         // Then
         assertThat(field, is(notNullValue()));
-        assertThat(field.getDomAttribute("type"), is(equalTo("text")));
-    }
-
-    @Test
-    void shouldReturnUserTextFieldByDomProperty() throws Exception {
-        // Given
-        List<WebElement> inputElements = new ArrayList<>();
-        inputElements.add(new TestWebElement("input", "password"));
-        TestWebElement inputField = new TestWebElement("input", "text");
-        inputField.setUseDomProperty(true);
-        inputElements.add(inputField);
-        inputElements.add(new TestWebElement("input", "checkbox"));
-
-        // When
-        WebElement field = AuthUtils.getUserField(null, inputElements, null);
-
-        // Then
-        assertThat(field, is(notNullValue()));
-        assertThat(field.getDomAttribute("type"), is(equalTo("text")));
+        assertThat(field.getAttribute("type"), is(equalTo("text")));
     }
 
     @Test
@@ -191,7 +174,7 @@ class AuthUtilsUnitTest extends TestUtils {
 
         // Then
         assertThat(field, is(notNullValue()));
-        assertThat(field.getDomAttribute("type"), is(equalTo("text")));
+        assertThat(field.getAttribute("type"), is(equalTo("text")));
         assertThat(field.isDisplayed(), is(equalTo(true)));
     }
 
@@ -207,7 +190,7 @@ class AuthUtilsUnitTest extends TestUtils {
 
         // Then
         assertThat(field, is(notNullValue()));
-        assertThat(field.getDomAttribute("type"), is(equalTo("customtype")));
+        assertThat(field.getAttribute("type"), is(equalTo("customtype")));
         assertThat(field.isDisplayed(), is(equalTo(true)));
     }
 
@@ -227,7 +210,7 @@ class AuthUtilsUnitTest extends TestUtils {
 
         // Then
         assertThat(field, is(notNullValue()));
-        assertThat(field.getDomAttribute("type"), is(equalTo("customtype")));
+        assertThat(field.getAttribute("type"), is(equalTo("customtype")));
         assertThat(field.isDisplayed(), is(equalTo(true)));
     }
 
@@ -244,7 +227,7 @@ class AuthUtilsUnitTest extends TestUtils {
 
         // Then
         assertThat(field, is(notNullValue()));
-        assertThat(field.getDomAttribute("type"), is(equalTo("email")));
+        assertThat(field.getAttribute("type"), is(equalTo("email")));
     }
 
     @Test
@@ -261,7 +244,7 @@ class AuthUtilsUnitTest extends TestUtils {
 
         // Then
         assertThat(field, is(notNullValue()));
-        assertThat(field.getDomAttribute("id"), is(equalTo("email")));
+        assertThat(field.getAttribute("id"), is(equalTo("email")));
     }
 
     @Test
@@ -278,7 +261,7 @@ class AuthUtilsUnitTest extends TestUtils {
 
         // Then
         assertThat(field, is(notNullValue()));
-        assertThat(field.getDomAttribute("name"), is(equalTo("username")));
+        assertThat(field.getAttribute("name"), is(equalTo("username")));
     }
 
     @Test
@@ -309,25 +292,7 @@ class AuthUtilsUnitTest extends TestUtils {
 
         // Then
         assertThat(field, is(notNullValue()));
-        assertThat(field.getDomAttribute("type"), is(equalTo("password")));
-    }
-
-    @Test
-    void shouldReturnPasswordFieldByDomProperty() throws Exception {
-        // Given
-        List<WebElement> inputElements = new ArrayList<>();
-        inputElements.add(new TestWebElement("input", "email"));
-        inputElements.add(new TestWebElement("input", "checkbox"));
-        TestWebElement inputField = new TestWebElement("input", "password");
-        inputField.setUseDomProperty(true);
-        inputElements.add(inputField);
-
-        // When
-        WebElement field = AuthUtils.getPasswordField(inputElements);
-
-        // Then
-        assertThat(field, is(notNullValue()));
-        assertThat(field.getDomAttribute("type"), is(equalTo("password")));
+        assertThat(field.getAttribute("type"), is(equalTo("password")));
     }
 
     @Test
@@ -350,7 +315,7 @@ class AuthUtilsUnitTest extends TestUtils {
 
         // Then
         assertThat(field, is(notNullValue()));
-        assertThat(field.getDomAttribute("type"), is(equalTo("password")));
+        assertThat(field.getAttribute("type"), is(equalTo("password")));
         assertThat(field.isDisplayed(), is(equalTo(true)));
     }
 
@@ -403,7 +368,7 @@ class AuthUtilsUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldExtractJsonSessionTokens() throws Exception {
+    void shouldExtractJsonSessionTokensInObject() throws Exception {
         // Given
         HttpMessage msg = new HttpMessage(new URI("https://example.com/test", true));
         msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "blah-blah-json");
@@ -422,6 +387,45 @@ class AuthUtilsUnitTest extends TestUtils {
         assertThat(
                 tokens.get("json:auth.accessToken").getValue(),
                 is(equalTo("example-session-token")));
+    }
+
+    @Test
+    void shouldExtractJsonSessionTokenInString() throws Exception {
+        // Given
+        HttpMessage msg = new HttpMessage(new URI("https://example.com/test", true));
+        msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "blah-blah-json");
+        msg.getResponseBody().setBody("\"example-session-token\"");
+
+        // When
+        Map<String, SessionToken> tokens = AuthUtils.getResponseSessionTokens(msg);
+
+        // Then
+        assertThat(tokens.size(), is(equalTo(1)));
+        assertSessionToken(
+                tokens.get("json:"), SessionToken.JSON_SOURCE, "", "example-session-token");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"", " ", "  ", " \t", "\n"})
+    void shouldNotExtractJsonSessionTokenInBlankString(String value) throws Exception {
+        // Given
+        HttpMessage msg = new HttpMessage(new URI("https://example.com/test", true));
+        msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "blah-blah-json");
+        msg.getResponseBody().setBody("\"" + value + "\"");
+
+        // When
+        Map<String, SessionToken> tokens = AuthUtils.getResponseSessionTokens(msg);
+
+        // Then
+        assertThat(tokens.size(), is(equalTo(0)));
+    }
+
+    private static void assertSessionToken(
+            SessionToken token, String source, String key, String value) {
+        assertThat(token, is(notNullValue()));
+        assertThat(token.getSource(), is(equalTo(source)));
+        assertThat(token.getKey(), is(equalTo(key)));
+        assertThat(token.getValue(), is(equalTo(value)));
     }
 
     @Test
@@ -741,6 +745,7 @@ class AuthUtilsUnitTest extends TestUtils {
         String token1 = "96438673498764398";
         String token2 = "bndkdfsojhgkdshgk";
         String token3 = "89jdhf9834herg03s";
+        String token4 = "3ys96hdtr28f6gsjr";
 
         HttpMessage msg =
                 new HttpMessage(
@@ -753,6 +758,7 @@ class AuthUtilsUnitTest extends TestUtils {
         msg.getRequestHeader()
                 .addHeader(HttpFieldsNames.COOKIE, "id=" + token2 + "; SameSite=Strict");
         msg.getRequestHeader().addHeader(HttpFieldsNames.AUTHORIZATION, token3);
+        msg.getRequestHeader().addHeader("x-auth-token", token4);
 
         // When
         Set<SessionToken> tokens = AuthUtils.getRequestSessionTokens(msg);
@@ -766,22 +772,26 @@ class AuthUtilsUnitTest extends TestUtils {
                 });
 
         // Then
-        assertThat(tokens.size(), is(equalTo(3)));
+        assertThat(tokens.size(), is(equalTo(4)));
         assertThat(stArray[0].getSource(), is(equalTo(SessionToken.COOKIE_SOURCE)));
         assertThat(stArray[1].getSource(), is(equalTo(SessionToken.HEADER_SOURCE)));
         assertThat(stArray[2].getSource(), is(equalTo(SessionToken.HEADER_SOURCE)));
+        assertThat(stArray[3].getSource(), is(equalTo(SessionToken.HEADER_SOURCE)));
 
         assertThat(stArray[0].getToken(), is(equalTo("cookie:id")));
         assertThat(stArray[1].getToken(), is(equalTo("header:authorization")));
         assertThat(stArray[2].getToken(), is(equalTo("header:authorization")));
+        assertThat(stArray[3].getToken(), is(equalTo("header:x-auth-token")));
 
         assertThat(stArray[0].getValue(), is(equalTo(token2)));
         assertThat(stArray[1].getValue(), is(equalTo(token3)));
         assertThat(stArray[2].getValue(), is(equalTo(token1)));
+        assertThat(stArray[3].getValue(), is(equalTo(token4)));
 
         assertThat(stArray[0].getFullValue(), is(equalTo(token2)));
         assertThat(stArray[1].getFullValue(), is(equalTo(token3)));
         assertThat(stArray[2].getFullValue(), is(equalTo("Bearer " + token1)));
+        assertThat(stArray[3].getFullValue(), is(equalTo(token4)));
     }
 
     @Test
@@ -975,6 +985,29 @@ class AuthUtilsUnitTest extends TestUtils {
 
     static class BrowserTest extends TestUtils {
 
+        private static final String HTML_SHADOM_DOM =
+                """
+                    <div id="host-a"></div>
+                    <input id="host-input-a" />
+                    <div id="host-b"></div>
+                    <div>
+                        <input id="host-input-b" />
+                    </div>
+
+                    <script>
+                        function addShadowInput(hostSelector, inputId, mode) {
+                          const host = document.querySelector(hostSelector);
+                          const shadow = host.attachShadow({ mode: mode });
+                          const input = document.createElement("input");
+                          input.id = inputId;
+                          shadow.appendChild(input);
+                        }
+
+                        addShadowInput("#host-a", "shadow-input-open", "open" );
+                        addShadowInput("#host-b", "shadow-input-closed", "closed" );
+                    </script>
+                """;
+
         @RegisterExtension static SeleniumJupiter seleniumJupiter = new SeleniumJupiter();
 
         private String url;
@@ -1026,7 +1059,7 @@ class AuthUtilsUnitTest extends TestUtils {
                                 </form>
                              """;
             wd.get(url);
-            List<WebElement> inputElements = wd.findElements(By.xpath("//input"));
+            List<WebElement> inputElements = AuthUtils.getInputElements(wd, false);
             WebElement pwdField = AuthUtils.getPasswordField(inputElements);
             // When
             WebElement field = AuthUtils.getUserField(wd, inputElements, pwdField);
@@ -1049,7 +1082,7 @@ class AuthUtilsUnitTest extends TestUtils {
                                 </form>
                              """;
             wd.get(url);
-            List<WebElement> inputElements = wd.findElements(By.xpath("//input"));
+            List<WebElement> inputElements = AuthUtils.getInputElements(wd, false);
             WebElement pwdField = AuthUtils.getPasswordField(inputElements);
             // When
             WebElement field = AuthUtils.getUserField(wd, inputElements, pwdField);
@@ -1073,7 +1106,7 @@ class AuthUtilsUnitTest extends TestUtils {
                                 </form>
                              """;
             wd.get(url);
-            List<WebElement> inputElements = wd.findElements(By.xpath("//input"));
+            List<WebElement> inputElements = AuthUtils.getInputElements(wd, false);
             WebElement pwdField = AuthUtils.getPasswordField(inputElements);
             // When
             WebElement field = AuthUtils.getUserField(wd, inputElements, pwdField);
@@ -1081,6 +1114,90 @@ class AuthUtilsUnitTest extends TestUtils {
             // Then
             assertThat(field, is(notNullValue()));
             assertThat(field.getDomAttribute("name"), is(equalTo("randomB")));
+        }
+
+        @TestTemplate
+        void shouldReturnUserTextFieldByDomProperty(WebDriver wd) {
+            // Given
+            pageContent =
+                    () ->
+                            """
+                                <input type="password" />
+                                <input id="id" />
+                                <input type="checkbox" />
+                                <script>
+                                    document.getElementById("id").type = "text";
+                                </script>
+                             """;
+            wd.get(url);
+            List<WebElement> inputElements = AuthUtils.getInputElements(wd, false);
+
+            // When
+            WebElement field = AuthUtils.getUserField(null, inputElements, null);
+
+            // Then
+            assertThat(field, is(notNullValue()));
+            assertThat(field.getDomProperty("type"), is(equalTo("text")));
+        }
+
+        @TestTemplate
+        void shouldReturnPasswordFieldByDomProperty(WebDriver wd) {
+            // Given
+            pageContent =
+                    () ->
+                            """
+                                <input type="email" />
+                                <input type="checkbox" />
+                                <input id="id" />
+                                <script>
+                                    document.getElementById("id").type = "password";
+                                </script>
+                             """;
+            wd.get(url);
+            List<WebElement> inputElements = AuthUtils.getInputElements(wd, false);
+
+            // When
+            WebElement field = AuthUtils.getPasswordField(inputElements);
+
+            // Then
+            assertThat(field, is(notNullValue()));
+            assertThat(field.getDomProperty("type"), is(equalTo("password")));
+        }
+
+        @TestTemplate
+        void shouldReturnInputElementsUnderShadowDom(WebDriver wd) {
+            // Given
+            pageContent = () -> HTML_SHADOM_DOM;
+            wd.get(url);
+
+            // When
+            List<WebElement> inputElements = AuthUtils.getInputElements(wd, true);
+
+            // Then
+            assertThat(inputElements, hasSize(4));
+            assertId(inputElements.get(0), "host-input-a");
+            assertId(inputElements.get(1), "host-input-b");
+            assertId(inputElements.get(2), "shadow-input-open");
+            assertId(inputElements.get(3), "shadow-input-closed");
+        }
+
+        @TestTemplate
+        void shouldNotReturnInputElementsUnderShadowDomIfNotWanted(WebDriver wd) {
+            // Given
+            pageContent = () -> HTML_SHADOM_DOM;
+            wd.get(url);
+
+            // When
+            List<WebElement> inputElements = AuthUtils.getInputElements(wd, false);
+
+            // Then
+            assertThat(inputElements, hasSize(2));
+            assertId(inputElements.get(0), "host-input-a");
+            assertId(inputElements.get(1), "host-input-b");
+        }
+
+        private static void assertId(WebElement element, String id) {
+            assertThat(element.getAttribute("id"), is(equalTo(id)));
         }
     }
 
@@ -1209,8 +1326,6 @@ class AuthUtilsUnitTest extends TestUtils {
         private String id;
         private String name;
         @Setter private boolean displayed = true;
-        @Setter private boolean useDomAttribute = true;
-        @Setter private boolean useDomProperty;
 
         TestWebElement(String tag, String type) {
             this.tag = tag;
@@ -1246,14 +1361,7 @@ class AuthUtilsUnitTest extends TestUtils {
         }
 
         @Override
-        public String getDomAttribute(String name) {
-            if (useDomAttribute) {
-                return getAttributeImpl(name);
-            }
-            return null;
-        }
-
-        private String getAttributeImpl(String name) {
+        public String getAttribute(String name) {
             switch (name) {
                 case "id":
                     return id;
@@ -1264,20 +1372,6 @@ class AuthUtilsUnitTest extends TestUtils {
                 default:
                     return null;
             }
-        }
-
-        @Override
-        public @Nullable String getDomProperty(String name) {
-            if (useDomProperty) {
-                return getAttributeImpl(name);
-            }
-            return null;
-        }
-
-        @Override
-        @Deprecated
-        public String getAttribute(String name) {
-            return null;
         }
 
         @Override

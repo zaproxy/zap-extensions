@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add more auth examples:
  - Login form with existing (invalid) values for the credentials.
  - A div that may obscure the login fields with all requiring scrolling.
+ - Login with a non std header and unrelated (but required) cookies.
+ - Login with no link to the login form. Access is only via a redirect to a one time URL.
+ - Login with fields under shadom DOM.
+ - Login where the session token is base64 encoded when passed to the browser.
 
 ## [0.10.0] - 2025-05-15
 ### Added

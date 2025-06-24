@@ -661,12 +661,16 @@ public class Spider {
     }
 
     /**
-     * Sets the spider so it will scan from the point of view of a user.
+     * Sets the spider so it will scan from the point of view of a user. Also sets the Logout
+     * Avoidance option (based on the configured options).
      *
      * @param user the user to be scanned as
      */
     public void setScanAsUser(User user) {
         this.scanUser = user;
+        if (user != null) {
+            defaultFetchFilter.setLogoutAvoidance(spiderParam.isLogoutAvoidance());
+        }
     }
 
     /**

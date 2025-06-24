@@ -134,6 +134,7 @@ public class FirefoxProfileManager implements ProfileManager {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public Path getOrCreateProfile(String profileName) throws IOException {
         Path dir = this.getProfileDirectory(profileName);
         if (dir != null) {
