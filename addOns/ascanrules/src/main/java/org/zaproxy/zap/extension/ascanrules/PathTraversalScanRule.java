@@ -65,7 +65,9 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
                         CommonAlertTag.toMap(
                                 CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
                                 CommonAlertTag.OWASP_2017_A05_BROKEN_AC,
-                                CommonAlertTag.WSTG_V42_ATHZ_01_DIR_TRAVERSAL));
+                                CommonAlertTag.WSTG_V42_ATHZ_01_DIR_TRAVERSAL,
+                                CommonAlertTag.HIPAA,
+                                CommonAlertTag.PCI_DSS));
         alertTags.put(PolicyTag.DEV_STD.getTag(), "");
         alertTags.put(PolicyTag.DEV_FULL.getTag(), "");
         alertTags.put(PolicyTag.QA_STD.getTag(), "");

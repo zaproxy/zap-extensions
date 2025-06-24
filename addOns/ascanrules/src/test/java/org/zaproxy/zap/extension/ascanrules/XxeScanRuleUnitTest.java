@@ -351,13 +351,15 @@ class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
         // Then
         assertThat(cwe, is(equalTo(611)));
         assertThat(wasc, is(equalTo(43)));
-        assertThat(tags.size(), is(equalTo(12)));
+        assertThat(tags.size(), is(equalTo(14)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(true)));
         assertThat(tags.containsKey(CommonAlertTag.OWASP_2017_A04_XXE.getTag()), is(equalTo(true)));
         assertThat(
                 tags.containsKey(CommonAlertTag.WSTG_V42_INPV_07_XMLI.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(CommonAlertTag.HIPAA.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(CommonAlertTag.PCI_DSS.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(ExtensionOast.OAST_ALERT_TAG_KEY), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.API.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.DEV_STD.getTag()), is(equalTo(true)));

@@ -60,7 +60,9 @@ public class Spring4ShellScanRule extends AbstractAppPlugin implements CommonAct
                                 CommonAlertTag.OWASP_2021_A06_VULN_COMP,
                                 CommonAlertTag.OWASP_2017_A01_INJECTION,
                                 CommonAlertTag.OWASP_2017_A09_VULN_COMP,
-                                CommonAlertTag.WSTG_V42_INPV_12_COMMAND_INJ));
+                                CommonAlertTag.WSTG_V42_INPV_12_COMMAND_INJ,
+                                CommonAlertTag.HIPAA,
+                                CommonAlertTag.PCI_DSS));
         CommonAlertTag.putCve(alertTags, CVE);
         alertTags.put(PolicyTag.QA_FULL.getTag(), "");
         alertTags.put(PolicyTag.PENTEST.getTag(), "");

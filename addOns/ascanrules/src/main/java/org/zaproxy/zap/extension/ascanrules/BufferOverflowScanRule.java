@@ -55,7 +55,8 @@ public class BufferOverflowScanRule extends AbstractAppParamPlugin
                 new HashMap<>(
                         CommonAlertTag.toMap(
                                 CommonAlertTag.OWASP_2021_A03_INJECTION,
-                                CommonAlertTag.OWASP_2017_A01_INJECTION));
+                                CommonAlertTag.OWASP_2017_A01_INJECTION,
+                                CommonAlertTag.PCI_DSS));
         alertTags.put(PolicyTag.API.getTag(), "");
         alertTags.put(PolicyTag.PENTEST.getTag(), "");
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);

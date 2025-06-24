@@ -54,7 +54,9 @@ public class OutOfBandXssScanRule extends AbstractAppParamPlugin
                                 CommonAlertTag.OWASP_2021_A03_INJECTION,
                                 CommonAlertTag.OWASP_2017_A07_XSS,
                                 CommonAlertTag.WSTG_V42_INPV_01_REFLECTED_XSS,
-                                CommonAlertTag.WSTG_V42_INPV_02_STORED_XSS));
+                                CommonAlertTag.WSTG_V42_INPV_02_STORED_XSS,
+                                CommonAlertTag.HIPAA,
+                                CommonAlertTag.PCI_DSS));
         alertTags.put(ExtensionOast.OAST_ALERT_TAG_KEY, ExtensionOast.OAST_ALERT_TAG_VALUE);
         alertTags.put(PolicyTag.DEV_FULL.getTag(), "");
         alertTags.put(PolicyTag.QA_FULL.getTag(), "");

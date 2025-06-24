@@ -55,7 +55,9 @@ public class Log4ShellScanRule extends AbstractAppParamPlugin implements CommonA
                         CommonAlertTag.toMap(
                                 CommonAlertTag.OWASP_2021_A06_VULN_COMP,
                                 CommonAlertTag.OWASP_2017_A09_VULN_COMP,
-                                CommonAlertTag.WSTG_V42_INPV_11_CODE_INJ));
+                                CommonAlertTag.WSTG_V42_INPV_11_CODE_INJ,
+                                CommonAlertTag.HIPAA,
+                                CommonAlertTag.PCI_DSS));
         alertTags.put(ExtensionOast.OAST_ALERT_TAG_KEY, ExtensionOast.OAST_ALERT_TAG_VALUE);
         CommonAlertTag.putCve(alertTags, CVE_44228);
         CommonAlertTag.putCve(alertTags, CVE_45046);

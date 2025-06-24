@@ -67,7 +67,8 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
                         CommonAlertTag.toMap(
                                 CommonAlertTag.OWASP_2021_A03_INJECTION,
                                 CommonAlertTag.OWASP_2017_A01_INJECTION,
-                                CommonAlertTag.WSTG_V42_CLNT_04_OPEN_REDIR));
+                                CommonAlertTag.WSTG_V42_CLNT_04_OPEN_REDIR,
+                                CommonAlertTag.HIPAA));
         alertTags.put(PolicyTag.API.getTag(), "");
         alertTags.put(PolicyTag.DEV_CICD.getTag(), "");
         alertTags.put(PolicyTag.DEV_STD.getTag(), "");

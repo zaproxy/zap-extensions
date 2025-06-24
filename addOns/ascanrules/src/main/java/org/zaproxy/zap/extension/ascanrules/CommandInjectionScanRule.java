@@ -98,7 +98,9 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
                         CommonAlertTag.toMap(
                                 CommonAlertTag.OWASP_2021_A03_INJECTION,
                                 CommonAlertTag.OWASP_2017_A01_INJECTION,
-                                CommonAlertTag.WSTG_V42_INPV_12_COMMAND_INJ));
+                                CommonAlertTag.WSTG_V42_INPV_12_COMMAND_INJ,
+                                CommonAlertTag.HIPAA,
+                                CommonAlertTag.PCI_DSS));
         alertTags.put(PolicyTag.API.getTag(), "");
         alertTags.put(PolicyTag.DEV_CICD.getTag(), "");
         alertTags.put(PolicyTag.DEV_STD.getTag(), "");
