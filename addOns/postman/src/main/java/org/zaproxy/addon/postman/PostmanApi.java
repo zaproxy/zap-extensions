@@ -19,6 +19,8 @@
  */
 package org.zaproxy.addon.postman;
 
+import java.io.IOException;
+import java.util.List;
 import net.sf.json.JSONObject;
 import org.zaproxy.zap.extension.api.ApiAction;
 import org.zaproxy.zap.extension.api.ApiException;
@@ -32,19 +34,10 @@ public class PostmanApi extends ApiImplementor {
     private static final String ACTION_IMPORT_URL = "importUrl";
     private static final String PARAM_URL = "url";
     private static final String PARAM_FILE = "file";
-    private static final String PARAM_ENDPOINT_URL = "endpointUrl";
 
     public PostmanApi() {
-        this.addApiAction(
-                new ApiAction(
-                        ACTION_IMPORT_FILE,
-                        new String[] {PARAM_FILE},
-                        new String[] {PARAM_ENDPOINT_URL}));
-        this.addApiAction(
-                new ApiAction(
-                        ACTION_IMPORT_URL,
-                        new String[] {PARAM_URL},
-                        new String[] {PARAM_ENDPOINT_URL}));
+        this.addApiAction(new ApiAction(ACTION_IMPORT_FILE, List.of(PARAM_FILE), List.of()));
+        this.addApiAction(new ApiAction(ACTION_IMPORT_URL, List.of(PARAM_URL), List.of()));
     }
 
     @Override
@@ -54,9 +47,22 @@ public class PostmanApi extends ApiImplementor {
 
     @Override
     public ApiResponse handleApiAction(String name, JSONObject params) throws ApiException {
+        PostmanParser parser = new PostmanParser();
+
         switch (name) {
             case ACTION_IMPORT_FILE:
+                try {
+                    parser.importFromFile(params.getString(PARAM_FILE), "", false);
+                } catch (IllegalArgumentException | IOException e) {
+                    throw new ApiException(ApiException.Type.BAD_EXTERNAL_DATA);
+                }
+                break;
             case ACTION_IMPORT_URL:
+                try {
+                    parser.importFromUrl(params.getString(PARAM_URL), "", false);
+                } catch (IllegalArgumentException | IOException e) {
+                    throw new ApiException(ApiException.Type.BAD_EXTERNAL_DATA);
+                }
                 break;
 
             default:
