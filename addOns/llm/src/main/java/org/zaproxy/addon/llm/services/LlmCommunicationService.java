@@ -38,6 +38,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.httpclient.util.HttpURLConnection;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpSender;
@@ -158,20 +159,19 @@ public class LlmCommunicationService {
         Alert updatedAlert = alert;
         Alert originalAlert = updatedAlert.newInstance();
 
-        if (!alert.getTags().containsKey(AI_REVIEWED_TAG_KEY)) {
-            Confidence conf_llm;
+        if (isPreviouslyReviewed(alert)) {
+            LOGGER.debug("Skipping previously reviewed alert : {} ", alert.getName());
+        } else {
+            Confidence llmConfidence;
             LOGGER.debug("Reviewing alert : {}", alert.getName());
             LOGGER.debug("Confidence level from ZAP : {}", alert.getConfidence());
-            conf_llm = llmAssistant.review(alert.getDescription(), alert.getEvidence());
+            llmConfidence = llmAssistant.review(alert.getDescription(), alert.getEvidence());
             LOGGER.debug(
                     "Confidence level from LLM : {} | Explanation : {}",
-                    conf_llm.getLevel(),
-                    conf_llm.getExplanation());
-            updatedAlert.setConfidence(conf_llm.getLevel());
-            updatedAlert.setOtherInfo(
-                    String.format(
-                            "LLM Explanation: %s \n %s",
-                            conf_llm.getExplanation(), alert.getOtherInfo()));
+                    llmConfidence.getLevel(),
+                    llmConfidence.getExplanation());
+            updatedAlert.setConfidence(llmConfidence.getLevel());
+            updatedAlert.setOtherInfo(getUpdatedOtherInfo(alert, llmConfidence));
             Map<String, String> alertTags = alert.getTags();
 
             alertTags.putIfAbsent(AI_REVIEWED_TAG_KEY, "");
@@ -191,9 +191,16 @@ public class LlmCommunicationService {
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
             }
-        } else {
-            LOGGER.debug("Skipping reviewed alert : {} ", alert.getName());
         }
+    }
+
+    private static boolean isPreviouslyReviewed(Alert alert) {
+        return !alert.getTags().containsKey(AI_REVIEWED_TAG_KEY);
+    }
+
+    private static String getUpdatedOtherInfo(Alert alert, Confidence llmConfidence) {
+        return Constant.messages.getString(
+                "llm.reviewalert.otherinfo", alert.getOtherInfo(), llmConfidence.getExplanation());
     }
 
     private static ExtensionAlert getExtAlert() {

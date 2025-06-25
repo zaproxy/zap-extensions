@@ -38,6 +38,7 @@ import org.parosproxy.paros.view.AbstractParamPanel;
 import org.zaproxy.addon.llm.LlmOptions;
 import org.zaproxy.addon.llm.LlmProvider;
 
+@SuppressWarnings("serial")
 public class LlmOptionsPanel extends AbstractParamPanel {
 
     private static final Logger LOGGER = LogManager.getLogger(LlmOptionsPanel.class);
