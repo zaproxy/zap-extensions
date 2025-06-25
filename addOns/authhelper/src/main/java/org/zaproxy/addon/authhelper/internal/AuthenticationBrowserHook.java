@@ -29,8 +29,10 @@ import org.zaproxy.addon.authhelper.AuthUtils;
 import org.zaproxy.addon.authhelper.ClientScriptBasedAuthenticationMethodType.ClientScriptBasedAuthenticationMethod;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.addon.network.server.ServerInfo;
+import org.zaproxy.zap.authentication.AuthenticationCredentials;
 import org.zaproxy.zap.authentication.AuthenticationMethod;
 import org.zaproxy.zap.authentication.GenericAuthenticationCredentials;
+import org.zaproxy.zap.authentication.UsernamePasswordAuthenticationCredentials;
 import org.zaproxy.zap.extension.selenium.BrowserHook;
 import org.zaproxy.zap.extension.selenium.SeleniumScriptUtils;
 import org.zaproxy.zap.model.Context;
@@ -45,12 +47,10 @@ public class AuthenticationBrowserHook implements BrowserHook {
     private static final String PASSWORD = "Password";
 
     private ClientScriptBasedAuthenticationMethod csaMethod;
-    private Context context;
     private final User user;
     private ZestAuthRunner zestRunner;
 
     public AuthenticationBrowserHook(Context context, User user) {
-        this.context = context;
         AuthenticationMethod method = context.getAuthenticationMethod();
         if (!(method instanceof ClientScriptBasedAuthenticationMethod)) {
             throw new IllegalStateException("Unsupported method " + method.getType().getName());
@@ -76,10 +76,16 @@ public class AuthenticationBrowserHook implements BrowserHook {
         ZestAuthRunner runner = getZestRunner(ssUtils.getWebDriver());
         try {
             Map<String, String> paramsValues = new HashMap<>();
-            GenericAuthenticationCredentials credentials =
-                    (GenericAuthenticationCredentials) user.getAuthenticationCredentials();
-            paramsValues.put(USERNAME, credentials.getParam(USERNAME));
-            paramsValues.put(PASSWORD, credentials.getParam(PASSWORD));
+            AuthenticationCredentials creds = user.getAuthenticationCredentials();
+
+            if (creds instanceof GenericAuthenticationCredentials genCreds) {
+                paramsValues.put(USERNAME, genCreds.getParam(USERNAME));
+                paramsValues.put(PASSWORD, genCreds.getParam(PASSWORD));
+            } else if (creds instanceof UsernamePasswordAuthenticationCredentials upCreds) {
+                paramsValues.put(USERNAME, upCreds.getUsername());
+                paramsValues.put(PASSWORD, upCreds.getPassword());
+            }
+
             ZestScript zs = csaMethod.getZestScript();
             runner.setup(user, zs);
             runner.run(zs, paramsValues);
