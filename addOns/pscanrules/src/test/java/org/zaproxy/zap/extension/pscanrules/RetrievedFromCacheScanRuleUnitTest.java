@@ -86,8 +86,10 @@ class RetrievedFromCacheScanRuleUnitTest extends PassiveScannerTest<RetrievedFro
         assertThat(alerts.size(), is(equalTo(2)));
         Alert cacheHitMissAlert = alerts.get(0);
         assertThat(cacheHitMissAlert.getAlertRef(), is(equalTo("10050-1")));
+        assertThat(cacheHitMissAlert.getCweId(), is(equalTo(525)));
         Alert xCacheAlert = alerts.get(1);
         assertThat(xCacheAlert.getAlertRef(), is(equalTo("10050-2")));
+        assertThat(xCacheAlert.getCweId(), is(equalTo(525)));
     }
 
     @Test

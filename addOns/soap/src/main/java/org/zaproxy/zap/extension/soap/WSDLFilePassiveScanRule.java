@@ -92,6 +92,7 @@ public class WSDLFilePassiveScanRule extends PluginPassiveScanner implements Com
                 .setOtherInfo(getOtherInfo())
                 .setSolution(getSolution())
                 .setEvidence(evidence)
+                .setCweId(651) // CWE-651: Exposure of WSDL File Containing Sensitive Information
                 .setWascId(13)
                 .raise();
     }

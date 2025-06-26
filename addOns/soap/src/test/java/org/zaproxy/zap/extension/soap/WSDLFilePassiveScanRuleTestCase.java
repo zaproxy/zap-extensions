@@ -121,6 +121,7 @@ class WSDLFilePassiveScanRuleTestCase extends PassiveScannerTestUtils<WSDLFilePa
         scanHttpResponseReceive(wsdlMsg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getCweId(), is(equalTo(651)));
     }
 
     @ParameterizedTest
