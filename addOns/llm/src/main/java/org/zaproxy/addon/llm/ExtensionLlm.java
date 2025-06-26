@@ -31,7 +31,7 @@ import org.zaproxy.addon.llm.ui.LlmReviewAlertMenu;
 import org.zaproxy.zap.view.ZapMenuItem;
 
 /**
- * An extension for ZAP that enables researchers to leverage Language Learning Models (LLMs) to
+ * An extension for ZAP that enables researchers to leverage Large Language Models (LLMs) to
  * augment the functionalities of ZAP.
  */
 public class ExtensionLlm extends ExtensionAdaptor {
