@@ -53,6 +53,7 @@ public class PassiveScanApi extends ApiImplementor {
     private static final String VIEW_CURRENT_RULE = "currentRule";
     private static final String VIEW_CURRENT_TASKS = "currentTasks";
     private static final String VIEW_MAX_ALERTS_PER_RULE = "maxAlertsPerRule";
+    private static final String VIEW_MAX_BODY_SIZE_IN_BYTES = "maxBodySizeInBytes";
 
     private static final String ACTION_SET_ENABLED = "setEnabled";
     private static final String ACTION_SET_SCAN_ONLY_IN_SCOPE = "setScanOnlyInScope";
@@ -62,6 +63,7 @@ public class PassiveScanApi extends ApiImplementor {
     private static final String ACTION_DISABLE_SCANNERS = "disableScanners";
     private static final String ACTION_SET_SCANNER_ALERT_THRESHOLD = "setScannerAlertThreshold";
     private static final String ACTION_SET_MAX_ALERTS_PER_RULE = "setMaxAlertsPerRule";
+    private static final String ACTION_SET_MAX_BODY_SIZE_IN_BYTES = "setMaxBodySizeInBytes";
     private static final String ACTION_DISABLE_ALL_TAGS = "disableAllTags";
     private static final String ACTION_ENABLE_ALL_TAGS = "enableAllTags";
     private static final String ACTION_CLEAR_QUEUE = "clearQueue";
@@ -72,6 +74,7 @@ public class PassiveScanApi extends ApiImplementor {
     private static final String PARAM_ID = "id";
     private static final String PARAM_ALERT_THRESHOLD = "alertThreshold";
     private static final String PARAM_MAX_ALERTS = "maxAlerts";
+    private static final String PARAM_MAX_SIZE = "maxSize";
 
     private final ExtensionPassiveScan2 extension;
     private final PassiveScannersManager scannersManager;
@@ -97,6 +100,8 @@ public class PassiveScanApi extends ApiImplementor {
                         new String[] {PARAM_ID, PARAM_ALERT_THRESHOLD}));
         this.addApiAction(
                 new ApiAction(ACTION_SET_MAX_ALERTS_PER_RULE, new String[] {PARAM_MAX_ALERTS}));
+        this.addApiAction(
+                new ApiAction(ACTION_SET_MAX_BODY_SIZE_IN_BYTES, new String[] {PARAM_MAX_SIZE}));
         this.addApiAction(new ApiAction(ACTION_DISABLE_ALL_TAGS));
         this.addApiAction(new ApiAction(ACTION_ENABLE_ALL_TAGS));
         this.addApiAction(new ApiAction(ACTION_CLEAR_QUEUE));
@@ -113,6 +118,7 @@ public class PassiveScanApi extends ApiImplementor {
         this.addApiView(currentRule);
         this.addApiView(new ApiView(VIEW_CURRENT_TASKS));
         this.addApiView(new ApiView(VIEW_MAX_ALERTS_PER_RULE));
+        this.addApiView(new ApiView(VIEW_MAX_BODY_SIZE_IN_BYTES));
     }
 
     @Override
@@ -161,6 +167,11 @@ public class PassiveScanApi extends ApiImplementor {
                 break;
             case ACTION_SET_MAX_ALERTS_PER_RULE:
                 getOptions().setMaxAlertsPerRule(ApiUtils.getIntParam(params, PARAM_MAX_ALERTS));
+                break;
+            case ACTION_SET_MAX_BODY_SIZE_IN_BYTES:
+                getOptions()
+                        .setMaxBodySizeInBytesToScan(
+                                Math.max(0, ApiUtils.getIntParam(params, PARAM_MAX_SIZE)));
                 break;
             case ACTION_DISABLE_ALL_TAGS:
                 getOptions()
@@ -324,6 +335,12 @@ public class PassiveScanApi extends ApiImplementor {
                         new ApiResponseElement(
                                 VIEW_MAX_ALERTS_PER_RULE,
                                 Integer.toString(getOptions().getMaxAlertsPerRule()));
+                break;
+            case VIEW_MAX_BODY_SIZE_IN_BYTES:
+                result =
+                        new ApiResponseElement(
+                                VIEW_MAX_BODY_SIZE_IN_BYTES,
+                                Integer.toString(getOptions().getMaxBodySizeInBytesToScan()));
                 break;
             default:
                 throw new ApiException(ApiException.Type.BAD_VIEW);

@@ -79,8 +79,8 @@ class PassiveScanApiUnitTest extends TestUtils {
         // Given / When
         pscanApi = new PassiveScanApi(extension, scannersManager);
         // Then
-        assertThat(pscanApi.getApiActions(), hasSize(11));
-        assertThat(pscanApi.getApiViews(), hasSize(6));
+        assertThat(pscanApi.getApiActions(), hasSize(12));
+        assertThat(pscanApi.getApiViews(), hasSize(7));
         assertThat(pscanApi.getApiOthers(), hasSize(0));
     }
 
