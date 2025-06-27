@@ -425,22 +425,20 @@ class CommandInjectionScanRuleUnitTest extends ActiveScannerTest<CommandInjectio
                     protected Response serve(IHTTPSession session) {
                         String value = getFirstParamValue(session, "ipaddress");
                         String url = session.getUri() + "?" + session.getQueryParameterString();
-                        
+
                         // Simulate VulnerableApp Level 2 filtering
                         Pattern blockPattern = Pattern.compile("[;& ]");
                         if (value != null && !blockPattern.matcher(url).find()) {
                             // Allow newline-based command injection
                             if (value.contains("%0A") || value.contains("%0a")) {
                                 return newFixedLengthResponse(
-                                        Response.Status.OK, 
-                                        NanoHTTPD.MIME_HTML, 
+                                        Response.Status.OK,
+                                        NanoHTTPD.MIME_HTML,
                                         "root:x:0:0:root:/root:/bin/bash");
                             }
                         }
                         return newFixedLengthResponse(
-                                Response.Status.OK, 
-                                NanoHTTPD.MIME_HTML, 
-                                "Ping response");
+                                Response.Status.OK, NanoHTTPD.MIME_HTML, "Ping response");
                     }
                 });
 
@@ -467,25 +465,24 @@ class CommandInjectionScanRuleUnitTest extends ActiveScannerTest<CommandInjectio
                     protected Response serve(IHTTPSession session) {
                         String value = getFirstParamValue(session, "ipaddress");
                         String url = session.getUri() + "?" + session.getQueryParameterString();
-                        
+
                         // Simulate VulnerableApp Level 5 filtering
                         Pattern blockPattern = Pattern.compile("[;& ]");
-                        if (value != null && !blockPattern.matcher(url).find() 
-                            && !url.toUpperCase().contains("%26") 
-                            && !url.toUpperCase().contains("%3B")
-                            && !url.toUpperCase().contains("%7C")) {
+                        if (value != null
+                                && !blockPattern.matcher(url).find()
+                                && !url.toUpperCase().contains("%26")
+                                && !url.toUpperCase().contains("%3B")
+                                && !url.toUpperCase().contains("%7C")) {
                             // Allow newline-based command injection (the key bypass!)
                             if (value.contains("%0A") || value.contains("%0a")) {
                                 return newFixedLengthResponse(
-                                        Response.Status.OK, 
-                                        NanoHTTPD.MIME_HTML, 
+                                        Response.Status.OK,
+                                        NanoHTTPD.MIME_HTML,
                                         "root:x:0:0:root:/root:/bin/bash");
                             }
                         }
                         return newFixedLengthResponse(
-                                Response.Status.OK, 
-                                NanoHTTPD.MIME_HTML, 
-                                "Ping response");
+                                Response.Status.OK, NanoHTTPD.MIME_HTML, "Ping response");
                     }
                 });
 
@@ -514,14 +511,12 @@ class CommandInjectionScanRuleUnitTest extends ActiveScannerTest<CommandInjectio
                         // Only respond to URL-encoded newline attacks
                         if (value != null && (value.startsWith("%0A") || value.startsWith("%0a"))) {
                             return newFixedLengthResponse(
-                                    Response.Status.OK, 
-                                    NanoHTTPD.MIME_HTML, 
+                                    Response.Status.OK,
+                                    NanoHTTPD.MIME_HTML,
                                     "root:x:0:0:root:/root:/bin/bash");
                         }
                         return newFixedLengthResponse(
-                                Response.Status.OK, 
-                                NanoHTTPD.MIME_HTML, 
-                                "No output");
+                                Response.Status.OK, NanoHTTPD.MIME_HTML, "No output");
                     }
                 });
 

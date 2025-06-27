@@ -149,23 +149,23 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
 
         // ===== NEW: URL-ENCODED BYPASS PAYLOADS FOR VULNERABLEAPP =====
         // These payloads specifically target VulnerableApp's filter bypasses
-        
+
         // Newline bypass payloads (%0A = newline) - bypasses semicolon/ampersand filters
         NIX_OS_PAYLOADS.put("%0A" + NIX_TEST_CMD, NIX_CTRL_PATTERN);
         NIX_OS_PAYLOADS.put("%0a" + NIX_TEST_CMD, NIX_CTRL_PATTERN); // lowercase
         WIN_OS_PAYLOADS.put("%0A" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
         WIN_OS_PAYLOADS.put("%0a" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
-        
+
         // Carriage return + newline bypass (%0D%0A)
         NIX_OS_PAYLOADS.put("%0D%0A" + NIX_TEST_CMD, NIX_CTRL_PATTERN);
         NIX_OS_PAYLOADS.put("%0d%0a" + NIX_TEST_CMD, NIX_CTRL_PATTERN);
         WIN_OS_PAYLOADS.put("%0D%0A" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
         WIN_OS_PAYLOADS.put("%0d%0a" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
-        
+
         // Tab character bypass (%09)
         NIX_OS_PAYLOADS.put("%09" + NIX_TEST_CMD, NIX_CTRL_PATTERN);
         WIN_OS_PAYLOADS.put("%09" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
-        
+
         // Double URL encoding bypasses (for Level 4+ filters)
         NIX_OS_PAYLOADS.put("%250A" + NIX_TEST_CMD, NIX_CTRL_PATTERN); // double-encoded newline
         NIX_OS_PAYLOADS.put("%2526" + NIX_TEST_CMD, NIX_CTRL_PATTERN); // double-encoded &
@@ -173,7 +173,7 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
         WIN_OS_PAYLOADS.put("%250A" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
         WIN_OS_PAYLOADS.put("%2526" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
         WIN_OS_PAYLOADS.put("%253B" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
-        
+
         // Unicode bypass attempts
         NIX_OS_PAYLOADS.put("%u000A" + NIX_TEST_CMD, NIX_CTRL_PATTERN); // Unicode newline
         NIX_OS_PAYLOADS.put("%u0026" + NIX_TEST_CMD, NIX_CTRL_PATTERN); // Unicode &
@@ -236,8 +236,12 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
         WIN_OS_PAYLOADS.put("'|" + WIN_TEST_CMD + NULL_BYTE_CHARACTER, WIN_CTRL_PATTERN);
 
         // Special payloads with null byte
-        NIX_OS_PAYLOADS.put("||" + NIX_TEST_CMD + NULL_BYTE_CHARACTER, NIX_CTRL_PATTERN); // or control concatenation
-        NIX_OS_PAYLOADS.put("&&" + NIX_TEST_CMD + NULL_BYTE_CHARACTER, NIX_CTRL_PATTERN); // and control concatenation
+        NIX_OS_PAYLOADS.put(
+                "||" + NIX_TEST_CMD + NULL_BYTE_CHARACTER,
+                NIX_CTRL_PATTERN); // or control concatenation
+        NIX_OS_PAYLOADS.put(
+                "&&" + NIX_TEST_CMD + NULL_BYTE_CHARACTER,
+                NIX_CTRL_PATTERN); // and control concatenation
         // FoxPro for running os commands
         WIN_OS_PAYLOADS.put("run " + WIN_TEST_CMD + NULL_BYTE_CHARACTER, WIN_CTRL_PATTERN);
 
@@ -312,19 +316,19 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
 
         // ===== NEW: URL-ENCODED TIMING-BASED BYPASS PAYLOADS =====
         // These specifically target VulnerableApp's timing-based detection with URL encoding
-        
+
         // Newline bypass for timing attacks
         NIX_BLIND_OS_PAYLOADS.add("%0A" + NIX_BLIND_TEST_CMD);
         NIX_BLIND_OS_PAYLOADS.add("%0a" + NIX_BLIND_TEST_CMD);
         WIN_BLIND_OS_PAYLOADS.add("%0A" + WIN_BLIND_TEST_CMD);
         WIN_BLIND_OS_PAYLOADS.add("%0a" + WIN_BLIND_TEST_CMD);
-        
+
         // Carriage return + newline for timing
         NIX_BLIND_OS_PAYLOADS.add("%0D%0A" + NIX_BLIND_TEST_CMD);
         NIX_BLIND_OS_PAYLOADS.add("%0d%0a" + NIX_BLIND_TEST_CMD);
         WIN_BLIND_OS_PAYLOADS.add("%0D%0A" + WIN_BLIND_TEST_CMD);
         WIN_BLIND_OS_PAYLOADS.add("%0d%0a" + WIN_BLIND_TEST_CMD);
-        
+
         // Double URL encoding for advanced filter bypass
         NIX_BLIND_OS_PAYLOADS.add("%250A" + NIX_BLIND_TEST_CMD);
         NIX_BLIND_OS_PAYLOADS.add("%2526" + NIX_BLIND_TEST_CMD);
@@ -453,8 +457,8 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
     }
 
     /**
-     * Measures baseline response time and calculates adaptive timeout for timing attacks.
-     * This helps improve detection accuracy in containerized and cloud environments.
+     * Measures baseline response time and calculates adaptive timeout for timing attacks. This
+     * helps improve detection accuracy in containerized and cloud environments.
      *
      * @return adaptive timeout in seconds, minimum of 3 seconds
      */
@@ -465,20 +469,21 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
             long startTime = System.currentTimeMillis();
             sendAndReceive(baselineMsg, false);
             long baselineTime = System.currentTimeMillis() - startTime;
-            
+
             // Calculate adaptive timeout: baseline + buffer, with minimum of 3 seconds
-            int adaptiveTimeout = Math.max(3, (int)(baselineTime / 1000) + 2);
-            
+            int adaptiveTimeout = Math.max(3, (int) (baselineTime / 1000) + 2);
+
             // Cap maximum timeout to prevent excessive delays
             adaptiveTimeout = Math.min(adaptiveTimeout, 15);
-            
-            LOGGER.debug("Baseline response time: {}ms, adaptive timeout: {}s", 
-                        baselineTime, adaptiveTimeout);
-            
+
+            LOGGER.debug(
+                    "Baseline response time: {}ms, adaptive timeout: {}s",
+                    baselineTime,
+                    adaptiveTimeout);
+
             return adaptiveTimeout;
         } catch (Exception e) {
-            LOGGER.debug("Failed to measure baseline, using default timeout: {}", 
-                        timeSleepSeconds);
+            LOGGER.debug("Failed to measure baseline, using default timeout: {}", timeSleepSeconds);
             return timeSleepSeconds;
         }
     }
@@ -703,7 +708,8 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
 
         // IMPROVED: Use adaptive timeout for better container/cloud detection
         int adaptiveTimeout = getAdaptiveTimeout();
-        LOGGER.debug("Using adaptive timeout of {} seconds for timing-based detection", adaptiveTimeout);
+        LOGGER.debug(
+                "Using adaptive timeout of {} seconds for timing-based detection", adaptiveTimeout);
 
         it = blindOsPayloads.iterator();
 
