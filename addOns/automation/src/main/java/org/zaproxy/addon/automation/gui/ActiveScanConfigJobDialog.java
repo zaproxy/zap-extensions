@@ -19,6 +19,10 @@
  */
 package org.zaproxy.addon.automation.gui;
 
+import java.util.List;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.automation.jobs.ActiveScanConfigJob;
 import org.zaproxy.addon.automation.jobs.ActiveScanConfigJob.InputVectors;
@@ -32,7 +36,9 @@ public class ActiveScanConfigJobDialog extends StandardFieldsDialog {
     private static final long serialVersionUID = 1L;
 
     private static final String[] TAB_LABELS = {
-        "automation.dialog.tab.params", "automation.dialog.ascanconfig.tab.iv"
+        "automation.dialog.tab.params",
+        "automation.dialog.ascanconfig.tab.iv",
+        "automation.dialog.ascanconfig.tab.exclude"
     };
 
     private static final String TITLE = "automation.dialog.ascanconfig.title";
@@ -77,6 +83,8 @@ public class ActiveScanConfigJobDialog extends StandardFieldsDialog {
             "automation.dialog.ascanconfig.iv.cookie.encode";
 
     private static final String SCRIPTS_PARAM = "automation.dialog.ascanconfig.iv.scripts";
+
+    private static final String EXCLUDE_PARAM = "automation.dialog.ascanconfig.exclude";
 
     private ActiveScanConfigJob job;
 
@@ -182,6 +190,15 @@ public class ActiveScanConfigJobDialog extends StandardFieldsDialog {
         addCheckBoxField(1, SCRIPTS_PARAM, iv.isScripts());
 
         addPadding(1);
+
+        this.addMultilineField(2, EXCLUDE_PARAM, listToString(job.getData().getExcludePaths()));
+    }
+
+    private String listToString(List<String> list) {
+        if (list != null) {
+            return String.join("\n", list);
+        }
+        return "";
     }
 
     @Override
@@ -227,12 +244,32 @@ public class ActiveScanConfigJobDialog extends StandardFieldsDialog {
 
         iv.setScripts(getBoolValue(SCRIPTS_PARAM));
 
+        job.getData().setExcludePaths(stringParamToList(EXCLUDE_PARAM));
+
         job.resetAndSetChanged();
+    }
+
+    private List<String> stringParamToList(String param) {
+        // Return a list of the trimmed and non empty strings
+        return Stream.of(this.getStringValue(param).split("\n"))
+                .map(String::trim)
+                .filter(item -> !item.isEmpty())
+                .toList();
     }
 
     @Override
     public String validateFields() {
-        // Nothing to do
+        for (String str : stringParamToList(EXCLUDE_PARAM)) {
+            if (!JobUtils.containsVars(str)) {
+                // Can only validate strings that dont contain env vars
+                try {
+                    Pattern.compile(str);
+                } catch (Exception e) {
+                    return Constant.messages.getString(
+                            "automation.dialog.ascanconfig.error.excregex", str);
+                }
+            }
+        }
         return null;
     }
 }

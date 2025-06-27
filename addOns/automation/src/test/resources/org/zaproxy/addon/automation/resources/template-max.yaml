@@ -87,6 +87,7 @@ jobs:
         enabled:                           # Bool: If enabled. Default: false
         encodeCookieValues:                # Bool: If cookie values should be encoded. Default: false
       scripts:                             # Bool: If Input Vector scripts should be used. Default: true
+    excludePaths:                          # An optional list of regexes to exclude
 
   - type: activeScan-policy            # Defines a new active scan policy which can be used by later activeScan related jobs
     parameters:

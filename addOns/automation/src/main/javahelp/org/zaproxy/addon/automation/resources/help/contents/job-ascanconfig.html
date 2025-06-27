@@ -44,7 +44,10 @@ This job configures the active scanner, for custom active scans (e.g. Sequence).
         enabled:                           # Bool: If enabled. Default: false
         encodeCookieValues:                # Bool: If cookie values should be encoded. Default: false
       scripts:                             # Bool: If Input Vector scripts should be used. Default: true
+    excludePaths:                          # An optional list of regexes to exclude
 </pre>
+
+Note that the 'excludePaths' will overwrite any existing session "Exclude from Scanner" paths.
 
 </BODY>
 </HTML>
