@@ -241,8 +241,7 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
         // FoxPro for running os commands
         WIN_OS_PAYLOADS.put("run " + WIN_TEST_CMD + NULL_BYTE_CHARACTER, WIN_CTRL_PATTERN);
 
-        // uninitialized variable waf bypass with null byte
-        String insertedCMD = insertUninitVar(NIX_TEST_CMD);
+        // uninitialized variable waf bypass with null byte (reuse existing insertedCMD variable)
         // No quote payloads
         NIX_OS_PAYLOADS.put("&" + insertedCMD + NULL_BYTE_CHARACTER, NIX_CTRL_PATTERN);
         NIX_OS_PAYLOADS.put(";" + insertedCMD + NULL_BYTE_CHARACTER, NIX_CTRL_PATTERN);
