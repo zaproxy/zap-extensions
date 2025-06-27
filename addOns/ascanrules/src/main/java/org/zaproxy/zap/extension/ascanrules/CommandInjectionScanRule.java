@@ -147,26 +147,15 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
         WIN_OS_PAYLOADS.put("run " + WIN_TEST_CMD, WIN_CTRL_PATTERN);
         PS_PAYLOADS.put(";" + PS_TEST_CMD + " #", PS_CTRL_PATTERN); // chain & comment
 
-        // ===== NEW: NEWLINE BYPASS PAYLOADS FOR VULNERABLEAPP =====
-        // These payloads specifically target VulnerableApp's filter bypasses
-        // Uses actual newline characters that will be URL-encoded automatically by ZAP
-
-        // Newline bypass payloads - bypasses semicolon/ampersand filters in VulnerableApp levels
-        // 2-5
         NIX_OS_PAYLOADS.put("\n" + NIX_TEST_CMD, NIX_CTRL_PATTERN);
         NIX_OS_PAYLOADS.put("\r" + NIX_TEST_CMD, NIX_CTRL_PATTERN);
         WIN_OS_PAYLOADS.put("\n" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
         WIN_OS_PAYLOADS.put("\r" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
-
-        // Carriage return + newline bypass
         NIX_OS_PAYLOADS.put("\r\n" + NIX_TEST_CMD, NIX_CTRL_PATTERN);
         WIN_OS_PAYLOADS.put("\r\n" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
-
-        // Tab character bypass
         NIX_OS_PAYLOADS.put("\t" + NIX_TEST_CMD, NIX_CTRL_PATTERN);
         WIN_OS_PAYLOADS.put("\t" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
 
-        // uninitialized variable waf bypass
         String insertedCMD = insertUninitVar(NIX_TEST_CMD);
         // No quote payloads
         NIX_OS_PAYLOADS.put("&" + insertedCMD + "&", NIX_CTRL_PATTERN);
@@ -231,7 +220,6 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
         // FoxPro for running os commands
         WIN_OS_PAYLOADS.put("run " + WIN_TEST_CMD + NULL_BYTE_CHARACTER, WIN_CTRL_PATTERN);
 
-        // uninitialized variable waf bypass with null byte (reuse existing insertedCMD variable)
         // No quote payloads
         NIX_OS_PAYLOADS.put("&" + insertedCMD + NULL_BYTE_CHARACTER, NIX_CTRL_PATTERN);
         NIX_OS_PAYLOADS.put(";" + insertedCMD + NULL_BYTE_CHARACTER, NIX_CTRL_PATTERN);
@@ -249,7 +237,6 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
     /** The default number of seconds used in time-based attacks (i.e. sleep commands). */
     private static final int DEFAULT_TIME_SLEEP_SEC = 3;
 
-    // limit the maximum number of requests sent for time-based attack detection
     private static final int BLIND_REQUESTS_LIMIT = 6;
 
     // error range allowable for statistical time-based blind attacks (0-1.0)
@@ -300,24 +287,15 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
         WIN_BLIND_OS_PAYLOADS.add("run " + WIN_BLIND_TEST_CMD);
         PS_BLIND_PAYLOADS.add(";" + PS_BLIND_TEST_CMD + " #"); // chain & comment
 
-        // ===== NEW: NEWLINE TIMING-BASED BYPASS PAYLOADS =====
-        // These specifically target VulnerableApp's timing-based detection
-
-        // Newline bypass for timing attacks - will be URL-encoded automatically by ZAP
         NIX_BLIND_OS_PAYLOADS.add("\n" + NIX_BLIND_TEST_CMD);
         NIX_BLIND_OS_PAYLOADS.add("\r" + NIX_BLIND_TEST_CMD);
         WIN_BLIND_OS_PAYLOADS.add("\n" + WIN_BLIND_TEST_CMD);
         WIN_BLIND_OS_PAYLOADS.add("\r" + WIN_BLIND_TEST_CMD);
-
-        // Carriage return + newline for timing
         NIX_BLIND_OS_PAYLOADS.add("\r\n" + NIX_BLIND_TEST_CMD);
         WIN_BLIND_OS_PAYLOADS.add("\r\n" + WIN_BLIND_TEST_CMD);
-
-        // Tab character for timing bypass
         NIX_BLIND_OS_PAYLOADS.add("\t" + NIX_BLIND_TEST_CMD);
         WIN_BLIND_OS_PAYLOADS.add("\t" + WIN_BLIND_TEST_CMD);
 
-        // uninitialized variable waf bypass
         String insertedCMD = insertUninitVar(NIX_BLIND_TEST_CMD);
         // No quote payloads
         NIX_BLIND_OS_PAYLOADS.add("&" + insertedCMD + "&");
@@ -446,17 +424,12 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
      */
     private int getAdaptiveTimeout() {
         try {
-            // Measure baseline response time with original request
             HttpMessage baselineMsg = getNewMsg();
             long startTime = System.currentTimeMillis();
             sendAndReceive(baselineMsg, false);
             long baselineTime = System.currentTimeMillis() - startTime;
 
-            // Calculate adaptive timeout: baseline + buffer, with minimum of 3 seconds
-            int adaptiveTimeout = Math.max(3, (int) (baselineTime / 1000) + 2);
-
-            // Cap maximum timeout to prevent excessive delays
-            adaptiveTimeout = Math.min(adaptiveTimeout, 15);
+            int adaptiveTimeout = Math.min(15, Math.max(3, (int) (baselineTime / 1000) + 2));
 
             LOGGER.debug(
                     "Baseline response time: {}ms, adaptive timeout: {}s",
@@ -687,8 +660,6 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
         // linear regression to check for a correlation
         // between requested delay and actual delay.
         // -----------------------------------------------
-
-        // IMPROVED: Use adaptive timeout for better container/cloud detection
         int adaptiveTimeout = getAdaptiveTimeout();
         LOGGER.debug(
                 "Using adaptive timeout of {} seconds for timing-based detection", adaptiveTimeout);

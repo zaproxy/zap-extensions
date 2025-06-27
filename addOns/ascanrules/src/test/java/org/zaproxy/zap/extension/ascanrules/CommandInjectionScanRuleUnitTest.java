@@ -412,8 +412,6 @@ class CommandInjectionScanRuleUnitTest extends ActiveScannerTest<CommandInjectio
         }
     }
 
-    // ===== NEW TESTS FOR VULNERABLEAPP BYPASS PAYLOADS =====
-
     @Test
     void shouldDetectVulnerableAppLevel2WithNewlineBypass() throws HttpMalformedHeaderException {
         // Given - Test VulnerableApp Level 2 behavior (simplified for testing)
