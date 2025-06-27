@@ -234,6 +234,27 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
 
         WIN_OS_PAYLOADS.put("'&" + WIN_TEST_CMD + NULL_BYTE_CHARACTER, WIN_CTRL_PATTERN);
         WIN_OS_PAYLOADS.put("'|" + WIN_TEST_CMD + NULL_BYTE_CHARACTER, WIN_CTRL_PATTERN);
+
+        // Special payloads with null byte
+        NIX_OS_PAYLOADS.put("||" + NIX_TEST_CMD + NULL_BYTE_CHARACTER, NIX_CTRL_PATTERN); // or control concatenation
+        NIX_OS_PAYLOADS.put("&&" + NIX_TEST_CMD + NULL_BYTE_CHARACTER, NIX_CTRL_PATTERN); // and control concatenation
+        // FoxPro for running os commands
+        WIN_OS_PAYLOADS.put("run " + WIN_TEST_CMD + NULL_BYTE_CHARACTER, WIN_CTRL_PATTERN);
+
+        // uninitialized variable waf bypass with null byte
+        String insertedCMD = insertUninitVar(NIX_TEST_CMD);
+        // No quote payloads
+        NIX_OS_PAYLOADS.put("&" + insertedCMD + NULL_BYTE_CHARACTER, NIX_CTRL_PATTERN);
+        NIX_OS_PAYLOADS.put(";" + insertedCMD + NULL_BYTE_CHARACTER, NIX_CTRL_PATTERN);
+        // Double quote payloads
+        NIX_OS_PAYLOADS.put("\"&" + insertedCMD + NULL_BYTE_CHARACTER, NIX_CTRL_PATTERN);
+        NIX_OS_PAYLOADS.put("\";" + insertedCMD + NULL_BYTE_CHARACTER, NIX_CTRL_PATTERN);
+        // Single quote payloads
+        NIX_OS_PAYLOADS.put("'&" + insertedCMD + NULL_BYTE_CHARACTER, NIX_CTRL_PATTERN);
+        NIX_OS_PAYLOADS.put("';" + insertedCMD + NULL_BYTE_CHARACTER, NIX_CTRL_PATTERN);
+        // Special payloads
+        NIX_OS_PAYLOADS.put("||" + insertedCMD + NULL_BYTE_CHARACTER, NIX_CTRL_PATTERN);
+        NIX_OS_PAYLOADS.put("&&" + insertedCMD + NULL_BYTE_CHARACTER, NIX_CTRL_PATTERN);
     }
 
     /** The default number of seconds used in time-based attacks (i.e. sleep commands). */
