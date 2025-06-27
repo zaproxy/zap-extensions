@@ -64,16 +64,21 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanrules.commandinjection.";
 
+    // *NIX OS Command constants
     private static final String NIX_TEST_CMD = "cat /etc/passwd";
     private static final Pattern NIX_CTRL_PATTERN = Pattern.compile("root:.:0:0");
 
+    // Windows OS Command constants
     private static final String WIN_TEST_CMD = "type %SYSTEMROOT%\\win.ini";
     private static final Pattern WIN_CTRL_PATTERN = Pattern.compile("\\[fonts\\]");
 
+    // PowerShell Command constants
     private static final String PS_TEST_CMD = "get-help";
     private static final Pattern PS_CTRL_PATTERN =
             Pattern.compile("(?:\\sGet-Help)(?i)|cmdlet|get-alias");
 
+    // Useful if space char isn't allowed by filters
+    // http://www.blackhatlibrary.net/Command_Injection
     private static final String BASH_SPACE_REPLACEMENT = "${IFS}";
 
     // OS Command payloads for command Injection testing
@@ -272,6 +277,7 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
         WIN_BLIND_OS_PAYLOADS.add("run " + WIN_BLIND_TEST_CMD);
         PS_BLIND_PAYLOADS.add(";" + PS_BLIND_TEST_CMD + " #"); // chain & comment
 
+        // uninitialized variable waf bypass
         NIX_BLIND_OS_PAYLOADS.add("\n" + NIX_BLIND_TEST_CMD);
         NIX_BLIND_OS_PAYLOADS.add("\r" + NIX_BLIND_TEST_CMD);
         WIN_BLIND_OS_PAYLOADS.add("\n" + WIN_BLIND_TEST_CMD);
@@ -433,6 +439,13 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
         return timeSleepSeconds;
     }
 
+    /**
+     * Scan for OS Command Injection Vulnerabilities
+     *
+     * @param msg a request only copy of the original message (the response isn't copied)
+     * @param paramName the parameter name that need to be exploited
+     * @param value the original parameter value
+     */
     @Override
     public void scan(HttpMessage msg, String paramName, String value) {
         LOGGER.debug(
@@ -531,6 +544,16 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
         return false;
     }
 
+    /**
+     * Tests for injection vulnerabilities with the given payloads.
+     *
+     * @param msg the HTTP message to test
+     * @param paramName the parameter name to test for injection
+     * @param value the original parameter value
+     * @param payloads the feedback-based payloads with detection patterns
+     * @param blindPayloads the time-based blind payloads
+     * @return {@code true} if vulnerability found, {@code false} otherwise
+     */
     private boolean testCommandInjection(
             HttpMessage msg,
             String paramName,
