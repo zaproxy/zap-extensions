@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Added Alert Tags for PCI DSS and HIPAA standards.
+- Added a help page for the alert tags provided through this add-on.
 
 ## [1.33.0] - 2025-06-20
 ### Added
