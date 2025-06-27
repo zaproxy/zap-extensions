@@ -22,7 +22,9 @@ package org.zaproxy.zap.extension.ascanrules;
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.startsWith;
 
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
@@ -114,6 +116,7 @@ class SqlInjectionSQLiteScanRuleUnitTest extends ActiveScannerTest<SqlInjectionS
                 equalTo("case randomblob(100000) when not null then 1 else 1 end "));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+        assertThat(alertsRaised.get(0).getTags(), not(hasKey(CommonAlertTag.TEST_TIMING.getTag())));
     }
 
     @Test
@@ -155,6 +158,7 @@ class SqlInjectionSQLiteScanRuleUnitTest extends ActiveScannerTest<SqlInjectionS
         assertThat(alertsRaised.get(0).getAttack(), startsWith("case randomblob(100"));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+        assertThat(alertsRaised.get(0).getTags(), is(hasKey(CommonAlertTag.TEST_TIMING.getTag())));
     }
 
     @Test
@@ -197,7 +201,7 @@ class SqlInjectionSQLiteScanRuleUnitTest extends ActiveScannerTest<SqlInjectionS
         // Then
         assertThat(cwe, is(equalTo(89)));
         assertThat(wasc, is(equalTo(19)));
-        assertThat(tags.size(), is(equalTo(7)));
+        assertThat(tags.size(), is(equalTo(8)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(true)));
@@ -208,6 +212,7 @@ class SqlInjectionSQLiteScanRuleUnitTest extends ActiveScannerTest<SqlInjectionS
                 tags.containsKey(CommonAlertTag.WSTG_V42_INPV_05_SQLI.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(CommonAlertTag.HIPAA.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(CommonAlertTag.PCI_DSS.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(CommonAlertTag.TEST_TIMING.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.QA_FULL.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
         assertThat(
