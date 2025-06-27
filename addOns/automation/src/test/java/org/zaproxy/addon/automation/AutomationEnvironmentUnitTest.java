@@ -380,9 +380,7 @@ class AutomationEnvironmentUnitTest {
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
         assertThat(progress.getErrors().size(), is(equalTo(1)));
-        assertThat(
-                progress.getErrors().get(0),
-                is(equalTo("!automation.error.context.badincludelist!")));
+        assertThat(progress.getErrors().get(0), is(equalTo("!automation.error.regex.badlist!")));
     }
 
     @Test
@@ -407,9 +405,7 @@ class AutomationEnvironmentUnitTest {
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
         assertThat(progress.getErrors().size(), is(equalTo(1)));
-        assertThat(
-                progress.getErrors().get(0),
-                is(equalTo("!automation.error.context.badexcludelist!")));
+        assertThat(progress.getErrors().get(0), is(equalTo("!automation.error.regex.badlist!")));
     }
 
     @Test
@@ -435,7 +431,7 @@ class AutomationEnvironmentUnitTest {
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
         assertThat(progress.getErrors().size(), is(equalTo(1)));
-        assertThat(progress.getErrors().get(0), is(equalTo("!automation.error.context.badregex!")));
+        assertThat(progress.getErrors().get(0), is(equalTo("!automation.error.regex.badregex!")));
     }
 
     @Test
@@ -461,7 +457,7 @@ class AutomationEnvironmentUnitTest {
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
         assertThat(progress.getErrors().size(), is(equalTo(1)));
-        assertThat(progress.getErrors().get(0), is(equalTo("!automation.error.context.badregex!")));
+        assertThat(progress.getErrors().get(0), is(equalTo("!automation.error.regex.badregex!")));
     }
 
     @Test
