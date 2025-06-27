@@ -161,6 +161,11 @@
             <enabled>true</enabled>
             <level>MEDIUM</level>
         </p40014>
+        <p40015>
+            <name>LDAP Injection</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p40015>
         <p40016>
             <name>Cross Site Scripting (Persistent) - Prime</name>
             <enabled>true</enabled>
@@ -236,6 +241,11 @@
             <enabled>true</enabled>
             <level>MEDIUM</level>
         </p40032>
+        <p40033>
+            <name>NoSQL Injection - MongoDB</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p40033>
         <p40034>
             <name>.env Information Leak</name>
             <enabled>true</enabled>
@@ -251,6 +261,11 @@
             <enabled>true</enabled>
             <level>MEDIUM</level>
         </p40038>
+        <p40039>
+            <name>Web Cache Deception</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p40039>
         <p40040>
             <name>CORS Header</name>
             <enabled>true</enabled>
@@ -366,5 +381,10 @@
             <enabled>true</enabled>
             <level>MEDIUM</level>
         </p90036>
+        <p90039>
+            <name>NoSQL Injection - MongoDB (Time Based)</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p90039>
     </plugins>
 </configuration>
