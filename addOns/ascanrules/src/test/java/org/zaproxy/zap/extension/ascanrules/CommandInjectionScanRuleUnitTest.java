@@ -68,14 +68,14 @@ class CommandInjectionScanRuleUnitTest extends ActiveScannerTest<CommandInjectio
         int recommendMax = super.getRecommendMaxNumberMessagesPerParam(strength);
         switch (strength) {
             case LOW:
-                return recommendMax + 5;  // Reduced from +15 to +5 for best payloads approach
+                return recommendMax + 9;
             case MEDIUM:
             default:
-                return recommendMax + 10; // Reduced from +35 to +10 for focused testing
+                return recommendMax + 23;
             case HIGH:
-                return recommendMax + 15; // Reduced from +50 to +15 for efficient coverage
+                return recommendMax + 30;
             case INSANE:
-                return recommendMax + 50; // Reduced from +65 to +50, still allows comprehensive testing
+                return recommendMax + 17;
         }
     }
 
