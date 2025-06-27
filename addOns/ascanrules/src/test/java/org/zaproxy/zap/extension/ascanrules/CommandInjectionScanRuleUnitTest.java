@@ -68,14 +68,14 @@ class CommandInjectionScanRuleUnitTest extends ActiveScannerTest<CommandInjectio
         int recommendMax = super.getRecommendMaxNumberMessagesPerParam(strength);
         switch (strength) {
             case LOW:
-                return recommendMax + 15; // Increased from 9 to account for new URL-encoded payloads
+                return recommendMax + 15;
             case MEDIUM:
             default:
-                return recommendMax + 35; // Increased from 23 to account for new URL-encoded payloads
+                return recommendMax + 35;
             case HIGH:
-                return recommendMax + 50; // Increased from 30 to account for new URL-encoded payloads
+                return recommendMax + 50;
             case INSANE:
-                return recommendMax + 65; // Increased from 17 to account for all new payloads
+                return recommendMax + 65;
         }
     }
 
@@ -189,7 +189,7 @@ class CommandInjectionScanRuleUnitTest extends ActiveScannerTest<CommandInjectio
         // Given / When
         int time = rule.getTimeSleep();
         // Then
-        assertThat(time, is(equalTo(3))); // Updated default from 5 to 3
+        assertThat(time, is(equalTo(3)));
     }
 
     @Test
@@ -209,7 +209,7 @@ class CommandInjectionScanRuleUnitTest extends ActiveScannerTest<CommandInjectio
         // When
         rule.init(getHttpMessage(""), parent);
         // Then
-        assertThat(rule.getTimeSleep(), is(equalTo(3))); // Updated default from 5 to 3
+        assertThat(rule.getTimeSleep(), is(equalTo(3)));
     }
 
     @Test
