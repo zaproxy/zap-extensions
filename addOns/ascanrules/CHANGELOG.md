@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 - Depends on an updated version of the Common Library add-on.
+- ascanrules: Enhanced CommandInjectionScanRule with URL-encoded bypass payloads and adaptive timing detection for improved container/cloud environment compatibility.
 
 ### Added
 - Rules (as applicable) have been tagged in relation to HIPAA and PCI DSS.

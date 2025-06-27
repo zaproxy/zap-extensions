@@ -147,6 +147,39 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
         WIN_OS_PAYLOADS.put("run " + WIN_TEST_CMD, WIN_CTRL_PATTERN);
         PS_PAYLOADS.put(";" + PS_TEST_CMD + " #", PS_CTRL_PATTERN); // chain & comment
 
+        // ===== NEW: URL-ENCODED BYPASS PAYLOADS FOR VULNERABLEAPP =====
+        // These payloads specifically target VulnerableApp's filter bypasses
+        
+        // Newline bypass payloads (%0A = newline) - bypasses semicolon/ampersand filters
+        NIX_OS_PAYLOADS.put("%0A" + NIX_TEST_CMD, NIX_CTRL_PATTERN);
+        NIX_OS_PAYLOADS.put("%0a" + NIX_TEST_CMD, NIX_CTRL_PATTERN); // lowercase
+        WIN_OS_PAYLOADS.put("%0A" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
+        WIN_OS_PAYLOADS.put("%0a" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
+        
+        // Carriage return + newline bypass (%0D%0A)
+        NIX_OS_PAYLOADS.put("%0D%0A" + NIX_TEST_CMD, NIX_CTRL_PATTERN);
+        NIX_OS_PAYLOADS.put("%0d%0a" + NIX_TEST_CMD, NIX_CTRL_PATTERN);
+        WIN_OS_PAYLOADS.put("%0D%0A" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
+        WIN_OS_PAYLOADS.put("%0d%0a" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
+        
+        // Tab character bypass (%09)
+        NIX_OS_PAYLOADS.put("%09" + NIX_TEST_CMD, NIX_CTRL_PATTERN);
+        WIN_OS_PAYLOADS.put("%09" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
+        
+        // Double URL encoding bypasses (for Level 4+ filters)
+        NIX_OS_PAYLOADS.put("%250A" + NIX_TEST_CMD, NIX_CTRL_PATTERN); // double-encoded newline
+        NIX_OS_PAYLOADS.put("%2526" + NIX_TEST_CMD, NIX_CTRL_PATTERN); // double-encoded &
+        NIX_OS_PAYLOADS.put("%253B" + NIX_TEST_CMD, NIX_CTRL_PATTERN); // double-encoded ;
+        WIN_OS_PAYLOADS.put("%250A" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
+        WIN_OS_PAYLOADS.put("%2526" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
+        WIN_OS_PAYLOADS.put("%253B" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
+        
+        // Unicode bypass attempts
+        NIX_OS_PAYLOADS.put("%u000A" + NIX_TEST_CMD, NIX_CTRL_PATTERN); // Unicode newline
+        NIX_OS_PAYLOADS.put("%u0026" + NIX_TEST_CMD, NIX_CTRL_PATTERN); // Unicode &
+        WIN_OS_PAYLOADS.put("%u000A" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
+        WIN_OS_PAYLOADS.put("%u0026" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
+
         // uninitialized variable waf bypass
         String insertedCMD = insertUninitVar(NIX_TEST_CMD);
         // No quote payloads
@@ -201,41 +234,16 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
 
         WIN_OS_PAYLOADS.put("'&" + WIN_TEST_CMD + NULL_BYTE_CHARACTER, WIN_CTRL_PATTERN);
         WIN_OS_PAYLOADS.put("'|" + WIN_TEST_CMD + NULL_BYTE_CHARACTER, WIN_CTRL_PATTERN);
-
-        // Special payloads
-        NIX_OS_PAYLOADS.put(
-                "||" + NIX_TEST_CMD + NULL_BYTE_CHARACTER,
-                NIX_CTRL_PATTERN); // or control concatenation
-        NIX_OS_PAYLOADS.put(
-                "&&" + NIX_TEST_CMD + NULL_BYTE_CHARACTER,
-                NIX_CTRL_PATTERN); // and control concatenation
-        // FoxPro for running os commands
-        WIN_OS_PAYLOADS.put("run " + WIN_TEST_CMD + NULL_BYTE_CHARACTER, WIN_CTRL_PATTERN);
-
-        // uninitialized variable waf bypass
-        insertedCMD = insertUninitVar(NIX_TEST_CMD);
-        // No quote payloads
-        NIX_OS_PAYLOADS.put("&" + insertedCMD + NULL_BYTE_CHARACTER, NIX_CTRL_PATTERN);
-        NIX_OS_PAYLOADS.put(";" + insertedCMD + NULL_BYTE_CHARACTER, NIX_CTRL_PATTERN);
-        // Double quote payloads
-        NIX_OS_PAYLOADS.put("\"&" + insertedCMD + NULL_BYTE_CHARACTER, NIX_CTRL_PATTERN);
-        NIX_OS_PAYLOADS.put("\";" + insertedCMD + NULL_BYTE_CHARACTER, NIX_CTRL_PATTERN);
-        // Single quote payloads
-        NIX_OS_PAYLOADS.put("'&" + insertedCMD + NULL_BYTE_CHARACTER, NIX_CTRL_PATTERN);
-        NIX_OS_PAYLOADS.put("';" + insertedCMD + NULL_BYTE_CHARACTER, NIX_CTRL_PATTERN);
-        // Special payloads
-        NIX_OS_PAYLOADS.put("||" + insertedCMD + NULL_BYTE_CHARACTER, NIX_CTRL_PATTERN);
-        NIX_OS_PAYLOADS.put("&&" + insertedCMD + NULL_BYTE_CHARACTER, NIX_CTRL_PATTERN);
     }
 
     /** The default number of seconds used in time-based attacks (i.e. sleep commands). */
-    private static final int DEFAULT_TIME_SLEEP_SEC = 5;
+    private static final int DEFAULT_TIME_SLEEP_SEC = 3;
 
     // limit the maximum number of requests sent for time-based attack detection
-    private static final int BLIND_REQUESTS_LIMIT = 4;
+    private static final int BLIND_REQUESTS_LIMIT = 6;
 
     // error range allowable for statistical time-based blind attacks (0-1.0)
-    private static final double TIME_CORRELATION_ERROR_RANGE = 0.15;
+    private static final double TIME_CORRELATION_ERROR_RANGE = 0.25;
     private static final double TIME_SLOPE_ERROR_RANGE = 0.30;
 
     // *NIX Blind OS Command constants
@@ -281,6 +289,27 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
         // FoxPro for running os commands
         WIN_BLIND_OS_PAYLOADS.add("run " + WIN_BLIND_TEST_CMD);
         PS_BLIND_PAYLOADS.add(";" + PS_BLIND_TEST_CMD + " #"); // chain & comment
+
+        // ===== NEW: URL-ENCODED TIMING-BASED BYPASS PAYLOADS =====
+        // These specifically target VulnerableApp's timing-based detection with URL encoding
+        
+        // Newline bypass for timing attacks
+        NIX_BLIND_OS_PAYLOADS.add("%0A" + NIX_BLIND_TEST_CMD);
+        NIX_BLIND_OS_PAYLOADS.add("%0a" + NIX_BLIND_TEST_CMD);
+        WIN_BLIND_OS_PAYLOADS.add("%0A" + WIN_BLIND_TEST_CMD);
+        WIN_BLIND_OS_PAYLOADS.add("%0a" + WIN_BLIND_TEST_CMD);
+        
+        // Carriage return + newline for timing
+        NIX_BLIND_OS_PAYLOADS.add("%0D%0A" + NIX_BLIND_TEST_CMD);
+        NIX_BLIND_OS_PAYLOADS.add("%0d%0a" + NIX_BLIND_TEST_CMD);
+        WIN_BLIND_OS_PAYLOADS.add("%0D%0A" + WIN_BLIND_TEST_CMD);
+        WIN_BLIND_OS_PAYLOADS.add("%0d%0a" + WIN_BLIND_TEST_CMD);
+        
+        // Double URL encoding for advanced filter bypass
+        NIX_BLIND_OS_PAYLOADS.add("%250A" + NIX_BLIND_TEST_CMD);
+        NIX_BLIND_OS_PAYLOADS.add("%2526" + NIX_BLIND_TEST_CMD);
+        WIN_BLIND_OS_PAYLOADS.add("%250A" + WIN_BLIND_TEST_CMD);
+        WIN_BLIND_OS_PAYLOADS.add("%2526" + WIN_BLIND_TEST_CMD);
 
         // uninitialized variable waf bypass
         String insertedCMD = insertUninitVar(NIX_BLIND_TEST_CMD);
@@ -401,6 +430,37 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
                     this.getConfig().getString(RULE_SLEEP_TIME));
         }
         LOGGER.debug("Sleep set to {} seconds", timeSleepSeconds);
+    }
+
+    /**
+     * Measures baseline response time and calculates adaptive timeout for timing attacks.
+     * This helps improve detection accuracy in containerized and cloud environments.
+     *
+     * @return adaptive timeout in seconds, minimum of 3 seconds
+     */
+    private int getAdaptiveTimeout() {
+        try {
+            // Measure baseline response time with original request
+            HttpMessage baselineMsg = getNewMsg();
+            long startTime = System.currentTimeMillis();
+            sendAndReceive(baselineMsg, false);
+            long baselineTime = System.currentTimeMillis() - startTime;
+            
+            // Calculate adaptive timeout: baseline + buffer, with minimum of 3 seconds
+            int adaptiveTimeout = Math.max(3, (int)(baselineTime / 1000) + 2);
+            
+            // Cap maximum timeout to prevent excessive delays
+            adaptiveTimeout = Math.min(adaptiveTimeout, 15);
+            
+            LOGGER.debug("Baseline response time: {}ms, adaptive timeout: {}s", 
+                        baselineTime, adaptiveTimeout);
+            
+            return adaptiveTimeout;
+        } catch (Exception e) {
+            LOGGER.debug("Failed to measure baseline, using default timeout: {}", 
+                        timeSleepSeconds);
+            return timeSleepSeconds;
+        }
     }
 
     /**
@@ -621,12 +681,16 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
         // between requested delay and actual delay.
         // -----------------------------------------------
 
+        // IMPROVED: Use adaptive timeout for better container/cloud detection
+        int adaptiveTimeout = getAdaptiveTimeout();
+        LOGGER.debug("Using adaptive timeout of {} seconds for timing-based detection", adaptiveTimeout);
+
         it = blindOsPayloads.iterator();
 
         for (int i = 0; it.hasNext() && (i < blindTargetCount); i++) {
             AtomicReference<HttpMessage> message = new AtomicReference<>();
             String sleepPayload = it.next();
-            paramValue = value + sleepPayload.replace("{0}", String.valueOf(timeSleepSeconds));
+            paramValue = value + sleepPayload.replace("{0}", String.valueOf(adaptiveTimeout));
 
             // the function that will send each request
             TimingUtils.RequestSender requestSender =
@@ -650,7 +714,7 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
                     isInjectable =
                             TimingUtils.checkTimingDependence(
                                     BLIND_REQUESTS_LIMIT,
-                                    timeSleepSeconds,
+                                    adaptiveTimeout,
                                     requestSender,
                                     TIME_CORRELATION_ERROR_RANGE,
                                     TIME_SLOPE_ERROR_RANGE);

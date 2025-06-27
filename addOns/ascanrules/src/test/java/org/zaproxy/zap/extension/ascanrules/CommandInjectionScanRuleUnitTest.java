@@ -185,11 +185,11 @@ class CommandInjectionScanRuleUnitTest extends ActiveScannerTest<CommandInjectio
     }
 
     @Test
-    void shouldUse5SecsByDefaultForTimeBasedAttacks() throws Exception {
+    void shouldUse3SecsByDefaultForTimeBasedAttacks() throws Exception {
         // Given / When
         int time = rule.getTimeSleep();
         // Then
-        assertThat(time, is(equalTo(5)));
+        assertThat(time, is(equalTo(3))); // Updated default from 5 to 3
     }
 
     @Test
@@ -203,13 +203,13 @@ class CommandInjectionScanRuleUnitTest extends ActiveScannerTest<CommandInjectio
     }
 
     @Test
-    void shouldDefaultTo5SecsIfConfigTimeIsMalformedValueForTimeBasedAttacks() throws Exception {
+    void shouldDefaultTo3SecsIfConfigTimeIsMalformedValueForTimeBasedAttacks() throws Exception {
         // Given
         rule.setConfig(configWithSleepRule("not a valid value"));
         // When
         rule.init(getHttpMessage(""), parent);
         // Then
-        assertThat(rule.getTimeSleep(), is(equalTo(5)));
+        assertThat(rule.getTimeSleep(), is(equalTo(3))); // Updated default from 5 to 3
     }
 
     @Test
@@ -410,5 +410,130 @@ class CommandInjectionScanRuleUnitTest extends ActiveScannerTest<CommandInjectio
             }
             return newFixedLengthResponse(Response.Status.OK, NanoHTTPD.MIME_HTML, "Content");
         }
+    }
+
+    // ===== NEW TESTS FOR VULNERABLEAPP BYPASS PAYLOADS =====
+
+    @Test
+    void shouldDetectVulnerableAppLevel2WithNewlineBypass() throws HttpMalformedHeaderException {
+        // Given - Test VulnerableApp Level 2 (blocks semicolon, ampersand, space)
+        String test = "/vulnerableapp/level2/";
+
+        nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String value = getFirstParamValue(session, "ipaddress");
+                        String url = session.getUri() + "?" + session.getQueryParameterString();
+                        
+                        // Simulate VulnerableApp Level 2 filtering
+                        Pattern blockPattern = Pattern.compile("[;& ]");
+                        if (value != null && !blockPattern.matcher(url).find()) {
+                            // Allow newline-based command injection
+                            if (value.contains("%0A") || value.contains("%0a")) {
+                                return newFixedLengthResponse(
+                                        Response.Status.OK, 
+                                        NanoHTTPD.MIME_HTML, 
+                                        "root:x:0:0:root:/root:/bin/bash");
+                            }
+                        }
+                        return newFixedLengthResponse(
+                                Response.Status.OK, 
+                                NanoHTTPD.MIME_HTML, 
+                                "Ping response");
+                    }
+                });
+
+        rule.init(getHttpMessage(test + "?ipaddress=127.0.0.1"), parent);
+
+        // When
+        rule.scan();
+
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+        String attack = alertsRaised.get(0).getAttack();
+        assertTrue(attack.contains("%0A") || attack.contains("%0a"));
+        assertThat(alertsRaised.get(0).getParam(), is(equalTo("ipaddress")));
+    }
+
+    @Test
+    void shouldDetectVulnerableAppLevel5WithAdvancedBypass() throws HttpMalformedHeaderException {
+        // Given - Test VulnerableApp Level 5 (also blocks %7C - pipe)
+        String test = "/vulnerableapp/level5/";
+
+        nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String value = getFirstParamValue(session, "ipaddress");
+                        String url = session.getUri() + "?" + session.getQueryParameterString();
+                        
+                        // Simulate VulnerableApp Level 5 filtering
+                        Pattern blockPattern = Pattern.compile("[;& ]");
+                        if (value != null && !blockPattern.matcher(url).find() 
+                            && !url.toUpperCase().contains("%26") 
+                            && !url.toUpperCase().contains("%3B")
+                            && !url.toUpperCase().contains("%7C")) {
+                            // Allow newline-based command injection (the key bypass!)
+                            if (value.contains("%0A") || value.contains("%0a")) {
+                                return newFixedLengthResponse(
+                                        Response.Status.OK, 
+                                        NanoHTTPD.MIME_HTML, 
+                                        "root:x:0:0:root:/root:/bin/bash");
+                            }
+                        }
+                        return newFixedLengthResponse(
+                                Response.Status.OK, 
+                                NanoHTTPD.MIME_HTML, 
+                                "Ping response");
+                    }
+                });
+
+        rule.init(getHttpMessage(test + "?ipaddress=127.0.0.1"), parent);
+
+        // When
+        rule.scan();
+
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+        String attack = alertsRaised.get(0).getAttack();
+        assertTrue(attack.contains("%0A") || attack.contains("%0a"));
+        assertThat(alertsRaised.get(0).getParam(), is(equalTo("ipaddress")));
+    }
+
+    @Test
+    void shouldTestUrlEncodedNewlinePayloads() throws HttpMalformedHeaderException {
+        // Given - Test that our new URL-encoded payloads are actually being used
+        String test = "/newline-test/";
+
+        nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String value = getFirstParamValue(session, "param");
+                        // Only respond to URL-encoded newline attacks
+                        if (value != null && (value.startsWith("%0A") || value.startsWith("%0a"))) {
+                            return newFixedLengthResponse(
+                                    Response.Status.OK, 
+                                    NanoHTTPD.MIME_HTML, 
+                                    "root:x:0:0:root:/root:/bin/bash");
+                        }
+                        return newFixedLengthResponse(
+                                Response.Status.OK, 
+                                NanoHTTPD.MIME_HTML, 
+                                "No output");
+                    }
+                });
+
+        rule.init(getHttpMessage(test + "?param=test"), parent);
+
+        // When
+        rule.scan();
+
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+        String attack = alertsRaised.get(0).getAttack();
+        assertTrue(attack.startsWith("%0A") || attack.startsWith("%0a"));
+        assertThat(alertsRaised.get(0).getParam(), is(equalTo("param")));
     }
 }
