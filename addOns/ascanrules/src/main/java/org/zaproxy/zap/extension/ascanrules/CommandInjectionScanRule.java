@@ -147,38 +147,24 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
         WIN_OS_PAYLOADS.put("run " + WIN_TEST_CMD, WIN_CTRL_PATTERN);
         PS_PAYLOADS.put(";" + PS_TEST_CMD + " #", PS_CTRL_PATTERN); // chain & comment
 
-        // ===== NEW: URL-ENCODED BYPASS PAYLOADS FOR VULNERABLEAPP =====
+        // ===== NEW: NEWLINE BYPASS PAYLOADS FOR VULNERABLEAPP =====
         // These payloads specifically target VulnerableApp's filter bypasses
+        // Uses actual newline characters that will be URL-encoded automatically by ZAP
 
-        // Newline bypass payloads (%0A = newline) - bypasses semicolon/ampersand filters
-        NIX_OS_PAYLOADS.put("%0A" + NIX_TEST_CMD, NIX_CTRL_PATTERN);
-        NIX_OS_PAYLOADS.put("%0a" + NIX_TEST_CMD, NIX_CTRL_PATTERN); // lowercase
-        WIN_OS_PAYLOADS.put("%0A" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
-        WIN_OS_PAYLOADS.put("%0a" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
+        // Newline bypass payloads - bypasses semicolon/ampersand filters in VulnerableApp levels
+        // 2-5
+        NIX_OS_PAYLOADS.put("\n" + NIX_TEST_CMD, NIX_CTRL_PATTERN);
+        NIX_OS_PAYLOADS.put("\r" + NIX_TEST_CMD, NIX_CTRL_PATTERN);
+        WIN_OS_PAYLOADS.put("\n" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
+        WIN_OS_PAYLOADS.put("\r" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
 
-        // Carriage return + newline bypass (%0D%0A)
-        NIX_OS_PAYLOADS.put("%0D%0A" + NIX_TEST_CMD, NIX_CTRL_PATTERN);
-        NIX_OS_PAYLOADS.put("%0d%0a" + NIX_TEST_CMD, NIX_CTRL_PATTERN);
-        WIN_OS_PAYLOADS.put("%0D%0A" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
-        WIN_OS_PAYLOADS.put("%0d%0a" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
+        // Carriage return + newline bypass
+        NIX_OS_PAYLOADS.put("\r\n" + NIX_TEST_CMD, NIX_CTRL_PATTERN);
+        WIN_OS_PAYLOADS.put("\r\n" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
 
-        // Tab character bypass (%09)
-        NIX_OS_PAYLOADS.put("%09" + NIX_TEST_CMD, NIX_CTRL_PATTERN);
-        WIN_OS_PAYLOADS.put("%09" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
-
-        // Double URL encoding bypasses (for Level 4+ filters)
-        NIX_OS_PAYLOADS.put("%250A" + NIX_TEST_CMD, NIX_CTRL_PATTERN); // double-encoded newline
-        NIX_OS_PAYLOADS.put("%2526" + NIX_TEST_CMD, NIX_CTRL_PATTERN); // double-encoded &
-        NIX_OS_PAYLOADS.put("%253B" + NIX_TEST_CMD, NIX_CTRL_PATTERN); // double-encoded ;
-        WIN_OS_PAYLOADS.put("%250A" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
-        WIN_OS_PAYLOADS.put("%2526" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
-        WIN_OS_PAYLOADS.put("%253B" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
-
-        // Unicode bypass attempts
-        NIX_OS_PAYLOADS.put("%u000A" + NIX_TEST_CMD, NIX_CTRL_PATTERN); // Unicode newline
-        NIX_OS_PAYLOADS.put("%u0026" + NIX_TEST_CMD, NIX_CTRL_PATTERN); // Unicode &
-        WIN_OS_PAYLOADS.put("%u000A" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
-        WIN_OS_PAYLOADS.put("%u0026" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
+        // Tab character bypass
+        NIX_OS_PAYLOADS.put("\t" + NIX_TEST_CMD, NIX_CTRL_PATTERN);
+        WIN_OS_PAYLOADS.put("\t" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
 
         // uninitialized variable waf bypass
         String insertedCMD = insertUninitVar(NIX_TEST_CMD);
@@ -314,26 +300,22 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
         WIN_BLIND_OS_PAYLOADS.add("run " + WIN_BLIND_TEST_CMD);
         PS_BLIND_PAYLOADS.add(";" + PS_BLIND_TEST_CMD + " #"); // chain & comment
 
-        // ===== NEW: URL-ENCODED TIMING-BASED BYPASS PAYLOADS =====
-        // These specifically target VulnerableApp's timing-based detection with URL encoding
+        // ===== NEW: NEWLINE TIMING-BASED BYPASS PAYLOADS =====
+        // These specifically target VulnerableApp's timing-based detection
 
-        // Newline bypass for timing attacks
-        NIX_BLIND_OS_PAYLOADS.add("%0A" + NIX_BLIND_TEST_CMD);
-        NIX_BLIND_OS_PAYLOADS.add("%0a" + NIX_BLIND_TEST_CMD);
-        WIN_BLIND_OS_PAYLOADS.add("%0A" + WIN_BLIND_TEST_CMD);
-        WIN_BLIND_OS_PAYLOADS.add("%0a" + WIN_BLIND_TEST_CMD);
+        // Newline bypass for timing attacks - will be URL-encoded automatically by ZAP
+        NIX_BLIND_OS_PAYLOADS.add("\n" + NIX_BLIND_TEST_CMD);
+        NIX_BLIND_OS_PAYLOADS.add("\r" + NIX_BLIND_TEST_CMD);
+        WIN_BLIND_OS_PAYLOADS.add("\n" + WIN_BLIND_TEST_CMD);
+        WIN_BLIND_OS_PAYLOADS.add("\r" + WIN_BLIND_TEST_CMD);
 
         // Carriage return + newline for timing
-        NIX_BLIND_OS_PAYLOADS.add("%0D%0A" + NIX_BLIND_TEST_CMD);
-        NIX_BLIND_OS_PAYLOADS.add("%0d%0a" + NIX_BLIND_TEST_CMD);
-        WIN_BLIND_OS_PAYLOADS.add("%0D%0A" + WIN_BLIND_TEST_CMD);
-        WIN_BLIND_OS_PAYLOADS.add("%0d%0a" + WIN_BLIND_TEST_CMD);
+        NIX_BLIND_OS_PAYLOADS.add("\r\n" + NIX_BLIND_TEST_CMD);
+        WIN_BLIND_OS_PAYLOADS.add("\r\n" + WIN_BLIND_TEST_CMD);
 
-        // Double URL encoding for advanced filter bypass
-        NIX_BLIND_OS_PAYLOADS.add("%250A" + NIX_BLIND_TEST_CMD);
-        NIX_BLIND_OS_PAYLOADS.add("%2526" + NIX_BLIND_TEST_CMD);
-        WIN_BLIND_OS_PAYLOADS.add("%250A" + WIN_BLIND_TEST_CMD);
-        WIN_BLIND_OS_PAYLOADS.add("%2526" + WIN_BLIND_TEST_CMD);
+        // Tab character for timing bypass
+        NIX_BLIND_OS_PAYLOADS.add("\t" + NIX_BLIND_TEST_CMD);
+        WIN_BLIND_OS_PAYLOADS.add("\t" + WIN_BLIND_TEST_CMD);
 
         // uninitialized variable waf bypass
         String insertedCMD = insertUninitVar(NIX_BLIND_TEST_CMD);
