@@ -43,13 +43,11 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.PolicyTag;
-
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
-
 
 /**
  * Active scan rule for Command Injection testing and verification.
@@ -230,8 +228,6 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
     /** The default number of seconds used in time-based attacks (i.e. sleep commands). */
     private static final int DEFAULT_TIME_SLEEP_SEC = 3;
 
-
-
     // *NIX Blind OS Command constants
     private static final String NIX_BLIND_TEST_CMD = "sleep {0}";
     // Windows Blind OS Command constants
@@ -405,7 +401,6 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
         LOGGER.debug("Sleep set to {} seconds", timeSleepSeconds);
     }
 
-
     private int getAdaptiveTimeout() {
         try {
             HttpMessage baselineMsg = getNewMsg();
@@ -438,7 +433,6 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
         return timeSleepSeconds;
     }
 
-
     @Override
     public void scan(HttpMessage msg, String paramName, String value) {
         LOGGER.debug(
@@ -465,90 +459,102 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
                     msg, paramName, value, WIN_OS_PAYLOADS, WIN_BLIND_OS_PAYLOADS)) {
                 return;
             }
-            
+
             if (isStop()) return;
-            
+
             if (testCommandInjection(msg, paramName, value, PS_PAYLOADS, PS_BLIND_PAYLOADS)) {
                 return;
             }
         }
     }
 
-
-
-
-
-
-
-
     private static String insertUninitVar(String command) {
         return command.replace(" ", "${u} ");
     }
 
+    private boolean testBlindCommandInjection(
+            String paramName,
+            String value,
+            int blindTargetCount,
+            List<String> blindPayloads,
+            String osType) {
 
-    private boolean testBlindCommandInjection(String paramName, String value, int blindTargetCount, 
-            List<String> blindPayloads, String osType) {
-        
         int adaptiveTimeout = getAdaptiveTimeout();
         String sleepCmd = String.valueOf(adaptiveTimeout);
-        
+
         Iterator<String> it = blindPayloads.iterator();
         for (int i = 0; it.hasNext() && i < blindTargetCount; i++) {
             String payload = it.next().replace("{0}", sleepCmd);
-            
+
             if (isStop()) return false;
-            
+
             HttpMessage msg = getNewMsg();
             setParameter(msg, paramName, value + payload);
-            
+
             try {
                 long startTime = System.currentTimeMillis();
                 sendAndReceive(msg, false);
                 long endTime = System.currentTimeMillis();
                 long responseTime = endTime - startTime;
-                
+
                 if (responseTime >= (adaptiveTimeout * 1000 - 500)) {
-                    String otherInfo = getOtherInfo(TestType.TIME, payload) + 
-                            " (OS: " + osType + ", Sleep time: " + adaptiveTimeout + "s)";
-                    
-                    buildAlert(paramName, payload, "Response time: " + responseTime + "ms", 
-                            otherInfo, msg).raise();
+                    String otherInfo =
+                            getOtherInfo(TestType.TIME, payload)
+                                    + " (OS: "
+                                    + osType
+                                    + ", Sleep time: "
+                                    + adaptiveTimeout
+                                    + "s)";
+
+                    buildAlert(
+                                    paramName,
+                                    payload,
+                                    "Response time: " + responseTime + "ms",
+                                    otherInfo,
+                                    msg)
+                            .raise();
                     return true;
                 }
-                
+
             } catch (SocketException ex) {
-                LOGGER.debug("Network error during blind command injection test: {}", ex.getMessage());
+                LOGGER.debug(
+                        "Network error during blind command injection test: {}", ex.getMessage());
                 continue;
             } catch (IOException ex) {
-                LOGGER.warn("Blind command injection test failed for parameter [{}]: {}", 
-                        paramName, ex.getMessage());
+                LOGGER.warn(
+                        "Blind command injection test failed for parameter [{}]: {}",
+                        paramName,
+                        ex.getMessage());
             }
         }
-        
+
         return false;
     }
 
-
-    private boolean testCommandInjection(HttpMessage msg, String paramName, String value,
-            Map<String, Pattern> payloads, List<String> blindPayloads) {
+    private boolean testCommandInjection(
+            HttpMessage msg,
+            String paramName,
+            String value,
+            Map<String, Pattern> payloads,
+            List<String> blindPayloads) {
 
         Iterator<Map.Entry<String, Pattern>> it = payloads.entrySet().iterator();
         boolean firstPayload = true;
         int maxPayloads = getTargetCount();
-        
+
         for (int i = 0; it.hasNext() && i < maxPayloads; i++) {
             Map.Entry<String, Pattern> entry = it.next();
             String payload = entry.getKey();
             Pattern pattern = entry.getValue();
-            
+
             if (isStop()) return false;
-            
+
             HttpMessage testMsg = getNewMsg();
             String finalPayload = firstPayload ? payload : value + payload;
             firstPayload = false;
-            
+
             setParameter(testMsg, paramName, finalPayload);
-            
+
             try {
                 sendAndReceive(testMsg, false);
                 String responseContent = testMsg.getResponseBody().toString();
@@ -556,51 +562,60 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
                 if (testMsg.getResponseHeader().hasContentType("html")) {
                     responseContent = StringEscapeUtils.unescapeHtml4(responseContent);
                 }
-                
+
                 Matcher matcher = pattern.matcher(responseContent);
                 if (matcher.find()) {
                     String evidence = matcher.group();
                     String otherInfo = getOtherInfo(TestType.FEEDBACK, finalPayload);
-                    
+
                     buildAlert(paramName, finalPayload, evidence, otherInfo, testMsg).raise();
                     return true;
                 }
-                
+
             } catch (SocketException ex) {
                 LOGGER.debug("Network error during command injection test: {}", ex.getMessage());
                 continue;
             } catch (IOException ex) {
-                LOGGER.warn("Command injection test failed for parameter [{}]: {}", 
-                        paramName, ex.getMessage());
+                LOGGER.warn(
+                        "Command injection test failed for parameter [{}]: {}",
+                        paramName,
+                        ex.getMessage());
             }
         }
 
-        return testBlindCommandInjection(paramName, value, getBlindTargetCount(), blindPayloads, "");
+        return testBlindCommandInjection(
+                paramName, value, getBlindTargetCount(), blindPayloads, "");
     }
-
-
 
     private int getTargetCount() {
         switch (this.getAttackStrength()) {
-            case LOW: return 1;
-            case MEDIUM: return 2;
-            case HIGH: return 3;
-            case INSANE: return NIX_OS_PAYLOADS.size(); // Test all payloads to ensure null byte detection
-            default: return 1;
+            case LOW:
+                return 1;
+            case MEDIUM:
+                return 2;
+            case HIGH:
+                return 3;
+            case INSANE:
+                return NIX_OS_PAYLOADS.size(); // Test all payloads to ensure null byte detection
+            default:
+                return 1;
         }
     }
 
     private int getBlindTargetCount() {
         switch (this.getAttackStrength()) {
-            case LOW: return 1;
-            case MEDIUM: return 2;
-            case HIGH: return 3;
-            case INSANE: return 6;
-            default: return 1;
+            case LOW:
+                return 1;
+            case MEDIUM:
+                return 2;
+            case HIGH:
+                return 3;
+            case INSANE:
+                return 6;
+            default:
+                return 1;
         }
     }
-
-
 
     private AlertBuilder buildAlert(
             String param, String attack, String evidence, String otherInfo, HttpMessage msg) {
