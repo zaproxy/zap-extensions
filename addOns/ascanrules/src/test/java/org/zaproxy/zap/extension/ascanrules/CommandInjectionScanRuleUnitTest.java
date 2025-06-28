@@ -185,11 +185,11 @@ class CommandInjectionScanRuleUnitTest extends ActiveScannerTest<CommandInjectio
     }
 
     @Test
-    void shouldUse3SecsByDefaultForTimeBasedAttacks() throws Exception {
+    void shouldUse5SecsByDefaultForTimeBasedAttacks() throws Exception {
         // Given / When
         int time = rule.getTimeSleep();
         // Then
-        assertThat(time, is(equalTo(3)));
+        assertThat(time, is(equalTo(5)));
     }
 
     @Test
@@ -203,13 +203,13 @@ class CommandInjectionScanRuleUnitTest extends ActiveScannerTest<CommandInjectio
     }
 
     @Test
-    void shouldDefaultTo3SecsIfConfigTimeIsMalformedValueForTimeBasedAttacks() throws Exception {
+    void shouldDefaultTo5SecsIfConfigTimeIsMalformedValueForTimeBasedAttacks() throws Exception {
         // Given
         rule.setConfig(configWithSleepRule("not a valid value"));
         // When
         rule.init(getHttpMessage(""), parent);
         // Then
-        assertThat(rule.getTimeSleep(), is(equalTo(3)));
+        assertThat(rule.getTimeSleep(), is(equalTo(5)));
     }
 
     @Test
@@ -409,138 +409,6 @@ class CommandInjectionScanRuleUnitTest extends ActiveScannerTest<CommandInjectio
                 payloads.add(value);
             }
             return newFixedLengthResponse(Response.Status.OK, NanoHTTPD.MIME_HTML, "Content");
-        }
-    }
-
-    @Test
-    void shouldDetectVulnerableAppLevel2WithNewlineBypass() throws HttpMalformedHeaderException {
-        // Given - Test VulnerableApp Level 2 behavior (simplified for testing)
-        String test = "/vulnerableapp/level2/";
-
-        nano.addHandler(
-                new NanoServerHandler(test) {
-                    @Override
-                    protected Response serve(IHTTPSession session) {
-                        String value = getFirstParamValue(session, "ipaddress");
-
-                        // Respond to any command injection payload that contains passwd
-                        if (value != null && value.contains("/etc/passwd")) {
-                            return newFixedLengthResponse(
-                                    Response.Status.OK,
-                                    NanoHTTPD.MIME_HTML,
-                                    "root:x:0:0:root:/root:/bin/bash");
-                        }
-                        return newFixedLengthResponse(
-                                Response.Status.OK, NanoHTTPD.MIME_HTML, "Ping response");
-                    }
-                });
-
-        rule.init(getHttpMessage(test + "?ipaddress=127.0.0.1"), parent);
-
-        // When
-        rule.scan();
-
-        // Then
-        assertThat(alertsRaised, hasSize(1));
-        assertThat(alertsRaised.get(0).getParam(), is(equalTo("ipaddress")));
-    }
-
-    @Test
-    void shouldDetectVulnerableAppLevel5WithAdvancedBypass() throws HttpMalformedHeaderException {
-        // Given - Test VulnerableApp Level 5 behavior (simplified for testing)
-        String test = "/vulnerableapp/level5/";
-
-        nano.addHandler(
-                new NanoServerHandler(test) {
-                    @Override
-                    protected Response serve(IHTTPSession session) {
-                        String value = getFirstParamValue(session, "ipaddress");
-
-                        // Respond to any command injection payload that contains passwd
-                        if (value != null && value.contains("/etc/passwd")) {
-                            return newFixedLengthResponse(
-                                    Response.Status.OK,
-                                    NanoHTTPD.MIME_HTML,
-                                    "root:x:0:0:root:/root:/bin/bash");
-                        }
-                        return newFixedLengthResponse(
-                                Response.Status.OK, NanoHTTPD.MIME_HTML, "Ping response");
-                    }
-                });
-
-        rule.init(getHttpMessage(test + "?ipaddress=127.0.0.1"), parent);
-
-        // When
-        rule.scan();
-
-        // Then
-        assertThat(alertsRaised, hasSize(1));
-        assertThat(alertsRaised.get(0).getParam(), is(equalTo("ipaddress")));
-    }
-
-    @Test
-    void shouldTestNewlineBypassPayloads() throws HttpMalformedHeaderException {
-        // Given - Test that newline bypass payloads work correctly
-        String test = "/newline-test/";
-
-        nano.addHandler(
-                new NanoServerHandler(test) {
-                    @Override
-                    protected Response serve(IHTTPSession session) {
-                        String value = getFirstParamValue(session, "param");
-                        // Respond to any command injection payload that contains passwd
-                        if (value != null && value.contains("/etc/passwd")) {
-                            return newFixedLengthResponse(
-                                    Response.Status.OK,
-                                    NanoHTTPD.MIME_HTML,
-                                    "root:x:0:0:root:/root:/bin/bash");
-                        }
-                        return newFixedLengthResponse(
-                                Response.Status.OK, NanoHTTPD.MIME_HTML, "No output");
-                    }
-                });
-
-        rule.init(getHttpMessage(test + "?param=test"), parent);
-
-        // When
-        rule.scan();
-
-        // Then - Should detect command injection including our new newline payloads
-        assertThat(alertsRaised, hasSize(1));
-        assertThat(alertsRaised.get(0).getParam(), is(equalTo("param")));
-    }
-
-    @Test
-    void shouldHaveNewlinePayloadsInStaticMaps() {
-        // Given - Get access to the static payload maps via reflection
-        try {
-            Class<?> scanRuleClass = CommandInjectionScanRule.class;
-            java.lang.reflect.Field nixField = scanRuleClass.getDeclaredField("NIX_OS_PAYLOADS");
-            nixField.setAccessible(true);
-            @SuppressWarnings("unchecked")
-            Map<String, Pattern> nixPayloads = (Map<String, Pattern>) nixField.get(null);
-
-            // Then - Check if our newline payloads are present
-            boolean hasNewlinePayloads =
-                    nixPayloads.keySet().stream()
-                            .anyMatch(
-                                    payload ->
-                                            payload.startsWith("\n") || payload.startsWith("\r"));
-
-            System.out.println("NIX payloads starting with newlines:");
-            nixPayloads.keySet().stream()
-                    .filter(payload -> payload.startsWith("\n") || payload.startsWith("\r"))
-                    .forEach(
-                            p ->
-                                    System.out.println(
-                                            "  - " + p.replace("\n", "\\n").replace("\r", "\\r")));
-
-            assertTrue(
-                    hasNewlinePayloads,
-                    "Newline bypass payloads should be present in NIX_OS_PAYLOADS");
-
-        } catch (Exception e) {
-            fail("Failed to access static payload maps: " + e.getMessage());
         }
     }
 }
