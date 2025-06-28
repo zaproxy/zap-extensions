@@ -64,7 +64,7 @@ class BlindSqlInjectionScanRuleUnitTest extends ActiveScannerTest<BlindSqlInject
         int id = rule.getId();
 
         // Then
-        assertThat(id, equalTo(40029));
+        assertThat(id, equalTo(40030));
     }
 
     @Test

@@ -318,7 +318,7 @@ public class BlindSqlInjectionScanRule extends AbstractAppParamPlugin
 
     @Override
     public int getId() {
-        return 40029;
+        return 40030;
     }
 
     @Override
