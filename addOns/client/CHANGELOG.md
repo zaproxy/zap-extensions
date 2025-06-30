@@ -4,6 +4,11 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Edge recorder link to help.
+
+### Changed
+- Updated Chrome and Firefox extensions to v0.1.4.
 
 
 ## [0.16.0] - 2025-06-20
