@@ -37,6 +37,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.ClassUtils;
@@ -757,5 +759,33 @@ public class JobUtils {
      */
     public static boolean containsVars(String str) {
         return str.contains("${");
+    }
+
+    public static List<String> verifyRegexes(
+            Object value, String key, AutomationProgress progress) {
+        if (!(value instanceof ArrayList<?>)) {
+            progress.error(
+                    Constant.messages.getString("automation.error.regex.badlist", key, value));
+            return Collections.emptyList();
+        }
+        ArrayList<String> regexes = new ArrayList<>();
+        for (Object regex : (ArrayList<?>) value) {
+            String regexStr = regex.toString();
+            regexes.add(regexStr);
+            try {
+                if (!JobUtils.containsVars(regexStr)) {
+                    // Only validate the regex if it doesnt contain vars
+                    Pattern.compile(regexStr);
+                }
+            } catch (PatternSyntaxException e) {
+                progress.error(
+                        Constant.messages.getString(
+                                "automation.error.regex.badregex",
+                                regex.toString(),
+                                key,
+                                e.getMessage()));
+            }
+        }
+        return regexes;
     }
 }

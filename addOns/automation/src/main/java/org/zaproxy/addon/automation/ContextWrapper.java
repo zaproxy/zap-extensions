@@ -24,14 +24,11 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
@@ -190,10 +187,12 @@ public class ContextWrapper {
                             Constant.messages.getString("automation.error.context.url.deprecated"));
                     break;
                 case "includePaths":
-                    data.setIncludePaths(verifyRegexes(value, "badincludelist", progress));
+                    data.setIncludePaths(
+                            JobUtils.verifyRegexes(value, cdata.getKey().toString(), progress));
                     break;
                 case "excludePaths":
-                    data.setExcludePaths(verifyRegexes(value, "badexcludelist", progress));
+                    data.setExcludePaths(
+                            JobUtils.verifyRegexes(value, cdata.getKey().toString(), progress));
                     break;
                 case "authentication":
                     data.setAuthentication(new AuthenticationData(value, progress));
@@ -305,31 +304,6 @@ public class ContextWrapper {
         } catch (URIException e) {
             progress.error(Constant.messages.getString("automation.error.context.badurl", url));
         }
-    }
-
-    private List<String> verifyRegexes(Object value, String key, AutomationProgress progress) {
-        if (!(value instanceof ArrayList<?>)) {
-            progress.error(Constant.messages.getString("automation.error.context." + key, value));
-            return Collections.emptyList();
-        }
-        ArrayList<String> regexes = new ArrayList<>();
-        for (Object regex : (ArrayList<?>) value) {
-            String regexStr = regex.toString();
-            regexes.add(regexStr);
-            try {
-                if (!JobUtils.containsVars(regexStr)) {
-                    // Only validate the regex if it doesnt contain vars
-                    Pattern.compile(regexStr);
-                }
-            } catch (PatternSyntaxException e) {
-                progress.error(
-                        Constant.messages.getString(
-                                "automation.error.context.badregex",
-                                regex.toString(),
-                                e.getMessage()));
-            }
-        }
-        return regexes;
     }
 
     public Context getContext() {
