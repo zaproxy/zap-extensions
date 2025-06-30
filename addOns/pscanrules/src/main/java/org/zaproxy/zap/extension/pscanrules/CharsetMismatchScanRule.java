@@ -47,6 +47,8 @@ public class CharsetMismatchScanRule extends PluginPassiveScanner
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.charsetmismatch.";
 
+    private static final int PLUGIN_ID = 90011;
+
     private static final Map<String, String> ALERT_TAGS;
 
     static {
@@ -56,12 +58,22 @@ public class CharsetMismatchScanRule extends PluginPassiveScanner
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
     }
 
-    private static enum MismatchType {
-        NO_MISMATCH_METACONTENTTYPE_MISSING,
-        HEADER_METACONTENTYPE_MISMATCH,
-        HEADER_METACHARSET_MISMATCH,
-        METACONTENTTYPE_METACHARSET_MISMATCH,
-        XML_MISMATCH
+    private enum MismatchType {
+        NO_MISMATCH_METACONTENTTYPE_MISSING("-1"),
+        HEADER_METACONTENTYPE_MISMATCH("-2"),
+        HEADER_METACHARSET_MISMATCH("-3"),
+        METACONTENTTYPE_METACHARSET_MISMATCH("-4"),
+        XML_MISMATCH("-5");
+
+        private final String alertRef;
+
+        MismatchType(String ref) {
+            this.alertRef = String.valueOf(PLUGIN_ID) + ref;
+        }
+
+        String getAlertRef() {
+            return this.alertRef;
+        }
     }
 
     @Override
@@ -153,55 +165,39 @@ public class CharsetMismatchScanRule extends PluginPassiveScanner
                     // other
                     if (AlertThreshold.LOW.equals(pluginThreshold)
                             && !bodyContentCharset.equalsIgnoreCase(metaCharset)) {
-                        raiseAlert(
-                                msg,
-                                id,
-                                metaCharset,
-                                bodyContentCharset,
-                                MismatchType
-                                        .METACONTENTTYPE_METACHARSET_MISMATCH); // body declarations
-                        // inconsistent with
-                        // each other
+                        buildAlert(
+                                        metaCharset,
+                                        bodyContentCharset,
+                                        MismatchType.METACONTENTTYPE_METACHARSET_MISMATCH)
+                                .raise(); // body declarations inconsistent with each other
                     }
                 }
                 if (hasBodyCharset) {
                     // Check the body content type charset declaration against the header
                     if (!bodyContentCharset.equalsIgnoreCase(headerCharset)) {
-                        raiseAlert(
-                                msg,
-                                id,
-                                headerCharset,
-                                bodyContentCharset,
-                                MismatchType.HEADER_METACONTENTYPE_MISMATCH); // body declaration
-                        // doesn't match header
+                        buildAlert(
+                                        headerCharset,
+                                        bodyContentCharset,
+                                        MismatchType.HEADER_METACONTENTYPE_MISMATCH)
+                                .raise(); // body declaration doesn't match header
                     }
                 }
                 if (hasMetaCharset) {
                     // Check the body meta charset declaration against the header
                     if (!metaCharset.equalsIgnoreCase(headerCharset)) {
-                        raiseAlert(
-                                msg,
-                                id,
-                                headerCharset,
-                                metaCharset,
-                                MismatchType
-                                        .HEADER_METACHARSET_MISMATCH); // body declaration doesn't
-                        // match header
+                        buildAlert(
+                                        headerCharset,
+                                        metaCharset,
+                                        MismatchType.HEADER_METACHARSET_MISMATCH)
+                                .raise(); // body declaration doesn't match header
                     }
                     // If Threshold is LOW be picky and report that
                     // only a meta charset declaration might be insufficient coverage for older
                     // clients
-                    if (AlertThreshold.LOW.equals(pluginThreshold) && hasBodyCharset == false) {
-                        raiseAlert(
-                                msg,
-                                id,
-                                "",
-                                "",
-                                MismatchType
-                                        .NO_MISMATCH_METACONTENTTYPE_MISSING); // body declaration
-                        // does match header
-                        // but may overlook
-                        // older clients
+                    if (AlertThreshold.LOW.equals(pluginThreshold) && !hasBodyCharset) {
+                        buildAlert("", "", MismatchType.NO_MISMATCH_METACONTENTTYPE_MISSING)
+                                .raise(); // body declaration
+                        // does match header but may overlook older clients
                     }
                 }
             }
@@ -212,11 +208,11 @@ public class CharsetMismatchScanRule extends PluginPassiveScanner
             // TODO: could there be more than one XML declaration tag for a single XML file?
             List<StartTag> xmlDeclarationTags =
                     source.getAllStartTags(StartTagType.XML_DECLARATION);
-            if (xmlDeclarationTags.size() > 0) {
+            if (!xmlDeclarationTags.isEmpty()) {
                 StartTag xmlDeclarationTag = xmlDeclarationTags.get(0);
                 String encoding = xmlDeclarationTag.getAttributeValue("encoding");
                 if (!headerCharset.equalsIgnoreCase(encoding)) {
-                    raiseAlert(msg, id, headerCharset, encoding, MismatchType.XML_MISMATCH);
+                    buildAlert(headerCharset, encoding, MismatchType.XML_MISMATCH).raise();
                 }
             }
         }
@@ -259,13 +255,9 @@ public class CharsetMismatchScanRule extends PluginPassiveScanner
         return charset;
     }
 
-    private void raiseAlert(
-            HttpMessage msg,
-            int id,
-            String firstCharset,
-            String secondCharset,
-            MismatchType currentMismatch) {
-        newAlert()
+    private AlertBuilder buildAlert(
+            String firstCharset, String secondCharset, MismatchType currentMismatch) {
+        return newAlert()
                 .setName(
                         getName()
                                 + " "
@@ -280,12 +272,12 @@ public class CharsetMismatchScanRule extends PluginPassiveScanner
                 .setReference(getReference())
                 .setCweId(getCweId())
                 .setWascId(getWascId())
-                .raise();
+                .setAlertRef(currentMismatch.getAlertRef());
     }
 
     @Override
     public int getPluginId() {
-        return 90011;
+        return PLUGIN_ID;
     }
 
     /*
@@ -362,5 +354,16 @@ public class CharsetMismatchScanRule extends PluginPassiveScanner
                 break;
         }
         return extraInfo;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildAlert("", "", MismatchType.NO_MISMATCH_METACONTENTTYPE_MISSING).build(),
+                buildAlert("UTF-8", "ISO-123", MismatchType.HEADER_METACONTENTYPE_MISMATCH).build(),
+                buildAlert("UTF-8", "ISO-123", MismatchType.HEADER_METACHARSET_MISMATCH).build(),
+                buildAlert("ISO-123", "UTF-8", MismatchType.METACONTENTTYPE_METACHARSET_MISMATCH)
+                        .build(),
+                buildAlert("UTF-8", "ISO-123", MismatchType.XML_MISMATCH).build());
     }
 }
