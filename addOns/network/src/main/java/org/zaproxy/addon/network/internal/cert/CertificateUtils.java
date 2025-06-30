@@ -53,7 +53,6 @@ import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bouncycastle.asn1.DERIA5String;
@@ -177,7 +176,7 @@ public final class CertificateUtils {
         X509v3CertificateBuilder certBuilder =
                 new JcaX509v3CertificateBuilder(
                         name,
-                        BigInteger.valueOf(new Random().nextInt()),
+                        BigInteger.valueOf(Math.abs(new SecureRandom().nextInt() + 0L)),
                         startDate,
                         expireDate,
                         name,
