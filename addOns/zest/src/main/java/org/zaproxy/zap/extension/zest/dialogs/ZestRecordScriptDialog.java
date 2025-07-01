@@ -26,15 +26,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.WebDriver;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteNode;
-import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
@@ -42,16 +38,12 @@ import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
-import org.zaproxy.zap.extension.zest.ZestStatementFromJson;
 import org.zaproxy.zap.view.StandardFieldsDialog;
-import org.zaproxy.zest.core.v1.ZestClientLaunch;
 import org.zaproxy.zest.core.v1.ZestScript;
 import org.zaproxy.zest.impl.ZestScriptEngineFactory;
 
 @SuppressWarnings("serial")
 public class ZestRecordScriptDialog extends StandardFieldsDialog {
-
-    private static final int ZEST_CLIENT_RECORDER_INITIATOR = -73;
 
     private static final String FIELD_TITLE = "zest.dialog.script.label.title";
     private static final String FIELD_PREFIX = "zest.dialog.script.label.prefix";
@@ -64,15 +56,12 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
     private static final String FIELD_LOAD = "zest.dialog.script.label.load";
     private static final String FIELD_CLIENT_NODE = "zest.dialog.script.label.clientnode";
     private static final String FIELD_BROWSER = "zest.dialog.script.label.browser";
-    private static final String ERROR_CLIENT = "zest.dialog.script.error.client";
-    private static final String THREAD_PREFIX = "ZAP-client-browser-";
 
     private static List<String> BROWSERS =
             List.of(
                     ExtensionSelenium.getName(Browser.FIREFOX),
                     ExtensionSelenium.getName(Browser.CHROME));
 
-    private int threadId = 1;
     private static final Logger LOGGER = LogManager.getLogger(ZestRecordScriptDialog.class);
 
     private static final long serialVersionUID = 1L;
@@ -196,23 +185,6 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
         return list;
     }
 
-    private void launchBrowser(String url, String browserName) {
-        ExtensionSelenium extSelenium =
-                Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class);
-        try {
-            WebDriver wd =
-                    extSelenium.getProxiedBrowserByName(
-                            ZEST_CLIENT_RECORDER_INITIATOR, browserName, null);
-            wd.get(url);
-        } catch (RuntimeException e) {
-            String msg =
-                    extSelenium.getWarnMessageFailedToStart(
-                            browserName.toLowerCase(Locale.ROOT), e);
-            cancelPressed();
-            View.getSingleton().showWarningDialog(msg);
-        }
-    }
-
     @Override
     public void save() {
         // Create a new script
@@ -256,26 +228,10 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
         extension.setRecordingNode(scriptNode);
 
         if (!this.isServerSide()) {
-            if (!this.extension.isClientAccessible()) {
-                LOGGER.warn(ERROR_CLIENT);
-                View.getSingleton().showWarningDialog(Constant.messages.getString(ERROR_CLIENT));
-                return;
-            }
-            String url = this.getStringValue(FIELD_CLIENT_NODE);
-            String browser = this.getStringValue(FIELD_BROWSER);
-            extension.addToParent(
+            extension.startClientRecording(
                     scriptNode,
-                    new ZestClientLaunch(
-                            ZestStatementFromJson.WINDOW_HANDLE_BROWSER_EXTENSION,
-                            browser,
-                            url.toLowerCase(Locale.ROOT),
-                            false),
-                    false,
-                    false);
-            extension.startClientRecording(url);
-            Thread browserThread =
-                    new Thread(() -> launchBrowser(url, browser), THREAD_PREFIX + threadId++);
-            browserThread.start();
+                    this.getStringValue(FIELD_BROWSER),
+                    this.getStringValue(FIELD_CLIENT_NODE));
         }
     }
 

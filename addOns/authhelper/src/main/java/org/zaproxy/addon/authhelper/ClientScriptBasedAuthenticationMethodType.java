@@ -222,7 +222,15 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
             return loginPageWait;
         }
 
-        protected ScriptWrapper getScriptTemp() {
+        public void setScriptWrapper(ScriptWrapper wrapper) {
+            try {
+                scriptField.set(this, wrapper);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+        }
+
+        private ScriptWrapper getScriptTemp() {
             try {
                 return (ScriptWrapper) scriptField.get(this);
             } catch (Exception ignore) {
@@ -233,6 +241,13 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
         protected void setScriptTemp(ClientScriptBasedAuthenticationMethod method) {
             try {
                 scriptField.set(method, getScriptTemp());
+            } catch (Exception ignore) {
+            }
+        }
+
+        public void setParamValues(Map<String, String> map) {
+            try {
+                paramValuesField.set(this, map);
             } catch (Exception ignore) {
             }
         }
