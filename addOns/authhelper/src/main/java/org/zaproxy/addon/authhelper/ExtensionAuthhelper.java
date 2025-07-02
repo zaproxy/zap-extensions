@@ -64,6 +64,7 @@ import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.sessions.ExtensionSessionManagement;
 import org.zaproxy.zap.extension.users.ExtensionUserManagement;
+import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.utils.ZapTextArea;
@@ -80,7 +81,8 @@ public class ExtensionAuthhelper extends ExtensionAdaptor {
             List.of(
                     ExtensionPassiveScan2.class,
                     ExtensionSelenium.class,
-                    ExtensionUserManagement.class);
+                    ExtensionUserManagement.class,
+                    ExtensionZest.class);
 
     public static final String RESOURCES_DIR = "/org/zaproxy/addon/authhelper/resources/";
 

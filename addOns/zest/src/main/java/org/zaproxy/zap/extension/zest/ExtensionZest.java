@@ -33,6 +33,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import javax.script.ScriptEngine;
@@ -45,6 +46,7 @@ import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.WebDriver;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
@@ -113,6 +115,11 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     public static final String HTTP_HEADER_X_SECURITY_PROXY = "X-Security-Proxy";
     public static final String VALUE_RECORD = "record";
 
+    private static final String ERROR_CLIENT = "zest.dialog.script.error.client";
+    private static final String THREAD_PREFIX = "ZAP-client-browser-";
+
+    private static final int ZEST_CLIENT_RECORDER_INITIATOR = -73;
+
     private static final Logger LOGGER = LogManager.getLogger(ExtensionZest.class);
 
     private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES =
@@ -155,6 +162,8 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     private ExtensionNetwork extensionNetwork;
     private Method displayScriptMethod;
     private Method selectNodeMethod;
+
+    private int threadId = 1;
 
     public ExtensionZest() {
         super(NAME);
@@ -1597,6 +1606,47 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
         return "YAML".equals(getParam().getScriptFormat())
                 ? ZestYaml.toString(element)
                 : ZestJSON.toString(element);
+    }
+
+    /**
+     * @since 48.8.0
+     */
+    public void startClientRecording(ScriptNode scriptNode, String browserName, String uri) {
+        if (!isClientAccessible()) {
+            View.getSingleton().showWarningDialog(Constant.messages.getString(ERROR_CLIENT));
+            return;
+        }
+        this.addToParent(
+                scriptNode,
+                new ZestClientLaunch(
+                        ZestStatementFromJson.WINDOW_HANDLE_BROWSER_EXTENSION,
+                        browserName,
+                        uri.toLowerCase(Locale.ROOT),
+                        false),
+                false,
+                false);
+        this.startClientRecording(uri);
+        Thread browserThread =
+                new Thread(() -> launchBrowser(uri, browserName), THREAD_PREFIX + threadId++);
+        browserThread.start();
+    }
+
+    private void launchBrowser(String url, String browserName) {
+        ExtensionSelenium extSelenium =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class);
+        try {
+            WebDriver wd =
+                    extSelenium.getProxiedBrowserByName(
+                            ZEST_CLIENT_RECORDER_INITIATOR, browserName, null);
+            wd.get(url);
+        } catch (RuntimeException e) {
+            String msg =
+                    extSelenium.getWarnMessageFailedToStart(
+                            browserName.toLowerCase(Locale.ROOT), e);
+            cancelScriptRecording();
+            stopClientRecording();
+            View.getSingleton().showWarningDialog(msg);
+        }
     }
 
     public void startClientRecording(String uri) {

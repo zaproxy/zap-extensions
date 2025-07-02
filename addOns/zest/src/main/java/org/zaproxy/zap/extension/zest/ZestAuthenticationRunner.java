@@ -60,8 +60,8 @@ public class ZestAuthenticationRunner extends ZestZapRunner implements Authentic
 
     private static final String PROXY_ADDRESS = "127.0.0.1";
 
-    private static final String USERNAME = "Username";
-    private static final String PASSWORD = "Password";
+    public static final String USERNAME = "Username";
+    public static final String PASSWORD = "Password";
 
     private final String totpVar;
 

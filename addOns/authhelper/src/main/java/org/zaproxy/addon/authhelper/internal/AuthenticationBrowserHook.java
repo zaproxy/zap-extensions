@@ -33,6 +33,7 @@ import org.zaproxy.zap.authentication.AuthenticationMethod;
 import org.zaproxy.zap.authentication.GenericAuthenticationCredentials;
 import org.zaproxy.zap.extension.selenium.BrowserHook;
 import org.zaproxy.zap.extension.selenium.SeleniumScriptUtils;
+import org.zaproxy.zap.extension.zest.ZestAuthenticationRunner;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.users.User;
 import org.zaproxy.zest.core.v1.ZestScript;
@@ -41,16 +42,11 @@ public class AuthenticationBrowserHook implements BrowserHook {
 
     private static final Logger LOGGER = LogManager.getLogger(AuthenticationBrowserHook.class);
 
-    private static final String USERNAME = "Username";
-    private static final String PASSWORD = "Password";
-
     private ClientScriptBasedAuthenticationMethod csaMethod;
-    private Context context;
     private final User user;
     private ZestAuthRunner zestRunner;
 
     public AuthenticationBrowserHook(Context context, User user) {
-        this.context = context;
         AuthenticationMethod method = context.getAuthenticationMethod();
         if (!(method instanceof ClientScriptBasedAuthenticationMethod)) {
             throw new IllegalStateException("Unsupported method " + method.getType().getName());
@@ -78,8 +74,13 @@ public class AuthenticationBrowserHook implements BrowserHook {
             Map<String, String> paramsValues = new HashMap<>();
             GenericAuthenticationCredentials credentials =
                     (GenericAuthenticationCredentials) user.getAuthenticationCredentials();
-            paramsValues.put(USERNAME, credentials.getParam(USERNAME));
-            paramsValues.put(PASSWORD, credentials.getParam(PASSWORD));
+            paramsValues.put(
+                    ZestAuthenticationRunner.USERNAME,
+                    credentials.getParam(ZestAuthenticationRunner.USERNAME));
+            paramsValues.put(
+                    ZestAuthenticationRunner.PASSWORD,
+                    credentials.getParam(ZestAuthenticationRunner.PASSWORD));
+
             ZestScript zs = csaMethod.getZestScript();
             runner.setup(user, zs);
             runner.run(zs, paramsValues);
