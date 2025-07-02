@@ -20,6 +20,7 @@
 package org.zaproxy.addon.automation.gui;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import java.awt.EventQueue;
 import java.awt.GridBagLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -418,14 +419,19 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
                             AutomationJob job = (AutomationJob) userObj;
                             if (currentPlan.moveJobUp(job)) {
                                 getTreeModel().moveJobUp(job);
-                                // TODO this isnt working :(
-                                tree.setRowSelectionInterval(row - 1, row - 1);
+                                selectTreeRow(row - 1);
                                 job.setChanged();
                             }
                         }
                     });
         }
         return jobUpButton;
+    }
+
+    private void selectTreeRow(int row) {
+        // Selections need to happen after all changes have been reflected in the tree.
+        // See the JXTreeTable$TreeTableModelAdapter delayed* methods.
+        EventQueue.invokeLater(() -> tree.setRowSelectionInterval(row, row));
     }
 
     private JButton getJobDownButton() {
@@ -454,8 +460,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
                             AutomationJob job = (AutomationJob) userObj;
                             if (currentPlan.moveJobDown(job)) {
                                 getTreeModel().moveJobDown(job);
-                                // TODO this isnt working :(
-                                tree.setRowSelectionInterval(row + 1, row + 1);
+                                selectTreeRow(row + 1);
                                 job.setChanged();
                             }
                         }
