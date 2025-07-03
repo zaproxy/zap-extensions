@@ -151,7 +151,7 @@ public class SpiderDialog extends StandardFieldsDialog {
         this.addCheckBoxField(1, FIELD_LOGOUT_AVOIDANCE, getSpiderParam().isLogoutAvoidance());
         this.addPadding(1);
 
-        if (!getBoolValue(FIELD_PROCESS_FORMS)) {
+        if (!getBoolValue(FIELD_PROCESS_FORMS).booleanValue()) {
             setFieldValue(FIELD_POST_FORMS, false);
             getField(FIELD_POST_FORMS).setEnabled(false);
         }
@@ -169,7 +169,7 @@ public class SpiderDialog extends StandardFieldsDialog {
                 new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        if (getBoolValue(FIELD_PROCESS_FORMS)) {
+                        if (getBoolValue(FIELD_PROCESS_FORMS).booleanValue()) {
                             getField(FIELD_POST_FORMS).setEnabled(true);
                         } else {
                             setFieldValue(FIELD_POST_FORMS, false);
@@ -238,7 +238,7 @@ public class SpiderDialog extends StandardFieldsDialog {
             }
         }
         this.setComboFields(FIELD_CONTEXT, ctxNames, "");
-        this.getField(FIELD_CONTEXT).setEnabled(ctxNames.size() > 0);
+        this.getField(FIELD_CONTEXT).setEnabled(!ctxNames.isEmpty());
     }
 
     private Context getSelectedContext() {
@@ -325,7 +325,7 @@ public class SpiderDialog extends StandardFieldsDialog {
         } catch (Exception e1) {
             // Ignore - will have been checked in validateParams
         }
-        if (this.getBoolValue(FIELD_ADVANCED)) {
+        if (this.getBoolValue(FIELD_ADVANCED).booleanValue()) {
             // Set the advanced options
             spiderParam.setMaxDepth(this.getIntValue(FIELD_MAX_DEPTH));
             spiderParam.setMaxDuration(this.getIntValue(FIELD_MAX_DURATION));
@@ -351,7 +351,7 @@ public class SpiderDialog extends StandardFieldsDialog {
         if (startUri != null) {
             contextSpecificObjects.add(startUri);
 
-            if (getBoolValue(FIELD_SUBTREE_ONLY)) {
+            if (getBoolValue(FIELD_SUBTREE_ONLY).booleanValue()) {
                 contextSpecificObjects.add(new HttpPrefixFetchFilter(startUri));
             }
         }
@@ -428,7 +428,7 @@ public class SpiderDialog extends StandardFieldsDialog {
             }
         }
 
-        if (getBoolValue(FIELD_SUBTREE_ONLY) && noStartUri) {
+        if (getBoolValue(FIELD_SUBTREE_ONLY).booleanValue() && noStartUri) {
             return Constant.messages.getString("spider.custom.noStartSubtreeOnly.error");
         }
 
