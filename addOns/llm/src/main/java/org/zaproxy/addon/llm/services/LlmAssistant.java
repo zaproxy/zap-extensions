@@ -27,11 +27,11 @@ import org.zaproxy.addon.llm.communication.HttpRequestList;
 
 public interface LlmAssistant {
     @UserMessage(
-            "Given the following OpenAPI definition, generate a list of chained HTTP requests to simulate a real world interaction : {{swagger}} ")
-    HttpRequestList extractHttpRequests(String swagger);
+            "Given the following OpenAPI definition, generate a list of chained HTTP requests to simulate a real world interaction : {{openapi}} ")
+    HttpRequestList extractHttpRequests(String openapi);
 
     @UserMessage(
-            "As a software architect, and based on your previous answer, generate other potential missing endpoints that are not mentioned in the swagger file. For example, if there is GET /product/1, suggest DELETE /product/1 if it's not mentioned")
+            "As a software architect, and based on your previous answer, generate other potential missing endpoints that are not mentioned in the OpenAPI file. For example, if there is GET /product/1, suggest DELETE /product/1 if it's not mentioned")
     HttpRequestList complete();
 
     @SystemMessage(

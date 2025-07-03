@@ -48,6 +48,7 @@ import org.zaproxy.addon.llm.communication.HttpRequestList;
 import org.zaproxy.addon.llm.utils.HistoryPersister;
 import org.zaproxy.addon.llm.utils.Requestor;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
+import org.zaproxy.zap.utils.Stats;
 
 public class LlmCommunicationService {
 
@@ -99,12 +100,15 @@ public class LlmCommunicationService {
         };
     }
 
-    private Integer importHttpCalls(String swaggercontent) throws IOException {
-        HttpRequestList listHttpRequest = llmAssistant.extractHttpRequests(swaggercontent);
+    private Integer importHttpCalls(String openapiContent) throws IOException {
+        Stats.incCounter("stats.llm.openapiseq.call");
+        HttpRequestList listHttpRequest = llmAssistant.extractHttpRequests(openapiContent);
         if (listHttpRequest == null) {
+            Stats.incCounter("stats.llm.openapiseq.fail");
             throw new RuntimeException(
                     "An issue occurred when trying to get response from the LLM");
         }
+        Stats.incCounter("stats.llm.openapiseq.result.count", listHttpRequest.getRequests().size());
         requestor.run(listHttpRequest);
         return listHttpRequest.getRequests().size();
     }
@@ -165,7 +169,15 @@ public class LlmCommunicationService {
             Confidence llmConfidence;
             LOGGER.debug("Reviewing alert : {}", alert.getName());
             LOGGER.debug("Confidence level from ZAP : {}", alert.getConfidence());
+            Stats.incCounter("stats.llm.alertreview.call");
             llmConfidence = llmAssistant.review(alert.getDescription(), alert.getEvidence());
+
+            if (llmConfidence.getLevel() == alert.getConfidence()) {
+                Stats.incCounter("stats.llm.alertreview.result.same");
+            } else {
+                Stats.incCounter("stats.llm.alertreview.result.changed");
+            }
+
             LOGGER.debug(
                     "Confidence level from LLM : {} | Explanation : {}",
                     llmConfidence.getLevel(),
