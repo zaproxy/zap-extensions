@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Fail fast on client errors.
+- Update Zest library to 0.31.0:
+  - Update Selenium to version 4.34.0.
 
 ## [48.7.0] - 2025-06-10
 ### Changed
