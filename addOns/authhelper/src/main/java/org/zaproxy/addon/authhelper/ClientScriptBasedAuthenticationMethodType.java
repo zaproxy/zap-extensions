@@ -429,6 +429,7 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                         zestScript.add(
                                 new ZestActionSleep(TimeUnit.SECONDS.toMillis(getLoginPageWait())));
                         removeCloseStatements(zestScript);
+                        AuthUtils.disableLogoutStatements(zestScript);
                     } else {
                         LOGGER.warn("Expected authScript to be a Zest script");
                         return null;
