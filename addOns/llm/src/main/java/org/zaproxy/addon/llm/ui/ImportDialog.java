@@ -157,8 +157,7 @@ public class ImportDialog extends AbstractDialog {
                     Constant.messages.getString("llm.importDialog.import.success", endpointCount));
             return true;
         } else {
-            showWarningDialog(
-                    Constant.messages.getString("llm.importDialog.import.failure", endpointCount));
+            showWarningDialog(Constant.messages.getString("llm.importDialog.import.failure"));
             return false;
         }
     }
