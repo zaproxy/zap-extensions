@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.27.0] - 2025-07-03
 ### Added
 - Support for recorded scripts in the Authentication Tester.
 
@@ -255,6 +255,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Support of authentication request identification and configuration.
 
+[0.27.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.27.0
 [0.26.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.26.0
 [0.25.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.25.0
 [0.24.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.24.0
