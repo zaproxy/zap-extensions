@@ -40,75 +40,17 @@ import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
 /**
- * The SqlInjectionSqLiteScanRule identifies SQLite specific SQL Injection vulnerabilities using
- * SQLite specific syntax. If it doesn't use SQLite specific syntax, it belongs in the generic
- * SQLInjection class!
+ * This scan rule identifies SQLite specific SQL Injection vulnerabilities using SQLite specific
+ * syntax. If it doesn't use SQLite specific syntax, it belongs in the generic SQLInjection class!
  *
  * @author 70pointer
  */
-public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin
+public class SqlInjectionSqLiteTimingScanRule extends AbstractAppParamPlugin
         implements CommonActiveScanRuleInfo {
-
-    // Some relevant notes about SQLite's support for various functions, which will affect what SQL
-    // is valid,
-    // and can be used to exploit each particular version :)
-    // some of the functions noted here are *very* useful in exploiting the system hosting the
-    // SQLite instance,
-    // but I won't give the game away too easily. Go have a play!
-    // 3.8.6       (2014-08-15) - hex integer literals supported, likely(X) supported, readfile(X)
-    // and writefile(X,Y) supported (if extension loading enabled)
-    // 3.8.3       (2014-02-03) - common table subexpressions supported ("WITH" keyword), printf
-    // function supported
-    // 3.8.1       (2013-10-17) - unlikely() and likelihood() functions supported
-    // 3.8.0       (2013-08-26) - percentile() function added as loadable extension
-    // 3.7.17      (2013-05-20) - new loadable extensions: including amatch, closure, fuzzer,
-    // ieee754, nextchar, regexp, spellfix, and wholenumber
-    // 3.7.16      (2013-03-18) - unicode(A) and char(X1,...,XN) supported
-    // 3.7.15      (2012-12-12) - instr() supported
-    // 3.6.8       (2009-01-12) - nested transactions supported
-    // 3.5.7       (2008-03-17) - ALTER TABLE uses double-quotes instead of single-quotes for
-    // quoting filenames (why filenames????).
-    // 3.3.13      (2007-02-13) - randomBlob() and hex() supported
-    // 3.3.8       (2006-10-09) - IF EXISTS on CREATE/DROP TRIGGER/VIEW
-    // 3.3.7       (2006-08-12) - virtual tables, dynamically loaded extensions, MATCH operator
-    // supported
-    // 3.2.6       (2005-09-17) - COUNT(DISTINCT expr) supported
-    // 3.2.3       (2005-08-21) - CAST operator, grave-accent quoting supported
-    // 3.2.0       (2005-03-21) - ALTER TABLE ADD COLUMN supported
-    // 3.1.0 ALPHA (2005-01-21) - ALTER TABLE ... RENAME TABLE, CURRENT_TIME, CURRENT_DATE, and
-    // CURRENT_TIMESTAMP, EXISTS clause, correlated subqueries supported
-    // 3.0.0 alpha (2004-06-18) - dropped support for COPY function, possibly added
-    // sqlite_source_id(), replace() (which were not in 2.8.17)
-    // 2.8.6       (2003-08-21) - date functions added
-    // 2.8.5       (2003-07-22) - supports LIMIT on a compound SELECT statement
-    // 2.8.1       (2003-05-16) - ATTACH and DETACH commands supported
-    // 2.5.0       (2002-06-17) - Double-quoted strings interpreted as column names not text
-    // literals,
-    //                           SQL-92 compliant handling of NULLs, full SQL-92 join syntax and
-    // LEFT OUTER JOINs supported
-    // 2.4.7       (2002-04-06) - "select TABLE.*", last_insert_rowid() supported
-    // 2.4.4       (2002-03-24) - CASE expressions supported
-    // 2.4.0       (2002-03-10) - coalesce(), lower(), upper(), and random() supported
-    // 2.3.3       (2002-02-18) - Allow identifiers to be quoted in square brackets, "CREATE TABLE
-    // AS SELECT" supported
-    // 2.2.0       (2001-12-22) - "SELECT rowid, * FROM table1" supported
-    // 2.0.3       (2001-10-13) - &, |,~,<<,>>,round() and abs() supported
-    // 2.0.1       (2001-10-02) - "expr NOT NULL", "expr NOTNULL" supported
-    // 1.0.32      (2001-07-23) - quoted strings supported as table and column names in expressions
-    // 1.0.28      (2001-04-04) - special column names ROWID, OID, and _ROWID_ supported (with
-    // random values)
-    // 1.0.4       (2000-08-28) - length() and substr() supported
-    // 1.0         (2000-08-17) - covers lots of unversioned releases.  ||, fcnt(), UNION, UNION
-    // ALL, INTERSECT, and EXCEPT, LIKE, GLOB, COPY supported
 
     private int expectedDelayInMs = 5000;
 
-    private boolean doTimeBased = false;
-
     private int doTimeMaxRequests = 0;
-
-    private boolean doUnionBased = false;
-    private int doUnionMaxRequests = 0;
 
     /** SQLite one-line comment */
     public static final String SQL_ONE_LINE_COMMENT = "--";
@@ -158,53 +100,6 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin
         Pattern.compile("near \\\".+\\\": syntax error", Pattern.CASE_INSENSITIVE)
     };
 
-    /** a template that defines how a UNION statement is built up, to find the SQLite version */
-    private static String UNION_ATTACK_TEMPLATE =
-            "<<<<VALUE>>>><<<<SYNTACTIC_PREVIOUS_STATEMENT_TYPE_CLOSER>>>><<<<SYNTACTIC_PREVIOUS_STATEMENT_CLAUSE_CLOSER>>>> <<<<UNIONSTATEMENT>>>> select <<<<SQLITE_VERSION_FUNCTION>>>><<<<UNIONADDITIONALCOLUMNS>>>><<<<SYNTACTIC_NEXT_STATEMENT_COMMENTER>>>>";
-
-    private static String SYNTACTIC_PREVIOUS_STATEMENT_TYPE_CLOSERS[] = {
-        "" // closing off an int parameter in the SQL statement
-        ,
-        "'" // closing off a char/string parameter in the SQL statement
-        ,
-        "\"" // closing off a string parameter in the SQL statement
-    };
-    private static String SYNTACTIC_PREVIOUS_STATEMENT_CLAUSE_CLOSERS[] = {
-        "", ")", "))", ")))", "))))", ")))))"
-    };
-    private static String SYNTACTIC_UNION_STATEMENTS[] = {"UNION"
-        // ,"UNION ALL"  Not necessary
-    };
-    private static String SQLITE_VERSION_FUNCTIONS[] = {
-        "sqlite_version()" // string type - gets the version in the form of "3.7.16.2", for instance
-        ,
-        "sqlite_version()+0" // numeric type - SQLite does implicit casting to convert "3.7.16.2" to
-        // 3.7 in numeric form.
-        ,
-        "sqlite_source_id()" // string type - this function was added in 3.6.18.  it gets the
-        // version in the form of "2013-04-12 11:52:43
-        // cbea02d93865ce0e06789db95fd9168ebac970c7"
-        // there may not be much point in running this one, since it gives much the same info as
-        // "sqlite_version()" and cannot be converted to an int.
-        // maybe it's useful in the case that a WAF is detecting / blocking "sqlite_version()"
-        // though?
-    };
-    private static String UNION_ADDITIONAL_COLUMNS[] = {
-        "",
-        ",null",
-        ",null,null",
-        ",null,null,null",
-        ",null,null,null,null",
-        ",null,null,null,null,null",
-        ",null,null,null,null,null,null",
-        ",null,null,null,null,null,null,null",
-        ",null,null,null,null,null,null,null,null",
-        ",null,null,null,null,null,null,null,null,null"
-    };
-    private static String SYNTACTIC_NEXT_STATEMENT_COMMENTER[] = {SQL_ONE_LINE_COMMENT
-        // ,""				//this isn't useful at all
-    };
-
     /** set depending on the attack strength / threshold */
     private long maxBlobBytes = 0;
 
@@ -231,7 +126,8 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin
     }
 
     /** for logging. */
-    private static final Logger LOGGER = LogManager.getLogger(SqlInjectionSqLiteScanRule.class);
+    private static final Logger LOGGER =
+            LogManager.getLogger(SqlInjectionSqLiteTimingScanRule.class);
 
     @Override
     public int getId() {
@@ -240,7 +136,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin
 
     @Override
     public String getName() {
-        return Constant.messages.getString("ascanrules.sqlinjection.sqlite.name");
+        return Constant.messages.getString("ascanrules.sqlinjection.sqlite.timing.name");
     }
 
     @Override
@@ -274,29 +170,17 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin
 
         // set up what we are allowed to do, depending on the attack strength that was set.
         if (this.getAttackStrength() == AttackStrength.LOW) {
-            doTimeBased = true;
             doTimeMaxRequests = 0;
             this.maxBlobBytes = 1000000000;
-            doUnionBased = false;
-            doUnionMaxRequests = 0;
         } else if (this.getAttackStrength() == AttackStrength.MEDIUM) {
-            doTimeBased = true;
             doTimeMaxRequests = 4;
             this.maxBlobBytes = 1000000000;
-            doUnionBased = false;
-            doUnionMaxRequests = 0;
         } else if (this.getAttackStrength() == AttackStrength.HIGH) {
-            doTimeBased = true;
             doTimeMaxRequests = 20;
             this.maxBlobBytes = 1000000000;
-            doUnionBased = true;
-            doUnionMaxRequests = 10;
         } else if (this.getAttackStrength() == AttackStrength.INSANE) {
-            doTimeBased = true;
             doTimeMaxRequests = 100;
             this.maxBlobBytes = 1000000000;
-            doUnionBased = true;
-            doUnionMaxRequests = 200;
         }
 
         // the allowable difference between a parse delay and an attack delay is controlled by the
@@ -387,7 +271,6 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin
             boolean foundTimeBased = false;
             for (int timeBasedSQLindex = 0;
                     timeBasedSQLindex < SQL_SQLITE_TIME_REPLACEMENTS.length
-                            && doTimeBased
                             && countTimeBasedRequests < doTimeMaxRequests
                             && !foundTimeBased;
                     timeBasedSQLindex++) {
@@ -451,7 +334,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin
                             // Likely an error based SQL Injection. Raise it
                             String extraInfo =
                                     Constant.messages.getString(
-                                            "ascanrules.sqlinjection.sqlite.alert.errorbased.extrainfo",
+                                            "ascanrules.sqlinjection.sqlite.alert.timing.error.extrainfo",
                                             errorMessagePattern);
                             // raise the alert
                             newAlert()
@@ -462,7 +345,6 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin
                                     .setOtherInfo(extraInfo)
                                     .setEvidence(matcher.group())
                                     .setMessage(msgDelay)
-                                    .setTags(getNeededAlertTags(true))
                                     .raise();
 
                             LOGGER.debug(
@@ -589,7 +471,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin
                     // Likely a SQL Injection. Raise it
                     String extraInfo =
                             Constant.messages.getString(
-                                    "ascanrules.sqlinjection.sqlite.alert.timebased.extrainfo",
+                                    "ascanrules.sqlinjection.sqlite.alert.timing.extrainfo",
                                     detectableDelayParameter,
                                     detectableDelay,
                                     maxDelayParameter,
@@ -605,7 +487,6 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin
                             .setOtherInfo(extraInfo)
                             .setEvidence(extraInfo)
                             .setMessage(detectableDelayMessage)
-                            .setTags(getNeededAlertTags(false))
                             .raise();
 
                     if (detectableDelayMessage != null)
@@ -630,153 +511,6 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin
                 }
             } // for each time based SQL index
             // end of check for SQLite time based SQL Injection
-
-            // TODO: fix this logic, cos it's broken already. it reports version 2.2 and 4.0..
-            // (false positives ahoy)
-            doUnionBased = false;
-
-            // try to get the version of SQLite, using a UNION based SQL injection vulnerability
-            // do this regardless of whether we already found a vulnerability using another
-            // technique.
-            if (doUnionBased) {
-                int unionRequests = 0;
-                // catch 3.0, 3.0.1, 3.0.1.1, 3.7.16.2, etc
-                Pattern versionNumberPattern =
-                        Pattern.compile(
-                                "[0-9]{1}\\.[0-9]{1,2}\\.[0-9]{1,2}\\.[0-9]{1,2}|[0-9]{1}\\.[0-9]{1,2}\\.[0-9]{1,2}|[0-9]{1}\\.[0-9]{1,2}",
-                                PATTERN_PARAM);
-                String candidateValues[] = {"", originalParamValue};
-                // shonky break label. labels the loop to break out of.  I believe I just finished a
-                // sentence with a preposition too. Oh My.
-                unionLoops:
-                for (String sqliteVersionFunction : SQLITE_VERSION_FUNCTIONS) {
-                    for (String statementTypeCloser : SYNTACTIC_PREVIOUS_STATEMENT_TYPE_CLOSERS) {
-                        for (String statementClauseCloser :
-                                SYNTACTIC_PREVIOUS_STATEMENT_CLAUSE_CLOSERS) {
-                            for (String unionAdditionalColms : UNION_ADDITIONAL_COLUMNS) {
-                                for (String nextStatementCommenter :
-                                        SYNTACTIC_NEXT_STATEMENT_COMMENTER) {
-                                    for (String statementUnionStatement :
-                                            SYNTACTIC_UNION_STATEMENTS) {
-                                        for (String value : candidateValues) {
-                                            // are we out of lives yet?
-                                            // TODO: fix so that the logic does not spin through the
-                                            // loop headers to get out of all of the nested loops..
-                                            // without using the shonky break to label logic
-                                            if (unionRequests > doUnionMaxRequests) {
-                                                break unionLoops;
-                                            }
-
-                                            String unionAttack = UNION_ATTACK_TEMPLATE;
-                                            unionAttack =
-                                                    unionAttack.replace(
-                                                            "<<<<SQLITE_VERSION_FUNCTION>>>>",
-                                                            sqliteVersionFunction);
-                                            unionAttack =
-                                                    unionAttack.replace(
-                                                            "<<<<SYNTACTIC_PREVIOUS_STATEMENT_TYPE_CLOSER>>>>",
-                                                            statementTypeCloser);
-                                            unionAttack =
-                                                    unionAttack.replace(
-                                                            "<<<<SYNTACTIC_PREVIOUS_STATEMENT_CLAUSE_CLOSER>>>>",
-                                                            statementClauseCloser);
-                                            unionAttack =
-                                                    unionAttack.replace(
-                                                            "<<<<UNIONADDITIONALCOLUMNS>>>>",
-                                                            unionAdditionalColms);
-                                            unionAttack =
-                                                    unionAttack.replace(
-                                                            "<<<<SYNTACTIC_NEXT_STATEMENT_COMMENTER>>>>",
-                                                            nextStatementCommenter);
-                                            unionAttack =
-                                                    unionAttack.replace(
-                                                            "<<<<UNIONSTATEMENT>>>>",
-                                                            statementUnionStatement);
-                                            unionAttack =
-                                                    unionAttack.replace("<<<<VALUE>>>>", value);
-
-                                            LOGGER.debug(
-                                                    "About to try to determine the SQLite version with [{}]",
-                                                    unionAttack);
-                                            HttpMessage unionAttackMessage = getNewMsg();
-                                            setParameter(
-                                                    unionAttackMessage, paramName, unionAttack);
-                                            sendAndReceive(unionAttackMessage);
-                                            unionRequests++;
-
-                                            // check the response for the version information..
-                                            Matcher matcher =
-                                                    versionNumberPattern.matcher(
-                                                            unionAttackMessage
-                                                                    .getResponseBody()
-                                                                    .toString());
-                                            while (matcher.find()) {
-                                                String versionNumber = matcher.group();
-                                                Pattern actualVersionNumberPattern =
-                                                        Pattern.compile(
-                                                                "\\Q" + versionNumber + "\\E",
-                                                                PATTERN_PARAM);
-                                                LOGGER.debug(
-                                                        "Found a candidate SQLite version number '{}'. About to look for the absence of '{}' in the (re-created) original response body (of length {}) to validate it",
-                                                        versionNumber,
-                                                        actualVersionNumberPattern,
-                                                        originalMessage
-                                                                .getResponseBody()
-                                                                .toString()
-                                                                .length());
-
-                                                // if the version number was not in the original*
-                                                // response, we will call it..
-                                                Matcher matcherVersionInOriginal =
-                                                        actualVersionNumberPattern.matcher(
-                                                                originalMessage
-                                                                        .getResponseBody()
-                                                                        .toString());
-                                                if (!matcherVersionInOriginal.find()) {
-                                                    // we have the SQLite version number..
-                                                    LOGGER.debug(
-                                                            "We found SQLite version [{}]",
-                                                            versionNumber);
-
-                                                    String extraInfo =
-                                                            Constant.messages.getString(
-                                                                    "ascanrules.sqlinjection.sqlite.alert.versionnumber.extrainfo",
-                                                                    versionNumber);
-                                                    newAlert()
-                                                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                                                            .setName(
-                                                                    getName()
-                                                                            + " - "
-                                                                            + versionNumber)
-                                                            .setUri(
-                                                                    getBaseMsg()
-                                                                            .getRequestHeader()
-                                                                            .getURI()
-                                                                            .toString())
-                                                            .setParam(paramName)
-                                                            .setAttack(unionAttack)
-                                                            .setOtherInfo(extraInfo)
-                                                            .setEvidence(versionNumber)
-                                                            .setMessage(unionAttackMessage)
-                                                            .setTags(getNeededAlertTags(true))
-                                                            .raise();
-                                                    break unionLoops;
-                                                }
-                                            }
-                                            // bale out if we were asked nicely
-                                            if (isStop()) {
-                                                LOGGER.debug(
-                                                        "Stopping the scan due to a user request");
-                                                return;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            } // end of doUnionBased
 
         } catch (UnknownHostException | URIException e) {
             LOGGER.debug("Failed to send HTTP message, cause: {}", e.getMessage());
@@ -810,15 +544,5 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
-    }
-
-    private Map<String, String> getNeededAlertTags(boolean isFeedbackBased) {
-        if (isFeedbackBased) {
-            Map<String, String> alertTags = new HashMap<>();
-            alertTags.putAll(getAlertTags());
-            alertTags.remove(CommonAlertTag.TEST_TIMING.getTag());
-            return alertTags;
-        }
-        return getAlertTags();
     }
 }
