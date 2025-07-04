@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Rules (as applicable) have been tagged in relation to HIPAA and PCI DSS.
 - The Cloud Metadata Potentially Exposed scan rules now has a CWE reference.
+- The SQL Injection - Oracle scan rule and alerts have been renamed to clarify that they're timing based (Issue 7341).
 
 ## [72] - 2025-06-20
 ### Added
