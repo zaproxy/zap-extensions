@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Depends on an updated version of the Common Library add-on.
 - The following scan rules and their alerts have been renamed to clarify that they're time based (Issue 7341).
     - SQL Injection - MsSQL 
+    - SQL Injection - MySQL
     - SQL Injection - Hypersonic
 
 ### Added
