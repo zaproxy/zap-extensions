@@ -23,6 +23,7 @@ import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -95,7 +96,7 @@ class CommandInjectionScanRuleUnitTest extends ActiveScannerTest<CommandInjectio
         // Then
         assertThat(cwe, is(equalTo(78)));
         assertThat(wasc, is(equalTo(31)));
-        assertThat(tags.size(), is(equalTo(13)));
+        assertThat(tags.size(), is(equalTo(14)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(true)));
@@ -107,6 +108,7 @@ class CommandInjectionScanRuleUnitTest extends ActiveScannerTest<CommandInjectio
                 is(equalTo(true)));
         assertThat(tags.containsKey(CommonAlertTag.HIPAA.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(CommonAlertTag.PCI_DSS.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(CommonAlertTag.TEST_TIMING.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.API.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.DEV_CICD.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.DEV_STD.getTag()), is(equalTo(true)));
@@ -381,6 +383,8 @@ class CommandInjectionScanRuleUnitTest extends ActiveScannerTest<CommandInjectio
                                 "The scan rule was able to retrieve the content of a file or "
                                         + "command by sending [a;cat /etc/passwd ] to the operating "
                                         + "system running this application.")));
+        Map<String, String> tags = alert.getTags();
+        assertThat(tags, not(hasKey(CommonAlertTag.TEST_TIMING.getTag())));
     }
 
     private static class PayloadCollectorHandler extends NanoServerHandler {
