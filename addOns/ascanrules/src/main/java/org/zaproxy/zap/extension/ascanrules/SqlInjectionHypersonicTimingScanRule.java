@@ -46,7 +46,7 @@ import org.zaproxy.zap.model.TechSet;
 /**
  * TODO: maybe implement a more specific UNION based check for Hypersonic (with table names)
  *
- * <p>The SqlInjectionHypersonicScanRule identifies Hypersonic specific SQL Injection
+ * <p>The SqlInjectionHypersonicTimingScanRule identifies Hypersonic specific SQL Injection
  * vulnerabilities using Hypersonic specific syntax. If it doesn't use Hypersonic specific syntax,
  * it belongs in the generic SQLInjection class! Note the ordering of checks, for efficiency is : 1)
  * Error based (N/A) 2) Boolean Based (N/A - uses standard syntax) 3) UNION based (TODO) 4) Stacked
@@ -68,7 +68,7 @@ import org.zaproxy.zap.model.TechSet;
  *
  * @author 70pointer
  */
-public class SqlInjectionHypersonicScanRule extends AbstractAppParamPlugin
+public class SqlInjectionHypersonicTimingScanRule extends AbstractAppParamPlugin
         implements CommonActiveScanRuleInfo {
 
     /** Hypersonic one-line comment */
@@ -201,7 +201,8 @@ public class SqlInjectionHypersonicScanRule extends AbstractAppParamPlugin
                                 CommonAlertTag.OWASP_2017_A01_INJECTION,
                                 CommonAlertTag.WSTG_V42_INPV_05_SQLI,
                                 CommonAlertTag.HIPAA,
-                                CommonAlertTag.PCI_DSS));
+                                CommonAlertTag.PCI_DSS,
+                                CommonAlertTag.TEST_TIMING));
         alertTags.put(PolicyTag.DEV_FULL.getTag(), "");
         alertTags.put(PolicyTag.QA_STD.getTag(), "");
         alertTags.put(PolicyTag.QA_FULL.getTag(), "");
@@ -211,7 +212,8 @@ public class SqlInjectionHypersonicScanRule extends AbstractAppParamPlugin
     }
 
     /** for logging. */
-    private static final Logger LOGGER = LogManager.getLogger(SqlInjectionHypersonicScanRule.class);
+    private static final Logger LOGGER =
+            LogManager.getLogger(SqlInjectionHypersonicTimingScanRule.class);
 
     /** The number of seconds used in time-based attacks (i.e. sleep commands). */
     private int timeSleepSeconds = DEFAULT_SLEEP_TIME;
