@@ -44,17 +44,17 @@ import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
 /**
- * The SqlInjectionMsSqlScanRule identifies MsSQL specific SQL Injection vulnerabilities using MsSQL
- * specific syntax. If it doesn't use MsSQL specific syntax, it belongs in the generic SQLInjection
- * class! Note the ordering of checks, for efficiency is : 1) Error based (N/A) 2) Boolean Based
- * (N/A - uses standard syntax) 3) UNION based (N/A - uses standard syntax) 4) Stacked (N/A - uses
- * standard syntax) 5) Blind/Time Based (Yes - uses specific syntax)
+ * This scan rule identifies MsSQL specific SQL Injection vulnerabilities using MsSQL specific
+ * syntax. If it doesn't use MsSQL specific syntax, it belongs in the generic SQLInjection class!
+ * Note the ordering of checks, for efficiency is : 1) Error based (N/A) 2) Boolean Based (N/A -
+ * uses standard syntax) 3) UNION based (N/A - uses standard syntax) 4) Stacked (N/A - uses standard
+ * syntax) 5) Blind/Time Based (Yes - uses specific syntax)
  *
  * <p>See the following for some great MySQL specific tricks which could be integrated here
  * http://www.websec.ca/kb/sql_injection#MSSQL_Stacked_Queries
  * http://pentestmonkey.net/cheat-sheet/sql-injection/mssql-sql-injection-cheat-sheet
  */
-public class SqlInjectionMsSqlScanRule extends AbstractAppParamPlugin
+public class SqlInjectionMsSqlTimingScanRule extends AbstractAppParamPlugin
         implements CommonActiveScanRuleInfo {
 
     /** MSSQL one-line comment */
@@ -134,7 +134,8 @@ public class SqlInjectionMsSqlScanRule extends AbstractAppParamPlugin
     private static final double TIME_SLOPE_ERROR_RANGE = 0.30;
 
     /** for logging. */
-    private static final Logger LOGGER = LogManager.getLogger(SqlInjectionMsSqlScanRule.class);
+    private static final Logger LOGGER =
+            LogManager.getLogger(SqlInjectionMsSqlTimingScanRule.class);
 
     private static final Map<String, String> ALERT_TAGS;
 
