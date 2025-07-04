@@ -25,6 +25,14 @@
             fingerprinting techniques adapted from the tool <a href="https://github.com/dolevf/graphw00f">graphw00f</a>.<br>
             <strong>Note:</strong> If the Tech Detection (Wappalyzer) add-on is installed the fingerprinter will also add identified GraphQL Engines to the Technology tab/data. 
         <td><a href="https://github.com/zaproxy/zap-extensions/tree/main/addOns/graphql/src/main/java/org/zaproxy/addon/graphql/GraphQlFingerprinter.java">GraphQlFingerprinter.java</a>
+    <tr>
+        <td><a href="https://www.zaproxy.org/docs/alerts/50007-3/">50007-3</a>
+        <td>GraphQL Circular References in Schema
+        <td>This alert is raised when cycles are found in the object types in the imported GraphQL schema.
+            A new alert is raised for each unique cycle.
+            The alert contains information about the cycle and a message with an example query.
+            No requests are actually sent.
+        <td><a href="https://github.com/zaproxy/zap-extensions/tree/main/addOns/graphql/src/main/java/org/zaproxy/addon/graphql/GraphQlCycleDetector.java">GraphQlCycleDetector.java</a>
 </table>
 
 <br>
