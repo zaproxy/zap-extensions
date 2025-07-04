@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.net.SocketException;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import org.apache.commons.configuration.ConversionException;
@@ -42,11 +41,11 @@ import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
 /**
- * The SqlInjectionPostgreScanRule identifies Postgresql specific SQL Injection vulnerabilities
- * using Postgresql specific syntax. If it doesn't use Postgresql specific syntax, it belongs in the
- * generic SQLInjection class! Note the ordering of checks, for efficiency is : 1) Error based (N/A)
- * 2) Boolean Based (N/A - uses standard syntax) 3) UNION based (N/A - uses standard syntax) 4)
- * Stacked (N/A - uses standard syntax) 5) Blind/Time Based (Yes)
+ * This scan rule identifies Postgresql specific SQL Injection vulnerabilities using Postgresql
+ * specific syntax. If it doesn't use Postgresql specific syntax, it belongs in the generic
+ * SQLInjection class! Note the ordering of checks, for efficiency is : 1) Error based (N/A) 2)
+ * Boolean Based (N/A - uses standard syntax) 3) UNION based (N/A - uses standard syntax) 4) Stacked
+ * (N/A - uses standard syntax) 5) Blind/Time Based (Yes)
  *
  * <p>See the following for some great specific tricks which could be integrated here
  * http://www.websec.ca/kb/sql_injection
@@ -60,10 +59,8 @@ import org.zaproxy.zap.model.TechSet;
  *
  * @author 70pointer
  */
-public class SqlInjectionPostgreScanRule extends AbstractAppParamPlugin
+public class SqlInjectionPostgreSqlTimingScanRule extends AbstractAppParamPlugin
         implements CommonActiveScanRuleInfo {
-
-    private boolean doTimeBased = false;
 
     private int doTimeMaxRequests = 0;
 
@@ -79,23 +76,6 @@ public class SqlInjectionPostgreScanRule extends AbstractAppParamPlugin
     // error range allowable for statistical time-based blind attacks (0-1.0)
     private static final double TIME_CORRELATION_ERROR_RANGE = 0.15;
     private static final double TIME_SLOPE_ERROR_RANGE = 0.30;
-
-    /**
-     * create a map of SQL related error message fragments, and map them back to the RDBMS that they
-     * are associated with keep the ordering the same as the order in which the values are inserted,
-     * to allow the more (subjectively judged) common cases to be tested first Note: these should
-     * represent actual (driver level) error messages for things like syntax error, otherwise we are
-     * simply guessing that the string should/might occur.
-     */
-    private static final Map<String, String> SQL_ERROR_TO_DBMS = new LinkedHashMap<>();
-
-    static {
-        SQL_ERROR_TO_DBMS.put("org.postgresql.util.PSQLException", "PostgreSQL");
-        SQL_ERROR_TO_DBMS.put("org.postgresql", "PostgreSQL");
-        // Note: only Postgresql mappings here.
-        // TODO: is this all?? we need more error messages for Postgresql for different languages.
-        // PHP, ASP, JSP(JDBC), etc.
-    }
 
     /**
      * The sleep function in Postgresql cast it back to an int, so we can use it in nested select
@@ -209,7 +189,8 @@ public class SqlInjectionPostgreScanRule extends AbstractAppParamPlugin
     }
 
     /** for logging. */
-    private static final Logger LOGGER = LogManager.getLogger(SqlInjectionPostgreScanRule.class);
+    private static final Logger LOGGER =
+            LogManager.getLogger(SqlInjectionPostgreSqlTimingScanRule.class);
 
     @Override
     public int getId() {
@@ -252,16 +233,12 @@ public class SqlInjectionPostgreScanRule extends AbstractAppParamPlugin
 
         // set up what we are allowed to do, depending on the attack strength that was set.
         if (this.getAttackStrength() == AttackStrength.LOW) {
-            doTimeBased = true;
             doTimeMaxRequests = 3;
         } else if (this.getAttackStrength() == AttackStrength.MEDIUM) {
-            doTimeBased = true;
             doTimeMaxRequests = 5;
         } else if (this.getAttackStrength() == AttackStrength.HIGH) {
-            doTimeBased = true;
             doTimeMaxRequests = 10;
         } else if (this.getAttackStrength() == AttackStrength.INSANE) {
-            doTimeBased = true;
             doTimeMaxRequests = 100;
         }
         // Read the sleep value from the configs
@@ -289,7 +266,6 @@ public class SqlInjectionPostgreScanRule extends AbstractAppParamPlugin
             int countTimeBasedRequests = 0;
             for (int timeBasedSQLindex = 0;
                     timeBasedSQLindex < SQL_POSTGRES_TIME_REPLACEMENTS.length
-                            && doTimeBased
                             && countTimeBasedRequests < doTimeMaxRequests;
                     timeBasedSQLindex++) {
                 countTimeBasedRequests++;
