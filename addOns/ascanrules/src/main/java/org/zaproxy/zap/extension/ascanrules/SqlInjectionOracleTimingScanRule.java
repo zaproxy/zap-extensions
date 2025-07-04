@@ -38,8 +38,8 @@ import org.zaproxy.zap.model.TechSet;
 /**
  * TODO: maybe implement a more specific UNION based check for Oracle (with table names)
  *
- * <p>The SqlInjectionOracleScanRule identifies Oracle specific SQL Injection vulnerabilities using
- * Oracle specific syntax. If it doesn't use Oracle specific syntax, it belongs in the generic
+ * <p>The SqlInjectionOracleTimingScanRule identifies Oracle specific SQL Injection vulnerabilities
+ * using Oracle specific syntax. If it doesn't use Oracle specific syntax, it belongs in the generic
  * SQLInjection class! Note the ordering of checks, for efficiency is : 1) Error based (N/A) 2)
  * Boolean Based (N/A - uses standard syntax) 3) UNION based (TODO) 4) Stacked (N/A - uses standard
  * syntax) 5) Blind/Time Based (Yes)
@@ -60,7 +60,7 @@ import org.zaproxy.zap.model.TechSet;
  *
  * @author 70pointer
  */
-public class SqlInjectionOracleScanRule extends AbstractAppParamPlugin
+public class SqlInjectionOracleTimingScanRule extends AbstractAppParamPlugin
         implements CommonActiveScanRuleInfo {
 
     private int expectedDelayInMs = 5000;
@@ -156,7 +156,8 @@ public class SqlInjectionOracleScanRule extends AbstractAppParamPlugin
                                 CommonAlertTag.OWASP_2017_A01_INJECTION,
                                 CommonAlertTag.WSTG_V42_INPV_05_SQLI,
                                 CommonAlertTag.HIPAA,
-                                CommonAlertTag.PCI_DSS));
+                                CommonAlertTag.PCI_DSS,
+                                CommonAlertTag.TEST_TIMING));
         alertTags.put(PolicyTag.DEV_FULL.getTag(), "");
         alertTags.put(PolicyTag.QA_STD.getTag(), "");
         alertTags.put(PolicyTag.QA_FULL.getTag(), "");
@@ -166,7 +167,8 @@ public class SqlInjectionOracleScanRule extends AbstractAppParamPlugin
     }
 
     /** for logging. */
-    private static final Logger LOGGER = LogManager.getLogger(SqlInjectionOracleScanRule.class);
+    private static final Logger LOGGER =
+            LogManager.getLogger(SqlInjectionOracleTimingScanRule.class);
 
     @Override
     public int getId() {
