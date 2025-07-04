@@ -41,12 +41,13 @@ import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
-/** Unit test for {@link SqlInjectionPostgreScanRule}. */
-class SqlInjectionPostgreScanRuleUnitTest extends ActiveScannerTest<SqlInjectionPostgreScanRule> {
+/** Unit test for {@link SqlInjectionPostgreSqlTimingScanRule}. */
+class SqlInjectionPostgreSqlTimingScanRuleUnitTest
+        extends ActiveScannerTest<SqlInjectionPostgreSqlTimingScanRule> {
 
     @Override
-    protected SqlInjectionPostgreScanRule createScanner() {
-        return new SqlInjectionPostgreScanRule();
+    protected SqlInjectionPostgreSqlTimingScanRule createScanner() {
+        return new SqlInjectionPostgreSqlTimingScanRule();
     }
 
     @Test
@@ -158,7 +159,7 @@ class SqlInjectionPostgreScanRuleUnitTest extends ActiveScannerTest<SqlInjection
         // Then
         assertThat(cwe, is(equalTo(89)));
         assertThat(wasc, is(equalTo(19)));
-        assertThat(tags.size(), is(equalTo(10)));
+        assertThat(tags.size(), is(equalTo(11)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(true)));
@@ -169,6 +170,7 @@ class SqlInjectionPostgreScanRuleUnitTest extends ActiveScannerTest<SqlInjection
                 tags.containsKey(CommonAlertTag.WSTG_V42_INPV_05_SQLI.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(CommonAlertTag.HIPAA.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(CommonAlertTag.PCI_DSS.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(CommonAlertTag.TEST_TIMING.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.DEV_FULL.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.QA_STD.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.QA_FULL.getTag()), is(equalTo(true)));
