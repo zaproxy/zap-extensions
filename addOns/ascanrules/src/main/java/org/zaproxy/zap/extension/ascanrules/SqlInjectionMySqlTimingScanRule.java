@@ -44,11 +44,11 @@ import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
 /**
- * The SqlInjectionMySqlScanRule identifies MySQL specific SQL Injection vulnerabilities using MySQL
- * specific syntax. If it doesn't use MySQL specific syntax, it belongs in the generic SQLInjection
- * class! Note the ordering of checks, for efficiency is : 1) Error based (N/A) 2) Boolean Based
- * (N/A - uses standard syntax) 3) UNION based (N/A - uses standard syntax) 4) Stacked (N/A - uses
- * standard syntax) 5) Blind/Time Based (Yes - uses specific syntax)
+ * The SqlInjectionMySqlTimingScanRule identifies MySQL specific SQL Injection vulnerabilities using
+ * MySQL specific syntax. If it doesn't use MySQL specific syntax, it belongs in the generic
+ * SQLInjection class! Note the ordering of checks, for efficiency is : 1) Error based (N/A) 2)
+ * Boolean Based (N/A - uses standard syntax) 3) UNION based (N/A - uses standard syntax) 4) Stacked
+ * (N/A - uses standard syntax) 5) Blind/Time Based (Yes - uses specific syntax)
  *
  * <p>See the following for some great MySQL specific tricks which could be integrated here
  * http://www.websec.ca/kb/sql_injection#MySQL_Stacked_Queries
@@ -56,7 +56,7 @@ import org.zaproxy.zap.model.TechSet;
  *
  * @author 70pointer
  */
-public class SqlInjectionMySqlScanRule extends AbstractAppParamPlugin
+public class SqlInjectionMySqlTimingScanRule extends AbstractAppParamPlugin
         implements CommonActiveScanRuleInfo {
 
     /** MySQL one-line comment */
@@ -220,7 +220,8 @@ public class SqlInjectionMySqlScanRule extends AbstractAppParamPlugin
                                 CommonAlertTag.OWASP_2017_A01_INJECTION,
                                 CommonAlertTag.WSTG_V42_INPV_05_SQLI,
                                 CommonAlertTag.HIPAA,
-                                CommonAlertTag.PCI_DSS));
+                                CommonAlertTag.PCI_DSS,
+                                CommonAlertTag.TEST_TIMING));
         alertTags.put(PolicyTag.DEV_FULL.getTag(), "");
         alertTags.put(PolicyTag.QA_STD.getTag(), "");
         alertTags.put(PolicyTag.QA_FULL.getTag(), "");
@@ -230,7 +231,8 @@ public class SqlInjectionMySqlScanRule extends AbstractAppParamPlugin
     }
 
     /** for logging. */
-    private static final Logger LOGGER = LogManager.getLogger(SqlInjectionMySqlScanRule.class);
+    private static final Logger LOGGER =
+            LogManager.getLogger(SqlInjectionMySqlTimingScanRule.class);
 
     private int timeSleepSeconds = DEFAULT_SLEEP_TIME;
 
