@@ -297,6 +297,7 @@ public class ExtensionCallHome extends ExtensionAdaptor
                     || key.startsWith("stats.error.")
                     || key.startsWith("stats.exim.")
                     || key.startsWith("stats.fuzz.")
+                    || key.startsWith("stats.formhandler.")
                     || key.startsWith("stats.graphql.")
                     || key.startsWith("stats.hud.")
                     || key.startsWith("stats.llm.")
