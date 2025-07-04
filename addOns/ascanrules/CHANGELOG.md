@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 - Depends on an updated version of the Common Library add-on.
+- The SQL Injection SQLite scan rule has been broken into two rules; one union based, and one time based (Issue 7341). This includes assigning the timing rule ID 90038, and updating the add-on's help content.
 
 ### Added
 - Rules (as applicable) have been tagged in relation to HIPAA and PCI DSS.
