@@ -384,6 +384,10 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
 
         for (AutomationJob job : jobsToRun) {
 
+            if (env.isTimeToQuit() && !job.isAlwaysRun()) {
+                continue;
+            }
+
             if (!job.isEnabled()) {
                 progress.info(
                         Constant.messages.getString("automation.info.jobdisabled", job.getType()));
@@ -425,9 +429,6 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
                     Constant.messages.getString(
                             "automation.info.jobend", job.getType(), job.getFormattedTimeTaken()));
             progress.addRunJob(job);
-            if (env.isTimeToQuit()) {
-                break;
-            }
         }
         setPlanFinished(plan);
         return progress;
