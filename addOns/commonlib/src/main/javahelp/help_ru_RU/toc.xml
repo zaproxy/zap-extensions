@@ -5,6 +5,7 @@
         <tocitem text="Дополнения" tocid="addons">
             <tocitem text="Общая библиотека " target="commonlib">
                 <tocitem text="Tabbed Output Panel" target="commonlib.output.panel"/>
+                <tocitem text="Alert Tags" target="commonlib.alert.tags"/>
             </tocitem>
         </tocitem>
     </tocitem>
