@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Rules (as applicable) have been tagged in relation to HIPAA and PCI DSS.
 - The Cloud Metadata Potentially Exposed scan rules now has a CWE reference.
+- Scan rules which execute time based attacks now include the "TEST_TIMING" alert tag.
 
 ## [72] - 2025-06-20
 ### Added

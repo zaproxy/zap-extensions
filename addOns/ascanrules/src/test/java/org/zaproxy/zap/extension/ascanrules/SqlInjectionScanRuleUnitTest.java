@@ -162,6 +162,7 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
 
     @Override
     protected SqlInjectionScanRule createScanner() {
+        mockMessages(new ExtensionAscanRules());
         return new SqlInjectionScanRule();
     }
 
