@@ -106,7 +106,7 @@ public class WorkerGenerator implements Runnable {
         } catch (FileNotFoundException ex) {
             LOGGER.error("File '{}' not found!", inputFile, ex);
         } catch (IOException ex) {
-            LOGGER.error(ex);
+            LOGGER.error(ex, ex);
         }
         // -------------------------------------------------
 
@@ -133,7 +133,7 @@ public class WorkerGenerator implements Runnable {
                     manager.setAuto(false);
                 }
             } catch (IOException e) {
-                LOGGER.error(e);
+                LOGGER.error(e, e);
             }
         }
 
@@ -178,7 +178,7 @@ public class WorkerGenerator implements Runnable {
                     baseCaseObj =
                             GenBaseCase.genBaseCase(manager, firstPart + currentDir, true, null);
                 } catch (IOException e) {
-                    LOGGER.error(e);
+                    LOGGER.error(e, e);
                 }
 
                 // end of dir fail case
@@ -278,7 +278,7 @@ public class WorkerGenerator implements Runnable {
                 } catch (FileNotFoundException e) {
                     LOGGER.error("File '{}' not found!", inputFile, e);
                 } catch (IOException e) {
-                    LOGGER.error(e);
+                    LOGGER.error(e, e);
                 }
             }
 
@@ -308,7 +308,7 @@ public class WorkerGenerator implements Runnable {
                                     GenBaseCase.genBaseCase(
                                             manager, firstPart + currentDir, false, fileExtention);
                         } catch (IOException e) {
-                            LOGGER.error(e);
+                            LOGGER.error(e, e);
                         }
 
                         // if the manager has sent the stop command then exit
@@ -380,7 +380,7 @@ public class WorkerGenerator implements Runnable {
                         } catch (FileNotFoundException e) {
                             LOGGER.error("File '{}' not found!", inputFile, e);
                         } catch (IOException e) {
-                            LOGGER.error(e);
+                            LOGGER.error(e, e);
                         }
                     }
                 } // end of file ext loop

@@ -434,7 +434,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
             }
 
         } catch (Exception e) {
-            LOGGER.error(e);
+            LOGGER.error(e, e);
         }
     }
 

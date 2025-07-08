@@ -133,7 +133,7 @@ public class WebSocketProxyListenerBreak implements WebSocketObserver {
                 message.setPayload((byte[]) payload);
             }
         } catch (WebSocketException e) {
-            LOGGER.error(e);
+            LOGGER.error(e, e);
         }
     }
 }

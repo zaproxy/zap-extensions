@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Update help with newer JavaScript engine and links.
 
+### Fixed
+- Error logs to always include stack trace.
+
 ## [45.12.0] - 2025-06-20
 ### Changed
 - Maintenance changes.

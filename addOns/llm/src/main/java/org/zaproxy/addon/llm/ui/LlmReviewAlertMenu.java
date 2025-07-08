@@ -55,7 +55,7 @@ public class LlmReviewAlertMenu extends PopupMenuItemAlert {
         } catch (Exception e) {
             View.getSingleton()
                     .showWarningDialog(Constant.messages.getString("llm.reviewalert.error"));
-            LOGGER.error(e);
+            LOGGER.error(e, e);
         }
     }
 
