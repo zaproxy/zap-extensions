@@ -29,6 +29,7 @@ import javax.jdo.PersistenceManagerFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.datanucleus.PropertyNames;
+import org.datanucleus.store.rdbms.RDBMSPropertyNames;
 import org.flywaydb.core.Flyway;
 import org.parosproxy.paros.db.Database;
 import org.parosproxy.paros.db.DatabaseException;
@@ -91,6 +92,8 @@ public class TableJdo implements DatabaseListener {
         jdoProperties.setProperty(Constants.PROPERTY_CONNECTION_PASSWORD, password);
 
         jdoProperties.put(PropertyNames.PROPERTY_CLASSLOADER_PRIMARY, classLoader);
+        jdoProperties.put(
+                RDBMSPropertyNames.PROPERTY_RDBMS_STRING_LENGTH_EXCEEDED_ACTION, "TRUNCATE");
 
         pmf = JDOHelper.getPersistenceManagerFactory(jdoProperties, "authhelper", classLoader);
     }

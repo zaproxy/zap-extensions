@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Fixed
+- Do not fail the authentication on diagnostic errors.
 
 ## [0.27.0] - 2025-07-03
 ### Added
