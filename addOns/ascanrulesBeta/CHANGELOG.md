@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Depends on an updated version of the Common Library add-on.
 
+### Fixed
+- Error logs to always include stack trace.
+
 ### Added
 - Rules (as applicable) have been tagged in relation to HIPAA and PCI DSS.
 - The 403 Bypass scan rule now has a CWE reference.

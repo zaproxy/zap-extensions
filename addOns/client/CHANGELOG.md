@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Updated Chrome and Firefox extensions to v0.1.4.
 
+### Fixed
+- Error logs to always include stack trace.
 
 ## [0.16.0] - 2025-06-20
 ### Added

@@ -540,7 +540,7 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
         try {
             new Thread(spiderThread, "ZAP-AjaxSpiderApi").start();
         } catch (Exception e) {
-            LOGGER.error(e);
+            LOGGER.error(e, e);
         }
     }
 

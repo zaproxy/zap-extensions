@@ -88,7 +88,7 @@ public class TableOpenApi extends ParosAbstractTable {
             int columnSize = DbUtils.getColumnSize(conn, "OPENAPI_SPECS", "DEFINITION");
             LOGGER.debug("Definition column size is now: {}", columnSize);
         } catch (SQLException e) {
-            LOGGER.warn(e);
+            LOGGER.warn(e, e);
         }
     }
 

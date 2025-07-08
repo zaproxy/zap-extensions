@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### Fixed
+- Error logs to always include stack trace.
 
 ## [23.24.0] - 2025-06-20
 ### Added
