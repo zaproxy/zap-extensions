@@ -353,6 +353,8 @@ public class AuthenticationDiagnostics implements AutoCloseable {
             tx.begin();
             pm.makePersistent(diagnostic);
             tx.commit();
+        } catch (Exception e) {
+            LOGGER.warn("Failed to persist diagnostics:", e);
         } finally {
             if (tx.isActive()) {
                 tx.rollback();
