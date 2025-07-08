@@ -37,9 +37,9 @@ public class HarExporter implements ExporterType {
 
         generator.writeStartObject();
         generator.writeObjectFieldStart("log");
-        HarLog log = HarUtils.createZapHarLog();
-        generator.writeStringField("version", log.getVersion());
-        generator.writePOJOField("creator", log.getCreator());
+        HarLog log = HarUtils.createZapHarLog().build();
+        generator.writeStringField("version", log.version());
+        generator.writePOJOField("creator", log.creator());
         generator.writeArrayFieldStart("entries");
     }
 

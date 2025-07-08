@@ -29,19 +29,21 @@ import de.sstoehr.harreader.model.HarCreatorBrowser;
 import de.sstoehr.harreader.model.HarEntry;
 import de.sstoehr.harreader.model.HarHeader;
 import de.sstoehr.harreader.model.HarLog;
+import de.sstoehr.harreader.model.HarLog.HarLogBuilder;
 import de.sstoehr.harreader.model.HarPostData;
 import de.sstoehr.harreader.model.HarPostDataParam;
 import de.sstoehr.harreader.model.HarQueryParam;
 import de.sstoehr.harreader.model.HarRequest;
 import de.sstoehr.harreader.model.HarResponse;
 import de.sstoehr.harreader.model.HarTiming;
-import de.sstoehr.harreader.model.HttpMethod;
 import de.sstoehr.harreader.model.HttpStatus;
 import java.io.IOException;
 import java.net.HttpCookie;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -110,14 +112,14 @@ public final class HarUtils {
 
     private HarUtils() {}
 
-    public static HarLog createZapHarLog() {
-        HarCreatorBrowser harCreator = new HarCreatorBrowser();
-        harCreator.setName(Constant.PROGRAM_NAME);
-        harCreator.setVersion(Constant.PROGRAM_VERSION);
-        HarLog log = new HarLog();
-        log.setVersion("1.2");
-        log.setCreator(harCreator);
-        return log;
+    public static HarLogBuilder createZapHarLog() {
+        return HarLog.builder()
+                .version("1.2")
+                .creator(
+                        HarCreatorBrowser.builder()
+                                .name(Constant.PROGRAM_NAME)
+                                .version(Constant.PROGRAM_VERSION)
+                                .build());
     }
 
     /**
@@ -130,7 +132,7 @@ public final class HarUtils {
      * @since 0.13.0
      */
     public static HttpMessage createHttpMessage(String harRequest) throws IOException {
-        return createHttpMessage(JSON_MAPPER.readValue(harRequest, HarEntry.class).getRequest());
+        return createHttpMessage(JSON_MAPPER.readValue(harRequest, HarEntry.class).request());
     }
 
     public static HttpMessage createHttpMessage(HarRequest harRequest)
@@ -138,35 +140,33 @@ public final class HarUtils {
         StringBuilder strBuilderReqHeader = new StringBuilder();
 
         strBuilderReqHeader
-                .append(harRequest.getRawMethod())
+                .append(harRequest.method())
                 .append(' ')
-                .append(harRequest.getUrl())
+                .append(harRequest.url())
                 .append(' ')
-                .append(harRequest.getHttpVersion())
+                .append(harRequest.httpVersion())
                 .append(HttpHeader.CRLF);
 
-        for (HarHeader harHeader : harRequest.getHeaders()) {
+        for (HarHeader harHeader : harRequest.headers()) {
             strBuilderReqHeader
-                    .append(harHeader.getName())
+                    .append(harHeader.name())
                     .append(": ")
-                    .append(harHeader.getValue())
+                    .append(harHeader.value())
                     .append(HttpHeader.CRLF);
         }
         strBuilderReqHeader.append(HttpHeader.CRLF);
 
         StringBuilder strBuilderReqBody = new StringBuilder();
-        final HarPostData harPostData = harRequest.getPostData();
-        if (harPostData != null) {
-            final String text = harPostData.getText();
-            if (text != null && !text.isEmpty()) {
-                strBuilderReqBody.append(harRequest.getPostData().getText());
-            } else if (harPostData.getParams() != null && !harPostData.getParams().isEmpty()) {
-                for (HarPostDataParam param : harRequest.getPostData().getParams()) {
-                    if (strBuilderReqBody.length() > 0) {
-                        strBuilderReqBody.append('&');
-                    }
-                    strBuilderReqBody.append(param.getName()).append('=').append(param.getValue());
+        HarPostData harPostData = harRequest.postData();
+        String text = harPostData.text();
+        if (text != null && !text.isEmpty()) {
+            strBuilderReqBody.append(harPostData.text());
+        } else if (!harPostData.params().isEmpty()) {
+            for (HarPostDataParam param : harPostData.params()) {
+                if (strBuilderReqBody.length() > 0) {
+                    strBuilderReqBody.append('&');
                 }
+                strBuilderReqBody.append(param.name()).append('=').append(param.value());
             }
         }
 
@@ -186,14 +186,17 @@ public final class HarUtils {
      */
     public static HttpMessage createHttpMessage(HarEntry harEntry)
             throws HttpMalformedHeaderException {
-        HttpMessage message = createHttpMessage(harEntry.getRequest());
+        HttpMessage message = createHttpMessage(harEntry.request());
 
         message.setTimeSentMillis(
-                Optional.ofNullable(harEntry.getStartedDateTime()).map(Date::getTime).orElse(0L));
+                Optional.ofNullable(harEntry.startedDateTime())
+                        .map(ZonedDateTime::toInstant)
+                        .map(Instant::toEpochMilli)
+                        .orElse(0L));
         message.setTimeElapsedMillis(
-                Optional.ofNullable(harEntry.getTimings()).map(HarTiming::getReceive).orElse(0));
+                Optional.ofNullable(harEntry.timings().receive()).map(Long::intValue).orElse(0));
 
-        setHttpResponse(harEntry.getResponse(), message);
+        setHttpResponse(harEntry.response(), message);
 
         return message;
     }
@@ -201,34 +204,34 @@ public final class HarUtils {
     private static void setHttpResponse(HarResponse harResponse, HttpMessage message)
             throws HttpMalformedHeaderException {
         // empty responses without status code are possible
-        if (harResponse.getRawStatus() == 0) {
+        if (harResponse.status() == 0) {
             return;
         }
 
         StringBuilder strBuilderResHeader =
                 new StringBuilder()
-                        .append(harResponse.getHttpVersion())
+                        .append(harResponse.httpVersion())
                         .append(' ')
-                        .append(harResponse.getRawStatus())
+                        .append(harResponse.status())
                         .append(' ')
-                        .append(harResponse.getStatusText())
+                        .append(harResponse.statusText())
                         .append(HttpHeader.CRLF);
 
         boolean mixedNewlineChars = false;
-        for (HarHeader harHeader : harResponse.getHeaders()) {
-            String value = harHeader.getValue();
+        for (HarHeader harHeader : harResponse.headers()) {
+            String value = harHeader.value();
             if (value.contains("\n") || value.contains("\r")) {
                 mixedNewlineChars = true;
                 LOGGER.info(
                         "{}\n\t{} value contains CR or LF and is likely invalid (though it may have been successfully set to the message):\n\t{}",
                         message.getRequestHeader().getURI(),
-                        harHeader.getName(),
+                        harHeader.name(),
                         StringEscapeUtils.escapeJava(value));
             }
             strBuilderResHeader
-                    .append(harHeader.getName())
+                    .append(harHeader.name())
                     .append(": ")
-                    .append(harHeader.getValue())
+                    .append(harHeader.value())
                     .append(HttpHeader.CRLF);
         }
         strBuilderResHeader.append(HttpHeader.CRLF);
@@ -244,10 +247,10 @@ public final class HarUtils {
         }
         message.setResponseFromTargetHost(true);
 
-        HarContent harContent = harResponse.getContent();
+        HarContent harContent = harResponse.content();
         if (harContent != null) {
-            if (BASE64_BODY_ENCODING.equals(harContent.getEncoding())) {
-                var text = harContent.getText();
+            if (BASE64_BODY_ENCODING.equals(harContent.encoding())) {
+                var text = harContent.text();
                 if (text != null)
                     try {
                         message.setResponseBody(Base64.getDecoder().decode(text));
@@ -257,7 +260,7 @@ public final class HarUtils {
                         message.setResponseBody(text);
                     }
             } else {
-                message.setResponseBody(harContent.getText());
+                message.setResponseBody(harContent.text());
             }
         }
     }
@@ -269,19 +272,27 @@ public final class HarUtils {
      * @return the {@code HarEntry}, never {@code null}.
      */
     public static HarEntry createHarEntry(HttpMessage httpMessage) {
-        HarTiming newTimings = new HarTiming();
-        newTimings.setSend(0);
-        newTimings.setWait(0);
-        newTimings.setReceive(httpMessage.getTimeElapsedMillis());
+        HarTiming newTimings =
+                HarTiming.builder()
+                        .send(0L)
+                        .waitTime(0L)
+                        .receive((long) httpMessage.getTimeElapsedMillis())
+                        .build();
 
-        HarEntry newEntry = new HarEntry();
-        newEntry.setStartedDateTime(new Date(httpMessage.getTimeSentMillis()));
-        newEntry.setTime(httpMessage.getTimeElapsedMillis());
-        newEntry.setRequest(createHarRequest(httpMessage));
-        newEntry.setResponse(createHarResponse(httpMessage));
-        newEntry.setTimings(newTimings);
+        HarEntry newEntry =
+                HarEntry.builder()
+                        .startedDateTime(createZonedDateTime(httpMessage.getTimeSentMillis()))
+                        .time(httpMessage.getTimeElapsedMillis())
+                        .request(createHarRequest(httpMessage))
+                        .response(createHarResponse(httpMessage))
+                        .timings(newTimings)
+                        .build();
         addCustomFields(newEntry, httpMessage);
         return newEntry;
+    }
+
+    private static ZonedDateTime createZonedDateTime(long millis) {
+        return ZonedDateTime.ofInstant(Instant.ofEpochMilli(millis), ZoneId.of("Z"));
     }
 
     private static void addCustomFields(HarEntry entry, HttpMessage message) {
@@ -315,10 +326,11 @@ public final class HarUtils {
         List<HarCookie> harCookies = new ArrayList<>();
         try {
             for (HttpCookie cookie : requestHeader.getHttpCookies()) {
-                HarCookie newCookie = new HarCookie();
-                newCookie.setName(cookie.getName());
-                newCookie.setValue(cookie.getValue());
-                harCookies.add(newCookie);
+                harCookies.add(
+                        HarCookie.builder()
+                                .name(cookie.getName())
+                                .value(cookie.getValue())
+                                .build());
             }
         } catch (IllegalArgumentException e) {
             LOGGER.warn(
@@ -328,10 +340,8 @@ public final class HarUtils {
 
         List<HarQueryParam> harQueryString = new ArrayList<>();
         for (HtmlParameter param : httpMessage.getUrlParams()) {
-            HarQueryParam newQueryParam = new HarQueryParam();
-            newQueryParam.setName(param.getName());
-            newQueryParam.setValue(param.getValue());
-            harQueryString.add(newQueryParam);
+            harQueryString.add(
+                    HarQueryParam.builder().name(param.getName()).value(param.getValue()).build());
         }
 
         HarPostData harPostData = null;
@@ -348,33 +358,31 @@ public final class HarUtils {
                 if (StringUtils.startsWithIgnoreCase(
                         contentType.trim(), HttpHeader.FORM_URLENCODED_CONTENT_TYPE)) {
                     for (HtmlParameter param : httpMessage.getFormParams()) {
-                        HarPostDataParam newPostParam = new HarPostDataParam();
-                        newPostParam.setName(param.getName());
-                        newPostParam.setValue(param.getValue());
-                        params.add(newPostParam);
+                        params.add(
+                                HarPostDataParam.builder()
+                                        .name(param.getName())
+                                        .value(param.getValue())
+                                        .build());
                     }
                 } else {
                     text = requestBody.toString();
                 }
             }
-            harPostData = new HarPostData();
-            harPostData.setMimeType(contentType);
-            harPostData.setParams(params);
-            harPostData.setText(text);
+            harPostData =
+                    HarPostData.builder().mimeType(contentType).params(params).text(text).build();
         }
 
-        HttpMethod method = HttpMethod.valueOf(requestHeader.getMethod().toUpperCase(Locale.ROOT));
-        HarRequest newHarRequest = new HarRequest();
-        newHarRequest.setMethod(method);
-        newHarRequest.setUrl(requestHeader.getURI().toString());
-        newHarRequest.setHttpVersion(requestHeader.getVersion());
-        newHarRequest.setCookies(harCookies);
-        newHarRequest.setHeaders(createHarHeaders(requestHeader));
-        newHarRequest.setQueryString(harQueryString);
-        newHarRequest.setPostData(harPostData);
-        newHarRequest.setHeadersSize((long) requestHeader.toString().length());
-        newHarRequest.setBodySize((long) httpMessage.getRequestBody().length());
-        return newHarRequest;
+        return HarRequest.builder()
+                .method(requestHeader.getMethod())
+                .url(requestHeader.getURI().toString())
+                .httpVersion(requestHeader.getVersion())
+                .cookies(harCookies)
+                .headers(createHarHeaders(requestHeader))
+                .queryString(harQueryString)
+                .postData(harPostData)
+                .headersSize((long) requestHeader.toString().length())
+                .bodySize((long) httpMessage.getRequestBody().length())
+                .build();
     }
 
     public static HarResponse createHarResponse(HttpMessage httpMessage) {
@@ -384,26 +392,27 @@ public final class HarUtils {
         long whenCreated = System.currentTimeMillis();
         for (HttpCookie cookie :
                 responseHeader.getHttpCookies(httpMessage.getRequestHeader().getHostName())) {
-            Date expires;
+            ZonedDateTime expires;
             if (cookie.getVersion() == 0) {
-                expires = new Date(whenCreated + (cookie.getMaxAge() * 1000));
+                expires = createZonedDateTime(whenCreated + (cookie.getMaxAge() * 1000));
             } else {
                 expires =
-                        new Date(
+                        createZonedDateTime(
                                 httpMessage.getTimeSentMillis()
                                         + httpMessage.getTimeElapsedMillis()
                                         + (cookie.getMaxAge() * 1000));
             }
 
-            HarCookie newCookie = new HarCookie();
-            newCookie.setName(cookie.getName());
-            newCookie.setValue(cookie.getValue());
-            newCookie.setPath(cookie.getPath());
-            newCookie.setDomain(cookie.getDomain());
-            newCookie.setExpires(expires);
-            newCookie.setHttpOnly(cookie.isHttpOnly());
-            newCookie.setSecure(cookie.getSecure());
-            harCookies.add(newCookie);
+            harCookies.add(
+                    HarCookie.builder()
+                            .name(cookie.getName())
+                            .value(cookie.getValue())
+                            .path(cookie.getPath())
+                            .domain(cookie.getDomain())
+                            .expires(expires)
+                            .httpOnly(cookie.isHttpOnly())
+                            .secure(cookie.getSecure())
+                            .build());
         }
 
         String text = null;
@@ -430,36 +439,39 @@ public final class HarUtils {
             }
         }
 
-        HarContent newHarContent = new HarContent();
-        newHarContent.setSize((long) httpMessage.getResponseBody().length());
-        newHarContent.setCompression((long) 0);
-        newHarContent.setMimeType(contentType);
-        newHarContent.setText(text);
-        newHarContent.setEncoding(encoding);
+        HarContent newHarContent =
+                HarContent.builder()
+                        .size((long) httpMessage.getResponseBody().length())
+                        .compression(0L)
+                        .mimeType(contentType)
+                        .text(text)
+                        .encoding(encoding)
+                        .build();
 
         String redirectUrl = responseHeader.getHeader(HttpHeader.LOCATION);
 
-        HarResponse newHarResponse = new HarResponse();
-        newHarResponse.setStatus(HttpStatus.byCode(responseHeader.getStatusCode()).getCode());
-        newHarResponse.setStatusText(responseHeader.getReasonPhrase());
-        newHarResponse.setHttpVersion(responseHeader.getVersion());
-        newHarResponse.setCookies(harCookies);
-        newHarResponse.setHeaders(createHarHeaders(responseHeader));
-        newHarResponse.setContent(newHarContent);
-        newHarResponse.setRedirectURL(redirectUrl == null ? "" : redirectUrl);
-        newHarResponse.setHeadersSize((long) responseHeader.toString().length());
-        newHarResponse.setBodySize((long) httpMessage.getResponseBody().length());
-        return newHarResponse;
+        return HarResponse.builder()
+                .status(HttpStatus.byCode(responseHeader.getStatusCode()).getCode())
+                .statusText(responseHeader.getReasonPhrase())
+                .httpVersion(responseHeader.getVersion())
+                .cookies(harCookies)
+                .headers(createHarHeaders(responseHeader))
+                .content(newHarContent)
+                .redirectURL(redirectUrl == null ? "" : redirectUrl)
+                .headersSize((long) responseHeader.toString().length())
+                .bodySize((long) httpMessage.getResponseBody().length())
+                .build();
     }
 
     public static List<HarHeader> createHarHeaders(HttpHeader httpHeader) {
         List<HarHeader> harHeaders = new ArrayList<>();
         List<HttpHeaderField> headers = httpHeader.getHeaders();
         for (HttpHeaderField headerField : headers) {
-            HarHeader newHeader = new HarHeader();
-            newHeader.setName(headerField.getName());
-            newHeader.setValue(headerField.getValue());
-            harHeaders.add(newHeader);
+            harHeaders.add(
+                    HarHeader.builder()
+                            .name(headerField.getName())
+                            .value(headerField.getValue())
+                            .build());
         }
         return harHeaders;
     }

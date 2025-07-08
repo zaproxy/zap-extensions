@@ -29,6 +29,7 @@ import static org.mockito.Mockito.withSettings;
 import de.sstoehr.harreader.model.HarEntry;
 import de.sstoehr.harreader.model.HarResponse;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.BeforeEach;
@@ -173,8 +174,7 @@ class HarUtilsUnitTest extends TestUtils {
         // When
         HarEntry entry = HarUtils.createHarEntry(message);
         // Then
-        assertThat(
-                entry.getAdditional().get(HarUtils.MESSAGE_NOTE_CUSTOM_FIELD), is(equalTo(note)));
+        assertThat(entry.additional().get(HarUtils.MESSAGE_NOTE_CUSTOM_FIELD), is(equalTo(note)));
     }
 
     private static HttpMessage createHttpMessage()
@@ -193,11 +193,9 @@ class HarUtilsUnitTest extends TestUtils {
         // When
         HarEntry entry = HarUtils.createHarEntry(id, type, message);
         // Then
-        assertThat(entry.getAdditional().get(HarUtils.MESSAGE_ID_CUSTOM_FIELD), is(equalTo(id)));
-        assertThat(
-                entry.getAdditional().get(HarUtils.MESSAGE_TYPE_CUSTOM_FIELD), is(equalTo(type)));
-        assertThat(
-                entry.getAdditional().get(HarUtils.MESSAGE_NOTE_CUSTOM_FIELD), is(equalTo(note)));
+        assertThat(entry.additional().get(HarUtils.MESSAGE_ID_CUSTOM_FIELD), is(equalTo(id)));
+        assertThat(entry.additional().get(HarUtils.MESSAGE_TYPE_CUSTOM_FIELD), is(equalTo(type)));
+        assertThat(entry.additional().get(HarUtils.MESSAGE_NOTE_CUSTOM_FIELD), is(equalTo(note)));
     }
 
     @Test
@@ -208,21 +206,21 @@ class HarUtilsUnitTest extends TestUtils {
         // When
         HarResponse response = HarUtils.createHarResponse(message);
         // Then
-        assertThat(response.getBodySize(), is(equalTo(3L)));
-        assertThat(response.getContent().getMimeType(), is(equalTo("")));
-        assertThat(response.getContent().getEncoding(), is(equalTo("base64")));
-        assertThat(response.getContent().getText(), is(equalTo("MTIz")));
+        assertThat(response.bodySize(), is(equalTo(3L)));
+        assertThat(response.content().mimeType(), is(equalTo("")));
+        assertThat(response.content().encoding(), is(equalTo("base64")));
+        assertThat(response.content().text(), is(equalTo("MTIz")));
     }
 
     @Test
     void shouldCreateJsonAsBytesFromHarLog() throws Exception {
         // Given
-        var log = HarUtils.createZapHarLog();
+        var builder = HarUtils.createZapHarLog();
         HttpMessage msg = createHttpMessage();
         msg.getRequestHeader().setHeader(HttpRequestHeader.USER_AGENT, "My-user-agent");
-        log.getEntries().add(HarUtils.createHarEntry(1, 2, msg));
+        builder.entries(List.of(HarUtils.createHarEntry(1, 2, msg)));
         // When
-        byte[] bytes = HarUtils.toJsonAsBytes(log);
+        byte[] bytes = HarUtils.toJsonAsBytes(builder.build());
         // Then
         assertThat(
                 new String(bytes, StandardCharsets.UTF_8),
@@ -235,10 +233,9 @@ class HarUtilsUnitTest extends TestUtils {
                                         + "      \"name\" : \"ZAP\",\n"
                                         + "      \"version\" : \"Dev Build\"\n"
                                         + "    },\n"
-                                        + "    \"browser\" : { },\n"
                                         + "    \"pages\" : [ ],\n"
                                         + "    \"entries\" : [ {\n"
-                                        + "      \"startedDateTime\" : \"1970-01-01T00:00:00.000+00:00\",\n"
+                                        + "      \"startedDateTime\" : \"1970-01-01T00:00:00Z\",\n"
                                         + "      \"time\" : 0,\n"
                                         + "      \"request\" : {\n"
                                         + "        \"method\" : \"GET\",\n"
