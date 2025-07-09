@@ -39,6 +39,8 @@ public enum Browser {
     CHROME_HEADLESS("chrome-headless", true),
     FIREFOX("firefox", false),
     FIREFOX_HEADLESS("firefox-headless", true),
+    EDGE("edge", false),
+    EDGE_HEADLESS("edge-headless", true),
     /**
      * Headless browser, guaranteed to be always available.
      *
@@ -115,6 +117,10 @@ public enum Browser {
             return CHROME;
         } else if (CHROME_HEADLESS.id.equals(id)) {
             return CHROME_HEADLESS;
+        } else if (EDGE.id.equals(id)) {
+            return EDGE;
+        } else if (EDGE_HEADLESS.id.equals(id)) {
+            return EDGE_HEADLESS;
         } else if (FIREFOX.id.equals(id)) {
             return FIREFOX;
         } else if (FIREFOX_HEADLESS.id.equals(id)) {
@@ -232,6 +238,9 @@ public enum Browser {
             case CHROME:
             case CHROME_HEADLESS:
                 return "chromedriver";
+            case EDGE:
+            case EDGE_HEADLESS:
+                return "msedgedriver";
             case FIREFOX:
             case FIREFOX_HEADLESS:
                 return "geckodriver";
