@@ -83,7 +83,7 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
      * @see #CONFIG_VERSION_KEY
      * @see #updateConfigsImpl(int)
      */
-    private static final int CURRENT_CONFIG_VERSION = 6;
+    private static final int CURRENT_CONFIG_VERSION = 7;
 
     private static final String AJAX_SPIDER_BASE_KEY = "ajaxSpider";
 
@@ -208,7 +208,7 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
                     new AllowedResource(
                             AllowedResource.createDefaultPattern("^http.*\\.css(?:\\?.*)?$")));
 
-    private static final String LOGOUT_AVOIDANCE_KEY = ".logoutAvoidance";
+    private static final String LOGOUT_AVOIDANCE_KEY = AJAX_SPIDER_BASE_KEY + ".logoutAvoidance";
 
     private int numberOfBrowsers;
     private int maxCrawlDepth;
@@ -387,6 +387,10 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
                 if (!getConfig().getKeys(ALL_ALLOWED_RESOURCES_KEY).hasNext()) {
                     setAllowedResources(DEFAULT_ALLOWED_RESOURCES);
                 }
+            case 6:
+                boolean oldLogoutAvoidance = getBoolean("logoutAvoidance", false);
+                getConfig().setProperty(LOGOUT_AVOIDANCE_KEY, oldLogoutAvoidance);
+                getConfig().clearProperty("logoutAvoidance");
         }
     }
 
