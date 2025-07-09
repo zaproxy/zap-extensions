@@ -24,6 +24,7 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 
@@ -196,6 +197,46 @@ class AjaxSpiderParamUnitTest {
             // Then
             assertThat(param.getNumberOfBrowsers(), is(equalTo(3)));
         }
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void shouldUpdateLogoutAvoidanceKeyOnConfigUpdate(boolean logoutAvoidance) {
+        // Given
+        configuration = new ZapXmlConfiguration();
+        configuration.setProperty("ajaxSpider[@version]", 6);
+        configuration.setProperty("logoutAvoidance", logoutAvoidance);
+        // When
+        param.load(configuration);
+        // Then
+        assertThat(param.isLogoutAvoidance(), is(equalTo(logoutAvoidance)));
+        assertThat(configuration.getProperty("logoutAvoidance"), is(nullValue()));
+        assertThat(
+                configuration.getBoolean("ajaxSpider.logoutAvoidance"),
+                is(equalTo(logoutAvoidance)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void shouldLoadLogoutAvoidanceFromConfig(boolean logoutAvoidance) {
+        // Given
+        configuration.setProperty("ajaxSpider.logoutAvoidance", logoutAvoidance);
+        // When
+        param.load(configuration);
+        // Then
+        assertThat(param.isLogoutAvoidance(), is(equalTo(logoutAvoidance)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void shouldSetAndPersistLogoutAvoidance(boolean logoutAvoidance) throws Exception {
+        // Given / When
+        param.setLogoutAvoidance(logoutAvoidance);
+        // Then
+        assertThat(param.isLogoutAvoidance(), is(equalTo(logoutAvoidance)));
+        assertThat(
+                configuration.getBoolean("ajaxSpider.logoutAvoidance"),
+                is(equalTo(logoutAvoidance)));
     }
 
     private void persistAllowedResource(int idx, String regex, Boolean enabled) {

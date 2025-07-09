@@ -4,8 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
 ### Fixed
+- Correct configuration key for Logout Avoidance (Issue 8994).
 - Error logs to always include stack trace.
 
 ## [23.24.0] - 2025-06-20
