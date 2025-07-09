@@ -31,6 +31,7 @@ import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
+import org.openqa.selenium.ScriptKey;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
@@ -48,6 +49,7 @@ import org.zaproxy.addon.authhelper.internal.db.DiagnosticMessage;
 import org.zaproxy.addon.authhelper.internal.db.DiagnosticScreenshot;
 import org.zaproxy.addon.authhelper.internal.db.DiagnosticStep;
 import org.zaproxy.addon.authhelper.internal.db.DiagnosticWebElement;
+import org.zaproxy.addon.authhelper.internal.db.DiagnosticWebElement.SelectorType;
 import org.zaproxy.addon.authhelper.internal.db.TableJdo;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
 import org.zaproxy.zap.network.HttpSenderListener;
@@ -65,11 +67,126 @@ public class AuthenticationDiagnostics implements AutoCloseable {
 
     private static final Logger LOGGER = LogManager.getLogger(AuthenticationDiagnostics.class);
 
+    private static final String ELEMENT_SELECTOR_SCRIPT =
+            """
+function isElementPathUnique(path, documentElement) {
+  const elements = documentElement.querySelectorAll(path);
+  return elements.length === 1;
+}
+
+function isElementXPathUnique(xpath, documentElement) {
+  const result = documentElement.evaluate(
+    xpath,
+    documentElement,
+    null,
+    XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
+    null,
+  );
+  return result.snapshotLength === 1;
+}
+
+function getCSSSelector(element, documentElement) {
+  let selector = element.tagName.toLowerCase();
+  if (selector === "html") {
+    selector = "body";
+  } else if (element === documentElement.body) {
+    selector = "body";
+  } else if (element.parentNode) {
+    const parentSelector = getCSSSelector(element.parentNode, documentElement);
+    selector = `${parentSelector} > ${selector}`;
+  }
+  return selector;
+}
+
+function getXPath(element, documentElement) {
+  if (!element.tagName) {
+    return "";
+  }
+
+  let selector = element.tagName.toLowerCase();
+
+  if (element.id && isElementXPathUnique(selector, documentElement)) {
+    selector += `[@id="${element.id}"]`;
+  } else {
+    let index = 1;
+    let sibling = element.previousSibling;
+    let isUnique = true;
+    while (sibling) {
+      if (
+        sibling.nodeType === Node.ELEMENT_NODE &&
+        sibling.nodeName === element.nodeName
+      ) {
+        index += 1;
+        isUnique = false;
+      }
+      sibling = sibling.previousSibling;
+    }
+
+    if (isUnique) {
+      sibling = element.nextSibling;
+      while (sibling) {
+        if (
+          sibling.nodeType === Node.ELEMENT_NODE &&
+          sibling.nodeName === element.nodeName
+        ) {
+          isUnique = false;
+          break;
+        }
+        sibling = sibling.nextSibling;
+      }
+    }
+
+    if (index !== 1 || !isUnique) {
+      selector += `[${index}]`;
+    }
+  }
+
+  if (element.parentNode) {
+    const parentSelector = getXPath(element.parentNode, documentElement);
+    selector = `${parentSelector}/${selector}`;
+  }
+  return selector;
+}
+
+function getSelector(element, documentElement) {
+  const selector = { type: "", value: "" };
+
+  if (element.id) {
+    selector.type = "css";
+    selector.value = `#${element.id}`;
+  } else if (
+    element.classList.length === 1 &&
+    element.classList.item(0) != null &&
+    isElementPathUnique(`.${element.classList.item(0)}`, documentElement)
+  ) {
+    selector.type = "css";
+    selector.value = `.${element.classList.item(0)}`;
+  } else {
+    const cssSelector = getCSSSelector(element, documentElement);
+    if (cssSelector && isElementPathUnique(cssSelector, documentElement)) {
+      selector.type = "css";
+      selector.value = cssSelector;
+    } else {
+      const xpath = getXPath(element, documentElement);
+      if (xpath) {
+        selector.type = "xpath";
+        selector.value = xpath;
+      }
+    }
+  }
+
+  return selector;
+}
+
+return getSelector(arguments[0], document)
+""";
+
     private final boolean enabled;
 
     private Diagnostic diagnostic;
     private HttpSenderListener listener;
     private DiagnosticStep currentStep;
+    private ScriptKey elementSelectorScriptKey;
 
     public AuthenticationDiagnostics(
             boolean enabled, String authenticationMethod, String context, String user) {
@@ -275,7 +392,7 @@ public class AuthenticationDiagnostics implements AutoCloseable {
                 .forEach(currentStep.getBrowserStorageItems()::add);
     }
 
-    private static DiagnosticWebElement createDiagnosticWebElement(
+    private DiagnosticWebElement createDiagnosticWebElement(
             WebDriver wd, List<WebElement> forms, WebElement element) {
         if (element == null) {
             return null;
@@ -291,6 +408,17 @@ public class AuthenticationDiagnostics implements AutoCloseable {
                     int idx = forms.indexOf(form);
                     diagElement.setFormIndex(idx != -1 ? idx : null);
                 }
+
+                if (elementSelectorScriptKey == null) {
+                    elementSelectorScriptKey = je.pin(ELEMENT_SELECTOR_SCRIPT);
+                }
+
+                @SuppressWarnings("unchecked")
+                Map<String, String> data =
+                        (Map<String, String>) je.executeScript(elementSelectorScriptKey, element);
+                diagElement.setSelectorType(
+                        "xpath".equals(data.get("type")) ? SelectorType.XPATH : SelectorType.CSS);
+                diagElement.setSelectorValue(data.get("value"));
             }
 
             diagElement.setTagName(element.getTagName());

@@ -20,6 +20,7 @@
 package org.zaproxy.addon.authhelper.report;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
@@ -32,10 +33,12 @@ import static org.mockito.Mockito.withSettings;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -56,6 +59,10 @@ import org.zaproxy.addon.authhelper.ClientScriptBasedAuthenticationMethodType;
 import org.zaproxy.addon.authhelper.ClientScriptBasedAuthenticationMethodType.ClientScriptBasedAuthenticationMethod;
 import org.zaproxy.addon.authhelper.ExtensionAuthhelper;
 import org.zaproxy.addon.authhelper.HeaderBasedSessionManagementMethodType;
+import org.zaproxy.addon.authhelper.internal.db.Diagnostic;
+import org.zaproxy.addon.authhelper.internal.db.DiagnosticStep;
+import org.zaproxy.addon.authhelper.internal.db.DiagnosticWebElement;
+import org.zaproxy.addon.authhelper.internal.db.DiagnosticWebElement.SelectorType;
 import org.zaproxy.addon.authhelper.report.AuthReportData.FailureDetail;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.reports.ExtensionReports;
@@ -319,6 +326,125 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
                                 ExtensionReports.class,
                                 "/reports/" + templateName + "/template.yaml")
                         .toFile());
+    }
+
+    @Test
+    void shouldIncludeDiagnosticsDataInReport() throws Exception {
+        // Given
+        ExtensionReports extRep = new ExtensionReports();
+        String templateName = "auth-report-json";
+        Template template = getTemplateFromYamlFile(templateName);
+        File f = File.createTempFile(templateName, template.getExtension());
+        ReportData reportData = getGenericReportData(templateName);
+        reportData.setSections(template.getSections());
+        AuthReportData ard = mock();
+        List<Diagnostic> diagnostics = new ArrayList<>();
+        Diagnostic diagnostic = new Diagnostic();
+        diagnostic.setCreateTimestamp(Instant.ofEpochMilli(1L));
+        diagnostic.setAuthenticationMethod("AuthenticationMethod 1");
+        diagnostic.setContext("Context 1");
+        diagnostic.setUser("User 1");
+        diagnostic.setScript("Script");
+        diagnostics.add(diagnostic);
+
+        diagnostic = new Diagnostic();
+        diagnostic.setCreateTimestamp(Instant.ofEpochMilli(2L));
+        diagnostic.setAuthenticationMethod("AuthenticationMethod 2");
+        diagnostic.setContext("Context 2");
+        diagnostic.setUser("User 2");
+
+        List<DiagnosticStep> steps = new ArrayList<>();
+        DiagnosticStep step = new DiagnosticStep();
+        step.setCreateTimestamp(Instant.ofEpochMilli(3L));
+        step.setId(123);
+        step.setUrl("http://example.com");
+        step.setDescription("Step Description");
+
+        DiagnosticWebElement webElement = new DiagnosticWebElement();
+        webElement.setCreateTimestamp(Instant.ofEpochMilli(4L));
+        webElement.setId(1);
+        webElement.setFormIndex(2);
+        webElement.setSelectorType(SelectorType.CSS);
+        webElement.setSelectorValue("x > y");
+        webElement.setFormIndex(1);
+        webElement.setTagName("Tag Name");
+        webElement.setAttributeType("Attribute Type");
+        webElement.setAttributeId("Attribute ID");
+        webElement.setAttributeValue("Attribute Value");
+        webElement.setText("Text");
+        webElement.setDisplayed(true);
+        webElement.setEnabled(true);
+        step.setWebElement(webElement);
+
+        steps.add(step);
+        diagnostic.setSteps(steps);
+        diagnostics.add(diagnostic);
+
+        given(ard.getDiagnostics()).willReturn(diagnostics);
+        reportData.addReportObjects("authdata", ard);
+
+        // When
+        extRep.generateReport(reportData, template, f.getAbsolutePath(), false);
+
+        // Then
+        assertThat(
+                Files.readString(f.toPath()).replaceAll("[\t\n]+", " "),
+                containsString(
+                        """
+	,"diagnostics": [
+		{
+			"created": "1970-01-01T00:00:00.001Z",
+			"authenticationMethod": "AuthenticationMethod 1",
+			"context": "Context 1",
+			"user": "User 1",
+			"script": "Script"
+
+
+			,"steps": [
+			]
+		},
+		{
+			"created": "1970-01-01T00:00:00.002Z",
+			"authenticationMethod": "AuthenticationMethod 2",
+			"context": "Context 2",
+			"user": "User 2",
+			"script": null
+
+
+			,"steps": [
+				{
+					"id": 123,
+					"created": "1970-01-01T00:00:00.003Z",
+					"url": "http:\\/\\/example.com",
+					"description": "Step Description"
+
+					,"webElement": {
+						"selector": {"type": "CSS", "value": "x > y"},
+						"formIndex": 1,
+						"tagName": "Tag Name",
+						"attributeType":  "Attribute Type",
+						"attributeId": "Attribute ID",
+						"attributeName": null,
+						"attributeValue":  "Attribute Value",
+						"text":  "Text",
+						"displayed": true,
+						"enabled": true
+					}
+
+					,"webElements": [
+					]
+					,"localStorage": [
+					]
+					,"sessionStorage": [
+					]
+					,"messages": [
+					]
+				}
+			]
+		}
+	]
+"""
+                                .replaceAll("[\t\n]+", " ")));
     }
 
     @Test

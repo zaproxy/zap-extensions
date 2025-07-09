@@ -53,6 +53,7 @@
 					"description": [[${step.description}]]
 					[#th:block th:with="webElement=${step.webElement}"][#th:block th:if="${webElement}"]
 					,"webElement": {
+						"selector": {"type": [[${webElement.selectorType}]], "value": [[${webElement.selectorValue}]]},
 						"formIndex": [[${webElement.formIndex}]],
 						"tagName": [[${webElement.tagName}]],
 						"attributeType":  [[${webElement.attributeType}]],
@@ -66,6 +67,7 @@
 					[#th:block th:if="${reportData.isIncludeSection('diagnosticswebelements')}" th:with="webElements=${step.webElements}"]
 					,"webElements": [[#th:block th:each="webElement, state: ${webElements}"][#th:block th:if="${! state.first}"],[/th:block]
 						{
+							"selector": {"type": [[${webElement.selectorType}]], "value": [[${webElement.selectorValue}]]},
 							"formIndex": [[${webElement.formIndex}]],
 							"tagName": [[${webElement.tagName}]],
 							"attributeType":  [[${webElement.attributeType}]],
