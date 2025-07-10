@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Allow to use Edge.
+- Depend on newer version of Selenium add-on.
 - Maintenance changes.
 
 ## [21] - 2025-01-09
