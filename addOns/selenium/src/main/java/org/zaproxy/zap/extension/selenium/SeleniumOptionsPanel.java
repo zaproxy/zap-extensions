@@ -74,6 +74,9 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
     private final JTextField chromeDriverTextField;
     private final JLabel infoBundledChromeDriverLabel;
     private final JButton useBundledChromeDriverButton;
+    private final JTextField edgeDriverTextField;
+    private final JLabel infoBundledEdgeDriverLabel;
+    private final JButton useBundledEdgeDriverButton;
     private final JTextField firefoxDriverTextField;
     private final JLabel infoBundledFirefoxDriverLabel;
     private final JButton useBundledFirefoxDriverButton;
@@ -81,6 +84,9 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
     private final JTextField chromeBinaryTextField;
     private final JTextField chromeArgumentsTextField;
     private final BrowserArgumentsTableModel chromeArgumentsTableModel;
+    private final JTextField edgeBinaryTextField;
+    private final JTextField edgeArgumentsTextField;
+    private final BrowserArgumentsTableModel edgeArgumentsTableModel;
     private final JTextField firefoxBinaryTextField;
     private final JTextField firefoxArgumentsTextField;
     private final JComboBox<String> firefoxProfileCombo;
@@ -141,6 +147,33 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
                 new BrowserArgumentsDialog(
                         parent, chromeArgumentsTableModel, confirmRemoveBrowserArgument);
 
+        edgeDriverTextField = createTextField();
+        JButton edgeDriverButton =
+                createButtonFileChooser(selectFileButtonLabel, edgeDriverTextField);
+        JLabel edgeDriverLabel =
+                new JLabel(resourceBundle.getString("selenium.options.label.driver.edge"));
+        edgeDriverLabel.setLabelFor(edgeDriverButton);
+
+        infoBundledEdgeDriverLabel =
+                createBundledWebDriverLabel(
+                        infoBundledWebDriverlabel, infoBundledWebDriverToolTip, infoIcon);
+        useBundledEdgeDriverButton =
+                createBundledWebDriverButton(
+                        bundledWebDriverButtonLabel,
+                        bundledWebDriverButtonToolTip,
+                        infoBundledWebDriverToolTip,
+                        edgeDriverTextField,
+                        Browser.EDGE);
+
+        edgeBinaryTextField = createTextField();
+        edgeArgumentsTextField = createTextField();
+        edgeArgumentsTextField.setEditable(false);
+
+        edgeArgumentsTableModel = new BrowserArgumentsTableModel();
+        BrowserArgumentsDialog edgeArgumentsDialog =
+                new BrowserArgumentsDialog(
+                        parent, edgeArgumentsTableModel, confirmRemoveBrowserArgument);
+
         firefoxBinaryTextField = createTextField();
         firefoxArgumentsTextField = createTextField();
         firefoxArgumentsTextField.setEditable(false);
@@ -194,6 +227,7 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
                                 driversLayout
                                         .createParallelGroup(GroupLayout.Alignment.TRAILING)
                                         .addComponent(chromeDriverLabel)
+                                        .addComponent(edgeDriverLabel)
                                         .addComponent(firefoxDriverLabel))
                         .addGroup(
                                 driversLayout
@@ -215,6 +249,23 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
                                                                                 chromeDriverButton)
                                                                         .addComponent(
                                                                                 useBundledChromeDriverButton)))
+                                        .addGroup(
+                                                driversLayout
+                                                        .createSequentialGroup()
+                                                        .addGroup(
+                                                                driversLayout
+                                                                        .createParallelGroup()
+                                                                        .addComponent(
+                                                                                edgeDriverTextField)
+                                                                        .addComponent(
+                                                                                infoBundledEdgeDriverLabel))
+                                                        .addGroup(
+                                                                driversLayout
+                                                                        .createParallelGroup()
+                                                                        .addComponent(
+                                                                                edgeDriverButton)
+                                                                        .addComponent(
+                                                                                useBundledEdgeDriverButton)))
                                         .addGroup(
                                                 driversLayout
                                                         .createSequentialGroup()
@@ -250,6 +301,17 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
                         .addGroup(
                                 driversLayout
                                         .createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(edgeDriverLabel)
+                                        .addComponent(edgeDriverTextField)
+                                        .addComponent(edgeDriverButton))
+                        .addGroup(
+                                driversLayout
+                                        .createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(infoBundledEdgeDriverLabel)
+                                        .addComponent(useBundledEdgeDriverButton))
+                        .addGroup(
+                                driversLayout
+                                        .createParallelGroup(GroupLayout.Alignment.BASELINE)
                                         .addComponent(firefoxDriverLabel)
                                         .addComponent(firefoxDriverTextField)
                                         .addComponent(firefoxDriverButton))
@@ -277,6 +339,15 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
                         chromeArgumentsTextField,
                         chromeArgumentsTableModel,
                         new JComboBox<>());
+        JPanel edgePanel =
+                createBinaryPanel(
+                        resourceBundle,
+                        edgeArgumentsDialog,
+                        "edge",
+                        edgeBinaryTextField,
+                        edgeArgumentsTextField,
+                        edgeArgumentsTableModel,
+                        new JComboBox<>());
         JPanel firefoxPanel =
                 createBinaryPanel(
                         resourceBundle,
@@ -297,11 +368,13 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
                 binariesLayout
                         .createParallelGroup()
                         .addComponent(chromePanel)
+                        .addComponent(edgePanel)
                         .addComponent(firefoxPanel));
         binariesLayout.setVerticalGroup(
                 binariesLayout
                         .createSequentialGroup()
                         .addComponent(chromePanel)
+                        .addComponent(edgePanel)
                         .addComponent(firefoxPanel));
 
         JPanel browserExtPanel = new JPanel();
@@ -489,6 +562,14 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
                 getEffectiveDriverPath(
                         Browser.CHROME, seleniumOptions.getChromeDriverPath(), driverAvailable));
 
+        driverAvailable = Browser.hasBundledWebDriver(Browser.EDGE);
+        infoBundledEdgeDriverLabel.setVisible(!driverAvailable);
+        useBundledEdgeDriverButton.setEnabled(driverAvailable);
+
+        edgeDriverTextField.setText(
+                getEffectiveDriverPath(
+                        Browser.EDGE, seleniumOptions.getEdgeDriverPath(), driverAvailable));
+
         driverAvailable = Browser.hasBundledWebDriver(Browser.FIREFOX);
         infoBundledFirefoxDriverLabel.setVisible(!driverAvailable);
         useBundledFirefoxDriverButton.setEnabled(driverAvailable);
@@ -511,6 +592,10 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
         chromeArgumentsTableModel.setArguments(
                 seleniumOptions.getBrowserArguments(Browser.CHROME.getId()));
         updateArguments(chromeArgumentsTableModel, chromeArgumentsTextField);
+        edgeBinaryTextField.setText(seleniumOptions.getEdgeBinaryPath());
+        edgeArgumentsTableModel.setArguments(
+                seleniumOptions.getBrowserArguments(Browser.EDGE.getId()));
+        updateArguments(edgeArgumentsTableModel, edgeArgumentsTextField);
         firefoxBinaryTextField.setText(seleniumOptions.getFirefoxBinaryPath());
         firefoxArgumentsTableModel.setArguments(
                 seleniumOptions.getBrowserArguments(Browser.FIREFOX.getId()));
@@ -564,6 +649,10 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
         seleniumOptions.setBrowserArguments(
                 Browser.CHROME.getId(), chromeArgumentsTableModel.getElements());
         seleniumOptions.setChromeDriverPath(chromeDriverTextField.getText());
+        seleniumOptions.setEdgeBinaryPath(edgeBinaryTextField.getText());
+        seleniumOptions.setBrowserArguments(
+                Browser.EDGE.getId(), edgeArgumentsTableModel.getElements());
+        seleniumOptions.setEdgeDriverPath(edgeDriverTextField.getText());
         seleniumOptions.setFirefoxBinaryPath(firefoxBinaryTextField.getText());
         seleniumOptions.setBrowserArguments(
                 Browser.FIREFOX.getId(), firefoxArgumentsTableModel.getElements());
