@@ -4,7 +4,7 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## [15.39.0] - 2025-07-10
 ### Added
 - Allow to use Edge browser.
 
@@ -314,6 +314,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Updated to Selenium 2.45 and moved to release
 
+[15.39.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.39.0
 [15.38.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.38.0
 [15.37.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.37.0
 [15.36.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.36.0
