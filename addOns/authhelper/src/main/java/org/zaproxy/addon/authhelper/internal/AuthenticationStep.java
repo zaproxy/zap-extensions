@@ -110,7 +110,8 @@ public class AuthenticationStep
         PASSWORD,
         RETURN,
         TOTP_FIELD,
-        USERNAME;
+        USERNAME,
+        WAIT;
 
         @Override
         public String toString() {
@@ -181,6 +182,16 @@ public class AuthenticationStep
     }
 
     public WebElement execute(WebDriver wd, UsernamePasswordAuthenticationCredentials credentials) {
+        if (getType() == Type.WAIT) {
+            try {
+                Thread.sleep(timeout);
+            } catch (InterruptedException e) {
+                LOGGER.warn("Interrupted while waiting for timeout.");
+                Thread.currentThread().interrupt();
+            }
+            return null;
+        }
+
         By by = createtBy();
 
         WebElement element =
@@ -274,7 +285,8 @@ public class AuthenticationStep
         }
 
         if (newStep.getType() != Type.AUTO_STEPS) {
-            if (isEmpty(newStep.getCssSelector()) && isEmpty(newStep.getXpath())) {
+            if (newStep.getType() != Type.WAIT
+                    && (isEmpty(newStep.getCssSelector()) && isEmpty(newStep.getXpath()))) {
                 return ValidationResult.NO_CSS_OR_XPATH;
             }
 
