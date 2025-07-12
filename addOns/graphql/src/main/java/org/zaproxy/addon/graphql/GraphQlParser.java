@@ -25,7 +25,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import graphql.introspection.IntrospectionQueryBuilder;
 import graphql.introspection.IntrospectionResultToSchema;
 import graphql.language.Document;
+import graphql.schema.GraphQLSchema;
+import graphql.schema.idl.SchemaParser;
 import graphql.schema.idl.SchemaPrinter;
+import graphql.schema.idl.UnExecutableSchemaGenerator;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -64,6 +67,8 @@ public class GraphQlParser {
                     CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG);
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
+    private final URI endpointUrl;
+    private final GraphQlQueryMessageBuilder queryMsgBuilder;
     private final Requestor requestor;
     private final ExtensionGraphQl extensionGraphQl;
     private final GraphQlParam param;
@@ -73,9 +78,9 @@ public class GraphQlParser {
     protected GraphQlParser(String endpointUrlStr) throws URIException {
         extensionGraphQl = new ExtensionGraphQl();
         param = extensionGraphQl.getParam();
-        requestor =
-                new Requestor(
-                        UrlBuilder.build(endpointUrlStr), HttpSender.MANUAL_REQUEST_INITIATOR);
+        endpointUrl = UrlBuilder.build(endpointUrlStr);
+        queryMsgBuilder = new GraphQlQueryMessageBuilder(endpointUrl);
+        requestor = new Requestor(queryMsgBuilder, HttpSender.MANUAL_REQUEST_INITIATOR);
     }
 
     public GraphQlParser(String endpointUrlStr, int initiator, boolean syncParse)
@@ -84,7 +89,9 @@ public class GraphQlParser {
     }
 
     public GraphQlParser(URI endpointUrl, int initiator, boolean syncParse) {
-        requestor = new Requestor(endpointUrl, initiator);
+        this.endpointUrl = endpointUrl;
+        queryMsgBuilder = new GraphQlQueryMessageBuilder(endpointUrl);
+        requestor = new Requestor(queryMsgBuilder, initiator);
         extensionGraphQl =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionGraphQl.class);
         param = extensionGraphQl.getParam();
@@ -154,11 +161,17 @@ public class GraphQlParser {
         }
     }
 
-    public void parse(String schema) {
+    public void parse(String sdl) {
+        GraphQLSchema schema =
+                UnExecutableSchemaGenerator.makeUnExecutableSchema(new SchemaParser().parse(sdl));
+        var generator =
+                new GraphQlGenerator(
+                        extensionGraphQl.getValueGenerator(), schema, requestor, param);
         if (syncParse) {
             fingerprint();
+            detectCycles(schema, generator);
             if (param.getQueryGenEnabled()) {
-                generate(schema);
+                generate(generator);
             }
             return;
         }
@@ -167,8 +180,9 @@ public class GraphQlParser {
                     @Override
                     public void run() {
                         fingerprint();
+                        detectCycles(schema, generator);
                         if (param.getQueryGenEnabled()) {
-                            generate(schema);
+                            generate(generator);
                         }
                     }
                 };
@@ -177,15 +191,15 @@ public class GraphQlParser {
     }
 
     private void fingerprint() {
-        var fingerprinter = new GraphQlFingerprinter(requestor.getEndpointUrl());
-        fingerprinter.fingerprint();
+        new GraphQlFingerprinter(endpointUrl, requestor).fingerprint();
     }
 
-    private void generate(String schema) {
+    private void detectCycles(GraphQLSchema schema, GraphQlGenerator generator) {
+        new GraphQlCycleDetector(schema, generator, queryMsgBuilder, param).detectCycles();
+    }
+
+    private void generate(GraphQlGenerator generator) {
         try {
-            GraphQlGenerator generator =
-                    new GraphQlGenerator(
-                            extensionGraphQl.getValueGenerator(), schema, requestor, param);
             generator.checkServiceMethods();
             generator.generateAndSend();
         } catch (Exception e) {
