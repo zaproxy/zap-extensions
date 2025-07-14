@@ -35,7 +35,8 @@
 		}[/th:block]
 	]
 	[/th:block]
-	[#th:block th:if="${reportData.isIncludeSection('diagnostics')}" th:with="diagnostics=${rptData.diagnostics}"]
+	[#th:block th:if="${reportData.isIncludeSection('diagnostics')}" th:with="diagnostics=${rptData.diagnostics}"][#th:block th:if="${reportData.isIncludeSection('diagnosticslogfile')}"]
+	,"logFile": [[${rptData.getLogContent()}]][/th:block]
 	,"diagnostics": [[#th:block th:each="entry, state: ${diagnostics}"][#th:block th:if="${! state.first}"],[/th:block]
 		{
 			"created": [[${entry.createTimestamp}]],

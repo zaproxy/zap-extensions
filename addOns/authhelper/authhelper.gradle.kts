@@ -115,6 +115,8 @@ dependencies {
     zapAddOn("reports")
     zapAddOn("zest")
 
+    compileOnly(libs.log4j.core)
+
     implementation("com.github.bastiaanjansen:otp-java:2.1.0") {
         // Provided by ZAP.
         exclude(group = "commons-codec", module = "commons-codec")
