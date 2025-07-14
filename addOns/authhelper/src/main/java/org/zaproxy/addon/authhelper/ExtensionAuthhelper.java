@@ -113,10 +113,12 @@ public class ExtensionAuthhelper extends ExtensionAdaptor {
     private AuthDiagnosticCollector authDiagCollector;
     private AuthhelperParam param;
     private TableJdo tableJdo;
+    private AuthHeaderTracker authHeaderTracker;
 
     public ExtensionAuthhelper() {
         super();
         this.setI18nPrefix("authhelper");
+        authHeaderTracker = new AuthHeaderTracker();
     }
 
     @Override
@@ -209,6 +211,7 @@ public class ExtensionAuthhelper extends ExtensionAdaptor {
     @Override
     public void hook(ExtensionHook extensionHook) {
         extensionHook.addSessionListener(new AuthSessionChangedListener());
+        extensionHook.addHttpSenderListener(authHeaderTracker);
         extensionHook.addOptionsParamSet(getParam());
         if (hasView()) {
             extensionHook.getHookMenu().addToolsMenuItem(getAuthTesterMenu());
@@ -366,6 +369,7 @@ public class ExtensionAuthhelper extends ExtensionAdaptor {
         @Override
         public void sessionChanged(Session session) {
             contextIdToLoginDetails.clear();
+            authHeaderTracker.clear();
             AuthUtils.clean();
         }
 
