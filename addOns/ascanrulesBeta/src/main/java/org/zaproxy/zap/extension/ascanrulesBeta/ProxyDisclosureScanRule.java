@@ -346,7 +346,12 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin implements Common
                                             getBaseMsg().getResponseBody().toString());
                             // Ensure the original message didn't already have evidence type
                             // content
+                            System.out.println(!originalBodyMatcher.find());
+                            originalBodyMatcher.reset();
+                            System.out.println(proxyHeaderMatcher.find());
+                            proxyHeaderMatcher.reset();
                             if (!originalBodyMatcher.find() && proxyHeaderMatcher.find()) {
+                                System.out.println("Here");
                                 String proxyHeaderName = proxyHeaderMatcher.group(1);
                                 proxyActuallyFound = true;
                                 LOGGER.debug(
