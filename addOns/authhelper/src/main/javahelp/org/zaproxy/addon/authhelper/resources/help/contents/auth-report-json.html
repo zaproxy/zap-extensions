@@ -201,6 +201,7 @@
 		"url": "http://example.com/login/",
 		"description": "Auto Fill Username",
 		"webElement": {
+			"selector": {"type": "CSS", "value": "body > div > span > input"},
 			"formIndex": 1,
 			"attributeType": "text",
 			"attributeId": "email",
@@ -214,6 +215,7 @@
 	}
 </pre>
 	More data can be included in each step depending on the additional diagnostics sections enabled for the report.
+	<p>The selector can be of type <code>CSS</code> or <code>XPATH</code> with the value containing the respective selector.
 
 	<H4>HTTP Messages for Diagnostics</H4>
 	When this section is enabled the step can, optionally, include HTTP messages that were sent during the step. Each message contains the request/response headers and bodies.
@@ -264,6 +266,7 @@
 <pre>
 	"webElements": [
 		{
+			"selector": {"type": "XPATH", "value": "\/html\/body\/div\/input[4]"},
 			"formIndex": 0,
 			"attributeType": "text",
 			"attributeId": "id",
