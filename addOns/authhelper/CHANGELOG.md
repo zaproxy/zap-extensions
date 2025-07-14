@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Add wait authentication step to Browser Based Authentication.
 - Include Web Element's selector in the Authentication Report.
+- Support for tracking authorization headers automatically for Header based auth.
 
 ### Fixed
 - Do not fail the authentication on diagnostic errors.
