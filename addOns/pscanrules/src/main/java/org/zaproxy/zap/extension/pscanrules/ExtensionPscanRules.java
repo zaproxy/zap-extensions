@@ -20,7 +20,11 @@
 package org.zaproxy.zap.extension.pscanrules;
 
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
+import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.extension.SessionChangedListener;
+import org.parosproxy.paros.model.Session;
 
 /**
  * A null extension just to cause the message bundle and help file to get loaded
@@ -47,5 +51,27 @@ public class ExtensionPscanRules extends ExtensionAdaptor {
     @Override
     public boolean canUnload() {
         return true;
+    }
+
+    @Override
+    public void hook(ExtensionHook extensionHook) {
+        extensionHook.addSessionListener(new PscanSessionChangedListener());
+    }
+
+    private static class PscanSessionChangedListener implements SessionChangedListener {
+
+        @Override
+        public void sessionChanged(Session session) {
+            ZapVersionScanRule.clear();
+        }
+
+        @Override
+        public void sessionAboutToChange(Session session) {}
+
+        @Override
+        public void sessionScopeChanged(Session session) {}
+
+        @Override
+        public void sessionModeChanged(Mode mode) {}
     }
 }

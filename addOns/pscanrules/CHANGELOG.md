@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Added
 - The Reverse Tabnabbing and Retrieved from Cache scan rules now have CWE references.
+- A ZAP is Out of Date rule.
 
 ## [65] - 2025-06-20
 ### Added
