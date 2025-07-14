@@ -11,4 +11,5 @@ sections:
  - diagnosticsscreenshots
  - diagnosticswebelements
  - diagnosticslocalstorage
+ - diagnosticslogfile
  - diagnosticssessionstorage

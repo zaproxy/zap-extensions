@@ -64,6 +64,8 @@ import org.zaproxy.addon.authhelper.internal.db.DiagnosticStep;
 import org.zaproxy.addon.authhelper.internal.db.DiagnosticWebElement;
 import org.zaproxy.addon.authhelper.internal.db.DiagnosticWebElement.SelectorType;
 import org.zaproxy.addon.authhelper.report.AuthReportData.FailureDetail;
+import org.zaproxy.addon.authhelper.report.AuthReportData.StatsItem;
+import org.zaproxy.addon.authhelper.report.AuthReportData.SummaryItem;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.reports.ExtensionReports;
 import org.zaproxy.addon.reports.ReportData;
@@ -245,21 +247,29 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
         File f = File.createTempFile(templateName, template.getExtension());
         ReportData reportData = getGenericReportData(templateName);
         reportData.setSections(template.getSections());
-        AuthReportData ard = new AuthReportData();
+        AuthReportData ard = mock();
         reportData.addReportObjects("authdata", ard);
 
-        ard.setSite("https://www.example.com");
+        given(ard.getSite()).willReturn("https://www.example.com");
         String afEnv =
                 """
                   env:
                   contexts:
                       name: 'some "quote" name'
                 """;
-        ard.setAfEnv(afEnv);
-        ard.addSummaryItem(true, "summary.1", "Bob's \"Item\"");
-        ard.addSummaryItem(true, "summary.\"2\"", "Foo bar");
-        ard.addStatsItem("stats.auth.1", "foo \"random\" bar", 123);
-        ard.addStatsItem("stats.foo.oops \"foo\" bar", "global", 0);
+        given(ard.getAfEnv()).willReturn(afEnv);
+        given(ard.getSummaryItems())
+                .willReturn(
+                        List.of(
+                                new SummaryItem(true, "summary.1", "Bob's \"Item\""),
+                                new SummaryItem(true, "summary.\"2\"", "Foo bar")));
+        given(ard.getStatistics())
+                .willReturn(
+                        List.of(
+                                        new StatsItem("stats.auth.1", "foo \"random\" bar", 123),
+                                        new StatsItem("stats.foo.oops \"foo\" bar", "global", 0))
+                                .toArray());
+        given(ard.getLogContent()).willReturn("Log content");
         // When
         File r = extRep.generateReport(reportData, template, f.getAbsolutePath(), false);
         String report = Files.readString(r.toPath());
@@ -309,6 +319,7 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
                 	]
                 \t
                 \t
+                	,"logFile": "Log content"
                 	,\"diagnostics\": [
                 	]
                 }
