@@ -25,9 +25,15 @@
 			<td>Ключ: <code>selenium.chromeDriver</code><br>Значение: путь в файловой системе к ChromeDriver. </td>
 		</tr>
 		<tr>
+			<td>EdgeDriver</td>
+			<td>This allows you to select the location of EdgeDriver.</td>
+			<td align="center">Путь (path) к связанному WebDriver, если он доступен. </td>
+			<td>Key: <code>selenium.edgeDriver</code><br>Value: file system path to the EdgeDriver</td>
+		</tr>
+		<tr>
 			<td>geckodriver</td>
 			<td>Это позволяет вам выбрать местоположение geckodriver (драйвера Firefox). </td>
-			<td align="center">Путь (path) к связанному WebDriver, если он доступен. </td>
+			<td align="center">The path to the bundled WebDriver, if available.</td>
 			<td>Ключ: <code>selenium.firefoxDriver</code><br>Значение: путь в файловой системе к geckodriver </td>
 		</tr>
 	</table>
@@ -48,10 +54,17 @@
 			<td>Key: <code>selenium.chromeBinary</code><br>Value: file system path to the Chrome binary</td>
 		</tr>
 		<tr>
+			<td>Edge</td>
+			<td>This allows you to select the location of Edge binary (for example, to use
+				a version other than the system default).</td>
+			<td align="center">(None)</td>
+			<td>Key: <code>selenium.edgeBinary</code><br>Value: file system path to the Edge binary</td>
+		</tr>
+		<tr>
 			<td>Firefox</td>
 			<td>This allows you to select the location of Firefox binary (for example, to use
 				a version other than the system default).</td>
-			<td align="center">(Нет)</td>
+			<td align="center">(None)</td>
 			<td>Key: <code>selenium.firefoxBinary</code><br>Value: file system path to the Firefox binary</td>
 		</tr>
 	</table>
@@ -63,7 +76,7 @@ WebDrivers) с использованием системных свойств Ja
 	More details about the bundled WebDrivers can be found on the overview page.
 
 	<h4>Browser Arguments</h4>
-	Both Chrome and Firefox binaries can have additional (CLI) arguments specified through the <code>Arguments...</code> button.
+	Chrome, Edge, and Firefox binaries can have additional (CLI) arguments specified through the <code>Arguments...</code> button.
 
 	<p>
 	<strong>Note:</strong> Adding invalid arguments might cause the browser to fail to start. ZAP already adds some arguments (e.g. headless).
@@ -81,7 +94,7 @@ WebDrivers) с использованием системных свойств Ja
 	Supported browsers and file extensions are:
 	<ul>
 	<li>Firefox: .xpi
-	<li>Chrome: .crx
+	<li>Chrome/Edge: .crx
 	</ul>
 	Add-ons can also add new browser extensions. If you delete a browser extension via this screen then it will be added again 
 	by the add-on so either just disable it or uninstall the add-on to remove the browser extension.
