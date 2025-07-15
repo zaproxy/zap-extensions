@@ -22,11 +22,14 @@
       66
     ],
     "description": "Zurb Foundation is used to prototype in the browser. Allows rapid creation of websites or applications while leveraging mobile and responsive technology. The front end framework is the collection of HTML, CSS, and Javascript containing design patterns.",
+    "dom": [
+      "link[href*='foundation'][href*='css']"
+    ],
     "html": [
       "<link[^>]+foundation[^>\"]+css",
       "<div [^>]*class=\"[^\"]*(?:small|medium|large)-\\d{1,2} columns"
     ],
-    "icon": "ZURB Foundation.png",
+    "icon": "ZURBFoundation.svg",
     "js": {
       "Foundation.version": "([\\d.]+)\\;version:\\1"
     },
@@ -149,6 +152,30 @@
     ],
     "website": "https://zakratheme.com"
   },
+  "Zalify": {
+    "cats": [
+      100
+    ],
+    "description": "Zalify is a data-driven growth engine for Shopify merchants, designed to provide agility and precision in the ecommerce environment.",
+    "icon": "Zalify.svg",
+    "js": {
+      "zalify.render": "",
+      "zalifyCurrentScript": ""
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "requires": [
+      "Shopify"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.zalify\\.com/"
+    ],
+    "website": "https://www.zalify.com"
+  },
   "Zammit": {
     "cats": [
       6
@@ -200,6 +227,40 @@
     ],
     "website": "https://www.zapiet.com"
   },
+  "Zarla": {
+    "cats": [
+      51
+    ],
+    "description": "Zarla is a website builder designed for small businesses, offering SEO optimization features to improve online visibility.",
+    "icon": "Zarla.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "cdn\\.zarlasites\\.com"
+    ],
+    "website": "https://www.zarla.com"
+  },
+  "Zaxaa": {
+    "cats": [
+      32
+    ],
+    "description": "Zaxaa is a sales funnel service designed to streamline the process of managing leads, nurturing prospects, and converting them into customers.",
+    "dom": [
+      "a[href*='.zaxaa.com'] > img[src*='www.zaxaa.com']"
+    ],
+    "icon": "Zaxaa.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://zaxaa.com"
+  },
   "Zeabur": {
     "cats": [
       62
@@ -231,6 +292,25 @@
       "Cart Functionality"
     ],
     "website": "https://www.zeald.com"
+  },
+  "ZeeMaps": {
+    "cats": [
+      35
+    ],
+    "description": "ZeeMaps is a custom map generation service that enables users to create personalized maps with location markers, regions, and annotations.",
+    "dom": [
+      "iframe[src*='www.zeemaps.com/']"
+    ],
+    "icon": "ZeeMaps.svg",
+    "js": {
+      "webpackChunkZeeMaps": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.zeemaps.com"
   },
   "Zeleris": {
     "cats": [
@@ -320,6 +400,21 @@
     "icon": "Zend.svg",
     "website": "https://zend.com"
   },
+  "ZendApps": {
+    "cats": [
+      100
+    ],
+    "description": "ZendApps is a tool designed to grow Shopify stores by streamlining operations and enhancing performance through automated features.",
+    "icon": "ZendApps.svg",
+    "requires": [
+      "Shopify"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.zend-apps\\.com/"
+    ],
+    "website": "https://zendapps.com"
+  },
   "Zendesk": {
     "cats": [
       4,
@@ -399,6 +494,25 @@
     },
     "website": "https://zenfolio.com"
   },
+  "Zenoti": {
+    "cats": [
+      72
+    ],
+    "description": "Zenoti is a cloud-based business software for spas, salons, and medspas, providing tools for managing appointment books, employee scheduling, and enabling online booking.",
+    "icon": "Zenoti.svg",
+    "meta": {
+      "Author": "^zenoti$"
+    },
+    "pricing": [
+      "mid",
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.zenoti\\.com"
+    ],
+    "website": "https://www.zenoti.com/"
+  },
   "Zenrez": {
     "cats": [
       32
@@ -427,6 +541,44 @@
     ],
     "saas": true,
     "website": "https://zentap.com"
+  },
+  "Zenu": {
+    "cats": [
+      53
+    ],
+    "description": "Zenu is an all-in-one CRM solution designed to manage real estate operations, including client interactions, property listings, and sales processes.",
+    "icon": "Zenu.svg",
+    "js": {
+      "zenuDebug": "",
+      "zenuHp": ""
+    },
+    "pricing": [],
+    "saas": true,
+    "scriptSrc": [
+      "assets\\.zenu\\.com\\.au"
+    ],
+    "website": "https://www.zenu.com.au"
+  },
+  "Zenvia": {
+    "cats": [
+      52
+    ],
+    "description": "Zenvia is a customer engagement platform that enables businesses to communicate with clients through multiple digital channels.",
+    "icon": "Zenvia.svg",
+    "js": {
+      "ZenviaChat": ""
+    },
+    "pricing": [
+      "freemium",
+      "high",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "static\\.zenvia\\.com"
+    ],
+    "website": "https://www.zenvia.com"
   },
   "Zenzzen": {
     "cats": [
@@ -460,6 +612,18 @@
       "\\.zeotap\\.com"
     ],
     "website": "https://zeotap.com"
+  },
+  "Zeppelin": {
+    "cats": [
+      32
+    ],
+    "description": "Zeppelin is an internet marketing provider platform designed to support digital advertising and online promotional strategies.",
+    "icon": "Zeppelin.svg",
+    "saas": true,
+    "scriptSrc": [
+      "cloud\\.zeppelin-group\\.com"
+    ],
+    "website": "https://www.zeppelin-group.com"
   },
   "Zepto": {
     "cats": [
@@ -581,6 +745,18 @@
     "saas": true,
     "website": "https://zid.sa"
   },
+  "Zieny": {
+    "cats": [
+      105
+    ],
+    "description": "Zieny is a platform that enables businesses to integrate 3D and augmented reality (AR) into websites, providing an interactive product experience without complex implementation.",
+    "icon": "Zieny.svg",
+    "saas": true,
+    "scriptSrc": [
+      "ar-view-zieny\\.com/"
+    ],
+    "website": "https://zieny.com"
+  },
   "Ziggy": {
     "cats": [
       59
@@ -683,6 +859,26 @@
       "zip\\.co"
     ],
     "website": "https://www.zip.co/"
+  },
+  "ZipWP": {
+    "cats": [
+      51
+    ],
+    "description": "ZipWP is a website builder that enables creation of professional sites with extensive customization options and no coding required.",
+    "icon": "ZipWP.svg",
+    "pricing": [
+      "onetime",
+      "low",
+      "recurring"
+    ],
+    "requires": [
+      "WordPress"
+    ],
+    "saas": true,
+    "scripts": [
+      "app\\.zipwp\\.com"
+    ],
+    "website": "https://zipwp.com"
   },
   "Zipify OCU": {
     "cats": [
@@ -884,6 +1080,43 @@
     ],
     "website": "https://www.zoho.com/pagesense/"
   },
+  "Zoho Recruit": {
+    "cats": [
+      101
+    ],
+    "description": "Zoho Recruit is a recruitment platform that integrates an applicant tracking system (ATS) with customer relationship management (CRM) functionality.",
+    "icon": "Zoho.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.zohocdn\\.com/recruit/"
+    ],
+    "website": "https://www.zoho.com/recruit/"
+  },
+  "Zoho SalesIQ": {
+    "cats": [
+      52
+    ],
+    "description": "Zoho SalesIQ is a digital customer engagement platform that provides marketing, sales, and support teams with tools to interact with site visitors at every stage of the customer lifecycle.",
+    "icon": "Zoho.svg",
+    "js": {
+      "$zoho.salesiq": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "salesiq\\.zohopublic\\.com"
+    ],
+    "website": "https://www.zoho.com/salesiq"
+  },
   "Zoho Sites": {
     "cats": [
       51
@@ -933,6 +1166,9 @@
       "generator": "^Zola(?:\\s[\\d\\.]+)?$"
     },
     "oss": true,
+    "scriptSrc": [
+      "\\.getzola\\.org"
+    ],
     "website": "https://www.getzola.org/"
   },
   "Zone.js": {
@@ -1173,6 +1409,18 @@
     ],
     "saas": true,
     "website": "https://www.zuppler.com"
+  },
+  "Zurple": {
+    "cats": [
+      32
+    ],
+    "description": "Zurple is a real estate marketing software that provides a solution for agents to manage leads, automate follow-ups, and optimize client engagement.",
+    "icon": "Zurple.svg",
+    "js": {
+      "Zurple.Client": ""
+    },
+    "saas": true,
+    "website": "https://zurple.com"
   },
   "Zwayam": {
     "cats": [

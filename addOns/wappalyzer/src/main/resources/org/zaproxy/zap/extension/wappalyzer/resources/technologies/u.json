@@ -386,6 +386,21 @@
     ],
     "website": "https://www.createit.com/gdpr"
   },
+  "Ultimate Tables": {
+    "cats": [
+      87
+    ],
+    "description": "Ultimate Tables is a tool for creating, managing, and designing tables without writing HTML code.",
+    "icon": "UltimateTables.svg",
+    "requires": [
+      "WordPress"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "/wp-content/plugins/ultimate-tables/"
+    ],
+    "website": "https://wphive.com/plugins/ultimate-tables"
+  },
   "UltimatelySocial": {
     "cats": [
       87
@@ -631,6 +646,18 @@
     ],
     "website": "https://unbxd.com"
   },
+  "Unchained Engine": {
+    "cats": [
+      6
+    ],
+    "description": "Unchained Engine is an open-source ecommerce framework built for Node.js and Bun, designed to provide a scalable solution for developing online stores.",
+    "icon": "UnchainedEngine.svg",
+    "oss": true,
+    "scriptSrc": [
+      "api\\.github\\.com/repos/unchainedshop/"
+    ],
+    "website": "https://docs.unchained.shop"
+  },
   "Underscore.js": {
     "cats": [
       59
@@ -752,6 +779,39 @@
       "/unito\\.min\\.js"
     ],
     "website": "https://unitohub.com"
+  },
+  "Unity": {
+    "cats": [
+      5
+    ],
+    "description": "Unity is a gaming widget that enables the playing of games developed using 3D gaming engine.",
+    "icon": "Unity.svg",
+    "js": {
+      "UnityLoader": "",
+      "createUnityInstance": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://unity.com"
+  },
+  "Universe Soft": {
+    "cats": [
+      53
+    ],
+    "description": "Universe-Soft is a business automation platform for salons, clinics, and fitness centers in Russia.",
+    "icon": "UniverseSoft.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.universe-soft\\.ru/"
+    ],
+    "website": "https://universe-soft.ru"
   },
   "Unless": {
     "cats": [
@@ -1219,6 +1279,23 @@
     "saas": true,
     "website": "https://upvoty.com"
   },
+  "Urllo": {
+    "cats": [
+      64
+    ],
+    "description": "Urllo is a URL redirection service designed for businesses to manage and streamline link forwarding.",
+    "dom": [
+      "iframe[src*='www.urllo-cdn.com']"
+    ],
+    "icon": "Urllo.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.urllo.com"
+  },
   "UsableNet": {
     "cats": [
       68
@@ -1459,6 +1536,19 @@
     ],
     "website": "https://userflow.com"
   },
+  "Userlane": {
+    "cats": [
+      58
+    ],
+    "description": "Userlane is a platform that provides an interactive step-by-step guide system designed to help users navigate software applications.",
+    "icon": "Userlane.svg",
+    "js": {
+      "Userlane": "",
+      "UserlaneCommandObject": ""
+    },
+    "saas": true,
+    "website": "https://www.userlane.com"
+  },
   "Userpilot": {
     "cats": [
       58,
@@ -1698,9 +1788,31 @@
     ],
     "website": "https://www.user1st.com/uremediate/"
   },
+  "uhChat": {
+    "cats": [
+      52
+    ],
+    "cookies": {
+      "uhchatrelock": ""
+    },
+    "description": "uhChat is a tool that enables the creation of an embedded chat box on websites for real-time communication.",
+    "icon": "uhChat.svg",
+    "js": {
+      "getuhchatCookie": "",
+      "uhchatClick": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://uhchat.net"
+  },
   "user.com": {
     "cats": [
       10
+    ],
+    "dom": [
+      "div[id*='ue_widget']"
     ],
     "html": [
       "<div[^>]+/id=\"ue_widget\""
