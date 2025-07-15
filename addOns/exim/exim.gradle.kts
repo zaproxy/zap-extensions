@@ -58,6 +58,7 @@ dependencies {
     implementation("de.sstoehr:har-reader:3.1.4") {
         // Provided by commonlib add-on:
         exclude(group = "com.fasterxml.jackson.core")
+        exclude(group = "com.fasterxml.jackson.datatype")
     }
     implementation(files("lib/pkts-core-3.0.11-tcp-streams-branch.jar"))
     implementation(files("lib/pkts-streams-3.0.11-tcp-streams-branch.jar"))
