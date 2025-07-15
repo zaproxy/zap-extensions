@@ -20,9 +20,11 @@
 package org.zaproxy.addon.exim.har;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.sstoehr.harreader.model.HarContent;
 import de.sstoehr.harreader.model.HarCookie;
 import de.sstoehr.harreader.model.HarCreatorBrowser;
@@ -104,9 +106,10 @@ public final class HarUtils {
 
     public static final ObjectMapper JSON_MAPPER =
             JsonMapper.builder()
+                    .addModule(new JavaTimeModule())
+                    .configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, false)
                     .serializationInclusion(JsonInclude.Include.NON_DEFAULT)
-                    .build()
-                    .findAndRegisterModules();
+                    .build();
 
     private static final ObjectWriter JSON_WRITER = JSON_MAPPER.writerWithDefaultPrettyPrinter();
 
