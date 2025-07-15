@@ -28,6 +28,7 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
+import org.zaproxy.zap.model.SessionStructure;
 import org.zaproxy.zap.network.HttpSenderListener;
 import org.zaproxy.zap.users.User;
 
@@ -66,7 +67,7 @@ public class AuthHeaderTracker implements HttpSenderListener {
         }
 
         try {
-            String host = msg.getRequestHeader().getURI().getHost();
+            String host = SessionStructure.getHostName(msg);
             String latestToken = hostToToken.get(host);
 
             if (isAuthInitiator(initiator)) {
