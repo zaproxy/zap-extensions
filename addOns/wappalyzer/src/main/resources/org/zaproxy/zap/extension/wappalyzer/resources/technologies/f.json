@@ -207,6 +207,7 @@
     ],
     "icon": "Facebook.svg",
     "js": {
+      "_fbp": "",
       "_fbq": ""
     },
     "scriptSrc": [
@@ -336,6 +337,23 @@
       "embed\\.famewall\\.io/"
     ],
     "website": "https://famewall.io"
+  },
+  "Famly": {
+    "cats": [
+      21
+    ],
+    "description": "Famly is a digital platform enabling early educators and families to collaborate, share responsibilities, and support child development.",
+    "icon": "Famly.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "app\\.famly\\.co"
+    ],
+    "website": "https://www.famly.co"
   },
   "FancyBox": {
     "cats": [
@@ -472,6 +490,36 @@
     ],
     "website": "https://www.fast.co"
   },
+  "Fast Simon": {
+    "cats": [
+      6
+    ],
+    "description": "Fast Simon is a solution for shopping optimization in ecommerce, enhancing search, navigation, and merchandising to improve online retail performance.",
+    "icon": "FastSimon.svg",
+    "js": {
+      "FastSimonAppType": "",
+      "FastSimonReporting": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "\\.fastsimon\\.com/"
+    ],
+    "website": "https://www.fastsimon.com"
+  },
+  "FastAPI": {
+    "cats": [
+      18
+    ],
+    "description": "FastAPI is a web framework for building APIs with Python, utilizing standard Python type hints.",
+    "dom": [
+      "link[href*='fastapi.tiangolo.com'][rel='shortcut icon']"
+    ],
+    "icon": "FastAPI.svg",
+    "implies": [
+      "Python"
+    ],
+    "website": "https://fastapi.tiangolo.com"
+  },
   "FastComet": {
     "cats": [
       88
@@ -488,6 +536,26 @@
       "payg"
     ],
     "website": "https://www.fastcomet.com"
+  },
+  "FastPixel": {
+    "cats": [
+      23
+    ],
+    "description": "FastPixel is an all-in-one WordPress caching plugin that speeds up your website.",
+    "icon": "FastPixel.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": [
+      "WordPress"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "api\\.fastpixel\\.io/"
+    ],
+    "website": "https://fastpixel.io"
   },
   "FastSpring": {
     "cats": [
@@ -700,19 +768,44 @@
     ],
     "website": "https://usefathom.com"
   },
-  "Faveo": {
+  "Fatsoma": {
     "cats": [
-      1,
       104
     ],
-    "description": "Open source help desk system and ticket management tool.",
+    "description": "Fatsoma is a platform for creating event and concert websites, enabling organizers to manage listings and ticket sales.",
+    "dom": [
+      "link[href*='.fatsomasites.com']"
+    ],
+    "icon": "Fatsoma.svg",
+    "saas": true,
+    "scripts": [
+      "\\.fatsoma\\.com"
+    ],
+    "website": "https://www.fatsoma.com"
+  },
+  "Faveo": {
+    "cats": [
+      13
+    ],
+    "description": "Faveo is an open source help desk system and ticket management tool that enables tracking, assignment, and resolution of support tickets.",
     "dom": [
       "link[href*='/lb-faveo/']"
     ],
-    "icon": "Faveo.png",
+    "icon": "Faveo.svg",
     "oss": true,
+    "pricing": [
+      "freemium",
+      "onetime",
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "requires": [
+      "jQuery"
+    ],
+    "saas": true,
     "scriptSrc": [
-      "faveo(?:\\/js)?(?:\\/jquery)?(?:\\/know)?(?:\\/mobilemenu)?(?:\\/plugins)?(?:\\/bootstrap)?(?:\\/superfish)?(?:\\/iCheck\\/icheck)?(?:-wysihtml5\\/bootstrap3-wysihtml5)?(?:\\.all)?(?:\\.rating)?(?:\\.pack)?((?:\\d+\\.)+\\d+)?(?:\\.min)?\\.js\\;version:\\1"
+      "/lb-faveo/js/"
     ],
     "website": "https://faveohelpdesk.com"
   },
@@ -802,6 +895,23 @@
     "icon": "Fedora.svg",
     "website": "https://fedoraproject.org"
   },
+  "FeedSpring": {
+    "cats": [
+      5
+    ],
+    "description": "FeedSpring is a platform that creates visually appealing social media feeds for websites.",
+    "icon": "FeedSpring.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "scripts\\.feedspring\\.co/"
+    ],
+    "website": "https://www.feedspring.com"
+  },
   "Feedback Fish": {
     "cats": [
       13
@@ -813,6 +923,22 @@
     ],
     "website": "https://feedback.fish"
   },
+  "FeedbackAutomatic": {
+    "cats": [
+      73
+    ],
+    "description": "FeedbackAutomatic is a platform that enables businesses to collect customer feedback through surveys, generating more online reviews to enhance their online reputation.",
+    "dom": [
+      "iframe[src*='app.feedbackautomatic.com/']"
+    ],
+    "icon": "FeedbackAutomatic.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://feedbackautomatic.com"
+  },
   "FeederNinja": {
     "cats": [
       5
@@ -823,6 +949,54 @@
       "\\.feederninja\\.com/"
     ],
     "website": "https://www.feederninja.com"
+  },
+  "Feedify": {
+    "cats": [
+      32
+    ],
+    "description": "Feedify is a platform that offers a lean dashboard for managing customer engagement tools with automation.",
+    "icon": "Feedify.svg",
+    "js": {
+      "feedify": "",
+      "feedify_options": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.feedify\\.net/"
+    ],
+    "website": "https://feedify.net"
+  },
+  "Feednami": {
+    "cats": [
+      47
+    ],
+    "description": "Feednami is a web service developed as a replacement for the discontinued Google Feed API, enabling applications to access and parse RSS and Atom feeds.",
+    "js": {
+      "feednami.load": "",
+      "feednami.promiseLoaded": ""
+    },
+    "saas": true,
+    "website": "https://toolkit.sekando.com/docs/en/feednami"
+  },
+  "Feedonomics": {
+    "cats": [
+      6
+    ],
+    "description": "Feedonomics is a product feed management platform that helps brands and retailers optimize and list product catalogs across global ecommerce shopping channels.",
+    "icon": "Feedonomics.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "tracking\\.feedonomics\\.com"
+    ],
+    "website": "https://feedonomics.com"
   },
   "Feefo": {
     "cats": [
@@ -861,6 +1035,25 @@
       "\\.hifello\\.com/"
     ],
     "website": "https://hifello.com"
+  },
+  "Felmat": {
+    "cats": [
+      36
+    ],
+    "description": "Felmat is an advertising network that connects advertisers with publishers to facilitate performance-based marketing across digital platforms.",
+    "icon": "Felmat.svg",
+    "js": {
+      "felmat_report_conversion": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "js\\.felmat\\.net/"
+    ],
+    "website": "https://www.felmat.net/"
   },
   "Fenicio": {
     "cats": [
@@ -921,6 +1114,33 @@
     "saas": true,
     "website": "https://apps.shopify.com/fera"
   },
+  "Ferret One": {
+    "cats": [
+      51
+    ],
+    "description": "Ferret One is a personal website builder tool developed in Asia.",
+    "icon": "FerretOne.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "ferret-one"
+    ],
+    "website": "https://ferret-one.com"
+  },
+  "Fever": {
+    "cats": [
+      104
+    ],
+    "description": "Fever is a digital platform facilitating the discovery and booking of top events and experiences worldwide.",
+    "icon": "Fever.svg",
+    "saas": true,
+    "scripts": [
+      "feverup\\.com"
+    ],
+    "website": "https://feverup.com"
+  },
   "FiboSearch": {
     "cats": [
       29
@@ -941,6 +1161,18 @@
     "saas": true,
     "website": "https://fibosearch.com"
   },
+  "FieldStack Omni": {
+    "cats": [
+      6
+    ],
+    "description": "Fieldstack Omni is a unified commerce platform that supports web store, third-party channel, and click-to-brick sales in a single system.",
+    "icon": "FieldStack.svg",
+    "meta": {
+      "generator": "^Fieldstack Omni$"
+    },
+    "saas": true,
+    "website": "https://www.fieldstack.com/platform/omnichannel-ecommerce-software"
+  },
   "Filamentphp": {
     "cats": [
       47
@@ -954,6 +1186,21 @@
     },
     "saas": true,
     "website": "https://filamentphp.com"
+  },
+  "FileHippo": {
+    "cats": [
+      5
+    ],
+    "description": "FileHippo is a widget that provides the latest software updates, allowing users to stay informed about new versions and releases.",
+    "icon": "FileHippo.svg",
+    "pricing": [
+      "freemium"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "www\\.filehippo\\.com"
+    ],
+    "website": "https://filehippo.com"
   },
   "FilePond": {
     "cats": [
@@ -983,6 +1230,30 @@
       "^https://server\\.fillout\\.com/embed/v(\\d)/\\;version:\\1"
     ],
     "website": "https://www.fillout.com/"
+  },
+  "Finalsite": {
+    "cats": [
+      1
+    ],
+    "description": "Finalsite is a web design and software for schools.",
+    "dom": [
+      "div[id*='fsPoweredByFinalsite']"
+    ],
+    "icon": "Finalsite.svg",
+    "saas": true,
+    "website": "https://www.finalsite.com/school-websites"
+  },
+  "Finalytics": {
+    "cats": [
+      10
+    ],
+    "description": "Finalytics is a platform that uses data and analytics to transform customer experience.",
+    "icon": "Finalytics.svg",
+    "js": {
+      "finalytics.accountSummaryParser": ""
+    },
+    "saas": true,
+    "website": "https://finalytics.ai"
   },
   "FinanceAds": {
     "cats": [
@@ -1128,6 +1399,25 @@
       "fingerprintjs(?:\\-pro|2)?(?:@|/)(\\d.*?)?/\\;version:\\1"
     ],
     "website": "https://fingerprintjs.com"
+  },
+  "Finsweet": {
+    "cats": [
+      51
+    ],
+    "description": "Finsweet is a platform that designs and develops websites exclusively using Webflow.",
+    "icon": "Finsweet.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": [
+      "Webflow"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.finsweet\\.com"
+    ],
+    "website": "https://finsweet.com"
   },
   "FintechOS": {
     "cats": [
@@ -1396,6 +1686,21 @@
     ],
     "website": "https://fixel.ai"
   },
+  "Flable": {
+    "cats": [
+      32
+    ],
+    "description": "Flable is an AI-powered digital marketing platform that unifies marketing data and reduces customer acquisition costs.",
+    "icon": "Flable.svg",
+    "js": {
+      "flable": ""
+    },
+    "saas": true,
+    "scripts": [
+      "\\.flable\\.ai"
+    ],
+    "website": "https://flable.ai"
+  },
   "FlagSmith": {
     "cats": [
       85
@@ -1457,6 +1762,18 @@
     },
     "website": "https://flarum.org/"
   },
+  "Flashchat": {
+    "cats": [
+      52
+    ],
+    "description": "Flashchat is an automated messenger conversation tool.",
+    "icon": "Flashchat.svg",
+    "saas": true,
+    "scriptSrc": [
+      "widget\\.flashchat\\.ai"
+    ],
+    "website": "https://flashchat.ai"
+  },
   "Flask": {
     "cats": [
       18,
@@ -1477,6 +1794,9 @@
   "Flat UI": {
     "cats": [
       66
+    ],
+    "dom": [
+      "link[href*='flat-ui.css'], link[href*='flat-ui.min.css']"
     ],
     "html": [
       "<link[^>]* href=[^>]+flat-ui(?:\\.min)?\\.css"
@@ -1586,6 +1906,37 @@
     ],
     "website": "https://woocommerce.com/flexslider/"
   },
+  "FlexiFunnels": {
+    "cats": [
+      51
+    ],
+    "description": "FlexiFunnels is a platform for building high-converting sales funnels, generating leads, and selling products without requiring coding knowledge.",
+    "icon": "FlexiFunnels.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.flexifunnels\\.com"
+    ],
+    "website": "https://flexifunnels.com"
+  },
+  "Flexmls": {
+    "cats": [
+      1
+    ],
+    "description": "Ecomtrack is a multi-listing CMS system designed for the real estate market, enabling property management and listings.",
+    "icon": "Flexmls.svg",
+    "js": {
+      "flexmls_connect": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "/plugins/flexmls-idx/"
+    ],
+    "website": "https://flexmls.com"
+  },
   "Flickity": {
     "cats": [
       59
@@ -1650,6 +2001,38 @@
     ],
     "website": "https://flipclock.readthedocs.io/en/dev-1.0.0/CHANGE%20LOG/"
   },
+  "Flipdish": {
+    "cats": [
+      93
+    ],
+    "description": "Flipdish is an all-in-one technology solution designed to streamline restaurant operations.",
+    "icon": "Flipdish.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.web\\.flipdish\\.com/"
+    ],
+    "website": "https://www.flipdish.com"
+  },
+  "Flipping Pro CRM": {
+    "cats": [
+      53
+    ],
+    "description": "Flipping Pro is an all-in-one real estate marketing CRM offering essential tools to help real estate business owners grow their operations.",
+    "icon": "FlippingPro.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "app\\.flippingpro\\.com"
+    ],
+    "website": "https://flippingpro.com"
+  },
   "FlippingBook": {
     "cats": [
       5
@@ -1672,6 +2055,40 @@
       "online\\.flippingbook\\.com/"
     ],
     "website": "https://flippingbook.com"
+  },
+  "Flipshop": {
+    "cats": [
+      6
+    ],
+    "description": "Flipshop is a platform that enables the creation of online stores for businesses.",
+    "icon": "Flipshop.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "(?:\\.flipshop\\.co|ans-flipshop\\.s3)"
+    ],
+    "website": "https://www.flipshop.co"
+  },
+  "Flipsite": {
+    "cats": [
+      51
+    ],
+    "description": "Flipsite is a platform for creating and managing websites.",
+    "icon": "Flipsite.svg",
+    "meta": {
+      "author": "^Made with Flipsite$"
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://flipsite.io"
   },
   "Flits": {
     "cats": [
@@ -1749,6 +2166,23 @@
       "\\.flocktory\\.com/"
     ],
     "website": "https://www.flocktory.com"
+  },
+  "Flodesk": {
+    "cats": [
+      32
+    ],
+    "description": "Flodesk is an email marketing platform that supports campaign creation, scheduling, and performance analysis using automation.",
+    "icon": "Flodesk.svg",
+    "js": {
+      "FlodeskObject": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://flodesk.com"
   },
   "Floori": {
     "cats": [
@@ -1832,6 +2266,23 @@
     ],
     "website": "https://www.flow.io/"
   },
+  "FlowTrack": {
+    "cats": [
+      32
+    ],
+    "description": "FlowTrack is an app that consolidates multiple services into one platform, enabling websites to attract more visitors and convert them into leads.",
+    "icon": "FlowTrack.svg",
+    "pricing": [
+      "onetime",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.flowtrack\\.co/"
+    ],
+    "website": "https://www.flowtrack.co"
+  },
   "Flowbite": {
     "cats": [
       66
@@ -1904,6 +2355,19 @@
     ],
     "website": "https://www.fluidplayer.com"
   },
+  "Fluro": {
+    "cats": [
+      53
+    ],
+    "description": "Fluro is an automation platform designed to support operational growth and management for expanding churches.",
+    "icon": "Fluro.svg",
+    "js": {
+      "$flurosite": "",
+      "__FLUROSITE__": ""
+    },
+    "saas": true,
+    "website": "https://www.fluro.io"
+  },
   "Flurry Analytics": {
     "cats": [
       10
@@ -1943,6 +2407,9 @@
       2
     ],
     "cpe": "cpe:2.3:a:fluxbb:fluxbb:*:*:*:*:*:*:*:*",
+    "dom": [
+      "p#poweredby > a[href*='//fluxbb.org/']"
+    ],
     "html": [
       "<p id=\"poweredby\">[^<]+<a href=\"https?://fluxbb\\.org/\">"
     ],
@@ -2053,6 +2520,9 @@
     "cookies": {
       "flyspray_project": ""
     },
+    "dom": [
+      "map#projectsearchform"
+    ],
     "html": [
       "(?:<a[^>]+>Powered by Flyspray|<map id=\"projectsearchform)"
     ],
@@ -2096,6 +2566,22 @@
       "WordPress"
     ],
     "website": "https://getflywheel.com"
+  },
+  "Fohr": {
+    "cats": [
+      32
+    ],
+    "description": "Fohr is a platform that improves collaboration between brands and influencers, focusing on building brands through influencer marketing.",
+    "headers": {
+      "Content-Security-Policy": "\\.fohr\\.co"
+    },
+    "icon": "Fohr.svg",
+    "meta": {
+      "name": "^Fohr$",
+      "title": "^Fohr$"
+    },
+    "saas": true,
+    "website": "https://www.fohr.co"
   },
   "Foleon": {
     "cats": [
@@ -2156,6 +2642,11 @@
     ],
     "description": "Font Awesome is a font and icon toolkit based on CSS and Less.",
     "dom": {
+      "[class*='fa']": {
+        "attributes": {
+          "class": "(?:^|\\s)fa(?:-[a-z0-9-]+)?(?:\\s|$)"
+        }
+      },
       "link[href*='awesome']": {
         "attributes": {
           "href": "(?:([\\d\\.]+)/)?(?:css/)?font-awesome(?:\\.min)?\\.css\\;version:\\1"
@@ -2180,6 +2671,7 @@
     "icon": "Font Awesome.svg",
     "js": {
       "FontAwesomeCdnConfig": "",
+      "FontAwesomeKitConfig.asyncLoading": "",
       "___FONT_AWESOME___": ""
     },
     "pricing": [
@@ -2446,6 +2938,18 @@
     "oss": true,
     "website": "https://www.fork-cms.com"
   },
+  "Form.taxi": {
+    "cats": [
+      110
+    ],
+    "description": "Form.taxi is a backend service that enables reliable HTML form submissions without requiring any programming.",
+    "dom": [
+      "form[action*='form.taxi/']"
+    ],
+    "icon": "FormTaxi.svg",
+    "saas": true,
+    "website": "https://form.taxi/en/backend"
+  },
   "FormAssembly": {
     "cats": [
       110
@@ -2500,6 +3004,46 @@
       "//formaloo\\.net/"
     ],
     "website": "https://www.formaloo.com"
+  },
+  "Format": {
+    "cats": [
+      1
+    ],
+    "description": "Format is a portfolio CMS system designed for creating, managing, and showcasing digital portfolios.",
+    "headers": {
+      "X-Format-Path": ""
+    },
+    "icon": "Format.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "format\\.com"
+    ],
+    "website": "https://www.format.com"
+  },
+  "Formcan": {
+    "cats": [
+      110
+    ],
+    "cookies": {
+      "formcan-color-mode": ""
+    },
+    "description": "Formcan is a form builder that enables creation, customization, and deployment of online forms for data collection and management.",
+    "icon": "Formcan.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "static\\.formcan\\.com/"
+    ],
+    "website": "https://www.formcan.com"
   },
   "Formidable Form": {
     "cats": [
@@ -2596,6 +3140,25 @@
     "saas": true,
     "website": "https://www.formstack.com"
   },
+  "Formstone": {
+    "cats": [
+      59
+    ],
+    "cpe": "cpe:2.3:a:formstone:formstone:*:*:*:*:*:*:*:*",
+    "description": "Formstone is a front-end library that simplifies web development by providing customizable jQuery plugins that abstract modern web patterns.",
+    "icon": "Formstone.svg",
+    "oss": true,
+    "pricing": [
+      "onetime"
+    ],
+    "requires": [
+      "jQuery"
+    ],
+    "scriptSrc": [
+      "jquery\\.formstone\\.min\\.js"
+    ],
+    "website": "https://formstone.it"
+  },
   "ForoshGostar": {
     "cats": [
       6
@@ -2666,10 +3229,15 @@
     "cats": [
       6
     ],
+    "description": "Fortune3 is a platform that offers ecommerce software and services.",
+    "dom": [
+      "link[href*='//www.fortune3.com/'],link[href*='siterate/rate.css']"
+    ],
     "html": [
       "(?:<link [^>]*href=\"[^\\/]*\\/\\/www\\.fortune3\\.com\\/[^\"]*siterate\\/rate\\.css|Powered by <a [^>]*href=\"[^\"]+fortune3\\.com)"
     ],
     "icon": "Fortune3.png",
+    "saas": true,
     "scriptSrc": [
       "cartjs\\.php\\?(?:.*&)?s=[^&]*myfortune3cart\\.com"
     ],
@@ -2685,6 +3253,9 @@
     },
     "cpe": "cpe:2.3:a:foswiki:foswiki:*:*:*:*:*:*:*:*",
     "description": "Foswiki is a free open-source collaboration platform.",
+    "dom": [
+      "div.foswikiCopyright, div.foswikiPage, div.foswikiMain"
+    ],
     "headers": {
       "X-Foswikiaction": "",
       "X-Foswikiuri": ""
@@ -2795,6 +3366,21 @@
       "cdn\\.foxycart\\.com"
     ],
     "website": "https://www.foxy.io"
+  },
+  "Framer Motion": {
+    "cats": [
+      59
+    ],
+    "description": "Framer Motion is a modern animation library for JavaScript, React, and Vue.",
+    "icon": "FramerMotion.svg",
+    "js": {
+      "MotionIsMounted": ""
+    },
+    "oss": true,
+    "pricing": [
+      "freemium"
+    ],
+    "website": "https://motion.dev"
   },
   "Framer Sites": {
     "cats": [
@@ -2914,15 +3500,18 @@
     "cats": [
       16
     ],
-    "description": "Fraudblocker is an ad fraud and click-fraud detection and protection service software.",
-    "icon": "fraudblocker.png",
+    "description": "Fraud Blocker is an all-in-one solution designed to reduce costs by preventing bots, competitor clicks, fake leads, and other forms of digital ad fraud.",
+    "icon": "FraudBlocker.svg",
     "pricing": [
       "low",
       "recurring"
     ],
     "saas": true,
     "scriptSrc": [
-      "monitor\\.fraudblocker\\.com/"
+      "monitor\\.fraudblocker\\.com"
+    ],
+    "scripts": [
+      "\\.fraudblocker\\.com"
     ],
     "website": "https://fraudblocker.com"
   },
@@ -2969,6 +3558,18 @@
     ],
     "website": "https://www.fout.co.jp"
   },
+  "Frederick": {
+    "cats": [
+      32
+    ],
+    "description": "Frederick is an automated marketing software solution developed by MindBody to streamline and optimize marketing tasks for businesses.",
+    "icon": "Frederick.svg",
+    "saas": true,
+    "scripts": [
+      "hirefrederick\\.com"
+    ],
+    "website": "https://hirefrederick.com"
+  },
   "FreeBSD": {
     "cats": [
       28
@@ -2999,6 +3600,38 @@
       "FTB_AddEvent": ""
     },
     "website": "https://freetextbox.com"
+  },
+  "Freedom Farmers": {
+    "cats": [
+      19
+    ],
+    "description": "Freedom Farmers is a micro farm platform designed for individuals interested in growing food, starting an agricultural business, or gaining access to land.",
+    "icon": "FreedomFarmers.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "//freedomfarmers\\.com"
+    ],
+    "website": "https://freedomfarmers.com"
+  },
+  "FreedomKit": {
+    "cats": [
+      32
+    ],
+    "description": "FreedomKit is an all-in-one online business software powered by AI that supports automation to streamline operations.",
+    "icon": "FreedomKit.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.freedomkit\\.ai"
+    ],
+    "website": "https://freedomkit.ai"
   },
   "Freemius": {
     "cats": [
@@ -3267,6 +3900,44 @@
       "api.friendlycaptcha.com"
     ]
   },
+  "Frill": {
+    "cats": [
+      90
+    ],
+    "description": "Frill is a platform that connects customers and businesses by enabling customers to provide feedback.",
+    "icon": "Frill.svg",
+    "js": {
+      "FRILL_ENV": "",
+      "Frill.containers": ""
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.frill\\.co/"
+    ],
+    "website": "https://frill.co"
+  },
+  "Frisbie": {
+    "cats": [
+      52
+    ],
+    "description": "Frisbie is a Russian chat widget designed for online communication.",
+    "icon": "Frisbie.svg",
+    "js": {
+      "Frisbie.app": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://frisbie.me"
+  },
   "Frizbit": {
     "cats": [
       32
@@ -3313,6 +3984,44 @@
       "FroalaEditor.VERSION": "([\\d\\.]+)\\;version:\\1"
     },
     "website": "https://froala.com/wysiwyg-editor"
+  },
+  "Froged": {
+    "cats": [
+      52
+    ],
+    "description": "Froged is an all-in-one omnichannel communication platform designed to streamline messaging across multiple channels.",
+    "icon": "Froged.svg",
+    "js": {
+      "Froged": "",
+      "frogedAutoClick": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "sdk\\.froged\\.com"
+    ],
+    "website": "https://froged.com"
+  },
+  "Front AI": {
+    "cats": [
+      52
+    ],
+    "description": "Front AI is a platform that offers services for Conversational AI, Virtual Agents, and Service Bots to support automated customer interactions.",
+    "icon": "FrontAI.svg",
+    "js": {
+      "FrontCFcreateCookie": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.front\\.ai/"
+    ],
+    "website": "https://front.ai"
   },
   "Front Chat": {
     "cats": [
@@ -3415,6 +4124,24 @@
       "generator": "^Frontity"
     },
     "website": "https://frontity.org"
+  },
+  "Frontlead": {
+    "cats": [
+      110
+    ],
+    "description": "Frontlead is a platform that enables the creation of forms, funnels, and surveys to streamline workflows and collect actionable insights.",
+    "icon": "Frontlead.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.frontlead\\.io"
+    ],
+    "website": "https://frontlead.io"
   },
   "Frosmo": {
     "cats": [
@@ -3654,6 +4381,22 @@
     "saas": true,
     "website": "https://funnelish.com"
   },
+  "Funnels of Course": {
+    "cats": [
+      32
+    ],
+    "description": "Funnels of Course is an all-in-one marketing platform designed to support coaches and course creators in achieving online success.",
+    "icon": "FunnelsOfCourse.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "app\\.funnelsofcourse\\.com"
+    ],
+    "website": "https://funnelsofcourse.com"
+  },
   "Funnelytics": {
     "cats": [
       32
@@ -3773,6 +4516,42 @@
       "/wp-content/themes/futurio/.+customscript\\.js(?:\\?ver=([\\d\\.]+))?\\;version:\\1"
     ],
     "website": "https://futuriowp.com"
+  },
+  "Futy": {
+    "cats": [
+      32
+    ],
+    "description": "Futy is a tool that helps convert website visitors into leads through a customer-friendly approach.",
+    "icon": "Futy.svg",
+    "js": {
+      "Futy.$axios": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.futy.io"
+  },
+  "Fygaro": {
+    "cats": [
+      6
+    ],
+    "description": "Fygaro is an online commerce platform enabling businesses to sell online, manage retail operations, and streamline daily business activities.",
+    "icon": "Fygaro.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "api\\.fygaro\\.com/"
+    ],
+    "scripts": [
+      "fygaro-production\\.s3"
+    ],
+    "website": "https://www.fygaro.com"
   },
   "Fynd Platform": {
     "cats": [

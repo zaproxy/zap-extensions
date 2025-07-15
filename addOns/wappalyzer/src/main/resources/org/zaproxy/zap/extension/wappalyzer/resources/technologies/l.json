@@ -121,6 +121,22 @@
     "saas": true,
     "website": "https://ltheme.com"
   },
+  "Labrador CMS": {
+    "cats": [
+      1
+    ],
+    "description": "Labrador CMS is a cloud-based CMS for professional publishers and newsrooms.",
+    "icon": "LabradorCMS.svg",
+    "pricing": [
+      "high",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "Device from labrador"
+    ],
+    "website": "https://www.labradorcms.com"
+  },
   "Ladipage": {
     "cats": [
       51
@@ -195,6 +211,26 @@
     ],
     "website": "https://landingpress.net"
   },
+  "Landingi": {
+    "cats": [
+      51
+    ],
+    "description": "Landingi is a platform for automating the creation, management, and optimization of landing pages.",
+    "icon": "Landingi.svg",
+    "js": {
+      "landingiInternalDetails": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "scripts\\.assets-landingi\\.com"
+    ],
+    "website": "https://landingi.com"
+  },
   "LangShop": {
     "cats": [
       100,
@@ -220,6 +256,23 @@
       "\\.langshop\\.app/"
     ],
     "website": "https://langshop.io"
+  },
+  "Lapis": {
+    "cats": [
+      6
+    ],
+    "description": "Lapis is an enterprise ecommerce solutions provider.",
+    "icon": "Lapis.svg",
+    "meta": {
+      "generator": "^Lapis$"
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://lapissoft.com"
   },
   "Laravel": {
     "cats": [
@@ -443,6 +496,27 @@
     ],
     "website": "https://layup.co.za"
   },
+  "Laylo": {
+    "cats": [
+      53
+    ],
+    "description": "Laylo is a drop CRM platform that enables artists to notify fans when merchandise, tickets, or content becomes available.",
+    "icon": "Laylo.svg",
+    "js": {
+      "layloSdkLoading": ""
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "payg",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "embed\\.laylo\\.com"
+    ],
+    "website": "https://laylo.com"
+  },
   "LayoutHub": {
     "cats": [
       100,
@@ -530,6 +604,66 @@
       "app\\.lead-concept\\.com/"
     ],
     "website": "https://www.lead-concept.com"
+  },
+  "Lead Forensics": {
+    "cats": [
+      10
+    ],
+    "description": "Lead Forensics is a B2B website visitor identification software that processes website traffic data to reveal the companies behind each visit.",
+    "icon": "LeadForensics.svg",
+    "saas": true,
+    "scriptSrc": [
+      "\\.leadforensics\\.com/"
+    ],
+    "website": "https://www.leadforensics.com"
+  },
+  "Lead Generated": {
+    "cats": [
+      53
+    ],
+    "description": "Lead Generated is a marketing CRM tool that centralizes customer data, tracks engagement, and automates marketing campaigns.",
+    "icon": "LeadGenerated.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.leadgenerated\\.com/"
+    ],
+    "website": "https://leadgenerated.com"
+  },
+  "Lead Prosper": {
+    "cats": [
+      32
+    ],
+    "description": "Lead Prosper is a lead distribution platform that facilitates connections between lead suppliers and lead buyers.",
+    "icon": "LeadProsper.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "api\\.leadprosper\\.io"
+    ],
+    "website": "https://leadprosper.io"
+  },
+  "Lead-Finity Webchat": {
+    "cats": [
+      52
+    ],
+    "description": "Lead-Finity Webchat is a platform that converts website visitors into leads and facilitates sales conversations.",
+    "icon": "LeadFinity.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "app\\.lead-finity\\.com"
+    ],
+    "website": "https://lead-finity.com"
   },
   "LeadBoxer": {
     "cats": [
@@ -812,6 +946,22 @@
     ],
     "website": "https://leadteh.ru"
   },
+  "Leady": {
+    "cats": [
+      10
+    ],
+    "description": "Leady is a lead generation and customer intelligence solution.",
+    "icon": "Leady.svg",
+    "js": {
+      "_leady.push": "",
+      "leady_track_key": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "\\.leady\\.com/"
+    ],
+    "website": "https://leady.cz"
+  },
   "Leaflet": {
     "cats": [
       35
@@ -847,6 +997,18 @@
       "scripts\\.leaflet\\.co/"
     ],
     "website": "https://join.leaflet.co"
+  },
+  "Leafly": {
+    "cats": [
+      6
+    ],
+    "description": "Leafly is a platform that provides information on cannabis strains, products, and dispensaries, allowing users to research, locate, and order cannabis from licensed providers.",
+    "icon": "Leafly.svg",
+    "saas": true,
+    "scripts": [
+      "www\\.leafly\\.com"
+    ],
+    "website": "https://www.leafly.com"
   },
   "LeanData": {
     "cats": [
@@ -964,6 +1126,22 @@
     ],
     "website": "https://learnybox.com"
   },
+  "LeaseHawk": {
+    "cats": [
+      10
+    ],
+    "description": "LeaseHawk is a platform that provides tools to measure and improve ROI for leases through data insights and performance tracking.",
+    "icon": "LeaseHawk.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "ace-chat\\.leasehawk\\.com"
+    ],
+    "website": "https://www.leasehawk.com"
+  },
   "Leaseweb": {
     "cats": [
       63,
@@ -1070,6 +1248,21 @@
     "oss": true,
     "website": "http://lenis.darkroom.engineering"
   },
+  "Lenus": {
+    "cats": [
+      53
+    ],
+    "description": "Lenus is a platform that develops healthcare optimization systems designed to improve operational efficiency.",
+    "icon": "Lenus.svg",
+    "meta": {
+      "author": "^Lenus$"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://lenushealth.com"
+  },
   "Leptos": {
     "cats": [
       18
@@ -1110,6 +1303,24 @@
     "icon": "Less.svg",
     "oss": true,
     "website": "https://lesscss.org"
+  },
+  "Let's Connect": {
+    "cats": [
+      52
+    ],
+    "description": "Let's Connect is a digital tool for businesses to manage customer interactions and communications.",
+    "icon": "LetsConnect.svg",
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.letsconnect\\.at/"
+    ],
+    "website": "https://www.letsconnect.at"
   },
   "Let's Encrypt": {
     "cats": [
@@ -1395,6 +1606,23 @@
     ],
     "website": "https://lokeshdhakar.com/projects/lightbox2/"
   },
+  "Lightfolio": {
+    "cats": [
+      7
+    ],
+    "description": "Lightfolio is a platform that offers online photo galleries designed for easy sharing, downloading, and selling of images.",
+    "icon": "Lightfolio.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "lfpublicstatic\\.lightfolio\\.com"
+    ],
+    "website": "https://www.lightfolio.com"
+  },
   "Lightning": {
     "cats": [
       80
@@ -1617,6 +1845,22 @@
     ],
     "website": "https://linda.co"
   },
+  "Linear": {
+    "cats": [
+      53
+    ],
+    "description": "Linear is a platform for collecting payments and managing business operations, offering sales and marketing tools for real estate agents, extending beyond a traditional brokerage system.",
+    "icon": "Linear.svg",
+    "js": {
+      "linearFrontend": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://linear.fi/hinnasto"
+  },
   "Linen": {
     "cats": [
       2
@@ -1632,6 +1876,27 @@
     },
     "oss": true,
     "website": "https://www.linen.dev"
+  },
+  "Linguana": {
+    "cats": [
+      54
+    ],
+    "description": "Linguana is a tool that provides AI-driven multi-language support ensuring SEO performance with translations and translated slugs for seamless multilingual user experiences.",
+    "icon": "Linguana.svg",
+    "js": {
+      "LINGUANA_MAIN_LANGUAGE_CODE": "",
+      "LINGUANA_SHOW_LANGUAGE_CODE": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "static\\.linguana\\.io/"
+    ],
+    "website": "https://www.linguana.io/"
   },
   "Linguise": {
     "cats": [
@@ -1736,6 +2001,23 @@
     ],
     "website": "https://www.linkedin.com/developers"
   },
+  "Linkfire": {
+    "cats": [
+      32
+    ],
+    "description": "Linkfire is a smart links tool designed for music marketing.",
+    "icon": "Linkfire.svg",
+    "js": {
+      "linkfire.linkfireUrl": ""
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.linkfire.com"
+  },
   "Linx Commerce": {
     "cats": [
       6
@@ -1829,6 +2111,27 @@
       "@([\\d.]+)/(?:/dist)?list\\.(?:min\\.)?js\\;version:\\1"
     ],
     "website": "https://listjs.com"
+  },
+  "Listagram": {
+    "cats": [
+      75
+    ],
+    "description": "Listagram is a list building tool which increases conversions by turning newsletter signups into a game.",
+    "icon": "Listagram.svg",
+    "js": {
+      "LISTAGRAM.config": "",
+      "LISTAGRAM_CFG.base_api": "www\\.listagram\\.com"
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "www\\.listagram\\.com"
+    ],
+    "website": "https://www.listagram.com"
   },
   "Listrak": {
     "cats": [
@@ -2396,6 +2699,21 @@
     ],
     "website": "https://apps.shopify.com/loadify"
   },
+  "LobbyPMS": {
+    "cats": [
+      93
+    ],
+    "description": "LobbyPMS is a platform developed to streamline daily accommodation management.",
+    "icon": "LobbyPMS.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.lobbypms\\.com"
+    ],
+    "website": "https://lobbypms.com"
+  },
   "LocalExpress": {
     "cats": [
       6
@@ -2515,6 +2833,9 @@
       "MongoDB"
     ],
     "oss": true,
+    "scriptSrc": [
+      "cdn\\.locomotive\\.works/"
+    ],
     "website": "https://www.locomotivecms.com"
   },
   "Lodash": {
@@ -2566,6 +2887,18 @@
       "\\.lodgify\\.com/"
     ],
     "website": "https://www.lodgify.com"
+  },
+  "Lofty": {
+    "cats": [
+      32
+    ],
+    "description": "Lofty is an all-in-one platform for real estate professionals that automates marketing campaigns and facilitates lead capture and conversion.",
+    "icon": "Lofty.svg",
+    "saas": true,
+    "scripts": [
+      "cdn\\.lofty\\.com"
+    ],
+    "website": "https://lofty.com"
   },
   "LogRocket": {
     "cats": [
@@ -2773,6 +3106,25 @@
     ],
     "website": "https://www.loja2.com.br"
   },
+  "Lojas Online CTT": {
+    "cats": [
+      6
+    ],
+    "description": "Lojas Online CTT is an ecommerce website builder that provides an online storefront with deliveries insured by CTT.",
+    "icon": "LojasOnlineCTT.svg",
+    "meta": {
+      "author": "Lojas Online CTT"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.lojasonlinectt\\.pt"
+    ],
+    "website": "https://www.ctt.pt/empresas/e-commerce-e-logistica/e-commerce/lojas-online-ctt/index"
+  },
   "Loom": {
     "cats": [
       103
@@ -2873,6 +3225,18 @@
       "app\\.productstash\\.io/"
     ],
     "website": "https://www.loopedin.io"
+  },
+  "Loopi": {
+    "cats": [
+      93
+    ],
+    "description": "Loopi is a digital ecosystem offering tools, integrations, and resources for tourism professionals to create, manage, and distribute multimodal tourist circuits.",
+    "icon": "Loopi.svg",
+    "saas": true,
+    "scriptSrc": [
+      "widget\\.loopi-velo\\.fr/"
+    ],
+    "website": "https://www.loopi.fr"
   },
   "Loops": {
     "cats": [
@@ -2990,6 +3354,17 @@
     ],
     "website": "https://lottiefiles.com"
   },
+  "Loyalis": {
+    "cats": [
+      84
+    ],
+    "description": "Loyalis is a loyalty program for ecommerce that enables businesses to reward customers based on purchases and engagement.",
+    "js": {
+      "loyalisOptions.key": ""
+    },
+    "saas": true,
+    "website": "https://www.loyalis.nl"
+  },
   "LoyaltyLion": {
     "cats": [
       84
@@ -3008,6 +3383,44 @@
       "sdk\\.loyaltylion\\.net/"
     ],
     "website": "https://loyaltylion.com"
+  },
+  "LoyaltyLoop": {
+    "cats": [
+      90
+    ],
+    "description": "LoyaltyLoop is an online review management platform that leverages customer loyalty surveys and Net Promoter Score tracking to enhance business reputation and strengthen customer relationships.",
+    "icon": "LoyaltyLoop.svg",
+    "js": {
+      "LoyaltyLoopEventListenerInitialized": "",
+      "countOfLoyaltyLoopTestimonialWidgets": ""
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.loyaltyloop\\.com/"
+    ],
+    "website": "https://loyaltyloop.com"
+  },
+  "Loyoly": {
+    "cats": [
+      84
+    ],
+    "description": "Loyoly is a loyalty and referral platform integrating user-generated content and reviews, enabling customer engagement with brands.",
+    "icon": "Loyoly.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "assets\\.loyoly\\.io/"
+    ],
+    "website": "https://www.loyoly.io"
   },
   "Lozad.js": {
     "cats": [
@@ -3114,6 +3527,21 @@
       "LuigisBox": ""
     },
     "website": "https://www.luigisbox.com"
+  },
+  "Luma": {
+    "cats": [
+      104
+    ],
+    "description": "Luma is a platform for creating event pages, sending invites, and managing tickets.",
+    "icon": "Luma.svg",
+    "js": {
+      "luma.initCheckout": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "embed\\.lu\\.ma"
+    ],
+    "website": "https://lu.ma"
   },
   "Lume": {
     "cats": [

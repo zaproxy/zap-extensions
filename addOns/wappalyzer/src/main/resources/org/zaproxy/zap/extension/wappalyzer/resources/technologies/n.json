@@ -73,6 +73,9 @@
       25
     ],
     "description": "NVD3 is a JavaScript visualisation library that is a free open-source tool.",
+    "dom": [
+      "link[href*='nv.d3.css'], link[href*='nv.d3.min.css']"
+    ],
     "html": [
       "<link[^>]* href=[^>]+nv\\.d3(?:\\.min)?\\.css"
     ],
@@ -88,6 +91,22 @@
       "nv\\.d3(?:\\.min)?\\.js"
     ],
     "website": "https://nvd3.org"
+  },
+  "Nabble": {
+    "cats": [
+      2
+    ],
+    "description": "Nabble is a platform offering free forum hosting and online web applications with customizable features.",
+    "js": {
+      "Nabble.analytics": "",
+      "NabbleDropdown": "",
+      "t_show_nabble_notice": ""
+    },
+    "pricing": [
+      "freemium"
+    ],
+    "saas": true,
+    "website": "https://nabble.com"
   },
   "Nacelle": {
     "cats": [
@@ -432,6 +451,27 @@
     ],
     "website": "https://www.navigaglobal.com/"
   },
+  "Navu": {
+    "cats": [
+      76
+    ],
+    "description": "Navu is a platform that uses AI to enhance B2B websites by delivering targeted messages to visitors, helping improve lead conversion through personalized user engagement.",
+    "icon": "Navu.svg",
+    "js": {
+      "$_navuEmbedded": "",
+      "$navuContext": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "c\\.navu\\.co/"
+    ],
+    "website": "https://navu.co"
+  },
   "Neat A/B testing": {
     "cats": [
       74,
@@ -750,6 +790,18 @@
     ],
     "website": "https://www.neto.com.au"
   },
+  "Netop": {
+    "cats": [
+      46
+    ],
+    "description": "Netop is a platform that provides remote support and chat solutions for secure communication and technical assistance.",
+    "icon": "Netop.svg",
+    "saas": true,
+    "scriptSrc": [
+      "\\.netop\\.com"
+    ],
+    "website": "https://netop.com"
+  },
   "Nette Framework": {
     "cats": [
       18
@@ -777,6 +829,18 @@
       "Nette.version": "^(.+)$\\;version:\\1"
     },
     "website": "https://nette.org"
+  },
+  "Netvibes": {
+    "cats": [
+      10
+    ],
+    "description": "Netvibes is a platform for social media monitoring, analytics, and real-time alerts.",
+    "icon": "Netvibes.svg",
+    "saas": true,
+    "scriptSrc": [
+      "www\\.netvibes\\.com/"
+    ],
+    "website": "https://www.netvibes.com"
   },
   "Network for Good": {
     "cats": [
@@ -1052,6 +1116,9 @@
     "js": {
       "nextgen_lightbox_settings.static_path": "/wp-content/plugins/nextgen-gallery/"
     },
+    "meta": {
+      "NextGEN": "^([\\d.]+)\\;version:\\1"
+    },
     "requires": [
       "WordPress"
     ],
@@ -1201,6 +1268,22 @@
     ],
     "website": "https://www.nexxt.com"
   },
+  "Ngage Live Chat": {
+    "cats": [
+      52
+    ],
+    "description": "Ngage Live Chat is an industry-specific live chat solution that converts website visitors into clients.",
+    "icon": "NgageLiveChat.svg",
+    "js": {
+      "NgageKillScript": "",
+      "StartNgageChat": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "messenger\\.ngageics\\.com"
+    ],
+    "website": "https://www.ngagelive.com"
+  },
   "Nginx": {
     "cats": [
       22,
@@ -1255,6 +1338,25 @@
     ],
     "saas": true,
     "website": "https://nicepage.com"
+  },
+  "Nido Tecnologia": {
+    "cats": [
+      19
+    ],
+    "description": "Nido Tecnologia is a platform that provides software solutions for the real estate industry in Brazil.",
+    "icon": "NidoTecnologia.svg",
+    "meta": {
+      "author": "^Nido Tecnologia$"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.nidoimovel\\.com\\.br"
+    ],
+    "website": "https://www.nido.com.br"
   },
   "Nidux": {
     "cats": [
@@ -1491,6 +1593,43 @@
     "saas": true,
     "website": "https://noibu.com"
   },
+  "Nolt": {
+    "cats": [
+      13
+    ],
+    "description": "Nolt is a collaborative platform for managing user requests, designed to replace outdated spreadsheets and Trello boards while providing actionable customer insights.",
+    "icon": "Nolt.svg",
+    "js": {
+      "Nolt.initialized": ""
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.nolt\\.io"
+    ],
+    "website": "https://nolt.io"
+  },
+  "Noodle Factory": {
+    "cats": [
+      21
+    ],
+    "description": "Noodle Factory is a tutor platform that enhances teaching through personalized and engaging student learning experiences.",
+    "icon": "NoodleFactory.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "portalapi\\.noodlefactory\\.ai"
+    ],
+    "website": "https://www.noodlefactory.ai"
+  },
   "Nootiz": {
     "cats": [
       13
@@ -1535,7 +1674,9 @@
     ],
     "description": "Norce is a headless SaaS platform for digital commerce, designed to support companies with advanced needs.",
     "dom": [
-      "link[href*='.jetshop.io']"
+      "link[href*='.jetshop.io']",
+      "div#jetshop-branding",
+      "aside#jetshop-branding"
     ],
     "html": [
       "<(?:div|aside) id=\"jetshop-branding\">"
@@ -1648,6 +1789,26 @@
     ],
     "website": "https://www.nosto.com/products/visual-ugc/"
   },
+  "Noticeable": {
+    "cats": [
+      85
+    ],
+    "description": "Noticeable is a platform that simplifies product updates and company announcements while enhancing user communication and feedback analysis.",
+    "icon": "Noticeable.svg",
+    "js": {
+      "noticeable": ""
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "sdk\\.noticeable\\.io/"
+    ],
+    "website": "https://noticeable.io"
+  },
   "Notie": {
     "cats": [
       59
@@ -1732,6 +1893,18 @@
     ],
     "saas": true,
     "website": "https://www.novel.com"
+  },
+  "Nowfloats": {
+    "cats": [
+      54
+    ],
+    "description": "Nowfloats is a location-based platform that automates SEO for business websites.",
+    "icon": "Nowfloats.svg",
+    "saas": true,
+    "scripts": [
+      "NOWFLOATS_POSITION"
+    ],
+    "website": "https://www.nowfloats.com"
   },
   "Nrdevo": {
     "cats": [
@@ -1929,7 +2102,7 @@
     "html": [
       "(?:<!--Powered by nopCommerce|Powered by: <a[^>]+nopcommerce)"
     ],
-    "icon": "nopCommerce.png",
+    "icon": "nopCommerce.svg",
     "implies": [
       "Microsoft ASP.NET"
     ],

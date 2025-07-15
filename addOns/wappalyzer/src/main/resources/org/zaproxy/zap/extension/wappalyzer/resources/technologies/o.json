@@ -1,4 +1,19 @@
 {
+  "ONiAD": {
+    "cats": [
+      36
+    ],
+    "description": "ONiAd is a software platform that connects brands with their audience through omnichannel advertising.",
+    "icon": "ONiAD.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "track\\.oniad\\.com"
+    ],
+    "website": "https://oniad.com"
+  },
   "OSI Tracker": {
     "cats": [
       71
@@ -58,6 +73,9 @@
       59
     ],
     "description": "OWL Carousel is an enabled jQuery plugin that lets you create responsive carousel sliders.",
+    "dom": [
+      "link[href*='owl.carousel.css'], link[href*='owl.carousel.min.css']"
+    ],
     "html": [
       "<link [^>]*href=\"[^\"]+owl\\.carousel(?:\\.min)?\\.css"
     ],
@@ -520,6 +538,9 @@
     ],
     "cpe": "cpe:2.3:a:odoo:odoo:*:*:*:*:*:*:*:*",
     "description": "Odoo is business management software which includes CRM, ecommerce, billing, accounting, manufacturing, warehouse, project management, and inventory management.",
+    "dom": [
+      "link[href*='/web/css/web.assets_common/'], link[href*='/web/css/website.assets_frontend/']"
+    ],
     "html": [
       "<link[^>]* href=[^>]+/web/css/(?:web\\.assets_common/|website\\.assets_frontend/)\\;confidence:25"
     ],
@@ -576,6 +597,18 @@
       "\\.ohdear\\.app/"
     ],
     "website": "https://ohdear.app"
+  },
+  "Ohava": {
+    "cats": [
+      1
+    ],
+    "description": "Ohava is a platform for managing business websites and marketing.",
+    "icon": "Ohava.svg",
+    "saas": true,
+    "scriptSrc": [
+      "analytics\\.ohava\\.tools"
+    ],
+    "website": "https://ohava.com"
   },
   "OkMenu": {
     "cats": [
@@ -670,7 +703,7 @@
       52
     ],
     "description": "Olark is a cloud-based live chat solution.",
-    "icon": "Olark.png",
+    "icon": "Olark.svg",
     "js": {
       "olark": "",
       "olarkUserData": ""
@@ -682,7 +715,7 @@
     "scriptSrc": [
       "\\.olark\\.com/"
     ],
-    "website": "https://www.olark.com/"
+    "website": "https://www.olark.com"
   },
   "Oleoshop": {
     "cats": [
@@ -699,6 +732,28 @@
     ],
     "saas": true,
     "website": "https://www.oleoshop.com"
+  },
+  "Olvy": {
+    "cats": [
+      85
+    ],
+    "description": "Olvy is a feedback management platform that enables user-centric teams to analyze insights, streamline product development, and keep stakeholders informed.",
+    "icon": "Olvy.svg",
+    "js": {
+      "OlvyConfig": "",
+      "OlvyInstances": ""
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.olvy\\.co"
+    ],
+    "website": "https://olvy.co"
   },
   "Omeda": {
     "cats": [
@@ -934,6 +989,25 @@
     "saas": true,
     "website": "https://onshop.asia"
   },
+  "OnSip": {
+    "cats": [
+      52
+    ],
+    "description": "OnSip is a hosted VoIP solution that includes website chat functionality for business communication.",
+    "icon": "OnSip.svg",
+    "js": {
+      "Onsip": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "js\\.onsip\\.com"
+    ],
+    "website": "https://www.onsip.com"
+  },
   "OnUniverse": {
     "cats": [
       51
@@ -1019,6 +1093,18 @@
       "\\.onecause\\.com/"
     ],
     "website": "https://www.onecause.com"
+  },
+  "OneCommerce": {
+    "cats": [
+      6
+    ],
+    "description": "OneCommerce is an ecommerce solution platform that improves conversion rates, supports marketing automation, and utilizes social proof.",
+    "icon": "OneCommerce.svg",
+    "saas": true,
+    "scripts": [
+      "onecommerce\\.io"
+    ],
+    "website": "https://onecommerce.io"
   },
   "OnePage Express": {
     "cats": [
@@ -1141,6 +1227,43 @@
     ],
     "website": "https://www.onetrust.com"
   },
+  "Onehub": {
+    "cats": [
+      50
+    ],
+    "description": "Onehub is a cloud-based platform that enables secure file sharing and access control for businesses and teams.",
+    "icon": "Onehub.svg",
+    "js": {
+      "Onehub": "",
+      "OnehubBarView": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.onehub\\.com"
+    ],
+    "website": "https://www.onehub.com"
+  },
+  "Onepage": {
+    "cats": [
+      51
+    ],
+    "description": "Onepage is a page-building software that enhances productivity by streamlining the creation and management of web pages.",
+    "icon": "Onepage.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.onepage\\.io"
+    ],
+    "website": "https://onepage.io"
+  },
   "Oney": {
     "cats": [
       91
@@ -1214,6 +1337,22 @@
     ],
     "website": "https://onsen.io"
   },
+  "Onsite Support": {
+    "cats": [
+      52
+    ],
+    "description": "Onsite Support is a platform that uses AI-enhanced helpdesk tools to reduce operational costs, minimize product returns, and accelerate customer service response times.",
+    "icon": "OnSiteSupport.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "static\\.onsitesupport\\.io"
+    ],
+    "website": "https://onsitesupport.io"
+  },
   "Ookla Speedtest Custom": {
     "cats": [
       5
@@ -1257,6 +1396,17 @@
     ],
     "saas": true,
     "website": "https://oopy.us/"
+  },
+  "Opal": {
+    "cats": [
+      47
+    ],
+    "description": "Opal is a Ruby-to-JavaScript compiler that allows Ruby code to run in web browsers by converting it into JavaScript.",
+    "dom": [
+      "script#opal-elementor-frontend-js, link[href*='opal-boostrap.css']"
+    ],
+    "oss": true,
+    "website": "https://opalrb.org"
   },
   "Open AdStream": {
     "cats": [
@@ -1460,6 +1610,9 @@
       1
     ],
     "cpe": "cpe:2.3:a:alkacon:opencms:*:*:*:*:*:*:*:*",
+    "dom": [
+      "link[href^='/opencms/']"
+    ],
     "headers": {
       "Server": "OpenCms"
     },
@@ -1533,6 +1686,7 @@
     "icon": "OpenLayers.svg",
     "js": {
       "OpenLayers.VERSION_NUMBER": "([\\d.]+)\\;version:\\1",
+      "ol.AssertionError": "",
       "ol.CanvasMap": ""
     },
     "oss": true,
@@ -1791,6 +1945,22 @@
     ],
     "website": "https://operatebeyond.com/dealer-websites-marketing"
   },
+  "Opesta": {
+    "cats": [
+      32
+    ],
+    "description": "Opesta is a marketing automation platform for Facebook Messenger.",
+    "icon": "Opesta.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "api\\.opesta\\.com"
+    ],
+    "website": "https://opesta.com"
+  },
   "Opigno LMS": {
     "cats": [
       21
@@ -1805,6 +1975,21 @@
       "opigno_(?:commerce|wtp_app|scorm|learning_path)"
     ],
     "website": "https://www.opigno.org"
+  },
+  "OpinionBar": {
+    "cats": [
+      73
+    ],
+    "description": "OpinionBar is a platform offering feedback forms and surveys that provide cash payments.",
+    "headers": {
+      "Content-Security-Policy": "\\.opinionbar\\.com"
+    },
+    "icon": "OpinionBar.svg",
+    "saas": true,
+    "scripts": [
+      "\\.opinionbar\\.com"
+    ],
+    "website": "https://www.opinionbar.com"
   },
   "OpinionLab": {
     "cats": [
@@ -1996,6 +2181,43 @@
       "\\.optimove\\.net/.+v([\\d\\.]+)\\.js\\;version:\\1"
     ],
     "website": "https://www.optimove.com"
+  },
+  "Optimx Sports": {
+    "cats": [
+      51
+    ],
+    "description": "OptimX Sports is a platform that provides professional website designs for hockey, rugby, and lacrosse teams using a state-of-the-art creation system.",
+    "icon": "OptimxSports.svg",
+    "js": {
+      "webpackJsonpoptimx_sports_client_website": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "/optimx-sports\\.appspot"
+    ],
+    "website": "https://optimxsports.com"
+  },
+  "Optimy": {
+    "cats": [
+      111
+    ],
+    "description": "Optimy is an all-in-one CSR platform that enhances social and business impact by streamlining social programs.",
+    "headers": {
+      "Content-Security-Policy": "optimyapp-css\\.s3"
+    },
+    "icon": "Optimy.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "/js/optimy\\.js"
+    ],
+    "website": "https://www.optimy.com"
   },
   "OptinMonster": {
     "cats": [
@@ -2675,6 +2897,9 @@
     ],
     "cpe": "cpe:2.3:a:microsoft:outlook_web_access:*:*:*:*:*:*:*:*",
     "description": "Outlook on the web is an information manager web app. It includes a web-based email client, a calendar tool, a contact manager, and a task manager.",
+    "dom": [
+      "link[href*='/owa/auth/']"
+    ],
     "headers": {
       "X-OWA-Version": "([\\d\\.]+)?\\;version:\\1"
     },
@@ -2722,6 +2947,33 @@
       "\\.over-blog-kiwi\\.com/"
     ],
     "website": "https://www.over-blog.com"
+  },
+  "Overloop": {
+    "cats": [
+      32
+    ],
+    "description": "Overloop is an AI-powered sales prospecting platform that automates lead generation, outreach, and engagement to optimize customer acquisition and conversion.",
+    "icon": "Overloop.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "app\\.overloop\\.com"
+    ],
+    "website": "https://overloop.com"
+  },
+  "Overwolf": {
+    "cats": [
+      47
+    ],
+    "description": "Overwolf is a platform that enables the creation, sharing, and monetization of in-game apps and mods.",
+    "icon": "Overwolf.svg",
+    "saas": true,
+    "scripts": [
+      "download\\.overwolf\\.com"
+    ],
+    "website": "https://www.overwolf.com"
   },
   "Ownpage": {
     "cats": [
@@ -2772,6 +3024,9 @@
       87
     ],
     "description": "Oxygen Builder is a tool to build a WordPress website.",
+    "dom": [
+      "body[class*='oxygen-body'], link[href*='wp-content/plugins/oxygen/']"
+    ],
     "html": [
       "<body class=(?:\"|')[^\"']*oxygen-body",
       "<link [^>]*href=(?:\"|')[^>]*wp-content/plugins/oxygen/"
@@ -2839,6 +3094,9 @@
     },
     "cpe": "cpe:2.3:a:oscommerce:oscommerce:*:*:*:*:*:*:*:*",
     "description": "OsCommerce is an open-source ecommerce and online store-management software program.",
+    "dom": [
+      "input[name='osCsid'], a[name='osCsid'], tr.infoBoxHeading, td.infoBoxHeading, table.infoBoxHeading"
+    ],
     "html": [
       "<br />Powered by <a href=\"https?://www\\.oscommerce\\.com",
       "<(?:input|a)[^>]+name=\"osCsid\"",
