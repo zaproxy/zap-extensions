@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 - Error logs to always include stack trace.
+- Log Firefox missing at debug instead of error.
 
 ## [0.16.0] - 2025-06-20
 ### Added
