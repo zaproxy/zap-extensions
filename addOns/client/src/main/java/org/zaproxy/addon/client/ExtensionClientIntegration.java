@@ -45,6 +45,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.WebDriverException;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
@@ -368,6 +369,9 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
                 LOGGER.error(
                         "Failed to get or create Firefox profile {}", ZAP_FIREFOX_PROFILE_NAME);
             }
+        } catch (WebDriverException e) {
+            // Will happen if Firefox is not available.
+            LOGGER.debug(e.getMessage(), e);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
