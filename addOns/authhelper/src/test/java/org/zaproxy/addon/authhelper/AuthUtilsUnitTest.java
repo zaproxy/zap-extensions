@@ -93,6 +93,9 @@ import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.Pair;
+import org.zaproxy.zest.core.v1.ZestActionPrint;
+import org.zaproxy.zest.core.v1.ZestComment;
+import org.zaproxy.zest.core.v1.ZestScript;
 
 class AuthUtilsUnitTest extends TestUtils {
 
@@ -981,6 +984,43 @@ class AuthUtilsUnitTest extends TestUtils {
 
         // Then
         assertThat(res, is(equalTo(Boolean.parseBoolean(result))));
+    }
+
+    @Test
+    void shouldDisableLogoutStatements() {
+        // Given
+        ZestScript zs = new ZestScript();
+        zs.add(new ZestActionPrint());
+        zs.add(new ZestActionPrint());
+        zs.add(new ZestComment("ZAP Recording LOGOUT"));
+        zs.add(new ZestActionPrint());
+        zs.add(new ZestActionPrint());
+
+        // When
+        AuthUtils.disableLogoutStatements(zs);
+
+        // Then
+        assertThat(zs.getStatements().get(0).isEnabled(), is(equalTo(true)));
+        assertThat(zs.getStatements().get(1).isEnabled(), is(equalTo(true)));
+        assertThat(zs.getStatements().get(2).isEnabled(), is(equalTo(true)));
+        assertThat(zs.getStatements().get(3).isEnabled(), is(equalTo(false)));
+        assertThat(zs.getStatements().get(4).isEnabled(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldNotDisableStatementsWhenNoLogoutCommentPresent() {
+        // Given
+        ZestScript zs = new ZestScript();
+        zs.add(new ZestActionPrint());
+        zs.add(new ZestActionPrint());
+        zs.add(new ZestActionPrint());
+        zs.add(new ZestActionPrint());
+
+        // When
+        AuthUtils.disableLogoutStatements(zs);
+
+        // Then
+        zs.getStatements().forEach(e -> assertThat(e.isEnabled(), is(equalTo(true))));
     }
 
     static class BrowserTest extends TestUtils {
