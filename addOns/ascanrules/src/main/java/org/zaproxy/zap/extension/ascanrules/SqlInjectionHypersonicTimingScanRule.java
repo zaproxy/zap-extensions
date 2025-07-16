@@ -24,7 +24,6 @@ import java.net.SocketException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -46,7 +45,7 @@ import org.zaproxy.zap.model.TechSet;
 /**
  * TODO: maybe implement a more specific UNION based check for Hypersonic (with table names)
  *
- * <p>The SqlInjectionHypersonicScanRule identifies Hypersonic specific SQL Injection
+ * <p>The SqlInjectionHypersonicTimingScanRule identifies Hypersonic specific SQL Injection
  * vulnerabilities using Hypersonic specific syntax. If it doesn't use Hypersonic specific syntax,
  * it belongs in the generic SQLInjection class! Note the ordering of checks, for efficiency is : 1)
  * Error based (N/A) 2) Boolean Based (N/A - uses standard syntax) 3) UNION based (TODO) 4) Stacked
@@ -68,7 +67,7 @@ import org.zaproxy.zap.model.TechSet;
  *
  * @author 70pointer
  */
-public class SqlInjectionHypersonicScanRule extends AbstractAppParamPlugin
+public class SqlInjectionHypersonicTimingScanRule extends AbstractAppParamPlugin
         implements CommonActiveScanRuleInfo {
 
     /** Hypersonic one-line comment */
@@ -76,26 +75,6 @@ public class SqlInjectionHypersonicScanRule extends AbstractAppParamPlugin
 
     private static final String ORIG_VALUE_TOKEN = "<<<<ORIGINALVALUE>>>>";
     private static final String SLEEP_TOKEN = "<<<<SLEEP>>>>";
-
-    /**
-     * create a map of SQL related error message fragments, and map them back to the RDBMS that they
-     * are associated with keep the ordering the same as the order in which the values are inserted,
-     * to allow the more (subjectively judged) common cases to be tested first Note: these should
-     * represent actual (driver level) error messages for things like syntax error, otherwise we are
-     * simply guessing that the string should/might occur.
-     */
-    private static final Map<String, String> SQL_ERROR_TO_DBMS = new LinkedHashMap<>();
-
-    static {
-        SQL_ERROR_TO_DBMS.put("org.hsql", "Hypersonic SQL");
-        SQL_ERROR_TO_DBMS.put("hSql.", "Hypersonic SQL");
-        SQL_ERROR_TO_DBMS.put("Unexpected token , requires FROM in statement", "Hypersonic SQL");
-        SQL_ERROR_TO_DBMS.put("Unexpected end of command in statement", "Hypersonic SQL");
-        SQL_ERROR_TO_DBMS.put("Column count does not match in statement", "Hypersonic SQL");
-        SQL_ERROR_TO_DBMS.put("Table not found in statement", "Hypersonic SQL");
-        SQL_ERROR_TO_DBMS.put("Unexpected token:", "Hypersonic SQL");
-        // Note: only Hypersonic mappings here.
-    }
 
     /** the sleep function in Hypersonic SQL */
     private static final String SQL_HYPERSONIC_TIME_FUNCTION =
@@ -212,7 +191,8 @@ public class SqlInjectionHypersonicScanRule extends AbstractAppParamPlugin
     }
 
     /** for logging. */
-    private static final Logger LOGGER = LogManager.getLogger(SqlInjectionHypersonicScanRule.class);
+    private static final Logger LOGGER =
+            LogManager.getLogger(SqlInjectionHypersonicTimingScanRule.class);
 
     /** The number of seconds used in time-based attacks (i.e. sleep commands). */
     private int timeSleepSeconds = DEFAULT_SLEEP_TIME;
