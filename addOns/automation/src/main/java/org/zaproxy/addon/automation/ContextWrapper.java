@@ -29,7 +29,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.httpclient.URI;
@@ -54,6 +56,7 @@ import org.zaproxy.zap.authentication.UsernamePasswordAuthenticationCredentials;
 import org.zaproxy.zap.extension.users.ExtensionUserManagement;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.StandardParameterParser;
+import org.zaproxy.zap.model.StructuralNodeModifier;
 import org.zaproxy.zap.users.User;
 
 public class ContextWrapper {
@@ -583,12 +586,16 @@ public class ContextWrapper {
         }
     }
 
+    @Getter
+    @Setter
     public static class StructureData {
 
         private List<String> structuralParameters;
+        private List<DataDrivenNodeData> dataDrivenNodes;
 
         public StructureData() {
             structuralParameters = new ArrayList<>();
+            dataDrivenNodes = new ArrayList<>();
         }
 
         StructureData(Context context) {
@@ -599,6 +606,12 @@ public class ContextWrapper {
                 var spp = (StandardParameterParser) urlParamParser;
                 structuralParameters = new ArrayList<>(spp.getStructuralParameters());
             }
+            context.getDataDrivenNodes()
+                    .forEach(
+                            ddn ->
+                                    dataDrivenNodes.add(
+                                            new DataDrivenNodeData(
+                                                    ddn.getName(), ddn.getPattern().toString())));
         }
 
         StructureData(Object data, AutomationProgress progress) {
@@ -626,7 +639,54 @@ public class ContextWrapper {
                         ((List<?>) value)
                                 .stream().map(Object::toString).forEach(structuralParameters::add);
                     }
+                } else if ("dataDrivenNodes".equals(cdata.getKey().toString())) {
+                    Object value = cdata.getValue();
+                    if (!(value instanceof List)) {
+                        progress.error(
+                                Constant.messages.getString(
+                                        "automation.error.context.badddnlist", value));
 
+                    } else {
+                        List<DataDrivenNodeData> ddnList = new ArrayList<>();
+                        for (Object ddn : (List<?>) value) {
+                            if (!(ddn instanceof LinkedHashMap)) {
+                                progress.error(
+                                        Constant.messages.getString(
+                                                "automation.error.env.ddn.bad", ddn));
+                                continue;
+                            }
+                            LinkedHashMap<?, ?> ddnMap = (LinkedHashMap<?, ?>) ddn;
+                            Object nameObj = ddnMap.get("name");
+                            Object regexObj = ddnMap.get("regex");
+                            if (ddnMap.size() != 2
+                                    || !(nameObj instanceof String)
+                                    || !(regexObj instanceof String)) {
+                                progress.error(
+                                        Constant.messages.getString(
+                                                "automation.error.env.ddn.bad", ddn));
+                                continue;
+                            }
+                            String regex = (String) regexObj;
+                            try {
+                                Pattern.compile(regex);
+                            } catch (Exception e) {
+                                progress.error(
+                                        Constant.messages.getString(
+                                                "automation.error.env.ddn.regex.bad", regex));
+                                continue;
+                            }
+                            if (!regex.matches(".*\\(.*\\).*\\(.*\\).*")) {
+                                progress.error(
+                                        Constant.messages.getString(
+                                                "automation.error.env.ddn.regex.format", regex));
+                                continue;
+                            }
+                            ddnList.add(new DataDrivenNodeData((String) nameObj, regex));
+                        }
+                        if (!ddnList.isEmpty()) {
+                            this.setDataDrivenNodes(ddnList);
+                        }
+                    }
                 } else {
                     progress.warn(
                             Constant.messages.getString(
@@ -658,14 +718,24 @@ public class ContextWrapper {
 
             context.setUrlParamParser(urlParamParser);
             urlParamParser.setContext(context);
+
+            context.setDataDrivenNodes(
+                    dataDrivenNodes.stream()
+                            .map(
+                                    ddn ->
+                                            new StructuralNodeModifier(
+                                                    StructuralNodeModifier.Type.DataDrivenNode,
+                                                    Pattern.compile(ddn.getRegex()),
+                                                    ddn.getName()))
+                            .toList());
         }
 
-        public List<String> getStructuralParameters() {
-            return structuralParameters;
-        }
-
-        public void setStructuralParameters(List<String> structuralParameters) {
-            this.structuralParameters = structuralParameters;
+        @Getter
+        @Setter
+        @AllArgsConstructor
+        public static class DataDrivenNodeData {
+            private String name;
+            private String regex;
         }
     }
 }
