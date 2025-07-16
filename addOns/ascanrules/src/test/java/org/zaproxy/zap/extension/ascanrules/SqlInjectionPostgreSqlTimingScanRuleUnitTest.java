@@ -41,12 +41,13 @@ import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
-/** Unit test for {@link SqlInjectionPostgreScanRule}. */
-class SqlInjectionPostgreScanRuleUnitTest extends ActiveScannerTest<SqlInjectionPostgreScanRule> {
+/** Unit test for {@link SqlInjectionPostgreSqlTimingScanRule}. */
+class SqlInjectionPostgreSqlTimingScanRuleUnitTest
+        extends ActiveScannerTest<SqlInjectionPostgreSqlTimingScanRule> {
 
     @Override
-    protected SqlInjectionPostgreScanRule createScanner() {
-        return new SqlInjectionPostgreScanRule();
+    protected SqlInjectionPostgreSqlTimingScanRule createScanner() {
+        return new SqlInjectionPostgreSqlTimingScanRule();
     }
 
     @Test

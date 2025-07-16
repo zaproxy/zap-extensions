@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - SQL Injection - MsSQL 
     - SQL Injection - MySQL
     - SQL Injection - Hypersonic
+    - SQL Injection - PostgreSQL
 
 ### Added
 - Rules (as applicable) have been tagged in relation to HIPAA and PCI DSS.
