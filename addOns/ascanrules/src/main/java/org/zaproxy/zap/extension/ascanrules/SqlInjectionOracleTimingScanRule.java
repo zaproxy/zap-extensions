@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.ascanrules;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,11 +37,11 @@ import org.zaproxy.zap.model.TechSet;
 /**
  * TODO: maybe implement a more specific UNION based check for Oracle (with table names)
  *
- * <p>The SqlInjectionOracleScanRule identifies Oracle specific SQL Injection vulnerabilities using
- * Oracle specific syntax. If it doesn't use Oracle specific syntax, it belongs in the generic
- * SQLInjection class! Note the ordering of checks, for efficiency is : 1) Error based (N/A) 2)
- * Boolean Based (N/A - uses standard syntax) 3) UNION based (TODO) 4) Stacked (N/A - uses standard
- * syntax) 5) Blind/Time Based (Yes)
+ * <p>This scan rule identifies Oracle specific SQL Injection vulnerabilities using Oracle specific
+ * syntax. If it doesn't use Oracle specific syntax, it belongs in the generic SQLInjection class!
+ * Note the ordering of checks, for efficiency is : 1) Error based (N/A) 2) Boolean Based (N/A -
+ * uses standard syntax) 3) UNION based (TODO) 4) Stacked (N/A - uses standard syntax) 5) Blind/Time
+ * Based (Yes)
  *
  * <p>See the following for some great specific tricks which could be integrated here
  * http://www.websec.ca/kb/sql_injection
@@ -60,43 +59,15 @@ import org.zaproxy.zap.model.TechSet;
  *
  * @author 70pointer
  */
-public class SqlInjectionOracleScanRule extends AbstractAppParamPlugin
+public class SqlInjectionOracleTimingScanRule extends AbstractAppParamPlugin
         implements CommonActiveScanRuleInfo {
 
     private int expectedDelayInMs = 5000;
 
-    private boolean doUnionBased = false; // TODO: use in Union based, when we implement it
-    private boolean doTimeBased = false;
-
-    private int doUnionMaxRequests = 0; // TODO: use in Union based, when we implement it
     private int doTimeMaxRequests = 0;
 
     /** Oracle one-line comment */
     public static final String SQL_ONE_LINE_COMMENT = " -- ";
-
-    /**
-     * create a map of SQL related error message fragments, and map them back to the RDBMS that they
-     * are associated with keep the ordering the same as the order in which the values are inserted,
-     * to allow the more (subjectively judged) common cases to be tested first Note: these should
-     * represent actual (driver level) error messages for things like syntax error, otherwise we are
-     * simply guessing that the string should/might occur.
-     */
-    private static final Map<String, String> SQL_ERROR_TO_DBMS = new LinkedHashMap<>();
-
-    static {
-        SQL_ERROR_TO_DBMS.put("oracle.jdbc", "Oracle");
-        SQL_ERROR_TO_DBMS.put("SQLSTATE[HY", "Oracle");
-        SQL_ERROR_TO_DBMS.put("ORA-00933", "Oracle");
-        SQL_ERROR_TO_DBMS.put("ORA-06512", "Oracle"); // indicates the line number of an error
-        SQL_ERROR_TO_DBMS.put("SQL command not properly ended", "Oracle");
-        SQL_ERROR_TO_DBMS.put("ORA-00942", "Oracle"); // table or view does not exist
-        SQL_ERROR_TO_DBMS.put("ORA-29257", "Oracle"); // host unknown
-        SQL_ERROR_TO_DBMS.put("ORA-00932", "Oracle"); // inconsistent datatypes
-
-        // Note: only Oracle mappings here.
-        // TODO: is this all?? we need more error messages for Oracle for different languages. PHP
-        // (oci8), ASP, JSP(JDBC), etc
-    }
 
     /** the 5 second sleep function in Oracle SQL */
     private static String SQL_ORACLE_TIME_SELECT =
@@ -167,7 +138,8 @@ public class SqlInjectionOracleScanRule extends AbstractAppParamPlugin
     }
 
     /** for logging. */
-    private static final Logger LOGGER = LogManager.getLogger(SqlInjectionOracleScanRule.class);
+    private static final Logger LOGGER =
+            LogManager.getLogger(SqlInjectionOracleTimingScanRule.class);
 
     @Override
     public int getId() {
@@ -210,25 +182,13 @@ public class SqlInjectionOracleScanRule extends AbstractAppParamPlugin
 
         // set up what we are allowed to do, depending on the attack strength that was set.
         if (this.getAttackStrength() == AttackStrength.LOW) {
-            doTimeBased = true;
             doTimeMaxRequests = 3;
-            doUnionBased = true;
-            doUnionMaxRequests = 3;
         } else if (this.getAttackStrength() == AttackStrength.MEDIUM) {
-            doTimeBased = true;
             doTimeMaxRequests = 5;
-            doUnionBased = true;
-            doUnionMaxRequests = 5;
         } else if (this.getAttackStrength() == AttackStrength.HIGH) {
-            doTimeBased = true;
             doTimeMaxRequests = 10;
-            doUnionBased = true;
-            doUnionMaxRequests = 10;
         } else if (this.getAttackStrength() == AttackStrength.INSANE) {
-            doTimeBased = true;
             doTimeMaxRequests = 100;
-            doUnionBased = true;
-            doUnionMaxRequests = 100;
         }
     }
 
@@ -256,7 +216,6 @@ public class SqlInjectionOracleScanRule extends AbstractAppParamPlugin
             long originalTimeUsed = msgTimeBaseline.getTimeElapsedMillis();
             // end of timing baseline check
 
-            int countUnionBasedRequests = 0;
             int countTimeBasedRequests = 0;
 
             LOGGER.debug(
@@ -269,7 +228,6 @@ public class SqlInjectionOracleScanRule extends AbstractAppParamPlugin
             // Check for time based SQL Injection, using Oracle specific syntax
             for (int timeBasedSQLindex = 0;
                     timeBasedSQLindex < SQL_ORACLE_TIME_REPLACEMENTS.length
-                            && doTimeBased
                             && countTimeBasedRequests < doTimeMaxRequests;
                     timeBasedSQLindex++) {
                 HttpMessage msgAttack = getNewMsg();
