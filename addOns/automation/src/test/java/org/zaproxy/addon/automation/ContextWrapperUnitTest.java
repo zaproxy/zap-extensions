@@ -54,6 +54,7 @@ import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.yaml.snakeyaml.Yaml;
+import org.zaproxy.addon.automation.ContextWrapper.StructureData.DataDrivenNodeData;
 import org.zaproxy.addon.automation.ContextWrapper.UserData;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.StandardParameterParser;
@@ -1406,6 +1407,7 @@ class ContextWrapperUnitTest {
         assertThat(context.getUrlParamParser(), is(instanceOf(StandardParameterParser.class)));
         var urlParamParser = (StandardParameterParser) context.getUrlParamParser();
         assertThat(urlParamParser.getStructuralParameters(), is(empty()));
+        assertThat(context.getDataDrivenNodes(), is(empty()));
     }
 
     @Test
@@ -1416,6 +1418,8 @@ class ContextWrapperUnitTest {
         given(env.replaceVars(any())).willAnswer(invocation -> invocation.getArgument(0));
         var structure = new ContextWrapper.StructureData();
         structure.setStructuralParameters(List.of("A", "B"));
+        structure.setDataDrivenNodes(
+                List.of(new DataDrivenNodeData("ddn1", "http://www.example.com/(aaa)/.*/(ccc)")));
         var context = new Context(session, 0);
 
         // When
@@ -1429,6 +1433,11 @@ class ContextWrapperUnitTest {
         assertThat(urlParamParser.getStructuralParameters(), contains("A", "B"));
         verify(env).replaceVars("A");
         verify(env).replaceVars("B");
+        assertThat(context.getDataDrivenNodes(), hasSize(1));
+        assertThat(context.getDataDrivenNodes().get(0).getName(), is("ddn1"));
+        assertThat(
+                context.getDataDrivenNodes().get(0).getPattern().toString(),
+                is("http://www.example.com/(aaa)/.*/(ccc)"));
     }
 
     @Test
@@ -1528,6 +1537,190 @@ class ContextWrapperUnitTest {
         // Then
         assertThat(progress.getWarnings(), contains("!automation.error.options.unknown!"));
         assertThat(progress.getErrors(), is(empty()));
+    }
+
+    @Test
+    void shouldLoadDdnData() {
+        // Given
+        String contextStr =
+                """
+                env:
+                  contexts:
+                  - name: name1
+                    urls:
+                    - http://www.example.com
+                    structure:
+                      dataDrivenNodes:
+                      - name: ddn1
+                        regex: http://www.example.com/(aaa)/.*/(ccc)
+                      - name: ddn2
+                        regex: http://www.example.com/(bbb)/.*/(ddd)
+                """;
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data = yaml.load(contextStr);
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+
+        // Then
+        assertThat(progress.getWarnings(), is(empty()));
+        assertThat(progress.getErrors(), is(empty()));
+        assertThat(env.getContextWrappers(), hasSize(1));
+        var structure = env.getContextWrappers().get(0).getData().getStructure();
+        assertNotNull(structure);
+        assertThat(structure.getDataDrivenNodes(), hasSize(2));
+        assertThat(structure.getDataDrivenNodes().get(0).getName(), is("ddn1"));
+        assertThat(
+                structure.getDataDrivenNodes().get(0).getRegex(),
+                is("http://www.example.com/(aaa)/.*/(ccc)"));
+        assertThat(structure.getDataDrivenNodes().get(1).getName(), is("ddn2"));
+        assertThat(
+                structure.getDataDrivenNodes().get(1).getRegex(),
+                is("http://www.example.com/(bbb)/.*/(ddd)"));
+    }
+
+    @Test
+    void shouldErrorOnBadDdnList() {
+        // Given
+        String contextStr =
+                """
+                env:
+                  contexts:
+                  - name: name1
+                    urls:
+                    - http://www.example.com
+                    structure:
+                      dataDrivenNodes: "not a list"
+                """;
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data = yaml.load(contextStr);
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        new AutomationEnvironment(contextData, progress);
+
+        // Then
+        assertThat(progress.getWarnings(), is(empty()));
+        assertThat(progress.getErrors(), hasSize(1));
+        assertThat(progress.getErrors().get(0), is("!automation.error.context.badddnlist!"));
+    }
+
+    @Test
+    void shouldErrorOnBadDdnEntry() {
+        // Given
+        String contextStr =
+                """
+                env:
+                  contexts:
+                  - name: name1
+                    urls:
+                    - http://www.example.com
+                    structure:
+                      dataDrivenNodes:
+                      - name: aaa
+                """;
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data = yaml.load(contextStr);
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        new AutomationEnvironment(contextData, progress);
+
+        // Then
+        assertThat(progress.getWarnings(), is(empty()));
+        assertThat(progress.getErrors(), hasSize(1));
+        assertThat(progress.getErrors().get(0), is("!automation.error.env.ddn.bad!"));
+    }
+
+    @Test
+    void shouldErrorOnBadDdnName() {
+        // Given
+        String contextStr =
+                """
+                env:
+                  contexts:
+                  - name: name1
+                    urls:
+                    - http://www.example.com
+                    structure:
+                      dataDrivenNodes:
+                      - name: []
+                        regex: http://www.example.com/(aaa)/.*/(ccc)
+                """;
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data = yaml.load(contextStr);
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        new AutomationEnvironment(contextData, progress);
+
+        // Then
+        assertThat(progress.getWarnings(), is(empty()));
+        assertThat(progress.getErrors(), hasSize(1));
+        assertThat(progress.getErrors().get(0), is("!automation.error.env.ddn.bad!"));
+    }
+
+    @Test
+    void shouldErrorOnBadDdnRegex() {
+        // Given
+        String contextStr =
+                """
+                env:
+                  contexts:
+                  - name: name1
+                    urls:
+                    - http://www.example.com
+                    structure:
+                      dataDrivenNodes:
+                      - name: aaa
+                        regex: '*'
+                """;
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data = yaml.load(contextStr);
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        new AutomationEnvironment(contextData, progress);
+
+        // Then
+        assertThat(progress.getWarnings(), is(empty()));
+        assertThat(progress.getErrors(), hasSize(1));
+        assertThat(progress.getErrors().get(0), is("!automation.error.env.ddn.regex.bad!"));
+    }
+
+    @Test
+    void shouldErrorOnBadDdnRegexFormat() {
+        // Given
+        String contextStr =
+                """
+                env:
+                  contexts:
+                  - name: name1
+                    urls:
+                    - http://www.example.com
+                    structure:
+                      dataDrivenNodes:
+                      - name: aaa
+                        regex: 'http://www.example.com/.*'
+                """;
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data = yaml.load(contextStr);
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        new AutomationEnvironment(contextData, progress);
+
+        // Then
+        assertThat(progress.getWarnings(), is(empty()));
+        assertThat(progress.getErrors(), hasSize(1));
+        assertThat(progress.getErrors().get(0), is("!automation.error.env.ddn.regex.format!"));
     }
 
     private static void assertFile(String path, File file) {
