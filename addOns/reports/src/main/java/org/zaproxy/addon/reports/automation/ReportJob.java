@@ -27,6 +27,8 @@ import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -42,6 +44,8 @@ import org.zaproxy.addon.reports.ReportParam;
 import org.zaproxy.addon.reports.Template;
 
 public class ReportJob extends AutomationJob {
+
+    private static final Logger LOGGER = LogManager.getLogger(ReportJob.class);
 
     private static final String JOB_NAME = "report";
 
@@ -270,9 +274,13 @@ public class ReportJob extends AutomationJob {
                             this.getName(),
                             file.getAbsolutePath()));
         } catch (Exception e) {
+            LOGGER.warn("Failed to generate the report:", e);
             progress.error(
                     Constant.messages.getString(
-                            "reports.automation.error.generate", this.getName(), e.getMessage()));
+                            "reports.automation.error.generate",
+                            this.getName(),
+                            e.getClass().getSimpleName(),
+                            e.getMessage()));
         }
     }
 
