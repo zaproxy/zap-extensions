@@ -22,9 +22,7 @@ package org.zaproxy.zap.extension.ascanrules;
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.startsWith;
 
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
@@ -40,12 +38,13 @@ import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
-/** Unit test for {@link SqlInjectionSqLiteScanRule}. */
-class SqlInjectionSQLiteScanRuleUnitTest extends ActiveScannerTest<SqlInjectionSqLiteScanRule> {
+/** Unit test for {@link SqlInjectionSqLiteTimingScanRule}. */
+class SqlInjectionSqLiteTimingScanRuleUnitTest
+        extends ActiveScannerTest<SqlInjectionSqLiteTimingScanRule> {
 
     @Override
-    protected SqlInjectionSqLiteScanRule createScanner() {
-        return new SqlInjectionSqLiteScanRule();
+    protected SqlInjectionSqLiteTimingScanRule createScanner() {
+        return new SqlInjectionSqLiteTimingScanRule();
     }
 
     // Give a bit more leeway
@@ -56,11 +55,11 @@ class SqlInjectionSQLiteScanRuleUnitTest extends ActiveScannerTest<SqlInjectionS
                 return NUMBER_MSGS_ATTACK_STRENGTH_LOW;
             case MEDIUM:
             default:
-                return NUMBER_MSGS_ATTACK_STRENGTH_MEDIUM + 2;
+                return NUMBER_MSGS_ATTACK_STRENGTH_MEDIUM;
             case HIGH:
-                return NUMBER_MSGS_ATTACK_STRENGTH_HIGH + 10;
+                return NUMBER_MSGS_ATTACK_STRENGTH_HIGH + 5;
             case INSANE:
-                return NUMBER_MSGS_ATTACK_STRENGTH_INSANE + 22;
+                return NUMBER_MSGS_ATTACK_STRENGTH_INSANE + 5;
         }
     }
 
@@ -116,7 +115,6 @@ class SqlInjectionSQLiteScanRuleUnitTest extends ActiveScannerTest<SqlInjectionS
                 equalTo("case randomblob(100000) when not null then 1 else 1 end "));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
-        assertThat(alertsRaised.get(0).getTags(), not(hasKey(CommonAlertTag.TEST_TIMING.getTag())));
     }
 
     @Test
@@ -158,7 +156,6 @@ class SqlInjectionSQLiteScanRuleUnitTest extends ActiveScannerTest<SqlInjectionS
         assertThat(alertsRaised.get(0).getAttack(), startsWith("case randomblob(100"));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
-        assertThat(alertsRaised.get(0).getTags(), is(hasKey(CommonAlertTag.TEST_TIMING.getTag())));
     }
 
     @Test
