@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Support for tracking authorization headers automatically for Header based auth.
 - Add Authentication Report section for the log file.
 
+## Changed
+- Send the referer header on verification if set on the original request.
+
 ### Fixed
 - Do not fail the authentication on diagnostic errors.
 
