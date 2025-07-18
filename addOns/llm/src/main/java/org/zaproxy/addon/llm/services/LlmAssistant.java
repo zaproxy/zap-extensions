@@ -54,5 +54,8 @@ public interface LlmAssistant {
                     + "---\n"
                     + "{{otherinfo}}"
                     + "Provide a short consistent explanation of the new score.\n")
-    Confidence review(@V("description") String description, @V("evidence") String evidence, @V("otherinfo") String otherinfo);
+    Confidence review(
+            @V("description") String description,
+            @V("evidence") String evidence,
+            @V("otherinfo") String otherinfo);
 }
