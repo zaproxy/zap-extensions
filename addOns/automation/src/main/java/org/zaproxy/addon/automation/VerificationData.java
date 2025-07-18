@@ -104,7 +104,7 @@ public class VerificationData extends AutomationData {
         if (headers != null) {
             List<AdditionalHeaderData> headerList = new ArrayList<>();
             for (String header : headers.split("\n")) {
-                String[] headerValue = header.split(":");
+                String[] headerValue = header.split(":", 2);
                 if (headerValue.length == 2) {
                     headerList.add(
                             new AdditionalHeaderData(headerValue[0].trim(), headerValue[1].trim()));
