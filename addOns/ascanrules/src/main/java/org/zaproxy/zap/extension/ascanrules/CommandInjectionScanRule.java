@@ -27,14 +27,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.commons.configuration.ConversionException;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -45,10 +42,8 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.PolicyTag;
-import org.zaproxy.addon.commonlib.timing.TimingUtils;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
-import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
@@ -61,11 +56,8 @@ import org.zaproxy.zap.model.TechSet;
 public class CommandInjectionScanRule extends AbstractAppParamPlugin
         implements CommonActiveScanRuleInfo {
 
-    /** The name of the rule to obtain the time, in seconds, for time-based attacks. */
-    private static final String RULE_SLEEP_TIME = RuleConfigParam.RULE_COMMON_SLEEP_TIME;
-
     /** Prefix for internationalised messages used by this rule */
-    private static final String MESSAGE_PREFIX = "ascanrules.commandinjection.";
+    static final String MESSAGE_PREFIX = "ascanrules.commandinjection.";
 
     // *NIX OS Command constants
     private static final String NIX_TEST_CMD = "cat /etc/passwd";
@@ -90,7 +82,7 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
     private static final Map<String, Pattern> WIN_OS_PAYLOADS = new LinkedHashMap<>();
     private static final Map<String, Pattern> PS_PAYLOADS = new LinkedHashMap<>();
 
-    private static final Map<String, String> ALERT_TAGS;
+    static final Map<String, String> ALERT_TAGS;
 
     static {
         Map<String, String> alertTags =
@@ -100,8 +92,7 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
                                 CommonAlertTag.OWASP_2017_A01_INJECTION,
                                 CommonAlertTag.WSTG_V42_INPV_12_COMMAND_INJ,
                                 CommonAlertTag.HIPAA,
-                                CommonAlertTag.PCI_DSS,
-                                CommonAlertTag.TEST_TIMING));
+                                CommonAlertTag.PCI_DSS));
         alertTags.put(PolicyTag.API.getTag(), "");
         alertTags.put(PolicyTag.DEV_CICD.getTag(), "");
         alertTags.put(PolicyTag.DEV_STD.getTag(), "");
@@ -229,102 +220,11 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
         NIX_OS_PAYLOADS.put("&&" + insertedCMD + NULL_BYTE_CHARACTER, NIX_CTRL_PATTERN);
     }
 
-    /** The default number of seconds used in time-based attacks (i.e. sleep commands). */
-    private static final int DEFAULT_TIME_SLEEP_SEC = 5;
-
-    // limit the maximum number of requests sent for time-based attack detection
-    private static final int BLIND_REQUESTS_LIMIT = 4;
-
-    // error range allowable for statistical time-based blind attacks (0-1.0)
-    private static final double TIME_CORRELATION_ERROR_RANGE = 0.15;
-    private static final double TIME_SLOPE_ERROR_RANGE = 0.30;
-
-    // *NIX Blind OS Command constants
-    private static final String NIX_BLIND_TEST_CMD = "sleep {0}";
-    // Windows Blind OS Command constants
-    private static final String WIN_BLIND_TEST_CMD = "timeout /T {0}";
-    // PowerSHell Blind Command constants
-    private static final String PS_BLIND_TEST_CMD = "start-sleep -s {0}";
-
-    // OS Command payloads for blind command Injection testing
-    private static final List<String> NIX_BLIND_OS_PAYLOADS = new LinkedList<>();
-    private static final List<String> WIN_BLIND_OS_PAYLOADS = new LinkedList<>();
-    private static final List<String> PS_BLIND_PAYLOADS = new LinkedList<>();
-
-    static {
-        // No quote payloads
-        NIX_BLIND_OS_PAYLOADS.add("&" + NIX_BLIND_TEST_CMD + "&");
-        NIX_BLIND_OS_PAYLOADS.add(";" + NIX_BLIND_TEST_CMD + ";");
-        WIN_BLIND_OS_PAYLOADS.add("&" + WIN_BLIND_TEST_CMD);
-        WIN_BLIND_OS_PAYLOADS.add("|" + WIN_BLIND_TEST_CMD);
-        PS_BLIND_PAYLOADS.add(";" + PS_BLIND_TEST_CMD);
-
-        // Double quote payloads
-        NIX_BLIND_OS_PAYLOADS.add("\"&" + NIX_BLIND_TEST_CMD + "&\"");
-        NIX_BLIND_OS_PAYLOADS.add("\";" + NIX_BLIND_TEST_CMD + ";\"");
-        WIN_BLIND_OS_PAYLOADS.add("\"&" + WIN_BLIND_TEST_CMD + "&\"");
-        WIN_BLIND_OS_PAYLOADS.add("\"|" + WIN_BLIND_TEST_CMD);
-        PS_BLIND_PAYLOADS.add("\";" + PS_BLIND_TEST_CMD);
-
-        // Single quote payloads
-        NIX_BLIND_OS_PAYLOADS.add("'&" + NIX_BLIND_TEST_CMD + "&'");
-        NIX_BLIND_OS_PAYLOADS.add("';" + NIX_BLIND_TEST_CMD + ";'");
-        WIN_BLIND_OS_PAYLOADS.add("'&" + WIN_BLIND_TEST_CMD + "&'");
-        WIN_BLIND_OS_PAYLOADS.add("'|" + WIN_BLIND_TEST_CMD);
-        PS_BLIND_PAYLOADS.add("';" + PS_BLIND_TEST_CMD);
-
-        // Special payloads
-        NIX_BLIND_OS_PAYLOADS.add("\n" + NIX_BLIND_TEST_CMD + "\n"); // force enter
-        NIX_BLIND_OS_PAYLOADS.add("`" + NIX_BLIND_TEST_CMD + "`"); // backtick execution
-        NIX_BLIND_OS_PAYLOADS.add("||" + NIX_BLIND_TEST_CMD); // or control concatenation
-        NIX_BLIND_OS_PAYLOADS.add("&&" + NIX_BLIND_TEST_CMD); // and control concatenation
-        NIX_BLIND_OS_PAYLOADS.add("|" + NIX_BLIND_TEST_CMD + "#"); // pipe & comment
-        // FoxPro for running os commands
-        WIN_BLIND_OS_PAYLOADS.add("run " + WIN_BLIND_TEST_CMD);
-        PS_BLIND_PAYLOADS.add(";" + PS_BLIND_TEST_CMD + " #"); // chain & comment
-
-        // uninitialized variable waf bypass
-        String insertedCMD = insertUninitVar(NIX_BLIND_TEST_CMD);
-        // No quote payloads
-        NIX_BLIND_OS_PAYLOADS.add("&" + insertedCMD + "&");
-        NIX_BLIND_OS_PAYLOADS.add(";" + insertedCMD + ";");
-        // Double quote payloads
-        NIX_BLIND_OS_PAYLOADS.add("\"&" + insertedCMD + "&\"");
-        NIX_BLIND_OS_PAYLOADS.add("\";" + insertedCMD + ";\"");
-        // Single quote payloads
-        NIX_BLIND_OS_PAYLOADS.add("'&" + insertedCMD + "&'");
-        NIX_BLIND_OS_PAYLOADS.add("';" + insertedCMD + ";'");
-        // Special payloads
-        NIX_BLIND_OS_PAYLOADS.add("\n" + insertedCMD + "\n");
-        NIX_BLIND_OS_PAYLOADS.add("`" + insertedCMD + "`");
-        NIX_BLIND_OS_PAYLOADS.add("||" + insertedCMD);
-        NIX_BLIND_OS_PAYLOADS.add("&&" + insertedCMD);
-        NIX_BLIND_OS_PAYLOADS.add("|" + insertedCMD + "#");
-    }
-
     // Logger instance
     private static final Logger LOGGER = LogManager.getLogger(CommandInjectionScanRule.class);
 
     // Get WASC Vulnerability description
     private static final Vulnerability VULN = Vulnerabilities.getDefault().get("wasc_31");
-
-    /** The number of seconds used in time-based attacks (i.e. sleep commands). */
-    private int timeSleepSeconds = DEFAULT_TIME_SLEEP_SEC;
-
-    private enum TestType {
-        FEEDBACK("feedback-based"),
-        TIME("time-based");
-
-        private final String nameKey;
-
-        private TestType(String nameKey) {
-            this.nameKey = nameKey;
-        }
-
-        String getNameKey() {
-            return nameKey;
-        }
-    }
 
     @Override
     public int getId() {
@@ -371,16 +271,6 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
         return ALERT_TAGS;
     }
 
-    private Map<String, String> getNeededAlertTags(TestType type) {
-        if (TestType.FEEDBACK.equals(type)) {
-            Map<String, String> alertTags = new HashMap<>();
-            alertTags.putAll(getAlertTags());
-            alertTags.remove(CommonAlertTag.TEST_TIMING.getTag());
-            return alertTags;
-        }
-        return getAlertTags();
-    }
-
     @Override
     public int getCweId() {
         return 78;
@@ -394,35 +284,6 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
     @Override
     public int getRisk() {
         return Alert.RISK_HIGH;
-    }
-
-    private static String getOtherInfo(TestType testType, String testValue) {
-        return Constant.messages.getString(
-                MESSAGE_PREFIX + "otherinfo." + testType.getNameKey(), testValue);
-    }
-
-    @Override
-    public void init() {
-        try {
-            timeSleepSeconds = this.getConfig().getInt(RULE_SLEEP_TIME, DEFAULT_TIME_SLEEP_SEC);
-        } catch (ConversionException e) {
-            LOGGER.debug(
-                    "Invalid value for '{}': {}",
-                    RULE_SLEEP_TIME,
-                    this.getConfig().getString(RULE_SLEEP_TIME));
-        }
-        LOGGER.debug("Sleep set to {} seconds", timeSleepSeconds);
-    }
-
-    /**
-     * Gets the number of seconds used in time-based attacks.
-     *
-     * <p><strong>Note:</strong> Method provided only to ease the unit tests.
-     *
-     * @return the number of seconds used in time-based attacks.
-     */
-    int getTimeSleep() {
-        return timeSleepSeconds;
     }
 
     /**
@@ -444,22 +305,18 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
 
         // Number of targets to try
         int targetCount = 0;
-        int blindTargetCount = 0;
 
         switch (this.getAttackStrength()) {
             case LOW:
                 targetCount = 3;
-                blindTargetCount = 2;
                 break;
 
             case MEDIUM:
                 targetCount = 7;
-                blindTargetCount = 6;
                 break;
 
             case HIGH:
                 targetCount = 13;
-                blindTargetCount = 12;
                 break;
 
             case INSANE:
@@ -467,12 +324,6 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
                         Math.max(
                                 PS_PAYLOADS.size(),
                                 (Math.max(NIX_OS_PAYLOADS.size(), WIN_OS_PAYLOADS.size())));
-                blindTargetCount =
-                        Math.max(
-                                PS_BLIND_PAYLOADS.size(),
-                                (Math.max(
-                                        NIX_BLIND_OS_PAYLOADS.size(),
-                                        WIN_BLIND_OS_PAYLOADS.size())));
                 break;
 
             default:
@@ -480,13 +331,7 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
         }
 
         if (inScope(Tech.Linux) || inScope(Tech.MacOS)) {
-            if (testCommandInjection(
-                    paramName,
-                    value,
-                    targetCount,
-                    blindTargetCount,
-                    NIX_OS_PAYLOADS,
-                    NIX_BLIND_OS_PAYLOADS)) {
+            if (testCommandInjection(paramName, value, targetCount, NIX_OS_PAYLOADS)) {
                 return;
             }
         }
@@ -497,13 +342,7 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
 
         if (inScope(Tech.Windows)) {
             // Windows Command Prompt
-            if (testCommandInjection(
-                    paramName,
-                    value,
-                    targetCount,
-                    blindTargetCount,
-                    WIN_OS_PAYLOADS,
-                    WIN_BLIND_OS_PAYLOADS)) {
+            if (testCommandInjection(paramName, value, targetCount, WIN_OS_PAYLOADS)) {
                 return;
             }
             // Check if the user has stopped the scan
@@ -511,15 +350,7 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
                 return;
             }
             // Windows PowerShell
-            if (testCommandInjection(
-                    paramName,
-                    value,
-                    targetCount,
-                    blindTargetCount,
-                    PS_PAYLOADS,
-                    PS_BLIND_PAYLOADS)) {
-                return;
-            }
+            testCommandInjection(paramName, value, targetCount, PS_PAYLOADS);
         }
     }
 
@@ -529,27 +360,19 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
      * @param paramName the name of the parameter that will be used for testing for injection
      * @param value the value of the parameter that will be used for testing for injection
      * @param targetCount the number of requests for normal payloads
-     * @param blindTargetCount the number of requests for blind payloads
      * @param osPayloads the normal payloads
-     * @param blindOsPayloads the blind payloads
      * @return {@code true} if the vulnerability was found, {@code false} otherwise.
      */
     private boolean testCommandInjection(
-            String paramName,
-            String value,
-            int targetCount,
-            int blindTargetCount,
-            Map<String, Pattern> osPayloads,
-            List<String> blindOsPayloads) {
-        // Start testing OS Command Injection patterns
-        // ------------------------------------------
+            String paramName, String value, int targetCount, Map<String, Pattern> osPayloads) {
+
         String payload;
         String paramValue;
         Iterator<String> it = osPayloads.keySet().iterator();
         boolean firstPayload = true;
 
         // -----------------------------------------------
-        // Check 1: Feedback based OS Command Injection
+        // Check: Feedback based OS Command Injection
         // -----------------------------------------------
         // try execution check sending a specific payload
         // and verifying if it returns back the output inside
@@ -597,8 +420,7 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
                             paramName,
                             paramValue);
 
-                    buildAlert(paramName, paramValue, matcher.group(), TestType.FEEDBACK, msg)
-                            .raise();
+                    buildAlert(paramName, paramValue, matcher.group(), msg).raise();
 
                     // All done. No need to look for vulnerabilities on subsequent
                     // payloads on the same request (to reduce performance impact)
@@ -606,17 +428,12 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
                 }
 
             } catch (IOException ex) {
-                // Do not try to internationalise this.. we need an error message in any event..
-                // if it's in English, it's still better than not having it at all.
                 LOGGER.warn(
                         "Command Injection vulnerability check failed for parameter [{}] and payload [{}] due to an I/O error",
                         paramName,
                         payload,
                         ex);
             }
-
-            // Check if the scan has been stopped
-            // if yes dispose resources and exit
             if (isStop()) {
                 // Dispose all resources
                 // Exit the scan rule
@@ -624,89 +441,6 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
             }
         }
 
-        // -----------------------------------------------
-        // Check 2: Time-based Blind OS Command Injection
-        // -----------------------------------------------
-        // Check for a sleep shell execution by using
-        // linear regression to check for a correlation
-        // between requested delay and actual delay.
-        // -----------------------------------------------
-
-        it = blindOsPayloads.iterator();
-
-        for (int i = 0; it.hasNext() && (i < blindTargetCount); i++) {
-            AtomicReference<HttpMessage> message = new AtomicReference<>();
-            String sleepPayload = it.next();
-            paramValue = value + sleepPayload.replace("{0}", String.valueOf(timeSleepSeconds));
-
-            // the function that will send each request
-            TimingUtils.RequestSender requestSender =
-                    x -> {
-                        HttpMessage msg = getNewMsg();
-                        message.set(msg);
-                        String finalPayload =
-                                value + sleepPayload.replace("{0}", String.valueOf(x));
-                        setParameter(msg, paramName, finalPayload);
-                        LOGGER.debug("Testing [{}] = [{}]", paramName, finalPayload);
-
-                        // send the request and retrieve the response
-                        sendAndReceive(msg, false);
-                        return msg.getTimeElapsedMillis() / 1000.0;
-                    };
-
-            boolean isInjectable;
-            try {
-                try {
-                    // use TimingUtils to detect a response to sleep payloads
-                    isInjectable =
-                            TimingUtils.checkTimingDependence(
-                                    BLIND_REQUESTS_LIMIT,
-                                    timeSleepSeconds,
-                                    requestSender,
-                                    TIME_CORRELATION_ERROR_RANGE,
-                                    TIME_SLOPE_ERROR_RANGE);
-                } catch (SocketException ex) {
-                    LOGGER.debug(
-                            "Caught {} {} when accessing: {}.\n The target may have replied with a poorly formed redirect due to our input.",
-                            ex.getClass().getName(),
-                            ex.getMessage(),
-                            message.get().getRequestHeader().getURI());
-                    continue; // Something went wrong, move to next blind iteration
-                }
-
-                if (isInjectable) {
-                    // We Found IT!
-                    // First do logging
-                    LOGGER.debug(
-                            "[Blind OS Command Injection Found] on parameter [{}] with value [{}]",
-                            paramName,
-                            paramValue);
-
-                    // just attach this alert to the last sent message
-                    buildAlert(paramName, paramValue, "", TestType.TIME, message.get()).raise();
-
-                    // All done. No need to look for vulnerabilities on subsequent
-                    // payloads on the same request (to reduce performance impact)
-                    return true;
-                }
-            } catch (IOException ex) {
-                // Do not try to internationalise this.. we need an error message in any event..
-                // if it's in English, it's still better than not having it at all.
-                LOGGER.warn(
-                        "Blind Command Injection vulnerability check failed for parameter [{}] and payload [{}] due to an I/O error",
-                        paramName,
-                        paramValue,
-                        ex);
-            }
-
-            // Check if the scan has been stopped
-            // if yes dispose resources and exit
-            if (isStop()) {
-                // Dispose all resources
-                // Exit the scan rule
-                return false;
-            }
-        }
         return false;
     }
 
@@ -716,7 +450,7 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
      *
      * @param cmd the cmd to insert uninitialized variable
      */
-    private static String insertUninitVar(String cmd) {
+    static String insertUninitVar(String cmd) {
         int varLength = ThreadLocalRandom.current().nextInt(1, 3) + 1;
         char[] array = new char[varLength];
         // $xx
@@ -731,23 +465,18 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
                 .replaceAll("\\/", Matcher.quoteReplacement(var + "/"));
     }
 
-    private AlertBuilder buildAlert(
-            String param, String attack, String evidence, TestType type, HttpMessage msg) {
-        String otherInfo = getOtherInfo(type, attack);
+    AlertBuilder buildAlert(String param, String attack, String evidence, HttpMessage msg) {
         return newAlert()
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setParam(param)
                 .setAttack(attack)
                 .setEvidence(evidence)
                 .setMessage(msg)
-                .setOtherInfo(otherInfo)
-                .setTags(getNeededAlertTags(type));
+                .setOtherInfo(Constant.messages.getString(MESSAGE_PREFIX + "otherinfo", attack));
     }
 
     @Override
     public List<Alert> getExampleAlerts() {
-        return List.of(
-                buildAlert("qry", "a;cat /etc/passwd ", "root:x:0:0", TestType.FEEDBACK, null)
-                        .build());
+        return List.of(buildAlert("qry", "a;cat /etc/passwd ", "root:x:0:0", null).build());
     }
 }

@@ -60,21 +60,27 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns
 <br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/90019/">90019</a>.
 
-<H2 id="id-90020">Command Injection</H2>
+<H2 id="id-90020">Remote OS Command Injection</H2>
 
-This rule submits *NIX and Windows OS commands as URL parameter values to determine whether or not the web application is passing unchecked
+This rule injects *NIX and Windows OS commands to determine whether or not the web application is passing unchecked
 user input directly to the underlying OS. The injection strings consist of meta-characters that may be interpreted by the OS
-as join commands along with a payload that should generate output in the response if the application is vulnerable. If the content of a response body
-matches the payload, the scanner raises an alert and returns immediately. In the event that none of the error-based matching attempts
-return output in the response, the scanner will attempt a blind injection attack by submitting sleep instructions as the payload and comparing the elapsed time between sending the request
-and receiving the response against a heuristic time-delay lower limit. If the elapsed time is greater than this limit, an alert is raised with medium confidence
-and the scanner returns immediately.
+as join commands along with a payload that should generate output in the response if the application is vulnerable.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/CommandInjectionScanRule.java">CommandInjectionScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/90020/">90020</a>.
+
+<H2 id="id-90037">Remote OS Command Injection (Time Based)</H2>
+
+This rule injects *NIX and Windows OS commands to determine whether or not the web application is passing unchecked
+user input directly to the underlying OS. The rule will attempt blind injection attack(s) by submitting sleep instructions as the payload and comparing the elapsed time between sending the request
+and receiving the response against a heuristic time-delay lower limit.
 <br>
 Post 2.5.0 you can change the length of time used for the blind injection attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/CommandInjectionScaRule.java">CommandInjectionScaRule.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/CommandInjectionTimingScanRule.java">CommandInjectionTimingScanRule.java</a>
 <br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/90020/">90020</a>.
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/90037/">90037</a>.
 
 <H2 id="id-40012">Cross Site Scripting (Reflected)</H2>
 
