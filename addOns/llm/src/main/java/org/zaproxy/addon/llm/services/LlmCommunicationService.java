@@ -170,7 +170,7 @@ public class LlmCommunicationService {
             LOGGER.debug("Reviewing alert : {}", alert.getName());
             LOGGER.debug("Confidence level from ZAP : {}", alert.getConfidence());
             Stats.incCounter("stats.llm.alertreview.call");
-            llmConfidence = llmAssistant.review(alert.getDescription(), alert.getEvidence());
+            llmConfidence = llmAssistant.review(alert.getDescription(), alert.getEvidence(), alert.getOtherInfo());
 
             if (llmConfidence.getLevel() == alert.getConfidence()) {
                 Stats.incCounter("stats.llm.alertreview.result.same");

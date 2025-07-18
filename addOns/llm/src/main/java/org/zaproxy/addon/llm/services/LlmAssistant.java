@@ -50,6 +50,9 @@ public interface LlmAssistant {
                     + "---\n"
                     + "{{evidence}}\n"
                     + "---\n"
+                    + "Also, here's some additional information that may be useful for you to reach to conclusion"
+                    + "---\n"
+                    + "{{otherinfo}}"
                     + "Provide a short consistent explanation of the new score.\n")
-    Confidence review(@V("description") String description, @V("evidence") String evidence);
+    Confidence review(@V("description") String description, @V("evidence") String evidence, @V("otherinfo") String otherinfo);
 }
