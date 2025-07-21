@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import org.apache.commons.configuration.ConversionException;
 import org.apache.logging.log4j.LogManager;
@@ -268,7 +269,7 @@ public class CommandInjectionTimingScanRule extends CommandInjectionScanRule
                         LOGGER.debug("Testing [{}] = [{}]", paramName, finalPayload);
 
                         sendAndReceive(msg, false);
-                        return msg.getTimeElapsedMillis() / 1000.0;
+                        return TimeUnit.MILLISECONDS.toSeconds(msg.getTimeElapsedMillis());
                     };
 
             boolean isInjectable;

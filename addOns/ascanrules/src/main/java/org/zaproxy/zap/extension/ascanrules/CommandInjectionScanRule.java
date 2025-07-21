@@ -56,7 +56,6 @@ import org.zaproxy.zap.model.TechSet;
 public class CommandInjectionScanRule extends AbstractAppParamPlugin
         implements CommonActiveScanRuleInfo {
 
-    /** Prefix for internationalised messages used by this rule */
     static final String MESSAGE_PREFIX = "ascanrules.commandinjection.";
 
     // *NIX OS Command constants
@@ -220,10 +219,8 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
         NIX_OS_PAYLOADS.put("&&" + insertedCMD + NULL_BYTE_CHARACTER, NIX_CTRL_PATTERN);
     }
 
-    // Logger instance
     private static final Logger LOGGER = LogManager.getLogger(CommandInjectionScanRule.class);
 
-    // Get WASC Vulnerability description
     private static final Vulnerability VULN = Vulnerabilities.getDefault().get("wasc_31");
 
     @Override
@@ -238,12 +235,9 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
 
     @Override
     public boolean targets(TechSet technologies) {
-        if (technologies.includes(Tech.Linux)
+        return technologies.includes(Tech.Linux)
                 || technologies.includes(Tech.MacOS)
-                || technologies.includes(Tech.Windows)) {
-            return true;
-        }
-        return false;
+                || technologies.includes(Tech.Windows);
     }
 
     @Override
@@ -295,40 +289,23 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
      */
     @Override
     public void scan(HttpMessage msg, String paramName, String value) {
-
-        // Begin scan rule execution
         LOGGER.debug(
                 "Checking [{}][{}], parameter [{}] for OS Command Injection Vulnerabilities",
                 msg.getRequestHeader().getMethod(),
                 msg.getRequestHeader().getURI(),
                 paramName);
 
-        // Number of targets to try
-        int targetCount = 0;
-
-        switch (this.getAttackStrength()) {
-            case LOW:
-                targetCount = 3;
-                break;
-
-            case MEDIUM:
-                targetCount = 7;
-                break;
-
-            case HIGH:
-                targetCount = 13;
-                break;
-
-            case INSANE:
-                targetCount =
-                        Math.max(
-                                PS_PAYLOADS.size(),
-                                (Math.max(NIX_OS_PAYLOADS.size(), WIN_OS_PAYLOADS.size())));
-                break;
-
-            default:
-                // Default to off
-        }
+        int targetCount =
+                switch (this.getAttackStrength()) {
+                    case LOW -> 3;
+                    case MEDIUM -> 7;
+                    case HIGH -> 13;
+                    case INSANE ->
+                            Math.max(
+                                    PS_PAYLOADS.size(),
+                                    Math.max(NIX_OS_PAYLOADS.size(), WIN_OS_PAYLOADS.size()));
+                    default -> 0; // Default to "off"
+                };
 
         if (inScope(Tech.Linux) || inScope(Tech.MacOS)) {
             if (testCommandInjection(paramName, value, targetCount, NIX_OS_PAYLOADS)) {
@@ -392,7 +369,6 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
             LOGGER.debug("Testing [{}] = [{}]", paramName, paramValue);
 
             try {
-                // Send the request and retrieve the response
                 try {
                     sendAndReceive(msg, false);
                 } catch (SocketException ex) {
@@ -413,8 +389,6 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
 
                 Matcher matcher = osPayloads.get(payload).matcher(content);
                 if (matcher.find()) {
-                    // We Found IT!
-                    // First do logging
                     LOGGER.debug(
                             "[OS Command Injection Found] on parameter [{}] with value [{}]",
                             paramName,
@@ -435,8 +409,6 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
                         ex);
             }
             if (isStop()) {
-                // Dispose all resources
-                // Exit the scan rule
                 return false;
             }
         }
@@ -458,11 +430,11 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
         for (int i = 1; i < varLength; ++i) {
             array[i] = (char) ThreadLocalRandom.current().nextInt(97, 123);
         }
-        String var = new String(array);
+        String variable = new String(array);
 
         // insert variable before each space and '/' in the path
-        return cmd.replaceAll("\\s", Matcher.quoteReplacement(var + " "))
-                .replaceAll("\\/", Matcher.quoteReplacement(var + "/"));
+        return cmd.replaceAll("\\s", Matcher.quoteReplacement(variable + " "))
+                .replaceAll("\\/", Matcher.quoteReplacement(variable + "/"));
     }
 
     AlertBuilder buildAlert(String param, String attack, String evidence, HttpMessage msg) {

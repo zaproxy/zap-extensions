@@ -125,7 +125,7 @@ class CommandInjectionTimingScanRuleUnitTest
     }
 
     @Test
-    void shouldInitWithConfig() throws Exception {
+    void shouldInitWithConfig() {
         // Given
         CommandInjectionTimingScanRule scanRule = new CommandInjectionTimingScanRule();
         scanRule.setConfig(new ZapXmlConfiguration());
