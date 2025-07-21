@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import org.apache.commons.configuration.ConversionException;
 import org.apache.logging.log4j.LogManager;
@@ -70,6 +71,9 @@ import org.zaproxy.zap.model.TechSet;
 public class SqlInjectionHypersonicTimingScanRule extends AbstractAppParamPlugin
         implements CommonActiveScanRuleInfo {
 
+    private static final String DEFAULT_FROM_AND_WHERE =
+            " from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME'";
+
     /** Hypersonic one-line comment */
     public static final String SQL_ONE_LINE_COMMENT = " -- ";
 
@@ -100,19 +104,19 @@ public class SqlInjectionHypersonicTimingScanRule extends AbstractAppParamPlugin
             List.of(
                     "; select "
                             + SQL_HYPERSONIC_TIME_FUNCTION
-                            + " from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME'"
+                            + DEFAULT_FROM_AND_WHERE
                             + SQL_ONE_LINE_COMMENT,
                     "'; select "
                             + SQL_HYPERSONIC_TIME_FUNCTION
-                            + " from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME'"
+                            + DEFAULT_FROM_AND_WHERE
                             + SQL_ONE_LINE_COMMENT,
                     "\"; select "
                             + SQL_HYPERSONIC_TIME_FUNCTION
-                            + " from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME'"
+                            + DEFAULT_FROM_AND_WHERE
                             + SQL_ONE_LINE_COMMENT,
                     "); select "
                             + SQL_HYPERSONIC_TIME_FUNCTION
-                            + " from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME'"
+                            + DEFAULT_FROM_AND_WHERE
                             + SQL_ONE_LINE_COMMENT,
                     SQL_HYPERSONIC_TIME_FUNCTION,
                     ORIG_VALUE_TOKEN + " / " + SQL_HYPERSONIC_TIME_FUNCTION + " ",
@@ -121,42 +125,50 @@ public class SqlInjectionHypersonicTimingScanRule extends AbstractAppParamPlugin
                     ORIG_VALUE_TOKEN
                             + " and exists ( select "
                             + SQL_HYPERSONIC_TIME_FUNCTION
-                            + " from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"
+                            + DEFAULT_FROM_AND_WHERE
+                            + ")"
                             + SQL_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
                     ORIG_VALUE_TOKEN
                             + "' and exists ( select "
                             + SQL_HYPERSONIC_TIME_FUNCTION
-                            + " from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"
+                            + DEFAULT_FROM_AND_WHERE
+                            + ")"
                             + SQL_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
                     ORIG_VALUE_TOKEN
                             + "\" and exists ( select "
                             + SQL_HYPERSONIC_TIME_FUNCTION
-                            + " from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"
+                            + DEFAULT_FROM_AND_WHERE
+                            + ")"
                             + SQL_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
                     ORIG_VALUE_TOKEN
                             + ") and exists ( select "
                             + SQL_HYPERSONIC_TIME_FUNCTION
-                            + " from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"
+                            + DEFAULT_FROM_AND_WHERE
+                            + ")"
                             + SQL_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
                     ORIG_VALUE_TOKEN
                             + " or exists ( select "
                             + SQL_HYPERSONIC_TIME_FUNCTION
-                            + " from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"
+                            + DEFAULT_FROM_AND_WHERE
+                            + ")"
                             + SQL_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
                     ORIG_VALUE_TOKEN
                             + "' or exists ( select "
                             + SQL_HYPERSONIC_TIME_FUNCTION
-                            + " from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"
+                            + DEFAULT_FROM_AND_WHERE
+                            + ")"
                             + SQL_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
                     ORIG_VALUE_TOKEN
                             + "\" or exists ( select "
                             + SQL_HYPERSONIC_TIME_FUNCTION
-                            + " from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"
+                            + DEFAULT_FROM_AND_WHERE
+                            + ")"
                             + SQL_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
                     ORIG_VALUE_TOKEN
                             + ") or exists ( select "
                             + SQL_HYPERSONIC_TIME_FUNCTION
-                            + " from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"
+                            + DEFAULT_FROM_AND_WHERE
+                            + ")"
                             + SQL_ONE_LINE_COMMENT // Param in WHERE clause somewhere
                     );
 
@@ -288,14 +300,17 @@ public class SqlInjectionHypersonicTimingScanRule extends AbstractAppParamPlugin
                                 sleepPayload
                                         .replace(ORIG_VALUE_TOKEN, paramValue)
                                         // Time in milliseconds for the SQL function.
-                                        .replace(SLEEP_TOKEN, Integer.toString(((int) x) * 1000));
+                                        .replace(
+                                                SLEEP_TOKEN,
+                                                String.valueOf(
+                                                        TimeUnit.SECONDS.toMillis((long) x)));
 
                         setParameter(msg, paramName, finalPayload);
                         LOGGER.debug("Testing [{}] = [{}]", paramName, finalPayload);
                         attack.compareAndSet(null, finalPayload);
 
                         sendAndReceive(msg, false);
-                        return msg.getTimeElapsedMillis() / 1000.0;
+                        return TimeUnit.MILLISECONDS.toSeconds(msg.getTimeElapsedMillis());
                     };
 
             try {
@@ -313,21 +328,18 @@ public class SqlInjectionHypersonicTimingScanRule extends AbstractAppParamPlugin
                             paramName,
                             attack.get());
 
-                    String extraInfo =
-                            Constant.messages.getString(
-                                    "ascanrules.sqlinjection.alert.timebased.extrainfo",
-                                    attack.get(),
-                                    message.get().getTimeElapsedMillis(),
-                                    paramValue,
-                                    getBaseMsg().getTimeElapsedMillis());
-
                     newAlert()
                             .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                            .setName(getName() + " - Time Based")
                             .setUri(getBaseMsg().getRequestHeader().getURI().toString())
                             .setParam(paramName)
                             .setAttack(attack.get())
-                            .setOtherInfo(extraInfo)
+                            .setOtherInfo(
+                                    Constant.messages.getString(
+                                            "ascanrules.sqlinjection.alert.timebased.extrainfo",
+                                            attack.get(),
+                                            message.get().getTimeElapsedMillis(),
+                                            paramValue,
+                                            getBaseMsg().getTimeElapsedMillis()))
                             .setMessage(message.get())
                             .raise();
                     break;

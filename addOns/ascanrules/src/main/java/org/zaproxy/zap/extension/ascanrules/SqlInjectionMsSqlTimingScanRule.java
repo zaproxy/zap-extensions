@@ -133,7 +133,6 @@ public class SqlInjectionMsSqlTimingScanRule extends AbstractAppParamPlugin
     private static final double TIME_CORRELATION_ERROR_RANGE = 0.15;
     private static final double TIME_SLOPE_ERROR_RANGE = 0.30;
 
-    /** for logging. */
     private static final Logger LOGGER =
             LogManager.getLogger(SqlInjectionMsSqlTimingScanRule.class);
 
@@ -201,7 +200,6 @@ public class SqlInjectionMsSqlTimingScanRule extends AbstractAppParamPlugin
     public void init() {
         LOGGER.debug("Initialising");
 
-        // set up what we are allowed to do, depending on the attack strength that was set.
         if (this.getAttackStrength() == AttackStrength.LOW) {
             blindTargetCount = 6;
         } else if (this.getAttackStrength() == AttackStrength.MEDIUM) {
@@ -212,7 +210,6 @@ public class SqlInjectionMsSqlTimingScanRule extends AbstractAppParamPlugin
             blindTargetCount = SQL_MSSQL_TIME_REPLACEMENTS.size();
         }
 
-        // Read the sleep value from the configs
         try {
             this.timeSleepSeconds =
                     this.getConfig()
@@ -225,7 +222,6 @@ public class SqlInjectionMsSqlTimingScanRule extends AbstractAppParamPlugin
         LOGGER.debug("Sleep set to {} seconds", timeSleepSeconds);
     }
 
-    /** scans for SQL Injection vulnerabilities, using MsSQL specific syntax. */
     @Override
     public void scan(HttpMessage originalMessage, String paramName, String paramValue) {
         LOGGER.debug(
@@ -255,7 +251,7 @@ public class SqlInjectionMsSqlTimingScanRule extends AbstractAppParamPlugin
                         attack.compareAndSet(null, finalPayload);
 
                         sendAndReceive(msg, false);
-                        return msg.getTimeElapsedMillis() / 1000.0;
+                        return TimeUnit.MILLISECONDS.toSeconds(msg.getTimeElapsedMillis());
                     };
 
             try {

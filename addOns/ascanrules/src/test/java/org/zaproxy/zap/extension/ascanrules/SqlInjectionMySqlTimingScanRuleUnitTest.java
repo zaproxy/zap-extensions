@@ -48,7 +48,7 @@ class SqlInjectionMySqlTimingScanRuleUnitTest
     }
 
     @Test
-    void shouldTargetMySQLTech() throws Exception {
+    void shouldTargetMySqlTech() {
         // Given
         TechSet techSet = techSet(Tech.MySQL);
         // When
@@ -58,7 +58,7 @@ class SqlInjectionMySqlTimingScanRuleUnitTest
     }
 
     @Test
-    void shouldNotTargetNonMySQLTechs() throws Exception {
+    void shouldNotTargetNonMySqlTechs() {
         // Given
         TechSet techSet = techSetWithout(Tech.MySQL);
         // When
