@@ -27,15 +27,16 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
-import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.Cookie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -56,11 +57,10 @@ import org.zaproxy.zap.extension.script.ScriptVars;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.network.HttpRequestBody;
 import org.zaproxy.zap.network.HttpResponseBody;
+import org.zaproxy.zap.session.SessionManagementMethod;
 import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.Pair;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
-import net.sf.json.JSONObject;
-import org.zaproxy.zap.session.SessionManagementMethod;
 
 class HeaderBasedSessionManagementMethodTypeUnitTest extends TestUtils {
 
