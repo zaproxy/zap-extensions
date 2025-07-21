@@ -47,17 +47,19 @@ public class PlanTreeTableModel extends DefaultTreeModel implements TreeTableMod
 
     protected static final int HIERARCHY_INDEX = 0;
     protected static final int ENABLED_INDEX = 1;
-    protected static final int STATUS_INDEX = 2;
-    protected static final int TIME_INDEX = 3;
-    protected static final int TYPE_INDEX = 4;
-    protected static final int NAME_INDEX = 5;
-    protected static final int INFO_INDEX = 6;
+    protected static final int ALWAYS_RUN_INDEX = 2;
+    protected static final int STATUS_INDEX = 3;
+    protected static final int TIME_INDEX = 4;
+    protected static final int TYPE_INDEX = 5;
+    protected static final int NAME_INDEX = 6;
+    protected static final int INFO_INDEX = 7;
 
     private static final String INDENT = "    ";
 
     private static final String[] COLUMN_NAMES = {
         "", // The tree control
         Constant.messages.getString("automation.panel.table.header.enabled"),
+        Constant.messages.getString("automation.panel.table.header.alwaysrun"),
         Constant.messages.getString("automation.panel.table.header.status"),
         Constant.messages.getString("automation.panel.table.header.time"),
         Constant.messages.getString("automation.panel.table.header.type"),
@@ -117,6 +119,8 @@ public class PlanTreeTableModel extends DefaultTreeModel implements TreeTableMod
                     return "";
                 case ENABLED_INDEX:
                     return true;
+                case ALWAYS_RUN_INDEX:
+                    return false;
                 case STATUS_INDEX:
                     if (!env.isCreated()) {
                         return Constant.messages.getString(
@@ -156,6 +160,8 @@ public class PlanTreeTableModel extends DefaultTreeModel implements TreeTableMod
             switch (columnIndex) {
                 case ENABLED_INDEX:
                     return job.isEnabled();
+                case ALWAYS_RUN_INDEX:
+                    return job.isAlwaysRun();
                 case STATUS_INDEX:
                     switch (job.getStatus()) {
                         case COMPLETED:
@@ -215,6 +221,8 @@ public class PlanTreeTableModel extends DefaultTreeModel implements TreeTableMod
             switch (columnIndex) {
                 case ENABLED_INDEX:
                     return true;
+                case ALWAYS_RUN_INDEX:
+                    return false;
                 case STATUS_INDEX:
                     if (!test.hasRun()) {
                         return "";
@@ -262,6 +270,7 @@ public class PlanTreeTableModel extends DefaultTreeModel implements TreeTableMod
     public Class<?> getColumnClass(int columnIndex) {
         switch (columnIndex) {
             case ENABLED_INDEX:
+            case ALWAYS_RUN_INDEX:
                 return Boolean.class;
             default:
                 return String.class;
@@ -275,7 +284,7 @@ public class PlanTreeTableModel extends DefaultTreeModel implements TreeTableMod
 
     @Override
     public boolean isCellEditable(Object node, int column) {
-        if (column == ENABLED_INDEX) {
+        if (column == ENABLED_INDEX || column == ALWAYS_RUN_INDEX) {
             DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) node;
             if (!treeNode.isRoot()) {
                 Object obj = treeNode.getUserObject();
@@ -288,13 +297,16 @@ public class PlanTreeTableModel extends DefaultTreeModel implements TreeTableMod
 
     @Override
     public void setValueAt(Object value, Object node, int column) {
-        if (column == ENABLED_INDEX) {
-            DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) node;
-            if (!treeNode.isRoot()) {
-                Object obj = treeNode.getUserObject();
-                if (obj instanceof AutomationJob) {
-                    AutomationJob job = (AutomationJob) obj;
+        DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) node;
+        if (!treeNode.isRoot()) {
+            Object obj = treeNode.getUserObject();
+            if (obj instanceof AutomationJob job) {
+                if (column == ENABLED_INDEX) {
                     job.setEnabled(((Boolean) value).booleanValue());
+                    job.setChanged();
+                    jobChanged(job);
+                } else if (column == ALWAYS_RUN_INDEX) {
+                    job.setAlwaysRun(((Boolean) value).booleanValue());
                     job.setChanged();
                     jobChanged(job);
                 }

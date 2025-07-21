@@ -676,7 +676,7 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
                                 .getPath();
                 startScan(dir, true);
             } catch (Exception e) {
-                LOGGER.error(e);
+                LOGGER.error(e, e);
             }
         }
     }

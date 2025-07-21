@@ -55,9 +55,10 @@ dependencies {
     zapAddOn("commonlib")
 
     implementation(files("lib/org.jwall.web.audit-0.2.15.jar"))
-    implementation("de.sstoehr:har-reader:2.4.0") {
+    implementation("de.sstoehr:har-reader:3.1.4") {
         // Provided by commonlib add-on:
         exclude(group = "com.fasterxml.jackson.core")
+        exclude(group = "com.fasterxml.jackson.datatype")
     }
     implementation(files("lib/pkts-core-3.0.11-tcp-streams-branch.jar"))
     implementation(files("lib/pkts-streams-3.0.11-tcp-streams-branch.jar"))

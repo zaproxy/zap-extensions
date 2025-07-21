@@ -70,6 +70,23 @@
     ],
     "website": "https://www.quic.cloud"
   },
+  "QUV": {
+    "cats": [
+      51
+    ],
+    "description": "QUV is a Korean no-code website builder platform that enables website creation through drag-and-drop functionality.",
+    "icon": "QUV.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.quv\\.kr/"
+    ],
+    "website": "https://quv.kr"
+  },
   "Qbrick": {
     "cats": [
       36
@@ -150,6 +167,35 @@
     ],
     "website": "https://www.qiscus.com"
   },
+  "Qiyeku": {
+    "cats": [
+      34
+    ],
+    "description": "Qiyeku is a Chinese enterprise database that provides business information, company listings, and industry resources for market research and trade connections.",
+    "icon": "Qiyeku.svg",
+    "saas": true,
+    "scriptSrc": [
+      "\\.qiyeku\\.cn"
+    ],
+    "website": "https://www.qiyeku.cn"
+  },
+  "Qomon": {
+    "cats": [
+      53
+    ],
+    "description": "Qomon is a Saas software and citizen engagement platform and mobile app for NGOs, movements, campaigns, advocacy groups, and citizen-driven organisations.",
+    "icon": "Qomon.svg",
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "scripts\\.qomon\\.org"
+    ],
+    "website": "https://qomon.com"
+  },
   "Qonnex": {
     "cats": [
       6,
@@ -183,6 +229,23 @@
       "api\\.qooqie\\.com"
     ],
     "website": "https://qooqie.com"
+  },
+  "Qshop": {
+    "cats": [
+      6
+    ],
+    "description": "Qshop is a Korean ecommerce platform that enables the creation of online stores.",
+    "icon": "Qshop.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "cdn\\.qshop\\.ai"
+    ],
+    "website": "https://qshop.ai"
   },
   "Qstomizer": {
     "cats": [
@@ -282,6 +345,18 @@
       "\\.qualtrics\\.com/"
     ],
     "website": "https://www.qualtrics.com"
+  },
+  "Quandoo": {
+    "cats": [
+      93
+    ],
+    "description": "Quandoo is a platform that allows users to find and reserve restaurants.",
+    "icon": "Quandoo.svg",
+    "saas": true,
+    "scriptSrc": [
+      "booking-widget\\.quandoo\\.com"
+    ],
+    "website": "https://www.quandoo.co.uk"
   },
   "Quant": {
     "cats": [
@@ -738,6 +813,23 @@
     ],
     "saas": true,
     "website": "https://www.quintype.com"
+  },
+  "Quiq Messaging": {
+    "cats": [
+      52
+    ],
+    "description": "Quiq Messaging is a business messaging solution designed to facilitate customer communication across multiple channels.",
+    "icon": "QuiqMessaging.svg",
+    "js": {
+      "Quiq": "",
+      "QuiqUtils": "",
+      "QuiqUtils._.VERSION": "([\\d.]+)\\;version:\\1"
+    },
+    "saas": true,
+    "scriptSrc": [
+      "\\.goquiq\\.com"
+    ],
+    "website": "https://quiq.com"
   },
   "Quixchat": {
     "cats": [

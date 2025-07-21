@@ -38,6 +38,7 @@ import de.sstoehr.harreader.HarReader;
 import de.sstoehr.harreader.HarReaderException;
 import de.sstoehr.harreader.model.HarEntry;
 import de.sstoehr.harreader.model.HarLog;
+import de.sstoehr.harreader.model.HarLog.HarLogBuilder;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
@@ -382,15 +383,15 @@ class HarImporterUnitTest extends TestUtils {
     private HarLog getHarLog(String path, String replacement) throws HarReaderException {
         return new HarReader()
                 .readFromString(getHtml(path, Map.of(PLACEHOLDER, replacement)))
-                .getLog();
+                .log();
     }
 
     private static HarLog createHarLog(HttpMessage message) {
-        HarLog harLog = HarUtils.createZapHarLog();
+        HarLogBuilder harLog = HarUtils.createZapHarLog();
         List<HarEntry> harEntries = new ArrayList<>();
         harEntries.add(HarUtils.createHarEntry(message));
-        harLog.setEntries(harEntries);
-        return harLog;
+        harLog.entries(harEntries);
+        return harLog.build();
     }
 
     static class TestAppender extends AbstractAppender {

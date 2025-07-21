@@ -25,7 +25,7 @@ crowdin {
 }
 
 dependencies {
-    api(platform("com.fasterxml.jackson:jackson-bom:2.17.0"))
+    api(platform("com.fasterxml.jackson:jackson-bom:2.19.1"))
     api("com.fasterxml.jackson.core:jackson-databind")
     api("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
     api("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")

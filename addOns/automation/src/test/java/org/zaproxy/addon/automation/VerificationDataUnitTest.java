@@ -20,6 +20,7 @@
 package org.zaproxy.addon.automation;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.BDDMockito.given;
@@ -28,6 +29,7 @@ import static org.mockito.Mockito.mock;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.stream.Stream;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -71,5 +73,26 @@ class VerificationDataUnitTest {
         assertThat(
                 context.getAuthenticationMethod().getAuthCheckingStrategy(),
                 is(authCheckingStrategy));
+    }
+
+    @Test
+    void shouldHandleContextWithHeaders() {
+        // Given
+        Constant.messages = new I18N(Locale.ENGLISH);
+        Context context = mock(Context.class);
+        HttpAuthenticationMethod httpAuthMethod = new HttpAuthenticationMethod();
+        given(context.getAuthenticationMethod()).willReturn(httpAuthMethod);
+        httpAuthMethod.setPollHeaders("test-header1: value1\n referer : https://www.example.com ");
+
+        // When
+        VerificationData data = new VerificationData(context);
+
+        // Then
+        assertThat(data.getPollAdditionalHeaders(), hasSize(2));
+        assertThat(data.getPollAdditionalHeaders().get(0).getHeader(), is("test-header1"));
+        assertThat(data.getPollAdditionalHeaders().get(0).getValue(), is("value1"));
+        assertThat(data.getPollAdditionalHeaders().get(1).getHeader(), is("referer"));
+        assertThat(
+                data.getPollAdditionalHeaders().get(1).getValue(), is("https://www.example.com"));
     }
 }

@@ -87,6 +87,21 @@
 			<td align = "center">All enabled</td>
 		</tr>
 		<tr>
+			<td>Scope Check</td>
+			<td>How the scope is checked:
+				<ul>
+					<li><code>Strict</code> - enforces that all requests need to be in scope to be accessed, with the exception of the Allowed Resources.
+					<li><code>Flexible</code> - allows all requests to be accessed. This scope check does not use nor require configuring the Allowed Resources for targets that need domains out of scope to work. This scope check has the side effect of allowing out of scope domains to be accessed, but not crawled.
+				</ul>
+			</td>
+			<td align = "center">Strict</td>
+		</tr>
+		<tr>
+			<td>Logout Avoidance</td>
+			<td>When enabled, the spider will avoid clicking common logout elements, which does not require manually excluding them.</td>
+			<td align = "center">False</td>
+		</tr>
+		<tr>
 			<td>Allowed Resources (table)</td>
 			<td>The list of allowed resources. The allowed resources are always fetched even if out of scope, allowing to include necessary resources (e.g. scripts) from 3rd-parties.</td>
 			<td align = "center"></td>

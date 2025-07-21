@@ -134,12 +134,23 @@ public class AutomationPlan {
 
                         Object jobEnabled = jobData.get("enabled");
                         if (jobEnabled != null) {
-                            if (jobEnabled instanceof Boolean) {
-                                job.setEnabled((Boolean) jobEnabled);
+                            if (jobEnabled instanceof Boolean enableBool) {
+                                job.setEnabled(enableBool);
                             } else {
                                 progress.warn(
                                         Constant.messages.getString(
                                                 "automation.error.job.enabled", jobEnabled));
+                            }
+                        }
+
+                        Object alwaysRun = jobData.get("alwaysRun");
+                        if (alwaysRun != null) {
+                            if (alwaysRun instanceof Boolean jobBool) {
+                                job.setAlwaysRun(jobBool);
+                            } else {
+                                progress.warn(
+                                        Constant.messages.getString(
+                                                "automation.error.job.alwaysrun", alwaysRun));
                             }
                         }
 

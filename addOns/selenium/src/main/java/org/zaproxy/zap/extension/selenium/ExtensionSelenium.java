@@ -51,6 +51,9 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.chromium.ChromiumOptions;
+import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
@@ -218,6 +221,8 @@ public class ExtensionSelenium extends ExtensionAdaptor {
 
         addBuiltInProvider(Browser.CHROME);
         addBuiltInProvider(Browser.CHROME_HEADLESS);
+        addBuiltInProvider(Browser.EDGE);
+        addBuiltInProvider(Browser.EDGE_HEADLESS);
         addBuiltInProvider(Browser.FIREFOX);
         addBuiltInProvider(Browser.FIREFOX_HEADLESS);
         addBuiltInProvider(Browser.HTML_UNIT);
@@ -1024,11 +1029,11 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         }
     }
 
-    private static void addChromeArguments(ChromeOptions options) {
+    private static void addArguments(Browser browser, ChromiumOptions<?> options) {
         List<String> arguments = new ArrayList<>();
         // FIXME https://github.com/SeleniumHQ/selenium/issues/15788
         arguments.add("--disable-features=DisableLoadExtensionCommandLineSwitch");
-        getSeleniumOptions().getBrowserArguments(Browser.CHROME.getId()).stream()
+        getSeleniumOptions().getBrowserArguments(browser.getId()).stream()
                 .filter(BrowserArgument::isEnabled)
                 .map(BrowserArgument::getArgument)
                 .forEach(arguments::add);
@@ -1037,7 +1042,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         }
     }
 
-    private static void addChromeExtensions(ChromeOptions options) {
+    private static void addChromeExtensions(ChromiumOptions<?> options) {
         options.addExtensions(
                 getSeleniumOptions().getEnabledBrowserExtensions(Browser.CHROME).stream()
                         .map(BrowserExtension::getPath)
@@ -1076,9 +1081,29 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                     chromeOptions.setBinary(binary);
                 }
 
-                addChromeArguments(chromeOptions);
+                addArguments(Browser.CHROME, chromeOptions);
                 consumer.accept(chromeOptions);
                 return configureDriver(new ChromeDriver(chromeOptions));
+            case EDGE, EDGE_HEADLESS:
+                EdgeOptions edgeOptions = new EdgeOptions();
+                edgeOptions.setCapability(BIDI_CAPABILITIY, true);
+                if (enableExtensions) {
+                    addChromeExtensions(edgeOptions);
+                }
+                setCommonOptions(edgeOptions, proxyAddress, proxyPort);
+                edgeOptions.addArguments("--proxy-bypass-list=<-loopback>");
+                edgeOptions.addArguments("--ignore-certificate-errors");
+                if (browser == Browser.EDGE_HEADLESS) {
+                    edgeOptions.addArguments("--headless=new");
+                }
+                String edgeBinary = System.getProperty(SeleniumOptions.EDGE_BINARY_SYSTEM_PROPERTY);
+                if (edgeBinary != null && !edgeBinary.isEmpty()) {
+                    edgeOptions.setBinary(edgeBinary);
+                }
+
+                addArguments(Browser.EDGE, edgeOptions);
+                consumer.accept(edgeOptions);
+                return configureDriver(new EdgeDriver(edgeOptions));
             case FIREFOX:
             case FIREFOX_HEADLESS:
                 FirefoxOptions firefoxOptions = new FirefoxOptions();
@@ -1231,6 +1256,8 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         switch (browser) {
             case CHROME:
                 return getMessages().getString("selenium.warn.message.failed.start.browser.chrome");
+            case EDGE:
+                return getMessages().getString("selenium.warn.message.failed.start.browser.edge");
             case PHANTOM_JS:
                 return getMessages()
                         .getString("selenium.warn.message.failed.start.browser.phantomjs");

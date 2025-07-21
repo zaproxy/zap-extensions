@@ -35,8 +35,7 @@
 		<tr>
 			<td>Chrome</td>
 			<td>chrome</td>
-			<td>Известно, что работают следующие версии: 59 и 60 (более старые версии могут работать
-тоже).  Требуется ChromeDriver, если его нет в системном PATH, его можно установить в
+			<td>Требуется ChromeDriver, если его нет в системном PATH, его можно установить в
 опциях.  Для получения дополнительной информации о ChromeDriver и о том, как его получить, посетите <a
 				href="https://sites.google.com/a/chromium.org/chromedriver/">веб-сайт ChromeDriver</a>. .
 			</td>
@@ -47,14 +46,24 @@
 			<td>Запускает Chrome без графического интерфейса (GUI). </td>
 		</tr>
 		<tr>
+			<td>Edge</td>
+			<td>edge</td>
+			<td>Requires EdgeDriver, if not on the system's PATH, it can be set in the
+				options. For more information on EdgeDriver and how to obtain it refer to the <a
+				href="https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/">EdgeDriver website</a>.
+			</td>
+		</tr>
+		<tr>
+			<td>Edge Headless</td>
+			<td>edge-headless</td>
+			<td>Starts Edge without GUI.</td>
+		</tr>
+		<tr>
 			<td>Firefox</td>
 			<td>firefox</td>
-			<td>Известно, что работают следующие версии: 45 (ESR), 46, 47.0.1, 54 и 55 (старые версии).
-версии тоже могут работать).  Известно, что некоторые версии не работают, например, 47.0.0. Новее
-версии (> 48) требуют geckodriver, его можно установить в настройках.  Для большей
-информации о geckodriver и о том, как его получить, см. на <a
-				href="https://github.com/mozilla/geckodriver">веб-сайте geckodriver</a> (см. примечание в нижнем колонтитуле
-для предостережения при использовании geckodriver). 
+			<td>Requires geckodriver, it can be set in the options. For more
+				information on geckodriver and how to obtain it refer to the <a
+				href="https://github.com/mozilla/geckodriver">geckodriver website</a>,
 			</td>
 		</tr>
 		<tr>
@@ -73,7 +82,7 @@
 			<td>&nbsp;</td>
 		</tr>
 	</table>
-	<p>To use Firefox, Chrome, and Safari, you must
+	<p>To use Firefox, Chrome, Edge, and Safari, you must
 		have them installed in your system. ID браузера можно использовать для выбора
 браузере при настройке ZAP через командную строку или с помощью ZAP API (например,
 настроить AJAX Spider на использование того или иного браузера). 

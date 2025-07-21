@@ -20,7 +20,6 @@
 package org.zaproxy.addon.exim;
 
 import de.sstoehr.harreader.model.HarEntry;
-import de.sstoehr.harreader.model.HarLog;
 import java.awt.EventQueue;
 import java.io.File;
 import java.io.IOException;
@@ -186,10 +185,8 @@ public class ImportExportApi extends ApiImplementor {
                             rh -> addHarEntry(entries, rh));
                 }
 
-                HarLog harLog = HarUtils.createZapHarLog();
-                harLog.setEntries(entries);
-
-                responseBody = HarUtils.toJsonAsBytes(harLog);
+                responseBody =
+                        HarUtils.toJsonAsBytes(HarUtils.createZapHarLog().entries(entries).build());
             } catch (ApiException e) {
                 responseBody =
                         e.toString(API.Format.JSON, incErrorDetails())
@@ -252,10 +249,9 @@ public class ImportExportApi extends ApiImplementor {
                                                     httpMessage));
                                 });
 
-                        HarLog harLog = HarUtils.createZapHarLog();
-                        harLog.setEntries(entries);
-
-                        responseBody = HarUtils.toJsonAsBytes(harLog);
+                        responseBody =
+                                HarUtils.toJsonAsBytes(
+                                        HarUtils.createZapHarLog().entries(entries).build());
                     } catch (ApiException e) {
                         responseBody =
                                 e.toString(API.Format.JSON, incErrorDetails())

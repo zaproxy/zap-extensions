@@ -131,10 +131,17 @@
 	parameters (i.e. resources identifiers) in order to properly process them 
 	according to the rule defined by the "Query parameters handling" option.
 
+	<h3>Logout Avoidance</h3>
+	Whether or not the Spider should attempt to avoid logout related paths/functionality, default: false.
+
 	<h3>Irrelevant Parameters</h3>
-	Allows to manage the parameters that should be removed when canonicalising the URLs found.
+	Allows to manage the parameters that should be removed when canonicalising the URLs found or request bodies generated (<code>x-www-form-urlencoded</code>).
 	<p>
-	The session names defined in the HTTP Sessions options are taken into account and removed.
+	The parameters with names matching the following are automatically considered irrelevant:
+	<ul>
+		<li>Session names defined in the HTTP Sessions options.
+		<li>Token names defined in the Anti-CSRF Tokens options.
+	</ul>
 
 	<h2>See also</h2>
 	<table>

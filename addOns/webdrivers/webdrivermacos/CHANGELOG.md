@@ -6,6 +6,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [148] - 2025-07-15
+### Changed
+- Update ChromeDriver to 138.0.7204.157.
+
+## [147] - 2025-07-08
+### Changed
+- Update ChromeDriver to 138.0.7204.94.
+
+## [146] - 2025-06-30
+### Changed
+- Update ChromeDriver to 138.0.7204.92.
+
+## [145] - 2025-06-24
+### Changed
+- Update ChromeDriver to 138.0.7204.49.
+
 ## [144] - 2025-06-17
 ### Changed
 - Update ChromeDriver to 137.0.7151.119.
@@ -605,6 +621,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release: Firefox v0.13.0 Chrome v2.27
 
+[148]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v148
+[147]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v147
+[146]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v146
+[145]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v145
 [144]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v144
 [143]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v143
 [142]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v142

@@ -52,7 +52,7 @@ public class Utils {
                 params.add(StringUtils.strip(line));
             }
         } catch (Exception e) {
-            LOGGER.error(e);
+            LOGGER.error(e, e);
         }
         return params;
     }

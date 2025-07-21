@@ -4,7 +4,22 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- Maintenance changes.
+- Depends on an updated version of the Common Library add-on.
+- The following scan rules and their alerts have been renamed to clarify that they're time based (Issue 7341).
+    - SQL Injection - Oracle
+    - SQL Injection - MsSQL 
+    - SQL Injection - MySQL
+    - SQL Injection - Hypersonic
+    - SQL Injection - SQLite
+    - SQL Injection - PostgreSQL
+- The Remote OS Command Injection scan rule has been broken into two rules; one feedback based, and one time based (Issue 7341). This includes assigning the time based rule ID 90037.
 
+### Added
+- Rules (as applicable) have been tagged in relation to HIPAA and PCI DSS.
+- The Cloud Metadata Potentially Exposed scan rules now has a CWE reference.
+- Scan rules which execute time based attacks now include the "TEST_TIMING" alert tag.
 
 ## [72] - 2025-06-20
 ### Added

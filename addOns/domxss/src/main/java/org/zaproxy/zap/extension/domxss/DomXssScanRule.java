@@ -222,7 +222,9 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
         return browser == Browser.FIREFOX
                 || browser == Browser.FIREFOX_HEADLESS
                 || browser == Browser.CHROME
-                || browser == Browser.CHROME_HEADLESS;
+                || browser == Browser.CHROME_HEADLESS
+                || browser == Browser.EDGE
+                || browser == Browser.EDGE_HEADLESS;
     }
 
     Browser getBrowser() {

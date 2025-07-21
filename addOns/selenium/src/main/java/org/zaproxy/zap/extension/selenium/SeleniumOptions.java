@@ -39,6 +39,7 @@ import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.chrome.ChromeDriverService;
+import org.openqa.selenium.edge.EdgeDriverService;
 import org.openqa.selenium.ie.InternetExplorerDriverService;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.common.VersionedAbstractParam;
@@ -63,6 +64,11 @@ public class SeleniumOptions extends VersionedAbstractParam {
     public static final String CHROME_BINARY_SYSTEM_PROPERTY = "zap.selenium.webdriver.chrome.bin";
     public static final String CHROME_DRIVER_SYSTEM_PROPERTY =
             ChromeDriverService.CHROME_DRIVER_EXE_PROPERTY;
+
+    public static final String EDGE_BINARY_SYSTEM_PROPERTY = "zap.selenium.webdriver.edge.bin";
+    public static final String EDGE_DRIVER_SYSTEM_PROPERTY =
+            EdgeDriverService.EDGE_DRIVER_EXE_PROPERTY;
+
     public static final String FIREFOX_BINARY_SYSTEM_PROPERTY =
             "zap.selenium.webdriver.firefox.bin";
     public static final String FIREFOX_DRIVER_SYSTEM_PROPERTY = "webdriver.gecko.driver";
@@ -104,6 +110,10 @@ public class SeleniumOptions extends VersionedAbstractParam {
 
     private static final String CHROME_ARGS_KEY = SELENIUM_BASE_KEY + ".chromeArgs.arg";
 
+    private static final String EDGE_BINARY_KEY = SELENIUM_BASE_KEY + ".edgeBinary";
+
+    private static final String EDGE_ARGS_KEY = SELENIUM_BASE_KEY + ".edgeArgs.arg";
+
     private static final String ARG_KEY = "argument";
     private static final String ENABLED_KEY = "enabled";
 
@@ -112,6 +122,8 @@ public class SeleniumOptions extends VersionedAbstractParam {
 
     /** The configuration key to read/write the path to ChromeDriver. */
     private static final String CHROME_DRIVER_KEY = SELENIUM_BASE_KEY + ".chromeDriver";
+
+    private static final String EDGE_DRIVER_KEY = SELENIUM_BASE_KEY + ".edgeDriver";
 
     /** The configuration key to read/write the path Firefox binary. */
     private static final String FIREFOX_BINARY_KEY = SELENIUM_BASE_KEY + ".firefoxBinary";
@@ -135,6 +147,10 @@ public class SeleniumOptions extends VersionedAbstractParam {
     /** The path to ChromeDriver. */
     private String chromeDriverPath = "";
 
+    private String edgeBinaryPath = "";
+
+    private String edgeDriverPath = "";
+
     /** The path to Firefox binary. */
     private String firefoxBinaryPath = "";
 
@@ -154,6 +170,7 @@ public class SeleniumOptions extends VersionedAbstractParam {
         extensionsDir = new File(Constant.getZapHome() + "/selenium/extensions/");
 
         browserArguments.put(Browser.CHROME.getId(), new ArrayList<>(0));
+        browserArguments.put(Browser.EDGE.getId(), new ArrayList<>(0));
         browserArguments.put(Browser.FIREFOX.getId(), new ArrayList<>(0));
     }
 
@@ -182,6 +199,12 @@ public class SeleniumOptions extends VersionedAbstractParam {
                         CHROME_BINARY_SYSTEM_PROPERTY, CHROME_BINARY_KEY);
         chromeDriverPath =
                 getWebDriverPath(Browser.CHROME, CHROME_DRIVER_SYSTEM_PROPERTY, CHROME_DRIVER_KEY);
+
+        edgeBinaryPath =
+                readSystemPropertyWithOptionFallback(EDGE_BINARY_SYSTEM_PROPERTY, EDGE_BINARY_KEY);
+        edgeDriverPath =
+                getWebDriverPath(Browser.EDGE, EDGE_DRIVER_SYSTEM_PROPERTY, EDGE_DRIVER_KEY);
+
         firefoxBinaryPath =
                 readSystemPropertyWithOptionFallback(
                         FIREFOX_BINARY_SYSTEM_PROPERTY, FIREFOX_BINARY_KEY);
@@ -197,6 +220,7 @@ public class SeleniumOptions extends VersionedAbstractParam {
 
         browserArguments = new HashMap<>();
         browserArguments.put(Browser.CHROME.getId(), readBrowserArguments(CHROME_ARGS_KEY));
+        browserArguments.put(Browser.EDGE.getId(), readBrowserArguments(EDGE_ARGS_KEY));
         browserArguments.put(Browser.FIREFOX.getId(), readBrowserArguments(FIREFOX_ARGS_KEY));
 
         confirmRemoveBrowserArgument = getBoolean(CONFIRM_REMOVE_BROWSER_ARG, true);
@@ -335,6 +359,56 @@ public class SeleniumOptions extends VersionedAbstractParam {
     private void saveAndSetSystemProperty(String optionKey, String systemProperty, String value) {
         getConfig().setProperty(optionKey, value);
         System.setProperty(systemProperty, value);
+    }
+
+    /**
+     * Gets the path to Edge binary.
+     *
+     * @return the path to Edge binary, or empty if not set.
+     */
+    public String getEdgeBinaryPath() {
+        return edgeBinaryPath;
+    }
+
+    /**
+     * Sets the path to Edge binary.
+     *
+     * @param edgeBinaryPath the path to Edge binary, or empty if not known.
+     * @throws IllegalArgumentException if {@code edgeBinaryPath} is {@code null}.
+     */
+    public void setEdgeBinaryPath(String edgeBinaryPath) {
+        Validate.notNull(edgeBinaryPath, "Parameter edgeBinaryPath must not be null.");
+
+        if (!this.edgeBinaryPath.equals(edgeBinaryPath)) {
+            this.edgeBinaryPath = edgeBinaryPath;
+
+            saveAndSetSystemProperty(EDGE_BINARY_KEY, EDGE_BINARY_SYSTEM_PROPERTY, edgeBinaryPath);
+        }
+    }
+
+    /**
+     * Gets the path to EdgeDriver.
+     *
+     * @return the path to EdgeDriver, or empty if not set.
+     */
+    public String getEdgeDriverPath() {
+        return edgeDriverPath;
+    }
+
+    /**
+     * Sets the path to EdgeDriver.
+     *
+     * @param edgeDriverPath the path to EdgeDriver, or empty if not known.
+     * @throws IllegalArgumentException if {@code edgeDriverPath} is {@code null}.
+     */
+    public void setEdgeDriverPath(String edgeDriverPath) {
+        Validate.notNull(edgeDriverPath, "Parameter edgeDriverPath must not be null.");
+
+        if (!this.edgeDriverPath.equals(edgeDriverPath)) {
+            this.edgeDriverPath = edgeDriverPath;
+
+            saveAndSetSystemProperty(EDGE_DRIVER_KEY, EDGE_DRIVER_SYSTEM_PROPERTY, edgeDriverPath);
+        }
     }
 
     /**
@@ -614,7 +688,11 @@ public class SeleniumOptions extends VersionedAbstractParam {
 
     private void persistBrowserArguments(String browser) {
         String baseKey =
-                Browser.CHROME.getId().equals(browser) ? CHROME_ARGS_KEY : FIREFOX_ARGS_KEY;
+                switch (Browser.getBrowserWithId(browser)) {
+                    case CHROME -> CHROME_ARGS_KEY;
+                    case EDGE -> EDGE_ARGS_KEY;
+                    default -> FIREFOX_ARGS_KEY;
+                };
         List<BrowserArgument> arguments = browserArguments.get(browser);
         ((HierarchicalConfiguration) getConfig()).clearTree(baseKey);
 

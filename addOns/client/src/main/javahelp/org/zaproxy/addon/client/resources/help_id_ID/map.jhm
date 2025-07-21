@@ -7,6 +7,7 @@
     <mapID target="addon.client-icon" url="contents/images/application-browser.png" />
     <mapID target="addon.client" url="contents/client.html" />
     <mapID target="addon.client.auto" url="contents/automation.html" />
+    <mapID target="addon.client.record" url="contents/record.html" />
     <mapID target="addon.client.spider" url="contents/spider.html" />
     <mapID target="addon.client.spider.api" url="contents/spider-api.html" />
     <mapID target="addon.client.pscan" url="contents/pscan.html" />

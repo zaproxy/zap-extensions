@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [23.25.0] - 2025-07-10
+### Fixed
+- Correct configuration key for Logout Avoidance (Issue 8994).
+- Error logs to always include stack trace.
+
 ## [23.24.0] - 2025-06-20
 ### Added
 - Allow to configure how the scope is checked, either Flexible or Strict, to allow or not access to out of scope domains.
@@ -353,6 +358,7 @@ By default it allows files with extension `.js` and `.css`.
 
 
 
+[23.25.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.25.0
 [23.24.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.24.0
 [23.23.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.23.0
 [23.22.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.22.0

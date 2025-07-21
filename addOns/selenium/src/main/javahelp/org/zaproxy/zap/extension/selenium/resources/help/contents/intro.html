@@ -33,8 +33,7 @@
 		<tr>
 			<td>Chrome</td>
 			<td>chrome</td>
-			<td>The following versions are known to work: 59 and 60 (older versions might work
-				too). Requires ChromeDriver, if not on the system's PATH, it can be set in the
+			<td>Requires ChromeDriver, if not on the system's PATH, it can be set in the
 				options. For more information on ChromeDriver and how to obtain it refer to the <a
 				href="https://sites.google.com/a/chromium.org/chromedriver/">ChromeDriver website</a>.
 			</td>
@@ -45,14 +44,24 @@
 			<td>Starts Chrome without GUI.</td>
 		</tr>
 		<tr>
+			<td>Edge</td>
+			<td>edge</td>
+			<td>Requires EdgeDriver, if not on the system's PATH, it can be set in the
+				options. For more information on EdgeDriver and how to obtain it refer to the <a
+				href="https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/">EdgeDriver website</a>.
+			</td>
+		</tr>
+		<tr>
+			<td>Edge Headless</td>
+			<td>edge-headless</td>
+			<td>Starts Edge without GUI.</td>
+		</tr>
+		<tr>
 			<td>Firefox</td>
 			<td>firefox</td>
-			<td>The following versions are known to work: 45 (ESR), 46, 47.0.1, 54, and 55 (older
-				versions might work too). Some versions are known to not work, for example, 47.0. Newer
-				versions (&ge; 48) require geckodriver, it can be set in the options. For more
+			<td>Requires geckodriver, it can be set in the options. For more
 				information on geckodriver and how to obtain it refer to the <a
-				href="https://github.com/mozilla/geckodriver">geckodriver website</a> (see footer note
-				for caveat when using geckodriver).
+				href="https://github.com/mozilla/geckodriver">geckodriver website</a>,
 			</td>
 		</tr>
 		<tr>
@@ -71,7 +80,7 @@
 			<td>&nbsp;</td>
 		</tr>
 	</table>
-	<p>To use Firefox, Chrome, and Safari, you must
+	<p>To use Firefox, Chrome, Edge, and Safari, you must
 		have them installed in your system. The ID of the browser can be used to choose the
 		browser when configuring ZAP through the command line or using the ZAP API (for example,
 		to set the AJAX Spider to use one or other browser).

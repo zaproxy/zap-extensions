@@ -61,7 +61,9 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
                         CommonAlertTag.toMap(
                                 CommonAlertTag.OWASP_2021_A03_INJECTION,
                                 CommonAlertTag.OWASP_2017_A07_XSS,
-                                CommonAlertTag.WSTG_V42_INPV_01_REFLECTED_XSS));
+                                CommonAlertTag.WSTG_V42_INPV_01_REFLECTED_XSS,
+                                CommonAlertTag.HIPAA,
+                                CommonAlertTag.PCI_DSS));
         alertTags.put(PolicyTag.DEV_CICD.getTag(), "");
         alertTags.put(PolicyTag.DEV_STD.getTag(), "");
         alertTags.put(PolicyTag.DEV_FULL.getTag(), "");
@@ -383,7 +385,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
                 .raise();
     }
 
-    private boolean performDirectAttack(HttpMessage msg, String param, String value) {
+    private boolean performDirectAttack(HttpMessage msg, String param) {
         for (String scriptAlert : GENERIC_SCRIPT_ALERT_LIST) {
             List<HtmlContext> contexts2 = performAttack(msg, param, "'\"" + scriptAlert, null, 0);
             if (contexts2 == null) {
@@ -403,8 +405,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
         return false;
     }
 
-    private boolean performTagAttack(
-            HtmlContext context, HttpMessage msg, String param, String value) {
+    private boolean performTagAttack(HtmlContext context, HttpMessage msg, String param) {
 
         if (context.isInScriptAttribute()) {
             // Good chance this will be vulnerable
@@ -936,7 +937,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
                 contexts = hca.getHtmlContexts(value + Constant.getEyeCatcher(), null, 0);
             }
             if (contexts.isEmpty()) {
-                attackWorked = performDirectAttack(msg, param, value);
+                attackWorked = performDirectAttack(msg, param);
             }
 
             for (HtmlContext context : contexts) {
@@ -947,7 +948,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
                 }
                 if (context.getTagAttribute() != null) {
                     // its in a tag attribute - lots of attack vectors possible
-                    attackWorked = performTagAttack(context, msg, param, value);
+                    attackWorked = performTagAttack(context, msg, param);
 
                 } else if (context.isInAttributeName()) {
 

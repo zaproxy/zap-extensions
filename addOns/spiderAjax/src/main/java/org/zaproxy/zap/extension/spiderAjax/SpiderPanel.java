@@ -397,7 +397,7 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
         try {
             new Thread(runnable, "ZAP-AjaxSpider").start();
         } catch (Exception e) {
-            LOGGER.error(e);
+            LOGGER.error(e, e);
         }
     }
 

@@ -47,7 +47,7 @@ class XpathInjectionScanRuleUnitTest extends ActiveScannerTest<XpathInjectionSca
         // Then
         assertThat(cwe, is(equalTo(643)));
         assertThat(wasc, is(equalTo(39)));
-        assertThat(tags.size(), is(equalTo(11)));
+        assertThat(tags.size(), is(equalTo(13)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(true)));
@@ -57,6 +57,8 @@ class XpathInjectionScanRuleUnitTest extends ActiveScannerTest<XpathInjectionSca
         assertThat(
                 tags.containsKey(CommonAlertTag.WSTG_V42_INPV_09_XPATH.getTag()),
                 is(equalTo(true)));
+        assertThat(tags.containsKey(CommonAlertTag.HIPAA.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(CommonAlertTag.PCI_DSS.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.API.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.DEV_STD.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.DEV_FULL.getTag()), is(equalTo(true)));

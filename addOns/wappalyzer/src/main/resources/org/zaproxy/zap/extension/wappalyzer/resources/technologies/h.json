@@ -210,6 +210,22 @@
     ],
     "website": "https://www.haskell.org/haddock/"
   },
+  "Haku": {
+    "cats": [
+      104
+    ],
+    "description": "Haku is a technology platform for endurance races that supports organizations in growing participation, increasing registrations, and improving event experiences.",
+    "icon": "Haku.svg",
+    "js": {
+      "addHakuRegisterEvent": "",
+      "addHakuSubmitEvent": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "\\.hakuapp\\.com/"
+    ],
+    "website": "https://hakusports.com"
+  },
   "Halo": {
     "cats": [
       1,
@@ -365,6 +381,21 @@
     ],
     "website": "https://hansel.io"
   },
+  "Hapana": {
+    "cats": [
+      53
+    ],
+    "description": "Hapana is a gym and fitness studio management platform designed to streamline operations.",
+    "icon": "Hapana.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.hapana\\.com/"
+    ],
+    "website": "https://www.hapana.com"
+  },
   "Happy Meal Prep": {
     "cats": [
       6,
@@ -508,6 +539,24 @@
     "oss": true,
     "website": "https://goharbor.io"
   },
+  "Harness": {
+    "cats": [
+      111
+    ],
+    "description": "Harness is a fundraising solution designed to streamline the process of raising funds for various causes and initiatives.",
+    "icon": "Harness.svg",
+    "js": {
+      "HarnessWidget": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.harnessapp\\.com"
+    ],
+    "website": "https://www.goharness.com/nonprofits"
+  },
   "HashThemes Total": {
     "cats": [
       80
@@ -608,6 +657,25 @@
     ],
     "website": "https://hatenablog.com"
   },
+  "HawkSearch": {
+    "cats": [
+      29
+    ],
+    "description": "HawkSearch is a responsive ecommerce site search solution designed to enhance product discovery and improve search functionality.",
+    "icon": "HawkSearch.svg",
+    "js": {
+      "HawkCompare.addImage": "",
+      "HawkSearch.BaseUrl": "",
+      "hawkIntervalSearch": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.hawksearch.com"
+  },
   "HeadJS": {
     "cats": [
       59,
@@ -675,6 +743,23 @@
       "headroom(?:\\.min)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1"
     ],
     "website": "https://wicky.nillia.ms/headroom.js/"
+  },
+  "Headway": {
+    "cats": [
+      5
+    ],
+    "description": "Headway is a product widget that keeps customers informed about updates and changes.",
+    "headers": {
+      "X-Hello": "^headway$"
+    },
+    "icon": "Headway.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://headwayapp.co"
   },
   "Heap": {
     "cats": [
@@ -1005,6 +1090,27 @@
       "cdn\\.usehero\\.com"
     ],
     "website": "https://www.usehero.com/"
+  },
+  "HeroUI": {
+    "cats": [
+      66
+    ],
+    "css": [
+      "--nextui-(?:colors-accents1|colors-text|space-0|fonts-sans|fonts-mono)"
+    ],
+    "description": "HeroUI allows you to make beautiful, modern, and fast websites/applications regardless of your design experience, created with React.js and Stitches, based on React Aria and inspired by Vuesax.",
+    "dom": [
+      "link[href*='nextui.org'][rel='canonical']"
+    ],
+    "icon": "HeroUI.svg",
+    "implies": [
+      "React"
+    ],
+    "oss": true,
+    "scripts": [
+      "NextUI"
+    ],
+    "website": "https://nextui.org/"
   },
   "Heroic": {
     "cats": [
@@ -1477,6 +1583,23 @@
     ],
     "website": "https://www.hikashop.com"
   },
+  "Hikari CS": {
+    "cats": [
+      53
+    ],
+    "description": "Hicari CS is a solution that helps webshops increase sales and customer loyalty with excellent customer service.",
+    "icon": "HikariCS.svg",
+    "pricing": [
+      "low",
+      "recurring",
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "widget\\.hikarics\\.com/"
+    ],
+    "website": "https://www.hikarics.com"
+  },
   "HikeOrders": {
     "cats": [
       68
@@ -1573,6 +1696,18 @@
       "/history(@|/)([\\d.]+)(?:/[a-z]+)?/history(?:(.production|.development))?(?:.min)?\\.js\\;version:\\2"
     ],
     "website": "https://github.com/ReactTraining/history"
+  },
+  "Hit-Mall": {
+    "cats": [
+      6
+    ],
+    "description": "Hit-Mall is a Japanese ecommerce solution designed to support online retail operations for businesses across various industries.",
+    "icon": "HitMall.svg",
+    "saas": true,
+    "scriptSrc": [
+      "/(?:[\\w\\-/]+)?hitmall\\.js(?:\\?.*)?"
+    ],
+    "website": "https://www.hit-mall.jp"
   },
   "Hiver": {
     "cats": [
@@ -1720,6 +1855,18 @@
     "saas": true,
     "website": "https://homhero.com.au"
   },
+  "Homefiniti": {
+    "cats": [
+      32
+    ],
+    "description": "Homefiniti is a platform for home builders that offers tools for websites, virtual tours, and other marketing solutions.",
+    "icon": "Homefiniti.svg",
+    "meta": {
+      "generator": "^Homefiniti$"
+    },
+    "saas": true,
+    "website": "https://oneilinteractive.com/solutions/homefiniti/"
+  },
   "Homerr": {
     "cats": [
       99
@@ -1778,6 +1925,24 @@
     "icon": "Hono.svg",
     "oss": true,
     "website": "https://hono.dev"
+  },
+  "Hoory": {
+    "cats": [
+      52
+    ],
+    "description": "Hoory is a Conversational AI platform that automates customer support.",
+    "icon": "Hoory.svg",
+    "js": {
+      "$hoory": "",
+      "hoorySDK.reRun": "",
+      "hoorySettings": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.hoory.com"
   },
   "Horoshop": {
     "cats": [
@@ -1900,6 +2065,25 @@
     ],
     "website": "https://www.hostinger.com"
   },
+  "Hostinger Horizons": {
+    "cats": [
+      51
+    ],
+    "description": "Hostinger Horizons is a no-code web app builder designed to simplify web application creation without requiring programming knowledge.",
+    "headers": {
+      "X-Powered-By": "^Hostinger Horizons$"
+    },
+    "icon": "Hostinger.svg",
+    "meta": {
+      "generator": "^Hostinger Horizons$"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.hostinger.com/horizons"
+  },
   "Hostinger Website Builder": {
     "cats": [
       51
@@ -1990,6 +2174,21 @@
     },
     "website": "https://www.hosttech.ch/websitecreator"
   },
+  "HotDoc": {
+    "cats": [
+      72
+    ],
+    "description": "HotDoc is a platform for booking healthcare appointments, providing patients with access to medical practitioners and clinics.",
+    "icon": "HotDoc.svg",
+    "js": {
+      "hotdoc.assetsURL": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.hotdoc\\.com\\.au"
+    ],
+    "website": "https://www.hotdoc.com.au"
+  },
   "Hotaru CMS": {
     "cats": [
       1
@@ -2059,6 +2258,25 @@
       "\\.hotmart\\.com/"
     ],
     "website": "https://hotmart.com"
+  },
+  "Housecall Pro": {
+    "cats": [
+      72
+    ],
+    "description": "Housecall Pro is a platform that enables businesses to schedule, dispatch, invoice, and receive online bookings from customers.",
+    "icon": "HousecallPro.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.housecallpro\\.com"
+    ],
+    "scripts": [
+      "housecallpro\\.com/"
+    ],
+    "website": "https://www.housecallpro.com"
   },
   "Howler.js": {
     "cats": [
@@ -2347,6 +2565,27 @@
     "saas": true,
     "website": "https://www.thehuddle.nl"
   },
+  "Huggy": {
+    "cats": [
+      52
+    ],
+    "description": "Huggy is a service automation platform that centralizes operations and integrates chatbots capable of responding at any time.",
+    "icon": "Huggy.svg",
+    "js": {
+      "Huggy.closeBox": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "payg",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.huggy\\.io/"
+    ],
+    "website": "https://www.huggy.io"
+  },
   "Hugo": {
     "cats": [
       57
@@ -2496,6 +2735,21 @@
     "saas": true,
     "website": "https://www.hull.io"
   },
+  "HumCommerce": {
+    "cats": [
+      6
+    ],
+    "description": "HumCommerce is a platform providing ecommerce solutions tailored for B2B and B2C brands, focusing on enhancing online sales and customer engagement.",
+    "icon": "HumCommerce.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "app\\.humcommerce\\.com/"
+    ],
+    "website": "https://www.humcommerce.com"
+  },
   "Human Presence": {
     "cats": [
       16
@@ -2547,6 +2801,18 @@
       "/wp-content/plugins/oxipay-payment-gateway/"
     ],
     "website": "https://www.shophumm.com"
+  },
+  "Hummerce": {
+    "cats": [
+      6
+    ],
+    "description": "Hummerce is a B2C/B2B ecommerce platform designed to support online sales with a stable and scalable foundation.",
+    "icon": "Hummerce.svg",
+    "meta": {
+      "generator": "^Hummerce$"
+    },
+    "saas": true,
+    "website": "https://hummerce.com"
   },
   "Hund.io": {
     "cats": [
@@ -2692,6 +2958,25 @@
     },
     "saas": true,
     "website": "https://www.hyperia.sk"
+  },
+  "Hyperlane": {
+    "cats": [
+      88
+    ],
+    "description": "Hyperlane is a hosting platform for WordPress and Craft CMS websites.",
+    "icon": "Hyperlane.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.hyperlane\\.co/"
+    ],
+    "scripts": [
+      "\\.hyperlane\\.co/"
+    ],
+    "website": "https://hyperlane.co"
   },
   "Hyperspeed": {
     "cats": [

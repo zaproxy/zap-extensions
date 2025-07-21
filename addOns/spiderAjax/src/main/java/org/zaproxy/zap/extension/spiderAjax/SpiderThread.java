@@ -515,7 +515,7 @@ public class SpiderThread implements Runnable {
 
             notifySpiderListenersFoundMessage(historyRef, httpMessage, state);
         } catch (Exception e) {
-            LOGGER.error(e);
+            LOGGER.error(e, e);
         }
     }
 

@@ -1085,6 +1085,82 @@ class ExtensionAutomationUnitTest extends TestUtils {
         assertThat(progress.hasErrors(), is(equalTo(false)));
     }
 
+    @Test
+    void shouldAlwaysRunJobOnError() {
+        // Given
+        ExtensionAutomation extAuto = new ExtensionAutomation();
+        String job1Name = "job1";
+        String job2Name = "job2";
+        String job3Name = "job3";
+
+        AutomationJobImpl job1 =
+                new AutomationJobImpl(true) {
+                    @Override
+                    public String getType() {
+                        return job1Name;
+                    }
+
+                    @Override
+                    public Order getOrder() {
+                        return Order.REPORT;
+                    }
+
+                    @Override
+                    public void runJob(AutomationEnvironment env, AutomationProgress progress) {
+                        super.runJob(env, progress);
+                        progress.error("Test Error");
+                    }
+                };
+        AutomationJobImpl job2 =
+                new AutomationJobImpl(true) {
+                    @Override
+                    public String getType() {
+                        return job2Name;
+                    }
+
+                    @Override
+                    public Order getOrder() {
+                        return Order.REPORT;
+                    }
+                };
+        AutomationJobImpl job3 =
+                new AutomationJobImpl(true) {
+                    @Override
+                    public String getType() {
+                        return job3Name;
+                    }
+
+                    @Override
+                    public Order getOrder() {
+                        return Order.REPORT;
+                    }
+                };
+        Path filePath = getResourcePath("resources/testplan-alwaysRunLastJob.yaml");
+        InMemoryStats stats = new InMemoryStats();
+        Stats.addListener(stats);
+
+        // When
+        extAuto.registerAutomationJob(job1);
+        extAuto.registerAutomationJob(job2);
+        extAuto.registerAutomationJob(job3);
+        AutomationProgress progress =
+                extAuto.runAutomationFile(filePath.toAbsolutePath().toString());
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.getErrors().size(), is(equalTo(1)));
+        assertThat(progress.getErrors().get(0), is(equalTo("Test Error")));
+        assertThat(job1.wasRun(), is(equalTo(true)));
+        assertThat(job2.wasRun(), is(equalTo(false)));
+        assertThat(job3.wasRun(), is(equalTo(true)));
+
+        assertThat(stats.getStat(ExtensionAutomation.WARNING_COUNT_STATS), is(equalTo(0L)));
+        assertThat(stats.getStat(ExtensionAutomation.ERROR_COUNT_STATS), is(equalTo(1L)));
+        assertThat(stats.getStat(ExtensionAutomation.PLANS_RUN_STATS), is(equalTo(1L)));
+        assertThat(stats.getStat(ExtensionAutomation.TOTAL_JOBS_RUN_STATS), is(2L));
+    }
+
     // Methods are accessed via reflection
     @SuppressWarnings("unused")
     private static class TestParamContainer {

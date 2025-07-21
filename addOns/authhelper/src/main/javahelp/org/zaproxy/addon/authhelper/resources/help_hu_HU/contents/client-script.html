@@ -21,8 +21,10 @@ Client Script Authentication can be configured in the environment section of an 
         method: "client"
         parameters:
           script: /path/to/RecordedAuth.zst  # String, the path to the Zest login script
+          scriptInline:                      # String, the full script (may be multi-line) - supply this or 'script' not both
           scriptEngine: Mozilla Zest         # The script engine used for the login script
           diagnostics:                       # Bool, enables the recording of diagnostic data during the authentication. Default: false.
+          loginPageWait:                     # Int, the time in seconds to wait after the script has run, default: 5
 </pre>
 
 <p>

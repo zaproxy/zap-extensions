@@ -59,7 +59,9 @@ public class Requestor {
             } catch (IOException e) {
                 errors.add(
                         Constant.messages.getString(
-                                "postman.import.error.unreachableUrl", e.getMessage()));
+                                "postman.import.error.unreachableUrl",
+                                e.getMessage(),
+                                httpMessage.getRequestHeader().getURI()));
                 LOGGER.debug(e.getMessage(), e);
             }
         }

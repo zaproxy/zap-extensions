@@ -71,7 +71,7 @@ zapAddOn {
                     version.set("15.*")
                 }
                 register("zest") {
-                    version.set(">=48.6.0")
+                    version.set(">=48.8.0")
                 }
             }
         }
@@ -114,6 +114,8 @@ dependencies {
     zapAddOn("client")
     zapAddOn("reports")
     zapAddOn("zest")
+
+    compileOnly(libs.log4j.core)
 
     implementation("com.github.bastiaanjansen:otp-java:2.1.0") {
         // Provided by ZAP.

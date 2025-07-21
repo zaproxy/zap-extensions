@@ -66,8 +66,8 @@ public class MenuImportHar extends ZapMenuItem {
                                         int tasks = 0;
                                         HarLog log = null;
                                         try {
-                                            log = new HarReader().readFromFile(file).getLog();
-                                            tasks = log.getEntries().size();
+                                            log = new HarReader().readFromFile(file).log();
+                                            tasks = log.entries().size();
                                         } catch (HarReaderException e) {
                                             LOGGER.warn(
                                                     "Failed to read HAR file: {}\n{}",

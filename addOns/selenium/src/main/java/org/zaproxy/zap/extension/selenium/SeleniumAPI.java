@@ -168,7 +168,9 @@ public class SeleniumAPI extends ApiImplementor {
 
     private static String getBrowser(JSONObject params) throws ApiException {
         String browser = params.getString(PARAM_BROWSER);
-        if (!(Browser.CHROME.getId().equals(browser) || Browser.FIREFOX.getId().equals(browser))) {
+        if (!(Browser.CHROME.getId().equals(browser)
+                || Browser.EDGE.getId().equals(browser)
+                || Browser.FIREFOX.getId().equals(browser))) {
             throw new ApiException(Type.ILLEGAL_PARAMETER, PARAM_BROWSER);
         }
         return browser;

@@ -22,12 +22,12 @@ package org.zaproxy.addon.exim.har;
 import de.sstoehr.harreader.HarReader;
 import de.sstoehr.harreader.HarReaderException;
 import de.sstoehr.harreader.model.HarEntry;
+import de.sstoehr.harreader.model.HarEntry.HarEntryBuilder;
 import de.sstoehr.harreader.model.HarLog;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -84,7 +84,7 @@ public class HarImporter {
         this.progressListener = listener;
         HarLog log = null;
         try {
-            log = new HarReader().readFromFile(file).getLog();
+            log = new HarReader().readFromFile(file).log();
             importHarLog(log);
         } catch (HarReaderException e) {
             LOGGER.warn("Failed to read HAR file: {}\n{}", file.getAbsolutePath(), e.getMessage());
@@ -136,48 +136,29 @@ public class HarImporter {
         }
     }
 
-    private static HarLog preProcessHarLog(HarLog log) {
-        List<HarEntry> entries =
-                log.getEntries().stream()
-                        .filter(HarImporter::entryIsNotLocalPrivate)
-                        .filter(HarImporter::entryHasUsableHttpVersion)
-                        .collect(Collectors.toList());
-        log.setEntries(entries);
-        return log;
+    private static List<HarEntry> preProcessHarEntries(HarLog log) {
+        return log.entries().stream()
+                .filter(HarImporter::entryIsNotLocalPrivate)
+                .map(HarImporter::correctHttpVersions)
+                .filter(HarImporter::entryHasUsableHttpVersion)
+                .toList();
     }
 
     private static boolean entryHasUsableHttpVersion(HarEntry entry) {
-        // Handle missing httpVersion (set http/1.1)
-        preProcessHttpVersion(
-                entry,
-                CHECK_MISSING.test(entry.getRequest().getHttpVersion()),
-                HttpHeader.HTTP11,
-                false);
-        preProcessHttpVersion(
-                entry,
-                CHECK_MISSING.test(entry.getResponse().getHttpVersion()),
-                HttpHeader.HTTP11,
-                true);
-        // Handle http/3 (set http/2)
-        preProcessHttpVersion(
-                entry, CHECK_H3.test(entry.getRequest().getHttpVersion()), HttpHeader.HTTP2, false);
-        preProcessHttpVersion(
-                entry, CHECK_H3.test(entry.getResponse().getHttpVersion()), HttpHeader.HTTP2, true);
-
-        if (!containsIgnoreCase(ACCEPTED_VERSIONS, entry.getRequest().getHttpVersion())
-                || !containsIgnoreCase(ACCEPTED_VERSIONS, entry.getResponse().getHttpVersion())) {
+        if (!containsIgnoreCase(ACCEPTED_VERSIONS, entry.request().httpVersion())
+                || !containsIgnoreCase(ACCEPTED_VERSIONS, entry.response().httpVersion())) {
             LOGGER.warn(
                     "Message with unsupported HTTP version (Req version: {}, Resp version: {}) will be dropped: {}",
-                    entry.getRequest().getHttpVersion(),
-                    entry.getResponse().getHttpVersion(),
-                    entry.getRequest().getUrl());
+                    entry.request().httpVersion(),
+                    entry.response().httpVersion(),
+                    entry.request().url());
             return false;
         }
         return true;
     }
 
     private static boolean entryIsNotLocalPrivate(HarEntry entry) {
-        String url = entry.getRequest().getUrl();
+        String url = entry.request().url();
         if (StringUtils.startsWithIgnoreCase(url, "about")
                 || StringUtils.startsWithIgnoreCase(url, "chrome")
                 || StringUtils.startsWithIgnoreCase(url, "edge")) {
@@ -189,11 +170,8 @@ public class HarImporter {
 
     protected static List<HttpMessage> getHttpMessages(HarLog log)
             throws HttpMalformedHeaderException {
-        preProcessHarLog(log);
-
         List<HttpMessage> result = new ArrayList<>();
-        List<HarEntry> entries = log.getEntries();
-        for (HarEntry entry : entries) {
+        for (HarEntry entry : preProcessHarEntries(log)) {
             result.add(getHttpMessage(entry));
         }
         return result;
@@ -215,22 +193,62 @@ public class HarImporter {
         return checkList.stream().anyMatch(e -> e.equalsIgnoreCase(candidate));
     }
 
-    private static void preProcessHttpVersion(
-            HarEntry entry, boolean condition, String vers, boolean response) {
+    private static HarEntry correctHttpVersions(HarEntry entry) {
+        HarEntryBuilder builder = entry.toBuilder();
+        // Handle missing httpVersion (set http/1.1)
+        boolean changed =
+                preProcessHttpVersion(
+                        entry,
+                        builder,
+                        CHECK_MISSING.test(entry.request().httpVersion()),
+                        HttpHeader.HTTP11,
+                        false);
+        changed |=
+                preProcessHttpVersion(
+                        entry,
+                        builder,
+                        CHECK_MISSING.test(entry.response().httpVersion()),
+                        HttpHeader.HTTP11,
+                        true);
+        // Handle http/3 (set http/2)
+        changed |=
+                preProcessHttpVersion(
+                        entry,
+                        builder,
+                        CHECK_H3.test(entry.request().httpVersion()),
+                        HttpHeader.HTTP2,
+                        false);
+        changed |=
+                preProcessHttpVersion(
+                        entry,
+                        builder,
+                        CHECK_H3.test(entry.response().httpVersion()),
+                        HttpHeader.HTTP2,
+                        true);
+
+        return changed ? builder.build() : entry;
+    }
+
+    private static boolean preProcessHttpVersion(
+            HarEntry entry,
+            HarEntryBuilder builder,
+            boolean condition,
+            String vers,
+            boolean response) {
         if (condition) {
             if (response) {
-                entry.getResponse().setHttpVersion(vers);
+                builder.response(entry.response().toBuilder().httpVersion(vers).build());
             } else {
-                entry.getRequest().setHttpVersion(vers);
+                builder.request(entry.request().toBuilder().httpVersion(vers).build());
             }
             LOGGER.info(
                     "Setting {} version to {} for {}",
                     response ? "response" : "request",
-                    response
-                            ? entry.getResponse().getHttpVersion()
-                            : entry.getRequest().getHttpVersion(),
-                    entry.getRequest().getUrl());
+                    vers,
+                    entry.request().url());
+            return true;
         }
+        return false;
     }
 
     private static void persistMessage(HttpMessage message) {

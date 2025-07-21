@@ -175,6 +175,18 @@
     ],
     "website": "https://4-tell.com"
   },
+  "42Chat": {
+    "cats": [
+      52
+    ],
+    "description": "42Chat is a provider of conversational AI solutions and text-based chatbots designed to connect clients with their communities.",
+    "icon": "42Chat.svg",
+    "saas": true,
+    "scriptSrc": [
+      "api\\.42chat\\.com"
+    ],
+    "website": "https://www.42chat.com"
+  },
   "42stores": {
     "cats": [
       6
@@ -237,6 +249,27 @@
     ],
     "saas": true,
     "website": "https://www.51.la"
+  },
+  "52Degrees": {
+    "cats": [
+      10
+    ],
+    "description": "52Degrees is a data platform formerly known as Handset Detection, providing real-time device and data insights for digital businesses.",
+    "icon": "52Degrees.svg",
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "api\\.handsetdetection\\.com"
+    ],
+    "scripts": [
+      "'api\\.handsetdetection\\.com"
+    ],
+    "website": "https://51degrees.com"
   },
   "5centsCDN": {
     "cats": [
@@ -345,6 +378,34 @@
     "xhr": [
       "api\\.8base\\.com"
     ]
+  },
+  "8x8": {
+    "cats": [
+      52
+    ],
+    "description": "8x8 is a communication tool offering chat functionality for streamlined business communication.",
+    "icon": "8x8.svg",
+    "js": {
+      "Chat8x8": "",
+      "__8x8Chat": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.8x8.com"
+  },
+  "91App": {
+    "cats": [
+      6
+    ],
+    "description": "91App is a Taiwan-based platform that provides solutions for retail stores.",
+    "icon": "91App.svg",
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.91app\\.com/"
+    ],
+    "website": "https://91app.com"
   },
   "<model-viewer>": {
     "cats": [

@@ -136,12 +136,24 @@ public class VerificationDetectionProcessor implements Runnable {
         authMethod.setLoggedOutIndicatorPattern(loggedOutIndicator);
         authMethod.setPollData(details.getMsg().getRequestBody().toString());
 
-        String contentType = details.getMsg().getRequestHeader().getHeader(HttpHeader.CONTENT_TYPE);
-        if (contentType != null) {
-            authMethod.setPollHeaders(HttpHeader.CONTENT_TYPE + ": " + contentType);
+        StringBuilder sb = new StringBuilder();
+        appendHeader(sb, details.getMsg().getRequestHeader(), HttpHeader.CONTENT_TYPE);
+        appendHeader(sb, details.getMsg().getRequestHeader(), HttpHeader.REFERER);
+        if (!sb.isEmpty()) {
+            authMethod.setPollHeaders(sb.toString());
         }
         AuthUtils.setVerificationDetailsForContext(context.getId(), details);
         Stats.incCounter("stats.auth.configure.verification");
+    }
+
+    private void appendHeader(StringBuilder sb, HttpRequestHeader reqHeader, String headerName) {
+        String headerValue = reqHeader.getHeader(headerName);
+        if (headerValue != null) {
+            sb.append(headerName);
+            sb.append(": ");
+            sb.append(headerValue);
+            sb.append("\n");
+        }
     }
 
     private VerificationRequestDetails repeatRequest(VerificationRequestDetails vrd, boolean auth)
@@ -161,6 +173,10 @@ public class VerificationDetectionProcessor implements Runnable {
                     .setHeader(
                             HttpRequestHeader.CONTENT_TYPE,
                             origReqHeader.getHeader(HttpRequestHeader.CONTENT_TYPE));
+            msg.getRequestHeader()
+                    .setHeader(
+                            HttpRequestHeader.REFERER,
+                            origReqHeader.getHeader(HttpRequestHeader.REFERER));
 
             msg.getRequestBody().setBody(vrd.getMsg().getRequestBody().getBytes());
             msg.getRequestHeader().setContentLength(msg.getRequestBody().length());

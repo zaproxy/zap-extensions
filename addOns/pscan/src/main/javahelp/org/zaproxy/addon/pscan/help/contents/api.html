@@ -50,6 +50,12 @@
 			</ul>
 		</li>
 		<li>
+			setMaxBodySizeInBytes (maxSize*): Sets the maximum body size in bytes that the passive scanner will scan.
+			<ul>
+				<li>maxSize: The maximum size in bytes, 0 to unset.</li>
+			</ul>
+		</li>
+		<li>
 			setScanOnlyInScope (onlyInScope*): Sets whether or not the passive scan should be performed only on messages that are in scope.
 			<ul>
 				<li>onlyInScope: The scan state, true or false.</li>
@@ -68,6 +74,7 @@
 	<ul>
 		<li>currentTasks: Shows information about the passive scan tasks currently being run (if any).</li>
 		<li>maxAlertsPerRule: Gets the maximum number of alerts a passive scan rule should raise.</li>
+		<li>maxBodySizeInBytes: Gets the maximum body size in bytes that the passive scanner will scan.</li>
 		<li>recordsToScan: The number of records the passive scanner still has to scan.</li>
 		<li>scanOnlyInScope: Tells whether or not the passive scan should be performed only on messages that are in scope.</li>
 		<li>scanners: Lists all passive scan rules with their ID, name, enabled state, and alert threshold.</li>

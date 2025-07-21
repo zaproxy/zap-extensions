@@ -61,6 +61,7 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor
             List.of(ExtensionQuickStart.class, ExtensionSelenium.class);
 
     private ImageIcon chromeIcon;
+    private ImageIcon edgeIcon;
     private ImageIcon chromiumIcon;
     private ImageIcon firefoxIcon;
     private ImageIcon safariIcon;
@@ -161,6 +162,8 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor
             launchToolbarButton.setIcon(firefoxIcon);
         } else if ("chrome".equalsIgnoreCase(browser)) {
             launchToolbarButton.setIcon(chromeIcon);
+        } else if ("edge".equalsIgnoreCase(browser)) {
+            launchToolbarButton.setIcon(edgeIcon);
         } else if ("safari".equalsIgnoreCase(browser)) {
             launchToolbarButton.setIcon(safariIcon);
         } else {
@@ -172,6 +175,9 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor
         chromeIcon =
                 DisplayUtils.getScaledIcon(
                         new ImageIcon(getClass().getResource(RESOURCES + "/chrome.png")));
+        edgeIcon =
+                DisplayUtils.getScaledIcon(
+                        new ImageIcon(getClass().getResource(RESOURCES + "/edge.png")));
 
         chromiumIcon =
                 DisplayUtils.getScaledIcon(

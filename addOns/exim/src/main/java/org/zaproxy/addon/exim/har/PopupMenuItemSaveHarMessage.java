@@ -20,7 +20,6 @@
 package org.zaproxy.addon.exim.har;
 
 import de.sstoehr.harreader.model.HarEntry;
-import de.sstoehr.harreader.model.HarLog;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -90,7 +89,6 @@ public class PopupMenuItemSaveHarMessage extends PopupMenuItemHttpMessageContain
 
     private static byte[] packRequestInHarArchive(List<HttpMessage> httpMessages)
             throws IOException {
-        HarLog harLog = HarUtils.createZapHarLog();
         var entries = new ArrayList<HarEntry>();
         httpMessages.forEach(
                 httpMessage -> {
@@ -105,8 +103,7 @@ public class PopupMenuItemSaveHarMessage extends PopupMenuItemHttpMessageContain
                     }
                     Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_SAVE_HAR_FILE_MSG);
                 });
-        harLog.setEntries(entries);
-        return HarUtils.toJsonAsBytes(harLog);
+        return HarUtils.toJsonAsBytes(HarUtils.createZapHarLog().entries(entries).build());
     }
 
     private static File getOutputFile() {

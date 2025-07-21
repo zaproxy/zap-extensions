@@ -906,7 +906,7 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
                             messagesTableModel.addHistoryReference(historyRef, state);
                         });
             } catch (HttpMalformedHeaderException | DatabaseException e) {
-                LOGGER.error(e);
+                LOGGER.error(e, e);
             }
         }
     }

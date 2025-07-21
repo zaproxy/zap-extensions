@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 
+## [48.8.0] - 2025-07-03
+
+### Added
+- New extension level method for recording client scripts.
+
+### Changed
+- Fail fast on client errors.
+- Update Zest library to 0.31.0:
+  - Update Selenium to version 4.34.0.
+
 ## [48.7.0] - 2025-06-10
 ### Changed
 - Update Zest library to 0.30.0:
@@ -412,6 +422,7 @@ Sender scripts. (Issue 5590)
 
 - Updated for 2.1.0
 
+[48.8.0]: https://github.com/zaproxy/zap-extensions/releases/zest-v48.8.0
 [48.7.0]: https://github.com/zaproxy/zap-extensions/releases/zest-v48.7.0
 [48.6.0]: https://github.com/zaproxy/zap-extensions/releases/zest-v48.6.0
 [48.5.0]: https://github.com/zaproxy/zap-extensions/releases/zest-v48.5.0

@@ -64,6 +64,7 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
     private long timeStarted;
     private long timeFinished;
     private boolean enabled = true;
+    private boolean alwaysRun = false;
 
     public enum Order {
         RUN_FIRST,
@@ -131,6 +132,14 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public boolean isAlwaysRun() {
+        return alwaysRun;
+    }
+
+    public void setAlwaysRun(boolean alwaysRun) {
+        this.alwaysRun = alwaysRun;
     }
 
     public int addDefaultTests(AutomationProgress progress) {

@@ -86,8 +86,8 @@ class SeleniumAPIUnitTest extends TestUtils {
         // Given / When
         api = new SeleniumAPI(options, extension);
         // Then
-        assertThat(api.getApiActions(), hasSize(12));
-        assertThat(api.getApiViews(), hasSize(10));
+        assertThat(api.getApiActions(), hasSize(14));
+        assertThat(api.getApiViews(), hasSize(12));
         assertThat(api.getApiOthers(), hasSize(0));
     }
 
@@ -133,7 +133,7 @@ class SeleniumAPIUnitTest extends TestUtils {
     }
 
     static Stream<String> validBrowserNames() {
-        return Stream.of("chrome", "firefox");
+        return Stream.of("chrome", "edge", "firefox");
     }
 
     @ParameterizedTest

@@ -243,7 +243,7 @@ public class CsrfTokenScanRule extends AbstractAppPlugin implements CommonActive
                 formIdx++;
             }
         } catch (IOException e) {
-            LOGGER.error(e);
+            LOGGER.debug(e, e);
         }
     }
 

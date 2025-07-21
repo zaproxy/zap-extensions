@@ -294,6 +294,21 @@
     ],
     "website": "https://developers.kakao.com/product"
   },
+  "Kalio": {
+    "cats": [
+      6
+    ],
+    "description": "Kalio is an ecommerce system designed for mid-market and enterprise stores.",
+    "icon": "Kalio.svg",
+    "meta": {
+      "Author": "^Kalio$"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.kaliocommerce.com"
+  },
   "Kaltura": {
     "cats": [
       14,
@@ -351,6 +366,25 @@
     ],
     "website": "https://kameleoon.com/"
   },
+  "Kamozi": {
+    "cats": [
+      32
+    ],
+    "description": "Kamozi is a system designed to support brand growth and increase ecommerce revenue through integrated tools and strategies.",
+    "icon": "Kamozi.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "trust\\.kamozi\\.io"
+    ],
+    "scripts": [
+      "\\.kamozi\\.io"
+    ],
+    "website": "https://kamozi.io"
+  },
   "Kamva": {
     "cats": [
       6
@@ -366,6 +400,37 @@
       "cdn\\.mykamva\\.ir"
     ],
     "website": "https://kamva.ir"
+  },
+  "Kangaroo Rewards": {
+    "cats": [
+      84
+    ],
+    "description": "Kangaroo Rewards is a platform designed to help businesses grow by fostering customer loyalty and enhancing brand recognition.",
+    "icon": "KangarooRewards.svg",
+    "js": {
+      "KangarooApps.Loyalties": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "www\\.kangaroorewards\\.com/"
+    ],
+    "website": "https://loyalty.kangaroorewards.com"
+  },
+  "KanzOboz": {
+    "cats": [
+      6
+    ],
+    "description": "KanzOboz is a platform for online shopping and advertising, specializing in fashion and lifestyle products.",
+    "dom": [
+      "a[href*='kanzoboz.ru/'] > img[src*='rating.kanzoboz.ru']"
+    ],
+    "icon": "KanzOboz.svg",
+    "saas": true,
+    "website": "https://kanzoboz.ru"
   },
   "Kapix Studio": {
     "cats": [
@@ -464,6 +529,38 @@
     "saas": true,
     "website": "https://karte.io"
   },
+  "Kartify": {
+    "cats": [
+      6
+    ],
+    "description": "Kartify is an ecommerce platform designed to support business growth through integrated tools for online selling and management.",
+    "icon": "Kartify.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": [
+      "Shopify"
+    ],
+    "saas": true,
+    "scripts": [
+      "sellup\\.herokuapp\\.com\\/kartifyjs\\/kartify\\.js"
+    ],
+    "website": "https://www.gokartify.com"
+  },
+  "Kartmax": {
+    "cats": [
+      6
+    ],
+    "description": "Kartmax is a D2C ecommerce business solution designed to support direct-to-consumer operations.",
+    "icon": "Kartmax.svg",
+    "saas": true,
+    "scriptSrc": [
+      "\\.kartmax\\.in/"
+    ],
+    "website": "https://kartmax.in"
+  },
   "Kartra": {
     "cats": [
       32
@@ -487,6 +584,25 @@
     ],
     "website": "https://home.kartra.com"
   },
+  "Kartris": {
+    "cats": [
+      6
+    ],
+    "description": "Kartris is an open-source ecommerce platform built with ASP.NET, designed for managing online stores.",
+    "icon": "Kartris.svg",
+    "js": {
+      "AddClassUpward__Kartris": "",
+      "Hover__KartrisMenu": ""
+    },
+    "oss": true,
+    "pricing": [
+      "freemium"
+    ],
+    "requires": [
+      "Microsoft ASP.NET"
+    ],
+    "website": "https://www.kartris.com"
+  },
   "Kasada": {
     "cats": [
       16
@@ -504,6 +620,23 @@
     ],
     "saas": true,
     "website": "https://www.kasada.io"
+  },
+  "Kasika": {
+    "cats": [
+      32
+    ],
+    "description": "Kasika is a Japanese marketing automation tool developed by CocoLive.",
+    "icon": "Kasika.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "panda\\.kasika\\.io/"
+    ],
+    "website": "https://cocolive.co.jp/"
   },
   "Keap": {
     "cats": [
@@ -864,6 +997,26 @@
     ],
     "website": "https://kibocommerce.com/personalization-software"
   },
+  "Kickflip": {
+    "cats": [
+      108
+    ],
+    "description": "Kickflip is a product customizer that enables visual customization of products on platforms like Shopify, WooCommerce, Wix, and via API integration.",
+    "icon": "Kickflip.svg",
+    "js": {
+      "kickflip.cart": ""
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "payg"
+    ],
+    "saas": true,
+    "scripts": [
+      "gokickflip\\.com"
+    ],
+    "website": "https://gokickflip.com"
+  },
   "Kicksite": {
     "cats": [
       53
@@ -913,6 +1066,36 @@
       "/modules/kiliba/logo\\.png"
     ],
     "website": "https://en.kiliba.com"
+  },
+  "Kilkaya": {
+    "cats": [
+      10
+    ],
+    "description": "Kilkaya is a platform that simplifies analytics for publishers by consolidating data and automating reporting.",
+    "icon": "Kilkaya.svg",
+    "saas": true,
+    "scripts": [
+      "Kilkaya"
+    ],
+    "website": "https://www.kilkaya.com"
+  },
+  "Kimonix": {
+    "cats": [
+      6
+    ],
+    "description": "Kimonix is a profit-driven merchandising platform designed to optimize product listings and increase sales performance.",
+    "icon": "Kimonix.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "payg",
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "api\\.kimonix\\.com"
+    ],
+    "website": "https://www.kimonix.com"
   },
   "Kindful": {
     "cats": [
@@ -1182,7 +1365,7 @@
       67
     ],
     "description": "Klaro is a simple consent management platform and privacy tool.",
-    "icon": "Klaro.png",
+    "icon": "Klaro.svg",
     "js": {
       "klaro": "",
       "klaroConfig": ""
@@ -1419,6 +1602,18 @@
     "saas": true,
     "website": "https://knak.com"
   },
+  "Knit pay": {
+    "cats": [
+      41
+    ],
+    "description": "Knit Pay is a platform designed for collecting payments and managing businesses while ensuring customer data security.",
+    "icon": "Knitpay.svg",
+    "js": {
+      "knit_pay_payment_button_ajax_object": ""
+    },
+    "saas": true,
+    "website": "https://www.knockcrm.com"
+  },
   "Knock": {
     "cats": [
       32
@@ -1433,6 +1628,27 @@
     ],
     "saas": true,
     "website": "https://www.knockcrm.com"
+  },
+  "Knock Knock App": {
+    "cats": [
+      52
+    ],
+    "description": "Knock Knock App is a video call solution for instant communication with website visitors, designed to optimize inbound inquiries and increase sales from website and landing page traffic.",
+    "icon": "KnockKnockApp.svg",
+    "js": {
+      "Knock_knock_user": "",
+      "knock_widget_init": ""
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "api\\.knock-knockapp\\.com"
+    ],
+    "website": "https://knockknockapp.ai"
   },
   "Knockout.js": {
     "cats": [
@@ -1581,6 +1797,18 @@
     "saas": true,
     "website": "https://www.kobimaster.com.tr"
   },
+  "Kochava": {
+    "cats": [
+      32
+    ],
+    "description": "Kochava is a unified platform for audience attribution and analytics, enabling accurate measurement and optimization of marketing performance across channels.",
+    "icon": "Kochava.svg",
+    "saas": true,
+    "scripts": [
+      "\\.kochava\\.com"
+    ],
+    "website": "https://www.kochava.com"
+  },
   "Koha": {
     "cats": [
       50
@@ -1665,6 +1893,22 @@
       "koken(?:\\.js\\?([\\d.]+)|/storage)\\;version:\\1"
     ],
     "website": "https://koken.me"
+  },
+  "Kommand": {
+    "cats": [
+      1
+    ],
+    "description": "Kommand is an all-in-one solution for marketing, store management, and website development.",
+    "icon": "Kommand.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "kommand-bundle\\.min\\.js"
+    ],
+    "website": "https://www.kommand.me"
   },
   "Kommi": {
     "cats": [
@@ -1797,6 +2041,26 @@
     },
     "website": "https://konvajs.org"
   },
+  "KoobCamp": {
+    "cats": [
+      93
+    ],
+    "description": "KoobCamp is a provider of camping, village, and glamping holiday solutions.",
+    "icon": "KoobCamp.svg",
+    "js": {
+      "KOOBCAMP_WIDGETS": "",
+      "KoobCampWidgets": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "widget\\.koobcamp\\.com"
+    ],
+    "website": "https://www.koobcamp.com/en/home-page"
+  },
   "Koobi": {
     "cats": [
       1
@@ -1917,6 +2181,57 @@
     ],
     "website": "https://kount.com"
   },
+  "Kreatio": {
+    "cats": [
+      1
+    ],
+    "description": "Kreatio is a content management system designed to enhance digital publishing efficiency and streamline content delivery.",
+    "icon": "Kreatio.svg",
+    "meta": {
+      "Powered By": "^Kreatio Platform$"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.kreatio.com"
+  },
+  "Krible": {
+    "cats": [
+      52
+    ],
+    "description": "Krible is a live chat management platform designed to facilitate real-time customer interactions and support.",
+    "icon": "Krible.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.krible\\.com"
+    ],
+    "scripts": [
+      "\\.krible\\.ru"
+    ],
+    "website": "https://krible.ru"
+  },
+  "Kross Booking": {
+    "cats": [
+      93
+    ],
+    "description": "Kross Booking is a booking management system that automates reservations, scheduling, and resource allocation to streamline operational workflows.",
+    "icon": "KrossBooking.svg",
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "data\\.krossbooking\\.com/"
+    ],
+    "website": "https://www.krossbooking.com"
+  },
   "Ktor": {
     "cats": [
       18
@@ -1944,6 +2259,27 @@
     ],
     "icon": "Kubernetes.svg",
     "website": "https://kubernetes.io/"
+  },
+  "Kubio Builder": {
+    "cats": [
+      51
+    ],
+    "description": "Kubio Builder is a WordPress site builder that enables editing of all site elements within a single interface.",
+    "icon": "KubioBuilder.svg",
+    "js": {
+      "kubio.frontend": "",
+      "kubioFrontendData": ""
+    },
+    "pricing": [
+      "onetime",
+      "low",
+      "recurring"
+    ],
+    "requires": [
+      "WordPress"
+    ],
+    "saas": true,
+    "website": "https://kubiobuilder.com"
   },
   "Kudobuzz": {
     "cats": [
@@ -2052,6 +2388,36 @@
       "kwaiq": ""
     },
     "website": "https://www.kwai.com"
+  },
+  "Kwanko": {
+    "cats": [
+      32
+    ],
+    "description": "Kwanko is a digital marketing platform.",
+    "icon": "Kwanko.svg",
+    "js": {
+      "kwankoDataPTAG.zone": ""
+    },
+    "saas": true,
+    "website": "https://www.kwanko.com"
+  },
+  "Kwanzoo": {
+    "cats": [
+      32
+    ],
+    "description": "Kwanzoo is an AI-powered GTM automation platform that enables adaptive account-based marketing.",
+    "icon": "Kwanzoo.svg",
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "ads\\.kwanzoo\\.com/"
+    ],
+    "website": "https://www.kwanzoo.com"
   },
   "k-eCommerce": {
     "cats": [

@@ -4,8 +4,26 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-### Changed
+### Added
+- Add wait authentication step to Browser Based Authentication.
+- Include Web Element's selector in the Authentication Report.
+- Support for tracking authorization headers automatically for Header based auth.
+- Add Authentication Report section for the log file.
+
+## Changed
+- Send the referer header on verification if set on the original request.
 - Removed requirement to set at least one header in the GUI for Header-Based Session Management.
+ 
+### Fixed
+- Do not fail the authentication on diagnostic errors.
+
+## [0.27.0] - 2025-07-03
+### Added
+- Support for recorded scripts in the Authentication Tester.
+
+### Changed
+- Updated to depend on Zest add-on 48.8.0.
+
 
 ## [0.26.0] - 2025-06-20
 ### Added
@@ -252,6 +270,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Support of authentication request identification and configuration.
 
+[0.27.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.27.0
 [0.26.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.26.0
 [0.25.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.25.0
 [0.24.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.24.0

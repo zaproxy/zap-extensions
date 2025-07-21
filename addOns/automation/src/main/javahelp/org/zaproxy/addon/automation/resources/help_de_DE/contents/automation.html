@@ -68,7 +68,6 @@ All file and directory paths can either be absolute or relative to the directory
 Relative paths are recommended for portability.
 
 <H2><a name="jobs">Jobs</a></H2>
-The jobs can be enabled/disabled through the GUI and the automation plan, with the <code>enabled</code> flag. Jobs are enabled by default.
 <p>
 The following automation jobs are supported by this add-on:
 <ul>
@@ -79,6 +78,15 @@ The following automation jobs are supported by this add-on:
 <li><a href="job-requestor.html">requestor</a> - crafts specific requests to send to the corresponding targets</li>
 <li><a href="job-ascan.html">activeScan</a> - runs the active scanner</li>
 <li><a href="job-exitstatus.html">exitStatus</a> - sets ZAP's exit code based on scan results</li>
+</ul>
+
+<H3><a name="gen-options">General Job Options</a></H3>
+
+The following options can be applied to all jobs, via the automation plan or the <a href="gui.html">GUI</a>:
+
+<ul>
+<li><code>enabled</code> - only jobs that are enabled will run.
+<li><code>alwaysRun</code> - enabled jobs with this option will run even if the plan exits early.
 </ul>
 
 <H3>Importance of Job Order</H3>

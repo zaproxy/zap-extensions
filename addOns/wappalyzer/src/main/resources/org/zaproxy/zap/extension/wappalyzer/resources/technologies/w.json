@@ -46,6 +46,18 @@
     ],
     "website": "https://www.w3counter.com"
   },
+  "WAR.PE": {
+    "cats": [
+      16
+    ],
+    "description": "WAR.PE is a platform designed to enhance the web experience by promoting user privacy and security.",
+    "icon": "WARPE.svg",
+    "saas": true,
+    "scriptSrc": [
+      "//war\\.pe/warp\\.js"
+    ],
+    "website": "https://war.pe"
+  },
   "WEBDEV": {
     "cats": [
       20
@@ -146,6 +158,42 @@
       "recurring"
     ],
     "website": "https://www.whmcs.com"
+  },
+  "WINEAROUND": {
+    "cats": [
+      93
+    ],
+    "description": "WINEAROUND is a booking software that enables businesses to manage online and offline reservations, schedule appointments, streamline operations, and enhance customer service for guided tours and activities.",
+    "icon": "WineAround.svg",
+    "js": {
+      "_winearoundDefaultLanguage": ""
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://winearound.com"
+  },
+  "WORKetc": {
+    "cats": [
+      53
+    ],
+    "description": "WORKetc is an all-in-one cloud computing platform offering web-based CRM, project management, and collaboration tools.",
+    "dom": [
+      "iframe[src*='.worketc.com/']"
+    ],
+    "icon": "WORKetc.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.worketc\\.com"
+    ],
+    "website": "https://www.worketc.com"
   },
   "WOW": {
     "cats": [
@@ -444,6 +492,9 @@
       "rocket_lazy": "",
       "rocket_lazyload_css_data": ""
     },
+    "meta": {
+      "generator": "^WP Rocket ([\\d.]+)\\;version:\\1"
+    },
     "pricing": [
       "low",
       "recurring"
@@ -664,6 +715,33 @@
     ],
     "website": "https://wordpress.org/plugins/wps-visitor-counter/"
   },
+  "WSHOP": {
+    "cats": [
+      6
+    ],
+    "description": "WSHOP is a cloud ecommerce platform for managing online stores, transactions, and customer interactions.",
+    "icon": "WSHOP.svg",
+    "js": {
+      "wShop.$attrs": ""
+    },
+    "website": "https://www.wshop.com"
+  },
+  "Waaship": {
+    "cats": [
+      99
+    ],
+    "description": "Waaship is an all-in-one fulfillment software designed to manage orders, inventory, picking, packing, and shipping.",
+    "icon": "Waaship.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "platform-app\\.waaship\\.com"
+    ],
+    "website": "https://waaship.com"
+  },
   "Wabi": {
     "cats": [
       53
@@ -830,6 +908,25 @@
     "saas": true,
     "website": "https://www.walkme.com"
   },
+  "Walla": {
+    "cats": [
+      1
+    ],
+    "description": "Walla is a cloud-based fitness studio management software.",
+    "icon": "Walla.svg",
+    "js": {
+      "wallaWidgetLoader": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.hellowalla\\.com"
+    ],
+    "website": "https://www.hellowalla.com"
+  },
   "Wallkit": {
     "cats": [
       41
@@ -850,6 +947,25 @@
     ],
     "website": "https://wallkit.net"
   },
+  "Wally": {
+    "cats": [
+      90
+    ],
+    "description": "Wally is a tool that imports, manages, and displays reviews from platforms like Google and Trustpilot on a website, providing social proof to enhance credibility.",
+    "icon": "Wally.svg",
+    "js": {
+      "wallyIsEventListenerAdded": ""
+    },
+    "pricing": [
+      "freemium",
+      "onetime"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "embed\\.getwally\\.net"
+    ],
+    "website": "https://getwally.net"
+  },
   "Wangsu": {
     "cats": [
       31
@@ -861,6 +977,22 @@
       "playurl.wangsu": ""
     },
     "website": "https://en.wangsu.com"
+  },
+  "Warm Welcome": {
+    "cats": [
+      52
+    ],
+    "description": "Warm Welcome is a tool that provides interactive video bubbles and video email features for personalized communication.",
+    "icon": "WarmWelcome.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "app\\.warmwelcome\\.com"
+    ],
+    "website": "https://www.warmwelcome.com"
   },
   "Warp": {
     "cats": [
@@ -954,6 +1086,24 @@
       "wati-integration-prod-service\\.clare\\.ai/"
     ],
     "website": "https://www.wati.io"
+  },
+  "Wave Commerce": {
+    "cats": [
+      6
+    ],
+    "description": "Wave Commerce is a platform that supports brands with Shopify development and direct-to-consumer ecommerce growth.",
+    "icon": "WaveCommerce.svg",
+    "js": {
+      "waveLocalPickup": ""
+    },
+    "requires": [
+      "Shopify"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.wavecommerce\\.hk/"
+    ],
+    "website": "https://www.wavecommerce.hk"
   },
   "Waveform": {
     "cats": [
@@ -1091,6 +1241,24 @@
     ],
     "saas": true,
     "website": "https://www.weweb.io"
+  },
+  "Weatherstack": {
+    "cats": [
+      19
+    ],
+    "description": "Weatherstack is a weather API providing JSON and XML data for global locations in a lightweight format.",
+    "dom": [
+      "link[href*='cdn.apixu.com']"
+    ],
+    "icon": "Weatherstack.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://weatherstack.com"
   },
   "Weaver Xtreme": {
     "cats": [
@@ -1472,7 +1640,9 @@
     ],
     "description": "WebSocket is a communication protocol that provides full-duplex communication channels over a single, long-lived connection, enabling interactive communication between web browsers and servers.",
     "dom": [
-      "link[rel='web-socket']"
+      "link[rel='web-socket']",
+      "link[href^='ws://']",
+      "link[href^='wss://']"
     ],
     "html": [
       "<(?:link|a)[^>]+href=[\"']wss?://"
@@ -1566,6 +1736,40 @@
     "saas": true,
     "website": "https://www.shop-script.com"
   },
+  "Webbotify": {
+    "cats": [
+      52
+    ],
+    "description": "Webbotify is a chatbot platform that uses AI trained specifically on a website's content to provide automated responses.",
+    "icon": "Webbotify.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "api\\.webbotify\\.com/"
+    ],
+    "website": "https://www.webbotify.com"
+  },
+  "Webcake": {
+    "cats": [
+      51
+    ],
+    "description": "Webcake is a platform for designing visually appealing landing pages.",
+    "icon": "Webcake.svg",
+    "js": {
+      "WebcakeAddresses": "",
+      "WebcakeScript": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://webcake.io"
+  },
   "Webeo": {
     "cats": [
       76
@@ -1606,6 +1810,21 @@
       "api\\.weberlo\\.com/"
     ],
     "website": "https://www.weberlo.com"
+  },
+  "Webestools": {
+    "cats": [
+      5
+    ],
+    "description": "Webestools is a platform offering online tools, including counters and widgets, for various functionalities.",
+    "dom": [
+      "iframe[src*='.webestools.com/']"
+    ],
+    "icon": "Webestools.svg",
+    "saas": true,
+    "scriptSrc": [
+      "www\\.webestools\\.com/"
+    ],
+    "website": "https://www.webestools.com"
   },
   "Webeyez": {
     "cats": [
@@ -1916,6 +2135,26 @@
     "saas": true,
     "website": "https://usewebready.com"
   },
+  "Webreed": {
+    "cats": [
+      1
+    ],
+    "cookies": {
+      "webreed_session": ""
+    },
+    "description": "Webreed is a website-based tool designed for managing animal breeding processes.",
+    "icon": "Webreed.svg",
+    "js": {
+      "webreed.tel_view_url": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.webreed.pet"
+  },
   "Webriti Busiprof": {
     "cats": [
       80
@@ -1970,6 +2209,23 @@
     },
     "website": "https://www.hosttech.ch/websitecreator"
   },
+  "Website Speedy": {
+    "cats": [
+      92
+    ],
+    "description": "Website Speedy is a tool that improves website speed by identifying and optimizing render-blocking elements, enabling asynchronous resource loading for better performance.",
+    "icon": "WebsiteSpeedy.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "websitespeedy\\.com"
+    ],
+    "website": "https://websitespeedy.com/"
+  },
   "WebsiteBaker": {
     "cats": [
       1
@@ -1993,6 +2249,9 @@
     "icon": "WebsiteBuilder.svg",
     "js": {
       "_site.urls.dataproxy": "\\.mywebsitebuilder\\.com"
+    },
+    "meta": {
+      "generator": "^[\\w\\s.&-]{0,40}\\bWebsite Builder$"
     },
     "pricing": [
       "low",
@@ -2025,6 +2284,18 @@
       "WebTrends": ""
     },
     "website": "https://worldwide.webtrends.com"
+  },
+  "Webware": {
+    "cats": [
+      51
+    ],
+    "description": "Webware is a platform that provides a user-friendly toolkit designed to help businesses establish an online presence.",
+    "icon": "Webware.svg",
+    "saas": true,
+    "scripts": [
+      "iglu:io\\.webware/"
+    ],
+    "website": "https://www.webware.ai"
   },
   "Webx": {
     "cats": [
@@ -2082,6 +2353,18 @@
     "saas": true,
     "website": "https://www.webzie.com/"
   },
+  "WeeBnB": {
+    "cats": [
+      93
+    ],
+    "description": "WeeBnB is a rental optimization platform that provides a website for managing and promoting vacation rentals.",
+    "icon": "WeeBnB.svg",
+    "meta": {
+      "generator": "^WeeBnB$"
+    },
+    "saas": true,
+    "website": "https://www.weebnb.com"
+  },
   "Weebly": {
     "cats": [
       1
@@ -2105,6 +2388,24 @@
       "cdn\\d+\\.editmysite\\.com"
     ],
     "website": "https://www.weebly.com"
+  },
+  "Weekdone": {
+    "cats": [
+      19
+    ],
+    "description": "Weekdone is a tool for managers and leaders who want to get more insights into their teams and organizations and improve team collaboration and focus.",
+    "icon": "Weekdone.svg",
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "weekdone\\.com"
+    ],
+    "website": "https://weekdone.com"
   },
   "Weglot": {
     "cats": [
@@ -2137,6 +2438,9 @@
     },
     "cpe": "cpe:2.3:a:welcart:welcart:*:*:*:*:*:*:*:*",
     "description": "Welcart is a free ecommerce plugin for WordPress with top market share in Japan.",
+    "dom": [
+      "link[href*='usces_default.css'],link[href*='usces_default.min.css']"
+    ],
     "html": [
       "<link[^>]+?href=\"[^\"]+usces_default(?:\\.min)?\\.css",
       "<!-- Welcart version : v([\\d.]+)\\;version:\\1"
@@ -2206,6 +2510,25 @@
       "app\\.weply\\.chat/"
     ],
     "website": "https://weply.chat"
+  },
+  "Wfolio": {
+    "cats": [
+      7
+    ],
+    "description": "Wfolio is an online solution designed to help photographers showcase their work and grow their business.",
+    "icon": "Wfolio.svg",
+    "js": {
+      "initWfolioCard": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.wfolio\\.pro"
+    ],
+    "website": "https://wfolio.com"
   },
   "Whatfix": {
     "cats": [
@@ -2287,15 +2610,68 @@
     ],
     "website": "https://www.whistl.co.uk"
   },
+  "Whitelabel MD": {
+    "cats": [
+      6
+    ],
+    "description": "White Label MD is a platform for creating ecommerce telemedicine websites with on-demand prescription fulfillment capabilities.",
+    "icon": "WhitelabelMD.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "api\\.whitelabelmd\\.com"
+    ],
+    "website": "https://whitelabelmd.com"
+  },
+  "Whitespark SEO": {
+    "cats": [
+      54
+    ],
+    "description": "Aims to help improve rankings and drive business via Google Search.",
+    "dom": [
+      "script[data-gfspw*='rb.whitespark.ca'], div[data-url*='rb.whitespark.ca']"
+    ],
+    "icon": "Whitespark.svg",
+    "pricing": [
+      "high",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://whitespark.ca/seo-services"
+  },
   "Whooshkaa": {
     "cats": [
       5
+    ],
+    "dom": [
+      "iframe[src*='whooshkaa.com']"
     ],
     "html": [
       "<iframe src=\"[^>]+whooshkaa\\.com"
     ],
     "icon": "Whooshkaa.svg",
     "website": "https://www.whooshkaa.com"
+  },
+  "Wicked Reports": {
+    "cats": [
+      32
+    ],
+    "description": "Wicked Reports is a marketing analytics platform that provides subscription-based, actionable reports on marketing results at each stage of the customer's journey from first click to sale.",
+    "icon": "WickedReports.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "widget\\.wickedreports\\.com/"
+    ],
+    "website": "https://www.wickedreports.com"
   },
   "WideBundle": {
     "cats": [
@@ -2434,6 +2810,21 @@
     "saas": true,
     "website": "https://wikinggruppen.se"
   },
+  "Wikit Live Chat": {
+    "cats": [
+      52
+    ],
+    "description": "Wikit Live Chat is a platform that enables the creation of intelligent chatbots, leveraging the capabilities of generative AI to enhance user interactions.",
+    "icon": "Wikit.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "webchat\\.wikit\\.ai"
+    ],
+    "website": "https://www.wikit.ai/solution/livechat"
+  },
   "WikkaWiki": {
     "cats": [
       8
@@ -2523,6 +2914,23 @@
     ],
     "website": "https://winktoolkit.org"
   },
+  "Wins eCommerce": {
+    "cats": [
+      6
+    ],
+    "description": "Wins eCommerce is a scalable ecommerce infrastructure that enables online store creation and product sales.",
+    "icon": "WinseCommerce.svg",
+    "meta": {
+      "author": "^Wins E-commerce$"
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://winsecommerce.com"
+  },
   "Winstone Servlet Container": {
     "cats": [
       22
@@ -2588,6 +2996,25 @@
     ],
     "website": "https://www.wirecard.com"
   },
+  "Wiremo": {
+    "cats": [
+      90
+    ],
+    "description": "Wiremo is a customer review platform designed for eCommerce businesses to collect, manage, and display user-generated feedback.",
+    "icon": "Wiremo.svg",
+    "js": {
+      "pluginWiremoIntegration": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "wapi\\.wiremo\\.co/"
+    ],
+    "website": "https://wiremo.co"
+  },
   "Wisepops": {
     "cats": [
       5,
@@ -2652,6 +3079,27 @@
       "\\.wisetracker\\.co\\.kr"
     ],
     "website": "https://www.wisetracker.co.kr"
+  },
+  "Wishi": {
+    "cats": [
+      76
+    ],
+    "description": "Wishi is a curation and personalization platform that enhances online sales by providing embedded personal styling at scale.",
+    "icon": "Wishi.svg",
+    "js": {
+      "Wishi.analytics": "",
+      "WishiAPI": "",
+      "WishiSDKVersion": "([\\d\\.]+)\\;version:\\1"
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "www\\.wishi\\.me"
+    ],
+    "website": "https://wishi.me"
   },
   "Wishlist King": {
     "cats": [
@@ -2784,7 +3232,21 @@
       "recurring"
     ],
     "saas": true,
+    "scripts": [
+      "static\\.wixstatic\\.com"
+    ],
     "website": "https://www.wix.com/freesitebuilder/tae-store"
+  },
+  "WizSoft": {
+    "cats": [
+      29
+    ],
+    "description": "WizSoft is a search engine designed for embedding in ecommerce websites and other platforms where data are stored in records.",
+    "saas": true,
+    "scriptSrc": [
+      "\\.wizsoft\\.com/"
+    ],
+    "website": "https://www.wizsoft.com"
   },
   "Wized": {
     "cats": [
@@ -2902,6 +3364,21 @@
     "saas": true,
     "website": "https://www.wolframalpha.com/widgets"
   },
+  "Wolters Kluwer": {
+    "cats": [
+      51
+    ],
+    "description": "Wolters Kluwer is a site builder designed for tax professionals to create and manage websites tailored to their practice needs.",
+    "icon": "WoltersKluwer.svg",
+    "meta": {
+      "GENERATOR": "^Designed by CCH Site Builder$"
+    },
+    "saas": true,
+    "scriptSrc": [
+      "www\\.cchwebsites\\.com/"
+    ],
+    "website": "https://www.cchwebsites.com"
+  },
   "Woltlab Community Framework": {
     "cats": [
       1
@@ -2957,6 +3434,9 @@
       6,
       87
     ],
+    "cookies": {
+      "woocommerce_recently_viewed": ""
+    },
     "cpe": "cpe:2.3:a:woocommerce:woocommerce:*:*:*:*:*:wordpress:*:*",
     "description": "WooCommerce is an open-source ecommerce plugin for WordPress.",
     "dom": [
@@ -2964,6 +3444,7 @@
     ],
     "icon": "WooCommerce.svg",
     "js": {
+      "wc_add_to_cart_params": "",
       "woocommerce_params": ""
     },
     "meta": {
@@ -3275,6 +3756,9 @@
     ],
     "cpe": "cpe:2.3:a:wordpress:wordpress:*:*:*:*:*:*:*:*",
     "description": "WordPress is a free and open-source content management system written in PHP and paired with a MySQL or MariaDB database. Features include a plugin architecture and a template system.",
+    "dom": [
+      "div[class*='wp-block-group'] > div[class*='wp-block-'], link[rel=stylesheet][href*='/wp-content/'], link[rel=stylesheet][href*='/wp-includes/'], link[href*='.wp.com']"
+    ],
     "headers": {
       "X-Pingback": "/xmlrpc\\.php$",
       "link": "rel=\"https://api\\.w\\.org/\""
@@ -3422,6 +3906,9 @@
     "js": {
       "WordPressPopularPosts": ""
     },
+    "scripts": [
+      "ImportFromWordPressInsideMenu"
+    ],
     "website": "https://wordpress.com"
   },
   "Wordfence": {
@@ -3487,6 +3974,23 @@
     "saas": true,
     "website": "https://www.workable.com"
   },
+  "Workadu": {
+    "cats": [
+      53
+    ],
+    "description": "Workadu is a business management system designed to simplify operations and streamline processes for businesses.",
+    "icon": "Workadu.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.workadu\\.com"
+    ],
+    "website": "https://www.workadu.com"
+  },
   "Workarea": {
     "cats": [
       6
@@ -3508,6 +4012,22 @@
     ],
     "saas": true,
     "website": "https://www.workarea.com"
+  },
+  "Workbooks": {
+    "cats": [
+      53
+    ],
+    "description": "Workbooks is a platform that helps manage sales leads, automate tasks, and track marketing efforts from advertisements to invoices.",
+    "icon": "Workbooks.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "secure\\.workbooks\\.com"
+    ],
+    "website": "https://www.workbooks.com"
   },
   "Workstand": {
     "cats": [

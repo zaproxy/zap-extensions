@@ -109,7 +109,7 @@ public class BruteForceWorkGenerator implements Runnable {
                     manager.setAuto(false);
                 }
             } catch (IOException e) {
-                LOGGER.error(e);
+                LOGGER.error(e, e);
             }
         }
 
@@ -124,7 +124,7 @@ public class BruteForceWorkGenerator implements Runnable {
                 // get any extention that need to be checked
                 extToCheck = tempDirToCheck.getExts();
             } catch (InterruptedException e) {
-                LOGGER.debug(e);
+                LOGGER.debug(e, e);
             }
 
             started = currentDir;
@@ -142,7 +142,7 @@ public class BruteForceWorkGenerator implements Runnable {
                             GenBaseCase.genBaseCase(manager, firstPart + currentDir, true, null);
 
                 } catch (IOException e) {
-                    LOGGER.error(e);
+                    LOGGER.error(e, e);
                 }
 
                 // baseCaseObj = new BaseCase(null, failcode, true, failurl, baseCase);
@@ -178,7 +178,7 @@ public class BruteForceWorkGenerator implements Runnable {
                                             manager, firstPart + currentDir, false, fileExtention);
 
                         } catch (IOException e) {
-                            LOGGER.error(e);
+                            LOGGER.error(e, e);
                         }
 
                         // call function to generate the brute force

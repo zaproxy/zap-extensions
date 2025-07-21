@@ -55,7 +55,10 @@
     "cats": [
       4
     ],
-    "description": "UIDoc is a Node.js application used at build time to generate API documentation.",
+    "description": "YUI Doc is a Node.js application used at build time to generate API documentation.",
+    "dom": [
+      "body[class*='yui3-skin-sam']"
+    ],
     "html": [
       "(?:<html[^>]* yuilibrary\\.com/rdf/[\\d.]+/yui\\.rdf|<body[^>]+class=\"yui3-skin-sam)"
     ],
@@ -116,6 +119,9 @@
     "cats": [
       6
     ],
+    "dom": [
+      "link[href*='store.yahoo.net']"
+    ],
     "headers": {
       "X-XRDS-Location": "/ystore/"
     },
@@ -169,6 +175,17 @@
     },
     "icon": "YalinHost.svg",
     "website": "https://yalinhost.com"
+  },
+  "Yamada UI": {
+    "cats": [
+      66
+    ],
+    "description": "Yamada UI is a versatile React component library.",
+    "dom": [
+      "a[aria-label*='Yamada UI']"
+    ],
+    "icon": "YamadaUI.svg",
+    "website": "https://yamada-ui.com"
   },
   "Yampi Checkout": {
     "cats": [
@@ -258,6 +275,9 @@
       36
     ],
     "description": "Yandex Direct is the platform designed for sponsored ad management.",
+    "dom": [
+      "yatag[class*='ya-partner__ads']"
+    ],
     "html": [
       "<yatag class=\"ya-partner__ads\">"
     ],
@@ -339,6 +359,23 @@
     "icon": "Yaws.png",
     "oss": true,
     "website": "https://github.com/erlyaws/yaws"
+  },
+  "Yay! Forms": {
+    "cats": [
+      73,
+      110
+    ],
+    "description": "Yay! Forms is an AI-powered tool for creating forms and surveys designed to capture audience sentiments.",
+    "icon": "YayForms.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "embed\\.yayforms\\.link"
+    ],
+    "website": "https://yayforms.com"
   },
   "Ybug": {
     "cats": [
@@ -582,12 +619,27 @@
     "implies": [
       "PHP"
     ],
+    "js": {
+      "yii.init": ""
+    },
     "oss": true,
     "scriptSrc": [
       "/assets/[a-zA-Z0-9]{8}\\/yii\\.js$",
       "yii(?:\\.|)?(?:validation|activeform)\\.js"
     ],
     "website": "https://www.yiiframework.com"
+  },
+  "YoPlanning": {
+    "cats": [
+      72
+    ],
+    "description": "YoPlanning is an online software designed for booking and planning activities.",
+    "icon": "YoPlanning.svg",
+    "saas": true,
+    "scriptSrc": [
+      "booking\\.yoplanning\\.pro"
+    ],
+    "website": "https://yoplanning.pro"
   },
   "Yoast Duplicate Post": {
     "cats": [
@@ -609,13 +661,9 @@
       87
     ],
     "description": "Yoast SEO is a search engine optimisation plugin for WordPress and other platforms.",
-    "dom": {
-      "script.yoast-schema-graph": {
-        "attributes": {
-          "class": ""
-        }
-      }
-    },
+    "dom": [
+      "script[class*='yoast-schema-graph']"
+    ],
     "html": [
       "<!-- This site is optimized with the Yoast (?:WordPress )?SEO plugin v([^\\s]+) -\\;version:\\1",
       "<!-- This site is optimized with the Yoast SEO Premium plugin v(?:[^\\s]+) \\(Yoast SEO v([^\\s]+)\\) -\\;version:\\1"
@@ -651,13 +699,9 @@
       100
     ],
     "description": "Yoast SEO for Shopify optimizes Shopify shops.",
-    "dom": {
-      "script#yoast-schema-graph": {
-        "attributes": {
-          "id": ""
-        }
-      }
-    },
+    "dom": [
+      "script#yoast-schema-graph"
+    ],
     "html": [
       "<!-- This site is optimized with Yoast SEO for Shopify -->"
     ],
@@ -769,6 +813,22 @@
       "console\\.log\\(\\'Yoori-Ecommerce"
     ],
     "website": "https://spagreen.net/yoori-ecommerce-solution"
+  },
+  "Yopify": {
+    "cats": [
+      6
+    ],
+    "description": "Yopify is an ecommerce app suite designed to boost sales, increase conversions, and enhance the customer experience.",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "//yopify\\.com/"
+    ],
+    "website": "https://www.yopify.com"
   },
   "Yotpo Loyalty & Referrals": {
     "cats": [
@@ -943,6 +1003,9 @@
       13
     ],
     "description": "YouTrack is a browser-based bug tracker, issue tracking system and project management software.",
+    "dom": [
+      "[no-title='YouTrack'], link[type='application/opensearchdescription+xml'][title='YouTrack']"
+    ],
     "html": [
       "no-title=\"YouTrack\">",
       "data-reactid=\"[^\"]+\">youTrack ([0-9.]+)<\\;version:\\1",
@@ -956,6 +1019,9 @@
       14
     ],
     "description": "YouTube is a video sharing service where users can create their own profile, upload videos, watch, like and comment on other videos.",
+    "dom": [
+      "embed[src*='youtube.com'], embed[src*='youtube-nocookie.com'], iframe[src*='youtube.com'], iframe[src*='youtube-nocookie.com'], param[value*='youtube.com'], param[value*='youtube-nocookie.com']"
+    ],
     "html": [
       "<(?:param|embed|iframe)[^>]+youtube(?:-nocookie)?\\.com/(?:v|embed)"
     ],
@@ -981,6 +1047,22 @@
     ],
     "saas": true,
     "website": "https://youform.com"
+  },
+  "Youzan": {
+    "cats": [
+      6
+    ],
+    "description": "Youzan is a Chinese shopping platform that provides businesses with tools for ecommerce, online store management, and customer engagement.",
+    "icon": "Youzan.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "m\\.youzan\\.com"
+    ],
+    "website": "https://www.youzan.com"
   },
   "YunoHost": {
     "cats": [
@@ -1030,5 +1112,17 @@
       "cdn\\.yellowmessenger\\.com"
     ],
     "website": "https://yellow.ai/"
+  },
+  "youCMS": {
+    "cats": [
+      1
+    ],
+    "description": "youCMS is an enterprise content management system developed in Denmark, designed to support large-scale digital content organization and delivery.",
+    "icon": "youCMS.svg",
+    "meta": {
+      "generator": "^youCMS(?:\\b|\\s|\\s*-)"
+    },
+    "saas": true,
+    "website": "https://www.youcms.eu"
   }
 }

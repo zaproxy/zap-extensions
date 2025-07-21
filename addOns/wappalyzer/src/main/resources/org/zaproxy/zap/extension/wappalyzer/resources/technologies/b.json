@@ -13,6 +13,25 @@
     ],
     "website": "https://www.b2ceurope.eu/"
   },
+  "B2Chat": {
+    "cats": [
+      52
+    ],
+    "description": "B2Chat is an all-in-one multi-channel platform that unites WhatsApp, Facebook, Instagram, Telegram, and LiveChat in a single interface.",
+    "icon": "B2Chat.svg",
+    "js": {
+      "b2chat_livechat_setup": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.b2chat\\.io"
+    ],
+    "website": "https://www.b2chat.io"
+  },
   "BDOW": {
     "cats": [
       5,
@@ -114,6 +133,22 @@
       "\\bBRT\\b"
     ],
     "website": "https://www.brt.it"
+  },
+  "BRYNK": {
+    "cats": [
+      111
+    ],
+    "description": "BRYNK is an all-in-one platform for managing memberships, donors, events, and payments or fundraising activities.",
+    "icon": "BRYNK.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.brynk\\.org"
+    ],
+    "website": "https://www.brynk.com"
   },
   "BSmart": {
     "cats": [
@@ -288,6 +323,18 @@
     ],
     "website": "https://www.backerkit.com"
   },
+  "Backstage": {
+    "cats": [
+      71
+    ],
+    "description": "Backstage is a provider of premium marketing templates designed for affiliates, offering ready-made emails, videos, and funnels to streamline campaign performance.",
+    "icon": "Backstage.svg",
+    "saas": true,
+    "scripts": [
+      "app\\.yourbackstage\\.io"
+    ],
+    "website": "https://yourbackstage.io"
+  },
   "Backstretch": {
     "cats": [
       25,
@@ -299,6 +346,23 @@
       "(?:((?:\\d+\\.)+\\d+)\\/)?(?:jquery\\.)?backstretch(?:\\.min)?\\.js\\;version:\\1"
     ],
     "website": "https://www.jquery-backstretch.com/"
+  },
+  "Bag": {
+    "cats": [
+      6
+    ],
+    "cookies": {
+      "shanta_session": ""
+    },
+    "description": "Bag is a platform that provides an integrated solution for ecommerce growth, offering tools to streamline operations.",
+    "icon": "Bag.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://shantaweb.com"
   },
   "Bahooosh": {
     "cats": [
@@ -419,6 +483,17 @@
       "widget\\.bandsintown\\.com/"
     ],
     "website": "https://artists.bandsintown.com/support/events-widget"
+  },
+  "Bandwango": {
+    "cats": [
+      97
+    ],
+    "description": "Bandwango is a platform that boosts community revenue by promoting local businesses and attractions while tracking visitor interactions to support economic growth.",
+    "dom": [
+      "a[href*='www.bandwango.com'] > img[src*='app.bandwango.com']"
+    ],
+    "icon": "Bandwango.svg",
+    "website": "https://www.bandwango.com"
   },
   "BannerBoo": {
     "cats": [
@@ -752,6 +827,23 @@
     ],
     "website": "https://www.betheme.com"
   },
+  "Beacons": {
+    "cats": [
+      32
+    ],
+    "description": "Beacons is an AI-powered creator platform that enables selling through a creator store, building an email marketing strategy, and securing brand deals in one place.",
+    "icon": "Beacons.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "cdn\\.beacons\\.ai"
+    ],
+    "website": "https://beacons.ai"
+  },
   "Beam AfterSell": {
     "cats": [
       100
@@ -933,6 +1025,22 @@
     ],
     "website": "https://www.beeswax.com/"
   },
+  "Beezer": {
+    "cats": [
+      51
+    ],
+    "description": "Beezer is a no-code web app builder with drag-and-drop functionality for creating applications.",
+    "icon": "Beezer.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.beezer\\.com"
+    ],
+    "website": "https://www.beezer.com"
+  },
   "Behzi": {
     "cats": [
       51
@@ -1000,6 +1108,23 @@
       "\\.getbento\\.com/"
     ],
     "website": "https://getbento.com"
+  },
+  "Bernet Cloud": {
+    "cats": [
+      62
+    ],
+    "description": "Bernet Cloud is a cloud management platform that enables global application deployment without requiring advanced technical expertise.",
+    "headers": {
+      "Bc-Powered-By": "bernet\\.cloud"
+    },
+    "icon": "BernetCloud.svg",
+    "pricing": [
+      "recurring",
+      "payg",
+      "freemium"
+    ],
+    "saas": true,
+    "website": "https://bernet.cloud"
   },
   "BerqWP": {
     "cats": [
@@ -1316,6 +1441,22 @@
     ],
     "website": "https://www.beyondmenu.com/contactus.aspx"
   },
+  "Beyonk": {
+    "cats": [
+      104
+    ],
+    "description": "Beyonk is an online ticketing software that provides EPOS and booking management solutions for businesses.",
+    "icon": "Beyonk.svg",
+    "pricing": [
+      "freemium",
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.beyonk\\.com"
+    ],
+    "website": "https://beyonk.com"
+  },
   "Biano": {
     "cats": [
       10
@@ -1519,6 +1660,23 @@
     ],
     "website": "https://en.bigin.io"
   },
+  "Bigshop": {
+    "cats": [
+      6
+    ],
+    "description": "Bigshop is a platform for creating and managing online stores.",
+    "icon": "Bigshop.svg",
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.bigshop\\.com\\.br"
+    ],
+    "website": "https://www.bigshop.com.br"
+  },
   "Bigware": {
     "cats": [
       6
@@ -1680,6 +1838,24 @@
     ],
     "website": "https://birdeye.com"
   },
+  "BitPay": {
+    "cats": [
+      41
+    ],
+    "description": "BitPay is a payment processing platform that enables websites to accept bitcoins as a form of payment.",
+    "dom": [
+      "form[action*='bitpay.com']"
+    ],
+    "icon": "BitPay.svg",
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scripts": [
+      "bitpay"
+    ],
+    "website": "https://www.bitpay.com"
+  },
   "Bitcoin": {
     "cats": [
       41
@@ -1762,6 +1938,25 @@
       "Bizweb": ""
     },
     "website": "https://www.bizweb.vn"
+  },
+  "Black Book": {
+    "cats": [
+      10
+    ],
+    "description": "Black Book is a provider of precise data and analytics for the automotive industry, offering market insights to support informed decision-making.",
+    "icon": "BlackBook.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.blackbookinformation\\.com"
+    ],
+    "scripts": [
+      "\\.blackbookinformation\\.com"
+    ],
+    "website": "https://www.hearst.com/black-book"
   },
   "Blackbaud CRM": {
     "cats": [
@@ -1910,6 +2105,21 @@
     ],
     "website": "https://blinklink.com"
   },
+  "Blip": {
+    "cats": [
+      52
+    ],
+    "description": "Blip is an intelligent conversation platform designed to facilitate interactive communication.",
+    "icon": "Blip.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "/santander-partner-blipchat\\.min\\.js"
+    ],
+    "website": "https://www.blip.ai"
+  },
   "Blitz": {
     "cats": [
       92
@@ -2029,6 +2239,71 @@
       "^https?://[^/]+\\.(?:blogspot|blogger)\\.com"
     ],
     "website": "https://www.blogger.com"
+  },
+  "BlokID": {
+    "cats": [
+      36
+    ],
+    "description": "BlokID is a real-time digital ad auditing tool, ensuring accurate tracking of all ad interactions with secure records.",
+    "icon": "BlokID.svg",
+    "pricing": [
+      "high",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "pixel\\.blokid\\.com/"
+    ],
+    "website": "https://www.blokid.com"
+  },
+  "Bloom": {
+    "cats": [
+      6
+    ],
+    "description": "Bloom is a provider of commerce services for the alcohol industry.",
+    "icon": "BloomWine.svg",
+    "js": {
+      "Bloom.Cookie": "",
+      "BloomController": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://bloom.wine/"
+  },
+  "Bloom Labs": {
+    "cats": [
+      86
+    ],
+    "description": "Bloom Labs is a local content targeting system that uses data analytics to distribute content based on geographic relevance.",
+    "icon": "Bloom.svg",
+    "saas": true,
+    "scriptSrc": [
+      "api\\.bloom\\.li/"
+    ],
+    "website": "https://bloom.li"
+  },
+  "Bloom Portfolio": {
+    "cats": [
+      7
+    ],
+    "description": "Bloom Portfolio is an online platform for showcasing work in a structured manner.",
+    "icon": "BloomIO.svg",
+    "meta": {
+      "application-name": "Bloom\\.io"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "code\\.bloom\\.io"
+    ],
+    "website": "https://bloom.io/features/website-portfolio"
   },
   "Bloomreach": {
     "cats": [
@@ -2297,6 +2572,21 @@
     ],
     "saas": true,
     "website": "https://bnovo.ru"
+  },
+  "BoatChat": {
+    "cats": [
+      52
+    ],
+    "description": "BoatChat is a customer service tool that provides live chat support for inquiries and assistance related to boat dealerships.",
+    "icon": "BoatChat.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.boatchat\\.com"
+    ],
+    "website": "https://www.boatchat.com"
   },
   "Boats Group": {
     "cats": [
@@ -2651,6 +2941,9 @@
       87
     ],
     "description": "BoldGrid is a free website builder for WordPress websites.",
+    "dom": [
+      "link[rel='stylesheet'][href*='boldgrid'], link[rel='stylesheet'][href*='post-and-page-builder'], link[href*='.boldgrid.com']"
+    ],
     "html": [
       "<link rel=[\"']stylesheet[\"'] [^>]+boldgrid",
       "<link rel=[\"']stylesheet[\"'] [^>]+post-and-page-builder",
@@ -2724,6 +3017,25 @@
     ],
     "website": "https://cibonfire.com"
   },
+  "Bonsai": {
+    "cats": [
+      53
+    ],
+    "description": "Bonsai is a platform that creates, sends, and tracks proposals online for streamlined client communication and project management.",
+    "dom": [
+      "iframe[src*='app.hellobonsai.com/']"
+    ],
+    "icon": "Bonsai.svg",
+    "meta": {
+      "apple-mobile-web-app-title": "^Bonsai$"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.hellobonsai.com"
+  },
   "Bontii": {
     "cats": [
       41
@@ -2739,6 +3051,18 @@
       "api\\.bontii\\.dk/"
     ],
     "website": "https://bontii.dk"
+  },
+  "Book N Pay": {
+    "cats": [
+      104
+    ],
+    "description": "Book N Pay is a platform for booking and paying for various services and activities.",
+    "icon": "BookNPay.svg",
+    "saas": true,
+    "scriptSrc": [
+      "\\.booknpay\\.net/"
+    ],
+    "website": "https://booknpay.net"
   },
   "BookDinners": {
     "cats": [
@@ -2853,6 +3177,22 @@
     ],
     "website": "https://www.bookatable.co.uk"
   },
+  "Booked": {
+    "cats": [
+      72
+    ],
+    "description": "Booked is a scheduling solution designed for organizational use.",
+    "dom": [
+      "link[href*='css/booked.css']"
+    ],
+    "icon": "Booked.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.bookedscheduler.com/"
+  },
   "Bookeo": {
     "cats": [
       72
@@ -2939,6 +3279,22 @@
     "saas": true,
     "website": "https://bookingkit.net/"
   },
+  "Bookitit": {
+    "cats": [
+      72
+    ],
+    "description": "Bookitit is an online scheduling system.",
+    "icon": "Bookitit.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.bookitit\\.com/"
+    ],
+    "website": "https://www.bookitit.com"
+  },
   "Bookly": {
     "cats": [
       72,
@@ -3000,6 +3356,38 @@
       "booksy\\.com/widget/code\\.js"
     ],
     "website": "https://booksy.com/"
+  },
+  "Bookteq": {
+    "cats": [
+      93
+    ],
+    "description": "Bookteq is a sports facility booking software that enables schools, clubs, and councils to manage reservations online.",
+    "dom": [
+      "link[href*='.bookteq.com']"
+    ],
+    "icon": "Bookteq.svg",
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "widget\\.bookteq\\.com"
+    ],
+    "website": "https://www.bookteq.com"
+  },
+  "Bool TypeScript": {
+    "cats": [
+      12
+    ],
+    "description": "Bool TypeScript is a framework optimized for high performance, leveraging Bun.sh to accelerate JavaScript and TypeScript application development.",
+    "headers": {
+      "X-Powered-By": "^Bool Typescript$"
+    },
+    "icon": "BoolTypeScript.svg",
+    "saas": true,
+    "website": "https://boolts.dev"
   },
   "Boomerang": {
     "cats": [
@@ -3105,6 +3493,21 @@
     ],
     "saas": true,
     "website": "https://www.bootic.io"
+  },
+  "Bootpay": {
+    "cats": [
+      41
+    ],
+    "description": "Bootpay is a payment integration service from Korea that enables businesses to process online transactions.",
+    "icon": "Bootpay.svg",
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.bootpay\\.co\\.kr/"
+    ],
+    "website": "https://www.bootpay.co.kr"
   },
   "Bootstrap": {
     "cats": [
@@ -3253,6 +3656,25 @@
       "WordPress"
     ],
     "website": "https://borlabs.io/borlabs-cookie/"
+  },
+  "Bot9": {
+    "cats": [
+      52
+    ],
+    "description": "Bot9 is an AI chatbot builder, tailored for customer support.",
+    "icon": "Bot9.svg",
+    "js": {
+      "BOT9_DATA.bot9Id": "",
+      "Bot9ChatbotInstance": "",
+      "bot9CopyCodeToClipboard": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://bot9.ai"
   },
   "BotPenguin": {
     "cats": [
@@ -3456,6 +3878,22 @@
     ],
     "website": "https://www.joinblvd.com"
   },
+  "Bounce Commerce": {
+    "cats": [
+      76
+    ],
+    "description": "Bounce Commerce is a provider of AI-based engagement solutions that enhance conversion rates by assisting customers in finding the right products.",
+    "icon": "BounceCommerce.svg",
+    "js": {
+      "baBounceManagement": "",
+      "bavBounceManagement": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "api\\.bounce-commerce\\.de"
+    ],
+    "website": "https://www.bounce-commerce.de"
+  },
   "Boutiq": {
     "cats": [
       100,
@@ -3584,6 +4022,18 @@
     ],
     "website": "https://brainsins.com"
   },
+  "Brainlead": {
+    "cats": [
+      32
+    ],
+    "description": "Brainlead is a marketing automation software.",
+    "icon": "Brainlead.svg",
+    "saas": true,
+    "scripts": [
+      "app\\.brainlead\\.it"
+    ],
+    "website": "https://brainlead.it"
+  },
   "Braintree": {
     "cats": [
       41
@@ -3655,6 +4105,26 @@
     ],
     "website": "https://brandfolder.com"
   },
+  "Brandquiz": {
+    "cats": [
+      73
+    ],
+    "description": "Brandquiz is a platform for creating quizzes and surveys to capture leads, collect feedback, and engage audiences.",
+    "icon": "Brandquiz.svg",
+    "js": {
+      "brandquizEmbed": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.brandquiz\\.io"
+    ],
+    "website": "https://www.brandquiz.io"
+  },
   "Braze": {
     "cats": [
       32,
@@ -3703,6 +4173,26 @@
     ],
     "website": "https://www.breadpayments.com"
   },
+  "Bread & Butter": {
+    "cats": [
+      97
+    ],
+    "description": "Bread & Butter is a platform that offers a first-party data CDP for lead generation.",
+    "icon": "BreadButter.svg",
+    "js": {
+      "BreadButter.breadbutter": ""
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "api\\.breadbutter\\.io"
+    ],
+    "website": "https://breadbutter.io"
+  },
   "Breadcrumb NavXT": {
     "cats": [
       87
@@ -3736,6 +4226,41 @@
     ],
     "saas": true,
     "website": "https://breakdance.com"
+  },
+  "Breeze": {
+    "cats": [
+      108
+    ],
+    "description": "Breeze is an open-source frontend framework designed for Magento.",
+    "icon": "Breeze.svg",
+    "js": {
+      "breeze.getScopeId": ""
+    },
+    "oss": true,
+    "pricing": [
+      "freemium"
+    ],
+    "requires": [
+      "Magento"
+    ],
+    "website": "https://breezefront.com"
+  },
+  "Breezy HR": {
+    "cats": [
+      101
+    ],
+    "description": "Breezy HR is a recruiting software and applicant tracking system designed to streamline hiring processes.",
+    "icon": "BreezyHR.svg",
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.breezy\\.hr"
+    ],
+    "website": "https://breezy.hr"
   },
   "Breinify": {
     "cats": [
@@ -3952,6 +4477,21 @@
     ],
     "website": "https://brimble.io"
   },
+  "Briqpay": {
+    "cats": [
+      41
+    ],
+    "description": "Briqpay is a payment optimization platform that streamlines business payment processes through its Payments Unleashed solution.",
+    "icon": "Briqpay.svg",
+    "js": {
+      "_briqpay.checkout": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "api\\.briqpay\\.com"
+    ],
+    "website": "https://briqpay.com"
+  },
   "Brizy": {
     "cats": [
       51
@@ -4067,6 +4607,21 @@
       "generator": "BrowserCMS ([\\d.]+)\\;version:\\1"
     },
     "website": "https://browsercms.org"
+  },
+  "Brushd": {
+    "cats": [
+      51
+    ],
+    "description": "Brushd is a portfolio website builder that simplifies the creation and maintenance of online creative portfolios.",
+    "headers": {
+      "X-Computed-Host": "content\\.brushd\\.co"
+    },
+    "icon": "Brushd.svg",
+    "saas": true,
+    "scriptSrc": [
+      "assets\\.brushd\\.co/"
+    ],
+    "website": "https://www.brushd.com"
   },
   "Bsale": {
     "cats": [
@@ -4379,6 +4934,34 @@
     "oss": true,
     "website": "https://fonts.bunny.net"
   },
+  "Bunting": {
+    "cats": [
+      74
+    ],
+    "description": "Bunting is a website personalization and AB testing tool.",
+    "icon": "Bunting.svg",
+    "js": {
+      "$_Bunting": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "http://getbunting.com"
+  },
+  "Busify": {
+    "cats": [
+      104
+    ],
+    "description": "Busify is a bus software platform that enables operators to issue tickets, enhance customer experiences, and manage fleets.",
+    "dom": [
+      "iframe[src*='.app.busify.com/'], link[href*='app.busify.com/']"
+    ],
+    "icon": "Busify.svg",
+    "saas": true,
+    "website": "https://www.busify.com"
+  },
   "Business Catalyst": {
     "cats": [
       1
@@ -4544,6 +5127,18 @@
       "cdn\\.co-buying\\.com/"
     ],
     "website": "https://www.buyapowa.com"
+  },
+  "Buyee": {
+    "cats": [
+      5
+    ],
+    "description": "Buyee is a widget that facilitates purchasing products from Japan.",
+    "icon": "Buyee.svg",
+    "saas": true,
+    "scripts": [
+      "\\.buyee\\.jp"
+    ],
+    "website": "https://buyee.jp"
   },
   "Buyist": {
     "cats": [

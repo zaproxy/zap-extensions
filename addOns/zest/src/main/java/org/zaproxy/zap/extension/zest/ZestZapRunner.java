@@ -401,9 +401,10 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
                 }
             }
             return super.handleClient(script, client);
+        } catch (ZestClientFailException e) {
+            throw e;
         } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
-            return null;
+            throw new ZestClientFailException(client, e);
         }
     }
 

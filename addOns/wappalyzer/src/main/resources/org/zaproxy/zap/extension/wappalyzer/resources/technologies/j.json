@@ -225,6 +225,21 @@
       "\\.jwpsrv\\.com"
     ]
   },
+  "Jacklist": {
+    "cats": [
+      51
+    ],
+    "description": "Jacklist is a website builder system developed in Japan.",
+    "icon": "Jacklist.svg",
+    "js": {
+      "homepage_api_url": "api\\.jacklist\\.jp"
+    },
+    "saas": true,
+    "scriptSrc": [
+      "api\\.jacklist\\.jp/"
+    ],
+    "website": "https://jacklist.ltd"
+  },
   "Jade": {
     "cats": [
       19
@@ -380,6 +395,40 @@
     "icon": "Java.svg",
     "website": "https://docs.oracle.com/javase/8/docs/technotes/tools/windows/javadoc.html"
   },
+  "JazzHR": {
+    "cats": [
+      101
+    ],
+    "description": "JazzHR is SaaS recruiting software to source talent, conduct interviews and hires.",
+    "icon": "JazzHR.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.jazz\\.co/"
+    ],
+    "scripts": [
+      "JazzHR"
+    ],
+    "website": "https://www.jazzhr.com"
+  },
+  "Jeeng": {
+    "cats": [
+      76
+    ],
+    "description": "Jeeng is a personalized notification platform that delivers targeted updates based on user preferences and engagement patterns.",
+    "icon": "Jeeng.svg",
+    "js": {
+      "jeeng_attribution": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "sdk\\.jeeng\\.com"
+    ],
+    "website": "https://www.jeeng.com"
+  },
   "Jekyll": {
     "cats": [
       57
@@ -466,6 +515,26 @@
       "/wp-content/plugins/jet-engine/"
     ],
     "website": "https://crocoblock.com/plugins/jetengine"
+  },
+  "JetTabs": {
+    "cats": [
+      87
+    ],
+    "description": "JetTabs is a plugin for Elementor that enables the creation of customizable tabs and accordion widgets for organizing content within web pages.",
+    "icon": "JetTabs.svg",
+    "implies": [
+      "Elementor"
+    ],
+    "js": {
+      "JetTabs.accordionInit": "",
+      "JetTabsSettings": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://crocoblock.com/plugins/jettabs"
   },
   "Jetpack": {
     "cats": [
@@ -751,6 +820,25 @@
     "saas": true,
     "website": "https://www.jobvite.com"
   },
+  "Joinchat": {
+    "cats": [
+      52
+    ],
+    "description": "Joinchat is a tool that enables businesses to convert customer conversations into sales or leads through integrated communication features.",
+    "icon": "Joinchat.svg",
+    "js": {
+      "joinchat_obj": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "/js/joinchat\\.min\\.js"
+    ],
+    "website": "https://join.chat"
+  },
   "Jonas Club Software": {
     "cats": [
       53
@@ -795,6 +883,9 @@
     ],
     "cpe": "cpe:2.3:a:joomla:joomla\\!:*:*:*:*:*:*:*:*",
     "description": "Joomla is a free and open-source content management system for publishing web content.",
+    "dom": [
+      "div[id*='wrapper_r'], link[href*='feed/com_'], link[href*='components/com_'], table[class*='pill']"
+    ],
     "headers": {
       "X-Content-Encoded-By": "Joomla! ([\\d.]+)\\;version:\\1"
     },
@@ -820,6 +911,25 @@
       "option=com_"
     ],
     "website": "https://www.joomla.org/"
+  },
+  "Joonbot": {
+    "cats": [
+      52
+    ],
+    "description": "Joonbot is a chatbot builder that enables users to create automated conversational flows without programming knowledge.",
+    "icon": "Joonbot.svg",
+    "js": {
+      "JOONBOT_WIDGET_ID": "",
+      "joonbot.hide": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://joonbot.com"
   },
   "Jotform": {
     "cats": [
@@ -924,6 +1034,28 @@
       "cdn\\.judge\\.me"
     ],
     "website": "https://judge.me"
+  },
+  "Juicer": {
+    "cats": [
+      96
+    ],
+    "description": "Juicer is a tool that aggregates brand hashtags and social media posts into a unified feed for websites, enabling moderation and content curation.",
+    "icon": "Juicer.svg",
+    "js": {
+      "Juicer.Active": "",
+      "JuicerBackbone.$": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.juicer\\.io/"
+    ],
+    "website": "https://www.juicer.io"
   },
   "JuicyAds": {
     "cats": [
@@ -1057,6 +1189,25 @@
     ],
     "website": "https://get.juo.io"
   },
+  "Juphy": {
+    "cats": [
+      100
+    ],
+    "description": "Juphy is an AI sales assistant designed for Shopify stores, enabling businesses to increase sales through automated customer engagement and support.",
+    "icon": "Juphy.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "requires": [
+      "Shopify"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "static\\.juphy\\.com/"
+    ],
+    "website": "https://juphy.com"
+  },
   "Juspay": {
     "cats": [
       41
@@ -1143,6 +1294,24 @@
     ],
     "website": "https://apps.shopify.com/justuno-pop-ups-email-conversion"
   },
+  "Juvo Leads": {
+    "cats": [
+      10,
+      52
+    ],
+    "description": "Juvo Leads is a platform that integrates hosted chat, call tracking, and form tracking into a unified reporting system.",
+    "icon": "JuvoLeads.svg",
+    "pricing": [
+      "low",
+      "recurring",
+      "payg"
+    ],
+    "saas": true,
+    "scripts": [
+      "cdn\\.juvoleads\\.com"
+    ],
+    "website": "https://juvoleads.com"
+  },
   "jComponent": {
     "cats": [
       12,
@@ -1210,7 +1379,7 @@
     "scriptSrc": [
       "jquery",
       "/jquery(?:-(\\d+\\.\\d+\\.\\d+))[/.-]\\;version:\\1",
-      "/(\\d+\\.\\d+\\.\\d+)/jquery(?!\\.popupoverlay\\.js)[/.-][^u]\\;version:\\1"
+      "/(\\d+\\.\\d+\\.\\d+)/jquery[/.-][^u]\\;version:\\1"
     ],
     "website": "https://jquery.com"
   },
@@ -1302,6 +1471,21 @@
       "jquery-modal/([\\d\\.]+)/jquery\\.modal\\.min\\.js\\;version:\\1"
     ],
     "website": "https://jquerymodal.com"
+  },
+  "jQuery Payment": {
+    "cats": [
+      41
+    ],
+    "description": "jQuery Payment is a general-purpose library for building credit card forms, validating input fields, and formatting card numbers.",
+    "icon": "jQuery.svg",
+    "oss": true,
+    "requires": [
+      "jQuery"
+    ],
+    "scriptSrc": [
+      "/jquery-payment/jquery\\.payment\\.min\\.js"
+    ],
+    "website": "https://plugins.jquery.com/payment"
   },
   "jQuery Popup Overlay": {
     "cats": [
@@ -1400,5 +1584,23 @@
     "xhr": [
       "cdn\\.jsdelivr\\.net"
     ]
+  },
+  "jsPDF": {
+    "cats": [
+      59
+    ],
+    "description": "jsPDF is a HTML5 client-side solution for generating PDF documents directly within web browsers.",
+    "icon": "jsPDF.svg",
+    "js": {
+      "jsPDF.API": ""
+    },
+    "oss": true,
+    "pricing": [
+      "freemium"
+    ],
+    "scriptSrc": [
+      "/jspdf\\.min\\.js"
+    ],
+    "website": "https://parall.ax/products/jspdf"
   }
 }

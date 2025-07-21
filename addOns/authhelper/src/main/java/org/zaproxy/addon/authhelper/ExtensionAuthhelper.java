@@ -64,6 +64,7 @@ import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.sessions.ExtensionSessionManagement;
 import org.zaproxy.zap.extension.users.ExtensionUserManagement;
+import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.utils.ZapTextArea;
@@ -80,7 +81,8 @@ public class ExtensionAuthhelper extends ExtensionAdaptor {
             List.of(
                     ExtensionPassiveScan2.class,
                     ExtensionSelenium.class,
-                    ExtensionUserManagement.class);
+                    ExtensionUserManagement.class,
+                    ExtensionZest.class);
 
     public static final String RESOURCES_DIR = "/org/zaproxy/addon/authhelper/resources/";
 
@@ -111,10 +113,12 @@ public class ExtensionAuthhelper extends ExtensionAdaptor {
     private AuthDiagnosticCollector authDiagCollector;
     private AuthhelperParam param;
     private TableJdo tableJdo;
+    private AuthHeaderTracker authHeaderTracker;
 
     public ExtensionAuthhelper() {
         super();
         this.setI18nPrefix("authhelper");
+        authHeaderTracker = new AuthHeaderTracker();
     }
 
     @Override
@@ -207,6 +211,7 @@ public class ExtensionAuthhelper extends ExtensionAdaptor {
     @Override
     public void hook(ExtensionHook extensionHook) {
         extensionHook.addSessionListener(new AuthSessionChangedListener());
+        extensionHook.addHttpSenderListener(authHeaderTracker);
         extensionHook.addOptionsParamSet(getParam());
         if (hasView()) {
             extensionHook.getHookMenu().addToolsMenuItem(getAuthTesterMenu());
@@ -364,6 +369,7 @@ public class ExtensionAuthhelper extends ExtensionAdaptor {
         @Override
         public void sessionChanged(Session session) {
             contextIdToLoginDetails.clear();
+            authHeaderTracker.clear();
             AuthUtils.clean();
         }
 

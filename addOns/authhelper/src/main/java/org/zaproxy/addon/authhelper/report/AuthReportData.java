@@ -21,6 +21,8 @@ package org.zaproxy.addon.authhelper.report;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -33,6 +35,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.lookup.StrSubstitutor;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.addon.authhelper.internal.db.Diagnostic;
 import org.zaproxy.addon.authhelper.internal.db.TableJdo;
@@ -123,6 +127,19 @@ public class AuthReportData implements Closeable {
             LOGGER.error("An error occurred while getting the diagnostics:", e);
         }
         return List.of();
+    }
+
+    public String getLogContent() {
+        try {
+            LoggerContext context = (LoggerContext) LogManager.getContext(false);
+            StrSubstitutor strSubstitutor = context.getConfiguration().getStrSubstitutor();
+            String pathLogFile =
+                    strSubstitutor.replace(strSubstitutor.getVariableResolver().lookup("filename"));
+            return Files.readString(Paths.get(pathLogFile));
+        } catch (Exception e) {
+            LOGGER.error("An error occurred while getting the log content:", e);
+            return "";
+        }
     }
 
     @Override

@@ -97,7 +97,7 @@ public class BruteForceURLFuzz implements Runnable {
                     manager.setAuto(false);
                 }
             } catch (IOException e) {
-                LOGGER.error(e);
+                LOGGER.error(e, e);
             }
         }
 
@@ -108,7 +108,7 @@ public class BruteForceURLFuzz implements Runnable {
             // get dir name
             currentDir = tempDirToCheck.getName();
         } catch (InterruptedException e) {
-            LOGGER.debug(e);
+            LOGGER.debug(e, e);
         }
 
         LOGGER.info("Starting fuzz on {}{}{dir}{}", firstPart, urlFuzzStart, urlFuzzEnd);
@@ -125,7 +125,7 @@ public class BruteForceURLFuzz implements Runnable {
                     GenBaseCase.genURLFuzzBaseCase(manager, firstPart + urlFuzzStart, urlFuzzEnd);
 
         } catch (IOException e) {
-            LOGGER.error(e);
+            LOGGER.error(e, e);
         }
 
         // baseCaseObj = new BaseCase(null, failcode, true, failurl, baseCase);

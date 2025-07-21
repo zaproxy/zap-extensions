@@ -82,7 +82,7 @@ class SOAPActionSpoofingActiveScanRuleTestCase {
         int wasc = rule.getWascId();
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(cwe, is(equalTo(0)));
+        assertThat(cwe, is(equalTo(451)));
         assertThat(wasc, is(equalTo(0)));
         assertThat(tags.size(), is(equalTo(10)));
 

@@ -225,7 +225,7 @@ public class RunScriptAction extends ScriptAction {
                 reportScriptError(progress, jobName, parameters, script.getLastException());
             }
         } catch (Exception e) {
-            LOGGER.error(e);
+            LOGGER.error(e, e);
             reportScriptError(progress, jobName, parameters, e);
         } finally {
             extScript.removeScriptOutputListener(scriptJobOutputListener);

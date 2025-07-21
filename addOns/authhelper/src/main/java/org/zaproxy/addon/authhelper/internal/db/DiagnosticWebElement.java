@@ -35,6 +35,11 @@ import lombok.NoArgsConstructor;
 @PersistenceCapable(table = "AUTHHELPER_DIAGNOSTIC_WEB_ELEMENT", detachable = "true")
 public class DiagnosticWebElement {
 
+    public enum SelectorType {
+        XPATH,
+        CSS,
+    }
+
     private Instant createTimestamp;
 
     @PrimaryKey
@@ -64,4 +69,10 @@ public class DiagnosticWebElement {
     private boolean displayed;
 
     private boolean enabled;
+
+    @Column(jdbcType = "INTEGER")
+    private SelectorType selectorType;
+
+    @Column(length = 4096)
+    private String selectorValue;
 }

@@ -240,6 +240,26 @@
     "oss": true,
     "website": "https://aimeos.org"
   },
+  "AINIRO": {
+    "cats": [
+      52
+    ],
+    "description": "AINIRO is a provider of AI chatbots, AI agents, and custom AI solutions designed for various applications.",
+    "icon": "AINIRO.svg",
+    "js": {
+      "ainiro.init": "",
+      "ainiro_faq_question": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.ainiro\\.io"
+    ],
+    "website": "https://ainiro.io"
+  },
   "ALL-INKL": {
     "cats": [
       88
@@ -329,7 +349,7 @@
     "headers": {
       "Server": "AOLserver/?([\\d.]+)?\\;version:\\1"
     },
-    "icon": "AOLserver.png",
+    "icon": "AOLserver.svg",
     "website": "https://aolserver.com"
   },
   "AOS": {
@@ -366,6 +386,23 @@
       "\\APC\\b"
     ],
     "website": "https://www.apc-pli.com"
+  },
+  "API Spreadsheets": {
+    "cats": [
+      47
+    ],
+    "description": "API Spreadsheets is a developer tool for integrating spreadsheet features into applications, enabling data management, automation, and real-time updates.",
+    "icon": "APISpreadsheets.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "api\\.apispreadsheets\\.com"
+    ],
+    "website": "https://apispreadsheets.com"
   },
   "ARCaptcha": {
     "cats": [
@@ -534,6 +571,35 @@
     },
     "website": "https://awstats.sourceforge.net"
   },
+  "Aarki": {
+    "cats": [
+      36
+    ],
+    "description": "Aarki is an AI platform that develops advertising solutions aimed at increasing mobile revenue growth.",
+    "icon": "Aarki.svg",
+    "saas": true,
+    "scripts": [
+      "\\.aarki\\.net"
+    ],
+    "website": "https://www.aarki.com"
+  },
+  "Aasaan": {
+    "cats": [
+      6
+    ],
+    "description": "Aasaan is a no-code e-commerce platform that helps digitalize businesses to grow.",
+    "icon": "Aasaan.svg",
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "assets\\.aasaan\\.app"
+    ],
+    "website": "https://aasaan.app"
+  },
   "AbhiCMS": {
     "cats": [
       1
@@ -566,6 +632,39 @@
     ],
     "saas": true,
     "website": "https://abicart.com/"
+  },
+  "Able CDP": {
+    "cats": [
+      97
+    ],
+    "description": "Able CDP is a customer journey tracking system that monitors and analyzes user interactions across multiple touchpoints to provide insights into engagement and behavior.",
+    "icon": "AbleCDP.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.ablecdp\\.com"
+    ],
+    "website": "https://www.ablecdp.com"
+  },
+  "Abralytics": {
+    "cats": [
+      10
+    ],
+    "description": "Abralytics is a privacy-focused alternative to Google Analytics that provides email reports.",
+    "icon": "Abralytics.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.abralytics\\.com/"
+    ],
+    "website": "https://www.abralytics.com"
   },
   "Absorb": {
     "cats": [
@@ -619,6 +718,23 @@
     "icon": "Accertify.svg",
     "saas": true,
     "website": "https://www.accertify.com/"
+  },
+  "AccessAlly": {
+    "cats": [
+      21
+    ],
+    "description": "AccessAlly is a customizable platform designed for scalable growth, offering tools for membership management, online courses, and automation.",
+    "icon": "AccessAlly.svg",
+    "js": {
+      "accessally_order_form_data_is_during_restore": "",
+      "accessally_script_object": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://accessally.com"
   },
   "AccessTrade": {
     "cats": [
@@ -741,6 +857,26 @@
     "saas": true,
     "website": "https://shop.acconsento.click"
   },
+  "Accredible": {
+    "cats": [
+      21
+    ],
+    "description": "Accredible is a branded digital certificates provider that supports learner and program growth through secure, verifiable credentialing.",
+    "dom": [
+      "iframe[src*='api.accredible.com/']"
+    ],
+    "headers": {
+      "Access-Control-Allow-Headers": "^Accredible-Authorization"
+    },
+    "icon": "Accredible.svg",
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.accredible.com"
+  },
   "AccuWeather": {
     "cats": [
       5
@@ -769,6 +905,21 @@
     },
     "oss": true,
     "website": "https://github.com/ajaxorg/ace"
+  },
+  "Acecounter": {
+    "cats": [
+      10
+    ],
+    "description": "Acecounter is a Korean analytics service that consolidates website analytics data into a single platform for streamlined access and analysis.",
+    "icon": "Acecounter.svg",
+    "js": {
+      "_AceCounter": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "\\.acecounter\\.com/"
+    ],
+    "website": "https://www.home.acecounter.com"
   },
   "Ackee": {
     "cats": [
@@ -1213,6 +1364,21 @@
     "saas": true,
     "website": "https://www.adbridg.com"
   },
+  "AdCalls": {
+    "cats": [
+      10
+    ],
+    "description": "AdCalls is a call tracking software designed to monitor and analyze inbound and outbound calls for performance and attribution.",
+    "dom": [
+      "link[href*='.adcalls.nl']"
+    ],
+    "headers": {
+      "Content-Security-Policy": "\\.adcalls\\.nl"
+    },
+    "icon": "AdCalls.svg",
+    "saas": true,
+    "website": "https://adcalls.com"
+  },
   "AdFixus": {
     "cats": [
       67
@@ -1257,6 +1423,26 @@
       "adinfinity\\.com\\.au"
     ],
     "website": "https://adinfinity.com.au"
+  },
+  "AdNabu": {
+    "cats": [
+      100
+    ],
+    "description": "AdNabu is a software solution for managing product feeds on Shopify, enabling organization and optimization for online stores.",
+    "icon": "AdNabu.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": [
+      "Shopify"
+    ],
+    "saas": true,
+    "scripts": [
+      "/adnabu-shopify"
+    ],
+    "website": "https://www.adnabu.com"
   },
   "AdOcean": {
     "cats": [
@@ -1509,6 +1695,22 @@
     ],
     "website": "https://www.adalo.com"
   },
+  "Adalte": {
+    "cats": [
+      104
+    ],
+    "description": "Adalte is an online solution designed for travel agencies, tour operators, and DMCs, offering travel management capabilities.",
+    "icon": "Adalte.svg",
+    "meta": {
+      "author": "www\\.adalte\\.com"
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.adalte.com"
+  },
   "Adalyser": {
     "cats": [
       36
@@ -1675,6 +1877,24 @@
     ],
     "website": "https://www.addsearch.com/"
   },
+  "Adevole": {
+    "cats": [
+      6
+    ],
+    "description": "Adevole is an ecommerce website builder for creating and managing online stores.",
+    "icon": "Adevole.svg",
+    "requires": [
+      "Shopify"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "www\\.adevole\\.com"
+    ],
+    "scripts": [
+      "www\\.adevole\\.com"
+    ],
+    "website": "https://www.adevole.com"
+  },
   "Adex": {
     "cats": [
       36
@@ -1796,6 +2016,18 @@
       "\\.adlooxtracking\\.com/"
     ],
     "website": "https://www.adloox.com"
+  },
+  "AdminBuy": {
+    "cats": [
+      1
+    ],
+    "description": "AdminBuy is an open-source content management system from China designed for building and managing websites.",
+    "icon": "AdminBuy.svg",
+    "meta": {
+      "author": "www\\.adminbuy\\.cn"
+    },
+    "saas": true,
+    "website": "https://www.adminbuy.cn"
   },
   "Adminer": {
     "cats": [
@@ -2294,6 +2526,18 @@
     ],
     "website": "https://adoric.com"
   },
+  "Adtriba": {
+    "cats": [
+      32
+    ],
+    "description": "Adtriba is a platform that captures all marketing touchpoints and calculates the profitability of each campaign using big data technology and AI.",
+    "icon": "Adtriba.svg",
+    "saas": true,
+    "scripts": [
+      "\\.adtriba\\.com"
+    ],
+    "website": "https://funnel.io/adtriba"
+  },
   "Adtribute": {
     "cats": [
       10
@@ -2581,6 +2825,18 @@
     ],
     "website": "https://www.affirm.com"
   },
+  "Aforest LMS": {
+    "cats": [
+      21
+    ],
+    "description": "AFOREST LMS is a training management system that supports the entire training cycle, including client needs assessment, course organization, learner tracking, quality control, assessments, certification, and e-learning integration, with invoicing capabilities.",
+    "icon": "AforestLMS.svg",
+    "meta": {
+      "publisher": "^Aforest Lux - C.I.D.$"
+    },
+    "saas": true,
+    "website": "https://www.groupe-aforest.com"
+  },
   "Afosto": {
     "cats": [
       6
@@ -2662,6 +2918,7 @@
     ],
     "icon": "afterpay.svg",
     "js": {
+      "AfterPay": "",
       "Afterpay": "",
       "Afterpay.version": "([\\d\\.]+)\\;version:\\1",
       "AfterpayAttractWidget": "",
@@ -2741,6 +2998,26 @@
     ],
     "saas": true,
     "website": "https://www.agilecrm.com"
+  },
+  "Agility CMS": {
+    "cats": [
+      1
+    ],
+    "description": "Agility CMS is an enterprise-level content management system provider offering scalable solutions for managing digital content across multiple platforms.",
+    "icon": "Agility.svg",
+    "meta": {
+      "generator": "^Agility CMS$"
+    },
+    "pricing": [
+      "high",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.agilitycms\\.com/"
+    ],
+    "website": "https://agilitycms.com"
   },
   "Agoda": {
     "cats": [
@@ -2866,6 +3143,21 @@
     },
     "saas": true,
     "website": "https://www.aiden.cx"
+  },
+  "Aimbase": {
+    "cats": [
+      32
+    ],
+    "description": "Aimbase is a marketing automation platform designed to streamline campaign management, customer engagement, and data-driven decision-making.",
+    "icon": "Aimbase.svg",
+    "js": {
+      "Aimbase.Analytics": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "ws\\.aimbase\\.com"
+    ],
+    "website": "https://aimbase.com"
   },
   "Aimerce": {
     "cats": [
@@ -3030,6 +3322,23 @@
     ],
     "website": "https://www.airship.com"
   },
+  "Airship CRM": {
+    "cats": [
+      53
+    ],
+    "description": "Airship CRM is a hospitality-focused platform that centralizes data, enables tailored email communication, and enhances visit frequency.",
+    "icon": "AirshipCRM.svg",
+    "pricing": [
+      "high",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.airship\\.co\\.uk/"
+    ],
+    "website": "https://airship.co.uk"
+  },
   "Airtable": {
     "cats": [
       5
@@ -3070,6 +3379,24 @@
     ],
     "saas": true,
     "website": "https://www.ait-themes.club"
+  },
+  "Aiva": {
+    "cats": [
+      53
+    ],
+    "description": "Aiva is a real estate lead conversion platform that qualifies and engages leads 24/7.",
+    "icon": "Aiva.svg",
+    "js": {
+      "__AivaLiveChat": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.hireaiva\\.com"
+    ],
+    "website": "https://hireaiva.com"
   },
   "Aivo": {
     "cats": [
@@ -3320,6 +3647,21 @@
     ],
     "website": "https://www.aklamio.com"
   },
+  "AkoCommerce": {
+    "cats": [
+      6
+    ],
+    "description": "AkoCommerce is a Shopify partner based in Taiwan that provides website planning and construction, as well as ecommerce store opening consultation services.",
+    "icon": "AkoCommerce.svg",
+    "requires": [
+      "Shopify"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.akocommerce\\.com"
+    ],
+    "website": "https://akocommerce.com"
+  },
   "Aksara CMS": {
     "cats": [
       1
@@ -3376,6 +3718,40 @@
       "\\.albacross\\.com"
     ],
     "website": "https://albacross.com"
+  },
+  "Alboom Proof": {
+    "cats": [
+      7
+    ],
+    "description": "Alboom Proof is a platform that provides client photo galleries, photo sales, and proofing services in one location, enabling photographers and visual artists to deliver their work.",
+    "dom": [
+      "img[data-original*='alfred.alboompro.com/']"
+    ],
+    "icon": "Alboom.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.alboompro.com/ferramentas/alboom-proof"
+  },
+  "Alboom Prosite": {
+    "cats": [
+      51
+    ],
+    "description": "Alboom Prosite is a website and landing page builder for businesses.",
+    "icon": "Alboom.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "bifrost\\.alboompro\\.com"
+    ],
+    "website": "https://www.alboompro.com/ferramentas/alboom-prosite"
   },
   "Alchemer Mobile": {
     "cats": [
@@ -3691,6 +4067,26 @@
     "oss": true,
     "website": "https://gitlab.com/allianceauth/allianceauth"
   },
+  "Alloka": {
+    "cats": [
+      10
+    ],
+    "description": "Alloka is a platform that provides end-to-end analytics and dynamic call tracking.",
+    "icon": "Alloka.svg",
+    "js": {
+      "AllokaId": "",
+      "allokaAddEvent": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "analytics\\.alloka\\.ru"
+    ],
+    "website": "https://alloka.ru"
+  },
   "AlloyUI": {
     "cats": [
       12
@@ -3707,6 +4103,21 @@
       "^https?://cdn\\.alloyui\\.com/"
     ],
     "website": "https://www.alloyui.com"
+  },
+  "Allstate": {
+    "cats": [
+      10
+    ],
+    "description": "Allstate is a provider of auto insurance quote metrics, offering data-driven insights to assess coverage options, pricing, and risk factors.",
+    "icon": "Allstate.svg",
+    "js": {
+      "s_i_allstateglobal": ""
+    },
+    "saas": true,
+    "scripts": [
+      "agents\\.allstate\\.com"
+    ],
+    "website": "https://www.allstate.com"
   },
   "Allyable": {
     "cats": [
@@ -3757,6 +4168,18 @@
     "oss": true,
     "website": "https://almalinux.org"
   },
+  "Alohome": {
+    "cats": [
+      32
+    ],
+    "description": "Alohome is a tech platform designed to enhance real estate sales conversions.",
+    "icon": "Alohome.svg",
+    "saas": true,
+    "scripts": [
+      "assets\\.alohome\\.io"
+    ],
+    "website": "https://en.alohome.io"
+  },
   "Alpharank": {
     "cats": [
       10
@@ -3792,6 +4215,7 @@
     ],
     "icon": "Alpine.js.svg",
     "js": {
+      "Alpine": "",
       "Alpine.version": "^(.+)$\\;version:\\1",
       "deferLoadingAlpine": ""
     },
@@ -3898,7 +4322,7 @@
     "cats": [
       1
     ],
-    "description": "AlvandCMS is a PHP-based content management system that is commonly used in Iran.",
+    "description": "Alvand is a PHP-based CMS with a modular architecture to enhance scalability and maintainability. It utilizes caching, reduces database queries and employs optimization mechanisms to improve request processing performance. The system supports RESTful APIs, user access management and built-in SEO. It features an independent templating system and dynamic cache management to minimize page load times. It's compatible with MySQL and MariaDB and includes security measures to prevent common attacks.",
     "icon": "AlvandCMS.svg",
     "implies": [
       "PHP",
@@ -3910,7 +4334,23 @@
     "pricing": [
       "poa"
     ],
-    "website": "https://alvandcms.ir"
+    "website": "https://alvandcms.com"
+  },
+  "Amasty": {
+    "cats": [
+      6
+    ],
+    "description": "Amasty is a developer of modules for Magento platforms.",
+    "headers": {
+      "Content-Security-Policy": "amasty\\.com",
+      "Content-Security-Policy-Report-Only": "amasty\\.com"
+    },
+    "icon": "Amasty.svg",
+    "requires": [
+      "Magento"
+    ],
+    "saas": true,
+    "website": "https://amasty.com"
   },
   "Amaya": {
     "cats": [
@@ -4213,6 +4653,9 @@
     },
     "icon": "Amazon Web Services.svg",
     "saas": true,
+    "scripts": [
+      "\\.amazonaws\\.com"
+    ],
     "website": "https://aws.amazon.com/"
   },
   "Amazon Webstore": {
@@ -4333,6 +4776,26 @@
     "icon": "Amobee.svg",
     "website": "https://www.amobee.com"
   },
+  "Amped": {
+    "cats": [
+      32
+    ],
+    "description": "Amped is a popup tool designed for growth, enabling email and SMS popups to capture leads and engage users.",
+    "dom": [
+      "link[href*='app.amped.io']"
+    ],
+    "icon": "Amped.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.amped\\.io"
+    ],
+    "website": "https://www.amped.io"
+  },
   "Amplience": {
     "cats": [
       1
@@ -4403,6 +4866,51 @@
       "AnalysysFangzhou_JS_SDK\\.min\\.js\\?v=([\\d.]+)\\;version:\\1"
     ],
     "website": "https://ark.analysys.cn"
+  },
+  "AnalyticOwl": {
+    "cats": [
+      10
+    ],
+    "description": "AnalyticOwl is a platform that offers a planning and attribution toolbox designed to support more informed advertising decisions.",
+    "icon": "AnalyticOwl.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "owlsight\\.analyticowl\\.com"
+    ],
+    "website": "https://analyticowl.com"
+  },
+  "Analytick": {
+    "cats": [
+      10
+    ],
+    "description": "Analytick is an advanced analytics platform that collects and analyzes data on website performance and user behavior.",
+    "icon": "Analytick.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "platform\\.analytick\\.ir/"
+    ],
+    "website": "http://analytick.ir"
+  },
+  "AnalyticsConnect": {
+    "cats": [
+      10
+    ],
+    "description": "AnalyticsConnect is a tool that tracks eCommerce data from Keap/Infusionsoft in Google Analytics, providing detailed insights and analysis.",
+    "icon": "AnalyticsConnect.svg",
+    "saas": true,
+    "scriptSrc": [
+      "js\\.analyticsconnect\\.io"
+    ],
+    "website": "https://analyticsconnect.io"
   },
   "Analyzee": {
     "cats": [
@@ -4557,6 +5065,8 @@
       "TypeScript"
     ],
     "js": {
+      "getAllAngularRootElements": "",
+      "getAngularTestability": "",
       "ng.coreTokens": "",
       "ng.probe": ""
     },
@@ -4655,6 +5165,18 @@
     ],
     "saas": true,
     "website": "https://www.animaapp.com/"
+  },
+  "AnimalChat": {
+    "cats": [
+      52
+    ],
+    "description": "AnimalChat is a messaging platform that connects pet owners and professionals, providing a flexible alternative to traditional communication methods.",
+    "icon": "AnimalChat.svg",
+    "saas": true,
+    "scriptSrc": [
+      "widget\\.animalchat\\.net"
+    ],
+    "website": "https://animalchat.net"
   },
   "Animate It": {
     "cats": [
@@ -4801,6 +5323,11 @@
     ],
     "description": "Ant Design is a UI library that can be used with data flow solutions and application frameworks in any React ecosystem.",
     "dom": {
+      "div[class*='ant-collapse']": {
+        "attributes": {
+          "class": "ant-collapse"
+        }
+      },
       "link[href*='antd']": {
         "attributes": {
           "href": "antd(?:@|/)?([\\d\\.]+)?(?:.+|)?\\.css\\;version:\\1"
@@ -5215,6 +5742,21 @@
     ],
     "website": "https://aplazame.com"
   },
+  "Apodle": {
+    "cats": [
+      53
+    ],
+    "description": "Apodle is a generic business management solution designed to support a range of operational and administrative functions across various industries.",
+    "icon": "Apodle.svg",
+    "saas": true,
+    "scriptSrc": [
+      "\\.apodle\\.com"
+    ],
+    "scripts": [
+      "\\.apodle\\.com"
+    ],
+    "website": "https://apodle.com"
+  },
   "Apollo": {
     "cats": [
       59
@@ -5572,6 +6114,21 @@
     ],
     "website": "https://www.iis.net/downloads/microsoft/application-request-routing"
   },
+  "Applied CSR24": {
+    "cats": [
+      69
+    ],
+    "description": "CSR24 is a portal login used by insurance agencies and brokerages that allows clients to access and review their policies.",
+    "headers": {
+      "Content-Security-Policy": "\\.csr24\\.com"
+    },
+    "icon": "AppliedCSR24.svg",
+    "saas": true,
+    "scripts": [
+      "portal\\.csr24\\.com"
+    ],
+    "website": "https://www1.appliedsystems.com/en-us/solutions/for-agents/mobility/applied-csr24/?_gl=1*jl1i3u*_up*MQ..*_gs*MQ..&gclid=CjwKCAiAn9a9BhBtEiwAbKg6fvbF0KJMjT1nWOuoNHScUZDHi_lH5kKLqrnAy0DtTbe6LIIgn-toYRoCp4MQAvD_BwE"
+  },
   "Appointedd": {
     "cats": [
       72
@@ -5819,6 +6376,20 @@
     ],
     "website": "https://arastta.org"
   },
+  "Arbor.js": {
+    "cats": [
+      25
+    ],
+    "description": "Arbor.js is a graph visualization library that uses web workers for performance and relies on jQuery for DOM manipulation and interaction.",
+    "js": {
+      "arbor": ""
+    },
+    "requires": [
+      "jQuery"
+    ],
+    "saas": true,
+    "website": "https://arborjs.org"
+  },
   "Arc": {
     "cats": [
       31
@@ -5968,6 +6539,22 @@
     "saas": true,
     "website": "https://argentotheme.com"
   },
+  "Arkose Labs": {
+    "cats": [
+      16
+    ],
+    "description": "Arkose Labs is a toolkit for fraud prevention that provides solutions to detect and mitigate malicious activity across digital platforms.",
+    "headers": {
+      "Content-Security-Policy": "\\.arkoselabs\\.com",
+      "Content-Security-Policy-Report-Only": "\\.arkoselabs\\.com"
+    },
+    "icon": "ArkoseLabs.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.arkoselabs.com"
+  },
   "AroSoftware": {
     "cats": [
       53
@@ -6031,6 +6618,18 @@
     ],
     "icon": "arsys.svg",
     "website": "https://www.arsys.es"
+  },
+  "Art Schema": {
+    "cats": [
+      51
+    ],
+    "description": "Art Schema is a tool for creating websites with custom designs and data types, offering a template-free website building experience.",
+    "icon": "ArtSchema.svg",
+    "saas": true,
+    "scriptSrc": [
+      "\\.artschema\\.net/"
+    ],
+    "website": "https://www.artschema.net"
   },
   "ArtiBot": {
     "cats": [
@@ -6175,6 +6774,21 @@
     "saas": true,
     "website": "https://asana.com"
   },
+  "Asapp": {
+    "cats": [
+      97
+    ],
+    "description": "Asapp is a platform that guides agents in providing responses to queries using AI technology.",
+    "icon": "Asapp.svg",
+    "js": {
+      "ASAPP.Host": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "sdk\\.asapp\\.com/"
+    ],
+    "website": "https://www.asapp.com"
+  },
   "AsciiDoc": {
     "cats": [
       1,
@@ -6274,6 +6888,24 @@
     ],
     "website": "https://www.asgaros.de"
   },
+  "Ashop": {
+    "cats": [
+      6
+    ],
+    "description": "Ashop is a hosted shopping cart software solution for creating and managing an online store.",
+    "icon": "Ashop.svg",
+    "js": {
+      "AshopKissMetricsAddClickEvent": "",
+      "AshopKissMetricsAddEvent": "",
+      "AshopKissMetricsAddIdentity": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.ashop.com.au"
+  },
   "AskNicely": {
     "cats": [
       90
@@ -6313,6 +6945,21 @@
     ],
     "website": "https://askspot.ai"
   },
+  "Askas": {
+    "cats": [
+      6
+    ],
+    "description": "Askas is an ecommerce design and shop system from Sweden, providing tools for online store creation and management.",
+    "dom": [
+      "div[class*='askas'] > a[href*='www.askas.se']"
+    ],
+    "icon": "Askas.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.askas.com/"
+  },
   "Asksuite": {
     "cats": [
       104
@@ -6327,6 +6974,18 @@
     },
     "saas": true,
     "website": "https://asksuite.com"
+  },
+  "Aspin": {
+    "cats": [
+      6
+    ],
+    "description": "Aspin is a B2B sales platform for distributors and wholesalers, offering ecommerce platforms, sales applications, and product information management tools.",
+    "icon": "Aspin.svg",
+    "meta": {
+      "author": "^Aspin Interactive www\\.aspininteractive\\.com"
+    },
+    "saas": true,
+    "website": "https://aspin.co.uk"
   },
   "Assertive Yield": {
     "cats": [
@@ -6442,7 +7101,7 @@
       "Astro": ""
     },
     "meta": {
-      "generator": "^Astro\\sv([\\d\\.]+)$\\;version:\\1"
+      "generator": "^Astro(?:\\sv([\\d\\.]+))?$\\;version:\\1"
     },
     "oss": true,
     "website": "https://astro.build"
@@ -6671,6 +7330,22 @@
     ],
     "website": "https://www.atome.sg/"
   },
+  "Atomseo": {
+    "cats": [
+      54,
+      92
+    ],
+    "description": "Atomseo is a tool designed to improve website performance by reducing user bounce rates and enhancing search engine visibility.",
+    "dom": [
+      "link[href*='.atomseo.com']"
+    ],
+    "icon": "Atomseo.svg",
+    "saas": true,
+    "scripts": [
+      "\\.atomseo\\.com"
+    ],
+    "website": "https://atomseo.com"
+  },
   "Attentive": {
     "cats": [
       76
@@ -6690,6 +7365,18 @@
       "cdn\\.attn\\.tv"
     ],
     "website": "https://www.attentivemobile.com"
+  },
+  "Attracta": {
+    "cats": [
+      54
+    ],
+    "description": "Attracta is a platform offering SEO tools designed to optimize website visibility and improve search engine rankings.",
+    "icon": "Attracta.svg",
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.attracta\\.com/"
+    ],
+    "website": "https://www.attracta.com"
   },
   "Attraqt": {
     "cats": [
@@ -6871,6 +7558,23 @@
     ],
     "website": "https://www.auryc.com"
   },
+  "Ausha": {
+    "cats": [
+      38
+    ],
+    "description": "Ausha is an all-in-one platform for hosting, distributing, and monetizing podcasts.",
+    "icon": "Ausha.svg",
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "widget\\.ausha\\.co"
+    ],
+    "website": "https://www.ausha.co"
+  },
   "Australia Post": {
     "cats": [
       99
@@ -6925,6 +7629,33 @@
     ],
     "website": "https://auth0.com/docs/libraries/lock"
   },
+  "Authy": {
+    "cats": [
+      69
+    ],
+    "description": "Authy is a security tool that enables two-factor authentication (2FA) for websites to help protect user accounts from unauthorized access.",
+    "icon": "Authy.svg",
+    "pricing": [
+      "freemium"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "www\\.authy\\.com"
+    ],
+    "website": "https://www.authy.com"
+  },
+  "Auto HQ": {
+    "cats": [
+      54
+    ],
+    "description": "Auto HQ is a provider of custom car dealer websites and SEO services designed to enhance visibility and attract customers.",
+    "icon": "AutoHQ.svg",
+    "saas": true,
+    "scripts": [
+      "\\.autohq\\.co\\.uk"
+    ],
+    "website": "https://www.autohq.co.uk"
+  },
   "AutoManager": {
     "cats": [
       1
@@ -6954,6 +7685,18 @@
     },
     "saas": true,
     "website": "https://www.autoops.com/"
+  },
+  "AutoVitals": {
+    "cats": [
+      53
+    ],
+    "description": "AutoVitals is a shop productivity, acquisition, and retention tool designed for the automotive industry.",
+    "icon": "AutoVitals.svg",
+    "saas": true,
+    "scriptSrc": [
+      "docs\\.autovitals\\.com/"
+    ],
+    "website": "https://www.autovitals.com"
   },
   "Autocommerce": {
     "cats": [
@@ -7035,6 +7778,22 @@
     ],
     "website": "https://automatad.com/"
   },
+  "Automatic Members": {
+    "cats": [
+      32
+    ],
+    "description": "Automic Members is an all-in-one marketing platform for fitness businesses.",
+    "icon": "AutomaticMembers.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "app.automaticmembers.com"
+    ],
+    "website": "https://automaticmembers.com"
+  },
   "Automatic.css": {
     "cats": [
       66,
@@ -7053,6 +7812,22 @@
       "WordPress"
     ],
     "website": "https://automaticcss.com"
+  },
+  "AutomaticSales": {
+    "cats": [
+      32
+    ],
+    "description": "AutomaticSales is a platform that centralizes marketing tools, offering unlimited sales funnels, email, SMS, web chat, and additional features in one system.",
+    "icon": "AutomaticSales.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "app\\.automaticsales\\.ai"
+    ],
+    "website": "https://automaticsales.ai"
   },
   "Automizely": {
     "cats": [
@@ -7284,6 +8059,21 @@
     ],
     "website": "https://www.netreviews.com"
   },
+  "Avizi": {
+    "cats": [
+      53
+    ],
+    "description": "Avizi is a tourism CRM system from France designed to manage customer relationships, bookings, and marketing for travel businesses.",
+    "icon": "Avizi.svg",
+    "saas": true,
+    "scriptSrc": [
+      "app\\.avizi\\.fr"
+    ],
+    "scripts": [
+      "app\\.avizi\\.fr"
+    ],
+    "website": "https://www.avizi.fr"
+  },
   "Aweber": {
     "cats": [
       32,
@@ -7324,6 +8114,23 @@
       "/awesomplete\\.js(?:$|\\?)"
     ],
     "website": "https://leaverou.github.io/awesomplete/"
+  },
+  "Awtomic": {
+    "cats": [
+      6
+    ],
+    "description": "Awtomic is a platform that offers shoppers and merchants tools for managing subscription products and membership services.",
+    "icon": "Awtomic.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdn/shop/.*awtomic.*\\.js\\?v=\\d+"
+    ],
+    "website": "https://www.awtomic.com"
   },
   "Axeptio": {
     "cats": [
@@ -7433,6 +8240,21 @@
     ],
     "saas": true,
     "website": "https://www.azoyagroup.com"
+  },
+  "AzuraCast": {
+    "cats": [
+      38
+    ],
+    "description": "AzuraCast is an open-source self-hosted web radio station in a box.",
+    "dom": [
+      "link[href*='/public/azuratest_radio/']"
+    ],
+    "icon": "AzuraCast.svg",
+    "oss": true,
+    "pricing": [
+      "freemium"
+    ],
+    "website": "https://www.azuracast.com"
   },
   "Azure": {
     "cats": [
@@ -7554,6 +8376,21 @@
     ],
     "website": "https://azure.microsoft.com/en-us/services/monitor"
   },
+  "Azuriom": {
+    "cats": [
+      1
+    ],
+    "description": "Azuriom is an open-source web solution for game servers, offering extensive customization through extensions.",
+    "icon": "Azuriom.svg",
+    "meta": {
+      "author": "^Azuriom$"
+    },
+    "oss": true,
+    "pricing": [
+      "freemium"
+    ],
+    "website": "https://azuriom.com"
+  },
   "a-blog cms": {
     "cats": [
       1
@@ -7590,6 +8427,23 @@
       "/wp-content/plugins/a3-lazy-load/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
     ],
     "website": "https://a3rev.com/shop/a3-lazy-load/"
+  },
+  "aSc EduPage": {
+    "cats": [
+      21
+    ],
+    "description": "aSc EduPage is a cloud-based school management system.",
+    "icon": "aScEduPage.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "static\\.edupage\\.org"
+    ],
+    "website": "https://www.edupage.org"
   },
   "aThemes Airi": {
     "cats": [

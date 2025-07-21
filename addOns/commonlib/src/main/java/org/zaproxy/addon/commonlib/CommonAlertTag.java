@@ -394,7 +394,9 @@ public enum CommonAlertTag {
      *
      * @since 1.34.0
      */
-    PCI_DSS("PCI_DSS", "https://www.pcisecuritystandards.org/standards/pci-dss/"),
+    PCI_DSS(
+            "PCI_DSS",
+            "https://www.zaproxy.org/docs/desktop/addons/common-library/alerttags/#compliance"),
 
     /**
      * Indicates that the scan rule has been mapped to the HIPAA standard.
@@ -403,7 +405,7 @@ public enum CommonAlertTag {
      */
     HIPAA(
             "HIPAA",
-            "https://www.hhs.gov/hipaa/for-professionals/privacy/laws-regulations/index.html");
+            "https://www.zaproxy.org/docs/desktop/addons/common-library/alerttags/#compliance");
 
     private String tag;
     private String value;

@@ -4,7 +4,12 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- Depends on an updated version of the Common Library add-on.
 
+### Added
+- Rules (as applicable) have been tagged in relation to HIPAA and PCI DSS.
+- The Web Cache Deception scan rule now has a CWE reference.
 
 ## [49] - 2025-06-20
 ### Changed

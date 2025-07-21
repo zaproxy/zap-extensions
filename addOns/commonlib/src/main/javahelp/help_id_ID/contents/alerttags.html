@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>
+        Alert Tags
+    </title>
+</head>
+<body>
+<h1>Alert Tags</h1>
+
+The Common Library add-on provides Alert Tags for use by scan rules.
+
+<p>
+Of note the following tags/groups of tags are included:
+<ul>
+    <li>Custom Payloads - A tag which indicates the scan rules which support <a href="https://www.zaproxy.org/docs/desktop/addons/custom-payloads/">Custom Payloads functionality</a>.</li>
+    <li>HIPAA (Health Insurance Portability and Accountability Act) - A tag representing alerts/rules which we've mapped to the HIPAA standard.</li>
+    <li>OWASP Top 10 (2017) - Tags representing the risks/vulnerabilities from the 2017 OWASP Top 10 list.</li>
+    <li>OWASP Top 10 (2021) - Tags representing the risks/vulnerabilities from the 2021 OWASP Top 10 list.</li>
+    <li>PCI DSS (Payment Card Industry Data Security Standard) - A tag representing alerts/rules which we've mapped to the PCI DSS standard.</li>
+    <li>Test Timing - A tag which represent rules/alerts which are based on time (induced delay) payloads.</li>
+    <li>OWASP Web Security Testing Guide (v4.2) - Tags which map rules/alerts to the relevant sections of the OWASP WSTG (version 4.2).</li>
+</ul>
+
+<h2 id="compliance">Compliance Tags</h2>
+
+Please note that the PCI DSS and HIPAA standards deal with specific types of data, while an identified vulnerability may expose
+such data ZAP has insufficient context with which to differentiate what is or might be exposed by leveraging a given vulnerability.
+If the system being tested does not hold any such data then the related compliance tag <strong>may</strong> not be relevant.
+<p>
+See also:<br>
+<ul>
+    <li><a href="https://www.hhs.gov/hipaa/for-professionals/privacy/laws-regulations/index.html">HIPAA</a>.</li>
+    <li><a href="https://www.pcisecuritystandards.org/standards/pci-dss/">PCI DSS</a>.</li>
+</ul>
+
+<h2>CVE Tags</h2>
+Any alert that involves a specific CVE will (generally) also have a tag for
+that specific CVE identifier with a value that links to Mitre's National
+Vulnerability Database (NVD).
+
+<h2>Policy Tags</h2>
+The add-on also provides a set of Alert Tags which associate various rule
+types or focus areas to scan policies, see the 
+<a href="https://www.zaproxy.org/docs/desktop/addons/scan-policies/">Scan 
+Policies add-on help</a> for further details.
+
+</body>
+</html>

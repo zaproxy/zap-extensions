@@ -4,7 +4,16 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- Depends on an updated version of the Common Library add-on.
 
+### Fixed
+- Error logs to always include stack trace.
+
+### Added
+- Rules (as applicable) have been tagged in relation to HIPAA and PCI DSS.
+- The 403 Bypass scan rule now has a CWE reference.
+- The Shell Shock scan rule now has the TEST_TIMING alert tag.
 
 ## [59] - 2025-06-20
 ### Changed

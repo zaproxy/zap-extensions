@@ -512,13 +512,13 @@ public class WebSocketProxyV13 extends WebSocketProxy {
             try {
                 System.arraycopy(closeCode, 0, newPayload, 0, closeCode.length);
             } catch (IndexOutOfBoundsException e) {
-                LOGGER.error(e);
+                LOGGER.error(e, e);
             }
 
             try {
                 System.arraycopy(payload, 2, newPayload, closeCode.length, payload.length - 2);
             } catch (IndexOutOfBoundsException e) {
-                LOGGER.error(e);
+                LOGGER.error(e, e);
             }
 
             return newPayload;

@@ -1,4 +1,18 @@
 {
+  "IBM Carbon Design System": {
+    "cats": [
+      66
+    ],
+    "description": "IBM Carbon Design System is an open-source design system for building products and digital experiences.",
+    "icon": "CarbonDesignSystem.svg",
+    "pricing": [
+      "freemium"
+    ],
+    "scriptSrc": [
+      "www\\.s81c\\.com/common/"
+    ],
+    "website": "https://carbondesignsystem.com"
+  },
   "IBM Coremetrics": {
     "cats": [
       10
@@ -543,6 +557,23 @@
     ],
     "website": "https://www.imagely.com/wordpress-gallery-plugin"
   },
+  "Imba": {
+    "cats": [
+      27
+    ],
+    "description": "Imba is a Web programming language that compiles to performant JavaScript, providing language-level support for defining, extending, subclassing, and instantiating.",
+    "icon": "Imba.svg",
+    "js": {
+      "Imba": "",
+      "Imba.VERSION": "([\\d\\.]+)\\;version:\\1",
+      "imba": ""
+    },
+    "oss": true,
+    "pricing": [
+      "freemium"
+    ],
+    "website": "https://imba.io"
+  },
   "Imber": {
     "cats": [
       52
@@ -994,6 +1025,26 @@
     ],
     "website": "https://infinite-scroll.com/"
   },
+  "Infinity": {
+    "cats": [
+      47
+    ],
+    "description": "Infinity is an all-in-one workspace that allows project organization, task tracking, and team collaboration in a centralized platform.",
+    "dom": [
+      "iframe[src*='app.startinfinity.com/']"
+    ],
+    "icon": "Infinity.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "app\\.startinfinity\\.com"
+    ],
+    "website": "https://startinfinity.com"
+  },
   "Influence": {
     "cats": [
       32
@@ -1023,6 +1074,9 @@
       "a[href*='www.influxmarketing.com'] > svg[class*='influx-footer-logo']"
     ],
     "icon": "InfluxCMS.svg",
+    "meta": {
+      "generator": "^Influx CMS$"
+    },
     "requires": [
       "React",
       "Gatsby"
@@ -1083,6 +1137,24 @@
       "recurring"
     ],
     "website": "https://www.infomaniak.com"
+  },
+  "Infor": {
+    "cats": [
+      53
+    ],
+    "description": "Infor is a resource planning solution designed to streamline operations, manage workflows, and support data-driven decision-making across various business functions.",
+    "dom": [
+      "iframe[src*='.cloud.infor.com/']"
+    ],
+    "icon": "Infor.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.cloud\\.infor\\.com"
+    ],
+    "website": "https://www.infor.com"
   },
   "InforUMobile": {
     "cats": [
@@ -1182,6 +1254,25 @@
     ],
     "saas": true,
     "website": "https://www.innovid.com/solutions/advertising-measurement"
+  },
+  "Inputflow": {
+    "cats": [
+      110
+    ],
+    "description": "Inputflow is a tool for creating multi-step forms in Webflow with full customization options.",
+    "icon": "Inputflow.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": [
+      "Webflow"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "script\\.inputflow\\.io"
+    ],
+    "website": "https://inputflow.com"
   },
   "Insider": {
     "cats": [
@@ -1370,6 +1461,7 @@
     ],
     "icon": "Instant.svg",
     "js": {
+      "Instant.initialized": "",
       "Instant.initializedVersion": "([\\d\\.]+)\\;version:\\1",
       "__instantInitSliders": ""
     },
@@ -1535,6 +1627,26 @@
     ],
     "website": "https://integralads.com"
   },
+  "Integrately": {
+    "cats": [
+      32
+    ],
+    "description": "Integrately is a click automation software that enables connection of multiple applications.",
+    "dom": [
+      "input[value*='app.integrately.com']"
+    ],
+    "icon": "Integrately.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "app\\.integrately\\.com"
+    ],
+    "website": "https://integrately.com"
+  },
   "Intel Active Management Technology": {
     "cats": [
       22,
@@ -1687,6 +1799,7 @@
       "<a href=\"https://www.intercom.com/intercom-link[^\"]+solution=customer-support[^>]+>We run on Intercom"
     ],
     "icon": "Intercom.svg",
+    "saas": true,
     "website": "https://www.intercom.com/articles"
   },
   "Internet Brands": {
@@ -1807,6 +1920,27 @@
       "Scripts/_app/Inv(?:\\w+)\\.js\\?v=(.+)$\\;version:\\1"
     ],
     "website": "https://www.inveon.com"
+  },
+  "Inveterate": {
+    "cats": [
+      84
+    ],
+    "description": "Inveterate is a loyalty platform designed to support flexible, scalable loyalty programs across various industries.",
+    "icon": "Inveterate.svg",
+    "js": {
+      "Inveterate": "",
+      "inveterate": ""
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.inveterate\\.js"
+    ],
+    "website": "https://www.inveterate.com"
   },
   "Invision Community": {
     "cats": [
@@ -2197,6 +2331,17 @@
     ],
     "website": "https://www.icims.com"
   },
+  "iCheck": {
+    "cats": [
+      59
+    ],
+    "description": "iCheck is a library for customizable checkboxes and radio buttons.",
+    "oss": true,
+    "scriptSrc": [
+      "/(?:js|iCheck)/icheck\\.min\\.js"
+    ],
+    "website": "https://github.com/drgullin/icheck"
+  },
   "iEXExchanger": {
     "cats": [
       1
@@ -2342,6 +2487,59 @@
     },
     "website": "https://www.apple.com/welcomescreen/ilife/iweb-3/"
   },
+  "iWiki": {
+    "cats": [
+      1
+    ],
+    "description": "iWiki is a Dutch-based content management system provider, formerly known as Kirra.",
+    "icon": "iWink.svg",
+    "js": {
+      "Kirra": "",
+      "KirraActiveMenuItems": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "\\.kirra\\.nl"
+    ],
+    "website": "https://www.iwink.nl"
+  },
+  "icomm": {
+    "cats": [
+      32
+    ],
+    "description": "icomm is a platform that helps companies manage their marketing automation strategy using AI-powered tools.",
+    "headers": {
+      "Content-Security-Policy": "\\.icommarketing\\.com",
+      "Server": "^ICOMMKT$"
+    },
+    "icon": "icomm.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://icommkt.com"
+  },
+  "icomm - Notifications Hub": {
+    "cats": [
+      32
+    ],
+    "description": "Notifications Hub is an omnichannel marketing automation platform powered by AI.0",
+    "excludes": [
+      "TITANPush"
+    ],
+    "icon": "icomm.svg",
+    "implies": [
+      "icomm"
+    ],
+    "js": {
+      "wpnObject.origin": "2"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://icommkt.com"
+  },
   "idCloudHost": {
     "cats": [
       88
@@ -2357,6 +2555,18 @@
     },
     "icon": "idCloudHost.svg",
     "website": "https://idcloudhost.com"
+  },
+  "iiQ Check": {
+    "cats": [
+      90
+    ],
+    "description": "iiQ Check is a system designed to optimize hotel guest communication and manage review distribution.",
+    "icon": "iiQCheck.svg",
+    "saas": true,
+    "scriptSrc": [
+      "app\\.iiq-check\\.de"
+    ],
+    "website": "https://www.iiq-check.de"
   },
   "ikiwiki": {
     "cats": [

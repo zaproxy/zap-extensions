@@ -182,7 +182,7 @@ public class SAMLUtils {
                     break;
             }
         } catch (UnsupportedEncodingException | SAMLException e) {
-            LOGGER.error(e);
+            LOGGER.error(e, e);
         }
         return "";
     }
