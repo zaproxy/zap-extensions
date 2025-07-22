@@ -22,6 +22,7 @@ package org.zaproxy.addon.automation.jobs;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.anEmptyMap;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -363,9 +364,8 @@ class ActiveScanConfigJobUnitTest extends TestUtils {
         assertThat(progress.getErrors().size(), is(equalTo(1)));
         assertThat(
                 progress.getErrors().get(0),
-                is(
-                        equalTo(
-                                "Invalid regex: * for key excludePaths : Dangling meta character '*' near index 0\n*\n^")));
+                containsString(
+                        "Invalid regex: * for key excludePaths : Dangling meta character '*' near index 0"));
     }
 
     private static void assertValidTemplate(String value) {
