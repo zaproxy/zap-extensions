@@ -86,7 +86,7 @@ class ExtensionClientIntegrationUnitTest extends TestUtils {
                         "[Profile0]",
                         "Name=zap-client-profile",
                         "IsRelative=1",
-                        "Path=Profiles/abcd1234.zap-client-profile");
+                        "Path=" + Path.of("Profiles/abcd1234.zap-client-profile"));
         Path iniPath = Files.createTempFile("fx-profiles", ".ini");
         Files.write(iniPath, validProfiles, StandardCharsets.UTF_8, StandardOpenOption.APPEND);
         ExtensionClientIntegration extClient = new ExtensionClientIntegration();
@@ -107,7 +107,9 @@ class ExtensionClientIntegrationUnitTest extends TestUtils {
                         "[Profile2]",
                         "Name=default",
                         "IsRelative=1",
-                        "Path=Profiles/efgh5678.default");
+                        "Path=" + Path.of("Profiles/efgh5678.default"));
+
+        Path zapProfilePath = Path.of("Profiles/abcd1234.zap-client-profile");
         List<String> expectedProfiles = new ArrayList<>();
         expectedProfiles.addAll(validProfiles);
         expectedProfiles.addAll(
@@ -116,15 +118,14 @@ class ExtensionClientIntegrationUnitTest extends TestUtils {
                         "[Profile3]",
                         "Name=zap-client-profile",
                         "IsRelative=1",
-                        "Path=Profiles/abcd1234.zap-client-profile"));
+                        "Path=" + zapProfilePath));
 
         Path iniPath = Files.createTempFile("fx-profiles", ".ini");
         Files.write(iniPath, validProfiles, StandardCharsets.UTF_8, StandardOpenOption.APPEND);
         ExtensionClientIntegration extClient = new ExtensionClientIntegration();
 
         // When
-        extClient.checkFirefoxProfilesFile(
-                iniPath, Path.of("Profiles/abcd1234.zap-client-profile"));
+        extClient.checkFirefoxProfilesFile(iniPath, zapProfilePath);
         List<String> updatedProfiles = Files.readAllLines(iniPath, StandardCharsets.UTF_8);
 
         // Then
