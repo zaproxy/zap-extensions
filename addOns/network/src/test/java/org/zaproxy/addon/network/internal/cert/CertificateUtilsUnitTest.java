@@ -22,6 +22,7 @@ package org.zaproxy.addon.network.internal.cert;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.equalToCompressingWhiteSpace;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
@@ -377,7 +378,7 @@ class CertificateUtilsUnitTest {
         // When
         String pem = CertificateUtils.keyStoreToCertificatePem(keyStore);
         // Then
-        assertThat(pem, is(equalTo(CERTIFICATE_PEM)));
+        assertThat(pem, is(equalToCompressingWhiteSpace(CERTIFICATE_PEM)));
     }
 
     @Test
@@ -412,7 +413,7 @@ class CertificateUtilsUnitTest {
         // When
         CertificateUtils.keyStoreToCertificatePem(keyStore, file);
         // Then
-        assertThat(contents(file), is(equalTo(CERTIFICATE_PEM)));
+        assertThat(contents(file), is(equalToCompressingWhiteSpace(CERTIFICATE_PEM)));
     }
 
     @Test

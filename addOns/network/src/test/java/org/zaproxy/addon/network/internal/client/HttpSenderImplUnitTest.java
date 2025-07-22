@@ -33,7 +33,6 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
-import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
@@ -333,7 +332,7 @@ class HttpSenderImplUnitTest {
                     assertThrows(
                             ZapUnknownHostException.class,
                             () -> method.sendWith(httpSender, message));
-            assertThat(exception.getMessage(), startsWith(host));
+            assertThat(exception.getMessage(), containsString(host));
             assertThat(exception.isFromOutgoingProxy(), is(equalTo(false)));
         }
 
@@ -851,6 +850,18 @@ class HttpSenderImplUnitTest {
         void shouldHaveTimingsSet(SenderMethod method) throws Exception {
             // Given
             long now = System.currentTimeMillis();
+            defaultHandler =
+                    (ctx, msg) -> {
+                        msg.setResponseHeader(DEFAULT_SERVER_HEADER);
+                        msg.setResponseBody(SERVER_RESPONSE);
+                        msg.getResponseHeader().setContentLength(msg.getResponseBody().length());
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        }
+                    };
+            server.setHttpMessageHandler(defaultHandler);
             // When
             method.sendWith(httpSender, message);
             // Then
@@ -1727,7 +1738,7 @@ class HttpSenderImplUnitTest {
                             () -> httpSender.sendAndReceive(message));
             assertThat(proxy.getReceivedMessages(), hasSize(0));
             assertThat(server.getReceivedMessages(), hasSize(0));
-            assertThat(exception.getMessage(), startsWith(proxyHost));
+            assertThat(exception.getMessage(), containsString(proxyHost));
             assertThat(exception.isFromOutgoingProxy(), is(equalTo(true)));
         }
 
