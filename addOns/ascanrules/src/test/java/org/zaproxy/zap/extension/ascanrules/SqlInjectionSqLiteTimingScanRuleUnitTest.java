@@ -59,7 +59,7 @@ class SqlInjectionSqLiteTimingScanRuleUnitTest
             case HIGH:
                 return NUMBER_MSGS_ATTACK_STRENGTH_HIGH + 5;
             case INSANE:
-                return NUMBER_MSGS_ATTACK_STRENGTH_INSANE + 5;
+                return NUMBER_MSGS_ATTACK_STRENGTH_INSANE + 13;
         }
     }
 
