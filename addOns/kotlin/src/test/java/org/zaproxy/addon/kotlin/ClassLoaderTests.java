@@ -24,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zaproxy.addon.kotlin.TestUtils.getScriptContents;
 
-import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Paths;
@@ -39,14 +38,12 @@ class ClassLoaderTests {
     private static final String testClassName = "testclasspath.TestClassOne";
 
     private ClassLoader testFallbackClassLoader() throws Exception {
-        String testClasspath =
-                Paths.get(
-                                getClass()
-                                        .getResource("/org/zaproxy/addon/kotlin/testclasspath")
-                                        .getFile())
+        URL testClasspath =
+                Paths.get(getClass().getResource("/org/zaproxy/addon/kotlin/testclasspath").toURI())
                         .getParent()
-                        .toString();
-        return new URLClassLoader(new URL[] {new URI("file://" + testClasspath + "/").toURL()});
+                        .toUri()
+                        .toURL();
+        return new URLClassLoader(new URL[] {testClasspath});
     }
 
     @Test
