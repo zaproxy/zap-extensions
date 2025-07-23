@@ -20,6 +20,8 @@
 package org.zaproxy.addon.exim.har;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.util.DefaultIndenter;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import de.sstoehr.harreader.model.HarLog;
 import java.io.IOException;
 import java.io.Writer;
@@ -33,7 +35,13 @@ public class HarExporter implements ExporterType {
 
     @Override
     public void begin(Writer writer) throws IOException {
-        generator = HarUtils.JSON_MAPPER.createGenerator(writer).useDefaultPrettyPrinter();
+        generator =
+                HarUtils.JSON_MAPPER
+                        .createGenerator(writer)
+                        .useDefaultPrettyPrinter()
+                        .setPrettyPrinter(
+                                new DefaultPrettyPrinter()
+                                        .withObjectIndenter(new DefaultIndenter("  ", "\n")));
 
         generator.writeStartObject();
         generator.writeObjectFieldStart("log");

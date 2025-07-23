@@ -20,8 +20,9 @@
 package org.zaproxy.addon.exim.automation;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.endsWith;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -142,12 +143,13 @@ class PruneJobUnitTest extends TestUtils {
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.hasErrors(), is(equalTo(true)));
         assertThat(progress.getErrors().size(), is(equalTo(1)));
-        assertThat(progress.getErrors(), contains(startsWith("Job prune Read 0 node(s) from ")));
         assertThat(
                 progress.getErrors(),
                 contains(
-                        endsWith(
-                                ", deleted 0 node(s), and failed with Exception loading file, for more details see the log file: Invalid file path (No such file or directory)")));
+                        allOf(
+                                startsWith("Job prune Read 0 node(s) from "),
+                                containsString(
+                                        ", deleted 0 node(s), and failed with Exception loading file, for more details see the log file: Invalid file path ("))));
     }
 
     private static void assertValidTemplate(String value) {

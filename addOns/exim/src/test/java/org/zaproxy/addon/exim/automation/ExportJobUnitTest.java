@@ -35,6 +35,9 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.withSettings;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -152,14 +155,15 @@ class ExportJobUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldReportExporterCount() {
+    void shouldReportExporterCount() throws IOException {
         // Given
         AutomationPlan plan = new AutomationPlan();
         AutomationProgress progress = plan.getProgress();
         AutomationEnvironment env = mock(AutomationEnvironment.class);
         ContextWrapper contextWrapper = new ContextWrapper(mock(Context.class));
         given(env.getContextWrapper(any())).willReturn(contextWrapper);
-        String yamlStr = "parameters:\n  fileName: /some/file";
+        Path file = Files.createTempFile("zap", "export");
+        String yamlStr = "parameters:\n  fileName: " + file.toString();
         Yaml yaml = new Yaml();
         Object data = yaml.load(yamlStr);
         ExporterResult result = mock();
@@ -178,7 +182,9 @@ class ExportJobUnitTest extends TestUtils {
         assertThat(progress.hasErrors(), is(equalTo(false)));
         assertThat(
                 progress.getInfos(),
-                hasItem("Job export: Exported 42 message(s) / node(s) to /some/file."));
+                hasItem(
+                        "Job export: Exported 42 message(s) / node(s) to %s."
+                                .formatted(file.toString())));
     }
 
     @Test

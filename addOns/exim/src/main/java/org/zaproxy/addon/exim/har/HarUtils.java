@@ -20,6 +20,8 @@
 package org.zaproxy.addon.exim.har;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.util.DefaultIndenter;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -111,7 +113,9 @@ public final class HarUtils {
                     .serializationInclusion(JsonInclude.Include.NON_DEFAULT)
                     .build();
 
-    private static final ObjectWriter JSON_WRITER = JSON_MAPPER.writerWithDefaultPrettyPrinter();
+    private static final ObjectWriter JSON_WRITER =
+            JSON_MAPPER.writer(
+                    new DefaultPrettyPrinter().withObjectIndenter(new DefaultIndenter("  ", "\n")));
 
     private HarUtils() {}
 
