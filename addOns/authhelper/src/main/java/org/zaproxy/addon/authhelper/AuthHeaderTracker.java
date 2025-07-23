@@ -19,10 +19,12 @@
  */
 package org.zaproxy.addon.authhelper;
 
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import org.apache.commons.httpclient.URIException;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpMessage;
@@ -40,7 +42,8 @@ public class AuthHeaderTracker implements HttpSenderListener {
 
     private static final Logger LOGGER = LogManager.getLogger(AuthHeaderTracker.class);
 
-    private Map<String, String> hostToToken = new HashMap<>();
+    private Map<String, Map<String, String>> hostHeaderToken =
+            Collections.synchronizedMap(new HashMap<>());
 
     @Override
     public int getListenerOrder() {
@@ -59,6 +62,11 @@ public class AuthHeaderTracker implements HttpSenderListener {
                 || initiator == HttpSender.PROXY_INITIATOR;
     }
 
+    private static boolean isTrackedHeader(String header) {
+        return StringUtils.containsIgnoreCase(header, "auth")
+                || StringUtils.containsIgnoreCase(header, "csrf");
+    }
+
     @Override
     public void onHttpRequestSend(HttpMessage msg, int initiator, HttpSender sender) {
         if (HttpRequestHeader.OPTIONS.equals(msg.getRequestHeader().getMethod())) {
@@ -68,28 +76,45 @@ public class AuthHeaderTracker implements HttpSenderListener {
 
         try {
             String host = SessionStructure.getHostName(msg);
-            String latestToken = hostToToken.get(host);
+            Map<String, String> latestTokens =
+                    hostHeaderToken.computeIfAbsent(
+                            host, h -> Collections.synchronizedMap(new HashMap<String, String>()));
 
             if (isAuthInitiator(initiator)) {
                 // Track any auth tokens
-                List<String> authHeaders =
-                        msg.getRequestHeader().getHeaderValues(HttpRequestHeader.AUTHORIZATION);
-                if (!authHeaders.isEmpty()) {
-                    String val1 = authHeaders.get(0);
-                    if (latestToken == null) {
-                        hostToToken.put(host, val1);
-                        LOGGER.debug(
-                                "New authorization header for domain {} : {}", host, trim(val1));
-                    } else if (!val1.equals(latestToken)) {
-                        hostToToken.put(host, val1);
-                        LOGGER.debug(
-                                "Update authorization header for domain {} : {}", host, trim(val1));
-                    }
-                }
-            } else if (latestToken != null && isHeaderAuth(msg.getRequestingUser())) {
-                // Always update the token for the other senders (apart from the modern spiders,
+                msg.getRequestHeader()
+                        .getHeaders()
+                        .forEach(
+                                hhf -> {
+                                    if (isTrackedHeader(hhf.getName())) {
+                                        String headerLc = hhf.getName().toLowerCase(Locale.ROOT);
+                                        String val1 = latestTokens.get(headerLc);
+                                        if (val1 == null) {
+                                            latestTokens.put(headerLc, hhf.getValue());
+                                            LOGGER.debug(
+                                                    "New header for domain {} : {} : {}",
+                                                    host,
+                                                    headerLc,
+                                                    trim(hhf.getValue()));
+                                        } else if (!val1.equals(hhf.getValue())) {
+                                            latestTokens.put(headerLc, hhf.getValue());
+                                            LOGGER.debug(
+                                                    "Update header for domain {} : {} : {}",
+                                                    host,
+                                                    headerLc,
+                                                    trim(hhf.getValue()));
+                                        }
+                                    }
+                                });
+            } else if (isHeaderAuth(msg.getRequestingUser())) {
+                // Always update the tokens for the other senders (apart from the modern spiders,
                 // which handle auth themselves)
-                msg.getRequestHeader().setHeader(HttpRequestHeader.AUTHORIZATION, latestToken);
+                latestTokens
+                        .entrySet()
+                        .forEach(
+                                entry ->
+                                        msg.getRequestHeader()
+                                                .setHeader(entry.getKey(), entry.getValue()));
             }
         } catch (URIException e) {
             LOGGER.debug(e.getMessage(), e);
@@ -109,16 +134,20 @@ public class AuthHeaderTracker implements HttpSenderListener {
     }
 
     public void clear() {
-        hostToToken.clear();
+        hostHeaderToken.clear();
     }
 
     /* Just for testing */
     protected int getHostCount() {
-        return hostToToken.size();
+        return hostHeaderToken.size();
     }
 
     /* Just for testing */
-    protected String getTokenForHost(String host) {
-        return hostToToken.get(host);
+    protected String getTokenForHost(String host, String header) {
+        Map<String, String> latestTokens = hostHeaderToken.get(host);
+        if (latestTokens == null) {
+            return null;
+        }
+        return latestTokens.get(header.toLowerCase(Locale.ROOT));
     }
 }

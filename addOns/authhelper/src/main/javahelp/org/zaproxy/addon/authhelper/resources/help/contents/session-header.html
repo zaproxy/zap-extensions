@@ -13,7 +13,7 @@ of headers.
 <p>
 If used in conjunction with <a href="browser-auth.html">Browser Based Authentication</a> or 
 <a href="client-script.html">Client Script Authentication</a> then it will also maintain all
-of the cookies and Authorization headers set as part of authentication.
+of the cookies and any headers with names containing the strings "auth" or "csrf" (ignoring case) set as part of authentication.
 <p>
 The header values can include the following tokens:
 
