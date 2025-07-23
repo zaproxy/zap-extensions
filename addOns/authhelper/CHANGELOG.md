@@ -13,7 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Changed
 - Send the referer header on verification if set on the original request.
 - Removed requirement to set at least one header in the GUI for Header-Based Session Management.
- 
+
 ### Fixed
 - Do not fail the authentication on diagnostic errors.
 
@@ -23,7 +23,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - Updated to depend on Zest add-on 48.8.0.
-
 
 ## [0.26.0] - 2025-06-20
 ### Added
