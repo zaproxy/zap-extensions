@@ -28,6 +28,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.withSettings;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
@@ -87,9 +88,7 @@ class ClientPassiveScanHelperUnitTest extends TestUtils {
     @ValueSource(strings = {"test123", "{\"'\\:, []]", "@!£$%^&*(_)\n\r\t\\u00A9"})
     void shouldDecodePrintableBase64Strings(String str) {
         // Given / When
-        String decoded =
-                ClientPassiveScanHelper.base64Decode(
-                        Base64.getEncoder().encodeToString(str.getBytes()));
+        String decoded = ClientPassiveScanHelper.base64Decode(base64Encode(str));
         // Then
         assertThat(decoded, is(str));
     }
@@ -98,10 +97,12 @@ class ClientPassiveScanHelperUnitTest extends TestUtils {
     @ValueSource(strings = {"\u0000", "\b", ""})
     void shouldNotDecodeUnprintableBase64Strings(String str) {
         // Given / When
-        String decoded =
-                ClientPassiveScanHelper.base64Decode(
-                        Base64.getEncoder().encodeToString(str.getBytes()));
+        String decoded = ClientPassiveScanHelper.base64Decode(base64Encode(str));
         // Then
         assertThat(decoded, is(nullValue()));
+    }
+
+    private static String base64Encode(String str) {
+        return Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8));
     }
 }
