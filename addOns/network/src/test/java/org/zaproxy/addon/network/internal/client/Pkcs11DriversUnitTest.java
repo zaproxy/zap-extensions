@@ -330,7 +330,7 @@ class Pkcs11DriversUnitTest extends TestUtils {
     private static void assertHomeDrivers(Matcher<String> matcher) {
         String content;
         try {
-            content = new String(Files.readAllBytes(homeDriversPath()), StandardCharsets.UTF_8);
+            content = Files.readString(homeDriversPath()).replace(System.lineSeparator(), "\n");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
