@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Support for step delay in Browser Based Authentication.
+
 ### Fixed
 - Bug in handling headers with colons in the values.
 

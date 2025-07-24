@@ -79,6 +79,7 @@ public class AuthenticationData extends AutomationData {
     public static final String PARAM_SCRIPT = "script";
     public static final String PARAM_SCRIPT_INLINE = "scriptInline";
     public static final String PARAM_SCRIPT_ENGINE = "scriptEngine";
+    public static final String PARAM_STEP_DELAY = "stepDelay";
 
     // TODO: Plan to change once the core supports dynamic methods better
     protected static final String CLIENT_SCRIPT_BASED_AUTH_METHOD_CLASSNAME =
@@ -172,6 +173,7 @@ public class AuthenticationData extends AutomationData {
             JobUtils.addPrivateField(parameters, PARAM_LOGIN_PAGE_URL, authMethod);
             JobUtils.addPrivateField(parameters, PARAM_LOGIN_PAGE_WAIT, authMethod);
             JobUtils.addPrivateField(parameters, PARAM_BROWSER_ID, authMethod);
+            JobUtils.addPrivateField(parameters, PARAM_STEP_DELAY, authMethod);
 
             try {
                 Method method = authMethod.getClass().getMethod("toMap", Map.class);
@@ -302,6 +304,7 @@ public class AuthenticationData extends AutomationData {
                 switch (entry.getKey()) {
                     case PARAM_PORT:
                     case PARAM_LOGIN_PAGE_WAIT:
+                    case PARAM_STEP_DELAY:
                         try {
                             Integer.parseInt(entry.getValue().toString());
                         } catch (NumberFormatException e) {
@@ -505,6 +508,7 @@ public class AuthenticationData extends AutomationData {
                         }
 
                         setLoginPageWait(am, parameters);
+                        setStepDelay(am, parameters);
 
                         try {
                             Method method = am.getClass().getMethod("fromMap", Map.class);
@@ -613,6 +617,16 @@ public class AuthenticationData extends AutomationData {
             if (loginPageWait >= 0) {
                 JobUtils.setPrivateField(
                         method, AuthenticationData.PARAM_LOGIN_PAGE_WAIT, loginPageWait);
+            }
+        }
+    }
+
+    private static void setStepDelay(Object method, Map<String, Object> parameters) {
+        Object stepDelayObj = parameters.get(AuthenticationData.PARAM_STEP_DELAY);
+        if (stepDelayObj instanceof Integer value) {
+            int stepDelay = JobUtils.unBox(value);
+            if (stepDelay >= 0) {
+                JobUtils.setPrivateField(method, AuthenticationData.PARAM_STEP_DELAY, stepDelay);
             }
         }
     }
