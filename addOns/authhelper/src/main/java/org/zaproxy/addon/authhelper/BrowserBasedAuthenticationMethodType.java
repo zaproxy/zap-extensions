@@ -107,6 +107,8 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
             CONTEXT_CONFIG_AUTH_BROWSER + ".loginpageurl";
     private static final String CONTEXT_CONFIG_AUTH_BROWSER_LOGINPAGEWAIT =
             CONTEXT_CONFIG_AUTH_BROWSER + ".loginpagewait";
+    private static final String CONTEXT_CONFIG_AUTH_BROWSER_STEPDELAY =
+            CONTEXT_CONFIG_AUTH_BROWSER + ".stepdelay";
     private static final String CONTEXT_CONFIG_AUTH_BROWSER_BROWSERID =
             CONTEXT_CONFIG_AUTH_BROWSER + ".browserid";
     private static final String CONTEXT_CONFIG_AUTH_BROWSER_STEP =
@@ -116,6 +118,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
     private static final String PARAM_BROWSER_ID = "browserId";
     private static final String PARAM_LOGIN_PAGE_URL = "loginPageUrl";
     private static final String PARAM_LOGIN_PAGE_WAIT = "loginPageWait";
+    private static final String PARAM_STEP_DELAY = "stepDelay";
 
     public static final String DEFAULT_BROWSER_ID = Browser.FIREFOX_HEADLESS.getId();
     private static final int DEFAULT_PAGE_WAIT = 5;
@@ -201,6 +204,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
         private String loginPageUrl;
         private String browserId = DEFAULT_BROWSER_ID;
         private int loginPageWait = DEFAULT_PAGE_WAIT;
+        private int stepDelay;
         private List<AuthenticationStep> authenticationSteps = List.of();
 
         public BrowserBasedAuthenticationMethod() {}
@@ -210,6 +214,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
             this.loginPageUrl = method.loginPageUrl;
             this.browserId = method.browserId;
             this.loginPageWait = method.loginPageWait;
+            this.stepDelay = method.stepDelay;
             authenticationSteps =
                     method.getAuthenticationSteps().stream().map(AuthenticationStep::new).toList();
         }
@@ -266,6 +271,14 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
 
         public void setLoginPageWait(int loginPageWait) {
             this.loginPageWait = loginPageWait;
+        }
+
+        public int getStepDelay() {
+            return stepDelay;
+        }
+
+        public void setStepDelay(int stepDelay) {
+            this.stepDelay = stepDelay;
         }
 
         public List<AuthenticationStep> getAuthenticationSteps() {
@@ -325,7 +338,13 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
                                     proxyPort);
 
                     if (AuthUtils.authenticateAsUserImpl(
-                            diags, wd, user, loginPageUrl, loginPageWait, authenticationSteps)) {
+                            diags,
+                            wd,
+                            user,
+                            loginPageUrl,
+                            loginPageWait,
+                            stepDelay,
+                            authenticationSteps)) {
                         // Wait until the authentication request is identified
                         for (int i = 0; i < AuthUtils.getWaitLoopCount(); i++) {
                             if (handler.getAuthMsg() != null) {
@@ -425,6 +444,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
             values.put(PARAM_LOGIN_PAGE_URL, loginPageUrl);
             values.put(PARAM_BROWSER_ID, browserId);
             values.put(PARAM_LOGIN_PAGE_WAIT, loginPageWait);
+            values.put(PARAM_STEP_DELAY, stepDelay);
             return new AuthMethodApiResponseRepresentation<>(values);
         }
 
@@ -520,16 +540,15 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
         method.setBrowserId(
                 session.getContextDataString(
                         contextId, RecordContext.TYPE_AUTH_METHOD_FIELD_2, DEFAULT_BROWSER_ID));
-        String waitStr =
+        String loginWaitStr =
                 session.getContextDataString(contextId, RecordContext.TYPE_AUTH_METHOD_FIELD_3, "");
-        if (!StringUtils.isEmpty(waitStr)) {
+        if (!StringUtils.isEmpty(loginWaitStr)) {
             try {
-                method.setLoginPageWait(Integer.parseInt(waitStr));
+                method.setLoginPageWait(Integer.parseInt(loginWaitStr));
             } catch (NumberFormatException e) {
                 // Ignore
             }
         }
-
         try {
             List<AuthenticationStep> loaded =
                     session
@@ -542,6 +561,15 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
             method.setAuthenticationSteps(loaded);
         } catch (Exception e) {
             LOGGER.error("An error occurred while loading the data:", e);
+        }
+        String stepDelayStr =
+                session.getContextDataString(contextId, RecordContext.TYPE_AUTH_METHOD_FIELD_5, "");
+        if (!StringUtils.isEmpty(stepDelayStr)) {
+            try {
+                method.setStepDelay(Integer.parseInt(stepDelayStr));
+            } catch (NumberFormatException e) {
+                // Ignore
+            }
         }
 
         return method;
@@ -573,6 +601,11 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
         } catch (Exception e) {
             LOGGER.error("An error occurred while persisting the data:", e);
         }
+
+        session.setContextData(
+                contextId,
+                RecordContext.TYPE_AUTH_METHOD_FIELD_5,
+                Integer.toString(method.stepDelay));
     }
 
     @Override
@@ -588,6 +621,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
         config.setProperty(CONTEXT_CONFIG_AUTH_BROWSER_LOGINPAGEURL, method.loginPageUrl);
         config.setProperty(CONTEXT_CONFIG_AUTH_BROWSER_BROWSERID, method.browserId);
         config.setProperty(CONTEXT_CONFIG_AUTH_BROWSER_LOGINPAGEWAIT, method.loginPageWait);
+        config.setProperty(CONTEXT_CONFIG_AUTH_BROWSER_STEPDELAY, method.stepDelay);
 
         method.authenticationSteps.stream()
                 .map(AuthenticationStep::encode)
@@ -620,6 +654,11 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
         } catch (Exception e) {
             throw new ConfigurationException(e);
         }
+        try {
+            method.setStepDelay(config.getInt(CONTEXT_CONFIG_AUTH_BROWSER_STEPDELAY));
+        } catch (Exception e) {
+            throw new ConfigurationException(e);
+        }
 
         try {
             List<AuthenticationStep> steps =
@@ -647,7 +686,8 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
     @Override
     public ApiDynamicActionImplementor getSetMethodForContextApiAction() {
         String[] mandatoryParamNames = new String[] {PARAM_LOGIN_PAGE_URL};
-        String[] optionalParamNames = new String[] {PARAM_BROWSER_ID, PARAM_LOGIN_PAGE_WAIT};
+        String[] optionalParamNames =
+                new String[] {PARAM_BROWSER_ID, PARAM_LOGIN_PAGE_WAIT, PARAM_STEP_DELAY};
         return new ApiDynamicActionImplementor(
                 API_METHOD_NAME, mandatoryParamNames, optionalParamNames) {
 
@@ -672,6 +712,11 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
                             ApiUtils.getOptionalStringParam(params, PARAM_LOGIN_PAGE_WAIT);
                     if (!StringUtils.isEmpty(loginPageWaitStr)) {
                         method.setLoginPageWait(Integer.parseInt(loginPageWaitStr));
+                    }
+
+                    String stepDelayStr = ApiUtils.getOptionalStringParam(params, PARAM_STEP_DELAY);
+                    if (!StringUtils.isEmpty(stepDelayStr)) {
+                        method.setStepDelay(Integer.parseInt(stepDelayStr));
                     }
 
                 } catch (ApiException e) {
@@ -701,6 +746,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
         private ZapTextField loginUrlField;
         private JComboBox<BrowserUI> browserCombo;
         private ZapNumberSpinner loginUrlWait;
+        private ZapNumberSpinner stepDelay;
         private JCheckBox diagnostics;
         private StepsPanel stepsPanel;
 
@@ -789,6 +835,16 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
             this.add(loginUrlWait, LayoutHelper.getGBC(1, y, 1, 1.0d, 0.0d));
             y++;
 
+            stepDelay = new ZapNumberSpinner(0, 0, Integer.MAX_VALUE);
+            JLabel stepDelayLabel =
+                    new JLabel(
+                            Constant.messages.getString(
+                                    "authhelper.auth.method.browser.label.stepDelay"));
+            stepDelayLabel.setLabelFor(stepDelay);
+            this.add(stepDelayLabel, LayoutHelper.getGBC(0, y, 1, 1.0d, 0.0d));
+            this.add(stepDelay, LayoutHelper.getGBC(1, y, 1, 1.0d, 0.0d));
+            y++;
+
             diagnostics = new JCheckBox();
             JLabel diagnosticsLabel =
                     new JLabel(
@@ -820,6 +876,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
                     .setBrowserId(
                             ((BrowserUI) browserCombo.getSelectedItem()).getBrowser().getId());
             getMethod().setLoginPageWait(loginUrlWait.getValue());
+            getMethod().setStepDelay(stepDelay.getValue());
             getMethod().setDiagnostics(diagnostics.isSelected());
             authenticationMethod.setAuthenticationSteps(stepsPanel.getSteps());
         }
@@ -832,6 +889,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
             ((BrowsersComboBoxModel) this.browserCombo.getModel())
                     .setSelectedBrowser(this.authenticationMethod.getBrowserId());
             this.loginUrlWait.setValue(authenticationMethod.getLoginPageWait());
+            this.stepDelay.setValue(authenticationMethod.getStepDelay());
             diagnostics.setSelected(authenticationMethod.isDiagnostics());
             stepsPanel.setSteps(authenticationMethod.getAuthenticationSteps());
         }

@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Include Web Element's selector in the Authentication Report.
 - Support for tracking authentication and CSRF headers automatically for Header based auth.
 - Add Authentication Report section for the log file.
+- Support for step delay in Browser Based Authentication, which replaces the auth tester "demo mode".
 
 ## Changed
 - Send the referer header on verification if set on the original request.
