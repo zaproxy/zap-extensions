@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [57.0.1] - 2025-07-24
 ### Added
 - A ZAP is Out of Date rule.
 
