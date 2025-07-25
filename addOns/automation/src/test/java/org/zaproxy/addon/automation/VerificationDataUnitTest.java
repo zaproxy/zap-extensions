@@ -20,6 +20,8 @@
 package org.zaproxy.addon.automation;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
@@ -32,8 +34,10 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.parosproxy.paros.Constant;
+import org.zaproxy.zap.authentication.AuthenticationMethod;
 import org.zaproxy.zap.authentication.AuthenticationMethod.AuthCheckingStrategy;
 import org.zaproxy.zap.authentication.HttpAuthenticationMethodType.HttpAuthenticationMethod;
 import org.zaproxy.zap.model.Context;
@@ -94,5 +98,48 @@ class VerificationDataUnitTest {
         assertThat(data.getPollAdditionalHeaders().get(1).getHeader(), is("referer"));
         assertThat(
                 data.getPollAdditionalHeaders().get(1).getValue(), is("https://www.example.com"));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"0,60,true", "-10,60,true", "20,20,false", "120,120,false"})
+    void shouldSetCorrectPollFrequencyWhenNotNull(
+            int frequency, int authFreq, boolean progressWarning) {
+        // Given
+        HttpAuthenticationMethod httpAuthMethod = new HttpAuthenticationMethod();
+        Constant.messages = new I18N(Locale.ENGLISH);
+        Context context = mock(Context.class);
+        AutomationProgress progress = new AutomationProgress();
+        LinkedHashMap<String, Object> data = new LinkedHashMap<>();
+        given(context.getAuthenticationMethod()).willReturn(httpAuthMethod);
+        data.put("method", "poll");
+        VerificationData verificationData = new VerificationData(data, progress);
+        verificationData.setPollFrequency(frequency);
+        // When
+        verificationData.initAuthenticationVerification(context, progress);
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(progressWarning)));
+        assertThat(verificationData.getPollFrequency(), is(equalTo(frequency)));
+        assertThat(httpAuthMethod.getPollFrequency(), is(equalTo(authFreq)));
+    }
+
+    @Test
+    void shouldUseDefaultPollFrequencyWhenNull() {
+        // Given
+        HttpAuthenticationMethod httpAuthMethod = new HttpAuthenticationMethod();
+        Constant.messages = new I18N(Locale.ENGLISH);
+        Context context = mock(Context.class);
+        AutomationProgress progress = new AutomationProgress();
+        LinkedHashMap<String, Object> data = new LinkedHashMap<>();
+        given(context.getAuthenticationMethod()).willReturn(httpAuthMethod);
+        data.put("method", "poll");
+        VerificationData verificationData = new VerificationData(data, progress);
+        verificationData.setPollFrequency(null);
+        // When
+        verificationData.initAuthenticationVerification(context, progress);
+        // Then
+        assertThat(httpAuthMethod.getPollFrequency(), is(greaterThan(0)));
+        assertThat(
+                httpAuthMethod.getPollFrequency(),
+                is(equalTo(AuthenticationMethod.DEFAULT_POLL_FREQUENCY)));
     }
 }

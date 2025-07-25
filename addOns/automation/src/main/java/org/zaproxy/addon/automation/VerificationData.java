@@ -231,7 +231,13 @@ public class VerificationData extends AutomationData {
                             this.getLoggedOutRegex()));
         }
         authMethod.setPollUrl(this.getPollUrl());
-        authMethod.setPollFrequency(JobUtils.unBox(this.getPollFrequency()));
+        if (getPollFrequency() != null) {
+            if (getPollFrequency() > 0) {
+                authMethod.setPollFrequency(getPollFrequency());
+            } else {
+                progress.warn(Constant.messages.getString("automation.warn.poll.zero"));
+            }
+        }
         authMethod.setPollData(this.getPollPostData());
         if (this.pollAdditionalHeaders != null && !this.pollAdditionalHeaders.isEmpty()) {
             StringBuilder headers = new StringBuilder();
