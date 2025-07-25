@@ -125,10 +125,11 @@ class SvgHrefParserUnitTest extends SpiderParserTestUtils<SvgHrefParser> {
         // Given
         messageWith("test.svg");
         msg.setResponseBody(
-                "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n"
-                        + "<svg width=\"5cm\" height=\"3cm\" viewBox=\"0 0 5 3\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\">\n"
-                        + "  <rect x=\".01\" y=\".01\" width=\"4.98\" height=\"2.98\" fill=\"none\" stroke=\"blue\" stroke-width=\".03\"/>\n"
-                        + "</svg>");
+                """
+                    <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+                    <svg width="5cm" height="3cm" viewBox="0 0 5 3" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                      <rect x=".01" y=".01" width="4.98" height="2.98" fill="none" stroke="blue" stroke-width=".03"/>
+                    </svg>""");
         // When
         boolean parse = parser.parseResource(ctx);
         // Then
@@ -140,13 +141,14 @@ class SvgHrefParserUnitTest extends SpiderParserTestUtils<SvgHrefParser> {
         // Given
         messageWith("test.svg");
         msg.setResponseBody(
-                "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n"
-                        + "<svg width=\"5cm\" height=\"3cm\" viewBox=\"0 0 5 3\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\">\n"
-                        + "  <rect x=\".01\" y=\".01\" width=\"4.98\" height=\"2.98\" fill=\"none\" stroke=\"blue\" stroke-width=\".03\"/>\n"
-                        // The following line produces a SAXParseException other than the DOCTYPE
-                        // issue tested elsewhere due to the ampersand outside of a CDATA block
-                        + "<text x=\"20\" y=\"35\" class=\"small\">Test & Text</text>"
-                        + "</svg>");
+                // The line 4 produces a SAXParseException other than the DOCTYPE
+                // issue tested elsewhere due to the ampersand outside of a CDATA block
+                """
+                    <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+                    <svg width="5cm" height="3cm" viewBox="0 0 5 3" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                      <rect x=".01" y=".01" width="4.98" height="2.98" fill="none" stroke="blue" stroke-width=".03"/>
+                    <text x="20" y="35" class="small">Test & Text</text>
+                    </svg>""");
         // When
         boolean parse = parser.parseResource(ctx);
         // Then
@@ -158,14 +160,15 @@ class SvgHrefParserUnitTest extends SpiderParserTestUtils<SvgHrefParser> {
         // Given
         messageWith("test.svg");
         msg.setResponseBody(
-                "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n"
-                        + "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n"
-                        + "<svg width=\"5cm\" height=\"3cm\" viewBox=\"0 0 5 3\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\">\n"
-                        + "  <rect x=\".01\" y=\".01\" width=\"4.98\" height=\"2.98\" fill=\"none\" stroke=\"blue\" stroke-width=\".03\"/>\n"
-                        + "  <a HREF=\"http://www.w3.org\">\n"
-                        + "    <ellipse cx=\"2.5\" cy=\"1.5\" rx=\"2\" ry=\"1\" fill=\"red\"/>\n"
-                        + "  </a>"
-                        + "</svg>");
+                """
+                        <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+                        <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+                        <svg width="5cm" height="3cm" viewBox="0 0 5 3" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                          <rect x=".01" y=".01" width="4.98" height="2.98" fill="none" stroke="blue" stroke-width=".03"/>
+                          <a HREF="http://www.w3.org">
+                            <ellipse cx="2.5" cy="1.5" rx="2" ry="1" fill="red"/>
+                          </a>
+                        </svg>""");
         // When
         boolean parse = parser.parseResource(ctx);
         // Then
