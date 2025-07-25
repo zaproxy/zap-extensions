@@ -383,7 +383,7 @@ public class HttpSenderApache
             return false;
         }
         // Exception message can be just the host or the host plus some other details.
-        return exceptionMessage.startsWith(options.getHttpProxy().getHost());
+        return exceptionMessage.contains(options.getHttpProxy().getHost());
     }
 
     private void sendImpl0(
