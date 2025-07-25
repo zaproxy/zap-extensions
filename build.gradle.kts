@@ -47,12 +47,6 @@ allprojects {
         dependencies {
             "errorprone"("com.google.errorprone:error_prone_core:2.26.1")
         }
-
-        java {
-            val javaVersion = JavaVersion.VERSION_17
-            sourceCompatibility = javaVersion
-            targetCompatibility = javaVersion
-        }
     }
 
     tasks.withType<JavaCompile>().configureEach {
