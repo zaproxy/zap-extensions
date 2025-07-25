@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Use only positive serial numbers for the Root CA certificate (Issue 8984).
 
+### Fixed
+- Correctly inform about unknown proxy host on all OSes.
+
 ## [0.22.0] - 2025-06-20
 ### Fixed
 - A typo in the help with regard to Transparent Proxying.
