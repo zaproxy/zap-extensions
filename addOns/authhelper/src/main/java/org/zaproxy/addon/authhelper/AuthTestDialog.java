@@ -108,8 +108,8 @@ public class AuthTestDialog extends StandardFieldsDialog {
     private static final String PASSWORD_LABEL = "authhelper.auth.test.dialog.label.password";
     private static final String USERNAME_LABEL = "authhelper.auth.test.dialog.label.username";
     private static final String BROWSER_LABEL = "authhelper.auth.test.dialog.label.browser";
-    private static final String WAIT_LABEL = "authhelper.auth.test.dialog.label.wait";
-    private static final String DEMO_LABEL = "authhelper.auth.test.dialog.label.demo";
+    private static final String LOGIN_WAIT_LABEL = "authhelper.auth.test.dialog.label.wait";
+    private static final String STEP_DELAY_LABEL = "authhelper.auth.test.dialog.label.stepdelay";
     private static final String RECORD_DIAGNOSTICS_LABEL =
             "authhelper.auth.test.dialog.label.recdiag";
     private static final String DIAGNOSTICS_LABEL = "authhelper.auth.test.dialog.label.diag";
@@ -244,8 +244,8 @@ public class AuthTestDialog extends StandardFieldsDialog {
 
         this.addTextField(0, USERNAME_LABEL, params.getUsername());
         this.addPasswordField(0, PASSWORD_LABEL, "");
-        this.addNumberField(0, WAIT_LABEL, 0, Integer.MAX_VALUE, params.getWait());
-        this.addCheckBoxField(0, DEMO_LABEL, params.isDemoMode());
+        this.addNumberField(0, LOGIN_WAIT_LABEL, 0, Integer.MAX_VALUE, params.getWait());
+        this.addNumberField(0, STEP_DELAY_LABEL, 0, Integer.MAX_VALUE, params.getStepDelay());
         this.addCheckBoxField(0, RECORD_DIAGNOSTICS_LABEL, params.isRecordDiagnostics());
         this.addCustomComponent(0, getResultsPanel());
         this.addPadding(0);
@@ -353,7 +353,7 @@ public class AuthTestDialog extends StandardFieldsDialog {
         recordButton.setEnabled(!isBrowserAuth);
         this.getField(PASSWORD_LABEL).setEnabled(isBrowserAuth);
         this.getField(USERNAME_LABEL).setEnabled(isBrowserAuth);
-        this.getField(DEMO_LABEL).setEnabled(isBrowserAuth);
+        this.getField(STEP_DELAY_LABEL).setEnabled(isBrowserAuth);
     }
 
     @Override
@@ -446,7 +446,6 @@ public class AuthTestDialog extends StandardFieldsDialog {
 
     private void authenticate() {
         StatsListener statsListener = null;
-        boolean demoMode = getBoolValue(DEMO_LABEL);
         try {
             String username = this.getStringValue(USERNAME_LABEL);
             String password = this.getStringValue(PASSWORD_LABEL);
@@ -482,7 +481,8 @@ public class AuthTestDialog extends StandardFieldsDialog {
                 bam.setDiagnostics(getBoolValue(RECORD_DIAGNOSTICS_LABEL));
 
                 bam.setBrowserId(browserId);
-                bam.setLoginPageWait(this.getIntValue(WAIT_LABEL));
+                bam.setLoginPageWait(this.getIntValue(LOGIN_WAIT_LABEL));
+                bam.setStepDelay(this.getIntValue(STEP_DELAY_LABEL));
                 bam.setAuthenticationSteps(
                         stepsPanel.getSteps().stream()
                                 .filter(AuthenticationStep::isEnabled)
@@ -519,7 +519,7 @@ public class AuthTestDialog extends StandardFieldsDialog {
                 }
                 csam.setScriptWrapper(scriptWrapper);
                 csam.setDiagnostics(getBoolValue(RECORD_DIAGNOSTICS_LABEL));
-                csam.setLoginPageWait(this.getIntValue(WAIT_LABEL));
+                csam.setLoginPageWait(this.getIntValue(LOGIN_WAIT_LABEL));
 
                 // TODO this is needed due to a core bug
                 Map<String, String> map = new HashMap<>();
@@ -564,9 +564,6 @@ public class AuthTestDialog extends StandardFieldsDialog {
                 am.setAuthCheckingStrategy(AuthCheckingStrategy.valueOf("AUTO_DETECT"));
             } catch (Exception e) {
                 // Ignore - not yet supported so will default to "poll"
-            }
-            if (demoMode) {
-                AuthUtils.setDemoMode(true);
             }
 
             statusLabel.setText(
@@ -691,9 +688,6 @@ public class AuthTestDialog extends StandardFieldsDialog {
             if (statsListener != null) {
                 Stats.removeListener(statsListener);
             }
-            if (demoMode) {
-                AuthUtils.setDemoMode(false);
-            }
             ext.enableAuthDiagCollector(false);
         }
     }
@@ -763,9 +757,9 @@ public class AuthTestDialog extends StandardFieldsDialog {
                         setFieldValue(LOGIN_URL_LABEL, "");
                         setFieldValue(USERNAME_LABEL, "");
                         setFieldValue(PASSWORD_LABEL, "");
-                        setFieldValue(WAIT_LABEL, AuthhelperParam.DEFAULT_WAIT);
+                        setFieldValue(LOGIN_WAIT_LABEL, AuthhelperParam.DEFAULT_WAIT);
+                        setFieldValue(STEP_DELAY_LABEL, 0);
                         browserComboModel.setSelectedBrowser(AuthhelperParam.DEFAULT_BROWSER);
-                        setFieldValue(DEMO_LABEL, false);
                         setFieldValue(RECORD_DIAGNOSTICS_LABEL, false);
                         stepsPanel.getSteps().forEach(step -> step.setEnabled(false));
 
@@ -795,8 +789,8 @@ public class AuthTestDialog extends StandardFieldsDialog {
         params.setUsername(this.getStringValue(USERNAME_LABEL));
         JComboBox<?> browserCombo = (JComboBox<?>) this.getField(BROWSER_LABEL);
         params.setBrowser(((BrowserUI) browserCombo.getSelectedItem()).getBrowser().getId());
-        params.setWait(this.getIntValue(WAIT_LABEL));
-        params.setDemoMode(this.getBoolValue(DEMO_LABEL));
+        params.setWait(this.getIntValue(LOGIN_WAIT_LABEL));
+        params.setStepDelay(this.getIntValue(STEP_DELAY_LABEL));
         params.setRecordDiagnostics(getBoolValue(RECORD_DIAGNOSTICS_LABEL));
         params.setSteps(stepsPanel.getSteps());
     }
