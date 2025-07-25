@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [66] - 2025-07-25
 ### Added
 - The Reverse Tabnabbing and Retrieved from Cache scan rules now have CWE references.
 - A ZAP is Out of Date rule.
@@ -620,6 +620,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[66]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v66
 [65]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v65
 [64]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v64
 [63]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v63
