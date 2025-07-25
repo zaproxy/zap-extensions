@@ -167,7 +167,7 @@
             <level>MEDIUM</level>
         </p40022>
         <p40024>
-            <name>SQL Injection - SQLite</name>
+            <name>SQL Injection - SQLite (Time Based)</name>
             <enabled>true</enabled>
             <level>MEDIUM</level>
         </p40024>
@@ -321,5 +321,10 @@
             <enabled>true</enabled>
             <level>MEDIUM</level>
         </p90036>
+        <p90037>
+            <name>Remote OS Command Injection (Time Based)</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p90037>
     </plugins>
 </configuration>
