@@ -161,5 +161,10 @@
             <enabled>true</enabled>
             <level>MEDIUM</level>
         </p90036>
+        <p90037>
+            <name>Remote OS Command Injection (Time Based)</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p90037>
     </plugins>
 </configuration>
