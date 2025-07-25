@@ -24,6 +24,7 @@ import java.net.SocketException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import org.apache.commons.configuration.ConversionException;
 import org.apache.logging.log4j.LogManager;
@@ -188,7 +189,6 @@ public class SqlInjectionPostgreSqlTimingScanRule extends AbstractAppParamPlugin
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
     }
 
-    /** for logging. */
     private static final Logger LOGGER =
             LogManager.getLogger(SqlInjectionPostgreSqlTimingScanRule.class);
 
@@ -231,7 +231,6 @@ public class SqlInjectionPostgreSqlTimingScanRule extends AbstractAppParamPlugin
     public void init() {
         LOGGER.debug("Initialising");
 
-        // set up what we are allowed to do, depending on the attack strength that was set.
         if (this.getAttackStrength() == AttackStrength.LOW) {
             doTimeMaxRequests = 3;
         } else if (this.getAttackStrength() == AttackStrength.MEDIUM) {
@@ -241,7 +240,7 @@ public class SqlInjectionPostgreSqlTimingScanRule extends AbstractAppParamPlugin
         } else if (this.getAttackStrength() == AttackStrength.INSANE) {
             doTimeMaxRequests = 100;
         }
-        // Read the sleep value from the configs
+
         try {
             sleepInSeconds =
                     this.getConfig()
@@ -254,21 +253,15 @@ public class SqlInjectionPostgreSqlTimingScanRule extends AbstractAppParamPlugin
         LOGGER.debug("Sleep set to {} seconds", sleepInSeconds);
     }
 
-    /**
-     * scans for SQL Injection vulnerabilities, using POSTGRES specific syntax. If it doesn't use
-     * specifically POSTGRES syntax, it does not belong in here, but in SQLInjection
-     */
     @Override
     public void scan(HttpMessage originalMessage, String paramName, String paramValue) {
         try {
             // Timing Baseline check: we need to get the time that it took the original query, to
             // know if the time based check is working correctly..
-            int countTimeBasedRequests = 0;
-            for (int timeBasedSQLindex = 0;
+            for (int timeBasedSQLindex = 0, countTimeBasedRequests = 0;
                     timeBasedSQLindex < SQL_POSTGRES_TIME_REPLACEMENTS.length
                             && countTimeBasedRequests < doTimeMaxRequests;
-                    timeBasedSQLindex++) {
-                countTimeBasedRequests++;
+                    timeBasedSQLindex++, countTimeBasedRequests++) {
                 AtomicReference<HttpMessage> message = new AtomicReference<>();
                 String payloadValue =
                         SQL_POSTGRES_TIME_REPLACEMENTS[timeBasedSQLindex].replace(
@@ -280,9 +273,8 @@ public class SqlInjectionPostgreSqlTimingScanRule extends AbstractAppParamPlugin
                             String finalPayload =
                                     payloadValue.replace(SLEEP_TOKEN, String.valueOf(x));
                             setParameter(timedMsg, paramName, finalPayload);
-                            // send the request and retrieve the response
                             sendAndReceive(timedMsg, false); // do not follow redirects
-                            return timedMsg.getTimeElapsedMillis() / 1000.0;
+                            return TimeUnit.MILLISECONDS.toSeconds(timedMsg.getTimeElapsedMillis());
                         };
                 boolean isInjectable;
                 try {
@@ -301,25 +293,12 @@ public class SqlInjectionPostgreSqlTimingScanRule extends AbstractAppParamPlugin
                                 ex.getClass().getName(),
                                 ex.getMessage(),
                                 message.get().getRequestHeader().getURI());
-                        continue; // Something went wrong, move to next blind iteration
+                        continue;
                     }
 
                     if (isInjectable) {
                         String finalPayloadValue =
                                 payloadValue.replace(SLEEP_TOKEN, String.valueOf(sleepInSeconds));
-                        // We Found IT!
-                        String extraInfo =
-                                Constant.messages.getString(
-                                        "ascanrules.sqlinjection.alert.timebased.extrainfo",
-                                        finalPayloadValue,
-                                        message.get().getTimeElapsedMillis(),
-                                        paramValue,
-                                        getBaseMsg().getTimeElapsedMillis());
-                        String attack =
-                                Constant.messages.getString(
-                                        "ascanrules.sqlinjection.alert.booleanbased.attack",
-                                        paramName,
-                                        finalPayloadValue);
                         LOGGER.debug(
                                 "[Time Based Postrgres SQL Injection - Found] on parameter [{}] with value [{}]",
                                 paramName,
@@ -327,12 +306,17 @@ public class SqlInjectionPostgreSqlTimingScanRule extends AbstractAppParamPlugin
 
                         newAlert()
                                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                                .setName(getName() + " - Time Based")
                                 .setUri(getBaseMsg().getRequestHeader().getURI().toString())
                                 .setParam(paramName)
-                                .setAttack(attack)
+                                .setAttack(finalPayloadValue)
                                 .setMessage(message.get())
-                                .setOtherInfo(extraInfo)
+                                .setOtherInfo(
+                                        Constant.messages.getString(
+                                                "ascanrules.sqlinjection.alert.timebased.extrainfo",
+                                                finalPayloadValue,
+                                                message.get().getTimeElapsedMillis(),
+                                                paramValue,
+                                                getBaseMsg().getTimeElapsedMillis()))
                                 .raise();
                         return;
                     }
@@ -346,10 +330,8 @@ public class SqlInjectionPostgreSqlTimingScanRule extends AbstractAppParamPlugin
             }
 
         } catch (Exception e) {
-            // Do not try to internationalise this.. we need an error message in any event..
-            // if it's in English, it's still better than not having it at all.
-            LOGGER.error(
-                    "An error occurred checking a url for POSTGRES SQL Injection vulnerabilities",
+            LOGGER.warn(
+                    "An error occurred checking a URL for Postgres SQL Injection vulnerabilities",
                     e);
         }
     }
