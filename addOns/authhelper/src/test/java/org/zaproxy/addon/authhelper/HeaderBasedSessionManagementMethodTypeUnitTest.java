@@ -27,6 +27,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
@@ -35,6 +36,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.Cookie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -55,6 +57,7 @@ import org.zaproxy.zap.extension.script.ScriptVars;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.network.HttpRequestBody;
 import org.zaproxy.zap.network.HttpResponseBody;
+import org.zaproxy.zap.session.SessionManagementMethod;
 import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.Pair;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
@@ -388,5 +391,111 @@ class HeaderBasedSessionManagementMethodTypeUnitTest extends TestUtils {
         Pair<String, String> header = headers.get(0);
         assertThat(header.first, is(equalTo(expectedFirst)));
         assertThat(header.second, is(equalTo(expectedSecond)));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {"'',0", "'   \\t\\n ',0", "Header1:Value1,1"})
+    void shouldSetHeaderConfigsFromApi(String headers, int expectedSize) throws ApiException {
+        // Given
+        HeaderBasedSessionManagementMethodType type = new HeaderBasedSessionManagementMethodType();
+        Context context = mock(Context.class);
+        JSONObject params = new JSONObject();
+        params.put("contextId", 1);
+        params.put("headers", headers);
+
+        Model model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
+        Model.setSingletonForTesting(model);
+        Session session = mock(Session.class);
+        given(model.getSession()).willReturn(session);
+        given(session.getContext(1)).willReturn(context);
+
+        // When
+        type.getSetMethodForContextApiAction().handleAction(params);
+
+        // Then
+        ArgumentCaptor<SessionManagementMethod> captor =
+                ArgumentCaptor.forClass(SessionManagementMethod.class);
+        verify(context).setSessionManagementMethod(captor.capture());
+        HeaderBasedSessionManagementMethod savedMethod =
+                (HeaderBasedSessionManagementMethod) captor.getValue();
+        assertThat(savedMethod.getHeaderConfigs(), hasSize(expectedSize));
+    }
+
+    @Test
+    void shouldSetHeaderConfigsFromApiWhenParamMissing() throws ApiException {
+        // Given
+        HeaderBasedSessionManagementMethodType type = new HeaderBasedSessionManagementMethodType();
+        Context context = mock(Context.class);
+        JSONObject params = new JSONObject();
+        params.put("contextId", 1);
+
+        Model model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
+        Model.setSingletonForTesting(model);
+        Session session = mock(Session.class);
+        given(model.getSession()).willReturn(session);
+        given(session.getContext(1)).willReturn(context);
+
+        // When
+        type.getSetMethodForContextApiAction().handleAction(params);
+
+        // Then
+        ArgumentCaptor<SessionManagementMethod> captor =
+                ArgumentCaptor.forClass(SessionManagementMethod.class);
+        verify(context).setSessionManagementMethod(captor.capture());
+        HeaderBasedSessionManagementMethod savedMethod =
+                (HeaderBasedSessionManagementMethod) captor.getValue();
+        assertThat(savedMethod.getHeaderConfigs(), hasSize(0));
+    }
+
+    @Test
+    void shouldLeaveUnresolvedJsonTokenInHeader() throws Exception {
+        // Given
+        HeaderBasedSessionManagementMethod method = new HeaderBasedSessionManagementMethod(0);
+        HttpMessage msg =
+                new HttpMessage(
+                        new HttpRequestHeader("GET https://example.com/ HTTP/1.1\r\n\r\n"),
+                        new HttpRequestBody(""),
+                        new HttpResponseHeader(
+                                """
+                                HTTP/1.1 200 OK\r
+                                Content-Type: application/json"""),
+                        new HttpResponseBody("{\"key\": \"value\"}"));
+        List<Pair<String, String>> headerConfigs = new ArrayList<>();
+        headerConfigs.add(new Pair<>("X-Test-Header", "Token-is-{%json:path.to.nothing%}"));
+        method.setHeaderConfigs(headerConfigs);
+
+        // When
+        List<Pair<String, String>> headers = method.extractWebSession(msg).getHeaders();
+
+        // Then
+        assertThat(headers, hasSize(1));
+        assertThat(headers.get(0).first, is(equalTo("X-Test-Header")));
+        assertThat(headers.get(0).second, is(equalTo("Token-is-{%json:path.to.nothing%}")));
+    }
+
+    @Test
+    void shouldLeaveUnresolvedJsonTokenInHeaderIfBodyEmpty() throws Exception {
+        // Given
+        HeaderBasedSessionManagementMethod method = new HeaderBasedSessionManagementMethod(0);
+        HttpMessage msg =
+                new HttpMessage(
+                        new HttpRequestHeader("GET https://example.com/ HTTP/1.1\r\n\r\n"),
+                        new HttpRequestBody(""),
+                        new HttpResponseHeader(
+                                """
+                                HTTP/1.1 200 OK\r
+                                Content-Type: application/json"""),
+                        new HttpResponseBody(""));
+        List<Pair<String, String>> headerConfigs = new ArrayList<>();
+        headerConfigs.add(new Pair<>("X-Test-Header", "Token-is-{%json:key%}"));
+        method.setHeaderConfigs(headerConfigs);
+
+        // When
+        List<Pair<String, String>> headers = method.extractWebSession(msg).getHeaders();
+
+        // Then
+        assertThat(headers, hasSize(1));
+        assertThat(headers.get(0).first, is(equalTo("X-Test-Header")));
+        assertThat(headers.get(0).second, is(equalTo("Token-is-{%json:key%}")));
     }
 }

@@ -456,7 +456,7 @@ public class HeaderBasedSessionManagementMethodType extends SessionManagementMet
     @Override
     public ApiDynamicActionImplementor getSetMethodForContextApiAction() {
         return new ApiDynamicActionImplementor(
-                API_METHOD_NAME, new String[] {PARAM_HEADERS}, null) {
+                API_METHOD_NAME, new String[0], new String[] {PARAM_HEADERS}) {
 
             @Override
             public void handleAction(JSONObject params) throws ApiException {
@@ -464,9 +464,12 @@ public class HeaderBasedSessionManagementMethodType extends SessionManagementMet
                         ApiUtils.getContextByParamId(params, SessionManagementAPI.PARAM_CONTEXT_ID);
                 HeaderBasedSessionManagementMethod smm =
                         createSessionManagementMethod(context.getId());
-                // Headers are newline separated key: value pairs
-                String[] headerArray = params.getString(PARAM_HEADERS).split("\n");
-                smm.setHeaderConfigs(getHeaderPairs(headerArray));
+                String headersStr = params.optString(PARAM_HEADERS, "");
+                if (!headersStr.isBlank()) {
+                    // Headers are newline separated key: value pairs
+                    String[] headerArray = headersStr.split("\n");
+                    smm.setHeaderConfigs(getHeaderPairs(headerArray));
+                }
                 context.setSessionManagementMethod(smm);
             }
         };
@@ -517,11 +520,6 @@ public class HeaderBasedSessionManagementMethodType extends SessionManagementMet
                             Constant.messages.getString(
                                     "authhelper.session.method.header.error.value"));
                 }
-            }
-            if (headers.isEmpty()) {
-                throw new IllegalStateException(
-                        Constant.messages.getString(
-                                "authhelper.session.method.header.error.headers"));
             }
         }
 
