@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Edge recorder link to help.
 
 ### Changed
-- Updated Chrome and Firefox extensions to v0.1.4.
+- Updated Chrome and Firefox extensions to v0.1.5.
 
 ### Fixed
 - Error logs to always include stack trace.
