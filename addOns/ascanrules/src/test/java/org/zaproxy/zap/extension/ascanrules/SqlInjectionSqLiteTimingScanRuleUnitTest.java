@@ -64,7 +64,7 @@ class SqlInjectionSqLiteTimingScanRuleUnitTest
     }
 
     @Test
-    void shouldTargetSqLiteSQLTech() throws Exception {
+    void shouldTargetSqLiteSqlTech() {
         // Given
         TechSet techSet = techSet(Tech.SQLite);
         // When
@@ -74,7 +74,7 @@ class SqlInjectionSqLiteTimingScanRuleUnitTest
     }
 
     @Test
-    void shouldNotTargetNonSqLiteSQLTechs() throws Exception {
+    void shouldNotTargetNonSqLiteSqlTechs() {
         // Given
         TechSet techSet = techSetWithout(Tech.SQLite);
         // When
@@ -149,9 +149,6 @@ class SqlInjectionSqLiteTimingScanRuleUnitTest
         this.rule.scan();
 
         assertThat(alertsRaised.size(), equalTo(1));
-        assertThat(
-                alertsRaised.get(0).getEvidence(),
-                startsWith("The query time is controllable using parameter value"));
         assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
         assertThat(alertsRaised.get(0).getAttack(), startsWith("case randomblob(100"));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));

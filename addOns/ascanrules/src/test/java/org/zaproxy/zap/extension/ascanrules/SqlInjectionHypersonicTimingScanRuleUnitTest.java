@@ -48,7 +48,7 @@ class SqlInjectionHypersonicTimingScanRuleUnitTest
     }
 
     @Test
-    void shouldTargetHypersonicSQLTech() throws Exception {
+    void shouldTargetHypersonicSqlTech() {
         // Given
         TechSet techSet = techSet(Tech.HypersonicSQL);
         // When
@@ -58,7 +58,7 @@ class SqlInjectionHypersonicTimingScanRuleUnitTest
     }
 
     @Test
-    void shouldNotTargetNonHypersonicSQLTechs() throws Exception {
+    void shouldNotTargetNonHypersonicSqlTechs() {
         // Given
         TechSet techSet = techSetWithout(Tech.HypersonicSQL);
         // When

@@ -74,7 +74,6 @@ public class SqlInjectionOracleTimingScanRule extends AbstractAppParamPlugin
             "SELECT  UTL_INADDR.get_host_name('10.0.0.1') from dual union SELECT  UTL_INADDR.get_host_name('10.0.0.2') from dual union SELECT  UTL_INADDR.get_host_name('10.0.0.3') from dual union SELECT  UTL_INADDR.get_host_name('10.0.0.4') from dual union SELECT  UTL_INADDR.get_host_name('10.0.0.5') from dual";
 
     /** Oracle specific time based injection strings. each for 5 seconds */
-
     // Note: <<<<ORIGINALVALUE>>>> is replaced with the original parameter value at runtime in these
     // examples below (see * comment)
     // TODO: maybe add support for ')' after the original value, before the sleeps
@@ -137,7 +136,6 @@ public class SqlInjectionOracleTimingScanRule extends AbstractAppParamPlugin
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
     }
 
-    /** for logging. */
     private static final Logger LOGGER =
             LogManager.getLogger(SqlInjectionOracleTimingScanRule.class);
 
@@ -180,7 +178,6 @@ public class SqlInjectionOracleTimingScanRule extends AbstractAppParamPlugin
     public void init() {
         LOGGER.debug("Initialising");
 
-        // set up what we are allowed to do, depending on the attack strength that was set.
         if (this.getAttackStrength() == AttackStrength.LOW) {
             doTimeMaxRequests = 3;
         } else if (this.getAttackStrength() == AttackStrength.MEDIUM) {
@@ -192,10 +189,6 @@ public class SqlInjectionOracleTimingScanRule extends AbstractAppParamPlugin
         }
     }
 
-    /**
-     * scans for SQL Injection vulnerabilities, using Oracle specific syntax. If it doesn't use
-     * specifically Oracle syntax, it does not belong in here, but in SQLInjection
-     */
     @Override
     public void scan(HttpMessage originalMessage, String paramName, String paramValue) {
 
@@ -214,7 +207,6 @@ public class SqlInjectionOracleTimingScanRule extends AbstractAppParamPlugin
                         msgTimeBaseline.getRequestHeader().getURI());
             }
             long originalTimeUsed = msgTimeBaseline.getTimeElapsedMillis();
-            // end of timing baseline check
 
             int countTimeBasedRequests = 0;
 
@@ -235,7 +227,7 @@ public class SqlInjectionOracleTimingScanRule extends AbstractAppParamPlugin
                         SQL_ORACLE_TIME_REPLACEMENTS[timeBasedSQLindex].replace(
                                 "<<<<ORIGINALVALUE>>>>", paramValue);
                 setParameter(msgAttack, paramName, newTimeBasedInjectionValue);
-                // send it.
+
                 try {
                     sendAndReceive(msgAttack, false); // do not follow redirects
                     countTimeBasedRequests++;
@@ -274,26 +266,18 @@ public class SqlInjectionOracleTimingScanRule extends AbstractAppParamPlugin
                         continue;
                     }
 
-                    String extraInfo =
-                            Constant.messages.getString(
-                                    "ascanrules.sqlinjection.alert.timebased.extrainfo",
-                                    newTimeBasedInjectionValue,
-                                    modifiedTimeUsed,
-                                    paramValue,
-                                    originalTimeUsed);
-                    String attack =
-                            Constant.messages.getString(
-                                    "ascanrules.sqlinjection.alert.booleanbased.attack",
-                                    paramName,
-                                    newTimeBasedInjectionValue);
-
                     newAlert()
                             .setConfidence(Alert.CONFIDENCE_MEDIUM)
                             .setUri(getBaseMsg().getRequestHeader().getURI().toString())
-                            .setName(getName() + " - Time Based")
                             .setParam(paramName)
-                            .setAttack(attack)
-                            .setOtherInfo(extraInfo)
+                            .setAttack(newTimeBasedInjectionValue)
+                            .setOtherInfo(
+                                    Constant.messages.getString(
+                                            "ascanrules.sqlinjection.alert.timebased.extrainfo",
+                                            newTimeBasedInjectionValue,
+                                            modifiedTimeUsed,
+                                            paramValue,
+                                            originalTimeUsed))
                             .setMessage(msgAttack)
                             .raise();
 
@@ -303,15 +287,12 @@ public class SqlInjectionOracleTimingScanRule extends AbstractAppParamPlugin
                             msgAttack.getRequestHeader().getURI(),
                             paramName);
                     return;
-                } // query took longer than the amount of time we attempted to retard it by
-            } // for each time based SQL index
-            // end of check for time based SQL Injection
+                }
+            }
 
         } catch (Exception e) {
-            // Do not try to internationalise this.. we need an error message in any event..
-            // if it's in English, it's still better than not having it at all.
-            LOGGER.error(
-                    "An error occurred checking a url for Oracle SQL Injection vulnerabilities", e);
+            LOGGER.warn(
+                    "An error occurred checking a URL for Oracle SQL Injection vulnerabilities", e);
         }
     }
 

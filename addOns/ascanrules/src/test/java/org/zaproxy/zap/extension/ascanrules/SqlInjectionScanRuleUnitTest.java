@@ -282,7 +282,7 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
     @Test
     void allErrorsListShouldBeComplete() {
         Stream.of(SqlInjectionScanRule.RDBMS.values())
-                .filter(db -> !db.equals(SqlInjectionScanRule.RDBMS.GenericRDBMS))
+                .filter(db -> !db.equals(SqlInjectionScanRule.RDBMS.GENERIC))
                 .forEach(
                         db ->
                                 db.getErrorPatterns().stream()
@@ -539,7 +539,7 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
             String normalValue = "payload";
             String andTrueValue = normalValue + SqlInjectionScanRule.SQL_LOGIC_AND_TRUE[0];
             String andFalseValue = normalValue + SqlInjectionScanRule.SQL_LOGIC_AND_FALSE[0];
-            String ORTrueValue = normalValue + SqlInjectionScanRule.SQL_LOGIC_OR_TRUE[0];
+            String orTrueValue = normalValue + SqlInjectionScanRule.SQL_LOGIC_OR_TRUE[0];
 
             UrlParamValueHandler handler =
                     UrlParamValueHandler.builder()
@@ -550,7 +550,7 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
                             .thenReturnHtml("normal response")
                             .whenParamValueIs(andFalseValue)
                             .thenReturnHtml(constructReflectedResponse("normal response"))
-                            .whenParamValueIs(ORTrueValue)
+                            .whenParamValueIs(orTrueValue)
                             .thenReturnHtml("different response")
                             .build();
             nano.addHandler(handler);
@@ -706,7 +706,7 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
             String normalValue = "normal";
             String andTrueValue = normalValue + SqlInjectionScanRule.SQL_LOGIC_AND_TRUE[0];
             String andFalseValue = normalValue + SqlInjectionScanRule.SQL_LOGIC_AND_FALSE[0];
-            String ORTrueValue = normalValue + SqlInjectionScanRule.SQL_LOGIC_OR_TRUE[0];
+            String orTrueValue = normalValue + SqlInjectionScanRule.SQL_LOGIC_OR_TRUE[0];
 
             UrlParamValueHandler handler =
                     UrlParamValueHandler.builder()
@@ -717,8 +717,8 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
                             .thenReturnHtml(constructReflectedResponse(andTrueValue) + normalValue)
                             .whenParamValueIs(andFalseValue)
                             .thenReturnHtml(constructReflectedResponse(andFalseValue) + normalValue)
-                            .whenParamValueIs(ORTrueValue)
-                            .thenReturnHtml(constructReflectedResponse(ORTrueValue) + normalValue)
+                            .whenParamValueIs(orTrueValue)
+                            .thenReturnHtml(constructReflectedResponse(orTrueValue) + normalValue)
                             .build();
             nano.addHandler(handler);
             rule.init(getHttpMessage("/?param=" + normalValue), parent);
@@ -876,18 +876,14 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
             paramValueToResponseMap.put(
                     normalPayload,
                     () -> {
-                        final Response response =
-                                newFixedLengthResponse(
-                                        Status.REDIRECT, NanoHTTPD.MIME_HTML, "normal");
-                        return response;
+                        return newFixedLengthResponse(
+                                Status.REDIRECT, NanoHTTPD.MIME_HTML, "normal");
                     });
             paramValueToResponseMap.put(
                     attackPayload,
                     () -> {
-                        final Response response =
-                                newFixedLengthResponse(
-                                        Status.REDIRECT, NanoHTTPD.MIME_HTML, "normal");
-                        return response;
+                        return newFixedLengthResponse(
+                                Status.REDIRECT, NanoHTTPD.MIME_HTML, "normal");
                     });
             paramValueToResponseMap.put(
                     verificationPayload,
@@ -1350,8 +1346,7 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
                     (Supplier<Response>)
                             MapUtils.getObject(
                                     paramValueToResponseMap, actualParamValue, fallbackResponse);
-            Response response = responseFn.get();
-            return response;
+            return responseFn.get();
         }
     }
 }

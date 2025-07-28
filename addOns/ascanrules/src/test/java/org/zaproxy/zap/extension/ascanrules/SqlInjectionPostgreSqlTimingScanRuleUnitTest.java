@@ -51,7 +51,7 @@ class SqlInjectionPostgreSqlTimingScanRuleUnitTest
     }
 
     @Test
-    void shouldTargetPostgreSQLTech() throws Exception {
+    void shouldTargetPostgreSqlTech() {
         // Given
         TechSet techSet = techSet(Tech.PostgreSQL);
         // When
@@ -61,7 +61,7 @@ class SqlInjectionPostgreSqlTimingScanRuleUnitTest
     }
 
     @Test
-    void shouldNotTargetNonPostgreSQLTechs() throws Exception {
+    void shouldNotTargetNonPostgreSqlTechs() {
         // Given
         TechSet techSet = techSetWithout(Tech.PostgreSQL);
         // When
@@ -115,6 +115,8 @@ class SqlInjectionPostgreSqlTimingScanRuleUnitTest
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
         assertThat(payloadSent, hasSize(2));
+        assertThat(
+                alertsRaised.get(0).getName(), equalTo("SQL Injection - PostgreSQL (Time Based)"));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
     }

@@ -48,7 +48,7 @@ class SqlInjectionMsSqlTimingScanRuleUnitTest
     }
 
     @Test
-    void shouldTargetMsSQLTech() throws Exception {
+    void shouldTargetMsSqlTech() {
         // Given
         TechSet techSet = techSet(Tech.MsSQL);
         // When
@@ -58,7 +58,7 @@ class SqlInjectionMsSqlTimingScanRuleUnitTest
     }
 
     @Test
-    void shouldNotTargetNonMsSQLTechs() throws Exception {
+    void shouldNotTargetNonMsSqlTechs() {
         // Given
         TechSet techSet = techSetWithout(Tech.MsSQL);
         // When

@@ -89,25 +89,18 @@ public class SqlInjectionSqLiteTimingScanRule extends AbstractAppParamPlugin
     };
 
     /** if the following errors occur during the attack, it's a SQL injection vuln */
-    private Pattern errorMessagePatterns[] = {
+    private static final Pattern[] ERROR_MESSAGE_PATTERNS = {
         Pattern.compile(
                 "no such function: randomblob",
                 Pattern.CASE_INSENSITIVE) // this one is specific to the time-based attack
         // attempted here, and is indicative of SQLite versions <
-        // 3.3.13, and >= 2.4.4 (because the CASE statement is
-        // used)
+        // 3.3.13, and >= 2.4.4 (because the CASE statement is used)
         ,
         Pattern.compile("near \\\".+\\\": syntax error", Pattern.CASE_INSENSITIVE)
     };
 
-    /** set depending on the attack strength / threshold */
-    private long maxBlobBytes = 0;
-
-    private long minBlobBytes = 100000;
-    private long parseDelayDifference = 0;
-    private long incrementalDelayIncreasesForAlert = 0;
-
-    private char[] RANDOM_PARAMETER_CHARS = "abcdefghijklmnopqrstuvwxyz0123456789".toCharArray();
+    private static final char[] RANDOM_PARAMETER_CHARS =
+            "abcdefghijklmnopqrstuvwxyz0123456789".toCharArray();
     private static final Map<String, String> ALERT_TAGS;
 
     static {
@@ -125,7 +118,13 @@ public class SqlInjectionSqLiteTimingScanRule extends AbstractAppParamPlugin
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
     }
 
-    /** for logging. */
+    /** Set depending on the attack strength / threshold */
+    private long maxBlobBytes = 0;
+
+    private long minBlobBytes = 100000;
+    private long parseDelayDifference = 0;
+    private long incrementalDelayIncreasesForAlert = 0;
+
     private static final Logger LOGGER =
             LogManager.getLogger(SqlInjectionSqLiteTimingScanRule.class);
 
@@ -326,23 +325,20 @@ public class SqlInjectionSqLiteTimingScanRule extends AbstractAppParamPlugin
 
                     // before we do the time based checking, first check for a known error message
                     // from the attack, indicating a SQL injection vuln
-                    for (Pattern errorMessagePattern : errorMessagePatterns) {
+                    for (Pattern errorMessagePattern : ERROR_MESSAGE_PATTERNS) {
                         Matcher matcher =
                                 errorMessagePattern.matcher(msgDelay.getResponseBody().toString());
                         boolean errorFound = matcher.find();
                         if (errorFound) {
-                            // Likely an error based SQL Injection. Raise it
-                            String extraInfo =
-                                    Constant.messages.getString(
-                                            "ascanrules.sqlinjection.sqlite.alert.timing.error.extrainfo",
-                                            errorMessagePattern);
-                            // raise the alert
                             newAlert()
                                     .setConfidence(Alert.CONFIDENCE_MEDIUM)
                                     .setUri(getBaseMsg().getRequestHeader().getURI().toString())
                                     .setParam(paramName)
                                     .setAttack(newTimeBasedInjectionValue)
-                                    .setOtherInfo(extraInfo)
+                                    .setOtherInfo(
+                                            Constant.messages.getString(
+                                                    "ascanrules.sqlinjection.sqlite.alert.timing.error.extrainfo",
+                                                    errorMessagePattern))
                                     .setEvidence(matcher.group())
                                     .setMessage(msgDelay)
                                     .raise();
@@ -356,11 +352,13 @@ public class SqlInjectionSqLiteTimingScanRule extends AbstractAppParamPlugin
                             foundTimeBased =
                                     true; // yeah, I know. we found an error based, while looking
                             // for a time based. bale out anyways.
-                            break; // out of the loop
+                            break;
                         }
                     }
-                    // outta the time based loop..
-                    if (foundTimeBased) break;
+
+                    if (foundTimeBased) {
+                        break;
+                    }
 
                     // no error message detected from the time based attack.. continue looking for
                     // time based injection point.
@@ -468,24 +466,21 @@ public class SqlInjectionSqLiteTimingScanRule extends AbstractAppParamPlugin
                 // other cases, the user may be happy with just 2 sequential increases...
                 LOGGER.debug("Number of sequential increases: {}", numberOfSequentialIncreases);
                 if (numberOfSequentialIncreases >= this.incrementalDelayIncreasesForAlert) {
-                    // Likely a SQL Injection. Raise it
-                    String extraInfo =
-                            Constant.messages.getString(
-                                    "ascanrules.sqlinjection.sqlite.alert.timing.extrainfo",
-                                    detectableDelayParameter,
-                                    detectableDelay,
-                                    maxDelayParameter,
-                                    maxDelay,
-                                    originalParamValue,
-                                    originalTimeUsed);
 
                     newAlert()
                             .setConfidence(Alert.CONFIDENCE_MEDIUM)
                             .setUri(getBaseMsg().getRequestHeader().getURI().toString())
                             .setParam(paramName)
                             .setAttack(detectableDelayParameter)
-                            .setOtherInfo(extraInfo)
-                            .setEvidence(extraInfo)
+                            .setOtherInfo(
+                                    Constant.messages.getString(
+                                            "ascanrules.sqlinjection.sqlite.alert.timing.extrainfo",
+                                            detectableDelayParameter,
+                                            detectableDelay,
+                                            maxDelayParameter,
+                                            maxDelay,
+                                            originalParamValue,
+                                            originalTimeUsed))
                             .setMessage(detectableDelayMessage)
                             .raise();
 
@@ -501,24 +496,21 @@ public class SqlInjectionSqLiteTimingScanRule extends AbstractAppParamPlugin
                     break;
                 } // the user-define threshold has been exceeded. raise it.
 
-                // outta the time based loop..
-                if (foundTimeBased) break;
+                if (foundTimeBased) {
+                    break;
+                }
 
-                // bale out if we were asked nicely
                 if (isStop()) {
                     LOGGER.debug("Stopping the scan due to a user request");
                     return;
                 }
-            } // for each time based SQL index
-            // end of check for SQLite time based SQL Injection
+            }
 
         } catch (UnknownHostException | URIException e) {
             LOGGER.debug("Failed to send HTTP message, cause: {}", e.getMessage());
         } catch (Exception e) {
-            // Do not try to internationalise this.. we need an error message in any event..
-            // if it's in English, it's still better than not having it at all.
-            LOGGER.error(
-                    "An error occurred checking a url for SQLite SQL Injection vulnerabilities", e);
+            LOGGER.warn(
+                    "An error occurred checking a URL for SQLite SQL Injection vulnerabilities", e);
         }
     }
 

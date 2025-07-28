@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import org.apache.commons.configuration.ConversionException;
 import org.apache.logging.log4j.LogManager;
@@ -65,7 +66,6 @@ public class SqlInjectionMySqlTimingScanRule extends AbstractAppParamPlugin
     private static final String SLEEP_TOKEN = "<<<<SLEEP>>>>";
 
     /** MySQL specific time based injection strings. */
-
     // Note: <<<<ORIGINALVALUE>>>> is replaced with the original parameter value at runtime in these
     // examples below (see * comment)
     // TODO: maybe add support for ')' after the original value, before the sleeps
@@ -214,7 +214,6 @@ public class SqlInjectionMySqlTimingScanRule extends AbstractAppParamPlugin
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
     }
 
-    /** for logging. */
     private static final Logger LOGGER =
             LogManager.getLogger(SqlInjectionMySqlTimingScanRule.class);
 
@@ -261,7 +260,6 @@ public class SqlInjectionMySqlTimingScanRule extends AbstractAppParamPlugin
     public void init() {
         LOGGER.debug("Initialising");
 
-        // set up what we are allowed to do, depending on the attack strength that was set.
         if (this.getAttackStrength() == AttackStrength.LOW) {
             blindTargetCount = 6;
         } else if (this.getAttackStrength() == AttackStrength.MEDIUM) {
@@ -272,7 +270,6 @@ public class SqlInjectionMySqlTimingScanRule extends AbstractAppParamPlugin
             blindTargetCount = SQL_MYSQL_TIME_REPLACEMENTS.size();
         }
 
-        // Read the sleep value from the configs
         try {
             this.timeSleepSeconds =
                     this.getConfig()
@@ -285,10 +282,6 @@ public class SqlInjectionMySqlTimingScanRule extends AbstractAppParamPlugin
         LOGGER.debug("Sleep set to {} seconds", timeSleepSeconds);
     }
 
-    /**
-     * scans for SQL Injection vulnerabilities, using MySQL specific syntax. If it doesn't use
-     * specifically MySQL syntax, it does not belong in here, but in TestSQLInjection
-     */
     @Override
     public void scan(HttpMessage originalMessage, String paramName, String originalParamValue) {
 
@@ -319,7 +312,7 @@ public class SqlInjectionMySqlTimingScanRule extends AbstractAppParamPlugin
                         attack.compareAndSet(null, finalPayload);
 
                         sendAndReceive(msg, false);
-                        return msg.getTimeElapsedMillis() / 1000.0;
+                        return TimeUnit.MILLISECONDS.toSeconds(msg.getTimeElapsedMillis());
                     };
 
             try {
@@ -337,21 +330,18 @@ public class SqlInjectionMySqlTimingScanRule extends AbstractAppParamPlugin
                             paramName,
                             attack.get());
 
-                    String extraInfo =
-                            Constant.messages.getString(
-                                    "ascanrules.sqlinjection.alert.timebased.extrainfo",
-                                    attack.get(),
-                                    message.get().getTimeElapsedMillis(),
-                                    originalParamValue,
-                                    getBaseMsg().getTimeElapsedMillis());
-
-                    // raise the alert
                     newAlert()
                             .setConfidence(Alert.CONFIDENCE_MEDIUM)
                             .setUri(getBaseMsg().getRequestHeader().getURI().toString())
                             .setParam(paramName)
                             .setAttack(attack.get())
-                            .setOtherInfo(extraInfo)
+                            .setOtherInfo(
+                                    Constant.messages.getString(
+                                            "ascanrules.sqlinjection.alert.timebased.extrainfo",
+                                            attack.get(),
+                                            message.get().getTimeElapsedMillis(),
+                                            originalParamValue,
+                                            getBaseMsg().getTimeElapsedMillis()))
                             .setMessage(message.get())
                             .raise();
                     break;
