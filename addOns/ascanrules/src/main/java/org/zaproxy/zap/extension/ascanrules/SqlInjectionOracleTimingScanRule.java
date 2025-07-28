@@ -19,9 +19,13 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
+import java.io.IOException;
+import java.net.SocketException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
+import org.apache.commons.configuration.ConversionException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -31,6 +35,8 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.PolicyTag;
+import org.zaproxy.addon.commonlib.timing.TimingUtils;
+import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
@@ -62,58 +68,69 @@ import org.zaproxy.zap.model.TechSet;
 public class SqlInjectionOracleTimingScanRule extends AbstractAppParamPlugin
         implements CommonActiveScanRuleInfo {
 
-    private int expectedDelayInMs = 5000;
+    private int sleepInSeconds;
 
     private int doTimeMaxRequests = 0;
 
-    /** Oracle one-line comment */
-    public static final String SQL_ONE_LINE_COMMENT = " -- ";
+    private static final String ORIG_VALUE_TOKEN = "<<<<ORIGINALVALUE>>>>";
+    private static final String SLEEP_TOKEN = "<<<<SLEEP>>>>";
+    private static final int DEFAULT_TIME_SLEEP_SEC = 5;
+    private static final int BLIND_REQUEST_LIMIT = 4;
+    // Error range allowable for statistical time-based blind attacks (0-1.0)
+    private static final double TIME_CORRELATION_ERROR_RANGE = 0.15;
+    private static final double TIME_SLOPE_ERROR_RANGE = 0.30;
 
-    /** the 5 second sleep function in Oracle SQL */
-    private static String SQL_ORACLE_TIME_SELECT =
-            "SELECT  UTL_INADDR.get_host_name('10.0.0.1') from dual union SELECT  UTL_INADDR.get_host_name('10.0.0.2') from dual union SELECT  UTL_INADDR.get_host_name('10.0.0.3') from dual union SELECT  UTL_INADDR.get_host_name('10.0.0.4') from dual union SELECT  UTL_INADDR.get_host_name('10.0.0.5') from dual";
+    private static String ORACLE_SLEEP_FUNCTION = "DBMS_SESSION.SLEEP(" + SLEEP_TOKEN + ")";
 
-    /** Oracle specific time based injection strings. each for 5 seconds */
-    // Note: <<<<ORIGINALVALUE>>>> is replaced with the original parameter value at runtime in these
-    // examples below (see * comment)
-    // TODO: maybe add support for ')' after the original value, before the sleeps
-    private static String[] SQL_ORACLE_TIME_REPLACEMENTS = {
-        "(" + SQL_ORACLE_TIME_SELECT + ")",
-        "<<<<ORIGINALVALUE>>>> / (" + SQL_ORACLE_TIME_SELECT + ") ",
-        "<<<<ORIGINALVALUE>>>>' / (" + SQL_ORACLE_TIME_SELECT + ") / '",
-        "<<<<ORIGINALVALUE>>>>\" / (" + SQL_ORACLE_TIME_SELECT + ") / \"",
-        "<<<<ORIGINALVALUE>>>> and exists ("
-                + SQL_ORACLE_TIME_SELECT
+    public static final String ORACLE_ONE_LINE_COMMENT = " -- ";
+
+    /** Oracle specific sleep injection strings. */
+    private static String[] ORACLE_TIME_PAYLOADS = {
+        "(" + ORACLE_SLEEP_FUNCTION + ")",
+        ORIG_VALUE_TOKEN + " AND " + ORACLE_SLEEP_FUNCTION,
+        ORIG_VALUE_TOKEN + " / (" + ORACLE_SLEEP_FUNCTION + ") ",
+        ORIG_VALUE_TOKEN + "' / (" + ORACLE_SLEEP_FUNCTION + ") / '",
+        ORIG_VALUE_TOKEN + "\" / (" + ORACLE_SLEEP_FUNCTION + ") / \"",
+        ORIG_VALUE_TOKEN
+                + " and exists ("
+                + ORACLE_SLEEP_FUNCTION
                 + ")"
-                + SQL_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
-        "<<<<ORIGINALVALUE>>>>' and exists ("
-                + SQL_ORACLE_TIME_SELECT
+                + ORACLE_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
+        ORIG_VALUE_TOKEN
+                + "' and exists ("
+                + ORACLE_SLEEP_FUNCTION
                 + ")"
-                + SQL_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
-        "<<<<ORIGINALVALUE>>>>\" and exists ("
-                + SQL_ORACLE_TIME_SELECT
+                + ORACLE_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
+        ORIG_VALUE_TOKEN
+                + "\" and exists ("
+                + ORACLE_SLEEP_FUNCTION
                 + ")"
-                + SQL_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
-        "<<<<ORIGINALVALUE>>>>) and exists ("
-                + SQL_ORACLE_TIME_SELECT
+                + ORACLE_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
+        ORIG_VALUE_TOKEN
+                + ") and exists ("
+                + ORACLE_SLEEP_FUNCTION
                 + ")"
-                + SQL_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
-        "<<<<ORIGINALVALUE>>>> or exists ("
-                + SQL_ORACLE_TIME_SELECT
+                + ORACLE_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
+        ORIG_VALUE_TOKEN
+                + " or exists ("
+                + ORACLE_SLEEP_FUNCTION
                 + ")"
-                + SQL_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
-        "<<<<ORIGINALVALUE>>>>' or exists ("
-                + SQL_ORACLE_TIME_SELECT
+                + ORACLE_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
+        ORIG_VALUE_TOKEN
+                + "' or exists ("
+                + ORACLE_SLEEP_FUNCTION
                 + ")"
-                + SQL_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
-        "<<<<ORIGINALVALUE>>>>\" or exists ("
-                + SQL_ORACLE_TIME_SELECT
+                + ORACLE_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
+        ORIG_VALUE_TOKEN
+                + "\" or exists ("
+                + ORACLE_SLEEP_FUNCTION
                 + ")"
-                + SQL_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
-        "<<<<ORIGINALVALUE>>>>) or exists ("
-                + SQL_ORACLE_TIME_SELECT
+                + ORACLE_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
+        ORIG_VALUE_TOKEN
+                + ") or exists ("
+                + ORACLE_SLEEP_FUNCTION
                 + ")"
-                + SQL_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
+                + ORACLE_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
     };
 
     private static final Map<String, String> ALERT_TAGS;
@@ -187,106 +204,94 @@ public class SqlInjectionOracleTimingScanRule extends AbstractAppParamPlugin
         } else if (this.getAttackStrength() == AttackStrength.INSANE) {
             doTimeMaxRequests = 100;
         }
+
+        // Read the sleep value from the configs
+        try {
+            sleepInSeconds =
+                    this.getConfig()
+                            .getInt(RuleConfigParam.RULE_COMMON_SLEEP_TIME, DEFAULT_TIME_SLEEP_SEC);
+        } catch (ConversionException e) {
+            LOGGER.debug(
+                    "Invalid value for 'rules.common.sleep': {}",
+                    this.getConfig().getString(RuleConfigParam.RULE_COMMON_SLEEP_TIME));
+        }
+        LOGGER.debug("Sleep set to {} seconds", sleepInSeconds);
     }
 
     @Override
     public void scan(HttpMessage originalMessage, String paramName, String paramValue) {
-
         try {
             // Timing Baseline check: we need to get the time that it took the original query, to
             // know if the time based check is working correctly..
-            HttpMessage msgTimeBaseline = getNewMsg();
-            try {
-                sendAndReceive(msgTimeBaseline, false); // do not follow redirects
-            } catch (java.net.SocketTimeoutException e) {
-                // to be expected occasionally, if the base query was one that contains some
-                // parameters exploiting time based SQL injection?
-                LOGGER.debug(
-                        "The Base Time Check timed out on [{}] URL [{}]",
-                        msgTimeBaseline.getRequestHeader().getMethod(),
-                        msgTimeBaseline.getRequestHeader().getURI());
-            }
-            long originalTimeUsed = msgTimeBaseline.getTimeElapsedMillis();
-
-            int countTimeBasedRequests = 0;
-
-            LOGGER.debug(
-                    "Scanning URL [{}] [{}], field [{}] with value [{}] for Oracle SQL Injection",
-                    getBaseMsg().getRequestHeader().getMethod(),
-                    getBaseMsg().getRequestHeader().getURI(),
-                    paramName,
-                    paramValue);
-
-            // Check for time based SQL Injection, using Oracle specific syntax
-            for (int timeBasedSQLindex = 0;
-                    timeBasedSQLindex < SQL_ORACLE_TIME_REPLACEMENTS.length
+            for (int timeBasedSQLindex = 0, countTimeBasedRequests = 0;
+                    timeBasedSQLindex < ORACLE_TIME_PAYLOADS.length
                             && countTimeBasedRequests < doTimeMaxRequests;
-                    timeBasedSQLindex++) {
-                HttpMessage msgAttack = getNewMsg();
-                String newTimeBasedInjectionValue =
-                        SQL_ORACLE_TIME_REPLACEMENTS[timeBasedSQLindex].replace(
-                                "<<<<ORIGINALVALUE>>>>", paramValue);
-                setParameter(msgAttack, paramName, newTimeBasedInjectionValue);
-
+                    timeBasedSQLindex++, countTimeBasedRequests++) {
+                AtomicReference<HttpMessage> message = new AtomicReference<>();
+                String payloadValue =
+                        ORACLE_TIME_PAYLOADS[timeBasedSQLindex].replace(
+                                ORIG_VALUE_TOKEN, paramValue);
+                TimingUtils.RequestSender requestSender =
+                        x -> {
+                            HttpMessage timedMsg = getNewMsg();
+                            message.compareAndSet(null, timedMsg);
+                            String finalPayload =
+                                    payloadValue.replace(SLEEP_TOKEN, String.valueOf((int) x));
+                            setParameter(timedMsg, paramName, finalPayload);
+                            sendAndReceive(timedMsg, false); // do not follow redirects
+                            return timedMsg.getTimeElapsedMillis() / 1000.0;
+                        };
+                boolean isInjectable;
                 try {
-                    sendAndReceive(msgAttack, false); // do not follow redirects
-                    countTimeBasedRequests++;
-                } catch (java.net.SocketTimeoutException e) {
-                    // this is to be expected, if we start sending slow queries to the database.
-                    // ignore it in this case.. and just get the time.
-                    LOGGER.debug(
-                            "The time check query timed out on [{}] URL [{}] on field: [{}]",
-                            msgTimeBaseline.getRequestHeader().getMethod(),
-                            msgTimeBaseline.getRequestHeader().getURI(),
-                            paramName);
-                }
-                long modifiedTimeUsed = msgAttack.getTimeElapsedMillis();
-
-                LOGGER.debug(
-                        "Time Based SQL Injection test: [{}] on field: [{}] with value [{}] took {}ms, where the original took {}ms",
-                        newTimeBasedInjectionValue,
-                        paramName,
-                        newTimeBasedInjectionValue,
-                        modifiedTimeUsed,
-                        originalTimeUsed);
-
-                if (modifiedTimeUsed >= (originalTimeUsed + expectedDelayInMs)) {
-                    // takes more than 5 extra seconds => likely time based SQL injection.
-
-                    // But first double check
-                    HttpMessage msgc = getNewMsg();
                     try {
-                        sendAndReceive(msgc, false); // do not follow redirects
-                    } catch (Exception e) {
-                        // Ignore all exceptions
-                    }
-                    long checkTimeUsed = msgc.getTimeElapsedMillis();
-                    if (checkTimeUsed >= (originalTimeUsed + this.expectedDelayInMs - 200)) {
-                        // Looks like the server is overloaded, very unlikely this is a real issue
-                        continue;
+                        // Use TimingUtils to detect a response to sleep payloads
+                        isInjectable =
+                                TimingUtils.checkTimingDependence(
+                                        BLIND_REQUEST_LIMIT,
+                                        sleepInSeconds,
+                                        requestSender,
+                                        TIME_CORRELATION_ERROR_RANGE,
+                                        TIME_SLOPE_ERROR_RANGE);
+                    } catch (SocketException ex) {
+                        LOGGER.debug(
+                                "Caught {} {} when accessing: {}.\n The target may have replied with a poorly formed redirect due to our input.",
+                                ex.getClass().getName(),
+                                ex.getMessage(),
+                                message.get().getRequestHeader().getURI());
+                        continue; // Something went wrong, move to next blind iteration
                     }
 
-                    newAlert()
-                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                            .setUri(getBaseMsg().getRequestHeader().getURI().toString())
-                            .setParam(paramName)
-                            .setAttack(newTimeBasedInjectionValue)
-                            .setOtherInfo(
-                                    Constant.messages.getString(
-                                            "ascanrules.sqlinjection.alert.timebased.extrainfo",
-                                            newTimeBasedInjectionValue,
-                                            modifiedTimeUsed,
-                                            paramValue,
-                                            originalTimeUsed))
-                            .setMessage(msgAttack)
-                            .raise();
+                    if (isInjectable) {
+                        String finalPayloadValue =
+                                payloadValue.replace(SLEEP_TOKEN, String.valueOf(sleepInSeconds));
+                        LOGGER.debug(
+                                "[Time Based Oracle SQL Injection - Found] on parameter [{}] with value [{}]",
+                                paramName,
+                                paramValue);
 
-                    LOGGER.debug(
-                            "A likely Time Based SQL Injection Vulnerability has been found with [{}] URL [{}] on field: [{}]",
-                            msgAttack.getRequestHeader().getMethod(),
-                            msgAttack.getRequestHeader().getURI(),
-                            paramName);
-                    return;
+                        newAlert()
+                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                .setName(getName() + " - Time Based")
+                                .setUri(getBaseMsg().getRequestHeader().getURI().toString())
+                                .setParam(paramName)
+                                .setAttack(finalPayloadValue)
+                                .setMessage(message.get())
+                                .setOtherInfo(
+                                        Constant.messages.getString(
+                                                "ascanrules.sqlinjection.alert.timebased.extrainfo",
+                                                finalPayloadValue,
+                                                message.get().getTimeElapsedMillis(),
+                                                paramValue,
+                                                getBaseMsg().getTimeElapsedMillis()))
+                                .raise();
+                        return;
+                    }
+                } catch (IOException ex) {
+                    LOGGER.warn(
+                            "Time based Oracle SQL Injection vulnerability check failed for parameter [{}] and payload [{}] due to an I/O error",
+                            paramName,
+                            paramValue,
+                            ex);
                 }
             }
 
@@ -296,8 +301,8 @@ public class SqlInjectionOracleTimingScanRule extends AbstractAppParamPlugin
         }
     }
 
-    public void setExpectedDelayInMs(int delay) {
-        expectedDelayInMs = delay;
+    public void setSleepInSeconds(int sleep) {
+        this.sleepInSeconds = sleep;
     }
 
     @Override
