@@ -22,11 +22,17 @@ package org.zaproxy.zap.extension.ascanrules;
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
@@ -46,7 +52,7 @@ class SqlInjectionOracleTimingScanRuleUnitTest
     }
 
     @Test
-    void shouldTargetOracleTech() throws Exception {
+    void shouldTargetOracleTech() {
         // Given
         TechSet techSet = techSet(Tech.Oracle);
         // When
@@ -56,7 +62,7 @@ class SqlInjectionOracleTimingScanRuleUnitTest
     }
 
     @Test
-    void shouldNotTargetNonOracleTechs() throws Exception {
+    void shouldNotTargetNonOracleTechs() {
         // Given
         TechSet techSet = techSetWithout(Tech.Oracle);
         // When
@@ -67,52 +73,60 @@ class SqlInjectionOracleTimingScanRuleUnitTest
 
     @Test
     void shouldAlertIfSleepTimesGetLonger() throws Exception {
-        String test = "/shouldReportSqlTimingIssue/";
+        // Given
+        String path = "/";
+        Pattern sleepPattern = Pattern.compile("DBMS_SESSION.SLEEP\\((\\d+)");
+        Set<String> payloadSent = new HashSet<>();
 
         this.nano.addHandler(
-                new NanoServerHandler(test) {
-                    private int time = 100;
+                new NanoServerHandler(path) {
 
                     @Override
                     protected Response serve(IHTTPSession session) {
                         String name = getFirstParamValue(session, "name");
                         String response = "<html><body></body></html>";
-                        if (name != null && name.contains("UTL_INADDR.get_host_name(")) {
-                            try {
-                                Thread.sleep(time);
-                            } catch (InterruptedException e) {
-                                // Ignore
-                            }
-                            time += 300;
+                        if (name == null) {
+                            return newFixedLengthResponse(response);
+                        }
+                        if (name.contains("DBMS_SESSION.SLEEP(")) {
+                            payloadSent.add(name);
+                        }
+                        Matcher match = sleepPattern.matcher(name);
+                        if (!match.find()) {
+                            return newFixedLengthResponse(name);
+                        }
+                        try {
+                            int sleepInput = Integer.parseInt(match.group(1));
+                            Thread.sleep(TimeUnit.SECONDS.toMillis(sleepInput));
+                        } catch (InterruptedException e) {
+                            // Ignore
                         }
                         return newFixedLengthResponse(response);
                     }
                 });
 
-        HttpMessage msg = this.getHttpMessage(test + "?name=test");
+        HttpMessage msg = this.getHttpMessage(path + "?name=test");
 
         this.rule.init(msg, this.parent);
-        this.rule.setExpectedDelayInMs(300);
-
+        this.rule.setSleepInSeconds(3);
+        // When
         this.rule.scan();
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
-        assertThat(alertsRaised.get(0).getName(), equalTo("SQL Injection - Oracle (Time Based)"));
+        assertThat(payloadSent, hasSize(2));
         assertThat(
-                alertsRaised.get(0).getAttack(),
-                equalTo(
-                        "test / (SELECT  UTL_INADDR.get_host_name('10.0.0.1') from dual union SELECT  UTL_INADDR.get_host_name('10.0.0.2') from dual union SELECT  UTL_INADDR.get_host_name('10.0.0.3') from dual union SELECT  UTL_INADDR.get_host_name('10.0.0.4') from dual union SELECT  UTL_INADDR.get_host_name('10.0.0.5') from dual) "));
+                alertsRaised.get(0).getName(), is(equalTo("SQL Injection - Oracle (Time Based)")));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
     }
 
     @Test
     void shouldNotAlertIfAllTimesGetLonger() throws Exception {
-        String test = "/shouldNotReportGeneralTimingIssue/";
+        String path = "/";
 
         this.nano.addHandler(
-                new NanoServerHandler(test) {
+                new NanoServerHandler(path) {
                     private int time = 100;
 
                     @Override
@@ -123,15 +137,15 @@ class SqlInjectionOracleTimingScanRuleUnitTest
                         } catch (InterruptedException e) {
                             // Ignore
                         }
-                        time += 300;
+                        time += 1000;
                         return newFixedLengthResponse(response);
                     }
                 });
 
-        HttpMessage msg = this.getHttpMessage(test + "?name=test");
+        HttpMessage msg = this.getHttpMessage(path + "?name=test");
 
         this.rule.init(msg, this.parent);
-        this.rule.setExpectedDelayInMs(300);
+        this.rule.setSleepInSeconds(1);
 
         this.rule.scan();
 

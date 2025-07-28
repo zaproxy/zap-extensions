@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Update alert references to latest locations to fix 404s and resolve redirections.
+- The SQL Injection - Oracle (Time Based) rule now uses DBMS_SESSION.SLEEP instead of an "expensive" query.
 
 ### Fixed
 - Hidden Files rule raising false positives if server returning 200 for files that don't exist (Issue 8434).
