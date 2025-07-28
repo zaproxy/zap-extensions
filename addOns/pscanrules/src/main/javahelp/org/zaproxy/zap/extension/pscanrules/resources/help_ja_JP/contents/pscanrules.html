@@ -575,5 +575,22 @@ Which indicates the use/exposure of Symfony's Profiler. Symfony's Profiler provi
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/XDebugTokenScanRule.java">XDebugTokenScanRule.java</a>
 <br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10056/">10056</a>.
+
+<h2 id="id-10116">ZAP is Out of Date</h2>
+This checks to make sure you are using the latest version of ZAP.<br>
+If your ZAP install is out of date then it will raise one alert on each domain with a severity based on how many versions
+out of date it is.<br>
+<ul>
+<li>1 version: Low Risk
+<li>2 versions: Medium Risk
+<li>3+ versions: High Risk
+<li>More that one year: High Risk (just for date stamped versions, such as the nightly or weekly releases)
+</ul>
+
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/ZapVersionScanRule.java">ZapVersionScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10116/">10116</a>.
+
 </body>
 </html>
