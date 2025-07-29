@@ -81,8 +81,8 @@ class ExternalRedirectScanRuleUnitTest extends ActiveScannerTest<ExternalRedirec
         NEITHER,
         ALLOW_LIST,
         CONCAT_PARAM,
-        CONCAT_PATH
-    };
+        CONCAT_PATH;
+    }
 
     private static NanoServerHandler createHttpRedirectHandler(String path, String header) {
         return createHttpRedirectHandler(path, header, PayloadHandling.NEITHER);
@@ -130,7 +130,7 @@ class ExternalRedirectScanRuleUnitTest extends ActiveScannerTest<ExternalRedirec
                     }
                     return response;
                 }
-                if (site != null && site.length() > 0) {
+                if (site != null && !site.isEmpty()) {
                     return redirectResponse;
                 }
                 return response;
@@ -320,7 +320,7 @@ class ExternalRedirectScanRuleUnitTest extends ActiveScannerTest<ExternalRedirec
                     @Override
                     protected NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
                         String site = getFirstParamValue(session, "site");
-                        if (site != null && site.length() > 0 && !site.contains(".")) {
+                        if (site != null && !site.isEmpty() && !site.contains(".")) {
                             Response response =
                                     newFixedLengthResponse(
                                             NanoHTTPD.Response.Status.REDIRECT,
@@ -329,8 +329,7 @@ class ExternalRedirectScanRuleUnitTest extends ActiveScannerTest<ExternalRedirec
                             response.addHeader(HttpFieldsNames.LOCATION, site);
                             return response;
                         }
-                        String response = "<html><body></body></html>";
-                        return newFixedLengthResponse(response);
+                        return newFixedLengthResponse("<html><body></body></html>");
                     }
                 });
         HttpMessage msg = getHttpMessage(test + "?site=xxx");
@@ -354,20 +353,17 @@ class ExternalRedirectScanRuleUnitTest extends ActiveScannerTest<ExternalRedirec
                     @Override
                     protected NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
                         String site = getFirstParamValue(session, "site");
-                        if (site != null && site.length() > 0) {
-                            Response response =
-                                    newFixedLengthResponse(
-                                            NanoHTTPD.Response.Status.OK,
-                                            NanoHTTPD.MIME_HTML,
-                                            "<html><head><meta http-equiv=\""
-                                                    + type
-                                                    + "\" content=\""
-                                                    + site
-                                                    + "\"></head><body><H1>Redirect></H1></body></html>");
-                            return response;
+                        if (site != null && !site.isEmpty()) {
+                            return newFixedLengthResponse(
+                                    NanoHTTPD.Response.Status.OK,
+                                    NanoHTTPD.MIME_HTML,
+                                    "<html><head><meta http-equiv=\""
+                                            + type
+                                            + "\" content=\""
+                                            + site
+                                            + "\"></head><body><H1>Redirect></H1></body></html>");
                         }
-                        String response = "<html><body></body></html>";
-                        return newFixedLengthResponse(response);
+                        return newFixedLengthResponse("<html><body></body></html>");
                     }
                 });
         HttpMessage msg = getHttpMessage(test + "?site=xxx");
@@ -386,18 +382,15 @@ class ExternalRedirectScanRuleUnitTest extends ActiveScannerTest<ExternalRedirec
             @Override
             protected NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
                 String site = getFirstParamValue(session, "site");
-                if (site != null && site.length() > 0) {
-                    Response response =
-                            newFixedLengthResponse(
-                                    NanoHTTPD.Response.Status.OK,
-                                    NanoHTTPD.MIME_HTML,
-                                    META_TEMPLATE
-                                            .replace(TYPE_TOKEN, type)
-                                            .replace(CONTENT_TOKEN, content + site));
-                    return response;
+                if (site != null && !site.isEmpty()) {
+                    return newFixedLengthResponse(
+                            NanoHTTPD.Response.Status.OK,
+                            NanoHTTPD.MIME_HTML,
+                            META_TEMPLATE
+                                    .replace(TYPE_TOKEN, type)
+                                    .replace(CONTENT_TOKEN, content + site));
                 }
-                String response = "<html><body></body></html>";
-                return newFixedLengthResponse(response);
+                return newFixedLengthResponse("<html><body></body></html>");
             }
         };
     }
@@ -446,18 +439,15 @@ class ExternalRedirectScanRuleUnitTest extends ActiveScannerTest<ExternalRedirec
             @Override
             protected NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
                 String site = getFirstParamValue(session, "site");
-                if (site != null && site.length() > 0) {
-                    Response response =
-                            newFixedLengthResponse(
-                                    NanoHTTPD.Response.Status.OK,
-                                    NanoHTTPD.MIME_HTML,
-                                    JS_VAR_TEMPLATE
-                                            .replace(JS_VAR_TOKEN, jsVar)
-                                            .replace(CONTENT_TOKEN, content + site));
-                    return response;
+                if (site != null && !site.isEmpty()) {
+                    return newFixedLengthResponse(
+                            NanoHTTPD.Response.Status.OK,
+                            NanoHTTPD.MIME_HTML,
+                            JS_VAR_TEMPLATE
+                                    .replace(JS_VAR_TOKEN, jsVar)
+                                    .replace(CONTENT_TOKEN, content + site));
                 }
-                String response = "<html><body></body></html>";
-                return newFixedLengthResponse(response);
+                return newFixedLengthResponse("<html><body></body></html>");
             }
         };
     }
@@ -511,18 +501,15 @@ class ExternalRedirectScanRuleUnitTest extends ActiveScannerTest<ExternalRedirec
             @Override
             protected NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
                 String site = getFirstParamValue(session, "site");
-                if (site != null && site.length() > 0) {
-                    Response response =
-                            newFixedLengthResponse(
-                                    NanoHTTPD.Response.Status.OK,
-                                    NanoHTTPD.MIME_HTML,
-                                    JS_METHOD_TEMPLATE
-                                            .replace(JS_METHOD_TOKEN, jsMethod)
-                                            .replace(CONTENT_TOKEN, content + site));
-                    return response;
+                if (site != null && !site.isEmpty()) {
+                    return newFixedLengthResponse(
+                            NanoHTTPD.Response.Status.OK,
+                            NanoHTTPD.MIME_HTML,
+                            JS_METHOD_TEMPLATE
+                                    .replace(JS_METHOD_TOKEN, jsMethod)
+                                    .replace(CONTENT_TOKEN, content + site));
                 }
-                String response = "<html><body></body></html>";
-                return newFixedLengthResponse(response);
+                return newFixedLengthResponse("<html><body></body></html>");
             }
         };
     }

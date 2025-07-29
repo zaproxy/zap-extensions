@@ -83,14 +83,31 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
     private static final int PLUGIN_ID = 20019;
     private static final String ORIGINAL_VALUE_PLACEHOLDER = "@@@original@@@";
 
-    // ZAP: Added multiple redirection types
-    public static final int NO_REDIRECT = 0x00;
-    public static final int REDIRECT_LOCATION_HEADER = 0x01;
-    public static final int REDIRECT_REFRESH_HEADER = 0x02;
-    public static final int REDIRECT_LOCATION_META = 0x03;
-    public static final int REDIRECT_REFRESH_META = 0x04;
-    public static final int REDIRECT_HREF_BASE = 0x05;
-    public static final int REDIRECT_JAVASCRIPT = 0x06;
+    private enum RedirectType {
+        NONE("", ""),
+        LOCATION_HEADER(
+                "-1", Constant.messages.getString(MESSAGE_PREFIX + "reason.location.header")),
+        REFRESH_HEADER("-2", Constant.messages.getString(MESSAGE_PREFIX + "reason.refresh.header")),
+        LOCATION_META("-3", Constant.messages.getString(MESSAGE_PREFIX + "reason.location.meta")),
+        REFRESH_META("-3", Constant.messages.getString(MESSAGE_PREFIX + "reason.refresh.meta")),
+        JAVASCRIPT("-4", Constant.messages.getString(MESSAGE_PREFIX + "reason.javascript"));
+
+        private String alertReference;
+        private String reason;
+
+        RedirectType(String ref, String reason) {
+            this.alertReference = PLUGIN_ID + ref;
+            this.reason = reason;
+        }
+
+        public String getAlertReference() {
+            return this.alertReference;
+        }
+
+        public String getReason() {
+            return this.reason;
+        }
+    }
 
     private static final String OWASP_SUFFIX = ".owasp.org";
     // Use a random 'host' to prevent false positives/collisions
@@ -101,29 +118,39 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
     private static final String REDIRECT_SITE = SITE_HOST + OWASP_SUFFIX;
 
     /** The various (prioritized) payload to try */
-    private static final String[] REDIRECT_TARGETS = {
-        REDIRECT_SITE,
-        HttpHeader.SCHEME_HTTPS + REDIRECT_SITE,
-        HttpHeader.SCHEME_HTTPS + REDIRECT_SITE.replace(".", "%2e"), // Double encode the dots
-        "5;URL='https://" + REDIRECT_SITE + "'",
-        "URL='http://" + REDIRECT_SITE + "'",
+    private enum RedirectPayloads {
+        PLAIN_SITE(REDIRECT_SITE, false),
+        HTTPS_SITE(HttpHeader.SCHEME_HTTPS + REDIRECT_SITE, false),
+        // Double encode the dots
+        HTTPS_PERIOD_ENCODE(HttpHeader.SCHEME_HTTPS + REDIRECT_SITE.replace(".", "%2e"), false),
+        HTTPS_REFRESH(
+                "5;URL='https://" + REDIRECT_SITE + "'",
+                false,
+                HttpHeader.SCHEME_HTTPS + REDIRECT_SITE),
+        HTTP_LOCATION(
+                "URL='http://" + REDIRECT_SITE + "'",
+                false,
+                HttpHeader.SCHEME_HTTP + REDIRECT_SITE),
         // Simple allow list bypass, ex: https://evil.com?<original_value>
-        // Where "original_value" is whatever the parameter value initially was, ex:
+        // Where <original_value> is whatever the parameter value initially was, ex:
         // https://good.expected.com
-        HttpHeader.SCHEME_HTTPS + REDIRECT_SITE + "/?" + ORIGINAL_VALUE_PLACEHOLDER,
-        "5;URL='https://" + REDIRECT_SITE + "/?" + ORIGINAL_VALUE_PLACEHOLDER + "'",
-        HttpHeader.SCHEME_HTTPS + "\\" + REDIRECT_SITE,
-        HttpHeader.SCHEME_HTTP + "\\" + REDIRECT_SITE,
-        HttpHeader.SCHEME_HTTP + REDIRECT_SITE,
-        "//" + REDIRECT_SITE,
-        "\\\\" + REDIRECT_SITE,
-        "HtTp://" + REDIRECT_SITE,
-        "HtTpS://" + REDIRECT_SITE,
+        HTTPS_ORIG_PARAM(
+                HttpHeader.SCHEME_HTTPS + REDIRECT_SITE + "/?" + ORIGINAL_VALUE_PLACEHOLDER, true),
+        HTTPS_REFRESH_ORIG_PARAM(
+                "5;URL='https://" + REDIRECT_SITE + "/?" + ORIGINAL_VALUE_PLACEHOLDER + "'",
+                true,
+                HttpHeader.SCHEME_HTTPS + REDIRECT_SITE),
+        HTTPS_WRONG_SLASH(HttpHeader.SCHEME_HTTPS + "\\" + REDIRECT_SITE, false),
+        HTTP_WRONG_SLASH(HttpHeader.SCHEME_HTTP + "\\" + REDIRECT_SITE, false),
+        HTTP(HttpHeader.SCHEME_HTTP + REDIRECT_SITE, false),
+        NO_SCHEME("//" + REDIRECT_SITE, false),
+        NO_SCHEME_WRONG_SLASH("\\\\" + REDIRECT_SITE, false),
+        HTTPS_MIXED_CASE("HtTpS://" + REDIRECT_SITE, false),
+        HTTP_MIXED_CASE("HtTp://" + REDIRECT_SITE, false);
 
-        // http://kotowicz.net/absolute/
-        // I never met real cases for these
-        // to be evaluated in the future
-        /*
+        /* http://kotowicz.net/absolute/
+        I never met real cases for these
+        to be evaluated in the future
         "/\\" + REDIRECT_SITE,
         "\\/" + REDIRECT_SITE,
         "\r \t//" + REDIRECT_SITE,
@@ -134,12 +161,36 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
         "://" + REDIRECT_SITE,
         ".:." + REDIRECT_SITE
         */
-    };
+
+        private final String payload;
+        private final boolean placeholder;
+        private final String redirectUrl;
+
+        RedirectPayloads(String payload, boolean placeholder, String redirectUrl) {
+            this.payload = payload;
+            this.placeholder = placeholder;
+            this.redirectUrl = redirectUrl;
+        }
+
+        RedirectPayloads(String payload, boolean placeholder) {
+            this(payload, placeholder, payload);
+        }
+
+        public String getInjection(String value) {
+            return placeholder ? payload.replace(ORIGINAL_VALUE_PLACEHOLDER, value) : payload;
+        }
+
+        public String getRedirectUrl() {
+            return redirectUrl;
+        }
+    }
 
     // Get WASC Vulnerability description
     private static final Vulnerability VULN = Vulnerabilities.getDefault().get("wasc_38");
 
     private static final Logger LOGGER = LogManager.getLogger(ExternalRedirectScanRule.class);
+
+    private int payloadCount;
 
     @Override
     public int getId() {
@@ -171,6 +222,20 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
         return VULN.getReferencesAsString();
     }
 
+    @Override
+    public void init() {
+        LOGGER.debug("Attacking at Attack Strength: {}", this.getAttackStrength());
+
+        // Figure out how aggressively we should test
+        payloadCount =
+                switch (this.getAttackStrength()) {
+                    case LOW -> 3;
+                    case MEDIUM -> 9;
+                    case HIGH, INSANE -> RedirectPayloads.values().length;
+                    default -> 9;
+                };
+    }
+
     /**
      * Scan for External Redirect vulnerabilities
      *
@@ -180,138 +245,75 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
      */
     @Override
     public void scan(HttpMessage msg, String param, String value) {
-
-        // Number of targets to try
-        int targetCount = 0;
-
-        // Debug only
-        LOGGER.debug("Attacking at Attack Strength: {}", this.getAttackStrength());
-
-        // Figure out how aggressively we should test
-        switch (this.getAttackStrength()) {
-            case LOW:
-                // Check only for baseline targets (2 reqs / param)
-                targetCount = 3;
-                break;
-
-            case MEDIUM:
-                // This works out as a total of 9 reqs / param
-                targetCount = 9;
-                break;
-
-            case HIGH:
-                // This works out as a total of 15 reqs / param
-                targetCount = REDIRECT_TARGETS.length;
-                break;
-
-            case INSANE:
-                // This works out as a total of 15 reqs / param
-                targetCount = REDIRECT_TARGETS.length;
-                break;
-
-            default:
-                break;
-        }
-
         LOGGER.debug(
                 "Checking [{}][{}], parameter [{}] for Open Redirect Vulnerabilities",
                 getBaseMsg().getRequestHeader().getMethod(),
                 getBaseMsg().getRequestHeader().getURI(),
                 param);
 
-        // For each target in turn
-        // note that depending on the AttackLevel,
-        // the number of elements that we will try changes.
-        String payload;
         String redirectUrl;
+        int payloadIdx = 0;
 
-        for (int h = 0; h < targetCount; h++) {
-            if (isStop()) {
+        // For each payload in turn
+        // note that depending on the Strength,
+        // the number of elements that we will try changes.
+        for (RedirectPayloads payload : RedirectPayloads.values()) {
+            if (isStop() || payloadIdx == payloadCount) {
                 return;
             }
 
-            payload =
-                    REDIRECT_TARGETS[h].contains(ORIGINAL_VALUE_PLACEHOLDER)
-                            ? REDIRECT_TARGETS[h].replace(ORIGINAL_VALUE_PLACEHOLDER, value)
-                            : REDIRECT_TARGETS[h];
+            String injection = payload.getInjection(value);
 
             // Get a new copy of the original message (request only) for each parameter value to try
             HttpMessage testMsg = getNewMsg();
-            setParameter(testMsg, param, payload);
+            setParameter(testMsg, param, injection);
 
-            LOGGER.debug("Testing [{}] = [{}]", param, payload);
+            LOGGER.debug("Testing [{}] = [{}]", param, injection);
 
             try {
                 // Send the request and retrieve the response
                 // Be careful: we haven't to follow redirect
                 sendAndReceive(testMsg, false);
 
-                String payloadScheme =
-                        StringUtils.containsIgnoreCase(payload, HttpHeader.HTTPS)
-                                ? HttpHeader.HTTPS
-                                : HttpHeader.HTTP;
-                // If it's a meta based injection the use the base url
-                redirectUrl =
-                        (payload.startsWith("5;") || payload.startsWith("URL="))
-                                ? payloadScheme + "://" + REDIRECT_SITE
-                                : payload;
+                redirectUrl = payload.getRedirectUrl();
 
                 // Get back if a redirection occurs
-                int redirectType = isRedirected(redirectUrl, testMsg);
+                RedirectType redirectType = isRedirected(redirectUrl, testMsg);
 
-                if (redirectType != NO_REDIRECT) {
-                    // We Found IT!
-                    // First do logging
+                if (redirectType != RedirectType.NONE) {
                     LOGGER.debug(
                             "[External Redirection Found] on parameter [{}] with payload [{}]",
                             param,
-                            payload);
+                            injection);
 
-                    buildAlert(param, payload, redirectType, redirectUrl, testMsg).raise();
-
-                    // All done. No need to look for vulnerabilities on subsequent
-                    // parameters on the same request (to reduce performance impact)
+                    buildAlert(param, injection, redirectType, redirectUrl, testMsg).raise();
                     return;
                 }
             } catch (IOException ex) {
-                // Do not try to internationalize this.. we need an error message in any event..
-                // if it's in English, it's still better than not having it at all.
                 LOGGER.warn(
                         "External Redirect vulnerability check failed for parameter [{}] and payload [{}] due to an I/O error",
                         param,
-                        payload,
+                        injection,
                         ex);
             }
-        }
-    }
-
-    private String getAlertReference(int redirectType) {
-        switch (redirectType) {
-            case REDIRECT_LOCATION_HEADER:
-                return getId() + "-1";
-            case REDIRECT_REFRESH_HEADER:
-                return getId() + "-2";
-            case REDIRECT_LOCATION_META:
-            case REDIRECT_REFRESH_META:
-                return getId() + "-3";
-            case REDIRECT_JAVASCRIPT:
-                return getId() + "-4";
-            default:
-                return "";
+            payloadIdx++;
         }
     }
 
     private AlertBuilder buildAlert(
-            String param, String payload, int redirectType, String evidence, HttpMessage testMsg) {
-        String alertRef = getAlertReference(redirectType);
+            String param,
+            String payload,
+            RedirectType redirectType,
+            String evidence,
+            HttpMessage testMsg) {
 
         return newAlert()
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setParam(param)
                 .setAttack(payload)
-                .setOtherInfo(getRedirectionReason(redirectType))
+                .setOtherInfo(redirectType.getReason())
                 .setEvidence(evidence)
-                .setAlertRef(alertRef)
+                .setAlertRef(redirectType.getAlertReference())
                 .setMessage(testMsg);
     }
 
@@ -369,7 +371,7 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
      * @param msg the current message where reflected redirection should be check into
      * @return get back the redirection type if exists
      */
-    private static int isRedirected(String payload, HttpMessage msg) {
+    private static RedirectType isRedirected(String payload, HttpMessage msg) {
 
         // (1) Check if redirection by "Location" header
         // http://en.wikipedia.org/wiki/HTTP_location
@@ -377,7 +379,7 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
         // Location: http://www.example.org/index.php
         String value = msg.getResponseHeader().getHeader(HttpFieldsNames.LOCATION);
         if (checkPayload(value)) {
-            return REDIRECT_LOCATION_HEADER;
+            return RedirectType.LOCATION_HEADER;
         }
 
         // (2) Check if redirection by "Refresh" header
@@ -391,7 +393,7 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
             value = getRefreshUrl(value);
 
             if (checkPayload(value)) {
-                return REDIRECT_REFRESH_HEADER;
+                return RedirectType.REFRESH_HEADER;
             }
         }
 
@@ -413,7 +415,7 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
 
                     // Check if the payload is inside the location attribute
                     if (checkPayload(value)) {
-                        return REDIRECT_LOCATION_META;
+                        return RedirectType.LOCATION_META;
                     }
 
                 } else if (value.equalsIgnoreCase("refresh")) {
@@ -428,7 +430,7 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
 
                         // Check if the payload is inside the location attribute
                         if (checkPayload(value)) {
-                            return REDIRECT_REFRESH_META;
+                            return RedirectType.REFRESH_META;
                         }
                     }
                 }
@@ -455,7 +457,7 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
                         Pattern.compile(
                                 "(?i)location(?:\\.href)?\\s*=\\s*['\"](" + matchingUrl + ")['\"]");
                 if (isRedirectPresent(pattern, value)) {
-                    return REDIRECT_JAVASCRIPT;
+                    return RedirectType.JAVASCRIPT;
                 }
 
                 // location.reload('http://evil.com/');
@@ -467,7 +469,7 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
                                         + matchingUrl
                                         + ")['\"]");
                 if (isRedirectPresent(pattern, value)) {
-                    return REDIRECT_JAVASCRIPT;
+                    return RedirectType.JAVASCRIPT;
                 }
 
                 // window.open('http://evil.com/');
@@ -478,46 +480,18 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
                                         + matchingUrl
                                         + ")['\"]");
                 if (isRedirectPresent(pattern, value)) {
-                    return REDIRECT_JAVASCRIPT;
+                    return RedirectType.JAVASCRIPT;
                 }
             }
         }
 
-        return NO_REDIRECT;
+        return RedirectType.NONE;
     }
 
     private static boolean isRedirectPresent(Pattern pattern, String value) {
         Matcher matcher = pattern.matcher(value);
         return matcher.find()
                 && StringUtils.startsWithIgnoreCase(matcher.group(1), HttpHeader.HTTP);
-    }
-
-    /**
-     * Get a readable reason for the found redirection
-     *
-     * @param type the redirection type
-     * @return a string representing the reason of this redirection
-     */
-    private static String getRedirectionReason(int type) {
-        switch (type) {
-            case REDIRECT_LOCATION_HEADER:
-                return Constant.messages.getString(MESSAGE_PREFIX + "reason.location.header");
-
-            case REDIRECT_LOCATION_META:
-                return Constant.messages.getString(MESSAGE_PREFIX + "reason.location.meta");
-
-            case REDIRECT_REFRESH_HEADER:
-                return Constant.messages.getString(MESSAGE_PREFIX + "reason.refresh.header");
-
-            case REDIRECT_REFRESH_META:
-                return Constant.messages.getString(MESSAGE_PREFIX + "reason.refresh.meta");
-
-            case REDIRECT_JAVASCRIPT:
-                return Constant.messages.getString(MESSAGE_PREFIX + "reason.javascript");
-
-            default:
-                return Constant.messages.getString(MESSAGE_PREFIX + "reason.notfound");
-        }
     }
 
     /**
@@ -559,38 +533,25 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
     public List<Alert> getExampleAlerts() {
         List<Alert> alerts = new ArrayList<>();
         String param = "destination";
+        String site = "http://3412390346190766618.owasp.org";
+        alerts.add(buildAlert(param, site, RedirectType.LOCATION_HEADER, site, null).build());
         alerts.add(
                 buildAlert(
                                 param,
-                                "http://3412390346190766618.owasp.org",
-                                REDIRECT_LOCATION_HEADER,
-                                getAlertReference(REDIRECT_LOCATION_HEADER),
+                                "5;URL='%s'".formatted(site),
+                                RedirectType.REFRESH_HEADER,
+                                site,
                                 null)
                         .build());
         alerts.add(
                 buildAlert(
                                 param,
-                                "5;URL='https://3412390346190766618.owasp.org'",
-                                REDIRECT_REFRESH_HEADER,
-                                getAlertReference(REDIRECT_REFRESH_HEADER),
+                                "5;URL='%s'".formatted(site),
+                                RedirectType.REFRESH_META,
+                                site,
                                 null)
                         .build());
-        alerts.add(
-                buildAlert(
-                                param,
-                                "5;URL='https://3412390346190766618.owasp.org'",
-                                REDIRECT_REFRESH_META,
-                                getAlertReference(REDIRECT_REFRESH_META),
-                                null)
-                        .build());
-        alerts.add(
-                buildAlert(
-                                param,
-                                "http://373082522675462941.owasp.org",
-                                REDIRECT_JAVASCRIPT,
-                                getAlertReference(REDIRECT_JAVASCRIPT),
-                                null)
-                        .build());
+        alerts.add(buildAlert(param, site, RedirectType.JAVASCRIPT, site, null).build());
         return alerts;
     }
 }
