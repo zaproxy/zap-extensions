@@ -466,7 +466,10 @@ an attacker can find out how the XML data is structured, or access data that he 
 to. He may even be able to elevate his privileges on the web site if the XML data is being used for 
 authentication (such as an XML based user file) or authorization." This rule attempts to identify such 
 weaknesses.
+<p><strong>Note:</strong> If the Custom Payloads add-on is installed you can add your own error strings (payloads) in the Custom Payloads options panel. 
+They will also be searched for in responses as they're scanned.
 <p>
+The Custom Payloads category for this rule is: <code>XPath-Errors</code>.<br>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/XpathInjectionScanRule.java">XpathInjectionScanRule.java</a>
 <br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/90021/">90021</a>.

@@ -22,8 +22,11 @@ package org.zaproxy.zap.extension.ascanrules;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.Supplier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -55,39 +58,47 @@ public class XpathInjectionScanRule extends AbstractAppParamPlugin
     private static final String[] XPATH_PAYLOADS = {"\"'", "<!--", "]]>"};
     // List of XPath errors (need to be improved)
     // Reference W3AF XPath injection plugin
-    private static final String[] XPATH_ERRORS = {
-        "XPathException",
-        "MS.Internal.Xml.",
-        "Unknown error in XPath",
-        "org.apache.xpath.XPath",
-        "A closing bracket expected in",
-        "An operand in Union Expression does not produce a node-set",
-        "Cannot convert expression to a number",
-        "Document Axis does not allow any context Location Steps",
-        "Empty Path Expression",
-        "Empty Relative Location Path",
-        "Empty Union Expression",
-        "Expected ')' in",
-        "Expected node test or name specification after axis operator",
-        "Incompatible XPath key",
-        "Incorrect Variable Binding",
-        "libxml2 library function failed",
-        "libxml2",
-        "xmlsec library function",
-        "xmlsec",
-        "error '80004005'",
-        "A document must contain exactly one root element.",
-        "<font face=\"Arial\" size=2>Expression must evaluate to a node-set.",
-        "Expected token '\\]'",
-        "<p>msxml4.dll</font>",
-        "<p>msxml3.dll</font>",
-        // Lotus notes error when document searching inside nsf files
-        "4005 Notes error: Query is not understandable",
-        // PHP error
-        "SimpleXMLElement::xpath()",
-        "xmlXPathEval: evaluation failed",
-        "Expression must evaluate to a node-set."
-    };
+    private static final List<String> DEFAULT_ERRORS =
+            List.of(
+                    "XPathException",
+                    "MS.Internal.Xml.",
+                    "Unknown error in XPath",
+                    "org.apache.xpath.XPath",
+                    "A closing bracket expected in",
+                    "An operand in Union Expression does not produce a node-set",
+                    "Cannot convert expression to a number",
+                    "Document Axis does not allow any context Location Steps",
+                    "Empty Path Expression",
+                    "Empty Relative Location Path",
+                    "Empty Union Expression",
+                    "Expected ')' in",
+                    "Expected node test or name specification after axis operator",
+                    "Incompatible XPath key",
+                    "Incorrect Variable Binding",
+                    "libxml2 library function failed",
+                    "libxml2",
+                    "xmlsec library function",
+                    "xmlsec",
+                    "error '80004005'",
+                    "A document must contain exactly one root element.",
+                    "<font face=\"Arial\" size=2>Expression must evaluate to a node-set.",
+                    "Expected token '\\]'",
+                    "<p>msxml4.dll</font>",
+                    "<p>msxml3.dll</font>",
+                    // Lotus notes error when document searching inside nsf files
+                    "4005 Notes error: Query is not understandable",
+                    // PHP error
+                    "SimpleXMLElement::xpath()",
+                    "xmlXPathEval: evaluation failed",
+                    "Expression must evaluate to a node-set.");
+
+    public static final List<String> DEFAULT_DISABLED_ERRORS =
+            List.of("Error: javax.xml.transform.TransformerException");
+
+    private static final Supplier<Iterable<String>> DEFAULT_ERROR_PROVIDER = List::of;
+    private static Supplier<Iterable<String>> errorProvider = DEFAULT_ERROR_PROVIDER;
+
+    public static final String ERRORS_PAYLOAD_CATEGORY = "XPath-Errors";
 
     private static final Map<String, String> ALERT_TAGS;
 
@@ -99,7 +110,8 @@ public class XpathInjectionScanRule extends AbstractAppParamPlugin
                                 CommonAlertTag.OWASP_2017_A01_INJECTION,
                                 CommonAlertTag.WSTG_V42_INPV_09_XPATH,
                                 CommonAlertTag.HIPAA,
-                                CommonAlertTag.PCI_DSS));
+                                CommonAlertTag.PCI_DSS,
+                                CommonAlertTag.CUSTOM_PAYLOADS));
         alertTags.put(PolicyTag.API.getTag(), "");
         alertTags.put(PolicyTag.DEV_CICD.getTag(), "");
         alertTags.put(PolicyTag.DEV_STD.getTag(), "");
@@ -198,9 +210,12 @@ public class XpathInjectionScanRule extends AbstractAppParamPlugin
                 sendAndReceive(msg, false);
                 responseContent = msg.getResponseBody().toString();
 
+                Iterator<String> errors =
+                        new IteratorJoin<>(
+                                DEFAULT_ERRORS.iterator(), getErrorProvider().get().iterator());
                 // Check if the injected content has generated an XML error
-                for (String errorString : XPATH_ERRORS) {
-
+                while (errors.hasNext()) {
+                    String errorString = errors.next();
                     // if the pattern was found in the new response,
                     // but not in the original response (for the unmodified request)
                     // then we have a match.. XPATH injection!
@@ -258,6 +273,49 @@ public class XpathInjectionScanRule extends AbstractAppParamPlugin
 
     @Override
     public List<Alert> getExampleAlerts() {
-        return List.of(createAlert("foo", XPATH_PAYLOADS[0], XPATH_ERRORS[0]).build());
+        return List.of(createAlert("foo", XPATH_PAYLOADS[0], DEFAULT_ERRORS.get(0)).build());
+    }
+
+    static Supplier<Iterable<String>> getErrorProvider() {
+        return errorProvider;
+    }
+
+    public static void setErrorProvider(Supplier<Iterable<String>> provider) {
+        errorProvider = provider == null ? DEFAULT_ERROR_PROVIDER : provider;
+    }
+
+    private static class IteratorJoin<T> implements Iterator<T> {
+
+        private final Iterator<T> next;
+        private Iterator<T> current;
+
+        IteratorJoin(Iterator<T> first, Iterator<T> next) {
+            this.next = Objects.requireNonNull(next);
+            current = Objects.requireNonNull(first);
+        }
+
+        @Override
+        public boolean hasNext() {
+            if (current == null) {
+                return false;
+            }
+
+            if (current.hasNext()) {
+                return true;
+            }
+
+            if (current == next) {
+                current = null;
+                return false;
+            }
+
+            current = next;
+            return current.hasNext();
+        }
+
+        @Override
+        public T next() {
+            return current.next();
+        }
     }
 }
