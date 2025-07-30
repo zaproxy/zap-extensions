@@ -23,11 +23,7 @@ import java.awt.Component;
 import java.io.File;
 import java.util.Arrays;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JTextField;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.automation.jobs.JobUtils;
@@ -40,10 +36,10 @@ public class GraphQlJobDialog extends StandardFieldsDialog {
 
     private static final long serialVersionUID = 1L;
 
-    private static final String QUERY_GEN_CONFIG_TAB_LABEL =
-            "graphql.automation.dialog.tab.queryGenConfig";
     private static final String[] TAB_LABELS = {
-        "graphql.automation.dialog.tab.params", QUERY_GEN_CONFIG_TAB_LABEL
+        "graphql.automation.dialog.tab.params",
+        "graphql.automation.dialog.tab.queryGenConfig",
+        "graphql.automation.dialog.tab.cycleDetectionConfig"
     };
 
     private static final String TITLE = "graphql.automation.dialog.title";
@@ -64,12 +60,17 @@ public class GraphQlJobDialog extends StandardFieldsDialog {
     private static final String ARGS_TYPE_PARAM = "graphql.automation.dialog.argstype";
     private static final String QUERY_SPLIT_TYPE_PARAM = "graphql.automation.dialog.querysplittype";
     private static final String REQUEST_METHOD_PARAM = "graphql.automation.dialog.requestmethod";
+    private static final String CYCLE_DETECTION_MODE_PARAM =
+            "graphql.automation.dialog.cycleDetectionMode";
+    private static final String MAX_CYCLE_DETECTION_ALERTS_PARAM =
+            "graphql.automation.dialog.maxCycleAlerts";
 
     private GraphQlJob job;
 
     private DefaultComboBoxModel<GraphQlParam.ArgsTypeOption> argsTypeModel;
     private DefaultComboBoxModel<GraphQlParam.QuerySplitOption> querySplitModel;
     private DefaultComboBoxModel<GraphQlParam.RequestMethodOption> requestMethodModel;
+    private DefaultComboBoxModel<GraphQlParam.CycleDetectionModeOption> cycleDetectionModel;
 
     public GraphQlJobDialog(GraphQlJob job) {
         super(
@@ -79,6 +80,7 @@ public class GraphQlJobDialog extends StandardFieldsDialog {
                 TAB_LABELS);
         this.job = job;
 
+        /* Parameters Tab */
         this.addTextField(0, NAME_PARAM, this.job.getData().getName());
         // Cannot select the node as it might not be present in the Sites tree
         this.addNodeSelectField(0, ENDPOINT_PARAM, null, true, false);
@@ -106,13 +108,9 @@ public class GraphQlJobDialog extends StandardFieldsDialog {
                 0,
                 QUERY_GEN_ENABLED_PARAM,
                 JobUtils.unBox(this.job.getParameters().getQueryGenEnabled()));
-
-        this.addFieldListener(
-                QUERY_GEN_ENABLED_PARAM,
-                e -> showQueryGenConfigTab(getBoolValue(QUERY_GEN_ENABLED_PARAM)));
-
         this.addPadding(0);
 
+        /* Query Generator Config Tab */
         this.addNumberField(
                 1,
                 MAX_QUERY_DEPTH_PARAM,
@@ -140,135 +138,57 @@ public class GraphQlJobDialog extends StandardFieldsDialog {
                 OPTIONAL_ARGS_ENABLED_PARAM,
                 JobUtils.unBox(this.job.getParameters().getOptionalArgsEnabled()));
 
-        argsTypeModel = new DefaultComboBoxModel<GraphQlParam.ArgsTypeOption>();
+        argsTypeModel = new DefaultComboBoxModel<>();
         Arrays.stream(GraphQlParam.ArgsTypeOption.values())
                 .forEach(v -> argsTypeModel.addElement(v));
-        DefaultListCellRenderer argsTypeRenderer =
-                new DefaultListCellRenderer() {
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    public Component getListCellRendererComponent(
-                            JList<?> list,
-                            Object value,
-                            int index,
-                            boolean isSelected,
-                            boolean cellHasFocus) {
-                        JLabel label =
-                                (JLabel)
-                                        super.getListCellRendererComponent(
-                                                list, value, index, isSelected, cellHasFocus);
-                        if (value instanceof GraphQlParam.ArgsTypeOption) {
-                            // The name is i18n'ed
-                            label.setText(((GraphQlParam.ArgsTypeOption) value).getName());
-                        }
-                        return label;
-                    }
-                };
-
-        GraphQlParam.ArgsTypeOption hpo = null;
-        if (this.job.getParameters().getArgsType() != null) {
-            hpo =
-                    GraphQlParam.ArgsTypeOption.valueOf(
-                            this.job.getParameters().getArgsType().toUpperCase());
-        } else {
-            hpo = GraphQlParam.ArgsTypeOption.BOTH;
-        }
-        argsTypeModel.setSelectedItem(hpo);
+        argsTypeModel.setSelectedItem(
+                this.job.getParameters().getArgsType() != null
+                        ? GraphQlParam.ArgsTypeOption.valueOf(
+                                this.job.getParameters().getArgsType().toUpperCase())
+                        : GraphQlParam.ArgsTypeOption.BOTH);
         this.addComboField(1, ARGS_TYPE_PARAM, argsTypeModel);
-        Component acField = this.getField(ARGS_TYPE_PARAM);
-        if (acField instanceof JComboBox) {
-            ((JComboBox<?>) acField).setRenderer(argsTypeRenderer);
-        }
 
-        querySplitModel = new DefaultComboBoxModel<GraphQlParam.QuerySplitOption>();
+        querySplitModel = new DefaultComboBoxModel<>();
         Arrays.stream(GraphQlParam.QuerySplitOption.values())
                 .forEach(v -> querySplitModel.addElement(v));
-        DefaultListCellRenderer querySplitRenderer =
-                new DefaultListCellRenderer() {
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    public Component getListCellRendererComponent(
-                            JList<?> list,
-                            Object value,
-                            int index,
-                            boolean isSelected,
-                            boolean cellHasFocus) {
-                        JLabel label =
-                                (JLabel)
-                                        super.getListCellRendererComponent(
-                                                list, value, index, isSelected, cellHasFocus);
-                        if (value instanceof GraphQlParam.QuerySplitOption) {
-                            // The name is i18n'ed
-                            label.setText(((GraphQlParam.QuerySplitOption) value).getName());
-                        }
-                        return label;
-                    }
-                };
-
-        GraphQlParam.QuerySplitOption qso = null;
-        if (this.job.getParameters().getQuerySplitType() != null) {
-            qso =
-                    GraphQlParam.QuerySplitOption.valueOf(
-                            this.job.getParameters().getQuerySplitType().toUpperCase());
-        } else {
-            qso = GraphQlParam.QuerySplitOption.LEAF;
-        }
-        querySplitModel.setSelectedItem(qso);
+        querySplitModel.setSelectedItem(
+                this.job.getParameters().getQuerySplitType() != null
+                        ? GraphQlParam.QuerySplitOption.valueOf(
+                                this.job.getParameters().getQuerySplitType().toUpperCase())
+                        : GraphQlParam.QuerySplitOption.LEAF);
         this.addComboField(1, QUERY_SPLIT_TYPE_PARAM, querySplitModel);
-        Component qsField = this.getField(QUERY_SPLIT_TYPE_PARAM);
-        if (acField instanceof JComboBox) {
-            ((JComboBox<?>) qsField).setRenderer(querySplitRenderer);
-        }
 
-        requestMethodModel = new DefaultComboBoxModel<GraphQlParam.RequestMethodOption>();
+        requestMethodModel = new DefaultComboBoxModel<>();
         Arrays.stream(GraphQlParam.RequestMethodOption.values())
                 .forEach(v -> requestMethodModel.addElement(v));
-        DefaultListCellRenderer requestMethodRenderer =
-                new DefaultListCellRenderer() {
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    public Component getListCellRendererComponent(
-                            JList<?> list,
-                            Object value,
-                            int index,
-                            boolean isSelected,
-                            boolean cellHasFocus) {
-                        JLabel label =
-                                (JLabel)
-                                        super.getListCellRendererComponent(
-                                                list, value, index, isSelected, cellHasFocus);
-                        if (value instanceof GraphQlParam.RequestMethodOption) {
-                            // The name is i18n'ed
-                            label.setText(((GraphQlParam.RequestMethodOption) value).getName());
-                        }
-                        return label;
-                    }
-                };
-
-        GraphQlParam.RequestMethodOption rmo = null;
-        if (this.job.getParameters().getRequestMethod() != null) {
-            rmo =
-                    GraphQlParam.RequestMethodOption.valueOf(
-                            this.job.getParameters().getRequestMethod().toUpperCase());
-        } else {
-            rmo = GraphQlParam.RequestMethodOption.POST_JSON;
-        }
-        requestMethodModel.setSelectedItem(rmo);
+        requestMethodModel.setSelectedItem(
+                this.job.getParameters().getRequestMethod() != null
+                        ? GraphQlParam.RequestMethodOption.valueOf(
+                                this.job.getParameters().getRequestMethod().toUpperCase())
+                        : GraphQlParam.RequestMethodOption.POST_JSON);
         this.addComboField(1, REQUEST_METHOD_PARAM, requestMethodModel);
-        Component rmField = this.getField(REQUEST_METHOD_PARAM);
-        if (acField instanceof JComboBox) {
-            ((JComboBox<?>) rmField).setRenderer(requestMethodRenderer);
-        }
+
         this.addPadding(1);
 
-        showQueryGenConfigTab(getBoolValue(QUERY_GEN_ENABLED_PARAM));
-    }
+        /* Cycle Detection Config Tab */
+        cycleDetectionModel = new DefaultComboBoxModel<>();
+        Arrays.stream(GraphQlParam.CycleDetectionModeOption.values())
+                .forEach(cycleDetectionModel::addElement);
+        cycleDetectionModel.setSelectedItem(
+                this.job.getParameters().getCycleDetectionMode() != null
+                        ? GraphQlParam.CycleDetectionModeOption.valueOf(
+                                this.job.getParameters().getCycleDetectionMode().toUpperCase())
+                        : GraphQlParam.CycleDetectionModeOption.QUICK);
+        this.addComboField(2, CYCLE_DETECTION_MODE_PARAM, cycleDetectionModel);
 
-    private void showQueryGenConfigTab(boolean visible) {
-        this.setTabsVisible(new String[] {QUERY_GEN_CONFIG_TAB_LABEL}, visible);
+        this.addNumberField(
+                2,
+                MAX_CYCLE_DETECTION_ALERTS_PARAM,
+                0,
+                Integer.MAX_VALUE,
+                JobUtils.unBox(this.job.getParameters().getMaxCycleDetectionAlerts()));
+
+        this.addPadding(2);
     }
 
     @Override
@@ -311,6 +231,16 @@ public class GraphQlJobDialog extends StandardFieldsDialog {
                 this.job.getParameters().setRequestMethod(rm.name().toLowerCase());
             }
 
+            Object cdmObj = cycleDetectionModel.getSelectedItem();
+            if (cdmObj instanceof GraphQlParam.CycleDetectionModeOption) {
+                GraphQlParam.CycleDetectionModeOption cdm =
+                        (GraphQlParam.CycleDetectionModeOption) cdmObj;
+                this.job.getParameters().setCycleDetectionMode(cdm.name().toLowerCase());
+            }
+            this.job
+                    .getParameters()
+                    .setMaxCycleDetectionAlerts(this.getIntValue(MAX_CYCLE_DETECTION_ALERTS_PARAM));
+
         } else {
             this.job.getParameters().setMaxQueryDepth(null);
             this.job.getParameters().setLenientMaxQueryDepthEnabled(null);
@@ -320,6 +250,8 @@ public class GraphQlJobDialog extends StandardFieldsDialog {
             this.job.getParameters().setArgsType(null);
             this.job.getParameters().setQuerySplitType(null);
             this.job.getParameters().setRequestMethod(null);
+            this.job.getParameters().setCycleDetectionMode(null);
+            this.job.getParameters().setMaxCycleDetectionAlerts(null);
         }
         this.job.resetAndSetChanged();
     }
