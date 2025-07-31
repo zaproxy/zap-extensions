@@ -59,6 +59,7 @@ public class AuthHeaderTracker implements HttpSenderListener {
 
     private boolean isAuthInitiator(int initiator) {
         return initiator == HttpSender.AUTHENTICATION_HELPER_INITIATOR
+                || initiator == HttpSender.AUTHENTICATION_INITIATOR
                 || initiator == HttpSender.PROXY_INITIATOR;
     }
 
