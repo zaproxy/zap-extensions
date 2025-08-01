@@ -76,6 +76,7 @@ public class AuthenticationData extends AutomationData {
     public static final String PARAM_LOGIN_PAGE_WAIT = "loginPageWait";
     public static final String PARAM_LOGIN_REQUEST_URL = "loginRequestUrl";
     public static final String PARAM_LOGIN_REQUEST_BODY = "loginRequestBody";
+    public static final String PARAM_MIN_WAIT_FOR = "minWaitFor";
     public static final String PARAM_SCRIPT = "script";
     public static final String PARAM_SCRIPT_INLINE = "scriptInline";
     public static final String PARAM_SCRIPT_ENGINE = "scriptEngine";
@@ -154,6 +155,7 @@ public class AuthenticationData extends AutomationData {
                 setMethod(METHOD_CLIENT);
                 extractAuthScriptParameters(authMethod, sw, parameters);
                 JobUtils.addPrivateField(parameters, PARAM_LOGIN_PAGE_WAIT, authMethod);
+                JobUtils.addPrivateField(parameters, PARAM_MIN_WAIT_FOR, authMethod);
             }
         } else if (authMethod instanceof ScriptBasedAuthenticationMethod scriptAuthMethod) {
             ScriptWrapper sw =
@@ -304,13 +306,14 @@ public class AuthenticationData extends AutomationData {
                 switch (entry.getKey()) {
                     case PARAM_PORT:
                     case PARAM_LOGIN_PAGE_WAIT:
+                    case PARAM_MIN_WAIT_FOR:
                     case PARAM_STEP_DELAY:
                         try {
                             Integer.parseInt(entry.getValue().toString());
                         } catch (NumberFormatException e) {
                             progress.error(
                                     Constant.messages.getString(
-                                            BAD_FIELD_ERROR_MSG, PARAM_PORT, data));
+                                            BAD_FIELD_ERROR_MSG, entry.getKey(), data));
                         }
                         break;
                     case PARAM_DIAGNOSTICS:
@@ -451,7 +454,14 @@ public class AuthenticationData extends AutomationData {
                         JobUtils.setPrivateField(
                                 clientScriptMethod, "paramValues", getScriptParameters(env));
 
-                        setLoginPageWait(clientScriptMethod, getParameters());
+                        setPrivateInteger(
+                                clientScriptMethod,
+                                getParameters(),
+                                AuthenticationData.PARAM_LOGIN_PAGE_WAIT);
+                        setPrivateInteger(
+                                clientScriptMethod,
+                                getParameters(),
+                                AuthenticationData.PARAM_MIN_WAIT_FOR);
 
                         reloadAuthenticationMethod(clientScriptMethod, progress);
                         context.setAuthenticationMethod(clientScriptMethod);
@@ -507,8 +517,8 @@ public class AuthenticationData extends AutomationData {
                                     am, AuthenticationData.PARAM_BROWSER_ID, (String) browserIdObj);
                         }
 
-                        setLoginPageWait(am, parameters);
-                        setStepDelay(am, parameters);
+                        setPrivateInteger(am, parameters, AuthenticationData.PARAM_LOGIN_PAGE_WAIT);
+                        setPrivateInteger(am, parameters, AuthenticationData.PARAM_STEP_DELAY);
 
                         try {
                             Method method = am.getClass().getMethod("fromMap", Map.class);
@@ -610,23 +620,13 @@ public class AuthenticationData extends AutomationData {
         return null;
     }
 
-    private static void setLoginPageWait(Object method, Map<String, Object> parameters) {
-        Object loginPageWaitObj = parameters.get(AuthenticationData.PARAM_LOGIN_PAGE_WAIT);
-        if (loginPageWaitObj instanceof Integer value) {
-            int loginPageWait = JobUtils.unBox(value);
-            if (loginPageWait >= 0) {
-                JobUtils.setPrivateField(
-                        method, AuthenticationData.PARAM_LOGIN_PAGE_WAIT, loginPageWait);
-            }
-        }
-    }
-
-    private static void setStepDelay(Object method, Map<String, Object> parameters) {
-        Object stepDelayObj = parameters.get(AuthenticationData.PARAM_STEP_DELAY);
-        if (stepDelayObj instanceof Integer value) {
-            int stepDelay = JobUtils.unBox(value);
-            if (stepDelay >= 0) {
-                JobUtils.setPrivateField(method, AuthenticationData.PARAM_STEP_DELAY, stepDelay);
+    private static void setPrivateInteger(
+            Object method, Map<String, Object> parameters, String fieldName) {
+        Object obj = parameters.get(fieldName);
+        if (obj instanceof Integer value) {
+            int i = JobUtils.unBox(value);
+            if (i >= 0) {
+                JobUtils.setPrivateField(method, fieldName, i);
             }
         }
     }

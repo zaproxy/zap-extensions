@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>ZAP Test Server</title>
+	<link href="/tutorial.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="roundContainer">
+	<h1>ZAP Test Server</H1>
+	<h2>HTML input elements that appear after increasing delays</h2>
+
+	<table>
+	<tr>
+		<td>Input 0: </td>
+		<td id="row-0"/>
+	</tr>
+	<tr>
+		<td>Input 1: </td>
+		<td id="row-1"/>
+	</tr>
+	<tr>
+		<td>Input 2: </td>
+		<td id="row-2"/>
+	</tr>
+	<tr>
+		<td>Input 3: </td>
+		<td id="row-3"/>
+	</tr>
+	<tr>
+		<td>Input 4: </td>
+		<td id="row-4"/>
+	</tr>
+	<tr>
+		<td>Input 5: </td>
+		<td id="row-5"/>
+	</tr>
+	<tr>
+		<td>Input 6: </td>
+		<td id="row-6"/>
+	</tr>
+	<tr>
+		<td>Input 7: </td>
+		<td id="row-7"/>
+	</tr>
+	<tr>
+		<td>Input 8: </td>
+		<td id="row-8"/>
+	</tr>
+	<tr>
+		<td>Input 9: </td>
+		<td id="row-9"/>
+	</tr>
+	</table>
+
+	<script>
+		function createInput(name) {
+			var inputName = "input-" + name;
+			var input = document.createElement("input");
+			input.attribute = "text";
+			input.id = inputName;
+			document.getElementById(name).appendChild(input);
+		}
+		var wait = 1000;
+		for (let i = 0; i < 10; i++) {
+			setTimeout(function(){ createInput("row-" + i); }, wait);
+			wait += (2000 * (i+1));
+		} 
+	</script>
+	
+	<ul>
+	<li><a href="./">..</a>
+	</ul>
+
+	<div class="buttonsDiv">
+		<a href="/"><button>Index page</button></a>
+	</div>
+</div>
+
+</body>
+</html>

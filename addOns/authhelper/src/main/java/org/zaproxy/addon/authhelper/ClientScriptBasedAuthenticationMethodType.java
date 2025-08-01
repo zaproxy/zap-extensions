@@ -84,6 +84,9 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
     private static final String CONTEXT_CONFIG_LOGIN_PAGE_WAIT =
             CONTEXT_CONFIG_AUTH_SCRIPT + ".loginpagewait";
 
+    private static final String CONTEXT_CONFIG_MIN_WAIT_FOR =
+            CONTEXT_CONFIG_AUTH_SCRIPT + ".minwaitfor";
+
     private static final int DEFAULT_PAGE_WAIT = 5;
 
     private ExtensionScript extensionScript;
@@ -134,11 +137,14 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                 contextId,
                 RecordContext.TYPE_AUTH_METHOD_FIELD_2,
                 EncodingUtils.mapToString(method.getParamValuesTemp()));
-
         session.setContextData(
                 contextId,
                 RecordContext.TYPE_AUTH_METHOD_FIELD_3,
                 Integer.toString(method.getLoginPageWait()));
+        session.setContextData(
+                contextId,
+                RecordContext.TYPE_AUTH_METHOD_FIELD_4,
+                Integer.toString(method.getMinWaitFor()));
     }
 
     @Override
@@ -153,6 +159,14 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
         if (!StringUtils.isEmpty(waitStr)) {
             try {
                 method.setLoginPageWait(Integer.parseInt(waitStr));
+            } catch (NumberFormatException ignore) {
+            }
+        }
+        String minWaitStr =
+                session.getContextDataString(contextId, RecordContext.TYPE_AUTH_METHOD_FIELD_4, "");
+        if (!StringUtils.isEmpty(minWaitStr)) {
+            try {
+                method.setMinWaitFor(Integer.parseInt(minWaitStr));
             } catch (NumberFormatException ignore) {
             }
         }
@@ -203,6 +217,7 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
         }
 
         private int loginPageWait = DEFAULT_PAGE_WAIT;
+        private int minWaitFor;
 
         private boolean diagnostics;
 
@@ -220,6 +235,14 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
 
         public int getLoginPageWait() {
             return loginPageWait;
+        }
+
+        public int getMinWaitFor() {
+            return minWaitFor;
+        }
+
+        public void setMinWaitFor(int minWaitFor) {
+            this.minWaitFor = minWaitFor;
         }
 
         public void setScriptWrapper(ScriptWrapper wrapper) {
@@ -293,6 +316,7 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
             setParamValuesTemp(method);
             setCredentialsParamNamesTemp(method);
             method.loginPageWait = loginPageWait;
+            method.minWaitFor = minWaitFor;
             return method;
         }
 
@@ -371,7 +395,7 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
         private void removeCloseStatements(ZestScript zestScript) {
             for (int i = 0; i < zestScript.getStatements().size(); i++) {
                 ZestStatement stmt = zestScript.getStatements().get(i);
-                if (stmt instanceof ZestClientWindowClose close) {
+                if (stmt instanceof ZestClientWindowClose) {
                     zestScript.getStatements().remove(i);
                     i -= 1;
                 }
@@ -429,6 +453,10 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                         zestScript.add(
                                 new ZestActionSleep(TimeUnit.SECONDS.toMillis(getLoginPageWait())));
                         removeCloseStatements(zestScript);
+                        if (minWaitFor > 0) {
+                            AuthUtils.setMinWaitFor(
+                                    zestScript, (int) TimeUnit.SECONDS.toMillis(minWaitFor));
+                        }
                     } else {
                         LOGGER.warn("Expected authScript to be a Zest script");
                         return null;
@@ -630,6 +658,7 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
         private ClientScriptBasedAuthenticationMethod shownMethod;
 
         private ZapNumberSpinner loginPageWait;
+        private ZapNumberSpinner minWaitFor;
         private JCheckBox diagnostics;
 
         public ClientScriptBasedAuthenticationMethodOptionsPanel() {
@@ -648,6 +677,16 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                 loginPageWaitLabel.setLabelFor(loginPageWait);
                 this.add(loginPageWaitLabel, LayoutHelper.getGBC(0, y, 1, 1.0d, 0.0d));
                 this.add(loginPageWait, LayoutHelper.getGBC(1, y, 2, 1.0d, 0.0d));
+                y++;
+
+                minWaitFor = new ZapNumberSpinner(0, 0, Integer.MAX_VALUE);
+                JLabel minWaitForLabel =
+                        new JLabel(
+                                Constant.messages.getString(
+                                        "authhelper.auth.method.browser.label.minWaitFor"));
+                minWaitForLabel.setLabelFor(minWaitFor);
+                this.add(minWaitForLabel, LayoutHelper.getGBC(0, y, 1, 1.0d, 0.0d));
+                this.add(minWaitFor, LayoutHelper.getGBC(1, y, 2, 1.0d, 0.0d));
                 y++;
 
                 diagnostics = new JCheckBox();
@@ -690,6 +729,7 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
 
             shownMethod = (ClientScriptBasedAuthenticationMethod) method;
             loginPageWait.setValue(shownMethod.getLoginPageWait());
+            minWaitFor.setValue(shownMethod.getMinWaitFor());
             diagnostics.setSelected(shownMethod.isDiagnostics());
         }
 
@@ -698,6 +738,7 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
             super.saveMethod();
 
             shownMethod.setLoginPageWait(loginPageWait.getValue());
+            shownMethod.setMinWaitFor(minWaitFor.getValue());
             shownMethod.setDiagnostics(diagnostics.isSelected());
         }
 
@@ -731,8 +772,8 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
         config.setProperty(
                 CONTEXT_CONFIG_AUTH_SCRIPT_PARAMS,
                 EncodingUtils.mapToString(method.getParamValuesTemp()));
-
         config.setProperty(CONTEXT_CONFIG_LOGIN_PAGE_WAIT, method.getLoginPageWait());
+        config.setProperty(CONTEXT_CONFIG_MIN_WAIT_FOR, method.getMinWaitFor());
     }
 
     @Override
@@ -752,6 +793,11 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
 
         try {
             method.setLoginPageWait(config.getInt(CONTEXT_CONFIG_LOGIN_PAGE_WAIT));
+        } catch (Exception e) {
+            throw new ConfigurationException(e);
+        }
+        try {
+            method.setMinWaitFor(config.getInt(CONTEXT_CONFIG_MIN_WAIT_FOR));
         } catch (Exception e) {
             throw new ConfigurationException(e);
         }
