@@ -166,9 +166,9 @@ public class PassiveScanTask implements Runnable {
                                 PluginPassiveScanner pps = (PluginPassiveScanner) scanner;
                                 Stats.incCounter(
                                         "stats.pscan." + pps.getPluginId() + ".time", timeTaken);
+                            } else {
+                                Stats.incCounter("stats.pscan." + scanner.getName(), timeTaken);
                             }
-                            // TODO remove at some point
-                            Stats.incCounter("stats.pscan." + scanner.getName(), timeTaken);
                             if (timeTaken > 5000) {
                                 // Took over 5 seconds, thats not ideal
                                 String responseInfo = "";

@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Allow to configure the option max body size through the API (Issue 8974).
 
+### Changed
+- To only record `stats.pscan.<rule-name>` statistics for scanners that have no IDs.
+
 ## [0.3.0] - 2025-06-20
 ### Changed
 - Adjusted further dialog, progress, and log messages with regard to preventing inclusion of commas in scan rule ID numbers. As well as ensuring consistency in use of ID (full caps) for table column headings.
