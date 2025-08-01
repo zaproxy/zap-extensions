@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Added
 - Support for step delay in Browser Based Authentication.
+- Support for min wait for in Client Script Authentication.
 
 ### Fixed
 - Bug in handling headers with colons in the values.

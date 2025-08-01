@@ -91,6 +91,9 @@ import org.zaproxy.zap.network.HttpRequestConfig;
 import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.Pair;
 import org.zaproxy.zap.utils.Stats;
+import org.zaproxy.zest.core.v1.ZestClientElement;
+import org.zaproxy.zest.core.v1.ZestScript;
+import org.zaproxy.zest.core.v1.ZestStatement;
 
 public class AuthUtils {
 
@@ -1380,5 +1383,19 @@ public class AuthUtils {
                 || host.contains("google-analytics")
                 || host.contains("mozilla")
                 || host.contains("safebrowsing-cache"));
+    }
+
+    public static void setMinWaitFor(ZestScript script, int minWaitForMsec) {
+        for (int i = 0; i < script.getStatements().size(); i++) {
+            setMinWaitFor(script.getStatements().get(i), minWaitForMsec);
+        }
+    }
+
+    private static void setMinWaitFor(ZestStatement stmt, int minWaitForMsec) {
+        if (stmt instanceof ZestClientElement cElmt) {
+            if (cElmt.getWaitForMsec() < minWaitForMsec) {
+                cElmt.setWaitForMsec(minWaitForMsec);
+            }
+        }
     }
 }
