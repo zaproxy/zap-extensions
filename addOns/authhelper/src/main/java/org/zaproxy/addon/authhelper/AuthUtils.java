@@ -136,8 +136,6 @@ public class AuthUtils {
 
     public static final int TIME_TO_SLEEP_IN_MSECS = 100;
 
-    private static final int DEMO_SLEEP_IN_MSECS = 2000;
-
     private static final int AUTH_PAGE_SLEEP_IN_MSECS = 2000;
 
     private static final Logger LOGGER = LogManager.getLogger(AuthUtils.class);
@@ -170,8 +168,6 @@ public class AuthUtils {
     private static ExecutorService executorService;
 
     private static long timeToWaitMs = TimeUnit.SECONDS.toMillis(5);
-
-    private static boolean demoMode;
 
     @Setter private static HistoryProvider historyProvider = new HistoryProvider();
 
@@ -398,7 +394,8 @@ public class AuthUtils {
             WebDriver wd,
             User user,
             String loginPageUrl,
-            int waitInSecs,
+            int loginWaitInSecs,
+            int stepDelayInSecs,
             List<AuthenticationStep> steps) {
 
         try (AuthenticationDiagnostics diags =
@@ -407,7 +404,8 @@ public class AuthUtils {
                         new BrowserBasedAuthenticationMethodType().getName(),
                         user.getContext().getName(),
                         user.getName())) {
-            return authenticateAsUserImpl(diags, wd, user, loginPageUrl, waitInSecs, steps);
+            return authenticateAsUserImpl(
+                    diags, wd, user, loginPageUrl, loginWaitInSecs, stepDelayInSecs, steps);
         }
     }
 
@@ -416,7 +414,8 @@ public class AuthUtils {
             WebDriver wd,
             User user,
             String loginPageUrl,
-            int waitInSecs,
+            int loginWaitInSecs,
+            int stepDelayInSecs,
             List<AuthenticationStep> steps) {
 
         UsernamePasswordAuthenticationCredentials credentials = getCredentials(user);
@@ -425,9 +424,17 @@ public class AuthUtils {
 
         // Try with the given URL
         wd.get(loginPageUrl);
+
         boolean auth =
                 internalAuthenticateAsUser(
-                        diags, wd, context, loginPageUrl, credentials, waitInSecs, steps);
+                        diags,
+                        wd,
+                        context,
+                        loginPageUrl,
+                        credentials,
+                        loginWaitInSecs,
+                        stepDelayInSecs,
+                        steps);
 
         if (auth) {
             return true;
@@ -451,7 +458,14 @@ public class AuthUtils {
                 sleep(AUTH_PAGE_SLEEP_IN_MSECS);
                 auth =
                         internalAuthenticateAsUser(
-                                diags, wd, context, loginPageUrl, credentials, waitInSecs, steps);
+                                diags,
+                                wd,
+                                context,
+                                loginPageUrl,
+                                credentials,
+                                loginWaitInSecs,
+                                stepDelayInSecs,
+                                steps);
                 if (auth) {
                     return true;
                 }
@@ -476,14 +490,13 @@ public class AuthUtils {
             String loginPageUrl,
             UsernamePasswordAuthenticationCredentials credentials,
             int waitInSecs,
+            int stepDelayInSecs,
             List<AuthenticationStep> steps) {
 
         sleep(50);
         diags.recordStep(
                 wd, Constant.messages.getString("authhelper.auth.method.diags.steps.start"));
-        if (demoMode) {
-            sleep(DEMO_SLEEP_IN_MSECS);
-        }
+        sleep(TimeUnit.SECONDS.toMillis(stepDelayInSecs));
 
         String username = credentials.getUsername();
         String password = credentials.getPassword();
@@ -521,7 +534,7 @@ public class AuthUtils {
                 default:
             }
 
-            sleep(demoMode ? DEMO_SLEEP_IN_MSECS : TIME_TO_SLEEP_IN_MSECS);
+            sleepMax(TimeUnit.SECONDS.toMillis(stepDelayInSecs), TIME_TO_SLEEP_IN_MSECS);
         }
 
         for (int i = 0; i < getWaitLoopCount(); i++) {
@@ -536,8 +549,8 @@ public class AuthUtils {
             if (i > 1 && userField != null && pwdField == null && !userAdded) {
                 // Handle pages which require you to submit the username first
                 LOGGER.debug("Submitting just user field on {}", loginPageUrl);
-                fillUserName(diags, wd, username, userField);
-                sendReturnAndSleep(diags, wd, userField);
+                fillUserName(diags, wd, username, userField, stepDelayInSecs);
+                sendReturnAndSleep(diags, wd, userField, stepDelayInSecs);
                 userAdded = true;
             }
             sleep(TIME_TO_SLEEP_IN_MSECS);
@@ -545,22 +558,22 @@ public class AuthUtils {
         if ((userField != null || userAdded) && pwdField != null) {
             if (!userAdded) {
                 LOGGER.debug("Entering user field on {}", wd.getCurrentUrl());
-                fillUserName(diags, wd, username, userField);
+                fillUserName(diags, wd, username, userField, stepDelayInSecs);
             }
             try {
                 if (!pwdAdded) {
                     LOGGER.debug("Submitting password field on {}", wd.getCurrentUrl());
-                    fillPassword(diags, wd, password, pwdField);
+                    fillPassword(diags, wd, password, pwdField, stepDelayInSecs);
                 }
-                sendReturn(diags, wd, pwdField);
+                sendReturnAndSleep(diags, wd, pwdField, stepDelayInSecs);
             } catch (Exception e) {
                 if (userField != null) {
                     // Handle the case where the password field was present but hidden / disabled
                     LOGGER.debug("Handling hidden password field on {}", wd.getCurrentUrl());
-                    sendReturnAndSleep(diags, wd, userField);
+                    sendReturnAndSleep(diags, wd, userField, stepDelayInSecs);
                     sleep(TIME_TO_SLEEP_IN_MSECS);
-                    fillPassword(diags, wd, password, pwdField);
-                    sendReturn(diags, wd, pwdField);
+                    fillPassword(diags, wd, password, pwdField, stepDelayInSecs);
+                    sendReturnAndSleep(diags, wd, pwdField, stepDelayInSecs);
                 }
             }
 
@@ -573,7 +586,7 @@ public class AuthUtils {
                 step.execute(wd, credentials);
                 diags.recordStep(wd, step.getDescription());
 
-                sleep(demoMode ? DEMO_SLEEP_IN_MSECS : TIME_TO_SLEEP_IN_MSECS);
+                sleepMax(TimeUnit.SECONDS.toMillis(stepDelayInSecs), TIME_TO_SLEEP_IN_MSECS);
             }
             diags.recordStep(
                     wd, Constant.messages.getString("authhelper.auth.method.diags.steps.finish"));
@@ -587,7 +600,7 @@ public class AuthUtils {
                 // This can happen for more traditional apps - refresh the current one in case
                 // its a good option.
                 wd.get(wd.getCurrentUrl());
-                AuthUtils.sleep(TimeUnit.SECONDS.toMillis(waitInSecs));
+                sleepMax(TimeUnit.SECONDS.toMillis(stepDelayInSecs), TIME_TO_SLEEP_IN_MSECS);
                 diags.recordStep(
                         wd,
                         Constant.messages.getString("authhelper.auth.method.diags.steps.refresh"));
@@ -639,27 +652,31 @@ public class AuthUtils {
     }
 
     private static void fillUserName(
-            AuthenticationDiagnostics diags, WebDriver wd, String username, WebElement field) {
+            AuthenticationDiagnostics diags,
+            WebDriver wd,
+            String username,
+            WebElement field,
+            int stepDelayInSecs) {
         fillField(field, username);
         diags.recordStep(
                 wd,
                 Constant.messages.getString("authhelper.auth.method.diags.steps.username"),
                 field);
-        if (demoMode) {
-            sleep(DEMO_SLEEP_IN_MSECS);
-        }
+        sleep(TimeUnit.SECONDS.toMillis(stepDelayInSecs));
     }
 
     private static void fillPassword(
-            AuthenticationDiagnostics diags, WebDriver wd, String password, WebElement field) {
+            AuthenticationDiagnostics diags,
+            WebDriver wd,
+            String password,
+            WebElement field,
+            int stepDelayInSecs) {
         fillField(field, password);
         diags.recordStep(
                 wd,
                 Constant.messages.getString("authhelper.auth.method.diags.steps.password"),
                 field);
-        if (demoMode) {
-            sleep(DEMO_SLEEP_IN_MSECS);
-        }
+        sleep(TimeUnit.SECONDS.toMillis(stepDelayInSecs));
     }
 
     private static void sendReturn(
@@ -670,11 +687,9 @@ public class AuthUtils {
     }
 
     private static void sendReturnAndSleep(
-            AuthenticationDiagnostics diags, WebDriver wd, WebElement field) {
+            AuthenticationDiagnostics diags, WebDriver wd, WebElement field, int stepDelayInSecs) {
         sendReturn(diags, wd, field);
-        if (demoMode) {
-            sleep(DEMO_SLEEP_IN_MSECS);
-        }
+        sleep(TimeUnit.SECONDS.toMillis(stepDelayInSecs));
     }
 
     public static void incStatsCounter(String url, String stat) {
@@ -693,7 +708,14 @@ public class AuthUtils {
         }
     }
 
+    private static void sleepMax(long msec1, long msec2) {
+        sleep(Math.max(msec1, msec2));
+    }
+
     public static void sleep(long millisecs) {
+        if (millisecs <= 0) {
+            return;
+        }
         try {
             Thread.sleep(millisecs);
         } catch (InterruptedException e) {
@@ -759,10 +781,6 @@ public class AuthUtils {
             getExtension(ExtensionSelenium.class).deregisterBrowserHook(browserHook);
             browserHook = null;
         }
-    }
-
-    public static void setDemoMode(boolean demo) {
-        demoMode = demo;
     }
 
     /**
@@ -1210,6 +1228,7 @@ public class AuthUtils {
                     user,
                     bbaMethod.getLoginPageUrl(),
                     bbaMethod.getLoginPageWait(),
+                    bbaMethod.getStepDelay(),
                     bbaMethod.getAuthenticationSteps());
         }
     }
