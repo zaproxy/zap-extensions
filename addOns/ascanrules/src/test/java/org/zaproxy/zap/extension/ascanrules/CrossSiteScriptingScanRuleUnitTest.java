@@ -377,6 +377,47 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
     }
 
     @Test
+    void shouldReportXssInCommentWithFilteredScriptsAndOnerror()
+            throws NullPointerException, IOException {
+        String test = "/shouldReportXssInCommentWithFilteredScriptsAndOnerror/";
+
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String name = getFirstParamValue(session, "name");
+                        String response;
+                        if (name != null) {
+                            // Strip out 'script' or 'onerror' ignoring the case
+                            name = name.replaceAll("(?i)script|onerror", "");
+                            response =
+                                    getHtml("InputInComment.html", new String[][] {{"name", name}});
+                        } else {
+                            response = getHtml("NoInput.html");
+                        }
+                        return newFixedLengthResponse(response);
+                    }
+                });
+
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
+
+        this.rule.init(msg, this.parent);
+
+        this.rule.scan();
+
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(
+                alertsRaised.get(0).getEvidence(),
+                equalTo("-->" + CrossSiteScriptingScanRule.B_MOUSE_ALERT + "<!--"));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
+        assertThat(
+                alertsRaised.get(0).getAttack(),
+                equalTo("-->" + CrossSiteScriptingScanRule.B_MOUSE_ALERT + "<!--"));
+        assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+    }
+
+    @Test
     void shouldNotReportXssInFilteredComment() throws NullPointerException, IOException {
         String test = "/shouldNotReportXssInFilteredComment/";
 
@@ -444,6 +485,44 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
         assertThat(
                 alertsRaised.get(0).getAttack(),
                 equalTo(CrossSiteScriptingScanRule.GENERIC_SCRIPT_ALERT));
+        assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+    }
+
+    @Test
+    void shouldReportXssInBodyWithFilteredScripts() throws NullPointerException, IOException {
+        String test = "/shouldReportXssInBody/";
+
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String name = getFirstParamValue(session, "name");
+                        String response;
+                        if (name != null) {
+                            // Strip out 'script' and `onerror` ignoring the case
+                            name = name.replaceAll("(?i)script|onerror", "");
+                            response = getHtml("InputInBody.html", new String[][] {{"name", name}});
+                        } else {
+                            response = getHtml("NoInput.html");
+                        }
+                        return newFixedLengthResponse(response);
+                    }
+                });
+
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
+
+        this.rule.init(msg, this.parent);
+
+        this.rule.scan();
+
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(
+                alertsRaised.get(0).getEvidence(),
+                equalTo(CrossSiteScriptingScanRule.B_MOUSE_ALERT));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
+        assertThat(
+                alertsRaised.get(0).getAttack(), equalTo(CrossSiteScriptingScanRule.B_MOUSE_ALERT));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
     }
@@ -769,8 +848,44 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
     }
 
     @Test
-    void shouldReportXssInAttribute() throws NullPointerException, IOException {
-        String test = "/shouldReportXssInAttribute/";
+    void shouldReportXssInAttributeUnfiltered() throws NullPointerException, IOException {
+        String test = "/shouldReportXssInAttributeUnfiltered/";
+
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String color = getFirstParamValue(session, "color");
+                        String response;
+                        if (color != null) {
+                            response =
+                                    getHtml(
+                                            "InputInAttribute.html",
+                                            new String[][] {{"color", color}});
+                        } else {
+                            response = getHtml("NoInput.html");
+                        }
+                        return newFixedLengthResponse(response);
+                    }
+                });
+
+        HttpMessage msg = this.getHttpMessage(test + "?color=red");
+
+        this.rule.init(msg, this.parent);
+
+        this.rule.scan();
+
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo("\"><scrIpt>alert(1);</scRipt>"));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("color"));
+        assertThat(alertsRaised.get(0).getAttack(), equalTo("\"><scrIpt>alert(1);</scRipt>"));
+        assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+    }
+
+    @Test
+    void shouldReportXssInAttributeAngleBracketFiltered() throws NullPointerException, IOException {
+        String test = "/shouldReportXssInAttributeAngleBracketFiltered/";
 
         this.nano.addHandler(
                 new NanoServerHandler(test) {
