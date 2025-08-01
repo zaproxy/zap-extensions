@@ -593,16 +593,11 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
         this.getOutputArea().setText(listToStr(progress.getAllMessages()));
         if (progress.hasErrors()) {
             View.getSingleton()
-                    .showWarningDialog(
-                            Constant.messages.getString(
-                                    "automation.panel.load.error",
-                                    listToStr(progress.getErrors())));
+                    .showWarningDialog(Constant.messages.getString("automation.panel.load.error"));
         } else if (progress.hasWarnings()) {
             View.getSingleton()
                     .showWarningDialog(
-                            Constant.messages.getString(
-                                    "automation.panel.load.warning",
-                                    listToStr(progress.getWarnings())));
+                            Constant.messages.getString("automation.panel.load.warning"));
         }
     }
 
