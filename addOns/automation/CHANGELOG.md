@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Support for step delay in Browser Based Authentication.
 - Support for min wait for in Client Script Authentication.
 
+### Changed
+- Refer to output panel for errors.
+
 ### Fixed
 - Bug in handling headers with colons in the values.
 - Use default authentication poll frequency when none specified, if the value is less than one a progress warning occurs.
