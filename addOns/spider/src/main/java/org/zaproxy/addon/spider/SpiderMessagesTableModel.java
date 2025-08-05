@@ -149,12 +149,8 @@ class SpiderMessagesTableModel
         if (processed) {
             return SUCCESSFULLY_PROCESSED_CELL_ITEM;
         }
-        ProcessedCellItem processedCellItem = cacheProcessedCellItems.get(reasonNotProcessed);
-        if (processedCellItem == null) {
-            processedCellItem = new ProcessedCellItem(processed, reasonNotProcessed);
-            cacheProcessedCellItems.put(reasonNotProcessed, processedCellItem);
-        }
-        return processedCellItem;
+        return cacheProcessedCellItems.computeIfAbsent(
+                reasonNotProcessed, k -> new ProcessedCellItem(processed, k));
     }
 
     @Override
