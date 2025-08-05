@@ -42,6 +42,7 @@ var addOns =
         "callgraph",
         "callhome",
         "client",
+        "codedx",
         "commonlib",
         "coreLang",
         "custompayloads",
