@@ -20,6 +20,7 @@ package org.zaproxy.zap.extension.codedx;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
 
 import org.apache.http.client.config.RequestConfig;
@@ -115,7 +116,7 @@ public class CodeDxExtension extends ExtensionAdaptor {
         RequestConfig config = RequestConfig.custom().setConnectTimeout(getTimeout()).setSocketTimeout(getTimeout())
                 .setConnectionRequestTimeout(getTimeout()).build();
         return HttpClientBuilder.create()
-                .setSSLSocketFactory(SSLConnectionSocketFactoryFactory.getFactory(new URL(url).getHost(), this))
+                .setSSLSocketFactory(SSLConnectionSocketFactoryFactory.getFactory(Paths.get(url).toUri().getHost(), this))
                 .setDefaultRequestConfig(config).build();
     }
 
@@ -129,7 +130,7 @@ public class CodeDxExtension extends ExtensionAdaptor {
         return HttpClientBuilder.create()
                 .setSSLSocketFactory(
                     SSLConnectionSocketFactoryFactory.getFactory(
-                        new URL(url).getHost(), this, fingerprint, acceptPermanently
+                        Paths.get(url).toUri().getHost(), this, fingerprint, acceptPermanently
                     )
                 ).setDefaultRequestConfig(config).build();
     }
