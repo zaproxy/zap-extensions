@@ -27,9 +27,13 @@ import java.util.concurrent.TimeUnit;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.httpclient.URI;
 import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.SiteMap;
+import org.parosproxy.paros.model.SiteNode;
 import org.zaproxy.addon.automation.AutomationData;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
@@ -52,6 +56,7 @@ public class ActiveScanJob extends AutomationJob {
     private static final String PARAM_CONTEXT = "context";
     private static final String PARAM_POLICY = "policy";
     private static final String PARAM_USER = "user";
+    private static final String PARAM_URL = "url";
 
     private ExtensionActiveScan extAScan;
 
@@ -122,7 +127,7 @@ public class ActiveScanJob extends AutomationJob {
                 this.parameters,
                 JobUtils.getJobOptions(this, progress),
                 this.getName(),
-                new String[] {PARAM_POLICY, PARAM_CONTEXT, PARAM_USER},
+                new String[] {PARAM_POLICY, PARAM_CONTEXT, PARAM_USER, PARAM_URL},
                 progress,
                 this.getPlan().getEnv());
     }
@@ -162,6 +167,26 @@ public class ActiveScanJob extends AutomationJob {
         target.setRecurse(true);
         List<Object> contextSpecificObjects = new ArrayList<>();
         User user = this.getUser(this.getParameters().getUser(), progress);
+
+        String urlStr = parameters.getUrl();
+        try {
+            if (StringUtils.isNotEmpty(urlStr)) {
+                urlStr = env.replaceVars(urlStr);
+                URI uri = new URI(urlStr, true);
+                SiteMap tree = Model.getSingleton().getSession().getSiteTree();
+                SiteNode node = tree.findNode(uri);
+                if (node == null) {
+                    progress.error(
+                            Constant.messages.getString("automation.error.job.nourl", urlStr));
+                    return;
+                } else {
+                    target.setStartNode(node);
+                }
+            }
+        } catch (Exception e1) {
+            progress.error(Constant.messages.getString("automation.error.context.badurl", urlStr));
+            return;
+        }
 
         ScanPolicy scanPolicy = null;
         if (!StringUtils.isEmpty(this.getParameters().getPolicy())) {
@@ -315,6 +340,7 @@ public class ActiveScanJob extends AutomationJob {
     public static class Parameters extends AutomationData {
         private String context = "";
         private String user = "";
+        private String url = "";
         private String policy = "";
         private Integer maxRuleDurationInMins = 0;
         private Integer maxScanDurationInMins = 0;
