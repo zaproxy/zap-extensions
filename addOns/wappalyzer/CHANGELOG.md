@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - During load the time taken to process the data files will be shown in human readable format (generally seconds), as well as milliseconds (ms).
 - Maintenance changes.
+- Reduced usage of error level logging.
 
 ## [21.47.0] - 2025-07-15
 ### Changed
