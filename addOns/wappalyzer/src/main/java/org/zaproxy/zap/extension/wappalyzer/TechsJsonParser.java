@@ -45,6 +45,7 @@ import java.util.regex.PatternSyntaxException;
 import javax.swing.ImageIcon;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jsoup.select.QueryParser;
@@ -93,21 +94,28 @@ public class TechsJsonParser {
                         .map(
                                 path ->
                                         CompletableFuture.runAsync(
-                                                () ->
-                                                        parseJson(
-                                                                techData,
-                                                                getStringResource(path),
-                                                                createIcons),
+                                                () -> {
+                                                    if (LOGGER.isDebugEnabled()) {
+                                                        String[] name = path.split("/");
+                                                        LOGGER.info(name[name.length - 1]);
+                                                    }
+                                                    parseJson(
+                                                            techData,
+                                                            getStringResource(path),
+                                                            createIcons);
+                                                },
                                                 executor))
                         .toList();
         // Note: Based on testing having the forEach separate performs faster than chaining it
         futures.forEach(CompletableFuture::join);
         executor.shutdown();
         Instant finish = Instant.now();
+        Long loadTime = Duration.between(start, finish).toMillis();
         LOGGER.info(
-                "Loaded {} Tech Detection technologies, in {}ms",
+                "Loaded {} Tech Detection technologies, in {} ({}ms)",
                 techData.getApplications().size(),
-                Duration.between(start, finish).toMillis());
+                DurationFormatUtils.formatDurationWords(loadTime, true, true),
+                loadTime);
         return techData;
     }
 
@@ -171,7 +179,7 @@ public class TechsJsonParser {
                     app.setScript(this.jsonToPatternList("SCRIPT", appData.get("scriptSrc")));
                     app.setMetas(this.jsonToAppPatternMapList("META", appData.get("meta")));
                     app.setCss(this.jsonToPatternList("CSS", appData.get("css")));
-                    app.setDom(this.jsonToAppPatternNestedMapList("DOM", appData.get("dom")));
+                    app.setDom(this.jsonToAppPatternNestedMapList("DOM", appData.get("dom"), app));
                     app.setSimpleDom(this.jsonToDomStringList(appData.get("dom")));
                     app.setImplies(TechsJsonParser.jsonToStringList(appData.get("implies")));
                     app.setCpe(appData.optString("cpe"));
@@ -342,7 +350,7 @@ public class TechsJsonParser {
     }
 
     private List<Map<String, Map<String, Map<String, AppPattern>>>> jsonToAppPatternNestedMapList(
-            String type, Object json) {
+            String type, Object json, Application app) {
         List<Map<String, Map<String, Map<String, AppPattern>>>> list = new ArrayList<>();
         AppPattern appPat;
         if (json == null) {
@@ -404,6 +412,10 @@ public class TechsJsonParser {
                     }
                 }
             }
+        } else if (json instanceof JSONArray) {
+            LOGGER.debug(
+                    "Ignoring {} DOM Pattern JSONArray, it will be added as Simple DOM Patterns",
+                    app.getName());
         } else {
             LOGGER.debug(
                     "Unexpected JSON type for {} pattern: {} {}",
