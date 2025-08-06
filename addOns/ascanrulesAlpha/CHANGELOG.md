@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Depends on an updated version of the Common Library add-on.
+- Reduced usage of error level logging.
 
 ### Added
 - Rules (as applicable) have been tagged in relation to HIPAA and PCI DSS.
