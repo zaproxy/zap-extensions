@@ -142,7 +142,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
                     .map(ExtensionWappalyzer::techToResourcePath)
                     .forEach(technologyFiles::add);
         } catch (IOException e) {
-            LOGGER.error("Failed to enumerate Tech Detection technologies:", e);
+            LOGGER.warn("Failed to enumerate Tech Detection technologies:", e);
         }
 
         TechData result =
@@ -383,17 +383,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
         if (!hasView()) {
             return;
         }
-
-        if (EventQueue.isDispatchThread()) {
-            sessionChangedEventHandler(session);
-
-        } else {
-            try {
-                EventQueue.invokeAndWait(() -> sessionChangedEventHandler(session));
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage(), e);
-            }
-        }
+        ThreadUtils.invokeAndWaitHandled(() -> sessionChangedEventHandler(session));
     }
 
     private void recreateSiteTreeMap() {

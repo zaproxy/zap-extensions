@@ -133,7 +133,7 @@ public class InformationDisclosureInUrlScanRule extends PluginPassiveScanner
         List<String> strings = new ArrayList<>();
         File f = new File(Constant.getZapHome() + File.separator + file);
         if (!f.exists()) {
-            LOGGER.error("No such file: {}", f.getAbsolutePath());
+            LOGGER.warn("No such file: {}", f.getAbsolutePath());
             return strings;
         }
 
