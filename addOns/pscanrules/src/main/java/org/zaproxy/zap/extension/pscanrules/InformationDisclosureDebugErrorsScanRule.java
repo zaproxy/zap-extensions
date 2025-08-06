@@ -114,7 +114,7 @@ public class InformationDisclosureDebugErrorsScanRule extends PluginPassiveScann
         BufferedReader reader = null;
         File f = path.toFile();
         if (!f.exists()) {
-            LOGGER.error("No such file: {}", f.getAbsolutePath());
+            LOGGER.warn("No such file: {}", f.getAbsolutePath());
             return strings;
         }
         try {

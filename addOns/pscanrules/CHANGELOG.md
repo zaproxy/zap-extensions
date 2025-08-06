@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Add alert references to HTTP Server Response Header scan rule alerts (Issue 7100, 9050).
 - Update alert references to latest locations to fix 404s and resolve redirections.
+- Reduced usage of error level logging.
 
 ## [66] - 2025-07-25
 ### Added
