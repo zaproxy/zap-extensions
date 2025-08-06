@@ -176,7 +176,7 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin
                         "The URI has no filename component, so there is not much point in looking for corresponding source code!");
             }
         } catch (Exception e) {
-            LOGGER.error(
+            LOGGER.warn(
                     "Error scanning a request for SVN based Source Code Disclosure: {}",
                     e.getMessage(),
                     e);
@@ -674,7 +674,7 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin
                     } catch (Exception e) {
                         // the connection will have been closed already, since we're used a try with
                         // resources
-                        LOGGER.error(
+                        LOGGER.debug(
                                 "Error parsing temporary SVN SQLite database {}",
                                 sqliteConnectionUrl);
                     } finally {

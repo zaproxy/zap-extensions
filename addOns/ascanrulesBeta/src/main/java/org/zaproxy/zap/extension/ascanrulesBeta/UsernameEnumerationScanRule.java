@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 import difflib.Delta;
 import difflib.DiffUtils;
 import difflib.Patch;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -718,10 +719,10 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin
                 }
             } // end of the for loop around the parameter list
 
-        } catch (Exception e) {
+        } catch (IOException e) {
             // Do not try to internationalise this.. we need an error message in any event..
             // if it's in English, it's still better than not having it at all.
-            LOGGER.error("An error occurred checking a url for Username Enumeration issues", e);
+            LOGGER.debug("An error occurred checking a url for Username Enumeration issues", e);
         }
     }
 
