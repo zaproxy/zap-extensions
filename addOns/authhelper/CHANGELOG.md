@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Changed
 - Send the referer header on verification if set on the original request.
 - Removed requirement to set at least one header in the GUI for Header-Based Session Management.
+- Browser based authentication to also support HTTP basic and digest authentication.
 
 ### Fixed
 - Do not fail the authentication on diagnostic errors.

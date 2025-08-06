@@ -7,7 +7,7 @@ configurations.api { extendsFrom(bouncyCastle) }
 
 val brotli by configurations.creating
 val hc by configurations.creating
-configurations.implementation {
+configurations.api {
     extendsFrom(brotli)
     extendsFrom(hc)
 }
