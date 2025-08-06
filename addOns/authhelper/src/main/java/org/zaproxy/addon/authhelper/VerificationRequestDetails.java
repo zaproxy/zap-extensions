@@ -28,6 +28,7 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
+import org.zaproxy.addon.commonlib.http.ComparableResponse;
 import org.zaproxy.zap.authentication.AuthenticationCredentials;
 import org.zaproxy.zap.authentication.UsernamePasswordAuthenticationCredentials;
 import org.zaproxy.zap.extension.users.ExtensionUserManagement;
@@ -95,10 +96,9 @@ public class VerificationRequestDetails {
     }
 
     public boolean isConsistent(VerificationRequestDetails vrd) {
-        return this.getResponseCode() == vrd.getResponseCode()
-                && isStructuredResponse() == vrd.isStructuredResponse()
-                && isContainsUserDetails() == vrd.isContainsUserDetails()
-                && (getResponseSize() / 10) == (vrd.getResponseSize() / 10);
+        ComparableResponse cr1 = new ComparableResponse(this.getMsg(), "");
+        return isContainsUserDetails() == vrd.isContainsUserDetails()
+                && cr1.compareWith(new ComparableResponse(vrd.getMsg(), "")) > 0.8;
     }
 
     public boolean isIdentifiablyDifferent(VerificationRequestDetails vrd) {

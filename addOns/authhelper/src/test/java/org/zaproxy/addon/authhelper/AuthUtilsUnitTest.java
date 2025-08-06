@@ -86,6 +86,7 @@ import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.zap.authentication.AuthenticationMethod;
 import org.zaproxy.zap.authentication.AuthenticationMethod.AuthCheckingStrategy;
+import org.zaproxy.zap.authentication.UsernamePasswordAuthenticationCredentials;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.network.HttpRequestBody;
 import org.zaproxy.zap.network.HttpResponseBody;
@@ -1010,6 +1011,42 @@ class AuthUtilsUnitTest extends TestUtils {
         assertThat(el1.getWaitForMsec(), is(equalTo(5000)));
         assertThat(el2.getWaitForMsec(), is(equalTo(5000)));
         assertThat(el3.getWaitForMsec(), is(equalTo(8000)));
+    }
+
+    @Test
+    void shouldGenerateBasicAuth() throws Exception {
+        // Given
+        HttpMessage msg = new HttpMessage(new URI("https://www.example.com/basic/", true));
+        msg.getResponseHeader().setHeader(HttpHeader.WWW_AUTHENTICATE, "Basic");
+        UsernamePasswordAuthenticationCredentials creds =
+                new UsernamePasswordAuthenticationCredentials("username", "password");
+
+        // When
+        String auth = AuthUtils.getAuthorization(msg, creds);
+
+        // Then
+        assertThat(auth, is(equalTo("Basic dXNlcm5hbWU6cGFzc3dvcmQ=")));
+    }
+
+    @Test
+    void shouldGenerateDigestAuth() throws Exception {
+        HttpMessage msg = new HttpMessage(new URI("https://www.example.com/digest/", true));
+        msg.getResponseHeader()
+                .setHeader(
+                        HttpHeader.WWW_AUTHENTICATE,
+                        "Digest realm=\"test\", domain=\"/HTTP/Digest\", nonce=\"e561a741e25a463317199abe129bb096\"");
+        UsernamePasswordAuthenticationCredentials creds =
+                new UsernamePasswordAuthenticationCredentials("username", "password");
+
+        // When
+        String auth = AuthUtils.getAuthorization(msg, creds);
+
+        // Then
+        assertThat(
+                auth,
+                is(
+                        equalTo(
+                                "Digest username=\"username\", realm=\"test\", nonce=\"e561a741e25a463317199abe129bb096\", uri=\"/digest/\", response=\"d7aaee78d91c0e29bca8a57fa26f1ea9\", algorithm=MD5")));
     }
 
     static class BrowserTest extends TestUtils {
