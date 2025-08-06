@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - The Web Cache Deception scan rule now includes example alert functionality for documentation generation purposes (Issue 6119).
 - Depends on an updated version of the Common Library add-on.
+- Reduced usage of error level logging.
 
 ## [52] - 2025-10-07
 ### Added

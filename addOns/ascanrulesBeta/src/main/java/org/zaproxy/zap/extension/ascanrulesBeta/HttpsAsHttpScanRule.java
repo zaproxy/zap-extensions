@@ -142,7 +142,7 @@ public class HttpsAsHttpScanRule extends AbstractAppPlugin implements CommonActi
             newRequest.getRequestHeader().setSecure(false); // https becomes http
             LOGGER.debug("**{} ", newRequest.getRequestHeader().getURI());
         } catch (URIException e) {
-            LOGGER.error("Error creating HTTP URL from HTTPS URL:", e);
+            LOGGER.debug("Error creating HTTP URL from HTTPS URL:", e);
             return;
         }
 
@@ -155,7 +155,7 @@ public class HttpsAsHttpScanRule extends AbstractAppPlugin implements CommonActi
         try {
             sendAndReceive(newRequest, false);
         } catch (IOException e) {
-            LOGGER.error("Error scanning a request via HTTP when the original was HTTPS:", e);
+            LOGGER.debug("Error scanning a request via HTTP when the original was HTTPS:", e);
             return;
         }
 

@@ -226,7 +226,7 @@ public class HttpOnlySiteScanRule extends AbstractHostPlugin implements CommonAc
             }
             return;
         } catch (IOException e) {
-            LOGGER.error("Request couldn't go through:", e);
+            LOGGER.debug("Request couldn't go through:", e);
             return;
         }
     }

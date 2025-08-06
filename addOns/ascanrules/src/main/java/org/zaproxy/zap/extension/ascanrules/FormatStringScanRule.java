@@ -272,7 +272,7 @@ public class FormatStringScanRule extends AbstractAppParamPlugin
         } catch (URIException e) {
             LOGGER.debug("Failed to send HTTP message, cause: {}", e.getMessage());
         } catch (IOException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.debug(e.getMessage(), e);
         }
     }
 
