@@ -22,11 +22,14 @@ package org.zaproxy.addon.authhelper;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
@@ -35,6 +38,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.Cookie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -55,6 +59,7 @@ import org.zaproxy.zap.extension.script.ScriptVars;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.network.HttpRequestBody;
 import org.zaproxy.zap.network.HttpResponseBody;
+import org.zaproxy.zap.session.SessionManagementMethod;
 import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.Pair;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
@@ -388,5 +393,85 @@ class HeaderBasedSessionManagementMethodTypeUnitTest extends TestUtils {
         Pair<String, String> header = headers.get(0);
         assertThat(header.first, is(equalTo(expectedFirst)));
         assertThat(header.second, is(equalTo(expectedSecond)));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {"'',0", "Header1:Value1,1", "Header:, 1"})
+    void shouldSetHeaderConfigsFromApi(String headers, int expectedSize) throws ApiException {
+        // Given
+        HeaderBasedSessionManagementMethodType type = new HeaderBasedSessionManagementMethodType();
+        Context context = mock(Context.class);
+        JSONObject params = new JSONObject();
+        params.put("contextId", 1);
+        params.put("headers", headers);
+
+        Model model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
+        Model.setSingletonForTesting(model);
+        Session session = mock(Session.class);
+        given(model.getSession()).willReturn(session);
+        given(session.getContext(1)).willReturn(context);
+
+        // When
+        type.getSetMethodForContextApiAction().handleAction(params);
+
+        // Then
+        ArgumentCaptor<SessionManagementMethod> captor =
+                ArgumentCaptor.forClass(SessionManagementMethod.class);
+        verify(context).setSessionManagementMethod(captor.capture());
+        HeaderBasedSessionManagementMethod savedMethod =
+                (HeaderBasedSessionManagementMethod) captor.getValue();
+        assertThat(savedMethod.getHeaderConfigs(), hasSize(expectedSize));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {"'   \\t\\n '", "Header"})
+    void shouldRejectInvalidHeaderConfigsFromApi(String headers) {
+        // Given
+        HeaderBasedSessionManagementMethodType type = new HeaderBasedSessionManagementMethodType();
+        Context context = mock(Context.class);
+        JSONObject params = new JSONObject();
+        params.put("contextId", 1);
+        params.put("headers", headers);
+
+        Model model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
+        Model.setSingletonForTesting(model);
+        Session session = mock(Session.class);
+        given(model.getSession()).willReturn(session);
+        given(session.getContext(1)).willReturn(context);
+
+        // When / Then
+        ApiException e =
+                assertThrows(
+                        ApiException.class,
+                        () -> type.getSetMethodForContextApiAction().handleAction(params));
+
+        assertThat(e.getType(), is(equalTo(ApiException.Type.ILLEGAL_PARAMETER)));
+        assertThat(e.getMessage(), is(containsString("headers")));
+    }
+
+    @Test
+    void shouldSetHeaderConfigsFromApiWhenParamMissing() throws ApiException {
+        // Given
+        HeaderBasedSessionManagementMethodType type = new HeaderBasedSessionManagementMethodType();
+        Context context = mock(Context.class);
+        JSONObject params = new JSONObject();
+        params.put("contextId", 1);
+
+        Model model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
+        Model.setSingletonForTesting(model);
+        Session session = mock(Session.class);
+        given(model.getSession()).willReturn(session);
+        given(session.getContext(1)).willReturn(context);
+
+        // When
+        type.getSetMethodForContextApiAction().handleAction(params);
+
+        // Then
+        ArgumentCaptor<SessionManagementMethod> captor =
+                ArgumentCaptor.forClass(SessionManagementMethod.class);
+        verify(context).setSessionManagementMethod(captor.capture());
+        HeaderBasedSessionManagementMethod savedMethod =
+                (HeaderBasedSessionManagementMethod) captor.getValue();
+        assertThat(savedMethod.getHeaderConfigs(), hasSize(0));
     }
 }
