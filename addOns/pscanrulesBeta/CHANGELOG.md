@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Update alert references to latest locations to fix 404s and resolve redirections.
+- Reduced usage of error level logging.
 
 ## [45] - 2025-09-10
 ### Changed
