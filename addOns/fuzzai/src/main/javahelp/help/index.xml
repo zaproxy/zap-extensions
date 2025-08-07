@@ -5,4 +5,7 @@
 
 <index version="2.0">
     <indexitem text="fuzzai" target="addon.fuzzai" />
+	<indexitem text="Extract Model Information" target="addon.fuzzai.ex-mod-info"/>
+	<indexitem text="Extract Training Data" target="addon.fuzzai.ex-train-data"/>
+	<indexitem text="Test Edge Cases" target="addon.fuzzai.test-edge"/>
 </index>
