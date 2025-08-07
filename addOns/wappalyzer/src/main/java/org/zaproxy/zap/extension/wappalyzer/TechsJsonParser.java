@@ -64,8 +64,8 @@ public class TechsJsonParser {
 
     public TechsJsonParser() {
         this(
-                (pattern, e) -> LOGGER.error("Invalid pattern syntax {}", pattern, e),
-                e -> LOGGER.error(e.getMessage(), e));
+                (pattern, e) -> LOGGER.warn("Invalid pattern syntax {}", pattern, e),
+                e -> LOGGER.warn(e.getMessage(), e));
     }
 
     TechsJsonParser(PatternErrorHandler peh, ParsingExceptionHandler parsingExceptionHandler) {
@@ -295,7 +295,7 @@ public class TechsJsonParser {
                 if (category != null) {
                     list.add(category);
                 } else {
-                    LOGGER.error("Failed to find category for {}", obj);
+                    LOGGER.warn("Failed to find category for {}", obj);
                 }
             }
         }
@@ -325,7 +325,7 @@ public class TechsJsonParser {
                 }
             }
         } else if (json != null) {
-            LOGGER.error(
+            LOGGER.warn(
                     "Unexpected JSON type for {} pattern: {} {}",
                     type,
                     json,
@@ -468,10 +468,10 @@ public class TechsJsonParser {
                 } else if (values[i].startsWith(FIELD_VERSION)) {
                     ap.setVersion(values[i].substring(FIELD_VERSION.length()));
                 } else {
-                    LOGGER.error("Unexpected field: {}", values[i]);
+                    LOGGER.warn("Unexpected field: {}", values[i]);
                 }
             } catch (Exception e) {
-                LOGGER.error("Invalid field syntax {}", values[i], e);
+                LOGGER.warn("Invalid field syntax {}", values[i], e);
             }
         }
         if (pattern.indexOf(FIELD_CONFIDENCE) > -1) {
@@ -491,7 +491,7 @@ public class TechsJsonParser {
             }
             return Integer.parseInt(confidence);
         } catch (NumberFormatException nfe) {
-            LOGGER.error("Invalid field value: {}", confidence);
+            LOGGER.debug("Invalid field value: {}", confidence);
             return 0;
         }
     }
