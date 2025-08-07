@@ -156,7 +156,7 @@ public class Log4ShellScanRule extends AbstractAppParamPlugin implements CommonA
             scanWithPayloads(param, ATTACK_PATTERNS_CVE44228, PREFIX_CVE44228);
             scanWithPayloads(param, ATTACK_PATTERNS_CVE45046, PREFIX_CVE45046);
         } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.warn(e.getMessage(), e);
         }
     }
 
