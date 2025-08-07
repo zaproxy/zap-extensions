@@ -6,7 +6,11 @@
 <toc version="2.0">
     <tocitem text="ZAP User Guide" tocid="toplevelitem">
         <tocitem text="Add Ons" tocid="addons">
-            <tocitem text="FuzzAI Files" image="addon.fuzzai.fuzzai-icon" target="addon.fuzzai"/>
+            <tocitem text="FuzzAI Files" image="addon.fuzzai.fuzzai-icon" target="addon.fuzzai">
+				<tocitem text="Extract Model Information" target="addon.fuzzai.ex-mod-info"/>
+				<tocitem text="Extract Training Data" target="addon.fuzzai.ex-train-data"/>
+				<tocitem text="Test Edge Cases" target="addon.fuzzai.test-edge"/>
+			</tocitem>
         </tocitem>
     </tocitem>
 </toc>
