@@ -23,6 +23,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
@@ -125,6 +126,23 @@ class BrowserBasedAuthenticationMethodTypeUnitTest {
         assertThat(method2.getLoginPageWait(), is(equalTo(7)));
         assertThat(method2.getStepDelay(), is(equalTo(3)));
         assertThat(method2.getBrowserId(), is(equalTo("example")));
+    }
+
+    @Test
+    void shouldLoadContextExportV0() {
+        // Given
+        String loginUrl = "https://www.example.com";
+        BrowserBasedAuthenticationMethodType type = new BrowserBasedAuthenticationMethodType();
+        BrowserBasedAuthenticationMethod method1 = type.createAuthenticationMethod(0);
+        ZapXmlConfiguration config = new ZapXmlConfiguration();
+        config.setProperty("context.authentication.browser.loginpageurl", loginUrl);
+        config.setProperty("context.authentication.browser.loginpagewait", 2);
+        // When
+        assertDoesNotThrow(() -> method1.getType().importData(config, method1));
+        // Then
+        assertThat(method1.getLoginPageUrl(), is(equalTo(loginUrl)));
+        assertThat(method1.getLoginPageWait(), is(equalTo(2)));
+        assertThat(method1.getStepDelay(), is(equalTo(0)));
     }
 
     @Test
