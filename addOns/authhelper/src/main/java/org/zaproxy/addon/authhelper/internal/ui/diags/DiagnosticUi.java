@@ -17,34 +17,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.authhelper.internal.db;
+package org.zaproxy.addon.authhelper.internal.ui.diags;
 
-import java.time.Instant;
-import javax.jdo.annotations.Cacheable;
-import javax.jdo.annotations.Column;
-import javax.jdo.annotations.IdGeneratorStrategy;
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.PrimaryKey;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import org.zaproxy.addon.authhelper.internal.db.Diagnostic;
 
 @Data
-@NoArgsConstructor
-@Cacheable("false")
-@PersistenceCapable(table = "AUTHHELPER_DIAGNOSTIC_MESSAGE", detachable = "true")
-public class DiagnosticMessage {
+public class DiagnosticUi {
 
-    private Instant createTimestamp;
+    private String createTimestamp;
 
-    @PrimaryKey
-    @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
     private int id;
 
-    @Column(name = "STEPID", allowsNull = "false")
-    private DiagnosticStep step;
+    private String authenticationMethod;
 
-    private int messageId;
+    private String context;
+    private String user;
 
-    private int initiator;
+    private String script;
+
+    private int steps;
+
+    DiagnosticUi(Diagnostic diagnostic) {
+        createTimestamp = diagnostic.getCreateTimestamp().toString();
+        id = diagnostic.getId();
+        authenticationMethod = diagnostic.getAuthenticationMethod();
+        context = diagnostic.getContext();
+        user = diagnostic.getUser();
+        script = diagnostic.getScript();
+        steps = diagnostic.getSteps().size();
+    }
 }
