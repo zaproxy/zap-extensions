@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.commons.httpclient.util.HttpURLConnection;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -170,9 +171,13 @@ public class LlmCommunicationService {
             LOGGER.debug("Reviewing alert : {}", alert.getName());
             LOGGER.debug("Confidence level from ZAP : {}", alert.getConfidence());
             Stats.incCounter("stats.llm.alertreview.call");
-            llmConfidence =
-                    llmAssistant.review(
-                            alert.getDescription(), alert.getEvidence(), alert.getOtherInfo());
+            if (StringUtils.isBlank(alert.getOtherInfo())) {
+                llmConfidence = llmAssistant.review(alert.getDescription(), alert.getEvidence());
+            } else {
+                llmConfidence =
+                        llmAssistant.review(
+                                alert.getDescription(), alert.getEvidence(), alert.getOtherInfo());
+            }
 
             if (llmConfidence.getLevel() == alert.getConfidence()) {
                 Stats.incCounter("stats.llm.alertreview.result.same");
@@ -209,7 +214,7 @@ public class LlmCommunicationService {
     }
 
     private static boolean isPreviouslyReviewed(Alert alert) {
-        return !alert.getTags().containsKey(AI_REVIEWED_TAG_KEY);
+        return alert.getTags().containsKey(AI_REVIEWED_TAG_KEY);
     }
 
     private static String getUpdatedOtherInfo(Alert alert, Confidence llmConfidence) {

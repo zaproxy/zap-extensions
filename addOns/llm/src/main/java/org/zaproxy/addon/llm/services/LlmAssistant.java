@@ -34,26 +34,40 @@ public interface LlmAssistant {
             "As a software architect, and based on your previous answer, generate other potential missing endpoints that are not mentioned in the OpenAPI file. For example, if there is GET /product/1, suggest DELETE /product/1 if it's not mentioned")
     HttpRequestList complete();
 
-    @SystemMessage(
-            "You are a web application security expert reviewing potential false positives. Answer only in JSON.")
-    @UserMessage(
-            "Your task is to review the following finding from ZAP (Zed Attack Proxy).\n"
-                    + "The confidence level is a pull down field which allows you to specify how confident you are in the validity of the finding : \n"
-                    + "- 0 if it's False Positive\n"
-                    + "- 1 if it's Low\n"
-                    + "- 2 if it's Medium\n"
-                    + "- 3 if it's High\n"
-                    + "\n"
-                    + "The alert is described as follows : {{description}}\n"
-                    + "\n"
-                    + "As evidence, the HTTP response contains :\n"
-                    + "---\n"
-                    + "{{evidence}}\n"
-                    + "---\n"
-                    + "Also, here's some additional information that may be useful for you to reach your conclusion"
-                    + "---\n"
-                    + "{{otherinfo}}"
-                    + "Provide a short consistent explanation of the new score.\n")
+    static final String PRIMARY_SYSTEM_MSG =
+            "You are a web application security expert reviewing potential false positives. Answer only in JSON.";
+    static final String PRIMARY_PROMPT =
+            """
+            Your task is to review the following finding from ZAP (Zed Attack Proxy).
+            The confidence level is a pull down field which allows you to specify how confident you are in the validity of the finding:
+            - 0 if it's False Positive
+            - 1 if it's Low
+            - 2 if it's Medium
+            - 3 if it's High
+
+            The alert is described as follows : {{description}}
+
+            As evidence, the HTTP response contains:
+            ---
+            {{evidence}}
+            ---
+            """;
+
+    static final String PRIMARY_GOAL = "Provide a short consistent explanation of the new score.\n";
+    static final String PRIMARY_PROMPT_WITH_OTHERINFO =
+            PRIMARY_PROMPT
+                    + """
+                    Also, here's some additional information that may be useful for you to reach your conclusion:
+                    ---
+                    {{otherinfo}}
+                    """;
+
+    @SystemMessage(PRIMARY_SYSTEM_MSG)
+    @UserMessage(PRIMARY_PROMPT + PRIMARY_GOAL)
+    Confidence review(@V("description") String description, @V("evidence") String evidence);
+
+    @SystemMessage(PRIMARY_SYSTEM_MSG)
+    @UserMessage(PRIMARY_PROMPT_WITH_OTHERINFO + PRIMARY_GOAL)
     Confidence review(
             @V("description") String description,
             @V("evidence") String evidence,
