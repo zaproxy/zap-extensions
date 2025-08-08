@@ -19,9 +19,11 @@
  */
 package org.zaproxy.addon.automation.gui;
 
+import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JButton;
+import javax.swing.JTextField;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.zaproxy.addon.automation.jobs.ActiveScanJob;
@@ -45,6 +47,7 @@ public class ActiveScanJobDialog extends ActiveScanPolicyDialog {
     private static final String TITLE = "automation.dialog.ascan.title";
     private static final String NAME_PARAM = "automation.dialog.all.name";
     private static final String CONTEXT_PARAM = "automation.dialog.ascan.context";
+    private static final String URL_PARAM = "automation.dialog.ascan.url";
     private static final String USER_PARAM = "automation.dialog.all.user";
     private static final String POLICY_PARAM = "automation.dialog.ascan.policy";
     private static final String MAX_RULE_DURATION_PARAM = "automation.dialog.ascan.maxruleduration";
@@ -76,6 +79,13 @@ public class ActiveScanJobDialog extends ActiveScanPolicyDialog {
         // Add blank option
         users.add(0, "");
         this.addComboField(0, USER_PARAM, users, this.job.getData().getParameters().getUser());
+
+        // Cannot select the node as it might not be present in the Sites tree
+        this.addNodeSelectField(0, URL_PARAM, null, true, false);
+        Component urlField = this.getField(URL_PARAM);
+        if (urlField instanceof JTextField) {
+            ((JTextField) urlField).setText(this.job.getParameters().getUrl());
+        }
 
         this.addTextField(0, POLICY_PARAM, this.job.getParameters().getPolicy());
         this.addNumberField(
@@ -195,6 +205,7 @@ public class ActiveScanJobDialog extends ActiveScanPolicyDialog {
         this.job.getData().setName(this.getStringValue(NAME_PARAM));
         this.job.getParameters().setContext(this.getStringValue(CONTEXT_PARAM));
         this.job.getParameters().setUser(this.getStringValue(USER_PARAM));
+        this.job.getParameters().setUrl(this.getStringValue(URL_PARAM));
         this.job.getParameters().setPolicy(this.getStringValue(POLICY_PARAM));
         this.job
                 .getParameters()
