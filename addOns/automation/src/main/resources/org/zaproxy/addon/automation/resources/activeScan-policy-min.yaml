@@ -9,3 +9,8 @@
         name:                          # Comment: The name of the rule for documentation purposes - this is not required or actually used
         strength:                      # String: The Attack Strength for this rule, one of Low, Medium, High, Insane, default: Medium
         threshold:                     # String: The Alert Threshold for this rule, one of Off, Low, Medium, High, default: Medium
+      alertTags:                       # Add rules by alert tags; overrides default settings but not rules explicitly listed under "rules"
+        include: []                    # List of alert tags to include, regex supported
+        exclude: []                    # List of alert tags to exclude from the include list, regex supported
+        strength:                      # String: The Attack Strength for this set of rules, one of Low, Medium, High, Insane, default: Medium
+        threshold:                     # String: The Alert Threshold for this set of rules, one of Off, Low, Medium, High, default: Medium
