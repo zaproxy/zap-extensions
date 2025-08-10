@@ -53,6 +53,7 @@ import org.parosproxy.paros.core.scanner.PluginTestHelper;
 import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.automation.AutomationPlan;
 import org.zaproxy.addon.automation.AutomationProgress;
+import org.zaproxy.addon.automation.jobs.PolicyDefinition.AlertTagRuleConfig;
 import org.zaproxy.addon.automation.jobs.PolicyDefinition.Rule;
 import org.zaproxy.zap.extension.ascan.ScanPolicy;
 import org.zaproxy.zap.utils.I18N;
@@ -367,5 +368,187 @@ class PolicyDefinitionUnitTest {
         String ruleYaml = AutomationPlan.writeObjectAsString(rule);
         // Then
         assertThat(ruleYaml, containsString("id: " + id));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"TEST_TAG", "TEST_.*"})
+    void shouldAddRuleUsingAlertTags(String tagPattern) {
+        // Given
+        String yamlStr =
+                String.format(
+                        """
+                defaultStrength: low
+                defaultThreshold: 'off'
+                alertTags:
+                  include:
+                    - %s
+                  exclude: []
+                  strength: insane
+                  threshold: high
+                """,
+                        tagPattern);
+        AutomationProgress progress = new AutomationProgress();
+        Yaml yaml = new Yaml();
+        Object data = yaml.load(yamlStr);
+
+        // When
+        policyDefinition.parsePolicyDefinition(data, "test", progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(policyDefinition.getDefaultStrength(), is(equalTo("low")));
+        assertThat(policyDefinition.getDefaultThreshold(), is(equalTo("off")));
+        List<Rule> rules = policyDefinition.getEffectiveRules();
+        assertThat(rules.size(), is(equalTo(1)));
+        assertThat(rules.get(0).getId(), is(equalTo(50000)));
+        assertThat(rules.get(0).getName(), is(equalTo("PluginTestHelper")));
+        assertThat(rules.get(0).getStrength(), is(equalTo("insane")));
+        assertThat(rules.get(0).getThreshold(), is(equalTo("high")));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"TEST_TAG", "TEST_.*"})
+    void shouldExcludeIncludedRulesUsingAlertTags(String tagPattern) {
+        // Given
+        String yamlStr =
+                String.format(
+                        """
+                defaultStrength: low
+                defaultThreshold: medium
+                alertTags:
+                  include:
+                  - .*
+                  exclude:
+                  - %s
+                """,
+                        tagPattern);
+        AutomationProgress progress = new AutomationProgress();
+        Yaml yaml = new Yaml();
+        Object data = yaml.load(yamlStr);
+
+        // When
+        policyDefinition.parsePolicyDefinition(data, "test", progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(policyDefinition.getEffectiveRules().isEmpty(), is(equalTo(true)));
+    }
+
+    @Test
+    void shouldNotAddSameRuleTwice() {
+        // Given
+        String yamlStr =
+                """
+                defaultStrength: low
+                defaultThreshold: 'off'
+                rules:
+                - id: 50000
+                  name: rule1
+                  strength: insane
+                  threshold: high
+                alertTags:
+                  include:
+                    - TEST_TAG
+                  exclude: []
+                  strength: low
+                  threshold: medium
+                """;
+        AutomationProgress progress = new AutomationProgress();
+        Yaml yaml = new Yaml();
+        Object data = yaml.load(yamlStr);
+
+        // When
+        policyDefinition.parsePolicyDefinition(data, "test", progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        List<Rule> rules = policyDefinition.getEffectiveRules();
+        assertThat(rules.size(), is(equalTo(1)));
+        assertThat(rules.get(0).getId(), is(equalTo(50000)));
+        assertThat(rules.get(0).getName(), is(equalTo("PluginTestHelper")));
+        assertThat(rules.get(0).getStrength(), is(equalTo("insane")));
+        assertThat(rules.get(0).getThreshold(), is(equalTo("high")));
+    }
+
+    @Test
+    void shouldLoadPlansWithNullAlertTagFields() {
+        // Given
+        String yamlStr =
+                """
+                defaultStrength: low
+                defaultThreshold: medium
+                alertTags:
+                  include: null
+                  exclude: null
+                  strength: null
+                  threshold: null
+                """;
+        AutomationProgress progress = new AutomationProgress();
+        Yaml yaml = new Yaml();
+        Object data = yaml.load(yamlStr);
+
+        // When
+        policyDefinition.parsePolicyDefinition(data, "test", progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(policyDefinition.getAlertTagRule(), is(equalTo(new AlertTagRuleConfig())));
+    }
+
+    @Test
+    void shouldHandleInvalidThresholdValue() {
+        // Given
+        String yamlStr =
+                """
+                defaultStrength: low
+                defaultThreshold: 'off'
+                alertTags:
+                  include:
+                    - TEST_TAG
+                  exclude: []
+                  strength: medium
+                  threshold: invalidThreshold
+                """;
+        AutomationProgress progress = new AutomationProgress();
+        Yaml yaml = new Yaml();
+        Object data = yaml.load(yamlStr);
+
+        // When
+        policyDefinition.parsePolicyDefinition(data, "test", progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(true)));
+        assertThat(
+                progress.getWarnings().get(0), is(equalTo("!automation.error.ascan.threshold!")));
+    }
+
+    @Test
+    void shouldHandleInvalidStrengthValue() {
+        // Given
+        String yamlStr =
+                """
+                defaultStrength: low
+                defaultThreshold: 'off'
+                alertTags:
+                  include:
+                    - TEST_TAG
+                  exclude: []
+                  strength: invalidStrength
+                  threshold: medium
+                """;
+        AutomationProgress progress = new AutomationProgress();
+        Yaml yaml = new Yaml();
+        Object data = yaml.load(yamlStr);
+
+        // When
+        policyDefinition.parsePolicyDefinition(data, "test", progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(true)));
+        assertThat(progress.getWarnings().get(0), is(equalTo("!automation.error.ascan.strength!")));
     }
 }

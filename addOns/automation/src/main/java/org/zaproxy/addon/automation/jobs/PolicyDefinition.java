@@ -19,12 +19,23 @@
  */
 package org.zaproxy.addon.automation.jobs;
 
+import static java.util.function.Predicate.not;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Pattern;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Plugin;
@@ -41,11 +52,15 @@ public class PolicyDefinition extends AutomationData {
 
     private static final String DEFAULT_STRENGTH_KEY = "defaultStrength";
     private static final String DEFAULT_THRESHOLD_KEY = "defaultThreshold";
-
+    private static final String ALERT_TAGS_KEY = "alertTags";
     protected static final String RULES_ELEMENT_NAME = "rules";
 
     private String defaultStrength = JobUtils.strengthToI18n(AttackStrength.MEDIUM.name());
     private String defaultThreshold = JobUtils.thresholdToI18n(AlertThreshold.MEDIUM.name());
+
+    @JsonProperty(ALERT_TAGS_KEY)
+    private AlertTagRuleConfig alertTagRule = new AlertTagRuleConfig();
+
     private List<Rule> rules = new ArrayList<>();
 
     public void parsePolicyDefinition(
@@ -72,7 +87,9 @@ public class PolicyDefinition extends AutomationData {
                     policyDefnData,
                     this,
                     jobName,
-                    new String[] {PolicyDefinition.RULES_ELEMENT_NAME},
+                    new String[] {
+                        PolicyDefinition.RULES_ELEMENT_NAME, PolicyDefinition.ALERT_TAGS_KEY
+                    },
                     progress);
 
             this.rules = new ArrayList<>();
@@ -94,18 +111,7 @@ public class PolicyDefinition extends AutomationData {
                             AlertThreshold threshold =
                                     JobUtils.parseAlertThreshold(
                                             ruleMap.get("threshold"), jobName, progress);
-
-                            Rule rule = new Rule();
-                            rule.setId(id);
-                            rule.setName(plugin.getName());
-                            if (threshold != null) {
-                                rule.setThreshold(threshold.name().toLowerCase());
-                            }
-                            if (strength != null) {
-                                rule.setStrength(strength.name().toLowerCase());
-                            }
-                            this.rules.add(rule);
-
+                            this.rules.add(buildRule(plugin, strength, threshold));
                         } else {
                             progress.warn(
                                     Constant.messages.getString(
@@ -123,6 +129,59 @@ public class PolicyDefinition extends AutomationData {
                                 RULES_ELEMENT_NAME,
                                 o));
             }
+
+            if (policyDefnData.containsKey(ALERT_TAGS_KEY)
+                    && policyDefnData.get(ALERT_TAGS_KEY)
+                            instanceof LinkedHashMap<?, ?> alertTagsData) {
+                this.alertTagRule = new AlertTagRuleConfig();
+                if (alertTagsData.get("include") != null) {
+                    alertTagRule.setIncludePatterns(
+                            JobUtils.verifyRegexes(
+                                            alertTagsData.get("include"),
+                                            getAlertTagsKey(jobName, "include"),
+                                            progress)
+                                    .stream()
+                                    .map(Pattern::compile)
+                                    .toList());
+                }
+                if (alertTagsData.get("exclude") != null) {
+                    alertTagRule.setExcludePatterns(
+                            JobUtils.verifyRegexes(
+                                            alertTagsData.get("exclude"),
+                                            getAlertTagsKey(jobName, "exclude"),
+                                            progress)
+                                    .stream()
+                                    .map(Pattern::compile)
+                                    .toList());
+                }
+                if (alertTagsData.get("strength") != null) {
+                    AttackStrength strength =
+                            JobUtils.parseAttackStrength(
+                                    alertTagsData.get("strength"),
+                                    getAlertTagsKey(jobName, "strength"),
+                                    progress);
+                    if (strength != null) {
+                        alertTagRule.setStrength(strength);
+                    }
+                }
+                if (alertTagsData.get("threshold") != null) {
+                    AlertThreshold threshold =
+                            JobUtils.parseAlertThreshold(
+                                    alertTagsData.get("threshold"),
+                                    getAlertTagsKey(jobName, "threshold"),
+                                    progress);
+                    if (threshold != null) {
+                        alertTagRule.setThreshold(threshold);
+                    }
+                }
+            } else if (policyDefnData.containsKey(ALERT_TAGS_KEY)) {
+                progress.warn(
+                        Constant.messages.getString(
+                                "automation.error.options.badtype",
+                                jobName,
+                                ALERT_TAGS_KEY,
+                                policyDefnData.get(ALERT_TAGS_KEY).getClass().getCanonicalName()));
+            }
         } else if (policyDefnObj != null) {
             progress.warn(
                     Constant.messages.getString(
@@ -131,6 +190,76 @@ public class PolicyDefinition extends AutomationData {
                             "policyDefinition",
                             policyDefnObj));
         }
+    }
+
+    List<Rule> getEffectiveRules() {
+        return computeEffectiveRules(this.alertTagRule, this.rules);
+    }
+
+    public static List<Rule> computeEffectiveRules(
+            AlertTagRuleConfig alertTagRule, List<Rule> rules) {
+        if (alertTagRule == null
+                || (alertTagRule.getIncludePatterns().isEmpty()
+                        && alertTagRule.getExcludePatterns().isEmpty())) {
+            return rules;
+        }
+        Map<Integer, Rule> effectiveRulesMap =
+                rules.stream()
+                        .collect(
+                                LinkedHashMap::new,
+                                (map, rule) -> map.put(rule.getId(), rule),
+                                LinkedHashMap::putAll);
+        List<Plugin> allRules = new ScanPolicy().getPluginFactory().getAllPlugin();
+        allRules.stream()
+                .filter(plugin -> plugin.getAlertTags() != null)
+                .filter(
+                        not(
+                                plugin ->
+                                        anyStringMatchesAnyPattern(
+                                                plugin.getAlertTags().keySet(),
+                                                alertTagRule.getExcludePatterns())))
+                .filter(
+                        plugin ->
+                                anyStringMatchesAnyPattern(
+                                        plugin.getAlertTags().keySet(),
+                                        alertTagRule.getIncludePatterns()))
+                .forEach(
+                        plugin ->
+                                effectiveRulesMap.computeIfAbsent(
+                                        plugin.getId(),
+                                        id ->
+                                                buildRule(
+                                                        plugin,
+                                                        alertTagRule.getStrength(),
+                                                        alertTagRule.getThreshold())));
+        return List.copyOf(effectiveRulesMap.values());
+    }
+
+    private static Rule buildRule(
+            Plugin plugin, AttackStrength strength, AlertThreshold threshold) {
+        Rule rule = new Rule();
+        rule.setId(plugin.getId());
+        rule.setName(plugin.getName());
+        if (strength != null) {
+            rule.setStrength(strength.name().toLowerCase(Locale.ROOT));
+        }
+        if (threshold != null) {
+            rule.setThreshold(threshold.name().toLowerCase(Locale.ROOT));
+        }
+        return rule;
+    }
+
+    private static boolean anyStringMatchesAnyPattern(
+            Collection<String> strings, List<Pattern> patterns) {
+        if (strings == null || strings.isEmpty() || patterns == null || patterns.isEmpty()) {
+            return false;
+        }
+        return strings.stream()
+                .anyMatch(key -> patterns.stream().anyMatch(p -> p.matcher(key).matches()));
+    }
+
+    private static String getAlertTagsKey(String jobName, String field) {
+        return MessageFormat.format("{0}.policyDefinition.alertTags.{1}", jobName, field);
     }
 
     private static void checkAndSetDefault(
@@ -188,7 +317,7 @@ public class PolicyDefinition extends AutomationData {
         }
 
         // Configure any rules
-        for (Rule rule : getRules()) {
+        for (Rule rule : getEffectiveRules()) {
             Plugin plugin = pluginFactory.getPlugin(rule.getId());
             if (plugin == null) {
                 // Will have already warned about this
@@ -251,6 +380,32 @@ public class PolicyDefinition extends AutomationData {
 
         public Rule copy() {
             return new Rule(id, name, threshold, strength);
+        }
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @EqualsAndHashCode(callSuper = false)
+    public static class AlertTagRuleConfig extends AutomationData {
+        @JsonProperty("include")
+        @NonNull
+        private List<Pattern> includePatterns = List.of();
+
+        @JsonProperty("exclude")
+        @NonNull
+        private List<Pattern> excludePatterns = List.of();
+
+        @NonNull private AttackStrength strength = AttackStrength.MEDIUM;
+        @NonNull private AlertThreshold threshold = AlertThreshold.MEDIUM;
+
+        public AlertTagRuleConfig copy() {
+            return new AlertTagRuleConfig(
+                    List.copyOf(includePatterns),
+                    List.copyOf(excludePatterns),
+                    strength,
+                    threshold);
         }
     }
 }
