@@ -27,10 +27,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.authhelper.VerificationRequestDetails.VerificationComparator;
 import org.zaproxy.addon.commonlib.AuthConstants;
+import org.zaproxy.addon.network.NetworkUtils;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.model.Context;
 
@@ -67,10 +69,33 @@ public class VerificationDetectionScanRule extends PluginPassiveScanner {
 
         Set<SessionToken> sessionTokens = AuthUtils.getRequestSessionTokens(msg);
         if (sessionTokens.isEmpty()) {
+            if (NetworkUtils.isHttpBasicAuth(msg) || NetworkUtils.isHttpDigestAuth(msg)) {
+                List<Context> contextList = AuthUtils.getRelatedContexts(msg);
+
+                for (Context context : contextList) {
+                    VerificationRequestDetails currentVerifDetails =
+                            AuthUtils.getVerificationDetailsForContext(context.getId());
+                    VerificationRequestDetails newVerifDetails =
+                            new VerificationRequestDetails(
+                                    msg,
+                                    msg.getRequestHeader().getHeader(HttpHeader.AUTHORIZATION),
+                                    context);
+                    if (currentVerifDetails != null
+                            && newVerifDetails.getScore() > 0
+                            && COMPARATOR.compare(newVerifDetails, currentVerifDetails) > 0) {
+                        // We've potentially found a better verification request
+                        LOGGER.debug(
+                                "Identified potentially better verification req {} for context {}",
+                                msg.getRequestHeader().getURI(),
+                                context.getName());
+                        AuthUtils.processVerificationDetails(context, newVerifDetails, this);
+                    }
+                }
+            }
+
             return;
         }
         // We have at least one session token, so it might be of interest
-
         for (SessionToken st : sessionTokens) {
             String token = st.getValue();
 

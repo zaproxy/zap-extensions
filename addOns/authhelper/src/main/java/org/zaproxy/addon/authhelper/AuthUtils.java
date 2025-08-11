@@ -60,9 +60,11 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchShadowRootException;
 import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.UsernameAndPassword;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.Extension;
@@ -71,10 +73,12 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
+import org.parosproxy.paros.network.HttpStatusCode;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType.BrowserBasedAuthenticationMethod;
 import org.zaproxy.addon.authhelper.internal.AuthenticationStep;
 import org.zaproxy.addon.commonlib.ResourceIdentificationUtils;
+import org.zaproxy.addon.network.NetworkUtils;
 import org.zaproxy.zap.authentication.AuthenticationCredentials;
 import org.zaproxy.zap.authentication.AuthenticationMethod;
 import org.zaproxy.zap.authentication.AuthenticationMethod.AuthCheckingStrategy;
@@ -104,6 +108,18 @@ public class AuthUtils {
     public static final String AUTH_SESSION_TOKENS_MAX = "stats.auth.sessiontokens.max";
     public static final String AUTH_BROWSER_PASSED_STATS = "stats.auth.browser.passed";
     public static final String AUTH_BROWSER_FAILED_STATS = "stats.auth.browser.failed";
+    public static final String AUTH_BROWSER_HTTP_AUTH_BASIC_STATS = "stats.auth.browser.http.basic";
+    public static final String AUTH_BROWSER_HTTP_AUTH_DIGEST_STATS =
+            "stats.auth.browser.http.digest";
+    public static final String AUTH_BROWSER_HTTP_AUTH_ERROR_STATS = "stats.auth.browser.http.error";
+    public static final String AUTH_BROWSER_HTTP_AUTH_PASSED_STATS =
+            "stats.auth.browser.http.passed";
+    public static final String AUTH_BROWSER_HTTP_AUTH_FAILED_STATS =
+            "stats.auth.browser.http.failed";
+    public static final String AUTH_BROWSER_HTTP_AUTH_NOT_SUPPORTED_STATS =
+            "stats.auth.browser.http.notsupported";
+    public static final String AUTH_BROWSER_HTTP_AUTH_UNKNOWN_STATS =
+            "stats.auth.browser.http.unknown";
 
     public static final String[] HEADERS = {HttpHeader.AUTHORIZATION, "X-CSRF-Token"};
     public static final String[] JSON_IDS = {"accesstoken", "token"};
@@ -134,6 +150,8 @@ public class AuthUtils {
     /* Less likely labels, but still worth trying */
     protected static List<String> LOGIN_LABELS_P2 =
             List.of("account", "signup", "sign up", "sign-up");
+
+    private static final String HTTP_AUTH_EXCEPTION_TEXT = "This site is asking you to sign in.";
 
     protected static final int MIN_SESSION_COOKIE_LENGTH = 10;
 
@@ -210,7 +228,10 @@ public class AuthUtils {
      * The URLs (and methods) we've checked for finding good verification requests. These will only
      * be recorded if the user has set verification to auto-detect.
      */
-    private static Map<Integer, Set<String>> contextVerificationMap =
+    private static Map<Integer, Set<String>> contextVerificationCheckedMap =
+            Collections.synchronizedMap(new HashMap<>());
+
+    private static Map<Integer, Set<String>> contextVerificationAlwaysCheckMap =
             Collections.synchronizedMap(new HashMap<>());
 
     public static long getTimeToWaitMs() {
@@ -444,17 +465,24 @@ public class AuthUtils {
 
         // Try with the given URL
         wd.get(loginPageUrl);
-
-        boolean auth =
-                internalAuthenticateAsUser(
-                        diags,
-                        wd,
-                        context,
-                        loginPageUrl,
-                        credentials,
-                        loginWaitInSecs,
-                        stepDelayInSecs,
-                        steps);
+        boolean auth = false;
+        try {
+            auth =
+                    internalAuthenticateAsUser(
+                            diags,
+                            wd,
+                            context,
+                            loginPageUrl,
+                            credentials,
+                            loginWaitInSecs,
+                            stepDelayInSecs,
+                            steps);
+        } catch (Exception e) {
+            if (e.getMessage() != null && e.getMessage().contains(HTTP_AUTH_EXCEPTION_TEXT)) {
+                return handleHttpAuth(wd, context, credentials, loginPageUrl);
+            }
+            throw e;
+        }
 
         if (auth) {
             return true;
@@ -490,6 +518,83 @@ public class AuthUtils {
                     return true;
                 }
             }
+        }
+        return false;
+    }
+
+    private static boolean handleHttpAuth(
+            WebDriver wd,
+            Context context,
+            UsernamePasswordAuthenticationCredentials credentials,
+            String loginPageUrl) {
+        if (wd instanceof FirefoxDriver fxwd) {
+            // Selenium currently only supports FX
+            // Start by checking the creds with a direct request - its much easier to
+            // detect auth failures this way
+            // Will have already seen this URL before, but its probably a good verif one
+            // now
+            alwaysCheckContextVerificationMap(context, loginPageUrl);
+            try {
+                // Send an authenticated request so that we see what sort of HTTP auth is in use
+                HttpSender unauthSender =
+                        new HttpSender(HttpSender.AUTHENTICATION_HELPER_INITIATOR);
+                unauthSender.setMaxRedirects(MAX_UNAUTH_REDIRECTIONS);
+
+                URI uri = new URI(loginPageUrl, true);
+                HttpMessage msg1 = new HttpMessage(uri);
+                unauthSender.sendAndReceive(msg1, REDIRECT_NOTIFIER_CONFIG);
+
+                String authHeader;
+                if (NetworkUtils.isHttpBasicAuth(msg1)) {
+                    authHeader = NetworkUtils.getHttpBasicAuthorization(credentials);
+                    incStatsCounter(uri, AUTH_BROWSER_HTTP_AUTH_BASIC_STATS);
+                } else if (NetworkUtils.isHttpDigestAuth(msg1)) {
+                    // Do not currently support Digest auth, but lets record the stats
+                    incStatsCounter(uri, AUTH_BROWSER_HTTP_AUTH_DIGEST_STATS);
+                    return false;
+                } else {
+                    incStatsCounter(uri, AUTH_BROWSER_HTTP_AUTH_UNKNOWN_STATS);
+                    return false;
+                }
+
+                // Now try to send an auth request - this will fail if the creds are wrong
+                HttpMessage msg2 = new HttpMessage(uri);
+                msg2.getRequestHeader().setHeader(HttpHeader.AUTHORIZATION, authHeader);
+                unauthSender.sendAndReceive(msg2, REDIRECT_NOTIFIER_CONFIG);
+
+                if (HttpStatusCode.isClientError(msg2.getResponseHeader().getStatusCode())) {
+                    incStatsCounter(loginPageUrl, AUTH_BROWSER_HTTP_AUTH_FAILED_STATS);
+                    return false;
+                }
+
+            } catch (Exception e1) {
+                incStatsCounter(loginPageUrl, AUTH_BROWSER_HTTP_AUTH_FAILED_STATS);
+                LOGGER.debug(e1.getMessage(), e1);
+                return false;
+            }
+            try {
+                // Attempt to get selenium to handle HTTP Auth
+                fxwd.network()
+                        .addAuthenticationHandler(
+                                new UsernameAndPassword(
+                                        credentials.getUsername(), credentials.getPassword()));
+
+                // Need to wait for passive scanning of prev req to complete
+                sleep(AUTH_PAGE_SLEEP_IN_MSECS);
+
+                neverCheckContextVerificationMap(context, loginPageUrl);
+                fxwd.get(loginPageUrl);
+
+                incStatsCounter(loginPageUrl, AUTH_FOUND_FIELDS_STATS);
+                incStatsCounter(loginPageUrl, AUTH_BROWSER_PASSED_STATS);
+                incStatsCounter(loginPageUrl, AUTH_BROWSER_HTTP_AUTH_PASSED_STATS);
+                return true;
+            } catch (Exception e1) {
+                incStatsCounter(loginPageUrl, AUTH_BROWSER_HTTP_AUTH_FAILED_STATS);
+                LOGGER.debug(e1.getMessage(), e1);
+            }
+        } else {
+            incStatsCounter(loginPageUrl, AUTH_BROWSER_HTTP_AUTH_NOT_SUPPORTED_STATS);
         }
         return false;
     }
@@ -1117,7 +1222,8 @@ public class AuthUtils {
         knownTokenMap.clear();
         contextVerifMap.clear();
         contextSessionMgmtMap.clear();
-        contextVerificationMap.clear();
+        contextVerificationCheckedMap.clear();
+        contextVerificationAlwaysCheckMap.clear();
         requestTokenMap.clear();
         if (executorService != null) {
             executorService.shutdown();
@@ -1181,6 +1287,18 @@ public class AuthUtils {
         return executorService;
     }
 
+    private static void alwaysCheckContextVerificationMap(Context context, String url) {
+        contextVerificationAlwaysCheckMap
+                .computeIfAbsent(context.getId(), c -> Collections.synchronizedSet(new HashSet<>()))
+                .add("GET " + url);
+    }
+
+    private static void neverCheckContextVerificationMap(Context context, String url) {
+        contextVerificationAlwaysCheckMap
+                .computeIfAbsent(context.getId(), c -> Collections.synchronizedSet(new HashSet<>()))
+                .remove("GET " + url);
+    }
+
     public static void processVerificationDetails(
             Context context,
             VerificationRequestDetails details,
@@ -1191,9 +1309,14 @@ public class AuthUtils {
                         + " "
                         + details.getMsg().getRequestHeader().getURI().toString();
 
-        if (contextVerificationMap
-                .computeIfAbsent(context.getId(), c -> Collections.synchronizedSet(new HashSet<>()))
-                .add(methodUrl)) {
+        if (contextVerificationAlwaysCheckMap
+                        .computeIfAbsent(
+                                context.getId(), c -> Collections.synchronizedSet(new HashSet<>()))
+                        .contains(methodUrl)
+                || contextVerificationCheckedMap
+                        .computeIfAbsent(
+                                context.getId(), c -> Collections.synchronizedSet(new HashSet<>()))
+                        .add(methodUrl)) {
             // Have not already checked this method + url
             getExecutorService().submit(new VerificationDetectionProcessor(context, details, rule));
         }
