@@ -424,7 +424,7 @@ public class AuthUtils {
             return authenticateAsUserImpl(
                     diags, wd, user, loginPageUrl, loginWaitInSecs, stepDelayInSecs, steps);
         } catch (Exception e) {
-            diags.recordErrorStep();
+            diags.recordErrorStep(wd);
             throw e;
         }
     }

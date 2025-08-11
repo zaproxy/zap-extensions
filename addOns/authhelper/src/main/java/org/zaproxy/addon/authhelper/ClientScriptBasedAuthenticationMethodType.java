@@ -476,7 +476,7 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                             cred);
 
                 } catch (Exception e) {
-                    diags.recordErrorStep();
+                    diags.recordErrorStep(getWebDriver(zestRunner));
 
                     // Catch Exception instead of ScriptException and IOException because script
                     // engine
@@ -598,6 +598,13 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                                     });
                 }
             }
+        }
+
+        private static WebDriver getWebDriver(ZestAuthenticationRunner runner) {
+            if (runner != null && !runner.getWebDrivers().isEmpty()) {
+                return runner.getWebDrivers().get(0);
+            }
+            return null;
         }
 
         private void recordCloseStep(

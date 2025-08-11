@@ -417,7 +417,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
 
             } catch (IOException e) {
                 LOGGER.error(e.getMessage(), e);
-                diags.recordErrorStep();
+                diags.recordErrorStep(null);
             }
 
             // Code based on Authentication.notifyOutputAuthFailure

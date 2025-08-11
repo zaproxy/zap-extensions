@@ -444,13 +444,19 @@ return getSelector(arguments[0], document)
         createStep();
     }
 
-    public void recordErrorStep() {
+    public void recordErrorStep(WebDriver webDriver) {
         if (!enabled) {
             return;
         }
 
         try {
-            recordStep(Constant.messages.getString("authhelper.auth.method.diags.steps.error"));
+            String description =
+                    Constant.messages.getString("authhelper.auth.method.diags.steps.error");
+            if (webDriver == null) {
+                recordStep(description);
+            } else {
+                recordStep(webDriver, description);
+            }
         } catch (Exception e) {
             LOGGER.warn("An error occurred while recording the error step:", e);
         }
