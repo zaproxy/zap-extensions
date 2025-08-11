@@ -53,7 +53,7 @@ import org.zaproxy.zap.utils.Stats;
 public class LlmCommunicationService {
 
     private static final Logger LOGGER = LogManager.getLogger(LlmCommunicationService.class);
-    private static final String AI_REVIEWED_TAG_KEY = "AI-Reviewed";
+    protected static final String AI_REVIEWED_TAG_KEY = "AI-Reviewed";
 
     private LlmAssistant llmAssistant;
     private LlmResponseHandler listener;
@@ -206,8 +206,8 @@ public class LlmCommunicationService {
         }
     }
 
-    private static boolean isPreviouslyReviewed(Alert alert) {
-        return !alert.getTags().containsKey(AI_REVIEWED_TAG_KEY);
+    protected static boolean isPreviouslyReviewed(Alert alert) {
+        return alert.getTags().containsKey(AI_REVIEWED_TAG_KEY);
     }
 
     private static String getUpdatedOtherInfo(Alert alert, Confidence llmConfidence) {
