@@ -32,6 +32,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -73,6 +74,11 @@ public class LlmCommunicationService {
                         .chatMemory(chatMemory)
                         .build();
         requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR, new HistoryPersister());
+    }
+
+    /** For testing purposes only. */
+    LlmCommunicationService(LlmAssistant assistant) {
+        this.llmAssistant = assistant;
     }
 
     private ChatLanguageModel buildModel(LlmOptions options) {
@@ -170,7 +176,13 @@ public class LlmCommunicationService {
             LOGGER.debug("Reviewing alert : {}", alert.getName());
             LOGGER.debug("Confidence level from ZAP : {}", alert.getConfidence());
             Stats.incCounter("stats.llm.alertreview.call");
-            llmConfidence = llmAssistant.review(alert.getDescription(), alert.getEvidence());
+            if (alert.getOtherInfo().isBlank()) {
+                llmConfidence = llmAssistant.review(alert.getDescription(), alert.getEvidence());
+            } else {
+                llmConfidence =
+                        llmAssistant.review(
+                                alert.getDescription(), alert.getEvidence(), alert.getOtherInfo());
+            }
 
             if (llmConfidence.getLevel() == alert.getConfidence()) {
                 Stats.incCounter("stats.llm.alertreview.result.same");
@@ -184,7 +196,7 @@ public class LlmCommunicationService {
                     llmConfidence.getExplanation());
             updatedAlert.setConfidence(llmConfidence.getLevel());
             updatedAlert.setOtherInfo(getUpdatedOtherInfo(alert, llmConfidence));
-            Map<String, String> alertTags = alert.getTags();
+            Map<String, String> alertTags = new HashMap<>(alert.getTags());
 
             alertTags.putIfAbsent(AI_REVIEWED_TAG_KEY, "");
             updatedAlert.setTags(alertTags);
