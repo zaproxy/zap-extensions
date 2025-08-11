@@ -476,6 +476,8 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                             cred);
 
                 } catch (Exception e) {
+                    diags.recordErrorStep();
+
                     // Catch Exception instead of ScriptException and IOException because script
                     // engine
                     // implementations might throw other exceptions on script errors (e.g.

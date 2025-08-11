@@ -337,7 +337,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
                                     proxyHost,
                                     proxyPort);
 
-                    if (AuthUtils.authenticateAsUserImpl(
+                    if (AuthUtils.authenticateAsUserWithErrorStep(
                             diags,
                             wd,
                             user,
@@ -417,6 +417,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
 
             } catch (IOException e) {
                 LOGGER.error(e.getMessage(), e);
+                diags.recordErrorStep();
             }
 
             // Code based on Authentication.notifyOutputAuthFailure

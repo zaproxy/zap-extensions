@@ -407,12 +407,29 @@ public class AuthUtils {
                         new BrowserBasedAuthenticationMethodType().getName(),
                         user.getContext().getName(),
                         user.getName())) {
-            return authenticateAsUserImpl(
+            return authenticateAsUserWithErrorStep(
                     diags, wd, user, loginPageUrl, loginWaitInSecs, stepDelayInSecs, steps);
         }
     }
 
-    static boolean authenticateAsUserImpl(
+    static boolean authenticateAsUserWithErrorStep(
+            AuthenticationDiagnostics diags,
+            WebDriver wd,
+            User user,
+            String loginPageUrl,
+            int loginWaitInSecs,
+            int stepDelayInSecs,
+            List<AuthenticationStep> steps) {
+        try {
+            return authenticateAsUserImpl(
+                    diags, wd, user, loginPageUrl, loginWaitInSecs, stepDelayInSecs, steps);
+        } catch (Exception e) {
+            diags.recordErrorStep();
+            throw e;
+        }
+    }
+
+    private static boolean authenticateAsUserImpl(
             AuthenticationDiagnostics diags,
             WebDriver wd,
             User user,

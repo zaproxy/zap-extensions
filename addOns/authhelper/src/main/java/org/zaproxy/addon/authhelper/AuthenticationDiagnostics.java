@@ -444,6 +444,18 @@ return getSelector(arguments[0], document)
         createStep();
     }
 
+    public void recordErrorStep() {
+        if (!enabled) {
+            return;
+        }
+
+        try {
+            recordStep(Constant.messages.getString("authhelper.auth.method.diags.steps.error"));
+        } catch (Exception e) {
+            LOGGER.warn("An error occurred while recording the error step:", e);
+        }
+    }
+
     public void recordStep(String description) {
         if (!enabled) {
             return;
