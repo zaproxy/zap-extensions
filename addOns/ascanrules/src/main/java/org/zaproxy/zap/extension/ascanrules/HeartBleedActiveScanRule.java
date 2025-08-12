@@ -1042,9 +1042,9 @@ public class HeartBleedActiveScanRule extends AbstractHostPlugin
                     if (os != null) os.close();
                 }
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             // needed to catch exceptions from the "finally" statement
-            LOGGER.error("Error scanning a node for HeartBleed: {}", e.getMessage(), e);
+            LOGGER.debug("Error scanning a node for HeartBleed: {}", e.getMessage(), e);
         }
     }
 

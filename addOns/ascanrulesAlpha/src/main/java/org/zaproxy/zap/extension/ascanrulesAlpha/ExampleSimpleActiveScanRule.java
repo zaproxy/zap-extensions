@@ -124,7 +124,7 @@ public class ExampleSimpleActiveScanRule extends AbstractAppParamPlugin
             }
 
         } catch (IOException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.debug(e.getMessage(), e);
         }
     }
 

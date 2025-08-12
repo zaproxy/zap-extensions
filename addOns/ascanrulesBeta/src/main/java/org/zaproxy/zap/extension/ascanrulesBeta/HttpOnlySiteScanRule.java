@@ -168,7 +168,7 @@ public class HttpOnlySiteScanRule extends AbstractHostPlugin implements CommonAc
                     .getRequestHeader()
                     .setURI(new URI("https", null, host, getPort(newRequest), path));
         } catch (URIException e) {
-            LOGGER.error("Error creating HTTPS URL from HTTP URL:", e);
+            LOGGER.debug("Error creating HTTPS URL from HTTP URL:", e);
             return;
         }
 
@@ -226,7 +226,7 @@ public class HttpOnlySiteScanRule extends AbstractHostPlugin implements CommonAc
             }
             return;
         } catch (IOException e) {
-            LOGGER.error("Request couldn't go through:", e);
+            LOGGER.debug("Request couldn't go through:", e);
             return;
         }
     }
