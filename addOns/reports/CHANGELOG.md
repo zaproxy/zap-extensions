@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Provide/log details on report errors through the Automation Framework job.
+- Allow to include Automation Framework errors and warnings in the Traditional JSON Report with Requests and Responses report.
 
 ## [0.39.0] - 2025-06-20
 ### Changed

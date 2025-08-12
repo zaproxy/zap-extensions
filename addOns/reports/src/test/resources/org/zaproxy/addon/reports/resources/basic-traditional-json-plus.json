@@ -66,6 +66,10 @@
         }
     ],
     "statistics":{ 
-    }
+    },
+    "afPlanErrors": [
+    ],
+    "afPlanWarns": [
+    ]
 }
 
