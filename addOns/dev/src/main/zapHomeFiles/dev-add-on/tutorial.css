@@ -18,6 +18,25 @@
   position: relative;
 }
 
+.squareContainer {
+  box-shadow: 0px 0px 70px #222;
+  -moz-box-shadow: 0px 0px 70px #222;
+  -webkit-box-shadow: 0px 0px 70px #222;
+  background-color: #fff;
+  margin: 0px auto;
+  border-top: 40px solid #fff;
+  border-bottom: 40px solid #fff;
+  border-left: 40px solid #fff;
+  border-right: 40px solid #fff;
+  padding: 10px;
+  margin-top: 40px;
+  padding-bottom: 10px;
+  font: 15px arial, sans-serif;
+  width: 320px;
+  /* min-height: 400px; */
+  position: relative;
+}
+
 .buttonsDiv {
   bottom: 60px;
   width: 100%;

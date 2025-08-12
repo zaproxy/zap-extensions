@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>ZAP Test Server</title>
+	<link href="/tutorial.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="roundContainer">
+	<h1>Simple App which uses a mock MS Online Auth Service</H1>
+	<h2>Start Page</h2>
+	<input type="checkbox" id="ms-sec"/> Let's keep your account secure dialog<br>
+	<input type="checkbox" id="ms-stay"/> Stay signed in dialog<br>
+	<input type="number" id="ms-delay" min="0" max="120"> Delay in seconds
+	<p>
+	<a id="link" href="#" onclick="login();">Login</a> to the app.
+	<p>
+	Direct URL format: https://app.sso-ms.zap/?redir=on&amp;ms-sec=true&amp;ms-stay=true
+	
+</div>
+<script>
+function login() {
+    location.href = 'https://start.sso-ms.zap?ms-delay=' + document.getElementById("ms-delay").value +
+    		'&ms-sec=' + document.getElementById("ms-sec").checked +
+    		'&ms-stay=' + document.getElementById("ms-stay").checked;
+}
+</script>
+
+</body>
+</html>
