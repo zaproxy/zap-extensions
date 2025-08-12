@@ -25,7 +25,7 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Session;
-import org.zaproxy.addon.llm.ui.ImportDialog;
+import org.zaproxy.addon.llm.ui.LlmOpenApiImportDialog;
 import org.zaproxy.addon.llm.ui.LlmOptionsPanel;
 import org.zaproxy.addon.llm.ui.LlmReviewAlertMenu;
 import org.zaproxy.zap.view.ZapMenuItem;
@@ -40,8 +40,8 @@ public class ExtensionLlm extends ExtensionAdaptor {
 
     protected static final String PREFIX = "llm";
 
-    private ZapMenuItem menuLLM;
-    private ImportDialog importDialog;
+    private ZapMenuItem llmOpenapiImportMenu;
+    private LlmOpenApiImportDialog llmOpenapiImportDialog;
     private LlmReviewAlertMenu llmReviewAlertMenu;
     private LlmOptions options;
 
@@ -69,15 +69,15 @@ public class ExtensionLlm extends ExtensionAdaptor {
 
         if (hasView()) {
             extensionHook.getHookView().addOptionPanel(new LlmOptionsPanel(this::setLlmExtEnabled));
-            extensionHook.getHookMenu().addImportMenuItem(getMenuLlm());
-            extensionHook.getHookMenu().addPopupMenuItem(getCheckLlmMenu());
+            extensionHook.getHookMenu().addImportMenuItem(getLlmOpenapiImportMenu());
+            extensionHook.getHookMenu().addPopupMenuItem(getLlmReviewAlertMenu());
 
             extensionHook.addSessionListener(
                     new SessionChangedListener() {
                         @Override
                         public void sessionAboutToChange(Session session) {
-                            if (importDialog != null) {
-                                importDialog.clearFields();
+                            if (llmOpenapiImportDialog != null) {
+                                llmOpenapiImportDialog.clearFields();
                             }
                         }
 
@@ -102,28 +102,29 @@ public class ExtensionLlm extends ExtensionAdaptor {
     public void unload() {
         super.unload();
 
-        if (importDialog != null) {
-            importDialog.dispose();
+        if (llmOpenapiImportDialog != null) {
+            llmOpenapiImportDialog.dispose();
         }
     }
 
-    private ZapMenuItem getMenuLlm() {
-        if (menuLLM == null) {
-            menuLLM = new ZapMenuItem("llm.topmenu.import.importOpenAPI");
-            menuLLM.setToolTipText(
+    private ZapMenuItem getLlmOpenapiImportMenu() {
+        if (llmOpenapiImportMenu == null) {
+            llmOpenapiImportMenu = new ZapMenuItem("llm.topmenu.import.importOpenAPI");
+            llmOpenapiImportMenu.setToolTipText(
                     Constant.messages.getString("llm.topmenu.import.importOpenAPI.tooltip"));
-            menuLLM.addActionListener(
+            llmOpenapiImportMenu.addActionListener(
                     e -> {
-                        if (importDialog == null) {
-                            importDialog = new ImportDialog(getView().getMainFrame(), options);
+                        if (llmOpenapiImportDialog == null) {
+                            llmOpenapiImportDialog =
+                                    new LlmOpenApiImportDialog(getView().getMainFrame(), options);
                         }
-                        importDialog.setVisible(true);
+                        llmOpenapiImportDialog.setVisible(true);
                     });
         }
-        return menuLLM;
+        return llmOpenapiImportMenu;
     }
 
-    private LlmReviewAlertMenu getCheckLlmMenu() {
+    private LlmReviewAlertMenu getLlmReviewAlertMenu() {
         if (llmReviewAlertMenu == null) {
             llmReviewAlertMenu = new LlmReviewAlertMenu(options, this::isConfigured);
         }
@@ -144,7 +145,7 @@ public class ExtensionLlm extends ExtensionAdaptor {
     }
 
     private void setLlmExtEnabled(boolean enable) {
-        getMenuLlm().setEnabled(enable);
-        getCheckLlmMenu().setEnabled(enable);
+        getLlmOpenapiImportMenu().setEnabled(enable);
+        getLlmReviewAlertMenu().setEnabled(enable);
     }
 }

@@ -29,12 +29,12 @@ import java.net.URL;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
@@ -51,7 +51,7 @@ import org.zaproxy.zap.utils.ZapHtmlLabel;
 import org.zaproxy.zap.view.LayoutHelper;
 
 @SuppressWarnings("serial")
-public class ImportDialog extends AbstractDialog {
+public class LlmOpenApiImportDialog extends AbstractDialog {
 
     private static final long serialVersionUID = -7074394202143400215L;
 
@@ -63,7 +63,7 @@ public class ImportDialog extends AbstractDialog {
     private JButton buttonImport;
     private JProgressBar progressBar;
 
-    public ImportDialog(JFrame parent, LlmOptions options) {
+    public LlmOpenApiImportDialog(JFrame parent, LlmOptions options) {
         super(parent, true);
         this.options = options;
 
@@ -98,7 +98,7 @@ public class ImportDialog extends AbstractDialog {
                                 + "</html>");
         Font font = requiredFieldsLabel.getFont();
         requiredFieldsLabel.setFont(FontUtils.getFont(font, FontUtils.Size.much_smaller));
-        requiredFieldsLabel.setHorizontalAlignment(JLabel.RIGHT);
+        requiredFieldsLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         add(requiredFieldsLabel, LayoutHelper.getGBC(0, row, 2, 1.0, new Insets(4, 8, 4, 8)));
         row++;
         add(getCancelButton(), LayoutHelper.getGBC(0, row, 1, 0.5, new Insets(4, 8, 8, 4)));

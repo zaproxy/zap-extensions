@@ -27,7 +27,6 @@ import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.ollama.OllamaChatModel;
 import dev.langchain4j.service.AiServices;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.file.Files;
@@ -106,7 +105,7 @@ public class LlmCommunicationService {
         };
     }
 
-    private Integer importHttpCalls(String openapiContent) throws IOException {
+    private Integer importHttpCalls(String openapiContent) throws RuntimeException {
         Stats.incCounter("stats.llm.openapiseq.call");
         HttpRequestList listHttpRequest = llmAssistant.extractHttpRequests(openapiContent);
         if (listHttpRequest == null) {
