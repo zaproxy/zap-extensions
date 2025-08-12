@@ -23,8 +23,8 @@ import java.io.IOException;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.llm.communication.HttpRequest;
 import org.zaproxy.addon.llm.communication.HttpRequestList;
@@ -47,7 +47,7 @@ public class Requestor {
         httpMessage.setRequestHeader(
                 String.format(
                         "%s %s %s",
-                        httpRequest.getMethod(), httpRequest.getUrl(), HttpRequestHeader.HTTP11));
+                        httpRequest.getMethod(), httpRequest.getUrl(), HttpHeader.HTTP11));
         sender.sendAndReceive(httpMessage, true);
 
         return httpMessage.getResponseBody().toString();
@@ -62,9 +62,7 @@ public class Requestor {
                 httpMessage.setRequestHeader(
                         String.format(
                                 "%s %s %s",
-                                httpRequest.getMethod(),
-                                httpRequest.getUrl(),
-                                HttpRequestHeader.HTTP11));
+                                httpRequest.getMethod(), httpRequest.getUrl(), HttpHeader.HTTP11));
 
                 for (Map.Entry<String, String> header : httpRequest.getHeaders().entrySet()) {
                     httpMessage.getRequestHeader().setHeader(header.getKey(), header.getValue());
