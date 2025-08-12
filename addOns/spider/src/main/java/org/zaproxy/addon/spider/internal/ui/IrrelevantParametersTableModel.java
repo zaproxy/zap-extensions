@@ -82,8 +82,8 @@ class IrrelevantParametersTableModel
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        if (columnIndex == 0 && aValue instanceof Boolean) {
-            irrelevantParameters.get(rowIndex).setEnabled((Boolean) aValue);
+        if (columnIndex == 0 && aValue instanceof Boolean val) {
+            irrelevantParameters.get(rowIndex).setEnabled(val);
             fireTableCellUpdated(rowIndex, columnIndex);
         }
     }

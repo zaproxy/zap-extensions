@@ -98,8 +98,8 @@ public class SpiderJobDialog extends StandardFieldsDialog {
         // Cannot select the node as it might not be present in the Sites tree
         this.addNodeSelectField(0, URL_PARAM, null, true, false);
         Component urlField = this.getField(URL_PARAM);
-        if (urlField instanceof JTextField) {
-            ((JTextField) urlField).setText(this.job.getParameters().getUrl());
+        if (urlField instanceof JTextField field) {
+            field.setText(this.job.getParameters().getUrl());
         }
         this.addNumberField(
                 0,
@@ -179,9 +179,9 @@ public class SpiderJobDialog extends StandardFieldsDialog {
                                 (JLabel)
                                         super.getListCellRendererComponent(
                                                 list, value, index, isSelected, cellHasFocus);
-                        if (value instanceof HandleParametersOption) {
+                        if (value instanceof HandleParametersOption hpo) {
                             // The name is i18n'ed
-                            label.setText(((HandleParametersOption) value).getName());
+                            label.setText(hpo.getName());
                         }
                         return label;
                     }
@@ -280,9 +280,7 @@ public class SpiderJobDialog extends StandardFieldsDialog {
             this.job.getParameters().setLogoutAvoidance(this.getBoolValue(LOGOUT_AVOIDANCE_PARAM));
 
             Object hpoObj = handleParamsModel.getSelectedItem();
-            if (hpoObj instanceof SpiderParam.HandleParametersOption) {
-                SpiderParam.HandleParametersOption hpo =
-                        (SpiderParam.HandleParametersOption) hpoObj;
+            if (hpoObj instanceof SpiderParam.HandleParametersOption hpo) {
                 this.job.getParameters().setHandleParameters(hpo);
             }
 
