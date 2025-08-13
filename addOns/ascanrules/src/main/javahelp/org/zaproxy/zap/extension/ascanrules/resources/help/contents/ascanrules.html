@@ -230,6 +230,8 @@ This rule attempts to discover the Log4Shell (<a href="https://nvd.nist.gov/vuln
 It relies on the OAST add-on to generate out-of-band payloads and verify DNS interactions.
 We recommend that this scan rule is used with header injection enabled for maximum coverage.
 <p>
+See also: <a href="https://www.zaproxy.org/docs/desktop/addons/oast-support/#alerts">OAST</a>.
+<p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/Log4ShellScanRule.java">Log4ShellScanRule.java</a>
 <br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40043/">40043</a>.
@@ -304,6 +306,9 @@ Alert ID: <a href="https://www.zaproxy.org/docs/alerts/90035/">90035</a>.
 
 <H2 id="id-90036">Server Side Template Injection (Blind)</H2>
 This rule goes one step further than the SSTI scan rule and attempts to find places where the impact of the user input is not immediately obvious, such as when used by an admin panel, report output, invoice, etc.
+It leverages the OAST add-on for out-of-band interactions.
+<p>
+See also: <a href="https://www.zaproxy.org/docs/desktop/addons/oast-support/#alerts">OAST</a>.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/SstiBlindScanRule.java">SstiBlindScanRule.java</a>
 <br>
@@ -491,6 +496,8 @@ internal or tertiary systems, etc. The number of tags which are tested individua
 This scan rule will only run if the OAST add-on is installed and available.
 It is also recommended that you test that the Callbacks service in the OAST add-on is correctly configured for your target site.
 If the target system cannot connect to the Callback Address then some XXE vulnerabilities will not be detected.
+<p>
+See also: <a href="https://www.zaproxy.org/docs/desktop/addons/oast-support/#alerts">OAST</a>.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/XxeScanRule.java">XxeScanRule.java</a>
 <br>
