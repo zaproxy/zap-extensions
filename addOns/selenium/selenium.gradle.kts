@@ -38,9 +38,13 @@ zapAddOn {
 dependencies {
     compileOnly(libs.log4j.core)
 
-    var seleniumVersion = "4.34.0"
+    var seleniumVersion = "4.35.0"
     selenium("org.seleniumhq.selenium:selenium-java:$seleniumVersion")
-    selenium("org.seleniumhq.selenium:htmlunit3-driver:4.33.0")
+    selenium("org.seleniumhq.selenium:htmlunit3-driver:4.34.0") {
+        // Do not expose the newer version to dependents, exclude and change to implementation.
+        exclude(group = "org.apache.commons", module = "commons-lang3")
+    }
+    implementation("org.apache.commons:commons-lang3:3.18.0")
     implementation(libs.log4j.slf4j)
 
     zapAddOn("commonlib")
