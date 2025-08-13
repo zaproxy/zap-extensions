@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - The Remote OS Command Injection scan rule has been broken into two rules; one feedback based, and one time based (Issue 7341). This includes assigning the time based rule ID 90037.
 - The External Redirect scan rule payload were slightly re-ordered to prioritize HTTPS variants.
 - For Alerts raised by the SQL Injection scan rules the Attack field values are now simply the payload, not an assembled description.
+- Add help details about behavior of scan rules which leverage OAST (Issue 8682).
 
 ### Added
 - Rules (as applicable) have been tagged in relation to HIPAA and PCI DSS.
