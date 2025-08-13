@@ -88,6 +88,7 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
             CONTEXT_CONFIG_AUTH_SCRIPT + ".minwaitfor";
 
     private static final int DEFAULT_PAGE_WAIT = 5;
+    private static final int DEFAULT_MIN_WAIT_FOR = 0;
 
     private ExtensionScript extensionScript;
 
@@ -688,7 +689,7 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                 this.add(loginPageWait, LayoutHelper.getGBC(1, y, 2, 1.0d, 0.0d));
                 y++;
 
-                minWaitFor = new ZapNumberSpinner(0, 0, Integer.MAX_VALUE);
+                minWaitFor = new ZapNumberSpinner(0, DEFAULT_MIN_WAIT_FOR, Integer.MAX_VALUE);
                 JLabel minWaitForLabel =
                         new JLabel(
                                 Constant.messages.getString(
@@ -806,7 +807,7 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
             throw new ConfigurationException(e);
         }
         try {
-            method.setMinWaitFor(config.getInt(CONTEXT_CONFIG_MIN_WAIT_FOR));
+            method.setMinWaitFor(config.getInt(CONTEXT_CONFIG_MIN_WAIT_FOR, DEFAULT_MIN_WAIT_FOR));
         } catch (Exception e) {
             throw new ConfigurationException(e);
         }
