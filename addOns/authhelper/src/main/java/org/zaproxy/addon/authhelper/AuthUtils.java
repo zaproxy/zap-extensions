@@ -25,7 +25,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -77,6 +76,9 @@ import org.parosproxy.paros.network.HttpStatusCode;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType.BrowserBasedAuthenticationMethod;
 import org.zaproxy.addon.authhelper.internal.AuthenticationStep;
+import org.zaproxy.addon.authhelper.internal.auth.Authenticator;
+import org.zaproxy.addon.authhelper.internal.auth.DefaultAuthenticator;
+import org.zaproxy.addon.authhelper.internal.auth.MsLoginAuthenticator;
 import org.zaproxy.addon.commonlib.ResourceIdentificationUtils;
 import org.zaproxy.addon.network.NetworkUtils;
 import org.zaproxy.zap.authentication.AuthenticationCredentials;
@@ -234,6 +236,12 @@ public class AuthUtils {
     private static Map<Integer, Set<String>> contextVerificationAlwaysCheckMap =
             Collections.synchronizedMap(new HashMap<>());
 
+    private static final List<Authenticator> AUTHENTICATORS;
+
+    static {
+        AUTHENTICATORS = List.of(new MsLoginAuthenticator(), new DefaultAuthenticator());
+    }
+
     public static long getTimeToWaitMs() {
         return timeToWaitMs;
     }
@@ -246,7 +254,7 @@ public class AuthUtils {
         return getTimeToWaitMs() / TIME_TO_SLEEP_IN_MSECS;
     }
 
-    static WebElement getUserField(
+    public static WebElement getUserField(
             WebDriver wd, List<WebElement> inputElements, WebElement passwordField) {
         return ignoreSeleniumExceptions(
                 () -> getUserFieldInternal(wd, inputElements, passwordField));
@@ -371,7 +379,7 @@ public class AuthUtils {
         return false;
     }
 
-    static WebElement getPasswordField(List<WebElement> inputElements) {
+    public static WebElement getPasswordField(List<WebElement> inputElements) {
         return ignoreSeleniumExceptions(
                 () ->
                         displayed(inputElements)
@@ -623,96 +631,20 @@ public class AuthUtils {
                 wd, Constant.messages.getString("authhelper.auth.method.diags.steps.start"));
         sleep(TimeUnit.SECONDS.toMillis(stepDelayInSecs));
 
-        String username = credentials.getUsername();
-        String password = credentials.getPassword();
+        Authenticator.Result result = null;
+        for (Authenticator authenticator : AUTHENTICATORS) {
+            result =
+                    authenticator.authenticate(
+                            diags, wd, context, loginPageUrl, credentials, stepDelayInSecs, steps);
 
-        WebElement userField = null;
-        WebElement pwdField = null;
-        boolean userAdded = false;
-        boolean pwdAdded = false;
-
-        Iterator<AuthenticationStep> it = steps.stream().sorted().iterator();
-        while (it.hasNext()) {
-            AuthenticationStep step = it.next();
-            if (!step.isEnabled()) {
+            if (!result.isAttempted()) {
                 continue;
             }
 
-            if (step.getType() == AuthenticationStep.Type.AUTO_STEPS) {
+            if (!result.isSuccessful()) {
                 break;
             }
 
-            WebElement element = step.execute(wd, credentials);
-            diags.recordStep(wd, step.getDescription(), element);
-
-            switch (step.getType()) {
-                case USERNAME:
-                    userField = element;
-                    userAdded = true;
-                    break;
-
-                case PASSWORD:
-                    pwdField = element;
-                    pwdAdded = true;
-                    break;
-
-                default:
-            }
-
-            sleepMax(TimeUnit.SECONDS.toMillis(stepDelayInSecs), TIME_TO_SLEEP_IN_MSECS);
-        }
-
-        for (int i = 0; i < getWaitLoopCount(); i++) {
-            if ((userField != null || userAdded) && pwdField != null) {
-                break;
-            }
-
-            List<WebElement> inputElements = getInputElements(wd, i > 2);
-            pwdField = getPasswordField(inputElements);
-            userField = getUserField(wd, inputElements, pwdField);
-
-            if (i > 1 && userField != null && pwdField == null && !userAdded) {
-                // Handle pages which require you to submit the username first
-                LOGGER.debug("Submitting just user field on {}", loginPageUrl);
-                fillUserName(diags, wd, username, userField, stepDelayInSecs);
-                sendReturnAndSleep(diags, wd, userField, stepDelayInSecs);
-                userAdded = true;
-            }
-            sleep(TIME_TO_SLEEP_IN_MSECS);
-        }
-        if ((userField != null || userAdded) && pwdField != null) {
-            if (!userAdded) {
-                LOGGER.debug("Entering user field on {}", wd.getCurrentUrl());
-                fillUserName(diags, wd, username, userField, stepDelayInSecs);
-            }
-            try {
-                if (!pwdAdded) {
-                    LOGGER.debug("Submitting password field on {}", wd.getCurrentUrl());
-                    fillPassword(diags, wd, password, pwdField, stepDelayInSecs);
-                }
-                sendReturnAndSleep(diags, wd, pwdField, stepDelayInSecs);
-            } catch (Exception e) {
-                if (userField != null) {
-                    // Handle the case where the password field was present but hidden / disabled
-                    LOGGER.debug("Handling hidden password field on {}", wd.getCurrentUrl());
-                    sendReturnAndSleep(diags, wd, userField, stepDelayInSecs);
-                    sleep(TIME_TO_SLEEP_IN_MSECS);
-                    fillPassword(diags, wd, password, pwdField, stepDelayInSecs);
-                    sendReturnAndSleep(diags, wd, pwdField, stepDelayInSecs);
-                }
-            }
-
-            while (it.hasNext()) {
-                AuthenticationStep step = it.next();
-                if (!step.isEnabled()) {
-                    continue;
-                }
-
-                step.execute(wd, credentials);
-                diags.recordStep(wd, step.getDescription());
-
-                sleepMax(TimeUnit.SECONDS.toMillis(stepDelayInSecs), TIME_TO_SLEEP_IN_MSECS);
-            }
             diags.recordStep(
                     wd, Constant.messages.getString("authhelper.auth.method.diags.steps.finish"));
 
@@ -732,17 +664,17 @@ public class AuthUtils {
             }
             return true;
         }
-        if (userField == null) {
+        if (result == null || !result.hasUserField()) {
             incStatsCounter(loginPageUrl, AUTH_NO_USER_FIELD_STATS);
         }
-        if (pwdField == null) {
+        if (result == null || !result.hasPwdField()) {
             incStatsCounter(loginPageUrl, AUTH_NO_PASSWORD_FIELD_STATS);
         }
         incStatsCounter(loginPageUrl, AUTH_BROWSER_FAILED_STATS);
         return false;
     }
 
-    static List<WebElement> getInputElements(WebDriver wd, boolean includeShadow) {
+    public static List<WebElement> getInputElements(WebDriver wd, boolean includeShadow) {
         List<WebElement> selectedElements = wd.findElements(By.cssSelector(INPUT_TAG));
         if (!includeShadow && !selectedElements.isEmpty()) {
             return selectedElements;
@@ -776,7 +708,7 @@ public class AuthUtils {
         field.sendKeys(value);
     }
 
-    private static void fillUserName(
+    public static void fillUserName(
             AuthenticationDiagnostics diags,
             WebDriver wd,
             String username,
@@ -790,7 +722,7 @@ public class AuthUtils {
         sleep(TimeUnit.SECONDS.toMillis(stepDelayInSecs));
     }
 
-    private static void fillPassword(
+    public static void fillPassword(
             AuthenticationDiagnostics diags,
             WebDriver wd,
             String password,
@@ -811,7 +743,7 @@ public class AuthUtils {
                 wd, Constant.messages.getString("authhelper.auth.method.diags.steps.return"));
     }
 
-    private static void sendReturnAndSleep(
+    public static void sendReturnAndSleep(
             AuthenticationDiagnostics diags, WebDriver wd, WebElement field, int stepDelayInSecs) {
         sendReturn(diags, wd, field);
         sleep(TimeUnit.SECONDS.toMillis(stepDelayInSecs));
@@ -833,7 +765,7 @@ public class AuthUtils {
         }
     }
 
-    private static void sleepMax(long msec1, long msec2) {
+    public static void sleepMax(long msec1, long msec2) {
         sleep(Math.max(msec1, msec2));
     }
 
