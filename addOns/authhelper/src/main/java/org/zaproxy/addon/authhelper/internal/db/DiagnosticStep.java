@@ -47,7 +47,7 @@ public class DiagnosticStep {
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
     private int id;
 
-    @Column(name = "DIAGNOSTICID")
+    @Column(name = "DIAGNOSTICID", allowsNull = "false")
     private Diagnostic diagnostic;
 
     @Column(length = 4096)
@@ -59,20 +59,22 @@ public class DiagnosticStep {
     @Column(name = "WEBELEMENTID")
     private DiagnosticWebElement webElement;
 
-    @Persistent(mappedBy = "step")
+    @Persistent(mappedBy = "step", dependent = "true")
     private DiagnosticScreenshot screenshot;
 
     @Order(column = "NUMBER")
+    @Element(dependent = "true")
     @Persistent(mappedBy = "step")
     private List<DiagnosticMessage> messages = new ArrayList<>();
 
     @Persistent(table = "AUTHHELPER_DIAGNOSTIC_STEP_WEB_ELEMENTS")
     @Join(column = "STEPID")
-    @Element(column = "WEBELEMENTID")
+    @Element(column = "WEBELEMENTID", dependent = "true")
     @Order(column = "NUMBER")
     private List<DiagnosticWebElement> webElements = new ArrayList<>();
 
     @Order(column = "NUMBER")
+    @Element(dependent = "true")
     @Persistent(mappedBy = "step")
     private List<DiagnosticBrowserStorageItem> browserStorageItems = new ArrayList<>();
 
