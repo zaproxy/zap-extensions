@@ -137,7 +137,7 @@ public class Text4ShellScanRule extends AbstractAppParamPlugin implements Common
         try {
             scanWithPayloads(param, ATTACK_PATTERNS);
         } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.warn(e.getMessage(), e);
         }
     }
 
