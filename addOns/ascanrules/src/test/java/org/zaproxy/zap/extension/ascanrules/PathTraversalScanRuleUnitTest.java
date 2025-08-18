@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.ascanrules;
 
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasSize;
@@ -31,10 +32,14 @@ import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin;
@@ -172,6 +177,13 @@ class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanR
         assertThat(alertsRaised.get(0).getAttack(), is(equalTo("c:/")));
         assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_HIGH)));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(
+                alertsRaised.get(0).getOtherInfo(),
+                is(
+                        equalTo(
+                                "While the evidence field indicates Windows, the rule actually "
+                                        + "checked that the response contains matches for all of the "
+                                        + "following: Windows, Program Files.")));
         assertThat(alertsRaised.get(0).getAlertRef(), is(equalTo("6-3")));
     }
 
@@ -190,6 +202,13 @@ class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanR
         assertThat(alertsRaised.get(0).getAttack(), is(equalTo("/")));
         assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_HIGH)));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(
+                alertsRaised.get(0).getOtherInfo(),
+                is(
+                        equalTo(
+                                "While the evidence field indicates etc, the rule actually "
+                                        + "checked that the response contains matches for all of the "
+                                        + "following: proc, etc, boot, tmp, home.")));
         assertThat(alertsRaised.get(0).getAlertRef(), is(equalTo("6-3")));
     }
 
@@ -208,6 +227,13 @@ class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanR
         assertThat(alertsRaised.get(0).getAttack(), is(equalTo("/")));
         assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_HIGH)));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(
+                alertsRaised.get(0).getOtherInfo(),
+                is(
+                        equalTo(
+                                "While the evidence field indicates etc, the rule actually "
+                                        + "checked that the response contains matches for all of the "
+                                        + "following: proc, etc, boot, tmp, home.")));
         assertThat(alertsRaised.get(0).getAlertRef(), is(equalTo("6-3")));
     }
 
@@ -281,6 +307,7 @@ class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanR
         // Then
         assertThat(alertsRaised, hasSize(1));
         assertThat(alertsRaised.get(0).getAlertRef(), is(equalTo("6-2")));
+        assertThat(alertsRaised.get(0).getOtherInfo(), is(emptyString()));
     }
 
     @Test
@@ -297,6 +324,7 @@ class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanR
         // Then
         assertThat(alertsRaised, hasSize(1));
         assertThat(alertsRaised.get(0).getAlertRef(), is(equalTo("6-1")));
+        assertThat(alertsRaised.get(0).getOtherInfo(), is(emptyString()));
     }
 
     @ParameterizedTest
@@ -317,6 +345,7 @@ class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanR
         assertThat(alertsRaised, hasSize(1));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_LOW)));
         assertThat(alertsRaised.get(0).getAlertRef(), is(equalTo("6-5")));
+        assertThat(alertsRaised.get(0).getOtherInfo(), is(emptyString()));
     }
 
     @Test
@@ -363,6 +392,88 @@ class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanR
         rule.scan();
         // Then
         assertThat(alertsRaised, hasSize(0));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        // Windows will always happen before ignoring Linux, if only Linux pre-check matches
+        "foo etc root tmp bin boot dev home mnt opt proc bar, 13",
+        "foo Program Files Users Windows bar, 13",
+        "foo etc root tmp bin boot dev home mnt opt proc Program Files Users Windows bar, 11"
+    })
+    void shouldSkipDirChecksIfResponseHasDirEvidenceToStartWith(String content, int expected)
+            throws Exception {
+        // Given
+        HttpMessage msg = getHttpMessage("/?p=v");
+        msg.setResponseBody(content);
+        rule.init(msg, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(httpMessagesSent, hasSize(equalTo(expected)));
+    }
+
+    private static Stream<Arguments> handlersProvider() {
+        return Stream.of(
+                // List Linux dirs on attack, but skip windiws payloads since it has windows
+                // evidence to start with
+                Arguments.of(
+                        new ListLinuxDirsOnAttack("/", "p", "/"),
+                        "foo Program Files Users Windows bar",
+                        List.of(
+                                "c:/",
+                                "c:\\",
+                                "..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\",
+                                "\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\",
+                                "file:///c:/",
+                                "file:///c:\\",
+                                "file:\\\\\\c:\\",
+                                "file:\\\\\\c:/",
+                                "file:\\\\\\",
+                                "d:\\",
+                                "d:/",
+                                "file:///d:/",
+                                "file:///d:\\",
+                                "file:\\\\\\d:\\",
+                                "file:\\\\\\d:/")),
+                // List win dirs on attack, but skip linux payloads since it has linux
+                // evidence to start with
+                Arguments.of(
+                        new ListWinDirsOnAttack("/", "p", "c:/"),
+                        "foo etc root tmp bin boot dev home mnt opt proc bar",
+                        List.of(
+                                "/",
+                                "../../../../../../../../../../../../../../../../",
+                                "/../../../../../../../../../../../../../../../../",
+                                "file:///")));
+    }
+
+    @ParameterizedTest
+    @MethodSource("handlersProvider")
+    void shouldNotSkipIfGoodCandidateForOnlyOneTech(
+            NanoServerHandler handler, String baseBody, List<String> skippedPayloads)
+            throws Exception {
+        // Given
+        nano.addHandler(handler);
+        HttpMessage msg = getHttpMessage("/?p=v");
+        msg.setResponseBody(baseBody);
+        rule.init(msg, parent);
+        // When
+        rule.scan();
+        // Then
+        assertSkippedPayloadsNotUsed(httpMessagesSent, skippedPayloads);
+        assertThat(alertsRaised, hasSize(equalTo(1)));
+        assertThat(alertsRaised.get(0).getAlertRef(), is(equalTo("6-3")));
+    }
+
+    private static void assertSkippedPayloadsNotUsed(
+            List<HttpMessage> httpMessagesSent, List<String> skippedPayloads) {
+        for (HttpMessage m : httpMessagesSent) {
+            String paramVal = m.getUrlParams().first().getValue();
+            for (String payload : skippedPayloads) {
+                assertThat(paramVal.equals(payload), is(equalTo(false)));
+            }
+        }
     }
 
     private abstract static class ListDirsOnAttack extends NanoServerHandler {
