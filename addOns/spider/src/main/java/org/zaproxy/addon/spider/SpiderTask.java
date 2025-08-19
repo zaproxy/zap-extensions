@@ -117,7 +117,7 @@ public class SpiderTask implements Runnable {
             if (resourceFound.getMessage() != null
                     && parent.getSpiderParam().isSendRefererHeader()) {
                 requestHeader.setHeader(
-                        HttpRequestHeader.REFERER,
+                        HttpHeader.REFERER,
                         resourceFound.getMessage().getRequestHeader().getURI().toString());
             }
             HttpMessage msg = new HttpMessage(requestHeader);
