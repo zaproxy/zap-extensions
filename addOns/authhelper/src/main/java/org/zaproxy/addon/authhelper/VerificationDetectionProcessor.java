@@ -99,22 +99,27 @@ public class VerificationDetectionProcessor implements Runnable {
                 }
             }
             if (goodVerifReq) {
-                String loggedInIndicator = Pattern.quote(details.getEvidence());
+                String loggedInIndicator = details.getEvidence();
                 String loggedOutIndicator = "";
 
                 if (details.getResponseCode() != firstNonAuthVrd.getResponseCode()) {
                     // The response code details are better to use than specific user names
                     String okCode = getResponseCodeDetails(details.getMsg());
-                    loggedInIndicator = Pattern.quote(okCode);
+                    loggedInIndicator = okCode;
                     loggedOutIndicator =
                             Pattern.quote(getResponseCodeDetails(firstNonAuthVrd.getMsg()));
                     if (!details.isContainsUserDetails()) {
                         details.setEvidence(okCode);
                     }
                 }
-                rule.getAlert(details).raise();
 
-                updateContext(loggedInIndicator, loggedOutIndicator);
+                if (!loggedInIndicator.isEmpty()) {
+                    loggedInIndicator = Pattern.quote(loggedInIndicator);
+
+                    rule.getAlert(details).raise();
+
+                    updateContext(loggedInIndicator, loggedOutIndicator);
+                }
             }
         } catch (IOException e) {
             LOGGER.debug(e.getMessage(), e);
