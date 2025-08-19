@@ -21,6 +21,7 @@ package org.zaproxy.addon.authhelper;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 import net.htmlparser.jericho.Source;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -67,6 +68,7 @@ public class VerificationDetectionScanRule extends PluginPassiveScanner {
             return;
         }
 
+        boolean lowPriority = isLowPriority(msg);
         Set<SessionToken> sessionTokens = AuthUtils.getRequestSessionTokens(msg);
         if (sessionTokens.isEmpty()) {
             if (NetworkUtils.isHttpBasicAuth(msg) || NetworkUtils.isHttpDigestAuth(msg)) {
@@ -80,6 +82,7 @@ public class VerificationDetectionScanRule extends PluginPassiveScanner {
                                     msg,
                                     msg.getRequestHeader().getHeader(HttpHeader.AUTHORIZATION),
                                     context);
+                    newVerifDetails.setLowPriority(lowPriority);
                     if (currentVerifDetails != null
                             && newVerifDetails.getScore() > 0
                             && COMPARATOR.compare(newVerifDetails, currentVerifDetails) > 0) {
@@ -106,6 +109,7 @@ public class VerificationDetectionScanRule extends PluginPassiveScanner {
                         AuthUtils.getVerificationDetailsForContext(context.getId());
                 VerificationRequestDetails newVerifDetails =
                         new VerificationRequestDetails(msg, token, context);
+                newVerifDetails.setLowPriority(lowPriority);
                 if (currentVerifDetails != null
                         && newVerifDetails.getScore() > 0
                         && COMPARATOR.compare(newVerifDetails, currentVerifDetails) > 0) {
@@ -122,7 +126,15 @@ public class VerificationDetectionScanRule extends PluginPassiveScanner {
 
     private static boolean isPoorCandidate(HttpMessage msg) {
         String escapedPathQuery = msg.getRequestHeader().getURI().getEscapedPathQuery();
-        return AuthConstants.getAuthRelatedIndicators().stream()
+        return Stream.concat(
+                        AuthConstants.getLogoutIndicators().stream(),
+                        AuthConstants.getRegistrationIndicators().stream())
+                .anyMatch(keyword -> StringUtils.containsIgnoreCase(escapedPathQuery, keyword));
+    }
+
+    private static boolean isLowPriority(HttpMessage msg) {
+        String escapedPathQuery = msg.getRequestHeader().getURI().getEscapedPathQuery();
+        return AuthConstants.getLoginIndicators().stream()
                 .anyMatch(keyword -> StringUtils.containsIgnoreCase(escapedPathQuery, keyword));
     }
 

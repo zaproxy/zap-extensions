@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
@@ -44,6 +45,7 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.AuthConstants;
 import org.zaproxy.zap.model.Context;
+import org.zaproxy.zap.utils.Pair;
 
 /** Unit test for {@link VerificationDetectionScanRule}. */
 class VerificationDetectionScanRuleUnitTest
@@ -62,7 +64,9 @@ class VerificationDetectionScanRuleUnitTest
         return BASE_URLS.stream()
                 .flatMap(
                         url ->
-                                AuthConstants.getAuthRelatedIndicators().stream()
+                                Stream.concat(
+                                                AuthConstants.getLogoutIndicators().stream(),
+                                                AuthConstants.getRegistrationIndicators().stream())
                                         // Format the URL with the indicator
                                         .map(url::formatted));
     }
@@ -120,24 +124,30 @@ class VerificationDetectionScanRuleUnitTest
     }
 
     /* Provides URLs with misc candidate strings both as path components and query values */
-    private static Stream<String> providePotentiallyGoodCandidates() {
-        // Get a 'matrix' of both sets
+    private static Stream<Arguments> providePotentialCandidates() {
+        // Get a 'matrix' of the sets
         return BASE_URLS.stream()
                 .flatMap(
                         url ->
-                                Set.of(
-                                                "query",
-                                                "update",
-                                                "1234",
-                                                "02a3f4ec-f3df-4aa0-a2bd-3fdcdb02aa55")
-                                        .stream()
+                                Stream.concat(
+                                                Set.of(
+                                                                "query",
+                                                                "update",
+                                                                "1234",
+                                                                "02a3f4ec-f3df-4aa0-a2bd-3fdcdb02aa55")
+                                                        .stream()
+                                                        .map(e -> new Pair<>(e, false)),
+                                                // Low priority candidates
+                                                AuthConstants.getLoginIndicators().stream()
+                                                        .map(e -> new Pair<>(e, true)))
                                         // Format the URL with the component
-                                        .map(url::formatted));
+                                        .map(e -> Arguments.of(url.formatted(e.first), e.second)));
     }
 
     @ParameterizedTest
-    @MethodSource("providePotentiallyGoodCandidates")
-    void shouldVerifyPotentiallyGoodCandidateUrl(String url) throws HttpMalformedHeaderException {
+    @MethodSource("providePotentialCandidates")
+    void shouldVerifyPotentialCandidateUrl(String url, boolean lowPriority)
+            throws HttpMalformedHeaderException {
         // Given
         String tokenName = "x-auth-header";
         String tokenValue = "fdb0f2d1-6f5c-4dd7-a829-e1cb7a114f23";
@@ -175,6 +185,7 @@ class VerificationDetectionScanRuleUnitTest
             assertThat(vrd.getContextId(), is(equalTo(1)));
             assertThat(vrd.getScore(), is(equalTo(2)));
             assertThat(vrd.getToken(), is(equalTo(tokenValue)));
+            assertThat(vrd.isLowPriority(), is(equalTo(lowPriority)));
             assertThat(ruleCaptor.getValue(), is(sameInstance(rule)));
         }
     }

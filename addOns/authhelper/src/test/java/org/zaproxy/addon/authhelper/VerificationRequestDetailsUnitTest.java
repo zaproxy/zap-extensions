@@ -22,6 +22,8 @@ package org.zaproxy.addon.authhelper;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.lessThan;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -47,6 +49,7 @@ import org.zaproxy.zap.network.HttpResponseBody;
 import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.users.User;
 
+/** Unit test for {@link VerificationRequestDetails}. */
 class VerificationRequestDetailsUnitTest extends TestUtils {
 
     private ExtensionLoader extensionLoader;
@@ -58,15 +61,25 @@ class VerificationRequestDetailsUnitTest extends TestUtils {
     void setUp() {
         extensionLoader =
                 mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
-        context = mock(Context.class);
+        context = mock(Context.class, withSettings().strictness(Strictness.LENIENT));
         given(context.getId()).willReturn(1);
         cuam = mock(ContextUserAuthManager.class);
 
-        ExtensionUserManagement extUser = mock(ExtensionUserManagement.class);
+        ExtensionUserManagement extUser =
+                mock(ExtensionUserManagement.class, withSettings().strictness(Strictness.LENIENT));
         given(extensionLoader.getExtension(ExtensionUserManagement.class)).willReturn(extUser);
         given(extUser.getContextUserAuthManager(anyInt())).willReturn(cuam);
 
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
+    }
+
+    @Test
+    void shouldHaveLowPriorityIfNoData() {
+        // Given / When
+        VerificationRequestDetails vrd = new VerificationRequestDetails();
+
+        // Then
+        assertThat(vrd.isLowPriority(), is(equalTo(true)));
     }
 
     @Test
@@ -99,6 +112,7 @@ class VerificationRequestDetailsUnitTest extends TestUtils {
         assertThat(vrd.getToken(), is(equalTo("aaa")));
         assertThat(vrd.getScore(), is(equalTo(2)));
         assertThat(vrd.getConfidence(), is(equalTo(1)));
+        assertThat(vrd.isLowPriority(), is(equalTo(false)));
     }
 
     @Test
@@ -321,5 +335,37 @@ class VerificationRequestDetailsUnitTest extends TestUtils {
         // Then
         assertThat(vrd1.isConsistent(vrd2), is(equalTo(false)));
         assertThat(vrd1.isIdentifiablyDifferent(vrd2), is(equalTo(true)));
+    }
+
+    /** Unit test for {@link VerificationRequestDetails$VerificationComparator}. */
+    static class VerificationComparatorUnitTest {
+
+        @Test
+        void shouldBeLessWhenLowPriority() {
+            // Given
+            VerificationRequestDetails vrd1 = new VerificationRequestDetails();
+            VerificationRequestDetails vrd2 = new VerificationRequestDetails();
+            vrd2.setLowPriority(false);
+
+            // When
+            int result = VerificationRequestDetails.getComparator().compare(vrd1, vrd2);
+
+            // Then
+            assertThat(result, is(lessThan(0)));
+        }
+
+        @Test
+        void shouldBeGreaterWhenNoLowPriority() {
+            // Given
+            VerificationRequestDetails vrd1 = new VerificationRequestDetails();
+            vrd1.setLowPriority(false);
+            VerificationRequestDetails vrd2 = new VerificationRequestDetails();
+
+            // When
+            int result = VerificationRequestDetails.getComparator().compare(vrd1, vrd2);
+
+            // Then
+            assertThat(result, is(greaterThan(0)));
+        }
     }
 }
