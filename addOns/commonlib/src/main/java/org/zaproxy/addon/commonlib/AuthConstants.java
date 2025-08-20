@@ -20,7 +20,6 @@
 package org.zaproxy.addon.commonlib;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -36,29 +35,41 @@ public final class AuthConstants {
     private static final Set<String> REGISTRATION_INDICATORS =
             Set.of("register", "signup", "sign-up");
 
+    private static final Set<String> LOGOUT_INDICATORS =
+            Set.of(
+                    "logout",
+                    "logoff",
+                    "signout",
+                    "signoff",
+                    "log-out",
+                    "sign-out",
+                    "log-off",
+                    "sign-off");
+
     private static final Set<String> AUTHENTICATION_RELATED_INDICATORS;
 
     static {
         AUTHENTICATION_RELATED_INDICATORS = new HashSet<>();
-        AUTHENTICATION_RELATED_INDICATORS.addAll(
-                List.of(
-                        "logout",
-                        "logoff",
-                        "signout",
-                        "signoff",
-                        "log-out",
-                        "sign-out",
-                        "log-off",
-                        "sign-off"));
+        AUTHENTICATION_RELATED_INDICATORS.addAll(LOGOUT_INDICATORS);
         AUTHENTICATION_RELATED_INDICATORS.addAll(LOGIN_INDICATORS);
         AUTHENTICATION_RELATED_INDICATORS.addAll(REGISTRATION_INDICATORS);
     }
+
+    private AuthConstants() {}
 
     /**
      * @return A set of Strings which represent indications of a login page or parameter value.
      */
     public static Set<String> getLoginIndicators() {
         return LOGIN_INDICATORS;
+    }
+
+    /**
+     * @return A set of Strings which represent indications of a logout URL or parameter value.
+     * @since 1.35.0
+     */
+    public static Set<String> getLogoutIndicators() {
+        return LOGOUT_INDICATORS;
     }
 
     /**

@@ -13,12 +13,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Support for min wait for time in Client Script Authentication.
 
 ## Changed
+- Now depends on minimum Common Library version 1.35.0.
 - Send the referer header on verification if set on the original request.
 - Removed requirement to set at least one header in the GUI for Header-Based Session Management.
 - Include step for errors in the authentication diagnostics.
 - Browser based authentication to also support HTTP basic authentication for Firefox.
 - Verification rule to improve detection.
 - Add support for Microsoft login in Browser Based Authentication.
+- Consider login like URLs as candidates for verification URL.
 
 ### Fixed
 - Do not fail the authentication on diagnostic errors.

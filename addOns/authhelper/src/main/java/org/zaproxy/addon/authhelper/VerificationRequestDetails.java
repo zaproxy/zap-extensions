@@ -24,6 +24,8 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Comparator;
 import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
@@ -44,10 +46,12 @@ public class VerificationRequestDetails {
     private boolean structuredResponse;
     private String evidence = "";
     private int contextId;
+    @Getter @Setter private boolean lowPriority;
 
     public VerificationRequestDetails() {
         this.msg = null;
         this.token = null;
+        this.lowPriority = true;
     }
 
     private static String urlEncode(String str) {
@@ -195,6 +199,10 @@ public class VerificationRequestDetails {
 
         @Override
         public int compare(VerificationRequestDetails o1, VerificationRequestDetails o2) {
+            int result = Boolean.compare(o1.isLowPriority(), o2.isLowPriority());
+            if (result != 0) {
+                return -result;
+            }
             return Integer.compare(o1.getScore(), o2.getScore());
         }
     }
