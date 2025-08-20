@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- The External Redirect scan rule has been updated to account for potential false positives involving JavaScript comments.
 
 ## [73] - 2025-09-02
 ### Changed
