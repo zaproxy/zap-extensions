@@ -371,25 +371,30 @@ return getSelector(arguments[0], document)
     }
 
     private void processStorage(JavascriptExecutor je, DiagnosticBrowserStorageItem.Type type) {
-        @SuppressWarnings("unchecked")
-        List<Map<String, String>> storage =
-                (List<Map<String, String>>) je.executeScript(type.getScript());
-        if (storage == null || storage.isEmpty()) {
-            return;
-        }
+        try {
+            @SuppressWarnings("unchecked")
+            List<Map<String, String>> storage =
+                    (List<Map<String, String>>) je.executeScript(type.getScript());
+            if (storage == null || storage.isEmpty()) {
+                return;
+            }
 
-        storage.stream()
-                .map(
-                        e -> {
-                            DiagnosticBrowserStorageItem item = new DiagnosticBrowserStorageItem();
-                            item.setCreateTimestamp(Instant.now());
-                            item.setStep(currentStep);
-                            item.setType(type);
-                            item.setKey(e.get("key"));
-                            item.setValue(e.get("value"));
-                            return item;
-                        })
-                .forEach(currentStep.getBrowserStorageItems()::add);
+            storage.stream()
+                    .map(
+                            e -> {
+                                DiagnosticBrowserStorageItem item =
+                                        new DiagnosticBrowserStorageItem();
+                                item.setCreateTimestamp(Instant.now());
+                                item.setStep(currentStep);
+                                item.setType(type);
+                                item.setKey(e.get("key"));
+                                item.setValue(e.get("value"));
+                                return item;
+                            })
+                    .forEach(currentStep.getBrowserStorageItems()::add);
+        } catch (WebDriverException e) {
+            LOGGER.debug("Failed to process the storage:", e);
+        }
     }
 
     private DiagnosticWebElement createDiagnosticWebElement(
