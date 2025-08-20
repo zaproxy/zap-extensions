@@ -531,6 +531,68 @@ class ExternalRedirectScanRuleUnitTest extends ActiveScannerTest<ExternalRedirec
         assertThat(alertsRaised.get(0).getEvidence().startsWith(HttpHeader.HTTP), equalTo(true));
     }
 
+    private static Stream<Arguments> provideCommentStrings() {
+        return Stream.of(
+                Arguments.of("Block comment", "/*  window.location.replace('@@@content@@@');\n*/"),
+                Arguments.of("Single line", "// window.location.replace('@@@content@@@');"),
+                Arguments.of(
+                        "Inline block",
+                        "console.log(\"example\"); /* console.log('@@@content@@@'); */"),
+                Arguments.of(
+                        "Inline single line",
+                        "console.log(\"example\"); // console.log('@@@content@@@');"),
+                Arguments.of(
+                        "Inline single line (w/ unicode escape)",
+                        "console.log(\"🔥 example\"); // console.log('\u1F525 @@@content@@@');"),
+                // Next needs double escape because of Java
+                Arguments.of(
+                        "Inline single line (w/ hex escape)",
+                        "console.log(\"example\"); // console.log('\\xD83D @@@content@@@');"),
+                Arguments.of(
+                        "Inline single line (w/ single char escapes)",
+                        "console.log(\"example\"); // console.log('\r\n\t@@@content@@@');"));
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("provideCommentStrings")
+    void shouldNotReportRedirectIfInsideJsComment(String name, String content) throws Exception {
+        // Given
+        String test = "/";
+        String body =
+                """
+                <!DOCTYPE html>
+                <html>
+                <head>
+                <title>Redirect commented out</title>
+                </head>
+                <body>
+
+                <script>function myRedirectFunction()
+                {%s}
+                //myRedirectFunction();</script>
+                """
+                        .formatted(content);
+        nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
+                        String site = getFirstParamValue(session, "site");
+                        if (site != null && !site.isEmpty()) {
+                            String withPayload = body.replace(CONTENT_TOKEN, site);
+                            return newFixedLengthResponse(
+                                    NanoHTTPD.Response.Status.OK, NanoHTTPD.MIME_HTML, withPayload);
+                        }
+                        return newFixedLengthResponse("<html><body></body></html>");
+                    }
+                });
+        HttpMessage msg = getHttpMessage(test + "?site=xxx");
+        rule.init(msg, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
     private static Stream<Arguments> createJsMethodBooleanPairs() {
         return Stream.of(
                 Arguments.of("location.reload", true),
