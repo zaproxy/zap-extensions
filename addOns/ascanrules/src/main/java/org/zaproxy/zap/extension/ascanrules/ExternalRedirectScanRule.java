@@ -20,11 +20,15 @@
 package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.IOException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -478,8 +482,262 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
 
     private static boolean isRedirectPresent(Pattern pattern, String value) {
         Matcher matcher = pattern.matcher(value);
+        if (!matcher.find()) {
+            return false;
+        }
+        Set<String> extractedComments = extractJsComments(value);
+        String valueWithoutComments = value;
+        for (String comment : extractedComments) {
+            valueWithoutComments = valueWithoutComments.replace(comment, "");
+        }
+
+        matcher = pattern.matcher(valueWithoutComments);
         return matcher.find()
                 && StringUtils.startsWithIgnoreCase(matcher.group(1), HttpHeader.HTTP);
+    }
+
+    private enum State {
+        NORMAL,
+        SLASH,
+        LINE_COMMENT,
+        BLOCK_COMMENT,
+        STRING_SINGLE,
+        STRING_DOUBLE,
+        TEMPLATE,
+        TEMPLATE_EXPR
+    }
+
+    /** Visibility increased for unit testing purposes only */
+    protected static Set<String> extractJsComments(String code) {
+        Set<String> comments = new LinkedHashSet<>();
+        StringBuilder current = null;
+
+        Deque<State> stateStack = new ArrayDeque<>();
+        Deque<Integer> exprDepthStack = new ArrayDeque<>(); // for nested ${...}
+
+        State state = State.NORMAL;
+        int i = 0;
+        final int n = code.length();
+
+        while (i < n) {
+            char c = code.charAt(i);
+
+            switch (state) {
+                case NORMAL:
+                    if (c == '"') {
+                        stateStack.push(state);
+                        state = State.STRING_DOUBLE;
+                        i++;
+                    } else if (c == '\'') {
+                        stateStack.push(state);
+                        state = State.STRING_SINGLE;
+                        i++;
+                    } else if (c == '`') {
+                        stateStack.push(state);
+                        state = State.TEMPLATE;
+                        i++;
+                    } else if (c == '/') {
+                        state = State.SLASH;
+                        i++;
+                    } else {
+                        i++;
+                    }
+                    break;
+
+                case SLASH:
+                    if (i >= n) {
+                        state = State.NORMAL;
+                        break;
+                    }
+                    char d = code.charAt(i);
+                    if (d == '/') {
+                        current = new StringBuilder("//");
+                        state = State.LINE_COMMENT;
+                        i++;
+                    } else if (d == '*') {
+                        current = new StringBuilder("/*");
+                        state = State.BLOCK_COMMENT;
+                        i++;
+                    } else {
+                        state = State.NORMAL;
+                    }
+                    break;
+
+                case LINE_COMMENT:
+                    if (i < n) {
+                        char ch = code.charAt(i);
+                        current.append(ch);
+                        i++;
+                        if (isLineTerminator(ch)) {
+                            comments.add(current.toString());
+                            current = null;
+                            state = State.NORMAL;
+                        }
+                    } else {
+                        // EOF inside line comment
+                        comments.add(current.toString());
+                        current = null;
+                        state = State.NORMAL;
+                    }
+                    break;
+
+                case BLOCK_COMMENT:
+                    if (i < n) {
+                        char ch = code.charAt(i);
+                        current.append(ch);
+                        if (ch == '*' && i + 1 < n && code.charAt(i + 1) == '/') {
+                            current.append('/');
+                            i += 2;
+                            comments.add(current.toString());
+                            current = null;
+                            state = State.NORMAL;
+                        } else {
+                            i++;
+                        }
+                    } else {
+                        // EOF inside block comment
+                        comments.add(current.toString());
+                        current = null;
+                        state = State.NORMAL;
+                    }
+                    break;
+
+                case STRING_DOUBLE:
+                    if (c == '\\') {
+                        i = consumeJsEscape(code, i) + 1;
+                    } else if (c == '"') {
+                        state = stateStack.pop();
+                        i++;
+                    } else {
+                        i++;
+                    }
+                    break;
+
+                case STRING_SINGLE:
+                    if (c == '\\') {
+                        i = consumeJsEscape(code, i) + 1;
+                    } else if (c == '\'') {
+                        state = stateStack.pop();
+                        i++;
+                    } else {
+                        i++;
+                    }
+                    break;
+
+                case TEMPLATE:
+                    if (c == '\\') {
+                        i = consumeJsEscape(code, i) + 1;
+                    } else if (c == '`') {
+                        state = stateStack.pop();
+                        i++;
+                    } else if (c == '$' && i + 1 < n && code.charAt(i + 1) == '{') {
+                        stateStack.push(state);
+                        exprDepthStack.push(1); // start of template expression
+                        state = State.TEMPLATE_EXPR;
+                        i += 2;
+                    } else {
+                        i++;
+                    }
+                    break;
+
+                case TEMPLATE_EXPR:
+                    if (c == '"') {
+                        stateStack.push(state);
+                        state = State.STRING_DOUBLE;
+                        i++;
+                    } else if (c == '\'') {
+                        stateStack.push(state);
+                        state = State.STRING_SINGLE;
+                        i++;
+                    } else if (c == '`') {
+                        stateStack.push(state);
+                        state = State.TEMPLATE;
+                        i++;
+                    } else if (c == '{') {
+                        exprDepthStack.push(exprDepthStack.pop() + 1);
+                        i++;
+                    } else if (c == '}') {
+                        int depth = exprDepthStack.pop() - 1;
+                        if (depth == 0) {
+                            state = stateStack.pop();
+                        } else {
+                            exprDepthStack.push(depth);
+                        }
+                        i++;
+                    } else if (c == '/') {
+                        state = State.SLASH;
+                        i++;
+                    } else {
+                        i++;
+                    }
+                    break;
+            }
+        }
+
+        // EOF handling: finalize any pending comment regardless of state
+        if (current != null) {
+            comments.add(current.toString());
+        }
+
+        return comments;
+    }
+
+    private static int consumeJsEscape(String s, int backslash) {
+        int n = s.length();
+        int i = backslash;
+        if (i + 1 >= n) return i;
+
+        char e = s.charAt(i + 1);
+
+        if (isLineTerminator(e)) {
+            if (e == '\r' && i + 2 < n && s.charAt(i + 2) == '\n') return i + 2;
+            return i + 1;
+        }
+
+        if (e == 'x' || e == 'X') {
+            int j = i + 2, count = 0;
+            while (j < n && count < 2 && isHexDigit(s.charAt(j))) {
+                j++;
+                count++;
+            }
+            return j - 1;
+        }
+
+        if (e == 'u' || e == 'U') {
+            int j = i + 2;
+            if (j < n && s.charAt(j) == '{') {
+                j++;
+                while (j < n && isHexDigit(s.charAt(j))) j++;
+                if (j < n && s.charAt(j) == '}') j++;
+                return j - 1;
+            } else {
+                int count = 0;
+                while (j < n && count < 4 && isHexDigit(s.charAt(j))) {
+                    j++;
+                    count++;
+                }
+                return j - 1;
+            }
+        }
+
+        if (e >= '0' && e <= '7') {
+            int j = i + 1, count = 0;
+            while (j < n && count < 3 && s.charAt(j) >= '0' && s.charAt(j) <= '7') {
+                j++;
+                count++;
+            }
+            return j - 1;
+        }
+
+        return i + 1;
+    }
+
+    private static boolean isHexDigit(char c) {
+        return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F');
+    }
+
+    private static boolean isLineTerminator(char c) {
+        return c == '\n' || c == '\r' || c == '\u2028' || c == '\u2029';
     }
 
     @Override
