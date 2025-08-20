@@ -23,7 +23,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.withSettings;
@@ -40,6 +39,10 @@ import org.mockito.MockSettings;
 import org.mockito.quality.Strictness;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.HistoryReference;
+import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.Session;
+import org.parosproxy.paros.model.SiteMap;
+import org.parosproxy.paros.model.SiteNode;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.testutils.TestUtils;
@@ -66,16 +69,38 @@ class ClientPassiveScanHelperUnitTest extends TestUtils {
     @Test
     void shouldFindHistoryRef() throws Exception {
         // Given
-        given(extHistory.getLastHistoryId()).willReturn(3);
+        Model model = mock();
+        given(extHistory.getModel()).willReturn(model);
+        Session session = mock();
+        given(model.getSession()).willReturn(session);
+        SiteMap siteTree = mock();
+        given(session.getSiteTree()).willReturn(siteTree);
+        SiteNode siteNode = mock();
         String url = "http://example.com/";
-        HistoryReference href1 = mockHistoryReference(url);
-        HistoryReference href2Deleted = null;
-        HistoryReference href3 = mockHistoryReference("http://not.example.com/");
-        given(extHistory.getHistoryReference(anyInt())).willReturn(href3, href2Deleted, href1);
+        given(siteTree.findNode(new URI(url, true))).willReturn(siteNode);
+        HistoryReference href = mockHistoryReference(url);
+        given(siteNode.getHistoryReference()).willReturn(href);
         // When
         HistoryReference foundHref = helper.findHistoryRef(url);
         // Then
-        assertThat(foundHref, is(equalTo(href1)));
+        assertThat(foundHref, is(equalTo(href)));
+    }
+
+    @Test
+    void shouldNotFindHistoryRefIfNotPresent() throws Exception {
+        // Given
+        Model model = mock();
+        given(extHistory.getModel()).willReturn(model);
+        Session session = mock();
+        given(model.getSession()).willReturn(session);
+        SiteMap siteTree = mock();
+        given(session.getSiteTree()).willReturn(siteTree);
+        String url = "http://example.com/";
+        given(siteTree.findNode(new URI(url, true))).willReturn(null);
+        // When
+        HistoryReference foundHref = helper.findHistoryRef(url);
+        // Then
+        assertThat(foundHref, is(nullValue()));
     }
 
     private static HistoryReference mockHistoryReference(String url) throws URIException {
