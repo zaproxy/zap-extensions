@@ -162,6 +162,9 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
      */
     public void planFinished() {}
 
+    /** Called to stop any running jobs early. Must be implemented by long running jobs. */
+    public void stop() {}
+
     public abstract void runJob(AutomationEnvironment env, AutomationProgress progress);
 
     public abstract String getType();

@@ -63,6 +63,7 @@ public class ActiveScanJob extends AutomationJob {
     private Parameters parameters = new Parameters();
     private PolicyDefinition policyDefinition = new PolicyDefinition();
     private Data data;
+    private boolean forceStop;
 
     public ActiveScanJob() {
         data = new Data(this, this.parameters, this.policyDefinition);
@@ -206,6 +207,7 @@ public class ActiveScanJob extends AutomationJob {
             contextSpecificObjects.add(scanPolicy);
         }
 
+        forceStop = false;
         int scanId = this.getExtAScan().startScan(target, user, contextSpecificObjects.toArray());
 
         long endTime = Long.MAX_VALUE;
@@ -221,12 +223,11 @@ public class ActiveScanJob extends AutomationJob {
 
         // Wait for the active scan to finish
         ActiveScan scan;
-        boolean forceStop = false;
 
         while (true) {
             this.sleep(500);
             scan = this.getExtAScan().getScan(scanId);
-            if (scan.isStopped()) {
+            if (scan.isStopped() || forceStop) {
                 break;
             }
             if (!this.runMonitorTests(progress) || System.currentTimeMillis() > endTime) {
@@ -241,6 +242,11 @@ public class ActiveScanJob extends AutomationJob {
         progress.addJobResultData(createJobResultData(scanId));
 
         getExtAScan().setPanelSwitch(true);
+    }
+
+    @Override
+    public void stop() {
+        forceStop = true;
     }
 
     @Override

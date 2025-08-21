@@ -51,6 +51,7 @@ public class AutomationAPI extends ApiImplementor {
     private static final String PREFIX = "automation";
 
     private static final String ACTION_RUN_PLAN = "runPlan";
+    private static final String ACTION_STOP_PLAN = "stopPlan";
     private static final String ACTION_END_DELAY_JOB = "endDelayJob";
     private static final String VIEW_PLAN_PROGRESS = "planProgress";
 
@@ -72,6 +73,7 @@ public class AutomationAPI extends ApiImplementor {
         super();
         this.extension = extension;
         this.addApiAction(new ApiAction(ACTION_RUN_PLAN, new String[] {PARAM_FILE_PATH}));
+        this.addApiAction(new ApiAction(ACTION_STOP_PLAN, new String[] {PARAM_PLAN_ID}));
         this.addApiAction(new ApiAction(ACTION_END_DELAY_JOB));
         this.addApiView(new ApiView(VIEW_PLAN_PROGRESS, new String[] {PARAM_PLAN_ID}));
     }
@@ -101,6 +103,14 @@ public class AutomationAPI extends ApiImplementor {
             } catch (IOException | ApiException e) {
                 throw new ApiException(Type.DOES_NOT_EXIST, e.getMessage());
             }
+        } else if (name.equals(ACTION_STOP_PLAN)) {
+            AutomationPlan plan = extension.getPlan(params.getInt(PARAM_PLAN_ID));
+
+            if (plan == null) {
+                throw new ApiException(Type.DOES_NOT_EXIST);
+            }
+            extension.stopPlan(plan);
+            return ApiResponseElement.OK;
         } else if (name.equals(ACTION_END_DELAY_JOB)) {
             DelayJob.setEndJob(true);
             return ApiResponseElement.OK;

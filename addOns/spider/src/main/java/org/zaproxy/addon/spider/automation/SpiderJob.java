@@ -81,6 +81,7 @@ public class SpiderJob extends AutomationJob {
 
     private UrlRequester urlRequester =
             new UrlRequester(this.getName(), new HttpSender(HttpSender.SPIDER_INITIATOR));
+    private boolean forceStop;
 
     public SpiderJob() {
         this.data = new Data(this, parameters);
@@ -230,6 +231,7 @@ public class SpiderJob extends AutomationJob {
             contextSpecificObjects.add(uri);
         }
 
+        forceStop = false;
         int scanId = this.getExtSpider().startScan(target, user, contextSpecificObjects.toArray());
 
         long endTime = Long.MAX_VALUE;
@@ -243,7 +245,6 @@ public class SpiderJob extends AutomationJob {
 
         // Wait for the spider to finish
         SpiderScan scan;
-        boolean forceStop = false;
         int numUrlsFound = 0;
         int lastCount = 0;
 
@@ -255,7 +256,7 @@ public class SpiderJob extends AutomationJob {
             Stats.incCounter(URLS_ADDED_STATS_KEY, numUrlsFound - lastCount);
             lastCount = numUrlsFound;
 
-            if (scan.isStopped()) {
+            if (scan.isStopped() || forceStop) {
                 break;
             }
             if (!this.runMonitorTests(progress) || System.currentTimeMillis() > endTime) {
@@ -274,6 +275,11 @@ public class SpiderJob extends AutomationJob {
                         "automation.info.urlsfound", this.getName(), numUrlsFound));
 
         getExtSpider().setPanelSwitch(true);
+    }
+
+    @Override
+    public void stop() {
+        forceStop = true;
     }
 
     /**

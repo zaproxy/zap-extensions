@@ -53,6 +53,7 @@ public class PassiveScanWaitJob extends AutomationJob {
 
     private Data data;
     private Parameters parameters = new Parameters();
+    private boolean forceStop;
 
     public PassiveScanWaitJob() {
         this.pscan =
@@ -75,13 +76,14 @@ public class PassiveScanWaitJob extends AutomationJob {
     @Override
     public void runJob(AutomationEnvironment env, AutomationProgress progress) {
         long endTime = Long.MAX_VALUE;
+        forceStop = false;
         Integer maxDuration = this.parameters.getMaxDuration();
         if (maxDuration != null && maxDuration > 0) {
             endTime = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(maxDuration);
         }
 
         while (pscan.getRecordsToScan() > 0) {
-            if (System.currentTimeMillis() > endTime) {
+            if (System.currentTimeMillis() > endTime || forceStop) {
                 break;
             }
             try {
@@ -91,6 +93,11 @@ public class PassiveScanWaitJob extends AutomationJob {
             }
         }
         progress.addJobResultData(this.getJobResultData());
+    }
+
+    @Override
+    public void stop() {
+        forceStop = true;
     }
 
     @Override

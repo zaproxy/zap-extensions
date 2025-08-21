@@ -54,6 +54,7 @@ public class ClientSpiderJob extends AutomationJob {
 
     private Data data;
     private Parameters parameters = new Parameters();
+    private boolean forceStop;
 
     public ClientSpiderJob() {
         this.data = new Data(this, parameters);
@@ -106,6 +107,7 @@ public class ClientSpiderJob extends AutomationJob {
         }
         uriStr = env.replaceVars(uriStr);
 
+        forceStop = false;
         int scanId = -1;
         try {
             scanId =
@@ -134,12 +136,11 @@ public class ClientSpiderJob extends AutomationJob {
         }
 
         // Wait for the client spider to finish
-        boolean forceStop = false;
 
         while (true) {
             this.sleep(500);
 
-            if (!spider.isRunning()) {
+            if (!spider.isRunning() || forceStop) {
                 break;
             }
             if (!this.runMonitorTests(progress) || System.currentTimeMillis() > endTime) {
@@ -151,6 +152,11 @@ public class ClientSpiderJob extends AutomationJob {
             spider.stopScan();
             progress.info(Constant.messages.getString("automation.info.jobstopped", getType()));
         }
+    }
+
+    @Override
+    public void stop() {
+        forceStop = true;
     }
 
     protected ClientOptions paramsToOptions() {
