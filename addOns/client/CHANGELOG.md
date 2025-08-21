@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - Updated Chrome and Firefox extensions to v0.1.5.
+- Reduce warnings when passive scanning.
 
 ### Fixed
 - Error logs to always include stack trace.

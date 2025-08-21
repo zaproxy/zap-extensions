@@ -22,12 +22,15 @@ package org.zaproxy.addon.client.pscan;
 import java.awt.event.KeyEvent;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.HistoryReference;
+import org.parosproxy.paros.model.SiteNode;
 import org.zaproxy.addon.client.ClientUtils;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.utils.Stats;
@@ -35,7 +38,6 @@ import org.zaproxy.zap.utils.Stats;
 public class ClientPassiveScanHelper {
 
     private static final Logger LOGGER = LogManager.getLogger(ClientPassiveScanHelper.class);
-    private static final int MAX_HREFS_TO_CHECK = 1000;
     private ExtensionAlert extAlert;
     private ExtensionHistory extHistory;
 
@@ -46,21 +48,20 @@ public class ClientPassiveScanHelper {
 
     public HistoryReference findHistoryRef(String url) {
         url = ClientUtils.stripUrlFragment(url);
-        int lastId = extHistory.getLastHistoryId();
 
-        // We don't expect to have to go too far back..
-        int limit = Math.max(lastId - MAX_HREFS_TO_CHECK, 0);
-        LOGGER.debug("Searching for history reference for {}", url);
-        for (int i = lastId; i >= limit; i--) {
-            HistoryReference hr = extHistory.getHistoryReference(i);
-            if (hr != null && url.equals(hr.getURI().toString())) {
-                LOGGER.debug("Found history reference {} for {}", hr.getHistoryId(), url);
+        try {
+            SiteNode node =
+                    extHistory.getModel().getSession().getSiteTree().findNode(new URI(url, true));
+            if (node != null) {
+                HistoryReference hr = node.getHistoryReference();
                 Stats.incCounter("stats.client.pscan.href.found");
+                LOGGER.debug("Found history reference {} for {}", hr.getHistoryId(), url);
                 return hr;
             }
+        } catch (URIException e) {
+            LOGGER.warn("Failed to create URI from: {} Cause: {}", url, e.getMessage());
         }
-        // Include the limit in case we change it in the future
-        Stats.incCounter("stats.client.pscan.href.missing." + MAX_HREFS_TO_CHECK);
+        Stats.incCounter("stats.client.pscan.href.missing");
         return null;
     }
 
