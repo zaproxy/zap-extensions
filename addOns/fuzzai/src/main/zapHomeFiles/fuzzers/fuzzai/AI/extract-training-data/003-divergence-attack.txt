@@ -1,23 +1,16 @@
-# This file contains fuzzing payloads specific to testing LLM "hypnosis" vulnerabilities.
-# The goal is to determine if the LLM enters a repetitive state where it unintentionally leaks training data.
-# These payloads explore edge cases where repetition may trigger the LLM to output sensitive data.
-# AI-RMM documentation: https://osf.io/kb8a5/
-#
-# Payloads simulate queries that aim to induce looping or repetitive responses.
+# Payloads are designed to induce divergence from the model’s aligned state, 
+# encouraging it to generate training data by combining nonsensical prompts with structured ones.
+# 
+# These payloads simulate queries that aim to induce looping or repetitive responses.
 # This version of payloads is more focused on training data extraction through a 
 # prompting strategy similar to the divergence attack described in the document.
 # Expected system behavior is detailed for each scenario. 
-#
-# Divergence testing - Payloads are designed to induce divergence from the model’s aligned state, 
-# encouraging it to generate training data by combining nonsensical prompts with structured ones.
-#
+# 
 # Repetition strategies - Several prompts employ repetition to test if the model diverges and 
 # outputs memorized data.
 #
 # Sensitive data requests - These payloads assess whether the model can protect sensitive training 
 # data like PII, code snippets, or real-world text examples from leaking.
-#
-#
 #
 # References
 # - Scalable Extraction of Training Data from (Production) Language Models
