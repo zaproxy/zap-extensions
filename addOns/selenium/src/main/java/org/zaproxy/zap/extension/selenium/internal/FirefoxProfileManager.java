@@ -31,8 +31,10 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.manager.SeleniumManager;
 import org.openqa.selenium.manager.SeleniumManagerOutput;
+import org.openqa.selenium.manager.SeleniumManagerOutput.Result;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.selenium.ProfileManager;
 import org.zaproxy.zap.utils.Stats;
@@ -146,10 +148,19 @@ public class FirefoxProfileManager implements ProfileManager {
                         .getBinaryPaths(
                                 List.of("--offline", "--avoid-stats", "--browser", "firefox"));
         if (smOutput.getCode() != 0) {
-            LOGGER.debug("Executed SeleniumManager with exit code: {}", smOutput.getCode());
+            LOGGER.debug(
+                    "Executed SeleniumManager with exit code: {} Message: {}",
+                    smOutput.getCode(),
+                    smOutput.getMessage());
             return null;
         }
-        String path = smOutput.getBrowserPath();
+
+        String path = getBrowserPath(smOutput);
+        if (path == null || path.isEmpty()) {
+            LOGGER.warn("Unable to find Firefox binary through SeleniumManager.");
+            return null;
+        }
+
         String[] args = {path, "-headless", "-CreateProfile", profileName};
         LOGGER.debug("Creating profile with: {}", () -> Arrays.toString(args));
 
@@ -173,5 +184,18 @@ public class FirefoxProfileManager implements ProfileManager {
                     "stats.selenium.profile.create.failure." + System.getProperty("os.name"));
         }
         return profileDir;
+    }
+
+    private static String getBrowserPath(Result smOutput) {
+        String path = smOutput.getBrowserPath();
+        if (path != null && !path.isEmpty()) {
+            return path;
+        }
+        try {
+            return new FirefoxBinary().getFile();
+        } catch (WebDriverException ignore) {
+            // Nothing to do, fallback attempt.
+        }
+        return null;
     }
 }

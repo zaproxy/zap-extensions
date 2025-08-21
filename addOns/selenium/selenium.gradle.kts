@@ -35,6 +35,17 @@ zapAddOn {
     }
 }
 
+spotless {
+    java {
+        target(
+            fileTree(projectDir) {
+                include("src/**/*.java")
+                exclude("src/main/java/org/zaproxy/zap/extension/selenium/internal/FirefoxBinary.java")
+            },
+        )
+    }
+}
+
 dependencies {
     compileOnly(libs.log4j.core)
 
