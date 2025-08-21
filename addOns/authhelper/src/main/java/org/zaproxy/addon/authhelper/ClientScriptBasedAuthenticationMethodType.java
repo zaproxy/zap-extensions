@@ -450,6 +450,7 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                             return null;
                         }
 
+                        zestRunner.setAutoCloseProxy(false);
                         zestRunner.registerHandler(getHandler(user));
                         zestScript.add(
                                 new ZestActionSleep(TimeUnit.SECONDS.toMillis(getLoginPageWait())));
@@ -597,6 +598,7 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                                             // Ignore
                                         }
                                     });
+                    zestRunner.closeProxy();
                 }
             }
         }
