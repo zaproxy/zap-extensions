@@ -29,6 +29,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.parosproxy.paros.Constant;
@@ -51,6 +52,8 @@ public final class MsLoginAuthenticator implements Authenticator {
     private static final By PASSWORD_FIELD = By.id("i0118");
     private static final By SUBMIT_BUTTON = By.id("idSIButton9");
     private static final By KMSI_FIELD = By.id("KmsiCheckboxField");
+    private static final By PROOF_REDIRECT_FIELD = By.id("idSubmit_ProofUp_Redirect");
+    private static final By PROOF_DONE_FIELD = By.id("id__5");
 
     private enum State {
         START,
@@ -61,6 +64,9 @@ public final class MsLoginAuthenticator implements Authenticator {
 
         POST_PASSWORD,
         STAY_SIGNED_IN,
+
+        PROOF_REDIRECT,
+        PROOF,
     }
 
     @Override
@@ -177,7 +183,13 @@ public final class MsLoginAuthenticator implements Authenticator {
                             Constant.messages.getString(
                                     "authhelper.auth.method.diags.steps.ms.stepchoice"));
 
-                    // XXX There might be a proof step too…
+                    try {
+                        waitForElement(wd, PROOF_REDIRECT_FIELD);
+                        states.add(State.PROOF_REDIRECT);
+                        break;
+                    } catch (TimeoutException e) {
+                        // Ignore, there's still the next step to check.
+                    }
 
                     try {
                         waitForElement(wd, KMSI_FIELD);
@@ -206,6 +218,42 @@ public final class MsLoginAuthenticator implements Authenticator {
                     states.add(State.SUBMIT);
                     states.add(State.POST_PASSWORD);
                     break;
+
+                case PROOF_REDIRECT:
+                    WebElement proofElement = wd.findElement(PROOF_REDIRECT_FIELD);
+                    proofElement.click();
+                    diags.recordStep(
+                            wd,
+                            Constant.messages.getString(
+                                    "authhelper.auth.method.diags.steps.ms.clickproofredirect"),
+                            proofElement);
+
+                    states.add(State.PROOF);
+                    break;
+
+                case PROOF:
+                    try {
+                        waitForElement(wd, new ElementWithText(By.tagName("button"), "Skip setup"));
+                        WebElement doneElement =
+                                waitForElement(wd, new ElementWithText(PROOF_DONE_FIELD, "Done"));
+                        doneElement.click();
+                        diags.recordStep(
+                                wd,
+                                Constant.messages.getString(
+                                        "authhelper.auth.method.diags.steps.ms.clickproofdone"),
+                                doneElement);
+
+                        states.add(State.POST_PASSWORD);
+                        break;
+                    } catch (TimeoutException e) {
+                        diags.recordStep(
+                                wd,
+                                Constant.messages.getString(
+                                        "authhelper.auth.method.diags.steps.ms.stepproofunknown"));
+                        LOGGER.debug(
+                                "Still in proof but no skip/done button found, assuming unsuccessful login.");
+                        break;
+                    }
             }
         } while (!states.isEmpty());
 
@@ -213,8 +261,11 @@ public final class MsLoginAuthenticator implements Authenticator {
     }
 
     private WebElement waitForElement(WebDriver wd, By by) {
-        return new WebDriverWait(wd, DEFAULT_WAIT_UNTIL)
-                .until(ExpectedConditions.elementToBeClickable(by));
+        return waitForElement(wd, ExpectedConditions.elementToBeClickable(by));
+    }
+
+    private WebElement waitForElement(WebDriver wd, ExpectedCondition<WebElement> condition) {
+        return new WebDriverWait(wd, DEFAULT_WAIT_UNTIL).until(condition);
     }
 
     private static boolean isMsLoginFlow(WebDriver wd) {
@@ -228,6 +279,30 @@ public final class MsLoginAuthenticator implements Authenticator {
             return true;
         } catch (TimeoutException e) {
             return false;
+        }
+    }
+
+    private static class ElementWithText implements ExpectedCondition<WebElement> {
+
+        private final By locator;
+        private final String text;
+
+        ElementWithText(By locator, String text) {
+            this.locator = locator;
+            this.text = text;
+        }
+
+        @Override
+        public WebElement apply(WebDriver driver) {
+            return driver.findElements(locator).stream()
+                    .filter(e -> text.equalsIgnoreCase(e.getText()))
+                    .findFirst()
+                    .orElse(null);
+        }
+
+        @Override
+        public String toString() {
+            return String.format("element '%s' with text '%s' is not present", locator, text);
         }
     }
 }
