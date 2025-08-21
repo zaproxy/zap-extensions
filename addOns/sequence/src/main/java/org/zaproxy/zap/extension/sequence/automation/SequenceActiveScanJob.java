@@ -116,9 +116,7 @@ public class SequenceActiveScanJob extends AutomationJob {
                             params, this.parameters, this.getName(), null, progress);
                     break;
                 case "policyDefinition":
-                case "name":
                 case "tests":
-                case "type":
                     // Handled before we get here
                     break;
                 default:
