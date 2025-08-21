@@ -68,6 +68,9 @@ public class ZestAuthenticationRunner extends ZestZapRunner implements Authentic
     private ZestScriptWrapper script = null;
     private AuthenticationHelper helper;
 
+    private boolean autoCloseProxy;
+    private Server proxyServer;
+
     public ZestAuthenticationRunner(
             ExtensionZest extension, ExtensionNetwork extensionNetwork, ZestScriptWrapper script) {
         super(extension, extensionNetwork, script);
@@ -76,6 +79,7 @@ public class ZestAuthenticationRunner extends ZestZapRunner implements Authentic
                 script.getZestScript().getParameters().getTokenStart()
                         + TOTP_VAR_NAME
                         + script.getZestScript().getParameters().getTokenEnd();
+        autoCloseProxy = true;
     }
 
     @Override
@@ -127,10 +131,9 @@ public class ZestAuthenticationRunner extends ZestZapRunner implements Authentic
             Map<String, String> paramsValues,
             GenericAuthenticationCredentials credentials)
             throws ScriptException {
-
+        closeProxy();
         this.helper = helper;
 
-        Server proxyServer = null;
         try {
             if (hasClientStatements()) {
                 proxyServer =
@@ -174,13 +177,41 @@ public class ZestAuthenticationRunner extends ZestZapRunner implements Authentic
         } catch (Exception e) {
             throw new ScriptException(e);
         } finally {
-            if (proxyServer != null) {
-                try {
-                    proxyServer.close();
-                } catch (IOException e) {
-                    LOGGER.debug("An error occurred while stopping the proxy.", e);
-                }
+            if (autoCloseProxy) {
+                closeProxy();
             }
+        }
+    }
+
+    /**
+     * Sets whether or not the proxy created for the authentication should be automatically closed
+     * after the authentication, true by default.
+     *
+     * <p>Allows to use the browser after the authentication has finished, callers should close the
+     * proxy once no longer needed.
+     *
+     * @param autoCloseProxy {@code true} to auto close the proxy, {@code false} otherwise.
+     * @since 48.9.0
+     * @see #closeProxy()
+     */
+    public void setAutoCloseProxy(boolean autoCloseProxy) {
+        this.autoCloseProxy = autoCloseProxy;
+    }
+
+    /**
+     * Closes the proxy.
+     *
+     * @since 48.9.0
+     * @see #setAutoCloseProxy(boolean)
+     */
+    public void closeProxy() {
+        if (proxyServer != null) {
+            try {
+                proxyServer.close();
+            } catch (IOException e) {
+                LOGGER.debug("An error occurred while stopping the proxy.", e);
+            }
+            proxyServer = null;
         }
     }
 

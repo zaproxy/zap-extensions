@@ -13,7 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Support for min wait for time in Client Script Authentication.
 
 ## Changed
-- Now depends on minimum Common Library version 1.35.0.
+- Now depends on minimum Common Library version 1.35.0 and Zest version 48.9.0.
 - Send the referer header on verification if set on the original request.
 - Removed requirement to set at least one header in the GUI for Header-Based Session Management.
 - Include step for errors in the authentication diagnostics.
@@ -26,6 +26,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Do not fail the authentication on diagnostic errors.
 - Do not configure poll authentication verification without logged in indicator.
 - Handle errors collecting the browser storage diagnostics.
+- Fix proxy errors during authentication with Client Script Based Authentication.
 
 ## [0.27.0] - 2025-07-03
 ### Added
