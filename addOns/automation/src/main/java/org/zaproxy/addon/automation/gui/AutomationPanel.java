@@ -86,6 +86,9 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
                     new ImageIcon(
                             AutomationPanel.class.getResource(
                                     ExtensionAutomation.RESOURCES_DIR + "save-as.png")));
+    private static final ImageIcon STOP_ICON =
+            DisplayUtils.getScaledIcon(
+                    new ImageIcon(AutomationPanel.class.getResource("/resource/icon/16/142.png")));
     private static final ImageIcon ADD_PLAN_ICON =
             DisplayUtils.getScaledIcon(
                     new ImageIcon(
@@ -151,6 +154,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
     private JButton runPlanButton;
     private JButton savePlanButton;
     private JButton saveAsPlanButton;
+    private JButton stopPlanButton;
     private JButton jobUpButton;
     private JButton jobDownButton;
     private JButton addJobButton;
@@ -193,6 +197,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
             toolbar.add(getSavePlanButton());
             toolbar.add(getSaveAsPlanButton());
             toolbar.add(getRunPlanButton());
+            toolbar.add(getStopPlanButton());
             toolbar.addSeparator();
             toolbar.add(getAddJobButton());
             toolbar.add(getRemoveJobButton());
@@ -218,6 +223,8 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
                         if (currentPlan == null) {
                             return;
                         }
+                        runPlanButton.setEnabled(false);
+                        getStopPlanButton().setEnabled(true);
                         ext.runPlanAsync(currentPlan);
                     });
         }
@@ -299,6 +306,23 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
             saveAsPlanButton.addActionListener(e -> savePlan(true));
         }
         return saveAsPlanButton;
+    }
+
+    private JButton getStopPlanButton() {
+        if (stopPlanButton == null) {
+            stopPlanButton = new JButton();
+            stopPlanButton.setIcon(STOP_ICON);
+            stopPlanButton.setToolTipText(
+                    Constant.messages.getString("automation.dialog.plan.stop"));
+            stopPlanButton.setEnabled(false);
+            stopPlanButton.addActionListener(
+                    e -> {
+                        if (currentPlan != null) {
+                            ext.stopPlan(currentPlan);
+                        }
+                    });
+        }
+        return stopPlanButton;
     }
 
     private JButton getLoadPlanButton() {
@@ -605,10 +629,15 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
         currentPlan = plan;
         getOutputArea().setText("");
         getTreeModel().setPlan(currentPlan);
-        getRunPlanButton().setEnabled(currentPlan != null);
+        getRunPlanButton()
+                .setEnabled(
+                        currentPlan != null
+                                && (currentPlan.getStarted() == null
+                                        || currentPlan.getFinished() != null));
         getAddJobButton().setEnabled(currentPlan != null);
         getSavePlanButton().setEnabled(false);
         getSaveAsPlanButton().setEnabled(currentPlan != null);
+        getStopPlanButton().setEnabled(currentPlan != null && !getRunPlanButton().isEnabled());
     }
 
     public List<String> getUnsavedPlans() {
@@ -801,6 +830,10 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
                 break;
             case AutomationEventPublisher.PLAN_STARTED:
                 this.getOutputArea().setText("");
+                break;
+            case AutomationEventPublisher.PLAN_FINISHED:
+                this.getRunPlanButton().setEnabled(true);
+                this.getStopPlanButton().setEnabled(false);
                 break;
             case AutomationEventPublisher.PLAN_ERROR_MESSAGE:
                 outputMessage(
