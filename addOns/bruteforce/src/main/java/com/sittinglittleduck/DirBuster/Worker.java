@@ -27,6 +27,7 @@ import java.net.URL;
 import java.util.concurrent.BlockingQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -238,16 +239,14 @@ public class Worker implements Runnable {
 
         // TODO move this option to the Adv options
         // if the response does not match the base case
-        Pattern regexFindFile = Pattern.compile(".*file not found.*", Pattern.CASE_INSENSITIVE);
-
-        Matcher m = regexFindFile.matcher(response);
+        boolean notFound = StringUtils.containsIgnoreCase("file not found", response);
 
         // need to clean the base case of the item we are looking for
         String basecase =
                 FilterResponce.removeItemCheckedFor(
                         work.getBaseCaseObj().getBaseCase(), work.getItemToCheck());
 
-        if (m.find()) {
+        if (notFound) {
             LOGGER.debug("Worker[{}]: 404 for: {}", threadId, url);
         } else if (!response.equalsIgnoreCase(basecase)) {
             notifyItemFound(code, response, rawResponse, basecase);
