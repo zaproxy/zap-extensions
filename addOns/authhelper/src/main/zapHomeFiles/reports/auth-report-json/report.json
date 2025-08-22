@@ -99,6 +99,7 @@
 					,"messages": [[#th:block th:each="entry, state: ${messages}" th:with="message=${helper.getHttpMessage(entry.messageId)}"][#th:block th:if="${! state.first}"],[/th:block]
 						{[#th:block th:if="${message}"]
 							"created": [[${entry.createTimestamp}]],
+							"rtt": [[${message.timeElapsedMillis}]],
 							"initiator": [[${entry.initiator}]],
 							"requestHeader": [[${message.requestHeader.toString()}]],
 							"requestBody": [[${message.requestBody.toString()}]],
