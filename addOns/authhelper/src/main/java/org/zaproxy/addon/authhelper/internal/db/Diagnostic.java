@@ -53,6 +53,9 @@ public class Diagnostic {
     @Column(length = 4194304)
     private String script;
 
+    @Column(length = 8388608)
+    private String afPlan;
+
     @Order(column = "NUMBER")
     @Element(dependent = "true")
     @Persistent(mappedBy = "diagnostic")

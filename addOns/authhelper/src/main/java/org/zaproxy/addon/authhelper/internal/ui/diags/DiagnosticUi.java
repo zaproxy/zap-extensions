@@ -47,6 +47,8 @@ public class DiagnosticUi {
 
     private String url;
 
+    private String afPlan;
+
     private String script;
 
     private int steps;
@@ -58,6 +60,7 @@ public class DiagnosticUi {
         context = diagnostic.getContext();
         user = diagnostic.getUser();
         url = getUrl(diagnostic);
+        afPlan = diagnostic.getAfPlan();
         script = diagnostic.getScript();
         steps = diagnostic.getSteps().size();
     }
