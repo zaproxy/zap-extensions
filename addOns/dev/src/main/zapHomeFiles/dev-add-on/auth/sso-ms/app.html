@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>ZAP Test Server</title>
+	<link href="/tutorial.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="roundContainer">
+	<h1>Simple App which uses a mock MS Online Auth Service</H1>
+	<h2>Links</h2>
+	<div id="links">
+		<a href="https://www.zaproxy.com">https://www.zaproxy.com</a><br>
+	</div>
+
+<script>
+function loadLinks() {
+	var token = sessionStorage.getItem("token");
+	if (! token) {
+		var params = new URLSearchParams(document.location.search);
+		token = params.get("token");
+		if (! token) {
+			window.location.href = "https://login.microsoftonline.zap/common/oauth2/v2.0/authorize" + 
+				(document.location.search === "" ? "?" : document.location.search) +
+				"&service=app.sso-ms.zap";
+		}
+		sessionStorage.setItem("token", token);
+	}
+
+	var params = new URLSearchParams(document.location.search);
+	var xhr = new XMLHttpRequest();
+	var url = "https://api.sso-ms.zap/";
+
+	fetch(url,{
+	  method:"GET",
+	  headers: {"Authorization": token}
+	})
+	.then(res => res.json())
+	.then(
+	  (result) => {
+        var links = document.getElementById("links");
+
+        result.forEach(function(link) {
+           var a = document.createElement('a');
+           a.href = link;
+           a.text = link;
+           links.appendChild(a);
+           links.appendChild(document.createElement('br'));
+        });
+	  },
+	  // We should handle errors here, but hey, its a test app...
+	  (error) => {
+	    // handle error
+	  }
+	)
+}
+window.addEventListener("load", (event) => {
+	loadLinks();
+});
+
+</script>
+	
+</div>
+</body>
+</html>
