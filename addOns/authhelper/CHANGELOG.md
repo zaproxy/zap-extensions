@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Send the referer header on verification if set on the original request.
 - Removed requirement to set at least one header in the GUI for Header-Based Session Management.
 - Include step for errors in the authentication diagnostics.
+- Include messages' RTT in the Authentication Report.
 - Browser based authentication to also support HTTP basic authentication for Firefox.
 - Verification rule to improve detection.
 - Add support for Microsoft login in Browser Based Authentication.
