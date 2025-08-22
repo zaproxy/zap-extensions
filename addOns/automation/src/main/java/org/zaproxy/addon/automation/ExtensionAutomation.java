@@ -353,6 +353,11 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         return Collections.unmodifiableList(runningPlans);
     }
 
+    public void stopPlan(AutomationPlan plan) {
+        plan.setStop(true);
+        plan.getJobs().forEach(AutomationJob::stop);
+    }
+
     public AutomationProgress runPlan(AutomationPlan plan, boolean resetProgress) {
         runningPlans.add(plan);
         if (resetProgress) {
@@ -364,6 +369,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
 
         plan.setStarted(new Date());
         plan.setFinished(null);
+        plan.setStop(false);
 
         AutomationEventPublisher.publishEvent(AutomationEventPublisher.PLAN_STARTED, plan, null);
         env.create(Model.getSingleton().getSession(), progress);
@@ -384,7 +390,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
 
         for (AutomationJob job : jobsToRun) {
 
-            if (env.isTimeToQuit() && !job.isAlwaysRun()) {
+            if (plan.isStop() || (env.isTimeToQuit() && !job.isAlwaysRun())) {
                 continue;
             }
 

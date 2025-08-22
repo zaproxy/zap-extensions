@@ -121,6 +121,11 @@ public class DelayJob extends AutomationJob {
     }
 
     @Override
+    public void stop() {
+        endJob = true;
+    }
+
+    @Override
     public String getType() {
         return JOB_NAME;
     }

@@ -53,6 +53,7 @@ public class AutomationPlan {
     private boolean changed = false;
     private Date started;
     private Date finished;
+    private boolean stop = false;
 
     private static final Logger LOGGER = LogManager.getLogger(AutomationPlan.class);
     private static final ObjectMapper YAML_OBJECT_MAPPER;
@@ -303,6 +304,14 @@ public class AutomationPlan {
 
     public Date getFinished() {
         return finished;
+    }
+
+    public boolean isStop() {
+        return stop;
+    }
+
+    public void setStop(boolean stop) {
+        this.stop = stop;
     }
 
     public String toYaml() throws IOException {
