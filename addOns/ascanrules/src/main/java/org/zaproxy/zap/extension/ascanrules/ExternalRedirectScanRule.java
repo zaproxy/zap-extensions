@@ -56,8 +56,9 @@ import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 public class ExternalRedirectScanRule extends AbstractAppParamPlugin
         implements CommonActiveScanRuleInfo {
 
-    /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanrules.externalredirect.";
+    private static final Vulnerability VULN = Vulnerabilities.getDefault().get("wasc_38");
+    private static final Logger LOGGER = LogManager.getLogger(ExternalRedirectScanRule.class);
 
     private static final Map<String, String> ALERT_TAGS;
 
@@ -117,7 +118,26 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
             Long.toString(Math.abs(UUID.randomUUID().getMostSignificantBits()));
     private static final String REDIRECT_SITE = SITE_HOST + OWASP_SUFFIX;
 
-    /** The various (prioritized) payload to try */
+    private static final String SITE_PATT = "https?://" + REDIRECT_SITE;
+    // location='http://evil.com/';
+    // location.href='http://evil.com/';
+    private static final Pattern JS_LOCATION_PATT =
+            Pattern.compile("(?i)location(?:\\.href)?\\s*=\\s*['\"](" + SITE_PATT + ")['\"]");
+    // location.reload('http://evil.com/');
+    // location.replace('http://evil.com/');
+    // location.assign('http://evil.com/');
+    private static final Pattern JS_LOCATION_EXTENDED_PATT =
+            Pattern.compile(
+                    "(?i)location\\.(?:replace|reload|assign)\\s*\\(\\s*['\"]("
+                            + SITE_PATT
+                            + ")['\"]");
+    // window.open('http://evil.com/');
+    // window.navigate('http://evil.com/');
+    private static final Pattern JS_WINDOW_PATT =
+            Pattern.compile(
+                    "(?i)window\\.(?:open|navigate)\\s*\\(\\s*['\"](" + SITE_PATT + ")['\"]");
+
+    /** The various (prioritized) payloads to try */
     private enum RedirectPayloads {
         PLAIN_SITE(REDIRECT_SITE, false),
         HTTPS_SITE(HttpHeader.SCHEME_HTTPS + REDIRECT_SITE, false),
@@ -185,11 +205,6 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
         }
     }
 
-    // Get WASC Vulnerability description
-    private static final Vulnerability VULN = Vulnerabilities.getDefault().get("wasc_38");
-
-    private static final Logger LOGGER = LogManager.getLogger(ExternalRedirectScanRule.class);
-
     private int payloadCount;
 
     @Override
@@ -254,9 +269,6 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
         String redirectUrl;
         int payloadIdx = 0;
 
-        // For each payload in turn
-        // note that depending on the Strength,
-        // the number of elements that we will try changes.
         for (RedirectPayloads payload : RedirectPayloads.values()) {
             if (isStop() || payloadIdx == payloadCount) {
                 return;
@@ -264,20 +276,17 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
 
             String injection = payload.getInjection(value);
 
-            // Get a new copy of the original message (request only) for each parameter value to try
             HttpMessage testMsg = getNewMsg();
             setParameter(testMsg, param, injection);
 
             LOGGER.debug("Testing [{}] = [{}]", param, injection);
 
             try {
-                // Send the request and retrieve the response
-                // Be careful: we haven't to follow redirect
+                // Be careful: don't follow redirect
                 sendAndReceive(testMsg, false);
 
                 redirectUrl = payload.getRedirectUrl();
 
-                // Get back if a redirection occurs
                 RedirectType redirectType = isRedirected(redirectUrl, testMsg);
 
                 if (redirectType != RedirectType.NONE) {
@@ -445,41 +454,19 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
         // http://code.google.com/p/html5security/wiki/RedirectionMethods
         if (StringUtils.indexOfIgnoreCase(content, payload) != -1) {
             List<Element> jsElements = htmlSrc.getAllElements(HTMLElementName.SCRIPT);
-            String matchingUrl = "https?://" + REDIRECT_SITE;
-            Pattern pattern;
 
             for (Element el : jsElements) {
                 value = el.getContent().toString();
 
-                // location='http://evil.com/';
-                // location.href='http://evil.com/';
-                pattern =
-                        Pattern.compile(
-                                "(?i)location(?:\\.href)?\\s*=\\s*['\"](" + matchingUrl + ")['\"]");
-                if (isRedirectPresent(pattern, value)) {
+                if (isRedirectPresent(JS_LOCATION_PATT, value)) {
                     return RedirectType.JAVASCRIPT;
                 }
 
-                // location.reload('http://evil.com/');
-                // location.replace('http://evil.com/');
-                // location.assign('http://evil.com/');
-                pattern =
-                        Pattern.compile(
-                                "(?i)location\\.(?:replace|reload|assign)\\s*\\(\\s*['\"]("
-                                        + matchingUrl
-                                        + ")['\"]");
-                if (isRedirectPresent(pattern, value)) {
+                if (isRedirectPresent(JS_LOCATION_EXTENDED_PATT, value)) {
                     return RedirectType.JAVASCRIPT;
                 }
 
-                // window.open('http://evil.com/');
-                // window.navigate('http://evil.com/');
-                pattern =
-                        Pattern.compile(
-                                "(?i)window\\.(?:open|navigate)\\s*\\(\\s*['\"]("
-                                        + matchingUrl
-                                        + ")['\"]");
-                if (isRedirectPresent(pattern, value)) {
+                if (isRedirectPresent(JS_WINDOW_PATT, value)) {
                     return RedirectType.JAVASCRIPT;
                 }
             }
@@ -494,11 +481,6 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
                 && StringUtils.startsWithIgnoreCase(matcher.group(1), HttpHeader.HTTP);
     }
 
-    /**
-     * Give back the risk associated to this vulnerability (high)
-     *
-     * @return the risk according to the Alert enum
-     */
     @Override
     public int getRisk() {
         return Alert.RISK_HIGH;
@@ -509,21 +491,11 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
         return ALERT_TAGS;
     }
 
-    /**
-     * http://cwe.mitre.org/data/definitions/601.html
-     *
-     * @return the official CWE id
-     */
     @Override
     public int getCweId() {
         return 601;
     }
 
-    /**
-     * http://projects.webappsec.org/w/page/13246981/URL%20Redirector%20Abuse
-     *
-     * @return the official WASC id
-     */
     @Override
     public int getWascId() {
         return 38;
