@@ -21,8 +21,11 @@ package org.zaproxy.addon.authhelper;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Supplier;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Transaction;
@@ -66,6 +69,9 @@ import org.zaproxy.zest.core.v1.ZestStatement;
 public class AuthenticationDiagnostics implements AutoCloseable {
 
     private static final Logger LOGGER = LogManager.getLogger(AuthenticationDiagnostics.class);
+
+    private static final List<DiagnosticDataProvider> diagnosticDataProviders =
+            Collections.synchronizedList(new ArrayList<>());
 
     private static final String ELEMENT_SELECTOR_SCRIPT =
             """
@@ -498,6 +504,15 @@ return getSelector(arguments[0], document)
 
         HttpSender.removeListener(listener);
 
+        diagnosticDataProviders.forEach(
+                provider -> {
+                    try {
+                        provider.addDiagnostics(diagnostic);
+                    } catch (Exception e) {
+                        LOGGER.error("An error occurred calling a data provider:", e);
+                    }
+                });
+
         PersistenceManager pm = TableJdo.getPmf().getPersistenceManager();
         Transaction tx = pm.currentTransaction();
         try {
@@ -557,5 +572,20 @@ return getSelector(arguments[0], document)
                         }
                     });
         }
+    }
+
+    public static void addDiagnosticDataProvider(DiagnosticDataProvider provider) {
+        Objects.requireNonNull(provider);
+        diagnosticDataProviders.add(provider);
+    }
+
+    public static void removeDiagnosticDataProvider(DiagnosticDataProvider provider) {
+        Objects.requireNonNull(provider);
+        diagnosticDataProviders.remove(provider);
+    }
+
+    public interface DiagnosticDataProvider {
+
+        void addDiagnostics(Diagnostic diagnostic);
     }
 }
