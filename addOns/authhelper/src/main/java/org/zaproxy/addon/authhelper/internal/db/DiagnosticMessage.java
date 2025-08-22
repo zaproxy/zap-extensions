@@ -41,7 +41,7 @@ public class DiagnosticMessage {
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
     private int id;
 
-    @Column(name = "STEPID")
+    @Column(name = "STEPID", allowsNull = "false")
     private DiagnosticStep step;
 
     private int messageId;

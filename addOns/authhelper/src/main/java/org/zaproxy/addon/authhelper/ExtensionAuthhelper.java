@@ -52,6 +52,7 @@ import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.authhelper.internal.db.TableJdo;
+import org.zaproxy.addon.authhelper.internal.ui.diags.AuthDiagsPanel;
 import org.zaproxy.addon.commonlib.internal.TotpSupport;
 import org.zaproxy.addon.commonlib.internal.TotpSupport.TotpData;
 import org.zaproxy.addon.commonlib.internal.TotpSupport.TotpGenerator;
@@ -218,6 +219,8 @@ public class ExtensionAuthhelper extends ExtensionAdaptor {
 
             authDiagCollector = new AuthDiagnosticCollector();
             extensionHook.addHttpSenderListener(authDiagCollector);
+
+            new AuthDiagsPanel(extensionHook);
         }
     }
 
