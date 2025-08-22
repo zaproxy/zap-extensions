@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add Authentication Report section for the log file.
 - Support for step delay in Browser Based Authentication, which replaces the auth tester "demo mode".
 - Support for min wait for time in Client Script Authentication.
+- Allow to manage the authentication diagnostics through the GUI.
 
 ## Changed
 - Now depends on minimum Common Library version 1.35.0 and Zest version 48.9.0.

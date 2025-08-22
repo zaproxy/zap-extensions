@@ -65,7 +65,7 @@ public class DiagnosticBrowserStorageItem {
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
     private int id;
 
-    @Column(name = "STEPID")
+    @Column(name = "STEPID", allowsNull = "false")
     private DiagnosticStep step;
 
     @Column(jdbcType = "INTEGER")
