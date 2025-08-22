@@ -95,10 +95,6 @@ public class ActiveScanConfigJob extends AutomationJob {
                             JobUtils.verifyRegexes(jobData.get(key), key.toString(), progress));
                     break;
 
-                case "name":
-                case "type":
-                    break;
-
                 default:
                     progress.warn(
                             Constant.messages.getString(

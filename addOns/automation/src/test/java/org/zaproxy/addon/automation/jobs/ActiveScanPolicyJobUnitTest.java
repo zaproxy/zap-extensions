@@ -163,7 +163,6 @@ class ActiveScanPolicyJobUnitTest {
         ActiveScanPolicyJob job = new ActiveScanPolicyJob();
         AutomationProgress progress = new AutomationProgress();
         LinkedHashMap<String, String> data = new LinkedHashMap<>();
-        data.put("name", "blah");
         data.put("tests", "");
         // The only invalid one
         data.put("unexpected", "data");
