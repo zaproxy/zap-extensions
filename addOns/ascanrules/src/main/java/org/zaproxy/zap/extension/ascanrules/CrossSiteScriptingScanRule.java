@@ -74,6 +74,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
     }
 
+    protected static final String GENERIC_ALERT = "alert(1)";
     protected static final String GENERIC_SCRIPT_ALERT = "<scrIpt>alert(1);</scRipt>";
     protected static final String GENERIC_ONERROR_ALERT = "<img src=x onerror=prompt()>";
     protected static final String IMG_ONERROR_LOG = "<img src=x onerror=console.log(1);>";
@@ -92,7 +93,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
 
     private static final List<String> GENERIC_SCRIPT_ALERT_LIST =
             Arrays.asList(
-                    GENERIC_SCRIPT_ALERT, GENERIC_NULL_BYTE_SCRIPT_ALERT, GENERIC_ONERROR_ALERT);
+                    GENERIC_ALERT, GENERIC_SCRIPT_ALERT, GENERIC_NULL_BYTE_SCRIPT_ALERT, GENERIC_ONERROR_ALERT);
     private static final List<Integer> GET_POST_TYPES =
             Arrays.asList(NameValuePair.TYPE_QUERY_STRING, NameValuePair.TYPE_POST_DATA);
 
@@ -388,18 +389,33 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
     private boolean performDirectAttack(HttpMessage msg, String param) {
         for (String scriptAlert : GENERIC_SCRIPT_ALERT_LIST) {
             List<HtmlContext> contexts2 = performAttack(msg, param, "'\"" + scriptAlert, null, 0);
-            if (contexts2 == null) {
-                continue;
-            }
-            if (!contexts2.isEmpty()) {
-                // Yep, its vulnerable
-                if (processContexts(contexts2, param, scriptAlert, false)) {
-                    return true;
+            List<HtmlContext> contexts3 = performAttack(msg, param, scriptAlert, null, 0);
+            if(contexts3 == null) {
+                if (contexts2 == null) {
+                    continue;
+                }
+                if (!contexts2.isEmpty()) {
+                    // Yep, its vulnerable
+                    if (processContexts(contexts2, param, scriptAlert, false)) {
+                        return true;
+                    }
+                }
+
+                if (isStop()) {
+                    break;
                 }
             }
+            else {
+                if (!contexts3.isEmpty()) {
+                        // Yep, its vulnerable
+                        if (processContexts(contexts3, param, scriptAlert, false)) {
+                            return true;
+                        }
+                }
 
-            if (isStop()) {
-                break;
+                if (isStop()) {
+                    break;
+                }
             }
         }
         return false;
@@ -974,6 +990,11 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
                         } else if ("script".equalsIgnoreCase(context.getParentTag())) {
                             // its in a script tag...
                             attackWorked = performScriptAttack(context, msg, param);
+                            if (attackWorked) {
+                                break;
+                            } else {
+                                attackWorked = performDirectAttack(msg, param);
+                            }
                         } else {
                             // Try an img tag
                             attackWorked = performImageTagAttack(context, msg, param);
