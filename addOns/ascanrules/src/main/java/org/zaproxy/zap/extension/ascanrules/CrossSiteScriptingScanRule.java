@@ -93,7 +93,9 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
 
     private static final List<String> GENERIC_SCRIPT_ALERT_LIST =
             Arrays.asList(
-                    GENERIC_ALERT, GENERIC_SCRIPT_ALERT, GENERIC_NULL_BYTE_SCRIPT_ALERT, GENERIC_ONERROR_ALERT);
+                    GENERIC_SCRIPT_ALERT,
+                    GENERIC_NULL_BYTE_SCRIPT_ALERT,
+                    GENERIC_ONERROR_ALERT);
     private static final List<Integer> GET_POST_TYPES =
             Arrays.asList(NameValuePair.TYPE_QUERY_STRING, NameValuePair.TYPE_POST_DATA);
 
@@ -387,35 +389,28 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
     }
 
     private boolean performDirectAttack(HttpMessage msg, String param) {
+        List<HtmlContext> contexts3 = performAttack(msg, param, GENERIC_ALERT, null, 0);
+        if (contexts3 != null && !contexts3.isEmpty()) {
+            if (processContexts(contexts3, param, GENERIC_ALERT, false)) {
+                    return true;
+                }
+        }
+        
         for (String scriptAlert : GENERIC_SCRIPT_ALERT_LIST) {
             List<HtmlContext> contexts2 = performAttack(msg, param, "'\"" + scriptAlert, null, 0);
-            List<HtmlContext> contexts3 = performAttack(msg, param, scriptAlert, null, 0);
-            if(contexts3 == null) {
-                if (contexts2 == null) {
-                    continue;
-                }
-                if (!contexts2.isEmpty()) {
-                    // Yep, its vulnerable
-                    if (processContexts(contexts2, param, scriptAlert, false)) {
-                        return true;
-                    }
-                }
-
-                if (isStop()) {
-                    break;
+            
+            if (contexts2 == null) {
+                continue;
+            }
+            if (!contexts2.isEmpty()) {
+                // Yep, its vulnerable
+                if (processContexts(contexts2, param, scriptAlert, false)) {
+                    return true;
                 }
             }
-            else {
-                if (!contexts3.isEmpty()) {
-                        // Yep, its vulnerable
-                        if (processContexts(contexts3, param, scriptAlert, false)) {
-                            return true;
-                        }
-                }
 
-                if (isStop()) {
-                    break;
-                }
+            if (isStop()) {
+                break;
             }
         }
         return false;
