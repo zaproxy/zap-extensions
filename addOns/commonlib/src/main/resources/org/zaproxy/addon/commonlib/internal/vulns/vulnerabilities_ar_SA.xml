@@ -185,7 +185,7 @@ Build: Heed the warnings of compilers and linkers, since they may alert you to i
 
 <vuln_items>wasc_7</vuln_items>
 <vuln_item_wasc_7>
-	<alert>Buffer Overflow</alert>
+	<alert/>
 	<desc>A Buffer Overflow is a flaw that occurs when more data is written to a block of memory, or buffer, than the buffer is allocated to hold. Exploiting a buffer overflow allows an attacker to modify portions of the target process’ address space. This ability can be used for a number of purposes, including the following:
     * Control the process execution
     * Crash the process
