@@ -22,21 +22,28 @@ package org.zaproxy.addon.automation.gui;
 import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
+import java.util.regex.Pattern;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import lombok.AccessLevel;
+import lombok.Getter;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.automation.jobs.PolicyDefinition.AlertTagRuleConfig;
 import org.zaproxy.addon.automation.jobs.PolicyDefinition.Rule;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
 @SuppressWarnings("serial")
 /** An abstract class that provides the methods needed to add active scan policy management tabs. */
+@Getter(value = AccessLevel.PROTECTED)
 public abstract class ActiveScanPolicyDialog extends StandardFieldsDialog {
 
     private static final long serialVersionUID = 1L;
@@ -47,6 +54,10 @@ public abstract class ActiveScanPolicyDialog extends StandardFieldsDialog {
             "automation.dialog.ascan.defaultthreshold";
     protected static final String DEFAULT_STRENGTH_PARAM =
             "automation.dialog.ascan.defaultstrength";
+    protected static final String TAG_RULE_THRESHOLD_PARAM =
+            "automation.dialog.ascanpolicyalerttags.threshold";
+    protected static final String TAG_RULE_STRENGTH_PARAM =
+            "automation.dialog.ascanpolicyalerttags.strength";
 
     private JButton addButton = null;
     private JButton modifyButton = null;
@@ -54,6 +65,26 @@ public abstract class ActiveScanPolicyDialog extends StandardFieldsDialog {
 
     private JTable rulesTable = null;
     private AscanRulesTableModel rulesModel = null;
+
+    private JTable includedTagsTable;
+    private final AlertTagsTableModel includedTagsTableModel =
+            new AlertTagsTableModel(
+                    Constant.messages.getString(
+                            "automation.dialog.ascanpolicyalerttags.includedtagpatterns"));
+    private final JButton addIncludedAlertTagButton =
+            createAddAlertTagButton(includedTagsTableModel);
+    private final JButton removeIncludedAlertTagButton =
+            createRemoveAlertTagButton(includedTagsTableModel, this::getIncludedAlertTagsTable);
+
+    private final AlertTagsTableModel excludedTagsTableModel =
+            new AlertTagsTableModel(
+                    Constant.messages.getString(
+                            "automation.dialog.ascanpolicyalerttags.excludedtagpatterns"));
+    private JTable excludedTagsTable;
+    private final JButton addExcludedAlertTagButton =
+            createAddAlertTagButton(excludedTagsTableModel);
+    private final JButton removeExcludedAlertTagButton =
+            createRemoveAlertTagButton(excludedTagsTableModel, this::getExcludedAlertTagsTable);
 
     public ActiveScanPolicyDialog(String title, Dimension dimension, String[] tabLabels) {
         super(View.getSingleton().getMainFrame(), title, dimension, tabLabels);
@@ -185,4 +216,61 @@ public abstract class ActiveScanPolicyDialog extends StandardFieldsDialog {
     }
 
     protected abstract List<Rule> getRules();
+
+    protected JTable getIncludedAlertTagsTable() {
+        if (includedTagsTable == null) {
+            includedTagsTable =
+                    createAlertTagsTable(
+                            getIncludedTagsTableModel(),
+                            getAlertTagRule().getIncludePatterns(),
+                            getRemoveIncludedAlertTagButton());
+        }
+        return includedTagsTable;
+    }
+
+    protected JTable getExcludedAlertTagsTable() {
+        if (excludedTagsTable == null) {
+            excludedTagsTable =
+                    createAlertTagsTable(
+                            getExcludedTagsTableModel(),
+                            getAlertTagRule().getExcludePatterns(),
+                            getRemoveExcludedAlertTagButton());
+        }
+        return excludedTagsTable;
+    }
+
+    protected AlertTagRuleConfig getAlertTagRule() {
+        return null;
+    }
+
+    private JButton createAddAlertTagButton(AlertTagsTableModel model) {
+        var button = new JButton(Constant.messages.getString("automation.dialog.button.add"));
+        button.addActionListener(
+                e -> {
+                    var dialog = new AddAlertTagDialog(this, model, -1);
+                    dialog.setVisible(true);
+                });
+        return button;
+    }
+
+    private JButton createRemoveAlertTagButton(
+            AlertTagsTableModel model, Supplier<JTable> tableSupplier) {
+        var button = new JButton(Constant.messages.getString("automation.dialog.button.remove"));
+        button.setEnabled(false);
+        button.addActionListener(e -> model.remove(tableSupplier.get().getSelectedRow()));
+        return button;
+    }
+
+    private JTable createAlertTagsTable(
+            AlertTagsTableModel model, List<Pattern> patterns, JButton removeButton) {
+        JTable table = new JTable(model);
+        model.setAlertTagPatterns(new ArrayList<>(patterns));
+        table.getSelectionModel()
+                .addListSelectionListener(
+                        e -> {
+                            boolean singleRowSelected = table.getSelectedRowCount() == 1;
+                            removeButton.setEnabled(singleRowSelected);
+                        });
+        return table;
+    }
 }
