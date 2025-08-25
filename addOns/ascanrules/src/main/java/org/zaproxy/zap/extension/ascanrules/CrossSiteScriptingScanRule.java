@@ -389,13 +389,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
     }
 
     private boolean performDirectAttack(HttpMessage msg, String param) {
-        List<HtmlContext> contexts3 = performAttack(msg, param, GENERIC_ALERT, null, 0);
-        if (contexts3 != null && !contexts3.isEmpty()) {
-            if (processContexts(contexts3, param, GENERIC_ALERT, false)) {
-                    return true;
-                }
-        }
-        
+
         for (String scriptAlert : GENERIC_SCRIPT_ALERT_LIST) {
             List<HtmlContext> contexts2 = performAttack(msg, param, "'\"" + scriptAlert, null, 0);
             
@@ -413,6 +407,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
                 break;
             }
         }
+
         return false;
     }
 
@@ -740,6 +735,12 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
                 return true;
             }
         }
+        List<HtmlContext> contexts3 = performAttack(msg, param, GENERIC_ALERT, null, 0);
+        if (contexts3 != null && !contexts3.isEmpty()) {
+            if (processContexts(contexts3, param, GENERIC_ALERT, false)) {
+                    return true;
+                }
+        }
         return false;
     }
 
@@ -985,11 +986,6 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
                         } else if ("script".equalsIgnoreCase(context.getParentTag())) {
                             // its in a script tag...
                             attackWorked = performScriptAttack(context, msg, param);
-                            if (attackWorked) {
-                                break;
-                            } else {
-                                attackWorked = performDirectAttack(msg, param);
-                            }
                         } else {
                             // Try an img tag
                             attackWorked = performImageTagAttack(context, msg, param);
