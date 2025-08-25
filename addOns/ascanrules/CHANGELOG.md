@@ -25,11 +25,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - The Cloud Metadata Potentially Exposed scan rules now has a CWE reference.
 - Scan rules which execute time based attacks now include the "TEST_TIMING" alert tag.
 - The XPath Injection scan rule now supports error patterns provided via the Custom Payloads add-on (Issue 8958). A minimum of Custom Payloads 0.15.0 is required to take advantage of this optional functionality.
-
-## [73] - 2025-08-25
-### Added
-- Detection of Escaped XSS /js/encodeURIComponent test.
-- Payload of simple alert in performDirectAttack function.
+- Detection of Escaped XSS /js/encodeURIComponent test. Payload of simple alert in performDirectAttack function.
 
 ## [72] - 2025-06-20
 ### Added
