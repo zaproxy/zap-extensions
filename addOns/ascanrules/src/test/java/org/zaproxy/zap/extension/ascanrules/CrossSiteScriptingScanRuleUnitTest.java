@@ -2684,15 +2684,16 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
                         if (q != null) {
                             // Make the eye catchers fail
                             response =
-                                    "<html><head></head><body>\n"
-                                            + "    <script>\n"
-                                            + "      eval(encodeURIComponent('"
-                                            + q
-                                            + "'));\n"
-                                            + "    </script>\n"
-                                            + "  \n"
-                                            + "\n"
-                                            + "</body></html>";
+                                    """
+                            <html>
+                                <head></head>
+                                <body>
+                                    <script>
+                                        eval(encodeURIComponent('%s'));
+                                    </script>
+                                </body>
+                            </html>"""
+                                            .formatted(q);
                         } else {
                             response = "<html><body>No input provided</body></html>";
                         }
