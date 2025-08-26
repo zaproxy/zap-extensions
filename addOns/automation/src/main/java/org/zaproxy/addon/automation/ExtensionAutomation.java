@@ -353,6 +353,10 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         return Collections.unmodifiableList(runningPlans);
     }
 
+    public void stopPlan(AutomationPlan plan) {
+        plan.stopPlan();
+    }
+
     public AutomationProgress runPlan(AutomationPlan plan, boolean resetProgress) {
         runningPlans.add(plan);
         if (resetProgress) {
@@ -384,7 +388,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
 
         for (AutomationJob job : jobsToRun) {
 
-            if (env.isTimeToQuit() && !job.isAlwaysRun()) {
+            if (plan.isStopping() || (env.isTimeToQuit() && !job.isAlwaysRun())) {
                 continue;
             }
 

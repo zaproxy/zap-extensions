@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Allow to configure the option max body size through the API (Issue 8974).
+- Support for stopping the passiveScan-wait automation job.
 
 ### Changed
 - To only record `stats.pscan.<rule-name>` statistics for scanners that have no IDs.

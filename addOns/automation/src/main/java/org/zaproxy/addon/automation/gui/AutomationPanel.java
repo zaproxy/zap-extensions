@@ -74,72 +74,67 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
 
     private static final ImageIcon PLAY_ICON =
             DisplayUtils.getScaledIcon(
-                    new ImageIcon(AutomationPanel.class.getResource("/resource/icon/16/131.png")));
+                    AutomationPanel.class.getResource("/resource/icon/16/131.png"));
     private static final ImageIcon LOAD_ICON =
             DisplayUtils.getScaledIcon(
-                    new ImageIcon(AutomationPanel.class.getResource("/resource/icon/16/047.png")));
+                    AutomationPanel.class.getResource("/resource/icon/16/047.png"));
     private static final ImageIcon SAVE_ICON =
             DisplayUtils.getScaledIcon(
-                    new ImageIcon(AutomationPanel.class.getResource("/resource/icon/16/096.png")));
+                    AutomationPanel.class.getResource("/resource/icon/16/096.png"));
     private static final ImageIcon SAVE_AS_ICON =
             DisplayUtils.getScaledIcon(
-                    new ImageIcon(
-                            AutomationPanel.class.getResource(
-                                    ExtensionAutomation.RESOURCES_DIR + "save-as.png")));
+                    AutomationPanel.class.getResource(
+                            ExtensionAutomation.RESOURCES_DIR + "save-as.png"));
+    private static final ImageIcon STOP_ICON =
+            DisplayUtils.getScaledIcon(
+                    AutomationPanel.class.getResource("/resource/icon/16/142.png"));
     private static final ImageIcon ADD_PLAN_ICON =
             DisplayUtils.getScaledIcon(
-                    new ImageIcon(
-                            AutomationPanel.class.getResource(
-                                    ExtensionAutomation.RESOURCES_DIR + "clipboard--plus.png")));
+                    AutomationPanel.class.getResource(
+                            ExtensionAutomation.RESOURCES_DIR + "clipboard--plus.png"));
     private static final ImageIcon DOWN_ARROW_ICON =
             DisplayUtils.getScaledIcon(
-                    new ImageIcon(
-                            AutomationPanel.class.getResource(
-                                    ExtensionAutomation.RESOURCES_DIR + "task-move-down.png")));
+                    AutomationPanel.class.getResource(
+                            ExtensionAutomation.RESOURCES_DIR + "task-move-down.png"));
     private static final ImageIcon UP_ARROW_ICON =
             DisplayUtils.getScaledIcon(
-                    new ImageIcon(
-                            AutomationPanel.class.getResource(
-                                    ExtensionAutomation.RESOURCES_DIR + "task-move-up.png")));
+                    AutomationPanel.class.getResource(
+                            ExtensionAutomation.RESOURCES_DIR + "task-move-up.png"));
     private static final ImageIcon ADD_JOB_ICON =
             DisplayUtils.getScaledIcon(
-                    new ImageIcon(
-                            AutomationPanel.class.getResource(
-                                    ExtensionAutomation.RESOURCES_DIR + "task--plus.png")));
+                    AutomationPanel.class.getResource(
+                            ExtensionAutomation.RESOURCES_DIR + "task--plus.png"));
     private static final ImageIcon REMOVE_JOB_ICON =
             DisplayUtils.getScaledIcon(
-                    new ImageIcon(
-                            AutomationPanel.class.getResource(
-                                    ExtensionAutomation.RESOURCES_DIR + "task--minus.png")));
+                    AutomationPanel.class.getResource(
+                            ExtensionAutomation.RESOURCES_DIR + "task--minus.png"));
     private static final ImageIcon ADD_TEST_ICON =
             DisplayUtils.getScaledIcon(
-                    new ImageIcon(
-                            AutomationPanel.class.getResource(
-                                    ExtensionAutomation.RESOURCES_DIR + "question-plus.png")));
+                    AutomationPanel.class.getResource(
+                            ExtensionAutomation.RESOURCES_DIR + "question-plus.png"));
     private static final ImageIcon REMOVE_TEST_ICON =
             DisplayUtils.getScaledIcon(
-                    new ImageIcon(
-                            AutomationPanel.class.getResource(
-                                    ExtensionAutomation.RESOURCES_DIR + "question-minus.png")));
+                    AutomationPanel.class.getResource(
+                            ExtensionAutomation.RESOURCES_DIR + "question-minus.png"));
 
     protected static final ImageIcon GREEN_BALL_ICON =
             DisplayUtils.getScaledIcon(
-                    new ImageIcon(AutomationPanel.class.getResource("/resource/icon/16/152.png")));
+                    AutomationPanel.class.getResource("/resource/icon/16/152.png"));
     protected static final ImageIcon RED_BALL_ICON =
             DisplayUtils.getScaledIcon(
-                    new ImageIcon(AutomationPanel.class.getResource("/resource/icon/16/151.png")));
+                    AutomationPanel.class.getResource("/resource/icon/16/151.png"));
     protected static final ImageIcon YELLOW_BALL_ICON =
             DisplayUtils.getScaledIcon(
-                    new ImageIcon(AutomationPanel.class.getResource("/resource/icon/16/154.png")));
+                    AutomationPanel.class.getResource("/resource/icon/16/154.png"));
     protected static final ImageIcon ORANGE_BALL_ICON =
             DisplayUtils.getScaledIcon(
-                    new ImageIcon(AutomationPanel.class.getResource("/resource/icon/16/156.png")));
+                    AutomationPanel.class.getResource("/resource/icon/16/156.png"));
     protected static final ImageIcon WHITE_BALL_ICON =
             DisplayUtils.getScaledIcon(
-                    new ImageIcon(AutomationPanel.class.getResource("/resource/icon/16/160.png")));
+                    AutomationPanel.class.getResource("/resource/icon/16/160.png"));
     protected static final ImageIcon GREY_BALL_ICON =
             DisplayUtils.getScaledIcon(
-                    new ImageIcon(AutomationPanel.class.getResource("/resource/icon/16/158.png")));
+                    AutomationPanel.class.getResource("/resource/icon/16/158.png"));
 
     private static final Logger LOGGER = LogManager.getLogger(AutomationPanel.class);
 
@@ -151,6 +146,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
     private JButton runPlanButton;
     private JButton savePlanButton;
     private JButton saveAsPlanButton;
+    private JButton stopPlanButton;
     private JButton jobUpButton;
     private JButton jobDownButton;
     private JButton addJobButton;
@@ -193,6 +189,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
             toolbar.add(getSavePlanButton());
             toolbar.add(getSaveAsPlanButton());
             toolbar.add(getRunPlanButton());
+            toolbar.add(getStopPlanButton());
             toolbar.addSeparator();
             toolbar.add(getAddJobButton());
             toolbar.add(getRemoveJobButton());
@@ -218,6 +215,8 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
                         if (currentPlan == null) {
                             return;
                         }
+                        runPlanButton.setEnabled(false);
+                        getStopPlanButton().setEnabled(true);
                         ext.runPlanAsync(currentPlan);
                     });
         }
@@ -299,6 +298,24 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
             saveAsPlanButton.addActionListener(e -> savePlan(true));
         }
         return saveAsPlanButton;
+    }
+
+    private JButton getStopPlanButton() {
+        if (stopPlanButton == null) {
+            stopPlanButton = new JButton();
+            stopPlanButton.setIcon(STOP_ICON);
+            stopPlanButton.setToolTipText(
+                    Constant.messages.getString("automation.dialog.plan.stop"));
+            stopPlanButton.setEnabled(false);
+            stopPlanButton.addActionListener(
+                    e -> {
+                        if (currentPlan != null) {
+                            stopPlanButton.setEnabled(false);
+                            ext.stopPlan(currentPlan);
+                        }
+                    });
+        }
+        return stopPlanButton;
     }
 
     private JButton getLoadPlanButton() {
@@ -572,8 +589,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
             optionsButton = new JButton();
             optionsButton.setToolTipText(Constant.messages.getString("automation.dialog.options"));
             optionsButton.setIcon(
-                    DisplayUtils.getScaledIcon(
-                            new ImageIcon(ZAP.class.getResource("/resource/icon/16/041.png"))));
+                    DisplayUtils.getScaledIcon(ZAP.class.getResource("/resource/icon/16/041.png")));
 
             optionsButton.addActionListener(
                     e ->
@@ -605,10 +621,15 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
         currentPlan = plan;
         getOutputArea().setText("");
         getTreeModel().setPlan(currentPlan);
-        getRunPlanButton().setEnabled(currentPlan != null);
+        getRunPlanButton()
+                .setEnabled(
+                        currentPlan != null
+                                && (currentPlan.getStarted() == null
+                                        || currentPlan.getFinished() != null));
         getAddJobButton().setEnabled(currentPlan != null);
         getSavePlanButton().setEnabled(false);
         getSaveAsPlanButton().setEnabled(currentPlan != null);
+        getStopPlanButton().setEnabled(currentPlan != null && !getRunPlanButton().isEnabled());
     }
 
     public List<String> getUnsavedPlans() {
@@ -801,6 +822,10 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
                 break;
             case AutomationEventPublisher.PLAN_STARTED:
                 this.getOutputArea().setText("");
+                break;
+            case AutomationEventPublisher.PLAN_FINISHED:
+                this.getRunPlanButton().setEnabled(true);
+                this.getStopPlanButton().setEnabled(false);
                 break;
             case AutomationEventPublisher.PLAN_ERROR_MESSAGE:
                 outputMessage(
