@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - For Alerts raised by the SQL Injection scan rules the Attack field values are now simply the payload, not an assembled description.
 - The Cross Site Scripting (Reflected) scan rule was updated to address potential false negatives when the injection context is a tag name and there is some filtering.
 - The Path Traversal scan rule now includes further details when directory matches are made (Issue 8379).
+- Add help details about behavior of scan rules which leverage OAST (Issue 8682).
 
 ### Added
 - Rules (as applicable) have been tagged in relation to HIPAA and PCI DSS.
