@@ -63,6 +63,8 @@ public class ClientSpiderApi extends ApiImplementor {
     private static final String PARAM_USER_NAME = "userName";
     private static final String PARAM_MAX_CRAWL_DEPTH = "maxCrawlDepth";
     private static final String PARAM_PAGE_LOAD_TIME = "pageLoadTime";
+    private static final String PARAM_NUMBER_OF_BROWSERS = "numberOfBrowsers";
+    private static final String PARAM_SCOPE_CHECK = "scopeCheck";
 
     private final ExtensionClientIntegration extension;
 
@@ -84,7 +86,9 @@ public class ClientSpiderApi extends ApiImplementor {
                                 PARAM_USER_NAME,
                                 PARAM_SUBTREE_ONLY,
                                 PARAM_MAX_CRAWL_DEPTH,
-                                PARAM_PAGE_LOAD_TIME)));
+                                PARAM_PAGE_LOAD_TIME,
+                                PARAM_NUMBER_OF_BROWSERS,
+                                PARAM_SCOPE_CHECK)));
 
         addApiAction(new ApiAction(ACTION_STOP_SCAN, List.of(PARAM_SCAN_ID)));
 
@@ -151,6 +155,12 @@ public class ClientSpiderApi extends ApiImplementor {
         }
         if (params.containsKey(PARAM_PAGE_LOAD_TIME)) {
             options.setPageLoadTimeInSecs(ApiUtils.getIntParam(params, PARAM_PAGE_LOAD_TIME));
+        }
+        if (params.containsKey(PARAM_NUMBER_OF_BROWSERS)) {
+            options.setThreadCount(ApiUtils.getIntParam(params, PARAM_NUMBER_OF_BROWSERS));
+        }
+        if (params.containsKey(PARAM_SCOPE_CHECK)) {
+            options.setScopeCheck(params.getString(PARAM_SCOPE_CHECK));
         }
 
         User user = getUser(params, context);
