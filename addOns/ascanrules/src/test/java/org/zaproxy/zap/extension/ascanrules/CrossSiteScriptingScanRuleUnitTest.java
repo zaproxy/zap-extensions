@@ -2683,19 +2683,11 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
                         String response;
                         if (q != null) {
                             // Make the eye catchers fail
-                            response =
-                                    """
-                            <html>
-                                <head></head>
-                                <body>
-                                    <script>
-                                        eval(encodeURIComponent('%s'));
-                                    </script>
-                                </body>
-                            </html>"""
-                                            .formatted(q);
+                            response = getHtml(
+                                            "InputInScriptEval.html",
+                                            new String[][] {{"q", q}});
                         } else {
-                            response = "<html><body>No input provided</body></html>";
+                            response = getHtml("NoInput.html");
                         }
                         return newFixedLengthResponse(response);
                     }
