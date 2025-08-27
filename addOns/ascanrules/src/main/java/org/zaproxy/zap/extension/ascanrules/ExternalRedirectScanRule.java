@@ -23,8 +23,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -136,6 +138,8 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
     private static final Pattern JS_WINDOW_PATT =
             Pattern.compile(
                     "(?i)window\\.(?:open|navigate)\\s*\\(\\s*['\"](" + SITE_PATT + ")['\"]");
+
+    private static final List<String> JS_PRE_CHECKS = List.of("window.", "location.", "location=");
 
     /** The various (prioritized) payloads to try */
     private enum RedirectPayloads {
@@ -476,9 +480,175 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
     }
 
     private static boolean isRedirectPresent(Pattern pattern, String value) {
-        Matcher matcher = pattern.matcher(value);
+        // Ensure the value has something we're interested in before dealing with comments
+        if (!StringUtils.containsIgnoreCase(value, SITE_HOST)
+                && JS_PRE_CHECKS.stream()
+                        .noneMatch(chk -> StringUtils.containsIgnoreCase(value, chk))) {
+            return false;
+        }
+        Set<String> extractedComments = extractJsComments(value);
+        String valueWithoutComments = value;
+        for (String comment : extractedComments) {
+            valueWithoutComments = valueWithoutComments.replace(comment, "");
+        }
+
+        Matcher matcher = pattern.matcher(valueWithoutComments);
+
         return matcher.find()
                 && StringUtils.startsWithIgnoreCase(matcher.group(1), HttpHeader.HTTP);
+    }
+
+    private static Set<String> extractJsComments(String js) {
+        // Some of the escapes in the comments below are double because of Java requirements
+        Set<String> comments = new HashSet<>();
+
+        final int n = js.length();
+        boolean inSingle = false; // '...'
+        boolean inDouble = false; // "..."
+        int i = 0;
+
+        while (i < n) {
+            char c = js.charAt(i);
+
+            // Inside a quoted string? Only look for the matching quote, consuming full escapes.
+            if (inSingle || inDouble) {
+                if (c == '\\') {
+                    i = consumeJsEscape(js, i); // Returns index of the last char of the escape
+                } else if (inSingle && c == '\'') {
+                    inSingle = false;
+                } else if (inDouble && c == '"') {
+                    inDouble = false;
+                }
+                i++;
+                continue;
+            }
+
+            // Not inside a string: maybe we’re entering one?
+            if (c == '\'') {
+                inSingle = true;
+                i++;
+                continue;
+            }
+            if (c == '"') {
+                inDouble = true;
+                i++;
+                continue;
+            }
+
+            // Not in a string: check for comments
+            if (c == '/' && i + 1 < n) {
+                char d = js.charAt(i + 1);
+
+                // Single-line //...
+                if (d == '/') {
+                    int end = i + 2;
+                    while (end < n && !isJsLineTerminator(js.charAt(end))) end++;
+                    comments.add(js.substring(i, end));
+                    i = end; // position at line break (or end)
+                    continue;
+                }
+
+                // Multi-line /* ... */
+                if (d == '*') {
+                    int end = js.indexOf("*/", i + 2);
+                    if (end == -1) {
+                        // Unterminated: consume to end
+                        comments.add(js.substring(i));
+                        i = n;
+                    } else {
+                        comments.add(js.substring(i, end + 2));
+                        i = end + 2;
+                    }
+                    continue;
+                }
+            }
+
+            // Otherwise, just move on.
+            i++;
+        }
+
+        return comments;
+    }
+
+    /**
+     * Consumes a full JS escape sequence starting at the backslash. Returns the index of the last
+     * character that belongs to the escape. Handles: \n, \r, \t, \b, \f, \v, \0, \', \", \\,
+     * line-continuations, \xHH, \uFFFF, \\u{...}
+     */
+    private static int consumeJsEscape(String s, int backslash) {
+        int n = s.length();
+        int i = backslash;
+        if (i + 1 >= n) {
+            return i; // Nothing to consume after '\'
+        }
+
+        char e = s.charAt(i + 1);
+
+        // Line continuation: backslash followed by a line terminator
+        if (isJsLineTerminator(e)) {
+            // Consume \r\n as a unit if present
+            if (e == '\r' && i + 2 < n && s.charAt(i + 2) == '\n') {
+                return i + 2;
+            }
+            return i + 1;
+        }
+
+        // \xHH  (2 hex digits)
+        if (e == 'x' || e == 'X') {
+            int j = i + 2;
+            int consumed = 0;
+            while (j < n && consumed < 2 && isHexDigit(s.charAt(j))) {
+                j++;
+                consumed++;
+            }
+            // Even if malformed, we stop at the last hex digit we found
+            return j - 1;
+        }
+
+        // \uFFFF or \\u{...}
+        if (e == 'u' || e == 'U') {
+            int j = i + 2;
+            if (j < n && s.charAt(j) == '{') {
+                // \\u{hex+}
+                j++;
+                while (j < n && isHexDigit(s.charAt(j))) {
+                    j++;
+                }
+                if (j < n && s.charAt(j) == '}') j++; // Close if present
+                return j - 1; // End of } or last hex if malformed
+            } else {
+                // \\uHHHH (exactly 4 hex if well-formed)
+                int consumed = 0;
+                while (j < n && consumed < 4 && isHexDigit(s.charAt(j))) {
+                    j++;
+                    consumed++;
+                }
+                return j - 1;
+            }
+        }
+
+        // Octal escapes (legacy). Consume up to 3 octal digits if present.
+        if (e >= '0' && e <= '7') {
+            int j = i + 1;
+            int consumed = 0;
+            while (j < n && consumed < 3 && s.charAt(j) >= '0' && s.charAt(j) <= '7') {
+                j++;
+                consumed++;
+            }
+            return j - 1;
+        }
+
+        // Simple one-char escapes: \n \r \t \b \f \v \0 \' \" \\
+        return i + 1;
+    }
+
+    private static boolean isHexDigit(char c) {
+        return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F');
+    }
+
+    private static boolean isJsLineTerminator(char c) {
+        // JS line terminators: LF, CR, LS, PS
+        return c == '\n' || c == '\r' || c == '\u2028' || c == '\u2029';
     }
 
     @Override
