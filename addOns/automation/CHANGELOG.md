@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Bug in handling headers with colons in the values.
 - Use default authentication poll frequency when none specified, if the value is less than one a progress warning occurs.
 - Do not warn if "enabled" or "alwaysRun" properties specified.
+- Use the authentication method's diagnostics state when creating a plan from a context.
 
 ## [0.51.0] - 2025-07-17
 ### Added

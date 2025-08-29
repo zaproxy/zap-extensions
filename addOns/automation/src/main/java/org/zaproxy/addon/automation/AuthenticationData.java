@@ -148,6 +148,7 @@ public class AuthenticationData extends AutomationData {
                         .getClass()
                         .getCanonicalName()
                         .equals(CLIENT_SCRIPT_BASED_AUTH_METHOD_CLASSNAME)) {
+            JobUtils.addPrivateField(parameters, PARAM_DIAGNOSTICS, authMethod);
             ScriptWrapper sw =
                     (ScriptWrapper) JobUtils.getPrivateField(authMethod, PRIVATE_FIELD_SCRIPT);
             LOGGER.debug("Matched client script class");
@@ -176,6 +177,7 @@ public class AuthenticationData extends AutomationData {
             JobUtils.addPrivateField(parameters, PARAM_LOGIN_PAGE_WAIT, authMethod);
             JobUtils.addPrivateField(parameters, PARAM_BROWSER_ID, authMethod);
             JobUtils.addPrivateField(parameters, PARAM_STEP_DELAY, authMethod);
+            JobUtils.addPrivateField(parameters, PARAM_DIAGNOSTICS, authMethod);
 
             try {
                 Method method = authMethod.getClass().getMethod("toMap", Map.class);
