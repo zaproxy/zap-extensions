@@ -44,6 +44,7 @@
 			"context": [[${entry.context}]],
 			"user": [[${entry.user}]],
 			"script": [[${entry.script}]]
+			[#th:block th:if="${reportData.isIncludeSection('diagnosticsafplan')}"],"afPlan": [[${entry.afPlan}]][/th:block]
 			
 			[#th:block th:with="steps=${entry.steps}"]
 			,"steps": [[#th:block th:each="step, state: ${steps}"][#th:block th:if="${! state.first}"],[/th:block]
