@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Edge recorder link to help.
 - Support for stopping the spiderCient automation job.
+- Optional `numberOfBrowsers` parameter for the Client Spider API action `scan` to control concurrency (number of browser windows).
+- Optional `scopeCheck` parameter for the Client Spider API action `scan` to select Scope Check (Flexible or Strict).
 
 ### Changed
 - Updated Chrome and Firefox extensions to v0.1.5.
