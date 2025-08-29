@@ -6,4 +6,7 @@
 <map version="1.0">
     <mapID target="addon.fuzzai" url="contents/fuzzai.html" />
     <mapID target="addon.fuzzai.fuzzai-icon" url="contents/images/user-silhouette-question.png" />
+    <mapID target="addon.fuzzai.ex-mod-info" url="contents/extract-model-info.html" />
+	<mapID target="addon.fuzzai.ex-train-data" url="contents/extract-training-data.html" />
+	<mapID target="addon.fuzzai.test-edge" url="contents/test-edge-cases.html" />
 </map>
