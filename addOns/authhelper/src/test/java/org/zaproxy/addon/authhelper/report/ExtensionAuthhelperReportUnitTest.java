@@ -356,6 +356,7 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
         diagnostic.setContext("Context 1");
         diagnostic.setUser("User 1");
         diagnostic.setScript("Script");
+        diagnostic.setAfPlan("AF Plan 1");
         diagnostics.add(diagnostic);
 
         diagnostic = new Diagnostic();
@@ -409,7 +410,7 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
 			"context": "Context 1",
 			"user": "User 1",
 			"script": "Script"
-
+			,"afPlan": "AF Plan 1"
 
 			,"steps": [
 			]
@@ -420,7 +421,7 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
 			"context": "Context 2",
 			"user": "User 2",
 			"script": null
-
+			,"afPlan": null
 
 			,"steps": [
 				{
