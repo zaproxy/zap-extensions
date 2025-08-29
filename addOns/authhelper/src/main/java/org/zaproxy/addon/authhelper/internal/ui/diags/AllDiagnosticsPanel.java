@@ -51,6 +51,7 @@ import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.JXErrorPane;
 import org.jdesktop.swingx.error.ErrorInfo;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
@@ -66,10 +67,13 @@ import org.zaproxy.addon.authhelper.internal.db.DiagnosticWebElement;
 import org.zaproxy.addon.authhelper.internal.db.DiagnosticWebElement.SelectorType;
 import org.zaproxy.addon.authhelper.internal.db.TableJdo;
 import org.zaproxy.addon.commonlib.ui.ReadableFileChooser;
+import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.ThreadUtils;
 import org.zaproxy.zap.view.TabbedPanel2;
 import org.zaproxy.zap.view.ZapTable;
+import org.zaproxy.zest.core.v1.ZestClientLaunch;
+import org.zaproxy.zest.core.v1.ZestScript;
 
 @SuppressWarnings("serial")
 public class AllDiagnosticsPanel extends AbstractPanel {
@@ -363,7 +367,7 @@ public class AllDiagnosticsPanel extends AbstractPanel {
                         (String) diagnosticData.get("authenticationMethod"));
                 diagnostic.setContext((String) diagnosticData.get("context"));
                 diagnostic.setUser((String) diagnosticData.get("user"));
-                diagnostic.setScript((String) diagnosticData.get("script"));
+                diagnostic.setScript(updateScript((String) diagnosticData.get("script")));
 
                 List<Map<String, Object>> stepsData =
                         (List<Map<String, Object>>) diagnosticData.get("steps");
@@ -398,6 +402,28 @@ public class AllDiagnosticsPanel extends AbstractPanel {
             LOGGER.warn(e.getMessage(), e);
             showErrorDialog("authhelper.authdiags.manager.import.error", e);
         }
+    }
+
+    private static String updateScript(String script) {
+        if (script == null || script.isBlank()) {
+            return script;
+        }
+
+        ExtensionZest extensionZest =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionZest.class);
+        if (extensionZest != null) {
+            try {
+                ZestScript zs = (ZestScript) extensionZest.convertStringToElement(script);
+                zs.getStatements().stream()
+                        .filter(ZestClientLaunch.class::isInstance)
+                        .map(ZestClientLaunch.class::cast)
+                        .forEach(e -> e.setHeadless(false));
+                return extensionZest.convertElementToString(zs);
+            } catch (Exception e) {
+                LOGGER.warn("An error occurred while updating the script:", e);
+            }
+        }
+        return script;
     }
 
     private void readScreenshot(DiagnosticStep diagnosticStep, String data) {
