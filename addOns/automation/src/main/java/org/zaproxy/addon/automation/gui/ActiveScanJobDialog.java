@@ -24,11 +24,15 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.JTextComponent;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.zaproxy.addon.automation.jobs.ActiveScanJob;
 import org.zaproxy.addon.automation.jobs.ActiveScanJob.Parameters;
 import org.zaproxy.addon.automation.jobs.JobUtils;
+import org.zaproxy.addon.automation.jobs.PolicyDefinition;
 import org.zaproxy.addon.automation.jobs.PolicyDefinition.Rule;
 import org.zaproxy.zap.utils.DisplayUtils;
 
@@ -40,6 +44,7 @@ public class ActiveScanJobDialog extends ActiveScanPolicyDialog {
     private static final String[] TAB_LABELS = {
         "automation.dialog.tab.params",
         "automation.dialog.ascan.tab.policydefaults",
+        "automation.dialog.ascan.tab.policyalerttags",
         "automation.dialog.ascan.tab.policyrules",
         "automation.dialog.ascan.tab.adv"
     };
@@ -68,48 +73,51 @@ public class ActiveScanJobDialog extends ActiveScanPolicyDialog {
     public ActiveScanJobDialog(ActiveScanJob job) {
         super(TITLE, DisplayUtils.getScaledDimension(500, 400), TAB_LABELS);
         this.job = job;
+        int tabIndex = -1;
 
-        this.addTextField(0, NAME_PARAM, this.job.getData().getName());
+        this.addTextField(++tabIndex, NAME_PARAM, this.job.getData().getName());
         List<String> contextNames = this.job.getEnv().getContextNames();
         // Add blank option
         contextNames.add(0, "");
-        this.addComboField(0, CONTEXT_PARAM, contextNames, this.job.getParameters().getContext());
+        this.addComboField(
+                tabIndex, CONTEXT_PARAM, contextNames, this.job.getParameters().getContext());
 
         List<String> users = job.getEnv().getAllUserNames();
         // Add blank option
         users.add(0, "");
-        this.addComboField(0, USER_PARAM, users, this.job.getData().getParameters().getUser());
+        this.addComboField(
+                tabIndex, USER_PARAM, users, this.job.getData().getParameters().getUser());
 
         // Cannot select the node as it might not be present in the Sites tree
-        this.addNodeSelectField(0, URL_PARAM, null, true, false);
+        this.addNodeSelectField(tabIndex, URL_PARAM, null, true, false);
         Component urlField = this.getField(URL_PARAM);
         if (urlField instanceof JTextField) {
             ((JTextField) urlField).setText(this.job.getParameters().getUrl());
         }
 
-        this.addTextField(0, POLICY_PARAM, this.job.getParameters().getPolicy());
+        this.addTextField(tabIndex, POLICY_PARAM, this.job.getParameters().getPolicy());
         this.addNumberField(
-                0,
+                tabIndex,
                 MAX_RULE_DURATION_PARAM,
                 0,
                 Integer.MAX_VALUE,
                 JobUtils.unBox(job.getParameters().getMaxRuleDurationInMins()));
         this.addNumberField(
-                0,
+                tabIndex,
                 MAX_SCAN_DURATION_PARAM,
                 0,
                 Integer.MAX_VALUE,
                 JobUtils.unBox(job.getParameters().getMaxScanDurationInMins()));
         addNumberField(
-                0,
+                tabIndex,
                 MAX_ALERTS_PER_RULE_PARAM,
                 0,
                 Integer.MAX_VALUE,
                 JobUtils.unBox(job.getParameters().getMaxAlertsPerRule()));
-        this.addCheckBoxField(0, FIELD_ADVANCED, advOptionsSet());
+        this.addCheckBoxField(tabIndex, FIELD_ADVANCED, advOptionsSet());
         this.addFieldListener(FIELD_ADVANCED, e -> setAdvancedTabs(getBoolValue(FIELD_ADVANCED)));
 
-        this.addPadding(0);
+        this.addPadding(tabIndex);
 
         String thresholdName =
                 JobUtils.thresholdToI18n(job.getData().getPolicyDefinition().getDefaultThreshold());
@@ -131,7 +139,7 @@ public class ActiveScanJobDialog extends ActiveScanPolicyDialog {
             allthresholds.add(JobUtils.thresholdToI18n(at.name()));
         }
 
-        this.addComboField(1, DEFAULT_THRESHOLD_PARAM, allthresholds, thresholdName);
+        this.addComboField(++tabIndex, DEFAULT_THRESHOLD_PARAM, allthresholds, thresholdName);
 
         List<String> allstrengths = new ArrayList<>();
 
@@ -142,47 +150,51 @@ public class ActiveScanJobDialog extends ActiveScanPolicyDialog {
             allstrengths.add(JobUtils.strengthToI18n(at.name()));
         }
 
-        this.addComboField(1, DEFAULT_STRENGTH_PARAM, allstrengths, strengthName);
+        this.addComboField(tabIndex, DEFAULT_STRENGTH_PARAM, allstrengths, strengthName);
 
-        this.addPadding(1);
+        this.addPadding(tabIndex);
 
         List<JButton> buttons = new ArrayList<>();
         buttons.add(getAddButton());
         buttons.add(getModifyButton());
         buttons.add(getRemoveButton());
 
-        this.addTableField(2, getRulesTable(), buttons);
+        this.addTagRuleTab(++tabIndex, allthresholds, allstrengths);
+
+        this.addTableField(++tabIndex, getRulesTable(), buttons);
 
         this.addNumberField(
-                3,
+                ++tabIndex,
                 DELAY_IN_MS_PARAM,
                 0,
                 Integer.MAX_VALUE,
                 JobUtils.unBox(job.getParameters().getDelayInMs()));
         this.addNumberField(
-                3,
+                tabIndex,
                 THREADS_PER_HOST_PARAM,
                 1,
                 Integer.MAX_VALUE,
                 JobUtils.unBox(job.getParameters().getThreadPerHost()));
         this.addCheckBoxField(
-                3, ADD_QUERY_PARAM, JobUtils.unBox(job.getParameters().getAddQueryParam()));
+                tabIndex, ADD_QUERY_PARAM, JobUtils.unBox(job.getParameters().getAddQueryParam()));
         this.addCheckBoxField(
-                3,
+                tabIndex,
                 HANDLE_ANTI_CSRF_PARAM,
                 JobUtils.unBox(job.getParameters().getHandleAntiCSRFTokens()));
         this.addCheckBoxField(
-                3,
+                tabIndex,
                 INJECT_PLUGIN_ID_PARAM,
                 JobUtils.unBox(job.getParameters().getInjectPluginIdInHeader()));
         this.addCheckBoxField(
-                3,
+                tabIndex,
                 SCAN_HEADERS_PARAM,
                 JobUtils.unBox(job.getParameters().getScanHeadersAllRequests()));
 
-        this.addPadding(3);
+        this.addPadding(tabIndex);
 
         setAdvancedTabs(getBoolValue(FIELD_ADVANCED));
+
+        configurePreviewButton();
     }
 
     private boolean advOptionsSet() {
@@ -193,6 +205,11 @@ public class ActiveScanJobDialog extends ActiveScanPolicyDialog {
                 || params.getHandleAntiCSRFTokens() != null
                 || params.getInjectPluginIdInHeader() != null
                 || params.getScanHeadersAllRequests() != null;
+    }
+
+    @Override
+    public JButton[] getExtraButtons() {
+        return new JButton[] {getPreviewRulesButton()};
     }
 
     private void setAdvancedTabs(boolean visible) {
@@ -248,6 +265,7 @@ public class ActiveScanJobDialog extends ActiveScanPolicyDialog {
             this.job.getParameters().setScanHeadersAllRequests(null);
         }
         this.job.getData().getPolicyDefinition().setRules(this.getRulesModel().getRules());
+        this.job.getData().getPolicyDefinition().setAlertTagRule(this.createAlertTagRuleConfig());
         this.job.resetAndSetChanged();
     }
 
@@ -260,5 +278,40 @@ public class ActiveScanJobDialog extends ActiveScanPolicyDialog {
     @Override
     protected List<Rule> getRules() {
         return job.getData().getPolicyDefinition().getRules();
+    }
+
+    @Override
+    protected PolicyDefinition.AlertTagRuleConfig getAlertTagRule() {
+        return job.getData().getPolicyDefinition().getAlertTagRule();
+    }
+
+    private void configurePreviewButton() {
+        if (this.getField(POLICY_PARAM) instanceof JTextComponent policyTextComponent) {
+            getPreviewRulesButton().setEnabled(policyTextComponent.getText().isEmpty());
+            policyTextComponent
+                    .getDocument()
+                    .addDocumentListener(
+                            new DocumentListener() {
+                                @Override
+                                public void insertUpdate(DocumentEvent e) {
+                                    togglePreviewButton();
+                                }
+
+                                @Override
+                                public void removeUpdate(DocumentEvent e) {
+                                    togglePreviewButton();
+                                }
+
+                                @Override
+                                public void changedUpdate(DocumentEvent e) {
+                                    togglePreviewButton();
+                                }
+
+                                private void togglePreviewButton() {
+                                    getPreviewRulesButton()
+                                            .setEnabled(policyTextComponent.getText().isEmpty());
+                                }
+                            });
+        }
     }
 }

@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Support for min wait for in Client Script Authentication.
 - Support for url in activeScan job.
 - Support for stopping plans and jobs.
+- Allow selecting rules in policy definitions using alert tags.
 
 ### Changed
 - Refer to output panel for errors.

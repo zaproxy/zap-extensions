@@ -27,6 +27,7 @@ import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.zaproxy.addon.automation.jobs.ActiveScanPolicyJob;
 import org.zaproxy.addon.automation.jobs.JobUtils;
+import org.zaproxy.addon.automation.jobs.PolicyDefinition;
 import org.zaproxy.addon.automation.jobs.PolicyDefinition.Rule;
 import org.zaproxy.zap.utils.DisplayUtils;
 
@@ -38,7 +39,8 @@ public class ActiveScanPolicyJobDialog extends ActiveScanPolicyDialog {
     private static final String[] TAB_LABELS = {
         "automation.dialog.tab.params",
         "automation.dialog.ascan.tab.policydefaults",
-        "automation.dialog.ascan.tab.policyrules"
+        "automation.dialog.ascan.tab.policyalerttags",
+        "automation.dialog.ascan.tab.policyrules",
     };
 
     private static final String TITLE = "automation.dialog.ascanpolicy.title";
@@ -48,12 +50,14 @@ public class ActiveScanPolicyJobDialog extends ActiveScanPolicyDialog {
     private ActiveScanPolicyJob job;
 
     public ActiveScanPolicyJobDialog(ActiveScanPolicyJob job) {
-        super(TITLE, DisplayUtils.getScaledDimension(500, 300), TAB_LABELS);
+        super(TITLE, DisplayUtils.getScaledDimension(500, 400), TAB_LABELS);
         this.job = job;
+        int tabIndex = -1;
 
-        this.addTextField(0, JOB_NAME_PARAM, this.job.getData().getName());
-        this.addTextField(0, POLICY_NAME_PARAM, this.job.getData().getParameters().getName());
-        this.addPadding(0);
+        this.addTextField(++tabIndex, JOB_NAME_PARAM, this.job.getData().getName());
+        this.addTextField(
+                tabIndex, POLICY_NAME_PARAM, this.job.getData().getParameters().getName());
+        this.addPadding(tabIndex);
 
         String thresholdName =
                 JobUtils.thresholdToI18n(job.getData().getPolicyDefinition().getDefaultThreshold());
@@ -75,7 +79,7 @@ public class ActiveScanPolicyJobDialog extends ActiveScanPolicyDialog {
             allthresholds.add(JobUtils.thresholdToI18n(at.name()));
         }
 
-        this.addComboField(1, DEFAULT_THRESHOLD_PARAM, allthresholds, thresholdName);
+        this.addComboField(++tabIndex, DEFAULT_THRESHOLD_PARAM, allthresholds, thresholdName);
 
         List<String> allstrengths = new ArrayList<>();
 
@@ -86,16 +90,23 @@ public class ActiveScanPolicyJobDialog extends ActiveScanPolicyDialog {
             allstrengths.add(JobUtils.strengthToI18n(at.name()));
         }
 
-        this.addComboField(1, DEFAULT_STRENGTH_PARAM, allstrengths, strengthName);
+        this.addComboField(tabIndex, DEFAULT_STRENGTH_PARAM, allstrengths, strengthName);
 
-        this.addPadding(1);
+        this.addPadding(tabIndex);
 
         List<JButton> buttons = new ArrayList<>();
         buttons.add(getAddButton());
         buttons.add(getModifyButton());
         buttons.add(getRemoveButton());
 
-        this.addTableField(2, getRulesTable(), buttons);
+        this.addTagRuleTab(++tabIndex, allthresholds, allstrengths);
+
+        this.addTableField(++tabIndex, getRulesTable(), buttons);
+    }
+
+    @Override
+    public JButton[] getExtraButtons() {
+        return new JButton[] {getPreviewRulesButton()};
     }
 
     @Override
@@ -123,11 +134,17 @@ public class ActiveScanPolicyJobDialog extends ActiveScanPolicyDialog {
                         JobUtils.i18nToThreshold(this.getStringValue(DEFAULT_THRESHOLD_PARAM)));
 
         this.job.getData().getPolicyDefinition().setRules(this.getRulesModel().getRules());
+        this.job.getData().getPolicyDefinition().setAlertTagRule(createAlertTagRuleConfig());
         this.job.resetAndSetChanged();
     }
 
     @Override
     protected List<Rule> getRules() {
         return job.getData().getPolicyDefinition().getRules();
+    }
+
+    @Override
+    protected PolicyDefinition.AlertTagRuleConfig getAlertTagRule() {
+        return job.getData().getPolicyDefinition().getAlertTagRule();
     }
 }

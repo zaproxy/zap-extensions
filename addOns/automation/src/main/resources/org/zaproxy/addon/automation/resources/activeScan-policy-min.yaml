@@ -4,6 +4,11 @@
     policyDefinition:                  # The policy definition
       defaultStrength:                 # String: The default Attack Strength for all rules, one of Low, Medium, High, Insane (not recommended), default: Medium
       defaultThreshold:                # String: The default Alert Threshold for all rules, one of Off, Low, Medium, High, default: Medium
+      alertTags:                       # Add rules by alert tags; overrides default settings but not rules explicitly listed under "rules"
+        include: []                    # List of alert tags to include, regex supported
+        exclude: []                    # List of alert tags to exclude from the include list, regex supported
+        strength:                      # String: The Attack Strength for this set of rules, one of Low, Medium, High, Insane, default: Medium
+        threshold:                     # String: The Alert Threshold for this set of rules, one of Off, Low, Medium, High, default: Medium
       rules:                           # A list of one or more active scan rules and associated settings which override the defaults
       - id:                            # Int: The rule id as per https://www.zaproxy.org/docs/alerts/
         name:                          # Comment: The name of the rule for documentation purposes - this is not required or actually used
