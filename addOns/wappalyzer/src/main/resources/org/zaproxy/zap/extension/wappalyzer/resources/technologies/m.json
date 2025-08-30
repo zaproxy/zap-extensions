@@ -2525,6 +2525,9 @@
     "dom": [
       "body[class*='mediawiki']"
     ],
+    "cookies": {
+      "wiki\\d+_session": ""
+    },
     "html": [
       "<body[^>]+class=\"mediawiki\"",
       "<(?:a|img)[^>]+>Powered by MediaWiki</a>",
@@ -3408,8 +3411,9 @@
       18
     ],
     "cookies": {
-      "ASP.NET_SessionId": "",
-      "ASPSESSION": ""
+      "ASP\\.NET_SessionId": "",
+      "ASPSESSION": "",
+      "\\.ASPXAUTH": ""
     },
     "cpe": "cpe:2.3:a:microsoft:asp.net:*:*:*:*:*:*:*:*",
     "description": "ASP.NET is an open-source, server-side web-application framework designed for web development to produce dynamic web pages.",

@@ -738,7 +738,7 @@
       18
     ],
     "cookies": {
-      "sails.sid": ""
+      "sails\\.sid": ""
     },
     "headers": {
       "X-Powered-By": "^Sails(?:$|[^a-z0-9])"

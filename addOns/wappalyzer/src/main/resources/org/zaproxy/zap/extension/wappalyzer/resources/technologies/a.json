@@ -2219,7 +2219,7 @@
       18
     ],
     "cookies": {
-      "CFGLOBALS": ""
+      "CFID|CFTOKEN|CFMAGIC|CFGLOBALS": ""
     },
     "cpe": "cpe:2.3:a:adobe:coldfusion:*:*:*:*:*:*:*:*",
     "description": "Adobe ColdFusion is a server-side scripting platform for building web applications and APIs, using a language called CFML (ColdFusion Markup Language).",
