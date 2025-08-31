@@ -883,6 +883,9 @@
     ],
     "cpe": "cpe:2.3:a:joomla:joomla\\!:*:*:*:*:*:*:*:*",
     "description": "Joomla is a free and open-source content management system for publishing web content.",
+    "cookies": {
+      "joomla_[a-z0-9]+": ""
+    },
     "dom": [
       "div[id*='wrapper_r'], link[href*='feed/com_'], link[href*='components/com_'], table[class*='pill']"
     ],

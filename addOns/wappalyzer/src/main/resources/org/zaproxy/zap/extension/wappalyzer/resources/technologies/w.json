@@ -2173,6 +2173,17 @@
     ],
     "website": "https://webriti.com/busiprof-premium-wordpress-theme-1"
   },
+  "WebSphere": {
+    "cats": [
+      22
+    ],
+    "icon": "websphere.svg",
+    "cpe":"cpe:2.3:a:ibm:websphere_application_server:-:*:*:*:*:*:*:*",
+    "cookies": {
+      "(?i)ltpatoken": ""
+    },
+    "website": "https://www.ibm.com/products/websphere-application-server"
+  },
   "WebsPlanet": {
     "cats": [
       1
