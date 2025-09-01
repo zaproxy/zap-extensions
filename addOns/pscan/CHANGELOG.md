@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - To only record `stats.pscan.<rule-name>` statistics for scanners that have no IDs.
+- To support other add-ons which manage passive scan rules. These rules will not currently be fully supported in the UI.
 
 ## [0.3.0] - 2025-06-20
 ### Changed
