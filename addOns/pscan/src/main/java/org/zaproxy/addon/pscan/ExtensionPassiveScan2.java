@@ -19,6 +19,8 @@
  */
 package org.zaproxy.addon.pscan;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -98,6 +100,9 @@ public class ExtensionPassiveScan2 extends ExtensionAdaptor {
 
     private PassiveScanController psc;
     private boolean passiveScanEnabled;
+
+    private List<PassiveScanRuleProvider> pscanRuleProviders =
+            Collections.synchronizedList(new ArrayList<>());
 
     public ExtensionPassiveScan2() {
         super(NAME);
@@ -415,6 +420,27 @@ public class ExtensionPassiveScan2 extends ExtensionAdaptor {
             return getPassiveScanController().getRunningTasks();
         }
         return List.of();
+    }
+
+    /**
+     * @since 0.4.0
+     */
+    public List<PassiveScanRuleProvider> getPscanRuleProviders() {
+        return pscanRuleProviders;
+    }
+
+    /**
+     * @since 0.4.0
+     */
+    public void addPscanRuleProvider(PassiveScanRuleProvider provider) {
+        pscanRuleProviders.add(provider);
+    }
+
+    /**
+     * @since 0.4.0
+     */
+    public void removePscanRuleProvider(PassiveScanRuleProvider provider) {
+        pscanRuleProviders.remove(provider);
     }
 
     private class ProxyListenerImpl implements ProxyListener {

@@ -45,6 +45,7 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.client.spider.ClientSpider;
 import org.zaproxy.addon.commonlib.ExtensionCommonlib;
+import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
 import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.selenium.internal.FirefoxProfileManager;
@@ -62,6 +63,8 @@ class ExtensionClientIntegrationUnitTest extends TestUtils {
         Control.initSingletonForTesting(mock(Model.class), extensionLoader);
         ExtensionSelenium extSel = mock(ExtensionSelenium.class);
         when(extensionLoader.getExtension(ExtensionSelenium.class)).thenReturn(extSel);
+        when(extensionLoader.getExtension(ExtensionPassiveScan2.class))
+                .thenReturn(mock(ExtensionPassiveScan2.class));
         FirefoxProfileManager fpm = mock(FirefoxProfileManager.class);
         when(extSel.getProfileManager(Browser.FIREFOX)).thenReturn(fpm);
         Path path = Files.createTempDirectory("zap-browser-test");
@@ -136,17 +139,20 @@ class ExtensionClientIntegrationUnitTest extends TestUtils {
     void shouldStartSpider() throws IOException {
         // Given
         Constant.messages = new I18N(Locale.ENGLISH);
-        ExtensionLoader extensionLoader = mock(ExtensionLoader.class);
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
         Model model = mock(Model.class);
         Session session = mock(Session.class);
         when(model.getSession()).thenReturn(session);
         Control.initSingletonForTesting(model, extensionLoader);
         when(extensionLoader.getExtension(ExtensionHistory.class))
                 .thenReturn(mock(ExtensionHistory.class));
-        ExtensionSelenium extSel = mock(ExtensionSelenium.class);
-        when(extensionLoader.getExtension(ExtensionSelenium.class)).thenReturn(extSel);
-        ExtensionCommonlib extCommonLib = mock(ExtensionCommonlib.class);
-        when(extensionLoader.getExtension(ExtensionCommonlib.class)).thenReturn(extCommonLib);
+        when(extensionLoader.getExtension(ExtensionSelenium.class))
+                .thenReturn(mock(ExtensionSelenium.class));
+        when(extensionLoader.getExtension(ExtensionCommonlib.class))
+                .thenReturn(mock(ExtensionCommonlib.class));
+        when(extensionLoader.getExtension(ExtensionPassiveScan2.class))
+                .thenReturn(mock(ExtensionPassiveScan2.class));
         ExtensionClientIntegration extClient = new ExtensionClientIntegration();
         extClient.initModel(model);
         extClient.init();

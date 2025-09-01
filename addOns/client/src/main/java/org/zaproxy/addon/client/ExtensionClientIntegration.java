@@ -49,6 +49,7 @@ import org.openqa.selenium.WebDriverException;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
@@ -70,6 +71,7 @@ import org.zaproxy.addon.client.internal.ReportedEvent;
 import org.zaproxy.addon.client.internal.ReportedObject;
 import org.zaproxy.addon.client.pscan.ClientPassiveScanController;
 import org.zaproxy.addon.client.pscan.ClientPassiveScanHelper;
+import org.zaproxy.addon.client.pscan.ClientPassiveScanRule;
 import org.zaproxy.addon.client.pscan.OptionsPassiveScan;
 import org.zaproxy.addon.client.spider.AuthenticationHandler;
 import org.zaproxy.addon.client.spider.ClientSpider;
@@ -91,6 +93,8 @@ import org.zaproxy.addon.client.ui.PopupMenuClientShowInSites;
 import org.zaproxy.addon.client.ui.PopupMenuExportClientMap;
 import org.zaproxy.addon.commonlib.ExtensionCommonlib;
 import org.zaproxy.addon.network.ExtensionNetwork;
+import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
+import org.zaproxy.addon.pscan.PassiveScanRuleProvider;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.eventBus.Event;
 import org.zaproxy.zap.eventBus.EventConsumer;
@@ -129,6 +133,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
                     ExtensionCommonlib.class,
                     ExtensionHistory.class,
                     ExtensionNetwork.class,
+                    ExtensionPassiveScan2.class,
                     ExtensionSelenium.class);
     private static final String STATS_EXPORT_CLIENTMAP = PREFIX + ".export.clientmap";
 
@@ -154,6 +159,8 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
 
     private ScanStatus pscanStatus;
 
+    private ClientPassiveScanRuleProvider clientPscanRuleProvider =
+            new ClientPassiveScanRuleProvider();
     private List<AuthenticationHandler> authHandlers =
             Collections.synchronizedList(new ArrayList<>());
 
@@ -390,6 +397,11 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
                     }
                 };
 
+        Control.getSingleton()
+                .getExtensionLoader()
+                .getExtension(ExtensionPassiveScan2.class)
+                .addPscanRuleProvider(clientPscanRuleProvider);
+
         ZAP.getEventBus()
                 .registerConsumer(
                         eventConsumer, "org.zaproxy.zap.extension.spiderAjax.SpiderEventPublisher");
@@ -460,6 +472,11 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
         if (eventConsumer != null) {
             ZAP.getEventBus().unregisterConsumer(eventConsumer);
         }
+        Control.getSingleton()
+                .getExtensionLoader()
+                .getExtension(ExtensionPassiveScan2.class)
+                .removePscanRuleProvider(clientPscanRuleProvider);
+
         if (hasView()) {
             getClientSpiderPanel().unload();
             getView()
@@ -919,5 +936,70 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
 
     public boolean exportClientMap(String path) {
         return exportClientMap(path, false);
+    }
+
+    private class ClientPassiveScanRuleProvider implements PassiveScanRuleProvider {
+
+        @Override
+        public void enableAllRules() {
+            passiveScanController.enableAllRules();
+            getClientParam().setPscanRulesDisabled(List.of());
+        }
+
+        private void setRuleStatusFromController() {
+            getClientParam()
+                    .setPscanRulesDisabled(
+                            passiveScanController.getDisabledScanRules().stream()
+                                    .map(ClientPassiveScanRule::getId)
+                                    .toList());
+        }
+
+        @Override
+        public void disableAllRules() {
+            passiveScanController.disableAllRules();
+            setRuleStatusFromController();
+        }
+
+        @Override
+        public boolean enableRule(int id) {
+            if (passiveScanController.enableRule(id)) {
+                setRuleStatusFromController();
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public boolean disableRule(int id) {
+            if (passiveScanController.disableRule(id)) {
+                setRuleStatusFromController();
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public boolean setThreshold(int id, AlertThreshold threshold) {
+            if (passiveScanController.setThreshold(id, threshold)) {
+                setRuleStatusFromController();
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public List<PassiveScanRule> getRules() {
+            return passiveScanController.getRules();
+        }
+
+        @Override
+        public PassiveScanRule getRule(int id) {
+            return passiveScanController.getRule(id);
+        }
+
+        @Override
+        public boolean hasRule(int id) {
+            return passiveScanController.hasRule(id);
+        }
     }
 }

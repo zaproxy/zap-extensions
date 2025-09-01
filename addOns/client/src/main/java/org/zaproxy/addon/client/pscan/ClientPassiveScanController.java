@@ -23,8 +23,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
+import org.zaproxy.addon.pscan.PassiveScanRuleProvider;
 
-public class ClientPassiveScanController {
+public class ClientPassiveScanController implements PassiveScanRuleProvider {
 
     private List<ClientPassiveScanRule> scanRules;
 
@@ -77,5 +79,73 @@ public class ClientPassiveScanController {
      */
     public void setDisabledScanRules(List<Integer> disabledScanRuleIds) {
         scanRules.forEach(s -> s.setEnabled(!disabledScanRuleIds.contains(s.getId())));
+    }
+
+    private ClientPassiveScanRule getScanRule(int id) {
+        return scanRules.stream().filter(r -> r.getId() == id).findFirst().orElse(null);
+    }
+
+    private PassiveScanRule normalise(ClientPassiveScanRule r) {
+        return new PassiveScanRule(
+                r.getId(), r.getName(), r.isEnabled() ? AlertThreshold.MEDIUM : AlertThreshold.OFF);
+    }
+
+    @Override
+    public void enableAllRules() {
+        scanRules.forEach(s -> s.setEnabled(true));
+    }
+
+    @Override
+    public void disableAllRules() {
+        scanRules.forEach(s -> s.setEnabled(false));
+    }
+
+    @Override
+    public boolean enableRule(int id) {
+        ClientPassiveScanRule rule = getScanRule(id);
+        if (rule != null) {
+            rule.setEnabled(true);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean disableRule(int id) {
+        ClientPassiveScanRule rule = getScanRule(id);
+        if (rule != null) {
+            rule.setEnabled(false);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean setThreshold(int id, AlertThreshold threshold) {
+        ClientPassiveScanRule rule = getScanRule(id);
+        if (rule != null) {
+            rule.setEnabled(AlertThreshold.OFF != threshold);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public List<PassiveScanRule> getRules() {
+        return scanRules.stream().map(this::normalise).toList();
+    }
+
+    @Override
+    public PassiveScanRule getRule(int id) {
+        ClientPassiveScanRule rule = getScanRule(id);
+        if (rule != null) {
+            return normalise(rule);
+        }
+        return null;
+    }
+
+    @Override
+    public boolean hasRule(int id) {
+        return this.getScanRule(id) != null;
     }
 }

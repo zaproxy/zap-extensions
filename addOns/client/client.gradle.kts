@@ -43,6 +43,11 @@ zapAddOn {
                 register("commonlib") {
                     version.set(">=1.23.0")
                 }
+                addOns {
+                    register("pscan") {
+                        version.set(">=0.4.0")
+                    }
+                }
             }
         }
     }
@@ -61,6 +66,7 @@ dependencies {
     zapAddOn("commonlib")
     zapAddOn("selenium")
     zapAddOn("network")
+    zapAddOn("pscan")
     zapAddOn("zest")
 
     testImplementation(project(":testutils"))
