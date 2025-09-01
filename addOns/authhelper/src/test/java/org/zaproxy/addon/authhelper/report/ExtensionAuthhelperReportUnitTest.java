@@ -34,10 +34,6 @@ import static org.mockito.Mockito.withSettings;
 import java.io.File;
 import java.nio.file.Files;
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import net.sf.json.JSONArray;
@@ -275,15 +271,12 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
         String report = Files.readString(r.toPath());
 
         // Then
-        LocalDateTime localDateTime = LocalDateTime.now();
-        ZonedDateTime zonedDateTime = localDateTime.atZone(ZoneId.systemDefault());
-        String current = zonedDateTime.format(DateTimeFormatter.RFC_1123_DATE_TIME);
         String expected =
                 """
                 {
                 	"@programName": "ZAP",
                 	"@version": "Test Build",
-                	"@generated": "@@@replace@@@",
+                	"@generated": "",
                 	"site":  "https:\\/\\/www.example.com"
                 \t
                 	,"summaryItems": [
@@ -323,12 +316,10 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
                 	,\"diagnostics\": [
                 	]
                 }
-                """
-                        .replace("@@@replace@@@", current);
-        report =
-                report.replaceAll(
-                        "[a-zA-Z]{3}, \\d{1,2} [a-zA-Z]{3} \\d{4} \\d{2}:\\d{2}:\\d{2}", current);
-        assertThat(report, is(equalTo(expected)));
+                """;
+        assertThat(
+                report.replaceFirst("@generated\": \"[^\"]+\"", "@generated\": \"\""),
+                is(equalTo(expected)));
     }
 
     static Template getTemplateFromYamlFile(String templateName) throws Exception {
