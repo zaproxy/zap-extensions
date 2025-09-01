@@ -533,6 +533,10 @@ public class AllDiagnosticsPanel extends AbstractPanel {
 
                 Instant created = Instant.parse((String) messageData.get("created"));
                 message.setTimeSentMillis(created.toEpochMilli());
+                Integer rtt = (Integer) messageData.get("rtt");
+                if (rtt != null) {
+                    message.setTimeElapsedMillis(rtt);
+                }
                 message.setResponseFromTargetHost(true);
 
                 HistoryReference ref =
