@@ -368,6 +368,7 @@ public class AllDiagnosticsPanel extends AbstractPanel {
                 diagnostic.setContext((String) diagnosticData.get("context"));
                 diagnostic.setUser((String) diagnosticData.get("user"));
                 diagnostic.setScript(updateScript((String) diagnosticData.get("script")));
+                diagnostic.setAfPlan((String) diagnosticData.get("afPlan"));
 
                 List<Map<String, Object>> stepsData =
                         (List<Map<String, Object>>) diagnosticData.get("steps");

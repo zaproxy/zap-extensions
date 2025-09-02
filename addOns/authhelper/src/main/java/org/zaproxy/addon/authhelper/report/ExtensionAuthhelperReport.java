@@ -31,13 +31,16 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.zaproxy.addon.authhelper.AuthUtils;
+import org.zaproxy.addon.authhelper.AuthenticationDiagnostics;
 import org.zaproxy.addon.authhelper.AutoDetectSessionManagementMethodType;
 import org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType;
 import org.zaproxy.addon.authhelper.ClientScriptBasedAuthenticationMethodType;
+import org.zaproxy.addon.authhelper.internal.db.Diagnostic;
 import org.zaproxy.addon.authhelper.report.AuthReportData.FailureDetail;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationPlan;
 import org.zaproxy.addon.automation.AutomationProgress;
+import org.zaproxy.addon.automation.ExtensionAutomation;
 import org.zaproxy.addon.reports.ExtensionReports;
 import org.zaproxy.addon.reports.ReportData;
 import org.zaproxy.zap.authentication.AuthenticationHelper;
@@ -57,10 +60,34 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
             List.of(ExtensionReports.class);
     private static final Logger LOGGER = LogManager.getLogger(ExtensionAuthhelperReport.class);
 
+    private ExtensionAutomation extensionAutomation;
     private AuthReportDataHandler authReportDataHandler;
+    private AuthenticationDiagnostics.DiagnosticDataProvider diagnosticDataProvider;
 
     public ExtensionAuthhelperReport() {
         super(NAME);
+    }
+
+    @Override
+    public void init() {
+        extensionAutomation = AuthUtils.getExtension(ExtensionAutomation.class);
+        if (extensionAutomation != null) {
+            diagnosticDataProvider = this::addDiagnosticData;
+            AuthenticationDiagnostics.addDiagnosticDataProvider(diagnosticDataProvider);
+        }
+    }
+
+    private void addDiagnosticData(Diagnostic diagnostic) {
+        List<AutomationPlan> plans = extensionAutomation.getRunningPlans();
+        if (plans.isEmpty()) {
+            diagnostic.setAfPlan("");
+            return;
+        }
+        try {
+            diagnostic.setAfPlan(plans.get(plans.size() - 1).toYaml());
+        } catch (IOException e) {
+            LOGGER.warn("An error occurred while setting the AF plan:", e);
+        }
     }
 
     @Override
@@ -85,6 +112,10 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
         ExtensionReports extReports = AuthUtils.getExtension(ExtensionReports.class);
         if (authReportDataHandler != null) {
             extReports.removeReportDataHandler(authReportDataHandler);
+        }
+
+        if (diagnosticDataProvider != null) {
+            AuthenticationDiagnostics.removeDiagnosticDataProvider(diagnosticDataProvider);
         }
     }
 

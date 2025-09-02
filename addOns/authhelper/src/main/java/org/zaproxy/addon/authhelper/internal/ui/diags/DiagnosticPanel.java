@@ -22,6 +22,8 @@ package org.zaproxy.addon.authhelper.internal.ui.diags;
 import java.awt.BorderLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +42,7 @@ import javax.swing.JToolBar;
 import javax.swing.SortOrder;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
@@ -48,6 +51,8 @@ import org.fife.ui.rtextarea.RTextScrollPane;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.AbstractPanel;
+import org.parosproxy.paros.extension.Extension;
+import org.zaproxy.addon.authhelper.ExtensionAuthhelper;
 import org.zaproxy.addon.authhelper.internal.db.DiagnosticStep;
 import org.zaproxy.addon.authhelper.internal.db.TableJdo;
 import org.zaproxy.zap.extension.script.ExtensionScript;
@@ -77,6 +82,7 @@ public class DiagnosticPanel extends AbstractPanel {
 
         addStepsTab(tabbedPane, steps);
         addScreenshotsTab(tabbedPane, steps);
+        addAfPlanTab(tabbedPane, diagnostic);
         addScriptTab(tabbedPane, diagnostic);
 
         add(tabbedPane, BorderLayout.CENTER);
@@ -163,6 +169,68 @@ public class DiagnosticPanel extends AbstractPanel {
 
         mainTabbedPane.addTab(
                 Constant.messages.getString("authhelper.authdiags.panel.tab.screenshots"), panel);
+    }
+
+    private static void addAfPlanTab(TabbedPanel2 mainTabbedPane, DiagnosticUi diagnostic) {
+        String plan = diagnostic.getAfPlan();
+        if (plan == null || plan.isBlank()) {
+            return;
+        }
+
+        JPanel planPanel = new JPanel(new BorderLayout(5, 5));
+
+        JToolBar toolBar = new JToolBar();
+        planPanel.add(BorderLayout.PAGE_START, toolBar);
+
+        RSyntaxTextArea planTextArea = new RSyntaxTextArea();
+        planTextArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_YAML);
+        planTextArea.setHighlightCurrentLine(false);
+        setText(planTextArea, plan);
+        planPanel.add(new RTextScrollPane(planTextArea, true));
+
+        Extension extensionAutomation =
+                Control.getSingleton().getExtensionLoader().getExtension("ExtensionAutomation");
+        if (extensionAutomation != null) {
+            JButton loadPlanButton =
+                    createButton(
+                            "authhelper.authdiags.panel.button.loadplan",
+                            ExtensionAuthhelper.RESOURCES_DIR + "images/robot.png");
+            loadPlanButton.addActionListener(
+                    e -> {
+                        try {
+                            Object afPlan =
+                                    extensionAutomation
+                                            .getClass()
+                                            .getDeclaredMethod("loadPlan", InputStream.class)
+                                            .invoke(
+                                                    extensionAutomation,
+                                                    IOUtils.toInputStream(
+                                                            planTextArea.getText(),
+                                                            StandardCharsets.UTF_8));
+                            extensionAutomation
+                                    .getClass()
+                                    .getDeclaredMethod(
+                                            "loadPlan",
+                                            afPlan.getClass(),
+                                            boolean.class,
+                                            boolean.class)
+                                    .invoke(extensionAutomation, afPlan, true, false);
+                        } catch (Exception ex) {
+                            LOGGER.warn("An error occurred while loading the plan:", ex);
+                        }
+                    });
+            toolBar.add(loadPlanButton);
+        }
+
+        JButton resetContentButton =
+                createButton(
+                        "authhelper.authdiags.panel.button.resetcontent",
+                        "/resource/icon/16/126.png");
+        resetContentButton.addActionListener(e -> setText(planTextArea, plan));
+        toolBar.add(resetContentButton);
+
+        mainTabbedPane.addTab(
+                Constant.messages.getString("authhelper.authdiags.panel.tab.afplan"), planPanel);
     }
 
     private static void addScriptTab(TabbedPanel2 mainTabbedPane, DiagnosticUi diagnostic) {
