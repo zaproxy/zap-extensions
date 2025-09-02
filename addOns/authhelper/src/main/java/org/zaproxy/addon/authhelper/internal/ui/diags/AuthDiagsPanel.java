@@ -26,6 +26,7 @@ import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Session;
+import org.zaproxy.addon.authhelper.AuthhelperParam;
 import org.zaproxy.addon.authhelper.ExtensionAuthhelper;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.TabbedPanel2;
@@ -37,7 +38,7 @@ public class AuthDiagsPanel extends AbstractPanel {
     private final AllDiagnosticsPanel allDiagsPanel;
     private final TabbedPanel2 tabbedPane;
 
-    public AuthDiagsPanel(ExtensionHook hook) {
+    public AuthDiagsPanel(AuthhelperParam options, ExtensionHook hook) {
         hook.addSessionListener(
                 new SessionChangedListener() {
 
@@ -71,7 +72,7 @@ public class AuthDiagsPanel extends AbstractPanel {
                                                 + "images/hand-padlock.png")));
 
         tabbedPane = new TabbedPanel2();
-        allDiagsPanel = new AllDiagnosticsPanel(tabbedPane);
+        allDiagsPanel = new AllDiagnosticsPanel(options, tabbedPane);
 
         setLayout(new BorderLayout());
         add(tabbedPane);

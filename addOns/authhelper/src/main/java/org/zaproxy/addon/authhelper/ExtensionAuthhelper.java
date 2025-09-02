@@ -220,7 +220,7 @@ public class ExtensionAuthhelper extends ExtensionAdaptor {
             authDiagCollector = new AuthDiagnosticCollector();
             extensionHook.addHttpSenderListener(authDiagCollector);
 
-            new AuthDiagsPanel(extensionHook);
+            new AuthDiagsPanel(getParam(), extensionHook);
         }
     }
 

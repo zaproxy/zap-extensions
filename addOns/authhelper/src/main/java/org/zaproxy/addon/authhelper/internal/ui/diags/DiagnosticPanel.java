@@ -22,8 +22,12 @@ package org.zaproxy.addon.authhelper.internal.ui.diags;
 import java.awt.BorderLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +38,7 @@ import javax.jdo.Query;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -42,6 +47,7 @@ import javax.swing.JToolBar;
 import javax.swing.SortOrder;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -52,6 +58,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.extension.Extension;
+import org.zaproxy.addon.authhelper.AuthhelperParam;
 import org.zaproxy.addon.authhelper.ExtensionAuthhelper;
 import org.zaproxy.addon.authhelper.internal.db.DiagnosticStep;
 import org.zaproxy.addon.authhelper.internal.db.TableJdo;
@@ -62,17 +69,20 @@ import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.TabbedPanel2;
 import org.zaproxy.zap.view.ZapTable;
+import org.zaproxy.zap.view.widgets.WritableFileChooser;
 
 @SuppressWarnings("serial")
 public class DiagnosticPanel extends AbstractPanel {
 
     private static final Logger LOGGER = LogManager.getLogger(DiagnosticPanel.class);
 
+    private static final String STEP_CLIENT_PROPERTY_KEY = "zap.stepUi";
+
     private static final long serialVersionUID = 1L;
 
     private final List<StepUi> steps;
 
-    public DiagnosticPanel(String name, DiagnosticUi diagnostic) {
+    public DiagnosticPanel(AuthhelperParam options, String name, DiagnosticUi diagnostic) {
         setName(name);
         setLayout(new BorderLayout());
 
@@ -81,7 +91,7 @@ public class DiagnosticPanel extends AbstractPanel {
         TabbedPanel2 tabbedPane = new TabbedPanel2();
 
         addStepsTab(tabbedPane, steps);
-        addScreenshotsTab(tabbedPane, steps);
+        addScreenshotsTab(options, tabbedPane, diagnostic, steps);
         addAfPlanTab(tabbedPane, diagnostic);
         addScriptTab(tabbedPane, diagnostic);
 
@@ -141,13 +151,81 @@ public class DiagnosticPanel extends AbstractPanel {
         return tabbedPane;
     }
 
-    private static void addScreenshotsTab(TabbedPanel2 mainTabbedPane, List<StepUi> steps) {
+    private void addScreenshotsTab(
+            AuthhelperParam options,
+            TabbedPanel2 mainTabbedPane,
+            DiagnosticUi diagnostic,
+            List<StepUi> steps) {
         if (steps.stream().noneMatch(StepUi::hasScreenshot)) {
             return;
         }
 
         JPanel panel = new JPanel(new BorderLayout(5, 5));
+
+        JToolBar toolBar = new JToolBar();
+        panel.add(BorderLayout.PAGE_START, toolBar);
+
+        JButton exportAllButton =
+                createButton(
+                        "authhelper.authdiags.panel.button.exportallscreenshots",
+                        "/resource/icon/16/096.png");
+        exportAllButton.addActionListener(
+                e -> {
+                    JFileChooser chooser = new JFileChooser(options.getAuthReportDir());
+                    chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                    if (chooser.showOpenDialog(DiagnosticPanel.this)
+                            == JFileChooser.APPROVE_OPTION) {
+                        File file = chooser.getSelectedFile();
+                        if (file == null) {
+                            return;
+                        }
+
+                        options.setAuthReportDir(file.getAbsolutePath());
+
+                        Path parent = file.toPath();
+
+                        for (StepUi step : steps) {
+                            exportScreenshot(
+                                    parent.resolve(getScreenshotFileName(diagnostic, step)), step);
+                        }
+                    }
+                });
+        toolBar.add(exportAllButton);
+
         JTabbedPane tabbedPane = createLeftTabbedPane();
+
+        JButton exportButton =
+                createButton(
+                        "authhelper.authdiags.panel.button.exportscreenshot",
+                        "/resource/icon/16/096.png");
+        exportButton.addActionListener(
+                e -> {
+                    JScrollPane scrollPane = (JScrollPane) tabbedPane.getSelectedComponent();
+                    StepUi step = (StepUi) scrollPane.getClientProperty(STEP_CLIENT_PROPERTY_KEY);
+
+                    WritableFileChooser chooser =
+                            new WritableFileChooser(new File(options.getAuthReportDir()));
+                    chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                    chooser.setFileFilter(
+                            new FileNameExtensionFilter(
+                                    Constant.messages.getString(
+                                            "authhelper.authdiags.panel.exportscreenshot.filter"),
+                                    "png"));
+                    chooser.setSelectedFile(new File(getScreenshotFileName(diagnostic, step)));
+                    if (chooser.showOpenDialog(DiagnosticPanel.this)
+                            == JFileChooser.APPROVE_OPTION) {
+                        File file = chooser.getSelectedFile();
+                        if (file == null) {
+                            return;
+                        }
+
+                        File parent = file.getParentFile();
+                        options.setAuthReportDir(parent != null ? parent.getAbsolutePath() : null);
+
+                        exportScreenshot(file.toPath(), step);
+                    }
+                });
+        toolBar.add(exportButton);
 
         for (StepUi step : steps) {
             if (!step.hasScreenshot()) {
@@ -158,17 +236,36 @@ public class DiagnosticPanel extends AbstractPanel {
             screen.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
             JLabel screenshotLabel = new JLabel();
+            screenshotLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
             screenshotLabel.setVerticalAlignment(SwingConstants.TOP);
             screenshotLabel.setIcon(new ImageIcon(step.getScreenshotData()));
             screen.add(screenshotLabel);
 
-            tabbedPane.addTab(step.getLabel(), new JScrollPane(screen));
+            JScrollPane scrollPane = new JScrollPane(screen);
+            scrollPane.putClientProperty(STEP_CLIENT_PROPERTY_KEY, step);
+            tabbedPane.addTab(step.getLabel(), scrollPane);
         }
 
         panel.add(tabbedPane);
 
         mainTabbedPane.addTab(
                 Constant.messages.getString("authhelper.authdiags.panel.tab.screenshots"), panel);
+    }
+
+    private static void exportScreenshot(Path path, StepUi step) {
+        try {
+            Files.write(path, step.getScreenshotData());
+        } catch (IOException ex) {
+            LOGGER.warn("An error occurred while writing the screenshot:", ex);
+        }
+    }
+
+    private static String getScreenshotFileName(DiagnosticUi diagnostic, StepUi step) {
+        return Constant.messages.getString(
+                        "authhelper.authdiags.panel.filename.screenshot",
+                        diagnostic.getId(),
+                        step.getNumber())
+                + ".png";
     }
 
     private static void addAfPlanTab(TabbedPanel2 mainTabbedPane, DiagnosticUi diagnostic) {

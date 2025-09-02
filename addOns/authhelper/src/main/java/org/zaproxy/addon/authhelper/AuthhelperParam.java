@@ -39,6 +39,7 @@ public class AuthhelperParam extends AbstractParam {
     private static final String RECORD_DIAGNOSTICS_KEY = AUTO_KEY + ".diagnostics";
     private static final String STEP_KEY = AUTO_KEY + ".steps.step";
     private static final String STEP_DELAY_KEY = AUTO_KEY + ".stepDelay";
+    private static final String AUTH_REPORT_DIR_KEY = AUTO_KEY + ".authReportDir";
 
     private String loginUrl;
     private String username;
@@ -47,6 +48,8 @@ public class AuthhelperParam extends AbstractParam {
     private int stepDelay;
     private boolean recordDiagnostics;
     private List<AuthenticationStep> steps = List.of();
+
+    private String authReportDir = "";
 
     public AuthhelperParam() {}
 
@@ -69,6 +72,8 @@ public class AuthhelperParam extends AbstractParam {
             // No longer used
             this.getConfig().clearProperty(DEMO_MODE_KEY);
         }
+
+        authReportDir = getString(AUTH_REPORT_DIR_KEY, "");
     }
 
     public String getLoginUrl() {
@@ -136,5 +141,14 @@ public class AuthhelperParam extends AbstractParam {
         this.steps.stream()
                 .map(AuthenticationStep::encode)
                 .forEach(e -> getConfig().addProperty(STEP_KEY, e));
+    }
+
+    public String getAuthReportDir() {
+        return authReportDir;
+    }
+
+    public void setAuthReportDir(String authReportDir) {
+        this.authReportDir = authReportDir == null ? "" : authReportDir;
+        getConfig().setProperty(AUTH_REPORT_DIR_KEY, this.authReportDir);
     }
 }

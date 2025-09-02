@@ -57,6 +57,7 @@ import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.authhelper.AuthhelperParam;
 import org.zaproxy.addon.authhelper.ExtensionAuthhelper;
 import org.zaproxy.addon.authhelper.internal.db.Diagnostic;
 import org.zaproxy.addon.authhelper.internal.db.DiagnosticBrowserStorageItem;
@@ -89,6 +90,7 @@ public class AllDiagnosticsPanel extends AbstractPanel {
 
     private static final long serialVersionUID = 1L;
 
+    private final AuthhelperParam options;
     private final TabbedPanel2 tabbedPane;
 
     private final Map<String, AbstractPanel> diagnosticPanels;
@@ -96,9 +98,8 @@ public class AllDiagnosticsPanel extends AbstractPanel {
     private final ZapTable table;
     private final AllDiagnosticsTableModel model;
 
-    private File currentImportDirectory;
-
-    public AllDiagnosticsPanel(TabbedPanel2 tabbedPane) {
+    public AllDiagnosticsPanel(AuthhelperParam options, TabbedPanel2 tabbedPane) {
+        this.options = options;
         this.tabbedPane = tabbedPane;
 
         setName(Constant.messages.getString("authhelper.authdiags.panel.all.title"));
@@ -190,7 +191,8 @@ public class AllDiagnosticsPanel extends AbstractPanel {
                 createButton("authhelper.authdiags.panel.import.file", "/resource/icon/16/047.png");
         importFileButton.addActionListener(
                 e -> {
-                    JFileChooser chooser = new ReadableFileChooser(currentImportDirectory);
+                    JFileChooser chooser =
+                            new ReadableFileChooser(new File(options.getAuthReportDir()));
                     chooser.setFileFilter(
                             new FileNameExtensionFilter(
                                     Constant.messages.getString(
@@ -204,7 +206,8 @@ public class AllDiagnosticsPanel extends AbstractPanel {
                             return;
                         }
 
-                        currentImportDirectory = file.getParentFile();
+                        File parent = file.getParentFile();
+                        options.setAuthReportDir(parent != null ? parent.getAbsolutePath() : null);
 
                         new Thread(() -> importFileReport(file), "ZAP-DiagsFileImport").start();
                     }
@@ -291,7 +294,7 @@ public class AllDiagnosticsPanel extends AbstractPanel {
                 diagnosticPanels.computeIfAbsent(
                         name,
                         k -> {
-                            AbstractPanel panel = new DiagnosticPanel(k, diagnostic);
+                            AbstractPanel panel = new DiagnosticPanel(options, k, diagnostic);
                             tabbedPane.addTab(panel);
                             return panel;
                         });
