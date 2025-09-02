@@ -67,7 +67,7 @@ public class AscanRulesTableModel extends AbstractTableModel {
         if (rule != null) {
             switch (col) {
                 case 0:
-                    return rule.getId();
+                    return String.valueOf(rule.getId());
                 case 1:
                     return rule.getName();
                 case 2:

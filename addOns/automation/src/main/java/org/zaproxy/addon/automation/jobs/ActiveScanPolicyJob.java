@@ -29,16 +29,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
-import org.parosproxy.paros.core.scanner.Plugin;
-import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
-import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
-import org.parosproxy.paros.core.scanner.PluginFactory;
 import org.zaproxy.addon.automation.AutomationData;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.gui.ActiveScanPolicyJobDialog;
-import org.zaproxy.addon.automation.jobs.PolicyDefinition.Rule;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.ascan.ScanPolicy;
 
@@ -140,75 +135,12 @@ public class ActiveScanPolicyJob extends AutomationJob {
     }
 
     protected ScanPolicy getScanPolicy(AutomationProgress progress) {
-        ScanPolicy scanPolicy = new ScanPolicy();
+        ScanPolicy scanPolicy =
+                this.getData().getPolicyDefinition().getScanPolicy(this.getName(), progress);
+        if (scanPolicy == null) {
+            scanPolicy = new ScanPolicy();
+        }
         scanPolicy.setName(this.getData().getParameters().getName());
-
-        // Set default strength
-        AttackStrength st =
-                JobUtils.parseAttackStrength(
-                        this.getData().getPolicyDefinition().getDefaultStrength(),
-                        this.getName(),
-                        progress);
-        if (st != null) {
-            scanPolicy.setDefaultStrength(st);
-            progress.info(
-                    Constant.messages.getString(
-                            "automation.info.ascan.setdefstrength", this.getName(), st.name()));
-        }
-
-        // Set default threshold
-        PluginFactory pluginFactory = scanPolicy.getPluginFactory();
-        AlertThreshold th =
-                JobUtils.parseAlertThreshold(
-                        this.getData().getPolicyDefinition().getDefaultThreshold(),
-                        this.getName(),
-                        progress);
-        if (th != null) {
-            scanPolicy.setDefaultThreshold(th);
-            if (th == AlertThreshold.OFF) {
-                for (Plugin plugin : pluginFactory.getAllPlugin()) {
-                    plugin.setEnabled(false);
-                }
-            } else {
-                scanPolicy.setDefaultThreshold(th);
-            }
-            progress.info(
-                    Constant.messages.getString(
-                            "automation.info.ascan.setdefthreshold", this.getName(), th.name()));
-        }
-
-        // Configure any rules
-        for (Rule rule : this.getData().getPolicyDefinition().getRules()) {
-            Plugin plugin = pluginFactory.getPlugin(rule.getId());
-            if (plugin == null) {
-                // Will have already warned about this
-                continue;
-            }
-            AttackStrength pluginSt =
-                    JobUtils.parseAttackStrength(rule.getStrength(), this.getName(), progress);
-            if (pluginSt != null) {
-                plugin.setAttackStrength(pluginSt);
-                plugin.setEnabled(true);
-                progress.info(
-                        Constant.messages.getString(
-                                "automation.info.ascan.rule.setstrength",
-                                this.getName(),
-                                String.valueOf(rule.getId()),
-                                pluginSt.name()));
-            }
-            AlertThreshold pluginTh =
-                    JobUtils.parseAlertThreshold(rule.getThreshold(), this.getName(), progress);
-            if (pluginTh != null) {
-                plugin.setAlertThreshold(pluginTh);
-                plugin.setEnabled(!AlertThreshold.OFF.equals(pluginTh));
-                progress.info(
-                        Constant.messages.getString(
-                                "automation.info.ascan.rule.setthreshold",
-                                this.getName(),
-                                String.valueOf(rule.getId()),
-                                pluginTh.name()));
-            }
-        }
         return scanPolicy;
     }
 

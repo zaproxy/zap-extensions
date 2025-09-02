@@ -19,6 +19,8 @@
  */
 package org.parosproxy.paros.core.scanner;
 
+import java.util.Map;
+
 public class PluginTestHelper extends AbstractPlugin {
 
     @Override
@@ -56,4 +58,9 @@ public class PluginTestHelper extends AbstractPlugin {
 
     @Override
     public void notifyPluginCompleted(HostProcess parent) {}
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return Map.of("TEST_TAG", "TEST_VALUE");
+    }
 }
