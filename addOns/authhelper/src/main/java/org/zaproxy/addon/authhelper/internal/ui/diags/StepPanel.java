@@ -47,6 +47,7 @@ public class StepPanel extends JPanel {
         HistoryReferencesTableModel.Column.URL,
         HistoryReferencesTableModel.Column.STATUS_CODE,
         HistoryReferencesTableModel.Column.STATUS_REASON,
+        HistoryReferencesTableModel.Column.RTT,
         HistoryReferencesTableModel.Column.SIZE_MESSAGE,
         HistoryReferencesTableModel.Column.SIZE_REQUEST_HEADER,
         HistoryReferencesTableModel.Column.SIZE_REQUEST_BODY,
