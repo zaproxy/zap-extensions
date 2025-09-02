@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.40.0] - 2025-09-02
 ### Changed
 - Provide/log details on report errors through the Automation Framework job.
 - Allow to include Automation Framework errors and warnings in the Traditional JSON Report with Requests and Responses report.
@@ -336,6 +336,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.40.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.40.0
 [0.39.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.39.0
 [0.38.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.38.0
 [0.37.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.37.0

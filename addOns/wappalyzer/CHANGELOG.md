@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [21.48.0] - 2025-09-02
 ### Changed
 - Updated with enthec upstream icon and pattern changes.
 - During load the time taken to process the data files will be shown in human readable format (generally seconds), as well as milliseconds (ms).
@@ -423,6 +423,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - First version
 
 
+[21.48.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.48.0
 [21.47.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.47.0
 [21.46.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.46.0
 [21.45.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.45.0

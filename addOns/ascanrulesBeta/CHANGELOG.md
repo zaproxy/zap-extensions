@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [60] - 2025-09-02
 ### Changed
 - Depends on an updated version of the Common Library add-on.
 - Add help details about behavior of scan rules which leverage OAST (Issue 8682)
@@ -586,6 +586,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[60]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v60
 [59]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v59
 [58]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v58
 [57]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v57

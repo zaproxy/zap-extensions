@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [26] - 2025-09-02
 ### Added
 - The SOAP Action Spoofing, SOAP XML Injection, and WSDL File Detection scan rules now all have CWE references.
 
@@ -186,6 +186,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[26]: https://github.com/zaproxy/zap-extensions/releases/soap-v26
 [25]: https://github.com/zaproxy/zap-extensions/releases/soap-v25
 [24]: https://github.com/zaproxy/zap-extensions/releases/soap-v24
 [23]: https://github.com/zaproxy/zap-extensions/releases/soap-v23
