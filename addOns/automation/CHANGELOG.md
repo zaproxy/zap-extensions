@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.52.0] - 2025-09-02
 ### Added
 - Support for step delay in Browser Based Authentication.
 - Support for min wait for in Client Script Authentication.
@@ -532,6 +532,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.52.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.52.0
 [0.51.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.51.0
 [0.50.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.50.0
 [0.49.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.49.0
