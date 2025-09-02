@@ -37,12 +37,22 @@ public class LoginLinkDetector {
             return loginLinks;
         }
         // If no links found, try buttons
-        return findElementsByTagAndLabels(wd, "button", loginLabels);
+        List<WebElement> loginButtons = findElementsByTagAndLabels(wd, "button", loginLabels);
+        if (!loginButtons.isEmpty()) {
+            return loginButtons;
+        }
+        // If no links nor buttons found try search for ARIA role button
+        return findElementsByAndLabels(wd, By.xpath("//*[@role=\"button\"]"), loginLabels);
     }
 
     private static List<WebElement> findElementsByTagAndLabels(
             WebDriver wd, String tag, List<String> labels) {
-        return wd.findElements(By.tagName(tag)).stream()
+        return findElementsByAndLabels(wd, By.tagName(tag), labels);
+    }
+
+    private static List<WebElement> findElementsByAndLabels(
+            WebDriver wd, By by, List<String> labels) {
+        return wd.findElements(by).stream()
                 .filter(element -> elementContainsText(element, labels))
                 .toList();
     }
@@ -59,7 +69,16 @@ public class LoginLinkDetector {
             return loginLinks;
         }
         // If no links found, try buttons
-        return findElementsByTagAndLabels(src, HTMLElementName.BUTTON, loginLabels);
+        List<Element> loginButtons =
+                findElementsByTagAndLabels(src, HTMLElementName.BUTTON, loginLabels);
+        if (!loginButtons.isEmpty()) {
+            return loginButtons;
+        }
+        // If no links nor buttons found try search for ARIA role button
+        return src.getAllElements().stream()
+                .filter(element -> "button".equals(element.getAttributeValue("role")))
+                .filter(element -> elementContainsText(element, loginLabels))
+                .toList();
     }
 
     private static List<Element> findElementsByTagAndLabels(

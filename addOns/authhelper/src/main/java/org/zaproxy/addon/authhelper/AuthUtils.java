@@ -137,6 +137,7 @@ public class AuthUtils {
                     "sign in",
                     "sign-in",
                     "iniciar sesión", // Spanish: login
+                    "ingresar", // Ditto.
                     "acceder", // Spanish: sign in
                     "connexion", // French: login
                     "se connecter", // French: sign in
