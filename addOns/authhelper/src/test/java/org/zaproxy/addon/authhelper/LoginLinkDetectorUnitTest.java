@@ -403,4 +403,142 @@ class LoginLinkDetectorUnitTest extends TestUtils {
         assertThat(loginLinks.size(), is(equalTo(1)));
         assertThat(loginLinks.get(0).getAttributeValue("custom"), is(equalTo("test")));
     }
+
+    @TestTemplate
+    void shouldReturnSimpleWdRoleButton(WebDriver wd) {
+        // Given
+        pageContent =
+                () ->
+                        """
+                            <h1>Heading</h1>
+                            <a href="#link1">Link 1</a>
+                            <a href="#link2">Link 2</a>
+                            <a href="#link3">Link 3</a>
+                            <div role="button" custom="test">Sign in</div>
+                            <div/>
+                         """;
+        wd.get(url);
+        // When
+        List<WebElement> loginLinks =
+                LoginLinkDetector.getLoginLinks(wd, AuthUtils.LOGIN_LABELS_P1);
+
+        // Then
+        assertThat(loginLinks.size(), is(equalTo(1)));
+        assertThat(loginLinks.get(0).getDomAttribute("custom"), is(equalTo("test")));
+    }
+
+    @Test
+    void shouldReturnSimpleWdRoleButton() {
+        // Given
+        String html =
+                """
+                   <h1>Heading</h1>
+                   <a href="#link1">Link 1</a>
+                   <a href="#link2">Link 2</a>
+                   <a href="#link3">Link 3</a>
+                   <div role="button" custom="test">Sign in</div>
+                   <div/>
+                """;
+        // When
+        List<Element> loginLinks =
+                LoginLinkDetector.getLoginLinks(new Source(html), AuthUtils.LOGIN_LABELS_P1);
+
+        // Then
+        assertThat(loginLinks.size(), is(equalTo(1)));
+        assertThat(loginLinks.get(0).getAttributeValue("custom"), is(equalTo("test")));
+    }
+
+    @TestTemplate
+    void shouldReturnMultipleSimpleWdRoleButtons(WebDriver wd) {
+        // Given
+        pageContent =
+                () ->
+                        """
+                            <h1>Heading</h1>
+                            <a href="#link1">Link 1</a>
+                            <div role="button" custom="test1">Sign in</div>
+                            <a href="#link2">Link 2</a>
+                            <div role="button" custom="test2">Log In</div>
+                            <a href="#link3">Link 3</a>
+                            <div role="button" custom="test3">Log Out</div>
+                            <div/>
+                         """;
+        wd.get(url);
+        // When
+        List<WebElement> loginLinks =
+                LoginLinkDetector.getLoginLinks(wd, AuthUtils.LOGIN_LABELS_P1);
+
+        // Then
+        assertThat(loginLinks.size(), is(equalTo(2)));
+        assertThat(loginLinks.get(0).getDomAttribute("custom"), is(equalTo("test1")));
+        assertThat(loginLinks.get(1).getDomAttribute("custom"), is(equalTo("test2")));
+    }
+
+    @Test
+    void shouldReturnMultipleSimpleSrcRoleButtons() {
+        // Given
+        String html =
+                """
+                   <h1>Heading</h1>
+                   <a href="#link1">Link 1</a>
+                   <div role="button" custom="test1">Sign in</div>
+                   <a href="#link2">Link 2</a>
+                   <div role="button" custom="test2">Log In</div>
+                   <a href="#link3">Link 3</a>
+                   <div role="button" custom="test3">Log Out</div>
+                   <div/>
+                """;
+        // When
+        List<Element> loginLinks =
+                LoginLinkDetector.getLoginLinks(new Source(html), AuthUtils.LOGIN_LABELS_P1);
+
+        // Then
+        assertThat(loginLinks.size(), is(equalTo(2)));
+        assertThat(loginLinks.get(0).getAttributeValue("custom"), is(equalTo("test1")));
+        assertThat(loginLinks.get(1).getAttributeValue("custom"), is(equalTo("test2")));
+    }
+
+    @TestTemplate
+    void shouldReturnRoleButtonWithDeeperWdText(WebDriver wd) {
+        // Given
+        pageContent =
+                () ->
+                        """
+                            <h1>Heading</h1>
+                            <a href="#link1">Link 1</a>
+                            <a href="#link2">Link 2</a>
+                            <div role="button" custom="test"><div><div></div><div><div>Log in</div></div></div>
+                            <a href="#link3">Link 3</a>
+                            <div/>
+                         """;
+        wd.get(url);
+        // When
+        List<WebElement> loginLinks =
+                LoginLinkDetector.getLoginLinks(wd, AuthUtils.LOGIN_LABELS_P1);
+
+        // Then
+        assertThat(loginLinks.size(), is(equalTo(1)));
+        assertThat(loginLinks.get(0).getDomAttribute("custom"), is(equalTo("test")));
+    }
+
+    @Test
+    void shouldReturnRoleButtonWithDeeperSrcText() {
+        // Given
+        String html =
+                """
+                   <h1>Heading</h1>
+                   <a href="#link1">Link 1</a>
+                   <a href="#link2">Link 2</a>
+                   <div role="button" custom="test"><div><div></div><div><div>Log in</div></div></div></div>
+                   <a href="#link3">Link 3</a>
+                   <div/>
+                """;
+        // When
+        List<Element> loginLinks =
+                LoginLinkDetector.getLoginLinks(new Source(html), AuthUtils.LOGIN_LABELS_P1);
+
+        // Then
+        assertThat(loginLinks.size(), is(equalTo(1)));
+        assertThat(loginLinks.get(0).getAttributeValue("custom"), is(equalTo("test")));
+    }
 }
