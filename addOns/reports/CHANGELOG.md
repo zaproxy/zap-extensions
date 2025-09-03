@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Corrected a minor typo and image alt tags in the help.
 
+### Added
+- An ISO 8601 date and time field (ex: "created": "2025-09-03T12:49:35.236211400Z") has been added to the Traditional JSON, Traditional JSON with Requests and Responses, Traditional XML, Traditional XML with Requests and Responses.
+
 ## [0.40.0] - 2025-09-02
 ### Changed
 - Provide/log details on report errors through the Automation Framework job.

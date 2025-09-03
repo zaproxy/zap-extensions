@@ -791,6 +791,7 @@ class ExtensionReportsUnitTest extends TestUtils {
     private static String cleanReport(String str) {
         return str.replaceFirst("generated=\".*\"", "generated=\"DATE\"")
                 .replaceFirst("@generated\": \".*\"", "@generated\": \"DATE\"")
+                .replaceFirst("created\": \".*\"", "created\": \"DATE\"")
                 .replaceAll("basic-.*/", "dir")
                 .replaceAll("[\\n\\r\\t ]+", " ");
     }
