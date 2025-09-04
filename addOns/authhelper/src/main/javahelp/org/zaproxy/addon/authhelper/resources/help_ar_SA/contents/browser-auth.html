@@ -17,6 +17,8 @@ the username has been entered).
 The plan is to keep enhancing this authentication method to handle all of the most commonly used login page formats.
 If it does not work with your application's login page then please inform the ZAP team via the 
 <a href="https://groups.google.com/group/zaproxy-users">ZAP User Group</a> giving as many details as possible.
+<p>
+This method also supports HTTP Basic Authentication for Firefox only (due to Selenium restrictions).
 
 <h3>Authentication Steps</h3>
 When the authentication method is not able to find suitable fields, or requires extra steps they can be manually specified by the user. The following steps are supported:
@@ -30,6 +32,7 @@ When the authentication method is not able to find suitable fields, or requires 
   <tr><td>Fill Username Field</td><td><code>USERNAME</code></td><td>Fills the username in a field, for when no suitable field was automatically identified.</td>
   <tr><td>Send Escape</td><td><code>ESCAPE</code></td><td>Sends the escape to the web element, for example, to dismiss a popup.</td>
   <tr><td>Send Return</td><td><code>RETURN</code></td><td>Sends return to the web element, for example, to submit the login form.</td>
+  <tr><td>Wait For Timeout</td><td><code>WAIT</code></td><td>Waits for the specified timeout.</td>
 </table>
 
 Each step is executed sequentially in the order they are specified. Steps that act on a web element need to be identified with either its CSS Selector or XPath, both of which can be obtained, for example, through browser dev tools.
@@ -53,11 +56,12 @@ Browser Based Authentication can be configured in the environment section of an 
         parameters:
           loginPageUrl:                # String, the URL of the login page, mandatory
           loginPageWait:               # Int, the time in seconds to wait after the login form has been submitted, default: 5
+          stepDelay:                   # Int, the time in seconds to wait in-between each step, default: 0
           browserId:                   # String, Browser Id to use, default: firefox-headless
           diagnostics:                 # Bool, enables the recording of diagnostic data during the authentication. Default: false.
           steps:                       # List of custom steps.
           - description:               # String, the description of the step.
-            type:                      # The type of the step, one of: AUTO_STEPS, CLICK, CUSTOM_FIELD, ESCAPE, PASSWORD, RETURN, TOTP_FIELD, USERNAME
+            type:                      # The type of the step, one of: AUTO_STEPS, CLICK, CUSTOM_FIELD, ESCAPE, PASSWORD, RETURN, TOTP_FIELD, USERNAME, WAIT
             cssSelector:               # String, the CSS Selector to the web element.
             xpath:                     # String, the XPath to the web element.
             value:                     # String, the value to fill in the web element.

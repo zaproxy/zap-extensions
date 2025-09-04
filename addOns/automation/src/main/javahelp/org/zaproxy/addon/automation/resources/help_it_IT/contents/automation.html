@@ -55,10 +55,14 @@ The <a href="options.html">Automation Options</a> screen allows you to configure
 <H2><a name="api">API</a></H2>
 The following API endpoints are provided by this add-on:
 <ul>
+<li>Action: endDelayJob() - ends the currently running delay job, if any</li>
 <li>Action: runPlan(filePath) - loads and asynchronously runs the plan in the specified file, returning a planId</li>
+<li>Action: stopPlan(planId) - stops the running plan identified by the planId</li>
 <li>View: planProgress(planId) - returns the progress details for the specified planId</li>
 </ul>
 If the ZAP desktop is being used then the plan will also be shown in the GUI to make it easier to diagnose any problems.
+<p>
+Note that some jobs may not stop immediately, for example if authentication is being handled.
 
 <H2><a name="environment">Environment</a></H2>
 The <a href="environment.html">environment</a> section of the file defines the applications which the rest of the jobs can act on.

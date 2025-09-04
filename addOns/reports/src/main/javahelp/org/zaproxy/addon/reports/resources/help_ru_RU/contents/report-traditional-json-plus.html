@@ -21,14 +21,20 @@
 			<td>Sequence Details</td>
 			<td>sequencedetails</td>
 		</tr>
+		<tr>
+			<td>Automation Framework State</td>
+			<td>afstate</td>
+		</tr>
 	</table>
 
-	<H3>Образец</H3>
-	<H4>About riskdesc</H4>
+	<H3>About riskdesc</H3>
 	riskdesc - Is a combination identifier, showing Risk followed by
 	Confidence (in brackets). For example
 	<code>High (Medium)</code>
 	would indicate a High risk issue identified with Medium confidence.
+
+	<H3>Образец</H3>
+
 	<pre>
 {
     "@version": "Dev Build",
@@ -98,7 +104,21 @@
                     ]
                 },
                 ...
-            ],
+            ]
+        }
+    ]
+}
+</pre>
+
+	<h4>Statistics Section</h4>
+	The report can also include statistics, per site and global, for
+	example:
+	<pre>
+{
+    ...
+    "site":[
+        {
+            ...
             "statistics": {
                 "site.specific.stat.a": 1,
                 "site.specific.stat.b": 2
@@ -109,13 +129,16 @@
         "global.stat.a": 1,
         "global.stat.b": 2
     }
-
+}
 </pre>
 
+	<h4>Sequence Details Section</h4>
 	The report can also include details of Sequences and related active
 	scanning results, for example:
 
 	<pre>
+{
+    ...
     "sequences": [
       {
         "name": "Seq name",
@@ -170,8 +193,24 @@
         ]
       }
     ]
+}
 </pre>
 
+	<h4>Automation Framework State Section</h4>
+	The report can also include Automation Framework errors and warnings,
+	for example:
+
+	<pre>
+{
+    ...
+    "afPlanErrors": [
+        "AError A"
+    ],
+    "afPlanWarns": [
+        "Warning B"
+    ]
+}
+</pre>
 </BODY>
 </HTML>
 
