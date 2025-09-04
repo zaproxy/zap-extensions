@@ -33,6 +33,7 @@ import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -392,10 +393,13 @@ public class ExtensionReports extends ExtensionAdaptor {
                 }
             }
 
+            Instant currentDateTime = Instant.now();
             synchronized (SIMPLE_DATE_FORMAT) {
                 context.setVariable(
-                        "generatedString", SIMPLE_DATE_FORMAT.format(System.currentTimeMillis()));
+                        "generatedString",
+                        SIMPLE_DATE_FORMAT.format(currentDateTime.toEpochMilli()));
             }
+            context.setVariable("created", currentDateTime.toString());
             context.setVariable("zapVersion", Constant.PROGRAM_VERSION);
             context.setVariable("programName", Constant.PROGRAM_NAME_SHORT);
 
