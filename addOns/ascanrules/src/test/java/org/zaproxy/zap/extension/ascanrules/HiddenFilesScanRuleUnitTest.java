@@ -45,6 +45,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
@@ -753,6 +754,32 @@ class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesScanRule>
         assertThat(tags, hasKey(CommonAlertTag.CUSTOM_PAYLOADS.getTag()));
         assertThat(alert.getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
         assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_LOW)));
+    }
+
+    @ParameterizedTest
+    @MethodSource("org.zaproxy.zap.extension.ascanrules.HiddenFilesScanRule#getHiddenFiles()")
+    // XXX A very likely FP.
+    void shouldRaiseAlertIfTestedUrlRespondsOkForCustomPayloads(String fileName)
+            throws HttpMalformedHeaderException {
+        // Given
+        String servePath = "/shouldAlert";
+        nano.addHandler(new OkResponse(servePath));
+        nano.addHandler(
+                new StaticContentServerHandler(
+                        '/' + fileName,
+                        "<html><head></head><H>Awesome Title</H1> Some Text... <html>"));
+        rule.init(getHttpMessage(servePath), parent);
+
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+        Alert alert = alertsRaised.get(0);
+        assertThat(httpMessagesSent, hasSize(greaterThanOrEqualTo(1)));
+        assertThat(alert.getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
+        assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_LOW)));
+        assertThat(alert.getEvidence(), is(equalTo("HTTP/1.1 200 OK")));
+        assertThat(alert.getOtherInfo(), is(equalTo("")));
     }
 
     @Test
