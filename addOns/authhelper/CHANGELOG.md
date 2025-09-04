@@ -7,8 +7,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Add login word variant for Spanish.
 
-## Changed
+### Changed
 - Search also for login elements with ARIA role button.
+
+### Fixed
+- Collect the current value of the element's attributes for the authentication diagnostics.
 
 ## [0.28.0] - 2025-09-02
 ### Added
