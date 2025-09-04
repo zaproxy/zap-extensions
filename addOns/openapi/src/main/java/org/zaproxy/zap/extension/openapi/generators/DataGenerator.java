@@ -177,7 +177,7 @@ public class DataGenerator {
             } else if (property.getProperties() != null && !property.getProperties().isEmpty()) {
                 return generators.getBodyGenerator().generate(property);
             } else {
-                return "";
+                return "{}";
             }
         }
         return generateValue(name, property, false);

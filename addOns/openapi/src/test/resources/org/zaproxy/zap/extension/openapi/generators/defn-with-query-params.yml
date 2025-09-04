@@ -18,6 +18,19 @@ paths:
         '200':
           description: OK
 
+  /content-json-empty-object:
+    get:
+      parameters:
+        - name: param
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PropertyEmptyObject'
+      responses:
+        '200':
+          description: OK
+
   /without-schema:
     get:
       parameters:
@@ -39,3 +52,10 @@ components:
           format: int64
         name:
           type: string
+    PropertyEmptyObject:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties: true
+
