@@ -51,115 +51,136 @@
 <br>
 警报 ID: <a href="https://www.zaproxy.org/docs/alerts/90019/">90019</a>.
 
-<h2 id="id-90020">命令注入</h2>
+<h2 id="id-90020">Remote OS Command Injection</h2>
 
-此规则将 *NIX 和 Windows 操作系统命令作为 URL 参数值提交，以确定网络应用程序是否将未选中的用户输入直接传递给底层操作系统。 注入字符串由元字符组成，操作系统可将其解释为连接命令，同时还包含一个负载，如果应用程序存在漏洞，该负载应在响应中产生输出。 如果响应的内容与负载相匹配，扫描器就会发出警报并立即返回。 如果没有任何基于错误的匹配尝试在响应中返回输出，扫描器将尝试盲目注入攻击，方法是提交睡眠指令作为负载，并将发送请求和接收响应之间的耗时与启发式时间延迟下限进行比较。 如果耗时大于此限制，则会以中等置信度发出警报，扫描器会立即返回。
+This rule injects *NIX and Windows OS commands to determine whether or not the web application is passing unchecked
+user input directly to the underlying OS. 注入字符串由元字符组成，操作系统可将其解释为连接命令，同时还包含一个负载，如果应用程序存在漏洞，该负载应在响应中产生输出。
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/CommandInjectionScanRule.java">CommandInjectionScanRule.java</a>
 <br>
-2.5.0 版本之后，您可以通过选项 “规则配置 ”面板更改 <code>rules.common.sleep</code> 参数，从而更改盲目注入攻击所使用的时间长度。
-<p>
-最新代码: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/CommandInjectionScaRule.java">CommandInjectionScaRule.java</a>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/90020/">90020</a>.
+
+<h2 id="id-90037">Remote OS Command Injection (Time Based)</h2>
+
+This rule injects *NIX and Windows OS commands to determine whether or not the web application is passing unchecked
+user input directly to the underlying OS. The rule will attempt blind injection attack(s) by submitting sleep instructions as the payload and comparing the elapsed time between sending the request
+and receiving the response against a heuristic time-delay lower limit.
 <br>
-警报 ID: <a href="https://www.zaproxy.org/docs/alerts/90020/">90020</a>.
-
-<h2 id="id-40012">跨站脚本攻击（反射型）</h2>
-
-该规则首先提交一个 “安全 ”值，然后分析该值在响应中出现的所有位置（如果有的话）。 <br>
-然后，它会针对每个实例出现的位置执行一系列攻击，包括标签属性、URL 属性、支持 src 属性的标签中的属性、html 注释等。 <br>
-注意：<br>
-本规则仅扫描低阈值的 HTTP PUT 请求。<br>
-如果警报阈值设置为 LOW，则 JSON 响应中的 XSS 注入会导致低风险和低置信度警报。
-对于其他响应内容类型，将发出低置信度警报。<br>
-如果警报阈值设置为 “中 (MEDIUM) ”或 “高 (HIGH)”，则非 HTML 响应中的 XSS 注入不会产生警报。<br>
+Post 2.5.0 you can change the length of time used for the blind injection attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
 <p>
-如果将特定字符从反射负载中剥离出来，那么就会使用可能具有相同效果的可替换字符重复攻击。
-<p>
-最新代码: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/CrossSiteScriptingScanRule.java">CrossSiteScriptingScanRule.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/CommandInjectionTimingScanRule.java">CommandInjectionTimingScanRule.java</a>
 <br>
-警报 ID: <a href="https://www.zaproxy.org/docs/alerts/40012/">40012</a>.
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/90037/">90037</a>.
 
-<h2 id="id-40014">跨站点脚本编写 （持续的）</h2>
+<h2 id="id-40012">Cross Site Scripting (Reflected)</h2>
 
-该规则首先提交一个唯一的 “安全 ”值，然后搜索整个应用程序，找出出现该值的所有位置<br>。
-然后，它会以与 “反射型 ”版本相同的方式执行一系列攻击，但在这种情况下，它会检查其他页面中的所有目标位置。<br>
-注意：<br>
-本规则仅扫描低阈值的 HTTP PUT 请求。<br>
-如果 XSS 注入位于 JSON 响应中，则会发出低风险和低置信度警报。<br>
+This rule starts by submitting a 'safe' value and analyzing all of the locations in which this value occurs in the response (if any). <br>
+It then performs a series of attacks specifically targeted at the location in which each of the instances occurs, 
+including tag attributes, URL attributes, attributes in tags which support src attributes, html comments etc. <br>
+Note: <br>
+This rule only scans HTTP PUT requests at LOW threshold.<br>
+If the alert threshold is set to LOW, XSS injection located in a JSON response results in a LOW risk and LOW confidence alert is raised.
+For other response content-types a LOW confidence alert is raised.<br>
+If the alert threshold is set to either MEDIUM or HIGH, XSS injection located in non-HTML responses do not generate alerts.<br>
 <p>
-最新代码: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/PersistentXssPrimeScanRule.java">PersistentXssPrimeScanRule.java</a>, 
+If specific characters are stripped out of a reflected payload then the attacks will be repeated with alternative characters that might have the same effect.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/CrossSiteScriptingScanRule.java">CrossSiteScriptingScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40012/">40012</a>.
+
+<h2 id="id-40014">Cross Site Scripting (persistent)</h2>
+
+This rule starts by submitting a unique 'safe' value and then spiders the whole application to find all of the locations in which the value occurs.<br>
+It then performs a series of attacks in the same way that the 'reflected' version does but in this case checks all of the 
+target locations in other pages.<br>
+Note: <br>
+This rule only scans HTTP PUT requests at LOW threshold.<br>
+If an XSS injection is located in a JSON response a LOW risk and LOW confidence alert is raised.<br>
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/PersistentXssPrimeScanRule.java">PersistentXssPrimeScanRule.java</a>, 
 <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/PersistentXssSpiderScanRule.java">PersistentXssSpiderScanRule.java</a>, 
 <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/PersistentXssScanRule.java">PersistentXssScanRule.java</a>
 <br>
-警报 ID: <a href="https://www.zaproxy.org/docs/alerts/40014/">40014</a>.
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40014/">40014</a>.
 
-<h2 id="id-40003">CRLF 注入</h2>
+<h2 id="id-40003">CRLF Injection</h2>
 
-此规则将注入的 “Set-Cookie ”头部前的各种 CRLF 特殊字符作为参数提交给服务器。 如果响应包含一个相同的 Set-Cookie 头部，扫描器就会发出警报并立即返回。
+This rule submits various CRLF special characters preceding an injected "Set-Cookie" header as a parameter to the server. If the response contains an identical Set-Cookie header,
+an alert is raised and the scanner returns immediately.
 <p>
-最新代码: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/CrlfInjectionScanRule.java">CrlfInjectionScanRule.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/CrlfInjectionScanRule.java">CrlfInjectionScanRule.java</a>
 <br>
-警报 ID: <a href="https://www.zaproxy.org/docs/alerts/40003/">40003</a>.
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40003/">40003</a>.
 
-<h2 id="id-0">目录浏览</h2>。
+<h2 id="id-0">Directory Browsing</h2>
 
-该规则通过检查响应正文中 Apache、IIS 和其他网络服务器软件使用的模式，来检查请求是否提供对目录列表的访问。
+This rule checks to see if a request will provide access to a directory listing by examining the response body for patterns used with Apache, IIS
+and other web server software.
 <p>
-最新代码: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/DirectoryBrowsingScanRule.java">DirectoryBrowsingScanRule.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/DirectoryBrowsingScanRule.java">DirectoryBrowsingScanRule.java</a>
 <br>
-警报 ID: <a href="https://www.zaproxy.org/docs/alerts/0/">0</a>.
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/0/">0</a>.
 
-<h2 id="id-40028">ELMAH 信息泄漏</h2>。
-测试错误日志模块和处理程序 (elmah.axd) HTTP 模块是否可用。 虽然该模块对开发人员和其他利益相关者很方便，但它也可能泄露大量信息，而安全分析师或恶意用户可能会对这些信息感兴趣。
-<br><br>。
-ELMAH 扫描规则以基于 Microsoft 的技术为目标： IIS、Windows、ASP 和 MSSQL。<br>
-文件只有在包含 “Error Log for ”文本时才会被报告，除非设置了低警报阈值。
+<h2 id="id-40028">ELMAH Information Leak</h2>
+Tests to see if the Error Logging Modules and Handlers (elmah.axd) HTTP Module is available. Although this module is handy for
+developers and other stakeholders it can also leak a significant amount of information which a security analyst or malicious individual
+may be interested in.<br><br>
+The ELMAH scan rule targets Microsoft based technologies: IIS, Windows, ASP, and MSSQL.<br>
+Files are only reported if they contain the text "Error Log for" unless a LOW alert threshold is set.
 <p>
-最新代码: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/ElmahScanRule.java">ElmahScanRule.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/ElmahScanRule.java">ElmahScanRule.java</a>
 <br>
-警报 ID: <a href="https://www.zaproxy.org/docs/alerts/40028/">40028</a>.
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40028/">40028</a>.
 
-<h2 id="id-20019">外部重定向</h2>。
+<h2 id="id-20019">External Redirect</h2>
 
-此规则在请求中提交各种 URL 重定向字符串作为参数值，然后检查响应的头部和正文，以确定是否发生了重定向以及重定向的类型。 重定向的原因可在 “位置 (Location)”和 “刷新 (Refresh)”头部字段以及响应正文中的 HTML 元标签和 Javascript 中搜索到。 系统会发出包括重定向类型的警报，扫描器会立即返回。
+This rule submits a variety of URL redirect strings as parameter values in a request, then examines the headers and bodies of responses to determine
+whether or not a redirect occurred and of what type. The cause of redirect is searched for in the "Location" and "Refresh" header fields, as well as by HTML meta tags
+and Javascript in the body of the response. An alert is raised including the redirection type and the scanner returns immediately.
 <p>
-最新代码: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/ExternalRedirectScanRule.java">ExternalRedirectScanRule.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/ExternalRedirectScanRule.java">ExternalRedirectScanRule.java</a>
 <br>
-警报 ID: <a href="https://www.zaproxy.org/docs/alerts/20019/">20019</a>.
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/20019/">20019</a>.
 
-<h2 id="id-30002">格式字符串错误</h2>。
-在编译代码中查找格式字符串处理错误的指示符。  它根据编译后的 C 代码所预期的字符来输出输入文本字符串，以生成格式化输出，并查找代码崩溃和异常会话关闭。
+<h2 id="id-30002">Format String Error</h2>
+Looks for indicators of format string handling errors in compiled code.  It does this by putting out strings of input text based upon characters
+compiled C code anticipates to produce formatted output and look for code crash and abnormal session closures.
 <p>
-最新代码: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/FormatStringScanRule.java">FormatStringScanRule.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/FormatStringScanRule.java">FormatStringScanRule.java</a>
 <br>
-警报 ID: <a href="https://www.zaproxy.org/docs/alerts/30002/">30002</a>.
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/30002/">30002</a>.
 
 <h2 id="id-10058">GET for POST</h2>
-该扫描规则接收 <code>application/x-www-form-urlencoded</code> POST 请求，将参数从 POST 改为 GET，然后重新提交请求。 
-如果 GET 响应与原始 POST 响应相同，则会发出警报。 虽然这本身并不一定代表安全漏洞，但它可能表明其他攻击或漏洞可以扩大或简化。
-(例如将基于 POST 的跨站脚本 (XSS) 攻击改为 GET）。
+This scan rule takes <code>application/x-www-form-urlencoded</code> POST requests, changes the parameters from POST to GET and resubmits the request. 
+If the GET response is the same as the original POST response then an alert is raised. While this does not necessarily
+represent a security weakness unto itself it may indicate that other attacks or weaknesses can be expanded or simplified.
+(Such as a POST based Cross-Site Scripting (XSS) attack being changed to GET.)
 <p>
-最新代码: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/GetForPostScanRule.java">GetForPostScanRule.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/GetForPostScanRule.java">GetForPostScanRule.java</a>
 <br>
-警报 ID: <a href="https://www.zaproxy.org/docs/alerts/10058/">10058</a>.
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10058/">10058</a>.
 
-<h2 id="id-20015">心脏出血 OpenSSL 漏洞</h2>。
-检测网络服务器是否存在心脏出血OpenSSL漏洞。
-有关详细信息，请参阅 CVE-2014-0160。
+<h2 id="id-20015">Heartbleed OpenSSL Vulnerability</h2>
+Detects if the web server is vulnerable to the Heartbleed OpenSSL Vulnerability, by exploiting it.
+For further details refer to CVE-2014-0160.
 <p>
-最新代码: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/HeartBleedActiveScanRule.java">HeartBleedActiveScanRule.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/HeartBleedActiveScanRule.java">HeartBleedActiveScanRule.java</a>
 <br>
-警报 ID: <a href="https://www.zaproxy.org/docs/alerts/20015/">20015</a>.
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/20015/">20015</a>.
 
-<h2 id="id-40035">隐藏文件查找器</h2>。
-此扫描规则可检查各种网络访问文件，这些文件可能会泄露管理、配置或凭证信息。
-最初包含的有效负载基于汉诺-博克（Hanno Böck）的<a href="https://github.com/hannob/snallygaster">Snallygaster</a>。
-此类有效负载通过检查响应代码和内容进行验证。 如果响应代码为 200（OK），则会执行额外的内容检查，以提高警报的可信度。
-如果响应代码为 401（未授权）或 403（禁止）或内容检查不成功，则会以较低的置信度（低阈值）发出警报。
+<h2 id="id-40035">Hidden File Finder</h2>
+This scan rule checks for various web accessible files which may leak administrative, configuration, or credential information.
+The original included set of payloads were based on <a href="https://github.com/hannob/snallygaster">Snallygaster</a> by Hanno Böck.
+Such payloads are verified by checking response code, and content. If the response code is 200 (Ok) then additional content checks are performed to increase alert confidence.
+If the response code is 401 (Unauthorized) or 403 (Forbidden) or the content checks are un-successful then an alert is raised with lower confidence (at LOW Threshold).
 <strong>Note:</strong> If the Custom Payloads add-on is installed you can add your own hidden file paths (payloads) in the Custom Payloads options panel. 
 <br>
 The Custom Payloads category for this rule is: <code>Hidden-File</code>.<br>
-For custom payloads only the response status code is checked. 如果需要包含内容检查，也可以将有效负载添加到 ZAP用户目录中的<code>json/hidden_files.json</code>文件中添加有效负载（在这种情况下，它们将被视为包含的有效负载）。
+For custom payloads only the response status code is checked. If there is a requirement to include a content check then it is also possible to add payloads to 
+the <code>json/hidden_files.json</code> file in ZAP's user directory (in which case they will be treated as included payloads).
 <p>
-下面介绍 JSON 条目的字段。
+The following describes the fields of the JSON entries.
 <pre><code>
 {
   "path":"some/path/without/leading/slash.ext",
@@ -172,14 +193,14 @@ For custom payloads only the response status code is checked. 如果需要包含
 }
 </code></pre>
 <p>
-值得注意的细节：
+Details worth noting:
 <ul>
-  <li>唯一必填字段是路径。</li>
-  <li>字段 content、not_content 和 links 可以有多个带引号、逗号分隔的值（字符串数组）。</li>
-  <li>二进制内容的检查基于起始位置 0（例如：startsWith 不包含）。</li>
+  <li>The only field that is required is path.</li>
+  <li>The fields content, not_content, and links can have multiple quoted, comma separated values (arrays of strings).</li>
+  <li>Checks of binary content are based on starting position 0 (ex: startsWith not contains).</li>
 </ul>
 <p>
-下面是一个 JSON 条目示例：
+The following is an example JSON entry:
 <pre><code>
 {
   "path":"CVS/root",
@@ -190,14 +211,16 @@ For custom payloads only the response status code is checked. 如果需要包含
 }
 </code></pre>
 <p>
-最新代码: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/HiddenFilesScanRule.java">HiddenFilesScanRule.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/HiddenFilesScanRule.java">HiddenFilesScanRule.java</a>
 <br>
-警报 ID: <a href="https://www.zaproxy.org/docs/alerts/40035/">40035</a>.
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40035/">40035</a>.
 
-<h2 id="id-40043">Log4Shell（CVE-2021-44228 和 CVE-2021-45046)</h2>
-此规则尝试发现 Log4Shell (<a href="https://nvd.nist.gov/vuln/detail/CVE-2021-44228">CVE-2021-44228</a> 和 <a href="https://nvd.nist.gov/vuln/detail/CVE-2021-45046">CVE-2021-45046</a>)漏洞。
-它依靠 OAST 附加组件生成带外有效负载并验证 DNS 交互。
-我们建议在使用此扫描规则时启用头部注入功能，以获得最大的覆盖范围。
+<h2 id="id-40043">Log4Shell (CVE-2021-44228 and CVE-2021-45046)</h2>
+This rule attempts to discover the Log4Shell (<a href="https://nvd.nist.gov/vuln/detail/CVE-2021-44228">CVE-2021-44228</a> and <a href="https://nvd.nist.gov/vuln/detail/CVE-2021-45046">CVE-2021-45046</a>) vulnerabilities.
+It relies on the OAST add-on to generate out-of-band payloads and verify DNS interactions.
+We recommend that this scan rule is used with header injection enabled for maximum coverage.
+<p>
+See also: <a href="https://www.zaproxy.org/docs/desktop/addons/oast-support/#alerts">OAST</a>.
 <p>
 最新代码: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/Log4ShellScanRule.java">Log4ShellScanRule.java</a>
 <br>
@@ -261,6 +284,9 @@ For custom payloads only the response status code is checked. 如果需要包含
 
 <h2 id="id-90036">服务器端模板注入（盲注）</h2>
 该规则比 SSTI 扫描规则更进一步，它试图找到用户输入的影响不会立即显现的地方，如管理面板、报告输出、记录等使用的地方。
+It leverages the OAST add-on for out-of-band interactions.
+<p>
+See also: <a href="https://www.zaproxy.org/docs/desktop/addons/oast-support/#alerts">OAST</a>.
 <p>
 最新代码: <h2 id="id-90036">SstiBlindScanRule.java</h2>
 <br>
@@ -317,16 +343,16 @@ For custom payloads only the response status code is checked. 如果需要包含
 <br>
 2.5.0版本 后，您可以通过选项 “规则配置 ”面板更改 <code>rules.common.sleep</code> 参数，从而更改攻击所用的时间长度。
 <p>
-最新代码: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/SqlInjectionHypersonicScanRule.java">SqlInjectionHypersonicScanRule.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/SqlInjectionHypersonicTimingScanRule.java">SqlInjectionHypersonicTimingScanRule.java</a>
 <br>
-警报 ID: <a href="https://www.zaproxy.org/docs/alerts/40020/">40020</a>.
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40020/">40020</a>.
 
-<h2 id="id-40027">SQL 注入 - MsSQL</h2>
-此主动扫描规则尝试在参数值中注入特定于 MsSQL 的睡眠命令，并分析服务器的响应时间，以查看睡眠是否在服务器上有效执行（表明 SQL 注入攻击成功）。
+<h2 id="id-40027">SQL Injection - MsSQL (Time Based)</h2>
+This active scan rule attempts to inject MsSQL specific sleep commands into parameter values and analyzes the server's response time to see if the sleep is effectively executed on the server (indicating a successful SQL injection attack).
 <p>
-最新代码: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/SqlInjectionMsSqlScanRule.java">SqlInjectionMsSqlScanRule.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/SqlInjectionMsSqlTimingScanRule.java">SqlInjectionMsSqlTimingScanRule.java</a>
 <br>
-警报 ID: <a href="https://www.zaproxy.org/docs/alerts/40027/">40027</a>.
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40027/">40027</a>.
 
 <h2 id="id-40019">SQL 注入 - MySQL（基于时间）</h2>
 
@@ -339,9 +365,9 @@ For custom payloads only the response status code is checked. 如果需要包含
 <br>
 2.5.0版本 后，您可以通过选项 “规则配置 ”面板更改 <code>rules.common.sleep</code> 参数，从而更改攻击所用的时间长度。
 <p>
-最新代码: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/SqlInjectionMySqlScanRule.java">SqlInjectionMySqlScanRule.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/SqlInjectionMySqlTimingScanRule.java">SqlInjectionMySqlTimingScanRule.java</a>
 <br>
-警报 ID: <a href="https://www.zaproxy.org/docs/alerts/40019/">40019</a>.
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40019/">40019</a>.
 
 <h2 id="id-40021">SQL 注入 - Oracle（基于时间）</h2>
 
@@ -354,9 +380,9 @@ For custom payloads only the response status code is checked. 如果需要包含
 <br>
 请注意，由于延迟方式的原因，此规则目前不允许更改定时攻击所使用的时间长度。 
 <p>
-最新代码: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/SqlInjectionOracleScanRule.java">SqlInjectionOracleScanRule.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/SqlInjectionOracleTimingScanRule.java">SqlInjectionOracleTimingScanRule.java</a>
 <br>
-警报 ID: <a href="https://www.zaproxy.org/docs/alerts/40021/">40021</a>.
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40021/">40021</a>.
 
 <h2 id="id-40022">SQL注入 - PostgreSQL（基于时间）</h2>
 
@@ -370,16 +396,16 @@ For custom payloads only the response status code is checked. 如果需要包含
 <br>
 2.5.0版本 后，您可以通过选项 “规则配置 ”面板更改 <code>rules.common.sleep</code> 参数，从而更改攻击所用的时间长度。
 <p>
-最新代码: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/SqlInjectionPostgreScanRule.java">SqlInjectionPostgreScanRule.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/SqlInjectionPostgreSqlTimingScanRule.java">SqlInjectionPostgreSqlTimingScanRule.java</a>
 <br>
-警报 ID: <a href="https://www.zaproxy.org/docs/alerts/40022/">40022</a>.
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40022/">40022</a>.
 
-<h2 id="id-40024">SQL 注入 - SQLite</h2>
-此主动扫描规则尝试在参数值中注入 SQLite 特定命令，并分析服务器的响应，查看命令是否在服务器上有效执行（表明 SQL 注入攻击成功）。
+<h2 id="id-40024">SQL Injection - SQLite (Time Based)</h2>
+This active scan rule attempts to inject SQLite specific commands into parameter values and analyzes the timing of server responses to see if the commands were effectively executed on the server (indicating a successful SQL injection attack).
 <p>
-最新代码: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/SqlInjectionSqLiteScanRule.java">SqlInjectionSqLiteScanRule.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/SqlInjectionSqLiteTimingScanRule.java">SqlInjectionSqLiteTimingScanRule.java</a>
 <br>
-警报 ID: <a href="https://www.zaproxy.org/docs/alerts/40024/">40024</a>.
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40024/">40024</a>.
 
 <h2 id="id-40029">Trace.axd 信息泄露</h2> 
 测试跟踪查看器（trace.axd）是否可用。 尽管该组件方便了开发人员和其他利益相关者，但它可能会泄露大量信息，而安全分析师或恶意用户可能会对这些信息感兴趣。<br><br>
@@ -400,10 +426,13 @@ The Custom Payloads category for this rule is: <code>User-Agent</code>.
 警报 ID: <a href="https://www.zaproxy.org/docs/alerts/10104/">10104</a>.
 
 <h2 id="id-90021">XPath 注入</0
-如><p>
-最新代码: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/XpathInjectionScanRule.java">XpathInjectionScanRule.java</a>
+如><p><strong>Note:</strong> If the Custom Payloads add-on is installed you can add your own error strings (payloads) in the Custom Payloads options panel. 
+They will also be searched for in responses as they're scanned.
+<p>
+The Custom Payloads category for this rule is: <code>XPath-Errors</code>.<br>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/XpathInjectionScanRule.java">XpathInjectionScanRule.java</a>
 <br>
-警报 ID: <a href="https://www.zaproxy.org/docs/alerts/90021/">90021</a>.
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/90021/">90021</a>.
 
 <h2 id="id-90017">注入 XSLT</h2>
 此扫描规则检查通过注入 XSL 变换引起的某些响应。 <br/>
@@ -420,6 +449,8 @@ The Custom Payloads category for this rule is: <code>User-Agent</code>.
 该扫描规则只有在 OAST 附加组件已安装并可用时才会运行。
 还建议您测试 OAST 附加组件中的回调服务是否为针对您目标站点的正确配置。
 如果目标系统无法连接到回调地址，就无法检测到某些 XXE 漏洞。
+<p>
+See also: <a href="https://www.zaproxy.org/docs/desktop/addons/oast-support/#alerts">OAST</a>.
 <p>
 最新代码: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/XxeScanRule.java">XxeScanRule.java</a>
 <br>

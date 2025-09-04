@@ -20,6 +20,11 @@ like <a href="job-ascan.html">activeScan</a> job.
     policyDefinition:                  # The policy definition
       defaultStrength:                 # String: The default Attack Strength for all rules, one of Low, Medium, High, Insane (not recommended), default: Medium
       defaultThreshold:                # String: The default Alert Threshold for all rules, one of Off, Low, Medium, High, default: Medium
+      alertTags:                       # Add rules based on alert tags; does not override or remove rules listed explicitly under "rules"
+        include: []                    # List of alert tags to include, regex supported
+        exclude: []                    # List of alert tags to exclude from this include list, regex supported
+        strength:                      # String: The Attack Strength for this set of rules, one of Low, Medium, High, Insane, default: Medium
+        threshold:                     # String: The Alert Threshold for this set of rules, one of Off, Low, Medium, High, default: Medium
       rules:                           # A list of one or more active scan rules and associated settings which override the defaults
       - id:                            # Int: The rule id as per https://www.zaproxy.org/docs/alerts/
         name:                          # Comment: The name of the rule for documentation purposes - this is not required or actually used
@@ -28,6 +33,20 @@ like <a href="job-ascan.html">activeScan</a> job.
     enabled:                           # Bool: If set to false the job will not be run, default: true
     alwaysRun:                         # Bool: If set and the job is enabled then it will run even if the plan exits early, default: false
 </pre>
+
+<h2>Policy Definition Hierarchy</h2>
+ZAP processes the policy definition in the following order:
+
+<ol>
+    <li><strong>Default behavior</strong>: All rules start with the default strength and threshold settings. We expect
+        the default threshold to be set to <code>Off</code> in most cases.
+    <li><strong>Alert tag processing</strong>: Rules matching the <code>include</code> patterns are enabled with the
+        specified alert tag strength and threshold, and rules matching any <code>exclude</code> pattern are removed from
+        the included set. For a full list of default alert tags, see <a href="https://www.zaproxy.org/alerttags/">Alert
+            Tags</a>.
+    <li><strong>Individual rule overrides</strong>: Explicitly listed rules under the <code>rules</code> section take
+        precedence over alert tag settings and policy defaults.
+</ol>
 
 </BODY>
 </HTML>

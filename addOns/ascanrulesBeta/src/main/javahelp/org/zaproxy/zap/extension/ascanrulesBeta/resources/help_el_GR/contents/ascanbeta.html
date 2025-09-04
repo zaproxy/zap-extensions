@@ -193,7 +193,9 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/41/">41</a>.
 
 <h2 id="id-40046">Server Side Request Forgery</h2>
-This rule attempts to find Server Side Request Forgery vulnerabilities by injecting out-of-band payloads in request parameters.
+This rule attempts to find Server Side Request Forgery vulnerabilities by injecting out-of-band payloads from the OAST add-on in request parameters.
+<p>
+See also: <a href="https://www.zaproxy.org/docs/desktop/addons/oast-support/#alerts">OAST</a>.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SsrfScanRule.java">SsrfScanRule.java</a>
 <br>
@@ -202,6 +204,8 @@ Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40046/">40046</a>.
 <h2 id="id-40047">Text4shell (CVE-2022-42889)</h2>
 This rule attempts to discover the Text4shell (<a href="https://nvd.nist.gov/vuln/detail/CVE-2022-42889">CVE-2022-42889</a>) vulnerability.
 It relies on the OAST add-on to generate out-of-band payloads and verify DNS interactions.
+<p>
+See also: <a href="https://www.zaproxy.org/docs/desktop/addons/oast-support/#alerts">OAST</a>.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/Text4ShellScanRule.java">Text4ShellScanRule.java</a>
 <br>

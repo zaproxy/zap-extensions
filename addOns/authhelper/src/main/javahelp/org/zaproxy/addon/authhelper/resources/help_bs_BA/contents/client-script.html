@@ -25,10 +25,19 @@ Client Script Authentication can be configured in the environment section of an 
           scriptEngine: Mozilla Zest         # The script engine used for the login script
           diagnostics:                       # Bool, enables the recording of diagnostic data during the authentication. Default: false.
           loginPageWait:                     # Int, the time in seconds to wait after the script has run, default: 5
+          minWaitFor:                        # Int, sets the minimum waitFor time in seconds to wait for each client statement, default: 0
 </pre>
 
 <p>
 Refer to the <a href="auth-report-json.html">Authentication Report</a> for more details on the diagnostics.
+
+<p>
+Zest client element statements include a "Wait For" parameter in milliseconds which is the time that Zest will wait for the relevant 
+element to become accessible. If it becomes accessible before the "wait for" time then the script carries on and does not wait for the
+full time. The "minWaitFor" parameter above (in seconds) allows you to extend (but not shorten) the time the script will wait.
+This can be very useful if the target site sometimes runs slowly.
+Increasing the "minWaitFor" time will not impact the overall time as long as all of the elements do appear within the time limit.
+It can impact the overall time in failure cases, for example where the elements never appear.
 
 <H2>Client Spider and AJAX Spider Integration</H2>
 
