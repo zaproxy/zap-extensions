@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Fixed
+- Hidden Files rule raising false positives if server returning 200 for files that don't exist (Issue 8434).
 
 ## [73] - 2025-09-02
 ### Changed

@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.function.Supplier;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
@@ -48,6 +49,7 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.PolicyTag;
+import org.zaproxy.addon.commonlib.http.ComparableResponse;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 
 /**
@@ -67,6 +69,7 @@ public class HiddenFilesScanRule extends AbstractHostPlugin implements CommonAct
     private static final int PLUGIN_ID = 40035;
     private static final Logger LOGGER = LogManager.getLogger(HiddenFilesScanRule.class);
     private static final Map<String, String> ALERT_TAGS;
+    private static final Random staticRandomGenerator = new Random();
 
     static {
         Map<String, String> alertTags =
@@ -107,20 +110,32 @@ public class HiddenFilesScanRule extends AbstractHostPlugin implements CommonAct
     public void init() {
         hfList = readFromJsonFile(DEFAULT_PAYLOAD_PATH);
         for (String payload : getHiddenFilePayloads().get()) {
-            hfList.add(
-                    new HiddenFile(
-                            payload,
-                            Collections.emptyList(),
-                            Collections.emptyList(),
-                            "",
-                            Collections.emptyList(),
-                            "",
-                            true));
+            hfList.add(new HiddenFile(payload, true));
         }
+    }
+
+    /** Copied from org.parosproxy.paros.core.scanner.Analyser */
+    private static long getRndPositiveLong() {
+        long rnd = Long.MIN_VALUE;
+        while (rnd == Long.MIN_VALUE) {
+            rnd = staticRandomGenerator.nextLong();
+        }
+        return Math.abs(rnd);
     }
 
     @Override
     public void scan() {
+        HttpMessage willNotExistMsg =
+                sendHiddenFileRequest(new HiddenFile("zap" + getRndPositiveLong(), true));
+        HttpMessage willNotExistDotMsg =
+                sendHiddenFileRequest(new HiddenFile(".zap" + getRndPositiveLong(), true));
+        if (willNotExistMsg == null || willNotExistDotMsg == null) {
+            return;
+        }
+        ComparableResponse willNotExistCompResp = new ComparableResponse(willNotExistMsg, null);
+        ComparableResponse willNotExistDotCompResp =
+                new ComparableResponse(willNotExistDotMsg, null);
+
         for (HiddenFile file : hfList) {
 
             if (isStop()) {
@@ -134,6 +149,17 @@ public class HiddenFilesScanRule extends AbstractHostPlugin implements CommonAct
             }
             int statusCode = testMsg.getResponseHeader().getStatusCode();
             if (isPage200(testMsg)) {
+                ComparableResponse cr = new ComparableResponse(testMsg, null);
+                ComparableResponse testCr =
+                        file.getPath().startsWith(".")
+                                ? willNotExistDotCompResp
+                                : willNotExistCompResp;
+
+                if (cr.compareWith(testCr) >= 0.9) {
+                    // Getting essentially the same response for a file that really doesn't exist
+                    continue;
+                }
+
                 String responseBody = testMsg.getResponseBody().toString();
                 boolean matches =
                         doesNotMatch(responseBody, file.getNotContent())
@@ -452,6 +478,17 @@ public class HiddenFilesScanRule extends AbstractHostPlugin implements CommonAct
         private final String type;
         private final String extra;
         private final boolean custom;
+
+        public HiddenFile(String path, boolean custom) {
+            this(
+                    path,
+                    Collections.emptyList(),
+                    Collections.emptyList(),
+                    "",
+                    Collections.emptyList(),
+                    "",
+                    custom);
+        }
 
         public HiddenFile(
                 String path,
