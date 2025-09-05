@@ -118,6 +118,8 @@ public class DefaultAuthenticator implements Authenticator {
                 }
                 AuthUtils.sendReturnAndSleep(diags, wd, pwdField, stepDelayInSecs);
             } catch (Exception e) {
+                diags.reportFlowException(e);
+
                 if (userField != null) {
                     // Handle the case where the password field was present but hidden / disabled
                     LOGGER.debug("Handling hidden password field on {}", wd.getCurrentUrl());

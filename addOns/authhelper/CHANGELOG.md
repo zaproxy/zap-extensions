@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Added
 - Add login word variant for Spanish.
+- Log exception during authentication with diagnostics enabled.
 
 ## Changed
 - Search also for login elements with ARIA role button.
