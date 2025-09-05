@@ -82,6 +82,22 @@ class DataGeneratorUnitTest extends TestUtils {
         assertEquals("{\"id\":10,\"name\":\"John Doe\"}", data);
     }
 
+    @Test
+    void shouldGenerateEmptyPropertyObject() throws IOException {
+        // Given
+        OpenAPI openAPI = parseResource("defn-with-query-params.yml");
+        Parameter parameter =
+                openAPI.getPaths()
+                        .get("/content-json-empty-object")
+                        .getGet()
+                        .getParameters()
+                        .get(0);
+        // When
+        String data = generator.generate(parameter.getName(), parameter);
+        // Then
+        assertEquals("{\"data\":{}}", data);
+    }
+
     private OpenAPI parseResource(String fileName) throws IOException {
         ParseOptions options = new ParseOptions();
         options.setResolveFully(true);
