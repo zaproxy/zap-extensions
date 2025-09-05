@@ -473,6 +473,14 @@ return getSelector(arguments[0], document)
         }
     }
 
+    public void reportFlowException(Exception cause) {
+        if (!enabled) {
+            return;
+        }
+
+        LOGGER.info("Exception during steps:", cause);
+    }
+
     public void recordStep(String description) {
         if (!enabled) {
             return;
