@@ -208,6 +208,15 @@ class UrlCanonicalizerUnitTest {
     }
 
     @Test
+    void shouldIgnoreTwoSlashUri() {
+        // Given / When
+        String canonicalizedUri = UrlCanonicalizer.getCanonicalUrl(ctx, "//", BASE_URL);
+        // Then
+        assertThat(canonicalizedUri, canonicalizedUri, is(equalTo(null)));
+        assertThat(logEvents, not(hasItem(startsWith("WARN "))));
+    }
+
+    @Test
     void shouldReturnCanonicalUriWithPercentEncodedPath() throws URIException {
         // Given
         String uri = new URI("http://example.com/path/%C3%A1/", true).toString();
