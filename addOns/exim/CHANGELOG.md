@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### Fixed
+- Sites Tree export now includes full raw bodies for all HTTP methods (Issue 8941).
 
 ## [0.15.0] - 2025-09-02
 ### Changed
