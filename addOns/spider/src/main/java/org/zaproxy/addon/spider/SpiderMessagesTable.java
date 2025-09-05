@@ -131,14 +131,14 @@ class SpiderMessagesTable extends HistoryReferencesTable {
 
             boolean processed = cell.isSuccessful();
             Icon icon = getProcessedIcon(processed);
-            if (component instanceof IconAware) {
-                ((IconAware) component).setIcon(icon);
-            } else if (component instanceof JLabel) {
-                ((JLabel) component).setIcon(icon);
+            if (component instanceof IconAware iconAware) {
+                iconAware.setIcon(icon);
+            } else if (component instanceof JLabel label) {
+                label.setIcon(icon);
             }
 
-            if (component instanceof JLabel) {
-                ((JLabel) component).setText(processed ? "" : cell.getLabel());
+            if (component instanceof JLabel label) {
+                label.setText(processed ? "" : cell.getLabel());
             }
 
             return component;
