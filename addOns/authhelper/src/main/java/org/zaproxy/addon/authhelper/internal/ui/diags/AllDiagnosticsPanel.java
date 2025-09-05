@@ -23,6 +23,7 @@ import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import java.awt.BorderLayout;
+import java.awt.EventQueue;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
@@ -53,6 +54,7 @@ import org.jdesktop.swingx.error.ErrorInfo;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.AbstractPanel;
+import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
@@ -69,6 +71,7 @@ import org.zaproxy.addon.authhelper.internal.db.DiagnosticWebElement.SelectorTyp
 import org.zaproxy.addon.authhelper.internal.db.TableJdo;
 import org.zaproxy.addon.commonlib.ui.ReadableFileChooser;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
+import org.zaproxy.zap.model.SessionStructure;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.ThreadUtils;
 import org.zaproxy.zap.view.TabbedPanel2;
@@ -526,6 +529,9 @@ public class AllDiagnosticsPanel extends AbstractPanel {
             return;
         }
 
+        ExtensionHistory extensionHistory =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionHistory.class);
+
         for (Map<String, Object> messageData : messagesData) {
             try {
                 HttpMessage message = new HttpMessage();
@@ -554,6 +560,14 @@ public class AllDiagnosticsPanel extends AbstractPanel {
                         List.of(
                                 Constant.messages.getString(
                                         "authhelper.authdiags.message.tag.initiator", initiator)));
+
+                if (extensionHistory != null) {
+                    EventQueue.invokeLater(
+                            () -> {
+                                extensionHistory.addHistory(ref);
+                                SessionStructure.addPath(extensionHistory.getModel(), ref, message);
+                            });
+                }
 
                 DiagnosticMessage diagnosticMessage = new DiagnosticMessage();
                 diagnosticMessage.setStep(diagnosticStep);
