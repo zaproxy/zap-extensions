@@ -41,6 +41,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -185,10 +186,11 @@ class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesScanRule>
                         false);
 
         this.nano.addHandler(new OkResponse(servePath));
+        nano.setHandler404(new OkWithRndToken(""));
         this.nano.addHandler(
                 new StaticContentServerHandler(
                         '/' + testPath,
-                        "<html><head></head><H>Awesome Title</H1> Some Text... <html>"));
+                        "<html><head></head><H1>Awesome Title</H1> Some Text... <html>"));
 
         HttpMessage msg = this.getHttpMessage(servePath);
 
@@ -426,19 +428,14 @@ class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesScanRule>
     }
 
     @Test
-    void shouldRaiseAlertWithLowConfidenceIfTestedUrlRespondsOkToCustomPayload()
-            throws HttpMalformedHeaderException {
+    void shouldNotRaiseAlertIfMajorityResponsesTooSimilar() throws HttpMalformedHeaderException {
         // Given
-        String servePath = "/shouldAlert";
+        String servePath = "/shouldNotAlert";
 
         String testPath = "foo/test.php";
         List<String> customPaths = Arrays.asList(testPath);
 
-        this.nano.addHandler(new OkResponse(servePath));
-        this.nano.addHandler(
-                new StaticContentServerHandler(
-                        '/' + testPath,
-                        "<html><head></head><H>Awesome Title</H1> Some Text... <html>"));
+        nano.setHandler404(new OkWithRndToken(""));
 
         HttpMessage msg = this.getHttpMessage(servePath);
 
@@ -447,13 +444,56 @@ class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesScanRule>
 
         // When
         rule.scan();
+
+        // Then
+        assertThat(alertsRaised, hasSize(0));
+    }
+
+    @Test
+    void shouldtRaiseAlertForMatchWith404As200() throws HttpMalformedHeaderException {
+        // Given
+        String servePath = "/shouldAlert";
+
+        String testPath = "foo/test.php";
+        List<String> customPaths = Arrays.asList(testPath);
+
+        this.nano.addHandler(new OkResponse(servePath));
+        this.nano.addHandler(new OkResponse("/" + testPath));
+
+        nano.setHandler404(new OkWithRndToken(""));
+
+        HttpMessage msg = this.getHttpMessage(servePath);
+
+        HiddenFilesScanRule.setPayloadProvider(() -> customPaths);
+        rule.init(msg, this.parent);
+
+        // When
+        rule.scan();
+
         // Then
         assertThat(alertsRaised, hasSize(1));
         Alert alert = alertsRaised.get(0);
-        assertEquals(1, httpMessagesSent.size());
+        assertThat(httpMessagesSent, hasSize(greaterThanOrEqualTo(1)));
         assertEquals(Alert.RISK_MEDIUM, alertsRaised.get(0).getRisk());
         assertEquals(Alert.CONFIDENCE_LOW, alertsRaised.get(0).getConfidence());
         assertEquals(rule.getReference(), alert.getReference());
+    }
+
+    @ParameterizedTest
+    @MethodSource("org.zaproxy.zap.extension.ascanrules.HiddenFilesScanRule#getHiddenFiles()")
+    void shouldNotRaiseAlertIfMajorityResponsesTooSimilarForBuiltInCustomPayloads(String fileName)
+            throws HttpMalformedHeaderException {
+        // Given
+        String servePath = "/shouldNotAlert";
+
+        nano.setHandler404(new OkWithRndToken(""));
+
+        rule.init(getHttpMessage(servePath), parent);
+
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(0));
     }
 
     @Test
@@ -756,32 +796,6 @@ class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesScanRule>
         assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_LOW)));
     }
 
-    @ParameterizedTest
-    @MethodSource("org.zaproxy.zap.extension.ascanrules.HiddenFilesScanRule#getHiddenFiles()")
-    // XXX A very likely FP.
-    void shouldRaiseAlertIfTestedUrlRespondsOkForCustomPayloads(String fileName)
-            throws HttpMalformedHeaderException {
-        // Given
-        String servePath = "/shouldAlert";
-        nano.addHandler(new OkResponse(servePath));
-        nano.addHandler(
-                new StaticContentServerHandler(
-                        '/' + fileName,
-                        "<html><head></head><H>Awesome Title</H1> Some Text... <html>"));
-        rule.init(getHttpMessage(servePath), parent);
-
-        // When
-        rule.scan();
-        // Then
-        assertThat(alertsRaised, hasSize(1));
-        Alert alert = alertsRaised.get(0);
-        assertThat(httpMessagesSent, hasSize(greaterThanOrEqualTo(1)));
-        assertThat(alert.getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
-        assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_LOW)));
-        assertThat(alert.getEvidence(), is(equalTo("HTTP/1.1 200 OK")));
-        assertThat(alert.getOtherInfo(), is(equalTo("")));
-    }
-
     @Test
     @Override
     public void shouldHaveValidReferences() {
@@ -866,6 +880,25 @@ class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesScanRule>
 
         public OkBinResponse(String path, String content) {
             super(path, content);
+        }
+    }
+
+    private static class OkWithRndToken extends NanoServerHandler {
+
+        private Random rnd = new Random();
+
+        public OkWithRndToken(String name) {
+            super(name);
+        }
+
+        @Override
+        protected Response serve(IHTTPSession session) {
+            return NanoHTTPD.newFixedLengthResponse(
+                    Response.Status.OK,
+                    "text/html",
+                    "<html><head></head><body><H1>Awesome Title</H1> Some Text... <br>"
+                            + rnd.nextLong()
+                            + "</body></html>");
         }
     }
 }
