@@ -481,7 +481,7 @@ class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesScanRule>
 
     @ParameterizedTest
     @MethodSource("org.zaproxy.zap.extension.ascanrules.HiddenFilesScanRule#getHiddenFiles()")
-    void shouldNotRaiseAlertIfTestedUrlRespondsOkForBuiltInCustomPayloads(String fileName)
+    void shouldNotRaiseAlertIfMajorityResponsesTooSimilarForBuiltInCustomPayloads(String fileName)
             throws HttpMalformedHeaderException {
         // Given
         String servePath = "/shouldNotAlert";
