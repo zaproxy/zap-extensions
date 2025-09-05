@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Changed
 - Search also for login elements with ARIA role button.
+- Show always the diagnostic HTTP messages in the Sites tree and History tab when importing the Authentication Report.
 
 ## [0.28.0] - 2025-09-02
 ### Added
