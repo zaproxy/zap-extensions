@@ -433,10 +433,10 @@ return getSelector(arguments[0], document)
             }
 
             diagElement.setTagName(element.getTagName());
-            diagElement.setAttributeType(getAttribute(element, "type"));
-            diagElement.setAttributeId(getAttribute(element, "id"));
-            diagElement.setAttributeName(getAttribute(element, "name"));
-            diagElement.setAttributeValue(getAttribute(element, "value"));
+            diagElement.setAttributeType(element.getAttribute("type"));
+            diagElement.setAttributeId(element.getAttribute("id"));
+            diagElement.setAttributeName(element.getAttribute("name"));
+            diagElement.setAttributeValue(element.getAttribute("value"));
             diagElement.setText(element.getText());
             diagElement.setDisplayed(element.isDisplayed());
             diagElement.setEnabled(element.isEnabled());
@@ -494,14 +494,6 @@ return getSelector(arguments[0], document)
         }
         addMessageToStep(message);
         finishCurrentStep(message.getRequestHeader().getURI().toString(), description);
-    }
-
-    private static String getAttribute(WebElement element, String name) {
-        String value = element.getDomAttribute(name);
-        if (value != null) {
-            return value;
-        }
-        return element.getDomProperty(name);
     }
 
     @Override
