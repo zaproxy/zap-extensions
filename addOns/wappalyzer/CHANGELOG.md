@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Maintenance changes.
+- The Technology panel toolbar now includes a toggle button to link its displayed contents to the Sites Tree selection.
 
 ### Fixed
 - Icon sizing in the Technology table when a transparent placeholder needs to be used.

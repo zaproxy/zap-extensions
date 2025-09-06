@@ -56,14 +56,9 @@ import org.zaproxy.zap.extension.alert.ExampleAlertProvider;
 import org.zaproxy.zap.extension.search.ExtensionSearch;
 import org.zaproxy.zap.utils.ThreadUtils;
 import org.zaproxy.zap.view.ScanPanel;
-import org.zaproxy.zap.view.SiteMapListener;
-import org.zaproxy.zap.view.SiteMapTreeCellRenderer;
 
 public class ExtensionWappalyzer extends ExtensionAdaptor
-        implements SessionChangedListener,
-                SiteMapListener,
-                ApplicationHolder,
-                ExampleAlertProvider {
+        implements SessionChangedListener, ApplicationHolder, ExampleAlertProvider {
 
     public static final String NAME = "ExtensionWappalyzer";
 
@@ -173,7 +168,6 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
         super.hook(extensionHook);
 
         extensionHook.addSessionListener(this);
-        extensionHook.addSiteMapListener(this);
 
         if (hasView()) {
             @SuppressWarnings("unused")
@@ -248,6 +242,10 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
         super.unload();
 
         getPscanExtension().getPassiveScannersManager().remove(passiveScanner);
+
+        if (techPanel != null) {
+            techPanel.unload();
+        }
     }
 
     @Override
@@ -272,9 +270,9 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
 
     public TechTableModel getTechModelForSite(String site) {
         TechTableModel model = this.siteTechMap.computeIfAbsent(site, s -> new TechTableModel());
-        if (hasView()) {
+        if (techPanel != null) {
             // Add to site pulldown
-            this.getTechPanel().addSite(site);
+            this.techPanel.addSite(site);
         }
         return model;
     }
@@ -362,16 +360,6 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
             getExtensionSearch().search(p.pattern(), type, true, false);
         }
     }
-
-    @Override
-    public void nodeSelected(SiteNode node) {
-        // Event from SiteMapListenner
-        this.getTechPanel().siteSelected(normalizeSite(node.getHistoryReference().getURI()));
-    }
-
-    @Override
-    public void onReturnNodeRendererComponent(
-            SiteMapTreeCellRenderer arg0, boolean arg1, SiteNode arg2) {}
 
     @Override
     public void sessionAboutToChange(Session arg0) {
