@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### Fixed
+- Icon sizing in the Technology table when a transparent placeholder needs to be used.
 
 ## [21.48.0] - 2025-09-02
 ### Changed

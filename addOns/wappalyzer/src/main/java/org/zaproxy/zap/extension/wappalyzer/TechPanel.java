@@ -89,12 +89,12 @@ public class TechPanel extends AbstractPanel {
 
                 @Override
                 public int getIconWidth() {
-                    return 32;
+                    return TechsJsonParser.SIZE;
                 }
 
                 @Override
                 public int getIconHeight() {
-                    return 32;
+                    return TechsJsonParser.SIZE;
                 }
             };
 

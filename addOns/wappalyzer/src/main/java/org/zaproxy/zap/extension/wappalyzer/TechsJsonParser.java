@@ -57,7 +57,7 @@ public class TechsJsonParser {
     private static final String FIELD_CONFIDENCE = "confidence:";
     private static final String FIELD_VERSION = "version:";
     private static final String FIELD_SEPARATOR = "\\\\;";
-    private static final int SIZE = 16;
+    static final int SIZE = 16;
 
     private static final Logger LOGGER = LogManager.getLogger(TechsJsonParser.class);
     private final PatternErrorHandler patternErrorHandler;
