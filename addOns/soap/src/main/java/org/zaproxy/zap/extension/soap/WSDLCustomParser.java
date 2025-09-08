@@ -53,6 +53,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.function.Supplier;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
@@ -513,7 +514,9 @@ public class WSDLCustomParser {
     }
 
     private String dateFormat(String format) {
-        return new SimpleDateFormat(format).format(dateSupplier.get());
+        SimpleDateFormat sdf = new SimpleDateFormat(format);
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return sdf.format(dateSupplier.get());
     }
 
     /* Generates a SOAP request associated to the specified binding operation. */
