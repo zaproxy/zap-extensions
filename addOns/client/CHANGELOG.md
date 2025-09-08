@@ -4,13 +4,16 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Added
+- Optional `numberOfBrowsers` parameter for the Client Spider API action `scan` to control concurrency (number of browser windows).
+- Optional `scopeCheck` parameter for the Client Spider API action `scan` to select Scope Check (Flexible or Strict).
 
 ## [0.17.0] - 2025-09-02
 ### Added
 - Edge recorder link to help.
 - Support for stopping the spiderCient automation job.
 - Support for configuring the client passive scan rules via the passiveScan-config Automation Framework job. This add-on now depends on the pscan add-on.
+
 
 ### Changed
 - Updated Chrome and Firefox extensions to v0.1.6.
