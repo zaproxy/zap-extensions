@@ -22,6 +22,7 @@ package org.zaproxy.zap.testutils;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -53,7 +54,41 @@ interface ScanRuleTests {
         List<DynamicTest> tests = new ArrayList<>();
         // XXX Enable once all rules pass.
         // tests.add(dynamicTest("shouldHaveValidReferences", this::shouldHaveValidReferences));
+        tests.add(
+                dynamicTest(
+                        "shouldHaveExpectedAlertRefsInExampleAlerts",
+                        this::shouldHaveExpectedAlertRefsInExampleAlerts));
         return tests;
+    }
+
+    default void shouldHaveExpectedAlertRefsInExampleAlerts() {
+        // Given / When
+        List<Alert> alerts = getExampleAlerts(getScanRule());
+        // Then
+        if (alerts.size() <= 1) {
+            return;
+        }
+
+        List<String> errors = new ArrayList<>();
+        int i = 0;
+        for (Alert alert : alerts) {
+            ++i;
+            String alertRef = alert.getPluginId() + "-" + i;
+            if (!alertRef.equals(alert.getAlertRef())) {
+                errors.add(
+                        "Example Alert %s does not have expected ref: %s Has: %s"
+                                .formatted(i, alertRef, alert.getAlertRef()));
+            }
+        }
+
+        assertThat(errors.toString(), errors, is(empty()));
+    }
+
+    private static List<Alert> getExampleAlerts(Object scanRule) {
+        if (scanRule instanceof ExampleAlertProvider eap) {
+            return Optional.ofNullable(eap.getExampleAlerts()).orElse(List.of());
+        }
+        return List.of();
     }
 
     default void shouldHaveValidReferences() {

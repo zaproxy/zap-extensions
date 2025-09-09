@@ -748,17 +748,18 @@ public class CacheableScanRule extends PluginPassiveScanner implements CommonPas
         return alerts;
     }
 
-    private AlertBuilder buildAlert(String evidence) {
+    private AlertBuilder buildAlert(String evidence, String ref) {
         return newAlert()
                 .setRisk(Alert.RISK_INFO)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setEvidence(evidence)
                 .setCweId(524) // CWE-524: Information Exposure Through Caching
-                .setWascId(13); // WASC-13: Information Leakage
+                .setWascId(13) // WASC-13: Information Leakage
+                .setAlertRef(getPluginId() + "-" + ref);
     }
 
     private AlertBuilder alertNonStorable(String evidence) {
-        return buildAlert(evidence)
+        return buildAlert(evidence, "1")
                 .setName(Constant.messages.getString(MESSAGE_PREFIX_NONSTORABLE + "name"))
                 .setDescription(Constant.messages.getString(MESSAGE_PREFIX_NONSTORABLE + "desc"))
                 .setSolution(Constant.messages.getString(MESSAGE_PREFIX_NONSTORABLE + "soln"))
@@ -766,7 +767,7 @@ public class CacheableScanRule extends PluginPassiveScanner implements CommonPas
     }
 
     private AlertBuilder alertStorableNonCacheable(String evidence) {
-        return buildAlert(evidence)
+        return buildAlert(evidence, "2")
                 .setName(Constant.messages.getString(MESSAGE_PREFIX_STORABLE_NONCACHEABLE + "name"))
                 .setDescription(
                         Constant.messages.getString(MESSAGE_PREFIX_STORABLE_NONCACHEABLE + "desc"))
@@ -775,7 +776,7 @@ public class CacheableScanRule extends PluginPassiveScanner implements CommonPas
     }
 
     private AlertBuilder alertStorableCacheable(String evidence, String otherInfo) {
-        return buildAlert(evidence)
+        return buildAlert(evidence, "3")
                 .setName(Constant.messages.getString(MESSAGE_PREFIX_STORABLE_CACHEABLE + "name"))
                 .setDescription(
                         Constant.messages.getString(MESSAGE_PREFIX_STORABLE_CACHEABLE + "desc"))

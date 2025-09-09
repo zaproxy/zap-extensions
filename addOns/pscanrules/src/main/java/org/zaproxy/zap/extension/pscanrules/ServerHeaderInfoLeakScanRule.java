@@ -107,7 +107,7 @@ public class ServerHeaderInfoLeakScanRule extends PluginPassiveScanner
         return alerts;
     }
 
-    private AlertBuilder createAlert(String directive) {
+    private AlertBuilder createAlert(String directive, String ref) {
         return newAlert()
                 .setConfidence(Alert.CONFIDENCE_HIGH)
                 .setSolution(
@@ -118,11 +118,12 @@ public class ServerHeaderInfoLeakScanRule extends PluginPassiveScanner
                 // CWE-497: Exposure of Sensitive System Information to an Unauthorized Control
                 // Sphere
                 .setCweId(497)
-                .setWascId(13);
+                .setWascId(13)
+                .setAlertRef(getPluginId() + "-" + ref);
     }
 
     private AlertBuilder buildHeaderPresentAlert(String directive) {
-        return createAlert(directive)
+        return createAlert(directive, "1")
                 .setRisk(Alert.RISK_INFO)
                 .setName(Constant.messages.getString("pscanrules.serverheaderinfoleak.name"))
                 .setDescription(
@@ -130,7 +131,7 @@ public class ServerHeaderInfoLeakScanRule extends PluginPassiveScanner
     }
 
     private AlertBuilder buildVersionLeakAlert(String directive) {
-        return createAlert(directive)
+        return createAlert(directive, "2")
                 .setRisk(Alert.RISK_LOW)
                 .setName(Constant.messages.getString("pscanrules.serverheaderversioninfoleak.name"))
                 .setDescription(

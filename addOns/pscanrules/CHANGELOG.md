@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- Add alert references to HTTP Server Response Header scan rule alerts (Issue 7100, 9050).
 
 ## [66] - 2025-07-25
 ### Added
