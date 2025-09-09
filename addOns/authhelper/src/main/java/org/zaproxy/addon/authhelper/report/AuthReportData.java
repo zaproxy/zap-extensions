@@ -96,7 +96,11 @@ public class AuthReportData implements Closeable {
     }
 
     public void addStatsItem(String key, String scope, long value) {
-        statistics.put(key, new StatsItem(key, scope, value));
+        addStatsItem(key, scope, null, value);
+    }
+
+    public void addStatsItem(String key, String scope, String site, long value) {
+        statistics.put(key, new StatsItem(key, scope, site, value));
     }
 
     public Object[] getStatistics() {
@@ -151,5 +155,10 @@ public class AuthReportData implements Closeable {
 
     public record SummaryItem(boolean passed, String key, String description) {}
 
-    public record StatsItem(String key, String scope, long value) {}
+    public record StatsItem(String key, String scope, String site, long value) {
+
+        public StatsItem(String key, String scope, long value) {
+            this(key, scope, null, value);
+        }
+    }
 }

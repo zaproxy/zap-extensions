@@ -30,7 +30,8 @@
 	,"statistics": [[#th:block th:each="statItem, statState: ${rptData.getStatistics()}"][#th:block th:if="${! statState.first}"],[/th:block]
 		{
 			"key": [[${statItem.key}]],
-			"scope": [[${statItem.scope}]],
+			"scope": [[${statItem.scope}]],[#th:block th:if="${statItem.site}"]
+			"site": [[${statItem.site}]],[/th:block]
 			"value": [[${statItem.value}]]
 		}[/th:block]
 	]

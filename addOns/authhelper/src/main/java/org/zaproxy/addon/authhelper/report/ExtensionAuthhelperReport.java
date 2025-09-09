@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -300,10 +301,19 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
                     }
 
                     // Add all of the stats
+                    if (authMethod.getAuthCheckingStrategy() == AuthCheckingStrategy.POLL_URL
+                            && StringUtils.isNotEmpty(authMethod.getPollUrl())) {
+                        String pollHost =
+                                SessionStructure.getHostName(
+                                        new URI(authMethod.getPollUrl(), true));
+
+                        if (!hostname.equals(pollHost)) {
+                            addSiteStats(ard, inMemoryStats, pollHost);
+                        }
+                    }
+
                     inMemoryStats.getStats("").forEach((k, v) -> ard.addStatsItem(k, "global", v));
-                    inMemoryStats
-                            .getSiteStats(hostname, "")
-                            .forEach((k, v) -> ard.addStatsItem(k, "site", v));
+                    addSiteStats(ard, inMemoryStats, hostname);
 
                 } catch (Exception e) {
                     LOGGER.warn(e.getMessage(), e);
@@ -325,6 +335,13 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
             } catch (IOException e) {
                 LOGGER.error(e.getMessage(), e);
             }
+        }
+
+        private static void addSiteStats(
+                AuthReportData ard, InMemoryStats inMemoryStats, String site) {
+            inMemoryStats
+                    .getSiteStats(site, "")
+                    .forEach((k, v) -> ard.addStatsItem(k, "site", site, v));
         }
     }
 }
