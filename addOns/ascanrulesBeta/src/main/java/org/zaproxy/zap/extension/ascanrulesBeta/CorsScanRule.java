@@ -147,7 +147,16 @@ public class CorsScanRule extends AbstractAppPlugin implements CommonActiveScanR
                 .setRisk(risk)
                 .setConfidence(Alert.CONFIDENCE_HIGH)
                 .setDescription(
-                        risk == Alert.RISK_INFO ? getDescription() : getConstantStr("vuln.desc"));
+                        risk == Alert.RISK_INFO ? getDescription() : getConstantStr("vuln.desc"))
+                .setAlertRef(
+                        getId()
+                                + "-"
+                                + switch (risk) {
+                                    case Alert.RISK_INFO -> "1";
+                                    case Alert.RISK_MEDIUM -> "2";
+                                    case Alert.RISK_HIGH -> "3";
+                                    default -> "";
+                                });
     }
 
     private static String getConstantStr(String suffix) {
