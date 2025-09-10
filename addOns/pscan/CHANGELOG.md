@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+- Updated Automation Framework template plans and help content for passiveScan-* jobs to be more consistent.
 
 ## [0.4.0] - 2025-09-02
 ### Added
