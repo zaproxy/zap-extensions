@@ -26,6 +26,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
 
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
@@ -176,6 +177,19 @@ class FullPathDisclosureScanRuleUnitTest extends PassiveScannerTest<FullPathDisc
         // Then
         assertThat(alertsRaised, hasSize(1));
         assertEquals(defaultPath, alertsRaised.get(0).getEvidence());
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlerts() {
+        // Given / When
+        List<Alert> examples = rule.getExampleAlerts();
+        // Then
+        assertThat(examples.size(), is(equalTo(1)));
+        Alert alert = examples.get(0);
+        assertThat(alert.getName(), is(equalTo("Full Path Disclosure")));
+        assertThat(alert.getRisk(), is(equalTo(Alert.RISK_LOW)));
+        assertThat(alert.getAlertRef(), is(equalTo("110009")));
+        assertThat(alert.getCweId(), is(equalTo(209)));
     }
 
     @Override
