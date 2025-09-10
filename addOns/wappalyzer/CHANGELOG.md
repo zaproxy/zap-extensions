@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - Icon sizing in the Technology table when a transparent placeholder needs to be used.
 
+### Changed
+- The Tech Detection panel toolbar now includes a toggle button to link it's displayed content to the Sites Tree selection.
+
 ## [21.48.0] - 2025-09-02
 ### Changed
 - Updated with enthec upstream icon and pattern changes.
