@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [45] - 2025-09-10
 ### Changed
 - Add alert references to Content Cacheability scan rule alerts (Issue 7100).
 
@@ -368,6 +368,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[45]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v45
 [44]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v44
 [43]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v43
 [42]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v42
