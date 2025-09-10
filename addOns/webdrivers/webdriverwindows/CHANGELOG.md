@@ -3,8 +3,9 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
-
+## [157] - 2025-09-10
+### Fixed
+- Re-release because of accidental binary deletion of version 156.
 
 ## [156] - 2025-09-09
 ### Changed
@@ -656,6 +657,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release: Firefox v0.13.0 Chrome v2.27 IE 3.0.0
 
+[157]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v157
 [156]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v156
 [155]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v155
 [154]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v154
