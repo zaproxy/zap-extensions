@@ -14,7 +14,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Support for stopping the spiderCient automation job.
 - Support for configuring the client passive scan rules via the passiveScan-config Automation Framework job. This add-on now depends on the pscan add-on.
 
-
 ### Changed
 - Updated Chrome and Firefox extensions to v0.1.6.
 - Reduce warnings when passive scanning.
