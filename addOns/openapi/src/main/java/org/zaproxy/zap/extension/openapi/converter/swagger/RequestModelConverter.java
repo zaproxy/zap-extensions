@@ -26,7 +26,6 @@ import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.RequestBody;
 import java.util.List;
 import java.util.Map;
-import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpHeaderField;
 import org.zaproxy.zap.extension.openapi.generators.Generators;
 import org.zaproxy.zap.extension.openapi.generators.HeadersGenerator;
@@ -85,13 +84,9 @@ public class RequestModelConverter {
                 return generators.getBodyGenerator().generateMultiPart(schema, encoding);
             }
 
-            if (content.containsKey(CONTENT_APPLICATION_XML)) {
-                generators.addErrorMessage(
-                        Constant.messages.getString(
-                                "openapi.unsupportedcontent",
-                                operation.getOperationId(),
-                                CONTENT_APPLICATION_XML));
-                return "";
+            if (content.containsKey("application/xml")) {
+                schema = content.get("application/xml").getSchema();
+                return generators.getBodyGenerator().generateXml(schema);
             }
 
             if (!content.isEmpty()) {
