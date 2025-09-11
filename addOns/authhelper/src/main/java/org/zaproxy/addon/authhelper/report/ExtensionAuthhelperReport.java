@@ -179,7 +179,7 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
                             instanceof
                             AutoDetectSessionManagementMethodType
                                     .AutoDetectSessionManagementMethod);
-            boolean verificationPassed =
+            boolean verificationUrlIdentified =
                     !(AuthCheckingStrategy.AUTO_DETECT.equals(
                             authContext.getAuthenticationMethod().getAuthCheckingStrategy()));
 
@@ -209,6 +209,21 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
                                     instanceof
                                     ClientScriptBasedAuthenticationMethodType
                                             .ClientScriptBasedAuthenticationMethod;
+
+                    // Add all of the stats
+                    if (authMethod.getAuthCheckingStrategy() == AuthCheckingStrategy.POLL_URL
+                            && StringUtils.isNotEmpty(authMethod.getPollUrl())) {
+                        String pollHost =
+                                SessionStructure.getHostName(
+                                        new URI(authMethod.getPollUrl(), true));
+
+                        if (!hostname.equals(pollHost)) {
+                            addSiteStats(ard, inMemoryStats, pollHost);
+                        }
+                    }
+
+                    inMemoryStats.getStats("").forEach((k, v) -> ard.addStatsItem(k, "global", v));
+                    addSiteStats(ard, inMemoryStats, hostname);
 
                     if (authBBA || authClient) {
 
@@ -242,18 +257,21 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
                             ard.setAfPlanErrors(afProg.getErrors());
                         }
 
+                        boolean loggedIn = isLoggedIn(ard) && !isLoggedUnknown(ard);
+
                         boolean overallStatus =
                                 sessionPassed
-                                        && verificationPassed
+                                        && verificationUrlIdentified
                                         && (!authBBA || passedCount != null)
                                         && !hasAfErrors
-                                        && !hasMoreFailures;
+                                        && !hasMoreFailures
+                                        && loggedIn;
                         addSummaryItem(ard, "auth", overallStatus);
                         if (!overallStatus) {
                             if (!sessionPassed) {
                                 ard.addFailureDetail(FailureDetail.SESSION_MGMT);
                             }
-                            if (!verificationPassed) {
+                            if (!verificationUrlIdentified) {
                                 ard.addFailureDetail(FailureDetail.VERIF_IDENT);
                             }
                             if (!authBBA && passedCount == null) {
@@ -268,6 +286,10 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
                             if (hasAfErrors) {
                                 ard.addFailureDetail(FailureDetail.AF_PLAN_ERRORS);
                             }
+                            if (!loggedIn) {
+                                ard.addFailureDetail(FailureDetail.LOGGED_IN);
+                            }
+
                             // We got this far so did fail overall
                             if (!ard.hasFailureDetails()) {
                                 ard.addFailureDetail(FailureDetail.OVERALL);
@@ -293,27 +315,12 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
                                 ard,
                                 "auth",
                                 sessionPassed
-                                        && verificationPassed
+                                        && verificationUrlIdentified
                                         && inMemoryStats.getStat(
                                                         hostname,
                                                         AuthenticationHelper.AUTH_SUCCESS_STATS)
                                                 != null);
                     }
-
-                    // Add all of the stats
-                    if (authMethod.getAuthCheckingStrategy() == AuthCheckingStrategy.POLL_URL
-                            && StringUtils.isNotEmpty(authMethod.getPollUrl())) {
-                        String pollHost =
-                                SessionStructure.getHostName(
-                                        new URI(authMethod.getPollUrl(), true));
-
-                        if (!hostname.equals(pollHost)) {
-                            addSiteStats(ard, inMemoryStats, pollHost);
-                        }
-                    }
-
-                    inMemoryStats.getStats("").forEach((k, v) -> ard.addStatsItem(k, "global", v));
-                    addSiteStats(ard, inMemoryStats, hostname);
 
                 } catch (Exception e) {
                     LOGGER.warn(e.getMessage(), e);
@@ -324,7 +331,7 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
             }
 
             addSummaryItem(ard, "session", sessionPassed);
-            addSummaryItem(ard, "verif", verificationPassed);
+            addSummaryItem(ard, "verif", verificationUrlIdentified);
 
             AutomationProgress progress = new AutomationProgress();
             AutomationEnvironment env = new AutomationEnvironment(progress);
@@ -342,6 +349,18 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
             inMemoryStats
                     .getSiteStats(site, "")
                     .forEach((k, v) -> ard.addStatsItem(k, "site", site, v));
+        }
+
+        private static boolean isLoggedIn(AuthReportData ard) {
+            return hasStat(ard, AuthenticationMethod.AUTH_STATE_LOGGED_IN_STATS);
+        }
+
+        private static boolean hasStat(AuthReportData ard, String stat) {
+            return ard.getStatisticsImpl().stream().anyMatch(e -> stat.equals(e.key()));
+        }
+
+        private static boolean isLoggedUnknown(AuthReportData ard) {
+            return hasStat(ard, AuthenticationMethod.AUTH_STATE_UNKNOWN_STATS);
         }
     }
 }

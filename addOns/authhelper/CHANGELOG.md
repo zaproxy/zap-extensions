@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 - Collect the current value of the element's attributes for the authentication diagnostics.
+- In the Authentication Report set authentication successful only when the login was verified with the indicators.
 
 ## [0.28.0] - 2025-09-02
 ### Added
