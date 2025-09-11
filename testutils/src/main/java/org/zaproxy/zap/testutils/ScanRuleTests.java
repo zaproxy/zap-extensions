@@ -22,6 +22,7 @@ package org.zaproxy.zap.testutils;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assumptions.assumingThat;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 import java.io.IOException;
@@ -44,6 +45,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.zap.extension.alert.ExampleAlertProvider;
+import org.zaproxy.zap.network.HttpRequestConfig;
 
 interface ScanRuleTests {
 
@@ -116,8 +118,10 @@ interface ScanRuleTests {
 
             if (!HttpHeader.HTTPS.equals(uri.getScheme())) {
                 errors.add(AlertReferenceError.Cause.NOT_HTTPS.create(reference, ""));
-            } else if (false) {
-                fetchUrl(uri, reference, errors);
+            } else {
+                assumingThat(
+                        "1".equals(System.getenv("ZAP_REMOTE_TESTS")),
+                        () -> fetchUrl(uri, reference, errors));
             }
         }
 
@@ -127,13 +131,23 @@ interface ScanRuleTests {
     private static void fetchUrl(URI uri, String reference, List<AlertReferenceError> errors) {
         try {
             HttpMessage message = new HttpMessage(uri);
-            new HttpSender(0).sendAndReceive(message);
+            List<URI> redirections = new ArrayList<>();
+            new HttpSender(0)
+                    .sendAndReceive(
+                            message,
+                            HttpRequestConfig.builder()
+                                    .setRedirectionValidator(redirections::add)
+                                    .build());
             var responseHeader = message.getResponseHeader();
             int statusCode = responseHeader.getStatusCode();
             if (statusCode != HttpStatusCode.OK) {
                 errors.add(
                         AlertReferenceError.Cause.UNEXPECTED_STATUS_CODE.create(
                                 reference, statusCode));
+            } else if (!redirections.isEmpty()) {
+                errors.add(
+                        AlertReferenceError.Cause.REDIRECTED.create(
+                                reference, redirections.get(redirections.size() - 1)));
             }
         } catch (IOException e) {
             errors.add(AlertReferenceError.Cause.IO_EXCEPTION.create(reference, e));
