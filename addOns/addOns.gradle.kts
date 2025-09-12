@@ -144,6 +144,10 @@ subprojects {
         }
     }
 
+    tasks.withType<Test>().configureEach {
+        inputs.property("ZAP_REMOTE_TESTS", if (System.getenv("ZAP_REMOTE_TESTS") == "1") "1" else "0")
+    }
+
     configurations {
         "compileClasspath" {
             exclude(group = "log4j")
