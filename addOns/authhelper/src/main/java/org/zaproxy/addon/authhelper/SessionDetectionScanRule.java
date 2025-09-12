@@ -182,7 +182,7 @@ public class SessionDetectionScanRule extends PluginPassiveScanner {
                 .setDescription(Constant.messages.getString("authhelper.session-detect.desc"))
                 .setSolution(Constant.messages.getString("authhelper.session-detect.soln"))
                 .setReference(
-                        "https://www.zaproxy.org/docs/desktop/addons/authentication-helper/session-mgmt-id")
+                        "https://www.zaproxy.org/docs/desktop/addons/authentication-helper/session-mgmt-id/")
                 .setOtherInfo(
                         smDetails.getTokens().stream()
                                 .map(SessionToken::getToken)

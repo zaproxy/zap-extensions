@@ -147,7 +147,7 @@ public class VerificationDetectionScanRule extends PluginPassiveScanner {
                 .setDescription(Constant.messages.getString("authhelper.verification-detect.desc"))
                 .setSolution(Constant.messages.getString("authhelper.verification-detect.soln"))
                 .setReference(
-                        "https://www.zaproxy.org/docs/desktop/addons/authentication-helper/verif-id");
+                        "https://www.zaproxy.org/docs/desktop/addons/authentication-helper/verification-id/");
     }
 
     @Override

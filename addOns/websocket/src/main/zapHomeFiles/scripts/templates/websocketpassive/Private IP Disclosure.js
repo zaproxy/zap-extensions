@@ -90,7 +90,7 @@ function createAlertBuilder(helper, evidence){
  WebSocket message. This information might be helpful for further attacks targeting\
  internal systems.")
         .setSolution("Remove the private IP address from the WebSocket messages.")
-        .setReference("https://tools.ietf.org/html/rfc1918")
+        .setReference("https://datatracker.ietf.org/doc/html/rfc1918")
         .setEvidence(evidence);
 }
 
