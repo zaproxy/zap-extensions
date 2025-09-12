@@ -94,12 +94,6 @@ class PaddingOracleScanRuleUnitTest extends ActiveScannerTest<PaddingOracleScanR
         assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
     }
 
-    @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
-
     @ParameterizedTest
     @MethodSource("errorPatternsProvider")
     void shouldReportPaddingOracleForBase64Value(String errorPattern) throws Exception {

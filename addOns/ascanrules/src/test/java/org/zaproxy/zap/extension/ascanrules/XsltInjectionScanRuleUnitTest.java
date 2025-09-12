@@ -185,10 +185,4 @@ class XsltInjectionScanRuleUnitTest extends ActiveScannerTest<XsltInjectionScanR
         assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
         assertThat(alert.getAlertRef(), is(equalTo("90017")));
     }
-
-    @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
 }

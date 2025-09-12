@@ -268,10 +268,4 @@ class EnvFileScanRuleUnitTest extends AbstractAppFilePluginUnitTest<EnvFileScanR
         assertThat(authAlert.getConfidence(), is(equalTo(Alert.CONFIDENCE_LOW)));
         assertThat(authAlert.getAlertRef(), is(equalTo("40034-2")));
     }
-
-    @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
 }

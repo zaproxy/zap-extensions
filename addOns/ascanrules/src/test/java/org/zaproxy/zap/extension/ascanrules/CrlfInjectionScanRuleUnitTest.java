@@ -75,12 +75,6 @@ class CrlfInjectionScanRuleUnitTest extends ActiveScannerTest<CrlfInjectionScanR
     }
 
     @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
-
-    @Test
     void shouldReturnExpectedMappings() {
         // Given / When
         int cwe = rule.getCweId();

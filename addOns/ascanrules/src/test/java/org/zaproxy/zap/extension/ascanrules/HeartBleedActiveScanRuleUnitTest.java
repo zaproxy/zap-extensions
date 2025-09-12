@@ -76,10 +76,4 @@ class HeartBleedActiveScanRuleUnitTest extends ActiveScannerTest<HeartBleedActiv
         // Then
         assertThat(alerts.size(), is(equalTo(1)));
     }
-
-    @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
 }

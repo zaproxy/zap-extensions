@@ -295,12 +295,6 @@ class HtAccessScanRuleUnitTest extends AbstractAppFilePluginUnitTest<HtAccessSca
         assertThat(authAlert.getAlertRef(), is(equalTo("40032-2")));
     }
 
-    @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
-
     private static class MiscOkResponse extends NanoServerHandler {
 
         String contentType = "text.html";

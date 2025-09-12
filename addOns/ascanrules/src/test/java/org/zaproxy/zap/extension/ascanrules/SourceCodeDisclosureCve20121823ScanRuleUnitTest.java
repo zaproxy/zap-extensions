@@ -434,12 +434,6 @@ class SourceCodeDisclosureCve20121823ScanRuleUnitTest
         assertThat(alerts.size(), is(equalTo(1)));
     }
 
-    @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
-
     private HttpMessage httpMessage404NotFound() throws Exception {
         HttpMessage message = getHttpMessage("/");
         message.setResponseHeader(RESPONSE_HEADER_404_NOT_FOUND);

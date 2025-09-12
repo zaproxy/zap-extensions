@@ -180,12 +180,6 @@ class Log4ShellScanRuleUnitTest extends ActiveScannerTest<Log4ShellScanRule> {
         assertThat(alert2.getName(), is(equalTo("Log4Shell (CVE-2021-45046)")));
     }
 
-    @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
-
     private static class Log4ShellServerHandler extends NanoServerHandler {
         public Log4ShellServerHandler(String path) {
             super(path);

@@ -325,12 +325,6 @@ class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
         assertThat(alerts, hasSize(1));
     }
 
-    @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
-
     private static NanoServerHandler createNanoHandler(
             String path, NanoHTTPD.Response.IStatus status, String responseBody) {
         return new NanoServerHandler(path) {

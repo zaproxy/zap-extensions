@@ -146,12 +146,6 @@ class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanR
     }
 
     @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
-
-    @Test
     void shouldNotAlertIfAttackResponseDoesNotListDirectories() throws Exception {
         // Given
         rule.init(getHttpMessage("/?p=v"), parent);

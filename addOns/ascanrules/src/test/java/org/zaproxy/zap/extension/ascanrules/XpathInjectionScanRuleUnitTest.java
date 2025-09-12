@@ -98,12 +98,6 @@ class XpathInjectionScanRuleUnitTest extends ActiveScannerTest<XpathInjectionSca
     }
 
     @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
-
-    @Test
     void shouldRaiseAlertIfResponseContainsExpectedErrorForInjectedInput()
             throws HttpMalformedHeaderException {
         // Given

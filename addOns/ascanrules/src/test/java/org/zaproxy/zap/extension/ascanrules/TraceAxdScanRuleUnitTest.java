@@ -168,10 +168,4 @@ class TraceAxdScanRuleUnitTest extends AbstractAppFilePluginUnitTest<TraceAxdSca
         assertThat(authAlert.getConfidence(), is(equalTo(Alert.CONFIDENCE_LOW)));
         assertThat(authAlert.getAlertRef(), is(equalTo("40029-2")));
     }
-
-    @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
 }

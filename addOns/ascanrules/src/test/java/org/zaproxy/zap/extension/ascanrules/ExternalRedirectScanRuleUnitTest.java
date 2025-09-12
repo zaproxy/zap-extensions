@@ -185,12 +185,6 @@ class ExternalRedirectScanRuleUnitTest extends ActiveScannerTest<ExternalRedirec
     }
 
     @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
-
-    @Test
     void shouldHaveHighRisk() {
         // Given / When
         int risk = rule.getRisk();

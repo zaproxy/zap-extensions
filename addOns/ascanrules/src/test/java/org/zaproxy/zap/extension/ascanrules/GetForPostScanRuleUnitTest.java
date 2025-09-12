@@ -132,12 +132,6 @@ class GetForPostScanRuleUnitTest extends ActiveScannerTest<GetForPostScanRule> {
         assertThat(alert.getEvidence(), is(equalTo("HTTP/1.0 200")));
     }
 
-    @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
-
     private HttpMessage createMsg(String testPath, String response)
             throws HttpMalformedHeaderException {
         HttpMessage msg = this.getHttpMessage("POST", "text/html", testPath, response);

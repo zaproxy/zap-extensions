@@ -112,12 +112,6 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
     }
 
     @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
-
-    @Test
     void shouldReportXssInParagraph() throws NullPointerException, IOException {
         String test = "/shouldReportXssInParagraph/";
 

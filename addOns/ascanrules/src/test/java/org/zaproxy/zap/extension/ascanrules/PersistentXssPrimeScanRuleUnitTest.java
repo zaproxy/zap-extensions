@@ -37,12 +37,6 @@ class PersistentXssPrimeScanRuleUnitTest extends ActiveScannerTest<PersistentXss
     }
 
     @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
-
-    @Test
     void shouldReturnExpectedMappings() {
         // Given / When
         int cwe = rule.getCweId();
