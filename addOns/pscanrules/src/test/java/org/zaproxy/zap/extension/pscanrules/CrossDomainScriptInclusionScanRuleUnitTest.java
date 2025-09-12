@@ -433,10 +433,4 @@ class CrossDomainScriptInclusionScanRuleUnitTest
         assertThat(alert.getRisk(), is(equalTo(Alert.RISK_LOW)));
         assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
     }
-
-    @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
 }

@@ -86,12 +86,6 @@ class InfoPrivateAddressDisclosureScanRuleUnitTest
         assertThat(alert.getCweId(), is(equalTo(497)));
     }
 
-    @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
-
     @ParameterizedTest
     @CsvSource({ // IPs defined in RFC 1918
         "foo-10.0.0.0-bar, 10.0.0.0",

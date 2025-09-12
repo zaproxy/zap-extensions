@@ -119,12 +119,6 @@ class XAspNetVersionScanRuleUnitTest extends PassiveScannerTest<XAspNetVersionSc
                 equalTo(Constant.messages.getString(MESSAGE_PREFIX + "desc")));
     }
 
-    @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
-
     private static HttpMessage createMessage(String header) throws HttpMalformedHeaderException {
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");

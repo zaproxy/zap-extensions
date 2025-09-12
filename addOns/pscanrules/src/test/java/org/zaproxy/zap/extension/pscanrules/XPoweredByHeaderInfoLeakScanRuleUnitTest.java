@@ -26,7 +26,6 @@ import static org.hamcrest.Matchers.is;
 
 import java.util.List;
 import java.util.Map;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
@@ -83,13 +82,6 @@ class XPoweredByHeaderInfoLeakScanRuleUnitTest
         assertThat(alert.getRisk(), is(equalTo(Alert.RISK_LOW)));
         assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
         assertThat(alert.getCweId(), is(equalTo(497)));
-    }
-
-    @Test
-    @Override
-    @Disabled("Until zaproxy/zap-extensions#5204 is merged")
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
     }
 
     @Test

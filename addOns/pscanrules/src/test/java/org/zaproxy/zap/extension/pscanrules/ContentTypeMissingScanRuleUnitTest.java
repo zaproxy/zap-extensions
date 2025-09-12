@@ -89,12 +89,6 @@ class ContentTypeMissingScanRuleUnitTest extends PassiveScannerTest<ContentTypeM
     }
 
     @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
-
-    @Test
     void shouldNotAlertIfResponseBodyIsEmpty() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = createMessage();

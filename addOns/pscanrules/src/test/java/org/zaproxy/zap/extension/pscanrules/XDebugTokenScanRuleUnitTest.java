@@ -90,12 +90,6 @@ class XDebugTokenScanRuleUnitTest extends PassiveScannerTest<XDebugTokenScanRule
     }
 
     @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
-
-    @Test
     void shouldNotRaiseAlertIfThereIsNoRelevantHeader() throws Exception {
         // Given
         HttpMessage msg = createMessage();

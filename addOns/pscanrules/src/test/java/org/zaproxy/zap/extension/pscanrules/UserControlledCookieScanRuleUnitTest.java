@@ -211,10 +211,4 @@ class UserControlledCookieScanRuleUnitTest
         assertThat(alert.getRisk(), is(equalTo(Alert.RISK_INFO)));
         assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_LOW)));
     }
-
-    @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
 }

@@ -144,12 +144,6 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
     }
 
     @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
-
-    @Test
     void shouldNotRaiseAlertIfContentTypeIsNotHTML() {
         // Given
         msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "application/json");

@@ -345,10 +345,4 @@ class StrictTransportSecurityScanRuleUnitTest
         assertThat(malformedContentAlert.getConfidence(), is(equalTo(Alert.CONFIDENCE_HIGH)));
         assertThat(malformedContentAlert.getAlertRef(), is(equalTo("10035-8")));
     }
-
-    @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
 }

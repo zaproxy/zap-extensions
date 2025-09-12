@@ -331,10 +331,4 @@ class CookieLooselyScopedScanRuleUnitTest extends PassiveScannerTest<CookieLoose
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
     }
-
-    @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
 }

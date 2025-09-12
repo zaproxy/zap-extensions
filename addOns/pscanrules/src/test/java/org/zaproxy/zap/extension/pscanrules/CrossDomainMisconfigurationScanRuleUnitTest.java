@@ -76,12 +76,6 @@ class CrossDomainMisconfigurationScanRuleUnitTest
     }
 
     @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
-
-    @Test
     void shouldNotRaiseAlertIfCorsAllowOriginHeaderIsMissing() {
         // Given
         HttpMessage msg = createResponse(URI, null);

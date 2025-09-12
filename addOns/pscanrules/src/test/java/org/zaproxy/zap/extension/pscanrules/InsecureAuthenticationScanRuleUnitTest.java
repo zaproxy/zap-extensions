@@ -111,12 +111,6 @@ class InsecureAuthenticationScanRuleUnitTest
     }
 
     @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
-
-    @Test
     void shouldBeSecureIfHttpUsedWithSsl() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();

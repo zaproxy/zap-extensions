@@ -93,12 +93,6 @@ class RetrievedFromCacheScanRuleUnitTest extends PassiveScannerTest<RetrievedFro
     }
 
     @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
-
-    @Test
     void shouldNotRaiseAlertIfResponseHasNoRelevantHeader() throws URIException {
         // Given
         HttpMessage msg = createMessage();

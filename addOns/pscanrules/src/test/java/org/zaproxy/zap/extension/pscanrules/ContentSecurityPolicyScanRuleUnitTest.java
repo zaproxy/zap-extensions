@@ -107,12 +107,6 @@ class ContentSecurityPolicyScanRuleUnitTest
     }
 
     @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
-
-    @Test
     void shouldNotRaiseAlertOnNonHtmlAtMediumThreshold() {
         // Given
         HttpMessage msg = createHttpMessage("report-uri /__cspreport__");

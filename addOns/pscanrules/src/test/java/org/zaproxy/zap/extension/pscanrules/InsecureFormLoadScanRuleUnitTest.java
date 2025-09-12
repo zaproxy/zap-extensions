@@ -167,10 +167,4 @@ class InsecureFormLoadScanRuleUnitTest extends PassiveScannerTest<InsecureFormLo
         // THen
         assertThat(alerts.size(), is(equalTo(1)));
     }
-
-    @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
 }

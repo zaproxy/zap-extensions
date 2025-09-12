@@ -112,12 +112,6 @@ class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSameSiteSc
     }
 
     @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
-
-    @Test
     void shouldAlertWhenNoSameSiteAttribute() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = createMessage();
