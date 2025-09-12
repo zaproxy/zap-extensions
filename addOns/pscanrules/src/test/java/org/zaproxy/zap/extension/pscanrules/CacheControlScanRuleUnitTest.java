@@ -449,10 +449,4 @@ class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheControlScanRu
         assertThat(alert.getEvidence(), equalTo("no-store, must-revalidate"));
         assertThat(alert.getParam(), equalTo(HttpHeader.CACHE_CONTROL));
     }
-
-    @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
 }

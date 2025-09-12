@@ -129,12 +129,6 @@ class InformationDisclosureDebugErrorsScanRuleUnitTest
     }
 
     @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
-
-    @Test
     void shouldFindDebugErrorsFile() {
         // Given
         String debugErrorFilePath = "/xml/debug-error-messages.txt";

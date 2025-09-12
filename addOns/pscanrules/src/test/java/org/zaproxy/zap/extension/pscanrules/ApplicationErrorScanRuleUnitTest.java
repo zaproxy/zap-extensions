@@ -132,12 +132,6 @@ class ApplicationErrorScanRuleUnitTest extends PassiveScannerTest<ApplicationErr
     }
 
     @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
-
-    @Test
     void shouldRaiseAlertIfResponseCodeIsInternalServerErrorLow()
             throws HttpMalformedHeaderException {
         // Given

@@ -460,12 +460,6 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
         assertThat(tags, hasKey(PolicyTag.PENTEST.getTag()));
     }
 
-    @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
-
     private static String wrapEvidenceOtherInfo(String evidence, String info, int count) {
         if (count == 1) {
             return "The following pattern was used: "

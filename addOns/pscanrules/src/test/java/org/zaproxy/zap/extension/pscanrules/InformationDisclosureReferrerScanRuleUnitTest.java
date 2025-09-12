@@ -124,12 +124,6 @@ class InformationDisclosureReferrerScanRuleUnitTest
     }
 
     @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
-
-    @Test
     void noAlertOnRefererSelfReferenceWithSensitiveInfo()
             throws HttpMalformedHeaderException, URIException {
 

@@ -178,12 +178,6 @@ class HeartBleedScannerUnitTest extends PassiveScannerTest<HeartBleedScanRule> {
         assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_LOW)));
     }
 
-    @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
-
     private static HttpMessage createMsg(String serverHeader) throws HttpMalformedHeaderException {
         HttpMessage msg = createMsg();
         addServerHeader(msg, serverHeader);

@@ -162,10 +162,4 @@ class ServerHeaderInfoLeakScanRuleUnitTest
         assertThat(alerts.get(0).getCweId(), is(equalTo(497)));
         assertThat(alerts.get(1).getCweId(), is(equalTo(497)));
     }
-
-    @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
 }

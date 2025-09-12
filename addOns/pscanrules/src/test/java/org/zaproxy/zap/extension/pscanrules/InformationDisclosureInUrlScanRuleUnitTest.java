@@ -122,12 +122,6 @@ class InformationDisclosureInUrlScanRuleUnitTest
     }
 
     @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
-
-    @Test
     void sensitiveInfoInURLParamName() throws HttpMalformedHeaderException, URIException {
 
         // Given

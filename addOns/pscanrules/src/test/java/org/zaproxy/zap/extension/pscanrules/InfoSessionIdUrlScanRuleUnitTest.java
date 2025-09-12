@@ -137,12 +137,6 @@ class InfoSessionIdUrlScanRuleUnitTest extends PassiveScannerTest<InfoSessionIdU
     }
 
     @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
-
-    @Test
     void noAlertOnIDSmallerThanMinimum() throws HttpMalformedHeaderException, URIException {
 
         // Given

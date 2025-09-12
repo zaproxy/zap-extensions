@@ -180,10 +180,4 @@ class XChromeLoggerDataInfoLeakScanRuleUnitTest
         assertThat(tags1.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
         assertThat(tags1.containsKey(PolicyTag.QA_STD.getTag()), is(equalTo(true)));
     }
-
-    @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
 }

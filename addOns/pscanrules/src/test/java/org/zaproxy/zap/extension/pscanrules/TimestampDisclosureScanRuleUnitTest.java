@@ -88,12 +88,6 @@ class TimestampDisclosureScanRuleUnitTest extends PassiveScannerTest<TimestampDi
     }
 
     @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
-
-    @Test
     void verifyIgnoredHeadersListAsExpected() {
         // Given / When / Then
         assertEquals(11, TimestampDisclosureScanRule.RESPONSE_HEADERS_TO_IGNORE.size());

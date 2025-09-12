@@ -507,10 +507,4 @@ class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetScanRule> 
         assertThat(alerts.size(), is(equalTo(1)));
         assertThat(alerts.get(0).getCweId(), is(equalTo(1022)));
     }
-
-    @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
 }

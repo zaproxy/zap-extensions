@@ -186,12 +186,6 @@ class BigRedirectsScanRuleUnitTest extends PassiveScannerTest<BigRedirectsScanRu
         assertMultiAlertAttributes(alerts.get(1), "3");
     }
 
-    @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
-
     private static void assertBigAlertAttributes(Alert alert) {
         assertThat(alert.getRisk(), is(Alert.RISK_LOW));
         assertThat(alert.getConfidence(), is(Alert.CONFIDENCE_MEDIUM));

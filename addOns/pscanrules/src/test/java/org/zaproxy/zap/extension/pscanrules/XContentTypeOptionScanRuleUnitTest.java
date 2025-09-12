@@ -86,12 +86,6 @@ class XContentTypeOptionScanRuleUnitTest extends PassiveScannerTest<XContentType
     }
 
     @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
-
-    @Test
     void xContentTypeOptionsPresent() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();

@@ -82,12 +82,6 @@ class MixedContentScanRuleUnitTest extends PassiveScannerTest<MixedContentScanRu
     }
 
     @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
-
-    @Test
     void shouldNotRaiseAlertIfHttpResource() {
         // Given
         String uri = "http://example.com/";

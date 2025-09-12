@@ -118,12 +118,6 @@ class UsernameIdorScanRuleUnitTest extends PassiveScannerTest<UsernameIdorScanRu
     }
 
     @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
-
-    @Test
     void shouldNotRaiseAlertIfResponseHasNoRelevantContent() {
         // Given
         msg.setResponseBody("Some text <h1>Some Title Element</h1>");
