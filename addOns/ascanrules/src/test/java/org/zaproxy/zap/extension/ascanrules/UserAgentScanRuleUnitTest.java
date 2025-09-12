@@ -74,10 +74,4 @@ class UserAgentScanRuleUnitTest extends ActiveScannerTest<UserAgentScanRule> {
         assertThat(alert.getParam(), is(equalTo("Header User-Agent")));
         assertThat(alert.getAttack(), is(equalTo("ExampleBot 1.1")));
     }
-
-    @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
 }

@@ -96,12 +96,6 @@ class SourceCodeDisclosureWebinfScanRuleUnitTest
     }
 
     @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
-
-    @Test
     void shouldTryToObtainWebInfFiles() throws Exception {
         // Given
         rule.init(getHttpMessage("/some/path"), parent);

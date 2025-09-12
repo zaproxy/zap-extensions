@@ -76,10 +76,4 @@ abstract class CommandInjectionRuleTest<T extends AbstractPlugin>
         // Then
         assertThat(targets, is(equalTo(false)));
     }
-
-    @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
 }

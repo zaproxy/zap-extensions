@@ -90,12 +90,6 @@ class DirectoryBrowsingScanRuleUnitTest extends ActiveScannerTest<DirectoryBrows
     }
 
     @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
-
-    @Test
     void shouldFindDirectoryListing() throws Exception {
         // Given
         String test = "/";

@@ -290,12 +290,6 @@ class RemoteCodeExecutionCve20121823ScanRuleUnitTest
         assertThat(alerts.size(), is(equalTo(1)));
     }
 
-    @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
-
     private abstract static class RceResponse extends NanoServerHandler {
 
         private final String body;

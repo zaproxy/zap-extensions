@@ -124,12 +124,6 @@ class ElmahScanRuleUnitTest extends AbstractHostFilePluginUnitTest<ElmahScanRule
         assertThat(authAlert.getAlertRef(), is(equalTo("40028-2")));
     }
 
-    @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
-
     @ParameterizedTest
     @ValueSource(ints = {301, 403, 404, 500})
     void shouldNotAlertIfNonExistingElmahFileReturnsNon200CodeStdThreshold(int status)

@@ -222,12 +222,6 @@ class CommandInjectionTimingScanRuleUnitTest
     }
 
     @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
-
-    @Test
     void shouldHaveExpectedExampleAlert() {
         // Given / WHen
         List<Alert> alerts = rule.getExampleAlerts();
