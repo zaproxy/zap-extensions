@@ -24,10 +24,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.TreeMap;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
@@ -53,6 +52,7 @@ public class AuthReportData implements Closeable {
         OVERALL("overall.failed"),
         PASS_COUNT("pass.count.failed"),
         SESSION_MGMT("sessmgmt.failed"),
+        LOGGED_IN("loggedin.failed"),
         LOGIN_FAILURES("login.failures"),
         AF_PLAN_ERRORS("afplan.errors"),
         NO_SUCCESSFUL_LOGINS("no.successful.logins"),
@@ -73,7 +73,7 @@ public class AuthReportData implements Closeable {
     private boolean validReport;
     private String afEnv;
     private List<SummaryItem> summaryItems = new ArrayList<>();
-    private Map<String, StatsItem> statistics = new TreeMap<>();
+    private List<StatsItem> statistics = new ArrayList<>();
     private List<String> nextSteps = new ArrayList<>();
     private PersistenceManager pm;
     private List<Diagnostic> diagnostics;
@@ -100,11 +100,16 @@ public class AuthReportData implements Closeable {
     }
 
     public void addStatsItem(String key, String scope, String site, long value) {
-        statistics.put(key, new StatsItem(key, scope, site, value));
+        statistics.add(new StatsItem(key, scope, site, value));
+    }
+
+    List<StatsItem> getStatisticsImpl() {
+        return statistics;
     }
 
     public Object[] getStatistics() {
-        return statistics.values().toArray();
+        Collections.sort(statistics, (a, b) -> a.key().compareTo(b.key));
+        return statistics.toArray();
     }
 
     public List<Diagnostic> getDiagnostics() {
