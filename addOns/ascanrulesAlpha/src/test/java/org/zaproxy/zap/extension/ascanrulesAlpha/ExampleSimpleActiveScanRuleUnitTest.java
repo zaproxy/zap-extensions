@@ -44,10 +44,4 @@ class ExampleSimpleActiveScanRuleUnitTest extends ActiveScannerTest<ExampleSimpl
         Alert alert = alerts.get(0);
         assertThat(alert.getParam(), is(equalTo("foo")));
     }
-
-    @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
 }
