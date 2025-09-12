@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrulesAlpha;
 
+import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.AbstractPlugin;
 import org.zaproxy.zap.testutils.ActiveScannerTestUtils;
 
@@ -27,5 +28,11 @@ abstract class ActiveScannerTest<T extends AbstractPlugin> extends ActiveScanner
     @Override
     protected void setUpMessages() {
         mockMessages(new ExtensionAscanRulesAlpha());
+    }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
     }
 }

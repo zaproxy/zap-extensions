@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- Update alert references to latest locations to fix 404s and resolve redirections.
 
 ## [50] - 2025-09-02
 ### Changed
