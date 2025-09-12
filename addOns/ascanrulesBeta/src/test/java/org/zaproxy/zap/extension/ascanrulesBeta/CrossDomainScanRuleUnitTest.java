@@ -82,10 +82,4 @@ class CrossDomainScanRuleUnitTest extends ActiveScannerTest<CrossDomainScanRule>
         Alert silverlight = alerts.get(2);
         assertThat(silverlight.getAlertRef(), is(equalTo("20016-3")));
     }
-
-    @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
 }

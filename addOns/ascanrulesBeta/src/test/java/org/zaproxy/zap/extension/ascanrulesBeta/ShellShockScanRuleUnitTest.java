@@ -166,10 +166,4 @@ class ShellShockScanRuleUnitTest extends ActiveScannerTest<ShellShockScanRule> {
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
-
-    @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
 }

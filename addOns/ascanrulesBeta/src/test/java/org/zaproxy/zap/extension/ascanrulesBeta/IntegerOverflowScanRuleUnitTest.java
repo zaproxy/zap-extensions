@@ -170,10 +170,4 @@ class IntegerOverflowScanRuleUnitTest extends ActiveScannerTest<IntegerOverflowS
         // Then
         assertThat(alerts.size(), is(equalTo(1)));
     }
-
-    @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
 }

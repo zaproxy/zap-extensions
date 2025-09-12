@@ -339,12 +339,6 @@ class BackupFileDisclosureScanRuleUnitTest extends ActiveScannerTest<BackupFileD
                                         + " [https://example.com/profile.asp.old]")));
     }
 
-    @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
-
     private static class ForbiddenResponseWithReqPath extends NanoServerHandler {
 
         public ForbiddenResponseWithReqPath(String name) {
