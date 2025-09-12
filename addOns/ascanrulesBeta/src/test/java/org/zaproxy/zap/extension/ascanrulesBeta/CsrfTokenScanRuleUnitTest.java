@@ -336,12 +336,6 @@ class CsrfTokenScanRuleUnitTest extends ActiveScannerTest<CsrfTokenScanRule> {
         assertThat(alerts.size(), is(equalTo(1)));
     }
 
-    @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
-
     private HttpMessage createMessage(boolean isInScope)
             throws URIException, HttpMalformedHeaderException {
         return createMessage(isInScope, HttpRequestHeader.POST);

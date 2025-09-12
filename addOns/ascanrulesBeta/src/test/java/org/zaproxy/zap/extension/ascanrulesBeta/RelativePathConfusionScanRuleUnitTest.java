@@ -116,12 +116,6 @@ class RelativePathConfusionScanRuleUnitTest
         assertThat(alertsRaised, hasSize(1));
     }
 
-    @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
-
     private static NanoServerHandler createHandler(
             String path, Response.Status status, String body, String host) {
         return new NanoServerHandler(path) {
