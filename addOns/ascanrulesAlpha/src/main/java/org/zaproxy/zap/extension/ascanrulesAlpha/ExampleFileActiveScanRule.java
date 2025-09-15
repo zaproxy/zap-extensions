@@ -162,7 +162,7 @@ public class ExampleFileActiveScanRule extends AbstractAppParamPlugin
             }
 
         } catch (IOException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.debug(e.getMessage(), e);
         }
     }
 
@@ -205,7 +205,7 @@ public class ExampleFileActiveScanRule extends AbstractAppParamPlugin
         BufferedReader reader = null;
         File f = new File(Constant.getZapHome() + File.separator + file);
         if (!f.exists()) {
-            LOGGER.error("No such file: {}", f.getAbsolutePath());
+            LOGGER.warn("No such file: {}", f.getAbsolutePath());
             return strings;
         }
         try {
@@ -217,7 +217,7 @@ public class ExampleFileActiveScanRule extends AbstractAppParamPlugin
                 }
             }
         } catch (IOException e) {
-            LOGGER.error(
+            LOGGER.warn(
                     "Error on opening/reading example error file. Error: {}", e.getMessage(), e);
         } finally {
             if (reader != null) {
