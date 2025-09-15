@@ -313,6 +313,9 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
                 		}
                 	]
                 \t
+                \t,"domains": [
+                \t]
+                \t
                 \t
                 	,"logFile": "Log content"
                 	,\"diagnostics\": [

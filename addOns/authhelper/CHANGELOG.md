@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add login word variant for Spanish.
 - Log exception during authentication with diagnostics enabled.
 - Add the statistics of the site of the verification URL to the Authentication Report.
+- Add Authentication Report section for the domains accessed during the authentication.
 
 ### Changed
 - Search also for login elements with ARIA role button.
