@@ -99,7 +99,7 @@ public class JsFunctionScanRule extends PluginPassiveScanner implements CommonPa
                 }
             }
         } catch (IOException e) {
-            LOGGER.error(
+            LOGGER.warn(
                     "Error on opening/reading js functions file: {}{}{}{} Error: {}",
                     File.separator,
                     FUNC_LIST_DIR,
