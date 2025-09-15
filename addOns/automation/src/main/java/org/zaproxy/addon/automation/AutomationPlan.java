@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -81,97 +82,107 @@ public class AutomationPlan {
         super();
         this.id = nextId++;
         this.file = file;
+
         try (FileInputStream is = new FileInputStream(file)) {
-            Yaml yaml = new Yaml();
-            LinkedHashMap<?, ?> data = yaml.load(is);
-            LinkedHashMap<?, ?> envData = (LinkedHashMap<?, ?>) data.get("env");
-            ArrayList<?> jobsData = (ArrayList<?>) data.get("jobs");
+            readPlan(ext, is);
+        }
+    }
 
-            progress = new AutomationProgress();
-            env = new AutomationEnvironment(envData, progress);
-            env.setPlan(this);
+    public AutomationPlan(ExtensionAutomation ext, InputStream is) {
+        this.id = nextId++;
 
-            jobs = new ArrayList<>();
-            if (jobsData == null) {
-                return;
+        readPlan(ext, is);
+    }
+
+    private void readPlan(ExtensionAutomation ext, InputStream is) {
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data = yaml.load(is);
+        LinkedHashMap<?, ?> envData = (LinkedHashMap<?, ?>) data.get("env");
+        ArrayList<?> jobsData = (ArrayList<?>) data.get("jobs");
+
+        progress = new AutomationProgress();
+        env = new AutomationEnvironment(progress);
+        env.setPlan(this);
+        env.readData(envData);
+
+        jobs = new ArrayList<>();
+        if (jobsData == null) {
+            return;
+        }
+
+        for (Object jobObj : jobsData) {
+            if (!(jobObj instanceof LinkedHashMap<?, ?>)) {
+                progress.error(Constant.messages.getString("automation.error.job.data", jobObj));
+                continue;
             }
+            LinkedHashMap<?, ?> jobData = (LinkedHashMap<?, ?>) jobObj;
 
-            for (Object jobObj : jobsData) {
-                if (!(jobObj instanceof LinkedHashMap<?, ?>)) {
-                    progress.error(
-                            Constant.messages.getString("automation.error.job.data", jobObj));
-                    continue;
-                }
-                LinkedHashMap<?, ?> jobData = (LinkedHashMap<?, ?>) jobObj;
-
-                Object jobType = jobData.remove("type");
-                if (jobType == null) {
-                    progress.error(
-                            Constant.messages.getString("automation.error.job.notype", jobType));
-                    continue;
-                }
-                AutomationJob job = ext.getAutomationJob(jobType.toString());
-                if (job != null) {
-                    try {
-                        job = job.newJob();
-                        Object jobName = jobData.remove("name");
-                        if (jobName != null) {
-                            if (jobName instanceof String) {
-                                job.setName((String) jobName);
-                            } else {
-                                progress.warn(
-                                        Constant.messages.getString(
-                                                "automation.error.job.name", jobName));
-                            }
-                        }
-
-                        Object paramsObj = jobData.get("parameters");
-                        if (paramsObj != null && !(paramsObj instanceof LinkedHashMap<?, ?>)) {
-                            progress.error(
+            Object jobType = jobData.remove("type");
+            if (jobType == null) {
+                progress.error(Constant.messages.getString("automation.error.job.notype", jobType));
+                continue;
+            }
+            AutomationJob job = ext.getAutomationJob(jobType.toString());
+            if (job != null) {
+                try {
+                    job = job.newJob();
+                    Object jobName = jobData.remove("name");
+                    if (jobName != null) {
+                        if (jobName instanceof String) {
+                            job.setName((String) jobName);
+                        } else {
+                            progress.warn(
                                     Constant.messages.getString(
-                                            "automation.error.job.data", paramsObj));
-                            continue;
+                                            "automation.error.job.name", jobName));
                         }
+                    }
 
-                        Object jobEnabled = jobData.remove("enabled");
-                        if (jobEnabled != null) {
-                            if (jobEnabled instanceof Boolean enableBool) {
-                                job.setEnabled(enableBool);
-                            } else {
-                                progress.warn(
-                                        Constant.messages.getString(
-                                                "automation.error.job.enabled", jobEnabled));
-                            }
-                        }
-
-                        Object alwaysRun = jobData.remove("alwaysRun");
-                        if (alwaysRun != null) {
-                            if (alwaysRun instanceof Boolean jobBool) {
-                                job.setAlwaysRun(jobBool);
-                            } else {
-                                progress.warn(
-                                        Constant.messages.getString(
-                                                "automation.error.job.alwaysrun", alwaysRun));
-                            }
-                        }
-
-                        job.setEnv(env);
-                        job.setJobData(jobData);
-                        job.verifyParameters(progress);
-                        job.setPlan(this);
-                        jobs.add(job);
-
-                        job.addTests(jobData.get("tests"), progress);
-                    } catch (AutomationJobException e) {
-                        LOGGER.debug(e.getMessage(), e);
+                    Object paramsObj = jobData.get("parameters");
+                    if (paramsObj != null && !(paramsObj instanceof LinkedHashMap<?, ?>)) {
                         progress.error(
                                 Constant.messages.getString(
-                                        "automation.error.job.internal", jobType, e.getMessage()));
+                                        "automation.error.job.data", paramsObj));
+                        continue;
                     }
-                } else {
+
+                    Object jobEnabled = jobData.remove("enabled");
+                    if (jobEnabled != null) {
+                        if (jobEnabled instanceof Boolean enableBool) {
+                            job.setEnabled(enableBool);
+                        } else {
+                            progress.warn(
+                                    Constant.messages.getString(
+                                            "automation.error.job.enabled", jobEnabled));
+                        }
+                    }
+
+                    Object alwaysRun = jobData.remove("alwaysRun");
+                    if (alwaysRun != null) {
+                        if (alwaysRun instanceof Boolean jobBool) {
+                            job.setAlwaysRun(jobBool);
+                        } else {
+                            progress.warn(
+                                    Constant.messages.getString(
+                                            "automation.error.job.alwaysrun", alwaysRun));
+                        }
+                    }
+
+                    job.setEnv(env);
+                    job.setJobData(jobData);
+                    job.verifyParameters(progress);
+                    job.setPlan(this);
+                    jobs.add(job);
+
+                    job.addTests(jobData.get("tests"), progress);
+                } catch (AutomationJobException e) {
+                    LOGGER.debug(e.getMessage(), e);
                     progress.error(
-                            Constant.messages.getString("automation.error.job.unknown", jobType));
+                            Constant.messages.getString(
+                                    "automation.error.job.internal", jobType, e.getMessage()));
                 }
+            } else {
+                progress.error(
+                        Constant.messages.getString("automation.error.job.unknown", jobType));
             }
         }
     }

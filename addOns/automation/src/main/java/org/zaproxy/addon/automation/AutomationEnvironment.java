@@ -72,6 +72,11 @@ public class AutomationEnvironment {
 
     public AutomationEnvironment(Map<?, ?> envData, AutomationProgress progress) {
         this(progress);
+
+        readData(envData);
+    }
+
+    void readData(Map<?, ?> envData) {
         if (envData == null) {
             progress.error(Constant.messages.getString("automation.error.env.missing"));
             return;

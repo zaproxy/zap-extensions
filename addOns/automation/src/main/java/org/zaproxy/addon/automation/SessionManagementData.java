@@ -125,7 +125,8 @@ public class SessionManagementData extends AutomationData {
         }
     }
 
-    public SessionManagementData(Object data, AutomationProgress progress) {
+    public SessionManagementData(
+            Object data, AutomationProgress progress, AutomationEnvironment env) {
         if (!(data instanceof LinkedHashMap)) {
             progress.error(
                     Constant.messages.getString("automation.error.env.badsessionmgmt", data));
@@ -139,21 +140,28 @@ public class SessionManagementData extends AutomationData {
                         Constant.messages.getString(
                                 "automation.error.env.sessionmgmt.type.bad", data));
             } else if (METHOD_SCRIPT.equalsIgnoreCase(method)) {
-                if (!getParameters().containsKey(PARAM_SCRIPT)) {
-                    progress.error(
-                            Constant.messages.getString(
-                                    "automation.error.env.sessionmgmt.script.missing"));
-                } else {
-                    File f = new File(getParameters().get(PARAM_SCRIPT));
-                    if (!f.exists() || !f.canRead()) {
-                        progress.error(
-                                Constant.messages.getString(
-                                        "automation.error.env.sessionmgmt.script.bad",
-                                        f.getAbsolutePath()));
-                    }
-                }
+                // Validate script file.
+                getScriptFile(progress, env);
             }
         }
+    }
+
+    private File getScriptFile(AutomationProgress progress, AutomationEnvironment env) {
+        String scriptName = getParameters().get(PARAM_SCRIPT);
+        if (scriptName == null) {
+            progress.error(
+                    Constant.messages.getString("automation.error.env.sessionmgmt.script.missing"));
+            return null;
+        }
+
+        File f = JobUtils.getFile(scriptName, env.getPlan());
+        if (!f.exists() || !f.canRead()) {
+            progress.error(
+                    Constant.messages.getString(
+                            "automation.error.env.sessionmgmt.script.bad", f.getAbsolutePath()));
+            return null;
+        }
+        return f;
     }
 
     @SuppressWarnings("unchecked")
@@ -174,20 +182,8 @@ public class SessionManagementData extends AutomationData {
                 context.setSessionManagementMethod(new HttpAuthSessionManagementMethod());
                 break;
             case SessionManagementData.METHOD_SCRIPT:
-                String scriptName = getParameters().get(PARAM_SCRIPT);
-                if (scriptName == null) {
-                    progress.error(
-                            Constant.messages.getString(
-                                    "automation.error.env.sessionmgmt.script.missing"));
-                    break;
-                }
-                File f = JobUtils.getFile(getParameters().get(PARAM_SCRIPT), env.getPlan());
-                if (!f.exists() || !f.canRead()) {
-                    progress.error(
-                            Constant.messages.getString(
-                                    "automation.error.env.sessionmgmt.script.bad",
-                                    f.getAbsolutePath()));
-                } else {
+                File f = getScriptFile(progress, env);
+                if (f != null) {
                     ScriptWrapper sw =
                             JobUtils.getScriptWrapper(
                                     f,
