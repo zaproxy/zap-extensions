@@ -116,14 +116,20 @@ public class ServerConnectionEstablisher {
                 }
             }
         } catch (final HttpMalformedHeaderException mhe) {
-            throw new IllegalArgumentException("Malformed header error.", mhe);
+            throw new IllegalArgumentException(
+                    Constant.messages.getString("websocket.manual_send.exception.malformedheader"),
+                    mhe);
         } catch (final UnknownHostException uhe) {
-            throw new IOException("Error forwarding to an Unknown host: " + uhe.getMessage(), uhe);
+            throw new IOException(
+                    Constant.messages.getString(
+                            "websocket.manual_send.exception.unknownhost", uhe.getMessage()),
+                    uhe);
         } catch (final SSLException sslEx) {
             throw sslEx;
         } catch (final IOException ioe) {
             throw new IOException(
-                    "IO error in sending request: " + ioe.getClass() + ": " + ioe.getMessage(),
+                    Constant.messages.getString(
+                            "websocket.manual_send.exception.io", ioe.getMessage()),
                     ioe);
         }
 
