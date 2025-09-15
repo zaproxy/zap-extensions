@@ -6,6 +6,7 @@ sections:
  - summary
  - afenv
  - statistics
+ - domains
  - diagnostics
  - diagnosticsafplan
  - diagnosticsmessages

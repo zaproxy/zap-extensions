@@ -25,8 +25,11 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
+import java.util.TreeSet;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
@@ -37,8 +40,11 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.lookup.StrSubstitutor;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.model.Model;
 import org.zaproxy.addon.authhelper.internal.db.Diagnostic;
 import org.zaproxy.addon.authhelper.internal.db.TableJdo;
+import org.zaproxy.zap.model.SessionStructure;
+import org.zaproxy.zap.model.StructuralNode;
 
 @Getter
 @Setter
@@ -79,6 +85,7 @@ public class AuthReportData implements Closeable {
     private List<Diagnostic> diagnostics;
     private List<FailureDetail> failureDetails;
     private List<String> afPlanErrors = new ArrayList<>();
+    private Set<String> domains;
 
     public void addSummaryItem(boolean passed, String key, String description) {
         summaryItems.add(new SummaryItem(passed, key, description));
@@ -89,6 +96,22 @@ public class AuthReportData implements Closeable {
             failureDetails = new ArrayList<>();
         }
         failureDetails.add(detail);
+    }
+
+    public Set<String> getDomains() {
+        if (domains != null) {
+            return domains;
+        }
+
+        Set<String> temp = new TreeSet<>();
+        Iterator<StructuralNode> iter =
+                SessionStructure.getRootNode(Model.getSingleton()).getChildIterator();
+        while (iter.hasNext()) {
+            temp.add(iter.next().getName());
+        }
+
+        domains = temp;
+        return domains;
     }
 
     public boolean hasFailureDetails() {
