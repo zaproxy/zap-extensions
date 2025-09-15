@@ -274,9 +274,13 @@ class ContextWrapperUnitTest {
         LinkedHashMap<?, ?> data = yaml.load(contextStr);
         LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
         AutomationProgress progress = new AutomationProgress();
+        AutomationEnvironment env = new AutomationEnvironment(progress);
+        AutomationPlan plan = mock();
+        env.setPlan(plan);
+        given(plan.getEnv()).willReturn(env);
 
         // When
-        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+        env.readData(contextData);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
@@ -326,9 +330,13 @@ class ContextWrapperUnitTest {
         LinkedHashMap<?, ?> data = yaml.load(contextStr);
         LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
         AutomationProgress progress = new AutomationProgress();
+        AutomationEnvironment env = new AutomationEnvironment(progress);
+        AutomationPlan plan = mock();
+        env.setPlan(plan);
+        given(plan.getEnv()).willReturn(env);
 
         // When
-        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+        env.readData(contextData);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));

@@ -201,7 +201,7 @@ public class ContextWrapper {
                     data.setAuthentication(new AuthenticationData(value, progress));
                     break;
                 case "sessionManagement":
-                    data.setSessionManagement(new SessionManagementData(value, progress));
+                    data.setSessionManagement(new SessionManagementData(value, progress, env));
                     break;
                 case "technology":
                     data.setTechnology(new TechnologyData(value, env, progress));
