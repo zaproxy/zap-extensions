@@ -4,7 +4,7 @@
       maxScanDurationInMins:               # Int: The max time in minutes the active scanner will be allowed to run for, default: 0 unlimited
       maxAlertsPerRule:                    # Int: Maximum number of alerts to raise per rule, default: 0 unlimited
       defaultPolicy:                       # String: The name of the default scan policy to use, default: Default Policy
-      handleAntiCSRFTokens:                # Bool: If set then automatically handle anti CSRF tokens, default: false
+      handleAntiCSRFTokens:                # Bool: If set then automatically handle anti CSRF tokens, default: true
       injectPluginIdInHeader:              # Bool: If set then the relevant rule ID will be injected into the X-ZAP-Scan-ID header of each request, default: false
       threadPerHost:                       # Int: The max number of threads per host, default: 2 * Number of available processor cores
     inputVectors:                          # The input vectors used during the active scan.
