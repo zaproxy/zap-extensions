@@ -538,12 +538,6 @@ class TechPassiveScannerUnitTest extends PassiveScannerTestUtils<TechPassiveScan
         assertThat(helpLink, is(not(emptyString())));
     }
 
-    @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
-
     private void scan(HttpMessage msg) {
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
     }

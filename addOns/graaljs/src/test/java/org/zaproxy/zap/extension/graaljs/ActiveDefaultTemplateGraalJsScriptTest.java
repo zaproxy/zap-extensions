@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.zaproxy.zap.testutils.AlertReferenceError;
 
 class ActiveDefaultTemplateGraalJsScriptTest extends GraalJsActiveScriptScanRuleTestUtils {
     @Override
@@ -51,6 +52,16 @@ class ActiveDefaultTemplateGraalJsScriptTest extends GraalJsActiveScriptScanRule
         assertThat(name, is(not(emptyOrNullString())));
     }
 
+    @Override
+    public boolean isAllowedReferenceError(
+            AlertReferenceError.Cause cause, String reference, Object detail) {
+        if (cause == AlertReferenceError.Cause.UNEXPECTED_STATUS_CODE && ((int) detail) == 404) {
+            // These are example.org references.
+            return true;
+        }
+        return false;
+    }
+
     @Test
     void shouldRaiseAlert() throws Exception {
         // Given
@@ -65,7 +76,11 @@ class ActiveDefaultTemplateGraalJsScriptTest extends GraalJsActiveScriptScanRule
         assertThat(alert.getName(), is(equalTo("Active Vulnerability Title")));
         assertThat(alert.getDescription(), is(equalTo("Full description")));
         assertThat(alert.getSolution(), is(equalTo("The solution")));
-        assertThat(alert.getReference(), is(equalTo("Reference 1\nReference 2")));
+        assertThat(
+                alert.getReference(),
+                is(
+                        equalTo(
+                                "https://www.example.org/reference1\nhttps://www.example.org/reference2")));
         assertThat(alert.getOtherInfo(), is(equalTo("Any other Info")));
         assertThat(alert.getRisk(), is(equalTo(Alert.RISK_INFO)));
         assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_LOW)));

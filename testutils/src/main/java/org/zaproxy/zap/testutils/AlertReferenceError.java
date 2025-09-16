@@ -21,14 +21,15 @@ package org.zaproxy.zap.testutils;
 
 import java.util.function.Function;
 
-class AlertReferenceError {
+public class AlertReferenceError {
 
-    enum Cause {
+    public enum Cause {
         INVALID_URI(e -> "Invalid URI: '" + e.reference + "'. Reason: " + e.detail),
         NOT_HTTPS(e -> "Not HTTPS: " + e.reference),
         NOT_LINK(e -> "Not link: " + e.reference),
         UNEXPECTED_STATUS_CODE(
                 e -> "Unexpected status code, 200 != " + e.detail + ", for: " + e.reference),
+        REDIRECTED(e -> "Redirected from " + e.reference + " to: " + e.detail),
         IO_EXCEPTION(e -> "I/O exception: " + e.detail + ", for: " + e.reference);
 
         private final Function<AlertReferenceError, String> toString;

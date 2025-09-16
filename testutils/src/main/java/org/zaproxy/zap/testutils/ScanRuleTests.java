@@ -24,6 +24,7 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.emptyOrNullString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assumptions.assumingThat;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 import java.io.IOException;
@@ -47,6 +48,8 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.zap.extension.alert.ExampleAlertProvider;
+import org.zaproxy.zap.network.HttpRequestConfig;
+import org.zaproxy.zap.testutils.AlertReferenceError.Cause;
 
 interface ScanRuleTests {
 
@@ -55,8 +58,7 @@ interface ScanRuleTests {
     @TestFactory
     default Collection<DynamicTest> addScanRuleTests() {
         List<DynamicTest> tests = new ArrayList<>();
-        // XXX Enable once all rules pass.
-        // tests.add(dynamicTest("shouldHaveValidReferences", this::shouldHaveValidReferences));
+        tests.add(dynamicTest("shouldHaveValidReferences", this::shouldHaveValidReferences));
         tests.add(
                 dynamicTest(
                         "shouldHaveExpectedAlertRefsInExampleAlerts",
@@ -128,28 +130,59 @@ interface ScanRuleTests {
 
             if (!HttpHeader.HTTPS.equals(uri.getScheme())) {
                 errors.add(AlertReferenceError.Cause.NOT_HTTPS.create(reference, ""));
-            } else if (false) {
-                fetchUrl(uri, reference, errors);
+            } else {
+                assumingThat(
+                        "1".equals(System.getenv("ZAP_REMOTE_TESTS")),
+                        () -> fetchUrl(uri, reference, errors));
             }
         }
 
         assertThat(errors.toString(), errors, is(empty()));
     }
 
-    private static void fetchUrl(URI uri, String reference, List<AlertReferenceError> errors) {
+    default boolean isAllowedReferenceError(
+            AlertReferenceError.Cause cause, String reference, Object detail) {
+        return false;
+    }
+
+    private void fetchUrl(URI uri, String reference, List<AlertReferenceError> errors) {
         try {
             HttpMessage message = new HttpMessage(uri);
-            new HttpSender(0).sendAndReceive(message);
+            List<URI> redirections = new ArrayList<>();
+            new HttpSender(0)
+                    .sendAndReceive(
+                            message,
+                            HttpRequestConfig.builder()
+                                    .setRedirectionValidator(redirections::add)
+                                    .build());
             var responseHeader = message.getResponseHeader();
             int statusCode = responseHeader.getStatusCode();
-            if (statusCode != HttpStatusCode.OK) {
-                errors.add(
-                        AlertReferenceError.Cause.UNEXPECTED_STATUS_CODE.create(
-                                reference, statusCode));
+            if (statusCode == 429) {
+                // Assume exists.
+            } else if (statusCode != HttpStatusCode.OK) {
+                addErrorIfNotAllowed(
+                        errors,
+                        AlertReferenceError.Cause.UNEXPECTED_STATUS_CODE,
+                        reference,
+                        statusCode);
+            } else if (!redirections.isEmpty()) {
+                addErrorIfNotAllowed(
+                        errors,
+                        AlertReferenceError.Cause.REDIRECTED,
+                        reference,
+                        redirections.get(redirections.size() - 1));
             }
         } catch (IOException e) {
-            errors.add(AlertReferenceError.Cause.IO_EXCEPTION.create(reference, e));
+            addErrorIfNotAllowed(errors, AlertReferenceError.Cause.IO_EXCEPTION, reference, e);
         }
+    }
+
+    private void addErrorIfNotAllowed(
+            List<AlertReferenceError> errors, Cause cause, String reference, Object detail) {
+        if (isAllowedReferenceError(cause, reference, detail)) {
+            return;
+        }
+        errors.add(cause.create(reference, detail));
     }
 
     private static Set<String> getAllReferences(Object scanRule) {

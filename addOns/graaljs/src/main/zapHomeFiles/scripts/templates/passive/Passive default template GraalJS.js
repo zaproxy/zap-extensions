@@ -13,8 +13,8 @@ name: Passive Vulnerability Title
 description: Full description
 solution: The solution
 references:
-  - Reference 1
-  - Reference 2
+  - https://www.example.org/reference1
+  - https://www.example.org/reference2
 risk: INFO  # info, low, medium, high
 confidence: LOW  # false_positive, low, medium, high, user_confirmed
 cweId: 0
