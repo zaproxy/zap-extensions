@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Update alert reference to latest location.
+- Adjusted and internationalized the text in some exceptions/warning dialogs to use multiple lines and thus be more clear.
 
 ### Fixed
 - Error logs to always include stack trace.
