@@ -50,6 +50,7 @@ public class ExponentialEntityExpansionScanRule extends AbstractAppPlugin
                         CommonAlertTag.toMap(
                                 CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
                                 CommonAlertTag.WSTG_V42_BUSL_09_UPLOAD_MALICIOUS_FILES));
+        alertTags.put(PolicyTag.QA_CICD.getTag(), "");
         alertTags.put(PolicyTag.QA_STD.getTag(), "");
         alertTags.put(PolicyTag.QA_FULL.getTag(), "");
         alertTags.put(PolicyTag.API.getTag(), "");

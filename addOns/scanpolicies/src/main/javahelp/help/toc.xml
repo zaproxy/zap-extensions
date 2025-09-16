@@ -12,6 +12,7 @@
                 <tocitem text="Developer CI/CD Policy" target="addon.policy-dev-cicd"/>
                 <tocitem text="Developer Standard Policy" target="addon.policy-dev-std"/>
                 <tocitem text="Developer Full Policy" target="addon.policy-dev-full"/>
+                <tocitem text="QA CI/CD Policy" target="addon.policy-qa-cicd"/>
                 <tocitem text="QA Standard Policy" target="addon.policy-qa-std"/>
                 <tocitem text="QA Full Policy" target="addon.policy-qa-full"/>
                 <tocitem text="Penetration Tester Policy" target="addon.policy-pentest"/>

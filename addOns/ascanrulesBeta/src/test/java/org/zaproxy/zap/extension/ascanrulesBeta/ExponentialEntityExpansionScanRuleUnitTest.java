@@ -129,13 +129,14 @@ class ExponentialEntityExpansionScanRuleUnitTest
         // Then
         assertThat(cwe, is(equalTo(776)));
         assertThat(wasc, is(equalTo(44)));
-        assertThat(tags.size(), is(equalTo(6)));
+        assertThat(tags.size(), is(equalTo(7)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getTag()),
                 is(equalTo(true)));
         assertThat(
                 tags.containsKey(CommonAlertTag.WSTG_V42_BUSL_09_UPLOAD_MALICIOUS_FILES.getTag()),
                 is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.QA_CICD.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.QA_STD.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.QA_FULL.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.API.getTag()), is(equalTo(true)));

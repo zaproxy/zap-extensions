@@ -49,7 +49,7 @@ class ServerSideIncludeScanRuleUnitTest extends ActiveScannerTest<ServerSideIncl
         // Then
         assertThat(cwe, is(equalTo(97)));
         assertThat(wasc, is(equalTo(31)));
-        assertThat(tags.size(), is(equalTo(9)));
+        assertThat(tags.size(), is(equalTo(10)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(true)));
@@ -62,6 +62,7 @@ class ServerSideIncludeScanRuleUnitTest extends ActiveScannerTest<ServerSideIncl
         assertThat(tags.containsKey(PolicyTag.API.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.DEV_STD.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.DEV_FULL.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.QA_CICD.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.QA_STD.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.QA_FULL.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
