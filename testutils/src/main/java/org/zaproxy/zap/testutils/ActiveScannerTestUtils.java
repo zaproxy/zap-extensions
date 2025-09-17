@@ -21,7 +21,6 @@ package org.zaproxy.zap.testutils;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.emptyOrNullString;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThanOrEqualTo;
@@ -210,23 +209,11 @@ public abstract class ActiveScannerTestUtils<T extends AbstractPlugin> extends T
                 () -> {
                     setUp();
                     try {
-                        shouldHaveI18nNonEmptyName();
+                        shouldHaveI18nNonEmptyName(rule.getName(), extensionResourceBundle);
                     } finally {
                         shutDownServer();
                     }
                 });
-    }
-
-    private void shouldHaveI18nNonEmptyName() {
-        // Given / When
-        String name = rule.getName();
-        // Then
-        assertThat(name, is(not(emptyOrNullString())));
-        assertThat(
-                "Name does not seem to be i18n'ed, not found in the resource bundle:" + name,
-                extensionResourceBundle.keySet().stream()
-                        .map(extensionResourceBundle::getString)
-                        .anyMatch(str -> str.equals(name)));
     }
 
     private DynamicTest testExampleAlerts() {

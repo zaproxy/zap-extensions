@@ -148,7 +148,7 @@ public abstract class PassiveScannerTestUtils<T extends PassiveScanner> extends 
                 "shouldHaveI18nNonEmptyName",
                 () -> {
                     setUp();
-                    shouldHaveI18nNonEmptyName();
+                    shouldHaveI18nNonEmptyName(rule.getName(), extensionResourceBundle);
                 });
     }
 
@@ -159,18 +159,6 @@ public abstract class PassiveScannerTestUtils<T extends PassiveScanner> extends 
                     setUp();
                     shouldHaveExampleAlerts();
                 });
-    }
-
-    private void shouldHaveI18nNonEmptyName() {
-        // Given / When
-        String name = rule.getName();
-        // Then
-        assertThat(name, is(not(emptyOrNullString())));
-        assertThat(
-                "Name does not seem to be i18n'ed, not found in the resource bundle: " + name,
-                extensionResourceBundle.keySet().stream()
-                        .map(extensionResourceBundle::getString)
-                        .anyMatch(str -> str.equals(name)));
     }
 
     private void shouldHaveExampleAlerts() {

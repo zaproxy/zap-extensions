@@ -21,7 +21,9 @@ package org.zaproxy.zap.testutils;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.emptyOrNullString;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 import java.io.IOException;
@@ -30,6 +32,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Function;
@@ -59,6 +62,15 @@ interface ScanRuleTests {
                         "shouldHaveExpectedAlertRefsInExampleAlerts",
                         this::shouldHaveExpectedAlertRefsInExampleAlerts));
         return tests;
+    }
+
+    default void shouldHaveI18nNonEmptyName(String name, ResourceBundle extensionResourceBundle) {
+        assertThat(name, is(not(emptyOrNullString())));
+        assertThat(
+                "Name does not seem to be i18n'ed, not found in the resource bundle:" + name,
+                extensionResourceBundle.keySet().stream()
+                        .map(extensionResourceBundle::getString)
+                        .anyMatch(str -> str.equals(name)));
     }
 
     default void shouldHaveExpectedAlertRefsInExampleAlerts() {
