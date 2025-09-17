@@ -19,7 +19,6 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
-import org.junit.jupiter.api.Test;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.testutils.PassiveScannerTestUtils;
 
@@ -29,11 +28,5 @@ abstract class PassiveScannerTest<T extends PluginPassiveScanner>
     @Override
     protected void setUpMessages() {
         mockMessages(new ExtensionPscanRules());
-    }
-
-    @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
     }
 }

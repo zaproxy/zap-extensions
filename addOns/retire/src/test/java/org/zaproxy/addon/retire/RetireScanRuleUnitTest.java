@@ -285,12 +285,6 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
         assertRefs(example);
     }
 
-    @Test
-    @Override
-    public void shouldHaveValidReferences() {
-        super.shouldHaveValidReferences();
-    }
-
     private static void assertRefs(Alert alert) {
         assertThat(
                 alert.getReference(),

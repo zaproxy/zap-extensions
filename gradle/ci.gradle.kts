@@ -2,7 +2,7 @@
 
 fun isEnvVarTrue(envvar: String) = System.getenv(envvar) == "true"
 
-if (isEnvVarTrue("CI") && System.getenv("GITHUB_WORKFLOW") == "Java CI") {
+if (isEnvVarTrue("CI")) {
 
     allprojects {
         tasks.withType(Test::class).configureEach {

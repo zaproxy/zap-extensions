@@ -33,6 +33,7 @@ import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.testutils.AlertReferenceError;
 
 class PassiveDefaultTemplateGraalJsScriptTest extends GraalJsPassiveScriptScanRuleTestUtils {
     @Override
@@ -49,6 +50,16 @@ class PassiveDefaultTemplateGraalJsScriptTest extends GraalJsPassiveScriptScanRu
         assertThat(name, is(not(emptyOrNullString())));
     }
 
+    @Override
+    public boolean isAllowedReferenceError(
+            AlertReferenceError.Cause cause, String reference, Object detail) {
+        if (cause == AlertReferenceError.Cause.UNEXPECTED_STATUS_CODE && ((int) detail) == 404) {
+            // These are example.org references.
+            return true;
+        }
+        return false;
+    }
+
     @Test
     void shouldRaiseAlert() throws Exception {
         // Given
@@ -63,7 +74,11 @@ class PassiveDefaultTemplateGraalJsScriptTest extends GraalJsPassiveScriptScanRu
         assertThat(alert.getName(), is(equalTo("Passive Vulnerability Title")));
         assertThat(alert.getDescription(), is(equalTo("Full description")));
         assertThat(alert.getSolution(), is(equalTo("The solution")));
-        assertThat(alert.getReference(), is(equalTo("Reference 1\nReference 2")));
+        assertThat(
+                alert.getReference(),
+                is(
+                        equalTo(
+                                "https://www.example.org/reference1\nhttps://www.example.org/reference2")));
         assertThat(alert.getOtherInfo(), is(equalTo("Any other info")));
         assertThat(alert.getRisk(), is(equalTo(Alert.RISK_INFO)));
         assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_LOW)));

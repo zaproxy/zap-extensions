@@ -10,8 +10,8 @@ name: Active Vulnerability Title
 description: Full description
 solution: The solution
 references:
-  - Reference 1
-  - Reference 2
+  - https://www.example.org/reference1
+  - https://www.example.org/reference2
 category: INJECTION  # info_gather, browser, server, misc, injection
 risk: INFO  # info, low, medium, high
 confidence: LOW  # false_positive, low, medium, high, user_confirmed
