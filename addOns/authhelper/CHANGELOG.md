@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.29.0] - 2025-09-18
 ### Added
 - Add login word variant for Spanish.
 - Log exception during authentication with diagnostics enabled.
@@ -299,6 +299,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Support of authentication request identification and configuration.
 
+[0.29.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.29.0
 [0.28.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.28.0
 [0.27.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.27.0
 [0.26.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.26.0
