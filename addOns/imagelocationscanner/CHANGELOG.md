@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [7] - 2025-09-18
 ### Changed
 - Update alert reference and help link to latest location.
 
@@ -64,6 +64,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Promoted to beta and separated from the passive scan alpha add-on.
 
+[7]: https://github.com/zaproxy/zap-extensions/releases/imagelocationscanner-v7
 [6]: https://github.com/zaproxy/zap-extensions/releases/imagelocationscanner-v6
 [5]: https://github.com/zaproxy/zap-extensions/releases/imagelocationscanner-v5
 [4]: https://github.com/zaproxy/zap-extensions/releases/imagelocationscanner-v4

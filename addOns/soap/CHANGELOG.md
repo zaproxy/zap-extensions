@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [28] - 2025-09-18
 ### Added
 - QA CICD policy tag to active scan rules.
 
@@ -194,6 +194,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[28]: https://github.com/zaproxy/zap-extensions/releases/soap-v28
 [27]: https://github.com/zaproxy/zap-extensions/releases/soap-v27
 [26]: https://github.com/zaproxy/zap-extensions/releases/soap-v26
 [25]: https://github.com/zaproxy/zap-extensions/releases/soap-v25

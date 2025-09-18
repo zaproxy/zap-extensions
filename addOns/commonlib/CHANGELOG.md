@@ -4,7 +4,7 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## [1.36.0] - 2025-09-18
 ### Added
 - QA CICD policy tag.
 
@@ -226,6 +226,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 First version.
 
+[1.36.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.36.0
 [1.35.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.35.0
 [1.34.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.34.0
 [1.33.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.33.0

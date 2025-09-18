@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.53.0] - 2025-09-18
 ### Fixed
 - Correct Session Management script's path validation with variables.
 - Correct default value for Active Scan option `handleAntiCSRFTokens` in templates and help.
@@ -537,6 +537,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.53.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.53.0
 [0.52.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.52.0
 [0.51.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.51.0
 [0.50.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.50.0

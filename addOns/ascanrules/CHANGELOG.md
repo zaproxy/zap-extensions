@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [74] - 2025-09-18
 ### Added
 - QA CICD policy tag to selected rules.
 
@@ -626,6 +626,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[74]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v74
 [73]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v73
 [72]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v72
 [71]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v71

@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [51] - 2025-09-18
 ### Changed
 - Update alert references to latest locations to fix 404s and resolve redirections.
 
@@ -399,6 +399,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version, including persistent XSS tests
 
+[51]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v51
 [50]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v50
 [49]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v49
 [48]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v48
