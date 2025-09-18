@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<configuration>
+    <policy>QA CI/CD</policy>
+    <scanner>
+        <level>OFF</level>
+        <strength>MEDIUM</strength>
+    </scanner>
+    <plugins>
+        <p0>
+            <name>Directory Browsing</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p0>
+        <p10058>
+            <name>GET for POST</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p10058>
+        <p20012>
+            <name>Anti-CSRF Tokens Check</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p20012>
+        <p40009>
+            <name>Server Side Include</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p40009>
+        <p40040>
+            <name>CORS Header</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p40040>
+        <p40044>
+            <name>Exponential Entity Expansion (Billion Laughs Attack)</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p40044>
+        <p50000>
+            <name>Script Active Scan Rules</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p50000>
+        <p90025>
+            <name>Expression Language Injection</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p90025>
+    </plugins>
+</configuration>
