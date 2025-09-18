@@ -62,6 +62,7 @@ public class ServerSideIncludeScanRule extends AbstractAppParamPlugin
                                 CommonAlertTag.OWASP_2017_A01_INJECTION,
                                 CommonAlertTag.WSTG_V42_INPV_11_CODE_INJ));
         alertTags.put(PolicyTag.API.getTag(), "");
+        alertTags.put(PolicyTag.QA_CICD.getTag(), "");
         alertTags.put(PolicyTag.DEV_STD.getTag(), "");
         alertTags.put(PolicyTag.DEV_FULL.getTag(), "");
         alertTags.put(PolicyTag.QA_STD.getTag(), "");

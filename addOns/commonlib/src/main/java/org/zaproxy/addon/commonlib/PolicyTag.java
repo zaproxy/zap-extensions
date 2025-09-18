@@ -32,6 +32,10 @@ public enum PolicyTag {
     DEV_CICD("Dev CICD.policy", "Developer CI/CD", "scanpolicies"),
     DEV_STD("Dev Standard.policy", "Developer Standard", "scanpolicies"),
     DEV_FULL("Dev Full.policy", "Developer Full", "scanpolicies"),
+    /**
+     * @since 1.36.0
+     */
+    QA_CICD("QA CICD.policy", "QA CI/CD", "scanpolicies"),
     QA_STD("QA Standard.policy", "QA Standard", "scanpolicies"),
     QA_FULL("QA Full.policy", "QA Full", "scanpolicies"),
     API("API.policy", "API", "scanpolicies"),

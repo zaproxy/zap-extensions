@@ -66,6 +66,7 @@ public class ExpressionLanguageInjectionScanRule extends AbstractAppParamPlugin
                                 CommonAlertTag.WSTG_V42_INPV_11_CODE_INJ,
                                 CommonAlertTag.HIPAA,
                                 CommonAlertTag.PCI_DSS));
+        alertTags.put(PolicyTag.QA_CICD.getTag(), "");
         alertTags.put(PolicyTag.QA_STD.getTag(), "");
         alertTags.put(PolicyTag.QA_FULL.getTag(), "");
         alertTags.put(PolicyTag.API.getTag(), "");
