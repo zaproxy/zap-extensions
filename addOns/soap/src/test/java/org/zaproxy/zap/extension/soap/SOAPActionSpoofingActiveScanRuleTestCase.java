@@ -84,7 +84,7 @@ class SOAPActionSpoofingActiveScanRuleTestCase {
         // Then
         assertThat(cwe, is(equalTo(451)));
         assertThat(wasc, is(equalTo(0)));
-        assertThat(tags.size(), is(equalTo(10)));
+        assertThat(tags.size(), is(equalTo(11)));
 
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
@@ -96,6 +96,7 @@ class SOAPActionSpoofingActiveScanRuleTestCase {
         assertThat(tags.containsKey(PolicyTag.DEV_CICD.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.DEV_STD.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.DEV_FULL.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.QA_CICD.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.QA_STD.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.QA_FULL.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.SEQUENCE.getTag()), is(equalTo(true)));

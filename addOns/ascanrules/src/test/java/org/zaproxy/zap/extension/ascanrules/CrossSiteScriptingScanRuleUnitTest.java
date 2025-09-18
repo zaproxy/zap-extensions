@@ -76,7 +76,7 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
         // Then
         assertThat(cwe, is(equalTo(79)));
         assertThat(wasc, is(equalTo(8)));
-        assertThat(tags.size(), is(equalTo(12)));
+        assertThat(tags.size(), is(equalTo(13)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(true)));
@@ -86,8 +86,10 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
                 is(equalTo(true)));
         assertThat(tags.containsKey(CommonAlertTag.HIPAA.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(CommonAlertTag.PCI_DSS.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.DEV_CICD.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.DEV_STD.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.DEV_FULL.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.QA_CICD.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.QA_STD.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.QA_FULL.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.SEQUENCE.getTag()), is(equalTo(true)));
