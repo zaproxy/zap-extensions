@@ -42,10 +42,9 @@ dependencies {
     zapAddOn("commonlib")
     zapAddOn("scripts")
 
-    val graalJsVersion = "22.3.3"
-    implementation("org.graalvm.js:js:$graalJsVersion")
+    val graalJsVersion = "25.0.0"
+    implementation("org.graalvm.js:js-community:$graalJsVersion")
     implementation("org.graalvm.js:js-scriptengine:$graalJsVersion")
-    implementation("org.javadelight:delight-graaljs-sandbox:0.1.2")
 
     testImplementation(project(":testutils"))
 }

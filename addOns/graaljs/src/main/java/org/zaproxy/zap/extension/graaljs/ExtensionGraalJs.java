@@ -39,6 +39,7 @@ public class ExtensionGraalJs extends ExtensionAdaptor {
 
     static {
         System.setProperty("polyglot.engine.WarnInterpreterOnly", "false");
+        System.setProperty("polyglotimpl.AttachLibraryFailureAction", "ignore");
     }
 
     public static final String NAME = "ExtensionGraalJs";

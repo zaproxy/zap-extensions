@@ -40,8 +40,6 @@ import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledForJreRange;
-import org.junit.jupiter.api.condition.JRE;
 import org.zaproxy.zap.extension.graaljs.PacScript.Setting;
 import org.zaproxy.zap.extension.graaljs.PacScript.Setting.Type;
 import org.zaproxy.zap.testutils.TestUtils;
@@ -51,7 +49,6 @@ import org.zaproxy.zap.testutils.TestUtils;
  *
  * @author aine-rb
  */
-@EnabledForJreRange(min = JRE.JAVA_8, max = JRE.JAVA_11)
 class PacScriptUnitTest extends TestUtils {
 
     private static final String DATERANGE_FILE_NAME = "dateRange.pac";
