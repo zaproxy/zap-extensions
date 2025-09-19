@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Update Graal JavaScript engine to version 25 (Issues 8477 and 9010).
 - Use example links in Active/Passive Rule templates' references.
 
 ## [0.9.0] - 2025-01-09

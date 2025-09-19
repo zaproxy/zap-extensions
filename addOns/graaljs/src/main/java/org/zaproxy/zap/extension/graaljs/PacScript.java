@@ -19,9 +19,7 @@
  */
 package org.zaproxy.zap.extension.graaljs;
 
-import delight.graaljssandbox.GraalSandbox;
-import delight.graaljssandbox.GraalSandboxes;
-import delight.nashornsandbox.exceptions.ScriptAbuseException;
+import com.oracle.truffle.js.scriptengine.GraalJSScriptEngine;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -44,14 +42,15 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import javax.script.Invocable;
 import javax.script.ScriptException;
 import org.apache.commons.io.IOUtils;
+import org.graalvm.polyglot.Context;
+import org.graalvm.polyglot.Engine;
+import org.graalvm.polyglot.Value;
+import org.graalvm.polyglot.proxy.ProxyExecutable;
 
 /**
  * Represents a PAC script file and methods to evaluate its content.
@@ -121,33 +120,36 @@ class PacScript {
         }
         this.baseClock = Clock.systemDefaultZone();
 
-        GraalSandbox sandbox = GraalSandboxes.create();
+        Engine engine =
+                Engine.newBuilder("js").option("engine.WarnInterpreterOnly", "false").build();
+        Context.Builder contextBuilder =
+                Context.newBuilder("js").option("js.ecmascript-version", "2024");
 
-        sandbox.inject("dateRange", (ObjectPredicate) this::dateRange);
-        sandbox.inject("dnsDomainIs", (BiFunction<String, String, Boolean>) PacScript::dnsDomainIs);
-        sandbox.inject("dnsDomainLevels", (Function<String, Integer>) PacScript::dnsDomainLevels);
-        sandbox.inject("dnsResolve", (Function<String, String>) PacScript::dnsResolve);
-        sandbox.inject("isInNet", (StringPredicate) PacScript::isInNet);
-        sandbox.inject("isPlainHostName", (Function<String, Boolean>) PacScript::isPlainHostName);
-        sandbox.inject("isResolvable", (Function<String, Boolean>) PacScript::isResolvable);
-        sandbox.inject(
-                "localHostOrDomainIs",
-                (BiFunction<String, String, Boolean>) PacScript::localHostOrDomainIs);
-        sandbox.inject("myIpAddress", (Supplier<String>) PacScript::myIpAddress);
-        sandbox.inject("shExpMatch", (BiFunction<String, String, Boolean>) PacScript::shExpMatch);
-        sandbox.inject("timeRange", (ObjectPredicate) this::timeRange);
-        sandbox.inject("weekdayRange", (StringPredicate) this::weekdayRange);
+        GraalJSScriptEngine se = GraalJSScriptEngine.create(engine, contextBuilder);
 
-        try {
-            sandbox.eval(scriptContent);
-        } catch (ScriptAbuseException e) {
-            throw new ScriptException(e);
-        }
-        pacImpl = sandbox.getSandboxedInvocable();
+        se.put("dateRange", (ProxyExecutable) this::dateRange);
+        se.put("dnsDomainIs", (ProxyExecutable) PacScript::dnsDomainIs);
+        se.put("dnsDomainLevels", (ProxyExecutable) PacScript::dnsDomainLevels);
+        se.put("dnsResolve", (ProxyExecutable) PacScript::dnsResolve);
+        se.put("isInNet", (ProxyExecutable) PacScript::isInNet);
+        se.put("isPlainHostName", (ProxyExecutable) PacScript::isPlainHostName);
+        se.put("isResolvable", (ProxyExecutable) PacScript::isResolvable);
+        se.put("localHostOrDomainIs", (ProxyExecutable) PacScript::localHostOrDomainIs);
+        se.put("myIpAddress", (ProxyExecutable) PacScript::myIpAddress);
+        se.put("shExpMatch", (ProxyExecutable) PacScript::shExpMatch);
+        se.put("timeRange", (ProxyExecutable) this::timeRange);
+        se.put("weekdayRange", (ProxyExecutable) this::weekdayRange);
+
+        se.eval(scriptContent);
+        pacImpl = se;
     }
 
     void setBaseClock(Clock baseClock) {
         this.baseClock = baseClock;
+    }
+
+    public void close() {
+        ((GraalJSScriptEngine) pacImpl).close();
     }
 
     /**
@@ -162,7 +164,7 @@ class PacScript {
     String evaluate(String url, String host) throws ScriptException {
         try {
             return (String) pacImpl.invokeFunction("FindProxyForURL", url, host);
-        } catch (NoSuchMethodException | ScriptAbuseException e) {
+        } catch (Exception e) {
             throw new ScriptException(e);
         }
     }
@@ -389,7 +391,7 @@ class PacScript {
      * @see <a href="http://findproxyforurl.com/netscape-documentation/#dateRange">Netscape
      *     documentation</a>
      */
-    private boolean dateRange(Object... args) {
+    private boolean dateRange(Value... args) {
         String day1 = extractArg(args, 0);
         String month1 = extractArg(args, 1);
         String year1 = extractArg(args, 2);
@@ -479,14 +481,20 @@ class PacScript {
      * This method is the implementation of the PAC file function dnsDomainIs, see the link bellow
      * for the Netscape reference documentation.
      *
-     * @param hostName a String representation of the host name
-     * @param domainName a String representation of the domain name
+     * @param args
+     *     <ol>
+     *       <li>hostName - a String representation of the host name
+     *       <li>domainName - a String representation of the domain name
+     *     </ol>
+     *
      * @return {@code true} if the domain name of the given {@code hostName} is {@code domainName};
      *     {@code false} otherwise.
      * @see <a href="http://findproxyforurl.com/netscape-documentation/#dnsDomainIs">Netscape
      *     documentation</a>
      */
-    private static boolean dnsDomainIs(String hostName, String domainName) {
+    private static boolean dnsDomainIs(Value... args) {
+        String hostName = extractArg(args, 0);
+        String domainName = extractArg(args, 1);
         return hostName.endsWith(domainName);
     }
 
@@ -496,12 +504,17 @@ class PacScript {
      * This method is the implementation of the PAC file function dnsDomainLevels, see the link
      * bellow for the Netscape reference documentation.
      *
-     * @param hostName a String representation of the host name
+     * @param args
+     *     <ol>
+     *       <li>hostName - a String representation of the host name
+     *     </ol>
+     *
      * @return the number of occurrences of the character "." in {@code hostName}
      * @see <a href="http://findproxyforurl.com/netscape-documentation/#dnsDomainLevels">Netscape
      *     documentation</a>
      */
-    private static int dnsDomainLevels(String hostName) {
+    private static int dnsDomainLevels(Value... args) {
+        String hostName = extractArg(args, 0);
         int hostLength = hostName.length();
         int count = 0;
         for (int i = 0; i < hostLength; i++) {
@@ -517,12 +530,17 @@ class PacScript {
      * This method is the implementation of the PAC file function dnsResolve, see the link bellow
      * for the Netscape reference documentation.
      *
-     * @param hostName a String representation of the host name
+     * @param args
+     *     <ol>
+     *       <li>hostName - a String representation of the host name
+     *     </ol>
+     *
      * @return a String representation of the IPv4 or IPv6 address of {@code hostName}
      * @see <a href="http://findproxyforurl.com/netscape-documentation/#dnsResolve">Netscape
      *     documentation</a>
      */
-    private static String dnsResolve(String hostName) {
+    private static String dnsResolve(Value... args) {
+        String hostName = extractArg(args, 0);
         InetAddress address;
         try {
             address = InetAddress.getByName(hostName);
@@ -554,8 +572,8 @@ class PacScript {
      *     documentation</a>
      * @see PacScript#dnsResolve(String)
      */
-    private static boolean isInNet(String... args) {
-        String host = extractArg(args, 0);
+    private static boolean isInNet(Value... args) {
+        Value host = args[0];
         String network = extractArg(args, 1);
         String mask = extractArg(args, 2);
 
@@ -602,13 +620,17 @@ class PacScript {
      * This method is the implementation of the PAC file function isPlainHostName, see the link
      * bellow for the Netscape reference documentation.
      *
-     * @param hostName a String representation of the host name
+     * @param args
+     *     <ol>
+     *       <li>hostName - a String representation of the host name
+     *     </ol>
+     *
      * @return {@code true} if {@code hostName} contains no dots; {@code false} otherwise.
      * @see <a href="http://findproxyforurl.com/netscape-documentation/#isPlainHostName">Netscape
      *     documentation</a>
      */
-    private static boolean isPlainHostName(String hostName) {
-        return !hostName.contains(".");
+    private static boolean isPlainHostName(Value... args) {
+        return !extractArg(args, 0).contains(".");
     }
 
     /**
@@ -617,15 +639,19 @@ class PacScript {
      * This method is the implementation of the PAC file function isResolvable, see the link bellow
      * for the Netscape reference documentation.
      *
-     * @param hostName a String representation of the host name
+     * @param args
+     *     <ol>
+     *       <li>hostName - a String representation of the host name
+     *     </ol>
+     *
      * @return {@code true} if {@code hostName} is resolved by a valid IPv4 or IPv6 address; {@code
      *     false} otherwise.
      * @see <a href="http://findproxyforurl.com/netscape-documentation/#isResolvable">Netscape
      *     documentation</a>
      */
-    private static boolean isResolvable(String hostName) {
+    private static boolean isResolvable(Value... args) {
         try {
-            InetAddress.getByName(hostName);
+            InetAddress.getByName(extractArg(args, 0));
         } catch (UnknownHostException e) {
             return false; // Unknown host
         }
@@ -640,15 +666,21 @@ class PacScript {
      * This method is the implementation of the PAC file function localHostOrDomainIs, see the link
      * bellow for the Netscape reference documentation.
      *
-     * @param hostName a String representation of the host name
-     * @param FQHN a String representation of the Fully Qualified Host Name
+     * @param args
+     *     <ol>
+     *       <li>hostName - a String representation of the host name
+     *       <li>FQHN - a String representation of the Fully Qualified Host Name
+     *     </ol>
+     *
      * @return {@code true} if {@code hostName} and {@code FQHN} are equals or if the host name of
      *     {@code FQHN} is {@code hostName}; {@code false} otherwise.
      * @see <a
      *     href="http://findproxyforurl.com/netscape-documentation/#localHostOrDomainIs">Netscape
      *     documentation</a>
      */
-    private static boolean localHostOrDomainIs(String hostName, String FQHN) {
+    private static boolean localHostOrDomainIs(Value... args) {
+        String hostName = extractArg(args, 0);
+        String FQHN = extractArg(args, 1);
         return hostName.equals(FQHN) || FQHN.startsWith(hostName + ".");
     }
 
@@ -663,7 +695,7 @@ class PacScript {
      * @see <a href="http://findproxyforurl.com/netscape-documentation/#myIpAddress">Netscape
      *     documentation</a>
      */
-    private static String myIpAddress() {
+    private static String myIpAddress(Value... args) {
         Enumeration<NetworkInterface> interfaces;
         try {
             interfaces = NetworkInterface.getNetworkInterfaces();
@@ -698,14 +730,20 @@ class PacScript {
      * This method is the implementation of the PAC file function shExpMatch, see the link bellow
      * for the Netscape reference documentation.
      *
-     * @param name a String representation of the name to parse
-     * @param expression a String representation of the shell expression to match
+     * @param args
+     *     <ol>
+     *       <li>name - a String representation of the name to parse
+     *       <li>expression - a String representation of the shell expression to match
+     *     </ol>
+     *
      * @return {@code true} if {@code name} matches {@code expression}; {@code false} otherwise.
      * @see <a href="http://findproxyforurl.com/netscape-documentation/#shExpMatch">Netscape
      *     documentation</a>
      * @see java.util.regex.Pattern
      */
-    private static boolean shExpMatch(String name, String expression) {
+    private static boolean shExpMatch(Value... args) {
+        String name = extractArg(args, 0);
+        String expression = extractArg(args, 1);
         expression = expression.replace(".", "\\.");
         expression = expression.replace("*", ".*");
         expression = expression.replace("?", ".");
@@ -839,7 +877,7 @@ class PacScript {
      * @see <a href="http://findproxyforurl.com/netscape-documentation/#timeRange">Netscape
      *     documentation</a>
      */
-    private boolean timeRange(Object... args) {
+    private boolean timeRange(Value... args) {
         String hour1 = extractArg(args, 0);
         String min1 = extractArg(args, 1);
         String sec1 = extractArg(args, 2);
@@ -848,14 +886,14 @@ class PacScript {
         String sec2 = extractArg(args, 5);
         String timeZone = extractArg(args, 6);
 
-        List<Object> argList = Arrays.asList(args);
+        List<Value> argList = Arrays.asList(args);
 
         // Count the number of parameters corresponding to numbers
         int numberCount = 0;
-        for (Object arg : argList) {
+        for (Value arg : argList) {
             try {
-                Integer.valueOf(arg.toString());
-            } catch (NumberFormatException e) {
+                arg.asInt();
+            } catch (Exception e) {
                 continue;
             }
             numberCount++;
@@ -916,7 +954,7 @@ class PacScript {
      * @see <a href="http://findproxyforurl.com/netscape-documentation/#weekdayRange">Netscape
      *     documentation</a>
      */
-    private boolean weekdayRange(String... args) {
+    private boolean weekdayRange(Value... args) {
         String day1 = extractArg(args, 0);
         String day2 = extractArg(args, 1);
         String timeZone = extractArg(args, 2);
@@ -978,11 +1016,14 @@ class PacScript {
         return value.isEmpty() ? defaultValue : Integer.parseInt(value);
     }
 
-    private static String extractArg(Object[] args, int index) {
+    private static String extractArg(Value[] args, int index) {
         if (args == null || index >= args.length) {
             return "";
         }
-        return args[index].toString();
+        if (args[index].isNumber()) {
+            return String.valueOf(args[index].asInt());
+        }
+        return args[index].asString();
     }
 
     @FunctionalInterface

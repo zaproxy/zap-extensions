@@ -77,6 +77,7 @@ public class GraalJsEngineWrapper extends DefaultEngineWrapper {
                         .option("js.load", "true")
                         .option("js.print", "true")
                         .option("js.nashorn-compat", "true")
+                        .option("js.ecmascript-version", "2024")
                         .allowAllAccess(true)
                         .hostClassLoader(hostClassLoader);
 
