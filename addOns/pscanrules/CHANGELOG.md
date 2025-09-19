@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Add alert references to HTTP Server Response Header scan rule alerts (Issue 7100, 9050).
 - Update alert references to latest locations to fix 404s and resolve redirections.
+- The Charset Mismatch scan rule now includes example alert functionality for documentation generation purposes (Issue 6119) and alert references (Issue 7100).
+
+### Removed
+- The Charset Mismatch scan rule no longer produces an alert with regard to META content-type and older clients.
 
 ## [66] - 2025-07-25
 ### Added
