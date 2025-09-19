@@ -231,7 +231,7 @@ public class SpiderAPI extends ApiImplementor {
                 String url = ApiUtils.getOptionalStringParam(params, PARAM_URL);
                 if (params.containsKey(PARAM_MAX_CHILDREN)) {
                     String maxChildrenStr = params.getString(PARAM_MAX_CHILDREN);
-                    if (maxChildrenStr != null && maxChildrenStr.length() > 0) {
+                    if (maxChildrenStr != null && !maxChildrenStr.isEmpty()) {
                         try {
                             maxChildren = Integer.parseInt(maxChildrenStr);
                         } catch (NumberFormatException e) {
@@ -276,7 +276,7 @@ public class SpiderAPI extends ApiImplementor {
                 }
                 if (params.containsKey(PARAM_MAX_CHILDREN)) {
                     String maxChildrenStr = params.getString(PARAM_MAX_CHILDREN);
-                    if (maxChildrenStr != null && maxChildrenStr.length() > 0) {
+                    if (maxChildrenStr != null && !maxChildrenStr.isEmpty()) {
                         try {
                             maxChildren = Integer.parseInt(maxChildrenStr);
                         } catch (NumberFormatException e) {

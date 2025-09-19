@@ -156,7 +156,7 @@ public final class UrlCanonicalizer {
             queryString = (canonicalParams.isEmpty() ? "" : "?" + canonicalParams);
 
             /* Add starting slash if needed */
-            if (path.length() == 0) {
+            if (path.isEmpty()) {
                 path = "/" + path;
             }
 
@@ -255,7 +255,7 @@ public final class UrlCanonicalizer {
             String cleanedQuery = getCleanedQuery(uri.getEscapedQuery(), irrelevantParameter);
 
             // Add the parameters' names to the uri representation.
-            if (cleanedQuery.length() > 0) {
+            if (!cleanedQuery.isEmpty()) {
                 retVal.append('?').append(cleanedQuery);
             }
 
@@ -344,9 +344,7 @@ public final class UrlCanonicalizer {
     private static String cleanODataPath(String path, HandleParametersOption handleParameters) {
         String cleanedPath = path;
 
-        if (HandleParametersOption.USE_ALL.equals(handleParameters)) {
-            cleanedPath = path;
-        } else {
+        if (!HandleParametersOption.USE_ALL.equals(handleParameters)) {
 
             // check for single ID (unnamed)
             Matcher matcher = PATTERN_RESOURCE_IDENTIFIER_UNQUOTED.matcher(path);
@@ -429,7 +427,7 @@ public final class UrlCanonicalizer {
         final SortedSet<QueryParameter> params = new TreeSet<>();
 
         for (final String pair : pairs) {
-            if (pair.length() == 0) {
+            if (pair.isEmpty()) {
                 continue;
             }
 
