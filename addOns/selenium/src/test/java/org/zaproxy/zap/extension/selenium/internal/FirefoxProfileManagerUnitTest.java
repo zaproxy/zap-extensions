@@ -33,10 +33,25 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.zaproxy.zap.extension.selenium.SeleniumOptions;
 
 /** Unit test for {@link FirefoxProfileManager}. */
 class FirefoxProfileManagerUnitTest {
+
+    private SeleniumOptions options;
+
+    private FirefoxProfileManager fpm;
+
+    @BeforeEach
+    void setUp() {
+        options = mock();
+        given(options.getFirefoxBinaryPath()).willReturn("");
+
+        fpm = new FirefoxProfileManager(options);
+    }
 
     @Test
     void shouldReturnProfiles() throws IOException {
@@ -47,7 +62,6 @@ class FirefoxProfileManagerUnitTest {
         // Add invalid profiles as well
         Files.createDirectory(path.resolve("1b3d5f.not-a-profile"));
         Files.createFile(path.resolve("a2c4d6f8.file-not-dir"));
-        FirefoxProfileManager fpm = new FirefoxProfileManager();
         fpm.setProfilesDirectory(path);
 
         // When
@@ -64,7 +78,6 @@ class FirefoxProfileManagerUnitTest {
         // Given
         Path path = Files.createTempDirectory("fx-profiles-test2");
         Path p1 = Files.createDirectory(path.resolve("6jkd903j.profile1"));
-        FirefoxProfileManager fpm = new FirefoxProfileManager();
         fpm.setProfilesDirectory(path);
 
         // When
@@ -79,7 +92,6 @@ class FirefoxProfileManagerUnitTest {
         // Given
         Path path = Files.createTempDirectory("fx-profiles-test3");
         Files.createDirectory(path.resolve("6jkd903j.profile1"));
-        FirefoxProfileManager fpm = new FirefoxProfileManager();
         fpm.setProfilesDirectory(path);
 
         // When
@@ -97,7 +109,6 @@ class FirefoxProfileManagerUnitTest {
         Process process = mock(Process.class);
         given(runtime.exec(any(String[].class))).willReturn(process);
 
-        FirefoxProfileManager fpm = new FirefoxProfileManager();
         fpm.setProfilesDirectory(path);
         fpm.setRuntime(runtime);
 
@@ -117,7 +128,6 @@ class FirefoxProfileManagerUnitTest {
         Process process = mock(Process.class);
         given(runtime.exec(any(String[].class))).willReturn(process);
 
-        FirefoxProfileManager fpm = new FirefoxProfileManager();
         fpm.setProfilesDirectory(path);
         fpm.setRuntime(runtime);
 
@@ -127,5 +137,28 @@ class FirefoxProfileManagerUnitTest {
         // Then
         verify(runtime, times(0)).exec(any(String[].class));
         assertThat(pPath.toString(), is(equalTo(f.toString())));
+    }
+
+    @Test
+    void shouldCreateProfileWithBinaryFromOptions() throws IOException {
+        // Given
+        Path path = Files.createTempDirectory("fx-profiles-test6");
+        Runtime runtime = mock(Runtime.class);
+        Process process = mock(Process.class);
+        given(runtime.exec(any(String[].class))).willReturn(process);
+
+        fpm.setProfilesDirectory(path);
+        fpm.setRuntime(runtime);
+
+        String binary = "/my/bin/firefox";
+        given(options.getFirefoxBinaryPath()).willReturn(binary);
+
+        // When
+        fpm.getOrCreateProfile("profile1");
+
+        // Then
+        ArgumentCaptor<String[]> argsCaptor = ArgumentCaptor.captor();
+        verify(runtime, times(1)).exec(argsCaptor.capture());
+        assertThat(argsCaptor.getValue()[0], is(equalTo(binary)));
     }
 }

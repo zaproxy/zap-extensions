@@ -1377,7 +1377,8 @@ public class ExtensionSelenium extends ExtensionAdaptor {
      */
     public ProfileManager getProfileManager(Browser browser) {
         if (Browser.FIREFOX.equals(browser)) {
-            return profileManagerMap.computeIfAbsent(browser, s -> new FirefoxProfileManager());
+            return profileManagerMap.computeIfAbsent(
+                    browser, s -> new FirefoxProfileManager(getOptions()));
         }
         return null;
     }
