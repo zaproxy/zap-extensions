@@ -34,9 +34,9 @@ import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.manager.SeleniumManager;
 import org.openqa.selenium.manager.SeleniumManagerOutput;
-import org.openqa.selenium.manager.SeleniumManagerOutput.Result;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.selenium.ProfileManager;
+import org.zaproxy.zap.extension.selenium.SeleniumOptions;
 import org.zaproxy.zap.utils.Stats;
 
 public class FirefoxProfileManager implements ProfileManager {
@@ -48,9 +48,15 @@ public class FirefoxProfileManager implements ProfileManager {
 
     private static final Logger LOGGER = LogManager.getLogger(FirefoxProfileManager.class);
 
+    private final SeleniumOptions options;
+
     private Path profileDirectory;
     private List<String> profiles;
     private Runtime runtime = Runtime.getRuntime();
+
+    public FirefoxProfileManager(SeleniumOptions options) {
+        this.options = options;
+    }
 
     private Path getProfilesDirectory() {
         if (profileDirectory == null) {
@@ -143,21 +149,8 @@ public class FirefoxProfileManager implements ProfileManager {
             return dir;
         }
 
-        SeleniumManagerOutput.Result smOutput =
-                SeleniumManager.getInstance()
-                        .getBinaryPaths(
-                                List.of("--offline", "--avoid-stats", "--browser", "firefox"));
-        if (smOutput.getCode() != 0) {
-            LOGGER.debug(
-                    "Executed SeleniumManager with exit code: {} Message: {}",
-                    smOutput.getCode(),
-                    smOutput.getMessage());
-            return null;
-        }
-
-        String path = getBrowserPath(smOutput);
+        String path = getBrowserPath();
         if (path == null || path.isEmpty()) {
-            LOGGER.warn("Unable to find Firefox binary through SeleniumManager.");
             return null;
         }
 
@@ -186,7 +179,24 @@ public class FirefoxProfileManager implements ProfileManager {
         return profileDir;
     }
 
-    private static String getBrowserPath(Result smOutput) {
+    private String getBrowserPath() {
+        String optionsPath = options.getFirefoxBinaryPath();
+        if (!optionsPath.isEmpty()) {
+            return optionsPath;
+        }
+
+        SeleniumManagerOutput.Result smOutput =
+                SeleniumManager.getInstance()
+                        .getBinaryPaths(
+                                List.of("--offline", "--avoid-stats", "--browser", "firefox"));
+        if (smOutput.getCode() != 0) {
+            LOGGER.debug(
+                    "Executed SeleniumManager with exit code: {} Message: {}",
+                    smOutput.getCode(),
+                    smOutput.getMessage());
+            return null;
+        }
+
         String path = smOutput.getBrowserPath();
         if (path != null && !path.isEmpty()) {
             return path;
@@ -196,6 +206,7 @@ public class FirefoxProfileManager implements ProfileManager {
         } catch (WebDriverException ignore) {
             // Nothing to do, fallback attempt.
         }
+        LOGGER.warn("Unable to find Firefox binary through SeleniumManager.");
         return null;
     }
 }
