@@ -413,7 +413,9 @@ to minimise load on the web server, application server, and database, in order t
 load delays rather than by SQL injection delays. <br>
 The scan rule tests only for time-based SQL injection vulnerabilities.<br>
 <br>
-Note that this rule does not currently allow you to change the length of time used for the timing attacks due to the way the delay is caused. 
+The scan rule tests only for time-based SQL injection vulnerabilities.<br>
+<p>
+Post 2.5.0 you can change the length of time used for the attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/SqlInjectionOracleTimingScanRule.java">SqlInjectionOracleTimingScanRule.java</a>
 <br>

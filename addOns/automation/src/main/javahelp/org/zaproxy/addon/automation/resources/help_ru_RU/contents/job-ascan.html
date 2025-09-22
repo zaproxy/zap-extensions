@@ -31,7 +31,7 @@ This job supports <a href="test-monitor.html">monitor</a> tests.
       addQueryParam:                   # Bool: If set will add an extra query parameter to requests that do not have one, default: false
       defaultPolicy:                   # String: The name of the default scan policy to use, default: Default Policy
       delayInMs:                       # Int: The delay in milliseconds between each request, use to reduce the strain on the target, default 0
-      handleAntiCSRFTokens:            # Bool: If set then automatically handle anti CSRF tokens, default: false
+      handleAntiCSRFTokens:            # Bool: If set then automatically handle anti CSRF tokens, default: true
       injectPluginIdInHeader:          # Bool: If set then the relevant rule Id will be injected into the X-ZAP-Scan-ID header of each request, default: false
       scanHeadersAllRequests:          # Bool: If set then the headers of requests that do not include any parameters will be scanned, default: false
       threadPerHost:                   # Int: The max number of threads per host, default: 2 * Number of available processor cores

@@ -10,6 +10,7 @@
     <mapID target="addon.policy-dev-cicd" url="contents/policy-dev-cicd.html" />
     <mapID target="addon.policy-dev-std" url="contents/policy-dev-std.html" />
     <mapID target="addon.policy-dev-full" url="contents/policy-dev-full.html" />
+    <mapID target="addon.policy-qa-cicd" url="contents/policy-qa-cicd.html" />
     <mapID target="addon.policy-qa-std" url="contents/policy-qa-std.html" />
     <mapID target="addon.policy-qa-full" url="contents/policy-qa-full.html" />
     <mapID target="addon.policy-pentest" url="contents/policy-pentest.html" />

@@ -376,9 +376,11 @@ Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40019/">40019</a>.
 这表明 Oracle SQL 数据库中存在基于时间的 SQL 注入漏洞。 <br>
 此规则具有时间敏感性，只能在试图查找可疑 Oracle 数据库中顽固而不明显的 SQL 注入漏洞。 <br>
 因此，使用此规则时应将活动扫描线程数设置为最小，以尽量减少网络服务器、应用服务器和数据库的加载，从而避免因加载延迟而不是 SQL 注入延迟导致的误报。 <br>
-扫描规则仅测试基于时间的 SQL 注入漏洞。
+The scan rule tests only for time-based SQL injection vulnerabilities.<br>
 <br>
-请注意，由于延迟方式的原因，此规则目前不允许更改定时攻击所使用的时间长度。 
+The scan rule tests only for time-based SQL injection vulnerabilities.<br>
+<p>
+Post 2.5.0 you can change the length of time used for the attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/SqlInjectionOracleTimingScanRule.java">SqlInjectionOracleTimingScanRule.java</a>
 <br>
