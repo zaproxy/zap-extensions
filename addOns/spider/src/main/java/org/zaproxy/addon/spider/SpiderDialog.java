@@ -238,7 +238,7 @@ public class SpiderDialog extends StandardFieldsDialog {
             }
         }
         this.setComboFields(FIELD_CONTEXT, ctxNames, "");
-        this.getField(FIELD_CONTEXT).setEnabled(ctxNames.size() > 0);
+        this.getField(FIELD_CONTEXT).setEnabled(!ctxNames.isEmpty());
     }
 
     private Context getSelectedContext() {

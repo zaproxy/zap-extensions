@@ -24,6 +24,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -194,7 +196,7 @@ public class SpiderSvnEntriesParser extends SpiderParser {
                                 String filename = rsNodes.getString(2);
                                 String svn_filename = rsNodes.getString(3);
 
-                                if (filename != null && filename.length() > 0) {
+                                if (filename != null && !filename.isEmpty()) {
                                     getLogger()
                                             .debug(
                                                     "Found a file/directory name in the (SQLite based) SVN wc.db file");
@@ -215,7 +217,7 @@ public class SpiderSvnEntriesParser extends SpiderParser {
                                     // point.
                                     if (kind.equals("file")
                                             && svn_filename != null
-                                            && svn_filename.length() > 0) {
+                                            && !svn_filename.isEmpty()) {
                                         processUrl(ctx, svn_filename);
                                     }
                                 }
@@ -229,7 +231,7 @@ public class SpiderSvnEntriesParser extends SpiderParser {
                                                 "Got a potential Repository from the SVN wc.db file (format {})",
                                                 svnFormat);
                                 String repos_path = rsRepo.getString(1);
-                                if (repos_path != null && repos_path.length() > 0) {
+                                if (repos_path != null && !repos_path.isEmpty()) {
                                     // exclude local repositories here.. we cannot retrieve or
                                     // spider them
                                     Matcher repoMatcher =
@@ -268,10 +270,7 @@ public class SpiderSvnEntriesParser extends SpiderParser {
                                     "Error parsing temporary SVN SQLite database {}",
                                     sqliteConnectionUrl);
                 } finally {
-                    // delete the temp file.
-                    // this will be deleted when the VM is shut down anyway, but better to be safe
-                    // than to run out of disk space.
-                    tempSqliteFile.delete();
+                    deleteTempFile(tempSqliteFile);
                 }
 
             } catch (IOException | ClassNotFoundException e) {
@@ -298,7 +297,8 @@ public class SpiderSvnEntriesParser extends SpiderParser {
                 doc =
                         dBuilder.parse(
                                 new InputSource(
-                                        new ByteArrayInputStream(content.getBytes("utf-8"))));
+                                        new ByteArrayInputStream(
+                                                content.getBytes(StandardCharsets.UTF_8))));
             } catch (SAXException | IOException e) {
                 getLogger()
                         .error(
@@ -316,7 +316,7 @@ public class SpiderSvnEntriesParser extends SpiderParser {
                 String svnEntryUrl = ((Element) svnEntryNode).getAttribute("url");
                 String svnEntryCopyFromUrl = ((Element) svnEntryNode).getAttribute("copyfrom-url");
 
-                if (svnEntryName != null && svnEntryName.length() > 0) {
+                if (svnEntryName != null && !svnEntryName.isEmpty()) {
                     getLogger()
                             .debug(
                                     "Found a file/directory name in the (XML based) SVN < 1.4 entries file");
@@ -333,9 +333,7 @@ public class SpiderSvnEntriesParser extends SpiderParser {
 
                 // expected to be true for the first entry only (the directory housing other
                 // entries)
-                if (svnEntryName != null
-                        && svnEntryName.length() == 0
-                        && svnEntryKind.equals("dir")) {
+                if (svnEntryName != null && svnEntryName.isEmpty() && svnEntryKind.equals("dir")) {
                     // exclude local repositories here.. we cannot retrieve or spider them
                     Matcher repoMatcher = SVN_REPO_LOCATION_PATTERN.matcher(svnEntryUrl);
                     if (repoMatcher.find()) {
@@ -362,14 +360,14 @@ public class SpiderSvnEntriesParser extends SpiderParser {
             String[] lines = content.split("\n");
             for (String line : lines) {
                 // If the line is empty, skip it
-                if (line.length() > 0) {
+                if (!line.isEmpty()) {
 
                     Matcher matcher = SVN_TEXT_FORMAT_FILE_OR_DIRECTORY_PATTERN.matcher(line);
                     if (matcher.find()) {
                         // filetype is "dir" or "file", as per the contents of the SVN file.
                         String filetype = matcher.group(0);
                         // the previous line actually contains the file/directory name.
-                        if (previousline != null && previousline.length() > 0) {
+                        if (previousline != null && !previousline.isEmpty()) {
                             getLogger()
                                     .debug(
                                             "Found a file/directory name in the (text based) SVN 1.4/1.5/1.6 SVN entries file");
@@ -407,6 +405,17 @@ public class SpiderSvnEntriesParser extends SpiderParser {
         }
         // We consider the message fully parsed, so it doesn't get parsed by 'fallback' parsers
         return true;
+    }
+
+    private void deleteTempFile(File tempSqliteFile) {
+        // delete the temp file.
+        // this will be deleted when the VM is shut down anyway, but better to be safe
+        // than to run out of disk space.
+        try {
+            Files.deleteIfExists(tempSqliteFile.toPath());
+        } catch (IOException e) {
+            getLogger().warn("Failed to delete temporary SQLite file '{}'", tempSqliteFile, e);
+        }
     }
 
     @Override
