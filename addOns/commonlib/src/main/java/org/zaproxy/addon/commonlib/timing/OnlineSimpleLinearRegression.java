@@ -31,7 +31,7 @@ package org.zaproxy.addon.commonlib.timing;
  * computations. <br>
  * <br>
  * By convention, we fix correlation and slope at 1.0 and the intercept at 0.0 when insufficient
- * data points (<2) have been added.
+ * data points (&lt;2) have been added.
  *
  * @since 1.20.0
  */
