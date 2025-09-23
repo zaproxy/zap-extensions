@@ -20,15 +20,12 @@
 package org.zaproxy.zap.extension.graaljs;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.emptyOrNullString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
 
 import java.nio.file.Path;
 import java.util.Map;
-import java.util.ResourceBundle;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -43,11 +40,6 @@ class PassiveDefaultTemplateGraalJsScriptTest extends GraalJsPassiveScriptScanRu
                         .getResource(
                                 "/scripts/templates/passive/Passive default template GraalJS.js")
                         .toURI());
-    }
-
-    @Override
-    public void shouldHaveI18nNonEmptyName(String name, ResourceBundle extensionResourceBundle) {
-        assertThat(name, is(not(emptyOrNullString())));
     }
 
     @Override
