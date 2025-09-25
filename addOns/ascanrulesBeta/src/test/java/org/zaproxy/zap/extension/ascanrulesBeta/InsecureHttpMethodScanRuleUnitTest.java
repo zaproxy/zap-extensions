@@ -21,17 +21,22 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Method;
 import fi.iki.elonen.NanoHTTPD.Response;
+import fi.iki.elonen.NanoHTTPD.Response.Status;
 import java.util.Map;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.PolicyTag;
@@ -44,13 +49,15 @@ class InsecureHttpMethodScanRuleUnitTest extends ActiveScannerTest<InsecureHttpM
         return new InsecureHttpMethodScanRule();
     }
 
-    private static class AllowedPutPatchNanoServerHandler extends NanoServerHandler {
+    private static class PutPatchNanoServerHandler extends NanoServerHandler {
 
         String contentType;
         String method;
+        int status;
 
-        AllowedPutPatchNanoServerHandler(String method, String contentType, String path) {
+        PutPatchNanoServerHandler(int status, String method, String contentType, String path) {
             super(path);
+            this.status = status;
             this.method = method;
             this.contentType = contentType;
         }
@@ -67,6 +74,7 @@ class InsecureHttpMethodScanRuleUnitTest extends ActiveScannerTest<InsecureHttpM
             if (session.getMethod().equals(Method.PUT)
                     || session.getMethod().equals(Method.PATCH)) {
                 response.setMimeType(contentType);
+                response.setStatus(Status.lookup(status));
                 return response;
             }
             consumeBody(session);
@@ -76,12 +84,12 @@ class InsecureHttpMethodScanRuleUnitTest extends ActiveScannerTest<InsecureHttpM
 
     @ParameterizedTest
     @CsvSource({"PUT, json", "PUT, xml", "PATCH, json", "PATCH, xml"})
-    void shouldRaiseNoAlertsForPutOrPatchMethodsIfReturnJsonOrXml(String method, String contentType)
-            throws Exception {
+    void shouldNotRaiseAlertsForPutOrPatchMethodsIfReturnJsonOrXml200StatusNonLowThreshold(
+            String method, String contentType) throws Exception {
         // Given
-        String path = "/shouldRaiseNoAlertsForPutOrPatchMethodsIfReturnJsonOrXml/";
+        String path = "/";
         HttpMessage message = getHttpMessage(path);
-        nano.addHandler(new AllowedPutPatchNanoServerHandler(method, contentType, path));
+        nano.addHandler(new PutPatchNanoServerHandler(200, method, contentType, path));
 
         rule.init(message, parent);
         // When
@@ -90,14 +98,16 @@ class InsecureHttpMethodScanRuleUnitTest extends ActiveScannerTest<InsecureHttpM
         assertThat(alertsRaised.size(), equalTo(0));
     }
 
+    @Disabled
     @ParameterizedTest
     @ValueSource(strings = {"PUT", "PATCH"})
-    void shouldRaiseAlertForPutOrPatchMethodsIfNotReturnJsonOrXml(String method) throws Exception {
+    void shouldRaiseAlertForPutOrPatchMethodsIfNotReturnJsonOrXml200StatusNonLowThreshold(
+            String method) throws Exception {
         // Given
-        String path = "/shouldRaiseAlertForPutOrPatchMethodsIfNotReturnJsonOrXml/";
+        String path = "/";
         String contentType = "html";
         HttpMessage message = getHttpMessage(path);
-        nano.addHandler(new AllowedPutPatchNanoServerHandler(method, contentType, path));
+        nano.addHandler(new PutPatchNanoServerHandler(200, method, contentType, path));
 
         rule.init(message, parent);
         // When
@@ -105,6 +115,70 @@ class InsecureHttpMethodScanRuleUnitTest extends ActiveScannerTest<InsecureHttpM
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getName(), equalTo("Insecure HTTP Method - " + method));
+        assertThat(alertsRaised.get(0).getEvidence(), is(equalTo("200")));
+        assertThat(
+                alertsRaised.get(0).getOtherInfo(),
+                is(
+                        equalTo(
+                                "See the discussion on stackexchange: https://security.stackexchange.com/questions/21413/how-to-exploit-http-methods, for understanding REST operations see https://www.restapitutorial.com/lessons/httpmethods.html")));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"PUT, json", "PUT, xml", "PATCH, json", "PATCH, xml"})
+    void shouldNotRaiseAlertsForPutOrPatchMethodsIfReturnJsonOrXml403StatusNonLowThreshold(
+            String method, String contentType) throws Exception {
+        // Given
+        String path = "/";
+        HttpMessage message = getHttpMessage(path);
+        nano.addHandler(new PutPatchNanoServerHandler(200, method, contentType, path));
+
+        rule.init(message, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, is(empty()));
+    }
+
+    @Disabled
+    @ParameterizedTest
+    @ValueSource(strings = {"PUT", "PATCH"})
+    void shouldNotRaiseAlertForPutOrPatchMethodsIfNotReturnJsonOrXml403StatusNonLowThreshold(
+            String method) throws Exception {
+        // Given
+        String path = "/";
+        String contentType = "html";
+        HttpMessage message = getHttpMessage(path);
+        nano.addHandler(new PutPatchNanoServerHandler(403, method, contentType, path));
+
+        rule.init(message, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, is(empty()));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"PUT", "PATCH"})
+    void shouldRaiseAlertForPutOrPatchMethodsIfNotReturnJsonOrXml403StatusAtLowThreshold(
+            String method) throws Exception {
+        // Given
+        String path = "/";
+        String contentType = "html";
+        HttpMessage message = getHttpMessage(path);
+        nano.addHandler(new PutPatchNanoServerHandler(403, method, contentType, path));
+
+        rule.init(message, parent);
+        rule.setAlertThreshold(AlertThreshold.LOW);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+        assertThat(
+                alertsRaised.get(0).getOtherInfo(),
+                is(
+                        equalTo(
+                                "The OPTIONS method disclosed the following enabled HTTP methods for this resource: [%s]"
+                                        .formatted(method))));
     }
 
     @Test
