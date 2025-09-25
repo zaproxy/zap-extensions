@@ -98,6 +98,19 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin
         INSECURE_METHODS.addAll(WEBDAV_METHODS);
     }
 
+    private static final Set<String> METHODS_TO_SKIP =
+            Set.of(HttpRequestHeader.GET, HttpRequestHeader.POST, HttpRequestHeader.HEAD);
+
+    /*
+     * Build a list with status codes which indicate that this HTTP method is
+     * enabled but we are not allowed to use it
+     */
+    private static final List<Integer> ENABLED_STATUS_CODES =
+            List.of(
+                    HttpStatusCode.UNAUTHORIZED,
+                    HttpStatusCode.PAYMENT_REQUIRED,
+                    HttpStatusCode.FORBIDDEN);
+
     private static final Map<String, String> ALERT_TAGS;
 
     static {
@@ -150,7 +163,7 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin
             String thirdpartyHost = "www.google.com";
             int thirdpartyPort = 80;
             Pattern thirdPartyContentPattern =
-                    Pattern.compile("<title.*{1,10}Google.{1,25}/title>", Pattern.CASE_INSENSITIVE);
+                    Pattern.compile("<title.{1,10}Google.{1,25}/title>", Pattern.CASE_INSENSITIVE);
 
             // send an OPTIONS message, and see what the server reports. Do
             // not try any methods not listed in those results.
@@ -191,7 +204,12 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin
             // Convert the list to a set so that we have a unique list
             Set<String> enabledMethodsSet =
                     new HashSet<>(
-                            Arrays.asList(allowedmethods.toUpperCase(Locale.ROOT).split(",")));
+                            Arrays.stream(allowedmethods.toUpperCase(Locale.ROOT).split(","))
+                                    .map(String::trim) // strip off any leading spaces (it happens!)
+                                    .toList());
+
+            // Remove methods we aren't concerned about
+            enabledMethodsSet.removeAll(METHODS_TO_SKIP);
             if (enabledMethodsSet.contains(HttpRequestHeader.DELETE)) {
                 enabledMethodsSet.remove(
                         HttpRequestHeader
@@ -245,12 +263,6 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin
                 // rely on the OPTIONS METHOD, but potentially verify the
                 // results, depending on the Threshold.
                 for (String enabledmethod : enabledMethodsSet) {
-                    enabledmethod =
-                            enabledmethod.trim(); // strip off any leading spaces (it happens!)
-                    if (enabledmethod.isEmpty()) {
-                        continue;
-                    }
-
                     LOGGER.debug(
                             "The following enabled method is being checked: '{}'", enabledmethod);
                     String insecureMethod = enabledmethod;
@@ -306,10 +318,9 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin
 
                     if (raiseAlert) {
                         LOGGER.debug("Raising alert for Insecure HTTP Method");
-
                         newAlert()
                                 .setRisk(riskLevel)
-                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                .setConfidence(Alert.CONFIDENCE_LOW)
                                 .setName(
                                         Constant.messages.getString(
                                                 "ascanbeta.insecurehttpmethod.detailed.name",
@@ -565,38 +576,28 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin
         }
 
         final int responseCode = msg.getResponseHeader().getStatusCode();
-        String evidence = "";
-
-        /*
-         * Build a list with status code which indicate that this HTTP method is
-         * enabled but we are not allowed to use it
-         */
-        final ArrayList<Integer> enabledStatusCodes = new ArrayList<>();
-        enabledStatusCodes.add(HttpStatusCode.UNAUTHORIZED);
-        enabledStatusCodes.add(HttpStatusCode.PAYMENT_REQUIRED);
-        enabledStatusCodes.add(HttpStatusCode.FORBIDDEN);
 
         LOGGER.debug("Request Method: {}", httpMethod);
         LOGGER.debug("Response Code: {}", responseCode);
 
         if ((httpMethod.equals(HttpRequestHeader.PUT) || httpMethod.equals(HttpRequestHeader.PATCH))
-                && (msg.getResponseHeader().isJson() || msg.getResponseHeader().isXml())) {
+                && (msg.getResponseHeader().isJson()
+                        || msg.getResponseHeader().isXml()
+                        || !this.getAlertThreshold().equals(AlertThreshold.LOW))) {
             return;
         }
 
-        if (isPage200(msg) || responseCode == HttpStatusCode.CREATED) {
-            evidence =
-                    Constant.messages.getString(
-                            "ascanbeta.insecurehttpmethod.insecure", responseCode);
-        } else if (enabledStatusCodes.contains(responseCode)) {
-            evidence =
+        boolean isEnabledStatus = ENABLED_STATUS_CODES.contains(responseCode);
+        String furtherInfo = "";
+
+        if (isEnabledStatus) {
+            furtherInfo =
                     Constant.messages.getString(
                             "ascanbeta.insecurehttpmethod.potentiallyinsecure", responseCode);
         } else {
             return;
         }
 
-        int riskLevel;
         String exploitableDesc;
         String exploitableExtraInfo;
         if (WEBDAV_METHODS.contains(httpMethod)) {
@@ -606,7 +607,6 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin
             exploitableExtraInfo =
                     Constant.messages.getString(
                             "ascanbeta.insecurehttpmethod.webdav.exploitable.extrainfo");
-            riskLevel = Alert.RISK_INFO;
         } else {
             exploitableDesc =
                     Constant.messages.getString(
@@ -619,24 +619,24 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin
                             "ascanbeta.insecurehttpmethod."
                                     + httpMethod.toLowerCase()
                                     + ".exploitable.extrainfo");
-
-            riskLevel = Alert.RISK_MEDIUM;
         }
-        try {
 
-            newAlert()
-                    .setRisk(riskLevel)
-                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                    .setName(
-                            Constant.messages.getString(
-                                    "ascanbeta.insecurehttpmethod.detailed.name", httpMethod))
-                    .setDescription(exploitableDesc)
-                    .setOtherInfo(exploitableExtraInfo)
-                    .setEvidence(evidence)
-                    .setMessage(msg)
-                    .raise();
-        } catch (Exception e) {
-        }
+        exploitableExtraInfo =
+                StringUtils.isNotEmpty(furtherInfo)
+                        ? furtherInfo + "\n\n" + exploitableExtraInfo
+                        : exploitableExtraInfo;
+
+        newAlert()
+                .setRisk(Alert.RISK_MEDIUM)
+                .setConfidence(isEnabledStatus ? Alert.CONFIDENCE_LOW : Alert.CONFIDENCE_MEDIUM)
+                .setName(
+                        Constant.messages.getString(
+                                "ascanbeta.insecurehttpmethod.detailed.name", httpMethod))
+                .setDescription(exploitableDesc)
+                .setOtherInfo(exploitableExtraInfo)
+                .setEvidence(String.valueOf(responseCode))
+                .setMessage(msg)
+                .raise();
     }
 
     private static String randomAlphanumeric(int count) {
