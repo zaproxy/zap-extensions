@@ -18,6 +18,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - Hidden Files rule raising false positives if server returning 200 for files that don't exist (Issue 8434).
 
+### Changed
+- The External Redirect scan rule has been updated to account for potential false positives involving JavaScript comments.
+
 ## [73] - 2025-09-02
 ### Changed
 - Maintenance changes.
