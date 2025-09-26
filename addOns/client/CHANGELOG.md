@@ -4,7 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Added
+- Optional `numberOfBrowsers` parameter for the Client Spider API action `scan` to control concurrency (number of browser windows).
+- Optional `scopeCheck` parameter for the Client Spider API action `scan` to select Scope Check (Flexible or Strict).
 
 ## [0.17.0] - 2025-09-02
 ### Added
