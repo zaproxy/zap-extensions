@@ -115,6 +115,19 @@ public class ActiveScanJob extends AutomationJob {
                     break;
             }
         }
+
+        if (!StringUtils.isEmpty(getParameters().getPolicy())) {
+            try {
+                getExtAScan().getPolicyManager().getPolicy(getParameters().getPolicy());
+            } catch (ConfigurationException e) {
+                progress.error(
+                        Constant.messages.getString(
+                                "automation.error.ascan.policy.name",
+                                this.getName(),
+                                getParameters().getPolicy()));
+            }
+        }
+
         policyDefinition.parsePolicyDefinition(
                 jobData.get("policyDefinition"), this.getName(), progress);
         this.verifyUser(this.getParameters().getUser(), progress);

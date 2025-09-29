@@ -20,6 +20,7 @@
 package org.zaproxy.addon.automation.jobs;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -43,6 +44,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import org.apache.commons.configuration.ConfigurationException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -74,6 +76,7 @@ import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.ContextWrapper;
 import org.zaproxy.zap.extension.ascan.ActiveScan;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
+import org.zaproxy.zap.extension.ascan.PolicyManager;
 import org.zaproxy.zap.extension.ascan.ScanPolicy;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.Target;
@@ -83,6 +86,7 @@ import org.zaproxy.zap.utils.ZapXmlConfiguration;
 class ActiveScanJobUnitTest {
 
     private static MockedStatic<CommandLine> mockedCmdLine;
+    private PolicyManager policyManager;
     private ExtensionActiveScan extAScan;
     private static AbstractPlugin plugin;
 
@@ -120,6 +124,9 @@ class ActiveScanJobUnitTest {
         extAScan = mock(ExtensionActiveScan.class, withSettings().strictness(Strictness.LENIENT));
         given(extensionLoader.getExtension(ExtensionActiveScan.class)).willReturn(extAScan);
 
+        policyManager = mock();
+        given(extAScan.getPolicyManager()).willReturn(policyManager);
+
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
         Model.getSingleton().getOptionsParam().load(new ZapXmlConfiguration());
     }
@@ -153,35 +160,13 @@ class ActiveScanJobUnitTest {
     }
 
     @Test
-    void shouldApplyCustomConfigParams() {
-        // Given
-        String yamlStr =
-                "parameters:\n"
-                        + "  maxScanDurationInMins: 12\n"
-                        + "  maxAlertsPerRule: 5\n"
-                        + "  policy: testPolicy";
-        AutomationProgress progress = new AutomationProgress();
-        Yaml yaml = new Yaml();
-        Object data = yaml.load(yamlStr);
-
-        ActiveScanJob job = new ActiveScanJob();
-        job.setJobData(((LinkedHashMap<?, ?>) data));
-
-        // When
-        job.verifyParameters(progress);
-
-        // Then
-        assertThat(job.getParameters().getMaxScanDurationInMins(), is(equalTo(12)));
-        assertThat(job.getParameters().getMaxAlertsPerRule(), is(equalTo(5)));
-        assertThat(job.getParameters().getPolicy(), is(equalTo("testPolicy")));
-        assertThat(progress.hasErrors(), is(equalTo(false)));
-        assertThat(progress.hasWarnings(), is(equalTo(false)));
-    }
-
-    @Test
     void shouldFailWithUnknownConfigParam() {
         // Given
-        String yamlStr = "parameters:\n" + "  blah: 12\n" + "  policy: testPolicy";
+        String yamlStr =
+                """
+                parameters:
+                  blah: 12
+                """;
         AutomationProgress progress = new AutomationProgress();
         Yaml yaml = new Yaml();
         Object data = yaml.load(yamlStr);
@@ -795,8 +780,10 @@ class ActiveScanJobUnitTest {
     }
 
     @Test
-    void shouldVerifyParameters() {
+    void shouldVerifyParameters() throws Exception {
         // Given
+        given(policyManager.getPolicy("policy1")).willReturn(mock(ScanPolicy.class));
+
         AutomationEnvironment env = mock(AutomationEnvironment.class);
         given(env.getAllUserNames()).willReturn(List.of("user0", "user1"));
         ActiveScanJob job = new ActiveScanJob();
@@ -843,5 +830,31 @@ class ActiveScanJobUnitTest {
         assertThat(job.getParameters().getScanHeadersAllRequests(), is(equalTo(true)));
         assertThat(job.getParameters().getThreadPerHost(), is(equalTo(2)));
         assertThat(job.getParameters().getMaxAlertsPerRule(), is(equalTo(5)));
+    }
+
+    @Test
+    void shouldErrorOnUnknownPolicy() throws Exception {
+        // Given
+        given(policyManager.getPolicy("missingPolicy")).willThrow(ConfigurationException.class);
+
+        String yamlStr =
+                """
+                parameters:
+                  policy: missingPolicy
+                """;
+        AutomationProgress progress = new AutomationProgress();
+        Yaml yaml = new Yaml();
+        Object data = yaml.load(yamlStr);
+
+        ActiveScanJob job = new ActiveScanJob();
+        job.setJobData(((LinkedHashMap<?, ?>) data));
+
+        // When
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.getErrors(), contains("!automation.error.ascan.policy.name!"));
     }
 }
