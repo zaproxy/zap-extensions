@@ -212,7 +212,7 @@ public class SpiderHtmlFormParser extends SpiderParser {
                                     element ->
                                             Objects.equals(
                                                     element.getAttributeValue("form"), targetId))
-                            .collect(Collectors.toList()));
+                            .toList());
         }
 
         if (!formButtonElements.isEmpty()) {
