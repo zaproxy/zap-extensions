@@ -190,7 +190,7 @@ public class ExpressionLanguageInjectionScanRule extends AbstractAppParamPlugin
         } catch (IOException ex) {
             // Do not try to internationalise this.. we need an error message in any event..
             // if it's in English, it's still better than not having it at all.
-            LOGGER.error(
+            LOGGER.debug(
                     "Expression Language Injection vulnerability check failed for parameter [{}] and payload [{}] due to an I/O error",
                     paramName,
                     payload,

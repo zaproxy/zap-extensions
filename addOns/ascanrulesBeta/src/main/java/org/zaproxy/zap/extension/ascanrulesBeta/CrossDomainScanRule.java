@@ -135,7 +135,7 @@ public class CrossDomainScanRule extends AbstractHostPlugin implements CommonAct
             docBuilder = docBuilderFactory.newDocumentBuilder();
             xpath = XPathFactory.newInstance().newXPath();
         } catch (ParserConfigurationException e) {
-            LOGGER.error("Failed to create document builder:", e);
+            LOGGER.debug("Failed to create document builder:", e);
         }
     }
 
@@ -154,9 +154,9 @@ public class CrossDomainScanRule extends AbstractHostPlugin implements CommonAct
 
             scanSilverlightCrossdomainPolicyFile(originalURI);
 
-        } catch (Exception e) {
+        } catch (IOException | XPathExpressionException e) {
             // needed to catch exceptions from the "finally" statement
-            LOGGER.error(
+            LOGGER.debug(
                     "Error scanning a node for Cross Domain misconfigurations: {}",
                     e.getMessage(),
                     e);
