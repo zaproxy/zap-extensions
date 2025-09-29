@@ -78,7 +78,7 @@ public class RetireScanRule extends PluginPassiveScanner {
         Repo scanRepo = getRepo();
         if (!getHelper().isPage200(msg) || scanRepo == null) {
             if (scanRepo == null) {
-                LOGGER.error("\tThe Retire.js repository was null.");
+                LOGGER.warn("\tThe Retire.js repository was null.");
             }
             return;
         }
