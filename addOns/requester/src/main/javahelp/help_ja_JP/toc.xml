@@ -4,7 +4,7 @@
     <tocitem text="ZAP User Guide" tocid="toplevelitem">
         <tocitem text="Add Ons" tocid="addons">
             <tocitem text="Requester" image="addon.requester.icon" target="addon.requester">
-                <tocitem text="Dialogs" image="addon.requester.icon.dialog" target="addon.requester.dialogs"/>
+                <tocitem text="ダイアログ" image="addon.requester.icon.dialog" target="addon.requester.dialogs"/>
                 <tocitem text="Tab" image="addon.requester.icon" target="addon.requester.tab"/>
                 <tocitem text="Options" target="addon.requester.options"/>
             </tocitem>

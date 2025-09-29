@@ -71,20 +71,20 @@
 	<br />
 
 	<h2>右クリック メニュー</h2>
-	Right clicking on a node will bring up a menu which will allow you to:
+	ノードを右クリックすると、以下の操作を可能にするメニューが表示されます：
 
 	<h3>攻撃</h3>
-	The Attack menu has the following submenus:
+	攻撃メニューには以下のサブメニューがあります：
 	<h4>サイトの動的スキャン</h4>
 	This will initiate an
-	<i>動的スキャン</i> of the whole of the site containing the selected node.
+	<i>アクティブスキャン</i> of the whole of the site containing the selected node.
 	<br /> 　
 	<i>動的スキャンタブ</i> will be display and will show the progress of the scan.
 	<br />
 
 	<h4>動的スキャンノード</h4>
 	This will initiate an
-	<i>動的スキャン</i> of just the node selected.
+	<i>アクティブスキャン</i> of just the node selected.
 	<br /> 　
 	<i>動的スキャンタブ</i> will be display and will show the progress of the scan.
 	<br />
@@ -118,23 +118,21 @@
 	<br />
 
 	<h3>以下の処理から除外する:</h3>
-	このメニューには、次のサブメニューがあります。
+	このメニューには以下のサブメニューがあります：
 
 	<h4>プロキシ</h4>
-	This will exclude the selected nodes from the proxy. They will still be proxied via ZAP
-	but will not be shown in any of the tabs.
-	<br /> This can be used to ignore URLs that you know are not relevant to the system you
-	are currently testing.
+	選択したノードをプロキシから除外します。ZAP経由でプロキシされますが、どのタブにも表示されません。
+	<br /> 現在テストしているシステムに関係のないURLを無視するために使用できます。
 	<br /> The nodes can be included again via the
-	<i>セッション・プロパティ</i> dialog
+	<i>セッションプロパティ</i> dialog
 
-	<h4>スキャン</h4>
-	This will prevent the selected nodes from being actively scanned.
+	<h4>スキャナー</h4>
+	選択したノードがアクティブスキャンされることを防ぎます。
 	<br /> The nodes can be included again via the
-	<i>セッション・プロパティ</i> dialog
+	<i>セッションプロパティ</i> dialog
 
 	<h4>スパイダー</h4>
-	This will prevent the selected nodes from being spidered.
+	選択したノードがスパイダーされることを防ぎます。
 	<br /> The nodes can be included again via the
 	<i>セッション・プロパティ</i> dialog
 
@@ -159,10 +157,10 @@
 	<i>ブレークポイントダイアログを追加</i> which allows you to set a break point on that URL.
 	<br />
 
-	<h3>Alerts for this node</h3>
+	<h3>このノードのアラート</h3>
 	If the URL selected has
-	<i>アラート</i> associated with it then they will be listed under this menu.
-	<br> Selecting one of the alerts will cause it to be displayed.
+	<i>アラート</i> がある場合、このメニューの下に一覧表示されます。
+	<br> アラートの1つを選択すると、そのアラートが表示されます。
 
 	<h3>再送信...</h3>
 	This will bring up the
@@ -171,11 +169,11 @@
 
 	<h3>新しいアラート...</h3>
 	This will bring up the
-	<i>アラートダイアログを追加</i> which allows you to manually record a new
-	<i>Alert</i> against this request.
+	<i>アラートの追加ダイアログ</i> が表示され、このリクエストに対して新しい
+	<i>アラート</i> against this request.
 
-	<h3>ブラウザで表示</h3>
-	既定のブラウザーで選択されたノードのURLを開きます。
+	<h3>URLをブラウザで開く</h3>
+	選択したノードのURLを既定のブラウザーで開きます。
 
 	<h2>関連情報</h2>
 	<table>
