@@ -72,7 +72,7 @@ class ActiveDefaultTemplateGraalJsScriptTest extends GraalJsActiveScriptScanRule
         assertThat(alertsRaised, hasSize(1));
         Alert alert = alertsRaised.get(0);
         assertThat(alert.getPluginId(), is(equalTo(12345)));
-        assertThat(alert.getAlertRef(), is(equalTo("12345")));
+        assertThat(alert.getAlertRef(), is(equalTo("12345-1")));
         assertThat(alert.getName(), is(equalTo("Active Vulnerability Title")));
         assertThat(alert.getDescription(), is(equalTo("Full description")));
         assertThat(alert.getSolution(), is(equalTo("The solution")));

@@ -22,10 +22,10 @@ zapAddOn {
         dependencies {
             addOns {
                 register("commonlib") {
-                    version.set(">=1.24.0")
+                    version.set(">=1.37.0")
                 }
                 register("scripts") {
-                    version.set(">=45.2.0")
+                    version.set(">=45.14.0")
                 }
             }
         }

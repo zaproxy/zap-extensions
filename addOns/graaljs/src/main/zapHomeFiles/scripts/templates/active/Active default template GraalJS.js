@@ -22,6 +22,11 @@ alertTags:
   name2: value2
 otherInfo: Any other Info
 status: alpha
+alertRefOverrides:
+  12345-1: {}
+  12345-2:
+    name: Active Vulnerability - Type XYZ
+    description: Overridden description
 `);
 }
 
@@ -92,7 +97,8 @@ function scan(as, msg, param, value) {
 	
 	// Test the response here, and make other requests as required
 	if (true) {	// Change to a test which detects the vulnerability
-		as.newAlert()
+        // Call newAlert() if you're not using alertRefOverrides
+		as.newAlert("12345-1")
 			.setParam(param)
 			.setAttack('Your attack')
 			.setEvidence('Evidence')

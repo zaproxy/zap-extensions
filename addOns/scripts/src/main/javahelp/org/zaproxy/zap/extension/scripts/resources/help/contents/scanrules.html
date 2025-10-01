@@ -7,9 +7,9 @@
 <body>
 <h1>Script Scan Rules</h1>
 
-Active and Passive Scripts that implement the `getMetadata` function are treated as first-class scan rules by ZAP.
+Active and Passive Scripts that implement the <code>getMetadata</code> function are treated as first-class scan rules by ZAP.
 
-Example implementation of this function in a script would look like:
+An example implementation of this function in a script would look like:
 
 <pre><code>
 function getMetadata() {
@@ -31,15 +31,32 @@ alertTags:
   name2: value2
 otherInfo: Any other Info
 status: alpha
+alertRefOverrides:
+  12345-1:
+    name: Alert Reference 1
+
 `);
 }
 </code></pre>
 
+<p>
+The metadata function is evaluated upon saving the script, which is exposed as a scan rule if the metadata is valid.
+
+<p>
 The <code>category</code> field is only used for Active Scan Scripts.
 
-Any additional fields in the metadata are ignored.
+<p>
+The <code>alertRefOverrides</code> field allows you to override specific fields for each alert reference.
+You may override any top-level field except <code>id</code>, <code>category</code>, and <code>status</code>.
+An alert reference is used as a unique identifier for an alert type when a scan rule may raise more than one type of
+alert.
+Typically, alert references for a given scan rule are expected to be equal to the scan rule ID suffixed with sequential
+digits, e.g. <code>12345-1</code>, <code>12345-2</code>, etc.
+To raise an alert that uses the metadata for a given alert reference, you may pass the alert reference as an argument to
+<code>newAlert()</code>.
 
-The metadata function is evaluated upon saving the script, which is exposed as a scan rule if the metadata is valid.
+<p>
+Any undefined fields in the metadata are ignored (e.g. <code>author: your name</code>).
 
 </body>
 </html>
