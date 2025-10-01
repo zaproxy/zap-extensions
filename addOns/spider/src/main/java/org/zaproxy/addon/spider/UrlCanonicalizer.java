@@ -86,7 +86,10 @@ public final class UrlCanonicalizer {
      * @return the canonical url
      */
     public static String getCanonicalUrl(ParseContext ctx, String url, String baseURL) {
-        if (StringUtils.startsWithIgnoreCase(url, "javascript:") || "//".equals(url)) {
+        if (StringUtils.startsWithIgnoreCase(url, "javascript:")
+                || StringUtils.startsWithIgnoreCase(url, "tel:")
+                || StringUtils.startsWithIgnoreCase(url, "mailto:")
+                || "//".equals(url)) {
             return null;
         }
 

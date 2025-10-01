@@ -196,7 +196,9 @@ class UrlCanonicalizerUnitTest {
                 "javascript:",
                 "javascript://Something",
                 "javascript:ignore()",
+                "mailto:",
                 "mailto:ignore@example.com",
+                "tel:",
                 "tel:+1-900-555-0191"
             })
     void shouldIgnoreURIsWithNoAuthority(String uri) {
