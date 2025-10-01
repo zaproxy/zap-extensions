@@ -63,6 +63,9 @@ public class BoastService extends OastService implements OptionsChangedListener 
 
     @Override
     public void stopService() {
+        if (pollingSchedule != null) {
+            pollingSchedule.cancel(true);
+        }
         executorService.shutdown();
     }
 
