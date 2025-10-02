@@ -34,7 +34,7 @@ crowdin {
 dependencies {
     zapAddOn("commonlib")
 
-    implementation("org.jdom:jdom:2.0.2")
+    implementation(libs.sqliplugin.jdom)
 
     testImplementation(project(":testutils"))
 }

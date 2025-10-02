@@ -51,7 +51,7 @@ dependencies {
     zapAddOn("network")
     zapAddOn("oast")
 
-    implementation("org.bitbucket.mstrobel:procyon-compilertools:0.6.0")
+    implementation(libs.ascanrules.procyonCompilerTools)
 
     testImplementation(parent!!.childProjects.get("commonlib")!!.sourceSets.test.get().output)
     testImplementation(project(":testutils"))

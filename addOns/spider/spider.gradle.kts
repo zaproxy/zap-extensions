@@ -59,7 +59,7 @@ dependencies {
     zapAddOn("database")
     zapAddOn("network")
 
-    implementation("io.kaitai:kaitai-struct-runtime:0.10")
+    implementation(libs.spider.kaitaiStructRuntime)
 
     testImplementation(project(":testutils"))
     testImplementation(libs.log4j.core)

@@ -19,6 +19,6 @@ zapAddOn {
 dependencies {
     zapAddOn("commonlib")
 
-    implementation("com.google.re2j:re2j:1.7")
+    implementation(libs.pscanrulesAlpha.re2j)
     testImplementation(project(":testutils"))
 }

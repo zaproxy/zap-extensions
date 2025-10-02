@@ -49,7 +49,7 @@ dependencies {
     zapAddOn("scripts")
     zapAddOn("selenium")
 
-    api("org.zaproxy:zest:0.31.0") {
+    api(libs.zest.zest) {
         // Provided by commonlib add-on.
         exclude(group = "com.fasterxml.jackson.core")
         exclude(group = "com.fasterxml.jackson.dataformat")
@@ -58,7 +58,7 @@ dependencies {
         // Provided by ZAP.
         exclude(group = "net.htmlparser.jericho", module = "jericho-html")
     }
-    implementation("org.owasp.jbrofuzz:jbrofuzz-core:2.5.1") {
+    implementation(libs.zest.jbrofuzzCore) {
         // Only "jbrofuzz-core" is needed.
         setTransitive(false)
     }

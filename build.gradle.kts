@@ -2,12 +2,12 @@ import net.ltgt.gradle.errorprone.errorprone
 import org.zaproxy.gradle.spotless.ValidateImports
 
 plugins {
-    id("com.diffplug.spotless")
-    id("org.zaproxy.common") version "0.5.0" apply false
-    id("com.github.ben-manes.versions") version "0.52.0"
-    id("org.sonarqube") version "4.3.0.3225"
-    id("net.ltgt.errorprone") version "4.1.0"
-    id("io.freefair.lombok") version "8.12.2"
+    alias(libs.plugins.spotless)
+    alias(libs.plugins.zaproxy.common) apply false
+    alias(libs.plugins.dependencyUpdates)
+    alias(libs.plugins.sonarqube)
+    alias(libs.plugins.errorprone)
+    alias(libs.plugins.lombok)
 }
 
 apply(from = "$rootDir/gradle/ci.gradle.kts")

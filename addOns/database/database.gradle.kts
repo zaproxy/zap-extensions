@@ -50,10 +50,10 @@ spotless {
 dependencies {
     compileOnly(libs.log4j.core)
 
-    datanucleus("org.datanucleus:datanucleus-accessplatform-jdo-rdbms:6.0.7")
-    sqlite("org.xerial:sqlite-jdbc:3.45.3.0")
+    datanucleus(libs.database.datanucleusJdo)
+    sqlite(libs.database.sqliteJdbc)
 
-    api("org.flywaydb:flyway-core:9.22.3")
+    api(libs.database.flywayCore)
 
     testImplementation(libs.log4j.core)
     testImplementation(project(":testutils"))

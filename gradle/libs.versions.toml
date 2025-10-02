@@ -1,0 +1,129 @@
+[versions]
+bouncycastle = "1.77"
+brotli = "1.16.0"
+diffutils = "1.3.0"
+graaljs = "25.0.0"
+jbrofuzz = "2.5.1"
+jsoup = "1.17.2"
+kotlin = "1.3.72"
+langchain4j = "0.35.0"
+log4j = "2.24.2"
+nanohttpd = "2.3.1"
+netty = "4.1.100.Final"
+re2j = "1.7"
+slf4j = "1.7.32"
+
+[libraries]
+ascanrules-procyonCompilerTools = "org.bitbucket.mstrobel:procyon-compilertools:0.6.0"
+ascanrulesBeta-diffutils = { module = "com.googlecode.java-diff-utils:diffutils", version.ref = "diffutils" }
+ascanrulesBeta-jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
+authhelper-otpJava = "com.github.bastiaanjansen:otp-java:2.1.0"
+beanshell-beanshell = "org.beanshell:bsh:2.0b5"
+bugtracker-bridgeMethodAnnotations = "com.infradna.tool:bridge-method-annotation:1.18"
+bugtracker-githubApi = "org.kohsuke:github-api:1.303"
+bugtracker-j2bugzilla = "com.j2bugzilla:j2bugzilla:2.2.1"
+bugtracker-spotBugsAnnotations = "com.github.spotbugs:spotbugs-annotations:3.1.12"
+callgraph-jgraphx = "org.tinyjee.jgraphx:jgraphx:3.4.1.3"
+commonlib-apache-commons-collections4 = "org.apache.commons:commons-collections4:4.4"
+commonlib-apache-commons-csv = "org.apache.commons:commons-csv:1.10.0"
+commonlib-apache-commons-io = "commons-io:commons-io:2.16.1"
+commonlib-jackson-bom = "com.fasterxml.jackson:jackson-bom:2.19.1"
+commonlib-jackson-databind.module = "com.fasterxml.jackson.core:jackson-databind"
+commonlib-jackson-dataformat-xml.module = "com.fasterxml.jackson.dataformat:jackson-dataformat-xml"
+commonlib-jackson-dataformat-yaml.module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml"
+commonlib-jackson-datatype-jdk8.module = "com.fasterxml.jackson.datatype:jackson-datatype-jdk8"
+commonlib-jackson-datatype-jsr310.module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
+database-datanucleusJdo = "org.datanucleus:datanucleus-accessplatform-jdo-rdbms:6.0.7"
+database-flywayCore = "org.flywaydb:flyway-core:9.22.3"
+database-sqliteJdbc = "org.xerial:sqlite-jdbc:3.45.3.0"
+diff-diffutils = { module = "com.googlecode.java-diff-utils:diffutils", version.ref = "diffutils" }
+exim-harReader = "de.sstoehr:har-reader:3.1.4"
+exim-hektorFsm = "io.hektor:hektor-fsm:0.0.5"
+fuzz-jbrofuzzCore = { module = "org.owasp.jbrofuzz:jbrofuzz-core", version.ref = "jbrofuzz" }
+fuzz-rgxgen = "com.github.curious-odd-man:rgxgen:2.0"
+fuzz-snodge = "com.natpryce:snodge:2.1.2.2"
+graaljs-graaljs = { module = "org.graalvm.js:js-community", version.ref = "graaljs" }
+graaljs-jsScriptEngine = { module = "org.graalvm.js:js-scriptengine", version.ref = "graaljs" }
+graphql-graphqlJava = "com.graphql-java:graphql-java:24.3"
+groovy-groovy = "org.codehaus.groovy:groovy-all:3.0.14"
+grpc-protobuf = "io.grpc:grpc-protobuf:1.61.1"
+imagelocationscanner-metadataExtractor = "com.drewnoakes:metadata-extractor:2.19.0"
+jruby-jruby = "org.jruby:jruby-complete:1.7.4"
+jython-jython = "org.python:jython-standalone:2.7.2"
+kotlin-compiler = { module = "org.jetbrains.kotlin:kotlin-compiler-embeddable", version.ref = "kotlin" }
+kotlin-scripting = { module = "org.jetbrains.kotlin:kotlin-scripting-jsr223-embeddable", version.ref = "kotlin" }
+kotlin-stdlibJdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
+llm-langchain4j = { module = "dev.langchain4j:langchain4j", version.ref = "langchain4j" }
+llm-langchain4j-azureOpenAi = { module = "dev.langchain4j:langchain4j-azure-open-ai", version.ref = "langchain4j" }
+llm-langchain4j-ollama = { module = "dev.langchain4j:langchain4j-ollama", version.ref = "langchain4j" }
+log4j-core = { module = "org.apache.logging.log4j:log4j-core", version.ref = "log4j" }
+log4j-slf4j = { module = "org.apache.logging.log4j:log4j-slf4j-impl", version.ref = "log4j" }
+log4j-slf4j2 = { module = "org.apache.logging.log4j:log4j-slf4j2-impl", version.ref = "log4j" }
+network-bouncycastle-bcmail = { module = "org.bouncycastle:bcmail-jdk18on", version.ref = "bouncycastle" }
+network-bouncycastle-bcpkix = { module = "org.bouncycastle:bcpkix-jdk18on", version.ref = "bouncycastle" }
+network-bouncycastle-bcprov = { module = "org.bouncycastle:bcprov-jdk18on", version.ref = "bouncycastle" }
+network-brotli = { module = "com.aayushatharva.brotli4j:brotli4j", version.ref = "brotli" }
+network-brotli-linux-amd64 = { module = "com.aayushatharva.brotli4j:native-linux-x86_64", version.ref = "brotli" }
+network-brotli-osx-aarch64 = { module = "com.aayushatharva.brotli4j:native-osx-aarch64", version.ref = "brotli" }
+network-brotli-osx-amd64 = { module = "com.aayushatharva.brotli4j:native-osx-x86_64", version.ref = "brotli" }
+network-brotli-windows-amd64 = { module = "com.aayushatharva.brotli4j:native-windows-x86_64", version.ref = "brotli" }
+network-httpclient = "org.apache.httpcomponents.client5:httpclient5:5.2.1"
+network-ice4j = "org.jitsi:ice4j:3.0-24-g34c2ce5"
+network-netty-codec = { module = "io.netty:netty-codec", version.ref = "netty" }
+network-netty-codec-http2 = { module = "io.netty:netty-codec-http2", version.ref = "netty" }
+network-netty-handler = { module = "io.netty:netty-handler", version.ref = "netty" }
+openapi-swagger-compatSpecParser = "io.swagger:swagger-compat-spec-parser:1.0.75"
+openapi-swagger-parser = "io.swagger.parser.v3:swagger-parser:2.1.34"
+pscanrules-htmlunit-csp = "org.htmlunit:htmlunit-csp:4.0.0"
+pscanrules-re2j = { module = "com.google.re2j:re2j", version.ref = "re2j" }
+pscanrulesAlpha-re2j = { module = "com.google.re2j:re2j", version.ref = "re2j" }
+reports-flyingSaucerPdf = "org.xhtmlrenderer:flying-saucer-pdf:9.3.1"
+reports-thymeleaf = "org.thymeleaf:thymeleaf:3.1.2.RELEASE"
+saml-jaxbRuntime = "org.glassfish.jaxb:jaxb-runtime:2.3.2"
+scripts-byteBuddy = "net.bytebuddy:byte-buddy:1.14.13"
+selenium-apache-commons-lang3 = "org.apache.commons:commons-lang3:3.18.0"
+selenium-htmlunit3Driver = "org.seleniumhq.selenium:htmlunit3-driver:4.34.0"
+selenium-seleniumJava = "org.seleniumhq.selenium:selenium-java:4.35.0"
+soap-jakartaXmlSoapApi = "jakarta.xml.soap:jakarta.xml.soap-api:3.0.0"
+soap-saajImpl = "com.sun.xml.messaging.saaj:saaj-impl:3.0.0"
+soap-soaModelCore = "com.predic8:soa-model-core:2.0.1"
+spider-kaitaiStructRuntime = "io.kaitai:kaitai-struct-runtime:0.10"
+spiderAjax-apache-commons-math = "commons-math:commons-math:1.2"
+spiderAjax-findBugsAnnotations = "com.google.code.findbugs:jsr305:3.0.2"
+spiderAjax-guiceAssistedInject = "com.google.inject.extensions:guice-assistedinject:5.0.1"
+spiderAjax-jcipAnnotations = "net.jcip:jcip-annotations:1.0"
+spiderAjax-jclOverSlf4j = { module = "org.slf4j:jcl-over-slf4j", version.ref = "slf4j" }
+spiderAjax-julToSlf4j = { module = "org.slf4j:jul-to-slf4j", version.ref = "slf4j" }
+spiderAjax-metricsCore = "com.codahale.metrics:metrics-core:3.0.2"
+spiderAjax-nekohtml = "net.sourceforge.nekohtml:nekohtml:1.9.22"
+spiderAjax-slf4j-log4j12 = { module = "org.slf4j:slf4j-log4j12", version.ref = "slf4j" }
+spiderAjax-xmlunit = "xmlunit:xmlunit:1.6"
+sqliplugin-jdom = "org.jdom:jdom:2.0.2"
+test-hamcrest = "org.hamcrest:hamcrest-library:2.2"
+test-junit-jupiter = "org.junit.jupiter:junit-jupiter:5.10.2"
+test-junit-platformLauncher = { module = "org.junit.platform:junit-platform-launcher" }
+test-mockito-junit-jupiter = "org.mockito:mockito-junit-jupiter:5.10.0"
+test-selenium-jupiter = "io.github.bonigarcia:selenium-jupiter:5.1.1"
+test-webdrivermanager = "io.github.bonigarcia:webdrivermanager:5.7.0"
+testutils-httpclient5 = "org.apache.httpcomponents.client5:httpclient5:5.2.1"
+testutils-nanohttpd-webserver = { module = "org.nanohttpd:nanohttpd-webserver", version.ref = "nanohttpd" }
+testutils-nanohttpd-websocket = { module = "org.nanohttpd:nanohttpd-websocket", version.ref = "nanohttpd" }
+testutils-zap = "org.zaproxy:zap:2.16.0"
+wappalyzer-jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
+wappalyzer-jsvg = "com.github.weisj:jsvg:1.4.0"
+wappalyzer-re2j = { module = "com.google.re2j:re2j", version.ref = "re2j" }
+zest-jbrofuzzCore = { module = "org.owasp.jbrofuzz:jbrofuzz-core", version.ref = "jbrofuzz" }
+zest-zest = "org.zaproxy:zest:0.31.0"
+
+[plugins]
+cyclonedx = "org.cyclonedx.bom:2.2.0"
+datanucleus = "org.rm3l.datanucleus-gradle-plugin:2.0.0"
+dependencyUpdates = "com.github.ben-manes.versions:0.52.0"
+errorprone = "net.ltgt.errorprone:4.1.0"
+japicmp = "me.champeau.gradle.japicmp:0.4.6"
+lombok = "io.freefair.lombok:8.12.2"
+sonarqube = "org.sonarqube:4.3.0.3225"
+spotless.id = "com.diffplug.spotless"
+zaproxy-addon = "org.zaproxy.add-on:0.13.1"
+zaproxy-common = "org.zaproxy.common:0.5.0"
+zaproxy-crowdin = "org.zaproxy.crowdin:0.6.0"

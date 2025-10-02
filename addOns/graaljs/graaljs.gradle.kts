@@ -42,9 +42,8 @@ dependencies {
     zapAddOn("commonlib")
     zapAddOn("scripts")
 
-    val graalJsVersion = "25.0.0"
-    implementation("org.graalvm.js:js-community:$graalJsVersion")
-    implementation("org.graalvm.js:js-scriptengine:$graalJsVersion")
+    implementation(libs.graaljs.graaljs)
+    implementation(libs.graaljs.jsScriptEngine)
 
     testImplementation(project(":testutils"))
 }

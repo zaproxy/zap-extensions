@@ -18,11 +18,11 @@ import org.zaproxy.gradle.crowdin.CrowdinExtension
 plugins {
     eclipse
     jacoco
-    id("org.cyclonedx.bom") version "2.2.0" apply false
-    id("org.rm3l.datanucleus-gradle-plugin") version "2.0.0" apply false
-    id("org.zaproxy.add-on") version "0.13.1" apply false
-    id("org.zaproxy.crowdin") version "0.6.0" apply false
-    id("me.champeau.gradle.japicmp") version "0.4.6" apply false
+    alias(libs.plugins.cyclonedx) apply false
+    alias(libs.plugins.datanucleus) apply false
+    alias(libs.plugins.zaproxy.addon) apply false
+    alias(libs.plugins.zaproxy.crowdin) apply false
+    alias(libs.plugins.japicmp) apply false
 }
 
 description = "Common configuration of the add-ons."

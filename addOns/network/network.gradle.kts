@@ -62,35 +62,31 @@ spotless {
 dependencies {
     compileOnly(libs.log4j.core)
 
-    val nettyVersion = "4.1.100.Final"
-    implementation("io.netty:netty-codec:$nettyVersion")
-    implementation("io.netty:netty-handler:$nettyVersion")
-    implementation("io.netty:netty-codec-http2:$nettyVersion")
+    implementation(libs.network.netty.codec)
+    implementation(libs.network.netty.handler)
+    implementation(libs.network.netty.codec.http2)
 
-    hc("org.apache.httpcomponents.client5:httpclient5:5.2.1")
+    hc(libs.network.httpclient)
     implementation(libs.log4j.slf4j)
 
-    val bcVersion = "1.77"
-    val bcJava = "jdk18on"
-    bouncyCastle("org.bouncycastle:bcmail-$bcJava:$bcVersion")
-    bouncyCastle("org.bouncycastle:bcprov-$bcJava:$bcVersion")
-    bouncyCastle("org.bouncycastle:bcpkix-$bcJava:$bcVersion")
+    bouncyCastle(libs.network.bouncycastle.bcmail)
+    bouncyCastle(libs.network.bouncycastle.bcprov)
+    bouncyCastle(libs.network.bouncycastle.bcpkix)
 
-    val brotliVersion = "1.16.0"
-    brotli("com.aayushatharva.brotli4j:brotli4j:$brotliVersion")
-    brotli("com.aayushatharva.brotli4j:native-windows-x86_64:$brotliVersion")
-    brotli("com.aayushatharva.brotli4j:native-linux-x86_64:$brotliVersion")
-    brotli("com.aayushatharva.brotli4j:native-osx-x86_64:$brotliVersion")
-    brotli("com.aayushatharva.brotli4j:native-osx-aarch64:$brotliVersion")
+    brotli(libs.network.brotli)
+    brotli(libs.network.brotli.windows.amd64)
+    brotli(libs.network.brotli.linux.amd64)
+    brotli(libs.network.brotli.osx.amd64)
+    brotli(libs.network.brotli.osx.aarch64)
 
-    implementation("org.jitsi:ice4j:3.0-24-g34c2ce5") {
+    implementation(libs.network.ice4j) {
         // Don't need its dependencies, for now.
         setTransitive(false)
     }
 
-    testImplementation("org.hamcrest:hamcrest-library:2.2")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    testImplementation("org.mockito:mockito-junit-jupiter:5.10.0")
+    testImplementation(libs.test.hamcrest)
+    testImplementation(libs.test.junit.jupiter)
+    testRuntimeOnly(libs.test.junit.platformLauncher)
+    testImplementation(libs.test.mockito.junit.jupiter)
     testImplementation(libs.log4j.core)
 }
