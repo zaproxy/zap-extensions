@@ -20,7 +20,7 @@ zapAddOn {
 }
 
 dependencies {
-    implementation("org.jruby:jruby-complete:1.7.4")
+    implementation(libs.jruby.jruby)
 
     testImplementation(project(":testutils"))
 }

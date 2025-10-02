@@ -25,7 +25,7 @@ zapAddOn {
 dependencies {
     zapAddOn("commonlib")
 
-    implementation("org.python:jython-standalone:2.7.2")
+    implementation(libs.jython.jython)
 
     testImplementation(project(":testutils"))
 }

@@ -40,8 +40,8 @@ zapAddOn {
 }
 
 dependencies {
-    implementation("com.google.re2j:re2j:1.7")
-    implementation("org.htmlunit:htmlunit-csp:4.0.0")
+    implementation(libs.pscanrules.re2j)
+    implementation(libs.pscanrules.htmlunit.csp)
 
     zapAddOn("commonlib")
     zapAddOn("custompayloads")

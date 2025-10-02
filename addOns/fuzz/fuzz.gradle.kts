@@ -22,12 +22,12 @@ zapAddOn {
 dependencies {
     zapAddOn("commonlib")
 
-    implementation("com.natpryce:snodge:2.1.2.2")
-    implementation("org.owasp.jbrofuzz:jbrofuzz-core:2.5.1") {
+    implementation(libs.fuzz.snodge)
+    implementation(libs.fuzz.jbrofuzzCore) {
         // Only "jbrofuzz-core" is needed.
         setTransitive(false)
     }
-    implementation("com.github.curious-odd-man:rgxgen:2.0")
+    implementation(libs.fuzz.rgxgen)
 
     testImplementation(project(":testutils"))
 }

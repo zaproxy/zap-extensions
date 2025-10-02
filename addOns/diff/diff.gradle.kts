@@ -21,7 +21,7 @@ zapAddOn {
 
 dependencies {
     zapAddOn("commonlib")
-    implementation("com.googlecode.java-diff-utils:diffutils:1.3.0")
+    implementation(libs.diff.diffutils)
 }
 
 spotless {

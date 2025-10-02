@@ -57,8 +57,8 @@ dependencies {
     zapAddOn("automation")
     zapAddOn("commonlib")
 
-    implementation("org.thymeleaf:thymeleaf:3.1.2.RELEASE")
-    implementation("org.xhtmlrenderer:flying-saucer-pdf:9.3.1")
+    implementation(libs.reports.thymeleaf)
+    implementation(libs.reports.flyingSaucerPdf)
     implementation(libs.log4j.slf4j2)
 
     testImplementation(project(":addOns:sequence"))

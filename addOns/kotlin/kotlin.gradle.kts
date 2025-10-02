@@ -21,10 +21,9 @@ crowdin {
 }
 
 dependencies {
-    val ktVersion = "1.3.72"
-    api("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$ktVersion")
-    implementation("org.jetbrains.kotlin:kotlin-scripting-jsr223-embeddable:$ktVersion")
-    implementation("org.jetbrains.kotlin:kotlin-compiler-embeddable:$ktVersion")
+    api(libs.kotlin.stdlibJdk8)
+    implementation(libs.kotlin.scripting)
+    implementation(libs.kotlin.compiler)
 
     testImplementation(project(":testutils"))
     testRuntimeOnly(project(":addOns:encoder"))

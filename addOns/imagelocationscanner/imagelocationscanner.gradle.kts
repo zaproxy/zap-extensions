@@ -23,7 +23,7 @@ zapAddOn {
 dependencies {
     zapAddOn("commonlib")
 
-    implementation("com.drewnoakes:metadata-extractor:2.19.0")
+    implementation(libs.imagelocationscanner.metadataExtractor)
 
     testImplementation(project(":testutils"))
 }
