@@ -10,7 +10,7 @@ OpenAPI Support
 <h1>OpenAPI Support</h1>
 This add-on allows you to spider and import OpenAPI (Swagger) definitions, versions 1.2, 2.0, and 3.0.
 <br>
-<strong>Note:</strong> Generation of XML content is currently not supported.
+<strong>注:</strong> Generation of XML content is currently not supported.
 <br><br>
 The add-on will automatically detect any OpenAPI definitions and spider them as long as they are in scope.
 <br><br>
@@ -31,7 +31,7 @@ The dialogues also allow selecting a Context, optionally. If a context is select
     <li>the imported spec is saved to the session database</li>
     <li>data driven nodes are generated for endpoints with path parameters</li>
 </ul>
-<strong>Note:</strong> Endpoints excluded by the Context will not be imported.
+<strong>注:</strong> Endpoints excluded by the Context will not be imported.
 
 <h3>User</h3>
 The dialogues also allow selecting a User, optionally, to do authenticated imports.
@@ -91,7 +91,7 @@ Sites
 The imported OpenAPI definition is persisted to the session database. When the session is reloaded, the definition is
 used to generate the data driven nodes and mark them for future requests.
 
-<h2>Command Line</h2>
+<h2>コマンドライン</h2>
 The following Command Line options are added:
 <ul>
 <li>-openapifile &lt;filename&gt;  : Imports an OpenAPI definition from the specified file name</li>
@@ -107,7 +107,7 @@ These can be overridden using the Form Handler add-on which allows you to specif
 In most cases these will be simple values (like strings and integers) but in some cases you may need to specify structured values,
 e.g. <pre>{ "id": 0, "name": "Freda" }</pre>
 
-<h2>Statistics</h2>
+<h2>統計</h2>
 The add-on maintains the following statistics:
 <ul>
     <li>openapi.urls.added : The total number of URLs added when importing OpenAPI definitions</li>
