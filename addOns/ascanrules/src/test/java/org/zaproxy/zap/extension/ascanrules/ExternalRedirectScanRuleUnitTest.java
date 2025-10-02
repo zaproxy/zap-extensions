@@ -21,14 +21,18 @@ package org.zaproxy.zap.extension.ascanrules;
 
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.Response;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Stream;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -527,6 +531,48 @@ class ExternalRedirectScanRuleUnitTest extends ActiveScannerTest<ExternalRedirec
         assertThat(alertsRaised.get(0).getEvidence().startsWith(HttpHeader.HTTP), equalTo(true));
     }
 
+    @Test
+    void shouldNotReportRedirectIfInsideJsComment() throws Exception {
+        // Given
+        String test = "/";
+        String body =
+                """
+                <!DOCTYPE html>
+                <html>
+                <head>
+                <title>Redirect commented out</title>
+                </head>
+                <body>
+
+                <script>function myRedirectFunction()
+                {/*
+                window.location.replace('%s');
+                */}
+                //myRedirectFunction();
+                </script>
+                """
+                        .formatted(CONTENT_TOKEN);
+        nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
+                        String site = getFirstParamValue(session, "site");
+                        if (site != null && !site.isEmpty()) {
+                            String withPayload = body.replace(CONTENT_TOKEN, site);
+                            return newFixedLengthResponse(
+                                    NanoHTTPD.Response.Status.OK, NanoHTTPD.MIME_HTML, withPayload);
+                        }
+                        return newFixedLengthResponse("<html><body></body></html>");
+                    }
+                });
+        HttpMessage msg = getHttpMessage(test + "?site=xxx");
+        rule.init(msg, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, is(empty()));
+    }
+
     private static Stream<Arguments> createJsMethodBooleanPairs() {
         return Stream.of(
                 Arguments.of("location.reload", true),
@@ -631,4 +677,260 @@ class ExternalRedirectScanRuleUnitTest extends ActiveScannerTest<ExternalRedirec
         // Then
         assertThat(extracted, is(equalTo("http://www.example.com/")));
     }
+
+    /** Unit tests for {@link ExternalRedirectScanRule#extractJsComments(String)}. */
+    @Nested
+    class ExtractJsCommentsUnitTest {
+
+        private static final String BODY_TEMPLATE =
+                """
+                <html><head><script>
+                console.log("something interesting");
+                %s
+                </script></head><body><H1>Redirect</H1></body></html>
+                """;
+
+        private static Stream<Arguments> commentProvider() {
+            return Stream.of(
+                    // Some need to be double escaped because of Java
+                    Arguments.of("Empty line comment", "//", "//"),
+                    Arguments.of("Empty block comment", "/**/", "/**/"),
+                    Arguments.of("Block comment", "/*  comment \\n*/", "/*  comment \\n*/"),
+                    Arguments.of(
+                            "Line comment with CRLF",
+                            "console.log('x'); // comment\\r\\nconsole.log('y');",
+                            "// comment\\r\\nconsole.log('y');"),
+                    Arguments.of(
+                            "Block comment containing line terminator + line comment",
+                            "/* block start\\n// inside block */ console.log('x');",
+                            "/* block start\\n// inside block */"),
+                    Arguments.of(
+                            "Escaped quote before comment",
+                            "console.log('it\\'s fine'); // real comment",
+                            "// real comment"),
+                    Arguments.of(
+                            "Escaped backslash before comment",
+                            "console.log('c:\\\\'); // comment",
+                            "// comment"),
+                    Arguments.of("Single line", "// comment ", "// comment"),
+                    Arguments.of(
+                            "Block inside Single line", "// /* comment; */", "// /* comment; */"),
+                    Arguments.of(
+                            "Single line inside Block comment",
+                            "/*  comment \\n // example */",
+                            "/*  comment \\n // example */"),
+                    Arguments.of(
+                            "Inline block",
+                            "console.log(\"example\"); /* console.log('comment'); */",
+                            "/* console.log('comment'); */"),
+                    Arguments.of(
+                            "Inline incomplete block",
+                            // What do we really want in this case?
+                            "console.log(\"example\"); /* console.log('comment'); ",
+                            "/* console.log('comment'); \n</script></head><body><H1>Redirect</H1></body></html>"),
+                    Arguments.of(
+                            "Inline single line",
+                            "console.log(\"example\"); // console.log('comment'));",
+                            "// console.log('comment'));"),
+                    Arguments.of(
+                            "Inline single line (w/ unicode escape)",
+                            "console.log(\"🔥 example\"); // console.log('\\u1F525 example');",
+                            "// console.log('\\u1F525 example');"),
+                    Arguments.of(
+                            "Inline single line (w/ malformed (leading) unicode escape)",
+                            "console.log(\"🔥 example\"); // console.log('\\u 1F525 example');",
+                            "// console.log('\\u 1F525 example');"),
+                    Arguments.of(
+                            "Inline single line (w/ malformed (mid) unicode escape)",
+                            "console.log(\"🔥 example\"); // console.log('\\u1F 525 example');",
+                            "// console.log('\\u1F 525 example');"),
+                    Arguments.of(
+                            "Inline single line (surrogate pair unicode escape)",
+                            "console.log(\"example\"); // console.log('\\uD83D\\uDD25 example');",
+                            "// console.log('\\uD83D\\uDD25 example');"),
+                    Arguments.of(
+                            "Inline single line (malformed surrogate pair unicode escape)",
+                            "console.log(\"example\"); // console.log('\\uD83D\\uD D25 example');",
+                            "// console.log('\\uD83D\\uD D25 example');"),
+                    Arguments.of(
+                            "Inline single line (w/ braced unicode escape)",
+                            "console.log(\"🔥 example\"); // console.log('\\u{1F525} example');",
+                            "// console.log('\\u{1F525} example');"),
+                    Arguments.of(
+                            "Inline single line (w/ malformed braced unicode escape)",
+                            "console.log(\"🔥 example\"); // console.log('\\u {1F525} example');",
+                            "// console.log('\\u {1F525} example');"),
+                    Arguments.of(
+                            "Line comment terminated by LS",
+                            "console.log('x'); // comment\\u2028console.log('y');",
+                            "// comment\\u2028console.log('y');"),
+                    Arguments.of(
+                            "Line comment terminated by PS",
+                            "console.log('x'); // comment\\u2029console.log('y');",
+                            "// comment\\u2029console.log('y');"),
+                    Arguments.of(
+                            "Inline single line (octal escape)",
+                            "console.log(\"example\"); // console.log('\\141 example');",
+                            "// console.log('\\141 example');"),
+                    Arguments.of(
+                            "Inline single line (malformed octal)",
+                            "console.log(\"example\"); // console.log('\\8 example');",
+                            "// console.log('\\8 example');"),
+                    Arguments.of(
+                            "Inline single line (w/ hex escape)",
+                            "console.log(\"example\"); // console.log('\\x41 example');",
+                            "// console.log('\\x41 example');"),
+                    Arguments.of(
+                            "Inline single line (w/ malformed (leading) hex escape)",
+                            "console.log(\"example\"); // console.log('\\x 41 example');",
+                            "// console.log('\\x 41 example');"),
+                    Arguments.of(
+                            "Inline single line (w/ malformed (mid) hex escape)",
+                            "console.log(\"example\"); // console.log('\\x4 1 example');",
+                            "// console.log('\\x4 1 example');"),
+                    Arguments.of(
+                            "Inline single line (w/ single char escapes)",
+                            "console.log(\"example\"); // console.log('\\r\\n\\t example');",
+                            "// console.log('\\r\\n\\t example');"),
+                    Arguments.of(
+                            "Embedded template expression",
+                            "console.log('value ${1 + 1}'); // comment;",
+                            "// comment;"),
+                    Arguments.of(
+                            "Escaped quote inside template expression",
+                            "console.log(`value ${ 'it\\'s ok' }`); // trailing comment",
+                            "// trailing comment"),
+                    Arguments.of(
+                            "Template literal with embedded expression",
+                            "console.log(`value ${1 + 1}`); // comment;",
+                            "// comment;"),
+                    Arguments.of(
+                            "Template literal expression containing //",
+                            "console.log(\"value ${ 'not // a comment' }\"); // real comment example",
+                            "// real comment example"),
+                    Arguments.of(
+                            "Multiline template literal containing //",
+                            "console.log(`line1\n// not a comment\nline2`); // real comment",
+                            "// real comment"),
+                    Arguments.of(
+                            "Template literal containing /* ... */ text",
+                            "console.log(`this is not /* a comment */`); // real comment",
+                            "// real comment"),
+                    Arguments.of(
+                            "Template expression with string containing //",
+                            "console.log(`value ${ 'ignore // here' }`); // real comment",
+                            "// real comment"),
+                    Arguments.of(
+                            "Inline single line (null escape)",
+                            "console.log(\"example\"); // console.log('\\0 content');",
+                            "// console.log('\\0 content');"),
+                    Arguments.of(
+                            "Template literal with escaped backtick",
+                            "console.log(\"escaped \\` backtick\"); // trailing comment example",
+                            "// trailing comment example"),
+                    Arguments.of(
+                            "Nested template expression inside literal",
+                            "console.log(`outer ${ `inner ${1+1}` }`); // trailing comment",
+                            "// trailing comment"),
+                    Arguments.of(
+                            "Inline single line (null escape)",
+                            "console.log(\"example\"); // console.log('\\0 content');",
+                            "// console.log('\\0 content');"),
+                    Arguments.of(
+                            "Inline single line (VT/FF escape)",
+                            "console.log(\"example\"); // console.log('\\v\\f content');",
+                            "// console.log('\\v\\f content');"),
+                    Arguments.of(
+                            "Division before comment",
+                            "var x = 42 / 2; // division is not regex",
+                            "// division is not regex"),
+                    Arguments.of(
+                            "Template expression with inner comment",
+                            // Is this the behavior we want? I believe this should either be both or
+                            // just trailing. The current result seems wrong to me.
+                            "console.log(`outer ${ /* inner comment */ 42 }`); // trailing comment",
+                            "/* inner comment */"),
+                    Arguments.of(
+                            "Multiline nested template expression",
+                            "console.log(`line1 ${ `inner ${42} \\nline2 // not comment` }`); // real comment",
+                            "// real comment"),
+                    Arguments.of(
+                            "Nested template with string containing comment-like text",
+                            "console.log(`outer ${ 'string // not comment' }`); // real comment",
+                            "// real comment"),
+                    // This results in a zero comments situation. I believe that's likely fine as
+                    // the unterminated literal should be an app failure on it's own
+                    //                    Arguments.of(
+                    //                            "Unterminated template literal",
+                    //                            "console.log(`unterminated template ${1+1} //
+                    // comment not terminated", "?"),
+                    Arguments.of(
+                            "Regex literal followed by comment",
+                            "var re = /abc/; // trailing comment",
+                            "// trailing comment"),
+                    Arguments.of(
+                            "Regex literal containing // inside character class",
+                            "var re = /a\\/\\/b/; // trailing comment",
+                            "// trailing comment"),
+                    Arguments.of(
+                            "Regex literal containing /* ... */ in class",
+                            "var re = /a\\/\\*b/; // trailing comment",
+                            "// trailing comment"));
+        }
+
+        @ParameterizedTest(name = "{0}")
+        @MethodSource("commentProvider")
+        void shouldFindAComment(String name, String content, String expected) {
+            // Given / When
+            Set<String> comments =
+                    ExternalRedirectScanRule.extractJsComments(BODY_TEMPLATE.formatted(content));
+            // Then
+            assertThat(comments, hasSize(1));
+            assertThat(comments.iterator().next(), is(equalTo(expected)));
+        }
+
+        private static Stream<Arguments> sequentialCommentsProvider() {
+            return Stream.of(
+                    Arguments.of(
+                            "Single line comment sequence",
+                            "// first\n//second\nconsole.log('x');"),
+                    Arguments.of(
+                            "Single line and block comment sequence",
+                            "// first\n/*second*/\nconsole.log('x');"),
+                    Arguments.of(
+                            "Block comment sequence", "/* first*/\n/*second*/\nconsole.log('x');"));
+        }
+
+        @ParameterizedTest(name = "{0}")
+        @MethodSource("sequentialCommentsProvider")
+        void shouldIdentifyMultipleComments(String name, String comment) {
+            // Given / When
+            Set<String> comments =
+                    ExternalRedirectScanRule.extractJsComments(BODY_TEMPLATE.formatted(comment));
+            // Then
+            assertThat(comments, hasSize(2));
+        }
+
+        private static Stream<Arguments> nonCommentStringsProvider() {
+            return Stream.of(
+                    Arguments.of("String containing //", "console.log('not // a comment');"),
+                    Arguments.of(
+                            "String containing /* */",
+                            "console.log('not /* a comment */ either');"),
+                    Arguments.of(
+                            "Unterminated string before comment",
+                            "console.log('unterminated // not a comment"));
+        }
+
+        @ParameterizedTest(name = "{0}")
+        @MethodSource("nonCommentStringsProvider")
+        void shouldNotFindAComment(String name, String content) {
+            // Given / When
+            Set<String> comments =
+                    ExternalRedirectScanRule.extractJsComments(BODY_TEMPLATE.formatted(content));
+            // Then
+            assertThat(comments, is(empty()));
+        }
+    }
 }
+;
