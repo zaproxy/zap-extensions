@@ -7,7 +7,7 @@
 				<tocitem text="GUI" target="automation.gui"/>
 				<tocitem text="Options" target="automation.options"/>
 				<tocitem text="Environment" target="automation.env"/>
-				<tocitem text="Authentication" target="automation.auth"/>
+				<tocitem text="認証" target="automation.auth"/>
 				<tocitem text="Job: addOns" target="automation.addons"/>
 				<tocitem text="Job: activeScan-config" target="automation.ascanconfig"/>
 				<tocitem text="Job: activeScan-policy" target="automation.ascanpolicy"/>
