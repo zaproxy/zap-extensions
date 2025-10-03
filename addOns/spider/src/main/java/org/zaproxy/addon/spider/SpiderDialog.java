@@ -55,8 +55,7 @@ public class SpiderDialog extends StandardFieldsDialog {
     private static final String FIELD_MAX_DEPTH = "spider.custom.label.maxDepth";
     private static final String FIELD_MAX_CHILDREN = "spider.custom.label.maxChildren";
     private static final String FIELD_MAX_DURATION = "spider.custom.label.maxDuration";
-    private static final String FIELD_MAX_PARSE_SIZE_BYTES =
-            "spider.custom.label.maxParseSizeBytes";
+    private static final String FIELD_MAX_PARSE_SIZE_BYTES = "spider.custom.label.maxParseSizeBytes";
     private static final String FIELD_SEND_REFERER = "spider.custom.label.sendReferer";
     private static final String FIELD_ACCEPT_COOKIES = "spider.custom.label.acceptcookies";
     private static final String FIELD_PROCESS_FORMS = "spider.custom.label.processForms";
@@ -82,14 +81,15 @@ public class SpiderDialog extends StandardFieldsDialog {
     /**
      * Flag that holds the previous checked state of the "Subtree Only" checkbox.
      *
-     * <p>Used to restore the previous checked state between dialogue invocations.
+     * <p>
+     * Used to restore the previous checked state between dialogue invocations.
      *
      * @see #FIELD_SUBTREE_ONLY
      */
     private boolean subtreeOnlyPreviousCheckedState;
 
-    private ExtensionUserManagement extUserMgmt =
-            Control.getSingleton().getExtensionLoader().getExtension(ExtensionUserManagement.class);
+    private ExtensionUserManagement extUserMgmt = Control.getSingleton().getExtensionLoader()
+            .getExtension(ExtensionUserManagement.class);
 
     private Target target;
 
@@ -98,7 +98,7 @@ public class SpiderDialog extends StandardFieldsDialog {
                 owner,
                 "spider.custom.title",
                 dim,
-                new String[] {"spider.custom.tab.scope", "spider.custom.tab.adv"});
+                new String[] { "spider.custom.tab.scope", "spider.custom.tab.adv" });
         this.extension = ext;
 
         // The first time init to the default options set, after that keep own copies
@@ -187,7 +187,8 @@ public class SpiderDialog extends StandardFieldsDialog {
                 });
 
         if (target != null) {
-            // Set up the fields if a node has been specified, otherwise leave as previously set
+            // Set up the fields if a node has been specified, otherwise leave as previously
+            // set
             this.targetSelected(FIELD_START, this.target);
             this.setUsers();
         }
@@ -204,7 +205,8 @@ public class SpiderDialog extends StandardFieldsDialog {
 
     private SpiderParam getSpiderParam() {
         if (spiderParam == null) {
-            // First time in clone the global options, after that keep the last ones the user set
+            // First time in clone the global options, after that keep the last ones the
+            // user set
             spiderParam = (SpiderParam) extension.getSpiderParam().clone();
         }
         return spiderParam;
@@ -212,7 +214,7 @@ public class SpiderDialog extends StandardFieldsDialog {
 
     private void setAdvancedTabs(boolean visible) {
         // Show/hide all except from the first tab
-        this.setTabsVisible(new String[] {"spider.custom.tab.adv"}, visible);
+        this.setTabsVisible(new String[] { "spider.custom.tab.adv" }, visible);
     }
 
     @Override
@@ -254,8 +256,7 @@ public class SpiderDialog extends StandardFieldsDialog {
         Context context = this.getSelectedContext();
         if (context != null) {
             String userName = this.getStringValue(FIELD_USER);
-            List<User> users =
-                    this.extUserMgmt.getContextUserAuthManager(context.getId()).getUsers();
+            List<User> users = this.extUserMgmt.getContextUserAuthManager(context.getId()).getUsers();
             for (User user : users) {
                 if (userName.equals(user.getName())) {
                     return user;
@@ -269,8 +270,7 @@ public class SpiderDialog extends StandardFieldsDialog {
         Context context = this.getSelectedContext();
         List<String> userNames = new ArrayList<>();
         if (context != null) {
-            List<User> users =
-                    this.extUserMgmt.getContextUserAuthManager(context.getId()).getUsers();
+            List<User> users = this.extUserMgmt.getContextUserAuthManager(context.getId()).getUsers();
             userNames.add(""); // The default should always be 'not specified'
             for (User user : users) {
                 userNames.add(user.getName());
@@ -299,8 +299,7 @@ public class SpiderDialog extends StandardFieldsDialog {
     @Override
     public JButton[] getExtraButtons() {
         if (extraButtons == null) {
-            JButton resetButton =
-                    new JButton(Constant.messages.getString("spider.custom.button.reset"));
+            JButton resetButton = new JButton(Constant.messages.getString("spider.custom.button.reset"));
             resetButton.addActionListener(
                     new java.awt.event.ActionListener() {
                         @Override
@@ -309,7 +308,7 @@ public class SpiderDialog extends StandardFieldsDialog {
                         }
                     });
 
-            extraButtons = new JButton[] {resetButton};
+            extraButtons = new JButton[] { resetButton };
         }
         return extraButtons;
     }
@@ -392,7 +391,8 @@ public class SpiderDialog extends StandardFieldsDialog {
             try {
                 // Need both constructors as they catch slightly different issues ;)
                 new URI(url, true);
-                new URL(url);
+                // java.net.URL(String) is deprecated in newer JDKs; use URI -> URL
+                new java.net.URI(url).toURL();
             } catch (Exception e) {
                 return Constant.messages.getString("spider.custom.nostart.error");
             }

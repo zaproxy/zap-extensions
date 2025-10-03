@@ -23,9 +23,7 @@ import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.net.URL;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
@@ -36,7 +34,6 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
-import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -333,16 +330,23 @@ public class ImportDialog extends AbstractDialog {
         }
 
         try {
-            new URL(definitionLocation).toURI();
-            var uri = new URI(definitionLocation, true);
-            return extOpenApi.importOpenApiDefinition(
-                            uri,
-                            getTargetField().getText(),
-                            true,
-                            getSelectedContextId(),
-                            getSelectedUser())
-                    == null;
-        } catch (URIException | MalformedURLException | URISyntaxException ignored) {
+            // Validate the definitionLocation as a URI without using the deprecated
+            // URL(String) constructor. Parse once with java.net.URI then build the
+            // apache httpclient URI from the ASCII/escaped form if the URI is absolute.
+            java.net.URI juri = new java.net.URI(definitionLocation);
+            if (juri.isAbsolute()) {
+                org.apache.commons.httpclient.URI uri =
+                        new org.apache.commons.httpclient.URI(juri.toASCIIString(), true);
+                return extOpenApi.importOpenApiDefinition(
+                                uri,
+                                getTargetField().getText(),
+                                true,
+                                getSelectedContextId(),
+                                getSelectedUser())
+                        == null;
+            }
+            // Not absolute -> treat as a file path (fall through)
+        } catch (URIException | URISyntaxException ignored) {
             // Not a valid URI, try to import as a file
         } catch (InvalidUrlException e) {
             ThreadUtils.invokeAndWaitHandled(
