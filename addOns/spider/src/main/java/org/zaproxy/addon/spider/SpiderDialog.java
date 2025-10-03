@@ -23,7 +23,6 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JButton;
@@ -55,7 +54,8 @@ public class SpiderDialog extends StandardFieldsDialog {
     private static final String FIELD_MAX_DEPTH = "spider.custom.label.maxDepth";
     private static final String FIELD_MAX_CHILDREN = "spider.custom.label.maxChildren";
     private static final String FIELD_MAX_DURATION = "spider.custom.label.maxDuration";
-    private static final String FIELD_MAX_PARSE_SIZE_BYTES = "spider.custom.label.maxParseSizeBytes";
+    private static final String FIELD_MAX_PARSE_SIZE_BYTES =
+            "spider.custom.label.maxParseSizeBytes";
     private static final String FIELD_SEND_REFERER = "spider.custom.label.sendReferer";
     private static final String FIELD_ACCEPT_COOKIES = "spider.custom.label.acceptcookies";
     private static final String FIELD_PROCESS_FORMS = "spider.custom.label.processForms";
@@ -81,15 +81,14 @@ public class SpiderDialog extends StandardFieldsDialog {
     /**
      * Flag that holds the previous checked state of the "Subtree Only" checkbox.
      *
-     * <p>
-     * Used to restore the previous checked state between dialogue invocations.
+     * <p>Used to restore the previous checked state between dialogue invocations.
      *
      * @see #FIELD_SUBTREE_ONLY
      */
     private boolean subtreeOnlyPreviousCheckedState;
 
-    private ExtensionUserManagement extUserMgmt = Control.getSingleton().getExtensionLoader()
-            .getExtension(ExtensionUserManagement.class);
+    private ExtensionUserManagement extUserMgmt =
+            Control.getSingleton().getExtensionLoader().getExtension(ExtensionUserManagement.class);
 
     private Target target;
 
@@ -98,7 +97,7 @@ public class SpiderDialog extends StandardFieldsDialog {
                 owner,
                 "spider.custom.title",
                 dim,
-                new String[] { "spider.custom.tab.scope", "spider.custom.tab.adv" });
+                new String[] {"spider.custom.tab.scope", "spider.custom.tab.adv"});
         this.extension = ext;
 
         // The first time init to the default options set, after that keep own copies
@@ -214,7 +213,7 @@ public class SpiderDialog extends StandardFieldsDialog {
 
     private void setAdvancedTabs(boolean visible) {
         // Show/hide all except from the first tab
-        this.setTabsVisible(new String[] { "spider.custom.tab.adv" }, visible);
+        this.setTabsVisible(new String[] {"spider.custom.tab.adv"}, visible);
     }
 
     @Override
@@ -256,7 +255,8 @@ public class SpiderDialog extends StandardFieldsDialog {
         Context context = this.getSelectedContext();
         if (context != null) {
             String userName = this.getStringValue(FIELD_USER);
-            List<User> users = this.extUserMgmt.getContextUserAuthManager(context.getId()).getUsers();
+            List<User> users =
+                    this.extUserMgmt.getContextUserAuthManager(context.getId()).getUsers();
             for (User user : users) {
                 if (userName.equals(user.getName())) {
                     return user;
@@ -270,7 +270,8 @@ public class SpiderDialog extends StandardFieldsDialog {
         Context context = this.getSelectedContext();
         List<String> userNames = new ArrayList<>();
         if (context != null) {
-            List<User> users = this.extUserMgmt.getContextUserAuthManager(context.getId()).getUsers();
+            List<User> users =
+                    this.extUserMgmt.getContextUserAuthManager(context.getId()).getUsers();
             userNames.add(""); // The default should always be 'not specified'
             for (User user : users) {
                 userNames.add(user.getName());
@@ -299,7 +300,8 @@ public class SpiderDialog extends StandardFieldsDialog {
     @Override
     public JButton[] getExtraButtons() {
         if (extraButtons == null) {
-            JButton resetButton = new JButton(Constant.messages.getString("spider.custom.button.reset"));
+            JButton resetButton =
+                    new JButton(Constant.messages.getString("spider.custom.button.reset"));
             resetButton.addActionListener(
                     new java.awt.event.ActionListener() {
                         @Override
@@ -308,7 +310,7 @@ public class SpiderDialog extends StandardFieldsDialog {
                         }
                     });
 
-            extraButtons = new JButton[] { resetButton };
+            extraButtons = new JButton[] {resetButton};
         }
         return extraButtons;
     }

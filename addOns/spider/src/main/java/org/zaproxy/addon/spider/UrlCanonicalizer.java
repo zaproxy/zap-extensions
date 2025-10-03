@@ -38,18 +38,14 @@ import org.zaproxy.addon.spider.SpiderParam.HandleParametersOption;
 import org.zaproxy.addon.spider.parser.ParseContext;
 
 /**
- * The UrlCanonicalizer is used for the process of converting an URL into a
- * canonical (normalized)
- * form. See <a href="http://en.wikipedia.org/wiki/URL_normalization">URL
- * Normalization</a> for a
+ * The UrlCanonicalizer is used for the process of converting an URL into a canonical (normalized)
+ * form. See <a href="http://en.wikipedia.org/wiki/URL_normalization">URL Normalization</a> for a
  * reference.
  *
- * <p>
- * Note: some parts of the code are adapted from: <a
+ * <p>Note: some parts of the code are adapted from: <a
  * href="http://stackoverflow.com/a/4057470/405418">stackoverflow</a>
  *
- * <p>
- * Added support for OData URLs
+ * <p>Added support for OData URLs
  */
 public final class UrlCanonicalizer {
 
@@ -63,30 +59,29 @@ public final class UrlCanonicalizer {
     private static final int HTTPS_DEFAULT_PORT = 443;
 
     /**
-     * OData support Extract the ID of a resource including the surrounding quote
-     * First group is the
-     * resource_name Second group is the ID (quote will be taken as part of the
-     * value)
+     * OData support Extract the ID of a resource including the surrounding quote First group is the
+     * resource_name Second group is the ID (quote will be taken as part of the value)
      */
-    private static final Pattern PATTERN_RESOURCE_IDENTIFIER_UNQUOTED = Pattern.compile("/([\\w%]*)\\(([\\w']*)\\)");
+    private static final Pattern PATTERN_RESOURCE_IDENTIFIER_UNQUOTED =
+            Pattern.compile("/([\\w%]*)\\(([\\w']*)\\)");
 
     /** OData support Detect a section containing a composite IDs */
-    private static final Pattern PATTERN_RESOURCE_MULTIPLE_IDENTIFIER = Pattern.compile("/[\\w%]*\\((.*)\\)");
+    private static final Pattern PATTERN_RESOURCE_MULTIPLE_IDENTIFIER =
+            Pattern.compile("/[\\w%]*\\((.*)\\)");
 
     /** OData support Extract the detail of the multiples IDs */
-    private static final Pattern PATTERN_RESOURCE_MULTIPLE_IDENTIFIER_DETAIL = Pattern.compile("([\\w%]*)=([\\w']*)");
+    private static final Pattern PATTERN_RESOURCE_MULTIPLE_IDENTIFIER_DETAIL =
+            Pattern.compile("([\\w%]*)=([\\w']*)");
 
     /** Private constructor to avoid initialization of object. */
-    private UrlCanonicalizer() {
-    }
+    private UrlCanonicalizer() {}
 
     /**
-     * Gets the canonical url, starting from a relative or absolute url found in a
-     * given context
+     * Gets the canonical url, starting from a relative or absolute url found in a given context
      * (baseURL).
      *
-     * @param ctx     the parse context.
-     * @param url     the url string defining the reference
+     * @param ctx the parse context.
+     * @param url the url string defining the reference
      * @param baseURL the context in which this url was found
      * @return the canonical url
      */
@@ -157,9 +152,11 @@ public final class UrlCanonicalizer {
             path = path.trim();
 
             /* Process parameters and sort them. */
-            final SortedSet<QueryParameter> params = createSortedParameters(canonicalURI.getRawQuery());
+            final SortedSet<QueryParameter> params =
+                    createSortedParameters(canonicalURI.getRawQuery());
             final String queryString;
-            String canonicalParams = canonicalize(params, ctx.getSpiderParam()::isIrrelevantUrlParameter);
+            String canonicalParams =
+                    canonicalize(params, ctx.getSpiderParam()::isIrrelevantUrlParameter);
             queryString = (canonicalParams.isEmpty() ? "" : "?" + canonicalParams);
 
             /* Add starting slash if needed */
@@ -179,7 +176,8 @@ public final class UrlCanonicalizer {
             String pathAndQueryString = normalizePath(path) + queryString;
 
             // URL(String,String,int,String) is deprecated; construct via URI
-            java.net.URI tmpUri = new java.net.URI(protocol, null, host, port, pathAndQueryString, null, null);
+            java.net.URI tmpUri =
+                    new java.net.URI(protocol, null, host, port, pathAndQueryString, null, null);
             URL result = tmpUri.toURL();
             return result.toExternalForm();
 
@@ -196,13 +194,11 @@ public final class UrlCanonicalizer {
     /**
      * Tells whether or not the given port is the default for the given scheme.
      *
-     * <p>
-     * <strong>Note:</strong> Only HTTP and HTTPS schemes are taken into account.
+     * <p><strong>Note:</strong> Only HTTP and HTTPS schemes are taken into account.
      *
      * @param scheme the scheme
-     * @param port   the port
-     * @return {@code true} if given the port is the default port for the given
-     *         scheme, {@code
+     * @param port the port
+     * @return {@code true} if given the port is the default port for the given scheme, {@code
      *     false} otherwise.
      */
     private static boolean isDefaultPort(String scheme, int port) {
@@ -220,25 +216,19 @@ public final class UrlCanonicalizer {
     }
 
     /**
-     * Builds a String representation of the URI with cleaned parameters, that can
-     * be used when
-     * checking if an URI was already visited. The URI provided as a parameter
-     * should be already
+     * Builds a String representation of the URI with cleaned parameters, that can be used when
+     * checking if an URI was already visited. The URI provided as a parameter should be already
      * cleaned and canonicalized, so it should be build with a result from {@link
      * #getCanonicalURL(String)}.
      *
-     * <p>
-     * When building the URI representation, the same format should be used for all
-     * the cases, as
-     * it may affect the number of times the pages are visited and reported if the
-     * option
+     * <p>When building the URI representation, the same format should be used for all the cases, as
+     * it may affect the number of times the pages are visited and reported if the option
      * HandleParametersOption is changed while the spider is running.
      *
-     * @param uri                          the uri
-     * @param handleParameters             the handle parameters option
-     * @param handleODataParametersVisited Should we handle specific OData
-     *                                     parameters
-     * @param irrelevantParameter          a predicate to ignore parameters.
+     * @param uri the uri
+     * @param handleParameters the handle parameters option
+     * @param handleODataParametersVisited Should we handle specific OData parameters
+     * @param irrelevantParameter a predicate to ignore parameters.
      * @return the string representation of the URI
      * @throws URIException the URI exception
      */
@@ -266,9 +256,10 @@ public final class UrlCanonicalizer {
         // name to the
         // query
         if (handleParameters.equals(HandleParametersOption.IGNORE_VALUE)) {
-            StringBuilder retVal = new StringBuilder(
-                    createBaseUriWithCleanedPath(
-                            uri, handleParameters, handleODataParametersVisited));
+            StringBuilder retVal =
+                    new StringBuilder(
+                            createBaseUriWithCleanedPath(
+                                    uri, handleParameters, handleODataParametersVisited));
 
             String cleanedQuery = getCleanedQuery(uri.getEscapedQuery(), irrelevantParameter);
 
@@ -352,11 +343,10 @@ public final class UrlCanonicalizer {
     }
 
     /**
-     * Clean the path in the case of an OData Uri containing a resource identifier
-     * (simple or
+     * Clean the path in the case of an OData Uri containing a resource identifier (simple or
      * multiple)
      *
-     * @param path             The path to clean
+     * @param path The path to clean
      * @param handleParameters tThe cleaning mode
      * @return A cleaned path
      */
@@ -407,8 +397,9 @@ public final class UrlCanonicalizer {
                     } else {
                         StringBuilder sb = new StringBuilder(beforeSubstring);
 
-                        matcher = PATTERN_RESOURCE_MULTIPLE_IDENTIFIER_DETAIL.matcher(
-                                multipleIdentifierSection);
+                        matcher =
+                                PATTERN_RESOURCE_MULTIPLE_IDENTIFIER_DETAIL.matcher(
+                                        multipleIdentifierSection);
                         int i = 1;
                         while (matcher.find()) {
 
@@ -431,14 +422,12 @@ public final class UrlCanonicalizer {
     }
 
     /**
-     * Creates a sorted set with all the parameters from the given {@code query},
-     * ordered
+     * Creates a sorted set with all the parameters from the given {@code query}, ordered
      * lexicographically by name and value.
      *
      * @param queryString the query string
-     * @return a sorted set with all parameters, or {@code null} if the query string
-     *         is {@code null}
-     *         or empty.
+     * @return a sorted set with all parameters, or {@code null} if the query string is {@code null}
+     *     or empty.
      */
     private static SortedSet<QueryParameter> createSortedParameters(final String queryString) {
         if (queryString == null || queryString.isEmpty()) {
@@ -473,8 +462,7 @@ public final class UrlCanonicalizer {
     /**
      * Canonicalize the query string.
      *
-     * @param sortedParameters    Parameter name-value pairs in lexicographical
-     *                            order.
+     * @param sortedParameters Parameter name-value pairs in lexicographical order.
      * @param irrelevantParameter url parameters that are skipped
      * @return Canonical form of query string.
      */
@@ -516,8 +504,7 @@ public final class UrlCanonicalizer {
     /**
      * A query parameter, with non-{@code null} name and value.
      *
-     * <p>
-     * The query parameters are ordered by name and value.
+     * <p>The query parameters are ordered by name and value.
      */
     private static class QueryParameter implements Comparable<QueryParameter> {
 
