@@ -26,6 +26,7 @@ import io.netty.util.concurrent.DefaultThreadFactory;
 import io.netty.util.concurrent.EventExecutorGroup;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.Authenticator;
 import java.net.BindException;
 import java.net.InetAddress;
@@ -156,6 +157,8 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     private static final int ARG_HOST_IDX = 3;
     private static final int ARG_PORT_IDX = 4;
 
+    private Method resetWarnedContentTypeValuesMethod;
+
     private CloseableHttpSenderImpl<?> httpSenderNetwork;
 
     @SuppressWarnings("deprecation")
@@ -253,6 +256,13 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
             HttpSender.setImpl(httpSenderNetwork);
         } catch (Exception e) {
             LOGGER.error("An error occurred while creating the sender:", e);
+        }
+
+        try {
+            resetWarnedContentTypeValuesMethod =
+                    HttpMessage.class.getDeclaredMethod("resetWarnedContentTypeValues");
+        } catch (Exception e) {
+            // Nothing to do, method only available in newer core.
         }
     }
 
@@ -1634,7 +1644,15 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         }
 
         @Override
-        public void sessionAboutToChange(Session session) {}
+        public void sessionAboutToChange(Session session) {
+            if (resetWarnedContentTypeValuesMethod != null) {
+                try {
+                    resetWarnedContentTypeValuesMethod.invoke(null);
+                } catch (Exception e) {
+                    // Ignore, nothing to do.
+                }
+            }
+        }
 
         @Override
         public void sessionScopeChanged(Session session) {}
