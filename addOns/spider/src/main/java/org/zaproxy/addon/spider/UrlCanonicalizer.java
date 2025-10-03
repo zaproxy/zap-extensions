@@ -130,8 +130,7 @@ public final class UrlCanonicalizer {
             }
 
             /*
-             * Normalize: no empty segments (i.e., "//"), no segments equal to ".", and no
-             * segments equal to
+             * Normalize: no empty segments (i.e., "//"), no segments equal to ".", and no segments equal to
              * ".." that are preceded by a segment not equal to "..".
              */
             String path = canonicalURI.normalize().getRawPath();
@@ -175,10 +174,7 @@ public final class UrlCanonicalizer {
             String host = canonicalURI.getHost().toLowerCase();
             String pathAndQueryString = normalizePath(path) + queryString;
 
-            // URL(String,String,int,String) is deprecated; construct via URI
-            java.net.URI tmpUri =
-                    new java.net.URI(protocol, null, host, port, pathAndQueryString, null, null);
-            URL result = tmpUri.toURL();
+            URL result = new URL(protocol, host, port, pathAndQueryString);
             return result.toExternalForm();
 
         } catch (Exception ex) {
@@ -244,15 +240,13 @@ public final class UrlCanonicalizer {
             return uri.toString();
         }
 
-        // If the option is set to ignore parameters completely, ignore the query
-        // completely
+        // If the option is set to ignore parameters completely, ignore the query completely
         if (handleParameters.equals(HandleParametersOption.IGNORE_COMPLETELY)) {
             return createBaseUriWithCleanedPath(
                     uri, handleParameters, handleODataParametersVisited);
         }
 
-        // If the option is set to ignore the value, we get the parameters and we only
-        // add their
+        // If the option is set to ignore the value, we get the parameters and we only add their
         // name to the
         // query
         if (handleParameters.equals(HandleParametersOption.IGNORE_VALUE)) {

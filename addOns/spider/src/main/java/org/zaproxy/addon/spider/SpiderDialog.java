@@ -23,6 +23,7 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JButton;
@@ -186,8 +187,7 @@ public class SpiderDialog extends StandardFieldsDialog {
                 });
 
         if (target != null) {
-            // Set up the fields if a node has been specified, otherwise leave as previously
-            // set
+            // Set up the fields if a node has been specified, otherwise leave as previously set
             this.targetSelected(FIELD_START, this.target);
             this.setUsers();
         }
@@ -204,8 +204,7 @@ public class SpiderDialog extends StandardFieldsDialog {
 
     private SpiderParam getSpiderParam() {
         if (spiderParam == null) {
-            // First time in clone the global options, after that keep the last ones the
-            // user set
+            // First time in clone the global options, after that keep the last ones the user set
             spiderParam = (SpiderParam) extension.getSpiderParam().clone();
         }
         return spiderParam;
@@ -393,8 +392,7 @@ public class SpiderDialog extends StandardFieldsDialog {
             try {
                 // Need both constructors as they catch slightly different issues ;)
                 new URI(url, true);
-                // java.net.URL(String) is deprecated in newer JDKs; use URI -> URL
-                new java.net.URI(url).toURL();
+                new URL(url);
             } catch (Exception e) {
                 return Constant.messages.getString("spider.custom.nostart.error");
             }
