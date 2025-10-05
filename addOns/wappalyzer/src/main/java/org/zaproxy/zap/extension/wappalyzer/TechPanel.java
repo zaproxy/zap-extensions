@@ -39,6 +39,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -50,14 +51,17 @@ import org.jdesktop.swingx.renderer.StringValues;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.AbstractPanel;
+import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.SortedComboBoxModel;
 import org.zaproxy.zap.utils.TableExportButton;
+import org.zaproxy.zap.view.SiteMapListener;
+import org.zaproxy.zap.view.SiteMapTreeCellRenderer;
 import org.zaproxy.zap.view.ZapToggleButton;
 
 @SuppressWarnings("serial")
-public class TechPanel extends AbstractPanel {
+public class TechPanel extends AbstractPanel implements SiteMapListener {
 
     private static final long serialVersionUID = 1L;
 
@@ -76,8 +80,11 @@ public class TechPanel extends AbstractPanel {
     private TechTableModel techModel = new TechTableModel();
 
     private TableExportButton<JXTable> exportButton = null;
+    private ZapToggleButton linkWithSitesTreeButton = null;
     private ZapToggleButton enableButton = null;
     private JButton optionsButton;
+
+    private boolean linkWithSitesTreeSelection;
 
     private static final Icon TRANSPARENT_ICON =
             new Icon() {
@@ -167,6 +174,7 @@ public class TechPanel extends AbstractPanel {
             panelToolbar.add(
                     new JLabel(Constant.messages.getString("wappalyzer.toolbar.site.label")));
             panelToolbar.add(getSiteSelect());
+            panelToolbar.add(getLinkWithSitesTreeButton());
             panelToolbar.add(getExportButton());
             panelToolbar.add(getEnableToggleButton());
 
@@ -385,5 +393,45 @@ public class TechPanel extends AbstractPanel {
                                                     "wappalyzer.optionspanel.name")));
         }
         return optionsButton;
+    }
+
+    private JToggleButton getLinkWithSitesTreeButton() {
+        if (linkWithSitesTreeButton == null) {
+            linkWithSitesTreeButton = new ZapToggleButton();
+            linkWithSitesTreeButton.setIcon(
+                    new ImageIcon(
+                            TechPanel.class.getResource(
+                                    ExtensionWappalyzer.RESOURCE + "/earth-grey.png")));
+            linkWithSitesTreeButton.setToolTipText(
+                    Constant.messages.getString(
+                            "wappalyzer.toolbar.toggle.site.link.disabled.tooltip"));
+            linkWithSitesTreeButton.setSelectedIcon(
+                    new ImageIcon(
+                            TechPanel.class.getResource(
+                                    ExtensionWappalyzer.RESOURCE + "/earth-colour.png")));
+            linkWithSitesTreeButton.setSelectedToolTipText(
+                    Constant.messages.getString(
+                            "wappalyzer.toolbar.toggle.site.link.enabled.tooltip"));
+            DisplayUtils.scaleIcon(linkWithSitesTreeButton);
+
+            linkWithSitesTreeButton.addActionListener(
+                    e -> linkWithSitesTreeSelection = linkWithSitesTreeButton.isSelected());
+            linkWithSitesTreeButton.setSelected(true);
+        }
+        return linkWithSitesTreeButton;
+    }
+
+    @Override
+    public void nodeSelected(SiteNode node) {
+        // Event from SiteMapListenner
+        if (linkWithSitesTreeSelection) {
+            siteSelected(ExtensionWappalyzer.normalizeSite(node.getHistoryReference().getURI()));
+        }
+    }
+
+    @Override
+    public void onReturnNodeRendererComponent(
+            SiteMapTreeCellRenderer component, boolean leaf, SiteNode value) {
+        // Nothing to do
     }
 }

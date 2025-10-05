@@ -56,14 +56,9 @@ import org.zaproxy.zap.extension.alert.ExampleAlertProvider;
 import org.zaproxy.zap.extension.search.ExtensionSearch;
 import org.zaproxy.zap.utils.ThreadUtils;
 import org.zaproxy.zap.view.ScanPanel;
-import org.zaproxy.zap.view.SiteMapListener;
-import org.zaproxy.zap.view.SiteMapTreeCellRenderer;
 
 public class ExtensionWappalyzer extends ExtensionAdaptor
-        implements SessionChangedListener,
-                SiteMapListener,
-                ApplicationHolder,
-                ExampleAlertProvider {
+        implements SessionChangedListener, ApplicationHolder, ExampleAlertProvider {
 
     public static final String NAME = "ExtensionWappalyzer";
 
@@ -175,7 +170,6 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
         super.hook(extensionHook);
 
         extensionHook.addSessionListener(this);
-        extensionHook.addSiteMapListener(this);
 
         if (hasView()) {
             @SuppressWarnings("unused")
@@ -183,6 +177,8 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
             extensionHook.getHookView().addStatusPanel(getTechPanel());
             extensionHook.getHookMenu().addPopupMenuItem(this.getPopupMenuEvidence());
             extensionHook.getHookView().addOptionPanel(new TechOptionsPanel());
+
+            extensionHook.addSiteMapListener(getTechPanel());
         }
 
         extensionHook.addApiImplementor(new TechApi(this));
@@ -364,16 +360,6 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
             getExtensionSearch().search(p.pattern(), type, true, false);
         }
     }
-
-    @Override
-    public void nodeSelected(SiteNode node) {
-        // Event from SiteMapListenner
-        this.getTechPanel().siteSelected(normalizeSite(node.getHistoryReference().getURI()));
-    }
-
-    @Override
-    public void onReturnNodeRendererComponent(
-            SiteMapTreeCellRenderer arg0, boolean arg1, SiteNode arg2) {}
 
     @Override
     public void sessionAboutToChange(Session arg0) {
