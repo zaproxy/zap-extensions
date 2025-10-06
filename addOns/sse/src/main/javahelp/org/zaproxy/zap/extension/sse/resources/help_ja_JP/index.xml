@@ -6,5 +6,5 @@
 <index version="2.0">
     <!-- index entries are merged (sorted) into core index -->
 	<indexitem text="サーバー送信イベント" target="sse.introduction" />
-	<indexitem text="サーバー送信イベントタブ" target="sse.tab" />
+	<indexitem text="サーバー送信イベント タブ" target="sse.tab" />
 </index>

@@ -7,7 +7,7 @@
 	<tocitem text="ZAP ユーザーガイド" tocid="toplevelitem">
 		<tocitem text="アドオン" tocid="addons">
 			<tocitem text="簡単な例" image="simple-icon" target="simple">
-				<tocitem text="About" target="simple.about"/>
+				<tocitem text="このアドオンについて" target="simple.about"/>
 			</tocitem>
 		</tocitem>
 	</tocitem>

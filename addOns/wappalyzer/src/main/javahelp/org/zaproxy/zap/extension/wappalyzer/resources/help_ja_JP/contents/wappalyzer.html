@@ -7,50 +7,48 @@
 <body>
 <h1>テクノロジー検出</h1>
 <p>
-The Technology Detection add-on uses various patterns and finger prints to detect the technologies used by applications.<p>
-It works in a very similar way to the Wappalyzer browser add-ons with the following exceptions:
+テクノロジー検出アドオンは、さまざまなパターンとフィンガープリントを使用して、アプリケーションで使用されている技術を検出します。<p>
+Wappalyzerブラウザアドオンと非常によく似た動作をしますが、以下の点が異なります: 
 <ul>
-<li>It does not use the 'Global JavaScript variables' as these are difficult to test without a 'full' browser</li>
-<li>It does not not show the confidence - this is still todo</li>
-<li>It does not match technologies on the basis of DOM properties as some properties are set by JavaScript in the browser after the response has passed through ZAP</li>
-<li>It allows you to see the 'evidence' used to detect the technologies</li>
+<li>「完全な」ブラウザなしではテストが困難なため、「グローバルJavaScript変数」は使用しません</li>
+<li>信頼度は表示されません - これはまだ未実装です</li>
+<li>一部のプロパティはレスポンスがZAPを通過した後にブラウザ内のJavaScriptによって設定されるため、DOMプロパティに基づいた技術のマッチングは行いません</li>
+<li>テクノロジーを検出するために使用された「証拠」を確認できます</li>
 </ul>
 
-<h2>The Technology Tab</h2>
-This tab shows all of the detected technologies for the site selected.<br>
-Right clicking on a technology will display a 'Show evidence' menu under which are all of the regexes used to detect it.<br>
-Selecting a regex will switch to the 'Search' tab and search through the history for that regex. Note: If multiple rows are selected
-the menu will not be displayed.
+<h2>テクノロジータブ</h2>
+このタブには、選択されたサイトで検出されたすべてのテクノロジーが表示されます。<br>
+テクノロジーを右クリックすると、「証拠を表示」メニューが表示され、その下に検出に使用されたすべての正規表現が表示されます。<br>
+正規表現を選択すると、「検索」タブに切り替わり、その正規表現で履歴を検索します。注: 複数の行が選択されている場合、 メニューは表示されません。
 <p>
-Beside the site selection drop down is an Export button which can be used to export a CSV (comma separated values) file based on the
-table information currently being displayed.
+サイト選択ドロップダウンの横には、エクスポートボタンがあり、現在表示されているテーブル情報に基づいて CSV (カンマ区切り値) ファイルをエクスポートできます。
 <p>
-The toolbar also includes:
+ツールバーには以下も含まれます：
 <ul>
-  <li>An enable/disable toggle button which controls whether the technology detection passive scan rule is functioning or not. This enabled state is persisted between ZAP sessions.</li>
+  <li>テクノロジー検出パッシブスキャンルールが機能しているかどうかを制御する有効/無効切り替えボタン。この有効状態はZAPセッション間で保持されます。</li>
 <ul>
 
-<h2>Reporting</h2>
+<h2>レポート</h2>
 
-Technology data is available to reports via the 
-<a href="https://github.com/zaproxy/zap-extensions/tree/main/addOns/wappalyzer/src/main/java/org/zaproxy/zap/extension/wappalyzer/automation/TechJobResultData.java">TechJobResultData</a> class.
+テクノロジーデータは、  
+<a href="https://github.com/zaproxy/zap-extensions/tree/main/addOns/wappalyzer/src/main/java/org/zaproxy/zap/extension/wappalyzer/automation/TechJobResultData.java">TechJobResultData</a> クラスを介してレポートで利用できます。
 
 <h2>外部リンク</h2>
 <table>
 <tr>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 	<td><a href="https://github.com/enthec/webappanalyzer">Enthec Webappanalyzer</a></td>
-	<td>This project is a continuation of the iconic Wappalyzer that went private in August 2023.</td>
+	<td>このプロジェクトは、2023年8月に非公開になった象徴的なWappalyzerの後継です。</td>
 </tr>
 <tr>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 	<td><a href="https://www.wappalyzer.com/">https://www.wappalyzer.com/</a></td>
-	<td>The Wappalyzer Homepage</td>
+	<td>Wappalyzerホームページ</td>
 </tr>
 <tr>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 	<td>https://github.com/wappalyzer/wappalyzer</td>
-	<td>As of early August 2023 the Wappalyzer Repository is no longer public.</td>
+	<td>2023年8月初旬以降、Wappalyzerリポジトリは非公開になっています。</td>
 </tr>
 </table>
 

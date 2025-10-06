@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE toc PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN" "http://java.sun.com/products/javahelp/toc_2_0.dtd">
 <toc version="2.0">
-    <tocitem text="ZAP User Guide" tocid="toplevelitem">
-        <tocitem text="Add Ons" tocid="addons">
-            <tocitem text="Passive Scanner" image="addon.pscan.icon" target="addon.pscan">
+    <tocitem text="ZAP ユーザーガイド" tocid="toplevelitem">
+        <tocitem text="アドオン" tocid="addons">
+            <tocitem text="パッシブスキャナー" image="addon.pscan.icon" target="addon.pscan">
                 <tocitem text="API" target="addon.pscan.api"/>
-                <tocitem text="Automation Framework" target="addon.pscan.automation">
-                    <tocitem text="Job: passiveScanConfig" target="addon.pscan.automation.pscanconf"/>
-                    <tocitem text="Job: passiveScanWait" target="addon.pscan.automation.pscanwait"/>
+                <tocitem text="自動化フレームワーク" target="addon.pscan.automation">
+                    <tocitem text="ジョブ: パッシブスキャン設定" target="addon.pscan.automation.pscanconf"/>
+                    <tocitem text="ジョブ: パッシブスキャン待機" target="addon.pscan.automation.pscanwait"/>
                 </tocitem>
-                <tocitem text="Options" target="addon.pscan.options">
-                    <tocitem text="Passive Scanner" target="addon.pscan.options.scanner"/>
-                    <tocitem text="Passive Scan Rules" target="addon.pscan.options.rules"/>
-                    <tocitem text="Passive Scan Tags" target="addon.pscan.options.tags"/>
+                <tocitem text="オプション" target="addon.pscan.options">
+                    <tocitem text="パッシブスキャナー" target="addon.pscan.options.scanner"/>
+                    <tocitem text="パッシブスキャンルール" target="addon.pscan.options.rules"/>
+                    <tocitem text="パッシブスキャンタグ" target="addon.pscan.options.tags"/>
                 </tocitem>
             </tocitem>
         </tocitem>

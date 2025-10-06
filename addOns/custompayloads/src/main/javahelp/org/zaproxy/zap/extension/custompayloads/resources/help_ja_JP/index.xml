@@ -2,7 +2,7 @@
 <!DOCTYPE index PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Index Version 1.0//EN" "http://java.sun.com/products/javahelp/index_2_0.dtd">
 <index version="2.0">
     <!-- index entries are merged (sorted) into core index -->
-    <indexitem text="custompayloads" target="custompayloads"/>
-    <indexitem text="Custom Payloads API" target="custompayloads.api"/>
-    <indexitem text="Custom Payloads Options" target="custompayloads.options"/>
+    <indexitem text="カスタムペイロード" target="custompayloads"/>
+    <indexitem text="カスタムペイロードAPI" target="custompayloads.api"/>
+    <indexitem text="カスタムペイロードオプション" target="custompayloads.options"/>
 </index>

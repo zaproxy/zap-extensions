@@ -2,11 +2,11 @@
 <HTML>
 <HEAD>
 <TITLE>
-Browser Based Authentication
+ブラウザベース認証
 </TITLE>
 </HEAD>
 <BODY>
-<H1>Browser Based Authentication</H1>
+<H1>ブラウザベース認証</H1>
 
 This <a href="authhelper.html">add-on</a> adds a new authentication method which uses a browser to login to the target website.
 <p>
@@ -23,7 +23,7 @@ This method also supports HTTP Basic Authentication for Firefox only (due to Sel
 <h3>Authentication Steps</h3>
 When the authentication method is not able to find suitable fields, or requires extra steps they can be manually specified by the user. The following steps are supported:
 <table>
-  <tr><th>Name</th><th>Type</th><th>Description</th></tr>
+  <tr><th>Name</th><th>Type</th><th>説明</th></tr>
   <tr><td>Auto Steps</td><td><code>AUTO_STEPS</code></td><td>Indicates that the authentication method should perform the steps that does by default, to identify and fill the required fields (if not already). This is useful when the authentication method is able to find and submit the fields but other required steps must happen before or after.</td></tr>
   <tr><td>Click Element</td><td><code>CLICK</code></td><td>Clicks a web element, for example, to access the login form or dismiss a popup.</td>
   <tr><td>Fill Custom Field</td><td><code>CUSTOM_FIELD</code></td><td>Fills a custom field with the given value, for example, choose a realm or organisation department in the login form.</td>
@@ -47,7 +47,7 @@ The response containing the session token is identified by choosing the first re
 <li>JSON data with an element called <code>AccessToken</code> or <code>token</code> - case is ignored
 </ul>
 
-<H2>Automation Framework</H2>
+<H2>自動化フレームワーク</H2>
 
 Browser Based Authentication can be configured in the environment section of an Automation Framework plan using:
 <pre>

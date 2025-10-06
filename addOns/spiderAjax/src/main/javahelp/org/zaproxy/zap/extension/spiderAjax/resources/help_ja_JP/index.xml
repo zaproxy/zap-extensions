@@ -5,8 +5,8 @@
 
 <index version="2.0">
     <indexitem text="AJAXスパイダー" target="addon.spiderajax.concepts" />
-    <indexitem text="AJAX Spider automation" target="addon.spiderajax.automate"/>
-    <indexitem text="AJAX Spider context" target="addon.spiderajax.context"/>
-    <indexitem text="AJAX Spider dialog" target="addon.spiderajax.dialog"/>
-    <indexitem text="AJAX Spider tab" target="addon.spiderajax.tab"/>
+    <indexitem text="AJAXスパイダー 自動化" target="addon.spiderajax.automate"/>
+    <indexitem text="AJAXスパイダー コンテキスト" target="addon.spiderajax.context"/>
+    <indexitem text="AJAXスパイダー ダイアログ" target="addon.spiderajax.dialog"/>
+    <indexitem text="AJAXスパイダー タブ" target="addon.spiderajax.tab"/>
 </index>

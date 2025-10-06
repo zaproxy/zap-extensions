@@ -2,47 +2,44 @@
 <html>
 <head>
 <title>
-DOM XSS Active Scan Rule
+DOM XSS アクティブスキャンルール
 </title>
 </head>
 <body>
-<h1>DOM XSS Active Scan Rule</h1>
+<h1>DOM XSS アクティブスキャンルール</h1>
 <p>
-An Active Scan rule for detecting DOM XSS vulnerabilities.
+DOM XSS脆弱性を検出するためのアクティブスキャンルールです。
 <p>
-It launches browser windows and sends attack payloads to all of the relevant DOM elements.<br>
-As it launches browser windows it will take significantly longer than other (non browser based) rules. 
+ブラウザウィンドウを起動し、関連するすべてのDOM要素に攻撃ペイロードを送信します。<br>
+ブラウザウィンドウを起動するため、他の (ブラウザベースでない) ルールと比べて大幅に時間がかかります。 
 </p>
 <p>
-This version supports Firefox (the default), Chrome, and Edge. They can be run with GUI or headless (default), it can be changed with
-the rule <code>rules.domxss.browserid</code>, via the Options 'Rule configuration' panel, with values
+このバージョンはFirefox (デフォルト)、Chrome、Edgeをサポートしています。これらはGUIまたはヘッドレス (デフォルト) で実行できます。設定は ルール <code>rules.domxss.browserid</code>で変更できます。オプションの「ルール設定」パネルから、以下の値を使用します: 
 <code>firefox</code>, <code>firefox-headless</code>, <code>chrome</code>, <code>chrome-headless</code>,
-<code>edge</code>, and <code>edge-headless</code>.
+<code>edge</code>, <code>edge-headless</code>.
 
-<h3>Strengths and Thresholds</h3>
-The following Attack Strengths are supported, and related directly to the number of attack payloads used
-for URL fragment and form input field injections (eg: <code>http://example.com/index.html?foo=bar#injection</code>):
+<h3>攻撃強度としきい値</h3>
+以下の攻撃強度がサポートされており、URLフラグメントとフォーム入力フィールドのインジェクションに使用される攻撃ペイロードの数に直接関連しています (例: <code>http://example.com/index.html?foo=bar#injection</code>)：
 <ul>
-<li>LOW: 1 attack payloads 
-<li>MEDIUM: 3 attack payloads 
-<li>HIGH: 6 attack payloads 
-<li>INSANE: 9 attack payloads 
+<li>LOW: 1個の攻撃ペイロード 
+<li>MEDIUM: 3個の攻撃ペイロード 
+<li>HIGH: 6個の攻撃ペイロード 
+<li>INSANE: 9個の攻撃ペイロード 
 </ul>
-The scanner will also attempt URL/query parameter injections which are not impacted by the selected strength.
+スキャナーは、選択された強度に影響されないURL/クエリパラメーターのインジェクションも試行します。
 </p>
 <p>
-The rule will only report one DOM XSS vulnerability per node, unless the LOW Alert threshold
-is used, in which case it will keep trying all of the specified payloads. 
+このルールは、LOWアラートしきい値が使用されている場合を除き、ノードごとに1つのDOM XSS脆弱性のみを報告します。 LOWアラートしきい値の場合は、指定されたすべてのペイロードを試行し続けます。 
 
-<h3>Exclusions</h3>
-The rule will block the browser it launches from accessing any URLs that are excluded by:
+<h3>除外</h3>
+このルールは、起動したブラウザが以下によって除外されたURLにアクセスすることをブロックします：
 <ul>
-<li>Global Exclusions
-<li>Context Exclusions, if invoked with the relevant context
+<li>グローバル除外
+<li>コンテキスト除外 (関連するコンテキストで呼び出された場合)
 </ul>
 
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/domxss/src/main/java/org/zaproxy/zap/extension/domxss/DomXssScanRule.java">DomXssScanRule.java</a>
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/domxss/src/main/java/org/zaproxy/zap/extension/domxss/DomXssScanRule.java">DomXssScanRule.java</a>
 
 </body>
 </html>

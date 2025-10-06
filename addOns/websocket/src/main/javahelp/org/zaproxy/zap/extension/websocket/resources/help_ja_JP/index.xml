@@ -5,11 +5,11 @@
 
 <index version="2.0">
     <!-- index entries are merged (sorted) into core index -->
-    <indexitem text="websocket" target="websocket.introduction" />
-    <indexitem text="websocket api" target="websocket.api" />
-    <indexitem text="websocket scripts" target="websocket.script" />
-    <indexitem text="websocket pscans" target="websocket.pscanrules" />
-    <indexitem text="websocket tab" target="websocket.tab" />
-    <indexitem text="websocket options" target="websocket.options" />
-    <indexitem text="websocket session properties" target="websocket.sessionProperties" />
+    <indexitem text="WebSocket" target="websocket.introduction" />
+    <indexitem text="WebSocket API" target="websocket.api" />
+    <indexitem text="WebSocket スクリプト" target="websocket.script" />
+    <indexitem text="WebSocket パッシブスキャン" target="websocket.pscanrules" />
+    <indexitem text="WebSocket タブ" target="websocket.tab" />
+    <indexitem text="WebSocket オプション" target="websocket.options" />
+    <indexitem text="WebSocket セッションプロパティ" target="websocket.sessionProperties" />
 </index>

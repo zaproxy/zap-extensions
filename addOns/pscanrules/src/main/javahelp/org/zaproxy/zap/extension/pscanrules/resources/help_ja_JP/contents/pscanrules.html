@@ -3,11 +3,11 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>
-静的スキャンルール
+パッシブスキャンルール
 </title>
 </head>
 <body>
-<h1>Passive Scan Rules</h1>
+<h1>パッシブスキャンルール</h1>
 
 <h2>General Configuration</h2>
 
@@ -154,9 +154,9 @@ Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10029/">10029</a>.
 Looks for cookies set during HTTPS sessions, raises an alert for those that are set but do not include the secure flag.
 A cookie set with the secure flag will not be sent during a plain HTTP session.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/CookieSecureFlagScanRule.java">CookieSecureFlagScanRule.java</a>
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/CookieSecureFlagScanRule.java">CookieSecureFlagScanRule.java</a>
 <br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10011/">10011</a>.
+アラートID: <a href="https://www.zaproxy.org/docs/alerts/10011/">10011</a>.
 
 <h2 id="id-10054">Cookie Without SameSite Attribute</h2>
 This reports any cookies that:
@@ -166,9 +166,9 @@ This reports any cookies that:
   <li>do not have a recognised valid value for that attribute</li>
 </ul>
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/CookieSameSiteScanRule.java">CookieSameSiteScanRule.java</a>
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/CookieSameSiteScanRule.java">CookieSameSiteScanRule.java</a>
 <br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10054/">10054</a>.
+アラートID: <a href="https://www.zaproxy.org/docs/alerts/10054/">10054</a>.
 
 <h2 id="id-10017">Cross Domain Script Inclusion</h2>
 Validates whether or not scripts are included from domains other than the domain hosting the content. 
@@ -199,9 +199,9 @@ library to perform it's parsing and assessment of CSPs.
 <p>
 If a response has multiple CSPs they are analyzed individually, as there is no sure way to intersect/merge the policies and further different browsers have varying levels of CSP support and enforcement.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/ContentSecurityPolicyScanRule.java">ContentSecurityPolicyScanRule.java</a>
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/ContentSecurityPolicyScanRule.java">ContentSecurityPolicyScanRule.java</a>
 <br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10055/">10055</a>.
+アラートID: <a href="https://www.zaproxy.org/docs/alerts/10055/">10055</a>.
 
 <h2 id="id-10202">CSRF Countermeasures</h2>
 This rule identifies "potential" vulnerabilities with the lack of known CSRF 
@@ -229,9 +229,9 @@ Alert ID: <a href="https://www.zaproxy.org/docs/alerts/100202/">100202</a>.
 <h2 id="id-10033">Directory Browsing</h2>
 Passively scans responses for signatures that are indicative that Directory Browsing is possible.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/DirectoryBrowsingScanRule.java">DirectoryBrowsingScanRule.java</a>
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/DirectoryBrowsingScanRule.java">DirectoryBrowsingScanRule.java</a>
 <br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10033/">10033</a>.
+アラートID: <a href="https://www.zaproxy.org/docs/alerts/10033/">10033</a>.
 
 <h2 id="id-10097">Hash Disclosure</h2>
 Passively scans for password hashes disclosed by the web server. <br>
@@ -450,9 +450,9 @@ To help reduce false positives the rule checks the length of the token value,  i
 is not greater than 8 characters in length then the parameter is ignored 
 (i.e.: survey?sId=5 would not be flagged as vulnerable).
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/InfoSessionIdUrlScanRule.java">InfoSessionIdUrlScanRule.java</a>
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/InfoSessionIdUrlScanRule.java">InfoSessionIdUrlScanRule.java</a>
 <br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/3/">3</a>.
+アラートID: <a href="https://www.zaproxy.org/docs/alerts/3/">3</a>.
 
 <h2 id="id-10035">Strict Transport Security Header</h2>
 This rule checks HTTPS responses for the presence of a HTTP Strict Transport Security (HSTS) header and tests for various implementation concerns, 
@@ -519,9 +519,9 @@ The Custom Payloads category for this rule is: <code>Username-Idor</code>.<br>
 <p>
 This scan rule will only analyze text responses. 
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/UsernameIdorScanRule.java">UsernameIdorScanRule.java</a>
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/UsernameIdorScanRule.java">UsernameIdorScanRule.java</a>
 <br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10057/">10057</a>.
+アラートID: <a href="https://www.zaproxy.org/docs/alerts/10057/">10057</a>.
 
 <h2 id="id-10032">VIEWSTATE</h2>
 Attempts to identify VIEWSTATE parameters and analyze said parameters for various best practices or protective 
@@ -572,9 +572,9 @@ Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10021/">10021</a>.
 This checks response headers for the presence of X-Debug-Token and X-Debug-Token-Link details.
 Which indicates the use/exposure of Symfony's Profiler. Symfony's Profiler provides access to a significant amount of information of interest to malicious individuals and Security Testers.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/XDebugTokenScanRule.java">XDebugTokenScanRule.java</a>
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/XDebugTokenScanRule.java">XDebugTokenScanRule.java</a>
 <br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10056/">10056</a>.
+アラートID: <a href="https://www.zaproxy.org/docs/alerts/10056/">10056</a>.
 
 <h2 id="id-10116">ZAP is Out of Date</h2>
 This checks to make sure you are using the latest version of ZAP.<br>

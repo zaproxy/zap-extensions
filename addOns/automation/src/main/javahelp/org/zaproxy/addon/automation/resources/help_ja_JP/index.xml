@@ -2,22 +2,22 @@
 <!DOCTYPE index PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Index Version 1.0//EN" "http://java.sun.com/products/javahelp/index_2_0.dtd">
 <index version="2.0">
     <!-- index entries are merged (sorted) into core index -->
-	<indexitem text="automation" target="automation"/>
-    <indexitem text="automation - gui" target="automation.gui"/>
-    <indexitem text="automation - options" target="automation.options"/>
-    <indexitem text="automation - environment" target="automation.env"/>
-    <indexitem text="automation - authentication" target="automation.auth"/>
-    <indexitem text="automation - addOns job" target="automation.addons"/>
-    <indexitem text="automation - activeScan-config job" target="automation.ascanconfig"/>
-    <indexitem text="automation - activeScan-policy job" target="automation.ascanpolicy"/>
-    <indexitem text="automation - activeScan job" target="automation.ascan"/>
-    <indexitem text="automation - delay job" target="automation.delay"/>
-    <indexitem text="automation - exitStatus job" target="automation.exitstatus"/>
-    <indexitem text="automation - requestor job" target="automation.requestor"/>
-    <indexitem text="automation - about" target="automation.about"/>
-    <indexitem text="automation - tests" target="automation.tests"/>
-    <indexitem text="automation - alert test" target="automation.test.alert"/>
-    <indexitem text="automation - monitor test" target="automation.test.monitor"/>
-    <indexitem text="automation - statistic test" target="automation.test.stats"/>
-    <indexitem text="automation - url test" target="automation.test.url"/>
+	<indexitem text="自動化フレームワーク" target="automation"/>
+    <indexitem text="自動化フレームワーク - GUI" target="automation.gui"/>
+    <indexitem text="自動化フレームワーク - オプション" target="automation.options"/>
+    <indexitem text="自動化フレームワーク - 認証" target="automation.env"/>
+    <indexitem text="自動化フレームワーク - 認証" target="automation.auth"/>
+    <indexitem text="自動化フレームワーク - アドオンジョブ" target="automation.addons"/>
+    <indexitem text="自動化フレームワーク - アクティブスキャン設定ジョブ" target="automation.ascanconfig"/>
+    <indexitem text="自動化フレームワーク - アクティブスキャンポリシージョブ" target="automation.ascanpolicy"/>
+    <indexitem text="自動化フレームワーク - アクティブスキャンジョブ" target="automation.ascan"/>
+    <indexitem text="自動化フレームワーク - 待機ジョブ" target="automation.delay"/>
+    <indexitem text="自動化フレームワーク - 終了ステータスジョブ" target="automation.exitstatus"/>
+    <indexitem text="自動化フレームワーク - リクエスタージョブ" target="automation.requestor"/>
+    <indexitem text="自動化フレームワークについて" target="automation.about"/>
+    <indexitem text="自動化フレームワーク - テスト" target="automation.tests"/>
+    <indexitem text="自動化フレームワーク - アラートテスト" target="automation.test.alert"/>
+    <indexitem text="自動化フレームワーク - モニターテスト" target="automation.test.monitor"/>
+    <indexitem text="自動化フレームワーク - 統計テスト" target="automation.test.stats"/>
+    <indexitem text="自動化フレームワーク - URLテスト" target="automation.test.url"/>
 </index>

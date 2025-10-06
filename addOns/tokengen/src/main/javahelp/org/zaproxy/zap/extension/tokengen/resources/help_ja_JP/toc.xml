@@ -6,8 +6,8 @@
 <toc version="2.0">
 	<tocitem text="ZAP ユーザーガイド" tocid="toplevelitem">
 		<tocitem text="アドオン" tocid="addons">
-			<tocitem text="トークンジェネレータ" image="tokengen-icon" target="tokengen">
-				<tocitem text="Options" target="tokengen.options" />
+			<tocitem text="トークンジェネレーター" image="tokengen-icon" target="tokengen">
+				<tocitem text="オプション" target="tokengen.options" />
 			</tocitem>
 		</tocitem>
 	</tocitem>

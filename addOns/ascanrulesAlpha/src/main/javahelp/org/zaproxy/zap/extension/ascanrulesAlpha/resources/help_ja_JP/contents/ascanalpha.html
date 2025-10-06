@@ -2,12 +2,12 @@
 <html>
 <head>
 <title>
-Active Scan Rules - Alpha
+アクティブスキャンルール - Alpha
 </title>
 </head>
 <body>
-<h1>Active Scan Rules - Alpha</h1>
-The following alpha status active scan rules are included in this add-on:
+<h1>アクティブスキャンルール - Alpha</h1>
+以下のアルファステータスのアクティブスキャンルールがこのアドオンに含まれています：
 
 <h2 id="id-60101">An example active scan rule which loads data from a file</h2>
 This implements an example active scan rule that loads strings from a file that the user can edit.<br>
@@ -21,39 +21,37 @@ This implements a very simple example active scan rule.<br>
 For more details see: 
 <a href="https://www.zaproxy.org/blog/2014-04-30-hacking-zap-4-active-scan-rules/">Hacking ZAP Part 4: Active Scan Rules</a>.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/ExampleSimpleActiveScanRule.java">ExampleSimpleActiveScanRule.java</a>
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/ExampleSimpleActiveScanRule.java">ExampleSimpleActiveScanRule.java</a>
 
-<h2 id="id-40015">LDAP Injection</h2>
-LDAP Injection may be possible. It may be possible for an attacker to bypass authentication controls, and to view and modify arbitrary data in the LDAP directory.
-Skips messages which originally resulted in a client or server error response status code.
+<h2 id="id-40015">LDAPインジェクション</h2>
+LDAPインジェクションの可能性があります。 攻撃者が認証制御をバイパスし、LDAPディレクトリ内の任意のデータを閲覧および変更できる可能性があります。
+クライアントまたはサーバーエラーのレスポンスステータスコードが元々返されたメッセージはスキップされます。
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/LdapInjectionScanRule.java">LdapInjectionScanRule.java</a>
-<br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40015/">40015</a>.
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/LdapInjectionScanRule.java">LdapInjectionScanRule.java</a><br>
+アラートID: <a href="https://www.zaproxy.org/docs/alerts/40015/">40015</a>
 
-<h2 id="id-40033">NoSQL Injection - MongoDB</h2>
-This rule attempts to identify MongoDB specific NoSQL Injection vulnerabilities. It attempts various types of attacks including: boolean based, error based, time based, and authentication bypass. 
-It does not include time based attacks. It will also attempt JSON parameter specific payloads if the scan is configured to include JSON parameter variants.
+<h2 id="id-40033">NoSQLインジェクション - MongoDB</h2>
+このルールはMongoDB特有のNoSQLインジェクション脆弱性の識別を試みます。 真偽値ベース、エラーベース、認証バイパスなど、さまざまなタイプの攻撃を試行します。 
+時間ベースの攻撃は含まれません。 また、スキャンがJSONパラメータバリアントを含むように設定されている場合、JSONパラメータ固有のペイロードも試行します。
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/MongoDbInjectionScanRule.java">MongoDbInjectionScanRule.java</a>
-<br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40033/">40033</a>.
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/MongoDbInjectionScanRule.java">MongoDbInjectionScanRule.java</a><br>
+アラートID: <a href="https://www.zaproxy.org/docs/alerts/40033/">40033</a>
 
-<h2 id="id-90039">NoSQL Injection - MongoDB (Time Based)</h2>
-This rule attempts to identify MongoDB specific NoSQL Injection vulnerabilities using only time based attacks.
+<h2 id="id-90039">NoSQLインジェクション - MongoDB (時間ベース)</h2>
+このルールは時間ベースの攻撃のみを使用してMongoDB特有のNoSQLインジェクション脆弱性の識別を試みます。
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/MongoDbInjectionTimingScanRule.java">MongoDbInjectionTimingScanRule.java</a>
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/MongoDbInjectionTimingScanRule.java">MongoDbInjectionTimingScanRule.java</a>
 <br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/90039/">90039</a>.
+アラートID: <a href="https://www.zaproxy.org/docs/alerts/90039/">90039</a>.
 
-<h2 id="id-40039">Web Cache Deception</h2>
-This rule attempts to identify Web Cache Deception vulnerabilities. It checks whether a static path appended to original URIs can be used to leak sensitive user information or not.
+<h2 id="id-40039">Webキャッシュ欺瞞</h2>
+このルールはWebキャッシュデセプション脆弱性の識別を試みます。元のURIに静的パスを追加することで機密性の高いユーザー情報が漏洩する可能性があるかどうかをチェックします。
 <ul>
-    <li>User must be authenticated before using this rule</li>
+    <li>このルールを使用する前にユーザーは認証されている必要があります</li>
 </ul>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/WebCacheDeceptionScanRule.java">WebCacheDeceptionScanRule.java</a>
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/WebCacheDeceptionScanRule.java">WebCacheDeceptionScanRule.java</a>
 <br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40039/">40039</a>.
+アラートID: <a href="https://www.zaproxy.org/docs/alerts/40039/">40039</a>.
 
 </body>
 </html>

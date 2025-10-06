@@ -2,13 +2,10 @@
 <!DOCTYPE index PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Index Version 1.0//EN" "http://java.sun.com/products/javahelp/index_2_0.dtd">
 <index version="2.0">
 	<!-- index entries are merged (sorted) into core index -->
-	<indexitem text="reports" target="reports" />
-	<indexitem text="reports templates"
-		target="reports.templates" />
-	<indexitem text="reports automation"
-		target="reports.automation" />
-	<indexitem text="reports creating reports"
-		target="reports.create" />
-	<indexitem text="reports about" target="reports.about" />
-	<indexitem text="reports api" target="reports.api" />
+	<indexitem text="レポート生成" target="reports" />
+	<indexitem text="レポート生成 テンプレート" target="reports.templates" />
+	<indexitem text="レポート生成 自動化" target="reports.automation" />
+	<indexitem text="レポート生成 レポートの作成" target="reports.create" />
+	<indexitem text="レポート生成 について" target="reports.about" />
+	<indexitem text="レポート生成 API" target="reports.api" />
 </index>

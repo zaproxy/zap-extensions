@@ -6,12 +6,12 @@
 <toc version="2.0">
 	<tocitem text="ZAP ユーザーガイド" tocid="toplevelitem">
 		<tocitem text="アドオン" tocid="addons">
-			<tocitem text="Script Console" image="addon.scripts.icon" target="addon.scripts.scripts">
-				<tocitem text="Automation" target="addon.scripts.automation" />
-				<tocitem text="Console" target="addon.scripts.console" />
-				<tocitem text="Options" target="addon.scripts.options" />
-				<tocitem text="Scan Rules" target="addon.scripts.scanrules" />
-				<tocitem text="Tree" target="addon.scripts.tree" />
+			<tocitem text="スクリプトコンソール" image="addon.scripts.icon" target="addon.scripts.scripts">
+				<tocitem text="自動化" target="addon.scripts.automation" />
+				<tocitem text="コンソール" target="addon.scripts.console" />
+				<tocitem text="オプション" target="addon.scripts.options" />
+				<tocitem text="スキャンルール" target="addon.scripts.scanrules" />
+				<tocitem text="ツリー" target="addon.scripts.tree" />
 			</tocitem>
 		</tocitem>
 	</tocitem>
