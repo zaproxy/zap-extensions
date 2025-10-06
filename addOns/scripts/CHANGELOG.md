@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- Do not report authentication script errors as warnings in the Automation Framework for consistent behavior with all authentication methods, which handle errors as authentication failures.
 
 ## [45.13.0] - 2025-09-02
 ### Changed
