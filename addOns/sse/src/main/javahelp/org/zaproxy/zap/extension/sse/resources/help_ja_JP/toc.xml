@@ -7,7 +7,7 @@
 	<tocitem text="ZAP ユーザーガイド" tocid="toplevelitem">
 		<tocitem text="アドオン" tocid="addons">
 			<tocitem text="サーバー送信イベント" target="sse.introduction" image="html5connectivity" >
-				<tocitem text="Tab" target="sse.tab"/>
+				<tocitem text="タブ" target="sse.tab"/>
 			</tocitem>
 		</tocitem>
 	</tocitem>

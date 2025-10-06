@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE helpset PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp HelpSet Version 2.0//EN" "http://java.sun.com/products/javahelp/helpset_2_0.dtd">
 <helpset version="2.0" xml:lang="ja-JP">
-  <title>トークンジェネレータ　|　ZAP拡張</title>
+  <title>トークンジェネレーター｜ZAP 拡張機能</title>
 
   <maps>
      <homeID>top</homeID>

@@ -4,5 +4,5 @@
          "http://java.sun.com/products/javahelp/index_2_0.dtd">
 
 <index version="2.0">
-	<indexitem text="Bug Tracker" target="addon.bugtracker.bugtracker" />
+	<indexitem text="バグトラッカー" target="addon.bugtracker.bugtracker" />
 </index>

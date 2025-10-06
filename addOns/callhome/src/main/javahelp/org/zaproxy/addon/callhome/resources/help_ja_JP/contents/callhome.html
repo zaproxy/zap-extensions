@@ -2,36 +2,36 @@
 <HTML>
 <HEAD>
 <TITLE>
-Call Home
+コールホーム
 </TITLE>
 </HEAD>
 <BODY>
-<H1>Call Home</H1>
-This add-on will be used for all "calls home". 
+<H1>コールホーム</H1>
+このアドオンは、ZAPのすべての「コールホーム」に使用されます。 
 <p>
-It currently supports:
+現在、以下の機能に対応しています：
 
-<H2>Check For Updates</H2>
-The Check for Updates call is used to find out the latest information about ZAP and the published add-ons. 
-It is a mandatory add-on from ZAP 2.12.0 as this feature is used by the ZAP core.
+<H2>更新の確認</H2>
+「更新の確認」機能は、ZAP本体および公開済みアドオンの最新情報を取得するために使用されます。 
+この機能はZAPコアで使用されるため、ZAP 2.12.0以降では必須のアドオンとなっています。
 
-<H2>News</H2>
-The News call is used to find out the latest news item about ZAP - this is displayed in the ZAP desktop Quick Start panel. 
+<H2>ニュース</H2>
+「ニュース」機能は、ZAPに関する最新のお知らせを取得し、ZAP デスクトップの「クイックスタート」パネルに表示します。 
 
-<H2>Telemetry</H2>
-The Telemetry call reports the add-ons being used and some of the ZAP internal statistics.
-It will never collect details of the sites ZAP is being used on, details of the vulnerabilities or any personal identifiable information (PII).
+<H2>テレメトリー</H2>
+「テレメトリー」機能は、使用されているアドオンとZAPの内部統計情報の一部を報告します。
+ZAPが使用されているサイトの詳細、脆弱性の詳細、または個人を特定できる情報 (PII) を収集することは決してありません。
 <p>
-For more background see the blog post <a href="https://www.zaproxy.org/blog/2021-10-25-zap-telemetry-plans/">ZAP Telemetry Plans</a>.
+背景については、ブログ記事 <a href="https://www.zaproxy.org/blog/2021-10-25-zap-telemetry-plans/">ZAP Telemetry Plans</a> をご覧ください。
 
-<H2>Command Line option: -notel</H2>
-If <code>-notel</code> is specified on the command line then no telemetry calls will be made. The other calls will not be affected.
-Telemetry calls will also not be made if the standard <code>-silent</code> ZAP command line option is used.
+<H2>コマンドラインオプション: -notel</H2>
+コマンドラインで <code>-notel</code> オプションを指定すると、テレメトリー処理は実行されません。 他の処理には影響しません。
+また、標準の <code>-silent</code> オプションが使用された場合も、テレメトリー処理は実行されません。
 
-<H2>Call Home Options Panel</H2>
-This panel allows you to turn telemetry support on and off.
+<H2>コールホームオプションパネル</H2>
+このパネルでは、テレメトリーサポートのオンとオフを切り替えることができます。
 <p>
-It also displays the last set of telemetry data transmitted. 
-The telemetry data is also logged at DEBUG level in the ZAP log file.
+また、直近に送信されたテレメトリーデータが表示されます。 
+テレメトリーデータは、ZAPのログファイルに DEBUG レベルのログとして記録されます。
 </BODY>
 </HTML>

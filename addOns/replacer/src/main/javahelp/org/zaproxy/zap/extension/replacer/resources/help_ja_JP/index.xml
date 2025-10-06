@@ -4,7 +4,7 @@
          "http://java.sun.com/products/javahelp/index_2_0.dtd">
 
 <index version="2.0">
-	<indexitem text="replacer" target="replacer" />
-	<indexitem text="replacer automation"
+	<indexitem text="Replacer" target="replacer" />
+	<indexitem text="Replacer 自動化"
 		target="replacer.automation" />
 </index>

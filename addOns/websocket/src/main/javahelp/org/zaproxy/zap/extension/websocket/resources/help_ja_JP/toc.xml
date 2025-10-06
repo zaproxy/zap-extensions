@@ -12,8 +12,8 @@
 				<tocitem text="セッションプロパティ" target="websocket.sessionProperties"/>
 				<tocitem text="スクリプト" target="websocket.script"/>
 				<tocitem text="API" target="websocket.api"/>
-        <tocitem text="Passive Scan Rules" target="websocket.pscanrules"/>
-				<tocitem text="About" target="websocket.about"/>
+        <tocitem text="パッシブスキャンルール" target="websocket.pscanrules"/>
+				<tocitem text="このアドオンについて" target="websocket.about"/>
 			</tocitem>
 		</tocitem>
 	</tocitem>

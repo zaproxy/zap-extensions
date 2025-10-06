@@ -2,112 +2,110 @@
 <HTML>
 <HEAD>
 <TITLE>
-Automation Framework
+自動化フレームワーク
 </TITLE>
 </HEAD>
 <BODY>
-<H1>Automation Framework</H1>
-This add-on provides a framework that allows ZAP to be automated in an easy and flexible way.
+<H1>自動化フレームワーク</H1>
+このアドオンは、ZAPを簡単かつ柔軟な方法で自動化できるフレームワークを提供します。 
 
-<H3><a name="command-line-options">Command Line Options</a></H3>
+<H3><a name="command-line-options">コマンドラインオプション</a></H3>
 
-It provides the following command line options:
+以下のコマンドラインオプションを提供します：
 <ul>
-<li>-autorun &lt;source&gt;		Run the automation jobs specified in the file or from the URL.
-<li>-autogenmin &lt;filename&gt;	Generate template automation file with the key parameters.
-<li>-autogenmax &lt;filename&gt;	Generate template automation file with all parameters.
-<li>-autogenconf &lt;filename&gt;	Generate template automation file using the current configuration.
+<li>-autorun &lt;source&gt;		ファイルまたはURLから指定された自動化ジョブを実行する。
+<li>-autogenmin &lt;filename&gt;		主要なパラメータを含む自動化ファイルのテンプレートを生成する。
+<li>-autogenmax &lt;filename&gt;		すべてのパラメータを含む自動化ファイルのテンプレートを生成する。
+<li>-autogenconf &lt;filename&gt;	現在の設定を使用した自動化ファイルのテンプレートを生成する。
 </ul>
 
-<H3><a name="exit-codes">Exit Codes</a></H3>
-If the <code>-autorun</code> option is used with the ZAP <code>-cmd</code> option then the ZAP exit value will be set by default as follows: 
+<H3><a name="exit-codes">終了コード</a></H3>
+<code>-autorun</code>オプションがZAPの<code>-cmd</code>オプションと共に使用される場合、ZAPの終了値はデフォルトで以下のように設定されます： 
 <ul>
-<li>0 - The plan completed successfully with no errors or warnings
-<li>1 - The plan reported one or more errors
-<li>2 - The plan reported no errors but one or more warnings
+<li>0 - プランがエラーまたは警告なしで正常に完了しました
+<li>1 - プランが1つ以上のエラーを報告しました
+<li>2 - プランがエラーは報告しませんでしたが、1つ以上の警告を報告しました
 </ul>
-These values can be overridden by the <a href="job-exitstatus.html">exitStatus</a> job.<br>
-Whether the plan completed after encountering errors or warnings will depend on the settings used in the <a href="environment.html">environment</a>.
+これらの値は、<a href="job-exitstatus.html">exitStatus</a>ジョブによって上書きできます。<br>
+エラーまたは警告に遭遇した後にプランが完了するかどうかは、<a href="environment.html">environment</a>で使用される設定によって異なります。
 
-<H3><a name="usage">Usage</a></H3>
-To use the automation framework:
+<H3><a name="usage">使用方法</a></H3>
+自動化フレームワークを使用するには：
 <ol>
-<li>Generate a template automation file using one of the <code>-autogen*</code> command line options
-<li>Edit the file to match your requirements
-<li>Run the file using the <code>-autorun</code> commandline option e.g. <code>./zap.sh -cmd -autorun config.yaml</code>
+<li><code>-autogen*</code>コマンドラインオプションのいずれかを使用して、自動化ファイルのテンプレートを生成します
+<li>要件に合わせてファイルを編集します
+<li><code>-autorun</code>コマンドラインオプションを使用してファイルを実行します。例: <code>./zap.sh -cmd -autorun config.yaml</code> 
 </ol>
 
-<strong>Note:</strong> The Jobs are executed in the order in which they appear (top to bottom) within the Plan.
+<strong>注:</strong> ジョブはプラン内に記述された順序 (上から下) で実行されます。
 <p>
-In most cases it is recommended to also use the <code>-cmd</code> command line option so that the ZAP desktop is not displayed 
-and ZAP exits as soon as it has finished generating or running the jobs defined in the file.
-However you can choose to run Automation Framework jobs using the ZAP desktop to help you debug issues.
+ほとんどの場合、ZAP デスクトップが表示されず、ファイルで定義されたジョブの生成または実行が完了するとすぐにZAPが終了するように、 <code>-cmd</code>コマンドラインオプションも併用することを推奨します。
+ただし、問題のデバッグに役立てるため、ZAP デスクトップを使用して自動化フレームワークジョブを実行することもできます。
 
 <H2><a name="authentication">認証</a></H2>
-The Automation Framework supports all of the <a href="authentication.html">authentication</a> mechanisms supported by ZAP.
+自動化フレームワークは、ZAPでサポートされているすべての<a href="authentication.html">認証</a>メカニズムをサポートしています。
 
 <H2><a name="gui">GUI</a></H2>
-A <a href="gui.html">GUI</a> is under development and provides an ever increasing set of features.
+<a href="gui.html">GUI</a>は開発中であり、ますます多くの機能を提供しています。
 
-<H2><a name="options">Options</a></H2>
-The <a href="options.html">Automation Options</a> screen allows you to configure specific options.
+<H2><a name="options">オプション</a></H2>
+<a href="options.html">自動化オプション</a>画面では、特定のオプションを設定できます。
 
 <H2><a name="api">API</a></H2>
-The following API endpoints are provided by this add-on:
+このアドオンは以下のAPIエンドポイントを提供します：
 <ul>
-<li>Action: endDelayJob() - ends the currently running delay job, if any</li>
-<li>Action: runPlan(filePath) - loads and asynchronously runs the plan in the specified file, returning a planId</li>
-<li>Action: stopPlan(planId) - stops the running plan identified by the planId</li>
-<li>View: planProgress(planId) - returns the progress details for the specified planId</li>
+<li>Action: endDelayJob() - 現在実行中の遅延ジョブがあれば終了します</li>
+<li>Action: runPlan(filePath) - 指定されたファイル内のプランを読み込み、非同期で実行し、planIdを返します</li>
+<li>Action: stopPlan(planId) - planIdで識別される実行中のプランを停止します</li>
+<li>View: planProgress(planId) - 指定されたplanIdの進行状況の詳細を返します</li>
 </ul>
-If the ZAP desktop is being used then the plan will also be shown in the GUI to make it easier to diagnose any problems.
+ZAP デスクトップが使用されている場合、問題の診断を容易にするため、プランはGUIにも表示されます。
 <p>
-Note that some jobs may not stop immediately, for example if authentication is being handled.
+なお、認証が処理されている場合など、一部のジョブはすぐに停止しない場合があります。
 
-<H2><a name="environment">Environment</a></H2>
-The <a href="environment.html">environment</a> section of the file defines the applications which the rest of the jobs can act on.
+<H2><a name="environment">環境</a></H2>
+ファイルの <a href="environment.html">environment</a> セクションでは、残りのジョブが操作できるアプリケーションを定義します。
 
-<H2><a name="file-paths">File Paths</a></H2>
-All file and directory paths can either be absolute or relative to the directory containing the plan. 
-Relative paths are recommended for portability.
+<H2><a name="file-paths">ファイルパス</a></H2>
+すべてのファイルおよびディレクトリパスは、絶対パスまたはプランを含むディレクトリからの相対パスのいずれかを使用できます。 
+ 移植性のため、相対パスを推奨します。
 
-<H2><a name="jobs">Jobs</a></H2>
+<H2><a name="jobs">ジョブ</a></H2>
 <p>
-The following automation jobs are supported by this add-on:
+このアドオンでは以下の自動化ジョブがサポートされています：
 <ul>
-<li><a href="job-ascanconfig.html">activeScan-config</a> - configures the active scanner</li>
-<li><a href="job-ascanpolicy.html">activeScan-policy</a> - creates an active policy</li>
-<li><a href="job-addons.html">addOns</a> - add-on management, now deprecated</li>
-<li><a href="job-delay.html">delay</a> - pauses the plan for a specified period of time or a specific condition is met</li>
-<li><a href="job-requestor.html">requestor</a> - crafts specific requests to send to the corresponding targets</li>
-<li><a href="job-ascan.html">activeScan</a> - runs the active scanner</li>
-<li><a href="job-exitstatus.html">exitStatus</a> - sets ZAP's exit code based on scan results</li>
-</ul>
-
-<H3><a name="gen-options">General Job Options</a></H3>
-
-The following options can be applied to all jobs, via the automation plan or the <a href="gui.html">GUI</a>:
-
-<ul>
-<li><code>enabled</code> - only jobs that are enabled will run.
-<li><code>alwaysRun</code> - enabled jobs with this option will run even if the plan exits early.
+<li><a href="job-ascanconfig.html">activeScan-config</a> - アクティブスキャナーを設定します</li>
+<li><a href="job-ascanpolicy.html">activeScan-policy</a> - アクティブポリシーを作成します</li>
+<li><a href="job-addons.html">addOns</a> - アドオン管理、現在は非推奨です</li>
+<li><a href="job-delay.html">delay</a> - 指定された期間または特定の条件が満たされるまでプランを一時停止します</li>
+<li><a href="job-requestor.html">requestor</a> - 対応するターゲットに送信する特定のリクエストを作成します</li>
+<li><a href="job-ascan.html">activeScan</a> - アクティブスキャナーを実行します</li>
+<li><a href="job-exitstatus.html">exitStatus</a> - スキャン結果に基づいてZAPの終了コードを設定します</li>
 </ul>
 
-<H3>Importance of Job Order</H3>
-The order of jobs is relevant and important. For example: 
+<H3><a name="gen-options">一般的なジョブオプション</a></H3>
+
+以下のオプションは、自動化プランまたは<a href="gui.html">GUI</a>を介して、すべてのジョブに適用できます：
+
 <ul>
-  <li>there is no point putting a passiveScan-wait job before any sort of spidering or importing</li>
-  <li>configuring an alertFilter job after alerts have been generated by passive or active scanning will have no effect on the Alerts that were raised by those components in earlier jobs</li>
+<li><code>enabled</code> - 有効になっているジョブのみが実行されます。
+<li><code>alwaysRun</code> - このオプションが設定されている有効なジョブは、プランが早期に終了した場合でも実行されます。
+</ul>
+
+<H3>ジョブ順序の重要性</H3>
+ジョブの順序は関連性があり重要です。 例えば： 
+<ul>
+  <li>あらゆる種類のスパイダリングやインポートの前に passiveScan-wait ジョブを配置しても意味がありません</li>
+  <li>パッシブまたはアクティブスキャンによってアラートが生成された後に alertFilter ジョブを設定しても、それらのコンポーネントが以前のジョブで発生させたアラートには効果がありません</li>
 </ul>
 
 <p>
-<a href="tests.html">Job tests</a> can be added to jobs to check that the jobs have performed as expected.
+<a href="tests.html">ジョブテスト</a>をジョブに追加して、ジョブが期待どおりに実行されたかどうかを確認できます。
 <p>
 
-This framework is plugable and so other add-ons may add support for other jobs, see the 
-<a href="https://www.zaproxy.org/docs/automate/automation-framework/">Automation Framework</a> website pages for a more complete list.
+このフレームワークはプラグイン可能であり、他のアドオンが他のジョブのサポートを追加できます。より完全なリストについては、<a href="https://www.zaproxy.org/docs/automate/automation-framework/">自動化フレームワーク</a>のWebサイトページを参照してください。
 <p>
-The 'min' and 'max' templates include comments giving more information about the fields.
+'min' および 'max' テンプレートには、フィールドに関する詳細情報を提供するコメントが含まれています。
 </BODY>
 </HTML>
 

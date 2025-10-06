@@ -5,8 +5,8 @@
 
 <index version="2.0">
     <!-- index entries are merged (sorted) into core index -->
-	<indexitem text="Alert Filters" target="addon.alertFilter" />
-	<indexitem text="Context alert Filters" target="addon.contextAlertFilter" />
-	<indexitem text="Global Alert Filters" target="addon.globalAlertFilter" />
-	<indexitem text="Automation" target="addon.automation" />
+	<indexitem text="アラートフィルター" target="addon.alertFilter" />
+	<indexitem text="コンテキストアラートフィルター" target="addon.contextAlertFilter" />
+	<indexitem text="グローバルアラートフィルター" target="addon.globalAlertFilter" />
+	<indexitem text="自動化" target="addon.automation" />
 </index>

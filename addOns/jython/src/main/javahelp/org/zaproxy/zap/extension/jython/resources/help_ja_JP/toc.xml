@@ -7,7 +7,7 @@
 	<tocitem text="ZAP ユーザーガイド" tocid="toplevelitem">
 		<tocitem text="アドオン" tocid="addons">
 			<tocitem text="Pythonスクリプト" image="python-logo" target="jython">
-				<tocitem text="Options" target="jython.options" />
+				<tocitem text="オプション" target="jython.options" />
 			</tocitem>
 		</tocitem>
 	</tocitem>
