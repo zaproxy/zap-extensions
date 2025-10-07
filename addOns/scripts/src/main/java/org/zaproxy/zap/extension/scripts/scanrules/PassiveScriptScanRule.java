@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.scripts.scanrules;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.control.Control;
@@ -103,10 +104,21 @@ public class PassiveScriptScanRule extends PassiveScriptHelper {
                         .setCweId(metadata.getCweId())
                         .setWascId(metadata.getWascId())
                         .setOtherInfo(metadata.getOtherInfo());
-        if (metadata.getReferences() != null && !metadata.getReferences().isEmpty()) {
-            alertBuilder.setReference(String.join("\n", metadata.getReferences()));
-        }
+        alertBuilder.setReference(ScriptScanRuleUtils.mergeReferences(metadata.getReferences()));
         return alertBuilder;
+    }
+
+    /**
+     * @since 45.14.0
+     */
+    public AlertBuilder newAlert(String alertRef) {
+        AlertBuilder builder = newAlert();
+        builder.setAlertRef(alertRef);
+        if (metadata.getAlertRefOverrides() != null) {
+            ScriptScanRuleUtils.overrideWithAlertRefMetadata(
+                    builder, metadata.getAlertRefOverrides().get(alertRef));
+        }
+        return builder;
     }
 
     @Override
@@ -149,7 +161,13 @@ public class PassiveScriptScanRule extends PassiveScriptHelper {
 
     @Override
     public List<Alert> getExampleAlerts() {
-        return List.of(newAlert().build());
+        return Optional.ofNullable(metadata.getAlertRefOverrides())
+                .map(
+                        overrides ->
+                                overrides.keySet().stream()
+                                        .map(alertRef -> newAlert(alertRef).build())
+                                        .toList())
+                .orElseGet(() -> List.of(newAlert().build()));
     }
 
     final ScriptWrapper getScript() {

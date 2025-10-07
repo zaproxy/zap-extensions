@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.scripts.scanrules;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationUtils;
 import org.apache.logging.log4j.LogManager;
@@ -166,6 +167,19 @@ public class ActiveScriptScanRule extends ActiveScriptHelper {
                 .setOtherInfo(metadata.getOtherInfo());
     }
 
+    /**
+     * @since 45.14.0
+     */
+    public AlertBuilder newAlert(String alertRef) {
+        AlertBuilder builder = newAlert();
+        builder.setAlertRef(alertRef);
+        if (metadata.getAlertRefOverrides() != null) {
+            ScriptScanRuleUtils.overrideWithAlertRefMetadata(
+                    builder, metadata.getAlertRefOverrides().get(alertRef));
+        }
+        return builder;
+    }
+
     @Override
     public int getId() {
         return metadata.getId();
@@ -193,10 +207,7 @@ public class ActiveScriptScanRule extends ActiveScriptHelper {
 
     @Override
     public String getReference() {
-        if (metadata.getReferences() != null && !metadata.getReferences().isEmpty()) {
-            return String.join("\n", metadata.getReferences());
-        }
-        return "";
+        return ScriptScanRuleUtils.mergeReferences(metadata.getReferences());
     }
 
     @Override
@@ -226,7 +237,13 @@ public class ActiveScriptScanRule extends ActiveScriptHelper {
 
     @Override
     public List<Alert> getExampleAlerts() {
-        return List.of(newAlert().build());
+        return Optional.ofNullable(metadata.getAlertRefOverrides())
+                .map(
+                        overrides ->
+                                overrides.keySet().stream()
+                                        .map(alertRef -> newAlert(alertRef).build())
+                                        .toList())
+                .orElseGet(() -> List.of(newAlert().build()));
     }
 
     @Override
