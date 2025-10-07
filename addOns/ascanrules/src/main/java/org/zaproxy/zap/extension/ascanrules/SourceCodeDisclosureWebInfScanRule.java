@@ -24,6 +24,7 @@ import com.strobel.decompiler.DecompilerSettings;
 import com.strobel.decompiler.PlainTextOutput;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Collections;
@@ -267,8 +268,8 @@ public class SourceCodeDisclosureWebInfScanRule extends AbstractHostPlugin
                 javaClassesFound.remove(classname);
                 javaClassesHandled.add(classname);
             }
-        } catch (Exception e) {
-            LOGGER.error(
+        } catch (IOException e) {
+            LOGGER.debug(
                     "Error scanning a Host for Source Code Disclosure via the WEB-INF folder: {}",
                     e.getMessage(),
                     e);

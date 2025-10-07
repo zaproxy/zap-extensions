@@ -326,7 +326,7 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin
                 }
             }
         } catch (Exception e) {
-            LOGGER.error("Error scanning a Host for Insecure HTTP Methods: {}", e.getMessage(), e);
+            LOGGER.warn("Error scanning a Host for Insecure HTTP Methods: {}", e.getMessage(), e);
         }
     }
 

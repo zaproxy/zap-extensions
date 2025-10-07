@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Removed
 - The two example active scan rules were removed from this add-on and are now part of: https://github.com/zaproxy/addon-java
+- Reduced usage of error level logging.
 
 ## [51] - 2025-09-18
 ### Changed

@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.ascanrules;
 
 import static org.zaproxy.zap.extension.ascanrules.utils.Constants.NULL_BYTE_CHARACTER;
 
+import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -258,8 +259,8 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
             // Not an error, just means we probably attacked the redirect
             // location
             return null;
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
+        } catch (IOException e) {
+            LOGGER.debug(e.getMessage(), e);
         }
 
         if (isStop()) {
@@ -996,8 +997,8 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
                 attackHeader(msg, param, appendedValue ? value : "");
             }
 
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
+        } catch (IOException e) {
+            LOGGER.debug(e.getMessage(), e);
         }
     }
 
