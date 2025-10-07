@@ -63,7 +63,7 @@ public class BoastService extends OastService implements OptionsChangedListener 
 
     @Override
     public void stopService() {
-        executorService.shutdown();
+        shutdown(LOGGER, boastParam.getPollingFrequency(), executorService, pollingSchedule);
     }
 
     @Override

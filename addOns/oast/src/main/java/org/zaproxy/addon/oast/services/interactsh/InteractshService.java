@@ -125,7 +125,7 @@ public class InteractshService extends OastService implements OptionsChangedList
 
     @Override
     public void stopService() {
-        executorService.shutdown();
+        shutdown(LOGGER, param.getPollingFrequency(), executorService, pollingSchedule);
         deregister();
     }
 

@@ -22,8 +22,12 @@ package org.zaproxy.addon.oast;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.apache.logging.log4j.Logger;
 
 public abstract class OastService {
 
@@ -36,6 +40,28 @@ public abstract class OastService {
     public abstract void startService();
 
     public abstract void stopService();
+
+    protected static void shutdown(
+            Logger logger,
+            int pollingFrequency,
+            ScheduledExecutorService executorService,
+            ScheduledFuture<?> pollingSchedule) {
+        if (pollingSchedule != null) {
+            pollingSchedule.cancel(true);
+        }
+
+        executorService.shutdown();
+
+        try {
+            if (!executorService.awaitTermination(pollingFrequency * 2L, TimeUnit.SECONDS)) {
+                logger.warn("Failed to await for tasks to finish.");
+                executorService.shutdownNow();
+            }
+        } catch (InterruptedException ignore) {
+            Thread.currentThread().interrupt();
+            logger.warn("Interrupted while awaiting for executor to shutdown.");
+        }
+    }
 
     public abstract boolean isRegistered();
 
