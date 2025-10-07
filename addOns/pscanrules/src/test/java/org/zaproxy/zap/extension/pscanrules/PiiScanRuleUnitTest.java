@@ -20,7 +20,9 @@
 package org.zaproxy.zap.extension.pscanrules;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -48,6 +50,26 @@ import org.zaproxy.addon.commonlib.PolicyTag;
 
 /** Unit test for {@link PiiScanRule}. */
 class PiiScanRuleUnitTest extends PassiveScannerTest<PiiScanRule> {
+
+    private static final String CONTENT_INSIDE_SCRIPT_TAG =
+            "<html><body><script>var data = '{\"identifier\": \"GRID_LAYOUT_4743251660071187\"}';</script></body></html>";
+    private static final String CONTENT_INSIDE_IMG_ID_ATTR =
+            "<html><body><img id=\"GRID_LAYOUT_4743251660071187\" src=\"image.png\"></img></body></html>";
+    private static final String CONTENT_INSIDE_H1_CLASS_ATTR =
+            "<html><body><H1 class=\"GRID_LAYOUT_4743251660071187\">Heading One</H1></body></html>";
+    private static final String CONTENT_INSIDE_HTML_COMMENT =
+            "<html><body><!-- Example comment GRID_LAYOUT_4743251660071187 --><H1>Heading One</H1></body></html>";
+    private static final String CONTENT_SCRIPT_BLOCK_PLACEHOLDER =
+            """
+    <html>
+    <head>
+    <script>var data = '{\"cc\": \"%s\"}';</script>
+    </head>
+    <body>
+    <H1>Example heading</H1>
+    Totally wonderful content.
+    </body>
+    </html>""";
 
     @Override
     protected PiiScanRule createScanner() {
@@ -398,6 +420,100 @@ class PiiScanRuleUnitTest extends PassiveScannerTest<PiiScanRule> {
         scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), is(1));
+    }
+
+    private static Stream<Arguments> provideContentAndThresholds() {
+        return Stream.of(
+                Arguments.of(CONTENT_INSIDE_SCRIPT_TAG, AlertThreshold.MEDIUM),
+                Arguments.of(CONTENT_INSIDE_IMG_ID_ATTR, AlertThreshold.MEDIUM),
+                Arguments.of(CONTENT_INSIDE_H1_CLASS_ATTR, AlertThreshold.MEDIUM),
+                Arguments.of(CONTENT_INSIDE_HTML_COMMENT, AlertThreshold.MEDIUM),
+                Arguments.of(CONTENT_INSIDE_SCRIPT_TAG, AlertThreshold.HIGH),
+                Arguments.of(CONTENT_INSIDE_IMG_ID_ATTR, AlertThreshold.HIGH),
+                Arguments.of(CONTENT_INSIDE_H1_CLASS_ATTR, AlertThreshold.HIGH),
+                Arguments.of(CONTENT_INSIDE_HTML_COMMENT, AlertThreshold.HIGH));
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideContentAndThresholds")
+    void shouldNotRaiseAlertWhenPiiIsInNonVisibleHtmlContentTypeOnNonLowThreshold(
+            String content, AlertThreshold threshold) throws Exception {
+        // Given
+        HttpMessage msg = createMsg("4743251660071187");
+        msg.setResponseBody(content);
+        msg.getRequestHeader().setURI(new URI("http://example.com/generate/", true));
+        rule.setAlertThreshold(threshold);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised, is(empty()));
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                CONTENT_INSIDE_SCRIPT_TAG,
+                CONTENT_INSIDE_IMG_ID_ATTR,
+                CONTENT_INSIDE_H1_CLASS_ATTR,
+                CONTENT_INSIDE_HTML_COMMENT
+            })
+    void shouldRaiseAlertWhenPiiInNonVisibleHtmlContentTypeOnLowThreshold(String content)
+            throws Exception {
+        String ccNum = "4743251660071187";
+        HttpMessage msg = createMsg(ccNum);
+        msg.setResponseBody(content);
+        msg.getRequestHeader().setURI(new URI("http://example.com/generate/", true));
+        rule.setAlertThreshold(AlertThreshold.LOW);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+        assertThat(alertsRaised.get(0).getEvidence(), is(equalTo(ccNum)));
+    }
+
+    @ParameterizedTest
+    @EnumSource(names = {"HIGH", "MEDIUM", "LOW"})
+    void shouldAlertOnPiiInScriptBlockRegardlessOfThreshold(AlertThreshold threshold)
+            throws Exception {
+        String ccNum = "4743251660071187";
+        HttpMessage msg = createMsg(ccNum);
+        msg.setResponseBody(CONTENT_SCRIPT_BLOCK_PLACEHOLDER.formatted(ccNum));
+        msg.getRequestHeader().setURI(new URI("http://example.com/generate/", true));
+        rule.setAlertThreshold(threshold);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+        assertThat(alertsRaised.get(0).getEvidence(), is(equalTo(ccNum)));
+    }
+
+    @Test
+    void shouldAlertOnPiiWithUnderscoreInScriptBlockOnLowThreshold() throws Exception {
+        String ccNum = "4743251660071187";
+        HttpMessage msg = createMsg(ccNum);
+        msg.setResponseBody(CONTENT_SCRIPT_BLOCK_PLACEHOLDER.formatted("FOO_" + ccNum));
+        msg.getRequestHeader().setURI(new URI("http://example.com/generate/", true));
+        rule.setAlertThreshold(AlertThreshold.LOW);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+        assertThat(alertsRaised.get(0).getEvidence(), is(equalTo(ccNum)));
+    }
+
+    @ParameterizedTest
+    @EnumSource(names = {"HIGH", "MEDIUM"})
+    void shouldNotAlertOnPiiWithUnderscoreInScriptBlockOnNonLowThreshold(AlertThreshold threshold)
+            throws Exception {
+        String ccNum = "4743251660071187";
+        HttpMessage msg = createMsg(ccNum);
+        msg.setResponseBody(CONTENT_SCRIPT_BLOCK_PLACEHOLDER.formatted("FOO_" + ccNum));
+        msg.getRequestHeader().setURI(new URI("http://example.com/generate/", true));
+        rule.setAlertThreshold(threshold);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised, is(empty()));
     }
 
     private static Stream<Arguments> provideContentTypeAndThreshold() {

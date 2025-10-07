@@ -365,12 +365,12 @@ At LOW threshold, alerts will be raised for such matches.
 <p>
 At MEDIUM and HIGH threshold, the following content types are evaluated:
 <ul>
-    <li>HTML</li>
+    <li>HTML (visible text and script blocks)</li>
     <li>JSON</li>
     <li>XML</li>
 </ul>
 Image and CSS files are always ignored.
-Every other content type is evaluated at LOW threshold.
+Every other content type is evaluated at LOW threshold. Additionally at LOW threshold the entire response is evaluated.
 <p>
 Note: In the case of suspected credit card values, the potential credit card numbers are looked up against a Bank Identification Number List 
 (BINList). If a match is found the alert is raised at High confidence and additional details are added to the 'Other Information' field in the 
