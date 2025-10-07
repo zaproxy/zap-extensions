@@ -19,9 +19,14 @@
  */
 package org.zaproxy.zap.extension.graaljs;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.emptyOrNullString;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.mockito.Mockito.mock;
 
 import java.util.List;
+import java.util.ResourceBundle;
 import org.junit.jupiter.api.BeforeEach;
 import org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadataProvider;
 import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
@@ -52,6 +57,11 @@ public abstract class GraalJsPassiveScriptScanRuleTestUtils
     @Override
     public void setUpMessages() {
         mockMessages(new ExtensionGraalJs());
+    }
+
+    @Override
+    public void shouldHaveI18nNonEmptyName(String name, ResourceBundle extensionResourceBundle) {
+        assertThat(name, is(not(emptyOrNullString())));
     }
 
     @Override

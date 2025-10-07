@@ -41,5 +41,19 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns
 <br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40039/">40039</a>.
 
+<H2 id="id-100044">Suspicious Input Transformation</H2>
+This is an active script scan rule. It detects various types of suspicious input transformations that may indicate
+potential security vulnerabilities such as template injection, expression evaluation, quote consumption, and issues
+related to unicode normalization.
+<p>
+This rule is largely adapted from the "Suspect Transform" check included in the ActiveScan++ extension for Burp
+Suite by
+Albinowax: <a href="https://github.com/albinowax/ActiveScanPlusPlus/blob/master/src/burp/SuspectTransform.java">SuspectTransform.java</a>.
+
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/zapHomeFiles/scripts/scripts/active/SuspiciousInputTransformation.js">SuspiciousInputTransformation.js</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/100044/">100044</a>.
+
 </BODY>
 </HTML>

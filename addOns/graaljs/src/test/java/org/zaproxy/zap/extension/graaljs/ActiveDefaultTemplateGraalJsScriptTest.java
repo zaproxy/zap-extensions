@@ -20,15 +20,12 @@
 package org.zaproxy.zap.extension.graaljs;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.emptyOrNullString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
 
 import java.nio.file.Path;
 import java.util.Map;
-import java.util.ResourceBundle;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.zap.testutils.AlertReferenceError;
@@ -45,11 +42,6 @@ class ActiveDefaultTemplateGraalJsScriptTest extends GraalJsActiveScriptScanRule
     @Override
     protected boolean isIgnoreAlertsRaisedInSendReasonableNumberOfMessages() {
         return true;
-    }
-
-    @Override
-    public void shouldHaveI18nNonEmptyName(String name, ResourceBundle extensionResourceBundle) {
-        assertThat(name, is(not(emptyOrNullString())));
     }
 
     @Override
