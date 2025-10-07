@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.10.0] - 2025-10-07
 ### Changed
 - Update Graal JavaScript engine to version 25 (Issues 8477 and 9010).
 - Use example links in Active/Passive Rule templates' references.
@@ -71,6 +71,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 First version.
 
+[0.10.0]: https://github.com/zaproxy/zap-extensions/releases/graaljs-v0.10.0
 [0.9.0]: https://github.com/zaproxy/zap-extensions/releases/graaljs-v0.9.0
 [0.8.0]: https://github.com/zaproxy/zap-extensions/releases/graaljs-v0.8.0
 [0.7.0]: https://github.com/zaproxy/zap-extensions/releases/graaljs-v0.7.0

@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [45.14.0] - 2025-10-07
 ### Added
 - Support for alert reference overrides in script scan rule metadata.
 
@@ -399,6 +399,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[45.14.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.14.0
 [45.13.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.13.0
 [45.12.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.12.0
 [45.11.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.11.0
