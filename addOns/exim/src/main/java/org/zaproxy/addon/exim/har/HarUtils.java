@@ -110,7 +110,10 @@ public final class HarUtils {
             JsonMapper.builder()
                     .addModule(new JavaTimeModule())
                     .configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, false)
-                    .serializationInclusion(JsonInclude.Include.NON_DEFAULT)
+                    .defaultPropertyInclusion(
+                            JsonInclude.Value.construct(
+                                    JsonInclude.Include.NON_DEFAULT,
+                                    JsonInclude.Include.NON_DEFAULT))
                     .build();
 
     private static final ObjectWriter JSON_WRITER =

@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Reinstate the validation of the Scan Policy in the `activeScan` job.
 - Adjust the text for the plan load warning/error dialog text to be clear which output panel it's referring to.
+- Maintenance changes.
 
 ## [0.53.0] - 2025-09-18
 ### Fixed

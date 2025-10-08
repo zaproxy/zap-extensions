@@ -449,8 +449,7 @@ public class ExtensionReports extends ExtensionAdaptor {
                 reportFilename += ".pdf";
                 File pdfFile = new File(reportFilename);
                 try (OutputStream outputStream = new FileOutputStream(pdfFile)) {
-                    ITextRenderer renderer = new ITextRenderer();
-                    renderer.setDocument(file);
+                    ITextRenderer renderer = new ITextRenderer(file);
                     renderer.layout();
                     try {
                         renderer.createPDF(outputStream);

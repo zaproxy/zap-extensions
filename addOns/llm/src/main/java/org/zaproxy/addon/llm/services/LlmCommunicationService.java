@@ -19,11 +19,11 @@
  */
 package org.zaproxy.addon.llm.services;
 
-import com.azure.ai.openai.models.ChatCompletionsJsonResponseFormat;
 import dev.langchain4j.memory.ChatMemory;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.azure.AzureOpenAiChatModel;
-import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.model.chat.request.ResponseFormat;
 import dev.langchain4j.model.ollama.OllamaChatModel;
 import dev.langchain4j.service.AiServices;
 import java.io.BufferedReader;
@@ -59,7 +59,7 @@ public class LlmCommunicationService {
     private LlmResponseHandler listener;
     Requestor requestor;
 
-    static ChatLanguageModel model;
+    static ChatModel model;
     ChatMemory chatMemory;
 
     public LlmCommunicationService(LlmOptions options) {
@@ -69,7 +69,7 @@ public class LlmCommunicationService {
 
         llmAssistant =
                 AiServices.builder(LlmAssistant.class)
-                        .chatLanguageModel(model)
+                        .chatModel(model)
                         .chatMemory(chatMemory)
                         .build();
         requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR, new HistoryPersister());
@@ -80,7 +80,7 @@ public class LlmCommunicationService {
         this.llmAssistant = assistant;
     }
 
-    private ChatLanguageModel buildModel(LlmOptions options) {
+    private ChatModel buildModel(LlmOptions options) {
         return switch (options.getModelProvider()) {
             case AZURE_OPENAI ->
                     AzureOpenAiChatModel.builder()
@@ -88,7 +88,7 @@ public class LlmCommunicationService {
                             .deploymentName(options.getModelName())
                             .endpoint(options.getEndpoint())
                             .temperature(0.3)
-                            .responseFormat(new ChatCompletionsJsonResponseFormat())
+                            .responseFormat(ResponseFormat.JSON)
                             .listeners(List.of(listener))
                             .logRequestsAndResponses(true)
                             .build();

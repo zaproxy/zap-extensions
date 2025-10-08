@@ -47,7 +47,10 @@ import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 public class ActiveScanConfigJob extends AutomationJob {
     private static final ObjectMapper OBJECT_MAPPER =
             JsonMapper.builder()
-                    .serializationInclusion(JsonInclude.Include.NON_DEFAULT)
+                    .defaultPropertyInclusion(
+                            JsonInclude.Value.construct(
+                                    JsonInclude.Include.NON_DEFAULT,
+                                    JsonInclude.Include.NON_DEFAULT))
                     .build()
                     .findAndRegisterModules();
 
