@@ -1,10 +1,15 @@
-import org.zaproxy.gradle.addon.AddOnPlugin
+import org.zaproxy.gradle.WebDriverData
 import org.zaproxy.gradle.addon.AddOnStatus
-import org.zaproxy.gradle.tasks.DownloadWebDriver
 
 description = "Linux WebDrivers for Firefox and Chrome."
 
-extra["targetOs"] = DownloadWebDriver.OS.LINUX
+extra["webdrivers"] =
+    listOf(
+        WebDriverData(WebDriverData.OS.LINUX, WebDriverData.Browser.CHROME, WebDriverData.Arch.X64),
+        WebDriverData(WebDriverData.OS.LINUX, WebDriverData.Browser.FIREFOX, WebDriverData.Arch.X32, false),
+        WebDriverData(WebDriverData.OS.LINUX, WebDriverData.Browser.FIREFOX, WebDriverData.Arch.X64, false),
+        WebDriverData(WebDriverData.OS.LINUX, WebDriverData.Browser.FIREFOX, WebDriverData.Arch.ARM64, false),
+    )
 
 zapAddOn {
     addOnName.set("Linux WebDrivers")
@@ -17,31 +22,5 @@ zapAddOn {
             baseName.set("org.zaproxy.zap.extension.webdriverlinux.resources.help%LC%.helpset")
             localeToken.set("%LC%")
         }
-    }
-}
-
-tasks.named(AddOnPlugin.GENERATE_MANIFEST_TASK_NAME) {
-    dependsOn(tasks.withType<DownloadWebDriver>())
-}
-
-tasks {
-    register<DownloadWebDriver>("downloadChromeDriver") {
-        browser.set(DownloadWebDriver.Browser.CHROME)
-        arch.set(DownloadWebDriver.Arch.X64)
-    }
-
-    register<DownloadWebDriver>("downloadGeckodriverArm") {
-        browser.set(DownloadWebDriver.Browser.FIREFOX)
-        arch.set(DownloadWebDriver.Arch.ARM64)
-    }
-
-    register<DownloadWebDriver>("downloadGeckodriverX32") {
-        browser.set(DownloadWebDriver.Browser.FIREFOX)
-        arch.set(DownloadWebDriver.Arch.X32)
-    }
-
-    register<DownloadWebDriver>("downloadGeckodriverX64") {
-        browser.set(DownloadWebDriver.Browser.FIREFOX)
-        arch.set(DownloadWebDriver.Arch.X64)
     }
 }
