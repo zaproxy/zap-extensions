@@ -8,6 +8,6 @@
 	<indexitem text="スクリプトコンソール" target="addon.scripts.scripts" />
 	<indexitem text="スクリプトコンソール タブ" target="addon.scripts.console" />
 	<indexitem text="スクリプトコンソール オプション" target="addon.scripts.options" />
-	<indexitem text="スクリプト スキャンルール" target="addon.scripts.scanrules" />
+	<indexitem text="スクリプト – スキャンルール" target="addon.scripts.scanrules" />
 	<indexitem text="スクリプト ツリータブ" target="addon.scripts.tree" />
 </index>
