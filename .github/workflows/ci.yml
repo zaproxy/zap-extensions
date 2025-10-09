@@ -31,9 +31,9 @@ jobs:
         with:
           gradle-home-cache-includes: |
             caches
+            caches/zap-wd
             notifications
-            wdm
       - run: ./gradlew "-Dorg.gradle.jvmargs=-Xmx4g" assemble
         env:
-          WDM_CACHEPATH: "~/.gradle/wdm"
+          ZAP_WD_CACHE: 1
       - run: ./gradlew check

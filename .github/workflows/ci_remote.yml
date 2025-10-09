@@ -21,7 +21,6 @@ jobs:
           gradle-home-cache-includes: |
             caches
             notifications
-            wdm
       - run: ./gradlew -Dorg.gradle.jvmargs=-Xmx4g --continue --no-parallel test
         env:
           ZAP_REMOTE_TESTS: 1
