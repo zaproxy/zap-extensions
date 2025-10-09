@@ -9,22 +9,8 @@
 <h1>主动扫描规则 - alpha 版</h1>
 本插件包含以下alpha版本的主动扫描规则：
 
-<h2 id="id-60101">An example active scan rule which loads data from a file</h2>
-该示例实现了一个主动扫描规则，从一个用户可以编辑的文件中加载字符串。<br>
-更多详情，请参阅： 
-<a href="https://www.zaproxy.org/blog/2014-04-30-hacking-zap-4-active-scan-rules/">Hacking ZAP 第 4 部分：主动扫描规则</a>.
-<p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/ExampleFileActiveScanRule.java">ExampleFileActiveScanRule.java</a>
-
-<h2 id="id-60100">Example Active Scan Rule: Denial of Service</h2>
-This implements a very simple example active scan rule.<br>
-For more details see: 
-<a href="https://www.zaproxy.org/blog/2014-04-30-hacking-zap-4-active-scan-rules/">Hacking ZAP Part 4: Active Scan Rules</a>.
-<p>
-最新代码: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/ExampleSimpleActiveScanRule.java">ExampleSimpleActiveScanRule.java</a>
-
-<h2 id="id-40015">LDAP 注入</h2>
-可能存在LDAP 注入。 攻击者有可能绕过身份验证控制，查看和修改 LDAP 目录中的任意数据。
+<h2 id="id-40015">LDAP Injection</h2>
+LDAP Injection may be possible. 攻击者有可能绕过身份验证控制，查看和修改 LDAP 目录中的任意数据。
 跳过最初导致客户端或服务器错误响应状态代码的信息。
 <p>
 最新代码: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/LdapInjectionScanRule.java">LdapInjectionScanRule.java</a>
@@ -54,6 +40,20 @@ For more details see:
 最新代码： <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/WebCacheDeceptionScanRule.java">WebCacheDeceptionScanRule.java</a>
 <br>
 警报 ID: <a href="https://www.zaproxy.org/docs/alerts/40039/">40039</a>.
+
+<h2 id="id-100044">Suspicious Input Transformation</h2>
+This is an active script scan rule. It detects various types of suspicious input transformations that may indicate
+potential security vulnerabilities such as template injection, expression evaluation, quote consumption, and issues
+related to unicode normalization.
+<p>
+This rule is largely adapted from the "Suspect Transform" check included in the ActiveScan++ extension for Burp
+Suite by
+Albinowax: <a href="https://github.com/albinowax/ActiveScanPlusPlus/blob/master/src/burp/SuspectTransform.java">SuspectTransform.java</a>.
+
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/zapHomeFiles/scripts/scripts/active/SuspiciousInputTransformation.js">SuspiciousInputTransformation.js</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/100044/">100044</a>.
 
 </body>
 </html>

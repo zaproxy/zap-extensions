@@ -2,14 +2,14 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Script Scan Rules</title>
+    <title>スクリプト – スキャンルール</title>
 </head>
 <body>
-<h1>Script Scan Rules</h1>
+<h1>スクリプト – スキャンルール</h1>
 
-Active and Passive Scripts that implement the `getMetadata` function are treated as first-class scan rules by ZAP.
+<code>getMetadata</code>関数を実装したアクティブスクリプトとパッシブスクリプトは、ZAPでは正式なスキャンルールとして扱われます。
 
-Example implementation of this function in a script would look like:
+スクリプト内でこの関数を実装する例は次のとおりです:
 
 <pre><code>
 function getMetadata() {
@@ -31,15 +31,29 @@ alertTags:
   name2: value2
 otherInfo: Any other Info
 status: alpha
+alertRefOverrides:
+  12345-1:
+    name: Alert Reference 1
+
 `);
 }
 </code></pre>
 
-The <code>category</code> field is only used for Active Scan Scripts.
+<p>
+metadata関数はスクリプトの保存時に評価され、メタデータが有効であればスキャンルールとして公開されます。
 
-Any additional fields in the metadata are ignored.
+<p>
+<code>category</code>フィールドは、アクティブスキャンスクリプトでのみ使用されます。
 
-The metadata function is evaluated upon saving the script, which is exposed as a scan rule if the metadata is valid.
+<p>
+<code>alertRefOverrides</code>フィールドを使用すると、各アラート参照の特定のフィールドを上書きできます。
+<code>id</code>、<code>category</code>、<code>status</code>を除く、すべての最上位フィールドを上書きできます。
+アラート参照は、1つのスキャンルールが複数のタイプのアラートを発生させる場合に、各アラートタイプを一意に識別するために使用されます。
+通常、アラート参照はスキャンルールIDに連番の数字をサフィックスとして付加した形式（例: <code>12345-1</code>、<code>12345-2</code>など）になります。
+特定のアラート参照のメタデータを使用するアラートを発生させるには、<code>newAlert()</code>の引数としてアラート参照を渡します。
+
+<p>
+メタデータ内で定義されていないフィールドは無視されます (例: <code>author: your name</code>)。
 
 </body>
 </html>
