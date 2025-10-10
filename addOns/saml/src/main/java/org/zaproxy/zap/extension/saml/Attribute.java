@@ -19,8 +19,8 @@
  */
 package org.zaproxy.zap.extension.saml;
 
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlEnum;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class Attribute {

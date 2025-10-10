@@ -46,6 +46,7 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.support.ParameterDeclarations;
 import org.mockito.quality.Strictness;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
@@ -590,14 +591,16 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
 
     static class GetsArgumentsProvider implements ArgumentsProvider {
         @Override
-        public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
+        public Stream<? extends Arguments> provideArguments(
+                ParameterDeclarations parameters, ExtensionContext context) {
             return List.of(Arguments.of("GET"), Arguments.of("get"), Arguments.of("gEt")).stream();
         }
     }
 
     static class PostsArgumentsProvider implements ArgumentsProvider {
         @Override
-        public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
+        public Stream<? extends Arguments> provideArguments(
+                ParameterDeclarations parameters, ExtensionContext context) {
             return List.of(Arguments.of("POST"), Arguments.of("post"), Arguments.of("pOst"))
                     .stream();
         }

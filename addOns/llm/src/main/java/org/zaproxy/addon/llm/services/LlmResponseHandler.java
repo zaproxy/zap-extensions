@@ -31,7 +31,7 @@ public class LlmResponseHandler implements ChatModelListener {
 
     @Override
     public void onResponse(ChatModelResponseContext responseContext) {
-        LOGGER.info("Token usage = {} ", responseContext.response().tokenUsage());
+        LOGGER.info("Token usage = {} ", responseContext.chatResponse().tokenUsage());
     }
 
     @Override

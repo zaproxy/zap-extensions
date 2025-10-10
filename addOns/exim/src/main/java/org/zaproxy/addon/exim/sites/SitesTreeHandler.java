@@ -79,7 +79,9 @@ public class SitesTreeHandler {
                         .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
                         .disable(YAMLGenerator.Feature.SPLIT_LINES)
                         .disable(YAMLGenerator.Feature.ALWAYS_QUOTE_NUMBERS_AS_STRINGS)
-                        .serializationInclusion(JsonInclude.Include.NON_NULL)
+                        .defaultPropertyInclusion(
+                                JsonInclude.Value.construct(
+                                        JsonInclude.Include.NON_NULL, JsonInclude.Include.NON_NULL))
                         .enable(SerializationFeature.INDENT_OUTPUT)
                         .build();
 

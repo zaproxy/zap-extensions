@@ -22,6 +22,11 @@ zapAddOn {
     }
 }
 
+tasks.withType<JavaCompile>().configureEach {
+    // Allow warnings since Jython shades dependencies without bringing the annotations in use.
+    options.compilerArgs = options.compilerArgs - "-Werror"
+}
+
 dependencies {
     zapAddOn("commonlib")
 
