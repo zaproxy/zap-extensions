@@ -10,19 +10,22 @@
 		This screen allows you to configure the <a href="concepts.html">applications</a> that
 		can be invoked.<br> By default there are no applications available, you need to add
 		all of the applications that you want to use.
+	</p>
+
 	<H3>Display Name</H3>
-	The name that will be used for this application in ZAP.
-	<br>
+	<p>The name that will be used for this application in ZAP.</p>
 
 	<H3>Full Command</H3>
-	The full path of the application you want to invoke.
-	<br> Only one command can be specified. If you want to run multiple commands in one
-	go, or set up environmental variables, then you should create a script or batch file and
-	then invoke this from ZAP.
+	<p>
+		The full path of the application you want to invoke.<br>
+		Only one command can be specified. If you want to run multiple commands in one
+		go, or set up environmental variables, then you should create a script or batch file and
+		then invoke this from ZAP.
+	</p>
 
 	<H3>Parameters</H3>
-	The parameters that ZAP should pass to the command.
-	<br> The following tags may be used to pass parameters:
+	The parameters that ZAP should pass to the command.<br>
+	The following tags may be used to pass parameters:
 	<table>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -57,9 +60,7 @@
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td>%msgid%</td>
-			<td>the HTTP message id to fetch data from the API (/JSON/core/view/message/?id=$msgid), 
-				does not alway exist, will return -1 if no message id
-			</td>
+			<td>the HTTP message id to fetch data from the API (/JSON/core/view/message/?id=$msgid), does not alway exist, will return -1 if no message id</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -70,20 +71,23 @@
 	So if a command accepted a URL using '-u' you would specify the parameters as: '-u %url%'
 
 	<H3>Capture Output</H3>
-	If checked then the command run and any output it generates will be displayed on the
-	<i>Output tab</i>.
-	<br> You should always use this option when running scripts or commands that do not
-	have a UI.
-	<br> You can also use this option for troubleshooting - if an application does not
-	run as expected then copy the command run and try it from a command line prompt.
+	<p>
+		If checked then the command run and any output it generates will be displayed on the
+		<i>Output tab</i>.<br>
+		You should always use this option when running scripts or commands that do not
+		have a UI.<br>
+		You can also use this option for troubleshooting - if an application does not
+		run as expected then copy the command run and try it from a command line prompt.
+	</p>
 
 	<H3>Output to Note</H3>
-	If checked then any output will be appended to a
-	<i>Note</i> attached to the relevant
-	<i>History tab</i> record.
-	<br> Note that some nodes in the
-	<i>Sites tab</i> do not have associated
-	<i>History tab</i> records - for those nodes this option will have no effect.
-
+	<p>
+		If checked then any output will be appended to a
+		<i>Note</i> attached to the relevant
+		<i>History tab</i> record.<br>
+		Note that some nodes in the
+		<i>Sites tab</i> do not have associated
+		<i>History tab</i> records - for those nodes this option will have no effect.
+	</p>
 </BODY>
 </HTML>
