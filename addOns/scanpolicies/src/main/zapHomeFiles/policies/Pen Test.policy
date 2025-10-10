@@ -391,5 +391,10 @@
             <enabled>true</enabled>
             <level>MEDIUM</level>
         </p90039>
+        <p100044>
+            <name>Suspicious Input Transformation</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p100044>
     </plugins>
 </configuration>
