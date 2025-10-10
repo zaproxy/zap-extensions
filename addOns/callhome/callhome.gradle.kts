@@ -13,6 +13,8 @@ zapAddOn {
 }
 
 dependencies {
+    compileOnly(libs.log4j.core)
+
     testImplementation(project(":testutils"))
 }
 
