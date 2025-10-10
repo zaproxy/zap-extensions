@@ -28,6 +28,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import fi.iki.elonen.NanoHTTPD;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -214,6 +215,18 @@ class WebCacheDeceptionScanRuleUnitTest extends ActiveScannerTest<WebCacheDecept
         // Then
         assertThat(alertsRaised, hasSize(0));
         assertEquals(1, httpMessagesSent.size());
+    }
+
+    @Test
+    void shouldHaveExampleAlerts() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts, hasSize(1));
+        Alert example = alerts.get(0);
+        assertThat(example.getName(), is(equalTo("Web Cache Deception")));
+        assertThat(example.getAttack(), is("/test.css,/test.js,/test.gif,/test.png,/test.svg,"));
+        assertThat(example.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
     }
 
     private static class CachedTestResponse extends NanoServerHandler {
