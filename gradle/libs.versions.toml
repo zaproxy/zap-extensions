@@ -45,7 +45,7 @@ fuzz-snodge = "com.natpryce:snodge:2.1.2.2"
 graaljs-graaljs = { module = "org.graalvm.js:js-community", version.ref = "graaljs" }
 graaljs-jsScriptEngine = { module = "org.graalvm.js:js-scriptengine", version.ref = "graaljs" }
 graphql-graphqlJava = "com.graphql-java:graphql-java:24.3"
-groovy-groovy = "org.codehaus.groovy:groovy-all:3.0.14"
+groovy-groovy = "org.apache.groovy:groovy-all:5.0.1"
 grpc-protobuf = "io.grpc:grpc-protobuf:1.61.1"
 imagelocationscanner-metadataExtractor = "com.drewnoakes:metadata-extractor:2.19.0"
 jruby-jruby = "org.jruby:jruby-complete:1.7.4"

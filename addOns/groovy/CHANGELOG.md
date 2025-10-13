@@ -10,9 +10,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Update minimum ZAP version to 2.16.0.
+- Update Groovy from 3.0.14 to 5.0.1.  
+  Existing Groovy scripts should work without issues, 
+  but if you encounter problems, please refer to the following.
+  - [Groovy 4 Release Notes](https://groovy-lang.org/releasenotes/groovy-4.0.html)
+  - [Groovy 5 Release Notes](https://groovy-lang.org/releasenotes/groovy-5.0.html#Groovy5.0-breaking)
 - Update script templates:
   - authentication/AuthenticationDefaultTemplate.groovy - remove outdated example code.
   - httpsender/HttpSenderDefaultTemplate.groovy - update documentation.
+  - encode-decode/EncodeDecodeDefaultTemplate.groovy - remove the `final` modifier from the `test` field.
+  - httpfuzzerprocessor/FuzzerHttpProcessorDefaultTemplate.groovy - remove the `final` modifier from the `count` field.  
+    **NOTE:** The last two changes were required due to the Groovy update.
 
 ## [3.2.0] - 2024-04-11
 ### Changed
