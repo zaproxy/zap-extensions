@@ -18,7 +18,7 @@ LDAPインジェクションの可能性があります。 攻撃者が認証制
 
 <h2 id="id-40033">NoSQLインジェクション - MongoDB</h2>
 このルールはMongoDB特有のNoSQLインジェクション脆弱性の識別を試みます。 真偽値ベース、エラーベース、認証バイパスなど、さまざまなタイプの攻撃を試行します。 
-時間ベースの攻撃は含まれません。 また、スキャンがJSONパラメータバリアントを含むように設定されている場合、JSONパラメータ固有のペイロードも試行します。
+時間ベースの攻撃は含まれません。 また、スキャンがJSONパラメーターバリアントを含むように設定されている場合、JSONパラメーター固有のペイロードも試行します。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/MongoDbInjectionScanRule.java">MongoDbInjectionScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/40033/">40033</a>

@@ -14,7 +14,7 @@
 				<tocitem text="ジョブ: アクティブスキャン" target="automation.ascan"/>
 				<tocitem text="ジョブ: 待機" target="automation.delay"/>
 				<tocitem text="ジョブ: 終了ステータス" target="automation.exitstatus"/>
-				<tocitem text="ジョブ: リクエスター" target="automation.requestor"/>
+				<tocitem text="ジョブ: requestor" target="automation.requestor"/>
 				<tocitem text="テスト" target="automation.tests"/>
 				<tocitem text="テスト: アラート" target="automation.tests.alert"/>
 				<tocitem text="テスト: モニター" target="automation.tests.monitor"/>

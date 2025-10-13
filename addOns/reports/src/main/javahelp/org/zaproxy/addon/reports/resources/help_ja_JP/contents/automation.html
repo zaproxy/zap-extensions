@@ -2,42 +2,40 @@
 <HTML>
 <HEAD>
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
-<TITLE>Report Generation Automation Framework Support</TITLE>
+<TITLE>レポート生成 – 自動化フレームワーク対応</TITLE>
 </HEAD>
 <BODY>
-	<H1>Report Generation Automation Framework Support</H1>
-	This add-on supports the Automation Framework.
+	<H1>レポート生成 – 自動化フレームワーク対応</H1>
+	このアドオンは自動化フレームワークに対応しています。
 
-	<H2>Job: report</H2>
-	The report job allows you to generate reports using any of the
-	installed report templates.
+	<H2>ジョブ: report</H2>
+	report ジョブを使用すると、インストールされている任意のレポートテンプレートを使用してレポートを生成できます。
 	<pre>
-  - type: report                       # Report generation
+  - type: report                       # レポート生成
     parameters:
-      template:                        # String: The template id, default: risk-confidence-html
-      theme:                           # String: The template theme, default: the first theme defined for the template (if any)
-      reportDir:                       # String: The directory into which the report will be written
-      reportFile:                      # String: The report file name pattern, default: {{yyyy-MM-dd}}-ZAP-Report-[[site]]
-      reportTitle:                     # String: The report title
-      reportDescription:               # String: The report description
-      displayReport:                   # Boolean: Display the report when generated, default: false
-    risks:                             # List: The risks to include in this report, default all
+      template:                        # 文字列: テンプレート ID、デフォルト: risk-confidence-html
+      theme:                           # 文字列: テンプレートのテーマ、デフォルト: テンプレートに定義されている最初のテーマ (あれば)
+      reportDir:                       # 文字列: レポートが書き込まれるディレクトリ
+      reportFile:                      # 文字列: レポートファイル名のパターン、デフォルト: {{yyyy-MM-dd}}-ZAP-Report-[[site]]
+      reportTitle:                     # 文字列: レポートのタイトル
+      reportDescription:               # 文字列: レポートの説明
+      displayReport:                   # Boolean: 生成時にレポートを表示するかどうか、デフォルト: false
+    risks:                             # List: このレポートに含めるリスク、デフォルトはすべて
       - high
       - medium
       - low
       - info
-    confidences:                       # List: The confidences to include in this report, default all
+    confidences:                       # List: このレポートに含める信頼度、デフォルトはすべて
       - high
       - medium
       - low
       - falsepositive
-    sections:                          # List: The template sections to include in this report - see the relevant template, default all
-    sites:                             # List: The sites to include in this report, default all
+    sections:                          # List: このレポートに含めるテンプレートセクション - 該当するテンプレートを参照、デフォルトはすべて
+    sites:                             # List: このレポートに含めるサイト、デフォルトはすべて
 </pre>
 
-	The sites do not have to be full URLs - any site that contains one of
-	the strings in the sites list is included. The sites list also supports
-	variables.
+	サイトは完全なURLである必要はありません。サイトリスト内の文字列のいずれかを含むサイトはすべて含まれます。
+	サイトリストは変数もサポートしています。
 
 </BODY>
 </HTML>

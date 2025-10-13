@@ -3,44 +3,42 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>
-Plug-n-Hackクライアントタブ
+Plug-n-Hack クライアントタブ
 </title>
 </head>
 <body>
-<h1>Plug-n-Hackクライアントタブ</h1>
+<h1>Plug-n-Hack クライアントタブ</h1>
 <p>
-	Plug-n-Hack allows you to monitor client (browser) events in order to help test HTML5 applications.<br>
-	In order to support as wide a range of modern browsers as possible this is implemented by injecting javascript
-	into the response returned to the browser.<br>
-	As it means changing the response this functionality has to be manually enabled. 
+	Plug-n-Hackは、HTML5 アプリケーションのテストを支援するために、クライアント (ブラウザ) イベントを監視できるようにします。<br>
+可能な限り幅広いモダンなブラウザをサポートするために、これはブラウザに返されるレスポンスに JavaScript を注入することによって実装されます。<br>
+レスポンスを変更することを意味するため、この機能は手動で有効にする必要があります。 
 </p>
 <p>
-	To receive client events:
+	クライアントイベントを受信するには：
 	<ul>
-	<li>Access the pages you want to monitor while proxying through ZAP</li>
-	<li>Right click in the relevant node(s) in the Sites tree and select 'Monitor clients -> Include subtree'</li>
-	<li>Force your browser to reload those pages</li>
-	<li>Client events (such as postMessage, click, mouseover, etc.) will then be listed in this tab - select them to see the full details.</li>
+	<li>ZAPを経由してプロキシしながら、監視したいページにアクセスします</li>
+	<li>サイトツリーの関連ノードで右クリックし、「クライアントの監視」 -> 「サブツリーを含める」を選択します</li>
+	<li>ブラウザでそれらのページを強制的にリロードします</li>
+	<li>クライアントイベント (postMessage, click, mouseover など) がこのタブにリストされます - 選択して詳細を表示します。</li>
 	</ul>
 </p>
 <p>
-	The injected javascript sends a heartbeat to ZAP, so ZAP can display all of the 'active' clients in this tab.<br>
-	In this case 'active' clients are pages that are currently open in a browser tab.<br>
-	You can edit and resend any event via a right click menu item as long as the original client is active.<br>
+	注入された JavaScript は ZAP にハートビートを送信するので、ZAP はこのタブにすべての 'active' クライアントを表示できます。<br>
+ここで 'active' クライアントとは、ブラウザタブで現在開かれているページです。<br>
+元のクライアントがアクティブである限り、右クリックメニュー項目で任意のイベントを編集して再送信できます。<br>
 </p>
 <p>
-	You can also intercept and change postMessages on the fly.<br>
-	Client messages are intercepted if the ‘break on all requests’ button is selected on the top level toolbar.<br> 
-	You can also set custom client breakpoints via a button on the Clients tab.<br>
-	<br>
-	You can fuzz postMessages in the same way as any other message - highlight the string you want to fuzz in the Request tab, right click and select “Fuzz”.<br>
-	This option will only be available if the relevant browser still has that page open,as PnH sends the payloads to the browser.<br>
-	Standard ‘XSS’ payloads can be used to detect DOM XSS vulnerabilities, but you will need to manually monitor the UI to see if any of them are successful.<br>
-	<br>
-	PnH also adds a Custom fuzzing file called “PlugnHack DOM XSS Oracle”.<br>
-	This file is based on the OWASP XSS cheatsheet and invokes an ‘xss’ JavaScript method that is injected into the page. <br>
-	This method invokes the ZAP API which in turn flags the relevant attack in the UI - these are confirmed DOM XSS vulnerabilities, 
-	although (as always) you should check that they can really be exploited in the application you are testing without a tool like ZAP.<br>
+	postMessage をオンザフライでインターセプトして変更することもできます。<br>
+トップレベルツールバーの ‘break on all requests’ ボタンが選択されている場合、クライアントメッセージがインターセプトされます。<br>
+クライアントタブのボタンでカスタムクライアントブレークポイントを設定することもできます。<br>
+<br>
+他のメッセージと同じように postMessage をファズできます - リクエストタブでファズしたい文字列をハイライトし、右クリックして “Fuzz” を選択します。<br>
+このオプションは、関連ブラウザがそのページを開いている場合にのみ利用可能で、PnH がペイロードをブラウザに送信するためです。<br>
+標準の ‘XSS’ ペイロードを使用して DOM XSS 脆弱性を検出できますが、成功したかどうかを確認するために UI を手動で監視する必要があります。<br>
+<br>
+PnH は “PlugnHack DOM XSS Oracle” というカスタムファジングファイルも追加します。<br>
+このファイルは OWASP XSS チートシートに基づき、ページに注入された ‘xss’ JavaScript メソッドを呼び出します。 <br>
+このメソッドは ZAP API を呼び出し、UI で関連攻撃をフラグ付けします - これらは確認された DOM XSS 脆弱性ですが、 (いつものように) ZAP のようなツールなしでテスト中のアプリケーションで本当に悪用可能かを確認すべきです。<br>
 
 </p>
 

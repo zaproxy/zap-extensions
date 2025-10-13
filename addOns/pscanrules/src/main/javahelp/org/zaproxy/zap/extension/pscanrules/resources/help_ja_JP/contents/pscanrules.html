@@ -9,12 +9,12 @@
 <body>
 <h1>パッシブスキャンルール</h1>
 
-<h2>General Configuration</h2>
+<h2>全般設定</h2>
 
-<h3>Trusted Domains</h3>
+<h3>信頼済みドメイン</h3>
 You can specify a comma separated list of URL regex patterns using the <code>rules.domains.trusted</code> parameter via the Options 'Rule configuration' panel.
 Any link URL that matches one of these patterns will be considered to be in a trusted domain and will therefore not be reported.
-Following rules supports <b>Trusted Domains</b> :
+Following rules supports <b>信頼済みドメイン</b> :
 <ul>
  <li>Cross Domain Script Inclusion</li>
  <li>Reverse Tabnabbing</li>
@@ -210,8 +210,8 @@ The rule does not scan messages that are not HTML pages.<br>
 At HIGH alert threshold only scans messages which are in scope.<br>
 Post 2.5.0 you can specify a comma separated list of identifiers in the 
 <code>rules.csrf.ignorelist</code> parameter via the Options 'Rule configuration' panel.
-Any FORMs with a name or ID that matches one of these identifiers will be ignored when scanning for missing Anti-CSRF tokens.
-Only use this feature to ignore FORMs that you know are safe, for example search forms.
+これらの識別子のいずれかに一致する name または ID を持つFORMは、Anti-CSRFトークンの欠落をスキャンする際に無視されます。
+この機能は、検索フォームなど、安全であることが確認されているFORMを無視する場合にのみ使用してください。
 Form element names are sorted and de-duplicated when they are printed in the ZAP Report.
 <br>
 注:

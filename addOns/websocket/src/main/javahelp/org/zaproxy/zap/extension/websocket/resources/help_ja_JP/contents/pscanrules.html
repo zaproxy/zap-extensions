@@ -11,7 +11,7 @@
         <h2 id="scripts">スクリプト</h2>
         Scripts which are included by default in the add-on and they implement the following WebSocket passive scan rules:
 
-        <h3 id="id-110002">Base64 Disclosure</h3>
+        <h3 id="id-110002">Base64の漏洩</h3>
 
         This script analyzes incoming WebSocket message payload for Base64 strings. The encoded information may include sensitive data which may not specifically meant for end user consumption.<br>
 
@@ -164,7 +164,7 @@
             <tr><td><strong>アラートID:</strong></td><td><a href="https://www.zaproxy.org/docs/alerts/110006/">110006</a></td></tr>
         </table>
 
-        <h3 id="id-110007">Username Disclosure</h3>
+        <h3 id="id-110007">ユーザー名の漏洩</h3>
 
         Checks incoming WebSocket message payload for usernames. This script can find usernames which are hashed with the following methods:
         {MD2, MD5, SHA256, SHA384, SHA512}. The usernames have to be defined in any context before. In order to a add user in a Context follow the steps below:

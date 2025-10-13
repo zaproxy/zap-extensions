@@ -3,25 +3,25 @@
 <HEAD>
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
     <TITLE>
-        SOAP Automation Framework Support
+        SOAP – 自動化フレームワーク対応
     </TITLE>
 </HEAD>
 <BODY>
 
-<H1>SOAP Automation Framework Support</H1>
-This add-on supports the Automation Framework.
+<H1>SOAP – 自動化フレームワーク対応</H1>
+このアドオンは自動化フレームワークに対応しています。
 <br><br>
-The add-on will import WSDL files containing SOAP endpoints if they are found while spidering but adding them explicitly via a URL or local file is recommended if they are available.
+アドオンは、スパイダリング中に見つかった場合、SOAP エンドポイントを含むWSDLファイルをインポートしますが、利用可能であればURLまたはローカルファイル経由で明示的に追加することを推奨します。
 
-<H2>Job: soap</H2>
-The soap job allows you to import WSDL files locally or from a URL.
+<H2>ジョブ: soap</H2>
+soap ジョブは、ローカルまたはURLからWSDLファイルをインポートできます。
 <p>
-It is covered in the video: <a href="https://youtu.be/xuP00Ri460k">ZAP Chat 11 Automation Framework Part 5 - APIs</a>.
+この内容は、動画「<a href="https://youtu.be/xuP00Ri460k">ZAP Chat 11 Automation Framework Part 5 - APIs</a>」で解説されています。
 <pre>
-  - type: soap                         # SOAP WSDL import
+  - type: soap                         # SOAP WSDL インポート
     parameters:
-      wsdlFile:                        # String: Local file path of the WSDL, default: null, no definition will be imported
-      wsdlUrl:                         # String: URL pointing to the WSDL, default: null, no definition will be imported
+      wsdlFile:                        # 文字列: WSDL のローカルファイルパス、デフォルト: null、定義はインポートされません
+      wsdlUrl:                         # 文字列: WSDL を指すURL、デフォルト: null、定義はインポートされません
 </pre>
 
 </BODY>

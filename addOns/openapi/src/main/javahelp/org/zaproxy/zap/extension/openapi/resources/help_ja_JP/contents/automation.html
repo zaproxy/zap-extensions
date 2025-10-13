@@ -3,29 +3,29 @@
 <HEAD>
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
 <TITLE>
-OpenAPI Automation Framework Support
+OpenAPI – 自動化フレームワーク対応
 </TITLE>
 </HEAD>
 <BODY>
-<H1>OpenAPI Automation Framework Support</H1>
-This add-on supports the Automation Framework.
+<H1>OpenAPI – 自動化フレームワーク対応</H1>
+このアドオンは自動化フレームワークに対応しています。
 <br><br>
-The add-on will add OpenAPI definitions if they are found while spidering but adding them explicitly via a URL or local file is recommended if they are available.
+アドオンはスパイダー実行中に発見したOpenAPI定義を自動的に追加しますが、定義が利用可能な場合は、URLまたはローカルファイルを介して明示的に指定することを推奨します。
 <br><br>
-The targetUrl parameter works in the same way per <a href="openapi.html">'Target URL Format'</a>.
+targetUrlパラメーターは、<a href="openapi.html">「ターゲットURLの形式」</a>と同じ方法で動作します。
 
-<H2>Job: openapi</H2>
-The openapi job allows you to import OpenAPI definitions via a URL or file.
+<H2>ジョブ: openapi</H2>
+openapi ジョブを使用すると、URLまたはファイル経由でOpenAPI定義をインポートできます。
 <p>
-It is covered in the video: <a href="https://youtu.be/xuP00Ri460k">ZAP Chat 11 Automation Framework Part 5 - APIs</a>.
+この内容は、動画「<a href="https://youtu.be/xuP00Ri460k">ZAP Chat 11 Automation Framework Part 5 - APIs</a>」で解説されています。
 <pre>
-  - type: openapi                      # OpenAPI definition import
+  - type: openapi                      # OpenAPI定義のインポート
     parameters:
-      apiFile:                         # String: Local file containing the OpenAPI definition, default: null, no definition will be imported
-      apiUrl:                          # String: URL containing the OpenAPI definition, default: null, no definition will be imported
-      context:                         # String: Context to use when importing the OpenAPI definition, default: first context.
-      user:                            # String: An optional user to use for authentication, must be defined in the env.
-      targetUrl:                       # String: URL which overrides the target defined in the definition, default: null, the target will not be overridden
+      apiFile:                         # 文字列: OpenAPI定義を含むローカルファイル、デフォルト: null (定義はインポートされません)
+      apiUrl:                          # 文字列: OpenAPI定義を含むURL、デフォルト: null (定義はインポートされません)
+      context:                         # 文字列: OpenAPI定義をインポートする際に使用するコンテキスト、デフォルト: 最初のコンテキスト
+      user:                            # 文字列: 認証に使用するオプションのユーザー (自動化フレームワークの環境設定で定義されている必要があります)
+      targetUrl:                       # 文字列: 定義内で指定されたターゲットを上書きするURL、デフォルト: null (上書きなし)
 </pre>
 
 </BODY>
