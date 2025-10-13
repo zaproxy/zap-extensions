@@ -1,5 +1,6 @@
 import me.champeau.gradle.japicmp.JapicmpTask
-import org.cyclonedx.gradle.CycloneDxTask
+import org.cyclonedx.gradle.CyclonedxAggregateTask
+import org.cyclonedx.gradle.CyclonedxDirectTask
 import org.zaproxy.gradle.addon.AddOnPlugin
 import org.zaproxy.gradle.addon.AddOnPluginExtension
 import org.zaproxy.gradle.addon.apigen.ApiClientGenExtension
@@ -202,15 +203,14 @@ subprojects {
         dependsOn(tasks.named(JavaPlugin.JAR_TASK_NAME))
     }
 
-    val cyclonedxBom by tasks.existing(CycloneDxTask::class) {
-        setDestination(layout.buildDirectory.dir("reports/bom-all").get().asFile)
+    val cyclonedxBom by tasks.existing(CyclonedxAggregateTask::class) {
+        jsonOutput.set(layout.buildDirectory.dir("reports/bom-all/bom.json").get().asFile)
         mustRunAfter(allJarsForBom)
     }
 
-    val cyclonedxRuntimeBom by tasks.registering(CycloneDxTask::class) {
-        setIncludeConfigs(listOf(JavaPlugin.RUNTIME_CLASSPATH_CONFIGURATION_NAME))
-        setDestination(layout.buildDirectory.dir("reports/bom-runtime").get().asFile)
-        setOutputFormat("json")
+    val cyclonedxRuntimeBom by tasks.registering(CyclonedxDirectTask::class) {
+        includeConfigs.set(listOf(JavaPlugin.RUNTIME_CLASSPATH_CONFIGURATION_NAME))
+        jsonOutput.set(layout.buildDirectory.dir("reports/bom-runtime/bom.json").get().asFile)
         mustRunAfter(allJarsForBom)
     }
 
@@ -257,13 +257,7 @@ subprojects {
 
             assets {
                 register("bom") {
-                    file.set(
-                        cyclonedxBom.map {
-                            project.layout.projectDirectory.file(
-                                File(it.destination.get(), "${it.outputName.get()}.json").absolutePath,
-                            )
-                        },
-                    )
+                    file.set(file(cyclonedxBom.map { it.jsonOutput }))
                     contentType.set("application/json")
                 }
             }

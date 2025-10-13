@@ -20,7 +20,8 @@
 package org.zaproxy.zap.extension.wappalyzer;
 
 import com.github.weisj.jsvg.SVGDocument;
-import com.github.weisj.jsvg.attributes.paint.SVGPaint;
+import com.github.weisj.jsvg.parser.DocumentLimits;
+import com.github.weisj.jsvg.parser.LoaderContext;
 import com.github.weisj.jsvg.parser.SVGLoader;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -76,11 +77,6 @@ public class TechsJsonParser {
 
     TechData parse(String categories, List<String> technologies, boolean createIcons) {
         LOGGER.info("Starting to parse Tech Detection technologies.");
-        if (createIcons) {
-            // Access the SVGPaint class to hopefully address class contention when parallel loading
-            // below. Issue 8464
-            SVGPaint.DEFAULT_PAINT.paint();
-        }
         Instant start = Instant.now();
         TechData techData = new TechData();
         parseCategories(techData, getStringResource(categories));
@@ -235,7 +231,16 @@ public class TechsJsonParser {
             return null;
         }
         SVGLoader loader = new SVGLoader();
-        SVGDocument svgDocument = loader.load(url);
+        SVGDocument svgDocument =
+                loader.load(
+                        url,
+                        LoaderContext.builder()
+                                .documentLimits(
+                                        new DocumentLimits(
+                                                DocumentLimits.DEFAULT_MAX_NESTING_DEPTH,
+                                                DocumentLimits.DEFAULT_MAX_USE_NESTING_DEPTH,
+                                                8000))
+                                .build());
         BufferedImage image = new BufferedImage(SIZE, SIZE, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = image.createGraphics();
         try {

@@ -74,7 +74,7 @@ public final class BinList {
                     CSVFormat.Builder.create()
                             .setHeader()
                             .setSkipHeaderRecord(true)
-                            .build()
+                            .get()
                             .parse(inStream)
                             .getRecords();
         } catch (NullPointerException | IOException e) {

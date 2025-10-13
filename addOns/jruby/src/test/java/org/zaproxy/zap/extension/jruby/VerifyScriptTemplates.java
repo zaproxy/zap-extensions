@@ -26,20 +26,15 @@ import java.nio.file.Path;
 import javax.script.Compilable;
 import org.jruby.embed.jsr223.JRubyEngineFactory;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.condition.EnabledOnJre;
-import org.junit.jupiter.api.condition.JRE;
 import org.zaproxy.zap.testutils.AbstractVerifyScriptTemplates;
 
 /** Verifies that the JRuby script templates are parsed without errors. */
-// XXX Does not work with Java 9+, library is outdated.
-// Ref: https://github.com/zaproxy/zaproxy/issues/3944
-@EnabledOnJre(JRE.JAVA_8)
 public class VerifyScriptTemplates extends AbstractVerifyScriptTemplates {
 
     private static Compilable se;
 
     @BeforeAll
-    public static void setUp() {
+    static void setUp() {
         se = (Compilable) new JRubyEngineFactory().getScriptEngine();
     }
 

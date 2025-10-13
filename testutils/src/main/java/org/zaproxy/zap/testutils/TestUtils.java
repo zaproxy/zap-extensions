@@ -148,7 +148,7 @@ public abstract class TestUtils {
 
     @BeforeAll
     public static void beforeClass() throws Exception {
-        Path installDir = Files.createDirectory(tempDir.resolve("install"));
+        Path installDir = Files.createTempDirectory(tempDir, "install");
         Path xmlDir = Files.createDirectory(installDir.resolve("xml"));
         Files.createFile(xmlDir.resolve("log4j2.properties"));
 

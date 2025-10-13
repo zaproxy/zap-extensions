@@ -64,7 +64,10 @@ public class AutomationPlan {
                 YAMLMapper.builder()
                         .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
                         .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
-                        .serializationInclusion(JsonInclude.Include.NON_DEFAULT)
+                        .defaultPropertyInclusion(
+                                JsonInclude.Value.construct(
+                                        JsonInclude.Include.NON_DEFAULT,
+                                        JsonInclude.Include.NON_DEFAULT))
                         .build();
         YAML_OBJECT_MAPPER.findAndRegisterModules();
     }
