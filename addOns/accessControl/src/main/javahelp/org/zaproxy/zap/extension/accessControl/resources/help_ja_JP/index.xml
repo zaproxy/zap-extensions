@@ -5,7 +5,7 @@
 
 <index version="2.0">
     <!-- index entries are merged (sorted) into core index -->
-	<indexitem text="アクセス制御" target="accessControl.concepts" />
-	<indexitem text="アクセス制御 タブ" target="accessControl.tab" />
-	<indexitem text="アクセス制御 コンテキストオプション " target="accessControl.contextOptions" />
+	<indexitem text="アクセスコントロール" target="accessControl.concepts" />
+	<indexitem text="アクセスコントロール タブ" target="accessControl.tab" />
+	<indexitem text="アクセスコントロール コンテキストオプション " target="accessControl.contextOptions" />
 </index>

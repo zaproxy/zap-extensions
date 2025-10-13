@@ -3,33 +3,33 @@
 <HEAD>
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
 <TITLE>
-Alert Filter Automation Framework Support
+アラートフィルター – 自動化フレームワーク対応
 </TITLE>
 </HEAD>
 <BODY>
-<H1>Alert Filter Automation Framework Support</H1>
-This add-on supports the Automation Framework.
+<H1>アラートフィルター – 自動化フレームワーク対応</H1>
+このアドオンは自動化フレームワークに対応しています。
 
-<H2>Job: alertFilter</H2>
-The alertFilter job allows you to define global and context specific alert filters.
+<H2>ジョブ: alertFilter</H2>
+alertFilter ジョブでは、グローバルおよびコンテキスト固有のアラートフィルターを定義できます。
 <p>
-It is covered in the video: <a href="https://youtu.be/1fcpU54N-mA">ZAP Chat 08 Automation Framework Part 2 - Environment</a>.
+この内容は、動画「<a href="https://youtu.be/1fcpU54N-mA">ZAP Chat 08 Automation Framework Part 2 - Environment</a>」で解説されています。
 <pre>
-  - type: alertFilter                  # Used to change the risk levels of alerts
+  - type: alertFilter                  # アラートのリスクレベルを変更するために使用されます
     parameters:
-      deleteGlobalAlerts: true         # Boolean, if true then will delete all existing global alerts, default false
-    alertFilters:                      # A list of alertFilters to be applied
-      - ruleId:                        # Int: Mandatory, the scan rule ID or the alert reference
-        newRisk:                       # String: Mandatory new risk level, one of 'False Positive', 'Info', 'Low', 'Medium', 'High'
-        context:                       # String: Optional context name, if empty then a global alert filter will be created
-        url:                           # String: Optional string to match against the alert, supports environment vars
-        urlRegex:                      # Boolean: Optional, if true then the url is a regex
-        parameter:                     # String: Optional string to match against the alert parameter field
-        parameterRegex:                # Boolean: Optional, if true then the parameter is a regex, supports environment vars
-        attack:                        # String: Optional string to match against the alert attack field
-        attackRegex:                   # Boolean: Optional, if true then the attack is a regex
-        evidence:                      # String: Optional string to match against the alert evidence field
-        evidenceRegex:                 # Boolean: Optional, if true then the evidence is a regex
+      deleteGlobalAlerts: true         # Boolean: true の場合、既存のグローバルアラートをすべて削除します。デフォルトは false です
+    alertFilters:                      # 適用されるアラートフィルターのリスト
+      - ruleId:                        # Int: 必須。スキャンルールの ID またはアラート参照
+        newRisk:                       # 文字列: 必須。新しいリスクレベル。 'False Positive'、'Info'、'Low'、'Medium'、'High' のいずれか
+        context:                       # 文字列: オプションのコンテキスト名。空の場合、グローバルアラートフィルターが作成されます
+        url:                           # 文字列: オプション。アラートと照合する文字列。環境変数をサポートします
+        urlRegex:                      # Boolean: オプション。true の場合、url は正規表現です
+        parameter:                     # 文字列: オプション。アラートのパラメーターフィールドと照合する文字列
+        parameterRegex:                # Boolean: オプション。true の場合、parameter は正規表現です。環境変数をサポートします
+        attack:                        # 文字列: オプション。アラートのアタックフィールドと照合する文字列
+        attackRegex:                   # Boolean: オプション。true の場合、attack は正規表現です
+        evidence:                      # 文字列: オプション。アラートの証拠フィールドと照合する文字列
+        evidenceRegex:                 # Boolean: オプション。true の場合、evidence は正規表現です
 </pre>
 
 </BODY>

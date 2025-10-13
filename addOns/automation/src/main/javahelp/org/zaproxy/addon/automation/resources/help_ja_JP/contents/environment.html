@@ -26,7 +26,7 @@ env:                                   # 環境、必須
       excludePaths:                    # 除外する正規表現のオプションリスト
       authentication:
         method:                        # 文字列、'manual'、'http'、'form'、'json'、'script'、"autodetect"、"browser"、"client"のいずれか
-        parameters:                    # スクリプトに必要なものを含めることができます。 ポート以外のすべてのパラメータは変数をサポートしています
+        parameters:                    # スクリプトに必要なものを含めることができます。 ポート以外のすべてのパラメーターは変数をサポートしています
           hostname:                    # 文字列、'http'認証の場合のみ
           port:                        # 整数、'http'認証の場合のみ
           realm:                       # 文字列、'http'認証の場合のみ
@@ -49,14 +49,14 @@ env:                                   # 環境、必須
             value:                     # ヘッダー値
       sessionManagement:
         method:                        # 文字列、'cookie'、'http'、'script'のいずれか
-        parameters:                    # 0個以上のパラメータのリスト - スクリプトに必要なものを含めることができます
+        parameters:                    # 0個以上のパラメーターのリスト - スクリプトに必要なものを含めることができます
           script:                      # 文字列、スクリプトへのパス、'script'セッション管理の場合のみ
           scriptEngine:                # 文字列、使用するスクリプトエンジンの名前、'script'セッション管理の場合のみ
       technology:
         exclude:                       # 除外する技術のリスト、https://www.zaproxy.org/techtags/ を参照 (末尾の名前のみを使用)
         include:                       # 含める技術のリスト、特定の技術をターゲットとする場合にのみ使用してください。コンテキスト設定時はexcludeが優先されます
       structure:
-        structuralParameters:          # 構造パラメータの名前のリスト
+        structuralParameters:          # 構造パラメーターの名前のリスト
         dataDrivenNodes:               # データ駆動ノードのリスト
         - name:                        # 文字列、データ駆動ノードの名前
           regex:                       # 文字列、データ駆動ノードの正規表現、2つまたは3つの正規表現グループを含む必要があります

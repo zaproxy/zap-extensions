@@ -2,32 +2,32 @@
 <HTML>
 <HEAD>
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
-<TITLE>Replacer Automation Framework Support</TITLE>
+<TITLE>Replacer – 自動化フレームワーク対応</TITLE>
 </HEAD>
 <BODY>
-	<H1>Replacer Automation Framework Support</H1>
-	This add-on supports the Automation Framework.
+	<H1>Replacer – 自動化フレームワーク対応</H1>
+	このアドオンは自動化フレームワークに対応しています。
 
-	<H2>Job: requester</H2>
-	The replacer job allows you to add replacer rules.
+	<H2>ジョブ: requester</H2>
+	replacer ジョブを使用すると、置換ルールを追加できます。
 	<p>
-	It is covered in the video: <a href="https://youtu.be/4phnMy9iCPY">ZAP Chat 09 Automation Framework Part 3 - Requests</a>.
+	この内容は、動画「<a href="https://youtu.be/4phnMy9iCPY">ZAP Chat 09 Automation Framework Part 3 - Requests</a>」で解説されています。
 	<pre>
-  - type: "replacer"                   # Replacer rules
+  - type: "replacer"                   # 置換ルール
     parameters:
-      deleteAllRules:                  # Boolean, if true then will delete all existing replacer rules, default false
-    rules:                             # A list of replacer rules
-      - description:                   # String, the name of the rule
-        url:                           # String, a regex which will be used to match URLs, if empty then it will match all
-        matchType:                     # String, one of req_header, req_header_str, req_body_str, resp_header, resp_header_str, resp_body_str
-        matchString:                   # String, will be used to identify what should be replaced
-        matchRegex:                    # Boolean, if set then the matchString will be treated as a regex, default false
-        replacementString:             # String, the new string that will replace the specified selection
-        tokenProcessing:               # Boolean, when enabled the replacementString may contain a single token 
-        initiators:                    # A list of integers representing the initiators (see the help)
+      deleteAllRules:                  # Boolean、trueの場合、既存のすべての置換ルールを削除します。デフォルト：false
+    rules:                             # 置換ルールのリスト (複数のルールを定義可能)
+      - description:                   # 文字列、ルールの名前（説明）
+        url:                           # 文字列、URLと照合するための正規表現。空の場合はすべてのURLに一致します
+        matchType:                     # 文字列、以下のいずれか: req_header, req_header_str, req_body_str, resp_header, resp_header_str, resp_body_str
+        matchString:                   # 文字列、置き換える対象を指定します
+        matchRegex:                    # Boolean、trueの場合、matchString は正規表現として扱われます。デフォルト: false
+        replacementString:             # 文字列、マッチした部分を置き換える新しい文字列
+        tokenProcessing:               # Boolean、有効にすると動的トークン ({{RINT}}, {{UUID}}, {{TICKS}}) を使用できます
+        initiators:                    # イニシエーターを表す整数のリスト (詳細は replacer ページを参照)
 </pre>
 
-For more details of the parameters see the main <a href="replacer.html">replacer</a> page.
+パラメーターの詳細については、<a href="replacer.html">replacer</a>ページを参照してください。
 
 </BODY>
 </HTML>
