@@ -5,7 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-
+### Changed
+- Deprecate the `Username` and `Password` credential parameters in favor of the lowercase `username` and
+`password` variants, aligning them with the naming convention of the other authentication credentials.
 
 ## [48.9.0] - 2025-09-02
 ### Changed
