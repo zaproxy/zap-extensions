@@ -13,7 +13,7 @@ dependencies {
     compileOnly(libs.bugtracker.bridgeMethodAnnotations) {
         exclude(group = "org.jenkins-ci")
     }
-    compileOnly(libs.bugtracker.spotBugsAnnotations)
+    compileOnly("com.github.spotbugs:spotbugs-annotations:4.9.6")
     implementation(libs.bugtracker.j2bugzilla) {
         // Not needed.
         exclude(group = "junit")
