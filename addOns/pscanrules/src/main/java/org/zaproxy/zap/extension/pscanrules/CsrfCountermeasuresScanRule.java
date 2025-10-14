@@ -68,7 +68,8 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner
                         CommonAlertTag.toMap(
                                 CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
                                 CommonAlertTag.OWASP_2017_A05_BROKEN_AC,
-                                CommonAlertTag.WSTG_V42_SESS_05_CSRF));
+                                CommonAlertTag.WSTG_V42_SESS_05_CSRF,
+                                CommonAlertTag.SYSTEMIC));
         alertTags.put(PolicyTag.PENTEST.getTag(), "");
         alertTags.put(PolicyTag.DEV_STD.getTag(), "");
         alertTags.put(PolicyTag.QA_STD.getTag(), "");

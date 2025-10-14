@@ -4,8 +4,12 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- SYSTEMIC tag to selected rules.
+
 ### Changed
 - Update dependency.
+- Depends on an updated version of the Common Library add-on.
 
 ## [67] - 2025-09-18
 ### Changed
