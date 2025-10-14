@@ -47,7 +47,7 @@ class SlackerCookieScanRuleUnitTest extends ActiveScannerTest<SlackerCookieScanR
         // Then
         assertThat(cwe, is(equalTo(205)));
         assertThat(wasc, is(equalTo(45)));
-        assertThat(tags.size(), is(equalTo(4)));
+        assertThat(tags.size(), is(equalTo(5)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(true)));
@@ -67,6 +67,9 @@ class SlackerCookieScanRuleUnitTest extends ActiveScannerTest<SlackerCookieScanR
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_SESS_02_COOKIE_ATTRS.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_SESS_02_COOKIE_ATTRS.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.SYSTEMIC.getTag()),
+                is(equalTo(CommonAlertTag.SYSTEMIC.getValue())));
     }
 
     @Test

@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -51,8 +53,16 @@ public class UserAgentScanRule extends AbstractAppPlugin implements CommonActive
     private static final String USER_AGENT_PARAM_NAME =
             Constant.messages.getString(MESSAGE_PREFIX + "useragentparmname");
 
-    private static final Map<String, String> ALERT_TAGS =
-            Map.of(PolicyTag.PENTEST.getTag(), "", CommonAlertTag.CUSTOM_PAYLOADS.getTag(), "");
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.CUSTOM_PAYLOADS, CommonAlertTag.SYSTEMIC));
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     private static final String INTERNET_EXPLORER_8 =
             "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1)";

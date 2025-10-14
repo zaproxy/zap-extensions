@@ -122,7 +122,7 @@ class CorsScanRuleUnitTest extends ActiveScannerTest<CorsScanRule> {
         // Then
         assertThat(cwe, is(equalTo(942)));
         assertThat(wasc, is(equalTo(14)));
-        assertThat(tags.size(), is(equalTo(7)));
+        assertThat(tags.size(), is(equalTo(8)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
                 is(equalTo(true)));
@@ -144,6 +144,9 @@ class CorsScanRuleUnitTest extends ActiveScannerTest<CorsScanRule> {
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_CLNT_07_CORS.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_CLNT_07_CORS.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.SYSTEMIC.getTag()),
+                is(equalTo(CommonAlertTag.SYSTEMIC.getValue())));
     }
 
     private void assertExpectedAlert(int risk, String evidence) {

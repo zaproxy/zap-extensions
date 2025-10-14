@@ -117,7 +117,7 @@ class DirectoryBrowsingScanRuleUnitTest extends PassiveScannerTest<DirectoryBrow
         // Given / When
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(tags.size(), is(equalTo(4)));
+        assertThat(tags.size(), is(equalTo(5)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(true)));
@@ -132,6 +132,9 @@ class DirectoryBrowsingScanRuleUnitTest extends PassiveScannerTest<DirectoryBrow
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.SYSTEMIC.getTag()),
+                is(equalTo(CommonAlertTag.SYSTEMIC.getValue())));
     }
 
     @Test

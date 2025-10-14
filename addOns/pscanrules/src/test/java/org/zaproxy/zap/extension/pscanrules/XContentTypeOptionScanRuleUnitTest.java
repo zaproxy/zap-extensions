@@ -55,7 +55,7 @@ class XContentTypeOptionScanRuleUnitTest extends PassiveScannerTest<XContentType
         // Then
         assertThat(cwe, is(equalTo(693)));
         assertThat(wasc, is(equalTo(15)));
-        assertThat(tags.size(), is(equalTo(4)));
+        assertThat(tags.size(), is(equalTo(5)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(true)));
@@ -70,6 +70,9 @@ class XContentTypeOptionScanRuleUnitTest extends PassiveScannerTest<XContentType
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.SYSTEMIC.getTag()),
+                is(equalTo(CommonAlertTag.SYSTEMIC.getValue())));
     }
 
     @Test
