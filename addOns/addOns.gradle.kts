@@ -105,6 +105,10 @@ subprojects {
     if (mavenPublishAddOn) {
         apply(plugin = "maven-publish")
         apply(plugin = "signing")
+
+        tasks.named(LifecycleBasePlugin.CHECK_TASK_NAME) {
+            dependsOn(tasks.named(JavaPlugin.JAVADOC_TASK_NAME))
+        }
     }
     if (japicmpAddOn) {
         apply(plugin = "me.champeau.gradle.japicmp")
@@ -320,8 +324,8 @@ subprojects {
         publishing {
             repositories {
                 maven {
-                    val releasesRepoUrl = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
-                    val snapshotsRepoUrl = uri("https://oss.sonatype.org/content/repositories/snapshots/")
+                    val releasesRepoUrl = uri("https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/")
+                    val snapshotsRepoUrl = uri("https://central.sonatype.com/repository/maven-snapshots/")
                     setUrl(provider { if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl })
 
                     if (ossrhUsername != null && ossrhPassword != null) {

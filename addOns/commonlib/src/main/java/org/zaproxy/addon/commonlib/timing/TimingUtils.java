@@ -56,9 +56,9 @@ public class TimingUtils {
      * @param requestSender function that takes in the expected time, sends the request, and returns
      *     the actual delay.
      * @param correlationErrorRange the interval of acceptance for the regression correlation. for
-     *     example, input 0.2 will return true if 0.8 < correlation
+     *     example, input 0.2 will return true if 0.8 &lt; correlation
      * @param slopeErrorRange the interval of acceptance for the regression slope. for example,
-     *     input 0.2 will return true if 0.8 < slope < 1.2
+     *     input 0.2 will return true if 0.8 &lt; slope &lt; 1.2
      * @return true if the response times correlate linearly, false otherwise.
      * @throws IllegalArgumentException if less than 3 is provided as the requestsLimit OR if less
      *     than 5 is provided as the secondsLimit
