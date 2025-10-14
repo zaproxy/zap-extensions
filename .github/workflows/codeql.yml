@@ -28,11 +28,11 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: 17
-      - uses: github/codeql-action/init@v3
+      - uses: github/codeql-action/init@v4
         with:
           languages: ${{ matrix.language }}
       - if: matrix.language != 'java'
-        uses: github/codeql-action/autobuild@v3
+        uses: github/codeql-action/autobuild@v4
 
       - if: matrix.language == 'java'
         uses: gradle/actions/setup-gradle@4d9f0ba0025fe599b4ebab900eb7f3a1d93ef4c2 # v5.0.0
@@ -47,6 +47,6 @@ jobs:
         env:
           WDM_CACHEPATH: "~/.gradle/wdm"
 
-      - uses: github/codeql-action/analyze@v3
+      - uses: github/codeql-action/analyze@v4
         with:
           category: "/language:${{matrix.language}}"
