@@ -117,7 +117,7 @@ zest-jbrofuzzCore = { module = "org.owasp.jbrofuzz:jbrofuzz-core", version.ref =
 zest-zest = "org.zaproxy:zest:0.31.0"
 
 [plugins]
-cyclonedx = "org.cyclonedx.bom:3.0.0"
+cyclonedx = "org.cyclonedx.bom:2.2.0"
 datanucleus = "org.rm3l.datanucleus-gradle-plugin:2.0.0"
 dependencyUpdates = "com.github.ben-manes.versions:0.53.0"
 errorprone = "net.ltgt.errorprone:4.3.0"
