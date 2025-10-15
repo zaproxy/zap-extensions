@@ -27,6 +27,7 @@ updates:
       - dependency-name: "com.aayushatharva.brotli4j:*"
       - dependency-name: "org.apache.httpcomponents.client5:httpclient5"
       - dependency-name: "org.jitsi:ice4j"
+      - dependency-name: "org.cyclonedx.bom:org.cyclonedx.bom.gradle.plugin" # Breaks add-on release
       - dependency-name: "io.github.bonigarcia:selenium-jupiter" # Creates JAR hell because of different HttpComponents HttpClient
       - dependency-name: "io.github.bonigarcia:webdrivermanage" # Ditto
       - dependency-name: "com.diffplug.spotless*" # newer versions lead to runtime error, will need to update the common zap plugin first
