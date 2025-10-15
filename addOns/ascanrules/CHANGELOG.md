@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Address potential false positives with the XSLT Injection scan rule when payloads cause a failure which may still contain the expected evidence.
+- The External Redirect scan rule has been updated to account for potential false positives involving JavaScript comments.
 
 ## [74] - 2025-09-18
 ### Added

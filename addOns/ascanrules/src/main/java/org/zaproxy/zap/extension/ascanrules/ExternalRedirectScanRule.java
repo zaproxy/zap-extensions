@@ -20,11 +20,16 @@
 package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.IOException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -478,8 +483,189 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
 
     private static boolean isRedirectPresent(Pattern pattern, String value) {
         Matcher matcher = pattern.matcher(value);
+        if (!matcher.find()) {
+            return false;
+        }
+        Set<String> extractedComments = extractJsComments(value);
+        String valueWithoutComments = value;
+        for (String comment : extractedComments) {
+            valueWithoutComments = valueWithoutComments.replace(comment, "");
+        }
+
+        matcher = pattern.matcher(valueWithoutComments);
         return matcher.find()
                 && StringUtils.startsWithIgnoreCase(matcher.group(1), HttpHeader.HTTP);
+    }
+
+    private enum State {
+        DEFAULT,
+        IN_SINGLE_QUOTE,
+        IN_DOUBLE_QUOTE,
+        IN_TEMPLATE,
+        IN_TEMPLATE_EXPR,
+        IN_LINE_COMMENT,
+        IN_BLOCK_COMMENT,
+        IN_LINE_COMMENT_IN_TEMPLATE,
+        IN_BLOCK_COMMENT_IN_TEMPLATE
+    }
+
+    /** Visibility increased for unit testing purposes only */
+    protected static Set<String> extractJsComments(String source) {
+        Set<String> comments = new LinkedHashSet<>();
+        StringBuilder current = new StringBuilder();
+
+        Deque<State> stack = new ArrayDeque<>();
+        State state = State.DEFAULT;
+
+        final int len = source.length();
+        for (int i = 0; i < len; i++) {
+            char c = source.charAt(i);
+            char next = (i + 1 < len) ? source.charAt(i + 1) : 0;
+
+            switch (state) {
+                case DEFAULT:
+                    if (c == '/' && next == '/') {
+                        i++;
+                        current.setLength(0);
+                        current.append("//");
+                        state = State.IN_LINE_COMMENT;
+                    } else if (c == '/' && next == '*') {
+                        i++;
+                        current.setLength(0);
+                        current.append("/*");
+                        state = State.IN_BLOCK_COMMENT;
+                    } else if (c == '"' || c == '\'') {
+                        stack.push(state);
+                        state = (c == '"') ? State.IN_DOUBLE_QUOTE : State.IN_SINGLE_QUOTE;
+                    } else if (c == '`') {
+                        stack.push(state);
+                        state = State.IN_TEMPLATE;
+                    }
+                    break;
+
+                case IN_LINE_COMMENT:
+                    if (c == '\n' || c == '\r' || c == '\u2028' || c == '\u2029') {
+                        // Trim trailing whitespace and line terminators before storing
+                        String trimmed =
+                                current.toString().replaceAll("[\\r\\n\\u2028\\u2029]+$", "");
+                        comments.add(trimmed);
+                        state = State.DEFAULT;
+                    } else {
+                        current.append(c);
+                    }
+                    break;
+
+                case IN_BLOCK_COMMENT:
+                    current.append(c);
+                    if (c == '*' && next == '/') {
+                        current.append('/');
+                        i++;
+                        comments.add(current.toString());
+                        state = State.DEFAULT;
+                    }
+                    break;
+
+                case IN_SINGLE_QUOTE:
+                    if (c == '\\') {
+                        i++;
+                    } else if (c == '\'') {
+                        state = stack.pop();
+                    }
+                    break;
+
+                case IN_DOUBLE_QUOTE:
+                    if (c == '\\') {
+                        i++;
+                    } else if (c == '"') {
+                        state = stack.pop();
+                    }
+                    break;
+
+                case IN_TEMPLATE:
+                    if (c == '`') {
+                        state = stack.pop();
+                    } else if (c == '\\') {
+                        i++;
+                    } else if (c == '$' && next == '{') {
+                        stack.push(state);
+                        state = State.IN_TEMPLATE_EXPR;
+                        i++;
+                    }
+                    break;
+
+                case IN_TEMPLATE_EXPR:
+                    if (c == '}') {
+                        state = stack.pop();
+                    } else if (c == '\'' || c == '"') {
+                        stack.push(state);
+                        state = (c == '\'') ? State.IN_SINGLE_QUOTE : State.IN_DOUBLE_QUOTE;
+                    } else if (c == '`') {
+                        stack.push(state);
+                        state = State.IN_TEMPLATE;
+                    } else if (c == '/' && next == '/') {
+                        i++;
+                        stack.push(state);
+                        current.setLength(0);
+                        current.append("//");
+                        state = State.IN_LINE_COMMENT_IN_TEMPLATE;
+                    } else if (c == '/' && next == '*') {
+                        i++;
+                        stack.push(state);
+                        current.setLength(0);
+                        current.append("/*");
+                        state = State.IN_BLOCK_COMMENT_IN_TEMPLATE;
+                    }
+                    break;
+
+                case IN_LINE_COMMENT_IN_TEMPLATE:
+                    if (c == '\n' || c == '\r' || c == '\u2028' || c == '\u2029') {
+                        String trimmed =
+                                current.toString().replaceAll("[\\r\\n\\u2028\\u2029]+$", "");
+                        comments.add(trimmed);
+                        state = stack.pop();
+                    } else {
+                        current.append(c);
+                    }
+                    break;
+
+                case IN_BLOCK_COMMENT_IN_TEMPLATE:
+                    current.append(c);
+                    if (c == '*' && next == '/') {
+                        current.append('/');
+                        i++;
+                        comments.add(current.toString());
+                        state = stack.pop();
+                    }
+                    break;
+            }
+
+            // Special handling: detect </script> while in block comment and not yet closed
+            if ((state == State.IN_BLOCK_COMMENT || state == State.IN_BLOCK_COMMENT_IN_TEMPLATE)
+                    && i + 9 < len) {
+                // Case-insensitive check for </script>
+                String segment = source.substring(i, Math.min(len, i + 9)).toLowerCase(Locale.ROOT);
+                if (segment.startsWith("</script")) {
+                    // Capture everything up to start of </script>
+                    current.setLength(current.length() - 1); // Don't include the <
+                    comments.add(current.toString());
+                    state =
+                            (state == State.IN_BLOCK_COMMENT_IN_TEMPLATE && !stack.isEmpty())
+                                    ? stack.pop()
+                                    : State.DEFAULT;
+                    // Do not consume the tag itself (so parser can continue properly)
+                }
+            }
+        }
+
+        // Handle unterminated cases (EOF)
+        if (state == State.IN_LINE_COMMENT
+                || state == State.IN_LINE_COMMENT_IN_TEMPLATE
+                || state == State.IN_BLOCK_COMMENT
+                || state == State.IN_BLOCK_COMMENT_IN_TEMPLATE) {
+            comments.add(current.toString());
+        }
+
+        return comments;
     }
 
     @Override
