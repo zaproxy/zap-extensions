@@ -34,6 +34,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -50,7 +51,8 @@ public class CharsetMismatchScanRule extends PluginPassiveScanner
     private static final Map<String, String> ALERT_TAGS;
 
     static {
-        Map<String, String> alertTags = new HashMap<>();
+        Map<String, String> alertTags =
+                new HashMap<>(CommonAlertTag.toMap(CommonAlertTag.SYSTEMIC));
         alertTags.put(PolicyTag.PENTEST.getTag(), "");
         alertTags.put(PolicyTag.QA_STD.getTag(), "");
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);

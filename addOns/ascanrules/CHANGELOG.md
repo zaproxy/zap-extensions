@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- SYSTEMIC tag to selected rules.
+
 ### Changed
 - Address potential false positives with the XSLT Injection scan rule when payloads cause a failure which may still contain the expected evidence.
 

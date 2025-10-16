@@ -53,7 +53,8 @@ public class XBackendServerInformationLeakScanRule extends PluginPassiveScanner
                         CommonAlertTag.toMap(
                                 CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
                                 CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
-                                CommonAlertTag.WSTG_V42_INFO_02_FINGERPRINT_WEB_SERVER));
+                                CommonAlertTag.WSTG_V42_INFO_02_FINGERPRINT_WEB_SERVER,
+                                CommonAlertTag.SYSTEMIC));
         alertTags.put(PolicyTag.PENTEST.getTag(), "");
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
     }

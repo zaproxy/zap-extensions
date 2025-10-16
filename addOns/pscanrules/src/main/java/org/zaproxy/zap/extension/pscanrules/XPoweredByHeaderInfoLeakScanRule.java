@@ -54,7 +54,8 @@ public class XPoweredByHeaderInfoLeakScanRule extends PluginPassiveScanner
                         CommonAlertTag.toMap(
                                 CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
                                 CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED,
-                                CommonAlertTag.WSTG_V42_INFO_08_FINGERPRINT_APP_FRAMEWORK));
+                                CommonAlertTag.WSTG_V42_INFO_08_FINGERPRINT_APP_FRAMEWORK,
+                                CommonAlertTag.SYSTEMIC));
         alertTags.put(PolicyTag.PENTEST.getTag(), "");
         alertTags.put(PolicyTag.QA_STD.getTag(), "");
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);

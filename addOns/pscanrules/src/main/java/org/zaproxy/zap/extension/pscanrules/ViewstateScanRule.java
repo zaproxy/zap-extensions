@@ -53,7 +53,8 @@ public class ViewstateScanRule extends PluginPassiveScanner implements CommonPas
                 new HashMap<>(
                         CommonAlertTag.toMap(
                                 CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
-                                CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG));
+                                CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
+                                CommonAlertTag.SYSTEMIC));
         alertTags.put(PolicyTag.PENTEST.getTag(), "");
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
     }

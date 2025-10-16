@@ -92,7 +92,10 @@ public class CacheableScanRule extends PluginPassiveScanner implements CommonPas
 
     static {
         Map<String, String> alertTags =
-                new HashMap<>(CommonAlertTag.toMap(CommonAlertTag.WSTG_V42_ATHN_06_CACHE_WEAKNESS));
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.WSTG_V42_ATHN_06_CACHE_WEAKNESS,
+                                CommonAlertTag.SYSTEMIC));
         alertTags.put(PolicyTag.PENTEST.getTag(), "");
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
     }

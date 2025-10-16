@@ -405,7 +405,16 @@ public enum CommonAlertTag {
      */
     HIPAA(
             "HIPAA",
-            "https://www.zaproxy.org/docs/desktop/addons/common-library/alerttags/#compliance");
+            "https://www.zaproxy.org/docs/desktop/addons/common-library/alerttags/#compliance"),
+
+    /**
+     * Indicates that the scan rule often raises "systemic" or site wide issues.
+     *
+     * @since 1.38.0
+     */
+    SYSTEMIC(
+            "SYSTEMIC",
+            "https://www.zaproxy.org/docs/desktop/addons/common-library/alerttags/#systemic");
 
     private String tag;
     private String value;

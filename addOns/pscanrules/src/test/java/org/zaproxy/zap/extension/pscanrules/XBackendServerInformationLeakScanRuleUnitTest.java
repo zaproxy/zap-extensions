@@ -82,7 +82,7 @@ class XBackendServerInformationLeakScanRuleUnitTest
         // Given / When
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(tags.size(), is(equalTo(4)));
+        assertThat(tags.size(), is(equalTo(5)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(true)));
@@ -102,6 +102,9 @@ class XBackendServerInformationLeakScanRuleUnitTest
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_INFO_02_FINGERPRINT_WEB_SERVER.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_INFO_02_FINGERPRINT_WEB_SERVER.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.SYSTEMIC.getTag()),
+                is(equalTo(CommonAlertTag.SYSTEMIC.getValue())));
     }
 
     @Test

@@ -59,7 +59,8 @@ public class CrlfInjectionScanRule extends AbstractAppParamPlugin
                         CommonAlertTag.toMap(
                                 CommonAlertTag.OWASP_2021_A03_INJECTION,
                                 CommonAlertTag.OWASP_2017_A01_INJECTION,
-                                CommonAlertTag.WSTG_V42_INPV_15_HTTP_SPLITTING));
+                                CommonAlertTag.WSTG_V42_INPV_15_HTTP_SPLITTING,
+                                CommonAlertTag.SYSTEMIC));
         alertTags.put(PolicyTag.API.getTag(), "");
         alertTags.put(PolicyTag.DEV_FULL.getTag(), "");
         alertTags.put(PolicyTag.QA_FULL.getTag(), "");

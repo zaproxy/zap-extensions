@@ -178,7 +178,7 @@ class WebCacheDeceptionScanRuleUnitTest extends ActiveScannerTest<WebCacheDecept
         Map<String, String> tags = rule.getAlertTags();
         int cwe = rule.getCweId();
         // Then
-        assertThat(tags.size(), is(equalTo(6)));
+        assertThat(tags.size(), is(equalTo(7)));
         assertThat(cwe, is(equalTo(444)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
@@ -201,6 +201,9 @@ class WebCacheDeceptionScanRuleUnitTest extends ActiveScannerTest<WebCacheDecept
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_ATHN_06_CACHE_WEAKNESS.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_ATHN_06_CACHE_WEAKNESS.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.SYSTEMIC.getTag()),
+                is(equalTo(CommonAlertTag.SYSTEMIC.getValue())));
     }
 
     @Test

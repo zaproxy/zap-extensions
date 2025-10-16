@@ -53,7 +53,8 @@ public class HttpsAsHttpScanRule extends AbstractAppPlugin implements CommonActi
                         CommonAlertTag.toMap(
                                 CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
                                 CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
-                                CommonAlertTag.WSTG_V42_CRYP_03_CRYPTO_FAIL));
+                                CommonAlertTag.WSTG_V42_CRYP_03_CRYPTO_FAIL,
+                                CommonAlertTag.SYSTEMIC));
         alertTags.put(PolicyTag.QA_FULL.getTag(), "");
         alertTags.put(PolicyTag.PENTEST.getTag(), "");
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);

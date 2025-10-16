@@ -58,7 +58,8 @@ public class CorsScanRule extends AbstractAppPlugin implements CommonActiveScanR
                         CommonAlertTag.toMap(
                                 CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
                                 CommonAlertTag.OWASP_2017_A05_BROKEN_AC,
-                                CommonAlertTag.WSTG_V42_CLNT_07_CORS));
+                                CommonAlertTag.WSTG_V42_CLNT_07_CORS,
+                                CommonAlertTag.SYSTEMIC));
         alertTags.put(PolicyTag.QA_CICD.getTag(), "");
         alertTags.put(PolicyTag.QA_STD.getTag(), "");
         alertTags.put(PolicyTag.QA_FULL.getTag(), "");
