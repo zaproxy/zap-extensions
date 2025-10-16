@@ -4,11 +4,11 @@
     <!-- index entries are merged (sorted) into core index -->
 	<indexitem text="認証ヘルパー" target="authhelper"/>
 	<indexitem text="認証リクエストの識別" target="authhelper.auth-req-id"/>
-	<indexitem text="自動検出認証" target="authhelper.autodetect-auth"/>
+	<indexitem text="認証の自動検出" target="authhelper.autodetect-auth"/>
 	<indexitem text="ブラウザベース認証" target="authhelper.browser-auth"/>
 	<indexitem text="クライアントスクリプト認証" target="authhelper.client-script-auth"/>
-	<indexitem text="セッション管理方式の特定" target="authhelper.session-mgmt-id"/>
-	<indexitem text="自動検出セッション管理" target="authhelper.autodetect-session"/>
+	<indexitem text="セッション管理の特定" target="authhelper.session-mgmt-id"/>
+	<indexitem text="セッション管理の自動検出" target="authhelper.autodetect-session"/>
 	<indexitem text="ヘッダーベースセッション管理" target="authhelper.session-header"/>
 	<indexitem text="検証の特定" target="authhelper.verification-id"/>
 	<indexitem text="認証テスターダイアログ" target="authhelper.auth-tester"/>
