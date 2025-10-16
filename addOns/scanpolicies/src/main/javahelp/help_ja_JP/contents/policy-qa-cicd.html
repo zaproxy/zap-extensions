@@ -3,28 +3,27 @@
 <HEAD>
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
 <TITLE>
-QA 向け CI/CD ポリシー
+QA CI/CD ポリシー
 </TITLE>
 </HEAD>
 <BODY>
-<H1>QA 向け CI/CD ポリシー</H1>
+<H1>QA CI/CD ポリシー</H1>
 
-A quality assurance focused policy meant to perform fairly quickly while providing a greater set of results than developer policies, 
-intended for use in a CI/CD pipeline for a QA/staging environment.
+このポリシーは品質保証 (QA) に焦点を当てており、開発者ポリシーよりも広範な結果を提供しつつ、比較的迅速に実行されることを意図しています。これは、QA/ステージング環境向けの CI/CD パイプラインでの使用を目的としています。
 
 
 <ul>
-    <li>Recommended for running in CI/CD</li>
-    <li>Intended to run in a QA / Staging environment which is close to production</li>
-    <li>A superset of Developer CI/CD but with important env / server rules enabled</li>
-    <li>No long running rules</li>
-    <li>No rules with high false positives</li>
-    <li>No timing attacks</li>
-    <li>No informational only rules</li>
-    <li>Minimal overlap</li>
+    <li>CI/CD での実行推奨事項</li>
+    <li>本番環境に近い QA / ステージング環境で実行されることを意図しています</li>
+    <li>Developer CI/CD のスーパーセットですが、重要な環境/サーバー関連のルールが有効化されています</li>
+    <li>実行時間が長いルールを含まない</li>
+    <li>誤検知 (False Positives) が多いルールを含まない</li>
+    <li>タイミングアタックを含まない</li>
+    <li>情報提供のみのルールを含まない</li>
+    <li>重複が最小限 (Minimal overlap)</li>
 </ul>
 <p>
-For the list of scan rules included see the <a href="https://www.zaproxy.org/alerttags/policy_qa_cicd/">Alert Tag: POLICY_QA_CICD</a> page.
+含まれているスキャンルールの一覧については、<a href="https://www.zaproxy.org/alerttags/policy_qa_cicd/">アラートタグ: POLICY_QA_CICD</a> ページを参照してください。
 <p>
 メインの<a href="scanpolicies.html">スキャンポリシーページ</a>に戻る。
 
