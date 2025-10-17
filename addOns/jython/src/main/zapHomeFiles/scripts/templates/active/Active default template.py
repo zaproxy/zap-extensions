@@ -39,7 +39,20 @@ def scanNode(sas, msg):
   # sendAndReceive(msg, followRedirect, handleAntiCSRFtoken)
   sas.sendAndReceive(msg, False, False)
 
-  # Test the responses and raise alerts as below
+  # Test the responses and raise alerts as below in the scan method
+
+
+def scanHost(sas, msg):
+  # Debugging can be done using print like this
+  print('scanHost called for url=' + msg.getRequestHeader().getURI().toString())
+
+  # Copy requests before reusing them
+  msg = msg.cloneRequest()
+
+  # sendAndReceive(msg, followRedirect, handleAntiCSRFtoken)
+  sas.sendAndReceive(msg, False, False)
+
+  # Test the responses and raise alerts as below in the scan method
 
 
 def scan(helper, msg, param, value):

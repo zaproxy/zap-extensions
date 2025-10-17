@@ -25,7 +25,7 @@ zapAddOn {
                     version.set(">=1.37.0")
                 }
                 register("scripts") {
-                    version.set(">=45.14.0")
+                    version.set(">=45.15.0")
                 }
             }
         }

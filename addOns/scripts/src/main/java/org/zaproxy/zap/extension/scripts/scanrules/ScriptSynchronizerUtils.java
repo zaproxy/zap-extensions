@@ -19,7 +19,6 @@
  */
 package org.zaproxy.zap.extension.scripts.scanrules;
 
-import java.lang.reflect.UndeclaredThrowableException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -38,20 +37,7 @@ class ScriptSynchronizerUtils {
     static ScanRuleMetadata getMetadataForScript(ScriptWrapper script) throws Exception {
         var metadataProvider = getExtScript().getInterface(script, ScanRuleMetadataProvider.class);
         if (metadataProvider != null) {
-            try {
-                return metadataProvider.getMetadata();
-            } catch (UndeclaredThrowableException ignored) {
-                // Python and Kotlin scripts throw this exception when the method is not implemented
-                return null;
-            } catch (Exception e) {
-                if (e.getCause() != null
-                        && "groovy.lang.MissingMethodException"
-                                .equals(e.getCause().getClass().getCanonicalName())) {
-                    // Groovy scripts throw this exception when the method is not implemented
-                    return null;
-                }
-                throw e;
-            }
+            return ScriptScanRuleUtils.callOptionalScriptMethod(metadataProvider::getMetadata);
         }
         return null;
     }

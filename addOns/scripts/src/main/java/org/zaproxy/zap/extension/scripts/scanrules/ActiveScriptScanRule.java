@@ -104,6 +104,17 @@ public class ActiveScriptScanRule extends ActiveScriptHelper {
                                         "scripts.scanRules.ascan.disabledSkipReason"));
                 return;
             }
+
+            ActiveScript3 s3 = cachedScriptInterfaces.getInterface(script, ActiveScript3.class);
+            if (s3 != null) {
+                String hostKbKey = "host:" + metadata.getId();
+                if (!getKb().getBoolean(hostKbKey)) {
+                    getKb().add(hostKbKey, true);
+                    ScriptScanRuleUtils.callOptionalScriptMethod(
+                            () -> s3.scanHost(this, getNewMsg()));
+                }
+            }
+
             ActiveScript2 s = cachedScriptInterfaces.getInterface(script, ActiveScript2.class);
             if (s != null) {
                 HttpMessage msg = getNewMsg();

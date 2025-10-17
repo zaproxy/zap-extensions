@@ -23,7 +23,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -132,6 +135,7 @@ public class ActiveScriptScanRuleUnitTest extends TestUtils {
         given(script.getName()).willReturn("testScript.js");
         given(script.isEnabled()).willReturn(true);
         given(extensionLoader.getExtension(ExtensionScript.class)).willReturn(extensionScript);
+        given(extensionScript.getInterface(eq(script), any())).willReturn(null);
         given(extensionScript.getInterface(script, ActiveScript2.class))
                 .willReturn(scriptActiveInterface);
         given(extensionScript.getInterface(script, ScanRuleMetadataProvider.class))
@@ -184,10 +188,42 @@ public class ActiveScriptScanRuleUnitTest extends TestUtils {
         assertThat(alert.getAlertRef(), is(equalTo("12345-999")));
     }
 
+    @Test
+    void shouldScanHostOnceWithActiveScript3() throws Exception {
+        // Given
+        ActiveScript3 scriptActiveInterface3 = mock(ActiveScript3.class);
+        ScriptWrapper script = createScriptWrapper(scriptActiveInterface3, ActiveScript3.class);
+        VariantFactory variantFactory = mock(VariantFactory.class);
+        given(variantFactory.createVariants(any(), any())).willReturn(List.of(mock(Variant.class)));
+        given(model.getVariantFactory()).willReturn(variantFactory);
+
+        var metadata = new ScanRuleMetadata(12345, "Test Scan Rule");
+        var scanRule = new ActiveScriptScanRule(script, metadata);
+        HostProcess parent1 = mock(HostProcess.class, CALLS_REAL_METHODS);
+        HostProcess parent2 = mock(HostProcess.class, CALLS_REAL_METHODS);
+        doReturn(true).when(parent1).isStop(); // scanHost is called before this is checked
+        doReturn(true).when(parent2).isStop();
+        HttpMessage message1 = new HttpMessage(new HttpRequestHeader("GET /foo HTTP/1.1"));
+        HttpMessage message2 = new HttpMessage(new HttpRequestHeader("GET /bar HTTP/1.1"));
+        HttpMessage message3 = new HttpMessage(new HttpRequestHeader("GET /baz HTTP/1.1"));
+        // When
+        scanRule.init(message1, parent1);
+        scanRule.scan();
+        scanRule.init(message2, parent1);
+        scanRule.scan();
+        scanRule.init(message3, parent2);
+        scanRule.scan();
+        // Then
+        verify(scriptActiveInterface3, times(1)).scanHost(scanRule, message1);
+        verify(scriptActiveInterface3, times(0)).scanHost(scanRule, message2);
+        verify(scriptActiveInterface3, times(1)).scanHost(scanRule, message3);
+    }
+
     private <T> ScriptWrapper createScriptWrapper(T scriptInterface, Class<T> scriptClass)
             throws Exception {
         var script = mock(ScriptWrapper.class);
         given(extensionLoader.getExtension(ExtensionScript.class)).willReturn(extensionScript);
+        given(extensionScript.getInterface(eq(script), any())).willReturn(null);
         given(extensionScript.getInterface(script, scriptClass)).willReturn(scriptInterface);
         given(script.isEnabled()).willReturn(true);
         return script;
