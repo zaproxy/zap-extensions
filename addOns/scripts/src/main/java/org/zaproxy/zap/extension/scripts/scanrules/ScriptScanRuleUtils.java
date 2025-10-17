@@ -19,7 +19,9 @@
  */
 package org.zaproxy.zap.extension.scripts.scanrules;
 
+import java.lang.reflect.UndeclaredThrowableException;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.addon.commonlib.scanrules.AlertReferenceMetadata;
@@ -62,5 +64,48 @@ class ScriptScanRuleUtils {
         if (value != null) {
             setter.accept(value);
         }
+    }
+
+    /**
+     * Provided for syntactical sugar when the method to call does not return anything. See {@link
+     * #callOptionalScriptMethod(Callable)}.
+     */
+    static void callOptionalScriptMethod(ThrowingRunnable method) throws Exception {
+        callOptionalScriptMethod(
+                () -> {
+                    method.run();
+                    return null;
+                });
+    }
+
+    /**
+     * Calls the given method, handling exceptions thrown by some script engines when the method is
+     * not defined.
+     *
+     * @param method the method to call.
+     * @return the result of the method call, or {@code null} if the method is not defined.
+     * @param <T> the type of the method's result.
+     * @throws Exception any other exception thrown by the method.
+     */
+    static <T> T callOptionalScriptMethod(Callable<T> method) throws Exception {
+        try {
+            return method.call();
+        } catch (UndeclaredThrowableException ignored) {
+            // Python and Kotlin scripts throw this exception when the method is not implemented
+            return null;
+        } catch (Exception e) {
+            if (e.getCause() != null
+                    && "groovy.lang.MissingMethodException"
+                            .equals(e.getCause().getClass().getCanonicalName())) {
+                // Groovy scripts throw this exception when the method is not implemented
+                return null;
+            }
+            throw e;
+        }
+    }
+
+    @FunctionalInterface
+    interface ThrowingRunnable {
+        void run() throws Exception;
     }
 }
