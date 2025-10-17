@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### Changed
+- The Insecure Http Method Scan rule now includes example alert functionality for documentation generation purposes and added alert refs (Issue 6119).
 
 ## [62] - 2025-09-18
 ### Added
