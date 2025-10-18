@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Use UTF-8 charset for `application/json` when none specified on newer ZAP versions (Issue 6656).
+
 ### Changed
 - Reset warned invalid content-type values on newer ZAP versions (Issue 9082).
 
