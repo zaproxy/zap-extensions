@@ -59,7 +59,7 @@ class XDebugTokenScanRuleUnitTest extends PassiveScannerTest<XDebugTokenScanRule
         // Then
         assertThat(cwe, is(equalTo(489)));
         assertThat(wasc, is(equalTo(13)));
-        assertThat(tags.size(), is(equalTo(5)));
+        assertThat(tags.size(), is(equalTo(6)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
                 is(equalTo(true)));
@@ -79,6 +79,9 @@ class XDebugTokenScanRuleUnitTest extends PassiveScannerTest<XDebugTokenScanRule
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_ERRH_01_ERR.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_ERRH_01_ERR.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.SYSTEMIC.getTag()),
+                is(equalTo(CommonAlertTag.SYSTEMIC.getValue())));
     }
 
     @Test

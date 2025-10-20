@@ -4,9 +4,13 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- SYSTEMIC tag to selected rules.
+
 ### Changed
 - Update dependency.
 - The PII Disclosure scan rule now only evaluates visible text and script blocks in HTML responses at Medium or High alert threshold, while the entire response body is considered at Low alert threshold. To further prevent false positives at Medium or High alert threshold candidate strings with underscore are excluded.
+- Depends on an updated version of the Common Library add-on.
 
 ## [67] - 2025-09-18
 ### Changed

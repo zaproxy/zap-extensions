@@ -64,7 +64,8 @@ public class WebCacheDeceptionScanRule extends AbstractAppPlugin
                                 CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
                                 CommonAlertTag.WSTG_V42_ATHN_06_CACHE_WEAKNESS,
                                 CommonAlertTag.HIPAA,
-                                CommonAlertTag.PCI_DSS));
+                                CommonAlertTag.PCI_DSS,
+                                CommonAlertTag.SYSTEMIC));
         alertTags.put(PolicyTag.PENTEST.getTag(), "");
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
     }

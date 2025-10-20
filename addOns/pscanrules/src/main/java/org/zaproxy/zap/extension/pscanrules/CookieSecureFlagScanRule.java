@@ -51,7 +51,8 @@ public class CookieSecureFlagScanRule extends PluginPassiveScanner
                         CommonAlertTag.toMap(
                                 CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
                                 CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
-                                CommonAlertTag.WSTG_V42_SESS_02_COOKIE_ATTRS));
+                                CommonAlertTag.WSTG_V42_SESS_02_COOKIE_ATTRS,
+                                CommonAlertTag.SYSTEMIC));
         alertTags.put(PolicyTag.PENTEST.getTag(), "");
         alertTags.put(PolicyTag.DEV_STD.getTag(), "");
         alertTags.put(PolicyTag.QA_STD.getTag(), "");
