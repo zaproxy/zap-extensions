@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
-- Update Selenium to version 4.36.0.
+- Update Selenium to version 4.37.0.
 - Use configured Firefox binary when creating profiles.
 
 ## [15.40.0] - 2025-09-02
