@@ -8,42 +8,45 @@
 <body>
 <h1>повторное посещение (Revisit)</h1>
 <p>
-Вы когда-нибудь хотели иметь возможность просматривать приложение, которое вы тестировали с помощью ZAP, в определенное время?
-возможно, когда у вас нет к нему доступа или после того, как он каким-то образом изменился?<br>
-Если да, то это дополнение для вас! 
+Have you ever wanted to be able to browse an application you tested with ZAP at a specific time, perhaps when you don't have access to it, or after it's been changed in some way?<br>
+If so then this add-on is for you!
 </p>
+
 <p>
-The add-on allows you to instruct ZAP to return content from the ZAP history between specified
-dates rather than forwarding the requests to the site.<br>
+The add-on allows you to instruct ZAP to return content from the ZAP history between specified dates rather than forwarding the requests to the site.<br>
 This allows you to apparently browse and use a website that you no longer have access to.<br>
-It also allows you to see what it looked like at between specific times, which is useful if 
-the application has since changed.<br>
-<br>
-When returning pages from the ZAP history floating footers are injected into HTML pages to
-give a visual clue that these pages are generated from ZAP.<br>
+It also allows you to see what it looked like at between specific times, which is useful if the application has since changed.
+</p>
+
+<p>
+When returning pages from the ZAP history floating footers are injected into HTML pages to give a visual clue that these pages are generated from ZAP.<br>
 ZAP will return pages that were the result of both GET and POST requests as long as it finds ones that match.<br>
 Pages only match if all URL and POST parameters are the same, ignoring the order and any known CSRF tokens.<br>
-If no matching page can be found in the history then a custom 404 page is returned which will
-include links to the same page if it has been invoked with different parameters or outside of the time period specified.<br>
-<br>
-This add-on adds right click menus to the Sites Tree:
+If no matching page can be found in the history then a custom 404 page is returned which will include links to the same page if it has been invoked with different parameters or outside of the time period specified.
 </p>
+
+<p>This add-on adds right click menus to the Sites Tree:</p>
+
 <h3>Включить повторное посещение </h3>
-При выборе будет показано всплывающее окно, в котором запрашивается время начала и окончания. <br>
-Время начала по умолчанию равно времени первого запроса в сеансе. <br>
-Время окончания по умолчанию равно времени последнего запроса в сеансе. <br>
-Если какие-либо элементы времени (например, «день месяца») не изменились, эти элементы будут отключены. <br>
-If the dialog OK button is pressed then the revisit functionality will be enabled for the selected site,
-and a 'calendar' icon added to the site node in the Sites Tree.
+<p>
+When selected a popup will be shown which asks for the start and end times to be used.<br>
+The start time defaults to the time of the first request in the session.<br>
+The end time defaults to the time of the last request in the session.<br>
+If any of the time elements (for example 'day of the month') have not changed then those elements will be disabled.<br>
+If the dialog OK button is pressed then the revisit functionality will be enabled for the selected site, and a 'calendar' icon added to the site node in the Sites Tree.
+</p>
 
 <h3>Отключить повторное посещение </h3>
-Если выбрано, функция повторного посещения будет отключена для выбранного сайта. 
+<p>Если выбрано, функция повторного посещения будет отключена для выбранного сайта. </p>
 
 <h2>API</h2>
-Надстройка поддерживает следующие конечные точки API: <br><br>
-revisit /view /revisitList Возвращает список сайтов, разрешенных для повторного посещения <br>
-revisit / action / revisitSiteOn Включает повторное посещение для указанного сайта. Даты должны быть в формате: "гггг/мм/дд чч:мм:сс" <br> 
-revisit / action / revisitSiteOff Отключает повторное посещение для указанного сайта. 
+<p>Надстройка поддерживает следующие конечные точки API: </p>
+
+<pre>
+revisit / view / revisitList: Returns the list of sites enabled for revisit<br>
+revisit / action / revisitSiteOn: Turns revisit on for the specified site. Dates must use the format: "yyyy/MM/dd HH:mm:ss"<br>
+revisit / action / revisitSiteOff: Turns revisit off for the specified site
+</pre>
 
 </body>
 </html>

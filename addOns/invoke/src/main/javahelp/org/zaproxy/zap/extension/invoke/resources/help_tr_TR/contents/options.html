@@ -7,22 +7,25 @@
 <body>
 	<h1>Uygulamalar ekranı seçenekleri</h1>
 	<p>
-		Bu ekran sizin <a href="concepts.html">çağırılabilir uygulamaları</a> that
+		This screen allows you to configure the <a href="concepts.html">applications</a> that
 		can be invoked.<br> By default there are no applications available, you need to add
 		all of the applications that you want to use.
+	</p>
+
 	<h3>Ekran Adı</h3>
-	Bu uygulamanın ZAP'ta kullanılacak adı.
-	<br>
+	<p>Bu uygulamanın ZAP'ta kullanılacak adı.</p>
 
 	<h3>Tam Komut</h3>
-	Çağırmak istediğiniz uygulamanın tam yolu.
-	<br> Only one command can be specified. If you want to run multiple commands in one
-	go, or set up environmental variables, then you should create a script or batch file and
-	then invoke this from ZAP.
+	<p>
+		The full path of the application you want to invoke.<br>
+		Only one command can be specified. If you want to run multiple commands in one
+		go, or set up environmental variables, then you should create a script or batch file and
+		then invoke this from ZAP.
+	</p>
 
 	<h3>Parametreler</h3>
-	ZAP'ın komuta geçmesi gereken parametreler.
-	<br> Aşağıda bulunan etiketler parametreleri iletmek amacıyla kullanılabilir:
+	ZAP'ın komuta geçmesi gereken parametreler.<br>
+	Aşağıda bulunan etiketler parametreleri iletmek amacıyla kullanılabilir:
 	<table>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -57,9 +60,7 @@
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td>%msgid%</td>
-			<td>the HTTP message id to fetch data from the API (/JSON/core/view/message/?id=$msgid), 
-				does not alway exist, will return -1 if no message id
-			</td>
+			<td>the HTTP message id to fetch data from the API (/JSON/core/view/message/?id=$msgid), does not alway exist, will return -1 if no message id</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -70,20 +71,23 @@
 	Yani bir komut bir URL'yi '-u' kullanarak kabul ettiyse, parametreleri şu şekilde belirtirsiniz: '-u %url%'
 
 	<h3>Çıkış Yakalama</h3>
-	Eğer seçili ise o halde komutu çalıştırır ve onun ürettiği çıktılar gösterilir
-	<i>Çıkış sekmesi</i>.
-	<br> You should always use this option when running scripts or commands that do not
-	have a UI.
-	<br> You can also use this option for troubleshooting - if an application does not
-	run as expected then copy the command run and try it from a command line prompt.
+	<p>
+		If checked then the command run and any output it generates will be displayed on the
+		<i>Output tab</i>.<br>
+		You should always use this option when running scripts or commands that do not
+		have a UI.<br>
+		You can also use this option for troubleshooting - if an application does not
+		run as expected then copy the command run and try it from a command line prompt.
+	</p>
 
 	<h3>Not çıktısı</h3>
-	Eğer herhangi bir çıktı eklenirse
-	<i>Not</i> ilgiliye bağlı
-	<i>Geçmiş sekmesi</i> kaydet.
-	<br> Not olarak bazı düğümler
-	<i>Siteler sekmesi</i> ilişkili değil
-	<i>Geçmiş sekmesi</i> kayıtlar - bu düğümler için bu seçenek bir etkiye sahip olmayacaktır.
-
+	<p>
+		If checked then any output will be appended to a
+		<i>Note</i> attached to the relevant
+		<i>History tab</i> record.<br>
+		Note that some nodes in the
+		<i>Sites tab</i> do not have associated
+		<i>History tab</i> records - for those nodes this option will have no effect.
+	</p>
 </body>
 </html>

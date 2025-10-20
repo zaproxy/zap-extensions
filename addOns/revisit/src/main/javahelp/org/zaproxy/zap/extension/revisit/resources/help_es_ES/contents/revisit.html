@@ -8,42 +8,45 @@ Revisitar
 <body>
 <h1>Revisitar</h1>
 <p>
-¿Alguna vez has deseado ser capaz de navegar una aplicación que probaste con ZAP en un momento específico, quizás cuando no tienes acceso a ella, o después de que haya sido modificada de alguna forma?<br>
-Si es así ¡entonces este complemento es para ti!
+Have you ever wanted to be able to browse an application you tested with ZAP at a specific time, perhaps when you don't have access to it, or after it's been changed in some way?<br>
+If so then this add-on is for you!
 </p>
+
 <p>
-The add-on allows you to instruct ZAP to return content from the ZAP history between specified
-dates rather than forwarding the requests to the site.<br>
+The add-on allows you to instruct ZAP to return content from the ZAP history between specified dates rather than forwarding the requests to the site.<br>
 This allows you to apparently browse and use a website that you no longer have access to.<br>
-It also allows you to see what it looked like at between specific times, which is useful if 
-the application has since changed.<br>
-<br>
-When returning pages from the ZAP history floating footers are injected into HTML pages to
-give a visual clue that these pages are generated from ZAP.<br>
+It also allows you to see what it looked like at between specific times, which is useful if the application has since changed.
+</p>
+
+<p>
+When returning pages from the ZAP history floating footers are injected into HTML pages to give a visual clue that these pages are generated from ZAP.<br>
 ZAP will return pages that were the result of both GET and POST requests as long as it finds ones that match.<br>
 Pages only match if all URL and POST parameters are the same, ignoring the order and any known CSRF tokens.<br>
-If no matching page can be found in the history then a custom 404 page is returned which will
-include links to the same page if it has been invoked with different parameters or outside of the time period specified.<br>
-<br>
-This add-on adds right click menus to the Sites Tree:
+If no matching page can be found in the history then a custom 404 page is returned which will include links to the same page if it has been invoked with different parameters or outside of the time period specified.
 </p>
+
+<p>This add-on adds right click menus to the Sites Tree:</p>
+
 <h3>Habilitar Revisitar</h3>
-Cuando se selecciona, un mensaje emergente aparecerá preguntando por los tiempos iniciales y finales que se utilizarán.<br>
-El tiempo de inicio se fija de forma predeterminada al momento de la primera solicitud en la sesión.<br>
-El tiempo de finalización se fija de forma predeterminada al momento de la última solicitud en la sesión.<br>
-Si cualquiera de los elementos de tiempo (por ejemplo "día del mes") no son cambiados, entonces esos elementos se deshabilitarán.<br>
-If the dialog OK button is pressed then the revisit functionality will be enabled for the selected site,
-and a 'calendar' icon added to the site node in the Sites Tree.
+<p>
+When selected a popup will be shown which asks for the start and end times to be used.<br>
+The start time defaults to the time of the first request in the session.<br>
+The end time defaults to the time of the last request in the session.<br>
+If any of the time elements (for example 'day of the month') have not changed then those elements will be disabled.<br>
+If the dialog OK button is pressed then the revisit functionality will be enabled for the selected site, and a 'calendar' icon added to the site node in the Sites Tree.
+</p>
 
 <h3>Deshabilitar Revisitar</h3>
-Cuando se selecciona, la funcionalidad de revisitar será deshabilitada para el sitio seleccionado.
+<p>Cuando se selecciona, la funcionalidad de revisitar será deshabilitada para el sitio seleccionado.</p>
 
 <h2>API</h2>
-El complemento es compatible con los siguientes puntos de conexión API:<br><br>
-revisit / view / revisitList devuelve la lista de sitios con revisitar habilitado<br>
-revisit / action / revisitSiteOn Activa revisitar para el sitio especificado.
-Las fechas deben tener el formato: "AAAA/MM/dd HH:mm:ss"<br> 
-revisit / action / revisitSiteOff  Deshabilita revisitar para el sitio especificado
+<p>El complemento es compatible con los siguientes puntos de conexión API:</p>
+
+<pre>
+revisit / view / revisitList: Returns the list of sites enabled for revisit<br>
+revisit / action / revisitSiteOn: Turns revisit on for the specified site. Dates must use the format: "yyyy/MM/dd HH:mm:ss"<br>
+revisit / action / revisitSiteOff: Turns revisit off for the specified site
+</pre>
 
 </body>
 </html>

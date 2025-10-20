@@ -2,50 +2,44 @@
 <HTML>
 <HEAD>
 <TITLE>
-Automation Framework - activeScan-policy Job
+自動化フレームワーク - activeScan-policy ジョブ
 </TITLE>
 </HEAD>
 <BODY>
-<H1>Automation Framework - activeScan-policy Job</H1>
+<H1>自動化フレームワーク - activeScan-policy ジョブ</H1>
 
-This job defines an active scan policy. This policy can be used later in the plan by active scan related jobs, 
-like <a href="job-ascan.html">activeScan</a> job.
+このジョブはアクティブスキャンポリシーを定義します。 このポリシーは <a href="job-ascan.html">activeScan</a> ジョブなど、後続のアクティブスキャン関連ジョブでプラン内で使用できます。
 
 <H2>YAML</H2>
 
 <pre>
-  - type: activeScan-policy            # Defines a new active scan policy which can be used by later activeScan related jobs
+  - type: activeScan-policy            # 後続のアクティブスキャン関連ジョブで使用可能な新しいアクティブスキャンポリシーを定義します
     parameters:
-      name:                            # String: Name of the policy, mandatory
-    policyDefinition:                  # The policy definition
-      defaultStrength:                 # String: The default Attack Strength for all rules, one of Low, Medium, High, Insane (not recommended), default: Medium
-      defaultThreshold:                # String: The default Alert Threshold for all rules, one of Off, Low, Medium, High, default: Medium
-      alertTags:                       # Add rules based on alert tags; does not override or remove rules listed explicitly under "rules"
-        include: []                    # List of alert tags to include, regex supported
-        exclude: []                    # List of alert tags to exclude from this include list, regex supported
-        strength:                      # String: The Attack Strength for this set of rules, one of Low, Medium, High, Insane, default: Medium
-        threshold:                     # String: The Alert Threshold for this set of rules, one of Off, Low, Medium, High, default: Medium
-      rules:                           # A list of one or more active scan rules and associated settings which override the defaults
-      - id:                            # Int: The rule id as per https://www.zaproxy.org/docs/alerts/
-        name:                          # Comment: The name of the rule for documentation purposes - this is not required or actually used
-        strength:                      # String: The Attack Strength for this rule, one of Low, Medium, High, Insane, default: Medium
-        threshold:                     # String: The Alert Threshold for this rule, one of Off, Low, Medium, High, default: Medium
-    enabled:                           # Bool: If set to false the job will not be run, default: true
-    alwaysRun:                         # Bool: If set and the job is enabled then it will run even if the plan exits early, default: false
+      name:                            # 文字列: ポリシーの名前、必須
+    policyDefinition:                  # ポリシー定義
+      defaultStrength:                 # 文字列: すべてのルールのデフォルトの攻撃強度、Low、Medium、High、Insane (非推奨) のいずれか、デフォルト: Medium
+      defaultThreshold:                # 文字列: すべてのルールのデフォルトのアラートしきい値、Off、Low、Medium、Highのいずれか、デフォルト: Medium
+      alertTags:                       # アラートタグに基づいてルールを追加します。 'rules' の下に明示的にリストされているルールを上書きまたは削除しません
+        include: []                    # 含めるアラートタグのリスト、正規表現をサポート
+        exclude: []                    # このincludeリストから除外するアラートタグのリスト、正規表現をサポート
+        strength:                      # 文字列: このルールのセットの攻撃強度、Low、Medium、High、Insaneのいずれか、デフォルト: Medium
+        threshold:                     # 文字列: このルールのセットのアラートしきい値、Off、Low、Medium、Highのいずれか、デフォルト: Medium
+      rules:                           # 1つ以上のActive Scanルールと、デフォルトを上書きする関連設定のリスト
+      - id:                            # Int: https://www.zaproxy.org/docs/alerts/ に準拠したルールID
+        name:                          # コメント: ドキュメント作成目的のルールの名前 - これは必須ではなく、実際の動作には使用されません
+        strength:                      # 文字列: このルールの攻撃強度、Low、Medium、High、Insaneのいずれか、デフォルト: Medium
+        threshold:                     # 文字列: このルールののアラート閾値、Off、Low、Medium、Highのいずれか、デフォルト: Medium
+    enabled:                           # Bool: falseに設定されている場合、ジョブは実行されません、デフォルト: true
+    alwaysRun:                         # Bool: 設定され、ジョブが有効な場合、プランが早期に終了しても実行されます、デフォルト: false
 </pre>
 
-<h2>Policy Definition Hierarchy</h2>
-ZAP processes the policy definition in the following order:
+<h2>ポリシー定義の適用順序</h2>
+ZAPはポリシー定義を次の順序で処理します：
 
 <ol>
-    <li><strong>Default behavior</strong>: All rules start with the default strength and threshold settings. We expect
-        the default threshold to be set to <code>Off</code> in most cases.
-    <li><strong>Alert tag processing</strong>: Rules matching the <code>include</code> patterns are enabled with the
-        specified alert tag strength and threshold, and rules matching any <code>exclude</code> pattern are removed from
-        the included set. For a full list of default alert tags, see <a href="https://www.zaproxy.org/alerttags/">Alert
-            Tags</a>.
-    <li><strong>Individual rule overrides</strong>: Explicitly listed rules under the <code>rules</code> section take
-        precedence over alert tag settings and policy defaults.
+    <li><strong>デフォルトの動作</strong>: すべてのルールはデフォルトの強度と閾値の設定で開始されます。 通常、デフォルトのしきい値は <code>Off</code> に設定されることが推奨されます。
+    <li><strong>アラートタグの処理</strong>: <code>include パターンに一致するルールは、指定されたアラートタグの強度と閾値で有効になり、<code>exclude</code> パターンに一致するルールは、適用対象から除外されます。 デフォルトのアラートタグの完全なリストについては、<a href="https://www.zaproxy.org/alerttags/">アラートタグ</a>を参照してください。
+    <li><strong>個々のルールの上書き</strong>: <code>rules</code> セクションに明示的にリストされているルールは、アラートタグの設定やポリシーのデフォルト設定よりも優先されます。
 </ol>
 
 </BODY>
