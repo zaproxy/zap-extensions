@@ -7,11 +7,11 @@
                 <tocitem text="API" target="addon.policy-api"/>
                 <tocitem text="既定のポリシー" target="addon.policy-default"/>
                 <tocitem text="開発者向け CI/CD ポリシー" target="addon.policy-dev-cicd"/>
-                <tocitem text="開発者向け 標準ポリシー" target="addon.policy-dev-std"/>
-                <tocitem text="開発者向け 完全ポリシー" target="addon.policy-dev-full"/>
-                <tocitem text="QA 向け CI/CD ポリシー" target="addon.policy-qa-cicd"/>
-                <tocitem text="QA 向け 標準ポリシー" target="addon.policy-qa-std"/>
-                <tocitem text="QA 向け 完全ポリシー" target="addon.policy-qa-full"/>
+                <tocitem text="開発者標準ポリシー" target="addon.policy-dev-std"/>
+                <tocitem text="開発者フルポリシー" target="addon.policy-dev-full"/>
+                <tocitem text="QA CI/CD ポリシー" target="addon.policy-qa-cicd"/>
+                <tocitem text="QA 標準ポリシー" target="addon.policy-qa-std"/>
+                <tocitem text="QA フルポリシー" target="addon.policy-qa-full"/>
                 <tocitem text="ペネトレーションテスターポリシー" target="addon.policy-pentest"/>
             </tocitem>
         </tocitem>

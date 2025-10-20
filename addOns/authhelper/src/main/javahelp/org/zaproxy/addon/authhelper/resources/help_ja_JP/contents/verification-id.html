@@ -2,46 +2,40 @@
 <HTML>
 <HEAD>
 <TITLE>
-Verification Request Identification
+検証リクエストの識別
 </TITLE>
 </HEAD>
 <BODY>
-<H1>Verification Request Identification</H1>
+<H1>検証リクエストの識別</H1>
 
-This <a href="authhelper.html">add-on</a> includes a passive scan rule which attempts to identify Verification requests.<br>
-Verification requests are the requests that ZAP uses to tell if a session is still valid.
+この<a href="authhelper.html">アドオン</a>には、検証リクエストを識別しようとするパッシブスキャンルールが含まれています。
+検証リクエストは、セッションが依然として有効であるかどうかをZAPが判断するために使用するリクエストです。
 <p>
-Unlike the other identification scan rules in this add-on, this rule will only raise alerts if you have indicated that you want to use 
-verification auto-detection for a specific context.
-Due to the way the ZAP 2.12 core works it is not currently possible to add a new Verification Method Type dynamically.
-Instead you will need to:
+このアドオンの他の識別スキャンルールとは異なり、このルールは、特定のコンテキストに対して検証の自動検出を使用したいと指定した場合にのみ、アラートを発生させます。
+ZAP 2.12コアの動作方法により、新しい検証方法タイプを動的に追加することは現在不可能です。
+代わりに、次のことを行う必要があります：
 <ul>
-<li>Set the Session Management Method to <a href="autodetect-session.html">Auto-Detect Session Management Method</a>
-<li>Set the Verification Strategy to "Poll every Request or Response"
-<li>Not specify a URL to poll
+<li>セッション管理方式を<a href="autodetect-session.html">セッション管理方式の自動検出</a>に設定する
+<li>検証ストラテジーを「すべてのリクエストまたはレスポンスをポーリングする」に設定する
+<li>ポーリングするURLを指定しない
 </ul>
-In 2.13+ (and the latest weeklies) it will be possible to set the verification strategy to "Auto-Detect".
+2.13以降 (および最新のウィークリー版) では、検証ストラテジーを「自動検出」に設定できるようになります。
 <p>
-The rule works by identifying requests that behave differently when a valid session management token is supplied, 
-but also behave consistently when a token is supplied and when one is not supplied.
+このルールは、有効なセッション管理トークンが提供された場合に異なる動作をするリクエストを識別することで機能しますが、トークンが提供された場合と提供されなかった場合にも一貫した動作をするリクエストも識別します。
 <p>
-Responses which contain the user name are preferred - this can be the name given to the user in ZAP or the username 
-specified in the credentials.
+ユーザー名を含むレスポンスが推奨されます。これはZAPでユーザーに付けられた名前、または認証情報で指定されたユーザー名のいずれかです。
 <p>
-Unusually for a passive scan rule, this rule actually makes requests rather than just observing them.
-It needs to do this in order to identify which requests act differently when performed with and without a valid session token.
-It will only do that if you have enabled it as above.
+パッシブスキャンルールとしては異例ですが、このルールは単にリクエストを観測するのではなく、実際にリクエストを作成します。
+ これは、有効なセッショントークンがある場合とない場合で、どのリクエストが異なる動作をするかを識別するためにこれを行う必要があります。
+これは、上記のように有効にしている場合にのみ実行されます。
 <p>
-If the rule identifies a Verification request for a context that does not have one, 
-or a request that is determined to be 'better' that the currently identified request then the context will be updated.
+このルールが検証リクエストを持たないコンテキストの検証リクエストを識別した場合、または現在識別されているリクエストよりも「優れている」と判断されたリクエストを識別した場合、コンテキストが更新されます。
 <p>
-If this rule fails to identify a suitable request for your application then you can raise an 
-<a href="https://github.com/zaproxy/zaproxy/issues">issue</a> with the complete request and response details 
-(having obfuscated any sensitive information) and we will investigate it.
+このルールが対象アプリケーションに適したリクエストの検出に失敗した場合は、機密情報を伏せたうえでリクエストおよびレスポンスの詳細を添えて <a href="https://github.com/zaproxy/zaproxy/issues">問題</a> を報告してください。調査を行います。
 
 <p>
 
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/authhelper/src/main/java/org/zaproxy/addon/authhelper/VerificationDetectionScanRule.java">VerificationDetectionScanRule.java</a>
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/authhelper/src/main/java/org/zaproxy/addon/authhelper/VerificationDetectionScanRule.java">VerificationDetectionScanRule.java</a>
 
 </BODY>
 </HTML>

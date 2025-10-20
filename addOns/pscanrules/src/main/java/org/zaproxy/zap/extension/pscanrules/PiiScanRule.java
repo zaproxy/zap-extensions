@@ -110,34 +110,46 @@ public class PiiScanRule extends PluginPassiveScanner implements CommonPassiveSc
             return;
         }
 
-        String responseBody = getResponseBodyWithStylesRemoved(source);
-        List<Candidate> candidates = getNumberSequences(responseBody);
-        for (Candidate candidate : candidates) {
-            for (CreditCard cc : CreditCard.values()) {
-                Matcher matcher = cc.matcher(candidate.getCandidate());
-                while (matcher.find()) {
-                    String evidence = candidate.getOriginal();
-                    if (isDecimal(candidate.getContainingString())
-                            && !this.getAlertThreshold().equals(AlertThreshold.LOW)) {
-                        return;
-                    }
-                    if (PiiUtils.isValidLuhn(candidate.getCandidate())
-                            && !isSci(candidate.getContainingString())) {
-                        BinRecord binRec = BinList.getSingleton().get(evidence);
-                        createAlert(evidence, cc.name, binRec).raise();
+        for (String componentText : getStringsToAnalyze(source)) {
+            if (componentText.isBlank()) {
+                continue;
+            }
+            List<Candidate> candidates = getNumberSequences(componentText, getAlertThreshold());
+            for (Candidate candidate : candidates) {
+                for (CreditCard cc : CreditCard.values()) {
+                    Matcher matcher = cc.matcher(candidate.getCandidate());
+                    while (matcher.find()) {
+                        String evidence = candidate.getOriginal();
+                        if (isDecimal(candidate.getContainingString())
+                                && !this.getAlertThreshold().equals(AlertThreshold.LOW)) {
+                            return;
+                        }
+                        if (PiiUtils.isValidLuhn(candidate.getCandidate())
+                                && !isSci(candidate.getContainingString())) {
+                            BinRecord binRec = BinList.getSingleton().get(evidence);
+                            createAlert(evidence, cc.name, binRec).raise();
+                        }
                     }
                 }
             }
         }
     }
 
-    private static String getResponseBodyWithStylesRemoved(Source source) {
-        OutputDocument outputDocument = new OutputDocument(source);
-        outputDocument.remove(source.getAllElements(HTMLElementName.STYLE));
-        for (StartTag startTag : source.getAllStartTags("style", null)) {
-            outputDocument.remove(startTag.getAttributes().get("style"));
+    private List<String> getStringsToAnalyze(Source source) {
+        List<String> strings = new ArrayList<>();
+        if (getAlertThreshold().equals(AlertThreshold.LOW)) {
+            OutputDocument outputDocument = new OutputDocument(source);
+            outputDocument.remove(source.getAllElements(HTMLElementName.STYLE));
+            for (StartTag startTag : source.getAllStartTags("style", null)) {
+                outputDocument.remove(startTag.getAttributes().get("style"));
+            }
+            strings.add(outputDocument.toString());
+        } else {
+            strings.add(source.getTextExtractor().toString());
+            source.getAllElements(HTMLElementName.SCRIPT)
+                    .forEach(block -> strings.add(block.toString()));
         }
-        return outputDocument.toString();
+        return strings;
     }
 
     /**
@@ -215,11 +227,13 @@ public class PiiScanRule extends PluginPassiveScanner implements CommonPassiveSc
         return recString.toString();
     }
 
-    private static List<Candidate> getNumberSequences(String inputString) {
-        return getNumberSequences(inputString, 3);
+    private static List<Candidate> getNumberSequences(
+            String inputString, AlertThreshold threshold) {
+        return getNumberSequences(inputString, 3, threshold);
     }
 
-    private static List<Candidate> getNumberSequences(String inputString, int minSequence) {
+    private static List<Candidate> getNumberSequences(
+            String inputString, int minSequence, AlertThreshold threshold) {
         String regexString = String.format("(?:\\d{%d,}[\\s]*)+", minSequence);
         // Use RE2/J to avoid StackOverflowError when the response has many numbers.
         com.google.re2j.Matcher matcher =
@@ -227,20 +241,24 @@ public class PiiScanRule extends PluginPassiveScanner implements CommonPassiveSc
         List<Candidate> result = new ArrayList<>();
         while (matcher.find()) {
             int proposedEnd = matcher.end() + 3;
+
+            String containingString =
+                    inputString
+                            .substring(
+                                    // Include 3 leading characters if possible
+                                    matcher.start() - 3 > 0 ? matcher.start() - 3 : matcher.start(),
+                                    inputString.length() > proposedEnd
+                                            ? matcher.end() + 3
+                                            : inputString.length())
+                            .replaceAll("\\s+", "");
+            if (!threshold.equals(AlertThreshold.LOW) && containingString.contains("_")) {
+                continue;
+            }
             result.add(
                     new Candidate(
                             matcher.group(),
                             matcher.group().replaceAll("\\s+", ""),
-                            inputString
-                                    .substring(
-                                            // Include 3 leading characters if possible
-                                            matcher.start() - 3 > 0
-                                                    ? matcher.start() - 3
-                                                    : matcher.start(),
-                                            inputString.length() > proposedEnd
-                                                    ? matcher.end() + 3
-                                                    : inputString.length())
-                                    .replaceAll("\\s+", "")));
+                            containingString));
         }
         return result;
     }
@@ -309,6 +327,17 @@ public class PiiScanRule extends PluginPassiveScanner implements CommonPassiveSc
 
         public String getContainingString() {
             return containingString;
+        }
+
+        @Override
+        public String toString() {
+            return "Candidate [candidate="
+                    + candidate
+                    + ", containingString="
+                    + containingString
+                    + ", getOriginal()="
+                    + original
+                    + "]";
         }
     }
 }

@@ -8,86 +8,77 @@
 <BODY>
 <H1>認証テスターダイアログ</H1>
 
-This dialog allows you to test if ZAP can authenticate and automatically handle the session handling
-and verification for a site given only the login page and credentials.
+このダイアログを使用すると、ログインページと資格情報のみが与えられたサイトに対して、ZAPが認証を行い、セッション処理と検証を自動的に処理できるかどうかをテストできます。
 
-<H2>Fields</H2>
+<H2>フィールド</H2>
 
-The following fields are provided:
+以下のフィールドが提供されています。
 
-<H3>Login URL</H3>
-The URL of the login page. It is mandatory and must start with "http://" or "https://".
-The URL does not have to be in the Sites Tree, but must be accessible to ZAP.
+<H3>ログイン URL</H3>
+ログインページのURLです。 これは必須であり、「http://」または「https://」で始まる必要があります。
+このURLは、サイトツリーにある必要はありませんが、ZAPからアクセス可能でなければなりません。
 
 <H3>コンテキスト</H3>
-The name of the context which will be configured to handle the authentication.
-If the context already exists then it will be deleted and recreated.
+認証を処理するように設定されるコンテキストの名前です。
+そのコンテキストがすでに存在する場合、それは削除され、再作成されます。
 
-<H3>Auth Method</H3>
-The authentication method to use: 
+<H3>認証方法</H3>
+使用する認証認証方法： 
 <ul>
-<li>Browser Based - ZAP will try to identify and fill in the credentials automatically.
-<li>Client Script - ZAP will use the Client Script you have chosen to authenticate.
+<li>ブラウザベース - ZAPが資格情報を自動的に識別し、入力しようと試みます。
+<li>クライアントスクリプト - ZAPは、選択したクライアントスクリプトを使用して認証を行います。
 </ul>
 
-<H3>Client Script</H3>
-The script to use for authenticating - this will only be enabled if you have selected the "Client Script" Auth Method.
+<H3>クライアントスクリプト</H3>
+認証に使用するスクリプトです。これは、「クライアントスクリプト」認証メソッドを選択した場合にのみ有効になります。
 <p>
-If you do not already have a suitable script then you can use the "Record" button - this will launch the selected browser,
-start recording your actions and open the specified URL.<br>
-You will need to manually close the browser when you have finished.<br>
-The script you have just recorded will automatically be selected.
+適切なスクリプトをまだお持ちでない場合は、「記録」ボタンを使用できます。これにより、選択されたブラウザが起動し、ユーザーの操作の記録が開始され、指定されたURLが開かれます。<br>
+完了したら、ブラウザを手動で閉じる必要があります。<br>
+記録したばかりのスクリプトは、自動的に選択されます。
 
-<H3>Browser</H3>
-The browser to use for authentication.<br>
-The browser you choose will need to be installed and be able to be launched from ZAP.
+<H3>ブラウザ</H3>
+認証に使用するブラウザです。<br>
+選択したブラウザは、インストールされており、ZAPから起動できる必要があります。
 
-<H3>Username</H3>
-The username to use for authentication - this will only be enabled if you have selected the "Browser Based" Auth Method.<br>
-The username and password must be valid for the login to work.
+<H3>ユーザー名</H3>
+認証に使用するユーザー名です。これは、「ブラウザベース」認証メソッドを選択した場合にのみ有効になります。<br>
+ログインを機能させるには、ユーザー名とパスワードが有効でなければなりません。
 
-<H3>Password</H3>
-The password to use for authentication - this will only be enabled if you have selected the "Browser Based" Auth Method.<br>
-The username and password must be valid for the login to work.
+<H3>パスワード</H3>
+認証に使用するパスワードです。これは、「ブラウザベース」認証メソッドを選択した場合にのみ有効になります。<br>
+ログインを機能させるには、ユーザー名とパスワードが有効でなければなりません。
 
-<H3>Time to Wait (seconds)</H3>
-The number of seconds to wait after submitting the login form before closing the browser.<br>
-If the browser is closed before the application has loaded then ZAP may not be able to identify
-the session handling or find a suitable verification URL.
+<H3>待機時間 (秒)</H3>
+ログインフォームを送信してからブラウザを閉じるまでに待機する秒数です。<br>
+アプリケーションの読み込みが遅いために、ブラウザが早すぎるうちに閉じられた場合、ZAPはセッション処理を識別したり、適切な検証URLを見つけたりできなくなる可能性があります。
 
-<H3>Step Delay (seconds)</H3>
+<H3>ステップ遅延 (秒)</H3>
 
-The number of seconds to wait in-between each step, either the implicit steps (filling in the username field, then password, then submitting),
-or the ones specified on the Steps tab.<br>
-This can help if the target application is running too slowly and does not react in time to handle ZAP's input.<br>
-Setting this to 2 will have the same effect as the previous "Demo Mode".
+暗黙的なステップ (ユーザー名フィールドへの入力、パスワードへの入力、フォーム送信) またはステップタブで指定されたステップの間に待機する秒数です。<br>
+これは、ターゲットアプリケーションの実行が遅すぎるために、ZAPの入力に対応するのに間に合わない場合に役立ちます。<br>
+これを2に設定すると、以前の「デモモード」と同じ効果があります。
 
-<H3>Record Diagnostics</H3>
-Enables the recording of diagnostic data during the authentication. Refer to the <a href="auth-report-json.html">Authentication Report</a> for more details on the diagnostics.
+<H3>診断情報の記録</H3>
+認証中に診断データの記録を有効にします。 診断情報の詳細については、<a href="auth-report-json.html">認証レポート</a>を参照してください。
 
-<H3>Reset Button</H3>
-The reset button allows you to reset all the fields on the Test tab, and disable all Steps in the Steps tab (steps are only disabled not removed as recreating them might be tedious).
+<H3>リセットボタン</H3>
+リセットボタンを使用すると、テストタブ上のすべてのフィールドをリセットし、ステップタブ上のすべてのステップを無効化できます (再作成が面倒になる可能性があるため、ステップは削除されるのではなく無効化されるだけです)。
 
-<H2>Results Panel</H2>
+<H2>結果パネル</H2>
 
-The results panel show the progress and what has been identified. All elements need to be identified in order for 
-ZAP to be able to automatically handle authentication for this site.
+結果パネルには、進捗と識別された要素が表示されます。 ZAPがこのサイトの認証を自動的に処理できるようにするには、すべての要素が識別される必要があります。
 
-<H2>Diagnostics Tab</H2>
+<H2>診断タブ</H2>
 
-The Diagnostics tab will contain a summary of the requests and responses sent and received as part of the 
-authentication testing. It is recommended that you do not perform any other operations in ZAP while testing the 
-authentication otherwise that may result in unrelated messages being recorded.
+診断タブには、認証テストの一環として送受信されたリクエストとレスポンスの概要が含まれます。 認証をテストしている間に、ZAPで他の操作を実行しないことをお勧めします。そうしないと、無関係なメッセージが記録される可能性があるためです。
 <p>
-Only the absolute minimum information is recorded, and host name and parameter values are replaced by safe tokens.
-You can copy all of the data and review it to make sure it does not include any sensitive data 
-before you share it with us.
+記録されるのは絶対最小限の情報のみであり、ホスト名とパラメーターの値は安全なトークンに置き換えられます。
+データを私たち (開発チーム) と共有する前に、すべてのデータをコピーして、機密データが含まれていないことを確認できます。
 <p>
-Is ZAP fails to detect either the Username or Password field then we will need more details about the login page.
-If you can share that with us then it will it much easier to debug.
+ZAPがユーザー名またはパスワードフィールドのいずれかを検出できなかった場合は、ログインページに関する詳細情報が必要になります。
+それを共有していただければ、デバッグがはるかに容易になります。
 <p>
-If ZAP detects both of the required fields then please share the data from the diagnostic tab with us - 
-we will hopefully be able to diagnose what's going wrong with just that information.
+ZAPが必須の両方のフィールドを検出した場合は、診断タブのデータを私たちと共有してください。その情報だけで、何が問題を引き起こしているかを診断できるはずです。
 
 </BODY>
 </HTML>

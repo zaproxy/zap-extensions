@@ -8,57 +8,54 @@
 <BODY>
 <H1>クライアントスクリプト認証</H1>
 
-This <a href="authhelper.html">add-on</a> adds a new authentication type which uses a browser to login to the target website.
+この<a href="authhelper.html">アドオン</a>は、ブラウザを使用して対象Webサイトにログインする新しい認証方法を追加します。 
 <p>
-This functionality leverages Zest scripts (which may have been recorded via the ZAP Browser Extension) to login.
+この機能は、ログインのためにZestスクリプト (ZAPブラウザ拡張機能で記録されたものかもしれません) を活用します。
 <p>
 
 <H2>自動化フレームワーク</H2>
 
-Client Script Authentication can be configured in the environment section of an Automation Framework plan using:
+クライアントスクリプト認証は、自動化フレームワークプランの環境セクションで以下のように設定できます：
 <pre>
       authentication:
         method: "client"
         parameters:
-          script: /path/to/RecordedAuth.zst  # String, the path to the Zest login script
-          scriptInline:                      # String, the full script (may be multi-line) - supply this or 'script' not both
-          scriptEngine: Mozilla Zest         # The script engine used for the login script
-          diagnostics:                       # Bool, enables the recording of diagnostic data during the authentication. Default: false.
-          loginPageWait:                     # Int, the time in seconds to wait after the script has run, default: 5
-          minWaitFor:                        # Int, sets the minimum waitFor time in seconds to wait for each client statement, default: 0
+          script: /path/to/RecordedAuth.zst  # 文字列、Zestログインスクリプトへのパス
+          scriptInline:                      # 文字列、完全なスクリプト (複数行にわたる可能性があります) - これか 'script' のいずれかを指定し、両方は指定しないでください
+          scriptEngine: Mozilla Zest         # ログインスクリプトに使用されるスクリプトエンジン
+          diagnostics:                       # ブール値、認証中の診断データの記録を有効にします。 デフォルト: false。
+          loginPageWait:                     # 整数、スクリプト実行後に待機する時間 (秒)、デフォルト: 5
+          minWaitFor:                        # 整数、各クライアントステートメントに対して待機する最小の waitFor 時間 (秒) を設定します、デフォルト: 0
 </pre>
 
 <p>
-Refer to the <a href="auth-report-json.html">Authentication Report</a> for more details on the diagnostics.
+診断情報の詳細については、<a href="auth-report-json.html">認証レポート</a>を参照してください。
 
 <p>
-Zest client element statements include a "Wait For" parameter in milliseconds which is the time that Zest will wait for the relevant 
-element to become accessible. If it becomes accessible before the "wait for" time then the script carries on and does not wait for the
-full time. The "minWaitFor" parameter above (in seconds) allows you to extend (but not shorten) the time the script will wait.
-This can be very useful if the target site sometimes runs slowly.
-Increasing the "minWaitFor" time will not impact the overall time as long as all of the elements do appear within the time limit.
-It can impact the overall time in failure cases, for example where the elements never appear.
+Zestクライアント要素ステートメントには、ミリ秒単位の「Wait For」パラメーターが含まれています。これは、関連する要素がアクセス可能になるまでZestが待機する時間です。 要素が「minWaitFor」時間より前にアクセス可能になった場合、スクリプトは続行し、全時間は待機しません。 上記の「minWaitFor」パラメーター（秒単位）を使用すると、スクリプトが待機する時間を延長できます (ただし短縮はできません)。
+これは、対象サイトの動作が遅くなる場合がある場合に非常に役立ちます。
+すべての要素が時間制限内に表示される限り、「minWaitFor」時間を増やしても全体の時間には影響しません。
+ただし、要素がまったく表示されない場合など、失敗ケースでは全体の時間に影響を与える可能性があります。 
 
-<H2>Client Spider and AJAX Spider Integration</H2>
+<H2>クライアントスパイダーおよびAJAXスパイダー統合</H2>
 
-The Client or AJAX Spider will automatically login if a user is specified which is in a context that uses Client Script Authentication.
+クライアントスパイダーまたはAJAXスパイダーは、クライアントスクリプト認証を使用するコンテキスト内にユーザーが指定されている場合、自動的にログインを実行します。
 <p>
-Note that this uses the Selenium integration detailed below, so any browsers launched manually will also be logged in if the 
-Client or AJAX spider is performing an authenticated scan using Client Script Authentication.
+これは、以下に詳述されているSelenium統合を使用することに注意してください。そのため、クライアントスパイダーまたはAJAXスパイダーがクライアントスクリプト認証を使用した認証済みスキャンを実行している場合、手動で起動されたブラウザもログインされます。
 
-<H2>Selenium Integration</H2>
+<H2>Selenium統合</H2>
 
-Any browsers launched by ZAP can be configured to always first login using the details configured in a context.
+ZAPが起動するすべてのブラウザを、コンテキストで設定された詳細を使用して最初にログインするよう設定できます。
 <p>
-Note that due to restrictions in the core:
+コアの制限により：
 <ul>
-<li>Existing contexts are not updated in the GUI if you add or remove this add-on
-<li>Client Script Based Authentication cannot be added to a context via the API (unless used with ZAP 2.16.1 or later)
+<li>このアドオンを追加または削除した場合、既存のコンテキストはGUIで更新されません
+<li>クライアントスクリプトベース認証はAPI経由でコンテキストに追加できません (ZAP 2.16.1以降を除く)
 </ul>
-These restrictions will be addressed in a future release. 
+これらの制限は将来のリリースで解決される予定です。 
 
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/authhelper/src/main/java/org/zaproxy/addon/authhelper/ClientScriptBasedAuthenticationMethodType.java">ClientScriptBasedAuthenticationMethodType.java</a>
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/authhelper/src/main/java/org/zaproxy/addon/authhelper/ClientScriptBasedAuthenticationMethodType.java">ClientScriptBasedAuthenticationMethodType.java</a>
 
 </BODY>
 </HTML>
