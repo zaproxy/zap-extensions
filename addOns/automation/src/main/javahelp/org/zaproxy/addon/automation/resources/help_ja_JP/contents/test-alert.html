@@ -2,44 +2,41 @@
 <HTML>
 <HEAD>
   <TITLE>
-    Automation Framework - Alert Job Test
+    自動化フレームワーク - アラートジョブテスト
   </TITLE>
 </HEAD>
 <BODY>
-<H1>Automation Framework - Alert Job Test</H1>
+<H1>自動化フレームワーク - アラートジョブテスト</H1>
 
-Alert tests are supported by the activeScan and passiveScan-wait jobs. These tests can be used to validate the
-presence/absence of specific alerts in the active/passive scan. It is mandatory for the alerts specified in the 
-plan to have a scanRuleId, against which the generated alerts will always be matched. All other fields describing
-an alert are optional regexes, and will be matched against only if they are specified.
+アラートテストは、activeScan および passiveScan-wait ジョブでサポートされています。 これらのテストは、アクティブスキャンまたはパッシブスキャンで特定のアラートが存在するかどうか、または存在しないかを検証するために使用できます。 プランで指定するアラートには、scanRuleId を含めることが必須です。生成されたアラートは、常にこのIDと照合されます。 アラートを記述するその他すべてのフィールドは任意の正規表現として機能し、指定された場合にのみマッチングが行われます。
 <p>
-A job can have tests for multiple alerts, and multiple tests can be created for alerts having the same scanRuleId.
+1つのジョブには複数のアラートテストを含めることができ、同じ scanRuleId を持つアラートに対しても複数のテストを作成できます。
 
 <H2>YAML</H2>
 
 <pre>
   jobs:
-  - type: activeScan                   # The active scanner - this actively attacks the target so should only be used with permission
+  - type: activeScan                   # アクティブスキャナー - ターゲットを積極的に攻撃するため、必ず許可を得てから使用してください
     parameters:
-      context:                         # String: Name of the context to attack, default: first context
-      policy:                          # String: Name of the scan policy to be used, default: Default Policy
-      maxRuleDurationInMins:           # Int: The max time in minutes any individual rule will be allowed to run for, default: 0 unlimited
-      maxScanDurationInMins:           # Int: The max time in minutes the active scanner will be allowed to run for, default: 0 unlimited
+      context:                         # 文字列: 攻撃するコンテキストの名前、デフォルト: 最初のコンテキスト
+      policy:                          # 文字列: 使用するスキャンポリシーの名前、デフォルト: Default Policy
+      maxRuleDurationInMins:           # Int: 個々のルールが実行を許可される最大時間 (分)、デフォルト: 0 (制限なし)
+      maxScanDurationInMins:           # Int: アクティブスキャナーが実行を許可される最大時間 (分)、デフォルト: 0 (制限なし)
     tests:
-      - name: 'test one'                       # Name of the test, optional
-        type: alert                            # Specifies that the test is of type 'alert'
-        action: passIfPresent/passIfAbsent     # String: The condition (presence/absence) of the alert, default: passIfAbsent  
-        scanRuleId:                            # Integer: The id of the scanRule which generates the alert, mandatory  
-        alertName:                             # String: The name of the alert generated, optional
-        url: http://www.example.com/path       # String: The url of the request corresponding to the alert generated, optional
-        method:                                # String: The method of the request corresponding to the alert generated, optional
-        attack:                                # String: The actual attack which generated the alert, optional
-        param:                                 # String: The parameter which was modified to generate the alert, optional
-        evidence:                              # String: The evidence corresponding to the alert generated, optional
-        confidence:                            # String: The confidence of the alert, one of 'False Positive', 'Low', 'Medium', 'High', 'Confirmed', optional
-        risk:                                  # String: The risk of the alert, one of 'Informational', 'Low', 'Medium', 'High', optional
-        otherInfo:                             # String: Additional information corresponding to the alert, optional
-        onFail: 'info'                         # String: One of 'warn', 'error', 'info', mandatory
+      - name: 'test one'                       #  テストの名前、任意
+        type: alert                            # テストが「alert」タイプであることを指定します
+        action: passIfPresent/passIfAbsent     #  文字列: アラートの条件 (存在/非存在)、デフォルト: passIfAbsent
+        scanRuleId:                            # 整数: アラートを生成する scanRule のID、必須
+        alertName:                             # 文字列: 生成されたアラートの名前、任意
+        url: http://www.example.com/path       # 文字列: 生成されたアラートに対応するリクエストのURL、任意
+        method:                                # 文字列: 生成されたアラートに対応するリクエストのメソッド、任意
+        attack:                                # 文字列: アラートを生成した実際の攻撃、任意
+        param:                                 # 文字列: アラートを生成するために変更されたパラメータ、任意
+        evidence:                              # 文字列: 生成されたアラートに対応する証拠、任意
+        confidence:                            # 文字列: アラートの信頼度、'False Positive'、'Low'、'Medium'、'High'、'Confirmed' のいずれか、任意
+        risk:                                  # 文字列: アラートのリスクレベル、'Informational'、'Low'、'Medium'、'High' のいずれか、任意
+        otherInfo:                             # 文字列: アラートに対応する追加情報、任意
+        onFail: 'info'                         # 文字列: 'warn'、'error'、'info' のいずれか、必須
   
 </pre>
 </BODY>

@@ -7,22 +7,25 @@
 <body>
 	<h1>选项应用程序屏幕</h1>
 	<p>
-		此屏幕允许您配置 <a href="concepts.html">应用程序</a> that
+		This screen allows you to configure the <a href="concepts.html">applications</a> that
 		can be invoked.<br> By default there are no applications available, you need to add
 		all of the applications that you want to use.
+	</p>
+
 	<h3>显示名称</h3>
-	将在ZAP中用于此应用程序的名称。
-	<br>
+	<p>将在ZAP中用于此应用程序的名称。</p>
 
 	<h3>完整的命令</h3>
-	要调用的应用程序的完整路径。
-	<br> Only one command can be specified. If you want to run multiple commands in one
-	go, or set up environmental variables, then you should create a script or batch file and
-	then invoke this from ZAP.
+	<p>
+		The full path of the application you want to invoke.<br>
+		Only one command can be specified. If you want to run multiple commands in one
+		go, or set up environmental variables, then you should create a script or batch file and
+		then invoke this from ZAP.
+	</p>
 
 	<h3>参数</h3>
-	ZAP应传递给命令的参数。
-	<br> 下列标记可用于传递参数：
+	ZAP应传递给命令的参数。<br>
+	下列标记可用于传递参数：
 	<table>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -57,9 +60,7 @@
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td>%msgid%</td>
-			<td>the HTTP message id to fetch data from the API (/JSON/core/view/message/?id=$msgid), 
-				does not alway exist, will return -1 if no message id
-			</td>
+			<td>the HTTP message id to fetch data from the API (/JSON/core/view/message/?id=$msgid), does not alway exist, will return -1 if no message id</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -70,20 +71,23 @@
 	So if a command accepted a URL using '-u' you would specify the parameters as: '-u %url%'
 
 	<h3>捕获输出</h3>
-	如果选中，则命令运行，并且它生成的任何输出都将显示在
-	<i>输出选项卡</i>.
-	<br> You should always use this option when running scripts or commands that do not
-	have a UI.
-	<br> You can also use this option for troubleshooting - if an application does not
-	run as expected then copy the command run and try it from a command line prompt.
+	<p>
+		If checked then the command run and any output it generates will be displayed on the
+		<i>Output tab</i>.<br>
+		You should always use this option when running scripts or commands that do not
+		have a UI.<br>
+		You can also use this option for troubleshooting - if an application does not
+		run as expected then copy the command run and try it from a command line prompt.
+	</p>
 
 	<h3>Output to Note</h3>
-	If checked then any output will be appended to a
-	<i>备注</i> attached to the relevant
-	<i>历史记录选项卡</i> 记录。
-	<br> Note that some nodes in the
-	<i>站点选项卡</i> 没有关联
-	<i>历史记录选项卡</i> records - for those nodes this option will have no effect.
-
+	<p>
+		If checked then any output will be appended to a
+		<i>Note</i> attached to the relevant
+		<i>History tab</i> record.<br>
+		Note that some nodes in the
+		<i>Sites tab</i> do not have associated
+		<i>History tab</i> records - for those nodes this option will have no effect.
+	</p>
 </body>
 </html>
