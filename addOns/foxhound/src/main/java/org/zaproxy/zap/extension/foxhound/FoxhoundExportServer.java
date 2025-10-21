@@ -1,0 +1,124 @@
+package org.zaproxy.zap.extension.foxhound;
+
+import net.htmlparser.jericho.Source;
+import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.URIException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.db.DatabaseException;
+import org.parosproxy.paros.model.HistoryReference;
+import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.Session;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
+import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpResponseHeader;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
+import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
+import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
+import org.zaproxy.addon.network.ExtensionNetwork;
+import org.zaproxy.addon.network.server.HttpMessageHandler;
+import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
+import org.zaproxy.addon.network.server.Server;
+import org.zaproxy.zap.extension.alert.ExtensionAlert;
+import org.zaproxy.zap.extension.foxhound.alerts.FoxhoundAlertHelper;
+import org.zaproxy.zap.extension.foxhound.taint.TaintDeserializer;
+import org.zaproxy.zap.extension.foxhound.taint.TaintInfo;
+import org.zaproxy.zap.extension.foxhound.taint.TaintLocation;
+import org.zaproxy.zap.extension.foxhound.taint.TaintOperation;
+import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+import org.zaproxy.zap.model.SessionStructure;
+import org.zaproxy.zap.model.StructuralNode;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+public class FoxhoundExportServer extends PluginPassiveScanner {
+    private static final Logger LOGGER = LogManager.getLogger(FoxhoundExportServer.class);
+
+    static Server server = null;
+    private static int port = -1;
+
+    private ExtensionNetwork extensionNetwork = null;
+
+    public void start(ExtensionNetwork network) {
+        LOGGER.info("start");
+        this.extensionNetwork = network;
+        getServer();
+    }
+
+    public void stop() {
+        if (server != null) {
+            try {
+                server.stop();
+            } catch (IOException e) {
+                LOGGER.debug("An error occurred while stopping the proxy.", e);
+            }
+        }
+    }
+
+    private void analyseTaintFlow(String body) {
+        TaintInfo taint = TaintDeserializer.deserializeTaintInfo(body);
+        FoxhoundAlertHelper alertHelper = new FoxhoundAlertHelper(taint);
+        alertHelper.raiseAlerts();
+    }
+
+    private Server getServer() {
+        if (server == null) {
+            server = extensionNetwork.createHttpServer(
+                new HttpMessageHandler() {
+                    @Override
+                    public void handleMessage(HttpMessageHandlerContext ctx, HttpMessage msg) {
+                        try {
+                            String body = msg.getRequestBody().toString();
+                            analyseTaintFlow(body);
+
+                            msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "text/html");
+                            msg.getResponseHeader().setStatusCode(200);
+                            msg.setResponseBody("OK");
+                        } catch (Exception e) {
+                            LOGGER.warn(e);
+                        }
+                    }
+                });
+            try {
+                port = server.start(55676);
+                LOGGER.info("Starting Foxhound Export server on port:" + port);
+            } catch (IOException e) {
+                LOGGER.warn("An error occurred while starting the proxy.", e);
+            }
+        }
+        return server;
+    }
+
+
+    @Override
+    public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
+        LOGGER.debug("scanHttpResponseReceive() In Scan Http ResponseReceive," +
+                " id=" + msg.getHistoryRef().getHistoryId() +
+                " session=" + msg.getHistoryRef().getSessionId() +
+                " url=" + msg.getRequestHeader().getURI());
+    }
+
+    @Override
+    public void scanHttpRequestSend(HttpMessage msg, int id) {
+        LOGGER.debug("scanHttpRequestSend() In Scan Http ResponseReceive, " +
+                "id=" + msg.getHistoryRef().getHistoryId() +
+                " url=" + msg.getRequestHeader().getURI());
+    }
+
+    @Override
+    public String getName() {
+        return "";
+    }
+
+    @Override
+    public int getPluginId() {
+        return 40099;
+    }
+}

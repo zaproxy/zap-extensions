@@ -45,6 +45,7 @@ var addOns =
         "evalvillain",
         "exim",
         "formhandler",
+        "foxhound",
         "frontendscanner",
         "fuzz",
         "fuzzai",
@@ -130,3 +131,5 @@ fun setUpProject(
     }
     project.children.forEach { it -> setUpProject(it.parent!!.projectDir, it) }
 }
+
+include("addOns:foxhound")
