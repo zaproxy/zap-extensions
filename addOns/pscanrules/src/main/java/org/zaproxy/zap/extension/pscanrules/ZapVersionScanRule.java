@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
+import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.YearMonth;
@@ -53,6 +54,9 @@ public class ZapVersionScanRule extends PluginPassiveScanner implements CommonPa
     @Override
     public void scanHttpRequestSend(HttpMessage msg, int id) {
         try {
+            if (Constant.isSilent() && !hasLatestVersionInfo()) {
+                return;
+            }
             int risk = getRisk();
             if (risk <= 0) {
                 return;
@@ -173,6 +177,22 @@ public class ZapVersionScanRule extends PluginPassiveScanner implements CommonPa
             }
         }
         return latestVersionStr;
+    }
+
+    private static boolean hasLatestVersionInfo() {
+        ExtensionAutoUpdate ext =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionAutoUpdate.class);
+
+        if (ext != null) {
+            try {
+                Field f = ext.getClass().getDeclaredField("latestVersionInfo");
+                f.setAccessible(true);
+                return f.get(ext) != null;
+            } catch (Exception e) {
+                LOGGER.debug(e.getMessage(), e);
+            }
+        }
+        return false;
     }
 
     private AlertBuilder buildAlert(int risk, String latest) {
