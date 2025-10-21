@@ -12,6 +12,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - The PII Disclosure scan rule now only evaluates visible text and script blocks in HTML responses at Medium or High alert threshold, while the entire response body is considered at Low alert threshold. To further prevent false positives at Medium or High alert threshold candidate strings with underscore are excluded.
 - Depends on an updated version of the Common Library add-on.
 
+### Fixed
+- ZAP is Out of Date rule to not trigger a CFU request in silent mode (Issue 9096).
+
 ## [67] - 2025-09-18
 ### Changed
 - Add alert references to HTTP Server Response Header scan rule alerts (Issue 7100, 9050).
