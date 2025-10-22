@@ -246,7 +246,7 @@ public class SstiScanRule extends AbstractAppParamPlugin implements CommonActive
         }
 
         if (hasSuspectBehaviourWithPolyglot(paramName, inputPoint)) {
-            searchForMathsExecution(paramName, inputPoint, false);
+            searchForMathsExecution(paramName, msg, inputPoint, false);
         }
     }
 
@@ -293,7 +293,7 @@ public class SstiScanRule extends AbstractAppParamPlugin implements CommonActive
             return;
         }
 
-        searchForMathsExecution(paramName, inputPoint, fixSyntax);
+        searchForMathsExecution(paramName, msg, inputPoint, fixSyntax);
     }
 
     /**
@@ -348,11 +348,25 @@ public class SstiScanRule extends AbstractAppParamPlugin implements CommonActive
      * @param fixSyntax declares if should use several prefixes to fix a possible syntax error
      */
     private void searchForMathsExecution(
-            String paramName, InputPoint inputPoint, boolean fixSyntax) {
+            String paramName, HttpMessage msg, InputPoint inputPoint, boolean fixSyntax) {
         ArrayList<SinkPoint> sinksToTest = new ArrayList<>(inputPoint.getSinkPoints());
         boolean found = false;
         String[] codeFixPrefixes = {""};
         String templateFixingPrefix;
+        HttpMessage testMessage = msg.cloneRequest();
+        testMessage.getRequestHeader().setHeader("Follow-Redirects", "false");
+        try {
+            sendAndReceive(testMessage, false);
+        } catch (SocketException ex) {
+            LOGGER.debug("Caught {} {}", ex.getClass().getName(), ex.getMessage());
+        } catch (IOException ex) {
+            LOGGER.warn(
+                    "SSTI vulnerability check failed for parameter [{}]  due to an I/O error",
+                    paramName,
+                    ex);
+        }
+
+        int statusCode = testMessage.getResponseHeader().getStatusCode();
 
         if (fixSyntax) {
             codeFixPrefixes = WAYS_TO_FIX_CODE_SYNTAX;
@@ -370,7 +384,6 @@ public class SstiScanRule extends AbstractAppParamPlugin implements CommonActive
                 if (isStop() || found) {
                     break;
                 }
-
                 List<String> payloadsAndResults = sstiPayload.getRenderTestAndResult();
                 List<String> renderExpectedResults =
                         payloadsAndResults.subList(1, payloadsAndResults.size());
@@ -394,45 +407,124 @@ public class SstiScanRule extends AbstractAppParamPlugin implements CommonActive
                 try {
 
                     HttpMessage newMsg = getNewMsg();
+
                     setParameter(newMsg, paramName, renderTest);
-                    sendAndReceive(newMsg, false);
+                    if (!(statusCode >= 300 && statusCode < 400)) {
+                        sendAndReceive(newMsg, false);
 
-                    for (SinkPoint sink : sinksToTest) {
+                        for (SinkPoint sink : sinksToTest) {
 
-                        String output = sink.getCurrentStateInString(newMsg, paramName, renderTest);
+                            String output =
+                                    sink.getCurrentStateInString(newMsg, paramName, renderTest);
 
-                        for (String renderResult : renderExpectedResults) {
-                            // Some rendering tests add html tags so we can not only search for
-                            // the delimiters with the arithmetic result inside. Regex searches
-                            // may be expensive, so first we check if the result exist in the
-                            // response and only then we check if it inside the delimiters and
-                            // was originated by our payload.
-                            String regex =
-                                    "[\\w\\W]*"
-                                            + DELIMITER
-                                            + ".*"
-                                            + renderResult
-                                            + ".*"
-                                            + DELIMITER
-                                            + "[\\w\\W]*";
+                            for (String renderResult : renderExpectedResults) {
+                                // Some rendering tests add html tags so we can not only search for
+                                // the delimiters with the arithmetic result inside. Regex searches
+                                // may be expensive, so first we check if the result exist in the
+                                // response and only then we check if it inside the delimiters and
+                                // was originated by our payload.
+                                String regex =
+                                        "[\\w\\W]*"
+                                                + DELIMITER
+                                                + ".*"
+                                                + renderResult
+                                                + ".*"
+                                                + DELIMITER
+                                                + "[\\w\\W]*";
 
-                            if (output.contains(renderResult)
-                                    && output.matches(regex)
-                                    && sstiPayload.engineSpecificCheck(regex, output, renderTest)) {
+                                if (output.contains(renderResult)
+                                        && output.matches(regex)
+                                        && sstiPayload.engineSpecificCheck(
+                                                regex, output, renderTest)) {
 
-                                String attack = getOtherInfo(sink.getLocation(), output);
+                                    String attack = getOtherInfo(sink.getLocation(), output);
 
-                                createAlert(
-                                                newMsg.getRequestHeader().getURI().toString(),
-                                                paramName,
-                                                renderTest,
-                                                attack)
-                                        .setMessage(newMsg)
-                                        .raise();
-                                found = true;
+                                    createAlert(
+                                                    newMsg.getRequestHeader().getURI().toString(),
+                                                    paramName,
+                                                    renderTest,
+                                                    attack)
+                                            .setMessage(newMsg)
+                                            .raise();
+                                    found = true;
+                                }
                             }
                         }
                     }
+                    if (statusCode >= 300 && statusCode < 400) {
+                        try {
+                            for (TemplateFormat format : TEMPLATE_FORMATS) {
+                                // Construct the SSTI payload
+                                String sstiPayload2 =
+                                        "zapSSTI'%s7*7%s'"
+                                                .formatted(
+                                                        format.getStartTag(), format.getEndTag());
+
+                                // Create a new POST request
+                                HttpMessage postMsg = getNewMsg();
+                                postMsg.getRequestHeader().setMethod("POST");
+                                postMsg.getRequestHeader()
+                                        .setHeader(
+                                                "Content-Type",
+                                                "application/x-www-form-urlencoded");
+
+                                // Manually set the body to prevent url-encoding
+                                String requestBody = paramName + "=" + sstiPayload2;
+                                postMsg.setRequestBody(requestBody);
+                                postMsg.getRequestHeader()
+                                        .setContentLength(postMsg.getRequestBody().length());
+
+                                sendAndReceive(postMsg, false); // Send the raw POST request
+
+                                // Now send a GET request to check if SSTI execution occurred
+                                HttpMessage getProfileMsg =
+                                        new HttpMessage(postMsg.getRequestHeader().getURI());
+                                getProfileMsg.getRequestHeader().setMethod("GET");
+
+                                // Preserve authentication/session details
+                                getProfileMsg
+                                        .getRequestHeader()
+                                        .setHeader(
+                                                "User-Agent",
+                                                postMsg.getRequestHeader().getHeader("User-Agent"));
+                                getProfileMsg
+                                        .getRequestHeader()
+                                        .setHeader(
+                                                "Cookie",
+                                                postMsg.getRequestHeader().getHeader("Cookie"));
+                                getProfileMsg
+                                        .getRequestHeader()
+                                        .setHeader(
+                                                "Referer",
+                                                postMsg.getRequestHeader().getURI().toString());
+                                getProfileMsg
+                                        .getRequestHeader()
+                                        .setHeader(
+                                                "Origin", postMsg.getRequestHeader().getHostName());
+
+                                sendAndReceive(getProfileMsg, false); // Fetch profile page
+
+                                String responseBody = getProfileMsg.getResponseBody().toString();
+
+                                if (responseBody.contains(
+                                        "zapSSTI'49'")) { // Check if SSTI was executed
+                                    createAlert(
+                                                    newMsg.getRequestHeader().getURI().toString(),
+                                                    paramName,
+                                                    renderTest,
+                                                    sstiPayload2)
+                                            .setMessage(newMsg)
+                                            .raise();
+                                    found = true;
+                                    break;
+                                }
+                            }
+
+                        } catch (IOException e) {
+                            LOGGER.warn("Failed to send SSTI test requests: ", e);
+                        }
+                    }
+
                 } catch (SocketException ex) {
                     LOGGER.debug("Caught {} {}", ex.getClass().getName(), ex.getMessage());
                 } catch (IOException ex) {
