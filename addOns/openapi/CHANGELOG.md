@@ -4,7 +4,13 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Support for generating XML request bodies for OpenAPI definitions and associated unit/integration tests (BodyGeneratorXmlUnitTest, OpenApiIntegrationXmlTest).
+- Test resource for XML integration: `v3/openapi_xml_integration.yaml`.
+
 ### Changed
+- Wire XML body generation into the request model conversion and body generator.
+- Update help content to indicate XML generation is available (may fail for complex or invalid schemas).
 - Dependency updates.
 
 ## [46] - 2025-09-10
