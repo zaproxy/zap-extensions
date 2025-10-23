@@ -1,42 +1,19 @@
 package org.zaproxy.zap.extension.foxhound;
 
 import net.htmlparser.jericho.Source;
-import org.apache.commons.httpclient.URI;
-import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.parosproxy.paros.core.scanner.Alert;
-import org.parosproxy.paros.db.DatabaseException;
-import org.parosproxy.paros.model.HistoryReference;
-import org.parosproxy.paros.model.Model;
-import org.parosproxy.paros.model.Session;
-import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
-import org.zaproxy.addon.commonlib.CommonAlertTag;
-import org.zaproxy.addon.commonlib.PolicyTag;
-import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
-import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 import org.zaproxy.addon.network.server.Server;
-import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.foxhound.alerts.FoxhoundAlertHelper;
 import org.zaproxy.zap.extension.foxhound.taint.TaintDeserializer;
 import org.zaproxy.zap.extension.foxhound.taint.TaintInfo;
-import org.zaproxy.zap.extension.foxhound.taint.TaintLocation;
-import org.zaproxy.zap.extension.foxhound.taint.TaintOperation;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
-import org.zaproxy.zap.model.SessionStructure;
-import org.zaproxy.zap.model.StructuralNode;
-
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 public class FoxhoundExportServer extends PluginPassiveScanner {
     private static final Logger LOGGER = LogManager.getLogger(FoxhoundExportServer.class);
@@ -46,9 +23,10 @@ public class FoxhoundExportServer extends PluginPassiveScanner {
 
     private ExtensionNetwork extensionNetwork = null;
 
-    public void start(ExtensionNetwork network) {
+    public void start(ExtensionNetwork network, FoxhoundOptions options) {
         LOGGER.info("start");
         this.extensionNetwork = network;
+        port = options.getServerPort();
         getServer();
     }
 
@@ -87,7 +65,7 @@ public class FoxhoundExportServer extends PluginPassiveScanner {
                     }
                 });
             try {
-                port = server.start(55676);
+                server.start(port);
                 LOGGER.info("Starting Foxhound Export server on port:" + port);
             } catch (IOException e) {
                 LOGGER.warn("An error occurred while starting the proxy.", e);
@@ -114,7 +92,7 @@ public class FoxhoundExportServer extends PluginPassiveScanner {
 
     @Override
     public String getName() {
-        return "";
+        return "Foxhound Taint Flow Scanner";
     }
 
     @Override

@@ -24,6 +24,7 @@ public class ExtensionFoxhound extends ExtensionAdaptor {
             List.of(ExtensionNetwork.class);
 
     private FoxhoundExportServer exportServer;
+    private FoxhoundOptions options;
 
     @Override
     public void init() {
@@ -39,14 +40,15 @@ public class ExtensionFoxhound extends ExtensionAdaptor {
 
     @Override
     public void hook(ExtensionHook extensionHook) {
-        LOGGER.info("Hooking Foxhound ZAP extension");
         super.hook(extensionHook);
 
+        extensionHook.addOptionsParamSet(getOptions());
+        LOGGER.info("Loaded Foxhound Options {}", getOptions().getServerPort());
 
         ExtensionNetwork extensionNetwork =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionNetwork.class);
 
-        exportServer.start(extensionNetwork);
+        exportServer.start(extensionNetwork, getOptions());
     }
 
     @Override
@@ -73,5 +75,12 @@ public class ExtensionFoxhound extends ExtensionAdaptor {
     @Override
     public boolean canUnload() {
         return true;
+    }
+
+    public FoxhoundOptions getOptions() {
+        if (options == null) {
+            options = new FoxhoundOptions();
+        }
+        return options;
     }
 }
