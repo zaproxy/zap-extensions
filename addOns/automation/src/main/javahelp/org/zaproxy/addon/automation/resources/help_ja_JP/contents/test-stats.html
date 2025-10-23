@@ -2,21 +2,18 @@
 <HTML>
 <HEAD>
   <TITLE>
-    Automation Framework - Statistics Job Test
+    自動化フレームワーク - 統計ジョブテスト
   </TITLE>
 </HEAD>
 <BODY>
-<H1>Automation Framework - Statistics Job Test</H1>
+<H1>自動化フレームワーク - 統計ジョブテスト</H1>
 
-Statistics-based tests are supported by all add-ons that have an automation job. If there is a relevant
-statistic used by an add-on, a test can be created for it.<br>
-An up to date list of the statistics ZAP maintains can be found at 
-<a href="https://www.zaproxy.org/docs/internal-statistics/">https://www.zaproxy.org/docs/internal-statistics/</a>.
+統計ベースのテストは、自動化ジョブを持つすべてのアドオンでサポートされています。 アドオンで関連する統計が使用されている場合、その統計に対してテストを作成できます。<br>
+ZAPが保持する最新の統計リストは、<a href="https://www.zaproxy.org/docs/internal-statistics/">https://www.zaproxy.org/docs/internal-statistics/</a>で確認できます。
 <p>
-A job can have tests for multiple statistics and multiple tests can be created for the same statistic.
+1つのジョブは複数の統計に対するテストを持つことができ、同じ統計に対して複数のテストを作成できます。
 <p>
-Note that statistics-based tests will function correctly only if in memory statistics have been 
-<a href="https://www.zaproxy.org/docs/desktop/ui/dialogs/options/stats/#in-memory-statistics-enabled">enabled</a>.
+注: 統計ベースのテストは、インメモリ統計が<a href="https://www.zaproxy.org/docs/desktop/ui/dialogs/options/stats/#in-memory-statistics-enabled">有効</a>にされている場合にのみ正しく機能します。
 
 <H2>YAML</H2>
 
@@ -26,13 +23,13 @@ Note that statistics-based tests will function correctly only if in memory stati
     parameters:
       jobSpecificParam: 'value'
     tests:
-      - name: 'test one'                      # Name of the test, optional
-        type: stats                           # Specifies that the test is of type 'stats'
-        statistic: 'stats.addon.something'    # Name of an integer / long statistic
-        site:                                 # Name of the site for site specific tests, supports vars
-        operator: '>='                        # One of '==', '!=', '&gt;=', '&gt;', '&lt;', '&lt;='
-        value: 10                             # Value to compare statistic against
-        onFail: 'info'                        # String: One of 'warn', 'error', 'info', mandatory
+      - name: 'test one'                      # テストの任意の名前
+        type: stats                           # テストが「stats」タイプであることを指定します
+        statistic: 'stats.addon.something'    # 整数 / 長整数型の統計の名前
+        site:                                 # サイト固有のテストのためのサイトの名前、変数をサポートします
+        operator: '>='                        # '==', '!=', '&gt;=', '&gt;', '&lt;', '&lt;=' のいずれか
+        value: 10                             # 統計値を比較する値
+        onFail: 'info'                        # 文字列: 'warn', 'error', 'info' のいずれか、必須
 
 </pre>
 </BODY>
