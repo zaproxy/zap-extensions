@@ -17,6 +17,9 @@ zapAddOn {
         }
         dependencies {
             addOns {
+                register("selenium") {
+                    version.set(">=15.14.0")
+                }
                 register("network") {
                     version.set(">=0.1.0")
                 }
@@ -37,6 +40,8 @@ zapAddOn {
 dependencies {
     zapAddOn("commonlib")
     zapAddOn("network")
+    zapAddOn("selenium")
+    zapAddOn("pscan")
     testImplementation("io.github.bonigarcia:webdrivermanager:5.7.0")
     testImplementation(project(":testutils"))
 }

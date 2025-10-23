@@ -1,18 +1,23 @@
 package org.zaproxy.zap.extension.foxhound;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
-import org.parosproxy.paros.core.scanner.PluginFactory;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.zaproxy.addon.network.ExtensionNetwork;
-import org.zaproxy.addon.network.server.Server;
-import org.zaproxy.zap.extension.alert.ExtensionAlert;
+import org.zaproxy.zap.extension.foxhound.config.FoxhoundOptions;
+import org.zaproxy.zap.extension.foxhound.config.FoxhoundSeleniumProfile;
+import org.zaproxy.zap.extension.selenium.Browser;
+import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
+import org.zaproxy.zap.extension.selenium.ProfileManager;
 
-import java.io.IOException;
+import java.awt.EventQueue;
+import java.io.File;
+import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.List;
 
 
@@ -25,6 +30,7 @@ public class ExtensionFoxhound extends ExtensionAdaptor {
 
     private FoxhoundExportServer exportServer;
     private FoxhoundOptions options;
+    private FoxhoundSeleniumProfile seleniumProfile;
 
     @Override
     public void init() {
@@ -42,13 +48,24 @@ public class ExtensionFoxhound extends ExtensionAdaptor {
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
-        extensionHook.addOptionsParamSet(getOptions());
-        LOGGER.info("Loaded Foxhound Options {}", getOptions().getServerPort());
+        FoxhoundOptions options = getOptions();
+        extensionHook.addOptionsParamSet(options);
+
+        // Automatically update options in the selenium profile if they are changed
+        seleniumProfile = new FoxhoundSeleniumProfile(options);
+        options.addPropertyChangeListener(e -> seleniumProfile.writeOptionsToProfile());
 
         ExtensionNetwork extensionNetwork =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionNetwork.class);
 
         exportServer.start(extensionNetwork, getOptions());
+    }
+
+    @Override
+    public void postInit() {
+        if (seleniumProfile != null) {
+            seleniumProfile.writeOptionsToProfile();
+        }
     }
 
     @Override

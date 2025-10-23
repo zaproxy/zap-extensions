@@ -10,6 +10,7 @@ import org.zaproxy.addon.network.server.HttpMessageHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 import org.zaproxy.addon.network.server.Server;
 import org.zaproxy.zap.extension.foxhound.alerts.FoxhoundAlertHelper;
+import org.zaproxy.zap.extension.foxhound.config.FoxhoundOptions;
 import org.zaproxy.zap.extension.foxhound.taint.TaintDeserializer;
 import org.zaproxy.zap.extension.foxhound.taint.TaintInfo;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
