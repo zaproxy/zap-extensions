@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Maintenance changes
 - Depend on newer version of Zest add-on.
 
+### Fixed
+- Inform when the Authentication Report being imported does not contain any diagnostics.
+
 ## [0.29.0] - 2025-09-18
 ### Added
 - Add login word variant for Spanish.
