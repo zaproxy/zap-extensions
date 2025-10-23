@@ -363,8 +363,17 @@ public class AllDiagnosticsPanel extends AbstractPanel {
     @SuppressWarnings("unchecked")
     private void importDiagnosticData(Map<String, Object> report) {
         try {
-            for (Map<String, Object> diagnosticData :
-                    (List<Map<String, Object>>) report.get("diagnostics")) {
+            List<Map<String, Object>> diagnostics =
+                    (List<Map<String, Object>>) report.get("diagnostics");
+            if (diagnostics == null || diagnostics.isEmpty()) {
+                View.getSingleton()
+                        .showWarningDialog(
+                                Constant.messages.getString(
+                                        "authhelper.authdiags.manager.import.nodiagnostics"));
+                return;
+            }
+
+            for (Map<String, Object> diagnosticData : diagnostics) {
                 Diagnostic diagnostic = new Diagnostic();
 
                 diagnostic.setCreateTimestamp(
