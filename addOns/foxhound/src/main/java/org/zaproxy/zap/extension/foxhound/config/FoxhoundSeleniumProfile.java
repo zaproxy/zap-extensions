@@ -3,6 +3,7 @@ package org.zaproxy.zap.extension.foxhound.config;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.WebDriver;
 import org.parosproxy.paros.control.Control;
 import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
@@ -21,8 +22,15 @@ public class FoxhoundSeleniumProfile {
 
     private static final String FOXHOUND_PROFILE_NAME = "foxhound-profile";
     private FoxhoundOptions options;
+    private ExtensionSelenium extensionSelenium;
 
     public FoxhoundSeleniumProfile(FoxhoundOptions options) {
+        this.options = options;
+    }
+
+    public FoxhoundSeleniumProfile() { }
+
+    public void setOptions(FoxhoundOptions options) {
         this.options = options;
     }
 
@@ -84,8 +92,7 @@ public class FoxhoundSeleniumProfile {
 
     public void writeOptionsToProfile() {
         // Create Foxhound specific preferences
-        ExtensionSelenium extSelenium =
-                Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class);
+        ExtensionSelenium extSelenium = getExtensionSelenium();
 
         // Check that the custom Firefox profile is available
         ProfileManager pm = extSelenium.getProfileManager(Browser.FIREFOX);
@@ -103,6 +110,19 @@ public class FoxhoundSeleniumProfile {
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
+    }
+
+    private ExtensionSelenium getExtensionSelenium() {
+        if (extensionSelenium == null) {
+            extensionSelenium = Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class);
+        }
+        return extensionSelenium;
+    }
+
+    public void launchFoxhound() {
+        LOGGER.info("Launching Foxhound");
+        writeOptionsToProfile();
+        WebDriver webDriver = getExtensionSelenium().getWebDriverProxyingViaZAP(1234, Browser.FIREFOX.getId());
     }
 
 }

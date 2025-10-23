@@ -10,9 +10,11 @@ import org.parosproxy.paros.extension.ExtensionHook;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.zap.extension.foxhound.config.FoxhoundOptions;
 import org.zaproxy.zap.extension.foxhound.config.FoxhoundSeleniumProfile;
+import org.zaproxy.zap.extension.foxhound.ui.FoxhoundLaunchButton;
 import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.selenium.ProfileManager;
+import org.zaproxy.zap.view.ZapToggleButton;
 
 import java.awt.EventQueue;
 import java.io.File;
@@ -31,6 +33,8 @@ public class ExtensionFoxhound extends ExtensionAdaptor {
     private FoxhoundExportServer exportServer;
     private FoxhoundOptions options;
     private FoxhoundSeleniumProfile seleniumProfile;
+    private FoxhoundLaunchButton launchButton = null;
+
 
     @Override
     public void init() {
@@ -48,17 +52,25 @@ public class ExtensionFoxhound extends ExtensionAdaptor {
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
+        // Load Options
         FoxhoundOptions options = getOptions();
         extensionHook.addOptionsParamSet(options);
 
         // Automatically update options in the selenium profile if they are changed
-        seleniumProfile = new FoxhoundSeleniumProfile(options);
+        seleniumProfile = getSeleniumProfile();
+        seleniumProfile.setOptions(options);
         options.addPropertyChangeListener(e -> seleniumProfile.writeOptionsToProfile());
 
+        // Start the Export Server
         ExtensionNetwork extensionNetwork =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionNetwork.class);
 
         exportServer.start(extensionNetwork, getOptions());
+
+        // Load GUIs
+        if (hasView()) {
+            extensionHook.getHookView().addMainToolBarComponent(this.getLaunchButton());
+        }
     }
 
     @Override
@@ -94,10 +106,29 @@ public class ExtensionFoxhound extends ExtensionAdaptor {
         return true;
     }
 
-    public FoxhoundOptions getOptions() {
+    private FoxhoundOptions getOptions() {
         if (options == null) {
             options = new FoxhoundOptions();
         }
         return options;
+    }
+
+    private FoxhoundSeleniumProfile getSeleniumProfile() {
+        if (seleniumProfile == null) {
+            seleniumProfile = new FoxhoundSeleniumProfile();
+        }
+        return seleniumProfile;
+    }
+
+    private FoxhoundLaunchButton getLaunchButton() {
+        if (launchButton == null) {
+            launchButton = new FoxhoundLaunchButton();
+            launchButton.addActionListener(
+                    e -> {
+                        getSeleniumProfile().launchFoxhound();
+                    }
+            );
+        }
+        return launchButton;
     }
 }
