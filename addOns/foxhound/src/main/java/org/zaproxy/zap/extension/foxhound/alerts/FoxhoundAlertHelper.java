@@ -16,6 +16,7 @@ import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.foxhound.taint.TaintInfo;
 import org.zaproxy.zap.extension.foxhound.taint.TaintLocation;
 import org.zaproxy.zap.extension.foxhound.taint.TaintOperation;
+import org.zaproxy.zap.extension.foxhound.taint.TaintRange;
 import org.zaproxy.zap.model.SessionStructure;
 import org.zaproxy.zap.model.StructuralNode;
 
@@ -105,9 +106,45 @@ public class FoxhoundAlertHelper {
     private String getOtherInfo() {
         StringBuilder sb = new StringBuilder();
         if (taint != null) {
-            sb.append(Constant.messages.getString("foxhound.alert.otherInfo"))
-                    .append(" ")
-                    .append(taint.getStr());
+            sb.append(String.format(
+                Constant.messages.getString("foxhound.alert.sinkToSource"),
+                    String.join(", ", taint.getSources().stream().map(TaintOperation::getOperation).toList()),
+                    taint.getSink().getOperation()
+                )
+            );
+            sb.append(System.lineSeparator());
+            sb.append(
+                String.format(
+                    Constant.messages.getString("foxhound.alert.otherInfo"),
+                    taint.getStr()
+                )
+            );
+            sb.append(System.lineSeparator());
+            sb.append(System.lineSeparator());
+
+            sb.append(Constant.messages.getString("foxhound.alert.detailedSinkInfo"));
+            sb.append(System.lineSeparator());
+            // Work out the maxiumum number of digits we need so the ranges are all aligned
+            int highestRangeEnd = taint.getTaintRanges().isEmpty() ? 0 : taint.getTaintRanges().getLast().getEnd();
+            String fmtString = String.format("[%%0%sd, %%0%sd)",
+                    String.valueOf(highestRangeEnd).length(), String.valueOf(highestRangeEnd).length());
+            for (TaintRange range : taint.getTaintRanges()) {
+                sb.append(
+                        String.format(fmtString,
+                                range.getBegin(),
+                                range.getEnd()
+                        ));
+                sb.append(" \"");
+                sb.append(taint.getStr(), range.getBegin(), range.getEnd());
+                sb.append("\" ");
+                sb.append(String.format(
+                                Constant.messages.getString("foxhound.alert.sinkToSource"),
+                                String.join(", ", range.getSources().stream().map(TaintOperation::getOperation).toList()),
+                                taint.getSink().getOperation()
+                        )
+                );
+                sb.append(System.lineSeparator());
+            }
         }
         return sb.toString();
     }
@@ -140,6 +177,7 @@ public class FoxhoundAlertHelper {
                             .setAttack("Attack")
                             .setOtherInfo(otherInfo)
                             .setEvidence(evidence)
+                            .setParam(getTaint().getSink().getOperation())
                             .setMessage(msg)
                             .setHistoryRef(msg.getHistoryRef());
 
