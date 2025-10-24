@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.function.Predicate;
@@ -53,6 +54,7 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
@@ -383,6 +385,29 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
             // If the environment reports an error then no point in continuing
             setPlanFinished(plan);
             return progress;
+        }
+
+        // Apply any configs
+        Map<String, String> configs = env.getData().getConfigs();
+        if (!configs.isEmpty()) {
+            Model model = Model.getSingleton();
+            OptionsParam options = model.getOptionsParam();
+
+            for (Entry<String, String> entry : configs.entrySet()) {
+                Object current = options.getConfig().getProperty(entry.getKey());
+                options.getConfig().setProperty(entry.getKey(), entry.getValue());
+                Stats.incCounter("stats.auto.config." + entry.getKey());
+                progress.info(
+                        Constant.messages.getString(
+                                "automation.info.configset",
+                                entry.getKey(),
+                                current,
+                                entry.getValue()));
+            }
+            options.reloadConfigParamSets();
+            Control.getSingleton()
+                    .getExtensionLoader()
+                    .optionsChangedAllPlugin(model.getOptionsParam());
         }
 
         for (AutomationJob job : jobsToRun) {
