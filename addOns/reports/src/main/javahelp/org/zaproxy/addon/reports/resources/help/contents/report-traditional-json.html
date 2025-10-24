@@ -32,6 +32,7 @@
                     "instances":[
                         {
                             "uri": "http://localhost:8080/bodgeit/search.jsp?q=%3C%2Ffont%3E%3CscrIpt%3Ealert%281%29%3B%3C%2FscRipt%3E%3Cfont%3E",
+                            "nodeName": "http://localhost:8080/bodgeit/search.jsp (q)",
                             "method": "GET",
                             "param": "q",
                             "attack": "&lt;/font&gt;&lt;scrIpt&gt;alert(1);&lt;/scRipt&gt;&lt;font&gt;",
@@ -40,6 +41,7 @@
                         },
                         {
                             "uri": "http://localhost:8080/bodgeit/contact.jsp",
+                            "nodeName": "http://localhost:8080/bodgeit/contact.jsp",
                             "method": "POST",
                             "param": "comments",
                             "attack": "&lt;/td&gt;&lt;scrIpt&gt;alert(1);&lt;/scRipt&gt;&lt;td&gt;",
@@ -48,6 +50,7 @@
                         }
                     ],                   
                     "count": "2", 
+                    "systemic": false, 
                     "solution": "&lt;p&gt;Phase: Architecture and Design&lt;/p&gt;&lt;p&gt;Use a vetted library or framework that does not ...&lt;/p&gt;",
                     "otherinfo": "",
                     "reference": "&lt;p&gt;http://projects.webappsec.org/Cross-Site-Scripting&lt;/p&gt;&lt;p&gt;http://cwe.mitre.org/data/definitions/79.html&lt;/p&gt;",
