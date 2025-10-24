@@ -34,12 +34,14 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.swing.Timer;
 import org.apache.commons.httpclient.URI;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -53,6 +55,7 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
@@ -73,6 +76,8 @@ import org.zaproxy.zap.ZAP.ProcessType;
 import org.zaproxy.zap.eventBus.Event;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.script.ScriptVars;
+import org.zaproxy.zap.extension.stats.ExtensionStats;
+import org.zaproxy.zap.extension.stats.InMemoryStats;
 import org.zaproxy.zap.utils.Stats;
 
 public class ExtensionAutomation extends ExtensionAdaptor implements CommandLineListener {
@@ -383,6 +388,50 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
             // If the environment reports an error then no point in continuing
             setPlanFinished(plan);
             return progress;
+        }
+
+        // Apply any configs
+        Map<String, String> configs = env.getData().getConfigs();
+        if (!configs.isEmpty()) {
+            OptionsParam options = Model.getSingleton().getOptionsParam();
+            Long errorCount = null;
+            Long warnCount = null;
+            ExtensionStats extStats =
+                    Control.getSingleton().getExtensionLoader().getExtension(ExtensionStats.class);
+            InMemoryStats inMemoryStats = null;
+            if (extStats != null) {
+                inMemoryStats = extStats.getInMemoryStats();
+                if (inMemoryStats != null) {
+                    errorCount = inMemoryStats.getStat("stats.log.error");
+                    warnCount = inMemoryStats.getStat("stats.log.warn");
+                }
+            }
+
+            for (Entry<String, String> entry : configs.entrySet()) {
+                Object current = options.getConfig().getProperty(entry.getKey());
+                options.getConfig().setProperty(entry.getKey(), entry.getValue());
+                Stats.incCounter("stats.auto.config." + entry.getKey());
+                progress.info(
+                        Constant.messages.getString(
+                                "automation.info.configset",
+                                entry.getKey(),
+                                current,
+                                entry.getValue()));
+            }
+            options.reloadConfigParamSets();
+            Control.getSingleton().getExtensionLoader().optionsChangedAllPlugin(options);
+
+            if (inMemoryStats != null) {
+                // Check for any new warnings or errors
+                if (ObjectUtils.compare(errorCount, inMemoryStats.getStat("stats.log.error"))
+                        != 0) {
+                    progress.error(
+                            Constant.messages.getString("automation.env.error.config.error"));
+                }
+                if (ObjectUtils.compare(warnCount, inMemoryStats.getStat("stats.log.warn")) != 0) {
+                    progress.warn(Constant.messages.getString("automation.env.error.config.warn"));
+                }
+            }
         }
 
         for (AutomationJob job : jobsToRun) {

@@ -32,10 +32,13 @@ import static org.mockito.Mockito.withSettings;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -54,6 +57,8 @@ import org.parosproxy.paros.db.TableContext;
 import org.parosproxy.paros.extension.CommandLineArgument;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.OptionsParam;
+import org.zaproxy.addon.automation.ContextWrapper.Data;
 import org.zaproxy.addon.automation.jobs.ActiveScanConfigJob;
 import org.zaproxy.addon.automation.jobs.ActiveScanJob;
 import org.zaproxy.addon.automation.jobs.ActiveScanPolicyJob;
@@ -71,6 +76,9 @@ import org.zaproxy.zap.utils.ZapXmlConfiguration;
 class ExtensionAutomationUnitTest extends TestUtils {
 
     private static MockedStatic<CommandLine> mockedCmdLine;
+    private ExtensionLoader extensionLoader;
+
+    private Model model;
 
     @BeforeAll
     static void init() throws Exception {
@@ -85,14 +93,14 @@ class ExtensionAutomationUnitTest extends TestUtils {
     @BeforeEach
     void setUp() throws Exception {
         Constant.messages = new I18N(Locale.ENGLISH);
-        Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
+        model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
         Database database = mock(Database.class);
         lenient().when(model.getDb()).thenReturn(database);
         TableContext tableContext = mock(TableContext.class);
         lenient().when(database.getTableContext()).thenReturn(tableContext);
 
-        ExtensionLoader extensionLoader =
+        extensionLoader =
                 mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
     }
@@ -1159,6 +1167,57 @@ class ExtensionAutomationUnitTest extends TestUtils {
         assertThat(stats.getStat(ExtensionAutomation.ERROR_COUNT_STATS), is(equalTo(1L)));
         assertThat(stats.getStat(ExtensionAutomation.PLANS_RUN_STATS), is(equalTo(1L)));
         assertThat(stats.getStat(ExtensionAutomation.TOTAL_JOBS_RUN_STATS), is(2L));
+    }
+
+    @Test
+    void shouldSetConfigParams() throws ConfigurationException {
+        // Given
+        ExtensionAutomation extAuto = new ExtensionAutomation();
+        AutomationPlan plan = new AutomationPlan();
+        LinkedHashMap<String, Object> lhm = new LinkedHashMap<>();
+        lhm.put("a.b", "ab-value");
+        lhm.put("a.e", "");
+        lhm.put("a.i", 1);
+        lhm.put("a.n", null);
+        // The indexed key order must be maintained. 5 keys means its v likely to fail if this is
+        // not the case.
+        lhm.put("c.d(0).e", "cd0e-value");
+        lhm.put("c.d(1).e", "cd1e-value");
+        lhm.put("c.d(2).e", "cd2e-value");
+        lhm.put("c.d(3).e", "cd3e-value");
+        lhm.put("c.d(4).e", "cd4e-value");
+
+        Data data = new Data();
+        data.setName("Test");
+        data.setUrls(List.of("https://www.example.com"));
+        List<ContextWrapper> contexts = List.of(new ContextWrapper(data));
+        plan.getEnv().setContexts(contexts);
+        plan.getEnv().readData(Map.of("configs", lhm));
+
+        ZapXmlConfiguration conf = new ZapXmlConfiguration();
+        OptionsParam options = new OptionsParam();
+        options.load(conf);
+        lenient().when(model.getOptionsParam()).thenReturn(options);
+
+        // When
+        AutomationProgress progress = extAuto.runPlan(plan, false);
+        List<HierarchicalConfiguration> list =
+                ((HierarchicalConfiguration) model.getOptionsParam().getConfig())
+                        .configurationsAt("c.d");
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(model.getOptionsParam().getConfig().getString("a.b"), is(equalTo("ab-value")));
+        assertThat(model.getOptionsParam().getConfig().getString("a.e"), is(equalTo("")));
+        assertThat(model.getOptionsParam().getConfig().getInt("a.i"), is(equalTo(1)));
+        assertThat(model.getOptionsParam().getConfig().getString("a.n"), is(nullValue()));
+        assertThat(list.size(), is(equalTo(5)));
+        assertThat(list.get(0).getProperty("e"), is(equalTo("cd0e-value")));
+        assertThat(list.get(1).getProperty("e"), is(equalTo("cd1e-value")));
+        assertThat(list.get(2).getProperty("e"), is(equalTo("cd2e-value")));
+        assertThat(list.get(3).getProperty("e"), is(equalTo("cd3e-value")));
+        assertThat(list.get(4).getProperty("e"), is(equalTo("cd4e-value")));
     }
 
     // Methods are accessed via reflection
