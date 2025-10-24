@@ -1,5 +1,7 @@
 package org.zaproxy.zap.extension.foxhound.ui;
 
+import org.parosproxy.paros.Constant;
+
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import java.io.Serial;
@@ -15,7 +17,7 @@ public class FoxhoundLaunchButton extends JButton {
 
     public FoxhoundLaunchButton() {
         this.setIcon(createIcon(FOXHOUND_16));
-        this.setToolTipText("Launch Foxhound!");
+        this.setToolTipText(Constant.messages.getString("foxhound.ui.launchTooltip"));
     }
 
     private ImageIcon createIcon(String path) {

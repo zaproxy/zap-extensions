@@ -4,6 +4,7 @@ import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.db.DatabaseException;
@@ -11,12 +12,7 @@ import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.addon.commonlib.CommonAlertTag;
-import org.zaproxy.addon.commonlib.PolicyTag;
-import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
-import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
-import org.zaproxy.zap.extension.foxhound.FoxhoundExportServer;
 import org.zaproxy.zap.extension.foxhound.taint.TaintInfo;
 import org.zaproxy.zap.extension.foxhound.taint.TaintLocation;
 import org.zaproxy.zap.extension.foxhound.taint.TaintOperation;
@@ -36,7 +32,7 @@ public class FoxhoundAlertHelper {
     static {
         Set<FoxhoundVulnerabilityCheck> checks = new HashSet<>();
         checks.add(new FoxhoundXssCheck());
-        checks.add(new FoxhoundTaintInfo());
+        checks.add(new FoxhoundTaintInfoCheck());
         CHECKS = Collections.unmodifiableSet(checks);
     }
 
@@ -106,6 +102,16 @@ public class FoxhoundAlertHelper {
         return evidence;
     }
 
+    private String getOtherInfo() {
+        StringBuilder sb = new StringBuilder();
+        if (taint != null) {
+            sb.append(Constant.messages.getString("foxhound.alert.otherInfo"))
+                    .append(" ")
+                    .append(taint.getStr());
+        }
+        return sb.toString();
+    }
+
     protected String getUrl() {
         return taint.getSink().getLocation().getFilename();
     }
@@ -113,6 +119,7 @@ public class FoxhoundAlertHelper {
     public void raiseAlerts() {
         String url = getUrl();
         String evidence = getEvidenceFromBody(msg, getTaint().getSink());
+        String otherInfo = getOtherInfo();
         LOGGER.info("Raising alerts for taint flow: " + getTaint());
 
         if (msg != null) {
@@ -131,7 +138,7 @@ public class FoxhoundAlertHelper {
                             .setConfidence(check.getConfidence())
                             .setUri(url)
                             .setAttack("Attack")
-                            .setOtherInfo("Data flowing into sink: " + getTaint().getStr())
+                            .setOtherInfo(otherInfo)
                             .setEvidence(evidence)
                             .setMessage(msg)
                             .setHistoryRef(msg.getHistoryRef());

@@ -1,13 +1,13 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-description = "Foxhound ZAP Extension"
+description = "Capture and analysis the client-side data flows from the Foxhound browser."
 
 zapAddOn {
     addOnName.set("Foxhound ZAP Extension")
     addOnStatus.set(AddOnStatus.ALPHA)
 
     manifest {
-        author.set("Thomas Barber, SAP SE")
+        author.set("Thomas Barber")
         url.set("https://github.com/SAP/project-foxhound")
         // Don't search the add-on classes to prevent the inclusion
         // of the scanner, it's added/removed by the extension.

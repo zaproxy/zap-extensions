@@ -5,7 +5,7 @@ import org.zaproxy.zap.extension.foxhound.taint.TaintInfo;
 
 import java.util.Map;
 
-public class FoxhoundTaintInfo implements FoxhoundVulnerabilityCheck {
+public class FoxhoundTaintInfoCheck implements FoxhoundVulnerabilityCheck {
 
     @Override
     public Map<String, String> getAlertTags() {

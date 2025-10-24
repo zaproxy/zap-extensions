@@ -3,6 +3,7 @@ package org.zaproxy.zap.extension.foxhound;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
@@ -27,14 +28,18 @@ public class ExtensionFoxhound extends ExtensionAdaptor {
 
     private static final Logger LOGGER = LogManager.getLogger(ExtensionFoxhound.class);
 
+    // The name is public so that other extensions can access it
+    public static final String NAME = "ExtensionFoxhound";
+
     private static final List<Class<? extends Extension>> DEPENDENCIES =
-            List.of(ExtensionNetwork.class);
+            List.of(ExtensionNetwork.class, ExtensionSelenium.class);
 
     private FoxhoundExportServer exportServer;
     private FoxhoundOptions options;
     private FoxhoundSeleniumProfile seleniumProfile;
     private FoxhoundLaunchButton launchButton = null;
 
+    public ExtensionFoxhound() { super(NAME); }
 
     @Override
     public void init() {
@@ -92,13 +97,8 @@ public class ExtensionFoxhound extends ExtensionAdaptor {
     }
 
     @Override
-    public String getName() {
-        return "ExtensionFoxhound";
-    }
-
-    @Override
     public String getDescription() {
-        return "Foxhound";
+        return Constant.messages.getString("foxhound.desc");
     }
 
     @Override
