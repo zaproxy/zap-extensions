@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -442,8 +443,8 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
                         "Not checking for EAR/WAR files for this request, since the Attack Strength is not HIGH or INSANE");
             }
 
-        } catch (Exception e) {
-            LOGGER.error(
+        } catch (IOException e) {
+            LOGGER.debug(
                     "Error scanning parameters for Source Code Disclosure: {}", e.getMessage(), e);
         }
     }

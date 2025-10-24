@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Instant;
 import java.time.ZonedDateTime;
@@ -193,7 +194,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin implements Common
                                         requestUri.getPort(),
                                         requestUri.getPath())
                                 .toString();
-            } catch (Exception e) {
+            } catch (MalformedURLException e) {
                 // no point in continuing. The URL is invalid.  This is a peculiarity in the Zap
                 // core,
                 // and can happen when
@@ -216,7 +217,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin implements Common
                 // In short.. if this happens, we do not want to scan the URL anyway
                 // (because the user never browsed to it), so just do nothing instead.
 
-                LOGGER.error("Cannot convert URI [{}] to a URL: {}", requestUri, e.getMessage());
+                LOGGER.debug("Cannot convert URI [{}] to a URL: {}", requestUri, e.getMessage());
                 return;
             }
 

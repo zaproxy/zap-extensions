@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -95,8 +96,8 @@ public class PersistentXssPrimeScanRule extends AbstractAppParamPlugin
             this.setParameter(msg1, param, SourceSinkUtils.getUniqueValue(msg1, param));
             LOGGER.debug("Prime msg={} param={}", msg1.getRequestHeader().getURI(), param);
             sendAndReceive(msg1, false);
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
+        } catch (IOException e) {
+            LOGGER.debug(e.getMessage(), e);
         }
     }
 

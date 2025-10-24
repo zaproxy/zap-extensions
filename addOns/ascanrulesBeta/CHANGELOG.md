@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - Depends on an updated version of the Common Library add-on.
+- Reduced usage of error level logging.
 
 ## [62] - 2025-09-18
 ### Added

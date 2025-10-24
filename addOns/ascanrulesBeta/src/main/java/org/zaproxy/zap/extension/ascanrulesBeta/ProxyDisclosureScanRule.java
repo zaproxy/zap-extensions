@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -477,8 +478,8 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin implements Common
 
                     try {
                         sendAndReceive(mfMethodMsg, false); // do not follow redirects.
-                    } catch (Exception e) {
-                        LOGGER.error(
+                    } catch (IOException e) {
+                        LOGGER.debug(
                                 "Failed to send a request in step 2 with method {}, Max-Forwards: {}: {}",
                                 httpMethod,
                                 requestHeader.getHeader(HttpFieldsNames.MAX_FORWARDS),
@@ -769,10 +770,10 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin implements Common
                         .raise();
             }
 
-        } catch (Exception e) {
+        } catch (IOException e) {
             // Do not try to internationalise this.. we need an error message in any event..
             // if it's in English, it's still better than not having it at all.
-            LOGGER.error("An error occurred checking for proxy disclosure", e);
+            LOGGER.debug("An error occurred checking for proxy disclosure", e);
         }
     }
 

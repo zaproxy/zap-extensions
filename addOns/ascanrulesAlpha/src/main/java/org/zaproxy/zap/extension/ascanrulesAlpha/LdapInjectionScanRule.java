@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrulesAlpha;
 
+import java.io.IOException;
 import java.net.UnknownHostException;
 import java.text.MessageFormat;
 import java.util.Collections;
@@ -547,10 +548,10 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin
 
         } catch (UnknownHostException | URIException e) {
             LOGGER.debug("Failed to send HTTP message, cause: {}", e.getMessage());
-        } catch (Exception e) {
+        } catch (IOException e) {
             // Do not try to internationalise this.. we need an error message in any event..
             // if it's in English, it's still better than not having it at all.
-            LOGGER.error("An error occurred checking a url for LDAP Injection issues", e);
+            LOGGER.debug("An error occurred checking a url for LDAP Injection issues", e);
         }
     }
 
@@ -590,11 +591,9 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin
      * @param placeboMessage the message used to send the placebo attack
      * @param parameterName the name of the parameter which was attacked
      * @return
-     * @throws Exception
      */
     private boolean checkResultsForLDAPAlert(
-            HttpMessage attackMessage, HttpMessage placeboMessage, String parameterName)
-            throws Exception {
+            HttpMessage attackMessage, HttpMessage placeboMessage, String parameterName) {
         // compare the request response with each of the known error messages,
         // for each of the known LDAP implementations.
         // in order to minimise false positives, only consider a match

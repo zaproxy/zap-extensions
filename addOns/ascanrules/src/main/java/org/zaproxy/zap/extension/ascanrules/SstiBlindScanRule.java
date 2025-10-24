@@ -382,13 +382,11 @@ public class SstiBlindScanRule extends AbstractAppParamPlugin implements CommonA
                             ex.getMessage(),
                             msg.getRequestHeader().getURI());
                 } catch (IOException ex) {
-                    LOGGER.warn(
+                    LOGGER.debug(
                             "SSTI vulnerability check failed for parameter [{}] and payload [{}] due to an I/O error",
                             paramName,
                             payload,
                             ex);
-                } catch (Exception ex) {
-                    LOGGER.error("Failed SSTI rule with payload [{}]", payload, ex);
                 }
             }
         }

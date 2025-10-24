@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -178,8 +179,8 @@ public class RemoteCodeExecutionCve20121823ScanRule extends AbstractAppPlugin
                 buildAlert(payload, responseBody).setMessage(attackmsg).raise();
                 return true;
             }
-        } catch (Exception e) {
-            LOGGER.error(
+        } catch (IOException e) {
+            LOGGER.debug(
                     "Error scanning a URL for Remote Code Execution via CVE-2012-1823: {}",
                     e.getMessage(),
                     e);
