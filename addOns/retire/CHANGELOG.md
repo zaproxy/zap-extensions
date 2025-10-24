@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Updated with upstream retire.js pattern changes.
+- Reduced usage of error level logging.
 
 ## [0.49.0] - 2025-09-18
 ### Changed
