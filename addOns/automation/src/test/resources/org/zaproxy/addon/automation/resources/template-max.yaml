@@ -29,7 +29,7 @@ env:                                   # The environment, mandatory
             value:                     # The header value
       sessionManagement:
         method:                        # String, one of 'cookie', 'http', 'script'
-        parameters:                    # List of 0 or more parameters - may include any required for scripts
+        parameters:                    # List of parameters - may include any required for scripts
           script:                      # String, path to script, only for 'script' session management
           scriptEngine:                # String, the name of the script engine to use, only for 'script' session management
       technology:
@@ -45,7 +45,8 @@ env:                                   # The environment, mandatory
         credentials:                   # List of user credentials - may include any required for scripts, vars supported
           username:                    # String, the username to use when authenticating
           password:                    # String, the password to use when authenticating
-  vars:                                # List of 0 or more variables, can be used in urls and selected other parameters
+  vars:                                # List of variables, can be used in urls and selected other parameters
+  configs:                             # List of generic config parameters, as per the ZAP "-config" cmd line option
   parameters:
     failOnError: true                  # If set exit on an error         
     failOnWarning: false               # If set exit on a warning
