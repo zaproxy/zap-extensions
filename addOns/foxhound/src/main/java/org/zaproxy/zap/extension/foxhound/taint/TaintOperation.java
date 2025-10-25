@@ -1,5 +1,7 @@
 package org.zaproxy.zap.extension.foxhound.taint;
 
+import org.zaproxy.zap.extension.foxhound.config.FoxhoundConstants;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -34,6 +36,20 @@ public class TaintOperation {
 
     public boolean isSource() {
         return source;
+    }
+
+    public TaintSourceType getSourceType() {
+        if (isSource() && FoxhoundConstants.SOURCE_NAME_TYPE_MAP.containsKey(this.operation)) {
+            return FoxhoundConstants.SOURCE_NAME_TYPE_MAP.get(this.operation);
+        }
+        return null;
+    }
+
+    public TaintSinkType getSinkType() {
+        if (isSource() && FoxhoundConstants.SINK_NAME_TYPE_MAP.containsKey(this.operation)) {
+            return FoxhoundConstants.SINK_NAME_TYPE_MAP.get(this.operation);
+        }
+        return null;
     }
 
     public void setSource(boolean source) {

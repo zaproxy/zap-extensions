@@ -28,18 +28,16 @@ public class FoxhoundAlertHelper {
 
     private static final Logger LOGGER = LogManager.getLogger(FoxhoundAlertHelper.class);
 
-    private static final Set<FoxhoundVulnerabilityCheck> CHECKS;
-
-    static {
-        Set<FoxhoundVulnerabilityCheck> checks = new HashSet<>();
-        checks.add(new FoxhoundXssCheck());
-        checks.add(new FoxhoundTaintInfoCheck());
-        CHECKS = Collections.unmodifiableSet(checks);
-    }
+    private static final Set<FoxhoundVulnerabilityCheck> CHECKS = Set.of(
+            new FoxhoundXssCheck(),
+            new FoxhoundTaintInfoCheck(),
+            new FoxhoundStoredXssCheck(),
+            new FoxhoundCsrfCheck()
+    );
 
     private TaintInfo taint;
     private HttpMessage msg;
-    private ExtensionAlert extensionAlert =
+    private final ExtensionAlert extensionAlert =
             Control.getSingleton().getExtensionLoader().getExtension(ExtensionAlert.class);
 
     public FoxhoundAlertHelper(TaintInfo taint) {
@@ -157,7 +155,9 @@ public class FoxhoundAlertHelper {
         String url = getUrl();
         String evidence = getEvidenceFromBody(msg, getTaint().getSink());
         String otherInfo = getOtherInfo();
-        LOGGER.info("Raising alerts for taint flow: " + getTaint());
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("Raising alerts for taint flow: {}", getTaint());
+        }
 
         if (msg != null) {
             for (FoxhoundVulnerabilityCheck check : CHECKS) {
@@ -177,7 +177,7 @@ public class FoxhoundAlertHelper {
                             .setAttack("Attack")
                             .setOtherInfo(otherInfo)
                             .setEvidence(evidence)
-                            .setParam(getTaint().getSink().getOperation())
+                            .setParam(getTaint().getSink().getOperation())  // "param" should be one of the URL parameters
                             .setMessage(msg)
                             .setHistoryRef(msg.getHistoryRef());
 

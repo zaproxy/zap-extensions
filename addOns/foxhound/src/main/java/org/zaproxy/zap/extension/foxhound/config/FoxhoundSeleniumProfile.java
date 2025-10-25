@@ -77,13 +77,13 @@ public class FoxhoundSeleniumProfile {
 
         // Sources
         List<String> disabledSources = options.getSourcesDisabled();
-        for (String source : FoxhoundConstants.SOURCES) {
+        for (String source : FoxhoundConstants.ALL_SOURCE_NAMES) {
             prefs.add(getEntry(PREF_SOURCE_KEY_PREFIX + source, getBool(!disabledSources.contains(source))));
         }
 
         // Sinks
         List<String> disabledSinks = options.getSinksDisabled();
-        for (String sink : FoxhoundConstants.SINKS) {
+        for (String sink : FoxhoundConstants.ALL_SINK_NAMES) {
             prefs.add(getEntry(PREF_SINK_KEY_PREFIX + sink, getBool(!disabledSinks.contains(sink))));
         }
 

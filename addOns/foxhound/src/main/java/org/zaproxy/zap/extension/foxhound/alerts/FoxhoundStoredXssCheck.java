@@ -1,32 +1,25 @@
 package org.zaproxy.zap.extension.foxhound.alerts;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
-import org.zaproxy.zap.extension.foxhound.config.FoxhoundConstants;
 import org.zaproxy.zap.extension.foxhound.taint.TaintInfo;
 import org.zaproxy.zap.extension.foxhound.taint.TaintOperation;
-import org.zaproxy.zap.extension.foxhound.taint.TaintSinkType;
-import org.zaproxy.zap.extension.foxhound.taint.TaintSourceType;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class FoxhoundXssCheck implements FoxhoundVulnerabilityCheck {
+public class FoxhoundStoredXssCheck implements FoxhoundVulnerabilityCheck {
 
     private static final Vulnerability VULN = Vulnerabilities.getDefault().get("wasc_8");
     private static final Map<String, String> ALERT_TAGS;
     private static final Set<String> XSS_SINKS;
     private static final Set<String> XSS_SOURCES;
-    private static final Logger LOGGER = LogManager.getLogger(FoxhoundXssCheck.class);
 
     static {
         Map<String, String> alertTags =
@@ -41,8 +34,30 @@ public class FoxhoundXssCheck implements FoxhoundVulnerabilityCheck {
         alertTags.put(PolicyTag.SEQUENCE.getTag(), "");
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
 
-        XSS_SINKS = FoxhoundConstants.getSinkNamesWithTag(TaintSinkType.SinkTag.XSS);
-        XSS_SOURCES = FoxhoundConstants.getSourceNamesWithTags(List.of(TaintSourceType.SourceTag.URL, TaintSourceType.SourceTag.INPUT));
+        XSS_SINKS = Set.of(
+                "element.after",
+                "element.before",
+                "Function.ctor",
+                "document.writeln",
+                "document.write",
+                "eval",
+                "innerHTML",
+                "insertAdjacentHTML",
+                "insertAdjacentText",
+                "outerHTML",
+                "script.innerHTML",
+                "script.src",
+                "script.text",
+                "script.textContent",
+                "setInterval",
+                "setTimeout"
+        );
+
+        XSS_SOURCES = Set.of(
+                "document.cookie",
+                "localStorage.getItem",
+                "sessionStorage.getItem"
+        );
 
     }
 
@@ -53,7 +68,7 @@ public class FoxhoundXssCheck implements FoxhoundVulnerabilityCheck {
 
     @Override
     public int getRisk() {
-        return Alert.RISK_HIGH;
+        return Alert.RISK_LOW;
     }
 
     @Override
@@ -93,11 +108,6 @@ public class FoxhoundXssCheck implements FoxhoundVulnerabilityCheck {
 
     @Override
     public boolean shouldAlert(TaintInfo taint) {
-
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Sinks: Need one of: {} got: {}", XSS_SINKS, taint.getSink().getOperation());
-            LOGGER.debug("Sources: Need one of: {} got: {}", XSS_SOURCES, taint.getSources().stream().map(TaintOperation::getOperation).toList());
-        }
 
         if (!XSS_SINKS.contains(taint.getSink().getOperation())) {
             return false;

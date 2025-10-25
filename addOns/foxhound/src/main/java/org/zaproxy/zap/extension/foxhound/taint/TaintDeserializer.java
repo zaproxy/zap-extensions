@@ -13,21 +13,18 @@ import java.util.ListIterator;
 public class TaintDeserializer {
     private static final Logger LOGGER = LogManager.getLogger(TaintDeserializer.class);
 
-
     public static String url(String jsonString) {
         JSONObject jsonObject;
         String url = "";
         try {
             jsonObject = JSONObject.fromObject(jsonString);
-
             JSONObject detailObject = jsonObject.getJSONObject("detail");
-
             url = detailObject.getString("loc");
 
             LOGGER.debug("Extracted URL: " + url);
 
         } catch (JSONException e) {
-            LOGGER.debug("Unable to parse as JSON: {}", jsonString, e);
+            LOGGER.warn("Unable to parse as JSON: {}", jsonString, e);
         }
         return url;
     }

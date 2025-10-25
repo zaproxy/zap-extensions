@@ -1,131 +1,137 @@
 package org.zaproxy.zap.extension.foxhound.config;
 
+import net.sf.json.JSONArray;
+import net.sf.json.JSONException;
+import net.sf.json.JSONObject;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.zaproxy.zap.extension.foxhound.taint.NamedAndTagged;
+import org.zaproxy.zap.extension.foxhound.taint.TaintSinkType;
+import org.zaproxy.zap.extension.foxhound.taint.TaintSourceType;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class FoxhoundConstants {
 
-    public static List<String> SOURCES;
-    public static List<String> SINKS;
+    private static final String RESOURCE = "/org/zaproxy/zap/extension/foxhound/resources";
+    private static final String SOURCE_AND_SINK_LIST = RESOURCE + "/sourcessinks.json";
+    private static final Logger LOGGER = LogManager.getLogger(FoxhoundConstants.class);
 
-    // The full list can be found here: https://github.com/SAP/project-foxhound/blob/main/modules/libpref/init/all.js
+    public static Set<TaintSourceType> ALL_SOURCES;
+    public static Set<TaintSinkType> ALL_SINKS;
+
+    public static List<String> ALL_SOURCE_NAMES;
+    public static List<String> ALL_SINK_NAMES;
+
+    public static Map<String, TaintSourceType> SOURCE_NAME_TYPE_MAP;
+    public static Map<String, TaintSinkType> SINK_NAME_TYPE_MAP;
+
     static {
-        SOURCES = Collections.unmodifiableList(List.of(
-            // Location Sources
-            "location.hash",
-            "location.host",
-            "location.hostname",
-            "location.href",
-            "location.origin",
-            "location.pathname",
-            "location.port",
-            "location.protocol",
-            "location.search",
-            "window.name",
-            "document.referrer",
-            "document.baseURI",
-            "document.documentURI",
-
-            // Storage
-            "document.cookie",
-            "localStorage.getItem",
-            "sessionStorage.getItem",
-
-            // Message Based Sources
-            "MessageEvent",
-            "PushMessageData",
-            "PushSubscription.endpoint",
-            "WebSocket.MessageEvent.data",
-            "XMLHttpRequest.response",
-
-            // Specific Element Inputs
-            "input.value",
-            "textarea.value",
-            "script.innerHTML",
-
-            // DOM elements and attributes
-            "document.getElementById",
-            "document.getElementsByTagName",
-            "document.getElementsByTagNameNS",
-            "document.getElementsByClassName",
-            "document.querySelector",
-            "document.querySelectorAll",
-            "document.elementFromPoint",
-            "document.elementsFromPoint",
-            "element.attribute",
-            "element.closest"
-        ));
-
-        SINKS = Collections.unmodifiableList(List.of(
-            // Sinks
-            "element.after",
-            "element.before",
-
-            "EventSource",
-            "Function.ctor",
-            "Range.createContextualFragment(fragment)",
-            "WebSocket",
-            "WebSocket.send",
-            "XMLHttpRequest.open(password)",
-            "XMLHttpRequest.open(url)",
-            "XMLHttpRequest.open(username)",
-            "XMLHttpRequest.send",
-            "XMLHttpRequest.setRequestHeader(name)",
-            "XMLHttpRequest.setRequestHeader(value)",
-            "a.href",
-            "area.href",
-            "document.cookie",
-            "document.writeln",
-            "document.write",
-            "element.style",
-            "embed.src",
-            "eval",
-            "eventHandler",
-            "fetch.body",
-            "fetch.url",
-            "form.action",
-            "iframe.src",
-            "iframe.srcdoc",
-            "img.src",
-            "img.srcset",
-            "innerHTML",
-            "insertAdjacentHTML",
-            "insertAdjacentText",
-            "localStorage.setItem",
-            "localStorage.setItem(key)",
-            "location.assign",
-            "location.hash",
-            "location.host",
-            "location.href",
-            "location.pathname",
-            "location.port",
-            "location.protocol",
-            "location.replace",
-            "location.search",
-            "media.src",
-            "navigator.sendBeacon(body)",
-            "navigator.sendBeacon(url)",
-            "object.data",
-            "outerHTML",
-            "script.innerHTML",
-            "script.src",
-            "script.text",
-            "script.textContent",
-            "sessionStorage.setItem",
-            "sessionStorage.setItem(key)",
-            "setInterval",
-            "setTimeout",
-            "source",
-            "srcset",
-            "track.src",
-            "window.open",
-            "window.postMessage"
-        ));
+        try {
+            loadSourceAndSinkConfig();
+            // Cache source and sink names
+            ALL_SOURCE_NAMES = ALL_SOURCES.stream().map(NamedAndTagged::getName).toList();
+            ALL_SINK_NAMES = ALL_SINKS.stream().map(NamedAndTagged::getName).toList();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
+    public static void loadSourceAndSinkConfig() throws JSONException, IOException {
+        LOGGER.info("Loading source and sink config from {}", SOURCE_AND_SINK_LIST);
+        InputStream inputStream = FoxhoundConstants.class.getResourceAsStream(SOURCE_AND_SINK_LIST);
+        InputStreamReader streamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+        BufferedReader bufferedReader = new BufferedReader(streamReader);
 
+        StringBuilder sb = new StringBuilder();
 
+        String inputStr;
+        while ((inputStr = bufferedReader.readLine()) != null)
+            sb.append(inputStr);
 
+        JSONObject jsonObject = JSONObject.fromObject(sb.toString());
+
+        // Sources
+        ALL_SOURCES = new HashSet<>();
+        SOURCE_NAME_TYPE_MAP = new HashMap<>();
+        JSONArray sourceArray = jsonObject.getJSONArray("sources");
+        for (int i = 0, size = sourceArray.size(); i < size; i++) {
+            JSONObject sourceObject = sourceArray.getJSONObject(i);
+            TaintSourceType source = new TaintSourceType(sourceObject.getString("name"));
+            JSONArray tags = sourceObject.getJSONArray("tags");
+            for (int j = 0, l = tags.size(); j < l; j++) {
+                String tagString = tags.getString(j);
+                TaintSourceType.SourceTag sourceTag = NamedAndTagged.getTagForString(tags.getString(j), TaintSourceType.SourceTag.class);
+                if (sourceTag != null) {
+                    source.getTags().add(sourceTag);
+                }
+            }
+            ALL_SOURCES.add(source);
+            SOURCE_NAME_TYPE_MAP.put(sourceObject.getString("name"), source);
+        }
+
+        // Sinks
+        ALL_SINKS = new HashSet<>();
+        SINK_NAME_TYPE_MAP = new HashMap<>();
+        JSONArray sinkArray = jsonObject.getJSONArray("sinks");
+        for (int i = 0, size = sinkArray.size(); i < size; i++) {
+            JSONObject sinkObject = sinkArray.getJSONObject(i);
+            TaintSinkType sink = new TaintSinkType(sinkObject.getString("name"));
+            JSONArray tags = sinkObject.getJSONArray("tags");
+            for (int j = 0, l = tags.size(); j < l; j++) {
+                String tagString = tags.getString(j);
+                TaintSinkType.SinkTag sinkTag = NamedAndTagged.getTagForString(tags.getString(j), TaintSinkType.SinkTag.class);
+                if (sinkTag != null) {
+                    sink.getTags().add(sinkTag);
+                }
+            }
+            ALL_SINKS.add(sink);
+            SINK_NAME_TYPE_MAP.put(sinkObject.getString("name"), sink);
+        }
+    }
+
+    public static Set<TaintSourceType> getSourceTypesWithTag(TaintSourceType.SourceTag tag) {
+        return ALL_SOURCES.stream().filter(e -> e.getTags().contains(tag)).collect(Collectors.toSet());
+    }
+
+    public static Set<TaintSinkType> getSinkTypesWithTag(TaintSinkType.SinkTag tag) {
+        return ALL_SINKS.stream().filter(e -> e.getTags().contains(tag)).collect(Collectors.toSet());
+    }
+
+    public static Set<String> getSourceNamesWithTag(TaintSourceType.SourceTag tag) {
+        return getSourceTypesWithTag(tag).stream().map(NamedAndTagged::getName).collect(Collectors.toSet());
+    }
+
+    public static Set<String> getSinkNamesWithTag(TaintSinkType.SinkTag tag) {
+        return getSinkTypesWithTag(tag).stream().map(NamedAndTagged::getName).collect(Collectors.toSet());
+    }
+
+    public static Set<TaintSourceType> getSourceTypesWithTags(Collection<TaintSourceType.SourceTag> tags) {
+        return ALL_SOURCES.stream().filter(e -> !Collections.disjoint(tags, e.getTags())).collect(Collectors.toSet());
+    }
+
+    public static Set<TaintSinkType> getSinkTypesWithTags(Collection<TaintSinkType.SinkTag> tags) {
+        return ALL_SINKS.stream().filter(e -> !Collections.disjoint(tags, e.getTags())).collect(Collectors.toSet());
+    }
+
+    public static Set<String> getSourceNamesWithTags(Collection<TaintSourceType.SourceTag> tags) {
+        return getSourceTypesWithTags(tags).stream().map(NamedAndTagged::getName).collect(Collectors.toSet());
+    }
+
+    public static Set<String> getSinkNamesWithTags(Collection<TaintSinkType.SinkTag> tags) {
+        return getSinkTypesWithTags(tags).stream().map(NamedAndTagged::getName).collect(Collectors.toSet());
+    }
 
 }

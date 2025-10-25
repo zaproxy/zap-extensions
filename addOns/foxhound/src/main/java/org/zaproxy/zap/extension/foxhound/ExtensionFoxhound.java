@@ -1,6 +1,5 @@
 package org.zaproxy.zap.extension.foxhound;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -9,18 +8,12 @@ import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.zaproxy.addon.network.ExtensionNetwork;
+import org.zaproxy.zap.extension.foxhound.config.FoxhoundConstants;
 import org.zaproxy.zap.extension.foxhound.config.FoxhoundOptions;
 import org.zaproxy.zap.extension.foxhound.config.FoxhoundSeleniumProfile;
 import org.zaproxy.zap.extension.foxhound.ui.FoxhoundLaunchButton;
-import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
-import org.zaproxy.zap.extension.selenium.ProfileManager;
-import org.zaproxy.zap.view.ZapToggleButton;
 
-import java.awt.EventQueue;
-import java.io.File;
-import java.io.InputStream;
-import java.nio.file.Path;
 import java.util.List;
 
 
@@ -43,7 +36,6 @@ public class ExtensionFoxhound extends ExtensionAdaptor {
 
     @Override
     public void init() {
-        LOGGER.info("Starting the Foxhound ZAP extension");
         super.init();
         exportServer = new FoxhoundExportServer();
     }
@@ -76,6 +68,9 @@ public class ExtensionFoxhound extends ExtensionAdaptor {
         if (hasView()) {
             extensionHook.getHookView().addMainToolBarComponent(this.getLaunchButton());
         }
+
+        LOGGER.info("Starting the Foxhound ZAP extension with {} sources and {} sinks.",
+                FoxhoundConstants.ALL_SOURCES.size(), FoxhoundConstants.ALL_SINKS.size());
     }
 
     @Override
