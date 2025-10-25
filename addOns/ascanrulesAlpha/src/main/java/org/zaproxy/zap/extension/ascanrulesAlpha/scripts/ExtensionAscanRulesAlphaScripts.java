@@ -41,6 +41,7 @@ public class ExtensionAscanRulesAlphaScripts extends ExtensionAdaptor {
             LogManager.getLogger(ExtensionAscanRulesAlphaScripts.class);
     private static final String SCRIPT_SUSPICIOUS_INPUT_TRANSFORMATION =
             "SuspiciousInputTransformation.js";
+    private static final String SCRIPT_SWAGGER_SECRET_DETECTOR = "SwaggerSecretDetector.js";
 
     private ExtensionScript extScript;
 
@@ -88,6 +89,11 @@ public class ExtensionAscanRulesAlphaScripts extends ExtensionAdaptor {
                 SCRIPT_SUSPICIOUS_INPUT_TRANSFORMATION,
                 Constant.messages.getString(
                         "ascanalpha.scripts.suspiciousInputTransformation.desc"),
+                extScript.getScriptType(ExtensionActiveScan.SCRIPT_TYPE_ACTIVE),
+                false);
+        addScript(
+                SCRIPT_SWAGGER_SECRET_DETECTOR,
+                Constant.messages.getString("ascanalpha.scripts.swaggerSecretDetector.desc"),
                 extScript.getScriptType(ExtensionActiveScan.SCRIPT_TYPE_ACTIVE),
                 false);
     }
@@ -140,6 +146,7 @@ public class ExtensionAscanRulesAlphaScripts extends ExtensionAdaptor {
             return;
         }
         removeScript(SCRIPT_SUSPICIOUS_INPUT_TRANSFORMATION, false);
+        removeScript(SCRIPT_SWAGGER_SECRET_DETECTOR, false);
     }
 
     private void removeScript(String name, boolean isTemplate) {
