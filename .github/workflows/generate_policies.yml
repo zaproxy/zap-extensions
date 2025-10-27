@@ -23,7 +23,7 @@ jobs:
         # Run the ZAP script
         docker run -v $(pwd):/zap/wrk/:rw --user root -t ghcr.io/zaproxy/zaproxy:nightly ./zap.sh -addoninstallall -silent -script /zap/wrk/zap-extensions/.github/scripts/generateScanPolicies.js -cmd
     - name: Attach Policies
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: Policies
         path: 'zap-extensions/addOns/scanpolicies/src/main/zapHomeFiles/policies/*.policy'
