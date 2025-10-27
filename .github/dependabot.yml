@@ -43,3 +43,5 @@ updates:
       - dependency-name: "org.seleniumhq.selenium:htmlunit3-driver" # dependabot uses the wrong version when updating
       - dependency-name: "com.google.inject.extensions:guice-assistedinject" # updating this leads to errors, and this is a transitive dependency
       - dependency-name: "org.zaproxy:zap" # core versions are manually updated when targeting a new core
+      - dependency-name: "com.google.errorprone:error_prone_core"
+        versions: [ ">= 2.43.0" ] # versions 2.43.x and later require Java 21
