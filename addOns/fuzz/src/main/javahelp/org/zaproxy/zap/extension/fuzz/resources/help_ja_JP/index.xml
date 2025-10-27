@@ -5,7 +5,7 @@
 
 <index version="2.0">
     <indexitem text="ファザー 概念" target="addon.fuzzer.concepts" />
-    <indexitem text="ファザー ダイアログ" target="addon.fuzzer.dialogue"/>
+    <indexitem text="ファザーダイアログ" target="addon.fuzzer.dialogue"/>
     <indexitem text="ファザー 位置プロセッサダイアログ" target="addon.fuzzer.locations"/>
     <indexitem text="ファザー HTTPメッセージプロセッサ" target="addon.fuzzer.httpmessageprocessors"/>
     <indexitem text="ファザー ペイロードダイアログ" target="addon.fuzzer.payloads"/>
