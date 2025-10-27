@@ -813,11 +813,19 @@ class ExtensionReportsUnitTest extends TestUtils {
         Constant.messages = new I18N(Locale.ENGLISH);
         Template template = getTemplateFromYamlFile(templateName);
         String fileName = "basic-" + templateName;
-        File f = File.createTempFile(fileName, template.getExtension());
+        File f = File.createTempFile(fileName, "." + template.getExtension());
 
         // If the test fails because of valid changes then uncomment the next line and copy the
         // generated file to the right file in src/test/resources
-        // System.out.println(f.getAbsolutePath());
+        /*
+        System.out.println(
+                "cp "
+                        + f.getAbsolutePath()
+                        + " addOns/reports/src/test/resources/org/zaproxy/addon/reports/resources/"
+                        + fileName
+                        + "."
+                        + template.getExtension());
+                        */
 
         // When
         File r = generateReportWithAlerts(template, f);
@@ -853,6 +861,7 @@ class ExtensionReportsUnitTest extends TestUtils {
         assertThat(
                 alerts.getJSONObject(0).getString("desc"), is(equalTo("<p>XSS Description</p>")));
         assertThat(alerts.getJSONObject(0).getString("count"), is(equalTo("2")));
+        assertThat(alerts.getJSONObject(0).getBoolean("systemic"), is(equalTo(false)));
 
         assertThat(
                 alerts.getJSONObject(0).getString("solution"), is(equalTo("<p>Test Solution</p>")));
@@ -1488,7 +1497,7 @@ class ExtensionReportsUnitTest extends TestUtils {
         assertThat(alerts.getLength(), is(equalTo(1)));
         assertThat(alertItems.getLength(), is(equalTo(1)));
         NodeList alertItemNodes = alertItems.item(0).getChildNodes();
-        int alertItemCount = isXmlPlus ? 37 : 35;
+        int alertItemCount = isXmlPlus ? 39 : 37;
         assertThat(alertItemNodes.getLength(), is(equalTo(alertItemCount)));
         int i = 0;
         assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("#text"))); // Filler
@@ -1558,6 +1567,11 @@ class ExtensionReportsUnitTest extends TestUtils {
         i++;
         assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("#text"))); // Filler
         i++;
+        assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("systemic")));
+        assertThat(alertItemNodes.item(i).getTextContent(), is(equalTo("false")));
+        i++;
+        assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("#text"))); // Filler
+        i++;
         assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("solution")));
         String solutionString = isXmlPlus ? "Test Solution" : "<p>Test Solution</p>";
         assertThat(alertItemNodes.item(i).getTextContent(), is(equalTo(solutionString)));
@@ -1604,7 +1618,7 @@ class ExtensionReportsUnitTest extends TestUtils {
         NodeList instanceChildNodes = instancesChildNodes.item(i).getChildNodes();
 
         // Check the instance details
-        int instanceItemCount = isXmlPlus ? 21 : 13;
+        int instanceItemCount = isXmlPlus ? 23 : 15;
         assertThat(instanceChildNodes.getLength(), is(equalTo(instanceItemCount)));
         int y = 0;
         assertThat(instanceChildNodes.item(y).getNodeName(), is(equalTo("#text"))); // Filler
@@ -1613,6 +1627,11 @@ class ExtensionReportsUnitTest extends TestUtils {
         assertThat(
                 instanceChildNodes.item(y).getTextContent(),
                 is(equalTo("http://example.com/example_3")));
+        y++;
+        assertThat(instanceChildNodes.item(y).getNodeName(), is(equalTo("#text"))); // Filler
+        y++;
+        assertThat(instanceChildNodes.item(y).getNodeName(), is(equalTo("nodeName")));
+        assertThat(instanceChildNodes.item(y).getTextContent(), is(equalTo("")));
         y++;
         assertThat(instanceChildNodes.item(y).getNodeName(), is(equalTo("#text"))); // Filler
         y++;

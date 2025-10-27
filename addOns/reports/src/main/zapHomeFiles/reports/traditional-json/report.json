@@ -23,6 +23,7 @@
 						{
 							"id": "[(${instance.alertId})]",
 							"uri": "[(${helper.legacyEscapeText(instance.uri, true)})]",
+							"nodeName": "[(${helper.legacyEscapeText(helper.getNodeName(instance))})]",
 							"method": "[(${helper.legacyEscapeText(instance.method, true)})]",
 							"param": "[(${helper.legacyEscapeTextAlertParam(instance, true)})]",
 							"attack": "[(${helper.legacyEscapeText(instance.attack, true)})]",
@@ -31,6 +32,7 @@
 						}[/th:block]
 					],
 					"count": "[(${instances.size})]",
+					"systemic": [(${helper.isSystemic(alert)})],
 					"solution": "[(${helper.legacyEscapeParagraph(alert.solution, true)})]",
 					"otherinfo": "[(${helper.legacyEscapeParagraph(alert.otherinfo, true)})]",
 					"reference": "[(${helper.legacyEscapeParagraph(alert.reference, true)})]",
