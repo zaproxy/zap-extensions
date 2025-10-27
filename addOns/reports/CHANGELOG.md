@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Update dependencies.
+- All relevant reports to support nodeName and systemic counts.
 
 ## [0.41.0] - 2025-09-04
 ### Changed

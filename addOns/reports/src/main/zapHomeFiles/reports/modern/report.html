@@ -205,7 +205,12 @@
 										Name</a></td>
 								<td align="center" th:class="${'risk-' + alert.risk}"
 									th:text="${helper.getRiskString(alert.risk)}">Risk</td>
-								<td align="center" th:text="${alert.childCount}">Count</td>
+								<th:block th:if="${helper.isSystemic(alert)}">
+									<td align="center" th:text="#{report.alerts.list.systemic}">Systemic</td>
+								</th:block>
+								<th:block th:unless="${helper.isSystemic(alert)}">
+									<td align="center" th:text="${alert.childCount}">Count</td>
+								</th:block>
 							</tr>
 						</table>
 					</div>
@@ -437,6 +442,15 @@
 										<td width="80%"><a th:href="${instance.userObject.uri}"
 											th:text="${instance.userObject.uri}" href="url.html">URL</a></td>
 									</tr>
+									<th:block
+										th:if="${helper.getNodeName(instance.userObject) != null}">
+										<tr>
+											<td th:text="#{report.alerts.detail.nodename}" width="20%"
+												class="indent2">Node Name</td>
+											<td th:text="${helper.getNodeName(instance.userObject)}"
+												width="80%">Node Name</td>
+										</tr>
+									</th:block>
 									<tr>
 										<td th:text="#{report.alerts.detail.method}" width="20%"
 											class="indent2">Method</td>
@@ -543,7 +557,12 @@
 								</th:block>
 								<tr>
 									<td th:text="#{report.alerts.detail.instances}" width="20%">Instances</td>
-									<td th:text="${alert.childCount}" width="80%">Instances</td>
+									<th:block th:if="${helper.isSystemic(alert)}">
+										<td th:text="#{report.alerts.list.systemic}" width="80%">Systemic</td>
+									</th:block>
+									<th:block th:unless="${helper.isSystemic(alert)}">
+										<td th:text="${alert.childCount}" width="80%">Instances</td>
+									</th:block>
 								</tr>
 								<tr>
 									<td th:text="#{report.alerts.detail.solution}" width="20%">Solution</td>
