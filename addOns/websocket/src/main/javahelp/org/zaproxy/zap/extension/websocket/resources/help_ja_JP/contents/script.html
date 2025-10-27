@@ -3,30 +3,30 @@
 <HEAD>
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
 <TITLE>
-WebSocket Scripts
+WebSocket スクリプト
 </TITLE>
 </HEAD>
 <BODY>
-<H1>WebSocket Scripts</H1>
+<H1>WebSocket スクリプト</H1>
 
-<h2>WebSocket Sender</h2>
+<h2>WebSocket送信</h2>
 
-WebSocket Sender scripts are called before forwarding the WebSocket message frame to the server or client and can access and change any WebSocket message that is proxied via ZAP.<br>
-They are initially disabled, to enable them right click the relevant script in the Scripts tree and select "enable".<br>
-A template script is provided which gives details of the methods and parameters supported. 
+WebSocket送信スクリプトは、WebSocketメッセージフレームをサーバーまたはクライアントに転送する前に呼び出され、ZAP を経由する任意のWebSocketメッセージにアクセスして変更できます。<br>
+これらは初期設定では無効になっており、有効にするには、スクリプトツリー内の該当するスクリプトを右クリックし、「有効化」を選択します。<br>
+サポートされるメソッドとパラメーターの詳細を示すテンプレートスクリプトが提供されています。 
 
-<h2>Fuzzer WebSocket Processor</h2>
+<h2>ファザーWebSocketプロセッサ </h2>
 
-Fuzzer WebSocket Processor scripts are called before forwarding a fuzzed WebSocket message to the client/server. The payloads will have already been injected at this point.<br>
-A template script is provided which gives details of the methods and parameters supported. 
+ファザーWebSocketプロセッサスクリプトは、ファジングされたWebSocketメッセージをクライアント/サーバーに転送する前に呼び出されます。 この時点までに、ペイロードはすでにインジェクションされています。<br>
+サポートされるメソッドとパラメーターの詳細を示すテンプレートスクリプトが提供されています。 
 
-<h2>WebSocket Passive Rules</h2>
+<h2>WebSocketパッシブルール</h2>
 
-WebSocket Passive Scan scripts are called every time a WebSocket message frame is transmitted over a WebSocket connection. Scripts can access WebSocket messages in order to examine the payload and raise an alert.<br>
-All of the default scripts are registered and enabled on start up. If you do not want them to run by default then right click the relevant scripts and select 'disable'.
-If you delete them then they will be added and enabled again when you restart ZAP.<br>
-Template scripts are provided which give details of the methods and parameters supported.<br>
-In the <a href="pscanrules.html#scripts">WebSocket Passive Scan Rules</a> section, there are descriptions for scripts which are included by default in the add-on.
+WebSocketパッシブスキャンスクリプトは、WebSocket接続を介してWebSocketメッセージフレームが送信されるたびに呼び出されます。 スクリプトはWebSocketメッセージにアクセスし、ペイロードを調査してアラートを発生させることができます。<br>
+既定のスクリプトはすべて、ZAP 起動時に登録され有効になります。 これらを既定で実行させたくない場合は、該当するスクリプトを右クリックし、「無効化」を選択します。
+削除した場合、ZAPを再起動すると再度追加され、有効になります。<br>
+サポートされるメソッドとパラメーターの詳細を示すテンプレートスクリプトが提供されています。<br>
+既定で含まれているスクリプトの説明は、<a href="pscanrules.html#scripts">WebSocketパッシブスキャンルール</a>のセクションを参照してください。
 
 </BODY>
 </HTML>

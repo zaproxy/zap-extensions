@@ -9,41 +9,39 @@ WebSocket 固有のオプション
 <body>
 <h1>WebSocket 固有のオプション</h1>
 <p>
-This screen allows you to configure the WebSocket options:
+この画面ではWebSocketの動作に関するオプションを設定できます：
 
-<h3>Forward all</h3>
-If you're not interested in WebSockets communication, but you want to allow its messages being sent back &amp; forth through ZAP, then you should enable this option.
-As a result no message will be stored in the session database. Moreover no message will appear in the WebSockets tab. This setting can be useful if you have to deal with performance critical WebSocket connections and you're not interested what is being sent.
+<h3>すべて転送</h3>
+WebSocketsの通信には関心がないが、メッセージをZAP経由で送受信させたい場合に、このオプションを有効にする必要があります。
+結果として、セッションデータベースにメッセージは格納されません。 また、WebSocketsタブにもメッセージは表示されません。 この設定は、パフォーマンスが重要となるWebSocket接続を扱う場合で、送信されている内容に関心がない場合に役立ちます。
 <br><br>
-If you want to ignore just one specific channel, check out the WebSocket specific <i>セッション・プロパティ</i>.
+特定のチャネルだけを無視したい場合は、WebSocket固有の <i>セッションプロパティ</i>を確認してください<i></i>.
 
 
-<h3>Break on all</h3>
-In the <i>ブレーク</i> toolbar, there are two buttons:
+<h3>すべてのブレーク</h3>
+ <i>ブレーク</i> ツールバーには、2つのボタンがあります：
 <ul>
-	<li><img src="images/105.png" align="bottom" width="16" height="16" />&nbsp;&nbsp;<i>Set break on all requests</i></li>
-	<li><img src="images/106.png" align="bottom" width="16" height="16" />&nbsp;&nbsp;<i>Set break on all responses</i></li>
+	<li><img src="images/105.png" align="bottom" width="16" height="16" />&nbsp;&nbsp;<i>すべてのリクエストでブレークを設定</i></li>
+	<li><img src="images/106.png" align="bottom" width="16" height="16" />&nbsp;&nbsp;<i>すべてのレスポンスでブレークを設定</i></li>
 </ul>
-When you enable this option, then all outgoing (respectively incoming) WebSocket messages are also caught by these control buttons.
+このオプションを有効にすると、送信 (および受信) されるすべてのWebSocketメッセージも、これらの制御ボタンによって捕捉されます。
 <br><br>
-By default this option is disabled. In this case only HTTP messages are caught, but you can add explicit breakpoints on WebSocket communication in the <a href="tab.html">WebSocket tab</a>. 
+既定では、このオプションは無効になっています。この場合、HTTPメッセージのみが捕捉されますが、WebSocket通信に対して明示的なブレークポイントを <a href="tab.html">WebSocketタブ</a>で追加できます<a href="#"></a>. 
 
 
-<h3>Break on Ping &amp; Pong messages</h3>
-<i>PING</i> 及び <i>PONG</i> messages are often used by WebSocket servers to determine the health of the current connection. If you catch an incoming <i>PING</i> message, the browser is not able to return a <i>PONG</i> message immediately, resulting in a bad latency value.
+<h3>Ping および Pong メッセージでのブレーク</h3>
+<i>PING</i> および <i>PONG</i> メッセージは、WebSocketサーバーによって現在の接続の健全性を判断するために頻繁に使用されます。着信 <i>PING</i> メッセージを捕捉すると、ブラウザが <i>PONG</i> メッセージをすぐに返すことができず、レイテンシー値が悪化する可能性があります。
 <br><br>
-If this option is disabled no <i>PING</i> or <i>PONG</i> message is caught when you:
+このオプションが無効になっている場合、以下の場合には <i>PING</i> または <i>PONG</i> メッセージは捕捉されません：
 <ul>
-	<li>set a breakpoint on <u>all requests</u> or <u>all responses</u>, <i>or</i></li>
-	<li>step through to the next request or response and a <i>PING</i> or <i>PONG</i> message arrives</li>
+	<li><u>すべてのリクエスト</u>または<u>すべてのレスポンス</u>でブレークポイントを設定した場合</li>
+	<li>次のリクエストまたはレスポンスに進む際に <i>PING</i> または <i>PONG</i> メッセージが到着した場合</li>
 </ul>
-This setting does not affect breakpoints that are set explicitly on <i>PING</i> or <i>PONG</i> messages. You can view such explicit breakpoints in the <i>Breakpoints tab</i>.
+この設定は、 <i>PING</i> または <i>PONG</i> メッセージに対して明示的に設定されたブレークポイントには影響しません。そのような明示的なブレークポイントは、 <i>ブレークポイントタブ</i>で確認できます<i></i>.
 
-<h3>Remove <code>Sec-WebSocket-Extensions</code> header</h3>
-Allows to remove the HTTP header <code>Sec-WebSocket-Extensions</code> from handshake messages, so no transformations are done
-to the WebSocket messages sent/received.<br>
-This option should always be enabled unless the client or the server under test requires them. The WebSocket
-messages might not be correctly processed by ZAP when extensions are used.
+<h3><code>Sec-WebSocket-Extensions</code>ヘッダーを削除する</h3>
+ハンドシェイクメッセージからHTTPヘッダー <code>Sec-WebSocket-Extensions</code> を削除できるようにします。これにより、送受信されるWebSocketメッセージに変換処理が行われなくなります。<br>
+このオプションは、テスト対象のクライアントまたはサーバーが拡張機能を必要としない限り、常に有効にすべきです。拡張機能が使用されている場合、ZAP によってWebSocketメッセージが正しく処理されない可能性があります。
 
 </body>
 </html>
