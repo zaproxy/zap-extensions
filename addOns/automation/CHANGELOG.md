@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Setting arbitrary config values
+
 ### Changed
 - Reinstate the validation of the Scan Policy in the `activeScan` job.
 - Adjust the text for the plan load warning/error dialog text to be clear which output panel it's referring to.
