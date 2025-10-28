@@ -4,6 +4,10 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Click on button when login form does not handle return in Browser Based Authentication.
+- Handle password fields by ID and name in Browser Based Authentication.
+
 ### Changed
 - Maintenance changes
 - Depend on newer version of Zest add-on.
