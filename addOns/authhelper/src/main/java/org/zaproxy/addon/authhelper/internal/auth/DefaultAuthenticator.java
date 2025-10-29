@@ -116,7 +116,7 @@ public class DefaultAuthenticator implements Authenticator {
                     LOGGER.debug("Submitting password field on {}", wd.getCurrentUrl());
                     AuthUtils.fillPassword(diags, wd, password, pwdField, stepDelayInSecs);
                 }
-                AuthUtils.sendReturnAndSleep(diags, wd, pwdField, stepDelayInSecs);
+                AuthUtils.submit(diags, wd, pwdField, stepDelayInSecs);
             } catch (Exception e) {
                 diags.reportFlowException(e);
 

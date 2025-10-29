@@ -166,6 +166,8 @@ public class AuthUtils {
 
     private static final By ALL_SELECTOR = By.cssSelector("*");
 
+    private static final String PASSWORD = "password";
+
     private static final String INPUT_TAG = "input";
 
     private static final HttpRequestConfig REDIRECT_NOTIFIER_CONFIG =
@@ -386,11 +388,20 @@ public class AuthUtils {
                         displayed(inputElements)
                                 .filter(
                                         element ->
-                                                "password"
-                                                        .equalsIgnoreCase(
-                                                                getAttribute(element, "type")))
+                                                PASSWORD.equalsIgnoreCase(
+                                                        getAttribute(element, "type")))
                                 .findFirst()
-                                .orElse(null));
+                                .orElseGet(
+                                        () ->
+                                                displayed(inputElements)
+                                                        .filter(AuthUtils::hasPasswordAttributes)
+                                                        .findFirst()
+                                                        .orElse(null)));
+    }
+
+    private static boolean hasPasswordAttributes(WebElement element) {
+        return StringUtils.containsIgnoreCase(getAttribute(element, "id"), PASSWORD)
+                || StringUtils.containsIgnoreCase(getAttribute(element, "name"), PASSWORD);
     }
 
     /**
@@ -748,6 +759,30 @@ public class AuthUtils {
             AuthenticationDiagnostics diags, WebDriver wd, WebElement field, int stepDelayInSecs) {
         sendReturn(diags, wd, field);
         sleep(TimeUnit.SECONDS.toMillis(stepDelayInSecs));
+    }
+
+    public static void submit(
+            AuthenticationDiagnostics diags, WebDriver wd, WebElement field, int stepDelayInSecs) {
+        sendReturnAndSleep(diags, wd, field, stepDelayInSecs);
+
+        Boolean displayed = ignoreSeleniumExceptions(field::isDisplayed);
+        if (displayed == null || !displayed) {
+            return;
+        }
+
+        wd.findElements(By.tagName("button")).stream()
+                .filter(WebElement::isDisplayed)
+                .filter(WebElement::isEnabled)
+                .findFirst()
+                .ifPresent(
+                        e -> {
+                            diags.recordStep(
+                                    wd,
+                                    Constant.messages.getString(
+                                            "authhelper.auth.method.diags.steps.click"),
+                                    e);
+                            e.click();
+                        });
     }
 
     public static void incStatsCounter(String url, String stat) {
