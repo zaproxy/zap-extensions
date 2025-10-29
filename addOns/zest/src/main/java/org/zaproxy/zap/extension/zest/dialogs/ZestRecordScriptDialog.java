@@ -60,7 +60,8 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
     private static List<String> BROWSERS =
             List.of(
                     ExtensionSelenium.getName(Browser.FIREFOX),
-                    ExtensionSelenium.getName(Browser.CHROME));
+                    ExtensionSelenium.getName(Browser.CHROME),
+                    ExtensionSelenium.getName(Browser.EDGE));
 
     private static final Logger LOGGER = LogManager.getLogger(ZestRecordScriptDialog.class);
 
