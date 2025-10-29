@@ -1,8 +1,8 @@
 {
 	"@programName": "ZAP",
 	"@version": "Dev Build",
-	"@generated": "Mon, 27 Oct 2025 14:46:12",
-	"created": "2025-10-27T14:46:12.613843Z",
+	"@generated": "Wed, 29 Oct 2025 10:53:54",
+	"created": "2025-10-29T10:53:54.857109Z",
 	"site":[ 
 		{
 			"@name": "http://example.com",
@@ -23,7 +23,7 @@
 						{
 							"id": "-1",
 							"uri": "http://example.com/example_3",
-							"nodeName": "",
+							"nodeName": null,
 							"method": "GET",
 							"param": "Test Param",
 							"attack": "Test \"Attack\\\"",
@@ -33,7 +33,7 @@
 						{
 							"id": "-1",
 							"uri": "http://example.com/example_3",
-							"nodeName": "",
+							"nodeName": null,
 							"method": "GET",
 							"param": "Test Param",
 							"attack": "Test \"Attack\\\"",
