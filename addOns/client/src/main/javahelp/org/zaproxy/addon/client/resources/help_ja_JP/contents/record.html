@@ -6,49 +6,45 @@
 </TITLE>
 </HEAD>
 <BODY>
-<H1>Recording Client Side Scripts</H1>
+<H1>クライアントサイドスクリプトの記録</H1>
 
-The ZAP Browser extensions allow you to record all of the actions you take in the browser as a Zest script. 
-They can be used to record things like authentication scripts or other complex interactions.
-Zest scripts can be replayed in ZAP, whether in the desktop or in automation.
+ZAPブラウザ拡張機能を使用すると、ブラウザで行うすべてのアクションをZestスクリプトとして記録できます。 
+これらは認証スクリプトやその他の複雑な操作などを記録するために使用できます。
+Zestスクリプトはデスクトップ環境でも自動化環境でも、ZAPで再実行できます。
 <p>
-The "full" ZAP Browser Extension is automatically added to Firefox and Chrome browsers launched from ZAP.
+「完全」なZAPブラウザ拡張機能は、ZAPから起動されたFirefoxおよびChromeブラウザに自動的に追加されます。
 <p>
-You can also manually install these add-on, or the cut down "Browser Recorder" extensions:
+また、これらのアドオンまたは簡易版の「ブラウザレコーダー」拡張機能を手動でインストールすることもできます。
 
 <ul>
-<li>Firefox <a href="https://addons.mozilla.org/en-GB/firefox/addon/zap-browser-extension">ZAP by Checkmarx Browser Extension</a>
-<li>Firefox <a href="https://addons.mozilla.org/en-GB/firefox/addon/zap-by-checkmarx-recorder/">ZAP by Checkmarx Browser Recorder</a>
-<li>Chrome <a href="https://chromewebstore.google.com/detail/zap-by-checkmarx-browser/cgkggmillbmmpokepnicllalaohphffo">ZAP by Checkmarx Browser Extension</a>
-<li>Chrome <a href="https://chromewebstore.google.com/detail/zap-by-checkmarx-recorder/belmenkmkfloppjbbgibipmgcmnkaiki">ZAP by Checkmarx Browser Recorder</a>
-<li>Edge <a href="https://microsoftedge.microsoft.com/addons/detail/zap-by-checkmarx-recorder/okgkpllibfpmngdhhponlojjgeabfeee">ZAP by Checkmarx Browser Recorder</a>
+<li>Firefox <a href="https://addons.mozilla.org/en-GB/firefox/addon/zap-browser-extension">ZAP by Checkmarx ブラウザ拡張機能</a>
+<li>Firefox <a href="https://addons.mozilla.org/en-GB/firefox/addon/zap-by-checkmarx-recorder/">ZAP by Checkmarx ブラウザレコーダー</a>
+<li>Chrome <a href="https://chromewebstore.google.com/detail/zap-by-checkmarx-browser/cgkggmillbmmpokepnicllalaohphffo">ZAP by Checkmarx ブラウザ拡張機能</a>
+<li>Chrome <a href="https://chromewebstore.google.com/detail/zap-by-checkmarx-recorder/belmenkmkfloppjbbgibipmgcmnkaiki">ZAP by Checkmarx ブラウザレコーダー</a>
+<li>Edge <a href="https://microsoftedge.microsoft.com/addons/detail/zap-by-checkmarx-recorder/okgkpllibfpmngdhhponlojjgeabfeee">ZAP by Checkmarx ブラウザレコーダー</a>
 </ul>
 
-The Browser Recorder extension only allows you to record a Zest script and will not attempt to communicate with ZAP.
+ブラウザレコーダー拡張機能はZestスクリプトの記録のみを許可し、ZAPとの通信を試みません。
 <p>
-The ZAP Browser extensions all include detailed help via the popup panel.
+ZAPブラウザ拡張機能はすべて、ポップアップパネルを介して詳細なヘルプを含んでいます。
 
-<h2>Recording from ZAP</h2>
-The easiest way to record a client side script from ZAP is to use the "Record Zest Script" dialog.<br>
-You will need to change the "Record Type" to "Client (browser) side script" and supply a valid URL.<br>
-ZAP will launch your chosen browser and record the Zest statements in the Script Console as you perform actions in the browser.
+<h2>ZAPからの記録</h2>
+ZAPからクライアントサイドスクリプトを記録する最も簡単な方法は「Zestスクリプトの記録」ダイアログを使用することです。<br>
+「記録タイプ」を「クライアント (ブラウザ) サイドスクリプト」に変更し、有効なURLを提供する必要があります。<br>
+ZAPは選択したブラウザを起動し、ブラウザでアクションを実行すると、スクリプトコンソールにZestステートメントを記録します。
 
-<h2>Recorder Advice and Guidance</h2>
-If you are going to use the recorded script for authentication then you need to make sure that the browser
-will be in the same state as when it is launched from ZAP.
+<h2>レコーダーに関するアドバイスとガイダンス</h2>
+記録されたスクリプトを認証に使用する場合は、ブラウザがZAPから起動されたときと同じ状態にあることを確認する必要があります。
 <p>
-If the login URL is static then you can open that page before starting to record.<br>
-If the URL is dynamic then you should enter a suitable static URL in the Recorder Dialog. This URL will then
-be recorded in the script and the browser will handle the dynamic redirects as required.
+ログインURLが静的である場合は、記録を開始する前にそのページを開くことができます。<br>
+URLが動的な場合は、レコーダーダイアログに適切な静的URLを入力してください。 このURLはスクリプトに記録され、ブラウザは必要に応じて動的なリダイレクトを処理します。
 <p>
-In all cases you should start to record before dismissing any dialogs, such as cookie warnings and other disclaimers,
-as ZAP will need to do the same things.
+いかなる場合でも、Cookieに関する警告やその他の免責事項などのダイアログを非表示にする前に、記録を開始する必要があります。ZAPも同じことをする必要があるためです。
 <p>
-It is often better to use private/incognito mode when recording so that the browser will not have any existing 
-application state.
+既存のアプリケーション状態が残らないように、記録時にはプライベート/シークレットモードを使用することが推奨されます。
 <p>
-The 'buttons' on some modern web apps can be complicated HTML components that are sometimes hard to click on using automation.
-If your forms can be submitted using the RETURN key then that is often a better option to use when recording.
+一部のモダンなWebアプリケーションの「ボタン」は、自動化を使用してクリックするのが難しい場合がある複雑なHTMLコンポーネントである可能性があります。
+フォームが Return キーを使用して送信可能な場合は、記録時にはその方法を使用する方が多くの場合より良い選択肢となります。
 
 </BODY>
 </HTML>
