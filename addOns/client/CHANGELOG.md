@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add optional parameters for the Client Spider API action `scan`:
   - `numberOfBrowsers` - control concurrency (number of browser windows).
   - `scopeCheck` - select Scope Check (Flexible or Strict).
+- Spider stats.
 
 ## [0.17.0] - 2025-09-02
 ### Added
