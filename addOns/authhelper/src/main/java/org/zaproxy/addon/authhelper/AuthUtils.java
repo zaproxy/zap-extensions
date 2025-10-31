@@ -20,6 +20,7 @@
 package org.zaproxy.addon.authhelper;
 
 import java.net.HttpCookie;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -59,11 +60,14 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchShadowRootException;
 import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.UsernameAndPassword;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.Extension;
@@ -647,7 +651,14 @@ public class AuthUtils {
         for (Authenticator authenticator : AUTHENTICATORS) {
             result =
                     authenticator.authenticate(
-                            diags, wd, context, loginPageUrl, credentials, stepDelayInSecs, steps);
+                            diags,
+                            wd,
+                            context,
+                            loginPageUrl,
+                            credentials,
+                            stepDelayInSecs,
+                            waitInSecs,
+                            steps);
 
             if (!result.isAttempted()) {
                 continue;
@@ -762,12 +773,22 @@ public class AuthUtils {
     }
 
     public static void submit(
-            AuthenticationDiagnostics diags, WebDriver wd, WebElement field, int stepDelayInSecs) {
+            AuthenticationDiagnostics diags,
+            WebDriver wd,
+            WebElement field,
+            int stepDelayInSecs,
+            int pageLoadWait) {
         sendReturnAndSleep(diags, wd, field, stepDelayInSecs);
 
-        Boolean displayed = ignoreSeleniumExceptions(field::isDisplayed);
-        if (displayed == null || !displayed) {
-            return;
+        try {
+            boolean invisible =
+                    new WebDriverWait(wd, Duration.ofSeconds(pageLoadWait))
+                            .until(ExpectedConditions.invisibilityOf(field));
+            if (invisible) {
+                return;
+            }
+        } catch (TimeoutException ignore) {
+            // Nothing to do.
         }
 
         wd.findElements(By.tagName("button")).stream()

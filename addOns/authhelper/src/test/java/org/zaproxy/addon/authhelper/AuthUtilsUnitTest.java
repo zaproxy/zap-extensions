@@ -1038,6 +1038,21 @@ class AuthUtilsUnitTest extends TestUtils {
                     </script>
                 """;
 
+        private static final String FORM_SUBMIT_TIMEOUT =
+                """
+                    <script>
+                        function remove() {
+                            setTimeout(() => {
+                              document.getElementsByTagName("input")[0].remove();
+                            }, 1000);
+                        }
+                    </script>
+                    <form action="javascript:remove()">
+                        <input type="password" />
+                    </form>
+                    <button />
+                """;
+
         @RegisterExtension static SeleniumJupiter seleniumJupiter = new SeleniumJupiter();
 
         private String url;
@@ -1298,7 +1313,7 @@ class AuthUtilsUnitTest extends TestUtils {
             AuthenticationDiagnostics diags = mock();
 
             // When
-            AuthUtils.submit(diags, wd, passwordField, 1);
+            AuthUtils.submit(diags, wd, passwordField, 0, 0);
 
             // Then
             verify(diags).recordStep(wd, "Auto Return");
@@ -1308,23 +1323,34 @@ class AuthUtilsUnitTest extends TestUtils {
         @TestTemplate
         void shouldClickButtonIfReturnDoesNoActionOnFieldOnSubmit(WebDriver wd) {
             // Given
-            pageContent =
-                    () ->
-                            """
-                                <input type="password" />
-                                <button />
-                            """;
+            pageContent = () -> FORM_SUBMIT_TIMEOUT;
             wd.get(url);
             WebElement passwordField = wd.findElement(By.tagName("input"));
             AuthenticationDiagnostics diags = mock();
 
             // When
-            AuthUtils.submit(diags, wd, passwordField, 1);
+            AuthUtils.submit(diags, wd, passwordField, 0, 0);
 
             // Then
             WebElement button = wd.findElement(By.tagName("button"));
             verify(diags).recordStep(wd, "Auto Return");
             verify(diags).recordStep(wd, "Click Button", button);
+            verifyNoMoreInteractions(diags);
+        }
+
+        @TestTemplate
+        void shouldNotClickButtonIfReturnActionWorksUnderPageLoadWaitOnSubmit(WebDriver wd) {
+            // Given
+            pageContent = () -> FORM_SUBMIT_TIMEOUT;
+            wd.get(url);
+            WebElement passwordField = wd.findElement(By.tagName("input"));
+            AuthenticationDiagnostics diags = mock();
+
+            // When
+            AuthUtils.submit(diags, wd, passwordField, 0, 2);
+
+            // Then
+            verify(diags).recordStep(wd, "Auto Return");
             verifyNoMoreInteractions(diags);
         }
 

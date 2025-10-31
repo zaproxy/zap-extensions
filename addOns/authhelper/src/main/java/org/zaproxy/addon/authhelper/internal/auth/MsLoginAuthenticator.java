@@ -77,6 +77,7 @@ public final class MsLoginAuthenticator implements Authenticator {
             String loginPageUrl,
             UsernamePasswordAuthenticationCredentials credentials,
             int stepDelayInSecs,
+            int waitInSecs,
             List<AuthenticationStep> steps) {
         return authenticateImpl(diags, wd, credentials, stepDelayInSecs);
     }

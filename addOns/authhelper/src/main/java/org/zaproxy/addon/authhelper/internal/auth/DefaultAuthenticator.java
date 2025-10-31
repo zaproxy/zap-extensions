@@ -44,6 +44,7 @@ public class DefaultAuthenticator implements Authenticator {
             String loginPageUrl,
             UsernamePasswordAuthenticationCredentials credentials,
             int stepDelayInSecs,
+            int waitInSecs,
             List<AuthenticationStep> steps) {
 
         String username = credentials.getUsername();
@@ -116,7 +117,7 @@ public class DefaultAuthenticator implements Authenticator {
                     LOGGER.debug("Submitting password field on {}", wd.getCurrentUrl());
                     AuthUtils.fillPassword(diags, wd, password, pwdField, stepDelayInSecs);
                 }
-                AuthUtils.submit(diags, wd, pwdField, stepDelayInSecs);
+                AuthUtils.submit(diags, wd, pwdField, stepDelayInSecs, waitInSecs);
             } catch (Exception e) {
                 diags.reportFlowException(e);
 
