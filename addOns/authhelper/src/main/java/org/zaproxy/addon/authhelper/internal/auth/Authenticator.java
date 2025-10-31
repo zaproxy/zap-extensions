@@ -40,5 +40,6 @@ public interface Authenticator {
             String loginPageUrl,
             UsernamePasswordAuthenticationCredentials credentials,
             int stepDelayInSecs,
+            int waitInSecs,
             List<AuthenticationStep> steps);
 }
