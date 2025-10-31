@@ -11,7 +11,7 @@
     tests:
       - name: 'At least X URLs found'        # String: Name of the test, default: statistic + operator + value
         type: 'stats'                        # String: Type of test, only 'stats' is supported for now
-        statistic: 'spiderAjax.urls.added'   # String: Name of an integer / long statistic, currently supported: 'spiderAjax.urls.added'
+        statistic: 'stats.spiderAjax.urls.added'   # String: Name of an integer / long statistic, currently supported: 'stats.spiderAjax.urls.added'
         operator: '>='                       # String ['==', '!=', '>=', '>', '<', '<=']: Operator used for testing
         value: 100                           # Int: Change this to the number of URLs you expect to find
         onFail: 'info'                       # String [warn, error, info]: Change this to 'warn' or 'error' for the test to take effect

@@ -249,7 +249,9 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
         if (options.getMaxDuration() > 0) {
             maxTime = startTime + TimeUnit.MINUTES.toMillis(options.getMaxDuration());
         }
+        Stats.incCounter("stats.client.spider.started");
         if (user != null) {
+            Stats.incCounter("stats.client.spider.started.user");
             synchronized (this.extClient.getAuthenticationHandlers()) {
                 this.extClient
                         .getAuthenticationHandlers()
@@ -662,6 +664,7 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
             listener.scanFinshed(scanId, displayName);
         }
 
+        Stats.incCounter("stats.client.spider.time", timeTaken);
         Stats.incCounter("stats.client.spider.urls", crawledUrls.size());
         Stats.incCounter(
                 "stats.client.spider.nodes", addedNodesModel.getRowCount() + contentLoaded);
