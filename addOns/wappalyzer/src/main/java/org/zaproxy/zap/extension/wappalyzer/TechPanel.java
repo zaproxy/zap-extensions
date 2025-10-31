@@ -39,10 +39,15 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
+import javax.swing.JTree;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.tree.TreePath;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.renderer.DefaultTableRenderer;
 import org.jdesktop.swingx.renderer.MappedValue;
@@ -50,6 +55,7 @@ import org.jdesktop.swingx.renderer.StringValues;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.AbstractPanel;
+import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.SortedComboBoxModel;
@@ -76,8 +82,11 @@ public class TechPanel extends AbstractPanel {
     private TechTableModel techModel = new TechTableModel();
 
     private TableExportButton<JXTable> exportButton = null;
+    private ZapToggleButton linkWithSitesTreeButton;
     private ZapToggleButton enableButton = null;
     private JButton optionsButton;
+
+    private LinkWithSitesTreeSelectionListener linkWithSitesTreeSelectionListener;
 
     private static final Icon TRANSPARENT_ICON =
             new Icon() {
@@ -167,6 +176,7 @@ public class TechPanel extends AbstractPanel {
             panelToolbar.add(
                     new JLabel(Constant.messages.getString("wappalyzer.toolbar.site.label")));
             panelToolbar.add(getSiteSelect());
+            panelToolbar.add(getLinkWithSitesTreeButton());
             panelToolbar.add(getExportButton());
             panelToolbar.add(getEnableToggleButton());
 
@@ -385,5 +395,74 @@ public class TechPanel extends AbstractPanel {
                                                     "wappalyzer.optionspanel.name")));
         }
         return optionsButton;
+    }
+
+    private JToggleButton getLinkWithSitesTreeButton() {
+        if (linkWithSitesTreeButton == null) {
+            linkWithSitesTreeButton = new ZapToggleButton();
+            linkWithSitesTreeButton.setIcon(
+                    new ImageIcon(TechPanel.class.getResource("/resource/icon/16/earth-grey.png")));
+            linkWithSitesTreeButton.setToolTipText(
+                    Constant.messages.getString(
+                            "wappalyzer.toolbar.toggle.site.link.disabled.tooltip"));
+            linkWithSitesTreeButton.setSelectedIcon(
+                    new ImageIcon(TechPanel.class.getResource("/resource/icon/16/094.png")));
+            linkWithSitesTreeButton.setSelectedToolTipText(
+                    Constant.messages.getString(
+                            "wappalyzer.toolbar.toggle.site.link.enabled.tooltip"));
+            DisplayUtils.scaleIcon(linkWithSitesTreeButton);
+            setLinkWithSitesTreeSelection(true);
+            linkWithSitesTreeButton.addActionListener(
+                    e -> setLinkWithSitesTreeSelection(linkWithSitesTreeButton.isSelected()));
+        }
+        return linkWithSitesTreeButton;
+    }
+
+    private void setLinkWithSitesTreeSelection(boolean enabled) {
+        linkWithSitesTreeButton.setSelected(enabled);
+        JTree sitesTree = View.getSingleton().getSiteTreePanel().getTreeSite();
+        if (enabled) {
+            TreePath selectionPath = sitesTree.getSelectionPath();
+            if (selectionPath != null) {
+                setSiteSelection(selectionPath);
+            }
+            sitesTree.addTreeSelectionListener(getLinkWithSitesTreeSelectionListener());
+        } else {
+            removeSitesTreeListener();
+        }
+    }
+
+    private void setSiteSelection(TreePath selectionPath) {
+        SiteNode selected = (SiteNode) selectionPath.getLastPathComponent();
+        if (selected.isRoot()) {
+            return;
+        }
+        siteSelected(ExtensionWappalyzer.normalizeSite((selected).getHistoryReference().getURI()));
+    }
+
+    private LinkWithSitesTreeSelectionListener getLinkWithSitesTreeSelectionListener() {
+        if (linkWithSitesTreeSelectionListener == null) {
+            linkWithSitesTreeSelectionListener = new LinkWithSitesTreeSelectionListener();
+        }
+        return linkWithSitesTreeSelectionListener;
+    }
+
+    private class LinkWithSitesTreeSelectionListener implements TreeSelectionListener {
+
+        @Override
+        public void valueChanged(TreeSelectionEvent e) {
+            setSiteSelection(e.getPath());
+        }
+    }
+
+    protected void unload() {
+        removeSitesTreeListener();
+    }
+
+    private void removeSitesTreeListener() {
+        View.getSingleton()
+                .getSiteTreePanel()
+                .getTreeSite()
+                .removeTreeSelectionListener(getLinkWithSitesTreeSelectionListener());
     }
 }
