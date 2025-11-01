@@ -16,6 +16,7 @@ slf4j = "2.0.17"
 
 [libraries]
 ascanrules-procyonCompilerTools = "org.bitbucket.mstrobel:procyon-compilertools:0.6.0"
+ascanrules-rhino = "org.mozilla:rhino:1.8.0"
 ascanrulesBeta-diffutils = { module = "com.googlecode.java-diff-utils:diffutils", version.ref = "diffutils" }
 ascanrulesBeta-jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
 authhelper-otpJava = "com.github.bastiaanjansen:otp-java:2.1.0"

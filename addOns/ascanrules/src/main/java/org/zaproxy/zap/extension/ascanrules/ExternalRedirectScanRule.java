@@ -23,8 +23,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,6 +38,10 @@ import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.mozilla.javascript.CompilerEnvirons;
+import org.mozilla.javascript.EvaluatorException;
+import org.mozilla.javascript.Parser;
+import org.mozilla.javascript.ast.AstRoot;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -47,6 +53,7 @@ import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
+import org.zaproxy.zap.utils.Stats;
 
 /**
  * Reviewed scan rule for External Redirect
@@ -478,8 +485,41 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
 
     private static boolean isRedirectPresent(Pattern pattern, String value) {
         Matcher matcher = pattern.matcher(value);
+        if (!isPresent(matcher)) {
+            return false;
+        }
+        Set<String> extractedComments = extractJsComments(value);
+        String valueWithoutComments = value;
+        for (String comment : extractedComments) {
+            valueWithoutComments = valueWithoutComments.replace(comment, "");
+        }
+
+        return isPresent(pattern.matcher(valueWithoutComments));
+    }
+
+    private static boolean isPresent(Matcher matcher) {
         return matcher.find()
                 && StringUtils.startsWithIgnoreCase(matcher.group(1), HttpHeader.HTTP);
+    }
+
+    /** Visibility increased for unit testing purposes only */
+    protected static Set<String> extractJsComments(String jsSource) {
+        Set<String> comments = new HashSet<>();
+        try {
+            CompilerEnvirons env = new CompilerEnvirons();
+            env.setRecordingComments(true);
+            Parser parser = new Parser(env, env.getErrorReporter());
+            // Rhino drops a character when the snippet ends with a single line comment so add a
+            // newline
+            AstRoot ast = parser.parse(jsSource + "\n", null, 1);
+            if (ast.getComments() != null) {
+                ast.getComments().forEach(comment -> comments.add(comment.getValue()));
+            }
+        } catch (EvaluatorException ee) {
+            Stats.incCounter("stats.ascan.rule." + PLUGIN_ID + ".jsparse.fail");
+            LOGGER.debug(ee.getMessage());
+        }
+        return comments;
     }
 
     @Override
