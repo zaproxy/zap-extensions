@@ -5,7 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
-- The Session Fixation scan rule now includes example alert functionality for documentation generation purposes (Issue 6119).
+- The following scan rules now include example alert functionality for documentation generation purposes (Issue 6119) and alert references (Issue 7100):
+  - Insecure HTTP Method
+  - Session Fixation
 
 ## [65] - 2026-04-14
 ### Changed
