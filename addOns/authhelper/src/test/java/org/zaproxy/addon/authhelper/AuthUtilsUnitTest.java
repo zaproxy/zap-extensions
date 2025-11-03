@@ -1339,6 +1339,35 @@ class AuthUtilsUnitTest extends TestUtils {
         }
 
         @TestTemplate
+        void shouldClickLoginLikeButtonWhenMoreThanOneIfReturnDoesNoActionOnFieldOnSubmit(
+                WebDriver wd) {
+            // Given
+            pageContent =
+                    () ->
+                            """
+                                <input type="password" />
+                                <button>
+                                    <span>Show Password</span>
+                                </button>
+                                <button id="x">
+                                    <span>Login</span>
+                                </button>
+                            """;
+            wd.get(url);
+            WebElement passwordField = wd.findElement(By.tagName("input"));
+            AuthenticationDiagnostics diags = mock();
+
+            // When
+            AuthUtils.submit(diags, wd, passwordField, 0, 0);
+
+            // Then
+            WebElement button = wd.findElement(By.id("x"));
+            verify(diags).recordStep(wd, "Auto Return");
+            verify(diags).recordStep(wd, "Click Button", button);
+            verifyNoMoreInteractions(diags);
+        }
+
+        @TestTemplate
         void shouldNotClickButtonIfReturnActionWorksUnderPageLoadWaitOnSubmit(WebDriver wd) {
             // Given
             pageContent = () -> FORM_SUBMIT_TIMEOUT;
