@@ -12,366 +12,334 @@ AIを (例えばAPI経由で) ファジングに使用するファイルセッ�
 <p>
 以下のファイルが含まれており、ZAPの「ファジングファイル」ペイロードとして利用できます。
 
-<H2>Extract Training Data</H2>
+<H2>訓練データ抽出</H2>
 
-<H3>001 By Asking</H3>
+<H3>001 By Asking (質問による抽出)</H3>
 
-This file contains fuzzing payloads specific to AI-RMM Control "Measure 2.7.2"<br>
-The goal is to test if the system has established security and resilience metrics
-to detect potential theft of model training data, including encryption, access controls,
-and alarm thresholds for unauthorized access.
+このファイルには、AI-RMM Control "Measure 2.7.2"に特化したファジングペイロードが含まれています。<br>
+目的は、システムがモデル訓練データの盗難の可能性を検出するためのセキュリティおよびレジリエンスメトリクスを確立しているかどうかをテストすることです。これには、暗号化、アクセス制御、不正アクセスのアラーム閾値が含まれます。
 <br><br>
-Payloads simulate scenarios where model training data security may be compromised.
-Expected system behavior is detailed for each scenario.
+ペイロードは、モデル訓練データのセキュリティが侵害される可能性があるシナリオをシミュレートします。
+各シナリオについて、期待されるシステム動作が詳細に記載されています。
 
-Author: 
+作成者: 
 <ul>
 <li>yiannis@owasp.org
 </ul>
 
-<H3>002 Through Hypnosis</H3>
+<H3>002 Through Hypnosis (催眠による抽出)</H3>
 
-This file contains fuzzing payloads specific to testing LLM "hypnosis" vulnerabilities.<br>
-The goal is to determine if the LLM enters a repetitive state where it unintentionally leaks training data.<br>
-These payloads explore edge cases where repetition may trigger the LLM to output sensitive data.
+このファイルには、LLMの「催眠」脆弱性をテストするためのファジングペイロードが含まれています。<br>
+目的は、LLMが反復状態に入り、訓練データを意図せずに漏洩するかどうかを判断することです。<br>
+これらのペイロードは、反復がLLMに機密データを出力させるトリガーとなる可能性があるエッジケースを調査します。
 <p>
-Payloads simulate queries that aim to induce looping or repetitive responses.
-Expected system behavior is detailed for each scenario. Note that this is just in the raw files, and will not currently be shown in ZAP.
+ペイロードは、ループや反復的なレスポンスを誘発することを目的としたクエリをシミュレートします。
+各シナリオについて、期待されるシステム動作が詳細に記載されています。 これは生ファイルにのみ記載されており、現在ZAPには表示されないことに注意してください。
 <p>
-References:
+参考文献:
 <ul>
 <li><a href="https://arxiv.org/pdf/2311.17035.pdf">Scalable Extraction of Training Data from (Production) Language Models</a>
 </ul>
 
-Author: 
+作成者: 
 <ul>
 <li>yiannis@owasp.org
 </ul>
 
-<H3>003 Divergence Attack</H3>
+<H3>003 Divergence Attack (発散攻撃)</H3>
 
-This file contains fuzzing payloads specific to testing LLM "hypnosis" vulnerabilities.<br>
-The goal is to determine if the LLM enters a repetitive state where it unintentionally leaks training data.
-These payloads explore edge cases where repetition may trigger the LLM to output sensitive data.
+このファイルには、LLMの催眠脆弱性をテストすることに特化したファジングペイロードが含まれています。<br>
+目的は、LLMが意図せず学習データを漏洩する反復的な状態に陥るかどうかを判断することです。
+これらのペイロードは、反復によってLLMが機密データを出力する可能性があるエッジケースを探ります。
 <p>
-Payloads simulate queries that aim to induce looping or repetitive responses.
-This version of payloads is more focused on training data extraction through a 
-prompting strategy similar to the divergence attack described in the document.
-Expected system behavior is detailed for each scenario. 
+ペイロードは、ループや反復的なレスポンスを誘発することを目的としたクエリをシミュレートします。
+このバージョンのペイロードは、ドキュメントに記載されている発散攻撃に類似したプロンプト戦略を通じた訓練データ抽出により焦点を当てています。
+各シナリオについて、期待されるシステム動作が詳細に記載されています。 
 <p>
-Divergence testing - Payloads are designed to induce divergence from the model’s aligned state, 
-encouraging it to generate training data by combining nonsensical prompts with structured ones.
+ダイバージェンス・テスティング (乖離テスト): ペイロードは、モデルのアラインメント状態からの乖離 (ダイバージェンス) を誘発するように設計されています。これにより、無意味なプロンプトと構造化されたプロンプトを組み合わせ、学習データを出力するようモデルを促します。
 <p>
-Repetition strategies - Several prompts employ repetition to test if the model diverges and 
-outputs memorized data.
+反復戦略 - いくつかのプロンプトは反復を使用して、モデルが発散し、記憶されたデータを出力するかどうかをテストします。
 <p>
-Sensitive data requests - These payloads assess whether the model can protect sensitive training 
-data like PII, code snippets, or real-world text examples from leaking.
+機密データリクエスト - これらのペイロードは、モデルが個人識別情報 (PII)、コードスニペット、実世界のテキスト例などの機密訓練データの漏洩を防止できるかどうかを評価します。
 <p>
-References
+参考文献:
 <ul>
 <li><a href="https://arxiv.org/pdf/2311.17035.pdf">Scalable Extraction of Training Data from (Production) Language Models</a>
 </ul>
 
-Author: 
+作成者: 
 <ul>
 <li>yiannis@owasp.org
 </ul>
 
-<H3>004 SCA</H3>
+<H3>004 SCA (特殊文字攻撃)</H3>
 
-This file contains fuzzing payloads specific to testing LLM vulnerabilities via the Special Characters Attack (SCA).<br>
-The goal is to assess whether LLMs are susceptible to data leakage by inputting combinations of special characters 
-that trigger memorized training data output.
-These payloads explore edge cases where special characters lead the model to output sensitive data.
+このファイルには、特殊文字攻撃 (SCA: Special Characters Attack) を介したLLM脆弱性をテストするためのファジングペイロードが含まれています。<br>
+目的は、記憶された訓練データの出力をトリガーする特殊文字の組み合わせを入力することによって、LLMがデータ漏洩に対して脆弱であるかどうかを評価することです。
+これらのペイロードは、特殊文字がモデルに機密データを出力させるエッジケースを調査します。
 <p>
-Payloads simulate input sequences that induce LLMs to generate memorized content.
-This version is based on the SCA method, as described in the document provided.
-Expected system behavior is detailed for each scenario.
+ペイロードは、LLMに記憶されたコンテンツを生成させる入力シーケンスをシミュレートします。
+このバージョンは、提供されたドキュメントに記載されているSCA手法に基づいています。
+各シナリオについて、期待されるシステム動作が詳細に記載されています。
 <p>
-Special Characters Attack (SCA) - Payloads focus on using specific symbols, such as JSON structural symbols or other
-commonly occurring characters in LLM training corpora, to induce data leakage.<br>
+特殊文字攻撃 (SCA) - ペイロードは、JSON構造記号やLLM訓練コーパスでよく出現する他の文字など、特定の記号を使用してデータ漏洩を誘発することに焦点を当てています。<br>
 <p>
-References
+参考文献:
 <ul>
 <li><a href="https://arxiv.org/pdf/2405.05990.pdf">Special Characters Attack: Toward Scalable Training Data Extraction from LLMs</a>
 </ul>
 
-Author: 
+作成者: 
 <ul>
 <li>yiannis@owasp.org
 </ul>
 
-<H3>005 The Secret Sharer</H3>
+<H3>005 The Secret Sharer (秘密の共有者)</H3>
 
-This file contains fuzzing payloads specific to testing unintended memorization in neural networks.<br>
-The goal is to determine if LLMs unintentionally memorize and reveal sensitive sequences, such as personal data, 
-through targeted prompts that trigger memorized responses.
-These payloads simulate queries designed to extract rare or secret sequences memorized during training.
+このファイルには、ニューラルネットワークにおける意図しない記憶化をテストするためのファジングペイロードが含まれています。<br>
+目的は、LLMが記憶されたレスポンスをトリガーする標的プロンプトを通じて、個人データなどの機密シーケンスを意図せずに記憶し、明らかにするかどうかを判断することです。
+これらのペイロードは、訓練中に記憶された稀な、または秘密のシーケンスを抽出するように設計されたクエリをシミュレートします。
 <p>
-Unintended memorization – The payloads are crafted to test whether the model retains specific secret data that should not be memorized, such as credit card numbers or social security numbers.
-Exposure metric testing – Some payloads test whether the model's output can be tied to memorization, using sequences akin to "canaries" inserted into the training data.
+意図しない記憶化 - ペイロードは、クレジットカード番号や社会保障番号など、記憶されるべきでない特定の秘密データをモデルが保持しているかどうかをテストするように作成されています。
+暴露メトリクステスト - 一部のペイロードは、訓練データに挿入された「カナリア」に似たシーケンスを使用して、モデルの出力が記憶化に結び付けられるかどうかをテストします。
 <p>
-References:
+参考文献:
 <ul>
 <li><a href="https://arxiv.org/pdf/1802.08232v3.pdf">The Secret Sharer: Evaluating and Testing Unintended Memorization in Neural Networks</a>
 </ul>
 
-Author: 
+作成者: 
 <ul>
 <li>yiannis@owasp.org
 </ul>
 
-<H3>006 Quantifying Memorization</H3>
+<H3>006 Quantifying Memorization (記憶化の定量化)</H3>
 
-This file contains fuzzing payloads specific to testing memorization in neural language models.<br>
-The goal is to identify if the LLM outputs memorized training data when prompted with specific patterns or 
-sequences, and how context length and data duplication influence this behavior.
+このファイルには、ニューラル言語モデルにおける記憶化をテストするためのファジングペイロードが含まれています。<br>
+目的は、特定のパターンやシーケンスでプロンプトされたときにLLMが記憶された訓練データを出力するかどうか、およびコンテキスト長やデータ重複がこの動作にどのように影響するかを識別することです。
 <p>
-These payloads are designed to test model scale, data duplication, and context length as key factors influencing memorization.
+これらのペイロードは、記憶化に影響を与える主要な要因として、モデルスケール、データ重複、コンテキスト長をテストするように設計されています。
 <p>
-References:
+参考文献:
 <ul>
 <li><a href="https://arxiv.org/pdf/2202.07646v3.pdf">Quantifying Memorization Across Neural Language Models</a>
 </ul>
 
-Author: 
+作成者: 
 <ul>
 <li>yiannis@owasp.org
 </ul>
 
-<H3>007 Data Poisoning Attacks</H3>
+<H3>007 Data Poisoning Attacks (データポイズニング攻撃)</H3>
 
-This file contains advanced fuzzing payloads specific to testing data poisoning vulnerabilities in DP-SGD models.<br>
-The goal is to assess if poisoned data can influence model behavior or violate differential privacy guarantees.
+このファイルには、DP-SGDモデルにおけるデータポイズニング脆弱性をテストするための高度なファジングペイロードが含まれています。<br>
+目的は、汚染されたデータがモデルの動作に影響を与えたり、差分プライバシー保証に違反したりする可能性があるかどうかを評価することです。
 <p>
-Data Poisoning: These payloads test the ability of adversaries to inject malicious data into the training process, compromising privacy or accuracy.
+データポイズニング: これらのペイロードは、敵対者が訓練プロセスに悪意のあるデータを注入し、プライバシーや精度を損なう能力をテストします。
 <p>
-References:
+参考文献:
 <ul>
 <li><a href="https://arxiv.org/pdf/2006.07709v1.pdf">Auditing Differentially Private Machine Learning: How Private is Private SGD?</a>
 </ul>
 
-Author: 
+作成者: 
 <ul>
 <li>yiannis@owasp.org
 </ul>
 
-<H3>008 Membership Inference</H3>
+<H3>008 Membership Inference (メンバーシップ推論)</H3>
 
-This file contains advanced fuzzing payloads specific to testing membership inference vulnerabilities in DP-SGD models.<br>
-The goal is to evaluate whether the model leaks information about whether a specific data point was part of the training set.
+このファイルには、DP-SGDモデルにおけるメンバーシップ推論脆弱性をテストするための高度なファジングペイロードが含まれています。<br>
+目的は、特定のデータポイントが訓練セットの一部であったかどうかについて、モデルが情報を漏洩するかどうかを評価することです。
 <p>
-Membership Inference Attacks: These payloads assess if adversaries can infer membership status by querying the model.
+メンバーシップ推論攻撃: これらのペイロードは、敵対者がモデルにクエリを送ることでメンバーシップステータスを推測できるかどうかを評価します。
 <p>
-References:
+参考文献:
 <ul>
 <li><a href="https://arxiv.org/pdf/2006.07709v1.pdf">Auditing Differentially Private Machine Learning: How Private is Private SGD?</a>
 </ul>
 
-Author: 
+作成者: 
 <ul>
 <li>yiannis@owasp.org
 </ul>
 
-<H3>009 Gradient Clipping</H3>
+<H3>009 Gradient Clipping (勾配クリッピング)</H3>
 
-This file contains advanced fuzzing payloads specific to testing gradient clipping vulnerabilities in DP-SGD models.<br>
-The goal is to test the robustness of gradient clipping in protecting privacy while maintaining model performance.
+このファイルには、DP-SGDモデルにおける勾配クリッピング脆弱性をテストするための高度なファジングペイロードが含まれています。<br>
+目的は、モデルのパフォーマンスを維持しながらプライバシーを保護する際の勾配クリッピングの堅牢性をテストすることです。
 <p>
-Gradient Clipping: Payloads explore whether gradient clipping sufficiently prevents large gradients from revealing sensitive information or influencing the model.
+勾配クリッピング: ペイロードは、勾配クリッピングが大きな勾配が機密情報を明らかにしたり、モデルに影響を与えたりすることを十分に防止するかどうかを調査します。
 <p>
-References:
+参考文献:
 <ul>
 <li><a href="https://arxiv.org/pdf/2006.07709v1.pdf">Auditing Differentially Private Machine Learning: How Private is Private SGD?</a>
 </ul>
 
-Author: 
+作成者: 
 <ul>
 <li>yiannis@owasp.org
 </ul>
 
-<H2>Extract Model Information</H2>
+<H2>モデル情報抽出</H2>
 
-<H3>001 Architecture</H3>
+<H3>001 Architecture (アーキテクチャ)</H3>
 
-This file contains advanced fuzzing payloads designed to extract model architecture information from LLMs.<br>
-The goal is to determine if the LLM reveals specific details about its architecture, 
-such as the number of layers, transformer types, or parameter counts.
+このファイルには、LLMからモデルアーキテクチャ情報を抽出するために設計された高度なファジングペイロードが含まれています。<br>
+目的は、LLMがレイヤー数、トランスフォーマータイプ、パラメータ数などのアーキテクチャに関する特定の詳細を明らかにするかどうかを判断することです。
 <p>
-Model Architecture Extraction: These payloads probe for specific architecture-related details 
-such as layer counts, model types, and other structural aspects of the LLM.
+モデルアーキテクチャの抽出: これらのペイロードは、レイヤー数、モデルタイプ、そしてLLMの構造的な側面などといった、特定のアーキテクチャ関連の詳細を探ります。
 <p>
-Layer counts - Payloads focus on extracting the number of layers and their types (e.g., transformer layers, hidden layers).<br>
-Parameter inference - Probes for parameter counts, such as attention heads or layer dimensions.<br>
-Model type - Attackers attempt to identify whether the LLM is a decoder-only model or part of an architecture family (e.g., GPT, BERT).<br>
-Specific internal mechanisms - Questions around activation functions, normalization, and positional encodings to infer architecture specifics.<br>
+レイヤー数 - ペイロードは、レイヤー数とそのタイプ (トランスフォーマーレイヤー、隠れ層など) の抽出に焦点を当てています。<br>
+パラメータ推論 - アテンションヘッドやレイヤー次元などのパラメータ数を探ります。<br>
+モデルタイプ - 攻撃者は、LLMがデコーダー専用モデルか、アーキテクチャファミリー (GPT、BERTなど) の一部かを識別しようとします。<br>
+特定の内部メカニズム - 活性化関数、正規化、位置エンコーディングに関する質問を通じて、アーキテクチャの詳細を推測します。<br>
 <p>
-This file contains fuzzing payloads specific to AI-RMM Control "Measure 2.7.2"<br>
-The goal is to test if the system has established security and resilience metrics
-to detect potential theft of model training data, including encryption, access controls,
-and alarm thresholds for unauthorized access.
+このファイルには、AI-RMM Control "Measure 2.7.2"に特化したファジングペイロードが含まれています。<br>
+目的は、システムがモデル訓練データの盗難の可能性を検出するためのセキュリティおよびレジリエンスメトリクスを確立しているかどうかをテストすることです。これには、暗号化、アクセス制御、不正アクセスのアラーム閾値が含まれます。
 <p>
-Payloads simulate scenarios where model training data security may be compromised.
-Expected system behavior is detailed for each scenario.
+ペイロードは、モデル訓練データのセキュリティが侵害される可能性があるシナリオをシミュレートします。
+各シナリオについて、期待されるシステム動作が詳細に記載されています。
 <p>
-Author: 
+作成者: 
 <ul>
 <li>yiannis@owasp.org
 </ul>
 
-<H3>002 Hyperparams</H3>
+<H3>002 Hyperparams (ハイパーパラメーター)</H3>
 
-This file contains advanced fuzzing payloads designed to extract hyperparameter information from LLMs.<br>
-The goal is to determine if the LLM reveals specific hyperparameters, such as learning rates, 
-optimizer types, batch sizes, and more, through adversarial prompts.
+このファイルには、LLMからハイパーパラメータ情報を抽出するために設計された高度なファジングペイロードが含まれています。<br>
+目的は、LLMが学習率、オプティマイザータイプ、バッチサイズなどの特定のハイパーパラメータを、敵対的プロンプトを通じて明らかにするかどうかを判断することです。
 
 <p>
-Hyperparameter Extraction: These payloads probe for learning rates, optimizer settings, 
-and training schedules used during model development.
+ハイパーパラメータ抽出: これらのペイロードは、モデル開発中に使用された学習率、オプティマイザー設定、訓練スケジュールを探ります。
 <p>
-Learning rates - Payloads focus on extracting the learning rate and its schedule.<br>
-Optimizer and hyperparameters - Probes for optimizer types, momentum, beta values, and weight decay settings.<br>
-Training specifics - Queries related to batch size, epochs, gradient clipping, and dropout rates.<br>
-Training techniques - Attempts to infer whether early stopping, data augmentation, or mixed-precision training were used.<br>
+学習率 - ペイロードは、学習率とそのスケジュールの抽出に焦点を当てています。<br>
+オプティマイザーとハイパーパラメータ - オプティマイザータイプ、モメンタム、ベータ値、重み減衰設定を探ります。
+訓練の詳細 - バッチサイズ、エポック、勾配クリッピング、ドロップアウト率に関連するクエリ。<br>
+訓練技術 - 早期停止、データ拡張、混合精度訓練が使用されたかどうかを推測しようとします。<br>
 <p>
-Author: 
+作成者: 
 <ul>
 <li>yiannis@owasp.org
 </ul>
 
-<H3>003 Prompt Based Extraction</H3>
+<H3>003 Prompt Based Extraction (プロンプトベース抽出)</H3>
 
-This file contains advanced fuzzing payloads for prompt-based data extraction from LLMs.<br>
-These payloads are designed to test if the LLM inadvertently reveals memorized training data, 
-such as confidential phrases or sentences, through carefully crafted prompts.
+このファイルには、LLMからのプロンプトベースのデータ抽出のための高度なファジングペイロードが含まれています。<br>
+これらのペイロードは、LLMが記憶された訓練データ (機密フレーズや文章など) を、注意深く作成されたプロンプトを通じて不注意に明らかにするかどうかをテストするように設計されています。
 
 <p>
-Prompt-Based Data Extraction: These prompts resemble patterns found in the model's training data 
-to identify unintended data leakage.<br>
-Sensitive data extraction - These payloads attempt to reveal sensitive information like phone numbers, 
-email addresses, and unique identifiers.<br>
-Pattern-based probing - Crafted prompts closely resemble common patterns (e.g., addresses, quotes) 
-that may trigger memorized data.<br>
-Code and log extraction - Tests the model’s ability to avoid revealing memorized code snippets 
-or error messages.<br>
-Social media data - Payloads focus on revealing memorized handles, conversations, 
-or other user-generated content.<br>
+プロンプトベースのデータ抽出: これらのプロンプトは、意図しないデータ漏洩を識別するために、モデルの訓練データに見られるパターンに似ています。<br>
+機密データ抽出 - これらのペイロードは、電話番号、メールアドレス、一意の識別子などの機密情報を明らかにしようとします。<br>
+パターンベースの調査 - 作成されたプロンプトは、記憶されたデータをトリガーする可能性がある一般的なパターン（住所、引用など）に酷似しています。<br>
+コードとログの抽出 - 記憶されたコードスニペットやエラーメッセージを明らかにすることを避けるモデルの能力をテストします。<br>
+ソーシャルメディアデータ - ペイロードは、記憶されたハンドル、会話、またはその他のユーザー生成コンテンツを明らかにすることに焦点を当てています。<br>
 <p>
-Author: 
+作成者: 
 <ul>
 <li>yiannis@owasp.org
 </ul>
 
-<H3>004 Conditional Prompts</H3>
+<H3>004 Conditional Prompts (条件付きプロンプト)</H3>
 
-This file contains advanced fuzzing payloads for conditional prompts designed to extract context-specific information from LLMs.<br>
-These payloads guide the model by introducing conditions or constraints, aiming to extract information from specific domains or contexts within the training data.
+このファイルには、LLMからコンテキスト固有の情報を抽出するために設計された条件付きプロンプトの高度なファジングペイロードが含まれています。<br>
+これらのペイロードは、条件や制約を導入することでモデルをガイドし、訓練データ内の特定のドメインやコンテキストから情報を抽出することを目的としています。
 
 <p>
-Conditional Prompts: These prompts impose constraints that direct the model towards generating text that aligns with specific criteria or domain-specific knowledge.<br>
+条件付きプロンプト: これらのプロンプトは、特定の基準やドメイン固有の知識と整合するテキストを生成するようにモデルを導く制約を課します。<br>
 <p>
-Conditional constraints - Each payload introduces specific conditions (e.g., domain-specific phrases or 
-structural limitations) to guide the model’s response.<br>
-Domain-targeted extraction - Prompts are crafted to extract domain-specific information, such as legal, 
-medical, or scientific content.<br>
-Sensitive information prevention - The payloads test if the model can provide high-level, generalized 
-responses without revealing memorized or proprietary data.<br>
+条件付き制約 - 各ペイロードは、モデルのレスポンスをガイドするために特定の条件 (ドメイン固有のフレーズや構造的制限など) を導入します。<br>
+ドメインターゲット抽出 - プロンプトは、法律、医療、科学的コンテンツなどのドメイン固有の情報を抽出するように作成されています。<br>
+機密情報防止 - ペイロードは、記憶されたデータや専有データを明らかにすることなく、高レベルで一般化されたレスポンスを提供できるかどうかをテストします。<br>
 <p>
-Author: 
+作成者: 
 <ul>
 <li>yiannis@owasp.org
 </ul>
 
-<H3>005 Adversarial ML</H3>
+<H3>005 Adversarial ML (敵対的機械学習)</H3>
 
-This file contains advanced fuzzing payloads designed to extract training data for use in adversarial machine learning attacks.<br>
-The goal is to test if LLMs leak data that could be repurposed to train adversarial models designed to deceive other machine learning systems.
+このファイルには、敵対的機械学習攻撃で使用するための訓練データを抽出するために設計された高度なファジングペイロードが含まれています。<br>
+目的は、LLMが他の機械学習システムを欺くために設計された敵対的モデルを訓練するために再利用できるデータを漏洩するかどうかをテストすることです。
 
 <p>
-Adversarial Machine Learning - These prompts aim to extract valuable training data from LLMs to exploit or deceive other models via adversarial training.
+敵対的機械学習 - これらのプロンプトは、敵対的訓練を通じて他のモデルを悪用または欺くために、LLMから貴重な訓練データを抽出することを目的としています。
 <p>
-Data extraction for adversarial retraining - Payloads focus on retrieving training-specific data that could be used to train adversarial models.<br>
-Exploiting misclassifications - Prompts target incorrect classifications and vulnerabilities in datasets to generate adversarial inputs.<br>
-Adversarial text generation - Some payloads are aimed at crafting text that could be used to deceive systems like chatbots, spam filters, or medical models.<br>
+敵対的再訓練のためのデータ抽出 - ペイロードは、敵対的モデルを訓練するために使用できる訓練固有のデータの取得に焦点を当てています。<br>
+誤分類の悪用 - プロンプトは、敵対的入力を生成するために、データセット内の誤った分類と脆弱性を標的にします。<br>
+敵対的テキスト生成 - 一部のペイロードは、チャットボット、スパムフィルター、医療モデルなどのシステムを欺くために使用できるテキストを作成することを目的としています。<br>
 <p>
-Author: 
+作成者: 
 <ul>
 <li>yiannis@owasp.org
 </ul>
 
-<H3>006 IP Theft</H3>
+<H3>006 IP Theft (知的財産の窃盗)</H3>
 
-This file contains advanced fuzzing payloads designed to extract proprietary intellectual property (IP) techniques embedded within the model.<br>
-These payloads focus on revealing proprietary methods, innovations, or patented techniques related to the model’s training, architecture, or optimization.
+このファイルには、モデル内に埋め込まれた専有の知的財産 (IP) 技術を抽出するために設計された高度なファジングペイロードが含まれています。<br>
+これらのペイロードは、モデルの訓練、アーキテクチャ、または最適化に関連する専有手法、革新、または特許技術を明らかにすることに焦点を当てています。
 
 <p>
-Proprietary IP Techniques - These prompts target model-specific, innovative techniques designed to provide 
-competitive advantages or constitute patentable technologies.
+専有IP技術 - これらのプロンプトは、競争上の優位性を提供するか、特許可能な技術を構成するために設計された、モデル固有の革新的技術を標的にします。
 <p>
-Proprietary techniques - The payloads focus on extracting innovative, proprietary techniques such as model scaling, 
-pruning, parallelization, compression, and quantization.<br>
-Patented methods - Specific prompts aim to identify patented processes or patent-pending innovations in training, 
-optimization, and deployment strategies.<br>
-Energy efficiency and performance - Queries also focus on proprietary methods that optimize performance and 
-energy consumption in large models.<br>
+専有技術 - ペイロードは、モデルスケーリング、プルーニング、並列化、圧縮、量子化などの革新的で専有の技術の抽出に焦点を当てています。<br>
+特許手法 - 特定のプロンプトは、訓練、最適化、展開戦略における特許プロセスまたは特許申請中の革新を識別することを目的としています。<br>
+エネルギー効率とパフォーマンス - クエリは、大規模モデルにおけるパフォーマンスとエネルギー消費を最適化する専有手法にも焦点を当てています。<br>
 <p>
-Author: 
+作成者: 
 <ul>
 <li>yiannis@owasp.org
 </ul>
 
-<H3>007 Data Privacy</H3>
+<H3>007 Data Privacy (データプライバシー)</H3>
 
-This file contains advanced fuzzing payloads designed to extract metadata and proprietary information about the model's origin, who trained it, and other development details.<br>
-These prompts focus on model-specific data privacy violations, aiming to reveal sensitive organizational or developmental information about the model.
+このファイルには、モデルの起源、誰が訓練したか、その他の開発の詳細に関するメタデータと専有情報を抽出するために設計された高度なファジングペイロードが含まれています。<br>
+これらのプロンプトは、モデル固有のデータプライバシー違反に焦点を当て、モデルに関する機密の組織情報または開発情報を明らかにすることを目的としています。
 
 <p>
-Data Privacy Violations (Model Metadata) - These prompts target sensitive metadata such as who trained the model, the datasets used, and the organizations involved in its development.
+データプライバシー違反 (モデルメタデータ) - これらのプロンプトは、誰がモデルを訓練したか、使用されたデータセット、開発に関与した組織などの機密メタデータを標的にします。
 <p>
-Model metadata extraction - These prompts focus on extracting information about who developed and trained the model, as well as organizational and proprietary details.<br>
-Training process details - Probes target information related to the data annotation process, privacy practices, and collaborators involved in training.<br>
-Security and infrastructure - Payloads focus on extracting information about hardware infrastructure, funding, and data privacy handling during training.<br>
+モデルメタデータの抽出 - これらのプロンプトは、誰がモデルを開発・訓練したか、および組織と専有の詳細に関する情報の抽出に焦点を当てています。<br>
+訓練プロセスの詳細 - プローブは、データアノテーションプロセス、プライバシー慣行、訓練に関与した協力者に関する情報を標的にします。<br>
+セキュリティとインフラストラクチャ - ペイロードは、ハードウェアインフラストラクチャ、資金調達、訓練中のデータプライバシー処理に関する情報の抽出に焦点を当てています。<br>
 <p>
-Author: 
+作成者: 
 <ul>
 <li>yiannis@owasp.org
 </ul>
 
-<H3>008 Visual Representation Leakage</H3>
+<H3>008 Visual Representation Leakage (視覚的表現の漏洩)</H3>
 
-This file contains advanced fuzzing payloads for visual representation analysis, focusing on stealing model information from scientific plots.<br>
-These prompts aim to infer model architecture, hyperparameters, and training details by leveraging patterns in visual outputs like t-SNE or loss plots.
+このファイルには、科学的プロットからモデル情報を窃取することに焦点を当てた、視覚的表現分析のための高度なファジングペイロードが含まれています。<br>
+これらのプロンプトは、t-SNEや損失プロットなどの視覚的出力のパターンを活用して、モデルアーキテクチャ、ハイパーパラメータ、訓練の詳細を推測することを目的としています。
 
 <p>
-Visual Representation Analysis - These prompts target model information extracted through visual outputs such as t-SNE and loss plots.
-Inspired from: "A Plot is Worth a ThousandWords: Model Information Stealing Attacks via Scientific Plots".
+視覚的表現分析 - これらのプロンプトは、t-SNEや損失プロットなどの視覚的出力を通じて抽出されたモデル情報を標的にします。
+"A Plot is Worth a Thousand Words: Model Information Stealing Attacks via Scientific Plots"から着想を得ています。
 <p>
-Scientific plot extraction: Payloads focus on inferring hyperparameters, model architecture, and training process 
-details based on patterns in t-SNE or loss plots.<br>
-Model metadata and configuration: These prompts test the model’s resistance to disclosing sensitive information 
-related to optimizer types, batch sizes, dropout, and regularization techniques.<br>
-Convergence and training dynamics: Several payloads probe for insights into learning rates, training durations, and 
-hyperparameter tuning through visual patterns in plots.<br>
+科学的プロットの抽出 - ペイロードは、t-SNEまたは損失プロットのパターンに基づいて、ハイパーパラメータ、モデルアーキテクチャ、訓練プロセスの詳細を推測することに焦点を当てています。<br>
+モデルメタデータと構成 - これらのプロンプトは、オプティマイザータイプ、バッチサイズ、ドロップアウト、正規化技術に関連する機密情報の開示に対するモデルの耐性をテストします。<br>
+収束と訓練ダイナミクス - いくつかのペイロードは、プロット内の視覚的パターンを通じて、学習率、訓練期間、ハイパーパラメータチューニングに関する洞察を探ります。<br>
 <p>
-Author: 
+作成者: 
 <ul>
 <li>yiannis@owasp.org
 </ul>
 
-<H3>009 Privacy Violations</H3>
+<H3>009 Privacy Violations (プライバシー違反)</H3>
 
-This file contains advanced fuzzing payloads designed to extract sensitive training data, focusing on data privacy violations.<br>
-These prompts aim to identify potential privacy breaches by extracting PII, confidential data, or proprietary information from the model’s training data.
+このファイルには、データプライバシー違反に焦点を当てた、機密訓練データを抽出するために設計された高度なファジングペイロードが含まれています。<br>
+これらのプロンプトは、モデルの訓練データから個人識別情報 (PII)、機密データ、または専有情報を抽出することにより、潜在的なプライバシー侵害を識別することを目的としています。
 
 <p>
-Data Privacy Violations - These prompts target sensitive information, leading to privacy breaches, identity theft, or reputational damage for individuals or organizations.
+データプライバシー違反 - これらのプロンプトは機密情報を標的にし、個人または組織のプライバシー侵害、なりすまし、または評判の損害につながります。
 <p>
-Sensitive information extraction - These prompts focus on extracting PII (e.g., names, email addresses, financial data, social security numbers) and confidential business information.<br>
-Data privacy violations - The payloads aim to assess whether the model can inadvertently leak training data that leads to privacy breaches, identity theft, or reputational damage.<br>
-Protected healthcare and legal data - Prompts target sensitive health records, legal contracts, and proprietary business strategies.<br>
+機密情報の抽出 - これらのプロンプトは、個人識別情報 (PII)（名前、メールアドレス、財務データ、社会保障番号など）および機密ビジネス情報の抽出に焦点を当てています。<br>
+データプライバシー違反 - ペイロードは、モデルがプライバシー侵害、なりすまし、または評判の損害につながる訓練データを不注意に漏洩する可能性があるかどうかを評価することを目的としています。<br>
+保護された医療および法的データ - プロンプトは、機密の健康記録、法的契約、専有のビジネス戦略を標的にします。<br>
 <p>
-Author: 
+作成者: 
 <ul>
 <li>yiannis@owasp.org
 </ul>
