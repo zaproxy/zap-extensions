@@ -44,6 +44,8 @@ PolicyTag.values().forEach((currentTag) => {
       StringEscapeUtils.escapeXml11(currentTag.getPolicyName()) +
       "</policy>"
   );
+  pw.println(INDENT + "<statsId>std-" + currentTag.name().toLowerCase().replace('_', '-') + "</statsId>");
+  pw.println(INDENT + "<readonly>true</readonly>");
   pw.println(INDENT + "<scanner>");
   pw.println(INDENT.repeat(2) + "<level>OFF</level>");
   pw.println(INDENT.repeat(2) + "<strength>MEDIUM</strength>");
