@@ -1382,7 +1382,7 @@
     "scriptSrc": [
       "jquery",
       "/jquery(?:-(\\d+\\.\\d+\\.\\d+))[/.-]\\;version:\\1",
-      "/(\\d+\\.\\d+\\.\\d+)/jquery[/.-][^u]\\;version:\\1"
+      "/(\\d+\\.\\d+\\.\\d+)/jquery(?!\\.popupoverlay\\.js)[/.-][^u]\\;version:\\1"
     ],
     "website": "https://jquery.com"
   },
