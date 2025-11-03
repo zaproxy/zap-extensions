@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <configuration>
     <policy>Developer Standard</policy>
+    <statsId>std-dev-std</statsId>
+    <readonly>true</readonly>
     <scanner>
         <level>OFF</level>
         <strength>MEDIUM</strength>
