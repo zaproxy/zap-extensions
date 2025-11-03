@@ -23,7 +23,7 @@ Then navigate to the zap folder and execute:
 
 Light-weight to do list targeting Black Hat in December 2025, in rough order of priority. Goal is an [alpha](https://github.com/zaproxy/zap-extensions/wiki/AddOnDevelopment) release.
 
-- [ ] Allow foxhound to be launched automatically via the ZAP browser menu (perhaps by specifying path for Firefox)
+- [x] Allow foxhound to be launched automatically via the ZAP browser menu (perhaps by specifying path for Firefox)
 - [ ] Make the port of the Taint export server configurable
 - [ ] Add more details to the taint report
   - [ ] Details about sources and sinks
@@ -33,3 +33,4 @@ Light-weight to do list targeting Black Hat in December 2025, in rough order of 
 - [ ] Persist taint flows to a particular session
 - [ ] Add exploit generation
 - [ ] Add active scanning
+- [ ] Website to showcase plugin
