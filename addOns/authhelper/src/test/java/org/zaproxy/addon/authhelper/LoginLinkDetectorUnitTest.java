@@ -541,4 +541,54 @@ class LoginLinkDetectorUnitTest extends TestUtils {
         assertThat(loginLinks.size(), is(equalTo(1)));
         assertThat(loginLinks.get(0).getAttributeValue("custom"), is(equalTo("test")));
     }
+
+    @TestTemplate
+    void shouldReturnDivsWithPointerStyleAndLoginTextWithWd(WebDriver wd) {
+        // Given
+        pageContent =
+                () ->
+                        """
+                           <div id="div1">Login but no pointer</div>
+                           <div id="div2">
+                             <div id="div3" style="cursor: pointer">
+                               <div id="div4"></div>
+                               <div id="div5">Log in</div>
+                             </div>
+                           </div>
+                        """;
+        wd.get(url);
+        // When
+        List<WebElement> loginLinks =
+                LoginLinkDetector.getLoginLinks(wd, AuthUtils.LOGIN_LABELS_P1);
+
+        // Then
+        assertThat(loginLinks.size(), is(equalTo(2)));
+        assertThat(loginLinks.get(0).getDomAttribute("id"), is(equalTo("div3")));
+        assertThat(loginLinks.get(1).getDomAttribute("id"), is(equalTo("div5")));
+    }
+
+    @Test
+    void shouldReturnDivsWithLoginTextWithSrc() {
+        // Given
+        String html =
+                """
+                   <div id="div1">Login but no pointer</div>
+                   <div id="div2">
+                     <div id="div3" style="cursor: pointer">
+                       <div id="div4"></div>
+                       <div id="div5">Log in</div>
+                     </div>
+                   </div>
+                """;
+        // When
+        List<Element> loginLinks =
+                LoginLinkDetector.getLoginLinks(new Source(html), AuthUtils.LOGIN_LABELS_P1);
+
+        // Then
+        assertThat(loginLinks.size(), is(equalTo(4)));
+        assertThat(loginLinks.get(0).getAttributeValue("id"), is(equalTo("div1")));
+        assertThat(loginLinks.get(1).getAttributeValue("id"), is(equalTo("div2")));
+        assertThat(loginLinks.get(2).getAttributeValue("id"), is(equalTo("div3")));
+        assertThat(loginLinks.get(3).getAttributeValue("id"), is(equalTo("div5")));
+    }
 }

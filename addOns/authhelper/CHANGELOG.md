@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Click on button when login form does not handle return in Browser Based Authentication.
 - Handle password fields by ID and name in Browser Based Authentication.
+- Check div elements when searching for login links.
 
 ### Changed
 - Maintenance changes
