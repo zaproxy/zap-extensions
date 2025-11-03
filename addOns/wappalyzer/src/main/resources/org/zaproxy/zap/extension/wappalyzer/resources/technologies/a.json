@@ -4240,7 +4240,7 @@
       "freemium"
     ],
     "scripts": [
-      ".*altcha\\.(org|js)"
+      "altcha\\.(org|js)"
     ],
     "website": "https://altcha.org"
   },
