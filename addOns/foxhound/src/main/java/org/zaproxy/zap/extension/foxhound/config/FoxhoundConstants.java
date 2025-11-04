@@ -25,9 +25,11 @@ import java.util.stream.Collectors;
 
 public class FoxhoundConstants {
 
-    private static final String RESOURCE = "/org/zaproxy/zap/extension/foxhound/resources";
+    public static final String RESOURCE = "/org/zaproxy/zap/extension/foxhound/resources";
     private static final String SOURCE_AND_SINK_LIST = RESOURCE + "/sourcessinks.json";
     private static final Logger LOGGER = LogManager.getLogger(FoxhoundConstants.class);
+    public static final String FOXHOUND_256 = RESOURCE + "/default256.png";
+    public static final String FOXHOUND_16 = RESOURCE + "/default16.png";
 
     public static Set<TaintSourceType> ALL_SOURCES;
     public static Set<TaintSinkType> ALL_SINKS;
