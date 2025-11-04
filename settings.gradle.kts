@@ -47,7 +47,6 @@ var addOns =
         "formhandler",
         "frontendscanner",
         "fuzz",
-        "fuzzai",
         "fuzzdb",
         "gettingStarted",
         "graaljs",
