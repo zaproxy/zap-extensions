@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [69] - 2025-11-04
 ### Changed
 - Update dependency.
 - Reduced usage of error level logging.
@@ -646,6 +646,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[69]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v69
 [68]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v68
 [67]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v67
 [66]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v66

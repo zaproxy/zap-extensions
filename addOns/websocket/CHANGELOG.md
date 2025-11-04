@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [34] - 2025-11-04
 ### Changed
 - Update alert reference to latest location.
 - Adjusted and internationalized the text in some exceptions/warning dialogs to use multiple lines and thus be more clear.
@@ -247,6 +247,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[34]: https://github.com/zaproxy/zap-extensions/releases/websocket-v34
 [33]: https://github.com/zaproxy/zap-extensions/releases/websocket-v33
 [32]: https://github.com/zaproxy/zap-extensions/releases/websocket-v32
 [31]: https://github.com/zaproxy/zap-extensions/releases/websocket-v31

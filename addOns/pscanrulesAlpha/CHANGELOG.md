@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [47] - 2025-11-04
 ### Added
 - SYSTEMIC tag to selected rules.
 
@@ -393,6 +393,7 @@ As well as Alert Refs where applicable (Issues 6119 & 7100).
 - Updated User Controlled Open Redirect, Cookie and Charset rules after testing with
 - http://www.testcases.org/watcher/ test pages.
 
+[47]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v47
 [46]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v46
 [45]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v45
 [44]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v44
