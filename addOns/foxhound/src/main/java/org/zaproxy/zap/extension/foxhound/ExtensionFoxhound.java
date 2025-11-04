@@ -4,7 +4,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
-import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
@@ -14,9 +13,9 @@ import org.zaproxy.zap.extension.foxhound.config.FoxhoundConstants;
 import org.zaproxy.zap.extension.foxhound.config.FoxhoundOptions;
 import org.zaproxy.zap.extension.foxhound.config.FoxhoundSeleniumProfile;
 import org.zaproxy.zap.extension.foxhound.taint.TaintInfoStore;
-import org.zaproxy.zap.extension.foxhound.taint.TaintStoreEventListener;
 import org.zaproxy.zap.extension.foxhound.ui.FoxhoundLaunchButton;
 import org.zaproxy.zap.extension.foxhound.ui.FoxhoundPanel;
+import org.zaproxy.zap.extension.foxhound.ui.FoxhoundScanStatus;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 
 import java.util.List;
@@ -38,7 +37,9 @@ public class ExtensionFoxhound extends ExtensionAdaptor {
 
     private FoxhoundOptions options;
     private FoxhoundSeleniumProfile seleniumProfile;
-    private FoxhoundLaunchButton launchButton = null;
+    private FoxhoundLaunchButton launchButton;
+    private FoxhoundPanel foxhoundPanel;
+    private FoxhoundScanStatus foxhoundScanStatus;
 
     public ExtensionFoxhound() { super(NAME); }
 
@@ -75,8 +76,13 @@ public class ExtensionFoxhound extends ExtensionAdaptor {
 
         // Load GUIs
         if (hasView()) {
-            extensionHook.getHookView().addMainToolBarComponent(this.getLaunchButton());
-            extensionHook.getHookView().addStatusPanel(new FoxhoundPanel(this));
+            extensionHook.getHookView().addMainToolBarComponent(getLaunchButton());
+            extensionHook.getHookView().addStatusPanel(getFoxhoundPanel());
+            getView()
+                    .getMainFrame()
+                    .getMainFooterPanel()
+                    .addFooterToolbarRightComponent(getFoxhoundScanStatus().getCountLabel());
+            getTaintStore().registerEventListener(getFoxhoundScanStatus());
         }
 
         LOGGER.info("Starting the Foxhound ZAP extension with {} sources and {} sinks.",
@@ -99,6 +105,13 @@ public class ExtensionFoxhound extends ExtensionAdaptor {
     @Override
     public void unload() {
         super.unload();
+
+        if (hasView()) {
+            getView()
+                    .getMainFrame()
+                    .getMainFooterPanel()
+                    .removeFooterToolbarRightComponent(getFoxhoundScanStatus().getCountLabel());
+        }
     }
 
     @Override
@@ -156,5 +169,19 @@ public class ExtensionFoxhound extends ExtensionAdaptor {
             alertHelper = new FoxhoundAlertHelper();
         }
         return alertHelper;
+    }
+
+    public FoxhoundPanel getFoxhoundPanel() {
+        if (foxhoundPanel == null) {
+            foxhoundPanel = new FoxhoundPanel(this);
+        }
+        return foxhoundPanel;
+    }
+
+    public FoxhoundScanStatus getFoxhoundScanStatus() {
+        if (foxhoundScanStatus == null) {
+            foxhoundScanStatus = new FoxhoundScanStatus();
+        }
+        return foxhoundScanStatus;
     }
 }
