@@ -791,19 +791,34 @@ public class AuthUtils {
             // Nothing to do.
         }
 
-        wd.findElements(By.tagName("button")).stream()
-                .filter(WebElement::isDisplayed)
-                .filter(WebElement::isEnabled)
-                .findFirst()
-                .ifPresent(
-                        e -> {
-                            diags.recordStep(
-                                    wd,
-                                    Constant.messages.getString(
-                                            "authhelper.auth.method.diags.steps.click"),
-                                    e);
-                            e.click();
-                        });
+        WebElement button;
+        List<WebElement> buttons =
+                wd.findElements(By.tagName("button")).stream()
+                        .filter(WebElement::isDisplayed)
+                        .filter(WebElement::isEnabled)
+                        .toList();
+        if (buttons.size() == 1) {
+            button = buttons.get(0);
+        } else {
+            button =
+                    buttons.stream()
+                            .filter(e -> elementContainsText(e, LOGIN_LABELS_P1))
+                            .findFirst()
+                            .orElse(null);
+        }
+
+        if (button != null) {
+            diags.recordStep(
+                    wd,
+                    Constant.messages.getString("authhelper.auth.method.diags.steps.click"),
+                    button);
+            button.click();
+        }
+    }
+
+    private static boolean elementContainsText(WebElement element, List<String> searchTexts) {
+        String txt = element.getText().toLowerCase(Locale.ROOT);
+        return searchTexts.stream().anyMatch(txt::contains);
     }
 
     public static void incStatsCounter(String url, String stat) {
