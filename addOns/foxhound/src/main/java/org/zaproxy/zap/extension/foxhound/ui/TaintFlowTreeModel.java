@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.treetable.TreeTableModel;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.foxhound.taint.TaintInfo;
+import org.zaproxy.zap.extension.foxhound.taint.TaintLocation;
 import org.zaproxy.zap.extension.foxhound.taint.TaintOperation;
 import org.zaproxy.zap.extension.foxhound.taint.TaintRange;
 import org.zaproxy.zap.extension.foxhound.taint.TaintStoreEventListener;
@@ -14,9 +15,8 @@ import javax.swing.tree.DefaultTreeModel;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 public class TaintFlowTreeModel extends DefaultTreeModel implements TreeTableModel, TaintStoreEventListener {
 
@@ -58,13 +58,19 @@ public class TaintFlowTreeModel extends DefaultTreeModel implements TreeTableMod
 
     static {
         COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.treecontrol", String.class)); // The tree control
-        COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.url", String.class));
+        COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.filename", String.class));
+        COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.function", String.class));
+        COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.line", int.class));
+        COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.pos", int.class));
+        COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.scriptLine", int.class));
         COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.flow", String.class));
+        COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.string", String.class));
+        COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.url", String.class));
         COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.from", int.class));
         COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.to", int.class));
         COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.source", String.class));
         COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.sink", String.class));
-        COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.string", String.class));
+
     };
 
     private static final int COLUMN_COUNT = COLUMN_INFO.size();
@@ -79,7 +85,16 @@ public class TaintFlowTreeModel extends DefaultTreeModel implements TreeTableMod
         DefaultMutableTreeNode node = new DefaultMutableTreeNode(info);
         this.getRoot().add(node);
         // Add the different parts of the taint info
-        for (TaintRange range: info.getTaintRanges()) {
+        String taintedString = info.getStr();
+        List<TaintRange> ranges = info.getTaintRanges();
+
+        int lastRangeEnd = 0;
+        for (TaintRange range: ranges) {
+            if (range.getBegin() > lastRangeEnd) {
+                DefaultMutableTreeNode stringNode = new DefaultMutableTreeNode(taintedString.substring(lastRangeEnd, range.getBegin()));
+                node.add(stringNode);
+            }
+
             DefaultMutableTreeNode rangeNode = new DefaultMutableTreeNode(range);
             node.add(rangeNode);
             for (TaintOperation op : range.getFlow()) {
@@ -87,6 +102,13 @@ public class TaintFlowTreeModel extends DefaultTreeModel implements TreeTableMod
                 rangeNode.add(flowNode);
             }
         }
+
+        // Add final untainted string fragment
+        if ((!ranges.isEmpty()) && (ranges.getLast().getEnd() < taintedString.length())) {
+            DefaultMutableTreeNode stringNode = new DefaultMutableTreeNode(taintedString.substring(ranges.getLast().getEnd()));
+            node.add(stringNode);
+        }
+
         this.fireTreeStructureChanged(this, null, null, null);
     }
 
@@ -118,14 +140,18 @@ public class TaintFlowTreeModel extends DefaultTreeModel implements TreeTableMod
         }
         Object obj = treeNode.getUserObject();
         String columnKey = COLUMN_INFO.get(column).getKey();
+        TaintLocation location = null;
         if (columnKey == null) {
             return "";
+        } else if (obj instanceof String s) {
+            // NOP but could add later
         } else if (obj instanceof TaintInfo taintInfo) {
+            location = taintInfo.getSink().getLocation();
             switch (columnKey) {
                 case "foxhound.panel.table.header.url":
                     return taintInfo.getLocation();
                 case "foxhound.panel.table.header.flow":
-                    return "";
+                    return taintInfo.getSourceSinkLabel();
                 case "foxhound.panel.table.header.from":
                     return "";
                 case "foxhound.panel.table.header.to":
@@ -138,11 +164,12 @@ public class TaintFlowTreeModel extends DefaultTreeModel implements TreeTableMod
                     return taintInfo.getStr();
             }
         } else if (obj instanceof TaintRange range) {
+            location = range.getSink().getLocation();
             switch (columnKey) {
                 case "foxhound.panel.table.header.url":
                     return "";
                 case "foxhound.panel.table.header.flow":
-                    return "";
+                    return range.getSourceSinkLabel();
                 case "foxhound.panel.table.header.from":
                     return range.getBegin();
                 case "foxhound.panel.table.header.to":
@@ -153,6 +180,29 @@ public class TaintFlowTreeModel extends DefaultTreeModel implements TreeTableMod
                     return range.getSink().getOperation();
                 case "foxhound.panel.table.header.string":
                     return range.getStr();
+            }
+        } else if (obj instanceof TaintOperation op) {
+            location = op.getLocation();
+            switch (columnKey) {
+                case "foxhound.panel.table.header.url":
+                    return "";
+                case "foxhound.panel.table.header.flow":
+                    return op.getOperation();
+            }
+        }
+
+        if (location != null) {
+            switch (columnKey) {
+                case "foxhound.panel.table.header.filename":
+                    return location.getFilename();
+                case "foxhound.panel.table.header.function":
+                    return location.getFunction();
+                case "foxhound.panel.table.header.line":
+                    return location.getLine();
+                case "foxhound.panel.table.header.pos":
+                    return location.getPos();
+                case "foxhound.panel.table.header.scriptLine":
+                    return location.getScriptLine();
             }
         }
 

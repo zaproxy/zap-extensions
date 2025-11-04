@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import static org.zaproxy.zap.extension.foxhound.taint.TaintInfo.getOperationNameList;
+
 public class TaintRange {
 
 
@@ -35,6 +37,10 @@ public class TaintRange {
 
     public String getStr() {
         return str;
+    }
+
+    public String getSourceSinkLabel() {
+        return getOperationNameList(sources) + "  \u2192 " + sink.getOperation();
     }
 
     public void setStr(String str) {

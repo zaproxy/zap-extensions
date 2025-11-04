@@ -1,7 +1,7 @@
 package org.zaproxy.zap.extension.foxhound.taint;
 
-import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -38,6 +38,14 @@ public class TaintInfo {
     public TaintInfo() {
         taintRanges = new ArrayList<>();
         sources = new HashSet<>();
+    }
+
+    public static String getOperationNameList(Collection<TaintOperation> ops) {
+        return String.join(", ", ops.stream().map(TaintOperation::getOperation).toList());
+    }
+
+    public String getSourceSinkLabel() {
+        return getOperationNameList(sources) + " \u2192 " + sink.getOperation();
     }
 
     public String getStr() {

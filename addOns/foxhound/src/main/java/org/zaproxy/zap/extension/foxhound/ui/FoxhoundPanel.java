@@ -58,6 +58,7 @@ public class FoxhoundPanel extends AbstractPanel {
             tree.setColumnControlVisible(true);
             tree.setTreeTableModel(getTreeModel());
             tree.setTreeCellRenderer(new TaintFlowCellRenderer());
+
             taintFlowScrollPane.setViewportView(tree);
         }
         return taintFlowScrollPane;
