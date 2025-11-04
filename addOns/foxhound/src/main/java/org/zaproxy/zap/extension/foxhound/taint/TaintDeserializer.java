@@ -52,6 +52,8 @@ public class TaintDeserializer {
             range.setBegin(nodeObject.getInt("begin"));
             range.setEnd(nodeObject.getInt("end"));
 
+            range.setStr(taint.getStr().substring(range.getBegin(), range.getEnd()));
+
             JSONArray flowArray = nodeObject.getJSONArray("flow");
             // The taint flow navigates backwards from the sink, so reverse here
             for (int j = 0, l = flowArray.size(); j < l; j++) {

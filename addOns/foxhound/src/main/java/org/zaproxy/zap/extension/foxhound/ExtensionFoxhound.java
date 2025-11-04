@@ -9,9 +9,12 @@ import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.zaproxy.addon.network.ExtensionNetwork;
+import org.zaproxy.zap.extension.foxhound.alerts.FoxhoundAlertHelper;
 import org.zaproxy.zap.extension.foxhound.config.FoxhoundConstants;
 import org.zaproxy.zap.extension.foxhound.config.FoxhoundOptions;
 import org.zaproxy.zap.extension.foxhound.config.FoxhoundSeleniumProfile;
+import org.zaproxy.zap.extension.foxhound.taint.TaintInfoStore;
+import org.zaproxy.zap.extension.foxhound.taint.TaintStoreEventListener;
 import org.zaproxy.zap.extension.foxhound.ui.FoxhoundLaunchButton;
 import org.zaproxy.zap.extension.foxhound.ui.FoxhoundPanel;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
@@ -30,6 +33,9 @@ public class ExtensionFoxhound extends ExtensionAdaptor {
             List.of(ExtensionNetwork.class, ExtensionSelenium.class);
 
     private FoxhoundExportServer exportServer;
+    private TaintInfoStore taintStore;
+    private FoxhoundAlertHelper alertHelper;
+
     private FoxhoundOptions options;
     private FoxhoundSeleniumProfile seleniumProfile;
     private FoxhoundLaunchButton launchButton = null;
@@ -39,7 +45,6 @@ public class ExtensionFoxhound extends ExtensionAdaptor {
     @Override
     public void init() {
         super.init();
-        exportServer = new FoxhoundExportServer();
     }
 
     @Override
@@ -50,6 +55,8 @@ public class ExtensionFoxhound extends ExtensionAdaptor {
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
+
+        getTaintStore().registerEventListener(getAlertHelper());
 
         // Load Options
         FoxhoundOptions options = getOptions();
@@ -64,7 +71,7 @@ public class ExtensionFoxhound extends ExtensionAdaptor {
         ExtensionNetwork extensionNetwork =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionNetwork.class);
 
-        exportServer.start(extensionNetwork, getOptions());
+        getExportServer().start(extensionNetwork, getOptions(), this.getTaintStore());
 
         // Load GUIs
         if (hasView()) {
@@ -86,7 +93,7 @@ public class ExtensionFoxhound extends ExtensionAdaptor {
     @Override
     public void stop() {
         LOGGER.info("Stopping the Foxhound ZAP extension");
-        exportServer.stop();
+        getExportServer().stop();
     }
 
     @Override
@@ -128,5 +135,26 @@ public class ExtensionFoxhound extends ExtensionAdaptor {
             );
         }
         return launchButton;
+    }
+
+    public FoxhoundExportServer getExportServer() {
+        if (exportServer == null) {
+            exportServer = new FoxhoundExportServer();
+        }
+        return exportServer;
+    }
+
+    public TaintInfoStore getTaintStore() {
+        if (taintStore == null) {
+            taintStore = new TaintInfoStore();
+        }
+        return taintStore;
+    }
+
+    public FoxhoundAlertHelper getAlertHelper() {
+        if (alertHelper == null) {
+            alertHelper = new FoxhoundAlertHelper();
+        }
+        return alertHelper;
     }
 }

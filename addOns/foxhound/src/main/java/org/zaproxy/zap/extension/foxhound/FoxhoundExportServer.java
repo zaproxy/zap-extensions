@@ -13,6 +13,7 @@ import org.zaproxy.zap.extension.foxhound.alerts.FoxhoundAlertHelper;
 import org.zaproxy.zap.extension.foxhound.config.FoxhoundOptions;
 import org.zaproxy.zap.extension.foxhound.taint.TaintDeserializer;
 import org.zaproxy.zap.extension.foxhound.taint.TaintInfo;
+import org.zaproxy.zap.extension.foxhound.taint.TaintInfoStore;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import java.io.IOException;
 
@@ -23,10 +24,16 @@ public class FoxhoundExportServer extends PluginPassiveScanner {
     private static int port = -1;
 
     private ExtensionNetwork extensionNetwork = null;
+    private TaintInfoStore store = null;
 
-    public void start(ExtensionNetwork network, FoxhoundOptions options) {
+    public FoxhoundExportServer() {
+
+    }
+
+    public void start(ExtensionNetwork network, FoxhoundOptions options, TaintInfoStore store) {
         LOGGER.info("start");
         this.extensionNetwork = network;
+        this.store = store;
         port = options.getServerPort();
         getServer();
     }
@@ -43,8 +50,9 @@ public class FoxhoundExportServer extends PluginPassiveScanner {
 
     private void analyseTaintFlow(String body) {
         TaintInfo taint = TaintDeserializer.deserializeTaintInfo(body);
-        FoxhoundAlertHelper alertHelper = new FoxhoundAlertHelper(taint);
-        alertHelper.raiseAlerts();
+        if (store != null) {
+            store.addTaintInfo(taint);
+        }
     }
 
     private Server getServer() {

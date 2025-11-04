@@ -1,5 +1,6 @@
 package org.zaproxy.zap.extension.foxhound.taint;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;

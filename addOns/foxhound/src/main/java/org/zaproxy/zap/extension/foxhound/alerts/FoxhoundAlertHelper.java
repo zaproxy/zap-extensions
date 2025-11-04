@@ -17,6 +17,7 @@ import org.zaproxy.zap.extension.foxhound.taint.TaintInfo;
 import org.zaproxy.zap.extension.foxhound.taint.TaintLocation;
 import org.zaproxy.zap.extension.foxhound.taint.TaintOperation;
 import org.zaproxy.zap.extension.foxhound.taint.TaintRange;
+import org.zaproxy.zap.extension.foxhound.taint.TaintStoreEventListener;
 import org.zaproxy.zap.model.SessionStructure;
 import org.zaproxy.zap.model.StructuralNode;
 
@@ -24,7 +25,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-public class FoxhoundAlertHelper {
+public class FoxhoundAlertHelper implements TaintStoreEventListener {
 
     private static final Logger LOGGER = LogManager.getLogger(FoxhoundAlertHelper.class);
 
@@ -35,14 +36,10 @@ public class FoxhoundAlertHelper {
             new FoxhoundCsrfCheck()
     );
 
-    private TaintInfo taint;
-    private HttpMessage msg;
     private final ExtensionAlert extensionAlert =
             Control.getSingleton().getExtensionLoader().getExtension(ExtensionAlert.class);
 
-    public FoxhoundAlertHelper(TaintInfo taint) {
-        this.taint = taint;
-        this.msg = findHttpMessage(getUrl());
+    public FoxhoundAlertHelper() {
     }
 
     private static HttpMessage findHttpMessage(String url) {
@@ -101,7 +98,7 @@ public class FoxhoundAlertHelper {
         return evidence;
     }
 
-    private String getOtherInfo() {
+    private String getOtherInfo(TaintInfo taint) {
         StringBuilder sb = new StringBuilder();
         if (taint != null) {
             sb.append(String.format(
@@ -147,16 +144,17 @@ public class FoxhoundAlertHelper {
         return sb.toString();
     }
 
-    protected String getUrl() {
+    protected String getUrl(TaintInfo taint) {
         return taint.getSink().getLocation().getFilename();
     }
 
-    public void raiseAlerts() {
-        String url = getUrl();
-        String evidence = getEvidenceFromBody(msg, getTaint().getSink());
-        String otherInfo = getOtherInfo();
+    public void raiseAlerts(TaintInfo taint) {
+        String url = getUrl(taint);
+        HttpMessage msg = findHttpMessage(url);
+        String evidence = getEvidenceFromBody(msg, taint.getSink());
+        String otherInfo = getOtherInfo(taint);
         if (LOGGER.isTraceEnabled()) {
-            LOGGER.trace("Raising alerts for taint flow: {}", getTaint());
+            LOGGER.trace("Raising alerts for taint flow: {}", taint);
         }
 
         if (msg != null) {
@@ -177,7 +175,7 @@ public class FoxhoundAlertHelper {
                             .setAttack("Attack")
                             .setOtherInfo(otherInfo)
                             .setEvidence(evidence)
-                            .setParam(getTaint().getSink().getOperation())  // "param" should be one of the URL parameters
+                            .setParam(taint.getSink().getOperation())  // "param" should be one of the URL parameters
                             .setMessage(msg)
                             .setHistoryRef(msg.getHistoryRef());
 
@@ -188,19 +186,9 @@ public class FoxhoundAlertHelper {
         }
     }
 
-    public TaintInfo getTaint() {
-        return taint;
-    }
 
-    public void setTaint(TaintInfo taint) {
-        this.taint = taint;
-    }
-
-    public HttpMessage getMsg() {
-        return msg;
-    }
-
-    public void setMsg(HttpMessage msg) {
-        this.msg = msg;
+    @Override
+    public void taintInfoAdded(TaintInfo taintInfo) {
+        raiseAlerts(taintInfo);
     }
 }

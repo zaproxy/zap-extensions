@@ -1,5 +1,6 @@
 package org.zaproxy.zap.extension.foxhound.taint;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -8,8 +9,10 @@ import java.util.Set;
 
 public class TaintRange {
 
+
     private int begin;
     private int end;
+    private String str;
 
     private List<TaintOperation> flow;
 
@@ -17,15 +20,25 @@ public class TaintRange {
     private TaintOperation sink;
     private Set<TaintOperation> sources;
 
-    public TaintRange(int begin, int end, List<TaintOperation> flow) {
+    public TaintRange(String str, int begin, int end, List<TaintOperation> flow) {
         this.begin = begin;
         this.end = end;
         this.flow = flow;
+        this.str = str;
     }
 
     public TaintRange() {
         this.flow = new ArrayList<>();
         this.sources = new HashSet<>();
+        this.str = "";
+    }
+
+    public String getStr() {
+        return str;
+    }
+
+    public void setStr(String str) {
+        this.str = str;
     }
 
     public int getBegin() {

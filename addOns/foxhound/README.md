@@ -17,6 +17,12 @@ Then navigate to the zap folder and execute:
 ```bash
 ./gradlew.bat run
 ```
+# Taint flow views
+
+https://www.comp.nus.edu.sg/~cs3283/ftp/Java/swingConnect/tech_topics/tables-trees/tables-trees.html
+https://www.comp.nus.edu.sg/~cs3283/ftp/Java/swingConnect/tech_topics/treemodel/treemodel.html
+
+Taint View Panel with a TableTree, need a view to update it
 
 
 ## Development
