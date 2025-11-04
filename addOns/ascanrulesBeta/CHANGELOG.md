@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [63] - 2025-11-04
 ### Added
 - SYSTEMIC tag to selected rules.
 
@@ -605,6 +605,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[63]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v63
 [62]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v62
 [61]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v61
 [60]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v60

@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.30.0] - 2025-11-04
 ### Added
 - Click on button when login form does not handle return in Browser Based Authentication.
 - Handle password fields by ID and name in Browser Based Authentication.
@@ -312,6 +312,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Support of authentication request identification and configuration.
 
+[0.30.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.30.0
 [0.29.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.29.0
 [0.28.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.28.0
 [0.27.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.27.0

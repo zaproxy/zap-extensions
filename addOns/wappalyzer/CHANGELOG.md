@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [21.49.0] - 2025-11-04
 ### Changed
 - Updated with enthec upstream icon and pattern changes.
 - Maintenance changes.
@@ -433,6 +433,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - First version
 
 
+[21.49.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.49.0
 [21.48.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.48.0
 [21.47.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.47.0
 [21.46.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.46.0
