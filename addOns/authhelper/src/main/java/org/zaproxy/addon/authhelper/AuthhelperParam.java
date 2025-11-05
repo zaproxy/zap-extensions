@@ -32,6 +32,7 @@ public class AuthhelperParam extends AbstractParam {
     private static final String AUTO_KEY = "authhelper";
 
     private static final String LOGIN_URL_KEY = AUTO_KEY + ".loginurl";
+    private static final String DOMAINS_KEY = AUTO_KEY + ".domains";
     private static final String USERNAME_KEY = AUTO_KEY + ".username";
     private static final String BROWSER_KEY = AUTO_KEY + ".browser";
     private static final String WAIT_KEY = AUTO_KEY + ".wait";
@@ -44,6 +45,7 @@ public class AuthhelperParam extends AbstractParam {
     private String loginUrl;
     private String username;
     private String browser;
+    private String domains;
     private int wait = DEFAULT_WAIT;
     private int stepDelay;
     private boolean recordDiagnostics;
@@ -56,6 +58,7 @@ public class AuthhelperParam extends AbstractParam {
     @Override
     protected void parse() {
         this.loginUrl = this.getString(LOGIN_URL_KEY, "");
+        this.domains = this.getString(DOMAINS_KEY, "");
         this.username = this.getString(USERNAME_KEY, null);
         this.browser = this.getString(BROWSER_KEY, DEFAULT_BROWSER.getId());
         this.wait = getInteger(WAIT_KEY, DEFAULT_WAIT);
@@ -83,6 +86,15 @@ public class AuthhelperParam extends AbstractParam {
     public void setLoginUrl(String loginUrl) {
         this.loginUrl = loginUrl;
         getConfig().setProperty(LOGIN_URL_KEY, loginUrl);
+    }
+
+    public String getDomains() {
+        return domains;
+    }
+
+    public void setDomains(String domains) {
+        this.domains = domains;
+        getConfig().setProperty(DOMAINS_KEY, domains);
     }
 
     public String getBrowser() {
