@@ -6,10 +6,6 @@ import net.sf.json.JSONObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
-
 public class TaintDeserializer {
     private static final Logger LOGGER = LogManager.getLogger(TaintDeserializer.class);
 
@@ -36,7 +32,7 @@ public class TaintDeserializer {
         JSONObject detailObject = jsonObject.getJSONObject("detail");
 
         taint.setStr(detailObject.getString("str"));
-        taint.setLocation(detailObject.getString("loc"));
+        taint.setLocationName(detailObject.getString("loc"));
         taint.setParentLocation(detailObject.getString("parentloc"));
         taint.setReferrer(detailObject.getString("referrer"));
         taint.setSinkName(detailObject.getString("sink"));

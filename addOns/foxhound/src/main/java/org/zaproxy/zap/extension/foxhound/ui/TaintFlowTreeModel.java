@@ -13,9 +13,7 @@ import org.zaproxy.zap.extension.foxhound.taint.TaintStoreEventListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import java.io.Serial;
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class TaintFlowTreeModel extends DefaultTreeModel implements TreeTableModel, TaintStoreEventListener {
@@ -148,6 +146,8 @@ public class TaintFlowTreeModel extends DefaultTreeModel implements TreeTableMod
         } else if (obj instanceof TaintInfo taintInfo) {
             location = taintInfo.getSink().getLocation();
             switch (columnKey) {
+                case "foxhound.panel.table.header.filename":
+                    return location.getFilename();
                 case "foxhound.panel.table.header.url":
                     return taintInfo.getLocation();
                 case "foxhound.panel.table.header.flow":

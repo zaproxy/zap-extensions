@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-public class TaintInfo {
+public class TaintInfo implements TaintLocationProvider {
 
     private String str;
     private String location;
@@ -56,11 +56,16 @@ public class TaintInfo {
         this.str = str;
     }
 
-    public String getLocation() {
+    @Override
+    public TaintLocation getLocation() {
+        return getSink().getLocation();
+    }
+
+    public String getLocationName() {
         return location;
     }
 
-    public void setLocation(String location) {
+    public void setLocationName(String location) {
         this.location = location;
     }
 

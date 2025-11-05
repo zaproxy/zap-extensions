@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class TaintOperation {
+public class TaintOperation implements TaintLocationProvider {
 
     private String operation;
     private boolean source;
@@ -56,6 +56,7 @@ public class TaintOperation {
         this.source = source;
     }
 
+    @Override
     public TaintLocation getLocation() {
         return location;
     }

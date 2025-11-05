@@ -1,6 +1,5 @@
 package org.zaproxy.zap.extension.foxhound.taint;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -9,7 +8,7 @@ import java.util.Set;
 
 import static org.zaproxy.zap.extension.foxhound.taint.TaintInfo.getOperationNameList;
 
-public class TaintRange {
+public class TaintRange implements TaintLocationProvider {
 
 
     private int begin;
@@ -103,5 +102,10 @@ public class TaintRange {
                 ", sink=" + sink +
                 ", sources=" + sources +
                 '}';
+    }
+
+    @Override
+    public TaintLocation getLocation() {
+        return getSink().getLocation();
     }
 }

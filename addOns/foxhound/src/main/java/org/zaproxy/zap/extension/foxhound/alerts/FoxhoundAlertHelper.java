@@ -1,28 +1,19 @@
 package org.zaproxy.zap.extension.foxhound.alerts;
 
-import org.apache.commons.httpclient.URI;
-import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
-import org.parosproxy.paros.db.DatabaseException;
-import org.parosproxy.paros.model.HistoryReference;
-import org.parosproxy.paros.model.Model;
-import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
+import org.zaproxy.zap.extension.foxhound.taint.HttpMessageFinder;
 import org.zaproxy.zap.extension.foxhound.taint.TaintInfo;
 import org.zaproxy.zap.extension.foxhound.taint.TaintLocation;
 import org.zaproxy.zap.extension.foxhound.taint.TaintOperation;
 import org.zaproxy.zap.extension.foxhound.taint.TaintRange;
 import org.zaproxy.zap.extension.foxhound.taint.TaintStoreEventListener;
-import org.zaproxy.zap.model.SessionStructure;
-import org.zaproxy.zap.model.StructuralNode;
 
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 public class FoxhoundAlertHelper implements TaintStoreEventListener {
@@ -42,36 +33,7 @@ public class FoxhoundAlertHelper implements TaintStoreEventListener {
     public FoxhoundAlertHelper() {
     }
 
-    private static HttpMessage findHttpMessage(String url) {
-        String[] methods = { "GET", "POST" };
-        Model model = Model.getSingleton();
 
-        HistoryReference ref = null;
-        HttpMessage msg = null;
-
-        try {
-            URI uri = new URI(url, true);
-            uri.setFragment("");
-
-            // Try multiple methods as we don't know it from the URL
-            for (String method : methods) {
-                StructuralNode node = SessionStructure.find(model, uri, "GET", null);
-
-                if (node != null) {
-                    ref = node.getHistoryReference();
-                    if (ref != null) {
-                        msg = ref.getHttpMessage();
-                        break;
-                    }
-                }
-            }
-
-        } catch (URIException | DatabaseException | HttpMalformedHeaderException e) {
-            LOGGER.warn("Exception getting HttpMessage for URL: {} ({})", url, e.getMessage());
-        }
-
-        return msg;
-    }
 
     private static String getEvidenceFromBody(HttpMessage msg, TaintOperation sink) {
         String evidence = null;
@@ -150,7 +112,7 @@ public class FoxhoundAlertHelper implements TaintStoreEventListener {
 
     public void raiseAlerts(TaintInfo taint) {
         String url = getUrl(taint);
-        HttpMessage msg = findHttpMessage(url);
+        HttpMessage msg = HttpMessageFinder.findHttpMessage(url);
         String evidence = getEvidenceFromBody(msg, taint.getSink());
         String otherInfo = getOtherInfo(taint);
         if (LOGGER.isTraceEnabled()) {
