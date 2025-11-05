@@ -20,13 +20,12 @@
 package org.zaproxy.addon.automation;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -547,29 +546,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
             return null;
         }
         try {
-            AutomationPlan plan = new AutomationPlan(this, f);
-            this.displayPlan(plan);
-            this.runPlan(plan, false);
-            AutomationProgress progress = plan.getProgress();
-
-            if (progress.hasErrors()) {
-                CommandLine.info(Constant.messages.getString("automation.out.title.fail"));
-                for (String str : progress.getErrors()) {
-                    CommandLine.info(Constant.messages.getString("automation.out.info", str));
-                }
-            }
-            if (progress.hasWarnings()) {
-                CommandLine.info(Constant.messages.getString("automation.out.title.warn"));
-                for (String str : progress.getWarnings()) {
-                    CommandLine.info(Constant.messages.getString("automation.out.info", str));
-                }
-            }
-
-            if (!progress.hasErrors() && !progress.hasWarnings()) {
-                CommandLine.info(Constant.messages.getString("automation.out.title.good"));
-            }
-            return progress;
-
+            return this.runAutomationPlan(new AutomationPlan(this, f));
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             CommandLine.error(
@@ -577,6 +554,30 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
                             "automation.error.unexpected", f.getAbsolutePath(), e.getMessage()));
             return null;
         }
+    }
+
+    private AutomationProgress runAutomationPlan(AutomationPlan plan) {
+        this.displayPlan(plan);
+        this.runPlan(plan, false);
+        AutomationProgress progress = plan.getProgress();
+
+        if (progress.hasErrors()) {
+            CommandLine.info(Constant.messages.getString("automation.out.title.fail"));
+            for (String str : progress.getErrors()) {
+                CommandLine.info(Constant.messages.getString("automation.out.info", str));
+            }
+        }
+        if (progress.hasWarnings()) {
+            CommandLine.info(Constant.messages.getString("automation.out.title.warn"));
+            for (String str : progress.getWarnings()) {
+                CommandLine.info(Constant.messages.getString("automation.out.info", str));
+            }
+        }
+
+        if (!progress.hasErrors() && !progress.hasWarnings()) {
+            CommandLine.info(Constant.messages.getString("automation.out.title.good"));
+        }
+        return progress;
     }
 
     public static String getResourceAsString(String name) {
@@ -678,9 +679,9 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
     }
 
     private void runPlanCommandLine(String source) {
+        AutomationProgress progress;
         URI uri = createUri(source);
         if (uri != null) {
-            Path file;
             try {
                 HttpMessage message = new HttpMessage(uri);
                 new HttpSender(HttpSender.MANUAL_REQUEST_INITIATOR).sendAndReceive(message);
@@ -693,16 +694,20 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
                     return;
                 }
 
-                file = Files.createTempFile("zap-af-plan-", ".yaml");
-                Files.write(file, message.getResponseBody().getBytes());
+                progress =
+                        runAutomationPlan(
+                                this.loadPlan(
+                                        new ByteArrayInputStream(
+                                                message.getResponseBody().getBytes())));
+
             } catch (IOException e) {
                 setExitStatus(1, "I/O error getting remote plan: " + e.getMessage(), true);
                 return;
             }
-            source = file.toAbsolutePath().toString();
+        } else {
+            progress = runAutomationFile(source);
         }
 
-        AutomationProgress progress = runAutomationFile(source);
         if (exitOverride != null) {
             setExitStatus(exitOverride, "set by user", false);
         } else if (progress == null || progress.hasErrors()) {
