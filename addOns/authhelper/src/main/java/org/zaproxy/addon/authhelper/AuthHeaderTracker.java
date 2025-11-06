@@ -65,7 +65,8 @@ public class AuthHeaderTracker implements HttpSenderListener {
 
     private static boolean isTrackedHeader(String header) {
         return StringUtils.containsIgnoreCase(header, "auth")
-                || StringUtils.containsIgnoreCase(header, "csrf");
+                || StringUtils.containsIgnoreCase(header, "csrf")
+                || StringUtils.containsIgnoreCase(header, "key");
     }
 
     @Override
