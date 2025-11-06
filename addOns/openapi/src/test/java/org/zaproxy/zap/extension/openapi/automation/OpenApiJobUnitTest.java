@@ -154,7 +154,7 @@ class OpenApiJobUnitTest extends TestUtils {
         Constant.messages = new I18N(Locale.ENGLISH);
         AutomationProgress progress = new AutomationProgress();
         AutomationEnvironment env = mock(AutomationEnvironment.class);
-        ContextWrapper contextWrapper = new ContextWrapper(mock(Context.class));
+        ContextWrapper contextWrapper = new ContextWrapper(mock(Context.class), env);
         given(env.getContextWrapper(any())).willReturn(contextWrapper);
         String yamlStr = "parameters:\n" + "  apiUrl: 'Invalid URL.'";
         Yaml yaml = new Yaml();
@@ -180,7 +180,7 @@ class OpenApiJobUnitTest extends TestUtils {
         AutomationPlan plan = new AutomationPlan();
         AutomationProgress progress = plan.getProgress();
         AutomationEnvironment env = mock(AutomationEnvironment.class);
-        ContextWrapper contextWrapper = new ContextWrapper(mock(Context.class));
+        ContextWrapper contextWrapper = new ContextWrapper(mock(Context.class), env);
         given(env.getContextWrapper(any())).willReturn(contextWrapper);
         String yamlStr = "parameters:\n" + "  apiFile: 'Invalid file path'";
         Yaml yaml = new Yaml();

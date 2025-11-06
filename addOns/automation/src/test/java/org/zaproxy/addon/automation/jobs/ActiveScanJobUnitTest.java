@@ -240,7 +240,8 @@ class ActiveScanJobUnitTest {
         // Given
         Constant.messages = new I18N(Locale.ENGLISH);
         Context context = mock(Context.class);
-        ContextWrapper contextWrapper = new ContextWrapper(context);
+        ContextWrapper contextWrapper =
+                new ContextWrapper(context, mock(AutomationEnvironment.class));
 
         given(extAScan.startScan(any(), any(), any())).willReturn(1);
 
@@ -298,8 +299,9 @@ class ActiveScanJobUnitTest {
         given(session.getNewContext("context2")).willReturn(context2);
         Target target1 = new Target(context1);
         Target target2 = new Target(context2);
-        ContextWrapper contextWrapper1 = new ContextWrapper(context1);
-        ContextWrapper contextWrapper2 = new ContextWrapper(context2);
+        AutomationEnvironment env = mock(AutomationEnvironment.class);
+        ContextWrapper contextWrapper1 = new ContextWrapper(context1, env);
+        ContextWrapper contextWrapper2 = new ContextWrapper(context2, env);
 
         given(extAScan.startScan(any(), any(), any())).willReturn(1);
 
@@ -309,7 +311,6 @@ class ActiveScanJobUnitTest {
 
         AutomationProgress progress = new AutomationProgress();
 
-        AutomationEnvironment env = mock(AutomationEnvironment.class);
         given(env.getContext("context1")).willReturn(context1);
         given(env.getContext("context2")).willReturn(context2);
         given(env.getContextWrapper("context1")).willReturn(contextWrapper1);
@@ -350,7 +351,8 @@ class ActiveScanJobUnitTest {
     void shouldExitIfActiveScanTakesTooLong() throws MalformedURLException {
         // Given
         Context context = mock(Context.class);
-        ContextWrapper contextWrapper = new ContextWrapper(context);
+        ContextWrapper contextWrapper =
+                new ContextWrapper(context, new AutomationEnvironment(new AutomationProgress()));
 
         given(extAScan.startScan(any(), any(), any())).willReturn(1);
 

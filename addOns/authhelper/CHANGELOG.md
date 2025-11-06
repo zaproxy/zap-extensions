@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Track authentication headers with key in the name.
+- No longer quote domains as these will not get counted as valid URLs in the Automation Framework.
 
 ## [0.31.0] - 2025-11-05
 ### Added
