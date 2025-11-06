@@ -15,32 +15,48 @@ WebSockets选项卡显示了来自WebSocket连接的所有消息。当ZAP处于�
 
 <h2>过滤器</h2>
 	<h3>通道选择器</h3>
-		您可以将消息的显示限制为一个特定的WebSocket通道或全部。
+	<p>
+		You can restrict the display of messages to one specific WebSocket
+		channel or all.
 		<br>
-		如果您选择一个特定的通道，则 <i>显示握手</i> 按钮(<img src="images/handshake.png" align="bottom" width="16" height="16" />）已启用。单击它时，相应的HTTP握手将显示在"请求/响应"选项卡中。
+		If you select a specific channel, then the <i>Show handshake</i> button
+		(<img src="images/handshake.png" align="bottom" width="16" height="16" />)
+		becomes enabled. When you click on it, the corresponding HTTP handshake is
+		shown in the Request/Response tab.
+	</p>
 
 	<h3>筛选器对话框</h3>
-		在筛选器对话框中（<img src="images/054.png" align="bottom" width="16" height="16" />) 您可以进一步控制显示的信息。
+	<p>
+		In the filter dialog (<img src="images/054.png" align="bottom" width="16" height="16" />)
+		you can further control which messages are displayed.
+	</p>
 
-<br><br>
 <h2>断点</h2>
-	您可以设置自定义断点用 <i>添加自定义断点</i>
-	按钮(<img src="images/break_add.png" align="bottom" width="16" height="16" />).
+<p>
+	You can set custom breakpoints using the <i>Add Custom Breakpoints</i>
+	button (<img src="images/break_add.png" align="bottom" width="16" height="16" />).
 	<br>
-	或者您可以使用 <i>右键单击菜单</i>.
+	Alternatively you can use the <i>Right click menu</i>.
+</p>
 
-<br><br>
 <h2>右键单击菜单</h2>
+<p>
 	右键单击WebSocket消息将会出现一个菜单，它允许您:
+</p>
 
 	<h3>从WebSocket中排除</h3>
-		WebSocket连接可以通过添加排除的URL到WebSocket选项卡中排除
-		<i>会话属性</i>。 点击这个项目，用预先填入的URL调出会话属性。
+	<p>
+		WebSocket connections can be excluded from the WebSockets tab by adding
+		an excluded URL to the
+		<i>Session Properties</i>. 点击这个项目，用预先填入的URL调出会话属性。
 		Excluding a WebSocket connection will not result in closing the
 		connection, but in forwarding them without further processing.
+	</p>
 
 	<h3>中断...</h3>
-		这将带来
-		<i>添加断点对话框</i> 它允许你设置一个自定义的中断点。
+	<p>
+		This will bring up the
+		<i>Add Break Point dialog</i> which allows you to set up a custom break point.
+	</p>
 </body>
 </html>

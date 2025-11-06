@@ -13,33 +13,40 @@ WebSocketタブ
 WebSocketタブには、すべてのWebSocket接続メッセージが表示されます。 ZAPがアクティブな間に、例えば <a href="http://browserquest.mozilla.org/">Mozilla's BrowserQuest</a> にアクセスして、WebSocketの動作を確認できます。
 </p>
 
-<h2>フィルタ</h2>
+<h2>フィルター</h2>
 	<h3>チャネルセレクター</h3>
+	<p>
 		表示するメッセージを、特定の単一WebSocketチャネルに限定したり、すべてのチャネルを表示したりできます。
 		<br>
-		特定のチャネルを選択した場合、 <i>ハンドシェイクを表示</i> ボタン (<img src="images/handshake.png" align="bottom" width="16" height="16" />) が有効になります。このボタンをクリックすると、対応するHTTPハンドシェイクが リクエスト/レスポンス タブに表示されます。
+特定のチャネルを選択すると、<i>ハンドシェイクを表示</i>ボタン (<img src="images/handshake.png" align="bottom" width="16" height="16" />) が有効になります。 このボタンをクリックすると、対応するHTTPハンドシェイクが リクエスト/レスポンス タブに表示されます。
+	</p>
 
-	<h3>フィルタ ダイアログ</h3>
-		フィルタダイアログ (<img src="images/054.png" align="bottom" width="16" height="16" />) では、さらに表示されるメッセージを制御できます。
+	<h3>フィルターダイアログ</h3>
+	<p>
+		フィルターダイアログ (<img src="images/054.png" align="bottom" width="16" height="16" />) では、表示するメッセージをさらに詳細に制御できます。
+	</p>
 
-<br><br>
 <h2>ブレークポイント</h2>
-	You can set custom breakpoints using the <i>カスタムブレークポイントを追加</i>
-	ボタン (<img src="images/break_add.png" align="bottom" width="16" height="16" />).
+<p>
+	<i>カスタムブレークポイントを追加</i>ボタン (<img src="images/break_add.png" align="bottom" width="16" height="16" />) を使用して、カスタムブレークポイントを設定することができます。
 	<br>
-	または、 <i>右クリックメニュー</i>を使用することもできます<i></i>.
+または、<i>右クリックメニュー</i>を利用することもできます.
+</p>
 
-<br><br>
-<h2>右クリック メニュー</h2>
+<h2>右クリックメニュー</i>を使用することもできます<i></h2>
+<p>
 	WebSocketメッセージを右クリックすると、以下の操作を可能にするメニューが表示されます：
+</p>
 
 	<h3>WebSocketから除外</h3>
-		WebSocket接続は
-		<i>セッションプロパティ</i>に除外URLを追加することで、WebSocketタブから除外できます。 この項目をクリックすると、URLが事前に入力された状態でセッションプロパティが表示されます。
+	<p>
+		WebSocket接続は除外対象のURLを<i>セッションプロパティ</i>に追加することで、WebSocketタブから除外できます。 この項目をクリックすると、URLが事前に入力された状態でセッションプロパティが表示されます。
 		WebSocket接続を除外してもその接続は閉じられず、それ以降の処理なしで転送されます。
+	</p>
 
 	<h3>ブレーク...</h3>
-		これにより、カスタムブレークポイントを設定できる
-		<i>ブレークポイントの追加ダイアログ</i> が表示されます。
+	<p>
+		これにより、<i>ブレークポイントの追加</i>ダイアログが表示され、カスタムブレークポイントを設定することができます。
+	</p>
 </body>
 </html>
