@@ -75,6 +75,12 @@ public class TaintDeserializer {
                 location.setFunction(locationObject.getString("function"));
                 location.setLine(locationObject.getInt("line"));
                 location.setPos(locationObject.getInt("pos"));
+                if (locationObject.has("next_line")) {
+                    location.setNextLine(locationObject.getInt("next_line"));
+                }
+                if (locationObject.has("next_pos")) {
+                    location.setNextPos(locationObject.getInt("next_pos"));
+                }
                 location.setScriptLine(locationObject.getInt("scriptline"));
                 location.setMd5(locationObject.getString("scripthash"));
                 operation.setLocation(location);

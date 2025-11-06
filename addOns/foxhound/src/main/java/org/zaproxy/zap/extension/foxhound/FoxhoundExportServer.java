@@ -70,6 +70,7 @@ public class FoxhoundExportServer extends PluginPassiveScanner {
                             msg.setResponseBody("OK");
                         } catch (Exception e) {
                             LOGGER.warn(e);
+                            LOGGER.warn(e.getStackTrace());
                         }
                     }
                 });

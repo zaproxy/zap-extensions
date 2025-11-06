@@ -8,6 +8,9 @@ public class TaintLocation {
     private String function;
     private int line;
     private int pos;
+    private int next_line;
+    private int next_pos;
+
     private int scriptLine;
     private String md5;
 
@@ -16,6 +19,8 @@ public class TaintLocation {
         this.function = function;
         this.line = line;
         this.pos = pos;
+        this.next_line = 0;
+        this.next_pos = 0;
         this.scriptLine = scriptLine;
         this.md5 = md5;
     }
@@ -56,6 +61,22 @@ public class TaintLocation {
         this.pos = pos;
     }
 
+    public int getNextLine() {
+        return next_line;
+    }
+
+    public void setNextLine(int next_line) {
+        this.next_line = next_line;
+    }
+
+    public int getNextPos() {
+        return next_pos;
+    }
+
+    public void setNextPos(int next_pos) {
+        this.next_pos = next_pos;
+    }
+
     public int getScriptLine() {
         return scriptLine;
     }
@@ -72,15 +93,16 @@ public class TaintLocation {
         this.md5 = md5;
     }
 
+
     @Override
     public boolean equals(Object object) {
-        if (!(object instanceof TaintLocation that)) return false;
-        return line == that.line && pos == that.pos && scriptLine == that.scriptLine && Objects.equals(filename, that.filename) && Objects.equals(function, that.function) && Objects.equals(md5, that.md5);
+        if (!(object instanceof TaintLocation location)) return false;
+        return line == location.line && pos == location.pos && next_line == location.next_line && next_pos == location.next_pos && scriptLine == location.scriptLine && Objects.equals(filename, location.filename) && Objects.equals(function, location.function) && Objects.equals(md5, location.md5);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(filename, function, line, pos, scriptLine, md5);
+        return Objects.hash(filename, function, line, pos, next_line, next_pos, scriptLine, md5);
     }
 
     @Override
@@ -90,6 +112,8 @@ public class TaintLocation {
                 ", function='" + function + '\'' +
                 ", line=" + line +
                 ", pos=" + pos +
+                ", next_line=" + next_line +
+                ", next_pos=" + next_pos +
                 ", scriptLine=" + scriptLine +
                 ", md5='" + md5 + '\'' +
                 '}';

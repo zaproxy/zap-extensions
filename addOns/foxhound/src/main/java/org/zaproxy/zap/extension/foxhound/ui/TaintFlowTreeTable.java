@@ -24,6 +24,8 @@ import javax.swing.tree.TreePath;
 import java.io.Serial;
 import java.io.Serializable;
 
+import static java.util.Collections.swap;
+
 public class TaintFlowTreeTable extends JXTreeTable {
 
     @Serial
@@ -103,12 +105,20 @@ public class TaintFlowTreeTable extends JXTreeTable {
                         HttpPanel responsePanel = View.getSingleton().getResponsePanel();
                         String body = msg.getResponseBody().toString();
                         int start = this.getStringIndexFromLineAndPosition(body, location.getLine(), location.getPos());
+                        int end = this.getStringIndexFromLineAndPosition(body, location.getNextLine(), location.getNextPos());
+                        if (start > end) {
+                            int temp;
+                            temp = start;
+                            start = end;
+                            end = temp;
+                        }
                         SearchMatch sm = new SearchMatch(
                                 msg,
                                 SearchMatch.Location.RESPONSE_BODY,
-                                start, start + 5
+                                start, end
                         );
-                        LOGGER.info("TreeSelectionEvent found URL: {} with message {} highlighting {} string {}", url, msg, sm, body.substring(start, start + 5));
+                        LOGGER.info("TaintLocation: {}:{} to {}:{}", location.getLine(), location.getPos(), location.getNextLine(), location.getNextPos());
+                        LOGGER.info("TreeSelectionEvent found URL: {} with message {} highlighting {} string {}", url, msg, sm, body.substring(start, end));
                         responsePanel.highlightBody(sm);
                         responsePanel.setTabFocus();
                     }
