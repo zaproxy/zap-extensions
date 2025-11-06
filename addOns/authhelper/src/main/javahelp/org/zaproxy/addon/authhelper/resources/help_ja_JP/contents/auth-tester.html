@@ -64,9 +64,19 @@
 <H3>リセットボタン</H3>
 リセットボタンを使用すると、テストタブ上のすべてのフィールドをリセットし、ステップタブ上のすべてのステップを無効化できます (再作成が面倒になる可能性があるため、ステップは削除されるのではなく無効化されるだけです)。
 
-<H2>結果パネル</H2>
+<H3>Results Panel</H3>
 
 結果パネルには、進捗と識別された要素が表示されます。 ZAPがこのサイトの認証を自動的に処理できるようにするには、すべての要素が識別される必要があります。
+
+<H2>Domains Tab</H2>
+
+The domains tab allows you to supply any domains that should be included in the context.
+<p>
+The domains should be one per line, and in the format: 'https://www.example.com/'.
+<p>
+If the Session Handling or Verification URL fail then check to see if your app is accessing any other domains.
+<p>
+ZAP will not consider requests to any domains that are outside of the Login URL domain or the domains listed here.
 
 <H2>診断タブ</H2>
 

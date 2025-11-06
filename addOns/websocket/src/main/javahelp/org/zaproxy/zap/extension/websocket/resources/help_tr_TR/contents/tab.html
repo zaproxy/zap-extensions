@@ -16,35 +16,47 @@ ZAP aktif durumdayken, WebSockets'i eylem halinde görmek için, örneğin şura
 
 <h2>Filtreler</h2>
 	<h3>Kanal Seçici</h3>
-		Bir belirli Websocket kanalına veya tümüne giden mesajların görüntülenmesini kısıtlayabilirsiniz.
+	<p>
+		You can restrict the display of messages to one specific WebSocket
+		channel or all.
 		<br>
-		Eğer özel bir kanalı seçersenız, o zaman <i>El sıkışma göster</i> butonu
+		If you select a specific channel, then the <i>Show handshake</i> button
 		(<img src="images/handshake.png" align="bottom" width="16" height="16" />)
-		aktif hale gelir. Tıkladığınızda, karşılık gelen HTTP el sıkışması
-		İstek/Yanıt sekmesinde gösterilir.
+		becomes enabled. When you click on it, the corresponding HTTP handshake is
+		shown in the Request/Response tab.
+	</p>
 
 	<h3>Filtre Diyaloğu</h3>
-		Filtre diyaloğunda (<img src="images/054.png" align="bottom" width="16" height="16" />)
-		hangi mesajların görüntüleneceğini ayrıca kontrol edebilirsiniz.
+	<p>
+		In the filter dialog (<img src="images/054.png" align="bottom" width="16" height="16" />)
+		you can further control which messages are displayed.
+	</p>
 
-<br><br>
 <h2>Kesme Noktaları</h2>
-	Özel kesme noktaları koyabilirsin kullanarak <i>Özel Kesme Noktası Ekle</i>
-	buton (<img src="images/break_add.png" align="bottom" width="16" height="16" />).
+<p>
+	You can set custom breakpoints using the <i>Add Custom Breakpoints</i>
+	button (<img src="images/break_add.png" align="bottom" width="16" height="16" />).
 	<br>
-	Alternatif olarak kullanabilirsiniz <i>Sağ tık menü</i>.
+	Alternatively you can use the <i>Right click menu</i>.
+</p>
 
-<br><br>
-<h2>Sağ tık menüsü</h2>
+<h2>Sağ tık menü</h2>
+<p>
 	Bir WebSocket menüsüne sağ tıklama şunu yapmanızı sağlayacak bir menü getirecektir:
+</p>
 
 	<h3>WebSocket'dan hariç tut</h3>
-		WebSocket bağlantıları, WebSockets sekmesinden çıkartılabilir, dışlanan bir URL ekleyerek
-		<i>Oturum Özellikleri</i>. Bu öğeye tıklamak, önceden girilen URL ile oturum özelliklerini getirir.
+	<p>
+		WebSocket connections can be excluded from the WebSockets tab by adding
+		an excluded URL to the
+		<i>Session Properties</i>. Bu öğeye tıklamak, önceden girilen URL ile oturum özelliklerini getirir.
 		Bir WebSocket bağlantısını hariç tutmak bağlantının kapanmasıyla sonuçlanmayacaktır fakat onları daha fazla işlem yapmadan iletmeyle sonuçlanacaktır.
+	</p>
 
 	<h3>Kırılma...</h3>
-		Bu şunu öne çıkaracak
-		<i>Kırılma Noktası Ekle penceresi</i> özel bir kırılma noktası koymanıza izin verir.
+	<p>
+		This will bring up the
+		<i>Add Break Point dialog</i> which allows you to set up a custom break point.
+	</p>
 </body>
 </html>
