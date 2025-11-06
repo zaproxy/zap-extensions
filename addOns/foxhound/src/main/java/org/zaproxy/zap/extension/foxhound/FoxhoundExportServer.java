@@ -16,6 +16,8 @@ import org.zaproxy.zap.extension.foxhound.taint.TaintInfo;
 import org.zaproxy.zap.extension.foxhound.taint.TaintInfoStore;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 public class FoxhoundExportServer extends PluginPassiveScanner {
     private static final Logger LOGGER = LogManager.getLogger(FoxhoundExportServer.class);
@@ -61,16 +63,22 @@ public class FoxhoundExportServer extends PluginPassiveScanner {
                 new HttpMessageHandler() {
                     @Override
                     public void handleMessage(HttpMessageHandlerContext ctx, HttpMessage msg) {
+                        msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "text/html");
                         try {
                             String body = msg.getRequestBody().toString();
                             analyseTaintFlow(body);
 
-                            msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "text/html");
                             msg.getResponseHeader().setStatusCode(200);
                             msg.setResponseBody("OK");
                         } catch (Exception e) {
                             LOGGER.warn(e);
-                            LOGGER.warn(e.getStackTrace());
+                            StringWriter sw = new StringWriter();
+                            PrintWriter pw = new PrintWriter(sw);
+                            e.printStackTrace(pw);
+                            String sStackTrace = sw.toString(); // stack trace as a string
+                            LOGGER.warn(sStackTrace);
+                            msg.getResponseHeader().setStatusCode(500);
+                            msg.setResponseBody("ERROR");
                         }
                     }
                 });

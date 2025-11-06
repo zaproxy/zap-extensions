@@ -8,13 +8,9 @@ import java.util.Set;
 
 import static org.zaproxy.zap.extension.foxhound.taint.TaintInfo.getOperationNameList;
 
-public class TaintRange implements TaintLocationProvider {
+public class TaintRange extends Range implements TaintLocationProvider {
 
-
-    private int begin;
-    private int end;
     private String str;
-
     private List<TaintOperation> flow;
 
     // Derived Fields
@@ -22,8 +18,7 @@ public class TaintRange implements TaintLocationProvider {
     private Set<TaintOperation> sources;
 
     public TaintRange(String str, int begin, int end, List<TaintOperation> flow) {
-        this.begin = begin;
-        this.end = end;
+        super(begin, end);
         this.flow = flow;
         this.str = str;
     }
@@ -44,22 +39,6 @@ public class TaintRange implements TaintLocationProvider {
 
     public void setStr(String str) {
         this.str = str;
-    }
-
-    public int getBegin() {
-        return begin;
-    }
-
-    public void setBegin(int begin) {
-        this.begin = begin;
-    }
-
-    public int getEnd() {
-        return end;
-    }
-
-    public void setEnd(int end) {
-        this.end = end;
     }
 
     public List<TaintOperation> getFlow() {

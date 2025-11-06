@@ -5,6 +5,7 @@ import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.zaproxy.zap.extension.foxhound.utils.StringUtils;
 
 public class TaintDeserializer {
     private static final Logger LOGGER = LogManager.getLogger(TaintDeserializer.class);
@@ -49,7 +50,8 @@ public class TaintDeserializer {
             range.setEnd(nodeObject.getInt("end"));
 
             try {
-                range.setStr(taint.getStr().substring(range.getBegin(), range.getEnd()));
+                range.setStr(
+                        StringUtils.limitedSubstring(taint.getStr(), range.getBegin(), range.getEnd()));
             } catch (StringIndexOutOfBoundsException e) {
                 LOGGER.warn(e.toString());
             }

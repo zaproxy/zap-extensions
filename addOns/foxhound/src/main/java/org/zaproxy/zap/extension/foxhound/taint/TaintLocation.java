@@ -93,6 +93,34 @@ public class TaintLocation {
         this.md5 = md5;
     }
 
+    private static int ordinalIndexOf(String str, String substr, int n) {
+        int pos = str.indexOf(substr);
+        while (--n > 0 && pos != -1)
+            pos = str.indexOf(substr, pos + 1); // pos is one-origin number
+        return pos;
+    }
+
+    private static int getStringIndexFromLineAndPosition(String s, int line, int pos) {
+        return ordinalIndexOf(s, "\n", line - 1) + pos;
+    }
+
+    // Computes the index range
+    public Range getCodeSpan(String s) {
+        int start = getStringIndexFromLineAndPosition(s, getLine(), getPos());
+        int end = getStringIndexFromLineAndPosition(s, getNextLine(), getNextPos());
+        if (start > end) {
+            int temp;
+            temp = start;
+            start = end;
+            end = temp;
+        }
+        return new Range(start, end);
+    }
+
+    public String getCodeForEvidence(String s) {
+        Range range = getCodeSpan(s);
+        return s.substring(range.getBegin(), range.getEnd());
+    }
 
     @Override
     public boolean equals(Object object) {
@@ -105,17 +133,12 @@ public class TaintLocation {
         return Objects.hash(filename, function, line, pos, next_line, next_pos, scriptLine, md5);
     }
 
+    public String getViewSource() {
+        return "view-source:" + filename + "#line" + line;
+    }
+
     @Override
     public String toString() {
-        return "TaintLocation{" +
-                "filename='" + filename + '\'' +
-                ", function='" + function + '\'' +
-                ", line=" + line +
-                ", pos=" + pos +
-                ", next_line=" + next_line +
-                ", next_pos=" + next_pos +
-                ", scriptLine=" + scriptLine +
-                ", md5='" + md5 + '\'' +
-                '}';
+        return filename + ':' + line + ':' + pos;
     }
 }

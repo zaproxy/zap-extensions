@@ -9,6 +9,7 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.foxhound.taint.HttpMessageFinder;
+import org.zaproxy.zap.extension.foxhound.taint.Range;
 import org.zaproxy.zap.extension.foxhound.taint.TaintLocation;
 import org.zaproxy.zap.extension.foxhound.taint.TaintLocationProvider;
 import org.zaproxy.zap.extension.httppanel.HttpPanel;
@@ -69,16 +70,6 @@ public class TaintFlowTreeTable extends JXTreeTable {
             enabled = true;
         }
 
-        public static int ordinalIndexOf(String str, String substr, int n) {
-            int pos = str.indexOf(substr);
-            while (--n > 0 && pos != -1)
-                pos = str.indexOf(substr, pos + 1);
-            return pos;
-        }
-
-        private int getStringIndexFromLineAndPosition(String s, int line, int pos) {
-            return ordinalIndexOf(s, "\n", line - 1) + pos;
-        }
 
         @Override
         public void valueChanged(final TreeSelectionEvent evt) {
@@ -104,21 +95,14 @@ public class TaintFlowTreeTable extends JXTreeTable {
                         View.getSingleton().displayMessage(msg);
                         HttpPanel responsePanel = View.getSingleton().getResponsePanel();
                         String body = msg.getResponseBody().toString();
-                        int start = this.getStringIndexFromLineAndPosition(body, location.getLine(), location.getPos());
-                        int end = this.getStringIndexFromLineAndPosition(body, location.getNextLine(), location.getNextPos());
-                        if (start > end) {
-                            int temp;
-                            temp = start;
-                            start = end;
-                            end = temp;
-                        }
+                        Range sourceRange = location.getCodeSpan(body);
                         SearchMatch sm = new SearchMatch(
                                 msg,
                                 SearchMatch.Location.RESPONSE_BODY,
-                                start, end
+                                sourceRange.getBegin(), sourceRange.getEnd()
                         );
                         LOGGER.info("TaintLocation: {}:{} to {}:{}", location.getLine(), location.getPos(), location.getNextLine(), location.getNextPos());
-                        LOGGER.info("TreeSelectionEvent found URL: {} with message {} highlighting {} string {}", url, msg, sm, body.substring(start, end));
+                        LOGGER.info("TreeSelectionEvent found URL: {} with message {} highlighting {} string {}", url, msg, sm, body.substring(sourceRange.getBegin(), sourceRange.getEnd()));
                         responsePanel.highlightBody(sm);
                         responsePanel.setTabFocus();
                     }

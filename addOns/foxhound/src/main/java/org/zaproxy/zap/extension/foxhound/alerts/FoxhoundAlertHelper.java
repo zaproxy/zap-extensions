@@ -13,6 +13,7 @@ import org.zaproxy.zap.extension.foxhound.taint.TaintLocation;
 import org.zaproxy.zap.extension.foxhound.taint.TaintOperation;
 import org.zaproxy.zap.extension.foxhound.taint.TaintRange;
 import org.zaproxy.zap.extension.foxhound.taint.TaintStoreEventListener;
+import org.zaproxy.zap.extension.foxhound.utils.StringUtils;
 
 import java.util.Set;
 
@@ -31,33 +32,6 @@ public class FoxhoundAlertHelper implements TaintStoreEventListener {
             Control.getSingleton().getExtensionLoader().getExtension(ExtensionAlert.class);
 
     public FoxhoundAlertHelper() {
-    }
-
-
-
-    private static String getEvidenceFromBody(HttpMessage msg, TaintOperation sink) {
-        String evidence = null;
-        if (sink != null) {
-            if (msg != null) {
-                TaintLocation sinkLocation = sink.getLocation();
-                String sinkBody = msg.getResponseBody().toString();
-                String[] lines = sinkBody.split("\\r?\\n");
-
-                // Line from TaintLocation starts at 1, so adjust for array access
-                int line = sinkLocation.getLine() - 1;
-                if (line >= 0 && line < lines.length) {
-                    // Get the rest of the statement, either to the end of the line or to the next semicolon
-                    evidence = lines[line].substring(sinkLocation.getPos() - 1);
-                    String[] lineParts = evidence.split(";");
-                    if (lineParts.length > 0) {
-                        evidence = lineParts[0];
-                    }
-                }
-            } else {
-                evidence = sink.getOperation();
-            }
-        }
-        return evidence;
     }
 
     private String getOtherInfo(TaintInfo taint) {
@@ -92,7 +66,7 @@ public class FoxhoundAlertHelper implements TaintStoreEventListener {
                                 range.getEnd()
                         ));
                 sb.append(" \"");
-                sb.append(taint.getStr(), range.getBegin(), range.getEnd());
+                sb.append(range.getStr());
                 sb.append("\" ");
                 sb.append(String.format(
                                 Constant.messages.getString("foxhound.alert.sinkToSource"),
@@ -113,13 +87,13 @@ public class FoxhoundAlertHelper implements TaintStoreEventListener {
     public void raiseAlerts(TaintInfo taint) {
         String url = getUrl(taint);
         HttpMessage msg = HttpMessageFinder.findHttpMessage(url);
-        String evidence = getEvidenceFromBody(msg, taint.getSink());
-        String otherInfo = getOtherInfo(taint);
         if (LOGGER.isTraceEnabled()) {
             LOGGER.trace("Raising alerts for taint flow: {}", taint);
         }
 
         if (msg != null) {
+            String evidence = taint.getSink().getLocation().getCodeForEvidence(msg.getResponseBody().toString());
+            String otherInfo = getOtherInfo(taint);
             for (FoxhoundVulnerabilityCheck check : CHECKS) {
                 if (check.shouldAlert(taint)) {
                     Alert.Builder alertBuilder = Alert.builder()

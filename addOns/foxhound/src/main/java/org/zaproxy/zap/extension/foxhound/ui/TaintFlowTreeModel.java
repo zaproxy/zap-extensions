@@ -9,6 +9,7 @@ import org.zaproxy.zap.extension.foxhound.taint.TaintLocation;
 import org.zaproxy.zap.extension.foxhound.taint.TaintOperation;
 import org.zaproxy.zap.extension.foxhound.taint.TaintRange;
 import org.zaproxy.zap.extension.foxhound.taint.TaintStoreEventListener;
+import org.zaproxy.zap.extension.foxhound.utils.StringUtils;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -68,7 +69,6 @@ public class TaintFlowTreeModel extends DefaultTreeModel implements TreeTableMod
         COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.to", int.class));
         COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.source", String.class));
         COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.sink", String.class));
-
     };
 
     private static final int COLUMN_COUNT = COLUMN_INFO.size();
@@ -89,7 +89,8 @@ public class TaintFlowTreeModel extends DefaultTreeModel implements TreeTableMod
         int lastRangeEnd = 0;
         for (TaintRange range: ranges) {
             if (range.getBegin() > lastRangeEnd) {
-                DefaultMutableTreeNode stringNode = new DefaultMutableTreeNode(taintedString.substring(lastRangeEnd, range.getBegin()));
+                DefaultMutableTreeNode stringNode = new DefaultMutableTreeNode(
+                        StringUtils.limitedSubstring(taintedString, lastRangeEnd, range.getBegin()));
                 node.add(stringNode);
             }
 
@@ -99,11 +100,13 @@ public class TaintFlowTreeModel extends DefaultTreeModel implements TreeTableMod
                 DefaultMutableTreeNode flowNode = new DefaultMutableTreeNode(op);
                 rangeNode.add(flowNode);
             }
+            lastRangeEnd = range.getEnd();
         }
 
         // Add final untainted string fragment
         if ((!ranges.isEmpty()) && (ranges.getLast().getEnd() < taintedString.length())) {
-            DefaultMutableTreeNode stringNode = new DefaultMutableTreeNode(taintedString.substring(ranges.getLast().getEnd()));
+            DefaultMutableTreeNode stringNode = new DefaultMutableTreeNode(
+                    StringUtils.limitedSubstring(taintedString, ranges.getLast().getEnd(), taintedString.length()));
             node.add(stringNode);
         }
 
