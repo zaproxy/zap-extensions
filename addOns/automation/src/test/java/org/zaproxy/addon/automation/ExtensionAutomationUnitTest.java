@@ -23,6 +23,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.lenient;
@@ -30,6 +31,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.withSettings;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
@@ -66,6 +68,7 @@ import org.zaproxy.addon.automation.jobs.DelayJob;
 import org.zaproxy.addon.automation.jobs.ExitStatusJob;
 import org.zaproxy.addon.automation.jobs.ParamsJob;
 import org.zaproxy.addon.automation.jobs.RequestorJob;
+import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.stats.InMemoryStats;
 import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.I18N;
@@ -705,7 +708,7 @@ class ExtensionAutomationUnitTest extends TestUtils {
         CommandLineArgument[] args = extAuto.getCommandLineArguments();
 
         // Then
-        assertThat(args.length, is(equalTo(4)));
+        assertThat(args.length, is(equalTo(5)));
         assertThat(args[0].getName(), is(equalTo("-autorun")));
         assertThat(args[0].getNumOfArguments(), is(equalTo(1)));
         assertThat(args[1].getName(), is(equalTo("-autogenmin")));
@@ -714,6 +717,8 @@ class ExtensionAutomationUnitTest extends TestUtils {
         assertThat(args[2].getNumOfArguments(), is(equalTo(1)));
         assertThat(args[3].getName(), is(equalTo("-autogenconf")));
         assertThat(args[3].getNumOfArguments(), is(equalTo(1)));
+        assertThat(args[4].getName(), is(equalTo("-autocheck")));
+        assertThat(args[4].getNumOfArguments(), is(equalTo(1)));
     }
 
     @Test
@@ -978,7 +983,7 @@ class ExtensionAutomationUnitTest extends TestUtils {
 
         // When
         extAuto.registerAutomationJob(job);
-        AutomationPlan plan = new AutomationPlan(extAuto, filePath.toFile());
+        AutomationPlan plan = new AutomationPlan(extAuto, filePath.toFile(), false);
         extAuto.runPlanAsync(plan);
         Thread.sleep(100);
         int count1 = extAuto.getRunningPlans().size();
@@ -1023,7 +1028,7 @@ class ExtensionAutomationUnitTest extends TestUtils {
         ExtensionAutomation extAuto = new ExtensionAutomation();
         Path filePath = getResourcePath("resources/testPlan-withTests.yaml");
         extAuto.registerAutomationJob(job);
-        AutomationPlan plan = new AutomationPlan(extAuto, filePath.toFile());
+        AutomationPlan plan = new AutomationPlan(extAuto, filePath.toFile(), false);
 
         // When
         extAuto.runPlanAsync(plan);
@@ -1074,7 +1079,7 @@ class ExtensionAutomationUnitTest extends TestUtils {
         extAuto.registerAutomationJob(job3);
         File f = new File(filePath.toAbsolutePath().toString());
 
-        AutomationPlan plan = new AutomationPlan(extAuto, f);
+        AutomationPlan plan = new AutomationPlan(extAuto, f, false);
 
         // When
         extAuto.runPlan(plan, false);
@@ -1218,6 +1223,75 @@ class ExtensionAutomationUnitTest extends TestUtils {
         assertThat(list.get(2).getProperty("e"), is(equalTo("cd2e-value")));
         assertThat(list.get(3).getProperty("e"), is(equalTo("cd3e-value")));
         assertThat(list.get(4).getProperty("e"), is(equalTo("cd4e-value")));
+    }
+
+    @Nested
+    class CmdLineCheckTests {
+
+        @BeforeAll
+        static void init() throws Exception {
+            Field zapProcessType = ZAP.class.getDeclaredField("processType");
+            zapProcessType.setAccessible(true);
+            zapProcessType.set(null, ZAP.ProcessType.cmdline);
+        }
+
+        @Test
+        void shouldSetErrorWhenMissingFile() throws Exception {
+            // Given
+            ExtensionAutomation extAuto = new ExtensionAutomation();
+
+            // When
+            AutomationProgress progress = extAuto.checkPlanCommandLine("missingfile.yaml");
+
+            // Then
+            assertThat(Control.getSingleton().getExitStatus(), is(equalTo(1)));
+            assertThat(progress, is(nullValue()));
+        }
+
+        @Test
+        void shouldSetErrorWhenInvalidBadUrl() throws Exception {
+            // Given
+            ExtensionAutomation extAuto = new ExtensionAutomation();
+
+            // When
+            AutomationProgress progress =
+                    extAuto.checkPlanCommandLine("https://localhost:1234/missing.yaml");
+
+            // Then
+            assertThat(Control.getSingleton().getExitStatus(), is(equalTo(1)));
+            assertThat(progress, is(nullValue()));
+        }
+
+        @Test
+        void shouldSetErrorWhenBadYamlFile() throws Exception {
+            // Given
+            ExtensionAutomation extAuto = new ExtensionAutomation();
+            Path filePath = getResourcePath("resources/testplan-notyaml.yaml");
+
+            // When
+            AutomationProgress progress =
+                    extAuto.checkPlanCommandLine(filePath.toAbsolutePath().toString());
+
+            // Then
+            assertThat(Control.getSingleton().getExitStatus(), is(equalTo(1)));
+            assertThat(progress, is(nullValue()));
+        }
+
+        @Test
+        void shouldSetError() throws Exception {
+            // Given
+            ExtensionAutomation extAuto = new ExtensionAutomation();
+            Path filePath = getResourcePath("resources/testplan-nourl.yaml");
+
+            // When
+            AutomationProgress progress =
+                    extAuto.checkPlanCommandLine(filePath.toAbsolutePath().toString());
+
+            // Then
+            assertThat(Control.getSingleton().getExitStatus(), is(equalTo(1)));
+            assertThat(progress, notNullValue());
+            assertThat(progress.getErrors(), contains("!automation.error.context.nourl!"));
+        }
     }
 
     // Methods are accessed via reflection

@@ -1,0 +1,10 @@
+env:
+  contexts:
+    - name: example
+      urls: 
+  parameters:
+    failOnError: false                  
+    failOnWarning: false               
+    progressToStdout: false            
+
+jobs:

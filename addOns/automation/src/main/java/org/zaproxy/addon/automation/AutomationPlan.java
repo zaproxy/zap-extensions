@@ -81,29 +81,30 @@ public class AutomationPlan {
         env.setPlan(this);
     }
 
-    public AutomationPlan(ExtensionAutomation ext, File file) throws IOException {
+    public AutomationPlan(ExtensionAutomation ext, File file, boolean quiet) throws IOException {
         super();
         this.id = nextId++;
         this.file = file;
 
         try (FileInputStream is = new FileInputStream(file)) {
-            readPlan(ext, is);
+            readPlan(ext, is, quiet);
         }
     }
 
-    public AutomationPlan(ExtensionAutomation ext, InputStream is) {
+    public AutomationPlan(ExtensionAutomation ext, InputStream is, boolean quiet) {
         this.id = nextId++;
 
-        readPlan(ext, is);
+        readPlan(ext, is, quiet);
     }
 
-    private void readPlan(ExtensionAutomation ext, InputStream is) {
+    private void readPlan(ExtensionAutomation ext, InputStream is, boolean quiet) {
         Yaml yaml = new Yaml();
         LinkedHashMap<?, ?> data = yaml.load(is);
         LinkedHashMap<?, ?> envData = (LinkedHashMap<?, ?>) data.get("env");
         ArrayList<?> jobsData = (ArrayList<?>) data.get("jobs");
 
         progress = new AutomationProgress();
+        progress.setQuietMode(quiet);
         env = new AutomationEnvironment(progress);
         env.setPlan(this);
         env.readData(envData);

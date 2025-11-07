@@ -39,6 +39,7 @@ public class AutomationProgress {
     private int errorMark;
     private int warningMark;
     private int infoMark;
+    private boolean quietMode;
 
     public AutomationProgress() {}
 
@@ -69,7 +70,7 @@ public class AutomationProgress {
     private void infoImpl(String info, boolean toStdout) {
         this.infos.add(info);
         this.allMessages.add(info);
-        if (toStdout && outputToStdout) {
+        if (toStdout && outputToStdout && !quietMode) {
             CommandLine.info(info);
         }
         AutomationEventPublisher.publishMessageEvent(
@@ -110,6 +111,11 @@ public class AutomationProgress {
 
     public void setOutputToStdout(boolean outputToStdout) {
         this.outputToStdout = outputToStdout;
+    }
+
+    /** Sets quiet mode - this overrides any setting in the plan. */
+    public void setQuietMode(boolean quietMode) {
+        this.quietMode = quietMode;
     }
 
     public void addJobResultData(JobResultData data) {
