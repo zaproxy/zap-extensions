@@ -14,6 +14,7 @@ public class FoxhoundEventPublisher implements EventPublisher {
 
     public static final String TAINT_INFO_CREATED = "taintinfo.created";
     public static final String TAINT_INFO_UPDATED = "taintinfo.updated";
+    public static final String TAINT_INFO_CLEARED   = "taintinfo.cleared";
 
     public static final String JOB_ID = "jobId";
 
@@ -24,7 +25,8 @@ public class FoxhoundEventPublisher implements EventPublisher {
                     .registerPublisher(
                             publisher,
                             TAINT_INFO_CREATED,
-                            TAINT_INFO_UPDATED);
+                            TAINT_INFO_UPDATED,
+                            TAINT_INFO_CLEARED);
         }
         return publisher;
     }
@@ -43,6 +45,11 @@ public class FoxhoundEventPublisher implements EventPublisher {
 
         ZAP.getEventBus()
                 .publishSyncEvent(getPublisher(), event);
+    }
+
+    public static void  publishClearEvent() {
+        ZAP.getEventBus()
+                .publishSyncEvent(getPublisher(), new Event(getPublisher(), TAINT_INFO_CLEARED, null));
     }
 
     @Override

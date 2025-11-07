@@ -15,11 +15,13 @@ import org.zaproxy.zap.utils.ThreadUtils;
 
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.io.Serial;
 import java.io.Serializable;
 
-public class TaintFlowTreeTable extends JXTreeTable {
+public class TaintFlowTreeTable extends JXTreeTable  {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -34,6 +36,8 @@ public class TaintFlowTreeTable extends JXTreeTable {
         setColumnControlVisible(true);
         setTreeTableModel(getTreeModel());
         setTreeCellRenderer(new TaintFlowCellRenderer());
+        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(getModel());
+        setRowSorter(sorter);
 
         this.defaultSelectionListener = new DisplayMessageOnSelectionValueChange();
         this.getTreeSelectionModel().addTreeSelectionListener(defaultSelectionListener);

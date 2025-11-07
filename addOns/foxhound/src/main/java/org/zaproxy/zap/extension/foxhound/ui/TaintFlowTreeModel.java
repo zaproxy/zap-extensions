@@ -2,6 +2,7 @@ package org.zaproxy.zap.extension.foxhound.ui;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jdesktop.swingx.treetable.AbstractTreeTableModel;
 import org.jdesktop.swingx.treetable.TreeTableModel;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.foxhound.taint.TaintInfo;
@@ -61,6 +62,8 @@ public class TaintFlowTreeModel extends DefaultTreeModel implements TreeTableMod
     private static final List<ColumnInfo> COLUMN_INFO = new ArrayList<>();
 
     static {
+        COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.id", int.class));
+        COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.filename", String.class));
         COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.treecontrol", String.class)); // The tree control
         COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.filename", String.class));
         COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.timestamp", LocalDateTime.class));
@@ -135,7 +138,7 @@ public class TaintFlowTreeModel extends DefaultTreeModel implements TreeTableMod
 
     @Override
     public int getHierarchicalColumn() {
-        return 0;
+        return 1;
     }
 
     @Override
@@ -154,6 +157,8 @@ public class TaintFlowTreeModel extends DefaultTreeModel implements TreeTableMod
         } else if (obj instanceof TaintInfo taintInfo) {
             location = taintInfo.getSink().getLocation();
             switch (columnKey) {
+                case "foxhound.panel.table.header.id":
+                    return taintInfo.getId();
                 case "foxhound.panel.table.header.timestamp":
                     Instant instant = Instant.ofEpochMilli(taintInfo.getTimeStamp());
                     return LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
@@ -228,5 +233,10 @@ public class TaintFlowTreeModel extends DefaultTreeModel implements TreeTableMod
     @Override
     public void setValueAt(Object value, Object node, int column) {
         // Nothing to do, don't want to edit results
+    }
+
+    public void clear() {
+        this.getRoot().removeAllChildren();
+        this.fireTreeStructureChanged(this, null, null, null);
     }
 }

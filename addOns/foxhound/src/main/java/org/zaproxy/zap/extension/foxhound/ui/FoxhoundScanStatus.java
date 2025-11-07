@@ -12,7 +12,7 @@ import javax.swing.ImageIcon;
 
 import static org.zaproxy.zap.extension.foxhound.config.FoxhoundConstants.FOXHOUND_16;
 
-public class FoxhoundScanStatus extends ScanStatus  implements EventConsumer {
+public class FoxhoundScanStatus extends ScanStatus implements EventConsumer {
 
     public FoxhoundScanStatus() {
         super(new ImageIcon(FoxhoundScanStatus.class.getResource(FOXHOUND_16)),
@@ -26,6 +26,10 @@ public class FoxhoundScanStatus extends ScanStatus  implements EventConsumer {
     public void eventReceived(Event event) {
         if (event.getEventType().equals(FoxhoundEventPublisher.TAINT_INFO_CREATED)) {
             ThreadUtils.invokeLater(this::incScanCount);
+        } else if (event.getEventType().equals(FoxhoundEventPublisher.TAINT_INFO_CLEARED)) {
+            ThreadUtils.invokeLater(() -> {
+                this.setScanCount(0);
+            });
         }
     }
 }

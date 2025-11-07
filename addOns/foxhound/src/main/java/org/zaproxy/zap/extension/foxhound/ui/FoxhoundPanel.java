@@ -31,6 +31,7 @@ public class FoxhoundPanel extends AbstractPanel implements EventConsumer {
     private JScrollPane taintFlowScrollPane;
     private JToolBar toolbar;
     private JButton launchButton;
+    private JButton clearAllButton;
     private TaintFlowTreeTable tree;
 
 
@@ -72,6 +73,7 @@ public class FoxhoundPanel extends AbstractPanel implements EventConsumer {
             toolbar = new JToolBar();
             toolbar.setFloatable(false);
             toolbar.add(getLaunchButton());
+            toolbar.add(getClearAllButton());
 
         }
         return toolbar;
@@ -80,8 +82,20 @@ public class FoxhoundPanel extends AbstractPanel implements EventConsumer {
     private JButton getLaunchButton() {
         if (launchButton == null) {
             launchButton = new FoxhoundLaunchButton(extension.getSeleniumProfile());
+            launchButton.setText(Constant.messages.getString("foxhound.ui.launchText"));
         }
         return launchButton;
+    }
+
+    private JButton getClearAllButton() {
+        if (clearAllButton == null) {
+            clearAllButton = new JButton();
+            clearAllButton.setText(Constant.messages.getString("foxhound.ui.clearAll"));
+            clearAllButton.addActionListener(e -> {
+                extension.getTaintStore().clearAll();
+            });
+        }
+        return clearAllButton;
     }
 
     @Override
@@ -103,6 +117,10 @@ public class FoxhoundPanel extends AbstractPanel implements EventConsumer {
                     this.tree.getTreeModel().taintInfoAdded(taintInfo);
                 });
             }
+        } else if (event.getEventType().equals(FoxhoundEventPublisher.TAINT_INFO_CLEARED)) {
+            ThreadUtils.invokeLater(() -> {
+                this.tree.getTreeModel().clear();
+            });
         }
     }
 }
