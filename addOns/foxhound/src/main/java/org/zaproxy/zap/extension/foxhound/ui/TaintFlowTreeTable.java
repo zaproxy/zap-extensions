@@ -20,6 +20,8 @@ import javax.swing.table.TableRowSorter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TaintFlowTreeTable extends JXTreeTable  {
 
@@ -98,7 +100,7 @@ public class TaintFlowTreeTable extends JXTreeTable  {
                                     sourceRange.getBegin(), sourceRange.getEnd()
                             );
                             LOGGER.info("TaintLocation: {}:{} to {}:{}", location.getLine(), location.getPos(), location.getNextLine(), location.getNextPos());
-                            LOGGER.info("TreeSelectionEvent found URL: {} with message {} highlighting {} string {}", url, msg, sm, body.substring(sourceRange.getBegin(), sourceRange.getEnd()));
+                            LOGGER.info("TreeSelectionEvent found URL: {} with message {} highlighting {} string {}", url, msg, sm, location.getCodeForEvidence(body));
                             responsePanel.highlightBody(sm);
                             responsePanel.setTabFocus();
                         }

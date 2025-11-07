@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 public class TaintFlowTreeModel extends DefaultTreeModel implements TreeTableModel {
@@ -29,6 +30,8 @@ public class TaintFlowTreeModel extends DefaultTreeModel implements TreeTableMod
     private static final long serialVersionUID = 1L;
 
     private static final Logger LOGGER = LogManager.getLogger(TaintFlowTreeModel.class);
+
+    private ArrayList<TaintInfo> envVars = new ArrayList<>();
 
     public TaintFlowTreeModel(DefaultMutableTreeNode root) {
         super(root);
@@ -117,7 +120,6 @@ public class TaintFlowTreeModel extends DefaultTreeModel implements TreeTableMod
                     StringUtils.limitedSubstring(taintedString, ranges.getLast().getEnd(), taintedString.length()));
             node.add(stringNode);
         }
-
         this.fireTreeStructureChanged(this, null, null, null);
     }
 

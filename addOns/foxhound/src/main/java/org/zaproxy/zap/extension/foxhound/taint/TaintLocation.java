@@ -118,6 +118,9 @@ public class TaintLocation {
     }
 
     public String getCodeForEvidence(String s) {
+        if (s.isEmpty()) {
+            return "";
+        }
         Range range = getCodeSpan(s);
         return s.substring(range.getBegin(), range.getEnd());
     }

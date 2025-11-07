@@ -46,8 +46,8 @@ public class FoxhoundConstants {
         try {
             loadSourceAndSinkConfig();
             // Cache source and sink names
-            ALL_SOURCE_NAMES = ALL_SOURCES.stream().map(NamedAndTagged::getName).toList();
-            ALL_SINK_NAMES = ALL_SINKS.stream().map(NamedAndTagged::getName).toList();
+            ALL_SOURCE_NAMES = ALL_SOURCES.stream().map(NamedAndTagged::getName).sorted().toList();
+            ALL_SINK_NAMES = ALL_SINKS.stream().map(NamedAndTagged::getName).sorted().toList();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -136,6 +136,14 @@ public class FoxhoundConstants {
 
     public static Set<String> getSinkNamesWithTags(Collection<SinkTag> tags) {
         return getSinkTypesWithTags(tags).stream().map(NamedAndTagged::getName).collect(Collectors.toSet());
+    }
+
+    public static Set<SourceTag> getTagsFromString(Collection<String> names) {
+        Set<SourceTag> result = new HashSet<>();
+        for (String name: names) {
+
+        }
+        return result;
     }
 
 }
