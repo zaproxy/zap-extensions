@@ -1,22 +1,3 @@
-/*
- * Zed Attack Proxy (ZAP) and its related class files.
- *
- * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- *
- * Copyright 2010 The ZAP Development Team
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.zaproxy.zap.extension.foxhound.ui;
 
 import java.awt.Frame;
@@ -24,18 +5,28 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.HeadlessException;
 import java.awt.Insets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
+
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractDialog;
 import org.parosproxy.paros.model.Model;
 import org.zaproxy.zap.extension.foxhound.config.FoxhoundConstants;
 import org.zaproxy.zap.extension.foxhound.db.TaintInfoFilter;
+import org.zaproxy.zap.extension.foxhound.taint.NamedAndTagged;
+import org.zaproxy.zap.extension.foxhound.taint.SinkTag;
+import org.zaproxy.zap.extension.foxhound.taint.SourceTag;
+import org.zaproxy.zap.extension.foxhound.taint.TaintSinkType;
+import org.zaproxy.zap.extension.foxhound.taint.TaintSourceType;
 import org.zaproxy.zap.utils.ZapLabel;
 import org.zaproxy.zap.view.LayoutHelper;
 
@@ -54,8 +45,14 @@ public class TaintInfoFilterDialog extends AbstractDialog {
     private JButton btnReset = null;
     private JPanel jPanel2 = null;
 
+    private List<String> sourceRawList = null;
+    private List<String> sinkRawList = null;
+
     private JList<String> sourceList = null;
     private JList<String> sinkList = null;
+
+    private JComboBox<String> sourceCombo;
+    private JComboBox<String> sinkCombo;
 
     private JScrollPane sourceScroller = null;
     private JScrollPane sinkScroller = null;
@@ -84,7 +81,7 @@ public class TaintInfoFilterDialog extends AbstractDialog {
         this.setVisible(false);
         this.setTitle(Constant.messages.getString("foxhound.filter.dialog.title"));
         if (Model.getSingleton().getOptionsParam().getViewParam().getWmUiHandlingOption() == 0) {
-            this.setSize(600, 300);
+            this.setSize(800, 600);
         }
         centreDialog();
         this.getRootPane().setDefaultButton(btnApply);
@@ -249,11 +246,13 @@ public class TaintInfoFilterDialog extends AbstractDialog {
 
             GridBagConstraints gbc00 = LayoutHelper.getGBC(0, 0, 1, 1.0, stdInset());
             GridBagConstraints gbc01 = LayoutHelper.getGBC(1, 0, 1, 1.0, stdInset());
+            GridBagConstraints gbc10 = LayoutHelper.getGBC(0, 1, 1, 1.0, stdInset());
+            GridBagConstraints gbc11 = LayoutHelper.getGBC(1, 1, 1, 1.0, stdInset());
 
-            GridBagConstraints gbc10 =
+            GridBagConstraints gbc20 =
                     LayoutHelper.getGBC(
                             0,
-                            1,
+                            2,
                             1,
                             3,
                             1.0,
@@ -261,10 +260,10 @@ public class TaintInfoFilterDialog extends AbstractDialog {
                             GridBagConstraints.BOTH,
                             GridBagConstraints.NORTHWEST,
                             stdInset());
-            GridBagConstraints gbc11 =
+            GridBagConstraints gbc21 =
                     LayoutHelper.getGBC(
                             1,
-                            1,
+                            2,
                             1,
                             3,
                             1.0,
@@ -272,16 +271,16 @@ public class TaintInfoFilterDialog extends AbstractDialog {
                             GridBagConstraints.BOTH,
                             GridBagConstraints.NORTHWEST,
                             stdInset());
-
-            GridBagConstraints gbc30 = LayoutHelper.getGBC(0, 4, 2, 1.0, stdInset());
-
             jPanel2.add(
                     new JLabel(Constant.messages.getString("foxhound.filter.dialog.sources")), gbc00);
             jPanel2.add(
                     new JLabel(Constant.messages.getString("foxhound.filter.dialog.sinks")), gbc01);
 
-            jPanel2.add(getSourceScroller(), gbc10);
-            jPanel2.add(getSinkScroller(), gbc11);
+            jPanel2.add(getSourceCombo(), gbc10);
+            jPanel2.add(getSinkCombo(), gbc11);
+
+            jPanel2.add(getSourceScroller(), gbc20);
+            jPanel2.add(getSinkScroller(), gbc21);
 
         }
         return jPanel2;
@@ -305,6 +304,54 @@ public class TaintInfoFilterDialog extends AbstractDialog {
             sinkScroller = new JScrollPane(sinkList);
         }
         return sinkScroller;
+    }
+
+    private JComboBox<String> getSourceCombo() {
+        if (sourceCombo == null) {
+            sourceCombo = new JComboBox<>(
+                    Stream.of(SourceTag.class.getEnumConstants()).map(SourceTag::name).toList().toArray(new String[0])
+            );
+            sourceCombo.addActionListener(e -> {
+                String selected = (String) sourceCombo.getSelectedItem();
+                SourceTag sourceTag = NamedAndTagged.getTagForString(selected, SourceTag.class);
+                sourceList.clearSelection();
+                if (sourceTag != null) {
+                    int i = 0;
+                    for (TaintSourceType t : FoxhoundConstants.ALL_SOURCES) {
+                        if (t.isTagged(sourceTag)) {
+                            sourceList.addSelectionInterval(i, i);
+                        }
+                        i++;
+                    }
+                }
+
+            });
+        }
+        return sourceCombo;
+    }
+
+    private JComboBox<String> getSinkCombo() {
+        if (sinkCombo == null) {
+            sinkCombo = new JComboBox<>(
+                    Stream.of(SinkTag.class.getEnumConstants()).map(SinkTag::name).toList().toArray(new String[0])
+            );
+            sinkCombo.addActionListener(e -> {
+                String selected = (String) sinkCombo.getSelectedItem();
+                SinkTag sinkTag = NamedAndTagged.getTagForString(selected, SinkTag.class);
+                sinkList.clearSelection();
+                if (sinkTag != null) {
+                    int i = 0;
+                    for (TaintSinkType t : FoxhoundConstants.ALL_SINKS) {
+                        if (t.isTagged(sinkTag)) {
+                            sinkList.addSelectionInterval(i, i);
+                        }
+                        i++;
+                    }
+                }
+
+            });
+        }
+        return sinkCombo;
     }
 
     public TaintInfoFilter getFilter() {

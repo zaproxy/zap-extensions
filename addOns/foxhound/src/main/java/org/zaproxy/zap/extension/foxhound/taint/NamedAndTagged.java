@@ -47,6 +47,10 @@ public abstract class NamedAndTagged<T extends Enum<T>> {
         this.tags = tags;
     }
 
+    public boolean isTagged(T tag) {
+        return tags.contains(tag);
+    }
+
     @Override
     public boolean equals(Object object) {
         if (!(object instanceof NamedAndTagged<?> that)) return false;

@@ -16,8 +16,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -33,8 +35,8 @@ public class FoxhoundConstants {
     public static final String FOXHOUND_256 = RESOURCE + "/default256.png";
     public static final String FOXHOUND_16 = RESOURCE + "/default16.png";
 
-    public static Set<TaintSourceType> ALL_SOURCES;
-    public static Set<TaintSinkType> ALL_SINKS;
+    public static List<TaintSourceType> ALL_SOURCES;
+    public static List<TaintSinkType> ALL_SINKS;
 
     public static List<String> ALL_SOURCE_NAMES;
     public static List<String> ALL_SINK_NAMES;
@@ -45,9 +47,12 @@ public class FoxhoundConstants {
     static {
         try {
             loadSourceAndSinkConfig();
-            // Cache source and sink names
-            ALL_SOURCE_NAMES = ALL_SOURCES.stream().map(NamedAndTagged::getName).sorted().toList();
-            ALL_SINK_NAMES = ALL_SINKS.stream().map(NamedAndTagged::getName).sorted().toList();
+
+            ALL_SOURCES.sort(Comparator.comparing(NamedAndTagged::getName));
+            ALL_SINKS.sort(Comparator.comparing(NamedAndTagged::getName));
+
+            ALL_SOURCE_NAMES = ALL_SOURCES.stream().map(NamedAndTagged::getName).toList();
+            ALL_SINK_NAMES = ALL_SINKS.stream().map(NamedAndTagged::getName).toList();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -68,7 +73,7 @@ public class FoxhoundConstants {
         JSONObject jsonObject = JSONObject.fromObject(sb.toString());
 
         // Sources
-        ALL_SOURCES = new HashSet<>();
+        ALL_SOURCES = new ArrayList<>();
         SOURCE_NAME_TYPE_MAP = new HashMap<>();
         JSONArray sourceArray = jsonObject.getJSONArray("sources");
         for (int i = 0, size = sourceArray.size(); i < size; i++) {
@@ -87,7 +92,7 @@ public class FoxhoundConstants {
         }
 
         // Sinks
-        ALL_SINKS = new HashSet<>();
+        ALL_SINKS = new ArrayList<>();
         SINK_NAME_TYPE_MAP = new HashMap<>();
         JSONArray sinkArray = jsonObject.getJSONArray("sinks");
         for (int i = 0, size = sinkArray.size(); i < size; i++) {
