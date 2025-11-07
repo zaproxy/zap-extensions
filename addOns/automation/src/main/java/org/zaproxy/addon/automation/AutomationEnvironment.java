@@ -169,7 +169,7 @@ public class AutomationEnvironment {
     }
 
     public void addContext(Context context) {
-        this.contexts.add(new ContextWrapper(context));
+        this.contexts.add(new ContextWrapper(context, this));
     }
 
     private static ExtensionNetwork getExtensionNetwork() {

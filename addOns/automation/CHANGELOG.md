@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- Include in Context regular expressions when creating the plan from a context.
 
 ## [0.55.0] - 2025-11-05
 ### Changed

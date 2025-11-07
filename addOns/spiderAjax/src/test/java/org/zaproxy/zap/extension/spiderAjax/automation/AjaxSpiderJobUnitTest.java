@@ -357,8 +357,10 @@ class AjaxSpiderJobUnitTest {
         Context context1 = mock(Context.class);
         Context context2 = mock(Context.class);
         given(context2.isInContext(anyString())).willReturn(true);
-        ContextWrapper contextWrapper1 = new ContextWrapper(context1);
-        ContextWrapper contextWrapper2 = new ContextWrapper(context2);
+        ContextWrapper contextWrapper1 =
+                new ContextWrapper(context1, mock(AutomationEnvironment.class));
+        ContextWrapper contextWrapper2 =
+                new ContextWrapper(context2, mock(AutomationEnvironment.class));
 
         AjaxSpiderParam options = new AjaxSpiderParam();
         FileConfiguration tempConfig = new XMLConfiguration();

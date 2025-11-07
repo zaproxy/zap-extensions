@@ -192,7 +192,8 @@ class SpiderJobUnitTest extends TestUtils {
         // Given
         Constant.messages = new I18N(Locale.ENGLISH);
         Context context = mock(Context.class);
-        ContextWrapper contextWrapper = new ContextWrapper(context);
+        ContextWrapper contextWrapper =
+                new ContextWrapper(context, mock(AutomationEnvironment.class));
         contextWrapper.addUrl("https://www.example.com");
 
         given(extSpider.startScan(any(), any(), any())).willReturn(1);
@@ -267,8 +268,10 @@ class SpiderJobUnitTest extends TestUtils {
         Context context2 = mock(Context.class);
         Target target1 = new Target(context1);
         Target target2 = new Target(context2);
-        ContextWrapper contextWrapper1 = new ContextWrapper(context1);
-        ContextWrapper contextWrapper2 = new ContextWrapper(context2);
+        ContextWrapper contextWrapper1 =
+                new ContextWrapper(context1, mock(AutomationEnvironment.class));
+        ContextWrapper contextWrapper2 =
+                new ContextWrapper(context2, mock(AutomationEnvironment.class));
         contextWrapper1.addUrl("https://www.example.com");
         contextWrapper2.addUrl("https://www.example.com");
 
@@ -317,7 +320,8 @@ class SpiderJobUnitTest extends TestUtils {
     void shouldUseSpecifiedUrl() throws MalformedURLException {
         Constant.messages = new I18N(Locale.ENGLISH);
         Context context = mock(Context.class);
-        ContextWrapper contextWrapper = new ContextWrapper(context);
+        ContextWrapper contextWrapper =
+                new ContextWrapper(context, mock(AutomationEnvironment.class));
         String url = "https://www.example.com";
         contextWrapper.addUrl(url);
 
@@ -354,7 +358,8 @@ class SpiderJobUnitTest extends TestUtils {
     void shouldExitIfSpiderTakesTooLong() throws MalformedURLException {
         // Given
         Context context = mock(Context.class);
-        ContextWrapper contextWrapper = new ContextWrapper(context);
+        ContextWrapper contextWrapper =
+                new ContextWrapper(context, mock(AutomationEnvironment.class));
         contextWrapper.addUrl("https://www.example.com");
 
         given(extSpider.startScan(any(), any(), any())).willReturn(1);
@@ -389,7 +394,8 @@ class SpiderJobUnitTest extends TestUtils {
     void shouldTestAddedUrlsStatistic() {
         // Given
         Context context = mock(Context.class);
-        ContextWrapper contextWrapper = new ContextWrapper(context);
+        ContextWrapper contextWrapper =
+                new ContextWrapper(context, mock(AutomationEnvironment.class));
         contextWrapper.addUrl("https://www.example.com");
         given(extSpider.startScan(any(), any(), any())).willReturn(1);
 
@@ -426,7 +432,8 @@ class SpiderJobUnitTest extends TestUtils {
 
         startServer();
         Context context = mock(Context.class);
-        ContextWrapper contextWrapper = new ContextWrapper(context);
+        ContextWrapper contextWrapper =
+                new ContextWrapper(context, mock(AutomationEnvironment.class));
         String url = "http://localhost:" + nano.getListeningPort() + "/top";
         contextWrapper.addUrl(url);
 
@@ -467,7 +474,8 @@ class SpiderJobUnitTest extends TestUtils {
 
         startServer();
         Context context = mock(Context.class);
-        ContextWrapper contextWrapper = new ContextWrapper(context);
+        ContextWrapper contextWrapper =
+                new ContextWrapper(context, mock(AutomationEnvironment.class));
         String url1 = "http://localhost:" + nano.getListeningPort() + "/1";
         String url2 = "http://localhost:" + nano.getListeningPort() + "/2";
         String url3 = "http://localhost:" + nano.getListeningPort() + "/3";
@@ -519,7 +527,8 @@ class SpiderJobUnitTest extends TestUtils {
         given(extensionLoader.getExtension(ExtensionHistory.class)).willReturn(extHistory);
 
         Context context = mock(Context.class);
-        ContextWrapper contextWrapper = new ContextWrapper(context);
+        ContextWrapper contextWrapper =
+                new ContextWrapper(context, mock(AutomationEnvironment.class));
         String url = "http://null.example.com/";
         contextWrapper.addUrl(url);
 
@@ -559,7 +568,8 @@ class SpiderJobUnitTest extends TestUtils {
         given(extensionLoader.getExtension(ExtensionHistory.class)).willReturn(extHistory);
 
         Context context = mock(Context.class);
-        ContextWrapper contextWrapper = new ContextWrapper(context);
+        ContextWrapper contextWrapper =
+                new ContextWrapper(context, mock(AutomationEnvironment.class));
         String url = "http://null.example.com/";
         contextWrapper.addUrl(url);
 
@@ -603,7 +613,8 @@ class SpiderJobUnitTest extends TestUtils {
 
         startServer();
         Context context = mock(Context.class);
-        ContextWrapper contextWrapper = new ContextWrapper(context);
+        ContextWrapper contextWrapper =
+                new ContextWrapper(context, mock(AutomationEnvironment.class));
         String url = "http://localhost:" + nano.getListeningPort() + "/top";
         contextWrapper.addUrl(url);
 
