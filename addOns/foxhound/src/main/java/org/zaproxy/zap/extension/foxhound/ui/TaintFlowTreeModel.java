@@ -65,22 +65,21 @@ public class TaintFlowTreeModel extends DefaultTreeModel implements TreeTableMod
     private static final List<ColumnInfo> COLUMN_INFO = new ArrayList<>();
 
     static {
-        COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.id", int.class));
-        COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.filename", String.class));
+        //COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.id", int.class));
+        //COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.timestamp", LocalDateTime.class));
         COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.treecontrol", String.class)); // The tree control
         COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.filename", String.class));
-        COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.timestamp", LocalDateTime.class));
         COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.function", String.class));
         COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.line", int.class));
         COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.pos", int.class));
-        COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.scriptLine", int.class));
-        COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.flow", String.class));
-        COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.string", String.class));
-        COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.url", String.class));
-        COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.from", int.class));
-        COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.to", int.class));
-        COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.source", String.class));
-        COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.sink", String.class));
+        //COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.scriptLine", int.class));
+        //COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.flow", String.class));
+        //COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.string", String.class));
+        //COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.url", String.class));
+        //COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.from", int.class));
+        //COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.to", int.class));
+        //COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.source", String.class));
+        //COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.sink", String.class));
     };
 
     private static final int COLUMN_COUNT = COLUMN_INFO.size();
@@ -140,7 +139,7 @@ public class TaintFlowTreeModel extends DefaultTreeModel implements TreeTableMod
 
     @Override
     public int getHierarchicalColumn() {
-        return 1;
+        return 0;
     }
 
     @Override
@@ -165,7 +164,7 @@ public class TaintFlowTreeModel extends DefaultTreeModel implements TreeTableMod
                     Instant instant = Instant.ofEpochMilli(taintInfo.getTimeStamp());
                     return LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
                 case "foxhound.panel.table.header.filename":
-                    return location.getFilename();
+                    return taintInfo.getLocationName();
                 case "foxhound.panel.table.header.url":
                     return taintInfo.getLocation();
                 case "foxhound.panel.table.header.flow":

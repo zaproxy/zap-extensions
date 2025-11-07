@@ -9,6 +9,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import java.awt.Color;
 import java.awt.Component;
+import java.util.Objects;
 
 public class TaintFlowCellRenderer  extends DefaultTreeCellRenderer {
 
@@ -49,7 +50,11 @@ public class TaintFlowCellRenderer  extends DefaultTreeCellRenderer {
             setText(range.getStr());
             setTextNonSelectionColor(Color.RED);
         } else if (obj instanceof TaintOperation op) {
-            setText(op.getOperation());
+            if ((Objects.equals(op.getOperation(), "function")) && (!op.getArguments().isEmpty())) {
+                setText(op.getArguments().get(0) + "()");
+            } else {
+                setText(op.getOperation());
+            }
         }
 
         return this;

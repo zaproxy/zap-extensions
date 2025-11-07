@@ -44,6 +44,8 @@ public class TaintFlowTreeTable extends JXTreeTable  {
         this.defaultSelectionListener = new DisplayMessageOnSelectionValueChange();
         this.getTreeSelectionModel().addTreeSelectionListener(defaultSelectionListener);
 
+        this.setAutoCreateRowSorter(true);
+        this.packAll();
     }
 
     public TaintFlowTreeModel getTreeModel() {
