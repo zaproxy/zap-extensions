@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.32.0] - 2025-11-07
 ### Changed
 - Track authentication headers with key in the name.
 - No longer quote domains as these will not get counted as valid URLs in the Automation Framework.
@@ -321,6 +321,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Support of authentication request identification and configuration.
 
+[0.32.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.32.0
 [0.31.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.31.0
 [0.30.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.30.0
 [0.29.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.29.0
