@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [53] - 2025-11-04
 ### Added
 - SYSTEMIC tag to selected rules.
+- Swagger Secret Detector Script Scan Rule.
 
 ### Changed
 - The Web Cache Deception scan rule now includes example alert functionality for documentation generation purposes (Issue 6119).
