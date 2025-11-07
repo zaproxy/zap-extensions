@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Update dependencies.
 - All relevant reports to support nodeName and systemic counts.
+- Do not try to validate the AF report file in the GUI as the plan may run on another system.
 
 ## [0.41.0] - 2025-09-04
 ### Changed
