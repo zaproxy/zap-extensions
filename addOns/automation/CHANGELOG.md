@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.56.0] - 2025-11-07
 ### Added
 - Command line -autocheck option which checks if the specified yaml plan has the right format.
 
@@ -558,6 +558,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.56.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.56.0
 [0.55.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.55.0
 [0.54.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.54.0
 [0.53.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.53.0
