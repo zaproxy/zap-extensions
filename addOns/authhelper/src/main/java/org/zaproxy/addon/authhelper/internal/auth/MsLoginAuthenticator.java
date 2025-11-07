@@ -58,6 +58,8 @@ public final class MsLoginAuthenticator implements Authenticator {
     private enum State {
         START,
 
+        ACCOUNT_SELECTION,
+
         USERNAME,
         PASSWORD,
         SUBMIT,
@@ -105,17 +107,69 @@ public final class MsLoginAuthenticator implements Authenticator {
                 case START:
                     try {
                         waitForElement(wd, USERNAME_FIELD);
+                        userField = true;
+                        states.add(State.USERNAME);
+                        break;
+
                     } catch (TimeoutException e) {
+                        // Try next state.
+                    }
+
+                    if (findElement(wd, By.tagName("div"), "Pick an account") != null) {
+                        states.add(State.ACCOUNT_SELECTION);
+                    } else {
                         diags.recordStep(
                                 wd,
                                 Constant.messages.getString(
                                         "authhelper.auth.method.diags.steps.ms.missingusername"));
-                        LOGGER.debug("Expected username field not found, skipping login.");
-                        return Authenticator.NO_AUTH;
+                        LOGGER.debug(
+                                "Expected username field not found nor pick an account, failing login.");
                     }
 
-                    userField = true;
-                    states.add(State.USERNAME);
+                    break;
+
+                case ACCOUNT_SELECTION:
+                    WebElement userElement =
+                            findElement(wd, By.tagName("div"), credentials.getUsername());
+                    if (userElement != null) {
+                        userField = true;
+
+                        if (isUserLoggedIn(wd, userElement)) {
+                            pwdField = true;
+                            states.add(State.POST_PASSWORD);
+                        } else {
+                            states.add(State.PASSWORD);
+                        }
+
+                        diags.recordStep(
+                                wd,
+                                Constant.messages.getString(
+                                        "authhelper.auth.method.diags.steps.ms.clickaccount"),
+                                userElement);
+                        userElement.click();
+                        break;
+                    }
+
+                    WebElement otherAccountElement =
+                            findElement(wd, By.tagName("div"), "Use another account");
+                    if (otherAccountElement != null) {
+                        diags.recordStep(
+                                wd,
+                                Constant.messages.getString(
+                                        "authhelper.auth.method.diags.steps.ms.clickaccountother"),
+                                otherAccountElement);
+                        otherAccountElement.click();
+                        states.add(State.START);
+                        break;
+                    }
+
+                    diags.recordStep(
+                            wd,
+                            Constant.messages.getString(
+                                    "authhelper.auth.method.diags.steps.ms.stepunknown"));
+                    LOGGER.debug(
+                            "Still in pick an account but no known state, assuming unsuccessful login.");
+
                     break;
 
                 case USERNAME:
@@ -259,6 +313,18 @@ public final class MsLoginAuthenticator implements Authenticator {
         } while (!states.isEmpty());
 
         return new Result(true, successful, userField, pwdField);
+    }
+
+    private static boolean isUserLoggedIn(WebDriver wd, WebElement userElement) {
+        return userElement.findElement(By.xpath("..")).findElements(By.tagName("div")).stream()
+                .anyMatch(e -> "Signed in".equalsIgnoreCase(e.getText()));
+    }
+
+    private static WebElement findElement(WebDriver wd, By by, String text) {
+        return wd.findElements(by).stream()
+                .filter(e -> text.equalsIgnoreCase(e.getText()))
+                .findFirst()
+                .orElse(null);
     }
 
     private WebElement waitForElement(WebDriver wd, By by) {
