@@ -1,14 +1,16 @@
 package org.zaproxy.zap.extension.foxhound.taint;
 
+import org.zaproxy.zap.extension.foxhound.config.FoxhoundConstants;
+
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-public class TaintInfo implements TaintLocationProvider {
+public class TaintInfo implements SourceSinkProvider, TaintLocationProvider {
 
+    private int id = -1;
     private String str;
     private String location;
     private String parentLocation;
@@ -17,7 +19,6 @@ public class TaintInfo implements TaintLocationProvider {
     private long timeStamp;
     private String cookie;
     private boolean subframe;
-
     private List<TaintRange> taintRanges;
 
     // Derived Fields
@@ -40,12 +41,12 @@ public class TaintInfo implements TaintLocationProvider {
         sources = new HashSet<>();
     }
 
-    public static String getOperationNameList(Collection<TaintOperation> ops) {
-        return String.join(", ", ops.stream().map(TaintOperation::getOperation).toList());
+    public int getId() {
+        return id;
     }
 
-    public String getSourceSinkLabel() {
-        return getOperationNameList(sources) + " \u2192 " + sink.getOperation();
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getStr() {
@@ -125,6 +126,7 @@ public class TaintInfo implements TaintLocationProvider {
         this.subframe = subframe;
     }
 
+    @Override
     public TaintOperation getSink() {
         return sink;
     }
@@ -133,8 +135,13 @@ public class TaintInfo implements TaintLocationProvider {
         this.sink = sink;
     }
 
+    @Override
     public Set<TaintOperation> getSources() {
         return sources;
+    }
+
+    public String getSourceSinkLabel() {
+        return SourceSinkUtils.getSourceSinkLabel(this);
     }
 
     @Override
@@ -150,18 +157,8 @@ public class TaintInfo implements TaintLocationProvider {
 
     @Override
     public String toString() {
-        return "TaintInfo{" +
-                "str='" + str + '\'' +
-                ", location='" + location + '\'' +
-                ", parentLocation='" + parentLocation + '\'' +
-                ", referrer='" + referrer + '\'' +
-                ", sinkName='" + sinkName + '\'' +
-                ", timeStamp=" + timeStamp +
-                ", cookie='" + cookie + '\'' +
-                ", subframe=" + subframe +
-                ", taintRanges=" + taintRanges +
-                ", sink=" + sink +
-                ", sources=" + sources +
-                '}';
+            return "Taint flow: " + getSourceSinkLabel() + " from " + getSink().getLocation();
     }
+
+
 }

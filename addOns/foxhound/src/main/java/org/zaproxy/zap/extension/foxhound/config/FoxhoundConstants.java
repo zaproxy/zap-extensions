@@ -6,6 +6,8 @@ import net.sf.json.JSONObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zaproxy.zap.extension.foxhound.taint.NamedAndTagged;
+import org.zaproxy.zap.extension.foxhound.taint.SinkTag;
+import org.zaproxy.zap.extension.foxhound.taint.SourceTag;
 import org.zaproxy.zap.extension.foxhound.taint.TaintSinkType;
 import org.zaproxy.zap.extension.foxhound.taint.TaintSourceType;
 
@@ -75,7 +77,7 @@ public class FoxhoundConstants {
             JSONArray tags = sourceObject.getJSONArray("tags");
             for (int j = 0, l = tags.size(); j < l; j++) {
                 String tagString = tags.getString(j);
-                TaintSourceType.SourceTag sourceTag = NamedAndTagged.getTagForString(tags.getString(j), TaintSourceType.SourceTag.class);
+                SourceTag sourceTag = NamedAndTagged.getTagForString(tags.getString(j), SourceTag.class);
                 if (sourceTag != null) {
                     source.getTags().add(sourceTag);
                 }
@@ -94,7 +96,7 @@ public class FoxhoundConstants {
             JSONArray tags = sinkObject.getJSONArray("tags");
             for (int j = 0, l = tags.size(); j < l; j++) {
                 String tagString = tags.getString(j);
-                TaintSinkType.SinkTag sinkTag = NamedAndTagged.getTagForString(tags.getString(j), TaintSinkType.SinkTag.class);
+                SinkTag sinkTag = NamedAndTagged.getTagForString(tags.getString(j), SinkTag.class);
                 if (sinkTag != null) {
                     sink.getTags().add(sinkTag);
                 }
@@ -104,35 +106,35 @@ public class FoxhoundConstants {
         }
     }
 
-    public static Set<TaintSourceType> getSourceTypesWithTag(TaintSourceType.SourceTag tag) {
+    public static Set<TaintSourceType> getSourceTypesWithTag(SourceTag tag) {
         return ALL_SOURCES.stream().filter(e -> e.getTags().contains(tag)).collect(Collectors.toSet());
     }
 
-    public static Set<TaintSinkType> getSinkTypesWithTag(TaintSinkType.SinkTag tag) {
+    public static Set<TaintSinkType> getSinkTypesWithTag(SinkTag tag) {
         return ALL_SINKS.stream().filter(e -> e.getTags().contains(tag)).collect(Collectors.toSet());
     }
 
-    public static Set<String> getSourceNamesWithTag(TaintSourceType.SourceTag tag) {
+    public static Set<String> getSourceNamesWithTag(SourceTag tag) {
         return getSourceTypesWithTag(tag).stream().map(NamedAndTagged::getName).collect(Collectors.toSet());
     }
 
-    public static Set<String> getSinkNamesWithTag(TaintSinkType.SinkTag tag) {
+    public static Set<String> getSinkNamesWithTag(SinkTag tag) {
         return getSinkTypesWithTag(tag).stream().map(NamedAndTagged::getName).collect(Collectors.toSet());
     }
 
-    public static Set<TaintSourceType> getSourceTypesWithTags(Collection<TaintSourceType.SourceTag> tags) {
+    public static Set<TaintSourceType> getSourceTypesWithTags(Collection<SourceTag> tags) {
         return ALL_SOURCES.stream().filter(e -> !Collections.disjoint(tags, e.getTags())).collect(Collectors.toSet());
     }
 
-    public static Set<TaintSinkType> getSinkTypesWithTags(Collection<TaintSinkType.SinkTag> tags) {
+    public static Set<TaintSinkType> getSinkTypesWithTags(Collection<SinkTag> tags) {
         return ALL_SINKS.stream().filter(e -> !Collections.disjoint(tags, e.getTags())).collect(Collectors.toSet());
     }
 
-    public static Set<String> getSourceNamesWithTags(Collection<TaintSourceType.SourceTag> tags) {
+    public static Set<String> getSourceNamesWithTags(Collection<SourceTag> tags) {
         return getSourceTypesWithTags(tags).stream().map(NamedAndTagged::getName).collect(Collectors.toSet());
     }
 
-    public static Set<String> getSinkNamesWithTags(Collection<TaintSinkType.SinkTag> tags) {
+    public static Set<String> getSinkNamesWithTags(Collection<SinkTag> tags) {
         return getSinkTypesWithTags(tags).stream().map(NamedAndTagged::getName).collect(Collectors.toSet());
     }
 

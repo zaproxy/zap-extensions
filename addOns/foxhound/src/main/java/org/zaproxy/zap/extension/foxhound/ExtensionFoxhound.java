@@ -12,7 +12,7 @@ import org.zaproxy.zap.extension.foxhound.alerts.FoxhoundAlertHelper;
 import org.zaproxy.zap.extension.foxhound.config.FoxhoundConstants;
 import org.zaproxy.zap.extension.foxhound.config.FoxhoundOptions;
 import org.zaproxy.zap.extension.foxhound.config.FoxhoundSeleniumProfile;
-import org.zaproxy.zap.extension.foxhound.taint.TaintInfoStore;
+import org.zaproxy.zap.extension.foxhound.db.TaintInfoStore;
 import org.zaproxy.zap.extension.foxhound.ui.FoxhoundLaunchButton;
 import org.zaproxy.zap.extension.foxhound.ui.FoxhoundPanel;
 import org.zaproxy.zap.extension.foxhound.ui.FoxhoundScanStatus;
@@ -57,7 +57,8 @@ public class ExtensionFoxhound extends ExtensionAdaptor {
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
-        getTaintStore().registerEventListener(getAlertHelper());
+        // Start the alert helper
+        getAlertHelper();
 
         // Load Options
         FoxhoundOptions options = getOptions();
@@ -82,7 +83,6 @@ public class ExtensionFoxhound extends ExtensionAdaptor {
                     .getMainFrame()
                     .getMainFooterPanel()
                     .addFooterToolbarRightComponent(getFoxhoundScanStatus().getCountLabel());
-            getTaintStore().registerEventListener(getFoxhoundScanStatus());
         }
 
         LOGGER.info("Starting the Foxhound ZAP extension with {} sources and {} sinks.",
@@ -131,7 +131,7 @@ public class ExtensionFoxhound extends ExtensionAdaptor {
         return options;
     }
 
-    private FoxhoundSeleniumProfile getSeleniumProfile() {
+    public FoxhoundSeleniumProfile getSeleniumProfile() {
         if (seleniumProfile == null) {
             seleniumProfile = new FoxhoundSeleniumProfile();
         }
@@ -140,12 +140,7 @@ public class ExtensionFoxhound extends ExtensionAdaptor {
 
     private FoxhoundLaunchButton getLaunchButton() {
         if (launchButton == null) {
-            launchButton = new FoxhoundLaunchButton();
-            launchButton.addActionListener(
-                    e -> {
-                        getSeleniumProfile().launchFoxhound();
-                    }
-            );
+            launchButton = new FoxhoundLaunchButton(getSeleniumProfile());
         }
         return launchButton;
     }
@@ -166,7 +161,7 @@ public class ExtensionFoxhound extends ExtensionAdaptor {
 
     public FoxhoundAlertHelper getAlertHelper() {
         if (alertHelper == null) {
-            alertHelper = new FoxhoundAlertHelper();
+            alertHelper = new FoxhoundAlertHelper(getTaintStore());
         }
         return alertHelper;
     }

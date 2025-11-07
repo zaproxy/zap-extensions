@@ -6,9 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import static org.zaproxy.zap.extension.foxhound.taint.TaintInfo.getOperationNameList;
-
-public class TaintRange extends Range implements TaintLocationProvider {
+public class TaintRange extends Range implements TaintLocationProvider, SourceSinkProvider {
 
     private String str;
     private List<TaintOperation> flow;
@@ -33,10 +31,6 @@ public class TaintRange extends Range implements TaintLocationProvider {
         return str;
     }
 
-    public String getSourceSinkLabel() {
-        return getOperationNameList(sources) + "  \u2192 " + sink.getOperation();
-    }
-
     public void setStr(String str) {
         this.str = str;
     }
@@ -49,6 +43,7 @@ public class TaintRange extends Range implements TaintLocationProvider {
         this.flow = flow;
     }
 
+    @Override
     public TaintOperation getSink() {
         return sink;
     }
@@ -57,8 +52,13 @@ public class TaintRange extends Range implements TaintLocationProvider {
         this.sink = sink;
     }
 
+    @Override
     public Set<TaintOperation> getSources() {
         return sources;
+    }
+
+    public String getSourceSinkLabel() {
+        return SourceSinkUtils.getSourceSinkLabel(this);
     }
 
     @Override
@@ -74,13 +74,7 @@ public class TaintRange extends Range implements TaintLocationProvider {
 
     @Override
     public String toString() {
-        return "TaintRange{" +
-                "begin=" + begin +
-                ", end=" + end +
-                ", flow=" + flow +
-                ", sink=" + sink +
-                ", sources=" + sources +
-                '}';
+        return "Taint flow: " + getSourceSinkLabel() + " from " + getSink().getLocation();
     }
 
     @Override

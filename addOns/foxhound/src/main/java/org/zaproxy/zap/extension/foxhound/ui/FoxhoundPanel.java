@@ -2,43 +2,45 @@ package org.zaproxy.zap.extension.foxhound.ui;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jdesktop.swingx.JXTreeTable;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.extension.AbstractPanel;
-import org.parosproxy.paros.model.HistoryReference;
-import org.parosproxy.paros.network.HttpMalformedHeaderException;
-import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.ZAP;
+import org.zaproxy.zap.eventBus.Event;
+import org.zaproxy.zap.eventBus.EventConsumer;
 import org.zaproxy.zap.extension.foxhound.ExtensionFoxhound;
+import org.zaproxy.zap.extension.foxhound.FoxhoundEventPublisher;
+import org.zaproxy.zap.extension.foxhound.taint.TaintInfo;
+import org.zaproxy.zap.utils.ThreadUtils;
 import org.zaproxy.zap.view.LayoutHelper;
-import org.zaproxy.zap.view.table.HistoryReferencesTable;
-import org.zaproxy.zap.view.table.HistoryReferencesTableEntry;
 
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JScrollPane;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.JToolBar;
 import java.awt.GridBagLayout;
 
 import static org.zaproxy.zap.extension.foxhound.config.FoxhoundConstants.FOXHOUND_16;
 
 @SuppressWarnings("serial")
-public class FoxhoundPanel extends AbstractPanel {
+public class FoxhoundPanel extends AbstractPanel implements EventConsumer {
     private static final long serialVersionUID = 7L;
     public static final String FOXHOUND_PANEL_NAME = "Foxhound";
     private static final Logger LOGGER = LogManager.getLogger(FoxhoundPanel.class);
 
     private ExtensionFoxhound extension = null;
     private JScrollPane taintFlowScrollPane;
+    private JToolBar toolbar;
+    private JButton launchButton;
     private TaintFlowTreeTable tree;
-
 
 
     public FoxhoundPanel(ExtensionFoxhound extension) {
         super();
         this.extension = extension;
         this.initialize();
+
+        ZAP.getEventBus()
+                .registerConsumer(this, FoxhoundEventPublisher.getPublisher().getPublisherName());
     }
 
     private void initialize() {
@@ -49,14 +51,12 @@ public class FoxhoundPanel extends AbstractPanel {
 
         this.setLayout(new GridBagLayout());
 
-        this.add(this.getTaintFlowScrollPane(), LayoutHelper.getGBC(0, 0, 1, 1.0));
+        this.add(this.getToolbar(), LayoutHelper.getGBC(0, 0, 1, 1.0));
+        this.add(this.getTaintFlowScrollPane(), LayoutHelper.getGBC(0, 1, 1, 1.0, 1.0));
 
         this.setShowByDefault(true);
 
-        extension.getTaintStore().registerEventListener(tree.getTreeModel());
     }
-
-
 
     private JScrollPane getTaintFlowScrollPane() {
         if (taintFlowScrollPane == null) {
@@ -67,5 +67,43 @@ public class FoxhoundPanel extends AbstractPanel {
         return taintFlowScrollPane;
     }
 
+    private JToolBar getToolbar() {
+        if (toolbar == null) {
+            toolbar = new JToolBar();
+            toolbar.setFloatable(false);
+            toolbar.add(getLaunchButton());
+
+        }
+        return toolbar;
+    }
+
+    private JButton getLaunchButton() {
+        if (launchButton == null) {
+            launchButton = new FoxhoundLaunchButton(extension.getSeleniumProfile());
+        }
+        return launchButton;
+    }
+
+    @Override
+    public void eventReceived(Event event) {
+        if (event.getEventType().equals(FoxhoundEventPublisher.TAINT_INFO_CREATED)) {
+            String jobIdStr = event.getParameters().get(FoxhoundEventPublisher.JOB_ID);
+            if (jobIdStr == null) {
+                return;
+            }
+            int jobId;
+            try {
+                jobId = Integer.parseInt(jobIdStr);
+            } catch (NumberFormatException e) {
+                return;
+            }
+            TaintInfo taintInfo = this.extension.getTaintStore().getTaintInfo(jobId);
+            if (taintInfo != null) {
+                ThreadUtils.invokeLater(() -> {
+                    this.tree.getTreeModel().taintInfoAdded(taintInfo);
+                });
+            }
+        }
+    }
 }
 

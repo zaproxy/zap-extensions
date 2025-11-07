@@ -9,15 +9,16 @@ import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 import org.zaproxy.addon.network.server.Server;
-import org.zaproxy.zap.extension.foxhound.alerts.FoxhoundAlertHelper;
 import org.zaproxy.zap.extension.foxhound.config.FoxhoundOptions;
+import org.zaproxy.zap.extension.foxhound.pipeline.Consumer;
 import org.zaproxy.zap.extension.foxhound.taint.TaintDeserializer;
 import org.zaproxy.zap.extension.foxhound.taint.TaintInfo;
-import org.zaproxy.zap.extension.foxhound.taint.TaintInfoStore;
+import org.zaproxy.zap.extension.foxhound.db.TaintInfoStore;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 public class FoxhoundExportServer extends PluginPassiveScanner {
     private static final Logger LOGGER = LogManager.getLogger(FoxhoundExportServer.class);
@@ -27,6 +28,7 @@ public class FoxhoundExportServer extends PluginPassiveScanner {
 
     private ExtensionNetwork extensionNetwork = null;
     private TaintInfoStore store = null;
+
 
     public FoxhoundExportServer() {
 
@@ -51,10 +53,7 @@ public class FoxhoundExportServer extends PluginPassiveScanner {
     }
 
     private void analyseTaintFlow(String body) {
-        TaintInfo taint = TaintDeserializer.deserializeTaintInfo(body);
-        if (store != null) {
-            store.addTaintInfo(taint);
-        }
+        store.deserializeAndAddTaintInfo(body);
     }
 
     private Server getServer() {
@@ -65,11 +64,14 @@ public class FoxhoundExportServer extends PluginPassiveScanner {
                     public void handleMessage(HttpMessageHandlerContext ctx, HttpMessage msg) {
                         msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "text/html");
                         try {
-                            String body = msg.getRequestBody().toString();
-                            analyseTaintFlow(body);
+                            // For some reason we get the message twice...
+                            if (msg.getResponseBody().toString().isEmpty()) {
+                                String body = msg.getRequestBody().toString();
+                                analyseTaintFlow(body);
 
-                            msg.getResponseHeader().setStatusCode(200);
-                            msg.setResponseBody("OK");
+                                msg.getResponseHeader().setStatusCode(200);
+                                msg.setResponseBody("OK");
+                            }
                         } catch (Exception e) {
                             LOGGER.warn(e);
                             StringWriter sw = new StringWriter();

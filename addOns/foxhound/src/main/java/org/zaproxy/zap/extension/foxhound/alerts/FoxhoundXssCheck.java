@@ -8,10 +8,10 @@ import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 import org.zaproxy.zap.extension.foxhound.config.FoxhoundConstants;
+import org.zaproxy.zap.extension.foxhound.taint.SinkTag;
+import org.zaproxy.zap.extension.foxhound.taint.SourceTag;
 import org.zaproxy.zap.extension.foxhound.taint.TaintInfo;
 import org.zaproxy.zap.extension.foxhound.taint.TaintOperation;
-import org.zaproxy.zap.extension.foxhound.taint.TaintSinkType;
-import org.zaproxy.zap.extension.foxhound.taint.TaintSourceType;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -41,8 +41,8 @@ public class FoxhoundXssCheck implements FoxhoundVulnerabilityCheck {
         alertTags.put(PolicyTag.SEQUENCE.getTag(), "");
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
 
-        XSS_SINKS = FoxhoundConstants.getSinkNamesWithTag(TaintSinkType.SinkTag.XSS);
-        XSS_SOURCES = FoxhoundConstants.getSourceNamesWithTags(List.of(TaintSourceType.SourceTag.URL, TaintSourceType.SourceTag.INPUT));
+        XSS_SINKS = FoxhoundConstants.getSinkNamesWithTag(SinkTag.XSS);
+        XSS_SOURCES = FoxhoundConstants.getSourceNamesWithTags(List.of(SourceTag.URL, SourceTag.INPUT));
 
     }
 

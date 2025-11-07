@@ -6,20 +6,23 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.ZAP;
+import org.zaproxy.zap.eventBus.Event;
+import org.zaproxy.zap.eventBus.EventConsumer;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
+import org.zaproxy.zap.extension.foxhound.FoxhoundEventPublisher;
+import org.zaproxy.zap.extension.foxhound.db.TaintInfoStore;
 import org.zaproxy.zap.extension.foxhound.taint.HttpMessageFinder;
 import org.zaproxy.zap.extension.foxhound.taint.TaintInfo;
-import org.zaproxy.zap.extension.foxhound.taint.TaintLocation;
 import org.zaproxy.zap.extension.foxhound.taint.TaintOperation;
 import org.zaproxy.zap.extension.foxhound.taint.TaintRange;
-import org.zaproxy.zap.extension.foxhound.taint.TaintStoreEventListener;
-import org.zaproxy.zap.extension.foxhound.utils.StringUtils;
 
 import java.util.Set;
 
-public class FoxhoundAlertHelper implements TaintStoreEventListener {
+public class FoxhoundAlertHelper implements EventConsumer {
 
     private static final Logger LOGGER = LogManager.getLogger(FoxhoundAlertHelper.class);
+    private TaintInfoStore store;
 
     private static final Set<FoxhoundVulnerabilityCheck> CHECKS = Set.of(
             new FoxhoundXssCheck(),
@@ -31,7 +34,10 @@ public class FoxhoundAlertHelper implements TaintStoreEventListener {
     private final ExtensionAlert extensionAlert =
             Control.getSingleton().getExtensionLoader().getExtension(ExtensionAlert.class);
 
-    public FoxhoundAlertHelper() {
+    public FoxhoundAlertHelper(TaintInfoStore store) {
+        this.store = store;
+        ZAP.getEventBus()
+                .registerConsumer(this, FoxhoundEventPublisher.getPublisher().getPublisherName());
     }
 
     private String getOtherInfo(TaintInfo taint) {
@@ -122,9 +128,23 @@ public class FoxhoundAlertHelper implements TaintStoreEventListener {
         }
     }
 
-
     @Override
-    public void taintInfoAdded(TaintInfo taintInfo) {
-        raiseAlerts(taintInfo);
+    public void eventReceived(Event event) {
+        if (event.getEventType().equals(FoxhoundEventPublisher.TAINT_INFO_CREATED)) {
+            String jobIdStr = event.getParameters().get(FoxhoundEventPublisher.JOB_ID);
+            if (jobIdStr == null) {
+                return;
+            }
+            int jobId;
+            try {
+                jobId = Integer.parseInt(jobIdStr);
+            } catch (NumberFormatException e) {
+                return;
+            }
+            TaintInfo taintInfo = this.store.getTaintInfo(jobId);
+            if (taintInfo != null) {
+                raiseAlerts(taintInfo);
+            }
+        }
     }
 }

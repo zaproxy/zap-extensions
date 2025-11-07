@@ -114,6 +114,10 @@ public class TaintDeserializer {
             }
         }
 
+        if (taint != null) {
+            LOGGER.info("Deserialized flow: {}", taint);
+        }
+
         return taint;
     }
 

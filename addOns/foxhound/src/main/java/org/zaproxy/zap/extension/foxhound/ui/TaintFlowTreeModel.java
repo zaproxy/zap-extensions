@@ -8,16 +8,21 @@ import org.zaproxy.zap.extension.foxhound.taint.TaintInfo;
 import org.zaproxy.zap.extension.foxhound.taint.TaintLocation;
 import org.zaproxy.zap.extension.foxhound.taint.TaintOperation;
 import org.zaproxy.zap.extension.foxhound.taint.TaintRange;
-import org.zaproxy.zap.extension.foxhound.taint.TaintStoreEventListener;
 import org.zaproxy.zap.extension.foxhound.utils.StringUtils;
+import org.zaproxy.zap.utils.ThreadUtils;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import java.awt.EventQueue;
 import java.io.Serial;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-public class TaintFlowTreeModel extends DefaultTreeModel implements TreeTableModel, TaintStoreEventListener {
+public class TaintFlowTreeModel extends DefaultTreeModel implements TreeTableModel {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -58,6 +63,7 @@ public class TaintFlowTreeModel extends DefaultTreeModel implements TreeTableMod
     static {
         COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.treecontrol", String.class)); // The tree control
         COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.filename", String.class));
+        COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.timestamp", LocalDateTime.class));
         COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.function", String.class));
         COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.line", int.class));
         COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.pos", int.class));
@@ -78,7 +84,6 @@ public class TaintFlowTreeModel extends DefaultTreeModel implements TreeTableMod
         return (DefaultMutableTreeNode) super.getRoot();
     }
 
-    @Override
     public void taintInfoAdded(TaintInfo info) {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode(info);
         this.getRoot().add(node);
@@ -87,7 +92,7 @@ public class TaintFlowTreeModel extends DefaultTreeModel implements TreeTableMod
         List<TaintRange> ranges = info.getTaintRanges();
 
         int lastRangeEnd = 0;
-        for (TaintRange range: ranges) {
+        for (TaintRange range : ranges) {
             if (range.getBegin() > lastRangeEnd) {
                 DefaultMutableTreeNode stringNode = new DefaultMutableTreeNode(
                         StringUtils.limitedSubstring(taintedString, lastRangeEnd, range.getBegin()));
@@ -149,6 +154,9 @@ public class TaintFlowTreeModel extends DefaultTreeModel implements TreeTableMod
         } else if (obj instanceof TaintInfo taintInfo) {
             location = taintInfo.getSink().getLocation();
             switch (columnKey) {
+                case "foxhound.panel.table.header.timestamp":
+                    Instant instant = Instant.ofEpochMilli(taintInfo.getTimeStamp());
+                    return LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
                 case "foxhound.panel.table.header.filename":
                     return location.getFilename();
                 case "foxhound.panel.table.header.url":
