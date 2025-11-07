@@ -116,9 +116,7 @@ public class ReportJobDialog extends StandardFieldsDialog {
         }
         this.addFileSelectField(
                 TAB_SCOPE, FIELD_REPORT_DIR, dir, JFileChooser.DIRECTORIES_ONLY, null);
-        if (!StringUtils.isEmpty(dirName) && JobUtils.containsVars(dirName)) {
-            setFieldValue(FIELD_REPORT_DIR, dirName);
-        }
+        setFieldValue(FIELD_REPORT_DIR, dirName);
         this.addMultilineField(TAB_SCOPE, FIELD_DESCRIPTION, params.getReportDescription());
         this.addMultilineField(TAB_SCOPE, FIELD_SITES, listToString(job.getData().getSites()));
 
@@ -335,34 +333,14 @@ public class ReportJobDialog extends StandardFieldsDialog {
         this.job.resetAndSetChanged();
     }
 
-    private File getReportFile() {
-        return new File(
-                this.getStringValue(FIELD_REPORT_DIR), this.getStringValue(FIELD_REPORT_NAME));
-    }
-
     @Override
     public String validateFields() {
         Template template = extension.getTemplateByDisplayName(getStringValue(FIELD_TEMPLATE));
         if (template == null) {
             return Constant.messages.getString("reports.dialog.error.notemplate");
         }
-
-        if (JobUtils.containsVars(getStringValue(FIELD_REPORT_DIR))
-                || JobUtils.containsVars(getStringValue(FIELD_REPORT_NAME))) {
-            return null;
-        }
-
-        File f = getReportFile();
-        if (!f.exists()) {
-            if (!f.getParentFile().canWrite()) {
-                return Constant.messages.getString(
-                        "reports.dialog.error.dirperms", f.getParentFile().getAbsolutePath());
-            }
-        } else if (!f.canWrite()) {
-            return Constant.messages.getString(
-                    "reports.dialog.error.fileperms", f.getAbsolutePath());
-        }
-
+        // Do not try to validate the file perms as the plan may well be run on another system / in
+        // a container
         return null;
     }
 }
