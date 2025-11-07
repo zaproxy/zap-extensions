@@ -49,7 +49,7 @@ public class TaintInfoFilterDialog extends AbstractDialog {
     private JButton btnCancel = null;
     private JPanel jPanel1 = null;
     private int exitResult = JOptionPane.CANCEL_OPTION;
-    private TaintInfoFilter filter = new TaintInfoFilter();
+    private final TaintInfoFilter filter = new TaintInfoFilter();
 
     private JButton btnReset = null;
     private JPanel jPanel2 = null;

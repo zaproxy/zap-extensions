@@ -16,6 +16,7 @@ import org.zaproxy.zap.extension.foxhound.db.TaintInfoFilter;
 import org.zaproxy.zap.extension.foxhound.taint.NamedAndTagged;
 import org.zaproxy.zap.extension.foxhound.taint.TaintInfo;
 import org.zaproxy.zap.extension.history.HistoryFilterPlusDialog;
+import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.ThreadUtils;
 import org.zaproxy.zap.view.LayoutHelper;
 
@@ -34,6 +35,19 @@ public class FoxhoundPanel extends AbstractPanel implements EventConsumer {
     private static final long serialVersionUID = 7L;
     public static final String FOXHOUND_PANEL_NAME = "Foxhound";
     private static final Logger LOGGER = LogManager.getLogger(FoxhoundPanel.class);
+
+
+    private static final ImageIcon FOXHOUND_ICON =
+            DisplayUtils.getScaledIcon(
+                    FoxhoundPanel.class.getResource(FOXHOUND_16));
+
+    private static final ImageIcon FILTER_ICON =
+            DisplayUtils.getScaledIcon(
+                    FoxhoundPanel.class.getResource("/resource/icon/16/054.png"));
+
+    private static final ImageIcon DELETE_ICON =
+            DisplayUtils.getScaledIcon(
+                    FoxhoundPanel.class.getResource("/resource/icon/16/101.png"));
 
     private ExtensionFoxhound extension = null;
     private JScrollPane taintFlowScrollPane;
@@ -56,10 +70,7 @@ public class FoxhoundPanel extends AbstractPanel implements EventConsumer {
 
     private void initialize() {
         this.setName(Constant.messages.getString("foxhound.panel.title"));
-        this.setIcon(
-                new ImageIcon(
-                        FoxhoundPanel.class.getResource(FOXHOUND_16))); // 'flag' icon
-
+        this.setIcon(FOXHOUND_ICON);
         this.setLayout(new GridBagLayout());
 
         this.add(this.getToolbar(), LayoutHelper.getGBC(0, 0, 1, 1.0));
@@ -89,8 +100,8 @@ public class FoxhoundPanel extends AbstractPanel implements EventConsumer {
             toolbar = new JToolBar();
             toolbar.setFloatable(false);
             toolbar.add(getLaunchButton());
-            toolbar.add(getClearAllButton());
             toolbar.add(getFilterButton());
+            toolbar.add(getClearAllButton());
         }
         return toolbar;
     }
@@ -107,6 +118,7 @@ public class FoxhoundPanel extends AbstractPanel implements EventConsumer {
         if (clearAllButton == null) {
             clearAllButton = new JButton();
             clearAllButton.setText(Constant.messages.getString("foxhound.ui.clearAll"));
+            clearAllButton.setIcon(DELETE_ICON);
             clearAllButton.addActionListener(e -> {
                 extension.getTaintStore().clearAll();
             });
@@ -118,6 +130,7 @@ public class FoxhoundPanel extends AbstractPanel implements EventConsumer {
         if (filterButton == null) {
             filterButton = new JButton();
             filterButton.setText(Constant.messages.getString("foxhound.filter.dialog.open"));
+            filterButton.setIcon(FILTER_ICON);
             filterButton.addActionListener(e -> {
                 int res = showFilter();
                 if (res == 1) {
