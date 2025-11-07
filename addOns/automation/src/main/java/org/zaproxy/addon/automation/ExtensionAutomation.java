@@ -113,11 +113,12 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
     private LinkedHashMap<Integer, AutomationPlan> plans = new LinkedHashMap<>();
     private List<AutomationPlan> runningPlans = Collections.synchronizedList(new ArrayList<>());
 
-    private CommandLineArgument[] arguments = new CommandLineArgument[4];
+    private CommandLineArgument[] arguments = new CommandLineArgument[5];
     private static final int ARG_AUTO_RUN_IDX = 0;
     private static final int ARG_AUTO_GEN_MIN_IDX = 1;
     private static final int ARG_AUTO_GEN_MAX_IDX = 2;
     private static final int ARG_AUTO_GEN_CONF_IDX = 3;
+    private static final int ARG_AUTO_CHECK_IDX = 4;
 
     private AutomationPanel automationPanel;
 
@@ -490,11 +491,11 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
     }
 
     public AutomationPlan loadPlan(File f) throws IOException {
-        return new AutomationPlan(this, f);
+        return new AutomationPlan(this, f, false);
     }
 
-    public AutomationPlan loadPlan(InputStream in) {
-        return new AutomationPlan(this, in);
+    public AutomationPlan loadPlan(InputStream in, boolean quiet) {
+        return new AutomationPlan(this, in, quiet);
     }
 
     public void loadPlan(AutomationPlan plan, boolean setFocus, boolean run) {
@@ -532,23 +533,46 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
     }
 
     /**
-     * Run the automation plan define by the given file, intended only to be used from the command
-     * line
+     * Load the automation plan defined by the given file, intended only to be used from the command
+     * line.
+     *
+     * @param filename the name of the file
+     * @param quiet if set then will not output info messages to the console
+     * @return the automation progress
+     */
+    private AutomationPlan loadAutomationFile(String filename, boolean quiet) {
+        File f = new File(filename);
+        if (!f.exists() || !f.canRead()) {
+            CommandLine.error(
+                    Constant.messages.getString("automation.error.nofile", f.getAbsolutePath()));
+            setExitStatus(ERROR_EXIT_VALUE, "no such file", false);
+            return null;
+        }
+        try {
+            return new AutomationPlan(this, f, quiet);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            CommandLine.error(
+                    Constant.messages.getString(
+                            "automation.error.unexpected", f.getAbsolutePath(), e.getMessage()));
+            setExitStatus(ERROR_EXIT_VALUE, "exception reading file", false);
+            return null;
+        }
+    }
+
+    /**
+     * Run the automation plan defined by the given file, intended only to be used from the command
+     * line.
      *
      * @param filename the name of the file
      * @return the automation progress
      */
     protected AutomationProgress runAutomationFile(String filename) {
-        File f = new File(filename);
-        if (!f.exists() || !f.canRead()) {
-            CommandLine.error(
-                    Constant.messages.getString("automation.error.nofile", f.getAbsolutePath()));
-            return null;
-        }
         try {
-            return this.runAutomationPlan(new AutomationPlan(this, f));
+            return this.runAutomationPlan(this.loadAutomationFile(filename, false));
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
+            File f = new File(filename);
             CommandLine.error(
                     Constant.messages.getString(
                             "automation.error.unexpected", f.getAbsolutePath(), e.getMessage()));
@@ -657,6 +681,14 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
                         "-autogenconf <filename>  "
                                 + Constant.messages.getString(
                                         "automation.cmdline.autogenconf.help"));
+        arguments[ARG_AUTO_CHECK_IDX] =
+                new CommandLineArgument(
+                        "-autocheck",
+                        1,
+                        null,
+                        "",
+                        "-autocheck <source>      "
+                                + Constant.messages.getString("automation.cmdline.autocheck.help"));
         return arguments;
     }
 
@@ -676,10 +708,12 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         if (arguments[ARG_AUTO_GEN_CONF_IDX].isEnabled()) {
             generateConfigFile(arguments[ARG_AUTO_GEN_CONF_IDX].getArguments().firstElement());
         }
+        if (arguments[ARG_AUTO_CHECK_IDX].isEnabled()) {
+            checkPlanCommandLine(arguments[ARG_AUTO_CHECK_IDX].getArguments().firstElement());
+        }
     }
 
-    private void runPlanCommandLine(String source) {
-        AutomationProgress progress;
+    private AutomationPlan loadPlanCommandLine(String source, boolean quiet) {
         URI uri = createUri(source);
         if (uri != null) {
             try {
@@ -691,23 +725,22 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
                             1,
                             "non-200 response (" + statusCode + ") for remote plan: " + source,
                             true);
-                    return;
+                    return null;
                 }
 
-                progress =
-                        runAutomationPlan(
-                                this.loadPlan(
-                                        new ByteArrayInputStream(
-                                                message.getResponseBody().getBytes())));
+                return this.loadPlan(
+                        new ByteArrayInputStream(message.getResponseBody().getBytes()), quiet);
 
             } catch (IOException e) {
                 setExitStatus(1, "I/O error getting remote plan: " + e.getMessage(), true);
-                return;
+                return null;
             }
         } else {
-            progress = runAutomationFile(source);
+            return loadAutomationFile(source, quiet);
         }
+    }
 
+    private void setExitStatus(AutomationProgress progress) {
         if (exitOverride != null) {
             setExitStatus(exitOverride, "set by user", false);
         } else if (progress == null || progress.hasErrors()) {
@@ -715,6 +748,22 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         } else if (progress.hasWarnings()) {
             setExitStatus(WARN_EXIT_VALUE, "plan warnings", false);
         }
+    }
+
+    private void runPlanCommandLine(String source) {
+        AutomationPlan plan = loadPlanCommandLine(source, false);
+        if (plan != null) {
+            setExitStatus(runAutomationPlan(plan));
+        }
+    }
+
+    protected AutomationProgress checkPlanCommandLine(String source) {
+        AutomationPlan plan = loadPlanCommandLine(source, true);
+        if (plan != null) {
+            setExitStatus(plan.getProgress());
+            return plan.getProgress();
+        }
+        return null;
     }
 
     public static Integer getExitOverride() {

@@ -59,7 +59,8 @@ class AutomationPlanUnitTest {
                         + "    urls:\n"
                         + "    - \"https://www.example.com/\"\n");
         // When
-        AutomationPlan plan = assertDoesNotThrow(() -> new AutomationPlan(ext, file.toFile()));
+        AutomationPlan plan =
+                assertDoesNotThrow(() -> new AutomationPlan(ext, file.toFile(), false));
         // Then
         assertThat(plan.getJobs(), is(empty()));
         AutomationProgress progress = plan.getProgress();
