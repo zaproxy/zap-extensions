@@ -638,7 +638,7 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin implements Common
                         "Identified the origin node using TRACK, with server header: {}",
                         originServerName);
                 // check if this is the same as the last node we've identified, and if so, discard
-                // it. If not, add it to to the end (as the origin server).
+                // it. If not, add it to the end (as the origin server).
                 if (!nodeServers[step2numberOfNodes - 1].equals(originServerName)) {
                     // it's different to the last one seen.. add it.
                     LOGGER.debug(
