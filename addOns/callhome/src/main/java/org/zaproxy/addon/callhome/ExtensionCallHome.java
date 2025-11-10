@@ -577,7 +577,13 @@ public class ExtensionCallHome extends ExtensionAdaptor
 
                 String base = "stats.log." + event.getLevel().name().toLowerCase(Locale.ROOT);
                 Stats.incCounter(base);
-                Stats.incCounter(base + "." + event.getLoggerName());
+                String baseLoggerName = base + "." + event.getLoggerName();
+                Throwable t = event.getThrown();
+                if (t == null) {
+                    Stats.incCounter(baseLoggerName);
+                } else {
+                    Stats.incCounter(baseLoggerName + "." + t.getClass().getSimpleName());
+                }
             }
         }
     }
