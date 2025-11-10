@@ -32,6 +32,8 @@ class HttpEncodingBrotli implements HttpEncoding {
 
     private static final HttpEncodingBrotli SINGLETON = new HttpEncodingBrotli();
 
+    private static final byte[] EMPTY = {};
+
     private static final boolean AVAILABLE;
 
     static {
@@ -65,6 +67,10 @@ class HttpEncodingBrotli implements HttpEncoding {
 
     @Override
     public byte[] decode(byte[] content) throws IOException {
+        if (content.length == 0) {
+            return EMPTY;
+        }
+
         DirectDecompress directDecompress = Decoder.decompress(content);
         DecoderJNI.Status status = directDecompress.getResultStatus();
         if (status == DecoderJNI.Status.DONE) {

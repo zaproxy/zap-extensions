@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Reset warned invalid content-type values on newer ZAP versions (Issue 9082).
 
+### Fixed
+- Skip decoding of Brotli encoded empty bodies.
+
 ## [0.23.0] - 2025-09-02
 ### Added
 - NetworkUtils class.
