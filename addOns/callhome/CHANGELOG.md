@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Postman stats to telemetry.
 - Forced browse stats to telemetry.
 
+### Changed
+- Include the exception name in logger statistics.
+
 ## [0.17.0] - 2025-11-04
 ### Added
 - AJAX Spider stats to telemetry.
