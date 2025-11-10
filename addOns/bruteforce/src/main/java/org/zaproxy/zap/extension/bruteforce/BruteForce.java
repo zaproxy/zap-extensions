@@ -46,6 +46,7 @@ import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.network.HttpRequestBody;
 import org.zaproxy.zap.network.HttpResponseBody;
+import org.zaproxy.zap.utils.Stats;
 
 public class BruteForce extends Thread implements BruteForceListenner {
 
@@ -126,7 +127,9 @@ public class BruteForce extends Thread implements BruteForceListenner {
 
     @Override
     public void run() {
+        long startTime = System.currentTimeMillis();
         try {
+            Stats.incCounter("stats.bruteforce.started");
             tableModel.clear();
 
             URL targetURL = new URL(target.getURI().toString());
@@ -208,9 +211,12 @@ public class BruteForce extends Thread implements BruteForceListenner {
         }
         stopScan = true;
         LOGGER.info("BruteForce: {} finished", target.getURI());
+        Stats.incCounter("stats.bruteforce.time", System.currentTimeMillis() - startTime);
+        Stats.incCounter("stats.bruteforce.url.request", getWorkDone());
     }
 
     public void stopScan() {
+        Stats.incCounter("stats.bruteforce.stopped");
         stopScan = true;
     }
 
@@ -302,6 +308,8 @@ public class BruteForce extends Thread implements BruteForceListenner {
                             Model.getSingleton().getSession(),
                             HistoryReference.TYPE_BRUTE_FORCE,
                             msg);
+
+            Stats.incCounter("stats.bruteforce.url.found");
 
             SwingUtilities.invokeLater(
                     () -> {
