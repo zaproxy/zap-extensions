@@ -54,15 +54,21 @@ import org.zaproxy.addon.postman.models.ItemGroup;
 import org.zaproxy.addon.postman.models.KeyValueData;
 import org.zaproxy.addon.postman.models.PostmanCollection;
 import org.zaproxy.addon.postman.models.Request;
+import org.zaproxy.zap.extension.stats.InMemoryStats;
 import org.zaproxy.zap.testutils.TestUtils;
+import org.zaproxy.zap.utils.Stats;
 
 class PostmanParserUnitTest extends TestUtils {
+
+    private InMemoryStats stats;
 
     @BeforeEach
     void setup() throws Exception {
         setUpZap();
         startServer();
         mockMessages(new ExtensionPostman());
+        stats = new InMemoryStats();
+        Stats.addListener(stats);
     }
 
     @AfterEach
@@ -287,6 +293,9 @@ class PostmanParserUnitTest extends TestUtils {
         PostmanParser.extractHttpMessages(items, httpMessages);
 
         assertEquals(numberOfitems, httpMessages.size());
+        assertEquals(
+                stats.getStats("").get("stats.postman.messages"),
+                httpMessages.size() == 0 ? null : (long) httpMessages.size());
     }
 
     // The 'Content-Type' header gets set according to the mode of the request body, but if it's
@@ -351,6 +360,13 @@ class PostmanParserUnitTest extends TestUtils {
         assertEquals(
                 stringBody,
                 new String(httpMessage.getRequestBody().getContent(), StandardCharsets.UTF_8));
+        assertEquals(stats.getStats("").get("stats.postman.messages"), 1);
+    }
+
+    private long getStatsErrorCount() {
+        return stats.getStats("stats.postman.error.").values().stream()
+                .mapToLong(Long::longValue)
+                .sum();
     }
 
     @ParameterizedTest
@@ -366,6 +382,7 @@ class PostmanParserUnitTest extends TestUtils {
         for (int i = 0; i < errors.size(); i++) {
             assertEquals(expectedErrors.get(i), errors.get(i));
         }
+        assertEquals(getStatsErrorCount(), errors.size());
     }
 
     @MethodSource("variablesTestData")
