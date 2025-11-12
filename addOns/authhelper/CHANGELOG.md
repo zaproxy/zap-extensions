@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - Fail the Microsoft login if not able to perform all the expected steps.
+- Track GWT headers.
 
 ## [0.32.0] - 2025-11-07
 ### Changed
