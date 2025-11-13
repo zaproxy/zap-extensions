@@ -55,6 +55,7 @@ var addOns =
         "grpc",
         "highlighter",
         "imagelocationscanner",
+        "insights",
         "invoke",
         "jruby",
         "jsonview",
