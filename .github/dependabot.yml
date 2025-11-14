@@ -23,7 +23,6 @@ updates:
     ignore:
       # network add-on dependencies are managed manually
       - dependency-name: "io.netty:*"
-      - dependency-name: "org.bouncycastle:*"
       - dependency-name: "com.aayushatharva.brotli4j:*"
       - dependency-name: "org.apache.httpcomponents.client5:httpclient5"
       - dependency-name: "org.jitsi:ice4j"

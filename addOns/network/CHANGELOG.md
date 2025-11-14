@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Use UTF-8 charset for `application/json` when none specified on newer ZAP versions (Issue 6656).
 
 ### Changed
+- Update dependencies.
 - Reset warned invalid content-type values on newer ZAP versions (Issue 9082).
 - Updated user agents.
 
