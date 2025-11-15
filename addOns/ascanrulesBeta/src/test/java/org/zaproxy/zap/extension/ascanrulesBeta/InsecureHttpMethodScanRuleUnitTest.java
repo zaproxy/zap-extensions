@@ -27,11 +27,13 @@ import static org.hamcrest.Matchers.is;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Method;
 import fi.iki.elonen.NanoHTTPD.Response;
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.PolicyTag;
@@ -138,5 +140,13 @@ class InsecureHttpMethodScanRuleUnitTest extends ActiveScannerTest<InsecureHttpM
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_CONF_06_HTTP_METHODS.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_CONF_06_HTTP_METHODS.getValue())));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlert() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts.size(), is(equalTo(5)));
     }
 }
