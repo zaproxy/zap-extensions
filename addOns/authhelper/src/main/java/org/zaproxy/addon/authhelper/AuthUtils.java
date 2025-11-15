@@ -959,7 +959,7 @@ public class AuthUtils {
                         }
                     }
                 }
-            } catch (JSONException e) {
+            } catch (JSONException | ClassCastException e) {
                 LOGGER.debug(
                         "Unable to parse authentication response body from {} as JSON: {} ",
                         msg.getRequestHeader().getURI(),
