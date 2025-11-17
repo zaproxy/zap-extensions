@@ -21,20 +21,37 @@ package org.zaproxy.addon.insights.internal;
 
 import java.util.Map;
 import java.util.Map.Entry;
+import org.apache.commons.httpclient.URIException;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.model.HistoryReference;
 import org.zaproxy.addon.insights.ExtensionInsights;
+import org.zaproxy.zap.authentication.AuthenticationHelper;
+import org.zaproxy.zap.eventBus.Event;
+import org.zaproxy.zap.eventBus.EventConsumer;
 import org.zaproxy.zap.extension.stats.InMemoryStats;
+import org.zaproxy.zap.model.SessionStructure;
 import org.zaproxy.zap.utils.StatsListener;
 
-public class StatsMonitor implements StatsListener {
+public class StatsMonitor implements StatsListener, EventConsumer {
 
     private static final String STATS_CODE_PREFIX = "stats.code.";
     private static final String STATS_ERROR = "stats.log.error";
     private static final String STATS_WARN = "stats.log.warn";
     private static final String STATS_NETWORK_FAILURE = "stats.network.send.failure";
     private static final String STATS_NETWORK_SUCCESS = "stats.network.send.success";
+    private static final String STATS_ENDPOINTS_PREFIX = "stats.endpoints.";
+    private static final String STATS_ENDPOINTS_TOTAL = STATS_ENDPOINTS_PREFIX + "total";
+    private static final String STATS_ENDPOINTS_METHOD_PREFIX = STATS_ENDPOINTS_PREFIX + "method.";
+    private static final String STATS_ENDPOINTS_CTYPE_PREFIX = STATS_ENDPOINTS_PREFIX + "ctype.";
+    private static final String STATS_RESPONSE_TIME_PREFIX = "stats.responseTime.";
 
     private static final int MIN_NUMBER_OF_REQS = 1000;
+    private static final int MIN_NUMBER_OF_AUTH = 10;
+
+    // TODO move these to options
+    private static final int OPTION_LOW_WARNING = 5;
+    private static final int OPTION_HIGH_WARNING = 50;
+    private static final int OPTION_SLOW_RESPONSE_TIME = 255;
 
     private InMemoryStats stats = new InMemoryStats();
 
@@ -42,10 +59,6 @@ public class StatsMonitor implements StatsListener {
 
     public StatsMonitor(ExtensionInsights extensionInsights) {
         this.ext = extensionInsights;
-    }
-
-    public InMemoryStats getCachedStats() {
-        return stats;
     }
 
     private String getStatsDescription(String key) {
@@ -57,6 +70,16 @@ public class StatsMonitor implements StatsListener {
             return Constant.messages.getString(
                     ExtensionInsights.PREFIX + ".insight.stats.code",
                     key.substring(STATS_CODE_PREFIX.length()));
+        }
+        if (key.startsWith(STATS_ENDPOINTS_METHOD_PREFIX)) {
+            return Constant.messages.getString(
+                    ExtensionInsights.PREFIX + ".insight.stats.endpoints.method",
+                    key.substring(STATS_ENDPOINTS_METHOD_PREFIX.length()));
+        }
+        if (key.startsWith(STATS_ENDPOINTS_CTYPE_PREFIX)) {
+            return Constant.messages.getString(
+                    ExtensionInsights.PREFIX + ".insight.stats.endpoints.ctype",
+                    key.substring(STATS_ENDPOINTS_CTYPE_PREFIX.length()));
         }
         return key;
     }
@@ -81,6 +104,18 @@ public class StatsMonitor implements StatsListener {
     }
 
     public void processStats() {
+        processStatusCodeStats();
+        processEndpointStats();
+        processNetworkStats();
+        processResponseTimeStats();
+        processAuthStats();
+
+        // ZAP errors and warnings
+        recordNonZeroInsight(Insight.Level.Low, STATS_ERROR);
+        recordNonZeroInsight(Insight.Level.Low, STATS_WARN);
+    }
+
+    private void processStatusCodeStats() {
         // Count of responses by site and status code
         Map<String, Map<String, Long>> siteCodeStats = stats.getAllSiteStats(STATS_CODE_PREFIX);
         for (Entry<String, Map<String, Long>> site2stats : siteCodeStats.entrySet()) {
@@ -100,45 +135,135 @@ public class StatsMonitor implements StatsListener {
                 }
             }
 
-            if (tot400 > total / 20) {
+            if (total > MIN_NUMBER_OF_REQS && tot400 > total * OPTION_LOW_WARNING / 100) {
                 recordInsight(
                         Insight.Level.Low, site, STATS_CODE_PREFIX + "4xx", tot400 * 100 / total);
             }
-            if (tot500 > total / 20) {
+            if (total > MIN_NUMBER_OF_REQS && tot500 > total * OPTION_LOW_WARNING / 100) {
                 recordInsight(
                         Insight.Level.Low, site, STATS_CODE_PREFIX + "5xx", tot500 * 100 / total);
             }
         }
+    }
 
+    private void processEndpointStats() {
+        // Count endpoints related stats
+        Map<String, Map<String, Long>> siteEndpointStats =
+                stats.getAllSiteStats(STATS_ENDPOINTS_PREFIX);
+        for (Entry<String, Map<String, Long>> site2stats : siteEndpointStats.entrySet()) {
+            String site = site2stats.getKey();
+            for (Entry<String, Long> k2stat : site2stats.getValue().entrySet()) {
+                recordInsight(Insight.Level.Info, site, k2stat.getKey(), k2stat.getValue());
+            }
+        }
+    }
+
+    private void recordInsightWithLimits(
+            String site, String keyPrefix, long min, long total, long bad) {
+        if (total < min) {
+            return;
+        }
+        if (bad > 0) {
+            recordInsight(Insight.Level.Info, site, keyPrefix + "info", bad);
+        }
+
+        if (bad > total * OPTION_LOW_WARNING / 100) {
+            recordInsight(Insight.Level.Low, site, keyPrefix + "low", bad * 100 / total);
+        }
+        if (bad > total * OPTION_HIGH_WARNING / 100) {
+            recordInsight(Insight.Level.Medium, site, keyPrefix + "medium", bad * 100 / total);
+        }
+    }
+
+    private void processNetworkStats() {
         // Network problems
         long netGood = unbox(stats.getStat(STATS_NETWORK_SUCCESS));
         long netBad = unbox(stats.getStat(STATS_NETWORK_FAILURE));
         long netTotal = netGood + netBad;
-        if (netTotal > MIN_NUMBER_OF_REQS) {
-            if (netBad > netTotal / 2) {
-                recordInsight(
-                        Insight.Level.High, "stats.network.failure.high", netBad * 100 / netTotal);
-            }
-            if (netBad > netTotal / 20) {
-                recordInsight(
-                        Insight.Level.Medium,
-                        "stats.network.failure.medium",
-                        netBad * 100 / netTotal);
-            }
-        }
 
-        // ZAP errors and warnings
-        recordNonZeroInsight(Insight.Level.Low, STATS_ERROR);
-        recordNonZeroInsight(Insight.Level.Low, STATS_WARN);
+        recordInsightWithLimits("", "stats.network.failure.", MIN_NUMBER_OF_REQS, netTotal, netBad);
+    }
+
+    private void processResponseTimeStats() {
+        Map<String, Map<String, Long>> siteCodeStats =
+                stats.getAllSiteStats(STATS_RESPONSE_TIME_PREFIX);
+        for (Entry<String, Map<String, Long>> site2stats : siteCodeStats.entrySet()) {
+            String site = site2stats.getKey();
+            long total = 0;
+            long slowResponses = 0;
+
+            for (Entry<String, Long> k2stat : site2stats.getValue().entrySet()) {
+                String timeStr = k2stat.getKey().substring(STATS_RESPONSE_TIME_PREFIX.length());
+                total += k2stat.getValue();
+                try {
+                    int time = Integer.parseInt(timeStr);
+                    if (time > OPTION_SLOW_RESPONSE_TIME) {
+                        slowResponses += k2stat.getValue();
+                    }
+                } catch (NumberFormatException e) {
+                    // Ignore
+                }
+            }
+
+            recordInsightWithLimits(
+                    site, "stats.responseTime.", MIN_NUMBER_OF_REQS, total, slowResponses);
+        }
+    }
+
+    private void processAuthStats() {
+        Map<String, Map<String, Long>> siteEndpointStats = stats.getAllSiteStats("stats.auth.");
+        for (Entry<String, Map<String, Long>> site2stats : siteEndpointStats.entrySet()) {
+            String site = site2stats.getKey();
+            long failure = 0;
+            long success = 0;
+
+            for (Entry<String, Long> k2stat : site2stats.getValue().entrySet()) {
+                switch (k2stat.getKey()) {
+                    case AuthenticationHelper.AUTH_FAILURE_STATS:
+                        failure = k2stat.getValue();
+                        break;
+                    case AuthenticationHelper.AUTH_SUCCESS_STATS:
+                        success = k2stat.getValue();
+                        break;
+                }
+            }
+            recordInsightWithLimits(
+                    site, "stats.auth.failure.", MIN_NUMBER_OF_AUTH, failure + success, failure);
+        }
     }
 
     private boolean isRelevant(String key) {
-        if (key.startsWith(STATS_CODE_PREFIX)
+        return key.startsWith(STATS_CODE_PREFIX)
+                || key.startsWith(STATS_RESPONSE_TIME_PREFIX)
+                || key.equals(AuthenticationHelper.AUTH_FAILURE_STATS)
+                || key.equals(AuthenticationHelper.AUTH_SUCCESS_STATS)
+                || key.equals(STATS_NETWORK_SUCCESS)
+                || key.equals(STATS_NETWORK_FAILURE)
                 || key.equals(STATS_ERROR)
-                || key.equals(STATS_WARN)) {
-            return true;
+                || key.equals(STATS_WARN);
+    }
+
+    @Override
+    public void eventReceived(Event event) {
+        String site;
+        try {
+            HistoryReference href = event.getTarget().getStartNode().getHistoryReference();
+            site = SessionStructure.getHostName(href.getURI());
+            stats.counterInc(site, STATS_ENDPOINTS_TOTAL);
+            stats.counterInc(site, STATS_ENDPOINTS_METHOD_PREFIX + href.getMethod());
+
+            Map<String, String> params = event.getParameters();
+            if (params != null && params.containsKey("contentType")) {
+                String ct = params.get("contentType");
+                int semicolonIdx = ct.indexOf(';');
+                if (semicolonIdx > 0) {
+                    ct = ct.substring(0, semicolonIdx);
+                }
+                stats.counterInc(site, STATS_ENDPOINTS_CTYPE_PREFIX + ct);
+            }
+        } catch (URIException e) {
+            // Ignore
         }
-        return false;
     }
 
     @Override
@@ -228,6 +353,7 @@ public class StatsMonitor implements StatsListener {
     @Override
     public void allCleared() {
         stats.allCleared();
+        ext.clearInsights();
     }
 
     @Override
