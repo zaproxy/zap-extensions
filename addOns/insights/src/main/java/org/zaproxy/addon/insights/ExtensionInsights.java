@@ -28,9 +28,11 @@ import java.util.concurrent.TimeUnit;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.model.SiteMapEventPublisher;
 import org.zaproxy.addon.insights.internal.Insight;
 import org.zaproxy.addon.insights.internal.InsightsPanel;
 import org.zaproxy.addon.insights.internal.StatsMonitor;
+import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.utils.ThreadUtils;
 
@@ -57,7 +59,13 @@ public class ExtensionInsights extends ExtensionAdaptor {
         setI18nPrefix(PREFIX);
 
         statsMonitor = new StatsMonitor(this);
-        Stats.addListener(statsMonitor.getCachedStats());
+        Stats.addListener(statsMonitor);
+
+        ZAP.getEventBus()
+                .registerConsumer(
+                        statsMonitor,
+                        SiteMapEventPublisher.class.getCanonicalName(),
+                        SiteMapEventPublisher.SITE_NODE_ADDED_EVENT);
     }
 
     @Override
@@ -72,7 +80,6 @@ public class ExtensionInsights extends ExtensionAdaptor {
 
     @Override
     public void optionsLoaded() {
-
         pollThread = new PollThread();
         pollThread.start();
 
@@ -103,6 +110,22 @@ public class ExtensionInsights extends ExtensionAdaptor {
         }
     }
 
+    protected List<Insight> getInsights() {
+        return this.insights;
+    }
+
+    protected StatsMonitor getStatsMonitor() {
+        return statsMonitor;
+    }
+
+    public void clearInsights() {
+        this.insights.clear();
+        // This will indicate the insights have changed
+        if (insightsPanel != null) {
+            insightsPanel.setInsights(insights);
+        }
+    }
+
     public static URL getResource(String resource) {
         return ExtensionInsights.class.getResource(ExtensionInsights.RESOURCES + resource);
     }
@@ -116,8 +139,9 @@ public class ExtensionInsights extends ExtensionAdaptor {
     public void unload() {
         this.stop();
         if (statsMonitor != null) {
-            Stats.removeListener(statsMonitor.getCachedStats());
+            Stats.removeListener(statsMonitor);
         }
+        ZAP.getEventBus().unregisterConsumer(statsMonitor);
     }
 
     @Override
