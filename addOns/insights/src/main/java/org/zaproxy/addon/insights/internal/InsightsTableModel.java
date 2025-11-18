@@ -30,14 +30,17 @@ public class InsightsTableModel extends AbstractTableModel {
 
     private static final String[] COLUMN_NAMES = {
         Constant.messages.getString("insights.table.header.level"),
+        Constant.messages.getString("insights.table.header.reason"),
+        Constant.messages.getString("insights.table.header.stat"),
         Constant.messages.getString("insights.table.header.site"),
         Constant.messages.getString("insights.table.header.desc"),
-        Constant.messages.getString("insights.table.header.stat"),
     };
 
     private static final int COLUMN_COUNT = COLUMN_NAMES.length;
 
     private List<Insight> insights;
+
+    public InsightsTableModel() {}
 
     public void setInsights(List<Insight> insights) {
         this.insights = insights;
@@ -54,6 +57,10 @@ public class InsightsTableModel extends AbstractTableModel {
         } else {
             this.fireTableDataChanged();
         }
+    }
+
+    public Insight getRow(int index) {
+        return insights.get(index);
     }
 
     @Override
@@ -78,9 +85,10 @@ public class InsightsTableModel extends AbstractTableModel {
     public Class<?> getColumnClass(int column) {
         return switch (column) {
             case 0 -> Insight.Level.class;
-            case 1 -> String.class;
+            case 1 -> Insight.Reason.class;
             case 2 -> String.class;
-            case 3 -> Long.class;
+            case 3 -> String.class;
+            case 4 -> String.class;
             default -> Object.class;
         };
     }
@@ -91,9 +99,15 @@ public class InsightsTableModel extends AbstractTableModel {
             Insight ins = insights.get(rowIndex);
             return switch (columnIndex) {
                 case 0 -> ins.getLevel();
-                case 1 -> ins.getSite();
-                case 2 -> ins.getDescription();
-                case 3 -> ins.getStatistic();
+                case 1 -> ins.getReason();
+                case 2 ->
+                        ins.isPercent()
+                                ? Constant.messages.getString(
+                                        "insights.table.percent", ins.getStatistic())
+                                : Constant.messages.getString(
+                                        "insights.table.plain", ins.getStatistic());
+                case 3 -> ins.getSite();
+                case 4 -> ins.getDescription();
                 default -> null;
             };
         }

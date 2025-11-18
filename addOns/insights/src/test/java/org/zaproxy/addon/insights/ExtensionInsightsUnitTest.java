@@ -90,25 +90,40 @@ class ExtensionInsightsUnitTest extends TestUtils {
         assertThat(ext.getInsights().size(), is(equalTo(2)));
         assertInsight(
                 0,
-                Insight.Level.Low,
+                Insight.Level.LOW,
                 "",
-                "stats.log.error",
+                "insight.log.error",
                 "ZAP errors logged - see the zap.log file for details",
                 1L);
         assertInsight(
                 1,
-                Insight.Level.Low,
+                Insight.Level.LOW,
                 "",
-                "stats.log.warn",
+                "insight.log.warn",
                 "ZAP warnings logged - see the zap.log file for details",
                 5L);
+    }
+
+    @Test
+    void shouldRecordSpaceProblems() {
+        // Given
+        Stats.incCounter("stats.error.database.full", 1);
+        Stats.incCounter("stats.error.diskspace.full", 1);
+
+        // When
+        sm.processStats();
+
+        // Then
+        assertThat(ext.getInsights().size(), is(equalTo(2)));
+        assertInsight(0, Insight.Level.HIGH, "", "insight.database.full", "Database full", 1L);
+        assertInsight(1, Insight.Level.HIGH, "", "insight.diskspace.full", "Diskspace full", 1L);
     }
 
     @Test
     void shouldRecordNetworkInfoStats() {
         // Given
         Stats.incCounter("stats.network.send.success", 1000);
-        Stats.incCounter("stats.network.send.failure", 1);
+        Stats.incCounter("stats.network.send.failure", 15);
         Stats.incCounter("stats.network.send.other", 8);
 
         // When
@@ -116,13 +131,7 @@ class ExtensionInsightsUnitTest extends TestUtils {
 
         // Then
         assertThat(ext.getInsights().size(), is(equalTo(1)));
-        assertInsight(
-                0,
-                Insight.Level.Info,
-                "",
-                "stats.network.failure.info",
-                "Count of network failures",
-                1L);
+        assertInsight(0, "", "insight.network.failure", "Percentage of network failures", 1L);
     }
 
     @Test
@@ -135,21 +144,15 @@ class ExtensionInsightsUnitTest extends TestUtils {
         sm.processStats();
 
         // Then
-        assertThat(ext.getInsights().size(), is(equalTo(2)));
+        assertThat(ext.getInsights().size(), is(equalTo(1)));
         assertInsight(
                 0,
-                Insight.Level.Low,
+                Insight.Level.LOW,
+                Insight.Reason.EXCEEDED_LOW,
                 "",
-                "stats.network.failure.low",
-                "High percentage of network failures",
+                "insight.network.failure",
+                "Percentage of network failures",
                 9L);
-        assertInsight(
-                1,
-                Insight.Level.Info,
-                "",
-                "stats.network.failure.info",
-                "Count of network failures",
-                100L);
     }
 
     @Test
@@ -162,35 +165,22 @@ class ExtensionInsightsUnitTest extends TestUtils {
         sm.processStats();
 
         // Then
-        assertThat(ext.getInsights().size(), is(equalTo(3)));
+        assertThat(ext.getInsights().size(), is(equalTo(1)));
         assertInsight(
                 0,
-                Insight.Level.Medium,
+                Insight.Level.MEDIUM,
+                Insight.Reason.EXCEEDED_HIGH,
                 "",
-                "stats.network.failure.medium",
-                "Very high percentage of network failures",
+                "insight.network.failure",
+                "Percentage of network failures",
                 66L);
-        assertInsight(
-                1,
-                Insight.Level.Low,
-                "",
-                "stats.network.failure.low",
-                "High percentage of network failures",
-                66L);
-        assertInsight(
-                2,
-                Insight.Level.Info,
-                "",
-                "stats.network.failure.info",
-                "Count of network failures",
-                2000L);
     }
 
     @Test
     void shouldRecordAuthInfoStats() {
         // Given
         Stats.incCounter(EXAMPLE_COM, "stats.auth.success", 1000);
-        Stats.incCounter(EXAMPLE_COM, "stats.auth.failure", 1);
+        Stats.incCounter(EXAMPLE_COM, "stats.auth.failure", 11);
         Stats.incCounter(EXAMPLE_COM, "stats.auth.other", 8);
 
         // When
@@ -200,10 +190,9 @@ class ExtensionInsightsUnitTest extends TestUtils {
         assertThat(ext.getInsights().size(), is(equalTo(1)));
         assertInsight(
                 0,
-                Insight.Level.Info,
                 EXAMPLE_COM,
-                "stats.auth.failure.info",
-                "Count of authentication failures",
+                "insight.auth.failure",
+                "Percentage of authentication failures",
                 1L);
     }
 
@@ -217,21 +206,15 @@ class ExtensionInsightsUnitTest extends TestUtils {
         sm.processStats();
 
         // Then
-        assertThat(ext.getInsights().size(), is(equalTo(2)));
+        assertThat(ext.getInsights().size(), is(equalTo(1)));
         assertInsight(
                 0,
-                Insight.Level.Low,
+                Insight.Level.LOW,
+                Insight.Reason.EXCEEDED_LOW,
                 EXAMPLE_COM,
-                "stats.auth.failure.low",
-                "High percentage of authentication failures",
+                "insight.auth.failure",
+                "Percentage of authentication failures",
                 9L);
-        assertInsight(
-                1,
-                Insight.Level.Info,
-                EXAMPLE_COM,
-                "stats.auth.failure.info",
-                "Count of authentication failures",
-                100L);
     }
 
     @Test
@@ -244,35 +227,23 @@ class ExtensionInsightsUnitTest extends TestUtils {
         sm.processStats();
 
         // Then
-        assertThat(ext.getInsights().size(), is(equalTo(3)));
+        assertThat(ext.getInsights().size(), is(equalTo(1)));
         assertInsight(
                 0,
-                Insight.Level.Medium,
+                Insight.Level.MEDIUM,
+                Insight.Reason.EXCEEDED_HIGH,
                 EXAMPLE_COM,
-                "stats.auth.failure.medium",
-                "Very high percentage of authentication failures",
+                "insight.auth.failure",
+                "Percentage of authentication failures",
                 75L);
-        assertInsight(
-                1,
-                Insight.Level.Low,
-                EXAMPLE_COM,
-                "stats.auth.failure.low",
-                "High percentage of authentication failures",
-                75L);
-        assertInsight(
-                2,
-                Insight.Level.Info,
-                EXAMPLE_COM,
-                "stats.auth.failure.info",
-                "Count of authentication failures",
-                3000L);
     }
 
     @Test
     void shouldRecordAllStatusCodeInfoStats() {
         // Given
         Stats.incCounter(EXAMPLE_COM, "stats.code.100", 101);
-        Stats.incCounter(EXAMPLE_COM, "stats.code.200", 202);
+        Stats.incCounter(EXAMPLE_COM, "stats.code.200", 200);
+        Stats.incCounter(EXAMPLE_COM, "stats.code.201", 2);
         Stats.incCounter(EXAMPLE_COM, "stats.code.400", 4);
 
         // When
@@ -282,25 +253,22 @@ class ExtensionInsightsUnitTest extends TestUtils {
         assertThat(ext.getInsights().size(), is(equalTo(3)));
         assertInsight(
                 0,
-                Insight.Level.Info,
                 EXAMPLE_COM,
-                "stats.code.100",
-                "Count of responses with status code 100",
-                101L);
+                "insight.code.1xx",
+                "Percentage of responses with status code 1xx",
+                32L);
         assertInsight(
                 1,
-                Insight.Level.Info,
                 EXAMPLE_COM,
-                "stats.code.200",
-                "Count of responses with status code 200",
-                202L);
+                "insight.code.2xx",
+                "Percentage of responses with status code 2xx",
+                65L);
         assertInsight(
                 2,
-                Insight.Level.Info,
                 EXAMPLE_COM,
-                "stats.code.400",
-                "Count of responses with status code 400",
-                4L);
+                "insight.code.4xx",
+                "Percentage of responses with status code 4xx",
+                1L);
     }
 
     @Test
@@ -313,28 +281,21 @@ class ExtensionInsightsUnitTest extends TestUtils {
         sm.processStats();
 
         // Then
-        assertThat(ext.getInsights().size(), is(equalTo(3)));
+        assertThat(ext.getInsights().size(), is(equalTo(2)));
         assertInsight(
                 0,
-                Insight.Level.Low,
                 EXAMPLE_COM,
-                "stats.code.4xx",
-                "High percentage of responses with 4XX status codes",
-                5L);
+                "insight.code.1xx",
+                "Percentage of responses with status code 1xx",
+                94L);
         assertInsight(
                 1,
-                Insight.Level.Info,
+                Insight.Level.INFO,
+                Insight.Reason.EXCEEDED_LOW,
                 EXAMPLE_COM,
-                "stats.code.100",
-                "Count of responses with status code 100",
-                1000L);
-        assertInsight(
-                2,
-                Insight.Level.Info,
-                EXAMPLE_COM,
-                "stats.code.400",
-                "Count of responses with status code 400",
-                55L);
+                "insight.code.4xx",
+                "Percentage of responses with status code 4xx",
+                5L);
     }
 
     @Test
@@ -347,28 +308,21 @@ class ExtensionInsightsUnitTest extends TestUtils {
         sm.processStats();
 
         // Then
-        assertThat(ext.getInsights().size(), is(equalTo(3)));
+        assertThat(ext.getInsights().size(), is(equalTo(2)));
         assertInsight(
                 0,
-                Insight.Level.Low,
+                Insight.Level.LOW,
+                Insight.Reason.EXCEEDED_HIGH,
                 EXAMPLE_COM,
-                "stats.code.5xx",
-                "High percentage of responses with 5XX status codes",
+                "insight.code.5xx",
+                "Percentage of responses with status code 5xx",
                 50L);
         assertInsight(
                 1,
-                Insight.Level.Info,
                 EXAMPLE_COM,
-                "stats.code.100",
-                "Count of responses with status code 100",
-                550L);
-        assertInsight(
-                2,
-                Insight.Level.Info,
-                EXAMPLE_COM,
-                "stats.code.500",
-                "Count of responses with status code 500",
-                550L);
+                "insight.code.1xx",
+                "Percentage of responses with status code 1xx",
+                50L);
     }
 
     @Test
@@ -389,7 +343,7 @@ class ExtensionInsightsUnitTest extends TestUtils {
     void shouldRecordResponseTimesInfoStats() {
         // Given
         Stats.incCounter(EXAMPLE_COM, "stats.responseTime.2", 1000);
-        Stats.incCounter(EXAMPLE_COM, "stats.responseTime.256", 5);
+        Stats.incCounter(EXAMPLE_COM, "stats.responseTime.256", 55);
 
         // When
         sm.processStats();
@@ -398,10 +352,11 @@ class ExtensionInsightsUnitTest extends TestUtils {
         assertThat(ext.getInsights().size(), is(equalTo(1)));
         assertInsight(
                 0,
-                Insight.Level.Info,
+                Insight.Level.INFO,
+                Insight.Reason.EXCEEDED_LOW,
                 EXAMPLE_COM,
-                "stats.responseTime.info",
-                "Count of slow responses",
+                "insight.response.slow",
+                "Percentage of slow responses",
                 5L);
     }
 
@@ -409,27 +364,21 @@ class ExtensionInsightsUnitTest extends TestUtils {
     void shouldRecordhResponseTimesLowStats() {
         Stats.incCounter(EXAMPLE_COM, "stats.responseTime.2", 1000);
         Stats.incCounter(EXAMPLE_COM, "stats.responseTime.32", 500);
-        Stats.incCounter(EXAMPLE_COM, "stats.responseTime.256", 500);
+        Stats.incCounter(EXAMPLE_COM, "stats.responseTime.256", 1500);
 
         // When
         sm.processStats();
 
         // Then
-        assertThat(ext.getInsights().size(), is(equalTo(2)));
+        assertThat(ext.getInsights().size(), is(equalTo(1)));
         assertInsight(
                 0,
-                Insight.Level.Low,
+                Insight.Level.LOW,
+                Insight.Reason.EXCEEDED_HIGH,
                 EXAMPLE_COM,
-                "stats.responseTime.low",
-                "High percentage of slow responses",
-                25L);
-        assertInsight(
-                1,
-                Insight.Level.Info,
-                EXAMPLE_COM,
-                "stats.responseTime.info",
-                "Count of slow responses",
-                500L);
+                "insight.response.slow",
+                "Percentage of slow responses",
+                50L);
     }
 
     @Test
@@ -442,28 +391,15 @@ class ExtensionInsightsUnitTest extends TestUtils {
         sm.processStats();
 
         // Then
-        assertThat(ext.getInsights().size(), is(equalTo(3)));
+        assertThat(ext.getInsights().size(), is(equalTo(1)));
         assertInsight(
                 0,
-                Insight.Level.Medium,
+                Insight.Level.LOW,
+                Insight.Reason.EXCEEDED_HIGH,
                 EXAMPLE_COM,
-                "stats.responseTime.medium",
-                "Very high percentage of slow responses",
+                "insight.response.slow",
+                "Percentage of slow responses",
                 51L);
-        assertInsight(
-                1,
-                Insight.Level.Low,
-                EXAMPLE_COM,
-                "stats.responseTime.low",
-                "High percentage of slow responses",
-                51L);
-        assertInsight(
-                2,
-                Insight.Level.Info,
-                EXAMPLE_COM,
-                "stats.responseTime.info",
-                "Count of slow responses",
-                1050L);
     }
 
     @Test
@@ -481,51 +417,38 @@ class ExtensionInsightsUnitTest extends TestUtils {
         assertThat(ext.getInsights().size(), is(equalTo(6)));
         assertInsight(
                 0,
-                Insight.Level.Info,
                 "https://www.example1.com",
-                "stats.endpoints.method.GET",
-                "Count of endpoints with method GET",
-                10L);
-        assertInsight(
-                0,
-                Insight.Level.Info,
-                "https://www.example1.com",
-                "stats.endpoints.method.GET",
-                "Count of endpoints with method GET",
-                10L);
+                "insight.endpoint.method.GET",
+                "Percentage of endpoints with method GET",
+                71L);
         assertInsight(
                 1,
-                Insight.Level.Info,
                 "https://www.example1.com",
-                "stats.endpoints.method.POST",
-                "Count of endpoints with method POST",
-                4L);
+                "insight.endpoint.method.POST",
+                "Percentage of endpoints with method POST",
+                28L);
         assertInsight(
                 2,
-                Insight.Level.Info,
                 "https://www.example1.com",
-                "stats.endpoints.total",
+                "insight.endpoint.total",
                 "Count of total endpoints",
                 14L);
         assertInsight(
                 3,
-                Insight.Level.Info,
                 "https://www.example2.com",
-                "stats.endpoints.method.GET",
-                "Count of endpoints with method GET",
-                20L);
+                "insight.endpoint.method.GET",
+                "Percentage of endpoints with method GET",
+                90L);
         assertInsight(
                 4,
-                Insight.Level.Info,
                 "https://www.example2.com",
-                "stats.endpoints.method.OPTIONS",
-                "Count of endpoints with method OPTIONS",
-                2L);
+                "insight.endpoint.method.OPTIONS",
+                "Percentage of endpoints with method OPTIONS",
+                9L);
         assertInsight(
                 5,
-                Insight.Level.Info,
                 "https://www.example2.com",
-                "stats.endpoints.total",
+                "insight.endpoint.total",
                 "Count of total endpoints",
                 22L);
     }
@@ -553,66 +476,74 @@ class ExtensionInsightsUnitTest extends TestUtils {
         assertThat(ext.getInsights().size(), is(equalTo(8)));
         assertInsight(
                 0,
-                Insight.Level.Info,
                 "https://www.example1.com",
-                "stats.endpoints.ctype.multipart/form-data",
-                "Count of endpoints with content type multipart/form-data",
-                4L);
+                "insight.endpoint.ctype.multipart/form-data",
+                "Percentage of endpoints with content type multipart/form-data",
+                28L);
         assertInsight(
                 1,
-                Insight.Level.Info,
                 "https://www.example1.com",
-                "stats.endpoints.ctype.text/html",
-                "Count of endpoints with content type text/html",
-                6L);
+                "insight.endpoint.ctype.text/html",
+                "Percentage of endpoints with content type text/html",
+                42L);
         assertInsight(
                 2,
-                Insight.Level.Info,
                 "https://www.example1.com",
-                "stats.endpoints.method.GET",
-                "Count of endpoints with method GET",
-                14L);
+                "insight.endpoint.method.GET",
+                "Percentage of endpoints with method GET",
+                100L);
         assertInsight(
                 3,
-                Insight.Level.Info,
                 "https://www.example1.com",
-                "stats.endpoints.total",
+                "insight.endpoint.total",
                 "Count of total endpoints",
                 14L);
         assertInsight(
                 4,
-                Insight.Level.Info,
                 "https://www.example2.com",
-                "stats.endpoints.ctype.application/json",
-                "Count of endpoints with content type application/json",
-                10L);
+                "insight.endpoint.ctype.application/json",
+                "Percentage of endpoints with content type application/json",
+                45L);
         assertInsight(
                 5,
-                Insight.Level.Info,
                 "https://www.example2.com",
-                "stats.endpoints.ctype.text/html",
-                "Count of endpoints with content type text/html",
-                10L);
+                "insight.endpoint.ctype.text/html",
+                "Percentage of endpoints with content type text/html",
+                45L);
         assertInsight(
                 6,
-                Insight.Level.Info,
                 "https://www.example2.com",
-                "stats.endpoints.method.GET",
-                "Count of endpoints with method GET",
-                22L);
+                "insight.endpoint.method.GET",
+                "Percentage of endpoints with method GET",
+                100L);
         assertInsight(
                 7,
-                Insight.Level.Info,
                 "https://www.example2.com",
-                "stats.endpoints.total",
+                "insight.endpoint.total",
                 "Count of total endpoints",
                 22L);
     }
 
+    private void assertInsight(int index, String site, String key, String desc, long stat) {
+        this.assertInsight(index, Insight.Level.INFO, Insight.Reason.NA, site, key, desc, stat);
+    }
+
     private void assertInsight(
             int index, Insight.Level level, String site, String key, String desc, long stat) {
+        this.assertInsight(index, level, Insight.Reason.NA, site, key, desc, stat);
+    }
+
+    private void assertInsight(
+            int index,
+            Insight.Level level,
+            Insight.Reason reason,
+            String site,
+            String key,
+            String desc,
+            long stat) {
         Insight insightTest = ext.getInsights().get(index);
         assertThat(insightTest.getLevel(), is(equalTo(level)));
+        assertThat(insightTest.getReason(), is(equalTo(reason)));
         assertThat(insightTest.getSite(), is(equalTo(site)));
         assertThat(insightTest.getKey(), is(equalTo(key)));
         assertThat(insightTest.getDescription(), is(equalTo(desc)));
@@ -641,6 +572,7 @@ class ExtensionInsightsUnitTest extends TestUtils {
         Target target = mock(Target.class);
         SiteNode sn = mock(SiteNode.class);
         HistoryReference href = mock(HistoryReference.class);
+        given(href.getHistoryType()).willReturn(HistoryReference.TYPE_PROXIED);
         given(href.getMethod()).willReturn(method);
         given(href.getURI()).willReturn(new URI(url, true));
         given(sn.getHistoryReference()).willReturn(href);

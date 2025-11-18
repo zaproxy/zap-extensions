@@ -1,0 +1,124 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+Insights List
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Insights List</H1>
+
+This is the full set of Insights currently supported:
+
+<table>
+
+<tr>
+<th>Key
+<th>Description
+<th>Site
+<th>Low 
+<th>High 
+
+<tr>
+<td>insight.database.full
+<td>Database full
+<td>
+<td>1: High
+<td>1: High
+
+<tr>
+<td>insight.diskspace.full
+<td>Diskspace full
+<td>
+<td>1: High
+<td>1: High
+
+<tr>
+<td>insight.memory.usage
+<td>Percentage of memory used
+<td>
+<td>80: Medium
+<td>95: High
+
+<tr>
+<td>insight.log.error
+<td>Count of ZAP errors
+<td>
+<td>1: Low
+<td>1: Low
+
+<tr>
+<td>insight.log.warn
+<td>Count of ZAP warnings
+<td>
+<td>1: Low
+<td>1: Low
+
+<tr>
+<td>insight.network.failure
+<td>Percentage of network failures
+<td>
+<td>5: Low
+<td>50: Med
+
+<tr>
+<td>insight.auth.failure
+<td>Percentage of authentication failures
+<td>Yes
+<td>5: Low
+<td>50: Med
+
+<tr>
+<td>insight.code.Xxx
+<td>Percentage of Xxx response codes
+<td>Yes
+<td>1: Info
+<td>50: Low
+
+<tr>
+<td>insight.response.slow
+<td>Percentage of slow responses
+<td>Yes
+<td>1: Info
+<td>50: Low
+
+<tr>
+<td>insight.endpoint.content.CCC
+<td>Percentage of responses with content-type CCC
+<td>Yes
+<td>1: Info
+<td>1: Info
+
+<tr>
+<td>insight.endpoint.method.MMM
+<td>Percentage of responses with method MMM
+<td>Yes
+<td>1: Info
+<td>1: Info
+
+<tr>
+<td>insight.endpoint.total
+<td>Total number of endpoints
+<td>Yes
+<td>1: Info
+<td>1: Info
+
+</table>
+<p>
+The columns show the Insight <a href="insights-fields.html">fields</a> with the following additions:
+
+<H3>Site</H3>
+Indicates if the Insight is specific to a site (which will be specified). Otherwise Insights are not site specific.
+
+<H3>Low (Threshold : Level)</H3>
+
+This column indicates the lowest value at which an Insight will be reported, along with the Level at which it will be reported.
+A value of 1 indicates that it will be reported as soon as it is greater than zero.
+
+<H3>High (Threshold : Level)</H3>
+
+This column indicates the value at which an Insight will be reported as a more significant issue, along with the Level at which it will be reported.
+A value of 1 indicates that it will be reported as soon as it is greater than zero.
+
+</BODY>
+</HTML>

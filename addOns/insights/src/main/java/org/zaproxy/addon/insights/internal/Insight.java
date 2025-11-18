@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.insights.internal;
 
+import java.util.Locale;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,22 +30,45 @@ import org.parosproxy.paros.Constant;
 public class Insight {
 
     public enum Level {
-        High,
-        Medium,
-        Low,
-        Info;
+        HIGH,
+        MEDIUM,
+        LOW,
+        INFO;
 
         @Override
         public String toString() {
-            return Constant.messages.getString("insights.table.level." + this.name().toLowerCase());
+            return Constant.messages.getString(
+                    "insights.table.level." + this.name().toLowerCase(Locale.ROOT));
+        }
+    }
+
+    public enum Reason {
+        NA,
+        EXCEEDED_LOW,
+        EXCEEDED_HIGH;
+
+        @Override
+        public String toString() {
+            return Constant.messages.getString(
+                    "insights.table.reason." + this.name().toLowerCase(Locale.ROOT));
         }
     }
 
     private Level level;
+    private Reason reason;
     private String site;
     private String key;
     private String description;
     private long statistic;
+    private boolean percent;
+
+    public Insight(String site, String key, String description, long statistic) {
+        this(Level.INFO, Reason.NA, site, key, description, statistic, false);
+    }
+
+    public Insight(String site, String key, String description, long statistic, boolean percent) {
+        this(Level.INFO, Reason.NA, site, key, description, statistic, percent);
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -54,19 +78,30 @@ public class Insight {
 
         if (o instanceof Insight ins) {
             return level == ins.level
+                    && reason == ins.reason
                     && Objects.equals(site, ins.site)
-                    && Objects.equals(key, ins.key);
+                    && Objects.equals(key, ins.key)
+                    && Objects.equals(statistic, ins.statistic);
         }
         return false;
     }
 
     @Override
     public String toString() {
-        return "Insight: " + level.name() + " : " + site + " : " + key + " : " + statistic;
+        return "Insight: "
+                + level.name()
+                + " : "
+                + reason.name()
+                + " : "
+                + site
+                + " : "
+                + key
+                + " : "
+                + statistic;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(level, site, key);
+        return Objects.hash(level, site, key, statistic);
     }
 }
