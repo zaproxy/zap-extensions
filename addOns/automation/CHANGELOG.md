@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Make the "pass" output of Monitor Tests consistent with the "fail" output.
 
+### Fixed
+- Restore default standard output on absent `env` `parameters`.
+
 ## [0.56.0] - 2025-11-07
 ### Added
 - Command line -autocheck option which checks if the specified yaml plan has the right format.
