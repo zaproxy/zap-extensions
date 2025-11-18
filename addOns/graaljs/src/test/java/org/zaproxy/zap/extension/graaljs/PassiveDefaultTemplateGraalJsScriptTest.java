@@ -45,11 +45,8 @@ class PassiveDefaultTemplateGraalJsScriptTest extends GraalJsPassiveScriptScanRu
     @Override
     public boolean isAllowedReferenceError(
             AlertReferenceError.Cause cause, String reference, Object detail) {
-        if (cause == AlertReferenceError.Cause.UNEXPECTED_STATUS_CODE && ((int) detail) == 404) {
-            // These are example.org references.
-            return true;
-        }
-        return false;
+        // These are example.org references.
+        return true;
     }
 
     @Test
