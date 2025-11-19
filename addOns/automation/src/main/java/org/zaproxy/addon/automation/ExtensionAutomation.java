@@ -494,6 +494,17 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         return new AutomationPlan(this, f, false);
     }
 
+    /**
+     * Loads a plan from the given input stream.
+     *
+     * @param in the input stream with the plan in YAML format.
+     * @return the plan.
+     * @since 0.4.0
+     */
+    public AutomationPlan loadPlan(InputStream in) {
+        return loadPlan(in, false);
+    }
+
     public AutomationPlan loadPlan(InputStream in, boolean quiet) {
         return new AutomationPlan(this, in, quiet);
     }
