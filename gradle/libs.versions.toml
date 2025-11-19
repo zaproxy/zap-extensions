@@ -93,11 +93,9 @@ spiderAjax-apache-commons-math = "commons-math:commons-math:1.2"
 spiderAjax-findBugsAnnotations = "com.google.code.findbugs:jsr305:3.0.2"
 spiderAjax-guiceAssistedInject = "com.google.inject.extensions:guice-assistedinject:5.0.1"
 spiderAjax-jcipAnnotations = "net.jcip:jcip-annotations:1.0"
-spiderAjax-jclOverSlf4j = { module = "org.slf4j:jcl-over-slf4j", version.ref = "slf4j" }
 spiderAjax-julToSlf4j = { module = "org.slf4j:jul-to-slf4j", version.ref = "slf4j" }
 spiderAjax-metricsCore = "com.codahale.metrics:metrics-core:3.0.2"
 spiderAjax-nekohtml = "net.sourceforge.nekohtml:nekohtml:1.9.22"
-spiderAjax-slf4j-log4j12 = { module = "org.slf4j:slf4j-log4j12", version.ref = "slf4j" }
 spiderAjax-xmlunit = "xmlunit:xmlunit:1.6"
 sqliplugin-jdom = "org.jdom:jdom:2.0.2"
 test-hamcrest = "org.hamcrest:hamcrest-library:3.0"
