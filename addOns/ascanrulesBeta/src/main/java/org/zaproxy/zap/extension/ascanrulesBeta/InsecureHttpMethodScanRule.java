@@ -196,24 +196,7 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin
                 enabledMethodsSet.remove(
                         HttpRequestHeader
                                 .DELETE); // We don't actually want to make a DELETE request
-                newAlert()
-                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                        .setName(
-                                Constant.messages.getString(
-                                        "ascanbeta.insecurehttpmethod.detailed.name",
-                                        HttpRequestHeader.DELETE))
-                        .setDescription(
-                                Constant.messages.getString(
-                                        "ascanbeta.insecurehttpmethod.desc",
-                                        HttpRequestHeader.DELETE))
-                        .setOtherInfo(
-                                Constant.messages.getString(
-                                        "ascanbeta.insecurehttpmethod.extrainfo", allowedmethods))
-                        .setSolution(
-                                Constant.messages.getString("ascanbeta.insecurehttpmethod.soln"))
-                        .setEvidence(HttpRequestHeader.DELETE)
-                        .setMessage(optionsmsg)
-                        .raise();
+                buildDeleteMethodAlert(allowedmethods).setMessage(optionsmsg).raise();
             }
 
             if (attackStrength == AttackStrength.HIGH || attackStrength == AttackStrength.INSANE) {
@@ -307,19 +290,8 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin
                     if (raiseAlert) {
                         LOGGER.debug("Raising alert for Insecure HTTP Method");
 
-                        newAlert()
-                                .setRisk(riskLevel)
-                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                                .setName(
-                                        Constant.messages.getString(
-                                                "ascanbeta.insecurehttpmethod.detailed.name",
-                                                insecureMethod))
-                                .setDescription(description)
-                                .setOtherInfo(extraInfo)
-                                .setSolution(
-                                        Constant.messages.getString(
-                                                "ascanbeta.insecurehttpmethod.soln"))
-                                .setEvidence(evidence)
+                        buildInsecureHttpMethodAlert(
+                                        riskLevel, insecureMethod, description, extraInfo, evidence)
                                 .setMessage(alertMessage)
                                 .raise();
                     }
@@ -376,21 +348,8 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin
 
         // if the response *body* from the TRACE request contains the cookie,we're in business :)
         if (msg.getResponseBody().toString().contains(randomcookievalue)) {
-            newAlert()
-                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                    .setName(
-                            Constant.messages.getString(
-                                    "ascanbeta.insecurehttpmethod.detailed.name", method))
-                    .setDescription(
-                            Constant.messages.getString(
-                                    "ascanbeta.insecurehttpmethod.trace.exploitable.desc", method))
-                    .setUri(msg.getRequestHeader().getURI().toString())
-                    .setOtherInfo(
-                            Constant.messages.getString(
-                                    "ascanbeta.insecurehttpmethod.trace.exploitable.extrainfo",
-                                    randomcookievalue))
-                    .setSolution(Constant.messages.getString("ascanbeta.insecurehttpmethod.soln"))
-                    .setEvidence(randomcookievalue)
+            buildTraceCookieAlert(
+                            randomcookievalue, method, msg.getRequestHeader().getURI().toString())
                     .setMessage(msg)
                     .raise();
         }
@@ -495,24 +454,7 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin
                 Matcher m = thirdPartyContentPattern.matcher(response);
                 if (m.matches()) {
                     LOGGER.debug("Response matches expected third party pattern!");
-                    newAlert()
-                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                            .setName(
-                                    Constant.messages.getString(
-                                            "ascanbeta.insecurehttpmethod.detailed.name",
-                                            HttpRequestHeader.CONNECT))
-                            .setDescription(
-                                    Constant.messages.getString(
-                                            "ascanbeta.insecurehttpmethod.connect.exploitable.desc",
-                                            HttpRequestHeader.CONNECT))
-                            .setOtherInfo(
-                                    Constant.messages.getString(
-                                            "ascanbeta.insecurehttpmethod.connect.exploitable.extrainfo",
-                                            thirdpartyHost))
-                            .setSolution(
-                                    Constant.messages.getString(
-                                            "ascanbeta.insecurehttpmethod.soln"))
-                            .setEvidence(response)
+                    buildConnectResponseAlert(thirdpartyHost, response)
                             .setMessage(this.getBaseMsg())
                             .raise();
                 } else {
@@ -596,43 +538,11 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin
             return;
         }
 
-        int riskLevel;
-        String exploitableDesc;
-        String exploitableExtraInfo;
-        if (WEBDAV_METHODS.contains(httpMethod)) {
-            exploitableDesc =
-                    Constant.messages.getString(
-                            "ascanbeta.insecurehttpmethod.webdav.exploitable.desc", httpMethod);
-            exploitableExtraInfo =
-                    Constant.messages.getString(
-                            "ascanbeta.insecurehttpmethod.webdav.exploitable.extrainfo");
-            riskLevel = Alert.RISK_INFO;
-        } else {
-            exploitableDesc =
-                    Constant.messages.getString(
-                            "ascanbeta.insecurehttpmethod."
-                                    + httpMethod.toLowerCase()
-                                    + ".exploitable.desc",
-                            httpMethod);
-            exploitableExtraInfo =
-                    Constant.messages.getString(
-                            "ascanbeta.insecurehttpmethod."
-                                    + httpMethod.toLowerCase()
-                                    + ".exploitable.extrainfo");
+        HttpData data = getHttpDataForMethod(httpMethod);
 
-            riskLevel = Alert.RISK_MEDIUM;
-        }
         try {
 
-            newAlert()
-                    .setRisk(riskLevel)
-                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                    .setName(
-                            Constant.messages.getString(
-                                    "ascanbeta.insecurehttpmethod.detailed.name", httpMethod))
-                    .setDescription(exploitableDesc)
-                    .setOtherInfo(exploitableExtraInfo)
-                    .setEvidence(evidence)
+            buildHttpMethodAlert(data.risk, httpMethod, data.desc, data.extra, evidence)
                     .setMessage(msg)
                     .raise();
         } catch (Exception e) {
@@ -641,5 +551,170 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin
 
     private static String randomAlphanumeric(int count) {
         return RandomStringUtils.secure().nextAlphanumeric(count);
+    }
+
+    private static class HttpData {
+        int risk;
+        String desc;
+        String extra;
+
+        HttpData(int risk, String desc, String extra) {
+            this.risk = risk;
+            this.desc = desc;
+            this.extra = extra;
+        }
+    }
+
+    private HttpData getHttpDataForMethod(String httpMethod) {
+        if (WEBDAV_METHODS.contains(httpMethod)) {
+            return new HttpData(
+                    Alert.RISK_INFO,
+                    Constant.messages.getString(
+                            "ascanbeta.insecurehttpmethod.webdav.exploitable.desc", httpMethod),
+                    Constant.messages.getString(
+                            "ascanbeta.insecurehttpmethod.webdav.exploitable.extrainfo"));
+        }
+
+        return new HttpData(
+                Alert.RISK_MEDIUM,
+                Constant.messages.getString(
+                        "ascanbeta.insecurehttpmethod."
+                                + httpMethod.toLowerCase()
+                                + ".exploitable.desc",
+                        httpMethod),
+                Constant.messages.getString(
+                        "ascanbeta.insecurehttpmethod."
+                                + httpMethod.toLowerCase()
+                                + ".exploitable.extrainfo"));
+    }
+
+    private AlertBuilder buildBaseAlert(String httpMethod) {
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setName(
+                        Constant.messages.getString(
+                                "ascanbeta.insecurehttpmethod.detailed.name", httpMethod))
+                .setSolution(Constant.messages.getString("ascanbeta.insecurehttpmethod.soln"));
+    }
+
+    private AlertBuilder buildDeleteMethodAlert(String allowedmethods) {
+        return buildBaseAlert(HttpRequestHeader.DELETE)
+                .setDescription(
+                        Constant.messages.getString(
+                                "ascanbeta.insecurehttpmethod.desc", HttpRequestHeader.DELETE))
+                .setOtherInfo(
+                        Constant.messages.getString(
+                                "ascanbeta.insecurehttpmethod.extrainfo", allowedmethods))
+                .setEvidence(HttpRequestHeader.DELETE)
+                .setAlertRef(getId() + "-1");
+    }
+
+    private AlertBuilder buildInsecureHttpMethodAlert(
+            int riskLevel,
+            String insecureMethod,
+            String description,
+            String extraInfo,
+            String evidence) {
+        return buildBaseAlert(insecureMethod)
+                .setRisk(riskLevel)
+                .setDescription(description)
+                .setOtherInfo(extraInfo)
+                .setEvidence(evidence)
+                .setAlertRef(getId() + "-2");
+    }
+
+    private AlertBuilder buildTraceCookieAlert(
+            String randomcookievalue, String method, String URI) {
+        return buildBaseAlert(method)
+                .setDescription(
+                        Constant.messages.getString(
+                                "ascanbeta.insecurehttpmethod.trace.exploitable.desc", method))
+                .setUri(URI)
+                .setOtherInfo(
+                        Constant.messages.getString(
+                                "ascanbeta.insecurehttpmethod.trace.exploitable.extrainfo",
+                                randomcookievalue))
+                .setEvidence(randomcookievalue)
+                .setAlertRef(getId() + "-3");
+    }
+
+    private AlertBuilder buildConnectResponseAlert(String thirdpartyHost, String response) {
+        return buildBaseAlert(HttpRequestHeader.CONNECT)
+                .setDescription(
+                        Constant.messages.getString(
+                                "ascanbeta.insecurehttpmethod.connect.exploitable.desc",
+                                HttpRequestHeader.CONNECT))
+                .setOtherInfo(
+                        Constant.messages.getString(
+                                "ascanbeta.insecurehttpmethod.connect.exploitable.extrainfo",
+                                thirdpartyHost))
+                .setEvidence(response)
+                .setAlertRef(getId() + "-4");
+    }
+
+    private AlertBuilder buildHttpMethodAlert(
+            int riskLevel,
+            String httpMethod,
+            String exploitableDesc,
+            String exploitableExtraInfo,
+            String evidence) {
+
+        String alertRef = getId() + "-5";
+        if (WEBDAV_METHODS.contains(httpMethod)) {
+            alertRef = getId() + "-6";
+        }
+
+        return buildBaseAlert(httpMethod)
+                .setRisk(riskLevel)
+                .setDescription(exploitableDesc)
+                .setOtherInfo(exploitableExtraInfo)
+                .setEvidence(evidence)
+                .setAlertRef(alertRef);
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+
+        HttpData putData = getHttpDataForMethod("PUT");
+        HttpData copyData = getHttpDataForMethod("COPY");
+
+        return List.of(
+                buildDeleteMethodAlert("GET, POST, OPTIONS, HEAD, DELETE").build(),
+                buildInsecureHttpMethodAlert(
+                                Alert.RISK_MEDIUM,
+                                "PUT",
+                                "PUT",
+                                "GET, POST, HEAD, OPTIONS, PUT, DELETE",
+                                "PUT")
+                        .build(),
+                buildTraceCookieAlert(
+                                "aB3kL9zT2vQw8Xy1RmNp6sGh4Ud7Fc0ZjK9yX2mP",
+                                "TRACE",
+                                "http://example.com/")
+                        .build(),
+                buildConnectResponseAlert(
+                                "www.google.com",
+                                "HTTP/1.1 200 OK\n"
+                                        + "Date: Sat, 01 Nov 2025 19:33:10 GMT\n"
+                                        + "Content-Type: text/html; charset=ISO-8859-1\n"
+                                        + "Server: gws\n"
+                                        + "Connection: close")
+                        .build(),
+                buildHttpMethodAlert(
+                                putData.risk,
+                                "PUT",
+                                putData.desc,
+                                putData.extra,
+                                Constant.messages.getString(
+                                        "ascanbeta.insecurehttpmethod.insecure", 201))
+                        .build(),
+                buildHttpMethodAlert(
+                                copyData.risk,
+                                "COPY",
+                                copyData.desc,
+                                copyData.extra,
+                                Constant.messages.getString(
+                                        "ascanbeta.insecurehttpmethod.insecure", 201))
+                        .build());
     }
 }
