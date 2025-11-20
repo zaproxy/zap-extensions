@@ -30,15 +30,19 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
 import org.apache.commons.configuration.BaseConfiguration;
+import org.apache.commons.configuration.ConfigurationUtils;
+import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.HostProcess;
 import org.parosproxy.paros.core.scanner.NameValuePair;
+import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.core.scanner.ScannerParam;
 import org.parosproxy.paros.core.scanner.Variant;
 import org.parosproxy.paros.extension.ExtensionLoader;
@@ -217,6 +221,33 @@ public class ActiveScriptScanRuleUnitTest extends TestUtils {
         verify(scriptActiveInterface3, times(1)).scanHost(scanRule, message1);
         verify(scriptActiveInterface3, times(0)).scanHost(scanRule, message2);
         verify(scriptActiveInterface3, times(1)).scanHost(scanRule, message3);
+    }
+
+    @Test
+    void shouldCloneScanRule() {
+        // Given
+        ScriptWrapper script = mock(ScriptWrapper.class);
+        when(script.isEnabled()).thenReturn(true);
+        var metadata = new ScanRuleMetadata(12345, "Test Scan Rule");
+        metadata.setRisk(Risk.HIGH);
+        metadata.setConfidence(Confidence.HIGH);
+        var scanRule = new ActiveScriptScanRule(script, metadata);
+        scanRule.setConfig(new HierarchicalConfiguration());
+        scanRule.setAlertThreshold(Plugin.AlertThreshold.LOW);
+        scanRule.setAttackStrength(Plugin.AttackStrength.INSANE);
+        var config = new HierarchicalConfiguration();
+        var clonedRule = new ActiveScriptScanRule();
+        clonedRule.setConfig(config);
+        // When
+        scanRule.cloneInto(clonedRule);
+        // Then
+        assertThat(clonedRule.getScript(), is(equalTo(script)));
+        assertThat(clonedRule.getId(), is(equalTo(12345)));
+        assertThat(clonedRule.getName(), is(equalTo("Test Scan Rule")));
+        assertThat(clonedRule.getRisk(), is(equalTo(Risk.HIGH.getValue())));
+        assertThat(
+                ConfigurationUtils.toString(config).replaceAll("\\R", "\n"),
+                is(equalTo("plugins.p12345.level=LOW\nplugins.p12345.strength=INSANE")));
     }
 
     private <T> ScriptWrapper createScriptWrapper(T scriptInterface, Class<T> scriptClass)
