@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Allow to override the default alert threshold of the bundled policy.
 - Maintenance changes.
 
 ## [8] - 2025-01-10

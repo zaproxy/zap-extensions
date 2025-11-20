@@ -3,105 +3,87 @@
     <policy>QA CI/CD</policy>
     <statsId>std-qa-cicd</statsId>
     <readonly>true</readonly>
+    <locked>true</locked>
     <scanner>
-        <level>OFF</level>
+        <level>MEDIUM</level>
         <strength>MEDIUM</strength>
     </scanner>
     <plugins>
         <p0>
             <name>Directory Browsing</name>
             <enabled>true</enabled>
-            <level>MEDIUM</level>
         </p0>
         <p10058>
             <name>GET for POST</name>
             <enabled>true</enabled>
-            <level>MEDIUM</level>
         </p10058>
         <p20012>
             <name>Anti-CSRF Tokens Check</name>
             <enabled>true</enabled>
-            <level>MEDIUM</level>
         </p20012>
         <p20019>
             <name>External Redirect</name>
             <enabled>true</enabled>
-            <level>MEDIUM</level>
         </p20019>
         <p40009>
             <name>Server Side Include</name>
             <enabled>true</enabled>
-            <level>MEDIUM</level>
         </p40009>
         <p40012>
             <name>Cross Site Scripting (Reflected)</name>
             <enabled>true</enabled>
-            <level>MEDIUM</level>
         </p40012>
         <p40018>
             <name>SQL Injection</name>
             <enabled>true</enabled>
-            <level>MEDIUM</level>
         </p40018>
         <p40040>
             <name>CORS Header</name>
             <enabled>true</enabled>
-            <level>MEDIUM</level>
         </p40040>
         <p40044>
             <name>Exponential Entity Expansion (Billion Laughs Attack)</name>
             <enabled>true</enabled>
-            <level>MEDIUM</level>
         </p40044>
         <p50000>
             <name>Script Active Scan Rules</name>
             <enabled>true</enabled>
-            <level>MEDIUM</level>
         </p50000>
         <p90017>
             <name>XSLT Injection</name>
             <enabled>true</enabled>
-            <level>MEDIUM</level>
         </p90017>
         <p90020>
             <name>Remote OS Command Injection</name>
             <enabled>true</enabled>
-            <level>MEDIUM</level>
         </p90020>
         <p90021>
             <name>XPath Injection</name>
             <enabled>true</enabled>
-            <level>MEDIUM</level>
         </p90021>
         <p90023>
             <name>XML External Entity Attack</name>
             <enabled>true</enabled>
-            <level>MEDIUM</level>
         </p90023>
         <p90025>
             <name>Expression Language Injection</name>
             <enabled>true</enabled>
-            <level>MEDIUM</level>
         </p90025>
         <p90026>
             <name>SOAP Action Spoofing</name>
             <enabled>true</enabled>
-            <level>MEDIUM</level>
         </p90026>
         <p90029>
             <name>SOAP XML Injection</name>
             <enabled>true</enabled>
-            <level>MEDIUM</level>
         </p90029>
         <p90035>
             <name>Server Side Template Injection</name>
             <enabled>true</enabled>
-            <level>MEDIUM</level>
         </p90035>
         <p90037>
             <name>Remote OS Command Injection (Time Based)</name>
             <enabled>true</enabled>
-            <level>MEDIUM</level>
         </p90037>
     </plugins>
 </configuration>
