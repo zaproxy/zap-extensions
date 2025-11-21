@@ -26,6 +26,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.authhelper.AuthUtils;
 import org.zaproxy.addon.authhelper.AuthenticationDiagnostics;
 import org.zaproxy.addon.authhelper.internal.AuthenticationStep;
@@ -35,6 +36,12 @@ import org.zaproxy.zap.model.Context;
 public class DefaultAuthenticator implements Authenticator {
 
     private static final Logger LOGGER = LogManager.getLogger(DefaultAuthenticator.class);
+
+    @Override
+    public boolean isOwnSite(HttpMessage msg) {
+        // Default does not own any site.
+        return false;
+    }
 
     @Override
     public Result authenticate(

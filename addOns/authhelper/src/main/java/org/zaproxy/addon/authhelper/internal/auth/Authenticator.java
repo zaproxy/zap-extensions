@@ -21,6 +21,7 @@ package org.zaproxy.addon.authhelper.internal.auth;
 
 import java.util.List;
 import org.openqa.selenium.WebDriver;
+import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.authhelper.AuthenticationDiagnostics;
 import org.zaproxy.addon.authhelper.internal.AuthenticationStep;
 import org.zaproxy.zap.authentication.UsernamePasswordAuthenticationCredentials;
@@ -32,6 +33,8 @@ public interface Authenticator {
 
     public static record Result(
             boolean isAttempted, boolean isSuccessful, boolean hasUserField, boolean hasPwdField) {}
+
+    boolean isOwnSite(HttpMessage msg);
 
     Result authenticate(
             AuthenticationDiagnostics diags,
