@@ -583,8 +583,18 @@ public class ExtensionCallHome extends ExtensionAdaptor
                 if (t == null) {
                     Stats.incCounter(baseLoggerName);
                 } else {
-                    Stats.incCounter(baseLoggerName + "." + t.getClass().getSimpleName());
+                    Stats.incCounter(
+                            baseLoggerName + "." + t.getClass().getSimpleName() + getSource(t));
                 }
+            }
+
+            private static String getSource(Throwable t) {
+                StackTraceElement[] trace = t.getStackTrace();
+                if (trace == null || trace.length == 0) {
+                    return "";
+                }
+                StackTraceElement top = trace[0];
+                return "(" + top.getFileName() + ":" + top.getLineNumber() + ")";
             }
         }
     }
