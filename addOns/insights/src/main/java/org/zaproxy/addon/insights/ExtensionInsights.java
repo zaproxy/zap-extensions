@@ -20,9 +20,6 @@
 package org.zaproxy.addon.insights;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import org.parosproxy.paros.Constant;
@@ -30,11 +27,11 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.model.SiteMapEventPublisher;
 import org.zaproxy.addon.insights.internal.Insight;
+import org.zaproxy.addon.insights.internal.Insights;
 import org.zaproxy.addon.insights.internal.InsightsPanel;
 import org.zaproxy.addon.insights.internal.StatsMonitor;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.utils.Stats;
-import org.zaproxy.zap.utils.ThreadUtils;
 
 public class ExtensionInsights extends ExtensionAdaptor {
 
@@ -47,18 +44,16 @@ public class ExtensionInsights extends ExtensionAdaptor {
     private InsightsPanel insightsPanel;
     private StatsMonitor statsMonitor;
     private PollThread pollThread;
-    private List<Insight> insights = Collections.synchronizedList(new ArrayList<>());
+    private Insights insights;
 
-    private static final Comparator<Insight> INSIGHT_COMPARATOR =
-            Comparator.comparing(Insight::getLevel)
-                    .thenComparing(Comparator.comparing(Insight::getSite))
-                    .thenComparing(Comparator.comparing(Insight::getKey));
+    private boolean haveSwitched;
 
     public ExtensionInsights() {
         super(NAME);
         setI18nPrefix(PREFIX);
 
         statsMonitor = new StatsMonitor(this);
+        insights = new Insights();
         Stats.addListener(statsMonitor);
 
         ZAP.getEventBus()
@@ -84,34 +79,23 @@ public class ExtensionInsights extends ExtensionAdaptor {
         pollThread.start();
 
         if (insightsPanel != null) {
-            insightsPanel.setInsights(insights);
+            insightsPanel.setInsights(insights.getInsightList());
         }
     }
 
     public void recordInsight(Insight ins) {
-        int index = this.insights.indexOf(ins);
-        boolean added = false;
-        if (index >= 0) {
-            if (this.insights.get(index).getStatistic() == ins.getStatistic()) {
-                // No change
-                return;
-            }
-            this.insights.set(index, ins);
-        } else {
-            this.insights.add(ins);
-            this.insights.sort(INSIGHT_COMPARATOR);
-            index = this.insights.indexOf(ins);
-            added = true;
-        }
+        insights.recordInsight(ins);
         if (insightsPanel != null) {
-            final int indexFinal = index;
-            final boolean addedFinal = added;
-            ThreadUtils.invokeLater(() -> insightsPanel.insightChanged(indexFinal, addedFinal));
+            insightsPanel.pack();
+            if (Insight.Level.HIGH.equals(ins.getLevel()) && !haveSwitched) {
+                insightsPanel.setTabFocus();
+                haveSwitched = true;
+            }
         }
     }
 
     protected List<Insight> getInsights() {
-        return this.insights;
+        return this.insights.getInsightList();
     }
 
     protected StatsMonitor getStatsMonitor() {
@@ -122,7 +106,8 @@ public class ExtensionInsights extends ExtensionAdaptor {
         this.insights.clear();
         // This will indicate the insights have changed
         if (insightsPanel != null) {
-            insightsPanel.setInsights(insights);
+            insightsPanel.setInsights(insights.getInsightList());
+            insights.setModel(insightsPanel.getModel());
         }
     }
 

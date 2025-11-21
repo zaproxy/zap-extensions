@@ -23,7 +23,10 @@ import java.awt.CardLayout;
 import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JScrollPane;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.decorator.BorderHighlighter;
 import org.jdesktop.swingx.table.TableColumnExt;
@@ -60,12 +63,7 @@ public class InsightsPanel extends AbstractPanel {
         pack();
     }
 
-    public void insightChanged(int index, boolean added) {
-        model.insightChanged(index, added);
-        pack();
-    }
-
-    private void pack() {
+    public void pack() {
         if (!this.packed && model.getRowCount() > 0) {
             table.packAll();
             this.packed = true;
@@ -79,6 +77,19 @@ public class InsightsPanel extends AbstractPanel {
         col0Ext.addHighlighter(new InsightLevelTableCellIHighlighter(0));
         col0Ext.addHighlighter(new BorderHighlighter(new EmptyBorder(0, 10, 0, 0)));
 
+        TableCellRenderer rightAlignedRenderer =
+                new DefaultTableCellRenderer() {
+                    {
+                        setHorizontalAlignment(SwingConstants.RIGHT);
+                    }
+                };
+
+        table.getColumnExt(2).setCellRenderer(rightAlignedRenderer);
+
         return table;
+    }
+
+    public InsightsTableModel getModel() {
+        return model;
     }
 }
