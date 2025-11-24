@@ -122,4 +122,9 @@ public class SessionToken implements Comparable<SessionToken> {
         }
         return string.compareTo(otherString);
     }
+
+    @Override
+    public String toString() {
+        return "Source: " + source + " key: " + key + " value: " + value;
+    }
 }

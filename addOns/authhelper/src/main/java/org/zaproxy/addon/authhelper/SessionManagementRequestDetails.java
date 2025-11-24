@@ -46,4 +46,16 @@ public class SessionManagementRequestDetails {
     public int getConfidence() {
         return confidence;
     }
+
+    @Override
+    public String toString() {
+        return "MsgID: "
+                + msg.getHistoryRef().getHistoryId()
+                + " tokens ("
+                + tokens.size()
+                + "): "
+                + tokens
+                + " confidence: "
+                + confidence;
+    }
 }

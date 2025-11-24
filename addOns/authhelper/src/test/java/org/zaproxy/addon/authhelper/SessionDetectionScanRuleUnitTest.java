@@ -372,17 +372,6 @@ class SessionDetectionScanRuleUnitTest extends PassiveScannerTest<SessionDetecti
         extensionLoader =
                 mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
 
-        history = new ArrayList<>();
-        historyProvider = new TestHistoryProvider();
-        AuthUtils.setHistoryProvider(historyProvider);
-
-        Control.initSingletonForTesting(model, extensionLoader);
-        Model.setSingletonForTesting(model);
-
-        Session session = mock(Session.class);
-        given(session.getContextsForUrl(anyString())).willReturn(Arrays.asList());
-        given(model.getSession()).willReturn(session);
-
         String cookie = "67890123456789012345";
         String jwtValue = "bearer 677890123456789012345-677890123456789012345";
         String jwt = "{\"jwt\":\"%s\"}".formatted(jwtValue);
@@ -415,6 +404,17 @@ class SessionDetectionScanRuleUnitTest extends PassiveScannerTest<SessionDetecti
                         new HttpRequestBody(""),
                         new HttpResponseHeader("HTTP/1.1 200 OK\r\n"),
                         new HttpResponseBody("<html></html>"));
+
+        history = new ArrayList<>();
+        historyProvider = new SuccessHistoryProvider(msg2);
+        AuthUtils.setHistoryProvider(historyProvider);
+
+        Control.initSingletonForTesting(model, extensionLoader);
+        Model.setSingletonForTesting(model);
+
+        Session session = mock(Session.class);
+        given(session.getContextsForUrl(anyString())).willReturn(Arrays.asList());
+        given(model.getSession()).willReturn(session);
 
         List<HttpMessage> msgs = List.of(msg, msg2);
         historyProvider.addAuthMessageToHistory(msg);
@@ -491,6 +491,23 @@ class SessionDetectionScanRuleUnitTest extends PassiveScannerTest<SessionDetecti
         @Override
         public int getLastHistoryId() {
             return history.size() - 1;
+        }
+    }
+
+    class SuccessHistoryProvider extends TestHistoryProvider {
+
+        private HttpMessage msg;
+
+        SuccessHistoryProvider(HttpMessage msg) {
+            this.msg = msg;
+        }
+
+        @Override
+        public SessionManagementRequestDetails findSessionTokenSource(String token, int firstId) {
+            SessionToken st =
+                    new SessionToken(
+                            "json", "jwt", "bearer 677890123456789012345-677890123456789012345");
+            return new SessionManagementRequestDetails(msg, List.of(st), 3);
         }
     }
 }
