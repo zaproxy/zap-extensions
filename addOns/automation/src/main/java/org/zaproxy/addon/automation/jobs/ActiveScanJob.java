@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.automation.jobs;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -126,6 +127,16 @@ public class ActiveScanJob extends AutomationJob {
                                 this.getName(),
                                 getParameters().getPolicy()));
             }
+
+            if (!StringUtils.isEmpty(getParameters().getDefaultStrength())) {
+                JobUtils.parseAttackStrength(
+                        getParameters().getDefaultStrength(), getName(), progress);
+            }
+
+            if (!StringUtils.isEmpty(getParameters().getDefaultThreshold())) {
+                JobUtils.parseAlertThreshold(
+                        getParameters().getDefaultThreshold(), getName(), progress);
+            }
         }
 
         policyDefinition.parsePolicyDefinition(
@@ -139,7 +150,14 @@ public class ActiveScanJob extends AutomationJob {
                 this.parameters,
                 JobUtils.getJobOptions(this, progress),
                 this.getName(),
-                new String[] {PARAM_POLICY, PARAM_CONTEXT, PARAM_USER, PARAM_URL},
+                new String[] {
+                    PARAM_POLICY,
+                    PARAM_CONTEXT,
+                    PARAM_USER,
+                    PARAM_URL,
+                    "defaultStrength",
+                    "defaultThreshold",
+                },
                 progress,
                 this.getPlan().getEnv());
     }
@@ -207,6 +225,19 @@ public class ActiveScanJob extends AutomationJob {
                         this.getExtAScan()
                                 .getPolicyManager()
                                 .getPolicy(this.getParameters().getPolicy());
+
+                if (!StringUtils.isEmpty(getParameters().getDefaultStrength())) {
+                    scanPolicy.setDefaultStrength(
+                            JobUtils.parseAttackStrength(
+                                    getParameters().getDefaultStrength(), getName(), progress));
+                }
+
+                if (!StringUtils.isEmpty(getParameters().getDefaultThreshold())) {
+                    scanPolicy.setDefaultThreshold(
+                            JobUtils.parseAlertThreshold(
+                                    getParameters().getDefaultThreshold(), getName(), progress));
+                }
+
             } catch (ConfigurationException e) {
                 // Error already raised above
             }
@@ -359,6 +390,13 @@ public class ActiveScanJob extends AutomationJob {
         private String user = "";
         private String url = "";
         private String policy = "";
+
+        @JsonInclude(JsonInclude.Include.NON_EMPTY)
+        private String defaultStrength;
+
+        @JsonInclude(JsonInclude.Include.NON_EMPTY)
+        private String defaultThreshold;
+
         private Integer maxRuleDurationInMins = 0;
         private Integer maxScanDurationInMins = 0;
         private Boolean addQueryParam = false;

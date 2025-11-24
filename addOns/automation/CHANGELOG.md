@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Allow to specify the defaults for the alert threshold and attack strength of the active scan policy.
+
 ### Changed
 - Maintenance changes.
 - Make the "pass" output of Monitor Tests consistent with the "fail" output.
