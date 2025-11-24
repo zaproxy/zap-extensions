@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Camada_2" data-name="Camada 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 419.1 626.44">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #1a1a1a;
+      }
+
+      .cls-1, .cls-2 {
+        stroke-width: 0px;
+      }
+
+      .cls-2 {
+        fill: #c505f2;
+      }
+    </style>
+  </defs>
+  <g id="Camada_1-2" data-name="Camada 1">
+    <g id="Arte_45" data-name="Arte 45">
+      <g>
+        <rect class="cls-1" x="0" width="144.33" height="623.5"/>
+        <polygon class="cls-1" points="416.55 465.34 416.55 626.44 .85 392.53 .85 231.43 416.55 465.34"/>
+        <polygon class="cls-2" points="0 387.51 0 554.54 419.1 320.63 419.1 153.61 0 387.51"/>
+      </g>
+    </g>
+  </g>
+</svg>
