@@ -29,6 +29,8 @@ import org.parosproxy.paros.model.SiteMapEventPublisher;
 import org.zaproxy.addon.insights.internal.Insight;
 import org.zaproxy.addon.insights.internal.Insights;
 import org.zaproxy.addon.insights.internal.InsightsPanel;
+import org.zaproxy.addon.insights.internal.InsightsParam;
+import org.zaproxy.addon.insights.internal.OptionsPanel;
 import org.zaproxy.addon.insights.internal.StatsMonitor;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.utils.Stats;
@@ -45,6 +47,7 @@ public class ExtensionInsights extends ExtensionAdaptor {
     private StatsMonitor statsMonitor;
     private PollThread pollThread;
     private Insights insights;
+    private InsightsParam param;
 
     private boolean haveSwitched;
 
@@ -66,11 +69,20 @@ public class ExtensionInsights extends ExtensionAdaptor {
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
+        extensionHook.addOptionsParamSet(getParam());
 
         if (hasView()) {
             insightsPanel = new InsightsPanel();
             extensionHook.getHookView().addStatusPanel(insightsPanel);
+            extensionHook.getHookView().addOptionPanel(new OptionsPanel());
         }
+    }
+
+    public InsightsParam getParam() {
+        if (param == null) {
+            param = new InsightsParam();
+        }
+        return param;
     }
 
     @Override

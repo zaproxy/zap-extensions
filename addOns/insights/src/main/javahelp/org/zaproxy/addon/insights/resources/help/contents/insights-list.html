@@ -16,6 +16,7 @@ This is the full set of Insights currently supported:
 <th>Key
 <th>Description
 <th>Site
+<th>Type
 <th>Low 
 <th>High 
 
@@ -23,85 +24,97 @@ This is the full set of Insights currently supported:
 <td>insight.database.full
 <td>Database full
 <td>
-<td>1: High
-<td>1: High
+<td>
+<td>High
+<td>High
 
 <tr>
 <td>insight.diskspace.full
 <td>Diskspace full
 <td>
-<td>1: High
-<td>1: High
+<td>
+<td>High
+<td>High
 
 <tr>
 <td>insight.memory.usage
 <td>Percentage of memory used
 <td>
-<td>80: Medium
-<td>95: High
+<td>Mem
+<td>Medium
+<td>High
 
 <tr>
 <td>insight.log.error
 <td>Count of ZAP errors
 <td>
-<td>1: Low
-<td>1: Low
+<td>
+<td>Low
+<td>Low
 
 <tr>
 <td>insight.log.warn
 <td>Count of ZAP warnings
 <td>
-<td>1: Low
-<td>1: Low
+<td>
+<td>Low
+<td>Low
 
 <tr>
 <td>insight.network.failure
 <td>Percentage of network failures
 <td>
-<td>5: Low
-<td>50: Med
+<td>Msg
+<td>Low
+<td>Med
 
 <tr>
 <td>insight.auth.failure
 <td>Percentage of authentication failures
 <td>Yes
-<td>5: Low
-<td>50: Med
+<td>Msg
+<td>Low
+<td> Med
 
 <tr>
 <td>insight.code.Xxx
 <td>Percentage of Xxx response codes
 <td>Yes
-<td>1: Info
-<td>50: Low
+<td>Msg
+<td>Info
+<td>Low
 
 <tr>
 <td>insight.response.slow
 <td>Percentage of slow responses
 <td>Yes
-<td>1: Info
-<td>50: Low
+<td>Msg
+<td>Info
+<td>Low
 
 <tr>
 <td>insight.endpoint.content.CCC
 <td>Percentage of responses with content-type CCC
 <td>Yes
-<td>1: Info
-<td>1: Info
+<td>
+<td>Info
+<td>Info
 
 <tr>
 <td>insight.endpoint.method.MMM
 <td>Percentage of responses with method MMM
 <td>Yes
-<td>1: Info
-<td>1: Info
+<td>
+<td>Info
+<td>Info
 
 <tr>
 <td>insight.endpoint.total
 <td>Total number of endpoints
 <td>Yes
-<td>1: Info
-<td>1: Info
+<td>
+<td>Info
+<td>Info
 
 </table>
 <p>
@@ -110,15 +123,24 @@ The columns show the Insight <a href="insights-fields.html">fields</a> with the 
 <H3>Site</H3>
 Indicates if the Insight is specific to a site (which will be specified). Otherwise Insights are not site specific.
 
-<H3>Low (Threshold : Level)</H3>
+<H3>Type</H3>
 
-This column indicates the lowest value at which an Insight will be reported, along with the Level at which it will be reported.
-A value of 1 indicates that it will be reported as soon as it is greater than zero.
+The type of the insight, which indicates which of the threshold <a href="insights-options.html">options</a> it will use:
+<ul>
+<li>Mem: Will use the Memory Thresholds 
+<li>Msg: Will use the  Message Thresholds
+<li>&lt;blank&gt; Will not use any thresholds
+</ul>
 
-<H3>High (Threshold : Level)</H3>
+<H3>Low (Level)</H3>
 
-This column indicates the value at which an Insight will be reported as a more significant issue, along with the Level at which it will be reported.
-A value of 1 indicates that it will be reported as soon as it is greater than zero.
+This columns shows the Level at which it will be reported if it exceeds the related Low threshold.
+<p>
+Info level Insights will always be reported.
+
+<H3>High (Level)</H3>
+
+This columns shows the Level at which it will be reported if it exceeds the related High threshold.
 
 </BODY>
 </HTML>
