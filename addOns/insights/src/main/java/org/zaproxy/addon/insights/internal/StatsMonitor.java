@@ -67,13 +67,6 @@ public class StatsMonitor implements StatsListener, EventConsumer {
 
     private static final long MEM_GC_CHECK_MSEC = TimeUnit.MINUTES.toMillis(1);
 
-    // TODO move some or all of these to options
-    private static final int OPTION_LOW_WARNING = 5;
-    private static final int OPTION_HIGH_WARNING = 50;
-    private static final int OPTION_SLOW_RESPONSE_TIME = 255;
-    private static final int OPTION_MEM_LOW_WARNING = 80;
-    private static final int OPTION_MEM_HIGH_WARNING = 95;
-
     private InMemoryStats stats = new InMemoryStats();
     private long lastGc;
 
@@ -188,7 +181,7 @@ public class StatsMonitor implements StatsListener, EventConsumer {
                         entry.getValue(),
                         total);
             }
-            recordInsightWithLimits(
+            recordMessageInsightWithLimits(
                     Insight.Level.INFO,
                     Insight.Level.LOW,
                     site,
@@ -197,7 +190,7 @@ public class StatsMonitor implements StatsListener, EventConsumer {
                     total,
                     unbox(codeCounts.get("4")));
 
-            recordInsightWithLimits(
+            recordMessageInsightWithLimits(
                     Insight.Level.INFO,
                     Insight.Level.LOW,
                     site,
@@ -239,7 +232,7 @@ public class StatsMonitor implements StatsListener, EventConsumer {
         }
     }
 
-    private void recordInsightWithLimits(
+    private void recordMessageInsightWithLimits(
             Insight.Level lowLevel,
             Insight.Level highLevel,
             String site,
@@ -255,9 +248,9 @@ public class StatsMonitor implements StatsListener, EventConsumer {
             return;
         }
 
-        if (bad >= total * OPTION_HIGH_WARNING / 100) {
+        if (bad >= total * ext.getParam().getMessagesHighThreshold() / 100) {
             recordInsight(highLevel, Insight.Reason.EXCEEDED_HIGH, site, key, bad, total);
-        } else if (bad >= total * OPTION_LOW_WARNING / 100) {
+        } else if (bad >= total * ext.getParam().getMessagesLowThreshold() / 100) {
             recordInsight(lowLevel, Insight.Reason.EXCEEDED_LOW, site, key, bad, total);
         }
     }
@@ -268,7 +261,7 @@ public class StatsMonitor implements StatsListener, EventConsumer {
         long netBad = unbox(stats.getStat(STATS_NETWORK_FAILURE));
         long netTotal = netGood + netBad;
 
-        recordInsightWithLimits(
+        recordMessageInsightWithLimits(
                 Insight.Level.LOW,
                 Insight.Level.MEDIUM,
                 "",
@@ -291,7 +284,7 @@ public class StatsMonitor implements StatsListener, EventConsumer {
                 total += k2stat.getValue();
                 try {
                     int time = Integer.parseInt(timeStr);
-                    if (time > OPTION_SLOW_RESPONSE_TIME) {
+                    if (time >= ext.getParam().getSlowResponse()) {
                         slowResponses += k2stat.getValue();
                     }
                 } catch (NumberFormatException e) {
@@ -299,7 +292,7 @@ public class StatsMonitor implements StatsListener, EventConsumer {
                 }
             }
 
-            recordInsightWithLimits(
+            recordMessageInsightWithLimits(
                     Insight.Level.INFO,
                     Insight.Level.LOW,
                     site,
@@ -327,7 +320,7 @@ public class StatsMonitor implements StatsListener, EventConsumer {
                         break;
                 }
             }
-            recordInsightWithLimits(
+            recordMessageInsightWithLimits(
                     Insight.Level.LOW,
                     Insight.Level.MEDIUM,
                     site,
@@ -343,7 +336,7 @@ public class StatsMonitor implements StatsListener, EventConsumer {
 
         long usage = percent(heap.getUsed(), heap.getMax());
 
-        if (usage >= OPTION_MEM_HIGH_WARNING
+        if (usage >= ext.getParam().getMemoryHighThreshold()
                 && System.currentTimeMillis() - lastGc > MEM_GC_CHECK_MSEC) {
             LOGGER.info("Running GC as memory usage at {}%", usage);
             System.gc();
@@ -352,10 +345,10 @@ public class StatsMonitor implements StatsListener, EventConsumer {
         }
         LOGGER.debug("Memory usage at {}%", usage);
 
-        if (usage >= OPTION_MEM_LOW_WARNING) {
+        if (usage >= ext.getParam().getMemoryLowThreshold()) {
             Insight.Level level = Insight.Level.MEDIUM;
             Insight.Reason reason = Insight.Reason.EXCEEDED_LOW;
-            if (usage >= OPTION_MEM_HIGH_WARNING) {
+            if (usage >= ext.getParam().getMemoryHighThreshold()) {
                 level = Insight.Level.HIGH;
                 reason = Insight.Reason.EXCEEDED_HIGH;
             }

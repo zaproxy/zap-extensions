@@ -8,4 +8,5 @@
 	<indexitem text="insights" target="addon.insights" />
 	<indexitem text="insights - fields" target="addon.insights-fields" />
 	<indexitem text="insights - full list" target="addon.insights-list" />
+	<indexitem text="insights - options" target="addon.insights-options" />
 </index>
