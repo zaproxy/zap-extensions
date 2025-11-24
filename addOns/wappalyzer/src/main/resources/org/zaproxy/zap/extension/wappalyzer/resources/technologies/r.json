@@ -1395,6 +1395,19 @@
     ],
     "website": "https://wordpress.org/plugins/really-simple-captcha"
   },
+  "Really Simple SSL & Security": {
+    "cats": [
+      16
+    ],
+    "description": "Really Simple SSL & Security is an easy to install and performant security solution for WordPress.",
+    "dom": {
+      "body[data-rsssl]": {
+        "exists": ""
+      }
+    },
+    "icon": "really-simple-ssl.png",
+    "website": "https://really-simple-ssl.com"
+  },
   "Realytics": {
     "cats": [
       10
@@ -4613,6 +4626,17 @@
       "Rumble.resize": ""
     },
     "website": "https://rumble.com"
+  },
+  "Rumvision": {
+    "cats": [
+      78
+    ],
+    "description": "Rumvision is a front-end performance monitoring service",
+    "icon": "Rumvision.png",
+    "js": {
+      "rumv_config": ""
+    },
+    "website": "https://www.rumvision.com/"
   },
   "RunKit": {
     "cats": [

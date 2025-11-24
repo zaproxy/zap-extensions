@@ -2902,6 +2902,20 @@
     ],
     "website": "https://www.sendinblue.com"
   },
+  "Sendlane": {
+    "cats": [
+      32
+    ],
+    "description": "Sendlane is an email and sms marketing platform for online businesses",
+    "icon": "Sendland.png",
+    "js": {
+      "_Sendlane": ""
+    },
+    "scriptSrc": [
+      "sendlane\\.com/scripts/pusher\\.js"
+    ],
+    "website": "https://www.sendlane.com/"
+  },
   "Sendloop": {
     "cats": [
       75
@@ -4510,6 +4524,17 @@
       "productreviews\\.shopifycdn\\.com"
     ],
     "website": "https://apps.shopify.com/product-reviews"
+  },
+  "Shopify Web Components": {
+    "cats": [
+      18
+    ],
+    "description": "Storefront Web Components let you bring Shopify-powered commerce capabilities to any website.",
+    "icon": "Shopify.svg",
+    "scriptSrc": [
+      "cdn\\.shopify\\.com/storefront/web-components\\.js"
+    ],
+    "website": "https://shopify.dev/docs/api/storefront-web-components"
   },
   "Shopistry": {
     "cats": [
@@ -6454,6 +6479,22 @@
     ],
     "website": "https://siteklik.nl/"
   },
+  "Sitepark IES": {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:sitepark:information_enterprise_server:*:*:*:*:*:*:*:*",
+    "description": "Sitepark IES is a content management system written in PHP and paired with a MySQL database.",
+    "icon": "Sitepark.png",
+    "implies": [
+      "Lucene",
+      "MySQL"
+    ],
+    "meta": {
+      "generator": "^sitepark\\sinformation\\senterprise\\sserver\\s-\\sies\\sgenerator\\sv([\\d\\.]+)$\\;version:\\1"
+    },
+    "website": "https://www.sitepark.com/oeffentlicher-sektor/produkte/cms-technologie.php"
+  },
   "Sitepark InfoSite": {
     "cats": [
       1
@@ -7156,6 +7197,19 @@
       "jquery\\.themepunch\\.revolution\\.min\\.js"
     ],
     "website": "https://www.sliderrevolution.com"
+  },
+  "Slim SEO": {
+    "cats": [
+      87
+    ],
+    "description": "Slim SEO is a full-featured SEO plugin for WordPress that's lightweight, blazing fast with minimum configuration.",
+    "dom": {
+      "#slim-seo-schema": {
+        "exists": ""
+      }
+    },
+    "icon": "Slim-SEO.svg",
+    "website": "https://wpslimseo.com"
   },
   "Slim Select": {
     "cats": [
@@ -8867,6 +8921,18 @@
       "tracking\\.myspectro\\.io/"
     ],
     "website": "https://myspectro.io"
+  },
+  "Speculative Loading": {
+    "cats": [
+      87,
+      92
+    ],
+    "description": "Performance plugin from the WordPress Performance Team, which adds support for the Speculation Rules API, by which certain URLs are dynamically prefetched or prerendered based on user interaction.",
+    "icon": "speculation-rules.svg",
+    "meta": {
+      "generator": "^speculation-rules ([\\d.]+)?\\;version:\\1"
+    },
+    "website": "https://wordpress.org/plugins/speculation-rules/"
   },
   "Speed Kit": {
     "cats": [
@@ -11894,7 +11960,7 @@
     ],
     "description": "Supabase is an open-source platform that offers a Postgres database, Authentication, APIs, Edge Functions, Realtime subscriptions, Storage, and Vector embeddings for project development.",
     "dom": [
-      "a[href*='supabase.com'] > img[src*='/supabase-logo-wordmark--dark.png']"
+      "a[href*='supabase.com'] > img[src*='/supabase-logo-wordmark\\-\\-dark.png']"
     ],
     "icon": "Supabase.svg",
     "implies": [
