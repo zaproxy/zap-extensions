@@ -28,7 +28,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -159,9 +159,9 @@ public class HarImporter {
 
     private static boolean entryIsNotLocalPrivate(HarEntry entry) {
         String url = entry.request().url();
-        if (StringUtils.startsWithIgnoreCase(url, "about")
-                || StringUtils.startsWithIgnoreCase(url, "chrome")
-                || StringUtils.startsWithIgnoreCase(url, "edge")) {
+        if (Strings.CI.startsWith(url, "about")
+                || Strings.CI.startsWith(url, "chrome")
+                || Strings.CI.startsWith(url, "edge")) {
             LOGGER.debug("Skipping local private entry: {}", url);
             return false;
         }

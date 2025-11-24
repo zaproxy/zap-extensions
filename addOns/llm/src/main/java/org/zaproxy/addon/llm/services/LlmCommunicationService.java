@@ -202,7 +202,7 @@ public class LlmCommunicationService {
 
             try {
                 getExtAlert().updateAlert(updatedAlert);
-                getExtAlert().updateAlertInTree(originalAlert, updatedAlert);
+                getExtAlert().updateAlertInTree(updatedAlert);
                 if (alert.getHistoryRef() != null) {
                     alert.getHistoryRef().updateAlert(updatedAlert);
                     if (alert.getHistoryRef().getSiteNode() != null) {

@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
+- Update minimum ZAP version to 2.17.0.
 - Adjusted and internationalized the text in some exceptions/warning dialogs to use multiple lines and thus be more clear.
 
 ## [7.8.0] - 2025-01-10

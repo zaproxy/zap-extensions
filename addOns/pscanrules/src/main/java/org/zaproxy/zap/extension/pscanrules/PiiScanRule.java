@@ -30,7 +30,7 @@ import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.OutputDocument;
 import net.htmlparser.jericho.Source;
 import net.htmlparser.jericho.StartTag;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
@@ -161,7 +161,7 @@ public class PiiScanRule extends PluginPassiveScanner implements CommonPassiveSc
      *     otherwise.
      */
     private static boolean isSci(String containingString) {
-        if (!StringUtils.containsIgnoreCase(containingString, "e")) {
+        if (!Strings.CI.contains(containingString, "e")) {
             return false;
         }
 

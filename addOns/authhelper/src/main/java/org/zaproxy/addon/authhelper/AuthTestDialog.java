@@ -19,9 +19,7 @@
  */
 package org.zaproxy.addon.authhelper;
 
-import java.awt.Component;
 import java.awt.Frame;
-import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
@@ -335,21 +333,6 @@ public class AuthTestDialog extends StandardFieldsDialog {
                 }
             }
         }
-    }
-
-    // FIXME use parent method once ZAP 2.17 is released
-    private static JPanel getSideBySidePanel(Component c1, Component c2) {
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridBagLayout());
-        panel.add(
-                c1,
-                LayoutHelper.getGBC(
-                        0, 0, 1, 1.0D, 0.0D, GridBagConstraints.BOTH, new Insets(0, 0, 0, 2)));
-        panel.add(
-                c2,
-                LayoutHelper.getGBC(
-                        1, 0, 1, 0.0D, 0.0D, GridBagConstraints.BOTH, new Insets(0, 2, 0, 0)));
-        return panel;
     }
 
     private void setMethodState() {

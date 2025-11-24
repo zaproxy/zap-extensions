@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Set;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.zaproxy.addon.commonlib.AuthConstants;
 import org.zaproxy.addon.spider.DomainAlwaysInScopeMatcher;
 import org.zaproxy.zap.model.Context;
@@ -87,8 +87,7 @@ public class DefaultFetchFilter extends FetchFilter {
                         && AuthConstants.getAuthRelatedIndicators().stream()
                                 .anyMatch(
                                         keyword ->
-                                                StringUtils.containsIgnoreCase(
-                                                        escapedPathQuery, keyword))) {
+                                                Strings.CI.contains(escapedPathQuery, keyword))) {
                     return FetchStatus.LOGOUT_AVOIDANCE;
                 }
             }

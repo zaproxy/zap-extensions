@@ -23,7 +23,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import net.htmlparser.jericho.Source;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
@@ -78,7 +78,7 @@ public class WSDLFilePassiveScanRule extends PluginPassiveScanner implements Com
             String baseURL = msg.getRequestHeader().getURI().toString().trim();
             String contentType = header.getHeader(HttpHeader.CONTENT_TYPE).trim();
             return baseURL.endsWith(".wsdl")
-                    || StringUtils.endsWithIgnoreCase(baseURL, "?wsdl")
+                    || Strings.CI.endsWith(baseURL, "?wsdl")
                     || contentType.equals("application/wsdl+xml");
         }
         return false;
