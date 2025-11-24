@@ -19,16 +19,9 @@
  */
 package org.zaproxy.addon.authhelper;
 
-import java.awt.Component;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import org.apache.commons.configuration.Configuration;
@@ -36,7 +29,6 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jdesktop.swingx.JXComboBox;
 import org.openqa.selenium.WebDriver;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -45,7 +37,6 @@ import org.parosproxy.paros.db.RecordContext;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
-import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.authhelper.internal.ClientSideHandler;
 import org.zaproxy.addon.commonlib.internal.TotpSupport;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
@@ -54,8 +45,10 @@ import org.zaproxy.zap.authentication.AuthenticationCredentials;
 import org.zaproxy.zap.authentication.AuthenticationHelper;
 import org.zaproxy.zap.authentication.AuthenticationMethod;
 import org.zaproxy.zap.authentication.AuthenticationMethodType;
+import org.zaproxy.zap.authentication.AuthenticationMethodType.UnsupportedAuthenticationMethodException;
 import org.zaproxy.zap.authentication.GenericAuthenticationCredentials;
 import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType;
+import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType.ScriptBasedAuthenticationMethod;
 import org.zaproxy.zap.extension.api.ApiDynamicActionImplementor;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
@@ -64,7 +57,6 @@ import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.session.SessionManagementMethod;
 import org.zaproxy.zap.session.WebSession;
 import org.zaproxy.zap.users.User;
-import org.zaproxy.zap.utils.EncodingUtils;
 import org.zaproxy.zap.utils.ZapNumberSpinner;
 import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zest.core.v1.ZestActionSleep;
@@ -122,22 +114,10 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
     public void persistMethodToSession(
             Session session, int contextId, AuthenticationMethod authMethod)
             throws UnsupportedAuthenticationMethodException, DatabaseException {
-        if (!(authMethod instanceof ClientScriptBasedAuthenticationMethod)) {
-            throw new UnsupportedAuthenticationMethodException(
-                    "Client script based authentication type only supports: "
-                            + ClientScriptBasedAuthenticationMethod.class.getName());
-        }
+        super.persistMethodToSession(session, contextId, authMethod);
 
         ClientScriptBasedAuthenticationMethod method =
                 (ClientScriptBasedAuthenticationMethod) authMethod;
-        session.setContextData(
-                contextId,
-                RecordContext.TYPE_AUTH_METHOD_FIELD_1,
-                method.getScriptTemp().getName());
-        session.setContextData(
-                contextId,
-                RecordContext.TYPE_AUTH_METHOD_FIELD_2,
-                EncodingUtils.mapToString(method.getParamValuesTemp()));
         session.setContextData(
                 contextId,
                 RecordContext.TYPE_AUTH_METHOD_FIELD_3,
@@ -146,6 +126,15 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                 contextId,
                 RecordContext.TYPE_AUTH_METHOD_FIELD_4,
                 Integer.toString(method.getMinWaitFor()));
+    }
+
+    @Override
+    protected void validateAuthenticationMethod(AuthenticationMethod method) {
+        if (!(method instanceof ClientScriptBasedAuthenticationMethod)) {
+            throw new UnsupportedAuthenticationMethodException(
+                    "Client script based authentication type only supports: "
+                            + ClientScriptBasedAuthenticationMethod.class.getName());
+        }
     }
 
     @Override
@@ -187,36 +176,6 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
 
     public class ClientScriptBasedAuthenticationMethod extends ScriptBasedAuthenticationMethod {
 
-        private static Field scriptField;
-        private static Field credentialsParamNamesField;
-        private static Field paramValuesField;
-        private static Method getScriptInterfaceV2Method;
-        private static Method getScriptInterfaceMethod;
-
-        static {
-            try {
-                Class<?> sbamClass = ScriptBasedAuthenticationMethod.class;
-                scriptField = sbamClass.getDeclaredField("script");
-                scriptField.setAccessible(true);
-
-                credentialsParamNamesField = sbamClass.getDeclaredField("credentialsParamNames");
-                credentialsParamNamesField.setAccessible(true);
-
-                paramValuesField = sbamClass.getDeclaredField("paramValues");
-                paramValuesField.setAccessible(true);
-
-                Class<?> sbamtClass = ScriptBasedAuthenticationMethodType.class;
-                getScriptInterfaceV2Method =
-                        sbamtClass.getDeclaredMethod("getScriptInterfaceV2", ScriptWrapper.class);
-                getScriptInterfaceV2Method.setAccessible(true);
-
-                getScriptInterfaceMethod =
-                        sbamtClass.getDeclaredMethod("getScriptInterface", ScriptWrapper.class);
-                getScriptInterfaceMethod.setAccessible(true);
-            } catch (Exception ignore) {
-            }
-        }
-
         private int loginPageWait = DEFAULT_PAGE_WAIT;
         private int minWaitFor;
 
@@ -247,100 +206,32 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
         }
 
         public void setScriptWrapper(ScriptWrapper wrapper) {
-            try {
-                scriptField.set(this, wrapper);
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage(), e);
-            }
+            super.setScript(wrapper);
         }
 
-        private ScriptWrapper getScriptTemp() {
-            try {
-                return (ScriptWrapper) scriptField.get(this);
-            } catch (Exception ignore) {
-            }
-            return null;
-        }
-
-        protected void setScriptTemp(ClientScriptBasedAuthenticationMethod method) {
-            try {
-                scriptField.set(method, getScriptTemp());
-            } catch (Exception ignore) {
-            }
-        }
-
+        @Override
         public void setParamValues(Map<String, String> map) {
-            try {
-                paramValuesField.set(this, map);
-            } catch (Exception ignore) {
-            }
-        }
-
-        protected void setParamValuesTemp(ClientScriptBasedAuthenticationMethod method) {
-            try {
-                Map<String, String> values = getParamValuesTemp();
-                paramValuesField.set(method, values != null ? new HashMap<>(values) : null);
-            } catch (Exception ignore) {
-            }
-        }
-
-        @SuppressWarnings("unchecked")
-        protected Map<String, String> getParamValuesTemp() {
-            try {
-                return (Map<String, String>) paramValuesField.get(this);
-            } catch (Exception ignore) {
-            }
-            return null;
-        }
-
-        protected void setCredentialsParamNamesTemp(ClientScriptBasedAuthenticationMethod method) {
-            try {
-                credentialsParamNamesField.set(method, getCredentialsParamNamesTemp());
-            } catch (Exception ignore) {
-            }
-        }
-
-        protected String[] getCredentialsParamNamesTemp() {
-            try {
-                return (String[]) credentialsParamNamesField.get(this);
-            } catch (Exception ignore) {
-            }
-            return null;
+            super.setParamValues(map);
         }
 
         @Override
         public AuthenticationMethod duplicate() {
             ClientScriptBasedAuthenticationMethod method =
-                    new ClientScriptBasedAuthenticationMethod();
+                    (ClientScriptBasedAuthenticationMethod) super.duplicate();
             method.diagnostics = diagnostics;
-            setScriptTemp(method);
-            setParamValuesTemp(method);
-            setCredentialsParamNamesTemp(method);
             method.loginPageWait = loginPageWait;
             method.minWaitFor = minWaitFor;
             return method;
         }
 
         @Override
-        public boolean validateCreationOfAuthenticationCredentials() {
-            if (getCredentialsParamNamesTemp() != null) {
-                return true;
-            }
-
-            if (View.isInitialised()) {
-                View.getSingleton()
-                        .showMessageDialog(
-                                Constant.messages.getString(
-                                        "authentication.method.script.dialog.error.text.notLoaded"));
-            }
-
-            return false;
+        protected ScriptBasedAuthenticationMethod createInstance() {
+            return new ClientScriptBasedAuthenticationMethod();
         }
 
         @Override
         public AuthenticationCredentials createAuthenticationCredentials() {
-            return TotpSupport.createGenericAuthenticationCredentials(
-                    getCredentialsParamNamesTemp());
+            return TotpSupport.createGenericAuthenticationCredentials(getCredentialsParamNames());
         }
 
         @Override
@@ -349,7 +240,7 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
         }
 
         public ZestScript getZestScript() {
-            AuthenticationScript authScript = getAuthenticationScriptTemp();
+            AuthenticationScript authScript = getAuthenticationScript(getScript());
 
             if (authScript == null) {
                 LOGGER.debug("Failed to get ZestScript - no suitable interface");
@@ -363,29 +254,6 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                     "Failed to get ZestScript - authScript of right type {}",
                     authScript.getClass().getCanonicalName());
             return null;
-        }
-
-        private AuthenticationScript getAuthenticationScriptTemp() {
-            AuthenticationScript authScript = null;
-            try {
-                authScript =
-                        (AuthenticationScript)
-                                getScriptInterfaceV2Method.invoke(
-                                        ClientScriptBasedAuthenticationMethodType.this,
-                                        getScriptTemp());
-            } catch (Exception ignore) {
-            }
-            if (authScript == null) {
-                try {
-                    authScript =
-                            (AuthenticationScript)
-                                    getScriptInterfaceMethod.invoke(
-                                            ClientScriptBasedAuthenticationMethodType.this,
-                                            getScriptTemp());
-                } catch (Exception ignore) {
-                }
-            }
-            return authScript;
         }
 
         private boolean hasBrowserLaunch(ZestScript zestScript) {
@@ -420,8 +288,8 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
             }
             GenericAuthenticationCredentials cred = (GenericAuthenticationCredentials) credentials;
 
-            ScriptWrapper script = getScriptTemp();
-            AuthenticationScript authScript = getAuthenticationScriptTemp();
+            ScriptWrapper script = getScript();
+            AuthenticationScript authScript = getAuthenticationScript(script);
             if (authScript == null) {
                 return null;
             }
@@ -474,7 +342,7 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
 
                     authScript.authenticate(
                             new AuthenticationHelper(sender, sessionManagementMethod, user),
-                            getParamValuesTemp(),
+                            getParamValues(),
                             cred);
 
                 } catch (Exception e) {
@@ -629,24 +497,6 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                                 }
                             });
         }
-
-        @Override
-        public void replaceUserDataInPollRequest(HttpMessage msg, User user) {
-            AuthenticationHelper.replaceUserDataInRequest(
-                    msg, wrapKeys(getParamValuesTemp()), NULL_ENCODER);
-        }
-    }
-
-    private static Map<String, String> wrapKeys(Map<String, String> kvPairs) {
-        Map<String, String> map = new HashMap<>();
-        for (Entry<String, String> kv : kvPairs.entrySet()) {
-            map.put(
-                    AuthenticationMethod.TOKEN_PREFIX
-                            + kv.getKey()
-                            + AuthenticationMethod.TOKEN_POSTFIX,
-                    kv.getValue() == null ? "" : kv.getValue());
-        }
-        return map;
     }
 
     @SuppressWarnings("serial")
@@ -655,89 +505,53 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
 
         private static final long serialVersionUID = 1L;
 
-        private static Field dynamicContentPanelField;
-
-        static {
-            try {
-                dynamicContentPanelField =
-                        ScriptBasedAuthenticationMethodOptionsPanel.class.getDeclaredField(
-                                "dynamicContentPanel");
-                dynamicContentPanelField.setAccessible(true);
-            } catch (Exception ignore) {
-            }
-        }
-
         private ClientScriptBasedAuthenticationMethod shownMethod;
 
         private ZapNumberSpinner loginPageWait;
         private ZapNumberSpinner minWaitFor;
         private JCheckBox diagnostics;
 
-        public ClientScriptBasedAuthenticationMethodOptionsPanel() {
-            super();
+        @Override
+        protected int addCustomFields(int y) {
+            int newY = y;
 
-            try {
-                Component dynamicContentPanel = (Component) dynamicContentPanelField.get(this);
-                remove(dynamicContentPanel);
+            loginPageWait = new ZapNumberSpinner(0, DEFAULT_PAGE_WAIT, Integer.MAX_VALUE);
+            JLabel loginPageWaitLabel =
+                    new JLabel(
+                            Constant.messages.getString(
+                                    "authhelper.auth.method.browser.label.loginWait"));
+            loginPageWaitLabel.setLabelFor(loginPageWait);
+            this.add(loginPageWaitLabel, LayoutHelper.getGBC(0, newY, 1, 1.0d, 0.0d));
+            this.add(loginPageWait, LayoutHelper.getGBC(1, newY, 2, 1.0d, 0.0d));
+            newY++;
 
-                int y = 1;
-                loginPageWait = new ZapNumberSpinner(0, DEFAULT_PAGE_WAIT, Integer.MAX_VALUE);
-                JLabel loginPageWaitLabel =
-                        new JLabel(
-                                Constant.messages.getString(
-                                        "authhelper.auth.method.browser.label.loginWait"));
-                loginPageWaitLabel.setLabelFor(loginPageWait);
-                this.add(loginPageWaitLabel, LayoutHelper.getGBC(0, y, 1, 1.0d, 0.0d));
-                this.add(loginPageWait, LayoutHelper.getGBC(1, y, 2, 1.0d, 0.0d));
-                y++;
+            minWaitFor = new ZapNumberSpinner(0, DEFAULT_MIN_WAIT_FOR, Integer.MAX_VALUE);
+            JLabel minWaitForLabel =
+                    new JLabel(
+                            Constant.messages.getString(
+                                    "authhelper.auth.method.browser.label.minWaitFor"));
+            minWaitForLabel.setLabelFor(minWaitFor);
+            this.add(minWaitForLabel, LayoutHelper.getGBC(0, newY, 1, 1.0d, 0.0d));
+            this.add(minWaitFor, LayoutHelper.getGBC(1, newY, 2, 1.0d, 0.0d));
+            newY++;
 
-                minWaitFor = new ZapNumberSpinner(0, DEFAULT_MIN_WAIT_FOR, Integer.MAX_VALUE);
-                JLabel minWaitForLabel =
-                        new JLabel(
-                                Constant.messages.getString(
-                                        "authhelper.auth.method.browser.label.minWaitFor"));
-                minWaitForLabel.setLabelFor(minWaitFor);
-                this.add(minWaitForLabel, LayoutHelper.getGBC(0, y, 1, 1.0d, 0.0d));
-                this.add(minWaitFor, LayoutHelper.getGBC(1, y, 2, 1.0d, 0.0d));
-                y++;
+            diagnostics = new JCheckBox();
+            JLabel diagnosticsLabel =
+                    new JLabel(
+                            Constant.messages.getString(
+                                    "authhelper.auth.method.browser.label.diagnostics"));
+            diagnosticsLabel.setLabelFor(diagnostics);
+            add(diagnosticsLabel, LayoutHelper.getGBC(0, newY, 1, 1.0d, 0.0d));
+            add(diagnostics, LayoutHelper.getGBC(1, newY, 1, 1.0d, 0.0d));
+            newY++;
 
-                diagnostics = new JCheckBox();
-                JLabel diagnosticsLabel =
-                        new JLabel(
-                                Constant.messages.getString(
-                                        "authhelper.auth.method.browser.label.diagnostics"));
-                diagnosticsLabel.setLabelFor(diagnostics);
-                add(diagnosticsLabel, LayoutHelper.getGBC(0, y, 1, 1.0d, 0.0d));
-                add(diagnostics, LayoutHelper.getGBC(1, y, 1, 1.0d, 0.0d));
-                y++;
-
-                add(dynamicContentPanel, LayoutHelper.getGBC(0, y, 3, 1.0d, 0.0d));
-            } catch (Exception ignore) {
-            }
+            return newY;
         }
 
         @Override
-        @SuppressWarnings("unchecked")
         public void bindMethod(AuthenticationMethod method)
                 throws UnsupportedAuthenticationMethodException {
             super.bindMethod(method);
-
-            try {
-                Field scriptsComboBoxField =
-                        ScriptBasedAuthenticationMethodOptionsPanel.class.getDeclaredField(
-                                "scriptsComboBox");
-                scriptsComboBoxField.setAccessible(true);
-                JXComboBox scriptsCb = (JXComboBox) scriptsComboBoxField.get(this);
-                DefaultComboBoxModel<ScriptWrapper> model =
-                        (DefaultComboBoxModel<ScriptWrapper>) scriptsCb.getModel();
-                for (int i = 0; i < model.getSize(); i++) {
-                    if (!model.getElementAt(i).getEngineName().contains("Zest")) {
-                        model.removeElementAt(i);
-                        i--;
-                    }
-                }
-            } catch (Exception ignore) {
-            }
 
             shownMethod = (ClientScriptBasedAuthenticationMethod) method;
             loginPageWait.setValue(shownMethod.getLoginPageWait());
@@ -754,11 +568,9 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
             shownMethod.setDiagnostics(diagnostics.isSelected());
         }
 
-        // @Override
+        @Override
         protected List<ScriptWrapper> getAuthenticationScripts() {
-            // TODO Address once core allows it.
-            // return super.getAugenticationScripts().stream()
-            return getExtensionScript().getScripts(SCRIPT_TYPE_AUTH).stream()
+            return super.getAuthenticationScripts().stream()
                     .filter(sc -> sc.getEngineName().contains("Zest"))
                     .toList();
         }
@@ -773,17 +585,10 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
 
     @Override
     public void exportData(Configuration config, AuthenticationMethod authMethod) {
-        if (!(authMethod instanceof ClientScriptBasedAuthenticationMethod)) {
-            throw new UnsupportedAuthenticationMethodException(
-                    "Client script based authentication type only supports: "
-                            + ClientScriptBasedAuthenticationMethod.class.getName());
-        }
+        super.exportData(config, authMethod);
+
         ClientScriptBasedAuthenticationMethod method =
                 (ClientScriptBasedAuthenticationMethod) authMethod;
-        config.setProperty(CONTEXT_CONFIG_AUTH_SCRIPT_NAME, method.getScriptTemp().getName());
-        config.setProperty(
-                CONTEXT_CONFIG_AUTH_SCRIPT_PARAMS,
-                EncodingUtils.mapToString(method.getParamValuesTemp()));
         config.setProperty(CONTEXT_CONFIG_LOGIN_PAGE_WAIT, method.getLoginPageWait());
         config.setProperty(CONTEXT_CONFIG_MIN_WAIT_FOR, method.getMinWaitFor());
     }
@@ -791,17 +596,10 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
     @Override
     public void importData(Configuration config, AuthenticationMethod authMethod)
             throws ConfigurationException {
-        if (!(authMethod instanceof ClientScriptBasedAuthenticationMethod)) {
-            throw new UnsupportedAuthenticationMethodException(
-                    "Client script based authentication type only supports: "
-                            + ClientScriptBasedAuthenticationMethod.class.getName());
-        }
+        super.importData(config, authMethod);
+
         ClientScriptBasedAuthenticationMethod method =
                 (ClientScriptBasedAuthenticationMethod) authMethod;
-        this.loadMethod(
-                method,
-                objListToStrList(config.getList(CONTEXT_CONFIG_AUTH_SCRIPT_NAME)),
-                objListToStrList(config.getList(CONTEXT_CONFIG_AUTH_SCRIPT_PARAMS)));
 
         try {
             method.setLoginPageWait(config.getInt(CONTEXT_CONFIG_LOGIN_PAGE_WAIT));
@@ -813,14 +611,6 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
         } catch (Exception e) {
             throw new ConfigurationException(e);
         }
-    }
-
-    private static List<String> objListToStrList(List<Object> oList) {
-        List<String> sList = new ArrayList<>(oList.size());
-        for (Object o : oList) {
-            sList.add(o.toString());
-        }
-        return sList;
     }
 
     @Override

@@ -22,7 +22,7 @@ package org.zaproxy.addon.network;
 import java.io.UnsupportedEncodingException;
 import java.util.Base64;
 import java.util.List;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.hc.client5.http.auth.AuthChallenge;
 import org.apache.hc.client5.http.auth.ChallengeType;
 import org.apache.hc.client5.http.auth.Credentials;
@@ -54,7 +54,7 @@ public final class NetworkUtils {
      * @return true if the site requires HTTP Basic authentication.
      */
     public static boolean isHttpBasicAuth(HttpMessage msg) {
-        return StringUtils.startsWithIgnoreCase(
+        return Strings.CI.startsWith(
                 msg.getResponseHeader().getHeader(HttpHeader.WWW_AUTHENTICATE), "Basic");
     }
 
@@ -65,7 +65,7 @@ public final class NetworkUtils {
      * @return true if the site requires HTTP Digest authentication.
      */
     public static boolean isHttpDigestAuth(HttpMessage msg) {
-        return StringUtils.startsWithIgnoreCase(
+        return Strings.CI.startsWith(
                 msg.getResponseHeader().getHeader(HttpHeader.WWW_AUTHENTICATE), "Digest");
     }
 

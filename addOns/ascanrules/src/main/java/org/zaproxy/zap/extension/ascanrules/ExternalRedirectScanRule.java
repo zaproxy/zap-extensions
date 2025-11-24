@@ -35,7 +35,7 @@ import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mozilla.javascript.CompilerEnvirons;
@@ -357,7 +357,7 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
      * @return true if it's a valid open redirect
      */
     private static boolean checkPayload(String value) {
-        if (value == null || !StringUtils.startsWithIgnoreCase(value, HttpHeader.HTTP)) {
+        if (value == null || !Strings.CI.startsWith(value, HttpHeader.HTTP)) {
             return false;
         }
 
@@ -460,7 +460,7 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
 
         // (5) Check if redirection occurs by Javascript
         // http://code.google.com/p/html5security/wiki/RedirectionMethods
-        if (StringUtils.indexOfIgnoreCase(content, payload) != -1) {
+        if (Strings.CI.indexOf(content, payload) != -1) {
             List<Element> jsElements = htmlSrc.getAllElements(HTMLElementName.SCRIPT);
 
             for (Element el : jsElements) {
@@ -498,8 +498,7 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
     }
 
     private static boolean isPresent(Matcher matcher) {
-        return matcher.find()
-                && StringUtils.startsWithIgnoreCase(matcher.group(1), HttpHeader.HTTP);
+        return matcher.find() && Strings.CI.startsWith(matcher.group(1), HttpHeader.HTTP);
     }
 
     /** Visibility increased for unit testing purposes only */

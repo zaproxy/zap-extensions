@@ -106,7 +106,8 @@ class ActiveScanJobResultsUnitTest {
                         40,
                         1,
                         "100AlertOne",
-                        "InputVectorOne");
+                        "InputVectorOne",
+                        "nodeName1");
         RecordAlert recordTwo =
                 new RecordAlert(
                         2,
@@ -129,7 +130,8 @@ class ActiveScanJobResultsUnitTest {
                         400,
                         2,
                         "200AlertTwo",
-                        "InputVectorTwo");
+                        "InputVectorTwo",
+                        "nodeName2");
         TableAlert table = mock(TableAlert.class);
         given(table.read(1)).willReturn(recordOne);
         given(table.read(2)).willReturn(recordTwo);

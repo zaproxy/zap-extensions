@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Allow to specify the defaults for the alert threshold and attack strength of the active scan policy.
 
 ### Changed
+- Update minimum ZAP version to 2.17.0.
 - Maintenance changes.
 - Make the "pass" output of Monitor Tests consistent with the "fail" output.
 

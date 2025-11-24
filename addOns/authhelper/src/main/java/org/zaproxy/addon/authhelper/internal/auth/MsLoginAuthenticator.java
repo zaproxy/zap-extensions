@@ -23,7 +23,7 @@ import java.time.Duration;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
@@ -390,7 +390,7 @@ public final class MsLoginAuthenticator implements Authenticator {
 
     private static WebElement findElementContains(WebDriver wd, By by, String text) {
         return wd.findElements(by).stream()
-                .filter(e -> StringUtils.containsIgnoreCase(e.getText(), text))
+                .filter(e -> Strings.CI.contains(e.getText(), text))
                 .findFirst()
                 .orElse(null);
     }
@@ -461,7 +461,7 @@ public final class MsLoginAuthenticator implements Authenticator {
         @Override
         public WebElement apply(WebDriver driver) {
             return driver.findElements(locator).stream()
-                    .filter(e -> StringUtils.containsIgnoreCase(e.getText(), text))
+                    .filter(e -> Strings.CI.contains(e.getText(), text))
                     .findFirst()
                     .orElse(null);
         }
