@@ -26,7 +26,6 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
-import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.AfterEach;
@@ -36,12 +35,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.parosproxy.paros.control.Control;
-import org.parosproxy.paros.db.DatabaseException;
-import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpHeader;
-import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
@@ -50,6 +46,7 @@ import org.zaproxy.addon.authhelper.DiagnosticDataLoader;
 import org.zaproxy.addon.authhelper.ExtensionAuthhelper;
 import org.zaproxy.addon.authhelper.HistoryProvider;
 import org.zaproxy.addon.authhelper.SessionManagementRequestDetails;
+import org.zaproxy.addon.authhelper.TestHistoryProvider;
 import org.zaproxy.addon.authhelper.internal.ClientSideHandler.AuthRequestDetails;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 import org.zaproxy.zap.authentication.UsernamePasswordAuthenticationCredentials;
@@ -70,7 +67,6 @@ class ClientSideHandlerUnitTest extends TestUtils {
     private Context context;
     private ClientSideHandler csh;
     private HttpMessageHandlerContext ctx;
-    private List<HttpMessage> history;
     private HistoryProvider historyProvider;
 
     @Mock(strictness = org.mockito.Mock.Strictness.LENIENT)
@@ -95,7 +91,6 @@ class ClientSideHandlerUnitTest extends TestUtils {
 
         csh = new ClientSideHandler(user);
         ctx = new TestHttpMessageHandlerContext();
-        history = new ArrayList<>();
         historyProvider = new TestHistoryProvider();
         csh.setHistoryProvider(historyProvider);
         AuthUtils.setHistoryProvider(historyProvider);
@@ -114,7 +109,7 @@ class ClientSideHandlerUnitTest extends TestUtils {
         // When
         csh.handleMessage(ctx, msg);
         // Then
-        assertThat(history.size(), is(equalTo(1)));
+        assertThat(historyProvider.getLastHistoryId(), is(equalTo(1)));
     }
 
     @Test
@@ -366,8 +361,8 @@ class ClientSideHandlerUnitTest extends TestUtils {
         csh.handleMessage(ctx, getMsg);
 
         // Then
-        assertThat(history.size(), is(equalTo(2)));
-        assertThat(csh.getAuthMsg().getHistoryRef().getHistoryId(), is(equalTo(0)));
+        assertThat(historyProvider.getLastHistoryId(), is(equalTo(2)));
+        assertThat(csh.getAuthMsg().getHistoryRef().getHistoryId(), is(equalTo(1)));
     }
 
     @Test
@@ -380,9 +375,9 @@ class ClientSideHandlerUnitTest extends TestUtils {
         msgs.forEach(msg -> csh.handleMessage(ctx, msg));
 
         // Then
-        assertThat(history.size(), is(equalTo(3)));
+        assertThat(historyProvider.getLastHistoryId(), is(equalTo(3)));
         assertThat(csh.getAuthMsg(), is(notNullValue()));
-        assertThat(csh.getAuthMsg().getHistoryRef().getHistoryId(), is(equalTo(1)));
+        assertThat(csh.getAuthMsg().getHistoryRef().getHistoryId(), is(equalTo(2)));
         assertThat(
                 csh.getAuthMsg().getRequestHeader().getURI().toString(),
                 is(equalTo("https://example0/login.jsp")));
@@ -402,9 +397,9 @@ class ClientSideHandlerUnitTest extends TestUtils {
         msgs.forEach(msg -> csh.handleMessage(ctx, msg));
 
         // Then
-        assertThat(history.size(), is(equalTo(21)));
+        assertThat(historyProvider.getLastHistoryId(), is(equalTo(21)));
         assertThat(csh.getAuthMsg(), is(notNullValue()));
-        assertThat(csh.getAuthMsg().getHistoryRef().getHistoryId(), is(equalTo(9)));
+        assertThat(csh.getAuthMsg().getHistoryRef().getHistoryId(), is(equalTo(10)));
         assertThat(
                 csh.getAuthMsg().getRequestHeader().getURI().toString(),
                 is(equalTo("https://example0/login")));
@@ -426,9 +421,9 @@ class ClientSideHandlerUnitTest extends TestUtils {
         msgs.forEach(msg -> csh.handleMessage(ctx, msg));
 
         // Then
-        assertThat(history.size(), is(equalTo(20)));
+        assertThat(historyProvider.getLastHistoryId(), is(equalTo(20)));
         assertThat(csh.getAuthMsg(), is(notNullValue()));
-        assertThat(csh.getAuthMsg().getHistoryRef().getHistoryId(), is(equalTo(6)));
+        assertThat(csh.getAuthMsg().getHistoryRef().getHistoryId(), is(equalTo(7)));
         assertThat(
                 csh.getAuthMsg().getRequestHeader().getURI().toString(),
                 is(equalTo("https://example0/auth")));
@@ -450,9 +445,9 @@ class ClientSideHandlerUnitTest extends TestUtils {
         msgs.forEach(msg -> csh.handleMessage(ctx, msg));
 
         // Then
-        assertThat(history.size(), is(equalTo(3)));
+        assertThat(historyProvider.getLastHistoryId(), is(equalTo(3)));
         assertThat(csh.getAuthMsg(), is(notNullValue()));
-        assertThat(csh.getAuthMsg().getHistoryRef().getHistoryId(), is(equalTo(1)));
+        assertThat(csh.getAuthMsg().getHistoryRef().getHistoryId(), is(equalTo(2)));
         assertThat(
                 csh.getAuthMsg().getRequestHeader().getURI().toString(),
                 is(equalTo("https://example0/login")));
@@ -472,9 +467,9 @@ class ClientSideHandlerUnitTest extends TestUtils {
         msgs.forEach(msg -> csh.handleMessage(ctx, msg));
 
         // Then
-        assertThat(history.size(), is(equalTo(16)));
+        assertThat(historyProvider.getLastHistoryId(), is(equalTo(16)));
         assertThat(csh.getAuthMsg(), is(notNullValue()));
-        assertThat(csh.getAuthMsg().getHistoryRef().getHistoryId(), is(equalTo(1)));
+        assertThat(csh.getAuthMsg().getHistoryRef().getHistoryId(), is(equalTo(2)));
         assertThat(
                 csh.getAuthMsg().getRequestHeader().getURI().toString(),
                 is(equalTo("https://example0/sign_in")));
@@ -484,28 +479,6 @@ class ClientSideHandlerUnitTest extends TestUtils {
                 is(
                         equalTo(
                                 "authenticity_token=sanitizedtoken1&button=sanitizedtoken2&user[email]=FakeUserName@example.com&user[password]=F4keP4ssw0rd&\n")));
-    }
-
-    class TestHistoryProvider extends HistoryProvider {
-        @Override
-        public void addAuthMessageToHistory(HttpMessage msg) {
-            history.add(msg);
-            int id = history.size() - 1;
-            HistoryReference href = mock(HistoryReference.class);
-            given(href.getHistoryId()).willReturn(id);
-            msg.setHistoryRef(href);
-        }
-
-        @Override
-        public HttpMessage getHttpMessage(int historyId)
-                throws HttpMalformedHeaderException, DatabaseException {
-            return history.get(historyId);
-        }
-
-        @Override
-        public int getLastHistoryId() {
-            return history.size() - 1;
-        }
     }
 
     class TestHttpMessageHandlerContext implements HttpMessageHandlerContext {
