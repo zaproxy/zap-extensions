@@ -6,7 +6,7 @@
 <toc version="2.0">
     <tocitem text="ZAP User Guide" tocid="toplevelitem">
         <tocitem text="Add Ons" tocid="addons">
-            <tocitem text="MacOS WebDrivers" target="addon.webdrivermacos" />
+            <tocitem text="macOS WebDrivers" target="addon.webdrivermacos" />
         </tocitem>
     </tocitem>
 </toc>
