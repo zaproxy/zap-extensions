@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.19.0] - 2025-11-25
 ### Changed
 - Include the exceptions's file/line in logger statistics.
 
@@ -116,6 +116,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version supports Check for Updates and News calls.
 
+[0.19.0]: https://github.com/zaproxy/zap-extensions/releases/callhome-v0.19.0
 [0.18.0]: https://github.com/zaproxy/zap-extensions/releases/callhome-v0.18.0
 [0.17.0]: https://github.com/zaproxy/zap-extensions/releases/callhome-v0.17.0
 [0.16.0]: https://github.com/zaproxy/zap-extensions/releases/callhome-v0.16.0
