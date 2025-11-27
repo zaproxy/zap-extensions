@@ -76,6 +76,10 @@
 								href="#alert-type-counts"
 								data-th-text="#{report.template.section.alertTypeCounts}">Alert
 									counts by alert type</a></li>
+							<li
+								data-th-if="${reportData.isIncludeSection('insights') && reportData.reportObjects.get('insightsList') != null}"><a
+								href="#insights"
+								data-th-text="#{report.template.section.insights}">Insights</a></li>
 						</ol></li>
 					<li data-th-if="${reportData.isIncludeSection('alerts')}"><a
 						href="#alerts" data-th-text="#{report.template.section.alerts}">Alerts</a>
@@ -420,6 +424,51 @@
 							<td data-th-text="${alertsSize}">Total count</td>
 						</tr>
 					</tfoot>
+				</table>
+			</section>
+			
+			<section
+				data-th-if="${reportData.isIncludeSection('insights') && reportData.reportObjects.get('insightsList') != null}"
+				id="insights">
+				<h3 data-th-text="#{report.insights.title}" class="left-header">Insights</h3>
+				<table class="insights-table">
+						<caption>
+						<p data-th-text="#{report.template.insights.captionP1}">This table shows 
+							information that is likely to be very relevant to you, 
+							but which is not related to vulnerabilities, 
+							or potentially even related to the application in question.</p>
+					</caption>
+					<thead>
+					<tr>
+						<th scope="col" th:text="#{report.insights.level}">Level</th>
+						<th scope="col" th:text="#{report.insights.reason}">Reason</th>
+						<th scope="col" th:text="#{report.insights.site}">Site</th>
+						<th scope="col" th:text="#{report.insights.desc}">Description</th>
+						<th scope="col" th:text="#{report.insights.stat}">Statistic</th>
+					</tr>
+					</thead>
+					<tbody>
+					<th:block
+						th:each="ins, insState: ${reportData.reportObjects.get('insightsList')}">
+						<tr>
+						<td th:class="${'risk-' + (3 - ins.level.ordinal)}">
+							<div th:text="${ins.level}">Level</div>
+						</td>
+						<td>
+							<div th:text="${ins.reason}">Reason</div>
+						</td>
+						<td>
+							<div th:text="${ins.site}">Site</div>
+						</td>
+						<td>
+							<div th:text="${ins.description}">Description</div>
+						</td>
+						<td align="center">
+							<div th:text="${ins.statisticStr}">Statistic</div>
+						</td>
+						</tr>
+					</th:block>
+					</tbody>
 				</table>
 			</section>
 		</section>

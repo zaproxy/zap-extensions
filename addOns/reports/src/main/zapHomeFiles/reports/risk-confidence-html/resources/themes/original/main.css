@@ -328,26 +328,30 @@ table {
 	width: 45%;
 }
 
-.alerts-table, .alert-types-table {
+.alerts-table, .alert-types-table, .insights-table {
 	border-collapse: separate;
 	border-spacing: 2ch 1.5em;
 	width: 100%;
 }
 
-.alerts-table th, .alerts-table td, .alert-types-table th, .alert-types-table td {
+.alerts-table th, .alerts-table td, .alert-types-table th, .alert-types-table td, .insights-table td, .insights-table th {
 	vertical-align: top;
 }
 
-.alerts-table td, .alert-types-table td {
+.alerts-table td, .alert-types-table td, .insights-table td {
 	overflow-wrap: anywhere;
 }
 
-.alerts-table th, .alert-types-table th {
+.alerts-table th, .alert-types-table th, .insights-table th {
 	padding: 0 1ch;
 }
 
 .alerts-table td, .alert-types-table td {
 	padding: 0 2ch;
+}
+
+.insights-table td {
+	padding: 0 1ch;
 }
 
 .alerts-table summary {
