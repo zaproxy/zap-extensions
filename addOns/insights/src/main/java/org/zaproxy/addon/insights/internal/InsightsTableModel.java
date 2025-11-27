@@ -100,12 +100,7 @@ public class InsightsTableModel extends AbstractTableModel {
             return switch (columnIndex) {
                 case 0 -> ins.getLevel();
                 case 1 -> ins.getReason();
-                case 2 ->
-                        ins.isPercent()
-                                ? Constant.messages.getString(
-                                        "insights.table.percent", ins.getStatistic())
-                                : Constant.messages.getString(
-                                        "insights.table.plain", ins.getStatistic());
+                case 2 -> ins.getStatisticStr();
                 case 3 -> ins.getSite();
                 case 4 -> ins.getDescription();
                 default -> null;

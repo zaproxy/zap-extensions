@@ -51,6 +51,10 @@ public class Insights {
         return insightList;
     }
 
+    public Map<String, Map<String, Insight>> getInsightMap() {
+        return insightMap;
+    }
+
     public void setModel(InsightsTableModel model) {
         this.model = model;
     }

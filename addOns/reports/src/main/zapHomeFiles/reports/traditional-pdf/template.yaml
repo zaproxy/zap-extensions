@@ -4,5 +4,6 @@ mode: HTML
 extension: pdf
 sections:
  - alertcount
+ - insights
  - instancecount
  - alertdetails

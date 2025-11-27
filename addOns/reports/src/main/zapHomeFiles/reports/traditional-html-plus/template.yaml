@@ -5,6 +5,7 @@ extension: html
 sections:
  - chart
  - alertcount
+ - insights
  - instancecount
  - passingrules
  - alertdetails

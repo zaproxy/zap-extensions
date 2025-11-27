@@ -4,6 +4,7 @@ mode: HTML
 extension: html
 sections:
  - alertcount
+ - insights
  - instancecount
  - alertdetails
  - sequencedetails

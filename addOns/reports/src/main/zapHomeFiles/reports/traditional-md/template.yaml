@@ -4,5 +4,6 @@ mode: TEXT
 extension: md
 sections:
  - alertcount
+ - insights
  - instancecount
  - alertdetails
