@@ -29,6 +29,7 @@ import java.util.Objects;
 import java.util.function.Supplier;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Transaction;
+import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
@@ -55,6 +56,7 @@ import org.zaproxy.addon.authhelper.internal.db.DiagnosticWebElement;
 import org.zaproxy.addon.authhelper.internal.db.DiagnosticWebElement.SelectorType;
 import org.zaproxy.addon.authhelper.internal.db.TableJdo;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
+import org.zaproxy.zap.model.SessionStructure;
 import org.zaproxy.zap.network.HttpSenderListener;
 import org.zaproxy.zest.core.v1.ZestClientElement;
 import org.zaproxy.zest.core.v1.ZestClientElementClear;
@@ -71,6 +73,9 @@ public class AuthenticationDiagnostics implements AutoCloseable {
     private static final Logger LOGGER = LogManager.getLogger(AuthenticationDiagnostics.class);
 
     private static final List<DiagnosticDataProvider> diagnosticDataProviders =
+            Collections.synchronizedList(new ArrayList<>());
+
+    private static final List<DomainAccessedConsumer> domainAccessedConsumers =
             Collections.synchronizedList(new ArrayList<>());
 
     private static final String ELEMENT_SELECTOR_SCRIPT =
@@ -187,6 +192,8 @@ function getSelector(element, documentElement) {
 return getSelector(arguments[0], document)
 """;
 
+    private final HttpSenderListener domainAccessedListener;
+
     private final boolean enabled;
 
     private Diagnostic diagnostic;
@@ -206,6 +213,35 @@ return getSelector(arguments[0], document)
             String user,
             String script) {
         this.enabled = enabled;
+
+        domainAccessedListener =
+                new HttpSenderListener() {
+
+                    @Override
+                    public void onHttpResponseReceive(
+                            HttpMessage msg, int initiator, HttpSender sender) {
+                        // Nothing to do.
+
+                    }
+
+                    @Override
+                    public void onHttpRequestSend(
+                            HttpMessage msg, int initiator, HttpSender sender) {
+                        try {
+                            String domain = SessionStructure.getHostName(msg);
+                            domainAccessedConsumers.forEach(e -> e.domainAccessed(domain));
+                        } catch (URIException ignore) {
+                            // Nothing to do.
+                        }
+                    }
+
+                    @Override
+                    public int getListenerOrder() {
+                        return 0;
+                    }
+                };
+        HttpSender.addListener(domainAccessedListener);
+
         if (!enabled) {
             return;
         }
@@ -498,6 +534,8 @@ return getSelector(arguments[0], document)
 
     @Override
     public void close() {
+        HttpSender.removeListener(domainAccessedListener);
+
         if (!enabled) {
             return;
         }
@@ -572,6 +610,21 @@ return getSelector(arguments[0], document)
                         }
                     });
         }
+    }
+
+    public static void addDomainsAccessedConsumer(DomainAccessedConsumer consumer) {
+        Objects.requireNonNull(consumer);
+        domainAccessedConsumers.add(consumer);
+    }
+
+    public static void removeDomainsAccessedConsumer(DomainAccessedConsumer consumer) {
+        Objects.requireNonNull(consumer);
+        domainAccessedConsumers.remove(consumer);
+    }
+
+    public interface DomainAccessedConsumer {
+
+        void domainAccessed(String domain);
     }
 
     public static void addDiagnosticDataProvider(DiagnosticDataProvider provider) {

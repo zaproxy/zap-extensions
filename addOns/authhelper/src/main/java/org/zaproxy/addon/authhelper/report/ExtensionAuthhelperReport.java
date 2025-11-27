@@ -21,7 +21,10 @@ package org.zaproxy.addon.authhelper.report;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang3.StringUtils;
@@ -29,8 +32,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
+import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.extension.SessionChangedListener;
+import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.authhelper.AuthUtils;
 import org.zaproxy.addon.authhelper.AuthenticationDiagnostics;
 import org.zaproxy.addon.authhelper.AutoDetectSessionManagementMethodType;
@@ -61,6 +68,8 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
             List.of(ExtensionReports.class);
     private static final Logger LOGGER = LogManager.getLogger(ExtensionAuthhelperReport.class);
 
+    private static Set<String> domainsAccessed = Collections.synchronizedSet(new TreeSet<>());
+
     private ExtensionAutomation extensionAutomation;
     private AuthReportDataHandler authReportDataHandler;
     private AuthenticationDiagnostics.DiagnosticDataProvider diagnosticDataProvider;
@@ -76,6 +85,36 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
             diagnosticDataProvider = this::addDiagnosticData;
             AuthenticationDiagnostics.addDiagnosticDataProvider(diagnosticDataProvider);
         }
+        AuthenticationDiagnostics.addDomainsAccessedConsumer(domainsAccessed::add);
+    }
+
+    @Override
+    public void hook(ExtensionHook extensionHook) {
+        extensionHook.addSessionListener(
+                new SessionChangedListener() {
+
+                    @Override
+                    public void sessionScopeChanged(Session session) {
+                        // Nothing to do.
+
+                    }
+
+                    @Override
+                    public void sessionModeChanged(Mode mode) {
+                        // Nothing to do.
+
+                    }
+
+                    @Override
+                    public void sessionChanged(Session session) {
+                        domainsAccessed.clear();
+                    }
+
+                    @Override
+                    public void sessionAboutToChange(Session session) {
+                        // Nothing to do.
+                    }
+                });
     }
 
     private void addDiagnosticData(Diagnostic diagnostic) {
@@ -118,6 +157,8 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
         if (diagnosticDataProvider != null) {
             AuthenticationDiagnostics.removeDiagnosticDataProvider(diagnosticDataProvider);
         }
+
+        AuthenticationDiagnostics.removeDomainsAccessedConsumer(domainsAccessed::add);
     }
 
     @Override
@@ -167,6 +208,9 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
             }
             AuthReportData ard = new AuthReportData();
             reportData.addReportObjects("authdata", ard);
+
+            ard.setDomains(new TreeSet<>(domainsAccessed));
+            domainsAccessed.clear();
 
             Context authContext = getFirstAuthConfiguredContext(reportData);
             if (authContext == null) {

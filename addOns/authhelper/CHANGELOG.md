@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 - Do not include known authentication providers in context.
+- Ensure all domains accessed during authentication are included in the Authentication Report.
 
 ## [0.32.0] - 2025-11-07
 ### Changed
