@@ -42,7 +42,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
-import lombok.Setter;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.Source;
 import net.sf.json.JSONArray;
@@ -199,7 +198,7 @@ public class AuthUtils {
 
     private static long timeToWaitMs = TimeUnit.SECONDS.toMillis(5);
 
-    @Setter private static HistoryProvider historyProvider = new HistoryProvider();
+    private static HistoryProvider historyProvider = ExtensionAuthhelper.getHistoryProvider();
 
     /**
      * These are session tokens that have been seen in responses but not yet seen in use. When they
@@ -1550,5 +1549,10 @@ public class AuthUtils {
                 cElmt.setWaitForMsec(minWaitForMsec);
             }
         }
+    }
+
+    /** For testing purposes only, not part of the public API */
+    public static void setHistoryProvider(HistoryProvider hp) {
+        AuthUtils.historyProvider = hp;
     }
 }

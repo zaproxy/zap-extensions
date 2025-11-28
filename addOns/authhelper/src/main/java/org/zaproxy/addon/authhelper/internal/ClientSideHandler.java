@@ -27,7 +27,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import lombok.Getter;
-import lombok.Setter;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -60,7 +59,7 @@ public final class ClientSideHandler implements HttpMessageHandler {
     private AuthRequestDetails authReq;
     private int firstHrefId;
 
-    @Setter private HistoryProvider historyProvider = new HistoryProvider();
+    private HistoryProvider historyProvider = ExtensionAuthhelper.getHistoryProvider();
 
     public ClientSideHandler(User user) {
         this.user = user;
@@ -222,6 +221,11 @@ public final class ClientSideHandler implements HttpMessageHandler {
             }
         }
         return count;
+    }
+
+    /** For testing purposes only, not part of the public API */
+    void setHistoryProvider(HistoryProvider hp) {
+        this.historyProvider = hp;
     }
 
     @Getter

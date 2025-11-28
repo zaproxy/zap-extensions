@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 import javax.swing.ImageIcon;
+import lombok.Getter;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
@@ -107,6 +108,8 @@ public class ExtensionAuthhelper extends ExtensionAdaptor {
             };
 
     public static final Set<Integer> HISTORY_TYPES_SET = Set.of(HISTORY_TYPES);
+
+    @Getter private static HistoryProvider historyProvider = new HistoryProvider();
 
     private ZapMenuItem authTesterMenu;
     private AuthTestDialog authTestDialog;
@@ -212,6 +215,7 @@ public class ExtensionAuthhelper extends ExtensionAdaptor {
     @Override
     public void hook(ExtensionHook extensionHook) {
         extensionHook.addSessionListener(new AuthSessionChangedListener());
+        extensionHook.addSessionListener(historyProvider);
         extensionHook.addHttpSenderListener(authHeaderTracker);
         extensionHook.addOptionsParamSet(getParam());
         if (hasView()) {
