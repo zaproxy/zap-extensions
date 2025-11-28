@@ -43,7 +43,8 @@ public class Insight {
     }
 
     public enum Reason {
-        NA,
+        INFO,
+        WARNING,
         EXCEEDED_LOW,
         EXCEEDED_HIGH;
 
@@ -63,11 +64,17 @@ public class Insight {
     private boolean percent;
 
     public Insight(String site, String key, String description, long statistic) {
-        this(Level.INFO, Reason.NA, site, key, description, statistic, false);
+        this(Level.INFO, Reason.INFO, site, key, description, statistic, false);
     }
 
     public Insight(String site, String key, String description, long statistic, boolean percent) {
-        this(Level.INFO, Reason.NA, site, key, description, statistic, percent);
+        this(Level.INFO, Reason.INFO, site, key, description, statistic, percent);
+    }
+
+    public String getStatisticStr() {
+        return isPercent()
+                ? Constant.messages.getString("insights.insight.statistic.percent", getStatistic())
+                : Constant.messages.getString("insights.insight.statistic.plain", getStatistic());
     }
 
     @Override

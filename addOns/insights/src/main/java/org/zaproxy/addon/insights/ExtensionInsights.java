@@ -21,6 +21,7 @@ package org.zaproxy.addon.insights;
 
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
@@ -85,6 +86,10 @@ public class ExtensionInsights extends ExtensionAdaptor {
         return param;
     }
 
+    public StatsMonitor getStatsMonitor() {
+        return statsMonitor;
+    }
+
     @Override
     public void optionsLoaded() {
         pollThread = new PollThread();
@@ -106,12 +111,18 @@ public class ExtensionInsights extends ExtensionAdaptor {
         }
     }
 
-    protected List<Insight> getInsights() {
+    public List<Insight> getInsights() {
         return this.insights.getInsightList();
     }
 
-    protected StatsMonitor getStatsMonitor() {
-        return statsMonitor;
+    public Map<String, Map<String, Insight>> getInsightMap() {
+        return this.insights.getInsightMap();
+    }
+
+    public void processStats() {
+        if (statsMonitor != null) {
+            this.statsMonitor.processStats();
+        }
     }
 
     public void clearInsights() {

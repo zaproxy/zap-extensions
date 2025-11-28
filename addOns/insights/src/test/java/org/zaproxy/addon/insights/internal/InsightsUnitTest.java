@@ -88,7 +88,7 @@ public class InsightsUnitTest extends TestUtils {
         insights.recordInsight(
                 new Insight(
                         Insight.Level.LOW,
-                        Insight.Reason.NA,
+                        Insight.Reason.INFO,
                         "https://example2.com",
                         "insight.test.1-2",
                         "Test Insight 2",

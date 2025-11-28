@@ -11,6 +11,15 @@ ZAP by [Checkmarx](https://checkmarx.com/).
 [/th:block]
 [/th:block]
 
+[#th:block th:if="${reportData.isIncludeSection('insights') && reportData.reportObjects.get('insightsList') != null}"]
+## [(#{report.insights.title})]
+
+| [(#{report.insights.level})] | [(#{report.insights.reason})] | [(#{report.insights.site})] | [(#{report.insights.desc})] | [(#{report.insights.stat})] |
+| --- | --- | --- | --- | --- |
+[#th:block th:each="ins : ${reportData.reportObjects.get('insightsList')}"]| [(${ins.level})] | [(${ins.reason})] | [(${ins.site})] | [(${ins.description})] | [(${ins.statisticStr})] |
+[/th:block]
+[/th:block]
+
 [#th:block th:if="${reportData.isIncludeSection('instancecount')}"]
 ## [(#{report.alerts.list})]
 

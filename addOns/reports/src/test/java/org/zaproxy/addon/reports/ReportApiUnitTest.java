@@ -72,7 +72,7 @@ class ReportApiUnitTest {
         params = new JSONObject();
         params.put(ReportApi.PARAM_TITLE, "Default Title");
         params.put(ReportApi.PARAM_TEMPLATE, "traditional-html-plus");
-        template = ExtensionReportsUnitTest.getTemplateFromYamlFile("traditional-html-plus");
+        template = ReportTestUtils.getTemplateFromYamlFile("traditional-html-plus");
         when(extReports.getTemplateByConfigName(anyString())).thenReturn(template);
         reportDataCaptor = ArgumentCaptor.forClass(ReportData.class);
     }
@@ -97,7 +97,7 @@ class ReportApiUnitTest {
     void shouldPopulateReportTemplate() throws Exception {
         // Given
         String templateName = "traditional-pdf";
-        template = ExtensionReportsUnitTest.getTemplateFromYamlFile(templateName);
+        template = ReportTestUtils.getTemplateFromYamlFile(templateName);
         params.put(ReportApi.PARAM_TEMPLATE, templateName);
         ArgumentCaptor<Template> templateCaptor = ArgumentCaptor.forClass(Template.class);
         when(extReports.getTemplateByConfigName(templateName)).thenReturn(template);
