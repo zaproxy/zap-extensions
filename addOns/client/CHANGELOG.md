@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Updated Chrome and Firefox extensions to v0.1.7.
+- Update the automation framework template to include missing field (`scopeCheck`).
 
 ## [0.18.0] - 2025-11-04
 ### Added
