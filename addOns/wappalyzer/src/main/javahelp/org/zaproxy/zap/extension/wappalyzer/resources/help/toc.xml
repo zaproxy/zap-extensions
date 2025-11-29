@@ -9,6 +9,7 @@
 			<tocitem text="Technology Detection" image="addon.wappalyzer.icon" target="addon.wappalyzer">
 				<tocitem text="API" target="addon.wappalyzer.api" />
 				<tocitem text="Options" target="addon.wappalyzer.options" />
+				<tocitem text="Automation" target="addon.wappalyzer.automation" />
 			</tocitem>
 		</tocitem>
 	</tocitem>

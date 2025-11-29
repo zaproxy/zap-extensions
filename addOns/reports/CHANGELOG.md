@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Insights to the reports.
 
+### Changed
+- Update the automation framework `outputSummary` template to include missing field (`rules`).
+
 ## [0.42.0] - 2025-11-07
 ### Changed
 - Update dependencies.
