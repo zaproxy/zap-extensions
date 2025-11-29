@@ -39,5 +39,19 @@
 	the strings in the sites list is included. The sites list also supports
 	variables.
 
+	<H2>Job: outputSummary</H2>
+	The outputSummary job allows you to generate a summary of the alerts
+	found.
+	<pre>
+  - type: outputSummary                # Print summary to stdout, primarily to mimic the behaviour of the packaged scans
+    parameters:
+      format: None                     # String: The format of the output, one of None, Short, Long, default: None
+      summaryFile:                     # String: The full path of a file into which will be written a JSON summary of the scan, default empty
+    rules:                             # A list of rules for which the actions are to be overriden
+      - id:                            # Int: The rule id as per https://www.zaproxy.org/docs/alerts/
+        action:                        # String: The action to take for this rule, one of IGNORE, INFO, FAIL, default: WARN
+        customMessage:                 # String: A custom message which will be displayed with this rule
+</pre>
+
 </BODY>
 </HTML>
