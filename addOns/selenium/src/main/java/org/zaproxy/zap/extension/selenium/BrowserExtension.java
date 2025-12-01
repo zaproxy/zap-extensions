@@ -19,16 +19,21 @@
  */
 package org.zaproxy.zap.extension.selenium;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Locale;
-import javax.swing.filechooser.FileNameExtensionFilter;
+import java.util.stream.Stream;
+import javax.swing.filechooser.FileFilter;
+import org.apache.commons.lang3.Strings;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.utils.Enableable;
 
 public class BrowserExtension extends Enableable {
 
     private static final String FIREFOX_EXT = "xpi";
-    private static final String CHROME_EXT = "crx";
+    private static final String MANIFEST_FILE = "manifest.json";
+
     private Path path;
     private Browser browser;
 
@@ -41,8 +46,7 @@ public class BrowserExtension extends Enableable {
     public BrowserExtension(Path path) {
         super(true);
         this.path = path;
-        String nameLc = path.toString().toLowerCase(Locale.ROOT);
-        if (nameLc.endsWith(FIREFOX_EXT)) {
+        if (hasFileExtension(path, FIREFOX_EXT)) {
             this.browser = Browser.FIREFOX;
         } else {
             this.browser = Browser.CHROME;
@@ -74,18 +78,63 @@ public class BrowserExtension extends Enableable {
         this.browser = browser;
     }
 
-    public static FileNameExtensionFilter getFileNameExtensionFilter() {
-        return new FileNameExtensionFilter(
-                Constant.messages.getString("selenium.browser.extentions.filefilter"),
-                FIREFOX_EXT,
-                CHROME_EXT);
+    public static BrowserExtensionFileFilter getFileFilter() {
+        return new BrowserExtensionFileFilter();
     }
 
     public static boolean isBrowserExtension(Path path) {
         if (path == null) {
             return false;
         }
-        String nameLc = path.toString().toLowerCase(Locale.ROOT);
-        return nameLc.endsWith(FIREFOX_EXT) || nameLc.endsWith(CHROME_EXT);
+
+        if (hasFileExtension(path, FIREFOX_EXT)) {
+            return true;
+        }
+
+        if (!Files.isDirectory(path)) {
+            return false;
+        }
+
+        try (Stream<Path> stream = Files.walk(path, 1)) {
+            return stream.anyMatch(e -> MANIFEST_FILE.equals(e.getFileName().toString()));
+        } catch (IOException ignore) {
+            // Nothing to do.
+        }
+        return false;
+    }
+
+    private static boolean hasFileExtension(Path path, String extension) {
+        return Strings.CI.endsWith(path.getFileName().toString(), extension);
+    }
+
+    public static class BrowserExtensionFileFilter extends FileFilter {
+
+        @Override
+        public boolean accept(File f) {
+            return f.isDirectory()
+                    || hasFileExtension(f.toPath(), FIREFOX_EXT)
+                    || MANIFEST_FILE.equals(f.getName());
+        }
+
+        @Override
+        public String getDescription() {
+            return Constant.messages.getString("selenium.browser.extentions.filefilter");
+        }
+
+        public File getBrowserExtensionPath(File f) {
+            if (f == null) {
+                return null;
+            }
+
+            if (isBrowserExtension(f.toPath())) {
+                return f;
+            }
+
+            if (MANIFEST_FILE.equals(f.getName())) {
+                return f.getParentFile();
+            }
+
+            return null;
+        }
     }
 }

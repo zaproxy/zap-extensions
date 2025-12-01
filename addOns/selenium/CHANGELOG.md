@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Update Selenium to version 4.38.0.
 
+### Fixed
+- Restore loading of Chrome extensions, which now have to be unpacked/folders due changes in Chrome.
+
 ## [15.41.0] - 2025-10-21
 ### Changed
 - Update Selenium to version 4.37.0.
