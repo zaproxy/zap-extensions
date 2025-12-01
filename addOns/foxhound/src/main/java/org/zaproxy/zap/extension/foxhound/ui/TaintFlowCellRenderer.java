@@ -51,9 +51,13 @@ public class TaintFlowCellRenderer  extends DefaultTreeCellRenderer {
             setTextNonSelectionColor(Color.RED);
         } else if (obj instanceof TaintOperation op) {
             if ((Objects.equals(op.getOperation(), "function")) && (!op.getArguments().isEmpty())) {
-                setText(op.getArguments().get(0) + "()");
+                setText(op.getArguments().get(0) + "(" + String.join(", " , op.getArguments().subList(1, op.getArguments().size())) + ")");
             } else {
-                setText(op.getOperation());
+                if(!op.getArguments().isEmpty()) {
+                    setText(op.getOperation() + "('" + String.join("', '" , op.getArguments()) + "')");
+                } else {
+                    setText(op.getOperation());
+                }
             }
         }
 
