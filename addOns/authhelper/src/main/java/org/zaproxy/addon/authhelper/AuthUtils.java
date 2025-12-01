@@ -428,6 +428,15 @@ public class AuthUtils {
         return null;
     }
 
+    public static boolean isAuthProvider(HttpMessage msg) {
+        for (Authenticator authenticator : AUTHENTICATORS) {
+            if (authenticator.isOwnSite(msg)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * Authenticate as the given user, by filling in and submitting the login form
      *
@@ -959,7 +968,7 @@ public class AuthUtils {
                         }
                     }
                 }
-            } catch (JSONException e) {
+            } catch (JSONException | ClassCastException e) {
                 LOGGER.debug(
                         "Unable to parse authentication response body from {} as JSON: {} ",
                         msg.getRequestHeader().getURI(),

@@ -21,12 +21,15 @@ package org.zaproxy.addon.automation.gui;
 
 import java.awt.Component;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.function.UnaryOperator;
 import javax.swing.JButton;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
+import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.zaproxy.addon.automation.jobs.ActiveScanJob;
@@ -55,6 +58,10 @@ public class ActiveScanJobDialog extends ActiveScanPolicyDialog {
     private static final String URL_PARAM = "automation.dialog.ascan.url";
     private static final String USER_PARAM = "automation.dialog.all.user";
     private static final String POLICY_PARAM = "automation.dialog.ascan.policy";
+    private static final String POLICY_DEFAULT_THRESHOLD_PARAM =
+            "automation.dialog.ascan.policy.defaultthreshold";
+    private static final String POLICY_DEFAULT_STRENGTH_PARAM =
+            "automation.dialog.ascan.policy.defaultstrength";
     private static final String MAX_RULE_DURATION_PARAM = "automation.dialog.ascan.maxruleduration";
     private static final String MAX_SCAN_DURATION_PARAM = "automation.dialog.ascan.maxscanduration";
     private static final String MAX_ALERTS_PER_RULE_PARAM =
@@ -71,7 +78,7 @@ public class ActiveScanJobDialog extends ActiveScanPolicyDialog {
     private ActiveScanJob job;
 
     public ActiveScanJobDialog(ActiveScanJob job) {
-        super(TITLE, DisplayUtils.getScaledDimension(500, 400), TAB_LABELS);
+        super(TITLE, DisplayUtils.getScaledDimension(550, 450), TAB_LABELS);
         this.job = job;
         int tabIndex = -1;
 
@@ -95,7 +102,36 @@ public class ActiveScanJobDialog extends ActiveScanPolicyDialog {
             ((JTextField) urlField).setText(this.job.getParameters().getUrl());
         }
 
+        List<String> allThresholds =
+                Arrays.stream(AlertThreshold.values())
+                        .filter(e -> !AlertThreshold.DEFAULT.equals(e))
+                        .map(Enum::name)
+                        .map(JobUtils::thresholdToI18n)
+                        .toList();
+        List<String> allStrengths =
+                Arrays.stream(AttackStrength.values())
+                        .filter(e -> !AttackStrength.DEFAULT.equals(e))
+                        .map(Enum::name)
+                        .map(JobUtils::strengthToI18n)
+                        .toList();
+
         this.addTextField(tabIndex, POLICY_PARAM, this.job.getParameters().getPolicy());
+        List<String> emptyAndAllThresholds = new ArrayList<>(allThresholds.size() + 1);
+        emptyAndAllThresholds.add("");
+        emptyAndAllThresholds.addAll(allThresholds);
+        addComboField(
+                tabIndex,
+                POLICY_DEFAULT_THRESHOLD_PARAM,
+                emptyAndAllThresholds,
+                blankOrElse(job.getParameters().getDefaultThreshold(), JobUtils::thresholdToI18n));
+        List<String> emptyAndAllStrengths = new ArrayList<>(allStrengths.size() + 1);
+        emptyAndAllStrengths.add("");
+        emptyAndAllStrengths.addAll(allStrengths);
+        addComboField(
+                tabIndex,
+                POLICY_DEFAULT_STRENGTH_PARAM,
+                emptyAndAllStrengths,
+                blankOrElse(job.getParameters().getDefaultStrength(), JobUtils::strengthToI18n));
         this.addNumberField(
                 tabIndex,
                 MAX_RULE_DURATION_PARAM,
@@ -130,27 +166,8 @@ public class ActiveScanJobDialog extends ActiveScanPolicyDialog {
             strengthName = JobUtils.strengthToI18n(AttackStrength.MEDIUM.name());
         }
 
-        List<String> allthresholds = new ArrayList<>();
-
-        for (AlertThreshold at : AlertThreshold.values()) {
-            if (AlertThreshold.DEFAULT.equals(at)) {
-                continue;
-            }
-            allthresholds.add(JobUtils.thresholdToI18n(at.name()));
-        }
-
-        this.addComboField(++tabIndex, DEFAULT_THRESHOLD_PARAM, allthresholds, thresholdName);
-
-        List<String> allstrengths = new ArrayList<>();
-
-        for (AttackStrength at : AttackStrength.values()) {
-            if (AttackStrength.DEFAULT.equals(at)) {
-                continue;
-            }
-            allstrengths.add(JobUtils.strengthToI18n(at.name()));
-        }
-
-        this.addComboField(tabIndex, DEFAULT_STRENGTH_PARAM, allstrengths, strengthName);
+        this.addComboField(++tabIndex, DEFAULT_THRESHOLD_PARAM, allThresholds, thresholdName);
+        this.addComboField(tabIndex, DEFAULT_STRENGTH_PARAM, allStrengths, strengthName);
 
         this.addPadding(tabIndex);
 
@@ -159,7 +176,7 @@ public class ActiveScanJobDialog extends ActiveScanPolicyDialog {
         buttons.add(getModifyButton());
         buttons.add(getRemoveButton());
 
-        this.addTagRuleTab(++tabIndex, allthresholds, allstrengths);
+        this.addTagRuleTab(++tabIndex, allThresholds, allStrengths);
 
         this.addTableField(++tabIndex, getRulesTable(), buttons);
 
@@ -197,6 +214,10 @@ public class ActiveScanJobDialog extends ActiveScanPolicyDialog {
         configurePreviewButton();
     }
 
+    private static String blankOrElse(String value, UnaryOperator<String> operator) {
+        return StringUtils.isBlank(value) ? "" : operator.apply(value);
+    }
+
     private boolean advOptionsSet() {
         Parameters params = this.job.getParameters();
         return params.getDelayInMs() != null
@@ -224,6 +245,18 @@ public class ActiveScanJobDialog extends ActiveScanPolicyDialog {
         this.job.getParameters().setUser(this.getStringValue(USER_PARAM));
         this.job.getParameters().setUrl(this.getStringValue(URL_PARAM));
         this.job.getParameters().setPolicy(this.getStringValue(POLICY_PARAM));
+        this.job
+                .getParameters()
+                .setDefaultThreshold(
+                        blankOrElse(
+                                getStringValue(POLICY_DEFAULT_THRESHOLD_PARAM),
+                                JobUtils::i18nToThreshold));
+        this.job
+                .getParameters()
+                .setDefaultStrength(
+                        blankOrElse(
+                                getStringValue(POLICY_DEFAULT_STRENGTH_PARAM),
+                                JobUtils::i18nToStrength));
         this.job
                 .getParameters()
                 .setMaxRuleDurationInMins(this.getIntValue(MAX_RULE_DURATION_PARAM));

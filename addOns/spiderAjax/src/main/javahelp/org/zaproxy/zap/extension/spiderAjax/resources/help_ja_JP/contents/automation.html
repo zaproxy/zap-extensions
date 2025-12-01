@@ -50,14 +50,17 @@ spiderAjaxジョブにより、Ajaxスパイダーを実行できます。これ
       
     tests:
       - name: 'At least 100 URLs found'      # 文字列: テストの名前、デフォルト: statistic + operator + value
-        type: 'stats'                        # 文字列: テストのタイプ、現時点では 'stats' のみサポートされています
-        statistic: 'spiderAjax.urls.added'   # 文字列: Integer型またはLong型の統計の名前、現在サポートされているもの: 'spiderAjax.urls.added'
-        operator: '>='                       # 文字列 ['==', '!=', '>=', '>', '<', '<=']: Operator used for testing
-        value: 100                           # Int: Change this to the number of URLs you expect to find
-        onFail: 'info'                       # String [warn, error, info]: Change this to 'warn' or 'error' for the test to take effect
+        type: 'stats'                        # 文字列: テストのタイプ、現在は'stats'のみサポート
+        statistic: 'stats.spiderAjax.urls.added'   # 文字列: 整数/long統計の名前、現在サポート: 'stats.spiderAjax.urls.added'
+        operator: '&gt;='                       # 文字列['==', '!=', '&gt;=', '&gt;', '&lt;', '&lt;=']: テストに使用する演算子
+        value: 100                           # Int: 見つかると予想されるURLの数に変更する
+        onFail: 'info'                       # 文字列[warn, error, info]: テストを有効にするには、これを 'warn' または 'error' に変更してください
 </pre>
 
 runOnlyIfModern が True に設定されている場合、<a href="https://www.zaproxy.org/docs/desktop/addons/automation-framework/job-pscanwait/">passiveScan-wait</a>ジョブをこのジョブの前 (および後) に実行する必要があり、また<a href="https://www.zaproxy.org/docs/alerts/10109/">モダンWebアプリケーション</a>ルールがインストールされ、有効になっている必要があります。 これらのいずれかが行われていない場合、Ajaxスパイダーは常に実行され、警告が出力されます。
 両方が行われており、"モダンWebアプリケーション"のアラートが発生しない場合、これは従来のアプリケーションであり、Ajaxスパイダーは不要であると判断されます。
+
+以前は、統計情報 "spiderAjax.urls.started" が提供されていました。 これは非推奨であり、将来のいずれかの時点で削除される予定です。
+
 </BODY>
 </HTML>

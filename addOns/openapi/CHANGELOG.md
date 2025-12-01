@@ -4,7 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
 - Add XML body generation for OpenAPI plugin
+- Dependency updates.
 
 ## [47] - 2025-11-04
 ### Changed

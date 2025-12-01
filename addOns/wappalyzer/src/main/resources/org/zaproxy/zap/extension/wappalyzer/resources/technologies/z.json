@@ -354,6 +354,51 @@
     ],
     "website": "https://zenplanner.com"
   },
+  "ZenBasket": {
+    "cats": [
+      6
+    ],
+    "cookies": {
+      "zenbasket_session": ""
+    },
+    "description": "ZenBasket is a modern e-commerce website builder that allows users to create, customize, and manage online stores with drag-and-drop features and integrated payment solutions.",
+    "dom": {
+      "img[src*='getzenbasket.com']": {
+        "attributes": {
+          "src": "(?:cdn\\.|assets\\.|[a-z]{2}\\.images\\.)getzenbasket\\.com;confidence:50"
+        }
+      },
+      "link[href*='getzenbasket.com']": {
+        "attributes": {
+          "href": "(?:cdn\\.|assets\\.|[a-z]{2}\\.images\\.)getzenbasket\\.com;confidence:50"
+        }
+      }
+    },
+    "icon": "zenbasket.svg",
+    "js": {
+      "ZenBasket": ";confidence:25",
+      "ZenBasketApp": "",
+      "ZenBasketStore": ""
+    },
+    "meta": {
+      "generator": "ZenBasket;confidence:50",
+      "zenbasket-platform": ""
+    },
+    "pricing": [
+      "low",
+      "mid",
+      "recurring",
+      "freemium"
+    ],
+    "saas": true,
+    "url": [
+      "^https?//.+\\.getzenbasket\\.com"
+    ],
+    "website": "https://www.getzenbasket.com",
+    "xhr": [
+      "\\.getzenbasket\\.com"
+    ]
+  },
   "Zenbooker": {
     "cats": [
       72

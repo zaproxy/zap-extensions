@@ -688,6 +688,28 @@
     ],
     "website": "https://docs.generatepress.com/article/installing-gp-premium/"
   },
+  "Genesis blocks": {
+    "cats": [
+      87
+    ],
+    "description": "Premium block library & block editor enhancements from StudioPress.",
+    "dom": {
+      "link[href*='/wp-content/plugins/atomic-blocks']": {
+        "exists": ""
+      },
+      "link[href*='/wp-content/plugins/genesis-blocks']": {
+        "exists": ""
+      }
+    },
+    "html": [
+      "<div[^>]+class=[\"']wp-block-atomic-blocks-*"
+    ],
+    "icon": "genesis-blocks.png",
+    "scriptSrc": [
+      "/wp-content/themes/genesis-blocks/lib/js/"
+    ],
+    "website": "https://www.studiopress.com/genesis-blocks/"
+  },
   "Genesis theme": {
     "cats": [
       80
@@ -2929,7 +2951,7 @@
     "scriptSrc": [
       "googleapis\\.com/.+webfont"
     ],
-    "website": "https://google.com/fonts"
+    "website": "https://fonts.google.com/"
   },
   "Google Forms": {
     "cats": [

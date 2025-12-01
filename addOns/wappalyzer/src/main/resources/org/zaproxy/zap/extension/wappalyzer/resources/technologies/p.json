@@ -2132,6 +2132,18 @@
     ],
     "website": "https://wordpress.org/plugins/performance-lab/"
   },
+  "Performant Translations": {
+    "cats": [
+      87,
+      92
+    ],
+    "description": "Performance plugin from the WordPress Performance Team, which makes internationalization/localization in WordPress faster than ever before.",
+    "icon": "performant-translations.svg",
+    "meta": {
+      "generator": "^performant-translations ([\\d.]+)?\\;version:\\1"
+    },
+    "website": "https://wordpress.org/plugins/performant-translations/"
+  },
   "PerimeterX": {
     "cats": [
       16
@@ -5408,6 +5420,21 @@
     "saas": true,
     "website": "https://prestoplayer.com"
   },
+  "Pretty Damn Quick": {
+    "cats": [
+      74,
+      100
+    ],
+    "description": "Pretty Damn Quick is a Shopify app for eCommerce brands to deliver personalized checkout experiences.",
+    "icon": "PrettyDamnQuick.png",
+    "js": {
+      "initPDQscript": ""
+    },
+    "scriptSrc": [
+      "pdq-scripts\\.pdqprod\\.link"
+    ],
+    "website": "https://www.prettydamnquick.com/"
+  },
   "Pretty Links": {
     "cats": [
       87,
@@ -6692,6 +6719,20 @@
     "oss": true,
     "website": "https://github.com/mroderick/PubSubJS"
   },
+  "PubTech": {
+    "cats": [
+      67
+    ],
+    "description": "PubTech is a consent management platform helping brands and businesses collect, store and leverage their customer consents.",
+    "icon": "PubTech.png",
+    "js": {
+      "__pub_tech_cmp_config": ""
+    },
+    "scriptSrc": [
+      "pubtech-cmp-v(.+?)(?:-esm)?\\.js;version:\\1"
+    ],
+    "website": "https://www.pubtech.ai/"
+  },
   "Pubble": {
     "cats": [
       52
@@ -6747,6 +6788,22 @@
     },
     "oss": true,
     "website": "https://getpublii.com"
+  },
+  "PublishPress Blocks": {
+    "cats": [
+      87
+    ],
+    "description": "PublishPress Blocks is a Gutenberg Blocks page builder plugin that adds extra functionality to the WordPress Block Editor.",
+    "dom": {
+      "link[href*='/wp-content/plugins/advanced-gutenberg/assets/css/blocks.css?ver=([\\d\\.]+))?\\;version:\\1']": {
+        "exists": ""
+      }
+    },
+    "html": [
+      "<div[^>]+class=[\"']wp-block-advgb-*"
+    ],
+    "icon": "publishpress-blocks.png",
+    "website": "https://publishpress.com/blocks/"
   },
   "Publishrr": {
     "cats": [

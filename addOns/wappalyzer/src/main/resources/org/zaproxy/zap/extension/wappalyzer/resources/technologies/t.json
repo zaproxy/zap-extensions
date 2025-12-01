@@ -2810,6 +2810,18 @@
     ],
     "website": "https://themezhut.com/themes/hitmag"
   },
+  "Themify Builder": {
+    "cats": [
+      51,
+      87
+    ],
+    "description": "Themify Builder is a plugin that allows users to create complex layouts and designs by dragging and dropping elements onto their pages.",
+    "html": [
+      "<div[^>]+class=[\"']themify_builder_*"
+    ],
+    "icon": "themify-builder.png",
+    "website": "https://themify.me/builder"
+  },
   "Themonic Iconic One": {
     "cats": [
       80
@@ -4497,6 +4509,18 @@
     "saas": true,
     "website": "https://www.traek.io"
   },
+  "TrafficGuard": {
+    "cats": [
+      16
+    ],
+    "description": "TrafficGuard is an ad fraud and click-fraud detection software.",
+    "icon": "TrafficGuard.png",
+    "scriptSrc": [
+      "\\.tgtag\\.io",
+      "trafficguard\\.ai"
+    ],
+    "website": "https://www.trafficguard.ai/"
+  },
   "TrafficStars": {
     "cats": [
       36
@@ -5404,6 +5428,17 @@
     ],
     "website": "https://github.com/turbolinks/turbolinks"
   },
+  "Turbopack": {
+    "cats": [
+      47
+    ],
+    "description": "Turbopack is an open-source JavaScript module bundler.",
+    "icon": "Turbopack.svg",
+    "js": {
+      "TURBOPACK": ""
+    },
+    "website": "https://nextjs.org/docs/app/api-reference/turbopack"
+  },
   "TurfJS": {
     "cats": [
       59
@@ -5660,6 +5695,38 @@
       "/wp-content/themes/twentytwenty/"
     ],
     "website": "https://wordpress.org/themes/twentytwenty"
+  },
+  "Twenty Twenty-Five": {
+    "cats": [
+      80
+    ],
+    "description": "Twenty Twenty-Five is the default WordPress theme for 2025.",
+    "dom": {
+      "link[href*='/wp-content/themes/twentytwentyfive/']": {
+        "exists": ""
+      }
+    },
+    "icon": "WordPress.svg",
+    "scriptSrc": [
+      "/wp-content/themes/twentytwentyfive/"
+    ],
+    "website": "https://wordpress.org/themes/twentytwentyfive"
+  },
+  "Twenty Twenty-Four": {
+    "cats": [
+      80
+    ],
+    "description": "Twenty Twenty-Four is the default WordPress theme for 2024.",
+    "dom": {
+      "link[href*='/wp-content/themes/twentytwentyfour/']": {
+        "exists": ""
+      }
+    },
+    "icon": "WordPress.svg",
+    "scriptSrc": [
+      "/wp-content/themes/twentytwentyfour/"
+    ],
+    "website": "https://wordpress.org/themes/twentytwentyfour"
   },
   "Twenty Twenty-One": {
     "cats": [

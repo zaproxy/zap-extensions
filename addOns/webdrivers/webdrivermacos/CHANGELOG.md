@@ -4,7 +4,20 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- Change case of macOS (Issue 9157).
 
+## [167] - 2025-11-17
+### Changed
+- Update ChromeDriver to 142.0.7444.175.
+
+## [166] - 2025-11-11
+### Changed
+- Update ChromeDriver to 142.0.7444.162.
+
+## [165] - 2025-11-05
+### Changed
+- Update ChromeDriver to 142.0.7444.61.
 
 ## [164] - 2025-10-28
 ### Changed
@@ -685,6 +698,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release: Firefox v0.13.0 Chrome v2.27
 
+[167]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v167
+[166]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v166
+[165]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v165
 [164]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v164
 [163]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v163
 [162]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v162

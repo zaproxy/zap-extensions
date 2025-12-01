@@ -104,8 +104,6 @@ public class AutomationEnvironment {
                             Constant.messages.getString("automation.env.name"),
                             null,
                             progress);
-                    this.progress.setOutputToStdout(
-                            this.getData().getParameters().getProgressToStdout());
                     break;
                 case "proxy":
                     LinkedHashMap<?, ?> proxy = (LinkedHashMap<?, ?>) entry.getValue();
@@ -163,13 +161,16 @@ public class AutomationEnvironment {
                                     "automation.error.env.unknown", entry.getKey()));
             }
         }
+
+        progress.setOutputToStdout(getData().getParameters().getProgressToStdout());
+
         if (this.contexts.isEmpty()) {
             progress.error(Constant.messages.getString("automation.error.env.nocontexts", envData));
         }
     }
 
     public void addContext(Context context) {
-        this.contexts.add(new ContextWrapper(context));
+        this.contexts.add(new ContextWrapper(context, this));
     }
 
     private static ExtensionNetwork getExtensionNetwork() {

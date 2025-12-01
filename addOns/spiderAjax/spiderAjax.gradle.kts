@@ -78,6 +78,7 @@ dependencies {
     compileOnly(libs.log4j.core)
 
     implementation(files("lib/crawljax-core-3.7.1.jar"))
+    implementation(libs.log4j.slf4j2)
     implementation(libs.spiderAjax.apache.commons.math)
     implementation(libs.spiderAjax.metricsCore)
     implementation(libs.spiderAjax.findBugsAnnotations)
@@ -87,12 +88,7 @@ dependencies {
     }
     implementation(libs.spiderAjax.jcipAnnotations)
     implementation(libs.spiderAjax.nekohtml)
-    implementation(libs.spiderAjax.jclOverSlf4j)
     implementation(libs.spiderAjax.julToSlf4j)
-    implementation(libs.spiderAjax.slf4j.log4j12) {
-        // Provided by ZAP.
-        exclude(group = "log4j", module = "log4j")
-    }
     implementation(libs.spiderAjax.xmlunit)
 
     testImplementation(libs.log4j.core)

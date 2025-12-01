@@ -19,7 +19,7 @@ alertFilter ジョブでは、グローバルおよびコンテキスト固有�
     parameters:
       deleteGlobalAlerts: true         # Boolean: true の場合、既存のグローバルアラートをすべて削除します。デフォルトは false です
     alertFilters:                      # 適用されるアラートフィルターのリスト
-      - ruleId:                        # Int: 必須。スキャンルールの ID またはアラート参照
+      - ruleId:                        # Int/文字列: 必須。スキャンルールIDまたはアラート参照
         newRisk:                       # 文字列: 必須。新しいリスクレベル。 'False Positive'、'Info'、'Low'、'Medium'、'High' のいずれか
         context:                       # 文字列: オプションのコンテキスト名。空の場合、グローバルアラートフィルターが作成されます
         url:                           # 文字列: オプション。アラートと照合する文字列。環境変数をサポートします

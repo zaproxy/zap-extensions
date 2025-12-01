@@ -49,6 +49,10 @@ import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.Proxy;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
+import org.openqa.selenium.bidi.webextension.ExtensionArchivePath;
+import org.openqa.selenium.bidi.webextension.ExtensionPath;
+import org.openqa.selenium.bidi.webextension.InstallExtensionParameters;
+import org.openqa.selenium.bidi.webextension.WebExtension;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.chromium.ChromiumOptions;
@@ -1019,20 +1023,11 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         }
     }
 
-    private static void addFirefoxExtensions(FirefoxDriver driver) {
-        List<Path> exts =
-                getSeleniumOptions().getEnabledBrowserExtensions(Browser.FIREFOX).stream()
-                        .map(BrowserExtension::getPath)
-                        .collect(Collectors.toList());
-        if (!exts.isEmpty()) {
-            exts.stream().forEach(driver::installExtension);
-        }
-    }
-
     private static void addArguments(Browser browser, ChromiumOptions<?> options) {
         List<String> arguments = new ArrayList<>();
-        // FIXME https://github.com/SeleniumHQ/selenium/issues/15788
-        arguments.add("--disable-features=DisableLoadExtensionCommandLineSwitch");
+        // Needed to load the extensions.
+        arguments.add("--enable-unsafe-extension-debugging");
+        arguments.add("--remote-debugging-pipe");
         getSeleniumOptions().getBrowserArguments(browser.getId()).stream()
                 .filter(BrowserArgument::isEnabled)
                 .map(BrowserArgument::getArgument)
@@ -1042,16 +1037,21 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         }
     }
 
-    private static void addChromeExtensions(ChromiumOptions<?> options) {
-        options.addExtensions(
-                getSeleniumOptions().getEnabledBrowserExtensions(Browser.CHROME).stream()
-                        .map(BrowserExtension::getPath)
-                        .map(Path::toFile)
-                        .collect(Collectors.toList()));
-    }
-
-    private static RemoteWebDriver configureDriver(RemoteWebDriver driver) {
+    private static RemoteWebDriver configureDriver(
+            Browser browser, RemoteWebDriver driver, boolean enableExtensions) {
         driver.script().addConsoleMessageHandler(e -> WEBDRIVER_LOGGER.debug(e.getText()));
+
+        if (enableExtensions) {
+            WebExtension webExt = new WebExtension(driver);
+            getSeleniumOptions().getEnabledBrowserExtensions(browser).stream()
+                    .map(BrowserExtension::getPath)
+                    .map(Path::toAbsolutePath)
+                    .map(Path::toString)
+                    .map(browser == Browser.CHROME ? ExtensionPath::new : ExtensionArchivePath::new)
+                    .map(InstallExtensionParameters::new)
+                    .forEach(webExt::install);
+        }
+
         return driver;
     }
 
@@ -1067,9 +1067,6 @@ public class ExtensionSelenium extends ExtensionAdaptor {
             case CHROME_HEADLESS:
                 ChromeOptions chromeOptions = new ChromeOptions();
                 chromeOptions.setCapability(BIDI_CAPABILITIY, true);
-                if (enableExtensions) {
-                    addChromeExtensions(chromeOptions);
-                }
                 setCommonOptions(chromeOptions, proxyAddress, proxyPort);
                 chromeOptions.addArguments("--proxy-bypass-list=<-loopback>");
                 chromeOptions.addArguments("--ignore-certificate-errors");
@@ -1083,13 +1080,11 @@ public class ExtensionSelenium extends ExtensionAdaptor {
 
                 addArguments(Browser.CHROME, chromeOptions);
                 consumer.accept(chromeOptions);
-                return configureDriver(new ChromeDriver(chromeOptions));
+                return configureDriver(
+                        Browser.CHROME, new ChromeDriver(chromeOptions), enableExtensions);
             case EDGE, EDGE_HEADLESS:
                 EdgeOptions edgeOptions = new EdgeOptions();
                 edgeOptions.setCapability(BIDI_CAPABILITIY, true);
-                if (enableExtensions) {
-                    addChromeExtensions(edgeOptions);
-                }
                 setCommonOptions(edgeOptions, proxyAddress, proxyPort);
                 edgeOptions.addArguments("--proxy-bypass-list=<-loopback>");
                 edgeOptions.addArguments("--ignore-certificate-errors");
@@ -1103,7 +1098,8 @@ public class ExtensionSelenium extends ExtensionAdaptor {
 
                 addArguments(Browser.EDGE, edgeOptions);
                 consumer.accept(edgeOptions);
-                return configureDriver(new EdgeDriver(edgeOptions));
+                return configureDriver(
+                        Browser.CHROME, new EdgeDriver(edgeOptions), enableExtensions);
             case FIREFOX:
             case FIREFOX_HEADLESS:
                 FirefoxOptions firefoxOptions = new FirefoxOptions();
@@ -1172,11 +1168,8 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                     }
                 }
 
-                FirefoxDriver driver = new FirefoxDriver(firefoxOptions);
-                if (enableExtensions) {
-                    addFirefoxExtensions(driver);
-                }
-                return configureDriver(driver);
+                return configureDriver(
+                        Browser.FIREFOX, new FirefoxDriver(firefoxOptions), enableExtensions);
             case HTML_UNIT:
                 DesiredCapabilities htmlunitCapabilities = new DesiredCapabilities();
                 setCommonOptions(htmlunitCapabilities, proxyAddress, proxyPort);

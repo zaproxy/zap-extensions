@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-import java.util.regex.Pattern;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -480,7 +479,7 @@ public class AuthTestDialog extends StandardFieldsDialog {
                     // Just in case the user has added this anyway
                     dom = dom.substring(0, dom.length() - 2);
                 }
-                context.addIncludeInContextRegex(Pattern.quote(dom) + ".*");
+                context.addIncludeInContextRegex(dom + ".*");
             }
 
             JComboBox<?> browserCombo = (JComboBox<?>) this.getField(BROWSER_LABEL);

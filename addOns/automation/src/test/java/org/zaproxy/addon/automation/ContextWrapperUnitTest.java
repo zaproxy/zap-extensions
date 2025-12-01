@@ -88,12 +88,32 @@ class ContextWrapperUnitTest {
     }
 
     @Test
+    void shouldInitDataForValidUrlsIgnoringRegexes() {
+        // Given
+        Context context = new Context(session, 0);
+        context.addIncludeInContextRegex("\\Qhttps://www.example1.com\\E.*");
+        context.addIncludeInContextRegex("https://www.example2.com.*");
+        context.addIncludeInContextRegex("https://www.example3.*\\Q.com\\E.*");
+        // When
+        ContextWrapper cw =
+                new ContextWrapper(
+                        context, new AutomationEnvironment(mock(AutomationProgress.class)));
+        // Then
+        assertThat(cw.getData().getUrls(), contains("https://www.example2.com"));
+        assertThat(
+                cw.getData().getIncludePaths(),
+                contains(
+                        "\\Qhttps://www.example1.com\\E.*",
+                        "https://www.example2.com.*",
+                        "https://www.example3.*\\Q.com\\E.*"));
+    }
+
+    @Test
     void shouldInitDataForDefaultCookieSessionManagement() {
         // Given
-        Session session = mock(Session.class);
         Context context = new Context(session, 0);
         // When
-        ContextWrapper cw = new ContextWrapper(context);
+        ContextWrapper cw = new ContextWrapper(context, mock(AutomationEnvironment.class));
         // Then
         assertThat(
                 cw.getData().getSessionManagement().getMethod(),
@@ -115,11 +135,10 @@ class ContextWrapperUnitTest {
     @Test
     void shouldInitDataForHttpSessionManagement() {
         // Given
-        Session session = mock(Session.class);
         Context context = new Context(session, 0);
         // When
         context.setSessionManagementMethod(new HttpAuthSessionManagementMethod());
-        ContextWrapper cw = new ContextWrapper(context);
+        ContextWrapper cw = new ContextWrapper(context, mock(AutomationEnvironment.class));
         // Then
         assertThat(
                 cw.getData().getSessionManagement().getMethod(),

@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [19] - 2025-11-10
+### Added
+- Statistics.
+
 ## [18] - 2025-08-27
 
 ### Fixed
@@ -120,6 +124,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release as an add-on, previously bundled with ZAP core.
 
+[19]: https://github.com/zaproxy/zap-extensions/releases/bruteforce-v19
 [18]: https://github.com/zaproxy/zap-extensions/releases/bruteforce-v18
 [17]: https://github.com/zaproxy/zap-extensions/releases/bruteforce-v17
 [16]: https://github.com/zaproxy/zap-extensions/releases/bruteforce-v16

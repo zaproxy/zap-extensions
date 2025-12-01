@@ -19,7 +19,7 @@ The API is accessible via <code>clientSpider</code> API prefix.
 
 <H2>Actions</H2>
 <ul>
-<li><code>scan (browser url contextName userName subtreeOnly maxCrawlDepth pageLoadTime)</code>: Runs the Client Spider against the given URL and/or context. Returns the scanId.</li>
+<li><code>scan (browser url contextName userName subtreeOnly maxCrawlDepth pageLoadTime numberOfBrowsers scopeCheck)</code>: Runs the Client Spider against the given URL and/or context. Returns the scanId.</li>
 <li><code>stop (scanId*)</code>: Stops a Client Spider scan.</li>
 </ul>
 
@@ -32,13 +32,15 @@ The API is accessible via <code>clientSpider</code> API prefix.
 <li><code>subtreeOnly</code>: If set to 'true', the spider will only scan URLs under the specified URL. Default: 'false'.</li>
 <li><code>maxCrawlDepth</code>: The maximum depth the spider should crawl, where 0 is unlimited. Defaults to client options.</li>
 <li><code>pageLoadTime</code>: The time in seconds to wait for a page to load. Defaults to client options.</li>
+<li><code>numberOfBrowsers</code>: Number of Browser Windows to Open (concurrency). Integer, defaults to client options.</li>
+<li><code>scopeCheck</code>: Scope Check mode, either <code>FLEXIBLE</code> (default) or <code>STRICT</code>.</li>
 <li><code>scanId</code>: The ID of the scan to query or manage.</li>
 </ul>
 
 <H2>Examples</H2>
 <H3>Start a scan:</H3>
 <pre><code>
-https://zap/JSON/clientSpider/action/scan/?url=https://example.com&maxCrawlDepth=5&pageLoadTime=30
+https://zap/JSON/clientSpider/action/scan/?url=https://example.com&maxCrawlDepth=5&pageLoadTime=30&numberOfBrowsers=1&scopeCheck=STRICT
 </code></pre>
 
 <H3>Check status:</H3>
