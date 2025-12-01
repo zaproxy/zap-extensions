@@ -118,15 +118,7 @@ public class ActiveScanJob extends AutomationJob {
         }
 
         if (!StringUtils.isEmpty(getParameters().getPolicy())) {
-            try {
-                getExtAScan().getPolicyManager().getPolicy(getParameters().getPolicy());
-            } catch (ConfigurationException e) {
-                progress.error(
-                        Constant.messages.getString(
-                                "automation.error.ascan.policy.name",
-                                this.getName(),
-                                getParameters().getPolicy()));
-            }
+            // Validate the policy exists when running, it might be created dynamically.
 
             if (!StringUtils.isEmpty(getParameters().getDefaultStrength())) {
                 JobUtils.parseAttackStrength(
@@ -239,7 +231,12 @@ public class ActiveScanJob extends AutomationJob {
                 }
 
             } catch (ConfigurationException e) {
-                // Error already raised above
+                progress.error(
+                        Constant.messages.getString(
+                                "automation.error.ascan.policy.name",
+                                this.getName(),
+                                getParameters().getPolicy()));
+                return;
             }
         } else {
             scanPolicy =

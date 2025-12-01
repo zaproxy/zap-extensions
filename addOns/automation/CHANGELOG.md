@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 - Restore default standard output on absent `env` `parameters`.
+- Delay Scan Policy validation to runtime phase in the `activeScan` job, the Scan Policy might be created dynamically by other jobs.
 
 ## [0.56.0] - 2025-11-07
 ### Added
