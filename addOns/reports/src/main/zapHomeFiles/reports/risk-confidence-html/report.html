@@ -34,7 +34,7 @@
 	</header>
 
 	<main
-		data-th-with="MAX_CONFIDENCE_CODE=4, MAX_RISK_CODE=3, alerts=${helper.getDepthFirstChildren(alertTree, false)}, includedConfidenceCodes=${#reportData=reportData, #numbers.sequence(MAX_CONFIDENCE_CODE, 0, -1).{? #code=#this, #reportData.isIncludeConfidence(#code)}}, includedRiskCodes=${#reportData=reportData, #numbers.sequence(MAX_RISK_CODE, 0, -1).{? #code=#this, #reportData.isIncludeRisk(#code)}}, includedConfidenceCodesSize=${includedConfidenceCodes.size()}, includedRiskCodesSize=${includedRiskCodes.size()}, sitesWithAlerts=${#alerts=alerts, #helper=helper, reportData.sites.{? #site=#this, !#alerts.{^ #userObject=#this.userObject, #msgUri=#userObject.msgUri, #helper.getHostForSite(#site) == #msgUri.host &amp;&amp; #helper.getPortForSite(#site) == #helper.getPortForSite(#msgUri.toString()) &amp;&amp; #helper.isSslSite(#site) == #msgUri.scheme.equals('https')}.isEmpty()}}">
+		data-th-with="MAX_CONFIDENCE_CODE=4, MAX_RISK_CODE=3, alerts=${helper.getDepthFirstChildren(alertTree, false)}, includedConfidenceCodes=${#reportData=reportData, #numbers.sequence(MAX_CONFIDENCE_CODE, 0, -1).{? #code=#this, #reportData.isIncludeConfidence(#code)}}, includedRiskCodes=${#reportData=reportData, #numbers.sequence(MAX_RISK_CODE, 0, -1).{? #code=#this, #reportData.isIncludeRisk(#code)}}, includedConfidenceCodesSize=${includedConfidenceCodes.size()}, includedRiskCodesSize=${includedRiskCodes.size()}, sitesWithAlerts=${#alerts=alerts, #helper=helper, reportData.sites.{? #site=#this, !#alerts.{^ #userObject=#this.userObject, #msgUri=#userObject.msgUri, #helper.getHostForSite(#site) == #msgUri.host &amp;&amp; #helper.getPortForSite(#site) == #helper.getPortForSite(#msgUri.toString()) && #helper.isSslSite(#site) == #msgUri.scheme.equals('https')}.isEmpty()}}">
 
 		<section data-th-if="${reportData.isIncludeSection('contents')}"
 			id="contents" class="contents">
@@ -277,7 +277,7 @@
 							<th scope="row" data-th-text="${helper.getRiskString(riskCode)}">Risk
 								level</th>
 							<td data-th-each="confidenceCode: ${includedConfidenceCodes}"
-								data-th-with="count=${#riskCode=riskCode, #confidenceCode=confidenceCode, alerts.{? #userObject=#this.userObject, #userObject.risk == #riskCode &amp;&amp; #userObject.confidence == #confidenceCode}.size()}"><span
+								data-th-with="count=${#riskCode=riskCode, #confidenceCode=confidenceCode, alerts.{? #userObject=#this.userObject, #userObject.risk == #riskCode && #userObject.confidence == #confidenceCode}.size()}"><span
 								data-th-text="${count}">count</span><br> <span
 								class="additional-info-percentages"
 								data-th-text="|(${#numbers.formatPercent(count * 1.0/alertsSize, 1, 1)})|">(%
@@ -350,7 +350,7 @@
 									data-th-case="0" class="additional-info-percentages"
 									data-th-text="|(= ${riskString})|">(= Risk level)</span> <span
 									data-th-case="*" class="additional-info-percentages"
-									data-th-text="|(&gt;= ${riskString})|">(&gt;= Risk
+									data-th-text="|(>= ${riskString})|">(&gt;= Risk
 									level)</span> </th-block>
 							</th>
 						</tr>
@@ -362,7 +362,7 @@
 								data-th-text="#{report.template.site}">Site</th>
 							<th scope="row" data-th-text="${site}">Site</th>
 							<th-block
-								data-th-with="countsForRow=${#site=site, #helper=helper, #alerts=alerts, includedRiskCodes.{#riskCode=#this, #alerts.{? #userObject=#this.userObject, #msgUri=#userObject.msgUri, #userObject.confidence != 0 &amp;&amp; #userObject.risk == #riskCode &amp;&amp; #helper.getHostForSite(#site) == #msgUri.host &amp;&amp; #helper.getPortForSite(#site) ==  #helper.getPortForSite(#msgUri.toString()) &amp;&amp; #helper.isSslSite(#site) == #msgUri.scheme.equals('https')}.size()}}">
+								data-th-with="countsForRow=${#site=site, #helper=helper, #alerts=alerts, includedRiskCodes.{#riskCode=#this, #alerts.{? #userObject=#this.userObject, #msgUri=#userObject.msgUri, #userObject.confidence != 0 &amp;&amp; #userObject.risk == #riskCode &amp;&amp; #helper.getHostForSite(#site) == #msgUri.host && #helper.getPortForSite(#site) ==  #helper.getPortForSite(#msgUri.toString()) &amp;&amp; #helper.isSslSite(#site) == #msgUri.scheme.equals('https')}.size()}}">
 							<td data-th-each="count, iterStat: ${countsForRow}"><span
 								data-th-text="${count}">count</span><br> <span
 								class="additional-info-percentages"
@@ -495,7 +495,7 @@
 					</h3>
 					<ol>
 						<th-block data-th-each="site: ${sitesWithAlerts}"
-							data-th-with="filteredAlerts=${#helper=helper, #site=site, filteredAlerts.{? #userObject=#this.userObject, #msgUri=#userObject.msgUri, #helper.getHostForSite(#site) == #msgUri.host &amp;&amp; #helper.getPortForSite(#site) == #helper.getPortForSite(#msgUri.toString()) &amp;&amp; #helper.isSslSite(#site) == #msgUri.scheme.equals('https')}}">
+							data-th-with="filteredAlerts=${#helper=helper, #site=site, filteredAlerts.{? #userObject=#this.userObject, #msgUri=#userObject.msgUri, #helper.getHostForSite(#site) == #msgUri.host && #helper.getPortForSite(#site) == #helper.getPortForSite(#msgUri.toString()) && #helper.isSslSite(#site) == #msgUri.scheme.equals('https')}}">
 						<li data-th-unless="${filteredAlerts.isEmpty()}"
 							class="alerts--site-li">
 							<h4>
@@ -586,7 +586,7 @@
 									</span> </th-block> </th-block> </th-block>
 								</td>
 							</tr>
-							<tr data-th-if="${userObject.cweId &gt; 0}">
+							<tr data-th-if="${userObject.cweId > 0}">
 								<th scope="row"
 									data-th-text="#{report.template.alertType.cweId}">CWE ID</th>
 								<td><a
@@ -594,7 +594,7 @@
 									data-th-text="${userObject.cweId}"
 									href="https://cwe.mitre.org/data/index.html">CWE ID value</a></td>
 							</tr>
-							<tr data-th-if="${userObject.wascId &gt; 0}">
+							<tr data-th-if="${userObject.wascId > 0}">
 								<th scope="row"
 									data-th-text="#{report.template.alertType.wascId}">WASC ID</th>
 								<td data-th-text="${userObject.wascId}">WASC ID value</td>
@@ -671,7 +671,7 @@
 		<th scope="row" data-th-text="#{report.template.alertsTable.request}">Request</th>
 		<td><details
 				data-th-with="requestHeader=${userObject.message.requestHeader}, headerLength=${requestHeader.toString().length}"
-				data-th-open="${headerLength &lt; 2048 || !reportData.isIncludeSection('requestHeader')}">
+				data-th-open="${headerLength < 2048 || !reportData.isIncludeSection('requestHeader')}">
 				<summary
 					data-th-text="|#{report.template.alertsTable.requestHeader} (${headerLength} ${headerLength == 1? 'byte': 'bytes'})|">Request
 					line and header section (x bytes)</summary>
@@ -684,7 +684,7 @@
 				</th-block>
 			</details> <details class="request-body"
 				data-th-with="requestBody=${userObject.message.requestBody}, bodyLength=${requestBody.length}"
-				data-th-open="${bodyLength &lt; 2048 || !reportData.isIncludeSection('requestBody')}">
+				data-th-open="${bodyLength < 2048 || !reportData.isIncludeSection('requestBody')}">
 				<summary
 					data-th-text="|#{report.template.alertsTable.requestBody} (${bodyLength} ${bodyLength == 1? 'byte': 'bytes'})|">Request
 					body (x bytes)</summary>
@@ -701,7 +701,7 @@
 		<th scope="row" data-th-text="#{report.template.alertsTable.response}">Response</th>
 		<td><details
 				data-th-with="responseHeader=${userObject.message.responseHeader}, headerLength=${responseHeader.toString().length}"
-				data-th-open="${headerLength &lt; 2048 || !reportData.isIncludeSection('responseHeader')}">
+				data-th-open="${headerLength < 2048 || !reportData.isIncludeSection('responseHeader')}">
 				<summary
 					data-th-text="|#{report.template.alertsTable.responseHeader} (${headerLength} ${headerLength == 1? 'byte': 'bytes'})|">Status
 					line and header section (x bytes)</summary>
@@ -714,7 +714,7 @@
 				</th-block>
 			</details> <details class="response-body"
 				data-th-with="responseBody=${userObject.message.responseBody}, bodyLength=${responseBody.length}"
-				data-th-open="${bodyLength &lt; 2048 || !reportData.isIncludeSection('responseBody')}">
+				data-th-open="${bodyLength < 2048 || !reportData.isIncludeSection('responseBody')}">
 				<summary
 					data-th-text="|#{report.template.alertsTable.responseBody} (${bodyLength} ${bodyLength == 1? 'byte': 'bytes'})|">Response
 					body (x bytes)</summary>

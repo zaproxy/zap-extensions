@@ -189,7 +189,7 @@
 			<div class="inner">
 
 				<th:block
-					th:if="${reportData.isIncludeSection('insights') &amp;&amp; reportData.reportObjects.get('insightsList') != null}">
+					th:if="${reportData.isIncludeSection('insights') && reportData.reportObjects.get('insightsList') != null}">
 					<h3 th:text="#{report.insights.title}">Insights</h3>
 					<div class="tableWrapper">
 						<table class="insights" cellspacing="0" cellpadding="0">
@@ -281,7 +281,7 @@
 									<tr th:if="${alertCountsByRule.get(ascan.id) == null}">
 										<td><a
 											th:href="'https://www.zaproxy.org/docs/alerts/' + ${ascan.id} + '/'"
-											th:if="${ascan.id &gt;= 0}" th:text="${ascan.name}">Alert
+											th:if="${ascan.id >= 0}" th:text="${ascan.name}">Alert
 												Name</a></td>
 										<td th:text="#{report.template.pass.type.active}"
 											align="center">Active</td>
@@ -297,7 +297,7 @@
 									<tr th:if="${alertCountsByRule.get(pscan.id) == null}">
 										<td><a
 											th:href="${'https://www.zaproxy.org/docs/alerts/' + pscan.id + '/'}"
-											th:if="${pscan.id &gt;= 0}" th:text="${pscan.name}">Alert
+											th:if="${pscan.id >= 0}" th:text="${pscan.name}">Alert
 												Name</a></td>
 										<td th:text="#{report.template.pass.type.passive}"
 											align="center">Passive</td>
@@ -381,7 +381,7 @@
 						</div>
 					</th:block>
 					<th:block
-						th:if="${reportData.reportObjects.get('wappalyzerData') != null &amp;&amp; reportData.reportObjects.get('wappalyzerData').getTechnologyForSite(site).size() &gt; 0}">
+						th:if="${reportData.reportObjects.get('wappalyzerData') != null && reportData.reportObjects.get('wappalyzerData').getTechnologyForSite(site).size() > 0}">
 						<div class="tableWrapper">
 							<table class="summary" cellspacing="0" cellpadding="0">
 								<tr>
@@ -412,7 +412,7 @@
 						</div>
 					</th:block>
 					<th:block
-						th:if="${reportData.isIncludeSection('params') &amp;&amp; reportData.reportObjects.get('paramsData') != null &amp;&amp; reportData.reportObjects.get('paramsData').getSiteParameters(site)}">
+						th:if="${reportData.isIncludeSection('params') && reportData.reportObjects.get('paramsData') != null && reportData.reportObjects.get('paramsData').getSiteParameters(site)}">
 						<div class="tableWrapper">
 							<table class="summary" cellspacing="0" cellpadding="0">
 								<tr>
@@ -640,14 +640,14 @@
 										Id</td>
 									<td width="80%"><a
 										th:href="'https://cwe.mitre.org/data/definitions/' + ${alert.userObject.cweId} + '.html'"
-										th:if="${alert.userObject.cweId &gt; 0}"
+										th:if="${alert.userObject.cweId > 0}"
 										th:text="${alert.userObject.cweId}" href="cwe.html">CWE Id</a></td>
 								</tr>
 								<tr>
 									<td th:text="#{report.alerts.detail.wascid}" width="20%">WASC
 										Id</td>
 									<td width="80%"><th:block
-											th:if="${alert.userObject.wascId &gt; 0}"
+											th:if="${alert.userObject.wascId > 0}"
 											th:text="${alert.userObject.wascId}">WASC Id</th:block></td>
 								</tr>
 								<tr>
@@ -655,7 +655,7 @@
 										Id</td>
 									<td width="80%"><a
 										th:href="'https://www.zaproxy.org/docs/alerts/' + ${alert.userObject.pluginId} + '/'"
-										th:if="${alert.userObject.pluginId &gt;= 0}"
+										th:if="${alert.userObject.pluginId >= 0}"
 										th:text="${alert.userObject.pluginId}" href="plugin.html">Plugin
 											Id</a></td>
 								</tr>

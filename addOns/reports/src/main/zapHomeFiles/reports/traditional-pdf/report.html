@@ -171,7 +171,7 @@ td {
 	</th:block>
 
 	<th:block
-		th:if="${reportData.isIncludeSection('insights') &amp;&amp; reportData.reportObjects.get('insightsList') != null}">
+		th:if="${reportData.isIncludeSection('insights') && reportData.reportObjects.get('insightsList') != null}">
 		<h3 th:text="#{report.insights.title}" class="left-header">Insights</h3>
 		<table class="summary">
 			<tr>
@@ -326,14 +326,14 @@ td {
 					<td th:text="#{report.alerts.detail.cweid}" width="20%">CWE Id</td>
 					<td width="80%"><a
 						th:href="'https://cwe.mitre.org/data/definitions/' + ${alert.userObject.cweId} + '.html'"
-						th:if="${alert.userObject.cweId &gt; 0}"
+						th:if="${alert.userObject.cweId > 0}"
 						th:text="${alert.userObject.cweId}" href="cwe.html">CWE Id</a></td>
 				</tr>
 				<tr>
 					<td th:text="#{report.alerts.detail.wascid}" width="20%">WASC
 						Id</td>
 					<td width="80%"><th:block
-							th:if="${alert.userObject.wascId &gt; 0}"
+							th:if="${alert.userObject.wascId > 0}"
 							th:text="${alert.userObject.wascId}">WASC Id</th:block></td>
 				</tr>
 				<tr>
@@ -341,7 +341,7 @@ td {
 						Id</td>
 					<td width="80%"><a
 						th:href="'https://www.zaproxy.org/docs/alerts/' + ${alert.userObject.pluginId} + '/'"
-						th:if="${alert.userObject.pluginId &gt;= 0}"
+						th:if="${alert.userObject.pluginId >= 0}"
 						th:text="${alert.userObject.pluginId}" href="plugin.html">Plugin
 							Id</a></td>
 				</tr>

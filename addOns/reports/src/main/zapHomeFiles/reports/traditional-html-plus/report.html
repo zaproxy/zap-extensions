@@ -204,10 +204,10 @@
 						<a class="alwayswhite"
 							th:href="'#' + ${stepId}"
 							th:text="' ' + (${stepState.index} + 1)">step</a>
-						<span th:if="${riskLvl &gt; 0}"
+						<span th:if="${riskLvl > 0}"
 							th:class="'alert-' + ${step.getHighestAlert() + 'a'}"
 							th:text="' - '">flag</span><span
-				 				th:text="(${riskLvl &gt; 0} ? ${helper.getRiskString(riskLvl)} : '')">risk</span>
+				 				th:text="(${riskLvl > 0} ? ${helper.getRiskString(riskLvl)} : '')">risk</span>
 						</td>
 						<th:block
 							th:if="(${stepState.index} + 1) % 10 == 0 or ${stepState.last}">
@@ -264,7 +264,7 @@
 					<tr th:if="${alertCountsByRule.get(ascan.id) == null}">
 						<td><a
 							th:href="'https://www.zaproxy.org/docs/alerts/' + ${ascan.id} + '/'"
-							th:if="${ascan.id &gt;= 0}" th:text="${ascan.name}">Alert
+							th:if="${ascan.id >= 0}" th:text="${ascan.name}">Alert
 								Name</a></td>
 						<td th:text="#{report.template.pass.type.active}" align="center">Active</td>
 						<td align="center" th:text="${ascan.threshold}">Threshold</td>
@@ -279,7 +279,7 @@
 					<tr th:if="${alertCountsByRule.get(pscan.id) == null}">
 						<td><a
 							th:href="${'https://www.zaproxy.org/docs/alerts/' + pscan.id + '/'}"
-							th:if="${pscan.id &gt;= 0}" th:text="${pscan.name}">Alert
+							th:if="${pscan.id >= 0}" th:text="${pscan.name}">Alert
 								Name</a></td>
 						<td th:text="#{report.template.pass.type.passive}" align="center">Passive</td>
 						<td align="center" th:text="${pscan.threshold}">Threshold</td>
@@ -354,7 +354,7 @@
 			</table>
 		</th:block>
 		<th:block
-			th:if="${reportData.reportObjects.get('wappalyzerData') != null &amp;&amp; reportData.reportObjects.get('wappalyzerData').getTechnologyForSite(site).size() &gt; 0}">
+			th:if="${reportData.reportObjects.get('wappalyzerData') != null && reportData.reportObjects.get('wappalyzerData').getTechnologyForSite(site).size() > 0}">
 			<table class="summary">
 				<tr>
 					<th th:text="#{report.template.tech.name}">Technology</th>
@@ -384,7 +384,7 @@
 		</th:block>
 
 		<th:block
-			th:if="${reportData.isIncludeSection('params') &amp;&amp; reportData.reportObjects.get('paramsData') != null &amp;&amp; reportData.reportObjects.get('paramsData').getSiteParameters(site)}">
+			th:if="${reportData.isIncludeSection('params') && reportData.reportObjects.get('paramsData') != null && reportData.reportObjects.get('paramsData').getSiteParameters(site)}">
 			<table class="summary">
 				<tr>
 					<th th:text="#{report.template.params.name}">Name</th>
@@ -608,14 +608,14 @@
 					<td th:text="#{report.alerts.detail.cweid}" width="20%">CWE Id</td>
 					<td width="80%"><a
 						th:href="'https://cwe.mitre.org/data/definitions/' + ${alert.userObject.cweId} + '.html'"
-						th:if="${alert.userObject.cweId &gt; 0}"
+						th:if="${alert.userObject.cweId > 0}"
 						th:text="${alert.userObject.cweId}" href="cwe.html">CWE Id</a></td>
 				</tr>
 				<tr>
 					<td th:text="#{report.alerts.detail.wascid}" width="20%">WASC
 						Id</td>
 					<td width="80%"><th:block
-							th:if="${alert.userObject.wascId &gt; 0}"
+							th:if="${alert.userObject.wascId > 0}"
 							th:text="${alert.userObject.wascId}">WASC Id</th:block></td>
 				</tr>
 				<tr>
@@ -658,9 +658,9 @@
 
 							<span th:text="#{report.sequences.step.result}">Result</span> <span
 								th:text="${step.getResult()}">result</span><br> <span
-								th:if="${step.getAlerts().size() &gt; 0}"
+								th:if="${step.getAlerts().size() > 0}"
 								th:text="#{report.sequences.step.alerts}">Alerts</span>
-							<div class="lm2" th:if="${step.getAlerts().size() &gt; 0}">
+							<div class="lm2" th:if="${step.getAlerts().size() > 0}">
 								<th:block th:each="alert: ${step.getAlerts()}">
 									<span th:class="'alert-' + ${alert.getRisk() + 'b'}">&nbsp;<span>
 											<a th:href="'#plugin-' + ${alert.getPluginId()}"

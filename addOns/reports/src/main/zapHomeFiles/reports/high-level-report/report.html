@@ -54,7 +54,7 @@
 	<!-- Description, and first row of charts-->
 	<div class="container ">
 		<th:block
-			th:with="sites_size=${reportData.sites == null ? 0 : reportData.sites.size}, more_than_one_sites=${sites_size &gt; 1}">
+			th:with="sites_size=${reportData.sites == null ? 0 : reportData.sites.size}, more_than_one_sites=${sites_size > 1}">
 
 
 
@@ -66,13 +66,13 @@
 					<div class="row border-bottom" th:with="highest_alert=''">
 						<b th:text="#{report.template.mostSevereAlert}">Most Severe
 							Alert Level:</b> <br> <span
-							th:if="${alertCounts.get(3) == null? 0 : alertCounts.get(3)} &gt; 0"
+							th:if="${alertCounts.get(3) == null? 0 : alertCounts.get(3)} > 0"
 							th:text="'High'" th:class="'risk-3'"></span> <span
-							th:if="${alertCounts.get(2) == null? 0 : alertCounts.get(2)} &gt; 0 and ${alertCounts.get(3) == null? 0 : alertCounts.get(3)} == 0"
+							th:if="${alertCounts.get(2) == null? 0 : alertCounts.get(2)} > 0 and ${alertCounts.get(3) == null? 0 : alertCounts.get(3)} == 0"
 							th:text="'Medium'" th:class="'risk-2'"></span> <span
-							th:if="${alertCounts.get(1) == null? 0 : alertCounts.get(1)} &gt; 0 and ${alertCounts.get(2) == null? 0 : alertCounts.get(2)} == 0"
+							th:if="${alertCounts.get(1) == null? 0 : alertCounts.get(1)} > 0 and ${alertCounts.get(2) == null? 0 : alertCounts.get(2)} == 0"
 							th:text="'Low'" th:class="'risk-1'"></span> <span
-							th:if="${alertCounts.get(0) == null? 0 : alertCounts.get(0)} &gt; 0 and ${alertCounts.get(1) == null? 0 : alertCounts.get(1)} == 0"
+							th:if="${alertCounts.get(0) == null? 0 : alertCounts.get(0)} > 0 and ${alertCounts.get(1) == null? 0 : alertCounts.get(1)} == 0"
 							th:text="'Informational'" th:class="'risk-0'"></span>
 					</div>
 
@@ -110,7 +110,7 @@
 
 
 					<div
-						th:if="${#strings.arraySplit(description, '\n').length} &gt; 0"
+						th:if="${#strings.arraySplit(description, '\n').length} > 0"
 						class="col-md-5 col-lg-4 col-sm-9 col-xs-12 piChartWrapper styled_canvas">
 						<h3 th:text="#{report.template.reportDesc}"></h3>
 						<ul>
@@ -203,7 +203,7 @@
 	<p></p>
 
 	<th:block
-		th:if="${reportData.isIncludeSection('insights') &amp;&amp; reportData.reportObjects.get('insightsList') != null}">
+		th:if="${reportData.isIncludeSection('insights') && reportData.reportObjects.get('insightsList') != null}">
 		<div class="container">
 			<h3 th:text="#{report.insights.title}" class="left-header">Insights</h3>
 			<table

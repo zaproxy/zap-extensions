@@ -329,10 +329,10 @@ td {
 						<a class="alwayswhite"
 							th:href="'#' + ${stepId}"
 							th:text="' ' + (${stepState.index} + 1)">step</a>
-						<span th:if="${riskLvl &gt; 0}"
+						<span th:if="${riskLvl > 0}"
 							th:class="'alert-' + ${step.getHighestAlert() + 'a'}"
 							th:text="' - '">flag</span><span
-							th:text="(${riskLvl &gt; 0} ? ${helper.getRiskString(riskLvl)} : '')">risk</span>
+							th:text="(${riskLvl > 0} ? ${helper.getRiskString(riskLvl)} : '')">risk</span>
 						</td>
 						<th:block
 							th:if="(${stepState.index} + 1) % 10 == 0 or ${stepState.last}">
@@ -460,7 +460,7 @@ td {
 					<td th:text="#{report.alerts.detail.cweid}" width="20%">CWE Id</td>
 					<td width="80%"><a
 						th:href="'https://cwe.mitre.org/data/definitions/' + ${alert.userObject.cweId} + '.html'"
-						th:if="${alert.userObject.cweId &gt; 0}"
+						th:if="${alert.userObject.cweId > 0}"
 						th:text="${alert.userObject.cweId}" href="cwe.html">CWE Id</a></td>
 				</tr>
 				<tr>
@@ -475,7 +475,7 @@ td {
 						Id</td>
 					<td width="80%"><a
 						th:href="'https://www.zaproxy.org/docs/alerts/' + ${alert.userObject.pluginId} + '/'"
-						th:if="${alert.userObject.pluginId &gt;= 0}"
+						th:if="${alert.userObject.pluginId >= 0}"
 						th:text="${alert.userObject.pluginId}" href="plugin.html">Plugin
 							Id</a></td>
 				</tr>
@@ -508,9 +508,9 @@ td {
 
 							<span th:text="#{report.sequences.step.result}">Result</span> <span
 								th:text="${step.getResult()}">result</span><br> <span
-								th:if="${step.getAlerts().size() &gt; 0}"
+								th:if="${step.getAlerts().size() > 0}"
 								th:text="#{report.sequences.step.alerts}">Alerts</span>
-							<div class="lm2" th:if="${step.getAlerts().size() &gt; 0}">
+							<div class="lm2" th:if="${step.getAlerts().size() > 0}">
 								<th:block th:each="alert: ${step.getAlerts()}">
 									<span th:class="'alert-' + ${alert.getRisk() + 'b'}">&nbsp;<span>
 											<a th:href="'#' + ${alert.getPluginId()}"

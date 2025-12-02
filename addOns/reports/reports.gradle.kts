@@ -73,8 +73,7 @@ spotless {
         target(
             fileTree(projectDir) {
                 include("src/**/*.html")
-                exclude("src/main/zapHomeFiles/reports/risk-confidence-html/report.html")
-                exclude("src/main/zapHomeFiles/reports/traditional-html*/report.html")
+                exclude("src/main/zapHomeFiles/reports/**/report.html")
                 exclude("src/test/**/*.html")
             },
         )
