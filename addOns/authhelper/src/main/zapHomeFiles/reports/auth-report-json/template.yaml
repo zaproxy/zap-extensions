@@ -7,6 +7,8 @@ sections:
  - afenv
  - statistics
  - domains
+ - domainspartiallyoutofscope
+ - domainsoutofscope
  - diagnostics
  - diagnosticsafplan
  - diagnosticsmessages

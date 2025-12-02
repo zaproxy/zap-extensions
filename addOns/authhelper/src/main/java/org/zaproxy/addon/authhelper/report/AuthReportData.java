@@ -81,6 +81,8 @@ public class AuthReportData implements Closeable {
     private List<FailureDetail> failureDetails;
     private List<String> afPlanErrors = new ArrayList<>();
     private Set<String> domains;
+    private Set<String> domainsPartiallyOutOfScope;
+    private Set<String> domainsOutOfScope;
 
     public void addSummaryItem(boolean passed, String key, String description) {
         summaryItems.add(new SummaryItem(passed, key, description));
