@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -190,8 +191,8 @@ public class ShellShockScanRule extends AbstractAppParamPlugin implements Common
                         .raise();
             }
 
-        } catch (Exception e) {
-            LOGGER.error("Error scanning a Host for ShellShock: {}", e.getMessage(), e);
+        } catch (IOException e) {
+            LOGGER.debug("Error scanning a Host for ShellShock: {}", e.getMessage(), e);
         }
     }
 

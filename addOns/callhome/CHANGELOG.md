@@ -4,6 +4,25 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [0.19.0] - 2025-11-25
+### Changed
+- Include the exceptions's file/line in logger statistics.
+
+## [0.18.0] - 2025-11-10
+### Added
+- Postman stats to telemetry.
+- Forced browse stats to telemetry.
+
+### Changed
+- Include the exception name in logger statistics.
+
+## [0.17.0] - 2025-11-04
+### Added
+- AJAX Spider stats to telemetry.
+
+## [0.16.0] - 2025-10-22
 ### Added
 - Add statistics for the number of fatal/warn/error logged.
 
@@ -100,6 +119,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version supports Check for Updates and News calls.
 
+[0.19.0]: https://github.com/zaproxy/zap-extensions/releases/callhome-v0.19.0
+[0.18.0]: https://github.com/zaproxy/zap-extensions/releases/callhome-v0.18.0
+[0.17.0]: https://github.com/zaproxy/zap-extensions/releases/callhome-v0.17.0
+[0.16.0]: https://github.com/zaproxy/zap-extensions/releases/callhome-v0.16.0
 [0.15.0]: https://github.com/zaproxy/zap-extensions/releases/callhome-v0.15.0
 [0.14.0]: https://github.com/zaproxy/zap-extensions/releases/callhome-v0.14.0
 [0.13.0]: https://github.com/zaproxy/zap-extensions/releases/callhome-v0.13.0

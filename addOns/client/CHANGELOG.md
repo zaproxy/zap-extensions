@@ -4,10 +4,16 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- Updated Chrome and Firefox extensions to v0.1.7.
+- Bundle Chrome extension unpacked due changes in Chrome.
+
+## [0.18.0] - 2025-11-04
 ### Added
 - Add optional parameters for the Client Spider API action `scan`:
   - `numberOfBrowsers` - control concurrency (number of browser windows).
   - `scopeCheck` - select Scope Check (Flexible or Strict).
+- Spider stats.
 
 ## [0.17.0] - 2025-09-02
 ### Added
@@ -165,6 +171,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.18.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.18.0
 [0.17.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.17.0
 [0.16.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.16.0
 [0.15.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.15.0

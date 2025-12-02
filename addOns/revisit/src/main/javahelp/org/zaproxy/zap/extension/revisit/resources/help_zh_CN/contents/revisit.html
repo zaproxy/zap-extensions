@@ -8,42 +8,45 @@
 <body>
 <h1>再访问</h1>
 <p>
-你是否曾经想过能够浏览一个你在一个特定时间用ZAP测试过的应用，可能你并没有机会接触它，又或者是它以某种方式发生了变化?<br>
-如果是这样，这个附加物就是专门为你而准备的！
+Have you ever wanted to be able to browse an application you tested with ZAP at a specific time, perhaps when you don't have access to it, or after it's been changed in some way?<br>
+If so then this add-on is for you!
 </p>
+
 <p>
-The add-on allows you to instruct ZAP to return content from the ZAP history between specified
-dates rather than forwarding the requests to the site.<br>
+The add-on allows you to instruct ZAP to return content from the ZAP history between specified dates rather than forwarding the requests to the site.<br>
 This allows you to apparently browse and use a website that you no longer have access to.<br>
-It also allows you to see what it looked like at between specific times, which is useful if 
-the application has since changed.<br>
-<br>
-When returning pages from the ZAP history floating footers are injected into HTML pages to
-give a visual clue that these pages are generated from ZAP.<br>
+It also allows you to see what it looked like at between specific times, which is useful if the application has since changed.
+</p>
+
+<p>
+When returning pages from the ZAP history floating footers are injected into HTML pages to give a visual clue that these pages are generated from ZAP.<br>
 ZAP will return pages that were the result of both GET and POST requests as long as it finds ones that match.<br>
 Pages only match if all URL and POST parameters are the same, ignoring the order and any known CSRF tokens.<br>
-If no matching page can be found in the history then a custom 404 page is returned which will
-include links to the same page if it has been invoked with different parameters or outside of the time period specified.<br>
-<br>
-This add-on adds right click menus to the Sites Tree:
+If no matching page can be found in the history then a custom 404 page is returned which will include links to the same page if it has been invoked with different parameters or outside of the time period specified.
 </p>
+
+<p>This add-on adds right click menus to the Sites Tree:</p>
+
 <h3>不能再访问</h3>
-选定时，将会显示一个弹出窗口用来询问开始和结束的时间。<br>
-开始时间默认为会话中第一个请求的时间。<br>
-开始时间默认为在会话中第一个要求的时间。<br>
-如果任何时间因素（例如某月的一天）没有改变，之后那些因素将会有缺陷。<br>
-If the dialog OK button is pressed then the revisit functionality will be enabled for the selected site,
-and a 'calendar' icon added to the site node in the Sites Tree.
+<p>
+When selected a popup will be shown which asks for the start and end times to be used.<br>
+The start time defaults to the time of the first request in the session.<br>
+The end time defaults to the time of the last request in the session.<br>
+If any of the time elements (for example 'day of the month') have not changed then those elements will be disabled.<br>
+If the dialog OK button is pressed then the revisit functionality will be enabled for the selected site, and a 'calendar' icon added to the site node in the Sites Tree.
+</p>
 
 <h3>有缺陷的再浏览</h3>
-当被选择之后再浏览运作对被选择的站点是有缺陷的。
+<p>当被选择之后再浏览运作对被选择的站点是有缺陷的。</p>
 
 <h2>应用程序编程接口</h2>
-添加on支持以下API端点：<br><br>
-重新访问/revisitList/返回启用重新访问的站点列表<br>
-重新访问/操作/revisitSiteOn 打开指定站点的重新访问。日期必须使用格式：
-''年月日/HH:mm:ss"<br> 
-重新访问/操作/revisitSiteOff 为指定的站点关闭重新访问
+<p>添加on支持以下API端点：</p>
+
+<pre>
+revisit / view / revisitList: Returns the list of sites enabled for revisit<br>
+revisit / action / revisitSiteOn: Turns revisit on for the specified site. Dates must use the format: "yyyy/MM/dd HH:mm:ss"<br>
+revisit / action / revisitSiteOff: Turns revisit off for the specified site
+</pre>
 
 </body>
 </html>

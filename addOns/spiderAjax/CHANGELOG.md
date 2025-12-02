@@ -4,7 +4,15 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Fixed
+- Correct bundled logging dependencies.
 
+## [23.27.0] - 2025-11-04
+### Added
+- Spider stats.
+
+### Fixed
+- Correctly validate browser IDs.
 
 ## [23.26.0] - 2025-09-02
 ### Added
@@ -362,6 +370,7 @@ By default it allows files with extension `.js` and `.css`.
 
 
 
+[23.27.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.27.0
 [23.26.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.26.0
 [23.25.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.25.0
 [23.24.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.24.0

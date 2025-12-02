@@ -1,7 +1,7 @@
 import org.zaproxy.gradle.WebDriverData
 import org.zaproxy.gradle.addon.AddOnStatus
 
-description = "MacOS WebDrivers for Firefox and Chrome."
+description = "macOS WebDrivers for Firefox and Chrome."
 
 extra["webdrivers"] =
     listOf(
@@ -12,7 +12,7 @@ extra["webdrivers"] =
     )
 
 zapAddOn {
-    addOnName.set("MacOS WebDrivers")
+    addOnName.set("macOS WebDrivers")
     addOnStatus.set(AddOnStatus.RELEASE)
 
     manifest {

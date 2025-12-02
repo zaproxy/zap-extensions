@@ -134,7 +134,7 @@ class XChromeLoggerDataInfoLeakScanRuleUnitTest
         // Given / When
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(tags.size(), is(equalTo(5)));
+        assertThat(tags.size(), is(equalTo(6)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getTag()),
                 is(equalTo(true)));
@@ -155,6 +155,9 @@ class XChromeLoggerDataInfoLeakScanRuleUnitTest
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_INFO_05_CONTENT_LEAK.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_INFO_05_CONTENT_LEAK.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.SYSTEMIC.getTag()),
+                is(equalTo(CommonAlertTag.SYSTEMIC.getValue())));
     }
 
     @Test
@@ -167,7 +170,7 @@ class XChromeLoggerDataInfoLeakScanRuleUnitTest
 
         Alert alert = alerts.get(0);
         Map<String, String> tags1 = alert.getTags();
-        assertThat(tags1.size(), is(equalTo(6)));
+        assertThat(tags1.size(), is(equalTo(7)));
         assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_HIGH)));
         assertThat(alert.getCweId(), is(equalTo(532)));
         assertThat(tags1, hasKey("CWE-532"));

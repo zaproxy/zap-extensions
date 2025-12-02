@@ -68,6 +68,7 @@ import org.zaproxy.zap.extension.spiderAjax.internal.ExcludedElement;
 import org.zaproxy.zap.model.ScanEventPublisher;
 import org.zaproxy.zap.network.HttpResponseBody;
 import org.zaproxy.zap.users.User;
+import org.zaproxy.zap.utils.Stats;
 
 public class SpiderThread implements Runnable {
 
@@ -92,6 +93,7 @@ public class SpiderThread implements Runnable {
     private boolean running;
     private final Session session;
     private static final Logger LOGGER = LogManager.getLogger(SpiderThread.class);
+    private long startTime;
 
     private HttpResponseHeader outOfScopeResponseHeader;
     private HttpResponseBody outOfScopeResponseBody;
@@ -339,6 +341,7 @@ public class SpiderThread implements Runnable {
         LOGGER.info(
                 "Running Crawljax (with {}): {}", target.getOptions().getBrowserId(), displayName);
         this.running = true;
+        this.startTime = System.currentTimeMillis();
         notifyListenersSpiderStarted();
         SpiderEventPublisher.publishScanEvent(
                 ScanEventPublisher.SCAN_STARTED_EVENT,
@@ -346,9 +349,11 @@ public class SpiderThread implements Runnable {
                 this.target.toTarget(),
                 target.getStartUri().toString(),
                 this.target.getUser());
+        Stats.incCounter("stats.spiderAjax.started");
 
         User user = target.getUser();
         if (user != null) {
+            Stats.incCounter("stats.spiderAjax.started.user");
             for (AuthenticationHandler ah : extension.getAuthenticationHandlers()) {
                 if (ah.enableAuthentication(user)) {
                     authHandler = ah;
@@ -376,6 +381,7 @@ public class SpiderThread implements Runnable {
             LOGGER.error(e, e);
         } finally {
             this.running = false;
+            Stats.incCounter("stats.spiderAjax.time", System.currentTimeMillis() - this.startTime);
             LOGGER.info("Stopping proxy...");
             stopProxy();
             LOGGER.info("Proxy stopped.");
@@ -440,6 +446,7 @@ public class SpiderThread implements Runnable {
                     checkState(httpMessage.getRequestHeader().getURI().getEscapedURI());
 
             if (!ctx.isFromClient()) {
+                Stats.incCounter("stats.spiderAjax.urls.added");
                 notifyMessage(
                         httpMessage,
                         HistoryReference.TYPE_SPIDER_AJAX,

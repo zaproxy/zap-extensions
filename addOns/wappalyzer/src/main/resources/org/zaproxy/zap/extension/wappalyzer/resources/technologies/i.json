@@ -478,6 +478,30 @@
     "saas": true,
     "website": "https://imbox.se"
   },
+  "Image Placeholders": {
+    "cats": [
+      87,
+      92
+    ],
+    "description": "Performance plugin from the WordPress Performance Team, which determines and stores the dominant color for newly uploaded images in the media library, then uses that as a placeholder background during front end image loads.",
+    "icon": "dominant-color-images.svg",
+    "meta": {
+      "generator": "^dominant-color-images ([\\d.]+)?\\;version:\\1"
+    },
+    "website": "https://wordpress.org/plugins/dominant-color-images/"
+  },
+  "Image Prioritizer": {
+    "cats": [
+      87,
+      92
+    ],
+    "description": "Performance plugin from the WordPress Performance Team, which optimizes the loading of images which are the LCP (Largest Contentful Paint) element, including both img elements and elements with CSS background images.",
+    "icon": "image-prioritizer.svg",
+    "meta": {
+      "generator": "^image-prioritizer ([\\d.]+)?\\;version:\\1"
+    },
+    "website": "https://wordpress.org/plugins/image-prioritizer/"
+  },
   "Image Relay": {
     "cats": [
       95
@@ -524,6 +548,9 @@
     "dom": [
       "link[href*='ik.imagekit.io/']"
     ],
+    "headers": {
+      "x-server": "imagekit\\.io"
+    },
     "icon": "ImageKit.svg",
     "pricing": [
       "freemium",

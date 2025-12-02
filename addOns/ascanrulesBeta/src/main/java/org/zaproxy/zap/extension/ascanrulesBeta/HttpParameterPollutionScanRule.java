@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
+import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -147,8 +148,8 @@ public class HttpParameterPollutionScanRule extends AbstractAppPlugin
             }
         } catch (URIException e) {
             LOGGER.debug("Failed to send HTTP message, cause: {}", e.getMessage());
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
+        } catch (IOException e) {
+            LOGGER.debug(e.getMessage(), e);
         }
     }
 

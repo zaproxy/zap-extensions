@@ -404,6 +404,17 @@
     ],
     "website": "https://apispreadsheets.com"
   },
+  "APPLOVIN": {
+    "cats": [
+      36
+    ],
+    "description": "APPLOVIN is an advertising platform.",
+    "icon": "APPLOVIN.png",
+    "scriptSrc": [
+      "\\.applovin\\.com"
+    ],
+    "website": "https://www.applovin.com/"
+  },
   "ARCaptcha": {
     "cats": [
       16
@@ -2303,6 +2314,19 @@
     ],
     "website": "https://www.adobe.com/marketing/experience-manager.html"
   },
+  "Adobe Experience Manager Edge Delivery Services": {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:adobe:experience_manager:*:*:*:*:*:*:*:*",
+    "description": "Edge Delivery Services in Adobe Experience Manager Sites as a Cloud Service, also know as Helix, Franklin, Next-Generation Composability is a fast and lightweight content management system from Adobe.",
+    "icon": "Adobe Experience Platform.svg",
+    "scriptSrc": [
+      "^.+/scripts/aem\\.js$",
+      "^.+/scripts/lib-franklin\\.js$"
+    ],
+    "website": "https://www.aem.live"
+  },
   "Adobe Experience Manager Franklin": {
     "cats": [
       1
@@ -3893,6 +3917,21 @@
     "saas": true,
     "website": "https://apps.shopify.com/ali-reviews"
   },
+  "Alia": {
+    "cats": [
+      100,
+      110
+    ],
+    "description": "Alia is a Shopify app to design Email and SMS sign-up pop-up units",
+    "icon": "Alia.png",
+    "implies": [
+      "Shopify"
+    ],
+    "js": {
+      "alia": ""
+    },
+    "website": "https://www.alialearn.com/"
+  },
   "Alibaba Cloud CDN": {
     "cats": [
       31
@@ -3974,6 +4013,30 @@
       "\\.skynettechnologies\\.com/accessibility/"
     ],
     "website": "https://www.skynettechnologies.com/all-in-one-accessibility"
+  },
+  "All in One SEO": {
+    "cats": [
+      54,
+      87
+    ],
+    "cpe": "cpe:2.3:a:aioseo:all_in_one_seo:*:*:*:*:*:wordpress:*:*",
+    "description": "All in One SEO optimizes a WordPress website and its content for search engines.",
+    "dom": {
+      "script.aioseo-schema": {}
+    },
+    "html": [
+      "<!-- all in one seo ([\\d.]+) \\;version:\\1",
+      "<!-- all in one seo pack ([\\d.]+) \\;version:\\1",
+      "<!-- all in one seo pro ([\\d.]+) \\;version:pro \\1"
+    ],
+    "icon": "AIOSEO.svg",
+    "implies": [
+      "WordPress"
+    ],
+    "meta": {
+      "generator": "^all in one seo \\(aioseo\\) ([\\d\\.]+)\\;version:\\1"
+    },
+    "website": "https://aioseo.com"
   },
   "All in One SEO Pack": {
     "cats": [
@@ -4240,7 +4303,7 @@
       "freemium"
     ],
     "scripts": [
-      ".*altcha\\.(org|js)"
+      "altcha\\.(org|js)"
     ],
     "website": "https://altcha.org"
   },

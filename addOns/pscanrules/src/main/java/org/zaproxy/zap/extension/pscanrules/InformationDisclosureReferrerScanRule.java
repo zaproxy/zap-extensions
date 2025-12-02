@@ -58,7 +58,8 @@ public class InformationDisclosureReferrerScanRule extends PluginPassiveScanner
                 new HashMap<>(
                         CommonAlertTag.toMap(
                                 CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
-                                CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED));
+                                CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED,
+                                CommonAlertTag.SYSTEMIC));
         alertTags.put(PolicyTag.PENTEST.getTag(), "");
         alertTags.put(PolicyTag.DEV_STD.getTag(), "");
         alertTags.put(PolicyTag.QA_STD.getTag(), "");
@@ -184,7 +185,7 @@ public class InformationDisclosureReferrerScanRule extends PluginPassiveScanner
         List<String> strings = new ArrayList<>();
         File f = new File(Constant.getZapHome() + File.separator + file);
         if (!f.exists()) {
-            LOGGER.error("No such file: {}", f.getAbsolutePath());
+            LOGGER.warn("No such file: {}", f.getAbsolutePath());
             return strings;
         }
 

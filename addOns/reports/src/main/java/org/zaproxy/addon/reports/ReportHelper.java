@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.reports;
 
+import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -301,5 +302,70 @@ public class ReportHelper {
             LOGGER.debug("An error occurred while reading the HTTP message:", e);
         }
         return null;
+    }
+
+    /**
+     * Returns the nodeName for the alert. This will return null for versions before ZAP 2.17.
+     *
+     * @since 0.42.0
+     */
+    public static String getNodeName(Alert alert) {
+        if (alert == null) {
+            return null;
+        }
+        try {
+            Method method = alert.getClass().getMethod("getNodeName");
+            Object ret = method.invoke(alert);
+            if (ret != null && ret instanceof String str) {
+                return str;
+            }
+        } catch (Exception e) {
+            // Ignore
+        }
+        return null;
+    }
+
+    /**
+     * Returns whether the alert node is systemic. This will return false for versions before ZAP
+     * 2.17.
+     *
+     * @since 0.42.0
+     */
+    public static boolean isSystemic(AlertNode node) {
+        if (node == null) {
+            return false;
+        }
+        try {
+            Method method = node.getClass().getMethod("isSystemic");
+            Object ret = method.invoke(node);
+            if (ret != null && ret instanceof Boolean bool) {
+                return bool;
+            }
+        } catch (Exception e) {
+            // Ignore
+        }
+        return false;
+    }
+
+    /**
+     * Returns whether the alert node is systemic. This will return false for versions before ZAP
+     * 2.17.
+     *
+     * @since 0.42.0
+     */
+    public static boolean isSystemic(Alert alert) {
+        if (alert == null) {
+            return false;
+        }
+        try {
+            Method method = alert.getClass().getMethod("isSystemic");
+            Object ret = method.invoke(alert);
+            if (ret != null && ret instanceof Boolean bool) {
+                return bool;
+            }
+        } catch (Exception e) {
+            // Ignore
+        }
+        return false;
     }
 }

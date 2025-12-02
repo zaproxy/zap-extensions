@@ -59,7 +59,8 @@ public class CrossDomainMisconfigurationScanRule extends PluginPassiveScanner
                 new HashMap<>(
                         CommonAlertTag.toMap(
                                 CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
-                                CommonAlertTag.OWASP_2017_A05_BROKEN_AC));
+                                CommonAlertTag.OWASP_2017_A05_BROKEN_AC,
+                                CommonAlertTag.SYSTEMIC));
         alertTags.put(PolicyTag.PENTEST.getTag(), "");
         alertTags.put(PolicyTag.QA_STD.getTag(), "");
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
@@ -85,66 +86,60 @@ public class CrossDomainMisconfigurationScanRule extends PluginPassiveScanner
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 
-        try {
+        LOGGER.debug(
+                "Checking message {} for Cross-Domain misconfigurations",
+                msg.getRequestHeader().getURI());
+
+        String corsAllowOriginValue =
+                msg.getResponseHeader().getHeader(HttpHeader.ACCESS_CONTROL_ALLOW_ORIGIN);
+        // String corsAllowHeadersValue =
+        // msg.getResponseHeader().getHeader(HttpHeader.ACCESS_CONTROL_ALLOW_HEADERS);
+        // String corsAllowMethodsValue =
+        // msg.getResponseHeader().getHeader(HttpHeader.ACCESS_CONTROL_ALLOW_METHODS);
+        // String corsExposeHeadersValue =
+        // msg.getResponseHeader().getHeader(HttpHeader.ACCESS_CONTROL_EXPOSE_HEADERS);
+
+        if (corsAllowOriginValue != null && corsAllowOriginValue.equals("*")) {
             LOGGER.debug(
-                    "Checking message {} for Cross-Domain misconfigurations",
-                    msg.getRequestHeader().getURI());
+                    "Raising a Medium risk Cross Domain alert on {}: {}",
+                    HttpHeader.ACCESS_CONTROL_ALLOW_ORIGIN,
+                    corsAllowOriginValue);
+            // Its a Medium, rather than a High (as originally thought), for the following
+            // reasons:
+            // Assumption: if an API is accessible in an unauthenticated manner, it doesn't need
+            // to be protected
+            //  (if it should be protected, its a Missing Function Level Access Control issue,
+            // not a Cross Domain Misconfiguration)
+            //
+            // Case 1) Request sent using XHR
+            // - cookies will not be sent with the request at all unless withCredentials = true
+            // on the XHR request;
+            // - If a cookie was sent with the request, the browser will not give access to the
+            // response body via JavaScript unless the response headers say
+            // "Access-Control-Allow-Credentials: true"
+            // - If "Access-Control-Allow-Credentials: true" and "Access-Control-Allow-Origin:
+            // *" in the response, the browser will not give access to the response body.
+            //	  (this is an edge case, but is actually really important, because it blocks all
+            // the useful attacks, and is well supported by modern browsers)
+            // Case 2) Request sent using HTML Form POST with an iframe, for instance, and
+            // attempting to access the iframe body (ie, the Cross Domain response) using
+            // JavaScript
+            // - the cookie will be sent by the web browser (possibly leading to CSRF, but with
+            // no impact from the point of view of the Same Origin Policy / Cross Domain
+            // Misconfiguration
+            // - the HTML response is not accessible in JavaScript, regardless of the CORS
+            // headers sent in the response (in all my trials, at least)
+            //   (this is even more restrictive than the equivalent request sent by XHR)
 
-            String corsAllowOriginValue =
-                    msg.getResponseHeader().getHeader(HttpHeader.ACCESS_CONTROL_ALLOW_ORIGIN);
-            // String corsAllowHeadersValue =
-            // msg.getResponseHeader().getHeader(HttpHeader.ACCESS_CONTROL_ALLOW_HEADERS);
-            // String corsAllowMethodsValue =
-            // msg.getResponseHeader().getHeader(HttpHeader.ACCESS_CONTROL_ALLOW_METHODS);
-            // String corsExposeHeadersValue =
-            // msg.getResponseHeader().getHeader(HttpHeader.ACCESS_CONTROL_EXPOSE_HEADERS);
+            // The CORS misconfig could still allow an attacker to access the data returned from
+            // an unauthenticated API, which is protected by some other form of security, such
+            // as IP address white-listing, for instance.
 
-            if (corsAllowOriginValue != null && corsAllowOriginValue.equals("*")) {
-                LOGGER.debug(
-                        "Raising a Medium risk Cross Domain alert on {}: {}",
-                        HttpHeader.ACCESS_CONTROL_ALLOW_ORIGIN,
-                        corsAllowOriginValue);
-                // Its a Medium, rather than a High (as originally thought), for the following
-                // reasons:
-                // Assumption: if an API is accessible in an unauthenticated manner, it doesn't need
-                // to be protected
-                //  (if it should be protected, its a Missing Function Level Access Control issue,
-                // not a Cross Domain Misconfiguration)
-                //
-                // Case 1) Request sent using XHR
-                // - cookies will not be sent with the request at all unless withCredentials = true
-                // on the XHR request;
-                // - If a cookie was sent with the request, the browser will not give access to the
-                // response body via JavaScript unless the response headers say
-                // "Access-Control-Allow-Credentials: true"
-                // - If "Access-Control-Allow-Credentials: true" and "Access-Control-Allow-Origin:
-                // *" in the response, the browser will not give access to the response body.
-                //	  (this is an edge case, but is actually really important, because it blocks all
-                // the useful attacks, and is well supported by modern browsers)
-                // Case 2) Request sent using HTML Form POST with an iframe, for instance, and
-                // attempting to access the iframe body (ie, the Cross Domain response) using
-                // JavaScript
-                // - the cookie will be sent by the web browser (possibly leading to CSRF, but with
-                // no impact from the point of view of the Same Origin Policy / Cross Domain
-                // Misconfiguration
-                // - the HTML response is not accessible in JavaScript, regardless of the CORS
-                // headers sent in the response (in all my trials, at least)
-                //   (this is even more restrictive than the equivalent request sent by XHR)
-
-                // The CORS misconfig could still allow an attacker to access the data returned from
-                // an unauthenticated API, which is protected by some other form of security, such
-                // as IP address white-listing, for instance.
-
-                buildAlert(
-                                extractEvidence(
-                                        msg.getResponseHeader().toString(),
-                                        HttpHeader.ACCESS_CONTROL_ALLOW_ORIGIN))
-                        .raise();
-            }
-
-        } catch (Exception e) {
-            LOGGER.error(
-                    "An error occurred trying to passively scan a message for Cross Domain Misconfigurations");
+            buildAlert(
+                            extractEvidence(
+                                    msg.getResponseHeader().toString(),
+                                    HttpHeader.ACCESS_CONTROL_ALLOW_ORIGIN))
+                    .raise();
         }
     }
 

@@ -5,7 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Address redirections in references.
+
+## [53] - 2025-11-04
+### Added
+- SYSTEMIC tag to selected rules.
+
+### Changed
 - The Web Cache Deception scan rule now includes example alert functionality for documentation generation purposes (Issue 6119).
+- Depends on an updated version of the Common Library add-on.
+- Reduced usage of error level logging.
 
 ## [52] - 2025-10-07
 ### Added
@@ -410,6 +419,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version, including persistent XSS tests
 
+[53]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v53
 [52]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v52
 [51]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v51
 [50]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v50

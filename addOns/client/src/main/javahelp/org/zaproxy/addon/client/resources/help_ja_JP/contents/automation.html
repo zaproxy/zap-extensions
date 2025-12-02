@@ -10,31 +10,31 @@
 <H1>クライアントサイド統合 – 自動化フレームワーク対応</H1>
 このアドオンは自動化フレームワークに対応しています。
 
-<H2>Job: spiderClient</H2>
-The spiderClient job allows you to run the <a href="spider.html">Client Spider</a>, which is designed to explore modern web apps more effectively.
+<H2>ジョブ: spiderClient</H2>
+spiderClient ジョブを使用すると、モダンなWebアプリケーションをより効率的に探索するために設計された<a href="spider.html">クライアントスパイダー</a>を実行できます。
 <p>
-This job supports monitor tests.
+このジョブはモニターテストをサポートしています。
 
 <pre>
-  - type: spiderClient                 # The client spider - a spider which explores modern web apps more effectively
+  - type: spiderClient                 # クライアントスパイダー - モダンなウェブアプリケーションをより効率的に探索するスパイダー
     parameters:
-      context:                         # String: Name of the context to spider, default: first context
-      user:                            # String: An optional user to use for authentication, must be defined in the env
-      url:                             # String: URL to start spidering from, default: first context URL
-      maxDuration:                     # Int: The max time in minutes the spider will be allowed to run for, default: 0 unlimited
-      maxCrawlDepth:                   # Int: The maximum tree depth to explore, default 5
-      maxChildren:                     # Int: The maximum number of children to add to each node in the tree
-      numberOfBrowsers:                # Int: The number of browsers the spider will use, more will be faster but will use up more memory, default: number of cores
-      browserId:                       # String: Browser ID to use, default: firefox-headless
-      initialLoadTime:                 # Int: The time in seconds to wait after the initial URL is loaded, default: 5
-      pageLoadTime:                    # Int: The time in seconds to wait after a new URL is loaded, default: 1
-      shutdownTime:                    # Int: The time in seconds to wait after no activity before shutting down, default: 5
-      scopeCheck:                      # String: The scope check, either Flexible or Strict, default: Flexible
+      context:                         # 文字列: スパイダーするコンテキストの名前、デフォルト: 最初のコンテキスト
+      user:                            # 文字列: 認証に使用する任意のユーザー。envで定義されている必要があります
+      url:                             # 文字列: スパイダーを開始するURL、デフォルト: 最初のコンテキストのURL
+      maxDuration:                     # Int: スパイダーの最大実行時間 (分)、デフォルト: 0 (無制限)
+      maxCrawlDepth:                   # Int: 探索する最大ツリー深度、デフォルト 5
+      maxChildren:                     # Int: ツリー内の各ノードに追加する子の最大数
+      numberOfBrowsers:                # Int: スパイダーが使用するブラウザの数。数が多いほど高速ですが、より多くのメモリを消費します、デフォルト: コアの数
+      browserId:                       # 文字列: 使用するブラウザID、デフォルト: firefox-headless
+      initialLoadTime:                 # Int: 最初のURLがロードされた後の待機時間 (秒)、デフォルト: 5
+      pageLoadTime:                    # Int: 新しいURLがロードされた後の待機時間 (秒)、デフォルト: 1
+      shutdownTime:                    # Int: アクティビティがない状態が続いた後、シャットダウンするまでの待機時間 (秒)、デフォルト: 5
+      scopeCheck:                      # 文字列: スコープチェック。Flexible (柔軟) または Strict (厳格)、デフォルト: Flexible
 </pre>
 
 <H2>パッシブスキャンルール</H2>
 
-The Client <a href="pscan.html">Passive Scan Rules</a> can be set via the standard passiveScan-config job.
+クライアントの<a href="pscan.html">パッシブスキャンルール</a>は、標準の passiveScan-config ジョブを介して設定できます。
 
 </BODY>
 </HTML>

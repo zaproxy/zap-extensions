@@ -2,57 +2,51 @@
 <HTML>
 <HEAD>
 <TITLE>
-Client Side Integration - Internals
+クライアントサイド統合 - 内部構造
 </TITLE>
 </HEAD>
 <BODY>
-<H1>Client Side Integration - Internals</H1>
+<H1>クライアントサイド統合 - 内部構造</H1>
 
-<H2>Browser Extension</H2>
+<H2>ブラウザ拡張機能</H2>
 
-This <a href="client.html">add-on</a> depends on a <a href="https://github.com/zaproxy/browser-extension">ZAP browser extension</a> which runs in Firefox and Chrome - 
-if this extension is not present then this add-on will not be able to do anything.
+この<a href="client.html">アドオン</a>は、FirefoxとChromeで動作する<a href="https://github.com/zaproxy/browser-extension">ZAPブラウザ拡張機能</a>に依存しています。この拡張機能が存在しない場合、このアドオンは何も実行できません。
 <p>
-The browser extension needs to be able to communicate with ZAP, 
-but it must do it in a secure way so that malicious targets cannot abuse the API end points that this add-on defines.
-Passing configuration details to browser extensions can be tricky, 
-and so this is done in 2 different ways depending on how the browsers are launched.
+ブラウザ拡張機能はZAPと通信できる必要がありますが、悪意のあるターゲットがこのアドオンが定義するAPIエンドポイントを悪用できないように、安全な方法で行う必要があります。
+構成の詳細をブラウザ拡張機能に渡すのは困難な場合があります。そのため、ブラウザの起動方法に応じて2つの異なる方法で行われます。
 
-<H2>ZAP Browser Launch</H2>
+<H2>ZAPからのブラウザ起動</H2>
 
-If Firefox or Chrome are launched from ZAP with this add-on enabled then it automatically adds the ZAP browser extension.
-The add-on also opens a callback URL like: <pre>http://zap/zapCallBackUrl/12345678901234567890</pre> - this URL is regenerated
-every time ZAP is started and is considered safe as it is impractical for malicious targets to discover.
+ZAPでこのアドオンが有効な状態でFirefoxまたはChromeを起動すると、ZAPブラウザ拡張機能が自動的に追加されます。
+ このアドオンは、 <pre>http://zap/zapCallBackUrl/12345678901234567890</pre> のようなコールバックURLも開きます。このURLはZAPが起動されるたびに再生成され、悪意のあるターゲットが発見することが非現実的であるため、安全であると見なされます。
 <p>
-The browser extension detects URLs of this format in the context script 
-<a href="https://github.com/zaproxy/browser-extension/blob/main/source/ContentScript/index.ts">index.ts</a> 
-and then uses this URL to pass data from the browser back to ZAP.
+ブラウザ拡張機能は、コンテキストスクリプトの<a href="https://github.com/zaproxy/browser-extension/blob/main/source/ContentScript/index.ts">index.ts</a>でこの形式のURLを検出し、そのURLを使用してブラウザからZAPにデータを渡します。
 
-<H2>Manual Browser Launch</H2>
+<H2>手動でのブラウザ起動</H2>
 
-If you launch Firefox or Chrome in any other way then you will need to install the browser extension yourself from:
+FirefoxまたはChromeを他の方法で起動する場合、次の場所からブラウザ拡張機能を自分でインストールする必要があります。
 
 <ul>
 <li><a href="https://addons.mozilla.org/en-GB/firefox/addon/zap-browser-extension/">Firefox Add-Ons</a>
 <li><a href="https://chrome.google.com/webstore/detail/zap-browser-extension/oeadiegekjdlhpooeidmimgnmbfllehp">Chrome Web Store</a>
 </ul>
 
-Once installed you will need to configure the ZAP browser extension manually. In Firefox or Chrome:
+インストールしたら、ZAPブラウザ拡張機能を手動で設定する必要があります。 FirefoxまたはChromeで：
 
 <ul>
-<li>Click the Extensions button
-<li>Select the 'ZAP Browser Extension'
-<li>Update the extension Preferences screen
+<li>「拡張機能」ボタンをクリックします
+<li>「ZAPブラウザ拡張機能」を選択します
+<li>拡張機能の「設定」画面を更新します
 </ul>
 
-You will need to configure:
+設定する必要がある項目：
 
 <ul>
-<li>ZAP API URL: the default is <pre>http://zap/</pre> and should work in all cases, but you can also use the host and port ZAP is listening on, e.g. <pre>http://localhost:8080</pre>
-<li>ZAP API Key: you can find this in the ZAP API Options screen
+<li>ZAP API URL: デフォルトは <pre>http://zap/</pre> で、すべての場合に機能するはずですが、ZAPが待機しているホストとポートを使用することもできます。例： <pre>http://localhost:8080</pre>
+<li>ZAP API Key: これはZAPのAPIオプション画面で見つけることができます
 </ul>
 
-You can leave the ZAP API Key blank if you have turned off the API Key in ZAP, but this is only recommended in a safe environment where you trust the websites you will be accessing via ZAP.
+ZAPでAPIキーをオフにしている場合は、ZAP API Keyを空欄にすることもできますが、これはZAPを介してアクセスするWebサイトを信頼している安全な環境でのみ推奨されます。
 
 </BODY>
 </HTML>

@@ -38,6 +38,9 @@ class HttpEncodingBrotliUnitTest {
     private static final byte[] CONTENT = "42".getBytes(StandardCharsets.UTF_8);
     private static final byte[] CONTENT_ENCODED = {-117, 0, -128, 52, 50, 3};
 
+    private static final byte[] EMPTY_CONTENT = {};
+    private static final byte[] EMPTY_CONTENT_ENCODED = {6};
+
     private HttpEncodingBrotli encoding = HttpEncodingBrotli.getSingleton();
 
     @Test
@@ -54,6 +57,30 @@ class HttpEncodingBrotliUnitTest {
         byte[] decodedContent = encoding.decode(CONTENT_ENCODED);
         // Then
         assertThat(decodedContent, is(equalTo(CONTENT)));
+    }
+
+    @Test
+    void shouldEncodeEmptyContent() throws IOException {
+        // Given / When
+        byte[] encodedContent = encoding.encode(EMPTY_CONTENT);
+        // Then
+        assertThat(encodedContent, is(equalTo(EMPTY_CONTENT_ENCODED)));
+    }
+
+    @Test
+    void shouldDecodeEmptyContent() throws IOException {
+        // Given / When
+        byte[] decodedContent = encoding.decode(EMPTY_CONTENT_ENCODED);
+        // Then
+        assertThat(decodedContent, is(equalTo(EMPTY_CONTENT)));
+    }
+
+    @Test
+    void shouldSkipDecodePlainEmptyContent() throws IOException {
+        // Given / When
+        byte[] decodedContent = encoding.decode(EMPTY_CONTENT);
+        // Then
+        assertThat(decodedContent, is(equalTo(EMPTY_CONTENT)));
     }
 
     @Test

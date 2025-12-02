@@ -1086,6 +1086,52 @@
     },
     "website": "https://nextjs.org"
   },
+  "Next.js App Router": {
+    "cats": [
+      12,
+      22
+    ],
+    "description": "The Next.js App Router is a new paradigm for building applications using React's latest features.",
+    "icon": "Next.js.svg",
+    "implies": [
+      "Next.js"
+    ],
+    "js": {
+      "next.appDir": "true"
+    },
+    "website": "https://nextjs.org/docs/app"
+  },
+  "Next.js Page Router SSG": {
+    "cats": [
+      57
+    ],
+    "description": "Next.js Static Site Generation.",
+    "icon": "Next.js.svg",
+    "implies": [
+      "Next.js"
+    ],
+    "js": {
+      ".__NEXT_DATA__.autoExport": "true",
+      ".__NEXT_DATA__.gsp": "true",
+      ".__NEXT_DATA__.nextExport": "true"
+    },
+    "website": "https://nextjs.org/docs/pages/building-your-application/rendering/static-site-generation"
+  },
+  "Next.js Page Router SSR": {
+    "cats": [
+      22
+    ],
+    "description": "Next.js Server-Side Rendering.",
+    "icon": "Next.js.svg",
+    "implies": [
+      "Next.js"
+    ],
+    "js": {
+      ".__NEXT_DATA__.gip": "true",
+      ".__NEXT_DATA__.gssp": "true"
+    },
+    "website": "https://nextjs.org/docs/pages/building-your-application/rendering/server-side-rendering"
+  },
   "NextAuth.js": {
     "cats": [
       69
@@ -1788,6 +1834,18 @@
       "\\.stackla\\.com/"
     ],
     "website": "https://www.nosto.com/products/visual-ugc/"
+  },
+  "Nostra": {
+    "cats": [
+      92
+    ],
+    "description": "Nostra is a web performance optimisation solution.",
+    "icon": "Nostra.png",
+    "js": {
+      "Nostra": "",
+      "NostraEventManager": ""
+    },
+    "website": "https://www.nostra.ai/"
   },
   "Noticeable": {
     "cats": [

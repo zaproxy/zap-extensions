@@ -878,6 +878,17 @@
     ],
     "website": "https://www.edgecast.com"
   },
+  "Edgemesh": {
+    "cats": [
+      92
+    ],
+    "description": "Edgemesh is web acceleration platform for e-commerce brands",
+    "icon": "Edgemesh.png",
+    "js": {
+      "edgemesh": ""
+    },
+    "website": "https://edgemesh.com/"
+  },
   "Edgio": {
     "cats": [
       31,
@@ -1824,6 +1835,18 @@
     ],
     "website": "https://wordpress.org/plugins/embed-any-document"
   },
+  "Embed Optimizer": {
+    "cats": [
+      87,
+      92
+    ],
+    "description": "Performance plugin from the WordPress Performance Team, which optimizes embeds by lazy loading them only as they come into view.",
+    "icon": "embed-optimizer.svg",
+    "meta": {
+      "generator": "^embed-optimizer ([\\d.]+)?\\;version:\\1"
+    },
+    "website": "https://wordpress.org/plugins/embed-optimizer/"
+  },
   "Embed PDF Viewer": {
     "cats": [
       5,
@@ -1945,6 +1968,17 @@
       "@overview\\s+Ember -[\\s\\S]+@version\\s+(.+)\\;version:\\1"
     ],
     "website": "https://emberjs.com"
+  },
+  "Emergent": {
+    "cats": [
+      1
+    ],
+    "description": "Emergent is an AI-powered, no-code platform that lets users build functional web apps from natural language prompts instead of writing code.",
+    "icon": "Emergent.png",
+    "scriptSrc": [
+      "assets\\.emergent\\.sh"
+    ],
+    "website": "https://app.emergent.sh/"
   },
   "Emojicom": {
     "cats": [
@@ -2187,6 +2221,18 @@
       "Nginx"
     ],
     "website": "https://github.com/engintron/engintron"
+  },
+  "Enhanced Responsive Images": {
+    "cats": [
+      87,
+      92
+    ],
+    "description": "Performance plugin from the WordPress Performance Team, which improves image sizes attribute accuracy and implements the HTML spec for adding sizes='auto' to lazy loaded images.",
+    "icon": "enhanced-image-sizes.svg",
+    "meta": {
+      "generator": "^auto-sizes ([\\d.]+)?\\;version:\\1"
+    },
+    "website": "https://wordpress.org/plugins/auto-sizes/"
   },
   "Enigma": {
     "cats": [
@@ -2749,6 +2795,25 @@
       "/wp-content/uploads/essential-addons-elementor/"
     ],
     "website": "https://essential-addons.com/elementor/"
+  },
+  "Essential Blocks": {
+    "cats": [
+      87
+    ],
+    "description": "Essential Blocks is a Gutenberg Blocks page builder plugin that adds extra functionality to the WordPress Block Editor.",
+    "dom": {
+      "link#essential-blocks-frontend-style-css": {
+        "exists": ""
+      },
+      "link[href*='/wp-content/uploads/eb-style/']": {
+        "exists": ""
+      }
+    },
+    "html": [
+      "<div[^>]+class=[\"']wp-block-essential-blocks-*"
+    ],
+    "icon": "essential-blocks.png",
+    "website": "https://essential-blocks.com"
   },
   "Essential JS 2": {
     "cats": [
@@ -3379,11 +3444,11 @@
       18,
       22
     ],
-    "cpe": "cpe:2.3:a:expressjs:express:*:*:*:*:*:*:*:*",
-    "description": "Express is a web application framework for Node.js, released as free and open-source software under the MIT License. It is designed for building web applications and APIs.",
     "cookies": {
       "connect\\.sid": ""
     },
+    "cpe": "cpe:2.3:a:expressjs:express:*:*:*:*:*:*:*:*",
+    "description": "Express is a web application framework for Node.js, released as free and open-source software under the MIT License. It is designed for building web applications and APIs.",
     "headers": {
       "X-Powered-By": "^Express(?:$|,)"
     },

@@ -52,7 +52,7 @@ alertRefOverrides:
   ${SCAN_RULE_ID}-6:
     name: Suspicious Input Transformation - Unicode Normalisation
     references:
-      - https://blog.orange.tw/posts/2025-01-worstfit-unveiling-hidden-transformers-in-windows-ansi
+      - https://blog.orange.tw/posts/2025-01-worstfit-unveiling-hidden-transformers-in-windows-ansi/
   ${SCAN_RULE_ID}-7:
     name: Suspicious Input Transformation - URL Decoding Error
     references:

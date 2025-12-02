@@ -236,11 +236,12 @@ class ActiveScanJobUnitTest {
     }
 
     @Test
-    void shouldRunValidJob() throws MalformedURLException {
+    void shouldRunValidJob() throws Exception {
         // Given
         Constant.messages = new I18N(Locale.ENGLISH);
         Context context = mock(Context.class);
-        ContextWrapper contextWrapper = new ContextWrapper(context);
+        ContextWrapper contextWrapper =
+                new ContextWrapper(context, mock(AutomationEnvironment.class));
 
         given(extAScan.startScan(any(), any(), any())).willReturn(1);
 
@@ -253,8 +254,12 @@ class ActiveScanJobUnitTest {
         AutomationEnvironment env = mock(AutomationEnvironment.class);
         given(env.getDefaultContextWrapper()).willReturn(contextWrapper);
 
-        // When
+        given(policyManager.getPolicy("policy1")).willReturn(mock(ScanPolicy.class));
+
         ActiveScanJob job = new ActiveScanJob();
+        job.getParameters().setPolicy("policy1");
+
+        // When
         job.runJob(env, progress);
 
         // Then
@@ -288,6 +293,29 @@ class ActiveScanJobUnitTest {
     }
 
     @Test
+    void shouldFailIfUnknownPolicy() throws Exception {
+        // Given
+        given(policyManager.getPolicy("missingPolicy")).willThrow(ConfigurationException.class);
+        Constant.messages = new I18N(Locale.ENGLISH);
+        AutomationProgress progress = new AutomationProgress();
+        AutomationEnvironment env = mock(AutomationEnvironment.class);
+
+        ContextWrapper contextWrapper = new ContextWrapper(mock(Context.class), env);
+        given(env.getDefaultContextWrapper()).willReturn(contextWrapper);
+
+        ActiveScanJob job = new ActiveScanJob();
+        job.getParameters().setPolicy("missingPolicy");
+
+        // When
+        job.runJob(env, progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.getErrors(), contains("!automation.error.ascan.policy.name!"));
+    }
+
+    @Test
     void shouldUseSpecifiedContext() throws MalformedURLException {
         // Given
         Constant.messages = new I18N(Locale.ENGLISH);
@@ -298,8 +326,9 @@ class ActiveScanJobUnitTest {
         given(session.getNewContext("context2")).willReturn(context2);
         Target target1 = new Target(context1);
         Target target2 = new Target(context2);
-        ContextWrapper contextWrapper1 = new ContextWrapper(context1);
-        ContextWrapper contextWrapper2 = new ContextWrapper(context2);
+        AutomationEnvironment env = mock(AutomationEnvironment.class);
+        ContextWrapper contextWrapper1 = new ContextWrapper(context1, env);
+        ContextWrapper contextWrapper2 = new ContextWrapper(context2, env);
 
         given(extAScan.startScan(any(), any(), any())).willReturn(1);
 
@@ -309,7 +338,6 @@ class ActiveScanJobUnitTest {
 
         AutomationProgress progress = new AutomationProgress();
 
-        AutomationEnvironment env = mock(AutomationEnvironment.class);
         given(env.getContext("context1")).willReturn(context1);
         given(env.getContext("context2")).willReturn(context2);
         given(env.getContextWrapper("context1")).willReturn(contextWrapper1);
@@ -350,7 +378,8 @@ class ActiveScanJobUnitTest {
     void shouldExitIfActiveScanTakesTooLong() throws MalformedURLException {
         // Given
         Context context = mock(Context.class);
-        ContextWrapper contextWrapper = new ContextWrapper(context);
+        ContextWrapper contextWrapper =
+                new ContextWrapper(context, new AutomationEnvironment(new AutomationProgress()));
 
         given(extAScan.startScan(any(), any(), any())).willReturn(1);
 
@@ -780,10 +809,8 @@ class ActiveScanJobUnitTest {
     }
 
     @Test
-    void shouldVerifyParameters() throws Exception {
+    void shouldVerifyParameters() {
         // Given
-        given(policyManager.getPolicy("policy1")).willReturn(mock(ScanPolicy.class));
-
         AutomationEnvironment env = mock(AutomationEnvironment.class);
         given(env.getAllUserNames()).willReturn(List.of("user0", "user1"));
         ActiveScanJob job = new ActiveScanJob();
@@ -830,31 +857,5 @@ class ActiveScanJobUnitTest {
         assertThat(job.getParameters().getScanHeadersAllRequests(), is(equalTo(true)));
         assertThat(job.getParameters().getThreadPerHost(), is(equalTo(2)));
         assertThat(job.getParameters().getMaxAlertsPerRule(), is(equalTo(5)));
-    }
-
-    @Test
-    void shouldErrorOnUnknownPolicy() throws Exception {
-        // Given
-        given(policyManager.getPolicy("missingPolicy")).willThrow(ConfigurationException.class);
-
-        String yamlStr =
-                """
-                parameters:
-                  policy: missingPolicy
-                """;
-        AutomationProgress progress = new AutomationProgress();
-        Yaml yaml = new Yaml();
-        Object data = yaml.load(yamlStr);
-
-        ActiveScanJob job = new ActiveScanJob();
-        job.setJobData(((LinkedHashMap<?, ?>) data));
-
-        // When
-        job.verifyParameters(progress);
-
-        // Then
-        assertThat(progress.hasErrors(), is(equalTo(true)));
-        assertThat(progress.hasWarnings(), is(equalTo(false)));
-        assertThat(progress.getErrors(), contains("!automation.error.ascan.policy.name!"));
     }
 }

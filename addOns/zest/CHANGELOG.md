@@ -6,8 +6,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
+- Use lowercase credential parameters in the Authentication default template.
+
+## [48.10.0] - 2025-10-29
+### Added
+- Support for Edge in scripts run from the script console.
+
+### Changed
 - Deprecate the `Username` and `Password` credential parameters in favor of the lowercase `username` and
 `password` variants, aligning them with the naming convention of the other authentication credentials.
+- Update Zest library to 0.32.0.
+
+### Removed
+- Support for Internet Explorer.
 
 ## [48.9.0] - 2025-09-02
 ### Changed
@@ -428,6 +439,7 @@ Sender scripts. (Issue 5590)
 
 - Updated for 2.1.0
 
+[48.10.0]: https://github.com/zaproxy/zap-extensions/releases/zest-v48.10.0
 [48.9.0]: https://github.com/zaproxy/zap-extensions/releases/zest-v48.9.0
 [48.8.0]: https://github.com/zaproxy/zap-extensions/releases/zest-v48.8.0
 [48.7.0]: https://github.com/zaproxy/zap-extensions/releases/zest-v48.7.0

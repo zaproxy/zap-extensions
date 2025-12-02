@@ -4,6 +4,16 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Fixed
+- Script scan rules were not using the attack strength and alert threshold from active scan policies.
+
+### Changed
+- Update dependency.
+
+## [45.15.0] - 2025-11-04
+### Added
+- `scanHost` method to the active script scan rule interface that is called once per host being scanned.
+
 ### Changed
 - Update dependency.
 
@@ -403,6 +413,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[45.15.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.15.0
 [45.14.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.14.0
 [45.13.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.13.0
 [45.12.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.12.0

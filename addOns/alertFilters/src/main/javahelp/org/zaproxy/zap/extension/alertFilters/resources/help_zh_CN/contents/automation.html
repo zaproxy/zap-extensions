@@ -15,21 +15,21 @@
 <p>
 这个视频中有所介绍：<a href="https://youtu.be/1fcpU54N-mA">ZAP 第8章 自动化框架 第二部分 - 环境</a>.
 <pre>
-  - type: alertFilter                  # 用于更改警报的风险级别
+  - type: alertFilter                  # Used to change the risk levels of alerts
     parameters:
-      deleteGlobalAlerts: true         # 布尔值，如果为真则删除所有现有的全局警报，默认为假
-    alertFilters:                      # 被应用的alertFilters列表
-      - ruleId:                        # 整型: 必须填写，为扫描规则 ID 或警报引用
-        newRisk:                       # 字符串: 必须为新的风险级别, 以下值之一: 'False Positive', 'Info', 'Low', 'Medium', 'High'
-        context:                       # 字符串: 可选, 上下文名称, 若为空则会创建一个全局警报过滤器
-        url:                           # 字符串: 可选, 与警报匹配的字符串，支持环境变量
-        urlRegex:                      # 布尔值: 可选, 如果为真则URL是一个正则表达式
-        parameter:                     # 字符串: 可选, 与警报参数字段匹配的字符串
-        parameterRegex:                # 布尔值: 可选, 如果为真则参数是一个正则表达式，支持环境变量
-        attack:                        # 字符串: 可选, 与警报攻击字段匹配的字符串
-        attackRegex:                   # 布尔值: 可选, 若为真则攻击是一个正则表达式
-        evidence:                      # 字符串: 可选, 与警报证据字段匹配的字符串
-        evidenceRegex:                 # 布尔值: 可选, 若为真则证据是一个正则表达式
+      deleteGlobalAlerts: true         # Boolean, if true then will delete all existing global alerts, default false
+    alertFilters:                      # A list of alertFilters to be applied
+      - ruleId:                        # Int/String: Mandatory, the scan rule ID or the alert reference
+        newRisk:                       # String: Mandatory new risk level, one of 'False Positive', 'Info', 'Low', 'Medium', 'High'
+        context:                       # String: Optional context name, if empty then a global alert filter will be created
+        url:                           # String: Optional string to match against the alert, supports environment vars
+        urlRegex:                      # Boolean: Optional, if true then the url is a regex
+        parameter:                     # String: Optional string to match against the alert parameter field
+        parameterRegex:                # Boolean: Optional, if true then the parameter is a regex, supports environment vars
+        attack:                        # String: Optional string to match against the alert attack field
+        attackRegex:                   # Boolean: Optional, if true then the attack is a regex
+        evidence:                      # String: Optional string to match against the alert evidence field
+        evidenceRegex:                 # Boolean: Optional, if true then the evidence is a regex
 </pre>
 
 </BODY>

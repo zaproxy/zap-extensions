@@ -124,7 +124,7 @@ public class InsecureAuthenticationScanRule extends PluginPassiveScanner
                                     alertRisk = Alert.RISK_HIGH;
                                 }
                             } catch (IllegalArgumentException e) {
-                                LOGGER.error(
+                                LOGGER.debug(
                                         "Invalid Base64 value for {} Authentication: {}",
                                         authMechanism,
                                         authValues[1]);

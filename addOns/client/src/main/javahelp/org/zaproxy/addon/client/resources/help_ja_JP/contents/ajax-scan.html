@@ -2,28 +2,27 @@
 <HTML>
 <HEAD>
 <TITLE>
-Client Side Integration - AJAX Spider Enhancement
+クライアントサイド統合 - AJAXスパイダー機能強化
 </TITLE>
 </HEAD>
 <BODY>
-<H1>Client Side Integration - AJAX Spider Enhancement</H1>
+<H1>クライアントサイド統合 - AJAXスパイダー機能強化</H1>
 
-This add-on now adds a <a href="spider.html">Client Spider</a> which is designed to explore modern web apps more effectively.
-You are recommended to try this out as it is likely to be more effective that the AJAX Spider Enhancement detailed here.
+このアドオンは、モダンなWebアプリケーションをより効率的に探索できるよう設計された<a href="spider.html">クライアントスパイダー</a>を追加します。
+ ここで説明するAJAXスパイダー拡張機能よりも効率的である可能性が高いため、こちらをお試しください。
 <p>
-Also note that from ZAP 2.16.0 the AJAX Spider has an option to enable browser extensions, and that option is turned off by default.
-You will need to turn it on in order for this integration to work.
+またZAP 2.16.0以降、AJAXスパイダーにはブラウザ拡張機能を有効にするオプションがあり、このオプションはデフォルトでオフになっていることにも注意してください。
+ この連携が機能するためには、それをオンにする必要があります。
 <p>
-The AJAX Spider works by launching browsers, clicking links, and filling in fields.
-It is an effective way to crawl modern web apps but it is not able to directly access the DOM.
+AJAXスパイダーは、ブラウザを起動し、リンクをクリックし、フィールドに入力することで動作します。
+これはモダンなWebアプリケーションをクロールする効率的な方法ですが、DOMに直接アクセスすることはできません。
 <p>
-The browser extensions included in this add-on can access the DOM and stream specific events back to ZAP.
+このアドオンに含まれるブラウザ拡張機能は、DOMにアクセスし、特定のイベントをZAPにストリーム送信できます。
 <p>
-This add-on listens for AJAX Spider events and when the spider has finished it then examines the Client Map
-to see if it can find any URLs which were referenced by the DOM but which have not been accessed by ZAP.
+このアドオンは、AJAXスパイダーのイベントをリッスンし、スパイダーが完了したときに、クライアントマップを確認して、DOMによって参照されたがZAPがアクセスしていないURLを見つけられるかどうかを確認します。
 <p>
-If it finds any 'missed' URLs that were part of the AJAX Spider scan scope then it makes direct requests to these URLs.
-You will be able to see these requests in the History, Sites Tree, and Output tabs.
+AJAXスパイダーのスキャン範囲の一部であった「見落とされた」URLを見つけた場合、直接これらのURLにリクエストを送信します。
+ これらのリクエストは、履歴、サイトツリー、出力タブで確認できます。
 <p>
 
 </BODY>

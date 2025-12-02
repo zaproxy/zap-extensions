@@ -49,7 +49,7 @@ env:                                   # 環境、必須
             value:                     # ヘッダー値
       sessionManagement:
         method:                        # 文字列、'cookie'、'http'、'script'のいずれか
-        parameters:                    # 0個以上のパラメーターのリスト - スクリプトに必要なものを含めることができます
+        parameters:                    # パラメーターのリスト - スクリプトに必要なものを含めることができます
           script:                      # 文字列、スクリプトへのパス、'script'セッション管理の場合のみ
           scriptEngine:                # 文字列、使用するスクリプトエンジンの名前、'script'セッション管理の場合のみ
       technology:
@@ -73,6 +73,7 @@ env:                                   # 環境、必須
   vars:                                # 設定ファイル全体で使用される0個以上のカスタム変数のリスト
     myVarOne: CustomConfigVarOne       # 設定全体で${myVarOne}として使用可能
     myVarTwo: ${myVarOne}.VarTwo       # 他の変数を参照可能
+  configs:                             # ZAPの "-config" コマンドラインオプションに基づく、汎用設定パラメーターの一覧
   parameters:
     failOnError: true                  # 設定した場合、エラー時に終了
     failOnWarning: false               # 設定した場合、警告時に終了
@@ -91,7 +92,28 @@ env:                                   # 環境、必須
 変数は 'vars' セクションで定義できます
 変数はハードコード、他の変数の参照、または上記と同様にシステム環境変数の参照が可能です (例: '${envvar}')。 
 同じ名前の変数が2つある場合、システム変数の値が優先されます。 
-  
+
+<h3>Configs</h3>
+
+configs セクションは、ZAP設定ファイルで設定できる任意の値を定義するために使用できます。これは ZAP の -config コマンドラインオプションと同じように動作します。
+<p>
+コマンドラインの代わりにこのセクションを使用する利点は次のとおりです：
+<ol>
+<li>設定はプラン内で自己完結します
+<li>ZAP チームは (テレメトリが有効な場合) この方法で使用されるキーを監視し、最も頻繁に使用されるキーに対する完全なサポートの追加を優先します
+<li>使用されているキーにより良い解決策が利用可能な場合、警告が発行されます
+</ol>
+
+キーと値の検証は行われないため、設定が正しいことをご自身で確認する必要があります。 無効なキーは警告なく無視されます。
+<p>
+キーを決定するための推奨される方法は、FAQ: <a href="https://www.zaproxy.org/faq/how-do-you-find-out-what-key-to-use-to-set-a-config-value-on-the-command-line/">How do you find out what key to use to set a config value on the command line?</a> に記載されています
+<p>
+パッシブスキャンスレッド数を設定する動作例は次のとおりです：
+<pre>
+configs:
+  pscans.threads: 8
+</pre> 
+
 <h3>フォーマットの変更</h3>
 
 元々、'engine' および 'scriptEngine' フィールドは 'sessionManagement' 要素の直下にありました - これはプラン読み込み時には引き続きサポートされますが、現在は常に 'parameters' 要素の下に出力されます。

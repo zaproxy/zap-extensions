@@ -214,18 +214,18 @@ class ExtensionOpenApiTest extends AbstractServerTest {
         assertThat(
                 context.getIncludeInContextRegexs(),
                 contains(
-                        expectedUrl + "/pet",
-                        expectedUrl + "/pet/findByStatus",
-                        expectedUrl + "/pet/findByTags",
+                        "\\Q" + expectedUrl + "/pet\\E",
+                        "\\Q" + expectedUrl + "/pet/findByStatus\\E",
+                        "\\Q" + expectedUrl + "/pet/findByTags\\E",
                         expectedUrl + "/pet/[^/?]+",
-                        expectedUrl + "/store/inventory",
-                        expectedUrl + "/store/order",
+                        "\\Q" + expectedUrl + "/store/inventory\\E",
+                        "\\Q" + expectedUrl + "/store/order\\E",
                         expectedUrl + "/store/order/[^/?]+",
-                        expectedUrl + "/user",
-                        expectedUrl + "/user/createWithArray",
-                        expectedUrl + "/user/createWithList",
-                        expectedUrl + "/user/login",
-                        expectedUrl + "/user/logout",
+                        "\\Q" + expectedUrl + "/user\\E",
+                        "\\Q" + expectedUrl + "/user/createWithArray\\E",
+                        "\\Q" + expectedUrl + "/user/createWithList\\E",
+                        "\\Q" + expectedUrl + "/user/login\\E",
+                        "\\Q" + expectedUrl + "/user/logout\\E",
                         expectedUrl + "/user/[^/?]+"));
     }
 

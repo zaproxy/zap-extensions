@@ -13,7 +13,7 @@ zapAddOn {
         dependencies {
             addOns {
                 register("commonlib") {
-                    version.set(">= 1.36.0 & < 2.0.0")
+                    version.set(">= 1.38.0 & < 2.0.0")
                 }
                 register("network") {
                     version.set(">= 0.3.0")
@@ -52,6 +52,7 @@ dependencies {
     zapAddOn("oast")
 
     implementation(libs.ascanrules.procyonCompilerTools)
+    implementation(libs.ascanrules.rhino)
 
     testImplementation(parent!!.childProjects.get("commonlib")!!.sourceSets.test.get().output)
     testImplementation(project(":testutils"))

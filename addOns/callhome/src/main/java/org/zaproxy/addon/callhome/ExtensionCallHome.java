@@ -307,6 +307,7 @@ public class ExtensionCallHome extends ExtensionAdaptor
                     || key.startsWith("stats.auth.")
                     || key.startsWith("stats.auto.")
                     || key.startsWith("stats.break.")
+                    || key.startsWith("stats.bruteforce.")
                     || key.startsWith("stats.client.")
                     || key.startsWith("stats.code.")
                     || key.startsWith("stats.config.")
@@ -321,12 +322,14 @@ public class ExtensionCallHome extends ExtensionAdaptor
                     || key.startsWith("stats.network.")
                     || key.startsWith("stats.oast.")
                     || key.startsWith("stats.openapi.")
+                    || key.startsWith("stats.postman.")
                     || key.startsWith("stats.quickstart.")
                     || key.startsWith("stats.reports.")
                     || key.startsWith("stats.script.")
                     || key.startsWith("stats.selenium.")
                     || key.startsWith("stats.sequence.")
                     || key.startsWith("stats.spider.")
+                    || key.startsWith("stats.spiderAjax.")
                     || key.startsWith("stats.tech.")
                     || key.startsWith("stats.ui.")
                     || key.startsWith("stats.websockets.")
@@ -575,7 +578,23 @@ public class ExtensionCallHome extends ExtensionAdaptor
 
                 String base = "stats.log." + event.getLevel().name().toLowerCase(Locale.ROOT);
                 Stats.incCounter(base);
-                Stats.incCounter(base + "." + event.getLoggerName());
+                String baseLoggerName = base + "." + event.getLoggerName();
+                Throwable t = event.getThrown();
+                if (t == null) {
+                    Stats.incCounter(baseLoggerName);
+                } else {
+                    Stats.incCounter(
+                            baseLoggerName + "." + t.getClass().getSimpleName() + getSource(t));
+                }
+            }
+
+            private static String getSource(Throwable t) {
+                StackTraceElement[] trace = t.getStackTrace();
+                if (trace == null || trace.length == 0) {
+                    return "";
+                }
+                StackTraceElement top = trace[0];
+                return "(" + top.getFileName() + ":" + top.getLineNumber() + ")";
             }
         }
     }

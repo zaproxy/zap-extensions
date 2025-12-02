@@ -2,27 +2,24 @@
 <HTML>
 <HEAD>
   <TITLE>
-    Automation Framework - Monitor Job Test
+    自動化フレームワーク - モニタージョブテスト
   </TITLE>
 </HEAD>
 <BODY>
-<H1>Automation Framework - Monitor Job Test</H1>
+<H1>自動化フレームワーク - モニタージョブテスト</H1>
 
-Monitor tests are supported by long running jobs, such as <a href="job-ascan.html">activeScan</a> and spider.
+モニターテストは、<a href="job-ascan.html">activeScan</a> やスパイダーなど、実行時間の長いジョブによってサポートされています。
 <p>
-Unlike the other Job Tests, monitor tests run while a job is running.
-They work in a similar way to <a href="test-stats.html">statistic</a> tests in that they check a specified statistic,
-but there is no 'operator' - instead the test will fail if the value of the statistic exceeds the given threshold.
+他のジョブテストとは異なり、モニターテストはジョブの実行中に並行して実行されます。
+これらは<a href="test-stats.html">統計</a>テストと同様に機能し、指定された統計値をチェックしますが、「オペレータ」はありません。代わりに、統計値が与えられたしきい値を超えると、テストは失敗します。 
 <p>
-Monitor tests can be used to terminate a long running job early, for example if there are too many authentication failures.
+モニターテストは、実行時間の長いジョブを早期に終了させるために使用できます。たとえば、認証の失敗が多すぎる場合などです。
 <p>
-An up to date list of the statistics ZAP maintains can be found at 
-<a href="https://www.zaproxy.org/docs/internal-statistics/">https://www.zaproxy.org/docs/internal-statistics/</a>.
+ZAPが保持する最新の統計リストは、<a href="https://www.zaproxy.org/docs/internal-statistics/">https://www.zaproxy.org/docs/internal-statistics/</a>で確認できます。
 <p>
-A job can have tests for multiple statistics and multiple tests can be created for the same statistic.
+1つのジョブは複数の統計に対するテストを持つことができ、同じ統計に対して複数のテストを作成できます。
 <p>
-Note that monitor tests will function correctly only if in memory statistics have been 
-<a href="https://www.zaproxy.org/docs/desktop/ui/dialogs/options/stats/#in-memory-statistics-enabled">enabled</a>.
+注: モニターテストは、インメモリ統計が<a href="https://www.zaproxy.org/docs/desktop/ui/dialogs/options/stats/#in-memory-statistics-enabled">有効</a>されている場合にのみ正しく機能します。
 
 <H2>YAML</H2>
 
@@ -32,12 +29,12 @@ Note that monitor tests will function correctly only if in memory statistics hav
     parameters:
       jobSpecificParam: 'value'
     tests:
-      - name: 'test one'                      # Name of the test, optional
-        type: monitor                         # Specifies that the test is of type 'monitor'
-        statistic: 'stats.addon.something'    # Name of an integer / long statistic
-        site:                                 # Name of the site for site specific tests, supports vars
-        threshold: 10                         # The threshold at which a statistic fails
-        onFail: 'info'                        # String: One of 'warn', 'error', 'info', mandatory
+      - name: 'test one'                      # テストの任意の名前
+        type: monitor                         # テストが「monitor」タイプであることを指定します
+        statistic: 'stats.addon.something'    # 整数または長整数の統計の名前
+        site:                                 # サイト固有のテストのためのサイトの名前、変数をサポートします
+        threshold: 10                         # 統計値が失敗と見なされるしきい値
+        onFail: 'info'                        # 文字列: 'warn', 'error', 'info', のいずれか、必須
 </pre>
 </BODY>
 </HTML>

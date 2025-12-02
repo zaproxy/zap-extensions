@@ -160,7 +160,7 @@ class ExportJobUnitTest extends TestUtils {
         AutomationPlan plan = new AutomationPlan();
         AutomationProgress progress = plan.getProgress();
         AutomationEnvironment env = mock(AutomationEnvironment.class);
-        ContextWrapper contextWrapper = new ContextWrapper(mock(Context.class));
+        ContextWrapper contextWrapper = new ContextWrapper(mock(Context.class), env);
         given(env.getContextWrapper(any())).willReturn(contextWrapper);
         Path file = Files.createTempFile("zap", "export");
         String yamlStr = "parameters:\n  fileName: " + file.toString();
@@ -193,7 +193,7 @@ class ExportJobUnitTest extends TestUtils {
         AutomationPlan plan = new AutomationPlan();
         AutomationProgress progress = plan.getProgress();
         AutomationEnvironment env = mock(AutomationEnvironment.class);
-        ContextWrapper contextWrapper = new ContextWrapper(mock(Context.class));
+        ContextWrapper contextWrapper = new ContextWrapper(mock(Context.class), env);
         given(env.getContextWrapper(any())).willReturn(contextWrapper);
         String yamlStr = "parameters:\n  fileName: /some/file";
         Yaml yaml = new Yaml();
@@ -225,7 +225,7 @@ class ExportJobUnitTest extends TestUtils {
         AutomationPlan plan = new AutomationPlan();
         AutomationProgress progress = plan.getProgress();
         AutomationEnvironment env = mock(AutomationEnvironment.class);
-        ContextWrapper contextWrapper = new ContextWrapper(mock(Context.class));
+        ContextWrapper contextWrapper = new ContextWrapper(mock(Context.class), env);
         given(env.getContextWrapper(any())).willReturn(contextWrapper);
         String yamlStr =
                 "parameters:\n"
@@ -264,7 +264,7 @@ class ExportJobUnitTest extends TestUtils {
         AutomationPlan plan = new AutomationPlan();
         AutomationProgress progress = plan.getProgress();
         AutomationEnvironment env = mock(AutomationEnvironment.class);
-        ContextWrapper contextWrapper = new ContextWrapper(mock(Context.class));
+        ContextWrapper contextWrapper = new ContextWrapper(mock(Context.class), env);
         given(env.getContextWrapper(any())).willReturn(contextWrapper);
         String yamlStr =
                 "parameters:\n"

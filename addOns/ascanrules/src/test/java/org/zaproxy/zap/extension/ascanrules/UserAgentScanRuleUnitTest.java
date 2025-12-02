@@ -57,8 +57,9 @@ class UserAgentScanRuleUnitTest extends ActiveScannerTest<UserAgentScanRule> {
         // Given / When
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(tags.size(), is(equalTo(2)));
+        assertThat(tags.size(), is(equalTo(3)));
         assertThat(tags, hasKey(CommonAlertTag.CUSTOM_PAYLOADS.getTag()));
+        assertThat(tags, hasKey(CommonAlertTag.SYSTEMIC.getTag()));
         assertThat(tags, hasKey(PolicyTag.PENTEST.getTag()));
     }
 

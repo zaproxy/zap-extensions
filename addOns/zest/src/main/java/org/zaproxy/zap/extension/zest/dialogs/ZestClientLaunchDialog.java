@@ -49,7 +49,7 @@ public class ZestClientLaunchDialog extends StandardFieldsDialog implements Zest
 
     private static String BROWSER_TYPE_PREFIX = "zest.dialog.client.browserType.label.";
     private static String[] BROWSER_TYPES = {
-        "firefox", "chrome", "htmlunit", "internetexplorer", "opera", "phantomjs", "safari"
+        "firefox", "chrome", "edge", "htmlunit", "opera", "phantomjs", "safari"
     };
     private static String DEFAULT_BROWSER_TYPE = "firefox";
 
@@ -133,7 +133,6 @@ public class ZestClientLaunchDialog extends StandardFieldsDialog implements Zest
     }
 
     private List<String[]> getCapabilities(ZestClientLaunch client) {
-        // TODO
         List<String[]> list = new ArrayList<>();
         if (client.getCapabilities() != null) {
             for (String capability : client.getCapabilities().split("\n")) {

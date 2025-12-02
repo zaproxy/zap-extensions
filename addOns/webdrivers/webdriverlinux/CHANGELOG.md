@@ -6,6 +6,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [167] - 2025-11-17
+### Changed
+- Update ChromeDriver to 142.0.7444.175.
+
+## [166] - 2025-11-11
+### Changed
+- Update ChromeDriver to 142.0.7444.162.
+
+## [165] - 2025-11-05
+### Changed
+- Update ChromeDriver to 142.0.7444.61.
+
+## [164] - 2025-10-28
+### Changed
+- Update ChromeDriver to 142.0.7444.59.
+
+## [163] - 2025-10-21
+### Changed
+- Update ChromeDriver to 141.0.7390.122.
+
 ## [162] - 2025-10-14
 ### Changed
 - Update ChromeDriver to 141.0.7390.78.
@@ -677,6 +697,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release: Firefox v0.13.0 Chrome v2.27
 
+[167]: https://github.com/zaproxy/zap-extensions/releases/webdriverlinux-v167
+[166]: https://github.com/zaproxy/zap-extensions/releases/webdriverlinux-v166
+[165]: https://github.com/zaproxy/zap-extensions/releases/webdriverlinux-v165
+[164]: https://github.com/zaproxy/zap-extensions/releases/webdriverlinux-v164
+[163]: https://github.com/zaproxy/zap-extensions/releases/webdriverlinux-v163
 [162]: https://github.com/zaproxy/zap-extensions/releases/webdriverlinux-v162
 [161]: https://github.com/zaproxy/zap-extensions/releases/webdriverlinux-v161
 [160]: https://github.com/zaproxy/zap-extensions/releases/webdriverlinux-v160

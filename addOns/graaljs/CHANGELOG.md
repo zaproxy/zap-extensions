@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [0.11.0] - 2025-11-04
+### Changed
+- Update dependencies.
+- Update the Active script template to contain a `scanHost` function that is called once per host being scanned.
+- Update minimum scripts add-on version to 45.15.0.
+
 ## [0.10.0] - 2025-10-07
 ### Changed
 - Update Graal JavaScript engine to version 25 (Issues 8477 and 9010).
@@ -74,6 +80,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 First version.
 
+[0.11.0]: https://github.com/zaproxy/zap-extensions/releases/graaljs-v0.11.0
 [0.10.0]: https://github.com/zaproxy/zap-extensions/releases/graaljs-v0.10.0
 [0.9.0]: https://github.com/zaproxy/zap-extensions/releases/graaljs-v0.9.0
 [0.8.0]: https://github.com/zaproxy/zap-extensions/releases/graaljs-v0.8.0

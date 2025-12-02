@@ -353,6 +353,8 @@ public class AjaxSpiderJob extends AutomationJob {
             this.sleep(500);
 
             numUrlsFound = listener.getMessagesFound();
+            // Should remove this at some point, but its almost certainly being used by existing AF
+            // jobs
             Stats.incCounter("spiderAjax.urls.added", numUrlsFound - lastCount);
             lastCount = numUrlsFound;
 

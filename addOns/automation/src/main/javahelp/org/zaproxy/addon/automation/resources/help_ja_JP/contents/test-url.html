@@ -2,33 +2,31 @@
 <HTML>
 <HEAD>
   <TITLE>
-    Automation Framework - URL Presence Job Tests
+    自動化フレームワーク - URL存在ジョブテスト
   </TITLE>
 </HEAD>
 <BODY>
-<H1>Automation Framework - URL Presence Job Test</H1>
+<H1>自動化フレームワーク - URL存在ジョブテスト</H1>
 
-URL Presence tests are supported by all the jobs. These tests can be used to validate the presence/absence of a URL and it's 
-specific expressions in the HTTP response/request. The expressions are specified in the YAML file as regular expressions. 
-The test will pass if the URL or the specified expression is found in the response/request depending upon the operator 
-selection.
+URLの存在確認テストは、すべてのジョブでサポートされています。 これらのテストは、URLの有無、およびHTTPレスポンスやリクエスト内における特定のパターン (正規表現) の存在を確認するために使用できます。 パターンはYAMLファイル内で正規表現として指定されます。 
+テストは、オペレーターの選択に基づき、URLまたは指定された正規表現がレスポンスやリクエスト内に見つかった場合に成功します。
 <p>
-A job can have tests for multiple expressions, and multiple tests can be created for expressions having the same URL.
+1つのジョブには複数の表現に対するテストを含めることができ、同じURLを持つ表現に対して複数のテストを作成できます。
 
 <H2>YAML</H2>
 <pre>
   jobs:
   - type: something
     tests:
-      - name: 'test one'                      # Name of the test, optional
-        type: url                             # Specifies that the test is of type 'url'
-        url: http://www.example.com/path      # String: The URL to be tested.
-        operator: 'and'                       # One of 'and', 'or', default is 'or'
-        requestHeaderRegex:                   # String: The regular expression to be matched in the request header, optional
-        requestBodyRegex:                     # String: The regular expression to be matched in the request body, optional
-        responseHeaderRegex:                  # String: The regular expression to be matched in the response header, optional
-        responseBodyRegex:                    # String: The regular expression to be matched in the response body, optional
-        onFail: 'info'                        # String: One of 'warn', 'error', 'info', mandatory
+      - name: 'test one'                      # テストの名前、オプション
+        type: url                             # テストが 'url' タイプであることを指定
+        url: http://www.example.com/path      # 文字列: テスト対象のURL
+        operator: 'and'                       # 'and'、'or' のいずれか、デフォルトは 'or'
+        requestHeaderRegex:                   # 文字列: リクエストヘッダーで一致する正規表現、オプション
+        requestBodyRegex:                     # 文字列: リクエストボディで一致する正規表現、オプション
+        responseHeaderRegex:                  # 文字列: レスポンスヘッダーで一致する正規表現、オプション
+        responseBodyRegex:                    # 文字列: レスポンスボディで一致する正規表現、オプション
+        onFail: 'info'                        # 文字列: 'warn'、'error'、'info' のいずれか、必須
 </pre>
 </BODY>
 </HTML>

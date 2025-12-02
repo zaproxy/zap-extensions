@@ -4,9 +4,39 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Handle account selection and TOTP step in Microsoft login.
+
+### Changed
+- Fail the Microsoft login if not able to perform all the expected steps.
+- Track GWT headers.
+- Handle additional exceptions when processing JSON authentication components.
+
+### Fixed
+- Do not include known authentication providers in context.
+- Ensure all domains accessed during authentication are included in the Authentication Report.
+
+## [0.32.0] - 2025-11-07
+### Changed
+- Track authentication headers with key in the name.
+- No longer quote domains as these will not get counted as valid URLs in the Automation Framework.
+
+## [0.31.0] - 2025-11-05
+### Added
+- Domains to auth tester.
+
+## [0.30.0] - 2025-11-04
+### Added
+- Click on button when login form does not handle return in Browser Based Authentication.
+- Handle password fields by ID and name in Browser Based Authentication.
+- Check div elements when searching for login links.
+
 ### Changed
 - Maintenance changes
 - Depend on newer version of Zest add-on.
+
+### Fixed
+- Inform when the Authentication Report being imported does not contain any diagnostics.
 
 ## [0.29.0] - 2025-09-18
 ### Added
@@ -304,6 +334,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Support of authentication request identification and configuration.
 
+[0.32.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.32.0
+[0.31.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.31.0
+[0.30.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.30.0
 [0.29.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.29.0
 [0.28.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.28.0
 [0.27.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.27.0

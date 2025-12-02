@@ -1,135 +1,113 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <configuration>
     <policy>API</policy>
+    <statsId>std-api</statsId>
+    <readonly>true</readonly>
+    <locked>true</locked>
     <scanner>
-        <level>OFF</level>
+        <level>MEDIUM</level>
         <strength>MEDIUM</strength>
     </scanner>
     <plugins>
         <p0>
             <name>Directory Browsing</name>
             <enabled>true</enabled>
-            <level>MEDIUM</level>
         </p0>
         <p7>
             <name>Remote File Inclusion</name>
             <enabled>true</enabled>
-            <level>MEDIUM</level>
         </p7>
         <p20019>
             <name>External Redirect</name>
             <enabled>true</enabled>
-            <level>MEDIUM</level>
         </p20019>
         <p30001>
             <name>Buffer Overflow</name>
             <enabled>true</enabled>
-            <level>MEDIUM</level>
         </p30001>
         <p30002>
             <name>Format String Error</name>
             <enabled>true</enabled>
-            <level>MEDIUM</level>
         </p30002>
         <p30003>
             <name>Integer Overflow Error</name>
             <enabled>true</enabled>
-            <level>MEDIUM</level>
         </p30003>
         <p40003>
             <name>CRLF Injection</name>
             <enabled>true</enabled>
-            <level>MEDIUM</level>
         </p40003>
         <p40008>
             <name>Parameter Tampering</name>
             <enabled>true</enabled>
-            <level>MEDIUM</level>
         </p40008>
         <p40009>
             <name>Server Side Include</name>
             <enabled>true</enabled>
-            <level>MEDIUM</level>
         </p40009>
         <p40018>
             <name>SQL Injection</name>
             <enabled>true</enabled>
-            <level>MEDIUM</level>
         </p40018>
         <p40042>
             <name>Spring Actuator Information Leak</name>
             <enabled>true</enabled>
-            <level>MEDIUM</level>
         </p40042>
         <p40044>
             <name>Exponential Entity Expansion (Billion Laughs Attack)</name>
             <enabled>true</enabled>
-            <level>MEDIUM</level>
         </p40044>
         <p50000>
             <name>Script Active Scan Rules</name>
             <enabled>true</enabled>
-            <level>MEDIUM</level>
         </p50000>
         <p90017>
             <name>XSLT Injection</name>
             <enabled>true</enabled>
-            <level>MEDIUM</level>
         </p90017>
         <p90019>
             <name>Server Side Code Injection</name>
             <enabled>true</enabled>
-            <level>MEDIUM</level>
         </p90019>
         <p90020>
             <name>Remote OS Command Injection</name>
             <enabled>true</enabled>
-            <level>MEDIUM</level>
         </p90020>
         <p90021>
             <name>XPath Injection</name>
             <enabled>true</enabled>
-            <level>MEDIUM</level>
         </p90021>
         <p90023>
             <name>XML External Entity Attack</name>
             <enabled>true</enabled>
-            <level>MEDIUM</level>
         </p90023>
         <p90025>
             <name>Expression Language Injection</name>
             <enabled>true</enabled>
-            <level>MEDIUM</level>
         </p90025>
         <p90026>
             <name>SOAP Action Spoofing</name>
             <enabled>true</enabled>
-            <level>MEDIUM</level>
         </p90026>
         <p90029>
             <name>SOAP XML Injection</name>
             <enabled>true</enabled>
-            <level>MEDIUM</level>
         </p90029>
         <p90034>
             <name>Cloud Metadata Potentially Exposed</name>
             <enabled>true</enabled>
-            <level>MEDIUM</level>
         </p90034>
         <p90035>
             <name>Server Side Template Injection</name>
             <enabled>true</enabled>
-            <level>MEDIUM</level>
         </p90035>
         <p90036>
             <name>Server Side Template Injection (Blind)</name>
             <enabled>true</enabled>
-            <level>MEDIUM</level>
         </p90036>
         <p90037>
             <name>Remote OS Command Injection (Time Based)</name>
             <enabled>true</enabled>
-            <level>MEDIUM</level>
         </p90037>
     </plugins>
 </configuration>

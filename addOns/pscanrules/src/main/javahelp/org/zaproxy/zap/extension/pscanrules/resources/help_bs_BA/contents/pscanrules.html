@@ -89,7 +89,6 @@ Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10015/">10015</a>.
   </li>
   <li>Low Threshold:
     <ul>
-      <li>Meta Content-Type Charset Missing - The response doesn't contain a META Content-Type declaration, which may overlook older clients.</li>
       <li>Meta Charset Versus Meta Content-Type Charset - The response contains both a META Content-Type declaration and a META Charset declaration, and they don't match.</li>
     </ul>
   </li>
@@ -360,17 +359,17 @@ Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10028/">10028</a>.
 <h2 id="id-10062">PII Disclosure</h2>
 PII is information like credit card number, SSN etc. This check currently reports only numbers which match credit card numbers and pass Luhn checksum, which gives high confidence, that this is a credit card number.
 <br>
-At MEDIUM and HIGH threshold it attempts to use three characters of context on each side of potential matches to exclude matches within decimal like content.
+At MEDIUM and HIGH threshold it attempts to use three characters of context on each side of potential matches to exclude matches within decimal like content or content which includes underscores.
 At LOW threshold, alerts will be raised for such matches.
 <p>
 At MEDIUM and HIGH threshold, the following content types are evaluated:
 <ul>
-    <li>HTML</li>
+    <li>HTML (visible text and script blocks)</li>
     <li>JSON</li>
     <li>XML</li>
 </ul>
 Image and CSS files are always ignored.
-Every other content type is evaluated at LOW threshold.
+Every other content type is evaluated at LOW threshold. Additionally at LOW threshold the entire HTML response is evaluated.
 <p>
 Note: In the case of suspected credit card values, the potential credit card numbers are looked up against a Bank Identification Number List 
 (BINList). If a match is found the alert is raised at High confidence and additional details are added to the 'Other Information' field in the 

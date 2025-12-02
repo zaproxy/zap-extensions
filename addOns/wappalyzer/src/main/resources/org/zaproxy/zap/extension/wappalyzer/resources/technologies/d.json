@@ -1654,6 +1654,17 @@
     "saas": true,
     "website": "https://digify.shop"
   },
+  "Digioh": {
+    "cats": [
+      110
+    ],
+    "description": "Digioh is a lead generation and marketing company helping to convert clicks to customers known for it's email/sms sign-up units",
+    "icon": "Digioh.png",
+    "js": {
+      "DIGIOH_API": ""
+    },
+    "website": "https://www.digioh.com/"
+  },
   "Digismoothie Candy Rack": {
     "cats": [
       100
@@ -3255,11 +3266,11 @@
     "cats": [
       1
     ],
-    "cpe": "cpe:2.3:a:drupal:drupal:*:*:*:*:*:*:*:*",
-    "description": "Drupal is a free and open-source web content management framework.",
     "cookies": {
       "SESS[a-f0-9]{32}": ""
     },
+    "cpe": "cpe:2.3:a:drupal:drupal:*:*:*:*:*:*:*:*",
+    "description": "Drupal is a free and open-source web content management framework.",
     "dom": [
       "link[href*='/sites/default/themes/'], link[href*='/sites/all/themes/'], link[href*='/sites/default/modules/'], link[href*='/sites/all/modules/'], style[href*='/sites/default/themes/'], style[href*='/sites/all/themes/'], style[href*='/sites/default/modules/'], style[href*='/sites/all/modules/']"
     ],

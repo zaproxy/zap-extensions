@@ -53,7 +53,8 @@ public class HttpsAsHttpScanRule extends AbstractAppPlugin implements CommonActi
                         CommonAlertTag.toMap(
                                 CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
                                 CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
-                                CommonAlertTag.WSTG_V42_CRYP_03_CRYPTO_FAIL));
+                                CommonAlertTag.WSTG_V42_CRYP_03_CRYPTO_FAIL,
+                                CommonAlertTag.SYSTEMIC));
         alertTags.put(PolicyTag.QA_FULL.getTag(), "");
         alertTags.put(PolicyTag.PENTEST.getTag(), "");
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
@@ -141,7 +142,7 @@ public class HttpsAsHttpScanRule extends AbstractAppPlugin implements CommonActi
             newRequest.getRequestHeader().setSecure(false); // https becomes http
             LOGGER.debug("**{} ", newRequest.getRequestHeader().getURI());
         } catch (URIException e) {
-            LOGGER.error("Error creating HTTP URL from HTTPS URL:", e);
+            LOGGER.debug("Error creating HTTP URL from HTTPS URL:", e);
             return;
         }
 
@@ -154,7 +155,7 @@ public class HttpsAsHttpScanRule extends AbstractAppPlugin implements CommonActi
         try {
             sendAndReceive(newRequest, false);
         } catch (IOException e) {
-            LOGGER.error("Error scanning a request via HTTP when the original was HTTPS:", e);
+            LOGGER.debug("Error scanning a request via HTTP when the original was HTTPS:", e);
             return;
         }
 

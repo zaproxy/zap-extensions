@@ -7,6 +7,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Dependency updates.
 
+## [47] - 2025-11-04
+### Changed
+- Dependency updates.
+
+### Fixed
+- Include URLs from context verbatim.
+
 ## [46] - 2025-09-10
 
 ### Fixed
@@ -348,6 +355,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First Version
 
+[47]: https://github.com/zaproxy/zap-extensions/releases/openapi-v47
 [46]: https://github.com/zaproxy/zap-extensions/releases/openapi-v46
 [45]: https://github.com/zaproxy/zap-extensions/releases/openapi-v45
 [44]: https://github.com/zaproxy/zap-extensions/releases/openapi-v44

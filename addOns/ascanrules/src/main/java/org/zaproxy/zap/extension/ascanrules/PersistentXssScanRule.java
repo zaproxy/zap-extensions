@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -146,8 +147,8 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin
         setParameter(sourceMsg2, param, attack);
         try {
             sendAndReceive(sourceMsg2);
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
+        } catch (IOException e) {
+            LOGGER.debug(e.getMessage(), e);
         }
 
         if (isStop()) {
@@ -157,8 +158,8 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin
         HttpMessage sinkMsg2 = sinkMsg.cloneRequest();
         try {
             sendAndReceive(sinkMsg2);
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
+        } catch (IOException e) {
+            LOGGER.debug(e.getMessage(), e);
         }
 
         if (isStop()) {
@@ -690,8 +691,8 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin
                     }
                 }
             }
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
+        } catch (IOException e) {
+            LOGGER.debug(e.getMessage(), e);
         }
     }
 

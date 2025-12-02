@@ -20,6 +20,7 @@
 package org.zaproxy.addon.authhelper;
 
 import java.net.HttpCookie;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -59,11 +60,14 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchShadowRootException;
 import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.UsernameAndPassword;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.Extension;
@@ -165,6 +169,8 @@ public class AuthUtils {
     private static final Logger LOGGER = LogManager.getLogger(AuthUtils.class);
 
     private static final By ALL_SELECTOR = By.cssSelector("*");
+
+    private static final String PASSWORD = "password";
 
     private static final String INPUT_TAG = "input";
 
@@ -386,11 +392,20 @@ public class AuthUtils {
                         displayed(inputElements)
                                 .filter(
                                         element ->
-                                                "password"
-                                                        .equalsIgnoreCase(
-                                                                getAttribute(element, "type")))
+                                                PASSWORD.equalsIgnoreCase(
+                                                        getAttribute(element, "type")))
                                 .findFirst()
-                                .orElse(null));
+                                .orElseGet(
+                                        () ->
+                                                displayed(inputElements)
+                                                        .filter(AuthUtils::hasPasswordAttributes)
+                                                        .findFirst()
+                                                        .orElse(null)));
+    }
+
+    private static boolean hasPasswordAttributes(WebElement element) {
+        return StringUtils.containsIgnoreCase(getAttribute(element, "id"), PASSWORD)
+                || StringUtils.containsIgnoreCase(getAttribute(element, "name"), PASSWORD);
     }
 
     /**
@@ -411,6 +426,15 @@ public class AuthUtils {
             LOGGER.warn(e.getMessage(), e);
         }
         return null;
+    }
+
+    public static boolean isAuthProvider(HttpMessage msg) {
+        for (Authenticator authenticator : AUTHENTICATORS) {
+            if (authenticator.isOwnSite(msg)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -636,7 +660,14 @@ public class AuthUtils {
         for (Authenticator authenticator : AUTHENTICATORS) {
             result =
                     authenticator.authenticate(
-                            diags, wd, context, loginPageUrl, credentials, stepDelayInSecs, steps);
+                            diags,
+                            wd,
+                            context,
+                            loginPageUrl,
+                            credentials,
+                            stepDelayInSecs,
+                            waitInSecs,
+                            steps);
 
             if (!result.isAttempted()) {
                 continue;
@@ -748,6 +779,55 @@ public class AuthUtils {
             AuthenticationDiagnostics diags, WebDriver wd, WebElement field, int stepDelayInSecs) {
         sendReturn(diags, wd, field);
         sleep(TimeUnit.SECONDS.toMillis(stepDelayInSecs));
+    }
+
+    public static void submit(
+            AuthenticationDiagnostics diags,
+            WebDriver wd,
+            WebElement field,
+            int stepDelayInSecs,
+            int pageLoadWait) {
+        sendReturnAndSleep(diags, wd, field, stepDelayInSecs);
+
+        try {
+            boolean invisible =
+                    new WebDriverWait(wd, Duration.ofSeconds(pageLoadWait))
+                            .until(ExpectedConditions.invisibilityOf(field));
+            if (invisible) {
+                return;
+            }
+        } catch (TimeoutException ignore) {
+            // Nothing to do.
+        }
+
+        WebElement button;
+        List<WebElement> buttons =
+                wd.findElements(By.tagName("button")).stream()
+                        .filter(WebElement::isDisplayed)
+                        .filter(WebElement::isEnabled)
+                        .toList();
+        if (buttons.size() == 1) {
+            button = buttons.get(0);
+        } else {
+            button =
+                    buttons.stream()
+                            .filter(e -> elementContainsText(e, LOGIN_LABELS_P1))
+                            .findFirst()
+                            .orElse(null);
+        }
+
+        if (button != null) {
+            diags.recordStep(
+                    wd,
+                    Constant.messages.getString("authhelper.auth.method.diags.steps.click"),
+                    button);
+            button.click();
+        }
+    }
+
+    private static boolean elementContainsText(WebElement element, List<String> searchTexts) {
+        String txt = element.getText().toLowerCase(Locale.ROOT);
+        return searchTexts.stream().anyMatch(txt::contains);
     }
 
     public static void incStatsCounter(String url, String stat) {
@@ -888,7 +968,7 @@ public class AuthUtils {
                         }
                     }
                 }
-            } catch (JSONException e) {
+            } catch (JSONException | ClassCastException e) {
                 LOGGER.debug(
                         "Unable to parse authentication response body from {} as JSON: {} ",
                         msg.getRequestHeader().getURI(),

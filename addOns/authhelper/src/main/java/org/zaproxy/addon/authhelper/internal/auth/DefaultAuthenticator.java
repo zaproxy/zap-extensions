@@ -26,6 +26,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.authhelper.AuthUtils;
 import org.zaproxy.addon.authhelper.AuthenticationDiagnostics;
 import org.zaproxy.addon.authhelper.internal.AuthenticationStep;
@@ -37,6 +38,12 @@ public class DefaultAuthenticator implements Authenticator {
     private static final Logger LOGGER = LogManager.getLogger(DefaultAuthenticator.class);
 
     @Override
+    public boolean isOwnSite(HttpMessage msg) {
+        // Default does not own any site.
+        return false;
+    }
+
+    @Override
     public Result authenticate(
             AuthenticationDiagnostics diags,
             WebDriver wd,
@@ -44,6 +51,7 @@ public class DefaultAuthenticator implements Authenticator {
             String loginPageUrl,
             UsernamePasswordAuthenticationCredentials credentials,
             int stepDelayInSecs,
+            int waitInSecs,
             List<AuthenticationStep> steps) {
 
         String username = credentials.getUsername();
@@ -116,7 +124,7 @@ public class DefaultAuthenticator implements Authenticator {
                     LOGGER.debug("Submitting password field on {}", wd.getCurrentUrl());
                     AuthUtils.fillPassword(diags, wd, password, pwdField, stepDelayInSecs);
                 }
-                AuthUtils.sendReturnAndSleep(diags, wd, pwdField, stepDelayInSecs);
+                AuthUtils.submit(diags, wd, pwdField, stepDelayInSecs, waitInSecs);
             } catch (Exception e) {
                 diags.reportFlowException(e);
 

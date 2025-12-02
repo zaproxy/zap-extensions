@@ -54,6 +54,7 @@ import org.zaproxy.addon.postman.models.KeyValueData;
 import org.zaproxy.addon.postman.models.PostmanCollection;
 import org.zaproxy.addon.postman.models.Request;
 import org.zaproxy.addon.postman.models.Request.Url;
+import org.zaproxy.zap.utils.Stats;
 
 public class PostmanParser {
 
@@ -88,6 +89,7 @@ public class PostmanParser {
         }
 
         String collectionJson = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+        Stats.incCounter("stats.postman.import.file");
         return importCollection(collectionJson, variables, initViaUi);
     }
 
@@ -106,6 +108,7 @@ public class PostmanParser {
         }
 
         String collectionJson = requestor.getResponseBody(uri);
+        Stats.incCounter("stats.postman.import.url");
         return importCollection(collectionJson, variables, initViaUi);
     }
 
@@ -121,6 +124,7 @@ public class PostmanParser {
                 postmanCollection.getItem(), httpMessages, errors, postmanCollection.getVariable());
         if (httpMessages.isEmpty()) {
             errors.add(Constant.messages.getString("postman.import.error.noItem"));
+            Stats.incCounter("stats.postman.error.nomsgs");
         }
         return httpMessages;
     }
@@ -134,6 +138,10 @@ public class PostmanParser {
         requestor.run(httpMessages, errors);
 
         outputErrors(errors, initViaUi);
+
+        if (!errors.isEmpty()) {
+            Stats.incCounter("stats.postman.errors", errors.size());
+        }
 
         return errors.isEmpty();
     }
@@ -273,6 +281,7 @@ public class PostmanParser {
                             IMPORT_FORMAT_ERROR,
                             item.getName(),
                             Constant.messages.getString("postman.import.errorMsg.reqNotPresent")));
+            Stats.incCounter("stats.postman.error.noreq");
             return null;
         }
 
@@ -283,6 +292,7 @@ public class PostmanParser {
                             IMPORT_FORMAT_ERROR,
                             item.getName(),
                             Constant.messages.getString("postman.import.errorMsg.urlNotPresent")));
+            Stats.incCounter("stats.postman.error.nourl");
             return null;
         }
 
@@ -306,6 +316,7 @@ public class PostmanParser {
                             IMPORT_FORMAT_ERROR,
                             item.getName(),
                             Constant.messages.getString("postman.import.errorMsg.rawInvalid")));
+            Stats.incCounter("stats.postman.error.exception");
             return null;
         }
 
@@ -322,6 +333,7 @@ public class PostmanParser {
                 }
             }
         }
+        Stats.incCounter("stats.postman.messages");
 
         Body body = request.getBody();
         if (body == null || body.isDisabled()) {
@@ -423,6 +435,7 @@ public class PostmanParser {
                                 IMPORT_WARNING,
                                 item.getName(),
                                 e1.getClass().getName() + ": " + e1.getMessage()));
+                Stats.incCounter("stats.postman.error.badfile");
             }
         } else if (mode.equals(Body.GRAPHQL)) {
             if (body.getGraphQl() == null) {
@@ -503,6 +516,7 @@ public class PostmanParser {
                                 IMPORT_WARNING,
                                 itemName,
                                 "Could not read file: " + e.getMessage()));
+                Stats.incCounter("stats.postman.error.badfile");
                 return "";
             }
         } else {
@@ -528,6 +542,7 @@ public class PostmanParser {
                                     + e.getClass().getName()
                                     + ": "
                                     + e.getMessage()));
+            Stats.incCounter("stats.postman.error.badfiletype");
             return "";
         }
     }
