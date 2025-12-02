@@ -5,4 +5,5 @@ extension: html
 sections:
  - riskSummaryChart
  - bugsCountChart
+ - insights
  - vulnerabilityImpact
