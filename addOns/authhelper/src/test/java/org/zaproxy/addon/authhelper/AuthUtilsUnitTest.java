@@ -106,6 +106,7 @@ class AuthUtilsUnitTest extends TestUtils {
         setUpZap();
 
         mockMessages(new ExtensionAuthhelper());
+        AuthUtils.setHistoryProvider(new TestHistoryProvider());
     }
 
     @AfterEach

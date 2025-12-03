@@ -199,7 +199,8 @@ public class AuthUtils {
 
     private static long timeToWaitMs = TimeUnit.SECONDS.toMillis(5);
 
-    @Setter private static HistoryProvider historyProvider = new HistoryProvider();
+    @Setter
+    private static HistoryProvider historyProvider = ExtensionAuthhelper.getHistoryProvider();
 
     /**
      * These are session tokens that have been seen in responses but not yet seen in use. When they

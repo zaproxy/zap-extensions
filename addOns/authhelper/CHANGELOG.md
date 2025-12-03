@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fail the Microsoft login if not able to perform all the expected steps.
 - Track GWT headers.
 - Handle additional exceptions when processing JSON authentication components.
+- Improved performance of the Session Detection scan rule.
 
 ### Fixed
 - Do not include known authentication providers in context.

@@ -31,7 +31,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.withSettings;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
@@ -43,9 +42,7 @@ import org.mockito.quality.Strictness;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
-import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.extension.ExtensionLoader;
-import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpHeader;
@@ -67,7 +64,6 @@ import org.zaproxy.zap.utils.I18N;
 /** Unit test for {@link SessionDetectionScanRule}. */
 class SessionDetectionScanRuleUnitTest extends PassiveScannerTest<SessionDetectionScanRule> {
 
-    private List<HttpMessage> history;
     private HistoryProvider historyProvider;
 
     @Override
@@ -107,7 +103,6 @@ class SessionDetectionScanRuleUnitTest extends PassiveScannerTest<SessionDetecti
         given(session.getContextsForUrl(anyString())).willReturn(Arrays.asList(context));
         given(model.getSession()).willReturn(session);
 
-        history = new ArrayList<>();
         historyProvider = new TestHistoryProvider();
         AuthUtils.setHistoryProvider(historyProvider);
 
@@ -204,7 +199,6 @@ class SessionDetectionScanRuleUnitTest extends PassiveScannerTest<SessionDetecti
                 DiagnosticDataLoader.loadTestData(
                         this.getResourcePath("internal/bodgeit.diags").toFile());
 
-        history = new ArrayList<>();
         historyProvider = new TestHistoryProvider();
         AuthUtils.setHistoryProvider(historyProvider);
         // When
@@ -228,7 +222,6 @@ class SessionDetectionScanRuleUnitTest extends PassiveScannerTest<SessionDetecti
     @Test
     void shouldDetectCtflearnSession() throws Exception {
         // Given
-        history = new ArrayList<>();
         historyProvider = new TestHistoryProvider();
         AuthUtils.setHistoryProvider(historyProvider);
 
@@ -267,7 +260,6 @@ class SessionDetectionScanRuleUnitTest extends PassiveScannerTest<SessionDetecti
     @Test
     void shouldDetectDefthewebSession() throws Exception {
         // Given
-        history = new ArrayList<>();
         historyProvider = new TestHistoryProvider();
         AuthUtils.setHistoryProvider(historyProvider);
 
@@ -295,7 +287,6 @@ class SessionDetectionScanRuleUnitTest extends PassiveScannerTest<SessionDetecti
     @Test
     void shouldDetectGinnjuiceSession() throws Exception {
         // Given
-        history = new ArrayList<>();
         historyProvider = new TestHistoryProvider();
         AuthUtils.setHistoryProvider(historyProvider);
 
@@ -325,7 +316,6 @@ class SessionDetectionScanRuleUnitTest extends PassiveScannerTest<SessionDetecti
     @Test
     void shouldDetectInfosecexSession() throws Exception {
         // Given
-        history = new ArrayList<>();
         historyProvider = new TestHistoryProvider();
         AuthUtils.setHistoryProvider(historyProvider);
 
@@ -372,7 +362,6 @@ class SessionDetectionScanRuleUnitTest extends PassiveScannerTest<SessionDetecti
         extensionLoader =
                 mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
 
-        history = new ArrayList<>();
         historyProvider = new TestHistoryProvider();
         AuthUtils.setHistoryProvider(historyProvider);
 
@@ -469,28 +458,5 @@ class SessionDetectionScanRuleUnitTest extends PassiveScannerTest<SessionDetecti
         scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised, hasSize(0));
-    }
-
-    class TestHistoryProvider extends HistoryProvider {
-        @Override
-        public void addAuthMessageToHistory(HttpMessage msg) {
-            history.add(msg);
-            int id = history.size() - 1;
-            HistoryReference href =
-                    mock(HistoryReference.class, withSettings().strictness(Strictness.LENIENT));
-            given(href.getHistoryId()).willReturn(id);
-            msg.setHistoryRef(href);
-        }
-
-        @Override
-        public HttpMessage getHttpMessage(int historyId)
-                throws HttpMalformedHeaderException, DatabaseException {
-            return history.get(historyId);
-        }
-
-        @Override
-        public int getLastHistoryId() {
-            return history.size() - 1;
-        }
     }
 }
