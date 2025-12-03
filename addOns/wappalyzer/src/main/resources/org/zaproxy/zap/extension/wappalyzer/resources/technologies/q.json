@@ -230,6 +230,42 @@
     ],
     "website": "https://qooqie.com"
   },
+  "QoreAI": {
+    "cats": [
+      1
+    ],
+    "description": "QoreAI is an all-in-one collaboration operating system designed for the automotive industry.",
+    "icon": "QoreAI.svg",
+    "js": {
+      "QoreAI.execute": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.qoreai\\.com"
+    ],
+    "website": "https://www.qoreai.com"
+  },
+  "Qpien": {
+    "cats": [
+      52
+    ],
+    "description": "Qpien is a SaaS platform that provides multi-channel customer communication management with AI reply automation, smart inbox, call center integration, and workflow orchestration.",
+    "icon": "Qpien.svg",
+    "js": {
+      "QpienWidget": "",
+      "qpienIframeAction": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://qpien.com"
+  },
   "Qshop": {
     "cats": [
       6
@@ -326,6 +362,22 @@
     },
     "saas": true,
     "website": "https://www.qualitelis.septeo.com"
+  },
+  "Quality Unit Help Desk": {
+    "cats": [
+      52
+    ],
+    "description": "Quality Unit Help Desk is a customer support and help desk software designed to manage and streamline customer service operations.",
+    "icon": "QualityUnitHelpDesk.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.qualityunit\\.liveagent"
+    ],
+    "website": "https://www.qualityunit.com"
   },
   "Qualtrics": {
     "cats": [
@@ -495,23 +547,22 @@
   },
   "Qubit": {
     "cats": [
-      74,
       76
     ],
-    "description": "Qubit is a SaaS based persuasive personalisation at scale services.",
-    "icon": "Qubit.png",
+    "description": "Qubit is a platform that enables personalized ecommerce experiences through data-driven insights and intelligent automation.",
+    "icon": "Qubit.svg",
     "js": {
-      "__qubit": "",
-      "onQubitReady": ""
+      "QUBIT_WORKER": ""
     },
     "pricing": [
-      "poa"
+      "low",
+      "recurring"
     ],
     "saas": true,
     "scriptSrc": [
-      "static\\.goqubit\\.com"
+      "\\.goqubit\\.com"
     ],
-    "website": "https://www.qubit.com"
+    "website": "https://www.coveo.com/en/qubit"
   },
   "Querlo": {
     "cats": [
@@ -850,6 +901,26 @@
       "api\\.quixchat\\.com/assets/js/quixchat\\.js\\?ver=(\\d+\\.\\d+)(?:\\.\\d+)*\\;version:\\1"
     ],
     "website": "https://quixchat.com"
+  },
+  "Quizitri": {
+    "cats": [
+      32
+    ],
+    "description": "Quizitri is a tool for creating unlimited quizzes aimed at increasing conversions, website traffic, lead generation, and sales.",
+    "icon": "Quizitri.svg",
+    "pricing": [
+      "low",
+      "recurring",
+      "onetime"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.quizitri\\.com"
+    ],
+    "scripts": [
+      "app\\.quizitri\\.com"
+    ],
+    "website": "https://www.quizitri.com"
   },
   "Qukasoft": {
     "cats": [

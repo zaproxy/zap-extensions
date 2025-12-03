@@ -399,6 +399,23 @@
       "\\.getzenbasket\\.com"
     ]
   },
+  "ZenMaid": {
+    "cats": [
+      72
+    ],
+    "description": "ZenMaid is a residential cleaning scheduling software that helps manage appointments.",
+    "icon": "ZenMaid.svg",
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "app\\.zenmaid\\.com"
+    ],
+    "website": "https://get.zenmaid.com"
+  },
   "Zenbooker": {
     "cats": [
       72
@@ -539,6 +556,22 @@
     },
     "website": "https://zenfolio.com"
   },
+  "Zenler": {
+    "cats": [
+      21
+    ],
+    "description": "Zenler is a course creation platform that combines live classes, webinars, community building, and marketing tools in one system.",
+    "icon": "Zenler.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "webtracker\\.newzenler\\.com"
+    ],
+    "website": "https://www.newzenler.com"
+  },
   "Zenoti": {
     "cats": [
       72
@@ -658,6 +691,22 @@
     ],
     "website": "https://zeotap.com"
   },
+  "Zepio": {
+    "cats": [
+      6
+    ],
+    "description": "Zepio is a platform that enables creating an online store with an integrated website and delivery system, requiring no coding.",
+    "headers": {
+      "X-Powered-By": "^Zepio$"
+    },
+    "icon": "Zepio.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://zepio.io"
+  },
   "Zeppelin": {
     "cats": [
       32
@@ -699,6 +748,24 @@
     ],
     "saas": true,
     "website": "https://www.zestmoney.in"
+  },
+  "Zestard": {
+    "cats": [
+      6
+    ],
+    "description": "Zestard is a provider of Shopify plugins, offering solutions that support ecommerce functionality and customization.",
+    "icon": "Zestard.svg",
+    "js": {
+      "$zestard_easy": ""
+    },
+    "requires": [
+      "Shopify"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "zestardshop\\.com/shopifyapp"
+    ],
+    "website": "https://www.zestardshop.com"
   },
   "Zeta Producer": {
     "cats": [
@@ -924,6 +991,25 @@
       "app\\.zipwp\\.com"
     ],
     "website": "https://zipwp.com"
+  },
+  "Zipchat": {
+    "cats": [
+      52
+    ],
+    "description": "Zipchat is an AI chatbot for ecommerce, designed to boost sales by automating customer interactions and assisting with purchasing decisions.",
+    "icon": "Zipchat.svg",
+    "js": {
+      "zipchatWidgetLoaded": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "app\\.zipchat\\.ai"
+    ],
+    "website": "https://zipchat.ai"
   },
   "Zipify OCU": {
     "cats": [
@@ -1215,6 +1301,37 @@
       "\\.getzola\\.org"
     ],
     "website": "https://www.getzola.org/"
+  },
+  "Zola Planner": {
+    "cats": [
+      6
+    ],
+    "description": "Zola Planner is a wedding registry system that allows couples to manage gift selections, track contributions, and coordinate registry details in one centralized platform.",
+    "icon": "ZolaPlanner.svg",
+    "js": {
+      "ZolaWidget": "",
+      "zola.env": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "www\\.zola\\.com"
+    ],
+    "website": "https://www.zola.com/wedding-registry"
+  },
+  "Zonal Bookings": {
+    "cats": [
+      93
+    ],
+    "description": "Zonal Bookings is a reservations platform that enables hospitality businesses to centralize and manage all booking activities without charging commissions.",
+    "icon": "Zonal.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.reservationDetails\\.zonalBookingReference"
+    ],
+    "website": "https://www.zonal.co.uk/products/bookings"
   },
   "Zone.js": {
     "cats": [

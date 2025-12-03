@@ -407,6 +407,26 @@
     ],
     "website": "https://91app.com"
   },
+  "99minds": {
+    "cats": [
+      84
+    ],
+    "description": "99minds is an online platform for managing and scaling gift cards, store credit, digital wallets, and loyalty programs.",
+    "icon": "99minds.svg",
+    "js": {
+      "_99mindsDataLayer": ""
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.99minds\\.io"
+    ],
+    "website": "https://www.99minds.io"
+  },
   "<model-viewer>": {
     "cats": [
       105

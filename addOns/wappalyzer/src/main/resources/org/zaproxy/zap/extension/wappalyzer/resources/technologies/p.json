@@ -30,6 +30,18 @@
     "saas": true,
     "website": "https://parsico.org/"
   },
+  "PAYTR": {
+    "cats": [
+      41
+    ],
+    "description": "PAYTR is a platform that enables secure remote management of all payment transactions.",
+    "icon": "PAYTR.svg",
+    "saas": true,
+    "scriptSrc": [
+      "www\\.paytr\\.com"
+    ],
+    "website": "https://www.paytr.com"
+  },
   "PCI Proxy": {
     "cats": [
       41
@@ -99,6 +111,9 @@
     },
     "cpe": "cpe:2.3:a:php:php:*:*:*:*:*:*:*:*",
     "description": "PHP is a general-purpose scripting language used for web development.",
+    "dom": [
+      "form[action*='login_process.php']"
+    ],
     "headers": {
       "Server": "php/?([\\d.]+)?\\;version:\\1",
       "X-Powered-By": "^php/?([\\d.]+)?\\;version:\\1"
@@ -206,6 +221,24 @@
       ".+\\.pixijs\\.com"
     ],
     "website": "https://www.pixijs.com"
+  },
+  "POINT": {
+    "cats": [
+      101
+    ],
+    "description": "POINT is a volunteer management platform and app for nonprofits to find and manage volunteers.",
+    "icon": "POINT.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "//pointapp\\.org(?:/.*)?(?:\\?.*)?$"
+    ],
+    "website": "https://pointapp.org"
   },
   "POLi Payment": {
     "cats": [
@@ -360,6 +393,18 @@
     ],
     "website": "https://pacenow.co/"
   },
+  "Package.AI": {
+    "cats": [
+      32
+    ],
+    "description": "Package.AI is a unified platform for last-mile and customer engagement, leveraging AI to enhance service delivery.",
+    "icon": "PackageAI.svg",
+    "saas": true,
+    "scriptSrc": [
+      "app\\.package\\.ai"
+    ],
+    "website": "https://package.ai"
+  },
   "Packery": {
     "cats": [
       59
@@ -373,7 +418,7 @@
     "scriptSrc": [
       "packery(?:\\.pkgd)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1"
     ],
-    "website": "https://packery.metafizzy.co/"
+    "website": "https://packery.metafizzy.co"
   },
   "Packlink PRO": {
     "cats": [
@@ -432,6 +477,25 @@
       "cdn\\.paddle\\.com/paddle/paddle\\.js"
     ],
     "website": "https://paddle.com/"
+  },
+  "Paessler": {
+    "cats": [
+      37
+    ],
+    "description": "Paessler is a network monitoring platform that provides complete visibility into IT infrastructure through a single solution, helping detect, analyze, and resolve performance issues across systems and devices.",
+    "dom": [
+      "span[class*='paesslerlogo'] > a[href*='www.paessler.com']"
+    ],
+    "icon": "Paessler.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.paessler\\.com"
+    ],
+    "website": "https://www.paessler.com"
   },
   "PagSeguro": {
     "cats": [
@@ -622,6 +686,25 @@
     ],
     "website": "https://pagely.com/"
   },
+  "Pagemaker": {
+    "cats": [
+      51
+    ],
+    "description": "Pagemaker is a tool for creating mobile-first web pages optimized for high conversion rates.",
+    "icon": "Pagemaker.svg",
+    "js": {
+      "pagemaker.accordion": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.pagemaker\\.io"
+    ],
+    "website": "https://pagemaker.io"
+  },
   "Pagetiger": {
     "cats": [
       1
@@ -705,6 +788,18 @@
     ],
     "website": "https://www.palbin.com"
   },
+  "Palo Alto Networks - GlobalProtect": {
+    "cats": [
+      46
+    ],
+    "description": "GlobalProtect is a web-based portal that enables connection to a VPN, providing secure access to enterprise networks and resources.",
+    "dom": [
+      "link[href*='/global-protect/portal/css/']"
+    ],
+    "icon": "GlobalProtect.svg",
+    "saas": true,
+    "website": "https://www.paloaltonetworks.com/sase/globalprotect"
+  },
   "Paloma": {
     "cats": [
       100
@@ -737,6 +832,30 @@
     "icon": "PandaCSS.svg",
     "oss": true,
     "website": "https://panda-css.com/"
+  },
+  "Panda Video": {
+    "cats": [
+      14
+    ],
+    "description": "Panda Video is a video hosting platform that provide streaming, engages viewers, and supports sales growth.",
+    "dom": [
+      "iframe[src*='tv.pandavideo.com']"
+    ],
+    "icon": "PandaVideo.svg",
+    "js": {
+      "pandaLoad": "",
+      "pandatag": ""
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.tv\\.pandavideo\\.com"
+    ],
+    "website": "https://pandavideo.com"
   },
   "Pandectes": {
     "cats": [
@@ -934,6 +1053,24 @@
     "oss": true,
     "website": "https://inlang.com/m/gerre34r/library-inlang-paraglideJs"
   },
+  "ParcelPanel": {
+    "cats": [
+      102
+    ],
+    "description": "ParcelPanel is a solution for tracking shipments and managing returns for ecommerce businesses.",
+    "icon": "ParcelPanel.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "payg"
+    ],
+    "saas": true,
+    "scripts": [
+      "api\\.parcelpanel\\.com"
+    ],
+    "website": "https://www.parcelpanel.com"
+  },
   "Parcelforce": {
     "cats": [
       99
@@ -947,6 +1084,34 @@
       "\\bParcelforce\\b"
     ],
     "website": "https://www.parcelforce.com"
+  },
+  "Parentapps": {
+    "cats": [
+      21
+    ],
+    "description": "Parentapps is a school communication platform designed to streamline interaction between parents and teachers through centralized messaging and updates.",
+    "icon": "Parentapps.svg",
+    "meta": {
+      "generator": "Parentapps(?: v\\.([\\d.]+))?\\;version:\\1"
+    },
+    "saas": true,
+    "website": "https://www.parentapps.co.uk"
+  },
+  "ParkFlow": {
+    "cats": [
+      93
+    ],
+    "description": "ParkFlow is a system for managing bookings at airport parking facilities, enabling streamlined scheduling, allocation, and tracking of parking reservations.",
+    "icon": "ParkFlow.svg",
+    "pricing": [
+      "payg",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "widget\\.parkflow\\.io/"
+    ],
+    "website": "https://parkflow.io"
   },
   "ParkingCrew": {
     "cats": [
@@ -1065,6 +1230,18 @@
     ],
     "website": "https://particularaudience.com"
   },
+  "Partner Driven": {
+    "cats": [
+      71
+    ],
+    "description": "Partner Driven is a real estate investment approach that involves partnerships between investors to pool resources and share risks, aimed at maximizing returns through collaborative efforts.",
+    "icon": "PartnerDriven.svg",
+    "saas": true,
+    "scripts": [
+      "app\\.partnerdriven\\.com"
+    ],
+    "website": "https://partnerdriven.com"
+  },
   "PartnerStack": {
     "cats": [
       71
@@ -1114,6 +1291,21 @@
       "\\.partnero\\.com/"
     ],
     "website": "https://www.partnero.com"
+  },
+  "Parts Square": {
+    "cats": [
+      6
+    ],
+    "description": "Parts Square is an enterprise-grade automotive ecommerce platform designed to support SEO-friendly sales of auto parts through a standalone website.",
+    "icon": "PartsSquare.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.square\\.parts/"
+    ],
+    "website": "https://square.parts"
   },
   "Parttrap ONE": {
     "cats": [
@@ -1244,6 +1436,21 @@
     ],
     "website": "https://github.com/andreaferretti/paths-js"
   },
+  "Patient Prism": {
+    "cats": [
+      10
+    ],
+    "description": "Patient Prism is a call tracking and AI-powered coaching platform for dentists, designed to improve practice operations, patient engagement, and overall performance.",
+    "icon": "PatientPrism.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "next-api\\.patientprism\\.com"
+    ],
+    "website": "https://www.patientprism.com"
+  },
   "PatientSites": {
     "cats": [
       1
@@ -1319,6 +1526,22 @@
       "/wp-content/plugins/payitlater-gateway-for-woocommerce/(?:.+\\?ver=([\\d\\.]+))?\\;version:\\1"
     ],
     "website": "https://www.payitlater.com.au"
+  },
+  "Pay.": {
+    "cats": [
+      41
+    ],
+    "description": "Pay. is an all-in-one payment provider offering integrated solutions for processing online and in-store transactions.",
+    "icon": "PayNL.svg",
+    "js": {
+      "PaynlLabel": "",
+      "paynl_gateways": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.pay.nl"
   },
   "PayBright": {
     "cats": [
@@ -1505,6 +1728,25 @@
     ],
     "website": "https://developer.paypal.com/docs/marketing-solutions"
   },
+  "PayU Payment": {
+    "cats": [
+      41
+    ],
+    "description": "PayU is a provider of financial solutions for ecommerce, facilitating online payments and related transaction services.",
+    "icon": "PayU.svg",
+    "js": {
+      "OpenPayU": "",
+      "PayU": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "\\.payu\\.com"
+    ],
+    "scripts": [
+      "\\.payu\\.com"
+    ],
+    "website": "https://corporate.payu.com"
+  },
   "PayWhirl": {
     "cats": [
       41
@@ -1550,6 +1792,27 @@
       "partpayassets\\.blob\\.core\\.windows\\.net"
     ],
     "website": "https://payflex.co.za/"
+  },
+  "Payhip": {
+    "cats": [
+      6
+    ],
+    "description": "Payhip is a platform that enables creators to sell digital downloads and manage membership subscriptions.",
+    "icon": "Payhip.svg",
+    "js": {
+      "Payhip.Alert": "",
+      "PayhipSetupFinished": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "payhip\\.com/js/payhip\\.js"
+    ],
+    "website": "https://payhip.com"
   },
   "Payl8r": {
     "cats": [
@@ -1705,6 +1968,22 @@
     ],
     "website": "https://www.paysera.com"
   },
+  "Peachs": {
+    "cats": [
+      94
+    ],
+    "description": "Peachs is a Squarespace ecommerce word-of-mouth marketing system designed to promote products through customer referrals and social sharing.",
+    "icon": "Peachs.svg",
+    "js": {
+      "PEACHS_AFFILIATE_STARTED_PROGRAMS": "",
+      "PEACHS_SQUARESPACE_STARTED": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "//peachs\\.co/"
+    ],
+    "website": "https://peachs.co"
+  },
   "Pear Commerce": {
     "cats": [
       6
@@ -1759,6 +2038,18 @@
     "saas": true,
     "website": "https://www.peddle.com"
   },
+  "Peecho": {
+    "cats": [
+      6
+    ],
+    "description": "Peecho is a service that enables the sale of digital publications as printed physical products.",
+    "icon": "Peecho.svg",
+    "saas": true,
+    "scripts": [
+      "www\\.peecho\\.com"
+    ],
+    "website": "https://www.peecho.com"
+  },
   "Peek": {
     "cats": [
       5,
@@ -1804,6 +2095,18 @@
       "\\.peerboard\\.com/"
     ],
     "website": "https://peerboard.com"
+  },
+  "PeerJS": {
+    "cats": [
+      59
+    ],
+    "description": "PeerJS is a JavaScript library that enables WebRTC-based peer-to-peer data, video, and audio connections.",
+    "icon": "PeerJS.svg",
+    "js": {
+      "Peer.DEFAULT_KEY": ""
+    },
+    "oss": true,
+    "website": "https://peerjs.com"
   },
   "PeerPal": {
     "cats": [
@@ -1899,6 +2202,22 @@
       "(?:jquery\\.)?peity(?:-demo)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1"
     ],
     "website": "https://benpickles.github.io/peity/"
+  },
+  "Pelcro": {
+    "cats": [
+      41
+    ],
+    "description": "Pelcro is a subscription and membership management software.",
+    "icon": "Pelcro.svg",
+    "js": {
+      "Pelcro.adblock": "",
+      "PelcroEventsAlreadyFired": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "js\\.pelcro\\.com"
+    ],
+    "website": "https://www.get.pelcro.com"
   },
   "Pelican": {
     "cats": [
@@ -2033,6 +2352,34 @@
       "/npm/@percy\\.ai/"
     ],
     "website": "https://percy.ai"
+  },
+  "Perfect Corp": {
+    "cats": [
+      105
+    ],
+    "description": "Perfect Corp is a beauty augmented reality company and makeup AR technology platform that develops virtual try-on solutions for cosmetics brands.",
+    "icon": "PerfectCorp.svg",
+    "saas": true,
+    "scriptSrc": [
+      "plugins-media\\.perfectcorp\\.com"
+    ],
+    "website": "https://www.perfectcorp.com/business"
+  },
+  "Perfect Storm": {
+    "cats": [
+      53
+    ],
+    "description": "Perfect Storm is an all-in-one platform for real estate lead generation and customer relationship management, designed to support business scaling.",
+    "icon": "PerfectStorm.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "api\\.perfectstormnow\\.com"
+    ],
+    "website": "https://www.perfectstormnow.com"
   },
   "PerfectApps Swift": {
     "cats": [
@@ -2240,6 +2587,18 @@
     "xhr": [
       "api\\.permutive\\.com"
     ]
+  },
+  "Persona.ly": {
+    "cats": [
+      32
+    ],
+    "description": "Persona.ly is a data-driven platform that helps businesses acquire users through analytics and targeted strategies.",
+    "icon": "Persona.svg",
+    "saas": true,
+    "scriptSrc": [
+      "static\\.persona\\.ly"
+    ],
+    "website": "https://persona.ly"
   },
   "PersonaClick": {
     "cats": [
@@ -2732,6 +3091,58 @@
     "saas": true,
     "website": "https://piano.io/product/analytics/"
   },
+  "Picatcha": {
+    "cats": [
+      16
+    ],
+    "description": "Picatcha is a CAPTCHA technology designed to provide a usable and secure way to verify human users and prevent automated access.",
+    "icon": "Picatcha.svg",
+    "saas": true,
+    "scriptSrc": [
+      "api\\.picatcha\\.com"
+    ],
+    "scripts": [
+      "api\\.picatcha\\.com"
+    ],
+    "website": "https://picatcha.com"
+  },
+  "Pickaxe": {
+    "cats": [
+      51
+    ],
+    "description": "Pickaxe is a no-code platform that enables users to build, launch, and sell AI products without requiring coding skills.",
+    "icon": "Pickaxe.svg",
+    "js": {
+      "PICKAXE": "",
+      "PickaxeProject": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "embed\\.pickaxeproject\\.com"
+    ],
+    "website": "https://pickaxe.co"
+  },
+  "Pickrr": {
+    "cats": [
+      99
+    ],
+    "description": "Pickrr is a logistics and shipping solution that manages and optimizes order fulfillment for ecommerce businesses.",
+    "icon": "Pickrr.svg",
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "widget\\.pickrr\\.com"
+    ],
+    "website": "https://pickrr.com"
+  },
   "PickyStory": {
     "cats": [
       100
@@ -2821,6 +3232,25 @@
     ],
     "website": "https://www.picreel.com"
   },
+  "Picture It": {
+    "cats": [
+      100
+    ],
+    "description": "Picture It is a preview tool designed for Shopify art stores, enabling visualization of products within a single platform.",
+    "icon": "PictureIt.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": [
+      "Shopify"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.pictureit\\.co/"
+    ],
+    "website": "https://www.pictureit.co"
+  },
   "Picturepark": {
     "cats": [
       95
@@ -2838,6 +3268,44 @@
       "recurring"
     ],
     "website": "https://picturepark.com"
+  },
+  "PieEye": {
+    "cats": [
+      67
+    ],
+    "description": "PieEye is a data privacy solution for ecommerce platforms that supports privacy compliance requirements.",
+    "icon": "PieEye.svg",
+    "js": {
+      "piEyeScript": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.cookie\\.pii\\.ai/"
+    ],
+    "website": "https://pii.ai"
+  },
+  "Piggy": {
+    "cats": [
+      84
+    ],
+    "description": "Piggy is a loyalty program management platform.",
+    "icon": "Piggy.svg",
+    "js": {
+      "PiggyWidget": ""
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.piggy\\.eu/"
+    ],
+    "website": "https://www.piggy.eu"
   },
   "Piio": {
     "cats": [
@@ -2908,6 +3376,22 @@
     ],
     "website": "https://pimcore.com/en/digital-experience-platform"
   },
+  "Pimster": {
+    "cats": [
+      32
+    ],
+    "description": "Pimster is a platform that enables the creation and distribution of interactive, shoppable web stories across websites, email campaigns, and QR codes.",
+    "icon": "Pimster.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.pimster\\.app"
+    ],
+    "website": "https://pimster.app"
+  },
   "Pin Payments": {
     "cats": [
       41
@@ -2918,6 +3402,39 @@
       "api\\.pinpayments\\.com"
     ],
     "website": "https://www.pinpayments.com/"
+  },
+  "Pinboard": {
+    "cats": [
+      5
+    ],
+    "description": "Pinboard is a widget that displays bookmarks directly on a website for easy access and organization.",
+    "icon": "Pinboard.svg",
+    "js": {
+      "Pinboard_Linkroll": "",
+      "pinboardNS_callback": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "feeds\\.pinboard\\.in"
+    ],
+    "website": "https://pinboard.in"
+  },
+  "Pineapple Builder": {
+    "cats": [
+      51
+    ],
+    "description": "Pineapple Builder is an AI-powered website builder designed to help businesses create and scale websites.",
+    "icon": "PineappleBuilder.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.pineapple-cdn\\.com"
+    ],
+    "website": "https://www.pineapplebuilder.com"
   },
   "Ping Parrot": {
     "cats": [
@@ -3242,6 +3759,46 @@
     ],
     "website": "https://www.pixelyoursite.com"
   },
+  "Pixelesq": {
+    "cats": [
+      51
+    ],
+    "description": "Pixelesq is a no-code platform that uses AI tools to generate and manage websites with structured control over SEO, accessibility, performance, and branding standards.",
+    "dom": [
+      "div[data-accent-color*='pixelesq']"
+    ],
+    "icon": "Pixelesq.svg",
+    "implies": [
+      "Next.js",
+      "Tailwind CSS"
+    ],
+    "meta": {
+      "generator": "^Pixelesq\\s-\\sAI\\sWebsite\\sBuilder$"
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.pixelesq.com"
+  },
+  "Pixenio": {
+    "cats": [
+      51
+    ],
+    "cookies": {
+      "pxnssid": ""
+    },
+    "description": "Pixenio is a responsive website builder that enables users to create fast, SEO-optimized sites with simplicity comparable to managing social media profiles.",
+    "icon": "Pixenio.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://pixenio.com"
+  },
   "Pixieset Store": {
     "cats": [
       6
@@ -3352,6 +3909,23 @@
       "api\\.placed\\.com"
     ],
     "website": "https://www.placed.com"
+  },
+  "Placester": {
+    "cats": [
+      32
+    ],
+    "description": "Placester is an all-in-one digital marketing platform designed for real estate professionals to manage websites, lead generation, and online branding.",
+    "icon": "Placester.svg",
+    "js": {
+      "_placester.entitlements": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://placester.com"
   },
   "Plaid": {
     "cats": [
@@ -3484,6 +4058,59 @@
       "\\.plannit\\.io/"
     ],
     "website": "https://plannit.io"
+  },
+  "Planoplan": {
+    "cats": [
+      51
+    ],
+    "description": "Planoplan is a 3D interior design program that offers layouts, visualizations, and virtual tours for creating and exploring interior spaces.",
+    "icon": "Planoplan.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.planoplan\\.com"
+    ],
+    "scripts": [
+      "\\.planoplan\\.com"
+    ],
+    "website": "https://planoplan.com"
+  },
+  "Planway": {
+    "cats": [
+      72
+    ],
+    "description": "Planway is an online booking system that allows businesses to manage appointments, schedule services, and streamline client reservations through a digital platform.",
+    "icon": "Planway.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.planway\\.com"
+    ],
+    "website": "https://planway.com"
+  },
+  "Planyo": {
+    "cats": [
+      93
+    ],
+    "description": "Planyo is a flexible reservation system designed to manage bookings for various services and resources across different industries.",
+    "icon": "Planyo.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "www\\.planyo\\.com"
+    ],
+    "website": "https://www.planyo.com"
   },
   "Planzer": {
     "cats": [
@@ -3705,6 +4332,30 @@
     ],
     "website": "https://plenigo.com"
   },
+  "PlentyONE": {
+    "cats": [
+      6
+    ],
+    "description": "PlentyONE is a cloud-based ecommerce platform that provides ERP functionality, multichannel integration, and a built-in shop system.",
+    "headers": {
+      "x-plenty-shop": "^PlentyONE Shop$"
+    },
+    "icon": "PlentyONE.svg",
+    "implies": [
+      "Vue.js",
+      "Nuxt.js",
+      "Tailwind CSS",
+      "Vue Storefront",
+      "Storefront UI",
+      "Node.js"
+    ],
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.plentyone.com/product/online-shop"
+  },
   "Plerdy": {
     "cats": [
       10
@@ -3784,6 +4435,22 @@
     ],
     "website": "https://www.plezi.co"
   },
+  "Plices": {
+    "cats": [
+      32
+    ],
+    "description": "Plices is a platform for marketing and sales automation that supports the planning, execution, measurement, and optimization of strategies.",
+    "icon": "Plices.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "analytics\\.plices\\.com"
+    ],
+    "website": "https://plices.com"
+  },
   "Pliek": {
     "cats": [
       32
@@ -3856,6 +4523,18 @@
     ],
     "website": "https://plone.org/"
   },
+  "Plotch": {
+    "cats": [
+      6
+    ],
+    "description": "Plotch is an ecommerce system enabled by ONDC and Web3 technologies, designed to support decentralized and open digital commerce networks.",
+    "icon": "Plotch.svg",
+    "saas": true,
+    "scriptSrc": [
+      "cdnassets\\.plotch\\.io"
+    ],
+    "website": "https://www.plotch.ai"
+  },
   "Plotly": {
     "cats": [
       25
@@ -3881,7 +4560,8 @@
       51
     ],
     "cookies": {
-      "plug_pay_session": ""
+      "plug_pay_session": "",
+      "plugpay_session": ""
     },
     "description": "Plug&Pay is a payment processor that provides payment solutions for ecommerce businesses.",
     "icon": "Plug and Pay.svg",
@@ -3893,7 +4573,10 @@
       "recurring"
     ],
     "saas": true,
-    "website": "https://plugandpay.nl"
+    "scriptSrc": [
+      "\\.plugandpay\\.nl"
+    ],
+    "website": "https://plugandpay.com"
   },
   "Pluglin": {
     "cats": [
@@ -3929,6 +4612,26 @@
       "shop\\.plugo\\.world"
     ],
     "website": "http://plugo.co"
+  },
+  "Plum Popup": {
+    "cats": [
+      5
+    ],
+    "cookies": {
+      "plumPopupWixPerDayNew": "",
+      "plumPopupWixStartDatePerDay": ""
+    },
+    "description": "Plum Popup is a tool for creating customizable popups designed to help increase sales by engaging visitors and promoting offers.",
+    "icon": "Plum.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "app\\.plumpopup\\.com"
+    ],
+    "website": "https://plumpopup.com"
   },
   "Plupload": {
     "cats": [
@@ -3983,6 +4686,25 @@
       "plus-pro-components\\.js"
     ],
     "website": "https://plus-pro-components.com"
+  },
+  "PlusThis": {
+    "cats": [
+      32
+    ],
+    "description": "PlusThis is a campaign toolkit for marketing automation that offers tools to streamline, integrate, and enhance marketing workflows.",
+    "icon": "PlusThis.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.plusthis\\.com"
+    ],
+    "scripts": [
+      "\\.plusthis\\.com"
+    ],
+    "website": "https://www.plusthis.com"
   },
   "Plutio": {
     "cats": [
@@ -4065,6 +4787,27 @@
     ],
     "website": "https://www.pobo.cz"
   },
+  "Pobuca": {
+    "cats": [
+      84
+    ],
+    "description": "Pobuca is a cloud-based software platform for managing customer loyalty programs and engagement initiatives.",
+    "icon": "Pobuca.svg",
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.loyalty\\.pobuca\\.com"
+    ],
+    "scripts": [
+      "\\.loyalty\\.pobuca\\.com"
+    ],
+    "website": "https://pobuca.com"
+  },
   "Pocket": {
     "cats": [
       5
@@ -4086,6 +4829,18 @@
       "widgets\\.getpocket\\.com/"
     ],
     "website": "https://getpocket.com"
+  },
+  "Pocus": {
+    "cats": [
+      32
+    ],
+    "description": "Pocus is a platform that uses AI agents to monitor B2B accounts and identify real sales opportunities at critical moments.",
+    "icon": "Pocus.svg",
+    "saas": true,
+    "scriptSrc": [
+      "//pocustrack\\.com/pocus\\.js"
+    ],
+    "website": "https://www.pocus.com"
   },
   "Podia": {
     "cats": [
@@ -4185,6 +4940,22 @@
     ],
     "website": "https://podkite.com"
   },
+  "Podpage": {
+    "cats": [
+      51
+    ],
+    "description": "Podpage is a podcast site builder that automatically creates professional websites for podcasts using RSS feeds.",
+    "icon": "Podpage.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "static\\.getpodpage\\.com/"
+    ],
+    "website": "https://www.podpage.com"
+  },
   "Podsights": {
     "cats": [
       36
@@ -4223,6 +4994,24 @@
     ],
     "website": "https://www.polaranalytics.com"
   },
+  "Poll Everywhere": {
+    "cats": [
+      73
+    ],
+    "description": "Poll Everywhere is a tool that transforms presentations, meetings, and classes into immersive, interactive experiences, enabling audience engagement through real-time participation.",
+    "icon": "PollEverywhere.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "www\\.polleverywhere\\.com"
+    ],
+    "website": "https://www.polleverywhere.com"
+  },
   "Poll Maker": {
     "cats": [
       90
@@ -4234,6 +5023,40 @@
       "scripts\\.poll-maker\\.com/"
     ],
     "website": "https://www.poll-maker.com"
+  },
+  "Pollster": {
+    "cats": [
+      73
+    ],
+    "description": "Pollster is a feedback and research system based in Poland that collects and analyses survey data.",
+    "icon": "Pollster.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.pollster\\.pl"
+    ],
+    "scripts": [
+      "\\.pollster\\.pl"
+    ],
+    "website": "https://pollster.pl"
+  },
+  "Poloda AI": {
+    "cats": [
+      68
+    ],
+    "description": "Poloda AI is an accessibility solution designed to ensure compliance with accessibility standards and regulations.",
+    "icon": "PolodaAI.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "www\\.polodaai\\.com"
+    ],
+    "website": "https://www.polodaai.com"
   },
   "Poloriz": {
     "cats": [
@@ -4325,6 +5148,23 @@
     ],
     "website": "https://polymer-project.org"
   },
+  "Popcorn CRM": {
+    "cats": [
+      53
+    ],
+    "description": "Popcorn CRM is a visual CRM providing essential tools to manage customer relationships and support business growth.",
+    "icon": "PopcornCRM.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.popcorn\\.email"
+    ],
+    "website": "https://popcorncrm.co.uk"
+  },
   "Poper": {
     "cats": [
       58
@@ -4394,6 +5234,22 @@
       "popmenu\\.com"
     ]
   },
+  "Popmix": {
+    "cats": [
+      53
+    ],
+    "description": "Popmix CRM is a customer relationship management platform designed to manage sales, marketing, and recruitment activities through unified tools for tracking, communication, and performance analysis.",
+    "icon": "PopmixCRM.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "app\\.popmixcrm\\.com"
+    ],
+    "website": "https://popmixcrm.com"
+  },
   "Popmotion": {
     "cats": [
       59
@@ -4443,6 +5299,22 @@
       "//poppins\\.so/"
     ],
     "website": "https://poppins.so"
+  },
+  "Popsy": {
+    "cats": [
+      51
+    ],
+    "description": "Popsy is a no-code website builder designed for creators to build and publish websites without programming knowledge.",
+    "icon": "Popsy.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "assets\\.popsy\\.co/"
+    ],
+    "website": "https://popsy.co"
   },
   "Poptin": {
     "cats": [
@@ -4527,6 +5399,18 @@
     ],
     "website": "https://popupular.io"
   },
+  "Popvox": {
+    "cats": [
+      2
+    ],
+    "description": "Popvox is a platform that fosters civic engagement by providing tools for citizens to influence policy decisions and engage with elected representatives on governing innovations.",
+    "dom": [
+      "div[id*='PopVox'] > a[href*='www.popvox.com']"
+    ],
+    "icon": "Popvox.svg",
+    "saas": true,
+    "website": "https://popvox.com"
+  },
   "Porch": {
     "cats": [
       19
@@ -4562,6 +5446,56 @@
     ],
     "saas": true,
     "website": "https://www.portal.ir"
+  },
+  "Posh": {
+    "cats": [
+      52
+    ],
+    "description": "Posh is a conversational AI platform that enables machines to understand, process, and respond to human language in real time.",
+    "icon": "Posh.svg",
+    "js": {
+      "posh.close": "",
+      "poshie.close": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "js\\.poshdevelopment\\.com"
+    ],
+    "website": "https://www.posh.ai"
+  },
+  "Poshmark": {
+    "cats": [
+      6
+    ],
+    "description": "Poshmark is a platform for buying and selling new or used fashion items, including clothing, shoes, and accessories.",
+    "icon": "Poshmark.svg",
+    "saas": true,
+    "scriptSrc": [
+      "//poshmark\\.com/"
+    ],
+    "scripts": [
+      "//poshmark\\.com/"
+    ],
+    "website": "https://poshmark.com"
+  },
+  "Posify": {
+    "cats": [
+      6
+    ],
+    "description": "Posify is an integrated platform providing ecommerce and electronic point-of-sale (ePOS) solutions for managing online and in-store sales.",
+    "icon": "Posify.svg",
+    "js": {
+      "posifyFormatDate": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.posify\\.me/"
+    ],
+    "website": "https://www.posify.me"
   },
   "Poski": {
     "cats": [
@@ -4601,6 +5535,25 @@
       "(?:affiliate|associate)\\..+/scripts/trackjs\\.js"
     ],
     "website": "https://www.postaffiliatepro.com"
+  },
+  "Post Dolphin": {
+    "cats": [
+      32
+    ],
+    "description": "Post Dolphin is a social media management platform that plans, schedules, automates, and synchronizes social content across multiple channels.",
+    "icon": "PostDolphin.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "metashop\\.dolphinsuite\\.com"
+    ],
+    "scripts": [
+      "metashop\\.dolphinsuite\\.com"
+    ],
+    "website": "https://metashop.dolphinsuite.com"
   },
   "PostHog": {
     "cats": [
@@ -4655,6 +5608,18 @@
       "\\.postach\\.io/"
     ],
     "website": "https://postach.io"
+  },
+  "Postano": {
+    "cats": [
+      96
+    ],
+    "description": "Postano is a social content management platform that aggregates, curates, and displays user-generated content across digital channels.",
+    "icon": "Postano.svg",
+    "saas": true,
+    "scriptSrc": [
+      "www\\.postano\\.com"
+    ],
+    "website": "https://www.postano.com"
   },
   "Poste Italiane": {
     "cats": [
@@ -4943,6 +5908,26 @@
     "saas": true,
     "website": "https://powerfoliowp.com"
   },
+  "Powerful Form": {
+    "cats": [
+      110
+    ],
+    "description": "Powerful Form is a tool that enables custom form creation for Shopify stores, allowing collection and management of customer information directly within the storefront.",
+    "icon": "PowerfulForm.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": [
+      "Shopify"
+    ],
+    "saas": true,
+    "scripts": [
+      "app\\.powerfulform\\.com"
+    ],
+    "website": "https://powerfulform.com"
+  },
   "Powergap": {
     "cats": [
       6
@@ -4995,6 +5980,21 @@
       "static\\.powtoon\\.co"
     ],
     "website": "https://www.powtoon.com"
+  },
+  "Practice Perfect": {
+    "cats": [
+      53
+    ],
+    "description": "Practice Perfect is a cloud-based EMR and practice management application that integrates scheduling, billing, documentation, and reporting for healthcare providers.",
+    "icon": "PracticePerfect.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "app\\.practiceperfectemr\\.com"
+    ],
+    "website": "https://practiceperfectemr.com"
   },
   "Practo": {
     "cats": [
@@ -5490,6 +6490,18 @@
     ],
     "website": "https://www.pricespider.com"
   },
+  "Priice": {
+    "cats": [
+      5
+    ],
+    "description": "Priice is a widget that tracks and monitors product prices, providing up-to-date information for comparison and analysis.",
+    "dom": [
+      "link[href*='cdn.priice.net']"
+    ],
+    "icon": "Priice.svg",
+    "saas": true,
+    "website": "https://priice.net"
+  },
   "Prima Software": {
     "cats": [
       6
@@ -5704,7 +6716,8 @@
     ],
     "description": "Prismic is a headless CMS for Jamstack.",
     "dom": [
-      "img[src*='images.prismic.io']"
+      "img[src*='images.prismic.io']",
+      "div[id*='prismic-root']"
     ],
     "icon": "Prismic.svg",
     "pricing": [
@@ -5832,6 +6845,27 @@
     ],
     "website": "https://apps.shopify.com/privy"
   },
+  "ProProfs Quiz Maker": {
+    "cats": [
+      5
+    ],
+    "cookies": {
+      "pp_bot_kb_detail": ""
+    },
+    "description": "ProProfs Quiz Maker is a quiz-based widget builder that enables the creation of interactive quizzes for embedding on websites or digital platforms.",
+    "icon": "ProProfs.svg",
+    "js": {
+      "GetSecureUrlProProfs": "",
+      "ProProfsSaveBotReport": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.proprofs.com/quiz-school"
+  },
   "ProSites": {
     "cats": [
       1
@@ -5846,6 +6880,18 @@
       "analytics\\.prosites\\.com"
     ],
     "website": "https://www.prosites.com"
+  },
+  "Probance": {
+    "cats": [
+      32
+    ],
+    "description": "Probance is a marketing platform solution that helps businesses manage, track, and analyze marketing activities.",
+    "icon": "Probance.svg",
+    "saas": true,
+    "scriptSrc": [
+      "\\.my-probance\\.one/"
+    ],
+    "website": "https://probance.com"
   },
   "ProcessOut": {
     "cats": [
@@ -5952,6 +6998,25 @@
       "/product-personalizer/pplr_common\\.js"
     ],
     "website": "https://productpersonalizer.com"
+  },
+  "ProductDyno": {
+    "cats": [
+      50
+    ],
+    "cookies": {
+      "productdyno_session": ""
+    },
+    "description": "ProductDyno is a digital platform designed to help users manage, protect, and deliver digital products while enhancing online presence.",
+    "icon": "ProductDyno.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.productdyno\\.com"
+    ],
+    "website": "https://productdyno.com"
   },
   "Profeat": {
     "cats": [
@@ -6073,6 +7138,21 @@
     "saas": true,
     "website": "https://www.programia.eu"
   },
+  "Progreda": {
+    "cats": [
+      32
+    ],
+    "description": "Progreda is a platform that automates sales conversations via text, Instagram, and Facebook Messenger to generate leads, schedule appointments, and drive revenue growth.",
+    "icon": "Progreda.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "app\\.progreda\\.com"
+    ],
+    "website": "https://progreda.com"
+  },
   "Progress MOVEit": {
     "cats": [
       19
@@ -6174,6 +7254,39 @@
       "projesoft\\.js"
     ],
     "website": "https://www.projesoft.com.tr"
+  },
+  "Prolo Finder": {
+    "cats": [
+      35
+    ],
+    "description": "Prolo is a tool that adds a store locator feature to any website, enabling users to find nearby store locations through an interactive map or search interface.",
+    "icon": "ProloFinder.svg",
+    "js": {
+      "proloConfig": "",
+      "proloFinderState": ""
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "embed\\.prolofinder\\.com"
+    ],
+    "website": "https://www.prolofinder.com"
+  },
+  "Prom": {
+    "cats": [
+      6
+    ],
+    "description": "Prom is a marketplace system from Ukraine that provides an online platform for businesses and consumers to buy and sell goods.",
+    "icon": "Prom.svg",
+    "saas": true,
+    "scripts": [
+      "tracker\\.prom\\.ua"
+    ],
+    "website": "https://prom.ua"
   },
   "Promio": {
     "cats": [
@@ -6336,6 +7449,24 @@
     ],
     "website": "https://www.propflo.ai"
   },
+  "Propcart": {
+    "cats": [
+      6
+    ],
+    "description": "Propcart is an ecommerce software designed for prop houses to manage inventory, showcase items, and handle online rentals or sales.",
+    "icon": "Propcart.svg",
+    "meta": {
+      "generator": "^Propcart Pro$"
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://propcart.com"
+  },
   "Property Shell": {
     "cats": [
       53
@@ -6371,6 +7502,18 @@
     ],
     "website": "https://www.proposify.com"
   },
+  "Prospa": {
+    "cats": [
+      91
+    ],
+    "description": "Prospa is a platform that enables small businesses to pay for purchases over time with an interest-free repayment solution.",
+    "icon": "Prospa.svg",
+    "saas": true,
+    "scriptSrc": [
+      "\\.prospa\\.com/"
+    ],
+    "website": "https://www.prospa.com"
+  },
   "Prostoy": {
     "cats": [
       53
@@ -6387,6 +7530,22 @@
       "analytics\\.prostoy\\.ru"
     ],
     "website": "https://www.prostoy.ru"
+  },
+  "Proticaret": {
+    "cats": [
+      6
+    ],
+    "cookies": {
+      "proticaretCookie": ""
+    },
+    "description": "Proticaret is an ecommerce solution from Turkey designed to support online retail operations across various industries.",
+    "icon": "Proticaret.svg",
+    "js": {
+      "proticaret": ""
+    },
+    "pricing": [],
+    "saas": true,
+    "website": "https://www.proticaret.org"
   },
   "Proto AICX": {
     "cats": [
@@ -6591,6 +7750,18 @@
     "saas": true,
     "website": "https://proxmox.com/en/proxmox-ve"
   },
+  "Psyma": {
+    "cats": [
+      10
+    ],
+    "description": "Psyma is a behavior analytics platform specializing in data-driven insights for the automotive industry.",
+    "icon": "Psyma.svg",
+    "saas": true,
+    "scripts": [
+      "scripts\\.psyma\\.com"
+    ],
+    "website": "https://www.psyma.com/en/industries/automotive/"
+  },
   "Ptengine": {
     "cats": [
       74,
@@ -6756,6 +7927,22 @@
     ],
     "website": "https://www.pubble.io"
   },
+  "Pubfunnels": {
+    "cats": [
+      53
+    ],
+    "description": "Pubfunnels is a business hub designed for publishers and authors to manage, promote, and grow their publishing operations.",
+    "icon": "Pubfunnels.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "app\\.pubfunnels\\.com"
+    ],
+    "website": "https://pubfunnels.com"
+  },
   "Public CMS": {
     "cats": [
       1
@@ -6854,6 +8041,22 @@
     ],
     "website": "https://publytics.net"
   },
+  "Pubperf": {
+    "cats": [
+      10
+    ],
+    "description": "Pubperf is an analytics suite designed for digital publishers to measure, monitor, and optimize audience engagement, advertising performance, and content effectiveness across multiple platforms.",
+    "icon": "Pubperf.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "t\\.pubperf\\.com/"
+    ],
+    "website": "https://www.pubperf.com"
+  },
   "Pubstack": {
     "cats": [
       36
@@ -6901,6 +8104,21 @@
     ],
     "website": "https://pulsecms.com"
   },
+  "Pulse Insights": {
+    "cats": [
+      73
+    ],
+    "description": "Pulse Insights is a customer feedback platform that helps enterprises gather and analyze insights to understand customer needs and improve decision-making.",
+    "icon": "PulseInsights.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "js\\.pulseinsights\\.com"
+    ],
+    "website": "https://www.pulseinsights.com"
+  },
   "Pulse Secure": {
     "cats": [
       46
@@ -6915,6 +8133,33 @@
       "/dana-na/auth/"
     ],
     "website": "https://www.pulsesecure.net/products/remote-access-overview/"
+  },
+  "PulseM": {
+    "cats": [
+      90
+    ],
+    "description": "PulseM is an online platform for managing customer reviews and business reputation across digital channels.",
+    "icon": "PulseM.svg",
+    "js": {
+      "pulsem_button_installed": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "/embed-pulsemweb-gsd\\.js"
+    ],
+    "website": "https://pulsem.me"
+  },
+  "PunchTab": {
+    "cats": [
+      84
+    ],
+    "description": "PunchTab is a SaaS-based Consumer Management Platform (CMP) for brands to build and optimize direct consumer relationships.",
+    "icon": "PunchTab.svg",
+    "saas": true,
+    "scriptSrc": [
+      "static\\.punchtab\\.com"
+    ],
+    "website": "http://www.punchtab.com"
   },
   "Punchpass": {
     "cats": [
@@ -7006,6 +8251,26 @@
     ],
     "saas": true,
     "website": "https://www.purecars.com"
+  },
+  "PureClarity": {
+    "cats": [
+      76
+    ],
+    "description": "PureClarity is a platform that enables personalized upselling and delivers targeted content to increase customer engagement and sales.",
+    "icon": "PureClarity.svg",
+    "js": {
+      "PureClarityObject": "",
+      "PureClarityType": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "pcs\\.pureclarity\\.net"
+    ],
+    "website": "https://www.pureclarity.com"
   },
   "PurpleAds": {
     "cats": [
@@ -7352,6 +8617,28 @@
     ],
     "website": "https://docs.puter.com"
   },
+  "Pxxl App": {
+    "cats": [
+      62
+    ],
+    "description": "Pxxl App is a no-code platform that allows users to build and host web projects using custom subdomains on pxxl-managed domains.",
+    "icon": "Pxxl App.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "url": [
+      "\\.pxxl\\.app",
+      "\\.pxxl\\.tech",
+      "\\.pxxl\\.online",
+      "\\.pxxl\\.click",
+      "\\.pxxl\\.pro",
+      "\\.pxxl\\.site"
+    ],
+    "website": "https://pxxl.app"
+  },
   "PyData Sphinx Theme": {
     "cats": [
       19
@@ -7387,6 +8674,18 @@
     ],
     "oss": true,
     "website": "https://pyscript.net"
+  },
+  "PyWebIO": {
+    "cats": [
+      18
+    ],
+    "description": "PyWebIO is a browser-based framework that transforms the browser into a rich text terminal, allowing developers to create simple web or GUI applications using input and print functions without needing HTML or JavaScript knowledge.",
+    "icon": "PyWebIO.svg",
+    "oss": true,
+    "scriptSrc": [
+      "/js/pywebio\\.min\\.js"
+    ],
+    "website": "https://pywebio.readthedocs.io/en/latest/"
   },
   "Pygments": {
     "cats": [
@@ -7453,6 +8752,25 @@
     ],
     "saas": false,
     "website": "https://www.pythonanywhere.com"
+  },
+  "Pyze": {
+    "cats": [
+      10
+    ],
+    "description": "Pyze is a digital platform that provides analytics and engagement tools to support and measure digital transformation initiatives.",
+    "icon": "Pyze.svg",
+    "js": {
+      "Pyze.getAppInstanceId": "",
+      "PyzeCuratedEvents": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.pyze\\.com"
+    ],
+    "website": "https://www.pyze.com"
   },
   "p5.js": {
     "cats": [
@@ -7715,6 +9033,19 @@
     },
     "website": "https://phpsqlitecms.net"
   },
+  "phpwcms": {
+    "cats": [
+      1
+    ],
+    "description": "phpwcms is a web-based content management system and CMS framework built with PHP and MySQL.",
+    "headers": {
+      "X-Phpwcms-Page-Processed-In": "",
+      "X-Phpwcms-Release": ""
+    },
+    "icon": "PHPWCMS.svg",
+    "oss": true,
+    "website": "https://www.phpwcms.org"
+  },
   "phpwind": {
     "cats": [
       1,
@@ -7790,7 +9121,7 @@
     "headers": {
       "X-Plenty-Shop": "Ceres"
     },
-    "icon": "plentyShop LTS.svg",
+    "icon": "PlentyONE.svg",
     "oss": true,
     "website": "https://www.plentymarkets.com/product/modules/online-shop/"
   },
@@ -7834,7 +9165,7 @@
     "scriptSrc": [
       "jquery\\.prettyPhoto\\.js"
     ],
-    "website": "https://no-margin-for-errors.com/projects/prettyphoto-jquery-lightbox-clone/"
+    "website": "https://github.com/scaron/prettyphoto"
   },
   "punBB": {
     "cats": [
