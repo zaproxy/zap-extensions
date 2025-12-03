@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [45.16.0] - 2025-12-03
 ### Fixed
 - Script scan rules were not using the attack strength and alert threshold from active scan policies.
 
@@ -413,6 +413,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[45.16.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.16.0
 [45.15.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.15.0
 [45.14.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.14.0
 [45.13.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.13.0
