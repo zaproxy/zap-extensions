@@ -360,6 +360,9 @@
     "dom": [
       " body[data-aos-easing]"
     ],
+    "headers": {
+      "X-Powered-By": "^AdministerAOS"
+    },
     "icon": "AOS.svg",
     "js": {
       "AOS.init": "",
@@ -445,6 +448,20 @@
       "\\.ari-secure\\.com/"
     ],
     "website": "https://arinet.com"
+  },
+  "ARM JS": {
+    "cats": [
+      59
+    ],
+    "description": "ARM JS is a JavaScript library that centralizes data management and streamlines interactions with APIs.",
+    "icon": "ARMJS.svg",
+    "js": {
+      "ARM.aliases": ""
+    },
+    "pricing": [
+      "freemium"
+    ],
+    "website": "https://github.com/michaeljymsgutierrez/arm-js-library"
   },
   "ASP.NET Boilerplate": {
     "cats": [
@@ -582,6 +599,22 @@
     },
     "website": "https://awstats.sourceforge.net"
   },
+  "Aacio": {
+    "cats": [
+      6
+    ],
+    "description": "Aacio is an all-in-one platform that integrates multiple applications to offer tools, support, and resources aimed at facilitating business operations and growth.",
+    "icon": "Aacio.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "app\\.aacio\\.io"
+    ],
+    "website": "https://aacio.io"
+  },
   "Aarki": {
     "cats": [
       36
@@ -717,6 +750,21 @@
       "\\.accentuate\\.io/"
     ],
     "website": "https://www.accentuate.io"
+  },
+  "Acceptd": {
+    "cats": [
+      72
+    ],
+    "description": "Acceptd is a premier application and audition management platform designed to streamline the submission, review, and selection process for organizations and educational institutions.",
+    "icon": "Acceptd.svg",
+    "meta": {
+      "application-name": "^Acceptd Application$"
+    },
+    "saas": true,
+    "scripts": [
+      "\\.getacceptd\\.com"
+    ],
+    "website": "https://getacceptd.com"
   },
   "Accertify": {
     "cats": [
@@ -916,6 +964,25 @@
     },
     "oss": true,
     "website": "https://github.com/ajaxorg/ace"
+  },
+  "AceShop": {
+    "cats": [
+      6
+    ],
+    "description": "AceShop is a full-featured ecommerce component for Joomla that enables online store creation and management within the Joomla content management system.",
+    "icon": "AceShop.svg",
+    "oss": true,
+    "pricing": [
+      "freemium"
+    ],
+    "requires": [
+      "Joomla",
+      "jQuery"
+    ],
+    "scriptSrc": [
+      "/aceshopjquery/aceshopjquery/"
+    ],
+    "website": "https://www.joomace.net/joomla-extensions/aceshop-joomla-shopping-cart"
   },
   "Acecounter": {
     "cats": [
@@ -1309,7 +1376,7 @@
     ],
     "description": "Acuity Scheduling is a cloud-based appointment scheduling software solution.",
     "dom": [
-      "a[href*='app.acuityscheduling.com']"
+      "iframe[src*='app.acuityscheduling.com/']"
     ],
     "icon": "Acuity Scheduling.svg",
     "js": {
@@ -1735,6 +1802,29 @@
       "c5\\.adalyser\\.com"
     ],
     "website": "https://adalyser.com/"
+  },
+  "Adaptix": {
+    "cats": [
+      76,
+      32
+    ],
+    "description": "Adaptix is a marketing automation platform that uses AI to help businesses create personalized customer experiences.",
+    "icon": "Adaptix.svg",
+    "js": {
+      "AdaptixFormValidations": "",
+      "AdaptixLang": "",
+      "AdaptixSDK": "",
+      "AdaptixSDKLoaded": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.adaptix\\.ai/"
+    ],
+    "website": "https://www.adaptix.ai"
   },
   "Adara": {
     "cats": [
@@ -2173,6 +2263,21 @@
       "\\.adnegah\\.net/"
     ],
     "website": "https://adnegah.net"
+  },
+  "Adnymics": {
+    "cats": [
+      76
+    ],
+    "description": "Adnymics is a platform that enables personalization in ecommerce by tailoring content, recommendations, and experiences to individual users based on their behavior and preferences.",
+    "icon": "Adnymics.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "trac\\.adnymics\\.com"
+    ],
+    "website": "https://adnymics.com"
   },
   "Adobe Analytics": {
     "cats": [
@@ -3043,6 +3148,21 @@
     ],
     "website": "https://agilitycms.com"
   },
+  "Agillic": {
+    "cats": [
+      32
+    ],
+    "description": "Agillic is a Nordic marketing automation platform that delivers scalable, personalized campaigns while ensuring operational efficiency and full GDPR compliance.",
+    "icon": "Agillic.svg",
+    "saas": true,
+    "scriptSrc": [
+      "\\.agilliccdn\\.com"
+    ],
+    "scripts": [
+      "\\.agillic\\.eu"
+    ],
+    "website": "https://agillic.com"
+  },
   "Agoda": {
     "cats": [
       104
@@ -3061,6 +3181,35 @@
     ],
     "saas": true,
     "website": "https://www.agoda.com"
+  },
+  "Agora": {
+    "cats": [
+      62
+    ],
+    "description": "Agora is a real-time engagement platform that provides infrastructure for interactive communication across applications.",
+    "headers": {
+      "Content-Security-Policy": "\\.agora\\.io"
+    },
+    "icon": "Agora.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "payg",
+      "poa"
+    ],
+    "website": "https://www.agora.io"
+  },
+  "Agorize": {
+    "cats": [
+      101
+    ],
+    "description": "Agorize is a platform that enables businesses to identify and connect with talent through innovation challenges and collaborative programs.",
+    "icon": "Agorize.svg",
+    "saas": true,
+    "scriptSrc": [
+      "\\.fs\\.agorize\\.com"
+    ],
+    "website": "https://www.agorize.com"
   },
   "Ahoy": {
     "cats": [
@@ -3223,6 +3372,25 @@
     ],
     "website": "https://aimtell.com"
   },
+  "Aimy": {
+    "cats": [
+      72
+    ],
+    "description": "Aimy is a salon management platform that provides scheduling tools, a virtual assistant, and calendar maintenance features to streamline salon operations.",
+    "icon": "Aimy.svg",
+    "js": {
+      "MeetAimyMeta": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "widget\\.meetaimy\\.com"
+    ],
+    "website": "https://meetaimy.com"
+  },
   "Air360": {
     "cats": [
       10
@@ -3278,10 +3446,10 @@
       52
     ],
     "description": "Aircall is a cloud-based phone system for customer support and sales teams.",
-    "icon": "aircall.png",
+    "icon": "Aircall.svg",
     "saas": true,
     "scriptSrc": [
-      "^https?://cdn\\.aircall\\.io/"
+      "cdn\\.aircall\\.io"
     ],
     "website": "https://aircall.io"
   },
@@ -3442,6 +3610,18 @@
     "saas": true,
     "website": "https://www.aivo.co"
   },
+  "Ajax.NET Professional": {
+    "cats": [
+      12
+    ],
+    "description": "Ajax.NET Professional is a legacy framework that generates JavaScript proxies to call .NET server-side methods via AJAX.",
+    "js": {
+      "AjaxPro": "",
+      "AjaxPro.version": "^([\\d\\.]+)$\\;version:\\1"
+    },
+    "oss": true,
+    "website": "https://github.com/michaelschwarz/Ajax.NET-Professional"
+  },
   "Akamai": {
     "cats": [
       31
@@ -3478,6 +3658,26 @@
     ],
     "saas": true,
     "website": "https://www.akamai.com/us/en/products/security/bot-manager.jsp"
+  },
+  "Akamai Connected Cloud": {
+    "cats": [
+      62
+    ],
+    "description": "Akamai Connected Cloud is a distributed cloud platform that combines core compute, edge services, and security to run applications at global scale.",
+    "headers": {
+      "server": "^volt-adc$",
+      "x-volterra-location": ""
+    },
+    "icon": "Akamai.svg",
+    "implies": [
+      "Akamai"
+    ],
+    "pricing": [
+      "payg",
+      "recurring"
+    ],
+    "saas": false,
+    "website": "https://www.akamai.com/solutions/cloud-computing"
   },
   "Akamai Web Application Protector": {
     "cats": [
@@ -3974,6 +4174,36 @@
     ],
     "website": "https://help.aliyun.com/document_detail/193141.html"
   },
+  "Alimama": {
+    "cats": [
+      32
+    ],
+    "description": "Alimama is a data-driven marketing technology platform that enables businesses to optimize campaigns and audience engagement through advanced analytics.",
+    "icon": "Alimama.svg",
+    "saas": true,
+    "scriptSrc": [
+      "\\.alimama\\.com"
+    ],
+    "scripts": [
+      "\\.alimama\\.com"
+    ],
+    "website": "https://www.alimama.com"
+  },
+  "Alinea": {
+    "cats": [
+      1
+    ],
+    "description": "Alinea is a Git-based content management system designed specifically for integration with Next.js projects.",
+    "icon": "Alinea.svg",
+    "meta": {
+      "generator": "^ALinea ([\\d.]+)\\;version:\\1"
+    },
+    "oss": true,
+    "pricing": [
+      "freemium"
+    ],
+    "website": "https://alinea.sh"
+  },
   "Alive5": {
     "cats": [
       52
@@ -4243,6 +4473,23 @@
     ],
     "website": "https://en.alohome.io"
   },
+  "Alpha Review": {
+    "cats": [
+      90
+    ],
+    "description": "Alpha Review is an in-store ecommerce review tool developed in Korea, designed to gather and display customer feedback directly within retail environments.",
+    "icon": "AlphaReview.svg",
+    "js": {
+      "ALPHAREVIEW_FRONT_ALL": "",
+      "alpha_review_count_update": "",
+      "alpha_review_count_update_on": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "/alpha_au\\.js"
+    ],
+    "website": "https://alph.kr"
+  },
   "Alpharank": {
     "cats": [
       10
@@ -4398,6 +4645,21 @@
       "poa"
     ],
     "website": "https://alvandcms.com"
+  },
+  "Amap": {
+    "cats": [
+      35
+    ],
+    "description": "Amap is a digital cartography platform providing detailed geographic data, navigation, and location-based services across Asian regions.",
+    "icon": "Amap.svg",
+    "js": {
+      "AMap.ArrayBounds": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "webapi\\.amap\\.com"
+    ],
+    "website": "https://amap.com"
   },
   "Amasty": {
     "cats": [
@@ -4665,7 +4927,8 @@
     "headers": {
       "Content-Security-Policy": "s3[^ ]*amazonaws\\.com",
       "Content-Security-Policy-Report-Only": "s3[^ ]*\\.amazonaws\\.com",
-      "server": "^AmazonS3$"
+      "server": "^AmazonS3$",
+      "x-amz-server-side-encryption": ""
     },
     "icon": "Amazon S3.svg",
     "implies": [
@@ -4807,6 +5070,27 @@
     ],
     "website": "https://www.americanexpress.com/us/express-checkout/"
   },
+  "Amilia": {
+    "cats": [
+      53
+    ],
+    "description": "Amilia is a membership management software.",
+    "icon": "Amilia.svg",
+    "js": {
+      "AMILIA": "",
+      "AMILIA_APP": ""
+    },
+    "meta": {
+      "author": "^Amilia$"
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.amilia.com"
+  },
   "Amiro.CMS": {
     "cats": [
       1
@@ -4914,6 +5198,22 @@
       "\\.amplitude\\.com"
     ]
   },
+  "Ampry": {
+    "cats": [
+      32
+    ],
+    "description": "Ampry is a client acquisition marketing service designed to support law firms in expanding their reach and acquiring new clients.",
+    "icon": "Ampry.svg",
+    "js": {
+      "ampry_acc_code": "",
+      "ampry_script": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "\\.ampry\\.com"
+    ],
+    "website": "https://www.ampry.com"
+  },
   "Analysys Ark": {
     "cats": [
       10
@@ -4975,6 +5275,23 @@
     ],
     "website": "https://analyticsconnect.io"
   },
+  "Analyzati": {
+    "cats": [
+      10
+    ],
+    "description": "Analyzati is a privacy-focused analytics tool that measures website performance while protecting user data.",
+    "icon": "Analyzati.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.analyzati\\.com"
+    ],
+    "website": "https://analyzati.com"
+  },
   "Analyzee": {
     "cats": [
       10
@@ -4994,6 +5311,23 @@
       "cdn\\.analyzee\\.io/sdk/(.*)\\.js"
     ],
     "website": "https://analyzee.io"
+  },
+  "Analyzz": {
+    "cats": [
+      10
+    ],
+    "description": "Analyzz is a privacy-focused analytics platform that collects and reports website data while minimizing tracking of individual users.",
+    "icon": "Analyzz.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.analyzz\\.com"
+    ],
+    "website": "https://analyzz.com"
   },
   "AndersNoren Baskerville": {
     "cats": [
@@ -5090,6 +5424,18 @@
     ],
     "website": "https://www.anetwork.ir"
   },
+  "Anexis": {
+    "cats": [
+      53
+    ],
+    "description": "Anexis is a software provider offering tools that streamline communication, sales, and management processes for lodging businesses.",
+    "icon": "Anexis.svg",
+    "saas": true,
+    "scriptSrc": [
+      "\\.cloud\\.anex\\.is"
+    ],
+    "website": "https://anex.is"
+  },
   "Angie": {
     "cats": [
       22
@@ -5105,6 +5451,21 @@
     ],
     "oss": true,
     "website": "https://angie.software/en/"
+  },
+  "Angler AI": {
+    "cats": [
+      32
+    ],
+    "description": "Angler AI is a platform that helps direct-to-consumer brands improve prospecting strategies and increase customer lifetime value through data-driven insights.",
+    "icon": "Angler.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "static\\.getangler\\.ai"
+    ],
+    "website": "https://www.getangler.ai"
   },
   "Angular": {
     "cats": [
@@ -5280,6 +5641,27 @@
     "oss": true,
     "website": "https://animate.style"
   },
+  "Animation Addons": {
+    "cats": [
+      87
+    ],
+    "description": "Animation Addons is a WordPress plugin that extends the Elementor page builder with advanced animation effects and widgets for creating visually dynamic content.",
+    "icon": "Animation Addons.svg",
+    "pricing": [
+      "onetime"
+    ],
+    "requires": [
+      "WordPress",
+      "Elementor"
+    ],
+    "scriptSrc": [
+      "/wp-content/plugins/extension-for-animation-addons/"
+    ],
+    "scripts": [
+      "/animation-addons\\.com"
+    ],
+    "website": "https://animation-addons.com"
+  },
   "Aniview Ad Server": {
     "cats": [
       36
@@ -5322,6 +5704,22 @@
       "player\\.aniview\\.com/script/([\\d\\.]+)/\\;version:\\1"
     ],
     "website": "https://aniview.com/video-ad-player/"
+  },
+  "Annoto": {
+    "cats": [
+      15
+    ],
+    "description": "Annoto is a platform that transforms video viewing into an interactive, social, and collaborative experience rather than a passive individual activity.",
+    "icon": "Annoto.svg",
+    "js": {
+      "Annoto.boot": "",
+      "AnnotoApiPromise": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "\\.annoto\\.io"
+    ],
+    "website": "https://www.annoto.net"
   },
   "AnnounceKit": {
     "cats": [
@@ -5403,6 +5801,7 @@
     ],
     "icon": "Ant Design.svg",
     "js": {
+      "__ANTD_STYLE_CACHE_MANAGER_FOR_SSR__": "",
       "antd.version": "^([\\d\\.]+)$\\;version:\\1"
     },
     "oss": true,
@@ -5442,6 +5841,25 @@
     ],
     "saas": true,
     "website": "https://g6.antv.vision"
+  },
+  "Antavo": {
+    "cats": [
+      84
+    ],
+    "description": "Antavo is a software platform that provides AI-driven loyalty and promotion management solutions to help businesses design, automate, and analyze customer reward programs.",
+    "icon": "Antavo.svg",
+    "js": {
+      "Antavo.AJAX": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.antavo\\.com"
+    ],
+    "website": "https://antavo.com"
   },
   "Antee IPO": {
     "cats": [
@@ -5529,6 +5947,27 @@
       "script\\.anura\\.io/"
     ],
     "website": "https://www.anura.io"
+  },
+  "AnyChat": {
+    "cats": [
+      52
+    ],
+    "description": "AnyChat is a real-time conversation system designed to enable communication and message exchange between users.",
+    "icon": "AnyChat.svg",
+    "js": {
+      "anychat.CHATBOX_FRAME": "",
+      "anychatWidget": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "api\\.anychat\\.one"
+    ],
+    "website": "https://anychat.one"
   },
   "AnyClip": {
     "cats": [
@@ -5736,6 +6175,25 @@
     "saas": true,
     "website": "https://www.aphixsoftware.com"
   },
+  "Apiary": {
+    "cats": [
+      47
+    ],
+    "description": "Apiary is an API design stack that provides tools for designing, testing, and documenting APIs, built specifically to support developers throughout the API development process.",
+    "icon": "Apiary.svg",
+    "js": {
+      "Apiary": "",
+      "apiaryUserModel": ""
+    },
+    "meta": {
+      "author": "^Apiary$"
+    },
+    "pricing": [
+      "freemium"
+    ],
+    "saas": true,
+    "website": "https://apiary.io"
+  },
   "Apigee": {
     "cats": [
       4,
@@ -5828,6 +6286,9 @@
     "dom": [
       "script#__APOLLO_STATE__"
     ],
+    "headers": {
+      "Access-Control-Allow-Headers": "^x-apollo-tracing"
+    },
     "icon": "Apollo.svg",
     "implies": [
       "GraphQL",
@@ -6265,6 +6726,28 @@
     ],
     "website": "https://www.appsflyer.com/"
   },
+  "Appstle": {
+    "cats": [
+      84
+    ],
+    "description": "Appstle is a platform that boosts ecommerce revenue through retention-focused customer experiences.",
+    "icon": "Appstle.svg",
+    "js": {
+      "AppstleIncluded": "",
+      "appstleInit": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "requires": [
+      "Shopify"
+    ],
+    "saas": true,
+    "website": "https://appstle.com"
+  },
   "Apptus": {
     "cats": [
       76
@@ -6289,6 +6772,18 @@
     ],
     "website": "https://www.apptus.com"
   },
+  "AppuOnline": {
+    "cats": [
+      5
+    ],
+    "description": "AppuOnline is a tool that provides embeddable stock charts for integration into websites or applications.",
+    "dom": [
+      "iframe[src*='www.appuonline.com']"
+    ],
+    "icon": "AppuOnline.svg",
+    "saas": true,
+    "website": "https://www.appuonline.com"
+  },
   "Appwrite": {
     "cats": [
       47
@@ -6307,6 +6802,18 @@
     "xhr": [
       "cloud\\.appwrite\\.io"
     ]
+  },
+  "Appy Pie Builder": {
+    "cats": [
+      51
+    ],
+    "description": "Appypie is a platform that enables the creation of apps and websites using AI.",
+    "icon": "Appypie.svg",
+    "saas": true,
+    "scripts": [
+      "snappy\\.appypie\\.com"
+    ],
+    "website": "https://www.appypie.com"
   },
   "Appzi": {
     "cats": [
@@ -6347,6 +6854,22 @@
     ],
     "saas": true,
     "website": "https://www.aprimo.com"
+  },
+  "Aptania": {
+    "cats": [
+      97
+    ],
+    "description": "Aptania is an all-in-one customer data platform that provides web analytics, lead generation, and customer insights in a single system.",
+    "icon": "Aptania.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "analytics\\.aptania\\.com/"
+    ],
+    "website": "https://www.aptania.com"
   },
   "AptusShop": {
     "cats": [
@@ -6602,6 +7125,25 @@
     "saas": true,
     "website": "https://argentotheme.com"
   },
+  "Arketa": {
+    "cats": [
+      53
+    ],
+    "description": "Arketa is a business platform for the fitness and wellness industry, providing tools to manage operations and support business growth.",
+    "icon": "Arketa.svg",
+    "js": {
+      "ArketaChatbot": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.arketa\\.co"
+    ],
+    "website": "https://www.arketa.com"
+  },
   "Arkose Labs": {
     "cats": [
       16
@@ -6617,6 +7159,46 @@
     ],
     "saas": true,
     "website": "https://www.arkoselabs.com"
+  },
+  "Arlo": {
+    "cats": [
+      72
+    ],
+    "description": "Arlo is an event management tool that helps organize, schedule, and track events.",
+    "headers": {
+      "Content-Security-Policy-Report-Only": "\\.arlocdn\\.net"
+    },
+    "icon": "Arlo.svg",
+    "js": {
+      "ArloST.apiClient": "",
+      "ArloStarterTemplate": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.arlo.co"
+  },
+  "Arnica": {
+    "cats": [
+      53
+    ],
+    "description": "Arnica is a CRM system that consolidates customer relationship processes into a single platform.",
+    "icon": "Arnica.svg",
+    "js": {
+      "arnicaBooking.init": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.arnica\\.pro"
+    ],
+    "website": "https://arnica.pro"
   },
   "AroSoftware": {
     "cats": [
@@ -6693,6 +7275,28 @@
       "\\.artschema\\.net/"
     ],
     "website": "https://www.artschema.net"
+  },
+  "ArtPlacer": {
+    "cats": [
+      32
+    ],
+    "cookies": {
+      "artplacer_session": ""
+    },
+    "description": "ArtPlacer is a marketing tool designed to support growth in art businesses by enhancing visibility and promotional efforts.",
+    "icon": "Artplacer.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": [
+      "Shopify"
+    ],
+    "saas": true,
+    "scripts": [
+      "shop-app\\.artplacer\\.com"
+    ],
+    "website": "https://www.artplacer.com"
   },
   "ArtiBot": {
     "cats": [
@@ -6824,6 +7428,27 @@
       "recurring"
     ],
     "website": "https://sndigitalhub.com"
+  },
+  "Aryeo": {
+    "cats": [
+      95
+    ],
+    "description": "Aryeo is an all-in-one platform designed to manage, deliver, and organize media for real estate photographers.",
+    "icon": "Aryeo.svg",
+    "js": {
+      "ARYEO_COMPANY_API_V1_BASE_URL": "",
+      "ARYEO_ENVIRONMENT": ""
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.aryeo\\.com"
+    ],
+    "website": "https://www.aryeo.com"
   },
   "Asana": {
     "cats": [
@@ -6969,6 +7594,26 @@
     "saas": true,
     "website": "https://www.ashop.com.au"
   },
+  "AsisteClick": {
+    "cats": [
+      52
+    ],
+    "description": "AsisteClick is a customer service solution that uses chatbots and an omnichannel platform to streamline support across multiple communication channels.",
+    "icon": "AsisteClick.svg",
+    "js": {
+      "loadAsisteClick": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.asisteclick\\.com"
+    ],
+    "website": "https://asisteclick.com"
+  },
   "AskNicely": {
     "cats": [
       90
@@ -7049,6 +7694,41 @@
     },
     "saas": true,
     "website": "https://aspin.co.uk"
+  },
+  "Aspio": {
+    "cats": [
+      93
+    ],
+    "description": "Aspio is a platform that streamlines bookings and manages sales.",
+    "icon": "Aspio.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": [
+      "WordPress"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "/aspio-io-customer/public/js/aspio-io-customer-public\\.js"
+    ],
+    "website": "https://aspio.io"
+  },
+  "Assemble": {
+    "cats": [
+      51
+    ],
+    "description": "Assemble is a website builder designed for creating and managing film-related websites.",
+    "icon": "Assemble.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "cdn\\.assemble\\.me"
+    ],
+    "website": "https://assemble.me"
   },
   "Assertive Yield": {
     "cats": [
@@ -7428,6 +8108,17 @@
       "cdn\\.attn\\.tv"
     ],
     "website": "https://www.attentivemobile.com"
+  },
+  "AttractROI": {
+    "cats": [
+      32
+    ],
+    "description": "AttractROI is a service that provides tools and resources to help businesses convert potential customers into loyal clients.",
+    "saas": true,
+    "scripts": [
+      "app\\.attractroi\\.com"
+    ],
+    "website": "https://attractroi.com"
   },
   "Attracta": {
     "cats": [
@@ -7830,6 +8521,22 @@
     ],
     "website": "https://apps.shopify.com/product-reviews-autoketing"
   },
+  "Automabots": {
+    "cats": [
+      53
+    ],
+    "description": "Automabots is an automated intelligent workforce designed to match home buyers with suitable properties.",
+    "icon": "Automabots.svg",
+    "js": {
+      "automabots.appRoot": "",
+      "automabotsWebpackJsonp": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "\\.automabots\\.com"
+    ],
+    "website": "https://automabots.com"
+  },
   "Automatad": {
     "cats": [
       36
@@ -7840,6 +8547,60 @@
       "//go\\.automatad\\.com/"
     ],
     "website": "https://automatad.com/"
+  },
+  "AutomatePro": {
+    "cats": [
+      10
+    ],
+    "description": "AutomatePro is a workflow automation platform that streamlines routine business processes.",
+    "icon": "AutomatePro.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "app\\.automatepro\\.ai"
+    ],
+    "website": "https://automatepro.ai"
+  },
+  "AutomateWoo": {
+    "cats": [
+      32
+    ],
+    "description": "AutomateWoo is a marketing automation plugin for WooCommerce that enables online stores to create automated workflows for emails, follow-ups, and customer engagement.",
+    "dom": [
+      "link#automatewoo-birthdays-css"
+    ],
+    "icon": "AutomateWoo.svg",
+    "js": {
+      "automatewoo_presubmit_params": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "requires": [
+      "WooCommerce"
+    ],
+    "saas": true,
+    "website": "https://automatewoo.com"
+  },
+  "Automated Growth": {
+    "cats": [
+      32
+    ],
+    "description": "Automated Growth is a platform offering AI and automation tools designed to streamline business operations.",
+    "icon": "AutomatedGrowth.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "app\\.automatedgrowthagency\\.com"
+    ],
+    "website": "https://automatedgrowthagency.com"
   },
   "Automatic Members": {
     "cats": [
@@ -8094,11 +8855,44 @@
     "cats": [
       5
     ],
-    "icon": "Avasize.png",
+    "icon": "Avasize.svg",
     "scriptSrc": [
       "^https?://cdn\\.avasize\\.com/"
     ],
     "website": "https://www.avasize.com"
+  },
+  "Avature": {
+    "cats": [
+      101
+    ],
+    "description": "Avature is a talent acquisition and talent management platform that provides solutions for recruitment, onboarding, and employee engagement.",
+    "icon": "Avature.svg",
+    "meta": {
+      "avature.portal.id": "",
+      "avature.portal.name": ""
+    },
+    "pricing": [
+      "poa",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.avature.net"
+  },
+  "AvidTrak": {
+    "cats": [
+      10
+    ],
+    "description": "AvidTrak is software for call tracking, recording, and analytics, designed to monitor phone performance, log conversations, and provide insights from call data.",
+    "icon": "AvidTrak.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "avidtrak\\.com/"
+    ],
+    "website": "https://avidtrak.com"
   },
   "Avis Verifies": {
     "cats": [
@@ -8443,6 +9237,9 @@
     "cats": [
       1
     ],
+    "cookies": {
+      "azuriom_session": ""
+    },
     "description": "Azuriom is an open-source web solution for game servers, offering extensive customization through extensions.",
     "icon": "Azuriom.svg",
     "meta": {
@@ -8734,6 +9531,24 @@
       "\\.authorize\\.net/"
     ],
     "website": "https://www.authorize.net"
+  },
+  "authorized.by": {
+    "cats": [
+      69
+    ],
+    "description": "authorized.by is a service that enables shops to verify products and confirm their authenticity.",
+    "icon": "authorizedby.svg",
+    "pricing": [
+      "freemium",
+      "mid",
+      "payg",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.authorized\\.by"
+    ],
+    "website": "https://www.authorized.by"
   },
   "autoComplete.js": {
     "cats": [

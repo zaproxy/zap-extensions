@@ -1,4 +1,22 @@
 {
+  "N1ED": {
+    "cats": [
+      24
+    ],
+    "description": "N1ED is an editor for Bootstrap websites that enables block-by-block content building.",
+    "icon": "N1ED.svg",
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.public\\.n1ed\\.com/"
+    ],
+    "website": "https://n1ed.com"
+  },
   "NACEX": {
     "cats": [
       99
@@ -29,6 +47,23 @@
       "\\.plataformaneo\\.com"
     ],
     "website": "https://www.jetecommerce.com.br"
+  },
+  "NET-RESULTS": {
+    "cats": [
+      32
+    ],
+    "description": "NET-RESULTS is a marketing automation platform for the data-driven marketer.",
+    "icon": "NET-RESULTS.svg",
+    "pricing": [
+      "high",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.net-results\\.io/"
+    ],
+    "website": "https://www.net-results.com"
   },
   "NProgress": {
     "cats": [
@@ -226,6 +261,22 @@
     ],
     "website": "https://www.najva.com"
   },
+  "Namastay": {
+    "cats": [
+      93
+    ],
+    "description": "Namastay is an optimized booking engine that simplifies the online guest journey to increase direct bookings.",
+    "icon": "Namastay.svg",
+    "js": {
+      "closeNamastay": "",
+      "initNamastay": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "sdk\\.namastay\\.io"
+    ],
+    "website": "https://www.namastay.io"
+  },
   "NamelessMC": {
     "cats": [
       1
@@ -312,6 +363,23 @@
     ],
     "saas": true,
     "website": "https://nationbuilder.com"
+  },
+  "NativeForms": {
+    "cats": [
+      110
+    ],
+    "description": "NativeForms is a tool for creating forms, surveys, and polls across various platforms.",
+    "icon": "NativeForms.svg",
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "script\\.nativeforms\\.com"
+    ],
+    "website": "https://nativeforms.com"
   },
   "Nativo": {
     "cats": [
@@ -510,6 +578,18 @@
     "saas": true,
     "website": "https://nebulasites.org"
   },
+  "Need Street": {
+    "cats": [
+      72
+    ],
+    "description": "Need Street is a web and mobile platform that connects healthcare providers with patients, enabling digital communication and management of healthcare services.",
+    "icon": "NeedStreet.svg",
+    "saas": true,
+    "scripts": [
+      "data\\.needstreet\\.com"
+    ],
+    "website": "https://www.needstreet.com"
+  },
   "Neexa": {
     "cats": [
       52
@@ -526,6 +606,22 @@
     ],
     "saas": true,
     "website": "https://neexa.ai"
+  },
+  "Negate": {
+    "cats": [
+      16
+    ],
+    "description": "Negate is a security service that provides premium bot protection for websites, blocking malicious bots in real time.",
+    "icon": "Negate.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "sapi\\.negate\\.io"
+    ],
+    "website": "https://negate.io"
   },
   "Nelio Testing": {
     "cats": [
@@ -549,6 +645,24 @@
     ],
     "saas": true,
     "website": "https://neliosoftware.com/testing"
+  },
+  "Nemu": {
+    "cats": [
+      10
+    ],
+    "description": "Nemu is a platform that enables end-to-end tracking to monitor and optimize campaign performance, supporting improved profitability.",
+    "icon": "Nemu.svg",
+    "js": {
+      "trackingNemu": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "trackings\\.nemu\\.com\\.br"
+    ],
+    "website": "https://usenemu.com"
   },
   "Neon CRM": {
     "cats": [
@@ -610,6 +724,19 @@
     ],
     "website": "https://flow.neos.io"
   },
+  "Neowize": {
+    "cats": [
+      10
+    ],
+    "description": "Neowize is a platform that applies artificial intelligence and data science to enhance analytics and decision-making in ecommerce.",
+    "icon": "Neowize.svg",
+    "js": {
+      "neowize_api_key": "",
+      "neowize_cart_data": ""
+    },
+    "saas": true,
+    "website": "https://www.neowize.com"
+  },
   "Nepso": {
     "cats": [
       1
@@ -619,6 +746,18 @@
     },
     "icon": "nepso.svg",
     "website": "https://www.nepso.com"
+  },
+  "Neshan": {
+    "cats": [
+      35
+    ],
+    "description": "Neshan is an Iranian route-finding tool that provides users with navigation and mapping services for travel across the country.",
+    "icon": "Neshan.svg",
+    "saas": true,
+    "scriptSrc": [
+      "static\\.neshan\\.org"
+    ],
+    "website": "https://neshan.org"
   },
   "Nestify": {
     "cats": [
@@ -802,6 +941,21 @@
     ],
     "website": "https://netop.com"
   },
+  "Netrox": {
+    "cats": [
+      52
+    ],
+    "description": "Netrox SC is a Russian online consultant technology platform that provides live chat and customer support tools for websites.",
+    "icon": "NetroxSC.svg",
+    "saas": true,
+    "scriptSrc": [
+      "\\.netroxsc\\.ru"
+    ],
+    "scripts": [
+      "\\.netroxsc\\.ru"
+    ],
+    "website": "https://netroxsc.ru"
+  },
   "Nette Framework": {
     "cats": [
       18
@@ -937,6 +1091,23 @@
     ],
     "website": "https://www.newstore.com"
   },
+  "Newo": {
+    "cats": [
+      52
+    ],
+    "description": "Newo is an AI platform offering automated solutions for sales, reception, and concierge services across various industries.",
+    "icon": "Newo.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "static\\.newo\\.ai"
+    ],
+    "website": "https://newo.ai"
+  },
   "Newspack": {
     "cats": [
       87
@@ -1070,6 +1241,9 @@
       22,
       57
     ],
+    "cookies": {
+      "NEXT_LOCALE": ""
+    },
     "cpe": "cpe:2.3:a:zeit:next.js:*:*:*:*:*:*:*:*",
     "description": "Next.js is a React framework for developing single page Javascript applications.",
     "headers": {
@@ -1084,6 +1258,9 @@
       "__NEXT_DATA__": "",
       "next.version": "^(.+)$\\;version:\\1"
     },
+    "scripts": [
+      "\\.next\\.react"
+    ],
     "website": "https://nextjs.org"
   },
   "Next.js App Router": {
@@ -1247,6 +1424,9 @@
     "requires": [
       "Next.js"
     ],
+    "scripts": [
+      "nextra//.site/"
+    ],
     "website": "https://nextra.site/"
   },
   "Nextsale": {
@@ -1362,6 +1542,22 @@
     ],
     "website": "https://niagahoster.co.id"
   },
+  "Nibiru Ecommerce": {
+    "cats": [
+      6
+    ],
+    "description": "Nibiru Ecommerce is a Uruguay-based SaaS platform for building and managing online stores with no sales commissions, offering integrations, scalability, and full control from day one.",
+    "headers": {
+      "x-powered-by": "^Nibiru Ecommerce$"
+    },
+    "icon": "Nibiru Ecommerce.svg",
+    "pricing": [
+      "poa",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://nibiru.uy"
+  },
   "Nicepage": {
     "cats": [
       51
@@ -1436,6 +1632,37 @@
     "saas": true,
     "website": "https://www.gonift.com"
   },
+  "NightsBridge": {
+    "cats": [
+      72
+    ],
+    "description": "NightsBridge is a SaaS platform that provides booking and channel management tools for accommodation providers.",
+    "dom": [
+      "a[target='_blank'][href*='.nightsbridge.co']"
+    ],
+    "icon": "NightsBridge.svg",
+    "js": {
+      "webpackChunkNightsbridgeBookingForm": ""
+    },
+    "pricing": [
+      "payg",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://site.nightsbridge.com"
+  },
+  "Niice": {
+    "cats": [
+      32
+    ],
+    "description": "Niice is a Dutch marketing automation platform that streamlines campaign management, customer engagement, and data-driven communication processes.",
+    "icon": "Niice.svg",
+    "saas": true,
+    "scripts": [
+      "niice\\.nl"
+    ],
+    "website": "https://www.niice.nl"
+  },
   "Nimbata": {
     "cats": [
       10
@@ -1453,6 +1680,38 @@
       "\\.dni\\.nimbata\\.com/"
     ],
     "website": "https://www.nimbata.com"
+  },
+  "Nimbu": {
+    "cats": [
+      6
+    ],
+    "description": "Nimbu is a platform that integrates content management, e-commerce, and a scalable cloud database into a single system.",
+    "icon": "Nimbu.svg",
+    "js": {
+      "nimbuConsentManager": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.nimbu\\.io"
+    ],
+    "website": "https://www.nimbu.io"
+  },
+  "Ninchat": {
+    "cats": [
+      52
+    ],
+    "description": "Ninchat is a secure messaging platform designed for organizations to facilitate encrypted communication and collaboration.",
+    "icon": "Ninchat.svg",
+    "js": {
+      "Ninchat.ERROR": "",
+      "NinchatAntics": "",
+      "NinchatAsyncInit": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "api\\.ninchat\\.com"
+    ],
+    "website": "https://ninchat.com"
   },
   "Ninja Forms": {
     "cats": [
@@ -1509,6 +1768,22 @@
       "services\\.nofraud\\.com/"
     ],
     "website": "https://www.nofraud.com"
+  },
+  "NoPaperForms": {
+    "cats": [
+      53
+    ],
+    "description": "NoPaperForms is a cloud-based platform that automates and manages student enrollment processes.",
+    "icon": "NoPaperForms.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "track\\.nopaperforms\\.com"
+    ],
+    "website": "https://www.nopaperforms.com"
   },
   "Nocodelytics": {
     "cats": [
@@ -1602,13 +1877,31 @@
     "saas": true,
     "website": "https://nodeping.com"
   },
+  "Nody": {
+    "cats": [
+      6
+    ],
+    "description": "Nody is a platform that enables the creation of online shops without requiring programming knowledge.",
+    "icon": "Nody.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "cdn\\.mujnody\\.cz"
+    ],
+    "website": "https://www.nody.cz"
+  },
   "Nogin": {
     "cats": [
       19
     ],
     "description": "Nogin is a platform operating as Commerce-as-a-Service (CaaS), offering cloud-based ecommerce functionalities and infrastructure for seamless integration and development of ecommerce solutions.",
-    "icon": "Nogin.png",
+    "icon": "Nogin.svg",
     "js": {
+      "NoginConfig": "",
       "nogin.wishlist": ""
     },
     "pricing": [
@@ -1676,6 +1969,28 @@
     ],
     "website": "https://www.noodlefactory.ai"
   },
+  "Nookal": {
+    "cats": [
+      72
+    ],
+    "description": "Nookal is a practice management software that organizes and manages medical appointments.",
+    "headers": {
+      "Access-Control-Allow-Origin": "bookings\\.nookal\\.com"
+    },
+    "icon": "Nookal.svg",
+    "js": {
+      "nookal": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "nookal\\.bookings\\.js"
+    ],
+    "website": "https://www.nookal.com"
+  },
   "Nootiz": {
     "cats": [
       13
@@ -1733,6 +2048,38 @@
     },
     "website": "https://www.norce.io/"
   },
+  "Nordcraft": {
+    "cats": [
+      18
+    ],
+    "description": "Nordcraft is a platform that integrates a visual design tool with a web framework, enabling the creation of web applications and websites in a unified environment.",
+    "headers": {
+      "X-Powered-By": "^Nordcraft$"
+    },
+    "icon": "Nordcraft.svg",
+    "meta": {
+      "application-name": "^Nordcraft$"
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "freemium"
+    ],
+    "saas": true,
+    "website": "https://nordcraft.com"
+  },
+  "Normalize.css": {
+    "cats": [
+      66
+    ],
+    "description": "Normalize.css is a CSS library that makes browsers render elements according to modern standards by targeting only the styles that require normalization.",
+    "dom": [
+      "link[href*='/assets/css/normalize.css']"
+    ],
+    "icon": "Normalize.svg",
+    "oss": true,
+    "website": "https://csstools.github.io/normalize.css"
+  },
   "Normi": {
     "cats": [
       67
@@ -1749,6 +2096,18 @@
       "app\\.normi\\.ca/"
     ],
     "website": "https://normi.ca"
+  },
+  "NorthStar Civic": {
+    "cats": [
+      1
+    ],
+    "description": "NorthStar Civic is a custom content and digital asset management system supporting news websites across the NorthStar Civic Media network.",
+    "icon": "NorthStarCivic.svg",
+    "meta": {
+      "cms": "^NorthStar CMS$"
+    },
+    "saas": true,
+    "website": "https://northstarcivic.com"
   },
   "Northbeam": {
     "cats": [
@@ -1768,6 +2127,18 @@
       "\\.northbeam\\.io/"
     ],
     "website": "https://www.northbeam.io"
+  },
+  "Northstar Club Management": {
+    "cats": [
+      53
+    ],
+    "description": "Northstar Club Management is a platform that integrates membership, accounting, reservations, events, and communication tools to streamline daily operations for private clubs and associations.",
+    "headers": {
+      "Portal": "^Northstar Connect"
+    },
+    "icon": "NorthstarClubManagement.svg",
+    "saas": true,
+    "website": "https://www.globalnorthstar.com"
   },
   "Norton Shopping Guarantee": {
     "cats": [
@@ -1932,6 +2303,18 @@
     ],
     "website": "https://notix.co"
   },
+  "Nova Busca": {
+    "cats": [
+      29
+    ],
+    "description": "Nova Busca is an artificial intelligence tool that enhances search functionality on ecommerce websites by improving result relevance and user experience.",
+    "icon": "NovaBusca.svg",
+    "saas": true,
+    "scriptSrc": [
+      "api\\.novabusca\\.com\\.br"
+    ],
+    "website": "https://novabusca.com.br"
+  },
   "Novel": {
     "cats": [
       6
@@ -1951,6 +2334,26 @@
     ],
     "saas": true,
     "website": "https://www.novel.com"
+  },
+  "NowButtons": {
+    "cats": [
+      5
+    ],
+    "description": "NowButtons is a floating action button plugin that enhances website interactivity by providing quick access to key actions and improving user conversion rates.",
+    "dom": [
+      "link[href*='static.callnowbutton.com/']"
+    ],
+    "icon": "NowButtons.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "static\\.callnowbutton\\.com"
+    ],
+    "website": "https://nowbuttons.com"
   },
   "Nowfloats": {
     "cats": [
@@ -2061,6 +2464,22 @@
     ],
     "website": "https://www.nuqlium.com"
   },
+  "Nurture": {
+    "cats": [
+      32
+    ],
+    "description": "Nurture is an all-in-one marketing automation software designed to streamline campaign management, lead tracking, and customer engagement in a single platform.",
+    "icon": "Nurture.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "nurtureapi\\.nurturehq\\.com"
+    ],
+    "website": "https://www.nurturehq.com"
+  },
   "Nurture Boss": {
     "cats": [
       32
@@ -2138,6 +2557,26 @@
       "/_nuxt/"
     ],
     "website": "https://nuxt.com"
+  },
+  "Nyehandel": {
+    "cats": [
+      6
+    ],
+    "cookies": {
+      "nyehandelse_session": ""
+    },
+    "description": "Nyehandel is an ecommerce platform that manages the entire process from purchase to delivery, designed to enhance operational efficiency and market competitiveness.",
+    "icon": "Nyehandel.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "requires": [
+      "Caddy"
+    ],
+    "saas": true,
+    "website": "https://nyehandel.se"
   },
   "nghttpx - HTTP/2 proxy": {
     "cats": [
