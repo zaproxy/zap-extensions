@@ -1,9 +1,9 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-description = "Capture and analysis the client-side data flows from the Foxhound browser."
+description = "Capture and analysis of client-side data flows from the Foxhound browser."
 
 zapAddOn {
-    addOnName.set("Foxhound ZAP Extension")
+    addOnName.set("Foxhound ZAP Add-on")
     addOnStatus.set(AddOnStatus.ALPHA)
 
     manifest {

@@ -190,7 +190,6 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
 
     @Override
     public void init() {
-        LOGGER.info("Parent:" + this.getParent());
         getProxy();
 
         try {

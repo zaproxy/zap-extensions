@@ -29,7 +29,7 @@ public class HttpMessageFinder {
 
             // Try multiple methods as we don't know it from the URL
             for (String method : methods) {
-                StructuralNode node = SessionStructure.find(model, uri, "GET", null);
+                StructuralNode node = SessionStructure.find(model, uri, method, null);
 
                 if (node != null) {
                     ref = node.getHistoryReference();

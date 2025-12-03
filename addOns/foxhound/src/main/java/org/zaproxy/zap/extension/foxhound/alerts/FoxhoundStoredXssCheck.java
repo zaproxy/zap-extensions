@@ -28,10 +28,7 @@ public class FoxhoundStoredXssCheck implements FoxhoundVulnerabilityCheck {
                                 CommonAlertTag.OWASP_2021_A03_INJECTION,
                                 CommonAlertTag.OWASP_2017_A07_XSS,
                                 CommonAlertTag.WSTG_V42_CLNT_01_DOM_XSS));
-        alertTags.put(PolicyTag.DEV_FULL.getTag(), "");
-        alertTags.put(PolicyTag.QA_STD.getTag(), "");
-        alertTags.put(PolicyTag.QA_FULL.getTag(), "");
-        alertTags.put(PolicyTag.SEQUENCE.getTag(), "");
+
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
 
         XSS_SINKS = Set.of(

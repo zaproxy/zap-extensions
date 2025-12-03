@@ -17,6 +17,7 @@ import org.zaproxy.zap.extension.foxhound.taint.TaintInfo;
 import org.zaproxy.zap.extension.foxhound.taint.TaintOperation;
 import org.zaproxy.zap.extension.foxhound.taint.TaintRange;
 
+import java.util.List;
 import java.util.Set;
 
 public class FoxhoundAlertHelper implements EventConsumer {
@@ -43,12 +44,8 @@ public class FoxhoundAlertHelper implements EventConsumer {
     private String getOtherInfo(TaintInfo taint) {
         StringBuilder sb = new StringBuilder();
         if (taint != null) {
-            sb.append(String.format(
-                Constant.messages.getString("foxhound.alert.sinkToSource"),
-                    String.join(", ", taint.getSources().stream().map(TaintOperation::getOperation).toList()),
-                    taint.getSink().getOperation()
-                )
-            );
+            sb.append(Constant.messages.getString("foxhound.alert.sinkToSource")).append(" ");
+            sb.append(taint.getSourceSinkLabel());
             sb.append(System.lineSeparator());
             sb.append(
                 String.format(
@@ -62,10 +59,11 @@ public class FoxhoundAlertHelper implements EventConsumer {
             sb.append(Constant.messages.getString("foxhound.alert.detailedSinkInfo"));
             sb.append(System.lineSeparator());
             // Work out the maxiumum number of digits we need so the ranges are all aligned
-            int highestRangeEnd = taint.getTaintRanges().isEmpty() ? 0 : taint.getTaintRanges().getLast().getEnd();
+            List<TaintRange> ranges = taint.getTaintRanges();
+            int highestRangeEnd =  ranges.isEmpty() ? 0 : ranges.get(ranges.size() - 1).getEnd();
             String fmtString = String.format("[%%0%sd, %%0%sd)",
                     String.valueOf(highestRangeEnd).length(), String.valueOf(highestRangeEnd).length());
-            for (TaintRange range : taint.getTaintRanges()) {
+            for (TaintRange range : ranges) {
                 sb.append(
                         String.format(fmtString,
                                 range.getBegin(),
@@ -74,12 +72,8 @@ public class FoxhoundAlertHelper implements EventConsumer {
                 sb.append(" \"");
                 sb.append(range.getStr());
                 sb.append("\" ");
-                sb.append(String.format(
-                                Constant.messages.getString("foxhound.alert.sinkToSource"),
-                                String.join(", ", range.getSources().stream().map(TaintOperation::getOperation).toList()),
-                                taint.getSink().getOperation()
-                        )
-                );
+                sb.append(Constant.messages.getString("foxhound.alert.sinkToSource")).append(" ");
+                sb.append(range.getSourceSinkLabel());
                 sb.append(System.lineSeparator());
             }
         }
@@ -114,7 +108,6 @@ public class FoxhoundAlertHelper implements EventConsumer {
                             .setTags(check.getAlertTags())
                             .setConfidence(check.getConfidence())
                             .setUri(url)
-                            .setAttack("Attack")
                             .setOtherInfo(otherInfo)
                             .setEvidence(evidence)
                             .setParam(taint.getSink().getOperation())  // "param" should be one of the URL parameters

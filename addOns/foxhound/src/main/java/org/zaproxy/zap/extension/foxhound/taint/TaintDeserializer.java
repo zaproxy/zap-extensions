@@ -102,7 +102,7 @@ public class TaintDeserializer {
                 }
 
                 // The Taint flow from Foxhound starts with the sink and works backwards, so reverse direction
-                range.getFlow().addFirst(operation);
+                range.getFlow().add(0, operation);
             }
             // Add the range
             taint.getTaintRanges().add(range);
@@ -115,7 +115,7 @@ public class TaintDeserializer {
         }
 
         if (taint != null) {
-            LOGGER.info("Deserialized flow: {}", taint);
+            LOGGER.debug("Deserialized flow: {}", taint);
         }
 
         return taint;
