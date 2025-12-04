@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.ascanrulesBeta;
+package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.IOException;
 import java.net.SocketException;
@@ -51,7 +51,7 @@ import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 public class HttpOnlySiteScanRule extends AbstractHostPlugin implements CommonActiveScanRuleInfo {
 
     /** Prefix for internationalised messages used by this rule */
-    private static final String MESSAGE_PREFIX = "ascanbeta.httponlysite.";
+    private static final String MESSAGE_PREFIX = "ascanrules.httponlysite.";
 
     private static final int PLUGIN_ID = 10106;
     private static final int REDIR_LIMIT = 10;

@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.ascanrulesAlpha;
+package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -55,7 +55,7 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin
         implements CommonActiveScanRuleInfo {
 
     // Prefix for internationalised messages used by this rule
-    private static final String MESSAGE_PREFIX = "ascanalpha.mongodb.";
+    private static final String MESSAGE_PREFIX = "ascanbeta.mongodb.";
     // Constants
     private static final String ALL_DATA_ATTACK = "alldata";
     private static final String CRASH_ATTACK = "crash";

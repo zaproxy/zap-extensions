@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.pscanrulesBeta;
+package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -45,7 +45,7 @@ public class InPageBannerInfoLeakScanRule extends PluginPassiveScanner
 
     private static final Logger LOGGER = LogManager.getLogger(InPageBannerInfoLeakScanRule.class);
     private static final int PLUGIN_ID = 10009;
-    private static final String MESSAGE_PREFIX = "pscanbeta.inpagebanner.";
+    private static final String MESSAGE_PREFIX = "pscanrules.inpagebanner.";
     private static final Map<String, String> ALERT_TAGS;
 
     static {

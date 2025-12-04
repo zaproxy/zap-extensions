@@ -4,6 +4,12 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- The following scan rules were added, having been promoted from Beta:
+  - In Page Banner Information Leak
+  - Java Serialization Object
+  - Sub Resource Integrity Attribute Missing
+
 ### Changed
 - Address redirection in a reference.
 - Update dependency.
