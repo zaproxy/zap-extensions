@@ -1,17 +1,23 @@
+/*
+ * Zed Attack Proxy (ZAP) and its related class files.
+ *
+ * ZAP is an HTTP/HTTPS proxy for assessing web application security.
+ *
+ * Copyright 2025 The ZAP Development Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.zaproxy.zap.extension.foxhound.alerts;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.parosproxy.paros.core.scanner.Alert;
-import org.zaproxy.addon.commonlib.CommonAlertTag;
-import org.zaproxy.addon.commonlib.PolicyTag;
-import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
-import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
-import org.zaproxy.zap.extension.foxhound.config.FoxhoundConstants;
-import org.zaproxy.zap.extension.foxhound.taint.SinkTag;
-import org.zaproxy.zap.extension.foxhound.taint.SourceTag;
-import org.zaproxy.zap.extension.foxhound.taint.TaintInfo;
-import org.zaproxy.zap.extension.foxhound.taint.TaintOperation;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -19,6 +25,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.core.scanner.Alert;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
+import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
+import org.zaproxy.zap.extension.foxhound.config.FoxhoundConstants;
+import org.zaproxy.zap.extension.foxhound.taint.SinkTag;
+import org.zaproxy.zap.extension.foxhound.taint.SourceTag;
+import org.zaproxy.zap.extension.foxhound.taint.TaintInfo;
+import org.zaproxy.zap.extension.foxhound.taint.TaintOperation;
 
 public class FoxhoundXssCheck implements FoxhoundVulnerabilityCheck {
 
@@ -39,8 +56,8 @@ public class FoxhoundXssCheck implements FoxhoundVulnerabilityCheck {
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
 
         XSS_SINKS = FoxhoundConstants.getSinkNamesWithTag(SinkTag.XSS);
-        XSS_SOURCES = FoxhoundConstants.getSourceNamesWithTags(List.of(SourceTag.URL, SourceTag.INPUT));
-
+        XSS_SOURCES =
+                FoxhoundConstants.getSourceNamesWithTags(List.of(SourceTag.URL, SourceTag.INPUT));
     }
 
     @Override
@@ -92,8 +109,12 @@ public class FoxhoundXssCheck implements FoxhoundVulnerabilityCheck {
     public boolean shouldAlert(TaintInfo taint) {
 
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Sinks: Need one of: {} got: {}", XSS_SINKS, taint.getSink().getOperation());
-            LOGGER.debug("Sources: Need one of: {} got: {}", XSS_SOURCES, taint.getSources().stream().map(TaintOperation::getOperation).toList());
+            LOGGER.debug(
+                    "Sinks: Need one of: {} got: {}", XSS_SINKS, taint.getSink().getOperation());
+            LOGGER.debug(
+                    "Sources: Need one of: {} got: {}",
+                    XSS_SOURCES,
+                    taint.getSources().stream().map(TaintOperation::getOperation).toList());
         }
 
         if (!XSS_SINKS.contains(taint.getSink().getOperation())) {
@@ -107,5 +128,4 @@ public class FoxhoundXssCheck implements FoxhoundVulnerabilityCheck {
 
         return !Collections.disjoint(sources, XSS_SOURCES);
     }
-
 }

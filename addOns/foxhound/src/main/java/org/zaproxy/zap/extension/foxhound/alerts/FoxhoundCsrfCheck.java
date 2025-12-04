@@ -1,18 +1,35 @@
+/*
+ * Zed Attack Proxy (ZAP) and its related class files.
+ *
+ * ZAP is an HTTP/HTTPS proxy for assessing web application security.
+ *
+ * Copyright 2025 The ZAP Development Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.zaproxy.zap.extension.foxhound.alerts;
-
-import org.parosproxy.paros.core.scanner.Alert;
-import org.zaproxy.addon.commonlib.CommonAlertTag;
-import org.zaproxy.addon.commonlib.PolicyTag;
-import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
-import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
-import org.zaproxy.zap.extension.foxhound.taint.TaintInfo;
-import org.zaproxy.zap.extension.foxhound.taint.TaintOperation;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.parosproxy.paros.core.scanner.Alert;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
+import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
+import org.zaproxy.zap.extension.foxhound.taint.TaintInfo;
+import org.zaproxy.zap.extension.foxhound.taint.TaintOperation;
 
 public class FoxhoundCsrfCheck implements FoxhoundVulnerabilityCheck {
 
@@ -31,44 +48,43 @@ public class FoxhoundCsrfCheck implements FoxhoundVulnerabilityCheck {
 
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
 
-        SINKS = Set.of(
-                "navigator.sendBeacon(body)",
-                "navigator.sendBeacon(url)",
-                "fetch.body",
-                "fetch.url",
-                "XMLHttpRequest.open(password)",
-                "XMLHttpRequest.open(url)",
-                "XMLHttpRequest.open(username)",
-                "XMLHttpRequest.send",
-                "XMLHttpRequest.setRequestHeader(name)",
-                "XMLHttpRequest.setRequestHeader(value)",
-                "WebSocket",
-                "WebSocket.send",
-                "EventSource",
-                "window.open",
-                "window.postMessage",
-                "location.assign",
-                "location.hash",
-                "location.host",
-                "location.href",
-                "location.pathname",
-                "location.port",
-                "location.protocol",
-                "location.replace",
-                "location.search"
-        );
+        SINKS =
+                Set.of(
+                        "navigator.sendBeacon(body)",
+                        "navigator.sendBeacon(url)",
+                        "fetch.body",
+                        "fetch.url",
+                        "XMLHttpRequest.open(password)",
+                        "XMLHttpRequest.open(url)",
+                        "XMLHttpRequest.open(username)",
+                        "XMLHttpRequest.send",
+                        "XMLHttpRequest.setRequestHeader(name)",
+                        "XMLHttpRequest.setRequestHeader(value)",
+                        "WebSocket",
+                        "WebSocket.send",
+                        "EventSource",
+                        "window.open",
+                        "window.postMessage",
+                        "location.assign",
+                        "location.hash",
+                        "location.host",
+                        "location.href",
+                        "location.pathname",
+                        "location.port",
+                        "location.protocol",
+                        "location.replace",
+                        "location.search");
 
-        SOURCES = Set.of(
-                "location.hash",
-                "location.href",
-                "location.pathname",
-                "location.search",
-                "window.name",
-                "document.referrer",
-                "document.baseURI",
-                "document.documentURI"
-        );
-
+        SOURCES =
+                Set.of(
+                        "location.hash",
+                        "location.href",
+                        "location.pathname",
+                        "location.search",
+                        "window.name",
+                        "document.referrer",
+                        "document.baseURI",
+                        "document.documentURI");
     }
 
     @Override
@@ -130,5 +146,4 @@ public class FoxhoundCsrfCheck implements FoxhoundVulnerabilityCheck {
 
         return !Collections.disjoint(sources, SOURCES);
     }
-
 }

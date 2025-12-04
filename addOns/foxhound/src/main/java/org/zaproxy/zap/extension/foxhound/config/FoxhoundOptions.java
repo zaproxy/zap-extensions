@@ -19,14 +19,13 @@
  */
 package org.zaproxy.zap.extension.foxhound.config;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.zaproxy.zap.common.VersionedAbstractParam;
-
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.zaproxy.zap.common.VersionedAbstractParam;
 
 public class FoxhoundOptions extends VersionedAbstractParam {
     private static final Logger LOGGER = LogManager.getLogger(FoxhoundOptions.class);
@@ -56,7 +55,9 @@ public class FoxhoundOptions extends VersionedAbstractParam {
     private List<String> sourcesDisabled;
     private List<String> sinksDisabled;
 
-    public FoxhoundOptions() { this.pcs = new PropertyChangeSupport(this); }
+    public FoxhoundOptions() {
+        this.pcs = new PropertyChangeSupport(this);
+    }
 
     @Override
     protected String getConfigVersionKey() {
@@ -69,17 +70,12 @@ public class FoxhoundOptions extends VersionedAbstractParam {
     }
 
     @Override
-    protected void updateConfigsImpl(int fileVersion) {
-
-    }
+    protected void updateConfigsImpl(int fileVersion) {}
 
     private List<String> getStringList(String key) {
         List<String> items;
         try {
-            items =
-                    getConfig().getList(key).stream()
-                            .map(Object::toString)
-                            .toList();
+            items = getConfig().getList(key).stream().map(Object::toString).toList();
         } catch (Exception e) {
             LOGGER.warn(e.getMessage(), e);
             items = new ArrayList<>();

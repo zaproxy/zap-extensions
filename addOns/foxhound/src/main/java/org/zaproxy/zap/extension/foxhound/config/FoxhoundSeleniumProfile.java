@@ -1,5 +1,30 @@
+/*
+ * Zed Attack Proxy (ZAP) and its related class files.
+ *
+ * ZAP is an HTTP/HTTPS proxy for assessing web application security.
+ *
+ * Copyright 2025 The ZAP Development Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.zaproxy.zap.extension.foxhound.config;
 
+import java.io.File;
+import java.nio.charset.Charset;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -8,13 +33,6 @@ import org.parosproxy.paros.control.Control;
 import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.selenium.ProfileManager;
-
-import java.io.File;
-import java.nio.charset.Charset;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public class FoxhoundSeleniumProfile {
 
@@ -28,7 +46,7 @@ public class FoxhoundSeleniumProfile {
         this.options = options;
     }
 
-    public FoxhoundSeleniumProfile() { }
+    public FoxhoundSeleniumProfile() {}
 
     public void setOptions(FoxhoundOptions options) {
         this.options = options;
@@ -42,7 +60,14 @@ public class FoxhoundSeleniumProfile {
     private static final String PREF_EXPORT_KEY = PREF_TAINTING_KEY + "export.url";
 
     private String getPreferenceLine(String key, String value) {
-        return PREF_PREFIX + "\"" + key + "\"" + ", " + value + PREF_SUFFIX + System.lineSeparator();
+        return PREF_PREFIX
+                + "\""
+                + key
+                + "\""
+                + ", "
+                + value
+                + PREF_SUFFIX
+                + System.lineSeparator();
     }
 
     private StringBuilder getPreferencesFromMap(List<Map.Entry<String, String>> tupleList) {
@@ -65,7 +90,8 @@ public class FoxhoundSeleniumProfile {
         return b ? "true" : "false";
     }
 
-    private static java.util.AbstractMap.SimpleEntry<String, String> getEntry(String key, String value) {
+    private static java.util.AbstractMap.SimpleEntry<String, String> getEntry(
+            String key, String value) {
         return new java.util.AbstractMap.SimpleEntry<>(key, value);
     }
 
@@ -73,18 +99,24 @@ public class FoxhoundSeleniumProfile {
         List<Map.Entry<String, String>> prefs = new ArrayList<>();
 
         // First the export server address
-        prefs.add(getEntry(PREF_EXPORT_KEY, getString("http://localhost:" + options.getServerPort())));
+        prefs.add(
+                getEntry(
+                        PREF_EXPORT_KEY, getString("http://localhost:" + options.getServerPort())));
 
         // Sources
         List<String> disabledSources = options.getSourcesDisabled();
         for (String source : FoxhoundConstants.ALL_SOURCE_NAMES) {
-            prefs.add(getEntry(PREF_SOURCE_KEY_PREFIX + source, getBool(!disabledSources.contains(source))));
+            prefs.add(
+                    getEntry(
+                            PREF_SOURCE_KEY_PREFIX + source,
+                            getBool(!disabledSources.contains(source))));
         }
 
         // Sinks
         List<String> disabledSinks = options.getSinksDisabled();
         for (String sink : FoxhoundConstants.ALL_SINK_NAMES) {
-            prefs.add(getEntry(PREF_SINK_KEY_PREFIX + sink, getBool(!disabledSinks.contains(sink))));
+            prefs.add(
+                    getEntry(PREF_SINK_KEY_PREFIX + sink, getBool(!disabledSinks.contains(sink))));
         }
 
         return getPreferencesFromMap(prefs).toString();
@@ -101,11 +133,11 @@ public class FoxhoundSeleniumProfile {
             if (profileDir != null) {
                 File prefFile = profileDir.resolve("user.js").toFile();
                 // Write the user profile all the time
-                FileUtils.writeStringToFile(prefFile, getProfileContentsFromOptions(), Charset.defaultCharset());
+                FileUtils.writeStringToFile(
+                        prefFile, getProfileContentsFromOptions(), Charset.defaultCharset());
                 extSelenium.setDefaultFirefoxProfile(FOXHOUND_PROFILE_NAME);
             } else {
-                LOGGER.error(
-                        "Failed to get or create Firefox profile {}", FOXHOUND_PROFILE_NAME);
+                LOGGER.error("Failed to get or create Firefox profile {}", FOXHOUND_PROFILE_NAME);
             }
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -114,7 +146,10 @@ public class FoxhoundSeleniumProfile {
 
     private ExtensionSelenium getExtensionSelenium() {
         if (extensionSelenium == null) {
-            extensionSelenium = Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class);
+            extensionSelenium =
+                    Control.getSingleton()
+                            .getExtensionLoader()
+                            .getExtension(ExtensionSelenium.class);
         }
         return extensionSelenium;
     }
@@ -122,7 +157,7 @@ public class FoxhoundSeleniumProfile {
     public void launchFoxhound() {
         LOGGER.info("Launching Foxhound");
         writeOptionsToProfile();
-        WebDriver webDriver = getExtensionSelenium().getWebDriverProxyingViaZAP(1234, Browser.FIREFOX.getId());
+        WebDriver webDriver =
+                getExtensionSelenium().getWebDriverProxyingViaZAP(1234, Browser.FIREFOX.getId());
     }
-
 }

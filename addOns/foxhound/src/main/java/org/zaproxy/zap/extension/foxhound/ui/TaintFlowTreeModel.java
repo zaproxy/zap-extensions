@@ -1,8 +1,34 @@
+/*
+ * Zed Attack Proxy (ZAP) and its related class files.
+ *
+ * ZAP is an HTTP/HTTPS proxy for assessing web application security.
+ *
+ * Copyright 2025 The ZAP Development Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.zaproxy.zap.extension.foxhound.ui;
 
+import java.io.Serial;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jdesktop.swingx.treetable.AbstractTreeTableModel;
 import org.jdesktop.swingx.treetable.TreeTableModel;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.foxhound.taint.TaintInfo;
@@ -10,24 +36,10 @@ import org.zaproxy.zap.extension.foxhound.taint.TaintLocation;
 import org.zaproxy.zap.extension.foxhound.taint.TaintOperation;
 import org.zaproxy.zap.extension.foxhound.taint.TaintRange;
 import org.zaproxy.zap.extension.foxhound.utils.StringUtils;
-import org.zaproxy.zap.utils.ThreadUtils;
-
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import java.awt.EventQueue;
-import java.io.Serial;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 
 public class TaintFlowTreeModel extends DefaultTreeModel implements TreeTableModel {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
+    @Serial private static final long serialVersionUID = 1L;
 
     private static final Logger LOGGER = LogManager.getLogger(TaintFlowTreeModel.class);
 
@@ -65,11 +77,15 @@ public class TaintFlowTreeModel extends DefaultTreeModel implements TreeTableMod
     private static final List<ColumnInfo> COLUMN_INFO = new ArrayList<>();
 
     static {
-        COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.treecontrol", String.class)); // The tree control
+        COLUMN_INFO.add(
+                new ColumnInfo(
+                        "foxhound.panel.table.header.treecontrol",
+                        String.class)); // The tree control
         COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.filename", String.class));
         COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.line", int.class));
         COLUMN_INFO.add(new ColumnInfo("foxhound.panel.table.header.pos", int.class));
-    };
+    }
+    ;
 
     private static final int COLUMN_COUNT = COLUMN_INFO.size();
 
@@ -88,8 +104,10 @@ public class TaintFlowTreeModel extends DefaultTreeModel implements TreeTableMod
         int lastRangeEnd = 0;
         for (TaintRange range : ranges) {
             if (range.getBegin() > lastRangeEnd) {
-                DefaultMutableTreeNode stringNode = new DefaultMutableTreeNode(
-                        StringUtils.limitedSubstring(taintedString, lastRangeEnd, range.getBegin()));
+                DefaultMutableTreeNode stringNode =
+                        new DefaultMutableTreeNode(
+                                StringUtils.limitedSubstring(
+                                        taintedString, lastRangeEnd, range.getBegin()));
                 node.add(stringNode);
             }
 
@@ -103,9 +121,14 @@ public class TaintFlowTreeModel extends DefaultTreeModel implements TreeTableMod
         }
 
         // Add final untainted string fragment
-        if ((!ranges.isEmpty()) && (ranges.get(ranges.size() - 1).getEnd() < taintedString.length())) {
-            DefaultMutableTreeNode stringNode = new DefaultMutableTreeNode(
-                    StringUtils.limitedSubstring(taintedString, ranges.get(ranges.size() - 1).getEnd(), taintedString.length()));
+        if ((!ranges.isEmpty())
+                && (ranges.get(ranges.size() - 1).getEnd() < taintedString.length())) {
+            DefaultMutableTreeNode stringNode =
+                    new DefaultMutableTreeNode(
+                            StringUtils.limitedSubstring(
+                                    taintedString,
+                                    ranges.get(ranges.size() - 1).getEnd(),
+                                    taintedString.length()));
             node.add(stringNode);
         }
         this.fireTreeStructureChanged(this, null, null, null);
@@ -163,7 +186,11 @@ public class TaintFlowTreeModel extends DefaultTreeModel implements TreeTableMod
                 case "foxhound.panel.table.header.to":
                     return "";
                 case "foxhound.panel.table.header.source":
-                    return String.join(", ", taintInfo.getSources().stream().map(TaintOperation::getOperation).toList());
+                    return String.join(
+                            ", ",
+                            taintInfo.getSources().stream()
+                                    .map(TaintOperation::getOperation)
+                                    .toList());
                 case "foxhound.panel.table.header.sink":
                     return taintInfo.getSink().getOperation();
                 case "foxhound.panel.table.header.string":
@@ -181,7 +208,9 @@ public class TaintFlowTreeModel extends DefaultTreeModel implements TreeTableMod
                 case "foxhound.panel.table.header.to":
                     return range.getEnd();
                 case "foxhound.panel.table.header.source":
-                    return String.join(", ", range.getSources().stream().map(TaintOperation::getOperation).toList());
+                    return String.join(
+                            ", ",
+                            range.getSources().stream().map(TaintOperation::getOperation).toList());
                 case "foxhound.panel.table.header.sink":
                     return range.getSink().getOperation();
                 case "foxhound.panel.table.header.string":

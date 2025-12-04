@@ -32,7 +32,7 @@ zapAddOn {
             }
         }
         pscanrules {
-            register("org.zaproxy.zap.extension.foxhound.FoxhoundExportServer");
+            register("org.zaproxy.zap.extension.foxhound.FoxhoundExportServer")
         }
     }
 }
@@ -45,4 +45,3 @@ dependencies {
     testImplementation("io.github.bonigarcia:webdrivermanager:5.7.0")
     testImplementation(project(":testutils"))
 }
-

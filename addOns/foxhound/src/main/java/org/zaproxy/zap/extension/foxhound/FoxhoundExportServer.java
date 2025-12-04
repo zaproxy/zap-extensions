@@ -1,5 +1,27 @@
+/*
+ * Zed Attack Proxy (ZAP) and its related class files.
+ *
+ * ZAP is an HTTP/HTTPS proxy for assessing web application security.
+ *
+ * Copyright 2025 The ZAP Development Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.zaproxy.zap.extension.foxhound;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import net.htmlparser.jericho.Source;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,10 +34,6 @@ import org.zaproxy.addon.network.server.Server;
 import org.zaproxy.zap.extension.foxhound.config.FoxhoundOptions;
 import org.zaproxy.zap.extension.foxhound.db.TaintInfoStore;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.concurrent.ConcurrentSkipListMap;
 
 public class FoxhoundExportServer extends PluginPassiveScanner {
     private static final Logger LOGGER = LogManager.getLogger(FoxhoundExportServer.class);
@@ -26,13 +44,9 @@ public class FoxhoundExportServer extends PluginPassiveScanner {
     private ExtensionNetwork extensionNetwork = null;
     private TaintInfoStore store = null;
 
-
-    public FoxhoundExportServer() {
-
-    }
+    public FoxhoundExportServer() {}
 
     public void start(ExtensionNetwork network, FoxhoundOptions options, TaintInfoStore store) {
-        LOGGER.info("start");
         this.extensionNetwork = network;
         this.store = store;
         port = options.getServerPort();
@@ -55,32 +69,37 @@ public class FoxhoundExportServer extends PluginPassiveScanner {
 
     private Server getServer() {
         if (server == null) {
-            server = extensionNetwork.createHttpServer(
-                new HttpMessageHandler() {
-                    @Override
-                    public void handleMessage(HttpMessageHandlerContext ctx, HttpMessage msg) {
-                        msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "text/html");
-                        try {
-                            // For some reason we get the message twice...
-                            if (msg.getResponseBody().toString().isEmpty()) {
-                                String body = msg.getRequestBody().toString();
-                                analyseTaintFlow(body);
+            server =
+                    extensionNetwork.createHttpServer(
+                            new HttpMessageHandler() {
+                                @Override
+                                public void handleMessage(
+                                        HttpMessageHandlerContext ctx, HttpMessage msg) {
+                                    msg.getResponseHeader()
+                                            .setHeader(
+                                                    HttpResponseHeader.CONTENT_TYPE, "text/html");
+                                    try {
+                                        // For some reason we get the message twice...
+                                        if (msg.getResponseBody().toString().isEmpty()) {
+                                            String body = msg.getRequestBody().toString();
+                                            analyseTaintFlow(body);
 
-                                msg.getResponseHeader().setStatusCode(200);
-                                msg.setResponseBody("OK");
-                            }
-                        } catch (Exception e) {
-                            LOGGER.warn(e);
-                            StringWriter sw = new StringWriter();
-                            PrintWriter pw = new PrintWriter(sw);
-                            e.printStackTrace(pw);
-                            String sStackTrace = sw.toString(); // stack trace as a string
-                            LOGGER.warn(sStackTrace);
-                            msg.getResponseHeader().setStatusCode(500);
-                            msg.setResponseBody("ERROR");
-                        }
-                    }
-                });
+                                            msg.getResponseHeader().setStatusCode(200);
+                                            msg.setResponseBody("OK");
+                                        }
+                                    } catch (Exception e) {
+                                        LOGGER.warn(e);
+                                        StringWriter sw = new StringWriter();
+                                        PrintWriter pw = new PrintWriter(sw);
+                                        e.printStackTrace(pw);
+                                        String sStackTrace =
+                                                sw.toString(); // stack trace as a string
+                                        LOGGER.warn(sStackTrace);
+                                        msg.getResponseHeader().setStatusCode(500);
+                                        msg.setResponseBody("ERROR");
+                                    }
+                                }
+                            });
             try {
                 server.start(port);
                 LOGGER.info("Starting Foxhound Export server on port:" + port);
@@ -91,20 +110,26 @@ public class FoxhoundExportServer extends PluginPassiveScanner {
         return server;
     }
 
-
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-        LOGGER.debug("scanHttpResponseReceive() In Scan Http ResponseReceive," +
-                " id=" + msg.getHistoryRef().getHistoryId() +
-                " session=" + msg.getHistoryRef().getSessionId() +
-                " url=" + msg.getRequestHeader().getURI());
+        LOGGER.debug(
+                "scanHttpResponseReceive() In Scan Http ResponseReceive,"
+                        + " id="
+                        + msg.getHistoryRef().getHistoryId()
+                        + " session="
+                        + msg.getHistoryRef().getSessionId()
+                        + " url="
+                        + msg.getRequestHeader().getURI());
     }
 
     @Override
     public void scanHttpRequestSend(HttpMessage msg, int id) {
-        LOGGER.debug("scanHttpRequestSend() In Scan Http ResponseReceive, " +
-                "id=" + msg.getHistoryRef().getHistoryId() +
-                " url=" + msg.getRequestHeader().getURI());
+        LOGGER.debug(
+                "scanHttpRequestSend() In Scan Http ResponseReceive, "
+                        + "id="
+                        + msg.getHistoryRef().getHistoryId()
+                        + " url="
+                        + msg.getRequestHeader().getURI());
     }
 
     @Override
