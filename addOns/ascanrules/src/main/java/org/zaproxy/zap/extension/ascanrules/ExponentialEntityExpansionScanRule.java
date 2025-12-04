@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.ascanrulesBeta;
+package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
@@ -41,7 +41,7 @@ public class ExponentialEntityExpansionScanRule extends AbstractAppPlugin
 
     private static final Logger LOGGER =
             LogManager.getLogger(ExponentialEntityExpansionScanRule.class);
-    private static final String PREFIX = "ascanbeta.entityExpansion.";
+    private static final String PREFIX = "ascanrules.entityExpansion.";
     private static final Map<String, String> ALERT_TAGS;
 
     static {

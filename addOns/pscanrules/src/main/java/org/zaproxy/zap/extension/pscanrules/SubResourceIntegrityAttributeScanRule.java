@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.pscanrulesBeta;
+package org.zaproxy.zap.extension.pscanrules;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -131,7 +131,7 @@ public class SubResourceIntegrityAttributeScanRule extends PluginPassiveScanner
     }
 
     /** Prefix for internationalized messages used by this rule */
-    private static final String MESSAGE_PREFIX = "pscanbeta.sri-integrity.";
+    private static final String MESSAGE_PREFIX = "pscanrules.sri-integrity.";
 
     private static final Map<String, String> ALERT_TAGS;
 
