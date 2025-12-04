@@ -79,7 +79,6 @@ public class FoxhoundExportServer extends PluginPassiveScanner {
                                             .setHeader(
                                                     HttpResponseHeader.CONTENT_TYPE, "text/html");
                                     try {
-                                        // For some reason we get the message twice...
                                         if (msg.getResponseBody().toString().isEmpty()) {
                                             String body = msg.getRequestBody().toString();
                                             analyseTaintFlow(body);
@@ -98,6 +97,8 @@ public class FoxhoundExportServer extends PluginPassiveScanner {
                                         msg.getResponseHeader().setStatusCode(500);
                                         msg.setResponseBody("ERROR");
                                     }
+                                    // This indicates that this handler provides the response
+                                    ctx.overridden();
                                 }
                             });
             try {

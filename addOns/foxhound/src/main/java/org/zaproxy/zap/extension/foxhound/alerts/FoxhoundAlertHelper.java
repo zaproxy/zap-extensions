@@ -114,8 +114,11 @@ public class FoxhoundAlertHelper implements EventConsumer {
             LOGGER.trace("Raising alerts for taint flow: {}", taint);
         }
         for (Alert alert : createAlerts(taint)) {
-            // Use null so the alertFound uses the historyRef from the alert
-            getExtensionAlert().alertFound(alert, null);
+            // Only raise an alert if we have found a message, otherwise an exception is thrown
+            if (alert.getMessage() != null) {
+                // Use null so the alertFound uses the historyRef from the alert
+                getExtensionAlert().alertFound(alert, null);
+            }
         }
     }
 
