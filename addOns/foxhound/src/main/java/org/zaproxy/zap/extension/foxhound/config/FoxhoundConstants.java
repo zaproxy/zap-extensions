@@ -42,6 +42,8 @@ import org.apache.logging.log4j.Logger;
 import org.zaproxy.zap.extension.foxhound.taint.NamedAndTagged;
 import org.zaproxy.zap.extension.foxhound.taint.SinkTag;
 import org.zaproxy.zap.extension.foxhound.taint.SourceTag;
+import org.zaproxy.zap.extension.foxhound.taint.TaintDeserializer;
+import org.zaproxy.zap.extension.foxhound.taint.TaintInfo;
 import org.zaproxy.zap.extension.foxhound.taint.TaintSinkType;
 import org.zaproxy.zap.extension.foxhound.taint.TaintSourceType;
 
@@ -49,6 +51,7 @@ public class FoxhoundConstants {
 
     public static final String RESOURCE = "/org/zaproxy/zap/extension/foxhound/resources";
     private static final String SOURCE_AND_SINK_LIST = RESOURCE + "/sourcessinks.json";
+    private static final String SAMPLE_FLOW_JSON = RESOURCE + "/sampletaintflow.json";
     private static final Logger LOGGER = LogManager.getLogger(FoxhoundConstants.class);
     public static final String FOXHOUND_256 = RESOURCE + "/default256.png";
     public static final String FOXHOUND_16 = RESOURCE + "/default16.png";
@@ -127,6 +130,22 @@ public class FoxhoundConstants {
             ALL_SINKS.add(sink);
             SINK_NAME_TYPE_MAP.put(sinkObject.getString("name"), sink);
         }
+    }
+
+    public static TaintInfo getSampleTaintInfo() throws JSONException, IOException {
+        LOGGER.info("Loading sample taint flow from {}", SAMPLE_FLOW_JSON);
+        InputStream inputStream = FoxhoundConstants.class.getResourceAsStream(SAMPLE_FLOW_JSON);
+        InputStreamReader streamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+        BufferedReader bufferedReader = new BufferedReader(streamReader);
+
+        StringBuilder sb = new StringBuilder();
+
+        String inputStr;
+        while ((inputStr = bufferedReader.readLine()) != null) sb.append(inputStr);
+
+        TaintInfo taintInfo = TaintDeserializer.deserializeTaintInfo(sb.toString());
+        LOGGER.debug("Loaded sample taint flow: {}", taintInfo.getSourceSinkLabel());
+        return taintInfo;
     }
 
     public static Set<TaintSourceType> getSourceTypesWithTag(SourceTag tag) {

@@ -24,10 +24,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.zaproxy.addon.network.ExtensionNetwork;
+import org.zaproxy.zap.extension.alert.ExampleAlertProvider;
 import org.zaproxy.zap.extension.foxhound.alerts.FoxhoundAlertHelper;
 import org.zaproxy.zap.extension.foxhound.config.FoxhoundConstants;
 import org.zaproxy.zap.extension.foxhound.config.FoxhoundOptions;
@@ -38,7 +40,7 @@ import org.zaproxy.zap.extension.foxhound.ui.FoxhoundPanel;
 import org.zaproxy.zap.extension.foxhound.ui.FoxhoundScanStatus;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 
-public class ExtensionFoxhound extends ExtensionAdaptor {
+public class ExtensionFoxhound extends ExtensionAdaptor implements ExampleAlertProvider {
 
     private static final Logger LOGGER = LogManager.getLogger(ExtensionFoxhound.class);
 
@@ -199,5 +201,10 @@ public class ExtensionFoxhound extends ExtensionAdaptor {
             foxhoundScanStatus = new FoxhoundScanStatus();
         }
         return foxhoundScanStatus;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return FoxhoundAlertHelper.getExampleAlerts();
     }
 }

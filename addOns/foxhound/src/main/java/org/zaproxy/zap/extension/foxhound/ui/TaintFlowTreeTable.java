@@ -118,13 +118,13 @@ public class TaintFlowTreeTable extends JXTreeTable {
                                                     SearchMatch.Location.RESPONSE_BODY,
                                                     sourceRange.getBegin(),
                                                     sourceRange.getEnd());
-                                    LOGGER.info(
+                                    LOGGER.debug(
                                             "TaintLocation: {}:{} to {}:{}",
                                             location.getLine(),
                                             location.getPos(),
                                             location.getNextLine(),
                                             location.getNextPos());
-                                    LOGGER.info(
+                                    LOGGER.debug(
                                             "TreeSelectionEvent found URL: {} with message {} highlighting {} string {}",
                                             url,
                                             msg,

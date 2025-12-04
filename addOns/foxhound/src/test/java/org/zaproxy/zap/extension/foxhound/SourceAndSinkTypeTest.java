@@ -21,12 +21,14 @@ package org.zaproxy.zap.extension.foxhound;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.junit.jupiter.api.Test;
 import org.zaproxy.zap.extension.foxhound.config.FoxhoundConstants;
 import org.zaproxy.zap.testutils.TestUtils;
 
 public class SourceAndSinkTypeTest extends TestUtils {
 
+    @Test
     public void testLoadingSourceSinkFile() {
-        assertEquals(10, FoxhoundConstants.ALL_SOURCES.size());
+        assertEquals(34, FoxhoundConstants.ALL_SOURCES.size());
     }
 }

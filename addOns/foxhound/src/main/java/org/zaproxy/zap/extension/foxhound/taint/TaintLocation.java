@@ -135,7 +135,7 @@ public class TaintLocation {
     }
 
     public String getCodeForEvidence(String s) {
-        if (s.isEmpty()) {
+        if ((s == null || s.isEmpty())) {
             return "";
         }
         Range range = getCodeSpan(s);

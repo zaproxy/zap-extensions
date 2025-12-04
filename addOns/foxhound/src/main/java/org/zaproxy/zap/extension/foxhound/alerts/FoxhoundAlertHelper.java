@@ -19,8 +19,11 @@
  */
 package org.zaproxy.zap.extension.foxhound.alerts;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import net.sf.json.JSONException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -32,6 +35,7 @@ import org.zaproxy.zap.eventBus.Event;
 import org.zaproxy.zap.eventBus.EventConsumer;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.foxhound.FoxhoundEventPublisher;
+import org.zaproxy.zap.extension.foxhound.config.FoxhoundConstants;
 import org.zaproxy.zap.extension.foxhound.db.TaintInfoStore;
 import org.zaproxy.zap.extension.foxhound.taint.HttpMessageFinder;
 import org.zaproxy.zap.extension.foxhound.taint.TaintInfo;
@@ -42,15 +46,14 @@ public class FoxhoundAlertHelper implements EventConsumer {
     private static final Logger LOGGER = LogManager.getLogger(FoxhoundAlertHelper.class);
     private TaintInfoStore store;
 
-    private static final Set<FoxhoundVulnerabilityCheck> CHECKS =
+    private static Set<FoxhoundVulnerabilityCheck> CHECKS =
             Set.of(
                     new FoxhoundXssCheck(),
                     new FoxhoundTaintInfoCheck(),
                     new FoxhoundStoredXssCheck(),
                     new FoxhoundCsrfCheck());
 
-    private final ExtensionAlert extensionAlert =
-            Control.getSingleton().getExtensionLoader().getExtension(ExtensionAlert.class);
+    private ExtensionAlert extensionAlert = null;
 
     public FoxhoundAlertHelper(TaintInfoStore store) {
         this.store = store;
@@ -58,7 +61,15 @@ public class FoxhoundAlertHelper implements EventConsumer {
                 .registerConsumer(this, FoxhoundEventPublisher.getPublisher().getPublisherName());
     }
 
-    private String getOtherInfo(TaintInfo taint) {
+    private ExtensionAlert getExtensionAlert() {
+        if (extensionAlert == null) {
+            extensionAlert =
+                    Control.getSingleton().getExtensionLoader().getExtension(ExtensionAlert.class);
+        }
+        return extensionAlert;
+    }
+
+    private static String getOtherInfo(TaintInfo taint) {
         StringBuilder sb = new StringBuilder();
         if (taint != null) {
             sb.append(Constant.messages.getString("foxhound.alert.sinkToSource")).append(" ");
@@ -94,52 +105,60 @@ public class FoxhoundAlertHelper implements EventConsumer {
         return sb.toString();
     }
 
-    protected String getUrl(TaintInfo taint) {
+    protected static String getUrl(TaintInfo taint) {
         return taint.getSink().getLocation().getFilename();
     }
 
     public void raiseAlerts(TaintInfo taint) {
-        String url = getUrl(taint);
-        HttpMessage msg = HttpMessageFinder.findHttpMessage(url);
         if (LOGGER.isTraceEnabled()) {
             LOGGER.trace("Raising alerts for taint flow: {}", taint);
         }
+        for (Alert alert : createAlerts(taint)) {
+            // Use null so the alertFound uses the historyRef from the alert
+            getExtensionAlert().alertFound(alert, null);
+        }
+    }
 
-        if (msg != null) {
-            String evidence =
-                    taint.getSink()
-                            .getLocation()
-                            .getCodeForEvidence(msg.getResponseBody().toString());
-            String otherInfo = getOtherInfo(taint);
-            for (FoxhoundVulnerabilityCheck check : CHECKS) {
-                if (check.shouldAlert(taint)) {
-                    Alert.Builder alertBuilder =
-                            Alert.builder()
-                                    .setPluginId(40099)
-                                    .setName(check.getVulnName())
-                                    .setRisk(check.getRisk())
-                                    .setDescription(check.getDescription())
-                                    .setSolution(check.getSolution())
-                                    .setReference(check.getReferences())
-                                    .setCweId(check.getCwe())
-                                    .setWascId(check.getWascId())
-                                    .setTags(check.getAlertTags())
-                                    .setConfidence(check.getConfidence())
-                                    .setUri(url)
-                                    .setOtherInfo(otherInfo)
-                                    .setEvidence(evidence)
-                                    .setParam(
-                                            taint.getSink()
-                                                    .getOperation()) // "param" should be one of the
-                                    // URL parameters
-                                    .setMessage(msg)
-                                    .setHistoryRef(msg.getHistoryRef());
+    protected static List<Alert> createAlerts(TaintInfo taint) {
+        List<Alert> alerts = new ArrayList<>();
 
-                    // Use null so the alertFound uses the historyRef from the alert
-                    extensionAlert.alertFound(alertBuilder.build(), null);
+        String url = getUrl(taint);
+        HttpMessage msg = HttpMessageFinder.findHttpMessage(url);
+
+        String evidence =
+                (msg == null)
+                        ? ""
+                        : taint.getSink()
+                                .getLocation()
+                                .getCodeForEvidence(msg.getResponseBody().toString());
+        String otherInfo = getOtherInfo(taint);
+        for (FoxhoundVulnerabilityCheck check : CHECKS) {
+            if (check.shouldAlert(taint)) {
+                Alert.Builder alertBuilder =
+                        Alert.builder()
+                                .setPluginId(40099)
+                                .setName(check.getVulnName())
+                                .setRisk(check.getRisk())
+                                .setDescription(check.getDescription())
+                                .setSolution(check.getSolution())
+                                .setReference(check.getReferences())
+                                .setCweId(check.getCwe())
+                                .setWascId(check.getWascId())
+                                .setTags(check.getAlertTags())
+                                .setConfidence(check.getConfidence())
+                                .setUri(url)
+                                .setOtherInfo(otherInfo)
+                                .setEvidence(evidence)
+                                .setParam(taint.getSink().getOperation());
+                if (msg != null) {
+                    alertBuilder.setMessage(msg);
+                    alertBuilder.setHistoryRef(msg.getHistoryRef());
                 }
+
+                alerts.add(alertBuilder.build());
             }
         }
+        return alerts;
     }
 
     @Override
@@ -160,5 +179,14 @@ public class FoxhoundAlertHelper implements EventConsumer {
                 raiseAlerts(taintInfo);
             }
         }
+    }
+
+    public static List<Alert> getExampleAlerts() {
+        try {
+            return FoxhoundAlertHelper.createAlerts(FoxhoundConstants.getSampleTaintInfo());
+        } catch (IOException | JSONException e) {
+            LOGGER.error(e);
+        }
+        return new ArrayList<>();
     }
 }
