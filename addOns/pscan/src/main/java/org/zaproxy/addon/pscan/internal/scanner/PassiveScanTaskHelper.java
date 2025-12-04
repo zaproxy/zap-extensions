@@ -40,6 +40,7 @@ import org.zaproxy.addon.pscan.internal.PassiveScannerOptions;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.pscan.PassiveScanner;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+import org.zaproxy.zap.utils.Stats;
 
 public class PassiveScanTaskHelper {
 
@@ -141,6 +142,7 @@ public class PassiveScanTaskHelper {
             return;
         }
 
+        incrementStats(alert);
         alert.setSource(Alert.Source.PASSIVE);
         // Raise the alert
         extAlert.alertFound(alert, href);
@@ -165,6 +167,14 @@ public class PassiveScanTaskHelper {
                     scanner.setEnabled(false);
                 }
             }
+        }
+    }
+
+    private static void incrementStats(Alert alert) {
+        String alertKeyBase = "stats.pscan." + alert.getPluginId() + ".alerts";
+        Stats.incCounter(alertKeyBase);
+        if (!alert.getAlertRef().equals(Integer.toString(alert.getPluginId()))) {
+            Stats.incCounter(alertKeyBase + "." + alert.getAlertRef());
         }
     }
 
