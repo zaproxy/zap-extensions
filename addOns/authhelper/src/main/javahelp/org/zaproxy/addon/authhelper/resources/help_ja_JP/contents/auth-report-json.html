@@ -36,6 +36,14 @@
 			<td>ドメイン</td>
 			<td>domains</td>
 		</tr>
+		<tr>
+			<td>Domains Partially Out of Scope</td>
+			<td>domainspartiallyoutofscope</td>
+		</tr>
+		<tr>
+			<td>Domains Out of Scope</td>
+			<td>domainsoutofscope</td>
+		</tr>
 
 		<tr>
 			<td>診断</td>
@@ -184,6 +192,31 @@
 	
 	これらは、ZAPによって記録されたすべての統計情報です。<br>
 それらの意味の詳細については、<a href="https://www.zaproxy.org/docs/internal-statistics/">https://www.zaproxy.org/docs/internal-statistics/</a>を参照してください。
+
+	<H3>Domains</H3>
+	This section contains an array with all the domains that were accessed while performing the authentication.
+<pre>
+	"domains": [
+		"https://www.example.org",
+		"https://api.example.org"
+	]
+</pre>
+
+	<H3>Domains Partially Out of Scope</H3>
+	This section contains an array with the domains partially out of scope, that were accessed while performing the authentication. For example, when the context includes just a subset of the target (e.g. <code>https://www.example.org/frontend/</code>) and other resources were also accessed (e.g. <code>https://www.example.org/backend/</code>).
+<pre>
+	"domainsPartiallyOutOfScope": [
+		"https://www.example.org"
+	]
+</pre>
+
+	<H3>Domains Out of Scope</H3>
+	This section contains an array with the domains out of scope (context), that were accessed while performing the authentication.
+<pre>
+	"domainsOutOfScope": [
+		"https://api.example.org"
+	]
+</pre>
 
 	<H3>診断</H3>
 	<a href="browser-auth.html">ブラウザベース</a>および<a href="client-script.html">クライアントスクリプト</a>認証メソッドでは、診断データを記録することができ、認証レポートに含めることで認証問題の診断に役立てることができます。
@@ -429,10 +462,6 @@
 			"site:" "https://www.example.org",
 			"value": 1
 		}
-	]
-	,"domains": [
-		"https://www.example.org",
-		"https://api.example.org"
 	]
 }
 </pre>
