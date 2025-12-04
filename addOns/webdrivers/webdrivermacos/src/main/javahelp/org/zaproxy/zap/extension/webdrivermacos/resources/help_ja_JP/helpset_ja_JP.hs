@@ -3,7 +3,7 @@
   <title>macOS WebDrivers</title>
 
   <maps>
-     <homeID>top</homeID>
+     <homeID>addon.webdrivermacos</homeID>
      <mapref location="map.jhm"/>
   </maps>
 
