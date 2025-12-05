@@ -61,13 +61,15 @@ public class React2ShellScanRule extends AbstractHostPlugin implements CommonAct
     private static final String ATTACK = "[\"$1:a:a\"]";
 
     private static final String PAYLOAD =
-            BOUNDRY
+            "--"
+                    + BOUNDRY
                     + HttpHeader.CRLF
                     + "Content-Disposition: form-data; name=\"1\""
                     + HttpHeader.CRLF
                     + HttpHeader.CRLF
                     + "{}"
                     + HttpHeader.CRLF
+                    + "--"
                     + BOUNDRY
                     + HttpHeader.CRLF
                     + "Content-Disposition: form-data; name=\"0\""
@@ -75,8 +77,10 @@ public class React2ShellScanRule extends AbstractHostPlugin implements CommonAct
                     + HttpHeader.CRLF
                     + ATTACK
                     + HttpHeader.CRLF
+                    + "--"
                     + BOUNDRY
-                    + "--";
+                    + "--"
+                    + HttpHeader.CRLF;
 
     static {
         Map<String, String> alertTags =
