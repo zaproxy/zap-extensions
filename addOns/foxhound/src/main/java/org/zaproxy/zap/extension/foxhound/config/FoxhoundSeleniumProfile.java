@@ -158,7 +158,7 @@ public class FoxhoundSeleniumProfile {
     public boolean launchFoxhound() {
         writeOptionsToProfile();
         String binaryPath = System.getProperty(SeleniumOptions.FIREFOX_BINARY_SYSTEM_PROPERTY);
-        if (binaryPath.contains("foxhound")) {
+        if ((binaryPath != null) && (binaryPath.contains("foxhound"))) {
             WebDriver webDriver =
                     getExtensionSelenium()
                             .getWebDriverProxyingViaZAP(1234, Browser.FIREFOX.getId());
