@@ -31,6 +31,7 @@ import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 import org.zaproxy.addon.network.server.Server;
+import org.zaproxy.zap.extension.foxhound.config.FoxhoundConstants;
 import org.zaproxy.zap.extension.foxhound.config.FoxhoundOptions;
 import org.zaproxy.zap.extension.foxhound.db.TaintInfoStore;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
@@ -140,6 +141,6 @@ public class FoxhoundExportServer extends PluginPassiveScanner {
 
     @Override
     public int getPluginId() {
-        return 40099;
+        return FoxhoundConstants.FOXHOUND_SCANID_DATAFLOW;
     }
 }
