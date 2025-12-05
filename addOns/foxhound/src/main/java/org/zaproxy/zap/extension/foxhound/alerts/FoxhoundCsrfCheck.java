@@ -91,6 +91,6 @@ public class FoxhoundCsrfCheck extends FoxhoundBaseCheck {
 
     @Override
     public int getCwe() {
-        return 79;
+        return 352;
     }
 }

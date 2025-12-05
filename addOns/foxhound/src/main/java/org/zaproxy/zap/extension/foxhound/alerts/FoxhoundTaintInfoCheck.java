@@ -53,7 +53,7 @@ public class FoxhoundTaintInfoCheck implements FoxhoundVulnerabilityCheck {
 
     @Override
     public String getDescription() {
-        return "";
+        return "An interesting data-flow was found in client-side JavaScript";
     }
 
     @Override
