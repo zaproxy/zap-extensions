@@ -5,4 +5,5 @@
       engine:                    # String: The script engine to use - can be used to override the default engine for the file extension
       name:                      # String: The name of the script, defaults to the file name
       source:                    # String: The full or relative path, must be readable
+      inline:                    # String: The full script (may be multi-line) - supply this or 'source' not both
       target:                    # String: The URL to be invoked for "targeted" script type
