@@ -45,6 +45,7 @@ var addOns =
         "evalvillain",
         "exim",
         "formhandler",
+        "foxhound",
         "frontendscanner",
         "fuzz",
         "fuzzdb",
