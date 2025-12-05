@@ -436,7 +436,8 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
 
         for (AutomationJob job : jobsToRun) {
 
-            if (plan.isStopping() || (env.isTimeToQuit() && !job.isAlwaysRun())) {
+            if ((plan.isStopping() || env.isTimeToQuit())
+                    && (plan.isHardStopping() || !job.isAlwaysRun())) {
                 continue;
             }
 

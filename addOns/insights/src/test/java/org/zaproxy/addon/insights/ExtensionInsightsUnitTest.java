@@ -43,6 +43,7 @@ import org.zaproxy.zap.eventBus.EventPublisher;
 import org.zaproxy.zap.model.Target;
 import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.Stats;
+import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 class ExtensionInsightsUnitTest extends TestUtils {
 
@@ -62,6 +63,8 @@ class ExtensionInsightsUnitTest extends TestUtils {
         ext = new ExtensionInsights();
         sm = ext.getStatsMonitor();
         testPublisher = new TestEventPublisher();
+        ext.getParam().load(new ZapXmlConfiguration());
+        ext.getParam().setExitAutoOnHigh(false);
 
         ZAP.getEventBus()
                 .registerPublisher(

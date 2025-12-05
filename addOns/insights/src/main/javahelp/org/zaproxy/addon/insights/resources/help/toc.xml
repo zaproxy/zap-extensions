@@ -9,6 +9,7 @@
 			<tocitem text="Insights" image="addon.insights-icon" target="addon.insights">
 				<tocitem text="Insights - Fields" target="addon.insights-fields"/>
 				<tocitem text="Insights - List" target="addon.insights-list"/>
+				<tocitem text="Insights - Job" target="addon.insights-job"/>
 				<tocitem text="Insights - Options" target="addon.insights-options"/>
 			</tocitem>
 		</tocitem>

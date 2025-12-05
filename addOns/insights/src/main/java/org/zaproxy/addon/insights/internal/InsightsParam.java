@@ -19,8 +19,6 @@
  */
 package org.zaproxy.addon.insights.internal;
 
-import java.util.Locale;
-import org.apache.commons.lang3.StringUtils;
 import org.zaproxy.zap.common.VersionedAbstractParam;
 
 public class InsightsParam extends VersionedAbstractParam {
@@ -28,25 +26,26 @@ public class InsightsParam extends VersionedAbstractParam {
     private static final String INSIGHTS_KEY = "insights";
 
     private static final String CONFIG_VERSION_KEY = INSIGHTS_KEY + VERSION_ATTRIBUTE;
-    private static final String EXIT_LEVEL_KEY = INSIGHTS_KEY + ".exitLevel";
     public static final String MSG_LOW_THRESHOLD_KEY = INSIGHTS_KEY + ".msgLow";
     public static final String MSG_HIGH_THRESHOLD_KEY = INSIGHTS_KEY + ".msgHigh";
     public static final String MEM_LOW_THRESHOLD_KEY = INSIGHTS_KEY + ".memLow";
     public static final String MEM_HIGH_THRESHOLD_KEY = INSIGHTS_KEY + ".memHigh";
     public static final String SLOW_RESPONSE_KEY = INSIGHTS_KEY + ".slow";
+    public static final String EXIT_AUTO_KEY = INSIGHTS_KEY + ".exitAuto";
 
     public static final int DEFAULT_MSG_LOW_THRESHOLD = 5;
     public static final int DEFAULT_MSG_HIGH_THRESHOLD = 50;
     public static final int DEFAULT_MEM_LOW_THRESHOLD = 80;
     public static final int DEFAULT_MEM_HIGH_THRESHOLD = 95;
     public static final int DEFAULT_SLOW_RESPONSE = 256;
+    public static final boolean DEFAULT_EXIT_AUTO_ON_HIGH = true;
 
-    private Insight.Level exitLevel;
     private int messagesLowThreshold = DEFAULT_MSG_LOW_THRESHOLD;
     private int messagesHighThreshold = DEFAULT_MSG_HIGH_THRESHOLD;
     private int memoryLowThreshold = DEFAULT_MEM_LOW_THRESHOLD;
     private int memoryHighThreshold = DEFAULT_MEM_HIGH_THRESHOLD;
     private int slowResponse = DEFAULT_SLOW_RESPONSE;
+    private boolean exitAutoOnHigh = DEFAULT_EXIT_AUTO_ON_HIGH;
 
     protected static final int CURRENT_CONFIG_VERSION = 1;
 
@@ -60,19 +59,7 @@ public class InsightsParam extends VersionedAbstractParam {
         this.memoryLowThreshold = this.getInt(MEM_LOW_THRESHOLD_KEY, DEFAULT_MEM_LOW_THRESHOLD);
         this.memoryHighThreshold = this.getInt(MEM_HIGH_THRESHOLD_KEY, DEFAULT_MEM_HIGH_THRESHOLD);
         this.slowResponse = nextPowerOfTwo(this.getInt(SLOW_RESPONSE_KEY, DEFAULT_SLOW_RESPONSE));
-        String exitLevelStr = this.getString(EXIT_LEVEL_KEY, null);
-        if (StringUtils.isNotBlank(exitLevelStr)) {
-            this.exitLevel = Insight.Level.valueOf(exitLevelStr.toUpperCase(Locale.ROOT));
-        }
-    }
-
-    public Insight.Level getExitLevel() {
-        return exitLevel;
-    }
-
-    public void setExitLevel(Insight.Level exitLevel) {
-        this.exitLevel = exitLevel;
-        getConfig().setProperty(EXIT_LEVEL_KEY, exitLevel == null ? null : exitLevel.name());
+        this.exitAutoOnHigh = this.getBoolean(EXIT_AUTO_KEY, true);
     }
 
     public int getMessagesLowThreshold() {
@@ -125,6 +112,15 @@ public class InsightsParam extends VersionedAbstractParam {
 
         int h = Integer.highestOneBit(x);
         return (h == x) ? x : h << 1;
+    }
+
+    public boolean isExitAutoOnHigh() {
+        return exitAutoOnHigh;
+    }
+
+    public void setExitAutoOnHigh(boolean exitAutoOnHigh) {
+        this.exitAutoOnHigh = exitAutoOnHigh;
+        getConfig().setProperty(EXIT_AUTO_KEY, this.exitAutoOnHigh);
     }
 
     @Override
