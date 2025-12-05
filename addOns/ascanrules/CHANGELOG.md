@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [76] - 2025-12-05
 ### Added
 - Remote Code Execution (React2Shell) Scan Rule (CVE-2025-55182, CVE-2025-66478)
 
@@ -642,6 +642,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[76]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v76
 [75]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v75
 [74]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v74
 [73]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v73
