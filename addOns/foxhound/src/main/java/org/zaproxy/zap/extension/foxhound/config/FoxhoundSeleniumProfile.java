@@ -33,6 +33,7 @@ import org.parosproxy.paros.control.Control;
 import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.selenium.ProfileManager;
+import org.zaproxy.zap.extension.selenium.SeleniumOptions;
 
 public class FoxhoundSeleniumProfile {
 
@@ -154,10 +155,17 @@ public class FoxhoundSeleniumProfile {
         return extensionSelenium;
     }
 
-    public void launchFoxhound() {
-        LOGGER.info("Launching Foxhound");
+    public boolean launchFoxhound() {
         writeOptionsToProfile();
-        WebDriver webDriver =
-                getExtensionSelenium().getWebDriverProxyingViaZAP(1234, Browser.FIREFOX.getId());
+        String binaryPath = System.getProperty(SeleniumOptions.FIREFOX_BINARY_SYSTEM_PROPERTY);
+        if (binaryPath.contains("foxhound")) {
+            WebDriver webDriver =
+                    getExtensionSelenium()
+                            .getWebDriverProxyingViaZAP(1234, Browser.FIREFOX.getId());
+            return true;
+        } else {
+            LOGGER.warn("Firefox binary doesn't appear to point to Foxhound: " + binaryPath);
+            return false;
+        }
     }
 }

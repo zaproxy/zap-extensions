@@ -22,21 +22,27 @@ package org.zaproxy.zap.extension.foxhound.alerts;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
+import org.zaproxy.zap.extension.foxhound.config.FoxhoundConstants;
+import org.zaproxy.zap.extension.foxhound.taint.SinkTag;
+import org.zaproxy.zap.extension.foxhound.taint.SourceTag;
 import org.zaproxy.zap.extension.foxhound.taint.TaintInfo;
 import org.zaproxy.zap.extension.foxhound.taint.TaintOperation;
 
-public class FoxhoundCsrfCheck implements FoxhoundVulnerabilityCheck {
+public class FoxhoundXssCheck extends FoxhoundBaseCheck{
 
-    private static final Vulnerability VULN = Vulnerabilities.getDefault().get("wasc_9");
+    private static final Vulnerability VULN = Vulnerabilities.getDefault().get("wasc_8");
     private static final Map<String, String> ALERT_TAGS;
-    private static final Set<String> SINKS;
-    private static final Set<String> SOURCES;
+    private static final Set<String> XSS_SINKS;
+    private static final Set<String> XSS_SOURCES;
 
     static {
         Map<String, String> alertTags =
@@ -48,58 +54,36 @@ public class FoxhoundCsrfCheck implements FoxhoundVulnerabilityCheck {
 
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
 
-        SINKS =
-                Set.of(
-                        "navigator.sendBeacon(body)",
-                        "navigator.sendBeacon(url)",
-                        "fetch.body",
-                        "fetch.url",
-                        "XMLHttpRequest.open(password)",
-                        "XMLHttpRequest.open(url)",
-                        "XMLHttpRequest.open(username)",
-                        "XMLHttpRequest.send",
-                        "XMLHttpRequest.setRequestHeader(name)",
-                        "XMLHttpRequest.setRequestHeader(value)",
-                        "WebSocket",
-                        "WebSocket.send",
-                        "EventSource",
-                        "window.open",
-                        "window.postMessage",
-                        "location.assign",
-                        "location.hash",
-                        "location.host",
-                        "location.href",
-                        "location.pathname",
-                        "location.port",
-                        "location.protocol",
-                        "location.replace",
-                        "location.search");
+        XSS_SINKS = FoxhoundConstants.getSinkNamesWithTag(SinkTag.XSS);
+        XSS_SOURCES =
+                FoxhoundConstants.getSourceNamesWithTags(List.of(SourceTag.URL, SourceTag.INPUT));
+    }
 
-        SOURCES =
-                Set.of(
-                        "location.hash",
-                        "location.href",
-                        "location.pathname",
-                        "location.search",
-                        "window.name",
-                        "document.referrer",
-                        "document.baseURI",
-                        "document.documentURI");
+    protected Vulnerability getVulnerability() {
+        return VULN;
+    }
+
+    protected Set<String> getRequiredSourceNames() {
+        return XSS_SOURCES;
+    }
+
+    protected Set<String> getRequiredSinkNames() {
+        return XSS_SINKS;
     }
 
     @Override
-    public String getVulnName() {
-        return VULN.getName();
+    public int getScanId() {
+        return FoxhoundConstants.FOXHOUND_SCANID_XSS;
     }
 
     @Override
     public int getRisk() {
-        return Alert.RISK_MEDIUM;
+        return Alert.RISK_HIGH;
     }
 
     @Override
     public int getConfidence() {
-        return Alert.CONFIDENCE_MEDIUM;
+        return Alert.CONFIDENCE_HIGH;
     }
 
     @Override
@@ -108,42 +92,8 @@ public class FoxhoundCsrfCheck implements FoxhoundVulnerabilityCheck {
     }
 
     @Override
-    public String getDescription() {
-        return VULN.getDescription();
-    }
-
-    @Override
-    public String getSolution() {
-        return VULN.getSolution();
-    }
-
-    @Override
-    public String getReferences() {
-        return VULN.getReferencesAsString();
-    }
-
-    @Override
     public int getCwe() {
-        return 352;
+        return 79;
     }
 
-    @Override
-    public int getWascId() {
-        return VULN.getWascId();
-    }
-
-    @Override
-    public boolean shouldAlert(TaintInfo taint) {
-
-        if (!SINKS.contains(taint.getSink().getOperation())) {
-            return false;
-        }
-
-        Set<String> sources = new HashSet<>();
-        for (TaintOperation op : taint.getSources()) {
-            sources.add(op.getOperation());
-        }
-
-        return !Collections.disjoint(sources, SOURCES);
-    }
 }

@@ -22,7 +22,9 @@ package org.zaproxy.zap.extension.foxhound.ui;
 import java.io.Serial;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.foxhound.config.FoxhoundConstants;
 import org.zaproxy.zap.extension.foxhound.config.FoxhoundSeleniumProfile;
 
@@ -35,7 +37,11 @@ public class FoxhoundLaunchButton extends JButton {
         this.setToolTipText(Constant.messages.getString("foxhound.ui.launchTooltip"));
         this.addActionListener(
                 e -> {
-                    profile.launchFoxhound();
+                    if (!profile.launchFoxhound()) {
+                        JOptionPane.showMessageDialog(
+                                View.getSingleton().getMainFrame(),
+                                Constant.messages.getString("foxhound.ui.notfound"));
+                    }
                 });
     }
 
