@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Remote Code Execution (React2Shell) Scan Rule (CVE-2025-55182, CVE-2025-66478)
+
 ### Changed
 - The External Redirect scan rule has been updated to account for potential false positives involving JavaScript comments.
 
