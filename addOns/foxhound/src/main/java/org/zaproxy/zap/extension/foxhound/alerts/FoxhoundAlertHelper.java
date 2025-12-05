@@ -19,11 +19,9 @@
  */
 package org.zaproxy.zap.extension.foxhound.alerts;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import net.sf.json.JSONException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -35,7 +33,6 @@ import org.zaproxy.zap.eventBus.Event;
 import org.zaproxy.zap.eventBus.EventConsumer;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.foxhound.FoxhoundEventPublisher;
-import org.zaproxy.zap.extension.foxhound.config.FoxhoundConstants;
 import org.zaproxy.zap.extension.foxhound.db.TaintInfoStore;
 import org.zaproxy.zap.extension.foxhound.taint.HttpMessageFinder;
 import org.zaproxy.zap.extension.foxhound.taint.TaintInfo;
@@ -122,6 +119,25 @@ public class FoxhoundAlertHelper implements EventConsumer {
         }
     }
 
+    protected static Alert.Builder getAlertBuilderFromCheck(FoxhoundVulnerabilityCheck check) {
+        Alert.Builder alertBuilder = Alert.builder();
+        if (check != null) {
+            alertBuilder
+                    .setPluginId(check.getScanId())
+                    .setName(check.getVulnName())
+                    .setRisk(check.getRisk())
+                    .setDescription(check.getDescription())
+                    .setSolution(check.getSolution())
+                    .setReference(check.getReferences())
+                    .setCweId(check.getCwe())
+                    .setWascId(check.getWascId())
+                    .setTags(check.getAlertTags())
+                    .setConfidence(check.getConfidence());
+        }
+
+        return alertBuilder;
+    }
+
     protected static List<Alert> createAlerts(TaintInfo taint) {
         List<Alert> alerts = new ArrayList<>();
 
@@ -138,17 +154,7 @@ public class FoxhoundAlertHelper implements EventConsumer {
         for (FoxhoundVulnerabilityCheck check : CHECKS) {
             if (check.shouldAlert(taint)) {
                 Alert.Builder alertBuilder =
-                        Alert.builder()
-                                .setPluginId(40099)
-                                .setName(check.getVulnName())
-                                .setRisk(check.getRisk())
-                                .setDescription(check.getDescription())
-                                .setSolution(check.getSolution())
-                                .setReference(check.getReferences())
-                                .setCweId(check.getCwe())
-                                .setWascId(check.getWascId())
-                                .setTags(check.getAlertTags())
-                                .setConfidence(check.getConfidence())
+                        getAlertBuilderFromCheck(check)
                                 .setUri(url)
                                 .setOtherInfo(otherInfo)
                                 .setEvidence(evidence)
@@ -185,11 +191,10 @@ public class FoxhoundAlertHelper implements EventConsumer {
     }
 
     public static List<Alert> getExampleAlerts() {
-        try {
-            return FoxhoundAlertHelper.createAlerts(FoxhoundConstants.getSampleTaintInfo());
-        } catch (IOException | JSONException e) {
-            LOGGER.error(e);
+        List<Alert> alerts = new ArrayList<>();
+        for (FoxhoundVulnerabilityCheck check : CHECKS) {
+            alerts.add(getAlertBuilderFromCheck(check).build());
         }
-        return new ArrayList<>();
+        return alerts;
     }
 }

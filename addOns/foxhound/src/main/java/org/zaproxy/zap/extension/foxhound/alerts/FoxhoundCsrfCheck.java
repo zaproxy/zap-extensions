@@ -21,12 +21,9 @@ package org.zaproxy.zap.extension.foxhound.alerts;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
@@ -34,12 +31,10 @@ import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 import org.zaproxy.zap.extension.foxhound.config.FoxhoundConstants;
 import org.zaproxy.zap.extension.foxhound.taint.SinkTag;
 import org.zaproxy.zap.extension.foxhound.taint.SourceTag;
-import org.zaproxy.zap.extension.foxhound.taint.TaintInfo;
-import org.zaproxy.zap.extension.foxhound.taint.TaintOperation;
 
-public class FoxhoundXssCheck extends FoxhoundBaseCheck{
+public class FoxhoundCsrfCheck extends FoxhoundBaseCheck {
 
-    private static final Vulnerability VULN = Vulnerabilities.getDefault().get("wasc_8");
+    private static final Vulnerability VULN = Vulnerabilities.getDefault().get("wasc_9");
     private static final Map<String, String> ALERT_TAGS;
     private static final Set<String> XSS_SINKS;
     private static final Set<String> XSS_SOURCES;
@@ -49,31 +44,34 @@ public class FoxhoundXssCheck extends FoxhoundBaseCheck{
                 new HashMap<>(
                         CommonAlertTag.toMap(
                                 CommonAlertTag.OWASP_2021_A03_INJECTION,
-                                CommonAlertTag.OWASP_2017_A07_XSS,
-                                CommonAlertTag.WSTG_V42_CLNT_01_DOM_XSS));
+                                CommonAlertTag.OWASP_2021_A10_SSRF,
+                                CommonAlertTag.WSTG_V42_CLNT_04_OPEN_REDIR));
 
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
 
-        XSS_SINKS = FoxhoundConstants.getSinkNamesWithTag(SinkTag.XSS);
+        XSS_SINKS = FoxhoundConstants.getSinkNamesWithTag(SinkTag.XSRF);
         XSS_SOURCES =
                 FoxhoundConstants.getSourceNamesWithTags(List.of(SourceTag.URL, SourceTag.INPUT));
     }
 
+    @Override
     protected Vulnerability getVulnerability() {
         return VULN;
     }
 
+    @Override
     protected Set<String> getRequiredSourceNames() {
         return XSS_SOURCES;
     }
 
+    @Override
     protected Set<String> getRequiredSinkNames() {
         return XSS_SINKS;
     }
 
     @Override
     public int getScanId() {
-        return FoxhoundConstants.FOXHOUND_SCANID_XSS;
+        return FoxhoundConstants.FOXHOUND_SCANID_CSRF;
     }
 
     @Override
@@ -95,5 +93,4 @@ public class FoxhoundXssCheck extends FoxhoundBaseCheck{
     public int getCwe() {
         return 79;
     }
-
 }

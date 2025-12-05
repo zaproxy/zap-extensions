@@ -65,6 +65,12 @@ public class FoxhoundConstants {
     public static Map<String, TaintSourceType> SOURCE_NAME_TYPE_MAP;
     public static Map<String, TaintSinkType> SINK_NAME_TYPE_MAP;
 
+    // These must match https://github.com/zaproxy/zaproxy/blob/main/docs/scanners.md
+    public static int FOXHOUND_SCANID_DATAFLOW = 40100;
+    public static int FOXHOUND_SCANID_XSS = 40101;
+    public static int FOXHOUND_SCANID_STORED_XSS = 40102;
+    public static int FOXHOUND_SCANID_CSRF = 40103;
+
     static {
         try {
             loadSourceAndSinkConfig();

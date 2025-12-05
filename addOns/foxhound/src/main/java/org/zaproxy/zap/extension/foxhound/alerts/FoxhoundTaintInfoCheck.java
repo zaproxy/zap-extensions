@@ -21,9 +21,15 @@ package org.zaproxy.zap.extension.foxhound.alerts;
 
 import java.util.Map;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.zaproxy.zap.extension.foxhound.config.FoxhoundConstants;
 import org.zaproxy.zap.extension.foxhound.taint.TaintInfo;
 
 public class FoxhoundTaintInfoCheck implements FoxhoundVulnerabilityCheck {
+
+    @Override
+    public int getScanId() {
+        return FoxhoundConstants.FOXHOUND_SCANID_DATAFLOW;
+    }
 
     @Override
     public Map<String, String> getAlertTags() {
