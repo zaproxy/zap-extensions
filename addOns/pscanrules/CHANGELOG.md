@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Sub Resource Integrity Attribute Missing
 
 ### Changed
+- Update minimum ZAP version to 2.17.0.
 - Address redirection in a reference.
 - Update dependency.
 

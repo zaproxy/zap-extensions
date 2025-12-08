@@ -149,6 +149,7 @@ public class ActiveScanJob extends AutomationJob {
                     PARAM_URL,
                     "defaultStrength",
                     "defaultThreshold",
+                    "persistTemporaryMessages",
                 },
                 progress,
                 this.getPlan().getEnv());
@@ -312,6 +313,7 @@ public class ActiveScanJob extends AutomationJob {
             case "maxChartTimeInMins":
             case "maxResultsToList":
             case "maxScansInUI":
+            case "persistTemporaryMessages":
             case "promptInAttackMode":
             case "promptToClearFinishedScans":
             case "rescanInAttackMode":

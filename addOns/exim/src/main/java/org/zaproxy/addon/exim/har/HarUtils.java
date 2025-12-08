@@ -52,7 +52,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -365,7 +365,7 @@ public final class HarUtils {
                 contentType = "";
                 text = requestBody.toString();
             } else {
-                if (StringUtils.startsWithIgnoreCase(
+                if (Strings.CI.startsWith(
                         contentType.trim(), HttpHeader.FORM_URLENCODED_CONTENT_TYPE)) {
                     for (HtmlParameter param : httpMessage.getFormParams()) {
                         params.add(

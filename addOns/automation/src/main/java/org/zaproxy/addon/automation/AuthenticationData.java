@@ -35,7 +35,6 @@ import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.reflect.MethodUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -92,7 +91,6 @@ public class AuthenticationData extends AutomationData {
     protected static final String FIELD_LOGIN_REQUEST_URL = "loginRequestURL";
 
     private static final String BAD_FIELD_ERROR_MSG = "automation.error.env.auth.field.bad";
-    private static final String PRIVATE_FIELD_SCRIPT = "script";
 
     public static final String VERIFICATION_ELEMENT = "verification";
 
@@ -149,22 +147,21 @@ public class AuthenticationData extends AutomationData {
                         .getCanonicalName()
                         .equals(CLIENT_SCRIPT_BASED_AUTH_METHOD_CLASSNAME)) {
             JobUtils.addPrivateField(parameters, PARAM_DIAGNOSTICS, authMethod);
-            ScriptWrapper sw =
-                    (ScriptWrapper) JobUtils.getPrivateField(authMethod, PRIVATE_FIELD_SCRIPT);
+            ScriptBasedAuthenticationMethod scriptAuthMethod =
+                    (ScriptBasedAuthenticationMethod) authMethod;
+            ScriptWrapper sw = scriptAuthMethod.getScript();
             LOGGER.debug("Matched client script class");
             if (sw != null) {
                 setMethod(METHOD_CLIENT);
-                extractAuthScriptParameters(authMethod, sw, parameters);
+                extractAuthScriptParameters(scriptAuthMethod, sw, parameters);
                 JobUtils.addPrivateField(parameters, PARAM_LOGIN_PAGE_WAIT, authMethod);
                 JobUtils.addPrivateField(parameters, PARAM_MIN_WAIT_FOR, authMethod);
             }
         } else if (authMethod instanceof ScriptBasedAuthenticationMethod scriptAuthMethod) {
-            ScriptWrapper sw =
-                    (ScriptWrapper)
-                            JobUtils.getPrivateField(scriptAuthMethod, PRIVATE_FIELD_SCRIPT);
+            ScriptWrapper sw = scriptAuthMethod.getScript();
             if (sw != null) {
                 setMethod(AuthenticationData.METHOD_SCRIPT);
-                extractAuthScriptParameters(authMethod, sw, parameters);
+                extractAuthScriptParameters(scriptAuthMethod, sw, parameters);
             }
         } else if (authMethod != null
                 && authMethod
@@ -203,16 +200,16 @@ public class AuthenticationData extends AutomationData {
     }
 
     private static void extractAuthScriptParameters(
-            AuthenticationMethod authMethod, ScriptWrapper sw, Map<String, Object> parameters) {
+            ScriptBasedAuthenticationMethod authMethod,
+            ScriptWrapper sw,
+            Map<String, Object> parameters) {
         if (sw.getFile() != null) {
             parameters.put(PARAM_SCRIPT, sw.getFile().getAbsolutePath());
         } else {
             parameters.put(PARAM_SCRIPT_INLINE, sw.getContents());
         }
         parameters.put(PARAM_SCRIPT_ENGINE, sw.getEngineName());
-        @SuppressWarnings("unchecked")
-        Map<String, String> paramValues =
-                (Map<String, String>) JobUtils.getPrivateField(authMethod, "paramValues");
+        Map<String, String> paramValues = authMethod.getParamValues();
         for (Entry<String, String> entry : paramValues.entrySet()) {
             parameters.put(entry.getKey(), entry.getValue());
         }
@@ -440,21 +437,18 @@ public class AuthenticationData extends AutomationData {
                         AuthenticationMethodType clientScriptType =
                                 extAuth.getAuthenticationMethodTypeForIdentifier(8);
                         LOGGER.info("Loaded client script auth method type {}.", clientScriptType);
-                        AuthenticationMethod clientScriptMethod =
-                                clientScriptType.createAuthenticationMethod(context.getId());
+                        ScriptBasedAuthenticationMethod clientScriptMethod =
+                                (ScriptBasedAuthenticationMethod)
+                                        clientScriptType.createAuthenticationMethod(
+                                                context.getId());
 
                         JobUtils.setPrivateField(
                                 clientScriptMethod,
                                 "diagnostics",
                                 parameters.getOrDefault(PARAM_DIAGNOSTICS, false));
 
-                        try {
-                            MethodUtils.invokeMethod(clientScriptMethod, "loadScript", sw);
-                        } catch (Exception e) {
-                            LOGGER.error(e.getMessage(), e);
-                        }
-                        JobUtils.setPrivateField(
-                                clientScriptMethod, "paramValues", getScriptParameters(env));
+                        clientScriptMethod.loadScript(sw);
+                        clientScriptMethod.setParamValues(getScriptParameters(env));
 
                         setPrivateInteger(
                                 clientScriptMethod,
@@ -476,16 +470,12 @@ public class AuthenticationData extends AutomationData {
                                 new ScriptBasedAuthenticationMethodType();
                         LOGGER.debug("Loaded script auth method type");
 
-                        AuthenticationMethod scriptMethod =
-                                scriptType.createAuthenticationMethod(context.getId());
+                        ScriptBasedAuthenticationMethod scriptMethod =
+                                (ScriptBasedAuthenticationMethod)
+                                        scriptType.createAuthenticationMethod(context.getId());
 
-                        try {
-                            MethodUtils.invokeMethod(scriptMethod, "loadScript", sw);
-                        } catch (Exception e) {
-                            LOGGER.error(e.getMessage(), e);
-                        }
-                        JobUtils.setPrivateField(
-                                scriptMethod, "paramValues", getScriptParameters(env));
+                        scriptMethod.loadScript(sw);
+                        scriptMethod.setParamValues(getScriptParameters(env));
 
                         reloadAuthenticationMethod(scriptMethod, progress);
                         context.setAuthenticationMethod(scriptMethod);

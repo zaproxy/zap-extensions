@@ -19,9 +19,7 @@
  */
 package org.zaproxy.addon.pscan.internal.scanner;
 
-import java.lang.reflect.Constructor;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 import net.htmlparser.jericho.Source;
 import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.LogManager;
@@ -41,9 +39,6 @@ import org.zaproxy.zap.utils.Stats;
 /** A class which runs all of the enabled passive scanners against a specified HistoryReference */
 public class PassiveScanTask implements Runnable {
 
-    private final Constructor<PassiveScanData> pscanDataConstructor;
-    private final Consumer<PassiveScanner> pscanActionsSetter;
-
     private HistoryReference href;
 
     private PassiveScanTaskHelper helper;
@@ -57,15 +52,9 @@ public class PassiveScanTask implements Runnable {
 
     private static final Logger LOGGER = LogManager.getLogger(PassiveScanTask.class);
 
-    public PassiveScanTask(
-            HistoryReference hr,
-            PassiveScanTaskHelper helper,
-            Constructor<PassiveScanData> pscanDataConstructor,
-            Consumer<PassiveScanner> pscanActionsSetter) {
+    public PassiveScanTask(HistoryReference hr, PassiveScanTaskHelper helper) {
         this.href = hr;
         this.helper = helper;
-        this.pscanDataConstructor = pscanDataConstructor;
-        this.pscanActionsSetter = pscanActionsSetter;
         this.maxBodySize = helper.getMaxBodySizeInBytesToScan();
         helper.addTaskToList(this);
     }
@@ -109,7 +98,7 @@ public class PassiveScanTask implements Runnable {
             // Parse the record
             HttpMessage msg = href.getHttpMessage();
             Source src = new Source(msg.getResponseBody().toString());
-            PassiveScanData passiveScanData = pscanDataConstructor.newInstance(msg);
+            PassiveScanData passiveScanData = new PassiveScanData(msg);
 
             for (PassiveScanner scanner : helper.getPassiveScanRuleManager().getScanners()) {
                 currentScanner = scanner;
@@ -128,7 +117,7 @@ public class PassiveScanTask implements Runnable {
                             pps.setHelper(passiveScanData);
                             scanner = pps;
                         }
-                        pscanActionsSetter.accept(scanner);
+                        scanner.setPassiveScanActions(helper);
 
                         LOGGER.debug(
                                 "Running scan rule, URL {} plugin {}",
