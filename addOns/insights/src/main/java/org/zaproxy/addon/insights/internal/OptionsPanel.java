@@ -24,6 +24,7 @@ import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -43,6 +44,7 @@ public class OptionsPanel extends AbstractParamPanel {
     private ZapNumberSpinner memLowThreshold;
     private ZapNumberSpinner memHighThreshold;
     private JComboBox<Integer> slowResponse;
+    private JCheckBox exitAutoOnHigh;
 
     public OptionsPanel() {
         super();
@@ -55,6 +57,11 @@ public class OptionsPanel extends AbstractParamPanel {
 
         int rowIndex = 0;
 
+        addParamField(
+                panel,
+                rowIndex++,
+                new JLabel(Constant.messages.getString("insights.options.exitAutoOnHigh")),
+                getExitAutoOnHigh());
         addParamField(
                 panel,
                 rowIndex++,
@@ -138,11 +145,19 @@ public class OptionsPanel extends AbstractParamPanel {
         return slowResponse;
     }
 
+    private JCheckBox getExitAutoOnHigh() {
+        if (exitAutoOnHigh == null) {
+            exitAutoOnHigh = new JCheckBox();
+        }
+        return exitAutoOnHigh;
+    }
+
     @Override
     public void initParam(Object obj) {
         OptionsParam options = (OptionsParam) obj;
         InsightsParam param = options.getParamSet(InsightsParam.class);
 
+        getExitAutoOnHigh().setSelected(param.isExitAutoOnHigh());
         getMsgLowThreshold().setValue(param.getMessagesLowThreshold());
         getMsgHighThreshold().setValue(param.getMessagesHighThreshold());
         getMemLowThreshold().setValue(param.getMemoryLowThreshold());
@@ -160,6 +175,7 @@ public class OptionsPanel extends AbstractParamPanel {
         OptionsParam options = (OptionsParam) obj;
         InsightsParam param = options.getParamSet(InsightsParam.class);
 
+        param.setExitAutoOnHigh(getExitAutoOnHigh().isSelected());
         param.setMessagesLowThreshold(getMsgLowThreshold().getValue());
         param.setMessagesHighThreshold(getMsgHighThreshold().getValue());
         param.setMemoryLowThreshold(getMemLowThreshold().getValue());

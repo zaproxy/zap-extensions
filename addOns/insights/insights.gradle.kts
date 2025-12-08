@@ -18,6 +18,19 @@ zapAddOn {
                     }
                 }
             }
+            register("org.zaproxy.addon.insights.automation.ExtensionInsightsAutomation") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.addon.insights.automation"))
+                }
+                dependencies {
+                    addOns {
+                        register("automation") {
+                            version.set(">=0.58.0")
+                        }
+                        register("commonlib")
+                    }
+                }
+            }
         }
     }
 }
@@ -31,6 +44,8 @@ crowdin {
 }
 
 dependencies {
+    zapAddOn("automation")
+    zapAddOn("commonlib")
     zapAddOn("reports")
     testImplementation(project(":testutils"))
 }
