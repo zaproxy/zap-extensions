@@ -271,6 +271,18 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns
 <br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/6/">6</a>.
 
+<h2 id="id-40048">Remote Code Execution (React2Shell)</h2>
+This rule identifies servers running vulnerable versions of React Server Components with Next.js, which will allow remote attackers to execute arbitrary code.
+<p>
+The rule is based on the PoC detailed on <a href="https://slcyber.io/research-center/high-fidelity-detection-mechanism-for-rsc-next-js-rce-cve-2025-55182-cve-2025-66478/">https://slcyber.io/research-center/high-fidelity-detection-mechanism-for-rsc-next-js-rce-cve-2025-55182-cve-2025-66478/</a>.
+<p>
+It verifies that the server is running vulnerable React Server Components with Next.js, and that the remote code execution (RCE) vulnerability is present without causing any damage.
+It forces an error via a malformed multipart request and checks for the presence of a string which confirms RCE is possible.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/React2ShellScanRule.java">React2ShellScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40048/">40048</a>.
+
 <h2 id="id-20018">Remote Code Execution - CVE-2012-1823</h2>
 Detect CVE-2012-1823 to perform Remote Code Execution on a PHP-CGI based web server.
 <p>
