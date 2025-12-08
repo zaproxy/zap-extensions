@@ -25,9 +25,10 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.zaproxy.addon.insights.InsightListener;
 import org.zaproxy.zap.utils.ThreadUtils;
 
-public class Insights {
+public class Insights implements InsightListener {
 
     private Map<String, Map<String, Insight>> insightMap;
     private List<Insight> insightList;
@@ -59,6 +60,7 @@ public class Insights {
         this.model = model;
     }
 
+    @Override
     public void recordInsight(Insight insight) {
         Map<String, Insight> siteInsights =
                 insightMap.computeIfAbsent(
