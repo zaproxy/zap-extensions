@@ -21,6 +21,7 @@ package org.zaproxy.addon.automation.jobs;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -195,20 +196,22 @@ class ActiveScanJobUnitTest {
                 job.getConfigParameters(new ScannerParamWrapper(), job.getParamMethodName());
 
         // Then
-        assertThat(params.size(), is(equalTo(12)));
-
-        assertThat(params.containsKey("encodeCookieValues"), is(equalTo(true)));
-        assertThat(params.containsKey("addQueryParam"), is(equalTo(true)));
-        assertThat(params.containsKey("defaultPolicy"), is(equalTo(true)));
-        assertThat(params.containsKey("delayInMs"), is(equalTo(true)));
-        assertThat(params.containsKey("handleAntiCSRFTokens"), is(equalTo(true)));
-        assertThat(params.containsKey("injectPluginIdInHeader"), is(equalTo(true)));
-        assertThat(params.containsKey("maxRuleDurationInMins"), is(equalTo(true)));
-        assertThat(params.containsKey("maxScanDurationInMins"), is(equalTo(true)));
-        assertThat(params.containsKey("scanHeadersAllRequests"), is(equalTo(true)));
-        assertThat(params.containsKey("threadPerHost"), is(equalTo(true)));
-        assertThat(params.containsKey("scanNullJsonValues"), is(equalTo(true)));
-        assertThat(params.containsKey("maxAlertsPerRule"), is(equalTo(true)));
+        assertThat(
+                params.keySet(),
+                containsInAnyOrder(
+                        "excludeAntiCsrfTokens",
+                        "encodeCookieValues",
+                        "addQueryParam",
+                        "defaultPolicy",
+                        "delayInMs",
+                        "handleAntiCSRFTokens",
+                        "injectPluginIdInHeader",
+                        "maxRuleDurationInMins",
+                        "maxScanDurationInMins",
+                        "scanHeadersAllRequests",
+                        "threadPerHost",
+                        "scanNullJsonValues",
+                        "maxAlertsPerRule"));
     }
 
     @Test

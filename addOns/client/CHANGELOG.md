@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Update the automation framework template to include missing field (`scopeCheck`).
+- Update minimum ZAP version to 2.17.0.
 
 ## [0.19.0] - 2025-12-03
 ### Changed

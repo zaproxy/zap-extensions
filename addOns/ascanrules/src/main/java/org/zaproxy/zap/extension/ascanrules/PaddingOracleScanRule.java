@@ -345,7 +345,7 @@ public class PaddingOracleScanRule extends AbstractAppParamPlugin
                     // The last letter represents the length
                     int last = value.length() - 1;
                     if (((last + (int) value.charAt(last)) % 4) == 0) {
-                        Base64 decoder = new Base64(true);
+                        Base64 decoder = Base64.builder().setUrlSafe(true).get();
                         return decoder.decode(value.substring(0, last));
                     }
                 }

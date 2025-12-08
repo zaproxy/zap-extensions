@@ -23,10 +23,11 @@ import java.nio.charset.StandardCharsets;
 import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.network.HttpBody;
 import org.parosproxy.paros.network.HttpHeader;
+import org.parosproxy.paros.network.HttpMessage.CharsetProvider;
 
-public class DefaultCharsetProvider /* TODO implements CharsetProvider */ {
+public class DefaultCharsetProvider implements CharsetProvider {
 
-    // @Override
+    @Override
     public String get(HttpHeader header, HttpBody body) {
         String charset = header.getCharset();
         if (!StringUtils.isBlank(charset)) {

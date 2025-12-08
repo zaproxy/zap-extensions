@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - A help page for the tech-detection (`wappalyzer`) automation framework job.
 
+### Changed
+- Update minimum ZAP version to 2.17.0.
+
 ## [21.50.0] - 2025-12-03
 ### Changed
 - Updated with enthec upstream icon and pattern changes.
