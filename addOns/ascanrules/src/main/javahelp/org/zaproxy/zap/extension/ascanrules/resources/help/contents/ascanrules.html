@@ -143,6 +143,13 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns
 <br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40028/">40028</a>.
 
+<H2 id="id-40044">Exponential Entity Expansion (Billion Laughs Attack)</H2>
+This rule attempts to identify the "Billion Laughs" vulnerability in servers that accept XML or YAML files.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/ExponentialEntityExpansionScanRule.java">ExponentialEntityExpansionScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40044/">40044</a>.
+
 <H2 id="id-20019">External Redirect</H2>
 
 This rule submits a variety of URL redirect strings as parameter values in a request, then examines the headers and bodies of responses to determine
@@ -224,6 +231,20 @@ The following is an example JSON entry:
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/HiddenFilesScanRule.java">HiddenFilesScanRule.java</a>
 <br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40035/">40035</a>.
+
+<H2 id="id-10106">HTTP Only Site</H2>
+This active scan rule checks whether an HTTP site is served under HTTPS.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/HttpOnlySiteScanRule.java">HttpOnlySiteScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10106/">10106</a>.
+
+<H2 id="id-10047">HTTPS Content Available via HTTP</H2>
+This active scan rule attempts to access content that was originally accessed via HTTPS (SSL/TLS) via HTTP.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/HttpsAsHttpScanRule.java">HttpsAsHttpScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10047/">10047</a>.
 
 <H2 id="id-40043">Log4Shell (CVE-2021-44228 and CVE-2021-45046)</H2>
 This rule attempts to discover the Log4Shell (<a href="https://nvd.nist.gov/vuln/detail/CVE-2021-44228">CVE-2021-44228</a> and <a href="https://nvd.nist.gov/vuln/detail/CVE-2021-45046">CVE-2021-45046</a>) vulnerabilities.
@@ -325,6 +346,17 @@ See also: <a href="https://www.zaproxy.org/docs/desktop/addons/oast-support/#ale
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/SstiBlindScanRule.java">SstiBlindScanRule.java</a>
 <br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/90036/">90036</a>.
+
+<H2 id="id-10048">ShellShock - CVE-2014-6271</H2>
+
+This rule performs 2 attacks to detect servers vulnerable to CVE-2014-6271 aka ShellShock.<br>
+The first is a simple reflected attack and the second is a time based attack.<br>
+<br>
+Post 2.5.0 you can change the length of time used for the attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/ShellShockScanRule.java">ShellShockScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10048/">10048</a>.
 
 <H2 id="id-20017">Source Code Disclosure - CVE-2012-1823</H2>
 Exploit CVE-2012-1823 to disclose server-side PHP source code on a PHP-CGI based web server.<br>

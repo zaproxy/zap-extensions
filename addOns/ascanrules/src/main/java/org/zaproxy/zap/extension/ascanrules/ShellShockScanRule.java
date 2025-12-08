@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.ascanrulesBeta;
+package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -97,12 +97,12 @@ public class ShellShockScanRule extends AbstractAppParamPlugin implements Common
 
     @Override
     public String getName() {
-        return Constant.messages.getString("ascanbeta.shellshock.name");
+        return Constant.messages.getString("ascanrules.shellshock.name");
     }
 
     @Override
     public String getDescription() {
-        return Constant.messages.getString("ascanbeta.shellshock.desc");
+        return Constant.messages.getString("ascanrules.shellshock.desc");
     }
 
     @Override
@@ -112,12 +112,12 @@ public class ShellShockScanRule extends AbstractAppParamPlugin implements Common
 
     @Override
     public String getSolution() {
-        return Constant.messages.getString("ascanbeta.shellshock.soln");
+        return Constant.messages.getString("ascanrules.shellshock.soln");
     }
 
     @Override
     public String getReference() {
-        return Constant.messages.getString("ascanbeta.shellshock.ref");
+        return Constant.messages.getString("ascanrules.shellshock.ref");
     }
 
     @Override
@@ -203,7 +203,7 @@ public class ShellShockScanRule extends AbstractAppParamPlugin implements Common
     private AlertBuilder createAlert() {
         return newAlert()
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                .setOtherInfo(Constant.messages.getString("ascanbeta.shellshock.extrainfo"));
+                .setOtherInfo(Constant.messages.getString("ascanrules.shellshock.extrainfo"));
     }
 
     private AlertBuilder buildAlert(String paramName, String attack) {
@@ -224,7 +224,7 @@ public class ShellShockScanRule extends AbstractAppParamPlugin implements Common
                 .setAttack(attack)
                 .setEvidence(
                         Constant.messages.getString(
-                                "ascanbeta.shellshock.timingbased.evidence", attackElapsedTime))
+                                "ascanrules.shellshock.timingbased.evidence", attackElapsedTime))
                 .setAlertRef(getId() + "-2");
     }
 

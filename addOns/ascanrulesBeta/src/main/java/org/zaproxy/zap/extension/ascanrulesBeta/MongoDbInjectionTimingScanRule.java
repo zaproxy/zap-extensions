@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.ascanrulesAlpha;
+package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.IOException;
 import java.net.SocketException;
@@ -52,7 +52,7 @@ public class MongoDbInjectionTimingScanRule extends AbstractAppParamPlugin
         implements CommonActiveScanRuleInfo {
 
     // Prefix for internationalised messages used by this rule
-    private static final String MESSAGE_PREFIX = "ascanalpha.mongodb.";
+    private static final String MESSAGE_PREFIX = "ascanbeta.mongodb.";
 
     private static final String RULE_SLEEP_TIME = RuleConfigParam.RULE_COMMON_SLEEP_TIME;
 
