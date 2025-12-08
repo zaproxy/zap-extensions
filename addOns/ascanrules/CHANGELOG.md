@@ -4,6 +4,13 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- The following scan rules were added, having been promoted from beta:
+  - Exponential Entity Expansion (Billion Laughs Attack)
+  - HTTP Only Site
+  - HTTPS Content Available via HTTP
+  - ShellShock - CVE-2014-6271
+
 ### Changed
 - Update dependency.
 
