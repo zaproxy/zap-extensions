@@ -30,7 +30,7 @@ import org.zaproxy.addon.insights.ExtensionInsights;
 
 public class ExtensionInsightsAutomation extends ExtensionAdaptor {
 
-    public static final String NAME = "ExtensionAlertFiltersAutomation";
+    public static final String NAME = "ExtensionInsightsAutomation";
 
     private static final List<Class<? extends Extension>> DEPENDENCIES =
             List.of(ExtensionInsights.class, ExtensionAutomation.class);
