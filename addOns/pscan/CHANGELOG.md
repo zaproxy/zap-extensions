@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Migrate handling of Alerts raised statistics from the core.
 - Update minimum ZAP version to 2.17.0.
 
+### Removed
+- Dropped help references to ZAP in Ten videos which are no longer available.
+
 ## [0.5.0] - 2025-09-10
 
 ### Changed

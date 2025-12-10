@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Update minimum ZAP version to 2.17.0.
 
+### Removed
+- Dropped help references to ZAP in Ten videos which are no longer available.
+
 ## [0.17.0] - 2025-11-04
 ### Changed
 - Update dependency.
