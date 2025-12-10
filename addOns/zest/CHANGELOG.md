@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update minimum ZAP version to 2.17.0.
 - Use lowercase credential parameters in the Authentication default template.
 
+### Fixed
+- Address deadlock when adding scripts.
+
 ## [48.10.0] - 2025-10-29
 ### Added
 - Support for Edge in scripts run from the script console.

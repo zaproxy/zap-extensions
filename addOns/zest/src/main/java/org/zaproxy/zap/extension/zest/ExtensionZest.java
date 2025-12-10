@@ -80,6 +80,7 @@ import org.zaproxy.zap.extension.zest.internal.NoopRequestValueReplacer;
 import org.zaproxy.zap.extension.zest.internal.RequestValueReplacer;
 import org.zaproxy.zap.extension.zest.internal.ScriptReorderer;
 import org.zaproxy.zap.extension.zest.menu.ZestMenuManager;
+import org.zaproxy.zap.utils.ThreadUtils;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 import org.zaproxy.zap.view.ZapToggleButton;
 import org.zaproxy.zest.core.v1.ZestActionFail;
@@ -160,8 +161,6 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     private ScriptReorderer scriptReorderer;
 
     private ExtensionNetwork extensionNetwork;
-    private Method displayScriptMethod;
-    private Method selectNodeMethod;
 
     private int threadId = 1;
 
@@ -235,25 +234,6 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
             this.getExtScript().getScriptUI().addRenderer(ZestElementWrapper.class, renderer);
             this.getExtScript().getScriptUI().addRenderer(ZestScriptWrapper.class, renderer);
             this.getExtScript().getScriptUI().disableScriptDialog(ZestScriptWrapper.class);
-        }
-        try {
-            displayScriptMethod =
-                    this.getExtScript()
-                            .getScriptUI()
-                            .getClass()
-                            .getDeclaredMethod("displayScript", ScriptWrapper.class, boolean.class);
-        } catch (Exception e) {
-            LOGGER.debug("Unable to find displayScript method with allowFocus", e);
-        }
-        try {
-            selectNodeMethod =
-                    this.getExtScript()
-                            .getScriptUI()
-                            .getClass()
-                            .getDeclaredMethod(
-                                    "selectNode", ScriptNode.class, boolean.class, boolean.class);
-        } catch (Exception e) {
-            LOGGER.debug("Unable to find selectNode method with allowFocus", e);
         }
     }
 
@@ -600,7 +580,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     public void display(
             ZestScriptWrapper script, ScriptNode node, boolean expand, boolean allowFocus) {
         if (View.isInitialised() && this.getExtScript().getScriptUI() != null) {
-            selectNode(node, expand, allowFocus);
+            getExtScript().getScriptUI().selectNode(node, expand, allowFocus);
             displayScript(script, allowFocus);
         }
     }
@@ -640,28 +620,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     }
 
     private void displayScript(ZestScriptWrapper sw, boolean allowFocus) {
-        if (displayScriptMethod != null) {
-            try {
-                displayScriptMethod.invoke(this.getExtScript().getScriptUI(), sw, allowFocus);
-                return;
-            } catch (Exception e) {
-                LOGGER.debug("Error while invoking displayScript Method with allowFocus", e);
-            }
-        }
-        this.getExtScript().getScriptUI().displayScript(sw);
-    }
-
-    private void selectNode(ScriptNode node, boolean expand, boolean allowFocus) {
-        if (selectNodeMethod != null) {
-            try {
-                selectNodeMethod.invoke(
-                        this.getExtScript().getScriptUI(), node, expand, allowFocus);
-                return;
-            } catch (Exception e) {
-                LOGGER.debug("Error while invoking selectNode Method with allowFocus", e);
-            }
-        }
-        this.getExtScript().getScriptUI().selectNode(node, expand);
+        getExtScript().getScriptUI().displayScript(sw, allowFocus);
     }
 
     public List<ScriptNode> getAllZestScriptNodes() {
@@ -1849,11 +1808,14 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
 
             this.getZestTreeModel().addScript(parentNode, zsw);
 
-            if (display && View.isInitialised()) {
-                this.updated(parentNode);
-                this.display(zsw, parentNode, true);
-                this.dialogManager.showZestEditScriptDialog(parentNode, zsw, false);
-                this.getZestResultsPanel().getModel().clear();
+            if (display && hasView()) {
+                ThreadUtils.invokeAndWaitHandled(
+                        () -> {
+                            this.updated(parentNode);
+                            this.display(zsw, parentNode, true);
+                            this.dialogManager.showZestEditScriptDialog(parentNode, zsw, false);
+                            this.getZestResultsPanel().getModel().clear();
+                        });
             }
         }
     }

@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Update the automation framework template to include missing field (`inline`).
+- Do not display scripts added through the Automation Framework.
 - Update minimum ZAP version to 2.17.0.
 
 ## [45.16.0] - 2025-12-03
