@@ -243,9 +243,9 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
         return targetPatterns;
     }
 
-    private static Pattern compilePayload(String payload) {
-        return Pattern.compile("\\b" + payload + "\\b", Pattern.CASE_INSENSITIVE);
-    }
+   private static Pattern compilePayload(String payload) {
+    return Pattern.compile("\\b" + payload + "\\b", Pattern.CASE_INSENSITIVE);
+}
 
     public static void setPayloadProvider(Supplier<Iterable<String>> provider) {
         payloadProvider = provider == null ? DEFAULT_PAYLOAD_PROVIDER : provider;
