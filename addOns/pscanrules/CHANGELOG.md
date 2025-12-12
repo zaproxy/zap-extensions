@@ -4,11 +4,15 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+## Unreleased
+- Improved detection of version information in Server Header Info Leak passive scan rule (Issue #9160).
+
 ### Added
 - The following scan rules were added, having been promoted from Beta:
   - In Page Banner Information Leak
   - Java Serialization Object
   - Sub Resource Integrity Attribute Missing
+
 
 ### Changed
 - Update minimum ZAP version to 2.17.0.
