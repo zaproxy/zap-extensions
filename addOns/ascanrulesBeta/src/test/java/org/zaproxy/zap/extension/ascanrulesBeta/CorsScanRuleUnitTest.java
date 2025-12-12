@@ -113,6 +113,34 @@ class CorsScanRuleUnitTest extends ActiveScannerTest<CorsScanRule> {
         assertExpectedAlert(Alert.RISK_MEDIUM, "*");
     }
 
+    @ParameterizedTest
+    @ValueSource(ints = {400, 401, 403, 404, 415, 500, 503})
+    void shouldAlertInfoIfErrorStatusCodeEvenWithAcaoAndAcac(int statusCode) throws Exception {
+        // Given - Even with ACAO and ACAC headers that would normally be HIGH risk,
+        // error responses should be INFO since no sensitive content is exposed
+        nano.addHandler(new CorsResponse("REFLECT", true, statusCode));
+        HttpMessage msg = this.getHttpMessage("/");
+        rule.init(msg, this.parent);
+        // When
+        rule.scan();
+        // Then
+        assertExpectedAlert(Alert.RISK_INFO, "REFLECT");
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {401, 404, 415})
+    void shouldAlertInfoIfErrorStatusCodeWithWildcardAcao(int statusCode) throws Exception {
+        // Given - Even with wildcard ACAO that would normally be MEDIUM risk,
+        // error responses should be INFO since no sensitive content is exposed
+        nano.addHandler(new CorsResponse("*", false, statusCode));
+        HttpMessage msg = this.getHttpMessage("/");
+        rule.init(msg, this.parent);
+        // When
+        rule.scan();
+        // Then
+        assertExpectedAlert(Alert.RISK_INFO, "*");
+    }
+
     @Test
     void shouldReturnExpectedMappings() {
         // Given / When
@@ -165,16 +193,22 @@ class CorsScanRuleUnitTest extends ActiveScannerTest<CorsScanRule> {
     private static class CorsResponse extends NanoServerHandler {
         private final String acaoBehavior;
         private final boolean isAcac;
+        private final Response.Status statusCode;
 
         public CorsResponse(String acaoBehavior, boolean isAcac) {
+            this(acaoBehavior, isAcac, 200);
+        }
+
+        public CorsResponse(String acaoBehavior, boolean isAcac, int statusCode) {
             super("/");
             this.acaoBehavior = acaoBehavior;
             this.isAcac = isAcac;
+            this.statusCode = Response.Status.lookup(statusCode);
         }
 
         @Override
         protected Response serve(IHTTPSession session) {
-            Response resp = newFixedLengthResponse(GENERIC_RESPONSE);
+            Response resp = newFixedLengthResponse(statusCode, "text/html", GENERIC_RESPONSE);
             if (acaoBehavior == null) {
                 return resp;
             }
