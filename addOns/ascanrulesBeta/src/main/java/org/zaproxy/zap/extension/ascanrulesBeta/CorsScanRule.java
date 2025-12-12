@@ -112,8 +112,16 @@ public class CorsScanRule extends AbstractAppPlugin implements CommonActiveScanR
                         respHead.getHeader(HttpFieldsNames.ACCESS_CONTROL_ALLOW_CREDENTIALS);
                 acacVal = acacVal == null ? "" : acacVal;
 
+                // Check if the response indicates an error (4xx or 5xx status codes)
+                // In such cases, sensitive content is not actually being exposed
+                int statusCode = respHead.getStatusCode();
+                boolean isErrorResponse = statusCode >= 400;
+
                 // Evaluates the risk for this alert
-                if (acaoVal.contains("*")) {
+                if (isErrorResponse) {
+                    // Error responses don't expose sensitive content, keep risk as INFO
+                    risk = Alert.RISK_INFO;
+                } else if (acaoVal.contains("*")) {
                     risk = Alert.RISK_MEDIUM;
                 } else if (acaoVal.contains(RANDOM_NAME)
                         || acaoVal.contains("null")
