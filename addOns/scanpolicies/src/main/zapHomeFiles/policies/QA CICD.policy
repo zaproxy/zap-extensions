@@ -45,6 +45,10 @@
             <name>Exponential Entity Expansion (Billion Laughs Attack)</name>
             <enabled>true</enabled>
         </p40044>
+        <p40048>
+            <name>Remote Code Execution (React2Shell)</name>
+            <enabled>true</enabled>
+        </p40048>
         <p50000>
             <name>Script Active Scan Rules</name>
             <enabled>true</enabled>
