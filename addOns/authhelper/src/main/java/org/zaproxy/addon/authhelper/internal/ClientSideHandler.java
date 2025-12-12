@@ -60,7 +60,7 @@ public final class ClientSideHandler implements HttpMessageHandler {
     private AuthRequestDetails authReq;
     private int firstHrefId;
 
-    @Setter private HistoryProvider historyProvider = new HistoryProvider();
+    @Setter private HistoryProvider historyProvider = ExtensionAuthhelper.getHistoryProvider();
 
     public ClientSideHandler(User user) {
         this.user = user;

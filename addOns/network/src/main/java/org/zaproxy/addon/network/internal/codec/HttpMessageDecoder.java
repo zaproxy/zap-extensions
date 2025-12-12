@@ -27,7 +27,7 @@ import io.netty.util.ByteProcessor;
 import io.netty.util.internal.AppendableCharSequence;
 import java.util.List;
 import java.util.function.Function;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.parosproxy.paros.network.HttpBody;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
@@ -267,7 +267,7 @@ public abstract class HttpMessageDecoder extends ByteToMessageDecoder {
 
     private boolean isTransferEncodingChunked() {
         for (String transferEncoding : header.getHeaderValues(HttpHeader.TRANSFER_ENCODING)) {
-            if (StringUtils.containsIgnoreCase(transferEncoding, HttpHeader._CHUNKED)) {
+            if (Strings.CI.contains(transferEncoding, HttpHeader._CHUNKED)) {
                 return true;
             }
         }

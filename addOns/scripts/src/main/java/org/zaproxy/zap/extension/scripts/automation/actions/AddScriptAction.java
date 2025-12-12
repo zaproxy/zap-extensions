@@ -221,7 +221,7 @@ public class AddScriptAction extends ScriptAction {
                         Constant.messages.getString(
                                 "scripts.automation.info.add.replace", jobName, sw.getName()));
             }
-            extScript.addScript(sw);
+            extScript.addScript(sw, false);
         } catch (IOException e) {
             progress.error(
                     Constant.messages.getString(

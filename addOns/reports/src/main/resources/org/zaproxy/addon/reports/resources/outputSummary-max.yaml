@@ -2,3 +2,7 @@
     parameters:
       format: None                     # String: The format of the output, one of None, Short, Long, default: None
       summaryFile:                     # String: The full path of a file into which will be written a JSON summary of the scan, default empty
+    rules:                             # A list of rules for which the actions are to be overridden
+      - id:                            # Int: The rule id as per https://www.zaproxy.org/docs/alerts/
+        action:                        # String: The action to take for this rule, one of IGNORE, INFO, FAIL, default: WARN
+        customMessage:                 # String: A custom message which will be displayed with this rule

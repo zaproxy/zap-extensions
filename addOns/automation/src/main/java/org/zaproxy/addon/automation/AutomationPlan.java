@@ -55,6 +55,7 @@ public class AutomationPlan {
     private Date started;
     private Date finished;
     private boolean stopping;
+    private boolean hardStopping;
 
     private static final Logger LOGGER = LogManager.getLogger(AutomationPlan.class);
     private static final ObjectMapper YAML_OBJECT_MAPPER;
@@ -326,9 +327,24 @@ public class AutomationPlan {
         return stopping;
     }
 
+    public boolean isHardStopping() {
+        return hardStopping;
+    }
+
     public void stopPlan() {
+        this.stopPlan(true);
+    }
+
+    public void stopPlan(boolean hardStop) {
         this.stopping = true;
-        getJobs().forEach(AutomationJob::stop);
+        this.hardStopping = hardStop;
+        getJobs()
+                .forEach(
+                        job -> {
+                            if (hardStop || !job.isAlwaysRun()) {
+                                job.stop();
+                            }
+                        });
     }
 
     public String toYaml() throws IOException {

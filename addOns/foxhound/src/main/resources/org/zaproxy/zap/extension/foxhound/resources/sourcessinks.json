@@ -1,0 +1,386 @@
+{
+    "sinks": [
+        {
+            "name": "element.after",
+            "tags": [ "HTML", "XSS" ]
+        },
+        {
+            "name": "element.before",
+            "tags": [ "HTML", "XSS" ]
+        },
+        {
+            "name": "EventSource",
+            "tags": []
+        },
+        {
+            "name": "Function.ctor",
+            "tags": [ "JAVASCRIPT", "XSS" ]
+        },
+        {
+            "name": "Range.createContextualFragment(fragment)",
+            "tags": [ "HTML", "XSS" ]
+        },
+        {
+            "name": "WebSocket",
+            "tags": [ "NETWORK", "URL" ]
+        },
+        {
+            "name": "WebSocket.send",
+            "tags": [ "NETWORK" ]
+        },
+        {
+            "name": "XMLHttpRequest.open(password)",
+            "tags": [ "NETWORK", "XHR" ]
+        },
+        {
+            "name": "XMLHttpRequest.open(url)",
+            "tags": [ "NETWORK", "XHR", "URL" ]
+        },
+        {
+            "name": "XMLHttpRequest.open(username)",
+            "tags": [ "NETWORK", "XHR" ]
+        },
+        {
+            "name": "XMLHttpRequest.send",
+            "tags": [ "NETWORK", "XHR" ]
+        },
+        {
+            "name": "XMLHttpRequest.setRequestHeader(name)",
+            "tags": [ "NETWORK", "XHR" ]
+        },
+        {
+            "name": "XMLHttpRequest.setRequestHeader(value)",
+            "tags": [ "NETWORK", "XHR" ]
+        },
+        {
+            "name": "a.href",
+            "tags": [ "URL" ]
+        },
+        {
+            "name": "area.href",
+            "tags": [ "URL" ]
+        },
+        {
+            "name": "document.cookie",
+            "tags": [ "STORAGE" ]
+        },
+        {
+            "name": "document.writeln",
+            "tags": [ "HTML", "XSS" ]
+        },
+        {
+            "name": "document.write",
+            "tags": [ "HTML", "XSS" ]
+        },
+        {
+            "name": "element.style",
+            "tags": [ "CSS" ]
+        },
+        {
+            "name": "embed.src",
+            "tags": [ "SRC" ]
+        },
+        {
+            "name": "eval",
+            "tags": [ "JAVASCRIPT", "XSS" ]
+        },
+        {
+            "name": "eventHandler",
+            "tags": [  ]
+        },
+        {
+            "name": "fetch.body",
+            "tags": [ "NETWORK", "FETCH" ]
+        },
+        {
+            "name": "fetch.url",
+            "tags": [ "NETWORK", "FETCH", "URL" ]
+        },
+        {
+            "name": "form.action",
+            "tags": []
+        },
+        {
+            "name": "iframe.src",
+            "tags": [ "SRC", "URL" ]
+        },
+        {
+            "name": "iframe.srcdoc",
+            "tags": [ "SRC", "URL" ]
+        },
+        {
+            "name": "img.src",
+            "tags": [ "SRC", "URL" ]
+        },
+        {
+            "name": "img.srcset",
+            "tags": [ "SRC", "URL" ]
+        },
+        {
+            "name": "innerHTML",
+            "tags": [ "HTML", "XSS" ]
+        },
+        {
+            "name": "insertAdjacentHTML",
+            "tags": [ "HTML", "XSS" ]
+        },
+        {
+            "name": "insertAdjacentText",
+            "tags": [ "HTML", "XSS" ]
+        },
+        {
+            "name": "localStorage.setItem",
+            "tags": [ "STORAGE" ]
+        },
+        {
+            "name": "localStorage.setItem(key)",
+            "tags": [ "STORAGE" ]
+        },
+        {
+            "name": "location.assign",
+            "tags": [ "LOCATION", "URL" ]
+        },
+        {
+            "name": "location.hash",
+            "tags": [ "LOCATION", "URL" ]
+        },
+        {
+            "name": "location.host",
+            "tags": [ "LOCATION", "URL" ]
+        },
+        {
+            "name": "location.href",
+            "tags": [ "LOCATION", "URL" ]
+        },
+        {
+            "name": "location.pathname",
+            "tags": [ "LOCATION", "URL" ]
+        },
+        {
+            "name": "location.port",
+            "tags": [ "LOCATION", "URL" ]
+        },
+        {
+            "name": "location.protocol",
+            "tags": [ "LOCATION", "URL" ]
+        },
+        {
+            "name": "location.replace",
+            "tags": [ "LOCATION", "URL" ]
+        },
+        {
+            "name": "location.search",
+            "tags": [ "LOCATION", "URL" ]
+        },
+        {
+            "name": "media.src",
+            "tags": [ "SRC", "URL" ]
+        },
+        {
+            "name": "navigator.sendBeacon(body)",
+            "tags": [ "NETWORK" ]
+        },
+        {
+            "name": "navigator.sendBeacon(url)",
+            "tags": [ "NETWORK", "URL" ]
+        },
+        {
+            "name": "object.data",
+            "tags": [ "URL" ]
+        },
+        {
+            "name": "outerHTML",
+            "tags": [ "HTML", "XSS" ]
+        },
+        {
+            "name": "script.innerHTML",
+            "tags": [ "HTML", "JAVASCRIPT", "XSS" ]
+        },
+        {
+            "name": "script.src",
+            "tags": [ "URL", "JAVASCRIPT", "XSS" ]
+        },
+        {
+            "name": "script.text",
+            "tags": [ "URL", "JAVASCRIPT", "XSS" ]
+        },
+        {
+            "name": "script.textContent",
+            "tags": [ "URL", "JAVASCRIPT", "XSS" ]
+        },
+        {
+            "name": "sessionStorage.setItem",
+            "tags": [ "STORAGE" ]
+        },
+        {
+            "name": "sessionStorage.setItem(key)",
+            "tags": [ "STORAGE" ]
+        },
+        {
+            "name": "setInterval",
+            "tags": [ "JAVASCRIPT", "XSS" ]
+        },
+        {
+            "name": "setTimeout",
+            "tags": [ "JAVASCRIPT", "XSS" ]
+        },
+        {
+            "name": "source",
+            "tags": [ "SRC" ]
+        },
+        {
+            "name": "srcset",
+            "tags": [ "SRC" ]
+        },
+        {
+            "name": "track.src",
+            "tags": [ "SRC" ]
+        },
+        {
+            "name": "window.open",
+            "tags": [ "LOCATION" ]
+        },
+        {
+            "name": "window.postMessage",
+            "tags": [ "POSTMESSAGE" ]
+        }
+    ],
+    "sources": [
+        {
+            "name": "location.hash",
+            "tags": [ "URL" ]
+        },
+        {
+            "name": "location.host",
+            "tags": [ "URL" ]
+        },
+        {
+            "name": "location.hostname",
+            "tags": [ "URL" ]
+        },
+        {
+            "name": "location.href",
+            "tags": [ "URL" ]
+        },
+        {
+            "name": "location.origin",
+            "tags": [ "URL" ]
+        },
+        {
+            "name": "location.pathname",
+            "tags": [ "URL" ]
+        },
+        {
+            "name": "location.port",
+            "tags": [ "URL" ]
+        },
+        {
+            "name": "location.protocol",
+            "tags": [ "URL" ]
+        },
+        {
+            "name": "location.search",
+            "tags": [ "URL" ]
+        },
+        {
+            "name": "window.name",
+            "tags": [ "URL" ]
+        },
+        {
+            "name": "document.referrer",
+            "tags": [ "URL" ]
+        },
+        {
+            "name": "document.baseURI",
+            "tags": [ "URL" ]
+        },
+        {
+            "name": "document.documentURI",
+            "tags": [ "URL" ]
+        },
+        {
+            "name": "document.cookie",
+            "tags": [ "STORAGE" ]
+        },
+        {
+            "name": "localStorage.getItem",
+            "tags": [ "STORAGE" ]
+        },
+        {
+            "name": "sessionStorage.getItem",
+            "tags": [ "STORAGE" ]
+        },
+        {
+            "name": "MessageEvent",
+            "tags": [ "MESSAGE" ]
+        },
+        {
+            "name": "PushMessageData",
+            "tags": [ "MESSAGE" ]
+        },
+        {
+            "name": "PushSubscription.endpoint",
+            "tags": [ "MESSAGE" ]
+        },
+        {
+            "name": "WebSocket.MessageEvent.data",
+            "tags": [ "MESSAGE" ]
+        },
+        {
+            "name": "XMLHttpRequest.response",
+            "tags": [ "NETWORK" ]
+        },
+        {
+            "name": "input.value",
+            "tags": [ "INPUT" ]
+        },
+        {
+            "name": "textarea.value",
+            "tags": [ "INPUT" ]
+        },
+        {
+            "name": "script.innerHTML",
+            "tags": [ "DOM" ]
+        },
+        {
+            "name": "document.getElementById",
+            "tags": [ "DOM" ]
+        },
+        {
+            "name": "document.getElementsByTagName",
+            "tags": [ "DOM" ]
+        },
+        {
+            "name": "document.getElementsByTagNameNS",
+            "tags": [ "DOM" ]
+        },
+        {
+            "name": "document.getElementsByClassName",
+            "tags": [ "DOM" ]
+        },
+        {
+            "name": "document.querySelector",
+            "tags": [ "DOM" ]
+        },
+        {
+            "name": "document.querySelectorAll",
+            "tags": [ "DOM" ]
+        },
+        {
+            "name": "document.elementFromPoint",
+            "tags": [ "DOM" ]
+        },
+        {
+            "name": "document.elementsFromPoint",
+            "tags": [ "DOM" ]
+        },
+        {
+            "name": "element.attribute",
+            "tags": [ "DOM" ]
+        },
+        {
+            "name": "element.closest",
+            "tags": [ "DOM" ]
+        }
+    ]
+}

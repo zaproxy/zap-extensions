@@ -9,8 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Document the engine name in the help page.
 
 ### Changed
-- Update minimum ZAP version to 2.16.0.
-- Update Groovy from 3.0.14 to 5.0.2.  
+- Update minimum ZAP version to 2.17.0.
+- Update Groovy from 3.0.14 to 5.0.3.  
   Existing Groovy scripts should work without issues, 
   but if you encounter problems, please refer to the following.
   - [Groovy 4 Release Notes](https://groovy-lang.org/releasenotes/groovy-4.0.html)

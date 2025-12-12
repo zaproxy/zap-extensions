@@ -5,7 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Update minimum ZAP version to 2.17.0.
 
+### Removed
+- Dropped help references to ZAP in Ten videos which are no longer available.
 
 ## [0.17.0] - 2025-11-04
 ### Changed

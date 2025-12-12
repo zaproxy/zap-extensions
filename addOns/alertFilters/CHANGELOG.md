@@ -4,7 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- Update the automation framework template and help to include missing fields (`ruleName` and `methods`).
+- Update minimum ZAP version to 2.17.0.
 
 ## [25] - 2025-11-04
 ### Changed

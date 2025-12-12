@@ -78,4 +78,20 @@
 			</statistic>
 		</th:block>
 	</statistics>
+	<th:block
+		th:if="${reportData.reportObjects.get('insightsList') != null}">
+		<insights>
+			<th:block
+				th:each="ins, insState: ${reportData.reportObjects.get('insightsList')}">
+				<insight>
+					<level th:text="${ins.level}"></level>
+					<reason th:text="${ins.reason}"></reason>
+					<site th:text="${ins.site}"></site>
+					<key th:text="${ins.key}"></key>
+					<description th:text="${ins.description}"></description>
+					<statistic th:text="${ins.statistic}"></statistic>
+				</insight>
+			</th:block>
+		</insights>
+	</th:block>
 </OWASPZAPReport>

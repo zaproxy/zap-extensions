@@ -55,6 +55,7 @@ import org.zaproxy.addon.authhelper.internal.db.DiagnosticWebElement;
 import org.zaproxy.addon.authhelper.internal.db.DiagnosticWebElement.SelectorType;
 import org.zaproxy.addon.authhelper.internal.db.TableJdo;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
+import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.network.HttpSenderListener;
 import org.zaproxy.zest.core.v1.ZestClientElement;
 import org.zaproxy.zest.core.v1.ZestClientElementClear;
@@ -71,6 +72,9 @@ public class AuthenticationDiagnostics implements AutoCloseable {
     private static final Logger LOGGER = LogManager.getLogger(AuthenticationDiagnostics.class);
 
     private static final List<DiagnosticDataProvider> diagnosticDataProviders =
+            Collections.synchronizedList(new ArrayList<>());
+
+    private static final List<MessageAccessedConsumer> messageAccessedConsumers =
             Collections.synchronizedList(new ArrayList<>());
 
     private static final String ELEMENT_SELECTOR_SCRIPT =
@@ -187,6 +191,8 @@ function getSelector(element, documentElement) {
 return getSelector(arguments[0], document)
 """;
 
+    private final HttpSenderListener messageAccessedListener;
+
     private final boolean enabled;
 
     private Diagnostic diagnostic;
@@ -206,6 +212,32 @@ return getSelector(arguments[0], document)
             String user,
             String script) {
         this.enabled = enabled;
+
+        messageAccessedListener =
+                new HttpSenderListener() {
+
+                    private Context ctx = Model.getSingleton().getSession().getContext(context);
+
+                    @Override
+                    public void onHttpResponseReceive(
+                            HttpMessage msg, int initiator, HttpSender sender) {
+                        // Nothing to do.
+
+                    }
+
+                    @Override
+                    public void onHttpRequestSend(
+                            HttpMessage msg, int initiator, HttpSender sender) {
+                        messageAccessedConsumers.forEach(e -> e.messageAccessed(ctx, msg));
+                    }
+
+                    @Override
+                    public int getListenerOrder() {
+                        return 0;
+                    }
+                };
+        HttpSender.addListener(messageAccessedListener);
+
         if (!enabled) {
             return;
         }
@@ -498,6 +530,8 @@ return getSelector(arguments[0], document)
 
     @Override
     public void close() {
+        HttpSender.removeListener(messageAccessedListener);
+
         if (!enabled) {
             return;
         }
@@ -572,6 +606,21 @@ return getSelector(arguments[0], document)
                         }
                     });
         }
+    }
+
+    public static void addMessageAccessedConsumer(MessageAccessedConsumer consumer) {
+        Objects.requireNonNull(consumer);
+        messageAccessedConsumers.add(consumer);
+    }
+
+    public static void removeMessageAccessedConsumer(MessageAccessedConsumer consumer) {
+        Objects.requireNonNull(consumer);
+        messageAccessedConsumers.remove(consumer);
+    }
+
+    public interface MessageAccessedConsumer {
+
+        void messageAccessed(Context ctx, HttpMessage message);
     }
 
     public static void addDiagnosticDataProvider(DiagnosticDataProvider provider) {

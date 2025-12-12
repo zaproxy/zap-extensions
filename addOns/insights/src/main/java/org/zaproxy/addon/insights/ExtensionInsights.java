@@ -20,9 +20,13 @@
 package org.zaproxy.addon.insights;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.model.SiteMapEventPublisher;
@@ -48,8 +52,9 @@ public class ExtensionInsights extends ExtensionAdaptor {
     private PollThread pollThread;
     private Insights insights;
     private InsightsParam param;
+    private List<InsightListener> listenners = Collections.synchronizedList(new ArrayList<>());
 
-    private boolean haveSwitched;
+    private boolean disableExit;
 
     public ExtensionInsights() {
         super(NAME);
@@ -57,6 +62,8 @@ public class ExtensionInsights extends ExtensionAdaptor {
 
         statsMonitor = new StatsMonitor(this);
         insights = new Insights();
+        this.addInsightListener(insights);
+
         Stats.addListener(statsMonitor);
 
         ZAP.getEventBus()
@@ -73,6 +80,7 @@ public class ExtensionInsights extends ExtensionAdaptor {
 
         if (hasView()) {
             insightsPanel = new InsightsPanel();
+            this.addInsightListener(insightsPanel);
             extensionHook.getHookView().addStatusPanel(insightsPanel);
             extensionHook.getHookView().addOptionPanel(new OptionsPanel());
         }
@@ -83,6 +91,18 @@ public class ExtensionInsights extends ExtensionAdaptor {
             param = new InsightsParam();
         }
         return param;
+    }
+
+    public StatsMonitor getStatsMonitor() {
+        return statsMonitor;
+    }
+
+    public void addInsightListener(InsightListener listener) {
+        this.listenners.add(listener);
+    }
+
+    public void removeInsightListener(InsightListener listener) {
+        this.listenners.remove(listener);
     }
 
     @Override
@@ -96,22 +116,30 @@ public class ExtensionInsights extends ExtensionAdaptor {
     }
 
     public void recordInsight(Insight ins) {
-        insights.recordInsight(ins);
-        if (insightsPanel != null) {
-            insightsPanel.pack();
-            if (Insight.Level.HIGH.equals(ins.getLevel()) && !haveSwitched) {
-                insightsPanel.setTabFocus();
-                haveSwitched = true;
-            }
+        this.listenners.forEach(il -> il.recordInsight(ins));
+
+        if (!hasView()
+                && this.getParam().isExitAutoOnHigh()
+                && !this.isDisableExit()
+                && ins.getLevel().equals(Insight.Level.HIGH)) {
+            Control control = Control.getSingleton();
+            control.setExitStatus(2, "Shutting down ZAP due to High Level Insight");
+            control.exit(false, null);
         }
     }
 
-    protected List<Insight> getInsights() {
+    public List<Insight> getInsights() {
         return this.insights.getInsightList();
     }
 
-    protected StatsMonitor getStatsMonitor() {
-        return statsMonitor;
+    public Map<String, Map<String, Insight>> getInsightMap() {
+        return this.insights.getInsightMap();
+    }
+
+    public void processStats() {
+        if (statsMonitor != null) {
+            this.statsMonitor.processStats();
+        }
     }
 
     public void clearInsights() {
@@ -121,6 +149,26 @@ public class ExtensionInsights extends ExtensionAdaptor {
             insightsPanel.setInsights(insights.getInsightList());
             insights.setModel(insightsPanel.getModel());
         }
+    }
+
+    /**
+     * Returns whether the option to automatically exit on a High insight has been disabled.
+     *
+     * @return
+     */
+    public boolean isDisableExit() {
+        return disableExit;
+    }
+
+    /**
+     * If set to true then the extension will not automatically exit on a High insight, even if
+     * configured to do so. The caller is essentially taking responsibility for handling the High
+     * insight.
+     *
+     * @param disableExit
+     */
+    public void setDisableExit(boolean disableExit) {
+        this.disableExit = disableExit;
     }
 
     public static URL getResource(String resource) {

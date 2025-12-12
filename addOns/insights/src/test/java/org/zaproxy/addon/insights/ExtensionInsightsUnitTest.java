@@ -43,6 +43,7 @@ import org.zaproxy.zap.eventBus.EventPublisher;
 import org.zaproxy.zap.model.Target;
 import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.Stats;
+import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 class ExtensionInsightsUnitTest extends TestUtils {
 
@@ -62,6 +63,8 @@ class ExtensionInsightsUnitTest extends TestUtils {
         ext = new ExtensionInsights();
         sm = ext.getStatsMonitor();
         testPublisher = new TestEventPublisher();
+        ext.getParam().load(new ZapXmlConfiguration());
+        ext.getParam().setExitAutoOnHigh(false);
 
         ZAP.getEventBus()
                 .registerPublisher(
@@ -91,6 +94,7 @@ class ExtensionInsightsUnitTest extends TestUtils {
         assertInsight(
                 0,
                 Insight.Level.LOW,
+                Insight.Reason.WARNING,
                 "",
                 "insight.log.error",
                 "ZAP errors logged - see the zap.log file for details",
@@ -98,6 +102,7 @@ class ExtensionInsightsUnitTest extends TestUtils {
         assertInsight(
                 1,
                 Insight.Level.LOW,
+                Insight.Reason.WARNING,
                 "",
                 "insight.log.warn",
                 "ZAP warnings logged - see the zap.log file for details",
@@ -115,8 +120,22 @@ class ExtensionInsightsUnitTest extends TestUtils {
 
         // Then
         assertThat(ext.getInsights().size(), is(equalTo(2)));
-        assertInsight(0, Insight.Level.HIGH, "", "insight.database.full", "Database full", 1L);
-        assertInsight(1, Insight.Level.HIGH, "", "insight.diskspace.full", "Diskspace full", 1L);
+        assertInsight(
+                0,
+                Insight.Level.HIGH,
+                Insight.Reason.WARNING,
+                "",
+                "insight.database.full",
+                "Database full",
+                1L);
+        assertInsight(
+                1,
+                Insight.Level.HIGH,
+                Insight.Reason.WARNING,
+                "",
+                "insight.diskspace.full",
+                "Diskspace full",
+                1L);
     }
 
     @Test
@@ -525,12 +544,12 @@ class ExtensionInsightsUnitTest extends TestUtils {
     }
 
     private void assertInsight(int index, String site, String key, String desc, long stat) {
-        this.assertInsight(index, Insight.Level.INFO, Insight.Reason.NA, site, key, desc, stat);
+        this.assertInsight(index, Insight.Level.INFO, Insight.Reason.INFO, site, key, desc, stat);
     }
 
     private void assertInsight(
             int index, Insight.Level level, String site, String key, String desc, long stat) {
-        this.assertInsight(index, level, Insight.Reason.NA, site, key, desc, stat);
+        this.assertInsight(index, level, Insight.Reason.INFO, site, key, desc, stat);
     }
 
     private void assertInsight(

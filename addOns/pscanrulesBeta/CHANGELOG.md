@@ -4,7 +4,14 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- Update minimum ZAP version to 2.17.0.
 
+### Removed
+- The following scan rules were removed, having been promoted to Beta:
+  - In Page Banner Information Leak
+  - Java Serialization Object
+  - Sub Resource Integrity Attribute Missing
 
 ## [47] - 2025-11-04
 ### Added

@@ -1,0 +1,23 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path opacity="0.928" fill-rule="evenodd" clip-rule="evenodd"
+        d="M2 0C11 0 20 0 29 0C29 8.33333 29 16.6667 29 25C22.81 24.6771 16.81 25.0104 11 26C8.25985 28.0595 5.25985 29.7262 2 31C2 20.6667 2 10.3333 2 0ZM7 6C12.3333 6 17.6667 6 23 6C22.6818 10.5323 23.0151 14.8656 24 19C18.8595 19.9881 13.5262 20.3214 8 20C8.27438 15.237 7.94104 10.5704 7 6Z"
+        fill="#DC5F38" />
+    <path opacity="0.043" fill-rule="evenodd" clip-rule="evenodd"
+        d="M7 6.00012C12.4753 5.01126 18.142 4.67792 24 5.00012C24 9.66679 24 14.3334 24 19.0001C23.0151 14.8657 22.6818 10.5324 23 6.00012C17.6667 6.00012 12.3333 6.00012 7 6.00012Z"
+        fill="#351D14" />
+    <path opacity="0.176" fill-rule="evenodd" clip-rule="evenodd"
+        d="M29 0C29.3333 0 29.6667 0 30 0C30 8.66667 30 17.3333 30 26C23.6667 26 17.3333 26 11 26C16.81 25.0104 22.81 24.6771 29 25C29 16.6667 29 8.33333 29 0Z"
+        fill="#37170D" />
+    <path opacity="0.01" fill-rule="evenodd" clip-rule="evenodd"
+        d="M30 26C31.3333 26.6667 31.3333 26.6667 30 26Z" fill="black" />
+    <path opacity="0.01" fill-rule="evenodd" clip-rule="evenodd"
+        d="M12 27C13.3333 27.6667 13.3333 27.6667 12 27Z" fill="black" />
+    <path opacity="0.01" fill-rule="evenodd" clip-rule="evenodd"
+        d="M10 28C11.3333 28.6667 11.3333 28.6667 10 28Z" fill="black" />
+    <path opacity="0.01" fill-rule="evenodd" clip-rule="evenodd"
+        d="M8 29C9.33333 29.6667 9.33333 29.6667 8 29Z" fill="black" />
+    <path opacity="0.01" fill-rule="evenodd" clip-rule="evenodd"
+        d="M8 30C7.33333 30.6667 7.33333 30.6667 8 30Z" fill="black" />
+    <path opacity="0.01" fill-rule="evenodd" clip-rule="evenodd"
+        d="M6 32C5.33333 30.6667 5.33333 30.6667 6 32Z" fill="black" />
+</svg>

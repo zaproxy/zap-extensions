@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.text.StringEscapeUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -2517,7 +2518,7 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
                     @Override
                     protected Response serve(IHTTPSession session) {
                         String name = getFirstParamValue(session, "name");
-                        if (!StringUtils.containsIgnoreCase(name, "0W45pz4p")
+                        if (!Strings.CI.contains(name, "0W45pz4p")
                                 && !name.equals("%3CscrIpt%3Ealert%281%29%3B%3C%2FscRipt%3E")) {
                             name = "something else";
                         }

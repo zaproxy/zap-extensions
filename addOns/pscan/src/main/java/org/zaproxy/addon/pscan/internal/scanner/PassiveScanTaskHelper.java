@@ -38,10 +38,12 @@ import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
 import org.zaproxy.addon.pscan.PassiveScannersManager;
 import org.zaproxy.addon.pscan.internal.PassiveScannerOptions;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
+import org.zaproxy.zap.extension.pscan.PassiveScanActions;
 import org.zaproxy.zap.extension.pscan.PassiveScanner;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+import org.zaproxy.zap.utils.Stats;
 
-public class PassiveScanTaskHelper {
+public class PassiveScanTaskHelper implements PassiveScanActions {
 
     private static final Logger LOGGER = LogManager.getLogger(PassiveScanTaskHelper.class);
 
@@ -136,11 +138,13 @@ public class PassiveScanTaskHelper {
         return extPscan.getModel().getOptionsParam().getParamSet(PassiveScannerOptions.class);
     }
 
+    @Override
     public void raiseAlert(HistoryReference href, Alert alert) {
         if (shutDown) {
             return;
         }
 
+        Stats.incCounter("stats.pscan." + alert.getPluginId() + ".alerts");
         alert.setSource(Alert.Source.PASSIVE);
         // Raise the alert
         extAlert.alertFound(alert, href);
@@ -173,6 +177,7 @@ public class PassiveScanTaskHelper {
      *
      * @param tag the name of the tag.
      */
+    @Override
     public void addHistoryTag(HistoryReference href, String tag) {
         if (shutDown) {
             return;

@@ -452,7 +452,7 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
                     alert.getPluginId(),
                     filter.getNewRisk());
             getExtAlert().updateAlert(updAlert);
-            getExtAlert().updateAlertInTree(origAlert, updAlert);
+            getExtAlert().updateAlertInTree(updAlert);
             if (alert.getHistoryRef() != null) {
                 alert.getHistoryRef().updateAlert(updAlert);
                 if (alert.getHistoryRef().getSiteNode() != null) {
@@ -472,10 +472,7 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
         int historyId = recordAlert.getHistoryId();
         if (historyId > 0) {
             HistoryReference href = this.getExtHistory().getHistoryReference(historyId);
-            Alert alert = new Alert(recordAlert, href);
-            // TODO remove once targeting 2.17+
-            alert.setHistoryId(recordAlert.getHistoryId());
-            return alert;
+            return new Alert(recordAlert, href);
         } else {
             // Not ideal :/
             return new Alert(recordAlert);

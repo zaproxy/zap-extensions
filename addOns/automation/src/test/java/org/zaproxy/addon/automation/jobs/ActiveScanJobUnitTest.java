@@ -21,6 +21,7 @@ package org.zaproxy.addon.automation.jobs;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -195,20 +196,22 @@ class ActiveScanJobUnitTest {
                 job.getConfigParameters(new ScannerParamWrapper(), job.getParamMethodName());
 
         // Then
-        assertThat(params.size(), is(equalTo(12)));
-
-        assertThat(params.containsKey("encodeCookieValues"), is(equalTo(true)));
-        assertThat(params.containsKey("addQueryParam"), is(equalTo(true)));
-        assertThat(params.containsKey("defaultPolicy"), is(equalTo(true)));
-        assertThat(params.containsKey("delayInMs"), is(equalTo(true)));
-        assertThat(params.containsKey("handleAntiCSRFTokens"), is(equalTo(true)));
-        assertThat(params.containsKey("injectPluginIdInHeader"), is(equalTo(true)));
-        assertThat(params.containsKey("maxRuleDurationInMins"), is(equalTo(true)));
-        assertThat(params.containsKey("maxScanDurationInMins"), is(equalTo(true)));
-        assertThat(params.containsKey("scanHeadersAllRequests"), is(equalTo(true)));
-        assertThat(params.containsKey("threadPerHost"), is(equalTo(true)));
-        assertThat(params.containsKey("scanNullJsonValues"), is(equalTo(true)));
-        assertThat(params.containsKey("maxAlertsPerRule"), is(equalTo(true)));
+        assertThat(
+                params.keySet(),
+                containsInAnyOrder(
+                        "excludeAntiCsrfTokens",
+                        "encodeCookieValues",
+                        "addQueryParam",
+                        "defaultPolicy",
+                        "delayInMs",
+                        "handleAntiCSRFTokens",
+                        "injectPluginIdInHeader",
+                        "maxRuleDurationInMins",
+                        "maxScanDurationInMins",
+                        "scanHeadersAllRequests",
+                        "threadPerHost",
+                        "scanNullJsonValues",
+                        "maxAlertsPerRule"));
     }
 
     @Test
@@ -236,7 +239,7 @@ class ActiveScanJobUnitTest {
     }
 
     @Test
-    void shouldRunValidJob() throws MalformedURLException {
+    void shouldRunValidJob() throws Exception {
         // Given
         Constant.messages = new I18N(Locale.ENGLISH);
         Context context = mock(Context.class);
@@ -254,8 +257,12 @@ class ActiveScanJobUnitTest {
         AutomationEnvironment env = mock(AutomationEnvironment.class);
         given(env.getDefaultContextWrapper()).willReturn(contextWrapper);
 
-        // When
+        given(policyManager.getPolicy("policy1")).willReturn(mock(ScanPolicy.class));
+
         ActiveScanJob job = new ActiveScanJob();
+        job.getParameters().setPolicy("policy1");
+
+        // When
         job.runJob(env, progress);
 
         // Then
@@ -286,6 +293,29 @@ class ActiveScanJobUnitTest {
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.hasErrors(), is(equalTo(true)));
         assertThat(progress.getErrors().get(0), is(equalTo("!automation.error.context.unknown!")));
+    }
+
+    @Test
+    void shouldFailIfUnknownPolicy() throws Exception {
+        // Given
+        given(policyManager.getPolicy("missingPolicy")).willThrow(ConfigurationException.class);
+        Constant.messages = new I18N(Locale.ENGLISH);
+        AutomationProgress progress = new AutomationProgress();
+        AutomationEnvironment env = mock(AutomationEnvironment.class);
+
+        ContextWrapper contextWrapper = new ContextWrapper(mock(Context.class), env);
+        given(env.getDefaultContextWrapper()).willReturn(contextWrapper);
+
+        ActiveScanJob job = new ActiveScanJob();
+        job.getParameters().setPolicy("missingPolicy");
+
+        // When
+        job.runJob(env, progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.getErrors(), contains("!automation.error.ascan.policy.name!"));
     }
 
     @Test
@@ -782,10 +812,8 @@ class ActiveScanJobUnitTest {
     }
 
     @Test
-    void shouldVerifyParameters() throws Exception {
+    void shouldVerifyParameters() {
         // Given
-        given(policyManager.getPolicy("policy1")).willReturn(mock(ScanPolicy.class));
-
         AutomationEnvironment env = mock(AutomationEnvironment.class);
         given(env.getAllUserNames()).willReturn(List.of("user0", "user1"));
         ActiveScanJob job = new ActiveScanJob();
@@ -832,31 +860,5 @@ class ActiveScanJobUnitTest {
         assertThat(job.getParameters().getScanHeadersAllRequests(), is(equalTo(true)));
         assertThat(job.getParameters().getThreadPerHost(), is(equalTo(2)));
         assertThat(job.getParameters().getMaxAlertsPerRule(), is(equalTo(5)));
-    }
-
-    @Test
-    void shouldErrorOnUnknownPolicy() throws Exception {
-        // Given
-        given(policyManager.getPolicy("missingPolicy")).willThrow(ConfigurationException.class);
-
-        String yamlStr =
-                """
-                parameters:
-                  policy: missingPolicy
-                """;
-        AutomationProgress progress = new AutomationProgress();
-        Yaml yaml = new Yaml();
-        Object data = yaml.load(yamlStr);
-
-        ActiveScanJob job = new ActiveScanJob();
-        job.setJobData(((LinkedHashMap<?, ?>) data));
-
-        // When
-        job.verifyParameters(progress);
-
-        // Then
-        assertThat(progress.hasErrors(), is(equalTo(true)));
-        assertThat(progress.hasWarnings(), is(equalTo(false)));
-        assertThat(progress.getErrors(), contains("!automation.error.ascan.policy.name!"));
     }
 }

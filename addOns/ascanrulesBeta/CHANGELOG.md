@@ -4,7 +4,20 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- The following scan rules were added, having been promoted from Alpha:
+  - NoSQL Injection - MongoDB
+  - NoSQL Injection - MongoDB (Time Based)
 
+### Changed
+- Update minimum ZAP version to 2.17.0.
+
+### Removed
+- The following scan rules were removed, having been promoted to Release:
+  - Exponential Entity Expansion (Billion Laughs Attack)
+  - HTTP Only Site
+  - HTTPS Content Available via HTTP
+  - ShellShock - CVE-2014-6271
 
 ## [63] - 2025-11-04
 ### Added

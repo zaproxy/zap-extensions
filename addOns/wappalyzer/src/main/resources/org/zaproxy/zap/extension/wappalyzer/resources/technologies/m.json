@@ -116,6 +116,29 @@
     ],
     "website": "https://www.mdui.org"
   },
+  "MDirector": {
+    "cats": [
+      32
+    ],
+    "description": "MDirector is an all-in-one digital marketing platform that centralizes email, SMS, and automation tools to manage campaigns and analyze audience engagement.",
+    "icon": "MDirector.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": [
+      "WordPress"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "/wp-content/plugins/mdirector-newsletter/public/js/mdirector-newsletter-public\\.js"
+    ],
+    "scripts": [
+      "app\\.mdirector\\.com"
+    ],
+    "website": "https://www.mdirector.com"
+  },
   "MGID": {
     "cats": [
       36
@@ -234,7 +257,8 @@
     ],
     "js": {
       "MODX": "",
-      "MODX_MEDIA_PATH": ""
+      "MODX_MEDIA_PATH": "",
+      "miniShop2Config.actionUrl": "/assets/components/minishop2/"
     },
     "meta": {
       "generator": "MODX[^\\d.]*([\\d.]+)?\\;version:\\1"
@@ -369,6 +393,23 @@
     "saas": true,
     "website": "https://mui.com"
   },
+  "Maatoo": {
+    "cats": [
+      32
+    ],
+    "description": "Maatoo is an all-in-one marketing tool designed to streamline campaign management, customer engagement, and analytics in a single platform.",
+    "icon": "Maatoo.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.maatoo\\.io"
+    ],
+    "website": "https://maatoo.io"
+  },
   "Mabisy": {
     "cats": [
       6
@@ -418,6 +459,22 @@
       "/wp-content/themes/Newsmag(?:-child)?/"
     ],
     "website": "https://www.machothemes.com/item/newsmag-lite"
+  },
+  "MacroActive": {
+    "cats": [
+      1
+    ],
+    "description": "MacroActive is a customizable coaching platform designed to help professionals build and manage their own branded programs and client communities.",
+    "dom": [
+      "link[href*='.macroactivemvp.com']"
+    ],
+    "icon": "MacroActive.svg",
+    "js": {
+      "MA.customerToken": "",
+      "MAnalytics": ""
+    },
+    "saas": true,
+    "website": "https://macroactive.com"
   },
   "MadAdsMedia": {
     "cats": [
@@ -622,6 +679,23 @@
     "icon": "MagicUI.svg",
     "oss": true,
     "website": "https://magicui.design/"
+  },
+  "MagicBell": {
+    "cats": [
+      5
+    ],
+    "description": "MagicBell is an embeddable notification inbox that allows applications to display and manage user notifications within their interfaces.",
+    "headers": {
+      "Content-Security-Policy": "\\.magicbell\\.com"
+    },
+    "icon": "MagicBell.svg",
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.magicbell.com"
   },
   "MagicLabs": {
     "cats": [
@@ -1112,6 +1186,18 @@
     ],
     "website": "https://www.mainad.com"
   },
+  "Mainboard": {
+    "cats": [
+      72
+    ],
+    "description": "Mainboard is a software platform designed to manage, schedule, and book talent.",
+    "headers": {
+      "server": "Mainboard\\.com"
+    },
+    "icon": "Mainboard.svg",
+    "saas": true,
+    "website": "https://www.mainboard.com"
+  },
   "Mainstay": {
     "cats": [
       52,
@@ -1141,6 +1227,27 @@
     "saas": true,
     "website": "https://www.maisey.co"
   },
+  "Maisie": {
+    "cats": [
+      52
+    ],
+    "description": "Maisie is an AI-powered conversational assistant that provides automated sales and customer support by handling queries around the clock.",
+    "icon": "Maisie.svg",
+    "js": {
+      "maisieChatBotContext": "",
+      "maisieWebpackJsonpFunction": ""
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.mymaisie\\.com"
+    ],
+    "website": "https://www.maisieai.com"
+  },
   "Makaira": {
     "cats": [
       108
@@ -1160,6 +1267,21 @@
       "\\.makaira\\.io"
     ],
     "website": "https://www.makaira.io"
+  },
+  "Makane": {
+    "cats": [
+      6
+    ],
+    "description": "Makane is a platform for creating websites and online stores.",
+    "icon": "Makane.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.makane\\.com"
+    ],
+    "website": "https://makane.com"
   },
   "Make-Sense": {
     "cats": [
@@ -1226,6 +1348,10 @@
       51
     ],
     "description": "Makeswift is a no-code website builder with the power and detail of a design tool.",
+    "headers": {
+      "Access-Control-Allow-Origin": "app\\.makeswift\\.com",
+      "Content-Security-Policy": "app\\.makeswift\\.com"
+    },
     "icon": "Makeswift.svg",
     "pricing": [
       "freemium",
@@ -1443,6 +1569,38 @@
     ],
     "website": "https://github.com/maplibre/maplibre-gl-js"
   },
+  "MapLoco": {
+    "cats": [
+      35
+    ],
+    "description": "MapLoco is a tool that displays website visitor locations on an interactive map for analysis and tracking.",
+    "dom": [
+      "a[href*='m.maploco.com'] > img[src*='www.maploco.com']"
+    ],
+    "icon": "MapLoco.svg",
+    "saas": true,
+    "website": "https://maploco.com"
+  },
+  "MapMyChannel": {
+    "cats": [
+      107
+    ],
+    "description": "MapMyChannel is a cloud-based fulfillment platform that integrates with ecommerce systems to automate inventory, shipping, and order management.",
+    "icon": "MapMyChannel.svg",
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "requiresCategory": [
+      6
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.mapmychannel\\.com/"
+    ],
+    "website": "https://www.mapmychannel.com"
+  },
   "MapPress": {
     "cats": [
       5,
@@ -1462,6 +1620,21 @@
       "WordPress"
     ],
     "website": "https://mappresspro.com"
+  },
+  "MapTrack": {
+    "cats": [
+      45
+    ],
+    "description": "MapTack is a platform to audit and manage assets from a single interface.",
+    "icon": "MapTrack.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "app\\.maptrackpro\\.com"
+    ],
+    "website": "https://maptrack.com"
   },
   "Mapbox GL JS": {
     "cats": [
@@ -1501,6 +1674,24 @@
       "api\\.mapbox\\.com/mapbox\\.js/v([\\d\\.]+)/\\;version:\\1"
     ],
     "website": "https://github.com/mapbox/mapbox.js"
+  },
+  "Mapline": {
+    "cats": [
+      35
+    ],
+    "description": "Mapline is a geo-powered analytics platform designed to deliver location-based insights worldwide.",
+    "dom": [
+      "iframe[src*='app.mapline.com']"
+    ],
+    "headers": {
+      "Access-Control-Allow-Origin": "app\\.mapline\\.com"
+    },
+    "icon": "Mapline.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://mapline.com"
   },
   "Mapme": {
     "cats": [
@@ -1597,6 +1788,24 @@
     },
     "oss": true,
     "website": "https://maptalks.org"
+  },
+  "Maptiler": {
+    "cats": [
+      35
+    ],
+    "description": "Maptiler is a mapping platform offering visual tools, global data, SDKs, and APIs for enterprise application development.",
+    "icon": "Maptiler.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "api\\.maptiler\\.com"
+    ],
+    "website": "https://www.maptiler.com"
   },
   "Marcando": {
     "cats": [
@@ -1784,6 +1993,9 @@
     "cats": [
       32
     ],
+    "cookies": {
+      "_mkto_trk": ""
+    },
     "description": "Marketo develops and sells marketing automation software for account-based marketing and other marketing services and products including SEO and content creation.",
     "icon": "Marketo.svg",
     "js": {
@@ -1927,6 +2139,22 @@
     ],
     "website": "https://www.marsello.com"
   },
+  "Marshal": {
+    "cats": [
+      68
+    ],
+    "description": "Marshal is a platform that ensures businesses achieve compliance and accessibility.",
+    "icon": "Marshal.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.usemarshal\\.co"
+    ],
+    "website": "https://usemarshal.co"
+  },
   "Mashore Method": {
     "cats": [
       53
@@ -1938,6 +2166,17 @@
       "app\\.mashoremethod\\.com"
     ],
     "website": "https://mashoremethod.com"
+  },
+  "Masonry": {
+    "cats": [
+      59
+    ],
+    "description": "Masonry is a JavaScript library that enables a cascading grid layout, positioning elements based on available vertical space for an optimized, gap-free arrangement.",
+    "js": {
+      "Masonry.Item": ""
+    },
+    "oss": true,
+    "website": "https://masonry.desandro.com"
   },
   "Massflow": {
     "cats": [
@@ -2037,6 +2276,18 @@
     },
     "website": "https://masterking32.com"
   },
+  "Mastery Manager": {
+    "cats": [
+      21
+    ],
+    "description": "Mastery Manager is a student learning system designed to track academic progress, evaluate performance, and support data-driven instructional planning.",
+    "icon": "MasteryManager.svg",
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.masterymanager\\.com"
+    ],
+    "website": "https://masterymanager.com"
+  },
   "Mastodon": {
     "cats": [
       2
@@ -2110,6 +2361,33 @@
       "(?:/([\\d.]+))?/material(?:\\.min)?\\.js\\;version:\\1"
     ],
     "website": "https://getmdl.io"
+  },
+  "Material UI": {
+    "cats": [
+      66
+    ],
+    "css": [
+      "\\.MuiPaper-root",
+      "\\.Mui-disabled"
+    ],
+    "description": "Material UI is a simple and customisable component library to build faster, beautiful, and more accessible React applications.",
+    "dom": [
+      "style[data-meta='MuiPaper'], div.MuiBox-root, div.MuiPaper-root, style[data-meta='MuiButton'], input.MuiInputBase-input, div.MuiContainer-root, .MuiButton-root"
+    ],
+    "icon": "MUI.svg",
+    "implies": [
+      "React"
+    ],
+    "oss": true,
+    "pricing": [
+      "freemium",
+      "payg"
+    ],
+    "saas": true,
+    "scripts": [
+      "https://mui\\.com"
+    ],
+    "website": "https://mui.com"
   },
   "Materialize CSS": {
     "cats": [
@@ -2437,6 +2715,21 @@
     ],
     "website": "https://www.maxicms.nl"
   },
+  "Maxxton": {
+    "cats": [
+      93
+    ],
+    "description": "Maxxton is a reservation and property management system.",
+    "icon": "Maxxton.svg",
+    "saas": true,
+    "scriptSrc": [
+      "\\.maxxton\\.net"
+    ],
+    "scripts": [
+      "\\.maxxton\\.net"
+    ],
+    "website": "https://maxxton.com"
+  },
   "Mazrica": {
     "cats": [
       53
@@ -2539,6 +2832,18 @@
       "mejs.version": "^(.+)$\\;version:\\1"
     },
     "website": "https://www.mediaelementjs.com"
+  },
+  "MediaPlatform": {
+    "cats": [
+      103
+    ],
+    "description": "MediaPlatform is enterprise video and webcasting software designed for corporate communications.",
+    "icon": "MediaPlatform.svg",
+    "js": {
+      "mediaPlatformLoginUrl": ""
+    },
+    "saas": true,
+    "website": "https://www.mediaplatform.com"
   },
   "MediaWiki": {
     "cats": [
@@ -2722,6 +3027,9 @@
     "cats": [
       29
     ],
+    "cookies": {
+      "saas_demo_meilisearch_session": ""
+    },
     "description": "Meilisearch is a search engine created by Meili, a software development company based in France.",
     "dom": [
       "span.meilisearch-autocomplete"
@@ -2800,11 +3108,30 @@
       "Laravel",
       "Zend"
     ],
+    "js": {
+      "MelisGdprBanner": "",
+      "melisGdprBanner_init": ""
+    },
     "meta": {
       "generator": "^Melis Platform\\.",
       "powered-by": "^Melis CMS\\."
     },
     "website": "https://www.melistechnology.com/"
+  },
+  "Meltwater": {
+    "cats": [
+      10
+    ],
+    "description": "Meltwater is a media monitoring platform that tracks, analyzes, and provides insights from online news, social media, and broadcast sources to support data-driven decision-making.",
+    "dom": [
+      "iframe[src*='app.meltwater.com']"
+    ],
+    "headers": {
+      "Content-Security-Policy": "\\.meltwater\\.com"
+    },
+    "icon": "Meltwater.svg",
+    "saas": true,
+    "website": "https://www.meltwater.com"
   },
   "MemberSpace": {
     "cats": [
@@ -3203,6 +3530,18 @@
     },
     "website": "https://www.eidosmedia.com/"
   },
+  "Meticular": {
+    "cats": [
+      19
+    ],
+    "description": "Meticular is a Swiss platform that provides business solutions and services to support organizational operations.",
+    "icon": "Meticular.svg",
+    "saas": true,
+    "scriptSrc": [
+      "analytics\\.metikular\\.ch"
+    ],
+    "website": "https://www.metikular.ch"
+  },
   "Metomic": {
     "cats": [
       67
@@ -3220,6 +3559,39 @@
       "metomic\\.js"
     ],
     "website": "https://metomic.io"
+  },
+  "Metorik": {
+    "cats": [
+      6
+    ],
+    "description": "Metorik is a WooCommerce and Shopify store automation system providing custom reports and email marketing tools to manage and analyze ecommerce operations.",
+    "icon": "Metorik.svg",
+    "js": {
+      "metorik_params": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "payg",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "/wp-content/plugins/metorik-helper(?:/.*)?(?:\\?.*)?$"
+    ],
+    "website": "https://metorik.com"
+  },
+  "Metrics Key": {
+    "cats": [
+      10
+    ],
+    "description": "Metrics Key is software used for tracking performance in software development and search marketing campaigns.",
+    "icon": "MetricsKey.svg",
+    "saas": true,
+    "scriptSrc": [
+      "//metricskey\\.net/track\\.js"
+    ],
+    "website": "https://metricskey.net"
   },
   "MetricsCube": {
     "cats": [
@@ -3779,6 +4151,18 @@
     ],
     "website": "https://midtrans.com"
   },
+  "Mieruca": {
+    "cats": [
+      54
+    ],
+    "description": "Mieruca is a Japanese SEO analysis tool designed to measure and improve website visibility through data-driven insights.",
+    "icon": "Mieruca.svg",
+    "saas": true,
+    "scriptSrc": [
+      "hm\\.mieru-ca\\.com"
+    ],
+    "website": "https://mieru-ca.com"
+  },
   "Miestro": {
     "cats": [
       6
@@ -3864,6 +4248,31 @@
     "oss": true,
     "website": "https://milligram.io"
   },
+  "MiloTree": {
+    "cats": [
+      5,
+      32
+    ],
+    "description": "MiloTree is a pop-up tool that helps websites grow by converting visitors into social media followers and customers.",
+    "icon": "MiloTree.svg",
+    "js": {
+      "milotree_closeBox": "",
+      "milotree_openBox": ""
+    },
+    "meta": {
+      "author": "^milotree"
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdn001\\.milotree\\.com"
+    ],
+    "website": "https://milotree.com"
+  },
   "Milonic": {
     "cats": [
       59
@@ -3879,6 +4288,23 @@
     ],
     "saas": true,
     "website": "https://milonic.com"
+  },
+  "Milvus": {
+    "cats": [
+      45,
+      53
+    ],
+    "description": "Milvus is an intelligent system designed to manage IT operations and provide help desk support.",
+    "icon": "Milvus.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.api\\.milvus\\.com"
+    ],
+    "website": "https://milvus.com.br"
   },
   "Mimiran": {
     "cats": [
@@ -4074,6 +4500,18 @@
     ],
     "website": "https://haveamint.com"
   },
+  "Minted": {
+    "cats": [
+      6
+    ],
+    "description": "Minted is a marketplace that offers premium design goods created by independent artists and designers.",
+    "icon": "Minted.svg",
+    "saas": true,
+    "scripts": [
+      "\\.minted\\.com"
+    ],
+    "website": "https://www.minted.com"
+  },
   "Mintlify": {
     "cats": [
       57,
@@ -4182,6 +4620,22 @@
       "mirakl\\.track"
     ],
     "website": "https://www.mirakl.com"
+  },
+  "Mirus": {
+    "cats": [
+      62
+    ],
+    "description": "Mirus is a platform that provides scalable solutions capable of adjusting capacity to meet demand while maintaining resilience against unexpected challenges.",
+    "icon": "Mirus.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.mirus\\.io"
+    ],
+    "website": "https://mirusresearch.com"
   },
   "Mirvac": {
     "cats": [
@@ -4364,6 +4818,9 @@
       "cdn\\.mxpnl\\.com/libs/mixpanel\\-([0-9.]+)\\.min\\.js\\;version:\\1",
       "api\\.mixpanel\\.com/track"
     ],
+    "scripts": [
+      "VITE_MIXPANEL_KEY"
+    ],
     "website": "https://mixpanel.com"
   },
   "MizbanCloud": {
@@ -4477,7 +4934,14 @@
     "cats": [
       51
     ],
-    "description": "Mobirise is a free offline app for Windows and Mac to easily create small/medium websites, landing pages, online resumes and portfolios.",
+    "description": "Mobirise is a free offline website builder for Windows and macOS that enables non-coders to create small and medium-sized websites locally using drag-and-drop pre-made blocks and themes.",
+    "dom": {
+      "link[href*='mobirise']": {
+        "attributes": {
+          "href": "assets/(web|css)/assets/mobirise(?:-icons\\d*)?/.+\\.css"
+        }
+      }
+    },
     "html": [
       "<!-- Site made with Mobirise Website Builder v([\\d.]+)\\;version:\\1"
     ],
@@ -4485,6 +4949,10 @@
     "meta": {
       "generator": "^Mobirise v([\\d.]+)\\;version:\\1"
     },
+    "pricing": [
+      "freemium",
+      "onetime"
+    ],
     "website": "https://mobirise.com"
   },
   "MochiKit": {
@@ -4525,6 +4993,26 @@
       "app\\.modalforms\\.com/"
     ],
     "website": "https://www.modalforms.com"
+  },
+  "Modelo": {
+    "cats": [
+      105
+    ],
+    "description": "Modelo is a 3D viewer and model platform that allows users to edit, share, and collaborate on digital models.",
+    "icon": "Modelo.svg",
+    "js": {
+      "@pub/modelo-site-cmty-micros-common-dialogs": "",
+      "ModeloCommonDialogs": ""
+    },
+    "meta": {
+      "feBu": "^modelo-site-cmty-home$"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://modelo.io"
   },
   "Moder": {
     "cats": [
@@ -4621,6 +5109,21 @@
     },
     "oss": true,
     "website": "https://www.modified-shop.org"
+  },
+  "Modio": {
+    "cats": [
+      10
+    ],
+    "description": "Modio is an ecommerce tracking system designed to monitor, analyze, and report online store performance and customer activity.",
+    "icon": "Modio.svg",
+    "js": {
+      "ModioCZ": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "trackingapi\\.modio\\.cz"
+    ],
+    "website": "https://www.modio.cz"
   },
   "Modula": {
     "cats": [
@@ -4756,6 +5259,22 @@
     "saas": true,
     "website": "https://mojo-app.com/ecommerce"
   },
+  "Mojo Helpdesk": {
+    "cats": [
+      13
+    ],
+    "description": "Mojo Helpdesk is a ticketing system used to centralize requests, assign tasks, automate workflows, and track progress for improved organization.",
+    "headers": {
+      "Content-Security-Policy": "asset\\.mojohelpdesk\\.com"
+    },
+    "icon": "MojoHelpdesk.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://mojohelpdesk.com"
+  },
   "Mojolicious": {
     "cats": [
       18
@@ -4772,6 +5291,20 @@
     ],
     "oss": true,
     "website": "https://mojolicio.us"
+  },
+  "Moka HR": {
+    "cats": [
+      101
+    ],
+    "description": "Moka HR is an AI-driven human resources management system offering full-module support for streamlined employee administration.",
+    "icon": "Moka.svg",
+    "js": {
+      "MOKA_RETRY": "",
+      "_MOKA_ENV_": "",
+      "__moka__extension__kit": ""
+    },
+    "saas": true,
+    "website": "https://mokahr.com"
   },
   "Mokini": {
     "cats": [
@@ -5022,6 +5555,22 @@
     ],
     "website": "https://monetate.com"
   },
+  "Monetize Pro": {
+    "cats": [
+      32
+    ],
+    "description": "Monetize Pro is a platform that helps users earn money through various monetization strategies for their online content.",
+    "icon": "MonetizePro.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "app\\.monetizepro\\.ai"
+    ],
+    "website": "https://monetizepro.ai"
+  },
   "MongoDB": {
     "cats": [
       34
@@ -5117,6 +5666,26 @@
       "monotracker(?:\\.min)?\\.js"
     ],
     "website": "https://www.mono.net/en"
+  },
+  "MonoBill": {
+    "cats": [
+      6
+    ],
+    "cookies": {
+      "monobill_session": ""
+    },
+    "description": "MonoBill is an ecommerce platform that offers built-in billing, subscription management, and payment processing features for small businesses.",
+    "icon": "MonoBill.svg",
+    "js": {
+      "MONO.formatMoney": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://monobill.com"
   },
   "Monocle": {
     "cats": [
@@ -5252,6 +5821,18 @@
     ],
     "website": "https://kbrsh.github.io/moon/"
   },
+  "Moon Organizer": {
+    "cats": [
+      19
+    ],
+    "description": "Moon Organizer is a platform that tracks lunar cycles, phases, and moon-related events to support planning and provide timely updates.",
+    "icon": "MoonOrganizer.svg",
+    "saas": true,
+    "scriptSrc": [
+      "\\.moonorganizer\\.com"
+    ],
+    "website": "https://moonorganizer.com"
+  },
   "Moori": {
     "cats": [
       6
@@ -5271,6 +5852,39 @@
     ],
     "saas": true,
     "website": "https://docs.moori.net"
+  },
+  "Moosend": {
+    "cats": [
+      32
+    ],
+    "description": "Moosend is a platform that enables management, creation, and distribution of email marketing campaigns.",
+    "icon": "Moosend.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "payg"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.moosend\\.com"
+    ],
+    "website": "https://moosend.com"
+  },
+  "Moostik": {
+    "cats": [
+      10
+    ],
+    "description": "Moostik is a French analytics counter designed to track website traffic and visitor behavior.",
+    "icon": "Moostik.svg",
+    "js": {
+      "moostik_scripts": "",
+      "moostik_this_node": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "m3\\.moostik\\.net"
+    ],
+    "website": "https://moostik.net"
   },
   "Moove GDPR Consent": {
     "cats": [
@@ -5327,12 +5941,42 @@
     ],
     "website": "https://mopinion.com"
   },
+  "Mopro": {
+    "cats": [
+      32
+    ],
+    "description": "Mopro is a growth platform designed to help small businesses improve their online presence and streamline digital operations.",
+    "icon": "Mopro.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.mopro\\.com/"
+    ],
+    "website": "https://www.mopro.com"
+  },
+  "Morningtrain": {
+    "cats": [
+      5
+    ],
+    "description": "Morningtrain is a pop-up window tool designed in Denmark for generating and capturing leads through on-site user engagement.",
+    "icon": "Morningtrain.svg",
+    "meta": {
+      "designer": "^Morning Train$"
+    },
+    "saas": true,
+    "scripts": [
+      "api\\.morningcatch\\.net"
+    ],
+    "website": "https://morningtrain.dk/vi-lukker-morningcatch"
+  },
   "Morphext": {
     "cats": [
-      25,
       59
     ],
-    "description": "A simple, high-performance and cross-browser jQuery rotating / carousel plugin for text phrases powered by Animate.css.",
+    "description": "Morphext is a lightweight jQuery plugin that rotates text using Animate.css transitions for smooth, dynamic visual effects.",
     "icon": "Morphext.svg",
     "oss": true,
     "scriptSrc": [
@@ -5617,6 +6261,18 @@
     ],
     "website": "https://github.com/moxiecode/moxie"
   },
+  "Moyklass": {
+    "cats": [
+      53
+    ],
+    "description": "Moyklass is a Russian customer relationship management platform designed to help schools manage student data, track performance, and organize administrative tasks.",
+    "icon": "Moyklass.svg",
+    "saas": true,
+    "scriptSrc": [
+      "app\\.moyklass\\.com"
+    ],
+    "website": "https://moyklass.com"
+  },
   "Mozard Suite": {
     "cats": [
       1
@@ -5760,6 +6416,18 @@
     "saas": true,
     "website": "https://www.muscula.com/"
   },
+  "Musement": {
+    "cats": [
+      104
+    ],
+    "description": "Musement is a platform that allows users to book tickets for attractions, museums, and activities, providing access to various cultural and entertainment experiences.",
+    "icon": "Musement.svg",
+    "saas": true,
+    "scriptSrc": [
+      "\\.musement\\.com/"
+    ],
+    "website": "https://www.musement.com"
+  },
   "Mustache": {
     "cats": [
       12
@@ -5894,6 +6562,26 @@
     "saas": true,
     "website": "https://www.myfoodlink.com.au"
   },
+  "MyAlice": {
+    "cats": [
+      53
+    ],
+    "description": "MyAlice is a customer support platform designed for ecommerce brands to manage and streamline customer service operations.",
+    "icon": "MyAlice.svg",
+    "js": {
+      "MyAliceWebChat": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "widget\\.myalice\\.ai"
+    ],
+    "website": "https://www.myalice.ai"
+  },
   "MyBB": {
     "cats": [
       2
@@ -5940,6 +6628,17 @@
     ],
     "saas": true,
     "website": "https://www.mycashflow.fi"
+  },
+  "MyDryCleaner": {
+    "cats": [
+      1
+    ],
+    "description": "MyDryCleaner is a dry cleaning management solution that streamlines operations for dry cleaning businesses.",
+    "saas": true,
+    "scriptSrc": [
+      "reviews\\.reviewmydrycleaner\\.com"
+    ],
+    "website": "https://mydrycleaner.com"
   },
   "MyEsalon": {
     "cats": [
@@ -6004,6 +6703,23 @@
     },
     "website": "https://www.myonlinestore.com/ "
   },
+  "MyRest": {
+    "cats": [
+      93
+    ],
+    "description": "MyRest is a reservation system for restaurants that incorporates updated guidelines for gastro marketing.",
+    "icon": "MyRest.svg",
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "api\\.myrest\\.io"
+    ],
+    "website": "https://myrest.io/"
+  },
   "MySQL": {
     "cats": [
       34
@@ -6029,6 +6745,18 @@
     ],
     "saas": true,
     "website": "https://mysitenow.gr"
+  },
+  "MyStat": {
+    "cats": [
+      10
+    ],
+    "description": "MyStat is a Hungarian-based analytics service that provides data insights and tracking capabilities for websites.",
+    "icon": "MyStat.svg",
+    "saas": true,
+    "scripts": [
+      "stat\\.mystat\\.hu"
+    ],
+    "website": "https://www.mystat.hu"
   },
   "MyTime": {
     "cats": [

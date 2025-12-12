@@ -5,6 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Added
+- Support for a "soft" stop which allows "always run" jobs to run.
+
+### Changed
+- Update minimum ZAP version to 2.17.0.
+
+## [0.57.0] - 2025-12-03
+### Added
 - Allow to specify the defaults for the alert threshold and attack strength of the active scan policy.
 
 ### Changed
@@ -13,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 - Restore default standard output on absent `env` `parameters`.
+- Delay Scan Policy validation to runtime phase in the `activeScan` job, the Scan Policy might be created dynamically by other jobs.
 
 ## [0.56.0] - 2025-11-07
 ### Added
@@ -569,6 +577,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.57.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.57.0
 [0.56.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.56.0
 [0.55.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.55.0
 [0.54.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.54.0

@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import org.apache.commons.httpclient.URIException;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpMessage;
@@ -64,11 +64,11 @@ public class AuthHeaderTracker implements HttpSenderListener {
     }
 
     private static boolean isTrackedHeader(String header) {
-        return StringUtils.containsIgnoreCase(header, "auth")
-                || StringUtils.containsIgnoreCase(header, "csrf")
+        return Strings.CI.contains(header, "auth")
+                || Strings.CI.contains(header, "csrf")
                 || (!"sec-websocket-key".equalsIgnoreCase(header)
-                        && StringUtils.containsIgnoreCase(header, "key"))
-                || StringUtils.startsWithIgnoreCase(header, "x-gwt-");
+                        && Strings.CI.contains(header, "key"))
+                || Strings.CI.contains(header, "x-gwt-");
     }
 
     @Override

@@ -6,7 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
+- Update minimum ZAP version to 2.17.0.
+- Update Selenium to version 4.39.0.
+
+## [15.42.0] - 2025-12-03
+### Changed
 - Update Selenium to version 4.38.0.
+
+### Fixed
+- Restore loading of Chrome extensions, which now have to be unpacked/folders due changes in Chrome.
 
 ## [15.41.0] - 2025-10-21
 ### Changed
@@ -327,6 +335,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Updated to Selenium 2.45 and moved to release
 
+[15.42.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.42.0
 [15.41.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.41.0
 [15.40.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.40.0
 [15.39.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.39.0

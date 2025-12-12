@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 import net.htmlparser.jericho.Source;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -129,13 +129,13 @@ public class VerificationDetectionScanRule extends PluginPassiveScanner {
         return Stream.concat(
                         AuthConstants.getLogoutIndicators().stream(),
                         AuthConstants.getRegistrationIndicators().stream())
-                .anyMatch(keyword -> StringUtils.containsIgnoreCase(escapedPathQuery, keyword));
+                .anyMatch(keyword -> Strings.CI.contains(escapedPathQuery, keyword));
     }
 
     private static boolean isLowPriority(HttpMessage msg) {
         String escapedPathQuery = msg.getRequestHeader().getURI().getEscapedPathQuery();
         return AuthConstants.getLoginIndicators().stream()
-                .anyMatch(keyword -> StringUtils.containsIgnoreCase(escapedPathQuery, keyword));
+                .anyMatch(keyword -> Strings.CI.contains(escapedPathQuery, keyword));
     }
 
     protected AlertBuilder getAlert(VerificationRequestDetails verifDetails) {

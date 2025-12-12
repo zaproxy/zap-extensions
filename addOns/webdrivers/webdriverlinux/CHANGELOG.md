@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [169] - 2025-12-10
+### Changed
+- Update ChromeDriver to 143.0.7499.42.
+- Update minimum ZAP version to 2.17.0.
+
+## [168] - 2025-12-02
+### Changed
+- Update ChromeDriver to 143.0.7499.40.
+
 ## [167] - 2025-11-17
 ### Changed
 - Update ChromeDriver to 142.0.7444.175.
@@ -697,6 +706,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release: Firefox v0.13.0 Chrome v2.27
 
+[169]: https://github.com/zaproxy/zap-extensions/releases/webdriverlinux-v169
+[168]: https://github.com/zaproxy/zap-extensions/releases/webdriverlinux-v168
 [167]: https://github.com/zaproxy/zap-extensions/releases/webdriverlinux-v167
 [166]: https://github.com/zaproxy/zap-extensions/releases/webdriverlinux-v166
 [165]: https://github.com/zaproxy/zap-extensions/releases/webdriverlinux-v165

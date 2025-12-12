@@ -47,6 +47,8 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.border.TitledBorder;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
+import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.extension.selenium.BrowserExtension.BrowserExtensionFileFilter;
 import org.zaproxy.zap.extension.selenium.internal.BrowserArgumentsDialog;
 import org.zaproxy.zap.extension.selenium.internal.BrowserArgumentsTableModel;
 import org.zaproxy.zap.utils.FontUtils;
@@ -770,8 +772,27 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
 
         @Override
         public BrowserExtension showAddDialogue() {
-            JFileChooser fileChooser = new JFileChooser(directory);
-            fileChooser.setFileFilter(BrowserExtension.getFileNameExtensionFilter());
+            BrowserExtensionFileFilter fileFilter = BrowserExtension.getFileFilter();
+            JFileChooser fileChooser =
+                    new JFileChooser(directory) {
+                        @Override
+                        public void approveSelection() {
+                            File selectedFile =
+                                    fileFilter.getBrowserExtensionPath(getSelectedFile());
+                            if (selectedFile == null) {
+                                View.getSingleton()
+                                        .showWarningDialog(
+                                                BrowserExtMultipleOptionsPanel.this,
+                                                resourceBundle.getString(
+                                                        "selenium.browser.extentions.invalidpath"));
+                                return;
+                            }
+                            setSelectedFile(selectedFile);
+                            super.approveSelection();
+                        }
+                    };
+            fileChooser.setFileFilter(fileFilter);
+            fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
             if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
                 File file = fileChooser.getSelectedFile();
                 directory = file.getParent();

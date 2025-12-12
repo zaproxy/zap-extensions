@@ -52,6 +52,7 @@ import net.sf.json.util.JSONUtils;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -199,7 +200,8 @@ public class AuthUtils {
 
     private static long timeToWaitMs = TimeUnit.SECONDS.toMillis(5);
 
-    @Setter private static HistoryProvider historyProvider = new HistoryProvider();
+    @Setter
+    private static HistoryProvider historyProvider = ExtensionAuthhelper.getHistoryProvider();
 
     /**
      * These are session tokens that have been seen in responses but not yet seen in use. When they
@@ -404,8 +406,8 @@ public class AuthUtils {
     }
 
     private static boolean hasPasswordAttributes(WebElement element) {
-        return StringUtils.containsIgnoreCase(getAttribute(element, "id"), PASSWORD)
-                || StringUtils.containsIgnoreCase(getAttribute(element, "name"), PASSWORD);
+        return Strings.CI.contains(getAttribute(element, "id"), PASSWORD)
+                || Strings.CI.contains(getAttribute(element, "name"), PASSWORD);
     }
 
     /**

@@ -4,7 +4,12 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Insights to the reports.
 
+### Changed
+- Update the automation framework `outputSummary` template to include missing field (`rules`).
+- Update minimum ZAP version to 2.17.0.
 
 ## [0.42.0] - 2025-11-07
 ### Changed

@@ -27,7 +27,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -107,7 +107,7 @@ public class ReportHelper {
     }
 
     private static int getPortFromScheme(String site) {
-        if (StringUtils.startsWithIgnoreCase(site, "https")) {
+        if (Strings.CI.startsWith(site, "https")) {
             return 443;
         } else {
             return 80;

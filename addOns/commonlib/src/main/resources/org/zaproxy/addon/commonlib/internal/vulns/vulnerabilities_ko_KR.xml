@@ -125,7 +125,7 @@ This makes it easier to spot places in the code where data is being used that is
 
 <vuln_items>wasc_5</vuln_items>
 <vuln_item_wasc_5>
-	<alert>Remote File Inclusion</alert>
+	<alert>원격 파일 포함</alert>
 	<desc>Remote File Include (RFI) is an attack technique used to exploit "dynamic file include" mechanisms in web applications. When web applications take user input (URL, parameter value, etc.) and pass them into file include commands, the web application might be tricked into including remote files with malicious code.
 
 Almost all web application frameworks support file inclusion. File inclusion is mainly used for packaging common code into separate files that are later referenced by main application modules. When a web application references an include file, the code in this file may be executed implicitly or explicitly by calling specific procedures. If the choice of module to load is based on elements from the HTTP request, the web application might be vulnerable to RFI.
@@ -515,7 +515,7 @@ Many web sites are designed to authenticate and track a user when communication 
 
 <vuln_items>wasc_19</vuln_items>
 <vuln_item_wasc_19>
-	<alert>SQL Injection</alert>
+	<alert>SQL 인젝션</alert>
 	<desc>SQL Injection is an attack technique used to exploit applications that construct SQL statements from user-supplied input. When successful, the attacker is able to change the logic of SQL statements executed against the database.
 
 Structured Query Language (SQL) is a specialized programming language for sending queries to databases. The SQL programming language is both an ANSI and an ISO standard, though many database products supporting SQL do so with proprietary extensions to the standard language. Applications often use user-supplied data to create SQL statements. If an application fails to properly construct SQL statements it is possible for an attacker to alter the statement structure and execute unplanned and potentially hostile commands. When such commands are executed, they do so under the context of the user specified by the application executing the statement. This capability allows attackers to gain control of all database resources accessible by that user, up to and including the ability to execute commands on the hosting system.</desc>
@@ -763,7 +763,7 @@ Inputs should be decoded and canonicalized to the application's current internal
 
 <vuln_items>wasc_29</vuln_items>
 <vuln_item_wasc_29>
-	<alert>LDAP Injection</alert>
+	<alert>LDAP 인젝션</alert>
 	<desc>LDAP Injection is an attack technique used to exploit web sites that construct LDAP statements from user-supplied input.
 
 Lightweight Directory Access Protocol (LDAP) is an open-standard protocol for both querying and manipulating X.500 directory services. The LDAP protocol runs over Internet transport protocols, such as TCP. Web applications may use user-supplied input to create custom LDAP statements for dynamic web page requests.
@@ -857,7 +857,7 @@ A certificate binds an identity to a cryptographic key to authenticate a communi
 
 <vuln_items>wasc_33</vuln_items>
 <vuln_item_wasc_33>
-	<alert>Path Traversal</alert>
+	<alert>경로 추적(Path Traversal)</alert>
 	<desc>The Path Traversal attack technique allows an attacker access to files, directories, and commands that potentially reside outside the web document root directory. An attacker may manipulate a URL in such a way that the web site will execute or reveal the contents of arbitrary files anywhere on the web server. Any device that exposes an HTTP-based interface is potentially vulnerable to Path Traversal.
 
 Most web sites restrict user access to a specific portion of the file-system, typically called the "web document root" or "CGI root" directory. These directories contain the files intended for user access and the executable necessary to drive web application functionality. To access files or execute commands anywhere on the file-system, Path Traversal attacks will utilize the ability of special-characters sequences.
