@@ -44,6 +44,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
+import org.zaproxy.zap.utils.Stats;
 
 public class GraphQlParser {
 
@@ -108,6 +109,7 @@ public class GraphQlParser {
             raiseIntrospectionAlert(importMessage);
         }
         parse(schemaSdl);
+        Stats.incCounter(GraphQlStats.INTROSPECTION_URL_IMPORTED);
     }
 
     public void importUrl(String schemaUrlStr) throws IOException {
@@ -118,6 +120,7 @@ public class GraphQlParser {
         HttpMessage importMessage = new HttpMessage(schemaUrl);
         requestor.send(importMessage);
         parse(importMessage.getResponseBody().toString());
+        Stats.incCounter(GraphQlStats.SCHEMA_URL_IMPORTED);
     }
 
     public void importFile(String filePath) throws IOException {
@@ -134,6 +137,7 @@ public class GraphQlParser {
             schema = getSchemaFromIntrospectionResponse(schema);
         }
         parse(schema);
+        Stats.incCounter(GraphQlStats.SCHEMA_FILE_IMPORTED);
     }
 
     private static String getSchemaFromIntrospectionResponse(String response) throws IOException {
