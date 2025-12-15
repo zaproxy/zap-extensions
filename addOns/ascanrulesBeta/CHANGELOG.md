@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [64] - 2025-12-15
 ### Added
 - The following scan rules were added, having been promoted from Alpha:
   - NoSQL Injection - MongoDB
@@ -621,6 +621,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[64]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v64
 [63]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v63
 [62]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v62
 [61]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v61

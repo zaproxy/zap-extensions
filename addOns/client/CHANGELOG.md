@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.20.0] - 2025-12-15
 ### Changed
 - Update the automation framework template to include missing field (`scopeCheck`).
 - Update minimum ZAP version to 2.17.0.
@@ -177,6 +177,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.20.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.20.0
 [0.19.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.19.0
 [0.18.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.18.0
 [0.17.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.17.0
