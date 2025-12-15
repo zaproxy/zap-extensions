@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Update minimum ZAP version to 2.17.0.
 - Use lowercase credential parameters in the Authentication default template.
+- Update Zest library to 0.33.0:
+  - Support for script level `statementDelay`.
+  - Update Selenium to version 4.39.0.
 
 ### Fixed
 - Address deadlock when adding scripts.
