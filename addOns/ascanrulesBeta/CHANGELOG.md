@@ -4,7 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- Maintenance changes.
+- Updated the Insecure HTTP Method rule to raise alerts at LOW confidence when the Alert Threshold is LOW. Corrected the identification of HTTP methods/verbs which may result in more alerts being raised (regardless of Alert Threshold).
 
 ## [64] - 2025-12-15
 ### Added
