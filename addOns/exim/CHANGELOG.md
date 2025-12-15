@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.16.0] - 2025-12-15
 ### Changed
 - Update minimum ZAP version to 2.17.0.
 - Update dependencies.
@@ -134,6 +134,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release.
 
+[0.16.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.16.0
 [0.15.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.15.0
 [0.14.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.14.0
 [0.13.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.13.0

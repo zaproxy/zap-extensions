@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [23] - 2025-12-15
 ### Changed
 - Update minimum ZAP version to 2.17.0.
 
@@ -149,6 +149,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## 1 - 2015-08-24
 
 
+[23]: https://github.com/zaproxy/zap-extensions/releases/domxss-v23
 [22]: https://github.com/zaproxy/zap-extensions/releases/domxss-v22
 [21]: https://github.com/zaproxy/zap-extensions/releases/domxss-v21
 [20]: https://github.com/zaproxy/zap-extensions/releases/domxss-v20
