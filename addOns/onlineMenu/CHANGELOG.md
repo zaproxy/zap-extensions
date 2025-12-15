@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [15] - 2025-12-15
 ### Changed
 - Update minimum ZAP version to 2.17.0.
 
@@ -75,6 +75,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Promoted to beta, updated for ZAP 2.4
 
+[15]: https://github.com/zaproxy/zap-extensions/releases/onlineMenu-v15
 [14]: https://github.com/zaproxy/zap-extensions/releases/onlineMenu-v14
 [13]: https://github.com/zaproxy/zap-extensions/releases/onlineMenu-v13
 [12]: https://github.com/zaproxy/zap-extensions/releases/onlineMenu-v12
