@@ -2,7 +2,7 @@
 bouncycastle = "1.83"
 brotli = "1.16.0"
 diffutils = "1.3.0"
-flyway = "11.18.0"
+flyway = "11.19.0"
 graaljs = "25.0.1"
 jbrofuzz = "2.5.1"
 jsoup = "1.21.2"
@@ -101,7 +101,7 @@ sqliplugin-jdom = "org.jdom:jdom:2.0.2"
 test-hamcrest = "org.hamcrest:hamcrest-library:3.0"
 test-junit-jupiter = "org.junit.jupiter:junit-jupiter:6.0.1"
 test-junit-platformLauncher = { module = "org.junit.platform:junit-platform-launcher" }
-test-mockito-junit-jupiter = "org.mockito:mockito-junit-jupiter:5.20.0"
+test-mockito-junit-jupiter = "org.mockito:mockito-junit-jupiter:5.21.0"
 test-selenium-jupiter = "io.github.bonigarcia:selenium-jupiter:5.1.1"
 test-webdrivermanager = "io.github.bonigarcia:webdrivermanager:5.7.0"
 testutils-httpclient5 = "org.apache.httpcomponents.client5:httpclient5:5.2.1"
@@ -112,7 +112,7 @@ wappalyzer-jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
 wappalyzer-jsvg = "com.github.weisj:jsvg:2.0.0"
 wappalyzer-re2j = { module = "com.google.re2j:re2j", version.ref = "re2j" }
 zest-jbrofuzzCore = { module = "org.owasp.jbrofuzz:jbrofuzz-core", version.ref = "jbrofuzz" }
-zest-zest = "org.zaproxy:zest:0.32.0"
+zest-zest = "org.zaproxy:zest:0.33.0"
 
 [plugins]
 cyclonedx = "org.cyclonedx.bom:2.2.0"
@@ -121,7 +121,7 @@ dependencyUpdates = "com.github.ben-manes.versions:0.53.0"
 errorprone = "net.ltgt.errorprone:4.3.0"
 japicmp = "me.champeau.gradle.japicmp:0.4.6"
 lombok = "io.freefair.lombok:9.1.0"
-sonarqube = "org.sonarqube:7.2.0.6526"
+sonarqube = "org.sonarqube:7.2.1.6560"
 spotless.id = "com.diffplug.spotless"
 undercouch-download = "de.undercouch.download:5.6.0"
 zaproxy-addon = "org.zaproxy.add-on:0.13.1"
