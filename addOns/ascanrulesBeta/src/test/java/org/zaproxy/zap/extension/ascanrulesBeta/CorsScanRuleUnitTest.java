@@ -115,30 +115,30 @@ class CorsScanRuleUnitTest extends ActiveScannerTest<CorsScanRule> {
 
     @ParameterizedTest
     @ValueSource(ints = {400, 401, 403, 404, 415, 500, 503})
-    void shouldAlertInfoIfErrorStatusCodeEvenWithAcaoAndAcac(int statusCode) throws Exception {
-        // Given - Even with ACAO and ACAC headers that would normally be HIGH risk,
-        // error responses should be INFO since no sensitive content is exposed
+    void shouldAlertLowConfidenceIfErrorStatusCodeWithAcaoAndAcac(int statusCode) throws Exception {
+        // Given - With ACAO and ACAC headers that would normally be HIGH risk,
+        // error responses should have LOW confidence as exploitability is uncertain
         nano.addHandler(new CorsResponse("REFLECT", true, statusCode));
         HttpMessage msg = this.getHttpMessage("/");
         rule.init(msg, this.parent);
         // When
         rule.scan();
         // Then
-        assertExpectedAlert(Alert.RISK_INFO, "REFLECT");
+        assertExpectedAlert(Alert.RISK_HIGH, Alert.CONFIDENCE_LOW, "REFLECT");
     }
 
     @ParameterizedTest
     @ValueSource(ints = {401, 404, 415})
-    void shouldAlertInfoIfErrorStatusCodeWithWildcardAcao(int statusCode) throws Exception {
-        // Given - Even with wildcard ACAO that would normally be MEDIUM risk,
-        // error responses should be INFO since no sensitive content is exposed
+    void shouldAlertLowConfidenceIfErrorStatusCodeWithWildcardAcao(int statusCode) throws Exception {
+        // Given - With wildcard ACAO that would normally be MEDIUM risk,
+        // error responses should have LOW confidence as exploitability is uncertain
         nano.addHandler(new CorsResponse("*", false, statusCode));
         HttpMessage msg = this.getHttpMessage("/");
         rule.init(msg, this.parent);
         // When
         rule.scan();
         // Then
-        assertExpectedAlert(Alert.RISK_INFO, "*");
+        assertExpectedAlert(Alert.RISK_MEDIUM, Alert.CONFIDENCE_LOW, "*");
     }
 
     @Test
@@ -178,9 +178,14 @@ class CorsScanRuleUnitTest extends ActiveScannerTest<CorsScanRule> {
     }
 
     private void assertExpectedAlert(int risk, String evidence) {
+        assertExpectedAlert(risk, Alert.CONFIDENCE_HIGH, evidence);
+    }
+
+    private void assertExpectedAlert(int risk, int confidence, String evidence) {
         assertThat(alertsRaised, hasSize(1));
         Alert alert = alertsRaised.get(0);
         assertEquals(risk, alert.getRisk());
+        assertEquals(confidence, alert.getConfidence());
         if (evidence.equals("REFLECT")) {
             assertThat(
                     alert.getEvidence().startsWith("access-control-allow-origin: http://"),

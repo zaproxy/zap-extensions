@@ -108,20 +108,17 @@ public class CorsScanRule extends AbstractAppPlugin implements CommonActiveScanR
                 }
 
                 int risk = Alert.RISK_INFO;
+                int confidence = Alert.CONFIDENCE_HIGH;
                 String acacVal =
                         respHead.getHeader(HttpFieldsNames.ACCESS_CONTROL_ALLOW_CREDENTIALS);
                 acacVal = acacVal == null ? "" : acacVal;
 
                 // Check if the response indicates an error (4xx or 5xx status codes)
-                // In such cases, sensitive content is not actually being exposed
-                int statusCode = respHead.getStatusCode();
-                boolean isErrorResponse = statusCode >= 400;
+                // In such cases, we're less confident about exploitability
+                boolean isErrorResponse = isClientError(msg) || isServerError(msg);
 
                 // Evaluates the risk for this alert
-                if (isErrorResponse) {
-                    // Error responses don't expose sensitive content, keep risk as INFO
-                    risk = Alert.RISK_INFO;
-                } else if (acaoVal.contains("*")) {
+                if (acaoVal.contains("*")) {
                     risk = Alert.RISK_MEDIUM;
                 } else if (acaoVal.contains(RANDOM_NAME)
                         || acaoVal.contains("null")
@@ -129,6 +126,12 @@ public class CorsScanRule extends AbstractAppPlugin implements CommonActiveScanR
                     // If authenticated AJAX requests are allowed, the risk is higher
                     risk = acacVal.isEmpty() ? Alert.RISK_MEDIUM : Alert.RISK_HIGH;
                 }
+
+                // Lower confidence for error responses as exploitability is uncertain
+                if (isErrorResponse) {
+                    confidence = Alert.CONFIDENCE_LOW;
+                }
+
                 Matcher m =
                         Pattern.compile(
                                         String.format(
@@ -139,7 +142,7 @@ public class CorsScanRule extends AbstractAppPlugin implements CommonActiveScanR
                                                 acacVal),
                                         Pattern.MULTILINE)
                                 .matcher(respHead.toString());
-                buildAlert(risk)
+                buildAlert(risk, confidence)
                         .setMessage(msg)
                         .setAttack(HttpFieldsNames.ORIGIN + ": " + payload)
                         .setEvidence(m.find() ? m.group(0) : null)
@@ -152,10 +155,14 @@ public class CorsScanRule extends AbstractAppPlugin implements CommonActiveScanR
     }
 
     private AlertBuilder buildAlert(int risk) {
+        return buildAlert(risk, Alert.CONFIDENCE_HIGH);
+    }
+
+    private AlertBuilder buildAlert(int risk, int confidence) {
         return newAlert()
                 .setName(risk == Alert.RISK_INFO ? getName() : getConstantStr("vuln.name"))
                 .setRisk(risk)
-                .setConfidence(Alert.CONFIDENCE_HIGH)
+                .setConfidence(confidence)
                 .setDescription(
                         risk == Alert.RISK_INFO ? getDescription() : getConstantStr("vuln.desc"))
                 .setAlertRef(
