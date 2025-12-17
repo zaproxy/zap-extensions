@@ -485,10 +485,10 @@ public class TechsJsonParser {
             }
         }
         if (pattern.indexOf(FIELD_CONFIDENCE) > -1) {
-            LOGGER.warn("Confidence field in pattern?: {}", pattern);
+            LOGGER.warn("Confidence field in pattern? {}", pattern);
         }
         if (pattern.indexOf(FIELD_VERSION) > -1) {
-            LOGGER.warn("Version field in pattern?: {}", pattern);
+            LOGGER.warn("Version field in pattern? {}", pattern);
         }
         ap.setPattern(pattern);
         return ap;
