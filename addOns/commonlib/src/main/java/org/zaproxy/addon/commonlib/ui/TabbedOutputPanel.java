@@ -50,6 +50,7 @@ import org.parosproxy.paros.view.View;
 import org.parosproxy.paros.view.WorkbenchPanel;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
 import org.zaproxy.zap.utils.DisplayUtils;
+import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.ThreadUtils;
 import org.zaproxy.zap.utils.TimeStampUtils;
 import org.zaproxy.zap.utils.ZapTextArea;
@@ -199,6 +200,7 @@ public class TabbedOutputPanel extends OutputPanel {
         txtOutput.setEditable(false);
         txtOutput.setLineWrap(true);
         txtOutput.setName("");
+        txtOutput.setFont(FontUtils.getFont("Monospaced"));
         txtOutput.addMouseListener(
                 new java.awt.event.MouseAdapter() {
                     @Override
