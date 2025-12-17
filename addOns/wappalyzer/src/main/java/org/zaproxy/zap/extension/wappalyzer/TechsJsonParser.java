@@ -61,17 +61,17 @@ public class TechsJsonParser {
     static final int SIZE = 16;
 
     private static final Logger LOGGER = LogManager.getLogger(TechsJsonParser.class);
-    private final PatternErrorHandler patternErrorHandler;
+    private final PatternFailureHandler patternFailureHandler;
     private final ParsingExceptionHandler parsingExceptionHandler;
 
     public TechsJsonParser() {
-        this(
-                (pattern, e) -> LOGGER.warn("Invalid pattern syntax {}", pattern, e),
-                e -> LOGGER.warn(e.getMessage(), e));
+        this(LOGGER::warn, e -> LOGGER.warn(e.getMessage(), e));
     }
 
-    TechsJsonParser(PatternErrorHandler peh, ParsingExceptionHandler parsingExceptionHandler) {
-        this.patternErrorHandler = peh;
+    TechsJsonParser(
+            PatternFailureHandler patternFailureHandler,
+            ParsingExceptionHandler parsingExceptionHandler) {
+        this.patternFailureHandler = patternFailureHandler;
         this.parsingExceptionHandler = parsingExceptionHandler;
     }
 
@@ -328,7 +328,7 @@ public class TechsJsonParser {
                                 new Exception("Unsupported type: " + value.getClass()));
                     }
                 } catch (PatternSyntaxException e) {
-                    patternErrorHandler.handleError(String.valueOf(entry.getValue()), e);
+                    handlePatternFailure(String.valueOf(entry.getValue()), e.getMessage());
                 }
             }
         } else if (json != null) {
@@ -341,8 +341,13 @@ public class TechsJsonParser {
         return list;
     }
 
-    private static Map<String, AppPattern> createMapAppPattern(
-            String type, String key, String value) {
+    private void handlePatternFailure(String value, String message) {
+        StringBuilder msgBuilder = new StringBuilder("Failed to parse app pattern: ");
+        msgBuilder.append(value).append(' ').append(message);
+        patternFailureHandler.handleFailure(msgBuilder.toString());
+    }
+
+    private Map<String, AppPattern> createMapAppPattern(String type, String key, String value) {
         Map<String, AppPattern> map = new HashMap<>();
         map.put(key, strToAppPattern(type, value));
         return map;
@@ -375,9 +380,7 @@ public class TechsJsonParser {
                                 Map<String, Map<String, AppPattern>> nodeSelectorMap =
                                         new HashMap<>();
                                 Map<String, AppPattern> value = new HashMap<>();
-                                appPat =
-                                        TechsJsonParser.strToAppPattern(
-                                                type, (String) valueMap.getValue());
+                                appPat = strToAppPattern(type, (String) valueMap.getValue());
                                 value.put((String) valueMap.getKey(), appPat);
                                 nodeSelectorMap.put((String) nodeEntryMap.getKey(), value);
                                 String query = (String) domEntryMap.getKey();
@@ -386,7 +389,7 @@ public class TechsJsonParser {
                                     list.add(domSelectorMap);
                                 }
                             } catch (PatternSyntaxException e) {
-                                patternErrorHandler.handleError((String) valueMap.getValue(), e);
+                                handlePatternFailure((String) valueMap.getValue(), e.getMessage());
                             }
                         }
                     } else {
@@ -395,9 +398,7 @@ public class TechsJsonParser {
                                     new HashMap<>();
                             Map<String, Map<String, AppPattern>> nodeSelectorMap = new HashMap<>();
                             Map<String, AppPattern> value = new HashMap<>();
-                            appPat =
-                                    TechsJsonParser.strToAppPattern(
-                                            type, (String) nodeEntryMap.getValue());
+                            appPat = strToAppPattern(type, (String) nodeEntryMap.getValue());
                             value.put((String) nodeEntryMap.getKey(), appPat);
                             nodeSelectorMap.put((String) nodeEntryMap.getKey(), value);
                             String query = (String) (domEntryMap).getKey();
@@ -406,7 +407,7 @@ public class TechsJsonParser {
                                 list.add(domSelectorMap);
                             }
                         } catch (PatternSyntaxException e) {
-                            patternErrorHandler.handleError((String) nodeEntryMap.getValue(), e);
+                            handlePatternFailure((String) nodeEntryMap.getValue(), e.getMessage());
                         }
                     }
                 }
@@ -428,8 +429,7 @@ public class TechsJsonParser {
         try {
             QueryParser.parse(query);
         } catch (SelectorParseException spe) {
-            patternErrorHandler.handleError(
-                    query, new PatternSyntaxException(spe.getMessage(), query, -1));
+            handlePatternFailure(query, spe.getMessage());
             return false;
         }
         return true;
@@ -446,26 +446,26 @@ public class TechsJsonParser {
                 }
                 try {
                     if (!objStr.isEmpty()) {
-                        list.add(TechsJsonParser.strToAppPattern(type, objStr));
+                        list.add(strToAppPattern(type, objStr));
                     }
                 } catch (PatternSyntaxException e) {
-                    patternErrorHandler.handleError(objStr, e);
+                    handlePatternFailure(objStr, e.getMessage());
                 }
             }
         } else if (json != null) {
             try {
                 String jsonValue = json.toString();
                 if (!jsonValue.isEmpty()) {
-                    list.add(TechsJsonParser.strToAppPattern(type, jsonValue));
+                    list.add(strToAppPattern(type, jsonValue));
                 }
             } catch (PatternSyntaxException e) {
-                patternErrorHandler.handleError(json.toString(), e);
+                handlePatternFailure(json.toString(), e.getMessage());
             }
         }
         return list;
     }
 
-    private static AppPattern strToAppPattern(String type, String str) {
+    private AppPattern strToAppPattern(String type, String str) {
         AppPattern ap = new AppPattern();
         ap.setType(type);
         String[] values = str.split(FIELD_SEPARATOR);
@@ -485,10 +485,10 @@ public class TechsJsonParser {
             }
         }
         if (pattern.indexOf(FIELD_CONFIDENCE) > -1) {
-            LOGGER.warn("Confidence field in pattern? {}", pattern);
+            patternFailureHandler.handleFailure("Confidence field in pattern? " + pattern);
         }
         if (pattern.indexOf(FIELD_VERSION) > -1) {
-            LOGGER.warn("Version field in pattern? {}", pattern);
+            patternFailureHandler.handleFailure("Version field in pattern? " + pattern);
         }
         ap.setPattern(pattern);
         return ap;
