@@ -107,7 +107,7 @@ test-webdrivermanager = "io.github.bonigarcia:webdrivermanager:5.7.0"
 testutils-httpclient5 = "org.apache.httpcomponents.client5:httpclient5:5.2.1"
 testutils-nanohttpd-webserver = { module = "org.nanohttpd:nanohttpd-webserver", version.ref = "nanohttpd" }
 testutils-nanohttpd-websocket = { module = "org.nanohttpd:nanohttpd-websocket", version.ref = "nanohttpd" }
-testutils-zap = "org.zaproxy:zap:2.17.0-SNAPSHOT"
+testutils-zap = "org.zaproxy:zap:2.17.0"
 wappalyzer-jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
 wappalyzer-jsvg = "com.github.weisj:jsvg:2.0.0"
 wappalyzer-re2j = { module = "com.google.re2j:re2j", version.ref = "re2j" }
