@@ -112,7 +112,7 @@ wappalyzer-jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
 wappalyzer-jsvg = "com.github.weisj:jsvg:2.0.0"
 wappalyzer-re2j = { module = "com.google.re2j:re2j", version.ref = "re2j" }
 zest-jbrofuzzCore = { module = "org.owasp.jbrofuzz:jbrofuzz-core", version.ref = "jbrofuzz" }
-zest-zest = "org.zaproxy:zest:0.33.0"
+zest-zest = "org.zaproxy:zest:0.35.0"
 
 [plugins]
 cyclonedx = "org.cyclonedx.bom:2.2.0"

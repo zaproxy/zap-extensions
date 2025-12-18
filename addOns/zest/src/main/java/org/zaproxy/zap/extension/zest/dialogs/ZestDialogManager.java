@@ -354,7 +354,7 @@ public class ZestDialogManager extends AbstractPanel {
         if (scriptDialog == null) {
             scriptDialog =
                     new ZestScriptsDialog(
-                            extension, View.getSingleton().getMainFrame(), new Dimension(500, 500));
+                            extension, View.getSingleton().getMainFrame(), new Dimension(550, 500));
         } else if (scriptDialog.isVisible()) {
             // Already being displayed, bring to the front but dont overwrite anything
             bringToFront(scriptDialog);
