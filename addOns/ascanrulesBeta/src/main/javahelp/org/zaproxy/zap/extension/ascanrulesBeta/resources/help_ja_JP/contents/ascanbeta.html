@@ -47,23 +47,11 @@ HIGH アラートしきい値では、スコープ内のメッセージのみを
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/CsrfTokenScanRule.java">CsrfTokenScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/20012/">20012</a>
 
-<h2 id="id-40044">指数関数的エンティティ展開（Billion Laughs攻撃）</h2>
-このルールは、XMLまたはYAMLファイルを受け入れるサーバーで「Billion Laughs」脆弱性の識別を試みます。
-<p>
-最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/ExponentialEntityExpansionScanRule.java">ExponentialEntityExpansionScanRule.java</a><br>
-アラートID: <a href="https://www.zaproxy.org/docs/alerts/40044/">40044</a>
-
 <h2 id="id-90025">ELインジェクション</h2>
 Webアプリケーションが式言語 (EL) インジェクション攻撃の影響を受けるかどうかをチェックします。この攻撃は、アプリケーションが実行前に意図したELステートメントを変更する可能性のある特殊要素を十分に無害化できない場合に発生します。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/ExpressionLanguageInjectionScanRule.java">ExpressionLanguageInjectionScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/90025/">90025</a>
-
-<h2 id="id-10106">HTTPのみのサイト</h2>
-このアクティブスキャンルールは、HTTPサイトがHTTPSで提供されているかどうかをチェックします。
-<p>
-最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/HttpOnlySiteScanRule.java">HttpOnlySiteScanRule.java</a><br>
-アラートID: <a href="https://www.zaproxy.org/docs/alerts/10106/">10106</a>
 
 <h2 id="id-10107">HttPoxy - Proxyヘッダーの誤用</h2>
 このアクティブスキャンルールは、サイトがリクエストで指定されたHTTP Proxyヘッダーを使用しているかどうかをチェックします。<br>
@@ -74,12 +62,6 @@ Webアプリケーションが式言語 (EL) インジェクション攻撃の�
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/HttPoxyScanRule.java">HttPoxyScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10107/">10107</a>
-
-<h2 id="id-10047">HTTPSコンテンツがHTTP経由でアクセス可能</h2>
-このアクティブスキャンルールは、元々HTTPS (SSL/TLS) 経由でアクセスされたコンテンツにHTTP経由でアクセスすることを試みます。
-<p>
-最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/HttpsAsHttpScanRule.java">HttpsAsHttpScanRule.java</a><br>
-アラートID: <a href="https://www.zaproxy.org/docs/alerts/10047/">10047</a>
 
 <h2 id="id-20014">HTTPパラメーター汚染 (HPP)</h2>
 同じ名前の重複または多数のHTTPパラメーターを提供すると、アプリケーションやWebサイトが意図しない方法で値を解釈する可能性があります。 これらの効果を利用することで、悪意のある個人は入力検証をバイパスしたり、エラーをトリガーしたり、内部変数の値を変更したりできる可能性があります。 
@@ -99,6 +81,21 @@ URLに対して有効になっている既知の安全でないHTTPメソッド�
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/IntegerOverflowScanRule.java">IntegerOverflowScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/30003/">30003</a>
+
+<h2 id="id-40033">NoSQL Injection - MongoDB</h2>
+This rule attempts to identify MongoDB specific NoSQL Injection vulnerabilities. It attempts various types of attacks including: boolean based, error based, time based, and authentication bypass. 
+It does not include time based attacks. It will also attempt JSON parameter specific payloads if the scan is configured to include JSON parameter variants.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/MongoDbInjectionScanRule.java">MongoDbInjectionScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40033/">40033</a>.
+
+<h2 id="id-90039">NoSQL Injection - MongoDB (Time Based)</h2>
+This rule attempts to identify MongoDB specific NoSQL Injection vulnerabilities using only time based attacks.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/MongoDbInjectionTimingScanRule.java">MongoDbInjectionTimingScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/90039/">90039</a>.
 
 <h2 id="id-40031">アウトオブバンドXSS</h2>
 このルールはアウトオブバンドXSS脆弱性の発見を試みます。
@@ -130,16 +127,6 @@ Webサーバーが、URLの正しい「相対パス」について混乱を招�
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SessionFixationScanRule.java">SessionFixationScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/40013/">40013</a>
-
-<h2 id="id-10048">ShellShock - CVE-2014-6271</h2>
-
-このルールは、CVE-2014-6271 (別名 ShellShock) に対して脆弱なサーバーを検出するために2つの攻撃を実行します。<br>
-1つ目はシンプルな反射型攻撃で、2つ目は時間ベースの攻撃です。<br>
-<br>
-バージョン2.5.0以降では、オプションの「ルール設定」パネルから <code>rules.common.sleep</code> パラメーターを変更することで、攻撃に使用される時間の長さを変更できます。
-<p>
-最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/ShellShockScanRule.java">ShellShockScanRule.java</a><br>
-アラートID: <a href="https://www.zaproxy.org/docs/alerts/10048/">10048</a>
 
 <h2 id="id-42">ソースコード漏洩 - SVN</h2>
 Subversionソースコードリポジトリのメタデータを使用して、Webサーバー上のソースコードを含むファイルをスキャンします。<br>

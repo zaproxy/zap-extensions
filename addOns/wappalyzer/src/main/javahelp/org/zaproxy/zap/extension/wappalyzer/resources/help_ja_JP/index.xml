@@ -7,4 +7,5 @@
 	<indexitem text="テクノロジー検出" target="addon.wappalyzer" />
 	<indexitem text="テクノロジー検出 API" target="addon.wappalyzer.api" />
 	<indexitem text="テクノロジー検出 オプション" target="addon.wappalyzer.options" />
+	<indexitem text="Wappalyzer Automation" target="addon.wappalyzer.automation" />
 </index>

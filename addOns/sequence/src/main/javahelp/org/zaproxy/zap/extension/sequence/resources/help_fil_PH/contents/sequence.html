@@ -12,26 +12,72 @@ Pagkasunod-sunod na Scanner
 Ang add-on na ito ay nagpapadali sa pagtatala at pag-scan ng mga sunod-sunod na mga kahilingan. 
 Sa ialng mga web na mga aplikasyon na ito ay kinakailangan para sa partikular na mga pangyayari o mga pahina upang ma-access o matapos ang isang tiyak na kaayusan.
 Sa pamamagitan ng pagtatala sa pagkasunod-sunod at pagkatapos ay pag-scan nito, ito ay posible upang masiguro na umaapaw na pangyayari na inaasahan na paraan.
+<p>
+The sequence active scanner will replay the sequence it is attacking.
+If a sequence is selected in the "Scripts" tab then the result of running the script will be shown in the "Zest Results" tab.
+If the sequence includes Zest assertions then these should give you a good indication of whether or not the sequence is running 
+in the same way as when it was recorded.
+<p>
+The active scanner will be run on each step of sequence, and each scan will complete before the next step is performed.
+If you are using the desktop then you will be able to see the scans for each step in the "Active Scan" tab - 
+they will be labelled as "&lt;sequence name&gt;/Step &lt;id&gt;".
+<p>
+Replaying each step, and attacking it before progressing to the next step, significantly increases the chances of the active scan 
+successfully attacking the sequence.
+However you should check that the sequence did complete successfully and that the active scan requests were not automatically rejected.
+The reports that support sequences will include information that can help you determine this.
 
-<h2>Paglikha ng mga pagkasunod-sunod</h2>
+<p>
+This add-on supports the <a href="automation.html">Automation Framework</a>.
+
+<h2>Creating Sequences</h2>
 <p>
 Isang pagkasunod-sunod na script ay dapat nailikha para sa bawat maramihan-hakbang na operasyon sa aplikasyon/dako na sinubukan.
 </p>
-Mayroong dalawang opsyon para sa paglikha ng pagkasunod-sunod:
+There are several options for creating sequences:
 <br><br>
 <ol>
+<li>Use the Automation Framework <a href="automation.html">sequence-import</a> job.
+<li>Use the Import menu item Import HAR as Sequence.
 <li>Sa alinman na mga site tree o kasaysayan na tab pumili ng mga kahilingan na gusto ninyong isama, i-kanan klik, at gamit ang "Dagdag sa Zest Script" (naging pagpili sa paglikha ng isang bagong script o pagdagdag sa isang umiiral na pagkasunod-sunod na script).</li>
 <li>Mula sa main tool bar, gamitin ang "Talaan ng Bagong Zest Script..." na button, pagpili ng "Pagkasunod-sunod" bilang uri.</li>
 </ol>
+<h3>Assertions</h3>
+When importing the sequences it is possible to choose to create assertions for each HTTP message of the sequence:
+<ul>
+<li>Assert Status Code - asserts that the replayed HTTP message has the same status code.
+<li>Assert Length - asserts that the replayed HTTP message has the same response body length, within the margin (percentage) specified.
+</ul>
 
 <h2>Pag-scan</h2>
-Kapag ang isang bagong Aktibong Scan ay nalikha mayroong isang "Pagkasunod-sunod" na tab na kung saan maaari mong piliin ang mga pagkasunod-sunod para makilatis. 
-Paalala: Ang Pagkasunod-sunod na tab ay lamang nakikita kapag "Ipakita ang advance na mga opsyon" ay napili. 
-Para sa halimbawa:<br>
-<img src="images/ascan-sequence.png"></img>
+
+You can active scan sequences via:
+<ul>
+<li>The "Sequence Active Scan" dialog.
+<li>The context menu "Active Scan Sequence" option on the top node of a Sequence script.
+<li>The Automation Framework <a href="automation.html">sequence-activeScan</a> job.
+</ul>
+
+<h2>Sequence Active Scan dialog</h2>
+
+This dialog is accessible via the "Tools" menu, and allows you to actively scan sequences.
+
+<h3>Scan Policy</h3>
+The name of the scan policy to use for active scanning. 
+The "Sequence" policy included with this add-on is the recommented one to use.
+
+<h3>Sequences</h3>
+The sequences to active scan. You must select at least one sequence. Selected sequences will be actively scanned in order.
+
+<h2>Reporting</h2>
+The following reports can include sequence scanning results:
+<ul>
+<li><a href="https://www.zaproxy.org/docs/desktop/addons/report-generation/report-traditional-json/">Traditional JSON Report</a>.
+<li><a href="https://www.zaproxy.org/docs/desktop/addons/report-generation/report-traditional-json-plus/">Traditional JSON Report with Requests and Responses</a>.
+</ul>
 
 <h3>Tingnan din</h3>
-<a href="https://zapmultistep.wordpress.com/">Ang ZAP na Maraming-Hakbang na blog</a>
+<a href="https://zapmultistep.wordpress.com/">Ang ZAP na Maraming-Hakbang na blog</a> - note that this blog is for an earlier version of this add-on and is somewhat out of date.
 
 </body>
 </html>

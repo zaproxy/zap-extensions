@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+Insights Options
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Insights Options</H1>
+
+This screen allows you to configure the <a href="insights.html">Insights</a> options.
+
+<H3>Exit Automation on High</H3>
+
+If set then a High Level Insight will stop automation.
+<p>
+If the Desktop UI is being used then this option will have no effect.
+<p>
+If the <a href="insights-job.html">insights</a> Automation Framework job has run and the plan is still running then the plan
+will be stopped. Any jobs that are flagged as "always run" will still run.
+<p>
+In all other cases ZAP will be stopped. 
+
+<H3>Message Low Threshold %</H3>
+
+The low threshold used for insights related to messages, as a percentage of all messages sent.
+<p>
+Default: 5%
+
+<H3>Message High Threshold %</H3>
+
+The high threshold used for insights related to messages, as a percentage of all messages sent.
+<p>
+Default: 50%
+
+<H3>Memory Low Threshold %</H3>
+
+The low threshold used for insights related to memory, as a percentage of the available memory,
+<p>
+Default: 80%
+
+<H3>Memory High Threshold %</H3>
+
+The high threshold used for insights related to memory, as a percentage of the available memory.
+<p>
+Default: 95%
+
+<H3>Slow Response in Milliseconds</H3>
+
+The response time in milliseconds that is treated as a "slow" response for the related Insight.
+<p>
+Default: 256
+<p>
+Note that the response times are recorded in the statistics in powers of 2.
+
+</HTML>

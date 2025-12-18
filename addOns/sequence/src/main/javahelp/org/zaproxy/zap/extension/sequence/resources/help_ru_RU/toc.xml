@@ -3,7 +3,10 @@
 <toc version="2.0">
 	<tocitem text="Руководство пользователя ZAP " tocid="toplevelitem">
 		<tocitem text="Дополнения" tocid="addons">
-			<tocitem text="Сканер последовательности " image="sequence-icon" target="sequence"/>
+			<tocitem text="Сканер последовательности " image="addon.sequence-icon" target="addon.sequence">
+				<tocitem text="Automation" target="addon.sequence.automation"/>
+				<tocitem text="Sequence Policy" target="addon.sequence.policy"/>
+			</tocitem>
 		</tocitem>
 	</tocitem>
 </toc>

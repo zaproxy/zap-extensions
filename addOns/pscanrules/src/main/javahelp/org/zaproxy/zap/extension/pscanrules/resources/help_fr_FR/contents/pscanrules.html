@@ -317,6 +317,14 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns
 <br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10027/">10027</a>.
 
+<h2 id="id-10009">In Page Banner Information Leak</h2>
+Analyzes response body content for the presence of web or application server banners (when the responses have error status codes).<br>
+If the Threshold is Low then status 200 - Ok responses are analyzed as well.<br>
+The presence of such banners may facilitate more targeted attacks against known vulnerabilities.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/InPageBannerInfoLeakScanRule.java">InPageBannerInfoLeakScanRule.java</a><br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10009/">10009</a>
+
 <h2 id="id-10105">Insecure Authentication</h2>
 HTTP basic or digest authentication has been used over an unsecured connection. The credentials can be read and then reused by someone with access to the network.
 <p>
@@ -330,6 +338,16 @@ The response contains a Java Server Faces (JSF) ViewState value that has no cryp
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/InsecureJsfViewStatePassiveScanRule.java">InsecureJsfViewStatePassiveScanRule.java</a>
 <br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/90001/">90001</a>.
+
+<h2 id="id-90002">Java Serialization Object</h2>
+Java Serialization Object (JSO) is a way to save and exchange objects between Java applications.<br>
+Different problems are associated with JSO. Sensitive data can leak to the stream of bytes.<br>
+An attacker can also modify the data and exploit JSO to do a Remote Code Execution on the server.<br>
+JSO should not be used by Java programs. Strong controls must be done on serialized data.<br>
+JSO are a type of vulnerabilities associated to A8:2017-Insecure Deserialization.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/JsoScanRule.java">JsoScanRule.java</a><br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/90002/">90002</a>
 
 <h2 id="id-10040">Mixed Content</h2>
 For content served via HTTPS analyse all the src attributes in the response looking for those sourced
@@ -452,6 +470,16 @@ is not greater than 8 characters in length then the parameter is ignored
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/InfoSessionIdUrlScanRule.java">InfoSessionIdUrlScanRule.java</a>
 <br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/3/">3</a>.
+
+<h2 id="id-90003">Sub Resource Integrity Attribute Missing</h2>
+This rule checks whether the integrity attribute in the script or the link element served by an external resource (for example: CDN) is missing.<br>
+It helps mitigate an attack where the CDN has been compromised and content has been replaced by malicious content.<br>
+Note: A suggested integrity hash value will be present in the relevant Alert's Other Info details if it can be resolved to a script in the Sites Tree.
+<p>
+This rule supports <b>Trusted Domains</b>, check "General Configuration" for more information.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/SubResourceIntegrityAttributeScanRule.java">SubResourceIntegrityAttributeScanRule.java</a><br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/90003/">90003</a>
 
 <h2 id="id-10035">Strict Transport Security Header</h2>
 This rule checks HTTPS responses for the presence of a HTTP Strict Transport Security (HSTS) header and tests for various implementation concerns, 

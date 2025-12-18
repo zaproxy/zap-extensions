@@ -12,26 +12,72 @@ Urutan Scanner
 Ini add-on yang memudahkan perekaman dan pemindaian urutan permintaan. 
 Di beberapa aplikasi web, hal ini diperlukan untuk acara tertentu atau halaman yang akan diakses atau diselesaikan dalam urutan tertentu.
 Dengan merekam urutan dan kemudian pemindaian itu, adalah mungkin untuk memastikan aliran tersebut terjadi dalam suatu yang diharapkan dengan cara ini.
+<p>
+The sequence active scanner will replay the sequence it is attacking.
+If a sequence is selected in the "Scripts" tab then the result of running the script will be shown in the "Zest Results" tab.
+If the sequence includes Zest assertions then these should give you a good indication of whether or not the sequence is running 
+in the same way as when it was recorded.
+<p>
+The active scanner will be run on each step of sequence, and each scan will complete before the next step is performed.
+If you are using the desktop then you will be able to see the scans for each step in the "Active Scan" tab - 
+they will be labelled as "&lt;sequence name&gt;/Step &lt;id&gt;".
+<p>
+Replaying each step, and attacking it before progressing to the next step, significantly increases the chances of the active scan 
+successfully attacking the sequence.
+However you should check that the sequence did complete successfully and that the active scan requests were not automatically rejected.
+The reports that support sequences will include information that can help you determine this.
 
-<h2>Membuat Urutan</h2>
+<p>
+This add-on supports the <a href="automation.html">Automation Framework</a>.
+
+<h2>Creating Sequences</h2>
 <p>
 Satu urutan naskah yang harus dibuat untuk setiap multi-langkah operasi di aplikasi/situs sedang diuji.
 </p>
-Ada dua pilihan untuk membuat urutan:
+There are several options for creating sequences:
 <br><br>
 <ol>
+<li>Use the Automation Framework <a href="automation.html">sequence-import</a> job.
+<li>Use the Import menu item Import HAR as Sequence.
 <li>Di salah satu Situs di pohon atau Sejarah tab pilih aplikasi yang anda ingin disertakan, klik kanan, dan menggunakan "Menambah Semangat Script" (baik memilih untuk membuat script baru atau menambahkan ke yang sudah ada Urutan script).</li>
 <li>Dari tool bar, gunakan "Rekor Baru Semangat Script..." tombol, pilih "Urutan" sebagai jenis.</li>
 </ol>
+<h3>Assertions</h3>
+When importing the sequences it is possible to choose to create assertions for each HTTP message of the sequence:
+<ul>
+<li>Assert Status Code - asserts that the replayed HTTP message has the same status code.
+<li>Assert Length - asserts that the replayed HTTP message has the same response body length, within the margin (percentage) specified.
+</ul>
 
 <h2>Pemindaian</h2>
-Ketika baru Aktif Scan yang dibuat di sana adalah "Urutan" tab di mana anda dapat memilih urutan(s) yang akan dipindai. 
-Catatan: Urutan tab ini hanya terlihat ketika "Show advanced options" dipilih. 
-Misalnya:<br>
-<img src="images/ascan-sequence.png"></img>
+
+You can active scan sequences via:
+<ul>
+<li>The "Sequence Active Scan" dialog.
+<li>The context menu "Active Scan Sequence" option on the top node of a Sequence script.
+<li>The Automation Framework <a href="automation.html">sequence-activeScan</a> job.
+</ul>
+
+<h2>Sequence Active Scan dialog</h2>
+
+This dialog is accessible via the "Tools" menu, and allows you to actively scan sequences.
+
+<h3>Scan Policy</h3>
+The name of the scan policy to use for active scanning. 
+The "Sequence" policy included with this add-on is the recommented one to use.
+
+<h3>Sequences</h3>
+The sequences to active scan. You must select at least one sequence. Selected sequences will be actively scanned in order.
+
+<h2>Reporting</h2>
+The following reports can include sequence scanning results:
+<ul>
+<li><a href="https://www.zaproxy.org/docs/desktop/addons/report-generation/report-traditional-json/">Traditional JSON Report</a>.
+<li><a href="https://www.zaproxy.org/docs/desktop/addons/report-generation/report-traditional-json-plus/">Traditional JSON Report with Requests and Responses</a>.
+</ul>
 
 <h3>Lihat juga</h3>
-<a href="https://zapmultistep.wordpress.com/">ZAP Multi-langkah Blog</a>
+<a href="https://zapmultistep.wordpress.com/">ZAP Multi-langkah Blog</a> - note that this blog is for an earlier version of this add-on and is somewhat out of date.
 
 </body>
 </html>
