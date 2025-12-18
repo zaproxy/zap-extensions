@@ -365,12 +365,12 @@
     "dom": {
       "img[src*='getzenbasket.com']": {
         "attributes": {
-          "src": "(?:cdn\\.|assets\\.|[a-z]{2}\\.images\\.)getzenbasket\\.com;confidence:50"
+          "src": "(?:cdn\\.|assets\\.|[a-z]{2}\\.images\\.)getzenbasket\\.com\\;confidence:50"
         }
       },
       "link[href*='getzenbasket.com']": {
         "attributes": {
-          "href": "(?:cdn\\.|assets\\.|[a-z]{2}\\.images\\.)getzenbasket\\.com;confidence:50"
+          "href": "(?:cdn\\.|assets\\.|[a-z]{2}\\.images\\.)getzenbasket\\.com\\;confidence:50"
         }
       }
     },
@@ -381,7 +381,7 @@
       "ZenBasketStore": ""
     },
     "meta": {
-      "generator": "ZenBasket;confidence:50",
+      "generator": "ZenBasket\\;confidence:50",
       "zenbasket-platform": ""
     },
     "pricing": [
