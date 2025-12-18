@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Updated with enthec upstream icon and pattern changes.
 - Adjust warnings logged when a pattern incorrectly contains Confidence or Version tags, use just one punctuation character.
 
 ## [21.51.0] - 2025-12-15

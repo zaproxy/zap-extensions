@@ -1244,7 +1244,7 @@
     "cookies": {
       "NEXT_LOCALE": ""
     },
-    "cpe": "cpe:2.3:a:zeit:next.js:*:*:*:*:*:*:*:*",
+    "cpe": "cpe:2.3:a:vercel:next.js:*:*:*:*:*:*:*:*",
     "description": "Next.js is a React framework for developing single page Javascript applications.",
     "headers": {
       "x-powered-by": "^Next\\.js ?([0-9.]+)?\\;version:\\1"

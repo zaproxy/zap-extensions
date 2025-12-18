@@ -7900,7 +7900,7 @@
       "__pub_tech_cmp_config": ""
     },
     "scriptSrc": [
-      "pubtech-cmp-v(.+?)(?:-esm)?\\.js;version:\\1"
+      "pubtech-cmp-v(.+?)(?:-esm)?\\.js\\;version:\\1"
     ],
     "website": "https://www.pubtech.ai/"
   },
