@@ -1,0 +1,28 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>
+Insight Automation Framework Job
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Insight Automation Framework Job</H1>
+This add-on supports the Automation Framework.
+
+<H2>Job: insights</H2>
+The insights job allows you to configure the insights options.
+<p>
+<pre>
+  - type: insights
+    parameters:
+      messagesLowThreshold:            # Integer: low threshold used for insights related to messages, default: 5
+      messagesHighThreshold:           # Integer: high threshold used for insights related to messages, default: 50
+      memoryLowThreshold:              # Integer: low threshold used for insights related to memory, default: 80
+      memoryHighThreshold:             # Integer: high threshold used for insights related to memory, default: 95
+      slowResponse:                    # Integer: the response time in msecs that is treated as "slow", default: 256
+      exitAutoOnHigh:                  # Boolean: if set will end the plan on a high level insight, default: true
+</pre>
+
+</BODY>
+</HTML>
