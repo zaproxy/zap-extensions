@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [21.52.0] - 2025-12-18
 ### Changed
 - Updated with enthec upstream icon and pattern changes.
 - Adjust warnings logged when a pattern incorrectly contains Confidence or Version tags, use just one punctuation character.
@@ -449,6 +449,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - First version
 
 
+[21.52.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.52.0
 [21.51.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.51.0
 [21.50.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.50.0
 [21.49.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.49.0
