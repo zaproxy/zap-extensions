@@ -65,14 +65,14 @@ dependencies {
     zapAddOn("commonlib")
     zapAddOn("spider")
 
-    implementation("io.swagger.parser.v3:swagger-parser:2.1.23") {
+    implementation(libs.openapi.swagger.parser) {
         // Provided by commonlib add-on:
         exclude(group = "com.fasterxml.jackson")
         exclude(group = "com.fasterxml.jackson.core")
         exclude(group = "com.fasterxml.jackson.dataformat")
         exclude(group = "com.fasterxml.jackson.datatype")
     }
-    implementation("io.swagger:swagger-compat-spec-parser:1.0.71") {
+    implementation(libs.openapi.swagger.compatSpecParser) {
         // Provided by commonlib add-on:
         exclude(group = "com.fasterxml.jackson")
         exclude(group = "com.fasterxml.jackson.core")
@@ -82,6 +82,7 @@ dependencies {
         exclude(group = "com.github.java-json-tools", module = "json-schema-validator")
         exclude(group = "org.apache.httpcomponents", module = "httpclient")
     }
+    implementation("org.apache.commons:commons-lang3:3.18.0")
     implementation(libs.log4j.slf4j2)
 
     testImplementation(parent!!.childProjects.get("commonlib")!!.sourceSets.test.get().output)

@@ -3,53 +3,53 @@
 <HEAD>
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
 <TITLE>
-Front-End Scanner
+フロントエンドスキャナー
 </TITLE>
 </HEAD>
 <BODY>
-<H1>Front-End Scanner</H1>
+<H1>フロントエンドスキャナー</H1>
 
-When installed and enabled, the Front-End Scanner add-on tampers with all HTTP responses passing through ZAP to inject a piece of JavaScript code containing custom logic, utility functions and scripts that ZAP users wish to run in the browser to help them audit front-end applications.
+フロントエンドスキャナー (Front-End Scanner) アドオンがインストールされ有効化されると、ZAP を通過するすべての HTTP レスポンスを操作して、カスタムロジック、ユーティリティ関数、および ZAP ユーザーがブラウザで実行したいスクリプトを含む JavaScript コードを注入します。
 
-<STRONG>Note:</STRONG> to be able to fully work, the add-on automatically removes CSP headers from webpages.
+<STRONG>注意:</STRONG> アドオンが完全に機能するためには、Webページから CSP ヘッダーを自動的に削除します。この操作はセキュリティリスクを伴う可能性があるため、テスト環境でのみ使用し、本番環境では CSP を無効化しないよう注意してください。
 
 
-<H2>Add a script to be run in the browser</H2>
+<H2>ブラウザで実行されるスクリプトを追加する</H2>
 
-<STRONG>Note:</STRONG> as for now, only "Client-Side Passive" scripts are injected in web pages.
+<STRONG>注意:</STRONG> 現在、Webページに注入されるのは「クライアントサイド・パッシブ」スクリプトのみです。
 
 <P>
-To add a passive script, go to the "Scripts" pane and right click on "Client-side Passive Rules", then "New Script...".
-Give your script a meaningful name, make sure that you use the template "scan.js" and save.
+パッシブスクリプトを追加するには、「スクリプト」ペインに移動し、「クライアントサイド・パッシブルール」を右クリックして「新規スクリプト...」を選択します。
+スクリプトに分かりやすい名前を付け、「scan.js」テンプレートを使用していることを確認し、保存します。
 </P>
 <P>
-As they will be executed in a web browser, scripts need to be written in Javascript.
-For the same reason, they can make use of the <a href="https://developer.mozilla.org/en-US/docs/Web/API">Web APIs</a> exposed by the browser that you use.
+スクリプトはWebブラウザで実行されるため、JavaScript で記述する必要があります。
+同じ理由で、使用するブラウザが公開する <a href="https://developer.mozilla.org/en-US/docs/Web/API">Web API</a> を利用できます。
 </P>
 <P>
-Each user script, written via ZAP's interface, ends up wrapped in a function in the front-end, receiving a Javascript object (FrontEndScanner) as a parameter. Thus, scripts have access to what this object exposes:
+ZAP のインターフェース経由で作成された各ユーザースクリプトは、フロントエンドで関数にラップされます。この関数は JavaScript オブジェクト (FrontEndScanner) をパラメーターとして受け取ります。 これにより、スクリプトはこのオブジェクトが公開するものにアクセスできます：
 <UL>
-  <LI>ZAP constants to help scripts create alerts,</LI>
-  <LI>the “mailbox”: a “publish-subscribe” mechanism to help scripts react to events happening in the browser (such as user interactions, Storage accesses, etc.),</LI>
-  <LI>a helper function to report findings back to ZAP.</LI>
+  <LI>ZAP 定数: スクリプトがアラートを作成するのを助けます。</LI>
+  <LI>「メールボックス (publish-subscribe メカニズム)」: ブラウザで発生するイベント (ユーザーインタラクション、ストレージアクセスなど) にスクリプトが反応するための仕組み。</LI>
+  <LI>発見事項をZAPに報告するためのヘルパー関数</LI>
 </UL>
-All the functions containing user (passive) scripts will be executed automatically in the browser.
+ユーザー (パッシブ) スクリプトを含むすべての関数は、ブラウザで自動的に実行されます。
 </P>
 
 
-<H2>Enabling - Disabling</H2>
+<H2>有効化 - 無効化</H2>
 
-To toggle the add-on, go to "Tools" then "Toggle Front-End Scanner" (note that the add-on is turned off by default).
+アドオンを切り替えるには、「ツール」メニューから「フロントエンドスキャナーを切り替え」を選択します (注意: アドオンはデフォルトでオフになっています)。
 
 <P>
-<STRONG>Note:</STRONG> Only enabled scripts will be injected in the targeted web pages.
-To enable (or disable) particular scripts, right click on them in the "Scripts" pane, then "Enable Script(s)" (or respectively "Disable Script(s)").
+<STRONG>注意:</STRONG> 有効化されたスクリプトのみが対象のWebページに注入されます。
+特定のスクリプトを有効化 (または無効化) するには、「スクリプト」ペインでそれらを右クリックし、「スクリプトを有効化」 (または「スクリプトを無効化」) を選択します。
 </P>
 
 
-<H2>Getting Involved</H2>
+<H2>参加する</H2>
 
-ZAP is a community project and so we are always very keen to hear from anyone who'd like to contribute, have a look at the <a href="https://github.com/zaproxy/zaproxy/issues?utf8=%E2%9C%93&q=is%3Aissue+is%3Aopen+%5BFrontEndScanner%5D">known issues on Github</a>, or just post to the <a href="https://groups.google.com/group/zaproxy-develop">ZAP Dev Group</a>.
+ZAP はコミュニティプロジェクトですので、貢献したい方はいつでも歓迎します。<a href="https://github.com/zaproxy/zaproxy/issues?utf8=%E2%9C%93&q=is%3Aissue+is%3Aopen+%5BFrontEndScanner%5D">GitHub で既知の問題</a>を確認するか、<a href="https://groups.google.com/group/zaproxy-develop">ZAP Dev Group</a> に投稿してください。
 
 </BODY>
 </HTML>

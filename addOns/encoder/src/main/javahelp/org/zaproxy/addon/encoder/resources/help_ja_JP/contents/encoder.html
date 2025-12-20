@@ -3,235 +3,221 @@
 <HEAD>
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
 <TITLE>
-Encode / Decode / Hash dialog
+エンコード / デコード/ ハッシュ ダイアログ
 </TITLE>
 </HEAD>
 <BODY>
-<H1>Encode / Decode / Hash dialog</H1>
+<H1>エンコード / デコード/ ハッシュ ダイアログ</H1>
 
 <p>
-This allows you to encode, decode or hash text.
+これはテキストをエンコード、デコード、またはハッシュすることを可能にします。
 
-<H2>Common Fields</H2>
-The dialog has one field that is common to all of the tabs:
+<H2>共通項目</H2>
+このダイアログには、すべてのタブに共通の項目が1つあります：
 
-<H3>Text to be encoded/decoded/hashed:</H3>
-This field is for the text that you want to be encoded, decoded or hashed.<br/>
-If any text is selected when the dialog is invoked then it will be put in this field.
-The other fields will be updated dynamically if you change the text<br/>
+<H3>エンコード/デコード/ハッシュするテキスト:</H3>
+この項目は、エンコード、デコード、またはハッシュしたいテキストのためのものです。<br/>
+ダイアログ起動時にテキストが選択されていた場合、そのテキストがこの項目に設定されます。 
+テキストを変更すると、他の項目が動的に更新されます<br/>
 
-<H2>Toolbar</H2>
+<H2>ツールバー</H2>
 
 <ul>
-  <li><img src="../../ui-tab--plus.png"></src> Add New Tab - Adds a new tab to the dialog.</li>
-  <li><img src="../../ui-tab--delete.png"></src> Remove Selected Tab - Removes the selected (or current) tab from the dialog.</li>
-  <li><img src="../../ui-output--plus.png"></src> Add Output Panel to Current Tab - Adds an output panel to the current tab.</li>
-  <li>Reset - Reset all the tabs/panels to their default state.</li>
-  <li>Options - Will open the options dialog, with the focus set to the Encode/Decode/Hash options panel.</li>
-  <li>Help - Will open the User Guide, with the content pane preset to the Encode/Decode/Hash add-on's help page.</li>
+  <li><img src="../../ui-tab--plus.png"></src> 新しいタブの追加 - ダイアログに新しいタブを追加します。</li>
+  <li><img src="../../ui-tab--delete.png"></src> 選択したタブを削除 - ダイアログから選択されている (または現在の) タブを削除します。</li>
+  <li><img src="../../ui-output--plus.png"></src> 現在のタブに出力パネルを追加 - 現在のタブに出力パネルを追加します。</li>
+  <li>リセット - すべてのタブ/パネルを既定の状態にリセットします。</li>
+  <li>オプション - オプションダイアログを開き、エンコード/デコード/ハッシュオプションパネルにフォーカスを設定します。</li>
+  <li>ヘルプ - ユーザーガイドを開き、コンテンツペインがエンコード/デコード/ハッシュアドオンのヘルプページにプリセットされます。</li>
 </ul>
 
-<H2>Output Panel(s) Context Menu</H2>
+<H2>出力パネルコンテキストメニュー</H2>
 
 <ul>
-  <li>Find - Brings up a standard input dialog to allow searching within a text area.</li>
-  <li>Copy - Standard copy functionality.</li>
-  <li>Paste - Standard paste functionality.</li>
-  <li>Delete Output Panel - Removes the relevant output text area.</li>
-  <li>Replace Input Text - Replaces the input text content, based on the selection or full content of
-  the relevant output text area. (Only active if the text area has content.)</li>
+  <li>検索 - 標準の入力ダイアログを表示し、テキストエリア内での検索を可能にします。</li>
+  <li>コピー - 標準のコピー機能。</li>
+  <li>貼り付け - 標準の貼り付け機能。</li>
+  <li>出力パネルを削除 - 関連する出力テキストエリアを削除します。</li>
+  <li>入力テキストを置換 - 関連する出力テキストエリアの選択または全内容に基づいて、入力テキストの内容を置換します。 （テキストエリアに内容がある場合にのみアクティブになります。）</li>
 </ul>
 
-<H2>Default Dialog Tabs & Panels</H2>
-In its default state the Encode/Decode/Hash dialog displays tabs and output panels with the following setup:
+<H2>既定のダイアログタブとパネル</H2>
+既定の状態では、エンコード/デコード/ハッシュダイアログは、次の設定でタブと出力パネルを表示します：
 
-<H3>Encode tab fields</H3>
+<H3>エンコードタブの項目</H3>
 
 <ul>
-  <li>Base 64 Encode</li>
-  <li>Base 64 URL Encode</li>
-  <li>URL Encode</li>
-  <li>Full URL Encode</li>
-  <li>ASCII Hex Encode</li>
-  <li>HTML Encode</li>
-  <li>Full HTML Encode</li>
-  <li>JavaScript Encode</li>
+  <li>Base64 エンコード</li>
+  <li>Base64 URL エンコード</li>
+  <li>URL エンコード</li>
+  <li>完全な URL エンコード</li>
+  <li>ASCII Hex エンコード</li>
+  <li>HTML エンコード</li>
+  <li>完全な HTML エンコード</li>
+  <li>JavaScript エンコード</li>
 </ul>
 
-<H3>Decode tab fields</H3>
+<H3>デコードタブの項目</H3>
 
 <ul>
-  <li>Base 64 Decode</li>
-  <li>Base 64 URL Decode</li>
-  <li>URL Decode</li>
-  <li>Full URL Decode</li>
-  <li>ASCII Hex Decode</li>
-  <li>HTML Decode</li>
-  <li>JavaScript Decode</li>
+  <li>Base64 デコード</li>
+  <li>Base64 URL デコード</li>
+  <li>URL デコード</li>
+  <li>完全な URL デコード</li>
+  <li>ASCII Hex デコード</li>
+  <li>HTML デコード</li>
+  <li>JavaScript デコード</li>
 </ul>
 
-<H3>Hash tab fields</H3>
+<H3>ハッシュタブの項目</H3>
 
 <ul>
-  <li>SHA256 Hash</li>
-  <li>SHA1 Hash</li>
-  <li>MD5 Hash</li>
+  <li>SHA256 ハッシュ</li>
+  <li>SHA1 ハッシュ</li>
+  <li>MD5 ハッシュ</li>
 </ul>
 
-<H3>Illegal UTF-8</H3>
+<H3>不正なUTF-8</H3>
 
 <ul>
-  <li>2 byte</li>
-  <li>3 byte</li>
-  <li>4 byte</li>
+  <li>2 バイト </li>
+  <li>3 バイト </li>
+  <li>4 バイト </li>
 </ul>
 
 <H3>Unicode</H3>
 
 <ul>
-  <li>Escaped Text</li>
-  <li>Unescaped Text</li>
+  <li>エスケープされたテキスト</li>
+  <li>エスケープされていないテキスト</li>
 </ul>
 
-<H2>Predefined Encode / Decode / Hash Processors</H2>
+<H2>定義済みエンコード/デコード/ハッシュプロセッサ</H2>
 
-<H3>Encoders</H3>
+<H3>エンコーダー</H3>
 
-<H4>2 byte Illegal UTF-8</H4>
-Will display with an illegal UTF-8 character sequence with 2 bytes.
+<H4>2バイトの不正なUTF-8</H4>
+2バイトの不正なUTF-8文字シーケンスを生成し表示します。
 
-<H4>3 byte Illegal UTF-8</H4>
-Will display illegal UTF-8 character sequence with 3 bytes.
+<H4>3バイトの不正なUTF-8</H4>
+3バイトの不正なUTF-8文字シーケンスを生成し表示します。 
 
-<H4>4 byte Illegal UTF-8</H4>
-Will display an illegal UTF-8 character sequence with 4 bytes.
+<H4>4バイトの不正なUTF-8</H4>
+4バイトの不正なUTF-8文字シーケンスを生成し表示します。 
 
-<H4>ASCII Hex Encode</H4>
-Will display the ASCII hex encoding of the text you enter.
+<H4>ASCII Hex エンコード</H4>
+入力したテキストのASCII 16進数エンコーディングを表示します。
 
-<H3>Base 64 Encode</H3>
-Will display the base 64 encoding of the text you enter.<br/>
+<H3>Base64 エンコード</H3>
+入力したテキストのBase64エンコーディングを表示します。<br/>
 
-<H3>Base 64 URL Encode</H3>
-Will display the base 64 URL encoding of the text you enter. Base64URL is a modification to the primary base 64 standard
-the purpose of which is the ability to use the encoding result as filename or URL address. Base64URL is described in 
-<a href="https://tools.ietf.org/html/rfc4648">RFC 4648</a>, which notes that the standard base 64 alphabet includes characters that are invalid for 
-URLs and file names (for example: plus sign and question mark are problematic). 
-The main standard will encode <code>&lt;&lt;???&gt;&gt;</code> to <code>PDw/Pz8+Pg==</code> while Base64URL will convert it to <code>PDw_Pz8-Pg</code>.
+<H3>Base64 URL エンコード</H3>
+入力したテキストのBase 64 URLエンコーディングを表示します。 Base64URL は、エンコード結果をファイル名または URL アドレスとして使用できるようにすることを目的とした、主要な Base64 標準の修正です。 Base64URLは <a href="https://tools.ietf.org/html/rfc4648">RFC 4648</a> で説明されており、標準のBase64 アルファベットにはURLやファイル名として無効な文字 (例: プラス記号や疑問符が問題となる) が含まれていることが指摘されています。 
+メインの標準では <code>&lt;&lt;???&gt;&gt;</code> を <code>PDw/Pz8+Pg==</code> にエンコードしますが、Base64URLはこれを <code>PDw_Pz8-Pg</code> に変換します。
 
-<H4>Escaped Unicode Text</H4>
-Will display escaped Unicode characters. For example, the text
-<code>A&ccedil;ores</code> would be encoded as <code>%u0041%u00e7%u006f%u0072%u0065%u0073</code>.
+<H4>エスケープされた Unicode テキスト</H4>
+エスケープされたUnicode文字を表示します。 例えば、テキスト <code>A&ccedil;ores</code> は <code>%u0041%u00e7%u006f%u0072%u0065%u0073</code> とエンコードされます。
 
-<H4>HTML Encode</H4>
-Will display the HTML encoding of the text you enter. For example, the text
-<code>&quot;pi&ntilde;ata&quot;</code> would be encoded as <code>&amp;quot;pi&amp;ntilde;ata&amp;quot;</code>.
+<H4>HTML エンコード</H4>
+入力したテキストのHTMLエンコーディングを表示します。 例えば、テキスト <code>&quot;pi&ntilde;ata&quot;</code> は <code>&amp;quot;pi&amp;ntilde;ata&amp;quot;</code> とエンコードされます。
 
-<H4>Full HTML Encode</H4>
-Will display the full HTML encoding of the text you enter. For example, the text <code>&lt;script&gt;</code> would be encoded as <code>&amp;#60;&amp;#115;&amp;#99;&amp;#114;&amp;#105;&amp;#112;&amp;#116;&amp;#62;</code>
+<H4>完全な HTML エンコード</H4>
+入力したテキストの完全なHTMLエンコーディングを表示します。 例えば、テキスト <code>&lt;script&gt;</code> は <code>&amp;#60;&amp;#115;&amp;#99;&amp;#114;&amp;#105;&amp;#112;&amp;#116;&amp;#62;</code> とエンコードされます。
 
-<H4>JavaScript Encode</H4>
-Will display escaped JavaScript literals of the text you enter. For example, the text
-<code>&quot;2&#65504;&quot;</code> would be encoded as <code>\&quot;2\uFFE0\&quot;</code>.
+<H4>JavaScript エンコード</H4>
+入力したテキストのエスケープされたJavaScriptリテラルを表示します。 例えば、テキスト <code>&quot;2&#65504;&quot;</code> は <code>\&quot;2\uFFE0\&quot;</code> とエンコードされます。
 
-<H4>URL Encode</H4>
-Will display the URL encoding of the text you enter.
+<H4>URL エンコード</H4>
+入力したテキストのURLエンコーディングを表示します。
 
-<H4>Full URL Encode</H4>
-Will display the full URL encoding of the text you enter (all characters converted to HEX and percent prepended).
+<H4>完全な URL エンコード</H4>
+入力したテキストの完全なURLエンコーディングを表示します (すべての文字を16進数に変換し、パーセントを前置します)。
 
-<H4>Unescaped Unicode Text</H4>
-Will display the unescaped Unicode characters. For example, the text
-<code>%u0041%u00e7%u006f%u0072%u0065%u0073</code> would be decoded as <code>A&ccedil;ores</code>.
+<H4>エスケープされていない Unicode テキスト</H4>
+エスケープされていないUnicode文字を表示します。 例えば、テキスト <code>%u0041%u00e7%u006f%u0072%u0065%u0073</code> は <code>A&ccedil;ores</code> とデコードされます。
 
-<H4>Morse Code Encoder</H4>
-Will display dits (.) and dahs (-) and word breaks (/) representing the provided Alpha Numeric (including space) input.
-For example, the text <code>SOS SOS</code> would be encoded as <code>... --- .../... --- ...</code>.
+<H4>モールス符号エンコーダー</H4>
+提供された英数字 (スペースを含む) 入力に対応する短点 (.) と長点 (-)、単語区切り (/) を表示します。 
+例えば、テキスト <code>SOS SOS</code> は <code>... --- .../... --- ...</code> とエンコードされます。
 
-<H3>Decoders</H3>
+<H3>デコーダー</H3>
 
-<H4>ASCII Hex Decode</H4>
-Will display the ASCII hex decoding of the text you enter.<br/>
-If there is no valid decoding then the field will be disabled.
+<H4>ASCII Hex デコード</H4>
+入力したテキストのASCII 16進数デコーディングを表示します。<br/>
+有効なデコードがない場合は、この項目は無効になります。
 
-<H4>Base 64 Decode</H4>
-Will display the base 64 decoding of the text you enter.<br/>
-Leveraging a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Base64.html#getMimeDecoder()">Mime decoder</a> to handle wrapped lines.
+<H4>Base64 デコード</H4>
+入力したテキストのBase64 デコーディングを表示します。<br/>
+折り返された行を処理するために、<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Base64.html#getMimeDecoder()">Mime デコーダー</a>を活用します。
 
-<H4>Base 64 URL Decode</H4>
-Will display the base 64 URL decoding of the text you enter. Base64URL is a modification to the primary base 64 standard 
-the purpose of which is the ability to use the encoding result as filename or URL address. Base64URL is described in 
-<a href="https://tools.ietf.org/html/rfc4648">RFC 4648</a>, which notes that the standard base 64 alphabet includes characters that are invalid for 
-URLs and file names (for example: plus sign and question mark are problematic). 
+<H4>Base64 URL デコード</H4>
+入力したテキストのBase64 URLデコーディングを表示します。 Base64URLは、エンコード結果をファイル名またはURL アドレスとして使用できるようにすることを目的とした、主要な Base64 標準の修正です。 Base64URLは <a href="https://tools.ietf.org/html/rfc4648">RFC 4648</a> で説明されており、標準のBase64 アルファベットにはURLやファイル名として無効な文字 (例: プラス記号や疑問符が問題となる) が含まれていることが指摘されています。 
 
-<H4>HTML Decode</H4>
-Will display the HTML decoding of the text you enter. For example, the text
-<code>&amp;quot;pi&amp;ntilde;ata&amp;quot;</code> would be decoded as <code>&quot;pi&ntilde;ata&quot;</code>.
+<H4>HTML デコード</H4>
+入力したテキストの HTML デコーディングを表示します。 例えば、テキスト <code>&amp;quot;pi&amp;ntilde;ata&amp;quot;</code> は <code>&quot;pi&ntilde;ata&quot;</code> とデコードされます。
 
-<H4>JavaScript Decode</H4>
-Will display the unescaped JavaScript literals of the text you enter. For example, the text
-<code>\&quot;2\uFFE0\&quot;</code> would be decoded as <code>&quot;2&#65504;&quot;</code>.
+<H4>JavaScript デコード</H4>
+入力したテキストのアンエスケープされたJavaScriptリテラルを表示します。 例えば、テキスト <code>\&quot;2\uFFE0\&quot;</code> は <code>&quot;2&#65504;&quot;</code> とデコードされます。
 
-<H4>URL Decode</H4>
-Will display the URL decoding of the text you enter.
+<H4>URL デコード</H4>
+入力したテキストのURLデコーディングを表示します。
 
-<H4>Full URL Decode</H4>
-Will display the URL decoding of the text you enter (percent signs removed and HEX decoded).
+<H4>完全な URL デコード</H4>
+入力したテキストのURLデコーディングを表示します (パーセント記号が削除され、16進数デコードされます)。
 
-<H4>Morse Code Decoder</H4>
-Will display Alpha Numeric (including space) output representing the provided morse code input.
-For example, the text <code>... --- .../... --- ...</code> would be encoded as <code>SOS SOS</code>.
+<H4>モールス符号デコーダー</H4>
+提供されたモールス符号入力に対応する英数字 (スペースを含む) 出力で表示します。
+例えば、テキスト <code>... --- .../... --- ...</code> は <code>SOS SOS</code> とデコードされます。
 
-<H3>Hashers</H3>
+<H3>ハッシュ処理ツール</H3>
 
-<H4>MD5 Hash</H4>
-Will display the MD5 hash of the text you enter.
+<H4>MD5 ハッシュ</H4>
+入力したテキストのMD5ハッシュを表示します。
 
-<H4>SHA1 Hash</H4>
-Will display the SHA1 hash of the text you enter.
+<H4>SHA1 ハッシュ</H4>
+入力したテキストのSHA1ハッシュを表示します。
 
-<H4>SHA256 Hash</H4>
-Will display the SHA256 hash of the text you enter.
+<H4>SHA256 ハッシュ</H4>
+入力したテキストのSHA256ハッシュを表示します。
 
-<H2>Other Processors</H2>
-The following processors can also be added to any tab.
+<H2>その他のプロセッサ</H2>
+以下のプロセッサは、どのタブにも追加できます。
 
-<H3>Custom</H3>
-Custom "Encode/Decode" scripts can be created/added to the Scripts Tree and used by custom Output Panels. They should return <code>EncodeDecodeResult</code> objects as indicated by the templates. However,
-in the event that users aren't careful in doing so will return other data types leveraging their <code>toString()</code> implementation (which may or may not be useful/obvious at first glance).
+<H3>カスタム</H3>
+カスタムの「エンコード/デコード」スクリプトは、スクリプトツリーで作成/追加し、カスタム出力パネルで使用できます。 それらはテンプレートに示されているように <code>EncodeDecodeResult</code> オブジェクトを返す必要があります。 しかし、 ユーザーがそうすることを怠った場合、それらは <code>toString()</code> 実装を活用して他のデータ型を返すことになります (これは一見すると役立つ/明らかではない場合があります)。
 
-<H3>Utility</H3>
+<H3>ユーティリティ</H3>
 
-<H4>To Lower Case</H4>
-Converts the input to all lower case characters.
+<H4>小文字に変換</H4>
+入力をすべて小文字に変換します。
 
-<H4>Remove Whitespace</H4>
-Removes all whitespace characters from the text, based on <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Character.html#isWhitespace(char)">Character.isWhiteSpace(char)</a>.
+<H4>空白を削除</H4>
+<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Character.html#isWhitespace(char)">Character.isWhiteSpace(char)</a> に基づいて、テキストからすべての空白文字を削除します。
 
-<H4>Reverse</H4>
-Reverses the order of the input.
+<H4>反転</H4>
+入力の順序を反転します。
 
-<H4>To Upper Case</H4>
-Converts the input to all upper case characters.
+<H4>大文字に変換</H4>
+入力をすべて大文字に変換します。
 
-<H4>ASCify</H4>
-Converts text removing accents/diacritics/ligatures (perhaps not fully, due to operation in compatibility mode) leaving only ASCII characters.
-Examples:
+<H4>ASCII化</H4>
+互換モードでの動作により完全ではないかもしれませんが、アクセント/ダイアクリティカルマーク/合字を削除して、ASCII文字のみを残すようにテキストを変換します。
+例:
 <ul>
-  <li><code>Tĥïŝ ĩš â fůňķŷ Šťŕĭńġ: ﬁ. étrange.</code> becomes <code>This is a funky String: fi. etrange.</code>.</li>
-  <li><code>鸟儿</code> becomes an empty string (all characters are dropped).</li>
-<ul>
+  <li><code>Tĥïŝ ĩš â fůňķŷ Šťŕĭńġ: ﬁ. étrange.</code> は <code>This is a funky String: fi. etrange.</code> になります。</li>
+  <li><code>鸟儿</code> は空の文字列になります (すべての文字が削除されます)。</li>
+</ul>
 
-See also:<br>
+参照：<br>
 <ul>
-    <li><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/text/Normalizer.html">Normalizer JavaDoc</a>. </li>
+    <li><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/text/Normalizer.html">Normalizer JavaDoc</a> </li>
     <li><a href="https://en.wikipedia.org/wiki/Transliteration">Wikipedia: Transliteration</a></li>
 </ul>
 
-<H3>Miscellaneous</H3>
+<H3>その他</H3>
 
-<H4>PowerShell Encode</H4>
-Converted to UTF-16LE and base64 encoded. Equivalent to one of the following examples (encoding "dir"):
+<H4>PowerShell エンコード</H4>
+UTF-16LEに変換され、Base64エンコードされます。 「dir」をエンコードする以下の例のいずれかに相当します：
 <p>
 <code> printf "dir"| iconv -t UTF-16LE | base64 -w 0 -</code>
 <br>
@@ -244,18 +230,18 @@ echo $encodedCommand
 </code>
 </pre>
 <br>
-Resulting in: <code>ZABpAHIA</code>.
+結果: <code>ZABpAHIA</code>
 <p>
-Which can be leveraged via something like the following (where <code>$encodedCommand</code> is set to the encoded value <code>ZABpAHIA</code>):<br>
+これは、以下のようなものを通じて活用できます (<code>$encodedCommand</code> がエンコードされた値 <code>ZABpAHIA</code>に設定されている場合)：<br>
 <code>powershell -exec bypass -enc $encodedCommand</code>
 
-<H2>Accessed via</H2>
+<H2>ここから参照されています</H2>
 <table>
 <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
-Tools menu 'Encode/Decode/Hash...' item</td></tr>
+ツールメニューの「エンコード/デコード/ハッシュ…」アイテム</td></tr>
 <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
-Many text areas such as the Output tab, Scripts console, Request and Response panels via 'Encode/Decode/Hash...' 
-right click menu item</td></tr>
+出力タブ、スクリプトコンソール、リクエストおよびレスポンスパネルなどの多くのテキストエリアで、右クリックメニューの「エンコード/デコード/ハッシュ…」アイテム 
+</td></tr>
 </table>
 
 </BODY>

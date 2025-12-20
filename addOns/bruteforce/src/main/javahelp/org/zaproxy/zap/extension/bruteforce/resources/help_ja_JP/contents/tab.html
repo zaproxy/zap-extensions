@@ -2,77 +2,69 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Forced Browse tab</title>
+<title>強制ブラウズタブ</title>
 </head>
 <body>
-	<h1>Forced Browse tab</h1>
+	<h1>強制ブラウズタブ</h1>
 
-	The Forced Browse tab allows you to perform a
-	<a href="concepts.html">強制ブラウズ</a> scan on any of the sites that have been
-	accessed.
+	強制ブラウズタブでは、アクセスした任意のサイトに対して
+	<a href="concepts.html">強制ブラウズ</a> スキャンを実行できます。
 	<br>
-	<br> Sites can be selected via the toolbar or the
-	<i>サイトタブ</i>.
-	<br> Any sites that have have been or are currently being scanned are marked in
-	bold in the toolbar Sites pulldown control.
-	<br> The toolbar provides a set of buttons which allow you to start, stop, pause and
-	resume the scan.
-	<br> A progress bar shows how far the scan of the selected site has progressed.
-	<br> The 'Current scans' value shows how many scans are currently active - hovering
-	over this value will show a list of the sites being scanned in a popup.
-	<br> The toolbar also includes a button to export the displayed content as CSV.
+	<br> サイトは、ツールバーまたは
+	<i>サイトタブ</i>から選択できます<i></i>.
+	<br> スキャンされた、または現在スキャン中のサイトは、ツールバーのサイトプルダウンコントロールで太字でマークされます。
+	<br> ツールバーには、スキャンの開始、停止、一時停止、および再開を可能にする一連のボタンが提供されます。
+	<br> プログレスバーは、選択したサイトのスキャン進行状況を示します。
+	<br> 「現在のスキャン」の値は、現在アクティブなスキャンの数を示します。この値にマウスオーバーすると、スキャン中のサイトのリストがポップアップで表示されます。
+	<br> ツールバーには、表示されているコンテンツをCSVとしてエクスポートするためのボタンも含まれています。
 
 	<h2>右クリック メニュー</h2>
-	Right clicking on one or more rows will bring up a menu which will allow you to:
+	1つ以上の行を右クリックすると、以下の操作を可能にするメニューが表示されます。
 
-	<h3>以下の処理から除外する:</h3>
-	This menu has the following submenus:
+	<h3>除外</h3>
+	このメニューには以下のサブメニューがあります：
 
 	<h4>プロキシ</h4>
-	This will exclude the selected nodes from the proxy. They will still be proxied via ZAP
-	but will not be shown in any of the tabs.
-	<br /> This can be used to ignore URLs that you know are not relevant to the system you
-	are currently testing.
-	<br /> The nodes can be included again via the
-	<i>セッション・プロパティ</i> dialog
+	選択したノードをプロキシから除外します。ZAP経由でプロキシされますが、どのタブにも表示されません。
+	<br /> 現在テストしているシステムに関係のないURLを無視するために使用できます。
+	<br /> ノードは、
+	<i>セッションプロパティ</i> ダイアログから再度含めることができます。
 
-	<h4>スキャン</h4>
-	This will prevent the selected notes from being actively scanned.
-	<br /> The nodes can be included again via the
-	<i>セッション・プロパティ</i> dialog
+	<h4>スキャナー</h4>
+	これは、選択されたノードがアクティブにスキャンされるのを防ぎます。
+	<br /> ノードは、
+	<i>セッションプロパティ</i> ダイアログから再度含めることができます。
 
 	<h4>スパイダー</h4>
-	This will prevent the selected nodes from being spidered.
-	<br /> The nodes can be included again via the
-	<i>セッション・プロパティ</i> dialog
+	選択したノードがスパイダーされることを防ぎます。
+	<br /> ノードは、
+	<i>セッションプロパティ</i> ダイアログから再度含めることができます。
 
 	<h3>コピー</h3>
-	This will copy the selected URLs to the clipboard.
+	これは、選択されたURLをクリップボードにコピーします。
 
 	<h3>再送信...</h3>
-	This will bring up the
-	<i>再送信ダイアログ</i> which allows you to resend the request after making any changes to
-	it that you want to.
+	これにより、
+	<i>再送信ダイアログ</i> が表示され、リクエストに必要な変更を加えた後にリクエストを再送できます。
 
 	<h3>新しいアラート...</h3>
-	This will bring up the
-	<i>アラートダイアログを追加</i> which allows you to manually record a new
-	<i>alert</i> against this request.
+	これにより、
+	<i>アラートの追加ダイアログ</i> が表示され、このリクエストに対して新しい
+	<i>アラート</i> を手動で記録できます。
 
-	<h3>ブラウザで表示</h3>
-	This will open the URL of the selected node in your default browser.
+	<h3>URLをブラウザで開く</h3>
+	選択したノードのURLを既定のブラウザーで開きます。
 
-	<h3>anti CSRF テストフォームを生成</h3>
-	This will open a URL which will give you a generated form for testing for CSRF issues.
-	<br> It will only be enabled for POST requests, if the API is enabled and if Java
-	supports the opening of URLs in a browser on your platform.
+	<h3>Anti-CSRFテストフォームを生成</h3>
+	これによりCSRF問題のテスト用に生成されたフォームを提供するURLが開きます。
+	<br> この機能は、APIが有効化されていて、かつお使いのプラットフォームでJavaがブラウザでURLを開くことをサポートしている場合に限り、POSTリクエストに対して有効になります。
 
 	<h2>関連情報</h2>
 	<table>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td><a href="options.html">Options Forced Browse screen</a></td>
-			<td>for details of the forced browse configuration</td>
+			<td><a href="options.html">オプション - 強制ブラウズ画面</a></td>
+			<td>強制ブラウズ構成の詳細</td>
 		</tr>
 	</table>
 

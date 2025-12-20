@@ -60,7 +60,7 @@ public final class ClientSideHandler implements HttpMessageHandler {
     private AuthRequestDetails authReq;
     private int firstHrefId;
 
-    @Setter private HistoryProvider historyProvider = new HistoryProvider();
+    @Setter private HistoryProvider historyProvider = ExtensionAuthhelper.getHistoryProvider();
 
     public ClientSideHandler(User user) {
         this.user = user;
@@ -101,7 +101,8 @@ public final class ClientSideHandler implements HttpMessageHandler {
                     && containsMaybeEncodedString(reqBody, authCreds.getUsername())
                     && containsMaybeEncodedString(reqBody, authCreds.getPassword())
                     && AuthUtils.getSessionManagementDetailsForContext(user.getContext().getId())
-                            != null) {
+                            != null
+                    && !AuthUtils.isAuthProvider(msg)) {
                 // The app is sending user creds to another site. Assume this is part of the valid
                 // auth flow and add to the context
                 try {

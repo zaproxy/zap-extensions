@@ -21,5 +21,5 @@ crowdin {
 }
 
 dependencies {
-    implementation("org.tinyjee.jgraphx:jgraphx:3.4.1.3")
+    implementation(libs.callgraph.jgraphx)
 }

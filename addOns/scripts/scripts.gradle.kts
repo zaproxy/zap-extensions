@@ -30,7 +30,7 @@ zapAddOn {
         dependencies {
             addOns {
                 register("commonlib") {
-                    version.set(">=1.32.0")
+                    version.set(">=1.37.0")
                 }
                 register("pscan") {
                     version.set(">= 0.1.0 & < 1.0.0")
@@ -68,7 +68,7 @@ dependencies {
     zapAddOn("commonlib")
     zapAddOn("pscan")
 
-    implementation("net.bytebuddy:byte-buddy:1.14.13")
+    implementation(libs.scripts.byteBuddy)
 
     testImplementation(project(":testutils"))
 }

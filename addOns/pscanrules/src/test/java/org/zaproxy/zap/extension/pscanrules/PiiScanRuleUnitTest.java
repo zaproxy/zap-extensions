@@ -20,8 +20,11 @@
 package org.zaproxy.zap.extension.pscanrules;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
@@ -48,6 +51,27 @@ import org.zaproxy.addon.commonlib.PolicyTag;
 
 /** Unit test for {@link PiiScanRule}. */
 class PiiScanRuleUnitTest extends PassiveScannerTest<PiiScanRule> {
+
+    private static final String CC_NUMBER = "4743251660071187";
+    private static final String CONTENT_INSIDE_NONVISIBLE_AREAS =
+            """
+    <html><body><script>var data = '{\"identifier\": \"GRID_LAYOUT_4743251660071187\"}';</script>
+    <img id=\"GRID_LAYOUT_4743251660071187\" src=\"image.png\"></img>
+    <H1 class=\"GRID_LAYOUT_4743251660071187\">Heading One</H1>
+    <!-- Example comment GRID_LAYOUT_4743251660071187 --><H1>Heading One</H1>
+    </body></html>""";
+
+    private static final String CONTENT_SCRIPT_BLOCK_PLACEHOLDER =
+            """
+    <html>
+    <head>
+    <script>var data = '{\"cc\": \"%s\"}';</script>
+    </head>
+    <body>
+    <H1>Example heading</H1>
+    Totally wonderful content.
+    </body>
+    </html>""";
 
     @Override
     protected PiiScanRule createScanner() {
@@ -398,6 +422,81 @@ class PiiScanRuleUnitTest extends PassiveScannerTest<PiiScanRule> {
         scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), is(1));
+    }
+
+    private HttpMessage createMessageWithNonVisibleCc() throws Exception {
+        HttpMessage msg = createMsg("");
+        msg.setResponseBody(CONTENT_INSIDE_NONVISIBLE_AREAS);
+        msg.getRequestHeader().setURI(new URI("http://example.com/generate/", true));
+        return msg;
+    }
+
+    @ParameterizedTest
+    @EnumSource(names = {"HIGH", "MEDIUM"})
+    void shouldNotRaiseAlertWhenPiiIsInNonVisibleHtmlContentTypeOnNonLowThreshold(
+            AlertThreshold threshold) throws Exception {
+        // Given
+        HttpMessage msg = createMessageWithNonVisibleCc();
+        rule.setAlertThreshold(threshold);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised, is(empty()));
+    }
+
+    @Test
+    void shouldRaiseAlertWhenPiiIsInNonVisibleHtmlContentTypeOnLowThreshold() throws Exception {
+        HttpMessage msg = createMessageWithNonVisibleCc();
+        rule.setAlertThreshold(AlertThreshold.LOW);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised, hasSize(4));
+        // startsWith because the comment test case ends up including a trailing space
+        alertsRaised.forEach(alert -> assertThat(alert.getEvidence(), is(startsWith(CC_NUMBER))));
+    }
+
+    private HttpMessage createMessageScriptBlockWithCc(String ccValue) throws Exception {
+        HttpMessage msg = createMsg("");
+        msg.setResponseBody(CONTENT_SCRIPT_BLOCK_PLACEHOLDER.formatted(ccValue));
+        msg.getRequestHeader().setURI(new URI("http://example.com/generate/", true));
+        return msg;
+    }
+
+    @ParameterizedTest
+    @EnumSource(names = {"HIGH", "MEDIUM", "LOW"})
+    void shouldAlertWhenPiiWithoutUnderscoreIsInScriptBlockRegardlessOfThreshold(
+            AlertThreshold threshold) throws Exception {
+        HttpMessage msg = createMessageScriptBlockWithCc(CC_NUMBER);
+        rule.setAlertThreshold(threshold);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+        assertThat(alertsRaised.get(0).getEvidence(), is(equalTo(CC_NUMBER)));
+    }
+
+    @Test
+    void shouldAlertWhenPiiWithUnderscoreIsInScriptBlockOnLowThreshold() throws Exception {
+        HttpMessage msg = createMessageScriptBlockWithCc("FOO_" + CC_NUMBER);
+        rule.setAlertThreshold(AlertThreshold.LOW);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+        assertThat(alertsRaised.get(0).getEvidence(), is(equalTo(CC_NUMBER)));
+    }
+
+    @ParameterizedTest
+    @EnumSource(names = {"HIGH", "MEDIUM"})
+    void shouldNotAlertWhenPiiWithUnderscoreIsInScriptBlockOnNonLowThreshold(
+            AlertThreshold threshold) throws Exception {
+        HttpMessage msg = createMessageScriptBlockWithCc("FOO_" + CC_NUMBER);
+        rule.setAlertThreshold(threshold);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised, is(empty()));
     }
 
     private static Stream<Arguments> provideContentTypeAndThreshold() {

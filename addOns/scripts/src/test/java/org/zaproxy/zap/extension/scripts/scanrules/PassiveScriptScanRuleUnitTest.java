@@ -126,6 +126,25 @@ public class PassiveScriptScanRuleUnitTest extends TestUtils {
         verify(scriptInterface, times(2)).appliesToHistoryType(historyType);
     }
 
+    @Test
+    void shouldAddAlertRefEvenOnMissingOverrides() {
+        // Given
+        ScriptWrapper script = mock(ScriptWrapper.class);
+        var metadata = new ScanRuleMetadata(12345, "Test Scan Rule");
+        metadata.setRisk(Risk.HIGH);
+        metadata.setConfidence(Confidence.HIGH);
+        var scanRule = new PassiveScriptScanRule(script, metadata);
+        scanRule.setHelper(mock(PassiveScanData.class));
+        // When
+        Alert alert = scanRule.newAlert("12345-999").build();
+        // Then
+        assertThat(alert.getPluginId(), is(equalTo(12345)));
+        assertThat(alert.getName(), is(equalTo("Test Scan Rule")));
+        assertThat(alert.getRisk(), is(equalTo(Risk.HIGH.getValue())));
+        assertThat(alert.getConfidence(), is(equalTo(Confidence.HIGH.getValue())));
+        assertThat(alert.getAlertRef(), is(equalTo("12345-999")));
+    }
+
     private <T> ScriptWrapper createScriptWrapper(T scriptInterface, Class<T> scriptClass)
             throws Exception {
         var script = mock(ScriptWrapper.class);

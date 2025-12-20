@@ -44,25 +44,32 @@ class ScanRuleMetadataUnitTest {
     void shouldParseMetadataYaml() {
         // Given
         String yaml =
-                "id: 12345\n"
-                        + "name: Active Vulnerability Title\n"
-                        + "description: Full description\n"
-                        + "solution: The solution\n"
-                        + "references:\n"
-                        + "  - Reference 1\n"
-                        + "  - Reference 2\n"
-                        + "category: INJECTION  # info_gather, browser, server, misc, injection\n"
-                        + "risk: INFO  # info, low, medium, high\n"
-                        + "confidence: LOW  # false_positive, low, medium, high, user_confirmed\n"
-                        + "cweId: 0\n"
-                        + "wascId: 0\n"
-                        + "alertTags:\n"
-                        + "  name1: value1\n"
-                        + "  name2: value2\n"
-                        + "otherInfo: Any other Info\n"
-                        + "status: alpha\n"
-                        + "codeLink: https://www.example.com/codelink\n"
-                        + "helpLink: https://www.example.com/helplink";
+                """
+id: 12345
+name: Active Vulnerability Title
+description: Full description
+solution: The solution
+references:
+  - https://example.com/reference-1
+  - https://example.com/reference-2
+category: INJECTION  # info_gather, browser, server, misc, injection
+risk: INFO  # info, low, medium, high
+confidence: LOW  # false_positive, low, medium, high, user_confirmed
+cweId: 123
+wascId: 456
+alertTags:
+  name1: value1
+  name2: value2
+otherInfo: Any other Info
+status: alpha
+codeLink: https://www.example.com/codelink
+helpLink: https://www.example.com/helplink
+alertRefOverrides:
+  12345-1:
+    name: Alert Ref Override 1
+  12345-2:
+    name: Alert Ref Override 2
+""";
         // When
         var metadata = ScanRuleMetadata.fromYaml(yaml);
         // Then
@@ -70,8 +77,63 @@ class ScanRuleMetadataUnitTest {
         assertThat(metadata.getName(), is(equalTo("Active Vulnerability Title")));
         assertThat(metadata.getDescription(), is(equalTo("Full description")));
         assertThat(metadata.getSolution(), is(equalTo("The solution")));
-        assertThat(metadata.getReferences(), contains("Reference 1", "Reference 2"));
+        assertThat(
+                metadata.getReferences(),
+                contains("https://example.com/reference-1", "https://example.com/reference-2"));
         assertThat(metadata.getCategory(), is(equalTo(Category.INJECTION)));
+        assertThat(metadata.getRisk(), is(equalTo(Risk.INFO)));
+        assertThat(metadata.getConfidence(), is(equalTo(Confidence.LOW)));
+        assertThat(metadata.getCweId(), is(equalTo(123)));
+        assertThat(metadata.getWascId(), is(equalTo(456)));
+        assertThat(
+                metadata.getAlertTags(), is(equalTo(Map.of("name1", "value1", "name2", "value2"))));
+        assertThat(metadata.getOtherInfo(), is(equalTo("Any other Info")));
+        assertThat(metadata.getStatus(), is(equalTo(AddOn.Status.alpha)));
+        assertThat(metadata.getCodeLink(), is(equalTo("https://www.example.com/codelink")));
+        assertThat(metadata.getHelpLink(), is(equalTo("https://www.example.com/helplink")));
+        assertThat(metadata.getAlertRefOverrides().size(), is(equalTo(2)));
+        assertThat(
+                metadata.getAlertRefOverrides().get("12345-1").getName(),
+                is(equalTo("Alert Ref Override 1")));
+        assertThat(
+                metadata.getAlertRefOverrides().get("12345-2").getName(),
+                is(equalTo("Alert Ref Override 2")));
+    }
+
+    @Test
+    void shouldHandleAllAlertRefOverrideFields() {
+        // Given
+        String yaml =
+                """
+id: 12345
+name: Active Vulnerability Title
+alertRefOverrides:
+  12345-1:
+    name: Alert Ref 1
+    description: Full description
+    solution: The solution
+    references:
+      - https://example.com/reference-1
+      - https://example.com/reference-2
+    risk: INFO  # info, low, medium, high
+    confidence: LOW  # false_positive, low, medium, high, user_confirmed
+    cweId: 0
+    wascId: 0
+    alertTags:
+      name1: value1
+      name2: value2
+    otherInfo: Any other Info
+""";
+        // When
+        AlertReferenceMetadata metadata =
+                ScanRuleMetadata.fromYaml(yaml).getAlertRefOverrides().get("12345-1");
+        // Then
+        assertThat(metadata.getName(), is(equalTo("Alert Ref 1")));
+        assertThat(metadata.getDescription(), is(equalTo("Full description")));
+        assertThat(metadata.getSolution(), is(equalTo("The solution")));
+        assertThat(
+                metadata.getReferences(),
+                contains("https://example.com/reference-1", "https://example.com/reference-2"));
         assertThat(metadata.getRisk(), is(equalTo(Risk.INFO)));
         assertThat(metadata.getConfidence(), is(equalTo(Confidence.LOW)));
         assertThat(metadata.getCweId(), is(equalTo(0)));
@@ -79,9 +141,6 @@ class ScanRuleMetadataUnitTest {
         assertThat(
                 metadata.getAlertTags(), is(equalTo(Map.of("name1", "value1", "name2", "value2"))));
         assertThat(metadata.getOtherInfo(), is(equalTo("Any other Info")));
-        assertThat(metadata.getStatus(), is(equalTo(AddOn.Status.alpha)));
-        assertThat(metadata.getCodeLink(), is(equalTo("https://www.example.com/codelink")));
-        assertThat(metadata.getHelpLink(), is(equalTo("https://www.example.com/helplink")));
     }
 
     @Test

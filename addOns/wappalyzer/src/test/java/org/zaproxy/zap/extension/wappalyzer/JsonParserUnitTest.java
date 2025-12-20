@@ -19,6 +19,11 @@
  */
 package org.zaproxy.zap.extension.wappalyzer;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
@@ -66,14 +71,23 @@ class JsonParserUnitTest {
     @Test
     void shouldErrorOnBrokenPatterns() {
         // Given
-        List<String> errs = Collections.synchronizedList(new ArrayList<>());
+        List<String> failures = Collections.synchronizedList(new ArrayList<>());
         List<Exception> parsingExceptions = Collections.synchronizedList(new ArrayList<>());
-        TechsJsonParser wjp =
-                new TechsJsonParser((pattern, e) -> errs.add(e.toString()), parsingExceptions::add);
+        TechsJsonParser wjp = new TechsJsonParser(failures::add, parsingExceptions::add);
         // When
         wjp.parse("categories.json", Collections.singletonList("broken.json"), true);
         // Then
-        assertEquals(3, errs.size());
-        assertEquals(0, parsingExceptions.size());
+        assertThat(failures, hasSize(5));
+        assertThat(
+                failures,
+                containsInAnyOrder(
+                        "Failed to parse app pattern: example\\.com/test\\.html[^>]+></iframe>{ Illegal repetition near index 39"
+                                + System.lineSeparator()
+                                + "example\\.com/test\\.html[^>]+></iframe>{",
+                        "Failed to parse app pattern: a[href='https://www.example.com'][title*='version] Did not find balanced marker at 'title*='version]'",
+                        "Failed to parse app pattern: a[href='https://www.example.com'][title*='version] Did not find balanced marker at 'title*='version]'",
+                        "Confidence field in pattern? Generator 1;confidence:50",
+                        "Version field in pattern? Generator X;version:1"));
+        assertThat(parsingExceptions, is(empty()));
     }
 }

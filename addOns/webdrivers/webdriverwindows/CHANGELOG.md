@@ -6,6 +6,63 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [172] - 2025-12-18
+### Changed
+- Update ChromeDriver to 143.0.7499.169.
+
+## [171] - 2025-12-16
+### Changed
+- Update ChromeDriver to 143.0.7499.146.
+
+## [170] - 2025-12-10
+### Changed
+- Update ChromeDriver to 143.0.7499.42.
+- Update minimum ZAP version to 2.17.0.
+
+## [169] - 2025-12-02
+### Changed
+- Update ChromeDriver to 143.0.7499.40.
+
+## [168] - 2025-11-17
+### Changed
+- Update ChromeDriver to 142.0.7444.175.
+
+## [167] - 2025-11-11
+### Changed
+- Update ChromeDriver to 142.0.7444.162.
+
+## [166] - 2025-11-05
+### Changed
+- Update ChromeDriver to 142.0.7444.61.
+
+## [165] - 2025-10-28
+### Changed
+- Update ChromeDriver to 142.0.7444.59.
+
+## [164] - 2025-10-21
+### Changed
+- Update ChromeDriver to 141.0.7390.122.
+
+## [163] - 2025-10-14
+### Changed
+- Update ChromeDriver to 141.0.7390.78.
+
+## [162] - 2025-10-09
+### Changed
+- Update ChromeDriver to 141.0.7390.76.
+
+## [161] - 2025-10-07
+### Changed
+- Update ChromeDriver to 141.0.7390.65.
+
+## [160] - 2025-09-30
+### Changed
+- Update ChromeDriver to 141.0.7390.54.
+
+## [159] - 2025-09-23
+### Changed
+- Update ChromeDriver to 140.0.7339.207.
+
 ## [158] - 2025-09-18
 ### Changed
 - Update ChromeDriver to 140.0.7339.185.
@@ -664,6 +721,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release: Firefox v0.13.0 Chrome v2.27 IE 3.0.0
 
+[172]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v172
+[171]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v171
+[170]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v170
+[169]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v169
+[168]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v168
+[167]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v167
+[166]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v166
+[165]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v165
+[164]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v164
+[163]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v163
+[162]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v162
+[161]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v161
+[160]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v160
+[159]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v159
 [158]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v158
 [157]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v157
 [156]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v156

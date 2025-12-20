@@ -23,6 +23,7 @@ import java.time.Duration;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
@@ -33,15 +34,19 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.authhelper.AuthUtils;
 import org.zaproxy.addon.authhelper.AuthenticationDiagnostics;
 import org.zaproxy.addon.authhelper.internal.AuthenticationStep;
+import org.zaproxy.addon.commonlib.internal.TotpSupport;
 import org.zaproxy.zap.authentication.UsernamePasswordAuthenticationCredentials;
 import org.zaproxy.zap.model.Context;
 
 public final class MsLoginAuthenticator implements Authenticator {
 
     private static final String PARTIAL_LOGIN_URL = "login.microsoftonline";
+
+    private static final String LOGIN_URL = "https://" + PARTIAL_LOGIN_URL;
 
     private static final Logger LOGGER = LogManager.getLogger(MsLoginAuthenticator.class);
 
@@ -53,10 +58,14 @@ public final class MsLoginAuthenticator implements Authenticator {
     private static final By SUBMIT_BUTTON = By.id("idSIButton9");
     private static final By KMSI_FIELD = By.id("KmsiCheckboxField");
     private static final By PROOF_REDIRECT_FIELD = By.id("idSubmit_ProofUp_Redirect");
+    private static final By PROOF_TOTP_FIELD = By.id("idTxtBx_SAOTCC_OTC");
+    private static final By PROOF_TOTP_VERIFY_FIELD = By.id("idSubmit_SAOTCC_Continue");
     private static final By PROOF_DONE_FIELD = By.id("id__5");
 
     private enum State {
         START,
+
+        ACCOUNT_SELECTION,
 
         USERNAME,
         PASSWORD,
@@ -66,7 +75,13 @@ public final class MsLoginAuthenticator implements Authenticator {
         STAY_SIGNED_IN,
 
         PROOF_REDIRECT,
+        PROOF_TOTP,
         PROOF,
+    }
+
+    @Override
+    public boolean isOwnSite(HttpMessage msg) {
+        return msg.getRequestHeader().getURI().toString().startsWith(LOGIN_URL);
     }
 
     @Override
@@ -77,6 +92,7 @@ public final class MsLoginAuthenticator implements Authenticator {
             String loginPageUrl,
             UsernamePasswordAuthenticationCredentials credentials,
             int stepDelayInSecs,
+            int waitInSecs,
             List<AuthenticationStep> steps) {
         return authenticateImpl(diags, wd, credentials, stepDelayInSecs);
     }
@@ -98,23 +114,79 @@ public final class MsLoginAuthenticator implements Authenticator {
         boolean successful = false;
         boolean userField = false;
         boolean pwdField = false;
+        int totpRetries = 0;
 
         do {
             switch (states.remove()) {
                 case START:
                     try {
                         waitForElement(wd, USERNAME_FIELD);
+                        userField = true;
+                        states.add(State.USERNAME);
+                        break;
+
                     } catch (TimeoutException e) {
+                        // Try next state.
+                    }
+
+                    if (findElement(wd, By.tagName("div"), "Pick an account") != null) {
+                        states.add(State.ACCOUNT_SELECTION);
+                    } else if (findElement(wd, PROOF_TOTP_FIELD) != null) {
+                        userField = true;
+                        pwdField = true;
+                        states.add(State.PROOF_TOTP);
+                    } else {
                         diags.recordStep(
                                 wd,
                                 Constant.messages.getString(
                                         "authhelper.auth.method.diags.steps.ms.missingusername"));
-                        LOGGER.debug("Expected username field not found, skipping login.");
-                        return Authenticator.NO_AUTH;
+                        LOGGER.debug("Unexpected initial state, failing login.");
                     }
 
-                    userField = true;
-                    states.add(State.USERNAME);
+                    break;
+
+                case ACCOUNT_SELECTION:
+                    WebElement userElement =
+                            findElement(wd, By.tagName("div"), credentials.getUsername());
+                    if (userElement != null) {
+                        userField = true;
+
+                        if (isUserLoggedIn(wd, userElement)) {
+                            pwdField = true;
+                            states.add(State.POST_PASSWORD);
+                        } else {
+                            states.add(State.PASSWORD);
+                        }
+
+                        diags.recordStep(
+                                wd,
+                                Constant.messages.getString(
+                                        "authhelper.auth.method.diags.steps.ms.clickaccount"),
+                                userElement);
+                        userElement.click();
+                        break;
+                    }
+
+                    WebElement otherAccountElement =
+                            findElement(wd, By.tagName("div"), "Use another account");
+                    if (otherAccountElement != null) {
+                        diags.recordStep(
+                                wd,
+                                Constant.messages.getString(
+                                        "authhelper.auth.method.diags.steps.ms.clickaccountother"),
+                                otherAccountElement);
+                        otherAccountElement.click();
+                        states.add(State.START);
+                        break;
+                    }
+
+                    diags.recordStep(
+                            wd,
+                            Constant.messages.getString(
+                                    "authhelper.auth.method.diags.steps.ms.stepunknown"));
+                    LOGGER.debug(
+                            "Still in pick an account but no known state, assuming unsuccessful login.");
+
                     break;
 
                 case USERNAME:
@@ -192,6 +264,21 @@ public final class MsLoginAuthenticator implements Authenticator {
                     }
 
                     try {
+                        WebElement proofTotpElement =
+                                waitForElement(
+                                        wd,
+                                        new ElemenContainsText(
+                                                By.id("idDiv_SAOTCC_Description"),
+                                                "authenticator"));
+                        if (proofTotpElement != null) {
+                            states.add(State.PROOF_TOTP);
+                            break;
+                        }
+                    } catch (TimeoutException e) {
+                        // Ignore, there's still the next step to check.
+                    }
+
+                    try {
                         waitForElement(wd, KMSI_FIELD);
                         states.add(State.STAY_SIGNED_IN);
                         break;
@@ -231,6 +318,38 @@ public final class MsLoginAuthenticator implements Authenticator {
                     states.add(State.PROOF);
                     break;
 
+                case PROOF_TOTP:
+                    totpRetries++;
+
+                    if (totpRetries > 2) {
+                        diags.recordStep(
+                                wd,
+                                Constant.messages.getString(
+                                        "authhelper.auth.method.diags.steps.ms.clickprooftotperror"));
+                        LOGGER.debug("TOTP proof failed, assuming unsuccessful login.");
+                        break;
+                    }
+
+                    WebElement proofTotpElement = wd.findElement(PROOF_TOTP_FIELD);
+                    WebElement proofTotpVerifyElement = wd.findElement(PROOF_TOTP_VERIFY_FIELD);
+                    proofTotpElement.clear();
+                    proofTotpElement.sendKeys(TotpSupport.getCode(credentials));
+                    proofTotpVerifyElement.click();
+                    diags.recordStep(
+                            wd,
+                            Constant.messages.getString(
+                                    "authhelper.auth.method.diags.steps.ms.clickprooftotpverify"),
+                            proofTotpVerifyElement);
+
+                    if (findElementContains(wd, By.id("idDiv_SAOTCC_ErrorMsg_OTC"), "try again")
+                            != null) {
+                        states.add(State.PROOF_TOTP);
+                    } else {
+                        states.add(State.POST_PASSWORD);
+                    }
+
+                    break;
+
                 case PROOF:
                     try {
                         waitForElement(wd, new ElementWithText(By.tagName("button"), "Skip setup"));
@@ -258,6 +377,29 @@ public final class MsLoginAuthenticator implements Authenticator {
         } while (!states.isEmpty());
 
         return new Result(true, successful, userField, pwdField);
+    }
+
+    private static boolean isUserLoggedIn(WebDriver wd, WebElement userElement) {
+        return userElement.findElement(By.xpath("..")).findElements(By.tagName("div")).stream()
+                .anyMatch(e -> "Signed in".equalsIgnoreCase(e.getText()));
+    }
+
+    private static WebElement findElement(WebDriver wd, By by) {
+        return wd.findElements(by).stream().findFirst().orElse(null);
+    }
+
+    private static WebElement findElementContains(WebDriver wd, By by, String text) {
+        return wd.findElements(by).stream()
+                .filter(e -> Strings.CI.contains(e.getText(), text))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private static WebElement findElement(WebDriver wd, By by, String text) {
+        return wd.findElements(by).stream()
+                .filter(e -> text.equalsIgnoreCase(e.getText()))
+                .findFirst()
+                .orElse(null);
     }
 
     private WebElement waitForElement(WebDriver wd, By by) {
@@ -303,6 +445,30 @@ public final class MsLoginAuthenticator implements Authenticator {
         @Override
         public String toString() {
             return String.format("element '%s' with text '%s' is not present", locator, text);
+        }
+    }
+
+    private static class ElemenContainsText implements ExpectedCondition<WebElement> {
+
+        private final By locator;
+        private final String text;
+
+        ElemenContainsText(By locator, String text) {
+            this.locator = locator;
+            this.text = text;
+        }
+
+        @Override
+        public WebElement apply(WebDriver driver) {
+            return driver.findElements(locator).stream()
+                    .filter(e -> Strings.CI.contains(e.getText(), text))
+                    .findFirst()
+                    .orElse(null);
+        }
+
+        @Override
+        public String toString() {
+            return String.format("element '%s' containing text '%s' is not present", locator, text);
         }
     }
 }

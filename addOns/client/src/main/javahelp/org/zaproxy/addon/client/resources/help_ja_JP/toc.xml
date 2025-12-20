@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE toc PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN" "http://java.sun.com/products/javahelp/toc_2_0.dtd">
 <toc version="2.0">
-	<tocitem text="ZAP User Guide" tocid="toplevelitem">
-		<tocitem text="Add Ons" tocid="addons">
-			<tocitem text="Client Side Integration" image="client-icon" target="addon.client">
-				<tocitem text="Automation" target="addon.client.auto"/>
-				<tocitem text="Recording" target="addon.client.record"/>
-				<tocitem text="Spider" target="addon.client.spider"/>
-				<tocitem text="Spider API" target="addon.client.spider.api"/>
-				<tocitem text="Passive Scanning" target="addon.client.pscan"/>
-				<tocitem text="AJAX Spider Enhancement" target="addon.client.ajaxscan"/>
-				<tocitem text="Firefox Profile" target="addon.client.fxprofile"/>
-				<tocitem text="Internals" target="addon.client.internals"/>
+	<tocitem text="ZAP ユーザーガイド" tocid="toplevelitem">
+		<tocitem text="アドオン" tocid="addons">
+			<tocitem text="クライアントサイド統合" image="client-icon" target="addon.client">
+				<tocitem text="自動化" target="addon.client.auto"/>
+				<tocitem text="記録" target="addon.client.record"/>
+				<tocitem text="スパイダー" target="addon.client.spider"/>
+				<tocitem text="スパイダーAPI" target="addon.client.spider.api"/>
+				<tocitem text="パッシブスキャン" target="addon.client.pscan"/>
+				<tocitem text="AJAXスパイダー機能強化" target="addon.client.ajaxscan"/>
+				<tocitem text="Firefox プロファイル" target="addon.client.fxprofile"/>
+				<tocitem text="内部構造" target="addon.client.internals"/>
 			</tocitem>
 		</tocitem>
 	</tocitem>

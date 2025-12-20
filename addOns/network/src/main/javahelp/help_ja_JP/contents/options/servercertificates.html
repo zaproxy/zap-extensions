@@ -2,111 +2,89 @@
 <HTML>
 <HEAD>
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
-<TITLE>Server Certificates</TITLE>
+<TITLE>サーバー証明書</TITLE>
 </HEAD>
 <BODY>
-	<H1>Server Certificates</H1>
+	<H1>サーバー証明書</H1>
 
-	This screens allows to manage and configure the root CA certificate and issued certificates.
+	この画面では、ルートCA証明書と発行された証明書の管理と設定を行うことができます。
 
 	<p>
-	ZAP allows you to transparently decrypt SSL connections.
-	For doing so, ZAP has to encrypt each request before sending
-	to the server and decrypt each response, which comes back.
-	But, this is already done by the browser.
-	That's why, the only way to decrypt or intercept the transmission,
-	is to do a 'manipulator in the middle' approach.
+	ZAPは、SSL接続を透過的に復号化することができます。
+	そのためには、ZAPはサーバーへ送信する前に各リクエストを暗号化し、戻ってくる各レスポンスを復号する必要があります。
+	しかし、これはすでにブラウザによって行われています。
+	そのため、通信を復号または傍受する唯一の方法は、「中間者 (manipulator in the middle)」アプローチを採用することです。
 	</p>
 
-	<H2>Overview</H2>
+	<H2>概要</H2>
 	<p>
-		<img alt="manipulator in the middle" src="../images/manipulatorinthemiddle.png">
+		<img alt="中間者操作" src="../images/manipulatorinthemiddle.png">
 	</p>
 	<p>
-		In short words, every data send to and received from the server
-		is encrypted/decrypted by using the original server's certificate
-		inside ZAP. This way, ZAP knows the plain text.
-		To establish a SSL protected session from you (your browser),
-		ZAP is using it's own certificate. This is the one you can create.
-		Every certificate created by ZAP will be signed for the same
-		server name. In the example above, ZAP will create a certificate
-		for the server's name <code>www.example.com</code>. This way, your browser
-		will do regular SSL encryption.
+		簡単に言えば、サーバーとの間で送受信されるすべてのデータは、ZAP内で元のサーバーの証明書を使用して暗号化/復号されます。 これにより、ZAPは平文を知ることができます。
+		あなた (あなたのブラウザ) からSSL保護されたセッションを確立するために、ZAPは独自の証明書を使用します。 これが、あなたが作成できる証明書です。
+		ZAPによって作成されるすべての証明書は、同じサーバー名に対して署名されます。 上記の例では、ZAPはサーバー名<code>www.example.com</code>に対する証明書を作成します。 これにより、あなたのブラウザは通常のSSL暗号化を行います。
 	</p>
 
-	<H2>Root CA certificate</H2>
+	<H2>ルートCA証明書</H2>
 	<p>
-		Imagine you're visiting multiple SSL protected sites. Every time your
-		browser connects such a site, a new SSL certificate is created.
-		But, these certificates are not trusted by anyone (because self created by ZAP).
-		In other words, your browser will not accept such certificates in the first place.
-		You may familiar with such situations, when your browser complains certificate
-		error but you manually can create an exception rule for that server.
+		複数のSSL保護されたサイトを訪問していると想像してください。 ブラウザがそのようなサイトに接続するたびに、新しいSSL証明書が作成されます。
+		しかし、これらの証明書は誰からも信頼されていません (ZAPによって自己作成されたため)。
+		言い換えれば、あなたのブラウザは最初からそのような証明書を受け入れません。
+		ブラウザが証明書エラーを報告するが、そのサーバーに対して手動で例外ルールを作成できる状況に慣れているかもしれません。
 	</p>
 	<p>
-		Every certificate created by ZAP is in the direct chain of trust
-		from the "ZAP Root CA" certificate.
-		(For more details about chain of trust, use your favorite search engine ;-) )
-		This means, you (your browser) only have to trust the ZAP Root CA once,
-		and any further certificates are automatically trusted. In other words,
-		once you've added the ZAP Root CA certificate to your list of trusted
-		Root CAs, your browser doesn't recognize the man in the middle.
+		ZAPによって作成されるすべての証明書は、「ZAP Root CA」証明書から直接的な信頼の連鎖にあります。
+		（信頼の連鎖の詳細については、お気に入りの検索エンジンを使用してください ;-) ）
+これは、あなた(あなたのブラウザ)がZAP Root CAを一度だけ信頼すれば、それ以降の証明書は自動的に信頼されることを意味します。 言い換えれば、ZAP Root CA証明書を信頼されたルートCAのリストに一度追加すれば、あなたのブラウザは中間者を認識しません。
 	</p>
 	<p>
-		<strong>Note:</strong>
-		<blockquote>On iOS 10.3 and onwards, you also need to enable full trust for the root certificate:
+		<strong>注:</strong>
+		<blockquote>iOS 10.3以降では、ルート証明書に対する完全な信頼も有効にする必要があります:
+設定 > 一般 > 情報 > 証明書信頼設定に移動します。
+		「ルート証明書の完全信頼を有効にする」の下で、証明書の信頼をオンにします。</blockquote>
 
-		Go to Settings > General > About > Certificate Trust Settings.
-		Under “Enable full trust for root certificates”, turn on trust for the certificate.</blockquote>
-
-	<h3>Generate</h3>
+	<h3>生成</h3>
 	<p>
-		When you are running ZAP for the first time then it will generate a Root CA certificate just for you.
-		If you do not use the 'browser launch' feature then you have to install it within your browser
-		or HTTP client application. See section <a href="#install">installation</a>
-		for more details.
+		ZAPを初めて実行すると、あなた専用のルートCA証明書が生成されます。
+		「ブラウザ起動」機能を使用しない場合は、ブラウザまたはHTTPクライアントアプリケーション内にインストールする必要があります。 詳細については、<a href="#install">インストール</a>セクションを参照してください。
 	</p>
 	<p>
-		The generated Root CA certificate is valid, by default, for one year. After that period you have
-		to create a new one.<br>
-		Every generated Root CA certificate is 2048 bit strong (RSA with SHA1).<br>
-		Every generated Root CA certificate starts with serial number "1".
-		Every generated Root CA certificate consists of the following identifiers:
+		生成されたルートCA証明書は、デフォルトで1年間有効です。 その期間後、新しいものを作成する必要があります。<br>
+生成されるすべてのルートCA証明書は2048ビット強度 (RSA with SHA1) です。<br>
+生成されるすべてのルートCA証明書はシリアル番号「1」で始まります。
+		生成されるすべてのルートCA証明書は、以下の識別子で構成されます：
 	</p>
 	<p style="padding-left: 20pt;">
 		<code>
 		CN = Zed Attack Proxy Root CA<br>
-		L = 87b77fe834b0a301<br>
-		O = ZAP Root CA<br>
-		OU = ZAP Root CA<br>
-		C = XX<br>
+L = 87b77fe834b0a301<br>
+O = ZAP Root CA<br>
+OU = ZAP Root CA<br>
+C = XX<br>
 		</code>
 	</p>
 	<p>
-		As you can see, there's a Location identifier (L) which is only a hexadecimal number.
-		This number is constructed out of two 32bit hash codes: user's name and user's home directory.
-		This way you can identify your own certificate when using multiple installations.
-		But there's no way, that anyone can figure out your name from this hash code.
+		ご覧のとおり、Location識別子 (L) があり、これは単なる16進数です。
+		この番号は、ユーザー名とユーザーのホームディレクトリという2つの32ビットハッシュコードから構成されています。
+		これにより、複数のインストールを使用している場合に、自分自身の証明書を識別できます。
+		しかし、このハッシュコードから誰かがあなたの名前を把握することはできません。
 	</p>
 
-	<h3>Import</h3>
+	<h3>インポート</h3>
 	<p>
-		When you're using multiple ZAP installation and you want to use the same
-		Root CA certificate, so you can import it. Simply use one installation of ZAP
-		to generate one Root CA certificate.<br>
-		Copy the file 'config.xml' from ZAP's home directory to
-		the PC, where you want to use the same certificate and press 'import' to import it.
+		複数のZAPインストールを使用していて、同じルートCA証明書を使用したい場合は、インポートできます。 単にZAPの1つのインストールを使用して1つのルートCA証明書を生成してください。<br>
+ZAPのホームディレクトリから「config.xml」ファイルを、同じ証明書を使用したいPCにコピーし、「インポート」を押してインポートします。
 	</p>
 	<p>
-		Alternatively you can use the <a href="../cmdline.html">command line</a> options:
+		または、<a href="../cmdline.html">コマンドライン</a>オプションを使用できます：
 		<ul>
-		<li>-certfulldump &lt;path&gt; to dump the certificate from one ZAP instance
-		<li>-certload &lt;path&gt; to load the certificate into another ZAP instance
+		<li>-certfulldump &lt;path&gt; - 1つのZAPインスタンスから証明書をダンプする
+		<li>-certload <br> - 別のZAPインスタンスに証明書をロードする
 		</ul>
 	<p>
-		You can also import certificates stored in pem files as long as they include both
-		the certificate and the unencrypted private key in the following format:<br>
-		<code><br>
+		証明書と暗号化されていない秘密鍵の両方が以下の形式で含まれている限り、PEMファイルに保存された証明書をインポートすることもできます：<br>
+<code><br>
 	-----BEGIN CERTIFICATE-----<br>
 	MIIC9TCCAl6gAwIBAgIJANL8E4epRNznMA0GCSqGSIb3DQEBBQUAMFsxGDAWBgNV<br>
 	BAoTD1N1cGVyZmlzaCwgSW5jLjELMAkGA1UEBxMCU0YxCzAJBgNVBAgTAkNBMQsw<br>
@@ -140,76 +118,62 @@
 	j48o5+RLKvqrpxNlMeS5AkEA6qIdW/yp5N8b1j2OxYZ9u5O//BvspwRITGM60Cps<br>
 	yemZE/ua8wm34SKvDHf5uxcmofShW17PLICrsLJ7P35y/A== <br>
 	-----END PRIVATE KEY-----<br>
-	</code><br>
-	And yes, that example will work - it's the Superfish certificate!
+</code><br>
+そして、はい、この例は機能します - これは Superfish の証明書です!
 	</p>
 
-	<h3><a name="view">View</a></h3>
+	<h3><a name="view">表示</a></h3>
 	<p>
-		In the options dialog of ZAP you're seeing the certificate in PEM format.
-		The option "view" tries to use your system's default
-		viewing tool for ".CER" files. On Windows, this is typically the same,
-		when exporting the certificate and double clicking on it.
+		ZAPのオプションダイアログでは、PEM形式の証明書が表示されます。
+		「表示」オプションは、システムのデフォルトの「.CER」ファイル表示ツールを使用しようとします。 Windowsでは、これは通常、証明書をエクスポートしてダブルクリックするのと同じです。
 	</p>
 
-	<h3><a name="save">Save</a></h3>
+	<h3><a name="save">保存</a></h3>
 	<p>
-		In the options dialog of ZAP you're seeing the raw bytes (hexa-decimal encoded)
-		of the certificate. Many programs are using this simple format for import/export
-		functions. When clicking Save, these bytes are saved to disk.
-		This is equal to selecting all and doing CTRL+C (copy to clipboard) and
-		save it into a new .CER file (which is simple text as you see in the dialog).
+		ZAPのオプションダイアログでは、証明書の生バイト (16進数エンコード) が表示されます。 多くのプログラムは、インポート/エクスポート機能にこのシンプルな形式を使用しています。 「保存」をクリックすると、これらのバイトがディスクに保存されます。
+		これは、すべてを選択してCTRL+C (クリップボードにコピー) を実行し、新しい.CERファイル (ダイアログに表示されているような単純なテキスト) に保存するのと同じです。
 	</p>
 
-	<h2><a name="issued_certificates">Issued Certificates</a></h2>
+	<h2><a name="issued_certificates">発行済み証明書</a></h2>
 	<p>
-		Each ZAP instance is using it's own root certificate. Of course, you can
-		import root certificates, to use them on multiple machines.
-		When running, there will be sub-certificated created, each time an HTTPS
-		resource is requested.
-		That means, the Root CA certificate is used as an issuer.
+		各ZAPインスタンスは独自のルート証明書を使用しています。 もちろん、複数のマシンで使用するためにルート証明書をインポートできます。
+		実行中、HTTPSリソースが要求されるたびに、サブ証明書が作成されます。
+		つまり、ルートCA証明書が発行者として使用されます。
 	</p>
 	<p>
-		The issued certificates are valid, by default, for 368 days.<br>
-		The issued certificates is 2048 bit strong (RSA with SHA1).<br>
-		The issued certificates has a random serial number.
-		The issued certificates consists of the following identifiers:
+		発行される証明書は、デフォルトで368日間有効です。<br>
+発行される証明書は2048ビット強度 (RSA with SHA1) です。<br>
+発行される証明書はランダムなシリアル番号を持ちます。
+		発行される証明書は、以下の識別子で構成されます：
 	</p>
 	<p style="padding-left: 20pt;">
 		<code>
 		CN = www.example.com<br>
-		E = zaproxy-develop@googlegroups.com<br>
-		C = XX<br>
-		O = ZAP<br>
-		OU = Zed Attack Proxy Project<br>
+E = zaproxy-develop@googlegroups.com<br>
+C = XX<br>
+O = ZAP<br>
+OU = Zed Attack Proxy Project<br>
 		</code>
 	</p>
 	<p>
 		<i>
-			Side note:
-			Each time you start ZAP, internally a random serial number offset is generated.
-			The issued certificates will use this offset plus an increasing counter.
-			For example, first the issued certificate has serial number 2314, the second one
-			2315, the third one 2316 and so on.
-			The reason for this is simple: browsers are also caching certificates.
-			When you restart ZAP but don't restart your browser, it could happen,
-			that the browser sees the same certificate but with different serial number.
-			In the end, the browser would complain about and reject the certificate.
-			By using the random offset (internally 48bit random number), the chances
-			are 1 to 281.474.976.710.656 that when restarting ZAP, the serial number
-			offset is a different one.<br>
-			So in the rare case, you are discovering that you browser complains about
-			a broken serial number within the certificate, just restart your browser ;-)
-		</i>.
+補足:
+ZAPを起動するたびに、内部的にランダムなシリアル番号オフセットが生成されます。
+			発行される証明書は、このオフセットに増加するカウンターを加えたものを使用します。
+			たとえば、最初に発行される証明書はシリアル番号2314、2番目は2315、3番目は2316というようになります。
+			これの理由は単純です: ブラウザも証明書をキャッシュしています。
+			ZAPを再起動してもブラウザを再起動しない場合、ブラウザが同じ証明書を異なるシリアル番号で見る可能性があります。
+			結局、ブラウザはそれについて文句を言い、証明書を拒否するでしょう。
+			ランダムオフセット (内部的には48ビットの乱数) を使用することで、ZAPを再起動したときにシリアル番号オフセットが異なる確率は281,474,976,710,656分の1になります。<br>
+したがって、まれに証明書内の壊れたシリアル番号についてブラウザが文句を言うことを発見した場合は、ブラウザを再起動してください ;-)
+</i>
 	</p>
 
-	<h3>CRL Distribution Point</h3>
+	<h3>CRL配布ポイント</h3>
 	<p>
-		Sometimes, a valid certificate is not enough to have a working TLS MITM.
-		For example, <code>libcurl</code> on Windows uses <code>schannel</code> as its backend,
-		which by default will check if a valid Certificate Revocation List Distribution Point
-		is provided in the certificate, and try to contact and retrieve this CRL.
-		If you're lucky the binary is verbose, and the error message will be clear enough :
+		場合によっては、有効な証明書があるだけでは、動作するTLS MITMには不十分です。
+		たとえば、Windowsの<code>libcurl</code>は、バックエンドとして<code>schannel</code>を使用しており、デフォルトでは証明書に有効な証明書失効リスト配布ポイントが提供されているかどうかをチェックし、このCRLに接続して取得しようとします。
+		運が良ければ、バイナリは詳細で、エラーメッセージは十分に明確です：
 	</p>
 
 	<p style="padding-left: 20pt;">
@@ -219,89 +183,76 @@
 		</code>
 	</p>
 	<p>
-		This may also manifest as a TLS Handshake Failure at the network level :
+		これは、ネットワークレベルでTLSハンドシェイク失敗として現れることもあります：
 	</p>
 
 	<p style="padding-left: 20pt;">
 		<code>
 			6    0.023470    192.168.56.104    1.2.3.4    TLSv1.2    273    Client Hello<br>
-			8    0.033465    1.2.3.4    192.168.56.104    TLSv1.2    144    Server Hello<br>
-		 11    0.033875    1.2.3.4    192.168.56.104    TLSv1.2    527    Certificate<br>
-		 13    0.084581    1.2.3.4    192.168.56.104    TLSv1.2    401    Server Key Exchange, Server Hello Done<br>
-		 16    0.158961    1.2.3.4    192.168.56.104    TLSv1.2    61    Alert (Level: Fatal, Description: Handshake Failure)<br>
+8    0.033465    1.2.3.4    192.168.56.104    TLSv1.2    144    Server Hello<br>
+11    0.033875    1.2.3.4    192.168.56.104    TLSv1.2    527    Certificate<br>
+13    0.084581    1.2.3.4    192.168.56.104    TLSv1.2    401    Server Key Exchange, Server Hello Done<br>
+16    0.158961    1.2.3.4    192.168.56.104    TLSv1.2    61    Alert (Level: Fatal, Description: Handshake Failure)<br>
 		</code>
 	</p>
 	<p>
-		This option enables you to specify a CRL Distribution Point that will be added in each of the generated certificates.
-		Obviously, you need to create a custom Root Certificate Authority, using for example <a href="https://github.com/kaysond/spki">https://github.com/kaysond/spki</a>,
-		a wrapper for OpenSSL that generates and manages a simple PKI suitable for small deployments, support CRLs and OCSP, and make the CRL available to the victim client,
-		using for example a tiny HTTP server.
+		このオプションを使用すると、生成される各証明書に追加されるCRL配布ポイントを指定できます。
+		明らかに、カスタムルート証明書機関を作成する必要があります。たとえば、<a href="https://github.com/kaysond/spki">https://github.com/kaysond/spki</a>を使用します。これは、小規模展開に適したシンプルなPKIを生成および管理するOpenSSLのラッパーで、CRLとOCSPをサポートし、たとえば小さなHTTPサーバーを使用して、被害者クライアントがCRLを利用できるようにします。
 	</p>
 
-	<h2><a name="install">Install ZAP Root CA certificate</a></h2>
+	<h2><a name="install">ZAP Root CA証明書のインストール</a></h2>
 	<p>
-		Any HTTPS client you want to use, has to know the ZAP Root CA certificate
-		as 'trusted root certificate'. Typically you have to install manually the
-		ZAP certificate into your browser's list of trusted root certificates.
+		使用したいすべてのHTTPSクライアントは、ZAP Root CA証明書を「信頼されたルート証明書」として認識する必要があります。 通常、ZAP証明書をブラウザの信頼されたルート証明書のリストに手動でインストールする必要があります。
 	</p>
 	<h3>Windows / Internet Explorer</h3>
 	<p>
-		The easiest way is to click on <a href="#view">View</a> and choose
-		'Install certificate'. Alternatively, you can <a href="#save">Save</a> your generated
-		certificate and double click the .CER file.
-		When doing so, the regular Windows wizard for certificate installation
-		assistance is popping up.
-		In this wizard manually choose the certificate store. Do NOT let
-		Windows choose automatically the certificate store.
-		Choose 'trusted root certificates' as store and finalize the wizard.
+		最も簡単な方法は、<a href="#view">表示</a>をクリックして「証明書のインストール」を選択することです。 または、生成した証明書を<a href="#save">保存</a>して、.CERファイルをダブルクリックすることもできます。
+		そうすると、証明書インストール支援のための通常のWindowsウィザードがポップアップ表示されます。
+		このウィザードで、証明書ストアを手動で選択してください。 Windowsに証明書ストアを自動的に選択させないでください。
+		ストアとして「信頼されたルート証明書」を選択し、ウィザードを完了します。
 		<br>
-		You can also copy the saved file and install it in other computers as needed.
+保存したファイルをコピーして、必要に応じて他のコンピューターにインストールすることもできます。
 	</p>
 	<p>
-		After successfully installation, you can check the certificate.
+		インストールが正常に完了したら、証明書を確認できます。
 	</p>
 		<ol>
-		<li>Go to Internet options</li>
-		<li>Tab Content</li>
-		<li>Click certificates</li>
-		<li>Click tab trusted root certificates</li>
-		<li>The ZAP Root CA should be there</li>
+		<li>インターネットオプションに移動</li>
+		<li>コンテンツタブ</li>
+		<li>証明書をクリック</li>
+		<li>信頼されたルート証明書タブをクリック</li>
+		<li>ZAP Root CAがそこにあるはずです</li>
 		</ol>
 
 	<h3>Mozilla Firefox</h3>
 	<p>
-		Firefox is using it's own certificate store. That's why you have to
-		import it twice, when you're using both browsers on Windows.
-		Installation and late on validation is done in the same preferences dialog:
+		Firefoxは独自の証明書ストアを使用しています。 そのため、Windowsで両方のブラウザを使用している場合は、2回インポートする必要があります。
+		インストールとその後の検証は、同じ環境設定ダイアログで行われます：
 	</p>
 		<ol>
-		<li>Go to Preferences</li>
-		<li>Tab Advanced</li>
-		<li>Tab Cryptography/Certificates</li>
-		<li>Click View Certificates</li>
-		<li>Click Authorities tab</li>
-		<li>Click Import and choose the <a href="#save">saved</a> <tt>zap_root_ca.cer</tt> file</li>
-		<li>In the wizard choose to trust this certificate to identify web sites (check on the boxes)</li>
-		<li>Finalize the wizard</li>
+		<li>環境設定に移動</li>
+		<li>詳細タブ</li>
+		<li>暗号化/証明書タブ</li>
+		<li>証明書を表示をクリック</li>
+		<li>認証局タブをクリック</li>
+		<li>インポートをクリックして、<a href="#save">保存した</a><tt>zap_root_ca.cer</tt>ファイルを選択</li>
+		<li>ウィザードで、この証明書をWebサイトの識別に信頼することを選択 (ボックスにチェック)</li>
+		<li>ウィザードを完了</li>
 		</ol>
 
-	<H2 style="color: red; font-weight: bold; text-decoration: underline;">Risks</H2>
+	<H2 style="color: red; font-weight: bold; text-decoration: underline;">リスク</H2>
 	<p>
-		<b>Attention, there are risks!</b><br>
-		When adding self generated Root CA certificates to your list of trusted
-		root certificates, everyone with the root certificate can smuggle data
-		into your system (browser).
-		In other words when you're not testing in a safe environment, but on
-		productive machines, be aware that you're opening an additional attack
-		vector to your system.
+		<b>注意、リスクがあります！</b><br>
+自己生成されたルートCA証明書を信頼されたルート証明書のリストに追加すると、そのルート証明書を持つ誰もがあなたのシステム (ブラウザ) にデータを密輸できます。
+		言い換えれば、安全な環境ではなく本番マシンでテストしている場合は、システムに追加の攻撃ベクトルを開いていることに注意してください。
 	</p>
 
-	<H2>See also</H2>
+	<H2>関連情報</H2>
 	<table>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td><a href="../network.html">Network</a></td>
-			<td>the introduction to Network add-on</td>
+			<td><a href="../network.html">ネットワーク</a></td>
+			<td>ネットワークアドオンの概要</td>
 		</tr>
 	</table>
 

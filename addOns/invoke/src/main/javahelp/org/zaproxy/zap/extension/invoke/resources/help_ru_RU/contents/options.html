@@ -7,21 +7,25 @@
 <body>
 	<h1>Параметры Экран приложений </h1>
 	<p>
-		Этот экран позволяет настроить  <a href="concepts.html">Приложения</a> тот <br> По умолчанию нет доступных приложений, нужно добавить
-все приложения, которые вы хотите использовать. 
+		This screen allows you to configure the <a href="concepts.html">applications</a> that
+		can be invoked.<br> By default there are no applications available, you need to add
+		all of the applications that you want to use.
+	</p>
+
 	<h3>Показать имя </h3>
-	Имя, которое будет использоваться для этого приложения в ZAP. 
-	<br>
+	<p>Имя, которое будет использоваться для этого приложения в ZAP. </p>
 
 	<h3>Полная Команда</h3>
-	Полный путь к приложению, которое вы хотите вызвать. 
-	<br> Можно указать только одну команду. Если вы хотите запустить несколько команд в одном
-go ( пути) или настроить переменные окружения, то вы должны создать сценарий или командный файл и
-затем вызовите это из ZAP. 
+	<p>
+		The full path of the application you want to invoke.<br>
+		Only one command can be specified. If you want to run multiple commands in one
+		go, or set up environmental variables, then you should create a script or batch file and
+		then invoke this from ZAP.
+	</p>
 
 	<h3>Параметры</h3>
-	Параметры, которые ZAP должен передать команде. 
-	<br> Для передачи параметров могут использоваться следующие теги: 
+	Параметры, которые ZAP должен передать команде. <br>
+	Для передачи параметров могут использоваться следующие теги: 
 	<table>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -56,9 +60,7 @@ go ( пути) или настроить переменные окружения
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td>%msgid%</td>
-			<td>идентификатор HTTP-сообщения для получения данных из API (/JSON/core/view/message/?id=$msgid),
-не всегда существует, вернет -1, если нет идентификатора сообщения 
-			</td>
+			<td>the HTTP message id to fetch data from the API (/JSON/core/view/message/?id=$msgid), does not alway exist, will return -1 if no message id</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -69,20 +71,23 @@ go ( пути) или настроить переменные окружения
 	Таким образом, если команда принимает URL-адрес с использованием «-u», вы должны указать параметры как: «-u %url%» 
 
 	<h3>Захват вывода </h3>
-	Если этот флажок установлен, запуск команды и любой вывод, который она генерирует, будет отображаться на 
-	<i>Вкладка «Вывод» </i>.
-	<br> Вы всегда должны использовать эту опцию при запуске скриптов или команд, которые не
-имеют пользовательский интерфейс. 
-	<br> Вы также можете использовать эту опцию для устранения неполадок — если приложение не
-запустите, как ожидалось, затем скопируйте команду run и попробуйте ее из командной строки. 
+	<p>
+		If checked then the command run and any output it generates will be displayed on the
+		<i>Output tab</i>.<br>
+		You should always use this option when running scripts or commands that do not
+		have a UI.<br>
+		You can also use this option for troubleshooting - if an application does not
+		run as expected then copy the command run and try it from a command line prompt.
+	</p>
 
 	<h3>Вывод в заметку </h3>
-	Если этот флажок установлен, любой вывод будет добавлен к 
-	<i>Примечание</i> прилагается к соответствующему 
-	<i>Вкладка История </i> запись
-	<br> Обратите внимание, что некоторые узлы в 
-	<i>Закладка сайты</i> не имеют связанных 
-	<i>Вкладка История </i> записи - для этих узлов эта опция не будет действовать. 
-
+	<p>
+		If checked then any output will be appended to a
+		<i>Note</i> attached to the relevant
+		<i>History tab</i> record.<br>
+		Note that some nodes in the
+		<i>Sites tab</i> do not have associated
+		<i>History tab</i> records - for those nodes this option will have no effect.
+	</p>
 </body>
 </html>

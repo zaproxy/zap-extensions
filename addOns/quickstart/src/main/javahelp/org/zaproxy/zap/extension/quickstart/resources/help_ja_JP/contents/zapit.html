@@ -6,31 +6,28 @@
 </HEAD>
 <BODY>
 	<H1>ZAPit</H1>
-	Quick Start add-on supports the following <a href="cmdline.html">Command Line</a> option to perform
-	a quick 'reconnaissance' scan of the URL specified.
+	クイックスタートアドオンは、指定されたURLのクイックな「偵察 (reconnaissance)」スキャンを実行するために、以下の<a href="cmdline.html">コマンドライン</a>オプションをサポートしています。
 	<p>
-	You can specify multiple URLs by specifying the option multiple times:
+	オプションを複数回指定することで、複数のURLを指定できます：
 	<ul>
 	<li><code>-zapit https://www.example1.com -zapit http://example2.com/ -cmd</code>
 	</ul>
-	The <code>-cmd</code> option must be specified, if it is not then the <code>-zapit</code> option will be ignored.
+	<code>-cmd</code> オプションを指定する必要があります。指定されていない場合、<code>-zapit</code> オプションは無視されます。
 	<p>
-	If you do not specify a URL beginning with either <code>http://</code> or <code>https://</code> then ZAP will 
-	scan both of those schemes.
+	<code>http://</code> または <code>https://</code> のいずれかで始まるURLを指定しない場合、ZAPは両方のスキームをスキャンします。
 	<p>
-	The ZAPit Scan will start a new ZAP session before it performs a scan, so do not start ZAP with a session that you want to keep.
+	ZAPitスキャンは、スキャンを実行する前に新しいZAPセッションを開始します。そのため、保持したいセッションでZAPを起動しないでください。
 	<p>
-	The ZAPit scan currently:
+	ZAPitスキャンが現在実行する内容は以下の通りです：
 	<ol>
-	<li>Makes one request to the target URL
-	<li>Reports key details about all of the requests and responses made (e.g. due to redirects)
-	<li>Reports any technology found by the 
-	<a href="https://www.zaproxy.org/docs/desktop/addons/technology-detection/">Technology Detection</a> add-on (if installed)
-	<li>Reports a summary of the alerts found
-	<li>Reports some stats from the root URL
+	<li>ターゲットURLへのリクエストを1回実行する
+	<li>行われたすべてのリクエストとレスポンス (リダイレクトによるものなど) に関する主要な詳細を報告する
+	<li><a href="https://www.zaproxy.org/docs/desktop/addons/technology-detection/">技術検出</a>アドオン (インストールされている場合) によって検出されたすべてのテクノロジーを報告する
+	<li>検出されたアラートの概要を報告する
+	<li>ルートURLからのいくつかの統計情報を報告する
 	</ol>
 	<p>
-	Example output:	 
+	出力例：	 
 	<pre>
 ZAPit scan of https://www.example.com
 Requests:
@@ -64,14 +61,14 @@ Root page stats:
 	Number of HTML input fields: 0
 	</pre>
 
-	This feature is at an early stage and more enhancements are planned.
+	この機能はまだ初期段階にあり、さらなる拡張が計画されています。
 
-	<H2>See also</H2>
+	<H2>関連情報</H2>
 	<table>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td><a href="quickstart.html">Quick Start</a></td>
-			<td>the introduction to Quick Start</td>
+			<td><a href="quickstart.html">クイックスタート</a></td>
+			<td>クイックスタートの概要</td>
 		</tr>
 	</table>
 

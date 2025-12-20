@@ -2,15 +2,15 @@
 <!DOCTYPE index PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Index Version 1.0//EN" "http://java.sun.com/products/javahelp/index_2_0.dtd">
 <index version="2.0">
     <!-- index entries are merged (sorted) into core index -->
-	<indexitem text="Authentication Helper" target="authhelper"/>
-	<indexitem text="Authentication Request Identification" target="authhelper.auth-req-id"/>
-	<indexitem text="Auto-Detect Authentication" target="authhelper.autodetect-auth"/>
-	<indexitem text="Browser Based Authentication" target="authhelper.browser-auth"/>
-	<indexitem text="Client Script Authentication" target="authhelper.client-script-auth"/>
-	<indexitem text="Session Management Identification" target="authhelper.session-mgmt-id"/>
-	<indexitem text="Auto-Detect Session Management" target="authhelper.autodetect-session"/>
-	<indexitem text="Header Based Session Management" target="authhelper.session-header"/>
-	<indexitem text="Verification Identification" target="authhelper.verification-id"/>
-	<indexitem text="Authentication Tester Dialog" target="authhelper.auth-tester"/>
-	<indexitem text="Report Templates" target="authhelper.report-templates"/>
+	<indexitem text="認証ヘルパー" target="authhelper"/>
+	<indexitem text="認証リクエストの識別" target="authhelper.auth-req-id"/>
+	<indexitem text="認証の自動検出" target="authhelper.autodetect-auth"/>
+	<indexitem text="ブラウザベース認証" target="authhelper.browser-auth"/>
+	<indexitem text="クライアントスクリプト認証" target="authhelper.client-script-auth"/>
+	<indexitem text="セッション管理の特定" target="authhelper.session-mgmt-id"/>
+	<indexitem text="セッション管理の自動検出" target="authhelper.autodetect-session"/>
+	<indexitem text="ヘッダーベースセッション管理" target="authhelper.session-header"/>
+	<indexitem text="検証の特定" target="authhelper.verification-id"/>
+	<indexitem text="認証テスターダイアログ" target="authhelper.auth-tester"/>
+	<indexitem text="レポートテンプレート" target="authhelper.report-templates"/>
 </index>

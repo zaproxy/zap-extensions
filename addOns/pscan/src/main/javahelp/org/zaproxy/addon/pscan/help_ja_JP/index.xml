@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE index PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Index Version 1.0//EN" "http://java.sun.com/products/javahelp/index_2_0.dtd">
 <index version="2.0">
-    <indexitem text="Passive Scanner" target="addon.pscan"/>
-    <indexitem text="Passive Scanner API" target="addon.pscan.api"/>
-    <indexitem text="Passive Scanner Automation" target="addon.pscan.automation"/>
-    <indexitem text="Passive Scanner Automation - passiveScan-config job" target="addon.pscan.automation.pscanconf"/>
-    <indexitem text="Passive Scanner Automation - passiveScan-wait job" target="addon.pscan.automation.pscanwait"/>
-    <indexitem text="Passive Scanner Options" target="addon.pscan.options"/>
+    <indexitem text="パッシブスキャナー" target="addon.pscan"/>
+    <indexitem text="パッシブスキャナーAPI" target="addon.pscan.api"/>
+    <indexitem text="パッシブスキャナー 自動化" target="addon.pscan.automation"/>
+    <indexitem text="パッシブスキャナー 自動化 - パッシブスキャン設定ジョブ" target="addon.pscan.automation.pscanconf"/>
+    <indexitem text="パッシブスキャナー 自動化 - パッシブスキャン待機ジョブ" target="addon.pscan.automation.pscanwait"/>
+    <indexitem text="パッシブスキャナー オプション" target="addon.pscan.options"/>
 </index>

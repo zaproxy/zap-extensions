@@ -1,39 +1,49 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <HTML>
 <HEAD>
-<TITLE>Traditional JSON Report with Requests and Responses</TITLE>
+<TITLE>リクエストとレスポンスを含む従来の JSON レポート</TITLE>
 </HEAD>
 <BODY>
-	<H1>Traditional JSON Report with Requests and Responses</H1>
+	<H1>リクエストとレスポンスを含む従来の JSON レポート</H1>
 
-	<H3>Sections</H3>
+	<H3>セクション</H3>
 
 	<table>
 		<tr>
-			<th align="left">Section</th>
+			<th align="left">セクション</th>
 			<th align="left">ID</th>
 		</tr>
 		<tr>
-			<td>Statistics</td>
+			<td>統計</td>
 			<td>statistics</td>
 		</tr>
 		<tr>
-			<td>Sequence Details</td>
+			<td>シーケンスの詳細</td>
 			<td>sequencedetails</td>
 		</tr>
 		<tr>
-			<td>Automation Framework State</td>
+			<td>自動化フレームワークの状態</td>
 			<td>afstate</td>
 		</tr>
 	</table>
 
-	<H3>Sample</H3>
+	<H3>サンプル</H3>
 
 	<pre>
 {
     "@version": "Dev Build",
     "@generated": "Fri, 4 Feb 2022 13:04:51",
     "created": "2022-02-04T13:04:51.236211400Z",
+	"insights":[
+		{
+			"level": "Info",
+			"reason": "Informational",
+			"site": "http://localhost:8080",
+			"key": "insight.code.2xx",
+			"description": "Percentage of responses with status code 2xx",
+			"statistic": "95"
+		}, ...
+	],
     "site":[
         {
             "@name": "http://localhost:8080",
@@ -53,6 +63,7 @@
                     "instances":[
                         {
                             "uri": "http://localhost:8080/bodgeit/search.jsp?q=%3C%2Ffont%3E%3CscrIpt%3Ealert%281%29%3B%3C%2FscRipt%3E%3Cfont%3E",
+                            "nodeName": "http://localhost:8080/bodgeit/search.jsp (q)",
                             "method": "GET",
                             "param": "q",
                             "attack": "&lt;/font&gt;&lt;scrIpt&gt;alert(1);&lt;/scRipt&gt;&lt;font&gt;",
@@ -65,6 +76,7 @@
                         },
                         {
                             "uri": "http://localhost:8080/bodgeit/contact.jsp",
+                            "nodeName": "http://localhost:8080/bodgeit/contact.jsp",
                             "method": "POST",
                             "param": "comments",
                             "attack": "&lt;/td&gt;&lt;scrIpt&gt;alert(1);&lt;/scRipt&gt;&lt;td&gt;",
@@ -77,6 +89,7 @@
                         }
                     ],                   
                     "count": "2", 
+                    "systemic": false, 
                     "solution": "&lt;p&gt;Phase: Architecture and Design&lt;/p&gt;&lt;p&gt;Use a vetted library or framework that does not ...&lt;/p&gt;",
                     "otherinfo": "",
                     "reference": "&lt;p&gt;http://projects.webappsec.org/Cross-Site-Scripting&lt;/p&gt;&lt;p&gt;http://cwe.mitre.org/data/definitions/79.html&lt;/p&gt;",
@@ -105,9 +118,8 @@
 }
 </pre>
 
-	<h4>Statistics Section</h4>
-	The report can also include statistics, per site and global, for
-	example:
+	<h4>統計セクション</h4>
+	レポートはサイトごとおよびグローバルな統計も含めることができます。例えば：
 	<pre>
 {
     ...
@@ -127,9 +139,8 @@
 }
 </pre>
 
-	<h4>Sequence Details Section</h4>
-	The report can also include details of Sequences and related active
-	scanning results, for example:
+	<h4>シーケンスの詳細セクション</h4>
+	レポートはシーケンスと関連するアクティブスキャン結果の詳細も含めることができます。例えば：
 
 	<pre>
 {
@@ -191,9 +202,8 @@
 }
 </pre>
 
-	<h4>Automation Framework State Section</h4>
-	The report can also include Automation Framework errors and warnings,
-	for example:
+	<h4>自動化フレームワークの状態セクション</h4>
+	レポートは自動化フレームワークのエラーと警告も含めることができます。例えば：
 
 	<pre>
 {

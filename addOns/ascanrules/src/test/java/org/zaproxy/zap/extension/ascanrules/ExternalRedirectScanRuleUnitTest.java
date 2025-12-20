@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.ascanrules;
 
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
@@ -28,7 +29,9 @@ import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.Response;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Stream;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -527,6 +530,48 @@ class ExternalRedirectScanRuleUnitTest extends ActiveScannerTest<ExternalRedirec
         assertThat(alertsRaised.get(0).getEvidence().startsWith(HttpHeader.HTTP), equalTo(true));
     }
 
+    @Test
+    void shouldNotReportRedirectIfInsideJsComment() throws Exception {
+        // Given
+        String test = "/";
+        String body =
+                """
+                <!DOCTYPE html>
+                <html>
+                <head>
+                <title>Redirect commented out</title>
+                </head>
+                <body>
+
+                <script>function myRedirectFunction()
+                {/*
+                window.location.replace('%s');
+                */}
+                //myRedirectFunction();
+                </script>
+                """
+                        .formatted(CONTENT_TOKEN);
+        nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
+                        String site = getFirstParamValue(session, "site");
+                        if (site != null && !site.isEmpty()) {
+                            String withPayload = body.replace(CONTENT_TOKEN, site);
+                            return newFixedLengthResponse(
+                                    NanoHTTPD.Response.Status.OK, NanoHTTPD.MIME_HTML, withPayload);
+                        }
+                        return newFixedLengthResponse("<html><body></body></html>");
+                    }
+                });
+        HttpMessage msg = getHttpMessage(test + "?site=xxx");
+        rule.init(msg, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, is(empty()));
+    }
+
     private static Stream<Arguments> createJsMethodBooleanPairs() {
         return Stream.of(
                 Arguments.of("location.reload", true),
@@ -556,7 +601,12 @@ class ExternalRedirectScanRuleUnitTest extends ActiveScannerTest<ExternalRedirec
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"window.open", "window.navigate"})
+    @ValueSource(
+            strings = {
+                "window.open",
+                "window.navigate",
+                "let r = /http:\\/\\/[a-z]+/g; window.navigate"
+            })
     void shouldReportRedirectWithJsWindowMethods(String jsMethod) throws Exception {
         // Given
         String test = "/";
@@ -630,5 +680,159 @@ class ExternalRedirectScanRuleUnitTest extends ActiveScannerTest<ExternalRedirec
         String extracted = ExternalRedirectScanRule.getLocationUrl(input);
         // Then
         assertThat(extracted, is(equalTo("http://www.example.com/")));
+    }
+
+    /** Unit tests for {@link ExternalRedirectScanRule#extractJsComments(String)}. */
+    @Nested
+    class ExtractJsCommentsUnitTest {
+
+        private static Stream<Arguments> commentProvider() {
+            return Stream.of(
+                    Arguments.of("Empty line comment", "//", Set.of("//")),
+                    Arguments.of("Empty block comment", "/**/", Set.of("/**/")),
+                    Arguments.of("Block comment", "/*  comment \n*/", Set.of("/*  comment \n*/")),
+                    Arguments.of(
+                            "Line comment with CRLF",
+                            "console.log('x'); // comment\r\nconsole.log('y');",
+                            Set.of("// comment")),
+                    Arguments.of(
+                            "Block comment containing line terminator + line comment",
+                            "/* block start\n// inside block */ console.log('x');",
+                            Set.of("/* block start\n// inside block */")),
+                    Arguments.of(
+                            "Escaped quote before comment",
+                            "console.log('it\\'s fine'); // real comment",
+                            Set.of("// real comment")),
+                    Arguments.of(
+                            "Escaped backslash before comment",
+                            "console.log('c:\\\\'); // comment",
+                            Set.of("// comment")),
+                    Arguments.of("Single line", "// comment ", Set.of("// comment ")),
+                    Arguments.of(
+                            "Block inside Single line",
+                            "// /* comment; */",
+                            Set.of("// /* comment; */")),
+                    Arguments.of(
+                            "Single line inside Block comment",
+                            "/*  comment \n // example */",
+                            Set.of("/*  comment \n // example */")),
+                    Arguments.of(
+                            "Inline block",
+                            "console.log(\"example\"); /* console.log('comment'); */",
+                            Set.of("/* console.log('comment'); */")),
+                    Arguments.of(
+                            "Inline single line",
+                            "console.log(\"example\"); // console.log('comment'));",
+                            Set.of("// console.log('comment'));")),
+                    Arguments.of(
+                            "Inline single line (w/ unicode escape)",
+                            "console.log(\"🔥 example\"); // console.log('\u1F525 example');",
+                            Set.of("// console.log('\u1F525 example');")),
+                    Arguments.of(
+                            "Template literal with embedded expression",
+                            "console.log(`value ${1 + 1}`); // comment;",
+                            Set.of("// comment;")),
+                    Arguments.of(
+                            "Template expression with block comment",
+                            "console.log(`value ${ /* block comment */ 42 }`);",
+                            Set.of("/* block comment */")),
+                    Arguments.of(
+                            "Multiline nested template expression",
+                            "console.log(`line1 ${ `inner ${42} // not comment` }`); // real comment",
+                            Set.of("// real comment")),
+                    Arguments.of(
+                            "Nested template with string containing comment-like text",
+                            "console.log(`outer ${ 'string // not comment' }`); // real comment",
+                            Set.of("// real comment")),
+                    Arguments.of(
+                            "Regex literal followed by comment",
+                            "var re = /abc/; // trailing comment",
+                            Set.of("// trailing comment")),
+                    Arguments.of(
+                            "Regex literal containing /* ... */ in class",
+                            "var re = /a\\/\\*b/; // trailing comment",
+                            Set.of("// trailing comment")),
+                    Arguments.of(
+                            "Regex-like in comment",
+                            "/* /http:\\/\\/evil.com/ */",
+                            Set.of("/* /http:\\/\\/evil.com/ */")));
+        }
+
+        @ParameterizedTest(name = "{0}")
+        @MethodSource("commentProvider")
+        void shouldFindExpectedComments(String name, String input, Set<String> expectedComments) {
+            // Given /  When
+            Set<String> actualComments = ExternalRedirectScanRule.extractJsComments(input);
+            // Then
+            assertThat(
+                    String.format(
+                            "Test '%s' failed. Expected %s but got %s",
+                            name, expectedComments, actualComments),
+                    actualComments,
+                    is(expectedComments));
+        }
+
+        private static Stream<Arguments> sequentialCommentsProvider() {
+            return Stream.of(
+                    Arguments.of(
+                            "Single line comment sequence",
+                            "// first\n//second\nconsole.log('x');",
+                            Set.of("// first", "//second")),
+                    Arguments.of(
+                            "Single line and block comment sequence",
+                            "// first\n/*second*/\nconsole.log('x');",
+                            Set.of("// first", "/*second*/")),
+                    Arguments.of(
+                            "Template expression with inner comment",
+                            "console.log(`outer ${ /* inner comment */ 42 }`); // trailing comment",
+                            Set.of("/* inner comment */", "// trailing comment")),
+                    Arguments.of(
+                            "Block comment sequence",
+                            "/* first*/\n/*second*/\nconsole.log('x');",
+                            Set.of("/* first*/", "/*second*/")));
+        }
+
+        @ParameterizedTest(name = "{0}")
+        @MethodSource("sequentialCommentsProvider")
+        void shouldIdentifyMultipleComments(
+                String name, String input, Set<String> expectedComments) {
+            // Given / When
+            Set<String> actualComments = ExternalRedirectScanRule.extractJsComments(input);
+            // Then
+            assertThat(
+                    "Unexpected comment set for test: " + name,
+                    actualComments,
+                    equalTo(expectedComments));
+        }
+
+        private static Stream<Arguments> nonCommentStringsProvider() {
+            return Stream.of(
+                    Arguments.of("String containing //", "console.log('not // a comment');"),
+                    Arguments.of(
+                            "String containing /* */",
+                            "console.log('not /* a comment */ either');"),
+                    Arguments.of(
+                            "Unterminated string before comment",
+                            "console.log('unterminated // not a comment"),
+                    Arguments.of("regex literal", "let r = /http:\\/\\/example.com/;"),
+                    Arguments.of(
+                            "regex with comment-like content", "let r = /\\/\\* comment *\\/g;"),
+                    // Unterminated template literal results in JS error
+                    Arguments.of(
+                            "Unterminated template literal",
+                            "console.log(`unterminated template ${1+1} // comment not terminated"),
+                    Arguments.of(
+                            "Inline incomplete block",
+                            "console.log(\"example\"); /* console.log('comment');"));
+        }
+
+        @ParameterizedTest(name = "{0}")
+        @MethodSource("nonCommentStringsProvider")
+        void shouldNotFindAComment(String name, String input) {
+            // Given / When
+            Set<String> comments = ExternalRedirectScanRule.extractJsComments(input);
+            // Then
+            assertThat(comments, is(empty()));
+        }
     }
 }

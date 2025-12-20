@@ -20,6 +20,8 @@
 package org.zaproxy.addon.automation.jobs;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -43,6 +45,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import org.apache.commons.configuration.ConfigurationException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -74,6 +77,7 @@ import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.ContextWrapper;
 import org.zaproxy.zap.extension.ascan.ActiveScan;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
+import org.zaproxy.zap.extension.ascan.PolicyManager;
 import org.zaproxy.zap.extension.ascan.ScanPolicy;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.Target;
@@ -83,6 +87,7 @@ import org.zaproxy.zap.utils.ZapXmlConfiguration;
 class ActiveScanJobUnitTest {
 
     private static MockedStatic<CommandLine> mockedCmdLine;
+    private PolicyManager policyManager;
     private ExtensionActiveScan extAScan;
     private static AbstractPlugin plugin;
 
@@ -120,6 +125,9 @@ class ActiveScanJobUnitTest {
         extAScan = mock(ExtensionActiveScan.class, withSettings().strictness(Strictness.LENIENT));
         given(extensionLoader.getExtension(ExtensionActiveScan.class)).willReturn(extAScan);
 
+        policyManager = mock();
+        given(extAScan.getPolicyManager()).willReturn(policyManager);
+
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
         Model.getSingleton().getOptionsParam().load(new ZapXmlConfiguration());
     }
@@ -153,35 +161,13 @@ class ActiveScanJobUnitTest {
     }
 
     @Test
-    void shouldApplyCustomConfigParams() {
-        // Given
-        String yamlStr =
-                "parameters:\n"
-                        + "  maxScanDurationInMins: 12\n"
-                        + "  maxAlertsPerRule: 5\n"
-                        + "  policy: testPolicy";
-        AutomationProgress progress = new AutomationProgress();
-        Yaml yaml = new Yaml();
-        Object data = yaml.load(yamlStr);
-
-        ActiveScanJob job = new ActiveScanJob();
-        job.setJobData(((LinkedHashMap<?, ?>) data));
-
-        // When
-        job.verifyParameters(progress);
-
-        // Then
-        assertThat(job.getParameters().getMaxScanDurationInMins(), is(equalTo(12)));
-        assertThat(job.getParameters().getMaxAlertsPerRule(), is(equalTo(5)));
-        assertThat(job.getParameters().getPolicy(), is(equalTo("testPolicy")));
-        assertThat(progress.hasErrors(), is(equalTo(false)));
-        assertThat(progress.hasWarnings(), is(equalTo(false)));
-    }
-
-    @Test
     void shouldFailWithUnknownConfigParam() {
         // Given
-        String yamlStr = "parameters:\n" + "  blah: 12\n" + "  policy: testPolicy";
+        String yamlStr =
+                """
+                parameters:
+                  blah: 12
+                """;
         AutomationProgress progress = new AutomationProgress();
         Yaml yaml = new Yaml();
         Object data = yaml.load(yamlStr);
@@ -210,20 +196,22 @@ class ActiveScanJobUnitTest {
                 job.getConfigParameters(new ScannerParamWrapper(), job.getParamMethodName());
 
         // Then
-        assertThat(params.size(), is(equalTo(12)));
-
-        assertThat(params.containsKey("encodeCookieValues"), is(equalTo(true)));
-        assertThat(params.containsKey("addQueryParam"), is(equalTo(true)));
-        assertThat(params.containsKey("defaultPolicy"), is(equalTo(true)));
-        assertThat(params.containsKey("delayInMs"), is(equalTo(true)));
-        assertThat(params.containsKey("handleAntiCSRFTokens"), is(equalTo(true)));
-        assertThat(params.containsKey("injectPluginIdInHeader"), is(equalTo(true)));
-        assertThat(params.containsKey("maxRuleDurationInMins"), is(equalTo(true)));
-        assertThat(params.containsKey("maxScanDurationInMins"), is(equalTo(true)));
-        assertThat(params.containsKey("scanHeadersAllRequests"), is(equalTo(true)));
-        assertThat(params.containsKey("threadPerHost"), is(equalTo(true)));
-        assertThat(params.containsKey("scanNullJsonValues"), is(equalTo(true)));
-        assertThat(params.containsKey("maxAlertsPerRule"), is(equalTo(true)));
+        assertThat(
+                params.keySet(),
+                containsInAnyOrder(
+                        "excludeAntiCsrfTokens",
+                        "encodeCookieValues",
+                        "addQueryParam",
+                        "defaultPolicy",
+                        "delayInMs",
+                        "handleAntiCSRFTokens",
+                        "injectPluginIdInHeader",
+                        "maxRuleDurationInMins",
+                        "maxScanDurationInMins",
+                        "scanHeadersAllRequests",
+                        "threadPerHost",
+                        "scanNullJsonValues",
+                        "maxAlertsPerRule"));
     }
 
     @Test
@@ -251,11 +239,12 @@ class ActiveScanJobUnitTest {
     }
 
     @Test
-    void shouldRunValidJob() throws MalformedURLException {
+    void shouldRunValidJob() throws Exception {
         // Given
         Constant.messages = new I18N(Locale.ENGLISH);
         Context context = mock(Context.class);
-        ContextWrapper contextWrapper = new ContextWrapper(context);
+        ContextWrapper contextWrapper =
+                new ContextWrapper(context, mock(AutomationEnvironment.class));
 
         given(extAScan.startScan(any(), any(), any())).willReturn(1);
 
@@ -268,8 +257,12 @@ class ActiveScanJobUnitTest {
         AutomationEnvironment env = mock(AutomationEnvironment.class);
         given(env.getDefaultContextWrapper()).willReturn(contextWrapper);
 
-        // When
+        given(policyManager.getPolicy("policy1")).willReturn(mock(ScanPolicy.class));
+
         ActiveScanJob job = new ActiveScanJob();
+        job.getParameters().setPolicy("policy1");
+
+        // When
         job.runJob(env, progress);
 
         // Then
@@ -303,6 +296,29 @@ class ActiveScanJobUnitTest {
     }
 
     @Test
+    void shouldFailIfUnknownPolicy() throws Exception {
+        // Given
+        given(policyManager.getPolicy("missingPolicy")).willThrow(ConfigurationException.class);
+        Constant.messages = new I18N(Locale.ENGLISH);
+        AutomationProgress progress = new AutomationProgress();
+        AutomationEnvironment env = mock(AutomationEnvironment.class);
+
+        ContextWrapper contextWrapper = new ContextWrapper(mock(Context.class), env);
+        given(env.getDefaultContextWrapper()).willReturn(contextWrapper);
+
+        ActiveScanJob job = new ActiveScanJob();
+        job.getParameters().setPolicy("missingPolicy");
+
+        // When
+        job.runJob(env, progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.getErrors(), contains("!automation.error.ascan.policy.name!"));
+    }
+
+    @Test
     void shouldUseSpecifiedContext() throws MalformedURLException {
         // Given
         Constant.messages = new I18N(Locale.ENGLISH);
@@ -313,8 +329,9 @@ class ActiveScanJobUnitTest {
         given(session.getNewContext("context2")).willReturn(context2);
         Target target1 = new Target(context1);
         Target target2 = new Target(context2);
-        ContextWrapper contextWrapper1 = new ContextWrapper(context1);
-        ContextWrapper contextWrapper2 = new ContextWrapper(context2);
+        AutomationEnvironment env = mock(AutomationEnvironment.class);
+        ContextWrapper contextWrapper1 = new ContextWrapper(context1, env);
+        ContextWrapper contextWrapper2 = new ContextWrapper(context2, env);
 
         given(extAScan.startScan(any(), any(), any())).willReturn(1);
 
@@ -324,7 +341,6 @@ class ActiveScanJobUnitTest {
 
         AutomationProgress progress = new AutomationProgress();
 
-        AutomationEnvironment env = mock(AutomationEnvironment.class);
         given(env.getContext("context1")).willReturn(context1);
         given(env.getContext("context2")).willReturn(context2);
         given(env.getContextWrapper("context1")).willReturn(contextWrapper1);
@@ -365,7 +381,8 @@ class ActiveScanJobUnitTest {
     void shouldExitIfActiveScanTakesTooLong() throws MalformedURLException {
         // Given
         Context context = mock(Context.class);
-        ContextWrapper contextWrapper = new ContextWrapper(context);
+        ContextWrapper contextWrapper =
+                new ContextWrapper(context, new AutomationEnvironment(new AutomationProgress()));
 
         given(extAScan.startScan(any(), any(), any())).willReturn(1);
 

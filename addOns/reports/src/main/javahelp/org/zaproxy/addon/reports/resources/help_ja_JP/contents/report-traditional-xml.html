@@ -1,12 +1,12 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <HTML>
 <HEAD>
-<TITLE>Traditional XML Report</TITLE>
+<TITLE>従来の XML レポート</TITLE>
 </HEAD>
 <BODY>
-	<H1>Traditional XML Report</H1>
+	<H1>従来の XML レポート</H1>
 
-	<H3>Sample</H3>
+	<H3>サンプル</H3>
 
 	<pre>
 &lt;?xml version="1.0"?&gt;
@@ -26,9 +26,9 @@
                         &lt;confidencedesc&gt;Medium&lt;/confidencedesc&gt;
                         &lt;desc&gt;&lt;p&gt;A cross-site request forgery is an attack that involves forcing a victim to send an HTTP request to a target destination without their knowledge...&lt;/desc&gt;
                         &lt;instances&gt;
-
                                 &lt;instance&gt;
                                     &lt;uri&gt;http://localhost:8080/bodgeit/advanced.jsp&lt;/uri&gt;
+                                    &lt;nodeName&gt;http://localhost:8080/bodgeit/advanced.jsp&lt;/nodeName&gt;
                                     &lt;method&gt;GET&lt;/method&gt;
                                     &lt;param&gt;&lt;/param&gt;
                                     &lt;attack&gt;&lt;/attack&gt;
@@ -38,6 +38,7 @@
 
                                 &lt;instance&gt;
                                     &lt;uri&gt;http://localhost:8080/bodgeit/advanced.jsp&lt;/uri&gt;
+                                    &lt;nodeName&gt;http://localhost:8080/bodgeit/advanced.jsp&lt;/nodeName&gt;
                                     &lt;method&gt;GET&lt;/method&gt;
                                     &lt;param&gt;&lt;/param&gt;
                                     &lt;attack&gt;&lt;/attack&gt;
@@ -47,13 +48,17 @@
 
                                 &lt;instance&gt;
                                     &lt;uri&gt;http://localhost:8080/bodgeit/basket.jsp&lt;/uri&gt;
+                                    &lt;nodeName&gt;http://localhost:8080/bodgeit/basket.jsp&lt;/nodeName&gt;
                                     &lt;method&gt;GET&lt;/method&gt;
                                     &lt;param&gt;&lt;/param&gt;
                                     &lt;attack&gt;&lt;/attack&gt;
                                     &lt;evidence&gt;&lt;form action=&quot;basket.jsp&quot; method=&quot;post&quot;&gt;&lt;/evidence&gt;
                                     &lt;otherinfo&gt;&lt;/otherinfo&gt;
                                 &lt;/instance&gt;
-
+                        &lt;count&gt;2&lt;/count&gt;
+                        &lt;systemic&gt;false&lt;/systemic&gt;
+                        &lt;solution&gt;The solution&lt;/solution&gt;
+                        &lt;otherinfo&gt;The other info&lt;/otherinfo&gt;
 
 </pre>
 

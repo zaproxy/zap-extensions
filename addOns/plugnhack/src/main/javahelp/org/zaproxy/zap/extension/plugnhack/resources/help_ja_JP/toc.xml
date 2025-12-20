@@ -7,7 +7,7 @@
 	<tocitem text="ZAP ユーザーガイド" tocid="toplevelitem">
 		<tocitem text="アドオン" tocid="addons">
 			<tocitem text="Plug-n-Hack" image="addon.plugnhack.plug" target="addon.plugnhack.plugnhack">
-				<tocitem text="Clients tab" target="addon.plugnhack.pnhclients"/>
+				<tocitem text="クライアントタブ" target="addon.plugnhack.pnhclients"/>
 			</tocitem>
 		</tocitem>
 	</tocitem>

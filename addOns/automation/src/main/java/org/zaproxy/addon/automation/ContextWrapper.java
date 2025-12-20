@@ -80,8 +80,9 @@ public class ContextWrapper {
      * Create a ContextWrapper from an existing Context
      *
      * @param context the existing context
+     * @param env the environment
      */
-    public ContextWrapper(Context context) {
+    public ContextWrapper(Context context, AutomationEnvironment env) {
         this.context = context;
         this.data = new Data();
         this.data.setName(context.getName());
@@ -90,7 +91,13 @@ public class ContextWrapper {
         // Contexts dont actually define the starting URL, but we need at least one
         for (String url : context.getIncludeInContextRegexs()) {
             if (url.endsWith(".*")) {
-                this.addUrl(url.substring(0, url.length() - 2));
+                String urlStr = env.replaceVars(url.substring(0, url.length() - 2));
+                try {
+                    new URI(urlStr, true);
+                    this.addUrl(urlStr);
+                } catch (Exception e) {
+                    // Ignore - could well be a more complex regex
+                }
             }
         }
 

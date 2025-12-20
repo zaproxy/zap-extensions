@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE toc PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN" "http://java.sun.com/products/javahelp/toc_2_0.dtd">
 <toc version="2.0">
-    <tocitem text="ZAP User Guide" tocid="toplevelitem">
-        <tocitem text="Add Ons" tocid="addons">
-            <tocitem text="Common Library" target="commonlib">
-                <tocitem text="Tabbed Output Panel" target="commonlib.output.panel"/>
-                <tocitem text="Alert Tags" target="commonlib.alert.tags"/>
+    <tocitem text="ZAP ユーザーガイド" tocid="toplevelitem">
+        <tocitem text="アドオン" tocid="addons">
+            <tocitem text="共通ライブラリ" target="commonlib">
+                <tocitem text="タブ付き出力パネル" target="commonlib.output.panel"/>
+                <tocitem text="アラートタグ" target="commonlib.alert.tags"/>
             </tocitem>
         </tocitem>
     </tocitem>

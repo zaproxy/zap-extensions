@@ -9,20 +9,6 @@ Active Scan Rules - Alpha
 <H1>Active Scan Rules - Alpha</H1>
 The following alpha status active scan rules are included in this add-on:
 
-<H2 id="id-60101">An example active scan rule which loads data from a file</H2>
-This implements an example active scan rule that loads strings from a file that the user can edit.<br>
-For more details see: 
-<a href="https://www.zaproxy.org/blog/2014-04-30-hacking-zap-4-active-scan-rules/">Hacking ZAP Part 4: Active Scan Rules</a>.
-<p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/ExampleFileActiveScanRule.java">ExampleFileActiveScanRule.java</a>
-
-<H2 id="id-60100">Example Active Scan Rule: Denial of Service</H2>
-This implements a very simple example active scan rule.<br>
-For more details see: 
-<a href="https://www.zaproxy.org/blog/2014-04-30-hacking-zap-4-active-scan-rules/">Hacking ZAP Part 4: Active Scan Rules</a>.
-<p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/ExampleSimpleActiveScanRule.java">ExampleSimpleActiveScanRule.java</a>
-
 <H2 id="id-40015">LDAP Injection</H2>
 LDAP Injection may be possible. It may be possible for an attacker to bypass authentication controls, and to view and modify arbitrary data in the LDAP directory.
 Skips messages which originally resulted in a client or server error response status code.
@@ -30,21 +16,6 @@ Skips messages which originally resulted in a client or server error response st
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/LdapInjectionScanRule.java">LdapInjectionScanRule.java</a>
 <br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40015/">40015</a>.
-
-<H2 id="id-40033">NoSQL Injection - MongoDB</H2>
-This rule attempts to identify MongoDB specific NoSQL Injection vulnerabilities. It attempts various types of attacks including: boolean based, error based, time based, and authentication bypass. 
-It does not include time based attacks. It will also attempt JSON parameter specific payloads if the scan is configured to include JSON parameter variants.
-<p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/MongoDbInjectionScanRule.java">MongoDbInjectionScanRule.java</a>
-<br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40033/">40033</a>.
-
-<H2 id="id-90039">NoSQL Injection - MongoDB (Time Based)</H2>
-This rule attempts to identify MongoDB specific NoSQL Injection vulnerabilities using only time based attacks.
-<p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/MongoDbInjectionTimingScanRule.java">MongoDbInjectionTimingScanRule.java</a>
-<br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/90039/">90039</a>.
 
 <H2 id="id-40039">Web Cache Deception</H2>
 This rule attempts to identify Web Cache Deception vulnerabilities. It checks whether a static path appended to original URIs can be used to leak sensitive user information or not.
@@ -54,6 +25,20 @@ This rule attempts to identify Web Cache Deception vulnerabilities. It checks wh
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/WebCacheDeceptionScanRule.java">WebCacheDeceptionScanRule.java</a>
 <br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40039/">40039</a>.
+
+<H2 id="id-100044">Suspicious Input Transformation</H2>
+This is an active script scan rule. It detects various types of suspicious input transformations that may indicate
+potential security vulnerabilities such as template injection, expression evaluation, quote consumption, and issues
+related to unicode normalization.
+<p>
+This rule is largely adapted from the "Suspect Transform" check included in the ActiveScan++ extension for Burp
+Suite by
+Albinowax: <a href="https://github.com/albinowax/ActiveScanPlusPlus/blob/master/src/burp/SuspectTransform.java">SuspectTransform.java</a>.
+
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/zapHomeFiles/scripts/scripts/active/SuspiciousInputTransformation.js">SuspiciousInputTransformation.js</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/100044/">100044</a>.
 
 </BODY>
 </HTML>

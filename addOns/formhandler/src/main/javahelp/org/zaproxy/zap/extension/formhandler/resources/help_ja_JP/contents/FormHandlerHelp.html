@@ -1,95 +1,80 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <html>
 	<head>
-		<title> Value Generator </title>
+		<title> 値ジェネレーター </title>
 	</head>
 	<body>
 
-		<h1>Value Generator</h1>
+		<h1>値ジェネレーター</h1>
 			<p>
-				This Value Generator extension allows for the custom configuration of values used in sites/apps based on field/input names.
+				この値ジェネレーター拡張機能は、フィールド/入力名に基づいて、サイト/アプリで使用される値をカスタム設定できるようにします。
 			</p>
 			<p>
-				<strong>Note:</strong> The word "Field" is used throughout this help documentation interchangeably with parameter or input.
-			</p>
-
-		<h2>Description</h2>
-			<p>
-				With this add-on the user can create new fields for inputs that they wish to control the 
-				value of. Additionally, the user can modify any existing field's name and value to fit the fields that 
-				they are trying to customize/control. Any field can also be disabled or removed by the user so that the custom values 
-				are not used. Field names, values, enabled state, and regex status will be stored even after a ZAP session has 
-				concluded.
-			</p>
-			<p>
-				The add-on provides a set of default field names and patterns that may be found in an app/system and a corresponding 
-				value for each default field. These default values can be disabled, modified, and deleted if the 
-				user desires.
+				<strong>注:</strong> このヘルプドキュメント全体で「フィールド」という用語は、パラメーターまたは入力と同義で使用されます。
 			</p>
 
-		<h2>Using the Value Generator</h2>
+		<h2>説明</h2>
 			<p>
-				The Value Generator can be configured thought ZAP's Options. Selecting the Value Generator tab will display a table 
-				with all existing inputs that are currently defined. An example is shown below.
+				このアドオンを使用すると、ユーザーは値を制御したい入力に対して新しいフィールドを作成できます。 さらに、既存のフィールドの名前と値を変更して、カスタマイズ/制御しようとしているフィールドに適合させることができます。 任意のフィールドを無効化または削除することで、カスタム値が使用されないようにすることもできます。 フィールド名、値、有効状態、正規表現ステータスは、ZAPセッションが終了した後も保存されます。
+			</p>
+			<p>
+				このアドオンは、アプリ/システムで見られる可能性のあるデフォルトのフィールド名とパターンのセット、 および各デフォルトフィールドに対応する値を提供します。 これらのデフォルト値は、 ユーザーが希望すれば無効化、変更、削除できます。
+			</p>
+
+		<h2>値ジェネレーターの使用</h2>
+			<p>
+				値ジェネレーターはZAPのオプションから設定できます。値ジェネレータータブを選択すると、 現在定義されているすべての既存の入力を含むテーブルが表示されます。以下に例を示します。
 			</p><br>
-			<img src="../contents/images/formHandlerTable.PNG" alt="A screenshot of the Value Generator's main table"/>
+			<img src="../contents/images/formHandlerTable.PNG" alt="値ジェネレーターのメインテーブルのスクリーンショット"/>
 
-		<h3>Adding a New Field</h3>
+		<h3>新しいフィールドの追加</h3>
 			<p>
-				To define additional input values the <b>Add</b> button can be clicked. This will bring up a dialog 
-				for the user to provide field information.
+				追加の入力値を定義するには、<b>追加</b>ボタンをクリックします。これにより、 フィールド情報を入力するためのダイアログが表示されます。
 			</p>
 
-			<img src="../contents/images/formHandlerAddDialog.PNG" alt="A screenshot of the Value Generator's add dialog"/>
+			<img src="../contents/images/formHandlerAddDialog.PNG" alt="値ジェネレーターの追加ダイアログのスクリーンショット"/>
 
 			<p>
-				Please take note of the following when adding a new field:
+				新しいフィールドを追加する際は、以下の点に注意してください：
 				<ul>
-					<li>A field name or regex pattern must be provided.</li>
-					<li>The field name cannot already exist in the table or a warning will occur.</li>
-					<li>The field name supplied to the Value Generator must match the field ID in the input that you wish 
-						to define/control.</li>
-					<li>The field name is not case sensitive, unless using regex.</li>
-					<li>Simple name matches will be attempted before regex matches.</li>
-					<li>A value does not have to be provided. This will result in an empty string being used.</li>
-					<li>The value field is case sensitive, and will be seen in subsequent traffic.</li>
+					<li>フィールド名または正規表現パターンを指定する必要があります。</li>
+					<li>フィールド名がテーブルに既に存在する場合、警告が表示されます。</li>
+					<li>値ジェネレーターに指定するフィールド名は、定義/制御したい入力のフィールドIDと一致する必要があります。</li>
+					<li>フィールド名は大文字小文字を区別しません (正規表現を使用する場合を除く)。</li>
+					<li>単純な名前マッチングが正規表現マッチングの前に試行されます。</li>
+					<li>値を指定する必要はありません。その場合、空文字列が使用されます。</li>
+					<li>値フィールドは大文字小文字を区別し、後続のトラフィックに表示されます。</li>
 				</ul>
 			</p>
 
-		<h3>Modifying an Existing Field</h3>
+		<h3>既存のフィールドの変更</h3>
 			<p>
-				The add-on allows the user to modify the values and names of existing fields. This can be done 
-				by selecting the field that you wish to modify and clicking on the <b>Modify</b> button.
+				このアドオンでは、既存のフィールドの値と名前を変更できます。これを行うには、 変更したいフィールドを選択し、<b>変更</b>ボタンをクリックします。
 			</p><br>
-			<img src="../contents/images/formHandlerModDialog.PNG" alt="A screenshot of the Value Generator's modify dialog"/>
+			<img src="../contents/images/formHandlerModDialog.PNG" alt="値ジェネレーターの変更ダイアログのスクリーンショット"/>
 
 			<p>
-				When modifying a field the user is constrained by the same rules as creating a new one. The most
-				common constraint when modifying a field is that the name cannot be the same as an existing field.
-				(i.e. No duplicate fields)
+				フィールドを変更する際、ユーザーは新規作成時と同じルールによって制約されます。 フィールドを変更する際の最も一般的な制約は、名前が既存のフィールドと同じにできないことです。
+				(つまり、重複するフィールドは許可されません)
 			</p>
 
-		<h3>Removing Fields</h3>
+		<h3>フィールドの削除</h3>
 			<p>
-				The user can remove fields at any time. To do so simply select the field that you wish to remove and 
-				click on the <b>Remove</b> button. <i> Please note that you will be prompted to confirm removal before 
-				proceeding unless the <b>Remove without Confirmation</b> box is checked.</i> 
+				ユーザーはいつでもフィールドを削除できます。 削除するには、削除したいフィールドを選択し、<b>削除</b>ボタンをクリックします。 <i>なお、<b>確認なしで削除チェックボックス</b>がオンになっていない限り、 処理を進める前に削除の確認を求められます。</i> 
 			</p>
 
-		<h2>Fields/Parameters That Are Not Defined</h2>
+		<h2>定義されていないフィールド/パラメーター</h2>
 			<p>
-				A user may find that they do not want to define everything, but rather define a select few within 
-				the expected input.
+				ユーザーは、すべてを定義するのではなく、期待される入力の中から一部のみを選択して定義したい場合があります。
 			</p>
 			<p>
-				Any field that is not defined in the Value Generator add-on will use a ZAP default value that is generated to match 
-				each field type.(For example: A text field will have the value "ZAP".)
+				値ジェネレーターアドオンで定義されていないフィールドは、各フィールドタイプに一致するように生成されたZAPのデフォルト値を使用します。 (例: テキストフィールドには値「ZAP」が使用されます。)
 			</p>
 
-		<h2>Statistics</h2>
+		<h2>統計</h2>
 			<p>
-				A number of statistics are exposed via the add-on for add, modify, and remove operations.<br>
-				In the following examples <code>{name}</code> will be the actual name of the Value Generator field.
+				このアドオンでは、追加、変更、削除操作に関する多数の統計が公開されます。<br>
+				以下の例では、 <code>{name}</code> は実際の値ジェネレーターフィールドの名前になります。
 				<ul>
 					<li>stats.formhandler.add</li>
 					<li>stats.formhandler.add.{name}</li>

@@ -3,56 +3,56 @@
 <HEAD>
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
 <TITLE>
-Spider Automation Framework Support
+スパイダー – 自動化フレームワーク対応
 </TITLE>
 </HEAD>
 <BODY>
-<H1>Spider Automation Framework Support</H1>
-This add-on supports the Automation Framework.
+<H1>スパイダー – 自動化フレームワーク対応</H1>
+このアドオンは自動化フレームワークに対応しています。
 
-<H2>Job: spider</H2>
-The Spider job runs the Traditional Spider. This is fast but does not handle modern applications as effectively.
+<H2>ジョブ: spider</H2>
+spider ジョブは従来のスパイダーを実行します。 これは高速ですが、最新のアプリケーションを効果的に処理することはできません。
 <p>
-It is covered in the video: <a href="https://youtu.be/WivoyVerBCo">ZAP Chat 10 Automation Framework Part 4 - Spidering</a>.
+この内容は、動画「<a href="https://youtu.be/WivoyVerBCo">ZAP Chat 10 Automation Framework Part 4 - Spidering</a>」で解説されています。
 <p>
-By default this job will spider the first context defined in the environment and so none of the parameters are mandatory.
+デフォルトでは、このジョブは環境で定義された最初のコンテキストをアクティブスキャンするため、パラメーターは必須ではありません。
 <p>
-This job supports monitor tests.
+このジョブはモニターテストをサポートしています。
 
 <H2>YAML</H2>
 
 <pre>
-  - type: spider                       # The traditional spider - fast but doesnt handle modern apps so well
+  - type: spider                       # 従来のスパイダー - 高速だが最新のアプリには対応しきれない
     parameters:
-      context:                         # String: Name of the context to spider, default: first context
-      user:                            # String: An optional user to use for authentication, must be defined in the env
-      url:                             # String: Url to start spidering from, default: first context URL
-      maxDuration:                     # Int: The max time in minutes the spider will be allowed to run for, default: 0 unlimited
-      maxDepth:                        # Int: The maximum tree depth to explore, default 5
-      maxChildren:                     # Int: The maximum number of children to add to each node in the tree
-      acceptCookies:                   # Bool: Whether the spider will accept cookies, default: true
-      handleODataParametersVisited:    # Bool: Whether the spider will handle OData responses, default: false
-      handleParameters:                # Enum [ignore_completely, ignore_value, use_all]: How query string parameters are used when checking if a URI has already been visited, default: use_all
-      logoutAvoidance:                 # Bool: Whether or not the Spider should attempt to avoid logout related paths/functionality, default: false
-      maxParseSizeBytes:               # Int: The max size of a response that will be parsed, default: 2621440 - 2.5 Mb
-      parseComments:                   # Bool: Whether the spider will parse HTML comments in order to find URLs, default: true
-      parseGit:                        # Bool: Whether the spider will parse Git metadata in order to find URLs, default: false
-      parseDsStore:                    # Bool: Whether the spider will parse .DS_Store files in order to find URLs, default: false
-      parseRobotsTxt:                  # Bool: Whether the spider will parse 'robots.txt' files in order to find URLs, default: true
-      parseSitemapXml:                 # Bool: Whether the spider will parse 'sitemap.xml' files in order to find URLs, default: true
-      parseSVNEntries:                 # Bool: Whether the spider will parse SVN metadata in order to find URLs, default: false
-      postForm:                        # Bool: Whether the spider will submit POST forms, default: true
-      processForm:                     # Bool: Whether the spider will process forms, default: true
-      sendRefererHeader:               # Bool: Whether the spider will send the referer header, default: true
-      threadCount:                     # Int: The number of spider threads, default: 2 * Number of available processor cores
-      userAgent:                       # String: The user agent to use in requests, default: '' - use the default ZAP one 
+      context:                         # 文字列: スパイダーを実行するコンテキストの名前、デフォルト: 最初のコンテキスト
+      user:                            # 文字列: 認証に使用するオプションのユーザー、環境で定義されている必要がある
+      url:                             # 文字列: スパイダーを開始するURL、デフォルト: 最初のコンテキストURL
+      maxDuration:                     # Int: スパイダーの実行を許可する最大時間 (分)、デフォルト: 0 (無制限)
+      maxDepth:                        # Int: 探索する最大ツリー深度、デフォルト: 5
+      maxChildren:                     # Int: ツリーの各ノードに追加する子の最大数
+      acceptCookies:                   # Bool: スパイダーがCookieを受け入れるかどうか、デフォルト: true
+      handleODataParametersVisited:    # Bool: スパイダーがODataレスポンスを処理するかどうか、デフォルト: false
+      handleParameters:                # Enum [ignore_completely, ignore_value, use_all]: URIが既に訪問されたかチェックする際にクエリ文字列パラメータをどう使用するか、デフォルト: use_all
+      logoutAvoidance:                 # Bool: スパイダーがログアウト関連のパス/機能を回避しようとするかどうか、デフォルト: false
+      maxParseSizeBytes:               # Int: 解析されるレスポンスの最大サイズ、デフォルト: 2621440 (2.5 MB)
+      parseComments:                   # Bool: スパイダーがURLを見つけるためにHTMLコメントを解析するかどうか、デフォルト: true
+      parseGit:                        # Bool: スパイダーがURLを見つけるためにGitメタデータを解析するかどうか、デフォルト: false
+      parseDsStore:                    # Bool: スパイダーがURLを見つけるために.DS_Storeファイルを解析するかどうか、デフォルト: false
+      parseRobotsTxt:                  # Bool: スパイダーがURLを見つけるために'robots.txt'ファイルを解析するかどうか、デフォルト: true
+      parseSitemapXml:                 # Bool: スパイダーがURLを見つけるために'sitemap.xml'ファイルを解析するかどうか、デフォルト: true
+      parseSVNEntries:                 # Bool: スパイダーがURLを見つけるためにSVNメタデータを解析するかどうか、デフォルト: false
+      postForm:                        # Bool: スパイダーがPOSTフォームを送信するかどうか、デフォルト: true
+      processForm:                     # Bool: スパイダーがフォームを処理するかどうか、デフォルト: true
+      sendRefererHeader:               # Bool: スパイダーが referer ヘッダーを送信するかどうか、デフォルト: true
+      threadCount:                     # Int: スパイダースレッド数、デフォルト: 利用可能なプロセッサコア数 × 2
+      userAgent:                       # 文字列: リクエストで使用するユーザーエージェント、デフォルト: '' (ZAPのデフォルトを使用)
     tests:
-      - name: 'At least 100 URLs found'                 # String: Name of the test, default: statistic + operator + value
-        type: 'stats'                                   # String: Type of test, only 'stats' is supported for now
-        statistic: 'automation.spider.urls.added'       # String: Name of an integer / long statistic, currently supported: 'automation.spider.urls.added'
-        operator: '>='                                  # String ['==', '!=', '>=', '>', '<', '<=']: Operator used for testing
-        value: 100                                      # Int: Change this to the number of URLs you expect to find
-        onFail: 'info'                                  # String: One of 'warn', 'error', 'info', mandatory
+      - name: 'At least 100 URLs found'                 # 文字列: テストの名前、デフォルト: statistic + operator + value
+        type: 'stats'                                   # 文字列: テストのタイプ、現在は'stats'のみサポート
+        statistic: 'automation.spider.urls.added'       # 文字列: 整数/long統計の名前、現在サポート: 'automation.spider.urls.added'
+        operator: '&gt;='                                  # 文字列['==', '!=', '&gt;=', '&gt;', '&lt;', '&lt;=']: テストに使用する演算子
+        value: 100                                      # Int: 見つかると予想されるURLの数に変更する
+        onFail: 'info'                                  # 文字列: 'warn', 'error', 'info'のいずれか、必須
 </pre>
 
 </BODY>

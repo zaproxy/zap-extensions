@@ -22,6 +22,11 @@ alertTags:
   name2: value2
 otherInfo: Any other Info
 status: alpha
+alertRefOverrides:
+  12345-1: {}
+  12345-2:
+    name: Active Vulnerability - Type XYZ
+    description: Overridden description
 `);
 }
 
@@ -35,8 +40,8 @@ status: alpha
  * @param msg - the HTTP Message being scanned. This is an HttpMessage object.
  */
 function scanNode(as, msg) {
-	// Debugging can be done using println like this
-	print('scan called for url=' + msg.getRequestHeader().getURI().toString());
+	// Debugging can be done using print like this
+	print('scanNode called for url=' + msg.getRequestHeader().getURI().toString());
 
 	// Copy requests before reusing them
 	msg = msg.cloneRequest();
@@ -66,6 +71,20 @@ function scanNode(as, msg) {
 }
 
 /**
+ * Scans a host.
+ * The scanHost function will be called once per host being scanned.
+ * @param as - the ActiveScan parent object that will do all the core interface tasks
+ *     (i.e.: sending and receiving messages, providing access to Strength and Threshold settings,
+ *     raising alerts, etc.). This is an ActiveScriptHelper object.
+ * @param msg - the HTTP Message being scanned. This is an HttpMessage object.
+ */
+function scanHost(as, msg) {
+	// Debugging can be done using print like this
+	const uri = msg.getRequestHeader().getURI();
+	print(`scanHost called for host=${uri.getHost()}` + (uri.getPort() !== -1 ? `:${uri.getPort()}` : ""));
+}
+
+/**
  * Scans a specific parameter in an HTTP message.
  * The scan function will typically be called for every parameter in every URL and Form for every page.
  * 
@@ -77,7 +96,7 @@ function scanNode(as, msg) {
  * @param {string} value - the original parameter value.
  */
 function scan(as, msg, param, value) {
-	// Debugging can be done using println like this
+	// Debugging can be done using print like this
 	print('scan called for url=' + msg.getRequestHeader().getURI().toString() + 
 		' param=' + param + ' value=' + value);
 	
@@ -92,7 +111,8 @@ function scan(as, msg, param, value) {
 	
 	// Test the response here, and make other requests as required
 	if (true) {	// Change to a test which detects the vulnerability
-		as.newAlert()
+        // Call newAlert() if you're not using alertRefOverrides
+		as.newAlert("12345-1")
 			.setParam(param)
 			.setAttack('Your attack')
 			.setEvidence('Evidence')

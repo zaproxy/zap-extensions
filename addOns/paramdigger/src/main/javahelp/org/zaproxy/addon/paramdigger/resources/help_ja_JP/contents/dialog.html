@@ -3,66 +3,54 @@
 <HEAD>
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
 <TITLE>
-Param Digger dialog
+パラメーターディガー ダイアログ
 </TITLE>
 </HEAD>
 <BODY>
-<H1>Param Digger dialog</H1>
+<H1>パラメーターディガー ダイアログ</H1>
 <p>
-This dialog launches the <a href="paramdigger.html">Param Digger</a>.<br>
+このダイアログは、<a href="paramdigger.html">パラメーターディガー</a>を起動します。<br>
 </p>
 
-<H2>Control</H2>
-The first tab allows you to select or change the URL along with selection of guessers.<br>
-If the URL is in one or more Contexts then you will be able to choose one of them.<br>
-You can also modify the number of threads that would be used for the Param Digger. <br> <br>
-If you select/check the 'URL Guess' checkbox, then the URL Guess tab will be shown which provides fine 
-grain control over the guessing process for URL parameters. <br>
-At this time Param Digger can perform guessing attacks and has only one of the guessers 
-available which is the URL Parameter Guesser, which is enabled by default. <br> <br>
-If you select/check the 'Header Guess' checkbox, then the Header Guess tab will be shown which 
-provides control over the guessing process for HTTP Headers.(Not yet available)<br><br>
-If you select/check the 'Cookie Guess' checkbox, then the Cookie Guess tab will be shown which
-provides control over the guessing process for Cookies.(Not yet available)<br><br>
+<H2>コントロール</H2>
+最初のタブでは、推測機能の選択とともに、URLの選択または変更を行うことができます。<br>
+URLが1つ以上のコンテキストに含まれている場合は、その中から1つを選択できます。<br>
+また、パラメーターディガーで使用されるスレッド数を変更することもできます。 <br> <br>
+「URL推測」チェックボックスを選択/チェックすると、「URL推測」タブが表示され、URLパラメーターの推測プロセスを詳細に制御できます。 <br>
+現時点では、パラメーターディガーは推測攻撃を実行でき、利用可能な推測機能はURLパラメーター推測機能のみであり、これは既定で有効になっています。 <br> <br>
+「ヘッダー推測」チェックボックスを選択/チェックすると、「ヘッダー推測」タブが表示され、HTTPヘッダーの推測プロセスを制御できます。(まだ利用できません)<br>
+<br>
+「Cookie推測」チェックボックスを選択/チェックすると、「Cookie推測」タブが表示され、Cookieの推測プロセスを制御できます。(まだ利用できません)<br><br>
 <br><br>
  
-<H2>URL Guess</H2>
-    This tab allows you to configure the URL guessing procedure. <br>
-    If you select/check the 'Add fcbz cache buster' then a static cache buster would be added/appended 
-    to the URL. (Not yet being used)<br><br>
-
-    The Wordlist dropdown is the one which offers users the ability to specify their wordlist. <br>
-    By default the 'Predefined' option is selected, which means the predefined wordlist, consisting of 
-    835 parameters. <br>
-    If you select the 'Custom' option, then you will be able to enter your own wordlist. <br>
-    If you select the 'Both' option, then it will use the predefined wordlist and the custom wordlist 
-    that you have specified. <br>
-    For your custom wordlist, you have to make sure that the words are separated by a newline.
+<H2>URL推測</H2>
+    このタブでは、URL推測手順を設定できます。 <br>
+「Fcbz キャッシュバスターを追加」を選択/チェックすると、静的なキャッシュバスターがURLに追加/付加されます。 (まだ使用されていません)<br>
+<br>
+「ワードリスト」ドロップダウンでは、ユーザーが自身のワードリストを指定できます。 <br>
+既定では「定義済み」オプションが選択されており、これは835個のパラメーターで構成される定義済みワードリストを意味します。 <br>
+「カスタム」オプションを選択すると、独自のワードリストを入力できます。 <br>
+「両方」オプションを選択すると、定義済みワードリストとユーザーが指定したカスタムワードリストの両方が使用されます。 <br>
+カスタムワードリストを使用する場合は、単語が改行で区切られていることを確認する必要があります。
     <br><br>
-    As of the current release, the predefined wordlist used by the add-on is based on 
-    <a href="https://github.com/s0md3v/Arjun">Arjun</a>'s small wordlist.
+現在のリリースでは、このアドオンで使用される定義済みワードリストは、<a href="https://github.com/s0md3v/Arjun">Arjun</a>のスモールワードリストに基づいています。
     <br><br>
-
-
-    The 'Number of Chunks' field is the one which allows you to control the number of chunks that are used.
-    If you are using a wordlist having more than 1000 words, then you can increase the number of chunks to your
-    desired requirement. Otherwise you can use the default value.
+「チャンク数」フィールドでは、使用されるチャンクの数を制御できます。
+    1000語を超えるワードリストを使用している場合は、必要に応じてチャンク数を増やすことができます。 そうでない場合は、既定値を使用できます。
+    <br><br>
+「メソッド」リストでは、使用したいメソッドを選択できます。 既定では「GET」が選択されています。 Ctrl + クリック（または Cmd + クリック）を使用するだけで、リストから1つまたは複数のメソッドを選択できます。
     <br><br>
 
-    The 'Methods' list allows you to select the methods that you want to use. By default GET is the one 
-    which is selected. You can choose one or multiple methods from the list, by simply using ctrl + click or (cmd + click).
-    <br><br>
+<H2>ヘッダー推測</H2>
+近日公開予定…<br><br>
+<H2>Cookie推測</H2>
+近日公開予定…<br><br>
 
-<H2>Header Guess</H2>
-Coming soon..<br><br>
-<H2>Cookie Guess</H2>
-Coming soon..<br><br>
-
-<H2>Accessed via</H2>
+<H2>ここから参照されています</H2>
 <table>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="tab.html">Param Digger tab</a></td></tr>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Sites tab</td><td>'Attack / Param Digger...' right click menu item</td></tr>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>History tab</td><td>'Attack / Param Digger...' right click menu item</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="tab.html">パラメーターディガー タブ</a></td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>サイトタブ</td><td>「攻撃 / パラメーターディガー&mldr;」の右クリックメニュー項目</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>履歴タブ</td><td>「攻撃 / パラメーターディガー&mldr;」の右クリックメニュー項目</td></tr>
 </table>
 
 </BODY>

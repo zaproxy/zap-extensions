@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [53] - 2025-12-15
+### Changed
+- Update minimum ZAP version to 2.17.0.
+
 ## [52] - 2025-07-10
 ### Added
 - Add icon for Edge browser.
@@ -286,6 +290,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[53]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v53
 [52]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v52
 [51]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v51
 [50]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v50

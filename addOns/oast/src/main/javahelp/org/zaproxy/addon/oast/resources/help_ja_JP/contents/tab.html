@@ -3,78 +3,73 @@
 <head>
     <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
     <title>
-        OAST Tab
+        OAST タブ
     </title>
 </head>
 <body>
-<h1>OAST Tab</h1>
+<h1>OAST タブ</h1>
 
-<p>This tab shows a summary of the out-of-band messages discovered by ZAP.</p>
+<p>このタブは、ZAPが発見したアウトオブバンドメッセージの概要を表示します。</p>
 
-<h2>Messages</h2>
+<h2>メッセージ</h2>
 
-For each message, you can see:
+各メッセージについて、以下を確認できます：
 
 <table>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-        <td>An Id</td>
+        <td>ID</td>
     </tr>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-        <td>The Timestamp of the received request.</td>
+        <td>受信したリクエストのタイムスタンプ</td>
     </tr>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-        <td>The Method associated with the request (GET, POST, etc.)</td>
+        <td>リクエストに関連付けられたメソッド (GET、POSTなど)</td>
     </tr>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-        <td>The URL</td>
+        <td>URL</td>
     </tr>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-        <td>The Handler - The component which caught or responded to the callback request.</td>
+        <td>ハンドラ - コールバックリクエストを捕捉または応答したコンポーネント</td>
     </tr>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-        <td>The Source - The address of the original request sender.</td>
+        <td>送信元 - 元のリクエスト送信元のアドレス</td>
     </tr>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-        <td>The Referer - The value of the HTTP <em>Referer</em> header (if one was included in the request).</td>
+        <td>リファラー - HTTP <em>Referer</em> ヘッダーの値 (リクエストに含まれていた場合)</td>
     </tr>
 </table>
 
-<h2>Buttons</h2>
+<h2>ボタン</h2>
 <table>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-        <td>Clear Messages</td>
-        <td>Clears all messages in the table.</td>
+        <td>メッセージをクリア</td>
+        <td>テーブル内のすべてのメッセージをクリアします。</td>
     </tr>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-        <td>Poll Now</td>
-        <td>Polls all registered services and resets the time to next polling. This means that if the polling
-            frequency is set to 120 seconds, and you click on the button with 30 seconds remaining, the next automatic
-            polling will occur after 120 seconds.
+        <td>今すぐポーリング</td>
+        <td>登録されているすべてのサービスをポーリングし、次回のポーリングまでの時間をリセットします。 これは、ポーリング頻度が120秒に設定されており、残り時間が30秒の時点でボタンをクリックした場合、次回の自動ポーリングは120秒後に発生することを意味します。
         </td>
     </tr>
 </table>
 
-<h2>Indicators</h2>
-The OAST Tab contains status indicators for external OAST services. A grey colour indicates that the service has not
-been registered yet. A green colour indicates that the service is registered and is being polled. If the service is
-registered as an active scan service, a small flame icon is added to the bottom right corner of the indicator. The
-timestamp next to the service name is updated whenever the service is polled.
+<h2>インジケーター</h2>
+OASTタブには、外部OASTサービスのステータスインジケーターが表示されます。 灰色は、サービスがまだ登録されていないことを示します。 緑色は、サービスが登録されポーリング中であることを示します。 サービスがアクティブスキャンサービスとして登録されている場合、小さな炎のアイコンがインジケータの右下隅に追加されます。 サービス名の横にあるタイムスタンプは、サービスがポーリングされるたびに更新されます。
 
-<h2>See also</h2>
+<h2>関連情報</h2>
 <table>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
         <td>
-            <a href="oast.html">OAST Support</a></td>
+            <a href="oast.html">OAST サポート</a></td>
         <td>&nbsp;</td>
     </tr>
 </table>

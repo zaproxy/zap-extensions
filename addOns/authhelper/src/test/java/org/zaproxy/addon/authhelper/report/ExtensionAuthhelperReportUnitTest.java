@@ -312,11 +312,12 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
                 			"value": 0
                 		}
                 	]
-                \t
-                \t,"domains": [
-                \t]
-                \t
-                \t
+                	,"domains": [
+                	]
+                	,"domainsPartiallyOutOfScope": [
+                	]
+                	,"domainsOutOfScope": [
+                	]
                 	,"logFile": "Log content"
                 	,\"diagnostics\": [
                 	]

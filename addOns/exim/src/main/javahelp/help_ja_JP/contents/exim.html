@@ -3,95 +3,92 @@
 <HEAD>
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
 <TITLE>
-Import/Export
+インポート/エクスポート
 </TITLE>
 </HEAD>
 <BODY>
 
-<H1>Import/Export</H1>
+<H1>インポート/エクスポート</H1>
 
-This add-on allows you to import and export ZAP data in a range of formats.
+このアドオンを使用すると、さまざまな形式でZAPデータをインポートおよびエクスポートできます。
 <p>
-It supports the <a href="automation.html">Automation Framework</a>.
+<a href="automation.html">自動化フレームワーク</a>に対応しています。
 
-<H2>Menus</H2>
+<H2>メニュー</H2>
 
-<H3>Copy URLs</H3>
-A context menu item to Copy URLs to the system clipboard.
+<H3>URLをコピー</H3>
+URLをシステムクリップボードにコピーするためのコンテキストメニュー項目。
 
-<H3>Save Selected Entries as HAR (HTTP Archive File)</H3>
-A context menu item to save the selected HTTP messages in HAR format.
+<H3>選択したエントリをHAR (HTTPアーカイブファイル) として保存</H3>
+選択したHTTPメッセージをHAR形式で保存するためのコンテキストメニュー項目。
 
-<H3>Save Raw Message</H3>
-Provides a context menu to save content of HTTP messages as binary.
-(While the files will probably open in a simple editor it may have null characters or malformed bytes.)
+<H3>メッセージをRaw形式で保存</H3>
+HTTPメッセージのコンテンツをバイナリとして保存するためのコンテキストメニューを提供します。
+（ファイルはおそらく単純なエディタで開くことができますが、null 文字や不正なバイトが含まれている可能性があります。）
 
-<H3>Save XML Message</H3>
-Provides a context menu to save content of HTTP messages as XML.
+<H3>XMLメッセージを保存</H3>
+HTTPメッセージのコンテンツをXMLとして保存するためのコンテキストメニューを提供します。
 
-<H3>Import HAR (HTTP Archive File)</H3>
-An option to import messages from a HTTP Archive (HAR), available via the 'Import' menu.
+<H3>HAR (HTTPアーカイブファイル) をインポート</H3>
+「インポート」メニューから利用できる、HTTPアーカイブ (HAR) からメッセージをインポートするオプション。 
 
-<strong>Note</strong>: The following modifications may be made when importing a HAR (HTTP Archive File):
+<strong>注</strong>: HAR (HTTPアーカイブファイル) のインポート時に、以下の変更が行われる可能性があります：
 <ul>
-  <li>Missing HTTP Version - If the message is missing the httpVersion attribute it will be set to "HTTP/1.1".</li>
-  <li>HTTP Version 3 - If the message has its httpVersion attribute set as "h3", "http/3", "http/3.0" it will be set to "HTTP/2".</li>
-  <li>Carriage return (CR) or Line feed (LF) in Headers - If the message contains headers with CR or LF, the CRLF(s) will be removed.</li>
+  <li>HTTPバージョンの欠落 - メッセージに httpVersion 属性がない場合、"HTTP/1.1" に設定されます。</li>
+  <li>HTTPバージョン3 - メッセージの httpVersion 属性が "h3"、"http/3"、"http/3.0" に設定されている場合、"HTTP/2" に設定されます。</li>
+  <li>ヘッダー内のキャリッジリターン (CR) またはラインフィード (LF) - メッセージにCRまたはLFを含むヘッダーが含まれている場合、CRLFは削除されます。</li>
 </ul>
 
-<H3>Import Log File</H3>
-Allows you to import log files from ModSecurity and files previously exported from ZAP.
+<H3>ログファイルをインポート</H3>
+ModSecurity ログファイルと、以前にZAPからエクスポートされたファイルをインポートできます。
 
-<H3>Import URLs</H3>
-An option to import a file of URLs is available via the 'Import' menu ('Import a File Containing URLs'). The file must be plain text with one URL per line.
-Blank lines and lines starting with # will be ignored.
+<H3>URLをインポート</H3>
+「インポート」メニュー (「URLを含むファイルをインポート」) から、URLのファイルをインポートするオプションを利用できます。 ファイルは、1行に1つのURLを含むプレーンテキストである必要があります。
+空行および # で始まる行は無視されます。
 
-<H3>Tools / Prune Sites Tree...</H3>
-This allows you to prune URLs from the Sites Tree using a file in the <a href="sitestreeformat.html">Sites Tree format</a>
+<H3>ツール / サイトツリーの剪定...</H3>
+<a href="sitestreeformat.html">サイトツリー形式</a>のファイルを使用して、サイトツリーからURLを剪定できます。
 
-<H2>Export</H2>
-The add-on also adds a top level "Export" menu, providing the following functionality.
+<H2>エクスポート</H2>
+このアドオンは、トップレベルの「エクスポート」メニューも追加し、以下の機能を提供します。
 
-<H3>Save Messages...</H3>
-This allows you to save requests and responses to a text file. <br/>
-Select the messages to save in the History tab (including multi-select).
+<H3>メッセージを保存…</H3>
+リクエストおよびレスポンスをテキストファイルに保存する機能です。 <br/>
+履歴タブで保存するメッセージを選択します (複数選択を含む)。
 
-<H3>Save Responses...</H3>
-This allows you to save a specific responses to a file. <br/>
-Select the relevant message in the History tab - 
-note that binary responses (such as images) can be saved as well as text responses.
+<H3>レスポンスを保存...</H3>
+特定のレスポンスをファイルに保存できます。 <br/>
+履歴タブで関連するメッセージを選択します。テキストレスポンスだけでなく、バイナリレスポンス (画像など) も保存できることに注意してください。
 
-<H3>Save Sites Tree...</H3>
-This allows you to save the Sites Tree in the <a href="sitestreeformat.html">Sites Tree format</a>
+<H3>サイトツリーを保存…</H3>
+<a href="sitestreeformat.html">サイトツリー形式</a>でサイトツリーを保存できます。
 
-<H3>Save All URLs...</H3>
-This allows you to save all the accessed URLs to a text or HTML file. <br/>
-This can be used, amongst other things, to compare the URLs available to users with 
-different roles or permissions on the same system.
-(Also consider leveraging the Access Control Testing add-on.)
-This functionality is also available via the right-click context menu in the Sites tree panel.
+<H3>すべてのURLを保存…</H3>
+アクセスされたすべてのURLをテキストファイルまたはHTMLファイルに保存できます。 <br/>
+これは特に、同じシステム上の異なるロールまたは権限を持つユーザーが利用できるURLを比較するために使用できます。
+（また、アクセス制御テストアドオンの活用も検討してください。）
+この機能は、サイトツリーパネルの右クリックコンテキストメニューからも利用できます。
 
-<H3>Save URLs...</H3>
-All URLs in the Sites tree that fall within the selected node are exported. This functionality is
-also available from the right-click menu when used on a Site or Context node in the Sites tree panel.
+<H3>URLを保存…</H3>
+選択されたノードに含まれるサイトツリー内のすべてのURLがエクスポートされます。 この機能は、サイトツリーパネルのサイトまたはコンテキストノードで右クリックメニューからも利用できます。
 
 <H2>ZAP API</H2>
-This add-on also exposes various ZAP API endpoints to facilitate programmatic use of the functionality.
+このアドオンは、機能のプログラムによる使用を容易にするために、さまざまなZAP APIエンドポイントも公開しています。
 
-<H3>Actions</H3>
+<H3>アクション</H3>
 <ul>
-  <li><code>exportSitesTree (filePath* )</code> Exports the Sites Tree in the Sites Tree YAML format.</li>
-  <li><code>importHar (filePath* )</code> Imports a HAR file.</li>
-  <li><code>importModsec2Logs (filePath* )</code> Imports ModSecurity2 logs from the file with the given file system path.</li>
-  <li><code>importUrls (filePath* )</code> Imports URLs (one per line) from the file with the given file system path.</li>
-  <li><code>importZapLogs (filePath* )</code> Imports previously exported ZAP messages from the file with the given file system path.</li>
-  <li><code>pruneSitesTree (filePath* )</code> Prunes the Sites Tree based on a file in the Sites Tree YAML format.</li>
+  <li><code>exportSitesTree (filePath* )</code> サイトツリーをサイトツリーYAML形式でエクスポートします。</li>
+  <li><code>importHar (filePath* )</code> HARファイルをインポートします。</li>
+  <li><code>importModsec2Logs (filePath* )</code> 指定されたファイルシステムパスのファイルからModSecurity2ログをインポートします。</li>
+  <li><code>importUrls (filePath* )</code> 指定されたファイルシステムパスのファイルからURL (1行に1つ) をインポートします。</li>
+  <li><code>importZapLogs (filePath* )</code> 指定されたファイルシステムパスのファイルから、以前にエクスポートされたZAPメッセージをインポートします。</li>
+  <li><code>pruneSitesTree (filePath* )</code> サイトツリーYAML形式のファイルに基づいてサイトツリーを剪定します。</li>
 </ul>
 
-<H3>Others</H3>
-  <li><code>exportHar (baseurl start count )</code> Gets the HTTP messages sent through/by ZAP, in HAR format, optionally filtered by URL and paginated with 'start' position and 'count' of messages</li>
-  <li><code>exportHarById (ids* )</code> Gets the HTTP messages with the given IDs, in HAR format.</li>
-  <li><code>sendHarRequest (request* followRedirects )</code> Sends the first HAR request entry, optionally following redirections. Returns, in HAR format, the request sent and response received and followed redirections, if any. The Mode is enforced when sending the request (and following redirections), custom manual requests are not allowed in 'Safe' mode nor in 'Protected' mode if out of scope.</li>
+<H3>その他</H3>
+  <li><code>exportHar (baseurl start count )</code> ZAPを経由/によって送信されたHTTPメッセージをHAR形式で取得します。オプションでURLによるフィルタリングや、'start' 位置とメッセージの 'count' によるページネーションが可能です。</li>
+  <li><code>exportHarById (ids* )</code> 指定されたIDを持つHTTPメッセージをHAR形式で取得します。</li>
+  <li><code>sendHarRequest (request* followRedirects )</code>  最初のHARリクエストエントリを送信します。オプションでリダイレクトをフォローします。 送信されたリクエストと受信したレスポンス、およびフォローされたリダイレクト (存在する場合) をHAR形式で返します。 リクエストの送信時 (およびリダイレクトのフォロー時) にはモードが適用されます。スコープ外の場合、「セーフ」モードまたは「プロテクト」モードではカスタムの手動リクエストは許可されません。</li>
 </ul>
 
 </BODY>

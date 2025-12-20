@@ -2,94 +2,77 @@
 <html>
 <head>
 <title>
-Passive Scan Rules - Alpha
+パッシブスキャンルール - Alpha
 </title>
 </head>
 <body>
-<h1>Passive Scan Rules - Alpha</h1>
+<h1>パッシブスキャンルール - Alpha</h1>
 
-The following alpha status passive scan rules are included in this add-on:
+以下のアルファステータスのパッシブスキャンルールがこのアドオンに含まれています：
 
-<h2>An example passive scan rule which loads data from a file</h2>
-This implements an example passive scan rule that loads strings from a file that the user can edit.<br>
-For more details see: <a href="https://www.zaproxy.org/blog/2014-04-03-hacking-zap-3-passive-scan-rules/">Hacking ZAP Part 3: Passive Scan Rules</a>.
-<p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/ExampleFilePassiveScanRule.java">ExampleFilePassiveScanRule.java</a>
-
-<h2 id="id-10094">Base64 Disclosure</h2>
+<h2 id="id-10094">Base64の漏洩</h2>
 <ul>
- <li><b>ASP.NET ViewState Disclosure:</b> An ASP.NET ViewState was disclosed by the application/web server</li>
- <li><b>ASP.NET ViewState Integrity:</b> The application does not use a Message Authentication Code (MAC) to protect the integrity of the ASP.NET ViewState, which can be tampered with by a malicious client</li>
- <li><b>Base64 Disclosure:</b> Base64 encoded data was disclosed by the application/web server</li>
+ <li><b>ASP.NET ViewStateの露見:</b> アプリケーション/Webサーバーによって、ASP.NET ViewState が公開されました</li>
+ <li><b>ASP.NET ViewStateの完全性:</b> アプリケーションがASP.NET ViewStateの完全性を保護するためにメッセージ認証コード (MAC) を使用していません。このため、悪意のあるクライアントによって改ざんされる可能性があります。</li>
+ <li><b>Base64の漏洩:</b> アプリケーションまたはWebサーバーによってBase64エンコードされたデータが漏洩しました。</li>
 </ul>
-<strong>Note:</strong> At Low Threshold all occurrences within each response will be included.
+<strong>注:</strong> 低しきい値では、各レスポンス内のすべての発生が含まれます。
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/Base64Disclosure.java">Base64Disclosure.java</a><br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10094/">10094</a>.
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/Base64Disclosure.java">Base64Disclosure.java</a><br>
+アラートID: <a href="https://www.zaproxy.org/docs/alerts/10094/">10094</a>.
 
-<h2>Example Passive Scan Rule: Denial of Service</h2>
-This implements a very simple example passive scan rule.<br>
-For more details see: <a href="https://www.zaproxy.org/blog/2014-04-03-hacking-zap-3-passive-scan-rules/">Hacking ZAP Part 3: Passive Scan Rules</a>.
-<p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/ExampleSimplePassiveScanRule.java">ExampleSimplePassiveScanRule.java</a>
-
-<h2 id="id-90005">Fetch Metadata Request Headers Scan Rule</h2>
-Fetch Metadata Request headers are HTTP request headers that provide additional information about a request's origin.
-This additional information helps the server to implement resource isolation policy, allowing external sites to request only
-those resources that are intended for sharing, and that are used appropriately. This approach can help mitigate common
-cross-site web vulnerabilities such as CSRF, Cross-site Script Inclusion, timing attacks, and cross-origin information leaks.
-The Fetch Metadata Request headers are:
+<h2 id="id-90005">Fetch Metadataリクエストヘッダースキャンルール</h2>
+Fetch Metadata リクエストヘッダーは、HTTP リクエストヘッダーで、リクエストのオリジンに関する追加情報を提供します。
+この追加情報は、サーバーがリソース隔離ポリシーを実装するのを助け、外部サイトが共有を意図したリソースのみをリクエストし、適切に使用されるようにします。 このアプローチは、CSRF、クロスサイトスクリプトインジェクション、タイミング攻撃、クロスオリジン情報漏洩などの一般的なクロスサイトウェブ脆弱性を緩和するのに役立ちます。
+Fetch Metadata リクエストヘッダーは以下の通りです：
 <ul>
  <li>Sec-Fetch-Site</li>
  <li>Sec-Fetch-Mode</li>
  <li>Sec-Fetch-Dest</li>
  <li>Sec-Fetch-User</li>
 </ul>
-(from <a href="https://developer.mozilla.org/en-US/docs/Glossary/Fetch_metadata_request_header">Fetch Metadata Headers</a>)
+( <a href="https://developer.mozilla.org/en-US/docs/Glossary/Fetch_metadata_request_header">Fetch Metadata Headers</a> より<a href="#"></a>)
 
 <p>
-Sec-Fetch-Site indicates the relationship between a request initiator's origin and the origin of requested resource.
-(from <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Sec-Fetch-Site">Sec-Fetch-Site</a>)
+Sec-Fetch-Site は、リクエストイニシエーターのオリジンとリクエストされたリソースのオリジン間の関係を示します。
+(<a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Sec-Fetch-Site">Sec-Fetch-Site</a> より))
 
 <p>
-Sec-Fetch-Mode allows the server to distinguish between requests originating from a user navigating between HTML
-pages and requests to load images and other resources.
-(from <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Sec-Fetch-Mode">Sec-Fetch-Mode</a>)
+Sec-Fetch-Mode は、サーバーが HTML ページ間をナビゲートするユーザーからのリクエストと、画像や他のリソースをロードするリクエストを区別できるようにします。
+(<a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Sec-Fetch-Mode">Sec-Fetch-Mode</a> より)
 
 <p>
-Sec-Fetch-Dest indicates where and how the requested resource will be used.
-(from <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Sec-Fetch-Dest">Sec-Fetch-Dest</a>)
+Sec-Fetch-Dest は、リクエストされたリソースがどこでどのように使用されるかを示します。
+(<a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Sec-Fetch-Dest">Sec-Fetch-Dest</a> より)
 
 <p>
-Sec-Fetch-User is only sent for requests initiated by user activation.
-(from <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Sec-Fetch-User">Sec-Fetch-User</a>)
+Sec-Fetch-User は、ユーザーアクティベーションによって開始されたリクエストに対してのみ送信されます。
+(<a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Sec-Fetch-User">Sec-Fetch-User</a> より)
 
 <p>
- Alerts generated:
+ 生成されるアラート：
 <ul>
- <li><b>Sec-Fetch-Site Header is Missing</b></li>
- <li><b>Sec-Fetch-Site Header Has an Invalid Value</b></li>
- <li><b>Sec-Fetch-Mode Header is Missing</b></li>
- <li><b>Sec-Fetch-Mode Header Has an Invalid Value</b></li>
- <li><b>Sec-Fetch-Dest Header is Missing</b></li>
- <li><b>Sec-Fetch-Dest Header Has an Invalid Value</b></li>
- <li><b>Sec-Fetch-User Header is Missing</b></li>
- <li><b>Sec-Fetch-User Header Has an Invalid Value</b></li>
+ <li><b>Sec-Fetch-Siteヘッダーがありません</b></li>
+ <li><b>Sec-Fetch-Site ヘッダーに無効な値があります</b></li>
+ <li><b>Sec-Fetch-Modeヘッダーがありません</b></li>
+ <li><b>Sec-Fetch-Mode ヘッダーに無効な値があります</b></li>
+ <li><b>Sec-Fetch-Destヘッダーがありません</b></li>
+ <li><b>Sec-Fetch-Dest ヘッダーに無効な値があります</b></li>
+ <li><b>Sec-Fetch-Userヘッダーがありません</b></li>
+ <li><b>Sec-Fetch-User ヘッダーに無効な値があります</b></li>
 </ul>
 <p>
- Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/FetchMetadataRequestHeadersScanRule.java">FetchMetadataRequestHeadersScanRule.java</a><br>
- Alert ID: <a href="https://www.zaproxy.org/docs/alerts/90005/">90005</a>.
+ 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/FetchMetadataRequestHeadersScanRule.java">FetchMetadataRequestHeadersScanRule.java</a><br>
+アラートID: <a href="https://www.zaproxy.org/docs/alerts/90005/">90005</a>.
 
-<h2 id="id-110009">Full Path Disclosure Scan Rule</h2>
-<p>A Full Path Disclosure vulnerability is where the path to the root of the application providing valuable information for attackers.
-Examples of Full Path Disclosure Vulnerabilities are : /home/omg/htdocs/file/ or C:\Users\username\server\
+<h2 id="id-110009">フルパスの露見スキャンルール</h2>
+<p>フルパス露見の脆弱性とは、アプリケーションのルートパスが攻撃者に貴重な情報を提供するものです。
+フルパス露見の脆弱性の例: /home/omg/htdocs/file/ または C:\Users\username\server\
 </p>
-<p>The attacker could use this path to steal credentials or other private information. For more information visit : <a href="https://owasp.org/www-community/attacks/Full_Path_Disclosure">OWASP article.</a></p>
+<p>攻撃者はこのパスを使用して、資格情報や他のプライベート情報を窃取する可能性があります。 詳細については <a href="https://owasp.org/www-community/attacks/Full_Path_Disclosure">OWASP 記事</a> を参照してください。</p>
 
-<p>Latest code:
- <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/FullPathDisclosureScanRule.java">FullPathDisclosureScanRule.java</a>
- <br>
- Alert ID: <a href="https://www.zaproxy.org/docs/alerts/110009/">110009</a>.
+<p>最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/FullPathDisclosureScanRule.java">FullPathDisclosureScanRule.java</a><br>
+アラートID: <a href="https://www.zaproxy.org/docs/alerts/110009/">110009</a>.
 </p>
 
 </body>

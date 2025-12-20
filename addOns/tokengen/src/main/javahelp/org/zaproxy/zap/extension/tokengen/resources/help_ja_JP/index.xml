@@ -4,6 +4,6 @@
          "http://java.sun.com/products/javahelp/index_2_0.dtd">
 
 <index version="2.0">
-	<indexitem text="tokengen" target="tokengen" />
-	<indexitem text="tokengen options" target="tokengen.options" />
+	<indexitem text="トークンジェネレーター" target="tokengen" />
+	<indexitem text="トークンジェネレーター オプション" target="tokengen.options" />
 </index>

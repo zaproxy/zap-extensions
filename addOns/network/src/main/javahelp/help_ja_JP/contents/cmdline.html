@@ -2,52 +2,50 @@
 <HTML>
 <HEAD>
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
-<TITLE>Command Line</TITLE>
+<TITLE>コマンドライン</TITLE>
 </HEAD>
 <BODY>
-	<H1>Command Line</H1>
+	<H1>コマンドライン</H1>
 
-	The Network add-on supports the following command line options:
+	ネットワークアドオンは、以下のコマンドラインオプションをサポートしています：
 	<table>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td>-certload</td>
-			<td>Loads the Root CA certificate from the specified file.</td>
+			<td>指定されたファイルからルートCA証明書を読み込みます。</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td>-certpubdump</td>
-			<td>Dumps the Root CA certificate into the specified file, this is suitable for importing into browsers.</td>
+			<td>指定されたファイルにルートCA証明書をダンプします。これはブラウザへのインポートに適しています。</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td>-certfulldump</td>
-			<td>Dumps the Root CA certificate and the private key into the specified file, this is suitable for importing into ZAP.</td>
+			<td>指定されたファイルにルートCA証明書と秘密鍵をダンプします。これはZAPへのインポートに適しています。</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td>-host</td>
-			<td>Overrides the host of the main proxy, specified in the configuration file.</td>
+			<td>設定ファイルで指定されているメインプロキシのホストを上書きします。</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td>-port</td>
-			<td>Overrides the port of the main proxy, specified in the configuration file.</td>
+			<td>設定ファイルで指定されているメインプロキシのポートを上書きします。</td>
 		</tr>
 	</table>
 
-	<H3>Local Servers/Proxies</H3>
-	When ZAP is running in command line mode (i.e. <code>-cmd</code>) only the main proxy is started, for example, to proxy integration tests
-	or access the ZAP API.
-	If unable to start the main proxy in command line mode or in daemon mode (i.e. <code>-daemon</code>) ZAP is terminated, when running with
-	GUI an appropriate warning is shown instead.
+	<H3>ローカルサーバー/プロキシ</H3>
+	ZAPがコマンドラインモード (すなわち <code>-cmd</code>) で実行されている場合、メインプロキシのみが起動されます。これは、統合テストのプロキシとして使用したり、ZAP APIにアクセスしたりする場合などに利用されます。
+	コマンドラインモードまたはデーモンモード (すなわち <code>-daemon</code>) でメインプロキシを開始できない場合、ZAPは終了します。GUIで実行されている場合は、代わりに適切な警告が表示されます。
 
-	<H2>See also</H2>
+	<H2>関連情報</H2>
 	<table>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td><a href="network.html">Network</a></td>
-			<td>the introduction to Network add-on</td>
+			<td><a href="network.html">ネットワーク</a></td>
+			<td>ネットワークアドオンの概要</td>
 		</tr>
 	</table>
 

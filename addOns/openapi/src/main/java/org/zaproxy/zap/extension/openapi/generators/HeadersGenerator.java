@@ -28,7 +28,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpHeaderField;
 import org.zaproxy.zap.extension.openapi.converter.swagger.OperationModel;
@@ -129,9 +129,7 @@ public class HeadersGenerator {
     private static String getPartialMatch(Set<String> values, String... wantedMatches) {
         for (String wantedMatch : wantedMatches) {
             Optional<String> match =
-                    values.stream()
-                            .filter(e -> StringUtils.containsIgnoreCase(e, wantedMatch))
-                            .findFirst();
+                    values.stream().filter(e -> Strings.CI.contains(e, wantedMatch)).findFirst();
             if (match.isPresent()) {
                 return match.get();
             }

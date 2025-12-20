@@ -2,36 +2,35 @@
 <HTML>
 <HEAD>
 <TITLE>
-Automation Framework - delay Job
+自動化フレームワーク - delay ジョブ
 </TITLE>
 </HEAD>
 <BODY>
-<H1>Automation Framework - delay Job</H1>
+<H1>自動化フレームワーク - delay ジョブ</H1>
 
-This job waits for a specified time unless one of a specific set of conditions are met.<br>
-It can be used to wait for regression tests being proxied through ZAP in order to explore your application more thoroughly.
+このジョブは、指定された時間待機します。ただし、特定の条件のいずれかが満たされた場合は待機を終了します。<br>
+これは、ZAP経由でプロキシされる回帰テストを待機するために使用でき、アプリケーションをより徹底的に探索するために役立ちます。
 <p>
-It is covered in the video: <a href="https://youtu.be/hcftgjz_Vgc">ZAP Chat 12 Automation Framework Part 6 - Delays and Active Scan</a>.
+この内容は、動画「<a href="https://youtu.be/hcftgjz_Vgc">ZAP Chat 12 Automation Framework Part 6 - Delays and Active Scan</a>」で解説されています。
 <p>
-The time parameter supports the formats <code>hh:mm:ss</code>, <code>mm:ss</code> and <code>ss</code>, so "5" is 5 seconds, 
-"1:30" is one minute and 30 seconds and "2:20:30" is 2 hours, 20 minutes and 30 seconds.
+time パラメータは、<code>hh:mm:ss</code>、<code>mm:ss</code>、<code>ss</code> の形式をサポートします。したがって、"5" は 5 秒、"1:30" は 1 分 30 秒、"2:20:30" は 2 時間 20 分 30 秒です。
 <p>
-The conditions supported are:
+サポートされる条件は以下の通りです：
 <ul>
-<li>The creation of the file given by the optional fileName parameter
-<li>Calling the static method: <code>org.zaproxy.addon.automation.jobs.DelayJob.setEndJob(true);</code>
-<li>Calling the API end point: <code>automation / action / endDelayJob</code>
+<li>オプションの fileName パラメータで与えられたファイルの作成
+<li>静的メソッドの呼び出し: <code>org.zaproxy.addon.automation.jobs.DelayJob.setEndJob(true);</code>
+<li>API エンドポイントの呼び出し: <code>automation / action / endDelayJob</code>
 </ul>
 
 <H2>YAML</H2>
 
 <pre>
-  - type: delay                        # Pause the plan for a set period of time or event (file created, static method called, API end point called)
+  - type: delay                        # 設定された期間、またはイベント (ファイル作成、静的メソッド呼び出し、APIエンドポイント呼び出し) が発生するまでプランを一時停止します
     parameters:
-      time:                            # String: The time to wait, format any of ['hh:mm:ss', 'mm:ss', 'ss'], default: 0
-      fileName:                        # String: Name of a file which will cause the job to end early if created, default: empty
-    enabled:                           # Bool: If set to false the job will not be run, default: true
-    alwaysRun:                         # Bool: If set and the job is enabled then it will run even if the plan exits early, default: false
+      time:                            # 文字列: 待機する時間、形式は ['hh:mm:ss', 'mm:ss', 'ss'] のいずれか、デフォルト: 0
+      fileName:                        # 文字列: 作成された場合にジョブを早期に終了させるファイルの名前、デフォルト: 空
+    enabled:                           # Bool: falseに設定されている場合、ジョブは実行されません、デフォルト: true
+    alwaysRun:                         # Bool: 設定され、ジョブが有効な場合、プランが早期に終了しても実行されます、デフォルト: false
 </pre>
 
 </BODY>

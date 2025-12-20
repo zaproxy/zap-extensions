@@ -154,12 +154,16 @@ public class CrossDomainScanRule extends AbstractHostPlugin implements CommonAct
 
             scanSilverlightCrossdomainPolicyFile(originalURI);
 
-        } catch (Exception e) {
-            // needed to catch exceptions from the "finally" statement
-            LOGGER.error(
+        } catch (IOException e) {
+            LOGGER.debug(
                     "Error scanning a node for Cross Domain misconfigurations: {}",
                     e.getMessage(),
                     e);
+        } catch (XPathExpressionException xei) {
+            LOGGER.error(
+                    "Error scanning a node for Cross Domain misconfigurations: {}",
+                    xei.getMessage(),
+                    xei);
         }
     }
 

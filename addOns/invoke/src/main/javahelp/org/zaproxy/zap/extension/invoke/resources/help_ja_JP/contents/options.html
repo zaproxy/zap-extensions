@@ -2,88 +2,82 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Options Applications screen</title>
+<title>オプション – アプリケーション画面</title>
 </head>
 <body>
-	<h1>Options Applications screen</h1>
+	<h1>オプション – アプリケーション画面</h1>
 	<p>
-		この画面が設定できるのは <a href="concepts.html">applications</a> that
-		can be invoked.<br> By default there are no applications available, you need to add
-		all of the applications that you want to use.
-	<h3>表示する名前</h3>
-	The name that will be used for this application in ZAP.
-	<br>
+		この画面では、呼び出し可能な<a href="concepts.html">アプリケーション</a>を設定できます。<br>
+デフォルトではアプリケーションは登録されていません。使用したいアプリケーションをすべて追加する必要があります。
+	</p>
 
-	<h3>実行するコマンド</h3>
-	The full path of the application you want to invoke.
-	<br> Only one command can be specified. If you want to run multiple commands in one
-	go, or set up environmental variables, then you should create a script or batch file and
-	then invoke this from ZAP.
+	<h3>表示名</h3>
+	<p>ZAPでこのアプリケーションに使用される名前です。</p>
 
-	<h3>パラメータ</h3>
-	The parameters that ZAP should pass to the command.
-	<br> The following tags may be used to pass parameters:
+	<h3>コマンドのフルパス</h3>
+	<p>
+		呼び出したいアプリケーションの完全なパス。<br>
+指定できるコマンドは1つだけです。 複数のコマンドを一度に実行したい場合や、環境変数を設定する必要がある場合は、スクリプトファイルまたはバッチファイルを作成し、それをZAPから起動してください。
+	</p>
+
+	<h3>パラメーター</h3>
+	ZAPがコマンドに渡すパラメーターです。<br>
+	パラメーターを渡すために以下のタグを使用できます：
 	<table>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td>%url%</td>
-			<td>the full url, e.g. 'http://localhost/test?a=b'</td>
+			<td>完全なURL。(例: http://localhost/test?a=b)</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td>%site%</td>
-			<td>the site, e.g. 'http://localhost:8080/'</td>
+			<td>サイト。(例: http://localhost:8080/)</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td>%host%</td>
-			<td>the hostname, e.g. 'localhost'</td>
+			<td>ホスト名。(例: localhost)</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td>%port%</td>
-			<td>the port, e.g. '80'</td>
+			<td>ポート。(例: 80)</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td>%cookie%</td>
-			<td>the first cookie field from the request header (if any)</td>
+			<td>リクエストヘッダーの最初のCookieフィールド (存在する場合)</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td>%postdata%</td>
-			<td>the POST data sent, if any, with any newlines replaced with "\n"</td>
+			<td>送信されたPOSTデータ (存在する場合)。すべての改行は "\n" に置換されます</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td>%msgid%</td>
-			<td>the HTTP message id to fetch data from the API (/JSON/core/view/message/?id=$msgid), 
-				does not alway exist, will return -1 if no message id
-			</td>
+			<td>APIからデータを取得するためのHTTPメッセージID (/JSON/core/view/message/?id=$msgid)。常に存在するわけではありません。メッセージIDがない場合は -1 が返されます</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td>%header-{{ header }}%</td>
-			<td>the request header by name (if any), e.g. <code>%header-user-agent%</code> would return the value of the User-Agent header</td>
+			<td>名前によるリクエストヘッダー (存在する場合)。例: <code>%header-user-agent%</code>はUser-Agentヘッダーの値を返します</td>
 		</tr>
 	</table>
-	So if a command accepted a URL using '-u' you would specify the parameters as: '-u %url%'
+	したがって、コマンドが '-u' を使用してURLを受け入れる場合、パラメーターは次のように指定します: '-u %url%'
 
-	<h3>出力結果のキャプチャ</h3>
-	If checked then the command run and any output it generates will be displayed on the
-	<i>アウトプットタブ</i>.
-	<br> You should always use this option when running scripts or commands that do not
-	have a UI.
-	<br> You can also use this option for troubleshooting - if an application does not
-	run as expected then copy the command run and try it from a command line prompt.
+	<h3>出力をキャプチャ</h3>
+	<p>
+		チェックされている場合、実行されたコマンドとその生成する出力は<i>出力タブ</i>に表示されます。<br>
+UIを持たないスクリプトやコマンドを実行する際は、必ずこのオプションを使用してください。<br>
+トラブルシューティングにもこのオプションを使用できます。アプリケーションが期待どおりに実行されない場合は、実行されたコマンドをコピーし、コマンドラインプロンプトから実行してみてください。
+	</p>
 
-	<h3>Output to Note</h3>
-	If checked then any output will be appended to a
-	<i>Note</i> attached to the relevant
-	<i>履歴タブ</i> record.
-	<br> Note that some nodes in the
-	<i>サイトタブ</i> do not have associated
-	<i>履歴タブ</i> records - for those nodes this option will have no effect.
-
+	<h3>ノートに出力</h3>
+	<p>
+		チェックされている場合、出力は関連する<i>履歴タブ</i>のレコードに添付された<i>ノート</i>に追記されます。<br>
+<i>サイトタブ</i>内の一部のノードには関連する<i>履歴タブ</i>のレコードがないことに注意してください。これらのノードに対しては、このオプションは適用されません。 
+	</p>
 </body>
 </html>

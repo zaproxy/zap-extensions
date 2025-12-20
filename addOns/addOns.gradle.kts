@@ -18,11 +18,11 @@ import org.zaproxy.gradle.crowdin.CrowdinExtension
 plugins {
     eclipse
     jacoco
-    id("org.cyclonedx.bom") version "2.2.0" apply false
-    id("org.rm3l.datanucleus-gradle-plugin") version "2.0.0" apply false
-    id("org.zaproxy.add-on") version "0.13.1" apply false
-    id("org.zaproxy.crowdin") version "0.6.0" apply false
-    id("me.champeau.gradle.japicmp") version "0.4.6" apply false
+    alias(libs.plugins.cyclonedx) apply false
+    alias(libs.plugins.datanucleus) apply false
+    alias(libs.plugins.zaproxy.addon) apply false
+    alias(libs.plugins.zaproxy.crowdin) apply false
+    alias(libs.plugins.japicmp) apply false
 }
 
 description = "Common configuration of the add-ons."
@@ -104,6 +104,10 @@ subprojects {
     if (mavenPublishAddOn) {
         apply(plugin = "maven-publish")
         apply(plugin = "signing")
+
+        tasks.named(LifecycleBasePlugin.CHECK_TASK_NAME) {
+            dependsOn(tasks.named(JavaPlugin.JAVADOC_TASK_NAME))
+        }
     }
     if (japicmpAddOn) {
         apply(plugin = "me.champeau.gradle.japicmp")
@@ -170,7 +174,7 @@ subprojects {
         }
     }
 
-    val zapGav = "org.zaproxy:zap:2.16.0"
+    val zapGav = "org.zaproxy:zap:2.17.0"
     dependencies {
         "zap"(zapGav)
     }
@@ -183,7 +187,7 @@ subprojects {
         )
 
         manifest {
-            zapVersion.set("2.16.0")
+            zapVersion.set("2.17.0")
 
             changesFile.set(tasks.named<ConvertMarkdownToHtml>("generateManifestChanges").flatMap { it.html })
             repo.set("https://github.com/zaproxy/zap-extensions/")
@@ -326,8 +330,8 @@ subprojects {
         publishing {
             repositories {
                 maven {
-                    val releasesRepoUrl = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
-                    val snapshotsRepoUrl = uri("https://oss.sonatype.org/content/repositories/snapshots/")
+                    val releasesRepoUrl = uri("https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/")
+                    val snapshotsRepoUrl = uri("https://central.sonatype.com/repository/maven-snapshots/")
                     setUrl(provider { if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl })
 
                     if (ossrhUsername != null && ossrhPassword != null) {

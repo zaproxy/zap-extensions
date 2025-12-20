@@ -56,6 +56,35 @@
     },
     "website": "https://www.kissmetrics.com"
   },
+  "KIT CMS": {
+    "cats": [
+      1
+    ],
+    "description": "KIT CMS is a .NET-based content management system created by Kontrolit.net for building and managing dynamic websites and digital content.",
+    "icon": "KITCMS.svg",
+    "meta": {
+      "generator": "^Kontrolit KIT CMS$"
+    },
+    "saas": true,
+    "website": "https://www.kontrolit.net"
+  },
+  "KKTIX": {
+    "cats": [
+      104
+    ],
+    "description": "KKTIX is a Taiwanese software platform that provides online ticketing and event management solutions.",
+    "icon": "KKTIX.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "assets\\.kktix\\.io"
+    ],
+    "website": "https://kktix.com"
+  },
   "KMK": {
     "cats": [
       6
@@ -309,6 +338,22 @@
     "saas": true,
     "website": "https://www.kaliocommerce.com"
   },
+  "Kalix": {
+    "cats": [
+      72
+    ],
+    "description": "Kalix is a HIPAA-compliant electronic medical record, practice management, and telehealth platform designed for dietitians, nutritionists, and other healthcare professionals.",
+    "icon": "Kalix.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.kalixhealth\\.com"
+    ],
+    "website": "https://kalixhealth.com"
+  },
   "Kaltura": {
     "cats": [
       14,
@@ -419,6 +464,20 @@
       "www\\.kangaroorewards\\.com/"
     ],
     "website": "https://loyalty.kangaroorewards.com"
+  },
+  "Kangle": {
+    "cats": [
+      22,
+      64
+    ],
+    "description": "Kangle is an open-source web server and reverse proxy software widely used in Chinese hosting environments for HTTP caching and virtual hosting.",
+    "headers": {
+      "server": "^kangle(?:/([\\d\\.]+))?\\;version:\\1",
+      "x-cache": "^MISS from (?:[\\w& ]+ )?kangle\\b"
+    },
+    "icon": "Kangle.svg",
+    "oss": true,
+    "website": "https://kangle.org"
   },
   "KanzOboz": {
     "cats": [
@@ -638,6 +697,23 @@
     ],
     "website": "https://cocolive.co.jp/"
   },
+  "KeaBuilder": {
+    "cats": [
+      32
+    ],
+    "description": "KeaBuilder is a platform that provides intelligent insights, strategic recommendations, advanced tools, and seamless integrations to strengthen online presence and support business growth.",
+    "dom": [
+      "link[href*='assets.keabuilder.com']"
+    ],
+    "icon": "KeaBuilder.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://keabuilder.com"
+  },
   "Keap": {
     "cats": [
       53
@@ -761,6 +837,21 @@
     ],
     "website": "https://www.telerik.com/kendo-ui"
   },
+  "Kenect": {
+    "cats": [
+      53
+    ],
+    "description": "Kenect is a platform that provides reputation management and business texting solutions for customer engagement and feedback collection.",
+    "dom": [
+      "iframe[src*='.kenect.com/']"
+    ],
+    "icon": "Kenect.svg",
+    "js": {
+      "toggleKenectWidget": ""
+    },
+    "saas": true,
+    "website": "https://www.kenect.com"
+  },
   "Kenlo": {
     "cats": [
       6
@@ -834,6 +925,25 @@
     },
     "website": "https://tools.ietf.org/html/rfc4559"
   },
+  "KerningJS": {
+    "cats": [
+      59
+    ],
+    "description": "Kerning.js is a JavaScript library that applies real CSS rules to style, transform, and scale web typography.",
+    "icon": "Kerning.svg",
+    "js": {
+      "FLAutoKerning": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "jquery\\.FLAutoKerning\\.js"
+    ],
+    "website": "https://webupon.com/blog/what-is-kerning"
+  },
   "Kestrel": {
     "cats": [
       22
@@ -895,6 +1005,22 @@
     "icon": "KeyCDN.svg",
     "website": "https://www.keycdn.com"
   },
+  "KeyReply": {
+    "cats": [
+      52
+    ],
+    "description": "KeyReply is a mobile-friendly chat widget that enables websites to provide real-time messaging and user support across devices.",
+    "icon": "KeyReply.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "keyreply\\.com/chat/widget\\.js"
+    ],
+    "website": "https://www.keyreply.com"
+  },
   "Keybase": {
     "cats": [
       16
@@ -935,6 +1061,38 @@
     ],
     "saas": true,
     "website": "https://keymailer.co"
+  },
+  "Keyvos": {
+    "cats": [
+      6
+    ],
+    "description": "Keyvos is a Greek ecommerce platform with functionality for storefront customization, product and order management, SEO, marketplace integration, and reporting.",
+    "icon": "Keyvos.svg",
+    "implies": [
+      "Laravel",
+      "MySQL",
+      "Elasticsearch"
+    ],
+    "meta": {
+      "generator": "Keyvos CMS"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.keyvos.gr"
+  },
+  "Keywee": {
+    "cats": [
+      32
+    ],
+    "description": "Keywee is a platform and managed service designed to support paid media and content distribution operations.",
+    "icon": "Keywee.svg",
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.keywee\\.co"
+    ],
+    "website": "https://keywee.co"
   },
   "Kibana": {
     "cats": [
@@ -1172,6 +1330,22 @@
     "saas": true,
     "website": "https://kintone.cybozu.co.jp"
   },
+  "Kiosked": {
+    "cats": [
+      6
+    ],
+    "description": "Kiosked is a platform that converts online content, including images, videos, and applications, into interactive digital storefronts.",
+    "icon": "Kiosked.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "scripts\\.kiosked\\.com"
+    ],
+    "website": "https://www.kiosked.com"
+  },
   "Kirby": {
     "cats": [
       1
@@ -1235,6 +1409,36 @@
     ],
     "saas": true,
     "website": "https://kitcart.net"
+  },
+  "Kites": {
+    "cats": [
+      51
+    ],
+    "description": "Kites is a no-code, drag-and-drop builder for creating interactive mobile websites.",
+    "icon": "Kites.svg",
+    "js": {
+      "kiteInstance.analytics": "",
+      "kiteJS": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.kites.io"
+  },
+  "Kiva": {
+    "cats": [
+      111
+    ],
+    "description": "Kiva is a charity organization that connects individuals through micro-lending to help alleviate poverty.",
+    "icon": "Kiva.svg",
+    "saas": true,
+    "scriptSrc": [
+      "www\\.kiva\\.org"
+    ],
+    "website": "https://www.kiva.org"
   },
   "Kiwi Sizing": {
     "cats": [
@@ -1413,6 +1617,46 @@
     ],
     "website": "https://www.klaviyo.com/"
   },
+  "Klaviyo Customer Hub": {
+    "cats": [
+      19
+    ],
+    "description": "Klaviyo Customer Hub gives customers a unified signed-in experience to track orders, manage returns, and get help",
+    "dom": {
+      "div#k-hub": {
+        "exists": ""
+      }
+    },
+    "icon": "Klaviyo.svg",
+    "js": {
+      "customerHub": ""
+    },
+    "website": "https://www.klaviyo.com/products/customer-experience-hub"
+  },
+  "Klaviyo Data Platform": {
+    "cats": [
+      97
+    ],
+    "description": "Klaviyo Data Platform is Klaviyo's CDP offering.",
+    "icon": "Klaviyo.svg",
+    "scriptSrc": [
+      "static-tracking\\.klaviyo\\.com/onsite/js/web_personalization"
+    ],
+    "website": "https://www.klaviyo.com/solutions/customer-data-platform"
+  },
+  "Klaviyo Forms": {
+    "cats": [
+      110
+    ],
+    "description": "Klaviyo Forms are used to capture Email and SMS sign-ups",
+    "dom": {
+      "div.klaviyo-form": {
+        "exists": ""
+      }
+    },
+    "icon": "Klaviyo.svg",
+    "website": "https://www.klaviyo.com/features/web-forms"
+  },
   "Klaviyo Reviews": {
     "cats": [
       90
@@ -1539,6 +1783,23 @@
     ],
     "website": "https://www.klickly.com"
   },
+  "Kliken": {
+    "cats": [
+      32
+    ],
+    "description": "Kliken is a shopping and ads marketing platform that helps businesses create, manage, and optimize online advertising campaigns.",
+    "icon": "Kliken.svg",
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "analytics\\.sitewit\\.com/"
+    ],
+    "website": "https://www.kliken.com/#sitewit"
+  },
   "Klip": {
     "cats": [
       100
@@ -1614,6 +1875,25 @@
     "saas": true,
     "website": "https://www.knockcrm.com"
   },
+  "KnoCommerce": {
+    "cats": [
+      73
+    ],
+    "description": "KnoCommerce is a post-purchase surveys system designed to collect customer feedback.",
+    "icon": "KnoCommerce.svg",
+    "js": {
+      "Kno.survey": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "www\\.knocdn\\.com"
+    ],
+    "website": "https://knocommerce.com"
+  },
   "Knock": {
     "cats": [
       32
@@ -1676,6 +1956,23 @@
       "api\\.knoma\\.io/"
     ],
     "website": "https://www.knoma.io"
+  },
+  "Knorish": {
+    "cats": [
+      21
+    ],
+    "cookies": {
+      "kn-antiforgery-cookie": ""
+    },
+    "description": "Knorish is a platform that enables users to create and sell online courses directly from their own websites.",
+    "icon": "Knorish.svg",
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://knorish.com"
   },
   "Ko-fi": {
     "cats": [
@@ -2232,6 +2529,25 @@
     ],
     "website": "https://www.krossbooking.com"
   },
+  "Kssib": {
+    "cats": [
+      6
+    ],
+    "cookies": {
+      "kssib_session": ""
+    },
+    "description": "Kssib is a platform from Middle East that provides integrated ecommerce solutions.",
+    "icon": "Kssib.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "cdn\\.kssib\\.co"
+    ],
+    "website": "https://kssib.com"
+  },
   "Ktor": {
     "cats": [
       18
@@ -2328,6 +2644,33 @@
     ],
     "website": "https://kueskipay.com/"
   },
+  "Kulea Marketing": {
+    "cats": [
+      32
+    ],
+    "description": "Kulea Marketing is a provider of inbound marketing and marketing automation software designed to streamline campaign management and customer engagement.",
+    "icon": "KuleaMarketing.svg",
+    "saas": true,
+    "scriptSrc": [
+      "\\.prod\\.kulea\\.marketing/"
+    ],
+    "website": "https://kulea.ma"
+  },
+  "Kundo": {
+    "cats": [
+      53
+    ],
+    "description": "Kundo is a customer service system for all digital channels, enhanced with AI and automation to resolve inquiries.",
+    "icon": "Kundo.svg",
+    "js": {
+      "$kundo_chat.DEFAULT_AVATAR_URL": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "static-chat\\.kundo\\.se"
+    ],
+    "website": "https://www.kundo.se"
+  },
   "Kuroco": {
     "cats": [
       47
@@ -2418,6 +2761,39 @@
       "ads\\.kwanzoo\\.com/"
     ],
     "website": "https://www.kwanzoo.com"
+  },
+  "Kwipped": {
+    "cats": [
+      6
+    ],
+    "description": "Kwipped is an online marketplace connecting businesses and individuals with providers of equipment rental and leasing.",
+    "icon": "Kwipped.svg",
+    "js": {
+      "init_kwipped_approve_snippet": "",
+      "kwipped_approve": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "api\\.kwipped\\.com"
+    ],
+    "website": "https://kwipped.com"
+  },
+  "Kyvio": {
+    "cats": [
+      51
+    ],
+    "description": "Kyvio is a platform for creating membership websites and constructing marketing funnels.",
+    "icon": "Kyvio.svg",
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.kyvio\\.com"
+    ],
+    "website": "https://kyvio.com"
   },
   "k-eCommerce": {
     "cats": [

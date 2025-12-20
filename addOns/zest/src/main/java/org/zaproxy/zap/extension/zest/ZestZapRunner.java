@@ -425,6 +425,12 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
             } else {
                 browser = Browser.CHROME;
             }
+        } else if ("Edge".equalsIgnoreCase(clientLaunch.getBrowserType())) {
+            if (clientLaunch.isHeadless()) {
+                browser = Browser.EDGE_HEADLESS;
+            } else {
+                browser = Browser.EDGE;
+            }
         } else {
             LOGGER.debug(
                     "Browser not launched by ZAP, passing to Zest {}",

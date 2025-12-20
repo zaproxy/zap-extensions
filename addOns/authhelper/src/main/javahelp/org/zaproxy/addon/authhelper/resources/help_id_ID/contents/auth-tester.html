@@ -68,10 +68,20 @@ Enables the recording of diagnostic data during the authentication. Refer to the
 <H3>Reset Button</H3>
 The reset button allows you to reset all the fields on the Test tab, and disable all Steps in the Steps tab (steps are only disabled not removed as recreating them might be tedious).
 
-<H2>Results Panel</H2>
+<H3>Results Panel</H3>
 
 The results panel show the progress and what has been identified. All elements need to be identified in order for 
 ZAP to be able to automatically handle authentication for this site.
+
+<H2>Domains Tab</H2>
+
+The domains tab allows you to supply any domains that should be included in the context.
+<p>
+The domains should be one per line, and in the format: 'https://www.example.com/'.
+<p>
+If the Session Handling or Verification URL fail then check to see if your app is accessing any other domains.
+<p>
+ZAP will not consider requests to any domains that are outside of the Login URL domain or the domains listed here.
 
 <H2>Diagnostics Tab</H2>
 

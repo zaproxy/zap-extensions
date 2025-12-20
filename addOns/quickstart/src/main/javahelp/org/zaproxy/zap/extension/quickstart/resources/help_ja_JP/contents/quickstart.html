@@ -3,98 +3,90 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>
-クイック スタート
+クイックスタート
 </title>
 </head>
 <body>
-<h1>クイック スタート</h1>
+<h1>クイックスタート</h1>
 
 <p>
-	The Quick Start tab provides you with an easy way to quickly test a web application.<br>
-	The top screen shows 3 buttons that take you to the following screens.
+	「クイックスタート」タブは、Webアプリケーションを迅速にテストするための簡単な方法を提供します。<br>
+画面上部には、以下の画面へ遷移するための3つのボタンが表示されます。
 </p>
 
-<h2>Automated Scan</h2>
+<h2>自動スキャン</h2>
 
-The Automated Scan screen allows you to launch an automated scan against an application - just enter its URL below and press 'Attack'.
+「自動スキャン」画面では、アプリケーションに対して自動スキャンを開始できます。以下にURLを入力し、「攻撃」を押すだけです。
 <br>
-Please be aware that you should only attack applications that you have been specifically been given permission to test.
+重要: テストの許可を明示的に取得したアプリケーションに対してのみ実行してください。
 
-<h3>URL to attack</h3>
+<h3>攻撃対象 URL</h3>
 
-This is the URL of the application you wish to attack, starting with 'http://' or 'https://'.<br>
-ZAP must be able to access this URL for the attack to proceed.
+これは攻撃したいアプリケーションのURLで、「http://」または「https://」から始まります。<br>
+攻撃を続行するには、ZAPがこのURLにアクセスできる必要があります。
 
-<h3>Use traditional spider</h3>
+<h3>従来のスパイダーを使用</h3>
 
-The traditional spider explores the application by finding links in HTML pages. 
-It is very fast but cannot handle applications which make heavy use of JavaScript. 
+従来のスパイダーは、HTMLページ内のリンクを見つけることによってアプリケーションを探索します。 非常に高速ですが、JavaScriptを多用するアプリケーションには対応できません。 
 
-<h3>Use ajax spider</h3>
+<h3>Ajaxスパイダーを使用</h3>
 
-The ajax spider explores the application by launching the browser you have chosen and clicking on the links it finds. 
-It is slower than the traditional spider but handles JavaScript well.<br>
-This option is only shown if the ajax spider add-on is installed. 
-If it is not available then you can download and install it for free from the ZAP Marketplace.
+Ajaxスパイダーは、選択したブラウザを起動し、見つけたリンクをクリックすることでアプリケーションを探索します。 トラディショナルスパイダーよりも低速ですが、JavaScriptを適切に処理します。<br>
+このオプションは、Ajaxスパイダーアドオンがインストールされている場合にのみ表示されます。 利用できない場合は、ZAP マーケットプレイスから無料でダウンロードしてインストールできます。
 <br><br>
-The options available are:
+利用可能なオプションは以下の通りです：
 <ul>
-<li>Never: you will then need to use the traditional spider
-<li>If Modern: will run if ZAP identifies the target as a modern app - for this you need to use the traditional spider
-<li>Always: if you choose this option then you do not need to run the traditional spider
+<li>しない: 従来のスパイダーを使用する必要があります
+<li>モダンの場合: ZAPがターゲットをモダンアプリとして識別した際に実行されます - この場合は従来のスパイダーを使用してください
+<li>常に: このオプションを選択した場合、従来のスパイダーを実行する必要はありません
 </ul>
 
-<h2>Manual Explore</h2>
+<h2>手動探索</h2>
 
-The Manual Explore screen allows you to launch the browser of your choice so that you can explore your application while proxying through ZAP.
-Select the browser you want from the pull-down and press the 'Launch Browser' button.<br>
-Browsers launched this way will be configured to proxy via ZAP and will ignore certificate errors,
-so you will not need to import the ZAP Root CA Certificate.<br>
-ZAP will remember the last browser you chose when you restart it.<br><br>
-A button will also be added to the toolbar which will launch the latest browser chosen. 
-The icon will change to represent the relevant browser <br><br> 
-Note that launched browsers will stop working if you change the address or port that ZAP is listening on.
+「手動探索」画面では選択したブラウザを起動でき、ZAP経由でプロキシしながらアプリケーションを探索できます。
+プルダウンから使用したいブラウザを選択し、「ブラウザを起動」ボタンを押してください。<br>
+この方法で起動されたブラウザは、ZAP経由でプロキシするように設定され、証明書エラーを無視するため、 ZAPのルートCA証明書をインポートする必要はありません。<br>
+ZAPは、再起動時に前回選択したブラウザを記憶します。<br><br>
+ツールバーにもボタンが追加され、最後に選択されたブラウザが起動されます。アイコンは、該当するブラウザを示すように変化します。 <br><br> 
+注: ZAPがリッスンしているアドレスやポートを変更すると、起動されたブラウザは動作を停止します。
 <p>
-If you do not have selenium add-on installed then you will see instructions for configuring your browser 
-to proxy via ZAP manually.
+Seleniumアドオンがインストールされていない場合は、ブラウザをZAP経由でプロキシするように手動で設定するための手順が表示されます。
 
-<h3>URL to explore</h3>
+<h3>探索対象 URL</h3>
 
-This is the URL of the application you wish to explore, starting with 'http://' or 'https://'.<br>
-ZAP must be able to access this URL.
+これは探索したいアプリケーションのURLで、「http://」または「https://」から始まります。<br>
+ZAPがこのURLにアクセスできる必要があります。
 
-<h3>Enable HUD</h3>
+<h3>HUDを有効化</h3>
 
-The ZAP Heads Up Display (HUD) brings all of the essential ZAP functionality into your browser. 
-It is ideal for people new to web security and also allows experienced penetration testers to focus on an application's 
-features while providing key security information and functionality. <br>
-This option is enabled if the HUD add-on is installed. 
-If it is not available then you can download and install it for free from the ZAP Marketplace.
+ZAP Heads Up Display (HUD) は、ZAPの主要機能をブラウザで利用できるようにします。 
+Webセキュリティ初心者に最適で、経験豊富なペンテスターがアプリケーションの機能に集中しながら、重要なセキュリティ情報と機能を活用することも可能にします。 <br>
+このオプションは、HUDアドオンがインストールされている場合に有効になります。アドオンがインストールされていない場合は、ZAP マーケットプレイスから無料でダウンロードしてインストールできます。
 
-<h2>Learn More</h2>
+<h2>詳細情報</h2>
 
-The Learn More screen provides links to local and online resources for you to learn more about ZAP.
+「詳細情報」画面では、ZAPについてさらに学ぶためのローカルおよびオンラインリソースへのリンクが提供されます。
 
-<h2>News</h2>
+<h2>ニュース</h2>
 
-Occasional news items will be displayed underneath the 3 buttons. Clicking on the red 'x' will hide the current news item.
+3つのボタンの下には、ときどきニュース項目が表示されます。赤い「x」をクリックすると、現在のニュース項目が非表示になります。
 
-<h2>See also</h2>
+<h2>関連情報</h2>
 <table>
 	<tr>
 		<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-		<td><a href="cmdline.html">Command Line</a></td>
-		<td>description of command line arguments</td>
+		<td><a href="cmdline.html">コマンドライン</a></td>
+		<td>コマンドライン引数の説明</td>
 	</tr>
 	<tr>
 		<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-		<td><a href="zapit.html">'ZAPit'</a></td>
-		<td>a quick 'reconnaissance' scan of the URL specified</td>
+		<td><a href="zapit.html">ZAPit</a></td>
+		<td>指定されたURLのクイック「偵察 (reconnaissance)」スキャン</td>
 	</tr>
 	<tr>
 		<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-		<td><a href="launchoptions.html">Launch Options</a></td>
-		<td>the Quick Start Launch Options</td>
+		<td><a href="launchoptions.html">起動オプション</a></td>
+		<td>クイックスタートの起動オプション</td>
 	</tr>
 </table>
 

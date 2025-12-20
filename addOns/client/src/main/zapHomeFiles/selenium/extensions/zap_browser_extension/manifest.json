@@ -1,0 +1,74 @@
+{
+"update_url": "https://clients2.google.com/service/update2/crx",
+
+  "manifest_version": 3,
+  "name": "ZAP by Checkmarx Browser Extension",
+  "version": "0.1.8",
+  "icons": {
+    "16": "assets/icons/zap16x16.png",
+    "32": "assets/icons/zap32x32.png",
+    "48": "assets/icons/zap48x48.png",
+    "128": "assets/icons/zap128x128.png",
+    "512": "assets/icons/zap512x512.png"
+  },
+  "description": "A browser extension which allows ZAP to access the client side of a web app.",
+  "homepage_url": "https://github.com/zaproxy/browser-extension/",
+  "short_name": "ZAP by Checkmarx Extension",
+  "incognito": "spanning",
+  "permissions": [
+    "tabs",
+    "cookies",
+    "storage"
+  ],
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  },
+  "author": "ZAP Core Team",
+  "minimum_chrome_version": "113",
+  "action": {
+    "default_icon": {
+      "16": "assets/icons/zap16x16.png",
+      "32": "assets/icons/zap32x32.png",
+      "48": "assets/icons/zap48x48.png",
+      "128": "assets/icons/zap128x128.png",
+      "512": "assets/icons/zap512x512.png"
+    },
+    "default_title": "ZAP by Checkmarx",
+    "default_popup": "popup.html",
+    "chrome_style": false
+  },
+  "options_page": "options.html",
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "background": {
+    "service_worker": "js/background.bundle.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "js/contentScript.bundle.js"
+      ]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "assets/fonts/Roboto-Regular.ttf"
+      ],
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ]
+    }
+  ]
+}

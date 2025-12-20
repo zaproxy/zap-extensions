@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE toc
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN"
+         "http://java.sun.com/products/javahelp/toc_2_0.dtd">
+
+<toc version="2.0">
+	<tocitem text="ZAP User Guide" tocid="toplevelitem">
+		<tocitem text="Add Ons" tocid="addons">
+			<tocitem text="Insights" image="addon.insights-icon" target="addon.insights">
+				<tocitem text="Insights - Fields" target="addon.insights-fields"/>
+				<tocitem text="Insights - List" target="addon.insights-list"/>
+				<tocitem text="Insights - Job" target="addon.insights-job"/>
+				<tocitem text="Insights - Options" target="addon.insights-options"/>
+			</tocitem>
+		</tocitem>
+	</tocitem>
+</toc>

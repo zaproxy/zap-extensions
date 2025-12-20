@@ -8,6 +8,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## Unreleased
 
 
+## [0.24.0] - 2025-12-15
+### Changed
+- Update minimum ZAP version to 2.17.0.
+
+## [0.23.0] - 2025-11-04
+### Fixed
+- Properly stop services when shutting down.
+
 ## [0.22.0] - 2025-06-20
 ### Changed
 - Link to repositories/documentation instead of service URLs in the help content.
@@ -191,6 +199,8 @@ Button is disabled in that case.
 
 ## [0.1.0] - 2021-08-04
 
+[0.24.0]: https://github.com/zaproxy/zap-extensions/releases/oast-v0.24.0
+[0.23.0]: https://github.com/zaproxy/zap-extensions/releases/oast-v0.23.0
 [0.22.0]: https://github.com/zaproxy/zap-extensions/releases/oast-v0.22.0
 [0.21.0]: https://github.com/zaproxy/zap-extensions/releases/oast-v0.21.0
 [0.20.0]: https://github.com/zaproxy/zap-extensions/releases/oast-v0.20.0

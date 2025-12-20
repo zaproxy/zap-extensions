@@ -3,34 +3,33 @@
 <HEAD>
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
     <TITLE>
-        Sites Tree File Format
+        サイトツリーファイル形式
     </TITLE>
 </HEAD>
 <BODY>
 
-<H1>Sites Tree File Format</H1>
+<H1>サイトツリーファイル形式</H1>
 
-The Sites Tree Format is a YAML representation of the ZAP Sites Tree.<br>
-It is a hierarchy of nodes, each of which represents all of the essential information needed to uniquely identify the corresponding node in the Sites tree.
+サイトツリー形式は、ZAPサイトツリーのYAML表現です。<br>
+これはノードの階層であり、各ノードは、サイトツリー内の対応するノードを一意に識別するために必要なすべての本質的な情報を表します。
 <p>
-Each node has the following format:
+各ノードは次の形式を持っています：
 
 <pre>
-  - node:              # The name of the node, as shown in the ZAP Sites Tree
-    url:               # The URL it represents, present for all apart from the top node
-    method:            # The HTTP method, present for all apart from the top node
-    responseLength:    # The length of the response, where relevant
-    statusCode:        # The HTTP status code, where relevant
-    data:              # The names of the data parameters, if any, separated with '=&amp;'s
-    children:          # A list of child nodes, present for all nodes apart from the leaves
+  - node:              # ZAPサイトツリーに表示されるノードの名前
+    url:               # それが表すURL。トップノード以外のすべてに存在する
+    method:            # HTTPメソッド。トップノード以外のすべてに存在する
+    responseLength:    # 該当する場合、レスポンスの長さ
+    statusCode:        # 該当する場合、HTTPステータスコード
+    data:              # 存在する場合、データパラメータの名前。'=&amp;' とアンパサンド (&amp;) の組み合わせで区切られます
+    children:          # 子ノードのリスト。リーフノードを除くすべてのノードに存在する
 </pre>
 
 <p>
-This format is used by the <a href="automation.html">Automation Framework</a> export and prune jobs, and by the corresponding
-<a href="exim.html">desktop menus</a>.
+この形式は、<a href="automation.html">自動化フレームワーク</a>の export および prune ジョブ、ならびに対応する<a href="exim.html">デスクトップメニュー</a>で使用されます。
 <p>
 
-A full simple example:
+完全な単純な例：
 
 <pre>
 - node: Sites

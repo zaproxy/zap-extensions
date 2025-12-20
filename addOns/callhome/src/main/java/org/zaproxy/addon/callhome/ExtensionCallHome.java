@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.lang.management.ManagementFactory;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -36,8 +37,16 @@ import java.util.regex.Pattern;
 import net.sf.json.JSONObject;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.httpclient.URI;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.Filter.Result;
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.appender.AbstractAppender;
+import org.apache.logging.log4j.core.config.Property;
+import org.apache.logging.log4j.core.filter.LevelRangeFilter;
+import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
@@ -59,6 +68,7 @@ import org.zaproxy.zap.extension.autoupdate.ExtensionAutoUpdate;
 import org.zaproxy.zap.extension.stats.ExtensionStats;
 import org.zaproxy.zap.extension.stats.InMemoryStats;
 import org.zaproxy.zap.network.HttpRequestConfig;
+import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 public class ExtensionCallHome extends ExtensionAdaptor
@@ -101,6 +111,8 @@ public class ExtensionCallHome extends ExtensionAdaptor
         }
     }
 
+    private final StatsLogHandler statsLogHandler;
+
     private HttpSender httpSender = null;
     private CallHomeParam param;
 
@@ -121,6 +133,8 @@ public class ExtensionCallHome extends ExtensionAdaptor
         setI18nPrefix(PREFIX);
         // Just before the Network extension.
         setOrder(Integer.MAX_VALUE - 1);
+
+        statsLogHandler = new StatsLogHandler();
     }
 
     @Override
@@ -142,6 +156,8 @@ public class ExtensionCallHome extends ExtensionAdaptor
     @Override
     public void unload() {
         this.setAutoUpdateSupplier(null);
+
+        statsLogHandler.remove();
     }
 
     private OptionsCallHomePanel getOptionsPanel() {
@@ -291,6 +307,7 @@ public class ExtensionCallHome extends ExtensionAdaptor
                     || key.startsWith("stats.auth.")
                     || key.startsWith("stats.auto.")
                     || key.startsWith("stats.break.")
+                    || key.startsWith("stats.bruteforce.")
                     || key.startsWith("stats.client.")
                     || key.startsWith("stats.code.")
                     || key.startsWith("stats.config.")
@@ -301,15 +318,18 @@ public class ExtensionCallHome extends ExtensionAdaptor
                     || key.startsWith("stats.graphql.")
                     || key.startsWith("stats.hud.")
                     || key.startsWith("stats.llm.")
+                    || key.startsWith("stats.log.")
                     || key.startsWith("stats.network.")
                     || key.startsWith("stats.oast.")
                     || key.startsWith("stats.openapi.")
+                    || key.startsWith("stats.postman.")
                     || key.startsWith("stats.quickstart.")
                     || key.startsWith("stats.reports.")
                     || key.startsWith("stats.script.")
                     || key.startsWith("stats.selenium.")
                     || key.startsWith("stats.sequence.")
                     || key.startsWith("stats.spider.")
+                    || key.startsWith("stats.spiderAjax.")
                     || key.startsWith("stats.tech.")
                     || key.startsWith("stats.ui.")
                     || key.startsWith("stats.websockets.")
@@ -510,6 +530,72 @@ public class ExtensionCallHome extends ExtensionAdaptor
             StringBuilder sb = new StringBuilder(message.length() + 1);
             sb.append(message).append('\n');
             View.getSingleton().getOutputPanel().append(sb.toString());
+        }
+    }
+
+    private static class StatsLogHandler {
+
+        StatsLogHandler() {
+            LoggerContext.getContext()
+                    .getConfiguration()
+                    .getRootLogger()
+                    .addAppender(new StatsAppender(), null, null);
+        }
+
+        void remove() {
+            LoggerContext.getContext()
+                    .getConfiguration()
+                    .getRootLogger()
+                    .removeAppender(StatsAppender.NAME);
+        }
+
+        static class StatsAppender extends AbstractAppender {
+
+            private static final String NAME = "ZAP-StatsAppender";
+            private static final Property[] NO_PROPERTIES = {};
+
+            StatsAppender() {
+                super(
+                        NAME,
+                        LevelRangeFilter.createFilter(
+                                Level.FATAL, Level.WARN, Result.NEUTRAL, Result.NEUTRAL),
+                        PatternLayout.newBuilder()
+                                .withDisableAnsi(true)
+                                .withCharset(StandardCharsets.UTF_8)
+                                .withPattern("%m%n")
+                                .build(),
+                        true,
+                        NO_PROPERTIES);
+                start();
+            }
+
+            @Override
+            public void append(LogEvent event) {
+                Level level = event.getLevel();
+                if (level.isLessSpecificThan(Level.INFO)) {
+                    return;
+                }
+
+                String base = "stats.log." + event.getLevel().name().toLowerCase(Locale.ROOT);
+                Stats.incCounter(base);
+                String baseLoggerName = base + "." + event.getLoggerName();
+                Throwable t = event.getThrown();
+                if (t == null) {
+                    Stats.incCounter(baseLoggerName);
+                } else {
+                    Stats.incCounter(
+                            baseLoggerName + "." + t.getClass().getSimpleName() + getSource(t));
+                }
+            }
+
+            private static String getSource(Throwable t) {
+                StackTraceElement[] trace = t.getStackTrace();
+                if (trace == null || trace.length == 0) {
+                    return "";
+                }
+                StackTraceElement top = trace[0];
+                return "(" + top.getFileName() + ":" + top.getLineNumber() + ")";
+            }
         }
     }
 }

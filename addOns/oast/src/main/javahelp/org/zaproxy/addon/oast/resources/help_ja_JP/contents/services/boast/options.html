@@ -2,55 +2,49 @@
 <html>
 <head>
     <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
-    <title>BOAST Options</title>
+    <title>BOASTオプション</title>
 </head>
 <body>
-<h1>BOAST Options</h1>
+<h1>BOASTオプション</h1>
 <p>
-    The BOAST Options screen allows you to configure the settings that affect how ZAP interacts with BOAST servers.
+    BOASTオプション画面では、ZAPがBOASTサーバーと**連携する方法**に影響する設定を構成できます。
 </p>
 
-<h3>Server URI</h3>
+<h3>サーバーURI</h3>
 
-<p>This address should point to the URI that will be used for registrations and polling.</p>
-<p>A valid URI will include the scheme, the host, the port, and the <code>/events</code> endpoint. The host must be
-    running a working instance of BOAST.</p>
-<p>An example of a valid URI is: <code>https://example.com:1337/events</code>.</p>
+<p>このアドレスは登録とポーリングに使用されるURIを指している必要があります。</p>
+<p>有効なURIには、スキーム、ホスト、ポート、および <code>/events</code> エンドポイントが含まれます。 ホストでは、稼働中のBOASTインスタンスが実行されている必要があります。</p>
+<p>有効なURIの例は、<code>https://example.com:1337/events</code> です。</p>
 
-<h3>Polling Frequency</h3>
+<h3>ポーリング頻度</h3>
 
-<p>This option allows you to change the frequency of polling the registered BOAST servers. It takes values in
-    seconds. The minimum allowed value is 10 seconds and the maximum is 21600 seconds (6 hours). The default value is 60
-    seconds.</p>
+<p>このオプションを使用すると、登録されたBOASTサーバーをポーリングする頻度を変更できます。 値は秒単位で指定します。 最小値は10秒、最大値は21600秒 (6時間) です。 デフォルト値は60秒です。</p>
 
-<h3>Active Servers</h3>
+<h3>アクティブサーバー</h3>
 
-<p>This table lists the Payloads and Canary values of all registered BOAST Servers. An entry is added each time you
-    register a new BOAST server.</p>
+<p>この表には、登録されているすべてのBOASTサーバーのペイロードとカナリア値が一覧表示されます。 新しいBOASTサーバーを登録するたびにエントリが追加されます。</p>
 
-<h4>Payload</h4>
+<h4>ペイロード</h4>
 
-<p>The Payload is the address of an active BOAST server that can be used in out-of-band attacks.</p>
+<p>ペイロードはアウトオブバンド攻撃で使用できるアクティブなBOASTサーバーのアドレスです。</p>
 
-<h4>Canary</h4>
+<h4>カナリア</h4>
 
-<p>The Canary value is a random string that is returned to the target web application when it makes a request to the
-    corresponding Payload address.</p>
-<p>Consider an example of how this value could be used: if the target web application ends up using the canary value
-    somewhere, then it may be vulnerable to out-of-band injection attacks. </p>
+<p>カナリア値は、ターゲットWebアプリケーションが対応するペイロードアドレスにリクエストを行うときに返されるランダムな文字列です。</p>
+<p>この値の使用例を考えます。ターゲットWebアプリケーションが最終的にどこかでカナリア値を使用する場合、アウトオブバンドインジェクション攻撃に対して脆弱である可能性があります。 </p>
 
 
-<H2>See also</H2>
+<H2>関連情報</H2>
 <table>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
         <td>
-            <a href="boast.html">BOAST Help</a></td>
+            <a href="boast.html">BOASTヘルプ</a></td>
         <td>&nbsp;</td>
     </tr>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-        <td><a href="https://github.com/ciphermarco/BOAST">BOAST on GitHub</a></td>
+        <td><a href="https://github.com/ciphermarco/BOAST">GitHubにあるBOAST</a></td>
         <td>&nbsp;</td>
     </tr>
 </table>

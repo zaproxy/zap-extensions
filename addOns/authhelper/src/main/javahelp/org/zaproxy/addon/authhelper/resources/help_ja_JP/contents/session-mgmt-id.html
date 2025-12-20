@@ -2,40 +2,34 @@
 <HTML>
 <HEAD>
 <TITLE>
-Session Management Identification
+セッション管理の特定
 </TITLE>
 </HEAD>
 <BODY>
-<H1>Session Management Identification</H1>
+<H1>セッション管理の特定</H1>
 
-This <a href="authhelper.html">add-on</a> includes a passive scan rule which attempts to identify session management methods.<br>
-It identifies session management methods by the presence of commonly used session management identifiers 
-and any values specified in Authorization request headers.
+この<a href="authhelper.html">アドオン</a>には、セッション管理方式の識別を試みるパッシブスキャンルールが含まれています。<br>
+一般的に使用されるセッション管理識別子や Authorization リクエストヘッダーで指定された値の存在から、セッション管理方式を識別します。
 <p>
-The rule will not attempt to identify very unusual session management methods - automation is one of the end goals so false negatives
-(missing unusual session management methods) are more desirable than false positives (incorrectly identifying a session management method). 
+このルールは非常に特殊なセッション管理方式の識別を試みません。自動化を重視するため、偽陽性（セッション管理方式を誤って識別する）よりも偽陰性（特殊な方式を識別できない）の方が許容されます。 
 <p>
-If this rule identifies a session management method that is part of the context that you have set to use the
-<a href="autodetect-session.html">Auto-Detect Session Management Method</a> then this rule will update the context to use the session management method identified.
+<a href="autodetect-session.html">セッション管理方式の自動検出</a>を使用するように設定されたコンテキスト内でセッション管理方式を識別した場合、コンテキストは識別された方式を使用するように自動的に更新されます。
 <br>
-If a session management method is not identified then check to make sure it is made to a site which is included in the context.<br>
-If it is not then add the site to the context and authenticate again via your browser.
+セッション管理方式が識別されない場合は、リクエスト先のサイトがコンテキストに含まれているかを確認してください。<br>
+含まれていない場合は、そのサイトをコンテキストに追加してから、ブラウザ経由で再度認証してください。
 <p>
-The 'Other Info' field is used to report the set of <a href="session-header.html">Header Based Session Management</a>
-tokens that need to be specified.
+「その他の情報」フィールドには、指定が必要な<a href="session-header.html">ヘッダーベースのセッション管理</a>トークンのセットが報告されます。
 <p>
-The rule will currently identify:
+現在、このルールが識別するのは以下のリクエストです：
 <ul>
-<li>Header-based session management methods
+<li>ヘッダーベースのセッション管理方式
 </ul>
 
-If this rule fails to identify one of the above method then you can raise an 
-<a href="https://github.com/zaproxy/zaproxy/issues">issue</a> with the complete request and response details 
-(having obfuscated any sensitive information) and we will investigate it.
+このルールが識別すべきセッション管理方式の検出に失敗した場合は、機密情報を伏せたうえでリクエストおよびレスポンスの詳細を添えて <a href="https://github.com/zaproxy/zaproxy/issues">問題</a> を報告してください。調査を行います。
 
 <p>
 
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/authhelper/src/main/java/org/zaproxy/addon/authhelper/SessionDetectionScanRule.java">SessionDetectionScanRule.java</a>
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/authhelper/src/main/java/org/zaproxy/addon/authhelper/SessionDetectionScanRule.java">SessionDetectionScanRule.java</a>
 
 </BODY>
 </HTML>

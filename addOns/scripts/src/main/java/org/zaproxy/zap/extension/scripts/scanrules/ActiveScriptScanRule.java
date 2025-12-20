@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.scripts.scanrules;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationUtils;
 import org.apache.logging.log4j.LogManager;
@@ -103,6 +104,17 @@ public class ActiveScriptScanRule extends ActiveScriptHelper {
                                         "scripts.scanRules.ascan.disabledSkipReason"));
                 return;
             }
+
+            ActiveScript3 s3 = cachedScriptInterfaces.getInterface(script, ActiveScript3.class);
+            if (s3 != null) {
+                String hostKbKey = "host:" + metadata.getId();
+                if (!getKb().getBoolean(hostKbKey)) {
+                    getKb().add(hostKbKey, true);
+                    ScriptScanRuleUtils.callOptionalScriptMethod(
+                            () -> s3.scanHost(this, getNewMsg()));
+                }
+            }
+
             ActiveScript2 s = cachedScriptInterfaces.getInterface(script, ActiveScript2.class);
             if (s != null) {
                 HttpMessage msg = getNewMsg();
@@ -141,14 +153,13 @@ public class ActiveScriptScanRule extends ActiveScriptHelper {
 
     @Override
     public void cloneInto(Plugin other) {
-        if (!(other instanceof ActiveScriptScanRule)) {
+        if (!(other instanceof ActiveScriptScanRule otherRule)) {
             throw new IllegalArgumentException(
                     "Expected a ActiveScriptScanRule, but got " + other.getClass().getName());
         }
-        var otherRule = (ActiveScriptScanRule) other;
         otherRule.script = script;
         otherRule.metadata = metadata;
-        otherRule.setConfig(getConfig());
+        super.cloneInto(otherRule);
     }
 
     final ScriptWrapper getScript() {
@@ -164,6 +175,19 @@ public class ActiveScriptScanRule extends ActiveScriptHelper {
         return super.newAlert()
                 .setConfidence(metadata.getConfidence().getValue())
                 .setOtherInfo(metadata.getOtherInfo());
+    }
+
+    /**
+     * @since 45.14.0
+     */
+    public AlertBuilder newAlert(String alertRef) {
+        AlertBuilder builder = newAlert();
+        builder.setAlertRef(alertRef);
+        if (metadata.getAlertRefOverrides() != null) {
+            ScriptScanRuleUtils.overrideWithAlertRefMetadata(
+                    builder, metadata.getAlertRefOverrides().get(alertRef));
+        }
+        return builder;
     }
 
     @Override
@@ -193,10 +217,7 @@ public class ActiveScriptScanRule extends ActiveScriptHelper {
 
     @Override
     public String getReference() {
-        if (metadata.getReferences() != null && !metadata.getReferences().isEmpty()) {
-            return String.join("\n", metadata.getReferences());
-        }
-        return "";
+        return ScriptScanRuleUtils.mergeReferences(metadata.getReferences());
     }
 
     @Override
@@ -226,7 +247,13 @@ public class ActiveScriptScanRule extends ActiveScriptHelper {
 
     @Override
     public List<Alert> getExampleAlerts() {
-        return List.of(newAlert().build());
+        return Optional.ofNullable(metadata.getAlertRefOverrides())
+                .map(
+                        overrides ->
+                                overrides.keySet().stream()
+                                        .map(alertRef -> newAlert(alertRef).build())
+                                        .toList())
+                .orElseGet(() -> List.of(newAlert().build()));
     }
 
     @Override

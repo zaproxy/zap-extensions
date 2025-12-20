@@ -3,38 +3,38 @@
 <HEAD>
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
 <TITLE>
-Spider dialog
+スパイダー ダイアログ
 </TITLE>
 </HEAD>
 <BODY>
-<H1>Spider dialog</H1>
+<H1>スパイダー ダイアログ</H1>
 <p>
-This dialog launches the <a href="spider.html">Spider</a>.<br>
+このダイアログは<a href="spider.html">スパイダー</a>を起動します。<br>
 
-<H2>Scope</H2>
-The first tab allows you to select or change the starting point.<br>
-If the starting point is in one or more Contexts then you will be able to choose one of them.<br>
-If that context has any Users defined then you will be able to select one of them.<br>
-If you select one of the users then the spider will be performed as that user, with ZAP (re)authenticating as that user whenever necessary.
+<H2>スコープ</H2>
+最初のタブでは、開始点を選択または変更できます。 <br>
+開始点が1つ以上のコンテキストに含まれている場合、その中から1つを選択できます。 <br>
+そのコンテキストにユーザーが定義されている場合は、その中から1人を選択できます。<br>
+いずれかのユーザーを選択すると、スパイダーはそのユーザーとして実行され、ZAPは必要に応じてそのユーザーとして(再)認証を行います。
 <br><br>
-If you select 'Recurse' then all of the nodes underneath the one selected will also be used to seed the Spider.
+「再帰」を選択すると、選択されたノードの下にあるすべてのノードもスパイダーのシードとして使用されます。
 <br><br>
-If you select 'Spider Subtree Only' the Spider will only access resources that are under the starting point (URI).
-When evaluating if a resource is found within the specified subtree, the Spider considers only the scheme, host, port, and path components of the URI.
+「サブツリーのみをスパイダー」を選択すると、スパイダーは開始位置 (URI) の下にあるリソースにのみアクセスします。
+リソースが指定されたサブツリー内で見つかったかどうかを評価するとき、スパイダーはURIのスキーム、ホスト、ポート、およびパスコンポーネントのみを考慮に入れます。
 <br><br>
-If you select 'Show Advanced Options' then the following tab will be shown which provides fine grain control over the spider process.
+「詳細オプションを表示」を選択すると、スパイダープロセスを詳細に制御できるタブが表示されます。
 <br><br>
-Clicking on the 'Reset' button will reset all of the options to their default values. 
+「リセット」ボタンをクリックすると、すべてのオプションがそのデフォルト値にリセットされます。 
 
-<H2>Advanced</H2>
+<H2>詳細オプション</H2>
 
-The parameters on this tab correspond to the same parameters on the <a href="options.html">Options Spider screen</a>.
+このタブのパラメーターは、<a href="options.html">オプション - スパイダー画面</a>のパラメーターに対応しています。
 
-<H2>Accessed via</H2>
+<H2>ここから参照されています</H2>
 <table>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="tab.html">Spider tab</a></td><td>'New Scan' button</td></tr>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Sites tab</td><td>'Attack / Spider...' right click menu item</td></tr>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>History tab</td><td>'Attack / Spider...' right click menu item</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="tab.html">スパイダー タブ</a></td><td>「新規スキャン」ボタン</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>サイトタブ</td><td>「攻撃 / スパイダー&mldr;」右クリックメニュー項目</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>履歴タブ</td><td>「攻撃 / スパイダー&mldr;」右クリックメニュー項目</td></tr>
 </table>
 
 </BODY>

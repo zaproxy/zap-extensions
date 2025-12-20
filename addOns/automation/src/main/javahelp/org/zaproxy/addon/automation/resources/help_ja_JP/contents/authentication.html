@@ -2,61 +2,54 @@
 <HTML>
 <HEAD>
 <TITLE>
-Automation Framework - authentication
+自動化フレームワーク - 認証
 </TITLE>
 </HEAD>
 <BODY>
-<H1>Automation Framework - authentication</H1>
-The Automation Framework supports all of the authentication mechanisms supported by ZAP.
+<H1>自動化フレームワーク - 認証</H1>
+自動化フレームワークは、ZAPがサポートするすべての認証メカニズムをサポートしています。
 
-<H2>Environmental Variables</H2>
+<H2>環境変数</H2>
 
-ZAP supports a set of Authentication Header Environmental Variables - these will be applied by ZAP if they are defined
-however ZAP is run, including via the Automation Framework.
+ZAPは、一連の認証ヘッダー環境変数をサポートしています。これらが定義されている場合、ZAPが自動化フレームワークを介した実行を含む、いかなる実行方法であっても適用されます。
 <p>
-These environmental variables must be defined at the system level - if they are defined in the <a href="environment.html">environment</a> 
-env section then they will be ignored.
+注: これらの環境変数は、システムレベルで定義されている必要があります。それらが <a href="environment.html">environment</a> セクションで定義されている場合、無視されます。
 
-<H2>Context Based Authentication</H2>
+<H2>コンテキストベース認証</H2>
 
-The Automation Framework supports the following methods of authentication supported by ZAP:
+自動化フレームワークは、ZAPがサポートする以下の認証メソッドをサポートしています：
 
 <ul>
-<li>Manual (use this if you are using the Authentication Header Environmental Variable)</li>
+<li>手動（認証ヘッダー環境変数を使用している場合はこれを使用します）</li>
 <li>HTTP / NTLM</li>
-<li>Form-based</li>
-<li>JSON-based</li>
-<li>Script</li>
+<li>フォームベース</li>
+<li>JSONベース</li>
+<li>スクリプト</li>
 </ul>
 
-The Automation Framework supports the following methods of authentication provided by the Authentication Helper add-on:
+自動化フレームワークは、認証ヘルパーアドオンによって提供される以下の認証メソッドをサポートしています：
 <ul>
-  <li>Auto-Detect Authentication</li>
-  <li>Browser-based Authentication</li>
-  <li>Client Script Authentication</li>
+  <li>認証の自動検出</li>
+  <li>ブラウザベース認証</li>
+  <li>クライアントスクリプト認証</li>
 </ul>
 
-<H2>Authentication Statistics</H2>
+<H2>認証統計情報</H2>
 
-ZAP maintains authentication statistics - search for 'auth' in the key field on the 
-<a href="https://www.zaproxy.org/docs/internal-statistics/">ZAP Internal Statistics</a> website page.
-These are ideal to use in <a href="tests.html">tests</a> to make sure the authentication is working as you expect. 
+ZAPは認証統計情報を保持しています。これらは、認証が期待通りに機能していることをテストで確認するために使用するのに理想的です。詳細は、<a href="https://www.zaproxy.org/docs/internal-statistics/">ZAP内部統計情報</a>のWebページで、キーフィールドで「auth」を検索してください。
+これらは、認証が期待どおりに機能していることを確認するための<a href="tests.html">テスト</a>に最適です。 
 <p>
-The authentication statistics are maintained for all supported authentication methods (including 'manual')
-but only if you have configured all of the authentication elements correctly.<br>
-You are strongly advised to test this via the ZAP desktop GUI.
+認証統計は、すべてのサポートされている認証方式（「手動」を含む）について保持されます。ただし、すべての認証要素を正しく構成している場合に限ります。<br>
+この動作は、ZAPのデスクトップGUIを使用してテストすることを強く推奨します。
 
-<H2>Configuring Authentication</H2>
+<H2>認証の設定</H2>
 
-The recommended way to configure authentication is to do so via the ZAP desktop GUI - 
-this gives you complete control over all aspects and allows you to test it in place.<br>
-Then you can create a new Automation Framework plan using the context(s) you have tested - 
-the authentication elements will be correctly initialised for all aspects supported.
+認証を設定するための推奨される方法は、ZAPのデスクトップGUIを介して行うことです。これにより、すべての側面を完全に制御でき、その場でテストできます。<br>
+その後、テストしたコンテキストを使用して新しい自動化フレームワークプランを作成できます。これにより、サポートされているすべての側面について、認証要素が正しく初期化されます。
 <p>
-It is worth noting that the authentication elements cannot be edited via the Automation Framework <a href="gui.html">GUI</a>,
-but they will not get lost if you use the GUI as long as you do not use it to delete the contexts.
+認証要素は自動化フレームワークの<a href="gui.html">GUI</a>を介して編集することはできません。ただし、GUIを使用してコンテキストを削除しない限り、GUIを使用してもそれらが失われることはありません。
 <p>
-The GUI will be updated to support all of the authentication elements in due course.
+GUIは、やがてすべての認証要素をサポートするように更新される予定です。
 
 </BODY>
 </HTML>

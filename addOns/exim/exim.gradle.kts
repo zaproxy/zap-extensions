@@ -31,7 +31,7 @@ zapAddOn {
         dependencies {
             addOns {
                 register("commonlib") {
-                    version.set(">= 1.28.0 & < 2.0.0")
+                    version.set(">= 1.38.0 & < 2.0.0")
                 }
             }
         }
@@ -55,7 +55,7 @@ dependencies {
     zapAddOn("commonlib")
 
     implementation(files("lib/org.jwall.web.audit-0.2.15.jar"))
-    implementation("de.sstoehr:har-reader:3.1.4") {
+    implementation(libs.exim.harReader) {
         // Provided by commonlib add-on:
         exclude(group = "com.fasterxml.jackson.core")
         exclude(group = "com.fasterxml.jackson.datatype")
@@ -63,7 +63,7 @@ dependencies {
     implementation(files("lib/pkts-core-3.0.11-tcp-streams-branch.jar"))
     implementation(files("lib/pkts-streams-3.0.11-tcp-streams-branch.jar"))
     implementation(files("lib/pkts-buffers-3.0.11-tcp-streams-branch.jar"))
-    implementation("io.hektor:hektor-fsm:0.0.5")
+    implementation(libs.exim.hektorFsm)
     implementation(libs.log4j.slf4j)
 
     testImplementation(parent!!.childProjects.get("commonlib")!!.sourceSets.test.get().output)

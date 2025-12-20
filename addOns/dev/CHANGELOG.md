@@ -15,6 +15,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
  - HTML page with input elements added with increasing delays.
  - A mock MS online login.
 
+### Changed
+- Update minimum ZAP version to 2.17.0.
+
 ## [0.10.0] - 2025-05-15
 ### Added
 - Basic CSRF test app.

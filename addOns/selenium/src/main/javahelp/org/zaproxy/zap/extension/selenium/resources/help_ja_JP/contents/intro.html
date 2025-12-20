@@ -7,72 +7,64 @@
 <body>
 	<h1>Selenium</h1>
 
-	<p>The Selenium add-on provides WebDrivers, for other add-ons, to invoke and remotely
-		control web browsers. It's also bundled the HtmlUnit web browser, an headless Java based
-		web browser.
+	<p>Seleniumアドオンは、他のアドオンがWebブラウザを起動し、リモートで制御するためにWebDriver群を提供します。また、ヘッドレス型JavaベースのWebブラウザである HtmlUnitブラウザも同梱されています。
 		
-	<p>It adds a 'Selenium' script type - these scripts are invoked whenever selenium launches a browser,
-	for example for the Ajax Spider or for manual browsing. 
+	<p>このアドオンは「Seleniumスクリプト」というスクリプトタイプを追加します。これらのスクリプトは、Seleniumがブラウザを起動するたびに実行されます。（例: Ajaxスパイダーや手動ブラウジング時など） 
 	
-	<p>The add-on also adds a right click option to ZAP panels that list URLs (such as the History and Sites tree)
-	which allows you to open the selected URL in any of the supported browsers. The Selenium scripts have access to the 
-	launched browser and can interact with it, for example, run JavaScript scripts, access URLs, fill forms, click buttons...
-	<br><strong>Note:</strong> The Selenium scripts are executed synchronously for the AJAX Spider, to prevent interferences
-	with the crawler later, it's up to the scripts to access the required URLs.
+	<p>また、このアドオンは、URLをリスト表示するZAPパネル (履歴タブやサイトツリーなど) に右クリックオプションを追加し、サポートされている任意のブラウザで選択したURLを開くことができるようにします。 Seleniumスクリプトは、起動されたブラウザにアクセスし、操作することができます。例えば、JavaScriptの実行、URLへのアクセス、フォームへの入力、ボタンのクリックなどです。
+	<br>
+<strong>注:</strong> Seleniumスクリプトは、後のクローラーとの干渉を防ぐため、AJAXスパイダーに対しては同期実行されます。必要なURLへのアクセスは、スクリプト側に委ねられます。
 
-	<h2>Supported Browsers</h2>
+	<h2>サポートされているブラウザ</h2>
 
 	
-	<p>The following web browsers are supported:
+	<p>以下のWebブラウザがサポートされています：
 	<table border="2">
 		<tr>
-			<th>Name</th>
+			<th>名前</th>
 			<th>ID</th>
-			<th>Requirements/Notes</th>
+			<th>要件/注意点</th>
 		</tr>
 		<tr>
 			<td>Chrome</td>
 			<td>chrome</td>
-			<td>Requires ChromeDriver, if not on the system's PATH, it can be set in the
-				options. For more information on ChromeDriver and how to obtain it refer to the <a
-				href="https://sites.google.com/a/chromium.org/chromedriver/">ChromeDriver website</a>.
+			<td>ChromeDriverが必要です。システムの PATH にない場合は、オプションで設定できます。 ChromeDriverの詳細は<a
+				href="https://sites.google.com/a/chromium.org/chromedriver/">ChromeDriverのWebサイト</a>を参照してください.
 			</td>
 		</tr>
 		<tr>
-			<td>Chrome Headless</td>
+			<td>ヘッドレスChrome</td>
 			<td>chrome-headless</td>
-			<td>Starts Chrome without GUI.</td>
+			<td>GUIなしでChromeを起動します。</td>
 		</tr>
 		<tr>
 			<td>Edge</td>
 			<td>edge</td>
-			<td>Requires EdgeDriver, if not on the system's PATH, it can be set in the
-				options. For more information on EdgeDriver and how to obtain it refer to the <a
-				href="https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/">EdgeDriver website</a>.
+			<td>EdgeDriverが必要です。システムの PATH にない場合は、オプションで設定できます。 EdgeDriverの詳細は<a
+				href="https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/">EdgeDriverのWebサイト</a>を参照してください.
 			</td>
 		</tr>
 		<tr>
-			<td>Edge Headless</td>
+			<td>ヘッドレスEdge</td>
 			<td>edge-headless</td>
-			<td>Starts Edge without GUI.</td>
+			<td>GUIなしでEdgeを起動します。</td>
 		</tr>
 		<tr>
 			<td>Firefox</td>
 			<td>firefox</td>
-			<td>Requires geckodriver, it can be set in the options. For more
-				information on geckodriver and how to obtain it refer to the <a
-				href="https://github.com/mozilla/geckodriver">geckodriver website</a>,
+			<td>geckodriverが必要です。オプションで設定できます。 geckodriverの詳細は<a
+				href="https://github.com/mozilla/geckodriver">geckodriverのWebサイト</a>を参照してください,
 			</td>
 		</tr>
 		<tr>
-			<td>Firefox Headless</td>
+			<td>ヘッドレスFirefox</td>
 			<td>firefox-headless</td>
-			<td>Starts Firefox without GUI.</td>
+			<td>GUIなしでFirefoxを起動します。</td>
 		</tr>
 		<tr>
 			<td>HtmlUnit</td>
 			<td>htmlunit</td>
-			<td>Bundled browser, does not have any requirement.</td>
+			<td>同梱されたブラウザで、特に要件はありません。</td>
 		</tr>
 		<tr>
 			<td>Safari</td>
@@ -80,37 +72,28 @@
 			<td>&nbsp;</td>
 		</tr>
 	</table>
-	<p>To use Firefox, Chrome, Edge, and Safari, you must
-		have them installed in your system. The ID of the browser can be used to choose the
-		browser when configuring ZAP through the command line or using the ZAP API (for example,
-		to set the AJAX Spider to use one or other browser).
+	<p>Firefox、Chrome、Edge、およびSafariを使用するには、システムにインストールされている必要があります。 ブラウザのIDは、コマンドラインまたはZAP APIを使用してZAPを設定する際にブラウザを選択するために使用できます（例: AJAXスパイダーで使用するブラウザを設定する場合など）。
 	<p>
-		Some of the requirements (e.g. WebDrivers) of the browsers can be configured in the <a
-			href="options.html">Options Selenium screen</a>.
+		ブラウザの要件の一部 (例: WebDriver群) は、<a
+			href="options.html">オプション - Selenium画面</a>で設定可能です。
 
-	<h2>Bundled WebDrivers</h2>
-	ZAP provides add-ons with the WebDrivers, when those add-ons are installed ZAP will
-	attempt to use those bundled WebDrivers by default. Some OSs might not have a WebDriver
-	for some of the browsers, in those cases ZAP will inform, in the options panel, that
-	there's no bundled WebDriver available. The bundled WebDrivers can also be (re)set with
-	the 'Bundled' button (for example, if another WebDriver was manually set). Not all
-	browser versions are supported with the bundled WebDrivers, it's recommended that
-	newer/latest versions of the browsers be used whenever possible.
+	<h2>同梱されたWebDriver群</h2>
+ZAPはWebDriver群をアドオンとして提供しており、それらのアドオンがインストールされている場合、ZAPはデフォルトで同梱されたWebDriver群の使用を試行します。 OSによっては一部のブラウザ用のWebDriverがない場合があり、その場合、ZAPはオプションパネルで同梱されたWebDriverが利用不可であることを通知します。 「Bundled」ボタンを使用して (再)設定することもできます (例: 別のWebDriverを手動で設定した後など)。 同梱されたWebDriver群はすべてのブラウザバージョンをサポートしているわけではないため、可能な限りより新しい/最新のバージョンのブラウザを使用することが推奨されます。
 
 	<p>
-		<strong>Note:</strong> ZAP add-ons can add additional browsers.
+		<strong>注:</strong> ZAPアドオンは追加のブラウザを追加することができます。
 
-	<h2>See also</h2>
+	<h2>関連情報</h2>
 	<table>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td><a href="options.html">Options Selenium screen</a></td>
-			<td>for an overview of the Selenium Options</td>
+			<td><a href="options.html">オプション - Selenium画面</a></td>
+			<td>Seleniumオプションの概要について</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td><a href="api.html">API</a></td>
-			<td>for an overview of the Selenium API</td>
+			<td>Selenium APIの概要について</td>
 		</tr>
 	</table>
 

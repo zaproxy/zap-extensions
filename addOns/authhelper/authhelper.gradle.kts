@@ -71,7 +71,7 @@ zapAddOn {
                     version.set("15.*")
                 }
                 register("zest") {
-                    version.set(">=48.9.0")
+                    version.set(">=48.10.0")
                 }
             }
         }
@@ -117,11 +117,11 @@ dependencies {
 
     compileOnly(libs.log4j.core)
 
-    implementation("com.github.bastiaanjansen:otp-java:2.1.0") {
+    implementation(libs.authhelper.otpJava) {
         // Provided by ZAP.
         exclude(group = "commons-codec", module = "commons-codec")
     }
 
-    testImplementation("io.github.bonigarcia:selenium-jupiter:5.1.1")
+    testImplementation(libs.test.selenium.jupiter)
     testImplementation(project(":testutils"))
 }

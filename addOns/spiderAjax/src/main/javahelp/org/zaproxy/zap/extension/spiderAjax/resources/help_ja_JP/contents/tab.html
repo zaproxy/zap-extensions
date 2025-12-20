@@ -2,13 +2,12 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>AJAX スパイダー タブ</title>
+<title>AJAXスパイダー タブ</title>
 </head>
 <body>
-	<h1>AJAX スパイダー タブ</h1>
+	<h1>AJAXスパイダー タブ</h1>
 	<p>
-		The AJAX Spider tab shows you the set of unique URIs found by <a href="concepts.html">AJAX
-			Spider</a>.
+		AJAXスパイダー タブは、<a href="concepts.html">AJAXスパイダー</a>によって見つけられた一意なURIの集合を表示します。.
 	</p>
 	<br /> 閲覧可能なリクエスト:
 	<table>
@@ -18,7 +17,7 @@
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td>The request timestamp</td>
+			<td>リクエストのタイムスタンプ</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -30,7 +29,7 @@
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td>The HTTP response status code</td>
+			<td>HTTPレスポンス ステータスコード</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -38,161 +37,159 @@
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td>リクエスト全体にかかった時間の長さ</td>
+			<td>リクエスト全体の処理時間</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td>The size of the response header</td>
+			<td>レスポンスヘッダーのサイズ</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td>The size of the response body</td>
+			<td>レスポンスボディのサイズ</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td>Any <i>Alerts</i> on the request
+			<td>リクエストに関する任意の<i>アラート</i>
 			</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td>Any <i>Notes</i> you have added to request
+			<td>リクエストに追加した任意の<i>ノート</i>
 			</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td>Any <i>Tags</i> you have added to request
+			<td>リクエストに追加した任意の<i>タグ</i>
 			</td>
 		</tr>
 	</table>
 
-	Selecting a requests will display it in the
+	リクエストを選択すると、上部の
 	<i>リクエストタブ</i> 及び
-	<i>レスポンスタブ</i> above.
+	<i>レスポンスタブ</i> に表示されます。
 	<br />
 
 	<h2>右クリック メニュー</h2>
-	Right clicking on a node will bring up a menu which will allow you to:
+	<p>ノードを右クリックすると、以下の操作を可能にするメニューが表示されます：</p>
 
 	<h3>攻撃</h3>
-	The Attack menu has the following submenus:
-	<h4>サイトの動的スキャン</h4>
-	This will initiate an
-	<i>動的スキャン</i> of the whole of the site containing the selected node.
-	<br /> 　
-	<i>動的スキャンタブ</i> will be display and will show the progress of the scan.
-	<br />
+	<p>攻撃メニューには以下のサブメニューがあります：</p>
 
-	<h4>動的スキャンノード</h4>
-	This will initiate an
-	<i>動的スキャン</i> of just the node selected.
-	<br /> 　
-	<i>動的スキャンタブ</i> will be display and will show the progress of the scan.
-	<br />
+	<h4>アクティブスキャンサイト</h4>
+	<p>
+		これは、選択されたノードを含むサイト全体の<i>アクティブスキャン</i>を開始します。<br />
+<i>アクティブスキャンタブ</i>が表示され、スキャンの進捗が表示されます。
+	</p>
 
-	<h4>Spider Site</h4>
-	This will initiate a
-	<i>スパイダー</i> of the whole of the site containing the selected node.
-	<br /> 　
-	<i>スパイダータブ</i> will be display and will show the progress of the scan.
-	<br />
+	<h4>アクティブスキャンノード</h4>
+	<p>
+		これは、選択されたノードのみの<i>アクティブスキャン</i>を開始します。<br />
+<i>アクティブスキャンタブ</i>が表示され、スキャンの進捗が表示されます。
+	</p>
 
-	<h4>Forced Browse Site</h4>
-	This will initiate a
-	<i>forced browse</i> of the whole of the site containing the selected node.
-	<br /> 　
-	<i>Forced Browse tab</i> will be display and will show the progress of the scan.
-	<br />
+	<h4>サイトをスパイダー</h4>
+	<p>
+		これは、選択されたノードを含むサイト全体の<i>スパイダー</i>を開始します。<br />
+<i>スパイダータブ</i>が表示され、スキャンの進捗が表示されます。
+	</p>
 
-	<h4>Forced Browse Directory</h4>
-	This will initiate a
-	<i>forced browse</i> on the selected directory.
-	<br /> 　
-	<i>Forced Browse tab</i> will be displayed and will show the progress of the scan.
-	<br />
+	<h4>サイトを強制ブラウズ</h4>
+	<p>
+		これは、選択されたノードを含むサイト全体の<i>強制ブラウズ</i>を開始します。<br />
+<i>強制ブラウズタブ</i>が表示され、スキャンの進捗が表示されます。
+	</p>
 
-	<h4>Forced Browse Directory (and children)</h4>
-	This will initiate a
-	<i>forced browse</i> on the selected directory and all children found.
-	<br /> 　
-	<i>Forced Browse tab</i> will be displayed and will show the progress of the scan.
-	<br />
+	<h4>ディレクトリを強制ブラウズ</h4>
+	<p>
+		これは、選択されたディレクトリに対する<i>強制ブラウズ</i>を開始します。<br />
+<i>強制ブラウズタブ</i>が表示され、スキャンの進捗が表示されます。
+	</p>
 
-	<h3>以下の処理から除外する:</h3>
-	このメニューには、次のサブメニューがあります。
+	<h4>強制ブラウズ (ディレクトリとその子)</h4>
+	<p>
+		これは、選択されたディレクトリおよび見つかったすべての子孫に対する<i>強制ブラウズ</i>を開始します。<br />
+<i>強制ブラウズタブ</i>が表示され、スキャンの進捗が表示されます。
+	</p>
+
+	<h3>以下の処理から除外する</h3>
+	<p>このメニューには以下のサブメニューがあります：</p>
 
 	<h4>プロキシ</h4>
-	This will exclude the selected nodes from the proxy. They will still be proxied via ZAP
-	but will not be shown in any of the tabs.
-	<br /> This can be used to ignore URLs that you know are not relevant to the system you
-	are currently testing.
-	<br /> The nodes can be included again via the
-	<i>セッション・プロパティ</i> dialog
+	<p>
+		これは選択されたノードをプロキシから除外します。 それらは引き続きZAP経由でプロキシされますが、どのタブにも表示されません。
+		<br />
+現在テストしているシステムに関係のないURLを無視するために使用できます。
+		<br />
+ノードは<i>セッションプロパティ</i>ダイアログから再度含めることができます。
+	</p>
 
-	<h4>スキャン</h4>
-	This will prevent the selected nodes from being actively scanned.
-	<br /> The nodes can be included again via the
-	<i>セッション・プロパティ</i> dialog
+	<h4>スキャナー</h4>
+	<p>
+		これは、選択されたノードがアクティブスキャンされるのを防ぎます。<br />
+ノードは<i>セッションプロパティ</i>ダイアログから再度含めることができます。
+	</p>
 
 	<h4>スパイダー</h4>
-	This will prevent the selected nodes from being spidered.
-	<br /> The nodes can be included again via the
-	<i>セッション・プロパティ</i> dialog
+	<p>
+		これは、選択されたノードがスパイダーされるのを防ぎます。<br />
+ノードは<i>セッションプロパティ</i>ダイアログから再度含めることができます。
+	</p>
 
 	<h3>アプリケーションの実行</h3>
-	This menu allows you to
-	<i>invoke applications</i> that you have configured via the
-	<i>Options Applications screen</i> which is also accessible via the 'Configure
-	applications...' submenu.
+	<p>
+		このメニューを使用すると、「アプリケーションを設定…」サブメニューからもアクセスできる<i>オプション - アプリケーション画面</i>で設定した<i>アプリケーションを呼び出す</i>ことができます。
+	</p>
 
 	<h3>タグ管理...</h3>
-	This will bring up the
-	<i>Manage Tags dialog</i> which allows you to change the
-	<i>タグ</i> associated with the request.
+	<p>
+		これはリクエストに関連付けられた<i>タグ</i>を変更できる<i>タグ管理ダイアログ</i>を表示します。
+	</p>
 
 	<h3>ノート...</h3>
-	This will bring up the
-	<i>ノートダイアログを追加</i> which allows you to record
-	<i>ノート</i> related to the request.
+	<p>
+		これはリクエストに関連する<i>ノート</i>を記録できる<i>ノートの追加</i>ダイアログを表示します。
+	</p>
 
 	<h3>ブレーク...</h3>
-	This will bring up the
-	<i>ブレークポイントダイアログを追加</i> which allows you to set a break point on that URL.
-	<br />
+	<p>
+		これはそのURLにブレークポイントを設定できる<i>ブレークポイントの追加ダイアログ</i>を表示します。
+	</p>
 
-	<h3>Alerts for this node</h3>
-	If the URL selected has
-	<i>アラート</i> associated with it then they will be listed under this menu.
-	<br> Selecting one of the alerts will cause it to be displayed.
+	<h3>このノードのアラート</h3>
+	<p>
+		選択されたURLに<i>アラート</i>が関連付けられている場合、それらはこのメニューの下に一覧表示されます。<br>
+いずれかのアラートを選択すると、それが表示されます。
+	</p>
 
 	<h3>再送信...</h3>
-	This will bring up the
-	<i>再送信ダイアログ</i> which allows you to resend the request after making any changes to
-	it that you want to.
+	<p>
+		これは必要な変更を加えた後にリクエストを再送信できる<i>再送信ダイアログ</i>を表示します。
+	</p>
 
 	<h3>新しいアラート...</h3>
-	This will bring up the
-	<i>アラートダイアログを追加</i> which allows you to manually record a new
-	<i>Alert</i> against this request.
+	<p>
+		これはこのリクエストに対して新しい<i>アラート</i>を手動で記録できる<i>アラートの追加ダイアログ</i>を表示します。
+	</p>
 
-	<h3>ブラウザで表示</h3>
-	既定のブラウザーで選択されたノードのURLを開きます。
+	<h3>URLをブラウザで開く</h3>
+	<p>選択したノードのURLを既定のブラウザーで開きます。</p>
 
 	<h2>関連情報</h2>
 	<table>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td><a href="concepts.html">AJAXスパイダー</a></td>
-			<td>for an overview of the AJAX Spider</td>
+			<td>AJAXスパイダーの概要について</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td><a href="options.html">Options AJAX Spider screen</a></td>
-			<td>for an overview of the AJAX Spider Options</td>
+			<td><a href="options.html">オプション - AJAXスパイダー画面</a></td>
+			<td>AJAXスパイダー オプションの概要について</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td><a href="scandialog.html">AJAX Spider dialog</a></td>
-			<td>for an overview of the AJAX Spider Dialog</td>
+			<td><a href="scandialog.html">AJAXスパイダー ダイアログ</a></td>
+			<td>AJAXスパイダー ダイアログの概要について</td>
 		</tr>
 	</table>
 

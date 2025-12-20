@@ -3,45 +3,42 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>
-        OAST Options
+        OASTオプション
     </title>
 </head>
 <body>
-<h1>OAST Options</h1>
+<h1>OASTオプション</h1>
 
-A tabbed pane allows you to configure the available OAST services.
+タブ付きペインでは、利用可能なOASTサービスを設定できます。
 
-<h2>General Settings</h2>
-These are options not specific to a single OAST service.
+<h2>全般設定</h2>
+これらは、単一のOASTサービスに固有ではないオプションです。
 
-<h3>Active Scan Service</h3>
-A dropdown menu that allows you to select the out-of-band service that will be used by active scan rules.
+<h3>アクティブスキャンサービス</h3>
+アクティブスキャンルールで使用されるアウトオブバンドサービスを選択できるドロップダウンメニューです。
 
-<h3>Permanent Database</h3>
-Enabling the "Use Permanent Database" option will allow you to persist registered out-of-band payloads in ZAP's
-permanent database. The persisted payloads will be loaded into memory and polled along with other payloads as per the
-set polling interval. The permanent database is currently only supported by the BOAST service.
+<h3>永続データベース</h3>
+「永続データベースを使用」オプションを有効にすると、登録されたアウトオブバンドペイロードをZAPの永続データベースに保存できます。 保存されたペイロードは、設定されたポーリング間隔に従って、他のペイロードとともにメモリにロードされ、ポーリングされます。 永続データベースは、現在BOASTサービスのみでサポートされています。
 
-<strong>NOTE</strong>: This means that Alerts may appear in a ZAP session which is not directly or specifically related
-to the original assessment/scan.
+<strong>注意</strong>: これは、元の評価/スキャンに直接的または特別に関連しないアラートがZAPセッションに出現する可能性があることを意味します。
 
-<h3>Days to Keep Records</h3>
-The number of days records will be kept in the Permanent Database.<br>
-Records will only be deleted when ZAP starts up, or if you save the options with a lower "Days to Keep Records" value.
+<h3>記録保持日数</h3>
+永続データベースに記録が保持される日数です。<br>
+レコードは、ZAPの起動時、または「記録保持日数」の値を低くしてオプションを保存した場合にのみ削除されます。
 
-<h3>Clear All Records</h3>
-This button will delete all records from the Permanent Database.
-You will not get any OOB alerts for any records that have been deleted.
+<h3>すべての記録をクリア</h3>
+このボタンは、永続データベースからすべてのレコードを削除します。
+削除されたレコードについては、OOBアラートは受信しなくなります。
 
-<h2>Service-Specific Configurations</h2>
-Look at the individual options page of each service for more information about the available settings for that service.
+<h2>サービス固有の設定</h2>
+利用可能な設定の詳細については、各サービスの個別のオプションページを参照してください。
 
-<h2>See also</h2>
+<h2>関連情報</h2>
 <table>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
         <td>
-            <a href="services/services.html">OAST Services</a></td>
+            <a href="services/services.html">OASTサービス</a></td>
         <td>&nbsp;</td>
     </tr>
 </table>

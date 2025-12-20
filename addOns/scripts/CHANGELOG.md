@@ -6,6 +6,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [45.17.0] - 2025-12-15
+### Changed
+- Update the automation framework template to include missing field (`inline`).
+- Do not display scripts added through the Automation Framework.
+- Update minimum ZAP version to 2.17.0.
+
+## [45.16.0] - 2025-12-03
+### Fixed
+- Script scan rules were not using the attack strength and alert threshold from active scan policies.
+
+### Changed
+- Update dependency.
+
+## [45.15.0] - 2025-11-04
+### Added
+- `scanHost` method to the active script scan rule interface that is called once per host being scanned.
+
+### Changed
+- Update dependency.
+
+## [45.14.0] - 2025-10-07
+### Added
+- Support for alert reference overrides in script scan rule metadata.
+
+### Changed
+- Do not report authentication script errors as warnings in the Automation Framework for consistent behavior with all authentication methods, which handle errors as authentication failures.
+
 ## [45.13.0] - 2025-09-02
 ### Changed
 - Update help with newer JavaScript engine and links.
@@ -395,6 +422,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[45.17.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.17.0
+[45.16.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.16.0
+[45.15.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.15.0
+[45.14.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.14.0
 [45.13.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.13.0
 [45.12.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.12.0
 [45.11.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.11.0

@@ -5,8 +5,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+
+## [0.18.0] - 2025-12-15
+### Changed
+- Update minimum ZAP version to 2.17.0.
+
+### Removed
+- Dropped help references to ZAP in Ten videos which are no longer available.
+
+## [0.17.0] - 2025-11-04
+### Changed
+- Update dependency.
+
 ### Fixed
-- Do not warn when canonicalising apparent URI, `//`.
+- Do not warn when canonicalising apparent URI, `//`, nor empty `tel` and `mailto`.
 
 ## [0.16.0] - 2025-09-02
 ### Added
@@ -141,6 +154,8 @@ The following table illustrates the changes versus the previous core release(s) 
 |                                                                                                                                         | SVG image files are parsed to identify HREF attributes and extract/resolve any contained links. (Issue 4984)                                                                                                        |
 |                                                                                                                                         | Irrelevant Parameters - Allows to manage the parameters that should be removed when canonicalising the URLs found. The session token names defined in the HTTP Sessions options are taken into account and removed (Issue 4388). |
 
+[0.18.0]: https://github.com/zaproxy/zap-extensions/releases/spider-v0.18.0
+[0.17.0]: https://github.com/zaproxy/zap-extensions/releases/spider-v0.17.0
 [0.16.0]: https://github.com/zaproxy/zap-extensions/releases/spider-v0.16.0
 [0.15.0]: https://github.com/zaproxy/zap-extensions/releases/spider-v0.15.0
 [0.14.0]: https://github.com/zaproxy/zap-extensions/releases/spider-v0.14.0

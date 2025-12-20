@@ -8,7 +8,7 @@ zapAddOn {
         dependencies {
             addOns {
                 register("commonlib") {
-                    version.set(">= 1.32.0 & < 2.0.0")
+                    version.set(">= 1.38.0 & < 2.0.0")
                 }
             }
         }
@@ -19,6 +19,6 @@ zapAddOn {
 dependencies {
     zapAddOn("commonlib")
 
-    implementation("com.google.re2j:re2j:1.7")
+    implementation(libs.pscanrulesAlpha.re2j)
     testImplementation(project(":testutils"))
 }

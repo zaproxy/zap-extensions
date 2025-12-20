@@ -1,8 +1,8 @@
 {
 	"@programName": "ZAP",
 	"@version": "Dev Build",
-	"@generated": "Thu, 17 Jun 2021 16:04:28",
-    "created": "2021-06-17T16:04:28.236211400Z",
+	"@generated": "Wed, 29 Oct 2025 10:53:54",
+	"created": "2025-10-29T10:53:54.857109Z",
 	"site":[ 
 		{
 			"@name": "http://example.com",
@@ -23,6 +23,7 @@
 						{
 							"id": "-1",
 							"uri": "http://example.com/example_3",
+							"nodeName": null,
 							"method": "GET",
 							"param": "Test Param",
 							"attack": "Test \"Attack\\\"",
@@ -32,6 +33,7 @@
 						{
 							"id": "-1",
 							"uri": "http://example.com/example_3",
+							"nodeName": null,
 							"method": "GET",
 							"param": "Test Param",
 							"attack": "Test \"Attack\\\"",
@@ -40,6 +42,7 @@
 						}
 					],
 					"count": "2",
+					"systemic": false,
 					"solution": "<p>Test Solution</p>",
 					"otherinfo": "<p>Test 'Other\\</p>",
 					"reference": "<p>Test Reference</p>",
@@ -50,4 +53,5 @@
 			]
 		}
 	]
+
 }

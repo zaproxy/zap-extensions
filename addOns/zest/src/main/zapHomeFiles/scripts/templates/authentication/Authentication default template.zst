@@ -10,20 +10,20 @@
     "tokenEnd": "}}",
     "tokens": {
       "LoginURL": "",
-      "Password": "",
-      "Username": ""
+      "password": "",
+      "username": ""
     },
     "elementType": "ZestVariables"
   },
   "statements": [
     {
-      "comment": "Authentication scripts are used to authenticate to an application.\n The Username and Password parameters are set depending on how the script is invoked.",
+      "comment": "Authentication scripts are used to authenticate to an application.\n The username and password parameters are set depending on how the script is invoked.",
       "index": 1,
       "elementType": "ZestComment"
     },
     {
       "urlToken": "{{LoginURL}}",
-      "data": "username\u003d{{Username}}\u0026password\u003d{{Password}}",
+      "data": "username\u003d{{username}}\u0026password\u003d{{password}}",
       "method": "POST",
       "headers": "Content-Type: application/x-www-form-urlencoded",
       "assertions": [],

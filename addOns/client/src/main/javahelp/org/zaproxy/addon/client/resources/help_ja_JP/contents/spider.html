@@ -2,72 +2,69 @@
 <HTML>
 <HEAD>
 <TITLE>
-Client Side Integration - Client Spider
+クライアントサイド統合 - クライアントスパイダー
 </TITLE>
 </HEAD>
 <BODY>
-<H1>Client Side Integration - Client Spider</H1>
+<H1>クライアントサイド統合 - クライアントスパイダー</H1>
 
-This <a href="client.html">add-on</a> adds a Client Spider which is designed to explore modern web apps more effectively.
+この<a href="client.html">アドオン</a>は、モダンなWebアプリケーションをより効率的に探索するために設計されたクライアントスパイダーを追加します。
 <p>
-The Client Spider works in a similar way to the AJAX Spider but it has access to the DOM via the ZAP Browser Extension
-which means that it can find content which the AJAX Spider cannot find.
+クライアントスパイダーはAJAXスパイダーと同様の方法で動作しますが、ZAPブラウザ拡張機能を介してDOMにアクセスできるため、AJAXスパイダーでは見つけられないコンテンツを検出できます。
 <p>
-The Client Spider supports all of the authentication options supported by ZAP, and will run any enabled Selenium scripts in the browsers that it launches.
+クライアントスパイダーは、ZAPがサポートするすべての認証オプションをサポートし、起動するブラウザで有効になっているSeleniumスクリプトを実行します。
 <p>
-While it is still at an early stage we believe it is a more effective approach than the AJAX Spider.
+まだ初期段階ではありますが、これはAJAXスパイダーよりも効率的なアプローチであると考えています。
 <br>
-We will be focussing on improving the Client Spider and the current plan is for it to supersede the AJAX Spider
-as the recommended way of crawling modern web apps.
+私たちはクライアントスパイダーの改善に焦点を当てており、モダンなWebアプリケーションをクロールするための推奨される方法としてAJAXスパイダーの後継となることが現在の計画です。
 <br>
-We would appreciate feedback via the <a href="https://groups.google.com/group/zaproxy-users">ZAP User Group</a>
-to let us know how effectively it works for you, especially in comparison with the AJAX Spider.
+AJAXスパイダーと比較して、どれだけ効果的に機能するかについて、<a href="https://groups.google.com/group/zaproxy-users">ZAPユーザーグループ</a>を介してフィードバックを歓迎します。
 
 <p>
-The spider can be invoked via:
+このスパイダーは以下を介して呼び出すことができます：
 <ul>
-<li>Context specific "Attack" menu
-<li>"Tools / Client Spider" menu item
-<li>Automation Framework <a href="automation.html">spiderClient</a> job
+<li>コンテキスト固有の「攻撃」メニュー
+<li>「ツール / クライアントスパイダー」メニュー項目
+<li>自動化フレームワークの<a href="automation.html">spiderClient</a>ジョブ
 </ul>
 
-<h3>Client Spider dialog</h3>
+<h3>クライアントスパイダーダイアログ</h3>
 
-The dialog for starting the Client Spider provides 2 sub tabs:
+クライアントスパイダーを開始するためのダイアログには、2つのサブタブがあります：
 
-<h4>Scope</h4>
+<h4>スコープ</h4>
 
-This tab allows you to define what the spider will attempt to explore.
+このタブでは、スパイダーが探索を試みるものを定義できます。
 <p>
-The Scope Check can be either:
+スコープチェックは次のいずれかになります：
 
 <ul>
-	<li><code>Strict</code> - enforces that all requests need to be in scope to be accessed.
-	<li><code>Flexible</code> - allows all requests to be accessed. This scope check has the side effect of allowing out of scope domains to be accessed, but not crawled.
+	<li><code>Strict</code> - アクセスにはすべてのリクエストがスコープ内にある必要があることを強制します。
+	<li><code>Flexible</code> - すべてのリクエストにアクセスすることを許可します。 このスコープチェックには、スコープ外のドメインへのアクセスは許可されますが、クロールはされません。
 </ul>
 
-<h4>Options</h4>
+<h4>オプション</h4>
 
-This tab allows you to define the options that control how the spider works.
+このタブではスパイダーの動作を制御するオプションを定義できます。
 
-<h3>Client Spider tab</h3>
+<h3>クライアントスパイダータブ</h3>
 
-The Client Spider tab allows you start and monitor the Client Spider.
-It provides 3 sub tabs:
+クライアントスパイダータブではクライアントスパイダーを開始および監視できます。
+これには3つのサブタブがあります：
 
-<h4>Added Nodes</h4>
+<h4>ノートを追加</h4>
 
-These are the nodes that have been added to the Client Map.
+これらはクライアントマップに追加されたノードです。
 
-<h4>Tasks</h4>
+<h4>タスク</h4>
 
-These are the tasks that spider uses to crawl the application. 
-The tasks are updated when they are added to the task list, when they start running, and when they complete.
-This allows you to understand what the Client Spider is actually doing much more clearly.
+これらは、スパイダーがアプリケーションをクロールするために使用するタスクです。 
+タスクは、タスクリストへの追加時、実行開始時、および完了時に更新されます。
+これにより、クライアントスパイダーが実際に何を行っているかを非常に明確に把握できます。
 
-<h4>Messages</h4>
+<h4>メッセージ</h4>
 
-These are the HTTP(S) messages sent from the browsers that the client uses.
+これらは、クライアントが使用するブラウザから送信されたHTTP(S)メッセージです。
 
 </BODY>
 </HTML>

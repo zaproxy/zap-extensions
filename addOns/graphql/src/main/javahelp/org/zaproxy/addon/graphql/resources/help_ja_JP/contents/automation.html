@@ -3,58 +3,58 @@
 <HEAD>
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
     <TITLE>
-        GraphQL Automation Framework Support
+        GraphQL – 自動化フレームワーク対応
     </TITLE>
 </HEAD>
 
 <BODY>
-<H1>GraphQL Automation Framework Support</H1>
-This add-on supports the Automation Framework.
+<H1>GraphQL – 自動化フレームワーク対応</H1>
+このアドオンは自動化フレームワークに対応しています。
 <br><br>
-The add-on will import GraphQL schemas using introspection if endpoints are found while spidering. However, specifying an endpoint and (optionally) a schema file or URL is recommended if they are available.
+スパイダー実行時にエンドポイントが発見された場合、このアドオンはイントロスペクションを利用してGraphQLスキーマをインポートします。 ただし、エンドポイントと (オプションで) スキーマファイルまたはURLが利用可能な場合は、それらを明示的に指定することを推奨します。
 
-<H2>Job: graphql</H2>
-The <i>graphql</i> job allows you to import GraphQL schemas locally or from a URL. It supports the following parameters:
+<H2>ジョブ: graphql</H2>
+<i>graphql</i> ジョブを使用すると、ローカルファイルまたはURLからGraphQLスキーマをインポートできます。 以下のパラメーターをサポートしています：
 <p>
-It is covered in the video: <a href="https://youtu.be/xuP00Ri460k">ZAP Chat 11 Automation Framework Part 5 - APIs</a>.
+この内容は、動画「<a href="https://youtu.be/xuP00Ri460k">ZAP Chat 11 Automation Framework Part 5 - APIs</a>」で解説されています。
 <pre>
-  - type: graphql                      # GraphQL definition import
+  - type: graphql                      # GraphQL定義のインポート
     parameters:
-      endpoint:                        # String: the endpoint URL, default: null, no schema is imported
-      schemaUrl:                       # String: URL pointing to a GraphQL Schema, default: null, import using introspection on endpoint
-      schemaFile:                      # String: Local file path of a GraphQL Schema, default: null, import using schemaUrl
-      queryGenEnabled:                 # Bool: Whether the Query Generator is enabled, default: true
-      maxQueryDepth:                   # Int: The maximum query generation depth, default: 5
-      lenientMaxQueryDepthEnabled:     # Bool: Whether or not Maximum Query Depth is enforced leniently, default: true
-      maxAdditionalQueryDepth:         # Int: The maximum additional query generation depth (used if enforced leniently), default: 5
-      maxArgsDepth:                    # Int: The maximum arguments generation depth, default: 5
-      optionalArgsEnabled:             # Bool: Whether or not Optional Arguments should be specified, default: true
-      argsType:                        # Enum [inline, variables, both]: How arguments are specified, default: both 
-      querySplitType:                  # Enum [leaf, root_field, operation]: The level for which a single query is generated, default: leaf
-      requestMethod:                   # Enum [post_json, post_graphql, get]: The request method, default: post_json
+      endpoint:                        # 文字列: エンドポイントのURL。デフォルト: null。この場合、スキーマはインポートされません
+      schemaUrl:                       # 文字列: GraphQLスキーマを指すURL。デフォルト: null。エンドポイントへのイントロスペクションを通じてインポートされます
+      schemaFile:                      # 文字列: GraphQLスキーマのローカルファイルパス。デフォルト: null。schemaUrlが指定されていない場合、ここからインポートされます
+      queryGenEnabled:                 # Bool: クエリジェネレーターが有効かどうか。デフォルト: true
+      maxQueryDepth:                   # Int: クエリ生成の最大深度。デフォルト: 5
+      lenientMaxQueryDepthEnabled:     # Bool: 最大クエリ深度の緩和が有効かどうか。デフォルト: true
+      maxAdditionalQueryDepth:         # Int: 最大追加クエリ深度 (緩和が有効な場合に使用)。デフォルト: 5
+      maxArgsDepth:                    # Int: 最大引数生成深度。デフォルト: 5
+      optionalArgsEnabled:             # Bool: オプション引数を指定するかどうか。デフォルト: true
+      argsType:                        # Enum [inline, variables, both]: 引数の指定方法。デフォルト: both
+      querySplitType:                  # Enum [leaf, root_field, operation]: 単一クエリが生成されるレベル。デフォルト: leaf
+      requestMethod:                   # Enum [post_json, post_graphql, get]: リクエストメソッド。デフォルト: post_json
 </pre>
 
-<H2>See also</H2>
+<H2>関連情報</H2>
 <table>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
         <td><a href="graphql.html">GraphQL</a></td>
-        <td>for an overview of the GraphQL add-on.</td>
+        <td>GraphQL アドオンの概要</td>
     </tr>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-        <td><a href="options.html">GraphQL Options</a></td>
-        <td>for information about the optional parameters.</td>
+        <td><a href="options.html">GraphQL オプション</a></td>
+        <td>オプションのパラメーターに関する情報</td>
     </tr>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-        <td><a href="variant.html">GraphQL Variant</a></td>
-        <td>for information about the GraphQL variant.</td>
+        <td><a href="variant.html">GraphQL バリアント</a></td>
+        <td>GraphQL バリアントに関する情報</td>
     </tr>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-        <td><a href="alerts.html">GraphQL Alerts</a></td>
-        <td>for information about alerts raised by the add-on.</td>
+        <td><a href="alerts.html">GraphQL アラート</a></td>
+        <td>このアドオンによって発生するアラートに関する情報</td>
     </tr>
 </table>
 

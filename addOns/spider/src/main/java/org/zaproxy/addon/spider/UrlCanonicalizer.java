@@ -31,7 +31,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.util.URIUtil;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zaproxy.addon.spider.SpiderParam.HandleParametersOption;
@@ -86,7 +86,10 @@ public final class UrlCanonicalizer {
      * @return the canonical url
      */
     public static String getCanonicalUrl(ParseContext ctx, String url, String baseURL) {
-        if (StringUtils.startsWithIgnoreCase(url, "javascript:") || "//".equals(url)) {
+        if (Strings.CI.startsWith(url, "javascript:")
+                || Strings.CI.startsWith(url, "tel:")
+                || Strings.CI.startsWith(url, "mailto:")
+                || "//".equals(url)) {
             return null;
         }
 

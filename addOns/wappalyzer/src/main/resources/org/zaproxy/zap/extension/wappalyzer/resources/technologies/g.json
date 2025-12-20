@@ -1,4 +1,35 @@
 {
+  "GBooking": {
+    "cats": [
+      72
+    ],
+    "description": "GBooking is an online platform that provides booking and business management services for scheduling, reservations, and operational organization.",
+    "icon": "GBooking.svg",
+    "pricing": [],
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.gbooking\\.ru"
+    ],
+    "website": "https://gbooking.ru"
+  },
+  "GDPR Cookie Consent Plugin by Webtoffee": {
+    "cats": [
+      67
+    ],
+    "cookies": {
+      "wt_consent": ""
+    },
+    "description": "GDPR Cookie Consent Plugin by Webtoffee is a WordPress solution that ensures GDPR and CCPA compliance, supports IAB standards, and integrates with Google Consent Mode.",
+    "icon": "GDPRCookieConsent.svg",
+    "js": {
+      "webtoffee._wccConsentStore": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "website": "https://www.webtoffee.com/product/gdpr-cookie-consent/"
+  },
   "GEODIS": {
     "cats": [
       99
@@ -378,6 +409,25 @@
     "saas": true,
     "website": "https://www.gsecondscreen.com"
   },
+  "GaniPara": {
+    "cats": [
+      6
+    ],
+    "description": "GaniPara is a hosted ecommerce solution based in Turkey, providing infrastructure for setting up and managing online stores.",
+    "icon": "GaniPara.svg",
+    "meta": {
+      "apple-mobile-web-app-title": "^Ganipara$"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.ganipara\\.com/"
+    ],
+    "website": "https://ganipara.com/planlar"
+  },
   "Gannett CMS": {
     "cats": [
       1
@@ -522,6 +572,18 @@
       "\\.geggio\\.com"
     ],
     "website": "https://www.geggio.com"
+  },
+  "Gekosale": {
+    "cats": [
+      6
+    ],
+    "description": "Gekosale is an open-source ecommerce solution designed for building and managing online stores.",
+    "icon": "Gekosale.svg",
+    "saas": true,
+    "scriptSrc": [
+      "\\bgekosale(?:\\.libs)?(?:\\.min)?\\.js\\b"
+    ],
+    "website": "https://gekosale.pl"
   },
   "Gelato": {
     "cats": [
@@ -688,6 +750,28 @@
     ],
     "website": "https://docs.generatepress.com/article/installing-gp-premium/"
   },
+  "Genesis blocks": {
+    "cats": [
+      87
+    ],
+    "description": "Premium block library & block editor enhancements from StudioPress.",
+    "dom": {
+      "link[href*='/wp-content/plugins/atomic-blocks']": {
+        "exists": ""
+      },
+      "link[href*='/wp-content/plugins/genesis-blocks']": {
+        "exists": ""
+      }
+    },
+    "html": [
+      "<div[^>]+class=[\"']wp-block-atomic-blocks-*"
+    ],
+    "icon": "genesis-blocks.png",
+    "scriptSrc": [
+      "/wp-content/themes/genesis-blocks/lib/js/"
+    ],
+    "website": "https://www.studiopress.com/genesis-blocks/"
+  },
   "Genesis theme": {
     "cats": [
       80
@@ -851,6 +935,17 @@
     ],
     "website": "https://www.geoapify.com"
   },
+  "Geobytes": {
+    "cats": [
+      79
+    ],
+    "description": "Geobytes is a geolocation service that enables redirection of users and provides statistics on their geographic origin.",
+    "saas": true,
+    "scripts": [
+      "gd\\.geobytes\\.com"
+    ],
+    "website": "https://geobytes.com"
+  },
   "Geonetric": {
     "cats": [
       1
@@ -904,6 +999,22 @@
     ],
     "saas": true,
     "website": "https://www.gesio.com"
+  },
+  "Gestim": {
+    "cats": [
+      53
+    ],
+    "description": "Gestim is an Italian real estate management system.",
+    "icon": "Gestim.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "stats\\.gestim\\.biz"
+    ],
+    "website": "https://www.gestim.it"
   },
   "Get Satisfaction": {
     "cats": [
@@ -978,6 +1089,24 @@
     ],
     "website": "https://getchat.app"
   },
+  "GetCommerce": {
+    "cats": [
+      6
+    ],
+    "description": "GetCommerce is a platform providing ecommerce website design and development tailored to align with brand identity and functionality.",
+    "icon": "GetCommerce.svg",
+    "js": {
+      "getCommerce.version": "([\\d\\.]+)\\;version:\\1"
+    },
+    "meta": {
+      "generator": "getCommerce ([\\d.]+)?\\;version:\\1"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://getcommerce.xyz"
+  },
   "GetFeedback": {
     "cats": [
       13
@@ -1048,6 +1177,25 @@
       "\\.getresponse\\.com/"
     ],
     "website": "https://www.getresponse.com"
+  },
+  "GetReview": {
+    "cats": [
+      90
+    ],
+    "description": "GetReview is a website reviews system designed to collect, manage, and display user feedback.",
+    "icon": "GetReview.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.getreview\\.pl"
+    ],
+    "scripts": [
+      "app\\.getreview\\.pl"
+    ],
+    "website": "https://getreview.pl"
   },
   "GetRooster": {
     "cats": [
@@ -1151,6 +1299,18 @@
     ],
     "website": "https://partner.getyourguide.com"
   },
+  "Getback": {
+    "cats": [
+      32
+    ],
+    "description": "Getback is a web push conversion optimization tool developed by AdFocus to help improve engagement and campaign performance through browser-based notifications.",
+    "icon": "Getback.svg",
+    "saas": true,
+    "scriptSrc": [
+      "www\\.getback\\.ch"
+    ],
+    "website": "https://www.getback.app"
+  },
   "Getgabs": {
     "cats": [
       32
@@ -1219,6 +1379,31 @@
     ],
     "website": "https://getsitecontrol.com"
   },
+  "Gevme": {
+    "cats": [
+      104
+    ],
+    "description": "Gevme is an omnichannel event management platform designed to streamline planning, coordination, and execution across physical, virtual, and hybrid events.",
+    "icon": "Gevme.svg",
+    "js": {
+      "GEVME.analytics": "",
+      "GevmeActivityFeed": ""
+    },
+    "meta": {
+      "generator": "^GEVME Analytics$"
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "analytics\\.gevme\\.com"
+    ],
+    "website": "https://www.gevme.com"
+  },
   "Ghost": {
     "cats": [
       1,
@@ -1264,6 +1449,24 @@
       "/gijgo@([\\d\\.]+)/js/gijgo\\.min\\.js\\;version:\\1"
     ],
     "website": "https://gijgo.com"
+  },
+  "Giosg": {
+    "cats": [
+      52
+    ],
+    "description": "Giosg is a live chat solution designed to support ecommerce platforms by enabling real-time customer communication and engagement.",
+    "icon": "Giosg.svg",
+    "js": {
+      "giosgWebpackJsonp": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "service\\.giosg\\.com"
+    ],
+    "website": "https://www.giosg.com"
   },
   "Giscus": {
     "cats": [
@@ -1438,9 +1641,19 @@
     "implies": [
       "Go"
     ],
+    "js": {
+      "window.config.assetVersionEncoded": ".+-gitea-([\\d\\.]+)\\;version:\\1"
+    },
     "meta": {
       "keywords": "^go,git,self-hosted,gitea$"
     },
+    "oss": true,
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
     "website": "https://gitea.io"
   },
   "Gitiles": {
@@ -1527,6 +1740,24 @@
       "/wp-content/plugins/give/.+give\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
     ],
     "website": "https://givewp.com"
+  },
+  "Giveffect": {
+    "cats": [
+      53
+    ],
+    "description": "Giveffect is a not-for-profit customer relationship management system designed to support organizational operations and engagement.",
+    "icon": "Giveffect.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.giveffect\\.com"
+    ],
+    "scripts": [
+      "\\.giveffect\\.com"
+    ],
+    "website": "https://www.giveffect.com"
   },
   "GivingFuel": {
     "cats": [
@@ -1989,6 +2220,24 @@
     ],
     "website": "https://www.gloriafood.com"
   },
+  "Glow": {
+    "cats": [
+      84
+    ],
+    "description": "Glow is a rewards platform that helps businesses increase repeat sales by encouraging one-time buyers to return through structured customer retention programs.",
+    "icon": "Glow.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "payg"
+    ],
+    "saas": true,
+    "scripts": [
+      "www\\.glowloyalty\\.com"
+    ],
+    "website": "https://glowloyalty.com"
+  },
   "GlueUp": {
     "cats": [
       53
@@ -2426,6 +2675,18 @@
     },
     "website": "https://gostats.com/"
   },
+  "GoVedia": {
+    "cats": [
+      6
+    ],
+    "description": "GoVedia is a provider of custom ecommerce development solutions tailored to specific business needs.",
+    "icon": "GoVedia.svg",
+    "saas": true,
+    "scripts": [
+      "\\.govedia\\.com"
+    ],
+    "website": "https://govedia.com"
+  },
   "GoZen Forms": {
     "cats": [
       110
@@ -2624,6 +2885,22 @@
     "saas": true,
     "website": "https://www.gomag.ro"
   },
+  "Gong": {
+    "cats": [
+      10
+    ],
+    "description": "Gong is an AI-powered platform that captures and analyses customer interactions to provide insights for revenue teams, improving forecasting accuracy and sales performance.",
+    "headers": {
+      "Content-Security-Policy": "app\\.gong\\.io"
+    },
+    "icon": "Gong.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.gong.io"
+  },
   "Goober": {
     "cats": [
       59
@@ -2640,6 +2917,37 @@
     },
     "oss": true,
     "website": "https://goober.js.org"
+  },
+  "GoodAPI": {
+    "cats": [
+      32
+    ],
+    "description": "GoodAPI is a platform that helps businesses increase conversions while supporting environmental sustainability by planting trees.",
+    "icon": "GoodAPI.svg",
+    "saas": true,
+    "scripts": [
+      "\\.thegoodapi\\.com"
+    ],
+    "website": "https://thegoodapi.com"
+  },
+  "GoodApps": {
+    "cats": [
+      6
+    ],
+    "description": "GoodApps is an ecommerce tools builder that provides customizable solutions for creating and managing online stores.",
+    "icon": "GoodApps.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.goodapps\\.io"
+    ],
+    "scripts": [
+      "\\.goodapps\\.io"
+    ],
+    "website": "https://goodapps.io"
   },
   "GoodEshop": {
     "cats": [
@@ -2671,6 +2979,22 @@
       "app\\.goodreviews\\.io"
     ],
     "website": "https://goodreviews.io"
+  },
+  "Goodbits": {
+    "cats": [
+      75
+    ],
+    "cookies": {
+      "_goodbits_session": ""
+    },
+    "description": "Goodbits is email newsletter creation software designed to help collect and curate content for sending newsletters.",
+    "icon": "Goodbits.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://goodbits.io"
   },
   "Goodsearch": {
     "cats": [
@@ -2853,6 +3177,24 @@
     ],
     "website": "https://cloud.google.com/cdn"
   },
+  "Google Cloud Load Balancing": {
+    "cats": [
+      65
+    ],
+    "description": "Google Cloud Load Balancing is a scalable, fully managed global load balancing service using Google Frontend.",
+    "headers": {
+      "server": "^Google Frontend$"
+    },
+    "icon": "Google Cloud.svg",
+    "implies": [
+      "Google Cloud"
+    ],
+    "pricing": [
+      "payg",
+      "poa"
+    ],
+    "website": "https://cloud.google.com/load-balancing"
+  },
   "Google Cloud Storage": {
     "cats": [
       19
@@ -2929,7 +3271,7 @@
     "scriptSrc": [
       "googleapis\\.com/.+webfont"
     ],
-    "website": "https://google.com/fonts"
+    "website": "https://fonts.google.com/"
   },
   "Google Forms": {
     "cats": [
@@ -3368,6 +3710,18 @@
     ],
     "website": "https://graffiticms.codeplex.com"
   },
+  "Grain Harvest": {
+    "cats": [
+      47
+    ],
+    "description": "Grain Harvest is an online platform that provides data science tools and resources for professionals and learners in the field.",
+    "icon": "GrainData.svg",
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.harvest\\.graindata\\.com"
+    ],
+    "website": "https://graindata.com"
+  },
   "GrandNode": {
     "cats": [
       6
@@ -3515,6 +3869,22 @@
     ],
     "saas": true,
     "website": "https://graphly.io"
+  },
+  "Graphy": {
+    "cats": [
+      21
+    ],
+    "description": "Graphy is a platform that enables the creation and scaling of courses, communities, and digital products using AI tools.",
+    "icon": "Graphy.svg",
+    "js": {
+      "getGraphyCookie": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://graphy.com"
   },
   "Grasp": {
     "cats": [
@@ -3744,6 +4114,10 @@
     ],
     "description": "Greyd.Suite is an all-in-one platform designed to streamline WordPress business operations, integrating site management, design, and marketing tools into a unified system.",
     "icon": "GreydSuite.svg",
+    "js": {
+      "greyd.animations": "",
+      "greydFormSettings": ""
+    },
     "pricing": [
       "onetime",
       "mid",
@@ -3994,6 +4368,22 @@
     ],
     "website": "https://growave.io"
   },
+  "Growcer": {
+    "cats": [
+      93
+    ],
+    "description": "Growcer is an online marketplace for grocery ordering and delivery, connecting customers with local stores for convenient shopping.",
+    "icon": "Growcer.svg",
+    "pricing": [
+      "onetime",
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.yogrowcer\\.com"
+    ],
+    "website": "https://www.yogrowcer.com"
+  },
   "Growform": {
     "cats": [
       110
@@ -4010,6 +4400,21 @@
     ],
     "saas": true,
     "website": "https://www.growform.co"
+  },
+  "Growing Good": {
+    "cats": [
+      6
+    ],
+    "description": "Growing Good is a software platform for local veg box schemes, providing tools to manage operations.",
+    "icon": "GrowingGood.svg",
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scripts": [
+      "growinggood\\.ams3\\.digitaloceanspaces"
+    ],
+    "website": "https://growing-good.co.uk"
   },
   "GrowingIO": {
     "cats": [
@@ -4061,6 +4466,33 @@
     ],
     "saas": true,
     "website": "https://www.gruvi.tv"
+  },
+  "GuardFlame": {
+    "cats": [
+      31
+    ],
+    "description": "GuardFlame is a provider of CDN acceleration services that enhance website performance.",
+    "headers": {
+      "server": "^GuardFlame$"
+    },
+    "icon": "GuardFlame.svg",
+    "saas": true,
+    "website": "https://hydun.com"
+  },
+  "Guest Suite": {
+    "cats": [
+      73
+    ],
+    "description": "Guest Suite is a tool that collects customer opinions during their stay, directly from the reception of the establishment.",
+    "icon": "GuestSuite.svg",
+    "js": {
+      "guestsuite": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "js\\.guestapp\\.me"
+    ],
+    "website": "https://guestapp.me"
   },
   "Guestonline": {
     "cats": [
@@ -4214,6 +4646,22 @@
       "w\\.gumstack\\.com"
     ],
     "website": "https://gumstack.com/"
+  },
+  "Gurucan": {
+    "cats": [
+      21
+    ],
+    "description": "Gurucan is a platform that enables users to create and sell online courses through a single interface.",
+    "icon": "Gurucan.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "assets\\.gurucan\\.com"
+    ],
+    "website": "https://www.gurucan.com"
   },
   "Gutenberg": {
     "cats": [

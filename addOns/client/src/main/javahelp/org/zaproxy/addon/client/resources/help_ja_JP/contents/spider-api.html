@@ -2,51 +2,53 @@
 <HTML>
 <HEAD>
 <TITLE>
-Client Side Integration - Client Spider API
+クライアントサイド統合 - クライアントスパイダーAPI
 </TITLE>
 </HEAD>
 <BODY>
-<H1>Client Side Integration - Client Spider API</H1>
+<H1>クライアントサイド統合 - クライアントスパイダーAPI</H1>
 
-This add-on adds various API endpoints to allow you to control the Client Spider programmatically.
+このアドオンはクライアントスパイダーをプログラムによって制御できるように、さまざまなAPIエンドポイントを追加します。
 <p>
-The API is accessible via <code>clientSpider</code> API prefix.
+APIには <code>clientSpider</code> というAPIプレフィックスを介してアクセスできます。
 
-<H2>Views</H2>
+<H2>ビュー</H2>
 <ul>
-<li><code>status (scanId*)</code>: Gets the status of the spider scan. Returns an integer between 0 and 100 indicating current progress.</li>
+<li><code>status (scanId*)</code>: スパイダースキャンのステータスを取得します。 現在の進行状況を示す0から100までの整数を返します。</li>
 </ul>
 
-<H2>Actions</H2>
+<H2>アクション</H2>
 <ul>
-<li><code>scan (browser url contextName userName subtreeOnly maxCrawlDepth pageLoadTime)</code>: Runs the Client Spider against the given URL and/or context. Returns the scanId.</li>
-<li><code>stop (scanId*)</code>: Stops a Client Spider scan.</li>
+<li><code>scan (browser url contextName userName subtreeOnly maxCrawlDepth pageLoadTime numberOfBrowsers scopeCheck)</code>: 指定されたURLやコンテキストに対してクライアントスパイダーを実行します。 スキャンIDを返します。</li>
+<li><code>stop (scanId*)</code>: クライアントスパイダースキャンを停止します。</li>
 </ul>
 
-<H2>Parameters</H2>
+<H2>パラメーター</H2>
 <ul>
-<li><code>browser</code>: The browser to use for the scan, e.g. 'firefox-headless'. If not specified, uses Firefox Headless.</li>
-<li><code>url</code>: The URL to start the scan at. If not specified and a context is set, the first URL in the context will be used.</li>
-<li><code>contextName</code>: The name of the context to scan.</li>
-<li><code>userName</code>: The name of the user to run the scan as. The user must exist in the specified context.</li>
-<li><code>subtreeOnly</code>: If set to 'true', the spider will only scan URLs under the specified URL. Default: 'false'.</li>
-<li><code>maxCrawlDepth</code>: The maximum depth the spider should crawl, where 0 is unlimited. Defaults to client options.</li>
-<li><code>pageLoadTime</code>: The time in seconds to wait for a page to load. Defaults to client options.</li>
-<li><code>scanId</code>: The ID of the scan to query or manage.</li>
+<li><code>browser</code>: スキャンに使用するブラウザ、例: 'firefox-headless'。 指定されていない場合は、Firefox Headlessが使用されます。</li>
+<li><code>url</code>: スキャンを開始するURL。 指定されておらずコンテキストが設定されている場合は、コンテキスト内の最初のURLが使用されます。</li>
+<li><code>contextName</code>: スキャンするコンテキストの名前。</li>
+<li><code>userName</code>: スキャンを実行するユーザーの名前。 ユーザーは指定されたコンテキストに存在する必要があります。</li>
+<li><code>subtreeOnly</code>: 'true' に設定されている場合、スパイダーは指定されたURLの下のURLのみをスキャンします。 デフォルト: 'false'</li>
+<li><code>maxCrawlDepth</code>: スパイダーがクロールする最大深度。0は無制限を意味します。 デフォルトはクライアントオプションです。</li>
+<li><code>pageLoadTime</code>: ページの読み込み待機時間 (秒単位)。 デフォルトはクライアントオプションです。</li>
+<li><code>numberOfBrowsers</code>: 開くブラウザウィンドウの数 (同時実行数)。 整数値。デフォルトはクライアントオプションの設定値です。</li>
+<li><code>scopeCheck</code>: スコープチェックモード。<code>FLEXIBLE</code> (デフォルト) または<code>STRICT</code>のいずれか。</li>
+<li><code>scanId</code>: 照会または管理するスキャンのID。</li>
 </ul>
 
-<H2>Examples</H2>
-<H3>Start a scan:</H3>
+<H2>例</H2>
+<H3>スキャンの開始：</H3>
 <pre><code>
-https://zap/JSON/clientSpider/action/scan/?url=https://example.com&maxCrawlDepth=5&pageLoadTime=30
+https://zap/JSON/clientSpider/action/scan/?url=https://example.com&maxCrawlDepth=5&pageLoadTime=30&numberOfBrowsers=1&scopeCheck=STRICT
 </code></pre>
 
-<H3>Check status:</H3>
+<H3>ステータスの確認：</H3>
 <pre><code>
 https://zap/JSON/clientSpider/view/status/?scanId=1
 </code></pre>
 
-<H3>Stop a scan:</H3>
+<H3>スキャンの停止：</H3>
 <pre><code>
 https://zap/JSON/clientSpider/action/stop/?scanId=1
 </code></pre>

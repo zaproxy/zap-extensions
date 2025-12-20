@@ -93,6 +93,7 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.network.LocalServersOptions.ServersChangedListener;
 import org.zaproxy.addon.network.common.HttpProxy;
 import org.zaproxy.addon.network.internal.ContentEncodingsHandler;
+import org.zaproxy.addon.network.internal.DefaultCharsetProvider;
 import org.zaproxy.addon.network.internal.TlsUtils;
 import org.zaproxy.addon.network.internal.cert.CertData;
 import org.zaproxy.addon.network.internal.cert.CertificateUtils;
@@ -254,6 +255,8 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         } catch (Exception e) {
             LOGGER.error("An error occurred while creating the sender:", e);
         }
+
+        HttpMessage.setCharsetProvider(new DefaultCharsetProvider());
     }
 
     private static void setLogLevel(List<String> classnames, Level level) {
@@ -1634,7 +1637,9 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         }
 
         @Override
-        public void sessionAboutToChange(Session session) {}
+        public void sessionAboutToChange(Session session) {
+            HttpMessage.resetWarnedContentTypeValues();
+        }
 
         @Override
         public void sessionScopeChanged(Session session) {}

@@ -3,51 +3,51 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>
-SOAP Support
+SOAP サポート
 </title>
 </head>
 <body>
-<h1>SOAP Support</h1>
-This add-on imports and scans WSDL files containing SOAP endpoints.
+<h1>SOAP サポート</h1>
+このアドオンは、SOAP エンドポイントを含む WSDLファイルをインポートおよびスキャンします。
 <br><br>
-It also supports the <a href="automation.html">Automation Framework</a>.
+また、 <a href="automation.html">自動化フレームワーク</a>をサポートします<a href="#"></a>.
 
-<h2>Importing</h2>
-The add-on will automatically detect any SOAP definitions and spider them as long as they are in scope.
+<h2>インポート</h2>
+アドオンは、スコープ内にある限り、SOAP定義を自動的に検出してスパイダーします。
 <br><br>
-A menu item is added to the Import menu:
+「インポート」メニューに以下の項目が追加されます：
 <ul>
-<li>Import a WSDL File</li>
+<li>WSDLファイルをインポート</li>
 </ul>
-Operations to import a WSDL file from the local filesystem or from a URL are also available via the API.
+ローカルファイルシステムまたはURLからWSDLファイルをインポートする操作は、API経由でも利用可能です。
 <br><br>
-<b>NOTE:</b> As of version 6 of this add-on, only encoded URLs are supported.
+<b>注意:</b> このアドオンのバージョン 6以降では、エンコードされたURLのみがサポートされます。
 
-<h3>Form Handler Add-on Support</h3>
-The SOAP add-on supports overriding default parameter values based on field names via the Form Handler add-on.
-For example,
+<h3>フォームハンドラーアドオンのサポート</h3>
+SOAP アドオンは、フォームハンドラーアドオン経由でフィールド名に基づくデフォルトパラメーター値のオーバーライドをサポートします。
+例えば、
 <br>
-<img src="images/formHandlerExample.png" alt="Form Handler Example" width="300">
+<img src="images/formHandlerExample.png" alt="フォームハンドラーの例" width="300">
 
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/tree/main/addOns/soap">SOAP Support</a>
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/tree/main/addOns/soap">SOAP サポート</a>
 
-<h2>Statistics</h2>
-This add-on maintains the following statistics:
+<h2>統計</h2>
+このアドオンは以下の統計を管理します：
 <ul>
-    <li>soap.urls.added: The total number of URLs (or SOAP Actions) added from imported WSDL files.</li>
+    <li>soap.urls.added: インポートされたWSDLファイルから追加されたURL (または SOAP アクション) の総数。</li>
 </ul>
 
-<h2>See also</h2>
+<h2>関連情報</h2>
 <table>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;
-        <td><a href="alerts.html">Alert & Rule Details</a>
-        <td>for details of the Alerts and rules for the SOAP support add-on.
+        <td><a href="alerts.html">アラートおよびルールの詳細</a>
+        <td>SOAP サポートアドオンのアラートおよびルールの詳細
     </tr>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;
-        <td><a href="automation.html">SOAP Automation</a>
-        <td>for information about the automation framework support.
+        <td><a href="automation.html">SOAP 自動化</a>
+        <td>自動化フレームワーク対応に関する情報
     </tr>
 </table>
 

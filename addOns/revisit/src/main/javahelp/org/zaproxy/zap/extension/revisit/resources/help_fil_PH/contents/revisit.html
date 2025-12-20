@@ -8,40 +8,45 @@ Revisit
 <body>
 <h1>Bisitahing Muli</h1>
 <p>
-Ginusto mo ba na magawang mag-browse sa isang aplikasyon na iyong nasubukan kasama ng ZAP sa isang partikular na oras, marahil kung wala kang access dito, o pagkatapos ito ay naging bago sa ilang paraan?<br> kung sa gayon itong add-on ay para sayo!
+Have you ever wanted to be able to browse an application you tested with ZAP at a specific time, perhaps when you don't have access to it, or after it's been changed in some way?<br>
+If so then this add-on is for you!
 </p>
+
 <p>
-The add-on allows you to instruct ZAP to return content from the ZAP history between specified
-dates rather than forwarding the requests to the site.<br>
+The add-on allows you to instruct ZAP to return content from the ZAP history between specified dates rather than forwarding the requests to the site.<br>
 This allows you to apparently browse and use a website that you no longer have access to.<br>
-It also allows you to see what it looked like at between specific times, which is useful if 
-the application has since changed.<br>
-<br>
-When returning pages from the ZAP history floating footers are injected into HTML pages to
-give a visual clue that these pages are generated from ZAP.<br>
+It also allows you to see what it looked like at between specific times, which is useful if the application has since changed.
+</p>
+
+<p>
+When returning pages from the ZAP history floating footers are injected into HTML pages to give a visual clue that these pages are generated from ZAP.<br>
 ZAP will return pages that were the result of both GET and POST requests as long as it finds ones that match.<br>
 Pages only match if all URL and POST parameters are the same, ignoring the order and any known CSRF tokens.<br>
-If no matching page can be found in the history then a custom 404 page is returned which will
-include links to the same page if it has been invoked with different parameters or outside of the time period specified.<br>
-<br>
-This add-on adds right click menus to the Sites Tree:
+If no matching page can be found in the history then a custom 404 page is returned which will include links to the same page if it has been invoked with different parameters or outside of the time period specified.
 </p>
+
+<p>This add-on adds right click menus to the Sites Tree:</p>
+
 <h3>Paganahin ang Revisit</h3>
-Ang piniling popup ay makikita kapag hinihingi ang simula at katapusan ng pag gamit.<br>
-Ang mga kakulangan ng oras sa pag uumpisa sa oras unang kahilingan na nasa sesyon.<br>
-Ang kakulangan ng oras ng pagtatapos sa oras ng huling kahilingan na nasa sesyon.<br>
-Kapag ang mga elemento na napili ay hindi nabago (halimbawa 'araw ng buwan') kasunod nito ang mga elemento ay hindi pagaganahin.<br>
-If the dialog OK button is pressed then the revisit functionality will be enabled for the selected site,
-and a 'calendar' icon added to the site node in the Sites Tree.
+<p>
+When selected a popup will be shown which asks for the start and end times to be used.<br>
+The start time defaults to the time of the first request in the session.<br>
+The end time defaults to the time of the last request in the session.<br>
+If any of the time elements (for example 'day of the month') have not changed then those elements will be disabled.<br>
+If the dialog OK button is pressed then the revisit functionality will be enabled for the selected site, and a 'calendar' icon added to the site node in the Sites Tree.
+</p>
 
 <h3>Hindi Pinagana ang Revisit</h3>
-Kapag napili pagkatapos ang pag papatakbo sa revisit ay hindi gagana sa mga napiling sayt.
+<p>Kapag napili pagkatapos ang pag papatakbo sa revisit ay hindi gagana sa mga napiling sayt.</p>
 
 <h2>Ang API</h2>
-Ang mga suporta na idadagdag sa sumusunod ng mga endpoint ng API:<br><br>
-ang revisit / view/ revisitlist ay bumabalik sa mga listahan ng mga sayt na pinagana sa revisit<br>
-ang revisit / action /revisitSiteon ay lumiliko sa mga tinukoy na sayt. Ang dapat na gamiting ayos ng petsa ay: "yyy/MM/dd HH:mm:ss"<br> 
-ang revisit / action revisitSiteOff ay lumiliko ang revisit mula sa mha tinutukoy na sayt
+<p>Ang mga suporta na idadagdag sa sumusunod ng mga endpoint ng API:</p>
+
+<pre>
+revisit / view / revisitList: Returns the list of sites enabled for revisit<br>
+revisit / action / revisitSiteOn: Turns revisit on for the specified site. Dates must use the format: "yyyy/MM/dd HH:mm:ss"<br>
+revisit / action / revisitSiteOff: Turns revisit off for the specified site
+</pre>
 
 </body>
 </html>

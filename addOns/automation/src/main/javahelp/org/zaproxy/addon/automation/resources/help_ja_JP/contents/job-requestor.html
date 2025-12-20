@@ -2,34 +2,33 @@
 <HTML>
 <HEAD>
   <TITLE>
-    Automation Framework - requestor Job
+    自動化フレームワーク - requestor ジョブ
   </TITLE>
 </HEAD>
 <BODY>
-<H1>Automation Framework - requestor Job</H1>
+<H1>自動化フレームワーク - requestor ジョブ</H1>
 
-This job sends specifically crafted requests to a target url, with a custom request method and body. The user can also specify
-an expected response code, against which the actual response is compared, and the user is warned in case it does not match. The user can add additional headers to the request e.g. Authorization Tokens, etc.
+このジョブは、カスタムのリクエストメソッドとボディを用いて、ターゲットURLに特別に作成されたリクエストを送信します。 ユーザーは期待されるレスポンスコードを指定でき、実際の結果と一致しない場合は警告されます。 また、認証トークンなどの追加のヘッダーをリクエストに追加することもできます。
 <p>
-It is covered in the video: <a href="https://youtu.be/4phnMy9iCPY">ZAP Chat 09 Automation Framework Part 3 - Requests</a>.
+この内容は、動画「<a href="https://youtu.be/4phnMy9iCPY">ZAP Chat 09 Automation Framework Part 3 - Requests</a>」で解説されています。
 
 <H2>YAML</H2>
 
 <pre>
-  - type: requestor                    # Used to send specific requests to targets
+  - type: requestor                    # ターゲットに特定のリクエストを送信するために使用されます
     parameters:
-      user:                            # String: An optional user to use for authenticated requests, must be defined in the env
-    requests:                          # A list of requests to make
-      - url:                           # String: A mandatory URL of the request to be made
-        name:                          # String: Optional name for the request, for documentation only
-        method:                        # String: A non-empty request method, default: GET
-        httpVersion:                   # String: The HTTP version to send the request with, default: HTTP/1.1
-        headers:                       # An optional list of additional headers to include in the request
+      user:                            # 文字列: 認証が必要なリクエストに使用する任意のユーザー、環境内で定義されている必要があります
+    requests:                          # 作成するリクエストのリスト
+      - url:                           # 文字列: 作成するリクエストのURL、必須
+        name:                          #文字列: リクエストの任意の名前、ドキュメント作成目的のみ
+        method:                        # 文字列: 空でないリクエストメソッド、デフォルト: GET
+        httpVersion:                   # 文字列: リクエストの送信に使用するHTTPバージョン、デフォルト: HTTP/1.1
+        headers:                       # リクエストに含める任意の追加ヘッダーのリスト
             - "header1:value1"
-        data:                          # String: Optional data to send in the request body, supports vars
-        responseCode:                  # Int: An optional, expected response code against which the actual response code will be matched
-    enabled:                           # Bool: If set to false the job will not be run, default: true
-    alwaysRun:                         # Bool: If set and the job is enabled then it will run even if the plan exits early, default: false
+        data:                          # 文字列: リクエストボディに送信する任意のデータ、変数 (vars) をサポート
+        responseCode:                  # Int: 任意の期待されるレスポンスコード、実際の結果と照合されます
+    enabled:                           # Bool: falseに設定されている場合、ジョブは実行されません、デフォルト: true
+    alwaysRun:                         # Bool: 設定され、ジョブが有効な場合、プランが早期に終了しても実行されます、デフォルト: false
 </pre>
 
 </BODY>

@@ -24,6 +24,11 @@ alertTags:
   name2: value2
 otherInfo: Any other info
 status: alpha
+alertRefOverrides:
+  12345-1: {}
+  12345-2:
+    name: Passive Vulnerability - Type XYZ
+    description: Overridden description
 `);
 }
 
@@ -44,7 +49,8 @@ function scan(ps, msg, src) {
 	if (true) {	// Change to a test which detects the vulnerability
 		// risk: 0: info, 1: low, 2: medium, 3: high
 		// confidence: 0: falsePositive, 1: low, 2: medium, 3: high, 4: confirmed
-		ps.newAlert()
+        // Call newAlert() if you're not using alertRefOverrides
+		ps.newAlert("12345-1")
 			.setParam('The param')
 			.setEvidence('Evidence')
 			.raise();

@@ -2,33 +2,30 @@
 <HTML>
 <HEAD>
 <TITLE>
-Client Side Integration - Firefox Profile
+クライアントサイド統合 - Firefoxプロファイル
 </TITLE>
 </HEAD>
 <BODY>
-<H1>Client Side Integration - Firefox Profile</H1>
+<H1>クライアントサイド統合 - Firefoxプロファイル</H1>
 
-This <a href="client.html">add-on</a> creates a Firefox profile called 'zap-client-profile' and sets it as the default profile that ZAP will use.
-This profile enables the ZAP Firefox extension for all sites.
+この<a href="client.html">アドオン</a>は 'zap-client-profile' という名前のFirefoxプロファイルを作成し、それをZAPが使用するデフォルトのプロファイルとして設定します。
+このプロファイルはすべてのサイトでZAP Firefox拡張機能を有効化します。
 <p>
-If you choose to use another profile then you will need to manually approve the ZAP extension for every
-site you use it for, every time you launch a browser from ZAP.
+別のプロファイルを使用することを選択した場合、ZAPからブラウザを起動する都度、使用するすべてのサイトでZAP拡張機能を手動で承認する必要があります。
 <p>
-This is a Firefox restriction - for more details see Bugzilla
-<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1836309">Bug 183609</a>.
+これはFirefoxの制限事項です。詳細については、Bugzillaの<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1836309">Bug 183609</a>を参照してください。
 
-<H2>Custom Containers</H2>
+<H2>カスタムコンテナ</H2>
 
-If you want to use the ZAP Firefox extension in your own containers then you may find that it does not work out of the box.
+独自のコンテナでZAP Firefox拡張機能を使用したい場合、そのままでは動作しないことがあります。
 <p>
-It should work fine in the <a href="https://www.zaproxy.org/docs/docker/">ZAP Docker Images</a> as the 
-'zap-client-profile' is added to them.
-If you create your own container images then you may need to include it as well.
+'zap-client-profile' が組み込まれているため、<a href="https://www.zaproxy.org/docs/docker/">ZAP Docker Images</a>では問題なく動作するはずです。
+独自のコンテナイメージを作成する場合は、同様にそれを含める必要があるかもしれません。
 <p>
-For more information see
+詳細については、以下を参照してください。
 <ul>
-<li>The Docker <a href="https://github.com/zaproxy/zaproxy/tree/main/docker/firefox">firefox</a> directory
-<li>The nightly <a href="https://github.com/zaproxy/zaproxy/blob/main/docker/Dockerfile-live">docker build file</a>
+<li>Dockerの<a href="https://github.com/zaproxy/zaproxy/tree/main/docker/firefox">firefox</a>ディレクトリ 
+<li>ナイトリービルドの<a href="https://github.com/zaproxy/zaproxy/blob/main/docker/Dockerfile-live">docker build file</a>
 </ul>
 
 </BODY>

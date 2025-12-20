@@ -2,60 +2,45 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>SOAP Alerts</title>
+    <title>SOAP アラート</title>
 </head>
 <body>
-<h1>SOAP Alerts</h1>
-<p> The following alerts are raised by the SOAP add-on. </p>
+<h1>SOAP アラート</h1>
+<p> 以下のアラートは、SOAP アドオンによって発生します。 </p>
 <table>
     <tr>
-        <th>Alert Reference
-        <th>Name
-        <th>Description
-        <th>Latest Code
+        <th>アラート参照
+        <th>名前
+        <th>説明
+        <th>最新のコード
     <tr id="id-90026">
         <td><a href="https://www.zaproxy.org/docs/alerts/90026/">90026</a>
-        <td>Action Spoofing
-        <td>SOAP requests contain some sort of operation that is 
-        later executed by the web application. This operation can be found 
-        in the first child element of the SOAP Body. However, if HTTP is used 
-        to transport the SOAP message the SOAP standard allows the use of an 
-        additional HTTP header element called SOAPAction. This header element 
-        contains the name of the executed operation. It is supposed to inform 
-        the receiving web service of what operation is contained in the SOAP 
-        Body, without having to do any XML parsing. This optimization can 
-        be used by an attacker to mount an attack, since certain web service 
-        frameworks determine the operation to be executed solely on the 
-        information contained in the SOAPAction header field. 
+        <td>アクションスプーフィング
+        <td>SOAP リクエストには、後にウェブアプリケーションによって実行される何らかの操作が含まれます。 この操作は、SOAP ボディの最初の子要素で見つけることができます。 しかし、HTTP が SOAP メッセージの転送に使用される場合、SOAP 標準では SOAPAction と呼ばれる追加の HTTP ヘッダー要素の使用が許可されます。 このヘッダー要素には、実行される操作の名前が含まれます。 これは、受信側のWebサービスに SOAP ボディに含まれる操作を、XML パースなしで通知することを目的としています。 この最適化は、攻撃者によって攻撃を仕掛けるために使用される可能性があります。なぜなら、特定のWebサービスフレームワークでは、SOAPAction ヘッダーフィールドに含まれる情報のみに基づいて実行される操作を決定するからです 
         <td><a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/soap/src/main/java/org/zaproxy/zap/extension/soap/SOAPActionSpoofingActiveScanRule.java">SOAPActionSpoofingActiveScanRule.java</a>
     <tr id="id-90029">
         <td><a href="https://www.zaproxy.org/docs/alerts/90029/">90029</a>
-        <td>SOAP XML Injection
-        <td>During an "XML Injection" an attacker tries to add or manipulate 
-        various XML Tags in the SOAP message aiming to manipulate the XML 
-        structure. Usually a successful XML injection results in the 
-        execution of a restricted or unintended operation. Depending on the 
-        executed operation various security or business controls might be 
-        violated.
+        <td>SOAP XML インジェクション
+        <td>「XML インジェクション」では、攻撃者は SOAP メッセージ内のさまざまな XML タグを追加または操作しようとし、XML 構造を操作することを目的とします。 通常、成功した XML インジェクションは、制限されたまたは意図しない操作の実行を引き起こします。 実行された操作によっては、さまざまなセキュリティまたはビジネスコントロールが侵害される可能性があります。
         <td><a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/soap/src/main/java/org/zaproxy/zap/extension/soap/SOAPXMLInjectionActiveScanRule.java">SOAPXMLInjectionActiveScanRule.java</a>
     <tr id="id-90030">
         <td><a href="https://www.zaproxy.org/docs/alerts/90030/">90030</a>
-        <td>WSDL File Detection
-        <td>This alert is raised when the passive scanner detects a WSDL file.
+        <td>WSDLファイル検出
+        <td>このアラートは、パッシブスキャナーが WSDL ファイルを検出したときに発生します。
         <td><a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/soap/src/main/java/org/zaproxy/zap/extension/soap/WSDLFilePassiveScanRule.java">WSDLFilePassiveScanRule.java</a>
 </table>
 
-<h2>See also</h2>
+<h2>関連情報</h2>
 <table>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;
         <td><a href="soap.html">SOAP</a>
-        <td>for an overview of the SOAP support add-on.
+        <td>SOAP サポートアドオンの概要
     </tr>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;
-        <td><a href="automation.html">SOAP Automation</a>
-        <td>for information about the automation framework support.
+        <td><a href="automation.html">SOAP 自動化</a>
+        <td>自動化フレームワーク対応に関する情報
     </tr>
 </table>
 </body>

@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -102,8 +103,8 @@ public class PersistentXssSpiderScanRule extends AbstractAppPlugin
             sendAndReceive(msg1, false);
             SourceSinkUtils.testForSink(msg1);
 
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
+        } catch (IOException e) {
+            LOGGER.debug(e.getMessage(), e);
         }
     }
 

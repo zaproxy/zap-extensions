@@ -76,7 +76,7 @@ dependencies {
     zapAddOn("spider")
     zapAddOn("wappalyzer")
 
-    implementation("com.graphql-java:graphql-java:22.3")
+    implementation(libs.graphql.graphqlJava)
 
     testImplementation(project(":testutils"))
     testImplementation(libs.log4j.core)

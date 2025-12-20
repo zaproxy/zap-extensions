@@ -23,19 +23,26 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
 import org.apache.commons.configuration.BaseConfiguration;
+import org.apache.commons.configuration.ConfigurationUtils;
+import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.HostProcess;
 import org.parosproxy.paros.core.scanner.NameValuePair;
+import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.core.scanner.ScannerParam;
 import org.parosproxy.paros.core.scanner.Variant;
 import org.parosproxy.paros.extension.ExtensionLoader;
@@ -132,6 +139,7 @@ public class ActiveScriptScanRuleUnitTest extends TestUtils {
         given(script.getName()).willReturn("testScript.js");
         given(script.isEnabled()).willReturn(true);
         given(extensionLoader.getExtension(ExtensionScript.class)).willReturn(extensionScript);
+        given(extensionScript.getInterface(eq(script), any())).willReturn(null);
         given(extensionScript.getInterface(script, ActiveScript2.class))
                 .willReturn(scriptActiveInterface);
         given(extensionScript.getInterface(script, ScanRuleMetadataProvider.class))
@@ -166,10 +174,87 @@ public class ActiveScriptScanRuleUnitTest extends TestUtils {
         assertThat(alert.getReference(), is(equalTo("")));
     }
 
+    @Test
+    void shouldAddAlertRefEvenOnMissingOverrides() {
+        // Given
+        ScriptWrapper script = mock(ScriptWrapper.class);
+        var metadata = new ScanRuleMetadata(12345, "Test Scan Rule");
+        metadata.setRisk(Risk.HIGH);
+        metadata.setConfidence(Confidence.HIGH);
+        var scanRule = new ActiveScriptScanRule(script, metadata);
+        // When
+        Alert alert = scanRule.newAlert("12345-999").build();
+        // Then
+        assertThat(alert.getPluginId(), is(equalTo(12345)));
+        assertThat(alert.getName(), is(equalTo("Test Scan Rule")));
+        assertThat(alert.getRisk(), is(equalTo(Risk.HIGH.getValue())));
+        assertThat(alert.getConfidence(), is(equalTo(Confidence.HIGH.getValue())));
+        assertThat(alert.getAlertRef(), is(equalTo("12345-999")));
+    }
+
+    @Test
+    void shouldScanHostOnceWithActiveScript3() throws Exception {
+        // Given
+        ActiveScript3 scriptActiveInterface3 = mock(ActiveScript3.class);
+        ScriptWrapper script = createScriptWrapper(scriptActiveInterface3, ActiveScript3.class);
+        VariantFactory variantFactory = mock(VariantFactory.class);
+        given(variantFactory.createVariants(any(), any())).willReturn(List.of(mock(Variant.class)));
+        given(model.getVariantFactory()).willReturn(variantFactory);
+
+        var metadata = new ScanRuleMetadata(12345, "Test Scan Rule");
+        var scanRule = new ActiveScriptScanRule(script, metadata);
+        HostProcess parent1 = mock(HostProcess.class, CALLS_REAL_METHODS);
+        HostProcess parent2 = mock(HostProcess.class, CALLS_REAL_METHODS);
+        doReturn(true).when(parent1).isStop(); // scanHost is called before this is checked
+        doReturn(true).when(parent2).isStop();
+        HttpMessage message1 = new HttpMessage(new HttpRequestHeader("GET /foo HTTP/1.1"));
+        HttpMessage message2 = new HttpMessage(new HttpRequestHeader("GET /bar HTTP/1.1"));
+        HttpMessage message3 = new HttpMessage(new HttpRequestHeader("GET /baz HTTP/1.1"));
+        // When
+        scanRule.init(message1, parent1);
+        scanRule.scan();
+        scanRule.init(message2, parent1);
+        scanRule.scan();
+        scanRule.init(message3, parent2);
+        scanRule.scan();
+        // Then
+        verify(scriptActiveInterface3, times(1)).scanHost(scanRule, message1);
+        verify(scriptActiveInterface3, times(0)).scanHost(scanRule, message2);
+        verify(scriptActiveInterface3, times(1)).scanHost(scanRule, message3);
+    }
+
+    @Test
+    void shouldCloneScanRule() {
+        // Given
+        ScriptWrapper script = mock(ScriptWrapper.class);
+        when(script.isEnabled()).thenReturn(true);
+        var metadata = new ScanRuleMetadata(12345, "Test Scan Rule");
+        metadata.setRisk(Risk.HIGH);
+        metadata.setConfidence(Confidence.HIGH);
+        var scanRule = new ActiveScriptScanRule(script, metadata);
+        scanRule.setConfig(new HierarchicalConfiguration());
+        scanRule.setAlertThreshold(Plugin.AlertThreshold.LOW);
+        scanRule.setAttackStrength(Plugin.AttackStrength.INSANE);
+        var config = new HierarchicalConfiguration();
+        var clonedRule = new ActiveScriptScanRule();
+        clonedRule.setConfig(config);
+        // When
+        scanRule.cloneInto(clonedRule);
+        // Then
+        assertThat(clonedRule.getScript(), is(equalTo(script)));
+        assertThat(clonedRule.getId(), is(equalTo(12345)));
+        assertThat(clonedRule.getName(), is(equalTo("Test Scan Rule")));
+        assertThat(clonedRule.getRisk(), is(equalTo(Risk.HIGH.getValue())));
+        assertThat(
+                ConfigurationUtils.toString(config).replaceAll("\\R", "\n"),
+                is(equalTo("plugins.p12345.level=LOW\nplugins.p12345.strength=INSANE")));
+    }
+
     private <T> ScriptWrapper createScriptWrapper(T scriptInterface, Class<T> scriptClass)
             throws Exception {
         var script = mock(ScriptWrapper.class);
         given(extensionLoader.getExtension(ExtensionScript.class)).willReturn(extensionScript);
+        given(extensionScript.getInterface(eq(script), any())).willReturn(null);
         given(extensionScript.getInterface(script, scriptClass)).willReturn(scriptInterface);
         given(script.isEnabled()).willReturn(true);
         return script;

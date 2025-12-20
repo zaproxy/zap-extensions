@@ -2,13 +2,13 @@
 <!DOCTYPE index PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Index Version 1.0//EN" "http://java.sun.com/products/javahelp/index_2_0.dtd">
 <index version="2.0">
     <!-- index entries are merged (sorted) into core index -->
-	<indexitem text="client" target="addon.client"/>
-	<indexitem text="client automation" target="addon.client.auto"/>
-	<indexitem text="client recording" target="addon.client.record"/>
-	<indexitem text="client spider" target="addon.client.spider"/>
-	<indexitem text="client spider api" target="addon.client.spider.api"/>
-	<indexitem text="client passive scanning" target="addon.client.pscan"/>
-	<indexitem text="client ajax spider enhancement" target="addon.client.ajaxscan"/>
-	<indexitem text="client firefox profile" target="addon.client.fxprofile"/>
-	<indexitem text="client internals" target="addon.client.internals"/>
+	<indexitem text="クライアント" target="addon.client"/>
+	<indexitem text="クライアント 自動化" target="addon.client.auto"/>
+	<indexitem text="クライアント 記録" target="addon.client.record"/>
+	<indexitem text="クライアント スパイダー" target="addon.client.spider"/>
+	<indexitem text="クライアント スパイダーAPI" target="addon.client.spider.api"/>
+	<indexitem text="クライアント パッシブスキャン" target="addon.client.pscan"/>
+	<indexitem text="クライアント AJAXスパイダー機能強化" target="addon.client.ajaxscan"/>
+	<indexitem text="クライアント Firefox プロファイル" target="addon.client.fxprofile"/>
+	<indexitem text="クライアント 内部構造" target="addon.client.internals"/>
 </index>

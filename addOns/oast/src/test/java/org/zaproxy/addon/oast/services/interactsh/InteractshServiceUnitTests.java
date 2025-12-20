@@ -52,24 +52,27 @@ import org.zaproxy.zap.utils.Stats;
 class InteractshServiceUnitTests extends TestUtils {
 
     private String serverUrl;
+    private InteractshService service;
 
     @BeforeEach
     void setup() throws Exception {
         setUpZap();
         startServer();
         serverUrl = "http://localhost:" + nano.getListeningPort();
+
+        InteractshParam param = new InteractshParam(serverUrl, 60, "");
+        service = new InteractshService(param);
     }
 
     @AfterEach
     void teardown() throws Exception {
+        service.stopService();
         stopServer();
     }
 
     @Test
     void shouldSendValidRegistrationRequest() throws Exception {
         // Given
-        InteractshParam param = new InteractshParam(serverUrl, 60, "");
-        InteractshService service = new InteractshService(param);
         StaticInteractshServerHandler handler = new StaticInteractshServerHandler("/register", "");
         nano.addHandler(handler);
         // When
@@ -84,8 +87,6 @@ class InteractshServiceUnitTests extends TestUtils {
     @Test
     void shouldIncrementStatPayloadsGeneratedCorrectly() throws Exception {
         // Given
-        InteractshParam param = new InteractshParam(serverUrl, 60, "");
-        InteractshService service = new InteractshService(param);
         StaticInteractshServerHandler handler = new StaticInteractshServerHandler("/register", "");
         nano.addHandler(handler);
         InMemoryStats stats = new InMemoryStats();
@@ -99,8 +100,6 @@ class InteractshServiceUnitTests extends TestUtils {
     @Test
     void shouldSendValidDeregistrationRequest() throws Exception {
         // Given
-        InteractshParam param = new InteractshParam(serverUrl, 60, "");
-        InteractshService service = new InteractshService(param);
         StaticInteractshServerHandler handler =
                 new StaticInteractshServerHandler("/deregister", "");
         nano.addHandler(handler);
@@ -117,8 +116,6 @@ class InteractshServiceUnitTests extends TestUtils {
     @ValueSource(ints = {200, 400, 500})
     void shouldDeregisterAlways(int statusCode) throws InteractshException {
         // Given
-        InteractshParam param = new InteractshParam(serverUrl, 60, "");
-        InteractshService service = new InteractshService(param);
         StaticInteractshServerHandler handler =
                 new StaticInteractshServerHandler("/deregister", "", statusCode);
         nano.addHandler(handler);
@@ -133,8 +130,6 @@ class InteractshServiceUnitTests extends TestUtils {
     @Test
     void shouldSendValidPollRequest() throws Exception {
         // Given
-        InteractshParam param = new InteractshParam(serverUrl, 60, "");
-        InteractshService service = new InteractshService(param);
         StaticInteractshServerHandler handler = new StaticInteractshServerHandler("/poll", "");
         nano.addHandler(handler);
         nano.addHandler(new StaticInteractshServerHandler("/register", ""));
@@ -150,8 +145,6 @@ class InteractshServiceUnitTests extends TestUtils {
     @Test
     void shouldDecryptPollingResponseCorrectly() throws Exception {
         // Given
-        InteractshParam param = new InteractshParam(serverUrl, 60, "");
-        InteractshService service = new InteractshService(param);
         List<InteractshEvent> interactions = setUpMockRegisterAndPollEndpoints(service);
         // When
         List<InteractshEvent> decryptedEvents = service.getInteractions();
@@ -163,8 +156,6 @@ class InteractshServiceUnitTests extends TestUtils {
     @Test
     void shouldIncrementStatInteractionsCorrectly() throws Exception {
         // Given
-        InteractshParam param = new InteractshParam(serverUrl, 60, "");
-        InteractshService service = new InteractshService(param);
         setUpMockRegisterAndPollEndpoints(service);
         InMemoryStats stats = new InMemoryStats();
         Stats.addListener(stats);

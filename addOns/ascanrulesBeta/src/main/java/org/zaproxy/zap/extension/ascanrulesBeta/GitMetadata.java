@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Map;
@@ -320,7 +321,7 @@ public class GitMetadata {
             try {
                 packinfofiledata = getURIResponseBody(uri, false, basemsg);
             } catch (FileNotFoundException e) {
-                LOGGER.error(
+                LOGGER.warn(
                         "We could not read '{}' to get the name of the pack file containing the content: {}",
                         uri,
                         e.getMessage());
@@ -1005,8 +1006,8 @@ public class GitMetadata {
                                 + inflatedObjectData.length);
 
             return inflatedObjectData;
-        } catch (Exception e) {
-            LOGGER.error("Some error occurred extracting a packed object", e);
+        } catch (IOException e) {
+            LOGGER.debug("Some error occurred extracting a packed object", e);
             throw e;
         }
     }

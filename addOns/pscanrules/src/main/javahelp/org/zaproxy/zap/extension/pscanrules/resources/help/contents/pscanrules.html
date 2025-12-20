@@ -89,7 +89,6 @@ Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10015/">10015</a>.
   </li>
   <li>Low Threshold:
     <ul>
-      <li>Meta Content-Type Charset Missing - The response doesn't contain a META Content-Type declaration, which may overlook older clients.</li>
       <li>Meta Charset Versus Meta Content-Type Charset - The response contains both a META Content-Type declaration and a META Charset declaration, and they don't match.</li>
     </ul>
   </li>
@@ -318,6 +317,14 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns
 <br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10027/">10027</a>.
 
+<H2 id="id-10009">In Page Banner Information Leak</H2>
+Analyzes response body content for the presence of web or application server banners (when the responses have error status codes).<br>
+If the Threshold is Low then status 200 - Ok responses are analyzed as well.<br>
+The presence of such banners may facilitate more targeted attacks against known vulnerabilities.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/InPageBannerInfoLeakScanRule.java">InPageBannerInfoLeakScanRule.java</a><br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10009/">10009</a>
+
 <H2 id="id-10105">Insecure Authentication</H2>
 HTTP basic or digest authentication has been used over an unsecured connection. The credentials can be read and then reused by someone with access to the network.
 <p>
@@ -331,6 +338,16 @@ The response contains a Java Server Faces (JSF) ViewState value that has no cryp
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/InsecureJsfViewStatePassiveScanRule.java">InsecureJsfViewStatePassiveScanRule.java</a>
 <br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/90001/">90001</a>.
+
+<H2 id="id-90002">Java Serialization Object</H2>
+Java Serialization Object (JSO) is a way to save and exchange objects between Java applications.<br>
+Different problems are associated with JSO. Sensitive data can leak to the stream of bytes.<br>
+An attacker can also modify the data and exploit JSO to do a Remote Code Execution on the server.<br>
+JSO should not be used by Java programs. Strong controls must be done on serialized data.<br>
+JSO are a type of vulnerabilities associated to A8:2017-Insecure Deserialization.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/JsoScanRule.java">JsoScanRule.java</a><br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/90002/">90002</a>
 
 <H2 id="id-10040">Mixed Content</H2>
 For content served via HTTPS analyse all the src attributes in the response looking for those sourced
@@ -360,17 +377,17 @@ Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10028/">10028</a>.
 <H2 id="id-10062">PII Disclosure</H2>
 PII is information like credit card number, SSN etc. This check currently reports only numbers which match credit card numbers and pass Luhn checksum, which gives high confidence, that this is a credit card number.
 <br>
-At MEDIUM and HIGH threshold it attempts to use three characters of context on each side of potential matches to exclude matches within decimal like content.
+At MEDIUM and HIGH threshold it attempts to use three characters of context on each side of potential matches to exclude matches within decimal like content or content which includes underscores.
 At LOW threshold, alerts will be raised for such matches.
 <p>
 At MEDIUM and HIGH threshold, the following content types are evaluated:
 <ul>
-    <li>HTML</li>
+    <li>HTML (visible text and script blocks)</li>
     <li>JSON</li>
     <li>XML</li>
 </ul>
 Image and CSS files are always ignored.
-Every other content type is evaluated at LOW threshold.
+Every other content type is evaluated at LOW threshold. Additionally at LOW threshold the entire HTML response is evaluated.
 <p>
 Note: In the case of suspected credit card values, the potential credit card numbers are looked up against a Bank Identification Number List 
 (BINList). If a match is found the alert is raised at High confidence and additional details are added to the 'Other Information' field in the 
@@ -453,6 +470,16 @@ is not greater than 8 characters in length then the parameter is ignored
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/InfoSessionIdUrlScanRule.java">InfoSessionIdUrlScanRule.java</a>
 <br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/3/">3</a>.
+
+<H2 id="id-90003">Sub Resource Integrity Attribute Missing</H2>
+This rule checks whether the integrity attribute in the script or the link element served by an external resource (for example: CDN) is missing.<br>
+It helps mitigate an attack where the CDN has been compromised and content has been replaced by malicious content.<br>
+Note: A suggested integrity hash value will be present in the relevant Alert's Other Info details if it can be resolved to a script in the Sites Tree.
+<p>
+This rule supports <b>Trusted Domains</b>, check "General Configuration" for more information.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/SubResourceIntegrityAttributeScanRule.java">SubResourceIntegrityAttributeScanRule.java</a><br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/90003/">90003</a>
 
 <H2 id="id-10035">Strict Transport Security Header</H2>
 This rule checks HTTPS responses for the presence of a HTTP Strict Transport Security (HSTS) header and tests for various implementation concerns, 

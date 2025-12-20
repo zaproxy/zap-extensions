@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.reports;
 
+import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -106,7 +107,7 @@ public class ReportHelper {
     }
 
     private static int getPortFromScheme(String site) {
-        if (StringUtils.startsWithIgnoreCase(site, "https")) {
+        if (Strings.CI.startsWith(site, "https")) {
             return 443;
         } else {
             return 80;
@@ -301,5 +302,70 @@ public class ReportHelper {
             LOGGER.debug("An error occurred while reading the HTTP message:", e);
         }
         return null;
+    }
+
+    /**
+     * Returns the nodeName for the alert. This will return null for versions before ZAP 2.17.
+     *
+     * @since 0.42.0
+     */
+    public static String getNodeName(Alert alert) {
+        if (alert == null) {
+            return null;
+        }
+        try {
+            Method method = alert.getClass().getMethod("getNodeName");
+            Object ret = method.invoke(alert);
+            if (ret != null && ret instanceof String str) {
+                return str;
+            }
+        } catch (Exception e) {
+            // Ignore
+        }
+        return null;
+    }
+
+    /**
+     * Returns whether the alert node is systemic. This will return false for versions before ZAP
+     * 2.17.
+     *
+     * @since 0.42.0
+     */
+    public static boolean isSystemic(AlertNode node) {
+        if (node == null) {
+            return false;
+        }
+        try {
+            Method method = node.getClass().getMethod("isSystemic");
+            Object ret = method.invoke(node);
+            if (ret != null && ret instanceof Boolean bool) {
+                return bool;
+            }
+        } catch (Exception e) {
+            // Ignore
+        }
+        return false;
+    }
+
+    /**
+     * Returns whether the alert node is systemic. This will return false for versions before ZAP
+     * 2.17.
+     *
+     * @since 0.42.0
+     */
+    public static boolean isSystemic(Alert alert) {
+        if (alert == null) {
+            return false;
+        }
+        try {
+            Method method = alert.getClass().getMethod("isSystemic");
+            Object ret = method.invoke(alert);
+            if (ret != null && ret instanceof Boolean bool) {
+                return bool;
+            }
+        } catch (Exception e) {
+            // Ignore
+        }
+        return false;
     }
 }

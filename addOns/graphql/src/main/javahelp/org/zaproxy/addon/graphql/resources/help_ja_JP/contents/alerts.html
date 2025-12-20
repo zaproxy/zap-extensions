@@ -2,35 +2,34 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>GraphQL Alerts</title>
+    <title>GraphQL アラート</title>
 </head>
 <body>
-<h1 id="id-50007">GraphQL Alerts</h1>
-<p> The following alerts are raised by the GraphQL add-on. </p>
+<h1 id="id-50007">GraphQL アラート</h1>
+<p> 以下のアラートは、GraphQL アドオンによって発生します。 </p>
 <table>
     <tr>
-        <th>Alert Reference
-        <th>Name
-        <th>Description
-        <th>Latest Code
+        <th>アラート参照
+        <th>名前
+        <th>説明
+        <th>最新のコード
     <tr>
         <td><a href="https://www.zaproxy.org/docs/alerts/50007-1/">50007-1</a>
-        <td>GraphQL Endpoint Supports Introspection
-        <td>This alert is raised when the spider discovers a GraphQL endpoint that supports introspection.
+        <td>GraphQLエンドポイントがイントロスペクションをサポート
+        <td>スパイダーがイントロスペクションをサポートするGraphQLエンドポイントを発見したときに提起されるアラートです。
         <td><a href="https://github.com/zaproxy/zap-extensions/tree/main/addOns/graphql/src/main/java/org/zaproxy/addon/graphql/GraphQlParser.java">GraphQlParser.java</a>
     <tr>
         <td><a href="https://www.zaproxy.org/docs/alerts/50007-2/">50007-2</a>
-        <td>GraphQL Server Implementation Identified
-        <td>This alert is raised when the GraphQL implementation used by the server is identified. It utilises
-            fingerprinting techniques adapted from the tool <a href="https://github.com/dolevf/graphw00f">graphw00f</a>.<br>
-            <strong>Note:</strong> If the Tech Detection (Wappalyzer) add-on is installed the fingerprinter will also add identified GraphQL Engines to the Technology tab/data. 
+        <td>GraphQLサーバー実装を特定
+        <td>サーバーで使用されているGraphQL実装が特定されたときに提起されるアラートです。 れは、ツール <a href="https://github.com/dolevf/graphw00f">graphw00f</a> から適合されたフィンガープリント技術を利用しています。<br>
+<strong>注:</strong> テクノロジー検出 (Wappalyzer) アドオンがインストールされている場合、このフィンガープリンターは特定されたGraphQLエンジンもテクノロジータブ/データに追加します。 
         <td><a href="https://github.com/zaproxy/zap-extensions/tree/main/addOns/graphql/src/main/java/org/zaproxy/addon/graphql/GraphQlFingerprinter.java">GraphQlFingerprinter.java</a>
 </table>
 
 <br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/50007/">50007</a>.
+アラートID: <a href="https://www.zaproxy.org/docs/alerts/50007/">50007</a>
 
-<h2 id="engines">Supported Engines</h2>
+<h2 id="engines">サポートされているエンジン</h2>
 
 <ul>
   <li>Absinthe - https://github.com/absinthe-graphql/absinthe</li>
@@ -70,27 +69,27 @@ Alert ID: <a href="https://www.zaproxy.org/docs/alerts/50007/">50007</a>.
   <li>WPGraphQL WordPress Plugin - https://github.com/wp-graphql/wp-graphql</li>
 </ul>
 
-<h2>See also</h2>
+<h2>関連情報</h2>
 <table>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;
         <td><a href="graphql.html">GraphQL</a>
-        <td>for an overview of the GraphQL add-on.
+        <td>GraphQL アドオンの概要
     </tr>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;
-        <td><a href="options.html">GraphQL Options</a>
-        <td>for information about the optional parameters.
+        <td><a href="options.html">GraphQL オプション</a>
+        <td>オプションのパラメーターに関する情報
     </tr>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;
-        <td><a href="automation.html">GraphQL Automation</a>
-        <td>for information about the automation framework support.
+        <td><a href="automation.html">GraphQL 自動化</a>
+        <td>自動化フレームワーク対応に関する情報
     </tr>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-        <td><a href="variant.html">GraphQL Variant</a></td>
-        <td>for information about the GraphQL variant.</td>
+        <td><a href="variant.html">GraphQL バリアント</a></td>
+        <td>GraphQL バリアントに関する情報</td>
     </tr>
 </table>
 </body>

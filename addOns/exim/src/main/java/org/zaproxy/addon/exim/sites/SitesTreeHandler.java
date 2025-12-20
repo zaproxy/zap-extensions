@@ -36,18 +36,22 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.List;
 import javax.swing.tree.TreeNode;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.core.scanner.VariantMultipartFormParameters;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
@@ -69,6 +73,15 @@ public class SitesTreeHandler {
 
     private static final Logger LOGGER = LogManager.getLogger(SitesTreeHandler.class);
 
+    private static final String MULTIPART_ENTRY =
+            "----boundary1234"
+                    + HttpHeader.CRLF
+                    + "Content-Disposition: form-data; name=\"%s\""
+                    + HttpHeader.CRLF
+                    + HttpHeader.CRLF
+                    + ""
+                    + HttpHeader.CRLF;
+
     private static final ObjectMapper YAML_MAPPER;
     private static final Yaml YAML_PARSER;
 
@@ -79,7 +92,9 @@ public class SitesTreeHandler {
                         .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
                         .disable(YAMLGenerator.Feature.SPLIT_LINES)
                         .disable(YAMLGenerator.Feature.ALWAYS_QUOTE_NUMBERS_AS_STRINGS)
-                        .serializationInclusion(JsonInclude.Include.NON_NULL)
+                        .defaultPropertyInclusion(
+                                JsonInclude.Value.construct(
+                                        JsonInclude.Include.NON_NULL, JsonInclude.Include.NON_NULL))
                         .enable(SerializationFeature.INDENT_OUTPUT)
                         .build();
 
@@ -119,14 +134,25 @@ public class SitesTreeHandler {
             if (node.getUrl() != null) {
                 URI uri = new URI(node.getUrl(), true);
                 SiteNode sn;
-                if (node.getNode().contains("(" + HttpHeader.FORM_MULTIPART_CONTENT_TYPE + ")")) {
+                if (node.getNode().contains("(multipart:")
+                        && StringUtils.isNotBlank(node.getData())) {
                     // Indicates this request used a multipart form POST
                     HttpMessage msg = new HttpMessage(uri);
                     msg.getRequestHeader().setMethod(node.getMethod());
                     msg.getRequestHeader()
                             .setHeader(
                                     HttpHeader.CONTENT_TYPE,
-                                    HttpHeader.FORM_MULTIPART_CONTENT_TYPE);
+                                    HttpHeader.FORM_MULTIPART_CONTENT_TYPE + "; boundary=----1234");
+                    StringBuilder sb = new StringBuilder();
+                    Arrays.stream(node.getData().split("&"))
+                            .forEach(
+                                    e ->
+                                            sb.append(
+                                                    MULTIPART_ENTRY.formatted(
+                                                            URLDecoder.decode(
+                                                                    e, StandardCharsets.UTF_8))));
+                    sb.append(HttpHeader.CRLF).append("----boundary1234--").append(HttpHeader.CRLF);
+                    msg.setRequestBody(sb.toString());
                     sn = siteMap.findNode(msg);
                 } else {
                     sn = siteMap.findNode(uri, node.getMethod(), node.getData());
@@ -222,11 +248,26 @@ public class SitesTreeHandler {
                 if (HttpRequestHeader.POST.equals(href.getMethod())) {
                     try {
                         HttpMessage msg = href.getHttpMessage();
-                        String contentType =
-                                msg.getRequestHeader().getHeader(HttpHeader.CONTENT_TYPE);
-                        if (contentType == null
-                                || !contentType.startsWith(
-                                        HttpHeader.FORM_MULTIPART_CONTENT_TYPE)) {
+                        if (msg.getRequestHeader()
+                                .hasContentType(HttpHeader.FORM_MULTIPART_CONTENT_TYPE)) {
+                            VariantMultipartFormParameters mfp =
+                                    new VariantMultipartFormParameters();
+                            mfp.setMessage(msg);
+                            StringBuilder sb = new StringBuilder();
+                            mfp.getParamList().stream()
+                                    .filter(p -> isRelevantMultipartParam(p.getType()))
+                                    .map(org.parosproxy.paros.core.scanner.NameValuePair::getName)
+                                    .forEach(
+                                            e -> {
+                                                if (sb.length() > 0) {
+                                                    sb.append('&');
+                                                }
+                                                sb.append(
+                                                        URLEncoder.encode(
+                                                                e, StandardCharsets.UTF_8));
+                                            });
+                            gen.writeStringField(EximSiteNode.DATA_KEY, sb.toString());
+                        } else {
                             List<NameValuePair> params =
                                     Model.getSingleton().getSession().getParameters(msg, Type.form);
                             StringBuilder sb = new StringBuilder();
@@ -256,6 +297,15 @@ public class SitesTreeHandler {
                 gen.writeEndArray();
             }
             gen.writeEndObject();
+        }
+
+        private static boolean isRelevantMultipartParam(int type) {
+            return type
+                            == org.parosproxy.paros.core.scanner.NameValuePair
+                                    .TYPE_MULTIPART_DATA_FILE_NAME
+                    || type
+                            == org.parosproxy.paros.core.scanner.NameValuePair
+                                    .TYPE_MULTIPART_DATA_PARAM;
         }
     }
 }

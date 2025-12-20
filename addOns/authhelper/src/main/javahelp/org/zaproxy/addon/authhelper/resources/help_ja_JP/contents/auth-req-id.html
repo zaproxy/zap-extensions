@@ -2,48 +2,43 @@
 <HTML>
 <HEAD>
 <TITLE>
-Authentication Request Identification
+認証リクエストの識別
 </TITLE>
 </HEAD>
 <BODY>
-<H1>Authentication Request Identification</H1>
+<H1>認証リクエストの識別</H1>
 
-This <a href="authhelper.html">add-on</a> includes a passive scan rule which attempts to identify authentication requests.<br>
-It identifies authentication requests by the presence of commonly used username and password field names.
-It also uses commonly used URL segments to identify more likely authentication requests, 
-and uses commonly used registration URL segments to ignore registration requests.
+この<a href="authhelper.html">アドオン</a>には、認証リクエストの識別を試みるパッシブスキャンルールが含まれています。<br>
+このルールは、一般的に使用されるユーザー名とパスワードのフィールド名が存在することで、認証リクエストを識別します。
+また、一般的に使用されるURLセグメントを使用して、認証リクエストである可能性が高いものを識別し、一般的に使用される登録用URLセグメントを使用して、登録リクエストを無視します。
 <p>
-The rule will not attempt to identify very unusual authentication requests - automation is one of the end goals so false negatives
-(missing unusual authentication requests) are more desirable than false positives (incorrectly identifying an authentication request). 
+このルールは非常に特殊な認証リクエストの識別を試みません。自動化を重視するため、偽陽性（認証リクエストではないものを誤って識別すること）よりも偽陰性（特殊な認証リクエストを見逃すこと）の方が許容されます。 
 <p>
-If this rule identifies an authentication request that is part of the context that you have set to use the
-<a href="autodetect-auth.html">Auto-Detect Authentication Method</a> then this rule will update the context to use the authentication method identified.
+このルールが、<a href="autodetect-auth.html">認証メソッドの自動検出</a>を使用するように設定されたコンテキストの一部である認証リクエストを識別した場合、このルールは識別された認証メソッドを使用するようにコンテキストを更新します。
 <br>
-If an authentication request is not identified then check to make sure it is made to a site which is included in the context.<br>
-If it is not then add the site to the context and authenticate again via your browser.
+認証リクエストが識別されない場合は、そのリクエストがコンテキストに含まれるサイトに対して行われたものであることを確認してください。<br>
+含まれていない場合は、そのサイトをコンテキストに追加し、ブラウザ経由で再度認証を行ってください。
 <p>
-The 'Other Info' field is used to report a set of key-value pairs which can be easily parsed. The current keys supported are:
+「その他の情報」フィールドは、簡単に解析できるキーと値のペアのセットを報告するために使用されます。 現在サポートされているキーは以下のとおりです：
 <ul>
 <li>userParam
 <li>userValue
 <li>passwordParam
 <li>csrfToken
 </ul>
-There can potentially be multiple csrfTokens.
+複数の csrfToken が存在する可能性もあります。
 <p>
-The rule will currently identify:
+現在、このルールが識別するのは以下のリクエストです：
 <ul>
-<li>Form-based authentication requests
-<li>JSON-based authentication requests
+<li>フォームベースの認証リクエスト
+<li>JSONベースの認証リクエスト
 </ul>
 
-If this rule fails to identify one of the above types of authentication requests then you can raise an 
-<a href="https://github.com/zaproxy/zaproxy/issues">issue</a> with the complete request and response details 
-(having obfuscated any sensitive information) and we will investigate it.
+このルールが上記の認証リクエストのいずれかを識別できない場合は、機密情報を伏せたうえでリクエストおよびレスポンスの詳細を添えて <a href="https://github.com/zaproxy/zaproxy/issues">問題</a> を報告してください。調査を行います。
 
 <p>
 
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/authhelper/src/main/java/org/zaproxy/addon/authhelper/AuthenticationDetectionScanRule.java">AuthenticationDetectionScanRule.java</a>
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/authhelper/src/main/java/org/zaproxy/addon/authhelper/AuthenticationDetectionScanRule.java">AuthenticationDetectionScanRule.java</a>
 
 </BODY>
 </HTML>

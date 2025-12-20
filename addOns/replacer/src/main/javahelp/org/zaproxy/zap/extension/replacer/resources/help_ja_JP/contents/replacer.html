@@ -7,117 +7,115 @@ Replacer
 </title>
 </head>
 <body>
-<h1>Replacer</h1>
-The replacer is an easy way to replace strings in requests and responses.
+<h1>Replacer（置換機能）</h1>
+Replacerは、リクエストおよびレスポンス内の文字列を簡単に置き換える機能です。
 <p>
-It is accessible via the Options and by default it can be quickly accessed via the '&lt;ctrl&gt; R' hotkey.
+オプションメニューからアクセスでき、デフォルトでは「&lt;ctrl&gt; R」ホットキーで素早く開くことができます。
 <p>
-It also supports the <a href="automation.html">Automation Framework</a>.
+また、<a href="automation.html">自動化フレームワーク</a>に対応しています。
 <p>
-The Replacer Options panel allows you to define as many replacement rules as you need.<br>
-Each rule is defined by the following fields:
-<h3>Description</h3>
-A description that allows you to identify the rule.
+置換機能のオプションパネルでは、必要な数の置換ルールを定義できます。<br>
+各ルールは以下のフィールドで定義されます：
+<h3>説明</h3>
+ルールを識別できるようにする説明。
 
 <h3>URL</h3>
-A regular expression to match the URL of the message, if empty the rule applies to all messages.<br>
-For example, allows to restrict the rules to certain domains when providing authentication credentials.
+メッセージのURLと照合する正規表現。空の場合、ルールはすべてのメッセージに適用されます。<br>
+例えば、認証資格情報を提供する際に、ルールを特定のドメインに制限できます。
 
-<h3>Match Type</h3>
-May be one of:
+<h3>マッチタイプ</h3>
+次のいずれかを指定します：
 
-<h4>Request Header (will add if not present)</h4>
-In this case the 'Match String' will be treated as a header name. 
-If the header is present then its value will be replaced by the replacement text. 
-If the replacement text is empty then the header will be removed (if present).
-If the header is not present and the replacement text is not empty then the header will be added.
+<h4>リクエストヘッダー (未設定時は追加)</h4>
+マッチ文字列はヘッダー名として扱われます。 
+ヘッダーが存在する場合、その値が置換テキストで置き換えられます。 
+置換テキストが空の場合、ヘッダーが削除されます (存在する場合)。
+ヘッダーが存在せず置換テキストが空でない場合、ヘッダーが追加されます。
 
-<h4>Request Header String</h4>
-In this case the 'Match String' will be treated as a string or regex expression.
-If it is present in the request header then it will be replaced by the replacement text.
+<h4>リクエストヘッダー文字列</h4>
+マッチ文字列は文字列または正規表現として扱われます。
+リクエストヘッダー内に存在する場合、置換テキストで置き換えられます。
 
-<h5>Host Header</h5>
-Both the Request Header and Request Header String match types can change/remove the Host header, while sending the message to the original request-target.
+<h5>Host ヘッダー</h5>
+リクエストヘッダーとリクエストヘッダー文字列の両方のマッチタイプで、元のリクエストターゲットにメッセージを送信しながら、Host ヘッダーを変更/削除できます。
 
-<h4>Request Body String</h4>
-In this case the 'Match String' will be treated as a string or regex expression.
-If it is present in the request body then it will be replaced by the replacement text.
+<h4>リクエストボディ文字列</h4>
+この場合、「マッチ文字列」は文字列または正規表現として扱われます。
+リクエストボディ内に存在する場合、置換テキストで置き換えられます。
 
-<h4>Response Header (will add if not present)</h4>
-In this case the 'Match String' will be treated as a header name. 
-If the header is present then its value will be replaced by the replacement text. 
-If the replacement text is empty then the header will be removed (if present).
-If the header is not present and the replacement text is not empty then the header will be added.
+<h4>レスポンスヘッダー (存在しない場合は追加)</h4>
+この場合、「マッチ文字列」はヘッダー名として扱われます。 
+ヘッダーが存在する場合、その値は置換テキストで置き換えられます。 
+置換テキストが空の場合、ヘッダーが削除されます (存在する場合)。
+ヘッダーが存在せず置換テキストが空でない場合、ヘッダーが追加されます。
 
-<h4>Response Header String</h4>
-In this case the 'Match String' will be treated as a string or regex expression.
-If it is present in the response header then it will be replaced by the replacement text.
+<h4>レスポンスヘッダー文字列</h4>
+この場合、「マッチ文字列」は文字列または正規表現として扱われます。
+レスポンスヘッダー内に存在する場合、置換テキストで置き換えられます。
 
-<h4>Response Body String</h4>
-In this case the 'Match String' will be treated as a string or regex expression.
-If it is present in the response body then it will be replaced by the replacement text.
+<h4>レスポンスボディ文字列</h4>
+この場合、「マッチ文字列」は文字列または正規表現として扱われます。
+レスポンスボディ内に存在する場合、置換テキストで置き換えられます。
 
-<h3>Match String</h3>
-The string that will be used to identify what should be replaced - see Match Type for details.
+<h3>マッチ文字列</h3>
+置き換える対象を識別するために使用される文字列 - 詳細はマッチタイプを参照してください。
 
-<h3>Match Regex</h3>
-If set then the Match String will be treated as a regex expression.
-This option is disabled when matching actual headers.
-Hexadecimal bytes are represented with "\x00 - \xFF" (for example "abc\x01\x02\x03def").
+<h3>正規表現マッチ</h3>
+設定されている場合、マッチ文字列は正規表現として扱われます。
+このオプションは、実際のヘッダーと照合する場合は無効になります。
+16進数バイトは「\x00 - \xFF」で表されます (例:「abc\x01\x02\x03def」)。
 
-<h3>Replacement String</h3>
+<h3>置換文字列</h3>
 <p>
-The new string that will replace the specified selection.
-Hexadecimal bytes are represented with "\x00 - \xFF".
-The literal string "\x00" can be kept with "\\x00".
+マッチした部分を置き換える新しい文字列。
+16進数表記：16進数バイトは「\x00 - \xFF」で表されます。
+リテラル文字列「\x00」を使用する場合は「\\x00」とエスケープしてください。
 </p>
 
-<h3>Enable</h3>
-If not set then the rule will not apply.
+<h3>有効</h3>
+設定されていない場合、ルールは適用されません。
 
-<h3>Token Processing</h3>
+<h3>トークン処理</h3>
 <p>
-When enabled, the Replacement String may contain a single token which is replaced with a dynamic value:
+有効にすると、置換文字列に動的な値で置き換えられる単一のトークンを含めることができます：
 </p>
 <table>
 	<tr>
-		<th>Token</th>
-		<th>Description</th>
+		<th>トークン</th>
+		<th>説明</th>
 	</tr>
 	<tr>
 		<td>{{RINT|MIN|MAX}}</td>
 		<td>
-			<p>Random Integer. <code>MIN</code> and <code>MAX</code> are each optional.</p> 
-			<p><code>MIN</code> defaults to <code>0</code></p>
-			<p><code>MAX</code> defaults to <a href="https://docs.oracle.com/javase/8/docs/api/constant-values.html#java.lang.Integer.MAX_VALUE">Integer.maxValue</a></p>
+			<p>ランダム整数。<code>MIN</code> と <code>MAX</code> はそれぞれオプションです。</p> 
+			<p><code>MIN</code> のデフォルトは <code>0</code></p>
+			<p><code>MAX</code> のデフォルトは <a href="https://docs.oracle.com/javase/8/docs/api/constant-values.html#java.lang.Integer.MAX_VALUE">Integer.maxValue</a></p>
 		</td>
 	</tr>
 	<tr>
 		<td>{{UUID}}</td>
-		<td>Random UUID generated using <a href="https://docs.oracle.com/javase/8/docs/api/java/util/UUID.html#randomUUID--">java.util.UUID.randomUUID()</a></td>
+		<td><a href="https://docs.oracle.com/javase/8/docs/api/java/util/UUID.html#randomUUID--">java.util.UUID.randomUUID()</a> を使用して生成されるランダムなUUID</td>
 	</tr>
 	<tr>
 		<td>{{TICKS}}</td>
-		<td>Unix epoch milliseconds using <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/System.html#currentTimeMillis--">System.currentTimeMillis()</a></td>
+		<td><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/System.html#currentTimeMillis--">System.currentTimeMillis()</a> を使用したUnixエポックミリ秒</td>
 	</tr>
 </table> 
 <p>
-<strong>Note:</strong> This option applies only to the following Match Types:
+<strong>注:</strong> このオプションは以下のマッチタイプにのみ適用されます：
 <ul>
-	<li>Request Header String</li>
-	<li>Request Body String</li>
-	<li>Response Header String</li>
-	<li>Response Body String</li>
+	<li>リクエストヘッダー文字列</li>
+	<li>リクエストボディ文字列</li>
+	<li>レスポンスヘッダー文字列</li>
+	<li>レスポンスボディ文字列 </li>
 </ul>
 
-<h3>Initiators tab</h3>
-Allows you to specify which 'initiators' the rule should apply to.
-Each ZAP component which can send and receive messages is a separate initiator, so this gives you a very fine grain
-control over exactly when the rule should apply.
+<h3>「開始元」タブ</h3>
+ルールを適用する「開始元」を指定できます。 
+メッセージを送受信できる各ZAPコンポーネント (スパイダー、アクティブスキャナー、プロキシなど) は個別の開始元として扱われるため、 ルールを適用するタイミングを非常に細かく制御できます。
 
 <p>
-If you need even more control over when and how text should be replaced then you can use the ZAP Script Console which
-gives you complete control over the ZAP messages.
+テキストの置換タイミングと方法をさらに詳細に制御する必要がある場合は、ZAPスクリプトコンソールを使用してください。 スクリプトを使用することで、ZAPメッセージを完全に制御できます。
 
 </body>
 </html>

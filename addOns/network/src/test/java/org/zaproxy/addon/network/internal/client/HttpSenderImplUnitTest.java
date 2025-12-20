@@ -2167,29 +2167,26 @@ class HttpSenderImplUnitTest {
         private static final String EXPECTED_COOKIE_HEADER =
                 "a=\"a-value\"; b=b-value\"; c=\"c-value; d=d -value; e=e-v; f=f-value; F=F-value; g=\"g; \"nameA=value; nameB\"=value; \"nameC\"=value; name a=value; name     c=value     c; X; W=";
 
+        private static final List<String> RAW_COOKIES =
+                List.of(
+                        "a=\"a-value\";",
+                        "b=b-value\"",
+                        "c=\"c-value       ",
+                        "d=d -value",
+                        "e=e-v;alue",
+                        "f=f-value",
+                        "F=F-value        ",
+                        "g=\"g;-valu\"e",
+                        "\"nameA=value",
+                        "nameB\"=value",
+                        "\"nameC\"=value",
+                        "      name a     =value",
+                        "name     c =  value     c ",
+                        "=X",
+                        "W=");
+
         @BeforeEach
         void setup() throws Exception {
-            server.setHttpMessageHandler(
-                    (ctx, msg) -> {
-                        msg.setResponseHeader(
-                                "HTTP/1.1 200\r\ncontent-length: 0\r\n"
-                                        + "Set-Cookie: a=\"a-value\";\r\n"
-                                        + "Set-Cookie: b=b-value\"\r\n"
-                                        + "Set-Cookie: c=\"c-value       \r\n"
-                                        + "Set-Cookie: d=d -value\r\n"
-                                        + "Set-Cookie: e=e-v;alue\r\n"
-                                        + "Set-Cookie: f=f-value\r\n"
-                                        + "Set-Cookie: F=F-value        \r\n"
-                                        + "Set-Cookie: g=\"g;-valu\"e\r\n"
-                                        + "Set-Cookie: \"nameA=value\r\n"
-                                        + "Set-Cookie: nameB\"=value\r\n"
-                                        + "Set-Cookie: \"nameC\"=value\r\n"
-                                        + "Set-Cookie:       name a     =value\r\n"
-                                        + "Set-Cookie: name     c =  value     c \r\n"
-                                        + "Set-Cookie: =X\r\n"
-                                        + "Set-Cookie: W=\r\n");
-                    });
-
             message.setRequestHeader("GET " + getServerUri("/") + " HTTP/1.1");
             httpSender.setUseGlobalState(false);
         }
@@ -2199,6 +2196,21 @@ class HttpSenderImplUnitTest {
             server.close();
         }
 
+        private void serverSetsCookies(SenderMethod method) throws Exception {
+            for (String cookie : RAW_COOKIES) {
+                server.setHttpMessageHandler(
+                        (ctx, msg) ->
+                                msg.setResponseHeader(
+                                        """
+                                        HTTP/1.1 200\r\n
+                                        content-length: 0\r\n
+                                        set-cookie: %s\r\n\r\n
+                                        """
+                                                .formatted(cookie)));
+                method.sendWith(httpSender, message);
+            }
+        }
+
         @ParameterizedTest
         @MethodSource(
                 "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#sendAndReceiveMethods")
@@ -2206,7 +2218,7 @@ class HttpSenderImplUnitTest {
             // Given
             httpSender.setUseCookies(false);
             // When
-            method.sendWith(httpSender, message);
+            serverSetsCookies(method);
             method.sendWith(httpSender, message);
             // Then
             assertThat(message.getRequestHeader().getHeader("cookie"), is(nullValue()));
@@ -2219,7 +2231,7 @@ class HttpSenderImplUnitTest {
             // Given
             httpSender.setUseCookies(true);
             // When
-            method.sendWith(httpSender, message);
+            serverSetsCookies(method);
             method.sendWith(httpSender, message);
             // Then
             assertThat(message.getRequestHeader().getHeader("cookie"), is(not(nullValue())));
@@ -2232,7 +2244,7 @@ class HttpSenderImplUnitTest {
             // Given
             httpSender.setUseCookies(true);
             // When
-            method.sendWith(httpSender, message);
+            serverSetsCookies(method);
             method.sendWith(httpSender, message);
             // Then
             assertThat(
@@ -2247,7 +2259,7 @@ class HttpSenderImplUnitTest {
             // Given
             httpSender.setUseCookies(true);
             // When
-            method.sendWith(httpSender, message);
+            serverSetsCookies(method);
             method.sendWith(httpSender, message);
             method.sendWith(httpSender, message);
             method.sendWith(httpSender, message);

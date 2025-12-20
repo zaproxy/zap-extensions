@@ -6,6 +6,9 @@ description = "Provides database engines and related infrastructure."
 val datanucleus by configurations.creating
 configurations.api { extendsFrom(datanucleus) }
 
+val flyway by configurations.creating
+configurations.api { extendsFrom(flyway) }
+
 val sqlite by configurations.creating
 configurations.api { extendsFrom(sqlite) }
 
@@ -24,6 +27,7 @@ zapAddOn {
 
         bundledLibs {
             libs.from(datanucleus)
+            libs.from(flyway)
             libs.from(sqlite)
         }
     }
@@ -50,10 +54,11 @@ spotless {
 dependencies {
     compileOnly(libs.log4j.core)
 
-    datanucleus("org.datanucleus:datanucleus-accessplatform-jdo-rdbms:6.0.7")
-    sqlite("org.xerial:sqlite-jdbc:3.45.3.0")
+    datanucleus(libs.database.datanucleusJdo)
+    sqlite(libs.database.sqliteJdbc)
 
-    api("org.flywaydb:flyway-core:9.22.3")
+    flyway(libs.database.flywayCore)
+    flyway(libs.database.flywayDatabaseHsqldb)
 
     testImplementation(libs.log4j.core)
     testImplementation(project(":testutils"))

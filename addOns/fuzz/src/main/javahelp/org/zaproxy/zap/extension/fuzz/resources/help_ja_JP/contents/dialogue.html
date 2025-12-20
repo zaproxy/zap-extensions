@@ -3,52 +3,51 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>
-Fuzzer dialog
+ファザーダイアログ
 </title>
 </head>
 <body>
-<h1>Fuzzer dialog</h1>
-This allows you to select the fuzzers to use when <a href="concepts.html">fuzzing </a> a request. 
+<h1>ファザーダイアログ</h1>
+このダイアログでは、リクエストの <a href="concepts.html">ファジング </a> 時に使用するファザーを選択できます。 
 
-<h3>Fuzz Locations tab</h3>
-To configure the fuzzing:<br/>
+<h3>ファジング位置タブ</h3>
+ファジングを設定するには：<br/>
 <ul>
-<li>Highlight a string you wish to fuzz in the Fuzz Locations tab</li>
-<li>Click the 'Add...' button to launch the <a href="payloads.html">Payloads dialog</a></li>
-<li>Add the payloads you want to use</li>
-<li>Click on the 'Processors...' button to launch the <a href="locations.html">Location Processors dialog</a> (if required)</li>
-<li>Click on the 'Start Fuzzer' button to start the fuzzing</li>
-<li>The results will then be listed in the <a href="tab.html">Fuzzer tab</a> select them to see the full requests and responses.</li>
+<li>ファジング位置タブでファジングしたい文字列をハイライト表示する。</li>
+<li>「追加...」ボタンをクリックして、<a href="payloads.html">ペイロードダイアログ</a>を起動する。</li>
+<li>使用したいペイロードを追加する。</li>
+<li>「プロセッサ…」ボタンをクリックして、<a href="locations.html">位置プロセッサダイアログ</a>を起動する（必要な場合）。</li>
+<li>「ファザー開始」ボタンをクリックしてファジングを開始する。</li>
+<li>結果は<a href="tab.html">ファザータブ</a>に一覧表示されます。それを選択すると、完全なリクエストとレスポンスが表示されます。</li>
 </ul>
-You can also search for strings in the fuzz results using the 'Search' tab.
+また、「検索」タブを使用して、ファジング結果内の文字列を検索することもできます。
 <p>
-Click on the 'Edit' button to edit the message you have selected for fuzzing.
-Note that this will remove all of the fuzz locations that you have defined.
+ファジング対象として選択したメッセージを編集するには、「編集」ボタンをクリックします。 注意: これにより、定義したすべてのファジング位置が削除されます。
 <p>
-You will need to 'Save' the message before you can define new fuzz locations.
+新しいファジング位置を定義する前に、メッセージを「保存」する必要があります。
 
-<h3>Options tab</h3>
-This tab allows you to configure the options to be used when fuzzing. See the main <a href="options.html">options help</a> for more details.
+<h3>オプション タブ</h3>
+このタブでは、ファジング時に使用するオプションを設定できます。 詳細については、メインの<a href="options.html">オプション ヘルプ</a>を参照してください。
 
-<h4>Follow Redirects</h4>
-Indicates whether or not the Fuzzer should follow redirect responses (only visible for HTTP messages).
+<h4>リダイレクトの追跡</h4>
+ファザーがリダイレクトレスポンスを追跡するかどうかを示します (HTTPメッセージでのみ表示されます)。
 
-<h3>Message Processors tab</h3>
-Message Processors can access and change the messages being fuzzed, control the fuzzing process, and interact with the ZAP UI.<br>
-The message processors available depend on the type of message being fuzzed, this add-on includes the <a href="httpmessageprocessors.html">default HTTP Messages processors</a>.
+<h3>メッセージプロセッサ タブ</h3>
+メッセージプロセッサは、ファジング対象のメッセージへのアクセスと変更、ファジングプロセスの制御、およびZAP UIとの連携が可能です。<br>
+利用可能なメッセージプロセッサは、ファジングするメッセージの種類によって異なります。このアドオンには、<a href="httpmessageprocessors.html">既定のHTTPメッセージプロセッサ</a>が含まれています.
 <p>
-Add-ons can also define additional payload generators.
+アドオンは、追加のペイロードジェネレーターを定義することもできます。
 
-<h2>Accessed via</h2>
+<h2>ここから参照されています</h2>
 <table>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Request tab</td><td>'Fuzz...' right click menu item</td></tr>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Sites and History tab</td><td>Attack > Fuzz... menu items</td></tr>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Tools menu </td><td>Attack > Fuzz... menu item</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>リクエストタブ</td><td>「ファズ&mldr;」右クリックメニュー項目</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>サイトタブと履歴タブ</td><td>攻撃 > ファジング&mldr; メニュー項目</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>ツールメニュー </td><td>攻撃 > ファジング&mldr; メニュー項目</td></tr>
 </table>
 
-<h2>See also</h2>
+<h2>関連情報</h2>
 <table>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Fuzzer concepts</a></td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">ファザーの概念</a></td></tr>
 </table>
 
 </body>

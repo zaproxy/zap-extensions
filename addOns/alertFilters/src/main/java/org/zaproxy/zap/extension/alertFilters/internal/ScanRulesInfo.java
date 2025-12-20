@@ -19,7 +19,6 @@
  */
 package org.zaproxy.zap.extension.alertFilters.internal;
 
-import java.lang.reflect.Constructor;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -85,11 +84,8 @@ public class ScanRulesInfo extends AbstractList<ScanRulesInfo.Entry> {
         if (scanRule instanceof PluginPassiveScanner) {
             try {
                 PluginPassiveScanner pps = ((PluginPassiveScanner) exampleAlertProvider).copy();
-                Constructor<PassiveScanData> constructor =
-                        PassiveScanData.class.getDeclaredConstructor(HttpMessage.class);
-                constructor.setAccessible(true);
                 PassiveScanData psd =
-                        constructor.newInstance(
+                        new PassiveScanData(
                                 new HttpMessage(new HttpRequestHeader("GET / HTTP/1.1")));
                 pps.setHelper(psd);
                 exampleAlertProvider = pps;

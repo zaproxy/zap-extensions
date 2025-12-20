@@ -2,38 +2,38 @@
 <HTML>
 <HEAD>
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
-<TITLE>Options Token Generator Screen</TITLE>
+<TITLE>オプション - トークンジェネレーター画面</TITLE>
 </HEAD>
 <BODY>
-    <H1>Options Token Generator screen</H1>
+    <H1>オプション - トークンジェネレーター画面</H1>
     <p>
-        This screen allows you to configure the <a href="tokengen.html">Token Generator</a>.
-    <h2>Configuration Options</h2>
+        この画面では、<a href="tokengen.html">トークンジェネレーター</a>の設定を行えます。
+    <h2>設定オプション</h2>
     <table border="2">
         <tr>
-            <th>Field</th>
-            <th>Details</th>
-            <th>Default</th>
-            <th>Config File</th>
+            <th>フィールド</th>
+            <th>詳細</th>
+            <th>既定値</th>
+            <th>設定ファイル</th>
         </tr>
         <tr>
-            <td>Number of Threads</td>
-            <td>The number of threads used during the token generation.
+            <td>スレッド数</td>
+            <td>トークンの生成時に使用されるスレッドの数
             </td>
             <td align="center">5</td>
-            <td>Key: <code>tokengen.threadsPerScan</code><br>Value: a non-negative integer.</td>
+            <td>キー: <code>tokengen.threadsPerScan</code><br>
+値: 負でない整数</td>
         </tr>
         <tr>
-            <td>Request Delay (in milliseconds)</td>
+            <td>リクエスト遅延 (ミリ秒)</td>
             <td>
-                The time to wait before sending each request, to avoid overloading the target server.
+                ターゲットサーバーへの負荷を避けるために、各リクエスト送信前に待機する時間
                 <p>
-                <strong>Note:</strong> Given the high number of requests sent during the Token
-                Generation increasing the delay might have a high impact on the time that the
-                generation will take to complete.
+                <strong>注意:</strong> トークン生成では大量のリクエストが送信されるため、遅延時間を長く設定すると、生成にかかる時間が大幅に延びる可能性があります。
             </td>
             <td align="center">0</td>
-            <td>Key: <code>tokengen.requestDelayInMs</code><br>Value: a non-negative integer.</td>
+            <td>キー: <code>tokengen.requestDelayInMs</code><br>
+値: 負でない整数</td>
         </tr>
     </table>
 

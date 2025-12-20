@@ -586,6 +586,18 @@
     ],
     "website": "https://www.vello.fi"
   },
+  "Veloce": {
+    "cats": [
+      53
+    ],
+    "description": "Veloce is a provider of CRM, marketing, and website services designed for healthcare practices to improve patient engagement and operational efficiency.",
+    "icon": "Veloce.svg",
+    "saas": true,
+    "scripts": [
+      "VeloceSolutions\\.net"
+    ],
+    "website": "https://www.velocesolutions.net"
+  },
   "Velocify": {
     "cats": [
       53
@@ -677,6 +689,26 @@
     ],
     "icon": "Venmo.svg",
     "website": "https://venmo.com"
+  },
+  "Venngage": {
+    "cats": [
+      51
+    ],
+    "description": "Venngage is a platform that enables the creation of infographics using AI-powered tools to streamline design and visualization.",
+    "icon": "Venngage.svg",
+    "js": {
+      "__venngage_embed_script_loaded": ""
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "infograph\\.venngage\\.com"
+    ],
+    "website": "https://venngage.com"
   },
   "VentasxMayor": {
     "cats": [
@@ -866,6 +898,51 @@
       "/_vercel/insights/script\\.js"
     ],
     "website": "https://vercel.com/analytics"
+  },
+  "Vercel Speed Insights": {
+    "cats": [
+      10
+    ],
+    "description": "Vercel Speed Insights provides you with a detailed view of your website's performance metrics, based on Core Web Vitals.",
+    "dom": {
+      "script[data-sdkn='@vercel/speed-insights/next']": {
+        "attributes": {
+          "data-sdkv": "^(.+)$\\;version:\\1"
+        }
+      }
+    },
+    "icon": "vercel.svg",
+    "js": {
+      "si": ""
+    },
+    "scriptSrc": [
+      "/_vercel/speed-insights/script\\.js"
+    ],
+    "website": "https://vercel.com/docs/speed-insights"
+  },
+  "Verfacto": {
+    "cats": [
+      32
+    ],
+    "description": "Verfacto is a marketing analytics tool for eCommerce that identifies factors influencing customer behavior and reveals what converts visitors into customers.",
+    "icon": "Verfacto.svg",
+    "js": {
+      "VerfactoEntryPoint": "",
+      "VerfactoTracker": ""
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "analytics\\.verfacto\\.com"
+    ],
+    "scripts": [
+      "analytics\\.verfacto\\.com"
+    ],
+    "website": "https://www.verfacto.com"
   },
   "VergeCloud": {
     "cats": [
@@ -1116,6 +1193,24 @@
     ],
     "website": "https://www.verticalscope.com"
   },
+  "Vertster": {
+    "cats": [
+      74
+    ],
+    "description": "Vertster is a multivariate testing platform that enables users to compare multiple webpage or app variations simultaneously to identify which combination of elements performs best based on user behavior and data analysis.",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.vertster\\.com"
+    ],
+    "scripts": [
+      "cdn\\.vertster\\.com"
+    ],
+    "website": "https://vertster.com"
+  },
   "Very Good Security": {
     "cats": [
       16
@@ -1174,6 +1269,18 @@
       "\\.vev\\.design/"
     ],
     "website": "https://www.vev.design"
+  },
+  "Vex": {
+    "cats": [
+      59
+    ],
+    "description": "Vex is a lightweight library for creating functional dialogs using vanilla JavaScript without external dependencies.",
+    "icon": "HubSpot.svg",
+    "js": {
+      "vex.close": ""
+    },
+    "oss": true,
+    "website": "https://github.hubspot.com/vex"
   },
   "Vextras": {
     "cats": [
@@ -1435,6 +1542,21 @@
     ],
     "website": "https://www.vidora.com"
   },
+  "Vidscrip": {
+    "cats": [
+      14
+    ],
+    "description": "Vidscrip is a digital platform that enables physicians to communicate with patients through personalized video content, enhancing patient engagement and improving care coordination.",
+    "icon": "Vidscrip.svg",
+    "js": {
+      "addVidscripWidget": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "\\.vidscrip\\.com"
+    ],
+    "website": "https://studio.vidscrip.com"
+  },
   "Vigbo": {
     "cats": [
       1
@@ -1506,6 +1628,23 @@
     },
     "oss": true,
     "website": "https://vike.dev"
+  },
+  "Vikreta": {
+    "cats": [
+      6
+    ],
+    "description": "Vikreta is a web storefront and POS platform built with React, Next.js, and Tailwind CSS, deployed on Vercel and designed for dynamic product and order management.",
+    "headers": {
+      "x-powered-by": "^Vikreta$"
+    },
+    "icon": "Vikreta.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": false,
+    "website": "https://www.vikreta.app"
   },
   "Viloud": {
     "cats": [
@@ -1868,6 +2007,36 @@
     "saas": true,
     "website": "https://visely.io"
   },
+  "Visenze": {
+    "cats": [
+      6
+    ],
+    "description": "Visenze is an AI commerce platform specializing in search and discovery solutions to help businesses improve product visibility and customer engagement.",
+    "icon": "Visenze.svg",
+    "js": {
+      "ViSenzeAnalytics": "",
+      "visenzeLayer": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.visenze\\.com"
+    ],
+    "website": "https://www.visenze.com"
+  },
+  "VisiOpt": {
+    "cats": [
+      74
+    ],
+    "description": "Visiopt™ is a powerful yet easy to use AI-driven Optimization System that enables you to manufacture your perfect customer at scale like a well oiled machine.",
+    "icon": "visiopt.png",
+    "js": {
+      "visiopt_code": ""
+    },
+    "scriptSrc": [
+      "visiopt\\.com"
+    ],
+    "website": "https://visiopt.com"
+  },
   "Visible Privacy": {
     "cats": [
       67
@@ -1894,6 +2063,23 @@
     },
     "saas": true,
     "website": "https://visitor.chat"
+  },
+  "Visitor.js": {
+    "cats": [
+      76
+    ],
+    "description": "Visitor.js is a tool that personalizes website content to optimize user engagement and improve conversion rates.",
+    "icon": "Visitor.svg",
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "www\\.visitorjs\\.com"
+    ],
+    "website": "https://www.visitorjs.com"
   },
   "VisitorVille": {
     "cats": [
@@ -2221,6 +2407,24 @@
     ],
     "website": "https://meetvolley.com"
   },
+  "Voltage": {
+    "cats": [
+      41
+    ],
+    "description": "Voltage is a payments platform that enables users to send bitcoin globally through a secure network.",
+    "icon": "Voltage.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "btcpay0\\.voltageapp\\.io"
+    ],
+    "website": "https://www.voltage.cloud"
+  },
   "Voltn": {
     "cats": [
       32
@@ -2284,12 +2488,17 @@
     ],
     "description": "Vondera is an eCommerce platform in Egypt that enables online store management with local shipping, secure payments, and integration with social media platforms and marketplaces.",
     "icon": "Vondera.svg",
+    "meta": {
+      "ecommerce": "^Vondera$",
+      "vondera-ecommerce": "^Vondera$"
+    },
     "pricing": [
       "low",
       "recurring"
     ],
     "saas": true,
     "scripts": [
+      "qaf\\.vondera\\.io",
       "\\.vondera\\.shop"
     ],
     "website": "https://www.vondera.app"
@@ -2443,6 +2652,21 @@
       "zingaya\\.com"
     ],
     "website": "https://voximplant.com/products/click-to-call"
+  },
+  "Vrio": {
+    "cats": [
+      6
+    ],
+    "description": "Vrio is a headless ecommerce platform offering API-driven and hosted solutions for building and managing online stores.",
+    "icon": "Vrio.svg",
+    "meta": {
+      "readme-subdomain": "^vrio-api$"
+    },
+    "saas": true,
+    "scripts": [
+      "\\.vrio\\.app"
+    ],
+    "website": "https://www.vrio.com"
   },
   "Vtiger": {
     "cats": [
@@ -2702,6 +2926,22 @@
     ],
     "website": "https://vyper.io"
   },
+  "Vyve+": {
+    "cats": [
+      32
+    ],
+    "description": "Vyve+ is an AI-powered platform that integrates marketing and sales automation tools into a single system.",
+    "icon": "Vyve.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "app\\.vyveplus\\.ai"
+    ],
+    "website": "https://vyveplus.ai"
+  },
   "v4Guard Checkpoint": {
     "cats": [
       16
@@ -2763,6 +3003,24 @@
     ],
     "saas": true,
     "website": "https://vchat.vn"
+  },
+  "vFairs": {
+    "cats": [
+      104
+    ],
+    "description": "vFairs is an event management platform for organizing customizable in-person and virtual events.",
+    "dom": [
+      "scripts[data-domain*='vfairscombined.com']"
+    ],
+    "icon": "vFairs.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "vfairs\\.com"
+    ],
+    "website": "https://www.vfairs.com"
   },
   "vcita": {
     "cats": [

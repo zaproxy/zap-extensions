@@ -2,54 +2,54 @@
 <HTML>
 <HEAD>
 <TITLE>
-Automation Framework - activeScan-config Job
+自動化フレームワーク - activeScan-config ジョブ
 </TITLE>
 </HEAD>
 <BODY>
-<H1>Automation Framework - activeScan-config Job</H1>
+<H1>自動化フレームワーク - activeScan-config ジョブ</H1>
 
-This job configures the active scanner, for custom active scans (e.g. Sequence).
+このジョブは、カスタムアクティブスキャン (例: シーケンス) のために、アクティブスキャナーの各種設定を行います。
 
 <H2>YAML</H2>
 
 <pre>
-  - type: activeScan-config                # Configures the settings of the active scanner.
+  - type: activeScan-config                # アクティブスキャナーの設定を構成します。
     parameters:
-      maxRuleDurationInMins:               # Int: The max time in minutes any individual rule will be allowed to run for, default: 0 unlimited
-      maxScanDurationInMins:               # Int: The max time in minutes the active scanner will be allowed to run for, default: 0 unlimited
-      maxAlertsPerRule:                    # Int: Maximum number of alerts to raise per rule, default: 0 unlimited
-      defaultPolicy:                       # String: The name of the default scan policy to use, default: Default Policy
-      handleAntiCSRFTokens:                # Bool: If set then automatically handle anti CSRF tokens, default: false
-      injectPluginIdInHeader:              # Bool: If set then the relevant rule ID will be injected into the X-ZAP-Scan-ID header of each request, default: false
-      threadPerHost:                       # Int: The max number of threads per host, default: 2 * Number of available processor cores
-    inputVectors:                          # The input vectors used during the active scan.
-      urlQueryStringAndDataDrivenNodes:    # Configures the scanning of query parameters and DDNs.
-         enabled:                          # Bool: If query parameters and DDNs scanning should be enabled. Default: true
-         addParam:                         # Bool: If a query parameter should be added if none present. Default: false
-         odata:                            # Bool: If OData query filters should be scanned. Default: true
-      postData:                            # Configures the scanning of request bodies.
-        enabled:                           # Bool: If enabled. Default: true
-        multiPartFormData:                 # Bool: If multipart form data bodies should be scanned. Default: true
-        xml:                               # Bool: If XML bodies should be scanned. Default: true
-        json:                              # Configures the scanning of JSON bodies.
-          enabled:                         # Bool: If JSON scanning should be enabled. Default: true
-          scanNullValues:                  # Bool: If null values should be scanned. Default: false
-        googleWebToolkit:                  # Bool: If GWT scanning should be enabled. Default: false
-        directWebRemoting:                 # Bool: If DWR scanning should be enabled. Default: false
-      urlPath:                             # Bool: If URL path segments should be scanned. Default: false
-      httpHeaders:                         # Configures the scanning of HTTP headers.
-        enabled:                           # Bool: If HTTP header scanning should be enabled. Default: false
-        allRequests:                       # Bool: If set then the headers of requests that do not include any parameters will be scanned. Default: false
-      cookieData:                          # Configures the scanning of cookies.
-        enabled:                           # Bool: If enabled. Default: false
-        encodeCookieValues:                # Bool: If cookie values should be encoded. Default: false
-      scripts:                             # Bool: If Input Vector scripts should be used. Default: true
-    excludePaths:                          # An optional list of regexes to exclude
-    enabled:                           # Bool: If set to false the job will not be run, default: true
-    alwaysRun:                         # Bool: If set and the job is enabled then it will run even if the plan exits early, default: false
+      maxRuleDurationInMins:               # Int: 個々のルールが実行を許可される最大時間 (分)、デフォルト: 0 (制限なし)
+      maxScanDurationInMins:               # Int: アクティブスキャナーが実行を許可される最大時間 (分)、デフォルト: 0 (制限なし)
+      maxAlertsPerRule:                    # Int: ルールごとに発生させるアラートの最大数、デフォルト: 0 (制限なし)
+      defaultPolicy:                       # 文字列: 使用するデフォルトスキャンポリシーの名前、デフォルト: Default Policy
+      handleAntiCSRFTokens:                # Bool: 設定されている場合、Anti-CSRFトークンを自動的に処理します、デフォルト: true
+      injectPluginIdInHeader:              # Bool: 設定されている場合、関連するルールIDが各リクエストの X-ZAP-Scan-ID ヘッダーに挿入されます、デフォルト: false
+      threadPerHost:                       # Int: ホストごとの最大スレッド数、デフォルト: 2 * 利用可能なプロセッサーコア数
+    inputVectors:                          # アクティブスキャン中に使用されるインプットベクター。
+      urlQueryStringAndDataDrivenNodes:    # クエリパラメータとデータ駆動型ノード (DDN) のスキャンを設定します。
+         enabled:                          # Bool: クエリパラメータとDDNのスキャンを有効化するかどうか。 デフォルト: true
+         addParam:                         # Bool: クエリパラメータが存在しない場合にクエリパラメータを追加するかどうか。 デフォルト: false
+         odata:                            # Bool: ODataクエリフィルタをスキャンするかどうか。 デフォルト: true
+      postData:                            # リクエストボディのスキャンを設定します。
+        enabled:                           # Bool: POSTデータスキャンを有効にするかどうか。 デフォルト: true
+        multiPartFormData:                 # Bool: マルチパートフォームデータボディをスキャンするかどうか。 デフォルト: true
+        xml:                               # Bool: XMLボディをスキャンするかどうか。 デフォルト: true
+        json:                              # JSONボディのスキャンを設定します。
+          enabled:                         # Bool: JSONスキャンを有効にするかどうか。 デフォルト: true
+          scanNullValues:                  # Bool: null値をスキャンするかどうか。 デフォルト: false
+        googleWebToolkit:                  # Bool: GWTスキャンを有効にするかどうか。 デフォルト: false
+        directWebRemoting:                 # Bool: DWRスキャンを有効にするかどうか。 デフォルト: false
+      urlPath:                             # Bool: URLパスセグメントをスキャンするかどうか。 デフォルト: false
+      httpHeaders:                         # HTTPヘッダーのスキャンを設定します。
+        enabled:                           # Bool: HTTPヘッダーのスキャンを有効にするかどうか。 デフォルト: false
+        allRequests:                       # Bool: 設定されている場合、パラメーターを含まないリクエストのヘッダーがスキャンされます。 デフォルト: false
+      cookieData:                          # クッキーのスキャンを設定します。
+        enabled:                           # Bool: クッキーのスキャンを有効にするかどうか。 デフォルト: false
+        encodeCookieValues:                # Bool: クッキー値をエンコードするかどうか。 デフォルト: false
+      scripts:                             # Bool: インプットベクタースクリプトを使用するかどうか。 デフォルト: true
+    excludePaths:                          # 除外する正規表現の任意のリスト
+    enabled:                           # Bool: falseに設定されている場合、ジョブは実行されません、デフォルト: true
+    alwaysRun:                         # Bool: 設定されジョブが有効な場合、プランが早期に終了しても実行されます、デフォルト: false
 </pre>
 
-Note that the 'excludePaths' will overwrite any existing session "Exclude from Scanner" paths.
+注: 'excludePaths' は、既存のセッションの「スキャナーから除外」パスをすべて上書きします。
 
 </BODY>
 </HTML>

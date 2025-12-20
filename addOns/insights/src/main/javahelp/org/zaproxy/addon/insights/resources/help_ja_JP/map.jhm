@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE map
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Map Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/map_1_0.dtd">
+
+<map version="1.0">
+	<mapID target="addon.insights-icon" url="contents/images/magnifier--exclamation.png" />
+    <mapID target="addon.insights" url="contents/insights.html" />
+    <mapID target="addon.insights-fields" url="contents/insights-fields.html" />
+    <mapID target="addon.insights-list" url="contents/insights-list.html" />
+    <mapID target="addon.insights-job" url="contents/insights-job.html" />
+    <mapID target="addon.insights-options" url="contents/insights-options.html" />
+</map>

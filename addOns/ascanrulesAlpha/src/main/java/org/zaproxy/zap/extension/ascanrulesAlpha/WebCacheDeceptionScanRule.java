@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
@@ -63,7 +64,8 @@ public class WebCacheDeceptionScanRule extends AbstractAppPlugin
                                 CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
                                 CommonAlertTag.WSTG_V42_ATHN_06_CACHE_WEAKNESS,
                                 CommonAlertTag.HIPAA,
-                                CommonAlertTag.PCI_DSS));
+                                CommonAlertTag.PCI_DSS,
+                                CommonAlertTag.SYSTEMIC));
         alertTags.put(PolicyTag.PENTEST.getTag(), "");
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
     }
@@ -121,19 +123,19 @@ public class WebCacheDeceptionScanRule extends AbstractAppPlugin
                     for (String ext : extensions) {
                         attack.append("/test.").append(ext).append(",");
                     }
-                    newAlert()
-                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                            .setMessage(authorisedMessage)
-                            .setOtherInfo(
-                                    Constant.messages.getString(
-                                            "ascanalpha.webCacheDeception.otherinfo"))
-                            .setAttack(attack.toString())
-                            .raise();
+                    createAlert(attack.toString()).setMessage(authorisedMessage).raise();
                 }
             } catch (IOException e) {
                 LOGGER.warn(e.getMessage(), e);
             }
         }
+    }
+
+    private AlertBuilder createAlert(String attack) {
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setOtherInfo(Constant.messages.getString("ascanalpha.webCacheDeception.otherinfo"))
+                .setAttack(attack);
     }
 
     private static String getBasePath(String path) throws URIException {
@@ -210,5 +212,10 @@ public class WebCacheDeceptionScanRule extends AbstractAppPlugin
     @Override
     public int getCweId() {
         return 444; // CWE-444: Inconsistent Interpretation of HTTP Requests
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(createAlert("/test.css,/test.js,/test.gif,/test.png,/test.svg,").build());
     }
 }

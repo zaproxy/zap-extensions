@@ -148,7 +148,7 @@ public class AutomationMonitorTest extends AbstractAutomationTest {
 
     @Override
     public String getTestPassedMessage() {
-        String testPassedReason = stat + " " + this.getData().getThreshold();
+        String testPassedReason = stat + " < " + this.getData().getThreshold();
         return Constant.messages.getString(
                 "automation.tests.pass",
                 getJobType(),

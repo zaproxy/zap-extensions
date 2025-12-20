@@ -72,14 +72,9 @@ public class AuthenticationBrowserHook implements BrowserHook {
         ZestAuthRunner runner = getZestRunner(ssUtils.getWebDriver());
         try {
             Map<String, String> paramsValues = new HashMap<>();
-            GenericAuthenticationCredentials credentials =
-                    (GenericAuthenticationCredentials) user.getAuthenticationCredentials();
-            paramsValues.put(
-                    ZestAuthenticationRunner.USERNAME,
-                    credentials.getParam(ZestAuthenticationRunner.USERNAME));
-            paramsValues.put(
-                    ZestAuthenticationRunner.PASSWORD,
-                    credentials.getParam(ZestAuthenticationRunner.PASSWORD));
+            ZestAuthenticationRunner.copyCredentials(
+                    (GenericAuthenticationCredentials) user.getAuthenticationCredentials(),
+                    paramsValues);
 
             ZestScript zs = csaMethod.getZestScript();
             AuthUtils.setMinWaitFor(zs, csaMethod.getMinWaitFor());

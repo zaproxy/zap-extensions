@@ -2,60 +2,56 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Script Console Tab</title>
+<title>スクリプトコンソール タブ</title>
 </head>
 <body>
-<h1>Script Console Tab</h1>
+<h1>スクリプトコンソール タブ</h1>
 <p>
-The Scripts Console allows you to write scripts which run within ZAP.<br/>
-It is made up of:
+スクリプトコンソールを使用すると、ZAP内で実行するスクリプトを作成できます。<br/>
+スクリプトコンソールは以下の要素で構成されています：
 <ul>
-<li>A toolbar</li>
-<li>A text area (top) in which you can write your scripts</li>
-<li>An output text area (bottom) for debug and error messages, with "print" statements.</li>
+<li>ツールバー</li>
+<li>スクリプトを記述できるテキストエリア (上部)</li>
+<li>デバッグメッセージやエラーメッセージ、「print」文の出力先となる出力テキストエリア (下部)</li>
 </ul>
-To create a new script or to load or switch scripts see the <a href="tree.html">The Scripts 'tree' tab</a>.
+新しいスクリプトを作成したり、スクリプトをロードしたり、切り替えたりする方法については、 <a href="tree.html">スクリプト「ツリー」タブ</a>を参照してください<a href="#"></a>.
 <p>
-Right-click in the script area for display and editing options.
+表示および編集オプションについては、スクリプトエリア内で右クリックしてください。
 <p>
-In ZAP versions after 2.7.0 if the script currently displayed in the console is changed by another program then you 
-will be given the option to keep the script in the console or replace it with the changed script.<br>
-If a script is changed by another program when it is not being displayed and has not previously been changed in the script console 
-then that script will be loaded and the new contents will be used when the script is run.
+ZAPバージョン2.7.0以降では、コンソールに現在表示されているスクリプトが他のプログラムによって変更された場合、コンソール内のスクリプトを保持するか、変更されたスクリプトに置き換えるかのオプションが提示されます。<br>
+スクリプトが表示されていないときに他のプログラムによって変更され、かつスクリプトコンソールで以前に変更されていない場合、そのスクリプトはロードされ、実行時には新しい内容が使用されます。
 <p>
-Templates can be viewed in the console but cannot be edited.<br/>
+テンプレートはコンソールで閲覧できますが、編集することはできません。<br/>
 
-<h2>Toolbar Buttons</h2>
+<h2>ツールバー ボタン</h2>
 
-<h3>Save Script</h3>
-This button allows you to save the script currently displayed in the console to a file.<br/>
-The shortcut `ctrl+S` (or `cmd+S` on macOS) may also be used for this purpose.<br/>
+<h3>スクリプトの保存</h3>
+このボタンを使用すると、コンソールに現在表示されているスクリプトをファイルに保存できます。<br/>
+この目的には、ショートカット ctrl+S (macOSでは cmd+S) も使用できます。<br/>
 
-<h3>Enable / Disable Script</h3>
-This button may be used to enable or disable the script currently displayed in the console.<br/>
+<h3>スクリプトの有効化 / 無効化</h3>
+このボタンは、コンソールに現在表示されているスクリプトを有効または無効にするために使用できます。<br/>
 
-<h3>Run and Stop Buttons</h3>
-You can run 'Stand Alone' scripts using the 'Run' button on the tab toolbar.<br/>
-All other types of scripts will be run when enabled or if explicitly invoked.<br/>
+<h3>実行ボタンと停止ボタン</h3>
+「スタンドアロン」スクリプトは、タブのツールバーにある「実行」ボタンを使用して実行できます。<br/>
+その他のすべてのタイプのスクリプトは、有効化されたとき、または明示的に呼び出されたときに実行されます。<br/>
 
-<h3>Auto-complete</h3>
-The console supports a limited form of auto-complete, controlled by a button on the toolbar.<br/>
-When enabled a popup will be shown when you type the name of one of the defined parameters followed by a dot -
-this will show you all of the methods available for you to call. 
-Selecting one of them will insert the method and parameters into your script.
-If you type another dot immediately after the method call then you will be shown another prompt for the methods
-available to the return type, if any. You will be able to keep expanding the types returned until you start typing something else.
+<h3>自動補完</h3>
+コンソールは、ツールバーのボタンで制御される限定的な形式の自動補完をサポートしています。<br/>
+これが有効になっている場合、定義されたパラメーター名に続けてドットを入力すると、ポップアップが表示され、呼び出し可能なすべてのメソッドが示されます。 
+そのうちの1つを選択すると、メソッドとパラメーターがスクリプトに挿入されます。
+メソッド呼び出しの直後に別のドットを入力すると、戻り値の型に対して利用可能なメソッドの別のプロンプトが表示されます (存在する場合)。 何か別の入力を開始するまで、戻り値の型を拡張し続けることができます。
  
 
-<h2>See also</h2>
+<h2>関連情報</h2>
 <table>
 <tr>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-	<td><a href="scripts.html">The Scripts add-on</a></td><td></td>
+	<td><a href="scripts.html">スクリプトアドオン</a></td><td></td>
 </tr>
 <tr>
     <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-	<td><a href="tree.html">The Scripts 'tree' tab</a></td><td></td>
+	<td><a href="tree.html">スクリプト「ツリー」タブ</a></td><td></td>
 </tr>
 </table>
 

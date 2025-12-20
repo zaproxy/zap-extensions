@@ -3,27 +3,30 @@
 <HEAD>
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
 <TITLE>
-Developer CI/CD Policy
+開発者向け CI/CD ポリシー
 </TITLE>
 </HEAD>
 <BODY>
-<H1>Developer CI/CD Policy</H1>
+<H1>開発者向け CI/CD ポリシー</H1>
 
-This policy is designed to be used by developers in a CI/CD pipeline.
+このポリシーは、CI/CD パイプラインで開発者が使用するために設計されています。
 
 <ul>
-    <li>Recommended for running in CI/CD</li>
-    <li>No environmental / server related rules</li>
-    <li>No long running rules</li>
-    <li>No rules with high false positives</li>
-    <li>No timing attacks</li>
-    <li>No informational only rules</li>
-    <li>Minimal overlap</li>
+    <li>CI/CD での実行推奨事項</li>
+    <li>環境またはサーバー関連のルールを含まない</li>
+    <li>実行時間が長いルールを含まない</li>
+    <li>誤検知 (False Positives) が多いルールを含まない</li>
+    <li>タイミングアタックを含まない</li>
+    <li>情報提供のみのルールを含まない</li>
+    <li>重複が最小限 (Minimal overlap)</li>
 </ul>
 <p>
-For the list of scan rules included see the <a href="https://www.zaproxy.org/alerttags/policy_dev_cicd/">Alert Tag: POLICY_DEV_CICD</a> page.
+含まれているスキャンルールの一覧については、<a href="https://www.zaproxy.org/alerttags/policy_dev_cicd/">アラートタグ: POLICY_DEV_CICD</a> ページを参照してください。
 <p>
-Return to <a href="scanpolicies.html">main scan policies page</a>.
+プログラム名: <code>Dev CICD</code>
+</p>
+<p>
+メインの<a href="scanpolicies.html">スキャンポリシーページ</a>に戻る。
 
 </BODY>
 </HTML>

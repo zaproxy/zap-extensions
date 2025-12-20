@@ -3,41 +3,36 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>
-        Access Control Context Options
+        アクセスコントロールコンテキストオプション 
     </title>
 </head>
 <body>
-<h1>Access Control Context Options</h1>
+<h1>アクセスコントロールコンテキストオプション </h1>
 
 <p>
-    The Access Control Context options are present as a panel for each Context when opening the Session Properties
-    dialog. This panel allows ZAP users to define the Access Rules for each User of each Context.
+    アクセスコントロールコンテキストオプションは、セッションプロパティダイアログを開いた際に、各コンテキストのパネルとして表示されます。 このパネルにより、ZAP ユーザーは、各コンテキストに属する各ユーザーのアクセスルールを定義できます。
 </p>
 
 <p>
-    As mentioned on the <a href="concepts.html">concepts</a> page, ZAP is making use of the tree-based
-    structure of URLs. So, when configuring the access rules, only 1 rule needs to be set explicitly for an entire
-    subtree, while for the other nodes rules are inferred. Three possible values can be set for any node in Context for
-    each User:
+    <a href="concepts.html">概念</a>ページで言及されているように、ZAPはURLのツリーベース構造を利用しています。 そのため、アクセスルールを設定する際、サブツリー全体に対して明示的に設定する必要があるルールは1つだけであり、他のノードのルールは推論されます。 各コンテキスト内の任意のノードに対して、各ユーザーごとに設定できる値は以下の3種類です：
 </p>
 <ul>
-    <li><b>Allowed</b> - The rule for the node is <i>explicitly</i> set as Allowed</li>
-    <li><b>Denied</b> - The rule for the node is <i>explicitly</i> set as Denied</li>
-    <li><b>Inherited</b> - The rule for the node is inferred based on the closest parent with an explicitly set rule
+    <li><b>許可</b> - ノードに対するルールが<i>明示的</i>に許可として設定されます。</li>
+    <li><b>拒否</b> - ノードに対するルールが<i>明示的</i>に拒否として設定されます。</li>
+    <li><b>継承</b> - ルールが明示的に設定された最も近い親ノードに基づいて、ノードのルールが推論されます。
     </li>
 </ul>
 
-<p>By default, the rules for any node has an <i>Inherited</i> value and the root node has a value of <i>Unknown</i>.
-    Thus, for any node without a parent with an explicitly configured rule, the inferred rule will default to
-    <i>Unknown</i>.</p>
+<p>デフォルトでは、任意のノードのルールは<i>継承</i>値を持ち、ルートノードは<i>不明</i>の値を持っています。
+    したがって、明示的に設定されたルールを持つ親を持たない任意のノードについて、推論されたルールはデフォルトで<i>不明</i>となります。.</p>
 
 <h2>関連情報</h2>
 <table>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
         <td>
-            <a href="concepts.html">Access Control Testing concepts</a></td>
-        <td>for a short introduction to Access Control Testing</td>
+            <a href="concepts.html">アクセスコントロールテストの概念</a></td>
+        <td>アクセスコントロールテストの簡単な紹介</td>
     </tr>
 </table>
 

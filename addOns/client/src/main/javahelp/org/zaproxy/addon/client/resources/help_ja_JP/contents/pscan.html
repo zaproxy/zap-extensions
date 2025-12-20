@@ -2,57 +2,56 @@
 <HTML>
 <HEAD>
 <TITLE>
-Client Side Integration - Passive Scan Rules
+クライアントサイド統合 - パッシブスキャンルール
 </TITLE>
 </HEAD>
 <BODY>
-<H1>Client Side Integration - Passive Scan Rules</H1>
+<H1>クライアントサイド統合 - パッシブスキャンルール</H1>
 
-The Client Side Integration add-on supports passive scanning of the data streamed from the browser.
+クライアントサイド統合アドオンは、ブラウザからストリーム送信されたデータのパッシブスキャンをサポートしています。
 <p>
-The following rules are included in this add-on:
+このアドオンには、次のルールが含まれています：
 
-<H2 id="id-120000">Information Disclosure - Information in Browser Storage</H2>
-This rule reports any information stored in browser localStorage and sessionStorage.
+<H2 id="id-120000">情報漏洩 - ブラウザ内の情報</H2>
+このルールは、ブラウザのlocalStorageおよびsessionStorageに保存されているすべての情報を報告します。
 <p>
-This is not unusual or necessarily unsafe - this informational alerts are raised to help you get a better understanding of 
-what this app is doing.
+これは異常なことではなく、必ずしも危険ではありません。これらの情報アラートは、このアプリケーションが何を行っているかをよりよく理解できるようにするために生成されます。
 <p>
-The alert parameter will be the storage key used.
-An alert will only be raised once for each URL + key. 
+アラートパラメーターは、使用されたストレージキーになります。
+アラートは、URL + キーの組み合わせごとに1回だけ発生します。 
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/tree/main/addOns/client/src/main/java/org/zaproxy/addon/client/pscan/InformationInStorageScanRule.java">InformationInStorageScanRule.java</a><br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/120000/">120000</a>.
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/tree/main/addOns/client/src/main/java/org/zaproxy/addon/client/pscan/InformationInStorageScanRule.java">InformationInStorageScanRule.java</a><br>
+アラートID: <a href="https://www.zaproxy.org/docs/alerts/120000/">120000</a>
 
-<H2 id="id-120001">Information Disclosure - Sensitive Information in Browser Storage</H2>
-This rule reports any sensitive information stored in browser localStorage and sessionStorage.
+<H2 id="id-120001">情報漏洩 - ブラウザストレージ内の機密情報</H2>
+このルールは、ブラウザのlocalStorage**およびsessionStorageに保存されている機密情報を報告します。
 <p>
-This can violate PCI and most organizational compliance policies.
+これは、PCIおよびほとんどの組織のコンプライアンスポリシーに違反する可能性があります。
 <p>
-Potentially sensitive information identified includes:
+特定された機密情報には、次のものが含まれます：
 <ul>
-<li>Credit card numbers
-<li>Email addresses
-<li>US Social security numbers
+<li>クレジットカード番号
+<li>Eメールアドレス
+<li>米国の社会保障番号
 </ul>
-The alert parameter will be the storage key used.
-An alert will only be raised once for each URL + key.
+アラートパラメーターは、使用されたストレージキーになります。
+アラートは、URL + キーの組み合わせごとに1回だけ発生します。
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/tree/main/addOns/client/src/main/java/org/zaproxy/addon/client/pscan/SensitiveInfoInStorageScanRule.java">SensitiveInfoInStorageScanRule.java</a><br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/120001/">120001</a>.
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/tree/main/addOns/client/src/main/java/org/zaproxy/addon/client/pscan/SensitiveInfoInStorageScanRule.java">SensitiveInfoInStorageScanRule.java</a><br>
+アラートID: <a href="https://www.zaproxy.org/docs/alerts/120001/">120001</a>
 
-<H2 id="id-120002">Information Disclosure - JWT in Browser Storage</H2>
-This rule reports any JWTs stored in browser localStorage and sessionStorage.
+<H2 id="id-120002">情報漏洩 - ブラウザ内のJWT</H2>
+このルールは、ブラウザのlocalStorageおよびsessionStorageに保存されているJWTを報告します。
 <p>
-JWTs are commonly stored in sessionStorage so these are just raised as Informational alerts.
+JWTは一般的にsessionStorageに保存されるため、これらは情報アラートとしてのみ生成されます。
 <p>
-JWTs should not typically be stored in localStorage so these are raised as Medium alerts.
+JWTは通常localStorageに保存されるべきではないため、これらは中アラートとして生成されます。 
 <p>
-The alert parameter will be the storage key used.
-An alert will only be raised once for each URL + key.
+アラートパラメーターは、使用されたストレージキーになります。
+アラートは、URL + キーの組み合わせごとに1回だけ発生します。
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/tree/main/addOns/client/src/main/java/org/zaproxy/addon/client/pscan/JwtInStorageScanRule.java">JwtInStorageScanRule.java</a><br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/120002/">120002</a>.
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/tree/main/addOns/client/src/main/java/org/zaproxy/addon/client/pscan/JwtInStorageScanRule.java">JwtInStorageScanRule.java</a><br>
+アラートID: <a href="https://www.zaproxy.org/docs/alerts/120002/">120002</a>
 
 </BODY>
 </HTML>

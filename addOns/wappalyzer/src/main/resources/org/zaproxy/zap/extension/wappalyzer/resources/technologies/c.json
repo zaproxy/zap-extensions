@@ -24,6 +24,21 @@
     ],
     "website": "https://c3js.org/"
   },
+  "CAPYS": {
+    "cats": [
+      53
+    ],
+    "description": "CAPYS is a CRM system designed to support builders in Brazil by managing client relationships, projects, and operational data.",
+    "dom": [
+      "form[action*='crmapi.capys.com.br']"
+    ],
+    "icon": "CAPYS.svg",
+    "saas": true,
+    "scripts": [
+      "crmapi\\.capys\\.com\\.br"
+    ],
+    "website": "https://capys.com.br"
+  },
   "CARTO Analytics": {
     "cats": [
       35
@@ -54,6 +69,18 @@
     ],
     "saas": true,
     "website": "https://carto.com/data-observatory"
+  },
+  "CATS": {
+    "cats": [
+      101
+    ],
+    "description": "CATS is an applicant tracking system designed to help professional recruiters manage job postings, candidate applications, and hiring workflows.",
+    "icon": "CATS.svg",
+    "saas": true,
+    "scriptSrc": [
+      "cp\\.static\\.catsone\\.com"
+    ],
+    "website": "https://catsone.com"
   },
   "CCV Shop": {
     "cats": [
@@ -120,6 +147,22 @@
     "icon": "CFML.png",
     "website": "https://adobe.com/products/coldfusion-family.html"
   },
+  "CIMcloud": {
+    "cats": [
+      6
+    ],
+    "description": "CIMcloud is a customer interaction management platform that integrates ecommerce capabilities.",
+    "icon": "CIMcloud.svg",
+    "js": {
+      "cimcloud.catalog": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.cimcloud.com"
+  },
   "CINC": {
     "cats": [
       32,
@@ -181,6 +224,18 @@
     },
     "website": "https://ckeditor.com"
   },
+  "CLIKdata": {
+    "cats": [
+      32
+    ],
+    "description": "CLIKdata is a provider of digital marketing and data services that support business growth by enhancing engagement and lead generation.",
+    "icon": "CLIKdata.svg",
+    "saas": true,
+    "scriptSrc": [
+      "pixel\\.clikdata\\.com"
+    ],
+    "website": "https://clikdata.com"
+  },
   "CMS Caddy": {
     "cats": [
       1
@@ -222,6 +277,25 @@
       "generator": "CMSimple( [\\d.]+)?\\;version:\\1"
     },
     "website": "https://www.cmsimple.org/en"
+  },
+  "CMoffer": {
+    "cats": [
+      6
+    ],
+    "description": "CMoffer is a drop shipping app focused on necklaces, rings, bracelets, earrings, and other creative gifts.",
+    "icon": "CMoffer.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": [
+      "Shopify"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.cmoffer\\.com"
+    ],
+    "website": "https://www.cmoffer.com"
   },
   "CNZZ": {
     "cats": [
@@ -319,6 +393,17 @@
     ],
     "website": "https://www.cre.ma"
   },
+  "CRM Done Better": {
+    "cats": [
+      32
+    ],
+    "description": "CRM Done Better is a marketing automation software that streamlines campaign management, customer segmentation, and lead nurturing to improve efficiency and data-driven decision making.",
+    "icon": "CRMDoneBetter.svg",
+    "scripts": [
+      "app\\.crmdonebetter\\.com"
+    ],
+    "website": "https://crmdonebetter.com"
+  },
   "CRM+": {
     "cats": [
       53
@@ -347,6 +432,23 @@
       "PHP"
     ],
     "website": "https://www.brainformatik.com"
+  },
+  "CRMBOOST": {
+    "cats": [
+      53
+    ],
+    "description": "CRMBOOST is a customer relationship management (CRM) platform that helps businesses organize, track, and manage interactions with clients and leads.",
+    "dom": [
+      "iframe[src*='.crmboost.com'], form[action*='crmboost.com']"
+    ],
+    "icon": "CRMBOOST.svg",
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.crmboost.com"
   },
   "CS Cart": {
     "cats": [
@@ -475,6 +577,23 @@
     ],
     "website": "https://www.stibodx.com/"
   },
+  "CXDP": {
+    "cats": [
+      32
+    ],
+    "description": "CXDP is a platform that enables businesses to create, manage, and deliver personalized marketing communications across multiple channels based on customer data and engagement insights.",
+    "icon": "CXDP.svg",
+    "pricing": [
+      "freemium",
+      "high",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "api\\.cxdp\\.ru"
+    ],
+    "website": "https://cxdp.ru"
+  },
   "CYBERBIZ": {
     "cats": [
       6
@@ -557,6 +676,26 @@
     },
     "oss": true,
     "website": "https://cachethq.io"
+  },
+  "Cackle": {
+    "cats": [
+      15
+    ],
+    "description": "Cackle is a cloud services platform for increasing conversion using comments, feedback collection, online consultant and surveys.",
+    "icon": "Cackle.svg",
+    "js": {
+      "Cackle.CommentCount": "",
+      "cackle_widget": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "k\\.cackle\\.me/"
+    ],
+    "website": "https://cackle.me"
   },
   "CactiveCloud": {
     "cats": [
@@ -906,6 +1045,37 @@
     ],
     "website": "https://www.campaignmonitor.com"
   },
+  "Campflow": {
+    "cats": [
+      110
+    ],
+    "description": "Campflow is a SaaS platform for event and membership management that provides online registration forms, participant tracking, communication tools, and financial reporting.",
+    "dom": [
+      "iframe[src*='on.campflow.de/']"
+    ],
+    "icon": "Campflow.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.campflow.de"
+  },
+  "CanJS": {
+    "cats": [
+      12
+    ],
+    "description": "CanJS is an MIT-licensed client-side JavaScript framework used for building maintainable and performant web applications.",
+    "icon": "CanJS.svg",
+    "js": {
+      "can.Animation": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "/canjs/can\\.custom\\.min\\.js"
+    ],
+    "website": "https://canjs.com"
+  },
   "Candid": {
     "cats": [
       6
@@ -1178,6 +1348,18 @@
     ],
     "website": "https://capturly.com"
   },
+  "CarChat24": {
+    "cats": [
+      52
+    ],
+    "description": "CarChat24 is a live chat solution built specifically for the automotive industry to facilitate real-time customer engagement and lead generation.",
+    "icon": "CarChat24.svg",
+    "saas": true,
+    "scriptSrc": [
+      "service11\\.carchat24\\.com"
+    ],
+    "website": "http://carchat24.com"
+  },
   "Caramella": {
     "cats": [
       1
@@ -1252,6 +1434,26 @@
     ],
     "saas": true,
     "website": "https://carbonmade.com"
+  },
+  "Cardina": {
+    "cats": [
+      46
+    ],
+    "description": "Cardina is a screen-sharing and cobrowsing tool that enables agents to see, draw on, and guide a customer’s screen during phone or live chat interactions without requiring customer actions.",
+    "icon": "Cardina.svg",
+    "js": {
+      "Cohere.addCallStatusListener": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "static\\.cohere\\.so"
+    ],
+    "website": "https://cardina.com"
   },
   "CareCart": {
     "cats": [
@@ -1336,12 +1538,16 @@
       51
     ],
     "description": "Cargo is a professional site building platform for designers and artists.",
+    "dom": [
+      "link[href*='build.cargo.site/']"
+    ],
     "icon": "Cargo.svg",
     "implies": [
       "PHP"
     ],
     "js": {
       "Cargo.Config": "",
+      "CargoEditor": "",
       "__cargo_js_ver__": ""
     },
     "meta": {
@@ -1351,6 +1557,18 @@
       "(?<!elo\\.io)/cargo\\."
     ],
     "website": "https://cargo.site"
+  },
+  "CargoServer": {
+    "cats": [
+      46
+    ],
+    "description": "CargoServer is a platform that enables secure data transfer.",
+    "icon": "CargoServer.svg",
+    "meta": {
+      "application-name": "^CargoServer$"
+    },
+    "saas": true,
+    "website": "https://cargoserver.ch"
   },
   "Carrd": {
     "cats": [
@@ -1530,6 +1748,26 @@
     "saas": true,
     "website": "https://cartflows.com"
   },
+  "CartHook": {
+    "cats": [
+      98
+    ],
+    "description": "CartHook is a solution for creating post-purchase upsell offers on Shopify.",
+    "icon": "CartHook.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": [
+      "Shopify"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "api\\.c\\.carthook\\.com"
+    ],
+    "website": "https://carthook.com"
+  },
   "CartKit": {
     "cats": [
       32
@@ -1623,6 +1861,33 @@
     ],
     "website": "https://carta.com"
   },
+  "Cartera": {
+    "cats": [
+      6
+    ],
+    "description": "Cartera is an ecommerce system that enables businesses to manage online sales, product listings, and transactions.",
+    "icon": "CarteraCommerce.svg",
+    "saas": true,
+    "scriptSrc": [
+      "\\.cartera\\.com"
+    ],
+    "website": "https://www.cartera.com"
+  },
+  "Cartful": {
+    "cats": [
+      76
+    ],
+    "description": "Cartful is a customer-focused service that assists online shoppers in locating suitable products on a website.",
+    "icon": "Cartful.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "embed\\.cartfulsolutions\\.com"
+    ],
+    "website": "https://www.cartful.com"
+  },
   "Cartpanda": {
     "cats": [
       6
@@ -1706,6 +1971,22 @@
     ],
     "saas": true,
     "website": "https://casasoft.ch"
+  },
+  "Casafari": {
+    "cats": [
+      53
+    ],
+    "description": "Casafari is a real estate CRM platform designed for professionals to manage content, properties, tasks, and client relationships.",
+    "icon": "Casafari.svg",
+    "meta": {
+      "author": "casafaricrm\\.com",
+      "publisher": "^Casafari CRM$"
+    },
+    "saas": true,
+    "scripts": [
+      "admin\\.casafaricrm\\.com"
+    ],
+    "website": "https://casafaricrm.com"
   },
   "Caspio": {
     "cats": [
@@ -1848,6 +2129,23 @@
     ],
     "website": "https://cre.moodysanalytics.com/products/catylist"
   },
+  "CausalFunnel": {
+    "cats": [
+      32
+    ],
+    "description": "CausalFunnel is an AI platform that analyzes customer behavior to optimize business conversion rates.",
+    "icon": "CuasalFunnel.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.scripts\\.causalfunnel\\.com"
+    ],
+    "website": "https://www.causalfunnel.com"
+  },
   "Cecil": {
     "cats": [
       57
@@ -1859,6 +2157,35 @@
       "generator": "^Cecil(?: ([0-9.]+))?$\\;version:\\1"
     },
     "website": "https://cecil.app"
+  },
+  "Celebros": {
+    "cats": [
+      6
+    ],
+    "description": "Celebros is a provider of conversion technology solutions for online shops, designed to improve user engagement and increase conversion rates.",
+    "icon": "Celebros.svg",
+    "saas": true,
+    "scripts": [
+      "ai2\\.celebros-analytics\\.com"
+    ],
+    "website": "https://www.celebros.com"
+  },
+  "Celerant": {
+    "cats": [
+      6
+    ],
+    "description": "Celerant is a retail management platform that integrates point of sale and ecommerce into a single system for streamlined business operations.",
+    "icon": "Celerant.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.celerantwebservices\\.com"
+    ],
+    "website": "https://www.celerant.com"
   },
   "Celeritas": {
     "cats": [
@@ -2065,6 +2392,25 @@
     ],
     "website": "https://www.ceros.com"
   },
+  "Certishopping": {
+    "cats": [
+      32
+    ],
+    "description": "Certishopping is an all-in-one marketing platform designed to accelerate business growth through integrated tools and automation.",
+    "headers": {
+      "Access-Control-Allow-Origin": "business\\.certishopping\\.com"
+    },
+    "icon": "Certishopping.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.certishopping\\.com"
+    ],
+    "website": "https://www.certishopping.com"
+  },
   "Cevoid": {
     "cats": [
       96
@@ -2090,6 +2436,7 @@
       72
     ],
     "description": "Cfixé is a scheduling platform that enables online booking for everyday services and allows professionals to embed a scheduling widget directly on their website.",
+    "icon": "Cfixe.svg",
     "pricing": [
       "low",
       "recurring"
@@ -2134,7 +2481,7 @@
     ],
     "description": "Chakra UI is a simple, modular and accessible component library that gives you the building blocks you need to build your React applications.",
     "dom": [
-      "html[style*='chakra-ui-color-mode'], body.chakra-ui-dark, body.chakra-ui-light, div.chakra-portal"
+      "html[style*='chakra-ui-color-mode'], body.chakra-ui-dark, body.chakra-ui-light, div.chakra-portal, div.chakra-container"
     ],
     "icon": "Chakra UI.svg",
     "implies": [
@@ -2365,6 +2712,37 @@
     ],
     "website": "https://chartbeat.com"
   },
+  "Chaser": {
+    "cats": [
+      46
+    ],
+    "description": "Chaser is a telephone callback system designed to connect users by initiating return calls through a central server.",
+    "icon": "Chaser.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "//chaser\\.ru'"
+    ],
+    "website": "https://chaser.ru"
+  },
+  "Chat Chasers": {
+    "cats": [
+      52
+    ],
+    "description": "Chat Chasers is a chat system designed for car dealers to streamline communication with customers.",
+    "icon": "ChatChasers.svg",
+    "js": {
+      "_FetchChatChasersApp": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "\\.chatchasers\\.com/"
+    ],
+    "website": "https://www.chatchasers.com"
+  },
   "Chat Robot": {
     "cats": [
       52
@@ -2417,6 +2795,22 @@
       "app\\.chatgptbuilder\\.io/"
     ],
     "website": "https://www.chatbotbuilder.ai"
+  },
+  "ChatBullet": {
+    "cats": [
+      52
+    ],
+    "description": "ChatBullet is a platform that integrates chatbots and AI tools to automate customer interactions.",
+    "icon": "ChatBullet.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "widget\\.chatbullet\\.com"
+    ],
+    "website": "https://chatbullet.com"
   },
   "ChatFood": {
     "cats": [
@@ -2524,6 +2918,45 @@
     ],
     "saas": true,
     "website": "https://www.chatstack.com"
+  },
+  "ChatThing": {
+    "cats": [
+      52
+    ],
+    "description": "Chat Thing is a platform that provides tools to build AI agents trained on custom content.",
+    "icon": "ChatThing.svg",
+    "js": {
+      "chatThing.chatFrame": "",
+      "chatThingConfig": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://chatthing.ai"
+  },
+  "ChatWING": {
+    "cats": [
+      52
+    ],
+    "description": "ChatWING is a live website chat system designed to facilitate real-time communication between businesses and website visitors.",
+    "dom": [
+      "iframe[src*='chatwing.com/chatbox/']"
+    ],
+    "icon": "ChatWING.svg",
+    "js": {
+      "chatwing.browser": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.chatwing\\.com"
+    ],
+    "website": "https://chatwing.com"
   },
   "ChatWith.io": {
     "cats": [
@@ -2800,6 +3233,24 @@
     ],
     "website": "https://chatway.app"
   },
+  "Chatwee": {
+    "cats": [
+      52
+    ],
+    "description": "Chatwee is a live chat and instant messaging app designed to facilitate real-time communication on websites and online communities.",
+    "icon": "Chatwee.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\bchatwee(?:-api)?\\.com/.*\\.js"
+    ],
+    "website": "https://chatwee.com"
+  },
   "Chatwoot": {
     "cats": [
       52
@@ -2870,6 +3321,22 @@
     ],
     "website": "https://www.checkfront.com"
   },
+  "Checkin": {
+    "cats": [
+      58
+    ],
+    "description": "Checkin is a system that automates registration processes.",
+    "icon": "Checkin.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "registration\\.checkin\\.no"
+    ],
+    "website": "https://www.checkin.no"
+  },
   "Checkly": {
     "cats": [
       13
@@ -2923,6 +3390,23 @@
       "cdn\\.checkout\\.com/js/.+js(?:\\?ver=)?([\\d\\.]+)?\\;version:\\1"
     ],
     "website": "https://www.checkout.com"
+  },
+  "CheerPJ": {
+    "cats": [
+      47
+    ],
+    "description": "CheerpJ is a WebAssembly-based Java Virtual Machine and OpenJDK distribution designed to run Java applications in modern browsers.",
+    "icon": "CheerPJ.svg",
+    "js": {
+      "CheerpJDataFolder": "",
+      "CheerpJDevFolder": "",
+      "CheerpJWebFolder": ""
+    },
+    "oss": true,
+    "scripts": [
+      "\\.cheerpj\\.com"
+    ],
+    "website": "https://cheerpj.com"
   },
   "Chefpreneur": {
     "cats": [
@@ -3283,12 +3767,17 @@
     "description": "Citrix is a people-centric solutions provider offering software that enables employees to work and collaborate remotely, irrespective of their device or network.",
     "icon": "Citrix.svg",
     "js": {
-      "AddHeaderAndBarForCitrix": ""
+      "AddHeaderAndBarForCitrix": "",
+      "CTXS.AccessGateway": "",
+      "CTXS.WebApiClient": ""
     },
     "pricing": [
       "poa"
     ],
     "saas": true,
+    "scriptSrc": [
+      "/ctxs\\.core\\.min\\.js"
+    ],
     "website": "https://www.citrix.com"
   },
   "CitrusPay": {
@@ -3367,6 +3856,23 @@
     ],
     "website": "https://wordpress.org/plugins/search/civicrm/"
   },
+  "Civic Champs": {
+    "cats": [
+      53
+    ],
+    "description": "Civic Champs is a volunteer management platform that streamlines event coordination, tracks volunteer hours, and simplifies communication between organizations and their volunteers.",
+    "icon": "CivicChamps.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.civicchamps\\.com"
+    ],
+    "website": "https://www.civicchamps.com"
+  },
   "CivicPlus": {
     "cats": [
       1
@@ -3389,8 +3895,7 @@
     "description": "CivicTheme is an open source, inclusive and component-based design system. It was created so governments and corporations can rapidly assemble modern, consistent and compliant digital experiences.",
     "dom": [
       "img[class*='civictheme-image']",
-      "img[class*='civic-image']",
-      "img[class*='ct-image']"
+      "img[class*='civic-image']"
     ],
     "icon": "CivicTheme.svg",
     "oss": true,
@@ -3639,6 +4144,41 @@
     ],
     "website": "https://clayful.io"
   },
+  "CleanCore": {
+    "cats": [
+      53
+    ],
+    "description": "CleanCore is an AI-driven CRM designed to automate operations for cleaning companies.",
+    "icon": "CleanCore.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "app\\.cleancore\\.io"
+    ],
+    "website": "https://cleancore.io"
+  },
+  "CleanTalk": {
+    "cats": [
+      16
+    ],
+    "description": "CleanTalk is an anti-spam plugin system that provides spam protection for various types of websites.",
+    "icon": "CleanTalk.svg",
+    "js": {
+      "ctAjaxSetupAddCleanTalkDataBeforeSendAjax": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "moderate\\.cleantalk\\.org/"
+    ],
+    "website": "https://cleantalk.org"
+  },
   "Clear": {
     "cats": [
       16
@@ -3694,6 +4234,9 @@
       "mapiLeadEndpoint": "mapi\\.clearlink\\.com"
     },
     "saas": true,
+    "scripts": [
+      "mapi\\.clearlink\\.com"
+    ],
     "website": "https://www.clearlink.com"
   },
   "Clearout": {
@@ -3820,6 +4363,55 @@
     ],
     "website": "https://www.clever.com"
   },
+  "CleverData": {
+    "cats": [
+      97
+    ],
+    "description": "CleverData is a CDP platform that manages customer data and enables personalized user experiences through robust data processing capabilities.",
+    "icon": "CleverData.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.cdp\\.cleverdata\\.ru"
+    ],
+    "website": "https://cleverdata.ru"
+  },
+  "CleverInsight": {
+    "cats": [
+      84
+    ],
+    "description": "CleverInsight is a tool that helps businesses measure customer satisfaction and design loyalty programs to improve customer retention.",
+    "dom": [
+      "iframe[src*='app.clevernps.com']"
+    ],
+    "icon": "CleverInsight.svg",
+    "saas": true,
+    "website": "https://clever-insight.com"
+  },
+  "CleverReach": {
+    "cats": [
+      75
+    ],
+    "description": "CleverReach is email marketing software featuring a web form designed for newsletter creation and distribution.",
+    "dom": [
+      "form[action*='.cleverreach.com/']"
+    ],
+    "icon": "CleverReach.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.cleverreach\\.com"
+    ],
+    "website": "https://www.cleverreach.com"
+  },
   "CleverTap": {
     "cats": [
       32,
@@ -3885,6 +4477,18 @@
     ],
     "website": "https://clickandpledge.com"
   },
+  "ClickBus": {
+    "cats": [
+      104
+    ],
+    "description": "ClickBus is an online platform that enables users to search, compare, and book bus travel routes.",
+    "icon": "ClickBus.svg",
+    "saas": true,
+    "scriptSrc": [
+      "static\\.clickbus\\.com"
+    ],
+    "website": "https://www.clickbus.com.br"
+  },
   "ClickCease": {
     "cats": [
       16
@@ -3898,6 +4502,9 @@
     "saas": true,
     "scriptSrc": [
       "\\.clickcease\\.com/monitor/"
+    ],
+    "scripts": [
+      "www\\.clickcease\\.com"
     ],
     "website": "https://www.clickcease.com"
   },
@@ -3956,6 +4563,22 @@
     ],
     "website": "https://clickdimensions.com"
   },
+  "ClickFreeze": {
+    "cats": [
+      36
+    ],
+    "description": "ClickFreeze is a tool that detects and blocks click fraud in Google Ads campaigns to improve performance and reduce wasted ad spend.",
+    "icon": "ClickFreeze.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "api\\.clickfreeze\\.io"
+    ],
+    "website": "https://www.clickfreeze.io"
+  },
   "ClickFunnels": {
     "cats": [
       32,
@@ -3979,6 +4602,23 @@
     "saas": true,
     "website": "https://www.clickfunnels.com"
   },
+  "ClickGUARD": {
+    "cats": [
+      36
+    ],
+    "description": "ClickGUARD is anti-click fraud prevention software designed to detect and block invalid or fraudulent clicks in online advertising campaigns.",
+    "icon": "ClickGUARD.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "io\\.clickguard\\.com"
+    ],
+    "website": "https://www.clickguard.com"
+  },
   "ClickHeat": {
     "cats": [
       10
@@ -3999,16 +4639,18 @@
     "cats": [
       4
     ],
-    "description": "ClickHelp is an online all-in-one documentation solution used by software companies around the world to create user manuals, knowledge bases, FAQs, tutorials, etc., and publish them instantly in their portal.",
+    "description": "ClickHelp is an AI-powered all-in-one documentation tool designed to create, manage, and publish technical content.",
     "dom": [
       "script#dxss_CI_301868994"
     ],
+    "headers": {
+      "Content-Security-Policy-Report-Only": "\\.clickhelp\\.com"
+    },
     "icon": "ClickHelp.svg",
     "implies": [
       "Microsoft ASP.NET"
     ],
     "pricing": [
-      "freemium",
       "mid",
       "recurring"
     ],
@@ -4138,6 +4780,22 @@
     "saas": true,
     "website": "https://www.clickbooq.com"
   },
+  "Clickbrainiacs": {
+    "cats": [
+      36
+    ],
+    "description": "Clickbrainiacs is a click fraud monitoring software for AdWords PPC campaigns that detects and helps prevent invalid or malicious ad clicks.",
+    "icon": "Clickbrainiacs.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "www\\.clickbrainiacs\\.com"
+    ],
+    "website": "https://www.clickbrainiacs.com"
+  },
   "Clicksign": {
     "cats": [
       50
@@ -4171,6 +4829,17 @@
     ],
     "saas": true,
     "website": "https://www.clickskeks.at/"
+  },
+  "Clicktools": {
+    "cats": [
+      73
+    ],
+    "description": "Clicktools is a feedback system developed by CallidusCloud for collecting and analyzing customer input across various channels.",
+    "saas": true,
+    "scripts": [
+      "\\.clicktools\\.com"
+    ],
+    "website": "https://clicktools.com"
   },
   "Clicktripz": {
     "cats": [
@@ -4874,7 +5543,8 @@
     "pricing": [
       "freemium",
       "payg",
-      "recurring"
+      "recurring",
+      "poa"
     ],
     "saas": true,
     "website": "https://www.cloudimage.io"
@@ -4954,6 +5624,22 @@
       "apps\\.cloverly\\.com/"
     ],
     "website": "https://www.cloverly.com"
+  },
+  "Clubcast": {
+    "cats": [
+      76
+    ],
+    "description": "Clubcast is a platform for managing and personalizing content for digital products, designed to enhance fan experiences and support revenue growth.",
+    "icon": "Clubcast.svg",
+    "js": {
+      "ClubcastRegistry": "",
+      "webpackChunkclubcast": ""
+    },
+    "saas": true,
+    "scripts": [
+      "api\\.clubcast\\.co\\.uk"
+    ],
+    "website": "https://clubcast.co.uk"
   },
   "Cludo": {
     "cats": [
@@ -5076,6 +5762,23 @@
     "saas": true,
     "website": "https://cnvert.com"
   },
+  "CoCo AI": {
+    "cats": [
+      32
+    ],
+    "description": "CoCo AI is a WhatsApp marketing assistant that uses artificial intelligence to automate campaigns, manage customer interactions, and improve engagement.",
+    "icon": "CoCoAI.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "dashboard\\.my-coco\\.ai/"
+    ],
+    "website": "https://my-coco.ai"
+  },
   "CoConstruct": {
     "cats": [
       19
@@ -5138,6 +5841,27 @@
       "generator": "^Coaster CMS v([\\d.]+)$\\;version:\\1"
     },
     "website": "https://www.coastercms.org"
+  },
+  "Coax": {
+    "cats": [
+      52
+    ],
+    "description": "Coax is a communication platform that consolidates chat histories from multiple channels to improve business communication and customer service.",
+    "icon": "Coax.svg",
+    "js": {
+      "coaxAppStorage": "",
+      "coaxCurrentWebDomain": "",
+      "openCoaxWidget": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.coax\\.com\\.au"
+    ],
+    "website": "https://coax.com.au"
   },
   "Cococart": {
     "cats": [
@@ -5275,6 +5999,22 @@
       "coffee-?script(?:-lint)?(?:\\.min)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1"
     ],
     "website": "https://coffeescript.org/"
+  },
+  "CoffeeCup": {
+    "cats": [
+      51
+    ],
+    "description": "CoffeeCup is a suite of web development tools for building sites, emails, and forms, with optional coding for added flexibility.",
+    "icon": "CoffeeCup.svg",
+    "meta": {
+      "generator": "^CoffeeCup Visual Site Designer"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.coffeecup.com"
   },
   "Cognigy": {
     "cats": [
@@ -5475,6 +6215,27 @@
     ],
     "website": "https://collect.chat"
   },
+  "Collective Audience": {
+    "cats": [
+      36
+    ],
+    "description": "Collective Audience is a cloud ecosystem for media and brands on the open web, formerly known as BeOp.",
+    "icon": "CollectiveAudience.svg",
+    "js": {
+      "BeOpSDK": "",
+      "beOpinionAsyncInit": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "widget\\.beop\\.io"
+    ],
+    "website": "https://beop.collectiveaudience.co"
+  },
   "CollectiveAccess": {
     "cats": [
       95
@@ -5636,6 +6397,22 @@
     ],
     "website": "https://colorlib.com/wp/themes/travelify"
   },
+  "Comarch e-Sklep": {
+    "cats": [
+      6
+    ],
+    "description": "Comarch e-Sklep is an ecommerce platform for creating and managing an online store.",
+    "icon": "ComarcheSklep.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "static\\.comarchesklep\\.pl"
+    ],
+    "website": "https://www.comarchesklep.pl"
+  },
   "Combahton FlowShield": {
     "cats": [
       16
@@ -5745,6 +6522,27 @@
     ],
     "website": "https://cometd.org"
   },
+  "Comgem": {
+    "cats": [
+      6
+    ],
+    "description": "Comgen is a B2B ecommerce platform that facilitates transactions and interactions between businesses through a digital marketplace.",
+    "headers": {
+      "Server": "^Comgem$"
+    },
+    "icon": "Comgem.svg",
+    "js": {
+      "comgem.activateCarousels": "",
+      "comgemTrack": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.comgem.com"
+  },
   "Comm100": {
     "cats": [
       52
@@ -5796,6 +6594,22 @@
     ],
     "website": "https://www.commandersact.com/en/solutions/trustcommander/"
   },
+  "CommentSold": {
+    "cats": [
+      6
+    ],
+    "description": "CommentSold is a platform that converts social media comments into sales by enabling automated purchase processing.",
+    "icon": "CommentSold.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "s3\\.commentsold\\.com"
+    ],
+    "website": "https://try.commentsold.com"
+  },
   "Commento": {
     "cats": [
       15
@@ -5811,6 +6625,25 @@
       "cdn\\.commento\\.io/"
     ],
     "website": "https://commento.io"
+  },
+  "Commerce Engine": {
+    "cats": [
+      6
+    ],
+    "description": "Commerce Engine is a headless SaaS platform that provides API-based ecommerce infrastructure including product search, order management, and fulfillment.",
+    "dom": [
+      "img[srcset*='cdn.commercengine.io']"
+    ],
+    "icon": "Commerce Engine.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.commercengine.io",
+    "xhr": [
+      "prod\\.api\\.commercengine\\.io/"
+    ]
   },
   "Commerce Server": {
     "cats": [
@@ -5982,6 +6815,23 @@
     ],
     "website": "https://www.community.com"
   },
+  "Community Box": {
+    "cats": [
+      5
+    ],
+    "description": "Community Box is a tool that allows users to create directories within a website without writing any code.",
+    "icon": "CommunityBox.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "cfapi\\.communitybox\\.co"
+    ],
+    "website": "https://www.communitybox.co"
+  },
   "Community Funded": {
     "cats": [
       111
@@ -6022,6 +6872,29 @@
       "wp-content/plugins/complianz-gdpr-premium"
     ],
     "website": "https://complianz.io"
+  },
+  "Composite Products": {
+    "cats": [
+      6
+    ],
+    "description": "Composite Products is a service that provides customizable product kits allowing selection and assembly of components to suit specific needs.",
+    "icon": "CompositeProducts.svg",
+    "js": {
+      "wc_composite_params": "",
+      "wc_cp_composite_scripts": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": [
+      "WordPress"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "/wp-content/plugins/woocommerce-composite-products"
+    ],
+    "website": "https://woocommerce.com/products/composite-products"
   },
   "Concert": {
     "cats": [
@@ -6223,6 +7096,18 @@
     ],
     "website": "https://conjured.co"
   },
+  "Connectally": {
+    "cats": [
+      32
+    ],
+    "description": "Connectally is a lead generation and automation platform designed to help marketing professionals streamline client acquisition.",
+    "icon": "Connectally.svg",
+    "saas": true,
+    "scripts": [
+      "app\\.connectally\\.com"
+    ],
+    "website": "https://connectally.com"
+  },
   "Connectif": {
     "cats": [
       76,
@@ -6325,6 +7210,21 @@
     ],
     "website": "https://www.constantcontact.com"
   },
+  "Construct 3": {
+    "cats": [
+      47
+    ],
+    "description": "Construct 3 is a browser-based game development platform that enables the creation of 2D games using a visual, drag-and-drop interface without requiring programming knowledge.",
+    "icon": "Construct3.svg",
+    "meta": {
+      "generator": "^Construct 3$"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "website": "https://www.construct.net/"
+  },
   "Constructor": {
     "cats": [
       6
@@ -6341,6 +7241,21 @@
     ],
     "saas": true,
     "website": "https://constructor.io"
+  },
+  "Constructor.io": {
+    "cats": [
+      29
+    ],
+    "description": "Constructor.io is a site search and merchandising platform designed to help ecommerce.",
+    "icon": "ConstructorIO.png",
+    "js": {
+      "ConstructorioClient": "",
+      "constructorio": ""
+    },
+    "scriptSrc": [
+      "\\.cnstrc\\.com/"
+    ],
+    "website": "https://constructor.io/"
   },
   "Contabo": {
     "cats": [
@@ -6382,6 +7297,18 @@
       "/wp-content/plugins/contact-form-7/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
     ],
     "website": "https://contactform7.com"
+  },
+  "ContactUs": {
+    "cats": [
+      32
+    ],
+    "description": "ContactUs is a custom ecommerce development and online marketing platform offering customer acquisition and prospect management solutions.",
+    "icon": "ContactUs.svg",
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.contactus\\.com"
+    ],
+    "website": "https://contactus.com"
   },
   "Container Media Group": {
     "cats": [
@@ -6561,6 +7488,7 @@
     ],
     "description": "Contentful is an API-first content management platform to create, manage and publish content on any digital channel.",
     "headers": {
+      "Server": "^Contentful Images API$",
       "x-contentful-request-id": ""
     },
     "html": [
@@ -6573,6 +7501,9 @@
       "recurring"
     ],
     "saas": true,
+    "scripts": [
+      "\\.ctfassets\\.net"
+    ],
     "website": "https://www.contentful.com",
     "xhr": [
       "(?:cdn|graphql)\\.contentful\\.com"
@@ -6745,6 +7676,33 @@
     "saas": true,
     "website": "https://convead.io"
   },
+  "Converdiant": {
+    "cats": [
+      10
+    ],
+    "description": "Converdiant is a conversion optimization system that analyzes user behavior and website performance data to improve engagement, streamline customer journeys, and increase conversion rates through data-driven insights.",
+    "icon": "Converdiant.svg",
+    "saas": true,
+    "scriptSrc": [
+      "app\\.converdiant\\.com"
+    ],
+    "website": "https://www.converdiant.com"
+  },
+  "Converge": {
+    "cats": [
+      32
+    ],
+    "description": "Converge is an all-in-one marketing measurement platform that consolidates performance data to provide insights across multiple channels.",
+    "icon": "Converge.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "static\\.runconverge\\.com"
+    ],
+    "website": "https://www.runconverge.com"
+  },
   "Convermax": {
     "cats": [
       29
@@ -6817,6 +7775,25 @@
       "\\.conversio\\.com/.+\\.myshopify\\.com"
     ],
     "website": "https://apps.shopify.com/conversio"
+  },
+  "Conversion Bear": {
+    "cats": [
+      81
+    ],
+    "description": "Conversion Bear is a Shopify app providing trust badges and sticky add-to-cart features to enhance store credibility and streamline the purchasing process.",
+    "icon": "ConversionBear.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": [
+      "Shopify"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.conversionbear\\.com"
+    ],
+    "website": "https://www.conversionbear.com"
   },
   "Convert": {
     "cats": [
@@ -6923,6 +7900,25 @@
     ],
     "website": "https://www.convertcart.com/"
   },
+  "Convertful": {
+    "cats": [
+      32
+    ],
+    "description": "Convertful is a tool that automates conversions by turning website traffic into leads and sales in real time.",
+    "icon": "Convertful.svg",
+    "js": {
+      "Convertful.$containers": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.convertful\\.com"
+    ],
+    "website": "https://convertful.com"
+  },
   "Convertim": {
     "cats": [
       41
@@ -6938,6 +7934,25 @@
     ],
     "saas": true,
     "website": "https://www.convertim.com"
+  },
+  "Convertiser": {
+    "cats": [
+      71
+    ],
+    "description": "Convertiser is a website monetization platform from Poland that helps publishers and advertisers optimize revenue through performance-based marketing solutions.",
+    "icon": "Convertiser.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.convertiser\\.com"
+    ],
+    "scripts": [
+      "\\.convertiser\\.com"
+    ],
+    "website": "https://convertiser.com"
   },
   "ConvertoBot": {
     "cats": [
@@ -7087,6 +8102,18 @@
       "cdn\\.convrrt\\.com/"
     ],
     "website": "https://www.convrrt.com"
+  },
+  "Conword": {
+    "cats": [
+      89
+    ],
+    "description": "Conword is a platform that provides automatic translations for websites, enabling multilingual content delivery without manual intervention.",
+    "icon": "Conword.svg",
+    "saas": true,
+    "scriptSrc": [
+      "static\\.conword\\.io"
+    ],
+    "website": "https://conword.io"
   },
   "Cookie Assistant": {
     "cats": [
@@ -7242,6 +8269,9 @@
       67
     ],
     "description": "CookieHub is a platform that helps website owners comply with data privacy regulations such as GDPR and CCPA by providing tools for managing cookie consent, tracking consent preferences, and ensuring legal compliance related to online tracking and data collection practices.",
+    "headers": {
+      "Content-Security-Policy": "cookiehub\\.net"
+    },
     "icon": "CookieHub.svg",
     "scriptSrc": [
       "cookiehub\\.net/.*\\.js"
@@ -7333,6 +8363,23 @@
     ],
     "website": "https://www.cooladata.com"
   },
+  "Cooltix": {
+    "cats": [
+      104
+    ],
+    "description": "Cooltix is an event and ticketing system designed to manage and sell tickets for concerts.",
+    "icon": "Cooltix.svg",
+    "pricing": [
+      "freemium",
+      "payg",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "static\\.cooltix\\.com/"
+    ],
+    "website": "https://cooltix.com"
+  },
   "Coopt": {
     "cats": [
       94
@@ -7354,6 +8401,23 @@
       "app\\.getcoopt\\.com/"
     ],
     "website": "https://www.getcoopt.com"
+  },
+  "Copernica": {
+    "cats": [
+      32,
+      75
+    ],
+    "description": "Copernica is a platform for managing email campaigns and automating customer communication using structured data and rule-based workflows.",
+    "dom": [
+      "form[action*='publisher.copernica.com/']"
+    ],
+    "icon": "Copernica.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.copernica.com"
   },
   "Copilot AI": {
     "cats": [
@@ -7633,6 +8697,18 @@
     ],
     "website": "https://corso.com"
   },
+  "Cosmedcloud": {
+    "cats": [
+      53
+    ],
+    "description": "Cosmedcloud is cloud-based practice management software tailored for cosmetic and aesthetic medicine clinics.",
+    "icon": "CosmedCloud.svg",
+    "saas": true,
+    "scripts": [
+      "\\.cosmedcloud\\.com"
+    ],
+    "website": "https://www.cosmedcloud.com"
+  },
   "Cosmic": {
     "cats": [
       1
@@ -7699,6 +8775,21 @@
     "saas": true,
     "website": "https://counselingkit.com"
   },
+  "Countable": {
+    "cats": [
+      2
+    ],
+    "description": "Countable is a community platform designed to support discussion, collaboration, and engagement among members through shared content, forums, and interactive features.",
+    "icon": "Countable.svg",
+    "meta": {
+      "appleid-signin-client-id": "com\\.countable\\.signin"
+    },
+    "saas": true,
+    "scriptSrc": [
+      "assets\\.countable\\.us/"
+    ],
+    "website": "https://www.countable.com"
+  },
   "Countdown Timer Ultimate": {
     "cats": [
       5,
@@ -7745,6 +8836,39 @@
       "\\bCoureon\\b"
     ],
     "website": "https://www.coureon.com"
+  },
+  "Cova": {
+    "cats": [
+      6
+    ],
+    "cookies": {
+      "cova_last_url": ""
+    },
+    "description": "Cova is a cannabis software platform that supports dispensary operations with point-of-sale, payments, inventory management, and regulatory compliance.",
+    "icon": "Cova.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://covasoftware.com"
+  },
+  "Cove": {
+    "cats": [
+      15
+    ],
+    "description": "Cove is a commenting and community platform that integrates with Ghost sites to enable reader discussions and user engagement.",
+    "icon": "Cove.svg",
+    "js": {
+      "coveAction": "",
+      "coveCommentCount": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.cove\\.chat"
+    ],
+    "website": "https://www.coveo.com"
   },
   "Coveo": {
     "cats": [
@@ -7989,6 +9113,22 @@
     ],
     "website": "https://crazyegg.com"
   },
+  "Creaitor": {
+    "cats": [
+      32
+    ],
+    "description": "Creaitor is an AI-driven platform that offers tools for content creation and SEO optimization to help content producers enhance their online presence.",
+    "icon": "Creaitor.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.creaitor\\.ai/"
+    ],
+    "website": "https://www.creaitor.ai"
+  },
   "Crealive": {
     "cats": [
       6
@@ -8015,6 +9155,22 @@
       "-crealive\\.mncdn\\.com"
     ],
     "website": "https://crealive.net"
+  },
+  "Create Demand": {
+    "cats": [
+      32
+    ],
+    "description": "Create Demand is an all-in-one sales and marketing platform designed to support business owners in managing and growing their sales and marketing operations.",
+    "icon": "CreateDemand.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "app\\.createdemand\\.ai"
+    ],
+    "website": "https://createdemand.ai"
   },
   "CreateJS": {
     "cats": [
@@ -8080,6 +9236,18 @@
     "saas": true,
     "website": "https://www.creoline.com"
   },
+  "Crexi": {
+    "cats": [
+      1
+    ],
+    "description": "Crexi is a commercial real estate platform that provides property listings with photos, maps, and detailed descriptions.",
+    "dom": [
+      "iframe[src*='www.crexi.com/']"
+    ],
+    "icon": "Crexi.svg",
+    "saas": true,
+    "website": "https://www.crexi.com"
+  },
   "Crikle": {
     "cats": [
       52
@@ -8143,6 +9311,21 @@
     ],
     "website": "https://criteo.com"
   },
+  "Critical Mention": {
+    "cats": [
+      10
+    ],
+    "description": "Critical Mention is a media monitoring technology that tracks, collects, and analyzes content from broadcast, online, and social media sources to provide insights into coverage and trends.",
+    "icon": "CriticalMention.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "app\\.criticalmention\\.com"
+    ],
+    "website": "https://www.criticalmention.com"
+  },
   "Crobox": {
     "cats": [
       5
@@ -8193,6 +9376,45 @@
     "saas": true,
     "website": "https://croct.com"
   },
+  "Cronitor": {
+    "cats": [
+      92
+    ],
+    "description": "Cronitor is a monitoring tool for developers that tracks status, performance, and uptime of cron jobs, websites, APIs, and other services.",
+    "icon": "Cronitor.svg",
+    "js": {
+      "cronitor.q": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://cronitor.io"
+  },
+  "Croogo": {
+    "cats": [
+      1
+    ],
+    "description": "Croogo is an open-source CMS built on CakePHP, offering a platform for managing website content.",
+    "icon": "Croogo.svg",
+    "js": {
+      "Croogo.basePath": ""
+    },
+    "meta": {
+      "generator": "^Croogo"
+    },
+    "oss": true,
+    "pricing": [
+      "freemium"
+    ],
+    "requires": [
+      "PHP"
+    ],
+    "website": "https://croogo.org"
+  },
   "Cross Pixel": {
     "cats": [
       77
@@ -8238,6 +9460,40 @@
     },
     "icon": "CrossBox.svg",
     "website": "https://crossbox.io"
+  },
+  "Crowdin": {
+    "cats": [
+      89
+    ],
+    "description": "Crowdin is a localization management platform that streamlines the process of translating, organizing, and maintaining multilingual content for software, websites, and other digital products.",
+    "icon": "Crowdin.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.app\\.crowdin\\.net"
+    ],
+    "website": "https://crowdin.com"
+  },
+  "Crowdsignal": {
+    "cats": [
+      73
+    ],
+    "description": "Crowdsignal is an online tool formerly known as Polldaddy that enables the creation of free polls for embedding on websites.",
+    "icon": "Crowdsignal.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "secure\\.polldaddy\\.com"
+    ],
+    "website": "https://crowdsignal.com"
   },
   "CrownPeak": {
     "cats": [
@@ -8505,6 +9761,41 @@
     ],
     "website": "https://culqi.com"
   },
+  "Curaytor": {
+    "cats": [
+      32
+    ],
+    "description": "Curaytor is a digital marketing platform that provides online strategy, advertising, and lead generation solutions for businesses seeking to enhance their digital presence.",
+    "dom": [
+      "link[href*='.curaytor.io']"
+    ],
+    "headers": {
+      "X-Served-By": "\\.curaytor\\.io"
+    },
+    "icon": "Curaytor.svg",
+    "saas": true,
+    "website": "https://www.curaytor.com"
+  },
+  "Custobar": {
+    "cats": [
+      97
+    ],
+    "description": "Custobar is a customer data platform that enables personalized marketing by leveraging data to tailor campaigns and communications.",
+    "icon": "Custobar.svg",
+    "js": {
+      "custobar.config": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "script\\.custobar\\.com"
+    ],
+    "website": "https://www.custobar.com"
+  },
   "Custom Fonts": {
     "cats": [
       87,
@@ -8538,6 +9829,25 @@
     ],
     "website": "https://wordpress.org/plugins/custom-twitter-feeds"
   },
+  "CustomDonations": {
+    "cats": [
+      111
+    ],
+    "description": "CustomDonations is a cloud-based service providing nonprofits with tools to create and manage online donation forms.",
+    "icon": "CustomDonations.svg",
+    "js": {
+      "CustomDonations.BuildForm": ""
+    },
+    "pricing": [
+      "payg",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "api\\.customdonations\\.com"
+    ],
+    "website": "https://customdonations.com"
+  },
   "CustomFit": {
     "cats": [
       76
@@ -8569,6 +9879,23 @@
       "widget\\.customer-alliance\\.com/"
     ],
     "website": "https://www.customer-alliance.com"
+  },
+  "Customer Stories": {
+    "cats": [
+      32
+    ],
+    "description": "Customer Stories is a customer marketing automation platform designed to support modern marketing and sales teams in streamlining engagement and outreach efforts.",
+    "icon": "CustomerStories.svg",
+    "pricing": [
+      "high",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.customerstories\\.net/"
+    ],
+    "website": "https://customerstories.net"
   },
   "Customer.io": {
     "cats": [
@@ -8806,6 +10133,18 @@
     ],
     "website": "https://cside.dev"
   },
+  "c15t": {
+    "cats": [
+      67
+    ],
+    "description": "c15t is an open source framework for managing cookies, consent, and privacy compliance.",
+    "icon": "c15t.svg",
+    "js": {
+      "c15tStore.getInitialState": ""
+    },
+    "oss": true,
+    "website": "https://c15t.com"
+  },
   "cPanel": {
     "cats": [
       9
@@ -8851,6 +10190,17 @@
     ],
     "saas": true,
     "website": "https://www.cstore.pl"
+  },
+  "caSaaS": {
+    "cats": [
+      1
+    ],
+    "description": "caSaaS is a Content Management System that enables users to create, organize, and manage digital content.",
+    "meta": {
+      "Generator": "caSaaS ([\\d.]+)\\;version:\\1"
+    },
+    "saas": true,
+    "website": "https://casaas.com"
   },
   "cashew": {
     "cats": [
@@ -8929,6 +10279,21 @@
       "clickio\\.mgr\\.consensu\\.org/t/consent_[0-9]+\\.js"
     ],
     "website": "https://www.gdpr.clickio.com/"
+  },
+  "coUrbanize": {
+    "cats": [
+      73
+    ],
+    "description": "coUrbanize is a platform that assists real estate development and planning teams in conducting community engagement online.",
+    "icon": "coUrbanize.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "assets\\.courbanize\\.com"
+    ],
+    "website": "https://www.courbanize.com"
   },
   "comScore": {
     "cats": [

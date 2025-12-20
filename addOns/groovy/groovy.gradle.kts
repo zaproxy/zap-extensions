@@ -26,7 +26,7 @@ dependencies {
     zapAddOn("commonlib")
     zapAddOn("scripts")
 
-    implementation("org.codehaus.groovy:groovy-all:3.0.14")
+    implementation(libs.groovy.groovy)
 
     testImplementation(project(":testutils"))
     testImplementation(project(":addOns:websocket"))

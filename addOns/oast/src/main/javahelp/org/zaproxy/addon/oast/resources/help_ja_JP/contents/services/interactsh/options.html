@@ -2,63 +2,58 @@
 <html>
 <head>
     <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
-    <title>Interactsh Options</title>
+    <title>Interactsh オプション</title>
 </head>
 <body>
-<h1>Interactsh Options</h1>
+<h1>Interactsh オプション</h1>
 <p>
-    The Interactsh Options screen allows you to configure the settings that affect how ZAP interacts with Interactsh.
+    Interactsh オプション画面では、ZAPがInteractshと連携する方法に関する設定を構成できます。
 </p>
 
-<h3>Server URL</h3>
+<h3>サーバーURL</h3>
 
-<p>This address (provided by the user) should point to the URL that will be used for registrations and polling.</p>
-<p>A valid URI will include at least the scheme and the host. The host must be running a working instance of
-    Interactsh.</p>
-<p>An example of a valid URI is: <code>https://oast.live</code>.</p>
+<p>このアドレス (ユーザー提供) は、登録とポーリングに使用されるURLを指し示す必要があります。</p>
+<p>有効なURIには、少なくともスキームとホストが含まれます。 ホストは動作しているInteractshのインスタンスを実行している必要があります。</p>
+<p>有効なURIの例: <code>https://oast.live</code></p>
 
-<h3>Authorization Token</h3>
+<h3>認可トークン</h3>
 
-<p>A value for this token must be specified if the Interactsh server at the specified Server URL requires
-    authentication. This token is added as the Authorization header value to all requests made to the server.</p>
+<p>指定されたサーバーURLのInteractshサーバーが認証を必要とする場合、このトークンの値を指定する必要があります。 このトークンはサーバーに対して行われるすべてのリクエストに Authorization ヘッダーの値として追加されます。</p>
 
-<h3>Polling Frequency</h3>
+<h3>ポーリング頻度</h3>
 
-<p>This option allows you to change the frequency of polling Interactsh. It takes values in seconds. The minimum allowed
-    value is 10 seconds and the maximum is 21600 seconds (6 hours). The default value is 60 seconds.</p>
+<p>このオプションを使用すると、Interactsh のポーリング頻度を変更できます。 値は秒単位で指定します。 許可される最小値は10秒で、最大値は21600秒 (6時間) です。 デフォルト値は60秒です。</p>
 
-<h3>Active Payloads</h3>
+<h3>アクティブペイロード</h3>
 
-<p>This table lists all the generated Payloads and corresponding Canary values. An entry is added each time you create a
-    new payload. The 'New Payload' Button is disabled if you change the Server URL and/or the Authorization Token.
-    To create new payloads in that case either revert the changes or save the settings and reopen the options screen.</p>
+<p>この表には、生成されたすべてのペイロードと対応するカナリー値が一覧表示されます。 新しいペイロードを作成するたびに項目が追加されます。 「新しいペイロード」ボタンは、サーバーURLや認証トークンを変更すると無効になります。
+    その場合、新しいペイロードを作成するには、変更を元に戻すか、設定を保存してオプション画面を再度開く必要があります。</p>
 
-<h4>Payload</h4>
+<h4>ペイロード</h4>
 
-<p>The Payload is the address that can be used in out-of-band attacks.</p>
+<p>ペイロードはアウトオブバンド攻撃で使用するためのアドレスです。</p>
 
-<h4>Canary</h4>
+<h4>カナリア</h4>
 
-<p>The Canary value is a string that is returned to the target web application when it makes a request to the
-    corresponding Payload address. It is obtained by reversing the subdomain in the Payload.</p>
-<p>A web application that ends up using the canary value somewhere may be susceptible to injection attacks. </p>
+<p>カナリー値は、ターゲットのWebアプリケーションが対応するペイロードアドレスにリクエストを行ったときに返される文字列です。 これは、ペイロード内のサブドメインを逆順にすることによって生成されます。</p>
+<p>何らかの形でカナリー値を使用することになるWebアプリケーションは、インジェクション攻撃を受けやすい可能性があります。 </p>
 
-<H2>See also</H2>
+<H2>関連情報</H2>
 <table>
     <tr>
         <td>&nbsp;&nbsp;</td>
         <td>
-            <a href="interactsh.html">Interactsh Help</a></td>
+            <a href="interactsh.html">Interactsh ヘルプ</a></td>
         <td>&nbsp;</td>
     </tr>
     <tr>
         <td>&nbsp;&nbsp;</td>
-        <td><a href="https://github.com/projectdiscovery/interactsh">Interactsh on GitHub</a></td>
+        <td><a href="https://github.com/projectdiscovery/interactsh">GitHub の Interactsh</a></td>
         <td>&nbsp;</td>
     </tr>
     <tr>
         <td>&nbsp;&nbsp;</td>
-        <td><a href="https://docs.projectdiscovery.io/tools/interactsh/overview">Interactsh Docs</a></td>
+        <td><a href="https://docs.projectdiscovery.io/tools/interactsh/overview">Interactsh ドキュメント</a></td>
         <td>&nbsp;</td>
     </tr>
 </table>

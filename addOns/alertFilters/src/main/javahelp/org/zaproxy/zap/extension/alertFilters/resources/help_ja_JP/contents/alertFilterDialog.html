@@ -2,76 +2,74 @@
 <HTML>
 <HEAD>
 <TITLE>
-Alert Filter Dialog
+アラートフィルターダイアログ
 </TITLE>
 </HEAD>
 <BODY>
-<H1>Alert Filter Dialog</H1>
+<H1>アラートフィルターダイアログ</H1>
 <p>
-This dialog is shown when you add or modify a 
-<a href="contextAlertFilter.html">Context Alert Filter</a> 
-or a <a href="globalAlertFilter.html">Global Alert Filter</a>
+このダイアログは、<a href="contextAlertFilter.html">コンテキストアラートフィルター</a>または<a href="globalAlertFilter.html">グローバルアラートフィルター</a>を追加または変更する際に表示されます。
 <p>
-It has the following fields: 
+次のフィールドがあります： 
 
-<H3>Scope</H3>
-This can either be 'Global' for a Global Alert Filter or the name of an existing context.
-It is only editable when you create an Alert Filter from an existing Alert.
+<H3>スコープ</H3>
+グローバルアラートフィルターの場合は「グローバル」、コンテキストアラートフィルターの場合は既存のコンテキスト名が表示されます。
+既存のアラートからアラートフィルターを作成する場合のみ編集可能です。
 
-<H3>Alert Type</H3>
-The first pull down lists all of the active and passive alert rules currently installed along with their (known) alert references.
-The second pull down lists all known IDs (scan rules and alert references). It also allows to manually specify one, if not listed (e.g. custom rule or not yet installed).
+<H3>アラートタイプ</H3>
+最初のドロップダウンリスト: 現在インストールされているアクティブおよびパッシブスキャンルールとそのアラート参照ID<br>
+2番目のドロップダウンリスト: すべての既知のID。 リストにない場合は手動入力も可能
 
-<H3>New Risk Level</H3>
-The new risk level to be assigned to any alerts raised that match the criteria defined by the rule.
+<H3>新しいリスクレベル</H3>
+ルールで定義された条件に一致する、発生したすべてのアラートに割り当てられる新しいリスクレベル。
  
 <H3>URL</H3>
-An optional URL.<br>
-If specified then this rule will be applied if the URL matches the URL of a raised alert.<br>
+オプションのURL。<br>
+指定した場合、アラートのURLと完全に一致したときにこのルールが適用されます。<br>
 
-<H3>URL is Regex?</H3>
-If set and a URL is specified then the URL will be treated as a regex expression when compared with the URL of the alert.<br>
-If it is not set then any specified URL must exactly match the URL of the alert.
+<H3>URLは正規表現ですか？</H3>
+チェックを入れ、URLを指定した場合、アラートのURLとの比較時に正規表現として扱われます。<br>
+チェックを入れない場合、指定したURLはアラートのURLと完全に一致する必要があります。
 
-<H3>Parameter</H3>
-An optional parameter.<br>
-If specified then this rule will be applied if the parameter exactly matches the parameter of a raised alert.<br>
+<H3>パラメーター</H3>
+オプションのパラメーター。<br>
+指定した場合、アラートのパラメーターと完全に一致したときにこのルールが適用されます。<br>
 
-<H3>Parameter is Regex?</H3>
-If set and a parameter is specified then the parameter will be treated as a regex expression when compared with the parameter of the alert.<br>
-If it is not set then any specified parameter must exactly match the parameter of the alert.
+<H3>パラメーターは正規表現ですか？</H3>
+チェックを入れ、パラメーターを指定した場合、アラートのパラメーターとの比較時に正規表現として扱われます。<br>
+チェックを入れない場合、指定したパラメーターはアラートのパラメーターと完全に一致する必要があります。
 
-<H3>Attack</H3>
-An optional attack.<br>
-If specified then this rule will be applied if the attack exactly matches the attack of a raised alert.<br>
+<H3>攻撃</H3>
+オプションの攻撃文字列。<br>
+指定した場合、アラートの攻撃文字列と完全に一致したときにこのルールが適用されます。<br>
 
-<H3>Attack is Regex?</H3>
-If set and a attack is specified then the attack will be treated as a regex expression when compared with the attack of the alert.<br>
-If it is not set then any specified attack must exactly match the attack of the alert.
+<H3>攻撃は正規表現ですか？</H3>
+チェックを入れ、攻撃文字列を指定した場合、アラートの攻撃文字列との比較時に正規表現として扱われます。<br>
+チェックを入れない場合、指定した攻撃文字列はアラートの攻撃文字列と完全に一致する必要があります。
 
-<H3>Evidence</H3>
-An optional evidence.<br>
-If specified then this rule will be applied if the evidence exactly matches the evidence of a raised alert.<br>
+<H3>証拠</H3>
+オプションの証拠。<br>
+指定した場合、アラートの証拠と完全に一致したときにこのルールが適用されます。<br>
 
-<H3>Evidence is Regex?</H3>
-If set and a evidence is specified then the evidence will be treated as a regex expression when compared with the evidence of the alert.<br>
-If it is not set then any specified evidence must exactly match the evidence of the alert.
+<H3>証拠は正規表現ですか？</H3>
+チェックを入れ、証拠を指定した場合、アラートの証拠との比較時に正規表現として扱われます。<br>
+チェックを入れない場合、指定した証拠はアラートの証拠と完全に一致する必要があります。
 
-<H3>Method</H3>
-An optional method.<br>
-If specified then this rule will be applied if the method matches (case insensitive) the method of a raised alert.<br>
+<H3>メソッド</H3>
+オプションのメソッド。<br>
+指定した場合、アラートのメソッドと完全に一致したときにこのルールが適用されます。<br>
 
-<H3>Enabled</H3>
-If set then this rule will be applied to all alerts raise against the given context.
+<H3>有効</H3>
+チェックを入れた場合、このルールは指定されたコンテキストに対して発生したすべてのアラートに適用されます。
 
-<H3>Test Filter</H3>
-The 'Test' button will show a count of how many existing alerts the filter will apply to. 
-It is disabled if the filter is disabled.
+<H3>フィルターのテスト</H3>
+「テスト」ボタンをクリックすると、このフィルターが適用される既存のアラートの数が表示されます。 
+フィルターが無効の場合、このボタンは使用できません。
 
-<H3>Apply Filter</H3>
-The 'Apply' button will actually apply the filter to all of the existing alerts that it applies to. 
-It will then show a count of the number of alerts iit changed. 
-It is disabled if the filter is disabled.
+<H3>フィルターの適用</H3>
+「適用」ボタンをクリックすると、条件に一致するすべての既存アラートに実際にこのフィルターが適用されます。 
+適用後、変更されたアラートの数が表示されます。 
+フィルターが無効の場合、このボタンは使用できません。
 
 </BODY>
 </HTML>

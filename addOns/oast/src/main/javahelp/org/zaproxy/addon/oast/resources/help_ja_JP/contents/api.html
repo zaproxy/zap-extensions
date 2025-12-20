@@ -6,65 +6,66 @@
 </HEAD>
 <BODY>
 	<H1>OAST API</H1>
-	The following operations are supported by the API:
+	APIでは、以下の操作がサポートされています：
 
-	<h3>Views</h3>
+	<h3>ビュー</h3>
 	<ul>
-		<li>getActiveScanService: Gets the service used with the active scanner, if any.</li>
-		<li>getBoastOptions: Gets the BOAST options.</li>
-		<li>getCallbackOptions: Gets the Callback options.</li>
-		<li>getDaysToKeepRecords: Gets the number of days the OAST records will be kept for.</li>
-		<li>getInteractshOptions: Gets the Interactsh options.</li>
-		<li>getServices: Gets all of the services.</li>
+		<li>getActiveScanService: アクティブスキャナーで使用されるサービス (存在する場合) を取得します。</li>
+		<li>getBoastOptions: BOASTオプションを取得します。</li>
+		<li>getCallbackOptions: コールバックオプションを取得します。</li>
+		<li>getDaysToKeepRecords: OASTレコードの保持日数を取得します。</li>
+		<li>getInteractshOptions: Interactshオプションを取得します。</li>
+		<li>getServices: すべてのサービスを取得します。</li>
 	</ul>
 
 
-	<h3>Actions</h3>
+	<h3>アクション</h3>
 	<ul>
 	
 
 		<li>
-			setActiveScanService (name*): Sets the service used with the active scanner.
+			setActiveScanService (name*): アクティブスキャナーで使用するサービスを設定します。
 			<ul>
-				<li>name: The name of the service.</li>
+				<li>name: サービスの名前</li>
 			</ul>
 		</li>
 		<li>
-			setBoastOptions (server* pollInSecs*): Sets the BOAST options. 	
+			setBoastOptions (server* pollInSecs*): BOASTオプションを設定します。 	
 			<ul>
-				<li>server: The server URL.</li>
-				<li>pollInSecs: The polling frequency.</li>
+				<li>server: サーバーURL</li>
+				<li>pollInSecs: ポーリング頻度 (秒)</li>
 			</ul>
 		</li>
 		<li>
-			setCallbackOptions (localAddress* remoteAddress* port*): Sets the Callback options.
+			setCallbackOptions (localAddress* remoteAddress* port*): コールバックオプションを設定します。
 			<ul>
-				<li>localAddress: The local address</li>
-				<li>remoteAddress: The remote address.</li>
-				<li>port: The port to listen on.</li>
+				<li>localAddress: ローカルアドレス</li>
+				<li>remoteAddress: リモートアドレス</li>
+				<li>port: リッスン対象のポート</li>
 			</ul>
 		</li>
 		<li>
-			setDaysToKeepRecords (days*): Sets the number of days the OAST records will be kept for.
+			setDaysToKeepRecords (days*): OASTレコードの保持日数を設定します。
 			<ul>
-				<li>days: The number of days.</li>
+				<li>days: 保持する日数</li>
 			</ul>
 		</li>
 		<li>
-			setInteractshOptions (server* pollInSecs* authToken*): Sets the Interactsh options.
+			setInteractshOptions (server* pollInSecs* authToken*): Interactshオプションを設定します。
 			<ul>
-				<li>server: The server URL.</li>
-				<li>pollInSecs: The polling frequency.</li>
-				<li>authToken: The Interactsh authentication token.</li>
+				<li>server: サーバーURL</li>
+				<li>pollInSecs: ポーリング頻度 (秒)</li>
+				<li>authToken: Interactsh認証トークン</li>
 			</ul>
 		</li>
+	</ul>
 
-	<H2>See also</H2>
+	<H2>関連情報</H2>
 	<table>
 		<tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
         <td>
-            <a href="services/services.html">OAST Services</a></td>
+            <a href="services/services.html">OASTサービス</a></td>
         <td>&nbsp;</td>
 		</tr>
 	</table>

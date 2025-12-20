@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>
+Technology Detection Automation Framework Support
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Technology Detection Automation Framework Support</H1>
+This add-on supports the Automation Framework.
+<br><br>
+<H2>Job: wappalyzer</H2>
+The <code>wappalyzer</code> job is a data job. It does not have any configurable parameters.
+It provides technology detection data to other jobs via the <code>TechJobResultData</code> class.
+
+<H2>YAML</H2>
+
+<pre>
+  - type: wappalyzer
+</pre>
+
+<H2>Job Data</H2>
+The following class will be made available to add-ons that provide access to the Job Data such as the Reporting add-on.
+<ul>
+<li>Key: <code>wappalyzerData</code>
+<li>Class: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/wappalyzer/src/main/java/org/zaproxy/zap/extension/wappalyzer/automation/TechJobResultData.java">TechJobResultData</a>
+</ul>
+
+</BODY>
+</HTML>

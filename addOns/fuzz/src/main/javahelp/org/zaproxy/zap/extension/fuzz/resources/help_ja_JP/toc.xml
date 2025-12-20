@@ -4,16 +4,16 @@
          "http://java.sun.com/products/javahelp/toc_2_0.dtd">
 
 <toc version="2.0">
-	<tocitem text="ZAP User Guide" tocid="toplevelitem">
-		<tocitem text="Add Ons" tocid="addons">
-			<tocitem text="Fuzzer" image="addon.fuzzer.icon" target="addon.fuzzer.concepts">
-				<tocitem text="Options" target="addon.fuzzer.options" />
-				<tocitem text="Dialogue" target="addon.fuzzer.dialogue" />
-				<tocitem text="HTTP Message Processors" target="addon.fuzzer.httpmessageprocessors"/>
-			    <tocitem text="Location Processors Dialog" target="addon.fuzzer.locations"/>
-    			<tocitem text="Payloads Dialog" target="addon.fuzzer.payloads"/>
-    			<tocitem text="Payload Processors Dialog" target="addon.fuzzer.processors"/>
-				<tocitem text="Tab" target="addon.fuzzer.tab" />
+	<tocitem text="ZAP ユーザーガイド" tocid="toplevelitem">
+		<tocitem text="アドオン" tocid="addons">
+			<tocitem text="ファザー" image="addon.fuzzer.icon" target="addon.fuzzer.concepts">
+				<tocitem text="オプション" target="addon.fuzzer.options" />
+				<tocitem text="ダイアログ" target="addon.fuzzer.dialogue" />
+				<tocitem text="HTTPメッセージプロセッサ" target="addon.fuzzer.httpmessageprocessors"/>
+			    <tocitem text="位置プロセッサダイアログ" target="addon.fuzzer.locations"/>
+    			<tocitem text="ペイロードダイアログ" target="addon.fuzzer.payloads"/>
+    			<tocitem text="ペイロードプロセッサダイアログ" target="addon.fuzzer.processors"/>
+				<tocitem text="タブ" target="addon.fuzzer.tab" />
 			</tocitem>
 		</tocitem>
 	</tocitem>

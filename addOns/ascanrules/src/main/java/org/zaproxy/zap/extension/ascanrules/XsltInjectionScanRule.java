@@ -52,7 +52,6 @@ public class XsltInjectionScanRule extends AbstractAppParamPlugin
         ERROR(
                 new String[] {"<"},
                 new String[] {"compilation error", "XSLT compile error", "SAXParseException"},
-                new String[] {},
                 "error"),
         VENDOR(
                 new String[] {
@@ -64,10 +63,6 @@ public class XsltInjectionScanRule extends AbstractAppParamPlugin
                 new String[] {
                     "libxslt", "Microsoft", "Saxonica", "Apache", "Xalan", "SAXON", "Transformiix"
                 },
-                new String[] {
-                    "Microsoft-Azure-Application-Gateway" // Can be returned in a 403 if the gateway
-                    // detects a possible attack
-                },
                 "vendor"),
         PORTSCAN(
                 new String[] {},
@@ -78,7 +73,6 @@ public class XsltInjectionScanRule extends AbstractAppParamPlugin
                     "No connection could be made because the target machine actively refused it",
                     "Can not load requested doc"
                 },
-                new String[] {},
                 "portscan"),
         COMMAND_EXEC(
                 new String[] {
@@ -91,22 +85,15 @@ public class XsltInjectionScanRule extends AbstractAppParamPlugin
                 new String[] {
                     "Cannot run program", "erroneous_command: not found",
                 },
-                new String[] {},
                 "command");
 
         private String[] payloads;
         private String[] evidences;
-        private String[] allowed;
         private String resourceIdentifier;
 
-        XSLTInjectionType(
-                String[] payloads,
-                String[] responses,
-                String[] allowed,
-                String resourceIdentifier) {
+        XSLTInjectionType(String[] payloads, String[] responses, String resourceIdentifier) {
             this.payloads = payloads;
             this.evidences = responses;
-            this.allowed = allowed;
             this.resourceIdentifier = resourceIdentifier;
         }
 
@@ -116,10 +103,6 @@ public class XsltInjectionScanRule extends AbstractAppParamPlugin
 
         private String[] getEvidences() {
             return evidences;
-        }
-
-        private String[] getAllowed() {
-            return allowed;
         }
 
         private String getResourceIdentifier() {
@@ -195,21 +178,20 @@ public class XsltInjectionScanRule extends AbstractAppParamPlugin
 
                 for (String evidence : relevantEvidence) {
                     if (body.contains(evidence)) {
-                        // found a possible injection
-                        boolean raiseAlert = true;
-                        for (String allow : checkType.getAllowed()) {
-                            if (allow.contains(evidence) && body.contains(allow)) {
-                                raiseAlert = false;
+                        if (checkType.equals(XSLTInjectionType.VENDOR)) {
+                            // Check again with invalid syntax (remove n)
+                            String invalidPayload = payload.replace("vendor", "vedor");
+                            HttpMessage invalidPayloadMsg = sendRequest(param, invalidPayload);
+                            if (invalidPayloadMsg.getResponseBody().toString().contains(evidence)) {
+                                // The body from the invalid payload still contained evidence
+                                // Likely false positive
                                 break;
                             }
                         }
-
-                        if (raiseAlert) {
-                            createAlert(param, payload, evidence, checkType.getResourceIdentifier())
-                                    .setMessage(msg)
-                                    .raise();
-                            return true;
-                        }
+                        createAlert(param, payload, evidence, checkType.getResourceIdentifier())
+                                .setMessage(msg)
+                                .raise();
+                        return true;
                     }
                 }
             } catch (Exception e) {

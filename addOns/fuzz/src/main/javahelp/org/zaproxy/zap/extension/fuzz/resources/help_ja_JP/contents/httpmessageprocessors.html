@@ -3,64 +3,60 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>
-HTTP Message Processors
+HTTPメッセージプロセッサ
 </title>
 </head>
 <body>
-<h1>HTTP Message Processors</h1>
-HTTP Message Processors can access and change the HTTP messages being fuzzed, control the fuzzing process, and interact with the ZAP UI.
+<h1>HTTPメッセージプロセッサ</h1>
+HTTPメッセージプロセッサは、ファジング対象のHTTPメッセージへのアクセスと変更、ファジングプロセスの制御、およびZAP UIとの連携が可能です。
 <p>
-Built-in HTTP Message Processors include:
+組み込みHTTPメッセージプロセッサには、以下のものが含まれます：
 
-<h3>Anti-CSRF Token Refresher</h3>
-Allows to refresh anti-CSRF tokens contained in the request. The anti-CSRF tokens must be properly detected by ZAP to be able to
-use this processor.<br>
-For more information consult the help page "Getting Started" > "Features" > "Anti CSRF Tokens".<br>
-<strong>Note:</strong> This processor is automatically added to the list of processors, if anti-CSRF tokens were detected.
+<h3>Anti-CSRFトークンリフレッシャー</h3>
+リクエストに含まれる Anti-CSRF トークンを更新できます。このプロセッサを使用するには、Anti-CSRF トークンがZAPによって適切に検出されている必要があります。<br>
+詳細については、「スタートガイド」>「機能」>「Anti CSRF トークン」のヘルプページを参照してください。<br>
+<strong>注:</strong> Anti-CSRF トークンが検出された場合、このプロセッサはプロセッサのリストに自動的に追加されます。
 
-<h3>Fuzzer HTTP Processor (Script)</h3>
-Allows to select the enabled Fuzzer HTTP Processor scripts. The scripts allow you to:
+<h3>ファザー HTTPプロセッサ (スクリプト)</h3>
+有効化されたファザー HTTPプロセッサ スクリプトを選択できます。スクリプトを使用すると、以下のことが可能です：
 <ul>
-<li>Obtain the list of payloads</li>
-<li>Stop fuzzing</li>
-<li>Increase the error count</li>
-<li>Send new messages</li>
-<li>Add messages to the Results tab</li>
-<li>Set custom ‘state’ messages in the <a href="tab.html">Fuzzer tab</a></li>
-<li>Raise alerts</li>
+<li>ペイロードのリストの取得</li>
+<li>ファジングの停止</li>
+<li>エラーカウントの増加</li>
+<li>新しいメッセージの送信</li>
+<li>「結果」タブへのメッセージの追加</li>
+<li><a href="tab.html">ファザー タブ</a>でのカスタム「ステータス」メッセージの設定</li>
+<li>アラートの発生</li>
 </ul>
 
-Scripts can include both Required and Optional parameters the values for which the user will be prompted to provide when the Processor is added to the fuzzer.
-The parameter names are defined within the script(s) via the methods <code>getRequiredParamsNames</code> and <code>getOptionalParamsNames</code>, each of which
-simply return an array of strings representing the parameters names.
+スクリプトには必須パラメーターとオプションパラメーターの両方を含めることができ、ユーザーはプロセッサがファザーに追加される際に、それらの値を提供するようプロンプトが表示されます。
+パラメーター名は、スクリプト内で <code>getRequiredParamsNames</code> および <code>getOptionalParamsNames</code>メソッドを通じて定義されます。これらのメソッドは、パラメーター名を表す文字列の配列を単に返します。
 
-<h3>Payload Reflection Detector</h3>
-Indicates in the State column of results table if one of the injected payloads were found in the response, using "<img src="images/reflected_icon.png"> Reflected".<br>
-<strong>Note:</strong> This processor is automatically added to the list of processors.
+<h3>ペイロード反射ディテクター</h3>
+注入されたペイロードのいずれかがレスポンス内で検出された場合、結果テーブルの「ステータス」列に「<img src="images/reflected_icon.png"> 反射」を使用して表示します。<br>
+<strong>注:</strong> このプロセッサはプロセッサのリストに自動的に追加されます。
 
-<h3>Request Content-Length Updater</h3>
-Updates (or adds, if not already present) the <code>Content-Length</code> request header with the length of the request body,
-for all request methods. No change is done if the size of the request body is zero and the header is not already present.<br>
-<strong>Note:</strong> This processor is automatically added to the list of processors.
+<h3>リクエスト Content-Length アップデーター</h3>
+すべてのリクエストメソッドについて、リクエストヘッダーの <code>Content-Length</code> をリクエストボディの長さで更新 (または、まだ存在しない場合は追加) します。リクエストボディのサイズがゼロで、かつヘッダーがまだ存在しない場合、変更は行われません。<br>
+<strong>注:</strong> このプロセッサはプロセッサのリストに自動的に追加されます。
 
-<h3>Tag Creator</h3>
-Allows to add custom ‘tags’, based on contents of the response, to the State column of the results table.
+<h3>タグクリエイター</h3>
+レスポンスの内容に基づいて、カスタムの「タグ」を結果テーブルの「ステータス」列に追加できます。
 
-<h3>User Message Processor</h3>
-Allows to fuzz as a user, using one of the users defined in the Contexts that include the HTTP message being fuzzed. Users must
-exist to be able to select and add this processor.
+<h3>ユーザーメッセージプロセッサ</h3>
+ファジングの対象となるHTTPメッセージを含むコンテキスト内で定義されたユーザーのいずれかを使用して、ユーザーとしてファジングできます。このプロセッサを選択して追加できるようにするには、ユーザーが存在している必要があります。
 
 <p>
-Other add-ons can define additional HTTP Message Processors.
+他のアドオンも追加のHTTPメッセージプロセッサを定義できます。
 
-<h2>Accessed via</h2>
+<h2>ここから参照されています</h2>
 <table>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="dialogue.html">Fuzzer dialog</a> under Message Processors tab</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="dialogue.html">ファザーダイアログ</a>「メッセージプロセッサ」タブ配下</td></tr>
 </table>
 
-<h2>See also</h2>
+<h2>関連情報</h2>
 <table>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Fuzzer concepts</a></td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">ファザーの概念</a></td></tr>
 </table>
 
 </body>

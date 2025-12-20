@@ -3,46 +3,44 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>
-Options Fuzz screen
+オプション - ファザー画面
 </title>
 </head>
 <body>
-<h1>Options Fuzzer screen</h1>
+<h1>オプション - ファザー画面</h1>
 <p>
-This screen allows you to configure the <a href="concepts.html">fuzzing</a> options:
+この画面では、 <a href="concepts.html">ファジング</a> に関するオプションを設定できます：
 
-<h3>Default Category</h3>
-The category that will initially be selected when the <a href="dialogue.html">Fuzz dialog</a> is displayed.
+<h3>デフォルトカテゴリ</h3>
+ <a href="dialogue.html">ファザーダイアログ</a> が表示されたときに、最初に選択されるカテゴリを定義します。
 
-<h3>Add Custom Fuzz File</h3>
-Allows you to add your own files to be used when fuzzing.<br>
-These should be text files with one payload per line.<br>
-Files are added to the 'fuzzers' directory underneath the ZAP home directory.
+<h3>カスタムファジングファイルの追加</h3>
+ファジング時に使用する独自のファイルを追加できます。<br>
+これらのファイルは、1行に1つのペイロードを含むテキストファイルである必要があります。<br>
+ファイルはZAPホームディレクトリ配下の fuzzers ディレクトリに追加されます。
 
-<h3>Finished Fuzzers in UI</h3>
-It defines the numbers of fuzzers (that have completed their execution)
-visible in the fuzzer tab.
+<h3>UIに表示する完了済みファザー数</h3>
+実行を完了したファザーのうち、ファザータブに表示される数を定義します。
 
-<h3>Retries on IO Error</h3>
-The number of retries when an input/output error occurs sending a request to the target.
+<h3>I/Oエラー時の再試行回数</h3>
+ターゲットへのリクエスト送信時に入出力エラーが発生した場合の再試行回数。
 
-<h3>Max. Errors Allowed</h3>
-If the number of errors exceed this limit, the fuzzer will stop its execution.
+<h3>最大許容エラー数</h3>
+エラー数がこの制限を超えると、ファザーは実行を停止します。
 
-<h3>Payload Replacement Strategy</h3>
-Rules defined to control the order that multiple payload lists are iterated.
+<h3>ペイロード置換戦略</h3>
+複数のペイロードリストが反復される順序を制御するために定義されたルール。
 
-<h3>Concurrent Scanning Threads per Scan</h3>
-The number of threads the fuzzer will use per scan.<br>
-Increasing the number of threads will speed up the scan but may put extra strain on the computer ZAP is running on as well as the target.
+<h3>スキャンあたりの同時スキャンスレッド数</h3>
+ファザーがスキャンごとに使用するスレッドの数。<br>
+スレッド数を増やすとスキャンは高速化されますが、ZAPを実行しているコンピューターとターゲットの両方に余分な負荷がかかる可能性があります。
 
-<h3>Delay when Fuzzing (in milliseconds)</h3>
-The number of milliseconds between requests by the fuzzer to the target host, usually done to
-avoid getting blocked by the target or if the target implements some sort of throttling requirement.
+<h3>ファジング時の遅延 (ミリ秒)</h3>
+ファザーによるターゲットホストへのリクエスト間の遅延時間 (ミリ秒)。これは通常、ターゲットによってブロックされるのを避けるため、またはターゲットが何らかのスロットリング要件を実装している場合に行われます。
 
-<h2>See also</h2>
+<h2>関連情報</h2>
 <table>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Fuzzer concepts</a></td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">ファザーの概念</a></td></tr>
 </table>
 
 </body>

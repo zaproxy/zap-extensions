@@ -13,7 +13,7 @@ zapAddOn {
 }
 
 dependencies {
-    implementation("org.beanshell:bsh:2.0b5")
+    implementation(libs.beanshell.beanshell)
 }
 
 spotless {

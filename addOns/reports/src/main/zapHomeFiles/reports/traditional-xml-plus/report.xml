@@ -24,6 +24,7 @@
 							<th:block th:each="instance: ${instances}">
 								<instance>
 									<uri th:text="${instance.uri}"></uri>
+									<nodeName th:text="${helper.getNodeName(instance)}"></nodeName>
 									<method th:text="${instance.method}"></method>
 									<param th:text="${instance.param}"></param>
 									<attack th:text="${instance.attack}"></attack>
@@ -41,6 +42,7 @@
 							</th:block>
 						</instances>
 						<count th:text="${instances.size()}"></count>
+						<systemic th:text="${helper.isSystemic(alert)}"></systemic>
 						<solution th:text="${alert.solution}"></solution>
 						<otherinfo th:text="${alert.otherinfo}"></otherinfo>
 						<reference th:text="${alert.reference}"></reference>
@@ -76,4 +78,20 @@
 			</statistic>
 		</th:block>
 	</statistics>
+	<th:block
+		th:if="${reportData.reportObjects.get('insightsList') != null}">
+		<insights>
+			<th:block
+				th:each="ins, insState: ${reportData.reportObjects.get('insightsList')}">
+				<insight>
+					<level th:text="${ins.level}"></level>
+					<reason th:text="${ins.reason}"></reason>
+					<site th:text="${ins.site}"></site>
+					<key th:text="${ins.key}"></key>
+					<description th:text="${ins.description}"></description>
+					<statistic th:text="${ins.statistic}"></statistic>
+				</insight>
+			</th:block>
+		</insights>
+	</th:block>
 </OWASPZAPReport>

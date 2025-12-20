@@ -1,192 +1,150 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <HTML>
 <HEAD>
-<TITLE>Creating Reports</TITLE>
+<TITLE>レポートの作成</TITLE>
 </HEAD>
 <BODY>
-	<H1>Creating Reports</H1>
+	<H1>レポートの作成</H1>
 
-	You can easily create your own reports.
+	独自のレポートを簡単に作成できます。
 	<p>
-		The add-on uses the <a href="https://www.thymeleaf.org/">Thymeleaf</a>
-		templating engine, so see their documentation for details of the
-		templating syntax.
+		アドオンは <a href="https://www.thymeleaf.org/">Thymeleaf</a>
+		テンプレートエンジンを使用しているため、テンプレート構文の詳細についてはそのドキュメントを参照してください。
 	</p>
 	<p>
-		The built in reports are copied into the 'reports' directory
-		underneath the ZAP <a
-			href="https://www.zaproxy.org/faq/what-is-the-default-directory-that-zap-uses/">default
-			directory</a>. Each report is in its own subdirectory. The easiest way to
-		create a new report is to copy and existing one into a new directory
-		at the same level.
+		組み込みレポートは、ZAPの<a
+			href="https://www.zaproxy.org/faq/what-is-the-default-directory-that-zap-uses/">デフォルトディレクトリ</a>の下にある
+		'reports' ディレクトリにコピーされます。 各レポートは独自のサブディレクトリにあります。
+		新しいレポートを作成する最も簡単な方法は、既存のものを同じレベルに新しいディレクトリにコピーすることです。
 	</p>
-	<p>Each report subdirectory must include:</p>
+	<p>各レポートサブディレクトリには以下を含める必要があります：</p>
 	<H3>template.yaml</H3>
-	A file containing:
+	以下の内容を含むファイル：
 	<pre>
-name:        # The display name for the report
-format:      # The format, eg one of HTML, XML, MD, JSON, PDF - this is used internally but not currently exposed in ZAP
-mode:        # The Thymeleaf template mode, one of HTML, RAW, TEXT, HTML
-extension:   # The extension to use when generating the report
-sections:    # An optional list of sections - parts of the report which may be included or excluded
-themes:      # An optional list of themes - different colours and styles which apply to the same content
+name:        # レポートの表示名
+format:      # 形式、例: HTML, XML, MD, JSON, PDF のいずれか - これは内部的に使用されますが、現在ZAPで公開されていません
+mode:        # Thymeleafテンプレートモード、HTML, RAW, TEXT, HTML のいずれか
+extension:   # レポート生成時に使用する拡張子
+sections:    # オプションのセクションリスト - レポートの含む/除外できる部分
+themes:      # オプションのテーマリスト - 同じコンテンツに適用される異なる色とスタイル
 </pre>
 
 	<H3>
 		report.<i>ext</i>
 	</H3>
-	The Thymeleaf report template.
-	<br> This should have the same extension that is specified in the
-	template.yaml file (e.g. 'report.md') except if it is a PDF report, in
-	which case "html" should be used (see below).
+	Thymeleafレポートテンプレート
+	<br> これは template.yaml ファイルで指定された同じ拡張子 (例: 'report.md')
+	を持つべきですが、PDFレポートの場合、"html" を使用してください (以下参照)。
 
 	<H3>Messages.properties</H3>
-	The report subdirectory may also include a "Messages.properties"
-	language file for template specific strings localised to English as
-	well as "Message_
-	<i>locale</i>.property" files for localising the strings into other
-	languages.
-	<br> The template specific strings should all start with '
+	レポートサブディレクトリには、テンプレート固有の文字列を英語にローカライズした "Messages.properties"
+	言語ファイル、および文字列を他の言語にローカライズするための "Message_ locale.property"
+	ファイルを含めることもできます。
+	<br> テンプレート固有の文字列はすべて '
 	<code>report.template.</code>
-	'
-	<br> If the report included sections then they must be defined in
-	this file - the keys will automatically be prefixed by
+	' で始まるべきです。
+	<br> レポートにセクションが含まれる場合、それらはこのファイルで定義する必要があります - キーは自動的に
 	<code>report.template.section.</code>
-	. Section names in the template.yaml file must just be alphanumeric
-	strings and not start with an integer.
-	<br>If a report includes themes then they must be defined in this
-	file - the keys will automatically be prefixed by
+	でプレフィックスされます。 template.yaml ファイルのセクション名は英数字の文字列でなければならず、整数で始まってはいけません。
+	<br> レポートにテーマが含まれる場合、それらはこのファイルで定義する必要があります - キーは自動的に
 	<code>report.template.theme.</code>
-	. Theme names in the template.yaml file must just be alphanumeric
-	strings and not start with an integer.
-	<br> The language files may also override the default translations
-	built into the reports add-on.
+	でプレフィックスされます。 template.yamlファイルのテーマ名は英数字の文字列でなければならず、整数で始まってはいけません。
+	<br> 言語ファイルは、レポートアドオンに組み込まれたデフォルト翻訳をオーバーライドすることもできます。
 
-	<H3>Resources</H3>
-	The report subdirectory may also include a "resources" directory. If
-	this is present then when a report is generated a subdirectory will be
-	created based on the report name and all of the files in the resources
-	directory will be copied into it.
-	<br> You should reference the files in the "resources"
-	subdirectory in the following way so that they can be accessed both via
-	the template and by the report when the subdirectory is created:
+	<H3>リソース</H3>
+	レポートサブディレクトリには、"resources" ディレクトリを含めることもできます。
+	これが存在する場合、レポート生成時にレポート名に基づくサブディレクトリが作成され、リソースディレクトリのすべてのファイルがそれにコピーされます。
+	<br> "resources"
+	サブディレクトリのファイルを以下の方法で参照してください。これにより、テンプレート経由とサブディレクトリ作成時のレポートの両方でアクセス可能になります：
 	<pre>
    &lt;script th:src="${resources + '/script.js'}" src="resources/script.js"&gt;&lt;/script&gt;
    &lt;link rel="stylesheet" th:href="${resources + '/style.css'}" href="resources/style.css"&gt;
    &lt;img th:src="${resources + '/image.png'}" src="resources/image.png"&gt;
 </pre>
-	The 'traditional-html-plus' template includes examples of JavaScript,
-	CSS and image resources.
+	'traditional-html-plus' テンプレートには、JavaScript、CSS、画像リソースの例が含まれています。
 
-	<H2>Data Available</H2>
-	The following data items are available to all reports. These can be
-	accessed via the Thymeleaf Standard Dialect, e.g.
+	<H2>利用可能なデータ</H2>
+	以下のデータ項目はすべてのレポートで利用可能です。 これらはThymeleaf標準ダイアレクト経由でアクセスできます、例:
 	<code>${reportTitle}</code>
 
 	<H3>alertTree</H3>
-	A tree containing all of the alerts that should be included in the
-	report. This is a copy of the standard ZAP alert tree shown in the
-	Desktop 'Alerts' tab but pruned to remove any alerts that do not match
-	the criteria selected.
+	レポートに含めるべきすべてのアラートを含むツリー。 これはデスクトップの 'アラート'
+	タブに表示される標準ZAPアラートツリーのコピーですが、選択された基準に一致しないアラートを除去したものです。
+	<p>ツリーのすべてのノードは AlertNode です。</p>
+	<p>トップレベルノードには有用なデータは含まれていません。</p>
 	<p>
-		Every node in the tree is an <a
-			href="https://javadoc.io/doc/org.zaproxy/zap/latest/org/zaproxy/zap/extension/alert/AlertNode.html">AlertNode</a>.
+		見つかった各タイプのアラートごとに第2レベルノードが1つあります。 これらのノードは 'userObject' が<a
+			href="https://javadoc.io/doc/org.zaproxy/zap/latest/org/parosproxy/paros/core/scanner/Alert.html">Alert</a>タイプで、アラートデータと関連するリクエストおよびレスポンスへのアクセスを提供します。
 	</p>
-	<p>The top level node does not include any useful data.</p>
-	<p>
-		There is one second level node for each type of alert found. These
-		nodes have a 'userObject' of type <a
-			href="https://javadoc.io/doc/org.zaproxy/zap/latest/org/parosproxy/paros/core/scanner/Alert.html">Alert</a>
-		which gives you access to all of the alert data and the associated
-		request and response.
-	</p>
-	<p>The 3rd and final level contains the alert instances - these are
-		all the same type as their parent node and give access to the alert
-		details in the same way.</p>
+	<p>第3および最終レベルにはアラートインスタンスが含まれます -
+		これらは親ノードと同じタイプで、同じ方法でアラート詳細へのアクセスを提供します。</p>
 	<H3>reportTitle</H3>
-	The title of the report set by the user.
+	ユーザーが設定したレポートのタイトル。
 
 	<H3>description</H3>
-	The description of the report set by the user.
+	ユーザーが設定したレポートの説明。
 
 	<H3>helper</H3>
-	An instance of the
+	有用なメソッドを提供する
 	<a
 		href="https://github.com/zaproxy/zap-extensions/tree/main/addOns/reports/src/main/java/org/zaproxy/addon/reports/ReportHelper.java">ReportHelper</a>
-	class that provides useful methods, including:
+	クラスのインスタンス、以下を含む：
 	<ul>
-		<li><code>getConfidenceString(int confidence)</code> Returns an
-			internationalised string for the associated confidence code</li>
-		<li><code>getRiskString(int risk)</code> Returns an
-			internationalised string for the associated risk code</li>
-		<li><code>getHttpStatusCode(int code)</code> Returns the meaning
-			of the specified HTTP status code</li>
-		<li><code>getHostForSite(String site)</code> Returns the hostname
-			for a given site URL</li>
-		<li><code>getPortForSite(String site)</code> Returns the port for
-			a given site URL</li>
-		<li><code>isSslSite(String site)</code> Returns true if the given
-			site URL is using SSL</li>
-		<li><code>getStatisticsString(String stat)</code> Returns the
-			meaning of the specific statistics key - currently only supported for
-			authentication stats</li>
-		<li><code>getSiteStats(String site, String prefix)</code> Returns
-			a Map of the statistics for the given site starting with the
-			(optional) prefix</li>
-		<li><code>hasSiteStats(String site, String prefix)</code> Returns
-			true if the given site has any statistics starting with the
-			(optional) prefix</li>
+		<li><code>getConfidenceString(int confidence)</code>
+			関連する信頼度コードの国際化文字列を返す</li>
+		<li><code>getRiskString(int risk)</code> 関連するリスクコードの国際化文字列を返す</li>
+		<li><code>getHttpStatusCode(int code)</code>
+			指定されたHTTPステータスコードの意味を返す</li>
+		<li><code>getHostForSite(String site)</code> 指定されたサイトURLのホスト名を返す</li>
+		<li><code>getPortForSite(String site)</code> 指定されたサイトURLのポートを返す</li>
+		<li><code>isSslSite(String site)</code>
+			指定されたサイトURLがSSLを使用している場合、true を返す</li>
+		<li><code>getStatisticsString(String stat)</code> 特定の統計キーの意味を返す -
+			現在は認証統計のみサポート</li>
+		<li><code>getSiteStats(String site, String prefix)</code>
+			指定されたサイトの (オプションの) プレフィックスで始まる統計の Map を返す</li>
+		<li><code>hasSiteStats(String site, String prefix)</code>
+			指定されたサイトが (オプションの) プレフィックスで始まる統計を持つ場合、true を返す</li>
 	</ul>
 
 	<H3>alertCounts</H3>
 
-	A Map of risk levels to the number of unique alerts. This can be used
-	by reports, for example, to generate a summary table.
+	リスクレベルごとの一意なアラート数の Map。 これをレポートで使用して、例えば概要テーブルを生成できます。
 
 	<H3>alertCountsByRule</H3>
 
-	A Map of scan rule IDs to the number of instances.
+	スキャンルールIDごとのインスタンス数の Map。
 
 	<H3>reportData</H3>
-	An instance of the
+	レポートに含めるデータを定義する
 	<a
 		href="https://github.com/zaproxy/zap-extensions/tree/main/addOns/reports/src/main/java/org/zaproxy/addon/reports/ReportData.java">ReportData</a>
-	class that defines the data to be included in the report. This can be
-	used, for example, to tell if there were no level alerts of a specific
-	level or if they were deliberately excluded.
-	<p>Automation jobs can make additional data available to the
-		reports, in many cases even if the automation framework was not used.
-		See the help pages for the relevant jobs for more details.</p>
+	クラスのインスタンス。 これを使用して、例えば特定のレベルのアラートがなかったか、または意図的に除外されたかを判断できます。
+	<p>自動化ジョブはレポートに追加データを提供でき、多くの場合自動化フレームワークを使用していなくても可能です。
+		詳細は、関連ジョブのヘルプページを確認してください。</p>
 
 	<H3>reportData : paramsData</H3>
-	An instance of the
+	サイトで使用されるパラメーターをクエリするメソッドを提供する
 	<a
 		href="https://github.com/zaproxy/zap-extensions/tree/main/addOns/automation/src/main/java/org/zaproxy/addon/automation/jobs/ParamsJobResultData.java">ParamsJobResultData</a>
-	class that provides methods for querying the parameters used by sites.
-	This is included in the Automation add-on as a "data job" that does not
-	provide any additional functionality.
+	クラスのインスタンス。 これは自動化アドオンに "data job" として含まれており、追加機能を提供しません。
 
 	<H3>stats</H3>
-	A Map of the global statistics. The site based statistics are available
-	via the helper.
+	グローバル統計の Map。 サイトベースの統計はヘルパー経由で利用可能です。
 
-	<H2>Testing Reports</H2>
-	ZAP does not cache the report templates, so it rereads them every time
-	you generate a report. This makes it much easier to test them. Just
-	make sure that the 'Template Directory' parameter is set to the top
-	level directory you are using for your reports, then when you create a
-	new report it will use the latest version of the template that you have
-	saved. You will not need to restart ZAP in order to pick up any changes
-	to existing reports that you have made.
+	<H2>レポートのテスト</H2>
+	ZAPはレポートテンプレートをキャッシュしないため、レポート生成ごとにそれらを再読み込みします。 これによりテストがはるかに簡単になります。
+	レポートに使用するトップレベルディレクトリを 'Template Directory' パラメーターに設定するだけで、
+	新しいレポートを作成すると保存したテンプレートの最新バージョンを使用します。
+	既存レポートへの変更を反映するためにZAPを再起動する必要はありません。
 
-	<H2>PDF Reports</H2>
-	PDF reports are generated using the
+	<H2>PDF レポート</H2>
+	PDFレポートは
 	<a href="https://github.com/flyingsaucerproject/flyingsaucer">Flying
-		Saucer</a> library which converts HTML documents into PDF format. In order
-	to create a PDF report you need to design it in HTML, call the template
-	"report.html" but specify the format as "PDF".
-	<p>Note that Flying Saucer requires that the HTML is well-formed
-		XML / XHTML. It will fail with an error if the template is not
-		well-formed so check the ZAP log file for details.</p>
+		Saucer</a> ライブラリを使用して生成され、HTMLドキュメントをPDF形式に変換します。
+	PDFレポートを作成するには、HTMLでデザインし、テンプレート名を "report.html"
+	としたうえで、フォーマットに「PDF」を指定する必要があります。
+	<p>Flying Saucer は、HTMLが整形式 XML / XHTMLである必要があります。
+		テンプレートが整形式でない場合はエラーで失敗するため、詳細は ZAP ログファイルを確認してください。</p>
 </BODY>
 </HTML>

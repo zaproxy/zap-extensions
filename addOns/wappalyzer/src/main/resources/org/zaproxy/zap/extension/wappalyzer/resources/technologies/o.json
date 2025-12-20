@@ -331,6 +331,25 @@
     ],
     "website": "https://www.ocnk.com"
   },
+  "Oclocher": {
+    "cats": [
+      2
+    ],
+    "description": "Oclocher is a parish animation app used by parishes and dioceses to help maintain connections between parishioners from one Sunday to the next.",
+    "headers": {
+      "Access-Control-Allow-Origin": "widget\\.oclocher\\.fr"
+    },
+    "icon": "OClocher.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "widget\\.oclocher\\.fr"
+    ],
+    "website": "https://www.oclocher.fr"
+  },
   "Oct8ne": {
     "cats": [
       52
@@ -350,6 +369,18 @@
       "\\.oct8ne\\.com/"
     ],
     "website": "https://oct8ne.com"
+  },
+  "Octane": {
+    "cats": [
+      91
+    ],
+    "description": "Octane is a financing solution for motorcycles, ATVs, mowers, and other power sports and outdoor equipment.",
+    "icon": "Octane.svg",
+    "saas": true,
+    "scriptSrc": [
+      "widget\\.octane\\.co"
+    ],
+    "website": "https://octane.co"
   },
   "Octane AI": {
     "cats": [
@@ -579,6 +610,21 @@
     ],
     "website": "https://github.hubspot.com/offline/docs/welcome"
   },
+  "Offset": {
+    "cats": [
+      6
+    ],
+    "description": "Offset is a platform designed to provide specialized solutions for wine ecommerce.",
+    "icon": "Offset.svg",
+    "meta": {
+      "author": "www\\.offsetpartners\\.com"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://offsetpartners.com/wine-ecommerce-platform/"
+  },
   "Oh Dear": {
     "cats": [
       13
@@ -755,6 +801,26 @@
     ],
     "website": "https://olvy.co"
   },
+  "Omacro": {
+    "cats": [
+      32
+    ],
+    "description": "Omacro is a platform focused on enhancing digital engagement by facilitating connections and increasing conversion rates.",
+    "icon": "Omacro.svg",
+    "js": {
+      "omacro.buynow": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "buynow\\.omacro\\.com"
+    ],
+    "website": "https://omacro.com"
+  },
   "Omeda": {
     "cats": [
       86,
@@ -810,6 +876,47 @@
       "cdn\\.ometria\\.com"
     ],
     "website": "https://ometria.com"
+  },
+  "Ometrics": {
+    "cats": [
+      52
+    ],
+    "description": "Ometrics is an AI chatbot solution that engages website visitors by understanding queries and delivering helpful responses.",
+    "icon": "Ometrics.svg",
+    "js": {
+      "Ometrics.Animation": "",
+      "OmetricsBody": ""
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "www\\.ometrics\\.com"
+    ],
+    "website": "https://www.ometrics.com"
+  },
+  "Omie": {
+    "cats": [
+      6
+    ],
+    "description": "Omie is a combined content management and ecommerce system based in Brazil.",
+    "icon": "Omie.svg",
+    "js": {
+      "omieInit": ""
+    },
+    "meta": {
+      "author": "^Omie$"
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://omie.com.br"
   },
   "Omise": {
     "cats": [
@@ -965,6 +1072,18 @@
     "saas": true,
     "website": "https://www.os.com.tr"
   },
+  "On The Map": {
+    "cats": [
+      54
+    ],
+    "description": "On The Map is a local business marketing system designed to help companies enhance visibility, manage online presence, and attract nearby customers through targeted digital strategies and data-driven tools.",
+    "icon": "OnTheMap.svg",
+    "saas": true,
+    "scripts": [
+      "\\.onthemapmarketing\\.com"
+    ],
+    "website": "https://www.onthemap.com"
+  },
   "OnShop": {
     "cats": [
       6
@@ -1024,6 +1143,25 @@
     ],
     "saas": true,
     "website": "https://onuniverse.com"
+  },
+  "Ondestek": {
+    "cats": [
+      52
+    ],
+    "description": "Ondestek is a live chat software that enables real-time customer communication through websites.",
+    "icon": "Ondestek.svg",
+    "js": {
+      "$ondestek": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "panel\\.ondestek\\.com/"
+    ],
+    "website": "https://ondestek.com"
   },
   "One.com": {
     "cats": [
@@ -1307,6 +1445,22 @@
     "saas": true,
     "website": "https://onfido.com"
   },
+  "Onicon": {
+    "cats": [
+      52
+    ],
+    "description": "Onicon is a Russian-based live chat software developed by Megagroup.",
+    "icon": "Onicon.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.onicon\\.ru"
+    ],
+    "website": "https://onicon.ru"
+  },
   "Onlim": {
     "cats": [
       52,
@@ -1323,6 +1477,26 @@
       "app\\.onlim\\.com/"
     ],
     "website": "https://onlim.com"
+  },
+  "Online Chat Centers": {
+    "cats": [
+      52
+    ],
+    "description": "Online Chat Centers is a live chat software platform designed to integrate with websites, enabling real-time customer communication and support across different online environments.",
+    "icon": "OCC.svg",
+    "js": {
+      "occEmbedClick": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "www\\.onlinechatcenters\\.com"
+    ],
+    "website": "https://www.onlinechatcenters.com"
   },
   "Onsen UI": {
     "cats": [
@@ -1396,6 +1570,23 @@
     ],
     "saas": true,
     "website": "https://oopy.us/"
+  },
+  "OpTuNE": {
+    "cats": [
+      104
+    ],
+    "description": "OpTuNE is an online platform for booking and managing events, designed for artists, venues, and promoters.",
+    "icon": "OpTuNE.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.optune\\.me"
+    ],
+    "website": "https://www.optune.me"
   },
   "Opal": {
     "cats": [
@@ -1590,6 +1781,18 @@
     ],
     "oss": true,
     "website": "https://www.opencart.com"
+  },
+  "OpenChat": {
+    "cats": [
+      52
+    ],
+    "description": "OpenChat is a community-owned chat application designed to prioritize privacy, security, and anonymity.",
+    "icon": "OpenChat.svg",
+    "saas": true,
+    "scriptSrc": [
+      "cloud\\.openchat\\.so"
+    ],
+    "website": "https://oc.app"
   },
   "OpenCities": {
     "cats": [
@@ -2081,6 +2284,18 @@
     ],
     "website": "https://www.optimisemedia.com"
   },
+  "Optimization Detective": {
+    "cats": [
+      87,
+      92
+    ],
+    "description": "Performance plugin from the WordPress Performance Team, which captures real user metrics about what elements are displayed on the page across a variety of device form factors (e.g. desktop, tablet, and phone) in order to apply loading optimizations.",
+    "icon": "optimization-detective.svg",
+    "meta": {
+      "generator": "^optimization-detective ([\\d.]+)?\\;version:\\1"
+    },
+    "website": "https://wordpress.org/plugins/optimization-detective/"
+  },
   "Optimizely": {
     "cats": [
       74,
@@ -2161,6 +2376,25 @@
       "\\.episerver.net/"
     ],
     "website": "https://www.optimizely.com/products/content/"
+  },
+  "Optimole": {
+    "cats": [
+      95
+    ],
+    "description": "Optimole is a cloud-based platform that provides media optimization, real-time image transformations, and digital asset management for improved website performance and delivery.",
+    "icon": "Optimole.svg",
+    "js": {
+      "optimoleData": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.i\\.optimole\\.com"
+    ],
+    "website": "https://optimole.com"
   },
   "Optimove": {
     "cats": [
@@ -2653,6 +2887,27 @@
     ],
     "website": "https://www.ordermygear.com"
   },
+  "OrderPort": {
+    "cats": [
+      6
+    ],
+    "description": "OrderPort is an eсommerce platform tailored for wineries, offering online sales, wine clubs, and point-of-sale integration.",
+    "dom": [
+      "span#updViewCart a[href*='orderport.net']"
+    ],
+    "icon": "OrderPort.svg",
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "requires": [
+      "Cart Functionality",
+      "Microsoft ASP.NET"
+    ],
+    "saas": true,
+    "website": "https://orderport.net"
+  },
   "OrderYOYO": {
     "cats": [
       6
@@ -2689,6 +2944,24 @@
       "\\.ordergroove\\.com/"
     ],
     "website": "https://www.ordergroove.com/"
+  },
+  "Ordering": {
+    "cats": [
+      93
+    ],
+    "description": "Ordering is a multi-store online ordering and delivery platform providing marketing and loyalty tools, along with native apps for businesses.",
+    "dom": [
+      "link[href*='apiv4.ordering.co']"
+    ],
+    "icon": "Ordering.svg",
+    "pricing": [
+      "onetime",
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.ordering.co"
   },
   "Ordersify Product Alerts": {
     "cats": [
@@ -2729,12 +3002,40 @@
     "saas": true,
     "website": "https://oreed.org/en"
   },
+  "Orimon.ai": {
+    "cats": [
+      32
+    ],
+    "description": "Orimon.ai is a platform that helps generate leads, automate customer support, and drive sales through AI-powered solutions.",
+    "dom": [
+      "iframe[src*='bot.orimon.ai/']"
+    ],
+    "icon": "Orimon.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "bot\\.orimon\\.ai"
+    ],
+    "website": "https://orimon.ai"
+  },
   "OroCommerce": {
     "cats": [
       6
     ],
+    "cookies": {
+      "orosfid": ""
+    },
+    "cpe": "cpe:2.3:a:oroinc:orocommerce:*:*:*:*:*:*:*:*",
+    "description": "OroCommerce is an open-source B2B ecommerce platform designed to meet the needs of B2B companies, offering features like advanced product management, customer segmentation, and complex pricing structures.",
     "dom": [
-      "script[data-requiremodule^='oro/'], script[data-requiremodule^='oroui/']"
+      "script[data-requiremodule^='oro/']",
+      "script[data-requiremodule^='oroui/']",
+      "script[src*='/oroui.js']",
+      "body[data-bound-view^='oroui/js/']"
     ],
     "html": [
       "<script [^>]+data-requiremodule=\"oro/",
@@ -2743,8 +3044,13 @@
     "icon": "orocommerce.svg",
     "implies": [
       "PHP",
-      "MySQL"
+      "Symfony"
     ],
+    "oss": true,
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
     "scriptSrc": [
       "oro\\.min\\.js\\?version=([\\d.]+)\\;version:\\1"
     ],
@@ -2804,6 +3110,22 @@
     ],
     "website": "https://www.post.at"
   },
+  "Otter Blocks": {
+    "cats": [
+      87
+    ],
+    "description": "Otter blocks is a Gutenberg Blocks page builder plugin that adds extra functionality to the WordPress Block Editor.",
+    "dom": {
+      "link[href*='/wp-content/plugins/otter-blocks']": {
+        "exists": ""
+      }
+    },
+    "html": [
+      "<div[^>]+class=[\"']wp-block-themeisle-blocks-*"
+    ],
+    "icon": "otter-blocks.png",
+    "website": "https://wordpress.org/plugins/otter-blocks/"
+  },
   "OtterText": {
     "cats": [
       32
@@ -2822,6 +3144,19 @@
       "app\\.ottertext\\.com"
     ],
     "website": "https://ottertext.com"
+  },
+  "Otto": {
+    "cats": [
+      72
+    ],
+    "description": "Otto is a veterinary workflow platform that streamlines scheduling, communication, and payment processes in a single system.",
+    "icon": "Otto.svg",
+    "js": {
+      "otto.id": "",
+      "ottoCareMicrosite": ""
+    },
+    "saas": true,
+    "website": "https://otto.vet/otto-flow"
   },
   "OutSystems": {
     "cats": [
@@ -2891,6 +3226,47 @@
     ],
     "website": "https://www.outbrain.com"
   },
+  "Outfindo": {
+    "cats": [
+      76
+    ],
+    "description": "Outfindo is a platform that provides product selection guides for websites to improve customer shopping experiences and boost conversions.",
+    "icon": "Outfindo.svg",
+    "js": {
+      "outfindoCatalogGuideData": "",
+      "outfindoCatalogGuideMapFailed": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "embed\\.outfindo\\.com"
+    ],
+    "website": "https://www.outfindo.com"
+  },
+  "Outfunnel": {
+    "cats": [
+      32
+    ],
+    "description": "Outfunnel is a platform that connects sales and marketing data to streamline workflows and improve data alignment across tools.",
+    "icon": "Outfunnel.svg",
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.outfunnel\\.com"
+    ],
+    "scripts": [
+      "cdn\\.outfunnel\\.com"
+    ],
+    "website": "https://outfunnel.com"
+  },
   "Outlook Web App": {
     "cats": [
       30
@@ -2917,6 +3293,26 @@
       "/owa/auth/log(?:on|off)\\.aspx"
     ],
     "website": "https://help.outlook.com"
+  },
+  "Outplay": {
+    "cats": [
+      32
+    ],
+    "description": "Outplay is a sales engagement platform that uses AI to optimize interactions and support fast-scaling small and medium-sized businesses.",
+    "icon": "Outplay.svg",
+    "js": {
+      "outplayhq": ""
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.outplayhq\\.co"
+    ],
+    "website": "https://outplay.ai"
   },
   "Ova": {
     "cats": [
@@ -2948,6 +3344,36 @@
     ],
     "website": "https://www.over-blog.com"
   },
+  "Overfull": {
+    "cats": [
+      93
+    ],
+    "description": "Overfull is a reservation management system designed for restaurants to handle bookings, manage tables, and streamline guest scheduling.",
+    "dom": [
+      "iframe[src*='app.overfull.fr']"
+    ],
+    "icon": "Overfull.svg",
+    "saas": true,
+    "scripts": [
+      "app\\.overfull\\.fr"
+    ],
+    "website": "https://www.overfull.fr"
+  },
+  "Overheat": {
+    "cats": [
+      74
+    ],
+    "description": "Overheat is a conversion optimization package designed to improve website performance by enhancing user experience and increasing conversion rates through data-driven strategies and tailored solutions.",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.overheat\\.it"
+    ],
+    "website": "https://overheat.it"
+  },
   "Overloop": {
     "cats": [
       32
@@ -2974,6 +3400,29 @@
       "download\\.overwolf\\.com"
     ],
     "website": "https://www.overwolf.com"
+  },
+  "Owids": {
+    "cats": [
+      5
+    ],
+    "description": "Owids is a set of widgets designed to improve website conversion rates and visitor engagement across platforms without requiring coding skills.",
+    "headers": {
+      "Access-Control-Allow-Origin": "^X-Owids-Key$"
+    },
+    "icon": "Owids.svg",
+    "js": {
+      "owidsSDKJSP": ""
+    },
+    "pricing": [
+      "freemium",
+      "payg",
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "sdk\\.owids\\.com"
+    ],
+    "website": "https://owids.com"
   },
   "Ownpage": {
     "cats": [
@@ -3067,6 +3516,22 @@
     "oss": true,
     "website": "https://ocstore.com"
   },
+  "onlyfy Application Manager": {
+    "cats": [
+      101
+    ],
+    "description": "onlyfy Application Manager is applicant tracking and recruitment software formerly known as Prescreen, designed to manage hiring processes and candidate applications.",
+    "icon": "Onlyfy.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "prescreen\\.io/.*iframeWidget\\.js"
+    ],
+    "website": "https://recruiting.xing.com/en/products/application-manager"
+  },
   "onpublix": {
     "cats": [
       1
@@ -3126,6 +3591,23 @@
     ],
     "oss": true,
     "website": "https://osticket.com"
+  },
+  "ostr.io": {
+    "cats": [
+      10
+    ],
+    "description": "ostr.io is a platform that provides site monitoring and analytics services, enabling the collection and analysis of performance and usage data.",
+    "icon": "ostr.svg",
+    "oss": true,
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "scriptSrc": [
+      "analytics\\.ostr\\.io"
+    ],
+    "website": "https://ostr.io"
   },
   "otrs": {
     "cats": [

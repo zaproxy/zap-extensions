@@ -3,52 +3,49 @@
 <head>
     <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
     <title>
-        Callback Options
+        コールバックオプション
     </title>
 </head>
 <body>
-<h1>Callback Options</h1>
+<h1>コールバックオプション</h1>
 <p>
-    The Callback Options screen allows you to configure the address used to detect vulnerabilities that allow an
-    attacker to call remote URLs.<br>
-    In previous versions the ZAP API was used for this purpose, but from 2.6.0 onwards a separate endpoint is used so
-    that target systems no longer need access to the API.
+    コールバックオプション画面では、攻撃者がリモートURLを呼び出せるような脆弱性の検出に使用されるアドレスを設定できます。<br>
+以前のバージョンでは、この目的のためにZAP APIが使用されていましたが、2.6.0以降では、ターゲットシステムがAPIへのアクセスを必要としないように、別のエンドポイントが使用されます。
 </p>
 
-<h3>Local Address (e.g. 0.0.0.0)</h3>
+<h3>ローカルアドレス (例: 0.0.0.0)</h3>
 
-The local address that ZAP will listen on for incoming connections.
-The default value of '0.0.0.0' means that ZAP will listen on all available local addresses.
+ZAPが着信接続をリッスンするローカルアドレスです。
+デフォルト値の '0.0.0.0' は、ZAPが利用可能なすべてのローカルアドレスでリッスンすることを意味します。
 
-<h3>Remote Address</h3>
+<h3>リモートアドレス</h3>
 
-The address that will be specified in the relevant attacks.
-This address must be accessible from the target system.
-You can use the Test URL to check that this is the case.
+関連する攻撃で指定されるアドレスです。
+このアドレスは、ターゲットシステムからアクセス可能である必要があります。
+テストURLを使用して、これが当てはまるかどうかを確認できます。
 
-<h3>Random Port</h3>
+<h3>ランダムポート</h3>
 
-By default ZAP will use a different port each time it is run.
-If you need to use the same port (for example to allow access through firewalls) then uncheck this option.
+デフォルトでは、ZAPは実行されるたびに異なるポートを使用します。
+例えば、ファイアウォール経由でのアクセスを許可するために同じポートを使用する必要がある場合は、このオプションのチェックを外します。
 
-<h3>Specify Port</h3>
+<h3>指定のポート</h3>
 
-If the Random Port option is unchecked then this is the port that ZAP will listen on.
-It must be different to the other ports ZAP uses, for example the port it uses for proxying connections.
+ランダムポートオプションのチェックが外されている場合、これはZAPがリッスンするポートです。
+これはZAPが使用する他のポート、たとえばプロキシ接続に使用するポートとは異なる必要があります。
 
-<h3>Test URL</h3>
+<h3>テストURL</h3>
 
-This is the test URL that you can try to access from remote systems.
-All accesses to the Test URL will be recorded in the ZAP log file at INFO level.
-If you are using the ZAP UI then accesses will also be shown in the Output tab, as
-well as the <a href="../../tab.html">OAST tab</a>.
+これは、リモートシステムからアクセスを試みることができるテストURLです。
+テストURLへのすべてのアクセスは、INFOレベルでZAPログファイルに記録されます。
+ZAP UIを使用している場合、アクセスは出力タブだけでなく<a href="../../tab.html">OASTタブ</a>にも表示されます。
 
-<h2>See also</h2>
+<h2>関連情報</h2>
 <table>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
         <td>
-            <a href="../../tab.html">OAST Tab</a></td>
+            <a href="../../tab.html">OAST タブ</a></td>
         <td>&nbsp;</td>
     </tr>
 </table>

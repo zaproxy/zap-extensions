@@ -2,79 +2,78 @@
 <HTML>
 <HEAD>
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
-<TITLE>Scripts Automation Framework Support</TITLE>
+<TITLE>スクリプト – 自動化フレームワーク対応</TITLE>
 </HEAD>
 <BODY>
-	<H1>Scripts Automation Framework Support</H1>
-	This add-on supports the Automation Framework.
+	<H1>スクリプト – 自動化フレームワーク対応</H1>
+	このアドオンは自動化フレームワークに対応しています。
 
-	<H2>Job: script</H2>
-    The script job allows you to execute various actions with scripts:
+	<H2>ジョブ: script</H2>
+    script ジョブを使用すると、スクリプトを使用してさまざまなアクションを実行できます：
     
-	<H2>Action: add</H2>
+	<H2>アクション: add</H2>
 
-	Adds the specified script to ZAP. Scripts are enabled but not configured to be loaded when ZAP restarts.
+	指定されたスクリプトをZAPに追加します。 スクリプトは有効化されますが、ZAPの再起動時にロードされるようには設定されません。
 	<p>
-	By default the default script engine for the file extension (if any) will be used - this may be overridden using the 'engine' parameter.
+	デフォルトでは、ファイル拡張子に対する既定のスクリプトエンジン (存在する場合) が使用されます。これは、engine パラメーターを使用して上書きできます。
 	
 	<ul>
-	<li>type: mandatory, can be any of the script types supported by ZAP
-	<li>engine: optional, can be used to override the default engine for the file extension
-	<li>name: optional, defaults to the file name, can be used to specify the script in another job
-	<li>source: mandatory, the path to the file (absolute or relative to the plan), must be a readable text file
+	<li>type: 必須。ZAPがサポートする任意のスクリプトタイプを指定できます。
+	<li>engine: オプション。ファイル拡張子に対する既定のエンジンを上書きするために使用できます。
+	<li>name: オプション。ファイル名が既定値となります。別のジョブでスクリプトを指定するために使用できます。
+	<li>source: 必須。ファイルへのパス (絶対パスまたはプランに対する相対パス)。読み取り可能なテキストファイルでなければなりません。
 	</ul>
 	
-	The <code>source</code> parameter was previously called <code>file</code>, both will work.
+	<code>source</code> パラメーターは以前は <code>file</code> と呼ばれていましたが、どちらも機能します。
 	
-	<H2>Action: remove</H2>
+	<H2>アクション: remove</H2>
 
-	Removes the specified script from ZAP.
+	指定されたスクリプトをZAPから削除します。
 	
 	<ul>
-	<li>name: mandatory, the name of the script in ZAP
+	<li>name: 必須。ZAP内のスクリプト名
 	</ul>
 
-	<H2>Action: run</H2>
+	<H2>アクション: run</H2>
 
-	Runs the specified script to ZAP. The script must already be available in ZAP, for example added using the 'add' action.
+	指定されたスクリプトをZAPで実行します。 スクリプトは事前にZAPで利用可能になっている必要があります (例: add アクションを使用して追加されているなど)。
 
 	<ul>
-	<li>type: mandatory, can be 'standalone' or 'targeted'
-	<li>name: mandatory, the name of the script in ZAP
-	<li>engine: optional, can be used to override the default engine for the file extension
-	<li>target: mandatory, if type is 'targeted', the target URL to be invoked for 'targeted' script
+	<li>type: 必須。standalone または targeted のいずれかを指定できます。
+	<li>name: 必須。ZAP内のスクリプト名
+	<li>engine: オプション。ファイル拡張子に対する既定のエンジンを上書きするために使用できます。
+	<li>target: 必須 (type が targeted の場合)。targeted スクリプトに対して起動されるターゲットURL。
 	</ul>
 
-	<H2>Action: loaddir</H2>
+	<H2>アクション: loaddir</H2>
 
-	Loads all of the scripts in the subdirectories under the specified source path to ZAP. 
-	Scripts are enabled but not configured to be loaded when ZAP restarts.
+	指定されたソースパス配下のサブディレクトリにあるすべてのスクリプトをZAPにロードします。 
+	スクリプトは有効化されますが、ZAPの再起動時にロードされるようには設定されません。
 	<p>
-	The scripts must be in subdirectories named after the relevant script type (such as ‘active’, ‘passive’, ‘proxy’ etc) 
-	and must have an appropriate extension for the script language used.
+	スクリプトは、関連するスクリプトタイプ (‘active’、‘passive’、‘proxy’ など) に対応した名前のサブディレクトリに配置する必要があり、使用するスクリプト言語に応じて適切な拡張子を持つ必要があります。
 	
 	<ul>
-	<li>source: mandatory, the path to the directory (absolute or relative to the plan).
+	<li>source: 必須。ディレクトリへのパス (絶対パスまたはプランに対する相対パス)
 	</ul>
 	
-	<H2>Action: enable</H2>
+	<H2>アクション: enable</H2>
 
-	Enables the specified script. The script must already be available in ZAP, for example added using the 'add' action.
-
-	<ul>
-		<li>name: mandatory, the name of the script in ZAP
-	</ul>
-
-	<H2>Action: disable</H2>
-
-	Disables the specified script. The script must already be available in ZAP, for example added using the 'add' action.
+	指定されたスクリプトを有効化します。 スクリプトは事前にZAPで利用可能になっている必要があります (例: add アクションを使用して追加されているなど)。
 
 	<ul>
-		<li>name: mandatory, the name of the script in ZAP
+		<li>name: 必須。ZAP内のスクリプト名
 	</ul>
 
-	<H2>YAML definition</H2>
-	Not all of the parameters are valid for all of the actions, see above for details.
+	<H2>アクション: disable</H2>
+
+	指定されたスクリプトを無効化します。 スクリプトは事前にZAPで利用可能になっている必要があります (例: add アクションを使用して追加されているなど)。
+
+	<ul>
+		<li>name: 必須。ZAP内のスクリプト名
+	</ul>
+
+	<H2>YAML 定義</H2>
+	すべてのパラメーターがすべてのアクションに対して有効であるわけではありません。詳細については上記を参照してください。
 	
     <pre>
   - type: script
@@ -84,17 +83,17 @@
       engine:                    # String: The script engine to use - can be used to override the default engine for the file extension
       name:                      # String: The name of the script, defaults to the file name
       source:                    # String: The full or relative file path, must be readable
-      inline:                    # String: The full script (may be multi-line) - supply this or 'file' not both
+      inline:                    # String: The full script (may be multi-line) - supply this or 'source' not both
       target:                    # String: The URL to be invoked for "targeted" script type
 	</pre>
 
-	The <code>source</code> parameter was previously called <code>file</code>, both will work.
+	<code>source</code> パラメーターは以前は <code>file</code> と呼ばれていましたが、どちらも機能します。
 
-	<H2>Inline Scripts</H2>
+	<H2>インラインスクリプト</H2>
 	
-	Inline scripts are where the script contents are in the YAML plan rather that a separate file.
+	インラインスクリプトとは、スクリプトの内容が別のファイルではなく YAMLプラン内 に記述されているものです。
 	
-	An example of adding and running a simple standalone inline script is:
+	単純なスタンドアロンのインラインスクリプトを追加して実行する例は以下のとおりです。
 
     <pre>
   - type: script
@@ -113,9 +112,9 @@
         name: "inline-test"
 	</pre>
 
-	<H2>Interacting with plans</H2>
+	<H2>プランとの連携</H2>
 
-	Scripts can interact with running plans using code like:
+	スクリプトは、以下のようなコードを使用して実行中のプランと連携できます。
 	
 	<pre><code>
 var extAF = control.getExtensionLoader().getExtension("ExtensionAutomation");

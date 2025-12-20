@@ -47,6 +47,21 @@
     "icon": "IBM.svg",
     "website": "https://ibm.com/software/webservers/httpservers"
   },
+  "ICE": {
+    "cats": [
+      53
+    ],
+    "description": "ICE is integrated customer engagement software designed to streamline communication, support, and interaction across multiple channels for businesses.",
+    "icon": "Enterice.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "www\\.enterice\\.com/"
+    ],
+    "website": "https://www.enterice.com/web/"
+  },
   "ID5": {
     "cats": [
       36
@@ -98,6 +113,28 @@
       "Windows Server"
     ],
     "website": "https://www.iis.net"
+  },
+  "INBOX": {
+    "cats": [
+      75
+    ],
+    "description": "INBOX is an email marketing system designed to create, manage, and track email campaigns for communication, promotions, or newsletters.",
+    "dom": [
+      "form[action*='app.useinbox.com/']"
+    ],
+    "icon": "UseInbox.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "payg",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.useinbox\\.com/"
+    ],
+    "website": "https://useinbox.com"
   },
   "INFOnline": {
     "cats": [
@@ -326,6 +363,20 @@
     ],
     "website": "https://www.iconosquare.com"
   },
+  "Icordis CMS": {
+    "cats": [
+      1
+    ],
+    "description": "Icordis CMS is a proprietary content management system developed by LCP nv for managing custom business and institutional websites.",
+    "icon": "Icordis CMS.svg",
+    "meta": {
+      "generator": "^Icordis CMS by LCP"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://www.lcp.be"
+  },
   "Ideasoft": {
     "cats": [
       6
@@ -343,6 +394,28 @@
     ],
     "website": "https://www.ideasoft.com.tr"
   },
+  "Identixweb iCart": {
+    "cats": [
+      6
+    ],
+    "description": "Identixweb iCart is a Shopify upsell app designed to boost pre-purchase sales and conversions directly in the cart without disrupting the shopping experience.",
+    "icon": "IdentixwebiCart.svg",
+    "js": {
+      "webpackChunk_identixweb_order_delivery_date": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": [
+      "Shopify"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdnicart\\.identixweb\\.com"
+    ],
+    "website": "https://www.identixweb.com/shopify-app/icart/"
+  },
   "Identrust": {
     "cats": [
       70
@@ -352,11 +425,33 @@
     "icon": "Identrust.svg",
     "website": "https://www.identrust.com/"
   },
+  "Ideta": {
+    "cats": [
+      52
+    ],
+    "description": "Ideta is a platform that provides chatbots and callbots to streamline company operations through AI and automation.",
+    "icon": "Ideta.svg",
+    "js": {
+      "webpackChunkideta_platoon": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "ideta-prod\\.appspot\\.com"
+    ],
+    "website": "https://www.ideta.io"
+  },
   "IdoSell Shop": {
     "cats": [
       6
     ],
     "description": "IdoSell Shop is a fully functional ecommerce software platform.",
+    "dom": [
+      "div[id*='idosell_logo'] > a[href*='www.idosell.com']"
+    ],
     "icon": "idosellshop.png",
     "js": {
       "IAI_Ajax": ""
@@ -383,6 +478,24 @@
     ],
     "saas": true,
     "website": "https://ifdo.co.kr/"
+  },
+  "Iframely": {
+    "cats": [
+      5
+    ],
+    "description": "Iframely is a uniform delivery service for rich media embeds and URL metadata across various platforms.",
+    "icon": "Iframely.svg",
+    "js": {
+      "iframely.ASPECT_WRAPPER_CLASS": "",
+      "loadIframelyEmbedJs": ""
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://iframely.com"
   },
   "Ignition": {
     "cats": [
@@ -424,6 +537,25 @@
     ],
     "saas": true,
     "website": "https://ikas.com"
+  },
+  "Ikeono": {
+    "cats": [
+      52
+    ],
+    "description": "Ikeono is an all-in-one communication tool that provides business text messaging solutions for independent retailers.",
+    "icon": "Ikeono.svg",
+    "js": {
+      "ikeono": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "widget\\.ikeono\\.com"
+    ],
+    "website": "https://www.ikeono.com"
   },
   "Ilias": {
     "cats": [
@@ -478,6 +610,30 @@
     "saas": true,
     "website": "https://imbox.se"
   },
+  "Image Placeholders": {
+    "cats": [
+      87,
+      92
+    ],
+    "description": "Performance plugin from the WordPress Performance Team, which determines and stores the dominant color for newly uploaded images in the media library, then uses that as a placeholder background during front end image loads.",
+    "icon": "dominant-color-images.svg",
+    "meta": {
+      "generator": "^dominant-color-images ([\\d.]+)?\\;version:\\1"
+    },
+    "website": "https://wordpress.org/plugins/dominant-color-images/"
+  },
+  "Image Prioritizer": {
+    "cats": [
+      87,
+      92
+    ],
+    "description": "Performance plugin from the WordPress Performance Team, which optimizes the loading of images which are the LCP (Largest Contentful Paint) element, including both img elements and elements with CSS background images.",
+    "icon": "image-prioritizer.svg",
+    "meta": {
+      "generator": "^image-prioritizer ([\\d.]+)?\\;version:\\1"
+    },
+    "website": "https://wordpress.org/plugins/image-prioritizer/"
+  },
   "Image Relay": {
     "cats": [
       95
@@ -524,6 +680,9 @@
     "dom": [
       "link[href*='ik.imagekit.io/']"
     ],
+    "headers": {
+      "x-server": "imagekit\\.io"
+    },
     "icon": "ImageKit.svg",
     "pricing": [
       "freemium",
@@ -713,6 +872,26 @@
     ],
     "website": "https://www.importify.com/"
   },
+  "Impresee": {
+    "cats": [
+      6
+    ],
+    "description": "Impresee is a tool that enhances ecommerce by providing an actionable search bar to improve product discovery and user navigation.",
+    "icon": "Impresee.svg",
+    "js": {
+      "impreseeBarColor": "",
+      "impreseeBarFontColor": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.impresee\\.com"
+    ],
+    "website": "https://impresee.com"
+  },
   "ImpressCMS": {
     "cats": [
       1
@@ -751,6 +930,24 @@
     },
     "oss": true,
     "website": "https://impresspages.org"
+  },
+  "Impressure": {
+    "cats": [
+      73
+    ],
+    "description": "Impressure is a platform for creating and publishing offer paths, dynamic forms, and surveys through a user-friendly interface.",
+    "icon": "Impressure.svg",
+    "js": {
+      "Impressure.commands": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "events\\.impressure\\.io"
+    ],
+    "website": "https://impressure.io"
   },
   "Imunify360": {
     "cats": [
@@ -807,6 +1004,23 @@
       "\\.incartupsell\\.com/"
     ],
     "website": "https://incartupsell.com"
+  },
+  "InEvent": {
+    "cats": [
+      104
+    ],
+    "description": "InEvent is event management software designed to streamline planning, organization, and execution of virtual, hybrid, and in-person events.",
+    "icon": "InEvent.svg",
+    "meta": {
+      "apiURL": "inevent\\.com",
+      "namespace": "^InEvent$"
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://inevent.com"
   },
   "InMoment": {
     "cats": [
@@ -937,6 +1151,21 @@
       "generator": "Indexhibit"
     },
     "website": "https://www.indexhibit.org"
+  },
+  "Indexic": {
+    "cats": [
+      104
+    ],
+    "description": "Indexic is a booking management platform designed for tours, activities, and rental operations.",
+    "icon": "Indexic.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.web\\.indexic\\.net"
+    ],
+    "website": "https://www.indexic.net"
   },
   "Indi": {
     "cats": [
@@ -1170,6 +1399,18 @@
     "saas": true,
     "website": "https://www.inforu.co.il"
   },
+  "Informa Markets": {
+    "cats": [
+      32
+    ],
+    "description": "Informa Markets is a platform that facilitates trade, innovation, and growth across various industries and specialist markets.",
+    "icon": "InformaMarkets.svg",
+    "saas": true,
+    "scripts": [
+      "connect\\.informamarkets\\.com"
+    ],
+    "website": "https://www.informamarkets.com"
+  },
   "Infoset": {
     "cats": [
       52,
@@ -1235,6 +1476,24 @@
     ],
     "saas": true,
     "website": "https://www.innervate.com"
+  },
+  "InnoShop": {
+    "cats": [
+      6
+    ],
+    "cookies": {
+      "innoshop_session": ""
+    },
+    "description": "InnoShop is an open-source ecommerce platform providing flexible tools for building and managing online stores.",
+    "icon": "InnoShop.svg",
+    "js": {
+      "inno.addCart": ""
+    },
+    "oss": true,
+    "scriptSrc": [
+      "\\.innoshop\\.cn"
+    ],
+    "website": "https://www.innoshop.com"
   },
   "Innovid Advertising Measurement": {
     "cats": [
@@ -1710,6 +1969,25 @@
     ],
     "website": "https://intensedebate.com"
   },
+  "InterRed": {
+    "cats": [
+      1
+    ],
+    "description": "InterRed is a software platform that provides integrated, future-proof publishing solutions for digital and print media management.",
+    "dom": [
+      "div[id*='footer__interred'] > a[href*='www.interred.de']"
+    ],
+    "icon": "InterRed.svg",
+    "meta": {
+      "generator": "^InterRed"
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.interred.de"
+  },
   "Interact": {
     "cats": [
       5
@@ -1851,6 +2129,18 @@
       "(?:is-bin|INTERSHOP)"
     ],
     "website": "https://intershop.com"
+  },
+  "Intiaro": {
+    "cats": [
+      6
+    ],
+    "description": "Intiaro is a provider of home decor and furniture products designed to support the creation of stylish living spaces.",
+    "icon": "Intiaro.svg",
+    "saas": true,
+    "scriptSrc": [
+      "libs\\.intiaro\\.com"
+    ],
+    "website": "https://en.intiaro.com"
   },
   "Intice": {
     "cats": [
@@ -2169,6 +2459,18 @@
     "saas": true,
     "website": "https://itseeze.com/"
   },
+  "Italiaonline": {
+    "cats": [
+      51
+    ],
+    "description": "Italiaonline is a web platform that provides tools and services for building and managing websites.",
+    "icon": "Italiaonline.svg",
+    "saas": true,
+    "scripts": [
+      "\\.italiaonline\\.it"
+    ],
+    "website": "https://www.italiaonline.it"
+  },
   "Iterable": {
     "cats": [
       32
@@ -2203,6 +2505,21 @@
       "\\.iteratehq\\.com/"
     ],
     "website": "https://iteratehq.com"
+  },
+  "Itoris": {
+    "cats": [
+      6
+    ],
+    "description": "Itoris is a developer specializing in widgets for ecommerce platforms, creating tools that enhance online store functionality.",
+    "icon": "Itoris.svg",
+    "saas": true,
+    "scriptSrc": [
+      "\\.itoris\\.com"
+    ],
+    "scripts": [
+      "\\.itoris\\.com"
+    ],
+    "website": "https://www.itoris.com"
   },
   "Ivory Search": {
     "cats": [
@@ -2342,6 +2659,23 @@
     ],
     "website": "https://github.com/drgullin/icheck"
   },
+  "iClose": {
+    "cats": [
+      72
+    ],
+    "description": "iClose is an appointment scheduling tool that helps businesses streamline lead generation and meeting coordination without additional advertising expenses.",
+    "icon": "iClosed.svg",
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.iclosed\\.io/"
+    ],
+    "website": "https://iclosed.io"
+  },
   "iEXExchanger": {
     "cats": [
       1
@@ -2359,6 +2693,18 @@
       "generator": "iEXExchanger"
     },
     "website": "https://exchanger.iexbase.com"
+  },
+  "iEntry": {
+    "cats": [
+      75
+    ],
+    "description": "iEntry is a full-service email marketing platform offering campaign management, list building, analytics, and targeted messaging for businesses.",
+    "icon": "iEntry.svg",
+    "saas": true,
+    "scriptSrc": [
+      "www\\.ientry\\.com"
+    ],
+    "website": "https://www.ientry.com"
   },
   "iGoDigital": {
     "cats": [
@@ -2390,6 +2736,26 @@
     ],
     "website": "https://www.ihomefinder.com"
   },
+  "iPaper": {
+    "cats": [
+      95
+    ],
+    "description": "iPaper is a platform that converts printed materials into interactive digital catalogs designed to enhance customer engagement and support sales.",
+    "icon": "iPaper.svg",
+    "js": {
+      "iPaper.API": "",
+      "iPaperDebugger": ""
+    },
+    "pricing": [
+      "high",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "embeds\\.ipaper\\.io"
+    ],
+    "website": "https://www.ipaper.io"
+  },
   "iPresta": {
     "cats": [
       6
@@ -2403,6 +2769,26 @@
       "designer": "iPresta"
     },
     "website": "https://ipresta.ir"
+  },
+  "iRaiser": {
+    "cats": [
+      111
+    ],
+    "description": "iRaiser is a platform that provides charities with tailored solutions to optimize and manage fundraising activities.",
+    "icon": "iRaiser.svg",
+    "js": {
+      "iRaiser.PaymentStartDate": "",
+      "iraiser_counter": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.iraiser\\.eu"
+    ],
+    "website": "https://www.iraiser.com"
   },
   "iSET": {
     "cats": [
@@ -2594,6 +2980,18 @@
       "imagesloaded(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1"
     ],
     "website": "https://imagesloaded.desandro.com/"
+  },
+  "immediaCMS": {
+    "cats": [
+      1
+    ],
+    "description": "immediaCMS is a content management system that enables users to create, edit, and organize digital content through a centralized platform for website and media management.",
+    "icon": "immediaCMS.svg",
+    "js": {
+      "simpleCmsMetadata": ""
+    },
+    "saas": true,
+    "website": "https://immediac.com/content-management-system"
   },
   "imperia CMS": {
     "cats": [
@@ -2828,6 +3226,21 @@
       "iubenda\\.com/"
     ],
     "website": "https://www.iubenda.com"
+  },
+  "iugu": {
+    "cats": [
+      41
+    ],
+    "description": "iugu is a financial management platform that enables businesses to handle payments, billing, and invoicing through a unified system.",
+    "icon": "iugu.svg",
+    "js": {
+      "Iugu.CreditCard": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "js\\.iugu\\.com"
+    ],
+    "website": "https://www.iugu.com"
   },
   "iyzico": {
     "cats": [

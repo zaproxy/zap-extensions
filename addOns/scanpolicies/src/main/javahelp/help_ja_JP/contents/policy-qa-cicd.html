@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>
+QA CI/CD ポリシー
+</TITLE>
+</HEAD>
+<BODY>
+<H1>QA CI/CD ポリシー</H1>
+
+このポリシーは品質保証 (QA) に焦点を当てており、開発者ポリシーよりも広範な結果を提供しつつ、比較的迅速に実行されることを意図しています。これは、QA/ステージング環境向けの CI/CD パイプラインでの使用を目的としています。
+
+
+<ul>
+    <li>CI/CD での実行推奨事項</li>
+    <li>本番環境に近い QA / ステージング環境で実行されることを意図しています</li>
+    <li>Developer CI/CD のスーパーセットですが、重要な環境/サーバー関連のルールが有効化されています</li>
+    <li>実行時間が長いルールを含まない</li>
+    <li>誤検知 (False Positives) が多いルールを含まない</li>
+    <li>タイミングアタックを含まない</li>
+    <li>情報提供のみのルールを含まない</li>
+    <li>重複が最小限 (Minimal overlap)</li>
+</ul>
+<p>
+含まれているスキャンルールの一覧については、<a href="https://www.zaproxy.org/alerttags/policy_qa_cicd/">アラートタグ: POLICY_QA_CICD</a> ページを参照してください。
+<p>
+プログラム名: <code>QA CICD</code>
+</p>
+<p>
+メインの<a href="scanpolicies.html">スキャンポリシーページ</a>に戻る。
+
+</BODY>
+</HTML>

@@ -46,6 +46,7 @@ public class EnvironmentDialog extends StandardFieldsDialog {
         "automation.dialog.tab.params",
         "automation.dialog.env.tab.proxy",
         "automation.dialog.env.tab.vars",
+        "automation.dialog.env.tab.configs",
     };
 
     private static final String TITLE = "automation.dialog.env.title";
@@ -75,6 +76,13 @@ public class EnvironmentDialog extends StandardFieldsDialog {
 
     private JTable envVarTable = null;
     private EnvVarTableModel envVarModel = null;
+
+    private JButton addConfigsButton = null;
+    private JButton modifyConfigsButton = null;
+    private JButton removeConfigsButton = null;
+
+    private JTable configsTable = null;
+    private ConfigsTableModel configsModel = null;
 
     public EnvironmentDialog(AutomationEnvironment env) {
         super(
@@ -114,6 +122,13 @@ public class EnvironmentDialog extends StandardFieldsDialog {
         envVarButtons.add(getRemoveEnvVarButton());
 
         this.addTableField(3, getEnvVarsTable(), envVarButtons);
+
+        List<JButton> configsButtons = new ArrayList<>();
+        configsButtons.add(getAddConfigsButton());
+        configsButtons.add(getModifyConfigsButton());
+        configsButtons.add(getRemoveConfigsButton());
+
+        this.addTableField(4, getConfigsTable(), configsButtons);
     }
 
     @Override
@@ -134,6 +149,7 @@ public class EnvironmentDialog extends StandardFieldsDialog {
 
         this.env.setContexts(this.getContextsModel().getContexts());
         this.env.getData().setVars(this.getEnvVarsModel().getEnvVarMap());
+        this.env.getData().setConfigs(this.getConfigsModel().getConfigsMap());
 
         String host = this.getStringValue(PROXY_HOSTNAME);
         if (!StringUtils.isBlank(host)) {
@@ -349,5 +365,101 @@ public class EnvironmentDialog extends StandardFieldsDialog {
 
     public void addEnvVar(EnvVarTableModel.EnvVar envVar) {
         getEnvVarsModel().add(envVar);
+    }
+
+    private JButton getAddConfigsButton() {
+        if (this.addConfigsButton == null) {
+            this.addConfigsButton =
+                    new JButton(Constant.messages.getString("automation.dialog.button.add"));
+            this.addConfigsButton.addActionListener(
+                    e -> {
+                        ConfigsDialog dialog = new ConfigsDialog(this);
+                        dialog.setVisible(true);
+                    });
+        }
+        return this.addConfigsButton;
+    }
+
+    private JButton getModifyConfigsButton() {
+        if (this.modifyConfigsButton == null) {
+            this.modifyConfigsButton =
+                    new JButton(Constant.messages.getString("automation.dialog.button.modify"));
+            modifyConfigsButton.setEnabled(false);
+            this.modifyConfigsButton.addActionListener(
+                    e -> {
+                        int row = getConfigsTable().getSelectedRow();
+                        ConfigsDialog dialog =
+                                new ConfigsDialog(this, this.configsModel.getConfigs().get(row));
+                        dialog.setVisible(true);
+                    });
+        }
+        return this.modifyConfigsButton;
+    }
+
+    private JButton getRemoveConfigsButton() {
+        if (this.removeConfigsButton == null) {
+            this.removeConfigsButton =
+                    new JButton(Constant.messages.getString("automation.dialog.button.remove"));
+            this.removeConfigsButton.setEnabled(false);
+            final EnvironmentDialog parent = this;
+            this.removeConfigsButton.addActionListener(
+                    e -> {
+                        if (JOptionPane.OK_OPTION
+                                == View.getSingleton()
+                                        .showConfirmDialog(
+                                                parent,
+                                                Constant.messages.getString(
+                                                        "automation.dialog.env.remove.confirm"))) {
+                            getConfigsModel().remove(getConfigsTable().getSelectedRow());
+                        }
+                    });
+        }
+        return this.removeConfigsButton;
+    }
+
+    private JTable getConfigsTable() {
+        if (configsTable == null) {
+            configsTable = new JTable();
+            configsTable.setModel(getConfigsModel());
+            configsTable
+                    .getSelectionModel()
+                    .addListSelectionListener(
+                            e -> {
+                                boolean singleRowSelected =
+                                        getConfigsTable().getSelectedRowCount() == 1;
+                                modifyConfigsButton.setEnabled(singleRowSelected);
+                                removeConfigsButton.setEnabled(singleRowSelected);
+                            });
+            configsTable.addMouseListener(
+                    new MouseAdapter() {
+                        @Override
+                        public void mouseClicked(MouseEvent me) {
+                            if (me.getClickCount() == 2) {
+                                int row = configsTable.getSelectedRow();
+                                if (row == -1) {
+                                    return;
+                                }
+                                ConfigsDialog dialog =
+                                        new ConfigsDialog(
+                                                EnvironmentDialog.this,
+                                                configsModel.getConfigs().get(row));
+                                dialog.setVisible(true);
+                            }
+                        }
+                    });
+        }
+        return configsTable;
+    }
+
+    private ConfigsTableModel getConfigsModel() {
+        if (configsModel == null) {
+            configsModel = new ConfigsTableModel();
+            configsModel.setConfigs(env.getData().getConfigs());
+        }
+        return configsModel;
+    }
+
+    public void addConfigs(ConfigsTableModel.Config configs) {
+        getConfigsModel().add(configs);
     }
 }

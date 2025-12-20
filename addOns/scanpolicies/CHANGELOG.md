@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [0.7.0] - 2025-12-15
+### Changed
+- Update minimum ZAP version to 2.17.0.
+- Allow to override the default alert threshold of the bundled policies.
+- Updated based on Rules' Policy Tag assignments.
+
+## [0.6.0] - 2025-11-04
+### Changed
+- Updated based on Rules' Policy Tag assignments.
+
+### Added
+- Document in the help the programmatic name of the policies.
+- Stats ID and readonly to the polices.
+
 ## [0.5.0] - 2025-09-18
 ### Changed
 - Updated based on Rules' Policy Tag assignments.
@@ -40,6 +54,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - QA Full
     - API
 
+[0.7.0]: https://github.com/zaproxy/zap-extensions/releases/scanpolicies-v0.7.0
+[0.6.0]: https://github.com/zaproxy/zap-extensions/releases/scanpolicies-v0.6.0
 [0.5.0]: https://github.com/zaproxy/zap-extensions/releases/scanpolicies-v0.5.0
 [0.4.0]: https://github.com/zaproxy/zap-extensions/releases/scanpolicies-v0.4.0
 [0.3.0]: https://github.com/zaproxy/zap-extensions/releases/scanpolicies-v0.3.0

@@ -28,6 +28,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import fi.iki.elonen.NanoHTTPD;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -177,7 +178,7 @@ class WebCacheDeceptionScanRuleUnitTest extends ActiveScannerTest<WebCacheDecept
         Map<String, String> tags = rule.getAlertTags();
         int cwe = rule.getCweId();
         // Then
-        assertThat(tags.size(), is(equalTo(6)));
+        assertThat(tags.size(), is(equalTo(7)));
         assertThat(cwe, is(equalTo(444)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
@@ -200,6 +201,9 @@ class WebCacheDeceptionScanRuleUnitTest extends ActiveScannerTest<WebCacheDecept
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_ATHN_06_CACHE_WEAKNESS.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_ATHN_06_CACHE_WEAKNESS.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.SYSTEMIC.getTag()),
+                is(equalTo(CommonAlertTag.SYSTEMIC.getValue())));
     }
 
     @Test
@@ -214,6 +218,18 @@ class WebCacheDeceptionScanRuleUnitTest extends ActiveScannerTest<WebCacheDecept
         // Then
         assertThat(alertsRaised, hasSize(0));
         assertEquals(1, httpMessagesSent.size());
+    }
+
+    @Test
+    void shouldHaveExampleAlerts() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts, hasSize(1));
+        Alert example = alerts.get(0);
+        assertThat(example.getName(), is(equalTo("Web Cache Deception")));
+        assertThat(example.getAttack(), is("/test.css,/test.js,/test.gif,/test.png,/test.svg,"));
+        assertThat(example.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
     }
 
     private static class CachedTestResponse extends NanoServerHandler {

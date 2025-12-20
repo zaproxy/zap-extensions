@@ -428,6 +428,25 @@
     "saas": true,
     "website": "https://happyreturns.com"
   },
+  "Happy Talk": {
+    "cats": [
+      32
+    ],
+    "description": "HappyTalk is a customer consultation tool developed in Korea that automates interactions to support business communication.",
+    "icon": "HappyTalk.svg",
+    "js": {
+      "Happytalk": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "chat-static\\.happytalkio\\.com/"
+    ],
+    "website": "https://www.happytalk.io/"
+  },
   "HappyFox Helpdesk": {
     "cats": [
       53
@@ -499,6 +518,25 @@
     ],
     "website": "https://www.haptik.ai"
   },
+  "Harafunnel": {
+    "cats": [
+      32,
+      52
+    ],
+    "description": "Harafunnel is a marketing automation tool that integrates with Facebook Messenger Bot to streamline customer engagement.",
+    "icon": "Harafunnel.svg",
+    "pricing": [
+      "freemium"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "assets\\.harafunnel\\.com"
+    ],
+    "scripts": [
+      "assets\\.harafunnel\\.com"
+    ],
+    "website": "https://en.harafunnel.com/pages/harafunnel"
+  },
   "Haravan": {
     "cats": [
       6
@@ -538,6 +576,24 @@
     ],
     "oss": true,
     "website": "https://goharbor.io"
+  },
+  "HarborByte": {
+    "cats": [
+      19
+    ],
+    "description": "HarborByte is a small business website platform that provides templated sites with integrated ecommerce, marketing, and hosting solutions.",
+    "headers": {
+      "Access-Control-Allow-Origin": "harborbyte\\.com"
+    },
+    "icon": "HarborByte.svg",
+    "meta": {
+      "content-security-policy": "harborbyte-media-assets\\.pages\\.dev",
+      "generator": "^Website by HarborByte$"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://harborbyte.com"
   },
   "Harness": {
     "cats": [
@@ -818,6 +874,25 @@
     "saas": true,
     "website": "https://www.heeet.io"
   },
+  "Heights Platform": {
+    "cats": [
+      21
+    ],
+    "cookies": {
+      "_Heights_session": ""
+    },
+    "description": "Heights Platform is an all-in-one platform for creating and selling online courses.",
+    "headers": {
+      "Access-Control-Allow-Origin": "uploads\\.heightsplatform\\.com"
+    },
+    "icon": "HeightsPlatform.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.heightsplatform.com"
+  },
   "Helhost": {
     "cats": [
       88
@@ -1039,6 +1114,43 @@
     ],
     "website": "https://www.helpdocs.io"
   },
+  "HelpOnClick": {
+    "cats": [
+      52
+    ],
+    "description": "HelpOnClick is a live chat and customer tracking platform designed to support real-time communication and monitor visitor interactions on websites.",
+    "icon": "HelpOnClick.svg",
+    "js": {
+      "HelpOnClickLogoRoundMask": "",
+      "HelpOnClick_ChatPrinter_Button": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.helponclick\\.com"
+    ],
+    "website": "https://helponclick.com"
+  },
+  "Helpwise": {
+    "cats": [
+      53
+    ],
+    "description": "Helpwise is a customer service platform that helps you manage all customer communication from a single place.",
+    "icon": "Helpwise.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.helpwise\\.io"
+    ],
+    "website": "https://helpwise.io"
+  },
   "Here": {
     "cats": [
       35
@@ -1237,6 +1349,21 @@
     ],
     "website": "https://www.hetzner.com"
   },
+  "Hexia": {
+    "cats": [
+      47
+    ],
+    "description": "Hexia is a public Application Programming Interface (API) provided by Hex Technologies for accessing its services and data.",
+    "icon": "Hexia.svg",
+    "js": {
+      "hexia.address": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "sdk\\.hexia\\.io"
+    ],
+    "website": "https://sdk.hexia.io"
+  },
   "Hexo": {
     "cats": [
       57
@@ -1317,6 +1444,22 @@
     "saas": true,
     "website": "https://heylight.com/it/it"
   },
+  "HeyPongo": {
+    "cats": [
+      84
+    ],
+    "description": "HeyPongo is a platform that helps merchants convert visitors into loyal customers and boost revenue through customer engagement tools.",
+    "icon": "HeyPongo.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "api\\.heypongo\\.com"
+    ],
+    "website": "https://www.heypongo.com"
+  },
   "HeySummit": {
     "cats": [
       103
@@ -1383,6 +1526,21 @@
     ],
     "website": "https://www.hiplatform.com"
   },
+  "HiBob": {
+    "cats": [
+      53
+    ],
+    "description": "HiBob is a modern HR platform designed to enhance productivity, employee engagement, and retention for businesses.",
+    "icon": "HiBob.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "app\\.hibob\\.com"
+    ],
+    "website": "https://www.hibob.com"
+  },
   "HiPay": {
     "cats": [
       41
@@ -1411,6 +1569,24 @@
     "icon": "Hiawatha.png",
     "oss": true,
     "website": "https://gitlab.com/hsleisink/hiawatha"
+  },
+  "Hibu": {
+    "cats": [
+      32
+    ],
+    "description": "Hibu is an AI-enabled platform that helps generate, manage, respond to, and convert leads while supporting ongoing customer engagement through a single provider.",
+    "icon": "Hibu.svg",
+    "js": {
+      "hibuWebsiteConfig": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "cdn\\.hibuwebsites\\.com"
+    ],
+    "website": "https://hibu.com"
   },
   "HighLevel": {
     "cats": [
@@ -1802,6 +1978,30 @@
     ],
     "website": "https://twitter.github.io/hogan.js/"
   },
+  "Hoiio": {
+    "cats": [
+      52
+    ],
+    "description": "Hoiio is a cloud communications platform that simplifies the setup of messaging, voice, and other communication services.",
+    "icon": "Hoiio.svg",
+    "saas": true,
+    "scripts": [
+      "hoiio\\.notifyEmpty"
+    ],
+    "website": "https://www.hoiio.com"
+  },
+  "HoldMyTicket": {
+    "cats": [
+      104
+    ],
+    "description": "HoldMyTicket is a platform offering event ticketing and box office solutions for organizers.",
+    "icon": "HoldMyTicket.svg",
+    "saas": true,
+    "scriptSrc": [
+      "//holdmyticket\\.com/widgets"
+    ],
+    "website": "https://tickets.holdmyticket.com"
+  },
   "Holduix CMS": {
     "cats": [
       1
@@ -1855,6 +2055,27 @@
     "saas": true,
     "website": "https://homhero.com.au"
   },
+  "Homebot": {
+    "cats": [
+      32
+    ],
+    "description": "Homebot is a platform that converts client engagement into measurable financial transactions, enabling actionable insights and improved business outcomes.",
+    "icon": "Homebot.svg",
+    "js": {
+      "Homebot": "",
+      "Homebot.version": "([\\d\\.]+)\\;version:\\1"
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "embed\\.homebotapp\\.com"
+    ],
+    "website": "https://homebot.ai"
+  },
   "Homefiniti": {
     "cats": [
       32
@@ -1880,6 +2101,24 @@
       "\\bHomerr\\b"
     ],
     "website": "https://www.homerr.com"
+  },
+  "Homerun": {
+    "cats": [
+      101
+    ],
+    "description": "Homerun is a platform used to organize hiring processes and manage candidate applications.",
+    "icon": "Homerun.svg",
+    "js": {
+      "homerunI18n": "",
+      "homerunPrivacySettings": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.homerun.co"
   },
   "Homestead": {
     "cats": [
@@ -1943,6 +2182,27 @@
     ],
     "saas": true,
     "website": "https://www.hoory.com"
+  },
+  "Hoowla": {
+    "cats": [
+      53
+    ],
+    "description": "Hoowla is a case management software designed to organize, track, and manage legal workflows and client information for law firms.",
+    "icon": "Hoowla.svg",
+    "js": {
+      "hoowlainit": ""
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.hoowla\\.com"
+    ],
+    "scripts": [
+      "cdn\\.hoowla\\.com"
+    ],
+    "website": "https://www.hoowla.com"
   },
   "Horoshop": {
     "cats": [
@@ -2205,6 +2465,22 @@
     },
     "website": "https://hotarucms.org"
   },
+  "Hotel Propeller": {
+    "cats": [
+      51
+    ],
+    "description": "Hotel Propeller is a web design platform that creates responsive websites tailored for hotels.",
+    "icon": "HotelPropeller.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.hotelpropeller\\.com"
+    ],
+    "website": "https://hotelpropeller.com"
+  },
   "Hotjar": {
     "cats": [
       10
@@ -2328,6 +2604,21 @@
       "/htmx\\.org@([\\d\\.]+)\\;version:\\1"
     ],
     "website": "https://htmx.org"
+  },
+  "Hub Platform": {
+    "cats": [
+      32
+    ],
+    "description": "Hub Platform is a suite of data-driven marketing and customer experience management solutions.",
+    "icon": "HubPlatform.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "analytics\\.hub-js\\.com"
+    ],
+    "website": "https://www.hub-js.com"
   },
   "HubSpot": {
     "cats": [
@@ -2514,6 +2805,23 @@
       "analytics\\.huberway\\.com/pixel/"
     ],
     "website": "https://www.huberway.com/analytics-software"
+  },
+  "Hubilo": {
+    "cats": [
+      32
+    ],
+    "description": "Hubilo is a platform offering branded interactive experiences, AI-driven content repurposing, and behavioral analytics to maximize webinar ROI.",
+    "icon": "Hubilo.svg",
+    "pricing": [
+      "high",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.hubilo\\.com"
+    ],
+    "website": "https://www.hubilo.com"
   },
   "Hubtiger": {
     "cats": [
@@ -2912,6 +3220,21 @@
     ],
     "oss": true,
     "website": "https://hydrogen.shopify.dev"
+  },
+  "HypeLab": {
+    "cats": [
+      36
+    ],
+    "description": "HypeLab is a platform that supports audience development by enhancing visibility, fostering recognition, and helping establish a loyal community.",
+    "icon": "HypeLab.svg",
+    "js": {
+      "HypeLab.Environment": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "api\\.hypelab\\.com"
+    ],
+    "website": "https://www.hypelab.com"
   },
   "Hypercloudhost": {
     "cats": [

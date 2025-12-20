@@ -1,154 +1,129 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <HTML>
 <HEAD>
-<TITLE>Report Generation</TITLE>
+<TITLE>レポート生成</TITLE>
 </HEAD>
 <BODY>
-	<H1>Report Generation</H1>
-	This add-on allows you to generate a
-	<a href="templates.html">variety of reports</a> in a flexible and
-	extensible way.
-	<p>It provides a dialog that can be accessed via menu "Report /
-		Generate Report..." menu item or via the "Generate Report..." toolbar
-		button.</p>
+	<H1>レポート生成</H1>
+	このアドオンは、柔軟で拡張可能な方法で
+	<a href="templates.html">さまざまなレポート</a>を生成できます。
+	<p>メニュー「レポート /
+		レポート生成…」メニュー項目または「レポート生成…」ツールバーボタン経由でアクセス可能なダイアログを提供します。</p>
 	<p>
-		It also supports the <a href="automation.html">Automation
-			Framework</a>.
+		また、<a href="automation.html">自動化フレームワーク</a>に対応しています。
 
 	</p>
-	<H1>Generate Report Dialog</H1>
+	<H1>レポート生成ダイアログ</H1>
 
-	<H2>Scope Fields</H2>
-	The Scope tab has the following fields:
+	<H2>スコープフィールド</H2>
+	スコープタブには以下のフィールドがあります：
 
-	<H3>Report Title</H3>
-	The title that will be used in the report.
+	<H3>レポートタイトル</H3>
+	レポートで使用されるタイトル。
 
-	<H3>Report Name</H3>
-	The filename that will be used for the report. This name can include
-	the following patterns:
+	<H3>レポート名</H3>
+	レポートで使用されるファイル名。 この名前には以下のパターンを含めることができます：
 	<ul>
-		<li><code>{{</code><i>date/time pattern</i> <code>}}</code> Any
-			Java Date/Time pattern, e.g. <code>yyyy-MM-dd</code></li>
-		<li><code>[[site]]</code> The name of the first site selected</li>
+		<li><code>{{</code><i>日時パターン</i> <code>}}</code> 任意のJava日時パターン、例:
+			<code>yyyy-MM-dd</code></li>
+		<li><code>[[site]]</code> 選択された最初のサイトの名前</li>
 	</ul>
-	The name will be automatically updated with the site selected and
-	extension for the report type.
-	<p>To change the default name used change the 'Report Name Pattern'
+	名前は選択されたサイトとレポートタイプの拡張子で自動的に更新されます。
+	<p>使用されるデフォルト名を変更するには、「レポート名パターン」を変更してください。</p>
+	<H3>レポートディレクトリ</H3>
+	レポートが書き込まれるディレクトリ。 このディレクトリは次にダイアログが開かれたときに選択されます。
 
-	</p>
-	<H3>Report Directory</H3>
-	The directory into which the report will be written. This directory
-	will be selected when the dialog is next opened.
+	<H3>説明</H3>
+	レポートに含まれる説明。
 
-	<H3>Description</H3>
-	The description that will be included in the report.
+	<H3>コンテキスト</H3>
+	現在利用可能なすべてのコンテキストのリスト。 1つ以上を選択して、それらのコンテキストからのアラートおよび他の情報のみをレポートに含めます。
+	シフトキーまたはコントロールキーを使用して複数のコンテキストを選択および選択解除できます。
+	<p>デフォルトではすべてのコンテキストが含まれます。</p>
+	<H3>サイト</H3>
+	現在利用可能なすべてのサイトのリスト。 1つ以上を選択して、それらのサイトからのアラートおよび他の情報のみをレポートに含めます。
+	シフトキーまたはコントロールキーを使用して複数のサイトを選択および選択解除できます。
+	<p>デフォルトではすべてのサイトが含まれます。</p>
+	<p>選択したコンテキストに含まれないサイトを選択した場合、レポートにデータは含まれません。</p>
+	<H3>アラートがない場合でも生成する</H3>
+	デフォルトでは、ダイアログはアラートなしのレポート生成を防ぎます。
+	アラートなしでレポートを生成したい場合、このチェックボックスを選択してください。
 
-	<H3>Contexts</H3>
-	A list of all of the Contexts currently available. Select one or more
-	to only include alerts and other information from those contexts in the
-	report. You can use the shift or control keys to select and unselect
-	more than one context.
-	<p>By default all contexts will be included.</p>
-	<H3>Sites</H3>
-	A list of all of the Sites currently available. Select one or more to
-	only include alerts and other information from those sites in the
-	report. You can use the shift or control keys to select and unselect
-	more than one site.
-	<p>By default all sites will be included.</p>
-	<p>If you select sites that are not in the contexts that you have
-		also selected then no data will be included in the report.</p>
-	<H3>Generate If No Alerts</H3>
-	By default the dialog will prevent you from generating a report with no
-	alerts. Select this check box if you do want to generate a report with
-	no alerts.
+	<H3>レポートを表示</H3>
+	選択されている場合、ZAPはそのレポートタイプに対してオペレーティングシステムで使用されるデフォルトプログラムを使用してレポートを開こうとします。
 
-	<H3>Display Report</H3>
-	If selected then ZAP will attempt to open the report using the default
-	program used by your operating system for that report type.
+	<H2>テンプレートフィールド</H2>
+	テンプレートタブには以下のフィールドがあります：
 
-	<H2>Template Fields</H2>
-	The Template tab has the following fields:
+	<H3>テンプレート</H3>
+	利用可能なすべてのテンプレートを含むプルダウン。 テンプレート名には生成される形式が含まれます、例: HTML, MD, PDF など。
 
-	<H3>Template</H3>
-	A pulldown containing all of the available templates. The template
-	names include the format that they will be generated in, e.g. HTML, MD,
-	PDF etc.
+	<H3>テーマ</H3>
+	テンプレートはオプションで「テーマ」を定義できます - 通常は同じコンテンツに適用される異なる色とスタイルです。
+	選択されたテンプレートにテーマが定義されている場合、ここでそれらを選択できます。
 
-	<H3>Theme</H3>
-	Templates may optionally define 'themes' - typically different colours
-	and styles which apply to the same content. If any themes are defined
-	for the selected template then you can select them here.
+	<H3>セクション</H3>
+	テンプレートはオプションで「セクション」を定義できます - レポートの含む/除外できる部分です。
+	選択されたテンプレートにセクションが定義されている場合、各セクションのチェックボックスがここに表示されます。
+	デフォルトではすべてのチェックボックスが選択されます。 セクションのいずれかを選択解除した場合、それらはレポートに含まれません。
 
-	<H3>Sections</H3>
-	Templates may optionally define 'sections' - parts of the report which
-	can be included or excluded. If the selected template defines sections
-	then a checkbox for each section will be displayed here. By default all
-	checkboxes will be selected. If you unselect any of the sections then
-	they will not be included in the report.
+	<H2>フィルターフィールド</H2>
+	フィルタータブには以下のフィールドがあります：
 
-	<H2>Filter Fields</H2>
-	The Filter tab has the following fields:
+	<H3>リスクを含める</H3>
+	選択されたリスクのアラートを含めます。
 
-	<H3>Include Risks</H3>
-	Include alerts with the selected risks.
+	<H3>信頼度を含める</H3>
+	選択された信頼度のアラートを含めます。
 
-	<H3>Include Confidences</H3>
-	Include alerts with the selected confidences.
+	<H2>オプションフィールド</H2>
+	オプションタブには以下のフィールドがあります：
 
-	<H2>Options Fields</H2>
-	The Options tab has the following fields:
+	<H3>レポート名パターン</H3>
+	レポート名を生成するために使用されるパターン。
 
-	<H3>Report Name Pattern</H3>
-	The pattern that will be used to generate the report name.
+	<H3>テンプレートディレクトリ</H3>
+	テンプレートがロードされるディレクトリ。
+	通常変更する必要はありませんが、新しいレポートを設計する場合、ローカルソースコードレポートディレクトリを指すように変更すると便利です。
+	デフォルトではZAPホームディレクトリの "reports" フォルダが使用されます。
 
-	<H3>Template Directory</H3>
-	The directory from which templates will be loaded. You should not
-	typically need to change unless you are designing new reports, in which
-	case it can be useful to change to point to your local source code
-	reports directory. The "reports" folder in your ZAP home directory is
-	used by default.
-
-	<H3>Field Descriptions</H3>
+	<H3>フィールドの説明</H3>
 
 	<H4>riskdesc</H4>
-	riskdesc - Is a combination identifier, showing Risk followed by
-	Confidence (in brackets). For example
+	riskdesc - リスクに続いて信頼度 (括弧内) を示す組み合わせ識別子です。 例えば
 	<code>High (Medium)</code>
-	would indicate a High risk issue identified with Medium confidence.
+	は中程度の信頼度で識別された高リスクの問題を示します。
 
 	<H4>created</H4>
-	The
 	<code>created</code>
-	field is an instant in the ISO-8601 representation.
+	フィールドは ISO-8601 表現のインスタントです。
 
-	<H2>See also</H2>
+	<H2>関連情報</H2>
 	<table>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td><a href="templates.html">Templates</a></td>
-			<td>for details of the templates currently available</td>
+			<td><a href="templates.html">テンプレート</a></td>
+			<td>現在利用可能なテンプレートの詳細</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td><a href="create.html">Creating Reports</a></td>
-			<td>for details on how to create and edit your own reports</td>
+			<td><a href="create.html">レポートの作成</a></td>
+			<td>独自のレポートを作成および編集する方法の詳細</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td><a href="automation.html">Report Generation Automation
-					Framework Support</a></td>
-			<td>for more details about the Automation Framework Support</td>
+			<td><a href="automation.html">レポート生成 – 自動化フレームワーク対応</a></td>
+			<td>自動化フレームワーク対応の詳細</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td><a href="api.html">Report Generation API</a></td>
-			<td>for more details about the Reports API</td>
+			<td><a href="api.html">レポート生成API</a></td>
+			<td>レポートAPIの詳細</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td><a href="about.html">About</a></td>
-			<td>for more details of this add-on</td>
+			<td><a href="about.html">このアドオンについて</a></td>
+			<td>このアドオンの詳細</td>
 		</tr>
 	</table>
 

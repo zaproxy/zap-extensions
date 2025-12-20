@@ -60,7 +60,7 @@ jobs:
         git checkout -b $BRANCH
         git remote set-url origin https://$GITHUB_USER:$GITHUB_TOKEN@github.com/$GITHUB_USER/zap-extensions.git
         # Update ChromeDriver version strings in help and build file
-        sed -i -e 's|val chromeDriverVersion = "[0-9\.]*"|val chromeDriverVersion = "'"$CHROME_VERS"'"|g' addOns/webdrivers/webdrivers.gradle.kts
+        sed -i -e 's|zap.chromedriver.version = [0-9\.]*|zap.chromedriver.version = '"$CHROME_VERS"'|g' addOns/webdrivers/gradle.properties
         sed -i -e "s|Chrome - ChromeDriver [0-9\.]*</li>|Chrome - ChromeDriver $CHROME_VERS</li>|g" addOns/webdrivers/webdriverlinux/src/main/javahelp/org/zaproxy/zap/extension/webdriverlinux/resources/help/contents/webdriverlinux.html
         sed -i -e "s|Chrome - ChromeDriver [0-9\.]*</li>|Chrome - ChromeDriver $CHROME_VERS</li>|g" addOns/webdrivers/webdrivermacos/src/main/javahelp/org/zaproxy/zap/extension/webdrivermacos/resources/help/contents/webdrivermacos.html
         sed -i -e "s|Chrome - ChromeDriver [0-9\.]*</li>|Chrome - ChromeDriver $CHROME_VERS</li>|g" addOns/webdrivers/webdriverwindows/src/main/javahelp/org/zaproxy/zap/extension/webdriverwindows/resources/help/contents/webdriverwindows.html
@@ -75,7 +75,7 @@ jobs:
           git commit -m "Webdriver Update" -m "ChromeDriver update to $CHROME_VERS" --signoff
         fi
         # Update geckodriver version strings in help and build file
-        sed -i -e 's|val geckodriverVersion = "[0-9\.]*"|val geckodriverVersion = "'"$GECKO_VERS"'"|g' addOns/webdrivers/webdrivers.gradle.kts
+        sed -i -e 's|zap.geckodriver.version = [0-9\.]*|zap.geckodriver.version = '"$GECKO_VERS"'|g' addOns/webdrivers/gradle.properties
         sed -i -e "s|Firefox - geckodriver [0-9\.]*</li>|Firefox - geckodriver $GECKO_VERS</li>|g" addOns/webdrivers/webdriverlinux/src/main/javahelp/org/zaproxy/zap/extension/webdriverlinux/resources/help/contents/webdriverlinux.html
         sed -i -e "s|Firefox - geckodriver [0-9\.]*</li>|Firefox - geckodriver $GECKO_VERS</li>|g" addOns/webdrivers/webdrivermacos/src/main/javahelp/org/zaproxy/zap/extension/webdrivermacos/resources/help/contents/webdrivermacos.html
         sed -i -e "s|Firefox - geckodriver [0-9\.]*</li>|Firefox - geckodriver $GECKO_VERS</li>|g" addOns/webdrivers/webdriverwindows/src/main/javahelp/org/zaproxy/zap/extension/webdriverwindows/resources/help/contents/webdriverwindows.html

@@ -36,6 +36,7 @@ import org.zaproxy.addon.automation.AutomationEventPublisher;
 import org.zaproxy.addon.automation.AutomationPlan;
 import org.zaproxy.addon.automation.ExtensionAutomation;
 import org.zaproxy.zap.ZAP;
+import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType;
 import org.zaproxy.zap.eventBus.Event;
 import org.zaproxy.zap.eventBus.EventConsumer;
 import org.zaproxy.zap.extension.script.ExtensionScript;
@@ -162,8 +163,11 @@ public class ExtensionScriptAutomation extends ExtensionAdaptor {
 
         @Override
         public void scriptError(ScriptWrapper script) {
-            if (ExtensionScript.TYPE_STANDALONE.equals(script.getTypeName())) {
+            if (ExtensionScript.TYPE_STANDALONE.equals(script.getTypeName())
+                    || ScriptBasedAuthenticationMethodType.SCRIPT_TYPE_AUTH.equals(
+                            script.getTypeName())) {
                 // Errors of stand alone scripts are handled directly by the job.
+                // Authentication script errors are handled as auth failures.
                 return;
             }
 

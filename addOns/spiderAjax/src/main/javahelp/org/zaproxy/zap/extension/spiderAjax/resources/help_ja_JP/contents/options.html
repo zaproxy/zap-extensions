@@ -2,129 +2,123 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Options AJAX Spider screen</title>
+<title>オプション - AJAXスパイダー画面</title>
 </head>
 <body>
-	<h1>Options AJAX Spider screen</h1>
+	<h1>オプション - AJAXスパイダー画面</h1>
 
-	この画面が設定できるのは
-	<a href="concepts.html">AJAXスパイダー</a> options. The AJAX Spider is an add-on for a
-	crawler called Crawljax. The add-on sets up a local proxy in ZAP to talk to Crawljax.
-	The AJAX Spider allows you to crawl web applications written in AJAX in far more depth than
-	the native Spider. Use the AJAX Spider if you may have web applications written in AJAX. You should also use
-	the native Spider as well for complete coverage of a web application (e.g., to cover HTML comments). 
+	この画面では、
+	<a href="concepts.html">AJAXスパイダー</a> のオプションを設定できます。 AJAXスパイダーは、Crawljaxと呼ばれるクローラーのアドオンです。 このアドオンは、Crawljaxと通信するためにZAP内にローカルプロキシを設定します。
+	AJAXスパイダーを使用すると、従来のスパイダーよりもはるかに深いレベルで、AJAXで書かれたWebアプリケーションをクロールできます。 AJAXで書かれたWebアプリケーションがある可能性がある場合は、AJAXスパイダーを使用してください。 Webアプリケーションの完全なカバレッジのために、従来のスパイダーも併用する必要があります。（例: HTMLコメントをカバーするためなど） 
     <br/>
     <br/>
-    <h2>Configuration Options</h2>
+    <h2>設定オプション</h2>
     <br/>
 	<table border ="2">
 		<tr>
-			<th>Field</th>
-			<th>Details</th>
-			<th>Default</th>
+			<th>フィールド</th>
+			<th>詳細</th>
+			<th>既定値</th>
 		</tr>
 		<tr>
-			<td>Browser</td>
-			<td>AJAX Spider relies on an external browser to crawl the targeted site. You can
-				specify which one you want to use. For more details on supported browsers refer to
-				"Selenium" add-on help pages.</td>
-			<td align="center">Firefox Headless</td>
+			<td>ブラウザ</td>
+			<td>AJAXスパイダーは、ターゲットサイトをクロールするために外部ブラウザーに依存します。使用するブラウザーを指定できます。サポートされているブラウザーの詳細については、「Selenium」アドオンのヘルプページを参照してください。</td>
+			<td align="center">ヘッドレスFirefox</td>
 		</tr>
 		<tr>
-			<td>Number of Browser Windows to Open</td>
-			<td>You can configure the number of windows to be used by AJAX Spider.
-				 The more windows, the faster the process will be.</td>
-			<td align = "center">Num cores</td>
+			<td>開くブラウザウィンドウの数</td>
+			<td>AJAXスパイダーが使用するウィンドウの数を設定できます。ウィンドウが多いほど、プロセスは速くなります。</td>
+			<td align = "center">CPUコア数</td>
 		</tr>
 		<tr>
-			<td>Maximum Crawl Depth</td>
-			<td>The maximum depth that the crawler can reach. Zero means unlimited depth.</td>
+			<td>最大クロール深度</td>
+			<td>クローラーが到達できる最大深度。ゼロは無制限の深度を意味します。</td>
 			<td align = "center">10</td>
 		</tr>
 		<tr>
-		    <td>Maximum Crawl States</td>
-			<td>The maximum number of states that the crawler should crawl. Zero means unlimited crawl states. </td>
-			<td align = "center"> 0 (unlimited)</td>
+		    <td>最大クロール状態数</td>
+			<td>クローラーがクロールすべき最大状態数。ゼロは無制限の状態数を意味します。 </td>
+			<td align = "center"> 0 (無制限)</td>
 		</tr>
 		<tr>
-			<td>Maximum Duration</td>
-			<td>The maximum time that the crawler is allowed to run. Zero means unlimited running time.</td>
-			<td align = "center">60 minutes</td>
+			<td>最大実行時間</td>
+			<td>クローラーが実行を許可される最大時間 (分)。ゼロは無制限の実行時間を意味します。</td>
+			<td align = "center">60分</td>
 		</tr>
 		<tr>
-			<td>Event Wait Time</td>
-			<td>The time to wait after a client side event is fired.</td>
+			<td>イベント待機時間</td>
+			<td>クライアント側イベントが発生した後に待機する時間 (ミリ秒)。</td>
 			<td align = "center">1000 ms</td>
 		</tr>
 		<tr>
-			<td>Reload Wait Time</td>
-			<td>The time to wait after URL is loaded.</td>
+			<td>リロード待機時間</td>
+			<td>URLがロードされた後に待機する時間 (ミリ秒)。</td>
 			<td align = "center">1000 ms</td>
 		</tr>
 		<tr>
-			<td>Enable Browser Extensions</td>
-			<td>When enabled, any browser extensions added by other add-ons will be enabled in the browsers used for crawling.</td>
+			<td>ブラウザー拡張機能を有効にする</td>
+			<td>有効にすると、他のアドオンによって追加されたブラウザ拡張機能は、クロールに使用されるブラウザで有効になります。</td>
 			<td align = "center">False</td>
 		</tr>
 		<tr>
-			<td>Click Elements Once</td>
-			<td>When enabled, the crawler attempts to interact with each element (e.g., by clicking) only once.  If this is not set, the crawler will attempt to click multiple times. Unsetting this option is more rigorous but may take considerably more time.</td>
+			<td>要素を1回だけクリックする</td>
+			<td>有効にすると、クローラーは各要素との相互作用 (クリックなど) を1回だけ試行します。  これが設定されていない場合、クローラーは複数回クリックしようとします。 このオプションを無効にすると、より徹底的になりますが、大幅に時間がかかる場合があります。</td>
 			<td align = "center">True</td>
 		</tr>
 		<tr>
-			<td>Use Random Values in Form Fields</td>
-			<td>When enabled, inserts random values into form fields. Otherwise, it uses empty values.</td>
+			<td>フォームフィールドでランダム値を使用する</td>
+			<td>有効にすると、フォーム入力欄にランダムな値が挿入されます。そうでない場合は、空の値が使用されます。</td>
 			<td align = "center">True</td>
 		</tr>
 		<tr>
-			<td>Click Default Elements Only</td>
-			<td>When enabled, only elements "a", "button" and "input" will be clicked during crawl. Otherwise, it uses the table below to determine which elements will be clicked.  For more in depth analysis, disable this and configure the clickable elements in the table.</td>
+			<td>デフォルトの要素のみをクリックする</td>
+			<td>有効にすると、クロール中に要素「a」、「button」、「input」のみがクリックされます。 そうでない場合は、以下の表を使用して、クリックされる要素を決定します。  より詳細な分析を行うには、これを無効にして、表でクリック可能な要素を設定してください。</td>
 			<td align = "center">True</td>
 		</tr>
 		<tr>
-			<td>Select elements to click during crawl (table)</td>
-			<td>The list of elements to crawl.  This table only applies when "click default elements only" is not enabled.  Use "enable all" for a more in depth analysis, though it may take somewhat longer.</td>
-			<td align = "center">All enabled</td>
+			<td>クロール中にクリックする要素を選択 (表)</td>
+			<td>クロールする要素のリスト。この表は、「デフォルトの要素のみをクリック」が無効になっている場合にのみ適用されます。より詳細な分析を行うには「すべて有効」を使用してください。ただし、多少時間がかかる場合があります。</td>
+			<td align = "center">すべて有効</td>
 		</tr>
 		<tr>
-			<td>Scope Check</td>
-			<td>How the scope is checked:
+			<td>スコープチェック</td>
+			<td>スコープがどのようにチェックされるか：
 				<ul>
-					<li><code>Strict</code> - enforces that all requests need to be in scope to be accessed, with the exception of the Allowed Resources.
-					<li><code>Flexible</code> - allows all requests to be accessed. This scope check does not use nor require configuring the Allowed Resources for targets that need domains out of scope to work. This scope check has the side effect of allowing out of scope domains to be accessed, but not crawled.
+					<li><code>Strict</code> - 許可されたリソースを除き、すべてのリクエストがスコープ内にある必要があることを強制します。
+					<li><code>Flexible</code> - すべてのリクエストにアクセスすることを許可します。 このスコープチェックは、スコープ外のドメインが機能するために必要なターゲットに対して、許可されたリソースの使用や設定を必要としません。 このスコープチェックには、スコープ外のドメインへのアクセスは許可されますが、クロールはされません。
 				</ul>
 			</td>
 			<td align = "center">Strict</td>
 		</tr>
 		<tr>
-			<td>Logout Avoidance</td>
-			<td>When enabled, the spider will avoid clicking common logout elements, which does not require manually excluding them.</td>
+			<td>ログアウト回避</td>
+			<td>有効にすると、スパイダーは一般的なログアウト要素のクリックを回避します。これにより、手動で除外する必要がなくなります。</td>
 			<td align = "center">False</td>
 		</tr>
 		<tr>
-			<td>Allowed Resources (table)</td>
-			<td>The list of allowed resources. The allowed resources are always fetched even if out of scope, allowing to include necessary resources (e.g. scripts) from 3rd-parties.</td>
+			<td>許可されたリソース (表)</td>
+			<td>許可されたリソースのリスト。許可されたリソースは、スコープ外であっても常にフェッチされ、サードパーティからの必要なリソース (例: スクリプトなど) を許可します。</td>
 			<td align = "center"></td>
 		</tr>
 		
 	</table>
 	
-	<h2>See also</h2>
+	<h2>関連情報</h2>
 	<table>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td><a href="concepts.html">AJAX Spider</a></td>
-			<td>for an overview of the AJAX Spider</td>
+			<td><a href="concepts.html">AJAXスパイダー</a></td>
+			<td>AJAXスパイダーの概要について</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td><a href="tab.html">AJAX Spider tab</a></td>
-			<td>for an overview of the AJAX Spider Tab</td>
+			<td><a href="tab.html">AJAXスパイダー タブ</a></td>
+			<td>AJAXスパイダー タブの概要について</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td><a href="scandialog.html">AJAX Spider dialog</a></td>
-			<td>for an overview of the AJAX Spider Dialog</td>
+			<td><a href="scandialog.html">AJAXスパイダー ダイアログ</a></td>
+			<td>AJAXスパイダー ダイアログの概要について</td>
 		</tr>
 	</table>
 

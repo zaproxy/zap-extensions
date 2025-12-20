@@ -2,59 +2,56 @@
 <HTML>
 <HEAD>
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
-<TITLE>Rate Limit</TITLE>
+<TITLE>レート制限</TITLE>
 </HEAD>
 <BODY>
-    <H1>Rate Limit</H1>
+    <H1>レート制限</H1>
 
-    <H2>Rate Limit</H2>
-    The Rate Limit feature limits the request rate of HTTP/HTTPS (not web sockets) traffic to hosts or domains to prevent overloading the target or being blocked.
-    The limit is applied using a matcher against the request host to pick an individual host, an entire domain, or anything
-    between. In the case a host matches multiple rules, the rule with the most restrictive rate is used.
+    <H2>レート制限</H2>
+    レート制限機能はターゲットの過負荷やブロックを防ぐために、ホストまたはドメインへのHTTP/HTTPS (Webソケットではない) トラフィックのリクエストレートを制限します。
+    制限はリクエストホストに対してマッチャーを使用することで、個々のホスト、ドメイン全体、あるいはその中間を指定して適用されます。 ホストが複数のルールに一致する場合、最も制限の厳しいレートを持つルールが使用されます。
     <p>
-    Limits for a domain or host may be quickly added via the context menu. Open the context menu on a message to add a
-    rule to limit by the host or domain.
+    ドメインまたはホストの制限はコンテキストメニューからすばやく追加できます。 メッセージ上でコンテキストメニューを開き、ホストまたはドメインによる制限ルールを追加します。
     <p>
-    Each rule is defined by the following fields:
+    各ルールは以下のフィールドで定義されます：
 
-    <h3>Description</h3>
-    A description that allows you to identify the rule. Each rule must have a unique description.
+    <h3>説明</h3>
+    ルールを識別するための説明。 各ルールには一意の説明が必要です。
 
-    <h3>Match String</h3>
-    The string that will be used to identify which hosts will be limited. If treated as a regular expression, the host must fully match.
+    <h3>マッチ文字列</h3>
+    制限されるホストを識別するために使用される文字列。 正規表現として扱われる場合、ホストは完全に一致する必要があります。
 
-    If "Match Regex" is un-checked, the match string is handled based on DNS conventions. If the string has one or two components,
-    i.e. 'example.com' or 'localhost', either an exact match or additional components will match. 'host1.example.com', 'sub1.host1.example.com' will match 'example.com'. 'localhost.localhost' will match 'localhost'. A match string of 'host1.example.com' will only match 'host1.example.com'.
+    「正規表現で一致」がオフの場合、一致文字列はDNSの慣例に基づいて処理されます。 文字列が1つまたは2つのコンポーネント (例: `example.com` や `localhost`) を持つ場合、完全一致または追加のサブコンポーネントも一致します。 「host1.example.com」、「sub1.host1.example.com」は「example.com」に一致します。 「localhost.localhost」は「localhost」に一致します。 「host1.example.com」の一致文字列は「host1.example.com」にのみ一致します。
 
-    <h3>Match Regex</h3>
-    If set then the Match String will be treated as a regular expression.
+    <h3>マッチ正規表現</h3>
+    設定されている場合、一致文字列は正規表現として扱われます。
 
-    <h3>Requests Per Second</h3>
-    The maximum number of requests per second.
+    <h3>1秒あたりのリクエスト数</h3>
+    1秒あたりの最大リクエスト数。
 
-    <h3>Group By</h3>
-    How to group hosts when applying rate limiting. The default "rule" limits the rate to all hosts matching the rule as a single unit. The "host" value will apply the rate limit to each host individually.
+    <h3>グループ化</h3>
+    レート制限を適用するときにホストをグループ化する方法。 デフォルトの「ルール」は、ルールに一致するすべてのホストを単一の単位としてレートを制限します。 「ホスト」値は各ホストに個別にレート制限を適用します。
 
-    <h3>Enable</h3>
-    If not set then the rule will not apply.
+    <h3>有効</h3>
+    設定されていない場合、ルールは適用されません。
 
-    <H2>Status Panel</H2>
-    A status panel is provided to show how requests to hosts are being limited.
-    The following fields are shown:
+    <H2>ステータスパネル</H2>
+    ホストへのリクエストがどのように制限されているかを示すステータスパネルが提供されます。
+    以下のフィールドが表示されます：
 
-    <h3>Group</h3>
-    The host or rule name based on the "Group By" setting in the rule. If grouping by hosts, there will be a row for each host.
+    <h3>グループ</h3>
+    ルールの「グループ化」設定に基づいたホストまたはルール名。 ホストごとにグループ化する場合、ホストごとに1行表示されます。
 
-    <h3>Rule</h3>
-    The name of the rule.
+    <h3>ルール</h3>
+    ルール名。
 
-    <h3>Requests</h3>
-    The number of requests processed by the rule for this host or group.
+    <h3>リクエスト数</h3>
+    このホストまたはグループに対してルールによって処理されたリクエストの数。
 
-    <h3>Effective Rate</h3>
-    The effective request rate based on the first request time, last request times, and request count. The value may be less than the request limit, but should never be more.
+    <h3>実効レート</h3>
+    最初のリクエスト時間、最後のリクエスト時間、およびリクエスト数に基づいた実効リクエストレート。 値はリクエスト制限よりも少なくなることがありますが、それよりも多くなることはありません。
 
-    <h3>Last</h3>
-    The time of the last request processed by the rule.
+    <h3>最終処理時刻</h3>
+    ルールによって処理された最後のリクエストの時刻。
 </BODY>
 </HTML>

@@ -19,9 +19,7 @@
  */
 package org.zaproxy.addon.authhelper;
 
-import java.awt.Component;
 import java.awt.Frame;
-import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
@@ -113,6 +111,7 @@ public class AuthTestDialog extends StandardFieldsDialog {
     private static final String RECORD_DIAGNOSTICS_LABEL =
             "authhelper.auth.test.dialog.label.recdiag";
     private static final String DIAGNOSTICS_LABEL = "authhelper.auth.test.dialog.label.diag";
+    private static final String DOMAINS_LABEL = "authhelper.auth.test.dialog.label.domains";
     private static final String COPY_LABEL = "authhelper.auth.test.dialog.label.copy";
 
     private static final String FOUND_STR =
@@ -163,6 +162,7 @@ public class AuthTestDialog extends StandardFieldsDialog {
                 DisplayUtils.getScaledDimension(600, 550),
                 new String[] {
                     "authhelper.auth.test.dialog.tab.test",
+                    "authhelper.auth.test.dialog.tab.domains",
                     "authhelper.auth.test.dialog.tab.steps",
                     "authhelper.auth.test.dialog.tab.diag"
                 });
@@ -251,6 +251,10 @@ public class AuthTestDialog extends StandardFieldsDialog {
         this.addPadding(0);
 
         int tab = 1;
+
+        addMultilineField(tab, DOMAINS_LABEL, params.getDomains());
+
+        tab++;
         stepsPanel = new StepsPanel(this, true);
         stepsPanel.setSteps(params.getSteps());
         setCustomTabPanel(tab, stepsPanel.getPanel());
@@ -329,21 +333,6 @@ public class AuthTestDialog extends StandardFieldsDialog {
                 }
             }
         }
-    }
-
-    // FIXME use parent method once ZAP 2.17 is released
-    private static JPanel getSideBySidePanel(Component c1, Component c2) {
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridBagLayout());
-        panel.add(
-                c1,
-                LayoutHelper.getGBC(
-                        0, 0, 1, 1.0D, 0.0D, GridBagConstraints.BOTH, new Insets(0, 0, 0, 2)));
-        panel.add(
-                c2,
-                LayoutHelper.getGBC(
-                        1, 0, 1, 0.0D, 0.0D, GridBagConstraints.BOTH, new Insets(0, 2, 0, 0)));
-        return panel;
     }
 
     private void setMethodState() {
@@ -467,6 +456,14 @@ public class AuthTestDialog extends StandardFieldsDialog {
             String loginUrl = this.getStringValue(LOGIN_URL_LABEL);
             context.addIncludeInContextRegex(
                     SessionStructure.getHostName(new URI(loginUrl, false)) + ".*");
+
+            for (String dom : getDomains()) {
+                if (dom.endsWith(".*")) {
+                    // Just in case the user has added this anyway
+                    dom = dom.substring(0, dom.length() - 2);
+                }
+                context.addIncludeInContextRegex(dom + ".*");
+            }
 
             JComboBox<?> browserCombo = (JComboBox<?>) this.getField(BROWSER_LABEL);
             String browserId = ((BrowserUI) browserCombo.getSelectedItem()).getBrowser().getId();
@@ -692,6 +689,12 @@ public class AuthTestDialog extends StandardFieldsDialog {
         }
     }
 
+    private List<String> getDomains() {
+        return List.of(this.getStringValue(DOMAINS_LABEL).split("\r?\n")).stream()
+                .filter(StringUtils::isNotBlank)
+                .toList();
+    }
+
     private static void setTotp(
             List<AuthenticationStep> steps, UsernamePasswordAuthenticationCredentials credentials) {
         if (!TotpSupport.isTotpInCore()) {
@@ -755,6 +758,7 @@ public class AuthTestDialog extends StandardFieldsDialog {
                                         Constant.messages.getString(
                                                 "authhelper.auth.test.dialog.default-context"));
                         setFieldValue(LOGIN_URL_LABEL, "");
+                        setFieldValue(DOMAINS_LABEL, "");
                         setFieldValue(USERNAME_LABEL, "");
                         setFieldValue(PASSWORD_LABEL, "");
                         setFieldValue(LOGIN_WAIT_LABEL, AuthhelperParam.DEFAULT_WAIT);
@@ -786,6 +790,7 @@ public class AuthTestDialog extends StandardFieldsDialog {
     private void saveDetails() {
         AuthhelperParam params = this.ext.getParam();
         params.setLoginUrl(this.getStringValue(LOGIN_URL_LABEL));
+        params.setDomains(this.getStringValue(DOMAINS_LABEL));
         params.setUsername(this.getStringValue(USERNAME_LABEL));
         JComboBox<?> browserCombo = (JComboBox<?>) this.getField(BROWSER_LABEL);
         params.setBrowser(((BrowserUI) browserCombo.getSelectedItem()).getBrowser().getId());
@@ -813,6 +818,17 @@ public class AuthTestDialog extends StandardFieldsDialog {
             }
             if (this.getStringValue(PASSWORD_LABEL).isBlank()) {
                 return Constant.messages.getString("authhelper.auth.test.dialog.error.nopassword");
+            }
+        }
+        for (String dom : this.getDomains()) {
+            String domLc = dom.toLowerCase(Locale.ROOT);
+            if (!domLc.startsWith("http://") && !domLc.startsWith("https://")) {
+                return Constant.messages.getString("authhelper.auth.test.dialog.error.baddom", dom);
+            }
+            try {
+                new URI(dom, false);
+            } catch (Exception e) {
+                return Constant.messages.getString("authhelper.auth.test.dialog.error.baddom", dom);
             }
         }
         return null;

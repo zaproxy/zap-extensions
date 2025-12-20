@@ -4,7 +4,7 @@ import org.zaproxy.zap.extension.fuzz.httpfuzzer.HttpFuzzResult
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.HttpFuzzerTaskProcessorUtils
 
 // Auxiliary variables/constants needed for processing.
-@Field final int count = 1
+@Field int count = 1
 
 /**
  * Processes the fuzzed message (payloads already injected).

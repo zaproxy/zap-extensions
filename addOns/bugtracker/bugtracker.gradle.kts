@@ -10,15 +10,15 @@ zapAddOn {
 }
 
 dependencies {
-    compileOnly("com.infradna.tool:bridge-method-annotation:1.18") {
+    compileOnly(libs.bugtracker.bridgeMethodAnnotations) {
         exclude(group = "org.jenkins-ci")
     }
-    compileOnly("com.github.spotbugs:spotbugs-annotations:3.1.12")
-    implementation("com.j2bugzilla:j2bugzilla:2.2.1") {
+    compileOnly("com.github.spotbugs:spotbugs-annotations:4.9.6")
+    implementation(libs.bugtracker.j2bugzilla) {
         // Not needed.
         exclude(group = "junit")
     }
-    implementation("org.kohsuke:github-api:1.303") {
+    implementation(libs.bugtracker.githubApi) {
         // Not needed.
         exclude(group = "com.infradna.tool")
         // Provided by ZAP.

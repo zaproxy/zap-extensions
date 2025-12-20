@@ -25,9 +25,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import java.util.List;
 import java.util.Map;
+import lombok.Getter;
+import lombok.Setter;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.control.AddOn;
 
+@Getter
+@Setter
 public class ScanRuleMetadata {
 
     private static final ObjectMapper YAML_OBJECT_MAPPER;
@@ -56,6 +60,7 @@ public class ScanRuleMetadata {
     private AddOn.Status status = AddOn.Status.unknown;
     private String codeLink;
     private String helpLink;
+    private Map<String, AlertReferenceMetadata> alertRefOverrides;
 
     // Required for Jackson YAML deserialization
     private ScanRuleMetadata() {}
@@ -64,126 +69,6 @@ public class ScanRuleMetadata {
         this.id = id;
         this.name = name;
         validateMetadata(this);
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getSolution() {
-        return solution;
-    }
-
-    public void setSolution(String solution) {
-        this.solution = solution;
-    }
-
-    public List<String> getReferences() {
-        return references;
-    }
-
-    public void setReferences(List<String> references) {
-        this.references = references;
-    }
-
-    public Category getCategory() {
-        return category;
-    }
-
-    public void setCategory(Category category) {
-        this.category = category;
-    }
-
-    public Risk getRisk() {
-        return risk;
-    }
-
-    public void setRisk(Risk risk) {
-        this.risk = risk;
-    }
-
-    public Confidence getConfidence() {
-        return confidence;
-    }
-
-    public void setConfidence(Confidence confidence) {
-        this.confidence = confidence;
-    }
-
-    public int getCweId() {
-        return cweId;
-    }
-
-    public void setCweId(int cweId) {
-        this.cweId = cweId;
-    }
-
-    public int getWascId() {
-        return wascId;
-    }
-
-    public void setWascId(int wascId) {
-        this.wascId = wascId;
-    }
-
-    public Map<String, String> getAlertTags() {
-        return alertTags;
-    }
-
-    public void setAlertTags(Map<String, String> alertTags) {
-        this.alertTags = alertTags;
-    }
-
-    public String getOtherInfo() {
-        return otherInfo;
-    }
-
-    public void setOtherInfo(String otherInfo) {
-        this.otherInfo = otherInfo;
-    }
-
-    public AddOn.Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(AddOn.Status status) {
-        this.status = status;
-    }
-
-    public String getCodeLink() {
-        return codeLink;
-    }
-
-    public void setCodeLink(String codeLink) {
-        this.codeLink = codeLink;
-    }
-
-    public String getHelpLink() {
-        return helpLink;
-    }
-
-    public void setHelpLink(String helpLink) {
-        this.helpLink = helpLink;
     }
 
     public static ScanRuleMetadata fromYaml(String yaml) {

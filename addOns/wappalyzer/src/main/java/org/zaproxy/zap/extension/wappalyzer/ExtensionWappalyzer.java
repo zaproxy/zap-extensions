@@ -56,14 +56,9 @@ import org.zaproxy.zap.extension.alert.ExampleAlertProvider;
 import org.zaproxy.zap.extension.search.ExtensionSearch;
 import org.zaproxy.zap.utils.ThreadUtils;
 import org.zaproxy.zap.view.ScanPanel;
-import org.zaproxy.zap.view.SiteMapListener;
-import org.zaproxy.zap.view.SiteMapTreeCellRenderer;
 
 public class ExtensionWappalyzer extends ExtensionAdaptor
-        implements SessionChangedListener,
-                SiteMapListener,
-                ApplicationHolder,
-                ExampleAlertProvider {
+        implements SessionChangedListener, ApplicationHolder, ExampleAlertProvider {
 
     public static final String NAME = "ExtensionWappalyzer";
 
@@ -132,9 +127,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
                         "com.github.weisj.jsvg.util.ResourceUtil",
                         "com.github.weisj.jsvg.parser.css.impl.SimpleCssParser",
                         "com.github.weisj.jsvg.parser.css.impl.Lexer",
-                        "com.github.weisj.jsvg.parser.SVGLoader",
-                        "com.github.weisj.jsvg.nodes.Image",
-                        "com.github.weisj.jsvg.nodes.container.BaseContainerNode"),
+                        "com.github.weisj.jsvg.nodes.Image"),
                 Level.OFF);
 
         List<String> technologyFiles = new ArrayList<>();
@@ -144,7 +137,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
                     .map(ExtensionWappalyzer::techToResourcePath)
                     .forEach(technologyFiles::add);
         } catch (IOException e) {
-            LOGGER.error("Failed to enumerate Tech Detection technologies:", e);
+            LOGGER.warn("Failed to enumerate Tech Detection technologies:", e);
         }
 
         TechData result =
@@ -175,7 +168,6 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
         super.hook(extensionHook);
 
         extensionHook.addSessionListener(this);
-        extensionHook.addSiteMapListener(this);
 
         if (hasView()) {
             @SuppressWarnings("unused")
@@ -250,6 +242,10 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
         super.unload();
 
         getPscanExtension().getPassiveScannersManager().remove(passiveScanner);
+
+        if (techPanel != null) {
+            techPanel.unload();
+        }
     }
 
     @Override
@@ -274,9 +270,9 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
 
     public TechTableModel getTechModelForSite(String site) {
         TechTableModel model = this.siteTechMap.computeIfAbsent(site, s -> new TechTableModel());
-        if (hasView()) {
+        if (techPanel != null) {
             // Add to site pulldown
-            this.getTechPanel().addSite(site);
+            this.techPanel.addSite(site);
         }
         return model;
     }
@@ -366,16 +362,6 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
     }
 
     @Override
-    public void nodeSelected(SiteNode node) {
-        // Event from SiteMapListenner
-        this.getTechPanel().siteSelected(normalizeSite(node.getHistoryReference().getURI()));
-    }
-
-    @Override
-    public void onReturnNodeRendererComponent(
-            SiteMapTreeCellRenderer arg0, boolean arg1, SiteNode arg2) {}
-
-    @Override
     public void sessionAboutToChange(Session arg0) {
         // Ignore
     }
@@ -385,17 +371,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
         if (!hasView()) {
             return;
         }
-
-        if (EventQueue.isDispatchThread()) {
-            sessionChangedEventHandler(session);
-
-        } else {
-            try {
-                EventQueue.invokeAndWait(() -> sessionChangedEventHandler(session));
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage(), e);
-            }
-        }
+        ThreadUtils.invokeAndWaitHandled(() -> sessionChangedEventHandler(session));
     }
 
     private void recreateSiteTreeMap() {

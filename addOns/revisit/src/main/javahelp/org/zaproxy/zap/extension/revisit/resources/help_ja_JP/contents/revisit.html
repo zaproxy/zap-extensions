@@ -8,42 +8,45 @@ Revisit
 <body>
 <h1>Revisit</h1>
 <p>
-Have you ever wanted to be able to browse an application you tested with ZAP at a specific time, 
-perhaps when you dont have access to it, or after its been changed in some way?<br>
-If so then this add-on is for you!
+ZAPでテストしたアプリケーションを、過去の特定の時点の状態で閲覧したいと思ったことはありませんか？例えば、そのアプリケーションにアクセスできなくなった後や、変更が加えられた後など。<br>
+そのような場合に、このアドオンが役立ちます！
 </p>
-<p>
-The add-on allows you to instruct ZAP to return content from the ZAP history between specified
-dates rather than forwarding the requests to the site.<br>
-This allows you to apparently browse and use a website that you no longer have access to.<br>
-It also allows you to see what it looked like at between specific times, which is useful if 
-the application has since changed.<br>
-<br>
-When returning pages from the ZAP history floating footers are injected into HTML pages to
-give a visual clue that these pages are generated from ZAP.<br>
-ZAP will return pages that were the result of both GET and POST requests as long as it finds ones that match.<br>
-Pages only match if all URL and POST parameters are the same, ignoring the order and any known CSRF tokens.<br>
-If no matching page can be found in the history then a custom 404 page is returned which will
-include links to the same page if it has been invoked with different parameters or outside of the time period specified.<br>
-<br>
-This add-on adds right click menus to the Sites Tree:
-</p>
-<h3>Enable Revisit</h3>
-When selected a popup will be shown which asks for the start and end times to be used.<br>
-The start time defaults to the time of the first request in the session.<br>
-The end time defaults to the time of the last request in the session.<br>
-If any of the time elements (for example 'day of the month') have not changed then those elements will be disabled.<br>
-If the dialog OK button is pressed then the revisit functionality will be enabled for the selected site,
-and a 'calendar' icon added to the site node in the Sites Tree.
 
-<h3>Disable Revisit</h3>
-When selected then the revisit functionality will be disabled for the selected site.
+<p>
+このアドオンを使用すると、リクエストをサイトに転送する代わりに、指定した期間のZAP履歴からコンテンツを返すようZAPに指示できます。<br>
+これにより、アクセスできなくなったWebサイトを閲覧したり使用したりできるようになります。<br>
+また、特定の時間帯にどのように見えていたかを確認することもできます。これは、アプリケーションがその後変更された場合に役立ちます。
+</p>
+
+<p>
+ZAP履歴からページを返す際、これらのページがZAPから生成されたものであることを示す視覚的な手がかりとして、フローティングフッターがHTMLページに挿入されます。<br>
+ZAPは、一致するものが見つかる限り、GETリクエストとPOSTリクエストの両方の結果であったページを返します。<br>
+ページは、パラメータの順序や既知のCSRFトークンを無視し、すべてのURLとPOSTパラメータが一致する場合にのみ一致します。<br>
+履歴に一致するページが見つからない場合、カスタム404ページが返されます。このカスタム404ページには、異なるパラメーターで呼び出された場合や、指定期間外で呼び出された場合に、元のページへのリンクが含まれます。
+</p>
+
+<p>このアドオンは、サイトツリーに右クリックメニューを追加します：</p>
+
+<h3>Revisitを有効にする</h3>
+<p>
+選択すると、使用する開始時刻と終了時刻を尋ねるポップアップが表示されます。<br>
+開始時刻は、セッション内の最初のリクエストの時刻がデフォルトとなります。<br>
+終了時刻は、セッション内の最後のリクエストの時刻がデフォルトとなります。<br>
+時刻の要素（例:「日付」）のいずれかが変更されていない場合、それらの要素は編集不可になります。<br>
+ダイアログの OK ボタンが押されると、選択されたサイトに対してRevisit機能が有効になり、サイトツリーのサイトノードに「カレンダー」アイコンが追加されます。
+</p>
+
+<h3>Revisitを無効にする</h3>
+<p>選択すると、選択されたサイトでRevisit機能が無効になります。 </p>
 
 <h2>API</h2>
-The add on supports the following API endpoints:<br><br>
-revisit / view / revisitList Returns the list of sites enabled for revisit<br>
-revisit / action / revisitSiteOn Turns revisit on for the specified site. Dates must use the format: "yyyy/MM/dd HH:mm:ss"<br> 
-revisit / action / revisitSiteOff  Turns revisit off for the specified site
+<p>このアドオンは以下のAPIエンドポイントをサポートしています：</p>
+
+<pre>
+revisit / view / revisitList: Revisitが有効になっているサイトのリストを返します<br>
+revisit / action / revisitSiteOn: 指定されたサイトのRevisitをオンにします。 日付は「yyyy/MM/dd HH:mm:ss」形式で指定する必要があります<br>
+revisit / action / revisitSiteOff: 指定されたサイトのRevisitをオフにします
+</pre>
 
 </body>
 </html>

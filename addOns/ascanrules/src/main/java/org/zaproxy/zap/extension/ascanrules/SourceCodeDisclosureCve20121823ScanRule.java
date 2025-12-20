@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -184,8 +185,8 @@ public class SourceCodeDisclosureCve20121823ScanRule extends AbstractAppPlugin
                     buildAlert(sourceCode).setMessage(attackmsg).raise();
                 }
             }
-        } catch (Exception e) {
-            LOGGER.error(
+        } catch (IOException e) {
+            LOGGER.debug(
                     "Error scanning a Host for Source Code Disclosure via CVE-2012-1823: {}",
                     e.getMessage(),
                     e);

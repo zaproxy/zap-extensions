@@ -20,15 +20,12 @@
 package org.zaproxy.zap.extension.graaljs;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.emptyOrNullString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
 
 import java.nio.file.Path;
 import java.util.Map;
-import java.util.ResourceBundle;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -46,18 +43,10 @@ class PassiveDefaultTemplateGraalJsScriptTest extends GraalJsPassiveScriptScanRu
     }
 
     @Override
-    public void shouldHaveI18nNonEmptyName(String name, ResourceBundle extensionResourceBundle) {
-        assertThat(name, is(not(emptyOrNullString())));
-    }
-
-    @Override
     public boolean isAllowedReferenceError(
             AlertReferenceError.Cause cause, String reference, Object detail) {
-        if (cause == AlertReferenceError.Cause.UNEXPECTED_STATUS_CODE && ((int) detail) == 404) {
-            // These are example.org references.
-            return true;
-        }
-        return false;
+        // These are example.org references.
+        return true;
     }
 
     @Test
@@ -70,7 +59,7 @@ class PassiveDefaultTemplateGraalJsScriptTest extends GraalJsPassiveScriptScanRu
         assertThat(alertsRaised, hasSize(1));
         Alert alert = alertsRaised.get(0);
         assertThat(alert.getPluginId(), is(equalTo(12345)));
-        assertThat(alert.getAlertRef(), is(equalTo("12345")));
+        assertThat(alert.getAlertRef(), is(equalTo("12345-1")));
         assertThat(alert.getName(), is(equalTo("Passive Vulnerability Title")));
         assertThat(alert.getDescription(), is(equalTo("Full description")));
         assertThat(alert.getSolution(), is(equalTo("The solution")));

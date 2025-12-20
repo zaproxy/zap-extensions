@@ -6,6 +6,64 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [171] - 2025-12-18
+### Changed
+- Update ChromeDriver to 143.0.7499.169.
+
+## [170] - 2025-12-16
+### Changed
+- Update ChromeDriver to 143.0.7499.146.
+
+## [169] - 2025-12-10
+### Changed
+- Update ChromeDriver to 143.0.7499.42.
+- Update minimum ZAP version to 2.17.0.
+
+## [168] - 2025-12-02
+### Changed
+- Update ChromeDriver to 143.0.7499.40.
+- Change case of macOS (Issue 9157).
+
+## [167] - 2025-11-17
+### Changed
+- Update ChromeDriver to 142.0.7444.175.
+
+## [166] - 2025-11-11
+### Changed
+- Update ChromeDriver to 142.0.7444.162.
+
+## [165] - 2025-11-05
+### Changed
+- Update ChromeDriver to 142.0.7444.61.
+
+## [164] - 2025-10-28
+### Changed
+- Update ChromeDriver to 142.0.7444.59.
+
+## [163] - 2025-10-21
+### Changed
+- Update ChromeDriver to 141.0.7390.122.
+
+## [162] - 2025-10-14
+### Changed
+- Update ChromeDriver to 141.0.7390.78.
+
+## [161] - 2025-10-09
+### Changed
+- Update ChromeDriver to 141.0.7390.76.
+
+## [160] - 2025-10-07
+### Changed
+- Update ChromeDriver to 141.0.7390.65.
+
+## [159] - 2025-09-30
+### Changed
+- Update ChromeDriver to 141.0.7390.54.
+
+## [158] - 2025-09-23
+### Changed
+- Update ChromeDriver to 140.0.7339.207.
+
 ## [157] - 2025-09-18
 ### Changed
 - Update ChromeDriver to 140.0.7339.185.
@@ -657,6 +715,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release: Firefox v0.13.0 Chrome v2.27
 
+[171]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v171
+[170]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v170
+[169]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v169
+[168]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v168
+[167]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v167
+[166]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v166
+[165]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v165
+[164]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v164
+[163]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v163
+[162]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v162
+[161]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v161
+[160]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v160
+[159]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v159
+[158]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v158
 [157]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v157
 [156]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v156
 [155]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v155

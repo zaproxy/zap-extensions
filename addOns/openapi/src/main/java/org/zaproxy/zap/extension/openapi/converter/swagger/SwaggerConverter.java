@@ -488,7 +488,7 @@ public class SwaggerConverter implements Converter {
             } else {
                 variantChecks.pathsWithNoParams.add(operation);
                 if (isContextIncludeNeeded(context, uri)) {
-                    context.addIncludeInContextRegex(uri);
+                    context.addIncludeInContextRegex(Pattern.quote(uri));
                 }
             }
         }

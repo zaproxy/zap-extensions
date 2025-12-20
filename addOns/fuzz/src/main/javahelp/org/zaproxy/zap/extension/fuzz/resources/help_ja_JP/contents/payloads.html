@@ -3,42 +3,41 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>
-Payloads dialog
+ペイロードダイアログ
 </title>
 </head>
 <body>
-<h1>Payloads dialog</h1>
-This allows you to select the payload generators to use when <a href="concepts.html">fuzzing</a> a request.
+<h1>ペイロードダイアログ</h1>
+このダイアログでは、リクエストの <a href="concepts.html">ファジング</a> 時に使用するペイロードジェネレーターを選択できます。
 <br><br>
-Payload generators generate the raw values or attacks that the fuzzer submits to the target application.
+ペイロードジェネレーターは、ファザーがターゲットアプリケーションに送信する生のデータ値または攻撃を生成します。
 <br><br>
-The following types of generators are provided by default:
+既定で提供されているジェネレーターの種類は以下のとおりです：
 <ul>
-<li>Empty/Null - generates the selected payload multiple times, leaving the message without changes. This payload generator is useful to send multiple messages that are later processed, for example, with a <a href="httpmessageprocessors.html">Fuzzer HTTP Processor (Script)</a>.</li>
-<li>File - select any local file for one off attacks</li>
-<li>File Fuzzers - select any combination of the fuzzing files registered with ZAP, e.g. via add-ons like fuzzdb</li>
-<li>Numberzz - allows to easily generate a sequence of numbers, with custom increment</li>
-<li>Regex - generate attacks based on regex patterns</li>
-<li>Strings - raw strings, which can be entered manually or pasted in</li>
-<li>Script - custom scripts that can generate any payloads required</li>
-<li>Json - generate attacks by fuzzing the provided json</li>
+<li>Empty/Null: 選択されたペイロードを複数回生成しますが、メッセージは変更されません。 このペイロードジェネレーターは、例えば <a href="httpmessageprocessors.html">ファザー HTTPプロセッサ (スクリプト)</a> などで後から処理される複数のメッセージを送信するのに役立ちます.</li>
+<li>File (ファイル): 一回限りの攻撃のために、任意のローカルファイルを選択します。</li>
+<li>File Fuzzers (ファイルファザー): ZAPに登録されているファジングファイル（例：fuzzdbのようなアドオン経由）の任意の組み合わせを選択します。</li>
+<li>Numberzz (数値): カスタムの増分値を使用して、一連の数値を簡単に生成できます。</li>
+<li>Regex (正規表現): 正規表現パターンに基づいて攻撃を生成します。</li>
+<li>Strings (文字列): 生の文字列。手動で入力するか、貼り付けることができます。</li>
+<li>Script (スクリプト): 必要な任意のペイロードを生成できるカスタムスクリプト</li>
+<li>Json: 提供されたJSONをファジングすることで攻撃を生成します。</li>
 </ul>
-You can write custom payload generator scripts - these can supply any payloads that you need.
+独自のペイロードジェネレータースクリプトを作成できます。これらは、必要なあらゆるペイロードを提供できます。
 <br><br>
-Add-ons can also define additional payload generators.
+アドオンは、追加のペイロードジェネレーターを定義することもできます。
 <br><br>
-The 'Processors...' button launches the <a href="processors.html">Payload Processors dialog</a> which allows you to
-configure payload processors that just apply to the payload generator you have selected.
+「プロセッサ…」ボタンは、 <a href="processors.html">ペイロードプロセッサダイアログ</a> を起動します。これにより、選択したペイロードジェネレーターにのみ適用されるペイロードプロセッサを設定できます。
 <br>
 
-<h2>Accessed via</h2>
+<h2>ここから参照されています</h2>
 <table>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="dialogue.html">Fuzzer dialog</a> 'Add...' button</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="dialogue.html">ファザーダイアログ</a>「追加...」ボタン</td></tr>
 </table>
 
-<h2>See also</h2>
+<h2>関連情報</h2>
 <table>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Fuzzer concepts</a></td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">ファザーの概念</a></td></tr>
 </table>
 
 </body>

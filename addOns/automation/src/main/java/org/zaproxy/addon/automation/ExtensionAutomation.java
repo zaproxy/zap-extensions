@@ -20,13 +20,12 @@
 package org.zaproxy.addon.automation;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -34,12 +33,14 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.swing.Timer;
 import org.apache.commons.httpclient.URI;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -53,6 +54,7 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
@@ -73,6 +75,8 @@ import org.zaproxy.zap.ZAP.ProcessType;
 import org.zaproxy.zap.eventBus.Event;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.script.ScriptVars;
+import org.zaproxy.zap.extension.stats.ExtensionStats;
+import org.zaproxy.zap.extension.stats.InMemoryStats;
 import org.zaproxy.zap.utils.Stats;
 
 public class ExtensionAutomation extends ExtensionAdaptor implements CommandLineListener {
@@ -109,11 +113,12 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
     private LinkedHashMap<Integer, AutomationPlan> plans = new LinkedHashMap<>();
     private List<AutomationPlan> runningPlans = Collections.synchronizedList(new ArrayList<>());
 
-    private CommandLineArgument[] arguments = new CommandLineArgument[4];
+    private CommandLineArgument[] arguments = new CommandLineArgument[5];
     private static final int ARG_AUTO_RUN_IDX = 0;
     private static final int ARG_AUTO_GEN_MIN_IDX = 1;
     private static final int ARG_AUTO_GEN_MAX_IDX = 2;
     private static final int ARG_AUTO_GEN_CONF_IDX = 3;
+    private static final int ARG_AUTO_CHECK_IDX = 4;
 
     private AutomationPanel automationPanel;
 
@@ -385,9 +390,54 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
             return progress;
         }
 
+        // Apply any configs
+        Map<String, String> configs = env.getData().getConfigs();
+        if (!configs.isEmpty()) {
+            OptionsParam options = Model.getSingleton().getOptionsParam();
+            Long errorCount = null;
+            Long warnCount = null;
+            ExtensionStats extStats =
+                    Control.getSingleton().getExtensionLoader().getExtension(ExtensionStats.class);
+            InMemoryStats inMemoryStats = null;
+            if (extStats != null) {
+                inMemoryStats = extStats.getInMemoryStats();
+                if (inMemoryStats != null) {
+                    errorCount = inMemoryStats.getStat("stats.log.error");
+                    warnCount = inMemoryStats.getStat("stats.log.warn");
+                }
+            }
+
+            for (Entry<String, String> entry : configs.entrySet()) {
+                Object current = options.getConfig().getProperty(entry.getKey());
+                options.getConfig().setProperty(entry.getKey(), entry.getValue());
+                Stats.incCounter("stats.auto.config." + entry.getKey());
+                progress.info(
+                        Constant.messages.getString(
+                                "automation.info.configset",
+                                entry.getKey(),
+                                current,
+                                entry.getValue()));
+            }
+            options.reloadConfigParamSets();
+            Control.getSingleton().getExtensionLoader().optionsChangedAllPlugin(options);
+
+            if (inMemoryStats != null) {
+                // Check for any new warnings or errors
+                if (ObjectUtils.compare(errorCount, inMemoryStats.getStat("stats.log.error"))
+                        != 0) {
+                    progress.error(
+                            Constant.messages.getString("automation.env.error.config.error"));
+                }
+                if (ObjectUtils.compare(warnCount, inMemoryStats.getStat("stats.log.warn")) != 0) {
+                    progress.warn(Constant.messages.getString("automation.env.error.config.warn"));
+                }
+            }
+        }
+
         for (AutomationJob job : jobsToRun) {
 
-            if (plan.isStopping() || (env.isTimeToQuit() && !job.isAlwaysRun())) {
+            if ((plan.isStopping() || env.isTimeToQuit())
+                    && (plan.isHardStopping() || !job.isAlwaysRun())) {
                 continue;
             }
 
@@ -442,11 +492,22 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
     }
 
     public AutomationPlan loadPlan(File f) throws IOException {
-        return new AutomationPlan(this, f);
+        return new AutomationPlan(this, f, false);
     }
 
+    /**
+     * Loads a plan from the given input stream.
+     *
+     * @param in the input stream with the plan in YAML format.
+     * @return the plan.
+     * @since 0.4.0
+     */
     public AutomationPlan loadPlan(InputStream in) {
-        return new AutomationPlan(this, in);
+        return loadPlan(in, false);
+    }
+
+    public AutomationPlan loadPlan(InputStream in, boolean quiet) {
+        return new AutomationPlan(this, in, quiet);
     }
 
     public void loadPlan(AutomationPlan plan, boolean setFocus, boolean run) {
@@ -484,50 +545,75 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
     }
 
     /**
-     * Run the automation plan define by the given file, intended only to be used from the command
-     * line
+     * Load the automation plan defined by the given file, intended only to be used from the command
+     * line.
      *
      * @param filename the name of the file
+     * @param quiet if set then will not output info messages to the console
      * @return the automation progress
      */
-    protected AutomationProgress runAutomationFile(String filename) {
+    private AutomationPlan loadAutomationFile(String filename, boolean quiet) {
         File f = new File(filename);
         if (!f.exists() || !f.canRead()) {
             CommandLine.error(
                     Constant.messages.getString("automation.error.nofile", f.getAbsolutePath()));
+            setExitStatus(ERROR_EXIT_VALUE, "no such file", false);
             return null;
         }
         try {
-            AutomationPlan plan = new AutomationPlan(this, f);
-            this.displayPlan(plan);
-            this.runPlan(plan, false);
-            AutomationProgress progress = plan.getProgress();
-
-            if (progress.hasErrors()) {
-                CommandLine.info(Constant.messages.getString("automation.out.title.fail"));
-                for (String str : progress.getErrors()) {
-                    CommandLine.info(Constant.messages.getString("automation.out.info", str));
-                }
-            }
-            if (progress.hasWarnings()) {
-                CommandLine.info(Constant.messages.getString("automation.out.title.warn"));
-                for (String str : progress.getWarnings()) {
-                    CommandLine.info(Constant.messages.getString("automation.out.info", str));
-                }
-            }
-
-            if (!progress.hasErrors() && !progress.hasWarnings()) {
-                CommandLine.info(Constant.messages.getString("automation.out.title.good"));
-            }
-            return progress;
-
+            return new AutomationPlan(this, f, quiet);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             CommandLine.error(
                     Constant.messages.getString(
                             "automation.error.unexpected", f.getAbsolutePath(), e.getMessage()));
+            setExitStatus(ERROR_EXIT_VALUE, "exception reading file", false);
             return null;
         }
+    }
+
+    /**
+     * Run the automation plan defined by the given file, intended only to be used from the command
+     * line.
+     *
+     * @param filename the name of the file
+     * @return the automation progress
+     */
+    protected AutomationProgress runAutomationFile(String filename) {
+        try {
+            return this.runAutomationPlan(this.loadAutomationFile(filename, false));
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            File f = new File(filename);
+            CommandLine.error(
+                    Constant.messages.getString(
+                            "automation.error.unexpected", f.getAbsolutePath(), e.getMessage()));
+            return null;
+        }
+    }
+
+    private AutomationProgress runAutomationPlan(AutomationPlan plan) {
+        this.displayPlan(plan);
+        this.runPlan(plan, false);
+        AutomationProgress progress = plan.getProgress();
+
+        if (progress.hasErrors()) {
+            CommandLine.info(Constant.messages.getString("automation.out.title.fail"));
+            for (String str : progress.getErrors()) {
+                CommandLine.info(Constant.messages.getString("automation.out.info", str));
+            }
+        }
+        if (progress.hasWarnings()) {
+            CommandLine.info(Constant.messages.getString("automation.out.title.warn"));
+            for (String str : progress.getWarnings()) {
+                CommandLine.info(Constant.messages.getString("automation.out.info", str));
+            }
+        }
+
+        if (!progress.hasErrors() && !progress.hasWarnings()) {
+            CommandLine.info(Constant.messages.getString("automation.out.title.good"));
+        }
+        return progress;
     }
 
     public static String getResourceAsString(String name) {
@@ -607,6 +693,14 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
                         "-autogenconf <filename>  "
                                 + Constant.messages.getString(
                                         "automation.cmdline.autogenconf.help"));
+        arguments[ARG_AUTO_CHECK_IDX] =
+                new CommandLineArgument(
+                        "-autocheck",
+                        1,
+                        null,
+                        "",
+                        "-autocheck <source>      "
+                                + Constant.messages.getString("automation.cmdline.autocheck.help"));
         return arguments;
     }
 
@@ -626,12 +720,14 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         if (arguments[ARG_AUTO_GEN_CONF_IDX].isEnabled()) {
             generateConfigFile(arguments[ARG_AUTO_GEN_CONF_IDX].getArguments().firstElement());
         }
+        if (arguments[ARG_AUTO_CHECK_IDX].isEnabled()) {
+            checkPlanCommandLine(arguments[ARG_AUTO_CHECK_IDX].getArguments().firstElement());
+        }
     }
 
-    private void runPlanCommandLine(String source) {
+    private AutomationPlan loadPlanCommandLine(String source, boolean quiet) {
         URI uri = createUri(source);
         if (uri != null) {
-            Path file;
             try {
                 HttpMessage message = new HttpMessage(uri);
                 new HttpSender(HttpSender.MANUAL_REQUEST_INITIATOR).sendAndReceive(message);
@@ -641,19 +737,22 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
                             1,
                             "non-200 response (" + statusCode + ") for remote plan: " + source,
                             true);
-                    return;
+                    return null;
                 }
 
-                file = Files.createTempFile("zap-af-plan-", ".yaml");
-                Files.write(file, message.getResponseBody().getBytes());
+                return this.loadPlan(
+                        new ByteArrayInputStream(message.getResponseBody().getBytes()), quiet);
+
             } catch (IOException e) {
                 setExitStatus(1, "I/O error getting remote plan: " + e.getMessage(), true);
-                return;
+                return null;
             }
-            source = file.toAbsolutePath().toString();
+        } else {
+            return loadAutomationFile(source, quiet);
         }
+    }
 
-        AutomationProgress progress = runAutomationFile(source);
+    private void setExitStatus(AutomationProgress progress) {
         if (exitOverride != null) {
             setExitStatus(exitOverride, "set by user", false);
         } else if (progress == null || progress.hasErrors()) {
@@ -661,6 +760,22 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         } else if (progress.hasWarnings()) {
             setExitStatus(WARN_EXIT_VALUE, "plan warnings", false);
         }
+    }
+
+    private void runPlanCommandLine(String source) {
+        AutomationPlan plan = loadPlanCommandLine(source, false);
+        if (plan != null) {
+            setExitStatus(runAutomationPlan(plan));
+        }
+    }
+
+    protected AutomationProgress checkPlanCommandLine(String source) {
+        AutomationPlan plan = loadPlanCommandLine(source, true);
+        if (plan != null) {
+            setExitStatus(plan.getProgress());
+            return plan.getProgress();
+        }
+        return null;
     }
 
     public static Integer getExitOverride() {

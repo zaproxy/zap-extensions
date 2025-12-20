@@ -7,109 +7,108 @@
 <body>
 	<h1>Selenium API</h1>
 
-	The 'selenium' API allows to set and view the paths to the required WebDrivers and
-	binary.
+	'selenium' APIを使用すると、必要なWebDriver群およびバイナリへのパスを設定および表示できます。
 
-	<h2>API actions/views</h2>
+	<h2>APIアクション/ビュー</h2>
 	<table border="2">
 		<tr>
-			<th>Name</th>
-			<th>Type</th>
-			<th>Parameters</th>
-			<th>Description</th>
+			<th>名前</th>
+			<th>タイプ</th>
+			<th>パラメーター</th>
+			<th>説明</th>
 		</tr>
 		<tr>
 			<td>getBrowserArguments</td>
-			<td>view</td>
+			<td>ビュー</td>
 			<td>browser*</td>
-			<td>Gets the browser arguments.</td>
+			<td>ブラウザ引数を取得します。</td>
 		</tr>
 		<tr>
 			<td>optionChromeBinaryPath</td>
-			<td>view</td>
+			<td>ビュー</td>
 			<td></td>
-			<td>Returns the current path to Chrome binary</td>
+			<td>現在のChromeバイナリへのパスを返します。</td>
 		</tr>
 		<tr>
 			<td>optionChromeDriverPath</td>
-			<td>view</td>
+			<td>ビュー</td>
 			<td></td>
-			<td>Returns the current path to ChromeDriver</td>
+			<td>現在のChromeDriverへのパスを返します。</td>
 		</tr>
 		<tr>
 			<td>optionFirefoxBinaryPath</td>
-			<td>view</td>
+			<td>ビュー</td>
 			<td></td>
-			<td>Returns the current path to Firefox binary</td>
+			<td>現在のFirefoxバイナリへのパスを返します。</td>
 		</tr>
 		<tr>
 			<td>optionFirefoxDriverPath</td>
-			<td>view</td>
+			<td>ビュー</td>
 			<td></td>
-			<td>Returns the current path to Firefox driver (geckodriver)</td>
+			<td>現在のFirefoxドライバー (geckodriver) へのパスを返します。</td>
 		</tr>
 		<tr>
 			<td>addBrowserArgument</td>
-			<td>action</td>
+			<td>アクション</td>
 			<td>browser* argument* enabled</td>
-			<td>Adds a browser argument.</td>
+			<td>ブラウザ引数を追加します。</td>
 		</tr>
 
 		<tr>
 			<td>launchBrowser</td>
-			<td>action</td>
+			<td>アクション</td>
 			<td>browser*</td>
-			<td>Launches a browser proxying through ZAP, for manual usage.</td>
+			<td>ZAPをプロキシとして使用してブラウザを起動し、手動で使用します。</td>
 		</tr>
 		<tr>
 			<td>removeBrowserArgument</td>
-			<td>action</td>
+			<td>アクション</td>
 			<td>browser* argument*</td>
-			<td>Removes a browser argument.</td>
+			<td>ブラウザ引数を削除します。</td>
 		</tr>
 		<tr>
 			<td>setBrowserArgumentEnabled</td>
-			<td>action</td>
+			<td>アクション</td>
 			<td>browser* argument* enabled* </td>
-			<td>Sets whether or not a browser argument is enabled.</td>
+			<td>ブラウザ引数を有効にするかどうかを設定します。</td>
 		</tr>
 		<tr>
 			<td>setOptionChromeBinaryPath</td>
-			<td>action</td>
-			<td>String*</td>
-			<td>Sets the current path to Chrome binary</td>
+			<td>アクション</td>
+			<td>文字列*</td>
+			<td>現在のChromeバイナリへのパスを設定</td>
 		</tr>
 		<tr>
 			<td>setOptionChromeDriverPath</td>
-			<td>action</td>
-			<td>String*</td>
-			<td>Sets the current path to ChromeDriver</td>
+			<td>アクション</td>
+			<td>文字列*</td>
+			<td>現在のChromeDriverへのパスを設定</td>
 		</tr>
 		<tr>
 			<td>setOptionFirefoxBinaryPath</td>
-			<td>action</td>
-			<td>String*</td>
-			<td>Sets the current path to Firefox binary</td>
+			<td>アクション</td>
+			<td>文字列*</td>
+			<td>現在のFirefoxバイナリへのパスを設定</td>
 		</tr>
 		<tr>
 			<td>setOptionFirefoxDriverPath</td>
-			<td>action</td>
-			<td>String*</td>
-			<td>Sets the current path to Firefox driver (geckodriver)</td>
+			<td>アクション</td>
+			<td>文字列*</td>
+			<td>現在のFirefoxドライバー (geckodriver) へのパスを設定</td>
 		</tr>
 	</table>
-	Starred parameters are mandatory
-	<h2>See also</h2>
+	アスタリスク (*) 付きのパラメータは必須です。 
+	<h2>関連情報</h2>
 	<table>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td><a href="intro.html">Selenium</a></td>
-			<td>for an overview of the Selenium add-on</td>
+			<td>Seleniumの概要について</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td><a href="options.html">Options Selenium screen</a></td>
-			<td>for an overview of the Selenium Options</td>
+			<td><a href="options.html">オプション - Selenium画面</a></td>
+			<td>Seleniumオプションの概要について</td>
 		</tr>
 	</table>
 

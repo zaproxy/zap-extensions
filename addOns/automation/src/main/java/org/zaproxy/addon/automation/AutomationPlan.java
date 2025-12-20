@@ -55,6 +55,7 @@ public class AutomationPlan {
     private Date started;
     private Date finished;
     private boolean stopping;
+    private boolean hardStopping;
 
     private static final Logger LOGGER = LogManager.getLogger(AutomationPlan.class);
     private static final ObjectMapper YAML_OBJECT_MAPPER;
@@ -64,7 +65,10 @@ public class AutomationPlan {
                 YAMLMapper.builder()
                         .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
                         .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
-                        .serializationInclusion(JsonInclude.Include.NON_DEFAULT)
+                        .defaultPropertyInclusion(
+                                JsonInclude.Value.construct(
+                                        JsonInclude.Include.NON_DEFAULT,
+                                        JsonInclude.Include.NON_DEFAULT))
                         .build();
         YAML_OBJECT_MAPPER.findAndRegisterModules();
     }
@@ -78,29 +82,30 @@ public class AutomationPlan {
         env.setPlan(this);
     }
 
-    public AutomationPlan(ExtensionAutomation ext, File file) throws IOException {
+    public AutomationPlan(ExtensionAutomation ext, File file, boolean quiet) throws IOException {
         super();
         this.id = nextId++;
         this.file = file;
 
         try (FileInputStream is = new FileInputStream(file)) {
-            readPlan(ext, is);
+            readPlan(ext, is, quiet);
         }
     }
 
-    public AutomationPlan(ExtensionAutomation ext, InputStream is) {
+    public AutomationPlan(ExtensionAutomation ext, InputStream is, boolean quiet) {
         this.id = nextId++;
 
-        readPlan(ext, is);
+        readPlan(ext, is, quiet);
     }
 
-    private void readPlan(ExtensionAutomation ext, InputStream is) {
+    private void readPlan(ExtensionAutomation ext, InputStream is, boolean quiet) {
         Yaml yaml = new Yaml();
         LinkedHashMap<?, ?> data = yaml.load(is);
         LinkedHashMap<?, ?> envData = (LinkedHashMap<?, ?>) data.get("env");
         ArrayList<?> jobsData = (ArrayList<?>) data.get("jobs");
 
         progress = new AutomationProgress();
+        progress.setQuietMode(quiet);
         env = new AutomationEnvironment(progress);
         env.setPlan(this);
         env.readData(envData);
@@ -322,9 +327,24 @@ public class AutomationPlan {
         return stopping;
     }
 
+    public boolean isHardStopping() {
+        return hardStopping;
+    }
+
     public void stopPlan() {
+        this.stopPlan(true);
+    }
+
+    public void stopPlan(boolean hardStop) {
         this.stopping = true;
-        getJobs().forEach(AutomationJob::stop);
+        this.hardStopping = hardStop;
+        getJobs()
+                .forEach(
+                        job -> {
+                            if (hardStop || !job.isAlwaysRun()) {
+                                job.stop();
+                            }
+                        });
     }
 
     public String toYaml() throws IOException {

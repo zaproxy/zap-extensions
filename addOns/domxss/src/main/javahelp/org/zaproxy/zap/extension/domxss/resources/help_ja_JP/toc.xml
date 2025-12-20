@@ -6,8 +6,8 @@
 <toc version="2.0">
 	<tocitem text="ZAP ユーザーガイド" tocid="toplevelitem">
 		<tocitem text="アドオン" tocid="addons">
-			<tocitem text="DOM XSS 動的 スキャン ルール" target="domxss">
-				<tocitem text="About" target="domxss.about"/>
+			<tocitem text="DOM XSS アクティブスキャンルール" target="domxss">
+				<tocitem text="このアドオンについて" target="domxss.about"/>
 			</tocitem>
 		</tocitem>
 	</tocitem>

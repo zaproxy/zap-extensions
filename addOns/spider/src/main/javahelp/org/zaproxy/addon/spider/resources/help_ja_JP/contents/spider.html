@@ -2,114 +2,84 @@
 <html>
 <head>
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
-<title>Spider</title>
+<title>スパイダー</title>
 </head>
 <body>
-	<h1>Spider</h1>
-	<p>The Spider is a tool that is used to automatically discover new
-		resources (URLs) on a particular Site. It begins with a list of URLs
-		to visit, called the seeds, which depends on how the Spider is
-		started. The Spider then visits these URLs, it identifies all the
-		hyperlinks in the page and adds them to the list of URLs to visit and
-		the process continues recursively as long as new resources are found.
+	<h1>スパイダー</h1>
+	<p>スパイダーは、特定のサイト上の新しいリソース (URL) を自動的に発見するために使用されるツールです。 これは、スパイダーがどのように開始されるかによって決まる、シードと呼ばれる訪問するURLのリストから始まります。 次に、スパイダーはこれらのURLを訪問し、ページ内のハイパーリンクをすべて特定し、それらを訪問するURLのリストに追加します。このプロセスは、新しいリソースが見つかる限り再帰的に続行されます。
 	</p>
 
-	<p>The Spider can be configured and started using the <a href="dialog.html">Spider dialogue</a>.</p>
+	<p>スパイダーは、<a href="dialog.html">スパイダー ダイアログ</a>を使用して設定および開始できます。</p>
 
-	<p>During the processing of an URL, the Spider makes a request to
-		fetch the resource and then parses the response, identifying
-		hyperlinks. It currently has the following behavior when processing
-		types of responses:</p>
+	<p>URLの処理中、スパイダーはリソースをフェッチするためのリクエストを行い、レスポンスを解析してハイパーリンクを特定します。 現在、レスポンスのタイプを処理する際には、以下の動作をします：</p>
 
 	<h4>HTML</h4>
-	Processes the specific tags, identifying links to new resources:
+	特定のタグを処理し、新しいリソースへのリンクを特定します：
 	<ul>
-		<li>Base - Proper handling</li>
-		<li>A, Link, Area, Base - 'href' attribute</li>
-		<li>Applet, Audio, Embed, Frame, IFrame, Input, Script, Img, Video - 'src' attribute</li>
-		<li>Blockquote - 'cite' attribute</li>
-		<li>Meta - 'http-equiv' for 'location', 'refresh' and 'Content-Security-Policy', 'name' for 'msapplication-config'</li>
-		<li>Applet - 'codebase', 'archive' attributes</li>
-		<li>Img - 'longdesc', 'lowsrc', 'dynsrc', 'srcset' attributes</li>
-		<li>Isindex - 'action' attribute</li>
-		<li>Object - 'codebase', 'data' attributes</li>
-		<li>Param - 'value' attribute</li>
-		<li>Svg - 'href' and 'xlink:href' attributes of 'image' and 'script' elements</li>
-		<li>Table - 'background' attribute</li>
-		<li>Video - 'poster' attribute</li>
-		<li>Form - proper handling of Forms with both GET and POST
-			method. The fields values are generated validly, including <a
-			href="http://www.w3schools.com/html5/html5_form_input_types.asp">HTML
-				5.0 input types</a> 'form', 'formaction', 'formmethod' attributes of buttons
-			are also respected.
+		<li>Base - 適切な処理</li>
+		<li>A, Link, Area, Base - 'href' 属性</li>
+		<li>Applet, Audio, Embed, Frame, IFrame, Input, Script, Img, Video - 'src' 属性</li>
+		<li>Blockquote - 'cite' 属性</li>
+		<li>Meta - 'http-equiv' の 'location', 'refresh', 'Content-Security-Policy'、'name' の 'msapplication-config'</li>
+		<li>Applet - 'codebase', 'archive' 属性</li>
+		<li>Img - 'longdesc', 'lowsrc', 'dynsrc', 'srcset' 属性</li>
+		<li>Isindex - 'action' 属性</li>
+		<li>Object - 'codebase', 'data' 属性</li>
+		<li>Param - 'value' 属性</li>
+		<li>Svg - 'image' および 'script' 要素の 'href' および 'xlink:href' 属性</li>
+		<li>Table - 'background' 属性</li>
+		<li>Video - 'poster' 属性</li>
+		<li>Form - GET および POST メソッドの両方を持つフォームの適切な処理。 <a
+			href="http://www.w3schools.com/html5/html5_form_input_types.asp">HTML 5.0 入力タイプ</a>を含め、フィールド値は有効に生成されます。ボタンの 'form', 'formaction', 'formmethod' 属性も尊重されます。
 		</li>
-		<li>Comments - Valid tags found in comments are also analyzed, if
-			specified in the <a href="options.html">Options
-				Spider screen</a>
+		<li>Comments - <a href="options.html">オプション - スパイダー画面</a>で指定されている場合、コメント内で見つかった有効なタグも解析されます。
 		</li>
-		<li>Import - 'implementation' attribute</li>
-		<li>Inline string - 'p', 'title', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', and 'blockquote' tags</li>
+		<li>Import - 'implementation' 属性</li>
+		<li>Inline string - 'p', 'title', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', および 'blockquote' タグ</li>
 	</ul>
 
-	<h4>Robots.txt file</h4>
-	If set in the
-	<a href="options.html">Options Spider
-		screen</a>, it also analyzes the 'Robots.txt' file and tries to identify
-	new resources using the specified rules. It has to be mentioned that
-	the Spider does not follow the rules specified in the 'Robots.txt'
-	file.
+	<h4>Robots.txt ファイル</h4>
+	<a href="options.html">オプション - スパイダー画面</a>で設定されている場合、'Robots.txt' ファイルも解析し、指定されたルールを使用して新しいリソースを特定しようとします。 スパイダーは 'Robots.txt' ファイルで指定されたルールに従わないことに言及しておく必要があります。
 
-	<h4>sitemap.xml file</h4>
-	If set in the <a href="options.html">Options Spider screen</a>, 
-	the Spider also analyzes the 'sitemap.xml' file and tries to identify
-	new resources.
+	<h4>sitemap.xml ファイル</h4>
+	<a href="options.html">オプション - スパイダー画面</a>で設定されている場合、'sitemap.xml' ファイルも解析し、新しいリソースを特定しようとします。
 
-	<h4>SVN metadata files</h4>
-	If set in the <a href="options.html">Options Spider screen</a>,
-	the Spider should also parse SVN metadata files and tries to 
-	identify new resources.
+	<h4>SVN メタデータファイル</h4>
+	<a href="options.html">オプション - スパイダー画面</a>で設定されている場合、スパイダーはSVNメタデータファイルも解析し、新しいリソースを特定しようとします。
 	
-	<h4>Git metadata files</h4>
-	If set in the <a href="options.html">Options Spider screen</a>,
-	the Spider should also parse Git metadata files and tries to 
-	identify new resources.
+	<h4>Git メタデータファイル</h4>
+	<a href="options.html">オプション - スパイダー画面</a>で設定されている場合、スパイダーはGitメタデータファイルも解析し、新しいリソースを特定しようとします。
 
-	<h4>.DS_Store files</h4>
-	If set in the <a href="options.html">Options Spider screen</a>,
-	the Spider should also parse .DS_Store files and tries to 
-	identify new resources.
+	<h4>.DS_Store ファイル</h4>
+	<a href="options.html">オプション - スパイダー画面</a>で設定されている場合、スパイダーは .DS_Store ファイルも解析し、新しいリソースを特定しようとします。
 
-	<h4>OData Atom Format</h4>
-	OData content using the Atom format is currently supported. All included links 
-	(relative or absolute) are processed.
+	<h4>OData Atom フォーマット</h4>
+	Atom フォーマットを使用したODataコンテンツが現在サポートされています。 含まれるすべてのリンク (相対または絶対) が処理されます。
 
-	<h4>SVG Files</h4>
-	SVG image files are parsed to identify HREF attributes and extract/resolve any contained links.
+	<h4>SVG ファイル</h4>
+	SVG画像ファイルは、HREF属性を特定し、含まれるリンクを抽出/解決するために解析されます。
 
-	<h4>Non-HTML Text Response</h4>
-	Text responses are parsed scanning for the URL pattern
+	<h4>非HTML テキストレスポンス</h4>
+	テキストレスポンスは、URLパターンをスキャンしながら解析されます。
 
-	<h4>Non-Text Response</h4>
-	Currently, the Spider does not process this type of resources.
+	<h4>非テキストレスポンス</h4>
+	現在、スパイダーはこのタイプのリソースを処理しません。
 
-	<h2>Other Aspects</h2>
+	<h2>その他の側面</h2>
 	<ul>
-	<li> When checking if an URL was already visited, the behaviour regarding how
-	parameters are handled can be configured on the Spider Options screen.
+	<li> URLがすでに訪問されたかどうかを確認する際、パラメーターがどのように処理されるかに関する動作は、スパイダー オプション画面で設定できます。
 	</li>
-	<li> When checking if an URL was already visited, there are a few common parameters
-	which are ignored: jsessionid, phpsessid, aspsessionid, utm_*
+	<li> URLがすでに訪問されたかどうかを確認する際、無視される一般的なパラメーターがいくつかあります: jsessionid, phpsessid, aspsessionid, utm_*
 	</li>
-	<li> The Spider's behaviour regarding cookies depends on how the Spider is started and which options are enabled. For more
-	details refer to the Spider Options screen.
+	<li> Cookieに関するスパイダーの動作は、スパイダーがどのように開始されるか、およびどのオプションが有効になっているかによって異なります。 詳細はスパイダー オプション画面を参照してください。
 	</li>
 	</ul>
 	<p>
-		The spider is configured using the <a
-			href="options.html">Spider Options screen</a>.
+		スパイダーは<a
+			href="options.html">スパイダー オプション画面</a>を使用して設定されます。
 	</p>
 
-	<h2>See also</h2>
+	<h2>関連情報</h2>
 	<table>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -118,14 +88,6 @@
 			<td>for an overview of the Spider Options</td>
 		</tr>
 	</table>
-
-<H2>Official Videos</H2>
-<table>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-<td><a href="https://play.sonatype.com/watch/rLq2nvgbuGwVn2BX9gA8r2">ZAP In Ten: Explore Your Applications</a> (10:36)</td></tr>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-<td><a href="https://youtu.be/mz2nhYpU-sw">ZAP Deep Dive: Exploring Applications: Standard Spider</a> (34:35)</td></tr>
-</table>
 
 </body>
 </html>

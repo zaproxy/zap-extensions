@@ -1,12 +1,12 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <HTML>
 <HEAD>
-<TITLE>Traditional XML Report with Requests and Responses</TITLE>
+<TITLE>リクエストとレスポンスを含む従来の XML レポート</TITLE>
 </HEAD>
 <BODY>
-	<H1>Traditional XML Report with Requests and Responses</H1>
+	<H1>リクエストとレスポンスを含む従来の XML レポート</H1>
 
-	<H3>Sample</H3>
+	<H3>サンプル</H3>
 
 	<pre>
         &lt;?xml version=&quot;1.0&quot;?&gt;
@@ -28,6 +28,7 @@
                                                                 
                                                                         &lt;instance&gt;
                                                                                 &lt;uri&gt;http://localhost:8080/bodgeit/js&lt;/uri&gt;
+                                                                                &lt;nodeName&gt;http://localhost:8080/bodgeit/js&lt;/nodeName&gt;
                                                                                 &lt;method&gt;GET&lt;/method&gt;
                                                                                 &lt;param&gt;&lt;/param&gt;
                                                                                 &lt;attack&gt;&lt;/attack&gt;
@@ -61,6 +62,7 @@
                                                                 
                                                                         &lt;instance&gt;
                                                                                 &lt;uri&gt;http://localhost:8080/bodgeit/js/util.js&lt;/uri&gt;
+                                                                                &lt;nodeName&gt;http://localhost:8080/bodgeit/js/util.js&lt;/nodeName&gt;
                                                                                 &lt;method&gt;GET&lt;/method&gt;
                                                                                 &lt;param&gt;&lt;/param&gt;
                                                                                 &lt;attack&gt;&lt;/attack&gt;
@@ -157,6 +159,7 @@
                                                                 
                                                         &lt;/instances&gt;
                                                         &lt;count&gt;3&lt;/count&gt;
+                                                        &lt;systemic&gt;false&lt;/systemic&gt;
                                                         &lt;solution&gt;&lt;/solution&gt;
                                                         &lt;otherinfo&gt;NOTE: Because of its name this cookie may be important, but dropping it appears to have no effect: [JSESSIONID] 
         Cookies that don&amp;apos;t have expected effects can reveal flaws in application logic. In the worst case, this can reveal where authentication via cookie token(s) is not actually enforced.

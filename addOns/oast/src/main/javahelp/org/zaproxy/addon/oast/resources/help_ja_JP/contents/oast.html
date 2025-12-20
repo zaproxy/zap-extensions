@@ -3,42 +3,43 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>
-        Out-of-band Application Security Testing Support
+        アウトオブバンドアプリケーションセキュリティテストのサポート
     </title>
 </head>
 <body>
-<h1>Out-of-band Application Security Testing Support</h1>
+<h1>アウトオブバンドアプリケーションセキュリティテストのサポート</h1>
 
-The OAST Support add-on allows you to detect and exploit out-of-band vulnerabilities in web applications.
+OASTサポートアドオンを使用すると、Webアプリケーションにおけるアウトオブバンド脆弱性を検出および検証できます。
 
-<h2>Services</h2>
-For a list of the supported services, see the <a href="services/services.html">OAST Services</a> page.
+<h2>サービス</h2>
+サポートされているサービスのリストについては、<a href="services/services.html">OASTサービス</a>のページを参照してください。
 
-<h2>Context Menu</h2> 
-A context menu, "Insert OAST Payload", is available in editable text components that allow to insert new payloads from the supported OAST services.
+<h2>コンテキストメニュー</h2> 
+「OASTペイロードを挿入」というコンテキストメニューが、サポートされているOASTサービスから新しいペイロードを挿入するために利用できる編集可能なテキストコンポーネント内で利用可能です。
 
-<h2>Scripts</h2>
-If the <em>Script Console</em> and the <em>GraalVM JavaScript</em> add-ons are installed, a new Extender script template
-called "OAST Request Handler.js" is added to ZAP. Using this template, you can create a script that performs an action
-whenever an out-of-band request is discovered. This action could be anything like sending yourself an email or
-executing another script in ZAP.
+<h2>スクリプト</h2>
+<em>スクリプトコンソール</em>および<em>GraalVM JavaScript</em>アドオンがインストールされている場合、「OAST Request Handler.js」という新しいエクステンダースクリプトテンプレートがZAPに追加されます。 このテンプレートを使用すると、アウトオブバンドリクエストが発見されたときにアクションを実行するスクリプトを作成できます。 このアクションは、自分自身にメールを送信する、またはZAP内で別のスクリプトを実行するといった、あらゆるものが考えられます。
 
-<H2>See also</H2>
+<h2>アラート</h2>
+
+OASTを利用するスキャンルールは、アウトオブバンドで発生し遅延する可能性があるため、すぐに表示されない、または特定のアクティブスキャンに関連付けられないアラートを生成することがあります。
+
+<H2>関連情報</H2>
 <table>
 	<tr>
 		<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 		<td><a href="api.html">OAST API</a></td>
-		<td>for more details about the OAST API</td>
+		<td>OAST APIの詳細情報</td>
 	</tr>
 	<tr>
 		<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-		<td><a href="options.html">OAST Options</a></td>
-		<td>for more details about the OAST Options</td>
+		<td><a href="options.html">OASTオプション</a></td>
+		<td>OASTオプションの詳細情報</td>
 	</tr>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
         <td>
-            <a href="tab.html">OAST Tab</a></td>
+            <a href="tab.html">OAST タブ</a></td>
         <td>&nbsp;</td>
     </tr>
 </table>

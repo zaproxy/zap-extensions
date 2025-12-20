@@ -3,30 +3,27 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>
-        Tabbed Output Panel
+        タブ付き出力パネル
     </title>
 </head>
 <body>
-<h1>Tabbed Output Panel</h1>
+<h1>タブ付き出力パネル</h1>
 
-The Common Library add-on provides a tabbed output panel that replaces the default output panel in ZAP.
-This allows other add-ons to optionally log messages under named tabs in the output panel.
-If a name is not provided, messages are shown under the "General" tab and exceptions are shown under the "Errors" tab
-by default.
-
-<p>
-While the Output tab itself can be detached, the tabs within the Output tab can also be detached if desired.
-To detach a tab, right click on it and select "Move Tab to New Window" in the context menu that pops up.
+共通ライブラリ (Common Library) アドオンは、ZAP のデフォルト出力パネルを置き換えるタブ付き出力パネルを提供します。
+これにより、他のアドオンはオプションで出力パネル内の名前付きタブの下にメッセージをログ出力できます。
+名前が指定されない場合、メッセージはデフォルトで「一般」タブの下に表示され、例外は「エラー」タブの下に表示されます。
 
 <p>
-Right-clicking within the body of a tab will display a context menu with relevant options such as Copy and Find.
-All standard shortcuts (such as Ctrl/Cmd + A/C/F), should work as expected too.
+出力タブ自体をデタッチ可能ですが、出力タブ内のタブも必要に応じてデタッチできます。
+タブをデタッチするには、それを右クリックし、表示されるコンテキストメニュー (右クリックメニュー) から「タブを新しいウィンドウに移動」を選択します。
 
 <p>
-Whenever new output is appended to any tab, a green dot will appear over the tab icon as well as the output panel
-icon to indicate that there is new content.
-The green dot will disappear from the tab when the content is viewed, and from the output panel when new content
-from all tabs (including detached tabs) has been seen.
+タブの本体内で右クリックすると、コピー や 検索 などの関連オプションを含むコンテキストメニューが表示されます。
+すべての標準ショートカットキー (Ctrl/Cmd + A/C/F など) も期待通り動作します。
+
+<p>
+新しい出力がどのタブにも追加されるたびに、緑色のドットがタブアイコンおよび出力パネルアイコンの上に表示され、新しいコンテンツがあることを示します。
+この緑色のドットは、コンテンツが閲覧されたときにタブから消え、すべてのタブ (デタッチされたタブを含む) からの新しいコンテンツが閲覧されたときに出力パネルから消えます。
 
 </body>
 </html>

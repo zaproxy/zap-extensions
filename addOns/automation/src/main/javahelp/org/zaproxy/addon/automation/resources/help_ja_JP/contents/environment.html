@@ -2,107 +2,125 @@
 <HTML>
 <HEAD>
 <TITLE>
-Automation Framework - Environment
+自動化フレームワーク - 環境
 </TITLE>
 </HEAD>
 <BODY>
-<H1>Automation Framework - Environment</H1>
+<H1>自動化フレームワーク - 環境</H1>
 
-This section of the YAML configuration file defines the applications which the rest of the jobs can act on.
+このYAML設定ファイルのセクションでは、残りのジョブが操作できるアプリケーションを定義します。
 <p>
-The environment is covered in the video: <a href="https://youtu.be/1fcpU54N-mA">ZAP Chat 08 Automation Framework Part 2 - Environment</a>.
+環境については、こちらの動画で解説されています: <a href="https://youtu.be/1fcpU54N-mA">ZAP Chat 08 Automation Framework Part 2 - Environment</a>。
 <p>
-The Automation Framework supports all of the <a href="authentication.html">authentication</a> mechanisms supported by ZAP.
+自動化フレームワークは、ZAPでサポートされているすべての<a href="authentication.html">認証</a>メカニズムをサポートしています。
 <p>
-<strong>Note</strong> When testing targets that operate on default ports (80 for http, 443 for https), the colon port portion of the URL should not be included.
-Including that portion (for example: http://example.com:80) may result in an inability to crawl or test the target. If a 'default' port is specified both 
-browsers and ZAP treat it without the default port being included then it doesn't match the expectation within the Context and there's nothing to interact with 
-as part of the Context.
+<strong>注:</strong> デフォルトポート (httpの場合は80、httpsの場合は443) で動作するターゲットをテストする場合、URLのコロン付きポート部分は含めないでください。
+その部分を含めた場合 (例: http://example.com:80)、ターゲットのクロールやテストができなくなる可能性があります。 「デフォルト」ポートが指定されている場合、ブラウザとZAPはそのポート番号を省略して扱います。その結果、コンテキスト内で期待されるURLと一致せず、コンテキストの一部として操作できなくなります。
 
 <pre>
-env:                                   # The environment, mandatory
-  contexts :                           # List of 1 or more contexts, mandatory
-    - name: context 1                  # Name to be used to refer to this context in other jobs, mandatory
-      urls:                            # A mandatory list of top level urls, everything under each url will be included
-      includePaths:                    # An optional list of regexes to include
-      excludePaths:                    # An optional list of regexes to exclude
+env:                                   # 環境、必須
+  contexts :                           # 1つ以上のコンテキストのリスト、必須
+    - name: context 1                  # 他のジョブでこのコンテキストを参照するために使用される名前、必須
+      urls:                            # トップレベルURLの必須リスト、各URL配下のすべてが含まれます
+      includePaths:                    # 含める正規表現のオプションリスト
+      excludePaths:                    # 除外する正規表現のオプションリスト
       authentication:
-        method:                        # String, one of 'manual', 'http', 'form', 'json', 'script', "autodetect", "browser", or "client"
-        parameters:                    # May include any required for scripts. All of the parameters support vars except for the port 
-          hostname:                    # String, only for 'http' authentication
-          port:                        # Int, only for 'http' authentication
-          realm:                       # String, only for 'http' authentication
-          loginPageUrl:                # String, the login page URL to read prior to making the request, only for 'form' or 'json' authentication
-          loginRequestUrl:             # String, the login URL to request, only for 'form' or 'json' authentication
-          loginRequestBody:            # String, the login request body - if not supplied a GET request will be used, only for 'form' or 'json' authentication
-          script:                      # String, path to script, only for 'script' authentication
-          scriptInline:                # String, the full script (may be multi-line) - supply this or 'script' not both. Only for 'script' authentication
-          scriptEngine:                # String, the name of the script engine to use, only for 'script' authentication
+        method:                        # 文字列、'manual'、'http'、'form'、'json'、'script'、"autodetect"、"browser"、"client"のいずれか
+        parameters:                    # スクリプトに必要なものを含めることができます。 ポート以外のすべてのパラメーターは変数をサポートしています
+          hostname:                    # 文字列、'http'認証の場合のみ
+          port:                        # 整数、'http'認証の場合のみ
+          realm:                       # 文字列、'http'認証の場合のみ
+          loginPageUrl:                # 文字列、リクエストを行う前に読み込むログインページURL、'form'または'json'認証の場合のみ
+          loginRequestUrl:             # 文字列、リクエストするログインURL、'form'または'json'認証の場合のみ
+          loginRequestBody:            # 文字列、ログインリクエストボディ - 指定しない場合GETリクエストが使用されます、'form'または'json'認証の場合のみ
+          script:                      # 文字列、スクリプトへのパス、'script'認証の場合のみ
+          scriptInline:                # 文字列、完全なスクリプト (複数行可) - 'script'とこちらのどちらか一方を指定してください。 'script'認証の場合のみ
+          scriptEngine:                # 文字列、使用するスクリプトエンジンの名前、'script'認証の場合のみ
         verification:
-          method:                      # String, one of 'response', 'request', 'both', 'poll'
-          loggedInRegex:               # String, regex pattern for determining if logged in
-          loggedOutRegex:              # String, regex pattern for determining if logged out
-          pollFrequency:               # Int, the poll frequency, only for 'poll' verification
-          pollUnits:                   # String, the poll units, one of 'requests', 'seconds', only for 'poll' verification
-          pollUrl:                     # String, the URL to poll, only for 'poll' verification
-          pollPostData:                # String, post dat to include in the poll, only for 'poll' verification
-          pollAdditionalHeaders:       # List of additional headers for poll request, only for 'poll' verification
-          - header:                    # The header name
-            value:                     # The header value
+          method:                      # 文字列、'response'、'request'、'both'、'poll'のいずれか
+          loggedInRegex:               # 文字列、ログイン状態を判定するための正規表現パターン
+          loggedOutRegex:              # 文字列、ログアウト状態を判定するための正規表現パターン
+          pollFrequency:               # 整数、ポーリング頻度、'poll'検証の場合のみ
+          pollUnits:                   # 文字列、ポーリング単位、'requests'、'seconds'のいずれか、'poll'検証の場合のみ
+          pollUrl:                     # 文字列、ポーリングするURL、'poll'検証の場合のみ
+          pollPostData:                # 文字列、ポーリングに含めるPOSTデータ、'poll'検証の場合のみ
+          pollAdditionalHeaders:       # ポーリングリクエストの追加ヘッダーのリスト、'poll'検証の場合のみ
+          - header:                    # ヘッダー名
+            value:                     # ヘッダー値
       sessionManagement:
-        method:                        # String, one of 'cookie', 'http', 'script'
-        parameters:                    # List of 0 or more parameters - may include any required for scripts
-          script:                      # String, path to script, only for 'script' session management
-          scriptEngine:                # String, the name of the script engine to use, only for 'script' session management
+        method:                        # 文字列、'cookie'、'http'、'script'のいずれか
+        parameters:                    # パラメーターのリスト - スクリプトに必要なものを含めることができます
+          script:                      # 文字列、スクリプトへのパス、'script'セッション管理の場合のみ
+          scriptEngine:                # 文字列、使用するスクリプトエンジンの名前、'script'セッション管理の場合のみ
       technology:
-        exclude:                       # List of tech to exclude, as per https://www.zaproxy.org/techtags/ (just use last names)
-        include:                       # List of tech to include, should only be used when targeting specific techs, the exclude takes precedence when configuring the context.
+        exclude:                       # 除外する技術のリスト、https://www.zaproxy.org/techtags/ を参照 (末尾の名前のみを使用)
+        include:                       # 含める技術のリスト、特定の技術をターゲットとする場合にのみ使用してください。コンテキスト設定時はexcludeが優先されます
       structure:
-        structuralParameters:          # List of names of structural parameters
-        dataDrivenNodes:               # List of data driven nodes
-        - name:                        # String, name of the data driven node
-          regex:                       # String, regex of the data driven node, must contain 2 or 3 regex groups
-      users:                           # List of one or more users available to use for authentication
-      - name:                          # String, the name to be used by the jobs
-        credentials:                   # List of user credentials - may include any required for scripts
-          username:                    # String, the username to use when authenticating, vars supported
-          password:                    # String, the password to use when authenticating, vars supported
-          totp:                        # The TOTP data, supported by Browser Based Authentication.
-            secret:                    # String, the secret.
-            period:                    # Int, the period. Default: 30
-            digits:                    # Int, the number of digits. Default: 6
-            algorithm:                 # String, the algorithm. Default: SHA1
-  vars:                                # List of 0 or more custom variables to be used throughout the config file
-    myVarOne: CustomConfigVarOne       # Can be used as ${myVarOne} anywhere throughout the config
-    myVarTwo: ${myVarOne}.VarTwo       # Can refer other vars
+        structuralParameters:          # 構造パラメーターの名前のリスト
+        dataDrivenNodes:               # データ駆動ノードのリスト
+        - name:                        # 文字列、データ駆動ノードの名前
+          regex:                       # 文字列、データ駆動ノードの正規表現、2つまたは3つの正規表現グループを含む必要があります
+      users:                           # 認証に使用可能な1人以上のユーザーのリスト
+      - name:                          # 文字列、ジョブで使用される名前
+        credentials:                   # ユーザー認証情報のリスト - スクリプトに必要なものを含めることができます
+          username:                    # 文字列、認証時に使用するユーザー名、変数サポート
+          password:                    # 文字列、認証時に使用するパスワード、変数サポート
+          totp:                        # TOTPデータ、ブラウザベース認証でサポート
+            secret:                    # 文字列、シークレット
+            period:                    # 整数、期間。 デフォルト: 30
+            digits:                    # 整数、桁数。 デフォルト: 6
+            algorithm:                 # 文字列、アルゴリズム。 デフォルト: SHA1
+  vars:                                # 設定ファイル全体で使用される0個以上のカスタム変数のリスト
+    myVarOne: CustomConfigVarOne       # 設定全体で${myVarOne}として使用可能
+    myVarTwo: ${myVarOne}.VarTwo       # 他の変数を参照可能
+  configs:                             # ZAPの "-config" コマンドラインオプションに基づく、汎用設定パラメーターの一覧
   parameters:
-    failOnError: true                  # If set exit on an error
-    failOnWarning: false               # If set exit on a warning
-    continueOnFailure: false           # Continue running all jobs, even if one fails
-    progressToStdout: true             # If set will write job progress to stdout
-  proxy:                               # Optional upstream proxy settings
-    hostname:                          # String, the proxy host
-    port:                              # Int, the proxy port
-    realm:                             # String, the proxy realm
-    username:                          # String, the proxy username
-    password:                          # String, the proxy password
+    failOnError: true                  # 設定した場合、エラー時に終了
+    failOnWarning: false               # 設定した場合、警告時に終了
+    continueOnFailure: false           # 1つのジョブが失敗してもすべてのジョブを実行し続ける
+    progressToStdout: true             # 設定した場合、ジョブの進捗状況を標準出力に書き込む
+  proxy:                               # オプションのアップストリームプロキシ設定
+    hostname:                          # 文字列、プロキシホスト
+    port:                              # 整数、プロキシポート
+    realm:                             # 文字列、プロキシレルム
+    username:                          # 文字列、プロキシユーザー名
+    password:                          # 文字列、プロキシパスワード
 </pre>
 
-<h3>Variables</h3>
+<h3>変数</h3>
 
-Variables can be defined in the 'vars' section.
-They can be hardcoded, refer to other variables or refer to system environment variables in the same way as above, e.g. '${envvar}'. 
-In case there are two variables with the same name, the value of the system variable would be preferred. 
-  
-<h3>Format Changes</h3>
+変数は 'vars' セクションで定義できます
+変数はハードコード、他の変数の参照、または上記と同様にシステム環境変数の参照が可能です (例: '${envvar}')。 
+同じ名前の変数が2つある場合、システム変数の値が優先されます。 
 
-Originally the 'engine' and 'scriptEngine' fields were directly under the 'sessionManagement' element - this is still supported when reading plans but they
-will now always be output under the 'parameters' element.
+<h3>Configs</h3>
+
+configs セクションは、ZAP設定ファイルで設定できる任意の値を定義するために使用できます。これは ZAP の -config コマンドラインオプションと同じように動作します。
 <p>
-Originally the 'username' and 'password' fields were directly under the user element - this is still supported when reading plans but they
-will now always be output under the 'credentials' element.
+コマンドラインの代わりにこのセクションを使用する利点は次のとおりです：
+<ol>
+<li>設定はプラン内で自己完結します
+<li>ZAP チームは (テレメトリが有効な場合) この方法で使用されるキーを監視し、最も頻繁に使用されるキーに対する完全なサポートの追加を優先します
+<li>使用されているキーにより良い解決策が利用可能な場合、警告が発行されます
+</ol>
+
+キーと値の検証は行われないため、設定が正しいことをご自身で確認する必要があります。 無効なキーは警告なく無視されます。
 <p>
-When specifying technology the tech names are given on https://www.zaproxy.org/techtags/ - only specify the last name, e.g. "C".
+キーを決定するための推奨される方法は、FAQ: <a href="https://www.zaproxy.org/faq/how-do-you-find-out-what-key-to-use-to-set-a-config-value-on-the-command-line/">How do you find out what key to use to set a config value on the command line?</a> に記載されています
+<p>
+パッシブスキャンスレッド数を設定する動作例は次のとおりです：
+<pre>
+configs:
+  pscans.threads: 8
+</pre> 
+
+<h3>フォーマットの変更</h3>
+
+元々、'engine' および 'scriptEngine' フィールドは 'sessionManagement' 要素の直下にありました - これはプラン読み込み時には引き続きサポートされますが、現在は常に 'parameters' 要素の下に出力されます。
+<p>
+元々、'username' および 'password' フィールドは user 要素の直下にありました - これはプラン読み込み時には引き続きサポートされますが、現在は常に 'credentials' 要素の下に出力されます。
+<p>
+テクノロジーを指定する場合、テクノロジー名は https://www.zaproxy.org/techtags/ に記載されています - 末尾の名前のみを指定してください (例: "C")。
 
 </BODY>
 </HTML>

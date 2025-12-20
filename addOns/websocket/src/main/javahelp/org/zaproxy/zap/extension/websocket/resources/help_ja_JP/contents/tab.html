@@ -10,47 +10,43 @@ WebSocketタブ
 <h1>WebSocketタブ</h1>
 
 <p>
-The WebSockets tab displays all messages from WebSocket connections.
-While ZAP is active, visit e.g.: <a href="http://browserquest.mozilla.org/">Mozilla's BrowserQuest</a>
-to see WebSockets in action.
+WebSocketタブには、すべてのWebSocket接続メッセージが表示されます。 ZAPがアクティブな間に、例えば <a href="http://browserquest.mozilla.org/">Mozilla's BrowserQuest</a> にアクセスして、WebSocketの動作を確認できます。
 </p>
 
-<h2>フィルタ</h2>
-	<h3>チャンネル セレクタ</h3>
-		You can restrict the display of messages to one specific WebSocket
-		channel or all.
+<h2>フィルター</h2>
+	<h3>チャネルセレクター</h3>
+	<p>
+		表示するメッセージを、特定の単一WebSocketチャネルに限定したり、すべてのチャネルを表示したりできます。
 		<br>
-		If you select a specific channel, then the <i>Show handshake</i> button
-		(<img src="images/handshake.png" align="bottom" width="16" height="16" />)
-		becomes enabled. When you click on it, the corresponding HTTP handshake is
-		shown in the Request/Response tab.
+特定のチャネルを選択すると、<i>ハンドシェイクを表示</i>ボタン (<img src="images/handshake.png" align="bottom" width="16" height="16" />) が有効になります。 このボタンをクリックすると、対応するHTTPハンドシェイクが リクエスト/レスポンス タブに表示されます。
+	</p>
 
-	<h3>フィルタ ダイアログ</h3>
-		In the filter dialog (<img src="images/054.png" align="bottom" width="16" height="16" />)
-		you can further control which messages are displayed.
+	<h3>フィルターダイアログ</h3>
+	<p>
+		フィルターダイアログ (<img src="images/054.png" align="bottom" width="16" height="16" />) では、表示するメッセージをさらに詳細に制御できます。
+	</p>
 
-<br><br>
 <h2>ブレークポイント</h2>
-	You can set custom breakpoints using the <i>Add Custom Breakpoints</i>
-	button (<img src="images/break_add.png" align="bottom" width="16" height="16" />).
+<p>
+	<i>カスタムブレークポイントを追加</i>ボタン (<img src="images/break_add.png" align="bottom" width="16" height="16" />) を使用して、カスタムブレークポイントを設定することができます。
 	<br>
-	Alternatively you can use the <i>右クリック メニュー</i>.
+または、<i>右クリックメニュー</i>を利用することもできます.
+</p>
 
-<br><br>
-<h2>右クリック メニュー</h2>
-	Right clicking on a WebSocket message will bring up a menu which will
-	allow you to:
+<h2>右クリックメニュー</i>を使用することもできます<i></h2>
+<p>
+	WebSocketメッセージを右クリックすると、以下の操作を可能にするメニューが表示されます：
+</p>
 
-	<h3>Exclude from WebSocket</h3>
-		WebSocket connections can be excluded from the WebSockets tab by adding
-		an excluded URL to the
-		<i>セッション・プロパティ</i>. Clicking on
-		this item, brings up the session properties with the URL pre-filled.
-		Excluding a WebSocket connection will not result in closing the
-		connection, but in forwarding them without further processing.
+	<h3>WebSocketから除外</h3>
+	<p>
+		WebSocket接続は除外対象のURLを<i>セッションプロパティ</i>に追加することで、WebSocketタブから除外できます。 この項目をクリックすると、URLが事前に入力された状態でセッションプロパティが表示されます。
+		WebSocket接続を除外してもその接続は閉じられず、それ以降の処理なしで転送されます。
+	</p>
 
 	<h3>ブレーク...</h3>
-		This will bring up the
-		<i>ブレークポイントダイアログを追加</i> which allows you to set up a custom break point.
+	<p>
+		これにより、<i>ブレークポイントの追加</i>ダイアログが表示され、カスタムブレークポイントを設定することができます。
+	</p>
 </body>
 </html>

@@ -2,60 +2,78 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Options Forced Browse screen</title>
+<title>オプション - 強制ブラウズ画面</title>
 </head>
 <body>
-	<h1>Options Forced Browse screen</h1>
+	<h1>オプション - 強制ブラウズ画面</h1>
 	<p>
-		This screen allows you to configure the <a href="concepts.html">Forced Browse</a>
-		options:
-	<h3>Concurrent scanning threads per host</h3>
-	The number of threads the scanner will use per host.
-	<br> Increasing the number of threads will speed up the scan but may put extra
-	strain on the computer ZAP is running on and the target host.
+		この画面では、<a href="concepts.html">強制ブラウズ</a>のオプションを設定できます：
+<h3>ホストあたりの並列スキャンスレッド数</h3>
+スキャナーがホストあたりに使用するスレッドの数です。
+	<br>
+スレッド数を増やすとスキャンは高速化されますが、ZAPを実行しているコンピューターとターゲットホストの両方に余分な負荷がかかる可能性があります。
 
-	<h3>Recursive</h3>
-	If checked then the scanner will recurse through all of the sub-directories found.
-	<br> This may take a long time.
+	<h3>再帰的</h3>
+チェックされている場合、スキャナーは見つかったすべてのサブディレクトリを再帰的に探索します。
+	<br>
+これには長い時間がかかる場合があります。
 
-	<h3>Default file</h3>
-	The default file selected when ZAP starts.
+	<h3>デフォルトファイル</h3>
+ZAPの起動時に選択されるデフォルトファイルです。
 
-	<h3>Add custom Forced Browse file</h3>
-	Allows you to add your own files to be used when brute forcing files and directories.
-	<br> These should be text files with one file or directory name per line.
-	<br> Files are added to the 'dirbuster' directory underneath the ZAP home directory.
+	<h3>カスタム強制ブラウズファイルを追加</h3>
+ファイルやディレクトリを総当たり探索する際に使用する独自のファイルを追加できます。
+	<br>
+これらは、1行に1つのファイル名またはディレクトリ名を含むテキストファイルである必要があります。
+	<br>
+ファイルはZAPのホームディレクトリ直下にある「dirbuster」ディレクトリに追加されます。
 
-    <h3>Force Browse files without extension</h3>
-    If selected then in addition to brute forcing directories, files without extension will also be brute forced.
-    <br> The URI of the file to be brute forced is derived by appending to the base path the entries of the selected forced browse text file.
-    <br> By default this option is unchecked.
-    <br> Enabling this will increase the scanning time.
+    <h3>拡張子のないファイルを強制ブラウズ</h3>
+選択されている場合、ディレクトリのブルートフォースに加えて、拡張子のないファイルもブルートフォースされます。
+    <br>
+選択した強制ブラウズのテキストファイルのエントリをベースパスに追加することで、ブルートフォースされるファイルのURIが導出されます。
+    <br>
+デフォルトでは、このオプションはチェックされていません。
+    <br>
+これを有効にすると、スキャン時間が増加します。
 
-	<h3>Force Browse files</h3>
-	If checked then in addition to brute forcing directories, the files will also be brute forced.
-    <br> The URI of the file to be brute forced is derived by appending given extensions to the entries of selected forced browse text file.
-    <br> Users do not need to worry whether the entry already ends with an extension or not. The conflict is handled internally.
-    <br> By default this option is unchecked.
-    <br> Enabling this will increase the scanning time.
+	<h3>ファイルも強制ブラウズ</h3>
+チェックされている場合、ディレクトリのブルートフォースに加えて、ファイルもブルートフォースされます。
+    <br>
+ブルートフォースされるファイルのURIは、選択された強制ブラウズテキストファイルのエントリに指定された拡張子を追加することによって導出されます。
+    <br>
+ユーザーは、エントリがすでに拡張子で終わっているかどうかを心配する必要はありません。 重複はZAP内部で処理されます。
+    <br>
+デフォルトでは、このオプションはチェックされていません。
+    <br>
+これを有効にすると、スキャン時間が増加します。
     
-    <h3>File extensions</h3>
-    If Force Browse files option is checked, then you can specify the file extensions that need to be brute forced.
-    <br> When specifying multiple extensions separate each extension with a comma(,).
-    <br> If no value is specified, "php" will be used as the default extension.
+    <h3>ファイル拡張子</h3>
+「ファイルも強制ブラウズ」オプションがチェックされている場合、ブルートフォースする必要のあるファイル拡張子を指定できます。
+    <br>
+複数の拡張子を指定する場合は、各拡張子をコンマ (,) で区切ります。
+    <br>
+値が指定されていない場合は、「php」がデフォルトの拡張子として使用されます。
     
-    <h3>File extensions to ignore</h3>
-    The scanner parses the response body to filter existing links.
-    <br> The extracted links are then used to make new requests.
-    <br> If file extensions to ignore is specified then links ending with those extensions are ignored from making requests.
-    <br> When specifying multiple extensions separate each extension with a comma(,).
-    <br> By default, this is set to "jpg, gif, jpeg, ico, tiff, png, bmp".
+    <h3>無視するファイル拡張子</h3>
+スキャナーは、レスポンスボディを解析して、既存のリンクをフィルタリングします。
+    <br>
+抽出されたリンクは、新しいリクエストを行うために使用されます。
+    <br>
+無視するファイル拡張子が指定されている場合、それらの拡張子で終わるリンクはリクエストの作成から無視されます。
+    <br>
+複数の拡張子を指定する場合は、各拡張子をコンマ (,) で区切ります。
+    <br>
+デフォルトでは、「jpg, gif, jpeg, ico, tiff, png, bmp」に設定されています。
     
-    <h3>Fail Case String</h3>
-    The scanner will request for every file type in every directory that it finds with the given fail case string appended.
-    <br> The response from this page is used to determine whether or not a guessed file/directory is there.
-    <br> By default, this is set to "thereIsNoWayThat-You-CanBeThere".
-    <br> If you’re getting strange results, consider changing this.
+    <h3>失敗ケース文字列</h3>
+スキャナーは、見つかったすべてのディレクトリ内のすべてのファイルに対して、指定された失敗ケース文字列を付加してリクエストを行います。
+    <br>
+このページからのレスポンスは、推測されたファイル/ディレクトリが存在するかどうかを判断するために使用されます。
+    <br>
+デフォルトでは、「thereIsNoWayThat-You-CanBeThere」に設定されています。
+    <br>
+予期せぬ結果が得られる場合は、この設定を変更することを検討してください。
   
 </body>
 </html>

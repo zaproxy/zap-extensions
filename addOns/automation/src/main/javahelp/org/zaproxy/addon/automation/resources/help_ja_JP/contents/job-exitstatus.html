@@ -2,37 +2,33 @@
 <HTML>
 <HEAD>
 <TITLE>
-Automation Framework - exitStatus Job
+自動化フレームワーク - exitStatus ジョブ
 </TITLE>
 </HEAD>
 <BODY>
-<H1>Automation Framework - exitStatus Job</H1>
+<H1>自動化フレームワーク - exitStatus ジョブ</H1>
 
-This job sets <a href="automation.html#exit-codes">ZAP's exit code</a> based on scan results.
-It also allows you to choose which exit values are used.
-It should typically be the last job in a plan.
+このジョブは、スキャン結果に基づいて<a href="automation.html#exit-codes">ZAPの終了コード</a>を設定します。
+また、どの終了値を使用するかを選択できます。
+通常、これはプランの最後のジョブとして設定する必要があります。
 <p>
-If warnLevel or errorLevel are set then the job will report a warning or error if any alerts
-are raised which have the same risk level or greater.
+warnLevel または errorLevel が設定されている場合、このジョブは、そのリスクレベル以上のアラートが1つでも発生した場合に警告またはエラーを報告します。
 <p>
-By default when ZAP is run with the <code>-cmd</code> and <code>-autorun</code> options then it will
-exit with a 1 if there are any errors, with a 2 if there are any warnings, and if everything is ok
-then it will exit with a 0.
-These values can be overriden by the <code>*ExitValue</code> options. The <code>*ExitValues</code> can be used together 
-with the warn/errorLevel or completely independently of them.
+デフォルトでは、ZAPが <code>-cmd</code> および <code>-autorun</code> オプションで実行された場合、エラーがあれば 1 で、警告があれば 2 で終了し、すべて正常な場合は 0 で終了します。
+これらの値は、<code>*ExitValue</code> オプションで上書きできます。 <code>*ExitValues</code>は、warn/errorLevel と併用することも、それらとは完全に独立して使用することもできます。
 
 <H2>YAML</H2>
 
 <pre>
-  - type: exitStatus                   # Sets the exit code based on scan results
+  - type: exitStatus                   # スキャン結果に基づいて終了コードを設定します
     parameters:
-      errorLevel:                      # String: Informational, Low, Medium, High, default: not set
-      warnLevel:                       # String: Informational, Low, Medium, High, default: not set
-      okExitValue:                     # Integer: Exit value if all ok, default 0
-      errorExitValue:                  # Integer: Exit value if there are errors, default 1
-      warnExitValue:                   # Integer: Exit value if there are warnings, default 2
-    enabled:                           # Bool: If set to false the job will not be run, default: true
-    alwaysRun:                         # Bool: If set and the job is enabled then it will run even if the plan exits early, default: false
+      errorLevel:                      # 文字列: Informational、Low、Medium、High のいずれか。デフォルト: 設定なし
+      warnLevel:                       # 文字列: Informational、Low、Medium、High のいずれか。デフォルト: 設定なし
+      okExitValue:                     # 整数: すべて問題ない場合の終了値、デフォルト: 0
+      errorExitValue:                  # 整数: エラーがある場合の終了値、デフォルト: 1
+      warnExitValue:                   # 整数: 警告がある場合の終了値、デフォルト: 2
+    enabled:                           # Bool: falseに設定されている場合、ジョブは実行されません。デフォルト: true
+    alwaysRun:                         # Bool: 設定され、ジョブが有効な場合、プランが早期に終了しても実行されます。デフォルト: false
  </pre>
 
 </BODY>

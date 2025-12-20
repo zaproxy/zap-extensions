@@ -2,59 +2,59 @@
 <HTML>
 <HEAD>
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
-<TITLE>GraphQL Variant</TITLE>
+<TITLE>GraphQL バリアント</TITLE>
 </HEAD>
 <BODY>
-	<H1>GraphQL Variant</H1>
+	<H1>GraphQL バリアント</H1>
 
-	The GraphQL variant is responsible for two things:
+	GraphQLバリアントは、以下の2つの役割を担っています：
 	<ol>
-		<li>Correctly representing the nodes for a GraphQL request in the sites tree.</li>
-		<li>Allow injecting payloads in GraphQL queries (Active Scan Input Vector support).</li>
+		<li>サイトツリーにGraphQLリクエストのノードを正しく表示すること。</li>
+		<li>GraphQLクエリにペイロードを注入できるようにすること (アクティブスキャン入力ベクターのサポート)。</li>
 	</ol>
 
-	The following sections will elaborate a little on each of these functionalities.
+	以下のセクションでは、これらの各機能について少し詳しく説明します。
 
-	<h2>Sites Tree Representation</h2>
+	<h2>サイトツリーにおける表現</h2>
 
-	Each unique GraphQL request proxied through ZAP is represented in the sites tree. 
-	Requests are placed under a common node if they have the same operations.
-	Two queries that have the same fields will be represented by the same node.
-	The only exception is when a query is sent with inline arguments and also using variables. 
-	In this case, a prefix of either '0' or '1' is added to distinguish between them respectively.
+	ZAPを介してプロキシされた一意のGraphQLリクエストは、サイトツリーに表示されます。 
+	同じオペレーションを持つリクエストは、共通のノードの下に配置されます。
+	 同じフィールドを持つ2つのクエリは、同じノードで表現されます。
+	 唯一の例外は、クエリがインライン引数と変数の両方を使用して送信される場合です。 
+	この場合、それらを区別するために、それぞれ『0』または『1』のプレフィックスが付加されます。
 	<br>
-	For example, the following figure illustrates how two requests may be represented in the sites tree.
+たとえば、次の図は、2つのリクエストがサイトツリーでどのように表現されるかを示しています。
 	<br>
 	<img src="images/sitesTreeExample.png">
 
-	<h2>Active Scan Input Vectors</h2>
+	<h2>アクティブスキャンの入力ベクトル</h2>
 
-	Values are injected for inline arguments in all queries proxied through ZAP.
-	If a query uses variables, then variables are replaced inline and variable definitions are deleted.
+	ZAPを介してプロキシされたすべてのクエリで、インライン引数に値が注入されます。
+	クエリが変数を使用している場合、変数はインライン引数として置き換えられ、変数定義は削除されます。
 	<br>
-	Note that, unless disabled, the built-in JSON Input Vector handler also works when a request is sent as JSON.
+リクエストがJSONとして送信される場合、組み込みのJSON入力ベクターハンドラーも (無効化されていない限り) 機能します。
 
-	<h2>See also</h2>
+	<h2>関連情報</h2>
 	<table>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td><a href="graphql.html">GraphQL</a></td>
-			<td>for an overview of the GraphQL add-on.</td>
+			<td>GraphQL アドオンの概要</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td><a href="options.html">GraphQL Options</a></td>
-			<td>for information about the optional parameters.</td>
+			<td><a href="options.html">GraphQL オプション</a></td>
+			<td>オプションのパラメーターに関する情報</td>
 		</tr>
         <tr>
             <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-            <td><a href="automation.html">GraphQL Automation</a></td>
-            <td>for information about the automation framework support.</td>
+            <td><a href="automation.html">GraphQL 自動化</a></td>
+            <td>自動化フレームワーク対応に関する情報</td>
         </tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td><a href="alerts.html">GraphQL Alerts</a></td>
-			<td>for information about alerts raised by the add-on.</td>
+			<td><a href="alerts.html">GraphQL アラート</a></td>
+			<td>このアドオンによって発生するアラートに関する情報</td>
 		</tr>
 	</table>
 

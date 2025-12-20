@@ -3,66 +3,63 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>
-OpenAPI Support
+OpenAPI サポート
 </title>
 </head>
 <body>
-<h1>OpenAPI Support</h1>
-This add-on allows you to spider and import OpenAPI (Swagger) definitions, versions 1.2, 2.0, and 3.0.
+<h1>OpenAPIインポート</h1>
+このアドオンを使用すると、OpenAPI (Swagger) 定義のバージョン1.2、2.0、3.0をスパイダーおよびインポートできます。
 <br>
-<strong>Note:</strong> Generation of XML content is currently not supported.
+<strong>注:</strong> XML コンテンツの生成は現在サポートされていません。
 <br><br>
-The add-on will automatically detect any OpenAPI definitions and spider them as long as they are in scope.
+このアドオンは、スコープ内にある限り、OpenAPI定義を自動的に検出してスパイダーします。
 <br><br>
-It also supports the <a href="automation.html">Automation Framework</a>.
+また、 <a href="automation.html">自動化フレームワーク</a>もサポートしています<a href="#"></a>.
 
 <h2>UI</h2>
-A menu item is added to the Import menu:
+「インポート」メニューに以下の項目が追加されます：
 <ul>
-<li>Import an OpenAPI definition</li>
+<li>OpenAPI定義のインポート</li>
 </ul>
-The dialogue allows overriding the server URL present in the OpenAPI definition (or specify one if not present) through the Target URL field.
-The import progress is shown in the progress tab.
+このダイアログでは、ターゲットURLフィールドを通じて、OpenAPI定義に存在するサーバーURLを上書き (または存在しない場合は指定) できます。
+インポートの進捗は進行状況タブに表示されます。
 
-<h3>Context</h3>
-The dialogues also allow selecting a Context, optionally. If a context is selected,
+<h3>コンテキスト</h3>
+ダイアログでは、オプションでコンテキストを選択することもできます。コンテキストが選択されている場合：
 <ul>
-    <li>each imported endpoint is included in the context, unless its URL matches an already existing <em>Include in Context</em> regex entry.</li>
-    <li>the imported spec is saved to the session database</li>
-    <li>data driven nodes are generated for endpoints with path parameters</li>
+    <li>インポートされた各エンドポイントは、そのURLが既存の<em>コンテキストに含める</em>正規表現エントリと一致しない限り、コンテキストに含まれます。</li>
+    <li>インポートされた仕様がセッションデータベースに保存されます</li>
+    <li>パスパラメーターを持つエンドポイントに対してデータ駆動型ノードが生成されます</li>
 </ul>
-<strong>Note:</strong> Endpoints excluded by the Context will not be imported.
+<strong>注:</strong> コンテキストによって除外されたエンドポイントはインポートされません。
 
-<h3>User</h3>
-The dialogues also allow selecting a User, optionally, to do authenticated imports.
+<h3>ユーザー</h3>
+ダイアログでは、オプションでユーザーを選択して、認証済みインポートを実行することもできます。
 
-<h3>Target URL Format</h3>
-The Target URL has the following format:<br>
+<h3>ターゲットURLの形式</h3>
+ターゲットURLの形式は次のとおりです：<br>
 <code>scheme://authority/path</code><br>
-with all URI components optional. Note: while all URI components are optional the scheme and authority become mandatory when not importing from URL and the definition does not specify them (for example, it has no servers or schemes).<br>
-Following some examples, overriding:
+すべてのURIコンポーネントはオプションです。 注: 通常すべてのURIコンポーネントはオプションです。ただし、ローカルファイルからインポートする場合で、定義にサーバーやスキームの指定がないときは、scheme と authority の指定が必須になります。<br>
+以下は上書き例です：
 <ul>
-<li>The authority and path: <code>localhost/api/</code></li>
-<li>Just the scheme: <code>https://</code></li>
-<li>Just the authority: <code>qa.example.com:9090</code></li>
-<li>Just the path: <code>/dev/v3/</code></li>
+<li>authority と path を上書き: <code>localhost/api/</code></li>
+<li>scheme のみを上書き: <code>https://</code></li>
+<li>authority のみを上書き: <code>qa.example.com:9090</code></li>
+<li>path のみを上書き: <code>/dev/v3/</code></li>
 </ul>
 
 <h2>API</h2>
-The following operations are added to the API:
+APIに以下の操作が追加されます：
 <ul>
 <li>ACTION importFile (file, target, contextId, userId)</li>
 <li>ACTION importUrl (url, hostOverride, contextId, userId)</li>
 </ul>
-Both <code>target</code> and <code>hostOverride</code> support the <code>Target URL</code> format explained earlier.
+ <code>target</code> と <code>hostOverride</code> の両方とも、前述の <code>ターゲットURL</code> 形式をサポートします。 定義は同期的にインポートされ、警告があれば返されます。
 
-The definitions will be imported synchronously and any warnings will be returned.
+<h2>データ駆動型ノード</h2>
+OpenAPI定義にパスパラメーターが含まれており、インポート時にコンテキストが指定されている場合、アドオンは自動的にデータ駆動ノードを生成します。 コンテキストが指定されていない場合、データ駆動型ノードは生成されません。
 
-<h2>Data Driven Nodes</h2>
-When the OpenAPI definition contains path parameters, and a context is specified during importing, the add-on will
-automatically generate data driven nodes. If no context is specified, no data driven nodes are generated.
-
-For example, the following OpenAPI definition will result in at least one data driven node.
+例えば、以下のOpenAPI定義は少なくとも1つのデータ駆動ノードを生成します。 
 
 <pre>
     ...
@@ -78,9 +75,9 @@ For example, the following OpenAPI definition will result in at least one data d
     ...
 </pre>
 
-The following nodes are added to the Sites Tree for the above endpoint:
+上記のエンドポイントに対して、以下のノードがサイトツリーに追加されます：
 <pre>
-Sites
+サイト
 └── http://example.com
     └── users
         └── v1
@@ -88,29 +85,28 @@ Sites
                 └── email
 </pre>
 
-The imported OpenAPI definition is persisted to the session database. When the session is reloaded, the definition is
-used to generate the data driven nodes and mark them for future requests.
+インポートされたOpenAPI定義はセッションデータベースに永続化されます。セッションが再読み込みされると、定義を 使用してデータ駆動型ノードが生成され、今後のリクエストのためにマークされます。
 
-<h2>Command Line</h2>
-The following Command Line options are added:
+<h2>コマンドライン</h2>
+以下のコマンドラインオプションが追加されます：
 <ul>
-<li>-openapifile &lt;filename&gt;  : Imports an OpenAPI definition from the specified file name</li>
-<li>-openapiurl &lt;url&gt;  : Imports an OpenAPI definition from the specified URL</li>
-<li>-openapitargeturl &lt;url&gt;  : The Target URL, to override the server URL present in the OpenAPI definition</li>
+<li>-openapifile &lt;filename&gt;  : 指定されたファイル名からOpenAPI定義をインポートします</li>
+<li>-openapiurl &lt;url&gt;  : 指定されたURLからOpenAPI定義をインポートします</li>
+<li>-openapitargeturl &lt;url&gt;  : OpenAPI定義に存在するサーバーURLを上書きするためのターゲットURL</li>
 </ul>
 
-The definitions will be imported synchronously and any warnings will be displayed on the command line.
+定義は同期的にインポートされ、警告があればコマンドラインに表示されます。
 
-<h2>User Specified Values</h2>
-Default values are used when importing OpenAPI definitions.<br>
-These can be overridden using the Form Handler add-on which allows you to specify your own values.<br>
-In most cases these will be simple values (like strings and integers) but in some cases you may need to specify structured values,
-e.g. <pre>{ "id": 0, "name": "Freda" }</pre>
+<h2>ユーザー指定値</h2>
+OpenAPI定義をインポートする際はデフォルト値が使用されます。<br>
+これらは、独自の値を指定できるフォームハンドラーアドオンを使用して上書きできます。<br>
+ほとんどの場合、これらは単純な値 (文字列や整数など) ですが、場合によっては構造化された値を指定する必要があります。
+例： <pre>{ "id": 0, "name": "Freda" }</pre>
 
-<h2>Statistics</h2>
-The add-on maintains the following statistics:
+<h2>統計</h2>
+このアドオンは以下の統計を管理します：
 <ul>
-    <li>openapi.urls.added : The total number of URLs added when importing OpenAPI definitions</li>
+    <li>openapi.urls.added: OpenAPI定義をインポートする際に追加されたURLの総数</li>
 </ul>
 
 </body>

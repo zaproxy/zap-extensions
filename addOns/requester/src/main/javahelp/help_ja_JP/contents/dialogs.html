@@ -2,163 +2,131 @@
 <HTML>
 <HEAD>
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
-<TITLE>Manual Request Editor dialog</TITLE>
+<TITLE>手動リクエストエディターダイアログ</TITLE>
 </HEAD>
 <BODY>
-	<H1>Manual Request Editor dialog</H1>
+	<H1>手動リクエストエディターダイアログ</H1>
 
-	This dialog allows you to create a HTTP request from scratch which will
-	be submitted to the specified target, or resend an existing HTTP
-	request after making any changes to it that you want to.
+	このダイアログを使用すると、指定されたターゲットに送信されるHTTPリクエストをゼロから作成したり、既存のHTTPリクエストに対して必要な変更を加えた後に再送信したりできます。
 
-	<H2>Request tab</H2>
+	<H2>リクエストタブ</H2>
 
-	This shows the request header and data, either in one or two panels
-	depending on the options chosen.
+	ここでは、選択されたオプションに応じて、リクエストヘッダーとデータを1つまたは2つのパネルに表示します。<br />
+	<br /> 「メソッド」ドロップダウンを使用して、HTTPメソッドを切り替えることができます。
+	<br>
+メソッドがPOSTに変更された場合、URLパラメーターはボディに移動され、メソッドがPOST以外に変更された場合、ボディ内のパラメーターはURLに移動されることに注意してください。
 	<br />
-	<br /> A 'Method' pull down allows you to switch between the HTTP
-	methods.
-	<br> Note that when the method is changed to a POST then any URL
-	parameters are moved into the body, and when the method is changed from
-	a POST then any parameters in the body are moved to the URL.
-	<br />
-	<br /> Pull downs allow you to select different Views for the Request
-	header and body.
+	<br /> ドロップダウンを使用すると、リクエストヘッダーとボディに対して異なるビューを選択できます。
 
 	<H3>
 		<img src="images/view-split.png" width="16" height="16" alt="" />&nbsp;
-		Split display for header and body
+		ヘッダーとボディの分割表示
 	</H3>
-	This changes the display so that separate panes are used for the header
-	and body.
-	<br>
+	これにより、ヘッダーとボディに別々のペインが使用されるように表示が変更されます。<br>
 
 	<H3>
 		<img src="images/view-all.png" width="16" height="16" alt="" />&nbsp;
-		Combined display for header and body
+		ヘッダーとボディの結合表示
 	</H3>
-	This changes the display so that the header and body are shown in one
-	pane.
-	<br>
+	これにより、ヘッダーとボディが1つのペインに表示されるように表示が変更されます。<br>
 
 	<H3>
 		<img src="images/fugue/globe-green.png" width="16" height="16" alt="" />&nbsp;
-		Use current tracking session
+		現在のトラッキングセッションを使用
 	</H3>
-	See the 'Use Global HTTP State' option in Options > Network >
-	Connection options screen.
-	<br>
+	オプション > ネットワーク > 接続オプション画面の「グローバルHTTP状態を使用する」オプションを参照してください。<br>
 
 	<H3>
 		<img src="images/fugue/cookie.png" width="16" height="16" alt="" />&nbsp;
-		Accept cookies
+		Cookieを受け入れる
 	</H3>
-	This option controls whether encountered cookies should be added to
-	subsequent requests. For example if a request is sent that results in a
-	response with Set-Cookie header(s) should those cookies values be added
-	to subsequent send attempts from the Manual Request dialog?
+	このオプションは、検出されたCookieを以降のリクエストに追加するかどうかを制御します。 たとえば、Set-Cookieヘッダーを含むレスポンスが発生するリクエストが送信された場合、そのCookie値を手動リクエストダイアログからの以降の送信試行に追加するかどうかを制御します。
 	<br>
 
 	<H3>
 		<img src="images/follow-redirect.png" width="16" height="16" alt="" />&nbsp;
-		Follow redirect
+		リダイレクトを追跡
 	</H3>
-	If selected automatically follows any redirects sent to the browser.
-	<br>
+	選択されている場合、ブラウザに送信されたリダイレクトを自動的に追跡します。<br>
 
 	<H3>
 		<img src="images/fugue/application-resize.png" width="16" height="16"
-			alt="" />&nbsp; Update Content Length
+			alt="" />&nbsp; Content-Length を更新
 	</H3>
-	By default ZAP will automatically update (or add) the Content-Length
-	header to match the size of the data submitted. If this option is
-	unselected then ZAP will not update the header allowing you to specify
-	any value you like.
+	デフォルトでは、ZAPは送信されたデータのサイズと一致するように Content-Length ヘッダーを自動的に更新 (または追加) します。 このオプションが選択解除されている場合、ZAPはヘッダーを更新しないため、任意の値を指定できます。
 	<br>
 
 	<H3>
 		<img src="images/fugue/server.png" width="16" height="16" alt="" />&nbsp;
-		Update Host Header
+		Host ヘッダーを更新
 	</H3>
-	By default ZAP will automatically update (or add) the Host header to
-	match the URL specified. If this option is unselected then ZAP will not
-	update the header allowing you to specify any value you like.
+	デフォルトでは、ZAPは指定されたURLと一致するように Host ヘッダーを自動的に更新 (または追加) します。 このオプションが選択解除されている場合、ZAPはヘッダーを更新しないため、任意の値を指定できます。
 	<br>
 
 	<H3>
 		<img src="images/csrf-button.png" width="16" height="16" alt="" />&nbsp;
-		Regenerate Anti-CSRF Token
+		Anti-CSRFトークンを再生成
 	</H3>
-	If selected automatically regenerates Anti-CSRF tokens if any exist.
-	Currently only supported in the message body and requires that the
-	Anti-CSRF extension is enabled.
+	選択されている場合、Anti-CSRFトークンが存在すれば自動的に再生成します。
+	現在、メッセージボディでのみサポートされており、Anti-CSRF拡張機能が有効になっている必要があります。
 	<br>
 
 	<H3>
 		<img src="images/lowercase-header-button.png" width="16" height="16"
-			alt="" />&nbsp; Lowercase Header Names
+			alt="" />&nbsp; ヘッダー名を小文字にする
 	</H3>
-	This will lowercase all the header names, making them compliant with
-	HTTP/2.
-	<br>
+	これにより、すべてのヘッダー名が小文字になり、HTTP/2に準拠します。<br>
 
 	<H3>
 		<img src="images/layout-tabbed.png" width="16" height="16" alt="" />&nbsp;
-		Request and Response tabs side by side
+		リクエストとレスポンスのタブを左右に並べて表示
 	</H3>
-	This changes the display so that the request and response tabs are side
-	by side.
-	<br> This increases the information that can be displayed but
-	means you cannot see both the request and response at the same time.
+	これにより、リクエストタブとレスポンスタブが横並びになるように表示が変更されます。
+	<br>
+表示できる情報が増えますが、リクエストとレスポンスの両方を同時に見ることはできません。
 
 	<H3>
 		<img src="images/layout-vertical-split.png" width="16" height="16"
-			alt="" />&nbsp; Request shown above Response
+			alt="" />&nbsp; リクエストをレスポンスの前に表示
 	</H3>
-	This changes the display so that the request panel is shown above the
-	response panel.
-	<br> This decreases the information that can be displayed but
-	means you can see both the request and response at the same time.
+	これにより、リクエストパネルがレスポンスパネルの上に表示されるように表示が変更されます。
+	<br>
+これにより、表示できる情報は減りますが、リクエストとレスポンスの両方を同時に見ることができます。
 
 	<H3>
 		<img src="images/layout-horizontal-split.png" width="16" height="16"
-			alt="" />&nbsp; Request and Response panels side by side
+			alt="" />&nbsp; リクエストとレスポンスのパネルを左右に並べて表示
 	</H3>
-	This changes the display so that the request panel is shown to the left
-	of the response panel.
-	<br> This decreases the information that can be displayed but
-	means you can see both the request and response at the same time.
+	これにより、リクエストパネルがレスポンスパネルの左側に表示されるように表示が変更されます。
+	<br>
+これにより、表示できる情報は減りますが、リクエストとレスポンスの両方を同時に見ることができます。
 
-	<H2>Response tab</H2>
+	<H2>レスポンスタブ</H2>
 
-	This shows the data sent to your browser in response to the request
-	that you submitted, either in one or two panels depending on the
-	options chosen.
-	<br />
-	<br /> Pull downs allow you to select different Views for the Response
-	header and body.
+	ここでは、選択されたオプションに応じて、送信したリクエストへのレスポンスとしてブラウザに送信されたデータが1つまたは2つのパネルに表示されます。<br />
+	<br /> ドロップダウンを使用すると、レスポンスヘッダーとボディに対して異なるビューを選択できます。
 
 
-	<H2>Accessed via</H2>
+	<H2>ここから参照されています</H2>
 	<table>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td>Top level Tools menu</td>
-			<td>'Manual Request Editor...' menu item</td>
+			<td>トップレベルの「ツール」メニュー</td>
+			<td>「手動リクエストエディター…」メニュー項目</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td>In any GUI component that has a HTTP message</td>
-			<td>'Open/Resend with Request Editor...' context menu item</td>
+			<td>HTTPメッセージを持つ任意のGUIコンポーネント内</td>
+			<td>「リクエストエディターで開く/再送信…」コンテキストメニュー項目</td>
 		</tr>
 	</table>
 
-	<H2>See also</H2>
+	<H2>関連情報</H2>
 	<table>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td><a href="requester.html">Requester</a></td>
-			<td>the introduction to Requester add-on</td>
+			<td><a href="requester.html">リクエスター</a></td>
+			<td>リクエスターアドオンの概要</td>
 		</tr>
 	</table>
 </BODY>

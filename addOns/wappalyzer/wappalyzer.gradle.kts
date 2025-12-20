@@ -48,9 +48,9 @@ dependencies {
 
     compileOnly(libs.log4j.core)
 
-    implementation("com.google.re2j:re2j:1.7")
-    implementation("com.github.weisj:jsvg:1.4.0")
-    implementation("org.jsoup:jsoup:1.17.2")
+    implementation(libs.wappalyzer.re2j)
+    implementation(libs.wappalyzer.jsvg)
+    implementation(libs.wappalyzer.jsoup)
 
     testImplementation(project(":testutils"))
 }

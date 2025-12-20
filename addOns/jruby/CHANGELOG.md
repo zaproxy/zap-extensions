@@ -8,7 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Document the engine name in the help page.
 
 ### Changed
-- Update minimum ZAP version to 2.16.0.
+- Update minimum ZAP version to 2.17.0.
+- Update dependency.
 - Maintenance changes.
 - Update script template:
   - httpsender/HttpSender default template.rb - update documentation.

@@ -7,6 +7,7 @@
     "icon": "U-KOMI.svg",
     "js": {
       "GetUkomiSliderItemInfo": "",
+      "installUkomiShimsDebug": "",
       "ukomiInstaLikeStep01": ""
     },
     "pricing": [
@@ -532,6 +533,18 @@
     ],
     "website": "https://umijs.org"
   },
+  "Umni": {
+    "cats": [
+      52
+    ],
+    "description": "Umni is a platform that provides an AI chatbot designed to automate and improve customer service, sales interactions, and marketing processes.",
+    "icon": "Umni.svg",
+    "saas": true,
+    "scriptSrc": [
+      "widget\\.umni\\.bg"
+    ],
+    "website": "https://umni.bg"
+  },
   "Umso": {
     "cats": [
       51
@@ -759,6 +772,21 @@
     ],
     "website": "https://unilogcorp.com"
   },
+  "Unipag": {
+    "cats": [
+      32
+    ],
+    "description": "Unipag is a universal sales promotion platform designed to streamline and manage promotional campaigns across various channels.",
+    "icon": "Unipag.svg",
+    "js": {
+      "Unipag": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.unipag\\.com"
+    ],
+    "website": "https://www.unipag.com"
+  },
   "Unito Hub": {
     "cats": [
       97
@@ -874,6 +902,9 @@
     "cats": [
       12
     ],
+    "cookies": {
+      "_unpoly_demo_layers_session": ""
+    },
     "description": "Unpoly is an unobtrusive Javascript framework for applications that render on the server.",
     "icon": "Unpoly.svg",
     "js": {
@@ -919,6 +950,21 @@
       "cdn\\.unstack\\.com/"
     ],
     "website": "https://www.unstack.com"
+  },
+  "Untree": {
+    "cats": [
+      51
+    ],
+    "description": "Untree is a provider of free Bootstrap templates for building responsive websites.",
+    "icon": "Untree.svg",
+    "meta": {
+      "author": "Untree\\.co"
+    },
+    "requires": [
+      "Bootstrap"
+    ],
+    "saas": true,
+    "website": "https://untree.co"
   },
   "UpScale Systems": {
     "cats": [
@@ -979,6 +1025,9 @@
       71
     ],
     "description": "Upfluence is the all-in-one affiliate and influencer marketing platform for ecommerce and direct-to-consumer brands.",
+    "dom": [
+      "link[href*='//uploader-upfluence-assets.s3']"
+    ],
     "icon": "Upfluence.svg",
     "pricing": [
       "poa"
@@ -1008,6 +1057,21 @@
     ],
     "saas": true,
     "website": "https://www.upgates.com"
+  },
+  "Uplifter": {
+    "cats": [
+      53
+    ],
+    "description": "Uplifter is a membership management software that organizes member data, tracks participation, processes payments, and supports communication within organizations.",
+    "icon": "Uplifter.svg",
+    "js": {
+      "UPLIFTER_STRTOTIME_SETTINGS": ""
+    },
+    "saas": true,
+    "scripts": [
+      "\\.uplifterinc\\.com"
+    ],
+    "website": "https://www.uplifterinc.com"
   },
   "Uplisting": {
     "cats": [
@@ -1044,6 +1108,29 @@
     ],
     "website": "https://uploadcare.com"
   },
+  "Uplynk": {
+    "cats": [
+      38
+    ],
+    "description": "Uplynk is a video streaming platform that provides tools for live and on-demand video delivery, including encoding, transcoding, and content management.",
+    "dom": [
+      "video[src*='.uplynk.com/'], img[data-thumbnailurl*='.uplynk.com/']"
+    ],
+    "headers": {
+      "content-security-policy": "\\.uplynk\\.com"
+    },
+    "icon": "Uplynk.svg",
+    "js": {
+      "UPLYNK": "",
+      "_uplynk_async_wget2_data": ""
+    },
+    "pricing": [
+      "payg",
+      "recurring",
+      "high"
+    ],
+    "website": "https://www.uplynk.com"
+  },
   "Upptime": {
     "cats": [
       13
@@ -1057,6 +1144,19 @@
     "icon": "Upptime.svg",
     "oss": true,
     "website": "https://upptime.js.org"
+  },
+  "Uppy": {
+    "cats": [
+      59
+    ],
+    "description": "Uppy is an open-source, modular JavaScript file uploader designed for integration and file management across web applications.",
+    "icon": "Uppy.svg",
+    "js": {
+      "Uppy.Audio": "",
+      "UppyUploader": ""
+    },
+    "oss": true,
+    "website": "https://uppy.io"
   },
   "Upravel": {
     "cats": [
@@ -1164,6 +1264,18 @@
       "app\\.upserve\\.com/"
     ],
     "website": "https://onlineordering.upserve.com"
+  },
+  "Upstack Data": {
+    "cats": [
+      32
+    ],
+    "description": "Upstack Data is a toolkit for data-driven marketing that includes multi-touch attribution, advanced C-API integration, and identity resolution capabilities.",
+    "icon": "UpstackData.svg",
+    "js": {
+      "_upstack": ""
+    },
+    "saas": true,
+    "website": "https://www.upstackdata.com"
   },
   "Upsy": {
     "cats": [
@@ -1549,6 +1661,26 @@
     "saas": true,
     "website": "https://www.userlane.com"
   },
+  "Userlink": {
+    "cats": [
+      52
+    ],
+    "description": "Userlink is a platform that integrates AI chatbots into webshops to improve customer experience and boost sales.",
+    "icon": "Userlink.svg",
+    "js": {
+      "setUserlinkChatVisible": "",
+      "userlinkIsInAvailableTimePeriod": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "files\\.userlink\\.ai"
+    ],
+    "website": "https://userlink.ai"
+  },
   "Userpilot": {
     "cats": [
       58,
@@ -1632,6 +1764,20 @@
       "static\\.usizy\\.es/"
     ],
     "website": "https://usizy.com"
+  },
+  "Utiq": {
+    "cats": [
+      36
+    ],
+    "description": "Utiq empowers brands and publishers to address audiences through Telco-powered first-party identifier.",
+    "icon": "Utiq.svg",
+    "js": {
+      "Utiq": ""
+    },
+    "scriptSrc": [
+      "/utiqloader\\.js"
+    ],
+    "website": "https://utiq.com/"
   },
   "Uvicorn": {
     "cats": [

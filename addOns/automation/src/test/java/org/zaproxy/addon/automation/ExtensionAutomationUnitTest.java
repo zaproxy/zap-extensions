@@ -23,6 +23,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.lenient;
@@ -30,12 +31,16 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.withSettings;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -54,6 +59,8 @@ import org.parosproxy.paros.db.TableContext;
 import org.parosproxy.paros.extension.CommandLineArgument;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.OptionsParam;
+import org.zaproxy.addon.automation.ContextWrapper.Data;
 import org.zaproxy.addon.automation.jobs.ActiveScanConfigJob;
 import org.zaproxy.addon.automation.jobs.ActiveScanJob;
 import org.zaproxy.addon.automation.jobs.ActiveScanPolicyJob;
@@ -61,6 +68,7 @@ import org.zaproxy.addon.automation.jobs.DelayJob;
 import org.zaproxy.addon.automation.jobs.ExitStatusJob;
 import org.zaproxy.addon.automation.jobs.ParamsJob;
 import org.zaproxy.addon.automation.jobs.RequestorJob;
+import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.stats.InMemoryStats;
 import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.I18N;
@@ -71,6 +79,9 @@ import org.zaproxy.zap.utils.ZapXmlConfiguration;
 class ExtensionAutomationUnitTest extends TestUtils {
 
     private static MockedStatic<CommandLine> mockedCmdLine;
+    private ExtensionLoader extensionLoader;
+
+    private Model model;
 
     @BeforeAll
     static void init() throws Exception {
@@ -85,14 +96,14 @@ class ExtensionAutomationUnitTest extends TestUtils {
     @BeforeEach
     void setUp() throws Exception {
         Constant.messages = new I18N(Locale.ENGLISH);
-        Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
+        model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
         Database database = mock(Database.class);
         lenient().when(model.getDb()).thenReturn(database);
         TableContext tableContext = mock(TableContext.class);
         lenient().when(database.getTableContext()).thenReturn(tableContext);
 
-        ExtensionLoader extensionLoader =
+        extensionLoader =
                 mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
     }
@@ -697,7 +708,7 @@ class ExtensionAutomationUnitTest extends TestUtils {
         CommandLineArgument[] args = extAuto.getCommandLineArguments();
 
         // Then
-        assertThat(args.length, is(equalTo(4)));
+        assertThat(args.length, is(equalTo(5)));
         assertThat(args[0].getName(), is(equalTo("-autorun")));
         assertThat(args[0].getNumOfArguments(), is(equalTo(1)));
         assertThat(args[1].getName(), is(equalTo("-autogenmin")));
@@ -706,6 +717,8 @@ class ExtensionAutomationUnitTest extends TestUtils {
         assertThat(args[2].getNumOfArguments(), is(equalTo(1)));
         assertThat(args[3].getName(), is(equalTo("-autogenconf")));
         assertThat(args[3].getNumOfArguments(), is(equalTo(1)));
+        assertThat(args[4].getName(), is(equalTo("-autocheck")));
+        assertThat(args[4].getNumOfArguments(), is(equalTo(1)));
     }
 
     @Test
@@ -970,7 +983,7 @@ class ExtensionAutomationUnitTest extends TestUtils {
 
         // When
         extAuto.registerAutomationJob(job);
-        AutomationPlan plan = new AutomationPlan(extAuto, filePath.toFile());
+        AutomationPlan plan = new AutomationPlan(extAuto, filePath.toFile(), false);
         extAuto.runPlanAsync(plan);
         Thread.sleep(100);
         int count1 = extAuto.getRunningPlans().size();
@@ -1015,7 +1028,7 @@ class ExtensionAutomationUnitTest extends TestUtils {
         ExtensionAutomation extAuto = new ExtensionAutomation();
         Path filePath = getResourcePath("resources/testPlan-withTests.yaml");
         extAuto.registerAutomationJob(job);
-        AutomationPlan plan = new AutomationPlan(extAuto, filePath.toFile());
+        AutomationPlan plan = new AutomationPlan(extAuto, filePath.toFile(), false);
 
         // When
         extAuto.runPlanAsync(plan);
@@ -1066,7 +1079,7 @@ class ExtensionAutomationUnitTest extends TestUtils {
         extAuto.registerAutomationJob(job3);
         File f = new File(filePath.toAbsolutePath().toString());
 
-        AutomationPlan plan = new AutomationPlan(extAuto, f);
+        AutomationPlan plan = new AutomationPlan(extAuto, f, false);
 
         // When
         extAuto.runPlan(plan, false);
@@ -1159,6 +1172,126 @@ class ExtensionAutomationUnitTest extends TestUtils {
         assertThat(stats.getStat(ExtensionAutomation.ERROR_COUNT_STATS), is(equalTo(1L)));
         assertThat(stats.getStat(ExtensionAutomation.PLANS_RUN_STATS), is(equalTo(1L)));
         assertThat(stats.getStat(ExtensionAutomation.TOTAL_JOBS_RUN_STATS), is(2L));
+    }
+
+    @Test
+    void shouldSetConfigParams() throws ConfigurationException {
+        // Given
+        ExtensionAutomation extAuto = new ExtensionAutomation();
+        AutomationPlan plan = new AutomationPlan();
+        LinkedHashMap<String, Object> lhm = new LinkedHashMap<>();
+        lhm.put("a.b", "ab-value");
+        lhm.put("a.e", "");
+        lhm.put("a.i", 1);
+        lhm.put("a.n", null);
+        // The indexed key order must be maintained. 5 keys means its v likely to fail if this is
+        // not the case.
+        lhm.put("c.d(0).e", "cd0e-value");
+        lhm.put("c.d(1).e", "cd1e-value");
+        lhm.put("c.d(2).e", "cd2e-value");
+        lhm.put("c.d(3).e", "cd3e-value");
+        lhm.put("c.d(4).e", "cd4e-value");
+
+        Data data = new Data();
+        data.setName("Test");
+        data.setUrls(List.of("https://www.example.com"));
+        List<ContextWrapper> contexts = List.of(new ContextWrapper(data));
+        plan.getEnv().setContexts(contexts);
+        plan.getEnv().readData(Map.of("configs", lhm));
+
+        ZapXmlConfiguration conf = new ZapXmlConfiguration();
+        OptionsParam options = new OptionsParam();
+        options.load(conf);
+        lenient().when(model.getOptionsParam()).thenReturn(options);
+
+        // When
+        AutomationProgress progress = extAuto.runPlan(plan, false);
+        List<HierarchicalConfiguration> list =
+                ((HierarchicalConfiguration) model.getOptionsParam().getConfig())
+                        .configurationsAt("c.d");
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(model.getOptionsParam().getConfig().getString("a.b"), is(equalTo("ab-value")));
+        assertThat(model.getOptionsParam().getConfig().getString("a.e"), is(equalTo("")));
+        assertThat(model.getOptionsParam().getConfig().getInt("a.i"), is(equalTo(1)));
+        assertThat(model.getOptionsParam().getConfig().getString("a.n"), is(nullValue()));
+        assertThat(list.size(), is(equalTo(5)));
+        assertThat(list.get(0).getProperty("e"), is(equalTo("cd0e-value")));
+        assertThat(list.get(1).getProperty("e"), is(equalTo("cd1e-value")));
+        assertThat(list.get(2).getProperty("e"), is(equalTo("cd2e-value")));
+        assertThat(list.get(3).getProperty("e"), is(equalTo("cd3e-value")));
+        assertThat(list.get(4).getProperty("e"), is(equalTo("cd4e-value")));
+    }
+
+    @Nested
+    class CmdLineCheckTests {
+
+        @BeforeAll
+        static void init() throws Exception {
+            Field zapProcessType = ZAP.class.getDeclaredField("processType");
+            zapProcessType.setAccessible(true);
+            zapProcessType.set(null, ZAP.ProcessType.cmdline);
+        }
+
+        @Test
+        void shouldSetErrorWhenMissingFile() throws Exception {
+            // Given
+            ExtensionAutomation extAuto = new ExtensionAutomation();
+
+            // When
+            AutomationProgress progress = extAuto.checkPlanCommandLine("missingfile.yaml");
+
+            // Then
+            assertThat(Control.getSingleton().getExitStatus(), is(equalTo(1)));
+            assertThat(progress, is(nullValue()));
+        }
+
+        @Test
+        void shouldSetErrorWhenInvalidBadUrl() throws Exception {
+            // Given
+            ExtensionAutomation extAuto = new ExtensionAutomation();
+
+            // When
+            AutomationProgress progress =
+                    extAuto.checkPlanCommandLine("https://localhost:1234/missing.yaml");
+
+            // Then
+            assertThat(Control.getSingleton().getExitStatus(), is(equalTo(1)));
+            assertThat(progress, is(nullValue()));
+        }
+
+        @Test
+        void shouldSetErrorWhenBadYamlFile() throws Exception {
+            // Given
+            ExtensionAutomation extAuto = new ExtensionAutomation();
+            Path filePath = getResourcePath("resources/testplan-notyaml.yaml");
+
+            // When
+            AutomationProgress progress =
+                    extAuto.checkPlanCommandLine(filePath.toAbsolutePath().toString());
+
+            // Then
+            assertThat(Control.getSingleton().getExitStatus(), is(equalTo(1)));
+            assertThat(progress, is(nullValue()));
+        }
+
+        @Test
+        void shouldSetError() throws Exception {
+            // Given
+            ExtensionAutomation extAuto = new ExtensionAutomation();
+            Path filePath = getResourcePath("resources/testplan-nourl.yaml");
+
+            // When
+            AutomationProgress progress =
+                    extAuto.checkPlanCommandLine(filePath.toAbsolutePath().toString());
+
+            // Then
+            assertThat(Control.getSingleton().getExitStatus(), is(equalTo(1)));
+            assertThat(progress, notNullValue());
+            assertThat(progress.getErrors(), contains("!automation.error.context.nourl!"));
+        }
     }
 
     // Methods are accessed via reflection

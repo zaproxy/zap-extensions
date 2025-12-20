@@ -24,11 +24,29 @@ import java.util.Locale;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 
 public class LoginLinkDetector {
+
+    private static final Logger LOGGER = LogManager.getLogger(LoginLinkDetector.class);
+
+    private static final String POINTER_DIVS_JS_SCRIPT =
+            """
+            const elements = [];
+            document.querySelectorAll('div').forEach((element) => {
+              const compStyles = window.getComputedStyle(element, 'hover');
+              if (compStyles.getPropertyValue('cursor') === 'pointer') {
+                elements.push(element)
+              }
+            });
+            return elements
+            """;
 
     public static List<WebElement> getLoginLinks(WebDriver wd, List<String> loginLabels) {
         // Try finding links first
@@ -42,7 +60,28 @@ public class LoginLinkDetector {
             return loginButtons;
         }
         // If no links nor buttons found try search for ARIA role button
-        return findElementsByAndLabels(wd, By.xpath("//*[@role=\"button\"]"), loginLabels);
+        List<WebElement> ariaButtons =
+                findElementsByAndLabels(wd, By.xpath("//*[@role=\"button\"]"), loginLabels);
+        if (!ariaButtons.isEmpty()) {
+            return ariaButtons;
+        }
+        return findPointerDivsWithLabels(wd, loginLabels);
+    }
+
+    private static List<WebElement> findPointerDivsWithLabels(
+            WebDriver wd, List<String> loginLabels) {
+        try {
+            JavascriptExecutor js = (JavascriptExecutor) wd;
+            @SuppressWarnings("unchecked")
+            List<WebElement> pointerDivs =
+                    (List<WebElement>) js.executeScript(POINTER_DIVS_JS_SCRIPT);
+            return pointerDivs.stream()
+                    .filter(element -> elementContainsText(element, loginLabels))
+                    .toList();
+        } catch (WebDriverException e) {
+            LOGGER.warn("Failed to get divs:", e);
+        }
+        return List.of();
     }
 
     private static List<WebElement> findElementsByTagAndLabels(
@@ -75,10 +114,15 @@ public class LoginLinkDetector {
             return loginButtons;
         }
         // If no links nor buttons found try search for ARIA role button
-        return src.getAllElements().stream()
-                .filter(element -> "button".equals(element.getAttributeValue("role")))
-                .filter(element -> elementContainsText(element, loginLabels))
-                .toList();
+        List<Element> ariaButtons =
+                src.getAllElements().stream()
+                        .filter(element -> "button".equals(element.getAttributeValue("role")))
+                        .filter(element -> elementContainsText(element, loginLabels))
+                        .toList();
+        if (!ariaButtons.isEmpty()) {
+            return ariaButtons;
+        }
+        return findElementsByTagAndLabels(src, HTMLElementName.DIV, loginLabels);
     }
 
     private static List<Element> findElementsByTagAndLabels(

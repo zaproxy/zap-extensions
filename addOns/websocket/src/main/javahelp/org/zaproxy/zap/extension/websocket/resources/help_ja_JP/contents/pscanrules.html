@@ -3,184 +3,180 @@
     <HEAD>
         <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
         <TITLE>
-            WebSocket Passive Scan Rules
+            WebSocket パッシブスキャンルール
         </TITLE>
     </HEAD>
     <BODY>
-        <H1>WebSocket Passive Scan Rules</H1>
-        <h2 id="scripts">Scripts</h2>
-        Scripts which are included by default in the add-on and they implement the following WebSocket passive scan rules:
+        <H1>WebSocket パッシブスキャンルール</H1>
+        <h2 id="scripts">スクリプト</h2>
+        このアドオンに既定で含まれているスクリプトは、以下のWebSocketパッシブスキャンルールを実装しています。
 
-        <h3 id="id-110002">Base64 Disclosure</h3>
+        <h3 id="id-110002">Base64の漏洩</h3>
 
-        This script analyzes incoming WebSocket message payload for Base64 strings. The encoded information may include sensitive data which may not specifically meant for end user consumption.<br>
-
-        The regular expression which is used to identify the Base64 string is based on padding characters. As result False Negative may occur if the encoded string has length N bits where (N)mod6 = 0. On the other hand, False Positives may occur if the input text contains strings ending with '='. <br>
+        このスクリプトは、着信WebSocketメッセージのペイロードを分析し、Base64 文字列を検出します。 エンコードされた情報には、エンドユーザーの利用を特に意図していない機密データが含まれている可能性があります。<br>
+Base64 文字列を識別するために使用される正規表現は、パディング文字に基づいています。 その結果、エンコードされた文字列の長さが N ビットで (N)mod6=0 の場合、偽陰性 (False Negative) が発生する可能性があります。 一方、入力テキストに = で終わる文字列が含まれている場合、偽陽性 (False Positive) が発生する可能性があります。 <br>
 
         <p>
-        Examples:
+        例:
         <table border="1"  width = "500">
-            <tr><th>Original</th><th>Payload</th><th>Outcome</th></tr>
-            <tr><td>Hello World</td><td>SGVsbG8gV29ybGQ=</td><td>True Positive</td></tr>
-            <tr><td>Hello World</td><td>THIS_ISSGVsbG8gV29ybGQ=TEXT</td><td>True Positive</td></tr>
-            <tr><td>Hello World!</td><td>SGVsbG8gV29ybGQK</td><td>False Negative</td></tr>
-            <tr><td>122==122</td><td><i>Invalid</i></td><td>False Positive</td>
+            <tr><th>オリジナル</th><th>ペイロード</th><th>結果</th></tr>
+            <tr><td>Hello World</td><td>SGVsbG8gV29ybGQ=</td><td>真陽性 (True Positive)</td></tr>
+            <tr><td>Hello World</td><td>THIS_ISSGVsbG8gV29ybGQ=TEXT</td><td>真陽性 (True Positive)</td></tr>
+            <tr><td>Hello World!</td><td>SGVsbG8gV29ybGQK</td><td>偽陰性 (False Negative)</td></tr>
+            <tr><td>122==122</td><td><i>無効</i></td><td>誤検知 (偽陽性)</td>
         </table>
 
         <p>
-        Default Values:
+        デフォルト値:
         <table border="1"  width = "500">
-            <tr><td><strong>Risk</strong></td><td>Info</td></tr>
-            <tr><td><strong>Confidence</strong></td><td>Medium</td></tr>
-            <tr><td><strong>Alert ID:</strong></td><td><a href="https://www.zaproxy.org/docs/alerts/110002/">110002</a></td></tr>
+            <tr><td><strong>リスク</strong></td><td>情報</td></tr>
+            <tr><td><strong>信頼度</strong></td><td>中</td></tr>
+            <tr><td><strong>アラートID:</strong></td><td><a href="https://www.zaproxy.org/docs/alerts/110002/">110002</a></td></tr>
         </table>
 
-        <h3 id="id-110001">Information Disclosure: Application Errors</h3>
+        <h3 id="id-110001">情報漏洩: アプリケーションエラー</h3>
 
-        This passive scanner checks incoming WebSocket message payload for known Application Error messages. Access to such details may provide a malicious individual with means by which to further abuse the web site. They may also leak data not specifically meant for end user consumption.<br>
+        このパッシブスキャナーは、受信WebSocketメッセージのペイロードに既知のアプリケーションエラーメッセージが含まれていないかチェックします。 このような詳細へのアクセスは、悪意のある個人にWebサイトをさらに悪用する手段を与える可能性があります。 また、エンドユーザーが直接利用することを意図していないデータが漏洩する可能性もあります。<br>
 
         <p>
-        Examples:
+        例:
         <table border="1"  width = "500">
-            <tr><th>Use case</th><th>Outcome</th></tr>
-            <tr><td>Warning: Cannot modify header information - headers already sent</td><td>True Positive</td></tr>
-            <tr><td>'this' is null or not an object</td><td>True Positive</td></tr>
-            <tr><td>System.Data.OleDb.OleDbException: Syntax error in string in query expression 'User ID = ? And Password = ?'</td><td>True Positive</td></tr>
+            <tr><th>使用例</th><th>結果</th></tr>
+            <tr><td>Warning: Cannot modify header information - headers already sent</td><td>真陽性 (True Positive)</td></tr>
+            <tr><td>'this' is null or not an object</td><td>真陽性 (True Positive)</td></tr>
+            <tr><td>System.Data.OleDb.OleDbException: Syntax error in string in query expression 'User ID = ? And Password = ?'</td><td>真陽性 (True Positive)</td></tr>
         </table>
         <p>
-        Default Values:
+        デフォルト値:
         <table border="1"  width = "500">
-            <tr><td><strong>Risk</strong></td><td>Medium</td></tr>
-            <tr><td><strong>Confidence</strong></td><td>Medium</td></tr>
-            <tr><td><strong>CWE ID</strong></td><td>209: Information Exposure Through an Error Message</td></tr>
-            <tr><td><strong>WASC ID</strong></td><td>13: Information Leakage</td></tr>
-            <tr><td><strong>Alert ID:</strong></td><td><a href="https://www.zaproxy.org/docs/alerts/110001/">110001</a></td></tr>
+            <tr><td><strong>リスク</strong></td><td>中</td></tr>
+            <tr><td><strong>信頼度</strong></td><td>中</td></tr>
+            <tr><td><strong>CWE ID</strong></td><td>209: エラーメッセージによる情報漏洩</td></tr>
+            <tr><td><strong>WASC ID</strong></td><td>13: 情報漏洩</td></tr>
+            <tr><td><strong>アラートID:</strong></td><td><a href="https://www.zaproxy.org/docs/alerts/110001/">110001</a></td></tr>
         </table>
 
-        <h3 id="id-110005">Information Disclosure: Credit Card Number</h3>
+        <h3 id="id-110005">情報漏洩: クレジットカード番号</h3>
 
-        This script scans for the presence of Personally Information Identifiable in incoming WebSocket message payload.
-        More specifically, it passively scans payload for credit card numbers. The available scans are for the following credit card types:
-        {American Express, Diners Club, Discover, Jcb, Maestro, Master Card, Visa}.<br>
-
-        <p>
-        Examples:
-        <table border="1"  width = "500">
-            <tr><th>Use case</th><th>Outcome</th></tr>
-            <tr><td>5264 8109 66944441</td><td>True Positive</td></tr>
-            <tr><td>{"z":0.4333009597918351}</td><td>False Positive</td></tr>
-        </table>
+        このスクリプトは、受信WebSocketメッセージのペイロードに個人識別情報 (PII) が含まれていないかスキャンします。 
+        具体的には、ペイロードにクレジットカード番号がないかを受動的にスキャンします。 以下のクレジットカードタイプがスキャン対象です: {American Express, Diners Club, Discover, JCB, Maestro, Master Card, Visa}.<br>
 
         <p>
-        Default Values:
+        例:
         <table border="1"  width = "500">
-            <tr><td><strong>Risk</strong></td><td>High</td></tr>
-            <tr><td><strong>Confidence</strong></td><td>High</td></tr>
-            <tr><td><strong>CWE ID</strong></td><td>359: Exposure of Private Information ('Privacy Violation')</td></tr>
-            <tr><td><strong>WASC ID</strong></td><td>13: Information Leakage</td></tr>
-            <tr><td><strong>Alert ID:</strong></td><td><a href="https://www.zaproxy.org/docs/alerts/110005/">110005</a></td></tr>
-        </table>
-
-        <h3 id="id-110003">Information Disclosure: Debug Errors</h3>
-
-        This script checks the incoming WebSocket message payload for known Debug Error message fragments. Access to such details may provide a malicious individual with means by which to further abuse the web site. They may also leak data not specifically meant for end user consumption.<br>
-
-        <p>
-        Examples:
-        <table border="1"  width = "500">
-            <tr><th>Use case</th><th>Outcome</th></tr>
-            <tr><td>Error Occurred While Processing Request</td><td>True Positive</td></tr>
-            <tr><td>PHP Warning: Error While Sending QUERY Packet</td><td>True Positive</td></tr>
+            <tr><th>使用例</th><th>結果</th></tr>
+            <tr><td>5264 8109 66944441</td><td>真陽性 (True Positive)</td></tr>
+            <tr><td>{"z":0.4333009597918351}</td><td>誤検知 (偽陽性)</td></tr>
         </table>
 
         <p>
-        Default Values:
+        デフォルト値:
         <table border="1"  width = "500">
-            <tr><td><strong>Risk</strong></td><td>Info</td></tr>
-            <tr><td><strong>Confidence</strong></td><td>Medium</td></tr>
-            <tr><td><strong>CWE ID</strong></td><td>200: Information Exposure</td></tr>
-            <tr><td><strong>WASC ID</strong></td><td>13: Info Leakage</td></tr>
-            <tr><td><strong>Alert ID:</strong></td><td><a href="https://www.zaproxy.org/docs/alerts/110003/">110003</a></td></tr>
+            <tr><td><strong>リスク</strong></td><td>高</td></tr>
+            <tr><td><strong>信頼度</strong></td><td>高</td></tr>
+            <tr><td><strong>CWE ID</strong></td><td>359: 個人情報の漏洩（「プライバシー違反」）</td></tr>
+            <tr><td><strong>WASC ID</strong></td><td>13: 情報漏洩</td></tr>
+            <tr><td><strong>アラートID:</strong></td><td><a href="https://www.zaproxy.org/docs/alerts/110005/">110005</a></td></tr>
         </table>
 
-        <h3 id="id-110004">Information Disclosure: Email address</h3>
+        <h3 id="id-110003">情報漏洩: デバッグエラー</h3>
 
-        This script scans incoming WebSocket messages for email addresses. Email addresses may be not specifically meant for end user consumption.<br>
+        このスクリプトは、受信WebSocketメッセージのペイロードに既知のデバッグエラーメッセージの断片が含まれていないかチェックします。 このような詳細へのアクセスは、悪意のある個人にWebサイトをさらに悪用する手段を与える可能性があります。 また、エンドユーザーが直接利用することを意図していないデータが漏洩する可能性もあります。<br>
 
         <p>
-        Default Values:
+        例:
+        <table border="1"  width = "500">
+            <tr><th>使用例</th><th>結果</th></tr>
+            <tr><td>Error Occurred While Processing Request</td><td>真陽性 (True Positive)</td></tr>
+            <tr><td>PHP Warning: Error While Sending QUERY Packet</td><td>真陽性 (True Positive)</td></tr>
+        </table>
+
+        <p>
+        デフォルト値:
+        <table border="1"  width = "500">
+            <tr><td><strong>リスク</strong></td><td>情報</td></tr>
+            <tr><td><strong>信頼度</strong></td><td>中</td></tr>
+            <tr><td><strong>CWE ID</strong></td><td>200: 情報漏洩</td></tr>
+            <tr><td><strong>WASC ID</strong></td><td>13: 情報漏洩</td></tr>
+            <tr><td><strong>アラートID:</strong></td><td><a href="https://www.zaproxy.org/docs/alerts/110003/">110003</a></td></tr>
+        </table>
+
+        <h3 id="id-110004">情報漏洩: メールアドレス</h3>
+
+        このスクリプトは、受信WebSocketメッセージにメールアドレスが含まれていないかスキャンします。 メールアドレスは、エンドユーザーが直接利用することを意図していない可能性があります。<br>
+
+        <p>
+        デフォルト値:
         <table border="1"  width = "400">
-            <tr><td><strong>Risk</strong></td><td>Info</td></tr>
-            <tr><td><strong>Confidence</strong></td><td>Info</td></tr>
-            <tr><td><strong>CWE ID</strong></td><td>200: Information Exposure</td></tr>
-            <tr><td><strong>WASC ID</strong></td><td>13: Information Leakage</td></tr>
-            <tr><td><strong>Alert ID:</strong></td><td><a href="https://www.zaproxy.org/docs/alerts/110004/">110004</a></td></tr>
+            <tr><td><strong>リスク</strong></td><td>情報</td></tr>
+            <tr><td><strong>信頼度</strong></td><td>情報</td></tr>
+            <tr><td><strong>CWE ID</strong></td><td>200: 情報漏洩</td></tr>
+            <tr><td><strong>WASC ID</strong></td><td>13: 情報漏洩</td></tr>
+            <tr><td><strong>アラートID:</strong></td><td><a href="https://www.zaproxy.org/docs/alerts/110004/">110004</a></td></tr>
         </table>
 
-        <h3 id="id-110008">Information Disclosure: Suspicious XML Comments</h3>
+        <h3 id="id-110008">情報漏洩: 疑わしいXMLコメント</h3>
 
-        This script checks incoming WebSocket messages payloads, which are XML formatted, for suspicious comments. The comments it is searching for are relevant to components with which an attacker can extract useful information. Comments like FIXME, BUG, etc. might be helpful for further attacks targeting the weaknesses of the web application.<br>
+        このスクリプトは、XML形式の受信WebSocketメッセージペイロードに疑わしいコメントが含まれていないかチェックします。 検索対象となるのは、攻撃者が有用な情報を引き出すために利用できるコンポーネントに関連するコメントです。 FIXME、BUGなどのコメントは、Webアプリケーションの弱点を標的としたさらなる攻撃に役立つ可能性があります。<br>
 
         <p>
-        Examples:
+        例:
         <table border="1"  width = "500">
-            <tr><th>Use case</th><th>Outcome</th></tr>
+            <tr><th>使用例</th><th>結果</th></tr>
             <tr><td>
                 <pre>&lt;xml_test&gt;&lt;!-- This is a comments section --&gt;&lt;/xml_test&gt;</pre>
-            </td><td>True Negative</td>
+            </td><td>真陰性 (True Negative)</td>
             </tr>
             <tr><td>
                 <pre>&lt;user_form&gt;&lt;!-- FIXME: Encode --&gt;&lt;/user_form&gt;</pre>
-            </td><td>True Positive</td>
+            </td><td>真陽性 (True Positive)</td>
             </tr>
         </table>
 
         <p>
-        Default Values:
+        デフォルト値:
         <table border="1"  width = "500">
-            <tr><td><strong>Risk</strong></td><td>Info</td></tr>
-            <tr><td><strong>Confidence</strong></td><td>Medium</td></tr>
-            <tr><td><strong>CWE ID</strong></td><td>200: Information Exposure</td></tr>
-            <tr><td><strong>WASC ID</strong></td><td>13: Info Leakage</td></tr>
-            <tr><td><strong>Alert ID:</strong></td><td><a href="https://www.zaproxy.org/docs/alerts/110008/">110008</a></td></tr>
+            <tr><td><strong>リスク</strong></td><td>情報</td></tr>
+            <tr><td><strong>信頼度</strong></td><td>中</td></tr>
+            <tr><td><strong>CWE ID</strong></td><td>200: 情報漏洩</td></tr>
+            <tr><td><strong>WASC ID</strong></td><td>13: 情報漏洩</td></tr>
+            <tr><td><strong>アラートID:</strong></td><td><a href="https://www.zaproxy.org/docs/alerts/110008/">110008</a></td></tr>
         </table>
 
-        <h3 id="id-110006">Private Address Disclosure</h3>
-        Checks incoming WebSocket message payload for inclusion of RFC 1918 IPv4 addresses as well as Amazon EC2 private hostnames (for example, ip-10-0-56-78). This information can give an attacker useful information about the IP address scheme of the internal network, and might be helpful for further attacks targeting internal systems. <br>
-
-        This passive scanner may generate false positives in the case of larger dotted numeric strings, such as vp09.02.51.10.01.09.16, where the latter 4 octets appear to be a RFC 1918 IPv4 address. After review an analyst can mark such alerts as False Positives in ZAP.<br>
+        <h3 id="id-110006">プライベートアドレスの漏洩</h3>
+        受信WebSocketメッセージのペイロードに、RFC 1918 IPv4アドレスや Amazon EC2プライベートホスト名（例: ip-10-0-56-78）が含まれていないかチェックします。 この情報により、攻撃者は内部ネットワークのIPアドレススキームに関する有用な情報を得ることができ、内部システムを標的としたさらなる攻撃に役立つ可能性があります。 <br>
+このパッシブスキャナーは、vp09.02.51.10.01.09.16 のようなドット区切りの長い数値文字列の場合に誤検知 (偽陽性) が発生する可能性があります。この例では、後方の4オクテットが RFC 1918 IPv4アドレスのように見えるためです。 アナリストはレビュー後、ZAPでそのようなアラートを誤検知としてマークすることができます。<br>
         <p>
-        Examples:
+        例:
         <table border="1"  width = "200">
-            <tr><th>Use case</th><th>Outcome</th></tr>
-            <tr><td>10.255.255.255</td><td>True Positive</td></tr>
-            <tr><td>ip-10.0.0.0</td><td>True Positive</td></tr>
+            <tr><th>使用例</th><th>結果</th></tr>
+            <tr><td>10.255.255.255</td><td>真陽性 (True Positive)</td></tr>
+            <tr><td>ip-10.0.0.0</td><td>真陽性 (True Positive)</td></tr>
         </table>
         <p>
-        Default Values:
+        デフォルト値:
         <table border="1"  width = "200">
-            <tr><td><strong>Risk</strong></td><td>Low</td></tr>
-            <tr><td><strong>Confidence</strong></td><td>Medium</td></tr>
-            <tr><td><strong>Alert ID:</strong></td><td><a href="https://www.zaproxy.org/docs/alerts/110006/">110006</a></td></tr>
+            <tr><td><strong>リスク</strong></td><td>低</td></tr>
+            <tr><td><strong>信頼度</strong></td><td>中</td></tr>
+            <tr><td><strong>アラートID:</strong></td><td><a href="https://www.zaproxy.org/docs/alerts/110006/">110006</a></td></tr>
         </table>
 
-        <h3 id="id-110007">Username Disclosure</h3>
+        <h3 id="id-110007">ユーザー名の露見</h3>
 
-        Checks incoming WebSocket message payload for usernames. This script can find usernames which are hashed with the following methods:
-        {MD2, MD5, SHA256, SHA384, SHA512}. The usernames have to be defined in any context before. In order to a add user in a Context follow the steps below:
+        受信WebSocketメッセージのペイロードにユーザー名が含まれていないかチェックします。 このスクリプトは、以下のメソッドでハッシュ化されたユーザー名を検出できます: {MD2, MD5, SHA256, SHA384, SHA512}。 ユーザー名は、事前にいずれかのコンテキストで定義されている必要があります。 コンテキストにユーザーを追加するには、以下の手順に従います：
         <ol>
-            <li>Include the handshake request in `Context`</li>
-            <li>Set the target user in `Session Context`</li>
+            <li>ハンドシェイクリクエストを Context に含める</li>
+            <li>Session Context でターゲットユーザーを設定する</li>
         </ol>
 
         <p>
-        Default Values:
+        デフォルト値:
         <table border="1"  width = "400">
-            <tr><td><strong>Risk</strong></td><td>Info</td></tr>
-            <tr><td><strong>Confidence</strong></td><td>High</td></tr>
-            <tr><td><strong>CWE ID</strong></td><td>284: Improper Access Control</td></tr>
-            <tr><td><strong>WASC ID</strong></td><td>2: Insufficient Authorization</td></tr>
-            <tr><td><strong>Alert ID:</strong></td><td><a href="https://www.zaproxy.org/docs/alerts/110007/">110007</a></td></tr>
+            <tr><td><strong>リスク</strong></td><td>情報</td></tr>
+            <tr><td><strong>信頼度</strong></td><td>高</td></tr>
+            <tr><td><strong>CWE ID</strong></td><td>284: 不適切なアクセス制御</td></tr>
+            <tr><td><strong>WASC ID</strong></td><td>2: 不十分な認可</td></tr>
+            <tr><td><strong>アラートID:</strong></td><td><a href="https://www.zaproxy.org/docs/alerts/110007/">110007</a></td></tr>
         </table>
         
     </BODY>

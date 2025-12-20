@@ -3,24 +3,23 @@
 <HEAD>
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
 <TITLE>
-Passive Scan Tags
+パッシブスキャンタグ
 </TITLE>
 </HEAD>
 <BODY>
-<H1>Passive Scan Tags</H1>
+<H1>パッシブスキャンタグ</H1>
 <p>
-This screen allows you to configure the tags that are added by the passive scanner.
+この画面では、パッシブスキャナーによって追加されるタグを設定できます。
 </p>
-You can add, modify and remove the tags via the appropriate buttons.
+対応するボタンを使用して、タグの追加、変更、削除を行うことができます。
 
-<H2>Tag Interpolation</H2>
-In order to allow some flexibility in Tag creation and content it is possible for the user to specify a regular expression with capturing groups
-which will be used to replace the group identifiers (ex: $1) in the resulting tag.
+<H2>タグの補間</H2>
+タグの作成と内容に柔軟性を持たせるために、ユーザーがキャプチャグループを持つ正規表現を指定することが可能です。これは、結果として生成されるタグ内のグループ識別子 (例: $1) を置換するために使用されます。
 <p>
-For example, a tag could be defined as follows:
+例として、タグは次のように定義できます：
 <table border=1>
   <tr>
-    <th>Field</th><th>Value</th><th>Note</th>
+    <th>フィールド</th><th>値</th><th>注</th>
   </tr>
   <tr>
     <td>Name:</td><td>Test</td><td>&nbsp;</td>
@@ -29,18 +28,17 @@ For example, a tag could be defined as follows:
     <td>Tag:</td><td>$1-SOMETAG</td><td>&nbsp;</td>
   </tr>
   <tr>
-    <td>Response Body Regex:</td><td>(\d{3})</td><td>Find strings of 3 numbers, using a capturing group (round brackets).</td>
+    <td>Response Body Regex:</td><td>(\d{3})</td><td>キャプチャグループ (丸括弧) を使用して、3桁の文字列を検索します。</td>
   </tr>
 </table>
-<b>Result:</b> When 3 digit strings are passively identified in response body content (the regex matches) the messages will be
-tagged such as "123-SOMETAG", "345-SOMETAG", etc.
+<b>結果:</b> レスポンスボディの内容で3桁の文字列がパッシブに識別された場合 (正規表現が一致すると)、メッセージには「123-SOMETAG」、「345-SOMETAG」などのタグが付与されます。
 
-<H2>See also</H2>
+<H2>関連情報</H2>
 <table>
 	<tr>
 		<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-		<td><a href="../pscan.html">Passive Scanner</a></td>
-		<td>the introduction to Passive Scanner add-on</td>
+		<td><a href="../pscan.html">パッシブスキャナー</a></td>
+		<td>パッシブスキャナーアドオンの概要</td>
 	</tr>
 </table>
 

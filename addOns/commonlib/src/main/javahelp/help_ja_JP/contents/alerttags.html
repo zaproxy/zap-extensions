@@ -3,48 +3,47 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>
-        Alert Tags
+        アラートタグ
     </title>
 </head>
 <body>
-<h1>Alert Tags</h1>
+<h1>アラートタグ</h1>
 
-The Common Library add-on provides Alert Tags for use by scan rules.
+共通ライブラリ (Common Library) アドオンは、スキャンルールで使用するためのアラートタグを提供します。
 
 <p>
-Of note the following tags/groups of tags are included:
+特に注目すべき、含まれているタグ/タググループは以下の通りです：
 <ul>
-    <li>Custom Payloads - A tag which indicates the scan rules which support <a href="https://www.zaproxy.org/docs/desktop/addons/custom-payloads/">Custom Payloads functionality</a>.</li>
-    <li>HIPAA (Health Insurance Portability and Accountability Act) - A tag representing alerts/rules which we've mapped to the HIPAA standard.</li>
-    <li>OWASP Top 10 (2017) - Tags representing the risks/vulnerabilities from the 2017 OWASP Top 10 list.</li>
-    <li>OWASP Top 10 (2021) - Tags representing the risks/vulnerabilities from the 2021 OWASP Top 10 list.</li>
-    <li>PCI DSS (Payment Card Industry Data Security Standard) - A tag representing alerts/rules which we've mapped to the PCI DSS standard.</li>
-    <li>Test Timing - A tag which represent rules/alerts which are based on time (induced delay) payloads.</li>
-    <li>OWASP Web Security Testing Guide (v4.2) - Tags which map rules/alerts to the relevant sections of the OWASP WSTG (version 4.2).</li>
+    <li>カスタムペイロード (Custom Payloads): <a href="https://www.zaproxy.org/docs/desktop/addons/custom-payloads/">カスタムペイロード機能</a>をサポートするスキャンルールを示すタグ</li>
+    <li>HIPAA (Health Insurance Portability and Accountability Act): HIPAA（医療保険の携行性と責任に関する法律）基準にマッピングされたアラート/ルールを示すタグ</li>
+    <li>OWASP Top 10 (2017): 2017年版 OWASP Top 10 リストのリスク/脆弱性を示すタグ</li>
+    <li>OWASP Top 10 (2021): 2021年版 OWASP Top 10 リストのリスク/脆弱性を示すタグ</li>
+    <li>PCI DSS (Payment Card Industry Data Security Standard): PCI DSS（ペイメントカード業界データセキュリティ基準）にマッピングされたアラート/ルールを示すタグ</li>
+    <li>テスト時間 (Test Timing): 時間ベースの（誘導された遅延による）ペイロードに基づくルール/アラートを示すタグ</li>
+    <li>OWASP Web Security Testing Guide (v4.2): ルール/アラートを、OWASP WSTG（Web Security Testing Guide）のバージョン 4.2 の関連セクションにマッピングするタグ</li>
 </ul>
 
-<h2 id="compliance">Compliance Tags</h2>
+<h2 id="compliance">コンプライアンスタグ</h2>
 
-Please note that the PCI DSS and HIPAA standards deal with specific types of data, while an identified vulnerability may expose
-such data ZAP has insufficient context with which to differentiate what is or might be exposed by leveraging a given vulnerability.
-If the system being tested does not hold any such data then the related compliance tag <strong>may</strong> not be relevant.
+PCI DSS および HIPAA の基準は、特定の種類のデータを扱うものです。識別された脆弱性がそのようなデータを露呈させる可能性があるとしても、ZAPには、特定の脆弱性を悪用することで何が露呈するのか、あるいは露呈する可能性があるのかを区別するための十分なコンテキストがありません。
+テスト対象のシステムがそのようなデータを保持していない場合、関連するコンプライアンス・タグは関連性がない<strong>可能性</strong>があります。
 <p>
-See also:<br>
+参照：<br>
 <ul>
-    <li><a href="https://www.hhs.gov/hipaa/for-professionals/privacy/laws-regulations/index.html">HIPAA</a>.</li>
-    <li><a href="https://www.pcisecuritystandards.org/standards/pci-dss/">PCI DSS</a>.</li>
+    <li><a href="https://www.hhs.gov/hipaa/for-professionals/privacy/laws-regulations/index.html">HIPAA</a></li>
+    <li><a href="https://www.pcisecuritystandards.org/standards/pci-dss/">PCI DSS</a></li>
 </ul>
 
-<h2>CVE Tags</h2>
-Any alert that involves a specific CVE will (generally) also have a tag for
-that specific CVE identifier with a value that links to Mitre's National
-Vulnerability Database (NVD).
+<h2>CVE タグ</h2>
+特定の CVE に関連するアラートは、(一般的に) その特定の CVE 識別子に対応するタグも持ちます。このタグの値は、Mitreの NVD (National Vulnerability Database) へのリンクとなっています。
 
-<h2>Policy Tags</h2>
-The add-on also provides a set of Alert Tags which associate various rule
-types or focus areas to scan policies, see the 
-<a href="https://www.zaproxy.org/docs/desktop/addons/scan-policies/">Scan 
-Policies add-on help</a> for further details.
+<h2 id="systemic">SYSTEMICタグ</h2>
+SYSTEMICタグは、多くの場合「サイト全体」に関わるアラートにフラグを付けるために使用されます。 これには、ヘッダーに関連するほとんどのルールが含まれます。
+
+ZAP 2.17.0 以降、ごく一部のシステミックアラートのみがデフォルトでデスクトップ UI およびレポートに含まれるようになります。
+
+<h2>ポリシータグ</h2>
+このアドオンは、様々なルールタイプやフォーカスエリアをスキャンポリシーに関連付ける一連のアラートタグも提供しています。詳細については、<a href="https://www.zaproxy.org/docs/desktop/addons/scan-policies/">スキャンポリシーアドオンのヘルプ</a>を参照してください。
 
 </body>
 </html>

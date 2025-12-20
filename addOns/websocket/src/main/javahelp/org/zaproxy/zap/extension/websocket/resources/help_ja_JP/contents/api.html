@@ -9,46 +9,46 @@ WebSocket API
 <BODY>
 <H1>WebSocket API</H1>
 
-<h2>Views</h2>
+<h2>ビュー</h2>
 	<h3>channels</h3>
-		Returns all of the registered web socket channels.
+		登録済みのWebソケットチャンネルをすべて返します。
 
 	<h3>message</h3>
 	
-		Mandatory Parameters:
+		必須パラメーター：
 		<ul>
-		<li>channelId: the channel identifier</li>
-		<li>messageId: the message identifier</li>
+		<li>channelId: チャネルID</li>
+		<li>messageId: メッセージID</li>
 		</ul>
-		Returns full details of the specified message.<br>
-		The 'channelId' and 'messageId' can be discovered via the 'messages' view.
+		指定されたメッセージの詳細な情報を返します。<br>
+「channelId」と「messageId」は、「messages」ビューを介して取得できます。
 
 	<h3>messages</h3>
 	
-		Optional Parameters:
+		オプションパラメーター：
 		<ul>
-		<li>channelId: the channel identifier</li>
-		<li>start: the offset to start returning messages from, starting from 0.</li>
-		<li>count: the number of messages to return.</li>
-		<li>payloadPreviewLength: the maximum number bytes to return for the payload contents.</li>
+		<li>channelId: チャネルID</li>
+		<li>start: メッセージの取得を開始するオフセット。値は0から始まります。</li>
+		<li>count: 返すメッセージの数。</li>
+		<li>payloadPreviewLength: ペイロードの最大バイト数。</li>
 		</ul>
-		Returns a list of all of the messages that meet the given criteria - by default all messages are returned<br>
-		The channelId can be discovered via the 'channels' view.<br>
-		The 'start' and 'count' parameters can be used to page through the messages<br>
-		The 'payloadPreviewLength' can be used to restrict the size of the data returned.<br>
+		指定された基準を満たすすべてのメッセージのリストを返します。デフォルトでは、すべてのメッセージが返されます。<br>
+「channelId」は「channels」ビューを介して取得できます。<br>
+「start」および「count」パラメーターは、メッセージのページ送りに使用できます。<br>
+「payloadPreviewLength」は、返されるデータのサイズを制限するために使用できます。<br>
 
-<h2>Actions</h2>
+<h2>アクション</h2>
 
 	<h3>sendTextMessage</h3>
 	
-		Mandatory Parameters:
+		必須パラメーター：
 		<ul>
-		<li>channelId: the channel identifier</li>
-		<li>outgoing: 'True' if the message is to be sent to the server and 'False' if it is to be sent to the client</li>
-		<li>message: the message to send</li>
+		<li>channelId: チャネルID</li>
+		<li>outgoing: メッセージをサーバーに送信する場合は「True」、クライアントに送信する場合は「False」を指定します。</li>
+		<li>message: 送信するメッセージ。</li>
 		</ul>
-		Sends the specified message on the specified channel.<br>
-		The channelId can be discovered via the 'channels' view.<br>
+		指定されたチャネルで指定されたメッセージを送信します。<br>
+「channelId」は「channels」ビューを介して取得できます。<br>
 
 </BODY>
 </HTML>

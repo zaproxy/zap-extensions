@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -140,7 +141,8 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin implements Common
                 new HashMap<>(
                         CommonAlertTag.toMap(
                                 CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
-                                CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG));
+                                CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
+                                CommonAlertTag.SYSTEMIC));
         alertTags.put(PolicyTag.PENTEST.getTag(), "");
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
     }
@@ -476,8 +478,8 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin implements Common
 
                     try {
                         sendAndReceive(mfMethodMsg, false); // do not follow redirects.
-                    } catch (Exception e) {
-                        LOGGER.error(
+                    } catch (IOException e) {
+                        LOGGER.debug(
                                 "Failed to send a request in step 2 with method {}, Max-Forwards: {}: {}",
                                 httpMethod,
                                 requestHeader.getHeader(HttpFieldsNames.MAX_FORWARDS),
@@ -636,7 +638,7 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin implements Common
                         "Identified the origin node using TRACK, with server header: {}",
                         originServerName);
                 // check if this is the same as the last node we've identified, and if so, discard
-                // it. If not, add it to to the end (as the origin server).
+                // it. If not, add it to the end (as the origin server).
                 if (!nodeServers[step2numberOfNodes - 1].equals(originServerName)) {
                     // it's different to the last one seen.. add it.
                     LOGGER.debug(
@@ -768,10 +770,10 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin implements Common
                         .raise();
             }
 
-        } catch (Exception e) {
+        } catch (IOException e) {
             // Do not try to internationalise this.. we need an error message in any event..
             // if it's in English, it's still better than not having it at all.
-            LOGGER.error("An error occurred checking for proxy disclosure", e);
+            LOGGER.debug("An error occurred checking for proxy disclosure", e);
         }
     }
 

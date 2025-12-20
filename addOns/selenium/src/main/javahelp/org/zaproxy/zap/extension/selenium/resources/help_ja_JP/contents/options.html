@@ -2,114 +2,113 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Options Selenium screen</title>
+<title>オプション - Selenium画面</title>
 </head>
 <body>
-	<h1>Options Selenium screen</h1>
+	<h1>オプション - Selenium画面</h1>
 
-	This screen allows you to setup the requirements of some of the WebDrivers.
+	この画面では、一部のWebDriverの要件を設定できます。 
 	<br />
-	<h2>Configuration Options</h2>
+	<h2>設定オプション</h2>
 	<h3>WebDrivers</h3>
 	<table border="2">
 		<tr>
-			<th>Field</th>
-			<th>Details</th>
-			<th>Default</th>
-			<th>Config File</th>
+			<th>フィールド</th>
+			<th>詳細</th>
+			<th>既定値</th>
+			<th>設定ファイル</th>
 		</tr>
 		<tr>
 			<td>ChromeDriver</td>
-			<td>This allows you to select the location of ChromeDriver.</td>
-			<td align="center">The path to the bundled WebDriver, if available.</td>
-			<td>Key: <code>selenium.chromeDriver</code><br>Value: file system path to the ChromeDriver</td>
+			<td>ChromeDriverの場所を選択できます。</td>
+			<td align="center">同梱されているWebDriverへのパス (利用可能な場合)。</td>
+			<td>Key: <code>selenium.chromeDriver</code><br>
+Value: ChromeDriverへのファイルシステムパス</td>
 		</tr>
 		<tr>
 			<td>EdgeDriver</td>
-			<td>This allows you to select the location of EdgeDriver.</td>
-			<td align="center">The path to the bundled WebDriver, if available.</td>
-			<td>Key: <code>selenium.edgeDriver</code><br>Value: file system path to the EdgeDriver</td>
+			<td>EdgeDriverの場所を選択できます。</td>
+			<td align="center">同梱されているWebDriverへのパス (利用可能な場合)。</td>
+			<td>Key: <code>selenium.edgeDriver</code><br>
+Value: EdgeDriverへのファイルシステムパス</td>
 		</tr>
 		<tr>
 			<td>geckodriver</td>
-			<td>This allows you to select the location of geckodriver (Firefox driver).</td>
-			<td align="center">The path to the bundled WebDriver, if available.</td>
-			<td>Key: <code>selenium.firefoxDriver</code><br>Value: file system path to the geckodriver</td>
+			<td>geckodriver  (Firefox ドライバー) の場所を選択できます。</td>
+			<td align="center">同梱されているWebDriverへのパス (利用可能な場合)。</td>
+			<td>Key: <code>selenium.firefoxDriver</code><br>
+Value: geckodriverへのファイルシステムパス</td>
 		</tr>
 	</table>
 
-	<h3>Binaries</h3>
+	<h3>バイナリ</h3>
 	<table border="2">
 		<tr>
-			<th>Field</th>
-			<th>Details</th>
-			<th>Default</th>
-			<th>Config File</th>
+			<th>フィールド</th>
+			<th>詳細</th>
+			<th>既定値</th>
+			<th>設定ファイル</th>
 		</tr>
 		<tr>
 			<td>Chrome</td>
-			<td>This allows you to select the location of Chrome binary (for example, to use
-				a version other than the system default).</td>
-			<td align="center">(None)</td>
-			<td>Key: <code>selenium.chromeBinary</code><br>Value: file system path to the Chrome binary</td>
+			<td>Chromeバイナリの場所を選択できます (例: システムデフォルト以外のバージョンを使用する場合)。</td>
+			<td align="center">(なし)</td>
+			<td>Key: <code>selenium.chromeBinary</code><br>
+Value: Chromeバイナリへのファイルシステムパス</td>
 		</tr>
 		<tr>
 			<td>Edge</td>
-			<td>This allows you to select the location of Edge binary (for example, to use
-				a version other than the system default).</td>
-			<td align="center">(None)</td>
-			<td>Key: <code>selenium.edgeBinary</code><br>Value: file system path to the Edge binary</td>
+			<td>Edgeバイナリの場所を選択できます (例: システムデフォルト以外のバージョンを使用する場合)。</td>
+			<td align="center">(なし)</td>
+			<td>Key: <code>selenium.edgeBinary</code><br>
+Value: Edgeバイナリへのファイルシステムパス</td>
 		</tr>
 		<tr>
 			<td>Firefox</td>
-			<td>This allows you to select the location of Firefox binary (for example, to use
-				a version other than the system default).</td>
-			<td align="center">(None)</td>
-			<td>Key: <code>selenium.firefoxBinary</code><br>Value: file system path to the Firefox binary</td>
+			<td>Firefoxバイナリの場所を選択できます (例: システムデフォルト以外のバージョンを使用する場合)。</td>
+			<td align="center">(なし)</td>
+			<td>Key: <code>selenium.firefoxBinary</code><br>
+Value: Firefoxバイナリへのファイルシステムパス</td>
 		</tr>
 	</table>
-	<strong>Note:</strong> It's also possible to set the above locations (binaries and
-	WebDrivers) using Java system properties, in which case the above options will be
-	overridden and those values shown instead.
+	<strong>注:</strong> 上記の場所 (バイナリとWebDriver群) は、Javaシステムプロパティを使用して設定することも可能です。その場合、上記の設定は上書きされ、プロパティの値が表示されます。
 
 	<p>
-	More details about the bundled WebDrivers can be found on the overview page.
+	同梱されたWebDriver群の詳細は、概要ページで確認できます。
 
-	<h4>Browser Arguments</h4>
-	Chrome, Edge, and Firefox binaries can have additional (CLI) arguments specified through the <code>Arguments...</code> button.
+	<h4>ブラウザ引数</h4>
+Chrome、Edge、およびFirefoxのバイナリに対して、<code>引数...</code> ボタンから追加の (CLI) 引数を指定できます。
 
 	<p>
-	<strong>Note:</strong> Adding invalid arguments might cause the browser to fail to start. ZAP already adds some arguments (e.g. headless).
+	<strong>注:</strong> 無効な引数を追加すると、ブラウザの起動に失敗する可能性があります。 ZAPはすでに一部の引数 (例: ヘッドレス) を追加しています。
 
-	<h4>Browser Profiles</h4>
-	You can choose which Firefox profile to use by default.
-	The <code>&lt;temporary&gt;</code> profile is one which is created by Selenium each time the browser is launched.
+	<h4>ブラウザプロファイル</h4>
+デフォルトで使用するFirefoxのプロファイルを選択できます。
+	<code>&lt;temporary&gt;</code> プロファイルは、ブラウザが起動されるたびにSeleniumによって作成されるプロファイルです。
 	<p>
-	<strong>Note:</strong> The 'client' add-on creates a profile called zap-client-profile - 
-	if you choose another profile then the Client add-on will not work without manual configuration.
+	<strong>注:</strong> 「client」アドオンは zap-client-profile というプロファイルを作成します。別のプロファイルを選択した場合、「Client」アドオンは手動設定なしでは機能しません。
 
-	<h3>Browser Extensions</h3>
+	<h3>ブラウザ拡張機能</h3>
 
 	You can add, remove, enable, or disable browser extensions via the relevant buttons on this screen.
-	Supported browsers and file extensions are:
+	Supported browsers and extensions are:
 	<ul>
 	<li>Firefox: .xpi
-	<li>Chrome/Edge: .crx
+	<li>Chrome/Edge: unpacked, directory containing the extension files
 	</ul>
-	Add-ons can also add new browser extensions. If you delete a browser extension via this screen then it will be added again 
-	by the add-on so either just disable it or uninstall the add-on to remove the browser extension.
+	アドオンも新しいブラウザ拡張機能を追加できます。 この画面から拡張機能を削除しても、アドオンによって再度追加されます。そのため、拡張機能を完全に削除するには、無効化するか、アドオン自体をアンインストールしてください。
 
-	<h2>See also</h2>
+	<h2>関連情報</h2>
 	<table>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td><a href="intro.html">Selenium</a></td>
-			<td>for an overview of the Selenium add-on</td>
+			<td>Seleniumの概要について</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td><a href="api.html">API</a></td>
-			<td>for an overview of the Selenium API</td>
+			<td>Selenium APIの概要について</td>
 		</tr>
 	</table>
 

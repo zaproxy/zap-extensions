@@ -2,185 +2,183 @@
 <HTML>
 <HEAD>
 <TITLE>
-Client Side Integration
+クライアントサイド統合
 </TITLE>
 </HEAD>
 <BODY>
-<H1>Client Side Integration</H1>
+<H1>クライアントサイド統合</H1>
 
-This add-on adds the following features to ZAP.
+このアドオンは、ZAPに以下の機能を追加します。
 
-<h2>Client Spider</h2>
+<h2>クライアントスパイダー</h2>
 
-This add-on adds a <a href="spider.html">Client Spider</a> which is designed to explore modern web apps more effectively.
+このアドオンは、モダンなWebアプリケーションをより効率的に探索できるよう設計された<a href="spider.html">クライアントスパイダー</a>を追加します。
 
-<h2>Browser Extensions</h2>
+<h2>ブラウザ拡張機能</h2>
 
-This add-on adds a ZAP browser extension to both Firefox and Chrome when they are launched from ZAP.
+このアドオンはZAPから起動された場合、FirefoxおよびChrome向けにZAPブラウザ拡張機能を追加します。 
 <p>
-The extensions stream significant browser based events back to ZAP, giving ZAP an insight into what is going on in the browser.
+この拡張機能はブラウザベースの重要なイベントをZAPにストリームし、ZAPがブラウザ内の状況を把握できるようにします。
 <p>
-They also allow you to <a href="record.html">Record Client Side Scripts</a>, for example for authentication.
+また、例えば認証のために<a href="record.html">クライアントサイドスクリプト</a>の記録を可能にします。
 <p>
-If you do not launch your browser(s) from ZAP then you can still install these extensions directly from the relevant stores:
+ZAPからブラウザを起動しない場合でも、対応するストアからこれらの拡張機能を直接インストールできます。
 
 <ul>
-<li>Firefox <a href="https://addons.mozilla.org/en-GB/firefox/addon/zap-browser-extension">ZAP by Checkmarx Browser Extension</a>
-<li>Chrome <a href="https://chromewebstore.google.com/detail/zap-by-checkmarx-browser/cgkggmillbmmpokepnicllalaohphffo">ZAP by Checkmarx Browser Extension</a>
+<li>Firefox <a href="https://addons.mozilla.org/en-GB/firefox/addon/zap-browser-extension">ZAP by Checkmarx ブラウザ拡張機能</a>
+<li>Chrome <a href="https://chromewebstore.google.com/detail/zap-by-checkmarx-browser/cgkggmillbmmpokepnicllalaohphffo">ZAP by Checkmarx ブラウザ拡張機能</a>
 </ul>
 
-Note that you may need to configure the extensions via their options pages to update the host and API key.
+ホストとAPIキーを更新するために、拡張機能のオプションページで設定が必要になる場合があることに注意してください。
 
-<h2>Passive Scanning</h2>
+<h2>パッシブスキャン</h2>
 
-This add-on provides a <a href="pscan.html">Passive Scanner</a> which passively scans all of the data received from the browser.
+このアドオンはブラウザから受信した全てのデータをパッシブにスキャンする<a href="pscan.html">パッシブスキャナー</a>を提供します。
 
-<h2>User Interface</h2>
+<h2>ユーザーインターフェース</h2>
 
-The add-on adds 4 new tabs to ZAP:
+このアドオンはZAPに4つの新しいタブを追加します：
 
-<h3>Client Map</h3>
+<h3>クライアントマップ</h3>
 
-The Client Map is a hierarchical representation of the sites visited, and is similar in some ways to the Sites Tree.
-It includes nodes which represent URLs and ones which represent browser based storage.
+クライアントマップは訪問したサイトの階層的な表現であり、いくつかの点でサイトツリーに似ています。
+これには、URLを表すノードと、ブラウザベースのストレージを表すノードが含まれます。
 <p>
-Unlike the Sites Tree it includes <a href="https://en.wikipedia.org/wiki/URI_fragment">URI fragments</a> which ZAP cannot otherwise see.
-This means that the Client Map looks very different to the Sites tree for modern web apps, and may give you a better understanding of the
-client side structure of the sites.
+サイトツリーとは異なり、ZAPが他に認識できない<a href="https://en.wikipedia.org/wiki/URI_fragment">URIフラグメント</a>が含まれます。
+これは、クライアントマップがモダンなWebアプリケーションではサイトツリーと非常に異なって見えることを意味し、サイトのクライアントサイド構造をより深く理解するのに役立つ場合があります。
 <p>
-The following icons are used for leaf nodes so that you can easily tell their status:
+以下のアイコンはそれらのステータスを簡単に識別できるように、リーフノードに適用されます。
 
 <table>
 	<tr>
 		<td><img src="images/node-standard.png" align="bottom" width="16" height="16" /></td>
-		<td>A URL which will be present in both the Site Tree and the Client Map</td>
+		<td>サイトツリーとクライアントマップの両方に存在するURL</td>
 	</tr>
 	<tr>
 		<td><img src="images/node-fragment.png" align="bottom" width="16" height="16" /></td>
-		<td>A URL which will only be present in Client Map as the URL contains a fragment</td>
+		<td>URLにフラグメントが含まれているため、クライアントマップにのみ存在するURL</td>
 	</tr>
 	<tr>
 		<td><img src="images/node-minus.png" align="bottom" width="16" height="16" /></td>
-		<td>A URL which was found in the DOM but which has not been accessed yet</td>
+		<td>DOMで見つかったが、まだアクセスされていないURL</td>
 	</tr>
 	<tr>
 		<td><img src="images/node-redirect.png" align="bottom" width="16" height="16" /></td>
-		<td>A URL which redirects to another URL</td>
+		<td>別のURLにリダイレクトするURL</td>
 	</tr>
 	<tr>
 		<td><img src="images/node-content-loaded.png" align="bottom" width="16" height="16" /></td>
-		<td>A URL which was loaded as content by the browser (e.g. JavaScript files) rather than as HTML</td>
+		<td>HTMLとしてではなく、ブラウザによってコンテンツとしてロードされたURL (例: JavaScriptファイル)</td>
 	</tr>
 </table>
 
 
 <p>
-Selecting a node that has been visited by ZAP will display details about that node in the Client Details tab.
+ZAPがすでに訪問したノードを選択すると、クライアント詳細タブにそのノードの詳細が表示されます。
 <p>
-The following context menu items are supported:
+以下のコンテキストメニュー項目がサポートされています：
 
-<h4>Export Client Map</h4>
+<h4>クライアントマップをエクスポート</h4>
 
-Allows users to export a representation of the Client Map in YAML format. Including all children and the associated component details of each node.
+クライアントマップの表現をYAML形式でエクスポートできます。 すべての子と、各ノードに関連付けられたコンポーネントの詳細が含まれます。
 
-<h4>Copy URLs</h4>
+<h4>URLをコピー</h4>
 
-Copies the URLs of the selected nodes into the clipboard, separated by newlines.
+選択したノードのURLを改行区切りでクリップボードにコピーします。
 
-<h4>Delete</h4>
+<h4>削除</h4>
 
-Deletes the selected nodes.
+選択したノードを削除します。
 
-<h4>Open in Browser</h4>
+<h4>ブラウザで開く</h4>
 
-Opens the selected node in the chosen browser.
-This menu item is disabled if multiple nodes are selected.
-If the URL contains a fragment then this will be passed to the browser.
+選択したノードを選択したブラウザで開きます。
+複数のノードが選択されている場合、このメニュー項目は無効になります。
+URLにフラグメントが含まれている場合、これはブラウザに渡されます。
 
-<h4>Show in Sites Tree</h4>
+<h4>サイトツリーで表示</h4>
 
-Opens the selected node in the Sites Tree.
-The message in the Sites Tree does not necessarily match the same message which created the Site Node.
-This menu item is disabled if multiple nodes are selected or if the URL has not yet been visited.
-If the URL contains a fragment then this will be ignored.
+選択したノードをサイトツリーで開きます。
+サイトツリー内のメッセージは、サイトノードを作成したメッセージと必ずしも一致しません。
+複数のノードが選択されている場合、またはURLがまだ訪問されていない場合、このメニュー項目は無効になります。
+URLにフラグメントが含まれている場合、これは無視されます。
 
-<h3>Client Details</h3>
+<h3>クライアントの詳細</h3>
 
-The Client Details tab shows details about Client Map nodes.
+クライアント詳細タブはクライアントマップノードに関する詳細を表示します。
 <p>
-The types of data displayed include:
+表示されるデータの種類は以下の通りです：
 <ul>
-<li>Button: Buttons detected in the DOM 
-<li>Cookies: Cookies set in the browser
-<li>FORM: Forms detected in the DOM 
-<li>Input: Input elements detected in the DOM 
-<li>Link: Links detected in the DOM 
+<li>ボタン: DOMで検出されたボタン 
+<li>Cookie: ブラウザで設定されたCookie
+<li>FORM: DOMで検出されたフォーム 
+<li>入力: DOMで検出された入力要素 
+<li>リンク: DOMで検出されたリンク 
 </ul>
 
-The following context menu items are supported:
+以下のコンテキストメニュー項目がサポートされています：
 
-<h4>Copy HREFs</h4>
+<h4>HREFをコピー</h4>
 
-Copies the HREFs of the selected entries into the clipboard, separated by newlines.
+選択したエントリのHREFを改行区切りでクリップボードにコピーします。
 
-<h4>Copy IDs</h4>
+<h4>IDをコピー</h4>
 
-Copies the IDs of the selected entries into the clipboard, separated by newlines.
+選択したエントリのIDを改行区切りでクリップボードにコピーします。
 
-<h4>Copy Texts</h4>
+<h4>テキストをコピー</h4>
 
-Copies the Texts of the selected entries into the clipboard, separated by newlines.
+選択したエントリのテキストを改行区切りでクリップボードにコピーします。
 
-<h3>Client History</h3>
+<h3>クライアント履歴</h3>
 
-The Client History tab shows all of the client side events sent from the browser extension to ZAP.
+クライアントヒストリタブはブラウザ拡張機能からZAPに送信されたすべてのクライアントサイドイベントを表示します。
 <p>
-In addition to the data displayed in the Client Details tab it also includes:
+クライアント詳細タブに表示されるデータに加え、以下も含まれます：
 
 <ul>
-<li>DOM Mutation: Browser <a href="https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver">MutationObserver</a> event 
-<li>Node Added: A DOM node added to the specified URL 
-<li>Page Load: Browser <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/load_event">load</a> event 
-<li>Page Unload: Browser <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/unload_event">unload</a> event 
+<li>DOMミューテーション: ブラウザの<a href="https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver">MutationObserver</a>イベント 
+<li>ノード追加: 指定されたURLに追加されたDOMノード 
+<li>ページロード: ブラウザの<a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/load_event">load</a>イベント 
+<li>ページアンロード: ブラウザの<a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/unload_event">unload</a>イベント 
 </ul>
 
-The following context menu items are supported:
+以下のコンテキストメニュー項目がサポートされています：
 
-<h4>Copy Node IDs</h4>
+<h4>ノードIDをコピー</h4>
 
-Copies the Node IDs of the selected entries into the clipboard, separated by newlines.
+選択したエントリのノードIDを改行区切りでクリップボードにコピーします。
 
-<h4>Copy Node Names</h4>
+<h4>ノード名をコピー</h4>
 
-Copies the Node Names of the selected entries into the clipboard, separated by newlines.
+選択したエントリのノード名を改行区切りでクリップボードにコピーします。
 
-<h4>Copy Source URLs</h4>
+<h4>送信元URLをコピー</h4>
 
-Copies the Source URLs of the selected entries into the clipboard, separated by newlines.
+選択したエントリのソースURLを改行区切りでクリップボードにコピーします。
 
-<h4>Copy Texts</h4>
+<h4>テキストをコピー</h4>
 
-Copies the Texts of the selected entries into the clipboard, separated by newlines.
+選択したエントリのテキストを改行区切りでクリップボードにコピーします。
 
-<h4>Copy Types</h4>
+<h4>タイプをコピー</h4>
 
-Copies the Types of the selected entries into the clipboard, separated by newlines.
+選択したエントリのタイプを改行区切りでクリップボードにコピーします。
 
-<h3>Client Spider</h3>
+<h3>クライアントスパイダー</h3>
 
-This is detailed in the <a href="spider.html">Client Spider</a> help page.
+これについては、<a href="spider.html">クライアントスパイダー</a>のヘルプページで詳しく説明されています。
 
-<h2>AJAX Spider Enhancement</h2>
+<h2>AJAXスパイダー機能強化</h2>
 
-This add-on provides an <a href="ajax-scan.html">AJAX Spider Enhancement</a> which can detect URLs referenced in the DOM which were not
-be accessed by the spider.
+このアドオンは、スパイダーによってアクセスされなかったDOMで参照されているURLを検出できる<a href="ajax-scan.html">AJAXスパイダー機能強化</a>を提供します。
 
-<h2>Firefox Profile</h2>
+<h2>Firefox プロファイル</h2>
 
-It also creates a <a href="firefox-profile.html">Firefox profile</a> and sets it as the default profile that ZAP will use.
+また、<a href="firefox-profile.html">Firefoxプロファイル</a>を作成し、ZAPが使用するデフォルトのプロファイルとして設定します。
 
 <p>
-For more details on how the add-on works see the <a href="internals.html">internals</a> page.
+アドオンの動作に関する詳細については、<a href="internals.html">内部構造</a>のページを参照してください。
 
 </BODY>
 </HTML>

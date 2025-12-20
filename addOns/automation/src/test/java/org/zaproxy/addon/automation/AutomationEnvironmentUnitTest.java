@@ -579,6 +579,35 @@ class AutomationEnvironmentUnitTest {
     }
 
     @Test
+    void shouldHaveDefaultParams() {
+        // Given
+        String contextStr =
+                """
+                env:
+                 contexts:
+                   - name: context 1
+                     urls:
+                     - https://www.example.com
+                """;
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data =
+                yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        AutomationEnvironment ae = new AutomationEnvironment(contextData, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.isOutputToStdout(), is(equalTo(true)));
+        assertThat(ae.isFailOnError(), is(equalTo(true)));
+        assertThat(ae.isFailOnWarning(), is(equalTo(false)));
+        assertThat(ae.isContinueOnFailure(), is(equalTo(false)));
+    }
+
+    @Test
     void shouldSetValidParams() {
         // Given
         String contextStr =
@@ -590,7 +619,8 @@ class AutomationEnvironmentUnitTest {
                         + "  parameters:\n"
                         + "    failOnError: false\n"
                         + "    failOnWarning: true\n"
-                        + "    progressToStdout: true\n";
+                        + "    progressToStdout: false\n"
+                        + "    continueOnFailure: true";
         Yaml yaml = new Yaml();
         LinkedHashMap<?, ?> data =
                 yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
@@ -605,8 +635,10 @@ class AutomationEnvironmentUnitTest {
         assertThat(progress.getErrors().size(), is(equalTo(0)));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.getWarnings().size(), is(equalTo(0)));
+        assertThat(progress.isOutputToStdout(), is(equalTo(false)));
         assertThat(ae.isFailOnError(), is(equalTo(false)));
         assertThat(ae.isFailOnWarning(), is(equalTo(true)));
+        assertThat(ae.isContinueOnFailure(), is(equalTo(true)));
         assertThat(ae.isTimeToQuit(), is(equalTo(false)));
     }
 

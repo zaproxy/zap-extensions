@@ -1,59 +1,62 @@
+import de.undercouch.gradle.tasks.download.Download
+import org.zaproxy.gradle.WebDriverData
+import org.zaproxy.gradle.addon.AddOnPlugin
 import org.zaproxy.gradle.addon.AddOnPluginExtension
 import org.zaproxy.gradle.addon.manifest.ManifestExtension
 import org.zaproxy.gradle.crowdin.CrowdinExtension
-import org.zaproxy.gradle.tasks.DownloadWebDriver
+
+plugins {
+    alias(libs.plugins.undercouch.download)
+}
 
 description = "Common configuration of the WebDriver add-ons."
 
-val geckodriverVersion = "0.36.0"
-val chromeDriverVersion = "140.0.7339.185"
+val geckodriverVersion = project.property("zap.geckodriver.version") as String
+val chromeDriverVersion = project.property("zap.chromedriver.version") as String
 
-fun configureDownloadTask(
-    outputDir: File,
-    targetOs: DownloadWebDriver.OS,
-    task: DownloadWebDriver,
-) {
-    val geckodriver = task.browser.get() == DownloadWebDriver.Browser.FIREFOX
-    var path = "webdriver/"
-    path +=
-        when (targetOs) {
-            DownloadWebDriver.OS.LINUX -> "linux"
-            DownloadWebDriver.OS.MAC -> "macos"
-            DownloadWebDriver.OS.WIN -> "windows"
+fun downloadUrl(data: WebDriverData): String {
+    if (data.browser == WebDriverData.Browser.FIREFOX) {
+        val filename =
+            when (data.os) {
+                WebDriverData.OS.LINUX -> {
+                    when (data.arch) {
+                        WebDriverData.Arch.X32 -> "linux32.tar.gz"
+                        WebDriverData.Arch.X64 -> "linux64.tar.gz"
+                        WebDriverData.Arch.ARM64 -> "linux-aarch64.tar.gz"
+                    }
+                }
+                WebDriverData.OS.MAC -> "macos${if (data.arch == WebDriverData.Arch.X64) "" else "-aarch64"}.tar.gz"
+                WebDriverData.OS.WIN -> "win${data.arch.str}.zip"
+            }
+
+        return "https://github.com/mozilla/geckodriver/releases/download/" +
+            "v$geckodriverVersion/${data.browser.webdriver}-v$geckodriverVersion-$filename"
+    }
+
+    val arch =
+        when (data.os) {
+            WebDriverData.OS.LINUX -> "linux${data.arch.str}"
+            WebDriverData.OS.MAC ->
+                "mac-${if (data.arch == WebDriverData.Arch.X64) "x" else ""}${data.arch.str}"
+            WebDriverData.OS.WIN -> "win${data.arch.str}"
         }
-    path += "/"
-    path += getArchPath(task)
-    path += "/"
-    path += if (geckodriver) "geckodriver" else "chromedriver"
-    if (targetOs == DownloadWebDriver.OS.WIN) {
-        path += ".exe"
-    }
 
-    with(task) {
-        os.set(targetOs)
-        version.set(if (geckodriver) geckodriverVersion else chromeDriverVersion)
-        outputFile.set(File(outputDir, path))
-    }
+    return "https://storage.googleapis.com/chrome-for-testing-public/" +
+        "$chromeDriverVersion/$arch/${data.browser.webdriver}-$arch.zip"
 }
 
-fun getArchPath(task: DownloadWebDriver): String {
-    return when (task.arch.get()) {
-        DownloadWebDriver.Arch.X32 -> "32"
-        DownloadWebDriver.Arch.ARM64 -> "arm64"
-        else -> "64"
-    }
+fun webDriverDir(data: WebDriverData) = "webdriver/${data.os.str}/${data.arch.str}/"
+
+fun webDriverPackageName(data: WebDriverData): String {
+    val version = if (data.browser == WebDriverData.Browser.FIREFOX) geckodriverVersion else chromeDriverVersion
+    val extension = if (data.zipped) "zip" else "tar.gz"
+    return "${data.browser.webdriver}-v$version-${data.os.str}${data.arch.str}.$extension"
 }
+
+fun webDriverPath(data: WebDriverData) = webDriverDir(data) + "${data.browser.webdriver}"
 
 subprojects {
-
-    val wdm by configurations.creating {
-        attributes {
-            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
-        }
-        isVisible = false
-        isCanBeConsumed = false
-        isCanBeResolved = true
-    }
+    apply(plugin = "de.undercouch.download")
 
     crowdin {
         configuration {
@@ -61,23 +64,51 @@ subprojects {
         }
     }
 
-    dependencies {
-        wdm("org.seleniumhq.selenium:selenium-java:4.1.2")
-    }
-
     afterEvaluate {
         val webdriversDir = layout.buildDirectory.dir("webdrivers")
-        val targetOs = project.extra["targetOs"] as DownloadWebDriver.OS
 
-        val downloadTasks =
-            tasks.withType<DownloadWebDriver>().also {
-                it.configureEach {
-                    configureDownloadTask(webdriversDir.get().asFile, targetOs, this)
-                    webdriverClasspath.from(wdm)
+        val webdriversPackagedDir: Provider<Directory> =
+            System.getenv("ZAP_WD_CACHE")?.let {
+                provider { layout.projectDirectory.dir("${gradle.gradleUserHomeDir}/caches/zap-wd") }
+            } ?: layout.buildDirectory.dir("webdriversPackaged")
+
+        @Suppress("UNCHECKED_CAST")
+        val webdrivers = project.extra["webdrivers"] as List<WebDriverData>
+
+        val copyTasks = mutableListOf<TaskProvider<Copy>>()
+        webdrivers.forEach { data ->
+
+            val baseTaskName = "${capitalized(data.browser)}Driver${capitalized(data.arch)}"
+            val downloadTask =
+                tasks.register<Download>("download$baseTaskName") {
+                    src(downloadUrl(data))
+                    dest(webdriversPackagedDir.map { it.file(webDriverPackageName(data)) })
+                    connectTimeout(60_000)
+                    readTimeout(60_000)
+                    onlyIfModified(true)
                 }
-            }
 
-        sourceSets["main"].output.dir(mapOf("builtBy" to downloadTasks), webdriversDir)
+            val copyTask =
+                tasks.register<Copy>("copy$baseTaskName") {
+                    val packagedFile = downloadTask.map { it.outputs.files.singleFile }
+                    val source = if (data.zipped) zipTree(packagedFile) else tarTree(packagedFile)
+                    from(source) {
+                        include("**/${data.browser.webdriver}*")
+                        eachFile {
+                            setPath(relativePath.lastName)
+                        }
+                    }
+                    into(webdriversDir.map { it.dir(webDriverDir(data)) })
+                }
+
+            copyTasks.add(copyTask)
+        }
+
+        tasks.named(AddOnPlugin.GENERATE_MANIFEST_TASK_NAME) {
+            dependsOn(copyTasks)
+        }
+
+        sourceSets["main"].output.dir(mapOf("builtBy" to copyTasks), webdriversDir)
 
         zapAddOn {
             manifest {
@@ -86,6 +117,8 @@ subprojects {
         }
     }
 }
+
+fun capitalized(a: Any) = a.toString().lowercase().replaceFirstChar(Char::titlecase)
 
 val Project.sourceSets: org.gradle.api.tasks.SourceSetContainer get() =
     (this as ExtensionAware).extensions.getByName("sourceSets") as SourceSetContainer

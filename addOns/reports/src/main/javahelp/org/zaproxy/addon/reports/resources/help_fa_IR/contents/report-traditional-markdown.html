@@ -6,6 +6,31 @@
 <BODY>
 	<H1>Traditional Markdown Report</H1>
 
+	<H3>Sections</H3>
+
+	<table>
+		<tr>
+			<th align="left">Section</th>
+			<th align="left">ID</th>
+		</tr>
+		<tr>
+			<td>Alert Count</td>
+			<td>alertcount</td>
+		</tr>
+		<tr>
+			<td>Insights</td>
+			<td>insights</td>
+		</tr>
+		<tr>
+			<td>Instance Count</td>
+			<td>instancecount</td>
+		</tr>
+		<tr>
+			<td>Alert Details</td>
+			<td>alertdetails</td>
+		</tr>
+	</table>
+
 	<H3>Sample</H3>
 	<H4>
 		Header
@@ -71,18 +96,21 @@ CSRF attacks are effective in a number of situations, including:
 CSRF has primarily been used to perform an action against a target site using the victim's privileges, but recent techniques have been discovered to disclose information by gaining access to the response. The risk of information disclosure is dramatically increased when the target site is vulnerable to XSS, because XSS can be used as a platform for CSRF, allowing the attack to operate within the bounds of the same-origin policy.
 
 * URL: http://localhost:8080/bodgeit/advanced.jsp
+  * Node Name: http://localhost:8080/bodgeit/advanced.jsp
   * Method: `GET`
   * Parameter: ``
   * Attack: ``
   * Evidence: `&lt;form id="advanced" name="advanced" method="POST" onsubmit="return validateForm(this);false;"&gt;`
   * Other Info: ``
 * URL: http://localhost:8080/bodgeit/advanced.jsp
+  * Node Name: http://localhost:8080/bodgeit/advanced.jsp
   * Method: `GET`
   * Parameter: ``
   * Attack: ``
   * Evidence: `&lt;form id="query" name="advanced" method="POST"&gt;`
   * Other Info: ``
 * URL: http://localhost:8080/bodgeit/basket.jsp
+  * Node Name: http://localhost:8080/bodgeit/basket.jsp
   * Method: `GET`
   * Parameter: ``
   * Attack: ``

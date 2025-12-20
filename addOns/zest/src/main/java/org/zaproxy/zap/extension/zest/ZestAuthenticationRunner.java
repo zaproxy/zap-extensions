@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import javax.script.ScriptException;
 import org.apache.commons.httpclient.URI;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpHeader;
@@ -60,8 +61,11 @@ public class ZestAuthenticationRunner extends ZestZapRunner implements Authentic
 
     private static final String PROXY_ADDRESS = "127.0.0.1";
 
-    public static final String USERNAME = "Username";
-    public static final String PASSWORD = "Password";
+    private static final String OLD_USERNAME = "Username";
+    private static final String OLD_PASSWORD = "Password";
+
+    public static final String USERNAME = "username";
+    public static final String PASSWORD = "password";
 
     private final String totpVar;
 
@@ -95,7 +99,10 @@ public class ZestAuthenticationRunner extends ZestZapRunner implements Authentic
     }
 
     private static boolean isCredentialParameter(String variableName) {
-        return USERNAME.equals(variableName) || PASSWORD.equals(variableName);
+        return USERNAME.equals(variableName)
+                || PASSWORD.equals(variableName)
+                || OLD_USERNAME.equals(variableName)
+                || OLD_PASSWORD.equals(variableName);
     }
 
     @Override
@@ -150,8 +157,7 @@ public class ZestAuthenticationRunner extends ZestZapRunner implements Authentic
                 this.setProxy(PROXY_ADDRESS, port);
             }
 
-            paramsValues.put(USERNAME, credentials.getParam(USERNAME));
-            paramsValues.put(PASSWORD, credentials.getParam(PASSWORD));
+            copyCredentials(credentials, paramsValues);
 
             this.run(script.getZestScript(), paramsValues);
 
@@ -181,6 +187,27 @@ public class ZestAuthenticationRunner extends ZestZapRunner implements Authentic
                 closeProxy();
             }
         }
+    }
+
+    public static void copyCredentials(
+            GenericAuthenticationCredentials credentials, Map<String, String> paramsValues) {
+        if (!StringUtils.isEmpty(credentials.getParam(OLD_USERNAME))
+                || !StringUtils.isEmpty(credentials.getParam(OLD_PASSWORD))) {
+            LOGGER.warn(
+                    "Use of {} and {} credential parameters is deprecated, use lowercase names instead.",
+                    OLD_USERNAME,
+                    OLD_PASSWORD);
+            copyValue(credentials, OLD_USERNAME, paramsValues);
+            copyValue(credentials, OLD_PASSWORD, paramsValues);
+        }
+
+        copyValue(credentials, USERNAME, paramsValues);
+        copyValue(credentials, PASSWORD, paramsValues);
+    }
+
+    private static void copyValue(
+            GenericAuthenticationCredentials credentials, String name, Map<String, String> params) {
+        params.put(name, credentials.getParam(name));
     }
 
     /**

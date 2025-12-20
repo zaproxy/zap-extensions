@@ -1,7 +1,7 @@
 import org.zaproxy.addon.encoder.processors.script.EncodeDecodeScriptHelper
 import groovy.transform.Field
 
-@Field final int test =  1
+@Field int test = 1
 
 /**
  * Process the input value and return the encoded/decoded/hashed etc. value

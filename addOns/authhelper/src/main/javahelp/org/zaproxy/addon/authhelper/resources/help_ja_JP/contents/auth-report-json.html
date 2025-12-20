@@ -1,192 +1,229 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <HTML>
 <HEAD>
-<TITLE>Authentication Report - JSON</TITLE>
+<TITLE>認証レポート - JSON</TITLE>
 </HEAD>
 <BODY>
-	<H1>Authentication Report - JSON</H1>
+	<H1>認証レポート - JSON</H1>
 
-	This is a specialized report which details how authentication handling worked for the given site.
+	これは、指定されたサイトに対する認証処理がどのように機能したかを詳述する専用レポートです。
 	<p>
-	You must specify the site you want the report for otherwise no data will be generated.
+	レポートの対象とするサイトを指定する必要があります。指定しない場合、データは生成されません。
 	<p>
-	This report is designed to be run after attempting to access at least one authenticated URL with the
-	authentication method set up correctly and with valid credentials.<br>
-	Session handling and verification can be left as "autodetect" - this report will detail how effective that was.
+	このレポートは、認証メソッドを正しく設定し、有効な認証情報を用いて、少なくとも1つの認証が必要なURLへのアクセスを試みた後に実行するように設計されています。<br>
+セッション処理と検証は「自動検出」のままにしておくことができます。このレポートは、その効果がどの程度だったかを詳述します。
 
-	<H3>Sections</H3>
+	<H3>セクション</H3>
 
 	<table>
 		<tr>
-			<th align="left">Section</th>
+			<th align="left">セクション</th>
 			<th align="left">ID</th>
 		</tr>
 		<tr>
-			<td>Summary</td>
+			<td>概要</td>
 			<td>summary</td>
 		</tr>
 		<tr>
-			<td>Automation Framework Environment</td>
+			<td>自動化フレームワーク環境</td>
 			<td>afenv</td>
 		</tr>
 		<tr>
-			<td>Statistics</td>
+			<td>統計</td>
 			<td>statistics</td>
+		</tr>
+		<tr>
+			<td>ドメイン</td>
+			<td>domains</td>
+		</tr>
+		<tr>
+			<td>Domains Partially Out of Scope</td>
+			<td>domainspartiallyoutofscope</td>
+		</tr>
+		<tr>
+			<td>Domains Out of Scope</td>
+			<td>domainsoutofscope</td>
 		</tr>
 
 		<tr>
-			<td>Diagnostics</td>
+			<td>診断</td>
 			<td>diagnostics</td>
 		</tr>
 		<tr>
-			<td>Automation Framework Plan for Diagnostics</td>
+			<td>診断用自動化フレームワークプラン</td>
 			<td>diagnosticsafplan</td>
 		</tr>
 		<tr>
-			<td>HTTP Messages for Diagnostics</td>
+			<td>診断用HTTPメッセージ</td>
 			<td>diagnosticsmessages</td>
 		</tr>
 		<tr>
-			<td>Local Storage for Diagnostics</td>
+			<td>診断用ローカルストレージ</td>
 			<td>diagnosticslocalstorage</td>
 		</tr>
 		<tr>
-			<td>Screenshots for Diagnostics</td>
+			<td>診断用スクリーンショット</td>
 			<td>diagnosticsscreenshots</td>
 		</tr>
 		<tr>
-			<td>Session Storage for Diagnostics</td>
+			<td>診断用セッションストレージ</td>
 			<td>diagnosticssessionstorage</td>
 		</tr>
 		<tr>
-			<td>Web Elements for Diagnostics</td>
+			<td>診断用Web要素</td>
 			<td>diagnosticswebelements</td>
 		</tr>
 		<tr>
-			<td>ZAP Log File for Diagnostics</td>
+			<td>診断用ZAPログファイル</td>
 			<td>diagnosticslogfile</td>
 		</tr>
 	</table>
 
-	<H3>Summary</H3>
-	The following summary items are used:
+	<H3>概要</H3>
+	以下の概要項目が使用されます：
 
 	<table>
 		<tr>
-			<th align="left">Key</th>
-			<th align="left">Passed</th>
-			<th align="left">Description</th>
+			<th align="left">キー</th>
+			<th align="left">結果</th>
+			<th align="left">説明</th>
 		</tr>
 		<tr>
 			<td>auth.summary.auth</td>
 			<td>false</td>
-			<td>Authentication failed</td>
+			<td>認証に失敗しました</td>
 		</tr>
 		<tr>
 			<td>auth.summary.auth</td>
 			<td>true</td>
-			<td>Authentication appeared to work</td>
+			<td>認証に成功したようです</td>
 		</tr>
 		<tr>
 			<td>auth.summary.password</td>
 			<td>false</td>
-			<td>Password field not identified</td>
+			<td>パスワードフィールドが特定されませんでした</td>
 		</tr>
 		<tr>
 			<td>auth.summary.password</td>
 			<td>true</td>
-			<td>Password field identified</td>
+			<td>パスワードフィールドが特定されました</td>
 		</tr>
 		<tr>
 			<td>auth.summary.session</td>
 			<td>false</td>
-			<td>Session Handling not identified</td>
+			<td>セッションハンドリングが特定されませんでした</td>
 		</tr>
 		<tr>
 			<td>auth.summary.session</td>
 			<td>true</td>
-			<td>Session Handling identified</td>
+			<td>セッションハンドリングが特定されました</td>
 		</tr>
 		<tr>
 			<td>auth.summary.username</td>
 			<td>false</td>
-			<td>Username field not identified</td>
+			<td>ユーザー名フィールドが特定されませんでした</td>
 		</tr>
 		<tr>
 			<td>auth.summary.username</td>
 			<td>true</td>
-			<td>Username field identified</td>
+			<td>ユーザー名フィールドが特定されました</td>
 		</tr>
 		<tr>
 			<td>auth.summary.verif</td>
 			<td>false</td>
-			<td>Verification URL not identified</td>
+			<td>検証URLが特定されませんでした</td>
 		</tr>
 		<tr>
 			<td>auth.summary.verif</td>
 			<td>true</td>
-			<td>Verification URL identified</td>
+			<td>検証URLが特定されました</td>
 		</tr>
 	</table>
 
-	<H4>Failure Details</H3>
-	The following failure detail items are used:
+	<H4>失敗の詳細</H4>
+	以下の失敗の詳細項目が使用されます:
 
 	<table>
 		<tr>
-			<th align="left">Key</th>
-			<th align="left">Description</th>
+			<th align="left">キー</th>
+			<th align="left">説明</th>
 		</tr>
 		<tr>
 			<td>auth.failure.overall</td>
-			<td>All authentication elements passed yet authentication was deemed a failure in the end.</td>
+			<td>すべての認証要素をパスしましたが、最終的に認証は失敗と判定されました。</td>
 		</tr>
 		<tr>
 			<td>auth.failure.pass_count</td>
-			<td>No successful browser logins.</td>
+			<td>ブラウザログインに成功しませんでした。</td>
 		</tr>
 		<tr>
 			<td>auth.failure.session_mgmt</td>
-			<td>Failed to identify session management.</td>
+			<td>セッション管理の特定に失敗しました。</td>
+		</tr>
+		<tr>
+			<td>auth.failure.logged_in</td>
+			<td>ログイン状態を示す情報が見つかりませんでした。</td>
 		</tr>
 		<tr>
 			<td>auth.failure.login_failures</td>
-			<td>One or more failed logins.</td>
+			<td>1回以上のログイン失敗がありました。</td>
 		</tr>
 		<tr>
 			<td>auth.failure.no_successful_logins</td>
-			<td>No successful browser logins.</td>
+			<td>ブラウザログインに成功しませんでした。</td>
 		</tr>
 		<tr>
 			<td>auth.failure.verif_ident</td>
-			<td>Failed to identify verification URL.</td>
+			<td>検証URLの特定に失敗しました。</td>
 		</tr>
 		<tr>
 			<td>auth.failure.af_plan_errors</td>
-			<td>There were Automation Framework plan errors.</td>
+			<td>自動化フレームワークのプランにエラーがありました。</td>
 		</tr>
 	</table>
 
-	<H3>Automation Framework Environment</H3>
+	<H3>自動化フレームワーク環境</H3>
 	
-	This is the <a href="https://www.zaproxy.org/docs/desktop/addons/automation-framework/environment/">Automation Framework environment</a>
-	that can be used to recreate the context being tested.
+	これは、テスト対象のコンテキストを再現するために使用できる<a href="https://www.zaproxy.org/docs/desktop/addons/automation-framework/environment/">自動化フレームワークの環境</a>です。
 	<p>
-	If you have set the Session Management or Verification to "autodetect" and ZAP successfully detected them then the
-	environment will have been updated with the values that ZAP has detected. 
+	セッション管理または検証を「自動検出」に設定し、ZAPがそれらを正常に検出した場合、環境はZAPが検出した値で更新されます。 
 
-	<H3>Statistics</H3>
+	<H3>統計</H3>
 	
-	These are all of the statistics that have been recorded by ZAP.<br>
-	For more details of what they mean see 
-	<a href="https://www.zaproxy.org/docs/internal-statistics/">https://www.zaproxy.org/docs/internal-statistics/</a>
+	これらは、ZAPによって記録されたすべての統計情報です。<br>
+それらの意味の詳細については、<a href="https://www.zaproxy.org/docs/internal-statistics/">https://www.zaproxy.org/docs/internal-statistics/</a>を参照してください。
 
-	<H3>Diagnostics</H3>
-	The <a href="browser-auth.html">Browser Based</a> and <a href="client-script.html">Client Script</a> authentication methods allow to record diagnostic data, which can be included in the Authentication Report, to help diagnose authentication problems.
+	<H3>Domains</H3>
+	This section contains an array with all the domains that were accessed while performing the authentication.
+<pre>
+	"domains": [
+		"https://www.example.org",
+		"https://api.example.org"
+	]
+</pre>
+
+	<H3>Domains Partially Out of Scope</H3>
+	This section contains an array with the domains partially out of scope, that were accessed while performing the authentication. For example, when the context includes just a subset of the target (e.g. <code>https://www.example.org/frontend/</code>) and other resources were also accessed (e.g. <code>https://www.example.org/backend/</code>).
+<pre>
+	"domainsPartiallyOutOfScope": [
+		"https://www.example.org"
+	]
+</pre>
+
+	<H3>Domains Out of Scope</H3>
+	This section contains an array with the domains out of scope (context), that were accessed while performing the authentication.
+<pre>
+	"domainsOutOfScope": [
+		"https://api.example.org"
+	]
+</pre>
+
+	<H3>診断</H3>
+	<a href="browser-auth.html">ブラウザベース</a>および<a href="client-script.html">クライアントスクリプト</a>認証メソッドでは、診断データを記録することができ、認証レポートに含めることで認証問題の診断に役立てることができます。
 	<p>
-	Diagnostic data can also be recorded with the <a href="auth-tester.html">Authentication Tester Dialog</a>.
+	診断データは、<a href="auth-tester.html">認証テスターダイアログ</a>でも記録できます。
 	<p>
-	The report will contain an array of diagnostic objects, one for each recorded authentication attempt. The diagnostic objet has the authentication method used, the name of the context and user, the script if Client Script Authentication, the Automation Framework plan, and each step performed during the authentication.
+	レポートには、記録された各認証試行に対して1つずつ、診断オブジェクトの配列が含まれます。 診断オブジェクトには、使用された認証メソッド、コンテキストとユーザーの名前、クライアントスクリプト認証の場合はスクリプト、自動化フレームワークプラン、および認証中に実行された各ステップが含まれます。
 <pre>
 	"diagnostics": [
 		{
@@ -203,7 +240,7 @@
 </pre>
 
 	<p>
-	Each step has at least the URL and the description, it can, optionally, contain also the input element that's being acted upon (e.g. username field being filled).
+	各ステップには、少なくともURLと説明が含まれ、オプションで操作対象の入力要素 (例: 入力されるユーザー名フィールド) を含めることができます。
 <pre>
 	{
 		"created": "0000-00-00T00:00:00.000000Z",
@@ -223,12 +260,12 @@
 		…
 	}
 </pre>
-	More data can be included in each step depending on the additional diagnostics sections enabled for the report.
-	<p>The selector can be of type <code>CSS</code> or <code>XPATH</code> with the value containing the respective selector.
+	レポートで有効化された追加の診断セクションに応じて、各ステップにはさらに多くのデータを含めることができます。
+	<p>selector は、<code>CSS</code>または<code>XPATH</code>のタイプで、value には対応するセレクタが含まれます。
 
 
-	<H4>Automation Framework Plan for Diagnostics</H4>
-	When this section is enabled the diagnostic object can, optionally, include the Automation Framework plan used during the authentication.
+	<H4>診断用自動化フレームワークプラン</H4>
+	このセクションが有効化されている場合、診断オブジェクトにはオプションで認証中に使用された自動化フレームワークプランを含めることができます。
 <pre>
 	"diagnostics": [
 		{
@@ -239,8 +276,8 @@
 	]
 </pre>
 
-	<H4>HTTP Messages for Diagnostics</H4>
-	When this section is enabled the step can, optionally, include HTTP messages that were sent during the step. Each message contains the request/response headers and bodies.
+	<H4>診断用HTTPメッセージ</H4>
+	このセクションが有効化されている場合、ステップにはオプションでそのステップ中に送信されたHTTPメッセージを含めることができます。 各メッセージには、リクエスト/レスポンスのヘッダーとボディが含まれます。
 <pre>
 	"messages": [
 		{
@@ -253,8 +290,8 @@
 	]
 </pre>
 
-	<H4>Local Storage for Diagnostics</H4>
-	When this section is enabled the step can, optionally, include the browser's local storage.
+	<H4>診断用ローカルストレージ</H4>
+	このセクションが有効化されている場合、ステップにはオプションでブラウザのローカルストレージを含めることができます。
 <pre>
 	"localStorage": [
 		{
@@ -265,14 +302,14 @@
 	]
 </pre>
 
-	<H4>Screenshots for Diagnostics</H4>
-	When this section is enabled the step can, optionally, include a screenshot of the page with the image data Base64 encoded.
+	<H4>診断用スクリーンショット</H4>
+	このセクションが有効化されている場合、ステップにはオプションでBase64エンコードされた画像データを含むページのスクリーンショットを含めることができます。
 <pre>
 	"screenshot": "…"
 </pre>
 
-	<H4>Session Storage for Diagnostics</H4>
-	When this section is enabled the step can, optionally, include the browser's session storage.
+	<H4>診断用セッションストレージ</H4>
+	このセクションが有効化されている場合、ステップにはオプションでブラウザのセッションストレージを含めることができます。
 <pre>
 	"sessionStorage": [
 		{
@@ -283,8 +320,8 @@
 	]
 </pre>
 
-	<H4>Web Elements for Diagnostics</H4>
-	When this section is enabled the step can, optionally, include all the input elements present in the page.
+	<H4>診断用Web要素</H4>
+	このセクションが有効化されている場合、ステップにはオプションでページ内に存在するすべての入力要素を含めることができます。
 <pre>
 	"webElements": [
 		{
@@ -301,13 +338,13 @@
 	]
 </pre>
 
-	<H4>ZAP Log File for Diagnostics</H4>
-	When this section is enabled a top level property is added to the report containing the contents of the log file.
+	<H4>診断用ZAPログファイル</H4>
+	このセクションが有効化されている場合、ログファイルの内容を含むトップレベルプロパティがレポートに追加されます。
 <pre>
 	"logFile": "Log file content..."
 </pre>
 
-	<H3>Sample</H3>
+	<H3>サンプル</H3>
 <pre>
 {
 	"@programName": "ZAP",
@@ -352,11 +389,13 @@
 		{
 			"key": "stats.auth.browser.foundfields",
 			"scope": "site",
+			"site:" "https://www.example.org",
 			"value": 1
 		},
 		{
 			"key": "stats.auth.browser.passed",
 			"scope": "site",
+			"site:" "https://www.example.org",
 			"value": 1
 		},
 		{
@@ -397,11 +436,13 @@
 		{
 			"key": "stats.auth.sessiontoken.accesstoken",
 			"scope": "site",
+			"site:" "https://www.example.org",
 			"value": 9
 		},
 		{
 			"key": "stats.auth.sessiontoken.token",
 			"scope": "site",
+			"site:" "https://www.example.org",
 			"value": 6
 		},
 		{
@@ -412,11 +453,13 @@
 		{
 			"key": "stats.auth.state.loggedin",
 			"scope": "site",
+			"site:" "https://www.example.org",
 			"value": 2
 		},
 		{
 			"key": "stats.auth.success",
 			"scope": "site",
+			"site:" "https://www.example.org",
 			"value": 1
 		}
 	]

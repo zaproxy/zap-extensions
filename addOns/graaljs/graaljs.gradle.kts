@@ -22,10 +22,10 @@ zapAddOn {
         dependencies {
             addOns {
                 register("commonlib") {
-                    version.set(">=1.24.0")
+                    version.set(">=1.37.0")
                 }
                 register("scripts") {
-                    version.set(">=45.2.0")
+                    version.set(">=45.15.0")
                 }
             }
         }
@@ -42,9 +42,8 @@ dependencies {
     zapAddOn("commonlib")
     zapAddOn("scripts")
 
-    val graalJsVersion = "25.0.0"
-    implementation("org.graalvm.js:js-community:$graalJsVersion")
-    implementation("org.graalvm.js:js-scriptengine:$graalJsVersion")
+    implementation(libs.graaljs.graaljs)
+    implementation(libs.graaljs.jsScriptEngine)
 
     testImplementation(project(":testutils"))
 }

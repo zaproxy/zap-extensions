@@ -52,7 +52,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -110,7 +110,10 @@ public final class HarUtils {
             JsonMapper.builder()
                     .addModule(new JavaTimeModule())
                     .configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, false)
-                    .serializationInclusion(JsonInclude.Include.NON_DEFAULT)
+                    .defaultPropertyInclusion(
+                            JsonInclude.Value.construct(
+                                    JsonInclude.Include.NON_DEFAULT,
+                                    JsonInclude.Include.NON_DEFAULT))
                     .build();
 
     private static final ObjectWriter JSON_WRITER =
@@ -362,7 +365,7 @@ public final class HarUtils {
                 contentType = "";
                 text = requestBody.toString();
             } else {
-                if (StringUtils.startsWithIgnoreCase(
+                if (Strings.CI.startsWith(
                         contentType.trim(), HttpHeader.FORM_URLENCODED_CONTENT_TYPE)) {
                     for (HtmlParameter param : httpMessage.getFormParams()) {
                         params.add(

@@ -2,90 +2,90 @@
 <HTML>
 <HEAD>
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
-<TITLE>GraphQL Options</TITLE>
+<TITLE>GraphQL オプション</TITLE>
 </HEAD>
 <BODY>
-	<H1>GraphQL Options</H1>
+	<H1>GraphQL オプション</H1>
 
-	In this document, a 'Query' may refer to a GraphQL query, subscription or mutation.
+	本ドキュメントにおける「クエリ」は、GraphQLのクエリ、サブスクリプション、またはミューテーションを指すことがあります。
 
-	<h2>Query Generator Configuration</h2>
+	<h2>クエリジェネレーター設定</h2>
 
-	The query generator uses the imported schema to generate queries for the target endpoint.
-	If enabled, it may be configured with the following options.
+	クエリジェネレーターは、インポートされたスキーマを使用して、ターゲットエンドポイント用のクエリを生成します。
+	有効になっている場合、以下のオプションで設定できます。
 
-	<h3>Maximum Query Depth</h3>
+	<h3>最大クエリ深度</h3>
 	
-	The maximum depth of a generated query.
+	生成されるクエリの最大深度。
 
-	<h3> Lenient Maximum Query Depth </h3>
+	<h3> 寛容な最大クエリ深度 </h3>
 
-	If enabled, this option prevents invalid queries by allowing additional depth for fields with no leaf types.
-	If disabled, Maximum Query Depth is enforced strictly, even if it means generating an invalid query.
+	有効にすると、このオプションは、リーフタイプに到達していないフィールドに対して追加の深度を許可することで、無効なクエリを防止します。
+	無効にすると、最大クエリ深度は厳密に適用され、その結果、無効なクエリが生成される可能性があります。
 
-	<h3> Additional Query Depth </h3>
+	<h3> 追加クエリ深度 </h3>
 
-	The value for this option is used only if the "Lenient Maximum Query Depth" option is enabled.
-	The maximum additional depth used to search for leaf-type fields.
-	If a leaf type is not found, the generated query may be invalid and a message is logged.
+	このオプションの値は、「寛容な最大クエリ深度」オプションが有効な場合にのみ使用されます。
+	リーフタイプフィールドを見つけるために使用される追加の最大深度。
+	リーフタイプが見つからない場合、生成されたクエリは無効になる可能性があり、メッセージがログに記録されます。
 
-	<h3>Maximum Arguments Depth</h3>
+	<h3>最大引数深度</h3>
 	
-	The maximum depth of specified arguments. This is useful when a field has an input object as an argument.
+	指定される引数の最大深度。 これは、フィールドが引数として入力オブジェクトを持つ場合に役立ちます。
 
-	<h3>Specify Optional Arguments</h3>
+	<h3>オプション引数を指定</h3>
 	
-	If this option is selected then optional (nullable) arguments will be specified too.
+	このオプションが選択されている場合、オプション (null 許容) の引数も指定されます。
 
-	<h3>Specify Arguments</h3>
+	<h3>引数の指定方法</h3>
 
-	Choose how the field arguments should be added in the generated query,
+	生成されたクエリにフィールド引数を追加する方法を選択します。
 	<ul>
-		<li>Inline</li>
-		<li>Using Variables</li>
-		<li>Both - each query will be sent twice, once with inline arguments and once with variables</li>
+		<li>インライン</li>
+		<li>変数を使用</li>
+		<li>両方 - 各クエリは、インライン引数を使用する場合と変数を使用する場合の2回送信されます。</li>
 	</ul>
 
-	<h3>Generate Query For</h3>
+	<h3>クエリの生成対象</h3>
 	
-	A separate query may be generated for either of the following in the provided schema,
+	提供されたスキーマ内で、以下のいずれかに対して個別のクエリが生成されます。
 	<ul>
-		<li>each Leaf, that is, each scalar or enum;</li>
-		<li>each field under a root operation type (Query, Mutation or Subscription); or</li>
-		<li>each root operation type.</li>
+		<li>各リーフ、すなわち、スカラーまたはEnum (列挙型)</li>
+		<li>ルート操作タイプ (Query、Mutation、または Subscription) の下にある各フィールド</li>
+		<li>各ルート操作タイプ</li>
 	</ul>
 
-	<h3>Request Method</h3>
+	<h3>リクエストメソッド</h3>
 	
-	The requests made to the endpoint can be of the following types:
+	エンドポイントに対して行われるリクエストは、以下のタイプです。
 
 	<ul>
-		<li>A POST request with a JSON body (Content-Type: application/json)</li>
-		<li>A POST request with a GraphQL query in the body (Content-Type: application/graphql)</li>
-		<li>A GET request with the query appended to it in a query string</li>
+		<li>JSONボディを持つPOSTリクエスト (Content-Type: application/json)</li>
+		<li>ボディにGraphQLクエリを含むPOSTリクエスト (Content-Type: application/graphql)</li>
+		<li>クエリがクエリ文字列として付加されたGETリクエスト</li>
 	</ul>
 
-	<h2>See also</h2>
+	<h2>関連情報</h2>
 	<table>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td><a href="graphql.html">GraphQL</a></td>
-			<td>for an overview of the GraphQL add-on.</td>
+			<td>GraphQL アドオンの概要</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td><a href="variant.html">GraphQL Variant</a></td>
-			<td>for information about the GraphQL variant.</td>
+			<td><a href="variant.html">GraphQL バリアント</a></td>
+			<td>GraphQL バリアントに関する情報</td>
 		</tr>
         <tr>
             <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-            <td><a href="automation.html">GraphQL Automation</a></td>
-            <td>for information about the automation framework support.</td>
+            <td><a href="automation.html">GraphQL 自動化</a></td>
+            <td>自動化フレームワーク対応に関する情報</td>
         </tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td><a href="alerts.html">GraphQL Alerts</a></td>
-			<td>for information about alerts raised by the add-on.</td>
+			<td><a href="alerts.html">GraphQL アラート</a></td>
+			<td>このアドオンによって発生するアラートに関する情報</td>
 		</tr>
 	</table>
 

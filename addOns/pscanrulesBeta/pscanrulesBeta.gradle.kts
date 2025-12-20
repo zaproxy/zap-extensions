@@ -13,7 +13,7 @@ zapAddOn {
         dependencies {
             addOns {
                 register("commonlib") {
-                    version.set(">= 1.32.0 & < 2.0.0")
+                    version.set(">= 1.38.0 & < 2.0.0")
                 }
             }
         }

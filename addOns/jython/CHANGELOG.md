@@ -8,9 +8,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Document the engine name in the help page.
 
 ### Changed
-- Update minimum ZAP version to 2.16.0.
+- Update minimum ZAP version to 2.17.0.
+- Update minimum scripts add-on version to 45.15.0.
+- Update dependency.
 - Update script template:
   - httpsender/HttpSender default template.py - update documentation.
+  - active/Active default template.py - add scanHost function that is called once per host being scanned.
 
 ## [15] - 2024-04-11
 ### Changed

@@ -15,17 +15,22 @@ zapAddOn {
                     version.set(">=1.24.0")
                 }
                 register("scripts") {
-                    version.set(">=45.2.0")
+                    version.set(">=45.15.0")
                 }
             }
         }
     }
 }
 
+tasks.withType<JavaCompile>().configureEach {
+    // Allow warnings since Jython shades dependencies without bringing the annotations in use.
+    options.compilerArgs = options.compilerArgs - "-Werror"
+}
+
 dependencies {
     zapAddOn("commonlib")
 
-    implementation("org.python:jython-standalone:2.7.2")
+    implementation(libs.jython.jython)
 
     testImplementation(project(":testutils"))
 }

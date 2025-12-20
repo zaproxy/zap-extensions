@@ -70,107 +70,137 @@
 	<br />
 
 	<h2>Sağ tık menüsü</h2>
-	Bir düğüme sağ tıklamak şunları yapmanızı sağlayan bir menü getirir:
+	<p>Right clicking on a node will bring up a menu which will allow you to:</p>
 
 	<h3>Saldırı</h3>
-	Saldırı menüsünde aşağıdaki alt menüler vardır:
+	<p>The Attack menu has the following submenus:</p>
+
 	<h4>Aktif Tarama Sitesi</h4>
-	Bu başlatılacak bir
-	<i>Aktif Tarama</i> seçili düğümü içeren sitenin tamamının.
-	<br />  
-	<i>Aktif Tarama sekmesi</i> görüntülenecek ve taramanın ilerlemesini gösterecek.
-	<br />
+	<p>
+		This will initiate an
+		<i>Active Scan</i> of the whole of the site containing the selected node.
+		<br /> The
+		<i>Active Scan tab</i> will be display and will show the progress of the scan.
+	</p>
 
 	<h4>Aktif Tarama Düğümü</h4>
-	Bu başlatılacak bir
-	<i>Aktif Tarama</i> yalnızca seçilen düğümün.
-	<br /> The
-	<i>Aktif Tarama sekmesi</i> taramayı ekranda gösterecek ve tarama döngüsünü gösterecek.
-	<br />
+	<p>
+		This will initiate an
+		<i>Active Scan</i> of just the node selected.
+		<br /> The
+		<i>Active Scan tab</i> will be display and will show the progress of the scan.
+	</p>
 
 	<h4>Ağ Sitesi</h4>
-	Bu başlatılacak bir
-	<i>örümcek</i> seçili düğümü içeren sitenin tamamını.
-	<br /> O
-	<i>Ağ sekmesi</i> tarama ve taramanın ilerlemesi ekranda gösterilecek
-	<br />
+	<p>
+		This will initiate a
+		<i>spider</i> of the whole of the site containing the selected node.
+		<br /> The
+		<i>Spider tab</i> will be display and will show the progress of the scan.
+	</p>
 
 	<h4>Siteye zorla gözat</h4>
-	Bu başlatacak bir
-	<i>zorla göz at</i> seçilen düğümü içeren sitenin tamamı.
-	<br /> O
-	<i>Zorla Göz At sekmesi</i> tarama ve taramanın ilerlemesi ekranda gösterilecek.
-	<br />
+	<p>
+		This will initiate a
+		<i>forced browse</i> of the whole of the site containing the selected node.
+		<br /> The
+		<i>Forced Browse tab</i> will be display and will show the progress of the scan.
+	</p>
 
 	<h4>Zorla Gözat Dizini</h4>
-	Bu başlatacak bir
-	<i>zorla göz at</i> seçili dizinde.
-	<br /> O
-	<i>Zorla Göz At sekmesi</i> görüntülenir ve taramanın ilerleme durumu gösterilir.
-	<br />
+	<p>
+		This will initiate a
+		<i>forced browse</i> on the selected directory.
+		<br /> The
+		<i>Forced Browse tab</i> will be displayed and will show the progress of the scan.
+	</p>
 
 	<h4>Zorla Göz At Dizini (ve çocuklar)</h4>
-	Bu başlatılacak bir
-	<i>zorla göz at</i> seçili dizin ve bulunan tüm çocuklarda.
-	<br /> O
-	<i>Zorla Göz At sekmesi</i> görüntülenir ve taramanın ilerleme durumu gösterilir.
-	<br />
+	<p>
+		This will initiate a
+		<i>forced browse</i> on the selected directory and all children found.
+		<br /> The
+		<i>Forced Browse tab</i> will be displayed and will show the progress of the scan.
+	</p>
 
 	<h3>Şunun dışında bırak</h3>
-	Bu menü aşağıdaki alt menülere sahiptir:
+	<p>Bu menü aşağıdaki alt menülere sahiptir:</p>
 
 	<h4>Proxy</h4>
-	Bu, seçilen düğümleri proxy dışında tutacaktır. ZAP ile hala proxylenmiş olacaklar fakat herhangi bir sekmede gösterilmeyecekler.
-	<br /> Bu, şu anda test etmekte olduğunuz sistem ile ilişkili olmadığını bildiğiniz URL'leri yok saymak için kullanılabilir.
-	<br /> Düğümler şunun aracılığıyla tekrar dahil edilebilir
-	<i>Session Properties</i> pencere
+	<p>
+		This will exclude the selected nodes from the proxy. They will still be proxied via ZAP
+		but will not be shown in any of the tabs.
+		<br /> This can be used to ignore URLs that you know are not relevant to the system you
+		are currently testing.
+		<br /> The nodes can be included again via the
+		<i>Session Properties</i> dialog
+	</p>
 
 	<h4>Tarayıcı</h4>
-	Bu seçili düğümlerin aktif olarak taranmasını önler.
-	<br /> Düğümler şunun aracılığıyla tekrar dahil edilebilir
-	<i>Session Properties</i> pencere
+	<p>
+		This will prevent the selected nodes from being actively scanned.
+		<br /> The nodes can be included again via the
+		<i>Session Properties</i> dialog
+	</p>
 
 	<h4>Örümcek</h4>
-	Bu, seçili düğümleri örümceğin taramasını engeller.
-	<br /> Düğüm şunun aracılığıyla tekrardan dahil edilebilir
-	<i>Oturum Özellikleri</i> pencere
+	<p>
+		This will prevent the selected nodes from being spidered.
+		<br /> The nodes can be included again via the
+		<i>Session Properties</i> dialog
+	</p>
 
 	<h3>Uygulamayı çalıştır</h3>
-	Bu menü size şunun imkanını sağlar
-	<i>uygulamaları çalıştır</i> üzerinden yapılandırdığınız
-	<i>Seçenek Uygulamaları Ekranı</i> 'Uygulamaları yapılandır...' alt menüsünden de erişilebilir.
+	<p>
+		This menu allows you to
+		<i>invoke applications</i> that you have configured via the
+		<i>Options Applications screen</i> which is also accessible via the 'Configure
+		applications...' submenu.
+	</p>
 
 	<h3>Etiketleri Yönet...</h3>
-	Bu şunu öne çıkaracak
-	<i>Sekme pencerelerini yönet</i> şunu değiştirmenize imkan verir
-	<i>etiketler</i> sorgu ile eşleştirilmiş.
+	<p>
+		This will bring up the
+		<i>Manage Tags dialog</i> which allows you to change the
+		<i>tags</i> associated with the request.
+	</p>
 
 	<h3>Not olarak...</h3>
-	Bu şunu öne çıkaracak
-	<i>Not penceresi ekle</i> şunu kaydetmenizi sağlar
-	<i>notlar</i> istek ile bağlantılı.
+	<p>
+		This will bring up the
+		<i>Add Note dialog</i> which allows you to record
+		<i>notes</i> related to the request.
+	</p>
 
 	<h3>Kırılma...</h3>
-	Bu şunu öne çıkaracak
-	<i>Kırılma Noktası diyaloğu ekle</i> o URL'e bir durma noktası ayarlamanıza izin verir.
-	<br />
+	<p>
+		This will bring up the
+		<i>Add Break Point dialog</i> which allows you to set a break point on that URL.
+	</p>
 
 	<h3>Bu düğüm için uyarılar</h3>
-	Eğer seçili URL, 
-	<i>uyarılar</i> onunla ilişkilendirildikten sonra bu menü altında listelenirler.
-	<br> Uyarılardan birini seçmek, görüntülenmesine sebep olacaktır.
+	<p>
+		If the URL selected has
+		<i>alerts</i> associated with it then they will be listed under this menu.
+		<br> Selecting one of the alerts will cause it to be displayed.
+	</p>
 
 	<h3>Tekrar gönder...</h3>
-	Bu şunu öne çıkaracak
-	<i>Diyaloğu yeniden gönder</i> istediğiniz herhangi bir değişiklik yaptıktan sonra isteği tekrar göndermenize imkan verir.
+	<p>
+		This will bring up the
+		<i>Resend dialog</i> which allows you to resend the request after making any changes to
+		it that you want to.
+	</p>
 
 	<h3>Yeni Uyarı...</h3>
-	Bu şunu öne çıkaracak
-	<i>Uyarı penceresi ekle</i> el ile yeni bir kayıt etmenizi sağlar
-	<i>Uyarı</i> bu isteğe karşı.
+	<p>
+		This will bring up the
+		<i>Add Alert dialog</i> which allows you to manually record a new
+		<i>Alert</i> against this request.
+	</p>
 
 	<h3>Tarayıcıda URL Aç</h3>
-	Bu, seçili düğümün URL'sini varsayılan tarayıcınızda açar.
+	<p>Bu, seçili düğümün URL'sini varsayılan tarayıcınızda açar.</p>
 
 	<h2>Ayrıca bakınız</h2>
 	<table>

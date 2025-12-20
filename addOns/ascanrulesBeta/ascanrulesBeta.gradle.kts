@@ -13,7 +13,7 @@ zapAddOn {
         dependencies {
             addOns {
                 register("commonlib") {
-                    version.set(">= 1.36.0 & < 2.0.0")
+                    version.set(">= 1.38.0 & < 2.0.0")
                 }
                 register("network") {
                     version.set(">= 0.3.0")
@@ -39,8 +39,8 @@ dependencies {
     zapAddOn("network")
     zapAddOn("oast")
 
-    implementation("com.googlecode.java-diff-utils:diffutils:1.3.0")
-    implementation("org.jsoup:jsoup:1.17.2")
+    implementation(libs.ascanrulesBeta.diffutils)
+    implementation(libs.ascanrulesBeta.jsoup)
 
     testImplementation(parent!!.childProjects.get("commonlib")!!.sourceSets.test.get().output)
     testImplementation(project(":testutils"))

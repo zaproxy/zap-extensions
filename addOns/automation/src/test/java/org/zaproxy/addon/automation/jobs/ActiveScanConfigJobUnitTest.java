@@ -298,7 +298,7 @@ class ActiveScanConfigJobUnitTest extends TestUtils {
         assertThat(iv.getCookieData().isEncodeCookieValues(), is(equalTo(encodeCookieValues)));
         verify(param).setEncodeCookieValues(encodeCookieValues);
 
-        verify(param).setTargetParamsInjectable(28);
+        verify(param).setTargetParamsInjectable(60);
         verify(param).setTargetParamsEnabledRPC(40);
     }
 

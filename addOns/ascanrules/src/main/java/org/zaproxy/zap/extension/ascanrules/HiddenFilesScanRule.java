@@ -409,13 +409,13 @@ public class HiddenFilesScanRule extends AbstractHostPlugin implements CommonAct
     private String readPayloadsFile(String path) {
         File f = new File(path);
         if (!f.exists()) {
-            LOGGER.error("No such file: {}", f.getAbsolutePath());
+            LOGGER.warn("No such file: {}", f.getAbsolutePath());
             return "";
         }
         try {
             return new String(Files.readAllBytes(f.toPath()), StandardCharsets.UTF_8);
         } catch (IOException e) {
-            LOGGER.error(
+            LOGGER.warn(
                     "Error on opening/reading {} payload file. Error: {}",
                     getName(),
                     e.getMessage(),

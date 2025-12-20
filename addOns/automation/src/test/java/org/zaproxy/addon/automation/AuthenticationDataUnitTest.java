@@ -36,6 +36,7 @@ import static org.mockito.Mockito.mock;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -78,6 +79,11 @@ class AuthenticationDataUnitTest extends TestUtils {
     @BeforeEach
     void setupEach() throws Exception {
         setUpZap();
+
+        Field extensionScriptField =
+                ScriptBasedAuthenticationMethodType.class.getDeclaredField("extensionScript");
+        extensionScriptField.setAccessible(true);
+        extensionScriptField.set(null, null);
 
         extensionLoader = mock(ExtensionLoader.class);
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
@@ -380,6 +386,7 @@ class AuthenticationDataUnitTest extends TestUtils {
         given(authScript.getOptionalParamsNames()).willReturn(new String[0]);
         given(extensionScript.getInterface(sw, AuthenticationScriptV2.class))
                 .willReturn(authScript);
+        given(extensionScript.getScript("ScriptName")).willReturn(sw);
 
         AuthenticationData data = new AuthenticationData();
         data.setMethod("script");
@@ -425,6 +432,7 @@ class AuthenticationDataUnitTest extends TestUtils {
         given(authScript.getOptionalParamsNames()).willReturn(new String[0]);
         given(extensionScript.getInterface(sw, AuthenticationScriptV2.class))
                 .willReturn(authScript);
+        given(extensionScript.getScript("ScriptName")).willReturn(sw);
 
         AuthenticationData data = new AuthenticationData();
         data.setMethod("script");

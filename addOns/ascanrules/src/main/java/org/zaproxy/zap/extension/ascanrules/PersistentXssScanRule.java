@@ -19,13 +19,14 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -146,8 +147,8 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin
         setParameter(sourceMsg2, param, attack);
         try {
             sendAndReceive(sourceMsg2);
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
+        } catch (IOException e) {
+            LOGGER.debug(e.getMessage(), e);
         }
 
         if (isStop()) {
@@ -157,8 +158,8 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin
         HttpMessage sinkMsg2 = sinkMsg.cloneRequest();
         try {
             sendAndReceive(sinkMsg2);
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
+        } catch (IOException e) {
+            LOGGER.debug(e.getMessage(), e);
         }
 
         if (isStop()) {
@@ -639,7 +640,7 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin
                                                         .raise();
                                             } else {
                                                 HttpMessage ctx2Message = contexts2.get(0).getMsg();
-                                                if (StringUtils.containsIgnoreCase(
+                                                if (Strings.CI.contains(
                                                         ctx.getMsg()
                                                                 .getResponseHeader()
                                                                 .getHeader(
@@ -690,8 +691,8 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin
                     }
                 }
             }
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
+        } catch (IOException e) {
+            LOGGER.debug(e.getMessage(), e);
         }
     }
 

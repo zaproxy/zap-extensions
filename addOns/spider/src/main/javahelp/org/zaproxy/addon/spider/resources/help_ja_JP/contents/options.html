@@ -2,158 +2,110 @@
 <html>
 <head>
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
-<title>Options Spider screen</title>
+<title>オプション - スパイダー画面</title>
 </head>
 <body>
-	<h1>Options Spider screen</h1>
+	<h1>オプション - スパイダー画面</h1>
 	<p>
-		This screen allows you to configure the <a
-			href="spider.html">Spider</a> options.</p> 
-	<p>It should be noted that modifying most of these options also affects
-	the running Spider.
+		この画面では、<a
+			href="spider.html">スパイダー</a>のオプションを設定できます。</p> 
+	<p>これらのオプションのほとんどを変更すると、実行中のスパイダーにも影響を与えることに注意してください。
 	</p>
 
-	<h3>Maximum depth to crawl</h3>
-	The parameter defines the maximum depth in the crawling process where a
-	page must be found in order for it to be processed. Resources found
-	deeper than this level are not fetched and parsed by the spider. The value
-	zero means unlimited depth.
+	<h3>クロールする最大階層</h3>
+	このパラメーターは、処理されるためにページが見つかる必要があるクロールプロセスにおける最大深度を定義します。 このレベルより深くで見つかったリソースは、スパイダーによってフェッチおよび解析されません。 値ゼロは無制限の深度を意味します。
 	<p>
-		The depth is calculated starting from the seeds, so, if a Spider scan
-		starts with only a single URL (eg. URL manually specified), the depth is
-		calculated from this one. However, if the scan starts with multiple
-		seeds (eg. recurse and Sites tree node with children), a resource is processed if it's depth
-		relative to <i>any</i> of the seeds is less than the defined one.
+		深度はシードから開始して計算されます。したがって、スパイダーのスキャンが単一のURL (例: 手動で指定されたURL) のみで開始された場合、深度はそのURLから計算されます。 ただし、スキャンが複数のシード (例: 再帰と子ノードを持つサイトツリーノード) で開始された場合、定義された深度よりも<i>いずれか</i>のシードに対する相対深度が小さい場合にリソースが処理されます。
 	</p>
 
-	<h3>Number of threads used</h3>
-	The Spider is multi-threaded and this is the number that defines the
-	maximum number of worker threads used in the crawling process. Changing this
-	parameter does not have any effect on any crawling that is in progress. 
+	<h3>使用するスレッド数</h3>
+	スパイダーはマルチスレッドであり、これはクロールプロセスで使用されるワーカースレッドの最大数を定義する数値です。 このパラメーターを変更しても、進行中のクロールには影響しません。 
 
-	<h3>Maximum duration</h3>
-	The maximum length of time that the Spider should run for, measured in minutes.
-	Zero (the default) means that the Spider will run until it has found all of the links that it is able to. 
+	<h3>最大実行時間</h3>
+	スパイダーが実行を許可される最大時間 (分単位) です。
+	ゼロ (既定値) は、スパイダーが可能なすべてのリンクを見つけるまで実行されることを意味します。 
 
-	<h3>Maximum children to crawl</h3>
-	This parameter limits the number of children that will be crawled at every node in the tree.<br>
-	This is useful for data driven applications that have large numbers of 'pages' that are in fact exactly the same code but 
-	containing different data, for example from a database.<br>
-	By default this is set to zero which means there are no limits applied to the number of child nodes crawled.
+	<h3>クロールする子ノードの最大数</h3>
+	このパラメーターは、ツリー内の各ノードでクロールされる子ノードの数を制限します。<br>
+これは、実際にはまったく同じコードであるが、データベースなどからの異なるデータを含む大量の「ページ」を持つデータ駆動型アプリケーションにとって有用です。<br>
+デフォルトではゼロに設定されており、これはクロールされる子ノードの数に制限が適用されないことを意味します。
 
-	<h3>Maximum parse size</h3>
-	Defines the maximum size, in bytes, that a response might have to be parsed. This allows
-	the Spider to skip big responses/files. Zero means unlimited size.
+	<h3>最大解析サイズ</h3>
+	解析されるレスポンスが持つ可能性のある最大サイズをバイト単位で定義します。 これにより、スパイダーは大きなレスポンス/ファイルをスキップできます。 ゼロは無制限のサイズを意味します。
 
-	<h3>Domains Always in Scope</h3>
-	Allows to manage the domains, string literals or regular expressions, that are in the
-	Spider's scope. The normal behavior of the Spider is to only follow links to resources
-	found on the same domain as the page where the scan started. However,
-	this option allows you to define additional domains that are considered
-	"in scope" during the crawling process. Pages on these domains are
-	processed during the scan.
+	<h3>常にスコープ内のドメイン</h3>
+	スパイダーのスコープ内にあるドメイン、文字列リテラル、または正規表現を管理できます。 スパイダーの通常の動作は、スキャンが開始されたページと同じドメインで見つかったリソースへのリンクのみをたどることです。 ただし、このオプションを使用すると、クロールプロセス中に「スコープ内」と見なされる追加のドメインを定義できます。 これらのドメイン上のページは、スキャン中に処理されます。
 		
-	<h3>Query parameters handling</h3>
-	When crawling, the Spider has an internal mechanism that marks which pages
-	were already visited, so they are not processed again. When this check is made,
-	the way the URIs parameters are handled is set using this option. There are
-	three available options:
+	<h3>クエリパラメーターの処理</h3>
+	クロール中に、スパイダーにはどのページがすでに訪問されたかをマークする内部メカニズムがあり、それらが再度処理されることはありません。 このチェックが行われる際、URIパラメーターの処理方法は、このオプションを使用して設定されます。 利用可能なオプションは3つあります：
 	<ul>
-	<li><b>Ignore parameters completely</b> - if www.example.org/?bar=456 is visited,
-	then www.example.org/?foo=123 will not be visited</li>
-	<li><b>Consider only parameter's name</b> (ignore parameter's value) - if 
-	www.example.org/?foo=123 is visited, then www.example.org/?foo=456 will not be visited, 
-	but www.example.org/?bar=789 or www.example.org/?foo=456&amp;bar=123 will be visited</li>
-	<li><b>Consider both parameter's name and value</b> - if www.example.org/?123 is visited,
-	any other uri that is different (including, for example, www.example.org/?foo=456 or 
-	www.example.org/?bar=abc) will be visited</li>
+	<li><b>パラメーターを完全に無視する</b> - www.example.org/?bar=456 が訪問された場合、www.example.org/?foo=123 は訪問されません。</li>
+	<li><b>パラメーター名のみを考慮する</b> (パラメーターの値を無視する) - www.example.org/?foo=123 が訪問された場合、www.example.org/?foo=456 は訪問されませんが、www.example.org/?bar=789 または www.example.org/?foo=456&bar=123 は訪問されます。</li>
+	<li><b>パラメーター名と値の両方を考慮する</b> - www.example.org/?123 が訪問された場合、異なるURI (例えば www.example.org/?foo=456 や www.example.org/?bar=abc を含む) はすべて訪問されます。</li>
 	</ul>
 
-	<h3>Send "Referer" header</h3>
-	If the Spider requests should be sent with the "Referer" header.
+	<h3>Referer ヘッダーを送信する</h3>
+	スパイダーのリクエストが「Referer」ヘッダーとともに送信されるかどうかを設定します。
 
-	<h3>Accept Cookies</h3>
-	If the Spider scans should accept cookies while Spidering. If enabled the Spider will
-	properly handle any cookies received from the server and will send them back accordingly.
-	If the option is disabled, the Spider will not send any cookies in its requests. For
-	example, this might control whether or not the Spider uses the same session throughout a
-	spidering scan.
-	<br>When accepting cookies the cookies are not shared between Spider scans, each scan has
-	its own cookie jar.
-	<br>This option has low priority, the Spider will respect other (global) options related
-	to the HTTP state. This option is ignored if, for example, the option Use Global HTTP
-	State is selected, when spidering as a User
-	or when a HTTP Session is active.
+	<h3>Cookieを受け入れる</h3>
+	スパイダーによるスキャン中にCookieを受け入れるかどうかを設定します。 有効になっている場合、スパイダーはサーバーから受信したすべてのCookieを適切に処理し、それに応じて送り返します。
+	このオプションが無効になっている場合、スパイダーはリクエストにCookieを一切送信しません。 たとえば、これはスパイダーがスキャン全体を通して同じセッションを使用するかどうかを制御する場合があります。
+	<br>
+Cookieを受け入れる場合、Cookieはスパイダーのスキャン間で共有されず、各スキャンは独自のCookieジャーを持ちます。
+	<br>
+このオプションは優先度が低く、スパイダーはHTTPステータスに関連する他の (グローバルな) オプションを尊重します。 たとえば、ユーザーとしてスパイダーを実行する場合や、HTTPセッションがアクティブな場合など、グローバルHTTPステータスを使用するオプションが選択されている場合、このオプションは無視されます。
 
-	<h3>Process forms</h3>
-	During the crawling process, the behaviour of the Spider when it
-	encounters HTML forms is defined by this option. If disabled, the HTML
-	forms will not be processed at all. If enabled, the HTML forms with the
-	method defined as HTTP GET will be submitted with some generated
-	values. The behaviour when encountering forms with the method defined
-	as HTTP POST is configured by the next option.
+	<h3>フォームを処理する</h3>
+	クロールプロセス中に、スパイダーがHTMLフォームに遭遇したときの動作がこのオプションによって定義されます。 無効になっている場合、HTMLフォームはまったく処理されません。 有効になっている場合、メソッドがHTTP GETとして定義されているHTMLフォームは、生成された値で送信されます。 メソッドがHTTP POSTとして定義されているフォームに遭遇したときの動作は、次のオプションで設定されます。
 
-	<h3>POST forms</h3>
-	As briefly described in the previous paragraph (Process Forms), this
-	option configures the behaviour of the Spider when
-	<i>Process Forms</i> is enabled and when encountering HTML forms that
-	have to be POSTed.
+	<h3>POSTフォーム</h3>
+	前の段落 (フォームの処理) で簡単に説明したように、このオプションは、<i>フォームの処理</i>が有効になっていて、POSTする必要があるHTMLフォームにスパイダーが遭遇したときの動作を設定します。
 
-	<h3>Parse HTML Comments</h3>
-	This option defines whether the Spider should also consider HTML
-	comments when searching for links to resources. Only the resources found in
-	commented valid HTML tags will be processed.
+	<h3>HTMLコメントを解析  </h3>
+	このオプションは、リソースへのリンクを検索する際に、スパイダーがHTMLコメントも考慮するかどうかを定義します。 コメント化された有効なHTMLタグで見つかったリソースのみが処理されます。
 
-	<h3>Parse 'robots.txt' files</h3>
-	This option defines whether the Spider should also spider the
-	robots.txt files found on websites, searching for links to resources.
-	This option does not define whether the Spider should follow the rules
-	imposed by the robots.txt file.
+	<h3>'robots.txt'ファイルを解析</h3>
+	このオプションは、スパイダーがWebサイトで見つかった robots.txt ファイルもスパイダーし、リソースへのリンクを検索するかどうかを定義します。
+	このオプションは、スパイダーが robots.txt ファイルによって課されたルールに従うかどうかを定義するものではありません。
 
-	<h3>Parse 'sitemap.xml' files</h3>
-	This option controls whether the Spider should also consider 
-	'sitemap.xml' file and try to identify new resources.
+	<h3>'sitemap.xml'ファイルを解析</h3>
+	このオプションは、スパイダーが sitemap.xml ファイルも考慮し、新しいリソースを特定しようとするかどうかを制御します。
 	
-	<h3>Parse SVN metadata files</h3>
-	This option controls whether the Spider should also parse 
-	SVN metadata files and try to identify new resources.
+	<h3>SVNメタデータファイルを解析</h3>
+	このオプションは、スパイダーがSVNメタデータファイルも解析し、新しいリソースを特定しようとするかどうかを制御します。
 	
-	<h3>Parse Git metadata files</h3>
-	This option controls whether the Spider should also parse 
-	Git metadata files and try to identify new resources.
+	<h3>Gitメタデータファイルを解析</h3>
+	このオプションは、スパイダーがGitメタデータファイルも解析し、新しいリソースを特定しようとするかどうかを制御します。
 
-	<h3>Parse .DS_Store files</h3>
-	This option controls whether the Spider should also parse 
-	.DS_Store files and try to identify new resources.
+	<h3>.DS_Storeファイルを解析</h3>
+	このオプションは、スパイダーが .DS_Store ファイルも解析し、新しいリソースを特定しようとするかどうかを制御します。
 
-	<h3>Handle OData-specific parameters</h3>
-	This options defines whether the Spider should try to detect OData-specific
-	parameters (i.e. resources identifiers) in order to properly process them 
-	according to the rule defined by the "Query parameters handling" option.
+	<h3>OData 固有のパラメータを処理</h3>
+	このオプションは、スパイダーがOData固有のパラメーター (すなわちリソース識別子) を検出し、それらを「クエリパラメーターの処理」オプションで定義されたルールに従って適切に処理しようとするかどうかを定義します。
 
-	<h3>Logout Avoidance</h3>
-	Whether or not the Spider should attempt to avoid logout related paths/functionality, default: false.
+	<h3>ログアウト回避</h3>
+	スパイダーがログアウト関連のパス/機能を回避しようと試みるかどうかを設定します。既定値は false です。
 
-	<h3>Irrelevant Parameters</h3>
-	Allows to manage the parameters that should be removed when canonicalising the URLs found or request bodies generated (<code>x-www-form-urlencoded</code>).
+	<h3>無関係なパラメーター</h3>
+	見つかったURLまたは生成されたリクエストボディ (<code>x-www-form-urlencoded</code>) を正規化する際に、削除すべきパラメーターを管理できます。
 	<p>
-	The parameters with names matching the following are automatically considered irrelevant:
+	以下の名前と一致するパラメーターは、自動的に無関係と見なされます：
 	<ul>
-		<li>Session names defined in the HTTP Sessions options.
-		<li>Token names defined in the Anti-CSRF Tokens options.
+		<li>HTTPセッションオプションで定義されたセッション名
+		<li>Anti-CSRFトークンオプションで定義されたトークン名
 	</ul>
 
-	<h2>See also</h2>
+	<h2>関連情報</h2>
 	<table>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td><a href="spider.html">Spider</a></td>
-			<td>for an overview of the Spider</td>
+			<td><a href="spider.html">スパイダー</a></td>
+			<td>スパイダーの概要について</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td><a href="tab.html">Spider Tab</a></td>
-			<td>for an overview of the Spider tab</td>
+			<td><a href="tab.html">スパイダータブ</a></td>
+			<td>スパイダータブの概要について</td>
 		</tr>
 	</table>
 

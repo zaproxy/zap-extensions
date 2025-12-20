@@ -21,7 +21,13 @@ package org.zaproxy.addon.authhelper.report;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang3.StringUtils;
@@ -29,8 +35,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
+import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.extension.SessionChangedListener;
+import org.parosproxy.paros.model.Session;
+import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.authhelper.AuthUtils;
 import org.zaproxy.addon.authhelper.AuthenticationDiagnostics;
 import org.zaproxy.addon.authhelper.AutoDetectSessionManagementMethodType;
@@ -61,6 +72,15 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
             List.of(ExtensionReports.class);
     private static final Logger LOGGER = LogManager.getLogger(ExtensionAuthhelperReport.class);
 
+    private enum ContextState {
+        IN_CONTEXT,
+        OUT_OF_CONTEXT,
+        PARTIAL_OUT_OF_CONTEXT,
+    }
+
+    private static Map<String, ContextState> domainsAccessed =
+            Collections.synchronizedMap(new HashMap<>());
+
     private ExtensionAutomation extensionAutomation;
     private AuthReportDataHandler authReportDataHandler;
     private AuthenticationDiagnostics.DiagnosticDataProvider diagnosticDataProvider;
@@ -76,6 +96,64 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
             diagnosticDataProvider = this::addDiagnosticData;
             AuthenticationDiagnostics.addDiagnosticDataProvider(diagnosticDataProvider);
         }
+        AuthenticationDiagnostics.addMessageAccessedConsumer(this::processMessageAccessed);
+    }
+
+    private void processMessageAccessed(Context ctx, HttpMessage msg) {
+        try {
+            String domain = SessionStructure.getHostName(msg);
+            domainsAccessed.compute(
+                    domain,
+                    (k, v) -> {
+                        boolean inCtx = ctx.isInContext(msg.getRequestHeader().getURI().toString());
+                        if (v == null) {
+                            return inCtx ? ContextState.IN_CONTEXT : ContextState.OUT_OF_CONTEXT;
+                        }
+
+                        return switch (v) {
+                            case IN_CONTEXT ->
+                                    inCtx
+                                            ? ContextState.IN_CONTEXT
+                                            : ContextState.PARTIAL_OUT_OF_CONTEXT;
+                            case OUT_OF_CONTEXT ->
+                                    inCtx
+                                            ? ContextState.PARTIAL_OUT_OF_CONTEXT
+                                            : ContextState.OUT_OF_CONTEXT;
+                            default -> ContextState.PARTIAL_OUT_OF_CONTEXT;
+                        };
+                    });
+        } catch (URIException ignore) {
+            // Nothing to do.
+        }
+    }
+
+    @Override
+    public void hook(ExtensionHook extensionHook) {
+        extensionHook.addSessionListener(
+                new SessionChangedListener() {
+
+                    @Override
+                    public void sessionScopeChanged(Session session) {
+                        // Nothing to do.
+
+                    }
+
+                    @Override
+                    public void sessionModeChanged(Mode mode) {
+                        // Nothing to do.
+
+                    }
+
+                    @Override
+                    public void sessionChanged(Session session) {
+                        domainsAccessed.clear();
+                    }
+
+                    @Override
+                    public void sessionAboutToChange(Session session) {
+                        // Nothing to do.
+                    }
+                });
     }
 
     private void addDiagnosticData(Diagnostic diagnostic) {
@@ -118,6 +196,8 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
         if (diagnosticDataProvider != null) {
             AuthenticationDiagnostics.removeDiagnosticDataProvider(diagnosticDataProvider);
         }
+
+        AuthenticationDiagnostics.addMessageAccessedConsumer(this::processMessageAccessed);
     }
 
     @Override
@@ -167,6 +247,11 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
             }
             AuthReportData ard = new AuthReportData();
             reportData.addReportObjects("authdata", ard);
+
+            ard.setDomains(getDomains(null));
+            ard.setDomainsPartiallyOutOfScope(getDomains(ContextState.PARTIAL_OUT_OF_CONTEXT));
+            ard.setDomainsOutOfScope(getDomains(ContextState.OUT_OF_CONTEXT));
+            domainsAccessed.clear();
 
             Context authContext = getFirstAuthConfiguredContext(reportData);
             if (authContext == null) {
@@ -342,6 +427,13 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
             } catch (IOException e) {
                 LOGGER.error(e.getMessage(), e);
             }
+        }
+
+        private static Set<String> getDomains(ContextState state) {
+            return domainsAccessed.entrySet().stream()
+                    .filter(e -> state == null || e.getValue() == state)
+                    .map(Map.Entry::getKey)
+                    .collect(Collectors.toCollection(TreeSet::new));
         }
 
         private static void addSiteStats(

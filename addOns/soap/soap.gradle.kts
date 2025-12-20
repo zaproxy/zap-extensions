@@ -58,9 +58,9 @@ dependencies {
     zapAddOn("commonlib")
     zapAddOn("spider")
 
-    implementation("com.predic8:soa-model-core:2.0.1")
-    implementation("com.sun.xml.messaging.saaj:saaj-impl:3.0.0")
-    implementation("jakarta.xml.soap:jakarta.xml.soap-api:3.0.0")
+    implementation(libs.soap.soaModelCore)
+    implementation(libs.soap.saajImpl)
+    implementation(libs.soap.jakartaXmlSoapApi)
     implementation(libs.log4j.slf4j)
 
     testImplementation(project(":testutils"))

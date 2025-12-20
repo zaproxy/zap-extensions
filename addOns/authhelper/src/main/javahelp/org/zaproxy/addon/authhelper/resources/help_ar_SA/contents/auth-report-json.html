@@ -33,6 +33,18 @@
 			<td>Statistics</td>
 			<td>statistics</td>
 		</tr>
+		<tr>
+			<td>Domains</td>
+			<td>domains</td>
+		</tr>
+		<tr>
+			<td>Domains Partially Out of Scope</td>
+			<td>domainspartiallyoutofscope</td>
+		</tr>
+		<tr>
+			<td>Domains Out of Scope</td>
+			<td>domainsoutofscope</td>
+		</tr>
 
 		<tr>
 			<td>Diagnostics</td>
@@ -129,7 +141,7 @@
 		</tr>
 	</table>
 
-	<H4>Failure Details</H3>
+	<H4>Failure Details</H4>
 	The following failure detail items are used:
 
 	<table>
@@ -148,6 +160,10 @@
 		<tr>
 			<td>auth.failure.session_mgmt</td>
 			<td>Failed to identify session management.</td>
+		</tr>
+		<tr>
+			<td>auth.failure.logged_in</td>
+			<td>No indication found of being logged in.</td>
 		</tr>
 		<tr>
 			<td>auth.failure.login_failures</td>
@@ -180,6 +196,31 @@
 	These are all of the statistics that have been recorded by ZAP.<br>
 	For more details of what they mean see 
 	<a href="https://www.zaproxy.org/docs/internal-statistics/">https://www.zaproxy.org/docs/internal-statistics/</a>
+
+	<H3>Domains</H3>
+	This section contains an array with all the domains that were accessed while performing the authentication.
+<pre>
+	"domains": [
+		"https://www.example.org",
+		"https://api.example.org"
+	]
+</pre>
+
+	<H3>Domains Partially Out of Scope</H3>
+	This section contains an array with the domains partially out of scope, that were accessed while performing the authentication. For example, when the context includes just a subset of the target (e.g. <code>https://www.example.org/frontend/</code>) and other resources were also accessed (e.g. <code>https://www.example.org/backend/</code>).
+<pre>
+	"domainsPartiallyOutOfScope": [
+		"https://www.example.org"
+	]
+</pre>
+
+	<H3>Domains Out of Scope</H3>
+	This section contains an array with the domains out of scope (context), that were accessed while performing the authentication.
+<pre>
+	"domainsOutOfScope": [
+		"https://api.example.org"
+	]
+</pre>
 
 	<H3>Diagnostics</H3>
 	The <a href="browser-auth.html">Browser Based</a> and <a href="client-script.html">Client Script</a> authentication methods allow to record diagnostic data, which can be included in the Authentication Report, to help diagnose authentication problems.
@@ -352,11 +393,13 @@
 		{
 			"key": "stats.auth.browser.foundfields",
 			"scope": "site",
+			"site:" "https://www.example.org",
 			"value": 1
 		},
 		{
 			"key": "stats.auth.browser.passed",
 			"scope": "site",
+			"site:" "https://www.example.org",
 			"value": 1
 		},
 		{
@@ -397,11 +440,13 @@
 		{
 			"key": "stats.auth.sessiontoken.accesstoken",
 			"scope": "site",
+			"site:" "https://www.example.org",
 			"value": 9
 		},
 		{
 			"key": "stats.auth.sessiontoken.token",
 			"scope": "site",
+			"site:" "https://www.example.org",
 			"value": 6
 		},
 		{
@@ -412,11 +457,13 @@
 		{
 			"key": "stats.auth.state.loggedin",
 			"scope": "site",
+			"site:" "https://www.example.org",
 			"value": 2
 		},
 		{
 			"key": "stats.auth.success",
 			"scope": "site",
+			"site:" "https://www.example.org",
 			"value": 1
 		}
 	]

@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE toc PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN" "http://java.sun.com/products/javahelp/toc_2_0.dtd">
 <toc version="2.0">
-    <tocitem text="ZAP User Guide" tocid="toplevelitem">
-        <tocitem text="Add Ons" tocid="addons">
-            <tocitem text="Scan Policies" image="addon.scanpolicies-icon" target="addon.scanpolicies">
+    <tocitem text="ZAP ユーザーガイド" tocid="toplevelitem">
+        <tocitem text="アドオン" tocid="addons">
+            <tocitem text="スキャンポリシー" image="addon.scanpolicies-icon" target="addon.scanpolicies">
                 <tocitem text="API" target="addon.policy-api"/>
-                <tocitem text="Default Policy" target="addon.policy-default"/>
-                <tocitem text="Developer CI/CD Policy" target="addon.policy-dev-cicd"/>
-                <tocitem text="Developer Standard Policy" target="addon.policy-dev-std"/>
-                <tocitem text="Developer Full Policy" target="addon.policy-dev-full"/>
-                <tocitem text="QA Standard Policy" target="addon.policy-qa-std"/>
-                <tocitem text="QA Full Policy" target="addon.policy-qa-full"/>
-                <tocitem text="Penetration Tester Policy" target="addon.policy-pentest"/>
+                <tocitem text="既定のポリシー" target="addon.policy-default"/>
+                <tocitem text="開発者向け CI/CD ポリシー" target="addon.policy-dev-cicd"/>
+                <tocitem text="開発者標準ポリシー" target="addon.policy-dev-std"/>
+                <tocitem text="開発者フルポリシー" target="addon.policy-dev-full"/>
+                <tocitem text="QA CI/CD ポリシー" target="addon.policy-qa-cicd"/>
+                <tocitem text="QA 標準ポリシー" target="addon.policy-qa-std"/>
+                <tocitem text="QA フルポリシー" target="addon.policy-qa-full"/>
+                <tocitem text="ペネトレーションテスターポリシー" target="addon.policy-pentest"/>
             </tocitem>
         </tocitem>
     </tocitem>

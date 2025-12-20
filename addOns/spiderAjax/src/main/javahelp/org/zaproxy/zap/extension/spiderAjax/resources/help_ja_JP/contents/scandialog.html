@@ -2,91 +2,90 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>AJAX Spider dialog</title>
+<title>AJAXスパイダー ダイアログ</title>
 </head>
 <body>
-<h1>AJAX Spider dialog</h1>
+<h1>AJAXスパイダー ダイアログ</h1>
 
-This dialog launches the AJAX Spider. 
+このダイアログはAJAXスパイダーを起動します。 
 
-<h2>Scope</h2>
-The first tab allows you to change key features like:
+<h2>スコープ</h2>
+最初のタブでは、次のような主要な機能を変更できます：
 
-<h3>Starting Point</h3>
+<h3>開始位置</h3>
 
-The URL which the AJAX spider will start crawling from, or a context (in which case it
-will be used one of the URLs that are in context as starting point).
+AJAXスパイダーがクロールを開始するURL、またはコンテキスト (その場合、コンテキスト内にあるURLのいずれかが開始点として利用されます)。
 
-<h3>Context</h3>
-Allows to select the Context to be spidered.
+<h3>コンテキスト</h3>
+スパイダーを行うコンテキストを選択できます。
 
-<h3>User</h3>
-Allows to select one of the users available from the selected context, to perform the spider scan as a user (ZAP will (re)authenticate as that user whenever necessary).
+<h3>ユーザー</h3>
+選択されたコンテキストで利用可能なユーザーの1人を選択し、そのユーザーとしてスパイダースキャンを実行できます(ZAPは必要に応じてそのユーザーとして再度認証を行います)。
 
-<h3>Just In Scope</h3>
+<h3>スコープ内のみ</h3>
 
-If set then any URLs which are out of scope will be ignored.
+設定されている場合、スコープ外のURLはすべて無視されます。
 <p>
-<strong>Note:</strong> The option <code>Just In Scope</code> is mutually exclusive with <code>Context</code> option, if one is used the other is ignored.
+<strong>注:</strong> オプション <code>スコープ内のみ</code> は <code>コンテキスト</code> オプションとは相互に排他的であり、一方が使用された場合、もう一方は無視されます。
 
-<h3>Spider Subtree Only</h3>
-If set then the spider will only access resources that are under the starting point (URI).
-When evaluating if a resource is found within the specified subtree, the spider considers only the scheme, host, port, and path components of the URI.
+<h3>サブツリーのみをスパイダー</h3>
+設定されている場合、スパイダーは開始位置 (URI) の下にあるリソースのみにアクセスします。
+リソースが指定されたサブツリー内で見つかったかどうかを評価するとき、スパイダーはURIのスキーム、ホスト、ポート、およびパスコンポーネントのみを考慮に入れます。
 
-<h3>Browser</h3>
+<h3>ブラウザ</h3>
 
-The type of browser to use.<br>
-Browsers will only be shown if ZAP has sufficient configuration to run them.<br>
-They may still fail to run if the browsers cannot be found or if the configuration information is incorrect.
+使用するブラウザの種類。<br>
+ブラウザは、ZAPがそれらを実行するための十分な設定を持っている場合にのみ表示されます。<br>
+ブラウザが見つからない場合や、設定情報が正しくない場合、実行に失敗する可能性があります。
 
-<h3>Show Advanced Options</h3>
+<h3>詳細オプションを表示</h3>
 
-If selected then the Options tab will be shown.
+選択されている場合、オプションタブが表示されます。
 
-<h2>Options</h2>
-This tab allows you to change options including:
+<h2>オプション</h2>
+このタブでは、次のようなオプションを変更できます。
 
-<h3>Number of Browser Windows to Open</h3>
-You can configure the number of windows to be used by AJAX Spider.<br>
-The more windows, the faster the process will be.
+<h3>開くブラウザウィンドウの数</h3>
+AJAXスパイダーが使用するウィンドウの数を設定できます。<br>
+ウィンドウが多いほど、プロセスは速くなります。
 
-<h3>Maximum Crawl Depth</h3>
-The maximum depth that the crawler can reach. Zero means unlimited depth.
+<h3>最大クロール深度</h3>
+クローラーが到達できる最大深度。ゼロは無制限の深度を意味します。
 
-<h3>Maximum Crawl States</h3>
-The maximum number of states that the crawler should crawl. Zero means unlimited crawl states. 
+<h3>最大クロール状態数</h3>
+クローラーがクロールすべき最大状態数。ゼロは無制限の状態数を意味します。 
 
-<h3>Maximum Duration</h3>
-The maximum time that the crawler is allowed to run. Zero means unlimited running time.
+<h3>最大実行時間</h3>
+クローラーが実行を許可される最大時間 (分)。ゼロは無制限の実行時間を意味します。
 
-<h3>Event Wait Time</h3>
-The time to wait after a client side event is fired.
+<h3>イベント待機時間</h3>
+クライアント側イベントが発生した後に待機する時間 (ミリ秒)。
 
-<h3>Reload Wait Time</h3>
-The time to wait after URL is loaded.
+<h3>リロード待機時間</h3>
+URLがロードされた後に待機する時間 (ミリ秒)。
 
-<h3>Scope Check</h3>
-How the scope is checked, for more information refer to the Options AJAX Spider screen.
+<h3>スコープチェック</h3>
+スコープがどのようにチェックされるか。詳細については、AJAXスパイダー オプション画面を参照してください。
 
-<h3>Allowed Resources</h3>
-The list of allowed resources. The allowed resources are always fetched even if out of scope, allowing to include necessary resources (e.g. scripts) from 3rd-parties.
+<h3>許可リソース</h3>
+許可されたリソースのリスト。許可されたリソースは、スコープ外であっても常にフェッチされ、サードパーティからの必要なリソース (例: スクリプトなど) を許可します。
 	
-	<h2>See also</h2>
+	<h2>関連情報</h2>
 	<table>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td><a href="concepts.html">AJAX Spider</a></td>
-			<td>for an overview of the AJAX Spider</td>
+			<td><a href="concepts.html">AJAXスパイダー</a></td>
+			<td>AJAXスパイダーの概要について</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td><a href="tab.html">AJAX Spider tab</a></td>
-			<td>for an overview of the AJAX Spider Tab</td>
+			<td><a href="tab.html">AJAXスパイダー タブ</a></td>
+			<td>AJAXスパイダー タブの概要について</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td><a href="options.html">Options AJAX Spider screen</a></td>
-			<td>for an overview of the AJAX Spider Options</td>
+			<td><a href="options.html">オプション - AJAXスパイダー画面</a></td>
+			<td>AJAXスパイダー オプションの概要について</td>
 		</tr>
 	</table>
 

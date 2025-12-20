@@ -8,4 +8,39 @@ updates:
       gha:
         applies-to: version-updates
         patterns:
-        - "*"
+          - "*"
+  - package-ecosystem: "gradle"
+    directory: "/"
+    exclude-paths:
+      - "buildSrc"
+    schedule:
+      interval: "weekly"
+    groups:
+      gradle:
+        applies-to: version-updates
+        patterns:
+          - "*"
+    ignore:
+      # network add-on dependencies are managed manually
+      - dependency-name: "io.netty:*"
+      - dependency-name: "com.aayushatharva.brotli4j:*"
+      - dependency-name: "org.apache.httpcomponents.client5:httpclient5"
+      - dependency-name: "org.jitsi:ice4j"
+      - dependency-name: "org.cyclonedx.bom" # Breaks add-on release
+      - dependency-name: "io.github.bonigarcia:selenium-jupiter" # Creates JAR hell because of different HttpComponents HttpClient
+      - dependency-name: "io.github.bonigarcia:webdrivermanager" # Ditto
+      - dependency-name: "com.diffplug.spotless*" # newer versions lead to runtime error, will need to update the common zap plugin first
+      - dependency-name: "org.apache.logging.log4j:*" # provided by core
+      - dependency-name: "org.jruby:jruby-complete"
+        versions: [ ">= 10" ] # versions 10.x and later require Java 21
+      - dependency-name: "org.xhtmlrenderer:flying-saucer-pdf"
+        versions: [ ">= 10" ] # versions 10.x and later require Java 21
+      - dependency-name: "com.natpryce:snodge"
+        versions: [ ">= 3" ] # versions 3.x require Kotlin libs
+      - dependency-name: "de.sstoehr:har-reader"
+        versions: [ ">= 4" ] # versions 4.x start to use Jackson 3.x
+      - dependency-name: "org.seleniumhq.selenium:htmlunit3-driver" # dependabot uses the wrong version when updating
+      - dependency-name: "com.google.inject.extensions:guice-assistedinject" # updating this leads to errors, and this is a transitive dependency
+      - dependency-name: "org.zaproxy:zap" # core versions are manually updated when targeting a new core
+      - dependency-name: "com.google.errorprone:error_prone_core"
+        versions: [ ">= 2.43.0" ] # versions 2.43.x and later require Java 21
