@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.pscanrules;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.is;
@@ -129,9 +130,12 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
             throws HttpMalformedHeaderException, URIException {
 
         // Given
-        String line1 = "myArray = [\"success\",\"FIXME\"]";
-        String line2 = "\n" + comment;
-        String body = line1 + line2 + "\nLine 3\n";
+        String body =
+                """
+                myArray = ["success","FIXME"];
+                %s
+                document.write("example");"""
+                        .formatted(comment);
         HttpMessage msg = createHttpMessageWithRespBody(body, "text/javascript;charset=ISO-8859-1");
 
         assertTrue(msg.getResponseHeader().isText());
@@ -174,9 +178,12 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
 
         // Given
         String comment = "// FIXME: DO something";
-        String line1 = "Some text <script>Some Script Element " + comment;
-        String line2 = "// FIXME: DO something else </script>";
-        String body = line1 + "\n" + line2 + "\nLine 2\n";
+        String body =
+                """
+                function example() { document.write('example'); } %s
+                // FIXME: DO something else
+                """
+                        .formatted(comment);
         HttpMessage msg = createHttpMessageWithRespBody(body, "text/javascript;charset=ISO-8859-1");
 
         assertTrue(msg.getResponseHeader().isText());
@@ -219,7 +226,7 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
 
         // Given
         String comment = "// todo DO something";
-        String script = "<script>Some Script Element " + comment + "\n</script>";
+        String script = "<script>document.write('example');" + comment + "\n</script>";
         String body = "<h1>Some text " + script + "</h1>\n<b>No script here</b>\n";
         HttpMessage msg = createHttpMessageWithRespBody(body, "text/html;charset=ISO-8859-1");
 
@@ -333,9 +340,9 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
     }
 
     @Test
-    void shouldAlertOnSuspiciousValuesInJavascriptSingleLineComment()
+    void shouldNotAlertOnSuspiciousValuesInJavascriptSingleLineComment()
             throws HttpMalformedHeaderException, URIException {
-        shouldAlertOnSuspiciousCommentInJavascriptContent(
+        shouldNotAlertOnSuspiciousCommentInJavascriptContent(
                 """
                 function fooFunction() {
                   var bar = 'Some text // ADMINISTRATOR fake comment';
@@ -344,9 +351,9 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
     }
 
     @Test
-    void shouldAlertOnSuspiciousValuesInJavascriptBlockComment()
+    void shouldNotAlertOnSuspiciousValuesInJavascriptBlockComment()
             throws HttpMalformedHeaderException, URIException {
-        shouldAlertOnSuspiciousCommentInJavascriptContent(
+        shouldNotAlertOnSuspiciousCommentInJavascriptContent(
                 """
                 function fooFunction() {
                   var bar = 'Some text /* ADMINISTRATOR fake comment */';
@@ -354,7 +361,7 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
                 """);
     }
 
-    private void shouldAlertOnSuspiciousCommentInJavascriptContent(String body)
+    private void shouldNotAlertOnSuspiciousCommentInJavascriptContent(String body)
             throws URIException, HttpMalformedHeaderException {
         // Given
         HttpMessage msg = createHttpMessageWithRespBody(body, "application/javascript");
@@ -363,7 +370,7 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
         // When
         scanHttpResponseReceive(msg);
         // Then - Alert since we aren't yet actually parsing the JS
-        assertThat(alertsRaised.size(), is(equalTo(1)));
+        assertThat(alertsRaised, is(empty()));
     }
 
     @Test

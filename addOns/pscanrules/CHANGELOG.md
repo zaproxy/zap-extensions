@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- The Information Disclosure - Suspicious Comments scan rule now attempts to collection comments from JavaScript content using Mozilla Rhino.
 
 ## [70] - 2025-12-15
 ### Added
