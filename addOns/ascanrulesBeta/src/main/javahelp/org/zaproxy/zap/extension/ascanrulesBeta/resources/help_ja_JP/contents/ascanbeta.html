@@ -82,23 +82,21 @@ URLに対して有効になっている既知の安全でないHTTPメソッド�
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/IntegerOverflowScanRule.java">IntegerOverflowScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/30003/">30003</a>
 
-<h2 id="id-40033">NoSQL Injection - MongoDB</h2>
-This rule attempts to identify MongoDB specific NoSQL Injection vulnerabilities. It attempts various types of attacks including: boolean based, error based, time based, and authentication bypass. 
-It does not include time based attacks. It will also attempt JSON parameter specific payloads if the scan is configured to include JSON parameter variants.
+<h2 id="id-40033">NoSQL インジェクション - MongoDB</h2>
+このルールは、MongoDB固有のNoSQLインジェクション脆弱性の特定を試みます。 真偽値ベース、エラーベース、認証バイパスなど、さまざまなタイプの攻撃を試行します。 
+時間ベースの攻撃は含まれません。 また、スキャンがJSONパラメーターバリアントを含むように設定されている場合、JSONパラメーター固有のペイロードも試行します。
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/MongoDbInjectionScanRule.java">MongoDbInjectionScanRule.java</a>
-<br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40033/">40033</a>.
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/MongoDbInjectionScanRule.java">MongoDbInjectionScanRule.java</a><br>
+アラートID: <a href="https://www.zaproxy.org/docs/alerts/40033/">40033</a>
 
-<h2 id="id-90039">NoSQL Injection - MongoDB (Time Based)</h2>
-This rule attempts to identify MongoDB specific NoSQL Injection vulnerabilities using only time based attacks.
+<h2 id="id-90039">NoSQLインジェクション - MongoDB (時間ベース)</h2>
+このルールは、時間ベースの攻撃のみを使用してMongoDB特有のNoSQLインジェクション脆弱性の識別を試みます。
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/MongoDbInjectionTimingScanRule.java">MongoDbInjectionTimingScanRule.java</a>
-<br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/90039/">90039</a>.
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/MongoDbInjectionTimingScanRule.java">MongoDbInjectionTimingScanRule.java</a><br>
+アラートID: <a href="https://www.zaproxy.org/docs/alerts/90039/">90039</a>
 
 <h2 id="id-40031">アウトオブバンドXSS</h2>
-このルールはアウトオブバンドXSS脆弱性の発見を試みます。
+このルールは、アウトオブバンドXSS脆弱性の発見を試みます。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/OutOfBandXssScanRule.java">OutOfBandXssScanRule.java</a>
 <br>

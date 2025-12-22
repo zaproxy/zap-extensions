@@ -112,12 +112,11 @@ ELMAH スキャンルールは、Microsoftベースのテクノロジー (IIS、
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/ElmahScanRule.java">ElmahScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/40028/">40028</a>
 
-<h2 id="id-40044">Exponential Entity Expansion (Billion Laughs Attack)</h2>
-This rule attempts to identify the "Billion Laughs" vulnerability in servers that accept XML or YAML files.
+<h2 id="id-40044">指数関数的エンティティ展開 (Billion Laughs攻撃)</h2>
+このルールは、XMLまたはYAMLファイルを受け入れるサーバーで「Billion Laughs」脆弱性を特定しようとします。
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/ExponentialEntityExpansionScanRule.java">ExponentialEntityExpansionScanRule.java</a>
-<br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40044/">40044</a>.
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/ExponentialEntityExpansionScanRule.java">ExponentialEntityExpansionScanRule.java</a><br>
+アラートID: <a href="https://www.zaproxy.org/docs/alerts/40044/">40044</a>
 
 <h2 id="id-20019">外部リダイレクト</h2>
 
@@ -191,19 +190,17 @@ JSONエントリのフィールドについて以下に説明します。
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/HiddenFilesScanRule.java">HiddenFilesScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/40035/">40035</a>
 
-<h2 id="id-10106">HTTP Only Site</h2>
-This active scan rule checks whether an HTTP site is served under HTTPS.
+<h2 id="id-10106">HTTPのみのサイト</h2>
+このアクティブスキャンルールは、HTTPサイトがHTTPSで提供されているかどうかをチェックします。
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/HttpOnlySiteScanRule.java">HttpOnlySiteScanRule.java</a>
-<br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10106/">10106</a>.
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/HttpOnlySiteScanRule.java">HttpOnlySiteScanRule.java</a><br>
+アラートID: <a href="https://www.zaproxy.org/docs/alerts/10106/">10106</a>
 
-<h2 id="id-10047">HTTPS Content Available via HTTP</h2>
-This active scan rule attempts to access content that was originally accessed via HTTPS (SSL/TLS) via HTTP.
+<h2 id="id-10047">HTTPSコンテンツがHTTP経由でアクセス可能</h2>
+このアクティブスキャンルールは、元々HTTPS (SSL/TLS) 経由でアクセスされたコンテンツにHTTP経由でアクセスしようとします。
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/HttpsAsHttpScanRule.java">HttpsAsHttpScanRule.java</a>
-<br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10047/">10047</a>.
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/HttpsAsHttpScanRule.java">HttpsAsHttpScanRule.java</a><br>
+アラートID: <a href="https://www.zaproxy.org/docs/alerts/10047/">10047</a>
 
 <h2 id="id-40043">Log4Shell (CVE-2021-44228 および CVE-2021-45046)</h2>
 このルールは、Log4Shell (<a href="https://nvd.nist.gov/vuln/detail/CVE-2021-44228">CVE-2021-44228</a> および <a href="https://nvd.nist.gov/vuln/detail/CVE-2021-45046">CVE-2021-45046</a>) 脆弱性を検出しようとします。
@@ -238,17 +235,16 @@ Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10047/">10047</a>.
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/PathTraversalScanRule.java">PathTraversalScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/6/">6</a>
 
-<h2 id="id-40048">Remote Code Execution (React2Shell)</h2>
-This rule identifies servers running vulnerable versions of React Server Components with Next.js, which will allow remote attackers to execute arbitrary code.
+<h2 id="id-40048">リモートコード実行 (React2Shell)</h2>
+このルールは、脆弱なバージョンのReact Server Components (Next.js使用) を実行しているサーバーを識別します。これにより、リモートの攻撃者が任意のコードを実行できます。
 <p>
-The rule is based on the PoC detailed on <a href="https://slcyber.io/research-center/high-fidelity-detection-mechanism-for-rsc-next-js-rce-cve-2025-55182-cve-2025-66478/">https://slcyber.io/research-center/high-fidelity-detection-mechanism-for-rsc-next-js-rce-cve-2025-55182-cve-2025-66478/</a>.
+このルールは、<a href="https://slcyber.io/research-center/high-fidelity-detection-mechanism-for-rsc-next-js-rce-cve-2025-55182-cve-2025-66478/">https://slcyber.io/research-center/high-fidelity-detection-mechanism-for-rsc-next-js-rce-cve-2025-55182-cve-2025-66478/</a>で詳述されているPoCに基づいています.
 <p>
-It verifies that the server is running vulnerable React Server Components with Next.js, and that the remote code execution (RCE) vulnerability is present without causing any damage.
-It forces an error via a malformed multipart request and checks for the presence of a string which confirms RCE is possible.
+サーバーが脆弱なReact Server Components (Next.js使用) を実行していること、およびリモートコード実行 (RCE) の脆弱性が存在することを、実害を与えることなく検証します。
+ 不正な形式の multipart リクエストによって意図的にエラーを発生させ、RCEが可能であることを確認する文字列の存在をチェックします。
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/React2ShellScanRule.java">React2ShellScanRule.java</a>
-<br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40048/">40048</a>.
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/React2ShellScanRule.java">React2ShellScanRule.java</a><br>
+アラートID: <a href="https://www.zaproxy.org/docs/alerts/40048/">40048</a>
 
 <h2 id="id-20018">リモートコード実行 - CVE-2012-1823</h2>
 PHP-CGIベースのWebサーバー上でリモートコード実行を実行するためのCVE-2012-1823を検出します。
@@ -287,14 +283,13 @@ PHP-CGIベースのWebサーバー上でリモートコード実行を実行す�
 
 <h2 id="id-10048">ShellShock - CVE-2014-6271</h2>
 
-This rule performs 2 attacks to detect servers vulnerable to CVE-2014-6271 aka ShellShock.<br>
-The first is a simple reflected attack and the second is a time based attack.<br>
+このルールは、CVE-2014-6271 (別名ShellShock) に対して脆弱なサーバーを検出するために2つの攻撃を実行します。<br>
+1つ目は単純な反射攻撃で、2つ目は時間ベースの攻撃です。<br>
 <br>
-Post 2.5.0 you can change the length of time used for the attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
+バージョン2.5.0以降では、オプションの「ルール設定」パネルから <code>rules.common.sleep</code> パラメーターを変更することで、攻撃に使用される時間の長さを変更できます。
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/ShellShockScanRule.java">ShellShockScanRule.java</a>
-<br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10048/">10048</a>.
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/ShellShockScanRule.java">ShellShockScanRule.java</a><br>
+アラートID: <a href="https://www.zaproxy.org/docs/alerts/10048/">10048</a>
 
 <h2 id="id-20017">ソースコードの露見 - CVE-2012-1823</h2>
 PHP-CGIベースのWebサーバー上でサーバーサイドのPHPソースコードを開示するためにCVE-2012-1823を悪用します。<br>
