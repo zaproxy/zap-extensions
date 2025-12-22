@@ -45,12 +45,11 @@
 <br>
 <strong>注:</strong> &dollar; は文字列/ペイロードの先頭から削除され、パターン組み立て時にオプションで含められます。
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/JsFunctionScanRule.java">JsFunctionScanRule.java</a><br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10110/">10110</a>
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/JsFunctionScanRule.java">JsFunctionScanRule.java</a><br>
+アラートID: <a href="https://www.zaproxy.org/docs/alerts/10110/">10110</a>
 
-<h2 id="id-10063">Permissions Policy Header Not Set</h2>
-This rule checks the HTTP response headers (on HTML and JavaScript responses) for inclusion of a "Permissions-Policy" header, 
-and alerts if one is not found. また、非推奨のヘッダー「Feature-Policy」が見つかった場合もアラートを発生させます。<br>
+<h2 id="id-10063">Permissions-Policy ヘッダー未設定</h2>
+このルールは、(HTMLおよびJavaScriptレスポンスの) HTTPレスポンスヘッダーに「Permissions-Policy」ヘッダーが含まれているかをチェックし、 見つからない場合にアラートを発行します。 また、非推奨のヘッダー「Feature-Policy」が見つかった場合もアラートを発行します。<br>
 リダイレクトは、しきい値が Low の場合を除いて無視されます。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/PermissionsPolicyScanRule.java">PermissionsPolicyScanRule.java</a><br>
@@ -96,8 +95,8 @@ action 要素の指定に失敗したHTMLフォームをレスポンスコンテ
 アプリケーションのソースコードがWebサーバーによって露見しました。<br>
 注意: CSS、JavaScript、画像、フォントファイル、およびISO制御文字を含むレスポンス (バイナリファイルの可能性が高いもの) は無視されます。
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/SourceCodeDisclosureScanRule.java">SourceCodeDisclosureScanRule.java</a><br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10099/">10099</a>
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/SourceCodeDisclosureScanRule.java">SourceCodeDisclosureScanRule.java</a><br>
+アラートID: <a href="https://www.zaproxy.org/docs/alerts/10099/">10099</a>
 
 </body>
 </html>

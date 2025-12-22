@@ -78,13 +78,13 @@
     <pre>
   - type: script
     parameters:
-      action:                    # String: The executed action - available actions: add, remove, run, enable, disable
-      type:                      # String: The type of the script
-      engine:                    # String: The script engine to use - can be used to override the default engine for the file extension
-      name:                      # String: The name of the script, defaults to the file name
-      source:                    # String: The full or relative file path, must be readable
-      inline:                    # String: The full script (may be multi-line) - supply this or 'source' not both
-      target:                    # String: The URL to be invoked for "targeted" script type
+      action:                    # 文字列: 実行されるアクション - 利用可能なアクション: add, remove, run, enable, disable
+      type:                      # 文字列: スクリプトのタイプ
+      engine:                    # 文字列: 使用するスクリプトエンジン - ファイル拡張子に対する既定のエンジンをオーバーライドするために使用可能
+      name:                      # 文字列: スクリプト名、ファイル名が既定値
+      source:                    # 文字列: 完全パスまたは相対ファイルパス、読み取り可能である必要があります
+      inline:                    # 文字列: 完全なスクリプト(複数行可能) - これまたは 'source' のいずれかを指定し、両方は指定しないこと
+      target:                    # 文字列: "targeted" スクリプトタイプに対して呼び出されるURL
 	</pre>
 
 	<code>source</code> パラメーターは以前は <code>file</code> と呼ばれていましたが、どちらも機能します。

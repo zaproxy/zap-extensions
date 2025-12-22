@@ -2,55 +2,52 @@
 <HTML>
 <HEAD>
 <TITLE>
-Insights Options
+インサイトオプション
 </TITLE>
 </HEAD>
 <BODY>
-<H1>Insights Options</H1>
+<H1>インサイトオプション</H1>
 
-This screen allows you to configure the <a href="insights.html">Insights</a> options.
+この画面では<a href="insights.html">インサイト</a>のオプションを設定できます。
 
-<H3>Exit Automation on High</H3>
+<H3>高レベル時に自動化を終了</H3>
 
-If set then a High Level Insight will stop automation.
+有効にした場合、高レベルのインサイトが発生すると自動化を停止します。
 <p>
-If the Desktop UI is being used then this option will have no effect.
+デスクトップUIを使用している場合、このオプションは影響しません。
 <p>
-If the <a href="insights-job.html">insights</a> Automation Framework job has run and the plan is still running then the plan
-will be stopped. Any jobs that are flagged as "always run" will still run.
+<a href="insights-job.html">insights</a>自動化フレームワークジョブが実行され、プランがまだ実行中の場合、プランは停止されます。 「常に実行」としてマークされているジョブは引き続き実行されます。
 <p>
-In all other cases ZAP will be stopped. 
+上記以外の場合、ZAPが停止されます。 
 
-<H3>Message Low Threshold %</H3>
+<H3>メッセージ失敗数の低レベルしきい値 (%)</H3>
 
-The low threshold used for insights related to messages, as a percentage of all messages sent.
+メッセージ関連のインサイトに使用される低しきい値。送信された全メッセージに対する割合として指定します。
 <p>
-Default: 5%
+デフォルト: 5%
 
-<H3>Message High Threshold %</H3>
+<H3>メッセージ失敗数の高レベルしきい値 (%)</H3>
 
-The high threshold used for insights related to messages, as a percentage of all messages sent.
+メッセージ関連のインサイトに使用される高しきい値。送信された全メッセージに対する割合として指定します。
 <p>
-Default: 50%
+デフォルト: 50%
 
-<H3>Memory Low Threshold %</H3>
+<H3>メモリ使用量の低レベルしきい値 (%)</H3>
 
-The low threshold used for insights related to memory, as a percentage of the available memory,
+メモリ関連のインサイトに使用される低しきい値。利用可能なメモリに対する割合として指定します。
 <p>
-Default: 80%
+デフォルト: 80%
 
-<H3>Memory High Threshold %</H3>
+<H3>メモリ使用量の高レベルしきい値 (%)</H3>
 
-The high threshold used for insights related to memory, as a percentage of the available memory.
+メモリ関連のインサイトに使用される高しきい値。利用可能なメモリに対する割合として指定します。
 <p>
-Default: 95%
+デフォルト: 95%
 
-<H3>Slow Response in Milliseconds</H3>
+<H3>低速レスポンスのしきい値 (ミリ秒)</H3>
 
-The response time in milliseconds that is treated as a "slow" response for the related Insight.
+関連するインサイトで「遅い」レスポンスとして扱われるレスポンス時間 (ミリ秒)。
 <p>
-Default: 256
+デフォルト: 256
 <p>
-Note that the response times are recorded in the statistics in powers of 2.
-
-</HTML>
+注: レスポンス時間は統計情報に2の累乗で記録されます。</HTML>

@@ -2,145 +2,145 @@
 <HTML>
 <HEAD>
 <TITLE>
-Insights List
+インサイト一覧
 </TITLE>
 </HEAD>
 <BODY>
-<H1>Insights List</H1>
+<H1>インサイト一覧</H1>
 
-This is the full set of Insights currently supported:
+現在サポートされているインサイトの完全な一覧は以下の通りです：
 
 <table>
 
 <tr>
-<th>Key
-<th>Description
-<th>Site
-<th>Type
-<th>Low 
-<th>High 
+<th>キー
+<th>説明
+<th>サイト
+<th>タイプ
+<th>低 (レベル) 
+<th>高 (レベル) 
 
 <tr>
 <td>insight.database.full
-<td>Database full
+<td>データベースが満杯
 <td>
 <td>
-<td>High
-<td>High
+<td>高
+<td>高
 
 <tr>
 <td>insight.diskspace.full
-<td>Diskspace full
+<td>ディスクの空き容量が満杯
 <td>
 <td>
-<td>High
-<td>High
+<td>高
+<td>高
 
 <tr>
 <td>insight.memory.usage
-<td>Percentage of memory used
+<td>メモリ使用率
 <td>
 <td>Mem
-<td>Medium
-<td>High
+<td>中
+<td>高
 
 <tr>
 <td>insight.log.error
-<td>Count of ZAP errors
+<td>ZAPエラーの数
 <td>
 <td>
-<td>Low
-<td>Low
+<td>低
+<td>低
 
 <tr>
 <td>insight.log.warn
-<td>Count of ZAP warnings
+<td>ZAP警告の数
 <td>
 <td>
-<td>Low
-<td>Low
+<td>低
+<td>低
 
 <tr>
 <td>insight.network.failure
-<td>Percentage of network failures
+<td>ネットワーク障害の割合
 <td>
 <td>Msg
-<td>Low
-<td>Med
+<td>低
+<td>中
 
 <tr>
 <td>insight.auth.failure
-<td>Percentage of authentication failures
-<td>Yes
+<td>認証失敗の割合
+<td>はい
 <td>Msg
-<td>Low
-<td> Med
+<td>低
+<td> 中
 
 <tr>
 <td>insight.code.Xxx
-<td>Percentage of Xxx response codes
-<td>Yes
+<td>Xxxレスポンスコードの割合
+<td>はい
 <td>Msg
-<td>Info
-<td>Low
+<td>情報
+<td>低
 
 <tr>
 <td>insight.response.slow
-<td>Percentage of slow responses
-<td>Yes
+<td>低速なレスポンスの割合
+<td>はい
 <td>Msg
-<td>Info
-<td>Low
+<td>情報
+<td>低
 
 <tr>
 <td>insight.endpoint.content.CCC
-<td>Percentage of responses with content-type CCC
-<td>Yes
+<td>Content-Type CCC のレスポンスの割合
+<td>はい
 <td>
-<td>Info
-<td>Info
+<td>情報
+<td>情報
 
 <tr>
 <td>insight.endpoint.method.MMM
-<td>Percentage of responses with method MMM
-<td>Yes
+<td>メソッドMMM のレスポンスの割合
+<td>はい
 <td>
-<td>Info
-<td>Info
+<td>情報
+<td>情報
 
 <tr>
 <td>insight.endpoint.total
-<td>Total number of endpoints
-<td>Yes
+<td>エンドポイントの総数
+<td>はい
 <td>
-<td>Info
-<td>Info
+<td>情報
+<td>情報
 
 </table>
 <p>
-The columns show the Insight <a href="insights-fields.html">fields</a> with the following additions:
+各列はインサイトの<a href="insights-fields.html">フィールド</a>を示しており、以下の追加項目があります：
 
-<H3>Site</H3>
-Indicates if the Insight is specific to a site (which will be specified). Otherwise Insights are not site specific.
+<H3>サイト</H3>
+インサイトが特定のサイトに固有かどうかを示します (固有の場合はサイトが指定されます)。 固有でない場合、インサイトはサイト固有ではありません。
 
-<H3>Type</H3>
+<H3>タイプ</H3>
 
-The type of the insight, which indicates which of the threshold <a href="insights-options.html">options</a> it will use:
+インサイトのタイプでどのしきい値<a href="insights-options.html">オプション</a>を使用するかを示します：
 <ul>
-<li>Mem: Will use the Memory Thresholds 
-<li>Msg: Will use the  Message Thresholds
-<li>&lt;blank&gt; Will not use any thresholds
+<li>Mem: メモリしきい値を使用します 
+<li>Msg: メッセージしきい値を使用します
+<li>&lt;空白&gt;: しきい値を使用しません
 </ul>
 
-<H3>Low (Level)</H3>
+<H3>低 (レベル)</H3>
 
-This columns shows the Level at which it will be reported if it exceeds the related Low threshold.
+この列には関連する低しきい値を超えた場合に報告されるレベルが表示されます。
 <p>
-Info level Insights will always be reported.
+「情報」レベルのインサイトは常に報告されます。
 
-<H3>High (Level)</H3>
+<H3>高 (レベル)</H3>
 
-This columns shows the Level at which it will be reported if it exceeds the related High threshold.
+この列には関連する高しきい値を超えた場合に報告されるレベルが表示されます。
 
 </BODY>
 </HTML>

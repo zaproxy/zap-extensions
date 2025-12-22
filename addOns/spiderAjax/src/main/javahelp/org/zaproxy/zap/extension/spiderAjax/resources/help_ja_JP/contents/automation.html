@@ -11,7 +11,7 @@ Ajax スパイダー – 自動化フレームワーク対応
 このアドオンは自動化フレームワークに対応しています。
 
 <H2>ジョブ: spiderAjax</H2>
-spiderAjaxジョブにより、Ajaxスパイダーを実行できます。これは従来のスパイダーよりも低速ですが、最新のWebアプリケーションをうまく処理します。
+spiderAjaxジョブにより、AJAXスパイダーを実行できます。これは従来のスパイダーよりも低速ですが、最新のWebアプリケーションをうまく処理します。
 <p>
 この内容は、動画「<a href="https://youtu.be/WivoyVerBCo">ZAP Chat 10 Automation Framework Part 4 - Spidering</a>」で解説されています。
 <p>
@@ -57,8 +57,8 @@ spiderAjaxジョブにより、Ajaxスパイダーを実行できます。これ
         onFail: 'info'                       # 文字列[warn, error, info]: テストを有効にするには、これを 'warn' または 'error' に変更してください
 </pre>
 
-runOnlyIfModern が True に設定されている場合、<a href="https://www.zaproxy.org/docs/desktop/addons/automation-framework/job-pscanwait/">passiveScan-wait</a>ジョブをこのジョブの前 (および後) に実行する必要があり、また<a href="https://www.zaproxy.org/docs/alerts/10109/">モダンWebアプリケーション</a>ルールがインストールされ、有効になっている必要があります。 これらのいずれかが行われていない場合、Ajaxスパイダーは常に実行され、警告が出力されます。
-両方が行われており、"モダンWebアプリケーション"のアラートが発生しない場合、これは従来のアプリケーションであり、Ajaxスパイダーは不要であると判断されます。
+runOnlyIfModern が True に設定されている場合、<a href="https://www.zaproxy.org/docs/desktop/addons/automation-framework/job-pscanwait/">passiveScan-wait</a>ジョブをこのジョブの前 (および後) に実行する必要があり、また<a href="https://www.zaproxy.org/docs/alerts/10109/">モダンWebアプリケーション</a>ルールがインストールされ、有効になっている必要があります。 これらのいずれかが行われていない場合、AJAXスパイダーは常に実行され、警告が出力されます。
+両方が行われており、"モダンWebアプリケーション"のアラートが発生しない場合、これは従来のアプリケーションであり、AJAXスパイダーは不要であると判断されます。
 
 以前は、統計情報 "spiderAjax.urls.started" が提供されていました。 これは非推奨であり、将来のいずれかの時点で削除される予定です。
 

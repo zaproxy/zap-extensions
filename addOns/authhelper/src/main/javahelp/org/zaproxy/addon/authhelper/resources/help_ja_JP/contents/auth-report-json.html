@@ -37,11 +37,11 @@
 			<td>domains</td>
 		</tr>
 		<tr>
-			<td>Domains Partially Out of Scope</td>
+			<td>部分的にスコープ外のドメイン</td>
 			<td>domainspartiallyoutofscope</td>
 		</tr>
 		<tr>
-			<td>Domains Out of Scope</td>
+			<td>スコープ外のドメイン</td>
 			<td>domainsoutofscope</td>
 		</tr>
 
@@ -193,8 +193,8 @@
 	これらは、ZAPによって記録されたすべての統計情報です。<br>
 それらの意味の詳細については、<a href="https://www.zaproxy.org/docs/internal-statistics/">https://www.zaproxy.org/docs/internal-statistics/</a>を参照してください。
 
-	<H3>Domains</H3>
-	This section contains an array with all the domains that were accessed while performing the authentication.
+	<H3>ドメイン</H3>
+	このセクションには、認証の実行中にアクセスされたすべてのドメインを含む配列が含まれています。
 <pre>
 	"domains": [
 		"https://www.example.org",
@@ -202,16 +202,16 @@
 	]
 </pre>
 
-	<H3>Domains Partially Out of Scope</H3>
-	This section contains an array with the domains partially out of scope, that were accessed while performing the authentication. For example, when the context includes just a subset of the target (e.g. <code>https://www.example.org/frontend/</code>) and other resources were also accessed (e.g. <code>https://www.example.org/backend/</code>).
+	<H3>部分的にスコープ外のドメイン</H3>
+	このセクションには、認証の実行中にアクセスされた、部分的にスコープ外のドメインを含む配列が含まれています。 たとえば、コンテキストがターゲットの一部のみ (例: <code>https://www.example.org/frontend/</code>) を含み、他のリソース (例: <code>https://www.example.org/backend/</code>) もアクセスされた場合です。
 <pre>
 	"domainsPartiallyOutOfScope": [
 		"https://www.example.org"
 	]
 </pre>
 
-	<H3>Domains Out of Scope</H3>
-	This section contains an array with the domains out of scope (context), that were accessed while performing the authentication.
+	<H3>スコープ外のドメイン</H3>
+	このセクションには、認証の実行中にアクセスされた、スコープ(コンテキスト)外のドメインを含む配列が含まれています。
 <pre>
 	"domainsOutOfScope": [
 		"https://api.example.org"
