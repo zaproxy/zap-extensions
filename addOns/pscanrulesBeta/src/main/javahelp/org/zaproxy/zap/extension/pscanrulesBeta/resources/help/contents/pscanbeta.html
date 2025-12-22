@@ -48,24 +48,6 @@ The Custom Payloads category for this rule is: <code>JS-Function</code>.
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/JsFunctionScanRule.java">JsFunctionScanRule.java</a><br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10110/">10110</a>
 
-<H2 id="id-10009">In Page Banner Information Leak</H2>
-Analyzes response body content for the presence of web or application server banners (when the responses have error status codes).<br>
-If the Threshold is Low then status 200 - Ok responses are analyzed as well.<br>
-The presence of such banners may facilitate more targeted attacks against known vulnerabilities.
-<p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/InPageBannerInfoLeakScanRule.java">InPageBannerInfoLeakScanRule.java</a><br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10009/">10009</a>
-
-<H2 id="id-90002">Java Serialization Object</H2>
-Java Serialization Object (JSO) is a way to save and exchange objects between Java applications.<br>
-Different problems are associated with JSO. Sensitive data can leak to the stream of bytes.<br>
-An attacker can also modify the data and exploit JSO to do a Remote Code Execution on the server.<br>
-JSO should not be used by Java programs. Strong controls must be done on serialized data.<br>
-JSO are a type of vulnerabilities associated to A8:2017-Insecure Deserialization.
-<p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/JsoScanRule.java">JsoScanRule.java</a><br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/90002/">90002</a>
-
 <H2 id="id-10063">Permissions Policy Header Not Set</H2>
 This rule checks the HTTP response headers (on HTML and JavaScript responses) for inclusion of a "Permissions-Policy" header, 
 and alerts if one is not found. It also alerts if the deprecated header "Feature-Policy" is found.<br>
@@ -131,16 +113,6 @@ NOTE: Ignores CSS, JavaScript, images, font files, and responses that contain IS
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/SourceCodeDisclosureScanRule.java">SourceCodeDisclosureScanRule.java</a><br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10099/">10099</a>
-
-<H2 id="id-90003">Sub Resource Integrity Attribute Missing</H2>
-This rule checks whether the integrity attribute in the script or the link element served by an external resource (for example: CDN) is missing.<br>
-It helps mitigate an attack where the CDN has been compromised and content has been replaced by malicious content.<br>
-Note: A suggested integrity hash value will be present in the relevant Alert's Other Info details if it can be resolved to a script in the Sites Tree.
-<p>
-This rule supports <b>Trusted Domains</b>, check "General Configuration" for more information.
-<p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/SubResourceIntegrityAttributeScanRule.java">SubResourceIntegrityAttributeScanRule.java</a><br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/90003/">90003</a>
 
 </BODY>
 </HTML>

@@ -4,8 +4,17 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [54] - 2025-12-15
 ### Changed
+- Update minimum ZAP version to 2.17.0.
 - Address redirections in references.
+
+### Removed
+- The following scan rules were removed, having been promoted to Beta:
+  - NoSQL Injection - MongoDB
+  - NoSQL Injection - MongoDB (Time Based)
 
 ## [53] - 2025-11-04
 ### Added
@@ -419,6 +428,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version, including persistent XSS tests
 
+[54]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v54
 [53]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v53
 [52]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v52
 [51]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v51

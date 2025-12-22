@@ -6,7 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Add XML body generation for OpenAPI plugin
+- Dependency update.
+
+## [48] - 2025-12-15
+### Changed
 - Dependency updates.
+- Update minimum ZAP version to 2.17.0.
 
 ## [47] - 2025-11-04
 ### Changed
@@ -356,6 +361,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First Version
 
+[48]: https://github.com/zaproxy/zap-extensions/releases/openapi-v48
 [47]: https://github.com/zaproxy/zap-extensions/releases/openapi-v47
 [46]: https://github.com/zaproxy/zap-extensions/releases/openapi-v46
 [45]: https://github.com/zaproxy/zap-extensions/releases/openapi-v45

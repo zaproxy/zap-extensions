@@ -5,7 +5,7 @@
       ],
       "css": "\\.example",
       "html": [
-        "example\\.com/test\\.html[^>]+></iframe>{", // Unbalanced repetition braces (1 error)
+        "example\\.com/test\\.html[^>]+></iframe>{",
         "<!-- (?:End )?Test Entry -->"
       ],
       "headers": {
@@ -26,7 +26,7 @@
         "foo": "bar"
       },
       "dom": {
-        "a[href='https://www.example.com'][title*='version]": { // Unbalanced single quote (counts as 2 errors)
+        "a[href='https://www.example.com'][title*='version]": {
           "attributes": {
             "title": "^version ([0-9.]+)$\\;version:\\1"
           },
@@ -41,7 +41,7 @@
         "testentry\\.com/",
         "ad\\.ca\\.testentry\\.net"
       ],
-      "description": "Test Entry is a test entry for UnitTests",
+      "description": "HTML: Unbalanced repetition braces (1 error); DOM: Unbalanced single quote (counts as 2 errors)",
       "url": "^https?://test\\.example\\.com",
       "website": "https://www.example.com/testentry"
     },
@@ -124,5 +124,31 @@
       "icon": "PHP.svg",
       "url": "\\.php(?:$|\\?)",
       "website": "http://php.net"
+    },
+    "Broken Confidence Tag": {
+      "cats": [
+        36
+      ],
+      "meta": {
+        "generator": [
+          "Generator 1;confidence:50"
+        ]
+      },
+      "description": "Confidence missing double slash https://github.com/enthec/webappanalyzer/#tags",
+      "url": "^https?://test\\.example\\.com",
+      "website": "https://www.example.com/testentry"
+    },
+     "Broken Version Tag": {
+      "cats": [
+        36
+      ],
+      "meta": {
+        "generator": [
+          "Generator X;version:\1"
+        ]
+      },
+      "description": "Version missing double slash https://github.com/enthec/webappanalyzer/#tags",
+      "url": "^https?://test\\.example\\.com",
+      "website": "https://www.example.com/testentry2"
     }
 }

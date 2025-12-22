@@ -103,8 +103,10 @@ public class StatsMonitor implements StatsListener, EventConsumer {
         return l == null ? 0 : l;
     }
 
-    private void recordStatsInsight(Insight.Level level, String statsKey, String insightsKey) {
-        recordInsight(level, Insight.Reason.NA, insightsKey, unbox(stats.getStat(statsKey)), 0);
+    private void recordWarningStatsInsight(
+            Insight.Level level, String statsKey, String insightsKey) {
+        recordInsight(
+                level, Insight.Reason.WARNING, insightsKey, unbox(stats.getStat(statsKey)), 0);
     }
 
     private void recordInsight(
@@ -130,8 +132,11 @@ public class StatsMonitor implements StatsListener, EventConsumer {
         }
         boolean isPercent = total > 0;
         long value = isPercent ? percent(stat, total) : stat;
-        ext.recordInsight(
-                new Insight(level, reason, site, key, getStatsDescription(key), value, isPercent));
+        if (value > 0) {
+            ext.recordInsight(
+                    new Insight(
+                            level, reason, site, key, getStatsDescription(key), value, isPercent));
+        }
     }
 
     public void processStats() {
@@ -142,10 +147,11 @@ public class StatsMonitor implements StatsListener, EventConsumer {
         processAuthStats();
 
         // ZAP errors and warnings
-        recordStatsInsight(Insight.Level.LOW, STATS_ERROR, "insight.log.error");
-        recordStatsInsight(Insight.Level.LOW, STATS_WARN, "insight.log.warn");
-        recordStatsInsight(Insight.Level.HIGH, STATS_DATABASE_FULL, "insight.database.full");
-        recordStatsInsight(Insight.Level.HIGH, STATS_DISKSPACE_FULL, "insight.diskspace.full");
+        recordWarningStatsInsight(Insight.Level.LOW, STATS_ERROR, "insight.log.error");
+        recordWarningStatsInsight(Insight.Level.LOW, STATS_WARN, "insight.log.warn");
+        recordWarningStatsInsight(Insight.Level.HIGH, STATS_DATABASE_FULL, "insight.database.full");
+        recordWarningStatsInsight(
+                Insight.Level.HIGH, STATS_DISKSPACE_FULL, "insight.diskspace.full");
 
         checkMemoryUsage();
     }
@@ -175,7 +181,7 @@ public class StatsMonitor implements StatsListener, EventConsumer {
             for (Entry<String, Long> entry : codeCounts.entrySet()) {
                 recordInsight(
                         Insight.Level.INFO,
-                        Insight.Reason.NA,
+                        Insight.Reason.INFO,
                         site,
                         INSIGHT_CODE_PREFIX + entry.getKey() + "xx",
                         entry.getValue(),
@@ -212,7 +218,7 @@ public class StatsMonitor implements StatsListener, EventConsumer {
             if (total != null) {
                 recordInsight(
                         Insight.Level.INFO,
-                        Insight.Reason.NA,
+                        Insight.Reason.INFO,
                         site,
                         INSIGHTS_ENDPOINTS_TOTAL,
                         total);
@@ -221,7 +227,7 @@ public class StatsMonitor implements StatsListener, EventConsumer {
                     if (!INSIGHTS_ENDPOINTS_TOTAL.equals(k2stat.getKey())) {
                         recordInsight(
                                 Insight.Level.INFO,
-                                Insight.Reason.NA,
+                                Insight.Reason.INFO,
                                 site,
                                 k2stat.getKey(),
                                 k2stat.getValue(),
@@ -241,7 +247,7 @@ public class StatsMonitor implements StatsListener, EventConsumer {
             long total,
             long bad) {
         if (bad > 0) {
-            recordInsight(Insight.Level.INFO, Insight.Reason.NA, site, key, bad, total);
+            recordInsight(Insight.Level.INFO, Insight.Reason.INFO, site, key, bad, total);
         }
 
         if (total < min) {

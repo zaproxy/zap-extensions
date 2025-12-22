@@ -33,16 +33,19 @@ import org.jdesktop.swingx.table.TableColumnExt;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.zaproxy.addon.insights.ExtensionInsights;
+import org.zaproxy.addon.insights.InsightListener;
+import org.zaproxy.zap.utils.ThreadUtils;
 import org.zaproxy.zap.view.ZapTable;
 
 @SuppressWarnings("serial")
-public class InsightsPanel extends AbstractPanel {
+public class InsightsPanel extends AbstractPanel implements InsightListener {
 
     private static final long serialVersionUID = 1L;
 
     private InsightsTableModel model = new InsightsTableModel();
     private JXTable table;
     private boolean packed;
+    private boolean haveSwitched;
 
     public InsightsPanel() {
         setName(Constant.messages.getString(ExtensionInsights.PREFIX + ".panel.title"));
@@ -59,15 +62,7 @@ public class InsightsPanel extends AbstractPanel {
     }
 
     public void setInsights(List<Insight> insights) {
-        model.setInsights(insights);
-        pack();
-    }
-
-    public void pack() {
-        if (!this.packed && model.getRowCount() > 0) {
-            table.packAll();
-            this.packed = true;
-        }
+        ThreadUtils.invokeLater(() -> model.setInsights(insights));
     }
 
     private JXTable getInsightsTable(InsightsTableModel model) {
@@ -91,5 +86,24 @@ public class InsightsPanel extends AbstractPanel {
 
     public InsightsTableModel getModel() {
         return model;
+    }
+
+    @Override
+    public void recordInsight(Insight ins) {
+        ThreadUtils.invokeLater(
+                () -> {
+                    int rowCount = model.getRowCount();
+                    if (rowCount == 1 || rowCount == 10 || rowCount == 20) {
+                        // Horrible way to make sure the table is sensibly sized
+                        table.packAll();
+                    }
+
+                    if (Insight.Level.HIGH.equals(ins.getLevel()) && !haveSwitched) {
+                        setTabFocus();
+                        // Always select the first one, it will have the highest level
+                        table.setRowSelectionInterval(0, 0);
+                        haveSwitched = true;
+                    }
+                });
     }
 }

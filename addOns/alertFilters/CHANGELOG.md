@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [26] - 2025-12-15
+### Changed
+- Update the automation framework template and help to include missing fields (`ruleName` and `methods`).
+- Update minimum ZAP version to 2.17.0.
+
 ## [25] - 2025-11-04
 ### Changed
 - Include String as supported type for the Automation Framework `alertFilter` job's `ruleId` field.
@@ -161,6 +166,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[26]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v26
 [25]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v25
 [24]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v24
 [23]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v23

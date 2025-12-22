@@ -26,9 +26,6 @@ import io.netty.util.concurrent.DefaultThreadFactory;
 import io.netty.util.concurrent.EventExecutorGroup;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.net.Authenticator;
 import java.net.BindException;
 import java.net.InetAddress;
@@ -88,8 +85,6 @@ import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.model.Session;
-import org.parosproxy.paros.network.HttpBody;
-import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
@@ -161,8 +156,6 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
     private static final int ARG_HOST_IDX = 3;
     private static final int ARG_PORT_IDX = 4;
-
-    private Method resetWarnedContentTypeValuesMethod;
 
     private CloseableHttpSenderImpl<?> httpSenderNetwork;
 
@@ -263,36 +256,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
             LOGGER.error("An error occurred while creating the sender:", e);
         }
 
-        try {
-            resetWarnedContentTypeValuesMethod =
-                    HttpMessage.class.getDeclaredMethod("resetWarnedContentTypeValues");
-        } catch (Exception e) {
-            // Nothing to do, method only available in newer core.
-        }
-
-        try {
-            Class<?> providerClass =
-                    Class.forName("org.parosproxy.paros.network.HttpMessage$CharsetProvider");
-            DefaultCharsetProvider provider = new DefaultCharsetProvider();
-            InvocationHandler invocationHandler =
-                    (o, method, args) -> {
-                        if ("get".equals(method.getName())) {
-                            return provider.get((HttpHeader) args[0], (HttpBody) args[1]);
-                        }
-                        return null;
-                    };
-
-            Method setCharsetMethod =
-                    HttpMessage.class.getMethod("setCharsetProvider", providerClass);
-            setCharsetMethod.invoke(
-                    null,
-                    Proxy.newProxyInstance(
-                            getClass().getClassLoader(),
-                            new Class<?>[] {providerClass},
-                            invocationHandler));
-        } catch (Exception e) {
-            // Nothing to do, method only available in newer core.
-        }
+        HttpMessage.setCharsetProvider(new DefaultCharsetProvider());
     }
 
     private static void setLogLevel(List<String> classnames, Level level) {
@@ -1674,13 +1638,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
         @Override
         public void sessionAboutToChange(Session session) {
-            if (resetWarnedContentTypeValuesMethod != null) {
-                try {
-                    resetWarnedContentTypeValuesMethod.invoke(null);
-                } catch (Exception e) {
-                    // Ignore, nothing to do.
-                }
-            }
+            HttpMessage.resetWarnedContentTypeValues();
         }
 
         @Override

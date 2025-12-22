@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [48] - 2025-12-15
+### Changed
+- Update minimum ZAP version to 2.17.0.
+
+### Removed
+- The following scan rules were removed, having been promoted to Beta:
+  - In Page Banner Information Leak
+  - Java Serialization Object
+  - Sub Resource Integrity Attribute Missing
+
 ## [47] - 2025-11-04
 ### Added
 - SYSTEMIC tag to selected rules.
@@ -383,6 +393,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[48]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v48
 [47]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v47
 [46]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v46
 [45]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v45

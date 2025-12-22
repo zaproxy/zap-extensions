@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE helpset PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp HelpSet Version 2.0//EN" "http://java.sun.com/products/javahelp/helpset_2_0.dtd">
 <helpset version="2.0" xml:lang="ja-JP">
-  <title>シーケンススキャナー｜ZAP 拡張機能</title>
+  <title>シーケンススキャナーアドオン</title>
 
   <maps>
-     <homeID>top</homeID>
+     <homeID>addon.sequence</homeID>
      <mapref location="map.jhm"/>
   </maps>
 
   <view>
     <name>TOC</name>
-    <label>コンテンツ</label>
+    <label>目次</label>
     <type>org.zaproxy.zap.extension.help.ZapTocView</type>
     <data>toc.xml</data>
   </view>

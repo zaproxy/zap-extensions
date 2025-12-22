@@ -48,25 +48,8 @@
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/JsFunctionScanRule.java">JsFunctionScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10110/">10110</a>
 
-<h2 id="id-10009">ページ内バナー情報漏洩</h2>
-レスポンスボディのコンテンツを分析し、(レスポンスがエラーステータスコードの場合に) Webサーバーまたはアプリケーションサーバーのバナーの存在を検出します。<br>
-しきい値が Low の場合、ステータス 200 - OK のレスポンスも分析されます。<br>
-このようなバナーの存在は、既知の脆弱性に対するより標的を絞った攻撃を容易にする可能性があります。
-<p>
-最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/InPageBannerInfoLeakScanRule.java">InPageBannerInfoLeakScanRule.java</a><br>
-アラートID: <a href="https://www.zaproxy.org/docs/alerts/10009/">10009</a>
-
-<h2 id="id-90002">Javaシリアライゼーションオブジェクト</h2>
-Javaシリアライゼーションオブジェクト (JSO) は、Javaアプリケーション間でオブジェクトを保存および交換する方法です。<br>
-JSOには複数のセキュリティ上の問題があります。 機密データがバイトストリームに漏洩する可能性があり、攻撃者はデータを改変してJSOを悪用し、サーバー上でリモートコード実行を行うこともできます。<br>
-JSOはJavaプログラムで使用すべきではありません。 シリアライズされたデータには厳格な制御が必要です。<br>
-JSOは、OWASP Top 10の「A8:2017-安全でないデシリアライゼーション」に関連する脆弱性の一種です。
-<p>
-最新のコード: <br>JsoScanRule.java</a><1>
-アラートID: <a href="https://www.zaproxy.org/docs/alerts/90002/">90002</a>
-
 <h2 id="id-10063">Permissions-Policy ヘッダー未設定</h2>
-このルールは、(HTMLおよびJavaScriptレスポンスの) HTTPレスポンスヘッダーに「Permissions-Policy」ヘッダーが含まれているかをチェックし、 見つからない場合にアラートを発生させます。 また、非推奨のヘッダー「Feature-Policy」が見つかった場合もアラートを発生させます。<br>
+このルールは、(HTMLおよびJavaScriptレスポンスの) HTTPレスポンスヘッダーに「Permissions-Policy」ヘッダーが含まれているかをチェックし、 見つからない場合にアラートを発行します。 また、非推奨のヘッダー「Feature-Policy」が見つかった場合もアラートを発行します。<br>
 リダイレクトは、しきい値が Low の場合を除いて無視されます。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/PermissionsPolicyScanRule.java">PermissionsPolicyScanRule.java</a><br>
@@ -114,16 +97,6 @@ action 要素の指定に失敗したHTMLフォームをレスポンスコンテ
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/SourceCodeDisclosureScanRule.java">SourceCodeDisclosureScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10099/">10099</a>
-
-<h2 id="id-90003">サブリソース整合性属性の欠落</h2>
-このルールは、外部リソース (例: CDN) から提供される script 要素または link 要素に integrity 属性が欠落しているかをチェックします。<br>
-これは、CDNが侵害され、コンテンツが悪意のあるコンテンツに置き換えられた場合の攻撃を軽減するのに役立ちます。<br>
-注: サイトツリー内のスクリプトに解決できる場合、推奨される整合性ハッシュ値が関連するアラートの「その他の情報」詳細に表示されます。
-<p>
-このルールは<b>信頼済みドメイン</b>をサポートしています。詳細については「全般設定」を確認してください。
-<p>
-最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/SubResourceIntegrityAttributeScanRule.java">SubResourceIntegrityAttributeScanRule.java</a><br>
-アラートID: <a href="https://www.zaproxy.org/docs/alerts/90003/">90003</a>
 
 </body>
 </html>

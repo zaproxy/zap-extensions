@@ -17,21 +17,6 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns
 <br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40015/">40015</a>.
 
-<h2 id="id-40033">NoSQL Injection - MongoDB</h2>
-This rule attempts to identify MongoDB specific NoSQL Injection vulnerabilities. Он пытается предпринять различные типы атак, в том числе: логические, основанные на ошибках, основанные на времени и обход аутентификации.  
-It does not include time based attacks. Он также будет пытаться использовать полезные данные, специфичные для параметра JSON, если сканирование настроено на включение вариантов параметров JSON. 
-<p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/MongoDbInjectionScanRule.java">MongoDbInjectionScanRule.java</a>
-<br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40033/">40033</a>.
-
-<h2 id="id-90039">NoSQL Injection - MongoDB (Time Based)</h2>
-This rule attempts to identify MongoDB specific NoSQL Injection vulnerabilities using only time based attacks.
-<p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/MongoDbInjectionTimingScanRule.java">MongoDbInjectionTimingScanRule.java</a>
-<br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/90039/">90039</a>.
-
 <h2 id="id-40039">Web Cache Deception</h2>
 This rule attempts to identify Web Cache Deception vulnerabilities. It checks whether a static path appended to original URIs can be used to leak sensitive user information or not.
 <ul>

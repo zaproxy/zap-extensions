@@ -202,6 +202,44 @@
 	</div>
 	<p></p>
 
+	<th:block
+		th:if="${reportData.isIncludeSection('insights') &amp;&amp; reportData.reportObjects.get('insightsList') != null}">
+		<div class="container">
+			<h3 th:text="#{report.insights.title}" class="left-header">Insights</h3>
+			<table
+				class="insights table table-hover table-bordered table-striped">
+				<tr>
+					<th th:text="#{report.insights.level}" height="24">Level</th>
+					<th th:text="#{report.insights.reason}">Reason</th>
+					<th th:text="#{report.insights.site}">Site</th>
+					<th th:text="#{report.insights.desc}">Description</th>
+					<th th:text="#{report.insights.stat}">Statistic</th>
+				</tr>
+				<th:block
+					th:each="ins, insState: ${reportData.reportObjects.get('insightsList')}">
+					<tr>
+						<td th:class="${'risk-' + (3 - ins.level.ordinal)}">
+							<div th:text="${ins.level}">Level</div>
+						</td>
+						<td>
+							<div th:text="${ins.reason}">Reason</div>
+						</td>
+						<td>
+							<div th:text="${ins.site}">Site</div>
+						</td>
+						<td>
+							<div th:text="${ins.description}">Description</div>
+						</td>
+						<td align="center">
+							<div th:text="${ins.statisticStr}">Statistic</div>
+						</td>
+					</tr>
+				</th:block>
+			</table>
+			<div class="spacer-lg"></div>
+		</div>
+	</th:block>
+
 	<div class="container">
 
 		<th:block

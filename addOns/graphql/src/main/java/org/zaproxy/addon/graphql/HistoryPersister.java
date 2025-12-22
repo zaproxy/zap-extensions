@@ -27,6 +27,7 @@ import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
+import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.utils.ThreadUtils;
 
 public class HistoryPersister implements RequesterListener {
@@ -46,6 +47,7 @@ public class HistoryPersister implements RequesterListener {
                                     ? HistoryReference.TYPE_SPIDER
                                     : HistoryReference.TYPE_ZAP_USER,
                             message);
+            Stats.incCounter(GraphQlStats.MESSAGES_ADDED);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             return;

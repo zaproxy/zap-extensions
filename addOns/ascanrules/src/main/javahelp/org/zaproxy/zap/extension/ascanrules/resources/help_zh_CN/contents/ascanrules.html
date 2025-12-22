@@ -133,6 +133,13 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns
 <br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40028/">40028</a>.
 
+<h2 id="id-40044">Exponential Entity Expansion (Billion Laughs Attack)</h2>
+This rule attempts to identify the "Billion Laughs" vulnerability in servers that accept XML or YAML files.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/ExponentialEntityExpansionScanRule.java">ExponentialEntityExpansionScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40044/">40044</a>.
+
 <h2 id="id-20019">External Redirect</h2>
 
 This rule submits a variety of URL redirect strings as parameter values in a request, then examines the headers and bodies of responses to determine
@@ -215,6 +222,20 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns
 <br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40035/">40035</a>.
 
+<h2 id="id-10106">HTTP Only Site</h2>
+This active scan rule checks whether an HTTP site is served under HTTPS.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/HttpOnlySiteScanRule.java">HttpOnlySiteScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10106/">10106</a>.
+
+<h2 id="id-10047">HTTPS Content Available via HTTP</h2>
+This active scan rule attempts to access content that was originally accessed via HTTPS (SSL/TLS) via HTTP.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/HttpsAsHttpScanRule.java">HttpsAsHttpScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10047/">10047</a>.
+
 <h2 id="id-40043">Log4Shell (CVE-2021-44228 and CVE-2021-45046)</h2>
 This rule attempts to discover the Log4Shell (<a href="https://nvd.nist.gov/vuln/detail/CVE-2021-44228">CVE-2021-44228</a> and <a href="https://nvd.nist.gov/vuln/detail/CVE-2021-45046">CVE-2021-45046</a>) vulnerabilities.
 It relies on the OAST add-on to generate out-of-band payloads and verify DNS interactions.
@@ -251,6 +272,18 @@ See also: <a href="https://www.zaproxy.org/docs/desktop/addons/oast-support/#ale
 最新代码: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/PathTraversalScanRule.java">PathTraversalScanRule.java</a>
 <br>
 警报 ID: <a href="https://www.zaproxy.org/docs/alerts/6/">6</a>.
+
+<h2 id="id-40048">Remote Code Execution (React2Shell)</h2>
+This rule identifies servers running vulnerable versions of React Server Components with Next.js, which will allow remote attackers to execute arbitrary code.
+<p>
+The rule is based on the PoC detailed on <a href="https://slcyber.io/research-center/high-fidelity-detection-mechanism-for-rsc-next-js-rce-cve-2025-55182-cve-2025-66478/">https://slcyber.io/research-center/high-fidelity-detection-mechanism-for-rsc-next-js-rce-cve-2025-55182-cve-2025-66478/</a>.
+<p>
+It verifies that the server is running vulnerable React Server Components with Next.js, and that the remote code execution (RCE) vulnerability is present without causing any damage.
+It forces an error via a malformed multipart request and checks for the presence of a string which confirms RCE is possible.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/React2ShellScanRule.java">React2ShellScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40048/">40048</a>.
 
 <h2 id="id-20018">远程代码执行 - CVE-2012-1823</h2>
 检测 CVE-2012-1823，在基于 PHP-CGI 的网络服务器上执行远程代码执行。
@@ -291,6 +324,17 @@ See also: <a href="https://www.zaproxy.org/docs/desktop/addons/oast-support/#ale
 最新代码: <h2 id="id-90036">SstiBlindScanRule.java</h2>
 <br>
 警报 ID: <a href="https://www.zaproxy.org/docs/alerts/90036/">90036</a>.
+
+<h2 id="id-10048">ShellShock - CVE-2014-6271</h2>
+
+This rule performs 2 attacks to detect servers vulnerable to CVE-2014-6271 aka ShellShock.<br>
+The first is a simple reflected attack and the second is a time based attack.<br>
+<br>
+Post 2.5.0 you can change the length of time used for the attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/ShellShockScanRule.java">ShellShockScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10048/">10048</a>.
 
 <h2 id="id-20017">源代码披露 - CVE-2012-1823</h2>
 利用 CVE-2012-1823 在基于 PHP-CGI 的 Web 服务器上披露服务器端 PHP 源代码。<br>

@@ -127,3 +127,13 @@ h2, h3, h4, h5, h6 {
 .additional-info-percentages {
 	color: #00549e;
 }
+
+.insights-table > tbody > tr {
+	border-bottom-color: #00549e;
+}
+
+.insights-table th[scope="col"] {
+	background-color: #00549e;
+	border-left-color: #fff;
+	color: #fff;
+}

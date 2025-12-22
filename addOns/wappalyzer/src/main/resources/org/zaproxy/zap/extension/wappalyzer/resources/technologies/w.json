@@ -726,6 +726,26 @@
     },
     "website": "https://www.wshop.com"
   },
+  "WWPass": {
+    "cats": [
+      69
+    ],
+    "description": "WWPass is a solution that enables authentication without the use of usernames, simplifying the login process while maintaining security through alternative methods.",
+    "icon": "WWPass.svg",
+    "js": {
+      "WWPass.init": "",
+      "wwpassQRCodeAuth": ""
+    },
+    "pricing": [
+      "freemium",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.wwpass\\.com"
+    ],
+    "website": "https://www.wwpass.com"
+  },
   "Waaship": {
     "cats": [
       99
@@ -1005,6 +1025,27 @@
     ],
     "website": "https://www.warmwelcome.com"
   },
+  "Warmly": {
+    "cats": [
+      32
+    ],
+    "description": "Warmly is an AI-powered platform that helps generate prospect lists and automate the conversion process.",
+    "icon": "Warmly.svg",
+    "js": {
+      "warmly-widget": "",
+      "warmly-widget-config": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "opps-widget\\.getwarmly\\.com"
+    ],
+    "website": "https://www.warmly.ai"
+  },
   "Warp": {
     "cats": [
       22
@@ -1045,6 +1086,18 @@
     ],
     "website": "https://warpstore.app"
   },
+  "Warply": {
+    "cats": [
+      84
+    ],
+    "description": "Warply is a customer loyalty platform that enables businesses to manage rewards, track engagement, and enhance customer retention through targeted campaigns.",
+    "icon": "Warply.svg",
+    "saas": true,
+    "scriptSrc": [
+      "static\\.warp\\.ly"
+    ],
+    "website": "https://warp.ly"
+  },
   "Wask": {
     "cats": [
       10
@@ -1060,6 +1113,18 @@
     ],
     "saas": true,
     "website": "https://www.wask.co"
+  },
+  "Waste Connections": {
+    "cats": [
+      19
+    ],
+    "description": "Waste Connections is a provider of waste management solutions, offering trash collection, dumpster rental, and recycling services across the United States.",
+    "icon": "WasteConnections.svg",
+    "saas": true,
+    "scriptSrc": [
+      "embed\\.wasteconnections\\.com/"
+    ],
+    "website": "https://www.wasteconnections.com"
   },
   "WatchThem": {
     "cats": [
@@ -1466,6 +1531,22 @@
     "saas": true,
     "website": "https://web3forms.com"
   },
+  "Web4Realty": {
+    "cats": [
+      32
+    ],
+    "description": "Web4Realty is an all-in-one marketing and sales platform for real estate professionals.",
+    "icon": "Web4Realty.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "idxjs\\.web4realty\\.com"
+    ],
+    "website": "https://web4realty.com"
+  },
   "WebAssembly": {
     "cats": [
       27
@@ -1485,6 +1566,22 @@
       "/wasm_exec\\.js"
     ],
     "website": "https://webassembly.org/"
+  },
+  "WebBoss": {
+    "cats": [
+      51
+    ],
+    "description": "WebBoss is a website builder designed for professional designers and developers, offering tools for creating and managing custom websites.",
+    "icon": "WebBoss.svg",
+    "meta": {
+      "generator": "WebBoss ([\\d.]+)\\;version:\\1"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://webboss.io"
   },
   "WebEngage": {
     "cats": [
@@ -1640,6 +1737,18 @@
     "oss": true,
     "website": "https://webrtc.org"
   },
+  "WebSTAT": {
+    "cats": [
+      10
+    ],
+    "description": "WebSTAT is a web analytics platform designed to provide simplified tracking of website performance and visitor behavior.",
+    "icon": "WebSTAT.svg",
+    "saas": true,
+    "scriptSrc": [
+      "\\.webstat\\.com/"
+    ],
+    "website": "https://webstat.com"
+  },
   "WebSite X5": {
     "cats": [
       1,
@@ -1749,6 +1858,23 @@
     ],
     "website": "https://webzi.ir"
   },
+  "Webareal": {
+    "cats": [
+      6
+    ],
+    "description": "Webareal is a Czech-based ecommerce platform designed for creating and managing online stores.",
+    "dom": [
+      "input[value*='www.webareal.sk']"
+    ],
+    "icon": "Webareal.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://webareal.cz"
+  },
   "Webasyst Shop-Script": {
     "cats": [
       6
@@ -1803,6 +1929,23 @@
     ],
     "saas": true,
     "website": "https://webcake.io"
+  },
+  "Webcool CMS": {
+    "cats": [
+      1
+    ],
+    "description": "Webcool CMS is a content management platform that automates workflows and enhances operational efficiency for organizations in the digital media and journalism industry.",
+    "headers": {
+      "X-Powered-By": "^Webcool CMS$"
+    },
+    "icon": "WebcoolCMS.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://webcool.vn"
   },
   "Webeo": {
     "cats": [
@@ -1938,6 +2081,18 @@
     ],
     "website": "https://www.webgains.com/"
   },
+  "Webhealer": {
+    "cats": [
+      1
+    ],
+    "description": "Webhealer is a content management system designed for managing and updating therapy-related websites.",
+    "icon": "Webhealer.svg",
+    "saas": true,
+    "scriptSrc": [
+      "umami\\.webhealer\\.net"
+    ],
+    "website": "https://www.webhealer.net"
+  },
   "Webica": {
     "cats": [
       36
@@ -1989,6 +2144,35 @@
       "webinaris_load"
     ],
     "website": "https://www.webinaris.com"
+  },
+  "Webinato": {
+    "cats": [
+      103
+    ],
+    "description": "Webinato is a webinar automation software that schedules, manages, and streams online seminars for businesses and educational purposes.",
+    "icon": "Webinato.svg",
+    "saas": true,
+    "scripts": [
+      "www\\.webinato\\.com"
+    ],
+    "website": "https://www.webinato.com"
+  },
+  "Webito": {
+    "cats": [
+      51
+    ],
+    "description": "Webito is a website builder that uses AI to provide flexible and scalable site creation.",
+    "icon": "Webito.svg",
+    "meta": {
+      "generator": "^webito website builder$"
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "http://webito.co"
   },
   "Webix": {
     "cats": [
@@ -2120,6 +2304,21 @@
     "saas": true,
     "website": "https://www.webolytics.com"
   },
+  "Webotit": {
+    "cats": [
+      52
+    ],
+    "description": "Webotit is a business tool that provides chatbot, callbot, and mailbot solutions powered by generative AI.",
+    "icon": "Webotit.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.webotit\\.ai"
+    ],
+    "website": "https://www.webotit.ai"
+  },
   "Webpack": {
     "cats": [
       19
@@ -2227,6 +2426,18 @@
     "icon": "Websale.png",
     "website": "https://websale.de"
   },
+  "Webscribble": {
+    "cats": [
+      101
+    ],
+    "description": "Webscribble is a career platform for associations that enhances member engagement and drives revenue growth through innovative solutions.",
+    "icon": "Webscribble.svg",
+    "saas": true,
+    "scripts": [
+      "api\\.webscribble\\.com"
+    ],
+    "website": "https://www.webscribble.com"
+  },
   "Website Creator": {
     "cats": [
       1
@@ -2305,6 +2516,22 @@
     "icon": "websocket.png",
     "website": "https://en.wikipedia.org/wiki/WebSocket"
   },
+  "Webstudio": {
+    "cats": [
+      51
+    ],
+    "description": "Webstudio is a platform that enables users to build custom frontends without manually writing code.",
+    "dom": [
+      "html[data-ws-last-published], div[data-ws-no-initial-animation]"
+    ],
+    "icon": "Webstudio.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://webstudio.is"
+  },
   "Webtrends": {
     "cats": [
       10
@@ -2346,6 +2573,23 @@
     ],
     "saas": true,
     "website": "https://www.webx.pk"
+  },
+  "Webydo": {
+    "cats": [
+      51
+    ],
+    "description": "Webydo is an online website generator that enables users to create websites without coding.",
+    "icon": "Webydo.svg",
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "global\\.webydo\\.com/"
+    ],
+    "website": "https://www.webydo.com"
   },
   "Webyn": {
     "cats": [
@@ -2440,6 +2684,26 @@
       "weekdone\\.com"
     ],
     "website": "https://weekdone.com"
+  },
+  "Weezbe": {
+    "cats": [
+      6
+    ],
+    "description": "Weezbe is an ecommerce solution that enables businesses to create and manage online stores.",
+    "icon": "Weezbe.svg",
+    "pricing": [
+      "low",
+      "recurring",
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "static\\.weezbe\\.com"
+    ],
+    "scripts": [
+      "static\\.weezbe\\.com"
+    ],
+    "website": "https://www.weezbe.com"
   },
   "Weglot": {
     "cats": [
@@ -2598,6 +2862,25 @@
     ],
     "website": "https://www.whatsapp.com/business"
   },
+  "Wheel of Popups": {
+    "cats": [
+      32
+    ],
+    "description": "Wheel of Popups is a tool that triggers an exit-intent popup designed to capture leaving visitors and support conversion optimization.",
+    "icon": "WheelOfPopups.svg",
+    "js": {
+      "initWheelOfPopups": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "www\\.wheelofpopups\\.com"
+    ],
+    "website": "https://wheelofpopups.com"
+  },
   "Wheelio": {
     "cats": [
       5
@@ -2629,6 +2912,23 @@
       "cdn\\.wheelysales\\.com/"
     ],
     "website": "https://wheelysales.com"
+  },
+  "Wherewolf": {
+    "cats": [
+      72
+    ],
+    "description": "Wherewolf is a platform that offers capture waivers, facilitates drive bookings, and automates review processes to streamline business operations.",
+    "icon": "Wherewolf.svg",
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.wherewolf\\.co"
+    ],
+    "website": "https://getwherewolf.com"
   },
   "Whistl": {
     "cats": [
@@ -2690,6 +2990,24 @@
     "icon": "Whooshkaa.svg",
     "website": "https://www.whooshkaa.com"
   },
+  "Whova": {
+    "cats": [
+      72
+    ],
+    "description": "Whova is an all-in-one event management platform supporting in-person, hybrid, and virtual events.",
+    "headers": {
+      "Content-Security-Policy": "whova\\.com"
+    },
+    "icon": "Whova.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "//whova\\.com/"
+    ],
+    "website": "https://whova.com"
+  },
   "Wicked Reports": {
     "cats": [
       32
@@ -2706,6 +3024,26 @@
       "widget\\.wickedreports\\.com/"
     ],
     "website": "https://www.wickedreports.com"
+  },
+  "Widde": {
+    "cats": [
+      14
+    ],
+    "description": "Widde is a platform that enables the use of interactive ecommerce videos on webpages, enhancing the shopping experience and providing businesses with a competitive advantage.",
+    "headers": {
+      "Content-Security-Policy-Report-Only": "\\.widde\\.io"
+    },
+    "icon": "Widde.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.widde\\.io"
+    ],
+    "website": "https://widde.io"
   },
   "WideBundle": {
     "cats": [
@@ -2891,6 +3229,21 @@
     ],
     "website": "https://www.wildjar.com"
   },
+  "WinLocal": {
+    "cats": [
+      90
+    ],
+    "description": "WinLocal is a monitoring and feedback collection service that helps businesses track reviews and improve visibility on maps and search results.",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "api\\.winlocal\\.ru"
+    ],
+    "website": "https://winlocal.ru"
+  },
   "Windows CE": {
     "cats": [
       28
@@ -3011,6 +3364,22 @@
     ],
     "website": "https://wipe-analytics.de"
   },
+  "Wiqhit": {
+    "cats": [
+      76
+    ],
+    "description": "Wiqhit is an online personalization tool that customizes website content to engage visitors and increase conversions through tailored user experiences.",
+    "icon": "Wiqhit.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.wiqhit\\.com/"
+    ],
+    "website": "https://www.wiqhit.com"
+  },
   "Wirecard": {
     "cats": [
       41
@@ -3048,6 +3417,21 @@
       "wapi\\.wiremo\\.co/"
     ],
     "website": "https://wiremo.co"
+  },
+  "Wise Agent": {
+    "cats": [
+      53
+    ],
+    "description": "Wise Agent is a real estate CRM platform that helps manage contacts and automate workflows.",
+    "icon": "WiseAgent.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.wiseagent\\.com"
+    ],
+    "website": "https://wiseagent.com"
   },
   "Wisepops": {
     "cats": [
@@ -3177,6 +3561,26 @@
       "\\.wistia\\.com"
     ],
     "website": "https://wistia.com"
+  },
+  "Witbooking": {
+    "cats": [
+      93
+    ],
+    "description": "Witbooking is a hotel booking engine that enables the management of reservations, availability, and pricing through an online platform.",
+    "dom": [
+      "form[action*='engine.witbooking.com']"
+    ],
+    "icon": "Witbooking.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "www\\.witbooking\\.com"
+    ],
+    "website": "https://www.witbooking.com"
   },
   "With Reach": {
     "cats": [
@@ -3353,6 +3757,25 @@
     ],
     "saas": true,
     "website": "https://wizzy.ai"
+  },
+  "Wodify": {
+    "cats": [
+      53
+    ],
+    "description": "Wodify is a gym management software.",
+    "icon": "Wodify.svg",
+    "js": {
+      "validateWodifyLeadForm": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "wodify\\.com"
+    ],
+    "website": "https://www.wodify.com"
   },
   "Wolf CMS": {
     "cats": [
@@ -3673,6 +4096,22 @@
     ],
     "website": "https://www.woopra.com"
   },
+  "Woorise": {
+    "cats": [
+      32
+    ],
+    "description": "Woorise is a marketing platform that enables the creation of lead generation landing pages.",
+    "dom": [
+      "script#woorise-embed-js-after"
+    ],
+    "icon": "Woorise.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://woorise.com"
+  },
   "Woostify": {
     "cats": [
       80
@@ -3791,7 +4230,10 @@
     "cpe": "cpe:2.3:a:wordpress:wordpress:*:*:*:*:*:*:*:*",
     "description": "WordPress is a free and open-source content management system written in PHP and paired with a MySQL or MariaDB database. Features include a plugin architecture and a template system.",
     "dom": [
-      "div[class*='wp-block-group'] > div[class*='wp-block-'], link[rel=stylesheet][href*='/wp-content/'], link[rel=stylesheet][href*='/wp-includes/'], link[href*='.wp.com']"
+      "div[class*='wp-block-group'] > div[class*='wp-block-']",
+      "link[rel=stylesheet][href*='/wp-content/']",
+      "link[rel=stylesheet][href*='/wp-includes/']",
+      "link[href*='.wp.com']"
     ],
     "headers": {
       "X-Pingback": "/xmlrpc\\.php$",
@@ -3807,8 +4249,10 @@
       "MySQL"
     ],
     "js": {
+      "wp.ajax": "",
       "wp.receiveEmbedMessage": "",
-      "wp_username": ""
+      "wp_username": "",
+      "wpb_prepare_tab_content": ""
     },
     "meta": {
       "generator": "^WordPress(?: ([\\d.]+))?\\;version:\\1",
@@ -3823,7 +4267,11 @@
     "saas": true,
     "scriptSrc": [
       "/wp-(?:content|includes)/",
-      "wp-embed\\.min\\.js"
+      "wp-embed\\.min\\.js",
+      "wp-static\\.assets\\.sh/"
+    ],
+    "scripts": [
+      "/wp-content"
     ],
     "website": "https://wordpress.org"
   },
@@ -3903,6 +4351,27 @@
       "/wp-content/plugins/wordpress-popular-posts/.+wpp\\.min\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
     ],
     "website": "https://wordpress.org/plugins/wordpress-popular-posts/"
+  },
+  "WordPress Project Manager": {
+    "cats": [
+      47
+    ],
+    "description": "WordPress Project Manager is an open-source project management tool designed to organize tasks and ensure timely project delivery.",
+    "icon": "WPProjectManager.svg",
+    "oss": true,
+    "pricing": [
+      "low",
+      "recurring",
+      "onetime"
+    ],
+    "requires": [
+      "WordPress"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "/wp-content/plugins/wedevs-project-manager/"
+    ],
+    "website": "https://wedevs.com/wp-project-manager-pro"
   },
   "WordPress Site Editor": {
     "cats": [
@@ -4085,6 +4554,22 @@
     ],
     "website": "https://www.workbooks.com"
   },
+  "Workday": {
+    "cats": [
+      53
+    ],
+    "description": "Workday is an enterprise cloud platform that provides solutions for finance, human resources, and business planning.",
+    "icon": "Workday.svg",
+    "js": {
+      "workday.appRoot": "",
+      "workdayMessages": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "www\\.myworkday\\.com"
+    ],
+    "website": "https://www.workday.com"
+  },
   "Workstand": {
     "cats": [
       6,
@@ -4229,6 +4714,27 @@
     },
     "oss": true,
     "website": "https://www.webtoolkit.eu/wt"
+  },
+  "WuBook": {
+    "cats": [
+      93
+    ],
+    "description": "WuBook is a software platform that allows efficient management of rooms and rates for hospitality operations.",
+    "icon": "WuBook.svg",
+    "js": {
+      "_WuBook": "",
+      "wbWuBookUrl": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "//wubook\\.net/"
+    ],
+    "website": "https://wubook.net"
   },
   "Wufoo": {
     "cats": [

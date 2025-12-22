@@ -236,6 +236,45 @@
     },
     "website": "https://xenforo.com"
   },
+  "Xenioo": {
+    "cats": [
+      52
+    ],
+    "description": "Xenioo is an omnichannel chatbot platform designed to create, manage, and deploy conversational agents across multiple messaging channels.",
+    "icon": "Xenioo.svg",
+    "js": {
+      "Xenioo": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "static\\.xenioo\\.com"
+    ],
+    "website": "https://www.xenioo.com"
+  },
+  "Xeno Chat": {
+    "cats": [
+      52
+    ],
+    "description": "Xeno Chat is a messaging app that enables live responses to support customer attraction, conversion, and retention.",
+    "icon": "Xeno.svg",
+    "js": {
+      "_xeno._Utils": "",
+      "_xenoLoader": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.xeno\\.app"
+    ],
+    "website": "https://xenoapp.com"
+  },
   "Xeora": {
     "cats": [
       18

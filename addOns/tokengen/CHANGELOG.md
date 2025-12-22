@@ -4,9 +4,12 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [16] - 2025-12-15
 ### Changed
 - Maintenance changes.
-- Update minimum ZAP version to 2.16.0.
+- Update minimum ZAP version to 2.17.0.
 
 ## [15] - 2021-10-07
 ### Changed
@@ -90,6 +93,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[16]: https://github.com/zaproxy/zap-extensions/releases/tokengen-v16
 [15]: https://github.com/zaproxy/zap-extensions/releases/tokengen-v15
 [14]: https://github.com/zaproxy/zap-extensions/releases/tokengen-v14
 [13]: https://github.com/zaproxy/zap-extensions/releases/tokengen-v13

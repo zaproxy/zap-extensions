@@ -1,0 +1,8 @@
+- type: insights
+  parameters:
+    messagesLowThreshold:            # Integer: low threshold used for insights related to messages, default: 5
+    messagesHighThreshold:           # Integer: high threshold used for insights related to messages, default: 50
+    memoryLowThreshold:              # Integer: low threshold used for insights related to memory, default: 80
+    memoryHighThreshold:             # Integer: high threshold used for insights related to memory, default: 95
+    slowResponse:                    # Integer: the response time in msecs that is treated as "slow", default: 256
+    exitAutoOnHigh:                  # Boolean: if set will end the plan on a high level insight, default: true

@@ -38,7 +38,7 @@ LOW しきい値では、エラーやリダイレクトを含むすべてのテ�
 デフォルトでは、レスポンスに Content-Security-Policy の 'frame-ancestors' 要素が含まれている場合、アラートは発生しません。これは X-Frame-Options ヘッダーより優先されるためです。
 ただし、LOW しきい値では上記の問題が依然として報告されますが、リスクはLOWになります。 
 <p>
-最新コード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/AntiClickjackingScanRule.java">AntiClickjackingScanRule.java</a><br>
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/AntiClickjackingScanRule.java">AntiClickjackingScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10020/">10020</a>
 
 <h2 id="id-90022">アプリケーションエラー</h2>
@@ -53,7 +53,7 @@ Internal Server Error (HTTP 500) の場合、アラートは低リスクに設�
 このルールの カスタムペイロード カテゴリ: <code>Application-Errors</code>.
 <p>ZAPのユーザーディレクトリの <code>xml/application_errors.xml</code> ファイルにパターンを追加することも可能です。<br>
 <p>
-最新コード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/ApplicationErrorScanRule.java">ApplicationErrorScanRule.java</a><br>
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/ApplicationErrorScanRule.java">ApplicationErrorScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/90022/">90022</a>
 
 <h2 id="id-10044">サイズの大きなリダイレクトを検出 (機密情報漏洩の可能性)</h2>
@@ -61,7 +61,7 @@ Internal Server Error (HTTP 500) の場合、アラートは低リスクに設�
 大きなリダイレクトレスポンスは、リダイレクトが行われたにもかかわらず、ページに実際にはコンテンツ (機密情報、PIIなどを含む可能性がある) が含まれていることを示す可能性があります。
 また、リダイレクトレスポンスの本文に複数のHREFが含まれている場合もアラートを発生させます。
 <p>
-最新コード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/BigRedirectsScanRule.java">BigRedirectsScanRule.java</a><br>
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/BigRedirectsScanRule.java">BigRedirectsScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10044/">10044</a>
 
 <h2 id="id-10015">Cache Control</h2>
@@ -69,7 +69,7 @@ Internal Server Error (HTTP 500) の場合、アラートは低リスクに設�
 MEDIUM および HIGH しきい値では、エラーやリダイレクト以外のテキストレスポンス (JavaScriptとCSSを除く) のみが対象となります。<br>
 LOW しきい値では、エラーやリダイレクトを含むすべてのレスポンスが対象となります。
 <p>
-最新コード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/CacheControlScanRule.java">CacheControlScanRule.java</a><br>
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/CacheControlScanRule.java">CacheControlScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10015/">10015</a>
 
 <h2 id="id-90011">文字セットの不一致</h2>
@@ -92,7 +92,7 @@ LOW しきい値では、エラーやリダイレクトを含むすべてのレ�
 <a href="http://www.w3.org/TR/html401/charset.html#h-5.2.2">http://www.w3.org/TR/html401/charset.html#h-5.2.2</a><br>
 <a href="http://www.w3.org/TR/html5/document-metadata.html#charset">http://www.w3.org/TR/html5/document-metadata.html#charset</a>
 <p>
-最新コード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/CharsetMismatchScanRule.java">CharsetMismatchScanRule.java</a><br>
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/CharsetMismatchScanRule.java">CharsetMismatchScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/90011/">90011</a>
 
 <h2 id="id-10038">Content Security Policy (CSP) ヘッダーが設定されていない</h2>
@@ -107,32 +107,32 @@ LOW しきい値では、エラーやリダイレクトを含むすべてのレ�
 <p>
 注: このルールは、指定されたポリシーの実際の分析を行いません。それについては、CSPスキャンルールが有効になっていることを確認してください。
 <p>
-最新コード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/ContentSecurityPolicyMissingScanRule.java">ContentSecurityPolicyMissingScanRule.java</a><br>
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/ContentSecurityPolicyMissingScanRule.java">ContentSecurityPolicyMissingScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10038/">10038</a>
 
 <h2 id="id-10019">Content-Type ヘッダーの欠落</h2>
 レスポンスに Content-Type ヘッダーが欠落している場合、またはヘッダーは存在するが値が空の場合にアラートを発生させます。
 <p>
-最新コード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/ContentTypeMissingScanRule.java">ContentTypeMissingScanRule.java</a><br>
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/ContentTypeMissingScanRule.java">ContentTypeMissingScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10019/">10019</a>
 
 <h2 id="id-10010">CookieにHttpOnlyフラグがない</h2>
 Cookieが設定される際にHttpOnlyフラグが付けられていることを確認します。 HttpOnlyフラグは、設定されているCookieがクライアント側スクリプト (JavaScriptなど) によって操作されるべきでないことをブラウザに示します。
 <p>
-最新コード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/CookieHttpOnlyScanRule.java">CookieHttpOnlyScanRule.java</a><br>
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/CookieHttpOnlyScanRule.java">CookieHttpOnlyScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10010/">10010</a>
 
 <h2 id="id-90033">Cookie - 広いスコープ</h2>
 Cookieはドメインまたはパスでスコープを設定できます。 このチェックはドメインスコープのみに関係します。Cookieに適用されるドメインスコープは、どのドメインがそれにアクセスできるかを決定します。 例えば、Cookieはサブドメインに厳密にスコープを設定できます (例: <code>www.nottrusted.com</code>)、または親ドメインに緩くスコープを設定できます (例: <code>nottrusted.com</code>)。 後者の場合、<code>nottrusted.com</code>の任意のサブドメインがCookieにアクセスできます。 緩くスコープされたCookieは、<code>google.com</code>や<code>live.com</code>のようなメガアプリケーションでは一般的です。.
 <p>
-最新コード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/CookieLooselyScopedScanRule.java">CookieLooselyScopedScanRule.java</a><br>
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/CookieLooselyScopedScanRule.java">CookieLooselyScopedScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/90033/">90033</a>
 
 <h2 id="id-10029">Cookieポイズニング</h2>
 このチェックは、クエリ文字列パラメータとPOSTデータのユーザー入力を調べて、Cookieパラメータが制御される可能性がある場所を特定します。 
 これはCookie poisoning攻撃と呼ばれ、攻撃者がさまざまな方法でCookieを操作できる場合に悪用可能になります。 場合によっては悪用できないこともありますが、URLパラメータでCookie値を設定できるようにすることは、一般的にバグと見なされます。
 <p>
-最新コード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/UserControlledCookieScanRule.java">UserControlledCookieScanRule.java</a><br>
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/UserControlledCookieScanRule.java">UserControlledCookieScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10029/">10029</a>
 
 <h2 id="id-10011">Cookie Secureフラグ</h2>
@@ -164,14 +164,14 @@ HTMLレスポンスの "script" タグの "src" 属性を調べて、コンテ�
 <li>このルールは<b>信頼済みドメイン</b>をサポートしています。詳細については「全般設定」を確認してください。</li>
 </ul> 
 <p>
-最新コード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/CrossDomainScriptInclusionScanRule.java">CrossDomainScriptInclusionScanRule.java</a><br>
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/CrossDomainScriptInclusionScanRule.java">CrossDomainScriptInclusionScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10017/">10017</a>
 
 <h2 id="id-10098">クロスドメイン設定ミス</h2>
 レスポンスをパッシブスキャンして、Webブラウザで同一オリジンポリシーを緩和するクロスドメイン誤設定を検出します。<br>
 現在の実装では、過度に寛容なCORSヘッダーを調べます。
 <p>
-最新コード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/CrossDomainMisconfigurationScanRule.java">CrossDomainMisconfigurationScanRule.java</a><br>
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/CrossDomainMisconfigurationScanRule.java">CrossDomainMisconfigurationScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10098/">10098</a>
 
 <h2 id="id-10055">CSP (Content Security Policy)</h2>
@@ -201,7 +201,7 @@ HIGHアラートしきい値では、スコープ内のメッセージのみを�
 
 <p>
 <p>
-最新コード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/CsrfCountermeasuresScanRule.java">CsrfCountermeasuresScanRule.java</a><br>
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/CsrfCountermeasuresScanRule.java">CsrfCountermeasuresScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/100202/">100202</a>
 
 <h2 id="id-10033">ディレクトリブラウジング</h2>
@@ -282,8 +282,16 @@ Webコンテンツを分析して、潜在的に機密の詳細を含むコメ�
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/InformationDisclosureSuspiciousCommentsScanRule.java">InformationDisclosureSuspiciousCommentsScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10027/">10027</a>
 
+<h2 id="id-10009">ページ内バナー情報漏洩</h2>
+レスポンスボディのコンテンツを分析し、(レスポンスがエラーステータスコードの場合に) Webサーバーまたはアプリケーションサーバーのバナーの存在を検出します。<br>
+しきい値が Low の場合、ステータス 200 - OK のレスポンスも分析されます。<br>
+このようなバナーの存在は、既知の脆弱性に対するより標的を絞った攻撃を容易にする可能性があります。
+<p>
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/InPageBannerInfoLeakScanRule.java">InPageBannerInfoLeakScanRule.java</a><br>
+アラートID: <a href="https://www.zaproxy.org/docs/alerts/10009/">10009</a>
+
 <h2 id="id-10105">安全でない認証</h2>
-HTTPベーシック認証またはダイジェスト認証が安全でない接続で使用されています。 認証情報はネットワークにアクセスできる誰かによって読み取られ、再利用される可能性があります。
+HTTP基本認証またはダイジェスト認証が、安全でない接続で使用されています。 認証情報はネットワークにアクセスできる誰かによって読み取られ、再利用される可能性があります。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/InsecureAuthenticationScanRule.java">InsecureAuthenticationScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10105/">10105</a>
@@ -294,15 +302,25 @@ HTTPベーシック認証またはダイジェスト認証が安全でない接�
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/InsecureJsfViewStatePassiveScanRule.java">InsecureJsfViewStatePassiveScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/90001/">90001</a>
 
-<h2 id="id-10040">混在コンテンツ</h2>
-HTTPS経由で提供されるコンテンツについて、レスポンス内のすべての src 属性を分析し、プレーンHTTP経由で取得されるものを探します。
+<h2 id="id-90002">Javaシリアライズオブジェクト</h2>
+Java Serialization Object (JSO) は、Javaアプリケーション間でオブジェクトを保存および交換する方法です。<br>
+JSOにはさまざまな問題が関連しています。 機密データがバイトストリームに漏洩する可能性があります。<br>
+攻撃者はデータを変更し、JSOを悪用してサーバー上でリモートコード実行を行うこともできます。<br>
+JSOはJavaプログラムで使用すべきではありません。 シリアライズされたデータには強力な制御を行う必要があります。<br>
+JSOは「A8:2017-安全でないデシリアライゼーション」に関連する脆弱性の一種です。
 <p>
-最新コード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/MixedContentScanRule.java">MixedContentScanRule.java</a><br>
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/JsoScanRule.java">JsoScanRule.java</a><br>
+アラートID: <a href="https://www.zaproxy.org/docs/alerts/90002/">90002</a>
+
+<h2 id="id-10040">混在コンテンツ</h2>
+HTTPS経由で提供されるコンテンツに対して、応答内のすべての src 属性を分析し、プレーンHTTP経由で取得されているものを検出します。
+<p>
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/MixedContentScanRule.java">MixedContentScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10040/">10040</a>
 
 <h2 id="id-10109">モダンWebアプリケーション</h2>
 サイトが最新のWebアプリケーションであると思われる場合に、情報提供のアラートを発生させます。<br>
-潜在的な脆弱性を示すものではありませんが、従来のスパイダーと比較して、Ajaxスパイダーがこのサイトをより効果的に探索できる可能性があることを示しています。
+潜在的な脆弱性を示すものではありませんが、従来のスパイダーと比較して、AJAXスパイダーがこのサイトをより効果的に探索できる可能性があることを示しています。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/ModernAppDetectionScanRule.java">ModernAppDetectionScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10109/">10109</a>
@@ -312,7 +330,7 @@ HTTPS経由で提供されるコンテンツについて、レスポンス内の
 <p>
 <strong>注意</strong>: パッシブチェックの目的では、オリジンと宛先のオーソリティ部分が比較されました。この発見の影響を検証するには、手動テストが必要になる場合があります。
 <p>
-最新コード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/UserControlledOpenRedirectScanRule.java">UserControlledOpenRedirectScanRule.java</a><br>
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/UserControlledOpenRedirectScanRule.java">UserControlledOpenRedirectScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10028/">10028</a>
 
 <h2 id="id-10062">個人識別用情報の漏洩</h2>
@@ -350,7 +368,7 @@ MEDIUMおよびHIGHしきい値では、以下のコンテンツタイプが評�
 <h2 id="id-10050">キャッシュから取得</h2>
 このスキャンルールは、共有キャッシュから提供されたコンテンツを検出します。
 <p>
-最新コード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/RetrievedFromCacheScanRule.java">RetrievedFromCacheScanRule.java</a><br>
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/RetrievedFromCacheScanRule.java">RetrievedFromCacheScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10050/">10050</a>
 
 <h2 id="id-10108">リバース・タブナビング</h2>
@@ -379,7 +397,7 @@ HIGHしきい値では、"_blank" ターゲットを使用するリンクのみ�
 <li>newcrbpc.com</li>
 </ul>
 <p>
-最新コード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/PolyfillCdnScriptScanRule.java">PolyfillCdnScriptScanRule.java</a><br>
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/PolyfillCdnScriptScanRule.java">PolyfillCdnScriptScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10115/">10115</a>
 
 <h2 id="id-10037">サーバーが "X-Powered-By" HTTPレスポンスヘッダーフィールド経由で情報を漏洩</h2>
@@ -392,9 +410,18 @@ HIGHしきい値では、"_blank" ターゲットを使用するリンクのみ�
 このスキャンルールは、セッショントークンタイプのパラメータがURLに書き換えられて存在するかどうかをチェックします。 
 誤検出を減らすために、ルールはトークン値の長さをチェックします。パラメータの値が8文字を超えない場合、そのパラメータは無視されます (つまり、survey?sId=5 は脆弱としてフラグ付けされません)。
 <p>
-最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/InfoSessionIdUrlScanRule.java">InfoSessionIdUrlScanRule.java</a>
-<br>
-アラートID: <a href="https://www.zaproxy.org/docs/alerts/3/">3</a>.
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/InfoSessionIdUrlScanRule.java">InfoSessionIdUrlScanRule.java</a><br>
+アラートID: <a href="https://www.zaproxy.org/docs/alerts/3/">3</a>
+
+<h2 id="id-90003">サブリソース完全性属性の欠落</h2>
+このルールは、外部リソース (例: CDN) から提供される script 要素または link 要素の integrity 属性が欠落しているかどうかをチェックします。<br>
+これは、CDNが侵害され、コンテンツが悪意のあるコンテンツに置き換えられた場合の攻撃を軽減するのに役立ちます。<br>
+注: サイトツリー内のスクリプトに解決できる場合、推奨されるintegrityハッシュ値が、関連するアラートの「その他の情報」詳細に表示されます。 
+<p>
+このルールは<b>信頼されたドメイン</b>をサポートしています。詳細については「全般設定」を確認してください。
+<p>
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/SubResourceIntegrityAttributeScanRule.java">SubResourceIntegrityAttributeScanRule.java</a><br>
+アラートID: <a href="https://www.zaproxy.org/docs/alerts/90003/">90003</a>
 
 <h2 id="id-10035">Strict-Transport-Security ヘッダー</h2>
 このルールは、HTTPSレスポンスにHTTP Strict Transport Security (HSTS) ヘッダーが存在するかどうかをチェックし、さまざまな実装上の懸念をテストして、見つかった場合にアラートを発生させます。
@@ -430,19 +457,19 @@ MEDIUMしきい値では、このルールは10年を超える潜在的なタイ
 <h2 id="id-10030">ユーザーが制御可能な文字コード</h2>
 このチェックは、クエリ文字列パラメータとPOSTデータのユーザー入力を調べて、Content-Type または meta タグの charset 宣言がユーザーによって制御される可能性がある場所を特定します。 このような charset 宣言は、常にアプリケーションによって宣言されるべきです。 攻撃者がレスポンスの charset を制御できる場合、HTMLを操作してXSSやその他の攻撃を実行できる可能性があります。
 <p>
-最新コード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/UserControlledCharsetScanRule.java">UserControlledCharsetScanRule.java</a><br>
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/UserControlledCharsetScanRule.java">UserControlledCharsetScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10030/">10030</a>
 
 <h2 id="id-10031">ユーザーが制御可能なHTML要素属性 (XSSの可能性)</h2>
 このチェックは、クエリ文字列パラメータとPOSTデータのユーザー入力を調べて、特定のHTML属性値が制御される可能性がある場所を特定します。 これは、XSS (クロスサイトスクリプティング) のホットスポット検出を提供し、悪用可能性を判断するにはセキュリティアナリストによるさらなるレビューが必要です。
 <p>
-最新コード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/UserControlledHTMLAttributesScanRule.java">UserControlledHTMLAttributesScanRule.java</a><br>
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/UserControlledHTMLAttributesScanRule.java">UserControlledHTMLAttributesScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10031/">10031</a>
 
 <h2 id="id-10043">ユーザーが制御可能なJavaScriptイベント (XSS)</h2>
 このチェックは、クエリ文字列パラメータとPOSTデータのユーザー入力を調べて、特定のHTML属性値が制御される可能性がある場所を特定します。 これは、XSS (クロスサイトスクリプティング) のホットスポット検出を提供し、悪用可能性を判断するにはセキュリティアナリストによるさらなるレビューが必要です。            
 <p>
-最新コード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/UserControlledJavascriptEventScanRule.java">UserControlledJavascriptEventScanRule.java</a><br>
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/UserControlledJavascriptEventScanRule.java">UserControlledJavascriptEventScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10043/">10043</a>
 
 <h2 id="id-10057">ユーザー名ハッシュの検出</h2>
@@ -494,7 +521,7 @@ VIEWSTATE パラメータを識別し、以下のようなさまざまなベス�
 MEDIUMおよびHIGHしきい値では、このルールはクライアントまたはサーバーエラーレスポンスやリダイレクトではアラートを出しません。<br>
 LOWしきい値では、エラーやリダイレクトを含むすべてのレスポンスでアラートを出します。<br>
 <p>
-最新コード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/XContentTypeOptionsScanRule.java">XContentTypeOptionsScanRule.java</a><br>
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/XContentTypeOptionsScanRule.java">XContentTypeOptionsScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10021/">10021</a>
 
 <h2 id="id-10056">X-Debug-Token ヘッダーによる情報漏洩</h2>

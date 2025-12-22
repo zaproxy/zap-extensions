@@ -205,6 +205,10 @@
             <name>Text4shell (CVE-2022-42889)</name>
             <enabled>true</enabled>
         </p40047>
+        <p40048>
+            <name>Remote Code Execution (React2Shell)</name>
+            <enabled>true</enabled>
+        </p40048>
         <p50000>
             <name>Script Active Scan Rules</name>
             <enabled>true</enabled>

@@ -44,6 +44,27 @@
     },
     "website": "https://jalbum.net/en"
   },
+  "JBoard": {
+    "cats": [
+      101
+    ],
+    "description": "JBoard is a platform for creating and managing job boards with no coding required, enabling users to post, organize, and maintain job listings.",
+    "icon": "JBoard.svg",
+    "js": {
+      "$JBoardAPI": "",
+      "$jBoard.adminUserToken": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.jboard\\.io"
+    ],
+    "website": "https://jboard.io"
+  },
   "JBoss Application Server": {
     "cats": [
       22
@@ -225,6 +246,18 @@
       "\\.jwpsrv\\.com"
     ]
   },
+  "Jabmo": {
+    "cats": [
+      32
+    ],
+    "description": "Jabmo is a software platform that automates lead generation by tracking and analyzing website visitor activity.",
+    "icon": "Jabmo.svg",
+    "saas": true,
+    "scripts": [
+      "/jabmo\\.com"
+    ],
+    "website": "https://jabmo.com"
+  },
   "Jacklist": {
     "cats": [
       51
@@ -268,6 +301,19 @@
       "recurring"
     ],
     "website": "https://www.jadu.net/"
+  },
+  "Jadu Central Content": {
+    "cats": [
+      1
+    ],
+    "description": "Jadu Central Content is a low-code publishing tool for creating, publishing, and managing website content and digital assets.",
+    "icon": "JaduCentralContent.svg",
+    "meta": {
+      "Author-Template": "^Jadu CSS design$",
+      "generator": "www\\.jadu\\.net"
+    },
+    "saas": true,
+    "website": "https://www.jadu.net/cms"
   },
   "Jahia DX": {
     "cats": [
@@ -315,6 +361,21 @@
       "cdn1\\.jameda-elements\\.de/"
     ],
     "website": "https://www.jameda.de"
+  },
+  "Jarvis Analytics": {
+    "cats": [
+      10
+    ],
+    "description": "Jarvis Analytics is a dental analytics platform that collects, processes, and visualizes dental data to support clinical decision-making and operational insights.",
+    "icon": "JarvisAnalytics.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "schedule\\.jarvisanalytics\\.com"
+    ],
+    "website": "https://www.jarvisanalytics.com"
   },
   "Java": {
     "cats": [
@@ -536,6 +597,27 @@
     "saas": true,
     "website": "https://crocoblock.com/plugins/jettabs"
   },
+  "Jetboost": {
+    "cats": [
+      5
+    ],
+    "description": "Jetboost is a tool that enables real-time search, dynamic filtering, and other features for Webflow sites without requiring code.",
+    "icon": "Jetboost.svg",
+    "js": {
+      "JETBOOST_SITE_ID": "",
+      "Jetboost.loaded": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": [
+      "Webflow"
+    ],
+    "saas": true,
+    "website": "https://www.jetboost.io"
+  },
   "Jetpack": {
     "cats": [
       87
@@ -626,6 +708,24 @@
       "/jibres\\.js"
     ],
     "website": "https://jibres.com"
+  },
+  "Jiglu": {
+    "cats": [
+      2
+    ],
+    "description": "Jiglu is a collaboration and communities suite that connects enterprise content with conversations to support improved communication.",
+    "icon": "Jiglu.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.jiglu\\.com/"
+    ],
+    "website": "https://www.jiglu.com"
   },
   "Jilt App": {
     "cats": [
@@ -762,6 +862,23 @@
     ],
     "website": "https://jivox.com"
   },
+  "Job Board Fire": {
+    "cats": [
+      101
+    ],
+    "description": "JobBoardFire is a platform that provides software for managing job boards, connecting entrepreneurs and community members.",
+    "icon": "JobBoardFire.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "jobboardfire\\.twic\\.pics"
+    ],
+    "website": "https://www.jobboardfire.com"
+  },
   "JobAdder": {
     "cats": [
       101
@@ -800,6 +917,22 @@
     "oss": true,
     "website": "https://www.jobberbase.com"
   },
+  "Jobiqo": {
+    "cats": [
+      101
+    ],
+    "description": "Jobiqo is a job board platform that enables publishers to expand reach and increase recruitment advertising revenue.",
+    "icon": "Jobiqo.svg",
+    "meta": {
+      "owner": "^Jobiqo$"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.jobiqo.com"
+  },
   "Jobvite": {
     "cats": [
       101
@@ -819,6 +952,30 @@
     ],
     "saas": true,
     "website": "https://www.jobvite.com"
+  },
+  "Jobylon": {
+    "cats": [
+      101
+    ],
+    "description": "Jobylon is a flexible talent acquisition platform designed to help leading employers streamline recruitment and manage hiring processes.",
+    "icon": "Jobylon.svg",
+    "saas": true,
+    "scriptSrc": [
+      "\\.jobylon\\.com"
+    ],
+    "website": "https://www.jobylon.com"
+  },
+  "Join It": {
+    "cats": [
+      53
+    ],
+    "description": "Join It is a membership management platform that helps nonprofits, clubs, and growing organizations manage members, track payments, and streamline administrative tasks.",
+    "icon": "JoinIt.svg",
+    "saas": true,
+    "scripts": [
+      "app\\.joinit\\.com"
+    ],
+    "website": "https://joinit.com"
   },
   "Joinchat": {
     "cats": [
@@ -957,6 +1114,22 @@
     ],
     "website": "https://www.jotform.com"
   },
+  "Jottful": {
+    "cats": [
+      51
+    ],
+    "description": "Jottful is a platform that enables small businesses to create and manage professional websites.",
+    "icon": "Jottful.svg",
+    "meta": {
+      "web_author": "^Jottful"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://jottful.com"
+  },
   "JouwWeb": {
     "cats": [
       1,
@@ -1018,6 +1191,22 @@
     ],
     "website": "https://www.jsviews.com/#jsviews"
   },
+  "Jubna": {
+    "cats": [
+      76
+    ],
+    "description": "Jubna is a content recommendation engine that delivers personalized suggestions by analyzing user behavior and preferences.",
+    "icon": "Jubna.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.jubna\\.com"
+    ],
+    "website": "https://www.jubna.com"
+  },
   "Judge.me": {
     "cats": [
       90
@@ -1037,6 +1226,18 @@
       "cdn\\.judge\\.me"
     ],
     "website": "https://judge.me"
+  },
+  "Jugem": {
+    "cats": [
+      11
+    ],
+    "description": "Jugem is a blogging software from Japan that allows users to create, manage, and publish online content.",
+    "icon": "Jugem.svg",
+    "saas": true,
+    "scriptSrc": [
+      "imaging\\.jugem\\.jp"
+    ],
+    "website": "https://jugem.jp"
   },
   "Juicer": {
     "cats": [
@@ -1108,6 +1309,26 @@
     ],
     "saas": true,
     "website": "https://www.jumio.com"
+  },
+  "JumpCloud": {
+    "cats": [
+      69
+    ],
+    "cookies": {
+      "_jumpcloud_user_console_": ""
+    },
+    "description": "JumpCloud is a cloud-based directory services platform offering single sign-on (SSO) and Active Directory-as-a-Service (ADaaS) functionalities.",
+    "icon": "JumpCloud.svg",
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.jumpcloud\\.com/"
+    ],
+    "website": "https://jumpcloud.com"
   },
   "Jumpseller": {
     "cats": [

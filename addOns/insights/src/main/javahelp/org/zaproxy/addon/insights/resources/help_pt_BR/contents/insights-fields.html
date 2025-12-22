@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+Insights Fields
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Insights Fields</H1>
+
+<H3>Level</H3>
+
+An indication of how significant an Insight is.
+<p>
+The following Levels are supported:
+<ul>
+<li>Info: An informational Insight which gives you more information about the target
+<li>Low: An Insight which is potentially a problem, depending on how your application works
+<li>Medium: A more significant Insight which should be investigated ASAP. It potentially means that the scan is not working as expected
+<li>High: A very significant Insight which is highly likely to impact the scan effectiveness
+</ul>
+
+We recommend terminating a scan early and investigating if any Medium or High level Insights are reported.
+
+<H3>Reason</H3>
+The reason why the Insight was reported.
+<p>
+It will be one of:
+<ul>
+<li>Exceeded High: The value exceeded the High threshold
+<li>Exceeded Low: The value exceeded the Low threshold
+<li>&lt;blank&gt;: Used for Info level Insights
+</ul>
+
+<H3>Key</H3>
+A string that can be reliably used to identify the Insight.
+
+<H3>Description</H3>
+A user friendly description. 
+This should not be used to identify Insights programmatically as it may be internationalised or change based on feedback.
+
+<H3>Value</H3>
+The value related to the Insight. This will be an integer or a percentage.
+
+<H3>Site</H3>
+Indicates if the Insight is specific to a site (which will be specified). Otherwise Insights are not site specific.
+
+<H3>Thresholds</H3>
+Each Insight has a Low and High threshold, which is shown in the <a href="insights-list.html">insight list</a>.
+
+</BODY>
+</HTML>

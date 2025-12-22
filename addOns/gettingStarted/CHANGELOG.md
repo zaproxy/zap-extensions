@@ -4,7 +4,11 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [20] - 2025-12-15
 ### Changed
+- Update minimum ZAP version to 2.17.0.
 - Update Getting Started Guide for 2.17.0.
 
 ## [19] - 2025-01-09
@@ -96,6 +100,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[20]: https://github.com/zaproxy/zap-extensions/releases/gettingStarted-v20
 [19]: https://github.com/zaproxy/zap-extensions/releases/gettingStarted-v19
 [18]: https://github.com/zaproxy/zap-extensions/releases/gettingStarted-v18
 [17]: https://github.com/zaproxy/zap-extensions/releases/gettingStarted-v17

@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
+- Use a monospaced font for the output panel.
+
+## [1.39.0] - 2025-12-15
+### Changed
+- Update minimum ZAP version to 2.17.0.
 - Update dependencies.
 
 ## [1.38.0] - 2025-10-21
@@ -241,6 +246,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 First version.
 
+[1.39.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.39.0
 [1.38.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.38.0
 [1.37.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.37.0
 [1.36.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.36.0

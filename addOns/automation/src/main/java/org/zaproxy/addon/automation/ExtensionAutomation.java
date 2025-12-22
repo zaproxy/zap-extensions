@@ -61,6 +61,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.automation.gui.AutomationOutputSource;
 import org.zaproxy.addon.automation.gui.AutomationPanel;
 import org.zaproxy.addon.automation.gui.OptionsPanel;
 import org.zaproxy.addon.automation.jobs.ActiveScanConfigJob;
@@ -121,6 +122,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
     private static final int ARG_AUTO_CHECK_IDX = 4;
 
     private AutomationPanel automationPanel;
+    private AutomationOutputSource outputSource;
 
     private static Integer exitOverride;
 
@@ -161,7 +163,8 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         extensionHook.addApiImplementor(new AutomationAPI(this));
 
         if (hasView()) {
-            extensionHook.getHookView().addStatusPanel(getAutomationPanel());
+            getView().getOutputPanel().registerOutputSource(getOutputSource());
+            extensionHook.getHookView().addWorkPanel(getAutomationPanel());
             extensionHook.getHookView().addOptionPanel(getOptionsPanel());
         }
 
@@ -243,6 +246,9 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
     public void unload() {
         super.unload();
         ZAP.getEventBus().unregisterPublisher(AutomationEventPublisher.getPublisher());
+        if (hasView()) {
+            getView().getOutputPanel().unregisterOutputSource(getOutputSource());
+        }
     }
 
     @Override
@@ -436,7 +442,8 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
 
         for (AutomationJob job : jobsToRun) {
 
-            if (plan.isStopping() || (env.isTimeToQuit() && !job.isAlwaysRun())) {
+            if ((plan.isStopping() || env.isTimeToQuit())
+                    && (plan.isHardStopping() || !job.isAlwaysRun())) {
                 continue;
             }
 
@@ -834,5 +841,14 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
     @Override
     public String getUIName() {
         return Constant.messages.getString("automation.name");
+    }
+
+    public AutomationOutputSource getOutputSource() {
+        if (outputSource == null) {
+            outputSource =
+                    new AutomationOutputSource(
+                            Constant.messages.getString("automation.output.name"));
+        }
+        return outputSource;
     }
 }

@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [6.8.0] - 2025-12-15
+### Changed
+- Update minimum ZAP version to 2.17.0.
+
 ## [6.7.0] - 2025-01-09
 ### Changed
 - Update minimum ZAP version to 2.16.0.
@@ -86,6 +90,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[6.8.0]: https://github.com/zaproxy/zap-extensions/releases/formhandler-v6.8.0
 [6.7.0]: https://github.com/zaproxy/zap-extensions/releases/formhandler-v6.7.0
 [6.6.0]: https://github.com/zaproxy/zap-extensions/releases/formhandler-v6.6.0
 [6.5.0]: https://github.com/zaproxy/zap-extensions/releases/formhandler-v6.5.0

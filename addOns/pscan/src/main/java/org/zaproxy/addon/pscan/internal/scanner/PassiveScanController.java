@@ -19,38 +19,26 @@
  */
 package org.zaproxy.addon.pscan.internal.scanner;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
-import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
 import org.zaproxy.addon.pscan.internal.PassiveScannerOptions;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
-import org.zaproxy.zap.extension.pscan.PassiveScanData;
-import org.zaproxy.zap.extension.pscan.PassiveScanner;
 import org.zaproxy.zap.utils.Stats;
 
 public class PassiveScanController extends Thread {
 
     private static final Logger LOGGER = LogManager.getLogger(PassiveScanController.class);
-
-    private Constructor<PassiveScanData> pscanDataConstructor;
-    private Consumer<PassiveScanner> setPscanActions;
 
     private ExtensionHistory extHist;
     private PassiveScanTaskHelper helper;
@@ -74,53 +62,6 @@ public class PassiveScanController extends Thread {
         // Get the last id - in case we've just opened an existing session
         currentId = getLastHistoryId();
         lastId = currentId;
-
-        try {
-            pscanDataConstructor = PassiveScanData.class.getConstructor(HttpMessage.class);
-        } catch (Exception e) {
-            // Ignore, the constructor exists but was previously not visible.
-        }
-
-        try {
-            InvocationHandler invocationHandler =
-                    (o, method, args) -> {
-                        switch (method.getName()) {
-                            case "addHistoryTag":
-                                helper.addHistoryTag((HistoryReference) args[0], (String) args[1]);
-                                return null;
-
-                            case "raiseAlert":
-                                helper.raiseAlert((HistoryReference) args[0], (Alert) args[1]);
-                                return null;
-
-                            default:
-                                return null;
-                        }
-                    };
-
-            Class<?> clazz =
-                    org.zaproxy.zap.extension.pscan.ExtensionPassiveScan.class
-                            .getClassLoader()
-                            .loadClass("org.zaproxy.zap.extension.pscan.PassiveScanActions");
-            Method setPassiveScanActions =
-                    org.zaproxy.zap.extension.pscan.PassiveScanner.class.getDeclaredMethod(
-                            "setPassiveScanActions", clazz);
-            Object passiveScanActions =
-                    Proxy.newProxyInstance(
-                            clazz.getClassLoader(), new Class<?>[] {clazz}, invocationHandler);
-
-            setPscanActions =
-                    scanRule -> {
-                        try {
-                            setPassiveScanActions.invoke(scanRule, passiveScanActions);
-                        } catch (Exception e) {
-                            // New core method exists.
-                        }
-                    };
-
-        } catch (Exception e) {
-            LOGGER.error("Failed to create PassiveScanActions:", e);
-        }
     }
 
     public void setSession(Session session) {
@@ -182,10 +123,7 @@ public class PassiveScanController extends Thread {
                             href.getURI(),
                             currentId,
                             href.getHistoryType());
-                    getExecutor()
-                            .submit(
-                                    new PassiveScanTask(
-                                            href, helper, pscanDataConstructor, setPscanActions));
+                    getExecutor().submit(new PassiveScanTask(href, helper));
                 }
                 int recordsToScan = this.getRecordsToScan();
                 Stats.setHighwaterMark("stats.pscan.recordsToScan", recordsToScan);

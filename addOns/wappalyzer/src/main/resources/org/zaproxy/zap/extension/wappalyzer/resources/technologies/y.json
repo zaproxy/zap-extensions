@@ -1,4 +1,17 @@
 {
+  "YM Cart": {
+    "cats": [
+      6
+    ],
+    "description": "Ymcart is a cross-border ecommerce platform providing a one-stop SaaS system for building independent online stores, primarily supporting Chinese ecommerce sellers.",
+    "icon": "YMCart.svg",
+    "js": {
+      "exec_ymcart_collect": "",
+      "ymcartDataLayer": ""
+    },
+    "saas": true,
+    "website": "https://ymcart.com"
+  },
   "YMQ Product Options Variant Option": {
     "cats": [
       100
@@ -33,6 +46,26 @@
     ],
     "saas": true,
     "website": "https://www.ynap.com/pages/about-us/what-we-do/monobrand/"
+  },
+  "YOAPress": {
+    "cats": [
+      51
+    ],
+    "description": "YOAPress is a SaaS platform that provides website building solutions tailored for real estate professionals.",
+    "dom": [
+      "link[href*='//api.yoa.ca']"
+    ],
+    "icon": "YOAPress.svg",
+    "js": {
+      "yoa_cache_clear": "",
+      "yoa_gallary": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://yoapress.com"
   },
   "YUI": {
     "cats": [
@@ -543,6 +576,26 @@
     ],
     "website": "https://github.com/elbywan/yett"
   },
+  "Yever": {
+    "cats": [
+      41
+    ],
+    "description": "Yever is a digital payment and checkout platform that enables secure online transactions for businesses and customers.",
+    "icon": "Yever.svg",
+    "js": {
+      "currentUrlYever": "",
+      "getUtmsUrlYever": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "api\\.yever\\.com\\.br"
+    ],
+    "website": "https://www.yever.com.br"
+  },
   "Yext": {
     "cats": [
       29,
@@ -628,6 +681,21 @@
       "yii(?:\\.|)?(?:validation|activeform)\\.js"
     ],
     "website": "https://www.yiiframework.com"
+  },
+  "Yo!Coach": {
+    "cats": [
+      21
+    ],
+    "description": "Yo!Coach is a tutoring and consultation platform designed to connect learners with experts for one-on-one sessions.",
+    "headers": {
+      "Set-Cookie": "\\.yo-coach\\.com"
+    },
+    "icon": "Yo!Coach.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.yo-coach.com"
   },
   "YoPlanning": {
     "cats": [
@@ -728,6 +796,18 @@
       "\\bYodel\\b"
     ],
     "website": "https://www.yodel.co.uk/"
+  },
+  "YogaTrail": {
+    "cats": [
+      53
+    ],
+    "description": "YogaTrail is a software platform for managing yoga businesses.",
+    "icon": "YogaTrail.svg",
+    "saas": true,
+    "scriptSrc": [
+      "widget\\.yogatrail\\.com"
+    ],
+    "website": "https://www.buzzwoo.de/projekte-kunden/yogatrail"
   },
   "Yola": {
     "cats": [
@@ -880,6 +960,9 @@
     "js": {
       "SMSBumpForm": ""
     },
+    "scripts": [
+      "/smsbump_timer\\.js"
+    ],
     "website": "https://www.yotpo.com/platform/smsbump-sms-marketing/"
   },
   "Yotpo Subscriptions": {
@@ -1064,6 +1147,21 @@
     ],
     "website": "https://www.youzan.com"
   },
+  "Yuno": {
+    "cats": [
+      41
+    ],
+    "description": "Yuno is a global payment orchestrator used by checkout platforms to optimize payment processing and enhance transaction performance.",
+    "icon": "Yuno.svg",
+    "js": {
+      "Yuno.threeDSecure": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "sdk-web\\.y\\.uno"
+    ],
+    "website": "https://y.uno/"
+  },
   "YunoHost": {
     "cats": [
       28
@@ -1094,6 +1192,17 @@
       "\\.yupopstorecdn\\.com"
     ],
     "website": "https://yupop.com"
+  },
+  "Yxper": {
+    "cats": [
+      10
+    ],
+    "description": "Yxper is a platform that delivers real-time business analytics and insights to help organizations monitor performance, optimize operations, and enhance customer experience.",
+    "saas": true,
+    "scripts": [
+      "analytics\\.yxper\\.com"
+    ],
+    "website": "https://yxper.com"
   },
   "yellow.ai": {
     "cats": [

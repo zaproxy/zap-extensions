@@ -4,13 +4,22 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [0.34.0] - 2025-12-15
+### Changed
+- Update minimum ZAP version to 2.17.0.
+
+## [0.33.0] - 2025-12-03
 ### Added
 - Handle account selection and TOTP step in Microsoft login.
+- Allow to include domains completely and partially out of scope in the Authentication Report.
 
 ### Changed
 - Fail the Microsoft login if not able to perform all the expected steps.
 - Track GWT headers.
 - Handle additional exceptions when processing JSON authentication components.
+- Improved performance of the Session Detection scan rule.
 
 ### Fixed
 - Do not include known authentication providers in context.
@@ -334,6 +343,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Support of authentication request identification and configuration.
 
+[0.34.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.34.0
+[0.33.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.33.0
 [0.32.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.32.0
 [0.31.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.31.0
 [0.30.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.30.0

@@ -1,0 +1,28 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>
+インサイト自動化フレームワークジョブ
+</TITLE>
+</HEAD>
+<BODY>
+<H1>インサイト自動化フレームワークジョブ</H1>
+このアドオンは自動化フレームワークに対応しています。
+
+<H2>ジョブ: insights</H2>
+insightsジョブはインサイトオプションを設定します。
+<p>
+<pre>
+  - type: insights
+    parameters:
+      messagesLowThreshold:            # Integer: メッセージ関連のインサイトに使用される低しきい値、デフォルト: 5
+      messagesHighThreshold:           # Integer: メッセージ関連のインサイトに使用される高しきい値、デフォルト: 50
+      memoryLowThreshold:              # Integer: メモリ関連のインサイトに使用される低しきい値、デフォルト: 80
+      memoryHighThreshold:             # Integer: メモリ関連のインサイトに使用される高しきい値、デフォルト: 95
+      slowResponse:                    # Integer: 「遅い」と判断されるレスポンス時間 (ミリ秒)、デフォルト: 256
+      exitAutoOnHigh:                  # Boolean: true の場合、高レベルのインサイトで自動化プランを終了する、デフォルト: true
+</pre>
+
+</BODY>
+</HTML>

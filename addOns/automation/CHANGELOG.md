@@ -4,6 +4,18 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- Move the Automation panel to the workspace window.
+- Use the main output panel for plan output messages.
+
+## [0.58.0] - 2025-12-15
+### Added
+- Support for a "soft" stop which allows "always run" jobs to run.
+
+### Changed
+- Update minimum ZAP version to 2.17.0.
+
+## [0.57.0] - 2025-12-03
 ### Added
 - Allow to specify the defaults for the alert threshold and attack strength of the active scan policy.
 
@@ -570,6 +582,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.58.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.58.0
+[0.57.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.57.0
 [0.56.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.56.0
 [0.55.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.55.0
 [0.54.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.54.0

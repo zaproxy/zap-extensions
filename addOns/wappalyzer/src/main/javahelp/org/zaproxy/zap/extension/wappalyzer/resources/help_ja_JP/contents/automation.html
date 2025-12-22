@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>
+テクノロジー検出 - 自動化フレームワーク対応
+</TITLE>
+</HEAD>
+<BODY>
+<H1>テクノロジー検出 - 自動化フレームワーク対応</H1>
+このアドオンは自動化フレームワークに対応しています。<br><br>
+<H2>ジョブ: wappalyzer</H2>
+<code>wappalyzer</code> ジョブはデータジョブです。 設定可能なパラメーターはありません。
+これは <code>TechJobResultData</code> クラスを介して、他のジョブにテクノロジー検出データを提供します。
+
+<H2>YAML</H2>
+
+<pre>
+  - type: wappalyzer
+</pre>
+
+<H2>ジョブデータ</H2>
+レポートアドオンのような、ジョブデータへのアクセスを提供するアドオンにおいて、以下のクラスが利用可能になります。
+<ul>
+<li>キー: <code>wappalyzerData</code>
+<li>クラス: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/wappalyzer/src/main/java/org/zaproxy/zap/extension/wappalyzer/automation/TechJobResultData.java">TechJobResultData</a>
+</ul>
+
+</BODY>
+</HTML>

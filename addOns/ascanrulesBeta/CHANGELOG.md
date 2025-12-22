@@ -6,6 +6,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [64] - 2025-12-15
+### Added
+- The following scan rules were added, having been promoted from Alpha:
+  - NoSQL Injection - MongoDB
+  - NoSQL Injection - MongoDB (Time Based)
+
+### Changed
+- Update minimum ZAP version to 2.17.0.
+
+### Removed
+- The following scan rules were removed, having been promoted to Release:
+  - Exponential Entity Expansion (Billion Laughs Attack)
+  - HTTP Only Site
+  - HTTPS Content Available via HTTP
+  - ShellShock - CVE-2014-6271
+
 ## [63] - 2025-11-04
 ### Added
 - SYSTEMIC tag to selected rules.
@@ -608,6 +624,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[64]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v64
 [63]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v63
 [62]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v62
 [61]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v61

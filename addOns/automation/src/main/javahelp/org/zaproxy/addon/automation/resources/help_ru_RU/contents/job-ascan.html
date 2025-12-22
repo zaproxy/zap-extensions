@@ -26,6 +26,8 @@ This job supports <a href="test-monitor.html">monitor</a> tests.
       user:                            # String: An optional user to use for authentication, must be defined in the env
       url:                             # String: The subtree to active scan, default: all URLs of the context
       policy:                          # String: Name of the scan policy to be used, default: Default Policy
+      defaultStrength:                 # String: The default Attack Strength for the specified scan policy.
+      defaultThreshold:                # String: The default Alert Threshold for the specified scan policy.
       maxRuleDurationInMins:           # Int: The max time in minutes any individual rule will be allowed to run for, default: 0 unlimited
       maxScanDurationInMins:           # Int: The max time in minutes the active scanner will be allowed to run for, default: 0 unlimited
       addQueryParam:                   # Bool: If set will add an extra query parameter to requests that do not have one, default: false

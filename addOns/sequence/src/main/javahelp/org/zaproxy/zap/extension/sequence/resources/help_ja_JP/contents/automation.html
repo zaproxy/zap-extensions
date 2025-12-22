@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+    <TITLE>
+        自動化フレームワーク対応
+    </TITLE>
+</HEAD>
+<BODY>
+
+<H1>自動化フレームワーク対応</H1>
+このアドオンは自動化フレームワークに対応しています。<br><br>
+
+<H2>ジョブ: sequence-import</H2>
+<code>sequence-import</code> ジョブは、HARファイルからシーケンスを作成することを可能にします。
+<pre>
+  - type: sequence-import      # HARファイルからシーケンスをインポートします。
+    parameters:
+      name:                    # シーケンスがZAPで知られる名前。
+      path:                    # インポートするHARファイルへのフルパスまたは相対パス。
+      assertCode:              # ブール値、真の場合ステータスコードのアサーションを追加。
+      assertLength:            # Integer、指定された場合おおよその長さのアサーションを追加（値は0から100の間）。
+</pre>
+
+このジョブは、将来のリクエストで使用されるHTTPフォームパラメータを自動的に検知し、それらを扱うためのZestアサインメントを追加します。
+
+<H2>ジョブ: sequence-activeScan</H2>
+<code>sequence-activeScan</code> ジョブは、シーケンスをアクティブスキャンすることを可能にします。
+<pre>
+  - type: sequence-activeScan                  # 1つまたはすべてのシーケンスをアクティブスキャンします。
+    parameters:
+      sequence:                                # 文字列: シーケンスの名前、または空の場合すべてのシーケンスをアクティブスキャン。
+      context:                                 # 文字列: アクティブスキャン時に使用するコンテキスト、デフォルト: 最初のコンテキスト。
+      user:                                    # 文字列: 認証に使用するオプションのユーザー、環境で定義されている必要があります。
+      policy:                                  # 文字列: 使用するスキャンポリシーの名前、デフォルト: Sequence。
+    policyDefinition:                          # ポリシー定義 - 'policy' が設定されていない場合のみ使用
+      defaultStrength:                         # 文字列: すべてのルールのデフォルト攻撃の強さ。Low、Medium、High、Insane (非推奨) のいずれか、デフォルト: Medium。
+      defaultThreshold:                        # 文字列: すべてのルールのデフォルトアラートしきい値。Off、Low、Medium、Highのいずれか、デフォルト: Medium。
+      rules:                                   # デフォルトを上書きする1つ以上のアクティブスキャンルールと関連設定のリスト
+      - id:                                    # Int: https://www.zaproxy.org/docs/alerts/ に従ったルールID。
+        name:                                  # コメント: ドキュメント目的のルール名 - 必須ではなく実際に使用されません。
+        strength:                              # 文字列: このルールの攻撃の強さ。Low、Medium、High、Insaneのいずれか、デフォルト: Medium。
+        threshold:                             # 文字列: このルールのアラートしきい値。Off、Low、Medium、Highのいずれか、デフォルト: Medium。
+    tests:
+      - name: 'test one'                       # テストの名前、オプション
+        type: alert                            # テストのタイプが 'alert' であることを指定
+        action: passIfPresent/passIfAbsent     # 文字列: アラートの条件（存在/不在）、デフォルト: passIfAbsent
+        scanRuleId:                            # Integer: アラートを生成するスキャンルールのID、必須
+        alertName:                             # 文字列: 生成されたアラートの名前、オプション
+        url: http://www.example.com/path       # 文字列: 生成されたアラートに対応するリクエストのURL、オプション
+        method:                                # 文字列: 生成されたアラートに対応するリクエストのメソッド、オプション
+        attack:                                # 文字列: アラートを生成した実際の攻撃、オプション
+        param:                                 # 文字列: アラートを生成するために変更されたパラメーター、オプション
+        evidence:                              # 文字列: 生成されたアラートに対応する証拠、オプション
+        confidence:                            # 文字列: アラートの信頼度、'False Positive'、'Low'、'Medium'、'High'、'Confirmed' のいずれか、オプション
+        risk:                                  # 文字列: アラートのリスク、'Informational'、'Low'、'Medium'、'High' のいずれか、オプション
+        otherInfo:                             # 文字列: アラートに対応する追加情報、オプション
+        onFail: 'info'                         # 文字列: 'warn'、'error'、'info' のいずれか、必須
+</pre>
+
+<strong>注</strong>: <code>policyDefinition</code> の <code>defaultThreshold</code> が <code>OFF</code> でない限り、すべてのルールは最初に有効化されます。
+
+</BODY>
+</HTML>

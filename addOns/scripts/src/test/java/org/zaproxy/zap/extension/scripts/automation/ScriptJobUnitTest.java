@@ -26,6 +26,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.stringContainsInOrder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
@@ -932,7 +933,7 @@ class ScriptJobUnitTest extends TestUtils {
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
-        verify(extScript).addScript(argument.capture());
+        verify(extScript).addScript(argument.capture(), eq(false));
         assertEquals("NotExisting", argument.getValue().getName());
     }
 
@@ -969,7 +970,7 @@ class ScriptJobUnitTest extends TestUtils {
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
-        verify(extScript).addScript(argument.capture());
+        verify(extScript).addScript(argument.capture(), eq(false));
         assertEquals("NotExisting", argument.getValue().getName());
     }
 
@@ -1005,7 +1006,7 @@ class ScriptJobUnitTest extends TestUtils {
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
-        verify(extScript).addScript(argument.capture());
+        verify(extScript).addScript(argument.capture(), eq(false));
         assertEquals(f.getName(), argument.getValue().getName());
     }
 
@@ -1040,7 +1041,7 @@ class ScriptJobUnitTest extends TestUtils {
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
-        verify(extScript).addScript(argument.capture());
+        verify(extScript).addScript(argument.capture(), eq(false));
         assertEquals("test", argument.getValue().getName());
     }
 

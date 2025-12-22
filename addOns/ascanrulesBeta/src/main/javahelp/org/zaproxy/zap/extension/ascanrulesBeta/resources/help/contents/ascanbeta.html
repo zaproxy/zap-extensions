@@ -55,13 +55,6 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns
 <br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/20012/">20012</a>.
 
-<H2 id="id-40044">Exponential Entity Expansion (Billion Laughs Attack)</H2>
-This rule attempts to identify the "Billion Laughs" vulnerability in servers that accept XML or YAML files.
-<p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/ExponentialEntityExpansionScanRule.java">ExponentialEntityExpansionScanRule.java</a>
-<br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40044/">40044</a>.
-
 <H2 id="id-90025">Expression Language Injection</H2>
 Checks if the web application is subject to Expression Language (EL) injection attacks, which occur
 when an application fails to sufficiently neutralize special elements that could modify the intended EL 
@@ -70,13 +63,6 @@ statement before it is executed.
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/ExpressionLanguageInjectionScanRule.java">ExpressionLanguageInjectionScanRule.java</a>
 <br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/90025/">90025</a>.
-
-<H2 id="id-10106">HTTP Only Site</H2>
-This active scan rule checks whether an HTTP site is served under HTTPS.
-<p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/HttpOnlySiteScanRule.java">HttpOnlySiteScanRule.java</a>
-<br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10106/">10106</a>.
 
 <H2 id="id-10107">HttPoxy - Proxy Header Misuse</H2>
 This active scan rule checks whether a site is using the HTTP Proxy header specified in the request.<br>
@@ -90,13 +76,6 @@ if a firewall prevents incoming connections then this rule will not work.
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/HttPoxyScanRule.java">HttPoxyScanRule.java</a>
 <br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10107/">10107</a>.
-
-<H2 id="id-10047">HTTPS Content Available via HTTP</H2>
-This active scan rule attempts to access content that was originally accessed via HTTPS (SSL/TLS) via HTTP.
-<p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/HttpsAsHttpScanRule.java">HttpsAsHttpScanRule.java</a>
-<br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10047/">10047</a>.
 
 <H2 id="id-20014">HTTP Parameter Pollution (HPP)</H2>
 Supplying duplicate or numerous HTTP parameters with the same name may cause an application or website
@@ -122,6 +101,21 @@ this by putting out multiple strings of integers designed to try and stimulate b
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/IntegerOverflowScanRule.java">IntegerOverflowScanRule.java</a>
 <br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/30003/">30003</a>.
+
+<H2 id="id-40033">NoSQL Injection - MongoDB</H2>
+This rule attempts to identify MongoDB specific NoSQL Injection vulnerabilities. It attempts various types of attacks including: boolean based, error based, time based, and authentication bypass. 
+It does not include time based attacks. It will also attempt JSON parameter specific payloads if the scan is configured to include JSON parameter variants.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/MongoDbInjectionScanRule.java">MongoDbInjectionScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40033/">40033</a>.
+
+<H2 id="id-90039">NoSQL Injection - MongoDB (Time Based)</H2>
+This rule attempts to identify MongoDB specific NoSQL Injection vulnerabilities using only time based attacks.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/MongoDbInjectionTimingScanRule.java">MongoDbInjectionTimingScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/90039/">90039</a>.
 
 <H2 id="id-40031">Out of Band XSS</H2>
 This rule attempts to discover Out-of-band XSS vulnerabilities.
@@ -157,17 +151,6 @@ Session Fixation may be possible. If this issue occurs with a login URL (where t
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SessionFixationScanRule.java">SessionFixationScanRule.java</a>
 <br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40013/">40013</a>.
-
-<H2 id="id-10048">ShellShock - CVE-2014-6271</H2>
-
-This rule perform 2 attacks to detect servers vulnerable to CVE-2014-6271 aka ShellShock.<br>
-The first is a simple reflected attack and the second is a time based attack.<br>
-<br>
-Post 2.5.0 you can change the length of time used for the attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
-<p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/ShellShockScanRule.java">ShellShockScanRule.java</a>
-<br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10048/">10048</a>.
 
 <H2 id="id-42">Source Code Disclosure - SVN</H2>
 Uses Subversion source code repository metadata to scan for files containing source code on the web server.<br>
