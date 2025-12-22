@@ -42,6 +42,7 @@ zapAddOn {
 dependencies {
     implementation(libs.pscanrules.re2j)
     implementation(libs.pscanrules.htmlunit.csp)
+    implementation(libs.scanrules.rhino)
 
     zapAddOn("commonlib")
     zapAddOn("custompayloads")

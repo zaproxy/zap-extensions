@@ -22,9 +22,11 @@ package org.zaproxy.zap.extension.pscanrules;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.function.Supplier;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
@@ -34,6 +36,12 @@ import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
 import net.htmlparser.jericho.StartTagType;
 import net.htmlparser.jericho.Tag;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.mozilla.javascript.CompilerEnvirons;
+import org.mozilla.javascript.EvaluatorException;
+import org.mozilla.javascript.Parser;
+import org.mozilla.javascript.ast.AstRoot;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
@@ -41,6 +49,7 @@ import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.ResourceIdentificationUtils;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+import org.zaproxy.zap.utils.Stats;
 
 public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassiveScanner
         implements CommonPassiveScanRuleInfo {
@@ -48,6 +57,8 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
     private static final String MESSAGE_PREFIX =
             "pscanrules.informationdisclosuresuspiciouscomments.";
     private static final int PLUGIN_ID = 10027;
+    private static final Logger LOGGER =
+            LogManager.getLogger(InformationDisclosureSuspiciousCommentsScanRule.class);
 
     private static final Map<String, String> ALERT_TAGS;
 
@@ -148,7 +159,7 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
                 Element el;
                 int offset = 0;
                 while ((el = source.getNextElement(offset, HTMLElementName.SCRIPT)) != null) {
-                    checkJsComments(patterns, alertMap, el.toString());
+                    checkJsComments(patterns, alertMap, el.getContent().toString());
                     offset = el.getEnd();
                 }
             }
@@ -182,7 +193,7 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
         if (!isGoodCandidate(target)) {
             return;
         }
-        for (String candidate : getJsComments(target)) {
+        for (String candidate : collectJsComments(target)) {
             for (Pattern pattern : patterns) {
                 Matcher m = pattern.matcher(candidate);
                 if (m.find()) {
@@ -280,6 +291,27 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
         example.setTags(
                 CommonAlertTag.mergeTags(example.getTags(), CommonAlertTag.CUSTOM_PAYLOADS));
         return List.of(example);
+    }
+
+    private static Set<String> collectJsComments(String jsSource) {
+        Set<String> comments = new HashSet<>();
+        try {
+            CompilerEnvirons env = new CompilerEnvirons();
+            env.setRecordingComments(true);
+            Parser parser = new Parser(env, env.getErrorReporter());
+            // Rhino drops a character when the snippet ends with a single line comment so add a
+            // newline
+            AstRoot ast = parser.parse(jsSource + "\n", null, 1);
+            if (ast.getComments() != null) {
+                ast.getComments().forEach(comment -> comments.add(comment.getValue()));
+            }
+        } catch (EvaluatorException ee) {
+            Stats.incCounter("stats.pscan.rule." + PLUGIN_ID + ".jsparse.fail");
+            LOGGER.debug(ee.getMessage());
+            // Rhino failed, fallback to regex
+            getJsComments(jsSource);
+        }
+        return comments;
     }
 
     private static class AlertSummary {
