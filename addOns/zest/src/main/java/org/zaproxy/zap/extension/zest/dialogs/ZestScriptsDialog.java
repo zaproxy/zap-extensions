@@ -68,6 +68,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
     private static final String FIELD_APPROX = "zest.dialog.script.label.approx";
     private static final String FIELD_LOAD = "zest.dialog.script.label.load";
     private static final String FIELD_DEBUG = "zest.dialog.script.label.debug";
+    private static final String FIELD_STMT_DELAY = "zest.dialog.script.label.stmtdelay";
 
     private static final Logger LOGGER = LogManager.getLogger(ZestScriptsDialog.class);
 
@@ -102,6 +103,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
                     "zest.dialog.script.tab.main",
                     "zest.dialog.script.tab.tokens",
                     "zest.dialog.script.tab.auth",
+                    "zest.dialog.script.tab.options",
                     "zest.dialog.script.tab.defaults"
                 });
         this.extension = ext;
@@ -206,10 +208,18 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
                 this.addPadding(2);
             }
 
-            this.addCheckBoxField(3, FIELD_STATUS, scriptWrapper.isIncStatusCodeAssertion());
-            this.addCheckBoxField(3, FIELD_LENGTH, scriptWrapper.isIncLengthAssertion());
-            this.addNumberField(3, FIELD_APPROX, 0, 100, scriptWrapper.getLengthApprox());
+            this.addNumberField(
+                    3,
+                    FIELD_STMT_DELAY,
+                    0,
+                    Integer.MAX_VALUE,
+                    scriptWrapper.getZestScript().getStatementDelay());
             this.addPadding(3);
+
+            this.addCheckBoxField(4, FIELD_STATUS, scriptWrapper.isIncStatusCodeAssertion());
+            this.addCheckBoxField(4, FIELD_LENGTH, scriptWrapper.isIncLengthAssertion());
+            this.addNumberField(4, FIELD_APPROX, 0, 100, scriptWrapper.getLengthApprox());
+            this.addPadding(4);
         }
 
         // this.requestFocus(FIELD_TITLE);
@@ -363,6 +373,13 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
         scriptWrapper.setContents(extension.convertElementToString(script));
         scriptWrapper.setLoadOnStart(this.getBoolValue(FIELD_LOAD));
         scriptWrapper.setDebug(this.getBoolValue(FIELD_DEBUG));
+
+        int stmtDelay = this.getIntValue(FIELD_STMT_DELAY);
+        if (scriptWrapper.getZestScript().getStatementDelay() != stmtDelay) {
+            scriptWrapper
+                    .getZestScript()
+                    .setOptions(Map.of(ZestScript.STATEMENT_DELAY_MS, Integer.toString(stmtDelay)));
+        }
 
         if (add) {
             if (this.chooseType) {
