@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.ascanrules;
+package org.zaproxy.zap.extension.ascanrulesAlpha;
 
 import java.net.UnknownHostException;
 import java.util.Collections;
@@ -135,7 +135,7 @@ public class SqlInjectionSqLiteTimingScanRule extends AbstractAppParamPlugin
 
     @Override
     public String getName() {
-        return Constant.messages.getString("ascanrules.sqlinjection.sqlite.timing.name");
+        return Constant.messages.getString("ascanalpha.sqlinjection.sqlite.timing.name");
     }
 
     @Override
@@ -145,7 +145,7 @@ public class SqlInjectionSqLiteTimingScanRule extends AbstractAppParamPlugin
 
     @Override
     public String getDescription() {
-        return Constant.messages.getString("ascanrules.sqlinjection.desc");
+        return Constant.messages.getString("ascanalpha.sqlinjection.desc");
     }
 
     @Override
@@ -155,12 +155,12 @@ public class SqlInjectionSqLiteTimingScanRule extends AbstractAppParamPlugin
 
     @Override
     public String getSolution() {
-        return Constant.messages.getString("ascanrules.sqlinjection.soln");
+        return Constant.messages.getString("ascanalpha.sqlinjection.soln");
     }
 
     @Override
     public String getReference() {
-        return Constant.messages.getString("ascanrules.sqlinjection.refs");
+        return Constant.messages.getString("ascanalpha.sqlinjection.refs");
     }
 
     @Override
@@ -337,7 +337,7 @@ public class SqlInjectionSqLiteTimingScanRule extends AbstractAppParamPlugin
                                     .setAttack(newTimeBasedInjectionValue)
                                     .setOtherInfo(
                                             Constant.messages.getString(
-                                                    "ascanrules.sqlinjection.sqlite.alert.timing.error.extrainfo",
+                                                    "ascanalpha.sqlinjection.sqlite.alert.timing.error.extrainfo",
                                                     errorMessagePattern))
                                     .setEvidence(matcher.group())
                                     .setMessage(msgDelay)
@@ -474,7 +474,7 @@ public class SqlInjectionSqLiteTimingScanRule extends AbstractAppParamPlugin
                             .setAttack(detectableDelayParameter)
                             .setOtherInfo(
                                     Constant.messages.getString(
-                                            "ascanrules.sqlinjection.sqlite.alert.timing.extrainfo",
+                                            "ascanalpha.sqlinjection.sqlite.alert.timing.extrainfo",
                                             detectableDelayParameter,
                                             detectableDelay,
                                             maxDelayParameter,
