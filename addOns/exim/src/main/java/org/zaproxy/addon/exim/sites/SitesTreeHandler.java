@@ -44,6 +44,9 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.StreamSupport;
 import javax.swing.tree.TreeNode;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
@@ -64,8 +67,10 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
+import org.zaproxy.addon.exim.ExporterOptions;
 import org.zaproxy.addon.exim.ExporterResult;
 import org.zaproxy.addon.exim.ExtensionExim;
+import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.NameValuePair;
 import org.zaproxy.zap.utils.Stats;
 
@@ -108,17 +113,30 @@ public class SitesTreeHandler {
     }
 
     public static void exportSitesTree(Writer fw, ExporterResult result) throws IOException {
-        exportSitesTree(fw, Model.getSingleton().getSession().getSiteTree(), result);
+        exportSitesTree(fw, result, null);
+    }
+
+    public static void exportSitesTree(Writer fw, ExporterResult result, ExporterOptions options)
+            throws IOException {
+        exportSitesTree(fw, Model.getSingleton().getSession().getSiteTree(), result, options);
     }
 
     public static void exportSitesTree(Writer fw, SiteMap sites, ExporterResult result)
+            throws IOException {
+        exportSitesTree(fw, sites, result, null);
+    }
+
+    public static void exportSitesTree(
+            Writer fw, SiteMap sites, ExporterResult result, ExporterOptions options)
             throws IOException {
         try (BufferedWriter bw = new BufferedWriter(fw)) {
             YAML_MAPPER
                     .copy()
                     .registerModule(
                             new SimpleModule()
-                                    .addSerializer(SiteNode.class, new SiteNodeSerializer(result)))
+                                    .addSerializer(
+                                            SiteNode.class,
+                                            new SiteNodeSerializer(options, result)))
                     .writeValue(bw, List.of(sites.getRoot()));
         }
     }
@@ -212,25 +230,51 @@ public class SitesTreeHandler {
 
         private static final long serialVersionUID = 1L;
 
+        private Context context;
         private ExporterResult result;
 
-        public SiteNodeSerializer(ExporterResult result) {
+        public SiteNodeSerializer(ExporterOptions options, ExporterResult result) {
             super(SiteNode.class);
 
+            this.context = options != null ? options.getContext() : null;
             this.result = result;
         }
 
         @Override
         public void serialize(SiteNode value, JsonGenerator gen, SerializerProvider provider)
                 throws IOException, JsonProcessingException {
+            boolean inScope = isInScope(value);
+            boolean anyChildInScope = isAnyChildInScope(value);
+            if (!inScope && !anyChildInScope) {
+                return;
+            }
+
+            gen.writeStartObject();
+
+            writeNodeData(inScope, value, gen);
+
+            if (value.getChildCount() > 0 && anyChildInScope) {
+                gen.writeArrayFieldStart(EximSiteNode.CHILDREN_KEY);
+                for (Enumeration<TreeNode> e = value.children(); e.hasMoreElements(); ) {
+                    gen.writeObject(e.nextElement());
+                }
+                gen.writeEndArray();
+            }
+            gen.writeEndObject();
+        }
+
+        private void writeNodeData(boolean inScope, SiteNode value, JsonGenerator gen)
+                throws IOException {
+            gen.writeStringField(
+                    EximSiteNode.NODE_KEY,
+                    value.getParent() == null ? EximSiteNode.ROOT_NODE_NAME : value.toString());
 
             result.incrementCount();
             Stats.incCounter(ExtensionExim.STATS_PREFIX + "save.sites.node");
 
-            gen.writeStartObject();
-            gen.writeStringField(
-                    EximSiteNode.NODE_KEY,
-                    value.getParent() == null ? EximSiteNode.ROOT_NODE_NAME : value.toString());
+            if (!inScope) {
+                return;
+            }
 
             HistoryReference href = value.getHistoryReference();
             if (href != null) {
@@ -288,15 +332,28 @@ public class SitesTreeHandler {
                     }
                 }
             }
+        }
 
-            if (value.getChildCount() > 0) {
-                gen.writeArrayFieldStart(EximSiteNode.CHILDREN_KEY);
-                for (Enumeration<TreeNode> e = value.children(); e.hasMoreElements(); ) {
-                    gen.writeObject(e.nextElement());
-                }
-                gen.writeEndArray();
+        private boolean isInScope(SiteNode value) {
+            if (context == null || value.isRoot()) {
+                return true;
             }
-            gen.writeEndObject();
+
+            return context.isInContext(value);
+        }
+
+        private boolean isAnyChildInScope(SiteNode value) {
+            if (context == null) {
+                return true;
+            }
+
+            return StreamSupport.stream(
+                            Spliterators.spliteratorUnknownSize(
+                                    value.depthFirstEnumeration().asIterator(),
+                                    Spliterator.ORDERED),
+                            false)
+                    .map(SiteNode.class::cast)
+                    .anyMatch(this::isInScope);
         }
 
         private static boolean isRelevantMultipartParam(int type) {

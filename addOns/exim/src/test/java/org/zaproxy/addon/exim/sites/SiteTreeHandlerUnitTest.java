@@ -36,6 +36,7 @@ import java.io.File;
 import java.io.StringWriter;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -60,6 +61,7 @@ import org.parosproxy.paros.model.SiteMap;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.exim.ExporterOptions;
 import org.zaproxy.addon.exim.ExporterResult;
 import org.zaproxy.zap.extension.ascan.VariantFactory;
 import org.zaproxy.zap.model.Context;
@@ -252,6 +254,68 @@ class SiteTreeHandlerUnitTest {
         // Then
         assertThat(sw.toString(), is(expectedYaml));
         assertThat(result.getCount(), is(4));
+    }
+
+    @Test
+    void shouldOutputNodesInContext() throws Exception {
+        // Given
+        String expectedYaml =
+                """
+                - node: Sites
+                  children:
+                  - node: http://www.example.org
+                    url: http://www.example.org
+                    method: GET
+                    children:
+                    - node: a
+                      url: http://www.example.org/a
+                      method: GET
+                      children:
+                      - node: b
+                        children:
+                        - node: GET:file
+                          url: http://www.example.org/a/b/file
+                          method: GET
+                          responseLength: 21
+                          statusCode: 200
+                """;
+        HttpMessage msg =
+                new HttpMessage(
+                        "GET http://www.example.org/a/b/file HTTP/1.1",
+                        "".getBytes(),
+                        "HTTP/1.1 200 OK",
+                        "".getBytes());
+        siteMap.addPath(getHref(msg));
+        siteMap.addPath(
+                getHref(
+                        new HttpMessage(
+                                "GET http://www.example.com/a/b/file HTTP/1.1",
+                                "".getBytes(),
+                                "HTTP/1.1 200 OK",
+                                "".getBytes())));
+
+        StringWriter sw = new StringWriter();
+        Context ctx = mock();
+        given(ctx.isInContext(any(SiteNode.class)))
+                .willAnswer(
+                        invocation -> {
+                            SiteNode node = invocation.getArgument(0);
+                            if (node.getHierarchicNodeName().startsWith("http://www.example.com")
+                                    || "b".equals(node.getNodeName())) {
+                                return false;
+                            }
+                            return true;
+                        });
+        ExporterOptions options =
+                ExporterOptions.builder().setOutputFile(Paths.get("/")).setContext(ctx).build();
+        ExporterResult result = new ExporterResult();
+
+        // When
+        SitesTreeHandler.exportSitesTree(sw, siteMap, result, options);
+
+        // Then
+        assertThat(sw.toString(), is(expectedYaml));
+        assertThat(result.getCount(), is(5));
     }
 
     @Test
