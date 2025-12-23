@@ -19,10 +19,6 @@
  */
 package org.zaproxy.zap.extension.openapi.v3;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.emptyString;
-import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -723,12 +719,16 @@ class BodyGeneratorUnitTest extends TestUtils {
                 new OperationModel("/xml", definition.getPaths().get("/xml").getPost(), null);
         // When
         String content = new RequestModelConverter().convert(operationModel, generators).getBody();
-        // Then
-        assertThat(content, is(emptyString()));
-        assertThat(
-                generators.getErrorMessages(),
-                contains(
-                        "Not generating request body for operation xml, the content type application/xml is not supported."));
+        // Then - XML bodies should now be generated for application/xml and the
+        // unsupported
+        // content message should no longer be produced for this operation.
+        org.junit.jupiter.api.Assertions.assertFalse(content.isEmpty());
+        org.junit.jupiter.api.Assertions.assertFalse(
+                generators.getErrorMessages().stream()
+                        .anyMatch(
+                                s ->
+                                        s.contains(
+                                                "Not generating request body for operation xml, the content type application/xml is not supported.")));
     }
 
     @Test
