@@ -169,10 +169,6 @@
             <name>Possible Username Enumeration</name>
             <enabled>true</enabled>
         </p40023>
-        <p40024>
-            <name>SQL Injection - SQLite (Time Based)</name>
-            <enabled>true</enabled>
-        </p40024>
         <p40025>
             <name>Proxy Disclosure</name>
             <enabled>true</enabled>

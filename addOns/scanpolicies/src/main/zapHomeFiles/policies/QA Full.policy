@@ -137,10 +137,6 @@
             <name>SQL Injection - PostgreSQL (Time Based)</name>
             <enabled>true</enabled>
         </p40022>
-        <p40024>
-            <name>SQL Injection - SQLite (Time Based)</name>
-            <enabled>true</enabled>
-        </p40024>
         <p40026>
             <name>Cross Site Scripting (DOM Based)</name>
             <enabled>true</enabled>
