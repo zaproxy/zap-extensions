@@ -26,24 +26,15 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
 import java.io.ByteArrayInputStream;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.httpclient.URI;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
-import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
-import org.parosproxy.paros.extension.ExtensionLoader;
-import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.zap.testutils.NanoServerHandler;
@@ -54,11 +45,6 @@ class SourceCodeDisclosureGitScanRuleUnitTest
     @Override
     protected SourceCodeDisclosureGitScanRule createScanner() {
         return new SourceCodeDisclosureGitScanRule();
-    }
-
-    @BeforeEach
-    void init() {
-        Control.initSingletonForTesting(Model.getSingleton(), mock(ExtensionLoader.class));
     }
 
     @Test
@@ -79,6 +65,12 @@ class SourceCodeDisclosureGitScanRuleUnitTest
                 is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.QA_FULL.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getValue())));
     }
 
     @Test
@@ -104,15 +96,9 @@ class SourceCodeDisclosureGitScanRuleUnitTest
         // Given
         this.nano.addHandler(new GitServerHandler());
 
-        HttpSender realSender = new HttpSender(HttpSender.ACTIVE_SCANNER_INITIATOR);
-        when(parent.getHttpSender()).thenReturn(realSender);
-
-        String url = "http://127.0.0.1:" + nano.getListeningPort() + "/custom/Target.java";
-        HttpMessage msg = new HttpMessage(new URI(url, true));
-        msg.setResponseHeader("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n");
+        HttpMessage msg = getHttpMessage("/custom/Target.java");
 
         rule.init(msg, parent);
-        rule.setAttackStrength(AttackStrength.HIGH);
 
         // When
         rule.scan();
@@ -167,23 +153,6 @@ class SourceCodeDisclosureGitScanRuleUnitTest
         public Response serve(IHTTPSession session) {
             String uri = session.getUri();
 
-            if (uri.endsWith("Target.java")) {
-                return newFixedLengthResponse(
-                        Response.Status.OK, "text/html", "<html><body>Target Code</body></html>");
-            }
-            if (uri.endsWith("/.git") || uri.endsWith("/.git/")) {
-                return newFixedLengthResponse(Response.Status.FORBIDDEN, "text/html", "Forbidden");
-            }
-            if (uri.endsWith(".git/HEAD")) {
-                return newFixedLengthResponse(
-                        Response.Status.OK, "text/plain", "ref: refs/heads/master\n");
-            }
-            if (uri.endsWith(".git/config")) {
-                return newFixedLengthResponse(
-                        Response.Status.OK,
-                        "text/plain",
-                        "[core]\n\trepositoryformatversion = 0\n");
-            }
             if (uri.endsWith(".git/index")) {
                 return newFixedLengthResponse(
                         Response.Status.OK,
