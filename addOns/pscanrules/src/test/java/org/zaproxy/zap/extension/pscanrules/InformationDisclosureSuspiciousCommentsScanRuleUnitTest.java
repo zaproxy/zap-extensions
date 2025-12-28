@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.pscanrules;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasKey;
@@ -27,13 +28,17 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -144,7 +149,7 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
         // Then
         assertEquals(1, alertsRaised.size());
         assertEquals(Alert.CONFIDENCE_MEDIUM, alertsRaised.get(0).getConfidence());
-        assertEquals("FIXME", alertsRaised.get(0).getEvidence());
+        assertThat(alertsRaised.get(0).getEvidence(), containsString("FIXME"));
         assertEquals(
                 wrapEvidenceOtherInfo("\\bFIXME\\b", comment, 1),
                 alertsRaised.get(0).getOtherInfo());
@@ -189,7 +194,7 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
         // Then
         assertEquals(1, alertsRaised.size());
         assertEquals(Alert.CONFIDENCE_MEDIUM, alertsRaised.get(0).getConfidence());
-        assertEquals("FIXME", alertsRaised.get(0).getEvidence());
+        assertThat(alertsRaised.get(0).getEvidence(), containsString("FIXME"));
         // detected 2 times, the first in the element
         assertEquals(
                 wrapEvidenceOtherInfo("\\bFIXME\\b", comment, 2),
@@ -218,7 +223,7 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
         // Then
         assertEquals(1, alertsRaised.size());
         assertEquals(Alert.CONFIDENCE_MEDIUM, alertsRaised.get(0).getConfidence());
-        assertEquals("FIXME", alertsRaised.get(0).getEvidence());
+        assertThat(alertsRaised.get(0).getEvidence(), containsString("FIXME"));
         assertEquals(
                 wrapEvidenceOtherInfo("\\bFIXME\\b", comment, 2),
                 alertsRaised.get(0).getOtherInfo());
@@ -557,5 +562,30 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
                 + " times, the first in likely comment: \""
                 + info
                 + "\", see evidence field for the suspicious comment/snippet.";
+    }
+
+    static Stream<Arguments> contextualEvidenceData() {
+        return Stream.of(
+                arguments("// FIXME", "// FIXME"),
+                arguments("// FIXME         1         2|", "// FIXME         1         2"),
+                arguments("// |2         1         FIXME", "2         1         FIXME"),
+                arguments(
+                        "// |2         1         FIXME         1         2|",
+                        "2         1         FIXME         1         2"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("contextualEvidenceData")
+    void shouldProvideContextualEvidenceAroundMatch(String comment, String evidence)
+            throws HttpMalformedHeaderException, URIException {
+        // Given
+        HttpMessage msg = createHttpMessageWithRespBody(comment, "application/javascript");
+
+        // When
+        scanHttpResponseReceive(msg);
+
+        // Then
+        assertEquals(1, alertsRaised.size());
+        assertThat(alertsRaised.get(0).getEvidence(), is(equalTo(evidence)));
     }
 }
