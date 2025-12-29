@@ -20,9 +20,13 @@
 package org.zaproxy.addon.client.spider;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -265,12 +269,16 @@ class ClientSpiderUnitTest extends TestUtils {
         List<String> values = argument.getAllValues();
         assertThat(
                 values,
-                contains(
-                        "https://www.example.com/",
-                        "https://www.example.com/l1",
-                        "https://www.example.com/l1/l2",
-                        "https://www.example.com/l1/l2/l3",
-                        "https://www.example.com/l1/l2/l3/l4"));
+                allOf(
+                        hasItems(
+                                "https://www.example.com/",
+                                "https://www.example.com/l1",
+                                "https://www.example.com/l1/l2",
+                                "https://www.example.com/l1/l2/l3",
+                                "https://www.example.com/l1/l2/l3/l4"),
+                        not(hasItem("https://www.example.com/l1/l2/l3/l4/l5")),
+                        not(hasItem("https://www.example.com/l1/l2/l3/l4/l5/l6"))));
+
         assertThat(l6Node, is(notNullValue()));
     }
 
