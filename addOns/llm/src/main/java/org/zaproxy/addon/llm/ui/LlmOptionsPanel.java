@@ -123,6 +123,8 @@ public class LlmOptionsPanel extends AbstractParamPanel {
         LlmOptions llmOptionsParam = ((OptionsParam) options).getParamSet(LlmOptions.class);
         apiKeyTextField.setText(Objects.toString(llmOptionsParam.getApiKey(), ""));
         llmendpointTextField.setText(Objects.toString(llmOptionsParam.getEndpoint(), ""));
+        modelNameTextField.setText(Objects.toString(llmOptionsParam.getModelName(), ""));
+        modelProviderComboBox.setSelectedItem(llmOptionsParam.getModelProvider());
     }
 
     @Override
