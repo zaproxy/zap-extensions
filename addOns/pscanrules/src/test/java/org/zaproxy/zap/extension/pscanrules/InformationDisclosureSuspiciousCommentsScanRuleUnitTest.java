@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.pscanrules;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.is;
@@ -142,7 +143,7 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
 
         // Then
         assertEquals(1, alertsRaised.size());
-        assertEquals(Alert.CONFIDENCE_LOW, alertsRaised.get(0).getConfidence());
+        assertEquals(Alert.CONFIDENCE_MEDIUM, alertsRaised.get(0).getConfidence());
         assertEquals("FIXME", alertsRaised.get(0).getEvidence());
         assertEquals(
                 wrapEvidenceOtherInfo("\\bFIXME\\b", comment, 1),
@@ -169,7 +170,7 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
     }
 
     @Test
-    void shouldCreateOneAlertforMultipleAndEqualSuspiciousComments()
+    void shouldCreateOneAlertforMultipleAndEqualSuspiciousCommentsJs()
             throws HttpMalformedHeaderException, URIException {
 
         // Given
@@ -187,11 +188,39 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
 
         // Then
         assertEquals(1, alertsRaised.size());
-        assertEquals(Alert.CONFIDENCE_LOW, alertsRaised.get(0).getConfidence());
+        assertEquals(Alert.CONFIDENCE_MEDIUM, alertsRaised.get(0).getConfidence());
         assertEquals("FIXME", alertsRaised.get(0).getEvidence());
         // detected 2 times, the first in the element
         assertEquals(
-                wrapEvidenceOtherInfo("\\bFIXME\\b", comment, 1),
+                wrapEvidenceOtherInfo("\\bFIXME\\b", comment, 2),
+                alertsRaised.get(0).getOtherInfo());
+    }
+
+    @Test
+    void shouldCreateOneAlertforMultipleAndEqualSuspiciousCommentsHtml()
+            throws HttpMalformedHeaderException, URIException {
+
+        // Given
+        String comment = "<!-- FIXME: foo bar -->";
+        String body =
+                """
+                Some text %s
+                %s <H1>Heading</H1>
+                """
+                        .formatted(comment, comment);
+        HttpMessage msg = createHttpMessageWithRespBody(body, "text/html");
+
+        assertTrue(msg.getResponseHeader().isText());
+
+        // When
+        scanHttpResponseReceive(msg);
+
+        // Then
+        assertEquals(1, alertsRaised.size());
+        assertEquals(Alert.CONFIDENCE_MEDIUM, alertsRaised.get(0).getConfidence());
+        assertEquals("FIXME", alertsRaised.get(0).getEvidence());
+        assertEquals(
+                wrapEvidenceOtherInfo("\\bFIXME\\b", comment, 2),
                 alertsRaised.get(0).getOtherInfo());
     }
 
@@ -231,7 +260,7 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
 
         // Then
         assertEquals(1, alertsRaised.size());
-        assertEquals(Alert.CONFIDENCE_LOW, alertsRaised.get(0).getConfidence());
+        assertEquals(Alert.CONFIDENCE_MEDIUM, alertsRaised.get(0).getConfidence());
         assertEquals(
                 wrapEvidenceOtherInfo("\\bTODO\\b", comment, 1),
                 alertsRaised.get(0).getOtherInfo());
@@ -333,9 +362,9 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
     }
 
     @Test
-    void shouldAlertOnSuspiciousValuesInJavascriptSingleLineComment()
+    void shouldNotAlertOnSuspiciousValuesInJavascriptSingleLineComment()
             throws HttpMalformedHeaderException, URIException {
-        shouldAlertOnSuspiciousCommentInJavascriptContent(
+        shouldNotAlertOnSuspiciousCommentInJavascriptContent(
                 """
                 function fooFunction() {
                   var bar = 'Some text // ADMINISTRATOR fake comment';
@@ -344,9 +373,9 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
     }
 
     @Test
-    void shouldAlertOnSuspiciousValuesInJavascriptBlockComment()
+    void shouldNotAlertOnSuspiciousValuesInJavascriptBlockComment()
             throws HttpMalformedHeaderException, URIException {
-        shouldAlertOnSuspiciousCommentInJavascriptContent(
+        shouldNotAlertOnSuspiciousCommentInJavascriptContent(
                 """
                 function fooFunction() {
                   var bar = 'Some text /* ADMINISTRATOR fake comment */';
@@ -354,7 +383,7 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
                 """);
     }
 
-    private void shouldAlertOnSuspiciousCommentInJavascriptContent(String body)
+    private void shouldNotAlertOnSuspiciousCommentInJavascriptContent(String body)
             throws URIException, HttpMalformedHeaderException {
         // Given
         HttpMessage msg = createHttpMessageWithRespBody(body, "application/javascript");
@@ -362,8 +391,7 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
                 () -> InformationDisclosureSuspiciousCommentsScanRule.DEFAULT_PAYLOADS);
         // When
         scanHttpResponseReceive(msg);
-        // Then - Alert since we aren't yet actually parsing the JS
-        assertThat(alertsRaised.size(), is(equalTo(1)));
+        assertThat(alertsRaised, is(empty()));
     }
 
     @Test
@@ -430,6 +458,60 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
         scanHttpResponseReceive(msg);
         // Then
         assertEquals(0, alertsRaised.size());
+    }
+
+    /**
+     * These cases could be a false positives or false negatives.
+     *
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Guides/Comments
+     * @see
+     *     https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Deprecated_and_obsolete_features#html_comments
+     */
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                // Example of a CDataComment within an HTML script block
+                """
+            <script>
+            <![CDATA[
+            var x = 10;
+            if (x > 5) {
+            // ... some code ...
+            }
+            ]]>
+            </script>
+            """,
+                // Example of a HTMLComment within an HTML script block
+                """
+            <script><!--
+            const x = "Not FixMe which would be a FP.";
+            --></script>
+            """,
+                // This example is a FN, at least the last HTML comment should be caught
+                """
+            <script>
+            <!-- TODO comment
+            console.log("a"); <!-- TODO comment
+            console.log("b");
+            --> TODO comment
+            <!-- TODO comment -->
+            </script>
+            """
+            })
+    void shouldNotAlertOnSuspiciousCommentInNonJsCommentWithinScriptBlock(String body)
+            throws HttpMalformedHeaderException, URIException {
+
+        // Given
+        HttpMessage msg = createHttpMessageWithRespBody(body, "text/html;charset=ISO-8859-1");
+
+        assertTrue(msg.getResponseHeader().isText());
+        assertFalse(ResourceIdentificationUtils.isJavaScript(msg));
+
+        // When
+        scanHttpResponseReceive(msg);
+
+        // Then
+        assertThat(alertsRaised, is(empty()));
     }
 
     @Test

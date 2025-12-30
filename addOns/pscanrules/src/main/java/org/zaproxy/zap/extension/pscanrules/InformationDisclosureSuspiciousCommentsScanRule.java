@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Supplier;
-import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.htmlparser.jericho.Element;
@@ -34,6 +33,9 @@ import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
 import net.htmlparser.jericho.StartTagType;
 import net.htmlparser.jericho.Tag;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.Lexer;
+import org.antlr.v4.runtime.Token;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
@@ -41,6 +43,7 @@ import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.ResourceIdentificationUtils;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+import org.zaproxy.zap.extension.pscanrules.antlr.JavaScriptLexer;
 
 public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassiveScanner
         implements CommonPassiveScanRuleInfo {
@@ -87,29 +90,9 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
     private static final Supplier<Iterable<String>> DEFAULT_PAYLOAD_PROVIDER =
             () -> DEFAULT_PAYLOADS;
 
-    // https://github.com/antlr/grammars-v4/blob/c82c128d980f4ce46fb3536f87b06b45b9619922/javascript/javascript/JavaScriptLexer.g4#L49-L50
-    private static final Pattern JS_MULTILINE_COMMENT =
-            Pattern.compile("/\\*.*?\\*/", Pattern.DOTALL);
-    private static final Pattern JS_SINGLELINE_COMMENT = Pattern.compile("//.*");
-
     private static Supplier<Iterable<String>> payloadProvider = DEFAULT_PAYLOAD_PROVIDER;
 
     private List<Pattern> patterns = null;
-
-    private static List<String> getJsComments(String content) {
-        List<String> results = new ArrayList<>();
-        JS_SINGLELINE_COMMENT
-                .matcher(content)
-                .results()
-                .map(MatchResult::group)
-                .forEach(results::add);
-        JS_MULTILINE_COMMENT
-                .matcher(content)
-                .results()
-                .map(MatchResult::group)
-                .forEach(results::add);
-        return results;
-    }
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
@@ -127,28 +110,21 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
                 // Can use the parser
 
                 // Check the comments
+                source.fullSequentialParse(); // Needed to check parent
                 List<Tag> tags = source.getAllTags(StartTagType.COMMENT);
                 for (Tag tag : tags) {
-                    String tagStr = tag.toString();
-                    for (Pattern pattern : patterns) {
-                        Matcher m = pattern.matcher(tagStr);
-                        if (m.find()) {
-                            recordAlertSummary(
-                                    alertMap,
-                                    new AlertSummary(
-                                            pattern.toString(),
-                                            tagStr,
-                                            Alert.CONFIDENCE_MEDIUM,
-                                            m.group()));
-                            break; // Only need to record this comment once
-                        }
+                    Element element = tag.getElement();
+                    Element parent = element != null ? element.getParentElement() : null;
+                    if (parent != null && HTMLElementName.SCRIPT.equals(parent.getName())) {
+                        continue; // Skip HTML comments inside script blocks
                     }
+                    searchSuspiciousComments(alertMap, tag.toString());
                 }
                 // Check the scripts
                 Element el;
                 int offset = 0;
                 while ((el = source.getNextElement(offset, HTMLElementName.SCRIPT)) != null) {
-                    checkJsComments(patterns, alertMap, el.toString());
+                    checkJsComments(patterns, alertMap, el.getContent().toString());
                     offset = el.getEnd();
                 }
             }
@@ -172,29 +148,38 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
                                 truncateString(firstSummary.getDetail()),
                                 entry.getValue().size());
             }
-            this.createAlert(other, firstSummary.getConfidence(), firstSummary.getEvidence())
-                    .raise();
+            this.createAlert(other, firstSummary.getEvidence()).raise();
         }
     }
 
-    private static void checkJsComments(
+    private void checkJsComments(
             List<Pattern> patterns, Map<String, List<AlertSummary>> alertMap, String target) {
         if (!isGoodCandidate(target)) {
             return;
         }
-        for (String candidate : getJsComments(target)) {
-            for (Pattern pattern : patterns) {
-                Matcher m = pattern.matcher(candidate);
-                if (m.find()) {
-                    recordAlertSummary(
-                            alertMap,
-                            new AlertSummary(
-                                    pattern.toString(),
-                                    candidate,
-                                    Alert.CONFIDENCE_LOW,
-                                    m.group()));
-                    return;
-                }
+
+        JavaScriptLexer lexer = new JavaScriptLexer(CharStreams.fromString(target));
+        Token token;
+
+        do {
+            token = lexer.nextToken();
+            if (token.getChannel() == Lexer.HIDDEN
+                    && (token.getType() == JavaScriptLexer.MultiLineComment
+                            || token.getType() == JavaScriptLexer.SingleLineComment
+                            || token.getType() == JavaScriptLexer.HtmlComment)) {
+                searchSuspiciousComments(alertMap, token.getText());
+            }
+        } while (token.getType() != Token.EOF);
+    }
+
+    private void searchSuspiciousComments(
+            Map<String, List<AlertSummary>> alertMap, String comment) {
+        for (Pattern pattern : patterns) {
+            Matcher m = pattern.matcher(comment);
+            if (m.find()) {
+                recordAlertSummary(
+                        alertMap, new AlertSummary(pattern.toString(), comment, m.group()));
+                return; // Only need to record this comment once
             }
         }
     }
@@ -215,10 +200,10 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
         return str;
     }
 
-    private AlertBuilder createAlert(String detail, int confidence, String evidence) {
+    private AlertBuilder createAlert(String detail, String evidence) {
         return newAlert()
                 .setRisk(Alert.RISK_INFO)
-                .setConfidence(confidence)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
                 .setOtherInfo(detail)
                 .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
@@ -274,7 +259,6 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
                                         MESSAGE_PREFIX + "otherinfo",
                                         "\\bFIXME\\b",
                                         "<!-- FixMe: cookie: root=true; Secure -->"),
-                                Alert.CONFIDENCE_MEDIUM,
                                 "FixMe")
                         .build();
         example.setTags(
@@ -285,14 +269,12 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
     private static class AlertSummary {
         private final String pattern;
         private final String detail;
-        private final int confidence;
         private final String evidence;
 
-        public AlertSummary(String pattern, String detail, int confidence, String evidence) {
+        public AlertSummary(String pattern, String detail, String evidence) {
             super();
             this.pattern = pattern;
             this.detail = detail;
-            this.confidence = confidence;
             this.evidence = evidence;
         }
 
@@ -302,10 +284,6 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
 
         public String getDetail() {
             return detail;
-        }
-
-        public int getConfidence() {
-            return confidence;
         }
 
         public String getEvidence() {

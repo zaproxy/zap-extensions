@@ -1,4 +1,5 @@
 [versions]
+antlr = "4.13.2"
 bouncycastle = "1.83"
 brotli = "1.16.0"
 diffutils = "1.3.0"
@@ -76,6 +77,8 @@ network-netty-codec-http2 = { module = "io.netty:netty-codec-http2", version.ref
 network-netty-handler = { module = "io.netty:netty-handler", version.ref = "netty" }
 openapi-swagger-compatSpecParser = "io.swagger:swagger-compat-spec-parser:1.0.75"
 openapi-swagger-parser = "io.swagger.parser.v3:swagger-parser:2.1.37"
+pscanrules-antlr = { module = "org.antlr:antlr4", version.ref = "antlr" }
+pscanrules-antlr-runtime = { module = "org.antlr:antlr4-runtime", version.ref = "antlr" }
 pscanrules-htmlunit-csp = "org.htmlunit:htmlunit-csp:4.21.0"
 pscanrules-re2j = { module = "com.google.re2j:re2j", version.ref = "re2j" }
 pscanrulesAlpha-re2j = { module = "com.google.re2j:re2j", version.ref = "re2j" }
