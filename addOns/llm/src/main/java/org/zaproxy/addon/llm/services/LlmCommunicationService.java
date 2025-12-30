@@ -57,12 +57,14 @@ public class LlmCommunicationService {
 
     private LlmAssistant llmAssistant;
     private LlmResponseHandler listener;
+    private LlmOptions options;
     Requestor requestor;
 
     static ChatModel model;
     ChatMemory chatMemory;
 
     public LlmCommunicationService(LlmOptions options) {
+        this.options = options;
         listener = new LlmResponseHandler();
         chatMemory = MessageWindowChatMemory.withMaxMessages(10);
         model = buildModel(options);
@@ -103,6 +105,10 @@ public class LlmCommunicationService {
                             .build();
             default -> throw new RuntimeException("Unknown model provider");
         };
+    }
+
+    public LlmOptions getOptions() {
+        return this.options;
     }
 
     private Integer importHttpCalls(String openapiContent) throws RuntimeException {
@@ -166,7 +172,6 @@ public class LlmCommunicationService {
     public void reviewAlert(Alert alert) {
 
         Alert updatedAlert = alert;
-        Alert originalAlert = updatedAlert.newInstance();
 
         if (isPreviouslyReviewed(alert)) {
             LOGGER.debug("Skipping previously reviewed alert : {} ", alert.getName());

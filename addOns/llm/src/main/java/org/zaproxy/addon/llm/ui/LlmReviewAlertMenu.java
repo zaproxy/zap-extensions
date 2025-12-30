@@ -21,14 +21,12 @@ package org.zaproxy.addon.llm.ui;
 
 import java.awt.Component;
 import java.util.Set;
-import java.util.function.Supplier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.addon.llm.LlmOptions;
-import org.zaproxy.addon.llm.services.LlmCommunicationService;
+import org.zaproxy.addon.llm.ExtensionLlm;
 import org.zaproxy.zap.extension.alert.PopupMenuItemAlert;
 
 @SuppressWarnings("serial")
@@ -38,14 +36,11 @@ public class LlmReviewAlertMenu extends PopupMenuItemAlert {
 
     private static final long serialVersionUID = 1L;
 
-    private final LlmOptions options;
-    private final Supplier<Boolean> configured;
+    private final ExtensionLlm ext;
 
-    public LlmReviewAlertMenu(LlmOptions options, Supplier<Boolean> configured) {
+    public LlmReviewAlertMenu(ExtensionLlm ext) {
         super(Constant.messages.getString("llm.menu.review.title"), true);
-
-        this.options = options;
-        this.configured = configured;
+        this.ext = ext;
     }
 
     @Override
@@ -69,7 +64,8 @@ public class LlmReviewAlertMenu extends PopupMenuItemAlert {
     @Override
     public boolean isEnableForComponent(Component invoker) {
         if (super.isEnableForComponent(invoker)) {
-            setEnabled(configured.get());
+            setEnabled(ext.isConfigured());
+            this.setToolTipText(this.isEnabled() ? null : ext.getCommsIssue());
             return true;
         }
         return false;
@@ -81,7 +77,6 @@ public class LlmReviewAlertMenu extends PopupMenuItemAlert {
     }
 
     private void reviewAlert(Alert alert) {
-        LlmCommunicationService llmCommunicationService = new LlmCommunicationService(options);
-        llmCommunicationService.reviewAlert(alert);
+        ext.getCommunicationService("ALERT_REVIEW").reviewAlert(alert);
     }
 }

@@ -22,7 +22,6 @@ package org.zaproxy.addon.llm.ui;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Objects;
-import java.util.function.Consumer;
 import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -45,17 +44,13 @@ public class LlmOptionsPanel extends AbstractParamPanel {
 
     private static final long serialVersionUID = 1L;
 
-    private final Consumer<Boolean> configured;
-
     private JComboBox<LlmProvider> modelProviderComboBox;
     private JTextField apiKeyTextField;
     private JTextField llmendpointTextField;
     private JTextField modelNameTextField;
 
-    public LlmOptionsPanel(Consumer<Boolean> configured) {
+    public LlmOptionsPanel() {
         super();
-
-        this.configured = configured;
 
         setName(Constant.messages.getString("llm.options.title"));
 
@@ -134,7 +129,6 @@ public class LlmOptionsPanel extends AbstractParamPanel {
         param.setApiKey(apiKeyTextField.getText());
         param.setEndpoint(llmendpointTextField.getText());
         param.setModelName(modelNameTextField.getText());
-        configured.accept(true);
     }
 
     @Override

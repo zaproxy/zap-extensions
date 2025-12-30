@@ -19,6 +19,9 @@
  */
 package org.zaproxy.addon.llm;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
+import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.common.VersionedAbstractParam;
 
 public class LlmOptions extends VersionedAbstractParam {
@@ -38,7 +41,7 @@ public class LlmOptions extends VersionedAbstractParam {
     public static final String ENDPOINT_PROPERTY = BASE_KEY + ".endpoint";
     public static final String MODEL_NAME_PROPERTY = BASE_KEY + ".modelname";
 
-    private LlmProvider modelProvider;
+    private LlmProvider modelProvider = LlmProvider.NONE;
 
     private String apiKey;
 
@@ -101,5 +104,26 @@ public class LlmOptions extends VersionedAbstractParam {
     public void setModelProvider(LlmProvider modelProvider) {
         this.modelProvider = modelProvider;
         getConfig().setProperty(MODEL_PROVIDER_PROPERTY, this.modelProvider.name());
+    }
+
+    public boolean hasCommsChanged(LlmOptions options) {
+        return !this.modelProvider.equals(options.modelProvider)
+                || !Strings.CS.equals(this.endpoint, options.endpoint)
+                || !Strings.CS.equals(this.apiKey, options.apiKey)
+                || !Strings.CS.equals(this.modelName, options.modelName);
+    }
+
+    public boolean isCommsConfigured() {
+        return !LlmProvider.NONE.equals(this.modelProvider) && !StringUtils.isBlank(endpoint);
+    }
+
+    public String getCommsIssue() {
+        if (LlmProvider.NONE.equals(this.modelProvider)) {
+            return Constant.messages.getString("llm.error.provider");
+        }
+        if (StringUtils.isBlank(endpoint)) {
+            return Constant.messages.getString("llm.error.endpoint");
+        }
+        return null;
     }
 }

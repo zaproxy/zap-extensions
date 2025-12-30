@@ -43,6 +43,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractDialog;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.llm.ExtensionLlm;
 import org.zaproxy.addon.llm.LlmOptions;
 import org.zaproxy.addon.llm.services.LlmCommunicationService;
 import org.zaproxy.zap.utils.FontUtils;
@@ -55,7 +56,7 @@ public class LlmOpenApiImportDialog extends AbstractDialog {
 
     private static final long serialVersionUID = -7074394202143400215L;
 
-    private final LlmOptions options;
+    private final ExtensionLlm ext;
 
     private JTextField fieldOpenapi;
     private JButton buttonChooseFile;
@@ -63,9 +64,9 @@ public class LlmOpenApiImportDialog extends AbstractDialog {
     private JButton buttonImport;
     private JProgressBar progressBar;
 
-    public LlmOpenApiImportDialog(JFrame parent, LlmOptions options) {
+    public LlmOpenApiImportDialog(JFrame parent, ExtensionLlm ext) {
         super(parent, true);
-        this.options = options;
+        this.ext = ext;
 
         super.setTitle(Constant.messages.getString("llm.importDialog.title"));
         centreDialog();
@@ -114,6 +115,9 @@ public class LlmOpenApiImportDialog extends AbstractDialog {
         String openapiLocation = getOpenapiField().getText();
         Integer endpointCount = 0;
 
+        LlmCommunicationService llmCommunicationService = ext.getCommunicationService("OPENAPI");
+        LlmOptions options = llmCommunicationService.getOptions();
+
         if (StringUtils.isEmpty(options.getApiKey())) {
             showWarningDialog(Constant.messages.getString("llm.options.apikey.error.undefinded"));
             throw new RuntimeException(
@@ -125,8 +129,6 @@ public class LlmOpenApiImportDialog extends AbstractDialog {
             throw new RuntimeException(
                     Constant.messages.getString("llm.options.endpoint.error.undefinded"));
         }
-
-        LlmCommunicationService llmCommunicationService = new LlmCommunicationService(options);
 
         if (StringUtils.isEmpty(openapiLocation)) {
             ThreadUtils.invokeAndWaitHandled(
