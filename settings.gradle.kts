@@ -62,6 +62,7 @@ var addOns =
         "jython",
         "kotlin",
         "llm",
+        "llmheader",
         "network",
         "oast",
         "onlineMenu",

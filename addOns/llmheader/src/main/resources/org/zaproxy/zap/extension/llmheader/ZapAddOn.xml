@@ -1,0 +1,19 @@
+<zapaddon>
+    <name>LLM Header Analyzer</name>
+    <version>1</version>
+    <description>Analyzes HTTP headers using an LLM to detect security weaknesses.</description>
+    <author>ZAP Dev Team</author>
+    <url>https://www.zaproxy.org/</url>
+    <changes>
+        <change>First version.</change>
+    </changes>
+    <extensions>
+        <extension>org.zaproxy.zap.extension.llmheader.ExtensionLLMHeaderAnalyzer</extension>
+    </extensions>
+    <ascanrules/>
+    <pscanrules/>
+    <filters/>
+    <files/>
+    <not-before-version>2.15.0</not-before-version>
+    <not-from-version/>
+</zapaddon>
