@@ -125,11 +125,12 @@ public class StealthManager {
             if (is == null) {
                 throw new FileNotFoundException(path);
             }
-            BufferedReader rd =
-                    new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
-            StringBuilder content = new StringBuilder(16384);
-            rd.lines().forEach(line -> content.append(line).append('\n'));
-            return content.toString();
+            try (BufferedReader rd =
+                    new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+                StringBuilder content = new StringBuilder(16384);
+                rd.lines().forEach(line -> content.append(line).append('\n'));
+                return content.toString();
+            }
         }
     }
 
@@ -304,7 +305,22 @@ public class StealthManager {
      * https://source.chromium.org/chromium/chromium/src/+/master:components/embedder_support/user_agent_utils.cc;l=302-419
      */
     List<Map<String, String>> getBrands(String uaVersion) {
-        int seed = Integer.parseInt(uaVersion.split("[.]")[0]); // the major version number
+        int seed = 0; // default in case uaVersion is invalid
+        if (uaVersion != null && !uaVersion.isEmpty()) {
+            try {
+                String[] parts = uaVersion.split("[.]");
+                if (parts.length > 0 && !parts[0].isEmpty()) {
+                    seed = Integer.parseInt(parts[0]); // the major version number
+                }
+            } catch (NumberFormatException e) {
+                LOGGER.warn(
+                        "Failed to parse UA version '{}', using default seed {}",
+                        uaVersion,
+                        seed,
+                        e);
+            }
+        }
+
         int[] order =
                 new int[][] {
                             {0, 1, 2},

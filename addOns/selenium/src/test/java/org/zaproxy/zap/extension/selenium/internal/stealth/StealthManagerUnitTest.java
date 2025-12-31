@@ -156,7 +156,7 @@ public class StealthManagerUnitTest {
         // Then Linux is not identified
         assertThat(userAgentOverrides.get("userAgent").toString(), not(containsString("Linux")));
         assertThat(userAgentOverrides.get("platform").toString(), equalTo("Win64"));
-        // Then Accept-Language is overriden
+        // Then Accept-Language is overridden
         assertThat(userAgentOverrides.get("acceptLanguage").toString(), not(emptyOrNullString()));
         // Then all user agent metadata is provided
         @SuppressWarnings("unchecked")
@@ -181,7 +181,7 @@ public class StealthManagerUnitTest {
         // Then Linux is not identified
         assertThat(userAgentOverrides.get("userAgent").toString(), not(containsString("Linux")));
         assertThat(userAgentOverrides.get("platform").toString(), equalTo("Win64"));
-        // Then Accept-Language is not overriden
+        // Then Accept-Language is not overridden
         assertThat(userAgentOverrides.get("acceptLanguage"), nullValue());
         // Then all user agent metadata is provided
         @SuppressWarnings("unchecked")
@@ -207,7 +207,7 @@ public class StealthManagerUnitTest {
         assertThat(userAgentOverrides.get("userAgent").toString(), not(containsString("Linux")));
         assertThat(userAgentOverrides.get("userAgent").toString(), containsString("Macintosh"));
         assertThat(userAgentOverrides.get("platform").toString(), equalTo("MacIntel"));
-        // Then Accept-Language is not overriden
+        // Then Accept-Language is not overridden
         assertThat(userAgentOverrides.get("acceptLanguage"), nullValue());
         // Then all user agent metadata is provided
         @SuppressWarnings("unchecked")
@@ -233,7 +233,7 @@ public class StealthManagerUnitTest {
         // Then Linux is not identified
         assertThat(userAgentOverrides.get("userAgent").toString(), not(containsString("Linux")));
         assertThat(userAgentOverrides.get("platform").toString(), equalTo("Win64"));
-        // Then Accept-Language is not overriden
+        // Then Accept-Language is not overridden
         assertThat(userAgentOverrides.get("acceptLanguage"), nullValue());
         // Then metadata object is provided
         @SuppressWarnings("unchecked")
@@ -260,7 +260,7 @@ public class StealthManagerUnitTest {
         Map<String, Object> userAgentOverrides = stealthManager.buildUserAgentOverrides(userAgent);
         // Then user agent override is provided
         assertThat(userAgentOverrides.get("userAgent").toString(), not(emptyOrNullString()));
-        // Then Accept-Language is not overriden
+        // Then Accept-Language is not overridden
         assertThat(userAgentOverrides.get("acceptLanguage"), nullValue());
         // Then non-chrome specific user agent metadata is provided
         assertThat(userAgentOverrides.get("platform").toString(), equalTo("MacIntel"));
@@ -285,7 +285,7 @@ public class StealthManagerUnitTest {
         Map<String, Object> userAgentOverrides = stealthManager.buildUserAgentOverrides(userAgent);
         // Then user agent override is provided
         assertThat(userAgentOverrides.get("userAgent").toString(), not(emptyOrNullString()));
-        // Then Accept-Language is not overriden
+        // Then Accept-Language is not overridden
         assertThat(userAgentOverrides.get("acceptLanguage"), nullValue());
         // Then non-chrome specific user agent metadata is provided
         assertThat(
@@ -312,7 +312,7 @@ public class StealthManagerUnitTest {
         Map<String, Object> userAgentOverrides = stealthManager.buildUserAgentOverrides(userAgent);
         // Then user agent override is provided
         assertThat(userAgentOverrides.get("userAgent").toString(), not(emptyOrNullString()));
-        // Then Accept-Language is not overriden
+        // Then Accept-Language is not overridden
         assertThat(userAgentOverrides.get("acceptLanguage"), nullValue());
         // Then non-chrome specific user agent metadata is provided
         assertThat(userAgentOverrides.get("platform").toString(), not(emptyOrNullString()));
@@ -371,7 +371,7 @@ public class StealthManagerUnitTest {
         stealthManager.browserLaunched(utils);
         // Then dev tools session is created
         verify(devTools, times(1)).createSession();
-        // Then user agent is overriden
+        // Then user agent is overridden
         verify(chromiumDriver, times(1)).executeScript("return navigator.userAgent");
         verify(chromiumDriver, times(1))
                 .executeCdpCommand(eq("Network.setUserAgentOverride"), any());

@@ -243,7 +243,7 @@ function stlev_navigator_plugins() {
             return magicArrayObjProxy
         }
 
-    generateMimeTypeArray = () => mimeTypesData => {
+    let generateMimeTypeArray = () => mimeTypesData => {
         return generateMagicArray()(
             mimeTypesData,
             MimeTypeArray.prototype,
@@ -252,7 +252,7 @@ function stlev_navigator_plugins() {
         )
     }
 
-    generatePluginArray = () => pluginsData => {
+    let generatePluginArray = () => pluginsData => {
         return generateMagicArray()(
             pluginsData,
             PluginArray.prototype,
