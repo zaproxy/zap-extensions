@@ -9,4 +9,5 @@
     <mapID target="addon.contextAlertFilter" url="contents/contextAlertFilter.html" />
     <mapID target="addon.globalAlertFilter" url="contents/globalAlertFilter.html" />
     <mapID target="addon.automation" url="contents/automation.html" />
+    <mapID target="addon.llm" url="contents/llm.html" />
 </map>

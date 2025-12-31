@@ -37,6 +37,17 @@ zapAddOn {
                     }
                 }
             }
+            register("org.zaproxy.zap.extension.openapi.llm.ExtensionOpenApiLlm") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.zap.extension.openapi.llm"))
+                }
+                dependencies {
+                    addOns {
+                        register("llm")
+                        register("commonlib")
+                    }
+                }
+            }
         }
         dependencies {
             addOns {
@@ -63,7 +74,12 @@ configurations {
 dependencies {
     zapAddOn("automation")
     zapAddOn("commonlib")
+    zapAddOn("llm")
     zapAddOn("spider")
+
+    compileOnly(libs.llm.langchain4j)
+    compileOnly(libs.llm.langchain4j.azureOpenAi)
+    compileOnly(libs.llm.langchain4j.ollama)
 
     implementation(libs.openapi.swagger.parser) {
         // Provided by commonlib add-on:
@@ -88,4 +104,5 @@ dependencies {
     testImplementation(parent!!.childProjects.get("commonlib")!!.sourceSets.test.get().output)
     testImplementation(libs.log4j.core)
     testImplementation(project(":testutils"))
+    testImplementation(libs.llm.langchain4j)
 }

@@ -19,21 +19,16 @@
  */
 package org.zaproxy.addon.llm;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.OptionsChangedListener;
-import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.OptionsParam;
-import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.llm.services.LlmCommunicationService;
-import org.zaproxy.addon.llm.ui.LlmOpenApiImportDialog;
 import org.zaproxy.addon.llm.ui.LlmOptionsPanel;
-import org.zaproxy.addon.llm.ui.LlmReviewAlertMenu;
-import org.zaproxy.zap.view.ZapMenuItem;
 
 /**
  * An extension for ZAP that enables researchers to leverage Large Language Models (LLMs) to augment
@@ -45,12 +40,10 @@ public class ExtensionLlm extends ExtensionAdaptor {
 
     protected static final String PREFIX = "llm";
 
-    private ZapMenuItem llmOpenapiImportMenu;
-    private LlmOpenApiImportDialog llmOpenapiImportDialog;
-    private LlmReviewAlertMenu llmReviewAlertMenu;
     private LlmOptions options;
     private LlmOptions prevOptions;
-    private Map<String, LlmCommunicationService> commsServices = new HashMap<>();
+    private Map<String, LlmCommunicationService> commsServices =
+            Collections.synchronizedMap(new HashMap<>());
 
     public ExtensionLlm() {
         super(NAME);
@@ -84,44 +77,11 @@ public class ExtensionLlm extends ExtensionAdaptor {
                             commsServices.clear();
                             prevOptions = (LlmOptions) options.clone();
                         }
-                        if (hasView()) {
-                            if (options.isCommsConfigured()) {
-                                getLlmOpenapiImportMenu().setEnabled(true);
-                                getLlmOpenapiImportMenu()
-                                        .setToolTipText(
-                                                Constant.messages.getString(
-                                                        "llm.topmenu.import.importOpenAPI.tooltip"));
-                            } else {
-                                getLlmOpenapiImportMenu().setEnabled(false);
-                                getLlmOpenapiImportMenu().setToolTipText(getCommsIssue());
-                            }
-                        }
                     }
                 });
 
         if (hasView()) {
             extensionHook.getHookView().addOptionPanel(new LlmOptionsPanel());
-            extensionHook.getHookMenu().addImportMenuItem(getLlmOpenapiImportMenu());
-            extensionHook.getHookMenu().addPopupMenuItem(getLlmReviewAlertMenu());
-
-            extensionHook.addSessionListener(
-                    new SessionChangedListener() {
-                        @Override
-                        public void sessionAboutToChange(Session session) {
-                            if (llmOpenapiImportDialog != null) {
-                                llmOpenapiImportDialog.clearFields();
-                            }
-                        }
-
-                        @Override
-                        public void sessionChanged(Session session) {}
-
-                        @Override
-                        public void sessionScopeChanged(Session session) {}
-
-                        @Override
-                        public void sessionModeChanged(Control.Mode mode) {}
-                    });
         }
     }
 
@@ -133,42 +93,14 @@ public class ExtensionLlm extends ExtensionAdaptor {
     @Override
     public void unload() {
         super.unload();
-
-        if (llmOpenapiImportDialog != null) {
-            llmOpenapiImportDialog.dispose();
-        }
-    }
-
-    private ZapMenuItem getLlmOpenapiImportMenu() {
-        if (llmOpenapiImportMenu == null) {
-            llmOpenapiImportMenu = new ZapMenuItem("llm.topmenu.import.importOpenAPI");
-            llmOpenapiImportMenu.setToolTipText(
-                    Constant.messages.getString("llm.topmenu.import.importOpenAPI.tooltip"));
-            llmOpenapiImportMenu.addActionListener(
-                    e -> {
-                        if (llmOpenapiImportDialog == null) {
-                            llmOpenapiImportDialog =
-                                    new LlmOpenApiImportDialog(getView().getMainFrame(), this);
-                        }
-                        llmOpenapiImportDialog.setVisible(true);
-                    });
-        }
-        return llmOpenapiImportMenu;
-    }
-
-    private LlmReviewAlertMenu getLlmReviewAlertMenu() {
-        if (llmReviewAlertMenu == null) {
-            llmReviewAlertMenu = new LlmReviewAlertMenu(this);
-        }
-        return llmReviewAlertMenu;
     }
 
     public boolean isConfigured() {
-        return options.isCommsConfigured();
+        return options != null && options.isCommsConfigured();
     }
 
     public String getCommsIssue() {
-        return this.options.getCommsIssue();
+        return options != null ? this.options.getCommsIssue() : null;
     }
 
     /**
@@ -185,10 +117,11 @@ public class ExtensionLlm extends ExtensionAdaptor {
         this.prevOptions = (LlmOptions) this.options.clone();
     }
 
-    public LlmCommunicationService getCommunicationService(String commsKey) {
+    public LlmCommunicationService getCommunicationService(String commsKey, String outputTabName) {
         if (!isConfigured()) {
             return null;
         }
-        return commsServices.computeIfAbsent(commsKey, k -> new LlmCommunicationService(options));
+        return commsServices.computeIfAbsent(
+                commsKey, k -> new LlmCommunicationService(options, outputTabName));
     }
 }

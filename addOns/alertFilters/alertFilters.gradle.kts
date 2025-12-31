@@ -30,6 +30,17 @@ zapAddOn {
                     }
                 }
             }
+            register("org.zaproxy.zap.extension.alertFilters.llm.ExtensionAlertFiltersLlm") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.zap.extension.alertFilters.llm"))
+                }
+                dependencies {
+                    addOns {
+                        register("llm")
+                        register("commonlib")
+                    }
+                }
+            }
         }
     }
 
@@ -42,7 +53,13 @@ zapAddOn {
 dependencies {
     zapAddOn("automation")
     zapAddOn("commonlib")
+    zapAddOn("llm")
     zapAddOn("pscan")
 
+    compileOnly(libs.llm.langchain4j)
+    compileOnly(libs.llm.langchain4j.azureOpenAi)
+    compileOnly(libs.llm.langchain4j.ollama)
+
     testImplementation(project(":testutils"))
+    testImplementation(libs.llm.langchain4j)
 }
