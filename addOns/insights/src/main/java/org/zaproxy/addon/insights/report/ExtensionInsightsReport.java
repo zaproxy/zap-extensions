@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.insights.report;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -92,7 +93,7 @@ public class ExtensionInsightsReport extends ExtensionAdaptor {
             ExtensionInsights ext = getExt(ExtensionInsights.class);
             // Force the processing so we get the very latest stats
             ext.processStats();
-            reportData.addReportObjects(INSIGHTS_LIST, ext.getInsights());
+            reportData.addReportObjects(INSIGHTS_LIST, new ArrayList<>(ext.getInsights()));
         }
     }
 }
