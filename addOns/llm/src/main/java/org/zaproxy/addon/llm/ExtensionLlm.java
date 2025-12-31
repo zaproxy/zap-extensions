@@ -19,12 +19,17 @@
  */
 package org.zaproxy.addon.llm;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.extension.OptionsChangedListener;
 import org.parosproxy.paros.extension.SessionChangedListener;
+import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.model.Session;
+import org.zaproxy.addon.llm.services.LlmCommunicationService;
 import org.zaproxy.addon.llm.ui.LlmOpenApiImportDialog;
 import org.zaproxy.addon.llm.ui.LlmOptionsPanel;
 import org.zaproxy.addon.llm.ui.LlmReviewAlertMenu;
@@ -44,6 +49,8 @@ public class ExtensionLlm extends ExtensionAdaptor {
     private LlmOpenApiImportDialog llmOpenapiImportDialog;
     private LlmReviewAlertMenu llmReviewAlertMenu;
     private LlmOptions options;
+    private LlmOptions prevOptions;
+    private Map<String, LlmCommunicationService> commsServices = new HashMap<>();
 
     public ExtensionLlm() {
         super(NAME);
@@ -65,10 +72,35 @@ public class ExtensionLlm extends ExtensionAdaptor {
         super.hook(extensionHook);
 
         options = new LlmOptions();
+        prevOptions = new LlmOptions();
         extensionHook.addOptionsParamSet(options);
 
+        extensionHook.addOptionsChangedListener(
+                new OptionsChangedListener() {
+
+                    @Override
+                    public void optionsChanged(OptionsParam optionsParam) {
+                        if (options.hasCommsChanged(prevOptions)) {
+                            commsServices.clear();
+                            prevOptions = (LlmOptions) options.clone();
+                        }
+                        if (hasView()) {
+                            if (options.isCommsConfigured()) {
+                                getLlmOpenapiImportMenu().setEnabled(true);
+                                getLlmOpenapiImportMenu()
+                                        .setToolTipText(
+                                                Constant.messages.getString(
+                                                        "llm.topmenu.import.importOpenAPI.tooltip"));
+                            } else {
+                                getLlmOpenapiImportMenu().setEnabled(false);
+                                getLlmOpenapiImportMenu().setToolTipText(getCommsIssue());
+                            }
+                        }
+                    }
+                });
+
         if (hasView()) {
-            extensionHook.getHookView().addOptionPanel(new LlmOptionsPanel(this::setLlmExtEnabled));
+            extensionHook.getHookView().addOptionPanel(new LlmOptionsPanel());
             extensionHook.getHookMenu().addImportMenuItem(getLlmOpenapiImportMenu());
             extensionHook.getHookMenu().addPopupMenuItem(getLlmReviewAlertMenu());
 
@@ -116,7 +148,7 @@ public class ExtensionLlm extends ExtensionAdaptor {
                     e -> {
                         if (llmOpenapiImportDialog == null) {
                             llmOpenapiImportDialog =
-                                    new LlmOpenApiImportDialog(getView().getMainFrame(), options);
+                                    new LlmOpenApiImportDialog(getView().getMainFrame(), this);
                         }
                         llmOpenapiImportDialog.setVisible(true);
                     });
@@ -126,26 +158,37 @@ public class ExtensionLlm extends ExtensionAdaptor {
 
     private LlmReviewAlertMenu getLlmReviewAlertMenu() {
         if (llmReviewAlertMenu == null) {
-            llmReviewAlertMenu = new LlmReviewAlertMenu(options, this::isConfigured);
+            llmReviewAlertMenu = new LlmReviewAlertMenu(this);
         }
         return llmReviewAlertMenu;
     }
 
-    private boolean isConfigured() {
-        return options.getModelProvider() != LlmProvider.NONE;
+    public boolean isConfigured() {
+        return options.isCommsConfigured();
+    }
+
+    public String getCommsIssue() {
+        return this.options.getCommsIssue();
+    }
+
+    /**
+     * Only for testing purposes.
+     *
+     * @return the options
+     */
+    protected LlmOptions getOptions() {
+        return this.options;
     }
 
     @Override
     public void optionsLoaded() {
-        super.optionsLoaded();
-
-        if (hasView()) {
-            setLlmExtEnabled(isConfigured());
-        }
+        this.prevOptions = (LlmOptions) this.options.clone();
     }
 
-    private void setLlmExtEnabled(boolean enable) {
-        getLlmOpenapiImportMenu().setEnabled(enable);
-        getLlmReviewAlertMenu().setEnabled(enable);
+    public LlmCommunicationService getCommunicationService(String commsKey) {
+        if (!isConfigured()) {
+            return null;
+        }
+        return commsServices.computeIfAbsent(commsKey, k -> new LlmCommunicationService(options));
     }
 }
