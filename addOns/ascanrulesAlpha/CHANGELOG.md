@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [55] - 2025-12-30
+### Added
+- The following scan rule was added, having been demoted from Release:
+  - SQL Injection - SQLite (Time Based)
+
 ## [54] - 2025-12-15
 ### Changed
 - Update minimum ZAP version to 2.17.0.
@@ -428,6 +433,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version, including persistent XSS tests
 
+[55]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v55
 [54]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v54
 [53]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v53
 [52]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v52

@@ -92,7 +92,7 @@ public class Exporter {
                             Constant.messages.getString(
                                     "exim.exporter.error.type.sitestree", options.getType()));
                 } else {
-                    SitesTreeHandler.exportSitesTree(writer, result);
+                    SitesTreeHandler.exportSitesTree(writer, result, options);
                 }
             } else {
                 if (Type.YAML.equals(options.getType())) {

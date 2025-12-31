@@ -9,7 +9,7 @@
 
   <view>
     <name>TOC</name>
-    <label>コンテンツ</label>
+    <label>目次</label>
     <type>org.zaproxy.zap.extension.help.ZapTocView</type>
     <data>toc.xml</data>
   </view>

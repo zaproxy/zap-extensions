@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [79] - 2025-12-30
+### Changed
+- Update dependency.
+
+### Removed
+- The following scan rule was removed, having been demoted to Alpha:
+  - SQL Injection - SQLite (Time Based)
+
 ## [78] - 2025-12-15
 ### Added
 - The following scan rules were added, having been promoted from beta:
@@ -661,6 +669,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[79]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v79
 [78]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v78
 [77]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v77
 [76]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v76

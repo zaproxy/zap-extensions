@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- Use the context when exporting the Sites Tree through the Automation Framework job.
 
 ## [0.16.0] - 2025-12-15
 ### Changed

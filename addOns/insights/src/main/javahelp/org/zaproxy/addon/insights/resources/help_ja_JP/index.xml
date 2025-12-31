@@ -2,9 +2,9 @@
 <!DOCTYPE index PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Index Version 1.0//EN" "http://java.sun.com/products/javahelp/index_2_0.dtd">
 <index version="2.0">
     <!-- index entries are merged (sorted) into core index -->
-	<indexitem text="insights" target="addon.insights"/>
-	<indexitem text="insights - fields" target="addon.insights-fields"/>
-	<indexitem text="insights - full list" target="addon.insights-list"/>
-	<indexitem text="insights - job" target="addon.insights-job"/>
-	<indexitem text="insights - options" target="addon.insights-options"/>
+	<indexitem text="インサイト" target="addon.insights"/>
+	<indexitem text="インサイト - フィールド" target="addon.insights-fields"/>
+	<indexitem text="インサイト - 一覧" target="addon.insights-list"/>
+	<indexitem text="インサイト - ジョブ" target="addon.insights-job"/>
+	<indexitem text="インサイト - オプション" target="addon.insights-options"/>
 </index>
