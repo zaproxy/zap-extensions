@@ -13,9 +13,16 @@
 LDAP Injection may be possible. 攻击者有可能绕过身份验证控制，查看和修改 LDAP 目录中的任意数据。
 跳过最初导致客户端或服务器错误响应状态代码的信息。
 <p>
-最新代码： <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/LdapInjectionScanRule.java">LdapInjectionScanRule.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/LdapInjectionScanRule.java">LdapInjectionScanRule.java</a>
 <br>
-警报 ID: <a href="https://www.zaproxy.org/docs/alerts/40015/">40015</a>.
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40015/">40015</a>.
+
+<h2 id="id-40024">SQL Injection - SQLite (Time Based)</h2>
+This active scan rule attempts to inject SQLite specific commands into parameter values and analyzes the timing of server responses to see if the commands were effectively executed on the server (indicating a successful SQL injection attack).
+<p>
+最新代码： <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/SqlInjectionSqLiteTimingScanRule.java">SqlInjectionSqLiteTimingScanRule.java</a>
+<br>
+警报 ID: <a href="https://www.zaproxy.org/docs/alerts/40024/">40024</a>.
 
 <h2 id="id-40039">Web缓存欺骗</h2>
 此规则尝试识别 Web 缓存欺骗漏洞。它会检查附加到原始 URI 的静态路径是否可用于泄漏敏感的用户信息。
