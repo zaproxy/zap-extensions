@@ -446,13 +446,6 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns
 <br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40022/">40022</a>.
 
-<h2 id="id-40024">SQL Injection - SQLite (Time Based)</h2>
-This active scan rule attempts to inject SQLite specific commands into parameter values and analyzes the timing of server responses to see if the commands were effectively executed on the server (indicating a successful SQL injection attack).
-<p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/SqlInjectionSqLiteTimingScanRule.java">SqlInjectionSqLiteTimingScanRule.java</a>
-<br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40024/">40024</a>.
-
 <h2 id="id-40029">Trace.axd 信息泄露</h2> 
 测试跟踪查看器（trace.axd）是否可用。 尽管该组件方便了开发人员和其他利益相关者，但它可能会泄露大量信息，而安全分析师或恶意用户可能会对这些信息感兴趣。<br><br>
 trace.axd 扫描规则的目标是基于 Microsoft 的技术： IIS、Windows、ASP 和 MSSQL。
