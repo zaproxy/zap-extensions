@@ -57,6 +57,7 @@ public class LlmOptionsPanel extends AbstractParamPanel {
         JLabel modelProviderLabel =
                 new JLabel(Constant.messages.getString("llm.options.label.modelprovider"));
         modelProviderComboBox = new JComboBox<>(LlmProvider.values());
+        modelProviderComboBox.addActionListener(e -> updateEndpointFieldState());
 
         JLabel llmApiKey = new JLabel(Constant.messages.getString("llm.options.label.apikey"));
         apiKeyTextField = new JPasswordField();
@@ -120,6 +121,7 @@ public class LlmOptionsPanel extends AbstractParamPanel {
         llmendpointTextField.setText(Objects.toString(llmOptionsParam.getEndpoint(), ""));
         modelNameTextField.setText(Objects.toString(llmOptionsParam.getModelName(), ""));
         modelProviderComboBox.setSelectedItem(llmOptionsParam.getModelProvider());
+        updateEndpointFieldState();
     }
 
     @Override
@@ -131,12 +133,26 @@ public class LlmOptionsPanel extends AbstractParamPanel {
         param.setModelName(modelNameTextField.getText());
     }
 
+    private void updateEndpointFieldState() {
+        llmendpointTextField.setEnabled(isEndpointSupported());
+    }
+
+    private boolean isEndpointSupported() {
+        return switch ((LlmProvider) modelProviderComboBox.getSelectedItem()) {
+            case NONE, GOOGLE_GEMINI -> false;
+            default -> true;
+        };
+    }
+
     @Override
     public void validateParam(Object object) throws Exception {
-        String endpoint = llmendpointTextField.getText();
-        String apiKey = apiKeyTextField.getText();
+        if (!isEndpointSupported()) {
+            return;
+        }
 
-        if (StringUtils.isNoneEmpty(apiKey)) {
+        String endpoint = llmendpointTextField.getText();
+
+        if (StringUtils.isNoneEmpty(endpoint)) {
 
             java.net.HttpURLConnection connection = null;
 

@@ -58,6 +58,7 @@ kotlin-stdlibJdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", versio
 llm-langchain4j = { module = "dev.langchain4j:langchain4j", version.ref = "langchain4j" }
 llm-langchain4j-azureOpenAi = { module = "dev.langchain4j:langchain4j-azure-open-ai", version.ref = "langchain4j" }
 llm-langchain4j-ollama = { module = "dev.langchain4j:langchain4j-ollama", version.ref = "langchain4j" }
+llm-langchain4j-googleGemini = { module = "dev.langchain4j:langchain4j-google-ai-gemini", version.ref = "langchain4j" }
 log4j-core = { module = "org.apache.logging.log4j:log4j-core", version.ref = "log4j" }
 log4j-slf4j = { module = "org.apache.logging.log4j:log4j-slf4j-impl", version.ref = "log4j" }
 log4j-slf4j2 = { module = "org.apache.logging.log4j:log4j-slf4j2-impl", version.ref = "log4j" }
