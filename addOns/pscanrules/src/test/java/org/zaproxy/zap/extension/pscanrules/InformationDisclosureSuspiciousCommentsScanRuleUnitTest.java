@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.pscanrules;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.is;
@@ -333,9 +334,9 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
     }
 
     @Test
-    void shouldAlertOnSuspiciousValuesInJavascriptSingleLineComment()
+    void shouldNotAlertOnSuspiciousValuesInJavascriptSingleLineComment()
             throws HttpMalformedHeaderException, URIException {
-        shouldAlertOnSuspiciousCommentInJavascriptContent(
+        shouldNotAlertOnSuspiciousCommentInJavascriptContent(
                 """
                 function fooFunction() {
                   var bar = 'Some text // ADMINISTRATOR fake comment';
@@ -344,9 +345,9 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
     }
 
     @Test
-    void shouldAlertOnSuspiciousValuesInJavascriptBlockComment()
+    void shouldNotAlertOnSuspiciousValuesInJavascriptBlockComment()
             throws HttpMalformedHeaderException, URIException {
-        shouldAlertOnSuspiciousCommentInJavascriptContent(
+        shouldNotAlertOnSuspiciousCommentInJavascriptContent(
                 """
                 function fooFunction() {
                   var bar = 'Some text /* ADMINISTRATOR fake comment */';
@@ -354,7 +355,7 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
                 """);
     }
 
-    private void shouldAlertOnSuspiciousCommentInJavascriptContent(String body)
+    private void shouldNotAlertOnSuspiciousCommentInJavascriptContent(String body)
             throws URIException, HttpMalformedHeaderException {
         // Given
         HttpMessage msg = createHttpMessageWithRespBody(body, "application/javascript");
@@ -362,8 +363,7 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
                 () -> InformationDisclosureSuspiciousCommentsScanRule.DEFAULT_PAYLOADS);
         // When
         scanHttpResponseReceive(msg);
-        // Then - Alert since we aren't yet actually parsing the JS
-        assertThat(alertsRaised.size(), is(equalTo(1)));
+        assertThat(alertsRaised, is(empty()));
     }
 
     @Test
@@ -430,6 +430,38 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
         scanHttpResponseReceive(msg);
         // Then
         assertEquals(0, alertsRaised.size());
+    }
+
+    /**
+     * This case is a false positive. It is Jericho which is extracting this comment tag.
+     *
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Guides/Comments
+     * @see
+     *     https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Deprecated_and_obsolete_features#html_comments
+     */
+    @Test
+    void shouldAlertOnSuspiciousCommentInHtmlCommentWithinScriptBlock()
+            throws HttpMalformedHeaderException, URIException {
+
+        // Given
+        String body =
+                """
+                <script><!--
+                const x = "Not FixMe which will be a FP.";
+                --></script>
+                """;
+        HttpMessage msg = createHttpMessageWithRespBody(body, "text/html;charset=ISO-8859-1");
+
+        assertTrue(msg.getResponseHeader().isText());
+        assertFalse(ResourceIdentificationUtils.isJavaScript(msg));
+
+        // When
+        scanHttpResponseReceive(msg);
+
+        // Then
+        assertEquals(1, alertsRaised.size());
+        Alert alert = alertsRaised.get(0);
+        assertThat(alert.getEvidence(), is(equalTo("FixMe")));
     }
 
     @Test

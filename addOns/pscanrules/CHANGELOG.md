@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Update dependency.
+- The Information Disclosure - Suspicious Comments scan rule now attempts to collect comments from JavaScript content using the ANTLR library, which should be more accurate.
 
 ## [70] - 2025-12-15
 ### Added

@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Supplier;
-import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.htmlparser.jericho.Element;
@@ -34,6 +33,9 @@ import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
 import net.htmlparser.jericho.StartTagType;
 import net.htmlparser.jericho.Tag;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.Lexer;
+import org.antlr.v4.runtime.Token;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
@@ -41,6 +43,7 @@ import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.ResourceIdentificationUtils;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+import org.zaproxy.zap.extension.pscanrules.antlr.JavaScriptLexer;
 
 public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassiveScanner
         implements CommonPassiveScanRuleInfo {
@@ -87,29 +90,9 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
     private static final Supplier<Iterable<String>> DEFAULT_PAYLOAD_PROVIDER =
             () -> DEFAULT_PAYLOADS;
 
-    // https://github.com/antlr/grammars-v4/blob/c82c128d980f4ce46fb3536f87b06b45b9619922/javascript/javascript/JavaScriptLexer.g4#L49-L50
-    private static final Pattern JS_MULTILINE_COMMENT =
-            Pattern.compile("/\\*.*?\\*/", Pattern.DOTALL);
-    private static final Pattern JS_SINGLELINE_COMMENT = Pattern.compile("//.*");
-
     private static Supplier<Iterable<String>> payloadProvider = DEFAULT_PAYLOAD_PROVIDER;
 
     private List<Pattern> patterns = null;
-
-    private static List<String> getJsComments(String content) {
-        List<String> results = new ArrayList<>();
-        JS_SINGLELINE_COMMENT
-                .matcher(content)
-                .results()
-                .map(MatchResult::group)
-                .forEach(results::add);
-        JS_MULTILINE_COMMENT
-                .matcher(content)
-                .results()
-                .map(MatchResult::group)
-                .forEach(results::add);
-        return results;
-    }
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
@@ -148,7 +131,7 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
                 Element el;
                 int offset = 0;
                 while ((el = source.getNextElement(offset, HTMLElementName.SCRIPT)) != null) {
-                    checkJsComments(patterns, alertMap, el.toString());
+                    checkJsComments(patterns, alertMap, el.getContent().toString());
                     offset = el.getEnd();
                 }
             }
@@ -182,21 +165,31 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
         if (!isGoodCandidate(target)) {
             return;
         }
-        for (String candidate : getJsComments(target)) {
-            for (Pattern pattern : patterns) {
-                Matcher m = pattern.matcher(candidate);
-                if (m.find()) {
-                    recordAlertSummary(
-                            alertMap,
-                            new AlertSummary(
-                                    pattern.toString(),
-                                    candidate,
-                                    Alert.CONFIDENCE_LOW,
-                                    m.group()));
-                    return;
+
+        JavaScriptLexer lexer = new JavaScriptLexer(CharStreams.fromString(target));
+        Token token;
+
+        do {
+            token = lexer.nextToken();
+            if (token.getChannel() == Lexer.HIDDEN
+                            && token.getType() == JavaScriptLexer.MultiLineComment
+                    || token.getType() == JavaScriptLexer.SingleLineComment) {
+                String candidate = token.getText();
+                for (Pattern pattern : patterns) {
+                    Matcher m = pattern.matcher(candidate);
+                    if (m.find()) {
+                        recordAlertSummary(
+                                alertMap,
+                                new AlertSummary(
+                                        pattern.toString(),
+                                        candidate,
+                                        Alert.CONFIDENCE_LOW,
+                                        m.group()));
+                        return;
+                    }
                 }
             }
-        }
+        } while (token.getType() != Token.EOF);
     }
 
     private static boolean isGoodCandidate(String target) {

@@ -1,3 +1,4 @@
+import net.ltgt.gradle.errorprone.errorprone
 import org.zaproxy.gradle.addon.AddOnStatus
 
 description = "The release status Passive Scanner rules"
@@ -39,9 +40,16 @@ zapAddOn {
     }
 }
 
+plugins {
+    antlr
+}
+
 dependencies {
     implementation(libs.pscanrules.re2j)
     implementation(libs.pscanrules.htmlunit.csp)
+
+    antlr(libs.pscanrules.antlr)
+    implementation(libs.pscanrules.antlr.runtime)
 
     zapAddOn("commonlib")
     zapAddOn("custompayloads")
@@ -56,5 +64,23 @@ spotless {
             "src/**/InfoPrivateAddressDisclosureScanRule.java",
             "src/**/InfoSessionIdUrlScanRule.java",
         ),
+        listOf(
+            "src/**/antlr/JavaScriptLexerBase.java",
+        ),
     )
+}
+
+val jsLexerPkg = "org.zaproxy.zap.extension.pscanrules.antlr"
+val jsLexerDir = jsLexerPkg.replace('.', '/')
+val generateGrammarSource by tasks.existing(AntlrTask::class) {
+    val libDir = "$outputDirectory/$jsLexerDir"
+    arguments = arguments + listOf("-package", jsLexerPkg, "-lib", libDir)
+
+    doFirst {
+        mkdir(libDir)
+    }
+}
+
+tasks.withType<JavaCompile>().configureEach {
+    options.errorprone.excludedPaths.set(".*/(generated-src|$jsLexerDir)/.*")
 }
