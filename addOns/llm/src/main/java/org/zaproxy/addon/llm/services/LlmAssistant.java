@@ -75,4 +75,7 @@ public interface LlmAssistant {
             @V("description") String description,
             @V("evidence") String evidence,
             @V("otherinfo") String otherinfo);
+
+    @UserMessage("{{message}}")
+    String chat(@V("message") String message);
 }

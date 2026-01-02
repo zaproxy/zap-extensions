@@ -244,4 +244,11 @@ public class LlmCommunicationService {
     private static ExtensionAlert getExtAlert() {
         return Control.getSingleton().getExtensionLoader().getExtension(ExtensionAlert.class);
     }
+
+    public String chat(String message) {
+        if (llmAssistant == null) {
+            throw new IllegalStateException("LLM assistant is not initialized");
+        }
+        return llmAssistant.chat(message);
+    }
 }

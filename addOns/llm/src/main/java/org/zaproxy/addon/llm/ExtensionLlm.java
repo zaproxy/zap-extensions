@@ -30,6 +30,9 @@ import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.llm.services.LlmCommunicationService;
+import org.zaproxy.addon.llm.ui.LlmAppendAlertMenu;
+import org.zaproxy.addon.llm.ui.LlmAppendHttpMessageMenu;
+import org.zaproxy.addon.llm.ui.LlmChatPanel;
 import org.zaproxy.addon.llm.ui.LlmOpenApiImportDialog;
 import org.zaproxy.addon.llm.ui.LlmOptionsPanel;
 import org.zaproxy.addon.llm.ui.LlmReviewAlertMenu;
@@ -48,6 +51,11 @@ public class ExtensionLlm extends ExtensionAdaptor {
     private ZapMenuItem llmOpenapiImportMenu;
     private LlmOpenApiImportDialog llmOpenapiImportDialog;
     private LlmReviewAlertMenu llmReviewAlertMenu;
+    private LlmAppendAlertMenu llmAppendAlertMenu;
+    private LlmAppendHttpMessageMenu llmAppendRequestMenu;
+    private LlmAppendHttpMessageMenu llmAppendResponseMenu;
+    private LlmAppendHttpMessageMenu llmAppendRequestResponseMenu;
+    private LlmChatPanel llmChatPanel;
     private LlmOptions options;
     private LlmOptions prevOptions;
     private Map<String, LlmCommunicationService> commsServices = new HashMap<>();
@@ -101,8 +109,13 @@ public class ExtensionLlm extends ExtensionAdaptor {
 
         if (hasView()) {
             extensionHook.getHookView().addOptionPanel(new LlmOptionsPanel());
+            extensionHook.getHookView().addWorkPanel(getLlmChatPanel());
             extensionHook.getHookMenu().addImportMenuItem(getLlmOpenapiImportMenu());
             extensionHook.getHookMenu().addPopupMenuItem(getLlmReviewAlertMenu());
+            extensionHook.getHookMenu().addPopupMenuItem(getLlmAppendAlertMenu());
+            extensionHook.getHookMenu().addPopupMenuItem(getLlmAppendRequestMenu());
+            extensionHook.getHookMenu().addPopupMenuItem(getLlmAppendResponseMenu());
+            extensionHook.getHookMenu().addPopupMenuItem(getLlmAppendRequestResponseMenu());
 
             extensionHook.addSessionListener(
                     new SessionChangedListener() {
@@ -164,11 +177,11 @@ public class ExtensionLlm extends ExtensionAdaptor {
     }
 
     public boolean isConfigured() {
-        return options.isCommsConfigured();
+        return options != null && options.isCommsConfigured();
     }
 
     public String getCommsIssue() {
-        return this.options.getCommsIssue();
+        return options != null ? options.getCommsIssue() : "";
     }
 
     /**
@@ -190,5 +203,59 @@ public class ExtensionLlm extends ExtensionAdaptor {
             return null;
         }
         return commsServices.computeIfAbsent(commsKey, k -> new LlmCommunicationService(options));
+    }
+
+    private LlmChatPanel getLlmChatPanel() {
+        if (llmChatPanel == null) {
+            llmChatPanel = new LlmChatPanel(this);
+        }
+        return llmChatPanel;
+    }
+
+    public LlmChatPanel getLlmChatPanelPublic() {
+        return getLlmChatPanel();
+    }
+
+    private LlmAppendAlertMenu getLlmAppendAlertMenu() {
+        if (llmAppendAlertMenu == null) {
+            llmAppendAlertMenu = new LlmAppendAlertMenu(this);
+        }
+        return llmAppendAlertMenu;
+    }
+
+    private LlmAppendHttpMessageMenu getLlmAppendRequestMenu() {
+        if (llmAppendRequestMenu == null) {
+            llmAppendRequestMenu =
+                    new LlmAppendHttpMessageMenu(
+                            this,
+                            Constant.messages.getString("llm.menu.append.request.title"),
+                            true,
+                            false);
+        }
+        return llmAppendRequestMenu;
+    }
+
+    private LlmAppendHttpMessageMenu getLlmAppendResponseMenu() {
+        if (llmAppendResponseMenu == null) {
+            llmAppendResponseMenu =
+                    new LlmAppendHttpMessageMenu(
+                            this,
+                            Constant.messages.getString("llm.menu.append.response.title"),
+                            false,
+                            true);
+        }
+        return llmAppendResponseMenu;
+    }
+
+    private LlmAppendHttpMessageMenu getLlmAppendRequestResponseMenu() {
+        if (llmAppendRequestResponseMenu == null) {
+            llmAppendRequestResponseMenu =
+                    new LlmAppendHttpMessageMenu(
+                            this,
+                            Constant.messages.getString("llm.menu.append.requestresponse.title"),
+                            true,
+                            true);
+        }
+        return llmAppendRequestResponseMenu;
     }
 }

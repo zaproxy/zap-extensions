@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Allow to perform API sequencing and alert review.
 - Basic stats
 - Support for Google Gemini.
+- An LLM Chat panel.
 
 ### Fixed
 - Error logs to always include stack trace.
