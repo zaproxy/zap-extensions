@@ -17,41 +17,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.llm.ui;
+package org.zaproxy.zap.extension.alertFilters.llm;
 
 import java.awt.Component;
 import java.util.Set;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
-import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.llm.ExtensionLlm;
 import org.zaproxy.zap.extension.alert.PopupMenuItemAlert;
 
 @SuppressWarnings("serial")
 public class LlmReviewAlertMenu extends PopupMenuItemAlert {
 
-    private static final Logger LOGGER = LogManager.getLogger(LlmReviewAlertMenu.class);
-
     private static final long serialVersionUID = 1L;
 
-    private final ExtensionLlm ext;
+    private static ExtensionLlm extLlm;
 
-    public LlmReviewAlertMenu(ExtensionLlm ext) {
-        super(Constant.messages.getString("llm.menu.review.title"), true);
-        this.ext = ext;
+    public LlmReviewAlertMenu() {
+        super(Constant.messages.getString("alertFilters.llm.menu.review.title"), true);
     }
 
     @Override
     public void performAction(Alert alert) {
-        try {
-            new Thread(() -> reviewAlert(alert)).start();
-        } catch (Exception e) {
-            View.getSingleton()
-                    .showWarningDialog(Constant.messages.getString("llm.reviewalert.error"));
-            LOGGER.error(e, e);
-        }
+        new Thread(() -> LlmActionReviewAlert.reviewAlert(alert)).start();
     }
 
     @Override
@@ -64,8 +53,8 @@ public class LlmReviewAlertMenu extends PopupMenuItemAlert {
     @Override
     public boolean isEnableForComponent(Component invoker) {
         if (super.isEnableForComponent(invoker)) {
-            setEnabled(ext.isConfigured());
-            this.setToolTipText(this.isEnabled() ? null : ext.getCommsIssue());
+            setEnabled(getExtLlm().isConfigured());
+            this.setToolTipText(this.isEnabled() ? null : getExtLlm().getCommsIssue());
             return true;
         }
         return false;
@@ -76,7 +65,10 @@ public class LlmReviewAlertMenu extends PopupMenuItemAlert {
         return true;
     }
 
-    private void reviewAlert(Alert alert) {
-        ext.getCommunicationService("ALERT_REVIEW").reviewAlert(alert);
+    private static ExtensionLlm getExtLlm() {
+        if (extLlm == null) {
+            extLlm = Control.getSingleton().getExtensionLoader().getExtension(ExtensionLlm.class);
+        }
+        return extLlm;
     }
 }

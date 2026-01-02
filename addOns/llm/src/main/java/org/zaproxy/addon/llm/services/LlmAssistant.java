@@ -19,10 +19,7 @@
  */
 package org.zaproxy.addon.llm.services;
 
-import dev.langchain4j.service.SystemMessage;
 import dev.langchain4j.service.UserMessage;
-import dev.langchain4j.service.V;
-import org.zaproxy.addon.llm.communication.Confidence;
 import org.zaproxy.addon.llm.communication.HttpRequestList;
 
 public interface LlmAssistant {
@@ -33,46 +30,4 @@ public interface LlmAssistant {
     @UserMessage(
             "As a software architect, and based on your previous answer, generate other potential missing endpoints that are not mentioned in the OpenAPI file. For example, if there is GET /product/1, suggest DELETE /product/1 if it's not mentioned")
     HttpRequestList complete();
-
-    static final String ALERT_REVIEW_SYSTEM_MSG =
-            "You are a web application security expert reviewing potential false positives. Answer only in JSON.";
-    static final String ALERT_REVIEW_GOAL =
-            "Provide a short consistent explanation of the new score.\n";
-    static final String ALERT_REVIEW_PROMPT =
-            """
-            Your task is to review the following finding from ZAP (Zed Attack Proxy).
-            The confidence level is a pull down field which allows you to specify how confident you are in the validity of the finding:
-            - 0 if it's False Positive
-            - 1 if it's Low
-            - 2 if it's Medium
-            - 3 if it's High
-            The alert is described as follows: {{description}}
-
-            As evidence, the HTTP message contains:
-            ---
-            {{evidence}}
-            ---
-            """
-                    + ALERT_REVIEW_GOAL;
-
-    static final String ALERT_REVIEW_OTHERINFO_PROMPT =
-            ALERT_REVIEW_PROMPT
-                    + """
-                    Also, here's some additional information that may be useful for you to reach your conclusion:
-                    ---
-                    {{otherinfo}}
-                    ---
-                    """
-                    + ALERT_REVIEW_GOAL;
-
-    @SystemMessage(ALERT_REVIEW_SYSTEM_MSG)
-    @UserMessage(ALERT_REVIEW_PROMPT)
-    Confidence review(@V("description") String description, @V("evidence") String evidence);
-
-    @SystemMessage(ALERT_REVIEW_SYSTEM_MSG)
-    @UserMessage(ALERT_REVIEW_OTHERINFO_PROMPT)
-    Confidence review(
-            @V("description") String description,
-            @V("evidence") String evidence,
-            @V("otherinfo") String otherinfo);
 }

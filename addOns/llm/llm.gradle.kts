@@ -4,7 +4,15 @@ zapAddOn {
     addOnName.set("LLM Support")
 
     manifest {
-        author.set("Abdessamad TEMMAR")
+        author.set("Abdessamad TEMMAR and the ZAP Core Team")
+
+        dependencies {
+            addOns {
+                register("commonlib") {
+                    version.set(">=1.39.0")
+                }
+            }
+        }
     }
 }
 
@@ -17,6 +25,8 @@ crowdin {
 }
 
 dependencies {
+    zapAddOn("commonlib")
+
     implementation(libs.llm.langchain4j)
     implementation(libs.llm.langchain4j.azureOpenAi)
     implementation(libs.llm.langchain4j.ollama)

@@ -23,7 +23,9 @@ import dev.langchain4j.memory.ChatMemory;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.azure.AzureOpenAiChatModel;
 import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.model.chat.request.ChatRequest;
 import dev.langchain4j.model.chat.request.ResponseFormat;
+import dev.langchain4j.model.chat.response.ChatResponse;
 import dev.langchain4j.model.ollama.OllamaChatModel;
 import dev.langchain4j.service.AiServices;
 import java.io.BufferedReader;
@@ -31,23 +33,16 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.commons.httpclient.util.HttpURLConnection;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.control.Control;
-import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.llm.LlmOptions;
-import org.zaproxy.addon.llm.communication.Confidence;
 import org.zaproxy.addon.llm.communication.HttpRequestList;
 import org.zaproxy.addon.llm.utils.HistoryPersister;
 import org.zaproxy.addon.llm.utils.Requestor;
-import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.utils.Stats;
 
 public class LlmCommunicationService {
@@ -58,14 +53,14 @@ public class LlmCommunicationService {
     private LlmAssistant llmAssistant;
     private LlmResponseHandler listener;
     private LlmOptions options;
-    Requestor requestor;
+    private Requestor requestor;
 
-    static ChatModel model;
-    ChatMemory chatMemory;
+    private static ChatModel model;
+    private ChatMemory chatMemory;
 
-    public LlmCommunicationService(LlmOptions options) {
+    public LlmCommunicationService(LlmOptions options, String outoutTabName) {
         this.options = options;
-        listener = new LlmResponseHandler();
+        listener = new LlmResponseHandler(outoutTabName);
         chatMemory = MessageWindowChatMemory.withMaxMessages(10);
         model = buildModel(options);
 
@@ -169,69 +164,11 @@ public class LlmCommunicationService {
         return endpointCount;
     }
 
-    public void reviewAlert(Alert alert) {
-
-        Alert updatedAlert = alert;
-
-        if (isPreviouslyReviewed(alert)) {
-            LOGGER.debug("Skipping previously reviewed alert : {} ", alert.getName());
-        } else {
-            Confidence llmConfidence;
-            LOGGER.debug("Reviewing alert : {}", alert.getName());
-            LOGGER.debug("Confidence level from ZAP : {}", alert.getConfidence());
-            Stats.incCounter("stats.llm.alertreview.call");
-            if (alert.getOtherInfo().isBlank()) {
-                llmConfidence = llmAssistant.review(alert.getDescription(), alert.getEvidence());
-            } else {
-                llmConfidence =
-                        llmAssistant.review(
-                                alert.getDescription(), alert.getEvidence(), alert.getOtherInfo());
-            }
-
-            if (llmConfidence.getLevel() == alert.getConfidence()) {
-                Stats.incCounter("stats.llm.alertreview.result.same");
-            } else {
-                Stats.incCounter("stats.llm.alertreview.result.changed");
-            }
-
-            LOGGER.debug(
-                    "Confidence level from LLM : {} | Explanation : {}",
-                    llmConfidence.getLevel(),
-                    llmConfidence.getExplanation());
-            updatedAlert.setConfidence(llmConfidence.getLevel());
-            updatedAlert.setOtherInfo(getUpdatedOtherInfo(alert, llmConfidence));
-            Map<String, String> alertTags = new HashMap<>(alert.getTags());
-
-            alertTags.putIfAbsent(AI_REVIEWED_TAG_KEY, "");
-            updatedAlert.setTags(alertTags);
-
-            try {
-                getExtAlert().updateAlert(updatedAlert);
-                getExtAlert().updateAlertInTree(updatedAlert);
-                if (alert.getHistoryRef() != null) {
-                    alert.getHistoryRef().updateAlert(updatedAlert);
-                    if (alert.getHistoryRef().getSiteNode() != null) {
-                        // Needed if the same alert was raised on another href for the same
-                        // SiteNode
-                        alert.getHistoryRef().getSiteNode().updateAlert(updatedAlert);
-                    }
-                }
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage(), e);
-            }
-        }
+    public ChatResponse chat(ChatRequest chatRequest) {
+        return model.chat(chatRequest);
     }
 
-    protected static boolean isPreviouslyReviewed(Alert alert) {
-        return alert.getTags().containsKey(AI_REVIEWED_TAG_KEY);
-    }
-
-    private static String getUpdatedOtherInfo(Alert alert, Confidence llmConfidence) {
-        return Constant.messages.getString(
-                "llm.reviewalert.otherinfo", alert.getOtherInfo(), llmConfidence.getExplanation());
-    }
-
-    private static ExtensionAlert getExtAlert() {
-        return Control.getSingleton().getExtensionLoader().getExtension(ExtensionAlert.class);
+    public String chat(String str) {
+        return model.chat(str);
     }
 }
