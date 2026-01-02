@@ -2671,4 +2671,25 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
     protected Path getResourcePath(String resourcePath) {
         return super.getResourcePath("crosssitescriptingscanrule/" + resourcePath);
     }
+
+    @Test
+    void shouldNotScanImageContentType() throws Exception {
+        // Given
+        String test = "/shouldNotScanImageContentType/";
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        Response response = newFixedLengthResponse("PNG image data");
+                        response.setMimeType("image/png");
+                        return response;
+                    }
+                });
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
+        this.rule.init(msg, this.parent);
+        // When
+        this.rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(0));
+    }
 }

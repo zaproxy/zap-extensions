@@ -178,7 +178,6 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
         super.scan(msg, originalParam);
     }
 
-
     private List<HtmlContext> performAttack(
             HttpMessage msg,
             String param,
