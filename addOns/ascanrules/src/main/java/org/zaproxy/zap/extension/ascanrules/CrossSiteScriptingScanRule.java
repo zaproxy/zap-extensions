@@ -45,6 +45,7 @@ import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
+import org.zaproxy.addon.commonlib.ResourceIdentificationUtils;
 import org.zaproxy.zap.extension.ascanrules.httputils.HtmlContext;
 import org.zaproxy.zap.extension.ascanrules.httputils.HtmlContextAnalyser;
 
@@ -165,9 +166,18 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
 
     @Override
     public void scan(HttpMessage msg, NameValuePair originalParam) {
+        if (this.getAlertThreshold() != Plugin.AlertThreshold.LOW
+                && !msg.getResponseHeader().isHtml()
+                && (ResourceIdentificationUtils.isImage(msg)
+                        || ResourceIdentificationUtils.isCss(msg)
+                        || ResourceIdentificationUtils.isFont(msg)
+                        || ResourceIdentificationUtils.responseContainsControlChars(msg))) {
+            return;
+        }
         currentParamType = originalParam.getType();
         super.scan(msg, originalParam);
     }
+
 
     private List<HtmlContext> performAttack(
             HttpMessage msg,
