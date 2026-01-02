@@ -12,23 +12,43 @@
     <p>
         Select the model provider you want to use for your LLM requests. The current supported model providers are listed below:
     <ul>
-        <li>Ollama
         <li>Azure OpenAI
+        <li>Google Gemini
+        <li>Ollama
     </ul>
     </p>
 </section>
 
+<h3>Azure OpenAI</h3>
+The details you will need can be found in the "Keys and Endpoint" section when examining your resource from the Azure portal.
+<p>
+For the API key you can use either KEY1 or KEY2.
+<p>
+You can also find the endpoint via the "Deployments" page in the Azure AI Foundry portal. An example endpoint is: <code>https://docs-test-001.openai.azure.com/</code>.
+
+<h3>Google Gemini</h3>
+
+The API key can be found in the "API Keys" section of Google AI Studio.
+<p>
+The endpoint base URL is built-in and so does not need to be specified.
+
+<h3>Ollama</h3>
+
+You will typically not need to specify an API key. Local models do not need an API key and if you access cloud models then you can configure the API key in Ollama.
+<p>
+If you have Ollama installed on the same machine as ZAP then by default the endpoint will be <code>http://localhost:11434/</code>.
+
 <section>
     <h2>API Key</h2>
     <p>
-        The API key is required to access your LLM API service. For Azure OpenAI, this value can be found in the "Keys and Endpoint" section when examining your resource from the Azure portal. You can use either KEY1 or KEY2.
+        The API key if required to access your LLM API service.
     </p>
 </section>
 
 <section>
     <h2>Endpoint Base URL</h2>
     <p>
-        The endpoint base URL is the root URL for all API requests to your LLM API service. For Azure OpenAI, this value can be found in the "Keys and Endpoint" section when examining your resource from the Azure portal. You can also find the endpoint via the "Deployments" page in the Azure AI Foundry portal. An example endpoint is: <code>https://docs-test-001.openai.azure.com/</code>.
+        The endpoint base URL is the root URL for all API requests to your LLM API service.
     </p>
 </section>
 
