@@ -63,6 +63,7 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
     }
 
     private static final int MAX_ELEMENT_CHRS_TO_REPORT = 128;
+    private static final int EVIDENCE_CONTEXT_CHARS = 20;
 
     public static final String CUSTOM_PAYLOAD_CATEGORY = "Suspicious-Comments";
     public static final List<String> DEFAULT_PAYLOADS =
@@ -186,16 +187,19 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
             for (Pattern pattern : patterns) {
                 Matcher m = pattern.matcher(candidate);
                 if (m.find()) {
-                    if (candidate.startsWith("//") && m.start() > 100) {
-                        continue;
-                    }
+                    int contextStart = m.start() - EVIDENCE_CONTEXT_CHARS > 0
+                                    ? m.start() - EVIDENCE_CONTEXT_CHARS
+                                    : 0;
+                    int contextEnd = candidate.length() > m.end() + EVIDENCE_CONTEXT_CHARS
+                                    ? m.end() + EVIDENCE_CONTEXT_CHARS
+                                    : candidate.length();
                     recordAlertSummary(
                             alertMap,
                             new AlertSummary(
                                     pattern.toString(),
                                     candidate,
                                     Alert.CONFIDENCE_LOW,
-                                    candidate.substring(0, m.end())));
+                                    candidate.substring(contextStart, contextEnd)));
                     return;
                 }
             }
