@@ -95,6 +95,7 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
     private final BrowserArgumentsTableModel firefoxArgumentsTableModel;
     private final OptionsBrowserExtensionsTableModel browserExtModel;
     private final AtomicBoolean confirmRemoveBrowserArgument;
+    private final JCheckBox stealthCheckBox;
     private final String temporaryBrowserProfile;
     private static String directory;
 
@@ -195,6 +196,8 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
         temporaryBrowserProfile = resourceBundle.getString("selenium.options.combo.profile.temp");
         // Add the temp one to indicate this field is to be used
         firefoxProfileCombo.addItem(temporaryBrowserProfile);
+
+        stealthCheckBox = new JCheckBox(resourceBundle.getString("selenium.options.label.stealth"));
 
         infoBundledFirefoxDriverLabel =
                 createBundledWebDriverLabel(
@@ -415,12 +418,14 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
                 layout.createParallelGroup()
                         .addComponent(driversPanel)
                         .addComponent(binariesPanel)
-                        .addComponent(browserExtPanel));
+                        .addComponent(browserExtPanel)
+                        .addComponent(stealthCheckBox));
         layout.setVerticalGroup(
                 layout.createSequentialGroup()
                         .addComponent(driversPanel)
                         .addComponent(binariesPanel)
-                        .addComponent(browserExtPanel));
+                        .addComponent(browserExtPanel)
+                        .addComponent(stealthCheckBox));
 
         setLayout(new BorderLayout());
         add(
@@ -605,6 +610,8 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
 
         confirmRemoveBrowserArgument.set(seleniumOptions.isConfirmRemoveBrowserArgument());
 
+        stealthCheckBox.setSelected(seleniumOptions.isStealth());
+
         browserExtModel.setExtensions(seleniumOptions.getBrowserExtensions());
         directory = seleniumOptions.getLastDirectory();
     }
@@ -670,6 +677,8 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
         seleniumOptions.setLastDirectory(directory);
 
         seleniumOptions.setConfirmRemoveBrowserArgument(confirmRemoveBrowserArgument.get());
+
+        seleniumOptions.setStealth(stealthCheckBox.isSelected());
     }
 
     @Override

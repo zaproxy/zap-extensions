@@ -61,4 +61,5 @@ dependencies {
     zapAddOn("network")
 
     testImplementation(project(":testutils"))
+    testImplementation("io.github.bonigarcia:webdrivermanager:5.7.0")
 }
