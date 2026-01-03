@@ -24,6 +24,7 @@ import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.azure.AzureOpenAiChatModel;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.request.ResponseFormat;
+import dev.langchain4j.model.googleai.GoogleAiGeminiChatModel;
 import dev.langchain4j.model.ollama.OllamaChatModel;
 import dev.langchain4j.service.AiServices;
 import java.io.BufferedReader;
@@ -97,6 +98,15 @@ public class LlmCommunicationService {
             case OLLAMA ->
                     OllamaChatModel.builder()
                             .baseUrl(options.getEndpoint())
+                            .modelName(options.getModelName())
+                            .temperature(0.3)
+                            .listeners(List.of(listener))
+                            .logRequests(true)
+                            .logResponses(true)
+                            .build();
+            case GOOGLE_GEMINI ->
+                    GoogleAiGeminiChatModel.builder()
+                            .apiKey(options.getApiKey())
                             .modelName(options.getModelName())
                             .temperature(0.3)
                             .listeners(List.of(listener))
@@ -233,5 +243,12 @@ public class LlmCommunicationService {
 
     private static ExtensionAlert getExtAlert() {
         return Control.getSingleton().getExtensionLoader().getExtension(ExtensionAlert.class);
+    }
+
+    public String chat(String message) {
+        if (llmAssistant == null) {
+            throw new IllegalStateException("LLM assistant is not initialized");
+        }
+        return llmAssistant.chat(message);
     }
 }

@@ -7,6 +7,7 @@
 	<tocitem text="ZAP User Guide" tocid="toplevelitem">
 		<tocitem text="Add Ons" tocid="addons">
 			<tocitem text="LLM Support" image="addon.llm.icon" target="addon.llm">
+				<tocitem text="LLM Chat" target="addon.llm.chat"/>
 				<tocitem text="Options" target="addon.llm.options"/>
 			</tocitem>
 		</tocitem>

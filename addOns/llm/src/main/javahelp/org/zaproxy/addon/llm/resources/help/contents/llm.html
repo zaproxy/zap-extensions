@@ -8,20 +8,29 @@ LLM Support
 </HEAD>
 <BODY>
 <H1>LLM Support</H1>
-This add-on integrates LLM with ZAP and includes two main features:
+This add-on integrates LLM with ZAP and includes three main features:
 
-API Sequencing: Import OpenAPI definitions to generate sequences of HTTP calls for subsequent scanning operations.
-Alert Review: Examine an alert and determine the confidence level based on evidence from ZAP, complete with an explanation for the updated confidence level.<p>
-
+<H2>LLM Chat</H2>
+An interactive chat interface that allows you to communicate directly with the configured LLM. You can ask questions, get explanations, and receive assistance in real-time. See the <a href="chat.html">LLM Chat</a> help page for more details.
 
 <H2>API Sequencing</H2>
-A menu item is added to the Import menu:
+Import OpenAPI definitions to generate sequences of HTTP calls for subsequent scanning operations. A menu item is added to the Import menu:
 <ul>
     <li>Import an OpenAPI File</li>
 </ul>
 
 <H2>Alert Review</H2>
-A right click menu item "Review Using LLM/AI" that is enabled for a single alert or an alert tree.
+Examine an alert and determine the confidence level based on evidence from ZAP, complete with an explanation for the updated confidence level. A right click menu item "Review Using LLM/AI" is enabled for a single alert or an alert tree.
+
+<H2>Appending Data to Chat</H2>
+Right-click menu items allow you to quickly append ZAP data to the LLM Chat input area:
+<ul>
+    <li><b>Append Alert to LLM Chat:</b> Available when right-clicking on alerts. Appends formatted alert information including risk, confidence, description, evidence, and URI. Supports appending multiple selected alerts.</li>
+    <li><b>Append Request to LLM Chat:</b> Available when right-clicking on HTTP messages. Appends the HTTP request (headers and body) to the chat.</li>
+    <li><b>Append Response to LLM Chat:</b> Available when right-clicking on HTTP messages. Appends the HTTP response (headers and body) to the chat.</li>
+    <li><b>Append Request & Response to LLM Chat:</b> Available when right-clicking on HTTP messages. Appends both the request and response to the chat.</li>
+</ul>
+When data is appended, the chat panel automatically switches to the chat tab and positions the cursor at the end of the appended text, ready for you to add questions or send the message.
 
 </BODY>
 </HTML>
