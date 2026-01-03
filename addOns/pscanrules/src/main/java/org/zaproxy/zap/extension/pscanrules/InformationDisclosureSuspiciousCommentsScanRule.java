@@ -186,13 +186,16 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
             for (Pattern pattern : patterns) {
                 Matcher m = pattern.matcher(candidate);
                 if (m.find()) {
+                    if (candidate.startsWith("//") && m.start() > 100) {
+                        continue;
+                    }
                     recordAlertSummary(
                             alertMap,
                             new AlertSummary(
                                     pattern.toString(),
                                     candidate,
                                     Alert.CONFIDENCE_LOW,
-                                    m.group()));
+                                    candidate.substring(0, m.end())));
                     return;
                 }
             }

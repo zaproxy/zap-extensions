@@ -132,6 +132,7 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
         String line1 = "myArray = [\"success\",\"FIXME\"]";
         String line2 = "\n" + comment;
         String body = line1 + line2 + "\nLine 3\n";
+        String expectedEvidence = comment.substring(0, comment.indexOf("FIXME") + 5);
         HttpMessage msg = createHttpMessageWithRespBody(body, "text/javascript;charset=ISO-8859-1");
 
         assertTrue(msg.getResponseHeader().isText());
@@ -143,7 +144,7 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
         // Then
         assertEquals(1, alertsRaised.size());
         assertEquals(Alert.CONFIDENCE_LOW, alertsRaised.get(0).getConfidence());
-        assertEquals("FIXME", alertsRaised.get(0).getEvidence());
+        assertEquals(expectedEvidence, alertsRaised.get(0).getEvidence());
         assertEquals(
                 wrapEvidenceOtherInfo("\\bFIXME\\b", comment, 1),
                 alertsRaised.get(0).getOtherInfo());
@@ -188,7 +189,7 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
         // Then
         assertEquals(1, alertsRaised.size());
         assertEquals(Alert.CONFIDENCE_LOW, alertsRaised.get(0).getConfidence());
-        assertEquals("FIXME", alertsRaised.get(0).getEvidence());
+        assertEquals("// FIXME", alertsRaised.get(0).getEvidence());
         // detected 2 times, the first in the element
         assertEquals(
                 wrapEvidenceOtherInfo("\\bFIXME\\b", comment, 1),
@@ -475,5 +476,50 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
                 + " times, the first in likely comment: \""
                 + info
                 + "\", see evidence field for the suspicious comment/snippet.";
+    }
+
+    @Test
+    void shouldNotAlertOnSuspiciousValuesInLongLineJavascriptSingleLineComment()
+            throws HttpMalformedHeaderException, URIException {
+        // Given
+        StringBuilder sb = new StringBuilder();
+        sb.append("var x = \"http://example.com/foo\";");
+        for (int i = 0; i < 200; i++) {
+            sb.append("a");
+        }
+        sb.append(" from ");
+
+        String body = sb.toString();
+        HttpMessage msg = createHttpMessageWithRespBody(body, "application/javascript");
+
+        // When
+        scanHttpResponseReceive(msg);
+
+        // Then
+        assertEquals(0, alertsRaised.size());
+    }
+
+    @Test
+    void shouldContinueScanningAfterIgnoredMinifiedComment()
+            throws HttpMalformedHeaderException, URIException {
+        // Given
+        StringBuilder sb = new StringBuilder();
+        sb.append("var x = \"http://example.com/foo\";");
+        for (int i = 0; i < 200; i++) {
+            sb.append("a");
+        }
+        sb.append(" from ");
+
+        sb.append("\n// FIXME: genuine issue");
+
+        String body = sb.toString();
+        HttpMessage msg = createHttpMessageWithRespBody(body, "application/javascript");
+
+        // When
+        scanHttpResponseReceive(msg);
+
+        // Then
+        assertEquals(1, alertsRaised.size());
+        assertEquals("// FIXME", alertsRaised.get(0).getEvidence());
     }
 }
