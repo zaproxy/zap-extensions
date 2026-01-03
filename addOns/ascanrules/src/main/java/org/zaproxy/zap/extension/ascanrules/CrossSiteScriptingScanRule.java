@@ -42,6 +42,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.PolicyTag;
+import org.zaproxy.addon.commonlib.ResourceIdentificationUtils;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
@@ -267,10 +268,14 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
             return null;
         }
         if (isNullByteSpecialHandling) {
-            /* Special handling for case where Attack Vector is reflected outside of html tag.
-             * Removing Null Byte as parser tries to find the enclosing tag on attack vector (e.g.
+            /*
+             * Special handling for case where Attack Vector is reflected outside of html
+             * tag.
+             * Removing Null Byte as parser tries to find the enclosing tag on attack vector
+             * (e.g.
              * \0<script>alert(1);</script>) starting from first character
-             * and as null byte is not starting any tag and there is no enclosing tag for null byte
+             * and as null byte is not starting any tag and there is no enclosing tag for
+             * null byte
              * so parent context is null.
              */
             attack = attack.replaceFirst(NULL_BYTE_CHARACTER, "");
@@ -328,7 +333,8 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
 
         /** Check response for attacks with specific chrs filtered */
         for (List<Mutation> mList : MUTATIONS) {
-            // check if the attack contains the first of the chrs to be mutated, it doesnt matter
+            // check if the attack contains the first of the chrs to be mutated, it doesnt
+            // matter
             // which one
             if (attack.contains(String.valueOf(mList.get(0).original))) {
                 HtmlContextAnalyser hca = new HtmlContextAnalyser(msg);
@@ -884,9 +890,20 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
 
     @Override
     public void scan(HttpMessage msg, String param, String value) {
-        if (!AlertThreshold.LOW.equals(getAlertThreshold())
-                && HttpRequestHeader.PUT.equals(msg.getRequestHeader().getMethod())) {
-            return;
+        if (!AlertThreshold.LOW.equals(getAlertThreshold())) {
+            if (HttpRequestHeader.PUT.equals(msg.getRequestHeader().getMethod())) {
+                return;
+            }
+            // Skip non-HTML responses (images, CSS, fonts, binary) when Content-Type is set
+            String contentType = msg.getResponseHeader().getHeader(HttpFieldsNames.CONTENT_TYPE);
+            if (contentType != null && !msg.getResponseHeader().isHtml()) {
+                if (ResourceIdentificationUtils.isImage(msg)
+                        || ResourceIdentificationUtils.isCss(msg)
+                        || ResourceIdentificationUtils.isFont(msg)
+                        || ResourceIdentificationUtils.responseContainsControlChars(msg)) {
+                    return;
+                }
+            }
         }
 
         try {
@@ -1003,7 +1020,8 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
     }
 
     private void attackHeader(HttpMessage msg, String param, String value) {
-        // We know the eyecatcher was reflected in the header, lets try some header splitting
+        // We know the eyecatcher was reflected in the header, lets try some header
+        // splitting
         // attacks
         for (String scriptAlert : GENERIC_SCRIPT_ALERT_LIST) {
             String attack = value + HEADER_SPLITTING + scriptAlert;

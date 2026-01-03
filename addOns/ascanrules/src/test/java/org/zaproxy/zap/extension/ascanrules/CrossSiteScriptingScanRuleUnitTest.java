@@ -2671,4 +2671,51 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
     protected Path getResourcePath(String resourcePath) {
         return super.getResourcePath("crosssitescriptingscanrule/" + resourcePath);
     }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"image/png", "text/css", "font/woff", "application/octet-stream"})
+    void shouldNotScanNonHtmlResponsesOnNonLowThreshold(String contentType) throws Exception {
+        // Given
+        String test = "/shouldNotScanNonHtmlResponsesOnNonLowThreshold/";
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        Response response = newFixedLengthResponse("Non-HTML content");
+                        response.setMimeType(contentType);
+                        return response;
+                    }
+                });
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
+        this.rule.init(msg, this.parent);
+        // When
+        this.rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(0));
+    }
+
+    @Test
+    void shouldScanNonHtmlResponsesOnLowThreshold() throws Exception {
+        // Given
+        String test = "/shouldScanNonHtmlResponsesOnLowThreshold/";
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String name = getFirstParamValue(session, "name");
+                        Response response =
+                                newFixedLengthResponse("<html><body>" + name + "</body></html>");
+                        response.setMimeType("image/png");
+                        return response;
+                    }
+                });
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
+        this.rule.setAlertThreshold(AlertThreshold.LOW);
+        this.rule.init(msg, this.parent);
+        // When
+        this.rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(greaterThan(0)));
+    }
 }
+
