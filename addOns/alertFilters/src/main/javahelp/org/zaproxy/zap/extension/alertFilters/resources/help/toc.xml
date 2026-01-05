@@ -10,6 +10,7 @@
 				<tocitem text="Context Alert Filters" target="addon.contextAlertFilter"/>
 				<tocitem text="Global Alert Filters" target="addon.globalAlertFilter"/>
 				<tocitem text="Automation" target="addon.automation"/>
+				<tocitem text="LLM Support" target="addon.llm"/>
 			</tocitem>
 		</tocitem>
 	</tocitem>
