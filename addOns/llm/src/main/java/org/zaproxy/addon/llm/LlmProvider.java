@@ -25,6 +25,7 @@ public enum LlmProvider {
     NONE("llm.provider.none"),
     OLLAMA("llm.provider.ollama"),
     AZURE_OPENAI("llm.provider.azure.openai"),
+    GOOGLE_GEMINI("llm.provider.google.gemini"),
     ;
 
     private final String messageKey;
