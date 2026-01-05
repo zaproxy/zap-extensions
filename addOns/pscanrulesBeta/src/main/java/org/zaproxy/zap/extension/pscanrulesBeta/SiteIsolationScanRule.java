@@ -152,6 +152,7 @@ public class SiteIsolationScanRule extends PluginPassiveScanner
                     .setRisk(Alert.RISK_LOW)
                     .setConfidence(Alert.CONFIDENCE_MEDIUM)
                     .setParam(getHeader())
+                    .setName(getString("name"))
                     .setDescription(getString("desc"))
                     .setSolution(getString("soln"))
                     .setReference(getString("refs"))
