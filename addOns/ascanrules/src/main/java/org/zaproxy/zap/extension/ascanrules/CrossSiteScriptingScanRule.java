@@ -42,6 +42,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.PolicyTag;
+import org.zaproxy.addon.commonlib.ResourceIdentificationUtils;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
@@ -884,9 +885,19 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
 
     @Override
     public void scan(HttpMessage msg, String param, String value) {
-        if (!AlertThreshold.LOW.equals(getAlertThreshold())
-                && HttpRequestHeader.PUT.equals(msg.getRequestHeader().getMethod())) {
-            return;
+        if (!AlertThreshold.LOW.equals(getAlertThreshold())) {
+            if (HttpRequestHeader.PUT.equals(msg.getRequestHeader().getMethod())) {
+                return;
+            }
+            // Skip non-HTML responses (images, CSS, fonts, binary) when not at LOW threshold
+            if (!msg.getResponseHeader().isHtml()) {
+                if (ResourceIdentificationUtils.isImage(msg)
+                        || ResourceIdentificationUtils.isCss(msg)
+                        || ResourceIdentificationUtils.isFont(msg)
+                        || ResourceIdentificationUtils.responseContainsControlChars(msg)) {
+                    return;
+                }
+            }
         }
 
         try {
