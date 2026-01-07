@@ -60,9 +60,9 @@ public class ExtensionLlmUnitTest extends TestUtils {
         ext.getOptions().setEndpoint("http://localhost");
 
         // When
-        LlmCommunicationService comms1 = ext.getCommunicationService("KEY1");
-        LlmCommunicationService comms2 = ext.getCommunicationService("KEY2");
-        LlmCommunicationService comms3 = ext.getCommunicationService("KEY3");
+        LlmCommunicationService comms1 = ext.getCommunicationService("KEY1", null);
+        LlmCommunicationService comms2 = ext.getCommunicationService("KEY2", null);
+        LlmCommunicationService comms3 = ext.getCommunicationService("KEY3", null);
 
         // Then
         assertThat(comms1, is(not(equalTo(comms2))));
@@ -77,9 +77,9 @@ public class ExtensionLlmUnitTest extends TestUtils {
         ext.getOptions().setEndpoint("http://localhost");
 
         // When
-        LlmCommunicationService comms1 = ext.getCommunicationService("KEY1");
-        LlmCommunicationService comms2 = ext.getCommunicationService("KEY1");
-        LlmCommunicationService comms3 = ext.getCommunicationService("KEY1");
+        LlmCommunicationService comms1 = ext.getCommunicationService("KEY1", null);
+        LlmCommunicationService comms2 = ext.getCommunicationService("KEY1", null);
+        LlmCommunicationService comms3 = ext.getCommunicationService("KEY1", null);
 
         // Then
         assertThat(comms1, is(equalTo(comms2)));
@@ -93,7 +93,7 @@ public class ExtensionLlmUnitTest extends TestUtils {
         ext.getOptions().setEndpoint("http://localhost");
 
         // When
-        LlmCommunicationService comms1 = ext.getCommunicationService("KEY1");
+        LlmCommunicationService comms1 = ext.getCommunicationService("KEY1", null);
         ext.getOptions().setEndpoint("http://localhost:1234");
 
         ArgumentCaptor<OptionsChangedListener> argument =
@@ -101,7 +101,7 @@ public class ExtensionLlmUnitTest extends TestUtils {
         verify(hook).addOptionsChangedListener(argument.capture());
         argument.getValue().optionsChanged(null);
 
-        LlmCommunicationService comms2 = ext.getCommunicationService("KEY1");
+        LlmCommunicationService comms2 = ext.getCommunicationService("KEY1", null);
 
         // Then
         assertThat(comms1, is(not(equalTo(comms2))));

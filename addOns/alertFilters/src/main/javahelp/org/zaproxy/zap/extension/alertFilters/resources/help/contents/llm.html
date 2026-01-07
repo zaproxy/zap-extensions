@@ -1,0 +1,23 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>
+Alert Filter LLM Support
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Alert Filter LLM Support</H1>
+This add-on supports LLM integration. It will only be enabled if you have chosen to install the LLM add-on.
+
+<H2>Alert Review</H2>
+The add-on adds a right click menu item "Review using LLM/AI" that is enabled for a single alert or an alert tree.
+<p>
+The alert review will instruct the configured LLM to examine one or more alerts and determine the confidence level based on evidence from ZAP, complete with an explanation for the updated confidence level.
+<p>
+The review will potentially change the confidence level of the alert(s).
+A new <code>LLM Explanation</code> will be added to the "Other Info" explaining why the change was made.
+The tag <code>AI-Reviewed</code> will always be added to any alerts reviewed.
+
+</BODY>
+</HTML>

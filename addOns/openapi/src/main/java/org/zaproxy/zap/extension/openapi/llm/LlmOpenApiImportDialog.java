@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.llm.ui;
+package org.zaproxy.zap.extension.openapi.llm;
 
 import java.awt.Font;
 import java.awt.GridBagLayout;
@@ -40,6 +40,7 @@ import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.AbstractDialog;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.view.View;
@@ -56,7 +57,7 @@ public class LlmOpenApiImportDialog extends AbstractDialog {
 
     private static final long serialVersionUID = -7074394202143400215L;
 
-    private final ExtensionLlm ext;
+    private final ExtensionOpenApiLlm ext;
 
     private JTextField fieldOpenapi;
     private JButton buttonChooseFile;
@@ -64,11 +65,11 @@ public class LlmOpenApiImportDialog extends AbstractDialog {
     private JButton buttonImport;
     private JProgressBar progressBar;
 
-    public LlmOpenApiImportDialog(JFrame parent, ExtensionLlm ext) {
+    public LlmOpenApiImportDialog(JFrame parent, ExtensionOpenApiLlm ext) {
         super(parent, true);
         this.ext = ext;
 
-        super.setTitle(Constant.messages.getString("llm.importDialog.title"));
+        super.setTitle(Constant.messages.getString("openapi.llm.importDialog.title"));
         centreDialog();
         setLayout(new GridBagLayout());
 
@@ -78,7 +79,8 @@ public class LlmOpenApiImportDialog extends AbstractDialog {
         var labelWsdl =
                 new ZapHtmlLabel(
                         "<html>"
-                                + Constant.messages.getString("llm.importDialog.labelOpenAPI")
+                                + Constant.messages.getString(
+                                        "openapi.llm.importDialog.labelOpenAPI")
                                 + "<font color=red>*</font></html>");
         fieldsPanel.add(
                 labelWsdl, LayoutHelper.getGBC(0, fieldsRow, 1, 0.5, new Insets(0, 0, 4, 4)));
@@ -95,7 +97,8 @@ public class LlmOpenApiImportDialog extends AbstractDialog {
         var requiredFieldsLabel =
                 new ZapHtmlLabel(
                         "<html><font color=red>*</font> "
-                                + Constant.messages.getString("llm.importDialog.requiredFields")
+                                + Constant.messages.getString(
+                                        "openapi.llm.importDialog.requiredFields")
                                 + "</html>");
         Font font = requiredFieldsLabel.getFont();
         requiredFieldsLabel.setFont(FontUtils.getFont(font, FontUtils.Size.much_smaller));
@@ -115,19 +118,36 @@ public class LlmOpenApiImportDialog extends AbstractDialog {
         String openapiLocation = getOpenapiField().getText();
         Integer endpointCount = 0;
 
-        LlmCommunicationService llmCommunicationService = ext.getCommunicationService("OPENAPI");
+        ExtensionLlm extLlm = getExtensionLlm();
+        if (!extLlm.isConfigured()) {
+            showWarningDialog(
+                    Constant.messages.getString("openapi.llm.importDialog.error.llmNotConfigured"));
+            return false;
+        }
+
+        LlmCommunicationService llmCommunicationService =
+                extLlm.getCommunicationService(
+                        "OPENAPI",
+                        Constant.messages.getString("openapi.llm.openapi.import.output.tab"));
+
+        if (llmCommunicationService == null) {
+            showWarningDialog(
+                    Constant.messages.getString("openapi.llm.importDialog.error.llmNotConfigured"));
+            return false;
+        }
+
         LlmOptions options = llmCommunicationService.getOptions();
 
         if (StringUtils.isEmpty(options.getApiKey())) {
-            showWarningDialog(Constant.messages.getString("llm.options.apikey.error.undefinded"));
-            throw new RuntimeException(
-                    Constant.messages.getString("llm.options.apikey.error.undefinded"));
+            showWarningDialog(
+                    Constant.messages.getString("openapi.llm.importDialog.error.llmNotConfigured"));
+            return false;
         }
 
         if (StringUtils.isEmpty(options.getEndpoint())) {
-            showWarningDialog(Constant.messages.getString("llm.options.endpoint.error.undefinded"));
-            throw new RuntimeException(
-                    Constant.messages.getString("llm.options.endpoint.error.undefinded"));
+            showWarningDialog(
+                    Constant.messages.getString("openapi.llm.importDialog.error.llmNotConfigured"));
+            return false;
         }
 
         if (StringUtils.isEmpty(openapiLocation)) {
@@ -135,7 +155,7 @@ public class LlmOpenApiImportDialog extends AbstractDialog {
                     () -> {
                         showWarningDialog(
                                 Constant.messages.getString(
-                                        "llm.importDialog.error.missingOpenapi"));
+                                        "openapi.llm.importDialog.error.missingOpenAPI"));
                         getOpenapiField().requestFocusInWindow();
                     });
             return false;
@@ -156,17 +176,23 @@ public class LlmOpenApiImportDialog extends AbstractDialog {
 
         if (endpointCount > 0) {
             showMessageDialog(
-                    Constant.messages.getString("llm.importDialog.import.success", endpointCount));
+                    Constant.messages.getString(
+                            "openapi.llm.importDialog.import.success", endpointCount));
             return true;
         } else {
-            showWarningDialog(Constant.messages.getString("llm.importDialog.import.failure"));
+            showWarningDialog(
+                    Constant.messages.getString("openapi.llm.importDialog.import.failure"));
             return false;
         }
     }
 
+    private ExtensionLlm getExtensionLlm() {
+        return Control.getSingleton().getExtensionLoader().getExtension(ExtensionLlm.class);
+    }
+
     private static void setContextMenu(JTextField field) {
         JMenuItem paste =
-                new JMenuItem(Constant.messages.getString("llm.importDialog.pasteAction"));
+                new JMenuItem(Constant.messages.getString("openapi.llm.importDialog.pasteAction"));
         paste.addActionListener(e -> field.paste());
 
         JPopupMenu jPopupMenu = new JPopupMenu();
@@ -185,7 +211,9 @@ public class LlmOpenApiImportDialog extends AbstractDialog {
     private JButton getChooseFileButton() {
         if (buttonChooseFile == null) {
             buttonChooseFile =
-                    new JButton(Constant.messages.getString("llm.importDialog.chooseFileButton"));
+                    new JButton(
+                            Constant.messages.getString(
+                                    "openapi.llm.importDialog.chooseFileButton"));
             buttonChooseFile.addActionListener(
                     e -> {
                         JFileChooser fileChooser =
@@ -194,7 +222,7 @@ public class LlmOpenApiImportDialog extends AbstractDialog {
                         FileNameExtensionFilter filter =
                                 new FileNameExtensionFilter(
                                         Constant.messages.getString(
-                                                "llm.importDialog.fileFilterDescription"),
+                                                "openapi.llm.importDialog.fileFilterDescription"),
                                         "json",
                                         "yaml");
                         fileChooser.setFileFilter(filter);
@@ -229,7 +257,8 @@ public class LlmOpenApiImportDialog extends AbstractDialog {
     private JButton getImportButton() {
         if (buttonImport == null) {
             buttonImport =
-                    new JButton(Constant.messages.getString("llm.importDialog.importButton"));
+                    new JButton(
+                            Constant.messages.getString("openapi.llm.importDialog.importButton"));
             buttonImport.addActionListener(
                     e -> {
                         showProgressBar(true);
@@ -242,12 +271,16 @@ public class LlmOpenApiImportDialog extends AbstractDialog {
                                                                 dispose();
                                                                 showProgressBar(false);
                                                             });
+                                                } else {
+                                                    showProgressBar(false);
                                                 }
                                             } catch (Exception ex) {
+                                                ThreadUtils.invokeAndWaitHandled(
+                                                        () -> showProgressBar(false));
                                                 throw new RuntimeException(ex);
                                             }
                                         },
-                                        "ZAP-LLM-UI-SWAGGER-Import")
+                                        "ZAP-OpenAPI-LLM-Import")
                                 .start();
                     });
         }
@@ -256,7 +289,8 @@ public class LlmOpenApiImportDialog extends AbstractDialog {
 
     public void showWarningFileNotFound(String fileLocation) {
         showWarningDialog(
-                Constant.messages.getString("llm.importDialog.error.fileNotFound", fileLocation));
+                Constant.messages.getString(
+                        "openapi.llm.importDialog.error.fileNotFound", fileLocation));
     }
 
     public void showWarningDialog(String message) {

@@ -17,41 +17,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.llm.ui;
+package org.zaproxy.zap.extension.alertFilters.llm;
 
 import java.awt.Component;
 import java.util.Set;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.llm.ExtensionLlm;
+import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.alert.PopupMenuItemAlert;
+import org.zaproxy.zap.utils.Stats;
 
 @SuppressWarnings("serial")
 public class LlmReviewAlertMenu extends PopupMenuItemAlert {
 
-    private static final Logger LOGGER = LogManager.getLogger(LlmReviewAlertMenu.class);
-
     private static final long serialVersionUID = 1L;
 
-    private final ExtensionLlm ext;
+    private ExtensionLlm extLlm;
+    private LlmActionReviewAlert actionReviewAlert;
 
-    public LlmReviewAlertMenu(ExtensionLlm ext) {
-        super(Constant.messages.getString("llm.menu.review.title"), true);
-        this.ext = ext;
+    public LlmReviewAlertMenu(ExtensionLlm extLlm, ExtensionAlert extAlert) {
+        super(Constant.messages.getString("alertFilters.llm.menu.review.title"), true);
+        this.extLlm = extLlm;
+        actionReviewAlert = new LlmActionReviewAlert(extLlm, extAlert);
     }
 
     @Override
     public void performAction(Alert alert) {
-        try {
-            new Thread(() -> reviewAlert(alert)).start();
-        } catch (Exception e) {
-            View.getSingleton()
-                    .showWarningDialog(Constant.messages.getString("llm.reviewalert.error"));
-            LOGGER.error(e, e);
-        }
+        new Thread(
+                        () -> {
+                            try {
+                                actionReviewAlert.reviewAlert(alert);
+                            } catch (Exception e) {
+                                Stats.incCounter("stats.llm.alertreview.result.error");
+                                View.getSingleton()
+                                        .showWarningDialog(
+                                                Constant.messages.getString(
+                                                        "alertFilters.llm.reviewalert.error"));
+                            }
+                        },
+                        "ZAP-LLM-Alert-Review")
+                .start();
     }
 
     @Override
@@ -64,8 +71,8 @@ public class LlmReviewAlertMenu extends PopupMenuItemAlert {
     @Override
     public boolean isEnableForComponent(Component invoker) {
         if (super.isEnableForComponent(invoker)) {
-            setEnabled(ext.isConfigured());
-            this.setToolTipText(this.isEnabled() ? null : ext.getCommsIssue());
+            setEnabled(extLlm.isConfigured());
+            this.setToolTipText(this.isEnabled() ? null : extLlm.getCommsIssue());
             return true;
         }
         return false;
@@ -74,9 +81,5 @@ public class LlmReviewAlertMenu extends PopupMenuItemAlert {
     @Override
     public boolean isSafe() {
         return true;
-    }
-
-    private void reviewAlert(Alert alert) {
-        ext.getCommunicationService("ALERT_REVIEW").reviewAlert(alert);
     }
 }

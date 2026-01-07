@@ -30,6 +30,16 @@ zapAddOn {
                     }
                 }
             }
+            register("org.zaproxy.zap.extension.alertFilters.llm.ExtensionAlertFiltersLlm") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.zap.extension.alertFilters.llm"))
+                }
+                dependencies {
+                    addOns {
+                        register("llm")
+                    }
+                }
+            }
         }
     }
 
@@ -42,7 +52,9 @@ zapAddOn {
 dependencies {
     zapAddOn("automation")
     zapAddOn("commonlib")
+    zapAddOn("llm")
     zapAddOn("pscan")
 
     testImplementation(project(":testutils"))
+    testImplementation(libs.llm.langchain4j)
 }

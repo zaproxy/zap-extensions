@@ -37,6 +37,16 @@ zapAddOn {
                     }
                 }
             }
+            register("org.zaproxy.zap.extension.openapi.llm.ExtensionOpenApiLlm") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.zap.extension.openapi.llm"))
+                }
+                dependencies {
+                    addOns {
+                        register("llm")
+                    }
+                }
+            }
         }
         dependencies {
             addOns {
@@ -63,6 +73,7 @@ configurations {
 dependencies {
     zapAddOn("automation")
     zapAddOn("commonlib")
+    zapAddOn("llm")
     zapAddOn("spider")
 
     implementation(libs.openapi.swagger.parser) {
