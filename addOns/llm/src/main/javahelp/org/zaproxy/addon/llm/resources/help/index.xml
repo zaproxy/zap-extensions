@@ -5,5 +5,6 @@
 
 <index version="2.0">
     <indexitem text="llm" target="addon.llm" />
+    <indexitem text="llm - chat" target="addon.llm.chat"/>
     <indexitem text="llm - options" target="addon.llm.options"/>
 </index>

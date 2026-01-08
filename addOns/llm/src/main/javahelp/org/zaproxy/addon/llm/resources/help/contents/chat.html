@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+    <TITLE>LLM Chat</TITLE>
+</HEAD>
+<BODY>
+<H1>LLM Chat</H1>
+
+The LLM Chat panel provides an interactive chat interface that allows you to communicate directly with the configured Large Language Model (LLM). This feature enables you to ask questions, get explanations, and receive assistance from the LLM in real-time.
+
+<H2>Accessing the Chat Panel</H2>
+The LLM Chat panel appears as a tab in the ZAP Workspace window. You can access it by clicking on the "LLM Chat" tab.
+
+<H2>Using the Chat Interface</H2>
+The chat interface consists of:
+<ul>
+    <li><b>Message Area:</b> Displays the conversation history between you and the LLM assistant. Messages are shown with labels indicating who sent them ("You" for your messages, "Assistant" for LLM responses). Located in the top portion of the panel.</li>
+    <li><b>Input Area:</b> A multi-line text area at the bottom of the panel where you type your questions or messages.</li>
+    <li><b>Send Button:</b> Click to send your message to the LLM.</li>
+    <li><b>Resizable Divider:</b> A divider between the message area and input area that can be dragged to adjust the relative sizes of each section.</li>
+</ul>
+
+<H2>Sending Messages</H2>
+To send a message to the LLM:
+<ol>
+    <li>Type your question or message in the input area at the bottom of the panel. The input area supports multi-line text, so you can type longer messages or format your questions.</li>
+    <li>Click the "Send" button or press Ctrl+Enter to send your message. (Note: Pressing Enter alone will create a new line in the multi-line input area.)</li>
+    <li>Your message will appear in the message area, and the LLM will process it in the background.</li>
+    <li>Once the LLM responds, the assistant's reply will appear below your message.</li>
+</ol>
+
+<H2>Requirements</H2>
+Before using the LLM Chat feature, you must have configured the LLM provider via the <a href="options.html">Options</a> panel.<br>
+If the LLM is not configured, you will see an error message when attempting to send a message.
+
+<H2>Error Handling</H2>
+The chat panel handles various error conditions:
+<ul>
+    <li><b>Not Configured:</b> If the LLM is not configured, you will see an error message prompting you to configure it in the Options panel.</li>
+    <li><b>Service Error:</b> If there is an issue initializing the LLM service, an appropriate error message will be displayed.</li>
+    <li><b>Send Error:</b> If there is an error sending a message to the LLM, the error details will be shown in the message area.</li>
+</ul>
+
+<H2>Appending ZAP Data to Chat</H2>
+You can quickly add data from ZAP directly into the chat input area using context menu items:
+
+<H3>Appending Alerts</H3>
+To append alert information to the chat:
+<ul>
+    <li>Right-click on one or more alerts in the Alerts tab or Alert tree.</li>
+    <li>Select "Append Alert to LLM Chat" from the context menu.</li>
+    <li>The alert details (name, risk level, confidence, description, evidence, URI, etc.) will be formatted and added to the input area.</li>
+    <li>If multiple alerts are selected, all of them will be appended in sequence.</li>
+    <li>The chat panel will automatically switch to the chat tab, and the cursor will be positioned at the end of the appended text.</li>
+</ul>
+
+<H3>Appending HTTP Messages</H3>
+To append HTTP request/response data to the chat:
+<ul>
+    <li>Right-click on an HTTP message in the History tab, Request/Response panels, or any other location where HTTP messages are displayed.</li>
+    <li>Select one of the following options from the context menu:
+        <ul>
+            <li><b>Append Request to LLM Chat:</b> Adds only the HTTP request (headers and body).</li>
+            <li><b>Append Response to LLM Chat:</b> Adds only the HTTP response (headers and body).</li>
+            <li><b>Append Request & Response to LLM Chat:</b> Adds both the request and response.</li>
+        </ul>
+    </li>
+    <li>The HTTP message data will be formatted and added to the input area.</li>
+    <li>The chat panel will automatically switch to the chat tab, and the cursor will be positioned at the end of the appended text.</li>
+</ul>
+
+<H2>Tips</H2>
+<ul>
+    <li>The chat maintains conversation context, allowing for follow-up questions and multi-turn conversations.</li>
+    <li>You can ask questions about security testing, web application vulnerabilities, ZAP usage, or any other topic the LLM can help with.</li>
+    <li>The input area is disabled while a message is being processed to prevent sending duplicate messages.</li>
+    <li>Messages automatically scroll to show the latest conversation.</li>
+    <li>Use the resizable divider to adjust the size of the message area and input area based on your preference.</li>
+    <li>You can append multiple alerts or HTTP messages in sequence to build up context for your questions to the LLM.</li>
+    <li>After appending data, you can edit it in the input area before sending, or add additional questions or context.</li>
+</ul>
+
+</BODY>
+</HTML>
+
