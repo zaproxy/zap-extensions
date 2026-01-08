@@ -99,6 +99,25 @@
 	Add-ons can also add new browser extensions. If you delete a browser extension via this screen then it will be added again 
 	by the add-on so either just disable it or uninstall the add-on to remove the browser extension.
 
+	<h3>Stealth Mode</h3>
+
+	Browsers that are controlled by Selenium are identifiable to the target. Sites may disable functionality or deny
+	access when automated. Stealth mode attempts to make the browser look like a user is in control with the goal of
+	giving the automation access to pages protected by bot detection.
+	<p>
+	Browsers may leak automation hints during user interaction. Stealth mode may be more effective with headless browsers.
+	<p>
+	This feature requires advanced access to the browser, i.e. Chrome Dev Tools. Currently only Chrome has the required
+	support. As the Selenium BiDi framework improves, stealth mode will support more browsers.
+	<p>
+	Stealth functionality is based on the following:
+	<ul>
+		<li>https://github.com/berstend/puppeteer-extra/packages/puppeteer-extra-plugin-stealth/</li>
+		<li>https://github.com/ultrafunkamsterdam/undetected-chromedriver</li>
+		<li>https://bot.sannysoft.com/</li>
+		<li>https://arh.antoinevastel.com/bots/areyouheadless</li>
+	</ul>
+
 	<h2>See also</h2>
 	<table>
 		<tr>

@@ -84,6 +84,7 @@ import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.selenium.internal.BrowserArgument;
 import org.zaproxy.zap.extension.selenium.internal.BuiltInSingleWebDriverProvider;
 import org.zaproxy.zap.extension.selenium.internal.FirefoxProfileManager;
+import org.zaproxy.zap.extension.selenium.internal.stealth.StealthManager;
 import org.zaproxy.zap.utils.Stats;
 
 /**
@@ -159,6 +160,8 @@ public class ExtensionSelenium extends ExtensionAdaptor {
 
     private ExtensionNetwork extensionNetwork;
 
+    private StealthManager stealthManager;
+
     public ExtensionSelenium() {
         super(NAME);
 
@@ -222,6 +225,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         addonFilesChangedListener = new AddonFilesChangedListenerImpl();
         webDriverProviders = Collections.synchronizedMap(new HashMap<>());
         providedBrowsers = Collections.synchronizedMap(new HashMap<>());
+        stealthManager = new StealthManager();
 
         addBuiltInProvider(Browser.CHROME);
         addBuiltInProvider(Browser.CHROME_HEADLESS);
@@ -823,6 +827,15 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         SeleniumScriptUtils ssu =
                 new SeleniumScriptUtils(wd, requester, providedBrowserId, proxyAddress, proxyPort);
 
+        // configure stealth
+        try {
+            if (options.isStealth()) {
+                stealthManager.browserLaunched(ssu);
+            }
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+
         // Run any hooks registered by add-ons first
         browserHooks.forEach(
                 script -> {
@@ -1070,6 +1083,9 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                 setCommonOptions(chromeOptions, proxyAddress, proxyPort);
                 chromeOptions.addArguments("--proxy-bypass-list=<-loopback>");
                 chromeOptions.addArguments("--ignore-certificate-errors");
+                if (getSeleniumOptions().isStealth()) {
+                    chromeOptions.addArguments("--disable-blink-features=AutomationControlled");
+                }
                 if (browser == Browser.CHROME_HEADLESS) {
                     chromeOptions.addArguments("--headless=new");
                 }

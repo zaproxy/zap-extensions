@@ -122,6 +122,43 @@ class SeleniumOptionsUnitTest extends TestUtils {
         assertThat(config.getBoolean("selenium.confirmRemoveBrowserArg"), is(equalTo(value)));
     }
 
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void shouldLoadConfigWithStealth(boolean value) {
+        // Given
+        ZapXmlConfiguration config =
+                configWith(
+                        "<selenium>\n" + "  <stealth>\n" + value + "</stealth>\n" + "</selenium>");
+        // When
+        options.load(config);
+        // Then
+        assertThat(options.isStealth(), is(equalTo(value)));
+    }
+
+    @Test
+    void shouldLoadConfigWithInvalidStealth() {
+        // Given
+        ZapXmlConfiguration config =
+                configWith("<selenium>\n" + "  <stealth>not boolean</stealth>\n" + "</selenium>");
+        // When
+        options.load(config);
+        // Then
+        assertThat(options.isStealth(), is(equalTo(false)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void shouldSetAndPersistStealth(boolean value) throws Exception {
+        // Given
+        ZapXmlConfiguration config = new ZapXmlConfiguration();
+        options.load(config);
+        // When
+        options.setStealth(value);
+        // Then
+        assertThat(options.isStealth(), is(equalTo(value)));
+        assertThat(config.getBoolean("selenium.stealth"), is(equalTo(value)));
+    }
+
     static Stream<Arguments> browserNameKey() {
         return Stream.of(
                 arguments("chrome", "selenium.chromeArgs.arg"),
