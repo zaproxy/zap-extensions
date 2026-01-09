@@ -28,7 +28,8 @@ import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.Response.Status;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.extension.openapi.AbstractServerTest;
@@ -41,8 +42,9 @@ import org.zaproxy.zap.testutils.NanoServerHandler;
 /** Test generated values for cookies. */
 class OpenApiGeneratedCookieValuesTest extends AbstractServerTest {
 
-    @Test
-    void shouldUseDefaultValues() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {"3.0.0", "3.1.0"})
+    void shouldUseDefaultValues(String version) throws Exception {
         // Given
         this.nano.addHandler(new PlainResponseServerHandler());
 
@@ -50,7 +52,10 @@ class OpenApiGeneratedCookieValuesTest extends AbstractServerTest {
                 new SwaggerConverter(
                         getHtml(
                                 "openapi_generated_cookie_values.yaml",
-                                new String[][] {{"PORT", String.valueOf(nano.getListeningPort())}}),
+                                new String[][] {
+                                    {"PORT", String.valueOf(nano.getListeningPort())},
+                                    {"VERSION", version}
+                                }),
                         null);
         List<HttpMessage> accessedMessages = new ArrayList<>();
         RequesterListener listener = (message, initiator) -> accessedMessages.add(message);

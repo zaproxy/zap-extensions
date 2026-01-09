@@ -1,0 +1,55 @@
+openapi: 3.1.0
+info:
+  title: OpenAPI 3.1 Type Arrays Test
+  version: 1.0.0
+servers:
+  - url: http://localhost:@@@PORT@@@/
+paths:
+  /parameters/path/{Name}/:
+    get:
+      operationId: parameters/path
+      parameters:
+      - in: path
+        name: Name
+        required: true
+        schema:
+          type: [string, null]
+      responses:
+        default:
+          description: Default response
+          content:
+            text/plain: {}
+  /parameters/query:
+    get:
+      operationId: parameters/query
+      parameters:
+      - in: query
+        name: Name
+        schema:
+          type: [string, null]
+      responses:
+        default:
+          description: Default response
+          content:
+            text/plain: {}
+  /body/json/nullable:
+    post:
+      operationId: body/json/nullable
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              type: object
+              properties:
+                NameA:
+                  type: [string, null]
+                NameB:
+                  type: [integer, null]
+                NameC:
+                  type: [boolean, null]
+      responses:
+        default:
+          description: Default response
+          content:
+            text/plain: {}
+

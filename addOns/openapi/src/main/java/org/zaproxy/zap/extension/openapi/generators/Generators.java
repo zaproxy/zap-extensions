@@ -19,8 +19,10 @@
  */
 package org.zaproxy.zap.extension.openapi.generators;
 
+import io.swagger.v3.oas.models.media.Schema;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import org.zaproxy.addon.commonlib.ValueProvider;
 
 public class Generators {
@@ -73,5 +75,19 @@ public class Generators {
 
     public MapGenerator getMapGenerator() {
         return mapGenerator;
+    }
+
+    public static String getType(Schema<?> schema) {
+        if (schema == null) {
+            return null;
+        }
+        String type = schema.getType();
+        if (type == null) {
+            Set<String> types = schema.getTypes();
+            if (types != null && !types.isEmpty()) {
+                type = types.iterator().next();
+            }
+        }
+        return type;
     }
 }
