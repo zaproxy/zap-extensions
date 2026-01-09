@@ -95,7 +95,7 @@ soap-soaModelCore = "com.predic8:soa-model-core:2.2.0"
 spider-kaitaiStructRuntime = "io.kaitai:kaitai-struct-runtime:0.11"
 spiderAjax-apache-commons-math = "commons-math:commons-math:1.2"
 spiderAjax-findBugsAnnotations = "com.google.code.findbugs:jsr305:3.0.2"
-spiderAjax-guiceAssistedInject = "com.google.inject.extensions:guice-assistedinject:5.0.1"
+spiderAjax-guiceAssistedInject = "com.google.inject.extensions:guice-assistedinject:6.0.0"
 spiderAjax-jcipAnnotations = "net.jcip:jcip-annotations:1.0"
 spiderAjax-julToSlf4j = { module = "org.slf4j:jul-to-slf4j", version.ref = "slf4j" }
 spiderAjax-metricsCore = "com.codahale.metrics:metrics-core:3.0.2"
