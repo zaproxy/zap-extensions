@@ -77,15 +77,11 @@ dependencies {
 
     compileOnly(libs.log4j.core)
 
-    implementation(files("lib/crawljax-core-3.7.1.jar"))
+    implementation(files("lib/crawljax-core-3.8.0.jar"))
     implementation(libs.log4j.slf4j2)
     implementation(libs.spiderAjax.apache.commons.math)
     implementation(libs.spiderAjax.metricsCore)
-    implementation(libs.spiderAjax.findBugsAnnotations)
-    implementation(libs.spiderAjax.guiceAssistedInject) {
-        // Not needed.
-        exclude(group = "org.sonatype.sisu.inject", module = "cglib")
-    }
+    implementation(libs.spiderAjax.guiceAssistedInject)
     implementation(libs.spiderAjax.jcipAnnotations)
     implementation(libs.spiderAjax.nekohtml)
     implementation(libs.spiderAjax.julToSlf4j)
