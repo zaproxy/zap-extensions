@@ -32,6 +32,7 @@ public class ReplacerTableModel extends AbstractTableModel {
 
     private static final String[] columnNames = {
         Constant.messages.getString("replacer.automation.dialog.table.header.desc"),
+        Constant.messages.getString("replacer.automation.dialog.table.header.method"),
         Constant.messages.getString("replacer.automation.dialog.table.header.match"),
         Constant.messages.getString("replacer.automation.dialog.table.header.replacement")
     };
@@ -60,8 +61,10 @@ public class ReplacerTableModel extends AbstractTableModel {
                 case 0:
                     return replacer.getDescription();
                 case 1:
-                    return replacer.getMatchString();
+                    return replacer.getMethod();
                 case 2:
+                    return replacer.getMatchString();
+                case 3:
                     return replacer.getReplacementString();
                 default:
                     return null;

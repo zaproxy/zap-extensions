@@ -232,7 +232,8 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
         for (ReplacerParamRule rule : this.getParams().getRules()) {
             if (rule.isEnabled()
                     && rule.appliesToInitiator(initiator)
-                    && rule.matchesUrl(msg.getRequestHeader().getURI().toString())) {
+                    && rule.matchesUrl(msg.getRequestHeader().getURI().toString())
+                    && rule.matchesMethod(msg.getRequestHeader().getMethod())) {
                 Pattern p = null;
                 if (rule.isMatchRegex()) {
                     p = Pattern.compile(rule.getMatchString());
@@ -328,7 +329,8 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
         for (ReplacerParamRule rule : this.getParams().getRules()) {
             if (rule.isEnabled()
                     && rule.appliesToInitiator(initiator)
-                    && rule.matchesUrl(msg.getRequestHeader().getURI().toString())) {
+                    && rule.matchesUrl(msg.getRequestHeader().getURI().toString())
+                    && rule.matchesMethod(msg.getRequestHeader().getMethod())) {
                 Pattern p = null;
                 if (rule.isMatchRegex()) {
                     p = Pattern.compile(rule.getMatchString());
