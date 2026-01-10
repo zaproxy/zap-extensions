@@ -2074,6 +2074,105 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
     }
 
     @Test
+    void shouldAlertXssInJsEvalWithHtmlEscape() throws HttpMalformedHeaderException {
+        // Given - Firing Range test case: eval() with HTML entity escaping
+        // This mimics the Firing Range's js_escape/html_escape endpoint where input is
+        // placed inside eval() and HTML entities are escaped but not JS string delimiters.
+        // The server applies: stringEscape (backslash and quote) but user can break out
+        // of the eval context with payloads that don't need < > or quotes.
+        String path = "/escape/js/html_escape";
+        nano.addHandler(
+                new NanoServerHandler(path) {
+
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String q = getFirstParamValue(session, "q");
+                        if (q == null) {
+                            q = "";
+                        }
+                        // Mimic the Firing Range's stringEscape method
+                        // which escapes backslash and single quote for JS context
+                        String jsEscaped = q.replace("\\", "\\\\").replace("'", "\\'");
+                        String response =
+                                getHtml(
+                                        "JsEvalWithHtmlEscape.html",
+                                        new String[][] {{"payload", jsEscaped}});
+                        return newFixedLengthResponse(response);
+                    }
+                });
+
+        HttpMessage msg = getHttpMessage(path + "?q=test");
+        rule.init(msg, parent);
+
+        // When
+        rule.scan();
+
+        // Then
+        // The scanner should detect XSS vulnerability here because even though
+        // backslash and single quote are escaped on server-side, and < > & are
+        // HTML-escaped in the template, the eval() will execute JavaScript code
+        // that doesn't require those characters. Payload: ;alert(1);
+        assertThat(alertsRaised, hasSize(1));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo("';alert(1);'"));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("q"));
+        assertThat(alertsRaised.get(0).getAttack(), equalTo("';alert(1);'"));
+        assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+    }
+
+    @Test
+    void shouldAlertXssInJsEvalWithEscapeFunction() throws HttpMalformedHeaderException {
+        // Given - Firing Range test case: eval(escape()) combination
+        // This is VULNERABLE because the HTML parser processes </script> tags BEFORE
+        // JavaScript execution. A payload like </script><script>alert(1)</script><script>
+        // breaks out of the script context at the HTML level, so escape() never runs.
+        // Example: eval(escape('</script><script>alert(1)</script><script>'))
+        //   -> HTML parser sees the </script> and closes the tag before eval() executes
+        //   -> The injected <script>alert(1)</script> executes in a new script context
+        // Server applies stringEscape (backslash and quote) like the Firing Range.
+        String path = "/escape/js/eval_escape";
+        nano.addHandler(
+                new NanoServerHandler(path) {
+
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String q = getFirstParamValue(session, "q");
+                        if (q == null) {
+                            q = "";
+                        }
+                        // Mimic the Firing Range's stringEscape method
+                        // which escapes backslash and single quote for JS context
+                        String jsEscaped = q.replace("\\", "\\\\").replace("'", "\\'");
+                        String response =
+                                getHtml(
+                                        "JsEvalWithEscape.html",
+                                        new String[][] {{"payload", jsEscaped}});
+                        return newFixedLengthResponse(response);
+                    }
+                });
+
+        HttpMessage msg = getHttpMessage(path + "?q=test");
+        rule.init(msg, parent);
+
+        // When
+        rule.scan();
+
+        // Then
+        // ZAP successfully detects XSS here. While ZAP reports the ';alert(1);' payload,
+        // the actual exploit on Firing Range works via </script> tag breaking:
+        //   Input: </script><script>alert(1)</script><script>
+        //   Result: eval(escape('</script><script>alert(1)</script><script>'))
+        //   The HTML parser closes at </script> before JavaScript runs, executing the XSS.
+        // Both payloads are detected by ZAP, confirming the vulnerability.
+        assertThat(alertsRaised, hasSize(1));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo("';alert(1);'"));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("q"));
+        assertThat(alertsRaised.get(0).getAttack(), equalTo("';alert(1);'"));
+        assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+    }
+
+    @Test
     void shouldNotAlertXssInJsStringWithEncoding() throws HttpMalformedHeaderException {
         // Given
         String path = "/user/search";

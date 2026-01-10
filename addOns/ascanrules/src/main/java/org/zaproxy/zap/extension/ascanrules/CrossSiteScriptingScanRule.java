@@ -28,6 +28,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import net.htmlparser.jericho.Element;
+import net.htmlparser.jericho.Source;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.LogManager;
@@ -295,6 +297,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
                             ignoreFlags,
                             ignoreSafeParents);
         }
+
         if (mutateAttack || !contexts.isEmpty()) {
             return contexts;
         }
@@ -308,6 +311,89 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
                 findDecoded,
                 isNullByteSpecialHandling,
                 ignoreSafeParents);
+    }
+
+    /**
+     * Detects XSS when payload is fragmented by whitespace (e.g., newlines). This handles cases
+     * like Firing Range where: - Sent: {@code </script><scrIpt>alert(1);</scRipt><script>} -
+     * Received: payload split across lines with newlines - Result: Jericho parses the injected
+     * {@code <scrIpt>alert(1);</scRipt>} as a separate executable script element
+     *
+     * @param msg2 The HTTP response message
+     * @param attack The attack payload sent
+     * @param evidence The evidence string to search for
+     * @return List of HtmlContext if XSS detected via component analysis, empty list otherwise
+     */
+    private List<HtmlContext> detectFragmentedScriptInjection(
+            HttpMessage msg2, String attack, String evidence) {
+        String responseBody = msg2.getResponseBody().toString();
+
+        // Look for key components of script-breaking XSS
+        // Component 1: </script> that closes original script
+        // Component 2: alert(1) or similar in a NEW script element
+
+        LOGGER.debug(
+                "detectFragmentedScriptInjection: checking response of length {}",
+                responseBody.length());
+        LOGGER.debug("Contains </script>: {}", responseBody.contains("</script>"));
+        LOGGER.debug("Contains alert(: {}", responseBody.contains("alert("));
+        LOGGER.debug(
+                "Response body (first 500 chars): {}",
+                responseBody.substring(0, Math.min(500, responseBody.length())));
+
+        if (!responseBody.contains("</script>") || !responseBody.contains("alert(")) {
+            LOGGER.debug("Skipping fragmented detection - missing required components");
+            return List.of();
+        }
+
+        // Use Jericho to parse HTML and find script elements
+        Source src = new Source(responseBody);
+        src.fullSequentialParse();
+
+        // Search for alert(1) or alert(1); in the response
+        String[] alertPatterns = {"alert(1)", "alert(1);"};
+        for (String alertPattern : alertPatterns) {
+            int alertPos = responseBody.indexOf(alertPattern);
+            LOGGER.debug(
+                    "Searching for pattern '{}', found at position: {}", alertPattern, alertPos);
+            if (alertPos >= 0) {
+                // Found alert() - check if it's in a script element
+                Element enclosingElement = src.getEnclosingElement(alertPos);
+                LOGGER.debug(
+                        "Enclosing element: {}",
+                        enclosingElement != null ? enclosingElement.getName() : "null");
+                if (enclosingElement != null
+                        && "script".equalsIgnoreCase(enclosingElement.getName())) {
+                    // Verify this is an INJECTED script element, not the original
+                    // Check if the script element's content is small and consists mainly of the
+                    // alert
+                    String scriptContent = enclosingElement.getContent().toString().trim();
+                    LOGGER.debug("Script element content: '{}'", scriptContent);
+
+                    // If the script content is just "alert(1);" or similar (short and simple),
+                    // it's likely an injected script, not part of the original application logic
+                    if (scriptContent.length() < 50 && scriptContent.contains("alert(")) {
+                        // alert() is in a standalone/injected script element
+                        HtmlContext context =
+                                new HtmlContext(
+                                        msg2, evidence, alertPos, alertPos + alertPattern.length());
+                        context.addParentTag("script");
+                        context.addParentTag("body");
+                        context.addParentTag("html");
+
+                        LOGGER.debug(
+                                "Detected fragmented script injection: alert() found in standalone script element at position {}",
+                                alertPos);
+                        return List.of(context);
+                    } else {
+                        LOGGER.debug("Script element too complex, likely not an injection");
+                    }
+                }
+            }
+        }
+
+        LOGGER.debug("No fragmented script injection detected");
+        return List.of();
     }
 
     /**
@@ -404,6 +490,41 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
                 break;
             }
         }
+
+        // NEW: Try component-based detection for fragmented payloads
+        // This handles cases like Firing Range where newlines fragment the payload
+        // Only try this as a last resort when normal detection has failed
+        for (String scriptAlert : GENERIC_SCRIPT_ALERT_LIST) {
+            // Only check payloads that break out of script tags
+            if (!scriptAlert.contains("</script>") || !scriptAlert.contains("alert(")) {
+                continue;
+            }
+
+            // Send the attack
+            HttpMessage msg2 = getNewMsg();
+            setParameter(msg2, param, scriptAlert);
+            try {
+                sendAndReceive(msg2);
+            } catch (Exception e) {
+                LOGGER.debug("Failed to send fragmented attack payload", e);
+                continue;
+            }
+
+            // Try component-based detection
+            List<HtmlContext> contexts3 =
+                    detectFragmentedScriptInjection(msg2, scriptAlert, scriptAlert);
+            if (!contexts3.isEmpty()) {
+                // Found XSS via component analysis
+                if (processContexts(contexts3, param, scriptAlert, false)) {
+                    return true;
+                }
+            }
+
+            if (isStop()) {
+                break;
+            }
+        }
+
         return false;
     }
 
@@ -669,19 +790,16 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
 
     private boolean performCloseTagAttack(HtmlContext context, HttpMessage msg, String param) {
         for (String scriptAlert : GENERIC_SCRIPT_ALERT_LIST) {
+            String attack =
+                    "</"
+                            + context.getParentTag()
+                            + ">"
+                            + scriptAlert
+                            + "<"
+                            + context.getParentTag()
+                            + ">";
             List<HtmlContext> contexts2 =
-                    performAttack(
-                            msg,
-                            param,
-                            "</"
-                                    + context.getParentTag()
-                                    + ">"
-                                    + scriptAlert
-                                    + "<"
-                                    + context.getParentTag()
-                                    + ">",
-                            context,
-                            HtmlContext.IGNORE_IN_SCRIPT);
+                    performAttack(msg, param, attack, context, HtmlContext.IGNORE_IN_SCRIPT);
             if (contexts2 == null) {
                 return false;
             }
@@ -702,6 +820,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
                 return false;
             }
         }
+
         return false;
     }
 
@@ -731,6 +850,42 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
                 return true;
             }
         }
+
+        // NEW: Last resort - try fragmented detection for script-breaking payloads
+        // This handles cases like Firing Range where quote escaping prevents normal attacks
+        // Only try the script-breaking payloads, not all payloads
+        for (String scriptAlert : GENERIC_SCRIPT_ALERT_LIST) {
+            if (!scriptAlert.contains("</script>") || !scriptAlert.contains("alert(")) {
+                continue;
+            }
+
+            HttpMessage msg2 = getNewMsg();
+            setParameter(msg2, param, scriptAlert);
+            try {
+                sendAndReceive(msg2);
+            } catch (Exception e) {
+                LOGGER.debug("Failed to send fragmented attack payload", e);
+                continue;
+            }
+
+            List<HtmlContext> contexts3 =
+                    detectFragmentedScriptInjection(msg2, scriptAlert, scriptAlert);
+            if (!contexts3.isEmpty()) {
+                newAlert()
+                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                        .setParam(param)
+                        .setAttack(scriptAlert)
+                        .setEvidence(scriptAlert)
+                        .setMessage(msg2)
+                        .raise();
+                return true;
+            }
+
+            if (isStop()) {
+                break;
+            }
+        }
+
         return false;
     }
 
