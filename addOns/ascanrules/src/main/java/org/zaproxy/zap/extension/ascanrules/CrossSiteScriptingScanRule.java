@@ -115,8 +115,6 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
 
     private static final String HEADER_SPLITTING = "\n\r\n\r";
 
-
-
     private static final Vulnerability VULN = Vulnerabilities.getDefault().get("wasc_8");
     private static final Logger LOGGER = LogManager.getLogger(CrossSiteScriptingScanRule.class);
     private int currentParamType;
@@ -145,6 +143,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
                             new Mutation(')', '`'),
                             new Mutation('<', FULL_WIDTH_LESS_THAN_CHAR, true),
                             new Mutation('>', FULL_WIDTH_GREATER_THAN_CHAR, true)));
+
     @Override
     public int getId() {
         return 40012;
@@ -331,7 +330,8 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
      *
      * <p><b>How it works:</b> HTML parsers process {@code </script>} tags before JavaScript
      * execution. Even if a payload is inside {@code eval(escape('...'))}, the HTML parser closes
-     * the script tag when it encounters {@code </script>}, creating a new executable script context.
+     * the script tag when it encounters {@code </script>}, creating a new executable script
+     * context.
      *
      * <p><b>Detection methods (in order):</b>
      *
@@ -400,7 +400,8 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
             LOGGER.debug("Detected script-breaking XSS pattern at position {}", matchStart);
             LOGGER.debug(
                     "Matched pattern: '{}'",
-                    responseBody.substring(matchStart, Math.min(matchEnd + 20, responseBody.length())));
+                    responseBody.substring(
+                            matchStart, Math.min(matchEnd + 20, responseBody.length())));
 
             // Create context for the script-breaking XSS
             HtmlContext context = new HtmlContext(msg2, evidence, matchStart, matchEnd);
@@ -482,9 +483,9 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
      *   <li>Only flag as vulnerable if a NEW standalone script element contains ONLY our payload
      * </ol>
      *
-     * <p>This conservative approach minimizes false positives by only detecting cases where: (1) the
-     * response structure changed, (2) a new script element appeared, and (3) it contains only our
-     * attack payload (not legitimate filtered/escaped content).
+     * <p>This conservative approach minimizes false positives by only detecting cases where: (1)
+     * the response structure changed, (2) a new script element appeared, and (3) it contains only
+     * our attack payload (not legitimate filtered/escaped content).
      *
      * @param eyecatcherMsg The baseline eyecatcher HTTP message
      * @param payloadMsg The HTTP message with the XSS payload

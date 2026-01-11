@@ -2119,11 +2119,16 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
         assertThat("Parameter should be 'q'", alert.getParam(), equalTo("q"));
         assertThat("Attack should match payload", alert.getAttack(), equalTo("';alert(1);'"));
         assertThat("Risk should be HIGH", alert.getRisk(), equalTo(Alert.RISK_HIGH));
-        assertThat("Confidence should be MEDIUM", alert.getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+        assertThat(
+                "Confidence should be MEDIUM",
+                alert.getConfidence(),
+                equalTo(Alert.CONFIDENCE_MEDIUM));
 
         // Verify the alert was raised for the correct URI
-        assertThat("Alert URI should contain test path",
-                alert.getUri(), containsString("/escape/js/html_escape"));
+        assertThat(
+                "Alert URI should contain test path",
+                alert.getUri(),
+                containsString("/escape/js/html_escape"));
 
         // Log for debugging
         System.out.println("[*] shouldAlertXssInJsEvalWithHtmlEscape: Alert raised successfully");
@@ -2183,14 +2188,20 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
         assertThat("Parameter should be 'q'", alert.getParam(), equalTo("q"));
         assertThat("Attack should match payload", alert.getAttack(), equalTo("';alert(1);'"));
         assertThat("Risk should be HIGH", alert.getRisk(), equalTo(Alert.RISK_HIGH));
-        assertThat("Confidence should be MEDIUM", alert.getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+        assertThat(
+                "Confidence should be MEDIUM",
+                alert.getConfidence(),
+                equalTo(Alert.CONFIDENCE_MEDIUM));
 
         // Verify the alert was raised for the correct URI
-        assertThat("Alert URI should contain test path",
-                alert.getUri(), containsString("/escape/js/eval_escape"));
+        assertThat(
+                "Alert URI should contain test path",
+                alert.getUri(),
+                containsString("/escape/js/eval_escape"));
 
         // Log for debugging
-        System.out.println("[*] shouldAlertXssInJsEvalWithEscapeFunction: Alert raised successfully");
+        System.out.println(
+                "[*] shouldAlertXssInJsEvalWithEscapeFunction: Alert raised successfully");
         System.out.println("  - Attack: " + alert.getAttack());
         System.out.println("  - Evidence: " + alert.getEvidence());
         System.out.println("  - URI: " + alert.getUri());
@@ -2806,19 +2817,21 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
                         }
 
                         // Simulate HTML escaping (but still vulnerable because it's in eval())
-                        String escaped = q.replace("<", "&lt;")
-                                          .replace("&", "&amp;")
-                                          .replace(">", "&gt;");
+                        String escaped =
+                                q.replace("<", "&lt;").replace("&", "&amp;").replace(">", "&gt;");
 
                         // The actual Firing Range response format
-                        String response = "<html>\n"
-                                + "  <body>\n"
-                                + "    <script>eval('" + escaped + "'.replace(/</g, '&lt;')\n"
-                                + "                              .replace(/&/g, '&amp;')\n"
-                                + "                              .replace(/>/g, '&gt;'));\n"
-                                + "    </script>\n"
-                                + "  </body>\n"
-                                + "</html>";
+                        String response =
+                                "<html>\n"
+                                        + "  <body>\n"
+                                        + "    <script>eval('"
+                                        + escaped
+                                        + "'.replace(/</g, '&lt;')\n"
+                                        + "                              .replace(/&/g, '&amp;')\n"
+                                        + "                              .replace(/>/g, '&gt;'));\n"
+                                        + "    </script>\n"
+                                        + "  </body>\n"
+                                        + "</html>";
 
                         return newFixedLengthResponse(response);
                     }
@@ -2830,17 +2843,25 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
 
         // The scanner should detect that </script><scrIpt>alert(1);</scRipt><script>
         // payload works even though HTML escaping is applied
-        assertThat("Should raise at least 1 alert for Firing Range HTML escape scenario",
-                alertsRaised.size(), greaterThan(0));
+        assertThat(
+                "Should raise at least 1 alert for Firing Range HTML escape scenario",
+                alertsRaised.size(),
+                greaterThan(0));
 
         // Verify alert details
         Alert alert = alertsRaised.get(0);
         assertThat("Parameter should be 'q'", alert.getParam(), equalTo("q"));
         assertThat("Risk should be HIGH", alert.getRisk(), equalTo(Alert.RISK_HIGH));
-        assertThat("Confidence should be MEDIUM", alert.getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+        assertThat(
+                "Confidence should be MEDIUM",
+                alert.getConfidence(),
+                equalTo(Alert.CONFIDENCE_MEDIUM));
 
         // Log for debugging - show all alerts raised
-        System.out.println("[*] shouldDetectXssInFiringRangeHtmlEscapeScenario: " + alertsRaised.size() + " alert(s) raised");
+        System.out.println(
+                "[*] shouldDetectXssInFiringRangeHtmlEscapeScenario: "
+                        + alertsRaised.size()
+                        + " alert(s) raised");
         for (int i = 0; i < alertsRaised.size(); i++) {
             Alert a = alertsRaised.get(i);
             System.out.println("  [" + (i + 1) + "] Attack: " + a.getAttack());
@@ -2867,13 +2888,16 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
 
                         // The actual Firing Range response format
                         // JavaScript escape() doesn't escape < and > tags
-                        String response = "<html>\n"
-                                + "  <body>\n"
-                                + "    <script>\n"
-                                + "      eval(escape('" + q + "'));\n"
-                                + "    </script>\n"
-                                + "  </body>\n"
-                                + "</html>";
+                        String response =
+                                "<html>\n"
+                                        + "  <body>\n"
+                                        + "    <script>\n"
+                                        + "      eval(escape('"
+                                        + q
+                                        + "'));\n"
+                                        + "    </script>\n"
+                                        + "  </body>\n"
+                                        + "</html>";
 
                         return newFixedLengthResponse(response);
                     }
@@ -2885,17 +2909,25 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
 
         // The scanner should detect that </script><scrIpt>alert(1);</scRipt><script>
         // payload works because escape() doesn't escape < and >
-        assertThat("Should raise at least 1 alert for Firing Range JS escape scenario",
-                alertsRaised.size(), greaterThan(0));
+        assertThat(
+                "Should raise at least 1 alert for Firing Range JS escape scenario",
+                alertsRaised.size(),
+                greaterThan(0));
 
         // Verify alert details
         Alert alert = alertsRaised.get(0);
         assertThat("Parameter should be 'q'", alert.getParam(), equalTo("q"));
         assertThat("Risk should be HIGH", alert.getRisk(), equalTo(Alert.RISK_HIGH));
-        assertThat("Confidence should be MEDIUM", alert.getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+        assertThat(
+                "Confidence should be MEDIUM",
+                alert.getConfidence(),
+                equalTo(Alert.CONFIDENCE_MEDIUM));
 
         // Log for debugging - show all alerts raised
-        System.out.println("[*] shouldDetectXssInFiringRangeJsEscapeScenario: " + alertsRaised.size() + " alert(s) raised");
+        System.out.println(
+                "[*] shouldDetectXssInFiringRangeJsEscapeScenario: "
+                        + alertsRaised.size()
+                        + " alert(s) raised");
         for (int i = 0; i < alertsRaised.size(); i++) {
             Alert a = alertsRaised.get(i);
             System.out.println("  [" + (i + 1) + "] Attack: " + a.getAttack());
