@@ -28,9 +28,13 @@ import net.htmlparser.jericho.Attribute;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.Source;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpMessage;
 
 public class HtmlContextAnalyser {
+
+    private static final Logger LOGGER = LogManager.getLogger(HtmlContextAnalyser.class);
 
     private char[] quotes = {'\'', '"'};
 
@@ -305,8 +309,25 @@ public class HtmlContextAnalyser {
                                 .equalsIgnoreCase("input"); // Special case for input src attributes
                 boolean isImageInputTag = false;
                 if (StringUtils.strip(element.getContent().toString()).contains(target)) {
+                    String elementContent = element.getContent().toString();
+                    String elementName = element.getName();
+
+                    // Diagnostic logging for script-breaking XSS
+                    if ("script".equalsIgnoreCase(elementName) && target.contains("</script>")) {
+                        LOGGER.debug("Potential script-breaking XSS detected:");
+                        LOGGER.debug("  Element: {}", elementName);
+                        LOGGER.debug("  Content: {}", elementContent);
+                        LOGGER.debug("  Target: {}", target);
+                    }
+
                     Map<String, Map<String, String>> tagMap =
-                            parseTag(StringUtils.strip(element.getContent().toString()));
+                            parseTag(StringUtils.strip(elementContent));
+
+                    // Log what the custom parser extracted from script content
+                    if (!tagMap.isEmpty()) {
+                        LOGGER.debug("  Custom parser found tags: {}", tagMap.keySet());
+                    }
+
                     for (String tagName : tagMap.keySet()) {
                         if (target.contains(tagName)) {
                             context.setInElementName(true);

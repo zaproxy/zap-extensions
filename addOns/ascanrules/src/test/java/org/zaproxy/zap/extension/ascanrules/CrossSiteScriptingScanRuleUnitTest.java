@@ -2112,12 +2112,24 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
         // backslash and single quote are escaped on server-side, and < > & are
         // HTML-escaped in the template, the eval() will execute JavaScript code
         // that doesn't require those characters. Payload: ;alert(1);
-        assertThat(alertsRaised, hasSize(1));
-        assertThat(alertsRaised.get(0).getEvidence(), equalTo("';alert(1);'"));
-        assertThat(alertsRaised.get(0).getParam(), equalTo("q"));
-        assertThat(alertsRaised.get(0).getAttack(), equalTo("';alert(1);'"));
-        assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
-        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+        assertThat("Should raise exactly 1 alert", alertsRaised, hasSize(1));
+
+        Alert alert = alertsRaised.get(0);
+        assertThat("Evidence should match payload", alert.getEvidence(), equalTo("';alert(1);'"));
+        assertThat("Parameter should be 'q'", alert.getParam(), equalTo("q"));
+        assertThat("Attack should match payload", alert.getAttack(), equalTo("';alert(1);'"));
+        assertThat("Risk should be HIGH", alert.getRisk(), equalTo(Alert.RISK_HIGH));
+        assertThat("Confidence should be MEDIUM", alert.getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+
+        // Verify the alert was raised for the correct URI
+        assertThat("Alert URI should contain test path",
+                alert.getUri(), containsString("/escape/js/html_escape"));
+
+        // Log for debugging
+        System.out.println("[*] shouldAlertXssInJsEvalWithHtmlEscape: Alert raised successfully");
+        System.out.println("  - Attack: " + alert.getAttack());
+        System.out.println("  - Evidence: " + alert.getEvidence());
+        System.out.println("  - URI: " + alert.getUri());
     }
 
     @Test
@@ -2164,12 +2176,24 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
         //   Result: eval(escape('</script><script>alert(1)</script><script>'))
         //   The HTML parser closes at </script> before JavaScript runs, executing the XSS.
         // Both payloads are detected by ZAP, confirming the vulnerability.
-        assertThat(alertsRaised, hasSize(1));
-        assertThat(alertsRaised.get(0).getEvidence(), equalTo("';alert(1);'"));
-        assertThat(alertsRaised.get(0).getParam(), equalTo("q"));
-        assertThat(alertsRaised.get(0).getAttack(), equalTo("';alert(1);'"));
-        assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
-        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+        assertThat("Should raise exactly 1 alert", alertsRaised, hasSize(1));
+
+        Alert alert = alertsRaised.get(0);
+        assertThat("Evidence should match payload", alert.getEvidence(), equalTo("';alert(1);'"));
+        assertThat("Parameter should be 'q'", alert.getParam(), equalTo("q"));
+        assertThat("Attack should match payload", alert.getAttack(), equalTo("';alert(1);'"));
+        assertThat("Risk should be HIGH", alert.getRisk(), equalTo(Alert.RISK_HIGH));
+        assertThat("Confidence should be MEDIUM", alert.getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+
+        // Verify the alert was raised for the correct URI
+        assertThat("Alert URI should contain test path",
+                alert.getUri(), containsString("/escape/js/eval_escape"));
+
+        // Log for debugging
+        System.out.println("[*] shouldAlertXssInJsEvalWithEscapeFunction: Alert raised successfully");
+        System.out.println("  - Attack: " + alert.getAttack());
+        System.out.println("  - Evidence: " + alert.getEvidence());
+        System.out.println("  - URI: " + alert.getUri());
     }
 
     @Test
@@ -2764,6 +2788,198 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(expectedAttack));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+    }
+
+    @Test
+    void shouldDetectXssInFiringRangeHtmlEscapeScenario() throws Exception {
+        // Simulates: https://public-firing-range.appspot.com/escape/js/html_escape?q=
+        // This endpoint reflects input inside eval() with HTML escaping applied
+        String test = "/firingRangeHtmlEscape/";
+
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String q = getFirstParamValue(session, "q");
+                        if (q == null) {
+                            q = "test";
+                        }
+
+                        // Simulate HTML escaping (but still vulnerable because it's in eval())
+                        String escaped = q.replace("<", "&lt;")
+                                          .replace("&", "&amp;")
+                                          .replace(">", "&gt;");
+
+                        // The actual Firing Range response format
+                        String response = "<html>\n"
+                                + "  <body>\n"
+                                + "    <script>eval('" + escaped + "'.replace(/</g, '&lt;')\n"
+                                + "                              .replace(/&/g, '&amp;')\n"
+                                + "                              .replace(/>/g, '&gt;'));\n"
+                                + "    </script>\n"
+                                + "  </body>\n"
+                                + "</html>";
+
+                        return newFixedLengthResponse(response);
+                    }
+                });
+
+        HttpMessage msg = this.getHttpMessage(test + "?q=test");
+        this.rule.init(msg, this.parent);
+        this.rule.scan();
+
+        // The scanner should detect that </script><scrIpt>alert(1);</scRipt><script>
+        // payload works even though HTML escaping is applied
+        assertThat("Should raise at least 1 alert for Firing Range HTML escape scenario",
+                alertsRaised.size(), greaterThan(0));
+
+        // Verify alert details
+        Alert alert = alertsRaised.get(0);
+        assertThat("Parameter should be 'q'", alert.getParam(), equalTo("q"));
+        assertThat("Risk should be HIGH", alert.getRisk(), equalTo(Alert.RISK_HIGH));
+        assertThat("Confidence should be MEDIUM", alert.getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+
+        // Log for debugging - show all alerts raised
+        System.out.println("[*] shouldDetectXssInFiringRangeHtmlEscapeScenario: " + alertsRaised.size() + " alert(s) raised");
+        for (int i = 0; i < alertsRaised.size(); i++) {
+            Alert a = alertsRaised.get(i);
+            System.out.println("  [" + (i + 1) + "] Attack: " + a.getAttack());
+            System.out.println("      Evidence: " + a.getEvidence());
+            System.out.println("      Confidence: " + a.getConfidence());
+        }
+    }
+
+    @Test
+    void shouldDetectXssInFiringRangeJsEscapeScenario() throws Exception {
+        // Simulates: https://public-firing-range.appspot.com/escape/js/escape?q=
+        // This endpoint reflects input inside eval(escape())
+        // escape() doesn't escape < and > so script injection works
+        String test = "/firingRangeJsEscape/";
+
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String q = getFirstParamValue(session, "q");
+                        if (q == null) {
+                            q = "test";
+                        }
+
+                        // The actual Firing Range response format
+                        // JavaScript escape() doesn't escape < and > tags
+                        String response = "<html>\n"
+                                + "  <body>\n"
+                                + "    <script>\n"
+                                + "      eval(escape('" + q + "'));\n"
+                                + "    </script>\n"
+                                + "  </body>\n"
+                                + "</html>";
+
+                        return newFixedLengthResponse(response);
+                    }
+                });
+
+        HttpMessage msg = this.getHttpMessage(test + "?q=test");
+        this.rule.init(msg, this.parent);
+        this.rule.scan();
+
+        // The scanner should detect that </script><scrIpt>alert(1);</scRipt><script>
+        // payload works because escape() doesn't escape < and >
+        assertThat("Should raise at least 1 alert for Firing Range JS escape scenario",
+                alertsRaised.size(), greaterThan(0));
+
+        // Verify alert details
+        Alert alert = alertsRaised.get(0);
+        assertThat("Parameter should be 'q'", alert.getParam(), equalTo("q"));
+        assertThat("Risk should be HIGH", alert.getRisk(), equalTo(Alert.RISK_HIGH));
+        assertThat("Confidence should be MEDIUM", alert.getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+
+        // Log for debugging - show all alerts raised
+        System.out.println("[*] shouldDetectXssInFiringRangeJsEscapeScenario: " + alertsRaised.size() + " alert(s) raised");
+        for (int i = 0; i < alertsRaised.size(); i++) {
+            Alert a = alertsRaised.get(i);
+            System.out.println("  [" + (i + 1) + "] Attack: " + a.getAttack());
+            System.out.println("      Evidence: " + a.getEvidence());
+            System.out.println("      Confidence: " + a.getConfidence());
+        }
+    }
+
+    @Test
+    void shouldDetectScriptBreakingXss() throws Exception {
+        // Test the exact pattern from Firing Range
+        String test = "/scriptBreakingXss/";
+
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String q = getFirstParamValue(session, "q");
+                        if (q == null) {
+                            q = "test";
+                        }
+
+                        // This is what Firing Range actually returns
+                        String response =
+                                "<html>\n"
+                                        + "  <body>\n"
+                                        + "    <script>eval('"
+                                        + q
+                                        + "');</script>\n"
+                                        + "  </body>\n"
+                                        + "</html>";
+
+                        return newFixedLengthResponse(response);
+                    }
+                });
+
+        HttpMessage msg =
+                this.getHttpMessage(test + "?q=</script><scrIpt>alert(1);</scRipt><script>");
+        this.rule.init(msg, this.parent);
+        this.rule.scan();
+
+        assertThat(alertsRaised.size(), greaterThan(0));
+
+        // Verify the alert details
+        Alert alert = alertsRaised.get(0);
+        assertThat(alert.getEvidence(), containsString("alert(1)"));
+    }
+
+    @Test
+    void shouldDetectScriptBreakingXssWithWhitespace() throws Exception {
+        // Test when browser adds whitespace/newlines
+        String test = "/scriptBreakingXssWhitespace/";
+
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String q = getFirstParamValue(session, "q");
+                        if (q == null) {
+                            q = "test";
+                        }
+
+                        // Simulate newlines added by browser/server
+                        String injected = q.replace("><", ">\n    <");
+
+                        String response =
+                                "<html>\n"
+                                        + "  <body>\n"
+                                        + "    <script>eval('"
+                                        + injected
+                                        + "');</script>\n"
+                                        + "  </body>\n"
+                                        + "</html>";
+
+                        return newFixedLengthResponse(response);
+                    }
+                });
+
+        HttpMessage msg =
+                this.getHttpMessage(test + "?q=</script><scrIpt>alert(1);</scRipt><script>");
+        this.rule.init(msg, this.parent);
+        this.rule.scan();
+
+        assertThat(alertsRaised.size(), greaterThan(0));
     }
 
     @Override
