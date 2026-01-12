@@ -167,6 +167,32 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
     @Override
     public void scan(HttpMessage msg, NameValuePair originalParam) {
         currentParamType = originalParam.getType();
+
+        // Skip scanning non-HTML content types when threshold is not LOW
+        if (!AlertThreshold.LOW.equals(getAlertThreshold())) {
+            HttpMessage baseMsg = getBaseMsg();
+            if (ResourceIdentificationUtils.isImage(baseMsg)
+                    || ResourceIdentificationUtils.isCss(baseMsg)
+                    || ResourceIdentificationUtils.isFont(baseMsg)
+                    || ResourceIdentificationUtils.responseContainsControlChars(baseMsg)) {
+                return;
+            }
+
+            // Checks for other non-HTML types not covered by ResourceIdentificationUtils
+            String contentType =
+                    baseMsg.getResponseHeader().getHeader(HttpFieldsNames.CONTENT_TYPE);
+            if (contentType != null) {
+                String lowerContentType = contentType.toLowerCase();
+                if (lowerContentType.contains("application/octet-stream")
+                        || lowerContentType.contains("application/pdf")
+                        || lowerContentType.contains("application/msword")
+                        || lowerContentType.contains("application/vnd.ms-")
+                        || lowerContentType.contains("application/vnd.openxmlformats-")) {
+                    return;
+                }
+            }
+        }
+
         super.scan(msg, originalParam);
     }
 
@@ -885,13 +911,10 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
 
     @Override
     public void scan(HttpMessage msg, String param, String value) {
-        if (!AlertThreshold.LOW.equals(getAlertThreshold())
-                && (HttpRequestHeader.PUT.equals(msg.getRequestHeader().getMethod())
-                        || ResourceIdentificationUtils.isImage(msg)
-                        || ResourceIdentificationUtils.isCss(msg)
-                        || ResourceIdentificationUtils.isFont(msg)
-                        || ResourceIdentificationUtils.responseContainsControlChars(msg))) {
-            return;
+        if (!AlertThreshold.LOW.equals(getAlertThreshold())) {
+            if (HttpRequestHeader.PUT.equals(msg.getRequestHeader().getMethod())) {
+                return;
+            }
         }
 
         try {

@@ -2690,19 +2690,21 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
                         return response;
                     }
                 });
-        HttpMessage msg = this.getHttpMessage(test + "?name=test");
+        HttpMessage msg = this.getHttpMessage(test + "?name=test", contentType);
 
         // When
         this.rule.init(msg, this.parent);
+        httpMessagesSent.clear(); // Clear the original request message
         this.rule.scan();
 
-        // Then
+        // Then - NO messages should be sent when skipping non-HTML content
         assertThat(httpMessagesSent, hasSize(0));
         assertThat(alertsRaised, hasSize(0));
     }
 
-    @Test
-    void shouldScanNonHtmlResponsesOnLowThreshold() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {"image/png", "text/css", "font/woff", "application/octet-stream"})
+    void shouldScanNonHtmlResponsesOnLowThreshold(String contentType) throws Exception {
         // Given
         String test = "/shouldScanNonHtmlResponsesOnLowThreshold/";
         this.nano.addHandler(
@@ -2710,19 +2712,24 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
                     @Override
                     protected Response serve(IHTTPSession session) {
                         String name = getFirstParamValue(session, "name");
-                        Response response = newFixedLengthResponse(name);
-                        response.addHeader(HttpFieldsNames.CONTENT_TYPE, "image/png");
+                        String data =
+                                contentType.equals("application/octet-stream")
+                                        ? "\u0000\u0001\u0002" + name
+                                        : "<html><body>" + name + "</body></html>";
+                        Response response = newFixedLengthResponse(data);
+                        response.addHeader(HttpFieldsNames.CONTENT_TYPE, contentType);
                         return response;
                     }
                 });
-        HttpMessage msg = this.getHttpMessage(test + "?name=test");
+        HttpMessage msg = this.getHttpMessage(test + "?name=test", contentType);
 
         // When
         this.rule.setAlertThreshold(AlertThreshold.LOW);
         this.rule.init(msg, this.parent);
+        httpMessagesSent.clear(); // Clear the original request message
         this.rule.scan();
 
-        // Then
+        // Then - LOW threshold SHOULD scan even non-HTML content
         assertThat(httpMessagesSent, hasSize(greaterThan(0)));
         assertThat(alertsRaised, hasSize(greaterThan(0)));
     }
