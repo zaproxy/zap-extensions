@@ -1,0 +1,57 @@
+openapi: 3.1.0
+info:
+  title: OpenAPI 3.1 Exclusive MinMax Test
+  version: 1.0.0
+servers:
+  - url: http://localhost:@@@PORT@@@/
+paths:
+  /parameters/query/exclusive:
+    get:
+      operationId: parameters/query/exclusive
+      parameters:
+      - in: query
+        name: minValue
+        schema:
+          type: integer
+          exclusiveMinimum: 10
+      - in: query
+        name: maxValue
+        schema:
+          type: integer
+          exclusiveMaximum: 100
+      - in: query
+        name: minMaxValue
+        schema:
+          type: number
+          exclusiveMinimum: 5.5
+          exclusiveMaximum: 99.9
+      responses:
+        default:
+          description: Default response
+          content:
+            text/plain: {}
+  /body/json/exclusive:
+    post:
+      operationId: body/json/exclusive
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              type: object
+              properties:
+                minValue:
+                  type: integer
+                  exclusiveMinimum: 10
+                maxValue:
+                  type: integer
+                  exclusiveMaximum: 100
+                minMaxValue:
+                  type: number
+                  exclusiveMinimum: 5.5
+                  exclusiveMaximum: 99.9
+      responses:
+        default:
+          description: Default response
+          content:
+            text/plain: {}
+

@@ -132,7 +132,7 @@ public class DataGenerator {
             return getExampleValue(parameter);
         }
 
-        if (isArray(getType(parameter.getSchema()))) {
+        if (isArray(Generators.getType(parameter.getSchema()))) {
             return generateArrayValue(name, parameter);
         }
 
@@ -144,10 +144,6 @@ public class DataGenerator {
         }
 
         return getExampleValue(parameter);
-    }
-
-    private static String getType(Schema<?> schema) {
-        return schema == null ? null : schema.getType();
     }
 
     private String generateArrayValue(String name, Parameter parameter) {
@@ -198,12 +194,13 @@ public class DataGenerator {
             }
         }
 
-        value = generators.getValueGenerator().getValue(name, schema.getType(), value);
+        String type = Generators.getType(schema);
+        value = generators.getValueGenerator().getValue(name, type, value);
 
         if (value.isEmpty()) {
-            value = getExampleValue(isPath, schema.getType(), name);
+            value = getExampleValue(isPath, type, name);
         } else {
-            if (!isPath && "string".equalsIgnoreCase(schema.getType())) {
+            if (!isPath && "string".equalsIgnoreCase(type)) {
                 value = "\"" + value + "\"";
             }
         }
@@ -215,7 +212,7 @@ public class DataGenerator {
 
     private String getExampleValue(Parameter parameter) {
         String in = parameter.getIn();
-        String type = getType(parameter.getSchema());
+        String type = Generators.getType(parameter.getSchema());
         if ("cookie".equals(in) && "string".equals(type)) {
             return "JohnDoe";
         }

@@ -50,7 +50,7 @@ public class MapGenerator {
      */
     public String generate(Map<String, String> types, Schema<?> property) {
         Schema<?> schema = (Schema<?>) property.getAdditionalProperties();
-        String type = types.get(schema.getType());
+        String type = types.get(Generators.getType(schema));
         String value = type != null ? type : bodyGenerator.generate(schema);
         String defaultKey = types.get(STRING.type());
         return OBJECT_BEGIN + defaultKey + INNER_SEPARATOR + value + OBJECT_END;

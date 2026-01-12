@@ -122,7 +122,7 @@ public class BodyGenerator {
             resolveNotSchema(schema);
         }
 
-        if (!PRIMITIVE_TYPES.contains(schema.getType())) {
+        if (!PRIMITIVE_TYPES.contains(Generators.getType(schema))) {
             schema.setType("string");
         }
 

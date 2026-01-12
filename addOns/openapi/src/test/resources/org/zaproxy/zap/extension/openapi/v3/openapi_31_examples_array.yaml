@@ -1,0 +1,71 @@
+openapi: 3.1.0
+info:
+  title: OpenAPI 3.1 Examples Test
+  version: 1.0.0
+servers:
+  - url: http://localhost:@@@PORT@@@/
+paths:
+  /parameters/query/examples:
+    get:
+      operationId: parameters/query/examples
+      parameters:
+      - in: query
+        name: Name
+        schema:
+          type: string
+        examples:
+          example1:
+            value: value1
+          example2:
+            value: value2
+          example3:
+            value: value3
+      responses:
+        default:
+          description: Default response
+          content:
+            text/plain: {}
+  /body/json/examples:
+    post:
+      operationId: body/json/examples
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              type: object
+              properties:
+                Name:
+                  type: string
+            examples:
+              example1:
+                value:
+                  Name: example1
+              example2:
+                value:
+                  Name: example2
+      responses:
+        default:
+          description: Default response
+          content:
+            text/plain: {}
+  /responses/examples:
+    get:
+      operationId: responses/examples
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: string
+              examples:
+                successExample1:
+                  value:
+                    result: success1
+                successExample2:
+                  value:
+                    result: success2
+

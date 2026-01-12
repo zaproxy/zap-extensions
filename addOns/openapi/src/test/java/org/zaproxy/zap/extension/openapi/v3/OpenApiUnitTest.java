@@ -116,6 +116,56 @@ class OpenApiUnitTest extends AbstractServerTest {
     }
 
     @Test
+    void shouldExplorePetStoreOpenApi31()
+            throws NullPointerException, IOException, SwaggerException {
+        String test = "/PetStore31/";
+        String defnName = "defn.yaml";
+
+        this.nano.addHandler(new DefnServerHandler(test, defnName, "PetStore_defn_3.1.yaml"));
+
+        Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
+        HttpMessage defnMsg = this.getHttpMessage(test + defnName);
+        SwaggerConverter converter =
+                new SwaggerConverter(
+                        requestor.getResponseBody(defnMsg.getRequestHeader().getURI()), null);
+        // No parsing errors
+        assertThat(converter.getErrorMessages(), is(empty()));
+
+        final Map<String, String> accessedUrls = new HashMap<>();
+        RequesterListener listener =
+                new RequesterListener() {
+                    @Override
+                    public void handleMessage(HttpMessage message, int initiator) {
+                        accessedUrls.put(
+                                message.getRequestHeader().getMethod()
+                                        + " "
+                                        + message.getRequestHeader().getURI().toString(),
+                                message.getRequestBody().toString());
+                    }
+                };
+        requestor.addListener(listener);
+        requestor.run(converter.getRequestModels(null));
+
+        assertEquals(
+                3,
+                accessedUrls.size(),
+                "Should have generated requests from OpenAPI 3.1 definition");
+
+        assertTrue(
+                accessedUrls.containsKey(
+                        "POST " + "http://localhost:" + nano.getListeningPort() + "/PetStore/pet"));
+        assertTrue(
+                accessedUrls.containsKey(
+                        "PUT " + "http://localhost:" + nano.getListeningPort() + "/PetStore/pet"));
+        assertTrue(
+                accessedUrls.containsKey(
+                        "GET "
+                                + "http://localhost:"
+                                + nano.getListeningPort()
+                                + "/PetStore/pet/10"));
+    }
+
+    @Test
     void shouldExplorePetStoreJsonOverrideHost()
             throws NullPointerException, IOException, SwaggerException {
         String test = "/PetStoreJson/";

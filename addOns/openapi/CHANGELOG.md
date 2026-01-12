@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Added
 - Added an optional LLM extension for importing OpenAPI definitions.
+- Initial support for OpenAPI 3.1 definitions.
 
 ### Changed
 - Dependency update.
