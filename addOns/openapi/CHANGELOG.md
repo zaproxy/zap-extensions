@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [49] - 2026-01-12
 ### Added
 - Added an optional LLM extension for importing OpenAPI definitions.
 - Initial support for OpenAPI 3.1 definitions.
@@ -364,6 +364,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First Version
 
+[49]: https://github.com/zaproxy/zap-extensions/releases/openapi-v49
 [48]: https://github.com/zaproxy/zap-extensions/releases/openapi-v48
 [47]: https://github.com/zaproxy/zap-extensions/releases/openapi-v47
 [46]: https://github.com/zaproxy/zap-extensions/releases/openapi-v46
