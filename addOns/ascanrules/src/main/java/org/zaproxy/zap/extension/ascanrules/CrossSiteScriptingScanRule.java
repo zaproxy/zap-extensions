@@ -889,14 +889,11 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
             if (HttpRequestHeader.PUT.equals(msg.getRequestHeader().getMethod())) {
                 return;
             }
-            // Skip non-HTML responses (images, CSS, fonts, binary) when not at LOW threshold
-            if (!msg.getResponseHeader().isHtml()) {
-                if (ResourceIdentificationUtils.isImage(msg)
-                        || ResourceIdentificationUtils.isCss(msg)
-                        || ResourceIdentificationUtils.isFont(msg)
-                        || ResourceIdentificationUtils.responseContainsControlChars(msg)) {
-                    return;
-                }
+            if (ResourceIdentificationUtils.isImage(msg)
+                    || ResourceIdentificationUtils.isCss(msg)
+                    || ResourceIdentificationUtils.isFont(msg)
+                    || ResourceIdentificationUtils.responseContainsControlChars(msg)) {
+                return;
             }
         }
 

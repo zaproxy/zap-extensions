@@ -2673,7 +2673,7 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"image/png", "text/css", "font/woff"})
+    @ValueSource(strings = {"image/png", "text/css", "font/woff", "application/octet-stream"})
     void shouldNotScanNonHtmlResponsesOnNonLowThreshold(String contentType) throws Exception {
         // Given
         String test = "/shouldNotScanNonHtmlResponsesOnNonLowThreshold/";
@@ -2681,7 +2681,11 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
                 new NanoServerHandler(test) {
                     @Override
                     protected Response serve(IHTTPSession session) {
-                        Response response = newFixedLengthResponse("some data");
+                        String data =
+                                contentType.equals("application/octet-stream")
+                                        ? "\u0000\u0001\u0002"
+                                        : "some data";
+                        Response response = newFixedLengthResponse(data);
                         response.addHeader(HttpFieldsNames.CONTENT_TYPE, contentType);
                         return response;
                     }
@@ -2693,29 +2697,7 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
         this.rule.scan();
 
         // Then
-        assertThat(alertsRaised, hasSize(0));
-    }
-
-    @Test
-    void shouldNotScanBinaryResponses() throws Exception {
-        // Given
-        String test = "/shouldNotScanBinaryResponses/";
-        this.nano.addHandler(
-                new NanoServerHandler(test) {
-                    @Override
-                    protected Response serve(IHTTPSession session) {
-                        Response response = newFixedLengthResponse("\u0000\u0001\u0002");
-                        response.addHeader(HttpFieldsNames.CONTENT_TYPE, "application/octet-stream");
-                        return response;
-                    }
-                });
-        HttpMessage msg = this.getHttpMessage(test + "?name=test");
-
-        // When
-        this.rule.init(msg, this.parent);
-        this.rule.scan();
-
-        // Then
+        assertThat(httpMessagesSent, hasSize(0));
         assertThat(alertsRaised, hasSize(0));
     }
 
