@@ -2710,8 +2710,7 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
                     @Override
                     protected Response serve(IHTTPSession session) {
                         String name = getFirstParamValue(session, "name");
-                        Response response =
-                                newFixedLengthResponse("<html><body>" + name + "</body></html>");
+                        Response response = newFixedLengthResponse(name);
                         response.addHeader(HttpFieldsNames.CONTENT_TYPE, "image/png");
                         return response;
                     }
@@ -2724,6 +2723,7 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
         this.rule.scan();
 
         // Then
+        assertThat(httpMessagesSent, hasSize(greaterThan(0)));
         assertThat(alertsRaised, hasSize(greaterThan(0)));
     }
 }

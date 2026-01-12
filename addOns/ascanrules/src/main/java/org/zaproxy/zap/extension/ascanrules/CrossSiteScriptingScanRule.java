@@ -885,16 +885,13 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
 
     @Override
     public void scan(HttpMessage msg, String param, String value) {
-        if (!AlertThreshold.LOW.equals(getAlertThreshold())) {
-            if (HttpRequestHeader.PUT.equals(msg.getRequestHeader().getMethod())) {
-                return;
-            }
-            if (ResourceIdentificationUtils.isImage(msg)
-                    || ResourceIdentificationUtils.isCss(msg)
-                    || ResourceIdentificationUtils.isFont(msg)
-                    || ResourceIdentificationUtils.responseContainsControlChars(msg)) {
-                return;
-            }
+        if (!AlertThreshold.LOW.equals(getAlertThreshold())
+                && (HttpRequestHeader.PUT.equals(msg.getRequestHeader().getMethod())
+                        || ResourceIdentificationUtils.isImage(msg)
+                        || ResourceIdentificationUtils.isCss(msg)
+                        || ResourceIdentificationUtils.isFont(msg)
+                        || ResourceIdentificationUtils.responseContainsControlChars(msg))) {
+            return;
         }
 
         try {
