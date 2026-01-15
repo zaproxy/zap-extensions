@@ -5,6 +5,7 @@
 		<tocitem text="Дополнения" tocid="addons">
 			<tocitem text="Поддержка OpenAPI " image="openapi-icon" target="openapi">
 				<tocitem text="Автоматизация " target="openapi.automation"/>
+				<tocitem text="LLM Support" target="openapi.llm"/>
 			</tocitem>
 		</tocitem>
 	</tocitem>

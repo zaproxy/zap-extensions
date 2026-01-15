@@ -5,6 +5,7 @@
 		<tocitem text="Tambahkan Ons" tocid="addons">
 			<tocitem text="OpenAPI Support" image="openapi-icon" target="openapi">
 				<tocitem text="Automation" target="openapi.automation"/>
+				<tocitem text="LLM Support" target="openapi.llm"/>
 			</tocitem>
 		</tocitem>
 	</tocitem>
