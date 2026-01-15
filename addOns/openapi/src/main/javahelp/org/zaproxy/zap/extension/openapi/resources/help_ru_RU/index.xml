@@ -3,4 +3,5 @@
 <index version="2.0">
 	<indexitem text="openapi" target="openapi"/>
 	<indexitem text="автоматизация openapi " target="openapi.automation"/>
+	<indexitem text="openapi llm" target="openapi.llm"/>
 </index>

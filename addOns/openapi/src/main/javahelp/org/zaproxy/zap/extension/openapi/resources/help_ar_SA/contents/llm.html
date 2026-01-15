@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>
+OpenAPI LLM Support
+</TITLE>
+</HEAD>
+<BODY>
+<H1>OpenAPI LLM Support</H1>
+This add-on supports LLM integration for importing OpenAPI definitions. It will only be enabled if you have chosen to install the LLM add-on and configured it.
+
+<H2>LLM/AI OpenAPI Importer</H2>
+The add-on adds a menu item to the Import menu:
+<ul>
+    <li>LLM/AI OpenAPI Importer</li>
+</ul>
+<p>
+This menu item allows you to import OpenAPI definitions using an LLM to extract HTTP requests from the specification. The LLM analyzes the OpenAPI definition and generates sequences of HTTP calls that can be used for subsequent scanning operations.
+<p>
+The import dialog allows you to specify:
+<ul>
+    <li>OpenAPI File location or URL - The path to an OpenAPI definition file (JSON or YAML) or a URL pointing to the definition</li>
+</ul>
+<p>
+The LLM will process the OpenAPI definition and create HTTP requests based on the endpoints defined in the specification. These requests will be added to the ZAP history, allowing you to scan and test the API endpoints.
+<p>
+
+</BODY>
+</HTML>
+
