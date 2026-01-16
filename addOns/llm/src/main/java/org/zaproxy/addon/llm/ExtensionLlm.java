@@ -28,6 +28,9 @@ import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.OptionsChangedListener;
 import org.parosproxy.paros.model.OptionsParam;
 import org.zaproxy.addon.llm.services.LlmCommunicationService;
+import org.zaproxy.addon.llm.ui.LlmAppendAlertMenu;
+import org.zaproxy.addon.llm.ui.LlmAppendHttpMessageMenu;
+import org.zaproxy.addon.llm.ui.LlmChatPanel;
 import org.zaproxy.addon.llm.ui.LlmOptionsPanel;
 
 /**
@@ -81,7 +84,35 @@ public class ExtensionLlm extends ExtensionAdaptor {
                 });
 
         if (hasView()) {
+            LlmChatPanel llmChatPanel = new LlmChatPanel(this);
             extensionHook.getHookView().addOptionPanel(new LlmOptionsPanel());
+            extensionHook.getHookView().addWorkPanel(llmChatPanel);
+            extensionHook.getHookMenu().addPopupMenuItem(new LlmAppendAlertMenu(llmChatPanel));
+            extensionHook
+                    .getHookMenu()
+                    .addPopupMenuItem(
+                            new LlmAppendHttpMessageMenu(
+                                    llmChatPanel,
+                                    Constant.messages.getString("llm.menu.append.request.title"),
+                                    true,
+                                    false));
+            extensionHook
+                    .getHookMenu()
+                    .addPopupMenuItem(
+                            new LlmAppendHttpMessageMenu(
+                                    llmChatPanel,
+                                    Constant.messages.getString("llm.menu.append.response.title"),
+                                    false,
+                                    true));
+            extensionHook
+                    .getHookMenu()
+                    .addPopupMenuItem(
+                            new LlmAppendHttpMessageMenu(
+                                    llmChatPanel,
+                                    Constant.messages.getString(
+                                            "llm.menu.append.requestresponse.title"),
+                                    true,
+                                    true));
         }
     }
 
@@ -100,7 +131,7 @@ public class ExtensionLlm extends ExtensionAdaptor {
     }
 
     public String getCommsIssue() {
-        return options != null ? this.options.getCommsIssue() : null;
+        return options != null ? options.getCommsIssue() : "";
     }
 
     /**

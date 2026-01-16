@@ -79,6 +79,16 @@ public class LlmReviewAlertMenu extends PopupMenuItemAlert {
     }
 
     @Override
+    public String getParentMenuName() {
+        return Constant.messages.getString("llm.aiassisted.popup");
+    }
+
+    @Override
+    public boolean isSubMenu() {
+        return true;
+    }
+
+    @Override
     public boolean isSafe() {
         return true;
     }
