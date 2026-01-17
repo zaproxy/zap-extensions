@@ -1491,4 +1491,21 @@ public class SessionFixationScanRule extends AbstractAppPlugin implements Common
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
     }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        List<Alert> alerts = new ArrayList<>();
+        Alert alert = new Alert(getPluginId());
+        alert.setRisk(getRisk());
+        alert.setConfidence(Alert.CONFIDENCE_MEDIUM);
+        alert.setName(getName());
+        alert.setDescription(getDescription());
+        alert.setEvidence("http://example.com/login?jsessionid=123456789ABCDEF");
+        alert.setSolution(getSolution());
+        alert.setReference(getReference());
+        alert.setCweId(getCweId());
+        alert.setWascId(getWascId());
+        alerts.add(alert);
+        return alerts;
+    }
 }
