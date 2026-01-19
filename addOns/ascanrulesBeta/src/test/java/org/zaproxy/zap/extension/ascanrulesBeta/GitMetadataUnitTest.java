@@ -26,6 +26,7 @@ import static org.hamcrest.Matchers.nullValue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class GitMetadataUnitTest {
@@ -38,7 +39,7 @@ class GitMetadataUnitTest {
     }
 
     @Test
-    void shouldValidateCorrectSha1() {
+    void shouldValidateCorrectSha1AsTrue() {
         // Given
         String validSha1 = "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3";
         // When
@@ -49,35 +50,27 @@ class GitMetadataUnitTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"short", "a94a8fe5ccb19ba61c4c0873d391e987982fbbd33", ""})
-    void shouldInvalidateIncorrectSha1(String invalidSha1) {
+    void shouldValidateIncorrectSha1AsFalse(String invalidSha1) {
         // When
         boolean isValid = gitMetadata.validateSHA1(invalidSha1);
         // Then
         assertThat(isValid, is(false));
     }
 
-    @Test
-    void shouldExtractBaseFolderFromStandardPath() {
-        // Given
-        String path = "http://example.com/.git/index";
+    @ParameterizedTest
+    @CsvSource({
+        "http://example.com/.git/index, http://example.com/.git/",
+        "http://example.com/app/v1/.git/HEAD, http://example.com/app/v1/.git/"
+    })
+    void shouldExtractBaseFolder(String path, String expectedBase) {
         // When
         String base = gitMetadata.getBaseFolder(path);
         // Then
-        assertThat(base, is("http://example.com/.git/"));
+        assertThat(base, is(expectedBase));
     }
 
     @Test
-    void shouldExtractBaseFolderFromDeepPath() {
-        // Given
-        String path = "http://example.com/app/v1/.git/HEAD";
-        // When
-        String base = gitMetadata.getBaseFolder(path);
-        // Then
-        assertThat(base, is("http://example.com/app/v1/.git/"));
-    }
-
-    @Test
-    void shouldReturnNullForNonGitPath() {
+    void shouldNotExtractBaseFolderFromNonGitPath() {
         // Given
         String path = "http://example.com/admin/index.php";
         // When
