@@ -39,11 +39,12 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.Getter;
 import org.apache.commons.httpclient.util.HttpURLConnection;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpSender;
-import org.zaproxy.addon.llm.LlmOptions;
+import org.zaproxy.addon.llm.LlmProviderConfig;
 import org.zaproxy.addon.llm.communication.HttpRequestList;
 import org.zaproxy.addon.llm.utils.HistoryPersister;
 import org.zaproxy.addon.llm.utils.Requestor;
@@ -56,18 +57,21 @@ public class LlmCommunicationService {
 
     private LlmAssistant llmAssistant;
     private LlmResponseHandler listener;
-    private LlmOptions options;
+    @Getter private LlmProviderConfig pconf;
+    @Getter private String modelName;
     private Requestor requestor;
 
     private static ChatModel model;
     private static ObjectMapper objectMapper = new ObjectMapper();
     private ChatMemory chatMemory;
 
-    public LlmCommunicationService(LlmOptions options, String outputTabName) {
-        this.options = options;
+    public LlmCommunicationService(
+            LlmProviderConfig pconf, String modelName, String outputTabName) {
+        this.pconf = pconf;
+        this.modelName = modelName;
         listener = new LlmResponseHandler(outputTabName);
         chatMemory = MessageWindowChatMemory.withMaxMessages(10);
-        model = buildModel(options);
+        model = buildModel();
 
         llmAssistant =
                 AiServices.builder(LlmAssistant.class)
@@ -82,13 +86,14 @@ public class LlmCommunicationService {
         this.llmAssistant = assistant;
     }
 
-    private ChatModel buildModel(LlmOptions options) {
-        return switch (options.getModelProvider()) {
+    private ChatModel buildModel() {
+
+        return switch (pconf.getProvider()) {
             case AZURE_OPENAI ->
                     AzureOpenAiChatModel.builder()
-                            .apiKey(options.getApiKey())
-                            .deploymentName(options.getModelName())
-                            .endpoint(options.getEndpoint())
+                            .apiKey(pconf.getApiKey())
+                            .deploymentName(modelName)
+                            .endpoint(pconf.getEndpoint())
                             .temperature(0.3)
                             .responseFormat(ResponseFormat.JSON)
                             .listeners(List.of(listener))
@@ -96,8 +101,8 @@ public class LlmCommunicationService {
                             .build();
             case OLLAMA ->
                     OllamaChatModel.builder()
-                            .baseUrl(options.getEndpoint())
-                            .modelName(options.getModelName())
+                            .baseUrl(pconf.getEndpoint())
+                            .modelName(modelName)
                             .temperature(0.3)
                             .listeners(List.of(listener))
                             .logRequests(true)
@@ -105,8 +110,8 @@ public class LlmCommunicationService {
                             .build();
             case GOOGLE_GEMINI ->
                     GoogleAiGeminiChatModel.builder()
-                            .apiKey(options.getApiKey())
-                            .modelName(options.getModelName())
+                            .apiKey(pconf.getApiKey())
+                            .modelName(modelName)
                             .temperature(0.3)
                             .listeners(List.of(listener))
                             .logRequests(true)
@@ -114,10 +119,6 @@ public class LlmCommunicationService {
                             .build();
             default -> throw new RuntimeException("Unknown model provider");
         };
-    }
-
-    public LlmOptions getOptions() {
-        return this.options;
     }
 
     private Integer importHttpCalls(String openapiContent) throws RuntimeException {
