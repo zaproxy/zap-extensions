@@ -22,6 +22,9 @@ package org.zaproxy.addon.llm;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
@@ -32,6 +35,7 @@ import org.zaproxy.addon.llm.ui.LlmAppendAlertMenu;
 import org.zaproxy.addon.llm.ui.LlmAppendHttpMessageMenu;
 import org.zaproxy.addon.llm.ui.LlmChatPanel;
 import org.zaproxy.addon.llm.ui.LlmOptionsPanel;
+import org.zaproxy.addon.llm.ui.LlmSelectorButton;
 
 /**
  * An extension for ZAP that enables researchers to leverage Large Language Models (LLMs) to augment
@@ -47,6 +51,8 @@ public class ExtensionLlm extends ExtensionAdaptor {
     private LlmOptions prevOptions;
     private Map<String, LlmCommunicationService> commsServices =
             Collections.synchronizedMap(new HashMap<>());
+
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionLlm.class);
 
     public ExtensionLlm() {
         super(NAME);
@@ -77,8 +83,7 @@ public class ExtensionLlm extends ExtensionAdaptor {
                     @Override
                     public void optionsChanged(OptionsParam optionsParam) {
                         if (options.hasCommsChanged(prevOptions)) {
-                            commsServices.clear();
-                            prevOptions = (LlmOptions) options.clone();
+                            optionsReset();
                         }
                     }
                 });
@@ -86,6 +91,9 @@ public class ExtensionLlm extends ExtensionAdaptor {
         if (hasView()) {
             LlmChatPanel llmChatPanel = new LlmChatPanel(this);
             extensionHook.getHookView().addOptionPanel(new LlmOptionsPanel());
+            extensionHook
+                    .getHookView()
+                    .addMainToolBarComponent(new LlmSelectorButton(this, options));
             extensionHook.getHookView().addWorkPanel(llmChatPanel);
             extensionHook.getHookMenu().addPopupMenuItem(new LlmAppendAlertMenu(llmChatPanel));
             extensionHook
@@ -145,7 +153,12 @@ public class ExtensionLlm extends ExtensionAdaptor {
 
     @Override
     public void optionsLoaded() {
-        this.prevOptions = (LlmOptions) this.options.clone();
+        this.prevOptions = this.options.clone();
+    }
+
+    private void optionsReset() {
+        commsServices.clear();
+        prevOptions = options.clone();
     }
 
     public LlmCommunicationService getCommunicationService(String commsKey, String outputTabName) {
@@ -153,6 +166,38 @@ public class ExtensionLlm extends ExtensionAdaptor {
             return null;
         }
         return commsServices.computeIfAbsent(
-                commsKey, k -> new LlmCommunicationService(options, outputTabName));
+                commsKey,
+                k ->
+                        new LlmCommunicationService(
+                                options.getDefaultProviderConfig(),
+                                options.getDefaultModelName(),
+                                outputTabName));
+    }
+
+    public void setDefaultProvider(String name, String modelName) {
+        if (name == null) {
+            return;
+        }
+
+        String providerName = name;
+        if (LlmProvider.NONE.toString().equals(providerName)) {
+            providerName = "";
+            modelName = "";
+        }
+
+        if (providerName.equals(options.getDefaultProviderName())
+                && modelName.equals(options.getDefaultModelName())) {
+            return;
+        }
+
+        options.setDefaultProviderName(providerName);
+        options.setDefaultModelName(modelName);
+        this.optionsReset();
+
+        try {
+            options.getConfig().save();
+        } catch (ConfigurationException e) {
+            LOGGER.error("Failed to save LLM default provider selection:", e);
+        }
     }
 }
