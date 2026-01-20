@@ -1494,18 +1494,20 @@ public class SessionFixationScanRule extends AbstractAppPlugin implements Common
 
     @Override
     public List<Alert> getExampleAlerts() {
-        List<Alert> alerts = new ArrayList<>();
-        Alert alert = new Alert(getPluginId());
-        alert.setRisk(getRisk());
-        alert.setConfidence(Alert.CONFIDENCE_MEDIUM);
-        alert.setName(getName());
-        alert.setDescription(getDescription());
-        alert.setEvidence("http://example.com/login?jsessionid=123456789ABCDEF");
-        alert.setSolution(getSolution());
-        alert.setReference(getReference());
-        alert.setCweId(getCweId());
-        alert.setWascId(getWascId());
-        alerts.add(alert);
-        return alerts;
+        Alert alert = new Alert(
+                40013,
+                Constant.messages.getString("ascanbeta.sessionfixation.name"),
+                Alert.RISK_HIGH,
+                Alert.CONFIDENCE_MEDIUM);
+
+        alert.setDescription(
+                Constant.messages.getString("ascanbeta.sessionfixation.desc"));
+        alert.setSolution(
+                Constant.messages.getString("ascanbeta.sessionfixation.soln"));
+        alert.setReference(
+                Constant.messages.getString("ascanbeta.sessionfixation.refs"));
+        alert.setUri("https://www.example.com");
+
+        return List.of(alert);
     }
 }
