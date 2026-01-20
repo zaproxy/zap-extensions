@@ -113,5 +113,17 @@ The add-on maintains the following statistics:
     <li>openapi.urls.added : The total number of URLs added when importing OpenAPI definitions</li>
 </ul>
 
+<H2>Scripts</H2>
+The following scripts are included with the add-on:
+
+<H3 id="id-100043">Swagger Secret & Vulnerability Detector</H3>
+This is an active script scan rule. It attempts to find exposed OpenAPI documentation that leaks sensitive secrets such
+as API keys, OAuth client secrets, access tokens, or that runs vulnerable versions of Swagger UI.
+<p>
+    Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/openapi/src/main/zapHomeFiles/scripts/scripts/active/SwaggerSecretDetector.js">SwaggerSecretDetector.js</a>
+    <br>
+    Alert ID: <a href="https://www.zaproxy.org/docs/alerts/100043/">100043</a>.
+
+
 </BODY>
 </HTML>
