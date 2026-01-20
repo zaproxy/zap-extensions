@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
+- Update dependencies.
 - Use a monospaced font for the output panel.
 
 ## [1.39.0] - 2025-12-15
