@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [50] - 2026-01-21
 ### Added
 - Swagger Secret Detector Script Scan Rule.
 
@@ -368,6 +368,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First Version
 
+[50]: https://github.com/zaproxy/zap-extensions/releases/openapi-v50
 [49]: https://github.com/zaproxy/zap-extensions/releases/openapi-v49
 [48]: https://github.com/zaproxy/zap-extensions/releases/openapi-v48
 [47]: https://github.com/zaproxy/zap-extensions/releases/openapi-v47
