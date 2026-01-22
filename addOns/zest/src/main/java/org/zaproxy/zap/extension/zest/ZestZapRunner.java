@@ -54,6 +54,7 @@ import org.zaproxy.zap.extension.script.ScriptUI;
 import org.zaproxy.zap.extension.script.ScriptVars;
 import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
+import org.zaproxy.zap.users.User;
 import org.zaproxy.zest.core.v1.ZestAction;
 import org.zaproxy.zest.core.v1.ZestActionFail;
 import org.zaproxy.zest.core.v1.ZestActionFailException;
@@ -409,6 +410,13 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
     }
 
     private String launchClient(ZestClientLaunch clientLaunch) {
+        // Get user from wrapper if available
+        User user = wrapper != null ? wrapper.getUser() : null;
+
+        // Temporary logging
+        String userName = user != null ? user.getName() : "none";
+        LOGGER.info("ZestZapRunner.launchClient - user: {}", userName);
+
         ExtensionSelenium extSel =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class);
         Browser browser = null;
@@ -467,6 +475,9 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
                     "Browser launched by ZAP {} {}",
                     clientLaunch.getBrowserType(),
                     clientLaunch.getWindowHandle());
+            // User is now available for use with WebDriver:
+            // - user: User (can be null)
+            // This can be used for BBA/CSA authentication or other purposes
             return clientLaunch.getWindowHandle();
         }
         return null;

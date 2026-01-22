@@ -75,7 +75,8 @@ class AddScriptActionUnitTest extends TestUtils {
         plan = new AutomationPlan();
         env = plan.getEnv();
         progress = mock(AutomationProgress.class);
-        parameters = new ScriptJobParameters(AddScriptAction.NAME, null, null, "", "", "", "");
+        parameters =
+                new ScriptJobParameters(AddScriptAction.NAME, null, null, "", "", "", "", "", "");
 
         action = new AddScriptAction(parameters);
     }

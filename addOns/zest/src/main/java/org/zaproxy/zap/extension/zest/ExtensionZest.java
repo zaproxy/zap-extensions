@@ -80,6 +80,7 @@ import org.zaproxy.zap.extension.zest.internal.NoopRequestValueReplacer;
 import org.zaproxy.zap.extension.zest.internal.RequestValueReplacer;
 import org.zaproxy.zap.extension.zest.internal.ScriptReorderer;
 import org.zaproxy.zap.extension.zest.menu.ZestMenuManager;
+import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.ThreadUtils;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 import org.zaproxy.zap.view.ZapToggleButton;
@@ -335,7 +336,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
         // Convert zest scripts into "plain" scripts
         for (ScriptType type : this.getExtScript().getScriptTypes()) {
             for (ScriptWrapper script : this.getExtScript().getScripts(type)) {
-                if (script.getEngineName().equals(ZestScriptEngineFactory.NAME)) {
+                if (ZestScriptEngineFactory.NAME.equals(script.getEngineName())) {
                     ScriptNode node = this.getExtScript().getTreeModel().getNodeForScript(script);
                     if (script instanceof ZestScriptWrapper) {
                         ZestScriptWrapper zsw = (ZestScriptWrapper) script;
@@ -662,7 +663,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     public List<ScriptWrapper> getZestScripts(String type) {
         List<ScriptWrapper> list = new ArrayList<>();
         for (ScriptWrapper sw : this.getExtScript().getScripts(type)) {
-            if (sw.getEngineName().equals(ZestScriptEngineFactory.NAME)) {
+            if (ZestScriptEngineFactory.NAME.equals(sw.getEngineName())) {
                 list.add(sw);
             }
         }
@@ -1745,12 +1746,16 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
         if (ewrap == null) {
             LOGGER.error("Failed to find engine Mozilla Zest");
         } else if (script instanceof ZestScriptWrapper) {
+            ZestScriptWrapper zestWrapper = (ZestScriptWrapper) script;
+            // Temporary debug logging
+            User user = zestWrapper.getUser();
+            LOGGER.info(
+                    "ExtensionZest.preInvoke - wrapper user: {}",
+                    user != null ? user.getName() : "null");
             this.getZestScriptEngineFactory()
-                    .setRunner(
-                            new ZestZapRunner(
-                                    this, getExtensionNetwork(), (ZestScriptWrapper) script));
+                    .setRunner(new ZestZapRunner(this, getExtensionNetwork(), zestWrapper));
             clearResults();
-            this.lastRunScript = ((ZestScriptWrapper) script).getZestScript();
+            this.lastRunScript = zestWrapper.getZestScript();
         }
     }
 

@@ -72,12 +72,15 @@ import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationPlan;
 import org.zaproxy.addon.automation.AutomationProgress;
+import org.zaproxy.addon.automation.ContextWrapper;
 import org.zaproxy.addon.automation.ExtensionAutomation;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
+import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.testutils.TestUtils;
+import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.I18N;
 
 class ScriptJobUnitTest extends TestUtils {
@@ -482,8 +485,8 @@ class ScriptJobUnitTest extends TestUtils {
                         "  name: myScript");
         setJobData(job, yamlStr);
         ScriptWrapper scriptWrapper = mock(ScriptWrapper.class);
-        when(scriptWrapper.getTypeName()).thenReturn("standalone");
-        when(extScript.getScript("myScript")).thenReturn(scriptWrapper);
+        given(scriptWrapper.getTypeName()).willReturn("standalone");
+        given(extScript.getScript("myScript")).willReturn(scriptWrapper);
 
         // When
         job.verifyParameters(progress);
@@ -1284,13 +1287,319 @@ class ScriptJobUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldNotHaveCustomParameters() {
+    void shouldReturnCustomConfigParamsWithContext() {
         // Given
         ScriptJob job = new ScriptJob();
         // When
         Map<String, String> custParams = job.getCustomConfigParameters();
         // Then
-        assertThat(custParams, is(equalTo(Collections.EMPTY_MAP)));
+        assertThat(custParams.size(), is(equalTo(1)));
+        assertThat(custParams.get("context"), is(equalTo("")));
+    }
+
+    @Test
+    void shouldLoadContextAndUserParameters() {
+        // Given
+        AutomationEnvironment testEnv =
+                mock(AutomationEnvironment.class, withSettings().strictness(Strictness.LENIENT));
+        given(testEnv.getAllUserNames()).willReturn(Arrays.asList("testuser"));
+        ScriptJob job = new ScriptJob();
+        job.setEnv(testEnv);
+        String yamlStr =
+                """
+                parameters:
+                  action: run
+                  type: "standalone"
+                  name: myScript
+                  context: TestContext
+                  user: testuser
+                """;
+        setJobData(job, yamlStr);
+
+        // When
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(job.getParameters().getContext(), is(equalTo("TestContext")));
+        assertThat(job.getParameters().getUser(), is(equalTo("testuser")));
+    }
+
+    @Test
+    void shouldLoadContextAndUserWithEmptyValues() {
+        // Given
+        ScriptJob job = new ScriptJob();
+        String yamlStr =
+                """
+                parameters:
+                  action: run
+                  type: "standalone"
+                  name: myScript
+                  context: ""
+                  user: ""
+                """;
+        setJobData(job, yamlStr);
+
+        // When
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(job.getParameters().getContext(), is(equalTo("")));
+        assertThat(job.getParameters().getUser(), is(equalTo("")));
+    }
+
+    @Test
+    void shouldVerifyUserInVerifyParameters() {
+        // Given
+        AutomationEnvironment testEnv =
+                mock(AutomationEnvironment.class, withSettings().strictness(Strictness.LENIENT));
+        given(testEnv.getAllUserNames()).willReturn(Arrays.asList("user0", "user1"));
+        ScriptJob job = new ScriptJob();
+        job.setEnv(testEnv);
+        String yamlStr =
+                """
+                parameters:
+                  action: run
+                  type: "standalone"
+                  name: myScript
+                  user: user1
+                """;
+        setJobData(job, yamlStr);
+
+        // When
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(job.getParameters().getUser(), is(equalTo("user1")));
+    }
+
+    @Test
+    void shouldFailIfUnknownUser() {
+        // Given
+        AutomationEnvironment testEnv =
+                mock(AutomationEnvironment.class, withSettings().strictness(Strictness.LENIENT));
+        given(testEnv.getAllUserNames()).willReturn(Arrays.asList("user0", "user1"));
+        ScriptJob job = new ScriptJob();
+        job.setEnv(testEnv);
+        String yamlStr =
+                """
+                parameters:
+                  action: run
+                  type: "standalone"
+                  name: myScript
+                  user: UnknownUser
+                """;
+        setJobData(job, yamlStr);
+
+        // When
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.getErrors(), contains("!automation.error.job.baduser!"));
+    }
+
+    @Test
+    void shouldFailIfUnknownContext() {
+        // Given
+        AutomationEnvironment testEnv =
+                mock(AutomationEnvironment.class, withSettings().strictness(Strictness.LENIENT));
+        given(testEnv.getAllUserNames()).willReturn(Collections.emptyList());
+        given(testEnv.getContextWrapper("Unknown")).willReturn(null);
+        ScriptJob job = new ScriptJob();
+        job.setEnv(testEnv);
+        job.getParameters().setAction("run");
+        job.getParameters().setType("standalone");
+        job.getParameters().setName("myScript");
+        job.getParameters().setContext("Unknown");
+
+        // When
+        job.runJob(testEnv, progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.getErrors().get(0), is(equalTo("!automation.error.context.unknown!")));
+    }
+
+    @Test
+    void shouldUseDefaultContextWhenContextNotSpecified() throws Exception {
+        // Given
+        AutomationEnvironment testEnv =
+                mock(AutomationEnvironment.class, withSettings().strictness(Strictness.LENIENT));
+        Context context = mock(Context.class);
+        given(context.getName()).willReturn("DefaultContext");
+        ContextWrapper contextWrapper = new ContextWrapper(context, testEnv);
+        given(testEnv.getDefaultContextWrapper()).willReturn(contextWrapper);
+        given(testEnv.getAllUserNames()).willReturn(Collections.emptyList());
+        ScriptJob job = new ScriptJob();
+        job.setEnv(testEnv);
+        String yamlStr =
+                """
+                parameters:
+                  action: run
+                  type: "standalone"
+                  name: myScript
+                """;
+        setJobData(job, yamlStr);
+        ScriptWrapper scriptWrapper = mock(ScriptWrapper.class);
+        given(scriptWrapper.getTypeName()).willReturn("standalone");
+        given(extScript.getScript("myScript")).willReturn(scriptWrapper);
+
+        // When
+        job.verifyParameters(progress);
+        job.applyParameters(progress);
+        job.runJob(testEnv, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        verify(testEnv).getDefaultContextWrapper();
+        verify(extScript, times(1)).invokeScript(scriptWrapper);
+    }
+
+    @Test
+    void shouldUseSpecifiedContext() throws Exception {
+        // Given
+        Context context1 = mock(Context.class);
+        Context context2 = mock(Context.class);
+        AutomationEnvironment testEnv =
+                mock(AutomationEnvironment.class, withSettings().strictness(Strictness.LENIENT));
+        ContextWrapper contextWrapper1 = new ContextWrapper(context1, testEnv);
+        ContextWrapper contextWrapper2 = new ContextWrapper(context2, testEnv);
+        given(testEnv.getContextWrapper("context1")).willReturn(contextWrapper1);
+        given(testEnv.getContextWrapper("context2")).willReturn(contextWrapper2);
+        given(testEnv.getAllUserNames()).willReturn(Collections.emptyList());
+        ScriptJob job = new ScriptJob();
+        job.setEnv(testEnv);
+        job.getParameters().setAction("run");
+        job.getParameters().setType("standalone");
+        job.getParameters().setName("myScript");
+        job.getParameters().setContext("context2");
+        ScriptWrapper scriptWrapper = mock(ScriptWrapper.class);
+        given(scriptWrapper.getTypeName()).willReturn("standalone");
+        given(extScript.getScript("myScript")).willReturn(scriptWrapper);
+
+        // When
+        job.runJob(testEnv, progress);
+
+        // Then
+        verify(testEnv, times(0)).getContextWrapper("context1");
+        verify(testEnv, times(1)).getContextWrapper("context2");
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        verify(extScript, times(1)).invokeScript(scriptWrapper);
+    }
+
+    @Test
+    void shouldFailIfUnknownUserInRunJob() throws Exception {
+        // Given
+        AutomationEnvironment testEnv =
+                mock(AutomationEnvironment.class, withSettings().strictness(Strictness.LENIENT));
+        Context context = mock(Context.class);
+        ContextWrapper contextWrapper = new ContextWrapper(context, testEnv);
+        given(testEnv.getDefaultContextWrapper()).willReturn(contextWrapper);
+        // User exists for verifyParameters but getUser returns null in runJob
+        given(testEnv.getAllUserNames()).willReturn(Arrays.asList("UnknownUser"));
+        given(testEnv.getUser("UnknownUser")).willReturn(null);
+        ScriptJob job = new ScriptJob();
+        job.setEnv(testEnv);
+        String yamlStr =
+                """
+                parameters:
+                  action: run
+                  type: "standalone"
+                  name: myScript
+                  user: UnknownUser
+                """;
+        setJobData(job, yamlStr);
+
+        // When
+        job.verifyParameters(progress);
+        job.applyParameters(progress);
+        job.runJob(testEnv, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.getErrors(), contains("!automation.error.job.baduser!"));
+    }
+
+    @Test
+    void shouldUseSpecifiedUser() throws Exception {
+        // Given
+        AutomationEnvironment testEnv =
+                mock(AutomationEnvironment.class, withSettings().strictness(Strictness.LENIENT));
+        Context context = mock(Context.class);
+        ContextWrapper contextWrapper = new ContextWrapper(context, testEnv);
+        User user = mock(User.class);
+        given(user.getName()).willReturn("testuser");
+        given(testEnv.getDefaultContextWrapper()).willReturn(contextWrapper);
+        given(testEnv.getUser("testuser")).willReturn(user);
+        given(testEnv.getAllUserNames()).willReturn(Arrays.asList("testuser"));
+        ScriptJob job = new ScriptJob();
+        job.setEnv(testEnv);
+        String yamlStr =
+                """
+                parameters:
+                  action: run
+                  type: "standalone"
+                  name: myScript
+                  user: testuser
+                """;
+        setJobData(job, yamlStr);
+        ScriptWrapper scriptWrapper = mock(ScriptWrapper.class);
+        given(scriptWrapper.getTypeName()).willReturn("standalone");
+        given(extScript.getScript("myScript")).willReturn(scriptWrapper);
+
+        // When
+        job.verifyParameters(progress);
+        job.applyParameters(progress);
+        job.runJob(testEnv, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        verify(testEnv).getUser("testuser");
+        verify(extScript, times(1)).invokeScript(scriptWrapper);
+    }
+
+    @Test
+    void shouldRunScriptWithContextAndUser() throws Exception {
+        // Given
+        AutomationEnvironment testEnv =
+                mock(AutomationEnvironment.class, withSettings().strictness(Strictness.LENIENT));
+        Context context = mock(Context.class);
+        given(context.getName()).willReturn("TestContext");
+        ContextWrapper contextWrapper = new ContextWrapper(context, testEnv);
+        User user = mock(User.class);
+        given(user.getName()).willReturn("testuser");
+        given(testEnv.getContextWrapper("TestContext")).willReturn(contextWrapper);
+        given(testEnv.getUser("testuser")).willReturn(user);
+        given(testEnv.getAllUserNames()).willReturn(Arrays.asList("testuser"));
+        ScriptJob job = new ScriptJob();
+        job.setEnv(testEnv);
+        String yamlStr =
+                """
+                parameters:
+                  action: run
+                  type: "standalone"
+                  name: myScript
+                  context: TestContext
+                  user: testuser
+                """;
+        setJobData(job, yamlStr);
+        ScriptWrapper scriptWrapper = mock(ScriptWrapper.class);
+        given(scriptWrapper.getTypeName()).willReturn("standalone");
+        given(extScript.getScript("myScript")).willReturn(scriptWrapper);
+
+        // When
+        job.verifyParameters(progress);
+        job.applyParameters(progress);
+        job.runJob(testEnv, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        verify(testEnv).getContextWrapper("TestContext");
+        verify(testEnv).getUser("testuser");
+        verify(extScript, times(1)).invokeScript(scriptWrapper);
     }
 
     private ScriptJob setJobData(ScriptJob job, String yamlStr) {
