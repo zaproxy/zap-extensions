@@ -109,5 +109,17 @@ OpenAPI定義をインポートする際はデフォルト値が使用されま�
     <li>openapi.urls.added: OpenAPI定義をインポートする際に追加されたURLの総数</li>
 </ul>
 
+<h2>Scripts</h2>
+The following scripts are included with the add-on:
+
+<h3 id="id-100043">Swagger Secret & Vulnerability Detector</h3>
+This is an active script scan rule. It attempts to find exposed OpenAPI documentation that leaks sensitive secrets such
+as API keys, OAuth client secrets, access tokens, or that runs vulnerable versions of Swagger UI.
+<p>
+    Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/openapi/src/main/zapHomeFiles/scripts/scripts/active/SwaggerSecretDetector.js">SwaggerSecretDetector.js</a>
+    <br>
+    Alert ID: <a href="https://www.zaproxy.org/docs/alerts/100043/">100043</a>.
+
+
 </body>
 </html>
