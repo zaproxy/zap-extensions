@@ -44,6 +44,12 @@ plugins {
     antlr
 }
 
+configurations {
+    api {
+        setExtendsFrom(extendsFrom.filterNot { it == antlr.get() })
+    }
+}
+
 dependencies {
     implementation(libs.pscanrules.re2j)
     implementation(libs.pscanrules.htmlunit.csp)
