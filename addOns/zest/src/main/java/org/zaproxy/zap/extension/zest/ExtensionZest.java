@@ -1745,12 +1745,11 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
         if (ewrap == null) {
             LOGGER.error("Failed to find engine Mozilla Zest");
         } else if (script instanceof ZestScriptWrapper) {
+            ZestScriptWrapper zestWrapper = (ZestScriptWrapper) script;
             this.getZestScriptEngineFactory()
-                    .setRunner(
-                            new ZestZapRunner(
-                                    this, getExtensionNetwork(), (ZestScriptWrapper) script));
+                    .setRunner(new ZestZapRunner(this, getExtensionNetwork(), zestWrapper));
             clearResults();
-            this.lastRunScript = ((ZestScriptWrapper) script).getZestScript();
+            this.lastRunScript = zestWrapper.getZestScript();
         }
     }
 

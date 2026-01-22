@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.authhelper;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -38,8 +39,11 @@ import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.authhelper.internal.ClientSideHandler;
+import org.zaproxy.addon.authhelper.internal.ZestAuthRunner;
 import org.zaproxy.addon.commonlib.internal.TotpSupport;
+import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
+import org.zaproxy.addon.network.server.ServerInfo;
 import org.zaproxy.zap.authentication.AbstractAuthenticationMethodOptionsPanel;
 import org.zaproxy.zap.authentication.AuthenticationCredentials;
 import org.zaproxy.zap.authentication.AuthenticationHelper;
@@ -52,6 +56,7 @@ import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType.Script
 import org.zaproxy.zap.extension.api.ApiDynamicActionImplementor;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
+import org.zaproxy.zap.extension.selenium.ClientAuthenticator;
 import org.zaproxy.zap.extension.zest.ZestAuthenticationRunner;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.session.SessionManagementMethod;
@@ -174,7 +179,8 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
         return new ClientScriptBasedAuthenticationMethodOptionsPanel();
     }
 
-    public class ClientScriptBasedAuthenticationMethod extends ScriptBasedAuthenticationMethod {
+    public class ClientScriptBasedAuthenticationMethod extends ScriptBasedAuthenticationMethod
+            implements ClientAuthenticator {
 
         private int loginPageWait = DEFAULT_PAGE_WAIT;
         private int minWaitFor;
@@ -237,6 +243,44 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
         @Override
         public AuthenticationMethodType getType() {
             return new ClientScriptBasedAuthenticationMethodType();
+        }
+
+        @Override
+        public boolean authenticate(WebDriver webDriver, User user) {
+            ZestScript zestScript = getZestScript();
+            if (zestScript == null) {
+                LOGGER.warn("No Zest script configured for client script authentication");
+                return false;
+            }
+            try {
+                ZestAuthRunner runner = new ZestAuthRunner();
+                // Always proxy via ZAP
+                ServerInfo mainProxyInfo =
+                        AuthUtils.getExtension(ExtensionNetwork.class).getMainProxyServerInfo();
+                runner.setProxy(mainProxyInfo.getAddress(), mainProxyInfo.getPort());
+                runner.setWebDriver(webDriver);
+
+                Map<String, String> paramsValues = new HashMap<>();
+                ZestAuthenticationRunner.copyCredentials(
+                        (GenericAuthenticationCredentials) user.getAuthenticationCredentials(),
+                        paramsValues);
+
+                AuthUtils.setMinWaitFor(zestScript, minWaitFor);
+                runner.setup(user, zestScript);
+                runner.run(zestScript, paramsValues);
+
+                int sleepTime = loginPageWait;
+                if (sleepTime > 0) {
+                    AuthUtils.sleep(TimeUnit.SECONDS.toMillis(sleepTime));
+                }
+                return true;
+            } catch (Exception e) {
+                LOGGER.warn(
+                        "An error occurred while trying to execute the Client Script Authentication script: {}",
+                        e.getMessage(),
+                        e);
+                return false;
+            }
         }
 
         public ZestScript getZestScript() {

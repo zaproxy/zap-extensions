@@ -28,6 +28,7 @@ import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
+import org.zaproxy.zap.users.User;
 import org.zaproxy.zest.core.v1.ZestScript;
 import org.zaproxy.zest.core.v1.ZestScript.Type;
 
@@ -46,6 +47,7 @@ public class ZestScriptWrapper extends ScriptWrapper {
     private boolean debug = false;
     private boolean recording = false;
     private int zestModCount;
+    private User user;
 
     public ZestScriptWrapper(ScriptWrapper script) {
         this.original = script;
@@ -184,6 +186,7 @@ public class ZestScriptWrapper extends ScriptWrapper {
         clone.setWriter(this.getWriter());
         clone.setDebug(this.isDebug());
         clone.setRecording(this.isRecording());
+        clone.setUser(this.getUser());
         return clone;
     }
 
@@ -240,5 +243,13 @@ public class ZestScriptWrapper extends ScriptWrapper {
 
     ScriptWrapper getOriginal() {
         return original;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
