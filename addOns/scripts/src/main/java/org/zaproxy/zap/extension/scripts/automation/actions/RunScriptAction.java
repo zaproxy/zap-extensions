@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.scripts.automation.actions;
 
+import java.lang.reflect.InvocationTargetException;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,10 +39,12 @@ import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.scripts.automation.ScriptJobOutputListener;
 import org.zaproxy.zap.extension.scripts.automation.ScriptJobParameters;
 import org.zaproxy.zap.extension.scripts.automation.ui.ScriptJobDialog;
+import org.zaproxy.zap.users.User;
 
 public class RunScriptAction extends ScriptAction {
 
     public static final String NAME = "run";
+    private static final String ZEST_ENGINE_NAME = "Mozilla Zest";
     private static final List<String> SCRIPT_TYPES =
             Arrays.asList(ExtensionScript.TYPE_STANDALONE, ExtensionScript.TYPE_TARGETED);
     private static final List<String> DISABLED_FIELDS =
@@ -176,6 +179,19 @@ public class RunScriptAction extends ScriptAction {
 
     @Override
     public void runJob(String jobName, AutomationEnvironment env, AutomationProgress progress) {
+        User user = null;
+        if (StringUtils.isNotEmpty(this.parameters.getUser())) {
+            user = env.getUser(this.parameters.getUser());
+            if (user == null) {
+                progress.error(
+                        Constant.messages.getString(
+                                "automation.error.job.baduser",
+                                jobName,
+                                this.parameters.getUser()));
+                return;
+            }
+        }
+
         ScriptJobOutputListener scriptJobOutputListener =
                 new ScriptJobOutputListener(progress, parameters.getName());
         try {
@@ -217,6 +233,7 @@ public class RunScriptAction extends ScriptAction {
                 HttpMessage httpMessage = siteNode.getHistoryReference().getHttpMessage();
                 extScript.invokeTargetedScript(script, httpMessage);
             } else {
+                setUserOnZestWrapper(script, user);
                 extScript.invokeScript(script);
             }
             scriptJobOutputListener.flush();
@@ -243,5 +260,25 @@ public class RunScriptAction extends ScriptAction {
                         jobName,
                         parameters.getName(),
                         e.getMessage()));
+    }
+
+    private void setUserOnZestWrapper(ScriptWrapper script, User user) {
+        if (user == null) {
+            LOGGER.debug("User is null, skipping set user.");
+            return;
+        }
+        if (!ZEST_ENGINE_NAME.equals(script.getEngineName())) {
+            LOGGER.warn("Script engine is not Zest, skipping set user.");
+            return;
+        }
+
+        try {
+            script.getClass().getMethod("setUser", User.class).invoke(script, user);
+        } catch (NoSuchMethodException
+                | IllegalAccessException
+                | InvocationTargetException
+                | SecurityException e) {
+            LOGGER.warn("Failed to set user on script wrapper", e);
+        }
     }
 }

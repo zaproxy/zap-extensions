@@ -37,6 +37,8 @@ public class ScriptJobParameters extends AutomationData {
     private String source = "";
     private String target = "";
     private String inline = "";
+    private String context = "";
+    private String user = "";
 
     public ScriptJobParameters(String action) {
         this.action = action;

@@ -39,7 +39,9 @@ public class RemoveScriptAction extends ScriptAction {
                     ScriptJobDialog.SCRIPT_INLINE_PARAM,
                     ScriptJobDialog.SCRIPT_IS_INLINE_PARAM,
                     ScriptJobDialog.SCRIPT_FILE_PARAM,
-                    ScriptJobDialog.SCRIPT_TARGET_PARAM);
+                    ScriptJobDialog.SCRIPT_TARGET_PARAM,
+                    ScriptJobDialog.SCRIPT_CONTEXT_PARAM,
+                    ScriptJobDialog.SCRIPT_USER_PARAM);
 
     public RemoveScriptAction(ScriptJobParameters parameters) {
         super(parameters);
