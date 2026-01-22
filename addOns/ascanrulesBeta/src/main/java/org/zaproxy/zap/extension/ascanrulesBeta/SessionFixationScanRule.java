@@ -23,6 +23,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Instant;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -685,16 +686,15 @@ public class SessionFixationScanRule extends AbstractAppPlugin implements Common
                         // (etc.)
                         // the alert here is "Session Id Expiry Time is excessive", or words to that
                         // effect.
-                        newAlert()
-                                .setRisk(sessionExpiryRiskLevel)
-                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                                .setName(vulnname)
-                                .setDescription(vulndesc)
-                                .setParam(currentHtmlParameter.getName())
-                                .setAttack(attack)
-                                .setOtherInfo(extraInfo)
-                                .setSolution(vulnsoln)
-                                .setMessage(getBaseMsg())
+                        buildSessionFixationAlert(
+                                        sessionExpiryRiskLevel,
+                                        Alert.CONFIDENCE_MEDIUM,
+                                        vulnname,
+                                        vulndesc,
+                                        currentHtmlParameter.getName(),
+                                        attack,
+                                        extraInfo,
+                                        vulnsoln)
                                 .raise();
 
                         LOGGER.debug(
@@ -1492,22 +1492,47 @@ public class SessionFixationScanRule extends AbstractAppPlugin implements Common
         return ALERT_TAGS;
     }
 
+    private AlertBuilder buildSessionFixationAlert(
+            int risk,
+            int confidence,
+            String name,
+            String description,
+            String param,
+            String attack,
+            String otherInfo,
+            String solution) {
+
+        return newAlert()
+                .setRisk(risk)
+                .setConfidence(confidence)
+                .setName(name)
+                .setDescription(description)
+                .setParam(param)
+                .setAttack(attack)
+                .setOtherInfo(otherInfo)
+                .setSolution(solution)
+                .setMessage(getBaseMsg());
+    }
+
     @Override
     public List<Alert> getExampleAlerts() {
-        Alert alert = new Alert(
-                40013,
-                Constant.messages.getString("ascanbeta.sessionfixation.name"),
-                Alert.RISK_HIGH,
-                Alert.CONFIDENCE_MEDIUM);
+        List<Alert> alerts = new ArrayList<>();
 
-        alert.setDescription(
-                Constant.messages.getString("ascanbeta.sessionfixation.desc"));
-        alert.setSolution(
-                Constant.messages.getString("ascanbeta.sessionfixation.soln"));
-        alert.setReference(
-                Constant.messages.getString("ascanbeta.sessionfixation.refs"));
+        Alert alert =
+                buildSessionFixationAlert(
+                                Alert.RISK_HIGH,
+                                Alert.CONFIDENCE_MEDIUM,
+                                getName(),
+                                getDescription(),
+                                "jsessionid",
+                                "-1",
+                                null,
+                                getSolution())
+                        .build();
+
         alert.setUri("https://www.example.com");
 
-        return List.of(alert);
+        alerts.add(alert);
+        return alerts;
     }
 }
