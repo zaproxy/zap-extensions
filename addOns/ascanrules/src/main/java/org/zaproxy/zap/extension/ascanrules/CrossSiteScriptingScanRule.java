@@ -177,20 +177,6 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
                     || ResourceIdentificationUtils.responseContainsControlChars(baseMsg)) {
                 return;
             }
-
-            // Checks for other non-HTML types not covered by ResourceIdentificationUtils
-            String contentType =
-                    baseMsg.getResponseHeader().getHeader(HttpFieldsNames.CONTENT_TYPE);
-            if (contentType != null) {
-                String lowerContentType = contentType.toLowerCase();
-                if (lowerContentType.contains("application/octet-stream")
-                        || lowerContentType.contains("application/pdf")
-                        || lowerContentType.contains("application/msword")
-                        || lowerContentType.contains("application/vnd.ms-")
-                        || lowerContentType.contains("application/vnd.openxmlformats-")) {
-                    return;
-                }
-            }
         }
 
         super.scan(msg, originalParam);
@@ -911,10 +897,9 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
 
     @Override
     public void scan(HttpMessage msg, String param, String value) {
-        if (!AlertThreshold.LOW.equals(getAlertThreshold())) {
-            if (HttpRequestHeader.PUT.equals(msg.getRequestHeader().getMethod())) {
-                return;
-            }
+        if (!AlertThreshold.LOW.equals(getAlertThreshold())
+                && HttpRequestHeader.PUT.equals(msg.getRequestHeader().getMethod())) {
+            return;
         }
 
         try {
