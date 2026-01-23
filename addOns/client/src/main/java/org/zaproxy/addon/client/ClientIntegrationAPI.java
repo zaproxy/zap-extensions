@@ -25,8 +25,12 @@ import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import net.sf.json.JSONObject;
+import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpHeader;
@@ -63,6 +67,9 @@ public class ClientIntegrationAPI extends ApiImplementor {
     private ExtensionClientIntegration extension;
 
     private String callbackUrl;
+
+    private Map<String, ClientCallBackImplementor> clientCallBacks =
+            Collections.synchronizedMap(new HashMap<>());
 
     public ClientIntegrationAPI(ExtensionClientIntegration extension) {
         this.extension = extension;
@@ -185,6 +192,18 @@ public class ClientIntegrationAPI extends ApiImplementor {
 
     @Override
     public String handleCallBack(HttpMessage msg) throws ApiException {
+        // Check for plugin client callbacks
+        // The URL will be of the form https://zap/zapCallBackUrl/<rnd number>/<optional client id>
+        String[] paths = msg.getRequestHeader().getURI().getEscapedPath().split("/");
+        if (paths.length > 3) {
+            ClientCallBackImplementor impl = this.clientCallBacks.get(paths[3]);
+            if (impl != null) {
+                return impl.handleCallBack(msg);
+            }
+            LOGGER.warn("Unexpected client implementor specified {}", paths[3]);
+            return "";
+        }
+
         if (HttpRequestHeader.POST.equals(msg.getRequestHeader().getMethod())) {
             String body = msg.getRequestBody().toString();
 
@@ -246,5 +265,21 @@ public class ClientIntegrationAPI extends ApiImplementor {
             throw new ApiException(
                     ApiException.Type.ILLEGAL_PARAMETER, "Invalid export path: " + exportPath);
         }
+    }
+
+    void registerClientCallBack(ClientCallBackImplementor callback) {
+        Validate.notNull(callback, "Parameter callback must not be null");
+        Validate.notNull(
+                callback.getImplementorName(),
+                "Parameter callback implementor name must not be null");
+        this.clientCallBacks.put(callback.getImplementorName(), callback);
+    }
+
+    void unregisterClientCallBack(ClientCallBackImplementor callback) {
+        Validate.notNull(callback, "Parameter callback must not be null");
+        Validate.notNull(
+                callback.getImplementorName(),
+                "Parameter callback implementor name must not be null");
+        this.clientCallBacks.remove(callback.getImplementorName());
     }
 }
