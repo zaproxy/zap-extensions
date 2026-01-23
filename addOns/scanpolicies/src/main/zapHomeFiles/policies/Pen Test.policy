@@ -321,6 +321,10 @@
             <name>NoSQL Injection - MongoDB (Time Based)</name>
             <enabled>true</enabled>
         </p90039>
+        <p100043>
+            <name>Swagger UI Secret &amp; Vulnerability Detector</name>
+            <enabled>true</enabled>
+        </p100043>
         <p100044>
             <name>Suspicious Input Transformation</name>
             <enabled>true</enabled>

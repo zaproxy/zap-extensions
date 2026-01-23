@@ -109,5 +109,9 @@
             <name>Remote OS Command Injection (Time Based)</name>
             <enabled>true</enabled>
         </p90037>
+        <p100043>
+            <name>Swagger UI Secret &amp; Vulnerability Detector</name>
+            <enabled>true</enabled>
+        </p100043>
     </plugins>
 </configuration>
