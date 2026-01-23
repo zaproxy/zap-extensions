@@ -755,7 +755,7 @@ public class ExtensionSpider2 extends ExtensionAdaptor implements ScanController
         if (menuItemCustomScan == null) {
             menuItemCustomScan =
                     new ZapMenuItem(
-                            "menu.tools.spider",
+                            "spider.menu.tools",
                             getView()
                                     .getMenuShortcutKeyStroke(
                                             KeyEvent.VK_S, KeyEvent.ALT_DOWN_MASK, false));
