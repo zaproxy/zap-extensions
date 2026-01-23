@@ -23,7 +23,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Instant;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -1516,23 +1515,20 @@ public class SessionFixationScanRule extends AbstractAppPlugin implements Common
 
     @Override
     public List<Alert> getExampleAlerts() {
-        List<Alert> alerts = new ArrayList<>();
-
         Alert alert =
                 buildSessionFixationAlert(
-                                Alert.RISK_HIGH,
-                                Alert.CONFIDENCE_MEDIUM,
-                                getName(),
-                                getDescription(),
-                                "jsessionid",
-                                "-1",
-                                null,
-                                getSolution())
+                        Alert.RISK_HIGH,
+                        Alert.CONFIDENCE_MEDIUM,
+                        getName(),
+                        getDescription(),
+                        "jsessionid",
+                        "-1",
+                        null,
+                        getSolution())
                         .build();
 
         alert.setUri("https://www.example.com");
-
-        alerts.add(alert);
-        return alerts;
+        return List.of(alert);
     }
+
 }
