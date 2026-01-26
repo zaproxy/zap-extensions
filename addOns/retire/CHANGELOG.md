@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Updated with upstream retire.js pattern changes.
+- Now only loads the data once (Issue 9103).
 
 ## [0.53.0] - 2026-01-08
 ### Changed
