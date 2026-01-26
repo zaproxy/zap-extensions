@@ -124,7 +124,7 @@ public class ExtensionInsights extends ExtensionAdaptor {
                 && ins.getLevel().equals(Insight.Level.HIGH)) {
             Control control = Control.getSingleton();
             control.setExitStatus(2, "Shutting down ZAP due to High Level Insight");
-            control.exit(false, null);
+            control.exit(true, null);
         }
     }
 
