@@ -57,7 +57,17 @@ public class RetireScanRule extends PluginPassiveScanner {
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
     }
 
-    private Repo repo;
+    private final RepoHolder repoHolder;
+    private Repo repo; // For backward compatibility and tests
+
+    /**
+     * Constructs a {@code RetireScanRule} with the given {@code RepoHolder}.
+     *
+     * @param repoHolder the holder that provides the {@link Repo} instance
+     */
+    public RetireScanRule(RepoHolder repoHolder) {
+        this.repoHolder = repoHolder;
+    }
 
     @Override
     public String getName() {
@@ -139,8 +149,12 @@ public class RetireScanRule extends PluginPassiveScanner {
 
     @Override
     public PluginPassiveScanner copy() {
-        RetireScanRule scanRule = new RetireScanRule();
-        scanRule.setRepo(this.getRepo());
+        RetireScanRule scanRule = new RetireScanRule(this.repoHolder);
+        // Share the same repo instance from holder if available, otherwise use test-injected repo
+        // Note: The test-injected repo is only preserved during copy if there is no holder.
+        if (this.repoHolder == null && this.repo != null) {
+            scanRule.setRepo(this.repo);
+        }
         scanRule.setConfig(this.getConfig());
         return scanRule;
     }
@@ -173,12 +187,18 @@ public class RetireScanRule extends PluginPassiveScanner {
     }
 
     protected Repo getRepo() {
-        if (repo == null) {
-            try {
-                this.repo = new Repo(COLLECTION_PATH);
-            } catch (IOException e) {
-                LOGGER.warn("Failed to open the Retire.js collection JSON file.", e);
-            }
+        // Priority: 1) Holder, 2) Test-injected repo, 3) Lazy load (fallback)
+        if (repoHolder != null) {
+            return repoHolder.getRepo();
+        }
+        if (repo != null) {
+            return repo;
+        }
+        // Fallback: lazy load (for backward compatibility)
+        try {
+            this.repo = new Repo(COLLECTION_PATH);
+        } catch (IOException e) {
+            LOGGER.warn("Failed to open the Retire.js collection JSON file.", e);
         }
         return repo;
     }
