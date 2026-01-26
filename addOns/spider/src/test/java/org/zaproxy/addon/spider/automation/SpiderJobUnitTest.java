@@ -27,9 +27,11 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.refEq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -59,7 +61,9 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
+import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.automation.AutomationEnvironment;
@@ -117,6 +121,20 @@ class SpiderJobUnitTest extends TestUtils {
 
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
         Model.getSingleton().getOptionsParam().load(new ZapXmlConfiguration());
+
+        ExtensionHistory extHistory =
+                mock(ExtensionHistory.class, withSettings().strictness(Strictness.LENIENT));
+        given(extensionLoader.getExtension(ExtensionHistory.class)).willReturn(extHistory);
+        doAnswer(
+                        invocation -> {
+                            HttpMessage msg = invocation.getArgument(0);
+                            HistoryReference href = mock();
+                            msg.setHistoryRef(href);
+                            given(href.getHttpMessage()).willReturn(msg);
+                            return null;
+                        })
+                .when(extHistory)
+                .addHistory(any(), eq(HistoryReference.TYPE_SPIDER));
     }
 
     @Test
@@ -426,10 +444,6 @@ class SpiderJobUnitTest extends TestUtils {
 
     @Test
     void shouldRequestContextUrl() throws Exception {
-        ExtensionHistory extHistory =
-                mock(ExtensionHistory.class, withSettings().strictness(Strictness.LENIENT));
-        given(extensionLoader.getExtension(ExtensionHistory.class)).willReturn(extHistory);
-
         startServer();
         Context context = mock(Context.class);
         ContextWrapper contextWrapper =
@@ -468,10 +482,6 @@ class SpiderJobUnitTest extends TestUtils {
 
     @Test
     void shouldRequestContextUrls() throws Exception {
-        ExtensionHistory extHistory =
-                mock(ExtensionHistory.class, withSettings().strictness(Strictness.LENIENT));
-        given(extensionLoader.getExtension(ExtensionHistory.class)).willReturn(extHistory);
-
         startServer();
         Context context = mock(Context.class);
         ContextWrapper contextWrapper =
@@ -522,10 +532,6 @@ class SpiderJobUnitTest extends TestUtils {
 
     @Test
     void shouldFailIfInvalidHost() throws Exception {
-        ExtensionHistory extHistory =
-                mock(ExtensionHistory.class, withSettings().strictness(Strictness.LENIENT));
-        given(extensionLoader.getExtension(ExtensionHistory.class)).willReturn(extHistory);
-
         Context context = mock(Context.class);
         ContextWrapper contextWrapper =
                 new ContextWrapper(context, mock(AutomationEnvironment.class));
@@ -563,10 +569,6 @@ class SpiderJobUnitTest extends TestUtils {
 
     @Test
     void shouldFailIfInvalidProxyHost() throws Exception {
-        ExtensionHistory extHistory =
-                mock(ExtensionHistory.class, withSettings().strictness(Strictness.LENIENT));
-        given(extensionLoader.getExtension(ExtensionHistory.class)).willReturn(extHistory);
-
         Context context = mock(Context.class);
         ContextWrapper contextWrapper =
                 new ContextWrapper(context, mock(AutomationEnvironment.class));
@@ -607,10 +609,6 @@ class SpiderJobUnitTest extends TestUtils {
 
     @Test
     void shouldWarnIfNotOkResponse() throws Exception {
-        ExtensionHistory extHistory =
-                mock(ExtensionHistory.class, withSettings().strictness(Strictness.LENIENT));
-        given(extensionLoader.getExtension(ExtensionHistory.class)).willReturn(extHistory);
-
         startServer();
         Context context = mock(Context.class);
         ContextWrapper contextWrapper =
@@ -650,6 +648,45 @@ class SpiderJobUnitTest extends TestUtils {
         assertThat(progress.getWarnings().size(), is(equalTo(1)));
         assertThat(
                 progress.getWarnings().get(0), is(equalTo("!spider.automation.error.url.notok!")));
+    }
+
+    @Test
+    void shouldErrorIfNotPersistedResponse() throws Exception {
+        given(extensionLoader.getExtension(ExtensionHistory.class)).willReturn(mock());
+
+        startServer();
+        Context context = mock(Context.class);
+        ContextWrapper contextWrapper =
+                new ContextWrapper(context, mock(AutomationEnvironment.class));
+        String url = "http://localhost:" + nano.getListeningPort() + "/top";
+        contextWrapper.addUrl(url);
+
+        given(extSpider.startScan(any(), any(), any())).willReturn(1);
+
+        SpiderScan spiderScan = mock(SpiderScan.class);
+        given(spiderScan.isStopped()).willReturn(true);
+        given(extSpider.getScan(1)).willReturn(spiderScan);
+
+        AutomationProgress progress = new AutomationProgress();
+
+        AutomationEnvironment env = mock(AutomationEnvironment.class);
+        given(env.getDefaultContextWrapper()).willReturn(contextWrapper);
+        given(env.replaceVars(url)).willReturn(url);
+
+        Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
+        SpiderJob job = new SpiderJob();
+
+        TestServerHandler testHandler = new TestServerHandler("/", Response.Status.FORBIDDEN);
+
+        nano.addHandler(testHandler);
+
+        // When
+        job.runJob(env, progress);
+
+        stopServer();
+
+        // Then
+        assertThat(progress.getErrors(), contains("!spider.automation.error.url.notpersisted!"));
     }
 
     @Test

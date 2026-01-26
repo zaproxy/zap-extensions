@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Maintenance changes.
 
+### Fixed
+- Handle persistence errors in automation job.
+
 ## [0.18.0] - 2025-12-15
 ### Changed
 - Update minimum ZAP version to 2.17.0.
