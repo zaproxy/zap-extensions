@@ -938,6 +938,23 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
         return exportClientMap(path, false);
     }
 
+    /**
+     * Registers a client callback implementor. Any requests to the callback URL which have the
+     * implementor name as the next element of the path will be passed over to that implementor.
+     * Implementors should use their unique ZAP add-on ID to prevent any clashes.
+     */
+    public void registerClientCallBack(ClientCallBackImplementor callback) {
+        this.api.registerClientCallBack(callback);
+    }
+
+    /**
+     * Unregisters a client callback implementor. Any requests using the implementor name will be
+     * ignored.
+     */
+    public void unregisterClientCallBack(ClientCallBackImplementor callback) {
+        this.api.unregisterClientCallBack(callback);
+    }
+
     private class ClientPassiveScanRuleProvider implements PassiveScanRuleProvider {
 
         @Override
