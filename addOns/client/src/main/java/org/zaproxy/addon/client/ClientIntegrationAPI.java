@@ -198,7 +198,16 @@ public class ClientIntegrationAPI extends ApiImplementor {
         if (paths.length > 3) {
             ClientCallBackImplementor impl = this.clientCallBacks.get(paths[3]);
             if (impl != null) {
-                return impl.handleCallBack(msg);
+                try {
+                    return impl.handleCallBack(msg);
+                } catch (Exception e) {
+                    LOGGER.error(
+                            "Error in client callback implementation {}: {}",
+                            paths[3],
+                            e.getMessage(),
+                            e);
+                    return "";
+                }
             }
             LOGGER.warn("Unexpected client implementor specified {}", paths[3]);
             return "";
