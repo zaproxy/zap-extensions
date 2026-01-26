@@ -59,6 +59,15 @@ public class RetireScanRule extends PluginPassiveScanner {
 
     private Repo repo;
 
+    /**
+     * Constructs a {@code RetireScanRule} with the given {@code Repo}.
+     *
+     * @param repo the {@link Repo} instance, may be {@code null}
+     */
+    public RetireScanRule(Repo repo) {
+        this.repo = repo;
+    }
+
     @Override
     public String getName() {
         return Constant.messages.getString("retire.rule.name");
@@ -139,8 +148,7 @@ public class RetireScanRule extends PluginPassiveScanner {
 
     @Override
     public PluginPassiveScanner copy() {
-        RetireScanRule scanRule = new RetireScanRule();
-        scanRule.setRepo(this.getRepo());
+        RetireScanRule scanRule = new RetireScanRule(this.repo);
         scanRule.setConfig(this.getConfig());
         return scanRule;
     }
@@ -173,18 +181,15 @@ public class RetireScanRule extends PluginPassiveScanner {
     }
 
     protected Repo getRepo() {
-        if (repo == null) {
-            try {
-                this.repo = new Repo(COLLECTION_PATH);
-            } catch (IOException e) {
-                LOGGER.warn("Failed to open the Retire.js collection JSON file.", e);
-            }
+        if (repo != null) {
+            return repo;
+        }
+
+        try {
+            this.repo = new Repo(COLLECTION_PATH);
+        } catch (IOException e) {
+            LOGGER.warn("Failed to open the Retire.js collection JSON file.", e);
         }
         return repo;
-    }
-
-    // This method supports unit tests
-    void setRepo(Repo repo) {
-        this.repo = repo;
     }
 }
