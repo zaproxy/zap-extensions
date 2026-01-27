@@ -38,4 +38,8 @@ public enum LlmProvider {
     public String toString() {
         return Constant.messages.getString(messageKey);
     }
+
+    public boolean supportsEndpoint() {
+        return this != NONE && this != GOOGLE_GEMINI;
+    }
 }

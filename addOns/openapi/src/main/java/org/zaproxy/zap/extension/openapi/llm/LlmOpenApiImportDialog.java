@@ -45,7 +45,6 @@ import org.parosproxy.paros.extension.AbstractDialog;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.llm.ExtensionLlm;
-import org.zaproxy.addon.llm.LlmOptions;
 import org.zaproxy.addon.llm.services.LlmCommunicationService;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.ThreadUtils;
@@ -57,8 +56,6 @@ public class LlmOpenApiImportDialog extends AbstractDialog {
 
     private static final long serialVersionUID = -7074394202143400215L;
 
-    private final ExtensionOpenApiLlm ext;
-
     private JTextField fieldOpenapi;
     private JButton buttonChooseFile;
     private JButton buttonCancel;
@@ -67,7 +64,6 @@ public class LlmOpenApiImportDialog extends AbstractDialog {
 
     public LlmOpenApiImportDialog(JFrame parent, ExtensionOpenApiLlm ext) {
         super(parent, true);
-        this.ext = ext;
 
         super.setTitle(Constant.messages.getString("openapi.llm.importDialog.title"));
         centreDialog();
@@ -131,20 +127,6 @@ public class LlmOpenApiImportDialog extends AbstractDialog {
                         Constant.messages.getString("openapi.llm.openapi.import.output.tab"));
 
         if (llmCommunicationService == null) {
-            showWarningDialog(
-                    Constant.messages.getString("openapi.llm.importDialog.error.llmNotConfigured"));
-            return false;
-        }
-
-        LlmOptions options = llmCommunicationService.getOptions();
-
-        if (StringUtils.isEmpty(options.getApiKey())) {
-            showWarningDialog(
-                    Constant.messages.getString("openapi.llm.importDialog.error.llmNotConfigured"));
-            return false;
-        }
-
-        if (StringUtils.isEmpty(options.getEndpoint())) {
             showWarningDialog(
                     Constant.messages.getString("openapi.llm.importDialog.error.llmNotConfigured"));
             return false;

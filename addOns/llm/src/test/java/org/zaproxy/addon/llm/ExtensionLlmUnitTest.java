@@ -23,19 +23,19 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.OptionsChangedListener;
 import org.zaproxy.addon.llm.services.LlmCommunicationService;
 import org.zaproxy.zap.testutils.TestUtils;
-import org.zaproxy.zap.utils.I18N;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 public class ExtensionLlmUnitTest extends TestUtils {
@@ -45,19 +45,27 @@ public class ExtensionLlmUnitTest extends TestUtils {
 
     @BeforeAll
     static void beforeAll() {
+        mockMessages(new ExtensionLlm());
         Control.initSingletonForTesting();
         hook = mock(ExtensionHook.class);
         ext = new ExtensionLlm();
         ext.hook(hook);
         ext.getOptions().load(new ZapXmlConfiguration());
-        Constant.messages = mock(I18N.class);
     }
 
     @Test
     void shouldReturnDifferentCommsForDifferentKeys() {
         // Given
-        ext.getOptions().setModelProvider(LlmProvider.OLLAMA);
-        ext.getOptions().setEndpoint("http://localhost");
+        ext.getOptions()
+                .setProviderConfigs(
+                        List.of(
+                                new LlmProviderConfig(
+                                        "default",
+                                        LlmProvider.OLLAMA,
+                                        null,
+                                        "http://localhost",
+                                        List.of("model1"))));
+        ext.getOptions().setDefaultProviderName("default");
 
         // When
         LlmCommunicationService comms1 = ext.getCommunicationService("KEY1", null);
@@ -73,8 +81,16 @@ public class ExtensionLlmUnitTest extends TestUtils {
     @Test
     void shouldReturnSameCommsForSameKey() {
         // Given
-        ext.getOptions().setModelProvider(LlmProvider.OLLAMA);
-        ext.getOptions().setEndpoint("http://localhost");
+        ext.getOptions()
+                .setProviderConfigs(
+                        List.of(
+                                new LlmProviderConfig(
+                                        "default",
+                                        LlmProvider.OLLAMA,
+                                        null,
+                                        "http://localhost",
+                                        List.of("model1"))));
+        ext.getOptions().setDefaultProviderName("default");
 
         // When
         LlmCommunicationService comms1 = ext.getCommunicationService("KEY1", null);
@@ -87,14 +103,30 @@ public class ExtensionLlmUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldReturnDifferemtCommsForSameKeyIfChanged() {
+    void shouldReturnDifferentCommsForSameKeyIfChanged() {
         // Given
-        ext.getOptions().setModelProvider(LlmProvider.OLLAMA);
-        ext.getOptions().setEndpoint("http://localhost");
+        ext.getOptions()
+                .setProviderConfigs(
+                        List.of(
+                                new LlmProviderConfig(
+                                        "default",
+                                        LlmProvider.OLLAMA,
+                                        null,
+                                        "http://localhost",
+                                        List.of("model1"))));
+        ext.getOptions().setDefaultProviderName("default");
 
         // When
         LlmCommunicationService comms1 = ext.getCommunicationService("KEY1", null);
-        ext.getOptions().setEndpoint("http://localhost:1234");
+        ext.getOptions()
+                .setProviderConfigs(
+                        List.of(
+                                new LlmProviderConfig(
+                                        "default",
+                                        LlmProvider.OLLAMA,
+                                        null,
+                                        "http://localhost:1234",
+                                        List.of("model1"))));
 
         ArgumentCaptor<OptionsChangedListener> argument =
                 ArgumentCaptor.forClass(OptionsChangedListener.class);
@@ -105,5 +137,56 @@ public class ExtensionLlmUnitTest extends TestUtils {
 
         // Then
         assertThat(comms1, is(not(equalTo(comms2))));
+    }
+
+    @Test
+    void shouldReturnNoCommsIfNoDefault() {
+        // Given
+        ext.getOptions()
+                .setProviderConfigs(
+                        List.of(
+                                new LlmProviderConfig(
+                                        "p1",
+                                        LlmProvider.OLLAMA,
+                                        null,
+                                        "http://localhost",
+                                        List.of("model1"))));
+        ext.getOptions().setDefaultProviderName("");
+
+        // When
+        LlmCommunicationService comms1 = ext.getCommunicationService("KEY1", null);
+
+        // Then
+        assertThat(comms1, is(nullValue()));
+    }
+
+    @Test
+    void shouldReturnDefaultProvider() {
+        // Given
+        ext.getOptions()
+                .setProviderConfigs(
+                        List.of(
+                                new LlmProviderConfig(
+                                        "p1",
+                                        LlmProvider.OLLAMA,
+                                        null,
+                                        "http://localhost",
+                                        List.of("model1")),
+                                new LlmProviderConfig(
+                                        "p2",
+                                        LlmProvider.AZURE_OPENAI,
+                                        "12345",
+                                        "http://localhost",
+                                        List.of("model1"))));
+
+        // When
+        ext.getOptions().setDefaultProviderName("p1");
+        LlmCommunicationService comms1 = ext.getCommunicationService("KEY1", null);
+        ext.getOptions().setDefaultProviderName("p2");
+        LlmCommunicationService comms2 = ext.getCommunicationService("KEY2", null);
+
+        // Then
+        assertThat(comms1.getPconf().getProvider(), is(LlmProvider.OLLAMA));
+        assertThat(comms2.getPconf().getProvider(), is(LlmProvider.AZURE_OPENAI));
     }
 }
