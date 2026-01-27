@@ -399,13 +399,18 @@ public class SpiderJob extends AutomationJob {
                                 .getExtension(ExtensionHistory.class);
                 extHistory.addHistory(msg, HistoryReference.TYPE_SPIDER);
 
+                HistoryReference ref = msg.getHistoryRef();
+                if (ref == null) {
+                    progress.error(
+                            Constant.messages.getString(
+                                    "spider.automation.error.url.notpersisted", requester, url));
+                    return;
+                }
+
                 ThreadUtils.invokeAndWait(
                         () ->
                                 // Needs to be done on the EDT
-                                Model.getSingleton()
-                                        .getSession()
-                                        .getSiteTree()
-                                        .addPath(msg.getHistoryRef()));
+                                Model.getSingleton().getSession().getSiteTree().addPath(ref));
             } catch (ZapUnknownHostException e1) {
                 if (e1.isFromOutgoingProxy()) {
                     progress.error(
