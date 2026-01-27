@@ -21,6 +21,7 @@ updates:
         patterns:
           - "*"
     ignore:
+      - dependency-name: "gradle-wrapper"
       # network add-on dependencies are managed manually
       - dependency-name: "io.netty:*"
       - dependency-name: "com.aayushatharva.brotli4j:*"
