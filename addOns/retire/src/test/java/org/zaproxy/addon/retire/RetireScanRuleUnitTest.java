@@ -25,8 +25,8 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
@@ -53,9 +53,11 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
 
     @Override
     protected RetireScanRule createScanner() {
-        RetireScanRule rsr = new RetireScanRule();
+        RetireScanRule rsr = new RetireScanRule(null);
         try {
-            rsr.setRepo(new Repo("/org/zaproxy/addon/retire/testrepository.json"));
+            RepoTestHolder holder =
+                    new RepoTestHolder(new Repo("/org/zaproxy/addon/retire/testrepository.json"));
+            return new RetireScanRule(holder);
         } catch (IOException e) {
             // Nothing to do
         }
@@ -326,6 +328,35 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
         scanRule.setConfig(mock(HierarchicalConfiguration.class));
         RetireScanRule copiedScanRule = (RetireScanRule) scanRule.copy();
 
+        assertSame(scanRule.getRepo(), copiedScanRule.getRepo());
+    }
+
+    @Test
+    void shouldGetRepoFromHolder() throws IOException {
+        // Given
+        Repo testRepo = new Repo("/org/zaproxy/addon/retire/testrepository.json");
+        RepoTestHolder holder = new RepoTestHolder(testRepo);
+
+        // When
+        RetireScanRule scanner = new RetireScanRule(holder);
+
+        // Then
+        assertSame(testRepo, scanner.getRepo());
+    }
+
+    @Test
+    void shouldShareRepoFromHolderInCopy() throws IOException {
+        // Given
+        Repo testRepo = new Repo("/org/zaproxy/addon/retire/testrepository.json");
+        RepoTestHolder holder = new RepoTestHolder(testRepo);
+        RetireScanRule scanRule = new RetireScanRule(holder);
+        scanRule.setConfig(mock(HierarchicalConfiguration.class));
+
+        // When
+        RetireScanRule copiedScanRule = (RetireScanRule) scanRule.copy();
+
+        // Then
+        assertSame(testRepo, copiedScanRule.getRepo());
         assertSame(scanRule.getRepo(), copiedScanRule.getRepo());
     }
 }
