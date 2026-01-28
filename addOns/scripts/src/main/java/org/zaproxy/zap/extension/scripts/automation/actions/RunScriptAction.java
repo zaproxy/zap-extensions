@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.scripts.automation.actions;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
@@ -245,12 +246,9 @@ public class RunScriptAction extends ScriptAction {
                 }
 
                 HttpMessage httpMessage = siteNode.getHistoryReference().getHttpMessage();
-                // Set user on ZestScriptWrapper if this is a Zest script
                 setUserOnZestWrapper(script, user);
                 extScript.invokeTargetedScript(script, httpMessage);
             } else {
-                logContextAndUser(script, context, user);
-                // Set user on ZestScriptWrapper if this is a Zest script
                 setUserOnZestWrapper(script, user);
                 extScript.invokeScript(script);
             }
@@ -280,21 +278,7 @@ public class RunScriptAction extends ScriptAction {
                         e.getMessage()));
     }
 
-    private void logContextAndUser(ScriptWrapper script, ContextWrapper context, User user) {
-        String contextName = "none";
-        if (context != null && context.getContext() != null) {
-            contextName = context.getContext().getName();
-        }
-        String userName = user == null ? "none" : user.getName();
-        LOGGER.info(
-                "Invoking script: {} context: {} user: {}",
-                script.getName(),
-                contextName,
-                userName);
-    }
-
     private void setUserOnZestWrapper(ScriptWrapper script, User user) {
-        // Check if this is a Zest script
         if (!ZEST_ENGINE_NAME.equals(script.getEngineName())) {
             return;
         }
@@ -307,15 +291,11 @@ public class RunScriptAction extends ScriptAction {
             if (user != null) {
                 Method setUserMethod = scriptClass.getMethod("setUser", User.class);
                 setUserMethod.invoke(script, user);
-                // Temporary debug logging
-                Method getUserMethod = scriptClass.getMethod("getUser");
-                Object retrievedUser = getUserMethod.invoke(script);
-                LOGGER.info(
-                        "Set user on ZestScriptWrapper: {} -> {}",
-                        user.getName(),
-                        retrievedUser != null ? ((User) retrievedUser).getName() : "null");
             }
-        } catch (Exception e) {
+        } catch (NoSuchMethodException
+                | IllegalAccessException
+                | InvocationTargetException
+                | SecurityException e) {
             LOGGER.info("Failed to set user on ZestScriptWrapper", e);
         }
     }

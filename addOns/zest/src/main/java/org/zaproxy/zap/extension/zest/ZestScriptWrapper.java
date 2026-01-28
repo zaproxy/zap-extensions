@@ -186,7 +186,7 @@ public class ZestScriptWrapper extends ScriptWrapper {
         clone.setWriter(this.getWriter());
         clone.setDebug(this.isDebug());
         clone.setRecording(this.isRecording());
-        clone.setUser(this.user);
+        clone.setUser(this.getUser());
         return clone;
     }
 

@@ -1531,7 +1531,6 @@ class ScriptJobUnitTest extends TestUtils {
         Context context = mock(Context.class);
         ContextWrapper contextWrapper = new ContextWrapper(context, testEnv);
         User user = mock(User.class);
-        given(user.getName()).willReturn("testuser");
         given(testEnv.getDefaultContextWrapper()).willReturn(contextWrapper);
         given(testEnv.getUser("testuser")).willReturn(user);
         given(testEnv.getAllUserNames()).willReturn(Arrays.asList("testuser"));
@@ -1570,7 +1569,6 @@ class ScriptJobUnitTest extends TestUtils {
         given(context.getName()).willReturn("TestContext");
         ContextWrapper contextWrapper = new ContextWrapper(context, testEnv);
         User user = mock(User.class);
-        given(user.getName()).willReturn("testuser");
         given(testEnv.getContextWrapper("TestContext")).willReturn(contextWrapper);
         given(testEnv.getUser("testuser")).willReturn(user);
         given(testEnv.getAllUserNames()).willReturn(Arrays.asList("testuser"));
