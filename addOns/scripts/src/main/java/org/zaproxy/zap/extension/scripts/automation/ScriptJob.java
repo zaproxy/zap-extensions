@@ -82,6 +82,8 @@ public class ScriptJob extends AutomationJob {
                     progress);
         }
 
+        this.verifyUser(this.getParameters().getUser(), progress);
+
         ScriptAction scriptAction = createScriptAction(progress);
         if (scriptAction != null) {
             scriptAction.verifyParameters(this.getName(), progress);
@@ -207,5 +209,12 @@ public class ScriptJob extends AutomationJob {
             return scriptAction.getSupportedScriptTypes();
         }
         return new ArrayList<>();
+    }
+
+    @Override
+    public Map<String, String> getCustomConfigParameters() {
+        Map<String, String> map = super.getCustomConfigParameters();
+        map.put("context", "");
+        return map;
     }
 }

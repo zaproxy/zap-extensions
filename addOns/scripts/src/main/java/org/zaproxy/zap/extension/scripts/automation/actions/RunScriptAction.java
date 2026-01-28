@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.scripts.automation.actions;
 
+import java.lang.reflect.Method;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,16 +33,19 @@ import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationProgress;
+import org.zaproxy.addon.automation.ContextWrapper;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.scripts.automation.ScriptJobOutputListener;
 import org.zaproxy.zap.extension.scripts.automation.ScriptJobParameters;
 import org.zaproxy.zap.extension.scripts.automation.ui.ScriptJobDialog;
+import org.zaproxy.zap.users.User;
 
 public class RunScriptAction extends ScriptAction {
 
     public static final String NAME = "run";
+    private static final String ZEST_ENGINE_NAME = "Mozilla Zest";
     private static final List<String> SCRIPT_TYPES =
             Arrays.asList(ExtensionScript.TYPE_STANDALONE, ExtensionScript.TYPE_TARGETED);
     private static final List<String> DISABLED_FIELDS =
@@ -176,6 +180,32 @@ public class RunScriptAction extends ScriptAction {
 
     @Override
     public void runJob(String jobName, AutomationEnvironment env, AutomationProgress progress) {
+        ContextWrapper context;
+        if (StringUtils.isNotEmpty(this.parameters.getContext())) {
+            context = env.getContextWrapper(this.parameters.getContext());
+            if (context == null) {
+                progress.error(
+                        Constant.messages.getString(
+                                "automation.error.context.unknown", this.parameters.getContext()));
+                return;
+            }
+        } else {
+            context = env.getDefaultContextWrapper();
+        }
+
+        User user = null;
+        if (StringUtils.isNotEmpty(this.parameters.getUser())) {
+            user = env.getUser(this.parameters.getUser());
+            if (user == null) {
+                progress.error(
+                        Constant.messages.getString(
+                                "automation.error.job.baduser",
+                                jobName,
+                                this.parameters.getUser()));
+                return;
+            }
+        }
+
         ScriptJobOutputListener scriptJobOutputListener =
                 new ScriptJobOutputListener(progress, parameters.getName());
         try {
@@ -215,8 +245,13 @@ public class RunScriptAction extends ScriptAction {
                 }
 
                 HttpMessage httpMessage = siteNode.getHistoryReference().getHttpMessage();
+                // Set user on ZestScriptWrapper if this is a Zest script
+                setUserOnZestWrapper(script, user);
                 extScript.invokeTargetedScript(script, httpMessage);
             } else {
+                logContextAndUser(script, context, user);
+                // Set user on ZestScriptWrapper if this is a Zest script
+                setUserOnZestWrapper(script, user);
                 extScript.invokeScript(script);
             }
             scriptJobOutputListener.flush();
@@ -243,5 +278,45 @@ public class RunScriptAction extends ScriptAction {
                         jobName,
                         parameters.getName(),
                         e.getMessage()));
+    }
+
+    private void logContextAndUser(ScriptWrapper script, ContextWrapper context, User user) {
+        String contextName = "none";
+        if (context != null && context.getContext() != null) {
+            contextName = context.getContext().getName();
+        }
+        String userName = user == null ? "none" : user.getName();
+        LOGGER.info(
+                "Invoking script: {} context: {} user: {}",
+                script.getName(),
+                contextName,
+                userName);
+    }
+
+    private void setUserOnZestWrapper(ScriptWrapper script, User user) {
+        // Check if this is a Zest script
+        if (!ZEST_ENGINE_NAME.equals(script.getEngineName())) {
+            return;
+        }
+
+        try {
+            // Use reflection on the script object itself (which is already a ZestScriptWrapper)
+            // We can't use Class.forName() because the zest add-on isn't in scripts add-on's
+            // classpath
+            Class<?> scriptClass = script.getClass();
+            if (user != null) {
+                Method setUserMethod = scriptClass.getMethod("setUser", User.class);
+                setUserMethod.invoke(script, user);
+                // Temporary debug logging
+                Method getUserMethod = scriptClass.getMethod("getUser");
+                Object retrievedUser = getUserMethod.invoke(script);
+                LOGGER.info(
+                        "Set user on ZestScriptWrapper: {} -> {}",
+                        user.getName(),
+                        retrievedUser != null ? ((User) retrievedUser).getName() : "null");
+            }
+        } catch (Exception e) {
+            LOGGER.info("Failed to set user on ZestScriptWrapper", e);
+        }
     }
 }
