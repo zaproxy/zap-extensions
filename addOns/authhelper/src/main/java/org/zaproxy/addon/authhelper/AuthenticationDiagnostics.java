@@ -372,8 +372,9 @@ return getSelector(arguments[0], document)
         }
 
         List<WebElement> foundElements =
-                resetWait(wd, () -> wd.findElements(By.xpath("//input|//button")));
-        List<WebElement> forms = resetWait(wd, () -> wd.findElements(By.xpath("//form")));
+                resetWait(wd, () -> wd.findElements(By.xpath("//input|//button")), () -> List.of());
+        List<WebElement> forms =
+                resetWait(wd, () -> wd.findElements(By.xpath("//form")), () -> List.of());
 
         currentStep.setWebElement(createDiagnosticWebElement(wd, forms, element));
         for (WebElement foundElement : foundElements) {
@@ -396,13 +397,14 @@ return getSelector(arguments[0], document)
      * Reset the webdriver implicit wait - use when you want the current state and don't want any
      * delays.
      */
-    private static <T> T resetWait(WebDriver wd, Supplier<? extends T> function) {
+    private static <T> T resetWait(
+            WebDriver wd, Supplier<? extends T> function, Supplier<T> defaultValue) {
         Duration duration = wd.manage().timeouts().getImplicitWaitTimeout();
         wd.manage().timeouts().implicitlyWait(Duration.ofMillis(0));
         try {
             return function.get();
         } catch (Exception e) {
-            return null;
+            return defaultValue.get();
         } finally {
             wd.manage().timeouts().implicitlyWait(duration);
         }
@@ -604,7 +606,8 @@ return getSelector(arguments[0], document)
                         } catch (ZestClientFailException e) {
                             return null;
                         }
-                    });
+                    },
+                    () -> null);
         }
     }
 
