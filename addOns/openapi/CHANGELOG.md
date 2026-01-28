@@ -3,6 +3,9 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+
+
 ## [51] - 2026-01-28
 ### Changed
 - Disable Swagger Secret Detector Script Scan Rule by default due to JS Engine memory leak (Issue 9230).
