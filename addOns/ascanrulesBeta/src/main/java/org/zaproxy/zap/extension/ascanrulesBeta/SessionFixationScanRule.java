@@ -685,16 +685,15 @@ public class SessionFixationScanRule extends AbstractAppPlugin implements Common
                         // (etc.)
                         // the alert here is "Session Id Expiry Time is excessive", or words to that
                         // effect.
-                        newAlert()
-                                .setRisk(sessionExpiryRiskLevel)
-                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                                .setName(vulnname)
-                                .setDescription(vulndesc)
-                                .setParam(currentHtmlParameter.getName())
-                                .setAttack(attack)
-                                .setOtherInfo(extraInfo)
-                                .setSolution(vulnsoln)
-                                .setMessage(getBaseMsg())
+                        buildSessionFixationAlert(
+                                        sessionExpiryRiskLevel,
+                                        Alert.CONFIDENCE_MEDIUM,
+                                        vulnname,
+                                        vulndesc,
+                                        currentHtmlParameter.getName(),
+                                        attack,
+                                        extraInfo,
+                                        vulnsoln)
                                 .raise();
 
                         LOGGER.debug(
@@ -1491,4 +1490,45 @@ public class SessionFixationScanRule extends AbstractAppPlugin implements Common
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
     }
+
+    private AlertBuilder buildSessionFixationAlert(
+            int risk,
+            int confidence,
+            String name,
+            String description,
+            String param,
+            String attack,
+            String otherInfo,
+            String solution) {
+
+        return newAlert()
+                .setRisk(risk)
+                .setConfidence(confidence)
+                .setName(name)
+                .setDescription(description)
+                .setParam(param)
+                .setAttack(attack)
+                .setOtherInfo(otherInfo)
+                .setSolution(solution)
+                .setMessage(getBaseMsg());
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        Alert alert =
+                buildSessionFixationAlert(
+                        Alert.RISK_HIGH,
+                        Alert.CONFIDENCE_MEDIUM,
+                        getName(),
+                        getDescription(),
+                        "jsessionid",
+                        "-1",
+                        null,
+                        getSolution())
+                        .build();
+
+        alert.setUri("https://www.example.com");
+        return List.of(alert);
+    }
+
 }
