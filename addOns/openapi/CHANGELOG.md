@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [51] - 2026-01-28
 ### Changed
 - Disable Swagger Secret Detector Script Scan Rule by default due to JS Engine memory leak (Issue 9230).
 
@@ -372,6 +372,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First Version
 
+[51]: https://github.com/zaproxy/zap-extensions/releases/openapi-v51
 [50]: https://github.com/zaproxy/zap-extensions/releases/openapi-v50
 [49]: https://github.com/zaproxy/zap-extensions/releases/openapi-v49
 [48]: https://github.com/zaproxy/zap-extensions/releases/openapi-v48
