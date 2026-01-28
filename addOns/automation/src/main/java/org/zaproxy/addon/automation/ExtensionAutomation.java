@@ -19,6 +19,8 @@
  */
 package org.zaproxy.addon.automation;
 
+import java.awt.event.HierarchyEvent;
+import java.awt.event.HierarchyListener;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -61,6 +63,8 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.parosproxy.paros.view.View;
+import org.parosproxy.paros.view.WorkbenchPanel;
+import org.zaproxy.addon.automation.gui.AutomationMovedStatusPanel;
 import org.zaproxy.addon.automation.gui.AutomationOutputSource;
 import org.zaproxy.addon.automation.gui.AutomationPanel;
 import org.zaproxy.addon.automation.gui.OptionsPanel;
@@ -123,6 +127,9 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
 
     private AutomationPanel automationPanel;
     private AutomationOutputSource outputSource;
+    private AutomationMovedStatusPanel movedStatusPanel;
+    private final HierarchyListener movedStatusPanelHierarchyListener =
+            this::movedStatusPanelHierarchyListener;
 
     private static Integer exitOverride;
 
@@ -166,6 +173,11 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
             getView().getOutputPanel().registerOutputSource(getOutputSource());
             extensionHook.getHookView().addWorkPanel(getAutomationPanel());
             extensionHook.getHookView().addOptionPanel(getOptionsPanel());
+            extensionHook.getHookView().addStatusPanel(getMovedStatusPanel());
+            View.getSingleton()
+                    .getWorkbench()
+                    .getTabbedFull()
+                    .addHierarchyListener(movedStatusPanelHierarchyListener);
         }
 
         extensionHook.addSessionListener(
@@ -248,6 +260,10 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         ZAP.getEventBus().unregisterPublisher(AutomationEventPublisher.getPublisher());
         if (hasView()) {
             getView().getOutputPanel().unregisterOutputSource(getOutputSource());
+            View.getSingleton()
+                    .getWorkbench()
+                    .getTabbedFull()
+                    .removeHierarchyListener(movedStatusPanelHierarchyListener);
         }
     }
 
@@ -264,6 +280,25 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
             automationPanel = new AutomationPanel(this);
         }
         return automationPanel;
+    }
+
+    private AutomationMovedStatusPanel getMovedStatusPanel() {
+        if (movedStatusPanel == null) {
+            movedStatusPanel = new AutomationMovedStatusPanel(getAutomationPanel());
+        }
+        return movedStatusPanel;
+    }
+
+    private void movedStatusPanelHierarchyListener(HierarchyEvent e) {
+        WorkbenchPanel workbench = View.getSingleton().getWorkbench();
+        if ((e.getChangeFlags() & HierarchyEvent.DISPLAYABILITY_CHANGED) != 0) {
+            if (workbench.getWorkbenchLayout() == WorkbenchPanel.Layout.FULL) {
+                workbench.removePanel(getMovedStatusPanel(), WorkbenchPanel.PanelType.STATUS);
+            } else if (workbench.getPanels(WorkbenchPanel.PanelType.STATUS).stream()
+                    .noneMatch(panel -> panel instanceof AutomationMovedStatusPanel)) {
+                workbench.addPanel(getMovedStatusPanel(), WorkbenchPanel.PanelType.STATUS);
+            }
+        }
     }
 
     public void registerAutomationJob(AutomationJob job) {
