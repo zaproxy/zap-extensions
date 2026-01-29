@@ -81,7 +81,7 @@ public class GraalJsEngineWrapper extends DefaultEngineWrapper {
                         .allowAllAccess(true)
                         .hostClassLoader(hostClassLoader);
 
-        return GraalJSScriptEngine.create(engine, contextBuilder);
+        return new ScriptEngineCleaner(GraalJSScriptEngine.create(engine, contextBuilder));
     }
 
     @Override
