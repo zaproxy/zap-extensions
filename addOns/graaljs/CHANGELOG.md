@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.13.0] - 2026-01-29
 ### Changed
 - Update dependencies.
 
@@ -88,6 +88,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 First version.
 
+[0.13.0]: https://github.com/zaproxy/zap-extensions/releases/graaljs-v0.13.0
 [0.12.0]: https://github.com/zaproxy/zap-extensions/releases/graaljs-v0.12.0
 [0.11.0]: https://github.com/zaproxy/zap-extensions/releases/graaljs-v0.11.0
 [0.10.0]: https://github.com/zaproxy/zap-extensions/releases/graaljs-v0.10.0
