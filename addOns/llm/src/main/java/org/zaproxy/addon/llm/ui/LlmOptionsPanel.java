@@ -19,94 +19,86 @@
  */
 package org.zaproxy.addon.llm.ui;
 
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Objects;
-import javax.swing.GroupLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.OptionsParam;
-import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.view.AbstractParamPanel;
 import org.zaproxy.addon.llm.LlmOptions;
 import org.zaproxy.addon.llm.LlmProvider;
+import org.zaproxy.addon.llm.LlmProviderConfig;
 
 @SuppressWarnings("serial")
 public class LlmOptionsPanel extends AbstractParamPanel {
 
-    private static final Logger LOGGER = LogManager.getLogger(LlmOptionsPanel.class);
-
     private static final long serialVersionUID = 1L;
 
-    private JComboBox<LlmProvider> modelProviderComboBox;
-    private JTextField apiKeyTextField;
-    private JTextField llmendpointTextField;
-    private JTextField modelNameTextField;
+    private LlmProviderConfigsTableModel providerConfigsModel;
+    private final JComboBox<String> defaultProviderComboBox;
+    private final JComboBox<String> defaultModelComboBox;
+    private final String noneProviderLabel;
 
     public LlmOptionsPanel() {
         super();
 
         setName(Constant.messages.getString("llm.options.title"));
 
-        JLabel modelProviderLabel =
-                new JLabel(Constant.messages.getString("llm.options.label.modelprovider"));
-        modelProviderComboBox = new JComboBox<>(LlmProvider.values());
-        modelProviderComboBox.addActionListener(e -> updateEndpointFieldState());
+        setLayout(new GridBagLayout());
 
-        JLabel llmApiKey = new JLabel(Constant.messages.getString("llm.options.label.apikey"));
-        apiKeyTextField = new JPasswordField();
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.LINE_START;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        JLabel llmendpoint = new JLabel(Constant.messages.getString("llm.options.label.endpoint"));
-        llmendpointTextField = new JTextField();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 0.0;
+        add(new JLabel(Constant.messages.getString("llm.options.providers.default.label")), gbc);
 
-        JLabel modelNameLabel =
-                new JLabel(Constant.messages.getString("llm.options.label.modelname"));
-        modelNameTextField = new JTextField();
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
+        noneProviderLabel = LlmProvider.NONE.toString();
+        defaultProviderComboBox = new JComboBox<>();
+        add(defaultProviderComboBox, gbc);
 
-        GroupLayout layout = new GroupLayout(this);
-        setLayout(layout);
-        layout.setAutoCreateGaps(true);
-        layout.setAutoCreateContainerGaps(true);
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.weightx = 0.0;
+        add(
+                new JLabel(
+                        Constant.messages.getString("llm.options.providers.default.model.label")),
+                gbc);
 
-        layout.setHorizontalGroup(
-                layout.createSequentialGroup()
-                        .addGroup(
-                                layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                                        .addComponent(modelProviderLabel)
-                                        .addComponent(llmApiKey)
-                                        .addComponent(llmendpoint)
-                                        .addComponent(modelNameLabel))
-                        .addGroup(
-                                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                        .addComponent(modelProviderComboBox)
-                                        .addComponent(apiKeyTextField)
-                                        .addComponent(llmendpointTextField)
-                                        .addComponent(modelNameTextField)));
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
+        defaultModelComboBox = new JComboBox<>();
+        add(defaultModelComboBox, gbc);
 
-        layout.setVerticalGroup(
-                layout.createSequentialGroup()
-                        .addGroup(
-                                layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                        .addComponent(modelProviderLabel)
-                                        .addComponent(modelProviderComboBox))
-                        .addGroup(
-                                layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                        .addComponent(llmApiKey)
-                                        .addComponent(apiKeyTextField))
-                        .addGroup(
-                                layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                        .addComponent(llmendpoint)
-                                        .addComponent(llmendpointTextField))
-                        .addGroup(
-                                layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                        .addComponent(modelNameLabel)
-                                        .addComponent(modelNameTextField)));
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.gridwidth = 2;
+        gbc.weightx = 1.0;
+        add(new JLabel(Constant.messages.getString("llm.options.providers.label")), gbc);
+
+        LlmProviderConfigsPanel providerConfigsPanel =
+                new LlmProviderConfigsPanel(getProviderConfigsTableModel());
+        gbc.gridy = 3;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        add(providerConfigsPanel, gbc);
+
+        getProviderConfigsTableModel()
+                .addTableModelListener(
+                        new TableModelListener() {
+                            @Override
+                            public void tableChanged(TableModelEvent e) {
+                                refreshDefaultProviderOptions();
+                            }
+                        });
+        defaultProviderComboBox.addActionListener(e -> refreshDefaultModelOptions());
     }
 
     @Override
@@ -117,62 +109,93 @@ public class LlmOptionsPanel extends AbstractParamPanel {
     @Override
     public void initParam(Object options) {
         LlmOptions llmOptionsParam = ((OptionsParam) options).getParamSet(LlmOptions.class);
-        apiKeyTextField.setText(Objects.toString(llmOptionsParam.getApiKey(), ""));
-        llmendpointTextField.setText(Objects.toString(llmOptionsParam.getEndpoint(), ""));
-        modelNameTextField.setText(Objects.toString(llmOptionsParam.getModelName(), ""));
-        modelProviderComboBox.setSelectedItem(llmOptionsParam.getModelProvider());
-        updateEndpointFieldState();
+        getProviderConfigsTableModel().setProviderConfigs(llmOptionsParam.getProviderConfigs());
+        refreshDefaultProviderOptions();
+        if (llmOptionsParam.getDefaultProviderName() == null
+                || llmOptionsParam.getDefaultProviderName().isEmpty()) {
+            defaultProviderComboBox.setSelectedItem(noneProviderLabel);
+        } else {
+            defaultProviderComboBox.setSelectedItem(llmOptionsParam.getDefaultProviderName());
+        }
+        setFirstItemIfUnset(defaultProviderComboBox);
+        refreshDefaultModelOptions();
+        defaultModelComboBox.setSelectedItem(llmOptionsParam.getDefaultModelName());
+        setFirstItemIfUnset(defaultModelComboBox);
     }
 
     @Override
     public void saveParam(Object options) {
         LlmOptions param = ((OptionsParam) options).getParamSet(LlmOptions.class);
-        param.setModelProvider((LlmProvider) modelProviderComboBox.getSelectedItem());
-        param.setApiKey(apiKeyTextField.getText());
-        param.setEndpoint(llmendpointTextField.getText());
-        param.setModelName(modelNameTextField.getText());
+        param.setProviderConfigs(getProviderConfigsTableModel().getElements());
+        Object selected = defaultProviderComboBox.getSelectedItem();
+        if (selected != null && noneProviderLabel.equals(selected.toString())) {
+            param.setDefaultProviderName("");
+            param.setDefaultModelName("");
+        } else {
+            param.setDefaultProviderName(selected != null ? selected.toString() : "");
+            Object selectedModel = defaultModelComboBox.getSelectedItem();
+            param.setDefaultModelName(selectedModel != null ? selectedModel.toString() : "");
+        }
     }
 
-    private void updateEndpointFieldState() {
-        llmendpointTextField.setEnabled(isEndpointSupported());
+    private LlmProviderConfigsTableModel getProviderConfigsTableModel() {
+        if (providerConfigsModel == null) {
+            providerConfigsModel = new LlmProviderConfigsTableModel();
+        }
+        return providerConfigsModel;
     }
 
-    private boolean isEndpointSupported() {
-        return switch ((LlmProvider) modelProviderComboBox.getSelectedItem()) {
-            case NONE, GOOGLE_GEMINI -> false;
-            default -> true;
-        };
+    private void refreshDefaultProviderOptions() {
+        Object selected = defaultProviderComboBox.getSelectedItem();
+        defaultProviderComboBox.removeAllItems();
+        defaultProviderComboBox.addItem(noneProviderLabel);
+        for (LlmProviderConfig config : getProviderConfigsTableModel().getElements()) {
+            defaultProviderComboBox.addItem(config.getName());
+        }
+        if (selected != null) {
+            defaultProviderComboBox.setSelectedItem(selected);
+        }
+        setFirstItemIfUnset(defaultProviderComboBox);
     }
 
-    @Override
-    public void validateParam(Object object) throws Exception {
-        if (!isEndpointSupported()) {
+    private void refreshDefaultModelOptions() {
+        Object selected = defaultModelComboBox.getSelectedItem();
+        defaultModelComboBox.removeAllItems();
+        LlmProviderConfig config = getSelectedProviderConfig();
+        if (config == null && noneProviderLabel.equals(defaultProviderComboBox.getSelectedItem())) {
             return;
         }
-
-        String endpoint = llmendpointTextField.getText();
-
-        if (StringUtils.isNoneEmpty(endpoint)) {
-
-            java.net.HttpURLConnection connection = null;
-
-            try {
-                URL url = new URL(endpoint);
-                connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod(HttpRequestHeader.GET);
-                connection.setConnectTimeout(5000);
-                connection.setReadTimeout(5000);
-            } catch (Exception e) {
-                // Endpoint is not reachable
-                LOGGER.error(
-                        "Failed to reach the LLM endpoint: HTTP error code: {}", e.getMessage());
-                throw new IllegalArgumentException(
-                        Constant.messages.getString("llm.options.endpoint.error.unreachable"));
-            } finally {
-                if (connection != null) {
-                    connection.disconnect();
-                }
+        if (config != null) {
+            for (String model : config.getModels()) {
+                defaultModelComboBox.addItem(model);
             }
         }
+        if (selected != null) {
+            defaultModelComboBox.setSelectedItem(selected);
+        }
+        setFirstItemIfUnset(defaultModelComboBox);
+    }
+
+    private void setFirstItemIfUnset(JComboBox<String> box) {
+        if (box.getSelectedItem() == null && box.getItemCount() > 0) {
+            box.setSelectedIndex(0);
+        }
+    }
+
+    private LlmProviderConfig getSelectedProviderConfig() {
+        Object selected = defaultProviderComboBox.getSelectedItem();
+        if (selected == null) {
+            return null;
+        }
+        String name = selected.toString();
+        if (noneProviderLabel.equals(name)) {
+            return null;
+        }
+        for (LlmProviderConfig config : getProviderConfigsTableModel().getElements()) {
+            if (name.equals(config.getName())) {
+                return config;
+            }
+        }
+        return null;
     }
 }
