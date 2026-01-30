@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Added
 - Support for other add-ons to piggyback the secure connection established with the ZAP browser extension.
+### Changed
+- Set the extension order so that it will always be available to unordered extensions.
 
 ## [0.20.0] - 2025-12-15
 ### Changed
