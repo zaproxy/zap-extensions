@@ -33,6 +33,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
@@ -44,6 +45,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.selenium.internal.BrowserArgument;
+import org.zaproxy.zap.extension.selenium.internal.CustomBrowserImpl;
 import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
@@ -55,6 +57,7 @@ class SeleniumOptionsUnitTest extends TestUtils {
 
     @BeforeEach
     void setUp() throws Exception {
+        mockMessages(new ExtensionSelenium());
         setUpZap();
         seleniumExtensionsDir = Paths.get(Constant.getZapHome(), "selenium", "extensions");
 
@@ -438,6 +441,285 @@ class SeleniumOptionsUnitTest extends TestUtils {
     void shouldThrowIfSettingNullFirefoxProfile() {
         // Given / When / Then
         assertThrows(NullPointerException.class, () -> options.setFirefoxDefaultProfile(null));
+    }
+
+    @Test
+    void shouldAddCustomBrowser() {
+        // Given
+        ZapXmlConfiguration config = new ZapXmlConfiguration();
+        options.load(config);
+        CustomBrowserImpl browser =
+                new CustomBrowserImpl(
+                        "TestBrowser",
+                        "/path/to/driver",
+                        "/path/to/binary",
+                        CustomBrowserImpl.BrowserType.CHROMIUM,
+                        new ArrayList<>());
+        // When
+        options.addCustomBrowser(browser);
+        // Then
+        assertThat(options.getCustomBrowsers(), hasSize(1));
+        CustomBrowserImpl added = options.getCustomBrowsers().get(0);
+        assertThat(added.getName(), is(equalTo("TestBrowser")));
+        assertThat(added.getDriverPath(), is(equalTo("/path/to/driver")));
+        assertThat(added.getBinaryPath(), is(equalTo("/path/to/binary")));
+        assertThat(added.getBrowserType(), is(equalTo(CustomBrowserImpl.BrowserType.CHROMIUM)));
+    }
+
+    @Test
+    void shouldPersistCustomBrowserWhenAdded() {
+        // Given
+        ZapXmlConfiguration config = new ZapXmlConfiguration();
+        options.load(config);
+        CustomBrowserImpl browser =
+                new CustomBrowserImpl(
+                        "TestBrowser",
+                        "/path/to/driver",
+                        "/path/to/binary",
+                        CustomBrowserImpl.BrowserType.CHROMIUM,
+                        new ArrayList<>());
+        // When
+        options.addCustomBrowser(browser);
+        // Then
+        assertThat(
+                config.getProperty("selenium.customBrowsers.browser(0).name"),
+                is(equalTo("TestBrowser")));
+        assertThat(
+                config.getProperty("selenium.customBrowsers.browser(0).driverPath"),
+                is(equalTo("/path/to/driver")));
+        assertThat(
+                config.getProperty("selenium.customBrowsers.browser(0).binaryPath"),
+                is(equalTo("/path/to/binary")));
+        assertThat(
+                config.getProperty("selenium.customBrowsers.browser(0).browserType"),
+                is(equalTo("CHROMIUM")));
+    }
+
+    @Test
+    void shouldAddMultipleCustomBrowsers() {
+        // Given
+        ZapXmlConfiguration config = new ZapXmlConfiguration();
+        options.load(config);
+        CustomBrowserImpl browser1 =
+                new CustomBrowserImpl(
+                        "Browser1",
+                        "/driver1",
+                        "/binary1",
+                        CustomBrowserImpl.BrowserType.CHROMIUM,
+                        new ArrayList<>());
+        CustomBrowserImpl browser2 =
+                new CustomBrowserImpl(
+                        "Browser2",
+                        "/driver2",
+                        "/binary2",
+                        CustomBrowserImpl.BrowserType.FIREFOX,
+                        new ArrayList<>());
+        // When
+        options.addCustomBrowser(browser1);
+        options.addCustomBrowser(browser2);
+        // Then
+        assertThat(options.getCustomBrowsers(), hasSize(2));
+        assertThat(options.getCustomBrowsers().get(0).getName(), is(equalTo("Browser1")));
+        assertThat(options.getCustomBrowsers().get(1).getName(), is(equalTo("Browser2")));
+    }
+
+    @Test
+    void shouldAddCustomBrowserWithArguments() {
+        // Given
+        ZapXmlConfiguration config = new ZapXmlConfiguration();
+        options.load(config);
+        List<BrowserArgument> arguments = new ArrayList<>();
+        arguments.add(new BrowserArgument("--arg1", true));
+        arguments.add(new BrowserArgument("--arg2", false));
+        CustomBrowserImpl browser =
+                new CustomBrowserImpl(
+                        "TestBrowser",
+                        "/path/to/driver",
+                        "/path/to/binary",
+                        CustomBrowserImpl.BrowserType.CHROMIUM,
+                        arguments);
+        // When
+        options.addCustomBrowser(browser);
+        // Then
+        assertThat(options.getCustomBrowsers(), hasSize(1));
+        CustomBrowserImpl added = options.getCustomBrowsers().get(0);
+        assertThat(added.getArguments(), hasSize(2));
+        assertThat(added.getArguments().get(0).getArgument(), is(equalTo("--arg1")));
+        assertThat(added.getArguments().get(0).isEnabled(), is(equalTo(true)));
+        assertThat(added.getArguments().get(1).getArgument(), is(equalTo("--arg2")));
+        assertThat(added.getArguments().get(1).isEnabled(), is(equalTo(false)));
+        // Verify persistence
+        assertThat(
+                config.getProperty("selenium.customBrowsers.browser(0).args.arg(0).argument"),
+                is(equalTo("--arg1")));
+        assertThat(
+                config.getProperty("selenium.customBrowsers.browser(0).args.arg(0).enabled"),
+                is(equalTo(true)));
+        assertThat(
+                config.getProperty("selenium.customBrowsers.browser(0).args.arg(1).argument"),
+                is(equalTo("--arg2")));
+        assertThat(
+                config.getProperty("selenium.customBrowsers.browser(0).args.arg(1).enabled"),
+                is(equalTo(false)));
+    }
+
+    @Test
+    void shouldRemoveCustomBrowserByName() {
+        // Given
+        ZapXmlConfiguration config = new ZapXmlConfiguration();
+        options.load(config);
+        CustomBrowserImpl browser1 =
+                new CustomBrowserImpl(
+                        "Browser1",
+                        "/driver1",
+                        "/binary1",
+                        CustomBrowserImpl.BrowserType.CHROMIUM,
+                        new ArrayList<>());
+        CustomBrowserImpl browser2 =
+                new CustomBrowserImpl(
+                        "Browser2",
+                        "/driver2",
+                        "/binary2",
+                        CustomBrowserImpl.BrowserType.FIREFOX,
+                        new ArrayList<>());
+        options.addCustomBrowser(browser1);
+        options.addCustomBrowser(browser2);
+        // When
+        boolean removed = options.removeCustomBrowser("Browser1");
+        // Then
+        assertThat(removed, is(equalTo(true)));
+        assertThat(options.getCustomBrowsers(), hasSize(1));
+        assertThat(options.getCustomBrowsers().get(0).getName(), is(equalTo("Browser2")));
+    }
+
+    @Test
+    void shouldReturnFalseWhenRemovingNonExistentBrowser() {
+        // Given
+        ZapXmlConfiguration config = new ZapXmlConfiguration();
+        options.load(config);
+        CustomBrowserImpl browser =
+                new CustomBrowserImpl(
+                        "Browser1",
+                        "/driver1",
+                        "/binary1",
+                        CustomBrowserImpl.BrowserType.CHROMIUM,
+                        new ArrayList<>());
+        options.addCustomBrowser(browser);
+        // When
+        boolean removed = options.removeCustomBrowser("NonExistent");
+        // Then
+        assertThat(removed, is(equalTo(false)));
+        assertThat(options.getCustomBrowsers(), hasSize(1));
+        assertThat(options.getCustomBrowsers().get(0).getName(), is(equalTo("Browser1")));
+    }
+
+    @Test
+    void shouldPersistRemovalOfCustomBrowser() {
+        // Given
+        ZapXmlConfiguration config = new ZapXmlConfiguration();
+        options.load(config);
+        CustomBrowserImpl browser1 =
+                new CustomBrowserImpl(
+                        "Browser1",
+                        "/driver1",
+                        "/binary1",
+                        CustomBrowserImpl.BrowserType.CHROMIUM,
+                        new ArrayList<>());
+        CustomBrowserImpl browser2 =
+                new CustomBrowserImpl(
+                        "Browser2",
+                        "/driver2",
+                        "/binary2",
+                        CustomBrowserImpl.BrowserType.FIREFOX,
+                        new ArrayList<>());
+        options.addCustomBrowser(browser1);
+        options.addCustomBrowser(browser2);
+        // When
+        options.removeCustomBrowser("Browser1");
+        // Then
+        // Verify Browser1 is removed from config
+        assertThat(
+                config.getProperty("selenium.customBrowsers.browser(0).name"),
+                is(equalTo("Browser2")));
+        assertThat(config.getProperty("selenium.customBrowsers.browser(1).name"), is(nullValue()));
+    }
+
+    @Test
+    void shouldRemoveCustomBrowserWithExactNameMatch() {
+        // Given
+        ZapXmlConfiguration config = new ZapXmlConfiguration();
+        options.load(config);
+        CustomBrowserImpl browser1 =
+                new CustomBrowserImpl(
+                        "Browser1",
+                        "/driver1",
+                        "/binary1",
+                        CustomBrowserImpl.BrowserType.CHROMIUM,
+                        new ArrayList<>());
+        CustomBrowserImpl browser2 =
+                new CustomBrowserImpl(
+                        "Browser1Test",
+                        "/driver2",
+                        "/binary2",
+                        CustomBrowserImpl.BrowserType.FIREFOX,
+                        new ArrayList<>());
+        options.addCustomBrowser(browser1);
+        options.addCustomBrowser(browser2);
+        // When
+        boolean removed = options.removeCustomBrowser("Browser1");
+        // Then
+        assertThat(removed, is(equalTo(true)));
+        assertThat(options.getCustomBrowsers(), hasSize(1));
+        assertThat(options.getCustomBrowsers().get(0).getName(), is(equalTo("Browser1Test")));
+    }
+
+    @Test
+    void shouldRemoveAllCustomBrowsers() {
+        // Given
+        ZapXmlConfiguration config = new ZapXmlConfiguration();
+        options.load(config);
+        CustomBrowserImpl browser1 =
+                new CustomBrowserImpl(
+                        "Browser1",
+                        "/driver1",
+                        "/binary1",
+                        CustomBrowserImpl.BrowserType.CHROMIUM,
+                        new ArrayList<>());
+        CustomBrowserImpl browser2 =
+                new CustomBrowserImpl(
+                        "Browser2",
+                        "/driver2",
+                        "/binary2",
+                        CustomBrowserImpl.BrowserType.FIREFOX,
+                        new ArrayList<>());
+        CustomBrowserImpl browser3 =
+                new CustomBrowserImpl(
+                        "Browser3",
+                        "/driver3",
+                        "/binary3",
+                        CustomBrowserImpl.BrowserType.CHROMIUM,
+                        new ArrayList<>());
+        options.addCustomBrowser(browser1);
+        options.addCustomBrowser(browser2);
+        options.addCustomBrowser(browser3);
+        // When
+        options.removeCustomBrowser("Browser1");
+        options.removeCustomBrowser("Browser2");
+        options.removeCustomBrowser("Browser3");
+        // Then
+        assertThat(options.getCustomBrowsers(), hasSize(0));
+    }
+
+    @Test
+    void shouldHandleRemovalFromEmptyList() {
+        // Given
+        ZapXmlConfiguration config = new ZapXmlConfiguration();
+        options.load(config);
+        // When
+        boolean removed = options.removeCustomBrowser("AnyBrowser");
+        // Then
+        assertThat(removed, is(equalTo(false)));
+        assertThat(options.getCustomBrowsers(), hasSize(0));
     }
 
     private static ZapXmlConfiguration configWith(String value) {

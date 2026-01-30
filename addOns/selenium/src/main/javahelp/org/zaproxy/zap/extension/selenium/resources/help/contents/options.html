@@ -7,86 +7,67 @@
 <BODY>
 	<H1>Options Selenium screen</H1>
 
-	This screen allows you to setup the requirements of some of the WebDrivers.
+	This screen allows you to manage the browsers which can be launched from ZAP.
 	<br />
 	<h2>Configuration Options</h2>
-	<h3>WebDrivers</h3>
-	<table border="2">
-		<tr>
-			<th>Field</th>
-			<th>Details</th>
-			<th>Default</th>
-			<th>Config File</th>
-		</tr>
-		<tr>
-			<td>ChromeDriver</td>
-			<td>This allows you to select the location of ChromeDriver.</td>
-			<td align="center">The path to the bundled WebDriver, if available.</td>
-			<td>Key: <code>selenium.chromeDriver</code><br>Value: file system path to the ChromeDriver</td>
-		</tr>
-		<tr>
-			<td>EdgeDriver</td>
-			<td>This allows you to select the location of EdgeDriver.</td>
-			<td align="center">The path to the bundled WebDriver, if available.</td>
-			<td>Key: <code>selenium.edgeDriver</code><br>Value: file system path to the EdgeDriver</td>
-		</tr>
-		<tr>
-			<td>geckodriver</td>
-			<td>This allows you to select the location of geckodriver (Firefox driver).</td>
-			<td align="center">The path to the bundled WebDriver, if available.</td>
-			<td>Key: <code>selenium.firefoxDriver</code><br>Value: file system path to the geckodriver</td>
-		</tr>
-	</table>
+	<h3>Browsers</h3>
+	This section allows you to configure all browsers, including the built-in browsers (Chrome, Edge, Firefox) and any custom browsers you add.
+	The table displays the following information for each browser:
+	<ul>
+	<li><strong>Name:</strong> The browser name
+	<li><strong>Driver:</strong> The path to the WebDriver executable (e.g., ChromeDriver, geckodriver)
+	<li><strong>Binary:</strong> The path to the browser binary executable (optional, for using a specific version)
+	<li><strong>Type:</strong> The browser type - either Chromium-based or Firefox-based
+	</ul>
 
-	<h3>Binaries</h3>
-	<table border="2">
-		<tr>
-			<th>Field</th>
-			<th>Details</th>
-			<th>Default</th>
-			<th>Config File</th>
-		</tr>
-		<tr>
-			<td>Chrome</td>
-			<td>This allows you to select the location of Chrome binary (for example, to use
-				a version other than the system default).</td>
-			<td align="center">(None)</td>
-			<td>Key: <code>selenium.chromeBinary</code><br>Value: file system path to the Chrome binary</td>
-		</tr>
-		<tr>
-			<td>Edge</td>
-			<td>This allows you to select the location of Edge binary (for example, to use
-				a version other than the system default).</td>
-			<td align="center">(None)</td>
-			<td>Key: <code>selenium.edgeBinary</code><br>Value: file system path to the Edge binary</td>
-		</tr>
-		<tr>
-			<td>Firefox</td>
-			<td>This allows you to select the location of Firefox binary (for example, to use
-				a version other than the system default).</td>
-			<td align="center">(None)</td>
-			<td>Key: <code>selenium.firefoxBinary</code><br>Value: file system path to the Firefox binary</td>
-		</tr>
-	</table>
-	<strong>Note:</strong> It's also possible to set the above locations (binaries and
-	WebDrivers) using Java system properties, in which case the above options will be
-	overridden and those values shown instead.
+	<h4>Built-in Browsers</h4>
+	The built-in browsers (Chrome, Edge, and Firefox) are automatically included in the table and cannot be removed.
+	You can modify their configuration (driver path, binary path, and arguments) by selecting a browser and clicking the <code>Modify...</code> button.
+	If you attempt to remove a built-in browser, a warning message will be displayed.
+
+	<h4>Custom Browsers</h4>
+	You can add your own custom browsers by clicking the <code>Add...</code> button. Custom browsers allow you to:
+	<ul>
+	<li>Specify a custom name for the browser
+	<li>Set the WebDriver path (e.g., for a custom Chromium or Firefox build)
+	<li>Set the browser binary path
+	<li>Choose the browser type (Chromium or Firefox)
+	<li>Add custom browser arguments
+	</ul>
+	Custom browsers can be modified or removed using the <code>Modify...</code> and <code>Remove</code> buttons.
+	Custom browsers are saved in the configuration and will persist across ZAP restarts.
 
 	<p>
-	More details about the bundled WebDrivers can be found on the overview page.
+	<strong>Note:</strong> Custom browsers automatically support headless mode for automation purposes. 
+	When using automation tools that support headless browsers, you will see two options for each custom browser:
+	one with the browser name and one with the browser name followed by " Headless".
 
 	<h4>Browser Arguments</h4>
-	Chrome, Edge, and Firefox binaries can have additional (CLI) arguments specified through the <code>Arguments...</code> button.
-
+	Each browser (built-in or custom) can have additional (CLI) arguments specified through the <code>Arguments...</code> button in the modify dialog.
 	<p>
-	<strong>Note:</strong> Adding invalid arguments might cause the browser to fail to start. ZAP already adds some arguments (e.g. headless).
+	<strong>Note:</strong> Adding invalid arguments might cause the browser to fail to start. ZAP already adds some arguments (e.g. headless mode arguments).
 
 	<h4>Browser Profiles</h4>
-	You can choose which Firefox profile to use by default.
+	You can choose which Firefox profile to use by default for Firefox browsers.
 	The <code>&lt;temporary&gt;</code> profile is one which is created by Selenium each time the browser is launched.
 	<p>
 	<strong>Note:</strong> The 'client' add-on creates a profile called zap-client-profile - 
 	if you choose another profile then the Client add-on will not work without manual configuration.
+
+	<h4>System Properties</h4>
+	It's also possible to set browser driver and binary locations using Java system properties, in which case the options will be
+	overridden and those values shown instead. The system properties are:
+	<ul>
+	<li><code>webdriver.chrome.driver</code> - ChromeDriver path
+	<li><code>webdriver.edge.driver</code> - EdgeDriver path
+	<li><code>webdriver.gecko.driver</code> - geckodriver (Firefox) path
+	<li><code>selenium.chromeBinary</code> - Chrome binary path
+	<li><code>selenium.edgeBinary</code> - Edge binary path
+	<li><code>selenium.firefoxBinary</code> - Firefox binary path
+	</ul>
+
+	<p>
+	More details about the bundled WebDrivers can be found on the overview page.
 
 	<h3>Browser Extensions</h3>
 
@@ -98,6 +79,7 @@
 	</ul>
 	Add-ons can also add new browser extensions. If you delete a browser extension via this screen then it will be added again 
 	by the add-on so either just disable it or uninstall the add-on to remove the browser extension.
+
 
 	<h2>See also</h2>
 	<table>

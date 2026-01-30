@@ -21,37 +21,33 @@ package org.zaproxy.zap.extension.selenium;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.SequentialGroup;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.TitledBorder;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.selenium.BrowserExtension.BrowserExtensionFileFilter;
-import org.zaproxy.zap.extension.selenium.internal.BrowserArgumentsDialog;
 import org.zaproxy.zap.extension.selenium.internal.BrowserArgumentsTableModel;
+import org.zaproxy.zap.extension.selenium.internal.CustomBrowserImpl;
+import org.zaproxy.zap.extension.selenium.internal.CustomBrowsersTableModel;
+import org.zaproxy.zap.extension.selenium.internal.DialogCustomBrowser;
 import org.zaproxy.zap.utils.FontUtils;
+import org.zaproxy.zap.view.AbstractMultipleOptionsBaseTableModel;
+import org.zaproxy.zap.view.AbstractMultipleOptionsBaseTablePanel;
 import org.zaproxy.zap.view.AbstractMultipleOptionsTableModel;
 
 /**
@@ -73,311 +69,29 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
 
     private static final long serialVersionUID = -4918932139321106800L;
 
-    private final JTextField chromeDriverTextField;
-    private final JLabel infoBundledChromeDriverLabel;
-    private final JButton useBundledChromeDriverButton;
-    private final JTextField edgeDriverTextField;
-    private final JLabel infoBundledEdgeDriverLabel;
-    private final JButton useBundledEdgeDriverButton;
-    private final JTextField firefoxDriverTextField;
-    private final JLabel infoBundledFirefoxDriverLabel;
-    private final JButton useBundledFirefoxDriverButton;
-
-    private final JTextField chromeBinaryTextField;
-    private final JTextField chromeArgumentsTextField;
     private final BrowserArgumentsTableModel chromeArgumentsTableModel;
-    private final JTextField edgeBinaryTextField;
-    private final JTextField edgeArgumentsTextField;
     private final BrowserArgumentsTableModel edgeArgumentsTableModel;
-    private final JTextField firefoxBinaryTextField;
-    private final JTextField firefoxArgumentsTextField;
-    private final JComboBox<String> firefoxProfileCombo;
     private final BrowserArgumentsTableModel firefoxArgumentsTableModel;
     private final OptionsBrowserExtensionsTableModel browserExtModel;
+    private final CustomBrowsersTableModel customBrowsersModel;
     private final AtomicBoolean confirmRemoveBrowserArgument;
-    private final String temporaryBrowserProfile;
+    private final ExtensionSelenium extSelenium;
     private static String directory;
 
-    private ExtensionSelenium extSelenium;
+    private static String getBuiltInBrowserName(Browser browser) {
+        // Use the same i18n'd names as the rest of the Selenium extension.
+        return ExtensionSelenium.getName(browser);
+    }
 
     public SeleniumOptionsPanel(
             ExtensionSelenium extSelenium, Dialog parent, ResourceBundle resourceBundle) {
         this.extSelenium = extSelenium;
         setName(resourceBundle.getString("selenium.options.title"));
 
-        String selectFileButtonLabel =
-                resourceBundle.getString("selenium.options.label.button.select.file");
-        String bundledWebDriverButtonLabel =
-                resourceBundle.getString("selenium.options.label.button.bundleddriver");
-        String bundledWebDriverButtonToolTip =
-                resourceBundle.getString("selenium.options.tooltip.button.bundleddriver");
-
-        String infoBundledWebDriverlabel =
-                resourceBundle.getString("selenium.options.label.nobundleddriver");
-        String infoBundledWebDriverToolTip =
-                resourceBundle.getString("selenium.options.tooltip.nobundleddriver");
-        ImageIcon infoIcon =
-                new ImageIcon(
-                        SeleniumOptionsPanel.class.getResource(
-                                "/resource/icon/fugue/information-white.png"));
-
-        chromeDriverTextField = createTextField();
-        JButton chromeDriverButton =
-                createButtonFileChooser(selectFileButtonLabel, chromeDriverTextField);
-        JLabel chromeDriverLabel =
-                new JLabel(resourceBundle.getString("selenium.options.label.driver.chrome"));
-        chromeDriverLabel.setLabelFor(chromeDriverButton);
-
-        infoBundledChromeDriverLabel =
-                createBundledWebDriverLabel(
-                        infoBundledWebDriverlabel, infoBundledWebDriverToolTip, infoIcon);
-        useBundledChromeDriverButton =
-                createBundledWebDriverButton(
-                        bundledWebDriverButtonLabel,
-                        bundledWebDriverButtonToolTip,
-                        infoBundledWebDriverToolTip,
-                        chromeDriverTextField,
-                        Browser.CHROME);
-
-        chromeBinaryTextField = createTextField();
-        chromeArgumentsTextField = createTextField();
-        chromeArgumentsTextField.setEditable(false);
-
         confirmRemoveBrowserArgument = new AtomicBoolean();
         chromeArgumentsTableModel = new BrowserArgumentsTableModel();
-        BrowserArgumentsDialog chromeArgumentsDialog =
-                new BrowserArgumentsDialog(
-                        parent, chromeArgumentsTableModel, confirmRemoveBrowserArgument);
-
-        edgeDriverTextField = createTextField();
-        JButton edgeDriverButton =
-                createButtonFileChooser(selectFileButtonLabel, edgeDriverTextField);
-        JLabel edgeDriverLabel =
-                new JLabel(resourceBundle.getString("selenium.options.label.driver.edge"));
-        edgeDriverLabel.setLabelFor(edgeDriverButton);
-
-        infoBundledEdgeDriverLabel =
-                createBundledWebDriverLabel(
-                        infoBundledWebDriverlabel, infoBundledWebDriverToolTip, infoIcon);
-        useBundledEdgeDriverButton =
-                createBundledWebDriverButton(
-                        bundledWebDriverButtonLabel,
-                        bundledWebDriverButtonToolTip,
-                        infoBundledWebDriverToolTip,
-                        edgeDriverTextField,
-                        Browser.EDGE);
-
-        edgeBinaryTextField = createTextField();
-        edgeArgumentsTextField = createTextField();
-        edgeArgumentsTextField.setEditable(false);
-
         edgeArgumentsTableModel = new BrowserArgumentsTableModel();
-        BrowserArgumentsDialog edgeArgumentsDialog =
-                new BrowserArgumentsDialog(
-                        parent, edgeArgumentsTableModel, confirmRemoveBrowserArgument);
-
-        firefoxBinaryTextField = createTextField();
-        firefoxArgumentsTextField = createTextField();
-        firefoxArgumentsTextField.setEditable(false);
-
         firefoxArgumentsTableModel = new BrowserArgumentsTableModel();
-        BrowserArgumentsDialog firefoxArgumentsDialog =
-                new BrowserArgumentsDialog(
-                        parent, firefoxArgumentsTableModel, confirmRemoveBrowserArgument);
-
-        firefoxDriverTextField = createTextField();
-        JButton firefoxDriverButton =
-                createButtonFileChooser(selectFileButtonLabel, firefoxDriverTextField);
-        JLabel firefoxDriverLabel =
-                new JLabel(resourceBundle.getString("selenium.options.label.firefox.driver"));
-        firefoxDriverLabel.setLabelFor(firefoxDriverTextField);
-        firefoxProfileCombo = new JComboBox<>();
-        temporaryBrowserProfile = resourceBundle.getString("selenium.options.combo.profile.temp");
-        // Add the temp one to indicate this field is to be used
-        firefoxProfileCombo.addItem(temporaryBrowserProfile);
-
-        infoBundledFirefoxDriverLabel =
-                createBundledWebDriverLabel(
-                        infoBundledWebDriverlabel, infoBundledWebDriverToolTip, infoIcon);
-        useBundledFirefoxDriverButton =
-                createBundledWebDriverButton(
-                        bundledWebDriverButtonLabel,
-                        bundledWebDriverButtonToolTip,
-                        infoBundledWebDriverToolTip,
-                        firefoxDriverTextField,
-                        Browser.FIREFOX);
-
-        JPanel driversPanel = new JPanel();
-        driversPanel.setBorder(
-                BorderFactory.createTitledBorder(
-                        null,
-                        resourceBundle.getString("selenium.options.webdrivers.title"),
-                        TitledBorder.DEFAULT_JUSTIFICATION,
-                        TitledBorder.DEFAULT_POSITION,
-                        FontUtils.getFont(FontUtils.Size.standard)));
-
-        GroupLayout driversLayout = new GroupLayout(driversPanel);
-        driversPanel.setLayout(driversLayout);
-
-        driversLayout.setAutoCreateGaps(true);
-        driversLayout.setAutoCreateContainerGaps(true);
-
-        driversLayout.setHorizontalGroup(
-                driversLayout
-                        .createSequentialGroup()
-                        .addGroup(
-                                driversLayout
-                                        .createParallelGroup(GroupLayout.Alignment.TRAILING)
-                                        .addComponent(chromeDriverLabel)
-                                        .addComponent(edgeDriverLabel)
-                                        .addComponent(firefoxDriverLabel))
-                        .addGroup(
-                                driversLayout
-                                        .createParallelGroup(GroupLayout.Alignment.LEADING)
-                                        .addGroup(
-                                                driversLayout
-                                                        .createSequentialGroup()
-                                                        .addGroup(
-                                                                driversLayout
-                                                                        .createParallelGroup()
-                                                                        .addComponent(
-                                                                                chromeDriverTextField)
-                                                                        .addComponent(
-                                                                                infoBundledChromeDriverLabel))
-                                                        .addGroup(
-                                                                driversLayout
-                                                                        .createParallelGroup()
-                                                                        .addComponent(
-                                                                                chromeDriverButton)
-                                                                        .addComponent(
-                                                                                useBundledChromeDriverButton)))
-                                        .addGroup(
-                                                driversLayout
-                                                        .createSequentialGroup()
-                                                        .addGroup(
-                                                                driversLayout
-                                                                        .createParallelGroup()
-                                                                        .addComponent(
-                                                                                edgeDriverTextField)
-                                                                        .addComponent(
-                                                                                infoBundledEdgeDriverLabel))
-                                                        .addGroup(
-                                                                driversLayout
-                                                                        .createParallelGroup()
-                                                                        .addComponent(
-                                                                                edgeDriverButton)
-                                                                        .addComponent(
-                                                                                useBundledEdgeDriverButton)))
-                                        .addGroup(
-                                                driversLayout
-                                                        .createSequentialGroup()
-                                                        .addGroup(
-                                                                driversLayout
-                                                                        .createParallelGroup()
-                                                                        .addComponent(
-                                                                                firefoxDriverTextField)
-                                                                        .addComponent(
-                                                                                infoBundledFirefoxDriverLabel))
-                                                        .addGroup(
-                                                                driversLayout
-                                                                        .createParallelGroup()
-                                                                        .addComponent(
-                                                                                firefoxDriverButton)
-                                                                        .addComponent(
-                                                                                useBundledFirefoxDriverButton)))));
-
-        driversLayout.setVerticalGroup(
-                driversLayout
-                        .createSequentialGroup()
-                        .addGroup(
-                                driversLayout
-                                        .createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                        .addComponent(chromeDriverLabel)
-                                        .addComponent(chromeDriverTextField)
-                                        .addComponent(chromeDriverButton))
-                        .addGroup(
-                                driversLayout
-                                        .createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                        .addComponent(infoBundledChromeDriverLabel)
-                                        .addComponent(useBundledChromeDriverButton))
-                        .addGroup(
-                                driversLayout
-                                        .createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                        .addComponent(edgeDriverLabel)
-                                        .addComponent(edgeDriverTextField)
-                                        .addComponent(edgeDriverButton))
-                        .addGroup(
-                                driversLayout
-                                        .createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                        .addComponent(infoBundledEdgeDriverLabel)
-                                        .addComponent(useBundledEdgeDriverButton))
-                        .addGroup(
-                                driversLayout
-                                        .createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                        .addComponent(firefoxDriverLabel)
-                                        .addComponent(firefoxDriverTextField)
-                                        .addComponent(firefoxDriverButton))
-                        .addGroup(
-                                driversLayout
-                                        .createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                        .addComponent(infoBundledFirefoxDriverLabel)
-                                        .addComponent(useBundledFirefoxDriverButton)));
-
-        JPanel binariesPanel = new JPanel();
-        binariesPanel.setBorder(
-                BorderFactory.createTitledBorder(
-                        null,
-                        resourceBundle.getString("selenium.options.binaries.title"),
-                        TitledBorder.DEFAULT_JUSTIFICATION,
-                        TitledBorder.DEFAULT_POSITION,
-                        FontUtils.getFont(FontUtils.Size.standard)));
-
-        JPanel chromePanel =
-                createBinaryPanel(
-                        resourceBundle,
-                        chromeArgumentsDialog,
-                        "chrome",
-                        chromeBinaryTextField,
-                        chromeArgumentsTextField,
-                        chromeArgumentsTableModel,
-                        new JComboBox<>());
-        JPanel edgePanel =
-                createBinaryPanel(
-                        resourceBundle,
-                        edgeArgumentsDialog,
-                        "edge",
-                        edgeBinaryTextField,
-                        edgeArgumentsTextField,
-                        edgeArgumentsTableModel,
-                        new JComboBox<>());
-        JPanel firefoxPanel =
-                createBinaryPanel(
-                        resourceBundle,
-                        firefoxArgumentsDialog,
-                        "firefox",
-                        firefoxBinaryTextField,
-                        firefoxArgumentsTextField,
-                        firefoxArgumentsTableModel,
-                        firefoxProfileCombo);
-
-        GroupLayout binariesLayout = new GroupLayout(binariesPanel);
-        binariesPanel.setLayout(binariesLayout);
-
-        binariesLayout.setAutoCreateGaps(true);
-        binariesLayout.setAutoCreateContainerGaps(true);
-
-        binariesLayout.setHorizontalGroup(
-                binariesLayout
-                        .createParallelGroup()
-                        .addComponent(chromePanel)
-                        .addComponent(edgePanel)
-                        .addComponent(firefoxPanel));
-        binariesLayout.setVerticalGroup(
-                binariesLayout
-                        .createSequentialGroup()
-                        .addComponent(chromePanel)
-                        .addComponent(edgePanel)
-                        .addComponent(firefoxPanel));
 
         JPanel browserExtPanel = new JPanel();
         GroupLayout browserExtLayout = new GroupLayout(browserExtPanel);
@@ -404,6 +118,36 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
         browserExtLayout.setVerticalGroup(
                 browserExtLayout.createSequentialGroup().addComponent(browserExtOptionsPanel));
 
+        JPanel customBrowsersPanel = new JPanel();
+        GroupLayout customBrowsersLayout = new GroupLayout(customBrowsersPanel);
+        customBrowsersPanel.setLayout(customBrowsersLayout);
+
+        customBrowsersLayout.setAutoCreateGaps(true);
+        customBrowsersLayout.setAutoCreateContainerGaps(true);
+
+        customBrowsersModel = new CustomBrowsersTableModel();
+
+        customBrowsersPanel.setBorder(
+                BorderFactory.createTitledBorder(
+                        null,
+                        resourceBundle.getString("selenium.options.custom.browsers.title"),
+                        TitledBorder.DEFAULT_JUSTIFICATION,
+                        TitledBorder.DEFAULT_POSITION,
+                        FontUtils.getFont(FontUtils.Size.standard)));
+
+        CustomBrowsersMultipleOptionsPanel customBrowsersOptionsPanel =
+                new CustomBrowsersMultipleOptionsPanel(
+                        this.customBrowsersModel, resourceBundle, parent);
+
+        customBrowsersLayout.setHorizontalGroup(
+                customBrowsersLayout
+                        .createSequentialGroup()
+                        .addComponent(customBrowsersOptionsPanel));
+        customBrowsersLayout.setVerticalGroup(
+                customBrowsersLayout
+                        .createSequentialGroup()
+                        .addComponent(customBrowsersOptionsPanel));
+
         JPanel innerPanel = new JPanel();
         GroupLayout layout = new GroupLayout(innerPanel);
         innerPanel.setLayout(layout);
@@ -413,13 +157,11 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
 
         layout.setHorizontalGroup(
                 layout.createParallelGroup()
-                        .addComponent(driversPanel)
-                        .addComponent(binariesPanel)
+                        .addComponent(customBrowsersPanel)
                         .addComponent(browserExtPanel));
         layout.setVerticalGroup(
                 layout.createSequentialGroup()
-                        .addComponent(driversPanel)
-                        .addComponent(binariesPanel)
+                        .addComponent(customBrowsersPanel)
                         .addComponent(browserExtPanel));
 
         setLayout(new BorderLayout());
@@ -430,189 +172,67 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
                         ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER));
     }
 
-    private static JPanel createBinaryPanel(
-            ResourceBundle resourceBundle,
-            BrowserArgumentsDialog browserArgumentsDialog,
-            String browser,
-            JTextField binaryTextField,
-            JTextField argsTextField,
-            BrowserArgumentsTableModel tableModel,
-            JComboBox<String> profileCombo) {
-        JButton binaryButton =
-                createButtonFileChooser(
-                        resourceBundle.getString("selenium.options.label.button.select.file"),
-                        binaryTextField);
-        JLabel binaryLabel = new JLabel(resourceBundle.getString("selenium.options.label.binary"));
-        binaryLabel.setLabelFor(binaryTextField);
-
-        JButton argsButton =
-                new JButton(resourceBundle.getString("selenium.options.label.button.configure"));
-        argsButton.addActionListener(
-                e -> {
-                    browserArgumentsDialog.setVisible(true);
-                    updateArguments(tableModel, argsTextField);
-                });
-        JLabel argsLabel = new JLabel(resourceBundle.getString("selenium.options.label.args"));
-        argsLabel.setLabelFor(argsTextField);
-        JLabel profileLabel =
-                new JLabel(resourceBundle.getString("selenium.options.label.profile"));
-        profileLabel.setLabelFor(profileCombo);
-
-        if (profileCombo.getModel().getSize() == 0) {
-            profileCombo.setVisible(false);
-            profileLabel.setVisible(false);
-        }
-
-        JPanel panel = new JPanel();
-        panel.setBorder(
-                BorderFactory.createTitledBorder(
-                        null,
-                        resourceBundle.getString("selenium.options.title." + browser),
-                        TitledBorder.DEFAULT_JUSTIFICATION,
-                        TitledBorder.DEFAULT_POSITION,
-                        FontUtils.getFont(FontUtils.Size.standard)));
-
-        GroupLayout layout = new GroupLayout(panel);
-        panel.setLayout(layout);
-
-        layout.setAutoCreateGaps(true);
-        layout.setAutoCreateContainerGaps(true);
-
-        layout.setHorizontalGroup(
-                layout.createSequentialGroup()
-                        .addGroup(
-                                layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                                        .addComponent(binaryLabel)
-                                        .addComponent(argsLabel)
-                                        .addComponent(profileLabel))
-                        .addGroup(
-                                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                        .addComponent(binaryTextField)
-                                        .addComponent(argsTextField)
-                                        .addComponent(profileCombo))
-                        .addGroup(
-                                layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                                        .addComponent(
-                                                binaryButton,
-                                                argsButton.getMinimumSize().width,
-                                                GroupLayout.DEFAULT_SIZE,
-                                                GroupLayout.DEFAULT_SIZE)
-                                        .addComponent(argsButton)));
-
-        SequentialGroup sg =
-                layout.createSequentialGroup()
-                        .addGroup(
-                                layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                        .addComponent(binaryLabel)
-                                        .addComponent(binaryTextField)
-                                        .addComponent(binaryButton))
-                        .addGroup(
-                                layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                        .addComponent(argsLabel)
-                                        .addComponent(argsTextField)
-                                        .addComponent(argsButton))
-                        .addGroup(
-                                layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                        .addComponent(profileLabel)
-                                        .addComponent(profileCombo));
-
-        layout.setVerticalGroup(sg);
-        return panel;
-    }
-
-    private JButton createBundledWebDriverButton(
-            String label,
-            String toolTip,
-            String disabledToolTip,
-            JTextField bindTextField,
-            Browser browser) {
-        ZapButton button = new ZapButton(label);
-        button.setToolTipText(toolTip);
-        button.setDisabledToolTipText(disabledToolTip);
-        button.addActionListener(new BundledWebDriverAction(bindTextField, browser));
-        return button;
-    }
-
-    private JLabel createBundledWebDriverLabel(String text, String toolTip, Icon icon) {
-        JLabel label = new JLabel(text);
-        label.setIcon(icon);
-        label.setToolTipText(toolTip);
-        return label;
-    }
-
-    private static JTextField createTextField() {
-        JTextField textField = new JTextField(20);
-        return textField;
-    }
-
-    private static JButton createButtonFileChooser(String buttonLabel, JTextField bindTextField) {
-        JButton button = new JButton(buttonLabel);
-        button.addActionListener(new FileChooserAction(bindTextField));
-        return button;
-    }
-
     @Override
     public void initParam(Object obj) {
         OptionsParam optionsParam = (OptionsParam) obj;
         SeleniumOptions seleniumOptions = optionsParam.getParamSet(SeleniumOptions.class);
 
-        boolean driverAvailable = Browser.hasBundledWebDriver(Browser.CHROME);
-        infoBundledChromeDriverLabel.setVisible(!driverAvailable);
-        useBundledChromeDriverButton.setEnabled(driverAvailable);
-
-        chromeDriverTextField.setText(
-                getEffectiveDriverPath(
-                        Browser.CHROME, seleniumOptions.getChromeDriverPath(), driverAvailable));
-
-        driverAvailable = Browser.hasBundledWebDriver(Browser.EDGE);
-        infoBundledEdgeDriverLabel.setVisible(!driverAvailable);
-        useBundledEdgeDriverButton.setEnabled(driverAvailable);
-
-        edgeDriverTextField.setText(
-                getEffectiveDriverPath(
-                        Browser.EDGE, seleniumOptions.getEdgeDriverPath(), driverAvailable));
-
-        driverAvailable = Browser.hasBundledWebDriver(Browser.FIREFOX);
-        infoBundledFirefoxDriverLabel.setVisible(!driverAvailable);
-        useBundledFirefoxDriverButton.setEnabled(driverAvailable);
-
-        firefoxDriverTextField.setText(
-                getEffectiveDriverPath(
-                        Browser.FIREFOX, seleniumOptions.getFirefoxDriverPath(), driverAvailable));
-
-        firefoxProfileCombo.removeAllItems();
-        firefoxProfileCombo.addItem(temporaryBrowserProfile);
-
-        ProfileManager fxPm = extSelenium.getProfileManager(Browser.FIREFOX);
-        if (fxPm != null) {
-            List<String> profiles = fxPm.getProfiles();
-            profiles.stream().forEach(firefoxProfileCombo::addItem);
-        }
-        firefoxProfileCombo.setSelectedItem(seleniumOptions.getFirefoxDefaultProfile());
-
-        chromeBinaryTextField.setText(seleniumOptions.getChromeBinaryPath());
-        chromeArgumentsTableModel.setArguments(
-                seleniumOptions.getBrowserArguments(Browser.CHROME.getId()));
-        updateArguments(chromeArgumentsTableModel, chromeArgumentsTextField);
-        edgeBinaryTextField.setText(seleniumOptions.getEdgeBinaryPath());
-        edgeArgumentsTableModel.setArguments(
-                seleniumOptions.getBrowserArguments(Browser.EDGE.getId()));
-        updateArguments(edgeArgumentsTableModel, edgeArgumentsTextField);
-        firefoxBinaryTextField.setText(seleniumOptions.getFirefoxBinaryPath());
-        firefoxArgumentsTableModel.setArguments(
-                seleniumOptions.getBrowserArguments(Browser.FIREFOX.getId()));
-        updateArguments(firefoxArgumentsTableModel, firefoxArgumentsTextField);
-
         confirmRemoveBrowserArgument.set(seleniumOptions.isConfirmRemoveBrowserArgument());
 
+        // Create built-in browsers
+        List<CustomBrowserImpl> allBrowsers = new ArrayList<>();
+
+        // Chrome
+        CustomBrowserImpl chromeBrowser = new CustomBrowserImpl();
+        chromeBrowser.setName(getBuiltInBrowserName(Browser.CHROME));
+        chromeBrowser.setBuiltIn(true);
+        boolean driverAvailable = Browser.hasBundledWebDriver(Browser.CHROME);
+        chromeBrowser.setDriverPath(
+                getEffectiveDriverPath(
+                        Browser.CHROME, seleniumOptions.getChromeDriverPath(), driverAvailable));
+        chromeBrowser.setBinaryPath(seleniumOptions.getChromeBinaryPath());
+        chromeBrowser.setBrowserType(CustomBrowserImpl.BrowserType.CHROMIUM);
+        chromeArgumentsTableModel.setArguments(
+                seleniumOptions.getBrowserArguments(Browser.CHROME.getId()));
+        chromeBrowser.setArguments(chromeArgumentsTableModel.getElements());
+        allBrowsers.add(chromeBrowser);
+
+        // Edge
+        CustomBrowserImpl edgeBrowser = new CustomBrowserImpl();
+        edgeBrowser.setName(getBuiltInBrowserName(Browser.EDGE));
+        edgeBrowser.setBuiltIn(true);
+        driverAvailable = Browser.hasBundledWebDriver(Browser.EDGE);
+        edgeBrowser.setDriverPath(
+                getEffectiveDriverPath(
+                        Browser.EDGE, seleniumOptions.getEdgeDriverPath(), driverAvailable));
+        edgeBrowser.setBinaryPath(seleniumOptions.getEdgeBinaryPath());
+        edgeBrowser.setBrowserType(CustomBrowserImpl.BrowserType.CHROMIUM);
+        edgeArgumentsTableModel.setArguments(
+                seleniumOptions.getBrowserArguments(Browser.EDGE.getId()));
+        edgeBrowser.setArguments(edgeArgumentsTableModel.getElements());
+        allBrowsers.add(edgeBrowser);
+
+        // Firefox
+        CustomBrowserImpl firefoxBrowser = new CustomBrowserImpl();
+        firefoxBrowser.setName(getBuiltInBrowserName(Browser.FIREFOX));
+        firefoxBrowser.setBuiltIn(true);
+        driverAvailable = Browser.hasBundledWebDriver(Browser.FIREFOX);
+        firefoxBrowser.setDriverPath(
+                getEffectiveDriverPath(
+                        Browser.FIREFOX, seleniumOptions.getFirefoxDriverPath(), driverAvailable));
+        firefoxBrowser.setBinaryPath(seleniumOptions.getFirefoxBinaryPath());
+        firefoxBrowser.setBrowserType(CustomBrowserImpl.BrowserType.FIREFOX);
+        firefoxArgumentsTableModel.setArguments(
+                seleniumOptions.getBrowserArguments(Browser.FIREFOX.getId()));
+        firefoxBrowser.setArguments(firefoxArgumentsTableModel.getElements());
+        allBrowsers.add(firefoxBrowser);
+
+        // Add custom browsers
+        allBrowsers.addAll(seleniumOptions.getCustomBrowsers());
+
+        customBrowsersModel.setBrowsers(allBrowsers);
         browserExtModel.setExtensions(seleniumOptions.getBrowserExtensions());
         directory = seleniumOptions.getLastDirectory();
-    }
-
-    private static void updateArguments(
-            BrowserArgumentsTableModel tableModel, JTextField textField) {
-        textField.setText(tableModel.getArgumentsAsString());
-        textField.setCaretPosition(0);
     }
 
     private static String getEffectiveDriverPath(
@@ -647,112 +267,53 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
         OptionsParam optionsParam = (OptionsParam) obj;
         SeleniumOptions seleniumOptions = optionsParam.getParamSet(SeleniumOptions.class);
 
-        seleniumOptions.setChromeBinaryPath(chromeBinaryTextField.getText());
-        seleniumOptions.setBrowserArguments(
-                Browser.CHROME.getId(), chromeArgumentsTableModel.getElements());
-        seleniumOptions.setChromeDriverPath(chromeDriverTextField.getText());
-        seleniumOptions.setEdgeBinaryPath(edgeBinaryTextField.getText());
-        seleniumOptions.setBrowserArguments(
-                Browser.EDGE.getId(), edgeArgumentsTableModel.getElements());
-        seleniumOptions.setEdgeDriverPath(edgeDriverTextField.getText());
-        seleniumOptions.setFirefoxBinaryPath(firefoxBinaryTextField.getText());
-        seleniumOptions.setBrowserArguments(
-                Browser.FIREFOX.getId(), firefoxArgumentsTableModel.getElements());
-        seleniumOptions.setFirefoxDriverPath(firefoxDriverTextField.getText());
+        String chromeName = getBuiltInBrowserName(Browser.CHROME);
+        String edgeName = getBuiltInBrowserName(Browser.EDGE);
+        String firefoxName = getBuiltInBrowserName(Browser.FIREFOX);
 
-        String firefoxDefaultProfile = "";
-        if (firefoxProfileCombo.getSelectedIndex() > 0) {
-            firefoxDefaultProfile = firefoxProfileCombo.getSelectedItem().toString();
+        List<CustomBrowserImpl> allBrowsers = customBrowsersModel.getElements();
+        List<CustomBrowserImpl> customBrowsers = new ArrayList<>();
+
+        for (CustomBrowserImpl browser : allBrowsers) {
+            if (browser.isBuiltIn()) {
+                // Save built-in browsers (identified by their i18n'd names).
+                if (chromeName.equals(browser.getName())) {
+                    seleniumOptions.setChromeDriverPath(browser.getDriverPath());
+                    seleniumOptions.setChromeBinaryPath(browser.getBinaryPath());
+                    seleniumOptions.setBrowserArguments(
+                            Browser.CHROME.getId(), browser.getArguments());
+                } else if (edgeName.equals(browser.getName())) {
+                    seleniumOptions.setEdgeDriverPath(browser.getDriverPath());
+                    seleniumOptions.setEdgeBinaryPath(browser.getBinaryPath());
+                    seleniumOptions.setBrowserArguments(
+                            Browser.EDGE.getId(), browser.getArguments());
+                } else if (firefoxName.equals(browser.getName())) {
+                    seleniumOptions.setFirefoxDriverPath(browser.getDriverPath());
+                    seleniumOptions.setFirefoxBinaryPath(browser.getBinaryPath());
+                    seleniumOptions.setBrowserArguments(
+                            Browser.FIREFOX.getId(), browser.getArguments());
+                }
+            } else {
+                // Collect custom browsers
+                customBrowsers.add(browser);
+            }
         }
-        seleniumOptions.setFirefoxDefaultProfile(firefoxDefaultProfile);
 
         seleniumOptions.setBrowserExtensions(browserExtModel.getElements());
+        seleniumOptions.setCustomBrowsers(customBrowsers);
         seleniumOptions.setLastDirectory(directory);
 
         seleniumOptions.setConfirmRemoveBrowserArgument(confirmRemoveBrowserArgument.get());
+
+        // Refresh custom browser providers after saving
+        if (extSelenium != null) {
+            extSelenium.registerCustomBrowsers();
+        }
     }
 
     @Override
     public String getHelpIndex() {
         return "addon.selenium.options";
-    }
-
-    private static class FileChooserAction implements ActionListener {
-
-        private final JTextField textField;
-
-        public FileChooserAction(JTextField bindTextField) {
-            this.textField = bindTextField;
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            JFileChooser fileChooser = new JFileChooser();
-            String path = textField.getText();
-            if (path != null) {
-                File file = new File(path);
-                if (file.exists()) {
-                    fileChooser.setSelectedFile(file);
-                }
-            }
-            if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-                final File selectedFile = fileChooser.getSelectedFile();
-
-                textField.setText(selectedFile.getAbsolutePath());
-            }
-        }
-    }
-
-    private static class BundledWebDriverAction implements ActionListener {
-
-        private final JTextField textField;
-        private final Browser browser;
-
-        public BundledWebDriverAction(JTextField bindTextField, Browser browser) {
-            this.textField = bindTextField;
-            this.browser = browser;
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            textField.setText(Browser.getBundledWebDriverPath(browser));
-        }
-    }
-
-    private static class ZapButton extends JButton {
-
-        private static final long serialVersionUID = 1L;
-
-        private String defaultToolTipText;
-        private String disabledToolTipText;
-
-        public ZapButton(String label) {
-            super(label);
-        }
-
-        @Override
-        public void setEnabled(boolean b) {
-            super.setEnabled(b);
-            updateCurrentToolTipText();
-        }
-
-        private void updateCurrentToolTipText() {
-            super.setToolTipText(
-                    (!isEnabled() && disabledToolTipText != null)
-                            ? disabledToolTipText
-                            : defaultToolTipText);
-        }
-
-        @Override
-        public void setToolTipText(String text) {
-            defaultToolTipText = text;
-            updateCurrentToolTipText();
-        }
-
-        public void setDisabledToolTipText(String text) {
-            disabledToolTipText = text;
-            updateCurrentToolTipText();
-        }
     }
 
     private static class BrowserExtMultipleOptionsPanel
@@ -822,6 +383,124 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
                             this.getParent(),
                             messages,
                             resourceBundle.getString("selenium.options.dialog.remove.title"),
+                            JOptionPane.OK_CANCEL_OPTION,
+                            JOptionPane.QUESTION_MESSAGE,
+                            null,
+                            new String[] {
+                                resourceBundle.getString(
+                                        "selenium.options.dialog.remove.button.remove"),
+                                resourceBundle.getString(
+                                        "selenium.options.dialog.remove.button.cancel")
+                            },
+                            null);
+
+            if (option == JOptionPane.OK_OPTION) {
+                setRemoveWithoutConfirmation(removeWithoutConfirmationCheckBox.isSelected());
+
+                return true;
+            }
+
+            return false;
+        }
+    }
+
+    private static class CustomBrowsersMultipleOptionsPanel
+            extends AbstractMultipleOptionsBaseTablePanel<CustomBrowserImpl> {
+        private static final long serialVersionUID = 1L;
+
+        private ResourceBundle resourceBundle;
+        private Dialog parent;
+        private DialogCustomBrowser addDialog;
+        private DialogCustomBrowser modifyDialog;
+
+        public CustomBrowsersMultipleOptionsPanel(
+                AbstractMultipleOptionsBaseTableModel<CustomBrowserImpl> model,
+                ResourceBundle resourceBundle,
+                Dialog parent) {
+            super(model, true);
+            this.resourceBundle = resourceBundle;
+            this.parent = parent;
+
+            getTable().setVisibleRowCount(5);
+        }
+
+        @Override
+        public CustomBrowserImpl showAddDialogue() {
+            if (addDialog == null) {
+                addDialog =
+                        new DialogCustomBrowser(
+                                parent,
+                                resourceBundle.getString(
+                                        "selenium.options.custom.browsers.dialog.add.title"));
+                addDialog.pack();
+            }
+            // Reset dialog state for add mode
+            addDialog.setCustomBrowser(null);
+            addDialog.setExistingBrowsers(((CustomBrowsersTableModel) getModel()).getElements());
+            addDialog.setVisible(true);
+
+            // Get the browser if dialog was confirmed (user clicked OK)
+            CustomBrowserImpl browser = addDialog.getCustomBrowser();
+            addDialog.clear();
+
+            // Only return browser if it was actually created (user clicked OK, not Cancel)
+            return browser;
+        }
+
+        @Override
+        public CustomBrowserImpl showModifyDialogue(CustomBrowserImpl e) {
+            if (modifyDialog == null) {
+                modifyDialog =
+                        new DialogCustomBrowser(
+                                parent,
+                                resourceBundle.getString(
+                                        "selenium.options.custom.browsers.dialog.modify.title"));
+                modifyDialog.pack();
+            }
+            CustomBrowserImpl browserCopy = new CustomBrowserImpl(e);
+            modifyDialog.setCustomBrowser(browserCopy);
+            modifyDialog.setExistingBrowsers(((CustomBrowsersTableModel) getModel()).getElements());
+            modifyDialog.setVisible(true);
+
+            CustomBrowserImpl browser = modifyDialog.getCustomBrowser();
+            modifyDialog.clear();
+
+            // Return the browser if it was confirmed (not null) and has changes
+            if (browser != null && !browser.allFieldsEqual(e)) {
+                return browser;
+            }
+
+            return null;
+        }
+
+        @Override
+        public boolean showRemoveDialogue(CustomBrowserImpl e) {
+            if (e.isBuiltIn()) {
+                // Built-in browsers cannot be removed - show warning
+                JOptionPane.showMessageDialog(
+                        this.getParent(),
+                        resourceBundle.getString(
+                                "selenium.options.custom.browsers.dialog.remove.builtin.warning"),
+                        resourceBundle.getString(
+                                "selenium.options.custom.browsers.dialog.remove.builtin.title"),
+                        JOptionPane.WARNING_MESSAGE);
+                return false;
+            }
+
+            JCheckBox removeWithoutConfirmationCheckBox =
+                    new JCheckBox(
+                            resourceBundle.getString(
+                                    "selenium.options.dialog.remove.label.checkbox"));
+            Object[] messages = {
+                resourceBundle.getString("selenium.options.custom.browsers.dialog.remove.text"),
+                removeWithoutConfirmationCheckBox
+            };
+            int option =
+                    JOptionPane.showOptionDialog(
+                            this.getParent(),
+                            messages,
+                            resourceBundle.getString(
+                                    "selenium.options.custom.browsers.dialog.remove.title"),
                             JOptionPane.OK_CANCEL_OPTION,
                             JOptionPane.QUESTION_MESSAGE,
                             null,
