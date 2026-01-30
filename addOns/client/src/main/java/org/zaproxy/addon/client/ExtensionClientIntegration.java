@@ -166,6 +166,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
 
     public ExtensionClientIntegration() {
         super(NAME);
+        this.setOrder(410);
     }
 
     @Override
