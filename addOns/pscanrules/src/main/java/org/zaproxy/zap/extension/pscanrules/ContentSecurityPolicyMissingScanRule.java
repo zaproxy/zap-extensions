@@ -74,8 +74,14 @@ public class ContentSecurityPolicyMissingScanRule extends PluginPassiveScanner
             return;
         }
 
-        if (!hasCspHeader(msg) && !CspUtils.hasMetaCsp(source)) {
-            alertMissingCspHeader().raise();
+        // Only check for META CSP at LOW threshold to avoid performance issues
+        boolean hasMetaCsp = false;
+        if (AlertThreshold.LOW.equals(this.getAlertThreshold())) {
+            hasMetaCsp = CspUtils.hasMetaCsp(source);
+        }
+
+        if (!hasCspHeader(msg) && !hasMetaCsp) {
+            alertMissingCspHeader(msg).raise();
         }
 
         if (hasObsoleteCspHeader(msg)) {
@@ -111,7 +117,7 @@ public class ContentSecurityPolicyMissingScanRule extends PluginPassiveScanner
     @Override
     public List<Alert> getExampleAlerts() {
         return Arrays.asList(
-                alertMissingCspHeader().setUri("https://www.example.com").build(),
+                alertMissingCspHeader(null).setUri("https://www.example.com").build(),
                 alertObsoleteCspHeader().setUri("https://www.example.com").build(),
                 alertCspReportOnlyHeader().setUri("https://www.example.com").build());
     }
@@ -144,8 +150,16 @@ public class ContentSecurityPolicyMissingScanRule extends PluginPassiveScanner
                 .setAlertRef(PLUGIN_ID + "-" + alertNum);
     }
 
-    private AlertBuilder alertMissingCspHeader() {
-        return buildAlert(Alert.RISK_MEDIUM, 1).setDescription(getAlertAttribute("desc"));
+    private AlertBuilder alertMissingCspHeader(HttpMessage msg) {
+        AlertBuilder builder =
+                buildAlert(Alert.RISK_MEDIUM, 1).setDescription(getAlertAttribute("desc"));
+
+        // Add informational message if META tags were not checked
+        if (msg != null && !AlertThreshold.LOW.equals(this.getAlertThreshold())) {
+            builder.setOtherInfo(getAlertAttribute("meta.not.checked"));
+        }
+
+        return builder;
     }
 
     private AlertBuilder alertObsoleteCspHeader() {
