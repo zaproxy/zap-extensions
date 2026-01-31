@@ -19,9 +19,6 @@
  */
 package org.zaproxy.addon.authhelper.internal;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
@@ -30,13 +27,10 @@ import org.zaproxy.addon.authhelper.ClientScriptBasedAuthenticationMethodType.Cl
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.addon.network.server.ServerInfo;
 import org.zaproxy.zap.authentication.AuthenticationMethod;
-import org.zaproxy.zap.authentication.GenericAuthenticationCredentials;
 import org.zaproxy.zap.extension.selenium.BrowserHook;
 import org.zaproxy.zap.extension.selenium.SeleniumScriptUtils;
-import org.zaproxy.zap.extension.zest.ZestAuthenticationRunner;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.users.User;
-import org.zaproxy.zest.core.v1.ZestScript;
 
 public class AuthenticationBrowserHook implements BrowserHook {
 
@@ -71,20 +65,7 @@ public class AuthenticationBrowserHook implements BrowserHook {
     public void browserLaunched(SeleniumScriptUtils ssUtils) {
         ZestAuthRunner runner = getZestRunner(ssUtils.getWebDriver());
         try {
-            Map<String, String> paramsValues = new HashMap<>();
-            ZestAuthenticationRunner.copyCredentials(
-                    (GenericAuthenticationCredentials) user.getAuthenticationCredentials(),
-                    paramsValues);
-
-            ZestScript zs = csaMethod.getZestScript();
-            AuthUtils.setMinWaitFor(zs, csaMethod.getMinWaitFor());
-            runner.setup(user, zs);
-            runner.run(zs, paramsValues);
-
-            int sleepTime = csaMethod.getLoginPageWait();
-            if (sleepTime > 0) {
-                AuthUtils.sleep(TimeUnit.SECONDS.toMillis(sleepTime));
-            }
+            csaMethod.executeZestAuthScript(runner, user);
         } catch (Exception e) {
             LOGGER.warn(
                     "An error occurred while trying to execute the Client Script Authentication script: {}",

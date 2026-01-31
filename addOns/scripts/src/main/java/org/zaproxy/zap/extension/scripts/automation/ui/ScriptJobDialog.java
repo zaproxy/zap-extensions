@@ -56,6 +56,8 @@ public class ScriptJobDialog extends StandardFieldsDialog {
     public static final String SCRIPT_TARGET_PARAM = "scripts.automation.dialog.target";
     public static final String SCRIPT_IS_INLINE_PARAM = "scripts.automation.dialog.isinline";
     public static final String SCRIPT_INLINE_PARAM = "scripts.automation.dialog.inline";
+    private static final String CONTEXT_PARAM = "automation.dialog.ascan.context";
+    private static final String USER_PARAM = "automation.dialog.all.user";
 
     private static final String[] ALL_FIELDS = {
         NAME_PARAM,
@@ -115,6 +117,16 @@ public class ScriptJobDialog extends StandardFieldsDialog {
                 this.job.getData().getParameters().getName(),
                 true);
         this.addFieldListener(SCRIPT_NAME_PARAM, e -> onScriptNameChanged());
+
+        List<String> contextNames = this.job.getEnv().getContextNames();
+        // Add blank option
+        contextNames.add(0, "");
+        this.addComboField(0, CONTEXT_PARAM, contextNames, this.job.getParameters().getContext());
+
+        List<String> users = job.getEnv().getAllUserNames();
+        // Add blank option
+        users.add(0, "");
+        this.addComboField(0, USER_PARAM, users, this.job.getData().getParameters().getUser());
 
         boolean isInline = StringUtils.isNotEmpty(this.job.getData().getParameters().getInline());
         this.addCheckBoxField(0, SCRIPT_IS_INLINE_PARAM, isInline);
@@ -234,6 +246,8 @@ public class ScriptJobDialog extends StandardFieldsDialog {
     @Override
     public void save() {
         this.job.getData().setName(this.getStringValue(NAME_PARAM));
+        this.job.getParameters().setContext(this.getStringValue(CONTEXT_PARAM));
+        this.job.getParameters().setUser(this.getStringValue(USER_PARAM));
         this.job.getData().getParameters().setAction(this.getStringValue(SCRIPT_ACTION_PARAM));
         this.job.getData().getParameters().setType(this.getStringValue(SCRIPT_TYPE_PARAM));
         this.job.getData().getParameters().setEngine(this.getStringValue(SCRIPT_ENGINE_PARAM));
@@ -271,7 +285,9 @@ public class ScriptJobDialog extends StandardFieldsDialog {
                         this.getStringValue(SCRIPT_NAME_PARAM),
                         this.getStringValue(SCRIPT_FILE_PARAM),
                         this.getStringValue(SCRIPT_TARGET_PARAM),
-                        this.getStringValue(SCRIPT_INLINE_PARAM));
+                        this.getStringValue(SCRIPT_INLINE_PARAM),
+                        this.getStringValue(CONTEXT_PARAM),
+                        this.getStringValue(USER_PARAM));
         sa = ScriptJob.createScriptAction(params, null);
         List<String> issues = sa.verifyParameters(this.getStringValue(NAME_PARAM), params, null);
         if (issues.isEmpty()) {
