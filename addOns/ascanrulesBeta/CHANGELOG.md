@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Dependency update.
+- Updated Session Fixation scan rule to use a shared alert builder for scan logic and example alerts, and adjusted unit tests accordingly.
 
 ## [64] - 2025-12-15
 ### Added
