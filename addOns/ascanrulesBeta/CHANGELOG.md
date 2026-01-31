@@ -54,6 +54,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Rules (as applicable) have been tagged in relation to HIPAA and PCI DSS.
 - The 403 Bypass scan rule now has a CWE reference.
 - The Shell Shock scan rule now has the TEST_TIMING alert tag.
+- The Proxy Disclosure scan rule will no longer alert on HTTP messages that have evidence to start with, in order to reduce possible false positives (Issue 8556). The misleading Attack string for the Alerts was also removed.
 
 ## [59] - 2025-06-20
 ### Changed
