@@ -76,6 +76,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
     }
 
+    protected static final String GENERIC_ALERT = "alert(1)";
     protected static final String GENERIC_SCRIPT_ALERT = "<scrIpt>alert(1);</scRipt>";
     protected static final String GENERIC_ONERROR_ALERT = "<img src=x onerror=prompt()>";
     protected static final String IMG_ONERROR_LOG = "<img src=x onerror=console.log(1);>";
@@ -728,6 +729,12 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
                         .setEvidence(ctx.getTarget())
                         .setMessage(ctx.getMsg())
                         .raise();
+                return true;
+            }
+        }
+        List<HtmlContext> contexts3 = performAttack(msg, param, GENERIC_ALERT, null, 0);
+        if (contexts3 != null && !contexts3.isEmpty()) {
+            if (processContexts(contexts3, param, GENERIC_ALERT, false)) {
                 return true;
             }
         }

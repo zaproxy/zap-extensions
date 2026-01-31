@@ -2667,6 +2667,41 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
     }
 
+    @Test
+    void shouldReportXssInSriptAttackInEval() throws NullPointerException, IOException {
+        // Given
+        String test = "/shouldReportXssInSriptAttackInEval/";
+
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String q = getFirstParamValue(session, "q");
+                        String response;
+                        if (q != null) {
+                            // Make the eye catchers fail
+                            response = getHtml(
+                                            "InputInScriptEval.html",
+                                            new String[][] {{"q", q}});
+                        } else {
+                            response = getHtml("NoInput.html");
+                        }
+                        return newFixedLengthResponse(response);
+                    }
+                });
+
+        HttpMessage msg = this.getHttpMessage(test + "?q=sample");
+        this.rule.setConfig(new ZapXmlConfiguration());
+        // When
+        this.rule.init(msg, this.parent);
+        this.rule.scan();
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("q"));
+        assertThat(alertsRaised.get(0).getAttack(), containsString("alert(1)"));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+    }
+
     @Override
     protected Path getResourcePath(String resourcePath) {
         return super.getResourcePath("crosssitescriptingscanrule/" + resourcePath);
