@@ -44,6 +44,8 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
+import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Logger;
@@ -63,6 +65,7 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.graphql.GraphQlFingerprinter.DiscoveredGraphQlEngine;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.testutils.NanoServerHandler;
@@ -123,7 +126,7 @@ class GraphQlFingerprinterUnitTest extends TestUtils {
                                 "{\"errors\": [{\"code\":\"Oh no! Something went wrong.\"}]}");
                     }
                 });
-        var fp = new GraphQlFingerprinter(UrlBuilder.build(endpointUrl));
+        var fp = buildFingerprinter(endpointUrl);
         // When
         fp.sendQuery("{zaproxy}");
         // Then
@@ -151,7 +154,7 @@ class GraphQlFingerprinterUnitTest extends TestUtils {
                     }
                 };
         nano.addHandler(handler);
-        var fp = new GraphQlFingerprinter(UrlBuilder.build(endpointUrl));
+        var fp = buildFingerprinter(endpointUrl);
         // When
         fp.sendQuery("{count}");
         fp.sendQuery("{count}");
@@ -166,7 +169,7 @@ class GraphQlFingerprinterUnitTest extends TestUtils {
         nano.addHandler(
                 new StaticContentServerHandler(
                         "/graphql", "{\"data\": {\"__typename\": \"Query\"}}"));
-        var fp = new GraphQlFingerprinter(UrlBuilder.build(endpointUrl));
+        var fp = buildFingerprinter(endpointUrl);
         // When
         fp.sendQuery("{__typename}");
         // Then
@@ -178,7 +181,7 @@ class GraphQlFingerprinterUnitTest extends TestUtils {
         // Given
         ExtensionAlert extensionAlert = mockExtensionAlert();
         nano.addHandler(new GraphQlResponseHandler("{ not actual json… }"));
-        var fp = new GraphQlFingerprinter(UrlBuilder.build(endpointUrl));
+        var fp = buildFingerprinter(endpointUrl);
         // When
         fp.fingerprint();
         // Then
@@ -348,7 +351,7 @@ class GraphQlFingerprinterUnitTest extends TestUtils {
     void shouldFingerprintValidData(String graphqlImpl, String response) throws Exception {
         // Given
         nano.addHandler(new GraphQlResponseHandler(response));
-        var fp = new GraphQlFingerprinter(UrlBuilder.build(endpointUrl));
+        var fp = buildFingerprinter(endpointUrl);
         List<DiscoveredGraphQlEngine> discoveredEngine = new ArrayList<>(1);
         GraphQlFingerprinter.addEngineHandler(discoveredEngine::add);
         // When
@@ -367,9 +370,8 @@ class GraphQlFingerprinterUnitTest extends TestUtils {
     void shouldFingerprintWithoutAddedHandler() throws Exception {
         // Given
         ExtensionAlert extensionAlert = mockExtensionAlert();
-        var url = UrlBuilder.build(endpointUrl);
         nano.addHandler(new GraphQlResponseHandler(errorResponse("The query must be a string.")));
-        var fp = new GraphQlFingerprinter(url);
+        var fp = buildFingerprinter(endpointUrl);
         // When
         fp.fingerprint();
         // Then
@@ -380,9 +382,8 @@ class GraphQlFingerprinterUnitTest extends TestUtils {
     void shouldFingerprintAfterHandlerReset() throws Exception {
         // Given
         ExtensionAlert extensionAlert = mockExtensionAlert();
-        var url = UrlBuilder.build(endpointUrl);
         nano.addHandler(new GraphQlResponseHandler(errorResponse("The query must be a string.")));
-        var fp = new GraphQlFingerprinter(url);
+        var fp = buildFingerprinter(endpointUrl);
         // When
         GraphQlFingerprinter.resetHandlers();
         fp.fingerprint();
@@ -430,5 +431,15 @@ class GraphQlFingerprinterUnitTest extends TestUtils {
             return newFixedLengthResponse(
                     NanoHTTPD.Response.Status.OK, "application/json", response);
         }
+    }
+
+    private static GraphQlFingerprinter buildFingerprinter(String endpointUrlStr)
+            throws URIException {
+        URI endpointUri = UrlBuilder.build(endpointUrlStr);
+        Requestor requestor =
+                new Requestor(
+                        new GraphQlQueryMessageBuilder(endpointUri),
+                        HttpSender.MANUAL_REQUEST_INITIATOR);
+        return new GraphQlFingerprinter(endpointUri, requestor);
     }
 }

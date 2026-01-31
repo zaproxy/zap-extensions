@@ -19,24 +19,19 @@
  */
 package org.zaproxy.addon.graphql;
 
-import java.awt.Component;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ItemEvent;
 import javax.swing.Box;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.plaf.basic.BasicComboBoxRenderer;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
 import org.zaproxy.addon.graphql.GraphQlParam.ArgsTypeOption;
+import org.zaproxy.addon.graphql.GraphQlParam.CycleDetectionModeOption;
 import org.zaproxy.addon.graphql.GraphQlParam.QuerySplitOption;
 import org.zaproxy.addon.graphql.GraphQlParam.RequestMethodOption;
 import org.zaproxy.zap.utils.ZapNumberSpinner;
@@ -51,7 +46,9 @@ public class GraphQlOptionsPanel extends AbstractParamPanel {
     private static final String NAME = Constant.messages.getString("graphql.options.panelName");
 
     private JCheckBox queryGenEnabled;
+    private JPanel importConfigPanel;
     private JPanel queryGenConfigPanel;
+    private JPanel cycleDetectionConfigPanel;
     private ZapNumberSpinner maxQueryDepthNumberSpinner;
     private JCheckBox lenientMaxQueryDepthEnabled = null;
     private ZapNumberSpinner maxAdditionalQueryDepthNumberSpinner;
@@ -61,14 +58,20 @@ public class GraphQlOptionsPanel extends AbstractParamPanel {
     private JComboBox<QuerySplitOption> querySplitOptions = null;
     private JComboBox<RequestMethodOption> requestMethodOptions = null;
     private JLabel maxAdditionalQueryDepthLabel;
+    private JComboBox<CycleDetectionModeOption> cycleDetectionModeOptions;
+    private ZapNumberSpinner maxCycleDetectionAlertsNumberSpinner;
 
     public GraphQlOptionsPanel() {
         super();
         setName(NAME);
         setLayout(new GridBagLayout());
 
-        int y = 0;
-        add(getQueryGenConfigPanel(), LayoutHelper.getGBC(0, y, 1, 1.0, new Insets(10, 2, 2, 2)));
+        int y = -1;
+        add(getImportConfigPanel(), LayoutHelper.getGBC(0, ++y, 1, 1.0, new Insets(10, 2, 2, 2)));
+        add(getQueryGenConfigPanel(), LayoutHelper.getGBC(0, ++y, 1, 1.0, new Insets(2, 2, 2, 2)));
+        add(
+                getCycleDetectionConfigPanel(),
+                LayoutHelper.getGBC(0, ++y, 1, 1.0, new Insets(2, 2, 2, 2)));
         add(Box.createGlue(), LayoutHelper.getGBC(0, ++y, 1, 1.0, 1.0));
     }
 
@@ -86,6 +89,8 @@ public class GraphQlOptionsPanel extends AbstractParamPanel {
         getArgsTypeOptions().setSelectedItem(param.getArgsType());
         getQuerySplitOptions().setSelectedItem(param.getQuerySplitType());
         getRequestMethodOptions().setSelectedItem(param.getRequestMethod());
+        getCycleDetectionModeOptions().setSelectedItem(param.getCycleDetectionMode());
+        getMaxCycleDetectionAlertsNumberSpinner().setValue(param.getMaxCycleDetectionAlerts());
     }
 
     @Override
@@ -102,6 +107,9 @@ public class GraphQlOptionsPanel extends AbstractParamPanel {
         param.setArgsType((ArgsTypeOption) getArgsTypeOptions().getSelectedItem());
         param.setQuerySplitType((QuerySplitOption) getQuerySplitOptions().getSelectedItem());
         param.setRequestMethod((RequestMethodOption) getRequestMethodOptions().getSelectedItem());
+        param.setCycleDetectionMode(
+                (CycleDetectionModeOption) getCycleDetectionModeOptions().getSelectedItem());
+        param.setMaxCycleDetectionAlerts(getMaxCycleDetectionAlertsNumberSpinner().getValue());
     }
 
     private JCheckBox getQueryGenEnabled() {
@@ -110,20 +118,23 @@ public class GraphQlOptionsPanel extends AbstractParamPanel {
                     new JCheckBox(
                             Constant.messages.getString("graphql.options.label.queryGenEnabled"),
                             true);
-            queryGenEnabled.addItemListener(
-                    e -> {
-                        boolean selected = e.getStateChange() == ItemEvent.SELECTED;
-                        for (var c : getQueryGenConfigPanel().getComponents()) {
-                            if (c == queryGenEnabled) {
-                                continue;
-                            }
-                            c.setEnabled(selected);
-                        }
-                        validate();
-                        repaint();
-                    });
         }
         return queryGenEnabled;
+    }
+
+    private JPanel getImportConfigPanel() {
+        if (importConfigPanel == null) {
+            importConfigPanel = new JPanel(new GridBagLayout());
+            importConfigPanel.setBorder(
+                    new TitledBorder(
+                            Constant.messages.getString(
+                                    "graphql.options.importConfigPanel.title")));
+            int y = -1;
+            importConfigPanel.add(
+                    getQueryGenEnabled(),
+                    LayoutHelper.getGBC(0, ++y, 2, 1.0, new Insets(2, 2, 2, 2)));
+        }
+        return importConfigPanel;
     }
 
     private JPanel getQueryGenConfigPanel() {
@@ -145,10 +156,7 @@ public class GraphQlOptionsPanel extends AbstractParamPanel {
             JLabel requestMethodLabel =
                     new JLabel(Constant.messages.getString("graphql.options.label.requestMethod"));
 
-            int i = 0;
-            queryGenConfigPanel.add(
-                    getQueryGenEnabled(),
-                    LayoutHelper.getGBC(0, i, 2, 1.0, new Insets(2, 2, 2, 2)));
+            int i = -1;
             queryGenConfigPanel.add(
                     maxQueryDepthLabel,
                     LayoutHelper.getGBC(0, ++i, 1, 1.0, new Insets(2, 2, 2, 2)));
@@ -190,6 +198,37 @@ public class GraphQlOptionsPanel extends AbstractParamPanel {
                     LayoutHelper.getGBC(1, i, 1, 1.0, new Insets(2, 2, 2, 2)));
         }
         return queryGenConfigPanel;
+    }
+
+    private JPanel getCycleDetectionConfigPanel() {
+        if (cycleDetectionConfigPanel == null) {
+            cycleDetectionConfigPanel = new JPanel(new GridBagLayout());
+            cycleDetectionConfigPanel.setBorder(
+                    new TitledBorder(
+                            Constant.messages.getString(
+                                    "graphql.options.cycleDetectionConfigPanel.title")));
+            JLabel modeLabel =
+                    new JLabel(
+                            Constant.messages.getString(
+                                    "graphql.options.label.cycleDetectionMode"));
+            JLabel maxAlertsLabel =
+                    new JLabel(
+                            Constant.messages.getString(
+                                    "graphql.options.label.cycleDetectionMaxAlerts"));
+
+            int y = -1;
+            cycleDetectionConfigPanel.add(
+                    modeLabel, LayoutHelper.getGBC(0, ++y, 1, 1.0, new Insets(2, 2, 2, 2)));
+            cycleDetectionConfigPanel.add(
+                    getCycleDetectionModeOptions(),
+                    LayoutHelper.getGBC(1, y, 1, 1.0, new Insets(2, 2, 2, 2)));
+            cycleDetectionConfigPanel.add(
+                    maxAlertsLabel, LayoutHelper.getGBC(0, ++y, 1, 1.0, new Insets(2, 2, 2, 2)));
+            cycleDetectionConfigPanel.add(
+                    getMaxCycleDetectionAlertsNumberSpinner(),
+                    LayoutHelper.getGBC(1, y, 1, 1.0, new Insets(2, 2, 2, 2)));
+        }
+        return cycleDetectionConfigPanel;
     }
 
     private ZapNumberSpinner getMaxQueryDepthNumberSpinner() {
@@ -257,7 +296,6 @@ public class GraphQlOptionsPanel extends AbstractParamPanel {
                             new ArgsTypeOption[] {
                                 ArgsTypeOption.INLINE, ArgsTypeOption.VARIABLES, ArgsTypeOption.BOTH
                             });
-            argsTypeOptions.setRenderer(new CustomComboBoxRenderer());
         }
         return argsTypeOptions;
     }
@@ -272,12 +310,10 @@ public class GraphQlOptionsPanel extends AbstractParamPanel {
                                 QuerySplitOption.ROOT_FIELD,
                                 QuerySplitOption.OPERATION
                             });
-            querySplitOptions.setRenderer(new CustomComboBoxRenderer());
         }
         return querySplitOptions;
     }
 
-    @SuppressWarnings("unchecked")
     private JComboBox<RequestMethodOption> getRequestMethodOptions() {
         if (requestMethodOptions == null) {
             requestMethodOptions =
@@ -287,40 +323,34 @@ public class GraphQlOptionsPanel extends AbstractParamPanel {
                                 RequestMethodOption.POST_GRAPHQL,
                                 RequestMethodOption.GET
                             });
-            requestMethodOptions.setRenderer(new CustomComboBoxRenderer());
         }
         return requestMethodOptions;
+    }
+
+    private JComboBox<CycleDetectionModeOption> getCycleDetectionModeOptions() {
+        if (cycleDetectionModeOptions == null) {
+            cycleDetectionModeOptions =
+                    new JComboBox<>(
+                            new CycleDetectionModeOption[] {
+                                CycleDetectionModeOption.DISABLED,
+                                CycleDetectionModeOption.QUICK,
+                                CycleDetectionModeOption.EXHAUSTIVE
+                            });
+        }
+        return cycleDetectionModeOptions;
+    }
+
+    private ZapNumberSpinner getMaxCycleDetectionAlertsNumberSpinner() {
+        if (maxCycleDetectionAlertsNumberSpinner == null) {
+            maxCycleDetectionAlertsNumberSpinner =
+                    new ZapNumberSpinner(
+                            0, GraphQlParam.DEFAULT_MAX_CYCLE_DETECTION_ALERTS, Integer.MAX_VALUE);
+        }
+        return maxCycleDetectionAlertsNumberSpinner;
     }
 
     @Override
     public String getHelpIndex() {
         return "graphql.options";
-    }
-
-    /** A renderer for properly displaying the name of options in a ComboBox. */
-    private static class CustomComboBoxRenderer extends BasicComboBoxRenderer {
-        private static final long serialVersionUID = 1L;
-        private static final Border BORDER = new EmptyBorder(2, 3, 3, 3);
-
-        @Override
-        @SuppressWarnings("rawtypes")
-        public Component getListCellRendererComponent(
-                JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-            super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-            if (value != null) {
-                setBorder(BORDER);
-                if (value instanceof ArgsTypeOption) {
-                    ArgsTypeOption item = (ArgsTypeOption) value;
-                    setText(item.getName());
-                } else if (value instanceof QuerySplitOption) {
-                    QuerySplitOption item = (QuerySplitOption) value;
-                    setText(item.getName());
-                } else if (value instanceof RequestMethodOption) {
-                    RequestMethodOption item = (RequestMethodOption) value;
-                    setText(item.getName());
-                }
-            }
-            return this;
-        }
     }
 }

@@ -27,6 +27,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -37,6 +38,8 @@ import org.mockito.ArgumentCaptor;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.zaproxy.addon.commonlib.DefaultValueProvider;
+import org.zaproxy.addon.commonlib.ExtensionCommonlib;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.stats.InMemoryStats;
 import org.zaproxy.zap.testutils.StaticContentServerHandler;
@@ -46,7 +49,7 @@ import org.zaproxy.zap.utils.Stats;
 
 class GraphQlParserUnitTest extends TestUtils {
 
-    String endpointUrl;
+    private String endpointUrl;
     private InMemoryStats stats;
 
     @BeforeEach
@@ -105,6 +108,9 @@ class GraphQlParserUnitTest extends TestUtils {
         GraphQlParser gqp = new GraphQlParser(endpointUrl);
         var extAlert = mock(ExtensionAlert.class);
         Control.getSingleton().getExtensionLoader().addExtension(extAlert);
+        var extCommonLib = mock(ExtensionCommonlib.class);
+        when(extCommonLib.getValueProvider()).thenReturn(new DefaultValueProvider());
+        Control.getSingleton().getExtensionLoader().addExtension(extCommonLib);
         // When
         gqp.introspect(true);
         // Then
@@ -124,6 +130,9 @@ class GraphQlParserUnitTest extends TestUtils {
                 "type Query {\n"
                         + "  searchSongsByLyrics(lyrics: String = \"Never gonna give you up\"): String\n"
                         + "}";
+        var extCommonLib = mock(ExtensionCommonlib.class);
+        when(extCommonLib.getValueProvider()).thenReturn(new DefaultValueProvider());
+        Control.getSingleton().getExtensionLoader().addExtension(extCommonLib);
         // When
         gqp.importFile(getResourcePath("introspectionResponse.json").toString());
         // Then
@@ -138,6 +147,9 @@ class GraphQlParserUnitTest extends TestUtils {
                 "{\"data\":{\"__schema\":{\"queryType\":{\"name\":\"Root\"},\"types\":[{\"kind\":\"OBJECT\",\"name\":\"Root\",\"fields\":[{\"name\":\"zap\",\"args\":[],\"type\":{\"kind\":\"SCALAR\",\"name\":\"String\"}}]}]}}}";
         nano.addHandler(new StaticContentServerHandler("/", introspectionResponse));
         GraphQlParser gqp = new GraphQlParser(endpointUrl);
+        var extCommonLib = mock(ExtensionCommonlib.class);
+        when(extCommonLib.getValueProvider()).thenReturn(new DefaultValueProvider());
+        Control.getSingleton().getExtensionLoader().addExtension(extCommonLib);
         // When
         gqp.introspect();
         // Then
@@ -150,6 +162,9 @@ class GraphQlParserUnitTest extends TestUtils {
         String schema = "type Query { test: String }";
         nano.addHandler(new StaticContentServerHandler("/schema.graphql", schema));
         GraphQlParser gqp = new GraphQlParser(endpointUrl);
+        var extCommonLib = mock(ExtensionCommonlib.class);
+        when(extCommonLib.getValueProvider()).thenReturn(new DefaultValueProvider());
+        Control.getSingleton().getExtensionLoader().addExtension(extCommonLib);
         // When
         gqp.importUrl(endpointUrl + "/schema.graphql");
         // Then
@@ -160,6 +175,9 @@ class GraphQlParserUnitTest extends TestUtils {
     void shouldIncrementImportFileStatOnSuccess() throws Exception {
         // Given
         GraphQlParser gqp = new GraphQlParser(endpointUrl);
+        var extCommonLib = mock(ExtensionCommonlib.class);
+        when(extCommonLib.getValueProvider()).thenReturn(new DefaultValueProvider());
+        Control.getSingleton().getExtensionLoader().addExtension(extCommonLib);
         // When
         gqp.importFile(getResourcePath("introspectionResponse.json").toString());
         // Then

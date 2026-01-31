@@ -25,6 +25,7 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.common.VersionedAbstractParam;
 import org.zaproxy.zap.extension.api.ApiException;
+import org.zaproxy.zap.extension.api.ZapApiIgnore;
 
 public class GraphQlParam extends VersionedAbstractParam {
 
@@ -42,6 +43,9 @@ public class GraphQlParam extends VersionedAbstractParam {
     private static final String PARAM_ARGS_TYPE = PARAM_BASE_KEY + ".argsType";
     private static final String PARAM_QUERY_SPLIT_TYPE = PARAM_BASE_KEY + ".querySplitType";
     private static final String PARAM_REQUEST_METHOD = PARAM_BASE_KEY + ".requestMethod";
+    private static final String PARAM_CYCLE_DETECTION_MODE = PARAM_BASE_KEY + ".cycleDetectionMode";
+    private static final String PARAM_CYCLE_DETECTION_MAX_ALERTS =
+            PARAM_BASE_KEY + ".cycleDetectionMaxAlerts";
 
     public static final boolean DEFAULT_QUERY_GEN_ENABLED = true;
     public static final int DEFAULT_MAX_QUERY_DEPTH = 5;
@@ -52,6 +56,9 @@ public class GraphQlParam extends VersionedAbstractParam {
     public static final ArgsTypeOption DEFAULT_ARGS_TYPE = ArgsTypeOption.BOTH;
     public static final QuerySplitOption DEFAULT_QUERY_SPLIT_TYPE = QuerySplitOption.LEAF;
     public static final RequestMethodOption DEFAULT_REQUEST_METHOD = RequestMethodOption.POST_JSON;
+    public static final CycleDetectionModeOption DEFAULT_CYCLE_DETECTION_MODE =
+            CycleDetectionModeOption.QUICK;
+    public static final int DEFAULT_MAX_CYCLE_DETECTION_ALERTS = 100;
 
     /**
      * The version of the configurations. Used to keep track of configurations changes between
@@ -73,7 +80,9 @@ public class GraphQlParam extends VersionedAbstractParam {
             boolean optionalArgsEnabled,
             ArgsTypeOption argsType,
             QuerySplitOption querySplitType,
-            RequestMethodOption requestMethod) {
+            RequestMethodOption requestMethod,
+            CycleDetectionModeOption cycleDetectionMode,
+            int maxCycleDetectionAlerts) {
         this.queryGenEnabled = queryGenEnabled;
         this.maxQueryDepth = maxQueryDepth;
         this.lenientMaxQueryDepthEnabled = lenientMaxQueryDepthEnabled;
@@ -83,6 +92,8 @@ public class GraphQlParam extends VersionedAbstractParam {
         this.argsType = argsType;
         this.querySplitType = querySplitType;
         this.requestMethod = requestMethod;
+        this.cycleDetectionMode = cycleDetectionMode;
+        this.maxCycleDetectionAlerts = maxCycleDetectionAlerts;
     }
 
     /** This option is used to specify how field arguments should be included. */
@@ -94,17 +105,14 @@ public class GraphQlParam extends VersionedAbstractParam {
         /** Each request is sent twice - once with in-line arguments and once using variables. */
         BOTH;
 
-        public String getName() {
-            switch (this) {
-                case INLINE:
-                    return Constant.messages.getString("graphql.options.value.args.inline");
-                case VARIABLES:
-                    return Constant.messages.getString("graphql.options.value.args.variables");
-                case BOTH:
-                    return Constant.messages.getString("graphql.options.value.args.both");
-                default:
-                    return null;
-            }
+        @Override
+        public String toString() {
+            return switch (this) {
+                case INLINE -> Constant.messages.getString("graphql.options.value.args.inline");
+                case VARIABLES ->
+                        Constant.messages.getString("graphql.options.value.args.variables");
+                case BOTH -> Constant.messages.getString("graphql.options.value.args.both");
+            };
         }
     };
 
@@ -117,17 +125,15 @@ public class GraphQlParam extends VersionedAbstractParam {
         /** A single large request is sent. */
         OPERATION;
 
-        public String getName() {
-            switch (this) {
-                case LEAF:
-                    return Constant.messages.getString("graphql.options.value.split.leaf");
-                case ROOT_FIELD:
-                    return Constant.messages.getString("graphql.options.value.split.rootField");
-                case OPERATION:
-                    return Constant.messages.getString("graphql.options.value.split.operation");
-                default:
-                    return null;
-            }
+        @Override
+        public String toString() {
+            return switch (this) {
+                case LEAF -> Constant.messages.getString("graphql.options.value.split.leaf");
+                case ROOT_FIELD ->
+                        Constant.messages.getString("graphql.options.value.split.rootField");
+                case OPERATION ->
+                        Constant.messages.getString("graphql.options.value.split.operation");
+            };
         }
     };
 
@@ -140,19 +146,37 @@ public class GraphQlParam extends VersionedAbstractParam {
         /** The method is GET and the query is appended to the endpoint URL in a query string. */
         GET;
 
-        public String getName() {
-            switch (this) {
-                case POST_JSON:
-                    return Constant.messages.getString("graphql.options.value.request.postJson");
-                case POST_GRAPHQL:
-                    return Constant.messages.getString("graphql.options.value.split.postGraphql");
-                case GET:
-                    return Constant.messages.getString("graphql.options.value.split.get");
-                default:
-                    return null;
-            }
+        @Override
+        public String toString() {
+            return switch (this) {
+                case POST_JSON ->
+                        Constant.messages.getString("graphql.options.value.request.postJson");
+                case POST_GRAPHQL ->
+                        Constant.messages.getString("graphql.options.value.split.postGraphql");
+                case GET -> Constant.messages.getString("graphql.options.value.split.get");
+            };
         }
-    };
+    }
+
+    public enum CycleDetectionModeOption {
+        DISABLED,
+        QUICK,
+        EXHAUSTIVE;
+
+        @Override
+        public String toString() {
+            return switch (this) {
+                case DISABLED ->
+                        Constant.messages.getString(
+                                "graphql.options.value.cycleDetection.disabled");
+                case QUICK ->
+                        Constant.messages.getString("graphql.options.value.cycleDetection.quick");
+                case EXHAUSTIVE ->
+                        Constant.messages.getString(
+                                "graphql.options.value.cycleDetection.exhaustive");
+            };
+        }
+    }
 
     private boolean queryGenEnabled;
     private int maxQueryDepth;
@@ -163,6 +187,8 @@ public class GraphQlParam extends VersionedAbstractParam {
     private ArgsTypeOption argsType;
     private QuerySplitOption querySplitType;
     private RequestMethodOption requestMethod;
+    private CycleDetectionModeOption cycleDetectionMode;
+    private int maxCycleDetectionAlerts;
 
     public int getMaxQueryDepth() {
         return maxQueryDepth;
@@ -209,6 +235,7 @@ public class GraphQlParam extends VersionedAbstractParam {
         getConfig().setProperty(PARAM_OPTIONAL_ARGS, optionalArgsEnabled);
     }
 
+    @ZapApiIgnore
     public ArgsTypeOption getArgsType() {
         return argsType;
     }
@@ -225,9 +252,10 @@ public class GraphQlParam extends VersionedAbstractParam {
 
     public void setArgsType(ArgsTypeOption argsType) {
         this.argsType = argsType;
-        getConfig().setProperty(PARAM_ARGS_TYPE, argsType.toString());
+        getConfig().setProperty(PARAM_ARGS_TYPE, argsType.name());
     }
 
+    @ZapApiIgnore
     public QuerySplitOption getQuerySplitType() {
         return querySplitType;
     }
@@ -244,9 +272,10 @@ public class GraphQlParam extends VersionedAbstractParam {
 
     public void setQuerySplitType(QuerySplitOption querySplitType) {
         this.querySplitType = querySplitType;
-        getConfig().setProperty(PARAM_QUERY_SPLIT_TYPE, querySplitType.toString());
+        getConfig().setProperty(PARAM_QUERY_SPLIT_TYPE, querySplitType.name());
     }
 
+    @ZapApiIgnore
     public RequestMethodOption getRequestMethod() {
         return requestMethod;
     }
@@ -263,7 +292,7 @@ public class GraphQlParam extends VersionedAbstractParam {
 
     public void setRequestMethod(RequestMethodOption requestMethod) {
         this.requestMethod = requestMethod;
-        getConfig().setProperty(PARAM_REQUEST_METHOD, requestMethod.toString());
+        getConfig().setProperty(PARAM_REQUEST_METHOD, requestMethod.name());
     }
 
     public boolean getQueryGenEnabled() {
@@ -273,6 +302,36 @@ public class GraphQlParam extends VersionedAbstractParam {
     public void setQueryGenEnabled(boolean queryGenEnabled) {
         this.queryGenEnabled = queryGenEnabled;
         getConfig().setProperty(PARAM_QUERY_GENERATOR_ENABLED, queryGenEnabled);
+    }
+
+    @ZapApiIgnore
+    public CycleDetectionModeOption getCycleDetectionMode() {
+        return cycleDetectionMode;
+    }
+
+    public void setCycleDetectionMode(CycleDetectionModeOption cycleDetectionMode) {
+        this.cycleDetectionMode = cycleDetectionMode;
+        getConfig().setProperty(PARAM_CYCLE_DETECTION_MODE, cycleDetectionMode.name());
+    }
+
+    // For generating an API action.
+    public void setCycleDetectionMode(String cycleDetectionMode) throws ApiException {
+        try {
+            setCycleDetectionMode(
+                    CycleDetectionModeOption.valueOf(cycleDetectionMode.toUpperCase(Locale.ROOT)));
+        } catch (IllegalArgumentException e) {
+            LOGGER.debug("'{}' is not a valid Cycle Detection Mode.", cycleDetectionMode);
+            throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, e.getMessage());
+        }
+    }
+
+    public int getMaxCycleDetectionAlerts() {
+        return maxCycleDetectionAlerts;
+    }
+
+    public void setMaxCycleDetectionAlerts(int maxCycleDetectionAlerts) {
+        this.maxCycleDetectionAlerts = maxCycleDetectionAlerts;
+        getConfig().setProperty(PARAM_CYCLE_DETECTION_MAX_ALERTS, maxCycleDetectionAlerts);
     }
 
     @Override
@@ -298,6 +357,9 @@ public class GraphQlParam extends VersionedAbstractParam {
         argsType = getEnum(PARAM_ARGS_TYPE, DEFAULT_ARGS_TYPE);
         querySplitType = getEnum(PARAM_QUERY_SPLIT_TYPE, DEFAULT_QUERY_SPLIT_TYPE);
         requestMethod = getEnum(PARAM_REQUEST_METHOD, DEFAULT_REQUEST_METHOD);
+        cycleDetectionMode = getEnum(PARAM_CYCLE_DETECTION_MODE, DEFAULT_CYCLE_DETECTION_MODE);
+        maxCycleDetectionAlerts =
+                getInt(PARAM_CYCLE_DETECTION_MAX_ALERTS, DEFAULT_MAX_CYCLE_DETECTION_ALERTS);
     }
 
     @Override

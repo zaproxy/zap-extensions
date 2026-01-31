@@ -23,13 +23,18 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
+import java.util.Locale;
+import org.apache.commons.configuration.ConfigurationUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.parosproxy.paros.Constant;
 import org.zaproxy.addon.graphql.GraphQlParam.ArgsTypeOption;
+import org.zaproxy.addon.graphql.GraphQlParam.CycleDetectionModeOption;
 import org.zaproxy.addon.graphql.GraphQlParam.QuerySplitOption;
 import org.zaproxy.addon.graphql.GraphQlParam.RequestMethodOption;
+import org.zaproxy.zap.utils.I18N;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 /** Unit test for {@link GraphQlParam}. */
@@ -44,6 +49,7 @@ class GraphQlParamUnitTest {
 
     @BeforeEach
     void setUp() {
+        Constant.messages = new I18N(Locale.ROOT);
         options = new GraphQlParam();
         config = new ZapXmlConfiguration();
         options.load(config);
@@ -59,7 +65,7 @@ class GraphQlParamUnitTest {
     void shouldLoadConfigWithArgsTypeOption(ArgsTypeOption value) {
         // Given
         options = new GraphQlParam();
-        config.setProperty(PARAM_ARGS_TYPE, value.toString());
+        config.setProperty(PARAM_ARGS_TYPE, value.name());
         // When
         options.load(config);
         // Then
@@ -82,7 +88,7 @@ class GraphQlParamUnitTest {
     void shouldLoadConfigWithQuerySplitOption(QuerySplitOption value) {
         // Given
         options = new GraphQlParam();
-        config.setProperty(PARAM_QUERY_SPLIT_TYPE, value.toString());
+        config.setProperty(PARAM_QUERY_SPLIT_TYPE, value.name());
         // When
         options.load(config);
         // Then
@@ -105,7 +111,7 @@ class GraphQlParamUnitTest {
     void shouldLoadConfigWithRequestMethodOption(RequestMethodOption value) {
         // Given
         options = new GraphQlParam();
-        config.setProperty(PARAM_REQUEST_METHOD, value.toString());
+        config.setProperty(PARAM_REQUEST_METHOD, value.name());
         // When
         options.load(config);
         // Then
@@ -121,5 +127,43 @@ class GraphQlParamUnitTest {
         options.load(config);
         // Then
         assertThat(options.getRequestMethod(), is(equalTo(RequestMethodOption.POST_JSON)));
+    }
+
+    @Test
+    void shouldWriteConfigCorrectly() {
+        // Given
+        options = new GraphQlParam();
+        config = new ZapXmlConfiguration();
+        // When
+        options.load(config);
+        options.setQueryGenEnabled(false);
+        options.setMaxQueryDepth(1337);
+        options.setLenientMaxQueryDepthEnabled(false);
+        options.setMaxAdditionalQueryDepth(42);
+        options.setMaxArgsDepth(21);
+        options.setOptionalArgsEnabled(false);
+        options.setArgsType(ArgsTypeOption.INLINE);
+        options.setQuerySplitType(QuerySplitOption.ROOT_FIELD);
+        options.setRequestMethod(RequestMethodOption.POST_GRAPHQL);
+        options.setCycleDetectionMode(CycleDetectionModeOption.EXHAUSTIVE);
+        options.setMaxCycleDetectionAlerts(9999);
+        // Then
+        assertThat(
+                ConfigurationUtils.toString(config).replaceAll("\\R", "\n"),
+                is(
+                        equalTo(
+                                """
+graphql.queryGenEnabled=false
+graphql.maxQueryDepth=1337
+graphql.lenientMaxQueryDepth=false
+graphql.maxAdditionalQueryDepth=42
+graphql.maxArgsDepth=21
+graphql.optionalArgs=false
+graphql.argsType=INLINE
+graphql.querySplitType=ROOT_FIELD
+graphql.requestMethod=POST_GRAPHQL
+graphql.cycleDetectionMode=EXHAUSTIVE
+graphql.cycleDetectionMaxAlerts=9999
+graphql[@version]=2""")));
     }
 }
