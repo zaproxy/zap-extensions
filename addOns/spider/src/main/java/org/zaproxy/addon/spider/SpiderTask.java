@@ -121,6 +121,17 @@ public class SpiderTask implements Runnable {
                         resourceFound.getMessage().getRequestHeader().getURI().toString());
             }
             HttpMessage msg = new HttpMessage(requestHeader);
+            if (resourceFound.getMessage() != null
+                    && resourceFound.getMessage().getRequestHeader().getHeader("content-type")
+                            != null) {
+                msg.getRequestHeader()
+                        .setHeader(
+                                "content-type",
+                                resourceFound
+                                        .getMessage()
+                                        .getRequestHeader()
+                                        .getHeader("content-type"));
+            }
             int bodyLength = resourceFound.getBody().length();
             String method = resourceFound.getMethod();
             if (bodyLength == 0
