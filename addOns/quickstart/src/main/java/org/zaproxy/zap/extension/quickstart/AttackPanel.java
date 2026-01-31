@@ -20,6 +20,9 @@
 package org.zaproxy.zap.extension.quickstart;
 
 import java.awt.GridBagLayout;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.net.URL;
 import java.util.List;
 import javax.swing.Box;
@@ -48,6 +51,7 @@ public class AttackPanel extends QuickStartSubPanel {
     private static final long serialVersionUID = 1L;
 
     private static final String DEFAULT_VALUE_URL_FIELD = "http://";
+    private static final Logger LOGGER = LogManager.getLogger(AttackPanel.class);
 
     private ImageIcon icon;
     private JButton attackButton;
@@ -84,6 +88,7 @@ public class AttackPanel extends QuickStartSubPanel {
     @Override
     public JPanel getDescriptionPanel() {
         JPanel panel = new QuickStartBackgroundPanel();
+        // here we are.  God damn it
         panel.add(
                 QuickStartHelper.getWrappedLabel("quickstart.attack.panel.message1"),
                 LayoutHelper.getGBC(0, 0, 2, 1.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
@@ -152,10 +157,12 @@ public class AttackPanel extends QuickStartSubPanel {
 
             traditionalSpiderY = ++formPanelY;
             plugableSpiderY = ++formPanelY;
-
+            
+            // this sets the horizontal panel for the start and stop buttons I guess?
             JPanel buttonPanel = QuickStartHelper.getHorizontalPanel();
             buttonPanel.add(this.getAttackButton());
-            buttonPanel.add(this.getStopButton());
+            buttonPanel.add(this.getPauseButton());
+            // buttonPanel.add(this.getStopButton());
             buttonPanel.add(Box.createHorizontalGlue());
             contentPanel.add(buttonPanel, LayoutHelper.getGBC(2, ++formPanelY, 1, 1.0D));
 
@@ -172,6 +179,7 @@ public class AttackPanel extends QuickStartSubPanel {
 
         return contentPanel;
     }
+    //! I think something needs to be here.
 
     private JLabel getProgressLabel() {
         if (progressLabel == null) {
@@ -331,8 +339,10 @@ public class AttackPanel extends QuickStartSubPanel {
             attackButton.setToolTipText(
                     Constant.messages.getString("quickstart.button.tooltip.attack"));
 
+                    //
             attackButton.addActionListener(
                     e -> {
+                        //
                         if ((traditionalSpider == null || !traditionalSpider.isSelected())
                                 && (plugableSpider == null || !plugableSpider.isSelected())) {
                             getExtensionQuickStart()
@@ -342,10 +352,52 @@ public class AttackPanel extends QuickStartSubPanel {
                                                     "quickstart.url.warning.nospider"));
                         } else {
                             attackUrl();
+                            // change the button to pause for now.
+
+                            //we also need some kind of check if it is currently paused
+                            attackButton.setText(Constant.messages.getString("quickstart.button.label.pause"));
+                            // we need something to check what the state of the scan is at this moment.
                         }
                     });
         }
         return attackButton;
+    }
+
+    // Likely not needed given new requirements given :)
+    private JButton getPauseButton() {
+        if (stopButton == null) {
+            stopButton = new JButton();
+            stopButton.setText(Constant.messages.getString("quickstart.button.label.pause"));
+            stopButton.setIcon(
+                    DisplayUtils.getScaledIcon(
+                            new ImageIcon(
+                                    SearchPanel.class.getResource(
+                                            "/resource/icon/16/141.png")))); // 'pause'
+            // icon
+            stopButton.setToolTipText(
+                    Constant.messages.getString("quickstart.button.tooltip.stop"));
+            stopButton.setEnabled(false);
+
+            stopButton.addActionListener(e -> {
+
+                // need to check if paused.  We need to check if the button was already clicked maybe?   
+                //just check if it paused and then handle accordingly
+                boolean checkPause = checkPauseStatus();
+                System.out.println(checkPause);
+                System.out.println("checkPause");
+                LOGGER.debug("what is this");
+                LOGGER.debug(checkPause);
+                LOGGER.info("does this help?");
+
+
+                if (checkPause == true) {
+                    resumeAttack();
+                } else {
+                    togglePauseAttack();
+                }
+            });
+        }
+        return stopButton;
     }
 
     private JButton getStopButton() {
@@ -367,6 +419,7 @@ public class AttackPanel extends QuickStartSubPanel {
         return stopButton;
     }
 
+    //! this part attacks
     boolean attackUrl() {
         Object item = this.getUrlField().getSelectedItem();
         if (item == null || DEFAULT_VALUE_URL_FIELD.equals(item.toString())) {
@@ -419,6 +472,26 @@ public class AttackPanel extends QuickStartSubPanel {
         getExtensionQuickStart().stopAttack();
 
         stopButton.setEnabled(false);
+    }
+
+    private void togglePauseAttack() {
+        LOGGER.info("toggle");
+        getExtensionQuickStart().togglePauseAttack();
+
+        // stopButton.setEnabled(false);
+    }
+
+    private void resumeAttack() {
+        getExtensionQuickStart().resumeAttack();
+
+        // stopButton.setEnabled(false);
+    }
+
+
+    private boolean checkPauseStatus() {
+        return getExtensionQuickStart().checkPause();
+
+        // stopButton.setEnabled(false);
     }
 
     private void setSpiderButtonsEnabled(boolean enabled) {

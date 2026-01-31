@@ -263,6 +263,7 @@ public class TokenPanel extends AbstractPanel {
                     new ImageIcon(getClass().getResource("/resource/icon/16/131.png")));
             pauseScanButton.setEnabled(false);
             pauseScanButton.addActionListener(e -> pauseScan());
+            // something is amiss
         }
         return pauseScanButton;
     }

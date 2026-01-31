@@ -295,6 +295,7 @@ public class SpiderAPI extends ApiImplementor {
 
                 return new ApiResponseElement(name, Integer.toString(scanId));
 
+                //  something here.
             case ACTION_PAUSE_SCAN:
                 scan = getSpiderScan(params);
                 extension.pauseScan(scan.getScanId());
