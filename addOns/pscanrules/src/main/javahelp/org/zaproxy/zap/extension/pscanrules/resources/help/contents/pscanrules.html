@@ -102,15 +102,23 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/90011/">90011</a>.
 
 <H2 id="id-10038">Content Security Policy (CSP) Header Not Set</H2>
-This checks HTML response headers for the presence of a Content Security Policy header, or the response body for CSP specified via META tag.<br>
+This checks HTML response headers for the presence of a Content Security Policy header.<br>
+At the Low threshold, it also checks the response body for CSP specified via META tag.<br>
 By default this rule checks for the presence of the "Content-Security-Policy", "X-Content-Security-Policy",
 and "X-WebKit-CSP" headers. Redirects and non-HTML responses are ignored except at the Low threshold.
 <p>
-If a "Content-Security-Policy" header is not found, an alert is raised.
+<strong>Threshold Behavior:</strong>
+<ul>
+<li><strong>MEDIUM/HIGH:</strong> Only checks HTTP headers for CSP. META tag CSP definitions are not validated for performance reasons.</li>
+<li><strong>LOW:</strong> Checks both HTTP headers and META tags for CSP definitions.</li>
+</ul>
+<p>
+If a "Content-Security-Policy" header is not found (and at Low threshold, no META CSP is found), an alert is raised.
+When META tags are not checked (at MEDIUM/HIGH threshold), the alert's "Other Info" field will indicate that META tag validation was skipped.
 <p>
 If an "X-Content-Security-Policy" or "X-WebKit-CSP" header is found, an INFO alert is raised. This may represent an outdated enforcement implementation.
 <p>
-If a "Content-Security-Policy-Report-Only" header is found on a response an INFO alert is raised. This may represent an enforcement effort 
+If a "Content-Security-Policy-Report-Only" header is found on a response an INFO alert is raised. This may represent an enforcement effort
 that is actively being refined or developed, or one which is only partially implemented.
 <p>
 Note: This rule does not perform any actual analysis of the specified policy, for that please ensure the CSP scan rule is enabled.
@@ -118,7 +126,6 @@ Note: This rule does not perform any actual analysis of the specified policy, fo
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/ContentSecurityPolicyMissingScanRule.java">ContentSecurityPolicyMissingScanRule.java</a>
 <br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10038/">10038</a>.
-
 <H2 id="id-10019">Content Type Missing</H2>
 Raises an alert if the response is lacking a Content-Type header or if the header exists but the value is empty.
 <p>
