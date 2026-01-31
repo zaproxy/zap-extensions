@@ -156,7 +156,13 @@ public class ContentSecurityPolicyMissingScanRule extends PluginPassiveScanner
 
         // Add informational message if META tags were not checked
         if (msg != null && !AlertThreshold.LOW.equals(this.getAlertThreshold())) {
-            builder.setOtherInfo(getAlertAttribute("meta.not.checked"));
+String existing = builder.getOtherInfo();
+String metaInfo = getAlertAttribute("meta.not.checked");
+if (existing == null || existing.isEmpty()) {
+    builder.setOtherInfo(metaInfo);
+} else {
+    builder.setOtherInfo(existing "\n" + metaInfo);
+}
         }
 
         return builder;
