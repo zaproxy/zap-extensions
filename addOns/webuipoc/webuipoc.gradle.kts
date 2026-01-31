@@ -48,8 +48,15 @@ for (dir in pocsSrcDir.listFiles()!!) {
                     workingDir = dir
                     args.set(arrayListOf("run", "lint"))
                 }
+            val checkFormatTask =
+                tasks.register<NpmTask>("checkFormatPoc$normalizedPocName") {
+                    group = pocBuildTasksGroup
+                    dependsOn(installTask)
+                    workingDir = dir
+                    args.set(arrayListOf("run", "check-format"))
+                }
             tasks.named(LifecycleBasePlugin.CHECK_TASK_NAME) {
-                dependsOn(lintTask)
+                dependsOn(lintTask, checkFormatTask)
             }
         }
     } else {

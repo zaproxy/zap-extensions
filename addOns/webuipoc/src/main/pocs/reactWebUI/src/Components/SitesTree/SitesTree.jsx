@@ -1,24 +1,22 @@
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import Accordion from "../Accordion/AccordionData";
 import { sendChildNode } from "../../Utilities/requests";
 
 const SiteTree = () => {
-
-  const [initialSitesTree, setInitialSitesTree] = useState(null)
-  
+  const [initialSitesTree, setInitialSitesTree] = useState(null);
 
   useEffect(() => {
-      const fetchData = async () => {
-        try {
-          const response = await sendChildNode("");
-          setInitialSitesTree(response);
-        } catch (error) {
-          console.error("Error fetching data:", error);
-        }
-      };
+    const fetchData = async () => {
+      try {
+        const response = await sendChildNode("");
+        setInitialSitesTree(response);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
 
-      fetchData();
-    }, []);
+    fetchData();
+  }, []);
 
   return (
     <div className="flex">
@@ -32,7 +30,7 @@ const SiteTree = () => {
               <div className="flex flex-row  justify-center text-center"></div>
               {initialSitesTree &&
                 initialSitesTree.map((node) => (
-                 <Accordion site={node} fetchChildren={sendChildNode}/>
+                  <Accordion site={node} fetchChildren={sendChildNode} />
                 ))}
             </div>
           </div>
