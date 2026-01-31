@@ -245,6 +245,30 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
             return new ClientScriptBasedAuthenticationMethodType();
         }
 
+        /**
+         * Executes the Zest authentication script using the provided runner.
+         *
+         * @param runner the ZestAuthRunner configured with proxy and WebDriver
+         * @param user the user to authenticate
+         * @throws Exception if an error occurs during script execution
+         */
+        public void executeZestAuthScript(ZestAuthRunner runner, User user) throws Exception {
+            Map<String, String> paramsValues = new HashMap<>();
+            ZestAuthenticationRunner.copyCredentials(
+                    (GenericAuthenticationCredentials) user.getAuthenticationCredentials(),
+                    paramsValues);
+
+            ZestScript zestScript = getZestScript();
+            AuthUtils.setMinWaitFor(zestScript, minWaitFor);
+            runner.setup(user, zestScript);
+            runner.run(zestScript, paramsValues);
+
+            int sleepTime = loginPageWait;
+            if (sleepTime > 0) {
+                AuthUtils.sleep(TimeUnit.SECONDS.toMillis(sleepTime));
+            }
+        }
+
         @Override
         public boolean authenticate(WebDriver webDriver, User user) {
             ZestScript zestScript = getZestScript();
@@ -260,19 +284,7 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                 runner.setProxy(mainProxyInfo.getAddress(), mainProxyInfo.getPort());
                 runner.setWebDriver(webDriver);
 
-                Map<String, String> paramsValues = new HashMap<>();
-                ZestAuthenticationRunner.copyCredentials(
-                        (GenericAuthenticationCredentials) user.getAuthenticationCredentials(),
-                        paramsValues);
-
-                AuthUtils.setMinWaitFor(zestScript, minWaitFor);
-                runner.setup(user, zestScript);
-                runner.run(zestScript, paramsValues);
-
-                int sleepTime = loginPageWait;
-                if (sleepTime > 0) {
-                    AuthUtils.sleep(TimeUnit.SECONDS.toMillis(sleepTime));
-                }
+                executeZestAuthScript(runner, user);
                 return true;
             } catch (Exception e) {
                 LOGGER.warn(

@@ -293,8 +293,14 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
                     authenticationSteps == null ? List.of() : authenticationSteps;
         }
 
-        @Override
-        public boolean authenticate(WebDriver webDriver, User user) {
+        /**
+         * Executes the browser-based authentication using the provided WebDriver.
+         *
+         * @param webDriver the WebDriver to use for authentication
+         * @param user the user to authenticate
+         * @return true if authentication was successful, false otherwise
+         */
+        public boolean executeBrowserAuth(WebDriver webDriver, User user) {
             if (loginPageUrl == null || loginPageUrl.isEmpty()) {
                 LOGGER.warn("Login page URL is not configured");
                 return false;
@@ -307,6 +313,11 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
                     loginPageWait,
                     stepDelay,
                     authenticationSteps);
+        }
+
+        @Override
+        public boolean authenticate(WebDriver webDriver, User user) {
+            return executeBrowserAuth(webDriver, user);
         }
 
         @Override
