@@ -45,6 +45,16 @@ The chat panel handles various error conditions:
 <H2>Appending ZAP Data to Chat</H2>
 You can quickly add data from ZAP directly into the chat input area using context menu items:
 
+<H3>Prompt Injection Countermeasures</H3>
+When appending untrusted data (such as HTTP responses or alert details), the add-on applies the
+following safeguards to reduce prompt injection risk:
+<ul>
+    <li><b>Structured payloads:</b> Appended data is inserted as structured JSON rather than free-form text.</li>
+    <li><b>Untrusted data delimiters:</b> The JSON block is wrapped between explicit <b>BEGIN/END</b> markers so the model can distinguish it from user instructions.</li>
+    <li><b>System guidance:</b> A fixed system message instructs the model to treat data inside the delimiters as data only, never as instructions.</li>
+</ul>
+These measures reduce risk but do not eliminate it. Always review appended content before sending.
+
 <H3>Appending Alerts</H3>
 To append alert information to the chat:
 <ul>

@@ -19,6 +19,11 @@
  */
 package org.zaproxy.addon.llm.ui;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
@@ -27,6 +32,7 @@ import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
 public class LlmAppendHttpMessageMenu extends PopupMenuItemHttpMessageContainer {
 
     private static final long serialVersionUID = 1L;
+    private static final Logger LOGGER = LogManager.getLogger(LlmAppendHttpMessageMenu.class);
 
     private final LlmChatPanel llmChatPanel;
     private final boolean includeRequest;
@@ -50,37 +56,42 @@ public class LlmAppendHttpMessageMenu extends PopupMenuItemHttpMessageContainer 
 
     private void appendHttpMessageToInput(
             HttpMessage httpMessage, boolean includeRequest, boolean includeResponse) {
-        StringBuilder sb = new StringBuilder();
+        try {
+            llmChatPanel.appendUntrustedDataToInput(
+                    buildStructuredPayload(httpMessage, includeRequest, includeResponse), true);
+        } catch (JsonProcessingException e) {
+            LOGGER.error("Failed to build structured HTTP payload.", e);
+            llmChatPanel.appendToInput(
+                    Constant.messages.getString("llm.chat.json.failure", e.getMessage()), true);
+        }
+    }
 
-        LlmChatPanel.appendFormattedMsg(
-                sb,
-                Constant.messages.getString("llm.chat.append.http.message.label"),
-                httpMessage.getRequestHeader().getURI().toString());
-        sb.append("\n");
+    protected static Map<String, Object> buildStructuredPayload(
+            HttpMessage httpMessage, boolean includeRequest, boolean includeResponse)
+            throws JsonProcessingException {
+        Map<String, Object> payload = new LinkedHashMap<>();
+        payload.put("type", "http_message");
+        payload.put("uri", httpMessage.getRequestHeader().getURI().toString());
 
         if (includeRequest) {
-            sb.append(Constant.messages.getString("llm.chat.append.http.request.header"))
-                    .append("\n");
-            sb.append(httpMessage.getRequestHeader().toString());
+            Map<String, Object> request = new LinkedHashMap<>();
+            request.put("header", httpMessage.getRequestHeader().toString());
             if (httpMessage.getRequestBody().length() > 0) {
-                sb.append("\n");
-                sb.append(httpMessage.getRequestBody().toString());
+                request.put("body", httpMessage.getRequestBody().toString());
             }
-            sb.append("\n\n");
+            payload.put("request", request);
         }
 
         if (includeResponse && !httpMessage.getResponseHeader().isEmpty()) {
-            sb.append(Constant.messages.getString("llm.chat.append.http.response.header"))
-                    .append("\n");
-            sb.append(httpMessage.getResponseHeader().toString());
+            Map<String, Object> response = new LinkedHashMap<>();
+            response.put("header", httpMessage.getResponseHeader().toString());
             if (httpMessage.getResponseBody().length() > 0) {
-                sb.append("\n");
-                sb.append(httpMessage.getResponseBody().toString());
+                response.put("body", httpMessage.getResponseBody().toString());
             }
-            sb.append("\n");
+            payload.put("response", response);
         }
 
-        llmChatPanel.appendToInput(sb.toString(), true);
+        return payload;
     }
 
     @Override
