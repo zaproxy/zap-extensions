@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Initial support for OpenAPI 3.1 definitions.
 
 ### Changed
+- Add XML body generation for OpenAPI plugin
 - Dependency update.
 
 ## [48] - 2025-12-15
