@@ -91,7 +91,7 @@ public class ProvidedBrowsersComboBoxModel extends AbstractListModel<ProvidedBro
     /**
      * Sets whether unconfigured browsers should be included in the model
      *
-     * @param includeHeadless true if unconfigured browsers should be included in the model
+     * @param includeUnconfigured true if unconfigured browsers should be included in the model
      */
     public void setIncludeUnconfigured(boolean includeUnconfigured) {
         this.includeUnconfigured = includeUnconfigured;
