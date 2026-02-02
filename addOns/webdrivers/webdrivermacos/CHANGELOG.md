@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [177] - 2026-02-02
 ### Changed
 - Roll back ChromeDriver to 144.0.7559.109.
 
@@ -736,6 +736,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release: Firefox v0.13.0 Chrome v2.27
 
+[177]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v177
 [176]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v176
 [175]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v175
 [174]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v174
