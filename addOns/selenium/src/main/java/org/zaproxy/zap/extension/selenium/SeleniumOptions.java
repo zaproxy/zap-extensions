@@ -45,6 +45,7 @@ import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.common.VersionedAbstractParam;
 import org.zaproxy.zap.extension.api.ZapApiIgnore;
 import org.zaproxy.zap.extension.selenium.internal.BrowserArgument;
+import org.zaproxy.zap.extension.selenium.internal.CustomBrowserImpl;
 
 /**
  * Manages the Selenium configurations saved in the configuration file.
@@ -139,6 +140,8 @@ public class SeleniumOptions extends VersionedAbstractParam {
 
     private static final String EXTENSIONS_LAST_DIR_KEY = SELENIUM_BASE_KEY + ".lastDir";
 
+    private static final String CUSTOM_BROWSERS_KEY = SELENIUM_BASE_KEY + ".customBrowsers.browser";
+
     private final File extensionsDir;
 
     /** The path to Chrome binary. */
@@ -165,6 +168,7 @@ public class SeleniumOptions extends VersionedAbstractParam {
 
     private Map<String, List<BrowserArgument>> browserArguments = new HashMap<>();
     private boolean confirmRemoveBrowserArgument = true;
+    private List<CustomBrowserImpl> customBrowsers = new ArrayList<>();
 
     public SeleniumOptions() {
         extensionsDir = new File(Constant.getZapHome() + "/selenium/extensions/");
@@ -172,6 +176,7 @@ public class SeleniumOptions extends VersionedAbstractParam {
         browserArguments.put(Browser.CHROME.getId(), new ArrayList<>(0));
         browserArguments.put(Browser.EDGE.getId(), new ArrayList<>(0));
         browserArguments.put(Browser.FIREFOX.getId(), new ArrayList<>(0));
+        customBrowsers = Collections.synchronizedList(new ArrayList<>());
     }
 
     @Override
@@ -224,6 +229,8 @@ public class SeleniumOptions extends VersionedAbstractParam {
         browserArguments.put(Browser.FIREFOX.getId(), readBrowserArguments(FIREFOX_ARGS_KEY));
 
         confirmRemoveBrowserArgument = getBoolean(CONFIRM_REMOVE_BROWSER_ARG, true);
+
+        customBrowsers = readCustomBrowsers();
     }
 
     /**
@@ -720,5 +727,116 @@ public class SeleniumOptions extends VersionedAbstractParam {
             }
         }
         return arguments;
+    }
+
+    /**
+     * Gets the list of custom browsers.
+     *
+     * @return the list of custom browsers
+     */
+    public List<CustomBrowserImpl> getCustomBrowsers() {
+        return Collections.unmodifiableList(customBrowsers);
+    }
+
+    /**
+     * Sets the list of custom browsers.
+     *
+     * @param customBrowsers the list of custom browsers
+     * @throws IllegalArgumentException if {@code customBrowsers} is {@code null}.
+     */
+    public void setCustomBrowsers(List<CustomBrowserImpl> customBrowsers) {
+        Validate.notNull(customBrowsers, "Parameter customBrowsers must not be null.");
+        this.customBrowsers = Collections.synchronizedList(new ArrayList<>(customBrowsers));
+        persistCustomBrowsers();
+    }
+
+    public void addCustomBrowser(CustomBrowserImpl customBrowserImpl) {
+        this.customBrowsers.add(customBrowserImpl);
+        persistCustomBrowsers();
+    }
+
+    public boolean removeCustomBrowser(String name) {
+        for (Iterator<CustomBrowserImpl> it = this.customBrowsers.iterator(); it.hasNext(); ) {
+            CustomBrowserImpl browser = it.next();
+            if (name.equals(browser.getName())) {
+                it.remove();
+                persistCustomBrowsers();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void persistCustomBrowsers() {
+        ((HierarchicalConfiguration) getConfig()).clearTree(CUSTOM_BROWSERS_KEY);
+
+        for (int i = 0, size = customBrowsers.size(); i < size; ++i) {
+            String elementBaseKey = CUSTOM_BROWSERS_KEY + "(" + i + ").";
+            CustomBrowserImpl browser = customBrowsers.get(i);
+
+            getConfig().setProperty(elementBaseKey + "name", browser.getName());
+            getConfig().setProperty(elementBaseKey + "driverPath", browser.getDriverPath());
+            getConfig().setProperty(elementBaseKey + "binaryPath", browser.getBinaryPath());
+            getConfig()
+                    .setProperty(elementBaseKey + "browserType", browser.getBrowserType().name());
+
+            String argsBaseKey = elementBaseKey + "args.arg";
+            List<BrowserArgument> arguments = browser.getArguments();
+            for (int j = 0, argsSize = arguments.size(); j < argsSize; ++j) {
+                String argElementBaseKey = argsBaseKey + "(" + j + ").";
+                BrowserArgument arg = arguments.get(j);
+                getConfig().setProperty(argElementBaseKey + ARG_KEY, arg.getArgument());
+                getConfig().setProperty(argElementBaseKey + ENABLED_KEY, arg.isEnabled());
+            }
+        }
+    }
+
+    private List<CustomBrowserImpl> readCustomBrowsers() {
+        List<HierarchicalConfiguration> fields =
+                ((HierarchicalConfiguration) getConfig()).configurationsAt(CUSTOM_BROWSERS_KEY);
+        List<CustomBrowserImpl> browsers = new ArrayList<>(fields.size());
+        for (HierarchicalConfiguration sub : fields) {
+            try {
+                String name = sub.getString("name", "");
+                if (name.isBlank()) {
+                    continue;
+                }
+                String driverPath = sub.getString("driverPath", "");
+                String binaryPath = sub.getString("binaryPath", "");
+                String browserTypeStr = sub.getString("browserType", "CHROMIUM");
+                CustomBrowserImpl.BrowserType browserType;
+                try {
+                    browserType = CustomBrowserImpl.BrowserType.valueOf(browserTypeStr);
+                } catch (IllegalArgumentException e) {
+                    browserType = CustomBrowserImpl.BrowserType.CHROMIUM;
+                }
+
+                // Read arguments from args.arg(0), args.arg(1), etc.
+                List<BrowserArgument> arguments = new ArrayList<>();
+                try {
+                    List<HierarchicalConfiguration> argFields = sub.configurationsAt("args.arg");
+                    for (HierarchicalConfiguration argSub : argFields) {
+                        try {
+                            String argument = argSub.getString(ARG_KEY, "");
+                            if (!argument.isBlank()) {
+                                arguments.add(
+                                        new BrowserArgument(
+                                                argument, argSub.getBoolean(ENABLED_KEY, true)));
+                            }
+                        } catch (ConversionException e) {
+                            LOGGER.warn("An error occurred while reading a browser argument:", e);
+                        }
+                    }
+                } catch (Exception e) {
+                    LOGGER.warn("An error occurred while reading custom browser arguments:", e);
+                }
+                browsers.add(
+                        new CustomBrowserImpl(
+                                name, driverPath, binaryPath, browserType, arguments));
+            } catch (ConversionException e) {
+                LOGGER.warn("An error occurred while reading a custom browser:", e);
+            }
+        }
+        return browsers;
     }
 }
