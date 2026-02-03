@@ -118,8 +118,7 @@ public class ExtensionOpenApiScripts extends ExtensionAdaptor {
                                         name)
                                 .toFile();
             }
-            // FIXME enable once the JS Engine memory leak has been fixed
-            ScriptWrapper script = new ScriptWrapper(name, description, engine, type, false, file);
+            ScriptWrapper script = new ScriptWrapper(name, description, engine, type, true, file);
             extScript.loadScript(script);
             if (isTemplate) {
                 extScript.addTemplate(script, false);
