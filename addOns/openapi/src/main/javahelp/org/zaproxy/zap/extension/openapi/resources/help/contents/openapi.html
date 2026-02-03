@@ -12,9 +12,25 @@ This add-on allows you to spider and import OpenAPI (Swagger) definitions, versi
 <br>
 <strong>Note:</strong> Generation of XML content is currently not supported.
 <br><br>
-The add-on will automatically detect any OpenAPI definitions and spider them as long as they are in scope.
-<br><br>
 It also supports the <a href="automation.html">Automation Framework</a>.
+
+<H2>Automatic Detection</H2>
+The add-on automatically detects and imports OpenAPI definitions from any HTTP response passing through ZAP, including:
+<ul>
+<li>Standard Spider</li>
+<li>AJAX Spider</li>
+<li>Manual browsing</li>
+<li>Proxied traffic</li>
+</ul>
+
+Detection is purely content-based (no URL pattern matching) to avoid false negatives. The add-on detects:
+<ul>
+<li><strong>OpenAPI specifications</strong> - JSON/YAML responses containing "swagger" or "openapi" keywords</li>
+<li><strong>Swagger UI pages</strong> - HTML pages containing Swagger UI markers (swagger-ui, SwaggerUIBundle)</li>
+<li><strong>JavaScript configuration files</strong> - JS files containing Swagger UI configuration with spec URLs</li>
+</ul>
+
+When an OpenAPI definition is detected, the add-on automatically imports it, generating HTTP requests for all defined API endpoints and populating the Sites Tree.
 
 <H2>UI</H2>
 A menu item is added to the Import menu:

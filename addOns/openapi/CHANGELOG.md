@@ -4,6 +4,13 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Automatic detection and import of OpenAPI specifications from any HTTP response via ProxyListener.
+  - Works for all traffic sources: standard spider, AJAX spider, manual browsing, and proxied traffic.
+  - Content-based detection (no URL pattern matching) to avoid false negatives.
+  - Detects OpenAPI specs, Swagger UI pages, and JavaScript configuration files.
+  - Automatically triggers import when specs are discovered.
+
 ### Changed
 - Enable Swagger Secret Detector Script Scan Rule, the JS Engine memory leak has been addressed (Issue 9230).
 

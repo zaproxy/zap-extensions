@@ -68,6 +68,7 @@ import org.zaproxy.zap.extension.openapi.OpenApiExceptions.InvalidDefinitionExce
 import org.zaproxy.zap.extension.openapi.OpenApiExceptions.InvalidUrlException;
 import org.zaproxy.zap.extension.openapi.TableOpenApi.TableOpenApiReadResult;
 import org.zaproxy.zap.extension.openapi.VariantOpenApi.VariantOpenApiChecks;
+import org.zaproxy.zap.extension.openapi.automation.OpenApiAutoDetectListener;
 import org.zaproxy.zap.extension.openapi.converter.swagger.OperationModel;
 import org.zaproxy.zap.extension.openapi.converter.swagger.SwaggerConverter;
 import org.zaproxy.zap.extension.openapi.network.RequestModel;
@@ -102,6 +103,8 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
 
     private static final Logger LOGGER = LogManager.getLogger(ExtensionOpenApi.class);
 
+    private OpenApiAutoDetectListener autoDetectListener;
+
     public ExtensionOpenApi() {
         super(NAME);
     }
@@ -127,6 +130,10 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
         extensionHook.addCommandLine(getCommandLineArguments());
         extensionHook.addVariant(VariantOpenApi.class);
         getModel().getSession().addOnContextsChangedListener(new ContextsChangedListenerImpl());
+
+        // Register auto-detection listener for Swagger UI and OpenAPI specs
+        autoDetectListener = new OpenApiAutoDetectListener(this);
+        extensionHook.addProxyListener(autoDetectListener);
     }
 
     @Override
@@ -135,6 +142,9 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
         if (importDialog != null) {
             importDialog.dispose();
             importDialog.unload();
+        }
+        if (autoDetectListener != null) {
+            autoDetectListener.shutdown();
         }
     }
 
