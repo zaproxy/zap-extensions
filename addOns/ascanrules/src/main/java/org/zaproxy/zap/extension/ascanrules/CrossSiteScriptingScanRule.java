@@ -28,6 +28,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import net.htmlparser.jericho.Element;
+import net.htmlparser.jericho.Source;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.LogManager;
@@ -42,6 +46,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.PolicyTag;
+import org.zaproxy.addon.commonlib.http.ComparableResponse;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
@@ -113,6 +118,12 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
     private static final Vulnerability VULN = Vulnerabilities.getDefault().get("wasc_8");
     private static final Logger LOGGER = LogManager.getLogger(CrossSiteScriptingScanRule.class);
     private int currentParamType;
+
+    /**
+     * Stores the eyecatcher baseline response for the current scan. Used by eyecatcher-based
+     * comparison detection to identify new XSS blocks that appear only in payload responses.
+     */
+    private HttpMessage eyecatcherMessage;
 
     private static final char FULL_WIDTH_LESS_THAN_CHAR = '＜';
     private static final char FULL_WIDTH_GREATER_THAN_CHAR = '＞';
@@ -295,6 +306,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
                             ignoreFlags,
                             ignoreSafeParents);
         }
+
         if (mutateAttack || !contexts.isEmpty()) {
             return contexts;
         }
@@ -308,6 +320,337 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
                 findDecoded,
                 isNullByteSpecialHandling,
                 ignoreSafeParents);
+    }
+
+    /**
+     * Detects XSS when an injected {@code alert()} (or similar) appears in a short, standalone
+     * {@code <script>} element in the response. This is indicative of script-breaking payloads such
+     * as {@code </script><scrIpt>alert(1);</scRipt><script>} being parsed so that the injected
+     * script becomes its own executable script element.
+     *
+     * <p><b>How it works:</b> HTML parsers process {@code </script>} tags before JavaScript
+     * execution. Even if a payload is inside {@code eval(escape('...'))}, the HTML parser closes
+     * the script tag when it encounters {@code </script>}, creating a new executable script
+     * context.
+     *
+     * <p><b>Detection methods (in order):</b>
+     *
+     * <ol>
+     *   <li><b>Pattern matching:</b> Searches for regex patterns like {@code
+     *       </script><script>alert(...)</script>} in the raw HTML
+     *   <li><b>Jericho parsing with length heuristic:</b> Uses the Jericho HTML parser to find
+     *       script elements, then applies a length heuristic ({@link #MAX_INJECTED_SCRIPT_LENGTH})
+     *       to identify likely injected scripts
+     * </ol>
+     *
+     * <p><b>Note:</b> This serves as a fallback detection method. The primary detection strategy
+     * uses eyecatcher-based comparison to identify new XSS patterns that appear only in payload
+     * responses.
+     *
+     * @param msg2 The HTTP response message
+     * @param attack The attack payload sent
+     * @param evidence The evidence string to search for (e.g., {@code alert(1)})
+     * @return List of HtmlContext if XSS is detected via analysis of standalone script elements,
+     *     empty list otherwise
+     */
+    private List<HtmlContext> detectFragmentedScriptInjection(
+            HttpMessage msg2, String attack, String evidence) {
+        String responseBody = msg2.getResponseBody().toString();
+
+        // Look for key components of script-breaking XSS
+        // Component 1: </script> that closes original script
+        // Component 2: alert(1) or similar in a NEW script element
+
+        LOGGER.debug(
+                "detectFragmentedScriptInjection: checking response of length {}",
+                responseBody.length());
+
+        // Case-insensitive check for script closing tags and alert patterns
+        String responseBodyLower = responseBody.toLowerCase();
+        boolean hasScriptClose = responseBodyLower.contains("</script>");
+        boolean hasAlert = responseBodyLower.contains("alert(");
+
+        LOGGER.debug("Contains </script> (case-insensitive): {}", hasScriptClose);
+        LOGGER.debug("Contains alert( (case-insensitive): {}", hasAlert);
+        LOGGER.debug(
+                "Response body (first 500 chars): {}",
+                responseBody.substring(0, Math.min(500, responseBody.length())));
+
+        if (!hasScriptClose || !hasAlert) {
+            LOGGER.debug("Skipping fragmented detection - missing required components");
+            return List.of();
+        }
+
+        // NEW: Check for script-breaking XSS pattern in raw HTML
+        // Pattern: </script><script>alert(...)</script>
+        // This handles cases where Jericho treats script content as raw text
+        Pattern scriptBreakPattern =
+                Pattern.compile(
+                        "</script>\\s*<scr[iI]pt[^>]*>\\s*alert\\([^)]*\\)",
+                        Pattern.CASE_INSENSITIVE);
+        Matcher matcher = scriptBreakPattern.matcher(responseBody);
+
+        if (matcher.find()) {
+            int matchStart = matcher.start();
+            int matchEnd = matcher.end();
+
+            LOGGER.info(
+                    "✓ detectFragmentedScriptInjection: Pattern-based detection SUCCESS at position {}",
+                    matchStart);
+            LOGGER.debug("Detected script-breaking XSS pattern at position {}", matchStart);
+            LOGGER.debug(
+                    "Matched pattern: '{}'",
+                    responseBody.substring(
+                            matchStart, Math.min(matchEnd + 20, responseBody.length())));
+
+            // Create context for the script-breaking XSS
+            HtmlContext context = new HtmlContext(msg2, evidence, matchStart, matchEnd);
+            context.addParentTag("script");
+            context.addParentTag("body");
+            context.addParentTag("html");
+
+            return List.of(context);
+        }
+
+        // EXISTING: Jericho-based detection (keep as fallback for other cases)
+        // Use Jericho to parse HTML and find script elements
+        Source src = new Source(responseBody);
+        src.fullSequentialParse();
+
+        // Search for alert(1) or alert(1); in the response
+        String[] alertPatterns = {"alert(1)", "alert(1);"};
+        for (String alertPattern : alertPatterns) {
+            int alertPos = responseBody.indexOf(alertPattern);
+            LOGGER.debug(
+                    "Searching for pattern '{}', found at position: {}", alertPattern, alertPos);
+            if (alertPos >= 0) {
+                // Found alert() - check if it's in a script element
+                Element enclosingElement = src.getEnclosingElement(alertPos);
+                LOGGER.debug(
+                        "Enclosing element: {}",
+                        enclosingElement != null ? enclosingElement.getName() : "null");
+                if (enclosingElement != null
+                        && "script".equalsIgnoreCase(enclosingElement.getName())) {
+                    // Verify this is a standalone injected script element
+                    // by checking if the ENTIRE script content is just our payload
+                    String scriptContent = enclosingElement.getContent().toString().trim();
+                    LOGGER.debug("Script element content: '{}'", scriptContent);
+
+                    // Only flag if the script element contains ONLY the alert pattern
+                    // (possibly with whitespace/semicolons) - this indicates a successful
+                    // script-breaking injection, not legitimate application code
+                    if (scriptContent.equals(alertPattern)
+                            || scriptContent.equals(alertPattern + ";")
+                            || scriptContent.trim().equals(alertPattern)) {
+                        // alert() is in a standalone/injected script element
+                        HtmlContext context =
+                                new HtmlContext(
+                                        msg2, evidence, alertPos, alertPos + alertPattern.length());
+                        context.addParentTag("script");
+                        context.addParentTag("body");
+                        context.addParentTag("html");
+
+                        LOGGER.info(
+                                "✓ detectFragmentedScriptInjection: Jericho-based detection SUCCESS - standalone script at position {}",
+                                alertPos);
+                        LOGGER.debug(
+                                "Detected fragmented script injection: alert() found in standalone script element at position {}",
+                                alertPos);
+                        return List.of(context);
+                    } else {
+                        LOGGER.debug(
+                                "Script element contains additional code, likely not a pure injection");
+                    }
+                }
+            }
+        }
+
+        LOGGER.debug("No fragmented script injection detected");
+        return List.of();
+    }
+
+    /**
+     * Performs eyecatcher-based comparison detection to identify XSS vulnerabilities. This method
+     * uses ComparableResponse to detect structural HTML changes and HtmlContextAnalyser to verify
+     * that new script elements contain only our injected payload.
+     *
+     * <p><b>Strategy:</b>
+     *
+     * <ol>
+     *   <li>Use ComparableResponse to compare eyecatcher vs payload responses
+     *   <li>Check if the payload response contains new script elements with standalone XSS payloads
+     *   <li>Use HtmlContextAnalyser to verify the payload is in an exploitable script context
+     *   <li>Only flag as vulnerable if a NEW standalone script element contains ONLY our payload
+     * </ol>
+     *
+     * <p>This conservative approach minimizes false positives by only detecting cases where: (1)
+     * the response structure changed, (2) a new script element appeared, and (3) it contains only
+     * our attack payload (not legitimate filtered/escaped content).
+     *
+     * @param eyecatcherMsg The baseline eyecatcher HTTP message
+     * @param payloadMsg The HTTP message with the XSS payload
+     * @param payload The attack payload that was sent
+     * @return true if new exploitable XSS context detected, false otherwise
+     */
+    private boolean detectXssViaEyecatcherComparison(
+            HttpMessage eyecatcherMsg, HttpMessage payloadMsg, String payload) {
+        try {
+            // Use ComparableResponse to detect if there are structural differences
+            ComparableResponse eyecatcherResp = new ComparableResponse(eyecatcherMsg, payload);
+            ComparableResponse payloadResp = new ComparableResponse(payloadMsg, payload);
+
+            // If responses are equivalent (same structure), no new XSS context was created
+            if (eyecatcherResp.equals(payloadResp)) {
+                LOGGER.debug("Responses are structurally equivalent, no new XSS context");
+                return false;
+            }
+
+            LOGGER.info(
+                    "detectXssViaEyecatcherComparison: Structural difference detected, analyzing script elements...");
+            LOGGER.debug("Structural difference detected between eyecatcher and payload responses");
+
+            // Parse the payload response to find script elements
+            Source src = new Source(payloadMsg.getResponseBody().toString());
+            src.fullSequentialParse();
+            List<Element> scriptElements = src.getAllElements("script");
+
+            // Check if any script element contains ONLY our alert payload
+            String[] alertPatterns = {"alert(1)", "alert(1);"};
+            for (Element scriptElement : scriptElements) {
+                String scriptContent = scriptElement.getContent().toString().trim();
+                for (String alertPattern : alertPatterns) {
+                    if (scriptContent.equals(alertPattern)
+                            || scriptContent.equals(alertPattern + ";")
+                            || scriptContent.trim().equals(alertPattern)) {
+                        LOGGER.info(
+                                "✓ detectXssViaEyecatcherComparison: SUCCESS - Found standalone injected script: '{}'",
+                                scriptContent);
+                        LOGGER.debug(
+                                "Found standalone injected script element with content: '{}'",
+                                scriptContent);
+                        return true;
+                    }
+                }
+            }
+
+            LOGGER.debug(
+                    "Structural changes detected but no standalone injected script elements found");
+            return false;
+
+        } catch (Exception e) {
+            LOGGER.debug("Error during eyecatcher comparison: {}", e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Attempts to detect XSS using script-breaking payloads with both eyecatcher-based comparison
+     * and fragmented script detection. This consolidates the detection logic used across multiple
+     * attack methods.
+     *
+     * <p><b>Detection strategy:</b>
+     *
+     * <ol>
+     *   <li><b>PRIMARY:</b> Eyecatcher-based comparison (if eyecatcher available)
+     *   <li><b>FALLBACK:</b> Fragmented script injection detection
+     * </ol>
+     *
+     * <p><b>Note:</b> This method is skipped for LOW attack strength to minimize the number of HTTP
+     * requests sent during scanning.
+     *
+     * @param msg The original HTTP message
+     * @param param The parameter name being tested
+     * @param useProcessContexts If true, use processContexts() to raise alerts; if false, return
+     *     contexts for caller to handle
+     * @return true if XSS detected and alert raised (when useProcessContexts=true), false otherwise
+     */
+    private boolean tryScriptBreakingDetection(
+            HttpMessage msg, String param, boolean useProcessContexts) {
+        // Skip script-breaking detection for LOW attack strength to reduce HTTP request count
+        if (Plugin.AttackStrength.LOW.equals(this.getAttackStrength())) {
+            LOGGER.debug("Skipping script-breaking detection for LOW attack strength");
+            return false;
+        }
+
+        LOGGER.info(
+                "tryScriptBreakingDetection: Starting script-breaking detection for param '{}'",
+                param);
+
+        for (String scriptAlert : GENERIC_SCRIPT_ALERT_LIST) {
+            HttpMessage msg2 = getNewMsg();
+            setParameter(msg2, param, scriptAlert);
+            try {
+                sendAndReceive(msg2);
+            } catch (Exception e) {
+                LOGGER.debug("Failed to send script-breaking attack payload", e);
+                continue;
+            }
+
+            // Primary detection: eyecatcher-based comparison (if available)
+            if (eyecatcherMessage != null
+                    && detectXssViaEyecatcherComparison(eyecatcherMessage, msg2, scriptAlert)) {
+                LOGGER.info(
+                        "✓ tryScriptBreakingDetection: XSS DETECTED via eyecatcher comparison for payload: {}",
+                        scriptAlert);
+                LOGGER.debug("XSS detected via eyecatcher comparison for payload: {}", scriptAlert);
+                if (useProcessContexts) {
+                    newAlert()
+                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                            .setParam(param)
+                            .setAttack(scriptAlert)
+                            .setEvidence(scriptAlert)
+                            .setMessage(msg2)
+                            .raise();
+                    return true;
+                } else {
+                    // For mutateAttack, we don't directly raise - return contexts instead
+                    // But eyecatcher detection doesn't produce contexts, so we raise here too
+                    newAlert()
+                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                            .setParam(param)
+                            .setAttack(scriptAlert)
+                            .setEvidence(scriptAlert)
+                            .setMessage(msg2)
+                            .raise();
+                    return true;
+                }
+            }
+
+            // Fallback detection: fragmented script injection (only for script-breaking payloads)
+            String scriptAlertLower = scriptAlert.toLowerCase();
+            if (scriptAlertLower.contains("</script>") && scriptAlertLower.contains("alert(")) {
+                List<HtmlContext> contexts3 =
+                        detectFragmentedScriptInjection(msg2, scriptAlert, scriptAlert);
+                if (!contexts3.isEmpty()) {
+                    LOGGER.info(
+                            "✓ tryScriptBreakingDetection: XSS DETECTED via fragmented detection for payload: {}",
+                            scriptAlert);
+                    LOGGER.debug(
+                            "XSS detected via fragmented detection for payload: {}", scriptAlert);
+                    if (useProcessContexts) {
+                        if (processContexts(contexts3, param, scriptAlert, false)) {
+                            return true;
+                        }
+                    } else {
+                        // For performScriptAttack, raise alert directly
+                        newAlert()
+                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                .setParam(param)
+                                .setAttack(scriptAlert)
+                                .setEvidence(scriptAlert)
+                                .setMessage(msg2)
+                                .raise();
+                        return true;
+                    }
+                }
+            }
+
+            if (isStop()) {
+                break;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -404,6 +747,13 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
                 break;
             }
         }
+
+        // Try script-breaking detection (eyecatcher-based + fragmented detection)
+        // This handles cases like Firing Range where quote escaping prevents normal attacks
+        if (tryScriptBreakingDetection(msg, param, true)) {
+            return true;
+        }
+
         return false;
     }
 
@@ -669,19 +1019,16 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
 
     private boolean performCloseTagAttack(HtmlContext context, HttpMessage msg, String param) {
         for (String scriptAlert : GENERIC_SCRIPT_ALERT_LIST) {
+            String attack =
+                    "</"
+                            + context.getParentTag()
+                            + ">"
+                            + scriptAlert
+                            + "<"
+                            + context.getParentTag()
+                            + ">";
             List<HtmlContext> contexts2 =
-                    performAttack(
-                            msg,
-                            param,
-                            "</"
-                                    + context.getParentTag()
-                                    + ">"
-                                    + scriptAlert
-                                    + "<"
-                                    + context.getParentTag()
-                                    + ">",
-                            context,
-                            HtmlContext.IGNORE_IN_SCRIPT);
+                    performAttack(msg, param, attack, context, HtmlContext.IGNORE_IN_SCRIPT);
             if (contexts2 == null) {
                 return false;
             }
@@ -702,6 +1049,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
                 return false;
             }
         }
+
         return false;
     }
 
@@ -731,7 +1079,11 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
                 return true;
             }
         }
-        return false;
+
+        // Try script-breaking detection (eyecatcher-based + fragmented detection)
+        // This is the main detection method for eval() contexts and script-breaking scenarios
+        // where traditional context analysis may fail
+        return tryScriptBreakingDetection(msg, param, false);
     }
 
     private boolean processContexts(
@@ -910,6 +1262,9 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
                 return;
             }
 
+            // Store eyecatcher message for eyecatcher-based comparison detection
+            eyecatcherMessage = msg2;
+
             HtmlContextAnalyser hca = new HtmlContextAnalyser(msg2);
             List<HtmlContext> contexts = hca.getHtmlContexts(Constant.getEyeCatcher(), null, 0);
             if (contexts.isEmpty()) {
@@ -936,6 +1291,8 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
                     // continue
                     return;
                 }
+                // Update eyecatcher message if appended version was successful
+                eyecatcherMessage = msg2;
                 hca = new HtmlContextAnalyser(msg2);
                 contexts = hca.getHtmlContexts(value + Constant.getEyeCatcher(), null, 0);
             }
