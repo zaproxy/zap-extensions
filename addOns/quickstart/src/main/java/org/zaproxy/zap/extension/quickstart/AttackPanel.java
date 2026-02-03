@@ -390,7 +390,7 @@ public class AttackPanel extends QuickStartSubPanel {
         String urlStr = item.toString();
         URL url;
         try {
-            url = new URL(urlStr);
+            url = new java.net.URI(urlStr).toURL();
             // Validate the actual request-uri of the HTTP message accessed.
             new URI(urlStr, true);
         } catch (Exception e) {

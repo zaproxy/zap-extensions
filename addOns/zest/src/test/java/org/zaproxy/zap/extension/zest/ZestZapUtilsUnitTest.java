@@ -26,7 +26,7 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.net.URL;
+import java.net.URI;
 import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -161,12 +161,12 @@ class ZestZapUtilsUnitTest {
         // Given
         String urlStr = "https://www.example.com";
         ZestRequest req = new ZestRequest();
-        req.setUrl(new URL(urlStr));
+        req.setUrl(new URI(urlStr).toURL());
         req.setMethod("GET");
         req.setHeaders("example-req-header: example-value");
         ZestResponse resp =
                 new ZestResponse(
-                        new URL(urlStr),
+                        new URI(urlStr).toURL(),
                         "HTTP/1.1 200 OK\r\nexample-resp-header: example-value",
                         "The body",
                         200,
@@ -207,7 +207,7 @@ class ZestZapUtilsUnitTest {
         req.setHeaders("example-req-header: example-value");
         ZestResponse resp =
                 new ZestResponse(
-                        new URL(urlStr),
+                        new URI(urlStr).toURL(),
                         "HTTP/1.1 200 OK\r\nexample-resp-header: example-value",
                         "The body",
                         200,

@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.spiderAjax;
 
 import java.awt.event.KeyEvent;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -451,7 +452,11 @@ public class ExtensionAjax extends ExtensionAdaptor {
         while (en.hasMoreElements()) {
             SiteNode childNode = (SiteNode) en.nextElement();
             if (context.isInContext(childNode)) {
-                return URI.create(childNode.getHistoryReference().getURI().toString());
+                try {
+                    return new URI(childNode.getHistoryReference().getURI().toString());
+                } catch (URISyntaxException e) {
+                    // Skip invalid URI and keep searching.
+                }
             }
 
             URI uri = findFirstUriInContext(context, childNode);

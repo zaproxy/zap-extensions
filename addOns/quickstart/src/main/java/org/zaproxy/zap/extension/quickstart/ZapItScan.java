@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.quickstart;
 
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -73,10 +74,10 @@ public class ZapItScan {
 
         URL targetURL;
         try {
-            targetURL = new URL(url);
+            targetURL = new java.net.URI(url).toURL();
             // Validate the actual request-uri of the HTTP message accessed.
             new URI(url, true);
-        } catch (MalformedURLException | URIException e) {
+        } catch (MalformedURLException | URIException | URISyntaxException e) {
             CommandLine.error(
                     Constant.messages.getString("quickstart.cmdline.quickurl.error.invalidUrl"));
             return false;

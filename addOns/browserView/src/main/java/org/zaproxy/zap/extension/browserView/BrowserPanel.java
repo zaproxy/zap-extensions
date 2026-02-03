@@ -22,7 +22,8 @@ package org.zaproxy.zap.extension.browserView;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -104,8 +105,8 @@ public class BrowserPanel extends JPanel {
 
     private static String toURL(String str) {
         try {
-            return new URL(str).toExternalForm();
-        } catch (MalformedURLException exception) {
+            return new URI(str).toURL().toExternalForm();
+        } catch (MalformedURLException | URISyntaxException exception) {
             return null;
         }
     }

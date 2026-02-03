@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.zest;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
@@ -1044,7 +1045,7 @@ public class ZestZapUtils {
     }
 
     public static ZestResponse toZestResponse(HttpMessage msg) throws MalformedURLException {
-        return toZestResponse(new URL(msg.getRequestHeader().getURI().toString()), msg);
+        return toZestResponse(toUrl(msg.getRequestHeader().getURI().toString()), msg);
     }
 
     private static ZestResponse toZestResponse(URL url, HttpMessage msg) {
@@ -1071,7 +1072,7 @@ public class ZestZapUtils {
             throw new HttpMalformedHeaderException("The request header does not have a URI.");
         }
 
-        req.setUrl(new URL(uri.toString()));
+        req.setUrl(toUrl(uri.toString()));
         if (replaceTokens) {
             req.setUrlToken(correctTokens(uri.toString()));
             req.setData(correctTokens(msg.getRequestBody().toString()));
@@ -1094,6 +1095,16 @@ public class ZestZapUtils {
         }
 
         return req;
+    }
+
+    private static URL toUrl(String value) throws MalformedURLException {
+        try {
+            return new java.net.URI(value).toURL();
+        } catch (URISyntaxException e) {
+            MalformedURLException ex = new MalformedURLException(e.getMessage());
+            ex.initCause(e);
+            throw ex;
+        }
     }
 
     private static void setHeaders(

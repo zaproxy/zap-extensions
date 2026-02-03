@@ -153,10 +153,8 @@ public final class UrlCanonicalizer {
             /* Process parameters and sort them. */
             final SortedSet<QueryParameter> params =
                     createSortedParameters(canonicalURI.getRawQuery());
-            final String queryString;
             String canonicalParams =
                     canonicalize(params, ctx.getSpiderParam()::isIrrelevantUrlParameter);
-            queryString = (canonicalParams.isEmpty() ? "" : "?" + canonicalParams);
 
             /* Add starting slash if needed */
             if (path.length() == 0) {
@@ -172,9 +170,10 @@ public final class UrlCanonicalizer {
             /* Lowercasing protocol and host */
             String protocol = canonicalURI.getScheme().toLowerCase();
             String host = canonicalURI.getHost().toLowerCase();
-            String pathAndQueryString = normalizePath(path) + queryString;
+            String normalizedPath = normalizePath(path);
+            String query = canonicalParams.isEmpty() ? null : canonicalParams;
 
-            URL result = new URL(protocol, host, port, pathAndQueryString);
+            URL result = new URI(protocol, null, host, port, normalizedPath, query, null).toURL();
             return result.toExternalForm();
 
         } catch (Exception ex) {

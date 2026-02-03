@@ -27,7 +27,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.net.URL;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -239,7 +238,7 @@ public class ImportDialog extends AbstractDialog {
         boolean importedWithoutErrors = false;
 
         try {
-            new URL(collectionLocation).toURI();
+            new java.net.URI(collectionLocation).toURL();
             new URI(collectionLocation, true);
             importedWithoutErrors =
                     parser.importFromUrl(

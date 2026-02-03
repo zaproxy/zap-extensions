@@ -22,7 +22,7 @@ package org.zaproxy.zap.extension.spiderAjax;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.net.URI;
-import java.net.URL;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JButton;
@@ -381,11 +381,19 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
 
         URI startUri = null;
         if (!this.getStringValue(FIELD_START).equals(getTargetText(target))) {
-            startUri = URI.create(getStringValue(FIELD_START));
+            try {
+                startUri = new URI(getStringValue(FIELD_START));
+            } catch (URISyntaxException e) {
+                return;
+            }
         } else {
             SiteNode startNode = target.getStartNode();
             if (startNode != null) {
-                startUri = URI.create(startNode.getHistoryReference().getURI().toString());
+                try {
+                    startUri = new URI(startNode.getHistoryReference().getURI().toString());
+                } catch (URISyntaxException e) {
+                    return;
+                }
             } else if (target.getContext() != null) {
                 startUri = extension.getFirstUriInContext(target.getContext());
             }
@@ -460,7 +468,7 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
             try {
                 // Need both constructors as they catch slightly different issues ;)
                 startUri = new URI(url);
-                new URL(url);
+                new URI(url).toURL();
             } catch (Exception e) {
                 return Constant.messages.getString("spiderajax.scandialog.nostart.error");
             }
@@ -471,7 +479,11 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
 
             SiteNode startNode = target.getStartNode();
             if (startNode != null) {
-                startUri = URI.create(startNode.getHistoryReference().getURI().toString());
+                try {
+                    startUri = new URI(startNode.getHistoryReference().getURI().toString());
+                } catch (URISyntaxException e) {
+                    return Constant.messages.getString("spiderajax.scandialog.nostart.error");
+                }
             } else if (context != null) {
                 if (getBoolValue(FIELD_SUBTREE_ONLY)) {
                     return Constant.messages.getString(

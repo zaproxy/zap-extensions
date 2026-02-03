@@ -484,7 +484,11 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
                 throw new ApiException(Type.MISSING_PARAMETER, PARAM_URL);
             }
 
-            startURI = URI.create(nodes.get(0).getHistoryReference().getURI().toString());
+            try {
+                startURI = new URI(nodes.get(0).getHistoryReference().getURI().toString());
+            } catch (URISyntaxException e) {
+                throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, PARAM_URL, e);
+            }
             validateUrl = false;
         } else if (context != null && !context.isInContext(url)) {
             throw new ApiException(Type.URL_NOT_IN_CONTEXT, PARAM_URL);

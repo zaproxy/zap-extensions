@@ -24,7 +24,6 @@ import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -511,7 +510,7 @@ public class ParamDiggerDialog extends StandardFieldsDialog {
         }
         try {
             new URI(url, true);
-            new URL(url);
+            new java.net.URI(url).toURL();
         } catch (Exception e) {
             return Constant.messages.getString("paramdigger.dialog.error.url.invalid");
         }

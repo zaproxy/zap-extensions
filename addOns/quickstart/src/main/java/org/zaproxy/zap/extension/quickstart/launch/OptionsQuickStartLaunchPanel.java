@@ -21,7 +21,7 @@ package org.zaproxy.zap.extension.quickstart.launch;
 
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.net.URL;
+import java.net.URI;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -89,7 +89,7 @@ public class OptionsQuickStartLaunchPanel extends AbstractParamPanel {
         if (getStartPageOption().getSelectedIndex() == 2) {
             try {
                 // Validate the url
-                new URL(getStartUrl().getText());
+                new URI(getStartUrl().getText()).toURL();
             } catch (Exception e) {
                 getStartUrl().requestFocus();
                 throw new IllegalArgumentException(
@@ -111,7 +111,7 @@ public class OptionsQuickStartLaunchPanel extends AbstractParamPanel {
                 param.setLaunchBlankStartPage();
                 break;
             case 2:
-                param.setLaunchStartPage(new URL(getStartUrl().getText()));
+                param.setLaunchStartPage(new URI(getStartUrl().getText()).toURL());
                 break;
             default:
                 param.setLaunchZapStartPage();

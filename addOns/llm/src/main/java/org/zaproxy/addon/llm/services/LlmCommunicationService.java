@@ -141,7 +141,7 @@ public class LlmCommunicationService {
     public Integer importOpenapiFromUrl(String urlString) {
         Integer endpointCount = 0;
         try {
-            URL url = URI.create(urlString).toURL();
+            URL url = new URI(urlString).toURL();
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
 
