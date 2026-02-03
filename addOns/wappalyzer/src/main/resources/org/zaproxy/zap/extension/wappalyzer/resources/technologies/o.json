@@ -1651,6 +1651,19 @@
     },
     "website": "https://pkp.sfu.ca/ojs"
   },
+  "opentelemetry": {
+    "cats": [10],
+    "description": "OpenTelemetry is a framework for observability, providing standardized APIs, libraries, and agents to collect telemetry data.",
+    "icon": "opentelemetry.svg",
+    "js": {
+      "otel": ""
+    },
+    "scriptSrc": [
+      "opentelemetry.*\\.js"
+    ],
+    "oss": true,
+    "website": "https://opentelemetry.io"
+  },
   "Open Web Analytics": {
     "cats": [
       10

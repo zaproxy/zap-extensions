@@ -1499,7 +1499,7 @@
     "saas": true,
     "website": "https://www.sana-commerce.com"
   },
-  "Sanity": {
+  "Sanity.io": {
     "cats": [
       1
     ],
@@ -1516,6 +1516,9 @@
       "content-security-policy": "cdn\\.sanity\\.io",
       "x-sanity-shard": ""
     },
+    "scriptSrc": [
+      "cdn\\.sanity\\.io"
+    ],
     "icon": "Sanity.svg",
     "pricing": [
       "freemium",
@@ -9256,6 +9259,7 @@
     "cats": [
       12
     ],
+    "cpe": "cpe:2.3:a:socket:socket.io:*:*:*:*:*:node.js:*:*",
     "icon": "Socket.io.svg",
     "implies": [
       "Node.js"
@@ -10996,6 +11000,7 @@
     "cats": [
       18
     ],
+    "cpe": "cpe:2.3:a:vmware:spring_framework:*:*:*:*:*:*:*:*",
     "description": "Spring is a comprehensive framework for building enterprise-level Java applications, providing tools and infrastructure for application development, including dependency injection, transaction management, and integration with various technologies.",
     "headers": {
       "X-Application-Context": ""
@@ -13475,15 +13480,20 @@
     "dom": [
       "a[href*='supabase.com'] > img[src*='/supabase-logo-wordmark\\-\\-dark.png']"
     ],
-    "icon": "Supabase.svg",
+    "icon": "supabase.svg",
     "implies": [
       "PostgreSQL"
+    ],
+    "scriptSrc": [
+      "cdn\\.supabase\\.com"
     ],
     "js": {
       "__NUXT__.config.public.SUPABASE_URL": "",
       "__NUXT__.config.public.supabase": "",
       "supabase.AuthAdminApi": "",
-      "supabase.storageKey": ""
+      "supabase.storageKey": "",
+      "createClient": "supabase\\."
+
     },
     "oss": true,
     "pricing": [
@@ -13872,6 +13882,7 @@
     "cats": [
       12
     ],
+    "cpe": "cpe:2.3:a:svelte:svelte:*:*:*:*:*:node.js:*:*",
     "description": "Svelte is a free and open-source front end compiler created by Rich Harris and maintained by the Svelte core team members.",
     "dom": [
       "link[href*='/svelte/']",
@@ -13891,6 +13902,7 @@
     "cats": [
       66
     ],
+    "cpe": "cpe:2.3:a:svelte:sveltekit:*:*:*:*:*:*:*:*",
     "description": "SvelteKit is the official Svelte framework for building web applications with a flexible filesystem-based routing.",
     "dom": {
       "#svelte-announcer": {

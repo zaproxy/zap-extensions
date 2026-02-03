@@ -674,6 +674,7 @@
     "cats": [
       22
     ],
+    "cpe": "cpe:2.3:a:eclipse:jetty:*:*:*:*:*:*:*:*",
     "description": "Jetty is an open-source web server and servlet container known for its scalability and efficiency, supporting protocols like HTTP and WebSocket for various applications from development tools to cloud services.",
     "headers": {
       "Server": "Jetty(?:\\(([\\d\\.]*\\d+))?\\;version:\\1"

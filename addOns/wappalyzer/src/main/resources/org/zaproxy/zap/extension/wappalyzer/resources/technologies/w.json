@@ -1771,6 +1771,9 @@
       19
     ],
     "description": "WebSocket is a communication protocol that provides full-duplex communication channels over a single, long-lived connection, enabling interactive communication between web browsers and servers.",
+    "headers": {
+        "Upgrade": "websocket"
+    },
     "dom": [
       "link[rel='web-socket']",
       "link[href^='ws://']",
