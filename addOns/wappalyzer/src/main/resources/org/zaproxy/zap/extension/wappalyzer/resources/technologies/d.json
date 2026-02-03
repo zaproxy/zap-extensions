@@ -2266,6 +2266,7 @@
     "cats": [
       1
     ],
+    "cpe": "cpe:2.3:a:monospace:directus:*:*:*:*:*:node.js:*:*",
     "description": "Directus is a free and open-source headless CMS framework for managing custom SQL-based databases.",
     "headers": {
       "x-powered-by": "^Directus$"

@@ -283,6 +283,16 @@
     ],
     "website": "https://btolead.it"
   },
+  "bun": {
+    "cats": [27],
+    "description": "Bun is a fast JavaScript runtime compatible with Node.js and Deno.",
+    "icon": "bun.svg",
+    "headers": {
+      "X-Powered-By": "Bun"
+    },
+    "oss": true,
+    "website": "https://bun.sh"
+  },
   "BUROGU": {
     "cats": [
       11

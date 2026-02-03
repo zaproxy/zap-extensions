@@ -2003,6 +2003,7 @@
       18,
       22
     ],
+    "cpe": "cpe:2.3:a:koajs:koa:*:*:*:*:*:node.js:*:*",
     "headers": {
       "X-Powered-By": "^koa$"
     },
@@ -2274,6 +2275,7 @@
     "cats": [
       64
     ],
+    "cpe": "cpe:2.3:a:konghq:kong:*:*:*:*:*:*:*:*",
     "description": "Kong is an open-source API gateway and platform that acts as middleware between compute clients and the API-centric applications.",
     "headers": {
       "via": "^kong/([\\d\\.]+)(?:.+)?$\\;version:\\1"

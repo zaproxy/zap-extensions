@@ -2536,6 +2536,7 @@
       18,
       57
     ],
+    "cpe": "cpe:2.3:a:nuxt:nuxt:*:*:*:*:*:*:*:*",
     "description": "Nuxt is a Vue framework for developing modern web applications.",
     "dom": [
       "div[id^='__nuxt']"

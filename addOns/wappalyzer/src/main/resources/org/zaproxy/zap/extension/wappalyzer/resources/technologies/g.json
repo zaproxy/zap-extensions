@@ -479,6 +479,7 @@
       57,
       12
     ],
+    "cpe": "cpe:2.3:a:gatsbyjs:gatsby:*:*:*:*:*:node.js:*:*",
     "description": "Gatsby is a React-based open-source framework with performance, scalability and security built-in.",
     "dom": [
       "div#___gatsby, style#gatsby-inlined-css"
@@ -1409,6 +1410,7 @@
       1,
       11
     ],
+    "cpe": "cpe:2.3:a:ghost:ghost:*:*:*:*:*:node.js:*:*",
     "description": "Ghost is a powerful app for new-media creators to publish, share, and grow a business around their content.",
     "headers": {
       "X-Ghost-Cache-Status": ""
