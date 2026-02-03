@@ -22,6 +22,7 @@ package org.zaproxy.addon.llm.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import dev.langchain4j.memory.ChatMemory;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.azure.AzureOpenAiChatModel;
@@ -39,6 +40,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import org.apache.commons.httpclient.util.HttpURLConnection;
@@ -64,6 +66,7 @@ public class LlmCommunicationService {
 
     private static ChatModel model;
     private static ObjectMapper objectMapper = new ObjectMapper();
+    private static ObjectWriter prettyWriter = objectMapper.writerWithDefaultPrettyPrinter();
     private ChatMemory chatMemory;
 
     public LlmCommunicationService(
@@ -191,6 +194,10 @@ public class LlmCommunicationService {
     public static <T> T mapResponse(ChatResponse response, Class<T> clazz)
             throws JsonMappingException, JsonProcessingException {
         return objectMapper.readValue(response.aiMessage().text(), clazz);
+    }
+
+    public static String mapJsonObject(Map<String, Object> payload) throws JsonProcessingException {
+        return prettyWriter.writeValueAsString(payload);
     }
 
     public void switchToOutputTab() {

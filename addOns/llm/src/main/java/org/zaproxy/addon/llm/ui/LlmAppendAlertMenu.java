@@ -19,6 +19,9 @@
  */
 package org.zaproxy.addon.llm.ui;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.zap.extension.alert.PopupMenuItemAlert;
@@ -37,55 +40,37 @@ public class LlmAppendAlertMenu extends PopupMenuItemAlert {
 
     @Override
     public void performAction(Alert alert) {
-        appendAlertToInput(alert);
+        llmChatPanel.appendUntrustedDataToInput(buildStructuredPayload(alert), true);
     }
 
-    private void appendAlertToInput(Alert alert) {
-        StringBuilder sb = new StringBuilder();
-
-        LlmChatPanel.appendFormattedMsg(
-                sb, Constant.messages.getString("llm.chat.append.alert.label"), alert.getName());
+    protected static Map<String, Object> buildStructuredPayload(Alert alert) {
+        Map<String, Object> payload = new LinkedHashMap<>();
+        payload.put("type", "alert");
+        putIfNotBlank(payload, "name", alert.getName());
 
         int risk = alert.getRisk();
         if (risk >= 0 && risk < Alert.MSG_RISK.length) {
-            LlmChatPanel.appendFormattedMsg(
-                    sb,
-                    Constant.messages.getString("llm.chat.append.alert.risk"),
-                    Alert.MSG_RISK[risk]);
+            payload.put("risk", Alert.MSG_RISK[risk]);
         }
+
         int confidence = alert.getConfidence();
         if (confidence >= 0 && confidence < Alert.MSG_CONFIDENCE.length) {
-            LlmChatPanel.appendFormattedMsg(
-                    sb,
-                    Constant.messages.getString("llm.chat.append.alert.confidence"),
-                    Alert.MSG_CONFIDENCE[confidence]);
+            payload.put("confidence", Alert.MSG_CONFIDENCE[confidence]);
         }
 
-        LlmChatPanel.appendFormattedMsg(
-                sb,
-                Constant.messages.getString("llm.chat.append.alert.description"),
-                alert.getDescription());
+        putIfNotBlank(payload, "description", alert.getDescription());
+        putIfNotBlank(payload, "uri", alert.getUri());
+        putIfNotBlank(payload, "param", alert.getParam());
+        putIfNotBlank(payload, "attack", alert.getAttack());
+        putIfNotBlank(payload, "evidence", alert.getEvidence());
+        putIfNotBlank(payload, "otherInfo", alert.getOtherInfo());
+        return payload;
+    }
 
-        LlmChatPanel.appendFormattedMsg(
-                sb, Constant.messages.getString("llm.chat.append.alert.uri"), alert.getUri());
-
-        LlmChatPanel.appendFormattedMsg(
-                sb, Constant.messages.getString("llm.chat.append.alert.param"), alert.getParam());
-
-        LlmChatPanel.appendFormattedMsg(
-                sb, Constant.messages.getString("llm.chat.append.alert.attack"), alert.getAttack());
-
-        LlmChatPanel.appendFormattedMsg(
-                sb,
-                Constant.messages.getString("llm.chat.append.alert.evidence"),
-                alert.getEvidence());
-
-        LlmChatPanel.appendFormattedMsg(
-                sb,
-                Constant.messages.getString("llm.chat.append.alert.otherinfo"),
-                alert.getOtherInfo());
-
-        llmChatPanel.appendToInput(sb.toString(), true);
+    private static void putIfNotBlank(Map<String, Object> payload, String key, String value) {
+        if (StringUtils.isNotBlank(value)) {
+            payload.put(key, value);
+        }
     }
 
     @Override
