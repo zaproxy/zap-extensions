@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- Enable Swagger Secret Detector Script Scan Rule, the JS Engine memory leak has been addressed (Issue 9230).
 
 ## [51] - 2026-01-28
 ### Changed
