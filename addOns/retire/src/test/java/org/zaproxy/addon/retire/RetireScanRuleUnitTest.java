@@ -25,8 +25,8 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
@@ -53,13 +53,13 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
 
     @Override
     protected RetireScanRule createScanner() {
-        RetireScanRule rsr = new RetireScanRule();
         try {
-            rsr.setRepo(new Repo("/org/zaproxy/addon/retire/testrepository.json"));
+            Repo testRepo = new Repo("/org/zaproxy/addon/retire/testrepository.json");
+            return new RetireScanRule(testRepo);
         } catch (IOException e) {
             // Nothing to do
         }
-        return rsr;
+        return new RetireScanRule(null);
     }
 
     @Test
@@ -326,6 +326,21 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
         scanRule.setConfig(mock(HierarchicalConfiguration.class));
         RetireScanRule copiedScanRule = (RetireScanRule) scanRule.copy();
 
+        assertSame(scanRule.getRepo(), copiedScanRule.getRepo());
+    }
+
+    @Test
+    void shouldShareRepoInCopy() throws IOException {
+        // Given
+        Repo testRepo = new Repo("/org/zaproxy/addon/retire/testrepository.json");
+        RetireScanRule scanRule = new RetireScanRule(testRepo);
+        scanRule.setConfig(mock(HierarchicalConfiguration.class));
+
+        // When
+        RetireScanRule copiedScanRule = (RetireScanRule) scanRule.copy();
+
+        // Then
+        assertSame(testRepo, copiedScanRule.getRepo());
         assertSame(scanRule.getRepo(), copiedScanRule.getRepo());
     }
 }
