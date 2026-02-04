@@ -48,3 +48,7 @@
 # VS Code
 # -------
 .vscode
+
+# 忽略本地大文件
+java_pid22508.hprof
+jdk17.zip

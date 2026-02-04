@@ -65,4 +65,10 @@ class SessionFixationScanRuleUnitTest extends ActiveScannerTest<SessionFixationS
                 tags.get(CommonAlertTag.WSTG_V42_SESS_03_SESS_FIXATION.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_SESS_03_SESS_FIXATION.getValue())));
     }
+
+    @Test
+    void shouldReturnExampleAlert() {
+        var alerts = rule.getExampleAlerts();
+        assertThat("Example alerts should not be empty", alerts.isEmpty(), is(false));
+    }
 }
