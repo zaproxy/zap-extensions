@@ -1380,14 +1380,7 @@ public class AuthUtils {
         @Override
         public void browserLaunched(SeleniumScriptUtils ssutils) {
             LOGGER.debug("AuthenticationBrowserHook - authenticating as {}", user.getName());
-            AuthUtils.authenticateAsUser(
-                    bbaMethod.isDiagnostics(),
-                    ssutils.getWebDriver(),
-                    user,
-                    bbaMethod.getLoginPageUrl(),
-                    bbaMethod.getLoginPageWait(),
-                    bbaMethod.getStepDelay(),
-                    bbaMethod.getAuthenticationSteps());
+            bbaMethod.authenticate(ssutils.getWebDriver(), user);
         }
     }
 

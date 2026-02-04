@@ -27,6 +27,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
@@ -63,6 +65,8 @@ public class ScriptJob extends AutomationJob {
                 }
             };
 
+    private static final Logger LOGGER = LogManager.getLogger(ScriptJob.class);
+
     private ScriptJobData data;
     private ScriptJobParameters parameters = new ScriptJobParameters();
 
@@ -85,6 +89,16 @@ public class ScriptJob extends AutomationJob {
         ScriptAction scriptAction = createScriptAction(progress);
         if (scriptAction != null) {
             scriptAction.verifyParameters(this.getName(), progress);
+            if (!this.getParameters().getAction().equals(RunScriptAction.NAME)
+                    && (this.getParameters().getUser() != null
+                            && !this.getParameters().getUser().isEmpty())) {
+                progress.warn(
+                        Constant.messages.getString(
+                                "scripts.automation.warn.userParameterSetButActionNotRun",
+                                this.getParameters().getName()));
+            } else {
+                this.verifyUser(this.getParameters().getUser(), progress);
+            }
         }
     }
 

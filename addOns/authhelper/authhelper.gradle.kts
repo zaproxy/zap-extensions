@@ -68,7 +68,7 @@ zapAddOn {
                     version.set(">= 0.1.0 & < 1.0.0")
                 }
                 register("selenium") {
-                    version.set("15.*")
+                    version.set(">=15.44.0")
                 }
                 register("zest") {
                     version.set(">=48.10.0")

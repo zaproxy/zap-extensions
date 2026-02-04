@@ -43,7 +43,9 @@ public class LoadDirScriptAction extends ScriptAction {
                     ScriptJobDialog.SCRIPT_ENGINE_PARAM,
                     ScriptJobDialog.SCRIPT_NAME_PARAM,
                     ScriptJobDialog.SCRIPT_IS_INLINE_PARAM,
-                    ScriptJobDialog.SCRIPT_TARGET_PARAM);
+                    ScriptJobDialog.SCRIPT_TARGET_PARAM,
+                    ScriptJobDialog.SCRIPT_CONTEXT_PARAM,
+                    ScriptJobDialog.SCRIPT_USER_PARAM);
 
     public LoadDirScriptAction(ScriptJobParameters parameters) {
         super(parameters);

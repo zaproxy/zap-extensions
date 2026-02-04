@@ -41,7 +41,10 @@ public class AddScriptAction extends ScriptAction {
 
     public static final String NAME = "add";
     private static final List<String> DISABLED_FIELDS =
-            Arrays.asList(ScriptJobDialog.SCRIPT_TARGET_PARAM);
+            Arrays.asList(
+                    ScriptJobDialog.SCRIPT_TARGET_PARAM,
+                    ScriptJobDialog.SCRIPT_CONTEXT_PARAM,
+                    ScriptJobDialog.SCRIPT_USER_PARAM);
 
     public AddScriptAction(ScriptJobParameters parameters) {
         super(parameters);

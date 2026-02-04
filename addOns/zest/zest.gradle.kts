@@ -35,7 +35,7 @@ zapAddOn {
                     version.set(">=45.2.0")
                 }
                 register("selenium") {
-                    version.set(">= 15.13.0")
+                    version.set(">= 15.44.0")
                 }
             }
         }

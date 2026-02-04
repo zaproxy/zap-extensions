@@ -53,7 +53,9 @@ import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptUI;
 import org.zaproxy.zap.extension.script.ScriptVars;
 import org.zaproxy.zap.extension.selenium.Browser;
+import org.zaproxy.zap.extension.selenium.ClientAuthenticator;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
+import org.zaproxy.zap.users.User;
 import org.zaproxy.zest.core.v1.ZestAction;
 import org.zaproxy.zest.core.v1.ZestActionFail;
 import org.zaproxy.zest.core.v1.ZestActionFailException;
@@ -408,7 +410,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
         }
     }
 
-    private String launchClient(ZestClientLaunch clientLaunch) {
+    protected String launchClient(ZestClientLaunch clientLaunch) {
         ExtensionSelenium extSel =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class);
         Browser browser = null;
@@ -443,6 +445,13 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
         if (StringUtils.isNotEmpty(url)) {
             url = replaceVariablesInString(url, true);
         }
+
+        User user = wrapper.getUser();
+        boolean needsClientAuth =
+                user != null
+                        && user.getContext().getAuthenticationMethod()
+                                instanceof ClientAuthenticator;
+
         WebDriver wd;
         String proxy = this.getProxy();
         if (StringUtils.isNotEmpty(proxy) && proxy.indexOf(':') > 0) {
@@ -454,14 +463,23 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
                             browser.getId(),
                             proxyArray[0],
                             Integer.parseInt(proxyArray[1]));
-            if (wd != null && StringUtils.isNotEmpty(url)) {
-                wd.get(url);
-            }
         } else {
-            wd = extSel.getProxiedBrowser(browser.getId(), url);
+            wd = extSel.getProxiedBrowser(browser.getId());
         }
 
         if (wd != null) {
+            if (needsClientAuth) {
+                ClientAuthenticator ca =
+                        (ClientAuthenticator) user.getContext().getAuthenticationMethod();
+                boolean success = ca.authenticate(wd, user);
+                if (!success) {
+                    LOGGER.warn("Failed to authenticate user {}", user.getName());
+                    return null;
+                }
+            }
+            if (StringUtils.isNotEmpty(url)) {
+                wd.get(url);
+            }
             this.addWebDriver(clientLaunch.getWindowHandle(), wd);
             LOGGER.debug(
                     "Browser launched by ZAP {} {}",

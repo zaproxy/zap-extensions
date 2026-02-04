@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - UI support for Zest script options.
+- Now supports authentication for client side scripts.
 
 ### Changed
 - Update Zest library to 0.35.0:

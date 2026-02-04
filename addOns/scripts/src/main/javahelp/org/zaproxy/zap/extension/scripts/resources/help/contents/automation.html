@@ -43,6 +43,8 @@
 	<li>name: mandatory, the name of the script in ZAP
 	<li>engine: optional, can be used to override the default engine for the file extension
 	<li>target: mandatory, if type is 'targeted', the target URL to be invoked for 'targeted' script
+	<li>context: optional, the name of the context to use when running the script
+	<li>user: optional, the name of the user to use when running the standalone script. Currently only supported for Zest scripts, if the context has browser-based or client-script authentication configured, the user will be authenticated before the script executes.
 	</ul>
 
 	<H2>Action: loaddir</H2>
@@ -86,6 +88,8 @@
       source:                    # String: The full or relative file path, must be readable
       inline:                    # String: The full script (may be multi-line) - supply this or 'source' not both
       target:                    # String: The URL to be invoked for "targeted" script type
+      context:                   # String: The name of the context to use when running the script (optional)
+      user:                      # String: The name of the user to use when running the standalone script (optional, requires context) [Currently only supported for Zest scripts]
 	</pre>
 
 	The <code>source</code> parameter was previously called <code>file</code>, both will work.

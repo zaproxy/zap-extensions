@@ -24,15 +24,28 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.WebDriver;
+import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.extension.ExtensionLoader;
+import org.parosproxy.paros.model.Model;
 import org.zaproxy.addon.network.ExtensionNetwork;
+import org.zaproxy.zap.authentication.AuthenticationMethod;
 import org.zaproxy.zap.extension.script.ExtensionScript;
+import org.zaproxy.zap.extension.selenium.ClientAuthenticator;
+import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
+import org.zaproxy.zap.model.Context;
+import org.zaproxy.zap.users.User;
 import org.zaproxy.zest.core.v1.ZestClient;
 import org.zaproxy.zest.core.v1.ZestClientFailException;
+import org.zaproxy.zest.core.v1.ZestClientLaunch;
 import org.zaproxy.zest.core.v1.ZestScript;
 
 /** Unit test for {@link ZestZapRunner}. */
@@ -41,6 +54,8 @@ class ZestZapRunnerUnitTest {
     private ExtensionZest extensionZest;
     private ExtensionScript extensionScript;
     private ExtensionNetwork extensionNetwork;
+    private ExtensionSelenium extensionSelenium;
+    private ExtensionLoader extensionLoader;
     private ZestScriptWrapper scriptWrapper;
 
     private ZestZapRunner runner;
@@ -87,4 +102,47 @@ class ZestZapRunnerUnitTest {
         assertThat(thrown.getElement(), is(sameInstance(client)));
         assertThat(thrown.getCause(), is(sameInstance(exception)));
     }
+
+    @Test
+    void shouldCallAuthenticateWithUserFromWrapper() {
+        // Given
+        extensionLoader = mock(ExtensionLoader.class);
+        Control.initSingletonForTesting(mock(Model.class), extensionLoader);
+        extensionSelenium = mock(ExtensionSelenium.class);
+        given(extensionLoader.getExtension(ExtensionSelenium.class)).willReturn(extensionSelenium);
+
+        WebDriver webDriver = mock(WebDriver.class);
+        WebDriver.Options options = mock(WebDriver.Options.class);
+        given(webDriver.manage()).willReturn(options);
+        given(options.timeouts()).willReturn(mock(WebDriver.Timeouts.class));
+        given(extensionSelenium.getProxiedBrowser(anyString())).willReturn(webDriver);
+
+        User user = mock(User.class);
+        given(user.getName()).willReturn("testuser");
+        Context context = mock(Context.class);
+
+        TestClientAuthenticatorMethod authMethod = mock(TestClientAuthenticatorMethod.class);
+        given(context.getAuthenticationMethod()).willReturn(authMethod);
+        given(user.getContext()).willReturn(context);
+
+        ZestScriptWrapper wrapper = mock(ZestScriptWrapper.class);
+        given(wrapper.getUser()).willReturn(user);
+        ZestZapRunner runnerWithWrapper =
+                new ZestZapRunner(extensionZest, extensionNetwork, wrapper);
+        ZestClientLaunch clientLaunch = mock(ZestClientLaunch.class);
+        given(clientLaunch.getBrowserType()).willReturn("Firefox");
+        given(clientLaunch.isHeadless()).willReturn(false);
+        given(clientLaunch.getUrl()).willReturn(null);
+        given(clientLaunch.getWindowHandle()).willReturn("window1");
+
+        // When
+        runnerWithWrapper.launchClient(clientLaunch);
+
+        // Then
+        verify(authMethod).authenticate(any(WebDriver.class), eq(user));
+    }
+
+    // Test implementation that implements both interfaces to ensure instanceof works
+    private abstract static class TestClientAuthenticatorMethod extends AuthenticationMethod
+            implements ClientAuthenticator {}
 }

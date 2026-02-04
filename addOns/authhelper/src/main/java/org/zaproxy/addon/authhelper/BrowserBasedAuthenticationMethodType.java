@@ -82,6 +82,7 @@ import org.zaproxy.zap.extension.authentication.AuthenticationAPI;
 import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.BrowserUI;
 import org.zaproxy.zap.extension.selenium.BrowsersComboBoxModel;
+import org.zaproxy.zap.extension.selenium.ClientAuthenticator;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.SessionStructure;
@@ -199,7 +200,8 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
         proxies.clear();
     }
 
-    public class BrowserBasedAuthenticationMethod extends AuthenticationMethod {
+    public class BrowserBasedAuthenticationMethod extends AuthenticationMethod
+            implements ClientAuthenticator {
 
         private boolean diagnostics;
         private String loginPageUrl;
@@ -289,6 +291,29 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
         public void setAuthenticationSteps(List<AuthenticationStep> authenticationSteps) {
             this.authenticationSteps =
                     authenticationSteps == null ? List.of() : authenticationSteps;
+        }
+
+        /**
+         * Executes the browser-based authentication using the provided WebDriver.
+         *
+         * @param webDriver the WebDriver to use for authentication
+         * @param user the user to authenticate
+         * @return true if authentication was successful, false otherwise
+         */
+        @Override
+        public boolean authenticate(WebDriver webDriver, User user) {
+            if (!isConfigured()) {
+                LOGGER.warn("Login page URL is not configured");
+                return false;
+            }
+            return AuthUtils.authenticateAsUser(
+                    diagnostics,
+                    webDriver,
+                    user,
+                    loginPageUrl,
+                    loginPageWait,
+                    stepDelay,
+                    authenticationSteps);
         }
 
         @Override
