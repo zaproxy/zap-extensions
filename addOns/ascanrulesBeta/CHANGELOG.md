@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - Update minimum ZAP version to 2.17.0.
+- CORS scan rule now reports LOW confidence for error responses (4xx/5xx) as exploitability is uncertain.
 
 ### Removed
 - The following scan rules were removed, having been promoted to Release:
