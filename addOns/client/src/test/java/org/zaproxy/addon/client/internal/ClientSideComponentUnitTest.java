@@ -31,6 +31,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.stream.Stream;
+import net.sf.json.JSONObject;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -459,5 +460,48 @@ class ClientSideComponentUnitTest extends TestUtils {
         int actual = one.compareTo(two);
         // Then
         assertThat(actual, is(equalTo(expected)));
+    }
+
+    @Test
+    void shouldSerializeAriaIdentificationToJsonString() {
+        // Given
+        JSONObject json = new JSONObject();
+        json.put("tagName", "DIV");
+        json.put("id", "");
+        json.put("url", EXAMPLE_URL);
+        json.put("type", "nodeAdded");
+
+        JSONObject ariaObj = new JSONObject();
+        ariaObj.put("role", "button");
+        ariaObj.put("aria-label", "Submit");
+        ariaObj.put("aria-pressed", "false");
+        json.put("ariaIdentification", ariaObj);
+
+        // When
+        ClientSideComponent component = new ClientSideComponent(json);
+
+        // Then
+        String ariaString = component.getData().get("ariaIdentification");
+        assertThat(ariaString.contains("role"), is(true));
+        assertThat(ariaString.contains("button"), is(true));
+        assertThat(ariaString.contains("aria-label"), is(true));
+        assertThat(ariaString.contains("Submit"), is(true));
+    }
+
+    @Test
+    void shouldSkipNullAriaIdentification() {
+        // Given
+        JSONObject json = new JSONObject();
+        json.put("tagName", "DIV");
+        json.put("id", "test-id");
+        json.put("url", EXAMPLE_URL);
+        json.put("type", "nodeAdded");
+        // No ariaIdentification
+
+        // When
+        ClientSideComponent component = new ClientSideComponent(json);
+
+        // Then - ariaIdentification should not be in data map
+        assertThat(component.getData().containsKey("ariaIdentification"), is(false));
     }
 }

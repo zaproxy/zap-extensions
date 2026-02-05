@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>ZAP Test Server - ARIA Navigation</title>
+	<link href="/tutorial.css" rel="stylesheet" type="text/css" />
+	<style>
+		.aria-link {
+			color: #0066cc;
+			text-decoration: underline;
+			cursor: pointer;
+			padding: 5px;
+		}
+		.aria-link:hover {
+			background-color: #eef;
+		}
+		.aria-button {
+			display: inline-block;
+			padding: 10px 20px;
+			margin: 10px;
+			background-color: #4CAF50;
+			color: white;
+			border-radius: 5px;
+			cursor: pointer;
+		}
+		.aria-button:hover {
+			background-color: #45a049;
+		}
+		.nav-section {
+			margin: 20px 0;
+			padding: 15px;
+			border: 1px solid #ddd;
+			border-radius: 5px;
+		}
+	</style>
+</head>
+<body>
+<div class="roundContainer">
+	<h1>ZAP Test Server</h1>
+	<h2>ARIA Navigation Test</h2>
+	<p>This page contains navigation elements that use ARIA roles instead of standard HTML links and buttons.
+	   <strong>The client spider cannot crawl to the target pages without ARIA detection support.</strong></p>
+
+	<div class="nav-section">
+		<h3>Navigation using ARIA role="link"</h3>
+		<p>These elements look and act like links but are implemented using div/span with role="link":</p>
+		<ul>
+			<li><span id="aria-link-page1" role="link" class="aria-link" 
+			          aria-label="Go to Page 1" 
+			          onclick="window.location.href='page1.html'">Go to Page 1 (ARIA link)</span></li>
+			<li><div id="aria-link-page2" role="link" class="aria-link" 
+			         aria-label="Go to Page 2" 
+			         onclick="window.location.href='page2.html'">Go to Page 2 (ARIA link)</div></li>
+		</ul>
+	</div>
+
+	<div class="nav-section">
+		<h3>Navigation using ARIA role="button"</h3>
+		<p>These elements look and act like buttons but are implemented using div with role="button":</p>
+		<div id="aria-button-page3" role="button" class="aria-button" 
+		     aria-label="Navigate to Page 3" 
+		     onclick="window.location.href='page3.html'">
+			Go to Page 3 (ARIA button)
+		</div>
+		<div id="aria-button-secret" role="button" class="aria-button" 
+		     aria-label="Navigate to Secret Page" 
+		     aria-describedby="secret-desc"
+		     onclick="window.location.href='secret.html'">
+			Go to Secret Page (ARIA button)
+		</div>
+		<p id="secret-desc" hidden>This button navigates to a secret page</p>
+	</div>
+
+	<div class="nav-section">
+		<h3>Tab Navigation using ARIA</h3>
+		<div role="tablist" aria-label="Content Tabs">
+			<div id="tab-info" role="tab" class="aria-button" 
+			     aria-selected="true" 
+			     aria-controls="panel-info"
+			     onclick="window.location.href='info.html'">
+				Info Tab
+			</div>
+			<div id="tab-settings" role="tab" class="aria-button" 
+			     aria-selected="false" 
+			     aria-controls="panel-settings"
+			     onclick="window.location.href='settings.html'">
+				Settings Tab
+			</div>
+		</div>
+	</div>
+
+	<div class="buttonsDiv">
+		<a href="index.html"><button>Back to ARIA Tests</button></a>
+	</div>
+</div>
+
+</body>
+</html>

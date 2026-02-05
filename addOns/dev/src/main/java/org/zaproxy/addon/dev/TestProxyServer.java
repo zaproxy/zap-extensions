@@ -119,9 +119,11 @@ public class TestProxyServer {
         TestDirectory elStoreDir = new TestDirectory(this, "elements");
         TestDirectory locStoreDir = new TestDirectory(this, "localStorage");
         TestDirectory sessStoreDir = new TestDirectory(this, "sessionStorage");
+        TestDirectory ariaDir = new TestDirectory(this, "aria");
         htmlDir.addDirectory(elStoreDir);
         htmlDir.addDirectory(locStoreDir);
         htmlDir.addDirectory(sessStoreDir);
+        htmlDir.addDirectory(ariaDir);
 
         TestDirectory seqDir = new TestDirectory(this, "seq");
         seqDir.addDirectory(new PerformanceDir(this, "performance"));

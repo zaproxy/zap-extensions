@@ -19,18 +19,34 @@
  */
 package org.zaproxy.addon.client.internal;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import net.sf.json.JSONObject;
 
 public class ReportedElement extends ReportedObject {
 
     private String tagType;
     private int formId = -1;
+    private String role;
+    private Map<String, String> ariaIdentification;
 
     public ReportedElement(JSONObject json) {
         super(json);
         this.tagType = getParam(json, "tagType");
+        this.role = getParam(json, "role");
         if (json.containsKey("formId")) {
             this.formId = json.getInt("formId");
+        }
+
+        if (json.containsKey("ariaIdentification")
+                && !json.get("ariaIdentification").equals(null)) {
+            JSONObject ariaObj = json.getJSONObject("ariaIdentification");
+            this.ariaIdentification = new HashMap<>();
+            for (Object key : ariaObj.keySet()) {
+                String keyStr = (String) key;
+                this.ariaIdentification.put(keyStr, ariaObj.getString(keyStr));
+            }
         }
     }
 
@@ -40,5 +56,13 @@ public class ReportedElement extends ReportedObject {
 
     public int getFormId() {
         return formId;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public Map<String, String> getAriaIdentification() {
+        return ariaIdentification != null ? Collections.unmodifiableMap(ariaIdentification) : null;
     }
 }

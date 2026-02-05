@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>ZAP Test Server - ARIA Buttons</title>
+	<link href="/tutorial.css" rel="stylesheet" type="text/css" />
+	<style>
+		.aria-button {
+			display: inline-block;
+			padding: 10px 20px;
+			margin: 10px;
+			background-color: #4CAF50;
+			color: white;
+			border-radius: 5px;
+			cursor: pointer;
+		}
+		.aria-button:hover {
+			background-color: #45a049;
+		}
+		.result {
+			margin: 20px 0;
+			padding: 15px;
+			border: 1px solid #ddd;
+			border-radius: 5px;
+			background-color: #f9f9f9;
+		}
+	</style>
+</head>
+<body>
+<div class="roundContainer">
+	<h1>ZAP Test Server</h1>
+	<h2>ARIA Button Elements Test</h2>
+	<p>This page demonstrates various ARIA button implementations.</p>
+
+	<h3>Basic ARIA Buttons</h3>
+	<div id="aria-btn-1" role="button" class="aria-button" aria-label="Action Button 1">
+		Button 1
+	</div>
+	<div id="aria-btn-2" role="button" class="aria-button" aria-label="Action Button 2">
+		Button 2
+	</div>
+	<span id="aria-btn-3" role="button" class="aria-button" aria-label="Span Button">
+		Span as Button
+	</span>
+
+	<h3>Toggle Buttons (aria-pressed)</h3>
+	<div id="aria-toggle-1" role="button" class="aria-button" 
+	     aria-pressed="false" aria-label="Toggle Option">
+		Toggle Off
+	</div>
+	<div id="aria-toggle-2" role="button" class="aria-button" 
+	     aria-pressed="true" aria-label="Toggle Option 2">
+		Toggle On
+	</div>
+
+	<h3>Buttons with aria-describedby</h3>
+	<div id="aria-btn-described" role="button" class="aria-button" 
+	     aria-label="Important Action" 
+	     aria-describedby="btn-description">
+		Important Button
+	</div>
+	<p id="btn-description">This button performs an important action. Click with caution.</p>
+
+	<h3>Buttons with aria-expanded</h3>
+	<div id="aria-expand-btn" role="button" class="aria-button" 
+	     aria-expanded="false" 
+	     aria-controls="expandable-content"
+	     aria-label="Expand Content">
+		Show More
+	</div>
+	<div id="expandable-content" hidden>
+		<p>This content was revealed by the expand button.</p>
+	</div>
+
+	<h3>Buttons WITHOUT IDs (uses ariaIdentification for identification)</h3>
+	<p>These elements have no id attribute, so the client spider must use ARIA attributes to identify them.</p>
+	<div role="button" class="aria-button" aria-label="No ID Button 1">
+		No ID Button 1
+	</div>
+	<div role="button" class="aria-button" aria-label="No ID Button 2" aria-pressed="false">
+		No ID Toggle
+	</div>
+	<span role="button" class="aria-button" aria-label="No ID Span Button">
+		No ID Span
+	</span>
+
+	<div class="buttonsDiv">
+		<a href="index.html"><button>Back to ARIA Tests</button></a>
+	</div>
+</div>
+
+<script>
+	// Make toggle buttons interactive
+	document.querySelectorAll('[aria-pressed]').forEach(btn => {
+		btn.addEventListener('click', function() {
+			const pressed = this.getAttribute('aria-pressed') === 'true';
+			this.setAttribute('aria-pressed', !pressed);
+			this.textContent = pressed ? 'Toggle Off' : 'Toggle On';
+		});
+	});
+
+	// Make expand button interactive
+	document.getElementById('aria-expand-btn').addEventListener('click', function() {
+		const content = document.getElementById('expandable-content');
+		const expanded = this.getAttribute('aria-expanded') === 'true';
+		this.setAttribute('aria-expanded', !expanded);
+		content.hidden = expanded;
+		this.textContent = expanded ? 'Show More' : 'Show Less';
+	});
+</script>
+
+</body>
+</html>
