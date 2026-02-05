@@ -182,4 +182,139 @@ class ReplacerParamUnitTest {
                 null,
                 enabled);
     }
+
+    /**
+     * Verifies that a rule with a method parameter is correctly written to configuration. This
+     * ensures that the method field is properly persisted in the configuration, including both
+     * non-empty and empty method values.
+     */
+    @ParameterizedTest
+    @ValueSource(strings = {"POST", ""})
+    void shouldWriteMethodToConfiguration(String method) {
+        // Given
+        param.load(configuration);
+        ReplacerParamRule rule =
+                new ReplacerParamRule(
+                        "Test Rule",
+                        "https://example.com",
+                        MatchType.REQ_HEADER_STR,
+                        "matchString",
+                        false,
+                        "replacement",
+                        null,
+                        true,
+                        false,
+                        method);
+
+        // When
+        param.addRule(rule);
+
+        // Then
+        String savedMethod =
+                configuration.getString(
+                        ReplacerParam.ALL_RULES_KEY + "(6)." + ReplacerParam.RULE_METHOD_KEY);
+        assertThat(savedMethod, is(equalTo(method)));
+    }
+
+    /**
+     * Verifies that loading a configuration without the method field (legacy config) defaults to
+     * empty string. This ensures backward compatibility when loading old configurations.
+     */
+    @Test
+    void shouldDefaultMethodToEmptyWhenLoadingLegacyConfig() {
+        // Given
+        ZapXmlConfiguration legacyConfig = new ZapXmlConfiguration();
+        String elementBaseKey = ReplacerParam.ALL_RULES_KEY + "(0).";
+        legacyConfig.setProperty(
+                elementBaseKey + ReplacerParam.RULE_DESCRIPTION_KEY, "Legacy Rule");
+        legacyConfig.setProperty(elementBaseKey + ReplacerParam.RULE_URL_KEY, "");
+        legacyConfig.setProperty(elementBaseKey + ReplacerParam.RULE_ENABLED_KEY, Boolean.TRUE);
+        legacyConfig.setProperty(
+                elementBaseKey + ReplacerParam.RULE_MATCH_TYPE_KEY,
+                MatchType.REQ_HEADER_STR.name());
+        legacyConfig.setProperty(
+                elementBaseKey + ReplacerParam.RULE_MATCH_STRING_KEY, "matchString");
+        legacyConfig.setProperty(elementBaseKey + ReplacerParam.RULE_REGEX_KEY, Boolean.FALSE);
+        legacyConfig.setProperty(
+                elementBaseKey + ReplacerParam.RULE_REPLACEMENT_KEY, "replacement");
+        legacyConfig.setProperty(elementBaseKey + ReplacerParam.RULE_INITIATORS_KEY, "");
+        legacyConfig.setProperty(
+                elementBaseKey + ReplacerParam.RULE_EXTRA_PROCESSING_KEY, Boolean.FALSE);
+        // Intentionally NOT setting RULE_METHOD_KEY to simulate legacy config
+
+        // When
+        ReplacerParam legacyParam = new ReplacerParam();
+        legacyParam.load(legacyConfig);
+
+        // Then
+        ReplacerParamRule loadedRule = legacyParam.getRule("Legacy Rule");
+        assertNotNull(loadedRule);
+        assertThat(loadedRule.getMethod(), is(equalTo("")));
+        assertThat(loadedRule.getDescription(), is(equalTo("Legacy Rule")));
+    }
+
+    /**
+     * Verifies that multiple rules with different methods are correctly written to configuration.
+     * This tests that the method field is stored independently for each rule.
+     */
+    @Test
+    void shouldWriteMultipleMethodsToConfiguration() {
+        // Given
+        param.load(configuration);
+        ReplacerParamRule rule1 =
+                new ReplacerParamRule(
+                        "Rule 1",
+                        "",
+                        MatchType.REQ_HEADER_STR,
+                        "match1",
+                        false,
+                        "replace1",
+                        null,
+                        true,
+                        false,
+                        "GET");
+        ReplacerParamRule rule2 =
+                new ReplacerParamRule(
+                        "Rule 2",
+                        "",
+                        MatchType.REQ_HEADER_STR,
+                        "match2",
+                        false,
+                        "replace2",
+                        null,
+                        true,
+                        false,
+                        "POST");
+        ReplacerParamRule rule3 =
+                new ReplacerParamRule(
+                        "Rule 3",
+                        "",
+                        MatchType.REQ_HEADER_STR,
+                        "match3",
+                        false,
+                        "replace3",
+                        null,
+                        true,
+                        false,
+                        "");
+
+        // When
+        param.addRule(rule1);
+        param.addRule(rule2);
+        param.addRule(rule3);
+
+        // Then
+        String savedMethod1 =
+                configuration.getString(
+                        ReplacerParam.ALL_RULES_KEY + "(6)." + ReplacerParam.RULE_METHOD_KEY);
+        String savedMethod2 =
+                configuration.getString(
+                        ReplacerParam.ALL_RULES_KEY + "(7)." + ReplacerParam.RULE_METHOD_KEY);
+        String savedMethod3 =
+                configuration.getString(
+                        ReplacerParam.ALL_RULES_KEY + "(8)." + ReplacerParam.RULE_METHOD_KEY);
+        assertThat(savedMethod1, is(equalTo("GET")));
+        assertThat(savedMethod2, is(equalTo("POST")));
+        assertThat(savedMethod3, is(equalTo("")));
+    }
 }

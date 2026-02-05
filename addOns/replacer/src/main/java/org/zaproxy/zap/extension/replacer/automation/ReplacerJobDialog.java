@@ -62,7 +62,7 @@ public class ReplacerJobDialog extends StandardFieldsDialog {
         super(
                 View.getSingleton().getMainFrame(),
                 TITLE,
-                DisplayUtils.getScaledDimension(500, 300),
+                DisplayUtils.getScaledDimension(500, 450),
                 TAB_LABELS);
         this.job = job;
 

@@ -213,7 +213,8 @@ public class ReplacerJob extends AutomationJob {
                 data.getReplacementString(),
                 initiators,
                 true,
-                JobUtils.unBox(data.getTokenProcessing()));
+                JobUtils.unBox(data.getTokenProcessing()),
+                data.getMethod());
     }
 
     protected static void replacerRuleToData(ReplacerParamRule rule, RuleData data) {
@@ -224,6 +225,7 @@ public class ReplacerJob extends AutomationJob {
 
         data.setDescription(rule.getDescription());
         data.setUrl(rule.getUrl());
+        data.setMethod(rule.getMethod());
         data.setMatchType(rule.getMatchType().name().toLowerCase());
         data.setMatchString(rule.getMatchString());
         data.setMatchRegex(rule.isMatchRegex());
@@ -350,6 +352,7 @@ public class ReplacerJob extends AutomationJob {
     public static class RuleData extends AutomationData {
         private String description = "";
         private String url = "";
+        private String method = "";
         private String matchType;
         private String matchString = "";
         private boolean matchRegex = false;
@@ -360,6 +363,7 @@ public class ReplacerJob extends AutomationJob {
         public RuleData(RuleData data) {
             this.description = data.description;
             this.url = data.url;
+            this.method = data.method;
             this.matchType = data.matchType;
             this.matchString = data.matchString;
             this.matchRegex = data.matchRegex;

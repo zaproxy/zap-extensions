@@ -121,4 +121,226 @@ class ReplacerParamRuleTest {
         // Then
         assertThat(hexValueRegexRule.getEscapedReplacement(), equalTo("\\x"));
     }
+
+    /**
+     * Verifies that the method field is correctly initialized when creating a rule with all
+     * parameters including the method parameter. This ensures the method is stored properly in the
+     * rule.
+     */
+    @Test
+    void shouldInitializeMethodWhenCreatingRuleWithMethod() {
+        // Given / When
+        ReplacerParamRule rule =
+                new ReplacerParamRule(
+                        "Test Rule",
+                        "https://example.com",
+                        REQ_HEADER_STR,
+                        "matchString",
+                        true,
+                        "replacement",
+                        null,
+                        true,
+                        false,
+                        "POST");
+
+        // Then
+        assertThat(rule.getMethod(), equalTo("POST"));
+    }
+
+    /**
+     * Verifies that the method field defaults to empty string when creating a rule without
+     * specifying the method parameter. This ensures backward compatibility with existing code.
+     */
+    @Test
+    void shouldDefaultMethodToEmptyStringWhenNotSpecified() {
+        // Given / When
+        ReplacerParamRule rule =
+                new ReplacerParamRule(
+                        "Test Rule",
+                        REQ_HEADER_STR,
+                        "matchString",
+                        true,
+                        "replacement",
+                        null,
+                        true);
+
+        // Then
+        assertThat(rule.getMethod(), equalTo(""));
+    }
+
+    /**
+     * Verifies that copying a rule preserves the method field. This tests the copy constructor to
+     * ensure all fields, including method, are properly duplicated.
+     */
+    @Test
+    void shouldCopyMethodWhenCloningRule() {
+        // Given
+        ReplacerParamRule original =
+                new ReplacerParamRule(
+                        "Test Rule",
+                        "https://example.com",
+                        REQ_HEADER_STR,
+                        "matchString",
+                        true,
+                        "replacement",
+                        null,
+                        true,
+                        false,
+                        "DELETE");
+
+        // When
+        ReplacerParamRule copy = new ReplacerParamRule(original);
+
+        // Then
+        assertThat(copy.getMethod(), equalTo("DELETE"));
+    }
+
+    /**
+     * Verifies that the equals method correctly compares rules with different method values. This
+     * ensures that the method field is included in equality checks.
+     */
+    @Test
+    void shouldConsiderMethodInEquality() {
+        // Given
+        ReplacerParamRule rule1 =
+                new ReplacerParamRule(
+                        "Test Rule",
+                        "",
+                        REQ_HEADER_STR,
+                        "matchString",
+                        false,
+                        "replacement",
+                        null,
+                        true,
+                        false,
+                        "GET");
+
+        ReplacerParamRule rule2 =
+                new ReplacerParamRule(
+                        "Test Rule",
+                        "",
+                        REQ_HEADER_STR,
+                        "matchString",
+                        false,
+                        "replacement",
+                        null,
+                        true,
+                        false,
+                        "POST");
+
+        // When / Then
+        assertThat(rule1.equals(rule2), equalTo(false));
+    }
+
+    /**
+     * Verifies that the hashCode method includes the method field in its calculation. This ensures
+     * that rules with different methods produce different hash codes.
+     */
+    @Test
+    void shouldIncludeMethodInHashCode() {
+        // Given
+        ReplacerParamRule rule1 =
+                new ReplacerParamRule(
+                        "Test Rule",
+                        "",
+                        REQ_HEADER_STR,
+                        "matchString",
+                        false,
+                        "replacement",
+                        null,
+                        true,
+                        false,
+                        "GET");
+
+        ReplacerParamRule rule2 =
+                new ReplacerParamRule(
+                        "Test Rule",
+                        "",
+                        REQ_HEADER_STR,
+                        "matchString",
+                        false,
+                        "replacement",
+                        null,
+                        true,
+                        false,
+                        "POST");
+
+        // When / Then
+        assertThat(rule1.hashCode() == rule2.hashCode(), equalTo(false));
+    }
+
+    /**
+     * Verifies that passing null for the method parameter in the constructor does not throw an
+     * exception and defaults to empty string.
+     */
+    @Test
+    void shouldHandleNullMethodInConstructor() {
+        // Given / When
+        ReplacerParamRule rule =
+                new ReplacerParamRule(
+                        "Test Rule",
+                        "",
+                        REQ_HEADER_STR,
+                        "matchString",
+                        false,
+                        "replacement",
+                        null,
+                        true,
+                        false,
+                        null);
+
+        // Then
+        assertThat(rule.getMethod(), equalTo(""));
+    }
+
+    /**
+     * Verifies that passing null to setMethod does not throw an exception and sets the method to
+     * empty string.
+     */
+    @Test
+    void shouldHandleNullMethodInSetter() {
+        // Given
+        ReplacerParamRule rule =
+                new ReplacerParamRule(
+                        "Test Rule",
+                        "",
+                        REQ_HEADER_STR,
+                        "matchString",
+                        false,
+                        "replacement",
+                        null,
+                        true,
+                        false,
+                        "GET");
+
+        // When
+        rule.setMethod(null);
+
+        // Then
+        assertThat(rule.getMethod(), equalTo(""));
+    }
+
+    /** Verifies that passing an empty string to setMethod works correctly. */
+    @Test
+    void shouldHandleEmptyMethodInSetter() {
+        // Given
+        ReplacerParamRule rule =
+                new ReplacerParamRule(
+                        "Test Rule",
+                        "",
+                        REQ_HEADER_STR,
+                        "matchString",
+                        false,
+                        "replacement",
+                        null,
+                        true,
+                        false,
+                        "GET");
+
+        // When
+        rule.setMethod("");
+
+        // Then
+        assertThat(rule.getMethod(), equalTo(""));
+    }
 }

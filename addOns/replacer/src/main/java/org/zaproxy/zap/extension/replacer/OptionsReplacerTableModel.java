@@ -33,6 +33,7 @@ public class OptionsReplacerTableModel
     private static final String[] COLUMN_NAMES = {
         Constant.messages.getString("replacer.options.table.header.enabled"),
         Constant.messages.getString("replacer.options.table.header.description"),
+        Constant.messages.getString("replacer.options.table.header.method"),
         Constant.messages.getString("replacer.options.table.header.match"),
         Constant.messages.getString("replacer.options.table.header.replacement")
     };
@@ -96,8 +97,10 @@ public class OptionsReplacerTableModel
             case 1:
                 return getElement(rowIndex).getDescription();
             case 2:
-                return getElement(rowIndex).getMatchString();
+                return getElement(rowIndex).getMethod();
             case 3:
+                return getElement(rowIndex).getMatchString();
+            case 4:
                 return getElement(rowIndex).getReplacement();
         }
         return null;

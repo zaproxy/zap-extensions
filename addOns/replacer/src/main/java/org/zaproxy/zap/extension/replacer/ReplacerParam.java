@@ -48,6 +48,7 @@ public class ReplacerParam extends VersionedAbstractParam {
     protected static final String RULE_REPLACEMENT_KEY = "replacement";
     protected static final String RULE_INITIATORS_KEY = "initiators";
     protected static final String RULE_EXTRA_PROCESSING_KEY = "extraprocessing";
+    protected static final String RULE_METHOD_KEY = "method";
 
     protected static final String CONFIRM_REMOVE_RULE_KEY =
             REPLACER_BASE_KEY + ".confirmRemoveToken";
@@ -183,6 +184,7 @@ public class ReplacerParam extends VersionedAbstractParam {
                             }
                         }
                     }
+                    String method = sub.getString(RULE_METHOD_KEY, "");
                     this.rules.add(
                             new ReplacerParamRule(
                                     desc,
@@ -193,7 +195,8 @@ public class ReplacerParam extends VersionedAbstractParam {
                                     replace,
                                     initList,
                                     enabled,
-                                    extraProcessing));
+                                    extraProcessing,
+                                    method));
                     tempTokensNames.add(desc);
                 }
             }
@@ -248,6 +251,7 @@ public class ReplacerParam extends VersionedAbstractParam {
                     .setProperty(
                             elementBaseKey + RULE_EXTRA_PROCESSING_KEY,
                             Boolean.valueOf(rule.isTokenProcessingEnabled()));
+            getConfig().setProperty(elementBaseKey + RULE_METHOD_KEY, rule.getMethod());
 
             List<Integer> initiators = rule.getInitiators();
             if (initiators == null || initiators.isEmpty()) {

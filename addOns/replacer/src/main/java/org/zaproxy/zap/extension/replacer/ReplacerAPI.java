@@ -56,6 +56,7 @@ public class ReplacerAPI extends ApiImplementor {
     private static final String INITIATORS = "initiators";
     private static final String PARAM_BOOL = "bool";
     private static final String URL = "url";
+    private static final String METHOD = "method";
 
     private ExtensionReplacer extension = null;
 
@@ -73,7 +74,7 @@ public class ReplacerAPI extends ApiImplementor {
                 new ApiAction(
                         ACTION_ADD_RULE,
                         new String[] {DESC, ENABLED, MATCH_TYPE, MATCH_REGEX, MATCH_STRING},
-                        new String[] {REPLACEMENT, INITIATORS, URL}));
+                        new String[] {REPLACEMENT, INITIATORS, URL, METHOD}));
 
         this.addApiAction(new ApiAction(ACTION_REMOVE_RULE, new String[] {DESC}));
         this.addApiAction(new ApiAction(ACTION_SET_ENABLED, new String[] {DESC, PARAM_BOOL}));
@@ -164,6 +165,8 @@ public class ReplacerAPI extends ApiImplementor {
                 }
             }
 
+            String method = getParam(params, METHOD, "");
+
             this.extension
                     .getParams()
                     .addRule(
@@ -176,7 +179,8 @@ public class ReplacerAPI extends ApiImplementor {
                                     getParam(params, REPLACEMENT, ""),
                                     initiators,
                                     enabled,
-                                    false));
+                                    false,
+                                    method));
 
             try {
                 this.extension.getParams().getConfig().save();
@@ -203,6 +207,7 @@ public class ReplacerAPI extends ApiImplementor {
         Map<String, String> map = new HashMap<>();
         map.put(DESC, rule.getDescription());
         map.put(URL, rule.getUrl());
+        map.put(METHOD, rule.getMethod());
         map.put(ENABLED, Boolean.toString(rule.isEnabled()));
         map.put(MATCH_TYPE, rule.getMatchType().name());
         map.put(MATCH_REGEX, Boolean.toString(rule.isMatchRegex()));

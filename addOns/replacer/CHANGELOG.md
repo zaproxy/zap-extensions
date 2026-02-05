@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Fixed
 - Correct error message which was shown as missing.
+### Added
+- Method parameter matcher to allow rules to apply to specific HTTP methods.
+
 
 ## [21] - 2025-12-15
 ### Changed
