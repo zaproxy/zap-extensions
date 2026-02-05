@@ -18,20 +18,22 @@
 <p>
 この内容は、動画「<a href="https://youtu.be/xuP00Ri460k">ZAP Chat 11 Automation Framework Part 5 - APIs</a>」で解説されています。
 <pre>
-  - type: graphql                      # GraphQL定義のインポート
+  - type: graphql                      # GraphQL definition import
     parameters:
-      endpoint:                        # 文字列: エンドポイントのURL。デフォルト: null。この場合、スキーマはインポートされません
-      schemaUrl:                       # 文字列: GraphQLスキーマを指すURL。デフォルト: null。エンドポイントへのイントロスペクションを通じてインポートされます
-      schemaFile:                      # 文字列: GraphQLスキーマのローカルファイルパス。デフォルト: null。schemaUrlが指定されていない場合、ここからインポートされます
-      queryGenEnabled:                 # Bool: クエリジェネレーターが有効かどうか。デフォルト: true
-      maxQueryDepth:                   # Int: クエリ生成の最大深度。デフォルト: 5
-      lenientMaxQueryDepthEnabled:     # Bool: 最大クエリ深度の緩和が有効かどうか。デフォルト: true
-      maxAdditionalQueryDepth:         # Int: 最大追加クエリ深度 (緩和が有効な場合に使用)。デフォルト: 5
-      maxArgsDepth:                    # Int: 最大引数生成深度。デフォルト: 5
-      optionalArgsEnabled:             # Bool: オプション引数を指定するかどうか。デフォルト: true
-      argsType:                        # Enum [inline, variables, both]: 引数の指定方法。デフォルト: both
-      querySplitType:                  # Enum [leaf, root_field, operation]: 単一クエリが生成されるレベル。デフォルト: leaf
-      requestMethod:                   # Enum [post_json, post_graphql, get]: リクエストメソッド。デフォルト: post_json
+      endpoint:                        # String: the endpoint URL, default: null, no schema is imported
+      schemaUrl:                       # String: URL pointing to a GraphQL Schema, default: null, import using introspection on endpoint
+      schemaFile:                      # String: Local file path of a GraphQL Schema, default: null, import using schemaUrl
+      queryGenEnabled:                 # Bool: Whether the Query Generator is enabled, default: true
+      maxQueryDepth:                   # Int: The maximum query generation depth, default: 5
+      lenientMaxQueryDepthEnabled:     # Bool: Whether or not Maximum Query Depth is enforced leniently, default: true
+      maxAdditionalQueryDepth:         # Int: The maximum additional query generation depth (used if enforced leniently), default: 5
+      maxArgsDepth:                    # Int: The maximum arguments generation depth, default: 5
+      optionalArgsEnabled:             # Bool: Whether or not Optional Arguments should be specified, default: true
+      argsType:                        # Enum [inline, variables, both]: How arguments are specified, default: both 
+      querySplitType:                  # Enum [leaf, root_field, operation]: The level for which a single query is generated, default: leaf
+      requestMethod:                   # Enum [post_json, post_graphql, get]: The request method, default: post_json
+      cycleDetectionMode:              # Enum [disabled, quick, exhaustive]: The cycle detection mode, default: quick
+      maxCycleDetectionAlerts:         # Int: The maximum number of alerts to raise for detected cycles, default: 100
 </pre>
 
 <H2>関連情報</H2>
