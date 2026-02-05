@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>ZAP Test Server - Interactive ARIA Elements</title>
+	<link href="/tutorial.css" rel="stylesheet" type="text/css" />
+	<style>
+		.aria-element {
+			display: inline-block;
+			padding: 10px 15px;
+			margin: 5px;
+			border: 1px solid #ccc;
+			border-radius: 5px;
+			cursor: pointer;
+		}
+		.aria-element:hover {
+			background-color: #eef;
+		}
+		.section {
+			margin: 20px 0;
+			padding: 15px;
+			border: 1px solid #ddd;
+			border-radius: 5px;
+		}
+		[aria-checked="true"], [aria-selected="true"] {
+			background-color: #4CAF50;
+			color: white;
+		}
+	</style>
+</head>
+<body>
+<div class="roundContainer">
+	<h1>ZAP Test Server</h1>
+	<h2>Interactive ARIA Elements</h2>
+	<p>This page demonstrates various interactive ARIA elements that should be detected and crawled.</p>
+
+	<div class="section">
+		<h3>Checkboxes (role="checkbox")</h3>
+		<div id="aria-checkbox-1" role="checkbox" class="aria-element" 
+		     aria-checked="false" aria-label="Option 1">
+			Option 1
+		</div>
+		<div id="aria-checkbox-2" role="checkbox" class="aria-element" 
+		     aria-checked="true" aria-label="Option 2">
+			Option 2 (checked)
+		</div>
+	</div>
+
+	<div class="section">
+		<h3>Radio Buttons (role="radio")</h3>
+		<div role="radiogroup" aria-label="Size Selection">
+			<div id="aria-radio-small" role="radio" class="aria-element" 
+			     aria-checked="true" aria-label="Small Size">
+				Small
+			</div>
+			<div id="aria-radio-medium" role="radio" class="aria-element" 
+			     aria-checked="false" aria-label="Medium Size">
+				Medium
+			</div>
+			<div id="aria-radio-large" role="radio" class="aria-element" 
+			     aria-checked="false" aria-label="Large Size">
+				Large
+			</div>
+		</div>
+	</div>
+
+	<div class="section">
+		<h3>Switch (role="switch")</h3>
+		<div id="aria-switch-1" role="switch" class="aria-element" 
+		     aria-checked="false" aria-label="Enable notifications">
+			Notifications: Off
+		</div>
+	</div>
+
+	<div class="section">
+		<h3>Menu Items (role="menuitem")</h3>
+		<div role="menu" aria-label="Actions Menu">
+			<div id="aria-menuitem-edit" role="menuitem" class="aria-element">
+				Edit
+			</div>
+			<div id="aria-menuitem-copy" role="menuitem" class="aria-element">
+				Copy
+			</div>
+			<div id="aria-menuitem-delete" role="menuitem" class="aria-element">
+				Delete
+			</div>
+		</div>
+	</div>
+
+	<div class="section">
+		<h3>Listbox Options (role="option")</h3>
+		<div role="listbox" aria-label="Select Color">
+			<div id="aria-option-red" role="option" class="aria-element" 
+			     aria-selected="false">
+				Red
+			</div>
+			<div id="aria-option-green" role="option" class="aria-element" 
+			     aria-selected="true">
+				Green (selected)
+			</div>
+			<div id="aria-option-blue" role="option" class="aria-element" 
+			     aria-selected="false">
+				Blue
+			</div>
+		</div>
+	</div>
+
+	<div class="section">
+		<h3>Tree Items (role="treeitem")</h3>
+		<div role="tree" aria-label="File Browser">
+			<div id="aria-treeitem-folder" role="treeitem" class="aria-element" 
+			     aria-expanded="false">
+				Documents
+			</div>
+			<div id="aria-treeitem-file1" role="treeitem" class="aria-element">
+				report.pdf
+			</div>
+			<div id="aria-treeitem-file2" role="treeitem" class="aria-element">
+				notes.txt
+			</div>
+		</div>
+	</div>
+
+	<div class="section">
+		<h3>Elements WITHOUT IDs (uses ariaIdentification)</h3>
+		<p>These elements have no id, so the spider uses ARIA attributes for identification.</p>
+		<div role="checkbox" class="aria-element" aria-checked="false" aria-label="No ID Checkbox">
+			No ID Checkbox
+		</div>
+		<div role="switch" class="aria-element" aria-checked="true" aria-label="No ID Switch">
+			No ID Switch
+		</div>
+		<div role="menuitem" class="aria-element" aria-label="No ID Menu Item">
+			No ID Menu Item
+		</div>
+	</div>
+
+	<div class="buttonsDiv">
+		<a href="index.html"><button>Back to ARIA Tests</button></a>
+	</div>
+</div>
+
+<script>
+	// Make checkboxes interactive
+	document.querySelectorAll('[role="checkbox"]').forEach(cb => {
+		cb.addEventListener('click', function() {
+			const checked = this.getAttribute('aria-checked') === 'true';
+			this.setAttribute('aria-checked', !checked);
+		});
+	});
+
+	// Make switch interactive
+	document.querySelectorAll('[role="switch"]').forEach(sw => {
+		sw.addEventListener('click', function() {
+			const checked = this.getAttribute('aria-checked') === 'true';
+			this.setAttribute('aria-checked', !checked);
+			this.textContent = checked ? 'Notifications: Off' : 'Notifications: On';
+		});
+	});
+
+	// Make radio buttons interactive
+	document.querySelectorAll('[role="radio"]').forEach(radio => {
+		radio.addEventListener('click', function() {
+			const group = this.closest('[role="radiogroup"]');
+			group.querySelectorAll('[role="radio"]').forEach(r => {
+				r.setAttribute('aria-checked', 'false');
+			});
+			this.setAttribute('aria-checked', 'true');
+		});
+	});
+
+	// Make options interactive
+	document.querySelectorAll('[role="option"]').forEach(opt => {
+		opt.addEventListener('click', function() {
+			const listbox = this.closest('[role="listbox"]');
+			listbox.querySelectorAll('[role="option"]').forEach(o => {
+				o.setAttribute('aria-selected', 'false');
+			});
+			this.setAttribute('aria-selected', 'true');
+		});
+	});
+</script>
+
+</body>
+</html>
