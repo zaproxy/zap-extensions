@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.pscanrules;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
@@ -70,8 +71,10 @@ class ContentSecurityPolicyMissingScanRuleUnitTest
                 "CONTENT-SECURITY-POLICY",
                 "content-security-policy"
             })
-    void givenMissingCspHeaderWithMetaThenAlertNotRaised(String name) throws Exception {
+    void givenMissingCspHeaderWithMetaAtLowThresholdThenAlertNotRaised(String name)
+            throws Exception {
         // Given
+        rule.setAlertThreshold(Plugin.AlertThreshold.LOW);
         HttpMessage msg = createHttpMessageWithHeaders(HEADER_HTML);
         msg.setResponseBody(
                 "<html><head><meta http-equiv=\""
@@ -82,6 +85,32 @@ class ContentSecurityPolicyMissingScanRuleUnitTest
 
         // Then
         assertThat(alertsRaised.size(), is(0));
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "Content-Security-Policy",
+                "CONTENT-SECURITY-POLICY",
+                "content-security-policy"
+            })
+    void givenMissingCspHeaderWithMetaAtMediumThresholdThenAlertRaised(String name)
+            throws Exception {
+        // Given
+        rule.setAlertThreshold(Plugin.AlertThreshold.MEDIUM);
+        HttpMessage msg = createHttpMessageWithHeaders(HEADER_HTML);
+        msg.setResponseBody(
+                "<html><head><meta http-equiv=\""
+                        + name
+                        + "\" content=\"default-src 'self'\"></head><H1>Test</H1></html>");
+        // When
+        scanHttpResponseReceive(msg);
+
+        // Then
+        assertThat(alertsRaised.size(), is(1));
+        assertThat(
+                alertsRaised.get(0).getOtherInfo(),
+                containsString("META tag CSP checks are only performed at LOW threshold"));
     }
 
     @Test
