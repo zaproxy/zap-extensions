@@ -23,6 +23,8 @@ package com.sittinglittleduck.DirBuster;
 import com.sittinglittleduck.DirBuster.SimpleHttpClient.HttpMethod;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Vector;
 import net.htmlparser.jericho.Attribute;
@@ -102,7 +104,8 @@ public class HTMLparse extends Thread {
                                 if (attr != null) {
                                     // creates a full qulaifed domian name, based on the page we
                                     // have just tested
-                                    URL tempURL = new URL(work.getWork(), attr.getValue());
+                                    URL tempURL =
+                                            work.getWork().toURI().resolve(attr.getValue()).toURL();
 
                                     String urlString = tempURL.getPath();
                                     // check it is not already there and the link is from the same
@@ -125,7 +128,7 @@ public class HTMLparse extends Thread {
                                     }
                                 }
 
-                            } catch (MalformedURLException e) {
+                            } catch (MalformedURLException | URISyntaxException e) {
                                 LOGGER.debug("Bad URL", e);
                             }
                         }
@@ -179,11 +182,16 @@ public class HTMLparse extends Thread {
                                         // ports
                                         WorkUnit workUnit =
                                                 new WorkUnit(
-                                                        new URL(
-                                                                work.getWork().getProtocol(),
-                                                                work.getWork().getHost(),
-                                                                work.getWork().getPort(),
-                                                                founditem),
+                                                        new URI(
+                                                                        work.getWork()
+                                                                                .getProtocol(),
+                                                                        null,
+                                                                        work.getWork().getHost(),
+                                                                        work.getWork().getPort(),
+                                                                        founditem,
+                                                                        null,
+                                                                        null)
+                                                                .toURL(),
                                                         founditem.endsWith("/"),
                                                         method,
                                                         baseCase,
@@ -198,7 +206,7 @@ public class HTMLparse extends Thread {
                                             // workUnit.getWork().toString() + " to the work
                                             // queue");
                                         }
-                                    } catch (MalformedURLException ex) {
+                                    } catch (MalformedURLException | URISyntaxException ex) {
                                         LOGGER.debug("Bad URL", ex);
                                     } catch (InterruptedException ex) {
                                         LOGGER.debug(ex);

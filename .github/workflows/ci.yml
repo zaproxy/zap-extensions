@@ -15,7 +15,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        java: [17, 19]
+        java: [17, 19, 21]
         include:
           - os: windows-latest
             java: 17

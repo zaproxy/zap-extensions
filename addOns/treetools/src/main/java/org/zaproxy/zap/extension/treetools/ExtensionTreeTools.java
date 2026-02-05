@@ -20,6 +20,8 @@
 package org.zaproxy.zap.extension.treetools;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
@@ -58,8 +60,8 @@ public class ExtensionTreeTools extends ExtensionAdaptor {
     @Override
     public URL getURL() {
         try {
-            return new URL("http://www.chs.us");
-        } catch (MalformedURLException e) {
+            return new URI("http://www.chs.us").toURL();
+        } catch (MalformedURLException | URISyntaxException e) {
             return null;
         }
     }

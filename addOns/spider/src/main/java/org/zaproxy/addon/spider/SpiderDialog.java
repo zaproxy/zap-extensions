@@ -23,7 +23,6 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JButton;
@@ -392,7 +391,7 @@ public class SpiderDialog extends StandardFieldsDialog {
             try {
                 // Need both constructors as they catch slightly different issues ;)
                 new URI(url, true);
-                new URL(url);
+                new java.net.URI(url).toURL();
             } catch (Exception e) {
                 return Constant.messages.getString("spider.custom.nostart.error");
             }

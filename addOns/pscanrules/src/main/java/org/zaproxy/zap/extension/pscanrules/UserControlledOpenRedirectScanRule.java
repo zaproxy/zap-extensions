@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.pscanrules;
 
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
@@ -117,8 +118,8 @@ public class UserControlledOpenRedirectScanRule extends PluginPassiveScanner
         if (responseLocation.indexOf("://") > 0) {
             URL responseURL;
             try {
-                responseURL = new URL(responseLocation);
-            } catch (MalformedURLException e) {
+                responseURL = new java.net.URI(responseLocation).toURL();
+            } catch (MalformedURLException | URISyntaxException e) {
                 return;
             }
 

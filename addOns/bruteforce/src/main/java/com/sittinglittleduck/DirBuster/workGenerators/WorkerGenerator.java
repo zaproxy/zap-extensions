@@ -35,6 +35,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Vector;
 import java.util.concurrent.BlockingQueue;
@@ -113,7 +115,7 @@ public class WorkerGenerator implements Runnable {
         // checks if the server surports heads requests
         if (manager.getAuto()) {
             try {
-                URL headurl = new URL(firstPart);
+                URL headurl = new URI(firstPart).toURL();
 
                 int responceCode =
                         manager.getHttpClient()
@@ -132,7 +134,7 @@ public class WorkerGenerator implements Runnable {
                     // switch the mode to just GET requests
                     manager.setAuto(false);
                 }
-            } catch (IOException e) {
+            } catch (IOException | URISyntaxException e) {
                 LOGGER.error(e, e);
             }
         }
@@ -210,14 +212,14 @@ public class WorkerGenerator implements Runnable {
                             } else {
                                 method = "GET";
                             }
-                            currentURL = new URL(firstPart + currentDir);
+                            currentURL = new URI(firstPart + currentDir).toURL();
                             // System.out.println("first part = " + firstPart);
                             // System.out.println("current dir = " + currentDir);
                             workQueue.put(
                                     new WorkUnit(
                                             currentURL, true, HttpMethod.GET, baseCaseObj, null));
                             LOGGER.debug("1 adding dir to work list {} {}", method, currentDir);
-                        } catch (MalformedURLException ex) {
+                        } catch (MalformedURLException | URISyntaxException ex) {
                             LOGGER.debug("Bad URL", ex);
                         } catch (InterruptedException ex) {
                             LOGGER.debug(ex);
@@ -249,7 +251,7 @@ public class WorkerGenerator implements Runnable {
                                     method = HttpMethod.GET;
                                 }
 
-                                currentURL = new URL(firstPart + currentDir + line + "/");
+                                currentURL = new URI(firstPart + currentDir + line + "/").toURL();
                                 // BaseCase baseCaseObj = new BaseCase(currentURL, failcode, true,
                                 // failurl, baseResponce);
                                 // if the base case is null then we need to switch to content
@@ -260,7 +262,7 @@ public class WorkerGenerator implements Runnable {
                                         new WorkUnit(currentURL, true, method, baseCaseObj, line));
                                 // System.out.println("Gen finshed adding to queue");
                                 LOGGER.debug("2 adding dir to work list {} {}", method, currentURL);
-                            } catch (MalformedURLException e) {
+                            } catch (MalformedURLException | URISyntaxException e) {
                                 // TODO deal with bad line
                                 // e.printStackTrace();
                                 // do nothing if it's malformed, I dont care about them!
@@ -345,11 +347,12 @@ public class WorkerGenerator implements Runnable {
                                         }
 
                                         URL currentURL =
-                                                new URL(
-                                                        firstPart
-                                                                + currentDir
-                                                                + line
-                                                                + fileExtention);
+                                                new URI(
+                                                                firstPart
+                                                                        + currentDir
+                                                                        + line
+                                                                        + fileExtention)
+                                                        .toURL();
                                         // BaseCase baseCaseObj = new BaseCase(currentURL, true,
                                         // failurl, baseResponce);
                                         workQueue.put(
@@ -363,7 +366,7 @@ public class WorkerGenerator implements Runnable {
                                                 "adding file to work list {} {}",
                                                 method,
                                                 currentURL);
-                                    } catch (MalformedURLException e) {
+                                    } catch (MalformedURLException | URISyntaxException e) {
                                         // e.printStackTrace();
                                         // again do nothing as I dont care
                                     } catch (InterruptedException e) {

@@ -20,6 +20,8 @@
 package org.zaproxy.zap.extension.pscanrules;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
@@ -146,8 +148,8 @@ public class UserControlledHTMLAttributesScanRule extends PluginPassiveScanner
         if (attrValue.indexOf("://") > 0) {
             URL url;
             try {
-                url = new URL(attrValue);
-            } catch (MalformedURLException e) {
+                url = new URI(attrValue).toURL();
+            } catch (MalformedURLException | URISyntaxException e) {
                 return;
             }
             // get protocol

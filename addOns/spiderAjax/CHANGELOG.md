@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Update Crawljax to version 3.8.0 (Issues 3412 and 7138).
+- Maintenance changes.
 
 ## [23.29.0] - 2025-12-15
 ### Changed

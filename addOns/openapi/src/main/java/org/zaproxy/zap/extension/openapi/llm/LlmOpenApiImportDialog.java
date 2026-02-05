@@ -25,7 +25,6 @@ import java.awt.Insets;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.net.URL;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -313,7 +312,7 @@ public class LlmOpenApiImportDialog extends AbstractDialog {
 
     private boolean isValidURL(String url) {
         try {
-            new URL(url).toURI();
+            new java.net.URI(url).toURL();
             new URI(url, true);
         } catch (URIException | MalformedURLException | URISyntaxException e) {
             // Not a valid URI
