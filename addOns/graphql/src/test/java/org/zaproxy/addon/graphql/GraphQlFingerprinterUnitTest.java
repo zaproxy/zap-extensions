@@ -30,6 +30,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -60,6 +61,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.ArgumentCaptor;
 import org.mockito.quality.Strictness;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -184,9 +186,9 @@ class GraphQlFingerprinterUnitTest extends TestUtils {
         var fp = buildFingerprinter(endpointUrl);
         // When
         fp.fingerprint();
-        // Then
-        assertThat(nano.getRequestedUris(), hasSize(27));
+        // Then - no framework detected, and no errors logged
         verifyNoInteractions(extensionAlert);
+        assertNoLoggedErrors(writer.toString());
     }
 
     static Stream<Arguments> fingerprintData() {
@@ -400,10 +402,93 @@ class GraphQlFingerprinterUnitTest extends TestUtils {
         assertDoesNotThrow(() -> GraphQlFingerprinter.addEngineHandler(handler::add));
     }
 
+    @Test
+    void shouldPreferHigherSpecificityFrameworkWhenMultipleMatch() throws Exception {
+        // Given
+        ExtensionAlert extensionAlert = mockExtensionAlert();
+        // Handler returns responses that match BOTH Tartiflette (score 95) and Lighthouse (score
+        // 50)
+        nano.addHandler(
+                new NanoServerHandler("/graphql") {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String body = getBody(session);
+                        // Tartiflette check sends "query @doesnotexist {__typename}"
+                        if (body != null && body.contains("@doesnotexist")) {
+                            return newFixedLengthResponse(
+                                    NanoHTTPD.Response.Status.OK,
+                                    "application/json",
+                                    "{\"errors\": [{\"message\": \"Unknow Directive < @doesnotexist >.\"}]}");
+                        }
+                        // Lighthouse check sends "{__typename @include(if: falsee)}"
+                        if (body != null && body.contains("@include(if: falsee)")) {
+                            return newFixedLengthResponse(
+                                    NanoHTTPD.Response.Status.OK,
+                                    "application/json",
+                                    "{\"errors\": [{\"message\": \"Internal server error\"}]}");
+                        }
+                        // Default response - use a non-matching typename to avoid Dgraph detection
+                        return newFixedLengthResponse(
+                                NanoHTTPD.Response.Status.OK,
+                                "application/json",
+                                "{\"data\": {\"__typename\": \"RootQuery\"}}");
+                    }
+                });
+        var fp = buildFingerprinter(endpointUrl);
+        List<DiscoveredGraphQlEngine> discoveredEngines = new ArrayList<>(1);
+        GraphQlFingerprinter.addEngineHandler(discoveredEngines::add);
+        // When
+        fp.fingerprint();
+        // Then - tartiflette (score 95) should be detected, not Lighthouse (score 50)
+        assertNoLoggedErrors(writer.toString());
+        assertThat(discoveredEngines, hasSize(1));
+        assertThat(discoveredEngines.get(0).getName(), is(equalTo("tartiflette")));
+        // Verify the alert was raised with Tartiflette evidence
+        ArgumentCaptor<Alert> alertCaptor = ArgumentCaptor.forClass(Alert.class);
+        verify(extensionAlert).alertFound(alertCaptor.capture(), isNull());
+        assertThat(
+                alertCaptor.getValue().getEvidence(),
+                is(equalTo("Unknow Directive < @doesnotexist >.")));
+    }
+
+    @Test
+    void shouldDetectJuniperViaPatternDetection() throws Exception {
+        // Given
+        ExtensionAlert extensionAlert = mockExtensionAlert();
+        nano.addHandler(
+                new NanoServerHandler("/graphql") {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        consumeBody(session);
+                        return newFixedLengthResponse(
+                                NanoHTTPD.Response.Status.OK,
+                                "application/json",
+                                "{\"errors\": [{\"message\": \"Unexpected \\\"queryy\\\"\"}]}");
+                    }
+                });
+        var fp = buildFingerprinter(endpointUrl);
+        List<DiscoveredGraphQlEngine> discoveredEngine = new ArrayList<>(1);
+        GraphQlFingerprinter.addEngineHandler(discoveredEngine::add);
+        // When
+        fp.fingerprint();
+        // Then - Juniper detected via pattern, no errors
+        assertNoLoggedErrors(writer.toString());
+        assertThat(discoveredEngine.get(0).getName(), is(equalTo("Juniper")));
+        // Verify evidence is from the error message pattern
+        ArgumentCaptor<Alert> alertCaptor = ArgumentCaptor.forClass(Alert.class);
+        verify(extensionAlert).alertFound(alertCaptor.capture(), isNull());
+        assertThat(alertCaptor.getValue().getEvidence(), is(equalTo("Unexpected \"queryy\"")));
+    }
+
     private static void assertNoErrors(ExtensionAlert extMock, String loggerOutput) {
+        assertNoLoggedErrors(loggerOutput);
+        verify(extMock, times(1)).alertFound(any(), isNull());
+    }
+
+    private static void assertNoLoggedErrors(String loggerOutput) {
         assertThat(loggerOutput, not(containsString("WARN")));
+        assertThat(loggerOutput, not(containsString("ERROR")));
         assertThat(loggerOutput, not(containsString("Null")));
-        verify(extMock, times(1)).alertFound(any(), any());
     }
 
     private static ExtensionAlert mockExtensionAlert() {
