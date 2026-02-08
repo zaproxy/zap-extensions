@@ -54,6 +54,7 @@ import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -366,38 +367,57 @@ class GraphQlFingerprinterUnitTest extends TestUtils {
         assertThat(discoveredEngine.get(0).getName(), is(equalTo(graphqlImpl)));
     }
 
-    @Test
-    void shouldFingerprintWithoutAddedHandler() throws Exception {
-        // Given
-        ExtensionAlert extensionAlert = mockExtensionAlert();
-        nano.addHandler(new GraphQlResponseHandler(errorResponse("The query must be a string.")));
-        var fp = buildFingerprinter(endpointUrl);
-        // When
-        fp.fingerprint();
-        // Then
-        assertNoErrors(extensionAlert, writer.toString());
-    }
+    @Nested
+    class HandlerTests {
 
-    @Test
-    void shouldFingerprintAfterHandlerReset() throws Exception {
-        // Given
-        ExtensionAlert extensionAlert = mockExtensionAlert();
-        nano.addHandler(new GraphQlResponseHandler(errorResponse("The query must be a string.")));
-        var fp = buildFingerprinter(endpointUrl);
-        // When
-        GraphQlFingerprinter.resetHandlers();
-        fp.fingerprint();
-        // Then
-        assertNoErrors(extensionAlert, writer.toString());
-    }
+        @Test
+        void shouldFingerprintWithoutAddedHandler() throws Exception {
+            // Given
+            ExtensionAlert extensionAlert = mockExtensionAlert();
+            nano.addHandler(new GraphQlResponseHandler(errorResponse("The query must be a string.")));
+            var fp = buildFingerprinter(endpointUrl);
+            // When
+            fp.fingerprint();
+            // Then
+            assertNoErrors(extensionAlert, writer.toString());
+        }
 
-    @Test
-    @Order(1)
-    void shouldStaticallyAddHandlerWithoutException() throws Exception {
-        // Given
-        List<DiscoveredGraphQlEngine> handler = new ArrayList<>();
-        // When / Then
-        assertDoesNotThrow(() -> GraphQlFingerprinter.addEngineHandler(handler::add));
+        @Test
+        void shouldFingerprintAfterHandlerReset() throws Exception {
+            // Given
+            ExtensionAlert extensionAlert = mockExtensionAlert();
+            nano.addHandler(new GraphQlResponseHandler(errorResponse("The query must be a string.")));
+            var fp = buildFingerprinter(endpointUrl);
+            // When
+            GraphQlFingerprinter.resetHandlers();
+            fp.fingerprint();
+            // Then
+            assertNoErrors(extensionAlert, writer.toString());
+        }
+
+        @Test
+        @Order(1)
+        void shouldStaticallyAddHandlerWithoutException() throws Exception {
+            // Given
+            List<DiscoveredGraphQlEngine> handler = new ArrayList<>();
+            // When / Then
+            assertDoesNotThrow(() -> GraphQlFingerprinter.addEngineHandler(handler::add));
+        }
+
+        @Test
+        void shouldPreserveHandlersAcrossMultipleFingerprinterInstances() throws Exception {
+            // Given
+            mockExtensionAlert();
+            nano.addHandler(new GraphQlResponseHandler(errorResponse("The query must be a string.")));
+            List<DiscoveredGraphQlEngine> discoveredEngines = new ArrayList<>();
+            GraphQlFingerprinter.addEngineHandler(discoveredEngines::add);
+            // When - create a new fingerprinter instance after handler registration
+            var fp = buildFingerprinter(endpointUrl);
+            fp.fingerprint();
+            // Then - handler should still be registered and receive the detected engine
+            assertThat(discoveredEngines, hasSize(1));
+            assertThat(discoveredEngines.get(0).getName(), is(equalTo("Ariadne")));
+        }
     }
 
     private static void assertNoErrors(ExtensionAlert extMock, String loggerOutput) {
