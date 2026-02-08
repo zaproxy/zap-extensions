@@ -23,6 +23,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -39,6 +40,30 @@ import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
 
 public class GraphQlFingerprinter {
+
+    /**
+     * A fingerprint check with its reliability score (0-100, higher = more specific).
+     *
+     * @param check The fingerprinting function that returns true if framework matches
+     * @param specificityScore Reliability score: 90-95 highly specific, 60-69 generic
+     */
+    private record FingerprintCheck(BooleanSupplier check, int specificityScore) {
+
+        private static final int MIN_SCORE = 0;
+        private static final int MAX_SCORE = 100;
+
+        /**
+         * Creates a fingerprint check with score validation.
+         *
+         * @throws IllegalArgumentException if specificityScore is not in range [0, 100]
+         */
+        public FingerprintCheck {
+            if (specificityScore < MIN_SCORE || specificityScore > MAX_SCORE) {
+                throw new IllegalArgumentException(
+                        "Specificity score must be in range [0, 100], got: " + specificityScore);
+            }
+        }
+    }
 
     private static final String FINGERPRINTING_ALERT_REF = ExtensionGraphQl.TOOL_ALERT_ID + "-2";
     private static final Map<String, String> FINGERPRINTING_ALERT_TAGS =
@@ -62,61 +87,128 @@ public class GraphQlFingerprinter {
         queryCache = new HashMap<>();
     }
 
+    /**
+     * Performs GraphQL framework fingerprinting using pattern-based detection.
+     *
+     * <p>Sends malformed queries and analyzes error responses to identify framework-specific
+     * patterns. Framework checks are ordered by specificity score, and the first successful match
+     * is used.
+     *
+     * @see #performPatternBasedDetection()
+     */
     public void fingerprint() {
-        Map<String, BooleanSupplier> fingerprinters = new LinkedHashMap<>();
-        // TODO: Check whether the order of the fingerprint checks matters.
-        fingerprinters.put("lighthouse", this::checkLighthouseEngine);
-        fingerprinters.put("caliban", this::checkCalibanEngine);
-        fingerprinters.put("lacinia", this::checkLaciniaEngine);
-        fingerprinters.put("jaal", this::checkJaalEngine);
-        fingerprinters.put("morpheus", this::checkMorpheusEngine);
-        fingerprinters.put("mercurius", this::checkMercuriusEngine);
-        fingerprinters.put("graphql-yoga", this::checkGraphQlYogaEngine);
-        fingerprinters.put("agoo", this::checkAgooEngine);
-        fingerprinters.put("dgraph", this::checkDgraphEngine);
-        fingerprinters.put("graphene", this::checkGrapheneEngine);
-        fingerprinters.put("ariadne", this::checkAriadneEngine);
-        fingerprinters.put("apollo", this::checkApolloEngine);
-        fingerprinters.put("aws-appsync", this::checkAwsAppSyncEngine);
-        fingerprinters.put("hasura", this::checkHasuraEngine);
-        fingerprinters.put("wpgraphql", this::checkWpGraphQlEngine);
-        fingerprinters.put("graphql-by-pop", this::checkGraphQlByPopEngine);
-        fingerprinters.put("graphql-java", this::checkGraphQlJavaEngine);
-        fingerprinters.put("hypergraphql", this::checkHyperGraphQlEngine);
-        fingerprinters.put("graphql-ruby", this::checkGraphQlRubyEngine);
-        fingerprinters.put("graphql-php", this::checkGraphQlPhpEngine);
-        fingerprinters.put("gqlgen", this::checkGqlGenEngine);
-        fingerprinters.put("graphql-go", this::checkGraphQlGoEngine);
-        fingerprinters.put("juniper", this::checkJuniperEngine);
-        fingerprinters.put("sangria", this::checkSangriaEngine);
-        fingerprinters.put("graphql-flutter", this::checkFlutterEngine);
-        fingerprinters.put("dianajl", this::checkDianajlEngine);
-        fingerprinters.put("strawberry", this::checkStrawberryEngine);
-        fingerprinters.put("tartiflette", this::checkTartifletteEngine);
-        fingerprinters.put("directus", this::checkDirectusEngine);
-        fingerprinters.put("absinthe", this::checkAbsintheEngine);
-        fingerprinters.put("graphql-dotnet", this::checkGraphqlDotNetEngine);
-        fingerprinters.put("pg_graphql", this::checkPgGraphqlEngine);
-        fingerprinters.put("tailcall", this::checkTailcallEngine);
-        fingerprinters.put("hotchocolate", this::checkHotchocolateEngine);
-        fingerprinters.put("inigo", this::checkInigoEngine);
+        String detectedFramework = performPatternBasedDetection();
 
-        for (var fingerprinter : fingerprinters.entrySet()) {
+        if (detectedFramework != null) {
+            raiseAlertForFramework(detectedFramework);
+        }
+
+        matchedString = null;
+        queryCache.clear();
+    }
+
+    /**
+     * Performs pattern-based detection using error message analysis.
+     *
+     * <p>Sends malformed queries and analyzes error responses to identify framework-specific
+     * patterns. Frameworks are checked in descending specificity order based on their specificity
+     * scores, and the first framework whose check succeeds is returned. The specificity scores are
+     * used only to determine the order of evaluation; any successful check is treated as a match.
+     *
+     * @return The detected framework name, or {@code null} if no framework matches
+     */
+    private String performPatternBasedDetection() {
+        Map<String, FingerprintCheck> fingerprinters = new LinkedHashMap<>();
+
+        // Register checks with specificity scores (higher = more specific/reliable)
+        // Scores range from 50 (generic errors) to 95 (highly unique patterns)
+
+        // Tier A: Highly specific patterns (90-95)
+        fingerprinters.put("tartiflette", new FingerprintCheck(this::checkTartifletteEngine, 95));
+        fingerprinters.put("hasura", new FingerprintCheck(this::checkHasuraEngine, 90));
+        fingerprinters.put("dgraph", new FingerprintCheck(this::checkDgraphEngine, 90));
+        fingerprinters.put("directus", new FingerprintCheck(this::checkDirectusEngine, 90));
+        fingerprinters.put("inigo", new FingerprintCheck(this::checkInigoEngine, 90));
+
+        // Tier B: Very specific patterns (80-89)
+        fingerprinters.put(
+                "graphql-by-pop", new FingerprintCheck(this::checkGraphQlByPopEngine, 85));
+        fingerprinters.put("wpgraphql", new FingerprintCheck(this::checkWpGraphQlEngine, 85));
+        fingerprinters.put("absinthe", new FingerprintCheck(this::checkAbsintheEngine, 80));
+        fingerprinters.put("lacinia", new FingerprintCheck(this::checkLaciniaEngine, 80));
+        fingerprinters.put("sangria", new FingerprintCheck(this::checkSangriaEngine, 80));
+
+        // Tier C: Moderately specific patterns (70-79)
+        fingerprinters.put("caliban", new FingerprintCheck(this::checkCalibanEngine, 75));
+        fingerprinters.put("strawberry", new FingerprintCheck(this::checkStrawberryEngine, 75));
+        fingerprinters.put("ariadne", new FingerprintCheck(this::checkAriadneEngine, 75));
+        fingerprinters.put("graphql-java", new FingerprintCheck(this::checkGraphQlJavaEngine, 70));
+        fingerprinters.put(
+                "graphql-dotnet", new FingerprintCheck(this::checkGraphqlDotNetEngine, 70));
+        fingerprinters.put("graphql-ruby", new FingerprintCheck(this::checkGraphQlRubyEngine, 70));
+        fingerprinters.put("graphql-php", new FingerprintCheck(this::checkGraphQlPhpEngine, 70));
+        fingerprinters.put("gqlgen", new FingerprintCheck(this::checkGqlGenEngine, 70));
+        fingerprinters.put("graphql-go", new FingerprintCheck(this::checkGraphQlGoEngine, 70));
+        fingerprinters.put("juniper", new FingerprintCheck(this::checkJuniperEngine, 70));
+        fingerprinters.put("hotchocolate", new FingerprintCheck(this::checkHotchocolateEngine, 70));
+        fingerprinters.put("pg_graphql", new FingerprintCheck(this::checkPgGraphqlEngine, 70));
+        fingerprinters.put("tailcall", new FingerprintCheck(this::checkTailcallEngine, 70));
+
+        // Tier D: Generic patterns (60-69)
+        fingerprinters.put("graphene", new FingerprintCheck(this::checkGrapheneEngine, 65));
+        fingerprinters.put("graphql-yoga", new FingerprintCheck(this::checkGraphQlYogaEngine, 65));
+        fingerprinters.put("aws-appsync", new FingerprintCheck(this::checkAwsAppSyncEngine, 65));
+        fingerprinters.put("hypergraphql", new FingerprintCheck(this::checkHyperGraphQlEngine, 65));
+        fingerprinters.put("graphql-flutter", new FingerprintCheck(this::checkFlutterEngine, 65));
+        fingerprinters.put("dianajl", new FingerprintCheck(this::checkDianajlEngine, 65));
+        fingerprinters.put("morpheus", new FingerprintCheck(this::checkMorpheusEngine, 65));
+        fingerprinters.put("apollo", new FingerprintCheck(this::checkApolloEngine, 60));
+        fingerprinters.put("mercurius", new FingerprintCheck(this::checkMercuriusEngine, 60));
+        fingerprinters.put("jaal", new FingerprintCheck(this::checkJaalEngine, 60));
+        fingerprinters.put("agoo", new FingerprintCheck(this::checkAgooEngine, 65));
+
+        // Tier E: Very generic patterns (50-59) - prone to false positives
+        fingerprinters.put("lighthouse", new FingerprintCheck(this::checkLighthouseEngine, 50));
+
+        // Iterate checks in descending score order and return on first match
+        // This ensures we check high-confidence patterns first and can early-exit
+        var sortedFingerprinters =
+                fingerprinters.entrySet().stream()
+                        .sorted(
+                                Map.Entry.comparingByValue(
+                                        Comparator.comparingInt(FingerprintCheck::specificityScore)
+                                                .reversed()))
+                        .toList();
+
+        for (var fingerprinter : sortedFingerprinters) {
             try {
-                if (fingerprinter.getValue().getAsBoolean()) {
-                    DiscoveredGraphQlEngine discoveredGraphQlEngine =
-                            new DiscoveredGraphQlEngine(
-                                    fingerprinter.getKey(),
-                                    lastQueryMsg.getRequestHeader().getURI());
-                    handleDetectedEngine(discoveredGraphQlEngine);
-                    raiseFingerprintingAlert(discoveredGraphQlEngine);
-                    break;
+                if (fingerprinter.getValue().check().getAsBoolean()) {
+                    String framework = fingerprinter.getKey();
+                    LOGGER.debug(
+                            "Detected GraphQL engine: {} (specificity score: {})",
+                            framework,
+                            fingerprinter.getValue().specificityScore());
+                    return framework;
                 }
             } catch (Exception e) {
                 LOGGER.warn("Failed to fingerprint GraphQL engine: {}", fingerprinter.getKey(), e);
             }
         }
-        queryCache.clear();
+
+        LOGGER.debug("No framework match found");
+        return null;
+    }
+
+    /**
+     * Helper method to raise fingerprinting alert for detected framework.
+     *
+     * @param framework The detected framework name
+     */
+    private void raiseAlertForFramework(String framework) {
+        DiscoveredGraphQlEngine discoveredGraphQlEngine =
+                new DiscoveredGraphQlEngine(framework, lastQueryMsg.getRequestHeader().getURI());
+        handleDetectedEngine(discoveredGraphQlEngine);
+        raiseFingerprintingAlert(discoveredGraphQlEngine);
     }
 
     private static void handleDetectedEngine(DiscoveredGraphQlEngine discoveredGraphQlEngine) {
@@ -564,6 +656,9 @@ public class GraphQlFingerprinter {
 
     private boolean checkStrawberryEngine() {
         sendQuery("query @deprecated {__typename}");
+        if (lastQueryMsg == null || !lastQueryMsg.getResponseHeader().isJson()) {
+            return false;
+        }
         String response = lastQueryMsg.getResponseBody().toString();
         try {
             return errorContains("Directive '@deprecated' may not be used on query.")
