@@ -56,7 +56,9 @@ public class GraphQlFingerprinter {
     private String matchedString;
 
     public GraphQlFingerprinter(URI endpointUrl, Requestor requestor) {
-        resetHandlers();
+        if (handlers == null) {
+            handlers = new ArrayList<>(2);
+        }
         this.endpointUrl = endpointUrl;
         this.requestor = requestor;
         queryCache = new HashMap<>();
