@@ -28,16 +28,24 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.withSettings;
 
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.network.HttpHeader;
@@ -57,23 +65,8 @@ class TechPassiveScannerUnitTest extends PassiveScannerTestUtils<TechPassiveScan
             Server: Apache\r
             X-Powered-By: PHP/5.6.34""";
 
-    ApplicationTestHolder defaultHolder;
-
-    public ApplicationTestHolder getDefaultHolder() {
-        if (defaultHolder == null) {
-            try {
-                defaultHolder = new ApplicationTestHolder();
-                TechsJsonParser parser = new TechsJsonParser();
-                TechData result =
-                        parser.parse(
-                                "categories.json", Collections.singletonList("apps.json"), true);
-                defaultHolder.setApplications(result.getApplications());
-            } catch (Exception ex) {
-                throw new RuntimeException(ex);
-            }
-        }
-        return defaultHolder;
-    }
+    private ApplicationHolder mockApplicationHolder;
+    private Map<String, List<ApplicationMatch>> siteToAppsMap = new HashMap<>();
 
     @Override
     protected void setUpMessages() {
@@ -82,8 +75,8 @@ class TechPassiveScannerUnitTest extends PassiveScannerTestUtils<TechPassiveScan
 
     @Override
     protected TechPassiveScanner createScanner() {
-        getDefaultHolder().resetApplicationsToSite();
-        return new TechPassiveScanner(getDefaultHolder());
+        resetApplicationsToSite();
+        return new TechPassiveScanner(getMockApplicationHolder());
     }
 
     @Test
@@ -493,9 +486,9 @@ class TechPassiveScannerUnitTest extends PassiveScannerTestUtils<TechPassiveScan
         msg.getResponseHeader().addHeader("Test", "Test Entry");
         // When
         scan(msg);
-        int initialCount = getDefaultHolder().getAppsForSite(site).size();
+        int initialCount = siteToAppsMap.get(site).size();
         scan(msg);
-        int secondaryCount = getDefaultHolder().getAppsForSite(site).size();
+        int secondaryCount = siteToAppsMap.get(site).size();
         // Then
         assertThat(initialCount, is(equalTo(secondaryCount)));
         assertFoundAppCount(site, 1);
@@ -560,12 +553,12 @@ class TechPassiveScannerUnitTest extends PassiveScannerTestUtils<TechPassiveScan
     }
 
     private void assertNothingFound(String site) {
-        List<ApplicationMatch> appsForSite = getDefaultHolder().getAppsForSite(site);
+        List<ApplicationMatch> appsForSite = siteToAppsMap.get(site);
         assertNull(appsForSite);
     }
 
     private void assertFoundAppCount(String site, int appCount) {
-        List<ApplicationMatch> appsForSite = getDefaultHolder().getAppsForSite(site);
+        List<ApplicationMatch> appsForSite = siteToAppsMap.get(site);
         assertThat(appsForSite, notNullValue());
         assertThat(appsForSite.size(), is(appCount));
     }
@@ -583,7 +576,7 @@ class TechPassiveScannerUnitTest extends PassiveScannerTestUtils<TechPassiveScan
     }
 
     private void assertFoundApp(String site, String appName, String version, boolean withEvidence) {
-        List<ApplicationMatch> appsForSite = getDefaultHolder().getAppsForSite(site);
+        List<ApplicationMatch> appsForSite = siteToAppsMap.get(site);
         assertThat(appsForSite, notNullValue());
 
         Optional<ApplicationMatch> app =
@@ -605,8 +598,8 @@ class TechPassiveScannerUnitTest extends PassiveScannerTestUtils<TechPassiveScan
 
         @Override
         protected TechPassiveScanner createScanner() {
-            getDefaultHolder().resetApplicationsToSite();
-            return new TechPassiveScanner(getDefaultHolder());
+            resetApplicationsToSite();
+            return new TechPassiveScanner(getMockApplicationHolder());
         }
 
         @Test
@@ -692,5 +685,49 @@ class TechPassiveScannerUnitTest extends PassiveScannerTestUtils<TechPassiveScan
                                             + "The following version(s) is/are associated with the identified tech: 55.4.3")));
             assertThat(alert.getWascId(), is(equalTo(13)));
         }
+    }
+
+    public ApplicationHolder getMockApplicationHolder() {
+        if (mockApplicationHolder == null) {
+            mockApplicationHolder =
+                    mock(ApplicationHolder.class, withSettings().strictness(Strictness.LENIENT));
+
+            List<Application> applications = createTestApplications();
+            given(mockApplicationHolder.getApplications()).willReturn(applications);
+
+            given(mockApplicationHolder.getApplication(anyString()))
+                    .willAnswer(
+                            invocation -> {
+                                String name = invocation.getArgument(0);
+                                return applications.stream()
+                                        .filter(app -> name.equals(app.getName()))
+                                        .findFirst()
+                                        .orElse(null);
+                            });
+
+            // Capture addApplicationsToSite calls and track them
+            doAnswer(
+                            invocation -> {
+                                String site = invocation.getArgument(0);
+                                ApplicationMatch match = invocation.getArgument(1);
+                                siteToAppsMap
+                                        .computeIfAbsent(site, k -> new ArrayList<>())
+                                        .add(match);
+                                return null;
+                            })
+                    .when(mockApplicationHolder)
+                    .addApplicationsToSite(anyString(), any(ApplicationMatch.class));
+        }
+        return mockApplicationHolder;
+    }
+
+    private void resetApplicationsToSite() {
+        siteToAppsMap.clear();
+    }
+
+    private List<Application> createTestApplications() {
+        TechsJsonParser parser = new TechsJsonParser();
+        TechData techData = parser.parse("categories.json", List.of("apps.json"), false);
+        return techData.getApplications();
     }
 }
