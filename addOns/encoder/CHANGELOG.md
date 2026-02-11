@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+- Main dialog input area is now resizable via a draggable divider between input and output panels, the position is saved and restored when the dialog is opened.
 
 ## [1.8.0] - 2025-12-15
 ### Changed
