@@ -101,7 +101,7 @@ public class OverlappingPairsSparseOccupancy extends Base
 		int j;
 		int u, l;
 		int wd;
-		long[] maskbit = new long[32];
+		int[] maskbit = new int[32];
 		int i, k, rt = 0;
 		int no_wds = (int) pow(2, bits_pw + 1);
 		int no_mswds;

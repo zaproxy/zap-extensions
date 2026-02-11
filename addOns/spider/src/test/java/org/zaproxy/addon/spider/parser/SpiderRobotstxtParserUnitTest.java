@@ -167,8 +167,8 @@ class SpiderRobotstxtParserUnitTest extends SpiderParserTestUtils<SpiderRobotstx
                         "http://example.com/x/y/z",
                         "http://example.com/a/b/c.html",
                         "http://example.com/nohtmltags/",
-                        "http://example.com/%25",
-                        "http://example.com/%20file.txt",
+                        "http://example.com/%2525",
+                        "http://example.com/%2520file.txt",
                         "http://example.com/abc/"));
     }
 

@@ -200,7 +200,7 @@ class SpiderSitemapXmlParserUnitTest extends SpiderParserTestUtils<SpiderSitemap
                         "http://subdomain.example.com/",
                         "http://example.com/relative",
                         "ftp://example.com/",
-                        "http://www.example.com/%C7"));
+                        "http://www.example.com/%25C7"));
     }
 
     @Test

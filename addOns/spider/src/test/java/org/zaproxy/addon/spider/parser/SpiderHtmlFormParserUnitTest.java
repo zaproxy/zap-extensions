@@ -908,7 +908,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
                         "http://example.org/?_file=test_file.txt&_hidden&_no-type=ZAP&_password=ZAP&_text=ZAP&submit=Submit",
                         "http://example.org/html5/number?_number=1&_number-max=2&_number-min=1&submit=Submit",
                         "http://example.org/html5/range?_range=1&_range-max=4&_range-min=3&submit=Submit",
-                        "http://example.org/html5/misc?_color=%23ffffff&_email=foo-bar%40example.com&_tel=9999999999&_url=http%3A%2F%2Fwww.example.com&submit=Submit",
+                        "http://example.org/html5/misc?_color=%2523ffffff&_email=foo-bar%2540example.com&_tel=9999999999&_url=http%253A%252F%252Fwww.example.com&submit=Submit",
                         "http://example.org/unknown?_unknown&submit=Submit",
                         "http://example.org/selects?_select-one-option=first-option&_select-selected-option=selected-option&_select-two-options=last-option&submit=Submit",
                         "http://example.org/checkbox?_checkbox=first-checkbox&submit=Submit",
@@ -981,14 +981,16 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
                                 params(
                                         param(
                                                 "_datetime",
-                                                formattedDate("yyyy-MM-dd'T'HH:mm:ss'Z'", date)),
+                                                formattedDate("yyyy-MM-dd'T'HH:mm:ss'Z'", date),
+                                                false),
                                         param(
                                                 "_datetime-local",
-                                                formattedDate("yyyy-MM-dd'T'HH:mm:ss", date)),
-                                        param("_date", formattedDate("yyyy-MM-dd", date)),
-                                        param("_time", formattedDate("HH:mm:ss", date)),
-                                        param("_month", formattedDate("yyyy-MM", date)),
-                                        param("_week", formattedDate("yyyy-'W'ww", date)),
+                                                formattedDate("yyyy-MM-dd'T'HH:mm:ss", date),
+                                                false),
+                                        param("_date", formattedDate("yyyy-MM-dd", date), false),
+                                        param("_time", formattedDate("HH:mm:ss", date), false),
+                                        param("_month", formattedDate("yyyy-MM", date), false),
+                                        param("_week", formattedDate("yyyy-'W'ww", date), false),
                                         param("submit", "Submit")))));
     }
 
@@ -1243,7 +1245,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
     }
 
     private static String formattedDate(String format, Date date) {
-        return new SimpleDateFormat(format).format(date);
+        return new SimpleDateFormat(format).format(date).replace("%", "%25");
     }
 
     private void messageWith(String filename) {

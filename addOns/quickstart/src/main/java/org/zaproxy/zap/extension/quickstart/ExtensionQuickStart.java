@@ -23,6 +23,7 @@ import java.awt.Container;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -723,10 +724,10 @@ public class ExtensionQuickStart extends ExtensionAdaptor
         public boolean attack(String url) {
             URL targetURL;
             try {
-                targetURL = new URL(url);
+                targetURL = new java.net.URI(url).toURL();
                 // Validate the actual request-uri of the HTTP message accessed.
                 new URI(url, true);
-            } catch (MalformedURLException | URIException e) {
+            } catch (MalformedURLException | URIException | URISyntaxException e) {
                 reportError(
                         Constant.messages.getString(
                                 "quickstart.cmdline.quickurl.error.invalidUrl"));

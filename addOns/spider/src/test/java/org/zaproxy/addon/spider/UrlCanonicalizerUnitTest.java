@@ -225,7 +225,7 @@ class UrlCanonicalizerUnitTest {
         // When
         String canonicalizedUri = UrlCanonicalizer.getCanonicalUrl(ctx, uri, BASE_URL);
         // Then
-        assertThat(canonicalizedUri, is(equalTo("http://example.com/path/%C3%A1/")));
+        assertThat(canonicalizedUri, is(equalTo("http://example.com/path/%25C3%25A1/")));
     }
 
     @Test
@@ -235,7 +235,9 @@ class UrlCanonicalizerUnitTest {
         // When
         String canonicalizedUri = UrlCanonicalizer.getCanonicalUrl(ctx, uri, BASE_URL);
         // Then
-        assertThat(canonicalizedUri, is(equalTo("http://example.com/path/?par%C3%A2m=v%C3%A3lue")));
+        assertThat(
+                canonicalizedUri,
+                is(equalTo("http://example.com/path/?par%25C3%25A2m=v%25C3%25A3lue")));
     }
 
     @Test
@@ -246,7 +248,9 @@ class UrlCanonicalizerUnitTest {
         // When
         String canonicalizedUri = UrlCanonicalizer.getCanonicalUrl(ctx, uri, BASE_URL);
         // Then
-        assertThat(canonicalizedUri, is(equalTo("http://example.com/?par%26am%3D1=val%26u%3De1")));
+        assertThat(
+                canonicalizedUri,
+                is(equalTo("http://example.com/?par%2526am%253D1=val%2526u%253De1")));
     }
 
     @Test

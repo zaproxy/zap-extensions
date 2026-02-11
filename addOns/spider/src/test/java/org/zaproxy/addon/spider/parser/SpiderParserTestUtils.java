@@ -204,10 +204,16 @@ abstract class SpiderParserTestUtils<T extends SpiderParser> extends TestUtils {
     }
 
     static String param(String name, String value) {
+        return param(name, value, true);
+    }
+
+    static String param(String name, String value, boolean encode) {
         try {
-            return URLEncoder.encode(name, StandardCharsets.UTF_8.name())
-                    + "="
-                    + URLEncoder.encode(value, StandardCharsets.UTF_8.name());
+            String val = URLEncoder.encode(value, StandardCharsets.UTF_8.name());
+            if (encode) {
+                val = val.replace("%", "%25");
+            }
+            return URLEncoder.encode(name, StandardCharsets.UTF_8.name()) + "=" + val;
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }

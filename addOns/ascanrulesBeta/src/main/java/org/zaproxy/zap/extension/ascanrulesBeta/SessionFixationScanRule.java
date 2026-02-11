@@ -19,8 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URISyntaxException;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.Collections;
@@ -188,13 +187,16 @@ public class SessionFixationScanRule extends AbstractAppPlugin implements Common
             String requestUrl = "Unknown URL";
             try {
                 requestUrl =
-                        new URL(
+                        new java.net.URI(
                                         requestUri.getScheme(),
+                                        null,
                                         requestUri.getHost(),
                                         requestUri.getPort(),
-                                        requestUri.getPath())
+                                        requestUri.getPath(),
+                                        null,
+                                        null)
                                 .toString();
-            } catch (MalformedURLException e) {
+            } catch (URISyntaxException e) {
                 // no point in continuing. The URL is invalid.  This is a peculiarity in the Zap
                 // core,
                 // and can happen when
