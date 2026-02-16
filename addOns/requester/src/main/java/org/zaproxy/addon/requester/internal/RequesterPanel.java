@@ -22,6 +22,7 @@ package org.zaproxy.addon.requester.internal;
 import java.awt.GridLayout;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import org.apache.commons.configuration.FileConfiguration;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.extension.OptionsChangedListener;
@@ -29,14 +30,17 @@ import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.requester.ExtensionRequester;
 
+@SuppressWarnings("serial")
 public class RequesterPanel extends AbstractPanel implements OptionsChangedListener {
 
     private static final long serialVersionUID = 1L;
 
     private RequesterNumberedRenamableTabbedPane requesterNumberedTabbedPane = null;
+    private FileConfiguration options;
 
-    public RequesterPanel(ExtensionRequester extension) {
+    public RequesterPanel(ExtensionRequester extension, FileConfiguration options) {
         super();
+        this.options = options;
         this.setLayout(new GridLayout(1, 1));
         this.setSize(474, 251);
         this.setName(Constant.messages.getString("requester.panel.title"));
@@ -47,7 +51,7 @@ public class RequesterPanel extends AbstractPanel implements OptionsChangedListe
                         .getMenuShortcutKeyStroke(KeyEvent.VK_R, InputEvent.ALT_DOWN_MASK, false));
         this.setMnemonic(Constant.messages.getChar("requester.panel.mnemonic"));
         this.setShowByDefault(true);
-        requesterNumberedTabbedPane = new RequesterNumberedRenamableTabbedPane();
+        requesterNumberedTabbedPane = new RequesterNumberedRenamableTabbedPane(options);
         this.add(requesterNumberedTabbedPane);
     }
 
@@ -56,7 +60,7 @@ public class RequesterPanel extends AbstractPanel implements OptionsChangedListe
     }
 
     public void newRequester(HttpMessage msg) {
-        ManualHttpRequestEditorPanel requestPane = new ManualHttpRequestEditorPanel();
+        ManualHttpRequestEditorPanel requestPane = new ManualHttpRequestEditorPanel(options);
         requestPane.setMessage(msg);
         getRequesterNumberedTabbedPane().addTab(requestPane);
     }
@@ -68,5 +72,9 @@ public class RequesterPanel extends AbstractPanel implements OptionsChangedListe
     @Override
     public void optionsChanged(OptionsParam optionsParam) {
         getRequesterNumberedTabbedPane().optionsChanged(optionsParam);
+    }
+
+    public void checkSaveConfigs() {
+        requesterNumberedTabbedPane.checkSaveConfigs();
     }
 }

@@ -19,17 +19,19 @@
  */
 package org.zaproxy.addon.requester.internal;
 
+import org.apache.commons.configuration.FileConfiguration;
+
 public class RequesterNumberedRenamableTabbedPane extends NumberedRenamableTabbedPane {
 
     private static final long serialVersionUID = 1L;
 
-    public RequesterNumberedRenamableTabbedPane() {
-        super();
+    public RequesterNumberedRenamableTabbedPane(FileConfiguration options) {
+        super(options);
     }
 
     @Override
     public void addDefaultTab() {
-        ManualHttpRequestEditorPanel requestPane = new ManualHttpRequestEditorPanel();
+        ManualHttpRequestEditorPanel requestPane = new ManualHttpRequestEditorPanel(getOptions());
         requestPane.setDefaultMessage();
         addTab(requestPane);
     }
