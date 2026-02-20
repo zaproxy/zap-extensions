@@ -193,9 +193,11 @@ public class SeleniumOptions extends VersionedAbstractParam {
         browserArguments.put(Browser.CHROME.getId(), new ArrayList<>(0));
         browserArguments.put(Browser.EDGE.getId(), new ArrayList<>(0));
         browserArguments.put(Browser.FIREFOX.getId(), new ArrayList<>(0));
+        browserArguments.put(Browser.HTML_UNIT.getId(), new ArrayList<>(0));
         browserPreferences.put(Browser.CHROME.getId(), new ArrayList<>(0));
         browserPreferences.put(Browser.EDGE.getId(), new ArrayList<>(0));
         browserPreferences.put(Browser.FIREFOX.getId(), new ArrayList<>(0));
+        browserPreferences.put(Browser.HTML_UNIT.getId(), new ArrayList<>(0));
         customBrowsers = Collections.synchronizedList(new ArrayList<>());
     }
 
@@ -247,6 +249,7 @@ public class SeleniumOptions extends VersionedAbstractParam {
         browserArguments.put(Browser.CHROME.getId(), readBrowserArguments(CHROME_ARGS_KEY));
         browserArguments.put(Browser.EDGE.getId(), readBrowserArguments(EDGE_ARGS_KEY));
         browserArguments.put(Browser.FIREFOX.getId(), readBrowserArguments(FIREFOX_ARGS_KEY));
+        browserArguments.put(Browser.HTML_UNIT.getId(), new ArrayList<>(0));
 
         confirmRemoveBrowserArgument = getBoolean(CONFIRM_REMOVE_BROWSER_ARG, true);
 
@@ -254,6 +257,7 @@ public class SeleniumOptions extends VersionedAbstractParam {
         browserPreferences.put(Browser.CHROME.getId(), readBrowserPreferences(CHROME_PREFS_KEY));
         browserPreferences.put(Browser.EDGE.getId(), readBrowserPreferences(EDGE_PREFS_KEY));
         browserPreferences.put(Browser.FIREFOX.getId(), readBrowserPreferences(FIREFOX_PREFS_KEY));
+        browserPreferences.put(Browser.HTML_UNIT.getId(), new ArrayList<>(0));
 
         confirmRemoveBrowserPreference = getBoolean(CONFIRM_REMOVE_BROWSER_PREF, true);
 
