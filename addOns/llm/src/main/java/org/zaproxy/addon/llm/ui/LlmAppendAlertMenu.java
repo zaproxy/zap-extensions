@@ -46,6 +46,10 @@ public class LlmAppendAlertMenu extends PopupMenuItemAlert {
     protected static Map<String, Object> buildStructuredPayload(Alert alert) {
         Map<String, Object> payload = new LinkedHashMap<>();
         payload.put("type", "alert");
+        payload.put("alert_id", alert.getAlertId());
+        if (alert.getHistoryRef() != null) {
+            payload.put("history_id", alert.getHistoryRef().getHistoryId());
+        }
         putIfNotBlank(payload, "name", alert.getName());
 
         int risk = alert.getRisk();

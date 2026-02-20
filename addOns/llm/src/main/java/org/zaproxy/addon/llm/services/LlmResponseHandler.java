@@ -48,7 +48,10 @@ public class LlmResponseHandler implements ChatModelListener {
     public void onRequest(ChatModelRequestContext requestContext) {
         output(
                 Constant.messages.getString("llm.output.prefix.request"),
-                requestContext.chatRequest().messages().get(0).toString());
+                requestContext.chatRequest().messages().stream()
+                        .map(Object::toString)
+                        .reduce((a, b) -> a + "\n\n" + b)
+                        .orElse(""));
     }
 
     @Override

@@ -62,6 +62,7 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
     protected LlmProviderConfig providerConfig;
     protected String originalName;
     private String lastSuggestedName;
+    private String lastSuggestedEndpoint;
     private HttpSender sender;
 
     public AddLlmProviderDialog(Dialog owner, LlmProviderConfigsTableModel model) {
@@ -93,6 +94,7 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
                 e -> {
                     updateEndpointFieldState();
                     updateSuggestedName();
+                    updateSuggestedEndpoint();
                 });
         providerLabel.setLabelFor(providerComboBox);
 
@@ -177,6 +179,7 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
         nameTextField.setText("");
         providerComboBox.setSelectedIndex(0);
         lastSuggestedName = providerComboBox.getSelectedItem().toString();
+        lastSuggestedEndpoint = "";
         apiKeyField.setText("");
         endpointField.setText("");
         modelsArea.setText("");
@@ -184,6 +187,7 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
         originalName = null;
         updateEndpointFieldState();
         updateSuggestedName();
+        updateSuggestedEndpoint();
     }
 
     @Override
@@ -212,6 +216,14 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
         }
 
         String endpoint = StringUtils.trimToEmpty(endpointField.getText());
+        if (provider.isEndpointRequired() && endpoint.isEmpty()) {
+            View.getSingleton()
+                    .showWarningDialog(
+                            this,
+                            Constant.messages.getString(
+                                    "llm.options.providers.error.endpoint.empty"));
+            return false;
+        }
         if (provider.supportsEndpoint() && !endpoint.isEmpty() && !isEndpointReachable(endpoint)) {
             View.getSingleton()
                     .showWarningDialog(
@@ -260,6 +272,25 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
         if (currentName.isEmpty() || currentName.equals(lastSuggestedName)) {
             lastSuggestedName = provider.toString();
             nameTextField.setText(lastSuggestedName);
+        }
+    }
+
+    protected void updateSuggestedEndpoint() {
+        LlmProvider provider = (LlmProvider) providerComboBox.getSelectedItem();
+        if (provider == null || !provider.supportsEndpoint()) {
+            lastSuggestedEndpoint = "";
+            return;
+        }
+
+        String defaultEndpoint = StringUtils.trimToEmpty(provider.getDefaultEndpoint());
+        if (defaultEndpoint.isEmpty()) {
+            return;
+        }
+
+        String currentEndpoint = StringUtils.trimToEmpty(endpointField.getText());
+        if (currentEndpoint.isEmpty() || currentEndpoint.equals(lastSuggestedEndpoint)) {
+            lastSuggestedEndpoint = defaultEndpoint;
+            endpointField.setText(defaultEndpoint);
         }
     }
 

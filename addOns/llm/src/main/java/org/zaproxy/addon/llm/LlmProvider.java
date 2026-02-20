@@ -24,6 +24,8 @@ import org.parosproxy.paros.Constant;
 public enum LlmProvider {
     NONE("llm.provider.none"),
     OLLAMA("llm.provider.ollama"),
+    OPENAI("llm.provider.openai"),
+    OPENROUTER("llm.provider.openrouter"),
     AZURE_OPENAI("llm.provider.azure.openai"),
     GOOGLE_GEMINI("llm.provider.google.gemini"),
     ;
@@ -41,5 +43,19 @@ public enum LlmProvider {
 
     public boolean supportsEndpoint() {
         return this != NONE && this != GOOGLE_GEMINI;
+    }
+
+    public boolean isEndpointRequired() {
+        return this == OLLAMA || this == AZURE_OPENAI;
+    }
+
+    public String getDefaultEndpoint() {
+        if (this == OPENAI) {
+            return "https://api.openai.com/v1";
+        }
+        if (this == OPENROUTER) {
+            return "https://openrouter.ai/api/v1";
+        }
+        return "";
     }
 }

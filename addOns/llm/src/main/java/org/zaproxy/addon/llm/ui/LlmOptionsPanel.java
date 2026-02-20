@@ -21,6 +21,7 @@ package org.zaproxy.addon.llm.ui;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.event.TableModelEvent;
@@ -41,6 +42,7 @@ public class LlmOptionsPanel extends AbstractParamPanel {
     private final JComboBox<String> defaultProviderComboBox;
     private final JComboBox<String> defaultModelComboBox;
     private final String noneProviderLabel;
+    private final JCheckBox autoIncludeProjectContextCheckBox;
 
     public LlmOptionsPanel() {
         super();
@@ -81,11 +83,18 @@ public class LlmOptionsPanel extends AbstractParamPanel {
         gbc.gridy = 2;
         gbc.gridwidth = 2;
         gbc.weightx = 1.0;
-        add(new JLabel(Constant.messages.getString("llm.options.providers.label")), gbc);
+        autoIncludeProjectContextCheckBox =
+                new JCheckBox(Constant.messages.getString("llm.options.chat.autoprojectcontext"));
+        add(autoIncludeProjectContextCheckBox, gbc);
 
         LlmProviderConfigsPanel providerConfigsPanel =
                 new LlmProviderConfigsPanel(getProviderConfigsTableModel());
         gbc.gridy = 3;
+        gbc.weighty = 0.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        add(new JLabel(Constant.messages.getString("llm.options.providers.label")), gbc);
+
+        gbc.gridy = 4;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         add(providerConfigsPanel, gbc);
@@ -110,6 +119,8 @@ public class LlmOptionsPanel extends AbstractParamPanel {
     public void initParam(Object options) {
         LlmOptions llmOptionsParam = ((OptionsParam) options).getParamSet(LlmOptions.class);
         getProviderConfigsTableModel().setProviderConfigs(llmOptionsParam.getProviderConfigs());
+        autoIncludeProjectContextCheckBox.setSelected(
+                llmOptionsParam.isAutoIncludeProjectContext());
         refreshDefaultProviderOptions();
         if (llmOptionsParam.getDefaultProviderName() == null
                 || llmOptionsParam.getDefaultProviderName().isEmpty()) {
@@ -127,6 +138,7 @@ public class LlmOptionsPanel extends AbstractParamPanel {
     public void saveParam(Object options) {
         LlmOptions param = ((OptionsParam) options).getParamSet(LlmOptions.class);
         param.setProviderConfigs(getProviderConfigsTableModel().getElements());
+        param.setAutoIncludeProjectContext(autoIncludeProjectContextCheckBox.isSelected());
         Object selected = defaultProviderComboBox.getSelectedItem();
         if (selected != null && noneProviderLabel.equals(selected.toString())) {
             param.setDefaultProviderName("");

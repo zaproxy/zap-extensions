@@ -31,10 +31,14 @@ import dev.langchain4j.model.chat.request.ChatRequest;
 import dev.langchain4j.model.chat.request.ResponseFormat;
 import dev.langchain4j.model.chat.response.ChatResponse;
 import dev.langchain4j.model.googleai.GoogleAiGeminiChatModel;
+import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.model.ollama.OllamaChatModel;
 import dev.langchain4j.service.AiServices;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
@@ -43,10 +47,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.Getter;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.httpclient.util.HttpURLConnection;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpSender;
+import org.zaproxy.addon.llm.LlmProvider;
 import org.zaproxy.addon.llm.LlmProviderConfig;
 import org.zaproxy.addon.llm.communication.HttpRequestList;
 import org.zaproxy.addon.llm.utils.HistoryPersister;
@@ -64,10 +70,11 @@ public class LlmCommunicationService {
     @Getter private String modelName;
     private Requestor requestor;
 
-    private static ChatModel model;
-    private static ObjectMapper objectMapper = new ObjectMapper();
-    private static ObjectWriter prettyWriter = objectMapper.writerWithDefaultPrettyPrinter();
+    private ChatModel model;
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectWriter prettyWriter = objectMapper.writerWithDefaultPrettyPrinter();
     private ChatMemory chatMemory;
+    private final HttpClient httpClient = HttpClient.newHttpClient();
 
     public LlmCommunicationService(
             LlmProviderConfig pconf, String modelName, String outputTabName) {
@@ -93,6 +100,32 @@ public class LlmCommunicationService {
     private ChatModel buildModel() {
 
         return switch (pconf.getProvider()) {
+            case OPENAI -> {
+                String baseUrl = StringUtils.trimToEmpty(pconf.getEndpoint());
+                if (baseUrl.isEmpty()) {
+                    baseUrl = pconf.getProvider().getDefaultEndpoint();
+                }
+                yield OpenAiChatModel.builder()
+                        .apiKey(pconf.getApiKey())
+                        .baseUrl(baseUrl)
+                        .modelName(modelName)
+                        .temperature(0.3)
+                        .listeners(List.of(listener))
+                        .build();
+            }
+            case OPENROUTER -> {
+                String baseUrl = StringUtils.trimToEmpty(pconf.getEndpoint());
+                if (baseUrl.isEmpty()) {
+                    baseUrl = pconf.getProvider().getDefaultEndpoint();
+                }
+                yield OpenAiChatModel.builder()
+                        .apiKey(pconf.getApiKey())
+                        .baseUrl(baseUrl)
+                        .modelName(modelName)
+                        .temperature(0.3)
+                        .listeners(List.of(listener))
+                        .build();
+            }
             case AZURE_OPENAI ->
                     AzureOpenAiChatModel.builder()
                             .apiKey(pconf.getApiKey())
@@ -184,11 +217,158 @@ public class LlmCommunicationService {
     }
 
     public ChatResponse chat(ChatRequest chatRequest) {
+        if (model == null) {
+            throw new IllegalStateException("Chat model was not initialised.");
+        }
         return model.chat(chatRequest);
     }
 
+    public String chatText(ChatRequest chatRequest) {
+        if (pconf != null && pconf.getProvider() == LlmProvider.OPENROUTER) {
+            try {
+                return openAiCompatibleChat(chatRequest);
+            } catch (RuntimeException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage(), e);
+            }
+        }
+        try {
+            return chat(chatRequest).aiMessage().text();
+        } catch (RuntimeException e) {
+            if (isOpenAiCompatible(pconf)) {
+                try {
+                    return openAiCompatibleChat(chatRequest);
+                } catch (Exception fallbackError) {
+                    e.addSuppressed(fallbackError);
+                }
+            }
+            throw e;
+        }
+    }
+
     public String chat(String str) {
+        if (model == null) {
+            throw new IllegalStateException("Chat model was not initialised.");
+        }
         return model.chat(str);
+    }
+
+    private static boolean isOpenAiCompatible(LlmProviderConfig config) {
+        if (config == null) {
+            return false;
+        }
+        LlmProvider provider = config.getProvider();
+        return provider == LlmProvider.OPENAI || provider == LlmProvider.OPENROUTER;
+    }
+
+    private String openAiCompatibleChat(ChatRequest chatRequest) throws Exception {
+        if (StringUtils.isBlank(modelName)) {
+            throw new IllegalStateException("No model name configured.");
+        }
+        if (StringUtils.isBlank(pconf.getApiKey())) {
+            throw new IllegalStateException("No API key configured.");
+        }
+
+        String baseUrl = StringUtils.trimToEmpty(pconf.getEndpoint());
+        if (baseUrl.isEmpty()) {
+            baseUrl = pconf.getProvider().getDefaultEndpoint();
+        }
+        if (StringUtils.isBlank(baseUrl)) {
+            throw new IllegalStateException("No base URL configured for provider.");
+        }
+
+        URI uri = URI.create(trimTrailingSlash(baseUrl) + "/chat/completions");
+
+        Map<String, Object> payload =
+                Map.of(
+                        "model",
+                        modelName,
+                        "temperature",
+                        0.3,
+                        "messages",
+                        chatRequest.messages().stream()
+                                .map(
+                                        msg -> {
+                                            String role;
+                                            String content;
+                                            if (msg instanceof dev.langchain4j.data.message.SystemMessage sm) {
+                                                role = "system";
+                                                content = sm.text();
+                                            } else if (msg instanceof dev.langchain4j.data.message.UserMessage um) {
+                                                role = "user";
+                                                content =
+                                                        um.hasSingleText()
+                                                                ? um.singleText()
+                                                                : um.contents().toString();
+                                            } else if (msg instanceof dev.langchain4j.data.message.AiMessage am) {
+                                                role = "assistant";
+                                                content = am.text();
+                                            } else {
+                                                role = "user";
+                                                content = msg.toString();
+                                            }
+                                            return Map.of("role", role, "content", content);
+                                        })
+                                .toList());
+
+        String body = objectMapper.writeValueAsString(payload);
+
+        HttpRequest request =
+                HttpRequest.newBuilder()
+                        .uri(uri)
+                        .header("Authorization", "Bearer " + pconf.getApiKey())
+                        .header("Content-Type", "application/json")
+                        .header("Accept", "application/json")
+                        .header("User-Agent", "ZAP-LLM-Addon")
+                        .POST(HttpRequest.BodyPublishers.ofString(body))
+                        .build();
+
+        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() < 200 || response.statusCode() >= 300) {
+            throw new RuntimeException(
+                    "LLM HTTP " + response.statusCode() + ": " + extractErrorMessage(response.body()));
+        }
+
+        return extractAssistantContent(response.body());
+    }
+
+    private static String extractAssistantContent(String responseBody) throws Exception {
+        var root = objectMapper.readTree(StringUtils.defaultString(responseBody));
+        var choices = root.path("choices");
+        if (!choices.isArray() || choices.isEmpty()) {
+            throw new RuntimeException("Unexpected LLM response (missing choices).");
+        }
+        var content = choices.get(0).path("message").path("content").asText(null);
+        if (StringUtils.isBlank(content)) {
+            throw new RuntimeException("Unexpected LLM response (missing message content).");
+        }
+        return content;
+    }
+
+    private static String extractErrorMessage(String responseBody) {
+        try {
+            var root = objectMapper.readTree(StringUtils.defaultString(responseBody));
+            var msg = root.path("error").path("message").asText(null);
+            if (StringUtils.isNotBlank(msg)) {
+                return msg;
+            }
+        } catch (Exception ignore) {
+            // ignored
+        }
+        String trimmed = StringUtils.trimToEmpty(responseBody);
+        if (trimmed.isEmpty()) {
+            return "Empty response body.";
+        }
+        return trimmed.length() > 500 ? trimmed.substring(0, 500) + "…" : trimmed;
+    }
+
+    private static String trimTrailingSlash(String url) {
+        String trimmed = StringUtils.trimToEmpty(url);
+        while (trimmed.endsWith("/")) {
+            trimmed = trimmed.substring(0, trimmed.length() - 1);
+        }
+        return trimmed;
     }
 
     public static <T> T mapResponse(ChatResponse response, Class<T> clazz)

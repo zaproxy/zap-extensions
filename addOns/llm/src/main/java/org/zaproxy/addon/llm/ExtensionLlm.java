@@ -142,6 +142,10 @@ public class ExtensionLlm extends ExtensionAdaptor {
         return options != null ? options.getCommsIssue() : "";
     }
 
+    public boolean isAutoIncludeProjectContext() {
+        return options != null && options.isAutoIncludeProjectContext();
+    }
+
     /**
      * Only for testing purposes.
      *

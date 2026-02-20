@@ -59,6 +59,9 @@ public class LlmAppendHttpMessageMenu extends PopupMenuItemHttpMessageContainer 
         Map<String, Object> payload = new LinkedHashMap<>();
         payload.put("type", "http_message");
         payload.put("uri", httpMessage.getRequestHeader().getURI().toString());
+        if (httpMessage.getHistoryRef() != null) {
+            payload.put("history_id", httpMessage.getHistoryRef().getHistoryId());
+        }
 
         if (includeRequest) {
             Map<String, Object> request = new LinkedHashMap<>();

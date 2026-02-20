@@ -58,9 +58,14 @@ public class LlmOptions extends VersionedAbstractParam {
     private static final String PROVIDER_ENDPOINT_KEY = "endpoint";
     private static final String PROVIDER_MODELS_KEY = "models.model";
 
+    private static final String CHAT_BASE_KEY = BASE_KEY + ".chat";
+    private static final String AUTO_INCLUDE_PROJECT_CONTEXT_KEY =
+            CHAT_BASE_KEY + ".autoIncludeProjectContext";
+
     private List<LlmProviderConfig> providerConfigs = new ArrayList<>();
     private String defaultProviderName;
     private String defaultModelName;
+    private boolean autoIncludeProjectContext;
 
     private static final Logger LOGGER = LogManager.getLogger(LlmOptions.class);
 
@@ -110,6 +115,7 @@ public class LlmOptions extends VersionedAbstractParam {
         this.providerConfigs = configs;
         defaultProviderName = getString(DEFAULT_PROVIDER_PROPERTY, "");
         defaultModelName = getString(DEFAULT_PROVIDER_MODEL, "");
+        autoIncludeProjectContext = getBoolean(AUTO_INCLUDE_PROJECT_CONTEXT_KEY, false);
     }
 
     @Override
@@ -131,7 +137,7 @@ public class LlmOptions extends VersionedAbstractParam {
         if (config == null || LlmProvider.NONE.equals(config.getProvider())) {
             return false;
         }
-        return !config.getProvider().supportsEndpoint()
+        return !config.getProvider().isEndpointRequired()
                 || !StringUtils.isBlank(config.getEndpoint());
     }
 
@@ -143,7 +149,7 @@ public class LlmOptions extends VersionedAbstractParam {
         if (config == null || LlmProvider.NONE.equals(config.getProvider())) {
             return Constant.messages.getString("llm.error.provider");
         }
-        if (config.getProvider().supportsEndpoint() && StringUtils.isBlank(config.getEndpoint())) {
+        if (config.getProvider().isEndpointRequired() && StringUtils.isBlank(config.getEndpoint())) {
             return Constant.messages.getString("llm.error.endpoint");
         }
         return null;
@@ -226,6 +232,15 @@ public class LlmOptions extends VersionedAbstractParam {
         getConfig().setProperty(DEFAULT_PROVIDER_MODEL, this.defaultModelName);
     }
 
+    public boolean isAutoIncludeProjectContext() {
+        return autoIncludeProjectContext;
+    }
+
+    public void setAutoIncludeProjectContext(boolean autoIncludeProjectContext) {
+        this.autoIncludeProjectContext = autoIncludeProjectContext;
+        getConfig().setProperty(AUTO_INCLUDE_PROJECT_CONTEXT_KEY, autoIncludeProjectContext);
+    }
+
     private LlmProviderConfig getDefaultProviderConfigInternal() {
         if (StringUtils.isBlank(defaultProviderName) || providerConfigs.isEmpty()) {
             return null;
@@ -244,6 +259,7 @@ public class LlmOptions extends VersionedAbstractParam {
         clone.providerConfigs = getProviderConfigs();
         clone.defaultProviderName = defaultProviderName;
         clone.defaultModelName = defaultModelName;
+        clone.autoIncludeProjectContext = autoIncludeProjectContext;
         return clone;
     }
 }
