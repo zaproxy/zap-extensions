@@ -38,16 +38,16 @@ public class LlmGeneratePayloadsForSelectionMenu extends ExtensionPopupMenuItem 
     private static final long serialVersionUID = 1L;
     private static final int MAX_BODY_CHARS = 4000;
 
-    private final LlmChatPanel llmChatPanel;
+    private final LlmChatPanelProvider llmChatPanelProvider;
     private final String promptKey;
     private final List<LlmZapActionType> allowedActionTypes;
     private final boolean requireConfirmation;
     private SelectableContentMessageContainer<HttpMessage> lastInvoker;
     private DefaultTextHttpMessageLocation lastSelection;
 
-    public LlmGeneratePayloadsForSelectionMenu(LlmChatPanel llmChatPanel) {
+    public LlmGeneratePayloadsForSelectionMenu(LlmChatPanelProvider llmChatPanelProvider) {
         this(
-                llmChatPanel,
+                llmChatPanelProvider,
                 "llm.menu.generate.selection.title",
                 "llm.chat.panel.payloads.prompt.text",
                 null,
@@ -55,13 +55,13 @@ public class LlmGeneratePayloadsForSelectionMenu extends ExtensionPopupMenuItem 
     }
 
     public LlmGeneratePayloadsForSelectionMenu(
-            LlmChatPanel llmChatPanel,
+            LlmChatPanelProvider llmChatPanelProvider,
             String titleKey,
             String promptKey,
             List<LlmZapActionType> allowedActionTypes,
             boolean requireConfirmation) {
         super(Constant.messages.getString(titleKey));
-        this.llmChatPanel = llmChatPanel;
+        this.llmChatPanelProvider = llmChatPanelProvider;
         this.promptKey = promptKey;
         this.allowedActionTypes = allowedActionTypes;
         this.requireConfirmation = requireConfirmation;
@@ -74,7 +74,7 @@ public class LlmGeneratePayloadsForSelectionMenu extends ExtensionPopupMenuItem 
         lastInvoker = null;
         lastSelection = null;
 
-        if (llmChatPanel == null) {
+        if (llmChatPanelProvider == null) {
             return false;
         }
         if (!(invoker instanceof SelectableContentMessageContainer<?> selectable)) {
@@ -153,7 +153,12 @@ public class LlmGeneratePayloadsForSelectionMenu extends ExtensionPopupMenuItem 
         }
         payload.put("request", request);
 
-        llmChatPanel.sendPayloadGenerationRequest(
+        llmChatPanelProvider.focusLlmChat();
+        LlmChatPanel panel = llmChatPanelProvider.openNewChatTab();
+        if (panel == null) {
+            return;
+        }
+        panel.sendPayloadGenerationRequest(
                 payload, promptKey, allowedActionTypes, requireConfirmation);
     }
 

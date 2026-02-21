@@ -37,13 +37,13 @@ public class LlmAppendRequestSelectionMenu extends ExtensionPopupMenuItem {
     private static final long serialVersionUID = 1L;
     private static final int MAX_BODY_CHARS = 4000;
 
-    private final LlmChatPanel llmChatPanel;
+    private final LlmChatPanelProvider llmChatPanelProvider;
     private SelectableContentMessageContainer<HttpMessage> lastInvoker;
     private DefaultTextHttpMessageLocation lastSelection;
 
-    public LlmAppendRequestSelectionMenu(LlmChatPanel llmChatPanel) {
+    public LlmAppendRequestSelectionMenu(LlmChatPanelProvider llmChatPanelProvider) {
         super(Constant.messages.getString("llm.menu.append.selection.title"));
-        this.llmChatPanel = llmChatPanel;
+        this.llmChatPanelProvider = llmChatPanelProvider;
         addActionListener(e -> performAction());
     }
 
@@ -52,7 +52,7 @@ public class LlmAppendRequestSelectionMenu extends ExtensionPopupMenuItem {
         lastInvoker = null;
         lastSelection = null;
 
-        if (llmChatPanel == null) {
+        if (llmChatPanelProvider == null) {
             return false;
         }
         if (!(invoker instanceof SelectableContentMessageContainer<?> selectable)) {
@@ -131,8 +131,13 @@ public class LlmAppendRequestSelectionMenu extends ExtensionPopupMenuItem {
         }
         payload.put("request", request);
 
-        llmChatPanel.appendUntrustedDataToInput(payload, true);
-        llmChatPanel.appendToInput(
+        llmChatPanelProvider.focusLlmChat();
+        LlmChatPanel panel = llmChatPanelProvider.openNewChatTab();
+        if (panel == null) {
+            return;
+        }
+        panel.appendUntrustedDataToInput(payload, true);
+        panel.appendToInput(
                 Constant.messages.getString(
                                 "llm.chat.panel.payloads.prompt.text",
                                 LlmZapActionsParser.ACTIONS_BEGIN,
@@ -166,4 +171,3 @@ public class LlmAppendRequestSelectionMenu extends ExtensionPopupMenuItem {
         return true;
     }
 }
-

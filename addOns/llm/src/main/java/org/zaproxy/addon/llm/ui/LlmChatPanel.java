@@ -980,6 +980,14 @@ public class LlmChatPanel extends AbstractPanel {
         }
 
         if (root.isObject()) {
+            JsonNode selection = root.get("selection");
+            if (selection != null && selection.isObject()) {
+                String t = textOrNull(selection, "text");
+                if (StringUtils.isNotBlank(t)) {
+                    return List.of(t);
+                }
+            }
+
             List<String> payloads = extractStringArray(root.get("payloads"));
             if (!payloads.isEmpty()) {
                 return payloads;

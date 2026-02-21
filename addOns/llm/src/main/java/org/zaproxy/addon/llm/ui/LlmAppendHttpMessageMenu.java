@@ -33,24 +33,32 @@ public class LlmAppendHttpMessageMenu extends PopupMenuItemHttpMessageContainer 
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = LogManager.getLogger(LlmAppendHttpMessageMenu.class);
 
-    private final LlmChatPanel llmChatPanel;
+    private final LlmChatPanelProvider llmChatPanelProvider;
     private final boolean includeRequest;
     private final boolean includeResponse;
 
     public LlmAppendHttpMessageMenu(
-            LlmChatPanel llmChatPanel,
+            LlmChatPanelProvider llmChatPanelProvider,
             String label,
             boolean includeRequest,
             boolean includeResponse) {
         super(label, true);
-        this.llmChatPanel = llmChatPanel;
+        this.llmChatPanelProvider = llmChatPanelProvider;
         this.includeRequest = includeRequest;
         this.includeResponse = includeResponse;
     }
 
     @Override
     public void performAction(HttpMessage httpMessage) {
-        llmChatPanel.appendUntrustedDataToInput(
+        if (llmChatPanelProvider == null) {
+            return;
+        }
+        llmChatPanelProvider.focusLlmChat();
+        LlmChatPanel panel = llmChatPanelProvider.openNewChatTab();
+        if (panel == null) {
+            return;
+        }
+        panel.appendUntrustedDataToInput(
                 buildStructuredPayload(httpMessage, includeRequest, includeResponse), true);
     }
 

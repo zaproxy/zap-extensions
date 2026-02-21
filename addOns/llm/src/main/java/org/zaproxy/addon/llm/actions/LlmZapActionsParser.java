@@ -94,6 +94,41 @@ public class LlmZapActionsParser {
                 HttpMessageLocation.Location location = parseLocation(textOrNull(actionNode, "location"));
                 int start = actionNode.path("start").asInt(-1);
                 int end = actionNode.path("end").asInt(-1);
+
+                // Some models nest selection details under "selection" rather than on the action object.
+                JsonNode selectionNode = actionNode.get("selection");
+                String selectionText = null;
+                if (selectionNode != null && selectionNode.isObject()) {
+                    if (location == null) {
+                        location = parseLocation(textOrNull(selectionNode, "location"));
+                    }
+                    if (start < 0) {
+                        start = selectionNode.path("start").asInt(-1);
+                    }
+                    if (end < 0) {
+                        end = selectionNode.path("end").asInt(-1);
+                    }
+                    selectionText = textOrNull(selectionNode, "text");
+                }
+
+                // Some models use "insertion_point" instead of (location/start/end + payload).
+                JsonNode insertionPointNode = actionNode.get("insertion_point");
+                if (insertionPointNode == null) {
+                    insertionPointNode = actionNode.get("insertionPoint");
+                }
+                String insertionPayload = null;
+                if (insertionPointNode != null && insertionPointNode.isObject()) {
+                    if (location == null) {
+                        location = parseLocation(textOrNull(insertionPointNode, "location"));
+                    }
+                    if (start < 0) {
+                        start = insertionPointNode.path("start").asInt(-1);
+                    }
+                    if (end < 0) {
+                        end = insertionPointNode.path("end").asInt(-1);
+                    }
+                    insertionPayload = textOrNull(insertionPointNode, "payload");
+                }
                 String payload = textOrNull(actionNode, "payload");
                 List<String> payloads = new ArrayList<>();
                 if (actionNode.has("payloads") && actionNode.get("payloads").isArray()) {
@@ -103,6 +138,27 @@ public class LlmZapActionsParser {
                             payloads.add(v);
                         }
                     }
+                }
+
+                // Some models omit "payload" for requester actions but include "payloads" or "selection.text".
+                if (StringUtils.isBlank(payload)
+                        && (type == LlmZapActionType.OPEN_REQUESTER_DIALOG
+                                || type == LlmZapActionType.OPEN_REQUESTER_TAB)) {
+                    if (!payloads.isEmpty()) {
+                        payload = payloads.get(0);
+                    } else if (StringUtils.isNotBlank(insertionPayload)) {
+                        payload = insertionPayload;
+                    } else if (StringUtils.isNotBlank(selectionText)) {
+                        payload = selectionText;
+                    }
+                }
+
+                // Some models provide a single payload string for fuzzer.
+                if ((payloads == null || payloads.isEmpty())
+                        && type == LlmZapActionType.OPEN_FUZZER
+                        && StringUtils.isNotBlank(payload)) {
+                    payloads = List.of(payload);
+                    payload = null;
                 }
 
                 LlmZapRequestData request = null;

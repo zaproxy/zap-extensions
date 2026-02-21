@@ -35,9 +35,9 @@ import org.zaproxy.addon.llm.actions.LlmZapActionType;
 import org.zaproxy.addon.llm.ui.LlmAppendAlertMenu;
 import org.zaproxy.addon.llm.ui.LlmAppendHttpMessageMenu;
 import org.zaproxy.addon.llm.ui.LlmAppendRequestSelectionMenu;
-import org.zaproxy.addon.llm.ui.LlmChatPanel;
 import org.zaproxy.addon.llm.ui.LlmGeneratePayloadsForSelectionMenu;
 import org.zaproxy.addon.llm.ui.LlmOptionsPanel;
+import org.zaproxy.addon.llm.ui.LlmChatTabbedPanel;
 import org.zaproxy.addon.llm.ui.LlmSelectorButton;
 
 /**
@@ -54,7 +54,7 @@ public class ExtensionLlm extends ExtensionAdaptor {
     private LlmOptions prevOptions;
     private Map<String, LlmCommunicationService> commsServices =
             Collections.synchronizedMap(new HashMap<>());
-    private LlmChatPanel llmChatPanel;
+    private LlmChatTabbedPanel llmChatPanel;
 
     private static final Logger LOGGER = LogManager.getLogger(ExtensionLlm.class);
 
@@ -93,7 +93,7 @@ public class ExtensionLlm extends ExtensionAdaptor {
                 });
 
         if (hasView()) {
-            llmChatPanel = new LlmChatPanel(this);
+            llmChatPanel = new LlmChatTabbedPanel(this);
             extensionHook.getHookView().addOptionPanel(new LlmOptionsPanel());
             extensionHook
                     .getHookView()

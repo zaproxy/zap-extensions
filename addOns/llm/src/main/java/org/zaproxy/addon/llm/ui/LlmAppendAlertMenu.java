@@ -31,16 +31,24 @@ public class LlmAppendAlertMenu extends PopupMenuItemAlert {
 
     private static final long serialVersionUID = 1L;
 
-    private final LlmChatPanel llmChatPanel;
+    private final LlmChatPanelProvider llmChatPanelProvider;
 
-    public LlmAppendAlertMenu(LlmChatPanel llmChatPanel) {
+    public LlmAppendAlertMenu(LlmChatPanelProvider llmChatPanelProvider) {
         super(Constant.messages.getString("llm.menu.append.alert.title"), true);
-        this.llmChatPanel = llmChatPanel;
+        this.llmChatPanelProvider = llmChatPanelProvider;
     }
 
     @Override
     public void performAction(Alert alert) {
-        llmChatPanel.appendUntrustedDataToInput(buildStructuredPayload(alert), true);
+        if (llmChatPanelProvider == null) {
+            return;
+        }
+        llmChatPanelProvider.focusLlmChat();
+        LlmChatPanel panel = llmChatPanelProvider.openNewChatTab();
+        if (panel == null) {
+            return;
+        }
+        panel.appendUntrustedDataToInput(buildStructuredPayload(alert), true);
     }
 
     protected static Map<String, Object> buildStructuredPayload(Alert alert) {
