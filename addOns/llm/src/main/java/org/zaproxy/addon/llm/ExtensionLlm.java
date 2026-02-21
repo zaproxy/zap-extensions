@@ -31,6 +31,7 @@ import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.OptionsChangedListener;
 import org.parosproxy.paros.model.OptionsParam;
 import org.zaproxy.addon.llm.services.LlmCommunicationService;
+import org.zaproxy.addon.llm.actions.LlmZapActionType;
 import org.zaproxy.addon.llm.ui.LlmAppendAlertMenu;
 import org.zaproxy.addon.llm.ui.LlmAppendHttpMessageMenu;
 import org.zaproxy.addon.llm.ui.LlmAppendRequestSelectionMenu;
@@ -130,6 +131,33 @@ public class ExtensionLlm extends ExtensionAdaptor {
             extensionHook
                     .getHookMenu()
                     .addPopupMenuItem(new LlmGeneratePayloadsForSelectionMenu(llmChatPanel));
+            extensionHook
+                    .getHookMenu()
+                    .addPopupMenuItem(
+                            new LlmGeneratePayloadsForSelectionMenu(
+                                    llmChatPanel,
+                                    "llm.menu.generate.selection.editor.title",
+                                    "llm.chat.panel.payloads.prompt.editor.text",
+                                    Collections.singletonList(LlmZapActionType.OPEN_REQUESTER_DIALOG),
+                                    false));
+            extensionHook
+                    .getHookMenu()
+                    .addPopupMenuItem(
+                            new LlmGeneratePayloadsForSelectionMenu(
+                                    llmChatPanel,
+                                    "llm.menu.generate.selection.requester.title",
+                                    "llm.chat.panel.payloads.prompt.requester.text",
+                                    Collections.singletonList(LlmZapActionType.OPEN_REQUESTER_TAB),
+                                    false));
+            extensionHook
+                    .getHookMenu()
+                    .addPopupMenuItem(
+                            new LlmGeneratePayloadsForSelectionMenu(
+                                    llmChatPanel,
+                                    "llm.menu.generate.selection.fuzzer.title",
+                                    "llm.chat.panel.payloads.prompt.fuzzer.text",
+                                    Collections.singletonList(LlmZapActionType.OPEN_FUZZER),
+                                    false));
         }
     }
 

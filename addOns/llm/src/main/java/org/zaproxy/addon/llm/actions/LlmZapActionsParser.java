@@ -48,26 +48,30 @@ public class LlmZapActionsParser {
 
     public LlmZapActionsParseResult parse(String assistantText) {
         if (StringUtils.isBlank(assistantText)) {
-            return new LlmZapActionsParseResult(Collections.emptyList(), Collections.emptyList());
+            return new LlmZapActionsParseResult(
+                    Collections.emptyList(), Collections.emptyList(), null, null);
         }
 
         String json = extractActionsJson(assistantText);
         if (StringUtils.isBlank(json)) {
             return new LlmZapActionsParseResult(
-                    Collections.emptyList(), List.of("No actions JSON found in the assistant text."));
+                    Collections.emptyList(),
+                    List.of("No actions JSON found in the assistant text."),
+                    null,
+                    null);
         }
 
         List<String> warnings = new ArrayList<>();
         List<LlmZapAction> actions = new ArrayList<>();
+        JsonNode root = null;
         try {
-            JsonNode root = MAPPER.readTree(json);
-            JsonNode actionsNode = root.path("actions");
-            if (!actionsNode.isArray()) {
-                warnings.add("Missing or invalid 'actions' array.");
-                return new LlmZapActionsParseResult(Collections.emptyList(), warnings);
+            root = MAPPER.readTree(json);
+            List<JsonNode> actionNodes = extractActionNodes(root, warnings);
+            if (actionNodes.isEmpty()) {
+                return new LlmZapActionsParseResult(Collections.emptyList(), warnings, root, json);
             }
 
-            for (JsonNode actionNode : actionsNode) {
+            for (JsonNode actionNode : actionNodes) {
                 String actionId = parseActionId(actionNode);
                 LlmZapActionType type = LlmZapActionType.fromId(actionId);
                 if (type == null) {
@@ -118,25 +122,61 @@ public class LlmZapActionsParser {
                     continue;
                 }
 
-                actions.add(
-                        new LlmZapAction(
-                                type,
-                                historyId,
-                                note,
-                                tags,
-                                location,
-                                start,
-                                end,
-                                payload,
-                                payloads,
-                                request));
+                    actions.add(
+                            new LlmZapAction(
+                                    type,
+                                    historyId,
+                                    note,
+                                    tags,
+                                    location,
+                                    start,
+                                    end,
+                                    payload,
+                                    payloads,
+                                    request));
             }
         } catch (Exception e) {
             warnings.add("Failed to parse actions JSON: " + e.getMessage());
-            return new LlmZapActionsParseResult(Collections.emptyList(), warnings);
+            return new LlmZapActionsParseResult(Collections.emptyList(), warnings, null, json);
         }
 
-        return new LlmZapActionsParseResult(actions, warnings);
+        return new LlmZapActionsParseResult(actions, warnings, root, json);
+    }
+
+    private static List<JsonNode> extractActionNodes(JsonNode root, List<String> warnings) {
+        if (root == null || root.isNull()) {
+            warnings.add("Missing actions JSON.");
+            return Collections.emptyList();
+        }
+
+        if (root.isArray()) {
+            List<JsonNode> nodes = new ArrayList<>();
+            root.forEach(nodes::add);
+            return nodes;
+        }
+
+        if (root.isObject()) {
+            JsonNode actionsNode = root.get("actions");
+            if (actionsNode != null && actionsNode.isArray()) {
+                List<JsonNode> nodes = new ArrayList<>();
+                actionsNode.forEach(nodes::add);
+                return nodes;
+            }
+
+            // Allow a single action object (models sometimes omit the wrapper array).
+            if (parseActionId(root) != null) {
+                return List.of(root);
+            }
+
+            warnings.add(
+                    "Missing or invalid 'actions' array. Expected {\"actions\": [...]} or a single action object.");
+            return Collections.emptyList();
+        }
+
+        warnings.add(
+                "Invalid actions JSON root type. Expected an object or array, got: "
+                        + root.getNodeType().toString());
+        return Collections.emptyList();
     }
 
     private static String buildUnsupportedActionWarning(JsonNode actionNode, String actionId) {
@@ -251,7 +291,9 @@ public class LlmZapActionsParser {
         // Fallback: accept a raw JSON object (common when users paste only the JSON).
         String trimmed = assistantText.trim();
         String raw = normalizeJsonCandidate(trimmed);
-        if (raw != null && raw.startsWith("{") && raw.endsWith("}")) {
+        if (raw != null
+                && ((raw.startsWith("{") && raw.endsWith("}"))
+                        || (raw.startsWith("[") && raw.endsWith("]")))) {
             return raw;
         }
 

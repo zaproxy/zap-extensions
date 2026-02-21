@@ -20,11 +20,13 @@
 package org.zaproxy.addon.llm.ui;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.llm.actions.LlmZapActionType;
 import org.zaproxy.zap.model.DefaultTextHttpMessageLocation;
 import org.zaproxy.zap.model.HttpMessageLocation;
 import org.zaproxy.zap.model.MessageLocation;
@@ -37,12 +39,32 @@ public class LlmGeneratePayloadsForSelectionMenu extends ExtensionPopupMenuItem 
     private static final int MAX_BODY_CHARS = 4000;
 
     private final LlmChatPanel llmChatPanel;
+    private final String promptKey;
+    private final List<LlmZapActionType> allowedActionTypes;
+    private final boolean requireConfirmation;
     private SelectableContentMessageContainer<HttpMessage> lastInvoker;
     private DefaultTextHttpMessageLocation lastSelection;
 
     public LlmGeneratePayloadsForSelectionMenu(LlmChatPanel llmChatPanel) {
-        super(Constant.messages.getString("llm.menu.generate.selection.title"));
+        this(
+                llmChatPanel,
+                "llm.menu.generate.selection.title",
+                "llm.chat.panel.payloads.prompt.text",
+                null,
+                true);
+    }
+
+    public LlmGeneratePayloadsForSelectionMenu(
+            LlmChatPanel llmChatPanel,
+            String titleKey,
+            String promptKey,
+            List<LlmZapActionType> allowedActionTypes,
+            boolean requireConfirmation) {
+        super(Constant.messages.getString(titleKey));
         this.llmChatPanel = llmChatPanel;
+        this.promptKey = promptKey;
+        this.allowedActionTypes = allowedActionTypes;
+        this.requireConfirmation = requireConfirmation;
         addActionListener(e -> performAction());
     }
 
@@ -131,7 +153,8 @@ public class LlmGeneratePayloadsForSelectionMenu extends ExtensionPopupMenuItem 
         }
         payload.put("request", request);
 
-        llmChatPanel.sendPayloadGenerationRequest(payload, true);
+        llmChatPanel.sendPayloadGenerationRequest(
+                payload, promptKey, allowedActionTypes, requireConfirmation);
     }
 
     private static String toActionLocation(HttpMessageLocation.Location location) {

@@ -19,7 +19,8 @@
  */
 package org.zaproxy.addon.llm.actions;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import java.util.List;
 
-public record LlmZapActionsParseResult(List<LlmZapAction> actions, List<String> warnings) {}
-
+public record LlmZapActionsParseResult(
+        List<LlmZapAction> actions, List<String> warnings, JsonNode root, String extractedJson) {}

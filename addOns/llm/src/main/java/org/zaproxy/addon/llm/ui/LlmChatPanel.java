@@ -20,6 +20,7 @@
 package org.zaproxy.addon.llm.ui;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.message.SystemMessage;
@@ -112,7 +113,7 @@ public class LlmChatPanel extends AbstractPanel {
     private volatile boolean cancelRequested;
     private volatile LlmCommunicationService inFlightService;
     private volatile long autoApplyActionsRequestId;
-    private volatile ActionContext autoApplyActionsContext;
+    private volatile AutoApplyContext autoApplyActionsContext;
     private long requestCounter;
     private long requestStartTimeMs;
     private Timer statusTimer;
@@ -124,6 +125,11 @@ public class LlmChatPanel extends AbstractPanel {
             int start,
             int end,
             String selectionText) {}
+
+    private record AutoApplyContext(
+            ActionContext actionContext,
+            List<LlmZapActionType> allowedActionTypes,
+            boolean requireConfirmation) {}
 
     public LlmChatPanel(ExtensionLlm extension) {
         this.extension = extension;
@@ -325,6 +331,28 @@ public class LlmChatPanel extends AbstractPanel {
     }
 
     public void sendPayloadGenerationRequest(Map<String, Object> payload, boolean autoApplyActions) {
+        sendPayloadGenerationRequest(
+                payload,
+                autoApplyActions,
+                "llm.chat.panel.payloads.prompt.text",
+                null,
+                true);
+    }
+
+    public void sendPayloadGenerationRequest(
+            Map<String, Object> payload,
+            String promptKey,
+            List<LlmZapActionType> allowedActionTypes,
+            boolean requireConfirmation) {
+        sendPayloadGenerationRequest(payload, true, promptKey, allowedActionTypes, requireConfirmation);
+    }
+
+    private void sendPayloadGenerationRequest(
+            Map<String, Object> payload,
+            boolean autoApplyActions,
+            String promptKey,
+            List<LlmZapActionType> allowedActionTypes,
+            boolean requireConfirmation) {
         if (payload == null || payload.isEmpty()) {
             return;
         }
@@ -347,7 +375,7 @@ public class LlmChatPanel extends AbstractPanel {
                 Constant.messages.getString("llm.chat.panel.payloads.autorequest", selectionText);
         String prompt =
                 Constant.messages.getString(
-                                "llm.chat.panel.payloads.prompt.text",
+                                promptKey,
                                 LlmZapActionsParser.ACTIONS_BEGIN,
                                 LlmZapActionsParser.ACTIONS_END)
                         + "\n";
@@ -358,7 +386,12 @@ public class LlmChatPanel extends AbstractPanel {
                     userVisibleMessage,
                     llmMessage,
                     false,
-                    autoApplyActions ? buildActionContextFromPayload(payload) : null);
+                    autoApplyActions
+                            ? new AutoApplyContext(
+                                    buildActionContextFromPayload(payload),
+                                    allowedActionTypes,
+                                    requireConfirmation)
+                            : null);
         } catch (JsonProcessingException e) {
             appendMessage(Constant.messages.getString("llm.chat.json.failure", e.getMessage()));
         }
@@ -582,7 +615,7 @@ public class LlmChatPanel extends AbstractPanel {
             String userVisibleMessage,
             String llmMessage,
             boolean clearInput,
-            ActionContext autoApplyContext) {
+            AutoApplyContext autoApplyContext) {
         if (StringUtils.isBlank(userVisibleMessage) || StringUtils.isBlank(llmMessage) || isProcessing) {
             return;
         }
@@ -727,21 +760,40 @@ public class LlmChatPanel extends AbstractPanel {
                     if (ASSISTANT_LABEL_KEY.equals(key)
                             && autoApplyActionsRequestId == requestId
                             && !cancelRequested) {
-                        ActionContext ctx = autoApplyActionsContext;
+                        AutoApplyContext ctx = autoApplyActionsContext;
                         autoApplyActionsRequestId = -1;
                         autoApplyActionsContext = null;
-                        applyActionsFromAssistantMessage(StringUtils.defaultString(lastAssistantMessage), ctx);
+                        applyActionsFromAssistantMessage(
+                                StringUtils.defaultString(lastAssistantMessage),
+                                ctx.actionContext(),
+                                ctx.allowedActionTypes(),
+                                ctx.requireConfirmation());
                     }
                 });
     }
 
-    private void applyActionsFromAssistantMessage(String assistantMessage, ActionContext context) {
+    private void applyActionsFromAssistantMessage(
+            String assistantMessage,
+            ActionContext context,
+            List<LlmZapActionType> allowedActionTypes,
+            boolean requireConfirmation) {
         if (StringUtils.isBlank(assistantMessage)) {
             return;
         }
 
         LlmZapActionsParseResult parsed = actionsParser.parse(assistantMessage);
-        if (parsed.actions().isEmpty()) {
+        List<LlmZapAction> actions = parsed.actions();
+        if (actions.isEmpty() && context != null) {
+            List<LlmZapActionType> allowed =
+                    (allowedActionTypes == null || allowedActionTypes.isEmpty())
+                            ? List.of(
+                                    LlmZapActionType.OPEN_REQUESTER_DIALOG,
+                                    LlmZapActionType.OPEN_REQUESTER_TAB,
+                                    LlmZapActionType.OPEN_FUZZER)
+                            : allowedActionTypes;
+            actions = buildFallbackActions(parsed.root(), allowed);
+        }
+        if (actions.isEmpty()) {
             if (!parsed.warnings().isEmpty()) {
                 JOptionPane.showMessageDialog(
                         this,
@@ -760,20 +812,37 @@ public class LlmChatPanel extends AbstractPanel {
             return;
         }
 
-        List<LlmZapAction> actions = parsed.actions();
         if (context != null) {
             actions = normalizeActionsWithContext(actions, context);
         }
 
-        int option =
-                JOptionPane.showConfirmDialog(
+        if (allowedActionTypes != null && !allowedActionTypes.isEmpty()) {
+            actions =
+                    actions.stream()
+                            .filter(a -> allowedActionTypes.contains(a.type()))
+                            .toList();
+            if (actions.isEmpty()) {
+                JOptionPane.showMessageDialog(
                         this,
-                        Constant.messages.getString("llm.chat.panel.actions.confirm", actions.size()),
+                        Constant.messages.getString("llm.chat.panel.actions.nonefound"),
                         Constant.messages.getString("llm.chat.panel.actions.title"),
-                        JOptionPane.OK_CANCEL_OPTION,
-                        JOptionPane.QUESTION_MESSAGE);
-        if (option != JOptionPane.OK_OPTION) {
-            return;
+                        JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+        }
+
+        if (requireConfirmation) {
+            int option =
+                    JOptionPane.showConfirmDialog(
+                            this,
+                            Constant.messages.getString(
+                                    "llm.chat.panel.actions.confirm", actions.size()),
+                            Constant.messages.getString("llm.chat.panel.actions.title"),
+                            JOptionPane.OK_CANCEL_OPTION,
+                            JOptionPane.QUESTION_MESSAGE);
+            if (option != JOptionPane.OK_OPTION) {
+                return;
+            }
         }
 
         List<LlmZapAction> finalActions = actions;
@@ -816,6 +885,151 @@ public class LlmChatPanel extends AbstractPanel {
                         },
                         "ZAP-LLM-Actions-Apply");
         applyThread.start();
+    }
+
+    private static List<LlmZapAction> buildFallbackActions(
+            JsonNode root, List<LlmZapActionType> allowedActionTypes) {
+        List<String> payloads = extractPayloadCandidates(root);
+        if (payloads.isEmpty()) {
+            return List.of();
+        }
+
+        String firstPayload = payloads.get(0);
+        List<LlmZapAction> actions = new ArrayList<>();
+
+        if (allowedActionTypes.contains(LlmZapActionType.OPEN_FUZZER)) {
+            actions.add(
+                    new LlmZapAction(
+                            LlmZapActionType.OPEN_FUZZER,
+                            -1,
+                            null,
+                            List.of(),
+                            null,
+                            -1,
+                            -1,
+                            null,
+                            payloads,
+                            null));
+        }
+        if (allowedActionTypes.contains(LlmZapActionType.OPEN_REQUESTER_DIALOG)
+                && StringUtils.isNotBlank(firstPayload)) {
+            actions.add(
+                    new LlmZapAction(
+                            LlmZapActionType.OPEN_REQUESTER_DIALOG,
+                            -1,
+                            null,
+                            List.of(),
+                            null,
+                            -1,
+                            -1,
+                            firstPayload,
+                            List.of(),
+                            null));
+        }
+        if (allowedActionTypes.contains(LlmZapActionType.OPEN_REQUESTER_TAB)
+                && StringUtils.isNotBlank(firstPayload)) {
+            actions.add(
+                    new LlmZapAction(
+                            LlmZapActionType.OPEN_REQUESTER_TAB,
+                            -1,
+                            null,
+                            List.of(),
+                            null,
+                            -1,
+                            -1,
+                            firstPayload,
+                            List.of(),
+                            null));
+        }
+
+        return actions;
+    }
+
+    private static List<String> extractPayloadCandidates(JsonNode root) {
+        if (root == null || root.isNull()) {
+            return List.of();
+        }
+
+        if (root.isTextual()) {
+            String v = StringUtils.trimToEmpty(root.asText());
+            return v.isEmpty() ? List.of() : List.of(v);
+        }
+
+        if (root.isArray()) {
+            List<String> out = new ArrayList<>();
+            for (JsonNode n : root) {
+                if (n == null || n.isNull()) {
+                    continue;
+                }
+                if (n.isTextual()) {
+                    String v = StringUtils.trimToEmpty(n.asText());
+                    if (!v.isEmpty()) {
+                        out.add(v);
+                    }
+                } else if (n.isObject()) {
+                    String v =
+                            StringUtils.defaultIfBlank(
+                                    StringUtils.trimToEmpty(textOrNull(n, "payload")),
+                                    StringUtils.trimToEmpty(textOrNull(n, "value")));
+                    if (!v.isEmpty()) {
+                        out.add(v);
+                    }
+                }
+            }
+            return out;
+        }
+
+        if (root.isObject()) {
+            List<String> payloads = extractStringArray(root.get("payloads"));
+            if (!payloads.isEmpty()) {
+                return payloads;
+            }
+            payloads = extractStringArray(root.get("payload_list"));
+            if (!payloads.isEmpty()) {
+                return payloads;
+            }
+            payloads = extractStringArray(root.get("suggested_payloads"));
+            if (!payloads.isEmpty()) {
+                return payloads;
+            }
+            payloads = extractStringArray(root.get("suggestions"));
+            if (!payloads.isEmpty()) {
+                return payloads;
+            }
+
+            String single = textOrNull(root, "payload");
+            if (StringUtils.isNotBlank(single)) {
+                return List.of(single);
+            }
+        }
+
+        return List.of();
+    }
+
+    private static List<String> extractStringArray(JsonNode node) {
+        if (node == null || node.isNull() || !node.isArray()) {
+            return List.of();
+        }
+        List<String> out = new ArrayList<>();
+        for (JsonNode n : node) {
+            if (n == null || n.isNull() || !n.isTextual()) {
+                continue;
+            }
+            String v = StringUtils.trimToEmpty(n.asText());
+            if (!v.isEmpty()) {
+                out.add(v);
+            }
+        }
+        return out;
+    }
+
+    private static String textOrNull(JsonNode node, String field) {
+        JsonNode v = node.get(field);
+        if (v == null || v.isNull()) {
+            return null;
+        }
+        String text = v.asText();
+        return StringUtils.isBlank(text) ? null : text;
     }
 
     private static List<LlmZapAction> normalizeActionsWithContext(
@@ -965,7 +1179,7 @@ public class LlmChatPanel extends AbstractPanel {
                     JOptionPane.INFORMATION_MESSAGE);
             return;
         }
-        applyActionsFromAssistantMessage(lastAssistantMessage, null);
+        applyActionsFromAssistantMessage(lastAssistantMessage, null, null, true);
     }
 
     @Override
