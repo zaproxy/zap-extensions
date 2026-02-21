@@ -21,7 +21,10 @@ package org.zaproxy.addon.llm.actions;
 
 public enum LlmZapActionType {
     SET_HISTORY_NOTE("set_history_note"),
-    ADD_HISTORY_TAGS("add_history_tags");
+    ADD_HISTORY_TAGS("add_history_tags"),
+    OPEN_REQUESTER_DIALOG("open_requester_dialog"),
+    OPEN_REQUESTER_TAB("open_requester_tab"),
+    OPEN_FUZZER("open_fuzzer");
 
     private final String id;
 
@@ -37,12 +40,24 @@ public enum LlmZapActionType {
         if (id == null) {
             return null;
         }
+        String normalized = id.trim().toLowerCase().replace('-', '_');
+
+        // Backwards/forwards compatibility aliases (model might invent these).
+        if ("open_request_editor".equals(normalized)) {
+            return OPEN_REQUESTER_DIALOG;
+        }
+        if ("open_requester".equals(normalized)) {
+            return OPEN_REQUESTER_TAB;
+        }
+        if ("open_http_fuzzer".equals(normalized)) {
+            return OPEN_FUZZER;
+        }
+
         for (LlmZapActionType t : values()) {
-            if (t.id.equals(id)) {
+            if (t.id.equals(normalized)) {
                 return t;
             }
         }
         return null;
     }
 }
-

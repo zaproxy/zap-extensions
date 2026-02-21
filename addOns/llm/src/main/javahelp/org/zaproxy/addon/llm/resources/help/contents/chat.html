@@ -97,6 +97,21 @@ To append HTTP request/response data to the chat:
     <li>The chat panel will automatically switch to the chat tab, and the cursor will be positioned at the end of the appended text.</li>
 </ul>
 
+<H3>Appending a Request Selection (Payload Suggestions)</H3>
+You can send the currently selected text from the Request panel to the chat (along with the full request and selection offsets):
+<ul>
+    <li>Select text in the Request header/body.</li>
+    <li>Right-click and choose <b>Append Request Selection to LLM Chat (with prompt)</b>.</li>
+    <li>This appends a structured JSON payload and inserts a ready-to-send prompt asking for attack vectors, payload suggestions, and user-approved ZAP actions.</li>
+</ul>
+
+You can also generate payload suggestions automatically:
+<ul>
+    <li>Select text in the Request header/body.</li>
+    <li>Right-click and choose <b>Generate Payloads for Selection (Open Tools)</b>.</li>
+    <li>This sends the selection and prompt to the configured model and (after you confirm) applies any proposed ZAP actions (for example opening Requester/Fuzzer with payloads).</li>
+</ul>
+
 <H2>Tips</H2>
 <ul>
     <li>The chat maintains conversation context, allowing for follow-up questions and multi-turn conversations.</li>

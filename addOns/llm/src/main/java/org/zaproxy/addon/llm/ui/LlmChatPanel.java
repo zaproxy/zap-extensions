@@ -37,10 +37,12 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JOptionPane;
@@ -54,10 +56,14 @@ import org.zaproxy.addon.llm.ExtensionLlm;
 import org.zaproxy.addon.llm.actions.LlmZapActionsExecutor;
 import org.zaproxy.addon.llm.actions.LlmZapActionsParseResult;
 import org.zaproxy.addon.llm.actions.LlmZapActionsParser;
+import org.zaproxy.addon.llm.actions.LlmZapAction;
+import org.zaproxy.addon.llm.actions.LlmZapActionType;
+import org.zaproxy.addon.llm.actions.LlmZapRequestData;
 import org.zaproxy.addon.llm.context.LlmProjectContextBuilder;
 import org.zaproxy.addon.llm.context.LlmZapLogTailBuilder;
 import org.zaproxy.addon.llm.services.LlmCommunicationService;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
+import org.zaproxy.zap.model.HttpMessageLocation;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.ZapTextArea;
@@ -89,6 +95,8 @@ public class LlmChatPanel extends AbstractPanel {
     private JPanel inputPanel;
     private ZapTextArea inputArea;
     private JButton sendButton;
+    private JButton cancelButton;
+    private JLabel statusLabel;
     private JSplitPane splitPane;
     private boolean isProcessing;
     private boolean containsStructuredPayload;
@@ -99,6 +107,23 @@ public class LlmChatPanel extends AbstractPanel {
     private long autoContextSessionId;
     private boolean autoContextIncludedForSession;
     private final List<ChatMessage> conversation;
+    private volatile Thread inFlightThread;
+    private volatile long inFlightRequestId;
+    private volatile boolean cancelRequested;
+    private volatile LlmCommunicationService inFlightService;
+    private volatile long autoApplyActionsRequestId;
+    private volatile ActionContext autoApplyActionsContext;
+    private long requestCounter;
+    private long requestStartTimeMs;
+    private Timer statusTimer;
+
+    private record ActionContext(
+            int historyId,
+            LlmZapRequestData request,
+            HttpMessageLocation.Location location,
+            int start,
+            int end,
+            String selectionText) {}
 
     public LlmChatPanel(ExtensionLlm extension) {
         this.extension = extension;
@@ -108,6 +133,11 @@ public class LlmChatPanel extends AbstractPanel {
         this.autoContextSessionId = -1;
         this.autoContextIncludedForSession = false;
         this.conversation = new ArrayList<>();
+        this.inFlightRequestId = -1;
+        this.cancelRequested = false;
+        this.autoApplyActionsRequestId = -1;
+        this.autoApplyActionsContext = null;
+        this.requestCounter = 0;
 
         setName(Constant.messages.getString("llm.chat.panel.title"));
         setIcon(
@@ -230,9 +260,17 @@ public class LlmChatPanel extends AbstractPanel {
         sendButton.setMaximumSize(new Dimension(80, 35));
         sendButton.addActionListener(e -> sendMessage());
 
-        // Wrap button in panel to prevent vertical expansion
-        JPanel buttonPanel = new JPanel(new BorderLayout());
+        // Initialize cancel button
+        cancelButton = new JButton(Constant.messages.getString("llm.chat.panel.cancel"));
+        cancelButton.setPreferredSize(new Dimension(80, 35));
+        cancelButton.setMaximumSize(new Dimension(80, 35));
+        cancelButton.setEnabled(false);
+        cancelButton.addActionListener(e -> cancelInFlightRequest());
+
+        // Wrap buttons in panel to prevent vertical expansion
+        JPanel buttonPanel = new JPanel(new BorderLayout(0, 8));
         buttonPanel.add(sendButton, BorderLayout.NORTH);
+        buttonPanel.add(cancelButton, BorderLayout.SOUTH);
 
         // Initialize input container
         JPanel inputContainer = new JPanel(new BorderLayout(10, 0));
@@ -242,6 +280,11 @@ public class LlmChatPanel extends AbstractPanel {
         // Initialize input panel
         inputPanel = new JPanel(new BorderLayout());
         inputPanel.add(inputContainer, BorderLayout.CENTER);
+
+        statusLabel = new JLabel(" ");
+        statusLabel.setBorder(new EmptyBorder(6, 2, 0, 2));
+        inputPanel.add(statusLabel, BorderLayout.SOUTH);
+
         updateInputPanelBorder();
 
         // Initialize split pane with resizable divider
@@ -254,6 +297,248 @@ public class LlmChatPanel extends AbstractPanel {
         add(splitPane, BorderLayout.CENTER);
 
         ExtensionHelp.enableHelpKey(this, "addon.llm.chat");
+    }
+
+    private void cancelInFlightRequest() {
+        if (!isProcessing) {
+            return;
+        }
+
+        cancelRequested = true;
+        autoApplyActionsRequestId = -1;
+        autoApplyActionsContext = null;
+        if (inFlightService != null) {
+            inFlightService.setOutputEnabled(false);
+        }
+
+        Thread t = inFlightThread;
+        if (t != null) {
+            t.interrupt();
+        }
+
+        appendMessage(
+                Constant.messages.getString(
+                        "llm.chat.panel.message.format",
+                        Constant.messages.getString(ASSISTANT_LABEL_KEY),
+                        Constant.messages.getString("llm.chat.panel.assistant.canceled")));
+        finishRequestUi();
+    }
+
+    public void sendPayloadGenerationRequest(Map<String, Object> payload, boolean autoApplyActions) {
+        if (payload == null || payload.isEmpty()) {
+            return;
+        }
+
+        setTabFocus();
+
+        String selectionText = "";
+        Object selectionObj = payload.get("selection");
+        if (selectionObj instanceof Map<?, ?> selectionMap) {
+            Object text = selectionMap.get("text");
+            if (text != null) {
+                selectionText = StringUtils.trimToEmpty(text.toString());
+            }
+        }
+        if (selectionText.length() > 120) {
+            selectionText = selectionText.substring(0, 120) + "…";
+        }
+
+        String userVisibleMessage =
+                Constant.messages.getString("llm.chat.panel.payloads.autorequest", selectionText);
+        String prompt =
+                Constant.messages.getString(
+                                "llm.chat.panel.payloads.prompt.text",
+                                LlmZapActionsParser.ACTIONS_BEGIN,
+                                LlmZapActionsParser.ACTIONS_END)
+                        + "\n";
+
+        try {
+            String llmMessage = buildUntrustedDataBlock(payload) + "\n" + prompt;
+            startRequest(
+                    userVisibleMessage,
+                    llmMessage,
+                    false,
+                    autoApplyActions ? buildActionContextFromPayload(payload) : null);
+        } catch (JsonProcessingException e) {
+            appendMessage(Constant.messages.getString("llm.chat.json.failure", e.getMessage()));
+        }
+    }
+
+    private static ActionContext buildActionContextFromPayload(Map<String, Object> payload) {
+        int historyId = -1;
+        Object hid = payload.get("history_id");
+        if (hid instanceof Number n) {
+            historyId = n.intValue();
+        } else if (hid != null) {
+            try {
+                historyId = Integer.parseInt(hid.toString());
+            } catch (Exception ignore) {
+                // ignore
+            }
+        }
+
+        LlmZapRequestData request = null;
+        Object requestObj = payload.get("request");
+        if (requestObj instanceof Map<?, ?> requestMap) {
+            Object header = requestMap.get("header");
+            Object body = requestMap.get("body");
+            String headerStr = header != null ? header.toString() : null;
+            String bodyStr = body != null ? body.toString() : null;
+            if (StringUtils.isNotBlank(headerStr) || StringUtils.isNotBlank(bodyStr)) {
+                request = new LlmZapRequestData(headerStr, bodyStr);
+            }
+        }
+
+        HttpMessageLocation.Location location = null;
+        int start = -1;
+        int end = -1;
+        String selectionText = null;
+        Object selectionObj = payload.get("selection");
+        if (selectionObj instanceof Map<?, ?> selectionMap) {
+            Object loc = selectionMap.get("location");
+            if (loc != null) {
+                String v = StringUtils.trimToEmpty(loc.toString()).toUpperCase().replace('-', '_');
+                if ("REQUEST_HEADER".equals(v) || "HTTP_REQUEST_HEADER".equals(v)) {
+                    location = HttpMessageLocation.Location.REQUEST_HEADER;
+                } else if ("REQUEST_BODY".equals(v) || "HTTP_REQUEST_BODY".equals(v)) {
+                    location = HttpMessageLocation.Location.REQUEST_BODY;
+                }
+            }
+            Object s = selectionMap.get("start");
+            Object e = selectionMap.get("end");
+            if (s instanceof Number sn) {
+                start = sn.intValue();
+            }
+            if (e instanceof Number en) {
+                end = en.intValue();
+            }
+
+            Object text = selectionMap.get("text");
+            if (text != null) {
+                selectionText = text.toString();
+            }
+        }
+
+        if (HttpMessageLocation.Location.REQUEST_HEADER.equals(location)) {
+            int[] adjusted = adjustHeaderLineSelection(start, end, selectionText);
+            start = adjusted[0];
+            end = adjusted[1];
+        }
+
+        return new ActionContext(historyId, request, location, start, end, selectionText);
+    }
+
+    private static int[] adjustHeaderLineSelection(int start, int end, String selectionText) {
+        if (start < 0 || end < 0 || end <= start || StringUtils.isBlank(selectionText)) {
+            return new int[] {start, end};
+        }
+        String s = selectionText;
+        if (s.indexOf('\n') >= 0 || s.indexOf('\r') >= 0) {
+            return new int[] {start, end};
+        }
+        int colon = s.indexOf(':');
+        if (colon <= 0) {
+            return new int[] {start, end};
+        }
+        String headerName = s.substring(0, colon);
+        if (headerName.isBlank() || headerName.chars().anyMatch(Character::isWhitespace)) {
+            return new int[] {start, end};
+        }
+        // Basic header-name validation: token of letters/digits/hyphen.
+        for (int i = 0; i < headerName.length(); i++) {
+            char c = headerName.charAt(i);
+            if (!(Character.isLetterOrDigit(c) || c == '-')) {
+                return new int[] {start, end};
+            }
+        }
+
+        int valueOffset = colon + 1;
+        if (valueOffset < s.length() && s.charAt(valueOffset) == ' ') {
+            valueOffset++;
+        }
+        int newStart = start + valueOffset;
+        if (newStart >= end) {
+            return new int[] {start, end};
+        }
+        return new int[] {newStart, end};
+    }
+
+    private void updateStatusText() {
+        if (!isProcessing) {
+            statusLabel.setText(" ");
+            return;
+        }
+
+        String provider = "";
+        String model = "";
+        if (inFlightService != null && inFlightService.getPconf() != null) {
+            provider =
+                    StringUtils.defaultString(inFlightService.getPconf().getProvider().toString());
+        }
+        if (inFlightService != null) {
+            model = StringUtils.defaultString(inFlightService.getModelName());
+        }
+
+        long elapsedMs = Math.max(0, System.currentTimeMillis() - requestStartTimeMs);
+        String target = "";
+        if (StringUtils.isNotBlank(provider) && StringUtils.isNotBlank(model)) {
+            target = String.format(" to %s / %s", provider, model);
+        } else if (StringUtils.isNotBlank(provider)) {
+            target = String.format(" to %s", provider);
+        } else if (StringUtils.isNotBlank(model)) {
+            target = String.format(" to %s", model);
+        }
+        String safeTarget = target.replace("'", "''");
+        statusLabel.setText(
+                Constant.messages.getString(
+                        cancelRequested
+                                ? "llm.chat.panel.status.canceled"
+                                : "llm.chat.panel.status.sending",
+                        safeTarget,
+                        (elapsedMs / 1000)));
+    }
+
+    private void startStatusTimer() {
+        stopStatusTimer();
+        statusTimer =
+                new Timer(
+                        500,
+                        e -> {
+                            updateStatusText();
+                            if (!isProcessing) {
+                                stopStatusTimer();
+                            }
+                        });
+        statusTimer.setRepeats(true);
+        statusTimer.start();
+    }
+
+    private void stopStatusTimer() {
+        if (statusTimer != null) {
+            statusTimer.stop();
+            statusTimer = null;
+        }
+    }
+
+    private void finishRequestUi() {
+        if (SwingUtilities.isEventDispatchThread()) {
+            finishRequestUiOnEdt();
+        } else {
+            SwingUtilities.invokeLater(this::finishRequestUiOnEdt);
+        }
+    }
+
+    private void finishRequestUiOnEdt() {
+        inputArea.setEnabled(true);
+        sendButton.setEnabled(true);
+        cancelButton.setEnabled(false);
+        sendButton.setText(Constant.messages.getString("llm.chat.panel.send"));
+        isProcessing = false;
+        inFlightThread = null;
+        inFlightService = null;
+        updateStatusText();
+        stopStatusTimer();
+        inputArea.requestFocusInWindow();
     }
 
     private void updateInputPanelBorder() {
@@ -290,6 +575,23 @@ public class LlmChatPanel extends AbstractPanel {
         if (message.isEmpty() || isProcessing) {
             return;
         }
+        startRequest(message, message, true, null);
+    }
+
+    private void startRequest(
+            String userVisibleMessage,
+            String llmMessage,
+            boolean clearInput,
+            ActionContext autoApplyContext) {
+        if (StringUtils.isBlank(userVisibleMessage) || StringUtils.isBlank(llmMessage) || isProcessing) {
+            return;
+        }
+
+        long requestId = ++requestCounter;
+        inFlightRequestId = requestId;
+        cancelRequested = false;
+        autoApplyActionsRequestId = autoApplyContext != null ? requestId : -1;
+        autoApplyActionsContext = autoApplyContext;
 
         long currentSessionId = Model.getSingleton().getSession().getSessionId();
         if (autoContextSessionId != currentSessionId) {
@@ -304,46 +606,62 @@ public class LlmChatPanel extends AbstractPanel {
             return;
         }
 
-        inputArea.setText("");
+        if (clearInput) {
+            inputArea.setText("");
+        }
         inputArea.setEnabled(false);
         sendButton.setEnabled(false);
+        cancelButton.setEnabled(true);
+        sendButton.setText(Constant.messages.getString("llm.chat.panel.send.sending"));
         isProcessing = true;
-        String llmMessage = message;
+        requestStartTimeMs = System.currentTimeMillis();
+        updateStatusText();
+        startStatusTimer();
+
+        String llmMessageWithContext = llmMessage;
         if (extension.isAutoIncludeProjectContext() && !autoContextIncludedForSession) {
             try {
-                llmMessage =
+                llmMessageWithContext =
                         buildUntrustedDataBlock(projectContextBuilder.buildProjectContext())
                                 + "\n"
-                                + message;
+                                + llmMessage;
                 autoContextIncludedForSession = true;
             } catch (Exception e) {
                 LOGGER.warn("Failed to include project context automatically: {}", e.getMessage());
             }
         }
-        final String llmMessageFinal = llmMessage;
+        final String llmMessageFinal = llmMessageWithContext;
         containsStructuredPayload = false;
 
         appendMessage(
                 Constant.messages.getString(
                         "llm.chat.panel.message.format",
                         Constant.messages.getString("llm.chat.panel.user.label"),
-                        message));
+                        userVisibleMessage));
 
-        // Send message to LLM in background thread
         Thread chatThread =
                 new Thread(
                         () -> {
                             try {
+                                if (cancelRequested || inFlightRequestId != requestId) {
+                                    return;
+                                }
                                 LlmCommunicationService service =
                                         extension.getCommunicationService(
                                                 "CHAT",
                                                 Constant.messages.getString(
                                                         "llm.chat.output.panel"));
                                 if (service == null) {
-                                    appendFormattedMessageLater(
-                                            "llm.chat.panel.error.service", null);
+                                    if (!cancelRequested && inFlightRequestId == requestId) {
+                                        appendFormattedMessageLater(
+                                                requestId, "llm.chat.panel.error.service", null);
+                                    }
                                     return;
                                 }
+                                inFlightService = service;
+                                service.setOutputEnabled(true);
+                                SwingUtilities.invokeLater(this::updateStatusText);
+
                                 UserMessage userMessage = UserMessage.from(llmMessageFinal);
 
                                 List<ChatMessage> requestMessages =
@@ -360,26 +678,38 @@ public class LlmChatPanel extends AbstractPanel {
                                                                 new ChatMessage[0]))
                                                 .build();
                                 String assistantText = service.chatText(chatRequest);
+                                if (cancelRequested || inFlightRequestId != requestId) {
+                                    return;
+                                }
                                 AiMessage aiMessage = AiMessage.from(assistantText);
                                 conversation.add(userMessage);
                                 conversation.add(aiMessage);
                                 trimConversation();
 
                                 appendFormattedMessageLater(
-                                        "llm.chat.panel.assistant.label", aiMessage.text());
+                                        requestId,
+                                        "llm.chat.panel.assistant.label",
+                                        aiMessage.text());
 
                             } catch (Exception e) {
+                                if (cancelRequested || inFlightRequestId != requestId) {
+                                    return;
+                                }
                                 appendFormattedMessageLater(
-                                        "llm.chat.panel.error.send", e.getMessage());
+                                        requestId, "llm.chat.panel.error.send", e.getMessage());
                             }
                         },
                         "ZAP-LLM-Chat");
+        inFlightThread = chatThread;
         chatThread.start();
     }
 
-    private void appendFormattedMessageLater(String key, String message) {
+    private void appendFormattedMessageLater(long requestId, String key, String message) {
         SwingUtilities.invokeLater(
                 () -> {
+                    if (cancelRequested || inFlightRequestId != requestId) {
+                        return;
+                    }
                     if (message != null) {
                         appendMessage(
                                 Constant.messages.getString(
@@ -393,11 +723,141 @@ public class LlmChatPanel extends AbstractPanel {
                     } else {
                         appendMessage(Constant.messages.getString(key));
                     }
-                    inputArea.setEnabled(true);
-                    sendButton.setEnabled(true);
-                    isProcessing = false;
-                    inputArea.requestFocusInWindow();
+                    finishRequestUi();
+                    if (ASSISTANT_LABEL_KEY.equals(key)
+                            && autoApplyActionsRequestId == requestId
+                            && !cancelRequested) {
+                        ActionContext ctx = autoApplyActionsContext;
+                        autoApplyActionsRequestId = -1;
+                        autoApplyActionsContext = null;
+                        applyActionsFromAssistantMessage(StringUtils.defaultString(lastAssistantMessage), ctx);
+                    }
                 });
+    }
+
+    private void applyActionsFromAssistantMessage(String assistantMessage, ActionContext context) {
+        if (StringUtils.isBlank(assistantMessage)) {
+            return;
+        }
+
+        LlmZapActionsParseResult parsed = actionsParser.parse(assistantMessage);
+        if (parsed.actions().isEmpty()) {
+            if (!parsed.warnings().isEmpty()) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        Constant.messages.getString(
+                                "llm.chat.panel.actions.nonefound.warnings",
+                                String.join("\n", parsed.warnings())),
+                        Constant.messages.getString("llm.chat.panel.actions.title"),
+                        JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+            JOptionPane.showMessageDialog(
+                    this,
+                    Constant.messages.getString("llm.chat.panel.actions.nonefound"),
+                    Constant.messages.getString("llm.chat.panel.actions.title"),
+                    JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        List<LlmZapAction> actions = parsed.actions();
+        if (context != null) {
+            actions = normalizeActionsWithContext(actions, context);
+        }
+
+        int option =
+                JOptionPane.showConfirmDialog(
+                        this,
+                        Constant.messages.getString("llm.chat.panel.actions.confirm", actions.size()),
+                        Constant.messages.getString("llm.chat.panel.actions.title"),
+                        JOptionPane.OK_CANCEL_OPTION,
+                        JOptionPane.QUESTION_MESSAGE);
+        if (option != JOptionPane.OK_OPTION) {
+            return;
+        }
+
+        List<LlmZapAction> finalActions = actions;
+        Thread applyThread =
+                new Thread(
+                        () -> {
+                            LlmZapActionsExecutor.ApplyResult result =
+                                    actionsExecutor.apply(finalActions);
+                            if (!result.errors().isEmpty()) {
+                                for (String error : result.errors()) {
+                                    LOGGER.warn("LLM action apply failed: {}", error);
+                                }
+                            }
+                            SwingUtilities.invokeLater(
+                                    () -> {
+                                        if (!result.errors().isEmpty()) {
+                                            StringBuilder sb = new StringBuilder();
+                                            sb.append(
+                                                            Constant.messages.getString(
+                                                                    "llm.chat.panel.actions.applied.witherrors",
+                                                                    result.appliedCount(),
+                                                                    result.errors().size()))
+                                                    .append("\n");
+                                            int max = Math.min(3, result.errors().size());
+                                            for (int i = 0; i < max; i++) {
+                                                sb.append("- ").append(result.errors().get(i)).append("\n");
+                                            }
+                                            if (result.errors().size() > max) {
+                                                sb.append("- …\n");
+                                            }
+                                            appendMessage(
+                                                    sb.toString().trim());
+                                        } else {
+                                            appendMessage(
+                                                    Constant.messages.getString(
+                                                            "llm.chat.panel.actions.applied",
+                                                            result.appliedCount()));
+                                        }
+                                    });
+                        },
+                        "ZAP-LLM-Actions-Apply");
+        applyThread.start();
+    }
+
+    private static List<LlmZapAction> normalizeActionsWithContext(
+            List<LlmZapAction> actions, ActionContext context) {
+        if (actions == null || actions.isEmpty() || context == null) {
+            return actions != null ? actions : List.of();
+        }
+
+        List<LlmZapAction> normalized = new ArrayList<>(actions.size());
+        for (LlmZapAction a : actions) {
+            if (a == null || a.type() == null) {
+                continue;
+            }
+            if (a.type() == LlmZapActionType.OPEN_REQUESTER_DIALOG
+                    || a.type() == LlmZapActionType.OPEN_REQUESTER_TAB
+                    || a.type() == LlmZapActionType.OPEN_FUZZER) {
+                LlmZapRequestData request = context.request() != null ? context.request() : a.request();
+                int historyId =
+                        request != null
+                                ? -1
+                                : (a.historyId() > 0 ? a.historyId() : context.historyId());
+                HttpMessageLocation.Location location =
+                        context.location() != null ? context.location() : a.location();
+                int start = context.start() >= 0 ? context.start() : a.start();
+                int end = context.end() >= 0 ? context.end() : a.end();
+                normalized.add(
+                        new LlmZapAction(
+                                a.type(),
+                                historyId,
+                                a.note(),
+                                a.tags(),
+                                location,
+                                start,
+                                end,
+                                a.payload(),
+                                a.payloads(),
+                                request));
+            } else {
+                normalized.add(a);
+            }
+        }
+        return normalized;
     }
 
     private void appendMessage(String message) {
@@ -505,57 +965,7 @@ public class LlmChatPanel extends AbstractPanel {
                     JOptionPane.INFORMATION_MESSAGE);
             return;
         }
-
-        LlmZapActionsParseResult parsed = actionsParser.parse(lastAssistantMessage);
-        if (parsed.actions().isEmpty()) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    Constant.messages.getString("llm.chat.panel.actions.nonefound"),
-                    Constant.messages.getString("llm.chat.panel.actions.title"),
-                    JOptionPane.INFORMATION_MESSAGE);
-            return;
-        }
-
-        int option =
-                JOptionPane.showConfirmDialog(
-                        this,
-                        Constant.messages.getString(
-                                "llm.chat.panel.actions.confirm", parsed.actions().size()),
-                        Constant.messages.getString("llm.chat.panel.actions.title"),
-                        JOptionPane.OK_CANCEL_OPTION,
-                        JOptionPane.QUESTION_MESSAGE);
-        if (option != JOptionPane.OK_OPTION) {
-            return;
-        }
-
-        Thread applyThread =
-                new Thread(
-                        () -> {
-                            LlmZapActionsExecutor.ApplyResult result =
-                                    actionsExecutor.apply(parsed.actions());
-                            if (!result.errors().isEmpty()) {
-                                for (String error : result.errors()) {
-                                    LOGGER.warn("LLM action apply failed: {}", error);
-                                }
-                            }
-                            SwingUtilities.invokeLater(
-                                    () -> {
-                                        if (!result.errors().isEmpty()) {
-                                            appendMessage(
-                                                    Constant.messages.getString(
-                                                            "llm.chat.panel.actions.applied.witherrors",
-                                                            result.appliedCount(),
-                                                            result.errors().size()));
-                                        } else {
-                                            appendMessage(
-                                                    Constant.messages.getString(
-                                                            "llm.chat.panel.actions.applied",
-                                                            result.appliedCount()));
-                                        }
-                                    });
-                        },
-                        "ZAP-LLM-Actions-Apply");
-        applyThread.start();
+        applyActionsFromAssistantMessage(lastAssistantMessage, null);
     }
 
     @Override

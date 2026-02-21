@@ -383,4 +383,10 @@ public class LlmCommunicationService {
     public void switchToOutputTab() {
         this.listener.setFocus();
     }
+
+    public void setOutputEnabled(boolean enabled) {
+        if (listener != null) {
+            listener.setOutputEnabled(enabled);
+        }
+    }
 }

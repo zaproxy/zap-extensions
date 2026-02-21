@@ -23,6 +23,7 @@ import dev.langchain4j.model.chat.listener.ChatModelErrorContext;
 import dev.langchain4j.model.chat.listener.ChatModelListener;
 import dev.langchain4j.model.chat.listener.ChatModelRequestContext;
 import dev.langchain4j.model.chat.listener.ChatModelResponseContext;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -36,12 +37,18 @@ public class LlmResponseHandler implements ChatModelListener {
 
     private OutputPanel outputPanel;
     private String outputTabName;
+    private final AtomicBoolean outputEnabled;
 
     public LlmResponseHandler(String outputTabName) {
         this.outputTabName = outputTabName;
+        this.outputEnabled = new AtomicBoolean(true);
         if (View.isInitialised()) {
             outputPanel = View.getSingleton().getOutputPanel();
         }
+    }
+
+    public void setOutputEnabled(boolean enabled) {
+        outputEnabled.set(enabled);
     }
 
     @Override
@@ -85,6 +92,9 @@ public class LlmResponseHandler implements ChatModelListener {
     }
 
     private void output(String prefix, String msg) {
+        if (!outputEnabled.get()) {
+            return;
+        }
         if (outputPanel != null) {
             outputPanel.appendAsync("\n" + prefix + "\n" + msg, outputTabName);
         }

@@ -189,6 +189,26 @@ public class FuzzMessageLocationsPanel
         return true;
     }
 
+    public boolean setPayloadsForLocation(MessageLocation location, List<PayloadTableEntry> payloads) {
+        if (location == null) {
+            throw new IllegalArgumentException("Parameter location must not be null.");
+        }
+        if (payloads == null) {
+            throw new IllegalArgumentException("Parameter payloads must not be null.");
+        }
+
+        List<FuzzLocationTableEntry> entries = getMultipleOptionsModel().getElements();
+        for (int i = 0; i < entries.size(); i++) {
+            FuzzLocationTableEntry entry = entries.get(i);
+            if (entry.getLocation().overlaps(location)) {
+                entry.setPayloads(payloads);
+                getMultipleOptionsModel().fireTableRowsUpdated(i, i);
+                return true;
+            }
+        }
+        return false;
+    }
+
     @SuppressWarnings({"unchecked", "rawtypes"})
     public List<PayloadGeneratorMessageLocation<?>> getFuzzMessageLocations() {
         List<PayloadGeneratorMessageLocation<?>> fuzzLocations = new ArrayList<>();

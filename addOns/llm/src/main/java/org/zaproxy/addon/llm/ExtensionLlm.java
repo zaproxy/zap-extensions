@@ -33,7 +33,9 @@ import org.parosproxy.paros.model.OptionsParam;
 import org.zaproxy.addon.llm.services.LlmCommunicationService;
 import org.zaproxy.addon.llm.ui.LlmAppendAlertMenu;
 import org.zaproxy.addon.llm.ui.LlmAppendHttpMessageMenu;
+import org.zaproxy.addon.llm.ui.LlmAppendRequestSelectionMenu;
 import org.zaproxy.addon.llm.ui.LlmChatPanel;
+import org.zaproxy.addon.llm.ui.LlmGeneratePayloadsForSelectionMenu;
 import org.zaproxy.addon.llm.ui.LlmOptionsPanel;
 import org.zaproxy.addon.llm.ui.LlmSelectorButton;
 
@@ -51,6 +53,7 @@ public class ExtensionLlm extends ExtensionAdaptor {
     private LlmOptions prevOptions;
     private Map<String, LlmCommunicationService> commsServices =
             Collections.synchronizedMap(new HashMap<>());
+    private LlmChatPanel llmChatPanel;
 
     private static final Logger LOGGER = LogManager.getLogger(ExtensionLlm.class);
 
@@ -89,7 +92,7 @@ public class ExtensionLlm extends ExtensionAdaptor {
                 });
 
         if (hasView()) {
-            LlmChatPanel llmChatPanel = new LlmChatPanel(this);
+            llmChatPanel = new LlmChatPanel(this);
             extensionHook.getHookView().addOptionPanel(new LlmOptionsPanel());
             extensionHook
                     .getHookView()
@@ -121,6 +124,12 @@ public class ExtensionLlm extends ExtensionAdaptor {
                                             "llm.menu.append.requestresponse.title"),
                                     true,
                                     true));
+            extensionHook
+                    .getHookMenu()
+                    .addPopupMenuItem(new LlmAppendRequestSelectionMenu(llmChatPanel));
+            extensionHook
+                    .getHookMenu()
+                    .addPopupMenuItem(new LlmGeneratePayloadsForSelectionMenu(llmChatPanel));
         }
     }
 

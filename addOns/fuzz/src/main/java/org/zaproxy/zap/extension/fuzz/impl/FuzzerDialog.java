@@ -206,6 +206,16 @@ public class FuzzerDialog<
         return fuzzLocationsPanel.addMessageLocation(messageLocation);
     }
 
+    public boolean setPayloadsForLocation(MessageLocation messageLocation, List<PayloadTableEntry> payloads) {
+        if (messageLocation == null) {
+            throw new IllegalArgumentException("Parameter messageLocation must not be null.");
+        }
+        if (payloads == null) {
+            throw new IllegalArgumentException("Parameter payloads must not be null.");
+        }
+        return fuzzLocationsPanel.setPayloadsForLocation(messageLocation, payloads);
+    }
+
     @Override
     public String getHelpIndex() {
         return "addon.fuzzer.dialogue";

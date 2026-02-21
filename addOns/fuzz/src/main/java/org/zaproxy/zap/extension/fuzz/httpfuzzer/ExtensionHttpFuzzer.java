@@ -53,6 +53,7 @@ import org.zaproxy.zap.extension.search.ExtensionSearch;
 import org.zaproxy.zap.extension.search.HttpSearcher;
 import org.zaproxy.zap.extension.search.SearchResult;
 import org.zaproxy.zap.extension.users.ExtensionUserManagement;
+import org.zaproxy.zap.model.MessageLocation;
 
 public class ExtensionHttpFuzzer extends ExtensionAdaptor {
 
@@ -211,6 +212,27 @@ public class ExtensionHttpFuzzer extends ExtensionAdaptor {
         httpFuzzerHandler
                 .getHttpFuzzResultsContentPanel()
                 .removeFuzzResultStateHighlighter(highlighter);
+    }
+
+    public void showFuzzerDialogWithPayloads(
+            HttpMessage message, MessageLocation location, List<String> payloads) {
+        if (!hasView() || message == null || location == null || payloads == null || payloads.isEmpty()) {
+            return;
+        }
+
+        ExtensionFuzz extensionFuzz =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionFuzz.class);
+        if (extensionFuzz == null) {
+            return;
+        }
+
+        HttpFuzzer fuzzer =
+                httpFuzzerHandler.showFuzzerDialogWithPayloads(
+                        message, location, extensionFuzz.getDefaultFuzzerOptions(), payloads);
+        if (fuzzer == null) {
+            return;
+        }
+        extensionFuzz.runFuzzer(httpFuzzerHandler, fuzzer);
     }
 
     public <T1 extends HttpFuzzerMessageProcessor, T2 extends HttpFuzzerMessageProcessorUI<T1>>

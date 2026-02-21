@@ -33,6 +33,20 @@ val mandatoryAddOns =
         "network",
     )
 
+val basicAddOns =
+    mandatoryAddOns +
+        listOf(
+            "browserView",
+            "fuzz",
+            "llm",
+            "quickstart",
+            "reports",
+            "requester",
+            "selenium",
+            "spider",
+            "spiderAjax",
+        )
+
 val parentProjects =
     listOf(
         "webdrivers",
@@ -509,6 +523,24 @@ tasks.register("deployMandatoryAddOns") {
     }
 }
 
+tasks.register("copyBasicAddOns") {
+    group = LifecycleBasePlugin.BUILD_GROUP
+    description = "Copies the basic add-ons to zaproxy project."
+
+    basicProjects().forEach {
+        dependsOn(it.tasks.named("copyZapAddOn"))
+    }
+}
+
+tasks.register("deployBasicAddOns") {
+    group = LifecycleBasePlugin.BUILD_GROUP
+    description = "Deploys the basic add-ons to the ZAP home dir."
+
+    basicProjects().forEach {
+        dependsOn(it.tasks.named("deployZapAddOn"))
+    }
+}
+
 tasks.register<TestReport>("testReport") {
     destinationDirectory.set(layout.buildDirectory.dir("reports/allTests"))
     subprojects.forEach {
@@ -573,6 +605,13 @@ fun AddOnPluginExtension.apiClientGen(configure: ApiClientGenExtension.() -> Uni
 
 fun mandatoryProjects() =
     mandatoryAddOns.map { name ->
+        val project = subprojects.find { it.name == name }
+        require(project != null) { "Add-on with project name $name not found." }
+        project
+    }
+
+fun basicProjects() =
+    basicAddOns.map { name ->
         val project = subprojects.find { it.name == name }
         require(project != null) { "Add-on with project name $name not found." }
         project

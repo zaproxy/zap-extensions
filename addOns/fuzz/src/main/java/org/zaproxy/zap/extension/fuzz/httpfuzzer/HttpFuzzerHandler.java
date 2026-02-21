@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.fuzz.httpfuzzer;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -30,6 +31,7 @@ import org.zaproxy.zap.extension.fuzz.FuzzerHandler;
 import org.zaproxy.zap.extension.fuzz.FuzzerOptions;
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.ui.HttpFuzzResultsContentPanel;
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.ui.HttpMessageSelectorPanel;
+import org.zaproxy.zap.extension.fuzz.impl.PayloadTableEntry;
 import org.zaproxy.zap.extension.fuzz.impl.FuzzerDialog;
 import org.zaproxy.zap.extension.fuzz.messagelocations.MessageLocationReplacement;
 import org.zaproxy.zap.extension.fuzz.messagelocations.MessageLocationReplacementGenerator;
@@ -40,6 +42,7 @@ import org.zaproxy.zap.extension.fuzz.messagelocations.MultipleMessageLocationsB
 import org.zaproxy.zap.extension.fuzz.messagelocations.MultipleMessageLocationsDepthFirstReplacer;
 import org.zaproxy.zap.extension.fuzz.messagelocations.MultipleMessageLocationsReplacer;
 import org.zaproxy.zap.extension.fuzz.payloads.PayloadGeneratorMessageLocation;
+import org.zaproxy.zap.extension.fuzz.payloads.ui.impl.DefaultStringPayloadGeneratorUIHandler.DefaultStringPayloadGeneratorUI;
 import org.zaproxy.zap.view.messagecontainer.MessageContainer;
 import org.zaproxy.zap.view.messagecontainer.SelectableContentMessageContainer;
 import org.zaproxy.zap.view.messagecontainer.http.HttpMessageContainer;
@@ -105,6 +108,40 @@ public class HttpFuzzerHandler implements FuzzerHandler<HttpMessage, HttpFuzzer>
         return showFuzzerDialogImpl(message, null, defaultOptions);
     }
 
+    public HttpFuzzer showFuzzerDialogWithPayloads(
+            HttpMessage message,
+            org.zaproxy.zap.model.MessageLocation location,
+            FuzzerOptions defaultOptions,
+            List<String> payloads) {
+        if (message == null || location == null || payloads == null || payloads.isEmpty()) {
+            return showFuzzerDialogImpl(message, null, defaultOptions);
+        }
+
+        FuzzerDialog<HttpMessage, HttpFuzzerOptions, HttpFuzzerMessageProcessor> fuzzDialogue =
+                new FuzzerDialog<>(
+                        View.getSingleton().getMainFrame(),
+                        defaultOptions,
+                        message,
+                        true,
+                        new HttpFuzzerHandlerOptionsPanel(),
+                        new HttpFuzzerMessageProcessorCollection(message, messageProcessors));
+
+        fuzzDialogue.addMessageLocation(location);
+        List<PayloadTableEntry> payloadEntries = buildPayloadEntries(payloads);
+        if (!payloadEntries.isEmpty()) {
+            fuzzDialogue.setPayloadsForLocation(location, payloadEntries);
+        }
+
+        fuzzDialogue.setVisible(true);
+        fuzzDialogue.dispose();
+
+        return createFuzzer(
+                (HttpMessage) fuzzDialogue.getMessage(),
+                fuzzDialogue.getFuzzLocations(),
+                fuzzDialogue.getFuzzerOptions(),
+                fuzzDialogue.getFuzzerMessageProcessors());
+    }
+
     private HttpFuzzer showFuzzerDialogImpl(
             HttpMessage message,
             SelectableContentMessageContainer<HttpMessage> container,
@@ -132,6 +169,23 @@ public class HttpFuzzerHandler implements FuzzerHandler<HttpMessage, HttpFuzzer>
                 fuzzDialogue.getFuzzLocations(),
                 fuzzDialogue.getFuzzerOptions(),
                 fuzzDialogue.getFuzzerMessageProcessors());
+    }
+
+    private static List<PayloadTableEntry> buildPayloadEntries(List<String> payloads) {
+        if (payloads == null || payloads.isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<String> cleaned = new ArrayList<>(payloads.size());
+        for (String p : payloads) {
+            if (p != null && !p.isBlank()) {
+                cleaned.add(p);
+            }
+        }
+        if (cleaned.isEmpty()) {
+            return Collections.emptyList();
+        }
+        DefaultStringPayloadGeneratorUI ui = new DefaultStringPayloadGeneratorUI(String.join("\n", cleaned), false);
+        return List.of(new PayloadTableEntry(1, ui));
     }
 
     @SuppressWarnings("unchecked")

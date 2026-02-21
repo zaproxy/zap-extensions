@@ -19,17 +19,5 @@
  */
 package org.zaproxy.addon.llm.actions;
 
-import java.util.List;
-import org.zaproxy.zap.model.HttpMessageLocation;
+public record LlmZapRequestData(String header, String body) {}
 
-public record LlmZapAction(
-        LlmZapActionType type,
-        int historyId,
-        String note,
-        List<String> tags,
-        HttpMessageLocation.Location location,
-        int start,
-        int end,
-        String payload,
-        List<String> payloads,
-        LlmZapRequestData request) {}

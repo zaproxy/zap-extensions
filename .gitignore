@@ -1,6 +1,7 @@
 # Misc
 #-----
 .DS_Store
+java_pid*.hprof
 
 # Gradle
 #-------
