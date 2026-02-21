@@ -61,11 +61,13 @@ public class LlmOptions extends VersionedAbstractParam {
     private static final String CHAT_BASE_KEY = BASE_KEY + ".chat";
     private static final String AUTO_INCLUDE_PROJECT_CONTEXT_KEY =
             CHAT_BASE_KEY + ".autoIncludeProjectContext";
+    private static final String CHAT_PERSONA_KEY = CHAT_BASE_KEY + ".persona";
 
     private List<LlmProviderConfig> providerConfigs = new ArrayList<>();
     private String defaultProviderName;
     private String defaultModelName;
     private boolean autoIncludeProjectContext;
+    private String chatPersona;
 
     private static final Logger LOGGER = LogManager.getLogger(LlmOptions.class);
 
@@ -116,6 +118,7 @@ public class LlmOptions extends VersionedAbstractParam {
         defaultProviderName = getString(DEFAULT_PROVIDER_PROPERTY, "");
         defaultModelName = getString(DEFAULT_PROVIDER_MODEL, "");
         autoIncludeProjectContext = getBoolean(AUTO_INCLUDE_PROJECT_CONTEXT_KEY, false);
+        chatPersona = getString(CHAT_PERSONA_KEY, "");
     }
 
     @Override
@@ -241,6 +244,15 @@ public class LlmOptions extends VersionedAbstractParam {
         getConfig().setProperty(AUTO_INCLUDE_PROJECT_CONTEXT_KEY, autoIncludeProjectContext);
     }
 
+    public String getChatPersona() {
+        return chatPersona;
+    }
+
+    public void setChatPersona(String chatPersona) {
+        this.chatPersona = StringUtils.trimToEmpty(chatPersona);
+        getConfig().setProperty(CHAT_PERSONA_KEY, this.chatPersona);
+    }
+
     private LlmProviderConfig getDefaultProviderConfigInternal() {
         if (StringUtils.isBlank(defaultProviderName) || providerConfigs.isEmpty()) {
             return null;
@@ -260,6 +272,7 @@ public class LlmOptions extends VersionedAbstractParam {
         clone.defaultProviderName = defaultProviderName;
         clone.defaultModelName = defaultModelName;
         clone.autoIncludeProjectContext = autoIncludeProjectContext;
+        clone.chatPersona = chatPersona;
         return clone;
     }
 }

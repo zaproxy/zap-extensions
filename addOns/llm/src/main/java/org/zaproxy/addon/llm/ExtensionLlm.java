@@ -183,6 +183,10 @@ public class ExtensionLlm extends ExtensionAdaptor {
         return options != null && options.isAutoIncludeProjectContext();
     }
 
+    public String getChatPersona() {
+        return options != null ? options.getChatPersona() : "";
+    }
+
     /**
      * Only for testing purposes.
      *

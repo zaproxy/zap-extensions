@@ -52,6 +52,9 @@ public enum LlmZapActionType {
         if ("open_http_fuzzer".equals(normalized)) {
             return OPEN_FUZZER;
         }
+        if ("fuzzer".equals(normalized)) {
+            return OPEN_FUZZER;
+        }
 
         for (LlmZapActionType t : values()) {
             if (t.id.equals(normalized)) {

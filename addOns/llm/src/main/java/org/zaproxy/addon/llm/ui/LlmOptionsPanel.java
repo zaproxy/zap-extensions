@@ -21,6 +21,9 @@ package org.zaproxy.addon.llm.ui;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -43,6 +46,8 @@ public class LlmOptionsPanel extends AbstractParamPanel {
     private final JComboBox<String> defaultModelComboBox;
     private final String noneProviderLabel;
     private final JCheckBox autoIncludeProjectContextCheckBox;
+    private final JTextArea chatPersonaTextArea;
+    private final JScrollPane chatPersonaScrollPane;
 
     public LlmOptionsPanel() {
         super();
@@ -54,6 +59,7 @@ public class LlmOptionsPanel extends AbstractParamPanel {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.LINE_START;
         gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(2, 0, 2, 0);
 
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -87,14 +93,31 @@ public class LlmOptionsPanel extends AbstractParamPanel {
                 new JCheckBox(Constant.messages.getString("llm.options.chat.autoprojectcontext"));
         add(autoIncludeProjectContextCheckBox, gbc);
 
+        gbc.gridy = 3;
+        gbc.gridwidth = 2;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        add(new JLabel(Constant.messages.getString("llm.options.chat.persona.label")), gbc);
+
+        gbc.gridy = 4;
+        gbc.weighty = 0.3;
+        gbc.fill = GridBagConstraints.BOTH;
+        chatPersonaTextArea = new JTextArea(8, 50);
+        chatPersonaTextArea.setLineWrap(true);
+        chatPersonaTextArea.setWrapStyleWord(true);
+        chatPersonaScrollPane = new JScrollPane(chatPersonaTextArea);
+        add(chatPersonaScrollPane, gbc);
+
         LlmProviderConfigsPanel providerConfigsPanel =
                 new LlmProviderConfigsPanel(getProviderConfigsTableModel());
-        gbc.gridy = 3;
+        gbc.gridx = 0;
+        gbc.gridy = 5;
+        gbc.gridwidth = 2;
         gbc.weighty = 0.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         add(new JLabel(Constant.messages.getString("llm.options.providers.label")), gbc);
 
-        gbc.gridy = 4;
+        gbc.gridy = 6;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         add(providerConfigsPanel, gbc);
@@ -121,6 +144,7 @@ public class LlmOptionsPanel extends AbstractParamPanel {
         getProviderConfigsTableModel().setProviderConfigs(llmOptionsParam.getProviderConfigs());
         autoIncludeProjectContextCheckBox.setSelected(
                 llmOptionsParam.isAutoIncludeProjectContext());
+        chatPersonaTextArea.setText(llmOptionsParam.getChatPersona());
         refreshDefaultProviderOptions();
         if (llmOptionsParam.getDefaultProviderName() == null
                 || llmOptionsParam.getDefaultProviderName().isEmpty()) {
@@ -139,6 +163,7 @@ public class LlmOptionsPanel extends AbstractParamPanel {
         LlmOptions param = ((OptionsParam) options).getParamSet(LlmOptions.class);
         param.setProviderConfigs(getProviderConfigsTableModel().getElements());
         param.setAutoIncludeProjectContext(autoIncludeProjectContextCheckBox.isSelected());
+        param.setChatPersona(chatPersonaTextArea.getText());
         Object selected = defaultProviderComboBox.getSelectedItem();
         if (selected != null && noneProviderLabel.equals(selected.toString())) {
             param.setDefaultProviderName("");

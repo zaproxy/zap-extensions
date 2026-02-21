@@ -161,6 +161,26 @@ public class LlmZapActionsParser {
                     payload = null;
                 }
 
+                // Some models use alternate fields for fuzzer payload lists.
+                if ((payloads == null || payloads.isEmpty()) && type == LlmZapActionType.OPEN_FUZZER) {
+                    payloads =
+                            firstNonEmptyPayloadList(
+                                    payloads,
+                                    extractPayloadList(actionNode.get("payload_list")),
+                                    extractPayloadList(actionNode.get("payloadList")),
+                                    extractPayloadList(actionNode.get("payload_values")),
+                                    extractPayloadList(actionNode.get("payloadValues")),
+                                    extractPayloadList(actionNode.get("values")),
+                                    extractPayloadList(actionNode.get("items")));
+                }
+
+                // Last resort: use the selected text as a single payload.
+                if ((payloads == null || payloads.isEmpty())
+                        && type == LlmZapActionType.OPEN_FUZZER
+                        && StringUtils.isNotBlank(selectionText)) {
+                    payloads = List.of(selectionText);
+                }
+
                 LlmZapRequestData request = null;
                 JsonNode requestNode = actionNode.get("request");
                 if (requestNode != null && requestNode.isObject()) {
@@ -326,6 +346,76 @@ public class LlmZapActionsParser {
             return null;
         }
         return s.substring(0, end);
+    }
+
+    @SafeVarargs
+    private static List<String> firstNonEmptyPayloadList(List<String> current, List<String>... candidates) {
+        if (current != null && !current.isEmpty()) {
+            return current;
+        }
+        if (candidates == null) {
+            return current;
+        }
+        for (List<String> c : candidates) {
+            if (c != null && !c.isEmpty()) {
+                return c;
+            }
+        }
+        return current;
+    }
+
+    private static List<String> extractPayloadList(JsonNode node) {
+        if (node == null || node.isNull()) {
+            return List.of();
+        }
+
+        if (node.isArray()) {
+            List<String> out = new ArrayList<>();
+            for (JsonNode n : node) {
+                if (n == null || n.isNull()) {
+                    continue;
+                }
+                String v = StringUtils.trimToEmpty(n.asText());
+                if (!v.isEmpty()) {
+                    out.add(v);
+                }
+            }
+            return out;
+        }
+
+        if (node.isTextual()) {
+            String text = StringUtils.trimToEmpty(node.asText());
+            if (text.isEmpty()) {
+                return List.of();
+            }
+            String[] lines = text.split("\\R+");
+            List<String> out = new ArrayList<>(lines.length);
+            for (String line : lines) {
+                String v = StringUtils.trimToEmpty(line);
+                if (!v.isEmpty()) {
+                    out.add(v);
+                }
+            }
+            return out;
+        }
+
+        if (node.isObject()) {
+            // Common wrapper shapes: { "values": [...] } or { "items": [...] }.
+            List<String> values = extractPayloadList(node.get("payloads"));
+            if (!values.isEmpty()) {
+                return values;
+            }
+            values = extractPayloadList(node.get("values"));
+            if (!values.isEmpty()) {
+                return values;
+            }
+            values = extractPayloadList(node.get("items"));
+            if (!values.isEmpty()) {
+                return values;
+            }
+        }
+
+        return List.of();
     }
 
     private static String extractActionsJson(String assistantText) {

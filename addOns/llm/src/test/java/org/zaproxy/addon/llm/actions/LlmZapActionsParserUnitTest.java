@@ -337,4 +337,76 @@ class LlmZapActionsParserUnitTest {
         assertThat(action.start(), is(equalTo(5)));
         assertThat(action.end(), is(equalTo(7)));
     }
+
+    @Test
+    void shouldAcceptFuzzerAliasActionId() {
+        // Given
+        String assistantText =
+                LlmZapActionsParser.ACTIONS_BEGIN
+                        + "\n"
+                        + "{\n"
+                        + "  \"actions\": [\n"
+                        + "    {\"action\": \"fuzzer\", \"payloads\": [\"a\"]}\n"
+                        + "  ]\n"
+                        + "}\n"
+                        + LlmZapActionsParser.ACTIONS_END;
+
+        // When
+        LlmZapActionsParseResult result = new LlmZapActionsParser().parse(assistantText);
+
+        // Then
+        assertThat(result.warnings(), is(empty()));
+        assertThat(result.actions(), hasSize(1));
+        assertThat(result.actions().get(0).type(), is(equalTo(LlmZapActionType.OPEN_FUZZER)));
+        assertThat(result.actions().get(0).payloads(), is(equalTo(List.of("a"))));
+    }
+
+    @Test
+    void shouldParseFuzzerPayloadsFromPayloadList() {
+        // Given
+        String assistantText =
+                LlmZapActionsParser.ACTIONS_BEGIN
+                        + "\n"
+                        + "{\n"
+                        + "  \"action\": \"open_fuzzer\",\n"
+                        + "  \"payload_list\": [\"a\", \"b\"],\n"
+                        + "  \"location\": \"request_header\",\n"
+                        + "  \"start\": 1,\n"
+                        + "  \"end\": 2\n"
+                        + "}\n"
+                        + LlmZapActionsParser.ACTIONS_END;
+
+        // When
+        LlmZapActionsParseResult result = new LlmZapActionsParser().parse(assistantText);
+
+        // Then
+        assertThat(result.warnings(), is(empty()));
+        assertThat(result.actions(), hasSize(1));
+        assertThat(result.actions().get(0).type(), is(equalTo(LlmZapActionType.OPEN_FUZZER)));
+        assertThat(result.actions().get(0).payloads(), is(equalTo(List.of("a", "b"))));
+    }
+
+    @Test
+    void shouldParseFuzzerPayloadsFromNewlineDelimitedString() {
+        // Given
+        String assistantText =
+                LlmZapActionsParser.ACTIONS_BEGIN
+                        + "\n"
+                        + "{\n"
+                        + "  \"action\": \"open_fuzzer\",\n"
+                        + "  \"payloadList\": \"a\\n\\nb\\n\",\n"
+                        + "  \"location\": \"request_body\",\n"
+                        + "  \"start\": 1,\n"
+                        + "  \"end\": 2\n"
+                        + "}\n"
+                        + LlmZapActionsParser.ACTIONS_END;
+
+        // When
+        LlmZapActionsParseResult result = new LlmZapActionsParser().parse(assistantText);
+
+        // Then
+        assertThat(result.warnings(), is(empty()));
+        assertThat(result.actions(), hasSize(1));
+        assertThat(result.actions().get(0).payloads(), is(equalTo(List.of("a", "b"))));
+    }
 }

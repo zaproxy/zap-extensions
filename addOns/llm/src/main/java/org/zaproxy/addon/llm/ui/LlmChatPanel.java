@@ -697,12 +697,16 @@ public class LlmChatPanel extends AbstractPanel {
 
                                 UserMessage userMessage = UserMessage.from(llmMessageFinal);
 
-                                List<ChatMessage> requestMessages =
-                                        new ArrayList<>(conversation.size() + 2);
-                                requestMessages.add(
-                                        SystemMessage.from(UNTRUSTED_DATA_SYSTEM_MESSAGE));
-                                requestMessages.addAll(conversation);
-                                requestMessages.add(userMessage);
+	                                List<ChatMessage> requestMessages =
+	                                        new ArrayList<>(conversation.size() + 2);
+	                                requestMessages.add(
+	                                        SystemMessage.from(UNTRUSTED_DATA_SYSTEM_MESSAGE));
+	                                String persona = StringUtils.trimToEmpty(extension.getChatPersona());
+	                                if (!persona.isEmpty()) {
+	                                    requestMessages.add(SystemMessage.from(persona));
+	                                }
+	                                requestMessages.addAll(conversation);
+	                                requestMessages.add(userMessage);
 
                                 ChatRequest chatRequest =
                                         ChatRequest.builder()
