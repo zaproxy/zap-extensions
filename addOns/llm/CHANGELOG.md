@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 - Basic stats
+- Support for Anthropic (Claude).
 - Support for Google Gemini.
 - Support for OpenAI.
 - Support for OpenRouter.

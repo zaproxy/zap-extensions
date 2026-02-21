@@ -154,6 +154,19 @@ public class LlmCommunicationService {
                             .logRequests(true)
                             .logResponses(true)
                             .build();
+            case ANTHROPIC -> {
+                String baseUrl = StringUtils.trimToEmpty(pconf.getEndpoint());
+                if (baseUrl.isEmpty()) {
+                    baseUrl = pconf.getProvider().getDefaultEndpoint();
+                }
+                yield AnthropicChatModel.builder()
+                        .apiKey(pconf.getApiKey())
+                        .baseUrl(baseUrl)
+                        .modelName(modelName)
+                        .temperature(0.3)
+                        .listeners(List.of(listener))
+                        .build();
+            }
             default -> throw new RuntimeException("Unknown model provider");
         };
     }

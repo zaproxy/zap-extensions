@@ -19,6 +19,7 @@
         The current supported model providers are:
     </p>
     <ul>
+        <li>Anthropic (Claude)
         <li>Azure OpenAI
         <li>Google Gemini
         <li>OpenAI
@@ -26,6 +27,12 @@
         <li>Ollama
     </ul>
 </section>
+
+<h3>Anthropic (Claude)</h3>
+
+Use your Anthropic API key.
+<p>
+The default endpoint is: <code>https://api.anthropic.com/v1</code>.
 
 <h3>Azure OpenAI</h3>
 The details you will need can be found in the "Keys and Endpoint" section when examining your resource from the Azure portal.
@@ -65,7 +72,7 @@ If you have Ollama installed on the same machine as ZAP then by default the endp
     </p>
     <ul>
         <li><strong>Name</strong>: A unique name for the provider entry.
-        <li><strong>Provider</strong>: The type of model provider (Azure OpenAI, Google Gemini, OpenAI, OpenRouter, or Ollama).
+        <li><strong>Provider</strong>: The type of model provider (Anthropic (Claude), Azure OpenAI, Google Gemini, OpenAI, OpenRouter, or Ollama).
         <li><strong>API Key</strong>: The API key, if required by the provider.
         <li><strong>Endpoint Base URL</strong>: The base URL for API requests (not required for Google Gemini).
         <li><strong>Models</strong>: One or more model/deployment names, one per line.

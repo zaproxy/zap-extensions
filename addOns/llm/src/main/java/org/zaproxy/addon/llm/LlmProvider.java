@@ -28,6 +28,7 @@ public enum LlmProvider {
     OPENROUTER("llm.provider.openrouter"),
     AZURE_OPENAI("llm.provider.azure.openai"),
     GOOGLE_GEMINI("llm.provider.google.gemini"),
+    ANTHROPIC("llm.provider.anthropic"),
     ;
 
     private final String messageKey;
@@ -50,11 +51,14 @@ public enum LlmProvider {
     }
 
     public String getDefaultEndpoint() {
+        if (this == OPENROUTER) {
+            return "https://openrouter.ai/api/v1";
+        }
         if (this == OPENAI) {
             return "https://api.openai.com/v1";
         }
-        if (this == OPENROUTER) {
-            return "https://openrouter.ai/api/v1";
+        if (this == ANTHROPIC) {
+            return "https://api.anthropic.com/v1";
         }
         return "";
     }
