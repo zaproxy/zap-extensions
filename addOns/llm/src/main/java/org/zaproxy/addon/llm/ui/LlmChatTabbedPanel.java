@@ -21,19 +21,19 @@ package org.zaproxy.addon.llm.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Objects;
-import javax.swing.BorderFactory;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import javax.swing.border.EmptyBorder;
+import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.zaproxy.addon.llm.ExtensionLlm;
@@ -44,12 +44,13 @@ import org.zaproxy.zap.utils.DisplayUtils;
 public class LlmChatTabbedPanel extends AbstractPanel implements LlmChatPanelProvider {
 
     private static final long serialVersionUID = 1L;
-    private static final String PLUS_TITLE = "+";
-    private static final Logger LOGGER = LogManager.getLogger(LlmChatTabbedPanel.class);
-    private static final long SLOW_TAB_SWITCH_MS = 1500;
+    private static final Icon PLUS_ICON = LlmChatTabIcons.PLUS_ICON;
+    private static final Icon CLOSE_GREY_ICON = LlmChatTabIcons.CLOSE_GREY_ICON;
+    private static final Icon CLOSE_RED_ICON = LlmChatTabIcons.CLOSE_RED_ICON;
 
     private final ExtensionLlm extension;
     private final JTabbedPane tabbedPane;
+    private final Component plusTabComponent;
     private int nextTabNumber;
 
     public LlmChatTabbedPanel(ExtensionLlm extension) {
@@ -64,37 +65,24 @@ public class LlmChatTabbedPanel extends AbstractPanel implements LlmChatPanelPro
 
         tabbedPane = new JTabbedPane();
         tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
-        tabbedPane.addChangeListener(
-                e -> {
-                    long startNs = System.nanoTime();
-                    int idx = tabbedPane.getSelectedIndex();
-                    Component selected =
-                            idx >= 0 && idx < tabbedPane.getTabCount()
-                                    ? tabbedPane.getComponentAt(idx)
-                                    : null;
-                    SwingUtilities.invokeLater(
-                            () -> {
-                                long elapsedMs = (System.nanoTime() - startNs) / 1_000_000;
-                                if (elapsedMs < SLOW_TAB_SWITCH_MS) {
-                                    return;
-                                }
-                                if (selected instanceof LlmChatPanel panel) {
-                                    LOGGER.warn(
-                                            "Slow chat tab switch: {}ms (msg={}, ctx={}, q={})",
-                                            elapsedMs,
-                                            panel.getMessageAreaCharCount(),
-                                            panel.getContextAreaCharCount(),
-                                            panel.getQuestionAreaCharCount());
-                                } else {
-                                    LOGGER.warn("Slow chat tab switch: {}ms", elapsedMs);
-                                }
-                            });
+        plusTabComponent = new JLabel();
+        tabbedPane.addChangeListener(e -> handlePlusTabSelection());
+        tabbedPane.addMouseListener(
+                new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent evt) {
+                        if (evt.getClickCount() != 2 || !SwingUtilities.isLeftMouseButton(evt)) {
+                            return;
+                        }
+                        int idx = tabbedPane.indexAtLocation(evt.getX(), evt.getY());
+                        maybeRenameTabAt(idx);
+                    }
                 });
 
         add(tabbedPane, BorderLayout.CENTER);
 
-        addNewChatTabAndSelect();
         addPlusTab();
+        addNewChatTabAndSelect();
 
         ExtensionHelp.enableHelpKey(this, "addon.llm.chat");
     }
@@ -131,7 +119,10 @@ public class LlmChatTabbedPanel extends AbstractPanel implements LlmChatPanelPro
     private void ensureNonPlusTabSelected() {
         int idx = tabbedPane.getSelectedIndex();
         if (idx >= 0 && isPlusTabIndex(idx)) {
-            addNewChatTabAndSelect();
+            // Avoid creating tabs on focus. Select the first chat tab instead.
+            if (tabbedPane.getTabCount() > 1) {
+                tabbedPane.setSelectedIndex(0);
+            }
         }
         if (tabbedPane.getSelectedIndex() < 0 && tabbedPane.getTabCount() > 0) {
             tabbedPane.setSelectedIndex(0);
@@ -139,114 +130,107 @@ public class LlmChatTabbedPanel extends AbstractPanel implements LlmChatPanelPro
     }
 
     private void addPlusTab() {
-        JPanel hidden = new JPanel();
-        hidden.setPreferredSize(new Dimension(0, 0));
-        tabbedPane.addTab(PLUS_TITLE, hidden);
-        int idx = tabbedPane.getTabCount() - 1;
-        tabbedPane.setTabComponentAt(idx, createPlusTabHeader());
-        // Prevent selecting the "+" tab (clicking the header button adds a new tab instead).
-        tabbedPane.setEnabledAt(idx, false);
+        tabbedPane.addTab("", PLUS_ICON, plusTabComponent);
     }
 
     private boolean isPlusTabIndex(int idx) {
-        return idx == tabbedPane.getTabCount() - 1 && PLUS_TITLE.equals(tabbedPane.getTitleAt(idx));
+        return idx == tabbedPane.getTabCount() - 1
+                && tabbedPane.getComponentAt(idx) == plusTabComponent;
     }
 
-    private Component createPlusTabHeader() {
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        panel.setOpaque(false);
-        panel.setBorder(BorderFactory.createEmptyBorder(2, 6, 2, 6));
+    private boolean addingTab;
 
-        JButton add = new JButton(PLUS_TITLE);
-        add.setFocusable(false);
-        add.setBorder(BorderFactory.createEmptyBorder());
-        add.setContentAreaFilled(false);
-        add.setOpaque(false);
-        add.addActionListener(e -> addNewChatTabAndSelect());
+    private void handlePlusTabSelection() {
+        if (addingTab) {
+            return;
+        }
 
-        panel.addMouseListener(
-                new MouseAdapter() {
-                    @Override
-                    public void mousePressed(MouseEvent e) {
-                        if (SwingUtilities.isLeftMouseButton(e)) {
-                            addNewChatTabAndSelect();
-                        }
-                    }
-                });
-
-        panel.add(add);
-        return panel;
+        int idx = tabbedPane.getSelectedIndex();
+        if (idx >= 0 && isPlusTabIndex(idx)) {
+            addingTab = true;
+            try {
+                addNewChatTabAndSelect();
+            } finally {
+                addingTab = false;
+            }
+        }
     }
 
     private LlmChatPanel addNewChatTabAndSelect() {
-        int plusIndex = tabbedPane.getTabCount() - 1;
-        if (plusIndex < 0) {
-            plusIndex = 0;
-        }
-        if (plusIndex >= 0 && isPlusTabIndex(plusIndex)) {
-            // Insert before the plus tab.
-            int insertAt = plusIndex;
-            LlmChatPanel chatPanel = new LlmChatPanel(extension);
-            String title = Integer.toString(nextTabNumber++);
-            tabbedPane.insertTab(title, null, chatPanel, null, insertAt);
-            tabbedPane.setTabComponentAt(insertAt, createTabHeader(title, chatPanel));
-            tabbedPane.setSelectedIndex(insertAt);
-            SwingUtilities.invokeLater(chatPanel::requestFocusInWindow);
-            return chatPanel;
-        }
-
-        // No plus tab yet, append.
+        int insertAt = Math.max(0, tabbedPane.getTabCount() - 1);
         LlmChatPanel chatPanel = new LlmChatPanel(extension);
         String title = Integer.toString(nextTabNumber++);
-        tabbedPane.addTab(title, chatPanel);
-        int idx = tabbedPane.getTabCount() - 1;
-        tabbedPane.setTabComponentAt(idx, createTabHeader(title, chatPanel));
-        tabbedPane.setSelectedIndex(idx);
+        tabbedPane.insertTab(title, null, chatPanel, null, insertAt);
+        tabbedPane.setTabComponentAt(insertAt, createTabHeader(title, chatPanel));
+        tabbedPane.setSelectedIndex(insertAt);
         SwingUtilities.invokeLater(chatPanel::requestFocusInWindow);
         return chatPanel;
     }
 
     private Component createTabHeader(String title, Component tabComponent) {
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 6, 0));
-        panel.setOpaque(false);
-        panel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-
-        JLabel label = new JLabel(title);
-        installTabSelectionHandlers(panel, label, tabComponent);
-        panel.add(label);
-
-        JButton close = new JButton("×");
-        close.setFocusable(false);
-        close.setBorder(BorderFactory.createEmptyBorder());
-        close.setContentAreaFilled(false);
-        close.setOpaque(false);
-        close.setToolTipText(Constant.messages.getString("llm.chat.panel.tab.close"));
-        close.addActionListener(e -> closeTab(tabComponent));
-
-        panel.add(close);
+        ClosableTabHeader panel = new ClosableTabHeader(title);
+        installTabSelectionAndRenameHandlers(panel, panel.label, tabComponent);
+        panel.close.addActionListener(e -> closeTab(tabComponent));
         return panel;
     }
 
-    private void installTabSelectionHandlers(
+    private void installTabSelectionAndRenameHandlers(
             Component tabHeader, Component tabLabel, Component tabComponent) {
         MouseAdapter adapter =
                 new MouseAdapter() {
                     @Override
                     public void mousePressed(MouseEvent e) {
-                        if (SwingUtilities.isLeftMouseButton(e)) {
-                            int idx = tabbedPane.indexOfComponent(tabComponent);
-                            if (idx >= 0) {
-                                tabbedPane.setSelectedIndex(idx);
-                            }
+                        if (!SwingUtilities.isLeftMouseButton(e)) {
                             return;
                         }
-                        if (SwingUtilities.isMiddleMouseButton(e)) {
-                            closeTab(tabComponent);
+                        int idx = tabbedPane.indexOfComponent(tabComponent);
+                        if (idx >= 0) {
+                            tabbedPane.setSelectedIndex(idx);
                         }
+                    }
+
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        if (e.getClickCount() != 2 || !SwingUtilities.isLeftMouseButton(e)) {
+                            return;
+                        }
+                        int idx = tabbedPane.indexOfComponent(tabComponent);
+                        maybeRenameTabAt(idx);
                     }
                 };
         tabHeader.addMouseListener(adapter);
         tabLabel.addMouseListener(adapter);
+    }
+
+    private void maybeRenameTabAt(int idx) {
+        if (idx < 0 || idx >= tabbedPane.getTabCount() || isPlusTabIndex(idx)) {
+            return;
+        }
+        Component tabComponent = tabbedPane.getComponentAt(idx);
+        if (!(tabComponent instanceof LlmChatPanel)) {
+            return;
+        }
+
+        String currentName = tabbedPane.getTitleAt(idx);
+        Component header = tabbedPane.getTabComponentAt(idx);
+        if (header != null && StringUtils.isNotBlank(header.getName())) {
+            currentName = header.getName();
+        }
+
+        String newName =
+                JOptionPane.showInputDialog(
+                        this,
+                        Constant.messages.getString("llm.chat.panel.tab.rename"),
+                        StringUtils.defaultString(currentName));
+        if (StringUtils.isBlank(newName)) {
+            return;
+        }
+
+        String finalName = newName.trim();
+        tabbedPane.setTitleAt(idx, finalName);
+        if (header != null) {
+            header.setName(finalName);
+        }
     }
 
     private void closeTab(Component tabComponent) {
@@ -265,6 +249,10 @@ public class LlmChatTabbedPanel extends AbstractPanel implements LlmChatPanelPro
             return;
         }
 
+        // If closing the last chat tab, select the previous one first.
+        if (tabbedPane.getTabCount() > 2 && idx == tabbedPane.getTabCount() - 2) {
+            tabbedPane.setSelectedIndex(Math.max(0, idx - 1));
+        }
         tabbedPane.removeTabAt(idx);
         ensureNonPlusTabSelected();
     }
@@ -277,5 +265,51 @@ public class LlmChatTabbedPanel extends AbstractPanel implements LlmChatPanelPro
             }
         }
         return count;
+    }
+
+    private static final class ClosableTabHeader extends JPanel {
+
+        private static final long serialVersionUID = 1L;
+
+        private final JLabel label;
+        private final JButton close;
+
+        private ClosableTabHeader(String title) {
+            super(new FlowLayout(FlowLayout.LEFT, 6, 0));
+            setOpaque(false);
+            setBorder(new EmptyBorder(2, 2, 2, 2));
+
+            label = new JLabel(title);
+            add(label);
+
+            close = new JButton(CLOSE_GREY_ICON == null ? "×" : null);
+            close.setFocusable(false);
+            close.setContentAreaFilled(false);
+            close.setOpaque(false);
+            close.setBorder(new EmptyBorder(0, 6, 0, 0));
+            close.setBorderPainted(false);
+            close.setToolTipText(Constant.messages.getString("llm.chat.panel.tab.close"));
+            if (CLOSE_GREY_ICON != null) {
+                close.setIcon(CLOSE_GREY_ICON);
+            }
+            if (CLOSE_RED_ICON != null) {
+                close.setRolloverIcon(CLOSE_RED_ICON);
+                close.setRolloverEnabled(true);
+            }
+
+            add(close);
+            setName(title);
+        }
+
+        @Override
+        public void setName(String name) {
+            super.setName(name);
+            label.setText(name);
+        }
+
+        @Override
+        public String getName() {
+            return label.getText();
+        }
     }
 }
