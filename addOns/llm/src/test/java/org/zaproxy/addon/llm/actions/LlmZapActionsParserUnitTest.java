@@ -420,4 +420,52 @@ class LlmZapActionsParserUnitTest {
         assertThat(result.actions(), hasSize(1));
         assertThat(result.actions().get(0).payloads(), is(equalTo(List.of("a", "b"))));
     }
+
+    @Test
+    void shouldParseFuzzerPayloadsFromPayloadsNewlineDelimitedString() {
+        // Given
+        String assistantText =
+                LlmZapActionsParser.ACTIONS_BEGIN
+                        + "\n"
+                        + "{\n"
+                        + "  \"action\": \"open_fuzzer\",\n"
+                        + "  \"payloads\": \"a\\n\\nb\\n\",\n"
+                        + "  \"location\": \"request_body\",\n"
+                        + "  \"start\": 1,\n"
+                        + "  \"end\": 2\n"
+                        + "}\n"
+                        + LlmZapActionsParser.ACTIONS_END;
+
+        // When
+        LlmZapActionsParseResult result = new LlmZapActionsParser().parse(assistantText);
+
+        // Then
+        assertThat(result.warnings(), is(empty()));
+        assertThat(result.actions(), hasSize(1));
+        assertThat(result.actions().get(0).payloads(), is(equalTo(List.of("a", "b"))));
+    }
+
+    @Test
+    void shouldParseFuzzerPayloadsFromPayloadsObjectWrapper() {
+        // Given
+        String assistantText =
+                LlmZapActionsParser.ACTIONS_BEGIN
+                        + "\n"
+                        + "{\n"
+                        + "  \"action\": \"open_fuzzer\",\n"
+                        + "  \"payloads\": {\"values\": [\"a\", \"b\"]},\n"
+                        + "  \"location\": \"request_body\",\n"
+                        + "  \"start\": 1,\n"
+                        + "  \"end\": 2\n"
+                        + "}\n"
+                        + LlmZapActionsParser.ACTIONS_END;
+
+        // When
+        LlmZapActionsParseResult result = new LlmZapActionsParser().parse(assistantText);
+
+        // Then
+        assertThat(result.warnings(), is(empty()));
+        assertThat(result.actions(), hasSize(1));
+        assertThat(result.actions().get(0).payloads(), is(equalTo(List.of("a", "b"))));
+    }
 }

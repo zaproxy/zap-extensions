@@ -132,15 +132,7 @@ public class LlmZapActionsParser {
                     insertionPayload = textOrNull(insertionPointNode, "payload");
                 }
                 String payload = textOrNull(actionNode, "payload");
-                List<String> payloads = new ArrayList<>();
-                if (actionNode.has("payloads") && actionNode.get("payloads").isArray()) {
-                    for (JsonNode p : actionNode.get("payloads")) {
-                        String v = StringUtils.trimToEmpty(p.asText());
-                        if (!v.isEmpty()) {
-                            payloads.add(v);
-                        }
-                    }
-                }
+                List<String> payloads = extractPayloadList(actionNode.get("payloads"));
 
                 // Some models omit "payload" for requester actions but include "payloads" or
                 // "selection.text".
