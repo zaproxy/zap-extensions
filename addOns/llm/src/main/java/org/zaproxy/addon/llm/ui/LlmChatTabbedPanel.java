@@ -27,7 +27,6 @@ import java.awt.event.MouseEvent;
 import java.net.URL;
 import java.util.Objects;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -69,17 +68,6 @@ public class LlmChatTabbedPanel extends AbstractPanel implements LlmChatPanelPro
         tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
         plusTabComponent = new JLabel();
         tabbedPane.addChangeListener(e -> handlePlusTabSelection());
-        tabbedPane.addMouseListener(
-                new MouseAdapter() {
-                    @Override
-                    public void mouseClicked(MouseEvent evt) {
-                        if (evt.getClickCount() != 2 || !SwingUtilities.isLeftMouseButton(evt)) {
-                            return;
-                        }
-                        int idx = tabbedPane.indexAtLocation(evt.getX(), evt.getY());
-                        maybeRenameTabAt(idx);
-                    }
-                });
 
         add(tabbedPane, BorderLayout.CENTER);
 
@@ -93,7 +81,7 @@ public class LlmChatTabbedPanel extends AbstractPanel implements LlmChatPanelPro
         URL url =
                 LlmChatTabbedPanel.class.getResource(
                         "/org/zaproxy/addon/llm/images/fugue/" + filename);
-        return url != null ? new ImageIcon(url) : null;
+        return url != null ? DisplayUtils.getScaledIcon(url) : null;
     }
 
     @Override
