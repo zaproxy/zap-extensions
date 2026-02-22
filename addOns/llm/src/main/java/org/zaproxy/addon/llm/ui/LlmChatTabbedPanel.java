@@ -24,8 +24,10 @@ import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.net.URL;
 import java.util.Objects;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -44,9 +46,9 @@ import org.zaproxy.zap.utils.DisplayUtils;
 public class LlmChatTabbedPanel extends AbstractPanel implements LlmChatPanelProvider {
 
     private static final long serialVersionUID = 1L;
-    private static final Icon PLUS_ICON = LlmChatTabIcons.PLUS_ICON;
-    private static final Icon CLOSE_GREY_ICON = LlmChatTabIcons.CLOSE_GREY_ICON;
-    private static final Icon CLOSE_RED_ICON = LlmChatTabIcons.CLOSE_RED_ICON;
+    private static final Icon PLUS_ICON = createFugueIcon("plus.png");
+    private static final Icon CLOSE_GREY_ICON = createFugueIcon("cross-small-grey.png");
+    private static final Icon CLOSE_RED_ICON = createFugueIcon("cross-small-red.png");
 
     private final ExtensionLlm extension;
     private final JTabbedPane tabbedPane;
@@ -85,6 +87,13 @@ public class LlmChatTabbedPanel extends AbstractPanel implements LlmChatPanelPro
         addNewChatTabAndSelect();
 
         ExtensionHelp.enableHelpKey(this, "addon.llm.chat");
+    }
+
+    private static Icon createFugueIcon(String filename) {
+        URL url =
+                LlmChatTabbedPanel.class.getResource(
+                        "/org/zaproxy/addon/llm/images/fugue/" + filename);
+        return url != null ? new ImageIcon(url) : null;
     }
 
     @Override
@@ -288,7 +297,7 @@ public class LlmChatTabbedPanel extends AbstractPanel implements LlmChatPanelPro
             close.setOpaque(false);
             close.setBorder(new EmptyBorder(0, 6, 0, 0));
             close.setBorderPainted(false);
-            close.setToolTipText(Constant.messages.getString("llm.chat.panel.tab.close"));
+            close.setToolTipText(Constant.messages.getString("all.button.close"));
             if (CLOSE_GREY_ICON != null) {
                 close.setIcon(CLOSE_GREY_ICON);
             }

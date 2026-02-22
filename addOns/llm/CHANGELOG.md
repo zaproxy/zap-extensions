@@ -21,3 +21,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Chat now maintains recent conversation context for follow-up questions.
 - Split the chat input area into separate context and question panes.
+- LLM Chat tabs now behave like Requester tabs (plus tab, close button, and rename on double-click).
