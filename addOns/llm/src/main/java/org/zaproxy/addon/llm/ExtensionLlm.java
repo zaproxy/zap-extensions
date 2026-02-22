@@ -30,14 +30,14 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.OptionsChangedListener;
 import org.parosproxy.paros.model.OptionsParam;
-import org.zaproxy.addon.llm.services.LlmCommunicationService;
 import org.zaproxy.addon.llm.actions.LlmZapActionType;
+import org.zaproxy.addon.llm.services.LlmCommunicationService;
 import org.zaproxy.addon.llm.ui.LlmAppendAlertMenu;
 import org.zaproxy.addon.llm.ui.LlmAppendHttpMessageMenu;
 import org.zaproxy.addon.llm.ui.LlmAppendRequestSelectionMenu;
+import org.zaproxy.addon.llm.ui.LlmChatTabbedPanel;
 import org.zaproxy.addon.llm.ui.LlmGeneratePayloadsForSelectionMenu;
 import org.zaproxy.addon.llm.ui.LlmOptionsPanel;
-import org.zaproxy.addon.llm.ui.LlmChatTabbedPanel;
 import org.zaproxy.addon.llm.ui.LlmSelectorButton;
 
 /**
@@ -130,15 +130,13 @@ public class ExtensionLlm extends ExtensionAdaptor {
                     .addPopupMenuItem(new LlmAppendRequestSelectionMenu(llmChatPanel));
             extensionHook
                     .getHookMenu()
-                    .addPopupMenuItem(new LlmGeneratePayloadsForSelectionMenu(llmChatPanel));
-            extensionHook
-                    .getHookMenu()
                     .addPopupMenuItem(
                             new LlmGeneratePayloadsForSelectionMenu(
                                     llmChatPanel,
                                     "llm.menu.generate.selection.editor.title",
                                     "llm.chat.panel.payloads.prompt.editor.text",
-                                    Collections.singletonList(LlmZapActionType.OPEN_REQUESTER_DIALOG),
+                                    Collections.singletonList(
+                                            LlmZapActionType.OPEN_REQUESTER_DIALOG),
                                     false));
             extensionHook
                     .getHookMenu()

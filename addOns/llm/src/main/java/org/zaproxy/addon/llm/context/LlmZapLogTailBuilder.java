@@ -110,7 +110,8 @@ public class LlmZapLogTailBuilder {
             // ignored, handled by returning an empty list.
         }
 
-        // Sort by rotation number (zap.log is considered 0), then take newest (lowest number) first.
+        // Sort by rotation number (zap.log is considered 0), then take newest (lowest number)
+        // first.
         result.sort(
                 (a, b) -> {
                     int ra = rotationNumber(a.getFileName().toString());

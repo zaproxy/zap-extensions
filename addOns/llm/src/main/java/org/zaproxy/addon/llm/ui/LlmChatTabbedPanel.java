@@ -32,6 +32,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.zaproxy.addon.llm.ExtensionLlm;
@@ -43,6 +45,8 @@ public class LlmChatTabbedPanel extends AbstractPanel implements LlmChatPanelPro
 
     private static final long serialVersionUID = 1L;
     private static final String PLUS_TITLE = "+";
+    private static final Logger LOGGER = LogManager.getLogger(LlmChatTabbedPanel.class);
+    private static final long SLOW_TAB_SWITCH_MS = 1500;
 
     private final ExtensionLlm extension;
     private final JTabbedPane tabbedPane;
@@ -59,12 +63,32 @@ public class LlmChatTabbedPanel extends AbstractPanel implements LlmChatPanelPro
         setLayout(new BorderLayout());
 
         tabbedPane = new JTabbedPane();
+        tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
         tabbedPane.addChangeListener(
                 e -> {
+                    long startNs = System.nanoTime();
                     int idx = tabbedPane.getSelectedIndex();
-                    if (idx >= 0 && isPlusTabIndex(idx)) {
-                        addNewChatTabAndSelect();
-                    }
+                    Component selected =
+                            idx >= 0 && idx < tabbedPane.getTabCount()
+                                    ? tabbedPane.getComponentAt(idx)
+                                    : null;
+                    SwingUtilities.invokeLater(
+                            () -> {
+                                long elapsedMs = (System.nanoTime() - startNs) / 1_000_000;
+                                if (elapsedMs < SLOW_TAB_SWITCH_MS) {
+                                    return;
+                                }
+                                if (selected instanceof LlmChatPanel panel) {
+                                    LOGGER.warn(
+                                            "Slow chat tab switch: {}ms (msg={}, ctx={}, q={})",
+                                            elapsedMs,
+                                            panel.getMessageAreaCharCount(),
+                                            panel.getContextAreaCharCount(),
+                                            panel.getQuestionAreaCharCount());
+                                } else {
+                                    LOGGER.warn("Slow chat tab switch: {}ms", elapsedMs);
+                                }
+                            });
                 });
 
         add(tabbedPane, BorderLayout.CENTER);
@@ -118,11 +142,40 @@ public class LlmChatTabbedPanel extends AbstractPanel implements LlmChatPanelPro
         JPanel hidden = new JPanel();
         hidden.setPreferredSize(new Dimension(0, 0));
         tabbedPane.addTab(PLUS_TITLE, hidden);
-        tabbedPane.setEnabledAt(tabbedPane.getTabCount() - 1, true);
+        int idx = tabbedPane.getTabCount() - 1;
+        tabbedPane.setTabComponentAt(idx, createPlusTabHeader());
+        // Prevent selecting the "+" tab (clicking the header button adds a new tab instead).
+        tabbedPane.setEnabledAt(idx, false);
     }
 
     private boolean isPlusTabIndex(int idx) {
         return idx == tabbedPane.getTabCount() - 1 && PLUS_TITLE.equals(tabbedPane.getTitleAt(idx));
+    }
+
+    private Component createPlusTabHeader() {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        panel.setOpaque(false);
+        panel.setBorder(BorderFactory.createEmptyBorder(2, 6, 2, 6));
+
+        JButton add = new JButton(PLUS_TITLE);
+        add.setFocusable(false);
+        add.setBorder(BorderFactory.createEmptyBorder());
+        add.setContentAreaFilled(false);
+        add.setOpaque(false);
+        add.addActionListener(e -> addNewChatTabAndSelect());
+
+        panel.addMouseListener(
+                new MouseAdapter() {
+                    @Override
+                    public void mousePressed(MouseEvent e) {
+                        if (SwingUtilities.isLeftMouseButton(e)) {
+                            addNewChatTabAndSelect();
+                        }
+                    }
+                });
+
+        panel.add(add);
+        return panel;
     }
 
     private LlmChatPanel addNewChatTabAndSelect() {
@@ -159,6 +212,7 @@ public class LlmChatTabbedPanel extends AbstractPanel implements LlmChatPanelPro
         panel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 
         JLabel label = new JLabel(title);
+        installTabSelectionHandlers(panel, label, tabComponent);
         panel.add(label);
 
         JButton close = new JButton("×");
@@ -169,19 +223,30 @@ public class LlmChatTabbedPanel extends AbstractPanel implements LlmChatPanelPro
         close.setToolTipText(Constant.messages.getString("llm.chat.panel.tab.close"));
         close.addActionListener(e -> closeTab(tabComponent));
 
-        // Middle-click anywhere on the tab header closes it (Requester-like).
-        panel.addMouseListener(
+        panel.add(close);
+        return panel;
+    }
+
+    private void installTabSelectionHandlers(
+            Component tabHeader, Component tabLabel, Component tabComponent) {
+        MouseAdapter adapter =
                 new MouseAdapter() {
                     @Override
-                    public void mouseClicked(MouseEvent e) {
+                    public void mousePressed(MouseEvent e) {
+                        if (SwingUtilities.isLeftMouseButton(e)) {
+                            int idx = tabbedPane.indexOfComponent(tabComponent);
+                            if (idx >= 0) {
+                                tabbedPane.setSelectedIndex(idx);
+                            }
+                            return;
+                        }
                         if (SwingUtilities.isMiddleMouseButton(e)) {
                             closeTab(tabComponent);
                         }
                     }
-                });
-
-        panel.add(close);
-        return panel;
+                };
+        tabHeader.addMouseListener(adapter);
+        tabLabel.addMouseListener(adapter);
     }
 
     private void closeTab(Component tabComponent) {

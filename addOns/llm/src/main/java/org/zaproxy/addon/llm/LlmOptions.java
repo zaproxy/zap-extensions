@@ -152,7 +152,8 @@ public class LlmOptions extends VersionedAbstractParam {
         if (config == null || LlmProvider.NONE.equals(config.getProvider())) {
             return Constant.messages.getString("llm.error.provider");
         }
-        if (config.getProvider().isEndpointRequired() && StringUtils.isBlank(config.getEndpoint())) {
+        if (config.getProvider().isEndpointRequired()
+                && StringUtils.isBlank(config.getEndpoint())) {
             return Constant.messages.getString("llm.error.endpoint");
         }
         return null;

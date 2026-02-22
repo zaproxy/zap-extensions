@@ -39,6 +39,7 @@ import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -46,7 +47,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
-import javax.swing.JOptionPane;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultCaret;
+import javax.swing.text.Document;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -54,11 +57,11 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.model.Model;
 import org.zaproxy.addon.llm.ExtensionLlm;
+import org.zaproxy.addon.llm.actions.LlmZapAction;
+import org.zaproxy.addon.llm.actions.LlmZapActionType;
 import org.zaproxy.addon.llm.actions.LlmZapActionsExecutor;
 import org.zaproxy.addon.llm.actions.LlmZapActionsParseResult;
 import org.zaproxy.addon.llm.actions.LlmZapActionsParser;
-import org.zaproxy.addon.llm.actions.LlmZapAction;
-import org.zaproxy.addon.llm.actions.LlmZapActionType;
 import org.zaproxy.addon.llm.actions.LlmZapRequestData;
 import org.zaproxy.addon.llm.context.LlmProjectContextBuilder;
 import org.zaproxy.addon.llm.context.LlmZapLogTailBuilder;
@@ -78,6 +81,9 @@ public class LlmChatPanel extends AbstractPanel {
     private static final String UNTRUSTED_DATA_BEGIN = "BEGIN_" + UNTRUSTED_DATA;
     private static final String UNTRUSTED_DATA_END = "END_" + UNTRUSTED_DATA;
     private static final int MAX_CONVERSATION_MESSAGES = 20;
+    private static final int MAX_MESSAGE_AREA_CHARS = 80_000;
+    private static final int MAX_CONTEXT_AREA_CHARS = 120_000;
+    private static final int MAX_QUESTION_AREA_CHARS = 30_000;
     private static final String UNTRUSTED_DATA_SYSTEM_MESSAGE =
             "The user may provide untrusted data from third parties. "
                     + "That data will be in JSON format and delimited by "
@@ -93,14 +99,18 @@ public class LlmChatPanel extends AbstractPanel {
 
     private ExtensionLlm extension;
     private ZapTextArea messageArea;
+    private JScrollPane messageScrollPane;
     private JPanel inputPanel;
-    private ZapTextArea inputArea;
+    private ZapTextArea contextArea;
+    private JScrollPane contextScrollPane;
+    private ZapTextArea questionArea;
     private JButton sendButton;
     private JButton cancelButton;
     private JLabel statusLabel;
     private JSplitPane splitPane;
     private boolean isProcessing;
     private boolean containsStructuredPayload;
+    private boolean showingWelcomeText;
     private final LlmProjectContextBuilder projectContextBuilder;
     private final LlmZapActionsParser actionsParser;
     private final LlmZapActionsExecutor actionsExecutor;
@@ -144,6 +154,7 @@ public class LlmChatPanel extends AbstractPanel {
         this.autoApplyActionsRequestId = -1;
         this.autoApplyActionsContext = null;
         this.requestCounter = 0;
+        this.showingWelcomeText = true;
 
         setName(Constant.messages.getString("llm.chat.panel.title"));
         setIcon(
@@ -152,11 +163,6 @@ public class LlmChatPanel extends AbstractPanel {
         setLayout(new BorderLayout());
 
         JPanel controlsPanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 8, 6));
-        JButton appendProjectContextButton =
-                new JButton(Constant.messages.getString("llm.chat.panel.button.context.project"));
-        appendProjectContextButton.addActionListener(
-                e -> appendUntrustedDataToInput(projectContextBuilder.buildProjectContext(), true));
-        controlsPanel.add(appendProjectContextButton);
 
         JButton appendAlertsSummaryButton =
                 new JButton(Constant.messages.getString("llm.chat.panel.button.context.alerts"));
@@ -199,19 +205,6 @@ public class LlmChatPanel extends AbstractPanel {
                 });
         controlsPanel.add(appendZapLogButton);
 
-        JButton insertActionsPromptButton =
-                new JButton(Constant.messages.getString("llm.chat.panel.button.actions.prompt"));
-        insertActionsPromptButton.addActionListener(
-                e ->
-                        appendToInput(
-                                Constant.messages.getString(
-                                                "llm.chat.panel.actions.prompt.text",
-                                                LlmZapActionsParser.ACTIONS_BEGIN,
-                                                LlmZapActionsParser.ACTIONS_END)
-                                        + "\n",
-                                true));
-        controlsPanel.add(insertActionsPromptButton);
-
         JButton applyActionsButton =
                 new JButton(Constant.messages.getString("llm.chat.panel.button.actions.apply"));
         applyActionsButton.addActionListener(e -> applyActionsFromLastAssistantMessage());
@@ -222,28 +215,41 @@ public class LlmChatPanel extends AbstractPanel {
         // Initialize message area
         messageArea = new ZapTextArea();
         messageArea.setEditable(false);
-        messageArea.setLineWrap(true);
-        messageArea.setWrapStyleWord(true);
+        // Wrapping large text is expensive (reflow) and makes tab switching feel slow.
+        messageArea.setLineWrap(false);
+        messageArea.setWrapStyleWord(false);
         messageArea.setFont(FontUtils.getFont("Dialog"));
         messageArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         messageArea.setText(Constant.messages.getString("llm.chat.panel.welcome"));
         updateTextAreaColors(messageArea);
+        DefaultCaret messageCaret = (DefaultCaret) messageArea.getCaret();
+        messageCaret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
 
         // Initialize message scroll pane
-        JScrollPane messageScrollPane = new JScrollPane();
+        messageScrollPane = new JScrollPane();
         messageScrollPane.setViewportView(messageArea);
         messageScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        messageScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        messageScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         messageScrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // Initialize input field (TextArea)
-        inputArea = new ZapTextArea();
-        inputArea.setFont(FontUtils.getFont("Dialog"));
-        inputArea.setLineWrap(true);
-        inputArea.setWrapStyleWord(true);
-        inputArea.setBorder(BorderFactory.createEmptyBorder(8, 10, 8, 10));
-        updateTextAreaColors(inputArea);
-        inputArea.addKeyListener(
+        // Initialize context field (TextArea)
+        contextArea = new ZapTextArea();
+        contextArea.setFont(FontUtils.getFont("Dialog"));
+        contextArea.setLineWrap(false);
+        contextArea.setWrapStyleWord(false);
+        contextArea.setBorder(BorderFactory.createEmptyBorder(8, 10, 8, 10));
+        updateTextAreaColors(contextArea);
+        DefaultCaret contextCaret = (DefaultCaret) contextArea.getCaret();
+        contextCaret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
+
+        // Initialize question field (TextArea)
+        questionArea = new ZapTextArea();
+        questionArea.setFont(FontUtils.getFont("Dialog"));
+        questionArea.setLineWrap(true);
+        questionArea.setWrapStyleWord(true);
+        questionArea.setBorder(BorderFactory.createEmptyBorder(8, 10, 8, 10));
+        updateTextAreaColors(questionArea);
+        questionArea.addKeyListener(
                 new KeyAdapter() {
                     @Override
                     public void keyPressed(KeyEvent e) {
@@ -254,11 +260,26 @@ public class LlmChatPanel extends AbstractPanel {
                     }
                 });
 
-        // Initialize input scroll pane
-        JScrollPane inputScrollPane = new JScrollPane(inputArea);
-        inputScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        inputScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        inputScrollPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        // Initialize context and question scroll panes
+        contextScrollPane = new JScrollPane(contextArea);
+        contextScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        contextScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        contextScrollPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        contextScrollPane.setMinimumSize(new Dimension(150, 0));
+
+        JScrollPane questionScrollPane = new JScrollPane(questionArea);
+        questionScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        questionScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        questionScrollPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        questionScrollPane.setMinimumSize(new Dimension(150, 0));
+
+        JSplitPane inputSplitPane =
+                new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, contextScrollPane, questionScrollPane);
+        inputSplitPane.setDividerLocation(0.5);
+        inputSplitPane.setResizeWeight(0.5);
+        inputSplitPane.setOneTouchExpandable(true);
+        inputSplitPane.setContinuousLayout(true);
+        inputSplitPane.setDividerSize(8);
 
         // Initialize send button
         sendButton = new JButton(Constant.messages.getString("llm.chat.panel.send"));
@@ -280,7 +301,7 @@ public class LlmChatPanel extends AbstractPanel {
 
         // Initialize input container
         JPanel inputContainer = new JPanel(new BorderLayout(10, 0));
-        inputContainer.add(inputScrollPane, BorderLayout.CENTER);
+        inputContainer.add(inputSplitPane, BorderLayout.CENTER);
         inputContainer.add(buttonPanel, BorderLayout.EAST);
 
         // Initialize input panel
@@ -330,13 +351,10 @@ public class LlmChatPanel extends AbstractPanel {
         finishRequestUi();
     }
 
-    public void sendPayloadGenerationRequest(Map<String, Object> payload, boolean autoApplyActions) {
+    public void sendPayloadGenerationRequest(
+            Map<String, Object> payload, boolean autoApplyActions) {
         sendPayloadGenerationRequest(
-                payload,
-                autoApplyActions,
-                "llm.chat.panel.payloads.prompt.text",
-                null,
-                true);
+                payload, autoApplyActions, "llm.chat.panel.payloads.prompt.text", null, true);
     }
 
     public void sendPayloadGenerationRequest(
@@ -344,7 +362,8 @@ public class LlmChatPanel extends AbstractPanel {
             String promptKey,
             List<LlmZapActionType> allowedActionTypes,
             boolean requireConfirmation) {
-        sendPayloadGenerationRequest(payload, true, promptKey, allowedActionTypes, requireConfirmation);
+        sendPayloadGenerationRequest(
+                payload, true, promptKey, allowedActionTypes, requireConfirmation);
     }
 
     private void sendPayloadGenerationRequest(
@@ -562,7 +581,8 @@ public class LlmChatPanel extends AbstractPanel {
     }
 
     private void finishRequestUiOnEdt() {
-        inputArea.setEnabled(true);
+        contextArea.setEnabled(true);
+        questionArea.setEnabled(true);
         sendButton.setEnabled(true);
         cancelButton.setEnabled(false);
         sendButton.setText(Constant.messages.getString("llm.chat.panel.send"));
@@ -571,7 +591,7 @@ public class LlmChatPanel extends AbstractPanel {
         inFlightService = null;
         updateStatusText();
         stopStatusTimer();
-        inputArea.requestFocusInWindow();
+        questionArea.requestFocusInWindow();
     }
 
     private void updateInputPanelBorder() {
@@ -604,11 +624,14 @@ public class LlmChatPanel extends AbstractPanel {
     }
 
     private void sendMessage() {
-        String message = inputArea.getText().trim();
-        if (message.isEmpty() || isProcessing) {
+        String question = StringUtils.trimToEmpty(questionArea.getText());
+        if (question.isEmpty() || isProcessing) {
             return;
         }
-        startRequest(message, message, true, null);
+
+        String context = StringUtils.trimToEmpty(contextArea.getText());
+        String llmMessage = context.isEmpty() ? question : context + "\n\n" + question;
+        startRequest(question, llmMessage, true, null);
     }
 
     private void startRequest(
@@ -616,7 +639,9 @@ public class LlmChatPanel extends AbstractPanel {
             String llmMessage,
             boolean clearInput,
             AutoApplyContext autoApplyContext) {
-        if (StringUtils.isBlank(userVisibleMessage) || StringUtils.isBlank(llmMessage) || isProcessing) {
+        if (StringUtils.isBlank(userVisibleMessage)
+                || StringUtils.isBlank(llmMessage)
+                || isProcessing) {
             return;
         }
 
@@ -640,9 +665,11 @@ public class LlmChatPanel extends AbstractPanel {
         }
 
         if (clearInput) {
-            inputArea.setText("");
+            contextArea.setText("");
+            questionArea.setText("");
         }
-        inputArea.setEnabled(false);
+        contextArea.setEnabled(false);
+        questionArea.setEnabled(false);
         sendButton.setEnabled(false);
         cancelButton.setEnabled(true);
         sendButton.setText(Constant.messages.getString("llm.chat.panel.send.sending"));
@@ -697,22 +724,22 @@ public class LlmChatPanel extends AbstractPanel {
 
                                 UserMessage userMessage = UserMessage.from(llmMessageFinal);
 
-	                                List<ChatMessage> requestMessages =
-	                                        new ArrayList<>(conversation.size() + 2);
-	                                requestMessages.add(
-	                                        SystemMessage.from(UNTRUSTED_DATA_SYSTEM_MESSAGE));
-	                                String persona = StringUtils.trimToEmpty(extension.getChatPersona());
-	                                if (!persona.isEmpty()) {
-	                                    requestMessages.add(SystemMessage.from(persona));
-	                                }
-	                                requestMessages.addAll(conversation);
-	                                requestMessages.add(userMessage);
+                                List<ChatMessage> requestMessages =
+                                        new ArrayList<>(conversation.size() + 2);
+                                requestMessages.add(
+                                        SystemMessage.from(UNTRUSTED_DATA_SYSTEM_MESSAGE));
+                                String persona =
+                                        StringUtils.trimToEmpty(extension.getChatPersona());
+                                if (!persona.isEmpty()) {
+                                    requestMessages.add(SystemMessage.from(persona));
+                                }
+                                requestMessages.addAll(conversation);
+                                requestMessages.add(userMessage);
 
                                 ChatRequest chatRequest =
                                         ChatRequest.builder()
                                                 .messages(
-                                                        requestMessages.toArray(
-                                                                new ChatMessage[0]))
+                                                        requestMessages.toArray(new ChatMessage[0]))
                                                 .build();
                                 String assistantText = service.chatText(chatRequest);
                                 if (cancelRequested || inFlightRequestId != requestId) {
@@ -821,10 +848,7 @@ public class LlmChatPanel extends AbstractPanel {
         }
 
         if (allowedActionTypes != null && !allowedActionTypes.isEmpty()) {
-            actions =
-                    actions.stream()
-                            .filter(a -> allowedActionTypes.contains(a.type()))
-                            .toList();
+            actions = actions.stream().filter(a -> allowedActionTypes.contains(a.type())).toList();
             if (actions.isEmpty()) {
                 JOptionPane.showMessageDialog(
                         this,
@@ -872,13 +896,14 @@ public class LlmChatPanel extends AbstractPanel {
                                                     .append("\n");
                                             int max = Math.min(3, result.errors().size());
                                             for (int i = 0; i < max; i++) {
-                                                sb.append("- ").append(result.errors().get(i)).append("\n");
+                                                sb.append("- ")
+                                                        .append(result.errors().get(i))
+                                                        .append("\n");
                                             }
                                             if (result.errors().size() > max) {
                                                 sb.append("- …\n");
                                             }
-                                            appendMessage(
-                                                    sb.toString().trim());
+                                            appendMessage(sb.toString().trim());
                                         } else {
                                             appendMessage(
                                                     Constant.messages.getString(
@@ -1058,7 +1083,8 @@ public class LlmChatPanel extends AbstractPanel {
             if (a.type() == LlmZapActionType.OPEN_REQUESTER_DIALOG
                     || a.type() == LlmZapActionType.OPEN_REQUESTER_TAB
                     || a.type() == LlmZapActionType.OPEN_FUZZER) {
-                LlmZapRequestData request = context.request() != null ? context.request() : a.request();
+                LlmZapRequestData request =
+                        context.request() != null ? context.request() : a.request();
                 int historyId =
                         request != null
                                 ? -1
@@ -1087,16 +1113,16 @@ public class LlmChatPanel extends AbstractPanel {
     }
 
     private void appendMessage(String message) {
-        String currentText = messageArea.getText();
-        if (currentText.isEmpty()
-                || currentText.equals(Constant.messages.getString("llm.chat.panel.welcome"))) {
-            messageArea.setText(message);
+        String displayMessage = truncateTail(message, MAX_MESSAGE_AREA_CHARS);
+        if (showingWelcomeText) {
+            messageArea.setText(displayMessage);
+            showingWelcomeText = false;
         } else {
-            messageArea.append("\n\n" + message);
+            messageArea.append("\n\n" + displayMessage);
         }
+        capTextArea(messageArea, MAX_MESSAGE_AREA_CHARS);
 
-        // Auto-scroll to bottom
-        messageArea.setCaretPosition(messageArea.getDocument().getLength());
+        scrollToBottom(messageScrollPane);
     }
 
     public void appendToInput(String str) {
@@ -1104,27 +1130,74 @@ public class LlmChatPanel extends AbstractPanel {
     }
 
     public void appendToInput(String str, boolean grabFocus) {
-        inputArea.append(str);
+        questionArea.append(str);
+        capTextArea(questionArea, MAX_QUESTION_AREA_CHARS);
 
         if (grabFocus) {
             setTabFocus();
-            inputArea.requestFocusInWindow();
+            questionArea.requestFocusInWindow();
         }
     }
 
     public void appendUntrustedDataToInput(Map<String, Object> payload, boolean grabFocus) {
         containsStructuredPayload = true;
         try {
-            inputArea.append(buildUntrustedDataBlock(payload) + "\n");
+            contextArea.append(buildUntrustedDataBlock(payload) + "\n");
+            capTextArea(contextArea, MAX_CONTEXT_AREA_CHARS);
+            scrollToBottom(contextScrollPane);
         } catch (JsonProcessingException e) {
             LOGGER.error("Failed to build structured payload.", e);
-            inputArea.append(Constant.messages.getString("llm.chat.json.failure", e.getMessage()));
+            questionArea.append(
+                    Constant.messages.getString("llm.chat.json.failure", e.getMessage()));
+            capTextArea(questionArea, MAX_QUESTION_AREA_CHARS);
         }
 
         if (grabFocus) {
             setTabFocus();
-            inputArea.requestFocusInWindow();
+            questionArea.requestFocusInWindow();
         }
+    }
+
+    private static void capTextArea(ZapTextArea textArea, int maxChars) {
+        if (textArea == null || maxChars <= 0) {
+            return;
+        }
+
+        Document doc = textArea.getDocument();
+        int length = doc.getLength();
+        int overflow = length - maxChars;
+        if (overflow <= 0) {
+            return;
+        }
+
+        try {
+            doc.remove(0, overflow);
+        } catch (BadLocationException e) {
+            // Best-effort trimming only.
+        }
+    }
+
+    private static String truncateTail(String value, int maxChars) {
+        if (value == null || maxChars <= 0) {
+            return "";
+        }
+        if (value.length() <= maxChars) {
+            return value;
+        }
+        return value.substring(value.length() - maxChars);
+    }
+
+    private static void scrollToBottom(JScrollPane scrollPane) {
+        if (scrollPane == null) {
+            return;
+        }
+        SwingUtilities.invokeLater(
+                () -> {
+                    var bar = scrollPane.getVerticalScrollBar();
+                    if (bar != null) {
+                        bar.setValue(bar.getMaximum());
+                    }
+                });
     }
 
     public static void appendFormattedMsg(StringBuilder sb, String prefix, String msg) {
@@ -1157,8 +1230,7 @@ public class LlmChatPanel extends AbstractPanel {
         String prompt = Constant.messages.getString(promptKey, min, max, defaultValue);
         String title = Constant.messages.getString(titleKey);
         String input =
-                JOptionPane.showInputDialog(
-                        this, prompt, title, JOptionPane.QUESTION_MESSAGE);
+                JOptionPane.showInputDialog(this, prompt, title, JOptionPane.QUESTION_MESSAGE);
         if (input == null) {
             return null;
         }
@@ -1198,7 +1270,20 @@ public class LlmChatPanel extends AbstractPanel {
     public void updateUI() {
         super.updateUI();
         updateTextAreaColors(messageArea);
-        updateTextAreaColors(inputArea);
+        updateTextAreaColors(contextArea);
+        updateTextAreaColors(questionArea);
         updateInputPanelBorder();
+    }
+
+    int getMessageAreaCharCount() {
+        return messageArea != null ? messageArea.getDocument().getLength() : -1;
+    }
+
+    int getContextAreaCharCount() {
+        return contextArea != null ? contextArea.getDocument().getLength() : -1;
+    }
+
+    int getQuestionAreaCharCount() {
+        return questionArea != null ? questionArea.getDocument().getLength() : -1;
     }
 }

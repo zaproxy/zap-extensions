@@ -91,7 +91,12 @@ public class LlmProjectContextBuilder {
                 "top_names",
                 sortCounts(byName).entrySet().stream()
                         .limit(maxAlertGroups)
-                        .collect(Collectors.toMap(Entry::getKey, Entry::getValue, (a, b) -> a, LinkedHashMap::new)));
+                        .collect(
+                                Collectors.toMap(
+                                        Entry::getKey,
+                                        Entry::getValue,
+                                        (a, b) -> a,
+                                        LinkedHashMap::new)));
         payload.put("top_names_truncated", byName.size() > maxAlertGroups);
         return payload;
     }
@@ -158,6 +163,8 @@ public class LlmProjectContextBuilder {
                         Comparator.<Entry<String, Integer>>comparingInt(Entry::getValue)
                                 .reversed()
                                 .thenComparing(Entry::getKey))
-                .collect(Collectors.toMap(Entry::getKey, Entry::getValue, (a, b) -> a, LinkedHashMap::new));
+                .collect(
+                        Collectors.toMap(
+                                Entry::getKey, Entry::getValue, (a, b) -> a, LinkedHashMap::new));
     }
 }

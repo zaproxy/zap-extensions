@@ -20,4 +20,3 @@
 package org.zaproxy.addon.llm.actions;
 
 public record LlmZapRequestData(String header, String body) {}
-

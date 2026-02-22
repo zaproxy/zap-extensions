@@ -45,15 +45,6 @@ public class LlmGeneratePayloadsForSelectionMenu extends ExtensionPopupMenuItem 
     private SelectableContentMessageContainer<HttpMessage> lastInvoker;
     private DefaultTextHttpMessageLocation lastSelection;
 
-    public LlmGeneratePayloadsForSelectionMenu(LlmChatPanelProvider llmChatPanelProvider) {
-        this(
-                llmChatPanelProvider,
-                "llm.menu.generate.selection.title",
-                "llm.chat.panel.payloads.prompt.text",
-                null,
-                true);
-    }
-
     public LlmGeneratePayloadsForSelectionMenu(
             LlmChatPanelProvider llmChatPanelProvider,
             String titleKey,

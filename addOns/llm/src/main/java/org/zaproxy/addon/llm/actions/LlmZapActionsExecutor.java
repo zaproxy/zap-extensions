@@ -180,7 +180,9 @@ public class LlmZapActionsExecutor {
             s = e;
             e = t;
         }
-        return original.substring(0, s) + StringUtils.defaultString(replacement) + original.substring(e);
+        return original.substring(0, s)
+                + StringUtils.defaultString(replacement)
+                + original.substring(e);
     }
 
     private ApplyResult openRequesterWithPayload(LlmZapAction action, boolean openDialog) {

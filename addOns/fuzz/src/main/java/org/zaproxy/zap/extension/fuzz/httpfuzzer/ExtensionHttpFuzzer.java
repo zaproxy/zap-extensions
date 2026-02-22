@@ -216,7 +216,11 @@ public class ExtensionHttpFuzzer extends ExtensionAdaptor {
 
     public void showFuzzerDialogWithPayloads(
             HttpMessage message, MessageLocation location, List<String> payloads) {
-        if (!hasView() || message == null || location == null || payloads == null || payloads.isEmpty()) {
+        if (!hasView()
+                || message == null
+                || location == null
+                || payloads == null
+                || payloads.isEmpty()) {
             return;
         }
 

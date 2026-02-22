@@ -5,11 +5,11 @@ Some ZAP builds do not expose an “Install add-on from file” option in the UI
 ## Build the `llm` add-on
 
 ```sh
-cd /Users/gerbot/Desktop/project/zap-extensions
+cd /path/to/zap-extensions
 ./gradlew :addOns:llm:jarZapAddOn
 
 # Example output:
-# [Incubating] Problems report is available at: file:///Users/gerbot/Desktop/project/zap-extensions/build/reports/problems/problems-report.html
+# [Incubating] Problems report is available at: file:///path/to/zap-extensions/build/reports/problems/problems-report.html
 # Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
 # BUILD SUCCESSFUL in 4s
 ```
@@ -23,7 +23,7 @@ addOns/llm/build/zapAddOn/bin/*.zap
 ## Build the `fuzz` add-on
 
 ```sh
-cd /Users/gerbot/Desktop/project/zap-extensions
+cd /path/to/zap-extensions
 ./gradlew :addOns:fuzz:jarZapAddOn
 ```
 
@@ -36,7 +36,7 @@ addOns/fuzz/build/zapAddOn/bin/*.zap
 ## Build both at once
 
 ```sh
-cd /Users/gerbot/Desktop/project/zap-extensions
+cd /path/to/zap-extensions
 ./gradlew :addOns:llm:jarZapAddOn :addOns:fuzz:jarZapAddOn
 ```
 

@@ -58,7 +58,8 @@ public class AnthropicChatModel implements ChatModel {
     private final List<ChatModelListener> listeners;
 
     private AnthropicChatModel(Builder builder) {
-        this.httpClient = builder.httpClient != null ? builder.httpClient : HttpClient.newHttpClient();
+        this.httpClient =
+                builder.httpClient != null ? builder.httpClient : HttpClient.newHttpClient();
         this.apiKey = StringUtils.trimToEmpty(builder.apiKey);
         this.baseUrl = StringUtils.trimToEmpty(builder.baseUrl);
         this.modelName = StringUtils.trimToEmpty(builder.modelName);
@@ -111,8 +112,7 @@ public class AnthropicChatModel implements ChatModel {
             String contentText;
             if (msg instanceof UserMessage um) {
                 role = "user";
-                contentText =
-                        um.hasSingleText() ? um.singleText() : String.valueOf(um.contents());
+                contentText = um.hasSingleText() ? um.singleText() : String.valueOf(um.contents());
             } else if (msg instanceof AiMessage am) {
                 role = "assistant";
                 contentText = StringUtils.defaultIfBlank(am.text(), am.toString());
@@ -131,11 +131,7 @@ public class AnthropicChatModel implements ChatModel {
 
         if (messages.isEmpty()) {
             messages.add(
-                    Map.of(
-                            "role",
-                            "user",
-                            "content",
-                            List.of(Map.of("type", "text", "text", ""))));
+                    Map.of("role", "user", "content", List.of(Map.of("type", "text", "text", ""))));
         }
 
         Map<String, Object> payload =
@@ -184,10 +180,16 @@ public class AnthropicChatModel implements ChatModel {
                     httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() < 200 || response.statusCode() >= 300) {
                 throw new RuntimeException(
-                        "LLM HTTP " + response.statusCode() + ": " + extractErrorMessage(response.body()));
+                        "LLM HTTP "
+                                + response.statusCode()
+                                + ": "
+                                + extractErrorMessage(response.body()));
             }
             String content = extractAssistantContent(response.body());
-            return ChatResponse.builder().aiMessage(AiMessage.from(content)).modelName(modelName).build();
+            return ChatResponse.builder()
+                    .aiMessage(AiMessage.from(content))
+                    .modelName(modelName)
+                    .build();
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {

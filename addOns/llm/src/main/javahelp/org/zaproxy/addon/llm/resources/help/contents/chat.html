@@ -56,17 +56,16 @@ You can quickly add data from ZAP directly into the chat input area using contex
 
 <H3>Chat Panel Context Buttons</H3>
 The chat panel includes buttons to help you add structured ZAP data to the input area:
+<p>The chat input area is split into two panes: use the left pane for context (structured ZAP data) and the right pane for your question.</p>
 <ul>
-    <li><b>Append Project Context</b>: Appends a structured summary of the current session, including contexts, in-scope sites, and an alerts summary.</li>
-    <li><b>Append Alerts Summary</b>: Appends a structured summary of the current alert counts and top alert names.</li>
-    <li><b>Append ZAP Logs (tail)</b>: Appends the tail of ZAP's log files (for example <code>zap.log</code> and rotated <code>zap.log.N</code> files, if present).</li>
+    <li><b>Query Alerts Summary</b>: Appends a structured summary of the current alert counts and top alert names.</li>
+    <li><b>Investigate ZAP Logs</b>: Appends the tail of ZAP's log files (for example <code>zap.log</code> and rotated <code>zap.log.N</code> files, if present).</li>
 </ul>
 These buttons append JSON data wrapped in BEGIN/END markers (see prompt injection countermeasures below).
 
-<H3>Chat Panel Actions (Optional)</H3>
-The chat panel includes optional buttons to help you apply model-proposed actions back into ZAP:
+<H3>Chat Panel Actions</H3>
+The chat panel includes a button to help you apply model-proposed actions back into ZAP:
 <ul>
-    <li><b>Insert Actions Prompt</b>: Inserts a template prompt asking the model to propose actions between BEGIN/END action markers.</li>
     <li><b>Apply Actions</b>: Parses actions from the last assistant response and applies them <b>only after you confirm</b>.</li>
 </ul>
 Supported actions are intentionally limited and user-approved (for example, setting a note or tags on a History entry).

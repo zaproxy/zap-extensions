@@ -31,24 +31,24 @@ import dev.langchain4j.model.chat.request.ChatRequest;
 import dev.langchain4j.model.chat.request.ResponseFormat;
 import dev.langchain4j.model.chat.response.ChatResponse;
 import dev.langchain4j.model.googleai.GoogleAiGeminiChatModel;
-import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.model.ollama.OllamaChatModel;
+import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.service.AiServices;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.net.URI;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.Getter;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.httpclient.util.HttpURLConnection;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpSender;
@@ -305,16 +305,22 @@ public class LlmCommunicationService {
                                         msg -> {
                                             String role;
                                             String content;
-                                            if (msg instanceof dev.langchain4j.data.message.SystemMessage sm) {
+                                            if (msg
+                                                    instanceof
+                                                    dev.langchain4j.data.message.SystemMessage sm) {
                                                 role = "system";
                                                 content = sm.text();
-                                            } else if (msg instanceof dev.langchain4j.data.message.UserMessage um) {
+                                            } else if (msg
+                                                    instanceof
+                                                    dev.langchain4j.data.message.UserMessage um) {
                                                 role = "user";
                                                 content =
                                                         um.hasSingleText()
                                                                 ? um.singleText()
                                                                 : um.contents().toString();
-                                            } else if (msg instanceof dev.langchain4j.data.message.AiMessage am) {
+                                            } else if (msg
+                                                    instanceof
+                                                    dev.langchain4j.data.message.AiMessage am) {
                                                 role = "assistant";
                                                 content = am.text();
                                             } else {
@@ -337,10 +343,14 @@ public class LlmCommunicationService {
                         .POST(HttpRequest.BodyPublishers.ofString(body))
                         .build();
 
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response =
+                httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         if (response.statusCode() < 200 || response.statusCode() >= 300) {
             throw new RuntimeException(
-                    "LLM HTTP " + response.statusCode() + ": " + extractErrorMessage(response.body()));
+                    "LLM HTTP "
+                            + response.statusCode()
+                            + ": "
+                            + extractErrorMessage(response.body()));
         }
 
         return extractAssistantContent(response.body());

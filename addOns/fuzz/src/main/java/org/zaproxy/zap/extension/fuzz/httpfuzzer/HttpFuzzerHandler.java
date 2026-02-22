@@ -31,8 +31,8 @@ import org.zaproxy.zap.extension.fuzz.FuzzerHandler;
 import org.zaproxy.zap.extension.fuzz.FuzzerOptions;
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.ui.HttpFuzzResultsContentPanel;
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.ui.HttpMessageSelectorPanel;
-import org.zaproxy.zap.extension.fuzz.impl.PayloadTableEntry;
 import org.zaproxy.zap.extension.fuzz.impl.FuzzerDialog;
+import org.zaproxy.zap.extension.fuzz.impl.PayloadTableEntry;
 import org.zaproxy.zap.extension.fuzz.messagelocations.MessageLocationReplacement;
 import org.zaproxy.zap.extension.fuzz.messagelocations.MessageLocationReplacementGenerator;
 import org.zaproxy.zap.extension.fuzz.messagelocations.MessageLocationReplacer;
@@ -184,7 +184,8 @@ public class HttpFuzzerHandler implements FuzzerHandler<HttpMessage, HttpFuzzer>
         if (cleaned.isEmpty()) {
             return Collections.emptyList();
         }
-        DefaultStringPayloadGeneratorUI ui = new DefaultStringPayloadGeneratorUI(String.join("\n", cleaned), false);
+        DefaultStringPayloadGeneratorUI ui =
+                new DefaultStringPayloadGeneratorUI(String.join("\n", cleaned), false);
         return List.of(new PayloadTableEntry(1, ui));
     }
 

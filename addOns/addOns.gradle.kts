@@ -603,19 +603,16 @@ fun AddOnPluginExtension.manifest(configure: ManifestExtension.() -> Unit): Unit
 fun AddOnPluginExtension.apiClientGen(configure: ApiClientGenExtension.() -> Unit): Unit =
     (this as ExtensionAware).extensions.configure("apiClientGen", configure)
 
-fun mandatoryProjects() =
-    mandatoryAddOns.map { name ->
+fun addOnProjects(addOns: List<String>) =
+    addOns.map { name ->
         val project = subprojects.find { it.name == name }
         require(project != null) { "Add-on with project name $name not found." }
         project
     }
 
-fun basicProjects() =
-    basicAddOns.map { name ->
-        val project = subprojects.find { it.name == name }
-        require(project != null) { "Add-on with project name $name not found." }
-        project
-    }
+fun mandatoryProjects() = addOnProjects(mandatoryAddOns)
+
+fun basicProjects() = addOnProjects(basicAddOns)
 
 fun Project.hasProperty(
     name: String,

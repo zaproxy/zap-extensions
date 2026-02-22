@@ -48,7 +48,8 @@ public class LlmAppendRequestSelectionMenu extends ExtensionPopupMenuItem {
     }
 
     @Override
-    public boolean isEnableForMessageContainer(org.zaproxy.zap.view.messagecontainer.MessageContainer<?> invoker) {
+    public boolean isEnableForMessageContainer(
+            org.zaproxy.zap.view.messagecontainer.MessageContainer<?> invoker) {
         lastInvoker = null;
         lastSelection = null;
 

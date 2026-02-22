@@ -19,8 +19,8 @@
  */
 package org.zaproxy.addon.llm.actions;
 
-import com.fasterxml.jackson.core.JsonFactoryBuilder;
 import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonFactoryBuilder;
 import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -91,11 +91,13 @@ public class LlmZapActionsParser {
                     }
                 }
 
-                HttpMessageLocation.Location location = parseLocation(textOrNull(actionNode, "location"));
+                HttpMessageLocation.Location location =
+                        parseLocation(textOrNull(actionNode, "location"));
                 int start = actionNode.path("start").asInt(-1);
                 int end = actionNode.path("end").asInt(-1);
 
-                // Some models nest selection details under "selection" rather than on the action object.
+                // Some models nest selection details under "selection" rather than on the action
+                // object.
                 JsonNode selectionNode = actionNode.get("selection");
                 String selectionText = null;
                 if (selectionNode != null && selectionNode.isObject()) {
@@ -140,7 +142,8 @@ public class LlmZapActionsParser {
                     }
                 }
 
-                // Some models omit "payload" for requester actions but include "payloads" or "selection.text".
+                // Some models omit "payload" for requester actions but include "payloads" or
+                // "selection.text".
                 if (StringUtils.isBlank(payload)
                         && (type == LlmZapActionType.OPEN_REQUESTER_DIALOG
                                 || type == LlmZapActionType.OPEN_REQUESTER_TAB)) {
@@ -162,7 +165,8 @@ public class LlmZapActionsParser {
                 }
 
                 // Some models use alternate fields for fuzzer payload lists.
-                if ((payloads == null || payloads.isEmpty()) && type == LlmZapActionType.OPEN_FUZZER) {
+                if ((payloads == null || payloads.isEmpty())
+                        && type == LlmZapActionType.OPEN_FUZZER) {
                     payloads =
                             firstNonEmptyPayloadList(
                                     payloads,
@@ -192,24 +196,18 @@ public class LlmZapActionsParser {
                 }
 
                 String validationIssue =
-                        validate(type, historyId, note, tags, location, start, end, payload, payloads, request);
+                        validate(
+                                type, historyId, note, tags, location, start, end, payload,
+                                payloads, request);
                 if (validationIssue != null) {
                     warnings.add(validationIssue);
                     continue;
                 }
 
-                    actions.add(
-                            new LlmZapAction(
-                                    type,
-                                    historyId,
-                                    note,
-                                    tags,
-                                    location,
-                                    start,
-                                    end,
-                                    payload,
-                                    payloads,
-                                    request));
+                actions.add(
+                        new LlmZapAction(
+                                type, historyId, note, tags, location, start, end, payload,
+                                payloads, request));
             }
         } catch (Exception e) {
             warnings.add("Failed to parse actions JSON: " + e.getMessage());
@@ -260,13 +258,15 @@ public class LlmZapActionsParser {
             return "Unsupported action: (null entry)";
         }
         if (!actionNode.isObject()) {
-            return "Unsupported action entry (expected object): " + StringUtils.abbreviate(actionNode.toString(), 200);
+            return "Unsupported action entry (expected object): "
+                    + StringUtils.abbreviate(actionNode.toString(), 200);
         }
         String id = StringUtils.defaultString(actionId);
         if (!id.isBlank()) {
             return "Unsupported action: " + id;
         }
-        return "Unsupported action (missing/blank id). Keys: " + String.join(", ", iterableFieldNames(actionNode));
+        return "Unsupported action (missing/blank id). Keys: "
+                + String.join(", ", iterableFieldNames(actionNode));
     }
 
     private static List<String> iterableFieldNames(JsonNode obj) {
@@ -293,7 +293,11 @@ public class LlmZapActionsParser {
         }
 
         // Common alternatives when models invent schemas.
-        id = firstNonBlank(textOrNull(actionNode, "id"), textOrNull(actionNode, "type"), textOrNull(actionNode, "name"));
+        id =
+                firstNonBlank(
+                        textOrNull(actionNode, "id"),
+                        textOrNull(actionNode, "type"),
+                        textOrNull(actionNode, "name"));
         if (StringUtils.isNotBlank(id)) {
             return cleanupActionId(id);
         }
@@ -332,7 +336,8 @@ public class LlmZapActionsParser {
             return null;
         }
 
-        // Drop trailing punctuation or extra explanation (e.g. "open_fuzzer," or "open_fuzzer (http)").
+        // Drop trailing punctuation or extra explanation (e.g. "open_fuzzer," or "open_fuzzer
+        // (http)").
         int end = 0;
         while (end < s.length()) {
             char c = s.charAt(end);
@@ -349,7 +354,8 @@ public class LlmZapActionsParser {
     }
 
     @SafeVarargs
-    private static List<String> firstNonEmptyPayloadList(List<String> current, List<String>... candidates) {
+    private static List<String> firstNonEmptyPayloadList(
+            List<String> current, List<String>... candidates) {
         if (current != null && !current.isEmpty()) {
             return current;
         }

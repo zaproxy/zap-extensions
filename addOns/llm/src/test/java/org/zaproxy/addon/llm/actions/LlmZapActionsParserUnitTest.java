@@ -131,8 +131,11 @@ class LlmZapActionsParserUnitTest {
 
         // Then
         assertThat(result.actions(), hasSize(3));
-        assertThat(result.actions().get(0).type(), is(equalTo(LlmZapActionType.OPEN_REQUESTER_DIALOG)));
-        assertThat(result.actions().get(1).type(), is(equalTo(LlmZapActionType.OPEN_REQUESTER_TAB)));
+        assertThat(
+                result.actions().get(0).type(),
+                is(equalTo(LlmZapActionType.OPEN_REQUESTER_DIALOG)));
+        assertThat(
+                result.actions().get(1).type(), is(equalTo(LlmZapActionType.OPEN_REQUESTER_TAB)));
         assertThat(result.actions().get(2).type(), is(equalTo(LlmZapActionType.OPEN_FUZZER)));
 
         // Missing context should be allowed for parsing (filled by caller if needed).
@@ -166,7 +169,8 @@ class LlmZapActionsParserUnitTest {
         // Then
         assertThat(result.warnings(), is(empty()));
         assertThat(result.actions(), hasSize(1));
-        assertThat(result.actions().get(0).type(), is(equalTo(LlmZapActionType.OPEN_REQUESTER_TAB)));
+        assertThat(
+                result.actions().get(0).type(), is(equalTo(LlmZapActionType.OPEN_REQUESTER_TAB)));
     }
 
     @Test
@@ -209,7 +213,8 @@ class LlmZapActionsParserUnitTest {
         // Then
         assertThat(result.warnings(), is(empty()));
         assertThat(result.actions(), hasSize(2));
-        assertThat(result.actions().get(0).type(), is(equalTo(LlmZapActionType.OPEN_REQUESTER_TAB)));
+        assertThat(
+                result.actions().get(0).type(), is(equalTo(LlmZapActionType.OPEN_REQUESTER_TAB)));
         assertThat(result.actions().get(1).type(), is(equalTo(LlmZapActionType.OPEN_FUZZER)));
     }
 
@@ -233,7 +238,8 @@ class LlmZapActionsParserUnitTest {
         // Then
         assertThat(result.warnings(), is(empty()));
         assertThat(result.actions(), hasSize(2));
-        assertThat(result.actions().get(0).type(), is(equalTo(LlmZapActionType.OPEN_REQUESTER_TAB)));
+        assertThat(
+                result.actions().get(0).type(), is(equalTo(LlmZapActionType.OPEN_REQUESTER_TAB)));
         assertThat(result.actions().get(1).type(), is(equalTo(LlmZapActionType.OPEN_FUZZER)));
     }
 
@@ -285,7 +291,9 @@ class LlmZapActionsParserUnitTest {
         // Then
         assertThat(result.warnings(), is(empty()));
         assertThat(result.actions(), hasSize(1));
-        assertThat(result.actions().get(0).type(), is(equalTo(LlmZapActionType.OPEN_REQUESTER_DIALOG)));
+        assertThat(
+                result.actions().get(0).type(),
+                is(equalTo(LlmZapActionType.OPEN_REQUESTER_DIALOG)));
         assertThat(result.actions().get(0).payload(), is(equalTo("p1")));
     }
 
@@ -307,9 +315,12 @@ class LlmZapActionsParserUnitTest {
         // Then
         assertThat(result.warnings(), is(empty()));
         assertThat(result.actions(), hasSize(1));
-        assertThat(result.actions().get(0).type(), is(equalTo(LlmZapActionType.OPEN_REQUESTER_TAB)));
+        assertThat(
+                result.actions().get(0).type(), is(equalTo(LlmZapActionType.OPEN_REQUESTER_TAB)));
         assertThat(result.actions().get(0).payload(), is(equalTo("sel")));
-        assertThat(result.actions().get(0).location(), is(equalTo(HttpMessageLocation.Location.REQUEST_BODY)));
+        assertThat(
+                result.actions().get(0).location(),
+                is(equalTo(HttpMessageLocation.Location.REQUEST_BODY)));
     }
 
     @Test

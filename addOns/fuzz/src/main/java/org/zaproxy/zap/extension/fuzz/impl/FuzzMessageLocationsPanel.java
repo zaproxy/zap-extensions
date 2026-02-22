@@ -189,7 +189,8 @@ public class FuzzMessageLocationsPanel
         return true;
     }
 
-    public boolean setPayloadsForLocation(MessageLocation location, List<PayloadTableEntry> payloads) {
+    public boolean setPayloadsForLocation(
+            MessageLocation location, List<PayloadTableEntry> payloads) {
         if (location == null) {
             throw new IllegalArgumentException("Parameter location must not be null.");
         }
