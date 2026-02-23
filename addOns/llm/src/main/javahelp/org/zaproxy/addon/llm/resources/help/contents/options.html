@@ -21,6 +21,7 @@
     <ul>
         <li>Azure OpenAI
         <li>Google Gemini
+        <li>OpenRouter
         <li>Ollama
     </ul>
 </section>
@@ -38,6 +39,12 @@ The API key can be found in the "API Keys" section of Google AI Studio.
 <p>
 The endpoint base URL is built-in and so does not need to be specified.
 
+<h3>OpenRouter</h3>
+
+Use your OpenRouter API key.
+<p>
+The default endpoint is: <code>https://openrouter.ai/api/v1</code>.
+
 <h3>Ollama</h3>
 
 You will typically not need to specify an API key. Local models do not need an API key and if you access cloud models then you can configure the API key in Ollama.
@@ -51,7 +58,7 @@ If you have Ollama installed on the same machine as ZAP then by default the endp
     </p>
     <ul>
         <li><strong>Name</strong>: A unique name for the provider entry.
-        <li><strong>Provider</strong>: The type of model provider (Azure OpenAI, Google Gemini, or Ollama).
+        <li><strong>Provider</strong>: The type of model provider (Azure OpenAI, Google Gemini, OpenRouter, or Ollama).
         <li><strong>API Key</strong>: The API key, if required by the provider.
         <li><strong>Endpoint Base URL</strong>: The base URL for API requests (not required for Google Gemini).
         <li><strong>Models</strong>: One or more model/deployment names, one per line.
