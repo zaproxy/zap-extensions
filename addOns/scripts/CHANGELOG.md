@@ -6,7 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Update dependency.
-- The Script Job Run action now supports passing authentication details (Context and User) for standalone Zest client script execution.
+
+### Added
+- The Script Job Run action now supports:
+    - Passing authentication details (context and user) for standalone Zest client script execution.
+    - Executing a chain of one or more Zest standalone scripts using the chain parameter.
 
 ## [45.17.0] - 2025-12-15
 ### Changed

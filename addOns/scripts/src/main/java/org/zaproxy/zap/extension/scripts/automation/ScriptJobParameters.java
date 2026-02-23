@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.scripts.automation;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,6 +40,7 @@ public class ScriptJobParameters extends AutomationData {
     private String inline = "";
     private String context = "";
     private String user = "";
+    private List<String> chain;
 
     public ScriptJobParameters(String action) {
         this.action = action;

@@ -80,6 +80,7 @@ import org.zaproxy.zap.extension.zest.internal.DefaultRequestValueReplacer;
 import org.zaproxy.zap.extension.zest.internal.NoopRequestValueReplacer;
 import org.zaproxy.zap.extension.zest.internal.RequestValueReplacer;
 import org.zaproxy.zap.extension.zest.internal.ScriptReorderer;
+import org.zaproxy.zap.extension.zest.internal.ZestScriptMerger;
 import org.zaproxy.zap.extension.zest.menu.ZestMenuManager;
 import org.zaproxy.zap.utils.ThreadUtils;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
@@ -1739,6 +1740,36 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
             return false;
         }
         return zestClientHelper.isClientActive();
+    }
+
+    /**
+     * Returns a single script wrapper that, when invoked, runs the given chain of scripts. Callers
+     * (e.g. scripts automation) use this so they do not need to know how the chain is executed;
+     * this implementation merges the scripts into one for a shared browser session. Accepts {@code
+     * ScriptWrapper} so callers can invoke via reflection without a hard dependency on Zest.
+     *
+     * <p><strong>Internal integration method:</strong> this is not part of Zest's public API and
+     * may change without notice.
+     *
+     * @param scripts list of Zest script wrappers in chain order (must be {@link
+     *     ZestScriptWrapper})
+     * @param runName name for the chain script (e.g. for logging)
+     * @return a script wrapper that runs the chain when invoked
+     * @throws IllegalArgumentException if scripts is null, empty, or contains non-Zest wrappers
+     */
+    public ScriptWrapper getChainScript(List<ScriptWrapper> scripts, String runName) {
+        if (scripts == null || scripts.isEmpty()) {
+            throw new IllegalArgumentException("Scripts list must not be null or empty");
+        }
+        List<ZestScriptWrapper> zestWrappers = new ArrayList<>(scripts.size());
+        for (ScriptWrapper sw : scripts) {
+            if (!(sw instanceof ZestScriptWrapper)) {
+                throw new IllegalArgumentException(
+                        "All scripts must be ZestScriptWrapper: " + sw.getName());
+            }
+            zestWrappers.add((ZestScriptWrapper) sw);
+        }
+        return ZestScriptMerger.mergeScripts(zestWrappers, runName, this::convertElementToString);
     }
 
     /**/
