@@ -590,7 +590,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         }
     }
 
-    private SeleniumOptions getOptions() {
+    protected SeleniumOptions getOptions() {
         if (options == null) {
             options = new SeleniumOptions();
         }
@@ -903,7 +903,9 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                             proxyAddress,
                             proxyPort,
                             consumer,
-                            enableExtensions);
+                            enableExtensions,
+                            driverConf.getArguments(),
+                            driverConf.getPreferences());
         } else if (provider instanceof CustomBrowserWebDriverProvider customBrowserProv) {
             CustomBrowserImpl customBrowser = customBrowserProv.getCustomBrowser();
             boolean headless = browserId.endsWith("-headless");
@@ -916,7 +918,9 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                             proxyPort,
                             headless,
                             consumer,
-                            enableExtensions);
+                            enableExtensions,
+                            driverConf.getArguments(),
+                            driverConf.getPreferences());
         } else {
             throw new IllegalArgumentException(
                     "Unknown ProvidedBrowser: " + provided.getClass().getCanonicalName());
@@ -1245,13 +1249,15 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         };
     }
 
-    private static DriverConfiguration buildConfigFromBrowser(
+    protected static DriverConfiguration buildConfigFromBrowser(
             Browser browser,
             int requester,
             String proxyAddress,
             int proxyPort,
             Consumer<MutableCapabilities> consumer,
-            boolean enableExtensions) {
+            boolean enableExtensions,
+            List<String> extraArguments,
+            Map<String, String> extraPreferences) {
         boolean headless;
         Browser baseBrowser;
         switch (browser) {
@@ -1285,6 +1291,9 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                     .map(BrowserArgument::getArgument)
                     .forEach(arguments::add);
         }
+        if (extraArguments != null && !extraArguments.isEmpty()) {
+            arguments.addAll(extraArguments);
+        }
 
         Map<String, String> preferences = new HashMap<>();
         getSeleniumOptions().getBrowserPreferences(baseBrowser.getId()).stream()
@@ -1295,6 +1304,9 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                                 preferences.put(p.getName().trim(), p.getValue());
                             }
                         });
+        if (extraPreferences != null && !extraPreferences.isEmpty()) {
+            preferences.putAll(extraPreferences);
+        }
 
         return DriverConfiguration.builder()
                 .requester(requester)
@@ -1311,15 +1323,21 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                 .build();
     }
 
-    private static DriverConfiguration buildConfigFromCustomBrowser(
+    protected static DriverConfiguration buildConfigFromCustomBrowser(
             CustomBrowserImpl customBrowser,
             int requester,
             String proxyAddress,
             int proxyPort,
             boolean headless,
             Consumer<MutableCapabilities> consumer,
-            boolean enableExtensions) {
-        List<String> arguments = getCustomBrowserArguments(customBrowser);
+            boolean enableExtensions,
+            List<String> extraArguments,
+            Map<String, String> extraPreferences) {
+        List<String> arguments = new ArrayList<>(getCustomBrowserArguments(customBrowser));
+        if (extraArguments != null && !extraArguments.isEmpty()) {
+            arguments.addAll(extraArguments);
+        }
+
         String binaryPath;
         String driverPath;
         DriverType type;
@@ -1358,6 +1376,9 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                                 preferences.put(p.getName().trim(), p.getValue());
                             }
                         });
+        if (extraPreferences != null && !extraPreferences.isEmpty()) {
+            preferences.putAll(extraPreferences);
+        }
 
         return DriverConfiguration.builder()
                 .requester(requester)

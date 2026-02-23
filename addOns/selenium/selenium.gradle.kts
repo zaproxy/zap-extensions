@@ -62,3 +62,25 @@ dependencies {
 
     testImplementation(project(":testutils"))
 }
+
+val webdriverProjectPath =
+    when {
+        org.gradle.internal.os.OperatingSystem.current().isMacOsX -> ":addOns:webdrivers:webdrivermacos"
+        org.gradle.internal.os.OperatingSystem.current().isLinux -> ":addOns:webdrivers:webdriverlinux"
+        else -> ":addOns:webdrivers:webdriverwindows"
+    }
+
+tasks.register<Sync>("prepareTestWebdrivers") {
+    val wdProject = project(webdriverProjectPath)
+    dependsOn(wdProject.tasks.named("generateZapAddOnManifest"))
+    from(wdProject.layout.buildDirectory.dir("webdrivers"))
+    into(layout.buildDirectory.dir("test-zap-webdrivers"))
+}
+
+tasks.withType<Test>().configureEach {
+    if (name == "test") {
+        dependsOn("prepareTestWebdrivers")
+        systemProperties["zap.test.webdrivers.home"] =
+            layout.buildDirectory.dir("test-zap-webdrivers").get().asFile.absolutePath
+    }
+}
