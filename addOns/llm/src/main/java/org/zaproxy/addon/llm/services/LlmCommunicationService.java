@@ -32,6 +32,7 @@ import dev.langchain4j.model.chat.request.ResponseFormat;
 import dev.langchain4j.model.chat.response.ChatResponse;
 import dev.langchain4j.model.googleai.GoogleAiGeminiChatModel;
 import dev.langchain4j.model.ollama.OllamaChatModel;
+import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.service.AiServices;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -44,6 +45,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import org.apache.commons.httpclient.util.HttpURLConnection;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpSender;
@@ -112,6 +114,19 @@ public class LlmCommunicationService {
                             .logRequests(true)
                             .logResponses(true)
                             .build();
+            case OPENROUTER -> {
+                String baseUrl = StringUtils.trimToEmpty(pconf.getEndpoint());
+                if (baseUrl.isEmpty()) {
+                    baseUrl = pconf.getProvider().getDefaultEndpoint();
+                }
+                yield OpenAiChatModel.builder()
+                        .apiKey(pconf.getApiKey())
+                        .baseUrl(baseUrl)
+                        .modelName(modelName)
+                        .temperature(0.3)
+                        .listeners(List.of(listener))
+                        .build();
+            }
             case GOOGLE_GEMINI ->
                     GoogleAiGeminiChatModel.builder()
                             .apiKey(pconf.getApiKey())
