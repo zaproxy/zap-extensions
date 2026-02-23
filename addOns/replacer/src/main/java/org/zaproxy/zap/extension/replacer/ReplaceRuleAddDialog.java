@@ -69,7 +69,7 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
 
     public ReplaceRuleAddDialog(
             Window owner, String title, OptionsReplacerTableModel replacerModel) {
-        super(owner, title, DisplayUtils.getScaledDimension(500, 350), ADV_TAB_LABELS, true);
+        super(owner, title, DisplayUtils.getScaledDimension(500, 450), ADV_TAB_LABELS, true);
         this.replacerModel = replacerModel;
         initFields();
     }
@@ -85,7 +85,8 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
         this.addComboField(0, MATCH_TYPE_FIELD, getMatchTypes(), selectedStr);
 
         boolean stringMatchType = true;
-        if (ReplacerParamRule.MatchType.REQ_HEADER.equals(selectedMatchType)) {
+        if (selectedMatchType == null
+                || ReplacerParamRule.MatchType.REQ_HEADER.equals(selectedMatchType)) {
             this.addComboField(0, MATCH_STR_FIELD, getDefaultRequestHeaders(), "", true);
             this.addCheckBoxField(0, REGEX_FIELD, false);
             // Only support exact matches with headers
@@ -98,11 +99,11 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
             this.getField(REGEX_FIELD).setEnabled(false);
             stringMatchType = false;
         } else {
-            this.addTextField(0, MATCH_STR_FIELD, "");
+            this.addMultilineField(0, MATCH_STR_FIELD, "");
             this.addCheckBoxField(0, REGEX_FIELD, false);
         }
 
-        this.addTextField(0, REPLACEMENT_FIELD, "");
+        this.addMultilineField(0, REPLACEMENT_FIELD, "");
         this.addReadOnlyField(0, INIT_TYPE_SUMMARY_FIELD, "", false);
         this.addCheckBoxField(0, ENABLE_FIELD, false);
         this.addCheckBoxField(0, ENABLE_TOKEN_PROCESSING, false);
@@ -132,6 +133,8 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
                     initFields();
                 });
         this.addFieldListener(INIT_TYPE_ALL_FIELD, e -> setUpInitiatorFields());
+
+        repaint();
     }
 
     private void setUpInitiatorFields() {
