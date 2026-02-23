@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for custom browsers
 - Support for browser preferences
 ### Changed
-- Update Selenium to version 4.40.0.
+- Update Selenium to version 4.41.0.
 ### Removed
 - Support for IE and disabled Safari.
 
