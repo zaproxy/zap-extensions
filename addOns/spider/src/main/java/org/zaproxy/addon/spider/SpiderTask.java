@@ -76,13 +76,12 @@ public class SpiderTask implements Runnable {
      */
     private HistoryReference reference;
 
-    /** The spider resource found. */
-    private SpiderResourceFound resourceFound;
-
     private ExtensionHistory extHistory;
 
     /** The Constant log. */
     private static final Logger LOGGER = LogManager.getLogger(SpiderTask.class);
+
+    private final int depth;
 
     /**
      * Instantiates a new spider task using the target URI. The purpose of this task is to crawl the
@@ -99,7 +98,7 @@ public class SpiderTask implements Runnable {
     public SpiderTask(Spider parent, SpiderResourceFound resourceFound, URI uri) {
         super();
         this.parent = parent;
-        this.resourceFound = resourceFound;
+        this.depth = resourceFound.getDepth();
 
         LOGGER.debug("New task submitted for uri: {}", uri);
 
@@ -151,7 +150,7 @@ public class SpiderTask implements Runnable {
 
             LOGGER.debug(
                     "Spider Task Started. Processing uri at depth {} using already constructed message: {}",
-                    resourceFound.getDepth(),
+                    depth,
                     reference.getURI());
 
             runImpl();
@@ -234,9 +233,9 @@ public class SpiderTask implements Runnable {
         parent.checkPauseAndWait();
 
         int maxDepth = parent.getSpiderParam().getMaxDepth();
-        if (maxDepth == SpiderParam.UNLIMITED_DEPTH || resourceFound.getDepth() < maxDepth) {
+        if (maxDepth == SpiderParam.UNLIMITED_DEPTH || depth < maxDepth) {
             parent.notifyListenersSpiderTaskResult(new SpiderTaskResult(msg));
-            processResource(parent, resourceFound.getDepth(), msg);
+            processResource(parent, depth, msg);
         } else {
             parent.notifyListenersSpiderTaskResult(
                     new SpiderTaskResult(msg, getSkippedMessage("maxdepth")));
