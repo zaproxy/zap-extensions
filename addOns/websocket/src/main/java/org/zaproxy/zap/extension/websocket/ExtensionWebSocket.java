@@ -495,9 +495,13 @@ public class ExtensionWebSocket extends ExtensionAdaptor
         if (webSocketPassiveScannerManager != null) {
             webSocketPassiveScannerManager.shutdownThread();
             extensionScript.removeScriptType(websocketPassiveScanScriptType);
+            webSocketPassiveScannerManager = null;
         }
 
-        eventPublisher.shutdown();
+        if (eventPublisher != null) {
+            eventPublisher.shutdown();
+            eventPublisher = null;
+        }
     }
 
     @Override
