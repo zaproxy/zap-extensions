@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Handle persistence errors and forced shutdown in automation job.
+- Address memory leak.
 
 ## [0.18.0] - 2025-12-15
 ### Changed
