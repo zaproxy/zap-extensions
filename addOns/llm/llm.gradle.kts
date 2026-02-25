@@ -29,8 +29,8 @@ dependencies {
 
     api(libs.llm.langchain4j)
     implementation(libs.llm.langchain4j.azureOpenAi)
-    implementation(libs.llm.langchain4j.openAi)
     implementation(libs.llm.langchain4j.ollama)
+    implementation(libs.llm.langchain4j.openAi)
     implementation(libs.llm.langchain4j.googleGemini)
 
     testImplementation(project(":testutils"))

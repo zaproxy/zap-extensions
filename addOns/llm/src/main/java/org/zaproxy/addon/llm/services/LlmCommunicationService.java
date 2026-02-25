@@ -95,19 +95,6 @@ public class LlmCommunicationService {
     private ChatModel buildModel() {
 
         return switch (pconf.getProvider()) {
-            case OPENROUTER -> {
-                String baseUrl = StringUtils.trimToEmpty(pconf.getEndpoint());
-                if (baseUrl.isEmpty()) {
-                    baseUrl = pconf.getProvider().getDefaultEndpoint();
-                }
-                yield OpenAiChatModel.builder()
-                        .apiKey(pconf.getApiKey())
-                        .baseUrl(baseUrl)
-                        .modelName(modelName)
-                        .temperature(0.3)
-                        .listeners(List.of(listener))
-                        .build();
-            }
             case AZURE_OPENAI ->
                     AzureOpenAiChatModel.builder()
                             .apiKey(pconf.getApiKey())
@@ -127,6 +114,19 @@ public class LlmCommunicationService {
                             .logRequests(true)
                             .logResponses(true)
                             .build();
+            case OPENROUTER -> {
+                String baseUrl = StringUtils.trimToEmpty(pconf.getEndpoint());
+                if (baseUrl.isEmpty()) {
+                    baseUrl = pconf.getProvider().getDefaultEndpoint();
+                }
+                yield OpenAiChatModel.builder()
+                        .apiKey(pconf.getApiKey())
+                        .baseUrl(baseUrl)
+                        .modelName(modelName)
+                        .temperature(0.3)
+                        .listeners(List.of(listener))
+                        .build();
+            }
             case GOOGLE_GEMINI ->
                     GoogleAiGeminiChatModel.builder()
                             .apiKey(pconf.getApiKey())
