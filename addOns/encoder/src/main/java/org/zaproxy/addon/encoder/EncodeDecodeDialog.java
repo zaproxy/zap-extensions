@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.encoder;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -40,6 +41,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.ScrollPaneConstants;
@@ -86,12 +88,15 @@ public class EncodeDecodeDialog extends AbstractFrame implements OptionsChangedL
     private JButton deleteSelectedTabButton;
     private int globalOutputPanelIndex;
     private JButton resetButton;
+    private JSplitPane inputOutputSplitPane = null;
+    private final double initialDividerLocation;
 
-    public EncodeDecodeDialog(List<TabModel> tabModels) {
+    public EncodeDecodeDialog(EncoderConfig.Data configData) {
         super();
+        this.initialDividerLocation = configData.getDividerLocation();
         encodeDecodeProcessors = new EncodeDecodeProcessors();
         init();
-        setTabs(tabModels);
+        setTabs(configData.getTabs());
 
         addWindowListener(
                 new WindowAdapter() {
@@ -146,7 +151,7 @@ public class EncodeDecodeDialog extends AbstractFrame implements OptionsChangedL
 
         List<TabModel> defaultTabModels = new ArrayList<>();
         try {
-            defaultTabModels.addAll(EncoderConfig.loadDefaultConfig());
+            defaultTabModels.addAll(EncoderConfig.loadDefaultConfig().getTabs());
         } catch (ConfigurationException | IOException e) {
             LOGGER.warn("There was a problem loading the default encoder config.", e);
         }
@@ -154,7 +159,7 @@ public class EncodeDecodeDialog extends AbstractFrame implements OptionsChangedL
         setTabs(defaultTabModels);
 
         try {
-            EncoderConfig.saveConfig(tabs);
+            EncoderConfig.saveConfig(new EncoderConfig.Data(tabs, getDividerProportion()));
         } catch (ConfigurationException | IOException e) {
             LOGGER.warn("There was a problem saving the encoder config.", e);
         }
@@ -484,28 +489,8 @@ public class EncodeDecodeDialog extends AbstractFrame implements OptionsChangedL
     private JPanel getMainPanel() {
         if (mainPanel == null) {
 
-            // mainPanel is the outside one
-            mainPanel = new JPanel();
+            mainPanel = new JPanel(new BorderLayout(1, 1));
             mainPanel.setPreferredSize(new Dimension(800, 600));
-            mainPanel.setLayout(new GridBagLayout());
-
-            final GridBagConstraints gbcScrollPanel = new GridBagConstraints();
-            gbcScrollPanel.gridx = 0;
-            gbcScrollPanel.gridy = 1;
-            gbcScrollPanel.insets = new Insets(1, 1, 1, 1);
-            gbcScrollPanel.anchor = GridBagConstraints.NORTHWEST;
-            gbcScrollPanel.fill = GridBagConstraints.BOTH;
-            gbcScrollPanel.weightx = 1.0D;
-            gbcScrollPanel.weighty = 0.25D;
-
-            final GridBagConstraints gbcTabPanel = new GridBagConstraints();
-            gbcTabPanel.gridx = 0;
-            gbcTabPanel.gridy = 3;
-            gbcTabPanel.insets = new Insets(1, 1, 1, 1);
-            gbcTabPanel.anchor = GridBagConstraints.NORTHWEST;
-            gbcTabPanel.fill = GridBagConstraints.BOTH;
-            gbcTabPanel.weightx = 1.0D;
-            gbcTabPanel.weighty = 1.0D;
 
             final JScrollPane scrollPanelWithInputField = new JScrollPane();
             scrollPanelWithInputField.setViewportView(getInputField());
@@ -519,16 +504,18 @@ public class EncodeDecodeDialog extends AbstractFrame implements OptionsChangedL
                             TitledBorder.DEFAULT_POSITION,
                             FontUtils.getFont(FontUtils.Size.standard)));
 
-            final GridBagConstraints gbcToolbar = new GridBagConstraints();
-            gbcToolbar.gridx = 0;
-            gbcToolbar.gridy = 2;
-            gbcToolbar.insets = new Insets(1, 1, 1, 1);
-            gbcToolbar.anchor = GridBagConstraints.NORTHWEST;
-            gbcToolbar.fill = GridBagConstraints.BOTH;
+            JPanel bottomPanel = new JPanel(new BorderLayout(1, 1));
+            bottomPanel.add(getPanelToolbar(), BorderLayout.PAGE_START);
+            bottomPanel.add(getMainTabbedPane(), BorderLayout.CENTER);
 
-            mainPanel.add(scrollPanelWithInputField, gbcScrollPanel);
-            mainPanel.add(getPanelToolbar(), gbcToolbar);
-            mainPanel.add(getMainTabbedPane(), gbcTabPanel);
+            inputOutputSplitPane =
+                    new JSplitPane(
+                            JSplitPane.VERTICAL_SPLIT, scrollPanelWithInputField, bottomPanel);
+            inputOutputSplitPane.setResizeWeight(initialDividerLocation);
+            inputOutputSplitPane.setDividerLocation(initialDividerLocation);
+            inputOutputSplitPane.setOneTouchExpandable(true);
+
+            mainPanel.add(inputOutputSplitPane, BorderLayout.CENTER);
         }
         return mainPanel;
     }
@@ -665,10 +652,21 @@ public class EncodeDecodeDialog extends AbstractFrame implements OptionsChangedL
 
     private void saveSetting() {
         try {
-            EncoderConfig.saveConfig(tabs);
+            EncoderConfig.saveConfig(new EncoderConfig.Data(tabs, getDividerProportion()));
         } catch (Exception e) {
             LOGGER.error("Can not store Encoder Config", e);
         }
+    }
+
+    private double getDividerProportion() {
+        if (inputOutputSplitPane == null) {
+            return initialDividerLocation;
+        }
+        int height = inputOutputSplitPane.getHeight() - inputOutputSplitPane.getDividerSize();
+        if (height <= 0) {
+            return initialDividerLocation;
+        }
+        return (double) inputOutputSplitPane.getDividerLocation() / height;
     }
 
     @Override

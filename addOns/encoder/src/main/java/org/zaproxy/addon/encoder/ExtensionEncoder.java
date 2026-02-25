@@ -22,7 +22,6 @@ package org.zaproxy.addon.encoder;
 import java.awt.Frame;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.KeyStroke;
@@ -169,14 +168,14 @@ public class ExtensionEncoder extends ExtensionAdaptor {
 
     private EncodeDecodeDialog getEncodeDecodeDialog() {
         if (encodeDecodeDialog == null) {
-            List<TabModel> tabModels;
+            EncoderConfig.Data configData;
             try {
-                tabModels = EncoderConfig.loadConfig();
+                configData = EncoderConfig.loadConfig();
             } catch (ConfigurationException | IOException e) {
                 LOGGER.error("Can not load Encoder Config");
-                tabModels = new ArrayList<>(0);
+                configData = new EncoderConfig.Data();
             }
-            encodeDecodeDialog = new EncodeDecodeDialog(tabModels);
+            encodeDecodeDialog = new EncodeDecodeDialog(configData);
         }
         return encodeDecodeDialog;
     }

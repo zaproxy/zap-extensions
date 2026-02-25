@@ -53,11 +53,13 @@ public class EncoderConfig {
     private static final String DEFAULT_BUNDLED_CONFIG_FILE =
             "resources/" + DEFAULT_CONFIG_FILE_NAME;
 
+    private static final String DIVIDER_LOCATION_KEY = "dividerLocation";
+
     private EncoderConfig() {
         // Utility Class
     }
 
-    public static List<TabModel> loadConfig() throws ConfigurationException, IOException {
+    public static Data loadConfig() throws ConfigurationException, IOException {
         Path config = getConfigPath(CONFIG_FILE);
         if (Files.notExists(config)) {
             return loadDefaultConfig();
@@ -65,7 +67,7 @@ public class EncoderConfig {
         return loadConfig(config);
     }
 
-    public static List<TabModel> loadDefaultConfig() throws ConfigurationException, IOException {
+    public static Data loadDefaultConfig() throws ConfigurationException, IOException {
         Path defaultConfig = getConfigPath(DEFAULT_CONFIG_FILE);
         if (Files.notExists(defaultConfig)) {
             Files.createDirectories(defaultConfig.getParent());
@@ -81,7 +83,7 @@ public class EncoderConfig {
                 } catch (IOException e1) {
                     LOGGER.error("Failed to load the default bundled configuration file.", e1);
                 }
-                return new ArrayList<>();
+                return new Data();
             }
         }
         return loadConfig(defaultConfig);
@@ -91,11 +93,11 @@ public class EncoderConfig {
         return Paths.get(Constant.getZapHome(), configName);
     }
 
-    private static List<TabModel> loadConfig(Path file) throws ConfigurationException {
+    private static Data loadConfig(Path file) throws ConfigurationException {
         return loadConfig(new ZapXmlConfiguration(file.toFile()));
     }
 
-    private static List<TabModel> loadConfig(ZapXmlConfiguration config) {
+    private static Data loadConfig(ZapXmlConfiguration config) {
         List<TabModel> tabs = new ArrayList<>();
         List<HierarchicalConfiguration> tabConfigs = config.configurationsAt(TAB_PATH);
         for (HierarchicalConfiguration tabConfig : tabConfigs) {
@@ -118,15 +120,17 @@ public class EncoderConfig {
             tab.setOutputPanels(panels);
             tabs.add(tab);
         }
-        return tabs;
+        return new Data(
+                tabs, config.getDouble(DIVIDER_LOCATION_KEY, Data.DEFAULT_DIVIDER_LOCATION));
     }
 
-    public static void saveConfig(List<TabModel> tabs) throws ConfigurationException, IOException {
-        saveConfig(getConfigPath(CONFIG_FILE), tabs);
+    public static void saveConfig(Data data) throws ConfigurationException, IOException {
+        saveConfig(getConfigPath(CONFIG_FILE), data);
     }
 
-    private static void saveConfig(Path file, List<TabModel> tabs)
+    private static void saveConfig(Path file, Data data)
             throws ConfigurationException, IOException {
+        List<TabModel> tabs = data.getTabs();
         ZapXmlConfiguration config = new ZapXmlConfiguration();
         int t = 0;
         for (TabModel tab : tabs) {
@@ -140,8 +144,60 @@ public class EncoderConfig {
                         elementPanelKey + OUTPUT_PANEL_SCRIPT_KEY, panel.getProcessorId());
             }
         }
+        config.setProperty(DIVIDER_LOCATION_KEY, data.getDividerLocation());
 
         Files.createDirectories(file.getParent());
         config.save(file.toFile());
+    }
+
+    /** Holder for encoder config: tab layout and divider position. */
+    public static final class Data {
+        /** Default proportion (0.0–1.0) for the input area in the main dialog. */
+        public static final double DEFAULT_DIVIDER_LOCATION = 0.2;
+
+        private final List<TabModel> tabs;
+        private final double dividerLocation;
+
+        /**
+         * Creates data with default tabs and divider location from config, or empty tabs and
+         * default divider if loading fails.
+         */
+        public Data() {
+            Data fromDefault = null;
+            try {
+                fromDefault = EncoderConfig.loadDefaultConfig();
+            } catch (ConfigurationException | IOException e) {
+                LOGGER.warn(
+                        "Failed to load default encoder config, using empty tabs and default divider.",
+                        e);
+            }
+            if (fromDefault != null) {
+                this.tabs = new ArrayList<>(fromDefault.getTabs());
+                this.dividerLocation = fromDefault.getDividerLocation();
+            } else {
+                this.tabs = new ArrayList<>();
+                this.dividerLocation = DEFAULT_DIVIDER_LOCATION;
+            }
+        }
+
+        /**
+         * Validates divider location: if in range 0.0–1.0 it is used, otherwise the default is
+         * used.
+         */
+        public Data(List<TabModel> tabs, double dividerLocation) {
+            this.tabs = new ArrayList<>(tabs);
+            this.dividerLocation =
+                    dividerLocation >= 0.0 && dividerLocation <= 1.0
+                            ? dividerLocation
+                            : DEFAULT_DIVIDER_LOCATION;
+        }
+
+        public List<TabModel> getTabs() {
+            return new ArrayList<>(tabs);
+        }
+
+        public double getDividerLocation() {
+            return dividerLocation;
+        }
     }
 }
