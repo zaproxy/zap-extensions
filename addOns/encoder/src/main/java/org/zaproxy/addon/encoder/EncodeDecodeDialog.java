@@ -26,6 +26,8 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -512,8 +514,17 @@ public class EncodeDecodeDialog extends AbstractFrame implements OptionsChangedL
                     new JSplitPane(
                             JSplitPane.VERTICAL_SPLIT, scrollPanelWithInputField, bottomPanel);
             inputOutputSplitPane.setResizeWeight(initialDividerLocation);
-            inputOutputSplitPane.setDividerLocation(initialDividerLocation);
             inputOutputSplitPane.setOneTouchExpandable(true);
+            inputOutputSplitPane.addComponentListener(
+                    new ComponentAdapter() {
+                        @Override
+                        public void componentResized(ComponentEvent e) {
+                            if (inputOutputSplitPane.getHeight() > 0) {
+                                inputOutputSplitPane.setDividerLocation(initialDividerLocation);
+                                inputOutputSplitPane.removeComponentListener(this);
+                            }
+                        }
+                    });
 
             mainPanel.add(inputOutputSplitPane, BorderLayout.CENTER);
         }
