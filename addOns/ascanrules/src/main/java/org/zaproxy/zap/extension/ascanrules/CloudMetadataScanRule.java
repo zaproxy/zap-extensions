@@ -60,11 +60,24 @@ public class CloudMetadataScanRule extends AbstractHostPlugin implements CommonA
     }
 
     private enum CloudProvider {
+        /**
+         * Amazon Web Services.
+         *
+         * <p>Format: Text, list of newline separated keys
+         * https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-data-retrieval.html
+         * https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html
+         */
         AWS(
                 List.of(
                         new Endpoint("169.254.169.254", "/latest/meta-data/", Map.of()),
                         new Endpoint("aws.zaproxy.org", "/latest/meta-data/", Map.of())),
-                Set.of("ami-id", "instance-id", "local-hostname", "public-hostname")),
+                Set.of("ami-id\n", "instance-id\n", "local-hostname\n", "public-hostname\n")),
+        /**
+         * Google Cloud Platform Text
+         *
+         * <p>Format: List of newline separated keys and subpaths
+         * https://docs.cloud.google.com/compute/docs/metadata/overview
+         */
         GCP(
                 List.of(
                         new Endpoint(
@@ -75,24 +88,73 @@ public class CloudMetadataScanRule extends AbstractHostPlugin implements CommonA
                                 "metadata.google.internal",
                                 "/computeMetadata/v1/",
                                 Map.of("Metadata-Flavor", "Google"))),
-                Set.of("project-id", "zone", "machineType", "hostname")),
+                Set.of("project-id\n", "zone\n", "machineType\n", "machine-type\n", "hostname\n")),
+        /**
+         * Oracle Cloud Infrastructure
+         *
+         * <p>Format: JSON
+         * https://docs.oracle.com/en-us/iaas/Content/Compute/Tasks/gettingmetadata.htm
+         */
         OCI(
                 List.of(
                         new Endpoint("169.254.169.254", "/opc/v1/instance/", Map.of()),
-                        new Endpoint("metadata.oraclecloud.com", "/opc/v1/instance/", Map.of())),
-                Set.of("oci", "instance", "availabilityDomain", "region")),
+                        new Endpoint("metadata.oraclecloud.com", "/opc/v1/instance/", Map.of()),
+                        new Endpoint(
+                                "169.254.169.254",
+                                "/opc/v2/instance/",
+                                Map.of("Authorization", "Bearer Oracle")),
+                        new Endpoint(
+                                "metadata.oraclecloud.com",
+                                "/opc/v2/instance/",
+                                Map.of("Authorization", "Bearer Oracle"))),
+                Set.of("\"oci", "\"instance\"", "\"availabilityDomain\"", "\"region")),
+        /**
+         * Alibaba Cloud Text
+         *
+         * <p>Format: List of newline separated keys
+         * https://www.alibabacloud.com/blog/alibaba-cloud-ecs-metadata-user-data-and-dynamic-data_594351
+         */
         ALIBABA_CLOUD(
                 List.of(
                         new Endpoint("100.100.100.200", "/latest/meta-data/", Map.of()),
                         new Endpoint("alibaba.zaproxy.org", "/latest/meta-data/", Map.of())),
-                Set.of("image-id", "instance-id", "hostname", "region-id")),
+                Set.of("image-id\n", "instance-id\n", "hostname\n", "region-id\n")),
+        /**
+         * Azure
+         *
+         * <p>Format: JSON
+         * https://learn.microsoft.com/en-us/azure/virtual-machines/instance-metadata-service
+         */
         AZURE(
                 List.of(
                         new Endpoint(
                                 "169.254.169.254",
                                 "/metadata/instance",
                                 Map.of("Metadata", "true"))),
-                Set.of("compute", "network", "osType", "vmSize"));
+                Set.of("\"compute\"", "\"network\"", "\"osType\"", "\"vmSize\"")),
+        /**
+         * IBM Cloud
+         *
+         * <p>Format: JSON
+         * https://cloud.ibm.com/docs/vpc?topic=vpc-imd-access-instance-metadata&interface=ui
+         */
+        IBM(
+                List.of(
+                        new Endpoint(
+                                "169.254.169.254",
+                                "/metadata/v1",
+                                Map.of("Metadata-Flavor", "ibm", "Accept", "application/json"))),
+                Set.of("\"compute\"", "\"network\"", "\"vm_id\"", "\"os_type\"")),
+        /**
+         * OpenStack
+         *
+         * <p>Format: JSON https://docs.openstack.org/nova/latest/user/metadata.html
+         */
+        OPEN_STACK(
+                List.of(
+                        new Endpoint(
+                                "169.254.169.254", "/openstack/latest/meta_data.json", Map.of())),
+                Set.of("\"uuid\"", "\"meta\"", "\"public_keys\""));
 
         private final List<Endpoint> endpoints;
         private final Set<String> indicators;
@@ -106,13 +168,13 @@ public class CloudMetadataScanRule extends AbstractHostPlugin implements CommonA
             return endpoints;
         }
 
-        public boolean containsMetadataIndicators(String responseBody) {
+        public String getMetadataIndicator(String responseBody) {
             for (String indicator : indicators) {
                 if (responseBody.contains(indicator)) {
-                    return true;
+                    return indicator;
                 }
             }
-            return false;
+            return null;
         }
 
         private static class Endpoint {
@@ -168,10 +230,11 @@ public class CloudMetadataScanRule extends AbstractHostPlugin implements CommonA
         return ALERT_TAGS;
     }
 
-    public AlertBuilder createAlert(HttpMessage newRequest, String host) {
+    public AlertBuilder createAlert(HttpMessage newRequest, String host, String indicator) {
         return newAlert()
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setAttack(host)
+                .setEvidence(indicator)
                 .setOtherInfo(Constant.messages.getString(MESSAGE_PREFIX + "otherinfo"))
                 .setMessage(newRequest);
     }
@@ -190,8 +253,9 @@ public class CloudMetadataScanRule extends AbstractHostPlugin implements CommonA
                     sendAndReceive(newRequest, false);
                     if (isSuccess(newRequest) && newRequest.getResponseBody().length() > 0) {
                         String responseBody = newRequest.getResponseBody().toString();
-                        if (provider.containsMetadataIndicators(responseBody)) {
-                            this.createAlert(newRequest, endpoint.host).raise();
+                        String indicator = provider.getMetadataIndicator(responseBody);
+                        if (indicator != null) {
+                            this.createAlert(newRequest, endpoint.host, indicator).raise();
                             return;
                         }
                     }
@@ -210,6 +274,6 @@ public class CloudMetadataScanRule extends AbstractHostPlugin implements CommonA
 
     @Override
     public List<Alert> getExampleAlerts() {
-        return List.of(createAlert(null, "www.example.com").build());
+        return List.of(createAlert(null, "www.example.com", "instance-id").build());
     }
 }
