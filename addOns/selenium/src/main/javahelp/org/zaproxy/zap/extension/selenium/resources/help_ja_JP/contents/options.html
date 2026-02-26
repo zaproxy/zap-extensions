@@ -7,86 +7,83 @@
 <body>
 	<h1>オプション - Selenium画面</h1>
 
-	この画面では、一部のWebDriverの要件を設定できます。 
+	This screen allows you to manage the browsers which can be launched from ZAP.
 	<br />
 	<h2>設定オプション</h2>
-	<h3>WebDrivers</h3>
-	<table border="2">
-		<tr>
-			<th>フィールド</th>
-			<th>詳細</th>
-			<th>既定値</th>
-			<th>設定ファイル</th>
-		</tr>
-		<tr>
-			<td>ChromeDriver</td>
-			<td>ChromeDriverの場所を選択できます。</td>
-			<td align="center">同梱されているWebDriverへのパス (利用可能な場合)。</td>
-			<td>Key: <code>selenium.chromeDriver</code><br>
-Value: ChromeDriverへのファイルシステムパス</td>
-		</tr>
-		<tr>
-			<td>EdgeDriver</td>
-			<td>EdgeDriverの場所を選択できます。</td>
-			<td align="center">同梱されているWebDriverへのパス (利用可能な場合)。</td>
-			<td>Key: <code>selenium.edgeDriver</code><br>
-Value: EdgeDriverへのファイルシステムパス</td>
-		</tr>
-		<tr>
-			<td>geckodriver</td>
-			<td>geckodriver  (Firefox ドライバー) の場所を選択できます。</td>
-			<td align="center">同梱されているWebDriverへのパス (利用可能な場合)。</td>
-			<td>Key: <code>selenium.firefoxDriver</code><br>
-Value: geckodriverへのファイルシステムパス</td>
-		</tr>
-	</table>
+	<h3>Browsers</h3>
+	This section allows you to configure all browsers, including the built-in browsers (Chrome, Edge, Firefox) and any custom browsers you add.
+	The table displays the following information for each browser:
+	<ul>
+	<li><strong>Name:</strong> The browser name
+	<li><strong>Driver:</strong> The path to the WebDriver executable (e.g., ChromeDriver, geckodriver)
+	<li><strong>Binary:</strong> The path to the browser binary executable (optional, for using a specific version)
+	<li><strong>Type:</strong> The browser type - either Chromium-based or Firefox-based
+	</ul>
 
-	<h3>バイナリ</h3>
-	<table border="2">
-		<tr>
-			<th>フィールド</th>
-			<th>詳細</th>
-			<th>既定値</th>
-			<th>設定ファイル</th>
-		</tr>
-		<tr>
-			<td>Chrome</td>
-			<td>Chromeバイナリの場所を選択できます (例: システムデフォルト以外のバージョンを使用する場合)。</td>
-			<td align="center">(なし)</td>
-			<td>Key: <code>selenium.chromeBinary</code><br>
-Value: Chromeバイナリへのファイルシステムパス</td>
-		</tr>
-		<tr>
-			<td>Edge</td>
-			<td>Edgeバイナリの場所を選択できます (例: システムデフォルト以外のバージョンを使用する場合)。</td>
-			<td align="center">(なし)</td>
-			<td>Key: <code>selenium.edgeBinary</code><br>
-Value: Edgeバイナリへのファイルシステムパス</td>
-		</tr>
-		<tr>
-			<td>Firefox</td>
-			<td>Firefoxバイナリの場所を選択できます (例: システムデフォルト以外のバージョンを使用する場合)。</td>
-			<td align="center">(なし)</td>
-			<td>Key: <code>selenium.firefoxBinary</code><br>
-Value: Firefoxバイナリへのファイルシステムパス</td>
-		</tr>
-	</table>
-	<strong>注:</strong> 上記の場所 (バイナリとWebDriver群) は、Javaシステムプロパティを使用して設定することも可能です。その場合、上記の設定は上書きされ、プロパティの値が表示されます。
+	<h4>Built-in Browsers</h4>
+	The built-in browsers (Chrome, Edge, and Firefox) are automatically included in the table and cannot be removed.
+	You can modify their configuration (driver path, binary path, and arguments) by selecting a browser and clicking the <code>Modify...</code> button.
+	If you attempt to remove a built-in browser, a warning message will be displayed.
+
+	<h4>Custom Browsers</h4>
+	You can add your own custom browsers by clicking the <code>Add...</code> button. Custom browsers allow you to:
+	<ul>
+	<li>Specify a custom name for the browser
+	<li>Set the WebDriver path (e.g., for a custom Chromium or Firefox build)
+	<li>Set the browser binary path
+	<li>Choose the browser type (Chromium or Firefox)
+	<li>Add custom browser arguments
+	</ul>
+	If you leave the driver or binary path empty for a custom browser, the default WebDriver and binary paths
+	configured for the corresponding built-in browser (Chrome/Edge for Chromium type, Firefox for Firefox type) will be used.
+	Custom browsers can be modified or removed using the <code>Modify...</code> and <code>Remove</code> buttons.
+	Custom browsers are saved in the configuration and will persist across ZAP restarts.
+
+	<p>
+	Custom browsers can be accessed programmatically using the keys:
+	<ul>
+	<li><code>custom.&lt;name&gt;</code>
+	<li><code>custom.&lt;name&gt;-headless</code>
+	</ul>
+	<p>
+	<strong>Note:</strong> Custom browsers automatically support headless mode for automation purposes. 
+	When using automation tools that support headless browsers, you will see two options for each custom browser:
+	one with the browser name and one with the browser name followed by " Headless".
+
+	<h4>Browser Arguments</h4>
+	Each browser (built-in or custom) can have additional (CLI) arguments specified through the <code>Arguments...</code> button in the modify dialog.
+	<p>
+	<strong>注:</strong> Adding invalid arguments might cause the browser to fail to start. ZAP already adds some arguments (e.g. headless mode arguments).
+
+	<h4>Browser Preferences</h4>
+	Each browser (built-in or custom) can have name/value preferences configured via the <code>Preferences...</code> button in the modify dialog.
+	Preferences are applied when the browser is launched:
+	<ul>
+	<li><strong>Chrome / Edge:</strong> Preferences are passed as the <code>prefs</code> experimental option. Use dotted names (e.g. <code>profile.default_content_setting_values.notifications</code>). Values can be text, numbers, or <code>true</code>/<code>false</code>.
+	<li><strong>Firefox:</strong> Preferences are set via <code>about:config</code>-style names (e.g. <code>network.proxy.type</code>). Values are coerced to string, integer, or boolean as appropriate.
+	</ul>
+	Only <strong>enabled</strong> preferences are applied. Duplicate preference names are not allowed when adding or modifying an entry.
+
+	<h4>Browser Profiles</h4>
+	You can choose which Firefox profile to use by default for Firefox browsers.
+	The <code>&lt;temporary&gt;</code> profile is one which is created by Selenium each time the browser is launched.
+	<p>
+	<strong>注:</strong> 「client」アドオンは zap-client-profile というプロファイルを作成します。別のプロファイルを選択した場合、「Client」アドオンは手動設定なしでは機能しません。
+
+	<h4>System Properties</h4>
+	It's also possible to set browser driver and binary locations using Java system properties, in which case the options will be
+	overridden and those values shown instead. The system properties are:
+	<ul>
+	<li><code>webdriver.chrome.driver</code> - ChromeDriver path
+	<li><code>webdriver.edge.driver</code> - EdgeDriver path
+	<li><code>webdriver.gecko.driver</code> - geckodriver (Firefox) path
+	<li><code>selenium.chromeBinary</code> - Chrome binary path
+	<li><code>selenium.edgeBinary</code> - Edge binary path
+	<li><code>selenium.firefoxBinary</code> - Firefox binary path
+	</ul>
 
 	<p>
 	同梱されたWebDriver群の詳細は、概要ページで確認できます。
-
-	<h4>ブラウザ引数</h4>
-Chrome、Edge、およびFirefoxのバイナリに対して、<code>引数...</code> ボタンから追加の (CLI) 引数を指定できます。
-
-	<p>
-	<strong>注:</strong> 無効な引数を追加すると、ブラウザの起動に失敗する可能性があります。 ZAPはすでに一部の引数 (例: ヘッドレス) を追加しています。
-
-	<h4>ブラウザプロファイル</h4>
-デフォルトで使用するFirefoxのプロファイルを選択できます。
-	<code>&lt;temporary&gt;</code> プロファイルは、ブラウザが起動されるたびにSeleniumによって作成されるプロファイルです。
-	<p>
-	<strong>注:</strong> 「client」アドオンは zap-client-profile というプロファイルを作成します。別のプロファイルを選択した場合、「Client」アドオンは手動設定なしでは機能しません。
 
 	<h3>ブラウザ拡張機能</h3>
 
