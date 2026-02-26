@@ -27,15 +27,18 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
@@ -66,95 +69,100 @@ class CloudMetadataScanRuleUnitTest extends ActiveScannerTest<CloudMetadataScanR
         assertThat(httpMessagesSent, is(not(empty())));
     }
 
-    @ParameterizedTest
-    @ValueSource(
-            strings = {
-                "169.254.169.254",
-                "aws.zaproxy.org",
-            })
-    void shouldAlertIfResponseIs200OkAWS(String host) throws Exception {
-        // Given
-        String path = "/latest/meta-data/";
-        // https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-data-retrieval.html
-        String body = "<html><head></head><H></H1>ami-id\nami-launch-index<html>";
-        this.nano.addHandler(createHandler(path, Response.Status.OK, body, host));
-        HttpMessage msg = this.getHttpMessage(path);
-        rule.init(msg, this.parent);
-        // When
-        rule.scan();
-        // Then
-        assertThat(alertsRaised, hasSize(1));
-        Alert alert = alertsRaised.get(0);
-        assertEquals(Alert.RISK_HIGH, alert.getRisk());
-        assertEquals(Alert.CONFIDENCE_MEDIUM, alert.getConfidence());
-        assertEquals(host, alert.getAttack());
+    static Stream<Arguments> cloudMetadataScanCases() {
+        return Stream.of(
+                // AWS
+                arguments("169.254.169.254", "/latest/meta-data/", "ami-id\n", "ami-id\n", true),
+                arguments("aws.zaproxy.org", "/latest/meta-data/", "ami-id\n", "ami-id\n", true),
+                arguments("169.254.169.254", "/latest/meta-data/", "ami-id", null, false),
+                // Alibaba Cloud
+                arguments(
+                        "100.100.100.200", "/latest/meta-data/", "image-id\n", "image-id\n", true),
+                arguments(
+                        "alibaba.zaproxy.org",
+                        "/latest/meta-data/",
+                        "image-id\n",
+                        "image-id\n",
+                        true),
+                arguments("100.100.100.200", "/latest/meta-data/", "image-id", null, false),
+                // GCP
+                arguments(
+                        "169.254.169.254",
+                        "/computeMetadata/v1/",
+                        "project-id\n",
+                        "project-id\n",
+                        true),
+                arguments(
+                        "metadata.google.internal",
+                        "/computeMetadata/v1/",
+                        "project-id\n",
+                        "project-id\n",
+                        true),
+                arguments("169.254.169.254", "/computeMetadata/v1/", "project-id", null, false),
+                // Azure
+                arguments(
+                        "169.254.169.254",
+                        "/metadata/instance",
+                        "{\"compute\":{}}",
+                        "\"compute\"",
+                        true),
+                arguments("169.254.169.254", "/metadata/instance", "osType", null, false),
+                // OCI
+                arguments("169.254.169.254", "/opc/v1/instance/", "{\"oci\":{}}", "\"oci", true),
+                arguments(
+                        "metadata.oraclecloud.com",
+                        "/opc/v1/instance/",
+                        "{\"oci\":{}}",
+                        "\"oci",
+                        true),
+                arguments(
+                        "metadata.oraclecloud.com",
+                        "/opc/v2/instance/",
+                        "{\"instance\":{}}",
+                        "\"instance\"",
+                        true),
+                arguments("169.254.169.254", "/opc/v1/instance/", "{\"other\":{}}", null, false),
+                // IBM
+                arguments(
+                        "169.254.169.254", "/metadata/v1", "{\"compute\":{}}", "\"compute\"", true),
+                arguments("169.254.169.254", "/metadata/v1", "{\"other\":{}}", null, false),
+                // OpenStack
+                arguments(
+                        "169.254.169.254",
+                        "/openstack/latest/meta_data.json",
+                        "{\"uuid\":\"abc-123\"}",
+                        "\"uuid\"",
+                        true),
+                arguments(
+                        "169.254.169.254",
+                        "/openstack/latest/meta_data.json",
+                        "{\"other\":\"x\"}",
+                        null,
+                        false));
     }
 
     @ParameterizedTest
-    @ValueSource(
-            strings = {
-                "100.100.100.200",
-                "alibaba.zaproxy.org",
-            })
-    void shouldAlertIfResponseIs200OkAlibabaCloud(String host) throws Exception {
+    @MethodSource("cloudMetadataScanCases")
+    void shouldAlertOrNotBasedOnMetadataResponse(
+            String host, String path, String body, String evidence, boolean shouldAlert)
+            throws Exception {
         // Given
-        String path = "/latest/meta-data/";
-        String body = "image-id\ninstance-id";
         this.nano.addHandler(createHandler(path, Response.Status.OK, body, host));
         HttpMessage msg = this.getHttpMessage(path);
         rule.init(msg, this.parent);
         // When
         rule.scan();
         // Then
-        assertThat(alertsRaised, hasSize(1));
-        Alert alert = alertsRaised.get(0);
-        assertEquals(Alert.RISK_HIGH, alert.getRisk());
-        assertEquals(Alert.CONFIDENCE_MEDIUM, alert.getConfidence());
-        assertEquals(host, alert.getAttack());
-    }
-
-    @ParameterizedTest
-    @ValueSource(
-            strings = {
-                "169.254.169.254",
-            })
-    void shouldAlertIfResponseIs200OkGCP(String host) throws Exception {
-        // Given
-        String path = "/computeMetadata/v1/";
-        String body = "project-id";
-        this.nano.addHandler(createHandler(path, Response.Status.OK, body, host));
-        HttpMessage msg = this.getHttpMessage(path);
-        rule.init(msg, this.parent);
-        // When
-        rule.scan();
-        // Then
-        assertThat(alertsRaised, hasSize(1));
-        Alert alert = alertsRaised.get(0);
-        assertEquals(Alert.RISK_HIGH, alert.getRisk());
-        assertEquals(Alert.CONFIDENCE_MEDIUM, alert.getConfidence());
-        assertEquals(host, alert.getAttack());
-    }
-
-    @ParameterizedTest
-    @ValueSource(
-            strings = {
-                "169.254.169.254",
-            })
-    void shouldAlertIfResponseIs200OkAzure(String host) throws Exception {
-        // Given
-        String path = "/metadata/instance";
-        String body = "osType";
-        this.nano.addHandler(createHandler(path, Response.Status.OK, body, host));
-        HttpMessage msg = this.getHttpMessage(path);
-        rule.init(msg, this.parent);
-        // When
-        rule.scan();
-        // Then
-        assertThat(alertsRaised, hasSize(1));
-        Alert alert = alertsRaised.get(0);
-        assertEquals(Alert.RISK_HIGH, alert.getRisk());
-        assertEquals(Alert.CONFIDENCE_MEDIUM, alert.getConfidence());
-        assertEquals(host, alert.getAttack());
+        if (shouldAlert) {
+            assertThat(alertsRaised, hasSize(1));
+            Alert alert = alertsRaised.get(0);
+            assertEquals(Alert.RISK_HIGH, alert.getRisk());
+            assertEquals(Alert.CONFIDENCE_MEDIUM, alert.getConfidence());
+            assertEquals(host, alert.getAttack());
+            assertEquals(evidence, alert.getEvidence());
+        } else {
+            assertThat(alertsRaised, hasSize(0));
+        }
     }
 
     @Test
@@ -190,6 +198,7 @@ class CloudMetadataScanRuleUnitTest extends ActiveScannerTest<CloudMetadataScanR
         assertThat(alert1.getRisk(), is(equalTo(Alert.RISK_HIGH)));
         assertThat(alert1.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
         assertThat(alert1.getCweId(), is(equalTo(1230)));
+        assertEquals("instance-id", alert1.getEvidence());
     }
 
     private static NanoServerHandler createHandler(
