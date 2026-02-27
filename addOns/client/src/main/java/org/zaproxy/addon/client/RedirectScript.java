@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.client;
 
+import java.util.UUID;
 import org.openqa.selenium.JavascriptExecutor;
 import org.zaproxy.zap.extension.selenium.BrowserHook;
 import org.zaproxy.zap.extension.selenium.SeleniumScriptUtils;
@@ -47,11 +48,14 @@ public class RedirectScript implements BrowserHook {
         if (ssutils.getRequester() == ZEST_CLIENT_RECORDER_INITIATOR) {
             sb.append("&zaprecord=true");
         }
+        sb.append("&zapid=");
+        sb.append(UUID.randomUUID());
         String zapurl = sb.toString();
         ssutils.getWebDriver().get(zapurl);
         JavascriptExecutor jsExecutor = (JavascriptExecutor) ssutils.getWebDriver();
         jsExecutor.executeScript("localStorage.setItem('localzapurl', '" + apiurl + "')");
         // The second refresh seems to be needed sometimes - could be a browser timing issue?
         ssutils.getWebDriver().get(zapurl);
+        api.browserLaunched(ssutils);
     }
 }

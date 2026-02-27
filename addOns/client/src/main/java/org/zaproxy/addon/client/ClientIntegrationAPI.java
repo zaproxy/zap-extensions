@@ -46,6 +46,7 @@ import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.api.ApiResponse;
 import org.zaproxy.zap.extension.api.ApiResponseElement;
+import org.zaproxy.zap.extension.selenium.SeleniumScriptUtils;
 
 public class ClientIntegrationAPI extends ApiImplementor {
     private static final String PREFIX = "client";
@@ -290,5 +291,16 @@ public class ClientIntegrationAPI extends ApiImplementor {
                 callback.getImplementorName(),
                 "Parameter callback implementor name must not be null");
         this.clientCallBacks.remove(callback.getImplementorName());
+    }
+
+    protected void browserLaunched(SeleniumScriptUtils ssutils) {
+        this.clientCallBacks.forEach(
+                (n, callback) -> {
+                    try {
+                        callback.browserLaunched(ssutils);
+                    } catch (Exception e) {
+                        LOGGER.error(e.getMessage(), e);
+                    }
+                });
     }
 }

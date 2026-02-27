@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.client;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -28,6 +29,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.ArgumentCaptor;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.parosproxy.paros.network.HttpSender;
@@ -57,20 +59,37 @@ class RedirectScriptUnitTest {
     void shouldNotDisableClientForCommonInitiators(int initiator) {
         // Given
         given(ssutils.getRequester()).willReturn(initiator);
+        ArgumentCaptor<String> urlCaptor = ArgumentCaptor.forClass(String.class);
         // When
         script.browserLaunched(ssutils);
         // Then
-        verify(wd, times(2)).get("callback-url?zapenable=true");
+        verify(wd, times(2)).get(urlCaptor.capture());
+        assertUrlsHavePrefixAndValidZapid(urlCaptor, "callback-url?zapenable=true&zapid=");
     }
 
     @Test
     void shouldDisableClientForZestRecorder() {
         // Given
         given(ssutils.getRequester()).willReturn(RedirectScript.ZEST_CLIENT_RECORDER_INITIATOR);
+        ArgumentCaptor<String> urlCaptor = ArgumentCaptor.forClass(String.class);
         // When
         script.browserLaunched(ssutils);
         // Then
-        verify(wd, times(2)).get("callback-url?zapenable=true&zaprecord=true");
+        verify(wd, times(2)).get(urlCaptor.capture());
+        assertUrlsHavePrefixAndValidZapid(
+                urlCaptor, "callback-url?zapenable=true&zaprecord=true&zapid=");
+    }
+
+    private static void assertUrlsHavePrefixAndValidZapid(
+            ArgumentCaptor<String> urlCaptor, String expectedPrefix) {
+        for (String url : urlCaptor.getAllValues()) {
+            assertTrue(url.startsWith(expectedPrefix), "URL should start with " + expectedPrefix);
+            assertTrue(
+                    url.substring(expectedPrefix.length())
+                            .matches(
+                                    "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"),
+                    "URL should contain valid UUID after zapid=");
+        }
     }
 
     private interface TestWebDriver extends WebDriver, JavascriptExecutor {}

@@ -20,6 +20,7 @@
 package org.zaproxy.addon.client;
 
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.extension.selenium.SeleniumScriptUtils;
 
 /**
  * @since 0.21.0
@@ -29,4 +30,6 @@ public interface ClientCallBackImplementor {
     String getImplementorName();
 
     String handleCallBack(HttpMessage msg);
+
+    default void browserLaunched(SeleniumScriptUtils ssutils) {}
 }
