@@ -50,6 +50,8 @@ If you have Ollama installed on the same machine as ZAP then by default the endp
 Use your OpenRouter API key.
 <p>
 The default endpoint is: <code>https://openrouter.ai/api/v1</code>.
+<p>
+You must specify at least one OpenRouter model name (in the <strong>Models</strong> field) from <a href="https://openrouter.ai/models">https://openrouter.ai/models</a>.
 
 <section>
     <h2>Provider Fields</h2>
@@ -61,7 +63,7 @@ The default endpoint is: <code>https://openrouter.ai/api/v1</code>.
         <li><strong>Provider</strong>: The type of model provider (Azure OpenAI, Google Gemini, Ollama, or OpenRouter).
         <li><strong>API Key</strong>: The API key, if required by the provider.
         <li><strong>Endpoint Base URL</strong>: The base URL for API requests (not required for Google Gemini).
-        <li><strong>Models</strong>: One or more model/deployment names, one per line.
+        <li><strong>Models</strong>: One or more model/deployment names, one per line (required for OpenRouter).
     </ul>
 </section>
 
@@ -87,5 +89,8 @@ The default endpoint is: <code>https://openrouter.ai/api/v1</code>.
         provider and model.
     </p>
 </section>
+
+
+
 </BODY>
 </HTML>

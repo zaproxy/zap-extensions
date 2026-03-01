@@ -58,6 +58,5 @@ public class ModifyLlmProviderDialog extends AddLlmProviderDialog {
                         : "";
         initialising = false;
         updateEndpointFieldState();
-        updateSuggestedEndpoint();
     }
 }

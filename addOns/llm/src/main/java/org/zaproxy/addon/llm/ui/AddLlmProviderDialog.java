@@ -286,30 +286,9 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
         if (provider == null) {
             return;
         }
-
-        if (!provider.supportsEndpoint()) {
-            endpointField.setText("");
-            lastSuggestedEndpoint = "";
-            return;
-        }
-
-        String defaultEndpoint = provider.getDefaultEndpoint();
-        String currentEndpoint = StringUtils.trimToEmpty(endpointField.getText());
-
-        if (defaultEndpoint == null || defaultEndpoint.isEmpty()) {
-            if (!lastSuggestedEndpoint.isEmpty() && currentEndpoint.equals(lastSuggestedEndpoint)) {
-                endpointField.setText("");
-            }
-            lastSuggestedEndpoint = "";
-            return;
-        }
-
-        if (currentEndpoint.isEmpty() || currentEndpoint.equals(lastSuggestedEndpoint)) {
-            lastSuggestedEndpoint = defaultEndpoint;
-            endpointField.setText(defaultEndpoint);
-        } else {
-            lastSuggestedEndpoint = "";
-        }
+        String endpoint = LlmProviderEndpointPolicy.endpointValueOnSelect(provider);
+        endpointField.setText(endpoint);
+        lastSuggestedEndpoint = endpoint;
     }
 
     protected boolean isDuplicateName(String name) {
