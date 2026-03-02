@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [80] - 2026-03-02
 ### Added
 - Checks for cloud metadata from IBM and OpenStack.
 - Evidence for cloud metadata.
@@ -675,6 +675,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[80]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v80
 [79]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v79
 [78]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v78
 [77]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v77
