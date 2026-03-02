@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.35.0] - 2026-03-02
 ### Fixed
 - Exception in authentication diagnostics.
 - Ensure the login link verification URL has both logged in and out indicators.
@@ -348,6 +348,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Support of authentication request identification and configuration.
 
+[0.35.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.35.0
 [0.34.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.34.0
 [0.33.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.33.0
 [0.32.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.32.0

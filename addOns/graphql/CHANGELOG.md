@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## [0.32.0] - 2026-03-02
 ### Added
 - Support for importing an introspection query response JSON from a URL (Issue 9249).
 
@@ -238,6 +238,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
   - Import a GraphQL Schema
   - Generate Queries from an imported Schema
 
+[0.32.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.32.0
 [0.31.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.31.0
 [0.30.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.30.0
 [0.29.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.29.0
