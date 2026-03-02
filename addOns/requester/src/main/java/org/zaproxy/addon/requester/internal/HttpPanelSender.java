@@ -30,6 +30,7 @@ import java.util.Map;
 import javax.net.ssl.SSLException;
 import javax.swing.JButton;
 import javax.swing.JToggleButton;
+import org.apache.commons.configuration.FileConfiguration;
 import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -60,11 +61,20 @@ import org.zaproxy.zap.network.HttpRequestConfig;
 /** Knows how to send {@link HttpMessage} objects. */
 public class HttpPanelSender {
 
+    private static final String FOLLOW_REDIRECTS_CONFIG_KEY = "followredir";
+    private static final String REGEN_CSRF_CONFIG_KEY = "regencsrf";
+    private static final String TRACKING_COOKIES_CONFIG_KEY = "trackcookies";
+    private static final String UPDATE_HOST_HEADER_CONFIG_KEY = "updatehost";
+    private static final String UPDATE_LENGTH_CONFIG_KEY = "updatelength";
+    private static final String USE_COOKIES_CONFIG_KEY = "usecookies";
+
     private static final Logger LOGGER = LogManager.getLogger(HttpPanelSender.class);
 
     private final HttpPanelResponse responsePanel;
     private ExtensionHistory extension;
     private ExtensionAntiCSRF extAntiCSRF;
+    private FileConfiguration options;
+    private String configurationKey;
 
     private HttpSender delegate;
 
@@ -78,7 +88,13 @@ public class HttpPanelSender {
 
     private CustomHttpPanelRequest customHttpPanelRequest;
 
-    public HttpPanelSender(CustomHttpPanelRequest requestPanel, HttpPanelResponse responsePanel) {
+    public HttpPanelSender(
+            FileConfiguration options,
+            String configurationKey,
+            CustomHttpPanelRequest requestPanel,
+            HttpPanelResponse responsePanel) {
+        this.options = options;
+        this.configurationKey = configurationKey;
         this.responsePanel = responsePanel;
         this.customHttpPanelRequest = requestPanel;
 
@@ -213,10 +229,17 @@ public class HttpPanelSender {
     private JToggleButton getButtonFollowRedirects() {
         if (followRedirect == null) {
             followRedirect =
-                    new JToggleButton(ExtensionRequester.createIcon("follow-redirect.png"));
+                    new JToggleButton(
+                            ExtensionRequester.createIcon("follow-redirect.png"),
+                            options.getBoolean(
+                                    configurationKey + FOLLOW_REDIRECTS_CONFIG_KEY, true));
             followRedirect.setToolTipText(
                     Constant.messages.getString("requester.httpsender.checkbox.followredirect"));
-            followRedirect.setSelected(true);
+            followRedirect.addItemListener(
+                    e ->
+                            options.setProperty(
+                                    configurationKey + FOLLOW_REDIRECTS_CONFIG_KEY,
+                                    e.getStateChange() == ItemEvent.SELECTED));
         }
         return followRedirect;
     }
@@ -224,31 +247,54 @@ public class HttpPanelSender {
     private JToggleButton getButtonUseTrackingSessionState() {
         if (useTrackingSessionState == null) {
             useTrackingSessionState =
-                    new JToggleButton(ExtensionRequester.createIcon("fugue/globe-green.png"));
+                    new JToggleButton(
+                            ExtensionRequester.createIcon("fugue/globe-green.png"),
+                            options.getBoolean(
+                                    configurationKey + TRACKING_COOKIES_CONFIG_KEY, true));
             useTrackingSessionState.setToolTipText(
                     Constant.messages.getString("requester.httpsender.checkbox.usesession"));
             useTrackingSessionState.addItemListener(
-                    e -> delegate.setUseGlobalState(e.getStateChange() == ItemEvent.SELECTED));
+                    e -> {
+                        boolean selected = e.getStateChange() == ItemEvent.SELECTED;
+                        delegate.setUseGlobalState(selected);
+                        options.setProperty(
+                                configurationKey + TRACKING_COOKIES_CONFIG_KEY, selected);
+                    });
         }
         return useTrackingSessionState;
     }
 
     private JToggleButton getButtonUseCookies() {
         if (useCookies == null) {
-            useCookies = new JToggleButton(ExtensionRequester.createIcon("fugue/cookie.png"), true);
+            useCookies =
+                    new JToggleButton(
+                            ExtensionRequester.createIcon("fugue/cookie.png"),
+                            options.getBoolean(configurationKey + USE_COOKIES_CONFIG_KEY, true));
             useCookies.setToolTipText(
                     Constant.messages.getString("requester.httpsender.checkbox.usecookies"));
             useCookies.addItemListener(
-                    e -> delegate.setUseCookies(e.getStateChange() == ItemEvent.SELECTED));
+                    e -> {
+                        boolean selected = e.getStateChange() == ItemEvent.SELECTED;
+                        delegate.setUseCookies(selected);
+                        options.setProperty(configurationKey + USE_COOKIES_CONFIG_KEY, selected);
+                    });
         }
         return useCookies;
     }
 
     private JToggleButton getButtonUseCsrf() {
         if (useCsrf == null) {
-            useCsrf = new JToggleButton(ExtensionRequester.createIcon("csrf-button.png"));
+            useCsrf =
+                    new JToggleButton(
+                            ExtensionRequester.createIcon("csrf-button.png"),
+                            options.getBoolean(configurationKey + REGEN_CSRF_CONFIG_KEY, true));
             useCsrf.setToolTipText(
                     Constant.messages.getString("requester.httpsender.checkbox.usecsrf"));
+            useCsrf.addItemListener(
+                    e ->
+                            options.setProperty(
+                                    configurationKey + REGEN_CSRF_CONFIG_KEY,
+                                    e.getStateChange() == ItemEvent.SELECTED));
         }
         return useCsrf;
     }
@@ -257,18 +303,33 @@ public class HttpPanelSender {
         if (fixContentLength == null) {
             fixContentLength =
                     new JToggleButton(
-                            ExtensionRequester.createIcon("fugue/application-resize.png"), true);
+                            ExtensionRequester.createIcon("fugue/application-resize.png"),
+                            options.getBoolean(configurationKey + UPDATE_LENGTH_CONFIG_KEY, true));
             fixContentLength.setToolTipText(
                     Constant.messages.getString("requester.httpsender.checkbox.fixlength"));
+            fixContentLength.addItemListener(
+                    e ->
+                            options.setProperty(
+                                    configurationKey + UPDATE_LENGTH_CONFIG_KEY,
+                                    e.getStateChange() == ItemEvent.SELECTED));
         }
         return fixContentLength;
     }
 
     private JToggleButton getButtonHostHeader() {
         if (hostHeader == null) {
-            hostHeader = new JToggleButton(ExtensionRequester.createIcon("fugue/server.png"), true);
+            hostHeader =
+                    new JToggleButton(
+                            ExtensionRequester.createIcon("fugue/server.png"),
+                            options.getBoolean(
+                                    configurationKey + UPDATE_HOST_HEADER_CONFIG_KEY, true));
             hostHeader.setToolTipText(
                     Constant.messages.getString("requester.httpsender.checkbox.hostheader"));
+            hostHeader.addItemListener(
+                    e ->
+                            options.setProperty(
+                                    configurationKey + UPDATE_HOST_HEADER_CONFIG_KEY,
+                                    e.getStateChange() == ItemEvent.SELECTED));
         }
         return hostHeader;
     }

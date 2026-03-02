@@ -40,13 +40,13 @@ import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import org.apache.commons.configuration.FileConfiguration;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.OptionsChangedListener;
-import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
@@ -85,6 +85,7 @@ public class ManualHttpRequestEditorPanel extends MessageEditorPanel
     private JLabel labelTotalLength = null;
     private String helpKey = null;
     private int defaultView;
+    private FileConfiguration options;
 
     // Find elements
     private JLabel matchLabel;
@@ -96,20 +97,25 @@ public class ManualHttpRequestEditorPanel extends MessageEditorPanel
     private int matchIndex;
     private List<SearchMatch> matches = new ArrayList<>();
 
-    public ManualHttpRequestEditorPanel() {
-        this(CONFIG_KEY, HELP_KEY, RequestResponsePanel.SIDE_BY_SIDE_VIEW);
+    public ManualHttpRequestEditorPanel(FileConfiguration options) {
+        this(options, CONFIG_KEY, HELP_KEY, RequestResponsePanel.SIDE_BY_SIDE_VIEW);
     }
 
-    public ManualHttpRequestEditorPanel(String configurationKey) throws HeadlessException {
-        this(configurationKey, "addon.requester.dialogs", RequestResponsePanel.TABS_VIEW);
+    public ManualHttpRequestEditorPanel(FileConfiguration options, String configurationKey)
+            throws HeadlessException {
+        this(options, configurationKey, "addon.requester.dialogs", RequestResponsePanel.TABS_VIEW);
     }
 
-    private ManualHttpRequestEditorPanel(String configurationKey, String helpKey, int defaultView)
+    private ManualHttpRequestEditorPanel(
+            FileConfiguration options, String configurationKey, String helpKey, int defaultView)
             throws HeadlessException {
         super(true, configurationKey);
+        this.options = options;
         this.defaultView = defaultView;
         this.helpKey = helpKey;
-        sender = new HttpPanelSender(getMessagePanel(), getResponsePanel());
+        sender =
+                new HttpPanelSender(
+                        options, configurationKey, getMessagePanel(), getResponsePanel());
 
         initialize();
     }
@@ -338,7 +344,7 @@ public class ManualHttpRequestEditorPanel extends MessageEditorPanel
         if (requestPanel == null) {
             requestPanel = new CustomHttpPanelRequest(true, configurationKey);
             requestPanel.setEnableViewSelect(true);
-            requestPanel.loadConfig(Model.getSingleton().getOptionsParam().getConfig());
+            requestPanel.loadConfig(options);
         }
         return requestPanel;
     }
@@ -348,7 +354,7 @@ public class ManualHttpRequestEditorPanel extends MessageEditorPanel
             responsePanel = new CustomHttpPanelResponse(false, configurationKey);
             responsePanel.setEnableViewSelect(true);
 
-            responsePanel.loadConfig(Model.getSingleton().getOptionsParam().getConfig());
+            responsePanel.loadConfig(options);
         }
         return responsePanel;
     }
@@ -358,6 +364,7 @@ public class ManualHttpRequestEditorPanel extends MessageEditorPanel
         if (requestResponsePanel == null) {
             requestResponsePanel =
                     new RequestResponsePanel(
+                            options,
                             configurationKey,
                             getMessagePanel(),
                             getResponsePanel(),
@@ -551,6 +558,7 @@ public class ManualHttpRequestEditorPanel extends MessageEditorPanel
         private JToggleButton aboveButtonView;
         private JToggleButton sideBySideButtonView;
 
+        private FileConfiguration options;
         private String configurationKey;
 
         private int verticalDividerLocation;
@@ -563,6 +571,7 @@ public class ManualHttpRequestEditorPanel extends MessageEditorPanel
         private LayoutChangedListener listener;
 
         public RequestResponsePanel(
+                FileConfiguration options,
                 String configurationKey,
                 CustomHttpPanelRequest request,
                 CustomHttpPanelResponse response,
@@ -577,6 +586,7 @@ public class ManualHttpRequestEditorPanel extends MessageEditorPanel
             }
             this.defaultView = defaultView;
 
+            this.options = options;
             this.configurationKey = configurationKey;
 
             this.requestPanel = request;
@@ -614,24 +624,14 @@ public class ManualHttpRequestEditorPanel extends MessageEditorPanel
 
         public void loadConfig() {
             verticalDividerLocation =
-                    Model.getSingleton()
-                            .getOptionsParam()
-                            .getConfig()
-                            .getInt(configurationKey + VERTICAL_DIVIDER_LOCATION_CONFIG_KEY, -1);
+                    options.getInt(configurationKey + VERTICAL_DIVIDER_LOCATION_CONFIG_KEY, -1);
             horizontalDividerLocation =
-                    Model.getSingleton()
-                            .getOptionsParam()
-                            .getConfig()
-                            .getInt(configurationKey + HORIZONTAL_DIVIDER_LOCATION_CONFIG_KEY, -1);
+                    options.getInt(configurationKey + HORIZONTAL_DIVIDER_LOCATION_CONFIG_KEY, -1);
 
-            changeView(
-                    Model.getSingleton()
-                            .getOptionsParam()
-                            .getConfig()
-                            .getInt(configurationKey + SELECTEDLAYOUT_CONFIG_KEY, defaultView));
+            changeView(options.getInt(configurationKey + SELECTEDLAYOUT_CONFIG_KEY, defaultView));
 
-            requestPanel.loadConfig(Model.getSingleton().getOptionsParam().getConfig());
-            responsePanel.loadConfig(Model.getSingleton().getOptionsParam().getConfig());
+            requestPanel.loadConfig(options);
+            responsePanel.loadConfig(options);
         }
 
         public void saveConfig() {
@@ -646,28 +646,18 @@ public class ManualHttpRequestEditorPanel extends MessageEditorPanel
                 default:
             }
 
-            Model.getSingleton()
-                    .getOptionsParam()
-                    .getConfig()
-                    .setProperty(
-                            configurationKey + VERTICAL_DIVIDER_LOCATION_CONFIG_KEY,
-                            Integer.valueOf(verticalDividerLocation));
-            Model.getSingleton()
-                    .getOptionsParam()
-                    .getConfig()
-                    .setProperty(
-                            configurationKey + HORIZONTAL_DIVIDER_LOCATION_CONFIG_KEY,
-                            Integer.valueOf(horizontalDividerLocation));
+            options.setProperty(
+                    configurationKey + VERTICAL_DIVIDER_LOCATION_CONFIG_KEY,
+                    Integer.valueOf(verticalDividerLocation));
+            options.setProperty(
+                    configurationKey + HORIZONTAL_DIVIDER_LOCATION_CONFIG_KEY,
+                    Integer.valueOf(horizontalDividerLocation));
 
-            Model.getSingleton()
-                    .getOptionsParam()
-                    .getConfig()
-                    .setProperty(
-                            configurationKey + SELECTEDLAYOUT_CONFIG_KEY,
-                            Integer.valueOf(currentView));
+            options.setProperty(
+                    configurationKey + SELECTEDLAYOUT_CONFIG_KEY, Integer.valueOf(currentView));
 
-            requestPanel.saveConfig(Model.getSingleton().getOptionsParam().getConfig());
-            responsePanel.saveConfig(Model.getSingleton().getOptionsParam().getConfig());
+            requestPanel.saveConfig(options);
+            responsePanel.saveConfig(options);
         }
 
         public void addToolbarButton(JToggleButton button) {

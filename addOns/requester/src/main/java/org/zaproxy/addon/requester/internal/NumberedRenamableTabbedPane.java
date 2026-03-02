@@ -29,20 +29,24 @@ import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import org.apache.commons.configuration.FileConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.OptionsParam;
 import org.zaproxy.addon.requester.ExtensionRequester;
 
+@SuppressWarnings("serial")
 public abstract class NumberedRenamableTabbedPane extends JTabbedPane {
 
     private static final long serialVersionUID = 1L;
     private Integer nextTabNumber = 1;
     private Component hiddenComponent = new JLabel();
+    private FileConfiguration options;
     private static final Icon PLUS_ICON = ExtensionRequester.createIcon("fugue/plus.png");
 
-    public NumberedRenamableTabbedPane() {
+    public NumberedRenamableTabbedPane(FileConfiguration options) {
         super();
+        this.options = options;
         this.addChangeListener(
                 new ChangeListener() {
 
@@ -55,6 +59,7 @@ public abstract class NumberedRenamableTabbedPane extends JTabbedPane {
                                 (NumberedRenamableTabbedPane) e.getSource();
                         if (!adding && ntp.getSelectedIndex() == ntp.getTabCount() - 1) {
                             // Clicked on plus tab or changed to it
+                            checkSaveConfigs();
                             adding = true;
                             ntp.addDefaultTab();
                             adding = false;
@@ -99,6 +104,17 @@ public abstract class NumberedRenamableTabbedPane extends JTabbedPane {
         this.insertTab(tabName, null, pane, null, index);
         this.setTabComponentAt(index, new CloseTabPanel(tabName, this));
         this.setSelectedIndex(index);
+    }
+
+    protected FileConfiguration getOptions() {
+        return options;
+    }
+
+    /** Save if only 1 main tab (plus the "add tab" option). */
+    protected void checkSaveConfigs() {
+        if (this.getTabCount() == 2) {
+            ((ManualHttpRequestEditorPanel) getComponentAt(0)).saveConfig();
+        }
     }
 
     void unload() {

@@ -104,7 +104,9 @@ public class ExtensionRequester extends ExtensionAdaptor {
         if (hasView()) {
             sendDialog =
                     new SendHttpMessageEditorDialog(
-                            this, new ManualHttpRequestEditorPanel("manual"));
+                            this,
+                            new ManualHttpRequestEditorPanel(
+                                    getModel().getOptionsParam().getConfig(), "manual"));
             sendDialog.load(extensionHook);
 
             extensionHook.addOptionsChangedListener(getRequesterPanel());
@@ -181,7 +183,7 @@ public class ExtensionRequester extends ExtensionAdaptor {
 
     private RequesterPanel getRequesterPanel() {
         if (requesterPanel == null) {
-            requesterPanel = new RequesterPanel(this);
+            requesterPanel = new RequesterPanel(this, getModel().getOptionsParam().getConfig());
         }
         return requesterPanel;
     }
@@ -212,6 +214,13 @@ public class ExtensionRequester extends ExtensionAdaptor {
     @Override
     public boolean canUnload() {
         return true;
+    }
+
+    @Override
+    public void stop() {
+        if (hasView()) {
+            getRequesterPanel().checkSaveConfigs();
+        }
     }
 
     @Override
