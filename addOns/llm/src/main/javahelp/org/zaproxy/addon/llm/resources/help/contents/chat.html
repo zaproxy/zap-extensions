@@ -12,6 +12,12 @@ The LLM Chat panel provides an interactive chat interface that allows you to com
 <H2>Accessing the Chat Panel</H2>
 The LLM Chat panel appears as a tab in the ZAP Workspace window. You can access it by clicking on the "LLM Chat" tab.
 
+<H2>Multiple Tabs</H2>
+The LLM Chat panel supports multiple sub-tabs, allowing you to run several conversations in parallel. Each tab maintains its own conversation history, so you can keep different topics or contexts separate.
+<p>
+Click the plus (+) tab to create a new chat tab. Tabs are initially numbered; double-click a tab to rename it. Use the close button on each tab to remove it when no longer needed.
+</p>
+
 <H2>Using the Chat Interface</H2>
 The chat interface consists of:
 <ul>
@@ -43,7 +49,7 @@ The chat panel handles various error conditions:
 </ul>
 
 <H2>Appending ZAP Data to Chat</H2>
-You can quickly add data from ZAP directly into the chat input area using context menu items:
+You can quickly add data from ZAP directly into the chat input area using context menu items. Data is appended to the currently selected chat tab.
 
 <H3>Prompt Injection Countermeasures</H3>
 When appending untrusted data (such as HTTP responses or alert details), the add-on applies the
@@ -82,6 +88,7 @@ To append HTTP request/response data to the chat:
 
 <H2>Tips</H2>
 <ul>
+    <li>Use multiple tabs to organize different conversations or topics; each tab keeps its own history.</li>
     <li>The chat maintains conversation context, allowing for follow-up questions and multi-turn conversations.</li>
     <li>You can ask questions about security testing, web application vulnerabilities, ZAP usage, or any other topic the LLM can help with.</li>
     <li>The input area is disabled while a message is being processed to prevent sending duplicate messages.</li>

@@ -19,9 +19,11 @@
  */
 package org.zaproxy.addon.llm;
 
+import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import javax.swing.ImageIcon;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,6 +38,7 @@ import org.zaproxy.addon.llm.ui.LlmAppendHttpMessageMenu;
 import org.zaproxy.addon.llm.ui.LlmChatPanel;
 import org.zaproxy.addon.llm.ui.LlmOptionsPanel;
 import org.zaproxy.addon.llm.ui.LlmSelectorButton;
+import org.zaproxy.zap.utils.DisplayUtils;
 
 /**
  * An extension for ZAP that enables researchers to leverage Large Language Models (LLMs) to augment
@@ -53,6 +56,15 @@ public class ExtensionLlm extends ExtensionAdaptor {
             Collections.synchronizedMap(new HashMap<>());
 
     private static final Logger LOGGER = LogManager.getLogger(ExtensionLlm.class);
+
+    public static ImageIcon createIcon(String resourcePath) {
+        URL url = ExtensionLlm.class.getResource(resourcePath);
+        if (url == null) {
+            LOGGER.error("Missing resource: {}", resourcePath);
+            return null;
+        }
+        return DisplayUtils.getScaledIcon(url);
+    }
 
     public ExtensionLlm() {
         super(NAME);
