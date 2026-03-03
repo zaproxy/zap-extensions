@@ -5512,6 +5512,12 @@
       "/jquery\\.shopware\\.min\\.js",
       "/engine/Shopware/"
     ],
+    "scripts": [
+      "window\\.features[^;]*V6_5_0_0.{0,15}true[^;]*V6_6_0_0.{0,15}false\\;version:6.5",
+      "window\\.features[^;]*V6_6_0_0.{0,15}true[^;]*V6_7_0_0.{0,15}false\\;version:6.6",
+      "window\\.features[^;]*V6_7_0_0.{0,15}true[^;]*V6_8_0_0.{0,15}false\\;version:6.7",
+      "window\\.features[^;]*V6_8_0_0.{0,15}true[^;]*V6_9_0_0.{0,15}false\\;version:6.8"
+    ],
     "website": "https://www.shopware.com"
   },
   "ShopWired": {
