@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Use the main output panel for plan output messages.
 - Add a status panel to inform users about the panel relocation.
 
+### Fixed
+- Correct error message.
+
 ## [0.58.0] - 2025-12-15
 ### Added
 - Support for a "soft" stop which allows "always run" jobs to run.
