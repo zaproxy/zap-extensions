@@ -25,6 +25,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.startsWith;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -37,7 +38,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,7 +47,6 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.quality.Strictness;
 import org.parosproxy.paros.CommandLine;
-import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
@@ -57,15 +56,17 @@ import org.zaproxy.addon.automation.AutomationEnvironment.Proxy;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.addon.network.common.HttpProxy;
 import org.zaproxy.zap.model.Context;
-import org.zaproxy.zap.utils.I18N;
+import org.zaproxy.zap.testutils.TestUtils;
 
-class AutomationEnvironmentUnitTest {
+class AutomationEnvironmentUnitTest extends TestUtils {
 
     private Session session;
     private static MockedStatic<CommandLine> mockedCmdLine;
 
     @BeforeAll
     static void init() throws Exception {
+        mockMessages(new ExtensionAutomation());
+
         mockedCmdLine = Mockito.mockStatic(CommandLine.class);
         AutomationEnvironment.envSupplier =
                 () -> Collections.singletonMap("myEnvVar", "envVarValue");
@@ -79,8 +80,7 @@ class AutomationEnvironmentUnitTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        Constant.messages = new I18N(Locale.ENGLISH);
-        session = mock(Session.class);
+        session = mock(Session.class, withSettings().strictness(Strictness.LENIENT));
         Context context = mock(Context.class);
         given(session.getNewContext(any())).willReturn(context);
     }
@@ -100,7 +100,7 @@ class AutomationEnvironmentUnitTest {
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
         assertThat(progress.getErrors().size(), is(equalTo(1)));
-        assertThat(progress.getErrors().get(0), is(equalTo("!automation.error.env.missing!")));
+        assertThat(progress.getErrors().get(0), is(equalTo("Missing environment.")));
     }
 
     @Test
@@ -118,7 +118,9 @@ class AutomationEnvironmentUnitTest {
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
         assertThat(progress.getErrors().size(), is(equalTo(1)));
-        assertThat(progress.getErrors().get(0), is(equalTo("!automation.error.env.nocontexts!")));
+        assertThat(
+                progress.getErrors().get(0),
+                is(equalTo("Missing contexts in environment: {contexts=null}")));
     }
 
     @Test
@@ -136,7 +138,9 @@ class AutomationEnvironmentUnitTest {
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
         assertThat(progress.getErrors().size(), is(equalTo(1)));
-        assertThat(progress.getErrors().get(0), is(equalTo("!automation.error.env.badcontexts!")));
+        assertThat(
+                progress.getErrors().get(0),
+                is(equalTo("Invalid contexts in environment: {param1=value 1}")));
     }
 
     @Test
@@ -154,7 +158,9 @@ class AutomationEnvironmentUnitTest {
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
         assertThat(progress.getErrors().size(), is(equalTo(1)));
-        assertThat(progress.getErrors().get(0), is(equalTo("!automation.error.context.nourl!")));
+        assertThat(
+                progress.getErrors().get(0),
+                is(equalTo("Missing URLs for context: {name=test, urls=null}")));
     }
 
     @Test
@@ -177,7 +183,11 @@ class AutomationEnvironmentUnitTest {
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
         assertThat(progress.getErrors().size(), is(equalTo(1)));
-        assertThat(progress.getErrors().get(0), is(equalTo("!automation.error.context.noname!")));
+        assertThat(
+                progress.getErrors().get(0),
+                is(
+                        equalTo(
+                                "Missing name for context: {name=null, urls=[http://www.example.com]}")));
     }
 
     @Test
@@ -201,7 +211,7 @@ class AutomationEnvironmentUnitTest {
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
         assertThat(progress.getErrors().size(), is(equalTo(1)));
-        assertThat(progress.getErrors().get(0), is(equalTo("!automation.error.context.badurl!")));
+        assertThat(progress.getErrors().get(0), is(equalTo("Invalid URL: Not a url")));
     }
 
     @Test
@@ -227,7 +237,8 @@ class AutomationEnvironmentUnitTest {
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
         assertThat(progress.getErrors().size(), is(equalTo(1)));
-        assertThat(progress.getErrors().get(0), is(equalTo("!automation.error.context.badurl!")));
+        assertThat(
+                progress.getErrors().get(0), is(equalTo("Invalid URL: Not a url with ${envvar}")));
     }
 
     @Test
@@ -380,7 +391,11 @@ class AutomationEnvironmentUnitTest {
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
         assertThat(progress.getErrors().size(), is(equalTo(1)));
-        assertThat(progress.getErrors().get(0), is(equalTo("!automation.error.regex.badlist!")));
+        assertThat(
+                progress.getErrors().get(0),
+                is(
+                        equalTo(
+                                "Regexes for key includePaths should be a list: https://www.testregex.example.com.*")));
     }
 
     @Test
@@ -405,7 +420,11 @@ class AutomationEnvironmentUnitTest {
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
         assertThat(progress.getErrors().size(), is(equalTo(1)));
-        assertThat(progress.getErrors().get(0), is(equalTo("!automation.error.regex.badlist!")));
+        assertThat(
+                progress.getErrors().get(0),
+                is(
+                        equalTo(
+                                "Regexes for key excludePaths should be a list: https://www.testregex.example.com.*")));
     }
 
     @Test
@@ -431,7 +450,9 @@ class AutomationEnvironmentUnitTest {
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
         assertThat(progress.getErrors().size(), is(equalTo(1)));
-        assertThat(progress.getErrors().get(0), is(equalTo("!automation.error.regex.badregex!")));
+        assertThat(
+                progress.getErrors().get(0),
+                startsWith("Invalid regex: Test\\ for key includePaths : "));
     }
 
     @Test
@@ -457,7 +478,9 @@ class AutomationEnvironmentUnitTest {
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
         assertThat(progress.getErrors().size(), is(equalTo(1)));
-        assertThat(progress.getErrors().get(0), is(equalTo("!automation.error.regex.badregex!")));
+        assertThat(
+                progress.getErrors().get(0),
+                startsWith("Invalid regex: Test\\ for key excludePaths : "));
     }
 
     @Test
@@ -671,7 +694,8 @@ class AutomationEnvironmentUnitTest {
         assertThat(progress.hasWarnings(), is(equalTo(true)));
         assertThat(progress.getWarnings().size(), is(equalTo(1)));
         assertThat(
-                progress.getWarnings().get(0), is(equalTo("!automation.error.options.unknown!")));
+                progress.getWarnings().get(0),
+                is(equalTo("Unrecognised parameter for job Environment : unknown2")));
     }
 
     @Test
@@ -703,7 +727,8 @@ class AutomationEnvironmentUnitTest {
         assertThat(progress.hasWarnings(), is(equalTo(true)));
         assertThat(progress.getWarnings().size(), is(equalTo(1)));
         assertThat(
-                progress.getWarnings().get(0), is(equalTo("!automation.error.options.unknown!")));
+                progress.getWarnings().get(0),
+                is(equalTo("Unrecognised parameter for job Automation Context : unknown2")));
     }
 
     @Test
@@ -894,7 +919,7 @@ class AutomationEnvironmentUnitTest {
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
         assertThat(progress.hasWarnings(), is(equalTo(true)));
-        assertThat(progress.getWarnings(), contains("!automation.error.env.novar!"));
+        assertThat(progress.getWarnings(), contains("Variable z used but not specified"));
         assertThat(result, is(equalTo("ab${z}ab${z}")));
     }
 
@@ -922,7 +947,7 @@ class AutomationEnvironmentUnitTest {
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
         assertThat(progress.hasWarnings(), is(equalTo(true)));
-        assertThat(progress.getWarnings(), contains("!automation.error.env.loopvar!"));
+        assertThat(progress.getWarnings(), contains("Variable a has self reference"));
         assertThat(result, is(equalTo("${a}")));
     }
 
@@ -951,7 +976,7 @@ class AutomationEnvironmentUnitTest {
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
         assertThat(progress.hasWarnings(), is(equalTo(true)));
-        assertThat(progress.getWarnings(), contains("!automation.error.env.loopvar!"));
+        assertThat(progress.getWarnings(), contains("Variable a has self reference"));
         assertThat(result, is(equalTo("${a}")));
     }
 
@@ -983,7 +1008,7 @@ class AutomationEnvironmentUnitTest {
         assertThat(progress.hasWarnings(), is(equalTo(true)));
         assertThat(
                 progress.getWarnings(),
-                contains("!automation.error.env.loopvar!", "!automation.error.env.loopvar!"));
+                contains("Variable c has self reference", "Variable b has self reference"));
         assertThat(result, is(equalTo("${b}${c}")));
     }
 
@@ -1072,7 +1097,7 @@ class AutomationEnvironmentUnitTest {
         assertThat(progress.getWarnings().size(), is(equalTo(1)));
         assertThat(
                 progress.getWarnings().get(0),
-                is(equalTo("!automation.error.context.url.deprecated!")));
+                is(equalTo("The context 'url' field has been replaced with a 'urls' list field")));
         assertThat(progress.hasErrors(), is(equalTo(false)));
     }
 
