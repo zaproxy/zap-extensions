@@ -23,6 +23,7 @@ import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.withSettings;
@@ -45,6 +46,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.quality.Strictness;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionLoader;
@@ -76,6 +78,7 @@ class HeadlessBrowsersUnitTest extends TestUtils {
     private static final boolean IS_CICD = CHROME_WEB_DRIVER != null;
 
     private static ExtensionNetwork extensionNetwork;
+    private static ExtensionSelenium extensionSelenium;
     private static Model model;
     private static Session session;
 
@@ -94,7 +97,7 @@ class HeadlessBrowsersUnitTest extends TestUtils {
 
     @BeforeEach
     void setUp() throws Exception {
-        ExtensionSelenium extensionSelenium = new ExtensionSelenium();
+        extensionSelenium = new ExtensionSelenium();
         mockMessages(extensionSelenium);
         setUpZap();
         model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
@@ -181,8 +184,9 @@ class HeadlessBrowsersUnitTest extends TestUtils {
         stopServer();
         Browser.setZapHomeDir(null);
         extensionNetwork.stop();
+        extensionSelenium.destroy();
         if (driver != null) {
-            driver.quit();
+            assertThat(((RemoteWebDriver) driver).getSessionId(), is(nullValue()));
         }
     }
 
@@ -205,8 +209,6 @@ class HeadlessBrowsersUnitTest extends TestUtils {
     @ParameterizedTest
     @MethodSource("headlessBrowsers")
     void shouldAccessSimpleWebPageWithHeadlessBrowser(String browserId) throws IOException {
-        ExtensionSelenium extensionSelenium =
-                Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class);
         String url = "http://localhost:" + nano.getListeningPort() + "/";
         driver = extensionSelenium.getWebDriver(browserId, DriverConfiguration.builder().build());
         driver.get(url);
@@ -218,8 +220,6 @@ class HeadlessBrowsersUnitTest extends TestUtils {
     @ParameterizedTest
     @MethodSource("headlessBrowsers")
     void shouldRequestImageWhenPageContainsImage(String browserId) throws IOException {
-        ExtensionSelenium extensionSelenium =
-                Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class);
         String url = "http://localhost:" + nano.getListeningPort() + PAGE_WITH_IMAGE_PATH;
 
         driver = extensionSelenium.getWebDriver(browserId, DriverConfiguration.builder().build());
@@ -246,8 +246,6 @@ class HeadlessBrowsersUnitTest extends TestUtils {
     @ParameterizedTest
     @MethodSource("headlessBrowsers")
     void shouldNotRequestImageWhenPreferenceBlocksImages(String browserId) throws IOException {
-        ExtensionSelenium extensionSelenium =
-                Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class);
         String url = "http://localhost:" + nano.getListeningPort() + PAGE_WITH_IMAGE_PATH;
         Map<String, String> blockImagesPrefs = getPreferencesToBlockImages(browserId);
 
@@ -268,8 +266,6 @@ class HeadlessBrowsersUnitTest extends TestUtils {
     /** Chrome and Edge only; Firefox does not support --user-agent as a command-line argument. */
     void shouldUseCustomUserAgentWhenArgumentSet(String browserId) throws IOException {
         String customUserAgent = "ZAP-Headless-Test-UA";
-        ExtensionSelenium extensionSelenium =
-                Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class);
         String url = "http://localhost:" + nano.getListeningPort() + "/";
         driver =
                 extensionSelenium.getWebDriver(

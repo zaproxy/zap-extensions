@@ -928,6 +928,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
 
         try {
             wd = createWebDriver(config);
+            webDrivers.add(wd);
             Stats.incCounter(statsKey);
         } catch (Exception e) {
             Stats.incCounter(statsKey + ".failure");
