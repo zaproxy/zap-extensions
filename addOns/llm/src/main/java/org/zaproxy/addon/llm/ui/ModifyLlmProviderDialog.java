@@ -51,11 +51,6 @@ public class ModifyLlmProviderDialog extends AddLlmProviderDialog {
         endpointField.setText(providerConfig.getEndpoint());
         modelsArea.setText(String.join("\n", providerConfig.getModels()));
         lastSuggestedName = "";
-        String defaultEndpoint = providerConfig.getProvider().getDefaultEndpoint();
-        lastSuggestedEndpoint =
-                defaultEndpoint != null && defaultEndpoint.equals(providerConfig.getEndpoint())
-                        ? defaultEndpoint
-                        : "";
         initialising = false;
         updateEndpointFieldState();
     }

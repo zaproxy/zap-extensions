@@ -62,7 +62,6 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
     protected LlmProviderConfig providerConfig;
     protected String originalName;
     protected String lastSuggestedName;
-    protected String lastSuggestedEndpoint;
     private HttpSender sender;
     protected boolean initialising;
 
@@ -184,7 +183,6 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
         nameTextField.setText("");
         providerComboBox.setSelectedIndex(0);
         lastSuggestedName = "";
-        lastSuggestedEndpoint = "";
         apiKeyField.setText("");
         endpointField.setText("");
         modelsArea.setText("");
@@ -286,16 +284,45 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
         if (provider == null) {
             return;
         }
-        String endpoint = endpointValueOnSelect(provider);
-        endpointField.setText(endpoint);
-        lastSuggestedEndpoint = endpoint;
+        if (!provider.supportsEndpoint()) {
+            endpointField.setText("");
+            return;
+        }
+
+        String suggestedEndpoint = endpointValueOnSelect(provider);
+        String currentEndpoint = StringUtils.defaultString(endpointField.getText());
+        if (currentEndpoint.isEmpty()
+                || (isAnyProviderDefaultEndpoint(currentEndpoint)
+                        && !currentEndpoint.equals(suggestedEndpoint))) {
+            endpointField.setText(suggestedEndpoint);
+        }
     }
 
     static String endpointValueOnSelect(LlmProvider provider) {
         if (provider == null || !provider.supportsEndpoint()) {
             return "";
         }
-        return StringUtils.trimToEmpty(provider.getDefaultEndpoint());
+        return StringUtils.defaultString(provider.getDefaultEndpoint());
+    }
+
+    private static boolean isAnyProviderDefaultEndpoint(String endpoint) {
+        if (endpoint == null || endpoint.isEmpty()) {
+            return false;
+        }
+
+        for (LlmProvider provider : LlmProvider.values()) {
+            if (provider == null || !provider.supportsEndpoint()) {
+                continue;
+            }
+
+            String defaultEndpoint = provider.getDefaultEndpoint();
+            if (defaultEndpoint != null
+                    && !defaultEndpoint.isEmpty()
+                    && defaultEndpoint.equals(endpoint)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected boolean isDuplicateName(String name) {

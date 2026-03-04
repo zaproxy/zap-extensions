@@ -25,7 +25,7 @@ import static org.hamcrest.Matchers.is;
 import org.junit.jupiter.api.Test;
 import org.zaproxy.addon.llm.LlmProvider;
 
-class AddLlmProviderDialogEndpointPolicyUnitTest {
+class AddLlmProviderDialogUnitTest {
 
     @Test
     void shouldApplyDefaultForOpenRouter() {
