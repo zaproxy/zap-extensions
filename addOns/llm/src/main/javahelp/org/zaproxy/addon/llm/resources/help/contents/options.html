@@ -1,96 +1,105 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <HTML>
+
 <HEAD>
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
     <TITLE>Options</TITLE>
 </HEAD>
+
 <BODY>
-<H1>Options</H1>
+    <H1>Options</H1>
 
-<section>
-    <h2>Model Providers</h2>
+    <section>
+        <h2>Model Providers</h2>
+        <p>
+            Configure one or more model providers. Each provider entry has a unique name, which is used
+            to select it in other parts of the UI. You can add, modify, and remove providers from the
+            list. The default provider is used when an LLM is required and no other provider is chosen.
+            You can also set the default model for the selected provider.
+        </p>
+        <p>
+            The current supported model providers are:
+        </p>
+        <ul>
+            <li>Azure OpenAI
+            <li>Google Gemini
+            <li>Ollama
+            <li>OpenRouter
+        </ul>
+    </section>
+
+    <h3>Azure OpenAI</h3>
+    The details you will need can be found in the "Keys and Endpoint" section when examining your resource from the
+    Azure portal.
     <p>
-        Configure one or more model providers. Each provider entry has a unique name, which is used
-        to select it in other parts of the UI. You can add, modify, and remove providers from the
-        list. The default provider is used when an LLM is required and no other provider is chosen.
-        You can also set the default model for the selected provider.
-    </p>
+        For the API key you can use either KEY1 or KEY2.
     <p>
-        The current supported model providers are:
-    </p>
-    <ul>
-        <li>Azure OpenAI
-        <li>Google Gemini
-        <li>Ollama
-        <li>OpenRouter
-    </ul>
-</section>
+        You can also find the endpoint via the "Deployments" page in the Azure AI Foundry portal. An example endpoint
+        is: <code>https://docs-test-001.openai.azure.com/</code>.
 
-<h3>Azure OpenAI</h3>
-The details you will need can be found in the "Keys and Endpoint" section when examining your resource from the Azure portal.
-<p>
-For the API key you can use either KEY1 or KEY2.
-<p>
-You can also find the endpoint via the "Deployments" page in the Azure AI Foundry portal. An example endpoint is: <code>https://docs-test-001.openai.azure.com/</code>.
+    <h3>Google Gemini</h3>
 
-<h3>Google Gemini</h3>
-
-The API key can be found in the "API Keys" section of Google AI Studio.
-<p>
-The endpoint base URL is built-in and so does not need to be specified.
-
-<h3>Ollama</h3>
-
-You will typically not need to specify an API key. Local models do not need an API key and if you access cloud models then you can configure the API key in Ollama.
-<p>
-If you have Ollama installed on the same machine as ZAP then by default the endpoint will be <code>http://localhost:11434/</code>.
-
-<h3>OpenRouter</h3>
-
-Use your OpenRouter API key.
-<p>
-The default endpoint is: <code>https://openrouter.ai/api/v1</code>.
-<p>
-You must specify at least one OpenRouter model name (in the <strong>Models</strong> field) from <a href="https://openrouter.ai/models">https://openrouter.ai/models</a>.
-
-<section>
-    <h2>Provider Fields</h2>
+    The API key can be found in the "API Keys" section of Google AI Studio.
     <p>
-        Each model provider has the following fields:
-    </p>
-    <ul>
-        <li><strong>Name</strong>: A unique name for the provider entry.
-        <li><strong>Provider</strong>: The type of model provider (Azure OpenAI, Google Gemini, Ollama, or OpenRouter).
-        <li><strong>API Key</strong>: The API key, if required by the provider.
-        <li><strong>Endpoint Base URL</strong>: The base URL for API requests (not required for Google Gemini).
-        <li><strong>Models</strong>: One or more model/deployment names, one per line (required for OpenRouter).
-    </ul>
-</section>
+        The endpoint base URL is built-in and so does not need to be specified.
 
-<section>
-    <h2>Defaults</h2>
-    <p>
-        The <strong>Default provider</strong> is used by LLM features unless another provider is
-        selected elsewhere. The default provider list includes a <strong>None</strong> option,
-        which indicates that no provider is configured by default.
-    </p>
-    <p>
-        The <strong>Default model</strong> applies to the selected default provider. It is populated
-        from the provider's model list.
-    </p>
-</section>
+    <h3>Ollama</h3>
 
-<section>
-    <h2>Toolbar Model Selector</h2>
+    You will typically not need to specify an API key. Local models do not need an API key and if you access cloud
+    models then you can configure the API key in Ollama.
     <p>
-        The main toolbar includes an LLM button that lets you quickly switch the default provider
-        and model. The dropdown shows one entry for each provider/model combination and indicates
-        which one is currently the default. The <strong>None</strong> entry clears the default
-        provider and model.
-    </p>
-</section>
+        If you have Ollama installed on the same machine as ZAP then by default the endpoint will be
+        <code>http://localhost:11434/</code>.
+
+    <h3>OpenRouter</h3>
+
+    Use your OpenRouter API key.
+    <p>
+        The default endpoint is: <code>https://openrouter.ai/api/v1</code>.
+    <p>
+        You must specify at least one OpenRouter model name (in the <strong>Models</strong> field) from <a
+            href="https://openrouter.ai/models">https://openrouter.ai/models</a>.
+
+    <section>
+        <h2>Provider Fields</h2>
+        <p>
+            Each model provider has the following fields:
+        </p>
+        <ul>
+            <li><strong>Name</strong>: A unique name for the provider entry.
+            <li><strong>Provider</strong>: The type of model provider (Azure OpenAI, Google Gemini, Ollama, or
+                OpenRouter).
+            <li><strong>API Key</strong>: The API key, if required by the provider.
+            <li><strong>Endpoint Base URL</strong>: The base URL for API requests (not required for Google Gemini).
+            <li><strong>Models</strong>: One or more model/deployment names, one per line.
+        </ul>
+    </section>
+
+    <section>
+        <h2>Defaults</h2>
+        <p>
+            The <strong>Default provider</strong> is used by LLM features unless another provider is
+            selected elsewhere. The default provider list includes a <strong>None</strong> option,
+            which indicates that no provider is configured by default.
+        </p>
+        <p>
+            The <strong>Default model</strong> applies to the selected default provider. It is populated
+            from the provider's model list.
+        </p>
+    </section>
+
+    <section>
+        <h2>Toolbar Model Selector</h2>
+        <p>
+            The main toolbar includes an LLM button that lets you quickly switch the default provider
+            and model. The dropdown shows one entry for each provider/model combination and indicates
+            which one is currently the default. The <strong>None</strong> entry clears the default
+            provider and model.
+        </p>
+    </section>
 
 
 
 </BODY>
+
 </HTML>
