@@ -76,7 +76,7 @@ public class LlmChatPanel extends AbstractPanel {
         if (panel != null) {
             panel.appendUntrustedDataToInput(payload, grabFocus);
         }
-        if (grabFocus) {
+        if (grabFocus && panel != null) {
             tabbedPane.setSelectedComponent(panel);
             setTabFocus();
         }

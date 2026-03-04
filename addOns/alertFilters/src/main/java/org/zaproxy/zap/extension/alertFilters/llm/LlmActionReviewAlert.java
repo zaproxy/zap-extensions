@@ -30,6 +30,7 @@ import dev.langchain4j.model.chat.request.json.JsonSchema;
 import dev.langchain4j.model.chat.response.ChatResponse;
 import java.util.HashMap;
 import java.util.Map;
+import javax.swing.SwingUtilities;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,6 +40,7 @@ import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.zaproxy.addon.llm.ExtensionLlm;
 import org.zaproxy.addon.llm.services.LlmCommunicationService;
+import org.zaproxy.addon.llm.ui.LlmChatTabPanel;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.utils.Stats;
 
@@ -99,8 +101,16 @@ public class LlmActionReviewAlert {
                     JsonProcessingException,
                     HttpMalformedHeaderException,
                     DatabaseException {
+        reviewAlert(alert, false);
+    }
 
-        if (isPreviouslyReviewed(alert)) {
+    public void reviewAlert(Alert alert, boolean force)
+            throws JsonMappingException,
+                    JsonProcessingException,
+                    HttpMalformedHeaderException,
+                    DatabaseException {
+
+        if (!force && isPreviouslyReviewed(alert)) {
             LOGGER.debug("Skipping previously reviewed alert : {} ", alert.getName());
             return;
         }
@@ -124,54 +134,75 @@ public class LlmActionReviewAlert {
                                         .build())
                         .build();
 
-        UserMessage userMessage =
-                UserMessage.from(
-                        ALERT_REVIEW_PROMPT
-                                        .replace("{{title}}", alert.getName())
-                                        .replace("{{description}}", alert.getDescription())
-                                        .replace("{{evidence}}", alert.getEvidence())
-                                + (StringUtils.isNotBlank(alert.getOtherInfo())
-                                        ? ALERT_REVIEW_OTHER_INFO.replace(
-                                                "{{other}}", alert.getOtherInfo())
-                                        : "")
-                                + ALERT_REVIEW_GOAL);
+        String promptText =
+                ALERT_REVIEW_PROMPT
+                                .replace("{{title}}", alert.getName())
+                                .replace("{{description}}", alert.getDescription())
+                                .replace("{{evidence}}", alert.getEvidence())
+                        + (StringUtils.isNotBlank(alert.getOtherInfo())
+                                ? ALERT_REVIEW_OTHER_INFO.replace("{{other}}", alert.getOtherInfo())
+                                : "")
+                        + ALERT_REVIEW_GOAL;
+
+        UserMessage userMessage = UserMessage.from(promptText);
 
         ChatRequest chatRequest =
                 ChatRequest.builder().responseFormat(responseFormat).messages(userMessage).build();
 
-        LlmCommunicationService commsService =
-                extLlm.getCommunicationService(
-                        "ALERT_REVIEW",
-                        Constant.messages.getString("alertFilters.llm.reviewalert.output.tab"));
-
-        ChatResponse resp = commsService.chat(chatRequest);
-        commsService.switchToOutputTab();
-        AlertFeedback feedback = LlmCommunicationService.mapResponse(resp, AlertFeedback.class);
-
-        if (feedback.level() == alert.getConfidence()) {
-            Stats.incCounter("stats.llm.alertreview.result.same");
-        } else {
-            Stats.incCounter("stats.llm.alertreview.result.changed");
+        String outputTabName =
+                Constant.messages.getString("alertFilters.llm.reviewalert.output.tab");
+        LlmChatTabPanel chatTab = extLlm.getOrCreateChatTab("ALERT_REVIEW", outputTabName);
+        if (chatTab != null) {
+            chatTab.appendToOutput(LlmChatTabPanel.USER_LABEL, promptText);
+            SwingUtilities.invokeLater(
+                    () -> {
+                        chatTab.showTab();
+                        chatTab.setProcessing(true);
+                    });
         }
 
-        LOGGER.debug(
-                "Confidence level from LLM : {} | Explanation : {}",
-                feedback.level(),
-                feedback.explanation());
-        alert.setConfidence(feedback.level());
-        alert.setOtherInfo(getUpdatedOtherInfo(alert, feedback.explanation()));
-        Map<String, String> alertTags = new HashMap<>(alert.getTags());
+        LlmCommunicationService commsService = extLlm.getCommunicationService("ALERT_REVIEW", null);
+        boolean success = false;
+        try {
+            ChatResponse resp = commsService.chat(chatRequest);
+            AlertFeedback feedback = LlmCommunicationService.mapResponse(resp, AlertFeedback.class);
 
-        alertTags.putIfAbsent(AI_REVIEWED_TAG_KEY, "");
-        alert.setTags(alertTags);
+            if (chatTab != null) {
+                chatTab.appendToOutput(
+                        LlmChatTabPanel.ASSISTANT_LABEL,
+                        confidenceLevelName(feedback.level()) + "\n" + feedback.explanation());
+            }
 
-        extAlert.updateAlert(alert);
-        extAlert.updateAlertInTree(alert);
-        if (alert.getHistoryRef() != null) {
-            alert.getHistoryRef().updateAlert(alert);
-            if (alert.getHistoryRef().getSiteNode() != null) {
-                // Needed if the same alert was raised on another href for the same SiteNode
-                alert.getHistoryRef().getSiteNode().updateAlert(alert);
+            if (feedback.level() == alert.getConfidence()) {
+                Stats.incCounter("stats.llm.alertreview.result.same");
+            } else {
+                Stats.incCounter("stats.llm.alertreview.result.changed");
+            }
+
+            LOGGER.debug(
+                    "Confidence level from LLM : {} | Explanation : {}",
+                    feedback.level(),
+                    feedback.explanation());
+            alert.setConfidence(feedback.level());
+            alert.setOtherInfo(getUpdatedOtherInfo(alert, feedback.explanation()));
+            Map<String, String> alertTags = new HashMap<>(alert.getTags());
+
+            alertTags.putIfAbsent(AI_REVIEWED_TAG_KEY, "");
+            alert.setTags(alertTags);
+
+            extAlert.updateAlert(alert);
+            extAlert.updateAlertInTree(alert);
+            if (alert.getHistoryRef() != null) {
+                alert.getHistoryRef().updateAlert(alert);
+                if (alert.getHistoryRef().getSiteNode() != null) {
+                    // Needed if the same alert was raised on another href for the same SiteNode
+                    alert.getHistoryRef().getSiteNode().updateAlert(alert);
+                }
+            }
+            success = true;
+        } finally {
+            if (!success && chatTab != null) {
+                SwingUtilities.invokeLater(() -> chatTab.setProcessing(false));
             }
         }
     }
@@ -183,5 +214,22 @@ public class LlmActionReviewAlert {
     private static String getUpdatedOtherInfo(Alert alert, String explanation) {
         return Constant.messages.getString(
                 "alertFilters.llm.reviewalert.otherinfo", alert.getOtherInfo(), explanation);
+    }
+
+    private static String confidenceLevelName(int level) {
+        return switch (level) {
+            case Alert.CONFIDENCE_FALSE_POSITIVE ->
+                    Constant.messages.getString(
+                            "alertFilters.llm.reviewalert.confidence.falsepositive");
+            case Alert.CONFIDENCE_LOW ->
+                    Constant.messages.getString("alertFilters.llm.reviewalert.confidence.low");
+            case Alert.CONFIDENCE_MEDIUM ->
+                    Constant.messages.getString("alertFilters.llm.reviewalert.confidence.medium");
+            case Alert.CONFIDENCE_HIGH ->
+                    Constant.messages.getString("alertFilters.llm.reviewalert.confidence.high");
+            default ->
+                    Constant.messages.getString(
+                            "alertFilters.llm.reviewalert.confidence.unknown", level);
+        };
     }
 }

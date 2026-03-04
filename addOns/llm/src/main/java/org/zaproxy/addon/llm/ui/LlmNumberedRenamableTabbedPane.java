@@ -22,13 +22,13 @@ package org.zaproxy.addon.llm.ui;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.apache.commons.lang3.StringUtils;
@@ -44,7 +44,7 @@ public class LlmNumberedRenamableTabbedPane extends JTabbedPane {
     private int nextTabNumber = 1;
     private final Component hiddenComponent = new JLabel();
     private final ExtensionLlm extension;
-    private Map<String, LlmChatTabPanel> taggedTabs = Collections.synchronizedMap(new HashMap<>());
+    private Map<String, LlmChatTabPanel> taggedTabs = new HashMap<>();
 
     public LlmNumberedRenamableTabbedPane(ExtensionLlm extension) {
         super();
@@ -63,6 +63,15 @@ public class LlmNumberedRenamableTabbedPane extends JTabbedPane {
                             ntp.addDefaultTab();
                             adding = false;
                         }
+                        LlmChatTabPanel selected = ntp.getSelectedChatPanel();
+                        if (selected != null) {
+                            SwingUtilities.invokeLater(selected::focusInput);
+                            int selIdx = ntp.getSelectedIndex();
+                            Component tabComp = ntp.getTabComponentAt(selIdx);
+                            if (tabComp instanceof LlmCloseTabPanel) {
+                                ((LlmCloseTabPanel) tabComp).setNewActivity(false);
+                            }
+                        }
                     }
                 });
 
@@ -70,19 +79,21 @@ public class LlmNumberedRenamableTabbedPane extends JTabbedPane {
                 new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent evt) {
-                        if (evt.getClickCount() == 2) {
-                            int index = indexAtLocation(evt.getX(), evt.getY());
-                            if (index > -1 && index < getTabCount() - 1) {
-                                Component comp = getTabComponentAt(index);
-                                if (comp != null) {
-                                    String newName =
-                                            JOptionPane.showInputDialog(
-                                                    Constant.messages.getString(
-                                                            "llm.chat.tab.rename"),
-                                                    comp.getName());
-                                    if (!StringUtils.isEmpty(newName)) {
-                                        comp.setName(newName);
-                                    }
+                        int index = indexAtLocation(evt.getX(), evt.getY());
+                        if (index == getTabCount() - 1 && getSelectedIndex() == getTabCount() - 1) {
+                            // "+" tab clicked while already selected — ChangeListener won't fire
+                            addDefaultTab();
+                        } else if (evt.getClickCount() == 2
+                                && index > -1
+                                && index < getTabCount() - 1) {
+                            Component comp = getTabComponentAt(index);
+                            if (comp != null) {
+                                String newName =
+                                        JOptionPane.showInputDialog(
+                                                Constant.messages.getString("llm.chat.tab.rename"),
+                                                comp.getName());
+                                if (!StringUtils.isEmpty(newName)) {
+                                    comp.setName(newName);
                                 }
                             }
                         }
@@ -107,14 +118,34 @@ public class LlmNumberedRenamableTabbedPane extends JTabbedPane {
     public LlmChatTabPanel addTab(String tag, String tabName) {
         int index = getTabCount() - 1;
         LlmChatTabPanel pane = new LlmChatTabPanel(extension, tag);
+        pane.setTabbedPane(this);
         insertTab(tabName, null, pane, null, index);
         setTabComponentAt(index, new LlmCloseTabPanel(tabName, this, tag));
         setSelectedIndex(index);
+        taggedTabs.put(tag, pane);
         return pane;
     }
 
+    public void markActivity(String tag) {
+        if (taggedTabs.get(tag) == getSelectedChatPanel()) {
+            return;
+        }
+        for (int i = 0; i < getTabCount() - 1; i++) {
+            Component comp = getTabComponentAt(i);
+            if (comp instanceof LlmCloseTabPanel
+                    && tag.equals(((LlmCloseTabPanel) comp).getTag())) {
+                ((LlmCloseTabPanel) comp).setNewActivity(true);
+                return;
+            }
+        }
+    }
+
     public LlmChatTabPanel getTaggedTab(String tag, String tabName) {
-        return taggedTabs.computeIfAbsent(tag, k -> addTab(tag, tabName));
+        LlmChatTabPanel existing = taggedTabs.get(tag);
+        if (existing != null) {
+            return existing;
+        }
+        return addTab(tag, tabName);
     }
 
     protected void unregisterTag(String tag) {

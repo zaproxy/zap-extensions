@@ -19,10 +19,11 @@
  */
 package org.zaproxy.addon.llm;
 
+import dev.langchain4j.model.chat.listener.ChatModelListener;
 import java.net.URL;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.ImageIcon;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
@@ -33,12 +34,16 @@ import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.OptionsChangedListener;
 import org.parosproxy.paros.model.OptionsParam;
 import org.zaproxy.addon.llm.services.LlmCommunicationService;
+import org.zaproxy.addon.llm.services.LlmGuiResponseHandler;
+import org.zaproxy.addon.llm.services.LlmLogResponseHandler;
 import org.zaproxy.addon.llm.ui.LlmAppendAlertMenu;
 import org.zaproxy.addon.llm.ui.LlmAppendHttpMessageMenu;
 import org.zaproxy.addon.llm.ui.LlmChatPanel;
+import org.zaproxy.addon.llm.ui.LlmChatTabPanel;
 import org.zaproxy.addon.llm.ui.LlmOptionsPanel;
 import org.zaproxy.addon.llm.ui.LlmSelectorButton;
 import org.zaproxy.zap.utils.DisplayUtils;
+import org.zaproxy.zap.utils.ThreadUtils;
 
 /**
  * An extension for ZAP that enables researchers to leverage Large Language Models (LLMs) to augment
@@ -50,10 +55,10 @@ public class ExtensionLlm extends ExtensionAdaptor {
 
     protected static final String PREFIX = "llm";
 
+    private LlmChatPanel llmChatPanel;
     private LlmOptions options;
     private LlmOptions prevOptions;
-    private Map<String, LlmCommunicationService> commsServices =
-            Collections.synchronizedMap(new HashMap<>());
+    private Map<String, LlmCommunicationService> commsServices = new ConcurrentHashMap<>();
 
     private static final Logger LOGGER = LogManager.getLogger(ExtensionLlm.class);
 
@@ -101,7 +106,7 @@ public class ExtensionLlm extends ExtensionAdaptor {
                 });
 
         if (hasView()) {
-            LlmChatPanel llmChatPanel = new LlmChatPanel(this);
+            llmChatPanel = new LlmChatPanel(this);
             extensionHook.getHookView().addOptionPanel(new LlmOptionsPanel());
             extensionHook
                     .getHookView()
@@ -163,6 +168,32 @@ public class ExtensionLlm extends ExtensionAdaptor {
         return this.options;
     }
 
+    private LlmChatTabPanel getChatTab(String commsKey, String panelName) {
+        if (this.llmChatPanel == null) {
+            return null;
+        }
+        AtomicReference<LlmChatTabPanel> result = new AtomicReference<>();
+        try {
+            ThreadUtils.invokeAndWait(
+                    () ->
+                            result.set(
+                                    this.llmChatPanel
+                                            .getTabbedPane()
+                                            .getTaggedTab(commsKey, panelName)));
+        } catch (Exception e) {
+            LOGGER.error("Failed to get chat tab for comms key: {}", commsKey, e);
+        }
+        return result.get();
+    }
+
+    /**
+     * Returns the named chat tab, creating it if it does not yet exist. Returns {@code null} when
+     * there is no view (headless/daemon mode).
+     */
+    public LlmChatTabPanel getOrCreateChatTab(String commsKey, String tabName) {
+        return getChatTab(commsKey, tabName);
+    }
+
     @Override
     public void optionsLoaded() {
         this.prevOptions = this.options.clone();
@@ -177,13 +208,21 @@ public class ExtensionLlm extends ExtensionAdaptor {
         if (!isConfigured()) {
             return null;
         }
+        if (this.hasView()) {
+            ChatModelListener listener = null;
+            if (outputTabName != null) {
+                listener = new LlmGuiResponseHandler(getChatTab(commsKey, outputTabName));
+            }
+            return new LlmCommunicationService(
+                    options.getDefaultProviderConfig(), options.getDefaultModelName(), listener);
+        }
         return commsServices.computeIfAbsent(
                 commsKey,
                 k ->
                         new LlmCommunicationService(
                                 options.getDefaultProviderConfig(),
                                 options.getDefaultModelName(),
-                                outputTabName));
+                                new LlmLogResponseHandler(commsKey)));
     }
 
     public void setDefaultProvider(String name, String modelName) {

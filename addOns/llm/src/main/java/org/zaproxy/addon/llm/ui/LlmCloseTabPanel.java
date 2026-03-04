@@ -20,11 +20,13 @@
 package org.zaproxy.addon.llm.ui;
 
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.border.EmptyBorder;
@@ -39,6 +41,9 @@ public class LlmCloseTabPanel extends JPanel {
             ExtensionLlm.createIcon("/resource/icon/fugue/cross-small-grey.png");
     private static final Icon CLOSE_TAB_RED_ICON =
             ExtensionLlm.createIcon("/resource/icon/fugue/cross-small-red.png");
+    private static final Icon NEW_ACTIVITY_ICON =
+            ExtensionLlm.createIcon(
+                    "/org/zaproxy/addon/commonlib/resources/green-badge-corner.png");
 
     private final JLabel lblTitle;
     private final String tag;
@@ -46,6 +51,7 @@ public class LlmCloseTabPanel extends JPanel {
     public LlmCloseTabPanel(String tabName, LlmNumberedRenamableTabbedPane tabbedPane, String tag) {
         super();
         this.setOpaque(false);
+        setLayout(new GridBagLayout());
         lblTitle = new JLabel(tabName);
         this.tag = tag;
         JButton btnClose = new JButton();
@@ -71,7 +77,7 @@ public class LlmCloseTabPanel extends JPanel {
         gbc.weightx = 0;
         this.add(btnClose, gbc);
 
-        btnClose.addActionListener(new LlmCloseActionHandler(tabbedPane, tag, tabName));
+        btnClose.addActionListener(new LlmCloseActionHandler(tabbedPane, tag));
     }
 
     @Override
@@ -94,24 +100,34 @@ public class LlmCloseTabPanel extends JPanel {
         return this.tag;
     }
 
+    public void setNewActivity(boolean hasActivity) {
+        lblTitle.setIcon(hasActivity ? NEW_ACTIVITY_ICON : null);
+    }
+
     private class LlmCloseActionHandler implements ActionListener {
 
         private final String tag;
-        private final String tabName;
         private final LlmNumberedRenamableTabbedPane tabbedPane;
 
-        public LlmCloseActionHandler(
-                LlmNumberedRenamableTabbedPane tabbedPane, String tag, String tabName) {
+        public LlmCloseActionHandler(LlmNumberedRenamableTabbedPane tabbedPane, String tag) {
             this.tabbedPane = tabbedPane;
             this.tag = tag;
-            this.tabName = tabName;
         }
 
         @Override
         public void actionPerformed(ActionEvent evt) {
+            int confirm =
+                    JOptionPane.showConfirmDialog(
+                            tabbedPane,
+                            Constant.messages.getString("llm.chat.tab.close.confirm"),
+                            Constant.messages.getString("llm.chat.tab.close.title"),
+                            JOptionPane.YES_NO_OPTION);
+            if (confirm != JOptionPane.YES_OPTION) {
+                return;
+            }
             JTabbedPane ntp = tabbedPane;
 
-            int index = ntp.indexOfTab(tabName);
+            int index = ntp.indexOfTabComponent(LlmCloseTabPanel.this);
             if (index >= 0) {
                 if (ntp.getTabCount() > 2 && index == ntp.getTabCount() - 2) {
                     ntp.setSelectedIndex(index - 1);
