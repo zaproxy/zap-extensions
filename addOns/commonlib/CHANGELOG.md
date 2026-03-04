@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Update dependencies.
 - Use a monospaced font for the output panel.
+- Remove Markdown formatting from vulnerabilities' solutions (Issue 8056).
 
 ### Added
 - Added OWASP Top 10 2025 and OWASP API Top 10 2023 Alert Tags.
