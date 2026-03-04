@@ -49,6 +49,10 @@ import org.zaproxy.zap.utils.ZapTextArea;
 @SuppressWarnings("serial")
 public class LlmChatTabPanel extends JPanel {
 
+    public static final String ASSISTANT_LABEL = "llm.chat.panel.assistant.label";
+    public static final String ERROR_LABEL = "llm.chat.panel.error.label";
+    public static final String USER_LABEL = "llm.chat.panel.user.label";
+
     private static final long serialVersionUID = 1L;
     private static final String UNTRUSTED_DATA = "UNTRUSTED_DATA_JSON";
     private static final String UNTRUSTED_DATA_BEGIN = "BEGIN_" + UNTRUSTED_DATA;
@@ -193,16 +197,14 @@ public class LlmChatTabPanel extends JPanel {
         }
 
         inputArea.setText("");
-        inputArea.setEnabled(false);
-        sendButton.setEnabled(false);
-        isProcessing = true;
+        setProcessing(true);
         boolean useStructuredPayload = containsStructuredPayload;
         containsStructuredPayload = false;
 
         appendMessage(
                 Constant.messages.getString(
                         "llm.chat.panel.message.format",
-                        Constant.messages.getString("llm.chat.panel.user.label"),
+                        Constant.messages.getString(USER_LABEL),
                         message));
 
         Thread chatThread =
@@ -215,8 +217,7 @@ public class LlmChatTabPanel extends JPanel {
                                                 Constant.messages.getString(
                                                         "llm.chat.output.panel"));
                                 if (service == null) {
-                                    appendFormattedMessageLater(
-                                            "llm.chat.panel.error.service", null);
+                                    appendToOutput("llm.chat.panel.error.service", null);
                                     return;
                                 }
                                 if (useStructuredPayload) {
@@ -228,25 +229,20 @@ public class LlmChatTabPanel extends JPanel {
                                                             UserMessage.from(message))
                                                     .build();
                                     ChatResponse response = service.chat(chatRequest);
-                                    appendFormattedMessageLater(
-                                            "llm.chat.panel.assistant.label",
-                                            response.aiMessage().text());
+                                    appendToOutput(ASSISTANT_LABEL, response.aiMessage().text());
                                 } else {
-                                    appendFormattedMessageLater(
-                                            "llm.chat.panel.assistant.label",
-                                            service.chat(message));
+                                    appendToOutput(ASSISTANT_LABEL, service.chat(message));
                                 }
 
                             } catch (Exception e) {
-                                appendFormattedMessageLater(
-                                        "llm.chat.panel.error.send", e.getMessage());
+                                appendToOutput("llm.chat.panel.error.send", e.getMessage());
                             }
                         },
                         "ZAP-LLM-Chat-" + tag);
         chatThread.start();
     }
 
-    private void appendFormattedMessageLater(String key, String message) {
+    public void appendToOutput(String key, String message) {
         SwingUtilities.invokeLater(
                 () -> {
                     if (message != null) {
@@ -259,11 +255,15 @@ public class LlmChatTabPanel extends JPanel {
                     } else {
                         appendMessage(Constant.messages.getString(key));
                     }
-                    inputArea.setEnabled(true);
-                    sendButton.setEnabled(true);
-                    isProcessing = false;
+                    setProcessing(false);
                     inputArea.requestFocusInWindow();
                 });
+    }
+
+    public void setProcessing(boolean processing) {
+        inputArea.setEnabled(!processing);
+        sendButton.setEnabled(!processing);
+        isProcessing = processing;
     }
 
     private void appendMessage(String message) {
@@ -276,6 +276,21 @@ public class LlmChatTabPanel extends JPanel {
         }
 
         messageArea.setCaretPosition(messageArea.getDocument().getLength());
+    }
+
+    protected String getTag() {
+        return this.tag;
+    }
+
+    public void appendToInput(String key, String message) {
+        SwingUtilities.invokeLater(
+                () -> {
+                    appendToInput(
+                            Constant.messages.getString(
+                                    "llm.chat.panel.message.format",
+                                    Constant.messages.getString(key),
+                                    message));
+                });
     }
 
     public void appendToInput(String str) {
@@ -308,6 +323,16 @@ public class LlmChatTabPanel extends JPanel {
 
         if (grabFocus) {
             inputArea.requestFocusInWindow();
+        }
+    }
+
+    public void showTab() {
+        if (getParent() instanceof LlmNumberedRenamableTabbedPane tabbedPane) {
+            tabbedPane.setSelectedComponent(this);
+            if (tabbedPane.getParent() instanceof LlmChatPanel chatPanel) {
+                chatPanel.grabFocus();
+                chatPanel.setTabFocus();
+            }
         }
     }
 
