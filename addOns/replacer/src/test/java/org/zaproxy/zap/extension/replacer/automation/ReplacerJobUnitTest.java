@@ -465,7 +465,8 @@ class ReplacerJobUnitTest extends TestUtils {
                         "replace",
                         initiators,
                         true,
-                        true);
+                        true,
+                        "");
 
         RuleData data = new RuleData();
 
@@ -543,6 +544,7 @@ class ReplacerJobUnitTest extends TestUtils {
                 new RuleData(
                         "desc",
                         "url",
+                        "POST",
                         "REQ_Header",
                         "match",
                         true,
@@ -556,6 +558,7 @@ class ReplacerJobUnitTest extends TestUtils {
         // Then
         assertThat(dataCopy.getDescription(), is("desc"));
         assertThat(dataCopy.getUrl(), is("url"));
+        assertThat(dataCopy.getMethod(), is("POST"));
         assertThat(dataCopy.getMatchType(), is("REQ_Header"));
         assertThat(dataCopy.getMatchString(), is("match"));
         assertThat(dataCopy.isMatchRegex(), is(true));
@@ -565,6 +568,223 @@ class ReplacerJobUnitTest extends TestUtils {
         assertThat(dataCopy.getInitiators().length, is(2));
         assertThat(dataCopy.getInitiators()[0], is(5));
         assertThat(dataCopy.getInitiators()[1], is(7));
+    }
+
+    /**
+     * Verifies that a rule with a method parameter can be properly defined in the automation
+     * configuration. This ensures the YAML parser correctly handles the method field.
+     */
+    @Test
+    void shouldApplyRuleWithMethod() {
+        // Given
+        ReplacerJob job =
+                createReplacerJob(
+                        """
+                        parameters:
+                          deleteAllRules: false
+                        rules:
+                          - description: Test with Method
+                            method: POST
+                            matchType: req_header_str
+                            matchString: test
+                            replacementString: replaced
+                        """);
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(job.getRuleCount(), is(equalTo(1)));
+        assertThat(job.getData().getRules().get(0).getMethod(), is(equalTo("POST")));
+    }
+
+    /**
+     * Verifies that a rule without a method parameter defaults to empty string in automation
+     * configuration. This ensures backward compatibility with existing automation configs.
+     */
+    @Test
+    void shouldDefaultMethodToEmptyInAutomation() {
+        // Given
+        ReplacerJob job =
+                createReplacerJob(
+                        """
+                        parameters:
+                          deleteAllRules: false
+                        rules:
+                          - matchType: req_header_str
+                            matchString: test
+                        """);
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(job.getRuleCount(), is(equalTo(1)));
+        assertThat(job.getData().getRules().get(0).getMethod(), is(emptyString()));
+    }
+
+    /**
+     * Verifies that multiple rules with different methods can be defined in automation
+     * configuration. This tests that the method field is handled independently for each rule.
+     */
+    @Test
+    void shouldApplyMultipleRulesWithDifferentMethods() {
+        // Given
+        ReplacerJob job =
+                createReplacerJob(
+                        """
+                        parameters:
+                          deleteAllRules: false
+                        rules:
+                          - description: GET Rule
+                            method: GET
+                            matchType: req_header_str
+                            matchString: test1
+                          - description: POST Rule
+                            method: POST
+                            matchType: req_body_str
+                            matchString: test2
+                          - description: No Method Rule
+                            matchType: resp_header_str
+                            matchString: test3
+                        """);
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(job.getRuleCount(), is(equalTo(3)));
+        assertThat(job.getData().getRules().get(0).getMethod(), is(equalTo("GET")));
+        assertThat(job.getData().getRules().get(1).getMethod(), is(equalTo("POST")));
+        assertThat(job.getData().getRules().get(2).getMethod(), is(emptyString()));
+    }
+
+    /**
+     * Verifies that the dataToReplacerRule method correctly converts RuleData with a method to a
+     * ReplacerParamRule. This ensures the method field is properly transferred during conversion.
+     */
+    @Test
+    void shouldConvertDataWithMethodToRule() {
+        // Given
+        RuleData data = new RuleData();
+        data.setDescription("desc");
+        data.setUrl("url");
+        data.setMethod("PUT");
+        data.setMatchType("Resp_Header_Str");
+        data.setMatchString("match");
+        data.setMatchRegex(true);
+        data.setReplacementString("repl");
+        data.setTokenProcessing(false);
+        data.setInitiators(new Integer[] {1, 3});
+
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        ReplacerParamRule rule = ReplacerJob.dataToReplacerRule(data, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(rule.getMethod(), is("PUT"));
+        assertThat(rule.getDescription(), is("desc"));
+        assertThat(rule.getUrl(), is("url"));
+        assertThat(rule.getMatchType(), is(MatchType.RESP_HEADER_STR));
+        assertThat(rule.getMatchString(), is("match"));
+        assertThat(rule.isMatchRegex(), is(true));
+    }
+
+    /**
+     * Verifies that the replacerRuleToData method correctly converts a ReplacerParamRule with a
+     * method to RuleData. This ensures bidirectional conversion preserves the method field.
+     */
+    @Test
+    void shouldConvertRuleWithMethodToData() {
+        // Given
+        List<Integer> initiators = new ArrayList<>();
+        initiators.add(2);
+        initiators.add(4);
+        ReplacerParamRule rule =
+                new ReplacerParamRule(
+                        "desc",
+                        "url",
+                        MatchType.REQ_BODY_STR,
+                        "match",
+                        false,
+                        "replace",
+                        initiators,
+                        true,
+                        false,
+                        "DELETE");
+
+        RuleData data = new RuleData();
+
+        // When
+        ReplacerJob.replacerRuleToData(rule, data);
+
+        // Then
+        assertThat(data.getDescription(), is("desc"));
+        assertThat(data.getUrl(), is("url"));
+        assertThat(data.getMethod(), is("DELETE"));
+        assertThat(data.getMatchType(), is("req_body_str"));
+        assertThat(data.getMatchString(), is("match"));
+        assertThat(data.isMatchRegex(), is(false));
+        assertThat(data.getReplacementString(), is("replace"));
+    }
+
+    /**
+     * Verifies that various HTTP methods are correctly handled in automation configuration. This
+     * tests common HTTP methods to ensure they're all supported.
+     */
+    @Test
+    void shouldHandleVariousHttpMethods() {
+        // Given
+        ReplacerJob job =
+                createReplacerJob(
+                        """
+                        rules:
+                          - method: GET
+                            matchType: req_header_str
+                            matchString: test1
+                          - method: POST
+                            matchType: req_header_str
+                            matchString: test2
+                          - method: PUT
+                            matchType: req_header_str
+                            matchString: test3
+                          - method: DELETE
+                            matchType: req_header_str
+                            matchString: test4
+                          - method: PATCH
+                            matchType: req_header_str
+                            matchString: test5
+                          - method: OPTIONS
+                            matchType: req_header_str
+                            matchString: test6
+                        """);
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(job.getRuleCount(), is(equalTo(6)));
+        assertThat(job.getData().getRules().get(0).getMethod(), is(equalTo("GET")));
+        assertThat(job.getData().getRules().get(1).getMethod(), is(equalTo("POST")));
+        assertThat(job.getData().getRules().get(2).getMethod(), is(equalTo("PUT")));
+        assertThat(job.getData().getRules().get(3).getMethod(), is(equalTo("DELETE")));
+        assertThat(job.getData().getRules().get(4).getMethod(), is(equalTo("PATCH")));
+        assertThat(job.getData().getRules().get(5).getMethod(), is(equalTo("OPTIONS")));
     }
 
     private static ReplacerJob createReplacerJob(String data) {

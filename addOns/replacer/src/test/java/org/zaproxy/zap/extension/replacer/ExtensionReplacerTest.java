@@ -722,7 +722,7 @@ class ExtensionReplacerTest {
 
         ReplacerParamRule TokenProcessingReplacementRule =
                 new ReplacerParamRule(
-                        "", "", matchType, match, false, replacement, null, true, true);
+                        "", "", matchType, match, false, replacement, null, true, true, "");
 
         extensionReplacer.getParams().getRules().add(TokenProcessingReplacementRule);
 
@@ -740,5 +740,413 @@ class ExtensionReplacerTest {
         extensionReplacer.getParams().getRules().add(TokenProcessingReplacementRule);
 
         return extensionReplacer;
+    }
+
+    /**
+     * Verifies that a valid HTTP method can be set on a replacer rule and retrieved correctly. This
+     * tests the basic getter and setter functionality for the method parameter.
+     */
+    @Test
+    void shouldSetValidMethod() {
+        // Given
+        ReplacerParamRule rule = new ReplacerParamRule();
+        String method = "POST";
+        // When
+        rule.setMethod(method);
+        // Then
+        assertThat(rule.getMethod(), equalTo(method));
+    }
+
+    /**
+     * Verifies that a replacer rule with no method specified (null or empty) matches all HTTP
+     * methods. This parameterized test checks that both null and empty method act as wildcards.
+     *
+     * @param method the method value to set (null or empty)
+     * @param requestMethod the HTTP method to test against the rule
+     */
+    @ParameterizedTest
+    @CsvSource({",GET", ",POST", "'',GET", "'',POST"})
+    void shouldMatchAllMethodsIfMethodEmptyOrNull(String method, String requestMethod) {
+        // Given
+        ReplacerParamRule rule = new ReplacerParamRule();
+        rule.setMethod(method);
+        // When
+        boolean matches = rule.matchesMethod(requestMethod);
+        // Then
+        assertThat(rule.getMethod(), equalTo(""));
+        assertThat(matches, equalTo(true));
+    }
+
+    /**
+     * Verifies that HTTP method matching is case-insensitive. This parameterized test checks
+     * various combinations to ensure case-insensitive matching and correct rejection of different
+     * methods.
+     *
+     * @param ruleMethod the HTTP method configured in the replacer rule
+     * @param requestMethod the HTTP method from the actual request
+     * @param expectedMatch whether the methods should match
+     */
+    @ParameterizedTest
+    @CsvSource({"GET,GET,true", "GET,get,true", "GET,POST,false"})
+    void shouldMatchMethodCaseInsensitive(
+            String ruleMethod, String requestMethod, boolean expectedMatch) {
+        // Given
+        ReplacerParamRule rule = new ReplacerParamRule();
+        rule.setMethod(ruleMethod);
+        // When
+        boolean matches = rule.matchesMethod(requestMethod);
+        // Then
+        assertThat(matches, equalTo(expectedMatch));
+    }
+
+    /**
+     * Verifies that a replacer rule configured for a specific HTTP method (POST) correctly replaces
+     * values in request headers when the request method matches. This ensures method filtering
+     * works properly for request header string replacements.
+     *
+     * @throws HttpMalformedHeaderException if the HTTP header is malformed
+     */
+    @Test
+    void shouldReplaceInRequestHeaderForMatchingMethod() throws HttpMalformedHeaderException {
+        // Given
+        msg.setRequestHeader("POST / HTTP/1.1\r\nX-CUSTOM: original");
+        ExtensionReplacer extensionReplacer = new ExtensionReplacer();
+        ReplacerParamRule rule =
+                new ReplacerParamRule(
+                        "",
+                        "",
+                        REQ_HEADER_STR,
+                        "original",
+                        false,
+                        "replaced",
+                        null,
+                        true,
+                        false,
+                        "POST");
+        extensionReplacer.getParams().getRules().add(rule);
+
+        // When
+        extensionReplacer.onHttpRequestSend(msg, 0, null);
+
+        // Then
+        assertThat(msg.getRequestHeader().getHeader("X-CUSTOM"), equalTo("replaced"));
+    }
+
+    /**
+     * Verifies that a replacer rule configured for a specific HTTP method (POST) does not replace
+     * values in request headers when the request method does not match (GET). This ensures method
+     * filtering prevents unwanted replacements.
+     *
+     * @throws HttpMalformedHeaderException if the HTTP header is malformed
+     */
+    @Test
+    void shouldNotReplaceInRequestHeaderForNonMatchingMethod() throws HttpMalformedHeaderException {
+        // Given
+        msg.setRequestHeader("GET / HTTP/1.1\r\nX-CUSTOM: original");
+        ExtensionReplacer extensionReplacer = new ExtensionReplacer();
+        ReplacerParamRule rule =
+                new ReplacerParamRule(
+                        "",
+                        "",
+                        REQ_HEADER_STR,
+                        "original",
+                        false,
+                        "replaced",
+                        null,
+                        true,
+                        false,
+                        "POST");
+        extensionReplacer.getParams().getRules().add(rule);
+
+        // When
+        extensionReplacer.onHttpRequestSend(msg, 0, null);
+
+        // Then
+        assertThat(msg.getRequestHeader().getHeader("X-CUSTOM"), equalTo("original"));
+    }
+
+    /**
+     * Verifies that a replacer rule configured for a specific HTTP method (DELETE) correctly
+     * replaces values in the request body when the request method matches. This ensures method
+     * filtering works properly for request body string replacements.
+     *
+     * @throws HttpMalformedHeaderException if the HTTP header is malformed
+     */
+    @Test
+    void shouldReplaceInRequestBodyForMatchingMethod() throws HttpMalformedHeaderException {
+        // Given
+        msg.setRequestHeader("DELETE / HTTP/1.1");
+        msg.setRequestBody("original_body");
+        ExtensionReplacer extensionReplacer = new ExtensionReplacer();
+        ReplacerParamRule rule =
+                new ReplacerParamRule(
+                        "",
+                        "",
+                        REQ_BODY_STR,
+                        "original_body",
+                        false,
+                        "replaced_body",
+                        null,
+                        true,
+                        false,
+                        "DELETE");
+        extensionReplacer.getParams().getRules().add(rule);
+
+        // When
+        extensionReplacer.onHttpRequestSend(msg, 0, null);
+
+        // Then
+        assertThat(msg.getRequestBody().toString(), equalTo("replaced_body"));
+    }
+
+    /**
+     * Verifies that a replacer rule configured for a specific HTTP method (DELETE) does not replace
+     * values in the request body when the request method does not match (POST). This ensures method
+     * filtering prevents unwanted body replacements.
+     *
+     * @throws HttpMalformedHeaderException if the HTTP header is malformed
+     */
+    @Test
+    void shouldNotReplaceInRequestBodyForNonMatchingMethod() throws HttpMalformedHeaderException {
+        // Given
+        msg.setRequestHeader("POST / HTTP/1.1");
+        msg.setRequestBody("original_body");
+        ExtensionReplacer extensionReplacer = new ExtensionReplacer();
+        ReplacerParamRule rule =
+                new ReplacerParamRule(
+                        "",
+                        "",
+                        REQ_BODY_STR,
+                        "original_body",
+                        false,
+                        "replaced_body",
+                        null,
+                        true,
+                        false,
+                        "DELETE");
+        extensionReplacer.getParams().getRules().add(rule);
+
+        // When
+        extensionReplacer.onHttpRequestSend(msg, 0, null);
+
+        // Then
+        assertThat(msg.getRequestBody().toString(), equalTo("original_body"));
+    }
+
+    /**
+     * Verifies that a replacer rule configured for a specific HTTP method (PUT) correctly replaces
+     * values in response headers when the request method matches. This ensures method filtering
+     * works properly for response header string replacements.
+     *
+     * @throws HttpMalformedHeaderException if the HTTP header is malformed
+     */
+    @Test
+    void shouldReplaceInResponseHeaderForMatchingMethod() throws HttpMalformedHeaderException {
+        // Given
+        msg.setRequestHeader("PUT / HTTP/1.1");
+        msg.setResponseHeader("HTTP/1.1 200 OK\r\nX-CUSTOM: original");
+        ExtensionReplacer extensionReplacer = new ExtensionReplacer();
+        ReplacerParamRule rule =
+                new ReplacerParamRule(
+                        "",
+                        "",
+                        RESP_HEADER_STR,
+                        "original",
+                        false,
+                        "replaced",
+                        null,
+                        true,
+                        false,
+                        "PUT");
+        extensionReplacer.getParams().getRules().add(rule);
+
+        // When
+        extensionReplacer.onHttpResponseReceive(msg, 0, null);
+
+        // Then
+        assertThat(msg.getResponseHeader().getHeader("X-CUSTOM"), equalTo("replaced"));
+    }
+
+    /**
+     * Verifies that a replacer rule configured for a specific HTTP method (PUT) does not replace
+     * values in response headers when the request method does not match (GET). This ensures method
+     * filtering prevents unwanted response header replacements.
+     *
+     * @throws HttpMalformedHeaderException if the HTTP header is malformed
+     */
+    @Test
+    void shouldNotReplaceInResponseHeaderForNonMatchingMethod()
+            throws HttpMalformedHeaderException {
+        // Given
+        msg.setRequestHeader("GET / HTTP/1.1");
+        msg.setResponseHeader("HTTP/1.1 200 OK\r\nX-CUSTOM: original");
+        ExtensionReplacer extensionReplacer = new ExtensionReplacer();
+        ReplacerParamRule rule =
+                new ReplacerParamRule(
+                        "",
+                        "",
+                        RESP_HEADER_STR,
+                        "original",
+                        false,
+                        "replaced",
+                        null,
+                        true,
+                        false,
+                        "PUT");
+        extensionReplacer.getParams().getRules().add(rule);
+
+        // When
+        extensionReplacer.onHttpResponseReceive(msg, 0, null);
+
+        // Then
+        assertThat(msg.getResponseHeader().getHeader("X-CUSTOM"), equalTo("original"));
+    }
+
+    /**
+     * Verifies that a replacer rule configured for a specific HTTP method (PATCH) correctly
+     * replaces values in the response body when the request method matches. This ensures method
+     * filtering works properly for response body string replacements.
+     *
+     * @throws HttpMalformedHeaderException if the HTTP header is malformed
+     */
+    @Test
+    void shouldReplaceInResponseBodyForMatchingMethod() throws HttpMalformedHeaderException {
+        // Given
+        msg.setRequestHeader("PATCH / HTTP/1.1");
+        msg.setResponseHeader("HTTP/1.1 200 OK");
+        msg.setResponseBody("original_response");
+        ExtensionReplacer extensionReplacer = new ExtensionReplacer();
+        ReplacerParamRule rule =
+                new ReplacerParamRule(
+                        "",
+                        "",
+                        RESP_BODY_STR,
+                        "original_response",
+                        false,
+                        "replaced_response",
+                        null,
+                        true,
+                        false,
+                        "PATCH");
+        extensionReplacer.getParams().getRules().add(rule);
+
+        // When
+        extensionReplacer.onHttpResponseReceive(msg, 0, null);
+
+        // Then
+        assertThat(msg.getResponseBody().toString(), equalTo("replaced_response"));
+    }
+
+    /**
+     * Verifies that a replacer rule configured for a specific HTTP method (PATCH) does not replace
+     * values in the response body when the request method does not match (GET). This ensures method
+     * filtering prevents unwanted response body replacements.
+     *
+     * @throws HttpMalformedHeaderException if the HTTP header is malformed
+     */
+    @Test
+    void shouldNotReplaceInResponseBodyForNonMatchingMethod() throws HttpMalformedHeaderException {
+        // Given
+        msg.setRequestHeader("GET / HTTP/1.1");
+        msg.setResponseHeader("HTTP/1.1 200 OK");
+        msg.setResponseBody("original_response");
+        ExtensionReplacer extensionReplacer = new ExtensionReplacer();
+        ReplacerParamRule rule =
+                new ReplacerParamRule(
+                        "",
+                        "",
+                        RESP_BODY_STR,
+                        "original_response",
+                        false,
+                        "replaced_response",
+                        null,
+                        true,
+                        false,
+                        "PATCH");
+        extensionReplacer.getParams().getRules().add(rule);
+
+        // When
+        extensionReplacer.onHttpResponseReceive(msg, 0, null);
+
+        // Then
+        assertThat(msg.getResponseBody().toString(), equalTo("original_response"));
+    }
+
+    /**
+     * Verifies that a replacer rule with an empty method string applies replacements to all HTTP
+     * methods. This tests the full replacement flow with an empty method acting as a wildcard.
+     *
+     * @throws HttpMalformedHeaderException if the HTTP header is malformed
+     */
+    @Test
+    void shouldReplaceWhenMethodIsEmptyString() throws HttpMalformedHeaderException {
+        // Given
+        msg.setRequestHeader("OPTIONS / HTTP/1.1\r\nX-CUSTOM: original");
+        ExtensionReplacer extensionReplacer = new ExtensionReplacer();
+        ReplacerParamRule rule =
+                new ReplacerParamRule(
+                        "",
+                        "",
+                        REQ_HEADER_STR,
+                        "original",
+                        false,
+                        "replaced",
+                        null,
+                        true,
+                        false,
+                        "");
+        extensionReplacer.getParams().getRules().add(rule);
+
+        // When
+        extensionReplacer.onHttpRequestSend(msg, 0, null);
+
+        // Then
+        assertThat(msg.getRequestHeader().getHeader("X-CUSTOM"), equalTo("replaced"));
+    }
+
+    /**
+     * Verifies that multiple rules with different method filters are selectively applied based on
+     * the request method. Only rules matching the request method should perform replacements.
+     *
+     * @throws HttpMalformedHeaderException if the HTTP header is malformed
+     */
+    @Test
+    void shouldApplyMultipleRulesWithDifferentMethods() throws HttpMalformedHeaderException {
+        // Given
+        msg.setRequestHeader("POST / HTTP/1.1\r\nX-HEADER-1: value1\r\nX-HEADER-2: value2");
+        ExtensionReplacer extensionReplacer = new ExtensionReplacer();
+        ReplacerParamRule rule1 =
+                new ReplacerParamRule(
+                        "",
+                        "",
+                        REQ_HEADER_STR,
+                        "value1",
+                        false,
+                        "replaced1",
+                        null,
+                        true,
+                        false,
+                        "POST");
+        ReplacerParamRule rule2 =
+                new ReplacerParamRule(
+                        "",
+                        "",
+                        REQ_HEADER_STR,
+                        "value2",
+                        false,
+                        "replaced2",
+                        null,
+                        true,
+                        false,
+                        "GET");
+        extensionReplacer.getParams().getRules().add(rule1);
+        extensionReplacer.getParams().getRules().add(rule2);
+
+        // When
+        extensionReplacer.onHttpRequestSend(msg, 0, null);
+
+        // Then
+        assertThat(msg.getRequestHeader().getHeader("X-HEADER-1"), equalTo("replaced1"));
+        assertThat(msg.getRequestHeader().getHeader("X-HEADER-2"), equalTo("value2"));
     }
 }
