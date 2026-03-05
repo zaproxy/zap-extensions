@@ -80,6 +80,7 @@ import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType.BrowserBasedAuthenticationMethod;
+import org.zaproxy.addon.authhelper.HeaderBasedSessionManagementMethodType.HeaderBasedSessionManagementMethod;
 import org.zaproxy.addon.authhelper.internal.AuthenticationStep;
 import org.zaproxy.addon.authhelper.internal.auth.Authenticator;
 import org.zaproxy.addon.authhelper.internal.auth.DefaultAuthenticator;
@@ -88,8 +89,10 @@ import org.zaproxy.addon.commonlib.AuthConstants;
 import org.zaproxy.addon.commonlib.ResourceIdentificationUtils;
 import org.zaproxy.addon.network.NetworkUtils;
 import org.zaproxy.zap.authentication.AuthenticationCredentials;
+import org.zaproxy.zap.authentication.AuthenticationHelper;
 import org.zaproxy.zap.authentication.AuthenticationMethod;
 import org.zaproxy.zap.authentication.AuthenticationMethod.AuthCheckingStrategy;
+import org.zaproxy.zap.authentication.AuthenticationMethod.AuthPollFrequencyUnits;
 import org.zaproxy.zap.authentication.AuthenticationMethod.UnsupportedAuthenticationCredentialsException;
 import org.zaproxy.zap.authentication.UsernamePasswordAuthenticationCredentials;
 import org.zaproxy.zap.extension.selenium.BrowserHook;
@@ -515,7 +518,7 @@ public class AuthUtils {
                             steps);
         } catch (Exception e) {
             if (e.getMessage() != null && e.getMessage().contains(HTTP_AUTH_EXCEPTION_TEXT)) {
-                return handleHttpAuth(wd, context, credentials, loginPageUrl);
+                return handleHttpAuth(diags, wd, context, credentials, loginPageUrl);
             }
             throw e;
         }
@@ -559,6 +562,7 @@ public class AuthUtils {
     }
 
     private static boolean handleHttpAuth(
+            AuthenticationDiagnostics diags,
             WebDriver wd,
             Context context,
             UsernamePasswordAuthenticationCredentials credentials,
@@ -569,9 +573,15 @@ public class AuthUtils {
             // detect auth failures this way
             // Will have already seen this URL before, but its probably a good verif one
             // now
+            String failureStr = null;
+            String passStr = null;
             alwaysCheckContextVerificationMap(context, loginPageUrl);
+            diags.recordStep(
+                    fxwd,
+                    Constant.messages.getString(
+                            "authhelper.auth.method.diags.steps.httpauthneeded"));
             try {
-                // Send an authenticated request so that we see what sort of HTTP auth is in use
+                // Send an unauthenticated request so that we see what sort of HTTP auth is in use
                 HttpSender unauthSender =
                         new HttpSender(HttpSender.AUTHENTICATION_HELPER_INITIATOR);
                 unauthSender.setMaxRedirects(MAX_UNAUTH_REDIRECTIONS);
@@ -592,6 +602,7 @@ public class AuthUtils {
                     incStatsCounter(uri, AUTH_BROWSER_HTTP_AUTH_UNKNOWN_STATS);
                     return false;
                 }
+                failureStr = getEvidence(msg1);
 
                 // Now try to send an auth request - this will fail if the creds are wrong
                 HttpMessage msg2 = new HttpMessage(uri);
@@ -602,6 +613,7 @@ public class AuthUtils {
                     incStatsCounter(loginPageUrl, AUTH_BROWSER_HTTP_AUTH_FAILED_STATS);
                     return false;
                 }
+                passStr = getEvidence(msg2);
 
             } catch (Exception e1) {
                 incStatsCounter(loginPageUrl, AUTH_BROWSER_HTTP_AUTH_FAILED_STATS);
@@ -620,10 +632,42 @@ public class AuthUtils {
 
                 neverCheckContextVerificationMap(context, loginPageUrl);
                 fxwd.get(loginPageUrl);
+                diags.recordStep(
+                        fxwd,
+                        Constant.messages.getString(
+                                "authhelper.auth.method.diags.steps.httpauthsupplied"));
 
                 incStatsCounter(loginPageUrl, AUTH_FOUND_FIELDS_STATS);
                 incStatsCounter(loginPageUrl, AUTH_BROWSER_PASSED_STATS);
                 incStatsCounter(loginPageUrl, AUTH_BROWSER_HTTP_AUTH_PASSED_STATS);
+                incStatsCounter(loginPageUrl, AuthenticationHelper.AUTH_SUCCESS_STATS);
+
+                if (context.getSessionManagementMethod().getType()
+                        instanceof AutoDetectSessionManagementMethodType) {
+                    LOGGER.debug(
+                            "Auto updating HTTP auth session management for context {}",
+                            context.getName());
+                    HeaderBasedSessionManagementMethodType type =
+                            new HeaderBasedSessionManagementMethodType();
+                    HeaderBasedSessionManagementMethod method =
+                            type.createSessionManagementMethod(context.getId());
+                    context.setSessionManagementMethod(method);
+                }
+
+                AuthenticationMethod authMethod = context.getAuthenticationMethod();
+                if (AuthCheckingStrategy.AUTO_DETECT.equals(authMethod.getAuthCheckingStrategy())) {
+                    LOGGER.debug(
+                            "Auto updating HTTP auth verification for context {}",
+                            context.getName());
+                    authMethod.setAuthCheckingStrategy(AuthCheckingStrategy.POLL_URL);
+                    authMethod.setPollUrl(loginPageUrl);
+                    authMethod.setPollFrequencyUnits(AuthPollFrequencyUnits.SECONDS);
+                    authMethod.setLoggedInIndicatorPattern(passStr);
+                    authMethod.setLoggedOutIndicatorPattern(failureStr);
+                }
+
+                sleep(AUTH_PAGE_SLEEP_IN_MSECS);
+
                 return true;
             } catch (Exception e1) {
                 incStatsCounter(loginPageUrl, AUTH_BROWSER_HTTP_AUTH_FAILED_STATS);
@@ -633,6 +677,12 @@ public class AuthUtils {
             incStatsCounter(loginPageUrl, AUTH_BROWSER_HTTP_AUTH_NOT_SUPPORTED_STATS);
         }
         return false;
+    }
+
+    private static String getEvidence(HttpMessage msg) {
+        return msg.getResponseHeader().getStatusCode()
+                + " "
+                + msg.getResponseHeader().getReasonPhrase();
     }
 
     private static UsernamePasswordAuthenticationCredentials getCredentials(User user) {
