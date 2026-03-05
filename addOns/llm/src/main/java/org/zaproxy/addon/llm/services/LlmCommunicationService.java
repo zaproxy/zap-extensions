@@ -27,6 +27,7 @@ import dev.langchain4j.memory.ChatMemory;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.azure.AzureOpenAiChatModel;
 import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.model.chat.listener.ChatModelListener;
 import dev.langchain4j.model.chat.request.ChatRequest;
 import dev.langchain4j.model.chat.request.ResponseFormat;
 import dev.langchain4j.model.chat.response.ChatResponse;
@@ -59,7 +60,7 @@ public class LlmCommunicationService {
     protected static final String AI_REVIEWED_TAG_KEY = "AI-Reviewed";
 
     private LlmAssistant llmAssistant;
-    private LlmResponseHandler listener;
+    private ChatModelListener listener;
     @Getter private LlmProviderConfig pconf;
     @Getter private String modelName;
     private Requestor requestor;
@@ -70,10 +71,10 @@ public class LlmCommunicationService {
     private ChatMemory chatMemory;
 
     public LlmCommunicationService(
-            LlmProviderConfig pconf, String modelName, String outputTabName) {
+            LlmProviderConfig pconf, String modelName, ChatModelListener listener) {
         this.pconf = pconf;
         this.modelName = modelName;
-        listener = new LlmResponseHandler(outputTabName);
+        this.listener = listener;
         chatMemory = MessageWindowChatMemory.withMaxMessages(10);
         model = buildModel();
 
@@ -198,9 +199,5 @@ public class LlmCommunicationService {
 
     public static String mapJsonObject(Map<String, Object> payload) throws JsonProcessingException {
         return prettyWriter.writeValueAsString(payload);
-    }
-
-    public void switchToOutputTab() {
-        this.listener.setFocus();
     }
 }
