@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Access to the progress of long running jobs
+
 ### Changed
 - Move the Automation panel to the workspace window.
 - Use the main output panel for plan output messages.

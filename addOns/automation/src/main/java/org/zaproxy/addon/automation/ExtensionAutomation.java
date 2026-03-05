@@ -38,6 +38,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.swing.Timer;
@@ -117,6 +119,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
     private AutomationParam param;
     private LinkedHashMap<Integer, AutomationPlan> plans = new LinkedHashMap<>();
     private List<AutomationPlan> runningPlans = Collections.synchronizedList(new ArrayList<>());
+    private final Map<String, LongRunningJob> longRunningJobs = new ConcurrentHashMap<>();
 
     private CommandLineArgument[] arguments = new CommandLineArgument[5];
     private static final int ARG_AUTO_RUN_IDX = 0;
@@ -185,6 +188,8 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
 
                     @Override
                     public void sessionChanged(Session session) {
+                        longRunningJobs.clear();
+
                         // Work around for core bug - can be removed once the core is fixed and
                         // released
                         String authHeaderValueVar = System.getenv(ZAP_AUTH_HEADER_VALUE);
@@ -398,6 +403,89 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         return Collections.unmodifiableList(runningPlans);
     }
 
+    protected void registerLongRunningJob(LongRunningJob job) {
+        // Need to register the job before it is run, so expect the jobId to be null to start with
+        new Thread(
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                String id;
+                                long limit = TimeUnit.SECONDS.toMillis(5);
+                                // If it takes longer than 5 seconds then assume something went
+                                // wrong
+                                for (int i = 0; i < limit; i += 200) {
+                                    id = job.getScanId();
+                                    if (id != null) {
+                                        longRunningJobs.put(id, job);
+                                        break;
+                                    }
+                                    try {
+                                        Thread.sleep(200);
+                                    } catch (InterruptedException e) {
+                                        // Ignore
+                                    }
+                                }
+                            }
+                        },
+                        "ZAP-AutoJobInit")
+                .start();
+    }
+
+    /**
+     * Returns all known IDs of long-running jobs that have been started. Jobs remain tracked after
+     * completion so their status can be queried. The map is cleared when a new ZAP session is
+     * started.
+     *
+     * @return a list of job IDs
+     * @since 0.59.0
+     */
+    public List<String> getLongRunningJobIds() {
+        return new ArrayList<>(longRunningJobs.keySet());
+    }
+
+    /**
+     * Returns the progress for the specified job ID.
+     *
+     * @param id the job id
+     * @return the progress percentage (0-100), or -1 if the job is not found
+     * @since 0.59.0
+     */
+    public int getScanProgress(String id) {
+        LongRunningJob job = longRunningJobs.get(id);
+        return job != null ? job.getScanProgress() : -1;
+    }
+
+    /**
+     * Returns the progress of all known long-running jobs.
+     *
+     * @return a map of job ID to progress percentage (0-100)
+     * @since 0.59.0
+     */
+    public Map<String, Integer> getAllScanProgress() {
+        Map<String, Integer> result = new HashMap<>();
+        for (Entry<String, LongRunningJob> entry : longRunningJobs.entrySet()) {
+            result.put(entry.getKey(), entry.getValue().getScanProgress());
+        }
+        return result;
+    }
+
+    /**
+     * Stops a long-running job by ID. The job must implement {@link AutomationJob} for stopping to
+     * take effect.
+     *
+     * @param id the job id
+     * @return {@code true} if the job was found and stopped, {@code false} otherwise
+     * @since 0.59.0
+     */
+    public boolean stopLongRunningJob(String id) {
+        LongRunningJob job = longRunningJobs.get(id);
+        if (job instanceof AutomationJob automationJob) {
+            automationJob.stop();
+            return true;
+        }
+        return false;
+    }
+
     public void stopPlan(AutomationPlan plan) {
         plan.stopPlan();
     }
@@ -500,6 +588,9 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
                 timer.start();
             }
             try {
+                if (job instanceof LongRunningJob lrJob) {
+                    registerLongRunningJob(lrJob);
+                }
                 job.runJob(env, progress);
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);

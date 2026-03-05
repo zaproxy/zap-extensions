@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+MCP Server Options
+</TITLE>
+</HEAD>
+<BODY>
+<H1>MCP Server Options</H1>
+
+This screen allows you to configure the <a href="mcp.html">MCP Server</a> add-on.
+
+<H2>Port</H2>
+
+The port on which the MCP HTTP server listens for connections.
+<p>
+Default: 8282
+<p>
+Valid range: 1 to 65535
+
+<H2>Security Key</H2>
+
+A key used to authenticate MCP clients. When the key is required, clients must include it in the <code>Authorization</code> header as the header value. You can set the key to any value you like.
+
+<H3>Require security key in Authorization header</H3>
+
+When enabled, all MCP requests (except OPTIONS preflight) must include the security key in the Authorization header. When disabled, no authentication is required.
+
+<H3>Generate</H3>
+
+Click this button to generate a new random security key. This also enables the "Require security key" option.
+
+<H2>Record MCP requests in ZAP history</H2>
+
+When enabled, each MCP server request (and its response) is recorded in the ZAP proxy history. This allows you to inspect MCP traffic in the History tab and use it with other ZAP features (e.g. alerts can link to the full request/response via <code>zap://history/{id}</code>).
+
+<p>
+Default: disabled
+<p>
+Note: Enabling this option will increase the size of your session as every MCP request is stored.
+
+<H2>See Also</H2>
+
+<ul>
+<li><a href="mcp.html">MCP Server</a> - Overview of the add-on
+<li><a href="mcp-tools.html">Tools</a> - Available MCP tools
+<li><a href="mcp-resources.html">Resources</a> - Available MCP resources
+</ul>
+
+</BODY>
+</HTML>
