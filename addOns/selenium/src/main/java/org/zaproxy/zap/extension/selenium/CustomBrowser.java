@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.selenium;
 
 import java.util.List;
 import java.util.Map;
-
 import lombok.Builder;
 import lombok.Getter;
 
