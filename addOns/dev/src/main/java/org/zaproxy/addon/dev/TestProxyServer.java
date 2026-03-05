@@ -34,6 +34,7 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.dev.api.openapi.simpleAuth.OpenApiSimpleAuthDir;
 import org.zaproxy.addon.dev.api.openapi.simpleUnauth.OpenApiSimpleUnauthDir;
+import org.zaproxy.addon.dev.auth.basicHttp.BasicHttpDir;
 import org.zaproxy.addon.dev.auth.jsonMultipleCookies.JsonMultipleCookiesDir;
 import org.zaproxy.addon.dev.auth.nonStdJsonBearer.NonStdJsonBearerDir;
 import org.zaproxy.addon.dev.auth.passswordAddedNoSubmit.PasswordAddedNoSubmitDir;
@@ -83,6 +84,7 @@ public class TestProxyServer {
         root = new TestDirectory(this, "");
 
         TestDirectory authDir = new TestDirectory(this, "auth");
+        authDir.addDirectory(new BasicHttpDir(this, "basic-http"));
         authDir.addDirectory(new SimpleJsonDir(this, "simple-json"));
         authDir.addDirectory(new SimpleJsonDir(this, "simple-json-blocking-ui"));
         authDir.addDirectory(new SimpleJsonDir(this, "simple-json-blocking-ui-scroll-fields"));
