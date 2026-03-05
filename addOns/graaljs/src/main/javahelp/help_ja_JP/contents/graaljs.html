@@ -13,5 +13,11 @@ ZAPスクリプトで <a href="https://www.graalvm.org/">GraalVM</a> JavaScript 
 <h2>エンジン名</h2>
 このエンジンの名前は <code>Graal.js</code> であり、ZAPを手動で、またはプログラムによって設定する際に使用する必要があります。
 
+<h2>Engine Lifecycle and Script Types</h2>
+Graal.js engines are automatically closed when the engine and any results produced by it are no longer in use.
+Scripts that are short lived, such as <code>standalone</code> scripts, should therefore not add or install components into ZAP, because those components will become stale when the engine is closed.
+For components that are expected to live longer, use the <code>extender</code> script type instead.
+Extender scripts are expected to manage their lifecycle explicitly via their <code>install</code> and <code>uninstall</code> methods.
+
 </BODY>
 </HTML>
