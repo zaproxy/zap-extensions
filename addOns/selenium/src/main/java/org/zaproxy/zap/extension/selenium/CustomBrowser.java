@@ -20,6 +20,8 @@
 package org.zaproxy.zap.extension.selenium;
 
 import java.util.List;
+import java.util.Map;
+
 import lombok.Builder;
 import lombok.Getter;
 
@@ -36,5 +38,6 @@ public class CustomBrowser {
     private final String driverPath;
     private final String binaryPath;
     private final List<String> arguments;
+    private final Map<String, String> preferences;
     private final String browserType;
 }
