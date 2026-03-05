@@ -149,7 +149,21 @@ public class ClientSideComponent implements Comparable<ClientSideComponent> {
     public ClientSideComponent(JSONObject json) {
         data = new HashMap<>();
         for (Object key : json.keySet()) {
-            data.put(key.toString(), json.get(key).toString());
+            String keyStr = key.toString();
+            Object value = json.get(key);
+
+            if ("ariaIdentification".equals(keyStr)) {
+                if (value instanceof JSONObject) {
+                    JSONObject ariaObj = (JSONObject) value;
+                    Map<String, String> ariaMap = new HashMap<>();
+                    for (Object ariaKey : ariaObj.keySet()) {
+                        ariaMap.put(ariaKey.toString(), ariaObj.getString(ariaKey.toString()));
+                    }
+                    data.put("ariaIdentification", ariaMapToString(ariaMap));
+                }
+            } else {
+                data.put(keyStr, value.toString());
+            }
         }
 
         this.tagName = json.getString("tagName");
@@ -278,5 +292,13 @@ public class ClientSideComponent implements Comparable<ClientSideComponent> {
             return -1;
         }
         return 1;
+    }
+
+    private static String ariaMapToString(Map<String, String> ariaMap) {
+        JSONObject json = new JSONObject();
+        for (Map.Entry<String, String> entry : ariaMap.entrySet()) {
+            json.put(entry.getKey(), entry.getValue());
+        }
+        return json.toString();
     }
 }
