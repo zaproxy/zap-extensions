@@ -40,6 +40,11 @@ public interface TraditionalSpider {
 
         void stopScan();
 
+        void pauseScan();
+        
+        void resumeScan();
+
+
         int getProgress();
     }
 }
