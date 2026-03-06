@@ -61,8 +61,9 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
 
     protected LlmProviderConfig providerConfig;
     protected String originalName;
-    private String lastSuggestedName;
+    protected String lastSuggestedName;
     private HttpSender sender;
+    protected boolean initialising;
 
     public AddLlmProviderDialog(Dialog owner, LlmProviderConfigsTableModel model) {
         super(owner, Constant.messages.getString("llm.options.providers.add.title"), false);
@@ -91,8 +92,12 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
                                 .toArray(LlmProvider[]::new));
         providerComboBox.addActionListener(
                 e -> {
+                    if (initialising) {
+                        return;
+                    }
                     updateEndpointFieldState();
                     updateSuggestedName();
+                    updateSuggestedEndpoint();
                 });
         providerLabel.setLabelFor(providerComboBox);
 
@@ -174,16 +179,19 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
 
     @Override
     protected void init() {
+        initialising = true;
         nameTextField.setText("");
         providerComboBox.setSelectedIndex(0);
-        lastSuggestedName = providerComboBox.getSelectedItem().toString();
+        lastSuggestedName = "";
         apiKeyField.setText("");
         endpointField.setText("");
         modelsArea.setText("");
         providerConfig = null;
         originalName = null;
+        initialising = false;
         updateEndpointFieldState();
         updateSuggestedName();
+        updateSuggestedEndpoint();
     }
 
     @Override
@@ -212,6 +220,14 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
         }
 
         String endpoint = StringUtils.trimToEmpty(endpointField.getText());
+        if (provider.isEndpointRequired() && endpoint.isEmpty()) {
+            View.getSingleton()
+                    .showWarningDialog(
+                            this,
+                            Constant.messages.getString(
+                                    "llm.options.providers.error.endpoint.empty"));
+            return false;
+        }
         if (provider.supportsEndpoint() && !endpoint.isEmpty() && !isEndpointReachable(endpoint)) {
             View.getSingleton()
                     .showWarningDialog(
@@ -261,6 +277,52 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
             lastSuggestedName = provider.toString();
             nameTextField.setText(lastSuggestedName);
         }
+    }
+
+    protected void updateSuggestedEndpoint() {
+        LlmProvider provider = (LlmProvider) providerComboBox.getSelectedItem();
+        if (provider == null) {
+            return;
+        }
+        if (!provider.supportsEndpoint()) {
+            endpointField.setText("");
+            return;
+        }
+
+        String suggestedEndpoint = endpointValueOnSelect(provider);
+        String currentEndpoint = StringUtils.defaultString(endpointField.getText());
+        if (currentEndpoint.isEmpty()
+                || (isAnyProviderDefaultEndpoint(currentEndpoint)
+                        && !currentEndpoint.equals(suggestedEndpoint))) {
+            endpointField.setText(suggestedEndpoint);
+        }
+    }
+
+    static String endpointValueOnSelect(LlmProvider provider) {
+        if (provider == null || !provider.supportsEndpoint()) {
+            return "";
+        }
+        return StringUtils.defaultString(provider.getDefaultEndpoint());
+    }
+
+    private static boolean isAnyProviderDefaultEndpoint(String endpoint) {
+        if (endpoint == null || endpoint.isEmpty()) {
+            return false;
+        }
+
+        for (LlmProvider provider : LlmProvider.values()) {
+            if (provider == null || !provider.supportsEndpoint()) {
+                continue;
+            }
+
+            String defaultEndpoint = provider.getDefaultEndpoint();
+            if (defaultEndpoint != null
+                    && !defaultEndpoint.isEmpty()
+                    && defaultEndpoint.equals(endpoint)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected boolean isDuplicateName(String name) {
