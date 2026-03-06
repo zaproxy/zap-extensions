@@ -37,6 +37,13 @@ public class CustomBrowser {
     private final String driverPath;
     private final String binaryPath;
     private final List<String> arguments;
+
+    /**
+     * Preferences passed to the browser on startup
+     *
+     * @since 15.46.0
+     */
     private final Map<String, String> preferences;
+
     private final String browserType;
 }
