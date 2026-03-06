@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Add XML body generation for OpenAPI plugin
 - Dependency update.
 
 ## [52] - 2026-02-11
