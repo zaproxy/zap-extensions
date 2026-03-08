@@ -27,6 +27,19 @@ import org.zaproxy.addon.commonlib.ValueProvider;
 
 public class Generators {
 
+    // OpenAPI schema type constants
+    static final String TYPE_ARRAY = "array";
+    static final String TYPE_BOOLEAN = "boolean";
+    static final String TYPE_INTEGER = "integer";
+    static final String TYPE_NUMBER = "number";
+    static final String TYPE_OBJECT = "object";
+    static final String TYPE_STRING = "string";
+
+    // OpenAPI schema format constants
+    static final String FORMAT_BINARY = "binary";
+    static final String FORMAT_DATE = "date";
+    static final String FORMAT_DATE_TIME = "date-time";
+
     private ValueGenerator valueGenerator;
     private ArrayGenerator arrayGenerator;
     private MapGenerator mapGenerator;
@@ -89,5 +102,29 @@ public class Generators {
             }
         }
         return type;
+    }
+
+    static boolean isArray(Schema<?> schema) {
+        return TYPE_ARRAY.equals(getType(schema));
+    }
+
+    static boolean isBinary(Schema<?> schema) {
+        return TYPE_STRING.equals(getType(schema)) && FORMAT_BINARY.equals(schema.getFormat());
+    }
+
+    static boolean isComposed(Schema<?> schema) {
+        return schema.getOneOf() != null || schema.getAnyOf() != null;
+    }
+
+    static boolean isDate(Schema<?> schema) {
+        return TYPE_STRING.equals(getType(schema)) && FORMAT_DATE.equals(schema.getFormat());
+    }
+
+    static boolean isDateTime(Schema<?> schema) {
+        return TYPE_STRING.equals(getType(schema)) && FORMAT_DATE_TIME.equals(schema.getFormat());
+    }
+
+    static boolean isMap(Schema<?> schema) {
+        return TYPE_OBJECT.equals(getType(schema)) && schema.getAdditionalProperties() != null;
     }
 }
