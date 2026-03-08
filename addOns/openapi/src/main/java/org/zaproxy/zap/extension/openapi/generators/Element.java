@@ -42,6 +42,7 @@ public class Element {
         }
     }
 
+    @Deprecated(forRemoval = true)
     public enum OpenApiType {
         STRING("string");
 

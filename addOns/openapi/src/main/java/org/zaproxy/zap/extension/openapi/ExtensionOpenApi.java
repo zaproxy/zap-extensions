@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.openapi;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.Json31;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.parser.core.models.SwaggerParseResult;
 import java.awt.EventQueue;
@@ -372,7 +373,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
 
             String openApiString;
             try {
-                openApiString = Json.mapper().writeValueAsString(openApi);
+                openApiString = serialize(openApi);
             } catch (JsonMappingException e) {
                 if (e.getOriginalMessage().contains("TextBuffer overrun")) {
                     LOGGER.warn(
@@ -399,6 +400,25 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
             results.setErrors(null);
         }
         return results;
+    }
+
+    /**
+     * Serializes the given {@link OpenAPI} definition to a JSON string, using the appropriate
+     * serializer for the spec version (OAS 3.1 uses {@link Json31}, others use {@link Json}).
+     *
+     * @param openApi the parsed OpenAPI definition
+     * @return the JSON string representation
+     * @throws com.fasterxml.jackson.core.JsonProcessingException if serialization fails
+     */
+    public static String serialize(OpenAPI openApi)
+            throws com.fasterxml.jackson.core.JsonProcessingException {
+        var mapper = isOpenApi31(openApi) ? Json31.mapper() : Json.mapper();
+        return mapper.writeValueAsString(openApi);
+    }
+
+    static boolean isOpenApi31(OpenAPI openApi) {
+        String version = openApi.getOpenapi();
+        return version != null && version.startsWith("3.1");
     }
 
     private List<String> importOpenApiDefinition(

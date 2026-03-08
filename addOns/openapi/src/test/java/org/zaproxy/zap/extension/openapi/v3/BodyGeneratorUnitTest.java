@@ -768,6 +768,44 @@ class BodyGeneratorUnitTest extends TestUtils {
                 request);
     }
 
+    @Test
+    void shouldGenerateArrayBodyForOpenApi31WithObjectItems() throws IOException {
+        // Given
+        OpenAPI openAPI = parseResourceWithRoundTrip("openapi_31_array_body.yaml");
+        // When
+        String request =
+                new RequestModelConverter()
+                        .convert(
+                                new OperationModel(
+                                        "/array-of-objects",
+                                        openAPI.getPaths().get("/array-of-objects").getPost(),
+                                        null),
+                                generators)
+                        .getBody();
+        // Then
+        assertEquals(
+                "[{\"name\":\"John Doe\",\"value\":10},{\"name\":\"John Doe\",\"value\":10}]",
+                request);
+    }
+
+    @Test
+    void shouldGenerateArrayBodyForOpenApi31WithStringItems() throws IOException {
+        // Given
+        OpenAPI openAPI = parseResourceWithRoundTrip("openapi_31_array_body.yaml");
+        // When
+        String request =
+                new RequestModelConverter()
+                        .convert(
+                                new OperationModel(
+                                        "/array-of-strings",
+                                        openAPI.getPaths().get("/array-of-strings").getPost(),
+                                        null),
+                                generators)
+                        .getBody();
+        // Then
+        assertEquals("[\"John Doe\",\"John Doe\"]", request);
+    }
+
     private OpenAPI parseResource(String fileName) throws IOException {
         ParseOptions options = new ParseOptions();
         options.setResolveFully(true);
@@ -775,5 +813,18 @@ class BodyGeneratorUnitTest extends TestUtils {
                 IOUtils.toString(
                         this.getClass().getResourceAsStream(fileName), StandardCharsets.UTF_8);
         return new OpenAPIV3Parser().readContents(defn, new ArrayList<>(), options).getOpenAPI();
+    }
+
+    /**
+     * Simulates the actual file import path: parse -> serialize to JSON -> re-parse. Uses {@link
+     * ExtensionOpenApi#serialize} to ensure the same version-aware serialization as actual code.
+     */
+    private OpenAPI parseResourceWithRoundTrip(String fileName) throws IOException {
+        OpenAPI firstParse = parseResource(fileName);
+        String reSerializedJson = ExtensionOpenApi.serialize(firstParse);
+        ParseOptions options = new ParseOptions();
+        options.setResolve(true);
+        options.setResolveFully(true);
+        return new OpenAPIV3Parser().readContents(reSerializedJson, null, options).getOpenAPI();
     }
 }

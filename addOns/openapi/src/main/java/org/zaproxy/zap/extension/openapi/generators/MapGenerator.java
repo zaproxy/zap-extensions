@@ -22,14 +22,8 @@ package org.zaproxy.zap.extension.openapi.generators;
 import static org.zaproxy.zap.extension.openapi.generators.Element.Json.INNER_SEPARATOR;
 import static org.zaproxy.zap.extension.openapi.generators.Element.Json.OBJECT_BEGIN;
 import static org.zaproxy.zap.extension.openapi.generators.Element.Json.OBJECT_END;
-import static org.zaproxy.zap.extension.openapi.generators.Element.OpenApiType.STRING;
 
-import io.swagger.v3.oas.models.media.BooleanSchema;
-import io.swagger.v3.oas.models.media.IntegerSchema;
-import io.swagger.v3.oas.models.media.NumberSchema;
-import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
-import io.swagger.v3.oas.models.media.StringSchema;
 import java.util.Map;
 
 public class MapGenerator {
@@ -42,9 +36,9 @@ public class MapGenerator {
 
     /**
      * @param types the data types supported with their corresponding default values
-     * @param property Can be {@link NumberSchema}, {@link IntegerSchema}, {@link StringSchema} and
-     *     {@link BooleanSchema}. For any other schema type, i.g {@link ObjectSchema}, the {@link
-     *     BodyGenerator#generate(Schema)} is invoked to start the value generation again.
+     * @param property the map schema whose additional-properties schema determines the value type.
+     *     For supported primitive types the default value from {@code types} is used; for any other
+     *     schema type {@link BodyGenerator#generate(Schema)} is invoked.
      * @return a key value JSON structure where the key is default to string as per Swagger/OpenApi
      *     specification.
      */
@@ -52,7 +46,7 @@ public class MapGenerator {
         Schema<?> schema = (Schema<?>) property.getAdditionalProperties();
         String type = types.get(Generators.getType(schema));
         String value = type != null ? type : bodyGenerator.generate(schema);
-        String defaultKey = types.get(STRING.type());
+        String defaultKey = types.get(Generators.TYPE_STRING);
         return OBJECT_BEGIN + defaultKey + INNER_SEPARATOR + value + OBJECT_END;
     }
 }

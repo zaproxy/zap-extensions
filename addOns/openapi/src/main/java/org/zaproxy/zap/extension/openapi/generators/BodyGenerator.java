@@ -23,12 +23,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.models.examples.Example;
 import io.swagger.v3.oas.models.headers.Header;
-import io.swagger.v3.oas.models.media.ArraySchema;
-import io.swagger.v3.oas.models.media.BinarySchema;
-import io.swagger.v3.oas.models.media.ComposedSchema;
 import io.swagger.v3.oas.models.media.Encoding;
 import io.swagger.v3.oas.models.media.MediaType;
-import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -51,7 +47,11 @@ public class BodyGenerator {
     private DataGenerator dataGenerator;
     private static final Logger LOGGER = LogManager.getLogger(BodyGenerator.class);
     private static final List<String> PRIMITIVE_TYPES =
-            Arrays.asList("boolean", "integer", "number", "string");
+            Arrays.asList(
+                    Generators.TYPE_BOOLEAN,
+                    Generators.TYPE_INTEGER,
+                    Generators.TYPE_NUMBER,
+                    Generators.TYPE_STRING);
     public static final String TEXT_FILE_CONTENTS =
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus eu tortor efficitur";
     public static final String IMAGE_FILE_CONTENTS =
@@ -101,10 +101,10 @@ public class BodyGenerator {
 
         LOGGER.debug("Generate body for object {}", schema.getName());
 
-        if (schema instanceof ArraySchema) {
-            return generateFromArraySchema((ArraySchema) schema);
-        } else if (schema instanceof BinarySchema) {
-            return generateFromBinarySchema((BinarySchema) schema, false);
+        if (Generators.isArray(schema) && schema.getItems() != null) {
+            return generateFromArraySchema(schema);
+        } else if (Generators.isBinary(schema)) {
+            return generateFromBinarySchema(schema, false);
         }
 
         @SuppressWarnings("rawtypes")
@@ -115,21 +115,21 @@ public class BodyGenerator {
             return generate((Schema<?>) schema.getAdditionalProperties());
         }
 
-        if (schema instanceof ComposedSchema) {
-            return generateJsonPrimitiveValue(resolveComposedSchema((ComposedSchema) schema));
+        if (Generators.isComposed(schema)) {
+            return generateJsonPrimitiveValue(resolveComposedSchema(schema));
         }
         if (schema.getNot() != null) {
             resolveNotSchema(schema);
         }
 
         if (!PRIMITIVE_TYPES.contains(Generators.getType(schema))) {
-            schema.setType("string");
+            schema.setType(Generators.TYPE_STRING);
         }
 
         return generateJsonPrimitiveValue(schema);
     }
 
-    private String generateFromArraySchema(ArraySchema schema) {
+    private String generateFromArraySchema(Schema<?> schema) {
         if (schema.getExample() instanceof String) {
             return (String) schema.getExample();
         }
@@ -147,7 +147,7 @@ public class BodyGenerator {
         return createJsonArrayWith(generate(schema.getItems()));
     }
 
-    private static String generateFromBinarySchema(BinarySchema schema, boolean image) {
+    private static String generateFromBinarySchema(Schema<?> schema, boolean image) {
         if (image) {
             return IMAGE_FILE_CONTENTS;
         }
@@ -173,15 +173,15 @@ public class BodyGenerator {
             if (dataGenerator.isSupported(property.getValue())) {
                 value = dataGenerator.generateBodyValue(property.getKey(), property.getValue());
             } else {
-
+                String propertyType = Generators.getType(property.getValue());
                 value =
                         generators
                                 .getValueGenerator()
                                 .getValue(
                                         property.getKey(),
-                                        property.getValue().getType(),
+                                        propertyType,
                                         generate(property.getValue()));
-                if ("string".equals(property.getValue().getType()) && !value.startsWith("\"")) {
+                if (Generators.TYPE_STRING.equals(propertyType) && !value.startsWith("\"")) {
                     value = "\"" + value + "\"";
                 }
             }
@@ -203,7 +203,7 @@ public class BodyGenerator {
         return dataGenerator.generateBodyValue("", schema);
     }
 
-    private static Schema<?> resolveComposedSchema(ComposedSchema schema) {
+    private static Schema<?> resolveComposedSchema(Schema<?> schema) {
 
         if (schema.getOneOf() != null) {
             return schema.getOneOf().get(0);
@@ -216,10 +216,10 @@ public class BodyGenerator {
     }
 
     private static void resolveNotSchema(Schema<?> schema) {
-        if (schema.getNot().getType().equals("string")) {
-            schema.setType("integer");
+        if (Generators.TYPE_STRING.equals(schema.getNot().getType())) {
+            schema.setType(Generators.TYPE_INTEGER);
         } else {
-            schema.setType("string");
+            schema.setType(Generators.TYPE_STRING);
         }
     }
 
@@ -276,7 +276,7 @@ public class BodyGenerator {
                 multipartData.append("\"");
                 multipartData.append(property.getKey());
                 multipartData.append("\"");
-                if (propertySchema instanceof BinarySchema) {
+                if (Generators.isBinary(propertySchema)) {
                     multipartData.append("; ");
                     multipartData.append("filename=");
                     multipartData.append("\"");
@@ -319,8 +319,7 @@ public class BodyGenerator {
 
                 multipartData.append("\r\n");
                 if (propertyContentType.contains("image")) {
-                    multipartData.append(
-                            generateFromBinarySchema(((BinarySchema) propertySchema), true));
+                    multipartData.append(generateFromBinarySchema(propertySchema, true));
                 } else {
                     multipartData.append(generate(propertySchema));
                 }
@@ -333,18 +332,14 @@ public class BodyGenerator {
     }
 
     private static String getPropertyContentType(Schema<?> schema) {
-        String type;
-
-        if (schema instanceof ObjectSchema) {
-            type = "application/json";
-        } else if (schema instanceof BinarySchema) {
-            type = "application/octet-stream";
-        } else if (schema instanceof ArraySchema) {
-            type = getPropertyContentType(((ArraySchema) schema).getItems());
-        } else {
-            type = "text/plain";
+        if (Generators.isMap(schema) || Generators.TYPE_OBJECT.equals(Generators.getType(schema))) {
+            return "application/json";
+        } else if (Generators.isBinary(schema)) {
+            return "application/octet-stream";
+        } else if (Generators.isArray(schema) && schema.getItems() != null) {
+            return getPropertyContentType(schema.getItems());
         }
-        return type;
+        return "text/plain";
     }
 
     private static String urlEncode(String string) {

@@ -19,7 +19,7 @@
  */
 package org.zaproxy.zap.extension.openapi.generators;
 
-import io.swagger.v3.oas.models.media.ArraySchema;
+import io.swagger.v3.oas.models.media.Schema;
 
 public class ArrayGenerator {
 
@@ -39,8 +39,7 @@ public class ArrayGenerator {
         this.dataGenerator = dataGenerator;
     }
 
-    public String generate(
-            String name, ArraySchema property, String collectionType, boolean isPath) {
+    public String generate(String name, Schema<?> property, String collectionType, boolean isPath) {
 
         if (property == null) {
             return "";
@@ -48,13 +47,16 @@ public class ArrayGenerator {
         if (collectionType.isEmpty()) {
             collectionType = "csv";
         }
-        String valueType = property.getItems().getType();
+        String valueType = Generators.getType(property.getItems());
         if (dataGenerator.isArray(valueType)) {
-            if (property.getItems() instanceof ArraySchema) {
-                return generate(name, (ArraySchema) property.getItems(), collectionType, isPath);
+            if (property.getItems() != null) {
+                return generate(name, property.getItems(), collectionType, isPath);
             } else {
                 return "";
             }
+        }
+        if (property.getItems() == null) {
+            return "";
         }
         String value = dataGenerator.generateValue(name, property.getItems(), isPath);
         return ARRAY_BEGIN + value + ARRAY_END;

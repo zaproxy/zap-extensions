@@ -20,17 +20,8 @@
 package org.zaproxy.zap.extension.openapi.generators;
 
 import io.swagger.v3.oas.models.examples.Example;
-import io.swagger.v3.oas.models.media.ArraySchema;
-import io.swagger.v3.oas.models.media.BooleanSchema;
 import io.swagger.v3.oas.models.media.Content;
-import io.swagger.v3.oas.models.media.DateSchema;
-import io.swagger.v3.oas.models.media.DateTimeSchema;
-import io.swagger.v3.oas.models.media.FileSchema;
-import io.swagger.v3.oas.models.media.IntegerSchema;
-import io.swagger.v3.oas.models.media.MapSchema;
-import io.swagger.v3.oas.models.media.NumberSchema;
 import io.swagger.v3.oas.models.media.Schema;
-import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import java.util.Collection;
 import java.util.Collections;
@@ -53,21 +44,21 @@ public class DataGenerator {
             Collections.unmodifiableMap(
                     new HashMap<String, String>() {
                         {
-                            put("integer", "10");
-                            put("number", "1.2");
-                            put("string", "\"John Doe\"");
-                            put("boolean", "true");
+                            put(Generators.TYPE_INTEGER, "10");
+                            put(Generators.TYPE_NUMBER, "1.2");
+                            put(Generators.TYPE_STRING, "\"John Doe\"");
+                            put(Generators.TYPE_BOOLEAN, "true");
                         }
                     });
 
     public boolean isSupported(Schema<?> schema) {
-        return schema instanceof ArraySchema
-                || schema instanceof BooleanSchema
-                || schema instanceof FileSchema
-                || schema instanceof IntegerSchema
-                || schema instanceof MapSchema
-                || schema instanceof NumberSchema
-                || schema instanceof StringSchema;
+        String type = Generators.getType(schema);
+        return Generators.TYPE_ARRAY.equals(type)
+                || Generators.TYPE_BOOLEAN.equals(type)
+                || Generators.TYPE_INTEGER.equals(type)
+                || Generators.TYPE_NUMBER.equals(type)
+                || Generators.TYPE_STRING.equals(type)
+                || Generators.isMap(schema);
     }
 
     public String generate(String name, Parameter parameter) {
@@ -136,38 +127,27 @@ public class DataGenerator {
             return generateArrayValue(name, parameter);
         }
 
-        if (parameter.getSchema() instanceof ArraySchema) {
-            Schema<?> items = ((ArraySchema) (parameter.getSchema())).getItems();
-            if (items != null) {
-                return generateValue(name, items, isPath(parameter.getIn()));
-            }
-        }
-
         return getExampleValue(parameter);
     }
 
     private String generateArrayValue(String name, Parameter parameter) {
         boolean isPath = isPath(parameter.getIn());
-        if (!(parameter.getSchema() instanceof ArraySchema
-                && ((ArraySchema) parameter.getSchema()).getItems() instanceof ArraySchema)) {
-            return generateValue(name, ((ArraySchema) parameter.getSchema()).getItems(), isPath);
+        Schema<?> schema = parameter.getSchema();
+        Schema<?> items = schema.getItems();
+        if (items != null && Generators.isArray(items)) {
+            return generators.getArrayGenerator().generate(name, items, "", isPath);
         }
-        return generators
-                .getArrayGenerator()
-                .generate(
-                        name,
-                        ((ArraySchema) ((ArraySchema) parameter.getSchema()).getItems()),
-                        "",
-                        isPath);
+        if (items != null) {
+            return generateValue(name, items, isPath);
+        }
+        return generators.getArrayGenerator().generate(name, schema, "", isPath);
     }
 
     public String generateBodyValue(String name, Schema<?> property) {
         if (isArray(property)) {
-            return generators
-                    .getArrayGenerator()
-                    .generate(name, (ArraySchema) property, "csv", false);
+            return generators.getArrayGenerator().generate(name, property, "csv", false);
         }
-        if (isMap(property)) {
+        if (Generators.isMap(property)) {
             if (property.getAdditionalProperties() instanceof Schema) {
                 return generators.getMapGenerator().generate(TYPES, property);
             } else if (property.getProperties() != null && !property.getProperties().isEmpty()) {
@@ -200,7 +180,7 @@ public class DataGenerator {
         if (value.isEmpty()) {
             value = getExampleValue(isPath, type, name);
         } else {
-            if (!isPath && "string".equalsIgnoreCase(type)) {
+            if (!isPath && Generators.TYPE_STRING.equalsIgnoreCase(type)) {
                 value = "\"" + value + "\"";
             }
         }
@@ -213,7 +193,7 @@ public class DataGenerator {
     private String getExampleValue(Parameter parameter) {
         String in = parameter.getIn();
         String type = Generators.getType(parameter.getSchema());
-        if ("cookie".equals(in) && "string".equals(type)) {
+        if ("cookie".equals(in) && Generators.TYPE_STRING.equals(type)) {
             return "JohnDoe";
         }
         return getExampleValue(isPath(in), type, parameter.getName());
@@ -228,7 +208,7 @@ public class DataGenerator {
 
     public String generateExampleValueForPath(String type, String name) {
         String value;
-        if ("string".equals(type)) {
+        if (Generators.TYPE_STRING.equals(type)) {
             if (name != null) {
                 value = name;
             } else {
@@ -249,23 +229,19 @@ public class DataGenerator {
     }
 
     public boolean isArray(String type) {
-        return "array".equals(type);
+        return Generators.TYPE_ARRAY.equals(type);
     }
 
     private static boolean isArray(Schema<?> schema) {
-        return schema instanceof ArraySchema;
+        return Generators.isArray(schema) && schema.getItems() != null;
     }
 
     public boolean isDateTime(Schema<?> schema) {
-        return schema instanceof DateTimeSchema;
+        return Generators.isDateTime(schema);
     }
 
     public boolean isDate(Schema<?> schema) {
-        return schema instanceof DateSchema;
-    }
-
-    private static boolean isMap(Schema<?> schema) {
-        return schema instanceof MapSchema;
+        return Generators.isDate(schema);
     }
 
     public Generators getGenerators() {
