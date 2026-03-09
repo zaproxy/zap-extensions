@@ -57,7 +57,10 @@ dependencies {
     datanucleus(libs.database.datanucleusJdo)
     sqlite(libs.database.sqliteJdbc)
 
-    flyway(libs.database.flywayCore)
+    flyway(libs.database.flywayCore) {
+        // Exclude the 2.x being included by 3.x
+        exclude(module = "com.fasterxml.jackson.core")
+    }
     flyway(libs.database.flywayDatabaseHsqldb)
 
     testImplementation(libs.log4j.core)
