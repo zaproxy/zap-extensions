@@ -20,10 +20,12 @@
 package org.zaproxy.zap.extension.quickstart;
 
 import java.net.URL;
+import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteNode;
 import org.zaproxy.zap.extension.ascan.ActiveScan;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
@@ -163,15 +165,19 @@ public class AttackThread extends Thread {
                 }
             }
 
-            if (startNode.isLeaf()
-                    && !startNode.getParent().isRoot()
-                    && !startNode.getParent().getParent().isRoot()) {
-                // Start node is a leaf and isnt root or a top level app (eg
-                // www.example.com/app1)
-                // Go up a level
-                startNode = startNode.getParent();
-                target.setStartNode(startNode);
+            // Need to go back to the SitesTree to find the right parent
+            String urlStr = url.toString();
+            if (urlStr.endsWith("/")) {
+                urlStr = urlStr.substring(0, urlStr.length() - 1);
             }
+            SiteNode attackNode =
+                    Model.getSingleton().getSession().getSiteTree().findNode(new URI(urlStr, true));
+            if (attackNode == null) {
+                // Fallback to accessed node if not found
+                attackNode = startNode;
+            }
+            target.setStartNode(attackNode);
+            LOGGER.info("Attacking {}", attackNode.getHierarchicNodeName());
 
             ExtensionActiveScan extAscan =
                     (ExtensionActiveScan)
