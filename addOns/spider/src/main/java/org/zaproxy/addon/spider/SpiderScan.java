@@ -56,7 +56,7 @@ public class SpiderScan implements ScanListenner, SpiderListener, GenericScanner
     public static final String SPIDER_URL_FOUND_STATS = "stats.spider.url.found";
     public static final String SPIDER_URL_ERROR_STATS = "stats.spider.url.error";
 
-    private static enum State {
+    private enum State {
         NOT_STARTED,
         RUNNING,
         PAUSED,
@@ -76,8 +76,8 @@ public class SpiderScan implements ScanListenner, SpiderListener, GenericScanner
     private final Lock lock;
 
     private int scanId;
-    private Target target;
-    private User user;
+    private final Target target;
+    private final User user;
 
     private String displayName = "";
 
@@ -89,17 +89,17 @@ public class SpiderScan implements ScanListenner, SpiderListener, GenericScanner
      * @see #foundURI(String, String, FetchStatus)
      * @see #getNumberOfURIsFound()
      */
-    private AtomicInteger numberOfURIsFound;
+    private final AtomicInteger numberOfURIsFound;
 
-    private Set<String> foundURIs;
+    private final Set<String> foundURIs;
 
-    private List<SpiderResource> resourcesFound;
+    private final List<SpiderResource> resourcesFound;
 
-    private List<SpiderResource> resourcesIoErrors;
+    private final List<SpiderResource> resourcesIoErrors;
 
-    private Set<String> foundURIsOutOfScope;
+    private final Set<String> foundURIsOutOfScope;
 
-    private SpiderThread spiderThread;
+    private final SpiderThread spiderThread;
 
     private State state;
 
