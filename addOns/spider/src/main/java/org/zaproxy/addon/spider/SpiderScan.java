@@ -361,34 +361,28 @@ public class SpiderScan implements ScanListenner, SpiderListener, GenericScanner
         }
     }
 
+    private void addMessageToMessagesTableModel0(SpiderTaskResult result) {
+        if ( ! EventQueue.isDispatchThread()) {
+            throw new IllegalStateException("Can only be called on AWT Thread, not " + Thread.currentThread().getName());
+        }
+        if ( cleared ) {
+            return;
+        }
+        if (messagesTableModel == null) {
+            messagesTableModel = new SpiderMessagesTableModel();
+        }
+        messagesTableModel.addHistoryReference(
+                result.getHttpMessage().getHistoryRef(),
+                result.isProcessed(),
+                result.getReasonNotProcessed());
+
+    }
+
     private void addMessageToMessagesTableModel(final SpiderTaskResult spiderTaskResult) {
         if (spiderTaskResult.getHttpMessage().getHistoryRef() == null) {
             return;
         }
-
-        if (EventQueue.isDispatchThread() || cleared) {
-            if (cleared) {
-                return;
-            }
-
-            if (messagesTableModel == null) {
-                messagesTableModel = new SpiderMessagesTableModel();
-            }
-            messagesTableModel.addHistoryReference(
-                    spiderTaskResult.getHttpMessage().getHistoryRef(),
-                    spiderTaskResult.isProcessed(),
-                    spiderTaskResult.getReasonNotProcessed());
-            return;
-        }
-
-        EventQueue.invokeLater(
-                new Runnable() {
-
-                    @Override
-                    public void run() {
-                        addMessageToMessagesTableModel(spiderTaskResult);
-                    }
-                });
+        EventQueue.invokeLater(() -> addMessageToMessagesTableModel0(spiderTaskResult));
     }
 
     @Override
