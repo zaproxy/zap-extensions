@@ -26,6 +26,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.apache.commons.httpclient.URI;
@@ -44,29 +45,22 @@ class DefaultFetchFilterUnitTest {
 
     @Mock Context context;
 
-    private DefaultFetchFilter filter;
-
-    @BeforeEach
-    void setUp() {
-        filter = new DefaultFetchFilter();
-    }
-
     @Test
-    void shouldFilterUriWithNonSchemeAsIllegalProtocol() throws Exception {
+    void shouldFilterUriWithNonSchemeAsIllegalProtocol() {
         // Given
         URI uri = createUri("example.com");
         // When
-        FetchStatus status = filter.checkFilter(uri);
+        FetchStatus status = new DefaultFetchFilter(null, Collections.emptyList()).checkFilter(uri);
         // Then
         assertThat(status, is(equalTo(FetchStatus.ILLEGAL_PROTOCOL)));
     }
 
     @Test
-    void shouldFilterUriWithNonHttpOrHttpsSchemeAsIllegalProtocol() throws Exception {
+    void shouldFilterUriWithNonHttpOrHttpsSchemeAsIllegalProtocol() {
         // Given
         URI uri = createUri("ftp://example.com");
         // When
-        FetchStatus status = filter.checkFilter(uri);
+        FetchStatus status = new DefaultFetchFilter(null, Collections.emptyList()).checkFilter(uri);
         // Then
         assertThat(status, is(equalTo(FetchStatus.ILLEGAL_PROTOCOL)));
     }
@@ -76,7 +70,7 @@ class DefaultFetchFilterUnitTest {
         // Given
         URI uri = createUri("http://example.com");
         // When
-        FetchStatus status = filter.checkFilter(uri);
+        FetchStatus status = new DefaultFetchFilter(null, Collections.emptyList()).checkFilter(uri);
         // Then
         assertThat(status, is(equalTo(FetchStatus.OUT_OF_SCOPE)));
     }
@@ -86,7 +80,7 @@ class DefaultFetchFilterUnitTest {
         // Given
         URI uri = createUri("https://example.com");
         // When
-        FetchStatus status = filter.checkFilter(uri);
+        FetchStatus status = new DefaultFetchFilter(null, Collections.emptyList()).checkFilter(uri);
         // Then
         assertThat(status, is(equalTo(FetchStatus.OUT_OF_SCOPE)));
     }
@@ -94,6 +88,7 @@ class DefaultFetchFilterUnitTest {
     @Test
     void shouldFilterOutOfScopeUriAsOutOfScope() throws Exception {
         // Given
+        var filter = new DefaultFetchFilter(null, Collections.emptyList());
         filter.addScopeRegex("scope.example.com");
         URI uri = createUri("http://example.com");
         // When
@@ -105,6 +100,7 @@ class DefaultFetchFilterUnitTest {
     @Test
     void shouldFilterInScopeUriAsValid() throws Exception {
         // Given
+        var filter = new DefaultFetchFilter(null, Collections.emptyList());
         filter.addScopeRegex("example.com");
         URI uri = createUri("http://example.com");
         // When
@@ -116,7 +112,7 @@ class DefaultFetchFilterUnitTest {
     @Test
     void shouldFilterNonAlwaysInScopeUriAsOutOfScope() throws Exception {
         // Given
-        filter.setDomainsAlwaysInScope(domainsAlwaysInScope("scope.example.com"));
+        var filter = new DefaultFetchFilter(null, domainsAlwaysInScope("scope.example.com"));
         URI uri = createUri("https://example.com");
         // When
         FetchStatus status = filter.checkFilter(uri);
@@ -127,7 +123,7 @@ class DefaultFetchFilterUnitTest {
     @Test
     void shouldFilterAlwaysInScopeUriAsValid() throws Exception {
         // Given
-        filter.setDomainsAlwaysInScope(domainsAlwaysInScope("example.com"));
+        var filter = new DefaultFetchFilter(null, domainsAlwaysInScope("example.com"));
         URI uri = createUri("https://example.com");
         // When
         FetchStatus status = filter.checkFilter(uri);
@@ -137,6 +133,7 @@ class DefaultFetchFilterUnitTest {
 
     @Test
     void shouldFilterExcludedInScopeUriAsUserRules() throws Exception {
+        var filter = new DefaultFetchFilter(null, Collections.emptyList());
         // Given
         filter.addScopeRegex("example.com");
         filter.setExcludeRegexes(excludeRegexes(".*example\\.com.*"));
@@ -150,7 +147,7 @@ class DefaultFetchFilterUnitTest {
     @Test
     void shouldFilterExcludedAlwaysInScopeUriAsUserRules() throws Exception {
         // Given
-        filter.setDomainsAlwaysInScope(domainsAlwaysInScope("example.com"));
+        var filter = new DefaultFetchFilter(null, domainsAlwaysInScope("example.com"));
         filter.setExcludeRegexes(excludeRegexes(".*example\\.com.*"));
         URI uri = createUri("http://example.com");
         // When
@@ -162,6 +159,7 @@ class DefaultFetchFilterUnitTest {
     @Test
     void shouldFilterNonExcludedInScopeUriAsValid() throws Exception {
         // Given
+        var filter = new DefaultFetchFilter(null, Collections.emptyList());
         filter.addScopeRegex("example.com");
         filter.setExcludeRegexes(excludeRegexes("subdomain\\.example\\.com.*"));
         URI uri = createUri("http://example.com");
@@ -174,7 +172,7 @@ class DefaultFetchFilterUnitTest {
     @Test
     void shouldFilterNonExcludedAlwaysInScopeUriAsValid() throws Exception {
         // Given
-        filter.setDomainsAlwaysInScope(domainsAlwaysInScope("example.com"));
+        var filter = new DefaultFetchFilter(null, domainsAlwaysInScope("example.com"));
         filter.setExcludeRegexes(excludeRegexes("subdomain\\.example\\.com.*"));
         URI uri = createUri("http://example.com");
         // When
@@ -186,7 +184,7 @@ class DefaultFetchFilterUnitTest {
     @Test
     void shouldFilterOutOfContextUriAsOutOfContext() throws Exception {
         // Given
-        filter.setScanContext(contextInScope(false));
+        var filter = new DefaultFetchFilter(contextInScope(false), Collections.emptyList());
         URI uri = createUri("http://example.com");
         // When
         FetchStatus status = filter.checkFilter(uri);
@@ -197,7 +195,7 @@ class DefaultFetchFilterUnitTest {
     @Test
     void shouldFilterInContextUriAsValid() throws Exception {
         // Given
-        filter.setScanContext(contextInScope(true));
+        var filter = new DefaultFetchFilter(contextInScope(true), Collections.emptyList());
         URI uri = createUri("http://example.com");
         // When
         FetchStatus status = filter.checkFilter(uri);
@@ -208,7 +206,8 @@ class DefaultFetchFilterUnitTest {
     @Test
     void shouldFilterExcludedInContextUriAsUserRules() throws Exception {
         // Given
-        filter.setScanContext(contextInScope(true));
+        var filter = new DefaultFetchFilter(contextInScope(true), Collections.emptyList());
+
         filter.setExcludeRegexes(excludeRegexes(".*example\\.com.*"));
         URI uri = createUri("http://example.com");
         // When
@@ -220,7 +219,8 @@ class DefaultFetchFilterUnitTest {
     @Test
     void shouldFilterNonExcludedInContextUriAsValid() throws Exception {
         // Given
-        filter.setScanContext(contextInScope(true));
+        var filter = new DefaultFetchFilter(contextInScope(true), Collections.emptyList());
+
         filter.setExcludeRegexes(excludeRegexes("subdomain\\.example\\.com.*"));
         URI uri = createUri("http://example.com");
         // When
@@ -232,7 +232,7 @@ class DefaultFetchFilterUnitTest {
     @Test
     void shouldFilterLogoutUriWhenAvoidLogout() {
         // Given
-        filter.setScanContext(contextInScope(true));
+        var filter = new DefaultFetchFilter(contextInScope(true), Collections.emptyList());
         filter.setLogoutAvoidance(true);
         URI uri = createUri("http://example.com/logout");
         // When
@@ -244,7 +244,8 @@ class DefaultFetchFilterUnitTest {
     @Test
     void shouldNotFilterLogoutUriWhenNotAvoidLogout() {
         // Given
-        filter.setScanContext(contextInScope(true));
+        var filter = new DefaultFetchFilter(contextInScope(true), Collections.emptyList());
+
         filter.setLogoutAvoidance(false);
         URI uri = createUri("http://example.com/logout");
         // When
@@ -262,27 +263,11 @@ class DefaultFetchFilterUnitTest {
     }
 
     private static List<DomainAlwaysInScopeMatcher> domainsAlwaysInScope(String... domains) {
-        if (domains == null || domains.length == 0) {
-            return Collections.emptyList();
-        }
-
-        List<DomainAlwaysInScopeMatcher> domainsAlwaysInScope = new ArrayList<>(1);
-        for (String domain : domains) {
-            domainsAlwaysInScope.add(new DomainAlwaysInScopeMatcher(domain));
-        }
-        return domainsAlwaysInScope;
+        return Arrays.stream(domains).map(DomainAlwaysInScopeMatcher::new).toList();
     }
 
     private static List<String> excludeRegexes(String... regexes) {
-        if (regexes == null || regexes.length == 0) {
-            return Collections.emptyList();
-        }
-
-        List<String> excludedRegexes = new ArrayList<>(1);
-        for (String regex : regexes) {
-            excludedRegexes.add(regex);
-        }
-        return excludedRegexes;
+        return Arrays.asList(regexes);
     }
 
     private Context contextInScope(boolean inScope) {
