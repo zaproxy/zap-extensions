@@ -155,6 +155,7 @@ class ReplacerJobUnitTest extends TestUtils {
         assertThat(job.getRuleCount(), is(equalTo(1)));
         assertThat(job.getData().getRules().size(), is(equalTo(1)));
         assertThat(job.getData().getRules().get(0).getDescription(), is(emptyString()));
+        assertThat(job.getData().getRules().get(0).getMethod(), is(emptyString()));
         assertThat(job.getData().getRules().get(0).getUrl(), is(emptyString()));
         assertThat(job.getData().getRules().get(0).getMatchType(), is(equalTo("resp_body_str")));
         assertThat(job.getData().getRules().get(0).isMatchRegex(), is(false));
@@ -172,6 +173,7 @@ class ReplacerJobUnitTest extends TestUtils {
                                 + "  deleteAllRules: false\n"
                                 + "rules:\n"
                                 + "  - description: desc\n"
+                                + "    method: POST\n"
                                 + "    url: url\n"
                                 + "    matchType: resp_body_str\n"
                                 + "    matchString: test\n"
@@ -190,6 +192,7 @@ class ReplacerJobUnitTest extends TestUtils {
         assertThat(job.getRuleCount(), is(equalTo(1)));
         assertThat(job.getData().getRules().size(), is(equalTo(1)));
         assertThat(job.getData().getRules().get(0).getDescription(), is("desc"));
+        assertThat(job.getData().getRules().get(0).getMethod(), is(equalTo("POST")));
         assertThat(job.getData().getRules().get(0).getUrl(), is("url"));
         assertThat(job.getData().getRules().get(0).getMatchType(), is(equalTo("resp_body_str")));
         assertThat(job.getData().getRules().get(0).getMatchString(), is(equalTo("test")));
@@ -398,6 +401,7 @@ class ReplacerJobUnitTest extends TestUtils {
         // Given
         RuleData data = new RuleData();
         data.setDescription("desc");
+        data.setMethod("PUT");
         data.setUrl("url");
         data.setMatchType("Resp_Header");
         data.setMatchString("match");
@@ -415,6 +419,7 @@ class ReplacerJobUnitTest extends TestUtils {
         assertThat(progress.hasErrors(), is(equalTo(false)));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(rule.getDescription(), is("desc"));
+        assertThat(rule.getMethod(), is("PUT"));
         assertThat(rule.getUrl(), is("url"));
         assertThat(rule.getMatchType(), is(MatchType.RESP_HEADER));
         assertThat(rule.getMatchString(), is("match"));
@@ -465,7 +470,8 @@ class ReplacerJobUnitTest extends TestUtils {
                         "replace",
                         initiators,
                         true,
-                        true);
+                        true,
+                        "DELETE");
 
         RuleData data = new RuleData();
 
@@ -474,6 +480,7 @@ class ReplacerJobUnitTest extends TestUtils {
 
         // Then
         assertThat(data.getDescription(), is("desc"));
+        assertThat(data.getMethod(), is("DELETE"));
         assertThat(data.getUrl(), is("url"));
         assertThat(data.getMatchType(), is("resp_header_str"));
         assertThat(data.getMatchString(), is("match"));
@@ -543,6 +550,7 @@ class ReplacerJobUnitTest extends TestUtils {
                 new RuleData(
                         "desc",
                         "url",
+                        "POST",
                         "REQ_Header",
                         "match",
                         true,
@@ -556,6 +564,7 @@ class ReplacerJobUnitTest extends TestUtils {
         // Then
         assertThat(dataCopy.getDescription(), is("desc"));
         assertThat(dataCopy.getUrl(), is("url"));
+        assertThat(dataCopy.getMethod(), is("POST"));
         assertThat(dataCopy.getMatchType(), is("REQ_Header"));
         assertThat(dataCopy.getMatchString(), is("match"));
         assertThat(dataCopy.isMatchRegex(), is(true));

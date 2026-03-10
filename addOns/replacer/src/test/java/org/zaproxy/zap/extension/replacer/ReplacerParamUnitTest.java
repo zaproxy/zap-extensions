@@ -20,11 +20,17 @@
 package org.zaproxy.zap.extension.replacer;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.configuration.HierarchicalConfiguration;
@@ -181,5 +187,105 @@ class ReplacerParamUnitTest {
                 ReplacerParam.REPORT_TO_REPLACEMENT,
                 null,
                 enabled);
+    }
+
+    @Test
+    void shouldLoadMinimalReplacerParamRule() {
+        // Given
+        configuration =
+                configWith(
+                        """
+                        <replacer version="%s">
+                          <full_list>
+                            <description>Description</description>
+                          </full_list>
+                        </replacer>"
+                        """
+                                .formatted(ReplacerParam.CURRENT_CONFIG_VERSION));
+        // When
+        param.load(configuration);
+        // Given
+        assertThat(param.getRules(), hasSize(1));
+        ReplacerParamRule rule = param.getRules().get(0);
+        assertThat(rule.getDescription(), is(equalTo("Description")));
+        assertThat(rule.getUrl(), is(equalTo("")));
+        assertThat(rule.getMatchType(), is(equalTo(MatchType.RESP_BODY_STR)));
+        assertThat(rule.getMatchString(), is(equalTo("")));
+        assertThat(rule.isMatchRegex(), is(equalTo(true)));
+        assertThat(rule.getReplacement(), is(equalTo("")));
+        assertThat(rule.getInitiators(), is(nullValue()));
+        assertThat(rule.isEnabled(), is(equalTo(true)));
+        assertThat(rule.isTokenProcessingEnabled(), is(equalTo(false)));
+        assertThat(rule.getMethod(), is(equalTo("")));
+    }
+
+    @Test
+    void shouldSaveReplacerParamRule() {
+        // Given
+        param.load(configuration);
+        param.clearRules();
+        ReplacerParamRule rule =
+                new ReplacerParamRule(
+                        "Description",
+                        "Url",
+                        MatchType.REQ_BODY_STR,
+                        "MatchString",
+                        false,
+                        "Replacement",
+                        List.of(1, 2),
+                        false,
+                        true,
+                        "Method");
+
+        // When
+        param.addRule(rule);
+
+        // Then
+        assertThat(
+                toString(configuration),
+                containsString(
+                        """
+                            <replacer version="%s">
+                                <full_list>
+                                    <description>Description</description>
+                                    <url>Url</url>
+                                    <enabled>false</enabled>
+                                    <matchtype>REQ_BODY_STR</matchtype>
+                                    <matchstr>MatchString</matchstr>
+                                    <regex>false</regex>
+                                    <replacement>Replacement</replacement>
+                                    <extraprocessing>true</extraprocessing>
+                                    <method>Method</method>
+                                    <initiators>[1, 2]</initiators>
+                                </full_list>
+                            </replacer>
+                        """
+                                .formatted(ReplacerParam.CURRENT_CONFIG_VERSION)
+                                .replace("\n", System.lineSeparator())));
+    }
+
+    private static String toString(ZapXmlConfiguration config) {
+        StringWriter writer = new StringWriter();
+        try {
+            config.save(writer);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return writer.toString();
+    }
+
+    private static ZapXmlConfiguration configWith(String value) {
+        ZapXmlConfiguration config = new ZapXmlConfiguration();
+        String contents =
+                "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n"
+                        + "<config>\n"
+                        + value
+                        + "\n</config>";
+        try {
+            config.load(new ByteArrayInputStream(contents.getBytes(StandardCharsets.UTF_8)));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return config;
     }
 }

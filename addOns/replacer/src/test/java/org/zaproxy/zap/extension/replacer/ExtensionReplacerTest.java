@@ -29,6 +29,11 @@ import static org.hamcrest.Matchers.matchesRegex;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.zaproxy.zap.extension.replacer.ReplacerParamRule.MatchType.REQ_BODY_STR;
 import static org.zaproxy.zap.extension.replacer.ReplacerParamRule.MatchType.REQ_HEADER;
 import static org.zaproxy.zap.extension.replacer.ReplacerParamRule.MatchType.REQ_HEADER_STR;
@@ -715,6 +720,40 @@ class ExtensionReplacerTest {
                 is(not(nullValue())));
     }
 
+    @Test
+    void shouldCheckMethodOnHttpRequestSend() throws HttpMalformedHeaderException {
+        // Given
+        msg.setRequestHeader("POST / HTTP/1.1");
+        ReplacerParamRule rule = mock();
+        given(rule.isEnabled()).willReturn(true);
+        given(rule.appliesToInitiator(anyInt())).willReturn(true);
+        given(rule.matchesUrl(anyString())).willReturn(true);
+        extensionReplacer.getParams().getRules().add(rule);
+
+        // When
+        extensionReplacer.onHttpRequestSend(msg, 0, null);
+
+        // Then
+        verify(rule).matchesMethod("POST");
+    }
+
+    @Test
+    void shouldCheckMethodOnHttpResponseReceive() throws HttpMalformedHeaderException {
+        // Given
+        msg.setRequestHeader("PUT / HTTP/1.1");
+        ReplacerParamRule rule = mock();
+        given(rule.isEnabled()).willReturn(true);
+        given(rule.appliesToInitiator(anyInt())).willReturn(true);
+        given(rule.matchesUrl(anyString())).willReturn(true);
+        extensionReplacer.getParams().getRules().add(rule);
+
+        // When
+        extensionReplacer.onHttpResponseReceive(msg, 0, null);
+
+        // Then
+        verify(rule).matchesMethod("PUT");
+    }
+
     private static ExtensionReplacer givenATokenProcessingReplacementRuleFor(
             ReplacerParamRule.MatchType matchType, String match, String replacement)
             throws HttpMalformedHeaderException {
@@ -722,7 +761,7 @@ class ExtensionReplacerTest {
 
         ReplacerParamRule TokenProcessingReplacementRule =
                 new ReplacerParamRule(
-                        "", "", matchType, match, false, replacement, null, true, true);
+                        "", "", matchType, match, false, replacement, null, true, true, "");
 
         extensionReplacer.getParams().getRules().add(TokenProcessingReplacementRule);
 
