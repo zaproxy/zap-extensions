@@ -19,18 +19,6 @@
  */
 package org.zaproxy.addon.spider;
 
-import java.awt.EventQueue;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.ConcurrentModificationException;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-import javax.swing.table.TableModel;
 import org.apache.commons.httpclient.URI;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
@@ -48,6 +36,21 @@ import org.zaproxy.zap.model.Target;
 import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.Stats;
 
+import javax.swing.table.TableModel;
+import java.awt.EventQueue;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.ConcurrentModificationException;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Supplier;
+
 public class SpiderScan implements ScanListenner, SpiderListener, GenericScanner2 {
 
     public static final String SPIDER_SCAN_STARTED_STATS = "stats.spider.started";
@@ -63,8 +66,7 @@ public class SpiderScan implements ScanListenner, SpiderListener, GenericScanner
         FINISHED
     }
 
-    private static final EnumSet<FetchStatus> FETCH_STATUS_IN_SCOPE =
-            EnumSet.of(FetchStatus.VALID, FetchStatus.SEED);
+    private static final EnumSet<FetchStatus> FETCH_STATUS_IN_SCOPE = EnumSet.of(FetchStatus.VALID, FetchStatus.SEED);
 
     private static final EnumSet<FetchStatus> FETCH_STATUS_OUT_OF_SCOPE =
             EnumSet.of(
@@ -73,7 +75,7 @@ public class SpiderScan implements ScanListenner, SpiderListener, GenericScanner
                     FetchStatus.USER_RULES,
                     FetchStatus.LOGOUT_AVOIDANCE);
 
-    private final Lock lock;
+    private final Lock lock = new ReentrantLock();
 
     private int scanId;
     private final Target target;
@@ -89,25 +91,31 @@ public class SpiderScan implements ScanListenner, SpiderListener, GenericScanner
      * @see #foundURI(String, String, FetchStatus)
      * @see #getNumberOfURIsFound()
      */
-    private final AtomicInteger numberOfURIsFound;
+    private final AtomicInteger numberOfURIsFound = new AtomicInteger();
 
-    private final Set<String> foundURIs;
-
-    private final List<SpiderResource> resourcesFound;
-
-    private final List<SpiderResource> resourcesIoErrors;
-
-    private final Set<String> foundURIsOutOfScope;
+    private final Set<String> foundURIs = Collections.synchronizedSet(new HashSet<>());
+    private final List<SpiderResource> resourcesFound = Collections.synchronizedList(new ArrayList<>());
+    private final List<SpiderResource> resourcesIoErrors = Collections.synchronizedList(new ArrayList<>());
+    private final Set<String> foundURIsOutOfScope = Collections.synchronizedSet(new HashSet<>());
+    private final AtomicReference<ScanListenner2> listener = new AtomicReference<>(new NullListener());
 
     private final SpiderThread spiderThread;
 
-    private State state;
-
+    private State state = State.NOT_STARTED;
     private int progress;
-
-    private ScanListenner2 listener;
-
     private volatile boolean cleared;
+
+    private static class NullListener implements ScanListenner2 {
+        @Override
+        public void scanFinshed(int id, String host) {
+            // empty
+        }
+
+        @Override
+        public void scanProgress(int id, String host, int progress, int maximum) {
+            // empty
+        }
+    }
 
     /**
      * The table model of the messages sent.
@@ -122,13 +130,13 @@ public class SpiderScan implements ScanListenner, SpiderListener, GenericScanner
     /**
      * Constructs a {@code SpiderScan} with the given data.
      *
-     * @param extension the extension to obtain configurations and notify the view
+     * @param extension    the extension to obtain configurations and notify the view
      * @param spiderParams the spider options
-     * @param target the spider target
-     * @param spiderURI the starting URI, may be {@code null}.
-     * @param scanUser the user to be used in the scan, may be {@code null}.
-     * @param scanId the ID of the scan
-     * @param name the name that identifies the target
+     * @param target       the spider target
+     * @param spiderURI    the starting URI, may be {@code null}.
+     * @param scanUser     the user to be used in the scan, may be {@code null}.
+     * @param scanId       the ID of the scan
+     * @param name         the name that identifies the target
      */
     public SpiderScan(
             ExtensionSpider2 extension,
@@ -138,19 +146,10 @@ public class SpiderScan implements ScanListenner, SpiderListener, GenericScanner
             User scanUser,
             int scanId,
             String name) {
-        lock = new ReentrantLock();
         this.scanId = scanId;
         this.target = target;
         this.user = scanUser;
         setDisplayName(name);
-
-        numberOfURIsFound = new AtomicInteger();
-        foundURIs = Collections.synchronizedSet(new HashSet<>());
-        resourcesFound = Collections.synchronizedList(new ArrayList<>());
-        resourcesIoErrors = Collections.synchronizedList(new ArrayList<>());
-        foundURIsOutOfScope = Collections.synchronizedSet(new HashSet<>());
-
-        state = State.NOT_STARTED;
 
         spiderThread =
                 new SpiderThread(Integer.toString(scanId), extension, spiderParams, name, this);
@@ -173,6 +172,25 @@ public class SpiderScan implements ScanListenner, SpiderListener, GenericScanner
         return scanId;
     }
 
+    private <T> T withLock(Supplier<T> callable) {
+        lock.lock();
+        try {
+            return callable.get();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    private void withLock(Runnable runnable) {
+        withLock(() -> {
+            runnable.run();
+            return null;
+        });
+    }
+
+
     /**
      * Returns the {@code String} representation of the scan state (not started, running, paused or
      * finished).
@@ -180,12 +198,7 @@ public class SpiderScan implements ScanListenner, SpiderListener, GenericScanner
      * @return the {@code String} representation of the scan state.
      */
     public String getState() {
-        lock.lock();
-        try {
-            return state.toString();
-        } finally {
-            lock.unlock();
-        }
+        return withLock(() -> state.toString());
     }
 
     /**
@@ -204,8 +217,7 @@ public class SpiderScan implements ScanListenner, SpiderListener, GenericScanner
      * <p>The call to this method has no effect if the scan was already started.
      */
     public void start() {
-        lock.lock();
-        try {
+        withLock(() -> {
             if (State.NOT_STARTED.equals(state)) {
                 spiderThread.addSpiderListener(this);
                 spiderThread.start();
@@ -214,9 +226,7 @@ public class SpiderScan implements ScanListenner, SpiderListener, GenericScanner
                         ScanEventPublisher.SCAN_STARTED_EVENT, this.scanId, this.target, user);
                 Stats.incCounter(SPIDER_SCAN_STARTED_STATS);
             }
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**
@@ -226,17 +236,14 @@ public class SpiderScan implements ScanListenner, SpiderListener, GenericScanner
      */
     @Override
     public void pauseScan() {
-        lock.lock();
-        try {
+        withLock(() -> {
             if (State.RUNNING.equals(state)) {
                 spiderThread.pauseScan();
                 state = State.PAUSED;
                 SpiderEventPublisher.publishScanEvent(
                         ScanEventPublisher.SCAN_PAUSED_EVENT, this.scanId);
             }
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**
@@ -246,17 +253,14 @@ public class SpiderScan implements ScanListenner, SpiderListener, GenericScanner
      */
     @Override
     public void resumeScan() {
-        lock.lock();
-        try {
+        withLock(() -> {
             if (State.PAUSED.equals(state)) {
                 spiderThread.resumeScan();
                 state = State.RUNNING;
                 SpiderEventPublisher.publishScanEvent(
                         ScanEventPublisher.SCAN_RESUMED_EVENT, this.scanId);
             }
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**
@@ -267,8 +271,7 @@ public class SpiderScan implements ScanListenner, SpiderListener, GenericScanner
      */
     @Override
     public void stopScan() {
-        lock.lock();
-        try {
+        withLock(() -> {
             if (!State.NOT_STARTED.equals(state) && !State.FINISHED.equals(state)) {
                 spiderThread.stopScan();
                 state = State.FINISHED;
@@ -276,9 +279,7 @@ public class SpiderScan implements ScanListenner, SpiderListener, GenericScanner
                         ScanEventPublisher.SCAN_STOPPED_EVENT, this.scanId);
                 Stats.incCounter(SPIDER_SCAN_STOPPED_STATS);
             }
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**
@@ -362,10 +363,10 @@ public class SpiderScan implements ScanListenner, SpiderListener, GenericScanner
     }
 
     private void addMessageToMessagesTableModel0(SpiderTaskResult result) {
-        if ( ! EventQueue.isDispatchThread()) {
+        if (!EventQueue.isDispatchThread()) {
             throw new IllegalStateException("Can only be called on AWT Thread, not " + Thread.currentThread().getName());
         }
-        if ( cleared ) {
+        if (cleared) {
             return;
         }
         if (messagesTableModel == null) {
@@ -387,17 +388,14 @@ public class SpiderScan implements ScanListenner, SpiderListener, GenericScanner
 
     @Override
     public void spiderComplete(boolean successful) {
-        lock.lock();
-        try {
+
+        withLock(() -> {
             state = State.FINISHED;
             SpiderEventPublisher.publishScanEvent(
                     ScanEventPublisher.SCAN_COMPLETED_EVENT, this.scanId);
-        } finally {
-            lock.unlock();
-        }
-        if (listener != null) {
-            listener.scanFinshed(this.getScanId(), this.getDisplayName());
-        }
+        });
+
+        listener.get().scanFinshed(this.getScanId(), this.getDisplayName());
     }
 
     @Override
@@ -407,9 +405,7 @@ public class SpiderScan implements ScanListenner, SpiderListener, GenericScanner
             SpiderEventPublisher.publishScanProgressEvent(scanId, percentageComplete);
         }
 
-        if (listener != null) {
-            listener.scanProgress(this.getScanId(), this.getDisplayName(), percentageComplete, 100);
-        }
+        listener.get().scanProgress(this.getScanId(), this.getDisplayName(), percentageComplete, 100);
     }
 
     @Override
@@ -482,7 +478,8 @@ public class SpiderScan implements ScanListenner, SpiderListener, GenericScanner
     }
 
     @Override
-    public void scanProgress(String host, int progress, int maximum) {}
+    public void scanProgress(String host, int progress, int maximum) {
+    }
 
     public TableModel getResultsTableModel() {
         return this.spiderThread.getResultsTableModel();
@@ -505,7 +502,7 @@ public class SpiderScan implements ScanListenner, SpiderListener, GenericScanner
     }
 
     public void setListener(ScanListenner2 listener) {
-        this.listener = listener;
+        this.listener.set(listener);
     }
 
     public void setCustomSpiderParsers(List<SpiderParser> customSpiderParsers) {
