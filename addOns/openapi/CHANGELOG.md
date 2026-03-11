@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Dependency update.
 
+### Fixed
+- Issue with data generation for arrays in OpenAPI 3.1 definitions (Issue 9261).
+
 ## [52] - 2026-02-11
 ### Changed
 - Enable Swagger Secret Detector Script Scan Rule, the JS Engine memory leak has been addressed (Issue 9230).

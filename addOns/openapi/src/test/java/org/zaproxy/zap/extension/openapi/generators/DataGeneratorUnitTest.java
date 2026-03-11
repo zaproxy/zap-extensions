@@ -98,6 +98,30 @@ class DataGeneratorUnitTest extends TestUtils {
         assertEquals("{\"data\":{}}", data);
     }
 
+    @Test
+    void shouldGenerateStringArray() throws IOException {
+        // Given
+        OpenAPI openAPI = parseResource("defn-with-query-params.yml");
+        Parameter parameter =
+                openAPI.getPaths().get("/string-array").getGet().getParameters().get(0);
+        // When
+        String data = generator.generate(parameter.getName(), parameter);
+        // Then
+        assertEquals("param", data);
+    }
+
+    @Test
+    void shouldGenerateArrayOfArrays() throws IOException {
+        // Given
+        OpenAPI openAPI = parseResource("defn-with-query-params.yml");
+        Parameter parameter =
+                openAPI.getPaths().get("/nested-array").getGet().getParameters().get(0);
+        // When
+        String data = generator.generate(parameter.getName(), parameter);
+        // Then
+        assertEquals("1.2", data);
+    }
+
     private OpenAPI parseResource(String fileName) throws IOException {
         ParseOptions options = new ParseOptions();
         options.setResolveFully(true);

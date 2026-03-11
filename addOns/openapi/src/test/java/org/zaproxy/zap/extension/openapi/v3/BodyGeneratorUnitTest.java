@@ -768,6 +768,80 @@ class BodyGeneratorUnitTest extends TestUtils {
                 request);
     }
 
+    @Test
+    void shouldGenerateBodyForOpenApi31WithObjectArray() throws IOException {
+        // Given
+        OpenAPI openAPI = parseResource("openapi_31_array_body.yaml");
+        // When
+        String request =
+                new RequestModelConverter()
+                        .convert(
+                                new OperationModel(
+                                        "/object-array",
+                                        openAPI.getPaths().get("/object-array").getPost(),
+                                        null),
+                                generators)
+                        .getBody();
+        // Then
+        assertEquals(
+                "[{\"name\":\"John Doe\",\"value\":10},{\"name\":\"John Doe\",\"value\":10}]",
+                request);
+    }
+
+    @Test
+    void shouldGenerateBodyForOpenApi31WithStringArray() throws IOException {
+        // Given
+        OpenAPI openAPI = parseResource("openapi_31_array_body.yaml");
+        // When
+        String request =
+                new RequestModelConverter()
+                        .convert(
+                                new OperationModel(
+                                        "/string-array",
+                                        openAPI.getPaths().get("/string-array").getPost(),
+                                        null),
+                                generators)
+                        .getBody();
+        // Then
+        assertEquals("[\"John Doe\",\"John Doe\"]", request);
+    }
+
+    @Test
+    void shouldGenerateBodyForOpenApi31WithNestedArray() throws IOException {
+        // Given
+        OpenAPI openAPI = parseResource("openapi_31_array_body.yaml");
+        // When
+        String request =
+                new RequestModelConverter()
+                        .convert(
+                                new OperationModel(
+                                        "/nested-array",
+                                        openAPI.getPaths().get("/nested-array").getPost(),
+                                        null),
+                                generators)
+                        .getBody();
+        // Then
+        assertEquals("[[1.2,1.2],[1.2,1.2]]", request);
+    }
+
+    @Test
+    void shouldGenerateBodyForOpenApi31WithNestedArrayProperty() throws IOException {
+        // Given
+        OpenAPI openAPI = parseResource("openapi_31_array_body.yaml");
+        // When
+        String request =
+                new RequestModelConverter()
+                        .convert(
+                                new OperationModel(
+                                        "/nested-array-property",
+                                        openAPI.getPaths().get("/nested-array-property").getPost(),
+                                        null),
+                                generators)
+                        .getBody();
+        // Then
+        assertEquals("{\"items\":[[1.2]]}", request);
+    }
+
     private OpenAPI parseResource(String fileName) throws IOException {
         ParseOptions options = new ParseOptions();
         options.setResolveFully(true);

@@ -19,18 +19,13 @@
  */
 package org.zaproxy.zap.extension.openapi.generators;
 
-import io.swagger.v3.oas.models.media.ArraySchema;
+import io.swagger.v3.oas.models.media.Schema;
+import org.zaproxy.zap.extension.openapi.OpenApiSchemaTypeUtils;
 
 public class ArrayGenerator {
 
     private DataGenerator dataGenerator;
 
-    /**
-     * csv - comma separated values foo,bar. ssv - space separated values foo bar. tsv - tab
-     * separated values foo\tbar. pipes - pipe separated values foo|bar. multi - corresponds to
-     * multiple parameter instances instead of multiple values for a single instance
-     * foo=bar&foo=baz. This is valid only for parameters in "query" or "formData".
-     */
     private static final String ARRAY_BEGIN = "[";
 
     private static final String ARRAY_END = "]";
@@ -39,24 +34,20 @@ public class ArrayGenerator {
         this.dataGenerator = dataGenerator;
     }
 
-    public String generate(
-            String name, ArraySchema property, String collectionType, boolean isPath) {
-
-        if (property == null) {
+    public String generate(String name, Schema<?> property, boolean isParam) {
+        if (property == null || property.getItems() == null) {
             return "";
         }
-        if (collectionType.isEmpty()) {
-            collectionType = "csv";
+        String value =
+                OpenApiSchemaTypeUtils.isArray(property.getItems())
+                        ? generate(name, property.getItems(), isParam)
+                        : dataGenerator.generateValue(name, property.getItems(), isParam);
+        if (isParam) {
+            // params are not expected to be enclosed in brackets
+            // at the moment, we only support the default serialization methods
+            // ref: https://swagger.io/docs/specification/v3_0/serialization/#path-parameters
+            return value;
         }
-        String valueType = property.getItems().getType();
-        if (dataGenerator.isArray(valueType)) {
-            if (property.getItems() instanceof ArraySchema) {
-                return generate(name, (ArraySchema) property.getItems(), collectionType, isPath);
-            } else {
-                return "";
-            }
-        }
-        String value = dataGenerator.generateValue(name, property.getItems(), isPath);
         return ARRAY_BEGIN + value + ARRAY_END;
     }
 }
