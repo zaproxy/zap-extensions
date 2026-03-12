@@ -24,6 +24,10 @@ Please be aware that you should only attack applications that you have been spec
 
 This is the URL of the application you wish to attack, starting with 'http://' or 'https://'.<br>
 ZAP must be able to access this URL for the attack to proceed.
+<br><br>
+ZAP will crawl from the URL specified but will remove a trailing slash from the URL before starting to attack.
+This is because https://example.com/test/ is treated as a leaf node internally, which would mean that ZAP would not attack
+URLs like https://example.com/test/1 etc.
 
 <h3>Use traditional spider</h3>
 
