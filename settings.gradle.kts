@@ -13,7 +13,8 @@ include(addOnsProjectName)
 include("testutils")
 
 // Keep the add-ons in alphabetic order.
-var addOns =
+// httpsInfo requires Java 21+ (DeepViolet 5.9).
+val addOns =
     listOf(
         "accessControl",
         "alertFilters",
@@ -55,6 +56,7 @@ var addOns =
         "groovy",
         "grpc",
         "highlighter",
+        "httpsInfo",
         "imagelocationscanner",
         "insights",
         "invoke",
@@ -110,7 +112,13 @@ var addOns =
         "websocket",
         "webuipoc",
         "zest",
-    )
+    ).let { list ->
+        if (org.gradle.api.JavaVersion.current() >= org.gradle.api.JavaVersion.VERSION_21) {
+            list
+        } else {
+            list.filter { it != "httpsInfo" }
+        }
+    }
 
 addOns.forEach { include("$addOnsProjectName:$it") }
 
