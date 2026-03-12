@@ -24,6 +24,10 @@
 
 これは攻撃したいアプリケーションのURLで、「http://」または「https://」から始まります。<br>
 攻撃を続行するには、ZAPがこのURLにアクセスできる必要があります。
+<br><br>
+ZAP will crawl from the URL specified but will remove a trailing slash from the URL before starting to attack.
+This is because https://example.com/test/ is treated as a leaf node internally, which would mean that ZAP would not attack
+URLs like https://example.com/test/1 etc.
 
 <h3>従来のスパイダーを使用</h3>
 
