@@ -508,6 +508,15 @@
 											class="indent2">Evidence</td>
 										<td th:text="${instance.userObject.evidence}" width="80%">Evidence</td>
 									</tr>
+									<tr>
+										<td th:text="#{report.alerts.detail.otherinfo}" width="20%"
+											class="indent2">Other Info</td>
+										<td width="80%"><th:block
+												th:each="other, state: ${#strings.arraySplit(instance.userObject.otherinfo != null ? instance.userObject.otherinfo : '', '\n')}">
+												<div th:text="${other}">Other Info</div>
+												<br th:if="${!state.last}" />
+											</th:block></td>
+									</tr>
 									<tr data-th-if="${instance.userObject.message}">
 										<td width="20%" class="indent2">
 											<div th:id="${'alert-' + instance.userObject.alertId}">

@@ -4,8 +4,12 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- "Other Info" to the modern HTML report
+
 ### Changed
 - Maintenance changes.
+- "Other Info" sections of the HTML reports to split the text on newlines.
 
 ## [0.43.0] - 2025-12-15
 ### Added

@@ -237,7 +237,8 @@ class ExtensionReportsXmlUnitTest extends TestUtils {
         assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("#text"))); // Filler
         i++;
         assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("otherinfo")));
-        String otherinfoString = isXmlPlus ? "Test 'Other\\" : "<p>Test 'Other\\</p>";
+        String otherinfoString =
+                isXmlPlus ? "Test 'Other\\\nSecond line" : "<p>Test 'Other\\</p><p>Second line</p>";
         assertThat(alertItemNodes.item(i).getTextContent(), is(equalTo(otherinfoString)));
         i++;
         assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("#text"))); // Filler
@@ -314,7 +315,7 @@ class ExtensionReportsXmlUnitTest extends TestUtils {
         assertThat(instanceChildNodes.item(y).getNodeName(), is(equalTo("#text"))); // Filler
         y++;
         assertThat(instanceChildNodes.item(y).getNodeName(), is(equalTo("otherinfo")));
-        String otherInfo = i == 1 ? "Test 'Other\\" : "Test Another 'Other\\";
+        String otherInfo = i == 1 ? "Test 'Other\\\nSecond line" : "Test Another 'Other\\";
         assertThat(instanceChildNodes.item(y).getTextContent(), is(equalTo(otherInfo)));
         y++;
         if (isXmlPlus) {
