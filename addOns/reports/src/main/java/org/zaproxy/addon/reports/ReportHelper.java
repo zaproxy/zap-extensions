@@ -19,7 +19,6 @@
  */
 package org.zaproxy.addon.reports;
 
-import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -305,7 +304,7 @@ public class ReportHelper {
     }
 
     /**
-     * Returns the nodeName for the alert. This will return null for versions before ZAP 2.17.
+     * Returns the nodeName for the alert.
      *
      * @since 0.42.0
      */
@@ -313,21 +312,11 @@ public class ReportHelper {
         if (alert == null) {
             return null;
         }
-        try {
-            Method method = alert.getClass().getMethod("getNodeName");
-            Object ret = method.invoke(alert);
-            if (ret != null && ret instanceof String str) {
-                return str;
-            }
-        } catch (Exception e) {
-            // Ignore
-        }
-        return null;
+        return alert.getNodeName();
     }
 
     /**
-     * Returns whether the alert node is systemic. This will return false for versions before ZAP
-     * 2.17.
+     * Returns whether the alert node is systemic.
      *
      * @since 0.42.0
      */
@@ -335,21 +324,11 @@ public class ReportHelper {
         if (node == null) {
             return false;
         }
-        try {
-            Method method = node.getClass().getMethod("isSystemic");
-            Object ret = method.invoke(node);
-            if (ret != null && ret instanceof Boolean bool) {
-                return bool;
-            }
-        } catch (Exception e) {
-            // Ignore
-        }
-        return false;
+        return node.isSystemic();
     }
 
     /**
-     * Returns whether the alert node is systemic. This will return false for versions before ZAP
-     * 2.17.
+     * Returns whether the alert node is systemic.
      *
      * @since 0.42.0
      */
@@ -357,15 +336,6 @@ public class ReportHelper {
         if (alert == null) {
             return false;
         }
-        try {
-            Method method = alert.getClass().getMethod("isSystemic");
-            Object ret = method.invoke(alert);
-            if (ret != null && ret instanceof Boolean bool) {
-                return bool;
-            }
-        } catch (Exception e) {
-            // Ignore
-        }
-        return false;
+        return alert.isSystemic();
     }
 }
