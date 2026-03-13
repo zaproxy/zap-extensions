@@ -23,7 +23,8 @@
 									<param>Test Param</param>
 									<attack>Test &quot;Attack\&quot;</attack>
 									<evidence>Test &lt;p&gt;Evidence</evidence>
-									<otherinfo>Test &apos;Other\</otherinfo>
+									<otherinfo>Test &apos;Other\
+Second line</otherinfo>
 									<requestheader>GET http://example.com/example_3 HTTP/1.1
 host: example.com
 user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:92.0) Gecko/20100101 Firefox/92.0
@@ -65,7 +66,8 @@ cache-control: no-cache
 						<count>2</count>
 						<systemic>false</systemic>
 						<solution>Test Solution</solution>
-						<otherinfo>Test &apos;Other\</otherinfo>
+						<otherinfo>Test &apos;Other\
+Second line</otherinfo>
 						<reference>Test Reference</reference>
 						<cweid>123</cweid>
 						<wascid>456</wascid>

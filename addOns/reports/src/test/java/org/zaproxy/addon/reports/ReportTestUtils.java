@@ -57,7 +57,7 @@ public class ReportTestUtils {
                 uriStr,
                 "Test Param",
                 "Test \"Attack\\\"",
-                "Test " + prefix + "'Other\\",
+                "Test " + prefix + "'Other\\" + (prefix.isEmpty() ? "\nSecond line" : ""),
                 "Test Solution",
                 "Test Reference",
                 "Test <p>Evidence",

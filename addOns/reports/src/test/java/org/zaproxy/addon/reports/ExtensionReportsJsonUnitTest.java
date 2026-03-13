@@ -108,7 +108,7 @@ class ExtensionReportsJsonUnitTest extends TestUtils {
                 alerts.getJSONObject(0).getString("solution"), is(equalTo("<p>Test Solution</p>")));
         assertThat(
                 alerts.getJSONObject(0).getString("otherinfo"),
-                is(equalTo("<p>Test 'Other\\</p>")));
+                is(equalTo("<p>Test 'Other\\</p><p>Second line</p>")));
         assertThat(
                 alerts.getJSONObject(0).getString("reference"),
                 is(equalTo("<p>Test Reference</p>")));
@@ -133,7 +133,7 @@ class ExtensionReportsJsonUnitTest extends TestUtils {
                 instances.getJSONObject(i).getString("attack"), is(equalTo("Test \"Attack\\\"")));
         assertThat(
                 instances.getJSONObject(i).getString("evidence"), is(equalTo("Test <p>Evidence")));
-        String otherInfo = i == 0 ? "Test 'Other\\" : "Test Another 'Other\\";
+        String otherInfo = i == 0 ? "Test 'Other\\\nSecond line" : "Test Another 'Other\\";
         assertThat(instances.getJSONObject(i).getString("otherinfo"), is(equalTo(otherInfo)));
     }
 

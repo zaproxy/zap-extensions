@@ -23,7 +23,8 @@
 									<param>Test Param</param>
 									<attack>Test &quot;Attack\&quot;</attack>
 									<evidence>Test &lt;p&gt;Evidence</evidence>
-									<otherinfo>Test &apos;Other\</otherinfo>
+									<otherinfo>Test &apos;Other\
+Second line</otherinfo>
 								</instance>
 							
 							
@@ -41,7 +42,7 @@
 						<count>2</count>
 						<systemic>false</systemic>
 						<solution>&lt;p&gt;Test Solution&lt;/p&gt;</solution>
-						<otherinfo>&lt;p&gt;Test &apos;Other\&lt;/p&gt;</otherinfo>
+						<otherinfo>&lt;p&gt;Test &apos;Other\&lt;/p&gt;&lt;p&gt;Second line&lt;/p&gt;</otherinfo>
 						<reference>&lt;p&gt;Test Reference&lt;/p&gt;</reference>
 						<cweid>123</cweid>
 						<wascid>456</wascid>
