@@ -21,13 +21,13 @@ package org.zaproxy.addon.oast.services.boast;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
@@ -135,6 +135,6 @@ public class BoastServer {
         Random random = ThreadLocalRandom.current();
         byte[] r = new byte[32];
         random.nextBytes(r);
-        return Base64.encodeBase64String(r);
+        return Base64.getEncoder().encodeToString(r);
     }
 }

@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Added an optional LLM extension for reviewing alerts.
 
+### Changed
+- Maintenance changes.
+
 ## [26] - 2025-12-15
 ### Changed
 - Update the automation framework template and help to include missing fields (`ruleName` and `methods`).
