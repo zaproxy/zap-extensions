@@ -93,6 +93,17 @@ A right click menu is provided (where relevant) in the edit dialogs to allow you
 <H2>Authentication Scripts</H2>
 Authentication scripts can use a custom ZAP variable, called <code>TOTP</code>, to send a value to an input field with a TOTP code generated from the user's credentials TOTP data.
 
+<H2>Import/Export Integration</H2>
+When the <a href="https://www.zaproxy.org/docs/desktop/addons/import-export/">Import/Export</a> add-on is installed, Zest adds the following functionality:
+
+<H3>Import Zest Script</H3>
+An option to import messages from a Zest script file is available via the 'Import' menu ('Import Zest Script...').
+The HTTP requests (and responses, if present) from the script are added to the Sites tree and History panel without replaying them.
+
+<H3>Export as Zest Script</H3>
+The Export menu and Automation Framework support exporting the history as a Zest script file.
+This creates a Zest script containing the HTTP requests (and responses) from the selected source (History or All).
+
 <H2>External links</H2>
 <table>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>

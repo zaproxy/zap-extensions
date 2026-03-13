@@ -53,7 +53,7 @@ public class Exporter {
 
     private final Model model;
 
-    Exporter(Model model) {
+    public Exporter(Model model) {
         this.model = model;
     }
 
@@ -100,7 +100,15 @@ public class Exporter {
                             Constant.messages.getString(
                                     "exim.exporter.error.type.messages", options.getSource()));
                 } else {
-                    exportMessagesImpl(writer, result, options);
+                    ExporterType exporterType = createExporterType(options);
+                    if (exporterType != null) {
+                        exportMessagesImpl(writer, result, options);
+                    } else {
+                        result.addError(
+                                Constant.messages.getString(
+                                        "exim.exporter.error.type.unavailable",
+                                        options.getType().getId()));
+                    }
                 }
             }
 
@@ -177,15 +185,19 @@ public class Exporter {
         return true;
     }
 
-    private static ExporterType createExporterType(ExporterOptions options) {
-        switch (options.getType()) {
-            case URL:
-                return UrlExporter.INSTANCE;
-
-            case HAR:
-            default:
-                return new HarExporter();
+    private ExporterType createExporterType(ExporterOptions options) {
+        String typeId = options.getType().getId();
+        if (Type.URL.getId().equals(typeId)) {
+            return UrlExporter.INSTANCE;
         }
+        if (Type.HAR.getId().equals(typeId)) {
+            return new HarExporter();
+        }
+        if (Type.YAML.getId().equals(typeId)) {
+            return null;
+        }
+        ExporterType registered = ExporterTypeRegistry.getExporterType(typeId);
+        return registered;
     }
 
     private static int[] getHistoryTypes(ExporterOptions options) {

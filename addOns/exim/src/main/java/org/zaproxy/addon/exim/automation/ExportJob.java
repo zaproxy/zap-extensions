@@ -84,18 +84,24 @@ public class ExportJob extends AutomationJob {
         // Check for invalid combinations
         if (Source.SITESTREE.equals(this.parameters.getSource())
                 && !Type.YAML.equals(this.parameters.getType())) {
+            String typeName =
+                    Constant.messages.getString(
+                            "exim.exporter.type." + this.parameters.getType().getId());
             progress.error(
                     Constant.messages.getString(
                             "exim.automation.export.error.sitestree.type",
                             this.getName(),
-                            this.parameters.getType()));
+                            typeName));
         } else if (!Source.SITESTREE.equals(this.parameters.getSource())
                 && Type.YAML.equals(this.parameters.getType())) {
+            String sourceName =
+                    Constant.messages.getString(
+                            "exim.exporter.source." + this.parameters.getSource().getId());
             progress.error(
                     Constant.messages.getString(
                             "exim.automation.export.error.messages.type",
                             this.getName(),
-                            this.parameters.getSource()));
+                            sourceName));
         }
     }
 
@@ -246,5 +252,15 @@ public class ExportJob extends AutomationJob {
         private Type type = Type.HAR;
         private Source source = Source.HISTORY;
         private String fileName;
+
+        /** For automation framework YAML parsing - converts string type ID to Type. */
+        public void setType(String typeId) {
+            this.type = Type.fromString(typeId);
+        }
+
+        /** Required - Lombok does not generate when setType(String) exists. */
+        public void setType(Type type) {
+            this.type = type;
+        }
     }
 }

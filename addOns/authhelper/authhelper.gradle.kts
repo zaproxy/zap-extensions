@@ -124,4 +124,5 @@ dependencies {
 
     testImplementation(libs.test.selenium.jupiter)
     testImplementation(project(":testutils"))
+    testRuntimeOnly("commons-codec:commons-codec:1.20.0")
 }

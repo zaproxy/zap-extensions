@@ -44,6 +44,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.MockSettings;
 import org.mockito.quality.Strictness;
@@ -287,10 +288,9 @@ class ExporterUnitTest extends TestUtils {
     }
 
     @ParameterizedTest
-    @EnumSource(
-            value = Type.class,
-            names = {"HAR", "URL"})
-    void shouldIncludeMessageInContext(Type type) throws Exception {
+    @CsvSource({"HAR", "URL"})
+    void shouldIncludeMessageInContext(String typeId) throws Exception {
+        Type type = Type.fromString(typeId);
         // Given
         optionsWithType(type);
         databaseWithHistoryMessage();
@@ -308,10 +308,9 @@ class ExporterUnitTest extends TestUtils {
     }
 
     @ParameterizedTest
-    @EnumSource(
-            value = Type.class,
-            names = {"HAR", "URL"})
-    void shouldNotIncludeMessageNotInContext(Type type) throws Exception {
+    @CsvSource({"HAR", "URL"})
+    void shouldNotIncludeMessageNotInContext(String typeId) throws Exception {
+        Type type = Type.fromString(typeId);
         // Given
         optionsWithType(type);
         databaseWithHistoryMessage();
@@ -329,10 +328,9 @@ class ExporterUnitTest extends TestUtils {
     }
 
     @ParameterizedTest
-    @EnumSource(
-            value = Type.class,
-            names = {"HAR", "URL"})
-    void shouldFailSiteTreeExportWithNonYamlFormat(Type type) throws Exception {
+    @CsvSource({"HAR", "URL"})
+    void shouldFailSiteTreeExportWithNonYamlFormat(String typeId) throws Exception {
+        Type type = Type.fromString(typeId);
         // Given
         optionsWithType(type);
         optionsWithSource(Source.SITESTREE);

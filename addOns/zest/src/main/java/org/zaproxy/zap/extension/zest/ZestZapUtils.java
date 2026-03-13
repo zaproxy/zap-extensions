@@ -1034,7 +1034,11 @@ public class ZestZapUtils {
             try {
                 msg.setResponseHeader(new HttpResponseHeader(response.getHeaders()));
             } catch (Exception e) {
-                LOGGER.error(e.getMessage(), e);
+                LOGGER.error(
+                        "Failed to get headers {} from {}",
+                        e.getMessage(),
+                        response.getHeaders(),
+                        e);
             }
             msg.setResponseBody(response.getBody());
             msg.setTimeElapsedMillis((int) response.getResponseTimeInMs());

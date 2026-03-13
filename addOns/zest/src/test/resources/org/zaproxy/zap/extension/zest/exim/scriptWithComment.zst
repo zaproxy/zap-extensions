@@ -1,0 +1,25 @@
+{
+  "about": "Zest script with comment and request",
+  "zestVersion": "0.3",
+  "title": "With Comment",
+  "type": "StandAlone",
+  "statements": [
+    {
+      "comment": "A comment",
+      "index": 1,
+      "elementType": "ZestComment"
+    },
+    {
+      "url": "http://test.example.com/path",
+      "method": "POST",
+      "headers": "Content-Type: application/x-www-form-urlencoded",
+      "data": "key=value",
+      "assertions": [],
+      "followRedirects": false,
+      "index": 2,
+      "elementType": "ZestRequest"
+    }
+  ],
+  "index": 0,
+  "elementType": "ZestScript"
+}

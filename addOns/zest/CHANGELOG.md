@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Internal support for creating a single runnable chain script from multiple Zest scripts.
+- Support for import and export.
 
 ## [48.12.0] - 2026-02-13
 ### Added

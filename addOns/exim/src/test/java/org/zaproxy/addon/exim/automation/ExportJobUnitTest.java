@@ -45,6 +45,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.quality.Strictness;
 import org.parosproxy.paros.model.Model;
@@ -217,10 +218,9 @@ class ExportJobUnitTest extends TestUtils {
     }
 
     @ParameterizedTest
-    @EnumSource(
-            value = Type.class,
-            names = {"HAR", "URL"})
-    void shouldReportErrorSiteTreeExportWithNonYamlFormat(Type type) {
+    @CsvSource({"har", "url"})
+    void shouldReportErrorSiteTreeExportWithNonYamlFormat(String typeId) {
+        Type type = Type.fromString(typeId);
         // Given
         AutomationPlan plan = new AutomationPlan();
         AutomationProgress progress = plan.getProgress();
