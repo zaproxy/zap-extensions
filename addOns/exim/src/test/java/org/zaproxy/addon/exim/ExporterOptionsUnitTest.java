@@ -37,9 +37,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.parosproxy.paros.model.Model;
 import org.zaproxy.addon.exim.ExporterOptions.Builder;
 import org.zaproxy.addon.exim.ExporterOptions.Source;
-import org.zaproxy.addon.exim.ExporterOptions.Type;
+import org.zaproxy.addon.exim.har.HarExporter;
+import org.zaproxy.addon.exim.sites.YamlExporter;
+import org.zaproxy.addon.exim.urls.UrlExporter;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.testutils.TestUtils;
 
@@ -51,6 +55,8 @@ class ExporterOptionsUnitTest extends TestUtils {
     @BeforeAll
     static void setupMessages() {
         mockMessages(new ExtensionExim());
+        ExtensionExim extension = new ExtensionExim();
+        extension.initModel(mock(Model.class));
     }
 
     @BeforeEach
@@ -75,7 +81,7 @@ class ExporterOptionsUnitTest extends TestUtils {
         ExporterOptions options = builder.setOutputFile(outputFile).build();
         // Then
         assertThat(options.getContext(), is(nullValue()));
-        assertThat(options.getType(), is(equalTo(Type.HAR)));
+        assertThat(options.getType(), is(equalTo(HarExporter.ID)));
         assertThat(options.getSource(), is(equalTo(Source.HISTORY)));
         assertThat(options.getOutputFile(), is(equalTo(outputFile)));
     }
@@ -92,14 +98,14 @@ class ExporterOptionsUnitTest extends TestUtils {
     }
 
     @ParameterizedTest
-    @EnumSource(value = Type.class)
-    void shouldSetType(Type type) {
+    @ValueSource(strings = {HarExporter.ID, UrlExporter.ID, YamlExporter.ID})
+    void shouldSetType(String typeId) {
         // Given
         ExporterOptions.Builder builder = builderWithOutputFile();
         // When
-        ExporterOptions options = builder.setType(type).build();
+        ExporterOptions options = builder.setType(typeId).build();
         // Then
-        assertThat(options.getType(), is(equalTo(type)));
+        assertThat(options.getType(), is(equalTo(typeId)));
     }
 
     @Test
@@ -135,34 +141,43 @@ class ExporterOptionsUnitTest extends TestUtils {
         return ExporterOptions.builder().setOutputFile(outputFile);
     }
 
-    /** Unit test for {@link ExporterOptions.Type}. */
+    /** Unit test for {@link ExporterType} via Exporter. */
     @Nested
-    class TypeUnitTest {
+    class ExporterTypeUnitTest {
 
         @ParameterizedTest
-        @EnumSource(value = Type.class)
-        void shouldHaveToStringRepresentation(Type type) {
+        @ValueSource(strings = {HarExporter.ID, UrlExporter.ID, YamlExporter.ID})
+        void shouldHaveToStringRepresentation(String typeId) {
+            ExporterType type = Exporter.fromString(typeId);
+            assertThat(type, is(notNullValue()));
             assertThat(type.toString(), is(notNullValue()));
         }
 
         @ParameterizedTest
-        @CsvSource({"HAR, har", "URL, url"})
-        void shouldReturnId(Type type, String expectedId) {
+        @CsvSource({
+            HarExporter.ID + ", " + HarExporter.ID,
+            UrlExporter.ID + ", " + UrlExporter.ID,
+            YamlExporter.ID + ", " + YamlExporter.ID
+        })
+        void shouldReturnId(String typeId, String expectedId) {
+            ExporterType type = Exporter.fromString(typeId);
             assertThat(type.getId(), is(equalTo(expectedId)));
         }
 
         @ParameterizedTest
         @CsvSource({
-            ", HAR",
-            "'', HAR",
-            "Something, HAR",
-            "har, HAR",
-            "haR, HAR",
-            "url, URL",
-            "urL, URL"
+            ", har",
+            "'', har",
+            "Something, har",
+            "har, har",
+            "haR, har",
+            "url, url",
+            "urL, url",
+            "yaml, yaml",
+            "YAML, yaml"
         })
-        void shouldConvertFromString(String value, Type expectedType) {
-            assertThat(Type.fromString(value), is(equalTo(expectedType)));
+        void shouldConvertFromString(String value, String expectedId) {
+            assertThat(Exporter.fromString(value).getId(), is(equalTo(expectedId)));
         }
     }
 

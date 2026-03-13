@@ -50,7 +50,8 @@ class HarImporterTypeUnitTest {
         // Given
         Reader reader = reader("");
         // When / Then
-        IOException e = assertThrows(IOException.class, () -> importer.begin(reader));
+        IOException e =
+                assertThrows(IOException.class, () -> importer.importData(reader, msg -> {}));
         assertThat(e.getMessage(), is(equalTo("Unexpected token null, expected: START_OBJECT")));
     }
 
@@ -59,7 +60,8 @@ class HarImporterTypeUnitTest {
         // Given
         Reader reader = reader("{}");
         // When / Then
-        IOException e = assertThrows(IOException.class, () -> importer.begin(reader));
+        IOException e =
+                assertThrows(IOException.class, () -> importer.importData(reader, msg -> {}));
         assertThat(
                 e.getMessage(), is(equalTo("Unexpected token END_OBJECT, expected: FIELD_NAME")));
     }
@@ -69,7 +71,8 @@ class HarImporterTypeUnitTest {
         // Given
         Reader reader = reader("{\"not_log\":{}}");
         // When / Then
-        IOException e = assertThrows(IOException.class, () -> importer.begin(reader));
+        IOException e =
+                assertThrows(IOException.class, () -> importer.importData(reader, msg -> {}));
         assertThat(e.getMessage(), is(equalTo("Unexpected name not_log, expected: log")));
     }
 
@@ -78,7 +81,8 @@ class HarImporterTypeUnitTest {
         // Given
         Reader reader = reader("{\"log\":[]}");
         // When / Then
-        IOException e = assertThrows(IOException.class, () -> importer.begin(reader));
+        IOException e =
+                assertThrows(IOException.class, () -> importer.importData(reader, msg -> {}));
         assertThat(
                 e.getMessage(),
                 is(equalTo("Unexpected token START_ARRAY, expected: START_OBJECT")));
@@ -89,7 +93,8 @@ class HarImporterTypeUnitTest {
         // Given
         Reader reader = reader("{\"log\":{}}");
         // When / Then
-        IOException e = assertThrows(IOException.class, () -> importer.begin(reader));
+        IOException e =
+                assertThrows(IOException.class, () -> importer.importData(reader, msg -> {}));
         assertThat(e.getMessage(), is(equalTo("Failed to find entries property in HAR log.")));
     }
 
@@ -98,7 +103,8 @@ class HarImporterTypeUnitTest {
         // Given
         Reader reader = reader("{\"log\":{\"entries\":{}}}");
         // When / Then
-        IOException e = assertThrows(IOException.class, () -> importer.begin(reader));
+        IOException e =
+                assertThrows(IOException.class, () -> importer.importData(reader, msg -> {}));
         assertThat(
                 e.getMessage(),
                 is(equalTo("Unexpected token START_OBJECT, expected: START_ARRAY")));
@@ -109,14 +115,6 @@ class HarImporterTypeUnitTest {
         // Given
         Reader reader = reader("{\"log\":{\"entries\":[]}}");
         // When / Then
-        assertDoesNotThrow(() -> importer.begin(reader));
-    }
-
-    @Test
-    void shouldNotThrowWhenReadingEnd() {
-        // Given
-        Reader reader = reader("…");
-        // When / Then
-        assertDoesNotThrow(() -> importer.end(reader));
+        assertDoesNotThrow(() -> importer.importData(reader, msg -> {}));
     }
 }

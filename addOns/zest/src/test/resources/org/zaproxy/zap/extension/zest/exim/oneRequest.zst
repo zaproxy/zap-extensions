@@ -1,0 +1,29 @@
+{
+  "about": "Zest script for unit test",
+  "zestVersion": "0.3",
+  "title": "Test Script",
+  "description": "",
+  "prefix": "",
+  "type": "StandAlone",
+  "parameters": {
+    "tokenStart": "{{",
+    "tokenEnd": "}}",
+    "tokens": {},
+    "elementType": "ZestVariables"
+  },
+  "statements": [
+    {
+      "url": "http://example.com/",
+      "method": "GET",
+      "headers": "Host: example.com",
+      "data": "",
+      "assertions": [],
+      "followRedirects": true,
+      "index": 1,
+      "elementType": "ZestRequest"
+    }
+  ],
+  "authentication": [],
+  "index": 0,
+  "elementType": "ZestScript"
+}

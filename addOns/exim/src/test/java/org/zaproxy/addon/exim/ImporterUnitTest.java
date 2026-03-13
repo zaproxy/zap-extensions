@@ -46,7 +46,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.quality.Strictness;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.addon.exim.ImporterOptions.Type;
+import org.zaproxy.addon.exim.har.HarImporterType;
 import org.zaproxy.zap.extension.stats.InMemoryStats;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.testutils.TestUtils;
@@ -66,6 +66,8 @@ class ImporterUnitTest extends TestUtils {
     @BeforeAll
     static void setupMessages() {
         mockMessages(new ExtensionExim());
+        ExtensionExim extension = new ExtensionExim();
+        extension.init();
     }
 
     @BeforeEach
@@ -74,7 +76,7 @@ class ImporterUnitTest extends TestUtils {
         inputFile = dir.resolve("inputfile");
 
         options = mock(ImporterOptions.class, withSettings().strictness(Strictness.LENIENT));
-        optionsWithType(Type.HAR);
+        optionsWithType(HarImporterType.ID);
         given(options.getInputFile()).willReturn(inputFile);
         importedMessages = new ArrayList<>();
         given(options.getMessageHandler()).willReturn(this::importedMessage);
@@ -94,14 +96,14 @@ class ImporterUnitTest extends TestUtils {
         Stats.removeListener(stats);
     }
 
-    private void optionsWithType(Type type) {
+    private void optionsWithType(String type) {
         given(options.getType()).willReturn(type);
     }
 
     @Test
     void shouldNotImportAnythingIfEmptyHar() throws Exception {
         // Given
-        optionsWithType(Type.HAR);
+        optionsWithType(HarImporterType.ID);
         inputFileWith(
                 "{\n"
                         + "  \"log\" : {\n"
@@ -128,7 +130,7 @@ class ImporterUnitTest extends TestUtils {
     @Test
     void shouldImportFromHar() throws Exception {
         // Given
-        optionsWithType(Type.HAR);
+        optionsWithType(HarImporterType.ID);
         inputFileWith(
                 "{\n"
                         + "  \"log\" : {\n"
@@ -160,7 +162,12 @@ class ImporterUnitTest extends TestUtils {
     private void assertCount(ImporterResult result, int count) {
         assertThat(result.getCount(), is(equalTo(count)));
         assertThat(
-                stats.getStat("stats.exim.importer." + options.getType().getId() + ".count"),
+                stats.getStat(
+                        "stats.exim.importer."
+                                + (options.getType() != null
+                                        ? options.getType().toLowerCase()
+                                        : HarImporterType.ID)
+                                + ".count"),
                 is(equalTo((long) count)));
     }
 
@@ -191,7 +198,7 @@ class ImporterUnitTest extends TestUtils {
     @Test
     void shouldIncludeMessageInContext() throws Exception {
         // Given
-        optionsWithType(Type.HAR);
+        optionsWithType(HarImporterType.ID);
         inputFileWith(
                 "{\n"
                         + "  \"log\" : {\n"
@@ -223,7 +230,7 @@ class ImporterUnitTest extends TestUtils {
     @Test
     void shouldNotIncludeMessageNotInContext() throws Exception {
         // Given
-        optionsWithType(Type.HAR);
+        optionsWithType(HarImporterType.ID);
         inputFileWith(
                 "{\n"
                         + "  \"log\" : {\n"

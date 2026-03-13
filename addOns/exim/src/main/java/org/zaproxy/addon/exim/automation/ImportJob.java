@@ -30,15 +30,27 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.extension.history.ExtensionHistory;
+import org.parosproxy.paros.model.HistoryReference;
+import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.automation.AutomationData;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
+import org.zaproxy.addon.automation.AutomationJobException;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.jobs.JobData;
 import org.zaproxy.addon.automation.jobs.JobUtils;
-import org.zaproxy.addon.exim.har.HarImporter;
+import org.zaproxy.addon.exim.ExtensionExim;
+import org.zaproxy.addon.exim.Importer;
+import org.zaproxy.addon.exim.ImporterOptions;
+import org.zaproxy.addon.exim.ImporterResult;
+import org.zaproxy.addon.exim.ImporterType;
 import org.zaproxy.addon.exim.log.LogsImporter;
+import org.zaproxy.addon.exim.urls.UrlExporter;
 import org.zaproxy.addon.exim.urls.UrlsImporter;
+import org.zaproxy.zap.utils.Stats;
+import org.zaproxy.zap.utils.ThreadUtils;
 
 public class ImportJob extends AutomationJob {
 
@@ -48,11 +60,24 @@ public class ImportJob extends AutomationJob {
     private static final String PARAM_TYPE = "type";
     private static final String PARAM_FILE_NAME = "fileName";
 
+    /** Import type ID for ModSecurity2 logs. */
+    static final String MODSEC2_TYPE = "modsec2";
+
+    /** Import type ID for ZAP messages import. */
+    static final String ZAP_MESSAGES_TYPE = "zap_messages";
+
+    private final ExtensionExim extensionExim;
     private Parameters parameters = new Parameters();
     private Data data;
 
-    public ImportJob() {
+    public ImportJob(ExtensionExim extensionExim) {
+        this.extensionExim = extensionExim;
         this.data = new Data(this, parameters);
+    }
+
+    @Override
+    public AutomationJob newJob() throws AutomationJobException {
+        return new ImportJob(extensionExim);
     }
 
     @Override
@@ -91,16 +116,24 @@ public class ImportJob extends AutomationJob {
         if (!StringUtils.isEmpty(fileName)) {
             File file = JobUtils.getFile(fileName, getPlan());
             if (file.exists() && file.canRead()) {
-                if (type.equalsIgnoreCase(TypeOption.HAR.name())) {
-                    HarImporter harImporter = new HarImporter(file);
-                    if (!harImporter.isSuccess()) {
-                        progress.error(
-                                Constant.messages.getString(
-                                        "exim.automation.import.error",
-                                        file.getAbsolutePath(),
-                                        TypeOption.HAR));
+                ImporterType importerType = Importer.getImporterType(type);
+                if (importerType != null) {
+                    ImporterResult result =
+                            extensionExim
+                                    .getImporter()
+                                    .apply(
+                                            ImporterOptions.builder()
+                                                    .setType(type)
+                                                    .setInputFile(file.toPath())
+                                                    .setMessageHandler(
+                                                            msg -> persistMessage(progress, msg))
+                                                    .build());
+                    if (!result.getErrors().isEmpty()) {
+                        for (String error : result.getErrors()) {
+                            progress.error(error);
+                        }
                     }
-                } else if (type.equalsIgnoreCase(TypeOption.MODSEC2.name())) {
+                } else if (MODSEC2_TYPE.equalsIgnoreCase(type)) {
                     LogsImporter logsImporter =
                             new LogsImporter(file, LogsImporter.LogType.MOD_SECURITY_2);
                     if (!logsImporter.isSuccess()) {
@@ -108,25 +141,28 @@ public class ImportJob extends AutomationJob {
                                 Constant.messages.getString(
                                         "exim.automation.import.error",
                                         file.getAbsolutePath(),
-                                        TypeOption.MODSEC2));
+                                        Constant.messages.getString(
+                                                "exim.options.value.type.modsec2")));
                     }
-                } else if (type.equalsIgnoreCase(TypeOption.URL.name())) {
+                } else if (UrlExporter.ID.equalsIgnoreCase(type)) {
                     UrlsImporter urlsImporter = new UrlsImporter(file);
                     if (!urlsImporter.isSuccess()) {
                         progress.error(
                                 Constant.messages.getString(
                                         "exim.automation.import.error",
                                         file.getAbsolutePath(),
-                                        TypeOption.URL));
+                                        Constant.messages.getString(
+                                                "exim.options.value.type.url")));
                     }
-                } else if (type.equalsIgnoreCase(TypeOption.ZAP_MESSAGES.name())) {
+                } else if (ZAP_MESSAGES_TYPE.equalsIgnoreCase(type)) {
                     LogsImporter zapImporter = new LogsImporter(file, LogsImporter.LogType.ZAP);
                     if (!zapImporter.isSuccess()) {
                         progress.error(
                                 Constant.messages.getString(
                                         "exim.automation.import.error",
                                         file.getAbsolutePath(),
-                                        TypeOption.ZAP_MESSAGES));
+                                        Constant.messages.getString(
+                                                "exim.options.value.type.zapmessages")));
                     }
                 } else {
                     progress.error(
@@ -149,6 +185,36 @@ public class ImportJob extends AutomationJob {
     @Override
     public String getTemplateDataMax() {
         return getResourceAsString(this.getType() + "-max.yaml");
+    }
+
+    private void persistMessage(AutomationProgress progress, HttpMessage message) {
+        try {
+            HistoryReference historyRef =
+                    new HistoryReference(
+                            extensionExim.getModel().getSession(),
+                            HistoryReference.TYPE_ZAP_USER,
+                            message);
+            Stats.incCounter(ExtensionExim.STATS_PREFIX + "import.automation.message");
+            ExtensionHistory extHistory =
+                    Control.getSingleton()
+                            .getExtensionLoader()
+                            .getExtension(ExtensionHistory.class);
+            if (extHistory != null) {
+                ThreadUtils.invokeAndWaitHandled(
+                        () -> {
+                            extHistory.addHistory(historyRef);
+                            extensionExim
+                                    .getModel()
+                                    .getSession()
+                                    .getSiteTree()
+                                    .addPath(historyRef, message);
+                        });
+            }
+        } catch (Exception e) {
+            progress.warn(
+                    Constant.messages.getString(
+                            "exim.automation.import.error.message", e.getLocalizedMessage()));
+        }
     }
 
     private static String getResourceAsString(String name) {
@@ -229,28 +295,5 @@ public class ImportJob extends AutomationJob {
     public static class Parameters extends AutomationData {
         private String type;
         private String fileName;
-    }
-
-    public enum TypeOption {
-        HAR,
-        MODSEC2,
-        URL,
-        ZAP_MESSAGES;
-
-        @Override
-        public String toString() {
-            switch (this) {
-                case HAR:
-                    return Constant.messages.getString("exim.options.value.type.har");
-                case MODSEC2:
-                    return Constant.messages.getString("exim.options.value.type.modsec2");
-                case URL:
-                    return Constant.messages.getString("exim.options.value.type.url");
-                case ZAP_MESSAGES:
-                    return Constant.messages.getString("exim.options.value.type.zapmessages");
-                default:
-                    return "";
-            }
-        }
     }
 }

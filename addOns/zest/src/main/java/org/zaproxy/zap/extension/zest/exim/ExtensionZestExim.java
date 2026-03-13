@@ -3,7 +3,7 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2022 The ZAP Development Team
+ * Copyright 2026 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.exim.automation;
+package org.zaproxy.zap.extension.zest.exim;
 
 import java.util.List;
 import org.parosproxy.paros.Constant;
@@ -25,43 +25,38 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
-import org.zaproxy.addon.automation.ExtensionAutomation;
 import org.zaproxy.addon.exim.ExtensionExim;
+import org.zaproxy.zap.extension.zest.ExtensionZest;
 
-public class ExtensionEximAutomation extends ExtensionAdaptor {
+/**
+ * A sub-extension of Zest that adds Zest script export and import support to the Import/Export
+ * add-on. Only loaded when the Import/Export add-on is installed.
+ */
+public class ExtensionZestExim extends ExtensionAdaptor {
 
-    public static final String NAME = "ExtensionEximAutomation";
+    public static final String NAME = "ExtensionZestExim";
 
     private static final List<Class<? extends Extension>> DEPENDENCIES =
-            List.of(ExtensionExim.class, ExtensionAutomation.class);
+            List.of(ExtensionExim.class, ExtensionZest.class);
 
-    private ImportJob importJob;
-    private ExportJob exportJob;
-    private PruneJob pruneJob;
-
-    public ExtensionEximAutomation() {
+    public ExtensionZestExim() {
         super(NAME);
-    }
-
-    @Override
-    public boolean supportsDb(String type) {
-        return true;
     }
 
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
-        ExtensionAutomation extAuto = getExtension(ExtensionAutomation.class);
-        importJob = new ImportJob(getExtension(ExtensionExim.class));
-        extAuto.registerAutomationJob(importJob);
-        exportJob = new ExportJob(getExtension(ExtensionExim.class));
-        extAuto.registerAutomationJob(exportJob);
-        pruneJob = new PruneJob();
-        extAuto.registerAutomationJob(pruneJob);
-    }
 
-    private static <T extends Extension> T getExtension(Class<T> clazz) {
-        return Control.getSingleton().getExtensionLoader().getExtension(clazz);
+        ExtensionExim extExim =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionExim.class);
+        ExtensionZest extZest =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionZest.class);
+        extExim.registerExporterType(new ZestExporter(extZest));
+        extExim.registerImporterType(new ZestImporterType());
+
+        if (hasView()) {
+            extensionHook.getHookMenu().addImportMenuItem(new MenuImportZest());
+        }
     }
 
     @Override
@@ -71,11 +66,10 @@ public class ExtensionEximAutomation extends ExtensionAdaptor {
 
     @Override
     public void unload() {
-        ExtensionAutomation extAuto = getExtension(ExtensionAutomation.class);
-
-        extAuto.unregisterAutomationJob(importJob);
-        extAuto.unregisterAutomationJob(exportJob);
-        extAuto.unregisterAutomationJob(pruneJob);
+        ExtensionExim extExim =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionExim.class);
+        extExim.unregisterExporterType(ZestExporter.ID);
+        extExim.unregisterImporterType(ZestImporterType.ID);
     }
 
     @Override
@@ -85,11 +79,11 @@ public class ExtensionEximAutomation extends ExtensionAdaptor {
 
     @Override
     public String getDescription() {
-        return Constant.messages.getString("exim.automation.desc");
+        return Constant.messages.getString("zest.exim.desc");
     }
 
     @Override
     public String getUIName() {
-        return Constant.messages.getString("exim.automation.name");
+        return Constant.messages.getString("zest.exim.name");
     }
 }

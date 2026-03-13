@@ -31,12 +31,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.withSettings;
 
 import java.util.LinkedHashMap;
-import java.util.Locale;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.quality.Strictness;
-import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
@@ -46,20 +44,22 @@ import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationPlan;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.exim.ExtensionExim;
-import org.zaproxy.zap.utils.I18N;
+import org.zaproxy.addon.exim.har.HarImporterType;
+import org.zaproxy.zap.testutils.TestUtils;
 
-class ImportJobUnitTest {
+class ImportJobUnitTest extends TestUtils {
     private ExtensionExim extExim;
 
     @BeforeEach
     void setUp() {
-        Constant.messages = new I18N(Locale.ENGLISH);
+        mockMessages(new ExtensionExim());
 
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
         ExtensionLoader extensionLoader =
                 mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
-        extExim = mock(ExtensionExim.class, withSettings().strictness(Strictness.LENIENT));
+        extExim = new ExtensionExim();
+        extExim.init();
         given(extensionLoader.getExtension(ExtensionExim.class)).willReturn(extExim);
 
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
@@ -68,7 +68,7 @@ class ImportJobUnitTest {
     @Test
     void shouldReturnDefaultFields() {
         // Given / When
-        ImportJob job = new ImportJob();
+        ImportJob job = new ImportJob(extExim);
 
         // Then
         assertThat(job.getType(), is(equalTo("import")));
@@ -83,7 +83,7 @@ class ImportJobUnitTest {
     @Test
     void shouldReturnCustomConfigParams() {
         // Given
-        ImportJob job = new ImportJob();
+        ImportJob job = new ImportJob(extExim);
 
         // When
         Map<String, String> params = job.getCustomConfigParameters();
@@ -97,15 +97,14 @@ class ImportJobUnitTest {
     @Test
     void shouldApplyCustomConfigParams() {
         // Given
-        Constant.messages = new I18N(Locale.ENGLISH);
         AutomationProgress progress = new AutomationProgress();
-        String type = "har";
+        String type = HarImporterType.ID;
         String fileName = "C:\\Users\\ZAPBot\\Documents\\test file.har";
         String yamlStr = "parameters:\n" + "  type: " + type + "\n" + "  fileName: " + fileName;
         Yaml yaml = new Yaml();
         Object data = yaml.load(yamlStr);
 
-        ImportJob job = new ImportJob();
+        ImportJob job = new ImportJob(extExim);
         job.setJobData(((LinkedHashMap<?, ?>) data));
 
         // When
@@ -122,7 +121,6 @@ class ImportJobUnitTest {
     @Test
     void shouldFailIfInvalidFile() {
         // Given
-        Constant.messages = new I18N(Locale.ENGLISH);
         AutomationPlan plan = new AutomationPlan();
         AutomationProgress progress = plan.getProgress();
         AutomationEnvironment env = plan.getEnv();
@@ -130,7 +128,7 @@ class ImportJobUnitTest {
         Yaml yaml = new Yaml();
         Object data = yaml.load(yamlStr);
 
-        ImportJob job = new ImportJob();
+        ImportJob job = new ImportJob(extExim);
         job.setJobData(((LinkedHashMap<?, ?>) data));
         job.setPlan(plan);
 
@@ -141,7 +139,9 @@ class ImportJobUnitTest {
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.hasErrors(), is(equalTo(true)));
-        assertThat(progress.getErrors().get(0), is(equalTo("!exim.automation.import.error.file!")));
+        assertThat(
+                progress.getErrors().get(0),
+                is(equalTo("Job import cannot read file: Invalid file path")));
     }
 
     private static void assertValidTemplate(String value) {

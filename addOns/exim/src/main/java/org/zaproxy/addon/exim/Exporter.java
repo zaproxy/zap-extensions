@@ -21,20 +21,24 @@ package org.zaproxy.addon.exim;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.zaproxy.addon.exim.ExporterOptions.Source;
-import org.zaproxy.addon.exim.ExporterOptions.Type;
 import org.zaproxy.addon.exim.har.HarExporter;
 import org.zaproxy.addon.exim.sites.SitesTreeHandler;
+import org.zaproxy.addon.exim.sites.YamlExporter;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.utils.Stats;
 
@@ -45,6 +49,9 @@ import org.zaproxy.zap.utils.Stats;
  * @see ExtensionExim#getExporter()
  */
 public class Exporter {
+
+    private static final Map<String, ExporterType> REGISTERED_TYPES =
+            Collections.synchronizedMap(new LinkedHashMap<>());
 
     private static final int[] ALL_HISTORY_TYPES = {};
     private static final int[] USER_HISTORY_TYPES = {
@@ -57,6 +64,53 @@ public class Exporter {
         this.model = model;
     }
 
+    static void register(ExporterType exporterType) {
+        if (exporterType != null
+                && exporterType.getId() != null
+                && !exporterType.getId().isBlank()) {
+            REGISTERED_TYPES.put(exporterType.getId().toLowerCase(Locale.ROOT), exporterType);
+        }
+    }
+
+    static void unregister(String typeId) {
+        if (typeId != null) {
+            REGISTERED_TYPES.remove(typeId.toLowerCase(Locale.ROOT));
+        }
+    }
+
+    /**
+     * Gets the exporter type for the given type ID.
+     *
+     * @param typeId the export type identifier.
+     * @return the exporter type, or {@code null} if not found.
+     * @since 0.18.0
+     */
+    public static ExporterType getExporterType(String typeId) {
+        return typeId != null ? REGISTERED_TYPES.get(typeId.toLowerCase(Locale.ROOT)) : null;
+    }
+
+    /**
+     * Returns all available export types (built-in and registered).
+     *
+     * @return the list of exporter types.
+     * @since 0.18.0
+     */
+    public static List<ExporterType> getAvailableTypes() {
+        return new ArrayList<>(REGISTERED_TYPES.values());
+    }
+
+    /**
+     * Resolves a type string to an exporter type.
+     *
+     * @param value the type identifier.
+     * @return the exporter type, or the default (HAR) if not found.
+     * @since 0.18.0
+     */
+    public static ExporterType fromString(String value) {
+        ExporterType type = getExporterType(value);
+        return type != null ? type : getExporterType(HarExporter.ID);
+    }
+
     /**
      * Exports the data with the given options.
      *
@@ -66,7 +120,7 @@ public class Exporter {
     public ExporterResult export(ExporterOptions options) {
         ExporterResult result = exportImpl(options);
         Stats.incCounter(
-                ExtensionExim.STATS_PREFIX + "exporter." + options.getType().getId() + ".count",
+                ExtensionExim.STATS_PREFIX + "exporter." + options.getType() + ".count",
                 result.getCount());
         return result;
     }
@@ -86,8 +140,9 @@ public class Exporter {
                         StandardOpenOption.CREATE,
                         StandardOpenOption.TRUNCATE_EXISTING)) {
 
+            ExporterType optionsType = fromString(options.getType());
             if (Source.SITESTREE.equals(options.getSource())) {
-                if (!Type.YAML.equals(options.getType())) {
+                if (!YamlExporter.isYamlExporter(options.getType())) {
                     result.addError(
                             Constant.messages.getString(
                                     "exim.exporter.error.type.sitestree", options.getType()));
@@ -95,12 +150,22 @@ public class Exporter {
                     SitesTreeHandler.exportSitesTree(writer, result, options);
                 }
             } else {
-                if (Type.YAML.equals(options.getType())) {
+                if (optionsType != null && !optionsType.supportsMessageExport()) {
+                    String sourceName =
+                            Constant.messages.getString(
+                                    "exim.exporter.source." + options.getSource().getId());
                     result.addError(
                             Constant.messages.getString(
-                                    "exim.exporter.error.type.messages", options.getSource()));
+                                    "exim.exporter.error.type.messages", sourceName));
                 } else {
-                    exportMessagesImpl(writer, result, options);
+                    ExporterType exporterType = createExporterType(options);
+                    if (exporterType != null) {
+                        exportMessagesImpl(writer, result, options);
+                    } else {
+                        result.addError(
+                                Constant.messages.getString(
+                                        "exim.exporter.error.type.unavailable", options.getType()));
+                    }
                 }
             }
 
@@ -177,15 +242,16 @@ public class Exporter {
         return true;
     }
 
-    private static ExporterType createExporterType(ExporterOptions options) {
-        switch (options.getType()) {
-            case URL:
-                return UrlExporter.INSTANCE;
-
-            case HAR:
-            default:
-                return new HarExporter();
+    private ExporterType createExporterType(ExporterOptions options) {
+        String typeId = options.getType();
+        if (typeId == null) {
+            return getExporterType(HarExporter.ID).createForExport();
         }
+        ExporterType type = getExporterType(typeId);
+        if (type == null || !type.supportsMessageExport()) {
+            return null;
+        }
+        return type.createForExport();
     }
 
     private static int[] getHistoryTypes(ExporterOptions options) {
@@ -196,57 +262,6 @@ public class Exporter {
             case HISTORY:
             default:
                 return USER_HISTORY_TYPES;
-        }
-    }
-
-    /** An exporter type, knows how to export a {@code HistoryReference} to specific data. */
-    public interface ExporterType {
-
-        /**
-         * Called when the export begins.
-         *
-         * @param writer to where to export the data.
-         * @throws IOException if an error occurs while beginning the export.
-         */
-        void begin(Writer writer) throws IOException;
-
-        /**
-         * Called when the export begins.
-         *
-         * @param writer to where to export to. the data
-         * @param ref the {@code HistoryReference} being exported.
-         * @throws IOException if an error occurs while exporting the given {@code
-         *     HistoryReference}.
-         */
-        void write(Writer writer, HistoryReference ref) throws IOException;
-
-        /**
-         * Called when the export ends.
-         *
-         * @param writer to where to export to the data.
-         * @throws IOException if an error occurs while ending the export.
-         */
-        void end(Writer writer) throws IOException;
-    }
-
-    private static class UrlExporter implements ExporterType {
-
-        static final UrlExporter INSTANCE = new UrlExporter();
-
-        @Override
-        public void begin(Writer writer) {
-            // Nothing to do.
-        }
-
-        @Override
-        public void write(Writer writer, HistoryReference ref) throws IOException {
-            writer.write(ref.getURI().getRawURI());
-            writer.write('\n');
-        }
-
-        @Override
-        public void end(Writer writer) {
-            // Nothing to do.
         }
     }
 }

@@ -26,7 +26,10 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.exim.Exporter;
 import org.zaproxy.addon.exim.ExporterOptions;
+import org.zaproxy.addon.exim.ExporterType;
+import org.zaproxy.addon.exim.sites.YamlExporter;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
@@ -44,7 +47,7 @@ public class ExportJobDialog extends StandardFieldsDialog {
 
     private ExportJob job;
 
-    private DefaultComboBoxModel<ExporterOptions.Type> typeOptionModel;
+    private DefaultComboBoxModel<ExporterType> typeOptionModel;
     private DefaultComboBoxModel<ExporterOptions.Source> sourceOptionModel;
 
     public ExportJobDialog(ExportJob job) {
@@ -58,8 +61,8 @@ public class ExportJobDialog extends StandardFieldsDialog {
         this.addComboField(CONTEXT_PARAM, contextNames, job.getParameters().getContext());
 
         typeOptionModel = new DefaultComboBoxModel<>();
-        Stream.of(ExporterOptions.Type.values()).forEach(typeOptionModel::addElement);
-        typeOptionModel.setSelectedItem(job.getParameters().getType());
+        Exporter.getAvailableTypes().forEach(typeOptionModel::addElement);
+        typeOptionModel.setSelectedItem(Exporter.fromString(job.getParameters().getType()));
         this.addComboField(TYPE_PARAM, typeOptionModel);
 
         String fileName = job.getData().getParameters().getFileName();
@@ -80,7 +83,9 @@ public class ExportJobDialog extends StandardFieldsDialog {
     @Override
     public void save() {
         this.job.getData().setName(getStringValue(NAME_PARAM));
-        this.job.getParameters().setType((ExporterOptions.Type) typeOptionModel.getSelectedItem());
+        this.job
+                .getParameters()
+                .setType(((ExporterType) typeOptionModel.getSelectedItem()).getId());
         this.job.getParameters().setFileName(getStringValue(FILE_NAME_PARAM));
         this.job
                 .getParameters()
@@ -91,11 +96,11 @@ public class ExportJobDialog extends StandardFieldsDialog {
     @Override
     public String validateFields() {
         if (ExporterOptions.Source.SITESTREE.equals(sourceOptionModel.getSelectedItem())
-                && !ExporterOptions.Type.YAML.equals(typeOptionModel.getSelectedItem())) {
+                && !(typeOptionModel.getSelectedItem() instanceof YamlExporter)) {
             return Constant.messages.getString(
                     "exim.automation.export.dialog.error.sitestree.type");
         } else if (!ExporterOptions.Source.SITESTREE.equals(sourceOptionModel.getSelectedItem())
-                && ExporterOptions.Type.YAML.equals(typeOptionModel.getSelectedItem())) {
+                && typeOptionModel.getSelectedItem() instanceof YamlExporter) {
             return Constant.messages.getString(
                     "exim.automation.export.dialog.error.messages.type",
                     sourceOptionModel.getSelectedItem());

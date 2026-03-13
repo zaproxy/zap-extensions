@@ -36,10 +36,13 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.zaproxy.addon.exim.ImporterOptions.Builder;
 import org.zaproxy.addon.exim.ImporterOptions.MessageHandler;
-import org.zaproxy.addon.exim.ImporterOptions.Type;
+import org.zaproxy.addon.exim.har.HarExporter;
+import org.zaproxy.addon.exim.har.HarImporterType;
+import org.zaproxy.addon.exim.sites.YamlExporter;
+import org.zaproxy.addon.exim.urls.UrlExporter;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.testutils.TestUtils;
 
@@ -52,6 +55,8 @@ class ImporterOptionsUnitTest extends TestUtils {
     @BeforeAll
     static void setupMessages() {
         mockMessages(new ExtensionExim());
+        ExtensionExim extension = new ExtensionExim();
+        extension.init();
     }
 
     @BeforeEach
@@ -87,7 +92,7 @@ class ImporterOptionsUnitTest extends TestUtils {
                 builder.setInputFile(inputFile).setMessageHandler(messageHandler).build();
         // Then
         assertThat(options.getContext(), is(nullValue()));
-        assertThat(options.getType(), is(equalTo(Type.HAR)));
+        assertThat(options.getType(), is(equalTo(HarImporterType.ID)));
         assertThat(options.getInputFile(), is(equalTo(inputFile)));
         assertThat(options.getMessageHandler(), is(equalTo(messageHandler)));
     }
@@ -104,8 +109,8 @@ class ImporterOptionsUnitTest extends TestUtils {
     }
 
     @ParameterizedTest
-    @EnumSource(value = Type.class)
-    void shouldSetType(Type type) {
+    @ValueSource(strings = {HarExporter.ID, UrlExporter.ID, YamlExporter.ID})
+    void shouldSetType(String type) {
         // Given
         ImporterOptions.Builder builder = builderWithInputFileAndMessageHandler();
         // When
@@ -127,32 +132,30 @@ class ImporterOptionsUnitTest extends TestUtils {
         return ImporterOptions.builder().setInputFile(inputFile).setMessageHandler(messageHandler);
     }
 
-    /** Unit test for {@link ImporterOptions.Type}. */
+    /** Unit test for {@link ImporterType} via Importer. */
     @Nested
-    class TypeUnitTest {
+    class ImporterTypeUnitTest {
 
         @ParameterizedTest
-        @EnumSource(value = Type.class)
-        void shouldHaveToStringRepresentation(Type type) {
-            assertThat(type.toString(), is(notNullValue()));
-        }
-
-        @ParameterizedTest
-        @CsvSource({"HAR, har"})
-        void shouldReturnId(Type type, String expectedId) {
-            assertThat(type.getId(), is(equalTo(expectedId)));
+        @ValueSource(strings = {HarExporter.ID, "HAR"})
+        void shouldResolveFromString(String typeId) {
+            ImporterType type = Importer.getImporterType(typeId);
+            assertThat(type, is(notNullValue()));
+            assertThat(type.getId(), is(equalTo("har")));
         }
 
         @ParameterizedTest
         @CsvSource({
-            ", HAR",
-            "'', HAR",
-            "Something, HAR",
-            "har, HAR",
-            "haR, HAR",
+            ", " + HarImporterType.ID,
+            "'', " + HarImporterType.ID,
+            "unknown, " + HarImporterType.ID,
+            HarImporterType.ID + ", " + HarImporterType.ID,
+            "haR, " + HarImporterType.ID
         })
-        void shouldConvertFromString(String value, Type expectedType) {
-            assertThat(Type.fromString(value), is(equalTo(expectedType)));
+        void shouldConvertFromString(String value, String expectedId) {
+            ImporterType type = Importer.fromString(value);
+            assertThat(type, is(notNullValue()));
+            assertThat(type.getId(), is(equalTo(expectedId)));
         }
     }
 }

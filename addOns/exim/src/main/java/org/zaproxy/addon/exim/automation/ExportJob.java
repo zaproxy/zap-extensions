@@ -22,6 +22,7 @@ package org.zaproxy.addon.exim.automation;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
@@ -37,11 +38,13 @@ import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.ContextWrapper;
 import org.zaproxy.addon.automation.jobs.JobData;
 import org.zaproxy.addon.automation.jobs.JobUtils;
+import org.zaproxy.addon.exim.Exporter;
 import org.zaproxy.addon.exim.ExporterOptions;
 import org.zaproxy.addon.exim.ExporterOptions.Source;
-import org.zaproxy.addon.exim.ExporterOptions.Type;
 import org.zaproxy.addon.exim.ExporterResult;
 import org.zaproxy.addon.exim.ExtensionExim;
+import org.zaproxy.addon.exim.har.HarExporter;
+import org.zaproxy.addon.exim.sites.YamlExporter;
 
 public class ExportJob extends AutomationJob {
 
@@ -83,19 +86,24 @@ public class ExportJob extends AutomationJob {
 
         // Check for invalid combinations
         if (Source.SITESTREE.equals(this.parameters.getSource())
-                && !Type.YAML.equals(this.parameters.getType())) {
+                && !YamlExporter.ID.equalsIgnoreCase(this.parameters.getType())) {
+            String typeId =
+                    this.parameters.getType() != null
+                            ? this.parameters.getType().toLowerCase(Locale.ROOT)
+                            : HarExporter.ID;
             progress.error(
                     Constant.messages.getString(
-                            "exim.automation.export.error.sitestree.type",
-                            this.getName(),
-                            this.parameters.getType()));
+                            "exim.automation.export.error.sitestree.type", this.getName(), typeId));
         } else if (!Source.SITESTREE.equals(this.parameters.getSource())
-                && Type.YAML.equals(this.parameters.getType())) {
+                && YamlExporter.ID.equalsIgnoreCase(this.parameters.getType())) {
+            String sourceName =
+                    Constant.messages.getString(
+                            "exim.exporter.source." + this.parameters.getSource().getId());
             progress.error(
                     Constant.messages.getString(
                             "exim.automation.export.error.messages.type",
                             this.getName(),
-                            this.parameters.getSource()));
+                            sourceName));
         }
     }
 
@@ -210,9 +218,10 @@ public class ExportJob extends AutomationJob {
 
     @Override
     public String getSummary() {
+        var type = Exporter.fromString(getParameters().getType());
         return Constant.messages.getString(
                 "exim.automation.export.dialog.summary",
-                getParameters().getType(),
+                type != null ? type.getName() : getParameters().getType(),
                 getParameters().getSource(),
                 JobUtils.unBox(getParameters().getFileName(), "''"));
     }
@@ -243,7 +252,7 @@ public class ExportJob extends AutomationJob {
     @Setter
     public static class Parameters extends AutomationData {
         private String context = "";
-        private Type type = Type.HAR;
+        private String type = HarExporter.ID;
         private Source source = Source.HISTORY;
         private String fileName;
     }

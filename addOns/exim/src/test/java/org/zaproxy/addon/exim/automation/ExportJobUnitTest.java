@@ -46,7 +46,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.quality.Strictness;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Model;
 import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.automation.AutomationEnvironment;
@@ -57,9 +59,10 @@ import org.zaproxy.addon.automation.ContextWrapper;
 import org.zaproxy.addon.exim.Exporter;
 import org.zaproxy.addon.exim.ExporterOptions;
 import org.zaproxy.addon.exim.ExporterOptions.Source;
-import org.zaproxy.addon.exim.ExporterOptions.Type;
 import org.zaproxy.addon.exim.ExporterResult;
 import org.zaproxy.addon.exim.ExtensionExim;
+import org.zaproxy.addon.exim.har.HarExporter;
+import org.zaproxy.addon.exim.urls.UrlExporter;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.testutils.TestUtils;
 
@@ -119,7 +122,7 @@ class ExportJobUnitTest extends TestUtils {
     void shouldApplyCustomConfigParams() {
         // Given
         AutomationProgress progress = new AutomationProgress();
-        String type = "har";
+        String type = HarExporter.ID;
         String source = "all";
         String fileName = "/output/data";
         String context = "My Context";
@@ -146,7 +149,7 @@ class ExportJobUnitTest extends TestUtils {
         job.applyParameters(progress);
 
         // Then
-        assertThat(job.getParameters().getType(), is(equalTo(ExporterOptions.Type.HAR)));
+        assertThat(job.getParameters().getType(), is(equalTo(HarExporter.ID)));
         assertThat(job.getParameters().getSource(), is(equalTo(ExporterOptions.Source.ALL)));
         assertThat(job.getParameters().getFileName(), is(equalTo(fileName)));
         assertThat(job.getParameters().getContext(), is(equalTo(context)));
@@ -217,10 +220,9 @@ class ExportJobUnitTest extends TestUtils {
     }
 
     @ParameterizedTest
-    @EnumSource(
-            value = Type.class,
-            names = {"HAR", "URL"})
-    void shouldReportErrorSiteTreeExportWithNonYamlFormat(Type type) {
+    @ValueSource(strings = {HarExporter.ID, UrlExporter.ID})
+    void shouldReportErrorSiteTreeExportWithNonYamlFormat(String typeId) {
+        String typeName = Constant.messages.getString("exim.exporter.type." + typeId);
         // Given
         AutomationPlan plan = new AutomationPlan();
         AutomationProgress progress = plan.getProgress();
@@ -231,7 +233,7 @@ class ExportJobUnitTest extends TestUtils {
                 "parameters:\n"
                         + "  source: SitesTree\n"
                         + "  type: "
-                        + type.getId()
+                        + typeId
                         + "\n"
                         + "  fileName: /some/file";
         Yaml yaml = new Yaml();
@@ -252,7 +254,8 @@ class ExportJobUnitTest extends TestUtils {
         assertThat(
                 progress.getErrors(),
                 contains(
-                        "Job export Invalid type for Sites Tree, only YAML is supported: " + type));
+                        "Job export Invalid type for Sites Tree, only YAML is supported: "
+                                + typeId));
     }
 
     @ParameterizedTest
@@ -271,7 +274,7 @@ class ExportJobUnitTest extends TestUtils {
                         + "  source: "
                         + source.getId()
                         + "\n"
-                        + "  type: YAML\n"
+                        + "  type: \"YAML\"\n"
                         + "  fileName: /some/file";
         Yaml yaml = new Yaml();
         Object data = yaml.load(yamlStr);
@@ -288,9 +291,10 @@ class ExportJobUnitTest extends TestUtils {
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.hasErrors(), is(equalTo(true)));
+        String sourceName = Constant.messages.getString("exim.exporter.source." + source.getId());
         assertThat(
                 progress.getErrors(),
-                contains("Job export Invalid type for " + source + ", YAML is not supported"));
+                contains("Job export Invalid type for " + sourceName + ", YAML is not supported"));
     }
 
     private static void assertValidTemplate(String value) {
