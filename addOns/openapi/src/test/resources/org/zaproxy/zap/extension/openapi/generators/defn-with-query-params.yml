@@ -42,6 +42,34 @@ paths:
         '200':
           description: OK
 
+  /string-array:
+    get:
+      parameters:
+        - name: param
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: OK
+
+  /nested-array:
+    get:
+      parameters:
+        - name: param
+          in: query
+          schema:
+            type: array
+            items:
+              type: array
+              items:
+                type: number
+      responses:
+        '200':
+          description: OK
+
 components:
   schemas:
     Tag:

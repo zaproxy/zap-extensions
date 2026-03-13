@@ -77,7 +77,7 @@ network-netty-codec = { module = "io.netty:netty-codec", version.ref = "netty" }
 network-netty-codec-http2 = { module = "io.netty:netty-codec-http2", version.ref = "netty" }
 network-netty-handler = { module = "io.netty:netty-handler", version.ref = "netty" }
 openapi-swagger-compatSpecParser = "io.swagger:swagger-compat-spec-parser:1.0.75"
-openapi-swagger-parser = "io.swagger.parser.v3:swagger-parser:2.1.38"
+openapi-swagger-parser = "io.swagger.parser.v3:swagger-parser:2.1.39"
 pscanrules-antlr = { module = "org.antlr:antlr4", version.ref = "antlr" }
 pscanrules-antlr-runtime = { module = "org.antlr:antlr4-runtime", version.ref = "antlr" }
 pscanrules-htmlunit-csp = "org.htmlunit:htmlunit-csp:4.22.0"

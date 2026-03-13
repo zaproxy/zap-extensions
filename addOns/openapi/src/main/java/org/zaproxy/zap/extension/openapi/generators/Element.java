@@ -41,34 +41,4 @@ public class Element {
             return syntax;
         }
     }
-
-    public enum OpenApiType {
-        STRING("string");
-
-        private String type;
-
-        OpenApiType(String type) {
-            this.type = type;
-        }
-
-        public String type() {
-            return this.type;
-        }
-    }
-
-    public enum Form {
-        INNER_SEPARATOR(":"),
-        OUTER_SEPARATOR(",");
-
-        private String syntax;
-
-        Form(String syntax) {
-            this.syntax = syntax;
-        }
-
-        @Override
-        public String toString() {
-            return syntax;
-        }
-    }
 }

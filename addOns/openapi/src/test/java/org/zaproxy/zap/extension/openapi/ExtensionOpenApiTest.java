@@ -32,10 +32,18 @@ import static org.mockito.BDDMockito.anyInt;
 import static org.mockito.BDDMockito.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.withSettings;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.iki.elonen.NanoHTTPD;
+import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.Json31;
+import io.swagger.v3.oas.models.OpenAPI;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -49,6 +57,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.mockito.MockedStatic;
 import org.mockito.quality.Strictness;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -269,6 +278,47 @@ class ExtensionOpenApiTest extends AbstractServerTest {
                     getHtml(dir + name).getBytes(StandardCharsets.UTF_8));
         }
         return localDefinition.toFile();
+    }
+
+    @Test
+    void shouldUseJsonMapperForOpenApi30Definition() throws Exception {
+        // Given
+        this.nano.addHandler(new EmptyServerHandler());
+        File file = createLocalDefinition("v3/PetStore_defn.json").toFile();
+        RecordHistory recordHistory = mock(RecordHistory.class);
+        given(tableHistory.write(anyLong(), anyInt(), any()))
+                .willReturn(recordHistory, recordHistory);
+        given(model.getVariantFactory()).willReturn(new VariantFactory());
+        ObjectMapper spyMapper = spy(Json.mapper());
+
+        try (MockedStatic<Json> jsonMock = mockStatic(Json.class)) {
+            jsonMock.when(Json::mapper).thenReturn(spyMapper);
+            // When
+            extensionOpenApi.importOpenApiDefinitionV2(file, null, false, -1, null);
+            // Then
+            verify(spyMapper, atLeastOnce()).writeValueAsString(any(OpenAPI.class));
+        }
+    }
+
+    @Test
+    void shouldUseJson31MapperForOpenApi31Definition() throws Exception {
+        // Given
+        this.nano.addHandler(new EmptyServerHandler());
+        File file = createLocalDefinition("v3/PetStore_defn_3.1.yaml").toFile();
+        RecordHistory recordHistory = mock(RecordHistory.class);
+        given(tableHistory.write(anyLong(), anyInt(), any()))
+                .willReturn(recordHistory, recordHistory);
+        given(model.getVariantFactory()).willReturn(new VariantFactory());
+        ObjectMapper spyMapper = spy(Json31.mapper());
+
+        try (MockedStatic<Json31> json31Mock = mockStatic(Json31.class)) {
+            json31Mock.when(Json31::mapper).thenReturn(spyMapper);
+            // When
+            extensionOpenApi.importOpenApiDefinitionV2(file, null, false, -1, null);
+            // Then
+            json31Mock.verify(Json31::mapper, atLeastOnce());
+            verify(spyMapper, atLeastOnce()).writeValueAsString(any(OpenAPI.class));
+        }
     }
 
     private static class EmptyServerHandler extends NanoServerHandler {

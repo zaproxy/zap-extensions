@@ -1,0 +1,76 @@
+openapi: 3.1.0
+info:
+  title: OpenAPI 3.1 Array Body Test
+  version: 1.0.0
+paths:
+  /object-array:
+    post:
+      operationId: createItems
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Item'
+      responses:
+        '200':
+          description: OK
+  /string-array:
+    post:
+      operationId: createStrings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+      responses:
+        '200':
+          description: OK
+  /nested-array:
+    post:
+      operationId: createArrays
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: array
+                items:
+                  type: number
+      responses:
+        '200':
+          description: OK
+  /nested-array-property:
+    post:
+      operationId: createArrayOfArrayProperty
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                items:
+                  type: array
+                  items:
+                    type: array
+                    items:
+                      type: number
+      responses:
+        '200':
+          description: OK
+components:
+  schemas:
+    Item:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: integer

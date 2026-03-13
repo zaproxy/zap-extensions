@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.openapi;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.Json31;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.parser.core.models.SwaggerParseResult;
 import java.awt.EventQueue;
@@ -372,7 +373,10 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
 
             String openApiString;
             try {
-                openApiString = Json.mapper().writeValueAsString(openApi);
+                String version = openApi.getOpenapi();
+                boolean isOpenApi31 = version != null && version.startsWith("3.1");
+                var mapper = isOpenApi31 ? Json31.mapper() : Json.mapper();
+                openApiString = mapper.writeValueAsString(openApi);
             } catch (JsonMappingException e) {
                 if (e.getOriginalMessage().contains("TextBuffer overrun")) {
                     LOGGER.warn(
