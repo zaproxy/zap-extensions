@@ -17,6 +17,8 @@ val validateImports =
         mapOf(
             "import org.apache.commons.lang." to
                 "Import/use classes from Commons Lang 3, instead of Lang 2.",
+            "import org.apache.commons.codec.binary.Base64" to
+                "Use java.util.Base64 instead.",
         ),
     )
 

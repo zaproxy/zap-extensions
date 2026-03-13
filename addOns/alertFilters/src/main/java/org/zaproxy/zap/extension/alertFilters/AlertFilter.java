@@ -20,11 +20,11 @@
 package org.zaproxy.zap.extension.alertFilters;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -290,27 +290,28 @@ public class AlertFilter extends Enableable {
      * @return the encoded string
      */
     public static String encode(AlertFilter alertFilter) {
+        Base64.Encoder encoder = Base64.getEncoder();
         StringBuilder out = new StringBuilder();
         out.append(alertFilter.isEnabled()).append(FIELD_SEPARATOR);
         out.append(alertFilter.getRuleId()).append(FIELD_SEPARATOR);
         out.append(alertFilter.getNewRisk()).append(FIELD_SEPARATOR);
         if (alertFilter.url != null) {
-            out.append(Base64.encodeBase64String(alertFilter.url.getBytes()));
+            out.append(encoder.encodeToString(alertFilter.url.getBytes()));
         }
         out.append(FIELD_SEPARATOR);
         out.append(alertFilter.isUrlRegex()).append(FIELD_SEPARATOR);
         if (alertFilter.parameter != null) {
-            out.append(Base64.encodeBase64String(alertFilter.parameter.getBytes()));
+            out.append(encoder.encodeToString(alertFilter.parameter.getBytes()));
         }
         out.append(FIELD_SEPARATOR);
         out.append(alertFilter.isParameterRegex()).append(FIELD_SEPARATOR);
         if (alertFilter.attack != null) {
-            out.append(Base64.encodeBase64String(alertFilter.attack.getBytes()));
+            out.append(encoder.encodeToString(alertFilter.attack.getBytes()));
         }
         out.append(FIELD_SEPARATOR);
         out.append(alertFilter.isAttackRegex()).append(FIELD_SEPARATOR);
         if (alertFilter.evidence != null) {
-            out.append(Base64.encodeBase64String(alertFilter.evidence.getBytes()));
+            out.append(encoder.encodeToString(alertFilter.evidence.getBytes()));
         }
         out.append(FIELD_SEPARATOR);
         out.append(alertFilter.isEvidenceRegex()).append(FIELD_SEPARATOR);
@@ -318,9 +319,9 @@ public class AlertFilter extends Enableable {
             String methods =
                     alertFilter.methods.stream()
                             .map(m -> m.getBytes(StandardCharsets.UTF_8))
-                            .map(Base64::encodeBase64String)
+                            .map(encoder::encodeToString)
                             .collect(Collectors.joining(FIELD_SEPARATOR));
-            out.append(Base64.encodeBase64String(methods.getBytes(StandardCharsets.UTF_8)));
+            out.append(encoder.encodeToString(methods.getBytes(StandardCharsets.UTF_8)));
         }
         out.append(FIELD_SEPARATOR);
         // LOGGER.debug("Encoded AlertFilter: {}", out.toString());
@@ -335,6 +336,7 @@ public class AlertFilter extends Enableable {
      * @return the decoded alert filter
      */
     protected static AlertFilter decode(int contextId, String encodedString) {
+        Base64.Decoder decoder = Base64.getDecoder();
         String[] pieces = encodedString.split(FIELD_SEPARATOR, -1);
         AlertFilter alertFilter = null;
         try {
@@ -343,26 +345,28 @@ public class AlertFilter extends Enableable {
             alertFilter.setEnabled(Boolean.parseBoolean(pieces[0]));
             alertFilter.setRuleId(pieces[1]);
             alertFilter.setNewRisk(Integer.parseInt(pieces[2]));
-            alertFilter.setUrl(new String(Base64.decodeBase64(pieces[3])));
+            alertFilter.setUrl(new String(decoder.decode(pieces[3]), StandardCharsets.UTF_8));
             alertFilter.setUrlRegex(Boolean.parseBoolean(pieces[4]));
-            alertFilter.setParameter(new String(Base64.decodeBase64(pieces[5])));
+            alertFilter.setParameter(new String(decoder.decode(pieces[5]), StandardCharsets.UTF_8));
             if (pieces.length > 6) {
                 // Older versions will not have included these fields
                 alertFilter.setParameterRegex(Boolean.parseBoolean(pieces[6]));
-                alertFilter.setAttack(new String(Base64.decodeBase64(pieces[7])));
+                alertFilter.setAttack(
+                        new String(decoder.decode(pieces[7]), StandardCharsets.UTF_8));
                 alertFilter.setAttackRegex(Boolean.parseBoolean(pieces[8]));
-                alertFilter.setEvidence(new String(Base64.decodeBase64(pieces[9])));
+                alertFilter.setEvidence(
+                        new String(decoder.decode(pieces[9]), StandardCharsets.UTF_8));
                 alertFilter.setEvidenceRegex(Boolean.parseBoolean(pieces[10]));
             }
             if (pieces.length > 11) {
                 alertFilter.setMethods(
                         Set.of(
                                         new String(
-                                                        Base64.decodeBase64(pieces[11]),
+                                                        decoder.decode(pieces[11]),
                                                         StandardCharsets.UTF_8)
                                                 .split(FIELD_SEPARATOR))
                                 .stream()
-                                .map(Base64::decodeBase64)
+                                .map(decoder::decode)
                                 .map(m -> new String(m, StandardCharsets.UTF_8))
                                 .collect(Collectors.toSet()));
             }

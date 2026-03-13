@@ -19,6 +19,8 @@
  */
 package org.zaproxy.zap.extension.accessControl;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -26,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import javax.swing.tree.TreeNode;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
@@ -269,7 +270,8 @@ public class ContextAccessRulesManager {
                 serializedRule.append(ruleEntry.getValue().name()).append(SERIALIZATION_SEPARATOR);
                 // Note: encode the name as it may contain special characters
                 serializedRule.append(
-                        Base64.encodeBase64String(ruleEntry.getKey().getNodeName().getBytes()));
+                        Base64.getEncoder()
+                                .encodeToString(ruleEntry.getKey().getNodeName().getBytes()));
                 serializedRule.append(SERIALIZATION_SEPARATOR);
                 // Note: there's no need to escape the URI as it's the last value of the
                 // serialization string and as we're using the URL escaped version (which cannot
@@ -292,7 +294,8 @@ public class ContextAccessRulesManager {
             String[] values = serializedRule.split(Character.toString(SERIALIZATION_SEPARATOR), 4);
             int userId = Integer.parseInt(values[0]);
             AccessRule rule = AccessRule.valueOf(values[1]);
-            String nodeName = new String(Base64.decodeBase64(values[2]));
+            String nodeName =
+                    new String(Base64.getDecoder().decode(values[2]), StandardCharsets.UTF_8);
             URI uri = new URI(values[3], true);
             SiteTreeNode node = new SiteTreeNode(nodeName, uri);
             getUserRules(userId).put(node, rule);
