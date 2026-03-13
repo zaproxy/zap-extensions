@@ -2671,4 +2671,65 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
     protected Path getResourcePath(String resourcePath) {
         return super.getResourcePath("crosssitescriptingscanrule/" + resourcePath);
     }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"image/png", "text/css", "font/woff"})
+    void shouldNotScanNonHtmlResponsesOnNonLowThreshold(String contentType) throws Exception {
+        // Given - Non-HTML content type
+        var response = "some data";
+        HttpMessage msg = getHttpMessage("GET", "/?name=test", response);
+        msg.getResponseHeader().setHeader(HttpFieldsNames.CONTENT_TYPE, contentType);
+
+        // When - Scan at default threshold (MEDIUM)
+        rule.init(msg, parent);
+        rule.scan();
+
+        // Then - NO messages should be sent (scanner skips non-HTML content)
+        assertThat(httpMessagesSent, hasSize(0));
+        assertThat(alertsRaised, hasSize(0));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"image/png", "text/css", "font/woff"})
+    void shouldScanNonHtmlResponsesOnLowThreshold(String contentType) throws Exception {
+        // Given
+        String test = "/shouldScanNonHtmlResponsesOnLowThreshold/";
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String name = getFirstParamValue(session, "name");
+                        String data = "<html><body>" + name + "</body></html>";
+                        Response response = newFixedLengthResponse(data);
+                        response.addHeader(HttpFieldsNames.CONTENT_TYPE, contentType);
+                        return response;
+                    }
+                });
+        HttpMessage msg = this.getHttpMessage(test + "?name=test", contentType);
+
+        // When
+        this.rule.setAlertThreshold(AlertThreshold.LOW);
+        this.rule.init(msg, this.parent);
+        this.rule.scan();
+
+        // Then - LOW threshold SHOULD scan even non-HTML content
+        assertThat(httpMessagesSent, hasSize(greaterThan(0)));
+        assertThat(alertsRaised, hasSize(greaterThan(0)));
+    }
+
+    @Test
+    void shouldNotScanNonHtmlResponsesWithControlCharsOnNonLowThreshold() throws Exception {
+        // Given - Binary content with control characters
+        var response = "\u0000\u0001\u0002\u0003Binary data";
+        HttpMessage msg = getHttpMessage("GET", "/?param=test", response);
+        msg.getResponseHeader().setHeader(HttpFieldsNames.CONTENT_TYPE, "application/octet-stream");
+
+        // When - Scan at default threshold (MEDIUM)
+        rule.init(msg, parent);
+        rule.scan();
+
+        // Then - NO messages should be sent (scanner skips binary content)
+        assertThat(httpMessagesSent, hasSize(0));
+        assertThat(alertsRaised, hasSize(0));
+    }
 }
