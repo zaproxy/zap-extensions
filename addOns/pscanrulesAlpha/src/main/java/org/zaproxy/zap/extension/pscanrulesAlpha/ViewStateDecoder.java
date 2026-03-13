@@ -21,9 +21,9 @@ package org.zaproxy.zap.extension.pscanrulesAlpha;
 
 import java.nio.ByteBuffer;
 import java.util.Base64;
+import java.util.HexFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.commons.codec.binary.Hex;
 
 /**
  * Decodes a ViewState into an XML based format.
@@ -41,6 +41,8 @@ public class ViewStateDecoder {
             Pattern.compile(
                     "^\\s*\\<hmac\\>false\\</hmac\\>\\s*$",
                     Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+
+    private static final HexFormat HEX_FORMAT = HexFormat.of();
 
     /** how far is the current item indented? */
     private int indentationlevel = 0;
@@ -251,7 +253,7 @@ public class ViewStateDecoder {
                 // TODO: test this case.
                 byte rgbabytes[] = new byte[4];
                 bb.get(rgbabytes);
-                String rgbaashexstring = Hex.encodeHexString(rgbabytes);
+                String rgbaashexstring = HEX_FORMAT.formatHex(rgbabytes);
 
                 representation.append(getIndentation(this.indentationlevel));
                 representation.append("<rgba>0x" + rgbaashexstring + "</rgba>");
@@ -261,7 +263,7 @@ public class ViewStateDecoder {
                 // TODO: test this case.
                 byte unitbytes[] = new byte[12];
                 bb.get(unitbytes);
-                String unitashexstring = Hex.encodeHexString(unitbytes);
+                String unitashexstring = HEX_FORMAT.formatHex(unitbytes);
                 representation.append(getIndentation(this.indentationlevel));
                 representation.append("<unit>0x" + unitashexstring + "</unit>");
                 return representation;
@@ -293,7 +295,7 @@ public class ViewStateDecoder {
                 // TODO: test this case.
                 byte uuidbytes[] = new byte[36];
                 bb.get(uuidbytes);
-                String uuidashexstring = Hex.encodeHexString(uuidbytes);
+                String uuidashexstring = HEX_FORMAT.formatHex(uuidbytes);
                 representation.append(getIndentation(this.indentationlevel));
                 representation.append("<uuid>0x" + uuidashexstring + "</uuid>");
                 return representation;
@@ -382,7 +384,7 @@ public class ViewStateDecoder {
             // there are bytes at the end that were not read. This is probably the MAC.
             byte[] dataremaininginbuffer = new byte[bytesremainingtoberead];
             dataBuffer.get(dataremaininginbuffer);
-            String dataremainderhexencoded = Hex.encodeHexString(dataremaininginbuffer);
+            String dataremainderhexencoded = HEX_FORMAT.formatHex(dataremaininginbuffer);
 
             representation.append(getIndentation(this.indentationlevel));
             representation.append("<hmac>true</hmac>\n");

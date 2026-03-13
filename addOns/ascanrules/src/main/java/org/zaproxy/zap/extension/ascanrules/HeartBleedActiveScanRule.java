@@ -28,9 +28,9 @@ import java.net.SocketTimeoutException;
 import java.nio.ByteBuffer;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HexFormat;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.codec.binary.Hex;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -58,6 +58,8 @@ public class HeartBleedActiveScanRule extends AbstractHostPlugin
 
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanrules.heartbleed.";
+
+    private static final HexFormat HEX_FORMAT = HexFormat.of();
 
     private static final String CVE = "CVE-2014-0160";
     private static final Map<String, String> ALERT_TAGS;
@@ -1111,7 +1113,7 @@ public class HeartBleedActiveScanRule extends AbstractHostPlugin
             LOGGER.debug(
                     "Got a message of type 0x{} from the server: {}",
                     Integer.toHexString(sslRecord.typ),
-                    Hex.encodeHexString(sslRecord.pay));
+                    HEX_FORMAT.formatHex(sslRecord.pay));
 
             if (sslRecord.typ == heartbeatRecordByte) {
                 // received the heartbeat response
@@ -1132,7 +1134,7 @@ public class HeartBleedActiveScanRule extends AbstractHostPlugin
                 if (sslRecord.pay[0] == 0x02) {
                     // Fatal alert
                     LOGGER.debug("NOT VULNERABLE. We got a fatal alert back from the server");
-                    LOGGER.debug("Alert Payload: 0x{}", Hex.encodeHexString(sslRecord.pay));
+                    LOGGER.debug("Alert Payload: 0x{}", HEX_FORMAT.formatHex(sslRecord.pay));
                     String msg = null;
                     switch (sslRecord.pay[1]) {
                         case 0:
