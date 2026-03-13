@@ -29,13 +29,12 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.HexFormat;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import org.apache.commons.codec.DecoderException;
-import org.apache.commons.codec.binary.Hex;
 import org.zaproxy.zap.extension.tokengen.TokenAnalysisTestResult.Result;
 
 public class CharacterFrequencyMap {
@@ -349,7 +348,7 @@ public class CharacterFrequencyMap {
         return new BigInteger(this.tokens.get(index).getBytes());
     }
 
-    public byte[] getByteArrayToken(int index) throws DecoderException {
+    public byte[] getByteArrayToken(int index) {
         if (index >= tokens.size()) {
             return null;
         }
@@ -357,7 +356,7 @@ public class CharacterFrequencyMap {
             return (new BigInteger(this.tokens.get(index), 10)).toByteArray();
 
         } else if (allHex) {
-            return Hex.decodeHex(this.tokens.get(index).toCharArray());
+            return HexFormat.of().parseHex(this.tokens.get(index));
         }
         return this.tokens.get(index).getBytes();
         // TODO This ok now?

@@ -22,9 +22,9 @@ package org.zaproxy.addon.client.pscan;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.HexFormat;
 import java.util.List;
 import net.sf.json.JSONObject;
-import org.apache.commons.codec.binary.Hex;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.addon.client.ClientUtils;
@@ -82,7 +82,7 @@ public class JwtInStorageScanRule extends ClientPassiveAbstractScanRule {
         boolean isLocal = ClientUtils.LOCAL_STORAGE.equals(obj.getType());
         String sigStr = sig;
         try {
-            sigStr = Hex.encodeHexString(Base64.getUrlDecoder().decode(sig));
+            sigStr = HexFormat.of().formatHex(Base64.getUrlDecoder().decode(sig));
         } catch (Exception e) {
             // Not valid base64 (surprising) - leave as original
         }

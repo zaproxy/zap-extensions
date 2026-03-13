@@ -24,12 +24,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.HexFormat;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.Inflater;
-import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.LogManager;
@@ -47,6 +47,8 @@ public class GitMetadata {
 
     /** the logger object */
     private static final Logger LOGGER = LogManager.getLogger(GitMetadata.class);
+
+    private static final HexFormat HEX_FORMAT = HexFormat.of();
 
     /**
      * a pattern used to determine if a given SHA1 value is valid (from the point of view of the
@@ -449,7 +451,7 @@ public class GitMetadata {
                 for (int i = 0; i < packEntryCount; i++) {
                     byte[] packTableData = new byte[20];
                     packfileTablesBuffer.get(packTableData);
-                    String packTableSha1 = Hex.encodeHexString(packTableData);
+                    String packTableSha1 = HEX_FORMAT.formatHex(packTableData);
                     // TODO: use more efficient byte based comparison to find the SHA1 here (and in
                     // similar code in pack index version 2 logic, later..
                     if (packTableSha1.equals(filesha1)) {
@@ -516,7 +518,7 @@ public class GitMetadata {
                     // read 20 bytes SHA1
                     byte[] indexEntryIdBuffer = new byte[20];
                     packindexfileV1dataBuffer.get(indexEntryIdBuffer);
-                    String indexEntrySha1 = Hex.encodeHexString(indexEntryIdBuffer);
+                    String indexEntrySha1 = HEX_FORMAT.formatHex(indexEntryIdBuffer);
                     if (indexEntrySha1.equals(filesha1)) {
                         LOGGER.debug(
                                 "FOUND our SHA1 {} at entry {} in the SHA1 table",
@@ -618,7 +620,7 @@ public class GitMetadata {
                     for (int i = 0; i < indexEntryCount; i++) {
                         byte[] indexEntryIdBuffer = new byte[20];
                         packindexfiledataBuffer.get(indexEntryIdBuffer);
-                        String indexEntrySha1 = Hex.encodeHexString(indexEntryIdBuffer);
+                        String indexEntrySha1 = HEX_FORMAT.formatHex(indexEntryIdBuffer);
                         if (indexEntrySha1.equals(filesha1)) {
                             LOGGER.debug(
                                     "FOUND our SHA1 {} at entry {} in the SHA11 table",
@@ -1132,7 +1134,7 @@ public class GitMetadata {
             byte[] indexEntryIdBuffer = new byte[20];
             dataBuffer.get(indexEntryIdBuffer);
             entryBytesRead += 20;
-            String indexEntrySha1 = Hex.encodeHexString(indexEntryIdBuffer);
+            String indexEntrySha1 = HEX_FORMAT.formatHex(indexEntryIdBuffer);
 
             short indexEntryFlags = dataBuffer.getShort();
             entryBytesRead += 2;

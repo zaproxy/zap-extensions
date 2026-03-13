@@ -23,10 +23,10 @@ import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.HexFormat;
 import java.util.Map;
 import net.sf.json.JSONException;
 import net.sf.json.JSONSerializer;
-import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -228,7 +228,7 @@ public class WebSocketMessageDTO implements Message {
                     map.put("payload", payload);
                 }
             } else if (this.payload instanceof byte[]) {
-                map.put("payload", Hex.encodeHexString((byte[]) this.payload));
+                map.put("payload", HexFormat.of().formatHex((byte[]) this.payload));
             } else {
                 try {
                     map.put("payload", this.getReadablePayload());

@@ -21,8 +21,8 @@ package org.zaproxy.addon.encoder.processors.script;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.HexFormat;
 import java.util.Objects;
-import org.apache.commons.codec.binary.Hex;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -115,7 +115,7 @@ public class ScriptBasedEncodeDecodeProcessor implements EncodeDecodeProcessor {
     private String getMd5HashAsHex(String value) {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
-            return new String(Hex.encodeHex(md.digest(value.getBytes())));
+            return HexFormat.of().formatHex(md.digest(value.getBytes()));
         } catch (NoSuchAlgorithmException e) {
             return "";
         }

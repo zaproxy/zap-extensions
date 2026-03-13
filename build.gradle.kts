@@ -19,6 +19,8 @@ val validateImports =
                 "Import/use classes from Commons Lang 3, instead of Lang 2.",
             "import org.apache.commons.codec.binary.Base64" to
                 "Use java.util.Base64 instead.",
+            "import org.apache.commons.codec.binary.Hex" to
+                "Use java.util.HexFormat instead.",
         ),
     )
 
