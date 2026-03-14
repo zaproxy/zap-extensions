@@ -25,7 +25,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.ImageIcon;
@@ -429,7 +428,7 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
         try {
             // Need both constructors as they catch slightly different issues ;)
             new URI(startUrl);
-            new URL(startUrl);
+            new URI(startUrl).toURL();
         } catch (Exception e) {
             return Constant.messages.getString("client.scandialog.nostart.error");
         }
