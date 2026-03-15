@@ -1,30 +1,21 @@
-import React from 'react';
-import HomeIcon from '@mui/icons-material/Home';
-import SettingsIcon from '@mui/icons-material/Settings';
-import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import React from "react";
+import HomeIcon from "@mui/icons-material/Home";
+import SettingsIcon from "@mui/icons-material/Settings";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 
+export const SidebarData = [
+  {
+    icon: <HomeIcon />,
+    link: "/home",
+  },
 
-export const SidebarData = [ 
+  {
+    icon: <SettingsIcon />,
+    link: "/home",
+  },
 
-    {
-       
-        icon: <HomeIcon />,
-        link: "/home"
-    } ,
-
-        {
-        
-        icon: <SettingsIcon />,
-        link: "/home"
-    } ,
-
-        {
-       
-        icon: <HighlightOffIcon />,
-        link: "/home"
-    } 
-
-
-
-]
-
+  {
+    icon: <HighlightOffIcon />,
+    link: "/home",
+  },
+];
