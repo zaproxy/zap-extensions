@@ -33,6 +33,7 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.commonlib.ExtensionCommonlib;
 import org.zaproxy.addon.commonlib.ui.ProgressPanel;
 import org.zaproxy.addon.commonlib.ui.ZapSortedMenu;
+import org.zaproxy.addon.exim.Exporter.ExporterType;
 import org.zaproxy.addon.exim.har.MenuImportHar;
 import org.zaproxy.addon.exim.har.PopupMenuItemSaveHarMessage;
 import org.zaproxy.addon.exim.log.MenuItemImportLogs;
@@ -176,6 +177,30 @@ public class ExtensionExim extends ExtensionAdaptor {
      */
     public Exporter getExporter() {
         return exporter;
+    }
+
+    /**
+     * Registers an exporter type for the given type ID.
+     *
+     * <p>Used by extensions to provide additional export formats.
+     *
+     * @param typeId the export type identifier (e.g. "zest").
+     * @param exporterType the exporter implementation.
+     * @param displayName the display name for the type in the UI.
+     * @since 0.14.0
+     */
+    public void registerExporterType(String typeId, ExporterType exporterType, String displayName) {
+        ExporterTypeRegistry.register(typeId, exporterType, displayName);
+    }
+
+    /**
+     * Unregisters the exporter type for the given type ID.
+     *
+     * @param typeId the export type identifier.
+     * @since 0.14.0
+     */
+    public void unregisterExporterType(String typeId) {
+        ExporterTypeRegistry.unregister(typeId);
     }
 
     /**

@@ -1,0 +1,49 @@
+{
+  "about": "Zest script for round-trip test",
+  "zestVersion": "0.3",
+  "title": "Round-trip Test",
+  "description": "",
+  "prefix": "",
+  "type": "StandAlone",
+  "parameters": {
+    "tokenStart": "{{",
+    "tokenEnd": "}}",
+    "tokens": {},
+    "elementType": "ZestVariables"
+  },
+  "statements": [
+    {
+      "url": "http://example.com/page1",
+      "method": "GET",
+      "headers": "Host: example.com",
+      "data": "",
+      "assertions": [],
+      "followRedirects": true,
+      "index": 1,
+      "elementType": "ZestRequest"
+    },
+    {
+      "url": "http://example.com/login",
+      "method": "POST",
+      "headers": "Host: example.com\r\nContent-Type: application/x-www-form-urlencoded",
+      "data": "user=foo&pass=bar",
+      "assertions": [],
+      "followRedirects": true,
+      "index": 2,
+      "elementType": "ZestRequest"
+    },
+    {
+      "url": "http://example.com/page2",
+      "method": "GET",
+      "headers": "Host: example.com",
+      "data": "",
+      "assertions": [],
+      "followRedirects": true,
+      "index": 3,
+      "elementType": "ZestRequest"
+    }
+  ],
+  "authentication": [],
+  "index": 0,
+  "elementType": "ZestScript"
+}

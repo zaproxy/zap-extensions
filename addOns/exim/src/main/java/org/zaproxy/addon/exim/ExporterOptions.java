@@ -22,7 +22,10 @@ package org.zaproxy.addon.exim;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.model.Context;
 
@@ -164,20 +167,26 @@ public class ExporterOptions {
     }
 
     /** The type of export. */
-    public enum Type {
+    public static final class Type {
+
         /** The messages are exported as an HAR. */
-        HAR,
+        public static final Type HAR =
+                new Type("har", Constant.messages.getString("exim.exporter.type.har"));
+
         /** The messages are exported as URLs. */
-        URL,
+        public static final Type URL =
+                new Type("url", Constant.messages.getString("exim.exporter.type.url"));
+
         /** The SiteTree will be exported as YAML. */
-        YAML;
+        public static final Type YAML =
+                new Type("yaml", Constant.messages.getString("exim.exporter.type.yaml"));
 
-        private String id;
-        private String name;
+        private final String id;
+        private final String name;
 
-        private Type() {
-            id = name().toLowerCase(Locale.ROOT);
-            name = Constant.messages.getString("exim.exporter.type." + id);
+        private Type(String id, String name) {
+            this.id = id;
+            this.name = name;
         }
 
         @JsonValue
@@ -190,22 +199,52 @@ public class ExporterOptions {
             return name;
         }
 
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Type type = (Type) o;
+            return id.equals(type.id);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(id);
+        }
+
         @JsonCreator
         public static Type fromString(String value) {
             if (value == null || value.isBlank()) {
                 return HAR;
             }
-
-            if (HAR.id.equalsIgnoreCase(value)) {
+            String lower = value.toLowerCase(Locale.ROOT);
+            if (HAR.id.equals(lower)) {
                 return HAR;
             }
-            if (URL.id.equalsIgnoreCase(value)) {
+            if (URL.id.equals(lower)) {
                 return URL;
             }
-            if (YAML.id.equalsIgnoreCase(value)) {
+            if (YAML.id.equals(lower)) {
                 return YAML;
             }
+            String displayName = ExporterTypeRegistry.getDisplayName(value);
+            if (displayName != null) {
+                return new Type(lower, displayName);
+            }
             return HAR;
+        }
+
+        /** Returns all available export types (built-in and registered). */
+        public static List<Type> getAvailableTypes() {
+            List<Type> list = new ArrayList<>();
+            list.add(HAR);
+            list.add(URL);
+            list.add(YAML);
+            for (ExporterTypeRegistry.ExporterTypeInfo info :
+                    ExporterTypeRegistry.getRegisteredTypes()) {
+                list.add(new Type(info.id(), info.displayName()));
+            }
+            return list;
         }
     }
 

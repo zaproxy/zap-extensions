@@ -243,7 +243,7 @@ public class JobUtils {
         if (testData == null || object == null) {
             return;
         }
-        Map<String, Method> methodMap = null;
+        Map<String, List<Method>> methodsByName = null;
         List<String> ignoreList = Collections.emptyList();
         if (ignore != null) {
             ignoreList = Arrays.asList(ignore);
@@ -251,9 +251,9 @@ public class JobUtils {
 
         try {
             Method[] methods = object.getClass().getMethods();
-            methodMap = new HashMap<>(methods.length);
+            methodsByName = new HashMap<>();
             for (Method m : methods) {
-                methodMap.put(m.getName(), m);
+                methodsByName.computeIfAbsent(m.getName(), k -> new ArrayList<>()).add(m);
             }
         } catch (Exception e1) {
             LOGGER.error(e1.getMessage(), e1);
@@ -273,13 +273,23 @@ public class JobUtils {
             }
             /** Mapping the setters of all the corresponding parameters of job */
             String paramMethodName = "set" + key.toUpperCase().charAt(0) + key.substring(1);
-            Method optMethod = methodMap.get(paramMethodName);
-            if (optMethod != null) {
-                if (optMethod.getParameterCount() > 0) {
-                    Object value = null;
-                    Class<?> paramType = optMethod.getParameterTypes()[0];
+            List<Method> setterMethods = methodsByName.get(paramMethodName);
+            if (setterMethods != null) {
+                Method optMethod = null;
+                Object value = null;
+                boolean conversionError = false;
+                for (Method m : setterMethods) {
+                    if (m.getParameterCount() == 0) {
+                        continue;
+                    }
+                    Class<?> paramType = m.getParameterTypes()[0];
                     try {
-                        value = objectToType(param.getValue(), paramType);
+                        Object converted = objectToType(param.getValue(), paramType);
+                        if (converted != null) {
+                            optMethod = m;
+                            value = converted;
+                            break;
+                        }
                     } catch (NumberFormatException e1) {
                         progress.error(
                                 Constant.messages.getString(
@@ -287,7 +297,8 @@ public class JobUtils {
                                         objectName,
                                         key,
                                         param.getValue()));
-                        continue;
+                        conversionError = true;
+                        break;
                     } catch (IllegalArgumentException e1) {
                         if (Enum.class.isAssignableFrom(paramType)) {
                             progress.error(
@@ -304,33 +315,40 @@ public class JobUtils {
                                             key,
                                             param.getValue()));
                         }
-                        continue;
+                        conversionError = true;
+                        break;
                     }
-                    if (value != null) {
-                        try {
-                            optMethod.invoke(object, value);
-                            progress.info(
-                                    Constant.messages.getString(
-                                            "automation.info.setparam",
-                                            objectName, // TODO changed param
-                                            key,
-                                            toStringValue(value, trim)));
-                        } catch (Exception e) {
-                            progress.error(
-                                    Constant.messages.getString(
-                                            "automation.error.options.badcall",
-                                            objectName,
-                                            paramMethodName,
-                                            e.getMessage()));
-                        }
-                    } else {
+                }
+                if (conversionError) {
+                    continue;
+                }
+                if (optMethod != null && value != null) {
+                    try {
+                        optMethod.invoke(object, value);
+                        progress.info(
+                                Constant.messages.getString(
+                                        "automation.info.setparam",
+                                        objectName,
+                                        key,
+                                        toStringValue(value, trim)));
+                    } catch (Exception e) {
                         progress.error(
                                 Constant.messages.getString(
-                                        "automation.error.options.badtype",
-                                        objectName, // TODO changed param
+                                        "automation.error.options.badcall",
+                                        objectName,
                                         paramMethodName,
-                                        optMethod.getParameterTypes()[0].getCanonicalName()));
+                                        e.getMessage()));
                     }
+                } else if (optMethod == null && !setterMethods.isEmpty()) {
+                    progress.error(
+                            Constant.messages.getString(
+                                    "automation.error.options.badtype",
+                                    objectName,
+                                    paramMethodName,
+                                    setterMethods
+                                            .get(0)
+                                            .getParameterTypes()[0]
+                                            .getCanonicalName()));
                 }
             } else {
                 // This is likely to be caused by the user using an invalid name, rather than a

@@ -58,7 +58,7 @@ public class ExportJobDialog extends StandardFieldsDialog {
         this.addComboField(CONTEXT_PARAM, contextNames, job.getParameters().getContext());
 
         typeOptionModel = new DefaultComboBoxModel<>();
-        Stream.of(ExporterOptions.Type.values()).forEach(typeOptionModel::addElement);
+        ExporterOptions.Type.getAvailableTypes().forEach(typeOptionModel::addElement);
         typeOptionModel.setSelectedItem(job.getParameters().getType());
         this.addComboField(TYPE_PARAM, typeOptionModel);
 

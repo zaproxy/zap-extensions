@@ -20,6 +20,20 @@ zapAddOn {
     manifest {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/zest/")
+        extensions {
+            register("org.zaproxy.zap.extension.zest.exim.ExtensionZestExim") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.zap.extension.zest.exim"))
+                }
+                dependencies {
+                    addOns {
+                        register("exim") {
+                            version.set(">=0.14.0")
+                        }
+                    }
+                }
+            }
+        }
         dependencies {
             addOns {
                 register("commonlib") {
@@ -44,6 +58,7 @@ zapAddOn {
 
 dependencies {
     zapAddOn("commonlib")
+    zapAddOn("exim")
     zapAddOn("network")
     zapAddOn("pscan")
     zapAddOn("scripts")
@@ -63,5 +78,6 @@ dependencies {
         setTransitive(false)
     }
 
+    testImplementation(parent!!.childProjects.get("commonlib")!!.sourceSets.test.get().output)
     testImplementation(project(":testutils"))
 }

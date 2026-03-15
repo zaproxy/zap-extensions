@@ -30,6 +30,7 @@ import static org.mockito.Mockito.mock;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -37,6 +38,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.zaproxy.addon.exim.ExporterOptions.Builder;
 import org.zaproxy.addon.exim.ExporterOptions.Source;
 import org.zaproxy.addon.exim.ExporterOptions.Type;
@@ -92,7 +94,7 @@ class ExporterOptionsUnitTest extends TestUtils {
     }
 
     @ParameterizedTest
-    @EnumSource(value = Type.class)
+    @MethodSource("builtInTypes")
     void shouldSetType(Type type) {
         // Given
         ExporterOptions.Builder builder = builderWithOutputFile();
@@ -100,6 +102,10 @@ class ExporterOptionsUnitTest extends TestUtils {
         ExporterOptions options = builder.setType(type).build();
         // Then
         assertThat(options.getType(), is(equalTo(type)));
+    }
+
+    static Stream<Type> builtInTypes() {
+        return Stream.of(Type.HAR, Type.URL, Type.YAML);
     }
 
     @Test
@@ -140,29 +146,32 @@ class ExporterOptionsUnitTest extends TestUtils {
     class TypeUnitTest {
 
         @ParameterizedTest
-        @EnumSource(value = Type.class)
+        @MethodSource("org.zaproxy.addon.exim.ExporterOptionsUnitTest#builtInTypes")
         void shouldHaveToStringRepresentation(Type type) {
             assertThat(type.toString(), is(notNullValue()));
         }
 
         @ParameterizedTest
-        @CsvSource({"HAR, har", "URL, url"})
-        void shouldReturnId(Type type, String expectedId) {
+        @CsvSource({"har, har", "url, url", "yaml, yaml"})
+        void shouldReturnId(String typeId, String expectedId) {
+            Type type = Type.fromString(typeId);
             assertThat(type.getId(), is(equalTo(expectedId)));
         }
 
         @ParameterizedTest
         @CsvSource({
-            ", HAR",
-            "'', HAR",
-            "Something, HAR",
-            "har, HAR",
-            "haR, HAR",
-            "url, URL",
-            "urL, URL"
+            ", har",
+            "'', har",
+            "Something, har",
+            "har, har",
+            "haR, har",
+            "url, url",
+            "urL, url",
+            "yaml, yaml",
+            "YAML, yaml"
         })
-        void shouldConvertFromString(String value, Type expectedType) {
-            assertThat(Type.fromString(value), is(equalTo(expectedType)));
+        void shouldConvertFromString(String value, String expectedId) {
+            assertThat(Type.fromString(value).getId(), is(equalTo(expectedId)));
         }
     }
 
