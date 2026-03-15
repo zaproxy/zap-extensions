@@ -336,6 +336,16 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         getConnectionOptions().setHttpProxyEnabled(enabled);
     }
 
+    /**
+     * Tells whether or not the HTTP proxy (outbound proxy chain) is enabled.
+     *
+     * @return {@code true} if the HTTP proxy is enabled, {@code false} otherwise.
+     * @since 0.26.0
+     */
+    public boolean isHttpProxyEnabled() {
+        return getConnectionOptions().isHttpProxyEnabled();
+    }
+
     ClientCertificatesOptions getClientCertificatesOptions() {
         return clientCertificatesOptions;
     }
