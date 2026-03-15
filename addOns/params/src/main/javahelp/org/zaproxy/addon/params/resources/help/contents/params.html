@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>
+Params tab
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Params tab</H1>
+
+<p>This shows a summary of the parameters and response header fields a site uses.</p>
+Sites can be selected via the toolbar or the Sites tab.</p>
+For each parameter you can see:
+
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+<td>The type - Cookie, FORM, URL, or Header</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+<td>The name of the parameter (or response header)</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+<td>The number of times it has been used</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+<td>The number of unique values</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+<td>The percentage change, where 0 means only one value has been used and 100 means all values are unique</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+<td>The flags - including cookie flags and anticsrf and session</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+<td>Some of the values - the full set of values may not all be visible</td></tr>
+</table>
+
+<H2>Right click menu</H2>
+Right clicking on a node will bring up a menu which will allow you to:
+
+<H3>Search</H3>
+This will show all examples of the parameter selected in the Search tab.
+
+<H3>Flag as Anti CSRF token</H3>
+This will flag the parameter as an Anti CSRF token.
+
+<H3>Unflag as Anti CSRF token</H3>
+This will remove the Anti CSRF token flag from the parameter.<br>
+
+<H3>Flag as Session token</H3>
+	This will mark the parameter as a Session token  for the current Site and will notify the
+	HTTP Sessions tool accordingly.
+	<br>
+
+<H3>Unflag as Session token</H3>
+This will unmark the parameter as a Session token for the current site and will notify the
+	HTTP Sessions tool accordingly.
+	<br>
+
+</BODY>
+</HTML>
