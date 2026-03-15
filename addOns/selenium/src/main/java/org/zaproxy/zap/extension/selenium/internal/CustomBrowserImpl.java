@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.selenium.internal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import lombok.Getter;
 import org.parosproxy.paros.Constant;
@@ -95,7 +96,16 @@ public class CustomBrowserImpl {
                 browser.getBinaryPath(),
                 BrowserType.valueOf(browser.getBrowserType().toUpperCase()),
                 stringsToArgs(browser.getArguments()),
-                List.of());
+                stringsToPrefs(browser.getPreferences()));
+    }
+
+    private static List<BrowserPreference> stringsToPrefs(Map<String, String> map) {
+        if (map == null) {
+            return List.of();
+        }
+        return map.entrySet().stream()
+                .map(entry -> new BrowserPreference(entry.getKey(), entry.getValue(), true))
+                .toList();
     }
 
     private static List<BrowserArgument> stringsToArgs(List<String> strs) {
