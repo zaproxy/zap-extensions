@@ -41,6 +41,7 @@ import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.ContextWrapper;
 import org.zaproxy.addon.automation.JobResultData;
+import org.zaproxy.addon.automation.LongRunningJob;
 import org.zaproxy.addon.automation.gui.ActiveScanJobDialog;
 import org.zaproxy.addon.commonlib.Constants;
 import org.zaproxy.zap.extension.ascan.ActiveScan;
@@ -49,7 +50,7 @@ import org.zaproxy.zap.extension.ascan.ScanPolicy;
 import org.zaproxy.zap.model.Target;
 import org.zaproxy.zap.users.User;
 
-public class ActiveScanJob extends AutomationJob {
+public class ActiveScanJob extends AutomationJob implements LongRunningJob {
 
     public static final String JOB_NAME = "activeScan";
     private static final String OPTIONS_METHOD_NAME = "getScannerParam";
@@ -65,6 +66,8 @@ public class ActiveScanJob extends AutomationJob {
     private PolicyDefinition policyDefinition = new PolicyDefinition();
     private Data data;
     private boolean forceStop;
+    private volatile Integer scanId;
+    private volatile ActiveScan currentScan;
 
     public ActiveScanJob() {
         data = new Data(this, this.parameters, this.policyDefinition);
@@ -248,38 +251,43 @@ public class ActiveScanJob extends AutomationJob {
         }
 
         forceStop = false;
-        int scanId = this.getExtAScan().startScan(target, user, contextSpecificObjects.toArray());
+        scanId = this.getExtAScan().startScan(target, user, contextSpecificObjects.toArray());
+        ActiveScan scan = this.getExtAScan().getScan(scanId);
+        try {
+            currentScan = scan;
 
-        long endTime = Long.MAX_VALUE;
-        if (JobUtils.unBox(this.getParameters().getMaxScanDurationInMins()) > 0) {
-            // The active scan should stop, if it doesnt we will stop it (after a few seconds
-            // leeway)
-            endTime =
-                    System.currentTimeMillis()
-                            + TimeUnit.MINUTES.toMillis(
-                                    this.getParameters().getMaxScanDurationInMins())
-                            + TimeUnit.SECONDS.toMillis(5);
-        }
-
-        // Wait for the active scan to finish
-        ActiveScan scan;
-
-        while (true) {
-            this.sleep(500);
-            scan = this.getExtAScan().getScan(scanId);
-            if (scan.isStopped() || forceStop) {
-                break;
+            long endTime = Long.MAX_VALUE;
+            if (JobUtils.unBox(this.getParameters().getMaxScanDurationInMins()) > 0) {
+                // The active scan should stop, if it doesnt we will stop it (after a few seconds
+                // leeway)
+                endTime =
+                        System.currentTimeMillis()
+                                + TimeUnit.MINUTES.toMillis(
+                                        this.getParameters().getMaxScanDurationInMins())
+                                + TimeUnit.SECONDS.toMillis(5);
             }
-            if (!this.runMonitorTests(progress) || System.currentTimeMillis() > endTime) {
-                forceStop = true;
-                break;
+
+            // Wait for the active scan to finish
+            while (true) {
+                this.sleep(500);
+                scan = this.getExtAScan().getScan(scanId);
+                currentScan = scan;
+                if (scan.isStopped() || forceStop) {
+                    break;
+                }
+                if (!this.runMonitorTests(progress) || System.currentTimeMillis() > endTime) {
+                    forceStop = true;
+                    break;
+                }
             }
+            if (forceStop) {
+                this.getExtAScan().stopScan(scanId);
+                progress.info(Constant.messages.getString("automation.info.jobstopped", getType()));
+            }
+            progress.addJobResultData(createJobResultData(scanId));
+        } finally {
+            currentScan = null;
         }
-        if (forceStop) {
-            this.getExtAScan().stopScan(scanId);
-            progress.info(Constant.messages.getString("automation.info.jobstopped", getType()));
-        }
-        progress.addJobResultData(createJobResultData(scanId));
 
         getExtAScan().setPanelSwitch(true);
     }
@@ -287,6 +295,20 @@ public class ActiveScanJob extends AutomationJob {
     @Override
     public void stop() {
         forceStop = true;
+    }
+
+    @Override
+    public String getScanId() {
+        return scanId != null ? "ascan-" + scanId : null;
+    }
+
+    @Override
+    public int getScanProgress() {
+        ActiveScan scan = currentScan;
+        if (scan != null) {
+            return scan.getProgress();
+        }
+        return getStatus() == Status.COMPLETED ? 100 : 0;
     }
 
     @Override

@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+MCP Tools
+</TITLE>
+</HEAD>
+<BODY>
+<H1>MCP Tools</H1>
+
+The following tools are available for MCP clients to invoke:
+
+<H2>zap_version</H2>
+Get the ZAP version.
+
+<H2>zap_info</H2>
+Get basic ZAP information.
+
+<H2>zap_create_context</H2>
+Create a ZAP context with the given name, URL and optional include/exclude regexes.
+<p>
+Parameters: <code>name</code>, <code>url</code>, and optionally <code>include_regexes</code>, <code>exclude_regexes</code>
+
+<H2>zap_start_spider</H2>
+Start the spider. The target can be a URL (creates a temporary context) or the name of an existing context. Returns a scan_id for use with zap_stop_spider and zap_get_spider_status.
+<p>
+Parameters: <code>target</code> - a URL or context name
+
+<H2>zap_stop_spider</H2>
+Stop the spider plan if it is running.
+<p>
+Parameters: <code>scan_id</code> - the ID returned by zap_start_spider
+
+<H2>zap_get_spider_status</H2>
+Get the status of the spider plan.
+<p>
+Parameters: <code>scan_id</code> - the ID returned by zap_start_spider
+
+<H2>See Also</H2>
+
+<ul>
+<li><a href="mcp.html">MCP Server</a> - Overview of the add-on
+<li><a href="mcp-options.html">Options</a> - Configuration options
+<li><a href="mcp-resources.html">Resources</a> - Available MCP resources
+</ul>
+
+</BODY>
+</HTML>

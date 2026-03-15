@@ -46,6 +46,7 @@ import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.ContextWrapper;
+import org.zaproxy.addon.automation.LongRunningJob;
 import org.zaproxy.addon.automation.jobs.JobData;
 import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.addon.automation.tests.AbstractAutomationTest;
@@ -61,7 +62,7 @@ import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.utils.ThreadUtils;
 
-public class SpiderJob extends AutomationJob {
+public class SpiderJob extends AutomationJob implements LongRunningJob {
 
     public static final String JOB_NAME = "spider";
     private static final String OPTIONS_METHOD_NAME = "getSpiderParam";
@@ -82,6 +83,9 @@ public class SpiderJob extends AutomationJob {
     private UrlRequester urlRequester =
             new UrlRequester(this.getName(), new HttpSender(HttpSender.SPIDER_INITIATOR));
     private boolean forceStop;
+
+    private volatile Integer scanId;
+    private volatile SpiderScan currentScan;
 
     public SpiderJob() {
         this.data = new Data(this, parameters);
@@ -232,46 +236,51 @@ public class SpiderJob extends AutomationJob {
         }
 
         forceStop = false;
-        int scanId = this.getExtSpider().startScan(target, user, contextSpecificObjects.toArray());
+        scanId = this.getExtSpider().startScan(target, user, contextSpecificObjects.toArray());
         SpiderScan scan = this.getExtSpider().getScan(scanId);
+        try {
+            currentScan = scan;
 
-        long endTime = Long.MAX_VALUE;
-        if (parameters.getMaxDuration() != null && parameters.getMaxDuration() > 0) {
-            // The spider should stop, if it doesnt we will stop it (after a few seconds leeway)
-            endTime =
-                    System.currentTimeMillis()
-                            + TimeUnit.MINUTES.toMillis(parameters.getMaxDuration())
-                            + TimeUnit.SECONDS.toMillis(5);
-        }
+            long endTime = Long.MAX_VALUE;
+            if (parameters.getMaxDuration() != null && parameters.getMaxDuration() > 0) {
+                // The spider should stop, if it doesnt we will stop it (after a few seconds leeway)
+                endTime =
+                        System.currentTimeMillis()
+                                + TimeUnit.MINUTES.toMillis(parameters.getMaxDuration())
+                                + TimeUnit.SECONDS.toMillis(5);
+            }
 
-        // Wait for the spider to finish
-        int numUrlsFound = 0;
-        int lastCount = 0;
+            // Wait for the spider to finish
+            int numUrlsFound = 0;
+            int lastCount = 0;
 
-        while (true) {
-            this.sleep(500);
+            while (true) {
+                this.sleep(500);
 
+                numUrlsFound = scan.getNumberOfURIsFound();
+                Stats.incCounter(URLS_ADDED_STATS_KEY, numUrlsFound - lastCount);
+                lastCount = numUrlsFound;
+
+                if (scan.isStopped() || forceStop) {
+                    break;
+                }
+                if (!this.runMonitorTests(progress) || System.currentTimeMillis() > endTime) {
+                    forceStop = true;
+                    break;
+                }
+            }
+            if (forceStop && scanId != null) {
+                this.getExtSpider().stopScan(scanId);
+                progress.info(Constant.messages.getString("automation.info.jobstopped", getType()));
+            }
             numUrlsFound = scan.getNumberOfURIsFound();
-            Stats.incCounter(URLS_ADDED_STATS_KEY, numUrlsFound - lastCount);
-            lastCount = numUrlsFound;
 
-            if (scan.isStopped() || forceStop) {
-                break;
-            }
-            if (!this.runMonitorTests(progress) || System.currentTimeMillis() > endTime) {
-                forceStop = true;
-                break;
-            }
+            progress.info(
+                    Constant.messages.getString(
+                            "automation.info.urlsfound", this.getName(), numUrlsFound));
+        } finally {
+            currentScan = null;
         }
-        if (forceStop) {
-            this.getExtSpider().stopScan(scanId);
-            progress.info(Constant.messages.getString("automation.info.jobstopped", getType()));
-        }
-        numUrlsFound = scan.getNumberOfURIsFound();
-
-        progress.info(
-                Constant.messages.getString(
-                        "automation.info.urlsfound", this.getName(), numUrlsFound));
 
         getExtSpider().setPanelSwitch(true);
     }
@@ -279,6 +288,20 @@ public class SpiderJob extends AutomationJob {
     @Override
     public void stop() {
         forceStop = true;
+    }
+
+    @Override
+    public String getScanId() {
+        return scanId != null ? "spider-" + scanId : null;
+    }
+
+    @Override
+    public int getScanProgress() {
+        SpiderScan scan = currentScan;
+        if (scan != null) {
+            return scan.getProgress();
+        }
+        return getStatus() == Status.COMPLETED ? 100 : 0;
     }
 
     /**

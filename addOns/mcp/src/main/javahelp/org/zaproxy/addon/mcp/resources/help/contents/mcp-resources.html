@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+MCP Resources
+</TITLE>
+</HEAD>
+<BODY>
+<H1>MCP Resources</H1>
+
+The following resources are available for MCP clients to read:
+
+<H2>zap://alerts</H2>
+ZAP security alerts summary. Returns a lightweight list with <code>name</code>, <code>risk</code>, <code>pluginId</code>, <code>alertRef</code>, <code>instanceCount</code>, <code>systemic</code>, and <code>instancesUri</code>. Use <code>zap://alerts/{alertRef}</code> to get the full instances for a specific alert.
+
+<H2>zap://alerts/{alertRef}</H2>
+All instances for a given alert. Replace <code>{alertRef}</code> with the alertRef from the <code>zap://alerts</code> summary (e.g. <code>zap://alerts/10055-13</code>). Each instance includes all of the key alert information, and <code>historyRef</code> linking to the full HTTP request/response via <code>zap://history/{id}</code>.
+
+<H2>zap://contexts</H2>
+All configured ZAP contexts with their include and exclude regexes.
+
+<H2>zap://history</H2>
+ZAP proxy history summary. Returns the number of history entries (count) rather than the full list, since the history table can grow very large. Use <code>zap://history/{id}</code> to get the full request and response for a specific entry.
+
+<H2>zap://history/{id}</H2>
+Full HTTP request and response for a given history entry. Replace <code>{id}</code> with the history ID (e.g. <code>zap://history/123</code>). Returns JSON with <code>requestHeader</code>, <code>requestBody</code>, <code>responseHeader</code>, and <code>responseBody</code> fields.
+
+<H2>zap://scan-policies</H2>
+All available active scan policies (use with <code>zap_start_active_scan</code> policy parameter).
+
+<H2>zap://scan-status</H2>
+Scan progress for all long-running automation jobs (e.g. spider scans).
+
+<H2>zap://sites</H2>
+ZAP sites tree (top-level nodes).
+
+<H2>zap://sites-tree</H2>
+ZAP sites tree in the full format defined at <a href="https://www.zaproxy.org/docs/desktop/addons/import-export/sitestreeformat/">Sites Tree File Format</a>. Returns JSON (instead of YAML) with the same structure: each node has <code>node</code>, <code>url</code>, <code>method</code>, <code>responseLength</code>, <code>statusCode</code>, <code>data</code> (for POST with params), and <code>children</code>.
+
+<H2>See Also</H2>
+
+<ul>
+<li><a href="mcp.html">MCP Server</a> - Overview of the add-on
+<li><a href="mcp-options.html">Options</a> - Configuration options
+<li><a href="mcp-tools.html">Tools</a> - Available MCP tools
+</ul>
+
+</BODY>
+</HTML>

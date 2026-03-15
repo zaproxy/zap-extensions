@@ -40,6 +40,7 @@ import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.ContextWrapper;
 import org.zaproxy.addon.automation.JobResultData;
+import org.zaproxy.addon.automation.LongRunningJob;
 import org.zaproxy.addon.automation.jobs.JobData;
 import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.addon.automation.tests.AbstractAutomationTest;
@@ -57,9 +58,10 @@ import org.zaproxy.zap.extension.spiderAjax.internal.ExcludedElement;
 import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.Stats;
 
-public class AjaxSpiderJob extends AutomationJob {
+public class AjaxSpiderJob extends AutomationJob implements LongRunningJob {
 
     private static final String JOB_NAME = "spiderAjax";
+    private static final String AJAX_SPIDER_ID = "ajaxspider-1";
     private static final String OPTIONS_METHOD_NAME = "getAjaxSpiderParam";
 
     private static final String PARAM_CONTEXT = "context";
@@ -79,6 +81,7 @@ public class AjaxSpiderJob extends AutomationJob {
     private Data data;
     private Parameters parameters = new Parameters();
     private boolean forceStop;
+    private volatile SpiderThread currentSpiderThread;
 
     public AjaxSpiderJob() {
         this.data = new Data(this, parameters);
@@ -334,7 +337,14 @@ public class AjaxSpiderJob extends AutomationJob {
                                 "Auto - " + getExtSpider().createDisplayName(target),
                                 target,
                                 listener);
+        currentSpiderThread = spiderThread;
         new Thread(spiderThread, "ZAP-AjaxSpiderAuto").start();
+
+        int waitAttempts = 0;
+        while (!spiderThread.isRunning() && waitAttempts < 20) {
+            this.sleep(250);
+            waitAttempts++;
+        }
 
         long endTime = Long.MAX_VALUE;
         if (JobUtils.unBox(this.getParameters().getMaxDuration()) > 0) {
@@ -371,6 +381,7 @@ public class AjaxSpiderJob extends AutomationJob {
             progress.info(Constant.messages.getString("automation.info.jobstopped", getType()));
         }
 
+        currentSpiderThread = null;
         progress.info(
                 Constant.messages.getString(
                         "automation.info.urlsfound", this.getType(), numUrlsFound));
@@ -379,6 +390,20 @@ public class AjaxSpiderJob extends AutomationJob {
     @Override
     public void stop() {
         forceStop = true;
+    }
+
+    @Override
+    public String getScanId() {
+        return AJAX_SPIDER_ID;
+    }
+
+    @Override
+    public int getScanProgress() {
+        SpiderThread spider = currentSpiderThread;
+        if (spider != null && spider.isRunning()) {
+            return 0;
+        }
+        return getStatus() == Status.COMPLETED ? 100 : 0;
     }
 
     private ContextWrapper getContextWrapper(
