@@ -22,7 +22,6 @@ package org.zaproxy.addon.postman.automation;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -105,9 +104,12 @@ public class PostmanJob extends AutomationJob {
 
         if (!StringUtils.isEmpty(collectionStr)) {
             String collectionUrl = env.replaceVars(collectionStr);
+            if (collectionUrl == null) {
+                collectionUrl = collectionStr;
+            }
 
             try {
-                new URL(collectionUrl).toURI();
+                new java.net.URI(collectionUrl).toURL();
                 new URI(collectionUrl, true);
 
                 parser.importFromUrl(collectionUrl, variables, false);

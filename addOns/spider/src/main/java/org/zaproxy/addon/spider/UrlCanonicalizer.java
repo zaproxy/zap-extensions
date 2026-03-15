@@ -20,8 +20,8 @@
  */
 package org.zaproxy.addon.spider;
 
+import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedSet;
@@ -153,10 +153,8 @@ public final class UrlCanonicalizer {
             /* Process parameters and sort them. */
             final SortedSet<QueryParameter> params =
                     createSortedParameters(canonicalURI.getRawQuery());
-            final String queryString;
             String canonicalParams =
                     canonicalize(params, ctx.getSpiderParam()::isIrrelevantUrlParameter);
-            queryString = (canonicalParams.isEmpty() ? "" : "?" + canonicalParams);
 
             /* Add starting slash if needed */
             if (path.length() == 0) {
@@ -172,10 +170,35 @@ public final class UrlCanonicalizer {
             /* Lowercasing protocol and host */
             String protocol = canonicalURI.getScheme().toLowerCase();
             String host = canonicalURI.getHost().toLowerCase();
-            String pathAndQueryString = normalizePath(path) + queryString;
+            String normalizedPath = normalizePath(path);
+            String query = canonicalParams.isEmpty() ? null : canonicalParams;
 
-            URL result = new URL(protocol, host, port, pathAndQueryString);
-            return result.toExternalForm();
+            /*
+             * Build the canonical URL string directly to preserve percent-encoding.
+             * The multi-argument URI constructor would re-encode % to %25, causing
+             * double-encoding of already-encoded path/query components.
+             */
+            StringBuilder result = new StringBuilder();
+            result.append(protocol).append("://").append(host);
+            if (port != -1) {
+                result.append(':').append(port);
+            }
+            result.append(normalizedPath);
+            if (query != null) {
+                result.append('?').append(query);
+            }
+            String resultStr = result.toString();
+            /*
+             * Validate the scheme is supported by java.net.URL (e.g. http, https, ftp).
+             * Unsupported schemes like "scheme://" would have caused toURL() to throw
+             * in the previous implementation, returning null.
+             */
+            try {
+                new URI(resultStr).toURL();
+            } catch (MalformedURLException | IllegalArgumentException e) {
+                return null;
+            }
+            return resultStr;
 
         } catch (Exception ex) {
             LOGGER.warn(

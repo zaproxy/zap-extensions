@@ -25,7 +25,6 @@ import java.awt.Insets;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.net.URL;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -116,7 +115,7 @@ public class ImportDialog extends AbstractDialog {
         }
 
         try {
-            new URL(wsdlLocation).toURI();
+            new java.net.URI(wsdlLocation).toURL();
             new URI(wsdlLocation, true);
             extSoap.extUrlWSDLImport(wsdlLocation);
             return true;

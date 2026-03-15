@@ -44,7 +44,7 @@ public class BinaryRankTestFor6x8Matrices extends Base {
 
 	int no_row, no_col;
 
-	long mask;
+	int mask;
 
 	String testName = "6x8"; // test name: "6x8", "31x31", "32x32"
 

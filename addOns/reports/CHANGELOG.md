@@ -8,8 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - "Other Info" to the modern HTML report
 
 ### Changed
-- Maintenance changes.
 - "Other Info" sections of the HTML reports to split the text on newlines.
+- Maintenance changes.
 
 ## [0.43.0] - 2025-12-15
 ### Added

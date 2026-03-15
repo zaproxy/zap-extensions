@@ -20,6 +20,7 @@
 package org.zaproxy.addon.reports.sarif;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -123,8 +124,15 @@ public class SarifReportDataSupport {
 
         for (Integer foundCWEId : foundCWEIds) {
             SarifTaxa taxa = taxonomy.addTaxa("" + foundCWEId);
-            taxa.helpUri =
-                    URI.create("https://cwe.mitre.org/data/definitions/" + foundCWEId + ".html");
+            taxa.helpUri = toUri("https://cwe.mitre.org/data/definitions/" + foundCWEId + ".html");
+        }
+    }
+
+    private static URI toUri(String value) {
+        try {
+            return new URI(value);
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException(e);
         }
     }
 

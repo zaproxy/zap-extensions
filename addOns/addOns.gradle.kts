@@ -138,7 +138,6 @@ subprojects {
         val lintFlags = mutableListOf("-processing")
         if (JavaVersion.current().getMajorVersion() >= "21") {
             lintFlags.add("-this-escape")
-            options.compilerArgs = options.compilerArgs - "-Werror"
         }
         options.compilerArgs = options.compilerArgs + "-Xlint:${lintFlags.joinToString(",")}"
     }

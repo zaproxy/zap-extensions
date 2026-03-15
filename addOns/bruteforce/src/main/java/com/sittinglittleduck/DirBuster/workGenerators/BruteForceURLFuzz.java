@@ -29,6 +29,8 @@ import com.sittinglittleduck.DirBuster.SimpleHttpClient.HttpMethod;
 import com.sittinglittleduck.DirBuster.WorkUnit;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.concurrent.BlockingQueue;
 import org.apache.logging.log4j.LogManager;
@@ -83,7 +85,7 @@ public class BruteForceURLFuzz implements Runnable {
 
         if (manager.getAuto()) {
             try {
-                URL headurl = new URL(firstPart);
+                URL headurl = new URI(firstPart).toURL();
 
                 int responceCode =
                         manager.getHttpClient()
@@ -96,7 +98,7 @@ public class BruteForceURLFuzz implements Runnable {
                     // switch the mode to just GET requests
                     manager.setAuto(false);
                 }
-            } catch (IOException e) {
+            } catch (IOException | URISyntaxException e) {
                 LOGGER.error(e, e);
             }
         }
@@ -177,12 +179,12 @@ public class BruteForceURLFuzz implements Runnable {
                 method = HttpMethod.GET;
             }
 
-            URL currentURL = new URL(firstPart + urlFuzzStart + temp + urlFuzzEnd);
+            URL currentURL = new URI(firstPart + urlFuzzStart + temp + urlFuzzEnd).toURL();
             workQueue.put(new WorkUnit(currentURL, true, method, baseCaseObj, temp));
 
         } catch (InterruptedException e) {
             LOGGER.debug(e);
-        } catch (MalformedURLException e) {
+        } catch (MalformedURLException | URISyntaxException e) {
             LOGGER.debug("Bad URL", e);
         }
     }

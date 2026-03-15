@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Attempts to collect comments from JavaScript content using the ANTLR library, which should be more accurate.
   - Provides more context in the evidence (Issue 9185).
 - The Content Security Policy scan rule leverages an updated version of the htmlunit-csp library that includes support for the trusted-types and require-trusted-types-for directives.
+- Maintenance changes.
 
 ## [70] - 2025-12-15
 ### Added
