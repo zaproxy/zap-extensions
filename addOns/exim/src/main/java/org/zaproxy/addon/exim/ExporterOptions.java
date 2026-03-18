@@ -24,6 +24,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import java.nio.file.Path;
 import java.util.Locale;
 import org.parosproxy.paros.Constant;
+import org.zaproxy.addon.exim.har.HarExporter;
 import org.zaproxy.zap.model.Context;
 
 /**
@@ -35,11 +36,11 @@ import org.zaproxy.zap.model.Context;
 public class ExporterOptions {
 
     private final Context context;
-    private final Type type;
+    private final String type;
     private final Source source;
     private final Path outputFile;
 
-    private ExporterOptions(Context context, Type type, Source source, Path outputFile) {
+    private ExporterOptions(Context context, String type, Source source, Path outputFile) {
         this.context = context;
         this.type = type;
         this.source = source;
@@ -50,7 +51,7 @@ public class ExporterOptions {
         return context;
     }
 
-    public Type getType() {
+    public String getType() {
         return type;
     }
 
@@ -79,12 +80,12 @@ public class ExporterOptions {
     public static class Builder {
 
         private Context context;
-        private Type type;
+        private String type;
         private Source source;
         private Path outputFile;
 
         private Builder() {
-            type = Type.HAR;
+            type = HarExporter.ID;
             source = Source.HISTORY;
         }
 
@@ -104,13 +105,13 @@ public class ExporterOptions {
         /**
          * Sets the type.
          *
-         * <p>Default value: {@link Type#HAR}.
+         * <p>Default value: {@link HarExporter#ID}.
          *
          * @param type the type.
          * @return the builder for chaining.
          * @throws IllegalArgumentException if the type is {@code null}.
          */
-        public Builder setType(Type type) {
+        public Builder setType(String type) {
             if (type == null) {
                 throw new IllegalArgumentException("The type must not be null.");
             }
@@ -160,52 +161,6 @@ public class ExporterOptions {
                 throw new IllegalStateException("The outputFile must be set.");
             }
             return new ExporterOptions(context, type, source, outputFile);
-        }
-    }
-
-    /** The type of export. */
-    public enum Type {
-        /** The messages are exported as an HAR. */
-        HAR,
-        /** The messages are exported as URLs. */
-        URL,
-        /** The SiteTree will be exported as YAML. */
-        YAML;
-
-        private String id;
-        private String name;
-
-        private Type() {
-            id = name().toLowerCase(Locale.ROOT);
-            name = Constant.messages.getString("exim.exporter.type." + id);
-        }
-
-        @JsonValue
-        public String getId() {
-            return id;
-        }
-
-        @Override
-        public String toString() {
-            return name;
-        }
-
-        @JsonCreator
-        public static Type fromString(String value) {
-            if (value == null || value.isBlank()) {
-                return HAR;
-            }
-
-            if (HAR.id.equalsIgnoreCase(value)) {
-                return HAR;
-            }
-            if (URL.id.equalsIgnoreCase(value)) {
-                return URL;
-            }
-            if (YAML.id.equalsIgnoreCase(value)) {
-                return YAML;
-            }
-            return HAR;
         }
     }
 

@@ -20,11 +20,16 @@
 package org.zaproxy.addon.exim.automation;
 
 import java.io.File;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.exim.Importer;
+import org.zaproxy.addon.exim.ImporterType;
+import org.zaproxy.addon.exim.urls.UrlExporter;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
@@ -40,7 +45,7 @@ public class ImportJobDialog extends StandardFieldsDialog {
 
     private ImportJob job;
 
-    private DefaultComboBoxModel<ImportJob.TypeOption> typeOptionModel;
+    private DefaultComboBoxModel<ImportTypeOption> typeOptionModel;
 
     public ImportJobDialog(ImportJob job) {
         super(View.getSingleton().getMainFrame(), TITLE, DisplayUtils.getScaledDimension(500, 200));
@@ -49,16 +54,16 @@ public class ImportJobDialog extends StandardFieldsDialog {
         this.addTextField(NAME_PARAM, this.job.getData().getName());
 
         typeOptionModel = new DefaultComboBoxModel<>();
-        Arrays.stream(ImportJob.TypeOption.values()).forEach(v -> typeOptionModel.addElement(v));
-        ImportJob.TypeOption typeOption = null;
-        if (this.job.getParameters().getType() != null) {
-            typeOption =
-                    ImportJob.TypeOption.valueOf(
-                            this.job.getParameters().getType().toUpperCase(Locale.ROOT));
-        } else {
-            typeOption = ImportJob.TypeOption.HAR;
+        for (ImportTypeOption option : getImportTypeOptions()) {
+            typeOptionModel.addElement(option);
         }
-        typeOptionModel.setSelectedItem(typeOption);
+        String currentType = this.job.getParameters().getType();
+        ImportTypeOption selected =
+                getImportTypeOptions().stream()
+                        .filter(o -> o.id().equalsIgnoreCase(currentType))
+                        .findFirst()
+                        .orElse(getImportTypeOptions().get(0));
+        typeOptionModel.setSelectedItem(selected);
         this.addComboField(TYPE_PARAM, typeOptionModel);
 
         String fileName = this.job.getData().getParameters().getFileName();
@@ -70,12 +75,32 @@ public class ImportJobDialog extends StandardFieldsDialog {
         this.addPadding();
     }
 
+    private static List<ImportTypeOption> getImportTypeOptions() {
+        List<ImportTypeOption> options = new ArrayList<>();
+        for (ImporterType type : Importer.getAvailableTypes()) {
+            options.add(new ImportTypeOption(type.getId(), type.getName()));
+        }
+        options.add(
+                new ImportTypeOption(
+                        ImportJob.MODSEC2_TYPE,
+                        Constant.messages.getString("exim.options.value.type.modsec2")));
+        options.add(
+                new ImportTypeOption(
+                        UrlExporter.ID,
+                        Constant.messages.getString("exim.options.value.type.url")));
+        options.add(
+                new ImportTypeOption(
+                        ImportJob.ZAP_MESSAGES_TYPE,
+                        Constant.messages.getString("exim.options.value.type.zapmessages")));
+        return options;
+    }
+
     @Override
     public void save() {
-        this.job.getData().setName(this.getStringValue(NAME_PARAM));
-        ImportJob.TypeOption typeOption = (ImportJob.TypeOption) typeOptionModel.getSelectedItem();
-        this.job.getParameters().setType(typeOption.name().toLowerCase(Locale.ROOT));
-        this.job.getParameters().setFileName(this.getStringValue(FILE_NAME_PARAM));
+        this.job.getData().setName(getStringValue(NAME_PARAM));
+        ImportTypeOption typeOption = (ImportTypeOption) typeOptionModel.getSelectedItem();
+        this.job.getParameters().setType(typeOption.id().toLowerCase(Locale.ROOT));
+        this.job.getParameters().setFileName(getStringValue(FILE_NAME_PARAM));
         this.job.resetAndSetChanged();
     }
 
@@ -83,5 +108,12 @@ public class ImportJobDialog extends StandardFieldsDialog {
     public String validateFields() {
         // Nothing to do
         return null;
+    }
+
+    private record ImportTypeOption(String id, String displayName) {
+        @Override
+        public String toString() {
+            return displayName;
+        }
     }
 }

@@ -25,13 +25,26 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import de.sstoehr.harreader.model.HarLog;
 import java.io.IOException;
 import java.io.Writer;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.model.HistoryReference;
-import org.zaproxy.addon.exim.Exporter.ExporterType;
+import org.zaproxy.addon.exim.ExporterType;
 
-public class HarExporter implements ExporterType {
+/** Exporter that exports messages as HAR. */
+public class HarExporter extends ExporterType {
+
+    public static final String ID = "har";
 
     private JsonGenerator generator;
+
+    public HarExporter() {
+        super(ID, Constant.messages.getString("exim.exporter.type.har"));
+    }
+
+    @Override
+    public ExporterType createForExport() {
+        return new HarExporter();
+    }
 
     @Override
     public void begin(Writer writer) throws IOException {

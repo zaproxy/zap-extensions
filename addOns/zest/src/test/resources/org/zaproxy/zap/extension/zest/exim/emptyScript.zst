@@ -1,0 +1,9 @@
+{
+  "about": "Empty Zest script",
+  "zestVersion": "0.3",
+  "title": "Empty",
+  "type": "StandAlone",
+  "statements": [],
+  "index": 0,
+  "elementType": "ZestScript"
+}

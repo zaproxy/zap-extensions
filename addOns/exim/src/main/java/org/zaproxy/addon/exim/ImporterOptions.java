@@ -19,12 +19,9 @@
  */
 package org.zaproxy.addon.exim;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
 import java.nio.file.Path;
-import java.util.Locale;
-import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.exim.har.HarImporterType;
 import org.zaproxy.zap.model.Context;
 
 /**
@@ -36,12 +33,12 @@ import org.zaproxy.zap.model.Context;
 public class ImporterOptions {
 
     private final Context context;
-    private final Type type;
+    private final String type;
     private final Path inputFile;
     private final MessageHandler messageHandler;
 
     private ImporterOptions(
-            Context context, Type type, Path inputFile, MessageHandler messageHandler) {
+            Context context, String type, Path inputFile, MessageHandler messageHandler) {
         this.context = context;
         this.type = type;
         this.inputFile = inputFile;
@@ -52,7 +49,7 @@ public class ImporterOptions {
         return context;
     }
 
-    public Type getType() {
+    public String getType() {
         return type;
     }
 
@@ -81,12 +78,12 @@ public class ImporterOptions {
     public static class Builder {
 
         private Context context;
-        private Type type;
+        private String type;
         private Path inputFile;
         private MessageHandler messageHandler;
 
         private Builder() {
-            type = Type.HAR;
+            type = HarImporterType.ID;
         }
 
         /**
@@ -105,13 +102,13 @@ public class ImporterOptions {
         /**
          * Sets the type.
          *
-         * <p>Default value: {@link Type#HAR}.
+         * <p>Default value: {@link HarImporterType#ID}.
          *
-         * @param type the type.
+         * @param type the type identifier.
          * @return the builder for chaining.
          * @throws IllegalArgumentException if the type is {@code null}.
          */
-        public Builder setType(Type type) {
+        public Builder setType(String type) {
             if (type == null) {
                 throw new IllegalArgumentException("The type must not be null.");
             }
@@ -160,42 +157,6 @@ public class ImporterOptions {
                 throw new IllegalStateException("The messageHandler must be set.");
             }
             return new ImporterOptions(context, type, inputFile, messageHandler);
-        }
-    }
-
-    /** The type of import. */
-    public enum Type {
-        /** The messages are imported from HAR. */
-        HAR;
-
-        private String id;
-        private String name;
-
-        private Type() {
-            id = name().toLowerCase(Locale.ROOT);
-            name = Constant.messages.getString("exim.importer.type." + id);
-        }
-
-        @JsonValue
-        public String getId() {
-            return id;
-        }
-
-        @Override
-        public String toString() {
-            return name;
-        }
-
-        @JsonCreator
-        public static Type fromString(String value) {
-            if (value == null || value.isBlank()) {
-                return HAR;
-            }
-
-            if (HAR.id.equalsIgnoreCase(value)) {
-                return HAR;
-            }
-            return HAR;
         }
     }
 

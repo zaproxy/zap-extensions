@@ -25,34 +25,47 @@ import de.sstoehr.harreader.model.HarEntry;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Objects;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.addon.exim.Importer.ImporterType;
 import org.zaproxy.addon.exim.ImporterOptions.MessageHandler;
+import org.zaproxy.addon.exim.ImporterType;
 
-public class HarImporterType implements ImporterType {
+/** Importer type that imports messages from HAR format. */
+public class HarImporterType extends ImporterType {
+
+    public static final String ID = "har";
+
+    public HarImporterType() {
+        super(ID, Constant.messages.getString("exim.importer.type.har"));
+    }
 
     private static final String LOG_FIELD = "log";
     private static final String ENTRIES_FIELD = "entries";
 
-    private JsonParser parser;
-
     @Override
-    public void begin(Reader reader) throws IOException {
-        parser = HarUtils.JSON_MAPPER.createParser(reader);
+    public void importData(Reader reader, MessageHandler handler) throws Exception {
+        JsonParser parser = HarUtils.JSON_MAPPER.createParser(reader);
 
-        validateNextToken(JsonToken.START_OBJECT, null);
-        validateNextToken(JsonToken.FIELD_NAME, LOG_FIELD);
-        validateNextToken(JsonToken.START_OBJECT, LOG_FIELD);
+        validateNextToken(parser, JsonToken.START_OBJECT, null);
+        validateNextToken(parser, JsonToken.FIELD_NAME, LOG_FIELD);
+        validateNextToken(parser, JsonToken.START_OBJECT, LOG_FIELD);
 
-        while (!isNextToken(JsonToken.FIELD_NAME, ENTRIES_FIELD)) {
+        while (!isNextToken(parser, JsonToken.FIELD_NAME, ENTRIES_FIELD)) {
             parser.skipChildren();
         }
 
-        validateNextToken(JsonToken.START_ARRAY, ENTRIES_FIELD);
+        validateNextToken(parser, JsonToken.START_ARRAY, ENTRIES_FIELD);
         parser.nextToken();
+
+        HarEntry entry;
+        while ((entry = parser.readValueAs(HarEntry.class)) != null) {
+            HttpMessage message = HarUtils.createHttpMessage(entry);
+            handler.handle(message);
+        }
     }
 
-    private boolean isNextToken(JsonToken wantedToken, String wantedName) throws IOException {
+    private static boolean isNextToken(JsonParser parser, JsonToken wantedToken, String wantedName)
+            throws IOException {
         JsonToken token = parser.nextToken();
         if (token == null) {
             throw new IOException("Failed to find entries property in HAR log.");
@@ -64,8 +77,8 @@ public class HarImporterType implements ImporterType {
         return wantedName.equals(parser.currentName());
     }
 
-    private void validateNextToken(JsonToken expectedToken, String expectedName)
-            throws IOException {
+    private static void validateNextToken(
+            JsonParser parser, JsonToken expectedToken, String expectedName) throws IOException {
         JsonToken token = parser.nextToken();
         if (token != expectedToken) {
             throw new IOException("Unexpected token " + token + ", expected: " + expectedToken);
@@ -75,19 +88,5 @@ public class HarImporterType implements ImporterType {
         if (!Objects.equals(name, expectedName)) {
             throw new IOException("Unexpected name " + name + ", expected: " + expectedName);
         }
-    }
-
-    @Override
-    public void read(Reader reader, MessageHandler handler) throws Exception {
-        HarEntry entry;
-        while ((entry = parser.readValueAs(HarEntry.class)) != null) {
-            HttpMessage message = HarUtils.createHttpMessage(entry);
-            handler.handle(message);
-        }
-    }
-
-    @Override
-    public void end(Reader reader) throws IOException {
-        // Nothing else to do once the "entries" is consumed.
     }
 }

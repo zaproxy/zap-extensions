@@ -19,11 +19,15 @@
  */
 package org.zaproxy.addon.exim;
 
-import java.io.IOException;
-import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.addon.exim.ImporterOptions.MessageHandler;
 import org.zaproxy.addon.exim.har.HarImporterType;
@@ -31,12 +35,15 @@ import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.utils.Stats;
 
 /**
- * Importer of data (e.g. HAR, URLs).
+ * Importer of data (e.g. HAR, pluggable formats).
  *
  * @since 0.13.0
  * @see ExtensionExim#getImporter()
  */
 public class Importer {
+
+    private static final Map<String, ImporterType> REGISTERED_TYPES =
+            Collections.synchronizedMap(new LinkedHashMap<>());
 
     private static final Exception STOP_IMPORT_EXCEPTION =
             new Exception() {
@@ -50,6 +57,56 @@ public class Importer {
 
     Importer() {}
 
+    static void register(ImporterType importerType) {
+        if (importerType != null
+                && importerType.getId() != null
+                && !importerType.getId().isBlank()) {
+            REGISTERED_TYPES.put(importerType.getId().toLowerCase(Locale.ROOT), importerType);
+        }
+    }
+
+    static void unregister(String typeId) {
+        if (typeId != null) {
+            REGISTERED_TYPES.remove(typeId.toLowerCase(Locale.ROOT));
+        }
+    }
+
+    /**
+     * Gets the importer type for the given type ID.
+     *
+     * @param typeId the import type identifier.
+     * @return the importer type, or {@code null} if not found.
+     * @since 0.18.0
+     */
+    public static ImporterType getImporterType(String typeId) {
+        return typeId != null ? REGISTERED_TYPES.get(typeId.toLowerCase(Locale.ROOT)) : null;
+    }
+
+    /**
+     * Returns all available import types (built-in and registered).
+     *
+     * @return the list of importer types.
+     * @since 0.18.0
+     */
+    public static List<ImporterType> getAvailableTypes() {
+        return new ArrayList<>(REGISTERED_TYPES.values());
+    }
+
+    /**
+     * Resolves a type string to an importer type.
+     *
+     * @param value the type identifier.
+     * @return the importer type, or the default (HAR) if not found.
+     * @since 0.18.0
+     */
+    public static ImporterType fromString(String value) {
+        if (value == null || value.isBlank()) {
+            return getImporterType(HarImporterType.ID);
+        }
+        ImporterType type = getImporterType(value);
+        return type != null ? type : getImporterType(HarImporterType.ID);
+    }
+
     /**
      * Imports the data with the given options.
      *
@@ -58,9 +115,12 @@ public class Importer {
      */
     public ImporterResult apply(ImporterOptions options) {
         ImporterResult result = importImpl(options);
+        String typeId =
+                options.getType() != null
+                        ? options.getType().toLowerCase(Locale.ROOT)
+                        : HarImporterType.ID;
         Stats.incCounter(
-                ExtensionExim.STATS_PREFIX + "importer." + options.getType().getId() + ".count",
-                result.getCount());
+                ExtensionExim.STATS_PREFIX + "importer." + typeId + ".count", result.getCount());
         return result;
     }
 
@@ -74,11 +134,17 @@ public class Importer {
         try (var reader = Files.newBufferedReader(file, StandardCharsets.UTF_8)) {
 
             ImporterType type = createImporterType(options);
+            if (type == null) {
+                result.addError(
+                        Constant.messages.getString(
+                                "exim.importer.error.type.unavailable", options.getType()));
+                return result;
+            }
+
             MessageHandler messageHandler = options.getMessageHandler();
-            type.begin(reader);
             Context context = options.getContext();
 
-            type.read(
+            type.importData(
                     reader,
                     msg -> {
                         if (context != null
@@ -98,7 +164,6 @@ public class Importer {
                             throw STOP_IMPORT_EXCEPTION;
                         }
                     });
-            type.end(reader);
         } catch (Exception e) {
             if (e != STOP_IMPORT_EXCEPTION) {
                 result.addError(
@@ -133,39 +198,10 @@ public class Importer {
     }
 
     private static ImporterType createImporterType(ImporterOptions options) {
-        switch (options.getType()) {
-            case HAR:
-            default:
-                return new HarImporterType();
+        String typeId = options.getType();
+        if (typeId == null || typeId.isBlank()) {
+            return getImporterType(HarImporterType.ID);
         }
-    }
-
-    /** An importer type, knows how to import an {@code HttpMessage} from specific data. */
-    public interface ImporterType {
-
-        /**
-         * Called when the import begins.
-         *
-         * @param reader from where to import the data.
-         * @throws IOException if an error occurs while beginning the import.
-         */
-        void begin(Reader reader) throws IOException;
-
-        /**
-         * Called while importing.
-         *
-         * @param reader from where to import the data
-         * @param handler the message handler.
-         * @throws Exception if an error occurs while importing the {@code HttpMessage}.
-         */
-        void read(Reader reader, MessageHandler handler) throws Exception;
-
-        /**
-         * Called when the import ends.
-         *
-         * @param reader from where to import the data.
-         * @throws IOException if an error occurs while ending the import.
-         */
-        void end(Reader reader) throws IOException;
+        return getImporterType(typeId);
     }
 }

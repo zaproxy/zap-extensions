@@ -45,8 +45,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.MockSettings;
 import org.mockito.quality.Strictness;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.db.Database;
 import org.parosproxy.paros.db.RecordHistory;
 import org.parosproxy.paros.db.TableHistory;
@@ -54,7 +56,8 @@ import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.exim.ExporterOptions.Source;
-import org.zaproxy.addon.exim.ExporterOptions.Type;
+import org.zaproxy.addon.exim.har.HarExporter;
+import org.zaproxy.addon.exim.urls.UrlExporter;
 import org.zaproxy.zap.extension.stats.InMemoryStats;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.testutils.TestUtils;
@@ -76,6 +79,8 @@ class ExporterUnitTest extends TestUtils {
     @BeforeAll
     static void setupMessages() {
         mockMessages(new ExtensionExim());
+        ExtensionExim extension = new ExtensionExim();
+        extension.initModel(mock(Model.class));
     }
 
     @BeforeEach
@@ -99,7 +104,7 @@ class ExporterUnitTest extends TestUtils {
         given(model.getDb()).willReturn(db);
 
         options = mock(ExporterOptions.class, LENIENT);
-        optionsWithType(Type.HAR);
+        optionsWithType(HarExporter.ID);
         optionsWithSource(Source.HISTORY);
         given(options.getOutputFile()).willReturn(outputFile);
 
@@ -114,7 +119,7 @@ class ExporterUnitTest extends TestUtils {
         Stats.removeListener(stats);
     }
 
-    private void optionsWithType(Type type) {
+    private void optionsWithType(String type) {
         given(options.getType()).willReturn(type);
     }
 
@@ -153,7 +158,7 @@ class ExporterUnitTest extends TestUtils {
     @Test
     void shouldExportEmptyHarIfNothingToExport() throws Exception {
         // Given
-        optionsWithType(Type.HAR);
+        optionsWithType(HarExporter.ID);
         // When
         ExporterResult result = exporter.export(options);
         // Then
@@ -179,7 +184,7 @@ class ExporterUnitTest extends TestUtils {
     @Test
     void shouldExportHistoryToHar() throws Exception {
         // Given
-        optionsWithType(Type.HAR);
+        optionsWithType(HarExporter.ID);
         databaseWithHistoryMessage();
         // When
         ExporterResult result = exporter.export(options);
@@ -195,14 +200,14 @@ class ExporterUnitTest extends TestUtils {
     private void assertCount(ExporterResult result, int count) {
         assertThat(result.getCount(), is(equalTo(count)));
         assertThat(
-                stats.getStat("stats.exim.exporter." + options.getType().getId() + ".count"),
+                stats.getStat("stats.exim.exporter." + options.getType() + ".count"),
                 is(equalTo((long) count)));
     }
 
     @Test
     void shouldExportAllToHar() throws Exception {
         // Given
-        optionsWithType(Type.HAR);
+        optionsWithType(HarExporter.ID);
         optionsWithSource(Source.ALL);
         databaseWithAllMessage();
         // When
@@ -219,7 +224,7 @@ class ExporterUnitTest extends TestUtils {
     @Test
     void shouldExportNoUrlsIfNothingToExport() throws Exception {
         // Given
-        optionsWithType(Type.URL);
+        optionsWithType(UrlExporter.ID);
         // When
         ExporterResult result = exporter.export(options);
         // Then
@@ -232,7 +237,7 @@ class ExporterUnitTest extends TestUtils {
     @Test
     void shouldExportHistoryToUrls() throws Exception {
         // Given
-        optionsWithType(Type.URL);
+        optionsWithType(UrlExporter.ID);
         databaseWithHistoryMessage();
         // When
         ExporterResult result = exporter.export(options);
@@ -246,7 +251,7 @@ class ExporterUnitTest extends TestUtils {
     @Test
     void shouldExportAllToUrls() throws Exception {
         // Given
-        optionsWithType(Type.URL);
+        optionsWithType(UrlExporter.ID);
         optionsWithSource(Source.ALL);
         databaseWithAllMessage();
         // When
@@ -287,10 +292,8 @@ class ExporterUnitTest extends TestUtils {
     }
 
     @ParameterizedTest
-    @EnumSource(
-            value = Type.class,
-            names = {"HAR", "URL"})
-    void shouldIncludeMessageInContext(Type type) throws Exception {
+    @ValueSource(strings = {HarExporter.ID, UrlExporter.ID})
+    void shouldIncludeMessageInContext(String type) throws Exception {
         // Given
         optionsWithType(type);
         databaseWithHistoryMessage();
@@ -308,10 +311,8 @@ class ExporterUnitTest extends TestUtils {
     }
 
     @ParameterizedTest
-    @EnumSource(
-            value = Type.class,
-            names = {"HAR", "URL"})
-    void shouldNotIncludeMessageNotInContext(Type type) throws Exception {
+    @ValueSource(strings = {HarExporter.ID, UrlExporter.ID})
+    void shouldNotIncludeMessageNotInContext(String type) throws Exception {
         // Given
         optionsWithType(type);
         databaseWithHistoryMessage();
@@ -329,10 +330,8 @@ class ExporterUnitTest extends TestUtils {
     }
 
     @ParameterizedTest
-    @EnumSource(
-            value = Type.class,
-            names = {"HAR", "URL"})
-    void shouldFailSiteTreeExportWithNonYamlFormat(Type type) throws Exception {
+    @ValueSource(strings = {HarExporter.ID, UrlExporter.ID})
+    void shouldFailSiteTreeExportWithNonYamlFormat(String type) throws Exception {
         // Given
         optionsWithType(type);
         optionsWithSource(Source.SITESTREE);
@@ -353,16 +352,17 @@ class ExporterUnitTest extends TestUtils {
             names = {"HISTORY", "ALL"})
     void shouldFailNonSitesTreeExportWithYamlFormat(Source source) throws Exception {
         // Given
-        optionsWithType(Type.YAML);
+        optionsWithType("yaml");
         optionsWithSource(source);
         // When
         ExporterResult result = exporter.export(options);
         // Then
         assertCount(result, 0);
         assertThat(result.getErrors().size(), is(1));
+        String sourceName = Constant.messages.getString("exim.exporter.source." + source.getId());
         assertThat(
                 result.getErrors().get(0),
-                is("Invalid type for " + source + ", YAML is not supported"));
+                is("Invalid type for " + sourceName + ", YAML is not supported"));
         assertThat(result.getCause(), is(nullValue()));
     }
 }
