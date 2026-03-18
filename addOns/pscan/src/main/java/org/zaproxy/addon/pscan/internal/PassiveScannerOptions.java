@@ -22,6 +22,7 @@ package org.zaproxy.addon.pscan.internal;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.configuration.ConversionException;
+import org.apache.commons.configuration.FileConfiguration;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -174,34 +175,36 @@ public class PassiveScannerOptions extends VersionedAbstractParam {
 
         ((HierarchicalConfiguration) getConfig()).clearTree(ALL_AUTO_TAG_SCANNERS_KEY);
 
+        FileConfiguration config = getConfig();
+
         for (int i = 0, size = scanners.size(); i < size; ++i) {
             String elementBaseKey = ALL_AUTO_TAG_SCANNERS_KEY + "(" + i + ").";
             RegexAutoTagScanner scanner = scanners.get(i);
 
-            getConfig().setProperty(elementBaseKey + AUTO_TAG_SCANNER_NAME_KEY, scanner.getName());
-            getConfig()
+            config.setProperty(elementBaseKey + AUTO_TAG_SCANNER_NAME_KEY, scanner.getName());
+            config
                     .setProperty(
                             elementBaseKey + AUTO_TAG_SCANNER_TYPE_KEY,
                             scanner.getType().toString());
-            getConfig()
+            config
                     .setProperty(elementBaseKey + AUTO_TAG_SCANNER_CONFIG_KEY, scanner.getConf());
-            getConfig()
+            config
                     .setProperty(
                             elementBaseKey + AUTO_TAG_SCANNER_REQ_URL_REGEX_KEY,
                             scanner.getRequestUrlRegex());
-            getConfig()
+            config
                     .setProperty(
                             elementBaseKey + AUTO_TAG_SCANNER_REQ_HEAD_REGEX_KEY,
                             scanner.getRequestHeaderRegex());
-            getConfig()
+            config
                     .setProperty(
                             elementBaseKey + AUTO_TAG_SCANNER_RES_HEAD_REGEX_KEY,
                             scanner.getResponseHeaderRegex());
-            getConfig()
+            config
                     .setProperty(
                             elementBaseKey + AUTO_TAG_SCANNER_RES_BODY_REGEX_KEY,
                             scanner.getResponseBodyRegex());
-            getConfig()
+            config
                     .setProperty(
                             elementBaseKey + AUTO_TAG_SCANNER_ENABLED_KEY, scanner.isEnabled());
         }
