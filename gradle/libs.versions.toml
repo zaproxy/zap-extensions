@@ -50,6 +50,7 @@ graaljs-jsScriptEngine = { module = "org.graalvm.js:js-scriptengine", version.re
 graphql-graphqlJava = "com.graphql-java:graphql-java:25.0"
 groovy-groovy = "org.apache.groovy:groovy-all:5.0.4"
 grpc-protobuf = "io.grpc:grpc-protobuf:1.79.0"
+httpsinfo-deepviolet = "com.github.spoofzu:DeepViolet:6.1.0"
 imagelocationscanner-metadataExtractor = "com.drewnoakes:metadata-extractor:2.19.0"
 jruby-jruby = "org.jruby:jruby-complete:9.4.14.0"
 jython-jython = "org.python:jython-standalone:2.7.4"
