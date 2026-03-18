@@ -347,6 +347,7 @@ public class StatsMonitor implements StatsListener, EventConsumer {
             LOGGER.info("Running GC as memory usage at {}%", usage);
             System.gc();
             lastGc = System.currentTimeMillis();
+            heap = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage();
             usage = percent(heap.getUsed(), heap.getMax());
         }
         LOGGER.debug("Memory usage at {}%", usage);
