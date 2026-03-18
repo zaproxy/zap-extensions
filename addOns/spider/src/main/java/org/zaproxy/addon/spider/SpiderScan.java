@@ -36,6 +36,8 @@ import org.zaproxy.zap.model.Target;
 import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.Stats;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.table.TableModel;
 import java.awt.EventQueue;
 import java.util.ArrayList;
@@ -130,13 +132,16 @@ public class SpiderScan implements ScanListenner, SpiderListener, GenericScanner
     /**
      * Constructs a {@code SpiderScan} with the given data.
      *
-     * @param extension    the extension to obtain configurations and notify the view
-     * @param spiderParams the spider options
-     * @param target       the spider target
-     * @param spiderURI    the starting URI, may be {@code null}.
-     * @param scanUser     the user to be used in the scan, may be {@code null}.
-     * @param scanId       the ID of the scan
-     * @param name         the name that identifies the target
+     * @param extension           the extension to obtain configurations and notify the view
+     * @param spiderParams        the spider options
+     * @param target              the spider target
+     * @param spiderURI           the starting URI, may be {@code null}.
+     * @param scanUser            the user to be used in the scan, may be {@code null}.
+     * @param scanId              the ID of the scan
+     * @param name                the name that identifies the target
+     * @param customSpiderParsers
+     * @param customFetchFilters
+     * @param customParseFilters
      */
     public SpiderScan(
             ExtensionSpider2 extension,
@@ -145,7 +150,10 @@ public class SpiderScan implements ScanListenner, SpiderListener, GenericScanner
             URI spiderURI,
             User scanUser,
             int scanId,
-            String name) {
+            String name,
+            @Nonnull List<SpiderParser> customSpiderParsers,
+            @Nonnull List<FetchFilter> customFetchFilters,
+            @Nonnull List<ParseFilter> customParseFilters) {
         this.scanId = scanId;
         this.target = target;
         this.user = scanUser;
@@ -160,6 +168,9 @@ public class SpiderScan implements ScanListenner, SpiderListener, GenericScanner
         spiderThread.setScanAsUser(scanUser);
         spiderThread.setJustScanInScope(target.isInScopeOnly());
         spiderThread.setScanChildren(target.isRecurse());
+        spiderThread.setCustomSpiderParsers(customSpiderParsers);
+        spiderThread.setCustomFetchFilters(customFetchFilters);
+        spiderThread.setCustomParseFilters(customParseFilters);
     }
 
     /**
@@ -503,18 +514,6 @@ public class SpiderScan implements ScanListenner, SpiderListener, GenericScanner
 
     public void setListener(ScanListenner2 listener) {
         this.listener.set(listener);
-    }
-
-    public void setCustomSpiderParsers(List<SpiderParser> customSpiderParsers) {
-        spiderThread.setCustomSpiderParsers(customSpiderParsers);
-    }
-
-    public void setCustomFetchFilters(List<FetchFilter> customFetchFilters) {
-        spiderThread.setCustomFetchFilters(customFetchFilters);
-    }
-
-    public void setCustomParseFilters(List<ParseFilter> customParseFilters) {
-        spiderThread.setCustomParseFilters(customParseFilters);
     }
 
     /**
