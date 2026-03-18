@@ -758,7 +758,7 @@ public class Spider {
      * it notifies the listeners of the progress and checks if the scan is complete. Called from the
      * SpiderTask.
      */
-    protected synchronized void postTaskExecution() {
+    protected void postTaskExecution() {
         if (stopped) {
             // Stopped, so don't count the task(s) as done.
             // (worker threads call this method even if the task was not really executed.)
@@ -839,8 +839,7 @@ public class Spider {
      * @param status the {@link FetchStatus} stating if this uri will be processed, and, if not,
      *               stating the reason of the filtering
      */
-    protected void notifyListenersFoundURI(
-            String uri, String method, FetchStatus status) {
+    protected void notifyListenersFoundURI(String uri, String method, FetchStatus status) {
         for (SpiderListener l : listeners) {
             l.foundURI(uri, method, status);
         }
