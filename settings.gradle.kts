@@ -13,8 +13,8 @@ include(addOnsProjectName)
 include("testutils")
 
 // Keep the add-ons in alphabetic order.
-var addOns =
-    listOf(
+val addOns =
+    mutableListOf(
         "accessControl",
         "alertFilters",
         "allinonenotes",
@@ -55,6 +55,7 @@ var addOns =
         "groovy",
         "grpc",
         "highlighter",
+        "httpsInfo",
         "imagelocationscanner",
         "insights",
         "invoke",
@@ -111,6 +112,10 @@ var addOns =
         "webuipoc",
         "zest",
     )
+
+if (JavaVersion.current() < JavaVersion.VERSION_21) {
+    addOns.remove("httpsInfo")
+}
 
 addOns.forEach { include("$addOnsProjectName:$it") }
 
