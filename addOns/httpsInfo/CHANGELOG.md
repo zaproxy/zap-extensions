@@ -3,8 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
-
+## [14] - 2026-03-19
 ### Added
 - Active scan rules Info level "HTTPS Configuration" alert and a Low, Medium or High alert if any problems reported.
 
@@ -71,5 +70,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[14]: https://github.com/zaproxy/zap-extensions/releases/httpsInfo-v14
 [13]: https://github.com/zaproxy/zap-extensions/releases/httpsInfo-v13
 [12]: https://github.com/zaproxy/zap-extensions/releases/httpsInfo-v12
