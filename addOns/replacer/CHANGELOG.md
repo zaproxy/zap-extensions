@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [22] - 2026-03-19
 ### Added
 - Method parameter matcher to allow rules to apply to specific HTTP methods (Issue 9016).
 
@@ -139,6 +139,7 @@ the dialogue when other match types are selected.
 
 - First version
 
+[22]: https://github.com/zaproxy/zap-extensions/releases/replacer-v22
 [21]: https://github.com/zaproxy/zap-extensions/releases/replacer-v21
 [20]: https://github.com/zaproxy/zap-extensions/releases/replacer-v20
 [19]: https://github.com/zaproxy/zap-extensions/releases/replacer-v19
