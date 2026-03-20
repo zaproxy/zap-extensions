@@ -22,11 +22,15 @@ package org.zaproxy.addon.automation.gui;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.awt.EventQueue;
 import java.awt.GridBagLayout;
+import java.awt.Toolkit;
+import java.awt.datatransfer.DataFlavor;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.lang.System.Logger.Level;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -88,6 +92,10 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
             DisplayUtils.getScaledIcon(
                     AutomationPanel.class.getResource(
                             ExtensionAutomation.RESOURCES_DIR + "clipboard--plus.png"));
+    private static final ImageIcon LOAD_PLAN_CLIPBOARD_ICON =
+            DisplayUtils.getScaledIcon(
+                    AutomationPanel.class.getResource(
+                            ExtensionAutomation.RESOURCES_DIR + "clipboard-sign.png"));
     private static final ImageIcon DOWN_ARROW_ICON =
             DisplayUtils.getScaledIcon(
                     AutomationPanel.class.getResource(
@@ -138,6 +146,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
     private JToolBar toolbar;
     private JScrollPane planScrollpane;
     private JButton loadPlanButton;
+    private JButton loadFromClipboardButton;
     private JButton addPlanButton;
     private JButton runPlanButton;
     private JButton savePlanButton;
@@ -176,6 +185,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
             toolbar.setFloatable(false);
             toolbar.add(getAddPlanButton());
             toolbar.add(getLoadPlanButton());
+            toolbar.add(getLoadFromClipboardButton());
             toolbar.add(getSavePlanButton());
             toolbar.add(getSaveAsPlanButton());
             toolbar.add(getRunPlanButton());
@@ -208,14 +218,17 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
                         runPlanButton.setEnabled(false);
                         getStopPlanButton().setEnabled(true);
                         ext.runPlanAsync(currentPlan);
-                        if (View.getSingleton().getOutputPanel()
-                                instanceof TabbedOutputPanel tabbedPanel) {
-                            tabbedPanel.setSelectedOutputTab(ext.getOutputSource().getName());
-                            tabbedPanel.setTabFocus();
-                        }
+                        focusOutputPanel();
                     });
         }
         return runPlanButton;
+    }
+
+    private void focusOutputPanel() {
+        if (View.getSingleton().getOutputPanel() instanceof TabbedOutputPanel tabbedPanel) {
+            tabbedPanel.setSelectedOutputTab(ext.getOutputSource().getName());
+            tabbedPanel.setTabFocus();
+        }
     }
 
     private void savePlan(boolean promptForFile) {
@@ -321,14 +334,8 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
                     Constant.messages.getString("automation.dialog.plan.load"));
             loadPlanButton.addActionListener(
                     e -> {
-                        if (currentPlan != null && currentPlan.isChanged()) {
-                            if (JOptionPane.OK_OPTION
-                                    != View.getSingleton()
-                                            .showConfirmDialog(
-                                                    Constant.messages.getString(
-                                                            "automation.dialog.plan.loosechanges"))) {
-                                return;
-                            }
+                        if (refuseUnsavedChanges()) {
+                            return;
                         }
                         final JFileChooser chooser =
                                 new JFileChooser(ext.getParam().getPlanDirectory());
@@ -357,24 +364,75 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
                                             chooser.getSelectedFile()
                                                     .getParentFile()
                                                     .getAbsolutePath());
-                            loadPlan(chooser.getSelectedFile());
+                            File f = chooser.getSelectedFile();
+                            loadPlanWithErrorHandling(
+                                    () -> {
+                                        loadPlan(ext.loadPlan(f));
+                                        ext.getParam().setLastPlanPath(f.getAbsolutePath());
+                                    });
                         }
                     });
         }
         return loadPlanButton;
     }
 
-    private void loadPlan(File f) {
+    private boolean refuseUnsavedChanges() {
+        return currentPlan != null
+                && currentPlan.isChanged()
+                && JOptionPane.OK_OPTION
+                        != View.getSingleton()
+                                .showConfirmDialog(
+                                        Constant.messages.getString(
+                                                "automation.dialog.plan.loosechanges"));
+    }
+
+    private interface RunnableException {
+        void run() throws Exception;
+    }
+
+    private void loadPlanWithErrorHandling(RunnableException loadAction) {
         try {
-            loadPlan(ext.loadPlan(f));
-            ext.getParam().setLastPlanPath(f.getAbsolutePath());
+            loadAction.run();
         } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            outputMessage(e.getMessage(), Level.ERROR);
+            focusOutputPanel();
             View.getSingleton()
-                    .showWarningDialog(
-                            Constant.messages.getString(
-                                    "automation.panel.load.failed", e.getMessage()));
+                    .showWarningDialog(Constant.messages.getString("automation.panel.load.failed"));
         }
+    }
+
+    private JButton getLoadFromClipboardButton() {
+        if (loadFromClipboardButton == null) {
+            loadFromClipboardButton = new JButton();
+            loadFromClipboardButton.setIcon(LOAD_PLAN_CLIPBOARD_ICON);
+            loadFromClipboardButton.setToolTipText(
+                    Constant.messages.getString("automation.dialog.plan.fromclipboard"));
+            loadFromClipboardButton.addActionListener(
+                    e -> {
+                        if (refuseUnsavedChanges()) {
+                            return;
+                        }
+                        var clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                        if (!clipboard.isDataFlavorAvailable(DataFlavor.stringFlavor)) {
+                            View.getSingleton()
+                                    .showWarningDialog(
+                                            Constant.messages.getString(
+                                                    "automation.dialog.plan.fromclipboard.notext"));
+                            return;
+                        }
+                        loadPlanWithErrorHandling(
+                                () -> {
+                                    String data =
+                                            (String) clipboard.getData(DataFlavor.stringFlavor);
+                                    loadPlan(
+                                            ext.loadPlan(
+                                                    new ByteArrayInputStream(
+                                                            data.getBytes(
+                                                                    StandardCharsets.UTF_8))));
+                                });
+                    });
+        }
+        return loadFromClipboardButton;
     }
 
     private Object setSelectedItem() {
@@ -395,13 +453,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
             addPlanButton.setToolTipText(Constant.messages.getString("automation.dialog.plan.new"));
             addPlanButton.addActionListener(
                     e -> {
-                        if (currentPlan != null
-                                && currentPlan.isChanged()
-                                && JOptionPane.OK_OPTION
-                                        != View.getSingleton()
-                                                .showConfirmDialog(
-                                                        Constant.messages.getString(
-                                                                "automation.dialog.plan.loosechanges"))) {
+                        if (refuseUnsavedChanges()) {
                             return;
                         }
                         new NewPlanDialog().setVisible(true);
