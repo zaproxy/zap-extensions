@@ -20,16 +20,21 @@
 package org.zaproxy.zap.extension.pscanrules;
 
 import java.net.HttpCookie;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.CookieUtils;
@@ -41,6 +46,9 @@ public class CookieLooselyScopedScanRule extends PluginPassiveScanner
 
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.cookielooselyscoped.";
+
+    private static final Pattern DOMAIN_PATTERN =
+            Pattern.compile("\\bdomain\\b\\s*=\\s*[^;]+", Pattern.CASE_INSENSITIVE);
 
     private static final Map<String, String> ALERT_TAGS;
 
@@ -85,8 +93,45 @@ public class CookieLooselyScopedScanRule extends PluginPassiveScanner
 
         // raise an alert if any loosely scoped cookies were found
         if (!looselyScopedCookies.isEmpty()) {
-            buildAlert(host, looselyScopedCookies).raise();
+            buildAlert(
+                            host,
+                            looselyScopedCookies,
+                            extractEvidence(msg, looselyScopedCookies.get(0)))
+                    .raise();
         }
+    }
+
+    /**
+     * Extract the exact evidence string, rather than the normalised one we would get from
+     * HttpCookie
+     */
+    private static String extractEvidence(HttpMessage msg, HttpCookie cookie) {
+        List<String> cookieHeaders =
+                new ArrayList<>(msg.getResponseHeader().getHeaderValues(HttpHeader.SET_COOKIE));
+        cookieHeaders.addAll(msg.getResponseHeader().getHeaderValues(HttpHeader.SET_COOKIE2));
+
+        String domain = cookie.getDomain();
+        String evidence = null;
+
+        Matcher m;
+        for (String header : cookieHeaders) {
+            List<HttpCookie> parsedCookies = HttpCookie.parse(header);
+
+            for (HttpCookie parsedCookie : parsedCookies) {
+                if (parsedCookie.getName().equals(cookie.getName())
+                        && parsedCookie.getDomain().equals(domain)) {
+
+                    m = DOMAIN_PATTERN.matcher(header);
+                    while (m.find()) {
+                        evidence = m.group();
+                        if (evidence.toLowerCase(Locale.ROOT).contains(domain)) {
+                            return evidence;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     /*
@@ -131,18 +176,21 @@ public class CookieLooselyScopedScanRule extends PluginPassiveScanner
         return originDomain.endsWith("." + cookieDomain);
     }
 
-    private AlertBuilder buildAlert(String host, List<HttpCookie> looselyScopedCookies) {
+    private AlertBuilder buildAlert(
+            String host, List<HttpCookie> looselyScopedCookies, String evidence) {
 
         StringBuilder sbCookies = new StringBuilder();
         for (HttpCookie cookie : looselyScopedCookies) {
             sbCookies.append(
-                    Constant.messages.getString(MESSAGE_PREFIX + "extrainfo.cookie", cookie));
+                    Constant.messages.getString(
+                            MESSAGE_PREFIX + "extrainfo.cookie", cookie.getName()));
         }
 
         return newAlert()
                 .setRisk(Alert.RISK_INFO)
                 .setConfidence(Alert.CONFIDENCE_LOW)
                 .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
+                .setEvidence(evidence)
                 .setOtherInfo(
                         Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", host, sbCookies))
                 .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
@@ -156,7 +204,8 @@ public class CookieLooselyScopedScanRule extends PluginPassiveScanner
         return List.of(
                 buildAlert(
                                 "subdomain.example.com",
-                                HttpCookie.parse("name=value; domain=example.com"))
+                                HttpCookie.parse("name=value; domain=example.com"),
+                                "domain=example.com")
                         .build());
     }
 
