@@ -64,6 +64,7 @@ val addOns =
         "jython",
         "kotlin",
         "llm",
+        "mcp",
         "network",
         "oast",
         "onlineMenu",

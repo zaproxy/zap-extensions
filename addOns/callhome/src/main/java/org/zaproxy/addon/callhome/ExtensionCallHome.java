@@ -319,6 +319,7 @@ public class ExtensionCallHome extends ExtensionAdaptor
                     || key.startsWith("stats.hud.")
                     || key.startsWith("stats.llm.")
                     || key.startsWith("stats.log.")
+                    || key.startsWith("stats.mcp.")
                     || key.startsWith("stats.network.")
                     || key.startsWith("stats.oast.")
                     || key.startsWith("stats.openapi.")

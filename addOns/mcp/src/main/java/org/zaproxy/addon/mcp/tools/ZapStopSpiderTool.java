@@ -1,0 +1,90 @@
+/*
+ * Zed Attack Proxy (ZAP) and its related class files.
+ *
+ * ZAP is an HTTP/HTTPS proxy for assessing web application security.
+ *
+ * Copyright 2026 The ZAP Development Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.zaproxy.addon.mcp.tools;
+
+import java.util.List;
+import java.util.Map;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
+import org.zaproxy.addon.automation.ExtensionAutomation;
+import org.zaproxy.addon.mcp.McpTool;
+import org.zaproxy.addon.mcp.McpToolException;
+import org.zaproxy.addon.mcp.McpToolResult;
+
+/** MCP tool that stops the spider plan if it is running. */
+public class ZapStopSpiderTool implements McpTool {
+
+    private static final Logger LOGGER = LogManager.getLogger(ZapStopSpiderTool.class);
+
+    @Override
+    public String getName() {
+        return "zap_stop_spider";
+    }
+
+    @Override
+    public String getDescription() {
+        return Constant.messages.getString("mcp.tool.stopspider.desc");
+    }
+
+    @Override
+    public InputSchema getInputSchema() {
+        return new InputSchema(
+                Map.of(
+                        "scan_id",
+                        InputSchema.PropertyDef.ofString(
+                                Constant.messages.getString("mcp.tool.stopspider.param.scanid"))),
+                List.of("scan_id"));
+    }
+
+    @Override
+    public McpToolResult execute(ToolArguments arguments) throws McpToolException {
+        String scanId = arguments.getString("scan_id");
+        if (scanId == null || scanId.isBlank()) {
+            throw new McpToolException(
+                    Constant.messages.getString("mcp.tool.stopspider.error.missingscanid"));
+        }
+        scanId = scanId.trim();
+
+        try {
+            ExtensionAutomation extAutomation =
+                    Control.getSingleton()
+                            .getExtensionLoader()
+                            .getExtension(ExtensionAutomation.class);
+
+            if (extAutomation.getLongRunningJobProgress(scanId) < 0) {
+                throw new McpToolException(
+                        Constant.messages.getString(
+                                "mcp.tool.stopspider.error.scanidnotfound", scanId));
+            }
+
+            extAutomation.stopLongRunningJob(scanId);
+        } catch (McpToolException e) {
+            throw e;
+        } catch (Exception e) {
+            LOGGER.warn("Failed to stop spider", e);
+            throw new McpToolException(
+                    Constant.messages.getString("mcp.tool.stopspider.error.failed"));
+        }
+
+        return McpToolResult.success(Constant.messages.getString("mcp.tool.stopspider.success"));
+    }
+}
