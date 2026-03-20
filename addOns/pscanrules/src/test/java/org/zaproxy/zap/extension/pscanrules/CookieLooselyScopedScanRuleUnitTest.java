@@ -218,6 +218,11 @@ class CookieLooselyScopedScanRuleUnitTest extends PassiveScannerTest<CookieLoose
 
         // Then
         assertThat(alertsRaised.size(), is(1));
+        assertThat(alertsRaised.get(0).getEvidence(), is("domain=example.com"));
+        assertThat(
+                alertsRaised.get(0).getOtherInfo(),
+                is(
+                        "The origin domain used for comparison was:\ntest.example.com\nCookie name: a\n"));
     }
 
     @Test
@@ -240,13 +245,19 @@ class CookieLooselyScopedScanRuleUnitTest extends PassiveScannerTest<CookieLoose
         // Given
         HttpMessage msg = createBasicMessage();
         msg.setRequestHeader("GET http://test.example.com/admin/roles HTTP/1.1");
-        msg.getResponseHeader().setHeader(HttpResponseHeader.SET_COOKIE, "a=b;domain=.example.com");
+        msg.getResponseHeader()
+                .setHeader(HttpResponseHeader.SET_COOKIE, "a=b;Domain = .example.com");
 
         // When
         scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), is(1));
+        assertThat(alertsRaised.get(0).getEvidence(), is("Domain = .example.com"));
+        assertThat(
+                alertsRaised.get(0).getOtherInfo(),
+                is(
+                        "The origin domain used for comparison was:\ntest.example.com\nCookie name: a\n"));
     }
 
     @Test
@@ -268,13 +279,18 @@ class CookieLooselyScopedScanRuleUnitTest extends PassiveScannerTest<CookieLoose
         // Given
         HttpMessage msg = createBasicMessage();
         msg.setRequestHeader("GET http://deep.sub.example.com HTTP/1.1");
-        msg.getResponseHeader().setHeader(HttpResponseHeader.SET_COOKIE, "a=b;domain=example.com;");
+        msg.getResponseHeader().setHeader(HttpResponseHeader.SET_COOKIE, "a=b;domain=Example.com;");
 
         // When
         scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), is(1));
+        assertThat(alertsRaised.get(0).getEvidence(), is("domain=Example.com"));
+        assertThat(
+                alertsRaised.get(0).getOtherInfo(),
+                is(
+                        "The origin domain used for comparison was:\ndeep.sub.example.com\nCookie name: a\n"));
     }
 
     @Test
@@ -333,5 +349,51 @@ class CookieLooselyScopedScanRuleUnitTest extends PassiveScannerTest<CookieLoose
 
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getEvidence(), is("domain=.example.com"));
+        assertThat(
+                alertsRaised.get(0).getOtherInfo(),
+                is(
+                        "The origin domain used for comparison was:\ntest.example.com\nCookie name: a\n"));
+    }
+
+    @Test
+    void shouldAlertWithMultipleCookieNames() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = createBasicMessage();
+        msg.setRequestHeader("GET http://test.example.com/admin/roles HTTP/1.1");
+        msg.getResponseHeader().addHeader(HttpResponseHeader.SET_COOKIE, "a=b;domain=.example.com");
+        msg.getResponseHeader().addHeader(HttpResponseHeader.SET_COOKIE, "c=d;domain=.example.com");
+
+        // When
+        scanHttpResponseReceive(msg);
+
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getEvidence(), is("domain=.example.com"));
+        assertThat(
+                alertsRaised.get(0).getOtherInfo(),
+                is(
+                        "The origin domain used for comparison was:\ntest.example.com\nCookie name: a\nCookie name: c\n"));
+    }
+
+    @Test
+    void shouldAlertWithRightEvidenceWhenMultipleCookies() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = createBasicMessage();
+        msg.setRequestHeader("GET http://test.example.com/admin/roles HTTP/1.1");
+        msg.getResponseHeader().addHeader(HttpResponseHeader.SET_COOKIE, "a=b;domain=.example.com");
+        msg.getResponseHeader()
+                .addHeader(HttpResponseHeader.SET_COOKIE, "c=d;domain=test.example.com");
+
+        // When
+        scanHttpResponseReceive(msg);
+
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getEvidence(), is("domain=.example.com"));
+        assertThat(
+                alertsRaised.get(0).getOtherInfo(),
+                is(
+                        "The origin domain used for comparison was:\ntest.example.com\nCookie name: a\n"));
     }
 }

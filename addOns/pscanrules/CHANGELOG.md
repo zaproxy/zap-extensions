@@ -4,7 +4,10 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Added
+- Loosely scoped cookie rule to include evidence.
+### Changed
+- Loosely scoped cookie rule to just include cookie names in the "Other Info".
 
 ## [71] - 2026-03-02
 ### Changed
