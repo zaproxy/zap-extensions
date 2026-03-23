@@ -10,11 +10,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
  - A div that may obscure the login fields with all requiring scrolling.
  - Login with a non std header and unrelated (but required) cookies.
  - Login with no link to the login form. Access is only via a redirect to a one time URL.
- - Login with fields under shadom DOM.
+ - Login with fields under shadow DOM.
  - Login where the session token is base64 encoded when passed to the browser.
  - HTML page with input elements added with increasing delays.
  - A mock MS online login.
  - Login using HTTP basic authentication.
+ - A mock MS online login which uses a popup window.
 
 ### Changed
 - Update minimum ZAP version to 2.17.0.

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>ZAP Test Server</title>
+	<link href="/tutorial.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="roundContainer">
+	<h1>App which uses a popup window for MS Online Auth</h1>
+	<h2>Start Page</h2>
+	<p>
+	This test uses a popup window to handle MS Online authentication.
+	The main app opens a new browser window for the MS login, then the popup closes after login and the main window continues.
+	<p>
+	<a href="https://app.sso-ms-popup.zap/">Go to the app.</a>
+	<p>
+	Credentials:
+	<ul>
+		<li>username = test@test.com
+		<li>password = password123
+	</ul>
+	<p>
+	Verification URL: https://app.sso-ms-popup.zap/user (Authorization: &lt;token&gt;)
+</div>
+</body>
+</html>

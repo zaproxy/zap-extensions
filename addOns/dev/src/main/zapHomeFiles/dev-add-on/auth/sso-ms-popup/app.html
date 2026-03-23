@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>ZAP Test Server</title>
+	<link href="/tutorial.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="roundContainer">
+	<h1>App which uses a popup window for MS Online Auth</h1>
+
+	<div id="login-div">
+		<h2>Not logged in</h2>
+		<p>
+		<a id="link" href="#" onclick="openLogin();">Login</a> to the app.
+	</div>
+
+	<div id="app-div" hidden="hidden">
+		<div id="message"></div>
+		<h2>Links</h2>
+		<div id="links">
+			<a href="test1">test1</a><br>
+			<a href="test2">test2</a><br>
+			<a href="test3">test3</a><br>
+		</div>
+	</div>
+</div>
+
+<script>
+window.addEventListener("load", (event) => {
+	var params = new URLSearchParams(document.location.search);
+	var token = params.get('token');
+
+	if (token) {
+		// Set cookie so the server can verify auth on subsequent requests
+		document.cookie = 'token=' + token + '; path=/';
+
+		if (window.opener && !window.opener.closed) {
+			// We are running in the popup - close it so the main window resumes
+			window.close();
+			return;
+		}
+		// Direct navigation with token (not a popup) - clean up the URL
+		history.replaceState(null, '', '/');
+	}
+
+	// Check cookie to decide which view to show
+	var cookieToken = getCookieToken();
+	if (cookieToken) {
+		showApp();
+	} else {
+		showLogin();
+	}
+
+	// When the popup closes the main window regains focus - re-check auth state
+	window.onfocus = function() {
+		if (getCookieToken()) {
+			showApp();
+		}
+	};
+});
+
+function getCookieToken() {
+	var cookies = document.cookie.split(';');
+	for (var c of cookies) {
+		var parts = c.trim().split('=');
+		if (parts[0] === 'token' && parts[1]) {
+			return parts[1];
+		}
+	}
+	return null;
+}
+
+function showLogin() {
+	document.getElementById('login-div').hidden = false;
+	document.getElementById('app-div').hidden = true;
+}
+
+function showApp() {
+	document.getElementById('login-div').hidden = true;
+	document.getElementById('app-div').hidden = false;
+
+	var token = getCookieToken();
+	fetch('https://app.sso-ms-popup.zap/user', {
+	  method: 'GET',
+	  headers: {'Authorization': token}
+	})
+	.then(res => res.json())
+	.then((result) => {
+		if (result.result === 'OK') {
+			document.getElementById('message').textContent = 'Hello ' + result.user;
+		} else {
+			showLogin();
+		}
+	});
+}
+
+function openLogin() {
+	window.open('https://login.microsoftonline.popup.zap/common/oauth2/v2.0/authorize?service=app.sso-ms-popup.zap');
+}
+</script>
+
+</body>
+</html>

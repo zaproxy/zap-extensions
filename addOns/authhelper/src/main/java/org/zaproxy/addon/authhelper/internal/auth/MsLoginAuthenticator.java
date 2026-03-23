@@ -23,6 +23,7 @@ import java.time.Duration;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Set;
 import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -103,9 +104,26 @@ public final class MsLoginAuthenticator implements Authenticator {
             UsernamePasswordAuthenticationCredentials credentials,
             int stepDelayInSecs) {
 
+        String targetHandle = wd.getWindowHandle();
+
         if (!isMsLoginFlow(wd, PAGE_LOAD_WAIT_UNTIL)) {
-            LOGGER.debug("Expected login URL not present, skipping login.");
-            return Authenticator.NO_AUTH;
+            // Check to see if another window has been opened
+            Set<String> handles = wd.getWindowHandles();
+            boolean switched = false;
+            if (handles.size() > 1) {
+                for (String handle : handles) {
+                    wd.switchTo().window(handle);
+                    if (isMsLoginFlow(wd, PAGE_LOAD_WAIT_UNTIL)) {
+                        switched = true;
+                        break;
+                    }
+                }
+            }
+            if (!switched) {
+                LOGGER.debug("Expected login URL not present, skipping login.");
+                return Authenticator.NO_AUTH;
+            }
+            LOGGER.debug("Found login URL in another window, switching to use it.");
         }
 
         Queue<State> states = new LinkedList<>();
@@ -116,8 +134,14 @@ public final class MsLoginAuthenticator implements Authenticator {
         boolean pwdField = false;
         int totpRetries = 0;
 
+        String authHandle = wd.getWindowHandle();
+
         do {
-            switch (states.remove()) {
+            checkIfWindowClosed(wd, authHandle, targetHandle);
+
+            State state = states.remove();
+            LOGGER.debug("State: {}", state);
+            switch (state) {
                 case START:
                     try {
                         waitForElement(wd, USERNAME_FIELD);
@@ -255,6 +279,8 @@ public final class MsLoginAuthenticator implements Authenticator {
                             Constant.messages.getString(
                                     "authhelper.auth.method.diags.steps.ms.stepchoice"));
 
+                    checkIfWindowClosed(wd, authHandle, targetHandle);
+
                     try {
                         waitForElement(wd, PROOF_REDIRECT_FIELD);
                         states.add(State.PROOF_REDIRECT);
@@ -262,6 +288,8 @@ public final class MsLoginAuthenticator implements Authenticator {
                     } catch (TimeoutException e) {
                         // Ignore, there's still the next step to check.
                     }
+
+                    checkIfWindowClosed(wd, authHandle, targetHandle);
 
                     try {
                         WebElement proofTotpElement =
@@ -277,6 +305,8 @@ public final class MsLoginAuthenticator implements Authenticator {
                     } catch (TimeoutException e) {
                         // Ignore, there's still the next step to check.
                     }
+
+                    checkIfWindowClosed(wd, authHandle, targetHandle);
 
                     try {
                         waitForElement(wd, KMSI_FIELD);
@@ -377,6 +407,13 @@ public final class MsLoginAuthenticator implements Authenticator {
         } while (!states.isEmpty());
 
         return new Result(true, successful, userField, pwdField);
+    }
+
+    private static void checkIfWindowClosed(WebDriver wd, String authHandle, String targetHandle) {
+        if (!wd.getWindowHandles().contains(authHandle)) {
+            LOGGER.debug("Authentication tab closed, switching back to main window.");
+            wd.switchTo().window(targetHandle);
+        }
     }
 
     private static boolean isUserLoggedIn(WebDriver wd, WebElement userElement) {
