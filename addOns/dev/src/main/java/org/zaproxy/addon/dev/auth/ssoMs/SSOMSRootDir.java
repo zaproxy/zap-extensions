@@ -219,8 +219,18 @@ public class SSOMSRootDir extends TestAuthDirectory {
                         delay(msg);
                         boolean redirect = false;
                         String token = msg.getRequestHeader().getHeader("Authorization");
+                        String page = getPageName(msg);
                         if (!HttpRequestHeader.GET.equals(msg.getRequestHeader().getMethod())) {
                             // Passthrough
+                        } else if ("user".equals(page)) {
+                            JSONObject response = new JSONObject();
+                            if (tokens.contains(token)) {
+                                response.put("result", "OK");
+                                response.put("user", "test@test.com");
+                            } else {
+                                response.put("result", "FAIL");
+                            }
+                            getServer().setJsonResponse(response, msg);
                         } else if (!tokens.contains(token)) {
                             DevUtils.setRedirect(msg, LOGIN_URL);
                             redirect = true;

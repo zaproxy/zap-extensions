@@ -7,6 +7,7 @@
 <body>
 <div class="roundContainer">
 	<h1>Simple App which uses a mock MS Online Auth Service</H1>
+	<div id="message"></div>
 	<h2>Links</h2>
 	<div id="links">
 		<a href="https://www.zaproxy.com">https://www.zaproxy.com</a><br>
@@ -19,18 +20,27 @@ function loadLinks() {
 		var params = new URLSearchParams(document.location.search);
 		token = params.get("token");
 		if (! token) {
-			window.location.href = "https://login.microsoftonline.zap/common/oauth2/v2.0/authorize" + 
+			window.location.href = "https://login.microsoftonline.zap/common/oauth2/v2.0/authorize" +
 				(document.location.search === "" ? "?" : document.location.search) +
 				"&service=app.sso-ms.zap";
 		}
 		sessionStorage.setItem("token", token);
 	}
 
-	var params = new URLSearchParams(document.location.search);
-	var xhr = new XMLHttpRequest();
-	var url = "https://api.sso-ms.zap/";
+	fetch("https://api.sso-ms.zap/user", {
+	  method: "GET",
+	  headers: {"Authorization": token}
+	})
+	.then(res => res.json())
+	.then((result) => {
+		if (result.result === "OK") {
+			document.getElementById("message").textContent = "Hello " + result.user;
+		} else {
+			window.location.replace("https://login.microsoftonline.zap/common/oauth2/v2.0/authorize?service=app.sso-ms.zap");
+		}
+	});
 
-	fetch(url,{
+	fetch("https://api.sso-ms.zap/", {
 	  method:"GET",
 	  headers: {"Authorization": token}
 	})
