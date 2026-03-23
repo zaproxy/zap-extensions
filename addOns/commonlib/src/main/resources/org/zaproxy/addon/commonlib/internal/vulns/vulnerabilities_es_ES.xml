@@ -606,16 +606,16 @@ Las funciones de aplicaciones web que suelen ser objeto de ataques de automatiza
     *Encuentas en línea: las encuentas en línea y otros diferentes sistemas de votación en línea se pueden trastornar de forma automática a favor de una opción determinada.
     *Envío de mensajes SMS basados en la web: los atacantes pueden explotar los sistemas de envíos de los mensajes SMS para poder enviar correos no deseados a los usuarios de teléfonos móviles
 	</desc>
-	<solution>Implemente fuertes medidas anti-automatización para defenderse contra intentos maliciosos de automatizar procesos. Considere las siguientes estrategias:
-1. **CAPTCHA:** Integra desafíos CAPTCHA en formularios críticos para distinguir entre bots automatizados y usuarios humanos.
-2. **Limitación de velocidad:** Aplique la limitación de velocidad en varias acciones para evitar solicitudes rápidas y repetitivas para conseguir que los ataques automatizados sean menos efectivos.
-3. **Análisis de comportamiento:** Implemente herramientas de análisis de comportamiento para detectar patrones indicativos de automatización, como secuencias de navegación o envíos de formularios inusuales.
-4. **Huella digital del dispositivo:** Utilice técnicas de huella digital del dispositivo para identificar y bloquear solicitudes de fuentes automatizadas sospechosas o conocidas.
-5. **Autenticación multifactor (MFA):** Introduzca la autenticación multifactor para agregar una capa adicional de seguridad, lo que dificultara que los ataques automatizados tengan éxito.
-6. **Honeypots:** Implemente honeypots o campos ocultos en formularios para engañar a los bots automatizados para que revelen su presencia, y poder tomar las medidas adecuadas.
-7. **Monitoreo y registro:** Monitoree y registre periódicamente las actividades de los usuarios para identificar y responder a patrones inusuales indicativos de automatización.
+	<solution>Implemente fuertes medidas anti-automatización para defenderse contra intentos maliciosos de automatizar procesos. Consider the following strategies:
+- CAPTCHA: Integrate CAPTCHA challenges in critical forms to distinguish between automated bots and human users.
+- Rate Limiting: Enforce rate limiting on various actions to prevent rapid and repetitive requests which makes the automated attacks less effective.
+- Behavioral Analysis: Implement behavioral analysis tools to detect patterns indicative of automation, such as unusual navigation sequences or form submissions.
+- Device Fingerprinting: Use device fingerprinting techniques to identify and block requests from suspicious or known automated sources.
+- Multi-Factor Authentication (MFA): Introduce multi-factor authentication to add an extra layer of security, making it harder for automated attacks to succeed.
+- Honeypots: Deploy honeypots or hidden fields in forms to trick automated bots into revealing their presence, allowing for appropriate action.
+- Monitoring and Logging: Regularly monitor and log user activities to identify and respond to unusual patterns indicative of automation.
 
-Una combinación de estas medidas suele ser más eficaz para prevenir ataques automatizados.</solution>
+A combination of these measures is often more effective in preventing automated attacks.</solution>
 	<reference>https://owasp.org/www-project-automated-threats-to-web-applications/</reference>
 	<reference>https://cwe.mitre.org/data/definitions/116.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/799.html</reference>
@@ -1064,19 +1064,19 @@ Antes de formular archivos XML con DTDs asociados, escanee para detectar declara
 	<desc>La metodología más común para los atacantes es revisar la presencia del sitio web que se quiere atacar y enumerar tanta información como sea posible. Con esta información, el atacante puede desarrollar un plan de ataque preciso, el cual explotará eficazmente una vulnerabilidad en el tipo/versión del sistema utilizado por el objetivo.
 
 El sistema de huella dactilar multi-paso es similar a su predecesor, TCP/IP Fingerprinting (con un escáner como Nmap) con la excepción de que está focalizado en la Capa de Aplicación del modelo OSI en lugar que en la Capa de Transporte. La teoría que se encuentra detrás de esta toma de huellas dactilares es originar un perfil de forma precisa de la plataforma del objetivo, la tecnología del software de la aplicación web, la versión de la base de datos back-end, de las configuraciones y también posiblemente de su arquitectura/topología de la red.</desc>
-	<solution>Implementar medidas para ofuscar o enmascarar información sobre la plataforma del sistema, la tecnología del software de aplicación web, la versión de la base de datos de back-end, las configuraciones y la arquitectura/topología de la red. Esto puede incluir:
+	<solution>Implementar medidas para ofuscar o enmascarar información sobre la plataforma del sistema, la tecnología del software de aplicación web, la versión de la base de datos de back-end, las configuraciones y la arquitectura/topología de la red. This can include:
 
-1. **Diversidad de plataformas y software:** Utilice una combinación de tecnologías y plataformas para dificultar que los atacantes creen un perfil preciso.
+- Platform and Software Diversity: Use a mix of technologies and platforms to make it harder for attackers to build an accurate profile.
 
-2. **Información falsa:** Introduzca información falsa o engañosa en las respuestas del sistema para confundir las herramientas de toma de huellas digitales.
+- False Information: Introduce fake or misleading information in system responses to confuse fingerprinting tools.
 
-3. **Aleatorización de respuestas:** Aleatorice ciertos elementos en las respuestas para dificultar que los atacantes identifiquen el sistema de manera consistente.
+- Response Randomization: Randomize certain elements in responses to make it difficult for attackers to consistently identify the system.
 
-4. Reglas de firewall: Implementar reglas de firewall para bloquear o limitar la efectividad de las técnicas de huella digital.
+- Firewall Rules: Implement firewall rules to block or limit the effectiveness of fingerprinting techniques.
 
-5. **Actualizaciones Regulares** Mantén el software, las plataformas y las configuraciones actualizadas para corregir vulnerabilidades conocidas y evitar la identificación precisa basada en información desactualizada.
+- Regular Updates: Keep software, platforms, and configurations up-to-date to patch known vulnerabilities and prevent accurate identification based on outdated information.
 
-No existe una solución única para todos los casos, por lo que una combinación de estas medidas puede ser la más efectiva.</solution>
+There is no one-size-fits-all solution, and a combination of these measures may be most effective.</solution>
 	<reference>https://cwe.mitre.org/data/definitions/205.html</reference>
 </vuln_item_wasc_45>
 
@@ -1112,15 +1112,15 @@ Una aplicación Web debería invalidar una sesión después de que ha pasado un 
 <vuln_item_wasc_48>
 	<alert>Indexación Insegura</alert>
 	<desc>La Indexación insegura es una amenaza a la confidencialidad de los datos de un sitio web. La indexación de contenidos de sitios web a través de un proceso que tiene acceso a archivos que se supone que no son de acceso público tiene el potencial de filtrar información sobre la existencia de dichos archivos y sobre su contenido. En el proceso de indexar, dicha información es recogida y almacenada por el proceso de indexación, la cual puede ser recuperada después (aunque no de forma trivial) por un determinado atacante, normalmente a través de una serie de consultas al motor de búsqueda. Al atacante no le impide el modelo de seguridad del motor de búsqueda. Como tal, este ataque es sutil y muy difícil de detectar y frustrar -no es fácil distinguir las consultas del atacante de las consultas de un usuario legítimo.</desc>
-	<solution>Implementa medidas para asegurar los procesos de indexación y prevenir el acceso no autorizado a información sensible. Las siguientes estrategias se tendrían que considerar:
-1. **Controles de Acceso** Revisa y restringe los permisos de acceso al proceso de indexación para asegurar que solo acceda e indexe archivos que estén destinados a ser públicos.
-2. **Estándar de exclusión de robots (robots.txt)** Utiliza el archivo robots.txt para especificar explícitamente qué áreas del sitio web no deben ser indexadas por los motores de búsqueda.
-3. **Requisitos de autenticación** Implementa mecanismos de autenticación para acceder a archivos sensibles, asegurando que solo usuarios o procesos autorizados puedan recuperarlos.
-4. **Cifrado de archivos:** Cifre archivos confidenciales para proteger su contenido, incluso si un usuario no autorizado obtiene acceso a los archivos.
-5. **Redacción de URL:** Evite incluir información confidencial en la URL o nombres de archivos que puedan quedar expuestos durante la indexación.
-6. **Encabezados de seguridad:** utilice encabezados de seguridad (por ejemplo, Política de seguridad de contenido) para controlar cómo los navegadores y motores de búsqueda interactúan con su sitio web.
+	<solution>Implementa medidas para asegurar los procesos de indexación y prevenir el acceso no autorizado a información sensible. The following strategies can be considered:
+- Access Controls: Review and restrict access permissions for the indexing process to ensure it only accesses and indexes files that are intended to be publicly available.
+- Robot Exclusion Standard (robots.txt): Use the robots.txt file to explicitly specify which areas of the website should not be indexed by search engines.
+- Authentication Requirements: Implement authentication mechanisms for accessing sensitive files, ensuring that only authorized users or processes can retrieve them.
+- File Encryption: Encrypt sensitive files to protect their content, even if an unauthorized user gains access to the files.
+- URL Redaction: Avoid including sensitive information in URLs or filenames that might be exposed during indexing.
+- Security Headers: Utilize security headers (e.g., Content Security Policy) to control how browsers and search engines interact with your website.
 
-Un enfoque de seguridad proactivo y en capas es crucial para protegerse contra la indexación insegura.</solution>
+A proactive and layered approach to security is crucial for safeguarding against Insecure Indexing.</solution>
 	<reference>https://cwe.mitre.org/data/definitions/612.html</reference>
 </vuln_item_wasc_48>
 
