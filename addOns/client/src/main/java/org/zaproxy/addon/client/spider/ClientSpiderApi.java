@@ -64,6 +64,7 @@ public class ClientSpiderApi extends ApiImplementor {
     private static final String PARAM_USER_NAME = "userName";
     private static final String PARAM_MAX_CRAWL_DEPTH = "maxCrawlDepth";
     private static final String PARAM_PAGE_LOAD_TIME = "pageLoadTime";
+    private static final String PARAM_LOGOUT_AVOIDANCE = "logoutAvoidance";
     private static final String PARAM_NUMBER_OF_BROWSERS = "numberOfBrowsers";
     private static final String PARAM_SCOPE_CHECK = "scopeCheck";
 
@@ -89,7 +90,8 @@ public class ClientSpiderApi extends ApiImplementor {
                                 PARAM_MAX_CRAWL_DEPTH,
                                 PARAM_PAGE_LOAD_TIME,
                                 PARAM_NUMBER_OF_BROWSERS,
-                                PARAM_SCOPE_CHECK)));
+                                PARAM_SCOPE_CHECK,
+                                PARAM_LOGOUT_AVOIDANCE)));
 
         addApiAction(new ApiAction(ACTION_STOP_SCAN, List.of(PARAM_SCAN_ID)));
 
@@ -163,6 +165,9 @@ public class ClientSpiderApi extends ApiImplementor {
         if (params.containsKey(PARAM_SCOPE_CHECK)) {
             options.setScopeCheck(
                     ApiUtils.getOptionalEnumParam(params, PARAM_SCOPE_CHECK, ScopeCheck.class));
+        }
+        if (params.containsKey(PARAM_LOGOUT_AVOIDANCE)) {
+            options.setLogoutAvoidance(ApiUtils.getBooleanParam(params, PARAM_LOGOUT_AVOIDANCE));
         }
 
         User user = getUser(params, context);

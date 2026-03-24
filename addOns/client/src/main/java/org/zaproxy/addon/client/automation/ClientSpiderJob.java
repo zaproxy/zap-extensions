@@ -187,6 +187,9 @@ public class ClientSpiderJob extends AutomationJob {
         if (this.parameters.getShutdownTime() != null) {
             options.setShutdownTimeInSecs(this.parameters.getShutdownTime());
         }
+        if (parameters.getLogoutAvoidance() != null) {
+            options.setLogoutAvoidance(parameters.getLogoutAvoidance());
+        }
         return options;
     }
 
@@ -292,6 +295,7 @@ public class ClientSpiderJob extends AutomationJob {
         private Integer pageLoadTime = ClientOptions.DEFAULT_PAGE_LOAD_TIME;
         private Integer shutdownTime = ClientOptions.DEFAULT_SHUTDOWN_TIME;
         private String scopeCheck = ScopeCheck.getDefault().toString();
+        private Boolean logoutAvoidance = ClientOptions.DEFAULT_LOGOUT_AVOIDANCE;
 
         public Parameters() {}
     }

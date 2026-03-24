@@ -19,7 +19,6 @@
  */
 package org.zaproxy.addon.client.spider;
 
-import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -48,6 +47,7 @@ import org.zaproxy.zap.extension.selenium.ProvidedBrowserUI;
 import org.zaproxy.zap.extension.users.ExtensionUserManagement;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.users.User;
+import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.ZapTextField;
 import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zap.view.NodeSelectDialog;
@@ -73,6 +73,7 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
     private static final String FIELD_INITIAL_LOAD_TIME = "client.options.label.initialloadtime";
     private static final String FIELD_PAGE_LOAD_TIME = "client.options.label.pageloadtime";
     private static final String FIELD_SHUTDOWN_TIME = "client.options.label.shutdowntime";
+    private static final String FIELD_LOGOUT_AVOIDANCE = "client.scandialog.label.logoutAvoidance";
 
     private static final Logger LOGGER = LogManager.getLogger(ClientSpiderDialog.class);
     private static final long serialVersionUID = 1L;
@@ -91,8 +92,8 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
 
     private ExtensionUserManagement extUserMgmt;
 
-    public ClientSpiderDialog(ExtensionClientIntegration ext, Frame owner, Dimension dim) {
-        super(owner, "client.scandialog.title", dim, LABELS);
+    public ClientSpiderDialog(ExtensionClientIntegration ext, Frame owner) {
+        super(owner, "client.scandialog.title", DisplayUtils.getScaledDimension(700, 350), LABELS);
         this.extension = ext;
         params = this.extension.getClientParam();
         this.extUserMgmt =
@@ -177,6 +178,7 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
         this.addNumberField(
                 1, FIELD_SHUTDOWN_TIME, 0, Integer.MAX_VALUE, params.getShutdownTimeInSecs());
         this.addNumberField(1, FIELD_DURATION, 0, Integer.MAX_VALUE, params.getMaxDuration());
+        addCheckBoxField(1, FIELD_LOGOUT_AVOIDANCE, params.isLogoutAvoidance());
 
         this.addPadding(1);
 
@@ -376,6 +378,7 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
             clientParams.setPageLoadTimeInSecs(this.getIntValue(FIELD_PAGE_LOAD_TIME));
             clientParams.setShutdownTimeInSecs(this.getIntValue(FIELD_SHUTDOWN_TIME));
             clientParams.setMaxDuration(this.getIntValue(FIELD_DURATION));
+            clientParams.setLogoutAvoidance(getBoolValue(FIELD_LOGOUT_AVOIDANCE));
         }
 
         subtreeOnlyPreviousCheckedState = getBoolValue(FIELD_SUBTREE_ONLY);

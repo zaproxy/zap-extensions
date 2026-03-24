@@ -28,6 +28,7 @@ import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.given;
@@ -36,6 +37,7 @@ import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
@@ -47,6 +49,7 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.LoggerContext;
@@ -60,8 +63,13 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.quality.Strictness;
+import org.mockito.verification.VerificationMode;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriver.Options;
 import org.openqa.selenium.WebDriver.Timeouts;
@@ -76,6 +84,7 @@ import org.zaproxy.addon.client.internal.ClientMap;
 import org.zaproxy.addon.client.internal.ClientNode;
 import org.zaproxy.addon.client.internal.ClientSideComponent;
 import org.zaproxy.addon.client.internal.ClientSideDetails;
+import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.addon.network.server.HttpServerConfig;
 import org.zaproxy.addon.network.server.Server;
@@ -413,6 +422,60 @@ class ClientSpiderUnitTest extends TestUtils {
         List<String> values = argument.getAllValues();
         assertThat(values, contains("https://www.example.com/", "https://www.example.com/new"));
         assertThat(logEvents, is(empty()));
+    }
+
+    static Stream<Arguments> logoutAvoidanceArgs() {
+        return Stream.of(arguments(true, never()), arguments(false, times(1)));
+    }
+
+    @ParameterizedTest
+    @MethodSource("logoutAvoidanceArgs")
+    void shouldHandleLogoutElementsBasedOnLogoutAvoidance(
+            boolean logoutAvoidance, VerificationMode mode) {
+        // Given
+        String logoutText = "logout";
+        clientOptions.setLogoutAvoidance(logoutAvoidance);
+        String url = "https://www.example.com/";
+        ClientSpider spider =
+                new ClientSpider(
+                        extClient,
+                        "",
+                        url,
+                        clientOptions,
+                        1,
+                        null,
+                        null,
+                        false,
+                        mock(ValueProvider.class));
+        Options options = mock(Options.class);
+        Timeouts timeouts = mock(Timeouts.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
+        when(wd.manage()).thenReturn(options);
+        when(options.timeouts()).thenReturn(timeouts);
+
+        // When
+        spider.run();
+        ClientNode node = map.getOrAddNode(url, false, false);
+        map.addComponentToNode(
+                node,
+                new ClientSideComponent(
+                        Map.of(ClientMap.URL_KEY, url, "tagName", "A", "text", logoutText),
+                        "A",
+                        null,
+                        url,
+                        null,
+                        logoutText,
+                        ClientSideComponent.Type.LINK,
+                        null,
+                        -1));
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            // Ignore
+        }
+        spider.stopScan();
+
+        // Then
+        verify(wd, mode).findElement(By.xpath("//A[contains(text(), 'logout')]"));
     }
 
     private static ClientNode getClientNode(String url, boolean visited) {

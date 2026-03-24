@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -65,6 +66,7 @@ import org.zaproxy.addon.client.internal.ClientSideDetails;
 import org.zaproxy.addon.client.spider.actions.ClickElement;
 import org.zaproxy.addon.client.spider.actions.OpenUrl;
 import org.zaproxy.addon.client.spider.actions.SubmitForm;
+import org.zaproxy.addon.commonlib.AuthConstants;
 import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
@@ -444,7 +446,8 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
 
         if (ClientMap.MAP_COMPONENT_ADDED_EVENT.equals(event.getEventType())) {
             Stats.incCounter("stats.client.spider.event.component");
-            if (ClickElement.isSupported(this::isUrlInScope, parameters)) {
+            if (ClickElement.isSupported(this::isUrlInScope, parameters)
+                    && !(options.isLogoutAvoidance() && isLogoutElement(parameters))) {
                 Stats.incCounter("stats.client.spider.event.component.click");
                 addTask(
                         url,
@@ -516,6 +519,15 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
         }
 
         return state;
+    }
+
+    private static boolean isLogoutElement(Map<String, String> parameters) {
+        String text = parameters.get("text");
+        if (text == null || text.isBlank()) {
+            return false;
+        }
+        String normalized = text.toLowerCase(Locale.ROOT).replaceAll("[ -]", "");
+        return AuthConstants.getLogoutIndicators().stream().anyMatch(normalized::contains);
     }
 
     private static String paramsToString(Map<String, String> parameters) {

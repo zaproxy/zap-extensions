@@ -739,11 +739,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
 
     private void initScanDialog() {
         if (spiderDialog == null) {
-            spiderDialog =
-                    new ClientSpiderDialog(
-                            this,
-                            View.getSingleton().getMainFrame(),
-                            DisplayUtils.getScaledDimension(700, 300));
+            spiderDialog = new ClientSpiderDialog(this, View.getSingleton().getMainFrame());
         }
         spiderDialog.updateBrowsers();
     }
