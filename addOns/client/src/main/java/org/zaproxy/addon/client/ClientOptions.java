@@ -43,6 +43,7 @@ public class ClientOptions extends VersionedAbstractParam {
     public static final int DEFAULT_INITIAL_LOAD_TIME = 5;
     public static final int DEFAULT_PAGE_LOAD_TIME = 1;
     public static final int DEFAULT_SHUTDOWN_TIME = 5;
+    public static final boolean DEFAULT_LOGOUT_AVOIDANCE = true;
 
     private static final String CONFIG_VERSION_KEY = CLIENT_BASE_KEY + VERSION_ATTRIBUTE;
     private static final String PSCAN_ENABLED_KEY = CLIENT_BASE_KEY + ".pscanEnabled";
@@ -58,6 +59,7 @@ public class ClientOptions extends VersionedAbstractParam {
     private static final String MAX_CHILDREN_KEY = CLIENT_BASE_KEY + ".maxChildren";
     private static final String MAX_SCANS_IN_UI_KEY = CLIENT_BASE_KEY + ".maxScansInUI";
     private static final String SCOPE_CHECK_KEY = CLIENT_BASE_KEY + ".scopeCheck";
+    private static final String LOGOUT_AVOIDANCE_KEY = CLIENT_BASE_KEY + ".logoutAvoidance";
 
     public enum ScopeCheck {
         FLEXIBLE,
@@ -106,6 +108,7 @@ public class ClientOptions extends VersionedAbstractParam {
     private int maxDuration;
     private int maxScansInUi = 5;
     private ScopeCheck scopeCheck = ScopeCheck.getDefault();
+    private boolean logoutAvoidance;
 
     @Override
     public ClientOptions clone() {
@@ -125,6 +128,7 @@ public class ClientOptions extends VersionedAbstractParam {
         this.maxDuration = getInt(MAX_DURATION_KEY, 0);
         this.maxScansInUi = getInt(MAX_SCANS_IN_UI_KEY, 5);
         this.scopeCheck = getEnum(SCOPE_CHECK_KEY, ScopeCheck.getDefault());
+        logoutAvoidance = getBoolean(LOGOUT_AVOIDANCE_KEY, DEFAULT_LOGOUT_AVOIDANCE);
 
         try {
             pscanRulesDisabled =
@@ -286,5 +290,14 @@ public class ClientOptions extends VersionedAbstractParam {
     public void setScopeCheck(ScopeCheck scopeCheck) {
         this.scopeCheck = scopeCheck == null ? ScopeCheck.getDefault() : scopeCheck;
         getConfig().setProperty(SCOPE_CHECK_KEY, this.scopeCheck.name());
+    }
+
+    public boolean isLogoutAvoidance() {
+        return logoutAvoidance;
+    }
+
+    public void setLogoutAvoidance(boolean logoutAvoidance) {
+        this.logoutAvoidance = logoutAvoidance;
+        getConfig().setProperty(LOGOUT_AVOIDANCE_KEY, logoutAvoidance);
     }
 }

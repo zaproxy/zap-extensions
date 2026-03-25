@@ -157,6 +157,7 @@ public class ClientSpiderJobUnitTest extends TestUtils {
                 is(ClientOptions.DEFAULT_INITIAL_LOAD_TIME));
         assertThat(job.getParameters().getPageLoadTime(), is(ClientOptions.DEFAULT_PAGE_LOAD_TIME));
         assertThat(job.getParameters().getShutdownTime(), is(ClientOptions.DEFAULT_SHUTDOWN_TIME));
+        assertThat(job.getParameters().getLogoutAvoidance(), is(true));
     }
 
     @Test
@@ -178,6 +179,7 @@ public class ClientSpiderJobUnitTest extends TestUtils {
                   initialLoadTime:  12
                   pageLoadTime:     13
                   shutdownTime:     14
+                  logoutAvoidance: false
                 """;
         Yaml yaml = new Yaml();
         Object data = yaml.load(yamlStr);
@@ -200,6 +202,21 @@ public class ClientSpiderJobUnitTest extends TestUtils {
         assertThat(job.getParameters().getInitialLoadTime(), is(equalTo(12)));
         assertThat(job.getParameters().getPageLoadTime(), is(equalTo(13)));
         assertThat(job.getParameters().getShutdownTime(), is(equalTo(14)));
+        assertThat(job.getParameters().getLogoutAvoidance(), is(equalTo(false)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void shouldApplyLogoutAvoidanceToOptions(boolean value) {
+        // Given
+        ClientSpiderJob job = new ClientSpiderJob();
+        job.getParameters().setLogoutAvoidance(value);
+
+        // When
+        ClientOptions options = job.paramsToOptions();
+
+        // Then
+        assertThat(options.isLogoutAvoidance(), is(value));
     }
 
     @Test
