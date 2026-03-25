@@ -61,6 +61,7 @@ public class HttpOnlySiteScanRule extends AbstractHostPlugin implements CommonAc
         Map<String, String> alertTags =
                 new HashMap<>(
                         CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2025_A04_CRYPTO_FAIL,
                                 CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
                                 CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
                                 CommonAlertTag.WSTG_V42_CRYP_03_CRYPTO_FAIL));

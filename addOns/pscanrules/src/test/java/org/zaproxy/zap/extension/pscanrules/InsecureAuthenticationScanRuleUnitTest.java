@@ -62,7 +62,16 @@ class InsecureAuthenticationScanRuleUnitTest
         // Given / When
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(tags.size(), is(equalTo(8)));
+        assertThat(tags.size(), is(equalTo(11)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2025_A01_BROKEN_AC.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2025_A04_CRYPTO_FAIL.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2025_A07_AUTH_FAIL.getTag()),
+                is(equalTo(true)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
                 is(equalTo(true)));
@@ -81,6 +90,15 @@ class InsecureAuthenticationScanRuleUnitTest
         assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.DEV_STD.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.QA_STD.getTag()), is(equalTo(true)));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2025_A01_BROKEN_AC.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2025_A01_BROKEN_AC.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2025_A04_CRYPTO_FAIL.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2025_A04_CRYPTO_FAIL.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2025_A07_AUTH_FAIL.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2025_A07_AUTH_FAIL.getValue())));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getValue())));

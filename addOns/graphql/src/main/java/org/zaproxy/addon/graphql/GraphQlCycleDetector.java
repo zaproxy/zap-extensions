@@ -60,6 +60,9 @@ public class GraphQlCycleDetector {
                     Map.of(
                             "OWASP_2023_API4",
                             "https://owasp.org/API-Security/editions/2023/en/0xa4-unrestricted-resource-consumption/"),
+                    CommonAlertTag.API_2023_API4_UNRESTRICTED_RESOURCE_CONSUMPTION,
+                    CommonAlertTag.OWASP_2025_A06_INSECURE_DESIGN,
+                    CommonAlertTag.OWASP_2025_A10_EXCEPTIONAL_CONDITIONS,
                     CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
                     CommonAlertTag.WSTG_V42_APIT_01_GRAPHQL);
     private static final CycleDetectionCompleteException CYCLE_DETECTION_COMPLETE_EXCEPTION =

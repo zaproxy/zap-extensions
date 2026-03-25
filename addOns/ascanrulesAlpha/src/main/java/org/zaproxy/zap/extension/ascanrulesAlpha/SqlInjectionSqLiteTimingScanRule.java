@@ -108,6 +108,8 @@ public class SqlInjectionSqLiteTimingScanRule extends AbstractAppParamPlugin
         Map<String, String> alertTags =
                 new HashMap<>(
                         CommonAlertTag.toMap(
+                                CommonAlertTag.API_2023_API4_UNRESTRICTED_RESOURCE_CONSUMPTION,
+                                CommonAlertTag.OWASP_2025_A05_INJECTION,
                                 CommonAlertTag.OWASP_2021_A03_INJECTION,
                                 CommonAlertTag.OWASP_2017_A01_INJECTION,
                                 CommonAlertTag.WSTG_V42_INPV_05_SQLI,

@@ -76,6 +76,9 @@ class AccessControlAlertsProcessorUnitTest {
                                 "CWE-" + cweId,
                                 "https://cwe.mitre.org/data/definitions/" + cweId + ".html"),
                         hasEntry(
+                                CommonAlertTag.OWASP_2025_A01_BROKEN_AC.getTag(),
+                                CommonAlertTag.OWASP_2025_A01_BROKEN_AC.getValue()),
+                        hasEntry(
                                 CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag(),
                                 CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getValue()),
                         hasEntry(

@@ -73,6 +73,8 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
         Map<String, String> alertTags =
                 new HashMap<>(
                         CommonAlertTag.toMap(
+                                CommonAlertTag.API_2023_API6_UNRESTRICTED_SENSITIVE_BUSINESS_FLOWS,
+                                CommonAlertTag.OWASP_2025_A05_INJECTION,
                                 CommonAlertTag.OWASP_2021_A03_INJECTION,
                                 CommonAlertTag.OWASP_2017_A01_INJECTION,
                                 CommonAlertTag.WSTG_V42_CLNT_04_OPEN_REDIR,

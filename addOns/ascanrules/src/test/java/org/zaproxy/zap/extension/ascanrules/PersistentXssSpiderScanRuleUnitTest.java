@@ -45,7 +45,7 @@ class PersistentXssSpiderScanRuleUnitTest extends ActiveScannerTest<PersistentXs
         // Then
         assertThat(cwe, is(equalTo(79)));
         assertThat(wasc, is(equalTo(8)));
-        assertThat(tags.size(), is(equalTo(9)));
+        assertThat(tags.size(), is(equalTo(10)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(true)));

@@ -56,6 +56,7 @@ public class CookieLooselyScopedScanRule extends PluginPassiveScanner
         Map<String, String> alertTags =
                 new HashMap<>(
                         CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2025_A08_INTEGRITY_FAIL,
                                 CommonAlertTag.OWASP_2021_A08_INTEGRITY_FAIL,
                                 CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
                                 CommonAlertTag.WSTG_V42_SESS_02_COOKIE_ATTRS,

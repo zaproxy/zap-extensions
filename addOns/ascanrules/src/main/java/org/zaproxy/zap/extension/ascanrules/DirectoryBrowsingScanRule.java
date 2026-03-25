@@ -57,6 +57,8 @@ public class DirectoryBrowsingScanRule extends AbstractAppPlugin
         Map<String, String> alertTags =
                 new HashMap<>(
                         CommonAlertTag.toMap(
+                                CommonAlertTag.API_2023_API8_SEC_MISCONFIG,
+                                CommonAlertTag.OWASP_2025_A01_BROKEN_AC,
                                 CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
                                 CommonAlertTag.OWASP_2017_A05_BROKEN_AC,
                                 CommonAlertTag.SYSTEMIC));

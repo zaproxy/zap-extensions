@@ -81,7 +81,7 @@ class ElmahScanRuleUnitTest extends AbstractHostFilePluginUnitTest<ElmahScanRule
         // Then
         assertThat(cwe, is(equalTo(94)));
         assertThat(wasc, is(equalTo(14)));
-        assertThat(tags.size(), is(equalTo(7)));
+        assertThat(tags.size(), is(equalTo(8)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(true)));

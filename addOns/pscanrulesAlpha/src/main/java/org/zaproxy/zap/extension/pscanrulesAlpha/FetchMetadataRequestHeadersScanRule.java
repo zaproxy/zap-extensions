@@ -70,7 +70,11 @@ public class FetchMetadataRequestHeadersScanRule extends PluginPassiveScanner
         Map<String, String> alertTags =
                 new HashMap<>(
                         CommonAlertTag.toMap(
-                                CommonAlertTag.WSTG_V42_SESS_05_CSRF, CommonAlertTag.SYSTEMIC));
+                                CommonAlertTag.OWASP_2025_A01_BROKEN_AC,
+                                CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
+                                CommonAlertTag.OWASP_2017_A05_BROKEN_AC,
+                                CommonAlertTag.WSTG_V42_SESS_05_CSRF,
+                                CommonAlertTag.SYSTEMIC));
         alertTags.put(PolicyTag.PENTEST.getTag(), "");
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
     }

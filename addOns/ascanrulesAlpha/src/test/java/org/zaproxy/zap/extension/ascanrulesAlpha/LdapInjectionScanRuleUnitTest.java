@@ -64,7 +64,14 @@ class LdapInjectionScanRuleUnitTest extends ActiveScannerTest<LdapInjectionScanR
         // Then
         assertThat(cwe, is(equalTo(90)));
         assertThat(wasc, is(equalTo(29)));
-        assertThat(tags.size(), is(equalTo(6)));
+        assertThat(tags.size(), is(equalTo(8)));
+        assertThat(
+                tags.containsKey(
+                        CommonAlertTag.API_2023_API4_UNRESTRICTED_RESOURCE_CONSUMPTION.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2025_A05_INJECTION.getTag()),
+                is(equalTo(true)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(true)));
@@ -74,6 +81,15 @@ class LdapInjectionScanRuleUnitTest extends ActiveScannerTest<LdapInjectionScanR
         assertThat(
                 tags.containsKey(CommonAlertTag.WSTG_V42_INPV_06_LDAPI.getTag()),
                 is(equalTo(true)));
+        assertThat(
+                tags.get(CommonAlertTag.API_2023_API4_UNRESTRICTED_RESOURCE_CONSUMPTION.getTag()),
+                is(
+                        equalTo(
+                                CommonAlertTag.API_2023_API4_UNRESTRICTED_RESOURCE_CONSUMPTION
+                                        .getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2025_A05_INJECTION.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2025_A05_INJECTION.getValue())));
         assertThat(tags.containsKey(CommonAlertTag.HIPAA.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(CommonAlertTag.PCI_DSS.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));

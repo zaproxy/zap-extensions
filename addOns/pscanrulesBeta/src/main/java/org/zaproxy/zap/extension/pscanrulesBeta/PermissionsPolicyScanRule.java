@@ -54,11 +54,12 @@ public class PermissionsPolicyScanRule extends PluginPassiveScanner
         Map<String, String> alertTags =
                 new HashMap<>(
                         CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2025_A01_BROKEN_AC,
                                 CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
-                                CommonAlertTag.OWASP_2017_A05_BROKEN_AC,
-                                CommonAlertTag.SYSTEMIC));
+                                CommonAlertTag.OWASP_2017_A05_BROKEN_AC));
         alertTags.put(PolicyTag.PENTEST.getTag(), "");
         alertTags.put(PolicyTag.QA_STD.getTag(), "");
+        alertTags.put(CommonAlertTag.SYSTEMIC.getTag(), CommonAlertTag.SYSTEMIC.getValue());
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
     }
 

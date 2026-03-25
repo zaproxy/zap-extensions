@@ -48,6 +48,10 @@ public class ExponentialEntityExpansionScanRule extends AbstractAppPlugin
         Map<String, String> alertTags =
                 new HashMap<>(
                         CommonAlertTag.toMap(
+                                CommonAlertTag.API_2023_API10_UNSAFE_CONSUMPTION,
+                                CommonAlertTag.OWASP_2025_A05_INJECTION,
+                                CommonAlertTag.OWASP_2025_A06_INSECURE_DESIGN,
+                                CommonAlertTag.OWASP_2025_A10_EXCEPTIONAL_CONDITIONS,
                                 CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
                                 CommonAlertTag.WSTG_V42_BUSL_09_UPLOAD_MALICIOUS_FILES));
         alertTags.put(PolicyTag.QA_CICD.getTag(), "");

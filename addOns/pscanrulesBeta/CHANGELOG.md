@@ -4,7 +4,10 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- The scan rules now have new tags for the OWASP Top 10 2025.
+- The Content Cacheability scan rule now includes alert tags for the 2021 and 2017 Top 10s.
+- Depends on an updated version of the Common Library add-on.
 
 ## [49] - 2026-02-17
 ### Changed

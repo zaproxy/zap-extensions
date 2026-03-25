@@ -6,7 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Update minimum ZAP version to 2.17.0.
-- The scan rule now has the "TEST_TIMING" alert tag.
+- The scan rule now has the "TEST_TIMING" alert tag, as well as new tags for the OWASP Top 10 2025, and API Top 10 2023.
+- Depends on an updated version of the Common Library add-on.
 
 ## [16] - 2025-04-30
 ### Changed

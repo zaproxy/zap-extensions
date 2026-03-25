@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Maintenance changes.
+- The scan rules now have new tags for the OWASP Top 10 2025.
+- The Fetch Metadata Request Headers scan rule now has alert tags for the Top 10 2021 and 2017.
+- The Full Path Disclosure scan rule now also has an alert tag for the 2017 Top 10.
+- Depends on an updated version of the Common Library add-on.
 
 ## [48] - 2025-12-15
 ### Changed

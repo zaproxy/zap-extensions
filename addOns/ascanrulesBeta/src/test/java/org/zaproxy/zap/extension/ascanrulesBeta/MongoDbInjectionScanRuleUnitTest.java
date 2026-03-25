@@ -61,7 +61,13 @@ class MongoDbInjectionScanRuleUnitTest extends ActiveScannerTest<MongoDbInjectio
         // Then
         assertThat(cwe, is(equalTo(943)));
         assertThat(wasc, is(equalTo(19)));
-        assertThat(tags.size(), is(equalTo(6)));
+        assertThat(tags.size(), is(equalTo(8)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.API_2023_API10_UNSAFE_CONSUMPTION.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2025_A05_INJECTION.getTag()),
+                is(equalTo(true)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(true)));
@@ -73,6 +79,12 @@ class MongoDbInjectionScanRuleUnitTest extends ActiveScannerTest<MongoDbInjectio
         assertThat(tags.containsKey(CommonAlertTag.HIPAA.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(CommonAlertTag.PCI_DSS.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
+        assertThat(
+                tags.get(CommonAlertTag.API_2023_API10_UNSAFE_CONSUMPTION.getTag()),
+                is(equalTo(CommonAlertTag.API_2023_API10_UNSAFE_CONSUMPTION.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2025_A05_INJECTION.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2025_A05_INJECTION.getValue())));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A03_INJECTION.getValue())));

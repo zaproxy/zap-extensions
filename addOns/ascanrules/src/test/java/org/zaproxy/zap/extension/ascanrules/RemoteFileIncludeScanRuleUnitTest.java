@@ -63,7 +63,7 @@ class RemoteFileIncludeScanRuleUnitTest extends ActiveScannerTest<RemoteFileIncl
         // Then
         assertThat(cwe, is(equalTo(98)));
         assertThat(wasc, is(equalTo(5)));
-        assertThat(tags.size(), is(equalTo(10)));
+        assertThat(tags.size(), is(equalTo(12)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(true)));

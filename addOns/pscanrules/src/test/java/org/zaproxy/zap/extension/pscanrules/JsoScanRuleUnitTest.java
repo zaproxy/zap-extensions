@@ -280,7 +280,10 @@ class JsoScanRuleUnitTest extends PassiveScannerTest<JsoScanRule> {
         // Given / When
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(tags.size(), is(equalTo(3)));
+        assertThat(tags.size(), is(equalTo(4)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2025_A06_INSECURE_DESIGN.getTag()),
+                is(equalTo(true)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getTag()),
                 is(equalTo(true)));
@@ -288,6 +291,9 @@ class JsoScanRuleUnitTest extends PassiveScannerTest<JsoScanRule> {
                 tags.containsKey(CommonAlertTag.OWASP_2017_A08_INSECURE_DESERIAL.getTag()),
                 is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2025_A06_INSECURE_DESIGN.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2025_A06_INSECURE_DESIGN.getValue())));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getValue())));

@@ -81,6 +81,8 @@ public class RemoteCodeExecutionCve20121823ScanRule extends AbstractAppPlugin
         Map<String, String> alertTags =
                 new HashMap<>(
                         CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2025_A03_SUPPLY_CHAIN,
+                                CommonAlertTag.OWASP_2025_A05_INJECTION,
                                 CommonAlertTag.OWASP_2021_A06_VULN_COMP,
                                 CommonAlertTag.OWASP_2017_A09_VULN_COMP,
                                 CommonAlertTag.WSTG_V42_INPV_12_COMMAND_INJ));

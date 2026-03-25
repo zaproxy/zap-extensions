@@ -54,17 +54,19 @@ public class Text4ShellScanRule extends AbstractAppParamPlugin implements Common
         Map<String, String> alertTags =
                 new HashMap<>(
                         CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2025_A03_SUPPLY_CHAIN,
+                                CommonAlertTag.OWASP_2025_A05_INJECTION,
                                 CommonAlertTag.OWASP_2021_A06_VULN_COMP,
                                 CommonAlertTag.OWASP_2017_A09_VULN_COMP,
                                 CommonAlertTag.WSTG_V42_INPV_11_CODE_INJ,
                                 CommonAlertTag.HIPAA,
                                 CommonAlertTag.PCI_DSS));
+        CommonAlertTag.putCve(alertTags, CVE);
         alertTags.put(ExtensionOast.OAST_ALERT_TAG_KEY, ExtensionOast.OAST_ALERT_TAG_VALUE);
         alertTags.put(PolicyTag.DEV_FULL.getTag(), "");
         alertTags.put(PolicyTag.QA_FULL.getTag(), "");
         alertTags.put(PolicyTag.SEQUENCE.getTag(), "");
         alertTags.put(PolicyTag.PENTEST.getTag(), "");
-        CommonAlertTag.putCve(alertTags, CVE);
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
     }
 

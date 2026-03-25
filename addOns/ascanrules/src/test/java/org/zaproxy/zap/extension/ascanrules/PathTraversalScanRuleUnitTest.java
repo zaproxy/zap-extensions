@@ -88,7 +88,7 @@ class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanR
         // Then
         assertThat(cwe, is(equalTo(22)));
         assertThat(wasc, is(equalTo(33)));
-        assertThat(tags.size(), is(equalTo(11)));
+        assertThat(tags.size(), is(equalTo(12)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
                 is(equalTo(true)));

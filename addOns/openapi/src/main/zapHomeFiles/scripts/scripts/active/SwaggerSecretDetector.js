@@ -26,6 +26,8 @@ risk: high
 confidence: medium
 cweId: 522  # Insufficiently Protected Credentials
 alertTags:
+  ${CommonAlertTag.API_2023_API9_IMPROPER_INVENTORY.getTag()}: ${CommonAlertTag.API_2023_API9_IMPROPER_INVENTORY.getValue()}
+  ${CommonAlertTag.OWASP_2025_A02_SEC_MISCONFIG.getTag()}: ${CommonAlertTag.OWASP_2025_A02_SEC_MISCONFIG.getValue()}
   ${CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()}: ${CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getValue()}
   ${CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()}: ${CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getValue()}
   ${PolicyTag.API.getTag()}: ""

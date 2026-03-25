@@ -196,7 +196,10 @@ class ServletParameterPollutionScanRuleUnitTest
         // Given / When
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(tags.size(), is(equalTo(5)));
+        assertThat(tags.size(), is(equalTo(6)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2025_A06_INSECURE_DESIGN.getTag()),
+                is(equalTo(true)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getTag()),
                 is(equalTo(true)));
@@ -206,6 +209,9 @@ class ServletParameterPollutionScanRuleUnitTest
         assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.DEV_STD.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.QA_STD.getTag()), is(equalTo(true)));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2025_A06_INSECURE_DESIGN.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2025_A06_INSECURE_DESIGN.getValue())));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getValue())));

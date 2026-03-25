@@ -65,6 +65,8 @@ public class SwaggerSecretDetectorScriptUnitTest extends GraalJsActiveScriptScan
         MatcherAssert.assertThat(
                 rule.getAlertTags().keySet(),
                 containsInAnyOrder(
+                        CommonAlertTag.API_2023_API9_IMPROPER_INVENTORY.getTag(),
+                        CommonAlertTag.OWASP_2025_A02_SEC_MISCONFIG.getTag(),
                         CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag(),
                         CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag(),
                         PolicyTag.API.getTag(),

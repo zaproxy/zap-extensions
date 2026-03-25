@@ -67,6 +67,7 @@ public class JsFunctionScanRule extends PluginPassiveScanner implements CommonPa
         Map<String, String> alertTags =
                 new HashMap<>(
                         CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2025_A06_INSECURE_DESIGN,
                                 CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
                                 CommonAlertTag.WSTG_V42_CLNT_02_JS_EXEC));
         alertTags.put(PolicyTag.PENTEST.getTag(), "");

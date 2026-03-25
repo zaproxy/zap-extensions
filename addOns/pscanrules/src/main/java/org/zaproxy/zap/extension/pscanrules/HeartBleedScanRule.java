@@ -74,6 +74,7 @@ public class HeartBleedScanRule extends PluginPassiveScanner implements CommonPa
         Map<String, String> alertTags = new HashMap<>();
         alertTags.putAll(
                 CommonAlertTag.toMap(
+                        CommonAlertTag.OWASP_2025_A04_CRYPTO_FAIL,
                         CommonAlertTag.OWASP_2021_A06_VULN_COMP,
                         CommonAlertTag.OWASP_2017_A09_VULN_COMP,
                         CommonAlertTag.WSTG_V42_CRYP_01_TLS));

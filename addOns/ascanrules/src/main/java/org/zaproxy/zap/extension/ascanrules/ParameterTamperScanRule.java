@@ -62,6 +62,8 @@ public class ParameterTamperScanRule extends AbstractAppParamPlugin
         Map<String, String> alertTags =
                 new HashMap<>(
                         CommonAlertTag.toMap(
+                                CommonAlertTag.API_2023_API1_BROKEN_OBJECT_LEVEL_AUTHZ,
+                                CommonAlertTag.OWASP_2025_A06_INSECURE_DESIGN,
                                 CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
                                 CommonAlertTag.OWASP_2017_A01_INJECTION));
         alertTags.put(PolicyTag.API.getTag(), "");

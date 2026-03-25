@@ -62,6 +62,8 @@ class SuspiciousInputTransformationScriptUnitTest extends GraalJsActiveScriptSca
         assertThat(
                 rule.getAlertTags().keySet(),
                 containsInAnyOrder(
+                        CommonAlertTag.API_2023_API4_UNRESTRICTED_RESOURCE_CONSUMPTION.getTag(),
+                        CommonAlertTag.OWASP_2025_A05_INJECTION.getTag(),
                         CommonAlertTag.OWASP_2021_A03_INJECTION.getTag(),
                         CommonAlertTag.OWASP_2017_A01_INJECTION.getTag(),
                         PolicyTag.PENTEST.getTag()));
@@ -84,6 +86,8 @@ class SuspiciousInputTransformationScriptUnitTest extends GraalJsActiveScriptSca
         assertThat(
                 alert.getTags().keySet(),
                 containsInAnyOrder(
+                        CommonAlertTag.API_2023_API4_UNRESTRICTED_RESOURCE_CONSUMPTION.getTag(),
+                        CommonAlertTag.OWASP_2025_A05_INJECTION.getTag(),
                         CommonAlertTag.OWASP_2021_A03_INJECTION.getTag(),
                         CommonAlertTag.OWASP_2017_A01_INJECTION.getTag(),
                         PolicyTag.PENTEST.getTag(),

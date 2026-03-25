@@ -132,6 +132,7 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
         Map<String, String> alertTags =
                 new HashMap<>(
                         CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2025_A05_INJECTION,
                                 CommonAlertTag.OWASP_2021_A03_INJECTION,
                                 CommonAlertTag.OWASP_2017_A07_XSS,
                                 CommonAlertTag.WSTG_V42_CLNT_01_DOM_XSS));

@@ -125,8 +125,14 @@ class Text4ShellScanRuleUnitTest extends ActiveScannerTest<Text4ShellScanRule> {
         // Then
         assertThat(cwe, is(equalTo(117)));
         assertThat(wasc, is(equalTo(20)));
-        assertThat(tags.size(), is(equalTo(11)));
+        assertThat(tags.size(), is(equalTo(13)));
 
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2025_A03_SUPPLY_CHAIN.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2025_A05_INJECTION.getTag()),
+                is(equalTo(true)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getTag()),
                 is(equalTo(true)));
@@ -138,12 +144,18 @@ class Text4ShellScanRuleUnitTest extends ActiveScannerTest<Text4ShellScanRule> {
                 is(equalTo(true)));
         assertThat(tags.containsKey(CommonAlertTag.HIPAA.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(CommonAlertTag.PCI_DSS.getTag()), is(equalTo(true)));
-        assertThat(tags.containsKey(ExtensionOast.OAST_ALERT_TAG_KEY), is(equalTo(true)));
         assertThat(tags.containsKey(Text4ShellScanRule.CVE), is(equalTo(true)));
-        assertThat(tags.containsKey(PolicyTag.QA_FULL.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(ExtensionOast.OAST_ALERT_TAG_KEY), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.DEV_FULL.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.QA_FULL.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.SEQUENCE.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2025_A03_SUPPLY_CHAIN.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2025_A03_SUPPLY_CHAIN.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2025_A05_INJECTION.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2025_A05_INJECTION.getValue())));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getValue())));
@@ -153,6 +165,9 @@ class Text4ShellScanRuleUnitTest extends ActiveScannerTest<Text4ShellScanRule> {
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_INPV_11_CODE_INJ.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_INPV_11_CODE_INJ.getValue())));
+        assertThat(
+                tags.get(Text4ShellScanRule.CVE),
+                is(equalTo("https://nvd.nist.gov/vuln/detail/CVE-2022-42889")));
         assertThat(
                 tags.get(ExtensionOast.OAST_ALERT_TAG_KEY),
                 is(equalTo(ExtensionOast.OAST_ALERT_TAG_VALUE)));

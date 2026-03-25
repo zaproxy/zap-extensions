@@ -50,6 +50,7 @@ public class JsoScanRule extends PluginPassiveScanner implements CommonPassiveSc
         Map<String, String> alertTags =
                 new HashMap<>(
                         CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2025_A06_INSECURE_DESIGN,
                                 CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
                                 CommonAlertTag.OWASP_2017_A08_INSECURE_DESERIAL));
         alertTags.put(PolicyTag.PENTEST.getTag(), "");

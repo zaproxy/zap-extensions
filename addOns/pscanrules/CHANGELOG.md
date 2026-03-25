@@ -4,7 +4,10 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- The scan rules now have new tags for the OWASP Top 10 2025.
+- The Charset Mismatch scan rule also now has tags for the Top 10 2021 and 2017.
+- Depends on an updated version of the Common Library add-on.
 
 ## [72] - 2026-03-31
 ### Added

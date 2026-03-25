@@ -64,6 +64,8 @@ public class GraphQlParser {
     private static final String INTROSPECTION_ALERT_REF = ExtensionGraphQl.TOOL_ALERT_ID + "-1";
     private static final Map<String, String> INTROSPECTION_ALERT_TAGS =
             CommonAlertTag.toMap(
+                    CommonAlertTag.API_2023_API8_SEC_MISCONFIG,
+                    CommonAlertTag.OWASP_2025_A02_SEC_MISCONFIG,
                     CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
                     CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG);
     private static final ObjectMapper MAPPER = new ObjectMapper();
