@@ -1076,7 +1076,7 @@ El sistema de huella dactilar multi-paso es similar a su predecesor, TCP/IP Fing
 
 - Regular Updates: Keep software, platforms, and configurations up-to-date to patch known vulnerabilities and prevent accurate identification based on outdated information.
 
-There is no one-size-fits-all solution, and a combination of these measures may be most effective.</solution>
+No existe una solución única para todos los casos, por lo que una combinación de estas medidas puede ser la más efectiva.</solution>
 	<reference>https://cwe.mitre.org/data/definitions/205.html</reference>
 </vuln_item_wasc_45>
 
@@ -1114,13 +1114,13 @@ Una aplicación Web debería invalidar una sesión después de que ha pasado un 
 	<desc>La Indexación insegura es una amenaza a la confidencialidad de los datos de un sitio web. La indexación de contenidos de sitios web a través de un proceso que tiene acceso a archivos que se supone que no son de acceso público tiene el potencial de filtrar información sobre la existencia de dichos archivos y sobre su contenido. En el proceso de indexar, dicha información es recogida y almacenada por el proceso de indexación, la cual puede ser recuperada después (aunque no de forma trivial) por un determinado atacante, normalmente a través de una serie de consultas al motor de búsqueda. Al atacante no le impide el modelo de seguridad del motor de búsqueda. Como tal, este ataque es sutil y muy difícil de detectar y frustrar -no es fácil distinguir las consultas del atacante de las consultas de un usuario legítimo.</desc>
 	<solution>Implementa medidas para asegurar los procesos de indexación y prevenir el acceso no autorizado a información sensible. The following strategies can be considered:
 - Access Controls: Review and restrict access permissions for the indexing process to ensure it only accesses and indexes files that are intended to be publicly available.
-- Robot Exclusion Standard (robots.txt): Use the robots.txt file to explicitly specify which areas of the website should not be indexed by search engines.
-- Authentication Requirements: Implement authentication mechanisms for accessing sensitive files, ensuring that only authorized users or processes can retrieve them.
-- File Encryption: Encrypt sensitive files to protect their content, even if an unauthorized user gains access to the files.
-- URL Redaction: Avoid including sensitive information in URLs or filenames that might be exposed during indexing.
-- Security Headers: Utilize security headers (e.g., Content Security Policy) to control how browsers and search engines interact with your website.
+- Estándar de exclusión de robots (robots.txt): Utiliza el archivo robots.txt para especificar explícitamente qué áreas del sitio web no deben ser indexadas por los motores de búsqueda.
+- Requisitos de autenticación: Implementa mecanismos de autenticación para acceder a archivos sensibles, asegurando que solo usuarios o procesos autorizados puedan recuperarlos.
+- Cifrado de archivos: Cifre archivos confidenciales para proteger su contenido, incluso si un usuario no autorizado obtiene acceso a los archivos.
+- Redacción de URL: Evite incluir información confidencial en la URL o nombres de archivos que puedan quedar expuestos durante la indexación.
+- Encabezados de seguridad: Utilice encabezados de seguridad (por ejemplo, Política de seguridad de contenido) para controlar cómo los navegadores y motores de búsqueda interactúan con su sitio web.
 
-A proactive and layered approach to security is crucial for safeguarding against Insecure Indexing.</solution>
+Un enfoque de seguridad proactivo y en capas es crucial para protegerse contra la indexación insegura.</solution>
 	<reference>https://cwe.mitre.org/data/definitions/612.html</reference>
 </vuln_item_wasc_48>
 

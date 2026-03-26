@@ -3,43 +3,36 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>
-        Access Control Testing
+        Tests de contrôle d'accès
     </title>
 </head>
 <body>
-<h1>Access Control Testing</h1>
+<h1>Tests de Contrôle d'Accès</h1>
 
 <p>
-    This add-on enables users to compare which parts of a web-application are available to some users, do access control
-    testing and identify potential access control issues. It allows configuration of access rules and conducts a full
-    attack aimed to help identify sections of a web application which are accessible by unauthorized clients.
+    Ce module permet aux utilisateurs de comparer les différentes parties d’une application web accessibles selon les profils, d’effectuer des tests de contrôle d’accès et d’identifier d’éventuelles failles de sécurité liées aux accès. Il permet la configuration de règles d'accès et de mener d'attaques complètes dans le but d'identifier les sections d'une application web qui seraient accessibles à des utilisateurs non autorisés.
 </p>
 
 <p>
-    There are two main concepts related to this add-on that should be explained: the <b>Access Rules</b> and the <b>testing
-    procedure</b>.
+    Il existe deux concepts principaux liés à ce module : les <b>règles d'accès</b> et la <b>procédure de test</b>.
 </p>
 
-<h2>Access Rules</h2>
+<h2>Règles d'accès</h2>
 
 <p>
-    In order to identify potential access control issues, ZAP needs to know which parts of the web application are
-    supposed to be accessed by which user. In ZAP, the name for these rules is: <i>Access Rules</i> and generally have
-    the meaning: "<i>PageA should/shouldn't be accessed by UserX</i>".
+    Afin d’identifier d’éventuels problèmes de contrôle d’accès, ZAP doit savoir quelles parties de l’application web sont censées être accessibles à quels utilisateurs. Dans ZAP, ces règles sont appelées : <i>Règles d’accès</i> et signifient généralement : « <i>PageA devrait / ne devrait pas être accessible à l’utilisateur UserX</i> ».
 </p>
 
-<p>The rules are configured for a Context and, for each User of that Context, each Site Node (web page) will be
-    associated to one of the following values:</p>
+<p>Les règles sont configurées pour un contexte et, pour chaque utilisateur de ce contexte, chaque nœud du site (page web) est associé à l’une des valeurs suivantes :</p>
 <ul>
-    <li><b>Allowed</b> - the resource <b>can</b> be accessed by the User to which the rule refers</li>
-    <li><b>Denied</b> - the resource <b>should not</b> be accessed by the User to which the rule refers</li>
-    <li><b>Unknown</b> - there is <b>no information</b> regarding whether the resource should or shouldn't be accessible
-        to the User to which the rule refers
+    <li><b>Autorisé</b> - la ressource <b>est</b> accessible à l’utilisateur auquel la règle s’applique</li>
+    <li><b>Refusé</b> - la ressource <b>n’est pas</b> accessible à l’utilisateur auquel la règle s’applique</li>
+    <li><b>Inconnu</b>– il n’y a <b>aucune information</b> quant au fait que la ressource doive ou non être accessible à l’utilisateur auquel la règle s’applique
     </li>
 </ul>
 
 <p>
-    In order to simplify the access rules definition process, ZAP is making use of the tree-based structure of URLs.
+    Afin de simplifier le processus de définition des règles d’accès, ZAP utilise une structure arborescente des URL.
     When analyzing the rules, an inference algorithm is used to detect the matching rules for each node based on its
     parent in the URL if no particular rules are defined. This means that, when configuring the access rules, only 1
     rule needs to be set explicitly for an entire subtree, while for the other nodes rules are inferred. More details
