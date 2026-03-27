@@ -30,6 +30,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.startsWith;
 
 import java.net.HttpURLConnection;
+import java.util.Map;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -41,6 +42,8 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.zap.testutils.ActiveScannerTestUtils;
 
 /**
@@ -102,10 +105,47 @@ class HttpsConfigScanRuleUnitTest extends ActiveScannerTestUtils<HttpsConfigScan
     }
 
     @Test
-    void shouldReturnExpectedIds() {
-        assertThat(rule.getId(), is(equalTo(10205)));
-        assertThat(rule.getCweId(), is(equalTo(311)));
-        assertThat(rule.getWascId(), is(equalTo(4)));
+    void shouldReturnExpectedMappings() {
+        // Given / When
+        int cwe = rule.getCweId();
+        int wasc = rule.getWascId();
+        Map<String, String> tags = rule.getAlertTags();
+        // Then
+        assertThat(cwe, is(equalTo(311)));
+        assertThat(wasc, is(equalTo(4)));
+        assertThat(tags.size(), is(equalTo(10)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2025_A04_CRYPTO_FAIL.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2021_A02_CRYPO_FAIL.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.WSTG_V42_CRYP_01_TLS.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(CommonAlertTag.SYSTEMIC.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.QA_STD.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.QA_FULL.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.API.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.SEQUENCE.getTag()), is(equalTo(true)));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2025_A04_CRYPTO_FAIL.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2025_A04_CRYPTO_FAIL.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2021_A02_CRYPO_FAIL.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2021_A02_CRYPO_FAIL.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.WSTG_V42_CRYP_01_TLS.getTag()),
+                is(equalTo(CommonAlertTag.WSTG_V42_CRYP_01_TLS.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.SYSTEMIC.getTag()),
+                is(equalTo(CommonAlertTag.SYSTEMIC.getValue())));
     }
 
     @Test
