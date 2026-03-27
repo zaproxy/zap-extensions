@@ -7,7 +7,6 @@ zapAddOn {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/https-info/")
         dependencies {
-            javaVersion.set("21")
             addOns {
                 register("network") {
                     version.set(">=0.26.0")
