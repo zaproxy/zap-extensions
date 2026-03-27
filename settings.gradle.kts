@@ -113,10 +113,6 @@ val addOns =
         "zest",
     )
 
-if (JavaVersion.current() < JavaVersion.VERSION_21) {
-    addOns.remove("httpsInfo")
-}
-
 addOns.forEach { include("$addOnsProjectName:$it") }
 
 rootProject.children.forEach { project -> setUpProject(settingsDir, project) }
