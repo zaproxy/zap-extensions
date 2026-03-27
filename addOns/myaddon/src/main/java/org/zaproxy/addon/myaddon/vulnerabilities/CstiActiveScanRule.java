@@ -59,7 +59,7 @@ public class CstiActiveScanRule extends AbstractAppParamPlugin {
             return;
         }
 
-        LOGGER.info(addon
+        LOGGER.info(
                 "CSTI rule invoked: param={} url={}",
                 originalParam.getName(),
                 msg.getRequestHeader().getURI());

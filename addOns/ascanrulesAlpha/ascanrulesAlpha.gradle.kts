@@ -12,6 +12,9 @@ zapAddOn {
                 register("commonlib") {
                     version.set(">= 1.38.0 & < 2.0.0")
                 }
+                register("client") {
+                    version.set(">=0.7.0")
+                }
             }
         }
 
@@ -37,7 +40,8 @@ tasks.named("compileJava") {
 
 dependencies {
     zapAddOn("commonlib")
-
+    zapAddOn("client")
+    compileOnly(parent!!.project("client"))
     testImplementation(project(":testutils"))
     testImplementation(project(":addOns:graaljs"))
     testImplementation(project(":addOns:scripts"))

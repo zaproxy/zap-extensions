@@ -7,5 +7,13 @@ zapAddOn {
 
     manifest {
         author.set("ZAP Dev Team")
+
+        dependencies{
+            addOns{
+                register("client") {
+                    version.set("0.21.0")
+                }
+            }
+        }
     }
 }

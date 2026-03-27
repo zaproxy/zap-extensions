@@ -65,7 +65,6 @@ public class ExtensionSimpleExample extends ExtensionAdaptor {
     private ZapMenuItem menuExample;
     private RightClickMsgMenu popupMsgMenuExample;
     private AbstractPanel statusPanel;
-
     private SimpleExampleAPI api;
 
     private static final Logger LOGGER = LogManager.getLogger(ExtensionSimpleExample.class);
