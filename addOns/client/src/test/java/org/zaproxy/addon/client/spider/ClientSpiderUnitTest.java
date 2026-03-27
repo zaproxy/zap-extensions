@@ -265,7 +265,7 @@ class ClientSpiderUnitTest extends TestUtils {
         map.getOrAddNode("https://www.example.com/l1/l2/l3/l4/l5", false, false);
         map.getOrAddNode("https://www.example.com/l1/l2/l3/l4/l5/l6", false, false);
         try {
-            Thread.sleep(200);
+            Thread.sleep(500);
         } catch (InterruptedException e) {
             // Ignore
         }

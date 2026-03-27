@@ -133,8 +133,10 @@ class HeadlessBrowsersUnitTest extends TestUtils {
         session = new Session(model);
         given(model.getSession()).willReturn(session);
 
-        extensionSelenium.addCustomBrowser(new CustomBrowser("fx", null, null, null, "Firefox"));
-        extensionSelenium.addCustomBrowser(new CustomBrowser("cr", null, null, null, "Chromium"));
+        extensionSelenium.addCustomBrowser(
+                CustomBrowser.builder().name("fx").browserType("Firefox").build());
+        extensionSelenium.addCustomBrowser(
+                CustomBrowser.builder().name("cr").browserType("Chromium").build());
 
         startServer();
         byte[] imageBytes =
