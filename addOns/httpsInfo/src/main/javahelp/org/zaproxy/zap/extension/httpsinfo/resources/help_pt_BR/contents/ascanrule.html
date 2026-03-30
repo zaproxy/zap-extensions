@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+HTTPS Configuration - Active Scan Rule
+</TITLE>
+</HEAD>
+<BODY>
+<H1>HTTPS Configuration - Active Scan Rule</H1>
+
+<p>
+This active scan rule runs once per host and performs HTTPS configuration analysis for sites using HTTPS.
+It skips HTTP sites entirely.
+</p>
+
+<H2>Alerts</H2>
+
+<p>
+The rule raises two types of alerts:
+</p>
+
+<H3 id="id-10205">10205-1: HTTPS Configuration (Info)</H3>
+<p>
+Always raised for HTTPS sites. Contains the full HTTPS configuration report including:
+</p>
+<ul>
+<li>Server certificate details (Subject DN, Issuer DN, fingerprint, validity dates, signing algorithm, etc.)</li>
+<li>Supported cipher suites with strength evaluation and handshake protocol</li>
+</ul>
+
+<H3>10205-2: HTTPS Security Configuration Issues (Low/Medium/High)</H3>
+<p>
+Raised when DeepViolet's TLS risk scoring identifies one or more security issues. The alert severity is based on the worst finding:
+</p>
+<ul>
+<li><b>High</b> - Critical or high severity findings (e.g., expired certificate, SSLv2/3 support, NULL ciphers)</li>
+<li><b>Medium</b> - Medium severity findings (e.g., TLS 1.0/1.1 support, weak ciphers, untrusted certificate)</li>
+<li><b>Low</b> - Low severity findings (e.g., missing HSTS, missing security headers)</li>
+</ul>
+<p>
+The alert includes the risk score, letter grade, detailed findings with rule IDs, and the full configuration report.
+</p>
+
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/tree/main/addOns/httpsInfo/src/main/java/org/zaproxy/zap/extension/httpsinfo/HttpsConfigScanRule.java">HttpsConfigScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10205/">10205</a>.
+
+<H2>References</H2>
+<p>
+This add-on uses <a href="https://github.com/spoofzu/DeepViolet/">DeepViolet</a> for TLS/SSL analysis.
+The risk scoring rules and rule IDs are documented in the DeepViolet project.
+</p>
+
+</BODY>
+</HTML>
