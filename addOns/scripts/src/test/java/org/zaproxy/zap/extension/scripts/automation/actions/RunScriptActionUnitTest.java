@@ -81,13 +81,12 @@ class RunScriptActionUnitTest extends TestUtils {
         return Constant.messages.getString(key, args);
     }
 
-    private static final ScriptWrapper MERGED_CHAIN_SCRIPT =
-            createMockZestWrapper("merged-chain-script");
+    private static final ScriptWrapper CHAIN_SCRIPT = createMockZestWrapper("chain-script");
     private static List<ScriptWrapper> capturedChainScripts;
     private static String capturedChainRunName;
     private static int getChainScriptCalls;
 
-    /** Stub for chain tests (no Zest): returns merged chain script wrapper. */
+    /** Stub for chain tests (no Zest): returns chain script wrapper. */
     private static final ExtensionAdaptor ZEST_CHAIN_SCRIPT_STUB =
             new ExtensionAdaptor("ExtensionZest") {
                 @SuppressWarnings("unused")
@@ -95,7 +94,7 @@ class RunScriptActionUnitTest extends TestUtils {
                     capturedChainScripts = scripts;
                     capturedChainRunName = runName;
                     getChainScriptCalls++;
-                    return scripts.isEmpty() ? null : MERGED_CHAIN_SCRIPT;
+                    return scripts.isEmpty() ? null : CHAIN_SCRIPT;
                 }
             };
 
@@ -274,7 +273,7 @@ class RunScriptActionUnitTest extends TestUtils {
         assertThat(getChainScriptCalls, is(equalTo(1)));
         assertThat(capturedChainScripts, contains(script1, script2));
         assertThat(capturedChainRunName, is(equalTo("chain_script1")));
-        verify(extScript, times(1)).invokeScript(MERGED_CHAIN_SCRIPT);
+        verify(extScript, times(1)).invokeScript(CHAIN_SCRIPT);
     }
 
     @Test
@@ -298,11 +297,11 @@ class RunScriptActionUnitTest extends TestUtils {
         assertThat(getChainScriptCalls, is(equalTo(1)));
         assertThat(capturedChainScripts, contains(script1, script2, script3));
         assertThat(capturedChainRunName, is(equalTo("chain_script1")));
-        verify(extScript, times(1)).invokeScript(MERGED_CHAIN_SCRIPT);
+        verify(extScript, times(1)).invokeScript(CHAIN_SCRIPT);
     }
 
     @Test
-    void shouldReportErrorWhenMergedChainExecutionFails() throws Exception {
+    void shouldReportErrorWhenChainExecutionFails() throws Exception {
         // Given
         ScriptWrapper script1 = createMockZestWrapper("script1");
         ScriptWrapper script2 = createMockZestWrapper("script2");
@@ -310,8 +309,7 @@ class RunScriptActionUnitTest extends TestUtils {
         given(extScript.getScript("script1")).willReturn(script1);
         given(extScript.getScript("script2")).willReturn(script2);
         given(extScript.getScript("script3")).willReturn(script3);
-        when(extScript.invokeScript(MERGED_CHAIN_SCRIPT))
-                .thenThrow(new RuntimeException("Script failed"));
+        when(extScript.invokeScript(CHAIN_SCRIPT)).thenThrow(new RuntimeException("Script failed"));
 
         parameters.setChain(List.of("script1", "script2", "script3"));
 
@@ -326,11 +324,57 @@ class RunScriptActionUnitTest extends TestUtils {
                         msg(
                                 "scripts.automation.error.chainExecutionFailed",
                                 JOB_NAME,
+                                "script1 -> script2 -> script3",
                                 "Script failed")));
         assertThat(getChainScriptCalls, is(equalTo(1)));
         assertThat(capturedChainScripts, contains(script1, script2, script3));
         assertThat(capturedChainRunName, is(equalTo("chain_script1")));
-        verify(extScript, times(1)).invokeScript(MERGED_CHAIN_SCRIPT);
+        verify(extScript, times(1)).invokeScript(CHAIN_SCRIPT);
+    }
+
+    @Test
+    void shouldReportChainExecutionErrorUsingZestContextWithoutDuplicatingExceptionMessage()
+            throws Exception {
+        ScriptWrapper script1 = createMockZestWrapper("script1");
+        ScriptWrapper script2 = createMockZestWrapper("script2");
+        given(extScript.getScript("script1")).willReturn(script1);
+        given(extScript.getScript("script2")).willReturn(script2);
+
+        String zestLine =
+                "Chain, source script \"nav\", zest index 16, type ZestClientElementClick - element missing";
+        ScriptWrapper chain = new ScriptWrapperWithZestFailureContext("chain-script", zestLine);
+
+        ExtensionAdaptor zestExt =
+                new ExtensionAdaptor("ExtensionZest") {
+                    @SuppressWarnings("unused")
+                    public ScriptWrapper getChainScript(
+                            List<ScriptWrapper> scripts, String runName) {
+                        capturedChainScripts = scripts;
+                        capturedChainRunName = runName;
+                        getChainScriptCalls++;
+                        return scripts.isEmpty() ? null : chain;
+                    }
+                };
+        given(extensionLoader.getExtension("ExtensionZest")).willReturn(zestExt);
+
+        when(extScript.invokeScript(chain))
+                .thenThrow(new RuntimeException("Very long root cause repeated everywhere"));
+
+        parameters.setChain(List.of("script1", "script2"));
+
+        action.runJob(JOB_NAME, env, progress);
+
+        assertThat(progress.getErrors(), hasSize(1));
+        assertThat(
+                progress.getErrors(),
+                contains(
+                        msg(
+                                "scripts.automation.error.chainExecutionFailed",
+                                JOB_NAME,
+                                "script1 -> script2",
+                                zestLine)));
+        assertThat(getChainScriptCalls, is(equalTo(1)));
+        verify(extScript, times(1)).invokeScript(chain);
     }
 
     @Test
@@ -351,7 +395,7 @@ class RunScriptActionUnitTest extends TestUtils {
         assertThat(getChainScriptCalls, is(equalTo(1)));
         assertThat(capturedChainScripts, contains(script1));
         assertThat(capturedChainRunName, is(equalTo("chain_script1")));
-        verify(extScript, times(1)).invokeScript(MERGED_CHAIN_SCRIPT);
+        verify(extScript, times(1)).invokeScript(CHAIN_SCRIPT);
         verify(extensionLoader, times(1)).getExtension("ExtensionZest");
     }
 
@@ -559,5 +603,21 @@ class RunScriptActionUnitTest extends TestUtils {
                 contains(msg("scripts.automation.error.scriptTypeIsNull", JOB_NAME)));
         assertThat(issues, hasSize(1));
         assertThat(issues, hasItem(msg("scripts.automation.error.scriptTypeIsNull", JOB_NAME)));
+    }
+
+    private static final class ScriptWrapperWithZestFailureContext extends ScriptWrapper {
+        private final String zestFailureContext;
+
+        ScriptWrapperWithZestFailureContext(String name, String zestFailureContext) {
+            setName(name);
+            setEngineName(ZEST_ENGINE_NAME);
+            setType(new ScriptType(ExtensionScript.TYPE_STANDALONE, null, null, false));
+            this.zestFailureContext = zestFailureContext;
+        }
+
+        @SuppressWarnings("unused")
+        public String getZestFailureContext() {
+            return zestFailureContext;
+        }
     }
 }
