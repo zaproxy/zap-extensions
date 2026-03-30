@@ -31,8 +31,10 @@ import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -41,6 +43,8 @@ import org.parosproxy.paros.core.scanner.AbstractHostPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 
 /**
  * Active scan rule that performs HTTPS configuration analysis per host. Skips HTTP sites and raises
@@ -54,6 +58,25 @@ public class HttpsConfigScanRule extends AbstractHostPlugin {
 
     private static final String ALERT_REF_INFO = PLUGIN_ID + "-1";
     private static final String ALERT_REF_FAILURE = PLUGIN_ID + "-2";
+
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2025_A04_CRYPTO_FAIL,
+                                CommonAlertTag.OWASP_2021_A02_CRYPO_FAIL,
+                                CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED,
+                                CommonAlertTag.WSTG_V42_CRYP_01_TLS,
+                                CommonAlertTag.SYSTEMIC));
+        alertTags.put(PolicyTag.QA_STD.getTag(), "");
+        alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        alertTags.put(PolicyTag.API.getTag(), "");
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
+        alertTags.put(PolicyTag.SEQUENCE.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     @Override
     public int getId() {
@@ -102,6 +125,11 @@ public class HttpsConfigScanRule extends AbstractHostPlugin {
 
     public String getHelpLink() {
         return "https://www.zaproxy.org/docs/desktop/addons/https-info/ascanrule/#id-" + getId();
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 
     @Override
