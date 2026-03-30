@@ -89,6 +89,7 @@ dependencies {
     zapAddOn("llm")
     zapAddOn("spider")
 
+    implementation(files("lib/swagger-parser-v3-2.1.40-SNAPSHOT.jar"))
     implementation(libs.openapi.swagger.parser) {
         // Provided by commonlib add-on:
         exclude(group = "com.fasterxml.jackson")

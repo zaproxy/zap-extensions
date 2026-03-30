@@ -23,6 +23,7 @@ import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -369,11 +370,11 @@ class OpenApiUnitTest extends AbstractServerTest {
     }
 
     @Test
-    void shouldFailToParseDefinitionWithSchemaComponentRecursion() throws Exception {
+    void shouldParseDefinitionWithSchemaComponentRecursion() throws Exception {
         // Given
         String defn = getHtml("schema_component_recursion.yaml");
         // When / Then
-        assertThrows(StackOverflowError.class, () -> new SwaggerConverter(defn, null));
+        assertDoesNotThrow(() -> new SwaggerConverter(defn, null));
     }
 
     @Test
