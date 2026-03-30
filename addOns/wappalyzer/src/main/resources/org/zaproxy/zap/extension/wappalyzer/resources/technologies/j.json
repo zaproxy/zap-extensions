@@ -1105,7 +1105,7 @@
     "scriptSrc": [
       "jquery",
       "/jquery(?:-(\\d+\\.\\d+\\.\\d+))[/.-]\\;version:\\1",
-      "/(\\d+\\.\\d+\\.\\d+)/jquery(?!\\.popupoverlay\\.js)[/.-][^u]\\;version:\\1"
+      "/(\\d+\\.\\d+\\.\\d+)/jquery(?!\\.popupoverlay\\.js|(?:\\.[\\w-]*)*fancybox)[/.-][^u]\\;version:\\1"
     ],
     "website": "https://jquery.com"
   },

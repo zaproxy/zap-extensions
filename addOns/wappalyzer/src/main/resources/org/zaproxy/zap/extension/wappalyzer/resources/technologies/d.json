@@ -3825,6 +3825,22 @@
     },
     "website": "https://www.adobe.com/products/dreamweaver.html"
   },
+  "DressOn": {
+    "cats": [
+      105
+    ],
+    "description": "DressOn is an AI-powered virtual fitting room that lets online shoppers try on clothes digitally.",
+    "icon": "DressOn.svg",
+    "saas": true,
+    "pricing": [
+      "freemium",
+      "recurring"
+    ],
+    "scriptSrc": [
+      "api\\.dresson\\.com\\.br/widget/"
+    ],
+    "website": "https://dresson.com.br"
+  },
   "Drift": {
     "cats": [
       52

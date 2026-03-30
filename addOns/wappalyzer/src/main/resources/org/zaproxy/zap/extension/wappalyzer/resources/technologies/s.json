@@ -10269,6 +10269,19 @@
     ],
     "website": "https://sourcepoint.com"
   },
+  "Sourcey": {
+    "cats": [
+      4,
+      57
+    ],
+    "description": "Sourcey is an open-source documentation platform and static site generator.",
+    "icon": "default.svg",
+    "meta": {
+      "generator": "Sourcey(?: ([\\d.]+))?\\;version:\\1"
+    },
+    "oss": true,
+    "website": "https://sourcey.com"
+  },
   "Sovrn": {
     "cats": [
       36

@@ -8873,8 +8873,15 @@
     ],
     "cpe": "cpe:2.3:a:cosmoshop:cosmoshop:*:*:*:*:*:*:*:*",
     "icon": "Cosmoshop.svg",
+    "meta": {
+      "cosmoshop.settings": ""
+    },
     "scriptSrc": [
-      "cosmoshop_functions\\.js"
+      "cosmoshop_functions\\.js",
+      "/cosmoshop/"
+    ],
+    "url": [
+      "/cosmoshop/"
     ],
     "website": "https://cosmoshop.de"
   },
