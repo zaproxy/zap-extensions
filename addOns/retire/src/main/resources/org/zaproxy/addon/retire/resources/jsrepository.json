@@ -3659,6 +3659,256 @@
           "https://security.snyk.io/vuln/SNYK-JS-ANGULARCORE-1070902",
           "https://vuldb.com/?id.181356"
         ]
+      },
+      {
+        "atOrAbove": "0",
+        "below": "18.2.15",
+        "severity": "high",
+        "cwe": [
+          "CWE-79"
+        ],
+        "identifiers": {
+          "summary": "A [Cross-site Scripting (XSS)](https://developer.mozilla.org/en-US/docs/Web/Security/Attacks/XSS) vulnerability has been identified in the Angular internationalization (i18n) pipeline. In ICU messages (International Components for Unicode), HTML from translated content was not properly sanitized and could execute arbitrary JavaScript.\n\nAngular i18n typically involves three steps, extracting all messages from an application in the source language, sending the messages to be translated, and then merging their translations back into the final source code. Translations are frequently handled by contracts with specific partner companies, and involve sending the source messages to a separate contractor before receiving final translations for display to the end user.\n\nIf the returned translations have malicious content, it could be rendered into the application and execute arbitrary JavaScript.\n\n### Impact\nWhen successfully exploited, this vulnerability allows for execution of attacker controlled JavaScript in the application origin. Depending on the nature of the application being exploited this could lead to:\n\n- **Credential Exfiltration**: Stealing sensitive user data stored in page memory, LocalStorage, IndexedDB, or cookies available to JS and sending them to an attacker controlled server.\n- **Page Vandalism:** Mutating the page to read or act differently than intended by the developer.\n\n### Attach Preconditions\n\n- **The attacker must compromise the translation file (xliff, xtb, etc.).**\n- Unlike most XSS vulnerabilities, this one is not exploitable by arbitrary users. An attacker must first compromise an application's translation file before they can escalate privileges into the Angular application client.\n- The victim application must use Angular i18n.\n- The victim application must use one or more ICU messages.\n- The victim application must render an ICU message.\n- The victim application must not defend against XSS via a safe [Content-Security Policy (CSP)](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CSP) or [Trusted Types](https://developer.mozilla.org/en-US/docs/Web/API/Trusted_Types_API).\n\n### Patches\n- 21.2.0\n- 21.1.6\n- 20.3.17\n- 19.2.19\n\n### Workarounds\nUntil the patch is applied, developers should consider:\n\n- **Reviewing and verifying translated content** received from untrusted third parties before incorporating it in an Angular application.\n- **Enabling strict CSP controls** to block unauthorized JavaScript from executing on the page.\n- [**Enabling Trusted Types**](https://angular.dev/best-practices/security#enforcing-trusted-types) to enforce proper HTML sanitization.\n\n### References\n\n- [Fix](https://github.com/angular/angular/pull/67183)",
+          "githubID": "GHSA-prjf-86w9-mfqv",
+          "CVE": [
+            "CVE-2026-27970"
+          ]
+        },
+        "info": [
+          "https://github.com/angular/angular/security/advisories/GHSA-prjf-86w9-mfqv",
+          "https://github.com/angular/angular/pull/67183",
+          "https://github.com/angular/angular/commit/306f367899dfc2e04238fecd3455547b5d54075d",
+          "https://github.com/angular/angular/commit/7d58b798c626bb0e4e5f89ca8affdce4f352b232",
+          "https://github.com/angular/angular/commit/b85830953281ff3a1a77bbfe69019d352d509c93",
+          "https://angular.dev/best-practices/security#enforcing-trusted-types",
+          "https://developer.mozilla.org/en-US/docs/Web/API/Trusted_Types_API",
+          "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CSP",
+          "https://developer.mozilla.org/en-US/docs/Web/Security/Attacks/XSS"
+        ]
+      },
+      {
+        "atOrAbove": "17.0.0-next.0",
+        "below": "18.2.15",
+        "severity": "high",
+        "cwe": [
+          "CWE-79"
+        ],
+        "identifiers": {
+          "summary": "A Cross-Site Scripting (XSS) vulnerability has been identified in the Angular runtime and compiler. It occurs when the application uses a security-sensitive attribute (for example href on an anchor tag) together with Angular's ability to internationalize attributes. Enabling internationalization for the sensitive attribute by adding `i18n-<attribute>` name bypasses Angular's built-in sanitization mechanism, which when combined with a data binding to untrusted user-generated data can allow an attacker to inject a malicious script. \n\nThe following example illustrates the issue:\n```html\n<a href=\"{{maliciousUrl}}\" i18n-href>Click me</a>\n```\n\nThe following attributes have been confirmed to be vulnerable:\n- `action`\n- `background`\n- `cite`\n- `codebase`\n- `data`\n- `formaction`\n- `href`\n- `itemtype`\n- `longdesc`\n- `poster`\n- `src`\n- `xlink:href`\n\n### Impact\nWhen exploited, this vulnerability allows an attacker to execute arbitrary code within the context of the vulnerable application's domain. This enables:\n- Session Hijacking: Stealing session cookies and authentication tokens.\n- Data Exfiltration: Capturing and transmitting sensitive user data.\n- Unauthorized Actions: Performing actions on behalf of the user.\n\n### Attack Preconditions\n1. The application must use a vulnerable version of Angular.\n2. The application must bind unsanitized user input to one of the attributes mentioned above.\n3. The bound value must be marked for internationalization via the presence of a `i18n-<name>` attribute on the same element.\n\n### Patches\n- 22.0.0-next.3\n- 21.2.4\n- 20.3.18\n- 19.2.20\n\n### Workarounds\nThe primary workaround is to ensure that any data bound to the vulnerable attributes is **never sourced from untrusted user input** (e.g., database, API response, URL parameters) until the patch is applied, or when it is, it shouldn't be marked for internationalization.\n\nAlternatively, users can explicitly sanitize their attributes by passing them through Angular's `DomSanitizer`:\n```ts\nimport {Component, inject, SecurityContext} from '@angular/core';\nimport {DomSanitizer} from '@angular/platform-browser';\n\n@Component({\n  template: `\n    <form action=\"{{url}}\" i18n-action>\n      <button>Submit</button>\n    </form>\n  `,\n})\nexport class App {\n  url: string;\n\n  constructor() {\n    const dangerousUrl = 'javascript:alert(1)';\n    const sanitizer = inject(DomSanitizer);\n    this.url = sanitizer.sanitize(SecurityContext.URL, dangerousUrl) || '';\n  }\n}\n```\n\n### References\n- [Fix 1](https://github.com/angular/angular/pull/67541) \n- [Fix 2](https://github.com/angular/angular/pull/67561)",
+          "githubID": "GHSA-g93w-mfhg-p222",
+          "CVE": [
+            "CVE-2026-32635"
+          ]
+        },
+        "info": [
+          "https://github.com/angular/angular/security/advisories/GHSA-g93w-mfhg-p222",
+          "https://github.com/angular/angular/pull/67541",
+          "https://github.com/angular/angular/pull/67561",
+          "https://github.com/angular/angular/commit/224e60ecb1b90115baa702f1c06edc1d64d86187",
+          "https://github.com/angular/angular/commit/78dea55351fb305b33a919c43a6b363137eca166",
+          "https://github.com/angular/angular/commit/8630319f74c9575a21693d875cc7d5252516146d",
+          "https://github.com/angular/angular/commit/ed2d324f9cc12aab6cfa0569ef10b73243a62c65"
+        ]
+      },
+      {
+        "atOrAbove": "19.0.0-next.0",
+        "below": "19.2.19",
+        "severity": "high",
+        "cwe": [
+          "CWE-79"
+        ],
+        "identifiers": {
+          "summary": "A [Cross-site Scripting (XSS)](https://developer.mozilla.org/en-US/docs/Web/Security/Attacks/XSS) vulnerability has been identified in the Angular internationalization (i18n) pipeline. In ICU messages (International Components for Unicode), HTML from translated content was not properly sanitized and could execute arbitrary JavaScript.\n\nAngular i18n typically involves three steps, extracting all messages from an application in the source language, sending the messages to be translated, and then merging their translations back into the final source code. Translations are frequently handled by contracts with specific partner companies, and involve sending the source messages to a separate contractor before receiving final translations for display to the end user.\n\nIf the returned translations have malicious content, it could be rendered into the application and execute arbitrary JavaScript.\n\n### Impact\nWhen successfully exploited, this vulnerability allows for execution of attacker controlled JavaScript in the application origin. Depending on the nature of the application being exploited this could lead to:\n\n- **Credential Exfiltration**: Stealing sensitive user data stored in page memory, LocalStorage, IndexedDB, or cookies available to JS and sending them to an attacker controlled server.\n- **Page Vandalism:** Mutating the page to read or act differently than intended by the developer.\n\n### Attach Preconditions\n\n- **The attacker must compromise the translation file (xliff, xtb, etc.).**\n- Unlike most XSS vulnerabilities, this one is not exploitable by arbitrary users. An attacker must first compromise an application's translation file before they can escalate privileges into the Angular application client.\n- The victim application must use Angular i18n.\n- The victim application must use one or more ICU messages.\n- The victim application must render an ICU message.\n- The victim application must not defend against XSS via a safe [Content-Security Policy (CSP)](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CSP) or [Trusted Types](https://developer.mozilla.org/en-US/docs/Web/API/Trusted_Types_API).\n\n### Patches\n- 21.2.0\n- 21.1.6\n- 20.3.17\n- 19.2.19\n\n### Workarounds\nUntil the patch is applied, developers should consider:\n\n- **Reviewing and verifying translated content** received from untrusted third parties before incorporating it in an Angular application.\n- **Enabling strict CSP controls** to block unauthorized JavaScript from executing on the page.\n- [**Enabling Trusted Types**](https://angular.dev/best-practices/security#enforcing-trusted-types) to enforce proper HTML sanitization.\n\n### References\n\n- [Fix](https://github.com/angular/angular/pull/67183)",
+          "githubID": "GHSA-prjf-86w9-mfqv",
+          "CVE": [
+            "CVE-2026-27970"
+          ]
+        },
+        "info": [
+          "https://github.com/angular/angular/security/advisories/GHSA-prjf-86w9-mfqv",
+          "https://github.com/angular/angular/pull/67183",
+          "https://github.com/angular/angular/commit/306f367899dfc2e04238fecd3455547b5d54075d",
+          "https://github.com/angular/angular/commit/7d58b798c626bb0e4e5f89ca8affdce4f352b232",
+          "https://github.com/angular/angular/commit/b85830953281ff3a1a77bbfe69019d352d509c93",
+          "https://angular.dev/best-practices/security#enforcing-trusted-types",
+          "https://developer.mozilla.org/en-US/docs/Web/API/Trusted_Types_API",
+          "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CSP",
+          "https://developer.mozilla.org/en-US/docs/Web/Security/Attacks/XSS"
+        ]
+      },
+      {
+        "atOrAbove": "19.0.0-next.0",
+        "below": "19.2.20",
+        "severity": "high",
+        "cwe": [
+          "CWE-79"
+        ],
+        "identifiers": {
+          "summary": "A Cross-Site Scripting (XSS) vulnerability has been identified in the Angular runtime and compiler. It occurs when the application uses a security-sensitive attribute (for example href on an anchor tag) together with Angular's ability to internationalize attributes. Enabling internationalization for the sensitive attribute by adding `i18n-<attribute>` name bypasses Angular's built-in sanitization mechanism, which when combined with a data binding to untrusted user-generated data can allow an attacker to inject a malicious script. \n\nThe following example illustrates the issue:\n```html\n<a href=\"{{maliciousUrl}}\" i18n-href>Click me</a>\n```\n\nThe following attributes have been confirmed to be vulnerable:\n- `action`\n- `background`\n- `cite`\n- `codebase`\n- `data`\n- `formaction`\n- `href`\n- `itemtype`\n- `longdesc`\n- `poster`\n- `src`\n- `xlink:href`\n\n### Impact\nWhen exploited, this vulnerability allows an attacker to execute arbitrary code within the context of the vulnerable application's domain. This enables:\n- Session Hijacking: Stealing session cookies and authentication tokens.\n- Data Exfiltration: Capturing and transmitting sensitive user data.\n- Unauthorized Actions: Performing actions on behalf of the user.\n\n### Attack Preconditions\n1. The application must use a vulnerable version of Angular.\n2. The application must bind unsanitized user input to one of the attributes mentioned above.\n3. The bound value must be marked for internationalization via the presence of a `i18n-<name>` attribute on the same element.\n\n### Patches\n- 22.0.0-next.3\n- 21.2.4\n- 20.3.18\n- 19.2.20\n\n### Workarounds\nThe primary workaround is to ensure that any data bound to the vulnerable attributes is **never sourced from untrusted user input** (e.g., database, API response, URL parameters) until the patch is applied, or when it is, it shouldn't be marked for internationalization.\n\nAlternatively, users can explicitly sanitize their attributes by passing them through Angular's `DomSanitizer`:\n```ts\nimport {Component, inject, SecurityContext} from '@angular/core';\nimport {DomSanitizer} from '@angular/platform-browser';\n\n@Component({\n  template: `\n    <form action=\"{{url}}\" i18n-action>\n      <button>Submit</button>\n    </form>\n  `,\n})\nexport class App {\n  url: string;\n\n  constructor() {\n    const dangerousUrl = 'javascript:alert(1)';\n    const sanitizer = inject(DomSanitizer);\n    this.url = sanitizer.sanitize(SecurityContext.URL, dangerousUrl) || '';\n  }\n}\n```\n\n### References\n- [Fix 1](https://github.com/angular/angular/pull/67541) \n- [Fix 2](https://github.com/angular/angular/pull/67561)",
+          "githubID": "GHSA-g93w-mfhg-p222",
+          "CVE": [
+            "CVE-2026-32635"
+          ]
+        },
+        "info": [
+          "https://github.com/angular/angular/security/advisories/GHSA-g93w-mfhg-p222",
+          "https://github.com/angular/angular/pull/67541",
+          "https://github.com/angular/angular/pull/67561",
+          "https://github.com/angular/angular/commit/224e60ecb1b90115baa702f1c06edc1d64d86187",
+          "https://github.com/angular/angular/commit/78dea55351fb305b33a919c43a6b363137eca166",
+          "https://github.com/angular/angular/commit/8630319f74c9575a21693d875cc7d5252516146d",
+          "https://github.com/angular/angular/commit/ed2d324f9cc12aab6cfa0569ef10b73243a62c65"
+        ]
+      },
+      {
+        "atOrAbove": "20.0.0-next.0",
+        "below": "20.3.17",
+        "severity": "high",
+        "cwe": [
+          "CWE-79"
+        ],
+        "identifiers": {
+          "summary": "A [Cross-site Scripting (XSS)](https://developer.mozilla.org/en-US/docs/Web/Security/Attacks/XSS) vulnerability has been identified in the Angular internationalization (i18n) pipeline. In ICU messages (International Components for Unicode), HTML from translated content was not properly sanitized and could execute arbitrary JavaScript.\n\nAngular i18n typically involves three steps, extracting all messages from an application in the source language, sending the messages to be translated, and then merging their translations back into the final source code. Translations are frequently handled by contracts with specific partner companies, and involve sending the source messages to a separate contractor before receiving final translations for display to the end user.\n\nIf the returned translations have malicious content, it could be rendered into the application and execute arbitrary JavaScript.\n\n### Impact\nWhen successfully exploited, this vulnerability allows for execution of attacker controlled JavaScript in the application origin. Depending on the nature of the application being exploited this could lead to:\n\n- **Credential Exfiltration**: Stealing sensitive user data stored in page memory, LocalStorage, IndexedDB, or cookies available to JS and sending them to an attacker controlled server.\n- **Page Vandalism:** Mutating the page to read or act differently than intended by the developer.\n\n### Attach Preconditions\n\n- **The attacker must compromise the translation file (xliff, xtb, etc.).**\n- Unlike most XSS vulnerabilities, this one is not exploitable by arbitrary users. An attacker must first compromise an application's translation file before they can escalate privileges into the Angular application client.\n- The victim application must use Angular i18n.\n- The victim application must use one or more ICU messages.\n- The victim application must render an ICU message.\n- The victim application must not defend against XSS via a safe [Content-Security Policy (CSP)](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CSP) or [Trusted Types](https://developer.mozilla.org/en-US/docs/Web/API/Trusted_Types_API).\n\n### Patches\n- 21.2.0\n- 21.1.6\n- 20.3.17\n- 19.2.19\n\n### Workarounds\nUntil the patch is applied, developers should consider:\n\n- **Reviewing and verifying translated content** received from untrusted third parties before incorporating it in an Angular application.\n- **Enabling strict CSP controls** to block unauthorized JavaScript from executing on the page.\n- [**Enabling Trusted Types**](https://angular.dev/best-practices/security#enforcing-trusted-types) to enforce proper HTML sanitization.\n\n### References\n\n- [Fix](https://github.com/angular/angular/pull/67183)",
+          "githubID": "GHSA-prjf-86w9-mfqv",
+          "CVE": [
+            "CVE-2026-27970"
+          ]
+        },
+        "info": [
+          "https://github.com/angular/angular/security/advisories/GHSA-prjf-86w9-mfqv",
+          "https://github.com/angular/angular/pull/67183",
+          "https://github.com/angular/angular/commit/306f367899dfc2e04238fecd3455547b5d54075d",
+          "https://github.com/angular/angular/commit/7d58b798c626bb0e4e5f89ca8affdce4f352b232",
+          "https://github.com/angular/angular/commit/b85830953281ff3a1a77bbfe69019d352d509c93",
+          "https://angular.dev/best-practices/security#enforcing-trusted-types",
+          "https://developer.mozilla.org/en-US/docs/Web/API/Trusted_Types_API",
+          "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CSP",
+          "https://developer.mozilla.org/en-US/docs/Web/Security/Attacks/XSS"
+        ]
+      },
+      {
+        "atOrAbove": "20.0.0-next.0.0.0",
+        "below": "20.3.18",
+        "severity": "high",
+        "cwe": [
+          "CWE-79"
+        ],
+        "identifiers": {
+          "summary": "A Cross-Site Scripting (XSS) vulnerability has been identified in the Angular runtime and compiler. It occurs when the application uses a security-sensitive attribute (for example href on an anchor tag) together with Angular's ability to internationalize attributes. Enabling internationalization for the sensitive attribute by adding `i18n-<attribute>` name bypasses Angular's built-in sanitization mechanism, which when combined with a data binding to untrusted user-generated data can allow an attacker to inject a malicious script. \n\nThe following example illustrates the issue:\n```html\n<a href=\"{{maliciousUrl}}\" i18n-href>Click me</a>\n```\n\nThe following attributes have been confirmed to be vulnerable:\n- `action`\n- `background`\n- `cite`\n- `codebase`\n- `data`\n- `formaction`\n- `href`\n- `itemtype`\n- `longdesc`\n- `poster`\n- `src`\n- `xlink:href`\n\n### Impact\nWhen exploited, this vulnerability allows an attacker to execute arbitrary code within the context of the vulnerable application's domain. This enables:\n- Session Hijacking: Stealing session cookies and authentication tokens.\n- Data Exfiltration: Capturing and transmitting sensitive user data.\n- Unauthorized Actions: Performing actions on behalf of the user.\n\n### Attack Preconditions\n1. The application must use a vulnerable version of Angular.\n2. The application must bind unsanitized user input to one of the attributes mentioned above.\n3. The bound value must be marked for internationalization via the presence of a `i18n-<name>` attribute on the same element.\n\n### Patches\n- 22.0.0-next.3\n- 21.2.4\n- 20.3.18\n- 19.2.20\n\n### Workarounds\nThe primary workaround is to ensure that any data bound to the vulnerable attributes is **never sourced from untrusted user input** (e.g., database, API response, URL parameters) until the patch is applied, or when it is, it shouldn't be marked for internationalization.\n\nAlternatively, users can explicitly sanitize their attributes by passing them through Angular's `DomSanitizer`:\n```ts\nimport {Component, inject, SecurityContext} from '@angular/core';\nimport {DomSanitizer} from '@angular/platform-browser';\n\n@Component({\n  template: `\n    <form action=\"{{url}}\" i18n-action>\n      <button>Submit</button>\n    </form>\n  `,\n})\nexport class App {\n  url: string;\n\n  constructor() {\n    const dangerousUrl = 'javascript:alert(1)';\n    const sanitizer = inject(DomSanitizer);\n    this.url = sanitizer.sanitize(SecurityContext.URL, dangerousUrl) || '';\n  }\n}\n```\n\n### References\n- [Fix 1](https://github.com/angular/angular/pull/67541) \n- [Fix 2](https://github.com/angular/angular/pull/67561)",
+          "githubID": "GHSA-g93w-mfhg-p222",
+          "CVE": [
+            "CVE-2026-32635"
+          ]
+        },
+        "info": [
+          "https://github.com/angular/angular/security/advisories/GHSA-g93w-mfhg-p222",
+          "https://github.com/angular/angular/pull/67541",
+          "https://github.com/angular/angular/pull/67561",
+          "https://github.com/angular/angular/commit/224e60ecb1b90115baa702f1c06edc1d64d86187",
+          "https://github.com/angular/angular/commit/78dea55351fb305b33a919c43a6b363137eca166",
+          "https://github.com/angular/angular/commit/8630319f74c9575a21693d875cc7d5252516146d",
+          "https://github.com/angular/angular/commit/ed2d324f9cc12aab6cfa0569ef10b73243a62c65"
+        ]
+      },
+      {
+        "atOrAbove": "21.0.0-next.0",
+        "below": "21.1.6",
+        "severity": "high",
+        "cwe": [
+          "CWE-79"
+        ],
+        "identifiers": {
+          "summary": "A [Cross-site Scripting (XSS)](https://developer.mozilla.org/en-US/docs/Web/Security/Attacks/XSS) vulnerability has been identified in the Angular internationalization (i18n) pipeline. In ICU messages (International Components for Unicode), HTML from translated content was not properly sanitized and could execute arbitrary JavaScript.\n\nAngular i18n typically involves three steps, extracting all messages from an application in the source language, sending the messages to be translated, and then merging their translations back into the final source code. Translations are frequently handled by contracts with specific partner companies, and involve sending the source messages to a separate contractor before receiving final translations for display to the end user.\n\nIf the returned translations have malicious content, it could be rendered into the application and execute arbitrary JavaScript.\n\n### Impact\nWhen successfully exploited, this vulnerability allows for execution of attacker controlled JavaScript in the application origin. Depending on the nature of the application being exploited this could lead to:\n\n- **Credential Exfiltration**: Stealing sensitive user data stored in page memory, LocalStorage, IndexedDB, or cookies available to JS and sending them to an attacker controlled server.\n- **Page Vandalism:** Mutating the page to read or act differently than intended by the developer.\n\n### Attach Preconditions\n\n- **The attacker must compromise the translation file (xliff, xtb, etc.).**\n- Unlike most XSS vulnerabilities, this one is not exploitable by arbitrary users. An attacker must first compromise an application's translation file before they can escalate privileges into the Angular application client.\n- The victim application must use Angular i18n.\n- The victim application must use one or more ICU messages.\n- The victim application must render an ICU message.\n- The victim application must not defend against XSS via a safe [Content-Security Policy (CSP)](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CSP) or [Trusted Types](https://developer.mozilla.org/en-US/docs/Web/API/Trusted_Types_API).\n\n### Patches\n- 21.2.0\n- 21.1.6\n- 20.3.17\n- 19.2.19\n\n### Workarounds\nUntil the patch is applied, developers should consider:\n\n- **Reviewing and verifying translated content** received from untrusted third parties before incorporating it in an Angular application.\n- **Enabling strict CSP controls** to block unauthorized JavaScript from executing on the page.\n- [**Enabling Trusted Types**](https://angular.dev/best-practices/security#enforcing-trusted-types) to enforce proper HTML sanitization.\n\n### References\n\n- [Fix](https://github.com/angular/angular/pull/67183)",
+          "githubID": "GHSA-prjf-86w9-mfqv",
+          "CVE": [
+            "CVE-2026-27970"
+          ]
+        },
+        "info": [
+          "https://github.com/angular/angular/security/advisories/GHSA-prjf-86w9-mfqv",
+          "https://github.com/angular/angular/pull/67183",
+          "https://github.com/angular/angular/commit/306f367899dfc2e04238fecd3455547b5d54075d",
+          "https://github.com/angular/angular/commit/7d58b798c626bb0e4e5f89ca8affdce4f352b232",
+          "https://github.com/angular/angular/commit/b85830953281ff3a1a77bbfe69019d352d509c93",
+          "https://angular.dev/best-practices/security#enforcing-trusted-types",
+          "https://developer.mozilla.org/en-US/docs/Web/API/Trusted_Types_API",
+          "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CSP",
+          "https://developer.mozilla.org/en-US/docs/Web/Security/Attacks/XSS"
+        ]
+      },
+      {
+        "atOrAbove": "21.2.0-next.0",
+        "below": "21.2.0",
+        "severity": "high",
+        "cwe": [
+          "CWE-79"
+        ],
+        "identifiers": {
+          "summary": "A [Cross-site Scripting (XSS)](https://developer.mozilla.org/en-US/docs/Web/Security/Attacks/XSS) vulnerability has been identified in the Angular internationalization (i18n) pipeline. In ICU messages (International Components for Unicode), HTML from translated content was not properly sanitized and could execute arbitrary JavaScript.\n\nAngular i18n typically involves three steps, extracting all messages from an application in the source language, sending the messages to be translated, and then merging their translations back into the final source code. Translations are frequently handled by contracts with specific partner companies, and involve sending the source messages to a separate contractor before receiving final translations for display to the end user.\n\nIf the returned translations have malicious content, it could be rendered into the application and execute arbitrary JavaScript.\n\n### Impact\nWhen successfully exploited, this vulnerability allows for execution of attacker controlled JavaScript in the application origin. Depending on the nature of the application being exploited this could lead to:\n\n- **Credential Exfiltration**: Stealing sensitive user data stored in page memory, LocalStorage, IndexedDB, or cookies available to JS and sending them to an attacker controlled server.\n- **Page Vandalism:** Mutating the page to read or act differently than intended by the developer.\n\n### Attach Preconditions\n\n- **The attacker must compromise the translation file (xliff, xtb, etc.).**\n- Unlike most XSS vulnerabilities, this one is not exploitable by arbitrary users. An attacker must first compromise an application's translation file before they can escalate privileges into the Angular application client.\n- The victim application must use Angular i18n.\n- The victim application must use one or more ICU messages.\n- The victim application must render an ICU message.\n- The victim application must not defend against XSS via a safe [Content-Security Policy (CSP)](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CSP) or [Trusted Types](https://developer.mozilla.org/en-US/docs/Web/API/Trusted_Types_API).\n\n### Patches\n- 21.2.0\n- 21.1.6\n- 20.3.17\n- 19.2.19\n\n### Workarounds\nUntil the patch is applied, developers should consider:\n\n- **Reviewing and verifying translated content** received from untrusted third parties before incorporating it in an Angular application.\n- **Enabling strict CSP controls** to block unauthorized JavaScript from executing on the page.\n- [**Enabling Trusted Types**](https://angular.dev/best-practices/security#enforcing-trusted-types) to enforce proper HTML sanitization.\n\n### References\n\n- [Fix](https://github.com/angular/angular/pull/67183)",
+          "githubID": "GHSA-prjf-86w9-mfqv",
+          "CVE": [
+            "CVE-2026-27970"
+          ]
+        },
+        "info": [
+          "https://github.com/angular/angular/security/advisories/GHSA-prjf-86w9-mfqv",
+          "https://github.com/angular/angular/pull/67183",
+          "https://github.com/angular/angular/commit/306f367899dfc2e04238fecd3455547b5d54075d",
+          "https://github.com/angular/angular/commit/7d58b798c626bb0e4e5f89ca8affdce4f352b232",
+          "https://github.com/angular/angular/commit/b85830953281ff3a1a77bbfe69019d352d509c93",
+          "https://angular.dev/best-practices/security#enforcing-trusted-types",
+          "https://developer.mozilla.org/en-US/docs/Web/API/Trusted_Types_API",
+          "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CSP",
+          "https://developer.mozilla.org/en-US/docs/Web/Security/Attacks/XSS"
+        ]
+      },
+      {
+        "atOrAbove": "21.0.0-next.0",
+        "below": "21.2.4",
+        "severity": "high",
+        "cwe": [
+          "CWE-79"
+        ],
+        "identifiers": {
+          "summary": "A Cross-Site Scripting (XSS) vulnerability has been identified in the Angular runtime and compiler. It occurs when the application uses a security-sensitive attribute (for example href on an anchor tag) together with Angular's ability to internationalize attributes. Enabling internationalization for the sensitive attribute by adding `i18n-<attribute>` name bypasses Angular's built-in sanitization mechanism, which when combined with a data binding to untrusted user-generated data can allow an attacker to inject a malicious script. \n\nThe following example illustrates the issue:\n```html\n<a href=\"{{maliciousUrl}}\" i18n-href>Click me</a>\n```\n\nThe following attributes have been confirmed to be vulnerable:\n- `action`\n- `background`\n- `cite`\n- `codebase`\n- `data`\n- `formaction`\n- `href`\n- `itemtype`\n- `longdesc`\n- `poster`\n- `src`\n- `xlink:href`\n\n### Impact\nWhen exploited, this vulnerability allows an attacker to execute arbitrary code within the context of the vulnerable application's domain. This enables:\n- Session Hijacking: Stealing session cookies and authentication tokens.\n- Data Exfiltration: Capturing and transmitting sensitive user data.\n- Unauthorized Actions: Performing actions on behalf of the user.\n\n### Attack Preconditions\n1. The application must use a vulnerable version of Angular.\n2. The application must bind unsanitized user input to one of the attributes mentioned above.\n3. The bound value must be marked for internationalization via the presence of a `i18n-<name>` attribute on the same element.\n\n### Patches\n- 22.0.0-next.3\n- 21.2.4\n- 20.3.18\n- 19.2.20\n\n### Workarounds\nThe primary workaround is to ensure that any data bound to the vulnerable attributes is **never sourced from untrusted user input** (e.g., database, API response, URL parameters) until the patch is applied, or when it is, it shouldn't be marked for internationalization.\n\nAlternatively, users can explicitly sanitize their attributes by passing them through Angular's `DomSanitizer`:\n```ts\nimport {Component, inject, SecurityContext} from '@angular/core';\nimport {DomSanitizer} from '@angular/platform-browser';\n\n@Component({\n  template: `\n    <form action=\"{{url}}\" i18n-action>\n      <button>Submit</button>\n    </form>\n  `,\n})\nexport class App {\n  url: string;\n\n  constructor() {\n    const dangerousUrl = 'javascript:alert(1)';\n    const sanitizer = inject(DomSanitizer);\n    this.url = sanitizer.sanitize(SecurityContext.URL, dangerousUrl) || '';\n  }\n}\n```\n\n### References\n- [Fix 1](https://github.com/angular/angular/pull/67541) \n- [Fix 2](https://github.com/angular/angular/pull/67561)",
+          "githubID": "GHSA-g93w-mfhg-p222",
+          "CVE": [
+            "CVE-2026-32635"
+          ]
+        },
+        "info": [
+          "https://github.com/angular/angular/security/advisories/GHSA-g93w-mfhg-p222",
+          "https://github.com/angular/angular/pull/67541",
+          "https://github.com/angular/angular/pull/67561",
+          "https://github.com/angular/angular/commit/224e60ecb1b90115baa702f1c06edc1d64d86187",
+          "https://github.com/angular/angular/commit/78dea55351fb305b33a919c43a6b363137eca166",
+          "https://github.com/angular/angular/commit/8630319f74c9575a21693d875cc7d5252516146d",
+          "https://github.com/angular/angular/commit/ed2d324f9cc12aab6cfa0569ef10b73243a62c65"
+        ]
+      },
+      {
+        "atOrAbove": "22.0.0-next.0",
+        "below": "22.0.0-next.3",
+        "severity": "high",
+        "cwe": [
+          "CWE-79"
+        ],
+        "identifiers": {
+          "summary": "A Cross-Site Scripting (XSS) vulnerability has been identified in the Angular runtime and compiler. It occurs when the application uses a security-sensitive attribute (for example href on an anchor tag) together with Angular's ability to internationalize attributes. Enabling internationalization for the sensitive attribute by adding `i18n-<attribute>` name bypasses Angular's built-in sanitization mechanism, which when combined with a data binding to untrusted user-generated data can allow an attacker to inject a malicious script. \n\nThe following example illustrates the issue:\n```html\n<a href=\"{{maliciousUrl}}\" i18n-href>Click me</a>\n```\n\nThe following attributes have been confirmed to be vulnerable:\n- `action`\n- `background`\n- `cite`\n- `codebase`\n- `data`\n- `formaction`\n- `href`\n- `itemtype`\n- `longdesc`\n- `poster`\n- `src`\n- `xlink:href`\n\n### Impact\nWhen exploited, this vulnerability allows an attacker to execute arbitrary code within the context of the vulnerable application's domain. This enables:\n- Session Hijacking: Stealing session cookies and authentication tokens.\n- Data Exfiltration: Capturing and transmitting sensitive user data.\n- Unauthorized Actions: Performing actions on behalf of the user.\n\n### Attack Preconditions\n1. The application must use a vulnerable version of Angular.\n2. The application must bind unsanitized user input to one of the attributes mentioned above.\n3. The bound value must be marked for internationalization via the presence of a `i18n-<name>` attribute on the same element.\n\n### Patches\n- 22.0.0-next.3\n- 21.2.4\n- 20.3.18\n- 19.2.20\n\n### Workarounds\nThe primary workaround is to ensure that any data bound to the vulnerable attributes is **never sourced from untrusted user input** (e.g., database, API response, URL parameters) until the patch is applied, or when it is, it shouldn't be marked for internationalization.\n\nAlternatively, users can explicitly sanitize their attributes by passing them through Angular's `DomSanitizer`:\n```ts\nimport {Component, inject, SecurityContext} from '@angular/core';\nimport {DomSanitizer} from '@angular/platform-browser';\n\n@Component({\n  template: `\n    <form action=\"{{url}}\" i18n-action>\n      <button>Submit</button>\n    </form>\n  `,\n})\nexport class App {\n  url: string;\n\n  constructor() {\n    const dangerousUrl = 'javascript:alert(1)';\n    const sanitizer = inject(DomSanitizer);\n    this.url = sanitizer.sanitize(SecurityContext.URL, dangerousUrl) || '';\n  }\n}\n```\n\n### References\n- [Fix 1](https://github.com/angular/angular/pull/67541) \n- [Fix 2](https://github.com/angular/angular/pull/67561)",
+          "githubID": "GHSA-g93w-mfhg-p222",
+          "CVE": [
+            "CVE-2026-32635"
+          ]
+        },
+        "info": [
+          "https://github.com/angular/angular/security/advisories/GHSA-g93w-mfhg-p222",
+          "https://github.com/angular/angular/pull/67541",
+          "https://github.com/angular/angular/pull/67561",
+          "https://github.com/angular/angular/commit/224e60ecb1b90115baa702f1c06edc1d64d86187",
+          "https://github.com/angular/angular/commit/78dea55351fb305b33a919c43a6b363137eca166",
+          "https://github.com/angular/angular/commit/8630319f74c9575a21693d875cc7d5252516146d",
+          "https://github.com/angular/angular/commit/ed2d324f9cc12aab6cfa0569ef10b73243a62c65"
+        ]
       }
     ],
     "extractors": {
@@ -4712,6 +4962,46 @@
         ]
       },
       {
+        "atOrAbove": "2.5.3",
+        "below": "2.5.9",
+        "severity": "medium",
+        "cwe": [
+          "CWE-79"
+        ],
+        "identifiers": {
+          "summary": "DOMPurify 3.1.3 through 3.3.1 and 2.5.3 through 2.5.8, fixed in 2.5.9 and 3.3.2, contain a cross-site scripting vulnerability that allows attackers to bypass attribute sanitization by exploiting five missing rawtext elements (noscript, xmp, noembed, noframes, iframe) in the `SAFE_FOR_XML` regex. Attackers can include payloads like `</noscript><img src=x onerror=alert(1)>` in attribute values to execute JavaScript when sanitized output is placed inside these unprotected rawtext contexts.",
+          "githubID": "GHSA-v2wj-7wpq-c8vv",
+          "CVE": [
+            "CVE-2026-0540"
+          ]
+        },
+        "info": [
+          "https://github.com/cure53/DOMPurify/commit/fca0a938b4261ddc9c0293a289935a9029c049f5",
+          "https://www.vulncheck.com/advisories/dompurify-xss-via-missing-rawtext-elements-in-safe-for-xml",
+          "https://www.vulncheck.com/advisories/dompurify-xss-via-missing-rawtext-elements-in-safeforxml"
+        ]
+      },
+      {
+        "atOrAbove": "2.5.3",
+        "below": "2.5.9",
+        "severity": "medium",
+        "cwe": [
+          "CWE-79"
+        ],
+        "identifiers": {
+          "summary": "DOMPurify 3.1.3 through 3.2.6 and 2.5.3 through 2.5.8 contain a cross-site scripting vulnerability that allows attackers to bypass attribute sanitization by exploiting missing textarea rawtext element validation in the SAFE_FOR_XML regex. Attackers can include closing rawtext tags like </textarea> in attribute values to break out of rawtext contexts and execute JavaScript when sanitized output is placed inside rawtext elements. The 3.x branch was fixed in 3.2.7; the 2.x branch was never patched.",
+          "githubID": "GHSA-v8jm-5vwx-cfxm",
+          "CVE": [
+            "CVE-2025-15599"
+          ]
+        },
+        "info": [
+          "https://github.com/cure53/DOMPurify/commit/c861f5a83fb8d90800f1680f855fee551161ac2b",
+          "https://www.vulncheck.com/advisories/dompurify-xss-via-textarea-rawtext-bypass-in-safe-for-xml",
+          "https://www.vulncheck.com/advisories/dompurify-xss-via-textarea-rawtext-bypass-in-safeforxml"
+        ]
+      },
+      {
         "atOrAbove": "3.0.0",
         "below": "3.1.3",
         "cwe": [
@@ -4781,6 +5071,46 @@
           "https://github.com/cure53/DOMPurify",
           "https://github.com/cure53/DOMPurify/releases/tag/3.2.4",
           "https://nsysean.github.io/posts/dompurify-323-bypass"
+        ]
+      },
+      {
+        "atOrAbove": "3.1.3",
+        "below": "3.2.7",
+        "severity": "medium",
+        "cwe": [
+          "CWE-79"
+        ],
+        "identifiers": {
+          "summary": "DOMPurify 3.1.3 through 3.2.6 and 2.5.3 through 2.5.8 contain a cross-site scripting vulnerability that allows attackers to bypass attribute sanitization by exploiting missing textarea rawtext element validation in the SAFE_FOR_XML regex. Attackers can include closing rawtext tags like </textarea> in attribute values to break out of rawtext contexts and execute JavaScript when sanitized output is placed inside rawtext elements. The 3.x branch was fixed in 3.2.7; the 2.x branch was never patched.",
+          "githubID": "GHSA-v8jm-5vwx-cfxm",
+          "CVE": [
+            "CVE-2025-15599"
+          ]
+        },
+        "info": [
+          "https://github.com/cure53/DOMPurify/commit/c861f5a83fb8d90800f1680f855fee551161ac2b",
+          "https://www.vulncheck.com/advisories/dompurify-xss-via-textarea-rawtext-bypass-in-safe-for-xml",
+          "https://www.vulncheck.com/advisories/dompurify-xss-via-textarea-rawtext-bypass-in-safeforxml"
+        ]
+      },
+      {
+        "atOrAbove": "3.1.3",
+        "below": "3.3.2",
+        "severity": "medium",
+        "cwe": [
+          "CWE-79"
+        ],
+        "identifiers": {
+          "summary": "DOMPurify 3.1.3 through 3.3.1 and 2.5.3 through 2.5.8, fixed in 2.5.9 and 3.3.2, contain a cross-site scripting vulnerability that allows attackers to bypass attribute sanitization by exploiting five missing rawtext elements (noscript, xmp, noembed, noframes, iframe) in the `SAFE_FOR_XML` regex. Attackers can include payloads like `</noscript><img src=x onerror=alert(1)>` in attribute values to execute JavaScript when sanitized output is placed inside these unprotected rawtext contexts.",
+          "githubID": "GHSA-v2wj-7wpq-c8vv",
+          "CVE": [
+            "CVE-2026-0540"
+          ]
+        },
+        "info": [
+          "https://github.com/cure53/DOMPurify/commit/fca0a938b4261ddc9c0293a289935a9029c049f5",
+          "https://www.vulncheck.com/advisories/dompurify-xss-via-missing-rawtext-elements-in-safe-for-xml",
+          "https://www.vulncheck.com/advisories/dompurify-xss-via-missing-rawtext-elements-in-safeforxml"
         ]
       }
     ],
@@ -5323,6 +5653,31 @@
         },
         "info": [
           "https://nvd.nist.gov/vuln/detail/CVE-2021-23358"
+        ]
+      },
+      {
+        "atOrAbove": "0",
+        "below": "1.13.8",
+        "severity": "high",
+        "cwe": [
+          "CWE-674",
+          "CWE-770"
+        ],
+        "identifiers": {
+          "summary": "### Impact\n\nIn simple words, some programs that use `_.flatten` or `_.isEqual` could be made to crash. Someone who wants to do harm may be able to do this on purpose. This can only be done if the program has special properties. It only works in Underscore versions up to 1.13.7. A more detailed explanation follows.\n\nIn affected versions of Underscore, the `_.flatten` and `_.isEqual` functions use recursion without a depth limit. Under very specific conditions, detailed below, an attacker could exploit this in a Denial of Service (DoS) attack by triggering a stack overflow.\n\nA proof of concept (PoC) for this type of attack with `_.isEqual`:\n\n```js\nconst _ = require('underscore');\n\n// build JSON string for nested object ~4500 levels deep\n// (for this to be an attack, the JSON would have to come from\n// a request or other untrusted input)\nlet json = '';\nfor (let i = 0; i < 4500; i++) json += '{\"n\":';\njson += '\"x\"';\nfor (let i = 0; i < 4500; i++) json += '}';\n\n// construct two distinct objects with equal shape from the above JSON\nconst a = JSON.parse(json);\nconst b = JSON.parse(json);\n\n_.isEqual(a, b); // RangeError: Maximum call stack size exceeded\n```\n\nA proof of concept (PoC) for this type of attack with `_.flatten`:\n\n```js\nconst _ = require('underscore');\n\n// build nested array ~4500 levels deep\n// (like with _.isEqual, this nested array would have to be sourced\n// from an untrusted external source for it to be an attack)\nlet nested = [];\nfor (let i = 0; i < 4500; i++) nested = [nested];\n\n_.flatten(nested); // RangeError: Maximum call stack size exceeded\n```\n\nAn application that crashes because of this can be restarted, so the bug is most relevant to applications for which continued operation is important, such as server applications. Furthermore, an application is only vulnerable to this type of attack if ALL of the following conditions are met:\n\n- Untrusted input must be used to create a recursive datastructure, for example using `JSON.parse`, with no enforced depth limit.\n- The datastructure thus created must be passed to `_.flatten` or `_.isEqual`.\n- In the case of `_.flatten`, the vulnerability can only be exploited if it is possible for a remote client to prepare a datastructure that consists of arrays at all levels AND if no finite depth limit is passed as the second argument to `_.flatten`.\n- In the case of `_.isEqual`, the vulnerability can only be exploited if there exists a code path in which two distinct datastructures that were submitted by the same remote client are compared using `_.isEqual`. For example, if a client submits data that are stored in a database, and the same client can later submit another datastructure that is then compared to the data that were saved in the database previously, OR if a client submits a single request, but its data are parsed twice, creating two non-identical but equivalent datastructures that are then compared.\n- Exceptions originating from the call to `_.flatten` or `_.isEqual`, as a result of a stack overflow, are not being caught.\n\nAll versions of Underscore up to and including 1.13.7 are affected by this weakness.\n\n### Patches\n\nThe problem has been patched in version 1.13.8. Upgrading to 1.13.8 or later completely prevents exploitation.\n\n**Note:** historically, there have been breaking changes in minor releases of Underscore, especially between versions 1.6 and 1.9. However, upgrading from version 1.9 or later to any later 1.x version should be feasible with little or no effort for all users.\n\n### Workarounds\n\nA workaround that works for both functions is to enforce a depth limit on the datastructure that is created from untrusted input. A limit of 1000 levels should prevent attacks from being successful on most systems. In systems with highly constrained hardware, we recommend lower limits, for example 100 levels.\n\nAnother possible workaround that only works for `_.flatten`, is to pass a second argument that limits the flattening depth to 1000 or less.\n\n### References\n\n- https://github.com/jashkenas/underscore/issues/3011\n- https://underscorejs.org/#1.13.8\n- https://underscorejs.org/#flatten\n- https://underscorejs.org/#isEqual",
+          "githubID": "GHSA-qpx9-hpmf-5gmw",
+          "CVE": [
+            "CVE-2026-27601"
+          ]
+        },
+        "info": [
+          "https://github.com/jashkenas/underscore/security/advisories/GHSA-qpx9-hpmf-5gmw",
+          "https://github.com/jashkenas/underscore/issues/3011",
+          "https://github.com/jashkenas/underscore/commit/411e222eb0ca5d570cc4f6315c02c05b830ed2b4",
+          "https://github.com/jashkenas/underscore/commit/a6e23ae9647461ec33ad9f92a2ecfc220eea0a84",
+          "https://underscorejs.org/#1.13.8",
+          "https://underscorejs.org/#flatten",
+          "https://underscorejs.org/#isEqual"
         ]
       }
     ],
@@ -6415,6 +6770,120 @@
           "https://fluidattacks.com/advisories/lydian",
           "https://github.com/sveltejs/svelte/releases/tag/svelte%405.46.4"
         ]
+      },
+      {
+        "atOrAbove": "0",
+        "below": "5.51.5",
+        "severity": "medium",
+        "cwe": [
+          "CWE-915"
+        ],
+        "identifiers": {
+          "summary": "In server-side rendering, attribute spreading on elements (e.g. `<div {...attrs}>`) enumerates inherited properties from the object's prototype chain rather than only own properties. In environments where `Object.prototype` has already been polluted — a precondition outside of Svelte's control — this can cause unexpected attributes to appear in SSR output or cause SSR to throw errors. Client-side rendering is not affected.",
+          "githubID": "GHSA-crpf-4hrx-3jrp",
+          "CVE": [
+            "CVE-2026-27125"
+          ]
+        },
+        "info": [
+          "https://github.com/sveltejs/svelte/security/advisories/GHSA-crpf-4hrx-3jrp",
+          "https://github.com/sveltejs/svelte/commit/73098bb26c6f06e7fd1b0746d817d2c5ee90755f",
+          "https://github.com/sveltejs/svelte/releases/tag/svelte@5.51.5"
+        ]
+      },
+      {
+        "atOrAbove": "0",
+        "below": "5.51.5",
+        "severity": "medium",
+        "cwe": [
+          "CWE-79"
+        ],
+        "identifiers": {
+          "summary": "Versions of svelte prior to 5.51.5 are vulnerable to cross-site scripting (XSS) during server-side rendering. When using spread syntax to render attributes from untrusted data, event handler properties are included in the rendered HTML output. If an application spreads user-controlled or external data as element attributes, an attacker can inject malicious event handlers that execute in victims' browsers.",
+          "githubID": "GHSA-f7gr-6p89-r883",
+          "CVE": [
+            "CVE-2026-27121"
+          ]
+        },
+        "info": [
+          "https://github.com/sveltejs/svelte/security/advisories/GHSA-f7gr-6p89-r883"
+        ]
+      },
+      {
+        "atOrAbove": "0",
+        "below": "5.51.5",
+        "severity": "medium",
+        "cwe": [
+          "CWE-79"
+        ],
+        "identifiers": {
+          "summary": "When using `<svelte:element this={tag}>` in server-side rendering, the provided tag name is not validated or sanitized before being emitted into the HTML output. If the tag string contains unexpected characters, it can result in HTML injection in the SSR output. Client-side rendering is not affected.",
+          "githubID": "GHSA-m56q-vw4c-c2cp",
+          "CVE": [
+            "CVE-2026-27122"
+          ]
+        },
+        "info": [
+          "https://github.com/sveltejs/svelte/security/advisories/GHSA-m56q-vw4c-c2cp"
+        ]
+      },
+      {
+        "atOrAbove": "5.39.3",
+        "below": "5.51.5",
+        "severity": "medium",
+        "cwe": [
+          "CWE-79"
+        ],
+        "identifiers": {
+          "summary": "In certain circumstances, the server-side rendering output of an `<option>` element does not properly escape its content, potentially allowing HTML injection in the SSR output. Client-side rendering is not affected.",
+          "githubID": "GHSA-h7h7-mm68-gmrc",
+          "CVE": [
+            "CVE-2026-27119"
+          ]
+        },
+        "info": [
+          "https://github.com/sveltejs/svelte/security/advisories/GHSA-h7h7-mm68-gmrc"
+        ]
+      },
+      {
+        "atOrAbove": "0",
+        "below": "5.53.5",
+        "severity": "medium",
+        "cwe": [
+          "CWE-79"
+        ],
+        "identifiers": {
+          "summary": "The contents of `bind:innerText` and `bind:textContent` on `contenteditable` elements were not properly escaped. This could enable HTML injection and Cross-site Scripting (XSS) if rendering untrusted data as the binding's initial value on the server.",
+          "githubID": "GHSA-phwv-c562-gvmh",
+          "CVE": [
+            "CVE-2026-27901"
+          ]
+        },
+        "info": [
+          "https://github.com/sveltejs/svelte/security/advisories/GHSA-phwv-c562-gvmh",
+          "https://github.com/sveltejs/svelte/commit/0df5abcae223058ceb95491470372065fb87951d",
+          "https://github.com/sveltejs/svelte/releases/tag/svelte@5.53.5"
+        ]
+      },
+      {
+        "atOrAbove": "5.53.0",
+        "below": "5.53.5",
+        "severity": "medium",
+        "cwe": [
+          "CWE-79"
+        ],
+        "identifiers": {
+          "summary": "Errors from `transformError` were not correctly escaped prior to being embedded in the HTML output, causing potential HTML injection and XSS if attacker-controlled content is returned from `transformError`.",
+          "githubID": "GHSA-qgvg-pr8v-6rr3",
+          "CVE": [
+            "CVE-2026-27902"
+          ]
+        },
+        "info": [
+          "https://github.com/sveltejs/svelte/security/advisories/GHSA-qgvg-pr8v-6rr3",
+          "https://github.com/sveltejs/svelte/commit/0298e979371bb583855c9810db79a70a551d22b9",
+          "https://github.com/sveltejs/svelte/releases/tag/svelte@5.53.5"
+        ]
       }
     ],
     "extractors": {
@@ -6586,6 +7055,30 @@
         ]
       },
       {
+        "atOrAbove": "0",
+        "below": "0.30.3",
+        "severity": "high",
+        "cwe": [
+          "CWE-754"
+        ],
+        "identifiers": {
+          "summary": "# Denial of Service via **proto** Key in mergeConfig\n\n### Summary\n\nThe `mergeConfig` function in axios crashes with a TypeError when processing configuration objects containing `__proto__` as an own property. An attacker can trigger this by providing a malicious configuration object created via `JSON.parse()`, causing complete denial of service.\n\n### Details\n\nThe vulnerability exists in `lib/core/mergeConfig.js` at lines 98-101:\n\n```javascript\nutils.forEach(Object.keys({ ...config1, ...config2 }), function computeConfigValue(prop) {\n  const merge = mergeMap[prop] || mergeDeepProperties;\n  const configValue = merge(config1[prop], config2[prop], prop);\n  (utils.isUndefined(configValue) && merge !== mergeDirectKeys) || (config[prop] = configValue);\n});\n```\n\nWhen `prop` is `'__proto__'`:\n\n1. `JSON.parse('{\"__proto__\": {...}}')` creates an object with `__proto__` as an own enumerable property\n2. `Object.keys()` includes `'__proto__'` in the iteration\n3. `mergeMap['__proto__']` performs prototype chain lookup, returning `Object.prototype` (truthy object)\n4. The expression `mergeMap[prop] || mergeDeepProperties` evaluates to `Object.prototype`\n5. `Object.prototype(...)` throws `TypeError: merge is not a function`\n\nThe `mergeConfig` function is called by:\n\n- `Axios._request()` at `lib/core/Axios.js:75`\n- `Axios.getUri()` at `lib/core/Axios.js:201`\n- All HTTP method shortcuts (`get`, `post`, etc.) at `lib/core/Axios.js:211,224`\n\n### PoC\n\n```javascript\nimport axios from \"axios\";\n\nconst maliciousConfig = JSON.parse('{\"__proto__\": {\"x\": 1}}');\nawait axios.get(\"https://httpbin.org/get\", maliciousConfig);\n```\n\n**Reproduction steps:**\n\n1. Clone axios repository or `npm install axios`\n2. Create file `poc.mjs` with the code above\n3. Run: `node poc.mjs`\n4. Observe the TypeError crash\n\n**Verified output (axios 1.13.4):**\n\n```\nTypeError: merge is not a function\n    at computeConfigValue (lib/core/mergeConfig.js:100:25)\n    at Object.forEach (lib/utils.js:280:10)\n    at mergeConfig (lib/core/mergeConfig.js:98:9)\n```\n\n**Control tests performed:**\n| Test | Config | Result |\n|------|--------|--------|\n| Normal config | `{\"timeout\": 5000}` | SUCCESS |\n| Malicious config | `JSON.parse('{\"__proto__\": {\"x\": 1}}')` | **CRASH** |\n| Nested object | `{\"headers\": {\"X-Test\": \"value\"}}` | SUCCESS |\n\n**Attack scenario:**\nAn application that accepts user input, parses it with `JSON.parse()`, and passes it to axios configuration will crash when receiving the payload `{\"__proto__\": {\"x\": 1}}`.\n\n### Impact\n\n**Denial of Service** - Any application using axios that processes user-controlled JSON and passes it to axios configuration methods is vulnerable. The application will crash when processing the malicious payload.\n\nAffected environments:\n\n- Node.js servers using axios for HTTP requests\n- Any backend that passes parsed JSON to axios configuration\n\nThis is NOT prototype pollution - the application crashes before any assignment occurs.",
+          "githubID": "GHSA-43fc-jf86-j433",
+          "CVE": [
+            "CVE-2026-25639"
+          ]
+        },
+        "info": [
+          "https://github.com/axios/axios/security/advisories/GHSA-43fc-jf86-j433",
+          "https://github.com/axios/axios/pull/7369",
+          "https://github.com/axios/axios/pull/7388",
+          "https://github.com/axios/axios/commit/28c721588c7a77e7503d0a434e016f852c597b57",
+          "https://github.com/axios/axios/commit/d7ff1409c68168d3057fc3891f911b2b92616f9e",
+          "https://github.com/axios/axios/releases/tag/v0.30.3",
+          "https://github.com/axios/axios/releases/tag/v1.13.5"
+        ]
+      },
+      {
         "atOrAbove": "1.0.0",
         "below": "1.6.0",
         "cwe": [
@@ -6694,6 +7187,30 @@
           "https://github.com/axios/axios/pull/7011",
           "https://github.com/axios/axios/commit/945435fc51467303768202250debb8d4ae892593",
           "https://github.com/axios/axios/releases/tag/v1.12.0"
+        ]
+      },
+      {
+        "atOrAbove": "1.0.0",
+        "below": "1.13.5",
+        "severity": "high",
+        "cwe": [
+          "CWE-754"
+        ],
+        "identifiers": {
+          "summary": "# Denial of Service via **proto** Key in mergeConfig\n\n### Summary\n\nThe `mergeConfig` function in axios crashes with a TypeError when processing configuration objects containing `__proto__` as an own property. An attacker can trigger this by providing a malicious configuration object created via `JSON.parse()`, causing complete denial of service.\n\n### Details\n\nThe vulnerability exists in `lib/core/mergeConfig.js` at lines 98-101:\n\n```javascript\nutils.forEach(Object.keys({ ...config1, ...config2 }), function computeConfigValue(prop) {\n  const merge = mergeMap[prop] || mergeDeepProperties;\n  const configValue = merge(config1[prop], config2[prop], prop);\n  (utils.isUndefined(configValue) && merge !== mergeDirectKeys) || (config[prop] = configValue);\n});\n```\n\nWhen `prop` is `'__proto__'`:\n\n1. `JSON.parse('{\"__proto__\": {...}}')` creates an object with `__proto__` as an own enumerable property\n2. `Object.keys()` includes `'__proto__'` in the iteration\n3. `mergeMap['__proto__']` performs prototype chain lookup, returning `Object.prototype` (truthy object)\n4. The expression `mergeMap[prop] || mergeDeepProperties` evaluates to `Object.prototype`\n5. `Object.prototype(...)` throws `TypeError: merge is not a function`\n\nThe `mergeConfig` function is called by:\n\n- `Axios._request()` at `lib/core/Axios.js:75`\n- `Axios.getUri()` at `lib/core/Axios.js:201`\n- All HTTP method shortcuts (`get`, `post`, etc.) at `lib/core/Axios.js:211,224`\n\n### PoC\n\n```javascript\nimport axios from \"axios\";\n\nconst maliciousConfig = JSON.parse('{\"__proto__\": {\"x\": 1}}');\nawait axios.get(\"https://httpbin.org/get\", maliciousConfig);\n```\n\n**Reproduction steps:**\n\n1. Clone axios repository or `npm install axios`\n2. Create file `poc.mjs` with the code above\n3. Run: `node poc.mjs`\n4. Observe the TypeError crash\n\n**Verified output (axios 1.13.4):**\n\n```\nTypeError: merge is not a function\n    at computeConfigValue (lib/core/mergeConfig.js:100:25)\n    at Object.forEach (lib/utils.js:280:10)\n    at mergeConfig (lib/core/mergeConfig.js:98:9)\n```\n\n**Control tests performed:**\n| Test | Config | Result |\n|------|--------|--------|\n| Normal config | `{\"timeout\": 5000}` | SUCCESS |\n| Malicious config | `JSON.parse('{\"__proto__\": {\"x\": 1}}')` | **CRASH** |\n| Nested object | `{\"headers\": {\"X-Test\": \"value\"}}` | SUCCESS |\n\n**Attack scenario:**\nAn application that accepts user input, parses it with `JSON.parse()`, and passes it to axios configuration will crash when receiving the payload `{\"__proto__\": {\"x\": 1}}`.\n\n### Impact\n\n**Denial of Service** - Any application using axios that processes user-controlled JSON and passes it to axios configuration methods is vulnerable. The application will crash when processing the malicious payload.\n\nAffected environments:\n\n- Node.js servers using axios for HTTP requests\n- Any backend that passes parsed JSON to axios configuration\n\nThis is NOT prototype pollution - the application crashes before any assignment occurs.",
+          "githubID": "GHSA-43fc-jf86-j433",
+          "CVE": [
+            "CVE-2026-25639"
+          ]
+        },
+        "info": [
+          "https://github.com/axios/axios/security/advisories/GHSA-43fc-jf86-j433",
+          "https://github.com/axios/axios/pull/7369",
+          "https://github.com/axios/axios/pull/7388",
+          "https://github.com/axios/axios/commit/28c721588c7a77e7503d0a434e016f852c597b57",
+          "https://github.com/axios/axios/commit/d7ff1409c68168d3057fc3891f911b2b92616f9e",
+          "https://github.com/axios/axios/releases/tag/v0.30.3",
+          "https://github.com/axios/axios/releases/tag/v1.13.5"
         ]
       }
     ],
@@ -6816,6 +7333,27 @@
         "info": [
           "https://github.com/markdown-it/markdown-it/issues/957",
           "https://github.com/markdown-it/markdown-it/compare/13.0.1...13.0.2"
+        ]
+      },
+      {
+        "atOrAbove": "13.0.0",
+        "below": "14.1.1",
+        "severity": "medium",
+        "cwe": [
+          "CWE-1333"
+        ],
+        "identifiers": {
+          "summary": "Versions of the package markdown-it from 13.0.0 and before 14.1.1 are vulnerable to Regular Expression Denial of Service (ReDoS) due to the use of the regex /\\*+$/ in the linkify function. An attacker can supply a long sequence of * characters followed by a non-matching character, which triggers excessive backtracking and may lead to a denial-of-service condition.",
+          "githubID": "GHSA-38c4-r59v-3vqw",
+          "CVE": [
+            "CVE-2026-2327"
+          ]
+        },
+        "info": [
+          "https://github.com/markdown-it/markdown-it/commit/4b4bbcae5e0990a5b172378e507b33a59012ed26",
+          "https://gist.github.com/ltduc147/c9abecae1b291ede4f692f2ab988c917",
+          "https://github.com/markdown-it/markdown-it/blob/14.1.0/lib/rules_inline/linkify.mjs#L33",
+          "https://security.snyk.io/vuln/SNYK-JS-MARKDOWNIT-10666750"
         ]
       }
     ],
@@ -7297,6 +7835,36 @@
       },
       {
         "atOrAbove": "11.1.4",
+        "below": "12.3.5",
+        "cwe": [
+          "CWE-285",
+          "CWE-863"
+        ],
+        "severity": "high",
+        "identifiers": {
+          "summary": "Authorization Bypass in Next.js Middleware",
+          "CVE": [
+            "CVE-2025-29927"
+          ],
+          "githubID": "GHSA-f82v-jwr5-mffw"
+        },
+        "info": [
+          "https://github.com/advisories/GHSA-f82v-jwr5-mffw",
+          "https://github.com/vercel/next.js/security/advisories/GHSA-f82v-jwr5-mffw",
+          "https://nvd.nist.gov/vuln/detail/CVE-2025-29927",
+          "https://github.com/vercel/next.js/commit/52a078da3884efe6501613c7834a3d02a91676d2",
+          "https://github.com/vercel/next.js/commit/5fd3ae8f8542677c6294f32d18022731eab6fe48",
+          "https://github.com/vercel/next.js",
+          "https://github.com/vercel/next.js/releases/tag/v12.3.5",
+          "https://github.com/vercel/next.js/releases/tag/v13.5.9",
+          "https://security.netapp.com/advisory/ntap-20250328-0002",
+          "https://vercel.com/changelog/vercel-firewall-proactively-protects-against-vulnerability-with-middleware",
+          "http://www.openwall.com/lists/oss-security/2025/03/23/3",
+          "http://www.openwall.com/lists/oss-security/2025/03/23/4"
+        ]
+      },
+      {
+        "atOrAbove": "12.0.0",
         "below": "12.3.5",
         "cwe": [
           "CWE-285",
@@ -7893,6 +8461,24 @@
         ]
       },
       {
+        "atOrAbove": "13.0.0",
+        "below": "15.0.8",
+        "severity": "high",
+        "cwe": [
+          "CWE-400",
+          "CWE-502"
+        ],
+        "identifiers": {
+          "summary": "A vulnerability affects certain React Server Components packages for versions 19.0.x, 19.1.x, and 19.2.x and frameworks that use the affected packages, including Next.js 13.x, 14.x, 15.x, and 16.x using the App Router. The issue is tracked upstream as [CVE-2026-23864](https://github.com/facebook/react/security/advisories/GHSA-83fc-fqcc-2hmg).\n\nA specially crafted HTTP request can be sent to any App Router Server Function endpoint that, when deserialized, may trigger excessive CPU usage, out-of-memory exceptions, or server crashes. This can result in denial of service in unpatched environments.",
+          "githubID": "GHSA-h25m-26qc-wcjf"
+        },
+        "info": [
+          "https://github.com/facebook/react/security/advisories/GHSA-83fc-fqcc-2hmg",
+          "https://github.com/vercel/next.js/security/advisories/GHSA-h25m-26qc-wcjf",
+          "https://vercel.com/changelog/summary-of-cve-2026-23864"
+        ]
+      },
+      {
         "atOrAbove": "15.0.0",
         "below": "15.1.2",
         "cwe": [
@@ -8029,6 +8615,24 @@
           "https://react.dev/blog/2025/12/11/denial-of-service-and-source-code-exposure-in-react-server-components",
           "https://www.cve.org/CVERecord?id=CVE-2025-55184",
           "https://www.facebook.com/security/advisories/cve-2025-67779"
+        ]
+      },
+      {
+        "atOrAbove": "15.1.1-canary.0",
+        "below": "15.1.12",
+        "severity": "high",
+        "cwe": [
+          "CWE-400",
+          "CWE-502"
+        ],
+        "identifiers": {
+          "summary": "A vulnerability affects certain React Server Components packages for versions 19.0.x, 19.1.x, and 19.2.x and frameworks that use the affected packages, including Next.js 13.x, 14.x, 15.x, and 16.x using the App Router. The issue is tracked upstream as [CVE-2026-23864](https://github.com/facebook/react/security/advisories/GHSA-83fc-fqcc-2hmg).\n\nA specially crafted HTTP request can be sent to any App Router Server Function endpoint that, when deserialized, may trigger excessive CPU usage, out-of-memory exceptions, or server crashes. This can result in denial of service in unpatched environments.",
+          "githubID": "GHSA-h25m-26qc-wcjf"
+        },
+        "info": [
+          "https://github.com/facebook/react/security/advisories/GHSA-83fc-fqcc-2hmg",
+          "https://github.com/vercel/next.js/security/advisories/GHSA-h25m-26qc-wcjf",
+          "https://vercel.com/changelog/summary-of-cve-2026-23864"
         ]
       },
       {
@@ -8180,6 +8784,24 @@
         ]
       },
       {
+        "atOrAbove": "15.2.0-canary.0",
+        "below": "15.2.9",
+        "severity": "high",
+        "cwe": [
+          "CWE-400",
+          "CWE-502"
+        ],
+        "identifiers": {
+          "summary": "A vulnerability affects certain React Server Components packages for versions 19.0.x, 19.1.x, and 19.2.x and frameworks that use the affected packages, including Next.js 13.x, 14.x, 15.x, and 16.x using the App Router. The issue is tracked upstream as [CVE-2026-23864](https://github.com/facebook/react/security/advisories/GHSA-83fc-fqcc-2hmg).\n\nA specially crafted HTTP request can be sent to any App Router Server Function endpoint that, when deserialized, may trigger excessive CPU usage, out-of-memory exceptions, or server crashes. This can result in denial of service in unpatched environments.",
+          "githubID": "GHSA-h25m-26qc-wcjf"
+        },
+        "info": [
+          "https://github.com/facebook/react/security/advisories/GHSA-83fc-fqcc-2hmg",
+          "https://github.com/vercel/next.js/security/advisories/GHSA-h25m-26qc-wcjf",
+          "https://vercel.com/changelog/summary-of-cve-2026-23864"
+        ]
+      },
+      {
         "atOrAbove": "15.3.0",
         "below": "15.3.3",
         "cwe": [
@@ -8274,6 +8896,24 @@
           "https://react.dev/blog/2025/12/11/denial-of-service-and-source-code-exposure-in-react-server-components",
           "https://www.cve.org/CVERecord?id=CVE-2025-55184",
           "https://www.facebook.com/security/advisories/cve-2025-67779"
+        ]
+      },
+      {
+        "atOrAbove": "15.3.0-canary.0",
+        "below": "15.3.9",
+        "severity": "high",
+        "cwe": [
+          "CWE-400",
+          "CWE-502"
+        ],
+        "identifiers": {
+          "summary": "A vulnerability affects certain React Server Components packages for versions 19.0.x, 19.1.x, and 19.2.x and frameworks that use the affected packages, including Next.js 13.x, 14.x, 15.x, and 16.x using the App Router. The issue is tracked upstream as [CVE-2026-23864](https://github.com/facebook/react/security/advisories/GHSA-83fc-fqcc-2hmg).\n\nA specially crafted HTTP request can be sent to any App Router Server Function endpoint that, when deserialized, may trigger excessive CPU usage, out-of-memory exceptions, or server crashes. This can result in denial of service in unpatched environments.",
+          "githubID": "GHSA-h25m-26qc-wcjf"
+        },
+        "info": [
+          "https://github.com/facebook/react/security/advisories/GHSA-83fc-fqcc-2hmg",
+          "https://github.com/vercel/next.js/security/advisories/GHSA-h25m-26qc-wcjf",
+          "https://vercel.com/changelog/summary-of-cve-2026-23864"
         ]
       },
       {
@@ -8413,6 +9053,24 @@
         ]
       },
       {
+        "atOrAbove": "15.4.0-canary.0",
+        "below": "15.4.11",
+        "severity": "high",
+        "cwe": [
+          "CWE-400",
+          "CWE-502"
+        ],
+        "identifiers": {
+          "summary": "A vulnerability affects certain React Server Components packages for versions 19.0.x, 19.1.x, and 19.2.x and frameworks that use the affected packages, including Next.js 13.x, 14.x, 15.x, and 16.x using the App Router. The issue is tracked upstream as [CVE-2026-23864](https://github.com/facebook/react/security/advisories/GHSA-83fc-fqcc-2hmg).\n\nA specially crafted HTTP request can be sent to any App Router Server Function endpoint that, when deserialized, may trigger excessive CPU usage, out-of-memory exceptions, or server crashes. This can result in denial of service in unpatched environments.",
+          "githubID": "GHSA-h25m-26qc-wcjf"
+        },
+        "info": [
+          "https://github.com/facebook/react/security/advisories/GHSA-83fc-fqcc-2hmg",
+          "https://github.com/vercel/next.js/security/advisories/GHSA-h25m-26qc-wcjf",
+          "https://vercel.com/changelog/summary-of-cve-2026-23864"
+        ]
+      },
+      {
         "atOrAbove": "15.5.0-canary.0",
         "below": "15.5.7",
         "severity": "critical",
@@ -8487,6 +9145,68 @@
         ]
       },
       {
+        "atOrAbove": "10.0.0",
+        "below": "15.5.10",
+        "severity": "medium",
+        "cwe": [
+          "CWE-400",
+          "CWE-770"
+        ],
+        "identifiers": {
+          "summary": "A DoS vulnerability exists in self-hosted Next.js applications that have `remotePatterns` configured for the Image Optimizer. The image optimization endpoint (`/_next/image`) loads external images entirely into memory without enforcing a maximum size limit, allowing an attacker to cause out-of-memory conditions by requesting optimization of arbitrarily large images. This vulnerability requires that `remotePatterns` is configured to allow image optimization from external domains and that the attacker can serve or control a large image on an allowed domain.\n\nStrongly consider upgrading to 15.5.10 and 16.1.5 to reduce risk and prevent availability issues in Next applications.",
+          "githubID": "GHSA-9g9p-9gw9-jx7f",
+          "CVE": [
+            "CVE-2025-59471"
+          ]
+        },
+        "info": [
+          "https://github.com/vercel/next.js/security/advisories/GHSA-9g9p-9gw9-jx7f",
+          "https://github.com/vercel/next.js/commit/500ec83743639addceaede95e95913398975156c",
+          "https://github.com/vercel/next.js/commit/e5b834d208fe0edf64aa26b5d76dcf6a176500ec",
+          "https://github.com/vercel/next.js/releases/tag/v15.5.10",
+          "https://github.com/vercel/next.js/releases/tag/v16.1.5"
+        ]
+      },
+      {
+        "atOrAbove": "15.5.1-canary.0",
+        "below": "15.5.10",
+        "severity": "high",
+        "cwe": [
+          "CWE-400",
+          "CWE-502"
+        ],
+        "identifiers": {
+          "summary": "A vulnerability affects certain React Server Components packages for versions 19.0.x, 19.1.x, and 19.2.x and frameworks that use the affected packages, including Next.js 13.x, 14.x, 15.x, and 16.x using the App Router. The issue is tracked upstream as [CVE-2026-23864](https://github.com/facebook/react/security/advisories/GHSA-83fc-fqcc-2hmg).\n\nA specially crafted HTTP request can be sent to any App Router Server Function endpoint that, when deserialized, may trigger excessive CPU usage, out-of-memory exceptions, or server crashes. This can result in denial of service in unpatched environments.",
+          "githubID": "GHSA-h25m-26qc-wcjf"
+        },
+        "info": [
+          "https://github.com/facebook/react/security/advisories/GHSA-83fc-fqcc-2hmg",
+          "https://github.com/vercel/next.js/security/advisories/GHSA-h25m-26qc-wcjf",
+          "https://vercel.com/changelog/summary-of-cve-2026-23864"
+        ]
+      },
+      {
+        "atOrAbove": "9.5.0",
+        "below": "15.5.13",
+        "severity": "medium",
+        "cwe": [
+          "CWE-444"
+        ],
+        "identifiers": {
+          "summary": "## Summary\nWhen Next.js rewrites proxy traffic to an external backend, a crafted `DELETE`/`OPTIONS` request using `Transfer-Encoding: chunked` could trigger request boundary disagreement between the proxy and backend. This could allow request smuggling through rewritten routes.\n\n## Impact\nAn attacker could smuggle a second request to unintended backend routes (for example, internal/admin endpoints), bypassing assumptions that only the configured rewrite destination/path is reachable. This does not impact applications hosted on providers that handle rewrites at the CDN level, such as Vercel. \n\n## Patches\nThe vulnerability originated in an upstream library vendored by Next.js. It is fixed by updating that dependency’s behavior so `content-length: 0` is added only when both `content-length` and `transfer-encoding` are absent, and `transfer-encoding` is no longer removed in that code path.\n\n## Workarounds\nIf upgrade is not immediately possible:\n- Block chunked `DELETE`/`OPTIONS` requests on rewritten routes at your edge/proxy.\n- Enforce authentication/authorization on backend routes per our [security guidance](https://nextjs.org/docs/app/guides/data-security).",
+          "githubID": "GHSA-ggv3-7p47-pfv8",
+          "CVE": [
+            "CVE-2026-29057"
+          ]
+        },
+        "info": [
+          "https://github.com/vercel/next.js/security/advisories/GHSA-ggv3-7p47-pfv8",
+          "https://github.com/vercel/next.js/commit/dc98c04f376c6a1df76ec3e0a2d07edf4abdabd6",
+          "https://github.com/vercel/next.js/releases/tag/v15.5.13",
+          "https://github.com/vercel/next.js/releases/tag/v16.1.7"
+        ]
+      },
+      {
         "atOrAbove": "15.6.0-canary.0",
         "below": "15.6.0-canary.59",
         "severity": "high",
@@ -8543,6 +9263,45 @@
           "https://react.dev/blog/2025/12/11/denial-of-service-and-source-code-exposure-in-react-server-components",
           "https://www.cve.org/CVERecord?id=CVE-2025-55184",
           "https://www.facebook.com/security/advisories/cve-2025-67779"
+        ]
+      },
+      {
+        "atOrAbove": "15.0.0-canary.0",
+        "below": "15.6.0-canary.61",
+        "severity": "medium",
+        "cwe": [
+          "CWE-400",
+          "CWE-409",
+          "CWE-770"
+        ],
+        "identifiers": {
+          "summary": "A denial of service vulnerability exists in Next.js versions with Partial Prerendering (PPR) enabled when running in minimal mode. The PPR resume endpoint accepts unauthenticated POST requests with the `Next-Resume: 1` header and processes attacker-controlled postponed state data. Two closely related vulnerabilities allow an attacker to crash the server process through memory exhaustion:\n\n1. **Unbounded request body buffering**: The server buffers the entire POST request body into memory using `Buffer.concat()` without enforcing any size limit, allowing arbitrarily large payloads to exhaust available memory.\n\n2. **Unbounded decompression (zipbomb)**: The resume data cache is decompressed using `inflateSync()` without limiting the decompressed output size. A small compressed payload can expand to hundreds of megabytes or gigabytes, causing memory exhaustion.\n\nBoth attack vectors result in a fatal V8 out-of-memory error (`FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory`) causing the Node.js process to terminate. The zipbomb variant is particularly dangerous as it can bypass reverse proxy request size limits while still causing large memory allocation on the server.\n\nTo be affected, an application must run with `experimental.ppr: true` or `cacheComponents: true` configured along with the NEXT_PRIVATE_MINIMAL_MODE=1 environment variable.\n\nStrongly consider upgrading to 15.6.0-canary.61 or 16.1.5 to reduce risk and prevent availability issues in Next applications.",
+          "githubID": "GHSA-5f7q-jpqc-wp7h",
+          "CVE": [
+            "CVE-2025-59472"
+          ]
+        },
+        "info": [
+          "https://github.com/vercel/next.js/security/advisories/GHSA-5f7q-jpqc-wp7h",
+          "https://vercel.com/changelog/summaries-of-cve-2025-59471-and-cve-2025-59472"
+        ]
+      },
+      {
+        "atOrAbove": "15.6.0-canary.0",
+        "below": "15.6.0-canary.61",
+        "severity": "high",
+        "cwe": [
+          "CWE-400",
+          "CWE-502"
+        ],
+        "identifiers": {
+          "summary": "A vulnerability affects certain React Server Components packages for versions 19.0.x, 19.1.x, and 19.2.x and frameworks that use the affected packages, including Next.js 13.x, 14.x, 15.x, and 16.x using the App Router. The issue is tracked upstream as [CVE-2026-23864](https://github.com/facebook/react/security/advisories/GHSA-83fc-fqcc-2hmg).\n\nA specially crafted HTTP request can be sent to any App Router Server Function endpoint that, when deserialized, may trigger excessive CPU usage, out-of-memory exceptions, or server crashes. This can result in denial of service in unpatched environments.",
+          "githubID": "GHSA-h25m-26qc-wcjf"
+        },
+        "info": [
+          "https://github.com/facebook/react/security/advisories/GHSA-83fc-fqcc-2hmg",
+          "https://github.com/vercel/next.js/security/advisories/GHSA-h25m-26qc-wcjf",
+          "https://vercel.com/changelog/summary-of-cve-2026-23864"
         ]
       },
       {
@@ -8620,6 +9379,24 @@
         ]
       },
       {
+        "atOrAbove": "16.0.0-beta.0",
+        "below": "16.0.11",
+        "severity": "high",
+        "cwe": [
+          "CWE-400",
+          "CWE-502"
+        ],
+        "identifiers": {
+          "summary": "A vulnerability affects certain React Server Components packages for versions 19.0.x, 19.1.x, and 19.2.x and frameworks that use the affected packages, including Next.js 13.x, 14.x, 15.x, and 16.x using the App Router. The issue is tracked upstream as [CVE-2026-23864](https://github.com/facebook/react/security/advisories/GHSA-83fc-fqcc-2hmg).\n\nA specially crafted HTTP request can be sent to any App Router Server Function endpoint that, when deserialized, may trigger excessive CPU usage, out-of-memory exceptions, or server crashes. This can result in denial of service in unpatched environments.",
+          "githubID": "GHSA-h25m-26qc-wcjf"
+        },
+        "info": [
+          "https://github.com/facebook/react/security/advisories/GHSA-83fc-fqcc-2hmg",
+          "https://github.com/vercel/next.js/security/advisories/GHSA-h25m-26qc-wcjf",
+          "https://vercel.com/changelog/summary-of-cve-2026-23864"
+        ]
+      },
+      {
         "atOrAbove": "16.1.0-canary.0",
         "below": "16.1.0-canary.17",
         "severity": "high",
@@ -8676,6 +9453,169 @@
           "https://react.dev/blog/2025/12/11/denial-of-service-and-source-code-exposure-in-react-server-components",
           "https://www.cve.org/CVERecord?id=CVE-2025-55184",
           "https://www.facebook.com/security/advisories/cve-2025-67779"
+        ]
+      },
+      {
+        "atOrAbove": "15.6.0-canary.0",
+        "below": "16.1.5",
+        "severity": "medium",
+        "cwe": [
+          "CWE-400",
+          "CWE-770"
+        ],
+        "identifiers": {
+          "summary": "A DoS vulnerability exists in self-hosted Next.js applications that have `remotePatterns` configured for the Image Optimizer. The image optimization endpoint (`/_next/image`) loads external images entirely into memory without enforcing a maximum size limit, allowing an attacker to cause out-of-memory conditions by requesting optimization of arbitrarily large images. This vulnerability requires that `remotePatterns` is configured to allow image optimization from external domains and that the attacker can serve or control a large image on an allowed domain.\n\nStrongly consider upgrading to 15.5.10 and 16.1.5 to reduce risk and prevent availability issues in Next applications.",
+          "githubID": "GHSA-9g9p-9gw9-jx7f",
+          "CVE": [
+            "CVE-2025-59471"
+          ]
+        },
+        "info": [
+          "https://github.com/vercel/next.js/security/advisories/GHSA-9g9p-9gw9-jx7f",
+          "https://github.com/vercel/next.js/commit/500ec83743639addceaede95e95913398975156c",
+          "https://github.com/vercel/next.js/commit/e5b834d208fe0edf64aa26b5d76dcf6a176500ec",
+          "https://github.com/vercel/next.js/releases/tag/v15.5.10",
+          "https://github.com/vercel/next.js/releases/tag/v16.1.5"
+        ]
+      },
+      {
+        "atOrAbove": "16.0.0-beta.0",
+        "below": "16.1.5",
+        "severity": "medium",
+        "cwe": [
+          "CWE-400",
+          "CWE-409",
+          "CWE-770"
+        ],
+        "identifiers": {
+          "summary": "A denial of service vulnerability exists in Next.js versions with Partial Prerendering (PPR) enabled when running in minimal mode. The PPR resume endpoint accepts unauthenticated POST requests with the `Next-Resume: 1` header and processes attacker-controlled postponed state data. Two closely related vulnerabilities allow an attacker to crash the server process through memory exhaustion:\n\n1. **Unbounded request body buffering**: The server buffers the entire POST request body into memory using `Buffer.concat()` without enforcing any size limit, allowing arbitrarily large payloads to exhaust available memory.\n\n2. **Unbounded decompression (zipbomb)**: The resume data cache is decompressed using `inflateSync()` without limiting the decompressed output size. A small compressed payload can expand to hundreds of megabytes or gigabytes, causing memory exhaustion.\n\nBoth attack vectors result in a fatal V8 out-of-memory error (`FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory`) causing the Node.js process to terminate. The zipbomb variant is particularly dangerous as it can bypass reverse proxy request size limits while still causing large memory allocation on the server.\n\nTo be affected, an application must run with `experimental.ppr: true` or `cacheComponents: true` configured along with the NEXT_PRIVATE_MINIMAL_MODE=1 environment variable.\n\nStrongly consider upgrading to 15.6.0-canary.61 or 16.1.5 to reduce risk and prevent availability issues in Next applications.",
+          "githubID": "GHSA-5f7q-jpqc-wp7h",
+          "CVE": [
+            "CVE-2025-59472"
+          ]
+        },
+        "info": [
+          "https://github.com/vercel/next.js/security/advisories/GHSA-5f7q-jpqc-wp7h",
+          "https://vercel.com/changelog/summaries-of-cve-2025-59471-and-cve-2025-59472"
+        ]
+      },
+      {
+        "atOrAbove": "16.1.0-canary.0",
+        "below": "16.1.5",
+        "severity": "high",
+        "cwe": [
+          "CWE-400",
+          "CWE-502"
+        ],
+        "identifiers": {
+          "summary": "A vulnerability affects certain React Server Components packages for versions 19.0.x, 19.1.x, and 19.2.x and frameworks that use the affected packages, including Next.js 13.x, 14.x, 15.x, and 16.x using the App Router. The issue is tracked upstream as [CVE-2026-23864](https://github.com/facebook/react/security/advisories/GHSA-83fc-fqcc-2hmg).\n\nA specially crafted HTTP request can be sent to any App Router Server Function endpoint that, when deserialized, may trigger excessive CPU usage, out-of-memory exceptions, or server crashes. This can result in denial of service in unpatched environments.",
+          "githubID": "GHSA-h25m-26qc-wcjf"
+        },
+        "info": [
+          "https://github.com/facebook/react/security/advisories/GHSA-83fc-fqcc-2hmg",
+          "https://github.com/vercel/next.js/security/advisories/GHSA-h25m-26qc-wcjf",
+          "https://vercel.com/changelog/summary-of-cve-2026-23864"
+        ]
+      },
+      {
+        "atOrAbove": "10.0.0",
+        "below": "16.1.7",
+        "severity": "medium",
+        "cwe": [
+          "CWE-400"
+        ],
+        "identifiers": {
+          "summary": "## Summary\nThe default Next.js image optimization disk cache (`/_next/image`) did not have a configurable upper bound, allowing unbounded cache growth.\n\n## Impact\nAn attacker could generate many unique image-optimization variants and exhaust disk space, causing denial of service.\n\n## Patches\nFixed by adding an LRU-backed disk cache with `images.maximumDiskCacheSize`, including eviction of least-recently-used entries when the limit is exceeded. Setting `maximumDiskCacheSize: 0` disables disk caching. \n\n## Workarounds\nIf upgrade is not immediately possible:\n- Periodically clean `.next/cache/images`.\n- Reduce variant cardinality (e.g., tighten values for `images.localPatterns`, `images.remotePatterns`, and `images.qualities`)",
+          "githubID": "GHSA-3x4c-7xq6-9pq8",
+          "CVE": [
+            "CVE-2026-27980"
+          ]
+        },
+        "info": [
+          "https://github.com/vercel/next.js/security/advisories/GHSA-3x4c-7xq6-9pq8",
+          "https://github.com/vercel/next.js/commit/39eb8e0ac498b48855a0430fbf4c22276a73b4bd",
+          "https://github.com/vercel/next.js/releases/tag/v16.1.7"
+        ]
+      },
+      {
+        "atOrAbove": "16.0.0-beta.0",
+        "below": "16.1.7",
+        "severity": "medium",
+        "cwe": [
+          "CWE-444"
+        ],
+        "identifiers": {
+          "summary": "## Summary\nWhen Next.js rewrites proxy traffic to an external backend, a crafted `DELETE`/`OPTIONS` request using `Transfer-Encoding: chunked` could trigger request boundary disagreement between the proxy and backend. This could allow request smuggling through rewritten routes.\n\n## Impact\nAn attacker could smuggle a second request to unintended backend routes (for example, internal/admin endpoints), bypassing assumptions that only the configured rewrite destination/path is reachable. This does not impact applications hosted on providers that handle rewrites at the CDN level, such as Vercel. \n\n## Patches\nThe vulnerability originated in an upstream library vendored by Next.js. It is fixed by updating that dependency’s behavior so `content-length: 0` is added only when both `content-length` and `transfer-encoding` are absent, and `transfer-encoding` is no longer removed in that code path.\n\n## Workarounds\nIf upgrade is not immediately possible:\n- Block chunked `DELETE`/`OPTIONS` requests on rewritten routes at your edge/proxy.\n- Enforce authentication/authorization on backend routes per our [security guidance](https://nextjs.org/docs/app/guides/data-security).",
+          "githubID": "GHSA-ggv3-7p47-pfv8",
+          "CVE": [
+            "CVE-2026-29057"
+          ]
+        },
+        "info": [
+          "https://github.com/vercel/next.js/security/advisories/GHSA-ggv3-7p47-pfv8",
+          "https://github.com/vercel/next.js/commit/dc98c04f376c6a1df76ec3e0a2d07edf4abdabd6",
+          "https://github.com/vercel/next.js/releases/tag/v15.5.13",
+          "https://github.com/vercel/next.js/releases/tag/v16.1.7"
+        ]
+      },
+      {
+        "atOrAbove": "16.0.1",
+        "below": "16.1.7",
+        "severity": "medium",
+        "cwe": [
+          "CWE-770"
+        ],
+        "identifiers": {
+          "summary": "## Summary\nA request containing the `next-resume: 1` header (corresponding with a PPR resume request) would buffer request bodies without consistently enforcing `maxPostponedStateSize` in certain setups. The previous mitigation protected minimal-mode deployments, but equivalent non-minimal deployments remained vulnerable to the same unbounded postponed resume-body buffering behavior.\n\n## Impact\nIn applications using the App Router with Partial Prerendering capability enabled (via `experimental.ppr` or `cacheComponents`), an attacker could send oversized `next-resume` POST payloads that were buffered without consistent size enforcement in non-minimal deployments, causing excessive memory usage and potential denial of service.\n\n## Patches\nFixed by enforcing size limits across all postponed-body buffering paths and erroring when limits are exceeded.  \n\n## Workarounds\nIf upgrade is not immediately possible:\n- Block requests containing the `next-resume` header, as this is never valid to be sent from an untrusted client.",
+          "githubID": "GHSA-h27x-g6w4-24gq",
+          "CVE": [
+            "CVE-2026-27979"
+          ]
+        },
+        "info": [
+          "https://github.com/vercel/next.js/security/advisories/GHSA-h27x-g6w4-24gq",
+          "https://github.com/vercel/next.js/commit/c885d4825f800dd1e49ead37274dcd08cdd6f3f1",
+          "https://github.com/vercel/next.js/releases/tag/v16.1.7"
+        ]
+      },
+      {
+        "atOrAbove": "16.0.1",
+        "below": "16.1.7",
+        "severity": "low",
+        "cwe": [
+          "CWE-1385"
+        ],
+        "identifiers": {
+          "summary": "## Summary\nIn `next dev`, cross-site protection for internal websocket endpoints could treat `Origin: null` as a bypass case even if [`allowedDevOrigins`](https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins) is configured, allowing privacy-sensitive/opaque contexts (for example sandboxed documents) to connect unexpectedly.\n\n## Impact\nIf a dev server is reachable from attacker-controlled content, an attacker may be able to connect to the HMR websocket channel and interact with dev websocket traffic. This affects development mode only.\nApps without a configured [`allowedDevOrigins`](https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins) still allow connections from any origin.\n\n## Patches\nFixed by validating `Origin: null` through the same cross-site origin-allowance checks used for other origins.  \n\n## Workarounds\nIf upgrade is not immediately possible:\n- Do not expose `next dev` to untrusted networks.\n- Block websocket upgrades to `/_next/webpack-hmr` when `Origin` is `null` at your proxy.",
+          "githubID": "GHSA-jcc7-9wpm-mj36",
+          "CVE": [
+            "CVE-2026-27977"
+          ]
+        },
+        "info": [
+          "https://github.com/vercel/next.js/security/advisories/GHSA-jcc7-9wpm-mj36",
+          "https://github.com/vercel/next.js/commit/862f9b9bb41d235e0d8cf44aa811e7fd118cee2a",
+          "https://github.com/vercel/next.js/releases/tag/v16.1.7"
+        ]
+      },
+      {
+        "atOrAbove": "16.0.1",
+        "below": "16.1.7",
+        "severity": "medium",
+        "cwe": [
+          "CWE-352"
+        ],
+        "identifiers": {
+          "summary": "## Summary\n`origin: null` was treated as a \"missing\" origin during Server Action CSRF validation. As a result, requests from opaque contexts (such as sandboxed iframes) could bypass origin verification instead of being validated as cross-origin requests.\n\n## Impact\nAn attacker could induce a victim browser to submit Server Actions from a sandboxed context, potentially executing state-changing actions with victim credentials (CSRF).\n\n## Patches\nFixed by treating `'null'` as an explicit origin value and enforcing host/origin checks unless `'null'` is explicitly allowlisted in `experimental.serverActions.allowedOrigins`.  \n\n## Workarounds\nIf upgrade is not immediately possible:\n- Add CSRF tokens for sensitive Server Actions.\n- Prefer `SameSite=Strict` on sensitive auth cookies.\n- Do not allow `'null'` in `serverActions.allowedOrigins` unless intentionally required and additionally protected.",
+          "githubID": "GHSA-mq59-m269-xvcx",
+          "CVE": [
+            "CVE-2026-27978"
+          ]
+        },
+        "info": [
+          "https://github.com/vercel/next.js/security/advisories/GHSA-mq59-m269-xvcx",
+          "https://github.com/vercel/next.js/commit/a27a11d78e748a8c7ccfd14b7759ad2b9bf097d8",
+          "https://github.com/vercel/next.js/releases/tag/v16.1.7"
         ]
       }
     ],
@@ -9431,7 +10371,9 @@
         "severity": "high",
         "identifiers": {
           "summary": "Embedded malware in ua-parser-js",
-          "CVE": [],
+          "CVE": [
+            "CVE-2021-4229"
+          ],
           "githubID": "GHSA-pjwm-rvh2-c87w"
         },
         "info": [
@@ -9476,7 +10418,9 @@
         "severity": "high",
         "identifiers": {
           "summary": "Embedded malware in ua-parser-js",
-          "CVE": [],
+          "CVE": [
+            "CVE-2021-4229"
+          ],
           "githubID": "GHSA-pjwm-rvh2-c87w"
         },
         "info": [
@@ -9497,7 +10441,9 @@
         "severity": "high",
         "identifiers": {
           "summary": "Embedded malware in ua-parser-js",
-          "CVE": [],
+          "CVE": [
+            "CVE-2021-4229"
+          ],
           "githubID": "GHSA-pjwm-rvh2-c87w"
         },
         "info": [
@@ -9736,6 +10682,388 @@
         "/*[\\s]+PDFObject v(§§version§§)",
         "let pdfobjectversion = \"(§§version§§)\";",
         "pdfobjectversion:\"(§§version§§)\""
+      ]
+    }
+  },
+  "threejs": {
+    "npmname": "three",
+    "vulnerabilities": [
+      {
+        "atOrAbove": "0",
+        "below": "0.125.0",
+        "severity": "high",
+        "cwe": [
+          "CWE-400"
+        ],
+        "identifiers": {
+          "summary": "This affects the package three before 0.125.0. This can happen when handling rgb or hsl colors. \n\n**PoC:** \n```js\nvar three = require('three')\nfunction build_blank(n) {\n    var ret = \"rgb(\"\n    for (var i = 0; i < n; i++) {\n        ret += \" \"\n    }\n    return ret + \"\";\n}\nvar Color = three.Color\nvar time = Date.now();\nnew Color(build_blank(50000)) var time_cost = Date.now() - time;\nconsole.log(time_cost + \" ms\")\n```",
+          "githubID": "GHSA-fq6p-x6j3-cmmq",
+          "CVE": [
+            "CVE-2020-28496"
+          ]
+        },
+        "info": [
+          "https://github.com/mrdoob/three.js/issues/21132",
+          "https://github.com/mrdoob/three.js/pull/21143/commits/4a582355216b620176a291ff319d740e619d583e",
+          "https://snyk.io/vuln/SNYK-JAVA-ORGWEBJARSNPM-1065972",
+          "https://snyk.io/vuln/SNYK-JS-THREE-1064931"
+        ]
+      }
+    ],
+    "extractors": {
+      "uri": [
+        "/three.js/(§§version§§)/",
+        "/three.js@(§§version§§)/"
+      ],
+      "filecontentreplace": [
+        "/Copyright 2010-20[0-9]{2} Three.js [\\s\\S]{0,90}const (?:REVISION|[a-z]) ?= ?['\"]([0-9]+)['\"]/0.$1.0/",
+        "/THREE ?= ?\\{\\}\\)\\)?;?[\\s]*\\}\\)?\\(this, ?\\(function ?\\([a-z]+\\) ?\\{ ?[\"']use strict[\"'];[\\s]*const (?:REVISION|[a-z]) ?= ?['\"]([0-9]+)['\"]/0.$1.0/",
+        "/QuaternionLinearInterpolant=[a-z]+;[a-z].REVISION=['\"]([0-9]+)['\"]/0.$1.0/"
+      ],
+      "func": [
+        "__THREE__ ? '0.'+__THREE__+'.0' : undefined"
+      ]
+    }
+  },
+  "highlightjs": {
+    "npmname": "highlight.js",
+    "vulnerabilities": [
+      {
+        "atOrAbove": "0",
+        "below": "9.18.2",
+        "severity": "medium",
+        "cwe": [
+          "CWE-471"
+        ],
+        "identifiers": {
+          "summary": "### Impact\n\nAffected versions of this package are vulnerable to Prototype Pollution.  A malicious HTML code block can be crafted that will result in prototype pollution of the base object's prototype during highlighting.  If you allow users to insert custom HTML code blocks into your page/app via parsing Markdown code blocks (or similar) and do not filter the language names the user can provide you may be vulnerable. \n\nThe pollution should just be harmless data but this can cause problems for applications not expecting these properties to exist and can result in strange behavior or application crashes, i.e. a potential DOS vector. \n\n_If your website or application does not render user provided data it should be unaffected._\n\n### Patches\n\nVersions 9.18.2 and 10.1.2 and newer include fixes for this vulnerability.  If you are using version 7 or 8 you are encouraged to upgrade to a newer release.\n\n### Workarounds\n\n#### Patch your library\n\nManually patch your library to create null objects for both `languages` and `aliases`:\n\n```js\nconst HLJS = function(hljs) {\n  // ...\n  var languages = Object.create(null);\n  var aliases = Object.create(null);\n```\n\n#### Filter out bad data from end users:\n\nFilter the language names that users are allowed to inject into your HTML to guarantee they are valid.\n\n### References\n\n* [What is Prototype Pollution?](https://codeburst.io/what-is-prototype-pollution-49482fc4b638)\n* https://github.com/highlightjs/highlight.js/pull/2636\n\n### For more information\n\nIf you have any questions or comments about this advisory:\n\n* Please file an issue against [highlight.js](https://github.com/highlightjs/highlight.js/issues/)",
+          "githubID": "GHSA-vfrc-7r7c-w9mx",
+          "CVE": [
+            "CVE-2020-26237"
+          ]
+        },
+        "info": [
+          "https://github.com/highlightjs/highlight.js/security/advisories/GHSA-vfrc-7r7c-w9mx",
+          "https://github.com/highlightjs/highlight.js/pull/2636",
+          "https://github.com/highlightjs/highlight.js/commit/7241013ae011a585983e176ddc0489a7a52f6bb0",
+          "https://lists.debian.org/debian-lts-announce/2020/12/msg00041.html",
+          "https://www.npmjs.com/package/highlight.js",
+          "https://www.oracle.com/security-alerts/cpujul2022.html"
+        ]
+      },
+      {
+        "atOrAbove": "10.0.0",
+        "below": "10.1.2",
+        "severity": "medium",
+        "cwe": [
+          "CWE-471"
+        ],
+        "identifiers": {
+          "summary": "### Impact\n\nAffected versions of this package are vulnerable to Prototype Pollution.  A malicious HTML code block can be crafted that will result in prototype pollution of the base object's prototype during highlighting.  If you allow users to insert custom HTML code blocks into your page/app via parsing Markdown code blocks (or similar) and do not filter the language names the user can provide you may be vulnerable. \n\nThe pollution should just be harmless data but this can cause problems for applications not expecting these properties to exist and can result in strange behavior or application crashes, i.e. a potential DOS vector. \n\n_If your website or application does not render user provided data it should be unaffected._\n\n### Patches\n\nVersions 9.18.2 and 10.1.2 and newer include fixes for this vulnerability.  If you are using version 7 or 8 you are encouraged to upgrade to a newer release.\n\n### Workarounds\n\n#### Patch your library\n\nManually patch your library to create null objects for both `languages` and `aliases`:\n\n```js\nconst HLJS = function(hljs) {\n  // ...\n  var languages = Object.create(null);\n  var aliases = Object.create(null);\n```\n\n#### Filter out bad data from end users:\n\nFilter the language names that users are allowed to inject into your HTML to guarantee they are valid.\n\n### References\n\n* [What is Prototype Pollution?](https://codeburst.io/what-is-prototype-pollution-49482fc4b638)\n* https://github.com/highlightjs/highlight.js/pull/2636\n\n### For more information\n\nIf you have any questions or comments about this advisory:\n\n* Please file an issue against [highlight.js](https://github.com/highlightjs/highlight.js/issues/)",
+          "githubID": "GHSA-vfrc-7r7c-w9mx",
+          "CVE": [
+            "CVE-2020-26237"
+          ]
+        },
+        "info": [
+          "https://github.com/highlightjs/highlight.js/security/advisories/GHSA-vfrc-7r7c-w9mx",
+          "https://github.com/highlightjs/highlight.js/pull/2636",
+          "https://github.com/highlightjs/highlight.js/commit/7241013ae011a585983e176ddc0489a7a52f6bb0",
+          "https://lists.debian.org/debian-lts-announce/2020/12/msg00041.html",
+          "https://www.npmjs.com/package/highlight.js",
+          "https://www.oracle.com/security-alerts/cpujul2022.html"
+        ]
+      },
+      {
+        "atOrAbove": "9.0.0",
+        "below": "10.4.1",
+        "severity": "medium",
+        "cwe": [
+          "CWE-20",
+          "CWE-400"
+        ],
+        "identifiers": {
+          "summary": "### Impact: Potential ReDOS vulnerabilities (exponential and polynomial RegEx backtracking)\n\n[oswasp](https://owasp.org/www-community/attacks/Regular_expression_Denial_of_Service_-_ReDoS): \n\n> The Regular expression Denial of Service (ReDoS) is a Denial of Service attack, that exploits the fact that most Regular Expression implementations may reach extreme situations that cause them to work very slowly (exponentially related to input size). An attacker can then cause a program using a Regular Expression to enter these extreme situations and then hang for a very long time.\n\nIf are you are using Highlight.js to highlight user-provided data you are possibly vulnerable.  On the client-side (in a browser or Electron environment) risks could include lengthy freezes or crashes... On the server-side infinite freezes could occur... effectively preventing users from accessing your app or service (ie, Denial of Service).\n\nThis is an issue with grammars shipped with the parser (and potentially 3rd party grammars also), not the parser itself. If you are using Highlight.js with any of the following grammars you are vulnerable.  If you are using `highlightAuto` to detect the language (and have any of these grammars registered) you are vulnerable. Exponential grammars (C, Perl, JavaScript) are auto-registered when using the common grammar subset/library `require('highlight.js/lib/common')` as of 10.4.0 - see https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.4.0/build/highlight.js\n\nAll versions prior to 10.4.1 are vulnerable, including version 9.18.5. \n\n**Grammars with exponential backtracking issues:**\n\n  - c-like (c, cpp, arduino)\n  - handlebars (htmlbars)\n  - gams\n  - perl\n  - jboss-cli\n  - r\n  - erlang-repl\n  - powershell\n  - routeros\n  - livescript (10.4.0 and 9.18.5 included this fix)\n  - javascript & typescript (10.4.0 included partial fixes)\n\nAnd of course any aliases of those languages have the same issue. ie: `hpp` is no safer than `cpp`.\n\n**Grammars with polynomial backtracking issues:**\n\n- kotlin\n- gcode\n- d\n- aspectj\n- moonscript\n- coffeescript/livescript\n- csharp\n- scilab\n- crystal\n- elixir\n- basic\n- ebnf\n- ruby\n- fortran/irpf90\n- livecodeserver\n- yaml\n- x86asm\n- dsconfig\n- markdown\n- ruleslanguage\n- xquery\n- sqf\n\nAnd again: any aliases of those languages have the same issue. ie: `ruby` and `rb` share the same ruby issues.\n\n\n### Patches\n\n- Version 10.4.1 resolves these vulnerabilities.  Please upgrade.\n\n### Workarounds / Mitigations\n\n- Discontinue use the affected grammars. (or perhaps use only those with poly vs exponential issues)\n- Attempt cherry-picking the grammar fixes into older versions...\n- Attempt using newer CDN versions of any affected languages.  (ie using an older CDN version of the library with newer CDN grammars).  Your mileage may vary.\n\n### References\n\n- https://owasp.org/www-community/attacks/Regular_expression_Denial_of_Service_-_ReDoS\n\n### For more information\n\nIf you have any questions or comments about this advisory:\n* Open an issue: https://github.com/highlightjs/highlight.js/issues\n* Email us at [security@highlightjs.com](mailto:security@highlightjs.com)",
+          "githubID": "GHSA-7wwv-vh3v-89cq"
+        },
+        "info": [
+          "https://github.com/highlightjs/highlight.js/security/advisories/GHSA-7wwv-vh3v-89cq",
+          "https://github.com/highlightjs/highlight.js/commit/373b9d862401162e832ce77305e49b859e110f9c",
+          "https://www.npmjs.com/package/@highlightjs/cdn-assets",
+          "https://www.npmjs.com/package/highlight.js"
+        ]
+      }
+    ],
+    "extractors": {
+      "uri": [
+        "/highlight.js[@/](§§version§§)/"
+      ],
+      "filename": [
+        "highlight[-.](§§version§§)(.min)?.js"
+      ],
+      "filecontent": [
+        "/\\*!\\s*[Hh]ighlight.js v(§§version§§)",
+        "\"after:highlightBlock\"[\\s\\S]{0,170}versionString=['\"](§§version§§)['\"]"
+      ]
+    }
+  },
+  "marked": {
+    "vulnerabilities": [
+      {
+        "atOrAbove": "0",
+        "below": "0.3.1",
+        "severity": "medium",
+        "cwe": [
+          "CWE-79"
+        ],
+        "identifiers": {
+          "summary": "Versions 0.3.0 and earlier of `marked` are affected by two cross-site scripting vulnerabilities, even when `sanitize: true` is set.\n\nThe attack vectors for this vulnerability are GFM Codeblocks and JavaScript URLs.\n\n\n## Recommendation\n\nUpgrade to version 0.3.1 or later.",
+          "githubID": "GHSA-9cw2-jqp5-7x39",
+          "CVE": [
+            "CVE-2014-3743"
+          ]
+        },
+        "info": [
+          "https://www.npmjs.com/advisories/22"
+        ]
+      },
+      {
+        "atOrAbove": "0",
+        "below": "0.3.3",
+        "severity": "medium",
+        "cwe": [
+          "CWE-79"
+        ],
+        "identifiers": {
+          "summary": "Versions 0.3.2 and earlier of `marked` are affected by a cross-site scripting vulnerability even when `sanitize:true` is set. \n\n## Proof of Concept ( IE10 Compatibility Mode Only )\n\n`[xss link](vbscript:alert(1&#41;)`\n\nwill get a link\n\n`<a href=\"vbscript:alert(1)\">xss link</a>`\n\n\n## Recommendation\n\nUpdate to version 0.3.3 or later.",
+          "githubID": "GHSA-cfjh-p3g4-3q2f",
+          "CVE": [
+            "CVE-2015-1370"
+          ]
+        },
+        "info": [
+          "https://github.com/chjj/marked/issues/492",
+          "https://github.com/markedjs/marked/issues/492",
+          "https://github.com/evilpacket/marked/commit/3c191144939107c45a7fa11ab6cb88be6694a1ba",
+          "https://github.com/markedjs/marked/commit/fc372d1c6293267722e33f2719d57cebd67b3da1",
+          "https://www.npmjs.com/advisories/24",
+          "https://www.npmjs.com/advisories/24/versions",
+          "http://www.openwall.com/lists/oss-security/2015/01/23/2"
+        ]
+      },
+      {
+        "atOrAbove": "0",
+        "below": "0.3.4",
+        "severity": "high",
+        "cwe": [
+          "CWE-1333"
+        ],
+        "identifiers": {
+          "summary": "Versions 0.3.3 and earlier of `marked` are affected by a regular expression denial of service ( ReDoS ) vulnerability when passed inputs that reach the `em` inline rule.\n\n\n\n## Recommendation\n\nUpdate to version 0.3.4 or later.",
+          "githubID": "GHSA-hjcp-j389-59ff",
+          "CVE": [
+            "CVE-2015-8854"
+          ]
+        },
+        "info": [
+          "https://github.com/chjj/marked/issues/497",
+          "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/BO2RMVVZVV6NFTU46B5RYRK7ZCXYARZS",
+          "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/M6BJG6RGDH7ZWVVAUFBFI5L32RSMQN2S",
+          "https://support.f5.com/csp/article/K05052081?utm_source=f5support&amp;utm_medium=RSS",
+          "https://www.npmjs.com/advisories/23",
+          "https://www.owasp.org/index.php/Regular_expression_Denial_of_Service_-_ReDoS",
+          "http://www.openwall.com/lists/oss-security/2016/04/20/11"
+        ]
+      },
+      {
+        "atOrAbove": "0",
+        "below": "0.3.6",
+        "severity": "medium",
+        "cwe": [
+          "CWE-79"
+        ],
+        "identifiers": {
+          "summary": "Affected versions of `marked` are susceptible to a cross-site scripting vulnerability in link components when `sanitize:true` is configured. \n\n## Proof of Concept\n\nThis flaw exists because link URIs containing HTML entities get processed in an abnormal manner. Any HTML Entities get parsed on a best-effort basis and included in the resulting link, while if that parsing fails that character is omitted.\n\nFor example:\n\nA link URI such as\n```\njavascript&#x58document;alert&#40;1&#41;\n```\nRenders a valid link that when clicked will execute `alert(1)`.\n\n\n## Recommendation\n\nUpdate to version 0.3.6 or later.",
+          "githubID": "GHSA-vfvf-mqq8-rwqc",
+          "CVE": [
+            "CVE-2016-10531"
+          ]
+        },
+        "info": [
+          "https://github.com/chjj/marked/pull/592",
+          "https://github.com/chjj/marked/pull/592/commits/2cff85979be8e7a026a9aca35542c470cf5da523",
+          "https://www.npmjs.com/advisories/101"
+        ]
+      },
+      {
+        "atOrAbove": "0",
+        "below": "0.3.7",
+        "severity": "medium",
+        "cwe": [
+          "CWE-79"
+        ],
+        "identifiers": {
+          "summary": "marked version 0.3.6 and earlier is vulnerable to an XSS attack in the data: URI parser.",
+          "githubID": "GHSA-7px7-7xjx-hxm8",
+          "CVE": [
+            "CVE-2017-1000427"
+          ]
+        },
+        "info": [
+          "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/BO2RMVVZVV6NFTU46B5RYRK7ZCXYARZS",
+          "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/M6BJG6RGDH7ZWVVAUFBFI5L32RSMQN2S",
+          "https://snyk.io/vuln/npm:marked:20170112"
+        ]
+      },
+      {
+        "atOrAbove": "0",
+        "below": "0.3.9",
+        "severity": "high",
+        "cwe": [
+          "CWE-400"
+        ],
+        "identifiers": {
+          "summary": "Affected versions of `marked` are vulnerable to a regular expression denial of service. \n\nThe amplification in this vulnerability is significant, with 1,000 characters resulting in the event loop being blocked for around 6 seconds.\n\n\n## Recommendation\n\nUpdate to version 0.3.9 or later.",
+          "githubID": "GHSA-x5pg-88wf-qq4p",
+          "CVE": [
+            "CVE-2017-16114"
+          ]
+        },
+        "info": [
+          "https://github.com/chjj/marked/issues/937",
+          "https://www.npmjs.com/advisories/531"
+        ]
+      },
+      {
+        "atOrAbove": "0",
+        "below": "0.3.17",
+        "severity": "medium",
+        "cwe": [
+          "CWE-1333"
+        ],
+        "identifiers": {
+          "summary": "Marked prior to version 0.3.17 is vulnerable to a Regular Expression Denial of Service (ReDoS) attack due to catastrophic backtracking in several regular expressions used for parsing HTML tags and markdown links. An attacker can exploit this vulnerability by providing specially crafted markdown input, such as deeply nested or repetitively structured brackets or tag attributes, which cause the parser to hang and lead to a Denial of Service.",
+          "githubID": "GHSA-p9wx-2529-fp83",
+          "CVE": [
+            "CVE-2018-25110"
+          ]
+        },
+        "info": [
+          "https://github.com/markedjs/marked/issues/1070",
+          "https://github.com/markedjs/marked/pull/1083",
+          "https://github.com/markedjs/marked/commit/20bfc106013ed45713a21672ad4a34df94dcd485",
+          "https://github.com/Checkmarx/Vulnerabilities-Proofs-of-Concept/tree/main/2018/CVE-2018-25110"
+        ]
+      },
+      {
+        "atOrAbove": "0.3.14",
+        "below": "0.6.2",
+        "severity": "medium",
+        "cwe": [
+          "CWE-400"
+        ],
+        "identifiers": {
+          "summary": "Versions of `marked` from 0.3.14 until 0.6.2 are vulnerable to Regular Expression Denial of Service. Email addresses may be evaluated in quadratic time, allowing attackers to potentially crash the node process due to resource exhaustion.\n\n\n## Recommendation\n\nUpgrade to version 0.6.2 or later.",
+          "githubID": "GHSA-xf5p-87ch-gxw2"
+        },
+        "info": [
+          "https://github.com/markedjs/marked/pull/1460",
+          "https://github.com/markedjs/marked/commit/b15e42b67cec9ded8505e9d68bb8741ad7a9590d",
+          "https://github.com/markedjs/marked/releases/tag/v0.6.2",
+          "https://snyk.io/vuln/SNYK-JS-MARKED-174116",
+          "https://www.npmjs.com/advisories/812"
+        ]
+      },
+      {
+        "atOrAbove": "0.4.0",
+        "below": "0.7.0",
+        "severity": "low",
+        "cwe": [
+          "CWE-1333"
+        ],
+        "identifiers": {
+          "summary": "Affected versions of `marked` are vulnerable to Regular Expression Denial of Service (ReDoS). The `_label` subrule may significantly degrade parsing performance of malformed input.\n\n\n## Recommendation\n\nUpgrade to version 0.7.0 or later.",
+          "githubID": "GHSA-ch52-vgq2-943f"
+        },
+        "info": [
+          "https://www.npmjs.com/advisories/1076"
+        ]
+      },
+      {
+        "atOrAbove": "1.1.1",
+        "below": "2.0.0",
+        "severity": "medium",
+        "cwe": [
+          "CWE-400"
+        ],
+        "identifiers": {
+          "summary": "### Impact\n_What kind of vulnerability is it? Who is impacted?_\n\n[Regular expression Denial of Service](https://owasp.org/www-community/attacks/Regular_expression_Denial_of_Service_-_ReDoS)\n\nA Denial of Service attack can affect anyone who runs user generated code through `marked`.\n\n### Patches\n_Has the problem been patched? What versions should users upgrade to?_\n\npatched in v2.0.0\n\n### Workarounds\n_Is there a way for users to fix or remediate the vulnerability without upgrading?_\n\nNone.\n\n### References\n_Are there any links users can visit to find out more?_\n\nhttps://github.com/markedjs/marked/issues/1927\nhttps://owasp.org/www-community/attacks/Regular_expression_Denial_of_Service_-_ReDoS\n\n### For more information\nIf you have any questions or comments about this advisory:\n* Open an issue in [marked](https://github.com/markedjs/marked/issues)",
+          "githubID": "GHSA-4r62-v4vq-hr96",
+          "CVE": [
+            "CVE-2021-21306"
+          ]
+        },
+        "info": [
+          "https://github.com/markedjs/marked/security/advisories/GHSA-4r62-v4vq-hr96",
+          "https://github.com/markedjs/marked/issues/1927",
+          "https://github.com/markedjs/marked/pull/1864",
+          "https://github.com/markedjs/marked/commit/7293251c438e3ee968970f7609f1a27f9007bccd",
+          "https://www.npmjs.com/package/marked"
+        ]
+      },
+      {
+        "atOrAbove": "0",
+        "below": "4.0.10",
+        "severity": "high",
+        "cwe": [
+          "CWE-1333"
+        ],
+        "identifiers": {
+          "summary": "### Impact\n\n_What kind of vulnerability is it?_\n\nDenial of service.\n\nThe regular expression `inline.reflinkSearch` may cause catastrophic backtracking against some strings.\nPoC is the following.\n\n```javascript\nimport * as marked from 'marked';\n\nconsole.log(marked.parse(`[x]: x\n\n\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](`));\n```\n\n_Who is impacted?_\n\nAnyone who runs untrusted markdown through marked and does not use a worker with a time limit.\n\n### Patches\n\n_Has the problem been patched?_\n\nYes\n\n_What versions should users upgrade to?_\n\n4.0.10\n\n### Workarounds\n\n_Is there a way for users to fix or remediate the vulnerability without upgrading?_\n\nDo not run untrusted markdown through marked or run marked on a [worker](https://marked.js.org/using_advanced#workers) thread and set a reasonable time limit to prevent draining resources.\n\n### References\n\n_Are there any links users can visit to find out more?_\n\n- https://marked.js.org/using_advanced#workers\n- https://owasp.org/www-community/attacks/Regular_expression_Denial_of_Service_-_ReDoS\n\n### For more information\n\nIf you have any questions or comments about this advisory:\n\n* Open an issue in [marked](https://github.com/markedjs/marked)\n",
+          "githubID": "GHSA-5v2h-r2cx-5xgj",
+          "CVE": [
+            "CVE-2022-21681"
+          ]
+        },
+        "info": [
+          "https://github.com/markedjs/marked/security/advisories/GHSA-5v2h-r2cx-5xgj",
+          "https://github.com/markedjs/marked/commit/8f806573a3f6c6b7a39b8cdb66ab5ebb8d55a5f5",
+          "https://github.com/markedjs/marked/commit/c4a3ccd344b6929afa8a1d50ac54a721e57012c0",
+          "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/AIXDMC3CSHYW3YWVSQOXAWLUYQHAO5UX"
+        ]
+      },
+      {
+        "atOrAbove": "0",
+        "below": "4.0.10",
+        "severity": "high",
+        "cwe": [
+          "CWE-1333",
+          "CWE-400"
+        ],
+        "identifiers": {
+          "summary": "### Impact\n\n_What kind of vulnerability is it?_\n\nDenial of service.\n\nThe regular expression `block.def` may cause catastrophic backtracking against some strings.\nPoC is the following.\n\n```javascript\nimport * as marked from \"marked\";\n\nmarked.parse(`[x]:${' '.repeat(1500)}x ${' '.repeat(1500)} x`);\n```\n\n_Who is impacted?_\n\nAnyone who runs untrusted markdown through marked and does not use a worker with a time limit.\n\n### Patches\n\n_Has the problem been patched?_\n\nYes\n\n_What versions should users upgrade to?_\n\n4.0.10\n\n### Workarounds\n\n_Is there a way for users to fix or remediate the vulnerability without upgrading?_\n\nDo not run untrusted markdown through marked or run marked on a [worker](https://marked.js.org/using_advanced#workers) thread and set a reasonable time limit to prevent draining resources.\n\n### References\n\n_Are there any links users can visit to find out more?_\n\n- https://marked.js.org/using_advanced#workers\n- https://owasp.org/www-community/attacks/Regular_expression_Denial_of_Service_-_ReDoS\n\n### For more information\n\nIf you have any questions or comments about this advisory:\n\n* Open an issue in [marked](https://github.com/markedjs/marked)\n",
+          "githubID": "GHSA-rrrm-qjm4-v8hf",
+          "CVE": [
+            "CVE-2022-21680"
+          ]
+        },
+        "info": [
+          "https://github.com/markedjs/marked/security/advisories/GHSA-rrrm-qjm4-v8hf",
+          "https://github.com/markedjs/marked/commit/c4a3ccd344b6929afa8a1d50ac54a721e57012c0",
+          "https://github.com/markedjs/marked/releases/tag/v4.0.10",
+          "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/AIXDMC3CSHYW3YWVSQOXAWLUYQHAO5UX"
+        ]
+      }
+    ],
+    "extractors": {
+      "uri": [
+        "/marked[@/](§§version§§)/"
+      ],
+      "filename": [
+        "marked[-.](§§version§§)(.min)?.js"
+      ],
+      "filecontent": [
+        "/[!*\\s/]+[\\s]marked v(§§version§§)"
       ]
     }
   },
