@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.21.0] - 2026-03-31
 ### Added
 - Support for other add-ons to piggyback the secure connection established with the ZAP browser extension.
 - Allow to avoid logout elements with the spider.
@@ -186,6 +186,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.21.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.21.0
 [0.20.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.20.0
 [0.19.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.19.0
 [0.18.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.18.0

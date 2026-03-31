@@ -4,7 +4,7 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## [48.13.0] - 2026-03-31
 ### Added
 - Internal support for creating a single runnable chain script from multiple Zest scripts.
 - Support for import and export.
@@ -463,6 +463,7 @@ Sender scripts. (Issue 5590)
 
 - Updated for 2.1.0
 
+[48.13.0]: https://github.com/zaproxy/zap-extensions/releases/zest-v48.13.0
 [48.12.0]: https://github.com/zaproxy/zap-extensions/releases/zest-v48.12.0
 [48.11.0]: https://github.com/zaproxy/zap-extensions/releases/zest-v48.11.0
 [48.10.0]: https://github.com/zaproxy/zap-extensions/releases/zest-v48.10.0

@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [72] - 2026-03-31
 ### Added
 - Loosely scoped cookie rule to include evidence.
 ### Changed
@@ -671,6 +671,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[72]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v72
 [71]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v71
 [70]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v70
 [69]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v69
