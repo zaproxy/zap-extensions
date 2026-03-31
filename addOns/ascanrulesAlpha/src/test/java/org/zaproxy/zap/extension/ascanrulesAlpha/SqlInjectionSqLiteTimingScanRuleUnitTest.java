@@ -22,11 +22,13 @@ package org.zaproxy.zap.extension.ascanrulesAlpha;
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.startsWith;
 
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -218,5 +220,23 @@ class SqlInjectionSqLiteTimingScanRuleUnitTest
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_INPV_05_SQLI.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_INPV_05_SQLI.getValue())));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlerts() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts, hasSize(2));
+
+        Alert errorAlert = alerts.get(0);
+        assertThat(errorAlert.getRisk(), is(equalTo(Alert.RISK_HIGH)));
+        assertThat(errorAlert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(errorAlert.getAlertRef(), is(equalTo(rule.getId() + "-1")));
+
+        Alert timingAlert = alerts.get(1);
+        assertThat(timingAlert.getRisk(), is(equalTo(Alert.RISK_HIGH)));
+        assertThat(timingAlert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(timingAlert.getAlertRef(), is(equalTo(rule.getId() + "-2")));
     }
 }
