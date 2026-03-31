@@ -2168,6 +2168,21 @@
     ],
     "website": "https://normi.ca"
   },
+  "Norse Env": {
+    "cats": [
+      1
+    ],
+    "description": "Norse Env is a lightweight PHP CMS for content-driven websites, featuring a visual editor, media library, and custom admin URL.",
+    "headers": {
+      "X-Powered-By": "Norse Env"
+    },
+    "icon": "NorseEnv.png",
+    "meta": {
+      "generator": "Norse Env"
+    },
+    "oss": true,
+    "website": "https://esim.pe"
+  },
   "Northbeam": {
     "cats": [
       10

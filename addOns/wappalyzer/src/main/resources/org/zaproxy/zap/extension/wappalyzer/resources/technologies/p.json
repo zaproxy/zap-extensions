@@ -6867,7 +6867,8 @@
     "cpe": "cpe:2.3:a:prestashop:prestashop:*:*:*:*:*:*:*:*",
     "description": "PrestaShop is a freemium, open-source ecommerce solution, written in the PHP programming language with support for the MySQL database management system.",
     "dom": [
-      "img[src*='/modules/prestablog/themes/'], img[data-src*='/modules/prestablog/themes/']"
+      "img[src*='/modules/prestablog/themes/'], img[data-src*='/modules/prestablog/themes/']",
+      "link[href*='/modules/ps_']"
     ],
     "headers": {
       "Powered-By": "^Prestashop$"
@@ -6893,6 +6894,9 @@
       "generator": "PrestaShop"
     },
     "oss": true,
+    "scriptSrc": [
+      "/modules/ps_[a-z]+/"
+    ],
     "scripts": [
       "PrestaShop-"
     ],

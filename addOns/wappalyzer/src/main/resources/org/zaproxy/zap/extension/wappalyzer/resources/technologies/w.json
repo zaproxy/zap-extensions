@@ -5143,6 +5143,20 @@
     ],
     "website": "https://www.wwpass.com"
   },
+  "Wx3": {
+    "cats": [
+      6
+    ],
+    "description": "Wx3 is a Brazilian e-commerce platform for fashion and retail stores.",
+    "icon": "Wx3.svg",
+    "meta": {
+      "author": "Wx3"
+    },
+    "html": [
+      "<a [^>]*href=\"https://wx3\\.com\\.br\""
+    ],
+    "website": "https://wx3.com.br"
+  },
   "Wyng": {
     "cats": [
       32
