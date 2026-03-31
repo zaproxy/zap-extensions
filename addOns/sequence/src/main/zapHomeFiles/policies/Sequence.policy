@@ -17,6 +17,10 @@
             <name>Remote File Inclusion</name>
             <enabled>true</enabled>
         </p7>
+        <p10205>
+            <name>HTTPS Configuration</name>
+            <enabled>true</enabled>
+        </p10205>
         <p20019>
             <name>External Redirect</name>
             <enabled>true</enabled>

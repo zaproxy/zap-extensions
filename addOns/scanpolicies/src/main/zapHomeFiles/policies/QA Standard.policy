@@ -25,6 +25,10 @@
             <name>GET for POST</name>
             <enabled>true</enabled>
         </p10058>
+        <p10205>
+            <name>HTTPS Configuration</name>
+            <enabled>true</enabled>
+        </p10205>
         <p20012>
             <name>Anti-CSRF Tokens Check</name>
             <enabled>true</enabled>
