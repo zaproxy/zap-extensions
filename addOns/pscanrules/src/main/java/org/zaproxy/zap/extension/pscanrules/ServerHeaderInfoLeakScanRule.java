@@ -47,7 +47,9 @@ public class ServerHeaderInfoLeakScanRule extends PluginPassiveScanner
 
     private static final Logger LOGGER = LogManager.getLogger(ServerHeaderInfoLeakScanRule.class);
 
-    private static final Pattern VERSION_PATTERN = Pattern.compile(".*\\d.*");
+    // Match version-like patterns such as 2.4, 2.4.49, 10.0.1, etc.
+private static final Pattern VERSION_PATTERN = Pattern.compile("\\d+\\.\\d+(\\.\\d+)?");
+
     private static final Map<String, String> ALERT_TAGS;
 
     static {
@@ -72,7 +74,8 @@ public class ServerHeaderInfoLeakScanRule extends PluginPassiveScanner
             // It is set so lets check it. Should only be one but it's a vector so iterate to be
             // sure.
             for (String serverDirective : serverOption) {
-                boolean matched = VERSION_PATTERN.matcher(serverDirective).matches();
+               boolean matched = VERSION_PATTERN.matcher(serverDirective).find();
+
                 if (matched) { // See if there's any version info.
                     // While an alpha string might be the server type (Apache, Netscape, IIS, etc.)
                     // that's much less of a head-start than actual version details.
