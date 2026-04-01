@@ -93,6 +93,7 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
                 e -> {
                     updateEndpointFieldState();
                     updateSuggestedName();
+                    updateSuggestedEndpoint();
                 });
         providerLabel.setLabelFor(providerComboBox);
 
@@ -184,6 +185,7 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
         originalName = null;
         updateEndpointFieldState();
         updateSuggestedName();
+        updateSuggestedEndpoint();
     }
 
     @Override
@@ -212,6 +214,14 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
         }
 
         String endpoint = StringUtils.trimToEmpty(endpointField.getText());
+        if (provider.isEndpointRequired() && endpoint.isEmpty()) {
+            View.getSingleton()
+                    .showWarningDialog(
+                            this,
+                            Constant.messages.getString(
+                                    "llm.options.providers.error.endpoint.empty"));
+            return false;
+        }
         if (provider.supportsEndpoint() && !endpoint.isEmpty() && !isEndpointReachable(endpoint)) {
             View.getSingleton()
                     .showWarningDialog(
@@ -261,6 +271,52 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
             lastSuggestedName = provider.toString();
             nameTextField.setText(lastSuggestedName);
         }
+    }
+
+    protected void updateSuggestedEndpoint() {
+        LlmProvider provider = (LlmProvider) providerComboBox.getSelectedItem();
+        if (provider == null) {
+            return;
+        }
+        if (!provider.supportsEndpoint()) {
+            endpointField.setText("");
+            return;
+        }
+
+        String suggestedEndpoint = endpointValueOnSelect(provider);
+        String currentEndpoint = StringUtils.defaultString(endpointField.getText());
+        if (currentEndpoint.isEmpty()
+                || (isAnyProviderDefaultEndpoint(currentEndpoint)
+                        && !currentEndpoint.equals(suggestedEndpoint))) {
+            endpointField.setText(suggestedEndpoint);
+        }
+    }
+
+    static String endpointValueOnSelect(LlmProvider provider) {
+        if (provider == null || !provider.supportsEndpoint()) {
+            return "";
+        }
+        return provider.getDefaultEndpoint();
+    }
+
+    private static boolean isAnyProviderDefaultEndpoint(String endpoint) {
+        if (endpoint == null || endpoint.isEmpty()) {
+            return false;
+        }
+
+        for (LlmProvider provider : LlmProvider.values()) {
+            if (provider == null || !provider.supportsEndpoint()) {
+                continue;
+            }
+
+            String defaultEndpoint = provider.getDefaultEndpoint();
+            if (defaultEndpoint != null
+                    && !defaultEndpoint.isEmpty()
+                    && defaultEndpoint.equals(endpoint)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected boolean isDuplicateName(String name) {
