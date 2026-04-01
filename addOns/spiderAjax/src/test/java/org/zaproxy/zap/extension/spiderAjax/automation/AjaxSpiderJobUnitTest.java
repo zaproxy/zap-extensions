@@ -65,6 +65,7 @@ import org.zaproxy.addon.automation.AutomationJob.Order;
 import org.zaproxy.addon.automation.AutomationPlan;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.ContextWrapper;
+import org.zaproxy.addon.automation.ExtensionAutomation;
 import org.zaproxy.addon.automation.tests.AutomationStatisticTest;
 import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderParam;
 import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderTarget;
@@ -110,6 +111,9 @@ class AjaxSpiderJobUnitTest {
         given(extensionLoader.getExtension(ExtensionStats.class)).willReturn(extStats);
         Mockito.lenient().when(extStats.getInMemoryStats()).thenReturn(mock(InMemoryStats.class));
 
+        ExtensionAutomation extAutomation = mock(ExtensionAutomation.class);
+        given(extensionLoader.getExtension(ExtensionAutomation.class)).willReturn(extAutomation);
+
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
         Model.getSingleton().getOptionsParam().load(new ZapXmlConfiguration());
     }
@@ -125,6 +129,7 @@ class AjaxSpiderJobUnitTest {
         assertThat(job.getOrder(), is(equalTo(Order.LAST_EXPLORE)));
         assertThat(job.getParamMethodObject(), is(extAjax));
         assertThat(job.getParamMethodName(), is("getAjaxSpiderParam"));
+        assertThat(job.getLongRunningJobProgress(), is(equalTo(0)));
     }
 
     @Test
@@ -285,8 +290,9 @@ class AjaxSpiderJobUnitTest {
         given(context.isInContext(url)).willReturn(true);
         given(extAjax.isSpiderRunning()).willReturn(false);
 
-        given(extAjax.createSpiderThread(anyString(), any(), any()))
-                .willReturn(mock(SpiderThread.class));
+        SpiderThread spiderThread = mock(SpiderThread.class);
+        given(spiderThread.isRunning()).willReturn(true, false);
+        given(extAjax.createSpiderThread(anyString(), any(), any())).willReturn(spiderThread);
 
         AutomationProgress progress = new AutomationProgress();
 
@@ -366,8 +372,9 @@ class AjaxSpiderJobUnitTest {
         FileConfiguration tempConfig = new XMLConfiguration();
         options.load(tempConfig);
 
-        given(extAjax.createSpiderThread(anyString(), any(), any()))
-                .willReturn(mock(SpiderThread.class));
+        SpiderThread spiderThread = mock(SpiderThread.class);
+        given(spiderThread.isRunning()).willReturn(true, false);
+        given(extAjax.createSpiderThread(anyString(), any(), any())).willReturn(spiderThread);
 
         AutomationProgress progress = new AutomationProgress();
 
@@ -410,8 +417,9 @@ class AjaxSpiderJobUnitTest {
         given(contextWrapper.getUrls()).willReturn(List.of(defaultUrl));
         given(env.getDefaultContextWrapper()).willReturn(contextWrapper);
 
-        given(extAjax.createSpiderThread(anyString(), any(), any()))
-                .willReturn(mock(SpiderThread.class));
+        SpiderThread spiderThread = mock(SpiderThread.class);
+        given(spiderThread.isRunning()).willReturn(true, false);
+        given(extAjax.createSpiderThread(anyString(), any(), any())).willReturn(spiderThread);
 
         // When
         AjaxSpiderJob job = new AjaxSpiderJob();

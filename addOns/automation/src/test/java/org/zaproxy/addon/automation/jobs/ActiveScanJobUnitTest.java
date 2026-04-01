@@ -75,6 +75,7 @@ import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob.Order;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.ContextWrapper;
+import org.zaproxy.addon.automation.ExtensionAutomation;
 import org.zaproxy.zap.extension.ascan.ActiveScan;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.ascan.PolicyManager;
@@ -128,6 +129,9 @@ class ActiveScanJobUnitTest {
         policyManager = mock();
         given(extAScan.getPolicyManager()).willReturn(policyManager);
 
+        ExtensionAutomation extAutomation = mock(ExtensionAutomation.class);
+        given(extensionLoader.getExtension(ExtensionAutomation.class)).willReturn(extAutomation);
+
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
         Model.getSingleton().getOptionsParam().load(new ZapXmlConfiguration());
     }
@@ -145,6 +149,8 @@ class ActiveScanJobUnitTest {
         assertThat(job.getOrder(), is(equalTo(Order.ATTACK)));
         assertThat(job.getParamMethodObject(), is(extAScan));
         assertThat(job.getParamMethodName(), is("getScannerParam"));
+        assertThat(job.getLongRunningJobId(), is(equalTo(null)));
+        assertThat(job.getLongRunningJobProgress(), is(equalTo(0)));
     }
 
     @Test

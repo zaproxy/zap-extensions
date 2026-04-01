@@ -162,6 +162,31 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
      */
     public void planFinished() {}
 
+    /** Will return true for long running jobs. */
+    public boolean isLongRunningJob() {
+        return false;
+    }
+
+    /**
+     * Returns a unique identifier for this long running job instance.
+     *
+     * @return the job id, or {@code null} if the job has not yet started and obtained an id, or if
+     *     it is not a long running job.
+     */
+    public String getLongRunningJobId() {
+        return null;
+    }
+
+    /**
+     * Returns the progress of a long running job as a percentage (0-100). Non long running jobs
+     * will return -1.
+     *
+     * @return the progress percentage
+     */
+    public int getLongRunningJobProgress() {
+        return -1;
+    }
+
     /** Called to stop any running jobs early. Must be implemented by long running jobs. */
     public void stop() {}
 

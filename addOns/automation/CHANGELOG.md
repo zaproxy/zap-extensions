@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Added
 - Allow to load a plan from the contents of the clipboard.
+- Access to the progress of long running jobs
 
 ### Changed
 - Move the Automation panel to the workspace window.
