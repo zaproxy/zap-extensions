@@ -693,21 +693,11 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin
                                         "ascanbeta.usernameenumeration.alert.attack",
                                         currentHtmlParameter.getType(),
                                         currentHtmlParameter.getName());
-                        String vulnname =
-                                Constant.messages.getString("ascanbeta.usernameenumeration.name");
-                        String vulndesc =
-                                Constant.messages.getString("ascanbeta.usernameenumeration.desc");
-                        String vulnsoln =
-                                Constant.messages.getString("ascanbeta.usernameenumeration.soln");
 
-                        newAlert()
-                                .setConfidence(Alert.CONFIDENCE_LOW)
-                                .setName(vulnname)
-                                .setDescription(vulndesc)
-                                .setParam(currentHtmlParameter.getName())
-                                .setAttack(attack)
-                                .setOtherInfo(extraInfo)
-                                .setSolution(vulnsoln)
+                        buildAlert(
+                                        currentHtmlParameter.getName(),
+                                        attack,
+                                        extraInfo)
                                 .setMessage(getBaseMsg())
                                 .raise();
 
@@ -769,5 +759,36 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
+    }
+
+    private AlertBuilder buildAlert(String paramName, String attack, String extraInfo) {
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_LOW)
+                .setName(Constant.messages.getString("ascanbeta.usernameenumeration.name"))
+                .setDescription(Constant.messages.getString("ascanbeta.usernameenumeration.desc"))
+                .setParam(paramName)
+                .setAttack(attack)
+                .setOtherInfo(extraInfo)
+                .setSolution(Constant.messages.getString("ascanbeta.usernameenumeration.soln"));
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildAlert(
+                                "username",
+                                Constant.messages.getString(
+                                        "ascanbeta.usernameenumeration.alert.attack",
+                                        HtmlParameter.Type.form.name(),
+                                        "username"),
+                                Constant.messages.getString(
+                                        "ascanbeta.usernameenumeration.alert.extrainfo",
+                                        HtmlParameter.Type.form.name(),
+                                        "username",
+                                        "admin",
+                                        "invaliduser123",
+                                        "",
+                                        1))
+                        .build());
     }
 }
