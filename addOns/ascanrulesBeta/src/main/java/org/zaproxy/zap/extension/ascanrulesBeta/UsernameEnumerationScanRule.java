@@ -679,22 +679,13 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin
                                             + "\n"); // blank line before
                         }
                         String diffAB = tempDiff.toString();
-                        String extraInfo =
-                                Constant.messages.getString(
-                                        "ascanbeta.usernameenumeration.alert.extrainfo",
-                                        currentHtmlParameter.getType(),
+                        buildAlert(
                                         currentHtmlParameter.getName(),
-                                        currentHtmlParameter.getValue(), // original value
-                                        invalidUsername, // new value
-                                        diffAB, // the differences between the two sets of output
-                                        numberofDifferences);
-                        String attack =
-                                Constant.messages.getString(
-                                        "ascanbeta.usernameenumeration.alert.attack",
                                         currentHtmlParameter.getType(),
-                                        currentHtmlParameter.getName());
-
-                        buildAlert(currentHtmlParameter.getName(), attack, extraInfo)
+                                        currentHtmlParameter.getValue(),
+                                        invalidUsername,
+                                        diffAB,
+                                        numberofDifferences)
                                 .setMessage(getBaseMsg())
                                 .raise();
 
@@ -758,14 +749,30 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin
         return ALERT_TAGS;
     }
 
-    private AlertBuilder buildAlert(String paramName, String attack, String extraInfo) {
+    private AlertBuilder buildAlert(
+            String paramName,
+            Object paramType,
+            String originalValue,
+            String invalidValue,
+            String diff,
+            int numDifferences) {
         return newAlert()
                 .setConfidence(Alert.CONFIDENCE_LOW)
                 .setName(Constant.messages.getString("ascanbeta.usernameenumeration.name"))
                 .setDescription(Constant.messages.getString("ascanbeta.usernameenumeration.desc"))
                 .setParam(paramName)
-                .setAttack(attack)
-                .setOtherInfo(extraInfo)
+                .setAttack(
+                        Constant.messages.getString(
+                                "ascanbeta.usernameenumeration.alert.attack", paramType, paramName))
+                .setOtherInfo(
+                        Constant.messages.getString(
+                                "ascanbeta.usernameenumeration.alert.extrainfo",
+                                paramType,
+                                paramName,
+                                originalValue,
+                                invalidValue,
+                                diff,
+                                numDifferences))
                 .setSolution(Constant.messages.getString("ascanbeta.usernameenumeration.soln"));
     }
 
@@ -774,18 +781,11 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin
         return List.of(
                 buildAlert(
                                 "username",
-                                Constant.messages.getString(
-                                        "ascanbeta.usernameenumeration.alert.attack",
-                                        HtmlParameter.Type.form.name(),
-                                        "username"),
-                                Constant.messages.getString(
-                                        "ascanbeta.usernameenumeration.alert.extrainfo",
-                                        HtmlParameter.Type.form.name(),
-                                        "username",
-                                        "admin",
-                                        "invaliduser123",
-                                        "",
-                                        1))
+                                HtmlParameter.Type.form.name(),
+                                "admin",
+                                "invaliduser123",
+                                "",
+                                1)
                         .build());
     }
 }
