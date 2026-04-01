@@ -694,10 +694,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin
                                         currentHtmlParameter.getType(),
                                         currentHtmlParameter.getName());
 
-                        buildAlert(
-                                        currentHtmlParameter.getName(),
-                                        attack,
-                                        extraInfo)
+                        buildAlert(currentHtmlParameter.getName(), attack, extraInfo)
                                 .setMessage(getBaseMsg())
                                 .raise();
 
