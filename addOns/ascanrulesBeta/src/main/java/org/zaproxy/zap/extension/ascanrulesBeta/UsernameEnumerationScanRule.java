@@ -680,9 +680,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin
                         }
                         String diffAB = tempDiff.toString();
                         buildAlert(
-                                        currentHtmlParameter.getName(),
-                                        currentHtmlParameter.getType(),
-                                        currentHtmlParameter.getValue(),
+                                        currentHtmlParameter,
                                         invalidUsername,
                                         diffAB,
                                         numberofDifferences)
@@ -750,26 +748,23 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin
     }
 
     private AlertBuilder buildAlert(
-            String paramName,
-            Object paramType,
-            String originalValue,
-            String invalidValue,
-            String diff,
-            int numDifferences) {
+            HtmlParameter param, String invalidValue, String diff, int numDifferences) {
         return newAlert()
                 .setConfidence(Alert.CONFIDENCE_LOW)
                 .setName(Constant.messages.getString("ascanbeta.usernameenumeration.name"))
                 .setDescription(Constant.messages.getString("ascanbeta.usernameenumeration.desc"))
-                .setParam(paramName)
+                .setParam(param.getName())
                 .setAttack(
                         Constant.messages.getString(
-                                "ascanbeta.usernameenumeration.alert.attack", paramType, paramName))
+                                "ascanbeta.usernameenumeration.alert.attack",
+                                param.getType().name(),
+                                param.getName()))
                 .setOtherInfo(
                         Constant.messages.getString(
                                 "ascanbeta.usernameenumeration.alert.extrainfo",
-                                paramType,
-                                paramName,
-                                originalValue,
+                                param.getType().name(),
+                                param.getName(),
+                                param.getValue(),
                                 invalidValue,
                                 diff,
                                 numDifferences))
@@ -780,9 +775,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin
     public List<Alert> getExampleAlerts() {
         return List.of(
                 buildAlert(
-                                "username",
-                                HtmlParameter.Type.form.name(),
-                                "admin",
+                                new HtmlParameter(HtmlParameter.Type.form, "username", "admin"),
                                 "invaliduser123",
                                 "",
                                 1)
