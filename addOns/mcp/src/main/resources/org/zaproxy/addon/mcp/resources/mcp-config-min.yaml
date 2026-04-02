@@ -1,0 +1,4 @@
+  - type: mcp-config                   # Configure the MCP server
+    parameters:
+      enabled:                         # Bool: Enable the MCP server, default: true
+      port:                            # Int: Port for the MCP HTTP listener, default: 8282
