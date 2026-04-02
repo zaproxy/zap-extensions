@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [23.30.0] - 2026-04-02
 ### Changed
 - Update Crawljax to version 3.8.0 (Issues 3412 and 7138).
 
@@ -378,6 +378,7 @@ By default it allows files with extension `.js` and `.css`.
 
 
 
+[23.30.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.30.0
 [23.29.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.29.0
 [23.28.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.28.0
 [23.27.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.27.0
