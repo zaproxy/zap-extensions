@@ -82,7 +82,9 @@ public class ZapStopSpiderTool implements McpTool {
         } catch (Exception e) {
             LOGGER.warn("Failed to stop spider", e);
             throw new McpToolException(
-                    Constant.messages.getString("mcp.tool.stopspider.error.failed"));
+                    Constant.messages.getString(
+                            "mcp.tool.stopspider.error.failed",
+                            Constant.messages.getString("mcp.tool.error.unknown")));
         }
 
         return McpToolResult.success(Constant.messages.getString("mcp.tool.stopspider.success"));

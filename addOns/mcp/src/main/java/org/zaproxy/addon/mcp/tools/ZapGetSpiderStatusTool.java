@@ -95,7 +95,9 @@ public class ZapGetSpiderStatusTool implements McpTool {
         } catch (Exception e) {
             LOGGER.warn("Failed to get spider status", e);
             throw new McpToolException(
-                    Constant.messages.getString("mcp.tool.getspiderstatus.error.failed"));
+                    Constant.messages.getString(
+                            "mcp.tool.getspiderstatus.error.failed",
+                            Constant.messages.getString("mcp.tool.error.unknown")));
         }
 
         return McpToolResult.success(result.toString());

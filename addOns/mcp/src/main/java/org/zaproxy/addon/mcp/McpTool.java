@@ -21,6 +21,7 @@ package org.zaproxy.addon.mcp;
 
 import java.util.List;
 import java.util.Map;
+import org.zaproxy.addon.automation.AutomationPlan;
 
 /**
  * Defines an MCP tool that can be invoked by clients.
@@ -109,5 +110,16 @@ public interface McpTool {
         public List<String> getList(String key) {
             return lists.getOrDefault(key, List.of());
         }
+    }
+
+    /**
+     * Returns the first error from the given plan, or null if the plan is null or there are no
+     * errors.
+     */
+    static String getFailureReason(AutomationPlan plan) {
+        if (plan == null || !plan.getProgress().hasErrors()) {
+            return null;
+        }
+        return plan.getProgress().getErrors().get(0);
     }
 }

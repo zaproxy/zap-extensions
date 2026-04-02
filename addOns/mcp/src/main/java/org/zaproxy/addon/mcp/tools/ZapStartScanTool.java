@@ -66,6 +66,7 @@ public abstract class ZapStartScanTool implements McpTool {
         target = target.trim();
 
         String scanId;
+        AutomationPlan plan = null;
 
         try {
             ExtensionAutomation extAutomation =
@@ -80,7 +81,7 @@ public abstract class ZapStartScanTool implements McpTool {
             }
             job = job.newJob();
 
-            AutomationPlan plan = new AutomationPlan();
+            plan = new AutomationPlan();
             Session session = Model.getSingleton().getSession();
             Context context;
 
@@ -123,15 +124,25 @@ public abstract class ZapStartScanTool implements McpTool {
                 Thread.currentThread().interrupt();
                 LOGGER.debug("Interrupted while starting scan", e);
                 throw new McpToolException(
-                        Constant.messages.getString(getMessageKeyPrefix() + ".error.failed"));
+                        Constant.messages.getString(
+                                getMessageKeyPrefix() + ".error.failed",
+                                Constant.messages.getString("mcp.tool.error.interrupted")));
             }
         } catch (McpToolException e) {
-            LOGGER.warn("Failed to start scan", e);
+            LOGGER.debug("Failed to start scan", e);
             throw e;
         } catch (Exception e) {
+            String reason = McpTool.getFailureReason(plan);
+            if (reason != null) {
+                throw new McpToolException(
+                        Constant.messages.getString(
+                                getMessageKeyPrefix() + ".error.failed", reason));
+            }
             LOGGER.error("Failed to start scan", e);
             throw new McpToolException(
-                    Constant.messages.getString(getMessageKeyPrefix() + ".error.failed"));
+                    Constant.messages.getString(
+                            getMessageKeyPrefix() + ".error.failed",
+                            Constant.messages.getString("mcp.tool.error.unknown")));
         }
 
         return McpToolResult.success(
