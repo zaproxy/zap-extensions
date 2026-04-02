@@ -407,7 +407,7 @@ public class AjaxSpiderJob extends AutomationJob {
     public int getLongRunningJobProgress() {
         SpiderThread spider = currentSpiderThread;
         if (spider != null && spider.isRunning()) {
-            return 0;
+            return 50;
         }
         return getStatus() == Status.COMPLETED ? 100 : 0;
     }

@@ -20,6 +20,7 @@
 package org.zaproxy.addon.mcp.tools;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -96,6 +97,11 @@ public class ZapGenerateReportTool implements McpTool {
             return McpToolResult.success(
                     Constant.messages.getString(
                             "mcp.tool.generatereport.success", report.getAbsolutePath()));
+        } catch (IOException e) {
+            // Likely to be a file problem
+            throw new McpToolException(
+                    Constant.messages.getString(
+                            "mcp.tool.generatereport.error.failed", e.getMessage()));
         } catch (IllegalArgumentException e) {
             throw new McpToolException(
                     Constant.messages.getString(
@@ -103,7 +109,9 @@ public class ZapGenerateReportTool implements McpTool {
         } catch (Exception e) {
             LOGGER.error("Failed to generate report", e);
             throw new McpToolException(
-                    Constant.messages.getString("mcp.tool.generatereport.error.failed"));
+                    Constant.messages.getString(
+                            "mcp.tool.generatereport.error.failed",
+                            Constant.messages.getString("mcp.tool.error.unknown")));
         }
     }
 }

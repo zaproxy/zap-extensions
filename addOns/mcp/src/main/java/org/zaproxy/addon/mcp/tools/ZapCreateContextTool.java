@@ -127,7 +127,9 @@ public class ZapCreateContextTool implements McpTool {
         } catch (Exception e) {
             LOGGER.warn("Failed to create context", e);
             throw new McpToolException(
-                    Constant.messages.getString("mcp.tool.createcontext.error.failed"));
+                    Constant.messages.getString(
+                            "mcp.tool.createcontext.error.failed",
+                            Constant.messages.getString("mcp.tool.error.unknown")));
         }
 
         return McpToolResult.success(
