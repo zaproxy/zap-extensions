@@ -12,28 +12,28 @@
 
 <H2>自動化タブ</H2>
 
-このタブでは、自動化ジョブの作成、ロード、編集、実行ができます。 このタブには2つのサブタブがあります。
+This tab allows you to create, load, edit and run automation jobs.
 <p>
 ツールバーには以下のボタンがあります：
 
 <ul>
 <li>新しいプラン… - 新しいプランダイアログを起動します
 <li>プランをロード… - YAMLファイルからプランをロードできます
-<li>プランを保存 - 現在のプランをYAMLファイルに保存します
-<li>プランを実行 - 現在のプランを実行します
-<li>プランを停止 - 現在のプランを停止します
-<li>ジョブを追加… - 現在のプランにジョブを追加するためのジョブの追加ダイアログを起動します
-<li>ジョブを削除… - 現在のプランから選択したジョブを削除します
-<li>ジョブを上へ移動 - 現在のプランで選択したジョブを1つ上に移動します
-<li>ジョブを下へ移動 - 現在のプランで選択したジョブを1つ下に移動します
-<li>テストを追加… - 現在のジョブにテストを追加するためのテストの追加ダイアログを起動します
-<li>テストを削除… - 現在のジョブから選択したテストを削除します
+<li>Load Plan from Clipboard - this allows you to load a plan from the contents of the clipboard
+<li>Save Plan - this saves the current plan to a yaml file
+<li>Run Plan - this runs the current plan
+<li>Stop Plan - this stops the current plan
+<li>Add Job... - this launches the Add Job dialog to add a job to the current plan
+<li>Remove Job... - this removes the selected job from the current plan
+<li>Move Job Up - this moves the selected job up one place in the current plan
+<li>Move Job Down - this moves the selected job down one place in the current plan
+<li>Add Test... - this launches the Add Test dialog to add a test to the current job
+<li>Remove Test... - this removes the selected test from the current job
 </ul>
 
-<H3>プランサブタブ</H3>
-
-プランをグラフィカルに表示し、実行中はその状態も表示します。<br>
-プランの任意の要素をダブルクリックして編集できます。
+Below the toolbar, you can find a graphical representation of the plan
+which also shows the state of the plan when it is run.<br>
+You can edit any of the elements of the plan by double clicking on them.
 <p>
 また、プランテーブルから以下の一般的なジョブオプションを変更できます：
 
@@ -42,9 +42,10 @@
 <li>常に実行 - このオプションが有効なジョブは、プランが途中で終了した場合でも実行されます。
 </ul>
 
-<H3>出力サブタブ</H3>
+<H2>Output</H2>
 
-プランのロードまたは実行時に生成されたすべての出力が表示されます。
+Any output generated while loading or running the plan will
+appear in the Automation sub-tab of the Output tab.
 
 <H2>今後の計画</H2>
 

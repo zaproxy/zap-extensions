@@ -12,28 +12,28 @@ Automation Framework - GUI
 
 <H2>Вкладка "Автоматизация" </H2>
 
-Эта вкладка позволяет создавать, загружать, редактировать и запускать задания автоматизации.  Он имеет 2 дополнительных вкладки. 
+This tab allows you to create, load, edit and run automation jobs.
 <p>
 Панель инструментов содержит следующие кнопки: 
 
 <ul>
 <li>Новый план ... - запускает диалоговое окно "Новый план". 
 <li>Загрузить план ... - позволяет загрузить план из файла yaml. 
+<li>Load Plan from Clipboard - this allows you to load a plan from the contents of the clipboard
 <li>Save Plan - this saves the current plan to a yaml file
 <li>Run Plan - this runs the current plan
 <li>Stop Plan - this stops the current plan
-<li>Добавить задание ... - запускает диалоговое окно Добавить задание, чтобы добавить задание в текущий план. 
-<li>Удалить задание ... - удаляет выбранное задание из текущего плана. 
-<li>Переместить задание вверх - перемещает выбранное задание на одну позицию вверх в текущем плане. 
-<li>Переместить задание вниз - перемещает выбранное задание на одну позицию вниз в текущем плане. 
-<li>Добавить тест ... - запускает диалоговое окно Добавить тест для добавления теста к текущему заданию. 
-<li>Удалить тест ... - удаляет выбранный тест из текущего задания. 
+<li>Add Job... - this launches the Add Job dialog to add a job to the current plan
+<li>Remove Job... - this removes the selected job from the current plan
+<li>Move Job Up - this moves the selected job up one place in the current plan
+<li>Move Job Down - this moves the selected job down one place in the current plan
+<li>Add Test... - this launches the Add Test dialog to add a test to the current job
+<li>Remove Test... - this removes the selected test from the current job
 </ul>
 
-<H3>Дополнительная вкладка "План" </H3>
-
-Графическое представление плана, которое также показывает состояние плана при его выполнении. <br>
-Вы можете редактировать любой из элементов плана, дважды щелкнув по ним. 
+Below the toolbar, you can find a graphical representation of the plan
+which also shows the state of the plan when it is run.<br>
+You can edit any of the elements of the plan by double clicking on them.
 <p>
 You can also change the following general job options via the plan table:
 
@@ -42,9 +42,10 @@ You can also change the following general job options via the plan table:
 <li>Always Run - enabled jobs with this option will run even if the plan exits early.
 </ul>
 
-<H3>Дополнительная вкладка вывода </H3>
+<H2>Output</H2>
 
-Любой вывод, созданный при загрузке или запуске плана. 
+Any output generated while loading or running the plan will
+appear in the Automation sub-tab of the Output tab.
 
 <H2>Планы на будущее </H2>
 
