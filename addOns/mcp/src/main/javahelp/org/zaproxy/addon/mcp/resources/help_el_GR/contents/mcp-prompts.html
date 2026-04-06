@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+MCP Prompts
+</TITLE>
+</HEAD>
+<BODY>
+<H1>MCP Prompts</H1>
+
+Prompts are reusable instruction templates. MCP clients discover them via <code>prompts/list</code>
+and retrieve them via <code>prompts/get</code>.
+
+<H2>zap_baseline_scan</H2>
+Run a ZAP baseline scan: spider the target (standard then AJAX) and check for passive vulnerabilities without any active attacking.
+<p>
+Arguments: <code>target</code> (required) - the URL to scan
+
+<H2>zap_full_scan</H2>
+Run a ZAP full scan: spider the target (standard then AJAX) and then actively scan for vulnerabilities.
+<p>
+Arguments: <code>target</code> (required) - the URL or context name to scan,
+<code>policy</code> (optional) - active scan policy name (defaults to the ZAP default policy)
+
+<H2>See Also</H2>
+
+<ul>
+<li><a href="mcp.html">MCP Integration</a> - Overview of the add-on
+<li><a href="mcp-options.html">Options</a> - Configuration options
+<li><a href="mcp-tools.html">Tools</a> - Available MCP tools
+<li><a href="mcp-resources.html">Resources</a> - Available MCP resources
+</ul>
+
+</BODY>
+</HTML>
