@@ -20,15 +20,12 @@
 package org.zaproxy.zap.extension.fuzz;
 
 import java.util.List;
-import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.CompositePayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.PayloadGenerator;
-import org.zaproxy.zap.extension.fuzz.payloads.generator.StringPayloadGenerator;
 
-class FuzzerPayloadGenerator extends CompositePayloadGenerator<DefaultPayload>
-        implements StringPayloadGenerator {
+class FuzzerPayloadGenerator extends CompositePayloadGenerator {
 
-    public FuzzerPayloadGenerator(List<PayloadGenerator<DefaultPayload>> payloadGenerators) {
+    public FuzzerPayloadGenerator(List<PayloadGenerator> payloadGenerators) {
         super(payloadGenerators);
     }
 }

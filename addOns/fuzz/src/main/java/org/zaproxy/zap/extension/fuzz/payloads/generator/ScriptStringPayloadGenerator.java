@@ -23,10 +23,10 @@ import javax.script.ScriptException;
 
 /**
  * An interface for scripts that generate {@code String}s payloads for use in a {@code
- * StringPayloadGenerator}.
+ * PayloadGenerator}.
  *
  * @see #TYPE_NAME
- * @see StringPayloadGenerator
+ * @see PayloadGenerator
  * @see ScriptStringPayloadGeneratorAdapter
  */
 public interface ScriptStringPayloadGenerator {

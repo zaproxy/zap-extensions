@@ -23,8 +23,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import org.zaproxy.zap.extension.fuzz.payloads.Payload;
-import org.zaproxy.zap.extension.fuzz.payloads.generator.PayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUI;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUIHandler;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUIPanel;
@@ -32,17 +30,16 @@ import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUIPanel;
 public class PayloadGeneratorsContainer {
 
     private final String defaultPanelName;
-    private Map<String, PayloadGeneratorUIPanel<?, ?, ?>> panels;
-    private Map<Class<?>, PayloadGeneratorUIPanel<?, ?, ?>> panelsMap;
+    private Map<String, PayloadGeneratorUIPanel> panels;
+    private Map<Class<?>, PayloadGeneratorUIPanel> panelsMap;
 
     public PayloadGeneratorsContainer(
-            Collection<PayloadGeneratorUIHandler<?, ?, ?>> payloadUIHandlers,
-            String defaultPanelName) {
+            Collection<PayloadGeneratorUIHandler> payloadUIHandlers, String defaultPanelName) {
         this.panels = new HashMap<>();
         this.panelsMap = new HashMap<>();
 
         String panelName = defaultPanelName;
-        for (PayloadGeneratorUIHandler<?, ?, ?> payloadUIHandler : payloadUIHandlers) {
+        for (PayloadGeneratorUIHandler payloadUIHandler : payloadUIHandlers) {
             addHelper(payloadUIHandler);
             panels.put(
                     payloadUIHandler.getName(),
@@ -55,11 +52,7 @@ public class PayloadGeneratorsContainer {
         this.defaultPanelName = panelName;
     }
 
-    private <
-                    T extends Payload,
-                    T3 extends PayloadGenerator<T>,
-                    T4 extends PayloadGeneratorUI<T, T3>>
-            void addHelper(PayloadGeneratorUIHandler<T, T3, T4> payloadUIHandler) {
+    private void addHelper(PayloadGeneratorUIHandler payloadUIHandler) {
         panelsMap.put(
                 payloadUIHandler.getPayloadGeneratorUIClass(),
                 payloadUIHandler
@@ -75,26 +68,20 @@ public class PayloadGeneratorsContainer {
         return defaultPanelName;
     }
 
-    public PayloadGeneratorUIPanel<?, ?, ?> getPanel(String name) {
+    public PayloadGeneratorUIPanel getPanel(String name) {
         return panels.get(name);
     }
 
-    public <
-                    T extends Payload,
-                    T3 extends PayloadGenerator<T>,
-                    T4 extends PayloadGeneratorUI<T, T3>,
-                    T5 extends PayloadGeneratorUIPanel<T, T3, T4>>
-            T5 getPanel(T4 payloadGeneratorUI) {
-        PayloadGeneratorUIPanel<?, ?, ?> panel = panelsMap.get(payloadGeneratorUI.getClass());
+    @SuppressWarnings("unchecked")
+    public <T extends PayloadGeneratorUIPanel> T getPanel(PayloadGeneratorUI payloadGeneratorUI) {
+        PayloadGeneratorUIPanel panel = panelsMap.get(payloadGeneratorUI.getClass());
         if (panel != null) {
-            @SuppressWarnings("unchecked")
-            T5 panelCasted = (T5) panel;
-            return panelCasted;
+            return (T) panel;
         }
         return null;
     }
 
-    public Collection<PayloadGeneratorUIPanel<?, ?, ?>> getPanels() {
+    public Collection<PayloadGeneratorUIPanel> getPanels() {
         return panels.values();
     }
 }

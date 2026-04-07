@@ -20,7 +20,7 @@ zapAddOn {
                 dependencies {
                     addOns {
                         register("fuzz") {
-                            version.set("2.* | 13.*")
+                            version.set(">=13.17.0")
                         }
                     }
                 }

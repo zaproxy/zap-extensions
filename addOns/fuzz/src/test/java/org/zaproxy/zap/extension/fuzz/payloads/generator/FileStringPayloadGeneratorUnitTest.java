@@ -42,7 +42,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
@@ -209,7 +209,7 @@ class FileStringPayloadGeneratorUnitTest extends TestUtils {
 
     private static long numberOfIteratedPayloads(FileStringPayloadGenerator generator) {
         long count = 0;
-        try (ResettableAutoCloseableIterator<DefaultPayload> iterator = generator.iterator()) {
+        try (ResettableAutoCloseableIterator<Payload> iterator = generator.iterator()) {
             while (iterator.hasNext()) {
                 iterator.next();
                 count++;

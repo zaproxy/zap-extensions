@@ -42,7 +42,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
 import org.parosproxy.paros.Constant;
-import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.FileStringPayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUI;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUIHandler;
@@ -53,9 +53,7 @@ import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 import org.zaproxy.zap.utils.ZapNumberSpinner;
 import org.zaproxy.zap.utils.ZapTextField;
 
-public class FileStringPayloadGeneratorUIHandler
-        implements PayloadGeneratorUIHandler<
-                DefaultPayload, FileStringPayloadGenerator, FileStringPayloadGeneratorUI> {
+public class FileStringPayloadGeneratorUIHandler implements PayloadGeneratorUIHandler {
 
     private static final String PAYLOAD_GENERATOR_NAME =
             Constant.messages.getString("fuzz.payloads.generator.file.name");
@@ -80,8 +78,7 @@ public class FileStringPayloadGeneratorUIHandler
         return new FileStringPayloadGeneratorUIPanel();
     }
 
-    public static class FileStringPayloadGeneratorUI
-            implements PayloadGeneratorUI<DefaultPayload, FileStringPayloadGenerator> {
+    public static class FileStringPayloadGeneratorUI implements PayloadGeneratorUI {
 
         private final Path file;
         private final Charset charset;
@@ -146,11 +143,6 @@ public class FileStringPayloadGeneratorUIHandler
         }
 
         @Override
-        public Class<FileStringPayloadGenerator> getPayloadGeneratorClass() {
-            return FileStringPayloadGenerator.class;
-        }
-
-        @Override
         public String getName() {
             return PAYLOAD_GENERATOR_NAME;
         }
@@ -187,8 +179,7 @@ public class FileStringPayloadGeneratorUIHandler
     }
 
     public static class FileStringPayloadGeneratorUIPanel
-            extends AbstractPersistentPayloadGeneratorUIPanel<
-                    DefaultPayload, FileStringPayloadGenerator, FileStringPayloadGeneratorUI> {
+            extends AbstractPersistentPayloadGeneratorUIPanel {
 
         private static final Charset[] CHARSETS = {
             StandardCharsets.UTF_8, StandardCharsets.ISO_8859_1, StandardCharsets.US_ASCII
@@ -445,7 +436,7 @@ public class FileStringPayloadGeneratorUIHandler
                                     getIgnoreEmptyLinesCheckBox().isSelected(),
                                     getIgnoreFirstLineCheckBox().isSelected(),
                                     numberOfPayloads);
-                    try (ResettableAutoCloseableIterator<DefaultPayload> payloads =
+                    try (ResettableAutoCloseableIterator<Payload> payloads =
                             payloadGenerator.iterator()) {
                         for (int i = 0;
                                 i < MAX_NUMBER_PAYLOADS_PREVIEW && payloads.hasNext();
@@ -569,21 +560,23 @@ public class FileStringPayloadGeneratorUIHandler
         }
 
         @Override
-        public void setPayloadGeneratorUI(FileStringPayloadGeneratorUI payloadGeneratorUI) {
+        public void setPayloadGeneratorUI(PayloadGeneratorUI payloadGeneratorUI) {
+            if (!(payloadGeneratorUI instanceof FileStringPayloadGeneratorUI ui)) {
+                throw new IllegalArgumentException(
+                        "Expected FileStringPayloadGeneratorUI but got: "
+                                + payloadGeneratorUI.getClass());
+            }
             modifyFileContents = true;
             mainLayout.replace(addPanel, getModifyPanel().getPanel());
 
-            getModifyPanel()
-                    .setPayloadGeneratorUI(
-                            payloadGeneratorUI,
-                            !payloadGeneratorUI.isTemporary(),
-                            payloadGeneratorUI.getFile());
+            getModifyPanel().setPayloadGeneratorUI(ui, !ui.isTemporary(), ui.getFile());
         }
 
         @Override
         public FileStringPayloadGeneratorUI getPayloadGeneratorUI() {
             if (modifyFileContents) {
-                return getModifyPanel().getFileStringPayloadGeneratorUI();
+                return (FileStringPayloadGeneratorUI)
+                        getModifyPanel().getFileStringPayloadGeneratorUI();
             }
             return new FileStringPayloadGeneratorUI(
                     Paths.get(getFileTextField().getText()),
@@ -681,9 +674,7 @@ public class FileStringPayloadGeneratorUIHandler
             return true;
         }
 
-        private static class ModifyFileStringPayloadsPanel
-                extends ModifyPayloadsPanel<
-                        DefaultPayload, FileStringPayloadGenerator, FileStringPayloadGeneratorUI> {
+        private static class ModifyFileStringPayloadsPanel extends ModifyPayloadsPanel {
 
             public ModifyFileStringPayloadsPanel(JButton saveButton) {
                 super(saveButton);
@@ -694,7 +685,7 @@ public class FileStringPayloadGeneratorUIHandler
                 return new FileStringPayloadGenerator(getFile(), 1) {
 
                     @Override
-                    public ResettableAutoCloseableIterator<DefaultPayload> iterator() {
+                    public ResettableAutoCloseableIterator<Payload> iterator() {
                         return new TextAreaPayloadIterator(getPayloadsTextArea());
                     }
                 };

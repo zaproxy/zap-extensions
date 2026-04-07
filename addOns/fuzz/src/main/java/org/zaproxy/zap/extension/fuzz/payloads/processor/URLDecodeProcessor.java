@@ -22,10 +22,9 @@ package org.zaproxy.zap.extension.fuzz.payloads.processor;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
-import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 
-public class URLDecodeProcessor extends AbstractCharsetProcessor<DefaultPayload>
-        implements DefaultPayloadProcessor {
+public class URLDecodeProcessor extends AbstractCharsetProcessor {
 
     public URLDecodeProcessor() {
         super();
@@ -40,7 +39,7 @@ public class URLDecodeProcessor extends AbstractCharsetProcessor<DefaultPayload>
     }
 
     @Override
-    public DefaultPayload process(DefaultPayload payload) {
+    public Payload process(Payload payload) {
         try {
             payload.setValue(URLDecoder.decode(payload.getValue(), getCharsetName()));
         } catch (UnsupportedEncodingException ignore) {

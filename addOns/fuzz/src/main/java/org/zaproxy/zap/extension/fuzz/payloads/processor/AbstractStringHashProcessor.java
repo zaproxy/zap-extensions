@@ -23,10 +23,9 @@ import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HexFormat;
-import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 
-public abstract class AbstractStringHashProcessor extends AbstractCharsetProcessor<DefaultPayload>
-        implements DefaultPayloadProcessor {
+public abstract class AbstractStringHashProcessor extends AbstractCharsetProcessor {
 
     private static final HexFormat HEX_FORMAT = HexFormat.of();
     private static final HexFormat HEX_FORMAT_UPPERCASE = HexFormat.of().withUpperCase();
@@ -70,7 +69,7 @@ public abstract class AbstractStringHashProcessor extends AbstractCharsetProcess
     protected abstract MessageDigest getMessageDigest();
 
     @Override
-    public DefaultPayload process(DefaultPayload payload) {
+    public Payload process(Payload payload) {
         MessageDigest messageDigest = getMessageDigest();
         messageDigest.reset();
         messageDigest.update(payload.getValue().getBytes(getCharset()));

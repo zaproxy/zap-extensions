@@ -28,6 +28,7 @@ import java.nio.file.Path;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
 /**
@@ -36,7 +37,7 @@ import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
  * <p>It reads the contents of a file and returns a payload for each line read. Ignoring empty and
  * commented lines.
  */
-public class FileStringPayloadGenerator implements StringPayloadGenerator {
+public class FileStringPayloadGenerator implements PayloadGenerator {
 
     private static final Logger LOGGER = LogManager.getLogger(FileStringPayloadGenerator.class);
 
@@ -200,7 +201,7 @@ public class FileStringPayloadGenerator implements StringPayloadGenerator {
     }
 
     @Override
-    public ResettableAutoCloseableIterator<DefaultPayload> iterator() {
+    public ResettableAutoCloseableIterator<Payload> iterator() {
         return new FileIterator(
                 file,
                 charset,
@@ -215,7 +216,7 @@ public class FileStringPayloadGenerator implements StringPayloadGenerator {
         return this;
     }
 
-    private static class FileIterator implements ResettableAutoCloseableIterator<DefaultPayload> {
+    private static class FileIterator implements ResettableAutoCloseableIterator<Payload> {
 
         private final Path file;
         private final Charset charset;
@@ -250,7 +251,7 @@ public class FileStringPayloadGenerator implements StringPayloadGenerator {
         }
 
         @Override
-        public DefaultPayload next() {
+        public Payload next() {
             try {
                 init();
 

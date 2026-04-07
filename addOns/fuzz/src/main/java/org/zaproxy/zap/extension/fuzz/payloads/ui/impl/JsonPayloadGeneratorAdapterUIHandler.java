@@ -26,7 +26,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import org.parosproxy.paros.Constant;
-import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.JsonPayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUI;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUIHandler;
@@ -36,11 +35,7 @@ import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.ZapNumberSpinner;
 import org.zaproxy.zap.utils.ZapTextArea;
 
-public class JsonPayloadGeneratorAdapterUIHandler
-        implements PayloadGeneratorUIHandler<
-                DefaultPayload,
-                JsonPayloadGenerator,
-                JsonPayloadGeneratorAdapterUIHandler.JsonPayloadGeneratorUI> {
+public class JsonPayloadGeneratorAdapterUIHandler implements PayloadGeneratorUIHandler {
 
     private static final String PAYLOAD_GENERATOR_NAME = getString("name");
     private static final String PAYLOAD_GENERATOR_DESC = getString("description");
@@ -56,31 +51,20 @@ public class JsonPayloadGeneratorAdapterUIHandler
     }
 
     @Override
-    public Class<
-                    ? extends
-                            PayloadGeneratorUIPanel<
-                                    DefaultPayload, JsonPayloadGenerator, JsonPayloadGeneratorUI>>
-            getPayloadGeneratorUIPanelClass() {
+    public Class<? extends PayloadGeneratorUIPanel> getPayloadGeneratorUIPanelClass() {
         return JsonPayloadGeneratorUIPanel.class;
     }
 
     @Override
-    public PayloadGeneratorUIPanel<DefaultPayload, JsonPayloadGenerator, JsonPayloadGeneratorUI>
-            createPanel() {
+    public PayloadGeneratorUIPanel createPanel() {
         return new JsonPayloadGeneratorUIPanel();
     }
 
-    public static class JsonPayloadGeneratorUI
-            implements PayloadGeneratorUI<DefaultPayload, JsonPayloadGenerator> {
+    public static class JsonPayloadGeneratorUI implements PayloadGeneratorUI {
         private final JsonPayloadGenerator jsonPayloadGenerator;
 
         public JsonPayloadGeneratorUI(JsonPayloadGenerator generator) {
             this.jsonPayloadGenerator = generator;
-        }
-
-        @Override
-        public Class<? extends JsonPayloadGenerator> getPayloadGeneratorClass() {
-            return JsonPayloadGenerator.class;
         }
 
         @Override
@@ -105,14 +89,13 @@ public class JsonPayloadGeneratorAdapterUIHandler
         }
 
         @Override
-        public PayloadGeneratorUI<DefaultPayload, JsonPayloadGenerator> copy() {
+        public PayloadGeneratorUI copy() {
             return this;
         }
     }
 
     public static class JsonPayloadGeneratorUIPanel
-            extends AbstractPersistentPayloadGeneratorUIPanel<
-                    DefaultPayload, JsonPayloadGenerator, JsonPayloadGeneratorUI> {
+            extends AbstractPersistentPayloadGeneratorUIPanel {
         private static final String JSON_FIELD_LABEL = getString("original.field.label");
         private static final String NUMBER_PAYLOADS_LABEL = getString("number.payloads.label");
 
@@ -180,11 +163,15 @@ public class JsonPayloadGeneratorAdapterUIHandler
         }
 
         @Override
-        public void setPayloadGeneratorUI(JsonPayloadGeneratorUI payloadGeneratorUI) {
-            oldGenerator = payloadGeneratorUI;
-            numberOfPayloadsSpinner.setValue(
-                    payloadGeneratorUI.getPayloadGenerator().getNumberOfPayloads());
-            jsonTextArea.setText(payloadGeneratorUI.getPayloadGenerator().getJson());
+        public void setPayloadGeneratorUI(PayloadGeneratorUI payloadGeneratorUI) {
+            if (!(payloadGeneratorUI instanceof JsonPayloadGeneratorUI ui)) {
+                throw new IllegalArgumentException(
+                        "Expected JsonPayloadGeneratorUI but got: "
+                                + payloadGeneratorUI.getClass());
+            }
+            oldGenerator = ui;
+            numberOfPayloadsSpinner.setValue(ui.getPayloadGenerator().getNumberOfPayloads());
+            jsonTextArea.setText(ui.getPayloadGenerator().getJson());
             jsonTextArea.discardAllEdits();
         }
 

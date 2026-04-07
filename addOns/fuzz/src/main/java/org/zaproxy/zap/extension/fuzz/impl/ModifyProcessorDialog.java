@@ -25,18 +25,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.fuzz.payloads.Payload;
-import org.zaproxy.zap.extension.fuzz.payloads.processor.PayloadProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.PayloadProcessorUI;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.PayloadProcessorUIPanel;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 import org.zaproxy.zap.view.AbstractFormDialog;
 
 @SuppressWarnings("serial")
-public class ModifyProcessorDialog<
-                T0 extends Payload,
-                T1 extends PayloadProcessor<T0>,
-                T2 extends PayloadProcessorUI<T0, T1>>
-        extends AbstractFormDialog {
+public class ModifyProcessorDialog extends AbstractFormDialog {
 
     private static final long serialVersionUID = 8111848758566016134L;
 
@@ -48,16 +43,16 @@ public class ModifyProcessorDialog<
             Constant.messages.getString("fuzz.fuzzer.dialog.modify.processor.button.confirm");
 
     private final String nameType;
-    private T2 payloadProcessorUI;
+    private PayloadProcessorUI payloadProcessorUI;
 
-    private PayloadProcessorUIPanel<T0, T1, T2> contentPanel;
+    private PayloadProcessorUIPanel contentPanel;
 
     private PayloadPreviewPanel previewPanel;
 
     public ModifyProcessorDialog(
             Dialog owner,
-            PayloadProcessorUIPanel<T0, T1, T2> panel,
-            T2 processorUI,
+            PayloadProcessorUIPanel panel,
+            PayloadProcessorUI processorUI,
             ResettableAutoCloseableIterator<Payload> payloads) {
         super(owner, DIALOG_TITLE, false);
 
@@ -143,7 +138,7 @@ public class ModifyProcessorDialog<
         payloadProcessorUI = contentPanel.getPayloadProcessorUI();
     }
 
-    public T2 getPayloadProcessorUI() {
+    public PayloadProcessorUI getPayloadProcessorUI() {
         return payloadProcessorUI;
     }
 }

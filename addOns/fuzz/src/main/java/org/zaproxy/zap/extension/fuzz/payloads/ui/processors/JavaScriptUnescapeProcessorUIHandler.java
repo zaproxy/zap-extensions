@@ -21,13 +21,10 @@ package org.zaproxy.zap.extension.fuzz.payloads.ui.processors;
 
 import javax.swing.JPanel;
 import org.parosproxy.paros.Constant;
-import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.JavaScriptUnescapeProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.JavaScriptUnescapeProcessorUIHandler.JavaScriptUnescapeProcessorUI;
 
-public class JavaScriptUnescapeProcessorUIHandler
-        implements PayloadProcessorUIHandler<
-                DefaultPayload, JavaScriptUnescapeProcessor, JavaScriptUnescapeProcessorUI> {
+public class JavaScriptUnescapeProcessorUIHandler implements PayloadProcessorUIHandler {
 
     private static final String PROCESSOR_NAME =
             Constant.messages.getString("fuzz.payload.processor.javascriptUnescape.name");
@@ -52,18 +49,12 @@ public class JavaScriptUnescapeProcessorUIHandler
         return new JavaScriptUnescapeProcessorUIPanel();
     }
 
-    public static class JavaScriptUnescapeProcessorUI
-            implements PayloadProcessorUI<DefaultPayload, JavaScriptUnescapeProcessor> {
+    public static class JavaScriptUnescapeProcessorUI implements PayloadProcessorUI {
 
         public static final JavaScriptUnescapeProcessorUI INSTANCE =
                 new JavaScriptUnescapeProcessorUI();
 
         public JavaScriptUnescapeProcessorUI() {}
-
-        @Override
-        public Class<JavaScriptUnescapeProcessor> getPayloadProcessorClass() {
-            return JavaScriptUnescapeProcessor.class;
-        }
 
         @Override
         public String getName() {
@@ -91,9 +82,7 @@ public class JavaScriptUnescapeProcessorUIHandler
         }
     }
 
-    public static class JavaScriptUnescapeProcessorUIPanel
-            extends AbstractProcessorUIPanel<
-                    DefaultPayload, JavaScriptUnescapeProcessor, JavaScriptUnescapeProcessorUI> {
+    public static class JavaScriptUnescapeProcessorUIPanel extends AbstractProcessorUIPanel {
 
         private JPanel fieldsPanel;
 
@@ -112,7 +101,7 @@ public class JavaScriptUnescapeProcessorUIHandler
         }
 
         @Override
-        public void setPayloadProcessorUI(JavaScriptUnescapeProcessorUI payloadProcessorUI) {}
+        public void setPayloadProcessorUI(PayloadProcessorUI payloadProcessorUI) {}
 
         @Override
         public JavaScriptUnescapeProcessor getPayloadProcessor() {
