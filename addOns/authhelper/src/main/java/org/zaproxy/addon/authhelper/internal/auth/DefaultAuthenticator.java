@@ -30,6 +30,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.authhelper.AuthUtils;
 import org.zaproxy.addon.authhelper.AuthenticationDiagnostics;
 import org.zaproxy.addon.authhelper.internal.AuthenticationStep;
+import org.zaproxy.addon.commonlib.internal.TotpSupport;
 import org.zaproxy.zap.authentication.UsernamePasswordAuthenticationCredentials;
 import org.zaproxy.zap.model.Context;
 
@@ -62,6 +63,19 @@ public class DefaultAuthenticator implements Authenticator {
         boolean userAdded = false;
         boolean pwdAdded = false;
 
+        // Count how many TOTP_FIELD steps exist to detect split single-character OTP boxes.
+        long totpFieldStepCount =
+                steps.stream()
+                        .filter(AuthenticationStep::isEnabled)
+                        .filter(s -> s.getType() == AuthenticationStep.Type.TOTP_FIELD)
+                        .count();
+        boolean splitTotpFields = totpFieldStepCount > 1;
+        int totpCharIndex = 0;
+        // Pre-generate TOTP code once so all 6 character fields use the same code,
+        // avoiding clock-window drift if a 30s boundary crosses during step execution.
+        String precomputedTotpCode =
+                splitTotpFields ? TotpSupport.getCode(credentials).toString() : null;
+
         Iterator<AuthenticationStep> it = steps.stream().sorted().iterator();
         while (it.hasNext()) {
             AuthenticationStep step = it.next();
@@ -73,7 +87,12 @@ public class DefaultAuthenticator implements Authenticator {
                 break;
             }
 
-            WebElement element = step.execute(wd, credentials);
+            WebElement element;
+            if (step.getType() == AuthenticationStep.Type.TOTP_FIELD && splitTotpFields) {
+                element = step.execute(wd, credentials, totpCharIndex++, precomputedTotpCode);
+            } else {
+                element = step.execute(wd, credentials);
+            }
             diags.recordStep(wd, step.getDescription(), element);
 
             switch (step.getType()) {
@@ -144,7 +163,11 @@ public class DefaultAuthenticator implements Authenticator {
                     continue;
                 }
 
-                step.execute(wd, credentials);
+                if (step.getType() == AuthenticationStep.Type.TOTP_FIELD && splitTotpFields) {
+                    step.execute(wd, credentials, totpCharIndex++, precomputedTotpCode);
+                } else {
+                    step.execute(wd, credentials);
+                }
                 diags.recordStep(wd, step.getDescription());
 
                 AuthUtils.sleepMax(

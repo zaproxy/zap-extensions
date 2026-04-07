@@ -37,6 +37,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -182,6 +183,31 @@ public class AuthenticationStep
     }
 
     public WebElement execute(WebDriver wd, UsernamePasswordAuthenticationCredentials credentials) {
+        return execute(wd, credentials, -1);
+    }
+
+    /**
+     * Executes this step.
+     *
+     * @param wd the WebDriver instance.
+     * @param credentials the user credentials.
+     * @param totpCharIndex when &gt;= 0, only the character at this index of the TOTP code is
+     *     sent to the field. Used for pages with individual single-character OTP input boxes.
+     *     Pass -1 to send the full TOTP code (default behaviour for a single combined field).
+     * @return the element interacted with, or {@code null} for WAIT steps.
+     */
+    public WebElement execute(
+            WebDriver wd,
+            UsernamePasswordAuthenticationCredentials credentials,
+            int totpCharIndex) {
+        return execute(wd, credentials, totpCharIndex, null);
+    }
+
+    public WebElement execute(
+            WebDriver wd,
+            UsernamePasswordAuthenticationCredentials credentials,
+            int totpCharIndex,
+            String precomputedTotpCode) {
         if (getType() == Type.WAIT) {
             try {
                 Thread.sleep(timeout);
@@ -204,7 +230,7 @@ public class AuthenticationStep
                 break;
 
             case CUSTOM_FIELD:
-                AuthUtils.fillField(element, value);
+                AuthUtils.fillFieldWithEvents(element, value, wd);
                 break;
 
             case ESCAPE:
@@ -212,7 +238,7 @@ public class AuthenticationStep
                 break;
 
             case PASSWORD:
-                AuthUtils.fillField(element, credentials.getPassword());
+                AuthUtils.fillFieldWithEvents(element, credentials.getPassword(), wd);
                 break;
 
             case RETURN:
@@ -220,11 +246,19 @@ public class AuthenticationStep
                 break;
 
             case TOTP_FIELD:
-                element.sendKeys(getTotpCode(credentials));
+                String totpCode =
+                        (precomputedTotpCode != null)
+                                ? precomputedTotpCode
+                                : getTotpCode(credentials).toString();
+                String totpValue =
+                        (totpCharIndex >= 0 && totpCharIndex < totpCode.length())
+                                ? String.valueOf(totpCode.charAt(totpCharIndex))
+                                : totpCode;
+                AuthUtils.fillFieldWithEvents(element, totpValue, wd);
                 break;
 
             case USERNAME:
-                AuthUtils.fillField(element, credentials.getUsername());
+                AuthUtils.fillFieldWithEvents(element, credentials.getUsername(), wd);
                 break;
 
             default:
