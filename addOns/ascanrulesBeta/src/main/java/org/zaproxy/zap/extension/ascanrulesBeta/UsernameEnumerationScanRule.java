@@ -19,6 +19,8 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
+import difflib.ChangeDelta;
+import difflib.Chunk;
 import difflib.Delta;
 import difflib.DiffUtils;
 import difflib.Patch;
@@ -656,34 +658,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin
                                                 Arrays.asList(
                                                         longestCommonSubstringB.split("\\n"))));
 
-                        int numberofDifferences = diffpatch.getDeltas().size();
-
-                        StringBuilder tempDiff = new StringBuilder(250);
-                        for (Delta<String> delta : diffpatch.getDeltas()) {
-                            String changeType = null;
-                            if (delta.getType() == Delta.TYPE.CHANGE) changeType = "Changed Text";
-                            else if (delta.getType() == Delta.TYPE.DELETE)
-                                changeType = "Deleted Text";
-                            else if (delta.getType() == Delta.TYPE.INSERT)
-                                changeType = "Inserted text";
-                            else changeType = "Unknown change type [" + delta.getType() + "]";
-
-                            tempDiff.append("\n(" + changeType + ")\n"); // blank line before
-                            tempDiff.append(
-                                    "Output for Valid Username  : "
-                                            + delta.getOriginal()
-                                            + "\n"); // no blank lines
-                            tempDiff.append(
-                                    "\nOutput for Invalid Username: "
-                                            + delta.getRevised()
-                                            + "\n"); // blank line before
-                        }
-                        String diffAB = tempDiff.toString();
-                        buildAlert(
-                                        currentHtmlParameter,
-                                        invalidUsername,
-                                        diffAB,
-                                        numberofDifferences)
+                        buildAlert(currentHtmlParameter, invalidUsername, diffpatch.getDeltas())
                                 .setMessage(getBaseMsg())
                                 .raise();
 
@@ -748,7 +723,19 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin
     }
 
     private AlertBuilder buildAlert(
-            HtmlParameter param, String invalidValue, String diff, int numDifferences) {
+            HtmlParameter param, String invalidValue, List<Delta<String>> deltas) {
+        StringBuilder diffText = new StringBuilder(250);
+        for (Delta<String> delta : deltas) {
+            String changeType;
+            if (delta.getType() == Delta.TYPE.CHANGE) changeType = "Changed Text";
+            else if (delta.getType() == Delta.TYPE.DELETE) changeType = "Deleted Text";
+            else if (delta.getType() == Delta.TYPE.INSERT) changeType = "Inserted text";
+            else changeType = "Unknown change type [" + delta.getType() + "]";
+
+            diffText.append("\n(" + changeType + ")\n");
+            diffText.append("Output for Valid Username  : " + delta.getOriginal() + "\n");
+            diffText.append("\nOutput for Invalid Username: " + delta.getRevised() + "\n");
+        }
         return newAlert()
                 .setConfidence(Alert.CONFIDENCE_LOW)
                 .setParam(param.getName())
@@ -764,8 +751,8 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin
                                 param.getName(),
                                 param.getValue(),
                                 invalidValue,
-                                diff,
-                                numDifferences));
+                                diffText.toString(),
+                                deltas.size()));
     }
 
     @Override
@@ -774,10 +761,12 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin
                 buildAlert(
                                 new HtmlParameter(HtmlParameter.Type.form, "username", "admin"),
                                 "invaliduser123",
-                                "\n(Changed Text)\n"
-                                        + "Output for Valid Username  : [Welcome, admin]\n"
-                                        + "\nOutput for Invalid Username: [Invalid username or password]\n",
-                                1)
+                                List.of(
+                                        new ChangeDelta<>(
+                                                new Chunk<>(0, List.of("Welcome, admin")),
+                                                new Chunk<>(
+                                                        0,
+                                                        List.of("Invalid username or password")))))
                         .build());
     }
 }
