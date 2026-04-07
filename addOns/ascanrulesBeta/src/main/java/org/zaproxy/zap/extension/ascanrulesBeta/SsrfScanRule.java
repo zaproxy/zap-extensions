@@ -48,6 +48,7 @@ public class SsrfScanRule extends AbstractAppParamPlugin implements CommonActive
         Map<String, String> alertTags =
                 new HashMap<>(
                         CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2025_A05_INJECTION,
                                 CommonAlertTag.OWASP_2021_A10_SSRF,
                                 CommonAlertTag.WSTG_V42_INPV_19_SSRF,
                                 CommonAlertTag.HIPAA,

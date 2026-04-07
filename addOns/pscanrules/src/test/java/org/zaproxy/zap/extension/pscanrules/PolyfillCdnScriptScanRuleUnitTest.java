@@ -56,7 +56,10 @@ class PolyfillCdnScriptScanRuleUnitTest extends PassiveScannerTest<PolyfillCdnSc
         assertThat(exampleAlerts.get(0).getCweId(), is(equalTo(829)));
         assertThat(exampleAlerts.get(0).getWascId(), is(equalTo(15)));
         assertThat(exampleAlerts.get(0).getConfidence(), is(equalTo(3)));
-        assertThat(tags.size(), is(equalTo(5)));
+        assertThat(tags.size(), is(equalTo(6)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2025_A03_SUPPLY_CHAIN.getTag()),
+                is(equalTo(true)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getTag()),
                 is(equalTo(true)));
@@ -66,6 +69,9 @@ class PolyfillCdnScriptScanRuleUnitTest extends PassiveScannerTest<PolyfillCdnSc
         assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.DEV_STD.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.QA_STD.getTag()), is(equalTo(true)));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2025_A03_SUPPLY_CHAIN.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2025_A03_SUPPLY_CHAIN.getValue())));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getValue())));

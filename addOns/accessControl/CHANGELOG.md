@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Maintenance changes.
+- The alerts now have new tags for the OWASP Top 10 2025.
+- Depends on an updated version of the Common Library add-on.
 
 ## [11] - 2025-12-15
 ### Changed

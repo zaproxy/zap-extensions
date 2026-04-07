@@ -101,6 +101,7 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner
         Map<String, String> alertTags =
                 new HashMap<>(
                         CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2025_A01_BROKEN_AC,
                                 CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
                                 CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED,
                                 CommonAlertTag.SYSTEMIC));

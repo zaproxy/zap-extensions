@@ -150,7 +150,7 @@ class ExternalRedirectScanRuleUnitTest extends ActiveScannerTest<ExternalRedirec
         // Then
         assertThat(cwe, is(equalTo(601)));
         assertThat(wasc, is(equalTo(38)));
-        assertThat(tags.size(), is(equalTo(13)));
+        assertThat(tags.size(), is(equalTo(15)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(true)));

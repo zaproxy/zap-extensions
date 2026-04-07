@@ -54,6 +54,7 @@ public class HttPoxyScanRule extends AbstractAppPlugin implements CommonActiveSc
         Map<String, String> alertTags =
                 new HashMap<>(
                         CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2025_A02_SEC_MISCONFIG,
                                 CommonAlertTag.OWASP_2021_A06_VULN_COMP,
                                 CommonAlertTag.OWASP_2017_A09_VULN_COMP));
         alertTags.put(PolicyTag.QA_FULL.getTag(), "");

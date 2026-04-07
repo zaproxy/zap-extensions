@@ -46,7 +46,7 @@ class HttpsAsHttpScanRuleUnitTest extends ActiveScannerTest<HttpsAsHttpScanRule>
         // Then
         assertThat(cwe, is(equalTo(311)));
         assertThat(wasc, is(equalTo(4)));
-        assertThat(tags.size(), is(equalTo(6)));
+        assertThat(tags.size(), is(equalTo(7)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(true)));

@@ -131,8 +131,12 @@ class GraphQlCycleDetectorUnitTest extends TestUtils {
                                         .setSource(Alert.Source.TOOL)
                                         .setTags(
                                                 Map.of(
-                                                        "OWASP_2023_API4",
+                                                        "API_2023_API4_RESOURCE_CONSUMPTION",
                                                         "https://owasp.org/API-Security/editions/2023/en/0xa4-unrestricted-resource-consumption/",
+                                                        "OWASP_2025_A06",
+                                                        "https://owasp.org/Top10/2025/A06_2025-Insecure_Design/",
+                                                        "OWASP_2025_A10",
+                                                        "https://owasp.org/Top10/2025/A10_2025-Mishandling_of_Exceptional_Conditions/",
                                                         "OWASP_2021_A04",
                                                         "https://owasp.org/Top10/A04_2021-Insecure_Design/",
                                                         "WSTG-v42-APIT-01",

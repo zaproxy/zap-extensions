@@ -57,7 +57,13 @@ class ParameterTamperScanRuleUnitTest extends ActiveScannerTest<ParameterTamperS
         // Then
         assertThat(cwe, is(equalTo(472)));
         assertThat(wasc, is(equalTo(20)));
-        assertThat(tags.size(), is(equalTo(6)));
+        assertThat(tags.size(), is(equalTo(8)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.API_2023_API1_BROKEN_OBJECT_LEVEL_AUTHZ.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2025_A06_INSECURE_DESIGN.getTag()),
+                is(equalTo(true)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getTag()),
                 is(equalTo(true)));
@@ -68,6 +74,12 @@ class ParameterTamperScanRuleUnitTest extends ActiveScannerTest<ParameterTamperS
         assertThat(tags.containsKey(PolicyTag.DEV_FULL.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.QA_FULL.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
+        assertThat(
+                tags.get(CommonAlertTag.API_2023_API1_BROKEN_OBJECT_LEVEL_AUTHZ.getTag()),
+                is(equalTo(CommonAlertTag.API_2023_API1_BROKEN_OBJECT_LEVEL_AUTHZ.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2025_A06_INSECURE_DESIGN.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2025_A06_INSECURE_DESIGN.getValue())));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getValue())));
@@ -265,7 +277,7 @@ class ParameterTamperScanRuleUnitTest extends ActiveScannerTest<ParameterTamperS
 
         Alert alert = alerts.get(0);
         Map<String, String> tags1 = alert.getTags();
-        assertThat(tags1.size(), is(equalTo(7)));
+        assertThat(tags1.size(), is(equalTo(9)));
         assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
         assertThat(tags1, hasKey("CWE-472"));
         assertThat(

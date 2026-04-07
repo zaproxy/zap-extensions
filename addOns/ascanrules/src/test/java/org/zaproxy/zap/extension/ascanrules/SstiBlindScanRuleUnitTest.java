@@ -143,7 +143,13 @@ class SstiBlindScanRuleUnitTest extends ActiveScannerTest<SstiBlindScanRule> {
         // Then
         assertThat(cwe, is(equalTo(1336)));
         assertThat(wasc, is(equalTo(20)));
-        assertThat(tags.size(), is(equalTo(10)));
+        assertThat(tags.size(), is(equalTo(12)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.API_2023_API10_UNSAFE_CONSUMPTION.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2025_A05_INJECTION.getTag()),
+                is(equalTo(true)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(true)));
@@ -160,6 +166,12 @@ class SstiBlindScanRuleUnitTest extends ActiveScannerTest<SstiBlindScanRule> {
         assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(CommonAlertTag.TEST_TIMING.getTag()), is(equalTo(true)));
         assertThat(
+                tags.get(CommonAlertTag.API_2023_API10_UNSAFE_CONSUMPTION.getTag()),
+                is(equalTo(CommonAlertTag.API_2023_API10_UNSAFE_CONSUMPTION.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2025_A05_INJECTION.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2025_A05_INJECTION.getValue())));
+        assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A03_INJECTION.getValue())));
         assertThat(
@@ -168,6 +180,12 @@ class SstiBlindScanRuleUnitTest extends ActiveScannerTest<SstiBlindScanRule> {
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_INPV_18_SSTI.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_INPV_18_SSTI.getValue())));
+        assertThat(
+                tags.get(ExtensionOast.OAST_ALERT_TAG_KEY),
+                is(equalTo(ExtensionOast.OAST_ALERT_TAG_VALUE)));
+        assertThat(
+                tags.get(CommonAlertTag.TEST_TIMING.getTag()),
+                is(equalTo(CommonAlertTag.TEST_TIMING.getValue())));
     }
 
     @Test

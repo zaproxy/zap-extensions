@@ -49,6 +49,9 @@ public class RetrievedFromCacheScanRule extends PluginPassiveScanner
         Map<String, String> alertTags =
                 new HashMap<>(
                         CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2025_A07_AUTH_FAIL,
+                                CommonAlertTag.OWASP_2021_A07_AUTH_FAIL,
+                                CommonAlertTag.OWASP_2017_A02_BROKEN_AUTH,
                                 CommonAlertTag.WSTG_V42_ATHN_06_CACHE_WEAKNESS,
                                 CommonAlertTag.SYSTEMIC));
         alertTags.put(PolicyTag.PENTEST.getTag(), "");

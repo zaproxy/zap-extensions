@@ -176,7 +176,7 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
         assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
         assertEquals("* Bootstrap v3.3.7", alertsRaised.get(0).getEvidence());
         assertRefs(alertsRaised.get(0));
-        assertEquals(7, alertsRaised.get(0).getTags().size());
+        assertEquals(8, alertsRaised.get(0).getTags().size());
     }
 
     @Test
@@ -247,7 +247,10 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
         int cweId = rule.getExampleAlerts().get(0).getCweId();
         // Then
         assertThat(cweId, is(equalTo(1395)));
-        assertThat(tags.size(), is(equalTo(5)));
+        assertThat(tags.size(), is(equalTo(6)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2025_A03_SUPPLY_CHAIN.getTag()),
+                is(equalTo(true)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getTag()),
                 is(equalTo(true)));
@@ -257,6 +260,9 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
         assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.DEV_STD.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.QA_STD.getTag()), is(equalTo(true)));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2025_A03_SUPPLY_CHAIN.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2025_A03_SUPPLY_CHAIN.getValue())));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getValue())));

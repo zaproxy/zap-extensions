@@ -345,7 +345,13 @@ class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
         // Then
         assertThat(cwe, is(equalTo(611)));
         assertThat(wasc, is(equalTo(43)));
-        assertThat(tags.size(), is(equalTo(15)));
+        assertThat(tags.size(), is(equalTo(17)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.API_2023_API10_UNSAFE_CONSUMPTION.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2025_A05_INJECTION.getTag()),
+                is(equalTo(true)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(true)));
@@ -365,6 +371,12 @@ class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
         assertThat(tags.containsKey(PolicyTag.SEQUENCE.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
         assertThat(
+                tags.get(CommonAlertTag.API_2023_API10_UNSAFE_CONSUMPTION.getTag()),
+                is(equalTo(CommonAlertTag.API_2023_API10_UNSAFE_CONSUMPTION.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2025_A05_INJECTION.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2025_A05_INJECTION.getValue())));
+        assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A03_INJECTION.getValue())));
         assertThat(
@@ -373,6 +385,15 @@ class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_INPV_07_XMLI.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_INPV_07_XMLI.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.HIPAA.getTag()),
+                is(equalTo(CommonAlertTag.HIPAA.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.PCI_DSS.getTag()),
+                is(equalTo(CommonAlertTag.PCI_DSS.getValue())));
+        assertThat(
+                tags.get(ExtensionOast.OAST_ALERT_TAG_KEY),
+                is(equalTo(ExtensionOast.OAST_ALERT_TAG_VALUE)));
     }
 
     private static class ValidatedResponse extends NanoServerHandler {

@@ -64,6 +64,7 @@ public class SpringActuatorScanRule extends AbstractHostPlugin implements Common
         Map<String, String> alertTags =
                 new HashMap<>(
                         CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2025_A02_SEC_MISCONFIG,
                                 CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
                                 CommonAlertTag.OWASP_2017_A05_BROKEN_AC,
                                 CommonAlertTag.WSTG_V42_CONF_05_ENUMERATE_INFRASTRUCTURE));

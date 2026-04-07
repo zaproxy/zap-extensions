@@ -29,6 +29,8 @@ confidence: medium
 cweId: 20  # CWE-20: Improper Input Validation
 wascId: 20  # WASC-20: Improper Input Handling
 alertTags:
+  ${CommonAlertTag.API_2023_API4_UNRESTRICTED_RESOURCE_CONSUMPTION.getTag()}: ${CommonAlertTag.API_2023_API4_UNRESTRICTED_RESOURCE_CONSUMPTION.getValue()}
+  ${CommonAlertTag.OWASP_2025_A05_INJECTION.getTag()}: ${CommonAlertTag.OWASP_2025_A05_INJECTION.getValue()}
   ${CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()}: ${CommonAlertTag.OWASP_2021_A03_INJECTION.getValue()}
   ${CommonAlertTag.OWASP_2017_A01_INJECTION.getTag()}: ${CommonAlertTag.OWASP_2017_A01_INJECTION.getValue()}
   ${PolicyTag.PENTEST.getTag()}: ""
