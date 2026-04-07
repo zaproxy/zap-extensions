@@ -727,14 +727,31 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin
         StringBuilder diffText = new StringBuilder(250);
         for (Delta<String> delta : deltas) {
             String changeType;
-            if (delta.getType() == Delta.TYPE.CHANGE) changeType = "Changed Text";
-            else if (delta.getType() == Delta.TYPE.DELETE) changeType = "Deleted Text";
-            else if (delta.getType() == Delta.TYPE.INSERT) changeType = "Inserted text";
-            else changeType = "Unknown change type [" + delta.getType() + "]";
+            if (delta.getType() == Delta.TYPE.CHANGE) {
+                changeType =
+                        Constant.messages.getString(
+                                "ascanbeta.usernameenumeration.diff.changetype.change");
+            } else if (delta.getType() == Delta.TYPE.DELETE) {
+                changeType =
+                        Constant.messages.getString(
+                                "ascanbeta.usernameenumeration.diff.changetype.delete");
+            } else if (delta.getType() == Delta.TYPE.INSERT) {
+                changeType =
+                        Constant.messages.getString(
+                                "ascanbeta.usernameenumeration.diff.changetype.insert");
+            } else {
+                changeType =
+                        Constant.messages.getString(
+                                "ascanbeta.usernameenumeration.diff.changetype.unknown",
+                                delta.getType());
+            }
 
-            diffText.append("\n(" + changeType + ")\n");
-            diffText.append("Output for Valid Username  : " + delta.getOriginal() + "\n");
-            diffText.append("\nOutput for Invalid Username: " + delta.getRevised() + "\n");
+            diffText.append(
+                    Constant.messages.getString(
+                            "ascanbeta.usernameenumeration.diff.output",
+                            changeType,
+                            delta.getOriginal(),
+                            delta.getRevised()));
         }
         return newAlert()
                 .setConfidence(Alert.CONFIDENCE_LOW)
