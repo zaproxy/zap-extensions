@@ -21,3 +21,12 @@ spotless {
 dependencies {
     implementation("com.diffplug.spotless:spotless-plugin-gradle:6.25.0")
 }
+
+gradlePlugin {
+    plugins {
+        register("jdo-enhance") {
+            id = "org.zaproxy.gradle.jdo-enhance"
+            implementationClass = "org.zaproxy.gradle.jdo.JdoEnhancePlugin"
+        }
+    }
+}
