@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.security.KeyStoreException;
 import java.security.ProviderException;
 import java.security.cert.Certificate;
@@ -823,19 +824,19 @@ class ClientCertificatesOptionsPanel extends AbstractParamPanel {
             Object[] hyperlinks = new Object[2];
             try {
                 JXHyperlink hyperlinkLabel = new JXHyperlink();
-                hyperlinkLabel.setURI(URI.create(sunReference));
+                hyperlinkLabel.setURI(new URI(sunReference));
                 hyperlinkLabel.setText(
                         Constant.messages.getString(
                                 "network.ui.options.clientcertificates.error.pkcs11.notavailable.sun.hyperlink.text"));
                 hyperlinks[0] = hyperlinkLabel;
 
                 hyperlinkLabel = new JXHyperlink();
-                hyperlinkLabel.setURI(URI.create(ibmReference));
+                hyperlinkLabel.setURI(new URI(ibmReference));
                 hyperlinkLabel.setText(
                         Constant.messages.getString(
                                 "network.ui.options.clientcertificates.error.pkcs11.notavailable.ibm.hyperlink.text"));
                 hyperlinks[1] = hyperlinkLabel;
-            } catch (UnsupportedOperationException e) {
+            } catch (UnsupportedOperationException | URISyntaxException e) {
                 hyperlinks[0] = sunReference;
                 hyperlinks[1] = ibmReference;
             }

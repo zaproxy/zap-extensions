@@ -20,6 +20,7 @@
 package org.zaproxy.addon.reports.sarif;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 
 public class SarifToolData {
 
@@ -33,7 +34,7 @@ public class SarifToolData {
                     .setTaxonomyComprehensive(true)
                     .setShortDescription("Zed Attack Proxy")
                     .setOrganization("ZAP")
-                    .setTaxonomyInformationUri(URI.create("https://www.zaproxy.org/"))
+                    .setTaxonomyInformationUri(toUri("https://www.zaproxy.org/"))
                     .build();
 
     static final SarifToolDataProvider CWE_WITH_4_8_TAXONOMY =
@@ -43,9 +44,9 @@ public class SarifToolData {
                     .setTaxonomyComprehensive(true)
                     .setTaxonomyReleaseDateUtc("2022-06-28")
                     .setTaxonomyDownloadUri(
-                            URI.create("https://cwe.mitre.org/data/xml/cwec_v4.8.xml.zip"))
+                            toUri("https://cwe.mitre.org/data/xml/cwec_v4.8.xml.zip"))
                     .setTaxonomyInformationUri(
-                            URI.create("https://cwe.mitre.org/data/published/cwe_v4.8.pdf"))
+                            toUri("https://cwe.mitre.org/data/published/cwe_v4.8.pdf"))
                     .setShortDescription("The MITRE Common Weakness Enumeration")
                     .setOrganization("MITRE")
                     .build();
@@ -64,6 +65,14 @@ public class SarifToolData {
 
     static SarifToolDataProviderBuilder builder() {
         return new SarifToolDataProviderBuilder();
+    }
+
+    private static URI toUri(String value) {
+        try {
+            return new URI(value);
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     static class SarifToolDataProviderBuilder {

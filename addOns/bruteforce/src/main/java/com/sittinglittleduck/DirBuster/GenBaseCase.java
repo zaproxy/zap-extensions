@@ -24,6 +24,8 @@ package com.sittinglittleduck.DirBuster;
 import com.sittinglittleduck.DirBuster.SimpleHttpClient.HttpMethod;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Vector;
 import java.util.regex.Matcher;
@@ -84,16 +86,16 @@ public class GenBaseCase {
         String baseResponce = "";
         URL failurl = null;
         if (isDir) {
-            failurl = new URL(url + failString + "/");
+            failurl = toUrl(url + failString + "/");
         } else {
             if (manager.isBlankExt()) {
                 fileExtention = "";
-                failurl = new URL(url + failString + fileExtention);
+                failurl = toUrl(url + failString + fileExtention);
             } else {
                 if (!fileExtention.startsWith(".")) {
                     fileExtention = "." + fileExtention;
                 }
-                failurl = new URL(url + failString + fileExtention);
+                failurl = toUrl(url + failString + fileExtention);
             }
         }
 
@@ -175,7 +177,7 @@ public class GenBaseCase {
 
         baseCase =
                 new BaseCase(
-                        new URL(url),
+                        toUrl(url),
                         failcode,
                         isDir,
                         failurl,
@@ -207,7 +209,7 @@ public class GenBaseCase {
         boolean useRegexInstead = false;
         String regex = null;
 
-        URL failurl = new URL(fuzzStart + failString + FuzzEnd);
+        URL failurl = toUrl(fuzzStart + failString + FuzzEnd);
 
         HttpResponse response = manager.getHttpClient().send(HttpMethod.GET, failurl.toString());
 
@@ -275,6 +277,16 @@ public class GenBaseCase {
              * TODO: think of a way to deal with this!
              */
             return null;
+        }
+    }
+
+    private static URL toUrl(String value) throws MalformedURLException {
+        try {
+            return new URI(value).toURL();
+        } catch (URISyntaxException e) {
+            MalformedURLException ex = new MalformedURLException(e.getMessage());
+            ex.initCause(e);
+            throw ex;
         }
     }
 }

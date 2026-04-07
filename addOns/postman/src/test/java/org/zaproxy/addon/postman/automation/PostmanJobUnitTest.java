@@ -173,6 +173,31 @@ class PostmanJobUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldFailIfInvalidUrlWhenVariablesResolveToNull() {
+        // Given
+        Constant.messages = new I18N(Locale.ENGLISH);
+        AutomationProgress progress = new AutomationProgress();
+        AutomationEnvironment env = mock(AutomationEnvironment.class);
+        String collectionUrl = "Invalid URL.";
+        String yamlStr = "parameters:\n" + "  collectionUrl: '" + collectionUrl + "'";
+        Yaml yaml = new Yaml();
+        Object data = yaml.load(yamlStr);
+
+        PostmanJob job = new PostmanJob();
+        job.setJobData(((LinkedHashMap<?, ?>) data));
+        given(env.replaceVars(collectionUrl)).willReturn(null);
+
+        // When
+        job.verifyParameters(progress);
+        job.runJob(env, progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.getErrors().get(0), is(equalTo("!postman.automation.error!")));
+    }
+
+    @Test
     void shouldFailIfInvalidFile() {
         // Given
         Constant.messages = new I18N(Locale.ENGLISH);

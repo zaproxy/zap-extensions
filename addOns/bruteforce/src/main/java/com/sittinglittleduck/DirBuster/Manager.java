@@ -24,6 +24,8 @@ import com.sittinglittleduck.DirBuster.workGenerators.BruteForceWorkGenerator;
 import com.sittinglittleduck.DirBuster.workGenerators.WorkerGenerator;
 import com.sittinglittleduck.DirBuster.workGenerators.WorkerGeneratorURLFuzz;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Date;
 import java.util.Locale;
@@ -214,10 +216,10 @@ public class Manager implements ProcessChecker.ProcessUpdate {
         // add the start point to the running list
         // TODO change this so it sctually checks for it
         try {
-            url = new URL(firstPartOfURL + startPoint);
+            url = new URI(firstPartOfURL + startPoint).toURL();
             // gui.addResult(new ResultsTableObject("Dir", url.getPath(), "---", "Scanning",
             // url.toString(), "Start point of testing", null, null, this.recursive, null));
-        } catch (MalformedURLException ex) {
+        } catch (MalformedURLException | URISyntaxException ex) {
             LOGGER.error("Bad URL", ex);
         }
 
@@ -266,10 +268,10 @@ public class Manager implements ProcessChecker.ProcessUpdate {
 
         // add the start point to the running list
         try {
-            url = new URL(firstPartOfURL + startPoint);
+            url = new URI(firstPartOfURL + startPoint).toURL();
             // gui.addResult(new ResultsTableObject("Dir", url.getPath(), "---", "Scanning",
             // url.toString(), "Start point of testing", null, null, this.recursive, null));
-        } catch (MalformedURLException ex) {
+        } catch (MalformedURLException | URISyntaxException ex) {
             LOGGER.error("Bad URL", ex);
         }
 
@@ -872,7 +874,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
             for (int a = 0; a < producedBasesCases.size(); a++) {
                 BaseCase tempBaseCase = producedBasesCases.elementAt(a);
 
-                if (tempBaseCase.getBaseCaseURL().equals(new URL(base))
+                if (tempBaseCase.getBaseCaseURL().equals(new URI(base).toURL())
                         && tempBaseCase.isDir() == isDir) {
                     if (!isDir) {
                         if (tempBaseCase.getFileExt().equals(fileExt)) {
@@ -883,7 +885,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
                     }
                 }
             }
-        } catch (MalformedURLException ex) {
+        } catch (MalformedURLException | URISyntaxException ex) {
             // do nothing I dont care
         }
 

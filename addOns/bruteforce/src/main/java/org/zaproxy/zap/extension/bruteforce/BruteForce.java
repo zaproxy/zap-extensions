@@ -26,6 +26,7 @@ import com.sittinglittleduck.DirBuster.SimpleHttpClient;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -132,7 +133,7 @@ public class BruteForce extends Thread implements BruteForceListenner {
             Stats.incCounter("stats.bruteforce.started");
             tableModel.clear();
 
-            URL targetURL = new URL(target.getURI().toString());
+            URL targetURL = new java.net.URI(target.getURI().toString()).toURL();
             manager.setTargetURL(targetURL);
 
             manager.setAuto(true);
@@ -202,7 +203,7 @@ public class BruteForce extends Thread implements BruteForceListenner {
                 } catch (InterruptedException e) {
                 }
             }
-        } catch (MalformedURLException ex) {
+        } catch (MalformedURLException | URISyntaxException ex) {
             LOGGER.error("Failed brute forcing site {}", target.getURI(), ex);
         }
 

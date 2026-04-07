@@ -33,6 +33,7 @@
 package com.fasteasytrade.JRandTest.IO;
 
 import java.io.DataInputStream;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Collection;
@@ -112,7 +113,7 @@ public class HttpGetUrlRandomStream implements RandomStream {
 			return false;
 
 		try {
-			url = new URL(filename);
+			url = new URI(filename).toURL();
 			con = url.openConnection();
 			con.connect();
 			lengthOfData = con.getContentLength();

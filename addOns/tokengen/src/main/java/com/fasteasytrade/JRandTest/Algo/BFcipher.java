@@ -274,7 +274,7 @@ public class BFcipher extends Cipher implements AutoCloseable {
 		long s2 = (FS[0x100 + ((R >>> 16) & 0xff)]);
 		long s3 = (FS[0x200 + ((R >>> 8) & 0xff)]);
 		long s4 = (FS[0x300 + ((R) & 0xff)]);
-		long s = (((s1 + s2) ^ s3) + s4) & (0xffffffff);
+		int s = (int) (((s1 + s2) ^ s3) + s4);
 		L ^= FP[np];
 		L ^= s;
 		return L;

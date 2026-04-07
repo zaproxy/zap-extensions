@@ -22,6 +22,8 @@ package org.zaproxy.zap.extension.zest.dialogs;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -203,9 +205,9 @@ public class ZestRequestDialog extends StandardFieldsDialog implements ZestDialo
             setUrlToken(request, url);
         } else {
             try {
-                request.setUrl(new URL(url));
+                request.setUrl(new URI(url).toURL());
                 request.setUrlToken(null);
-            } catch (MalformedURLException e) {
+            } catch (MalformedURLException | URISyntaxException e) {
                 // Assume this is because it includes a token
                 setUrlToken(request, url);
             }
@@ -262,8 +264,8 @@ public class ZestRequestDialog extends StandardFieldsDialog implements ZestDialo
                             if (url == null) {
                                 // Happens on a new request dialog
                                 try {
-                                    url = new URL(getStringValue(FIELD_URL));
-                                } catch (MalformedURLException e2) {
+                                    url = new URI(getStringValue(FIELD_URL)).toURL();
+                                } catch (MalformedURLException | URISyntaxException e2) {
                                     // Ignore - it could not be set up or parameterized
                                 }
                             }
