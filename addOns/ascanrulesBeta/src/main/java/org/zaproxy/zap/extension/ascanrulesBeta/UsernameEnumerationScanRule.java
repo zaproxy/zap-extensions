@@ -751,24 +751,21 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin
             HtmlParameter param, String invalidValue, String diff, int numDifferences) {
         return newAlert()
                 .setConfidence(Alert.CONFIDENCE_LOW)
-                .setName(Constant.messages.getString("ascanbeta.usernameenumeration.name"))
-                .setDescription(Constant.messages.getString("ascanbeta.usernameenumeration.desc"))
                 .setParam(param.getName())
                 .setAttack(
                         Constant.messages.getString(
                                 "ascanbeta.usernameenumeration.alert.attack",
-                                param.getType().name(),
+                                param.getType(),
                                 param.getName()))
                 .setOtherInfo(
                         Constant.messages.getString(
                                 "ascanbeta.usernameenumeration.alert.extrainfo",
-                                param.getType().name(),
+                                param.getType(),
                                 param.getName(),
                                 param.getValue(),
                                 invalidValue,
                                 diff,
-                                numDifferences))
-                .setSolution(Constant.messages.getString("ascanbeta.usernameenumeration.soln"));
+                                numDifferences));
     }
 
     @Override
@@ -777,7 +774,9 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin
                 buildAlert(
                                 new HtmlParameter(HtmlParameter.Type.form, "username", "admin"),
                                 "invaliduser123",
-                                "",
+                                "\n(Changed Text)\n"
+                                        + "Output for Valid Username  : [Welcome, admin]\n"
+                                        + "\nOutput for Invalid Username: [Invalid username or password]\n",
                                 1)
                         .build());
     }
