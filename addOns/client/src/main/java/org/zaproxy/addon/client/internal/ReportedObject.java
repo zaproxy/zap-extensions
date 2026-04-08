@@ -53,6 +53,27 @@ public abstract class ReportedObject {
         this.text = getParam(json, "text");
     }
 
+    protected ReportedObject(
+            Date timestamp,
+            String type,
+            String tagName,
+            String id,
+            String nodeName,
+            String url,
+            String xpath,
+            String href,
+            String text) {
+        this.timestamp = timestamp;
+        this.type = type;
+        this.tagName = tagName;
+        this.id = id;
+        this.nodeName = nodeName;
+        this.url = url;
+        this.xpath = xpath;
+        this.href = href;
+        this.text = text;
+    }
+
     protected static String getParam(JSONObject json, String param) {
         if (json.containsKey(param)) {
             return json.getString(param);

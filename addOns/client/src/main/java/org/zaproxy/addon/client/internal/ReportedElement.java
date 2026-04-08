@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.client.internal;
 
+import java.util.Date;
 import net.sf.json.JSONObject;
 
 public class ReportedElement extends ReportedObject {
@@ -32,6 +33,23 @@ public class ReportedElement extends ReportedObject {
         if (json.containsKey("formId")) {
             this.formId = json.getInt("formId");
         }
+    }
+
+    public ReportedElement(
+            Date timestamp,
+            String type,
+            String tagName,
+            String id,
+            String nodeName,
+            String url,
+            String xpath,
+            String href,
+            String text,
+            String tagType,
+            int formId) {
+        super(timestamp, type, tagName, id, nodeName, url, xpath, href, text);
+        this.tagType = tagType;
+        this.formId = formId;
     }
 
     public String getTagType() {

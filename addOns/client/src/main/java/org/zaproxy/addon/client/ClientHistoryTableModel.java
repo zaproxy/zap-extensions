@@ -147,6 +147,15 @@ public class ClientHistoryTableModel extends AbstractTableModel {
         fireTableRowsInserted(history.size() - 1, history.size() - 1);
     }
 
+    public synchronized void addReportedObjects(List<ReportedObject> objects) {
+        if (objects.isEmpty()) {
+            return;
+        }
+        int firstRow = history.size();
+        history.addAll(objects);
+        fireTableRowsInserted(firstRow, history.size() - 1);
+    }
+
     public synchronized void clear() {
         history.clear();
         fireTableDataChanged();
