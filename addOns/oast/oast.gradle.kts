@@ -1,7 +1,8 @@
-import org.rm3l.datanucleus.gradle.DataNucleusApi
-import org.rm3l.datanucleus.gradle.extensions.enhance.EnhanceExtension
-import org.zaproxy.gradle.addon.AddOnPlugin
 import org.zaproxy.gradle.addon.AddOnStatus
+
+plugins {
+    id("org.zaproxy.gradle.jdo-enhance")
+}
 
 description = "Allows you to exploit out-of-band vulnerabilities"
 
@@ -44,8 +45,8 @@ zapAddOn {
     }
 }
 
-tasks.named(AddOnPlugin.GENERATE_MANIFEST_TASK_NAME) {
-    mustRunAfter(tasks.named("enhance"))
+jdoEnhance {
+    persistenceUnitName.set(zapAddOn.addOnId.get())
 }
 
 crowdin {
@@ -56,16 +57,9 @@ crowdin {
     }
 }
 
-datanucleus {
-    enhance(
-        closureOf<EnhanceExtension> {
-            api(DataNucleusApi.JDO)
-            persistenceUnitName(zapAddOn.addOnId.get())
-        },
-    )
-}
-
 dependencies {
+    jdoEnhance(libs.database.datanucleusJdo)
+
     zapAddOn("database")
     zapAddOn("graaljs")
     zapAddOn("network")

@@ -122,7 +122,6 @@ zest-zest = "org.zaproxy:zest:0.35.0"
 
 [plugins]
 cyclonedx = "org.cyclonedx.bom:2.2.0"
-datanucleus = "org.rm3l.datanucleus-gradle-plugin:2.0.0"
 dependencyUpdates = "com.github.ben-manes.versions:0.53.0"
 errorprone = "net.ltgt.errorprone:5.1.0"
 japicmp = "me.champeau.gradle.japicmp:0.4.6"

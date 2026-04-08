@@ -1,7 +1,8 @@
-import org.rm3l.datanucleus.gradle.DataNucleusApi
-import org.rm3l.datanucleus.gradle.extensions.enhance.EnhanceExtension
-import org.zaproxy.gradle.addon.AddOnPlugin
 import org.zaproxy.gradle.addon.AddOnStatus
+
+plugins {
+    id("org.zaproxy.gradle.jdo-enhance")
+}
 
 description = "Helps identify and set up authentication handling"
 
@@ -86,24 +87,13 @@ crowdin {
     }
 }
 
-val enhance by tasks.named("enhance") {
-    outputs.upToDateWhen { false }
-}
-
-tasks.named(AddOnPlugin.GENERATE_MANIFEST_TASK_NAME) {
-    mustRunAfter(enhance)
-}
-
-datanucleus {
-    enhance(
-        closureOf<EnhanceExtension> {
-            api(DataNucleusApi.JDO)
-            persistenceUnitName(zapAddOn.addOnId.get())
-        },
-    )
+jdoEnhance {
+    persistenceUnitName.set(zapAddOn.addOnId.get())
 }
 
 dependencies {
+    jdoEnhance(libs.database.datanucleusJdo)
+
     zapAddOn("automation")
     zapAddOn("commonlib")
     zapAddOn("database")

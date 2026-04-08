@@ -19,7 +19,6 @@ plugins {
     eclipse
     jacoco
     alias(libs.plugins.cyclonedx) apply false
-    alias(libs.plugins.datanucleus) apply false
     alias(libs.plugins.zaproxy.addon) apply false
     alias(libs.plugins.zaproxy.crowdin) apply false
     alias(libs.plugins.japicmp) apply false
@@ -95,7 +94,6 @@ subprojects {
     apply(plugin = "java-library")
     apply(plugin = "jacoco")
     apply(plugin = "org.cyclonedx.bom")
-    apply(plugin = "org.rm3l.datanucleus-gradle-plugin")
     apply(plugin = "org.zaproxy.add-on")
     apply(plugin = "org.zaproxy.common")
     if (useCrowdin) {
