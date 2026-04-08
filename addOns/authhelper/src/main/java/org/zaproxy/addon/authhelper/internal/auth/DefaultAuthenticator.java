@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.parosproxy.paros.network.HttpMessage;
@@ -74,7 +75,13 @@ public class DefaultAuthenticator implements Authenticator {
             }
 
             WebElement element = step.execute(wd, credentials);
-            diags.recordStep(wd, step.getDescription(), element);
+            // Fix 1: after a CLICK navigates the page, the returned element is stale.
+            // Fall back to the 2-arg recordStep that doesn't access the element.
+            try {
+                diags.recordStep(wd, step.getDescription(), element);
+            } catch (StaleElementReferenceException e) {
+                diags.recordStep(wd, step.getDescription());
+            }
 
             switch (step.getType()) {
                 case USERNAME:
@@ -122,19 +129,42 @@ public class DefaultAuthenticator implements Authenticator {
             try {
                 if (!pwdAdded) {
                     LOGGER.debug("Submitting password field on {}", wd.getCurrentUrl());
-                    AuthUtils.fillPassword(diags, wd, password, pwdField, stepDelayInSecs);
+                    // Fix 2: after YAML steps navigate the page, pwdField is stale — swallow.
+                    try {
+                        AuthUtils.fillPassword(diags, wd, password, pwdField, stepDelayInSecs);
+                    } catch (StaleElementReferenceException e) {
+                        LOGGER.debug("Password field stale (page already navigated by steps), skipping fillPassword");
+                    }
                 }
-                AuthUtils.submit(diags, wd, pwdField, stepDelayInSecs, waitInSecs);
+                // Fix 3: after YAML Submit CLICK, pwdField is stale — swallow.
+                try {
+                    AuthUtils.submit(diags, wd, pwdField, stepDelayInSecs, waitInSecs);
+                } catch (StaleElementReferenceException e) {
+                    LOGGER.debug("Password field stale (page already navigated by steps), skipping submit");
+                }
             } catch (Exception e) {
                 diags.reportFlowException(e);
 
                 if (userField != null) {
                     // Handle the case where the password field was present but hidden / disabled
                     LOGGER.debug("Handling hidden password field on {}", wd.getCurrentUrl());
-                    AuthUtils.sendReturnAndSleep(diags, wd, userField, stepDelayInSecs);
+                    // Fix 4: userField/pwdField may be stale after YAML steps — swallow.
+                    try {
+                        AuthUtils.sendReturnAndSleep(diags, wd, userField, stepDelayInSecs);
+                    } catch (StaleElementReferenceException e) {
+                        LOGGER.debug("User field stale, skipping sendReturnAndSleep");
+                    }
                     AuthUtils.sleep(AuthUtils.TIME_TO_SLEEP_IN_MSECS);
-                    AuthUtils.fillPassword(diags, wd, password, pwdField, stepDelayInSecs);
-                    AuthUtils.sendReturnAndSleep(diags, wd, pwdField, stepDelayInSecs);
+                    try {
+                        AuthUtils.fillPassword(diags, wd, password, pwdField, stepDelayInSecs);
+                    } catch (StaleElementReferenceException e) {
+                        LOGGER.debug("Password field stale, skipping fillPassword in fallback");
+                    }
+                    try {
+                        AuthUtils.sendReturnAndSleep(diags, wd, pwdField, stepDelayInSecs);
+                    } catch (StaleElementReferenceException e) {
+                        LOGGER.debug("Password field stale, skipping sendReturnAndSleep in fallback");
+                    }
                 }
             }
 
