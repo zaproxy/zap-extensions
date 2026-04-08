@@ -39,8 +39,8 @@ jobs:
         echo $CHROME_INPUT
         CHROME_INPUT=${CHROME_INPUT:-"cxx" }
         echo $CHROME_INPUT
-        if [ $CHROME_INPUT == "cxx" ]; then
-          CHROME_VERS=$(curl -s https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions.json|jq -r .channels.Stable.version)
+        if [ "$CHROME_INPUT" == "cxx" ]; then
+          CHROME_VERS=$(curl -s "https://chromiumdash.appspot.com/fetch_releases?channel=Stable&platform=Linux&num=1"|jq -r '.[0].version')
         else
           CHROME_VERS=${{ github.event.inputs.chrome_version }}
         fi
@@ -50,7 +50,7 @@ jobs:
         echo $GECKO_INPUT
         GECKO_INPUT=${GECKO_INPUT:-"gxx" }
         echo $GECKO_INPUT
-        if [ $GECKO_INPUT == "gxx" ]; then
+        if [ "$GECKO_INPUT" == "gxx" ]; then
           GECKO_VERS=$(curl -s https://api.github.com/repos/mozilla/geckodriver/releases/latest|jq -r .name)
         else
           GECKO_VERS=${{ github.event.inputs.gecko_version }}
