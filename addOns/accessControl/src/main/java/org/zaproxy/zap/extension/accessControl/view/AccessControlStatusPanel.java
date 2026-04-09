@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.accessControl.view;
 
 import java.awt.Component;
+import java.awt.EventQueue;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,8 +31,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.logging.log4j.LogManager;
@@ -45,10 +44,8 @@ import org.jdesktop.swingx.renderer.MappedValue;
 import org.jdesktop.swingx.renderer.StringValues;
 import org.jdesktop.swingx.table.TableColumnExt;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
-import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread;
@@ -114,7 +111,10 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel
 
     @Override
     public void scanResultObtained(int contextId, AccessControlResultEntry result) {
-        getResultsModel(contextId).addEntry(new AccessControlResultsTableEntry(result));
+        EventQueue.invokeLater(
+                () ->
+                        getResultsModel(contextId)
+                                .addEntry(new AccessControlResultsTableEntry(result)));
     }
 
     @Override
@@ -147,11 +147,6 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel
 
             resultsTable.setName(PANEL_NAME);
             resultsTable.setDoubleBuffered(true);
-            resultsTable.setSelectionMode(
-                    javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-            resultsTable
-                    .getSelectionModel()
-                    .addListSelectionListener(new DisplayMessageOnSelectionValueChange());
 
             int columnIdx = AccessControlResultsTableModel.COLUMN_INDEX_RESULT;
             TableColumnExt column = resultsTable.getColumnExt(columnIdx);
@@ -346,27 +341,6 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel
                     .getHistoryReference();
         }
         return null;
-    }
-
-    /**
-     * Utility class used to display the currently selected message in the HttpRequest/Response
-     * panels.
-     */
-    protected class DisplayMessageOnSelectionValueChange implements ListSelectionListener {
-
-        @Override
-        public void valueChanged(final ListSelectionEvent evt) {
-            if (!evt.getValueIsAdjusting()) {
-                HistoryReference hRef = getSelectedHistoryReference();
-                if (hRef != null) {
-                    try {
-                        displayMessageInHttpPanel(hRef.getHttpMessage());
-                    } catch (HttpMalformedHeaderException | DatabaseException e) {
-                        LOGGER.error(e.getMessage(), e);
-                    }
-                }
-            }
-        }
     }
 
     /**
