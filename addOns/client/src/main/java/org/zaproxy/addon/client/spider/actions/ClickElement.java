@@ -19,9 +19,13 @@
  */
 package org.zaproxy.addon.client.spider.actions;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
+import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -37,6 +41,26 @@ public class ClickElement extends BaseElementAction {
     private static final Logger LOGGER = LogManager.getLogger(ClickElement.class);
 
     private static final String STATS_PREFIX = "stats.client.spider.action.click";
+
+    private static final List<String> INTERACTIVE_ARIA_ROLES =
+            Arrays.asList(
+                    "button",
+                    "link",
+                    "checkbox",
+                    "radio",
+                    "switch",
+                    "tab",
+                    "menuitem",
+                    "menuitemcheckbox",
+                    "menuitemradio",
+                    "option",
+                    "treeitem",
+                    "combobox",
+                    "listbox",
+                    "slider",
+                    "spinbutton",
+                    "searchbox",
+                    "textbox");
 
     private final Map<String, String> elementData;
     private final String tagName;
@@ -78,16 +102,59 @@ public class ClickElement extends BaseElementAction {
         }
 
         String tag = getTagName(data);
+        String ariaString = data.get("ariaIdentification");
+        if (StringUtils.isNotBlank(ariaString)) {
+            Map<String, String> ariaAttrs = parseAriaIdentification(ariaString);
+
+            if (!ariaAttrs.isEmpty()) {
+                String role = data.get("role");
+                StringBuilder xpathBuilder =
+                        new StringBuilder("//").append(StringUtils.isNotBlank(tag) ? tag : "*");
+                appendXpathAttribute(xpathBuilder, "role", role);
+                ariaAttrs.forEach((key, value) -> appendXpathAttribute(xpathBuilder, key, value));
+                return By.xpath(xpathBuilder.toString());
+            }
+        }
+
         String text = data.get("text");
         if ("INPUT".equalsIgnoreCase(tag)) {
-            return By.xpath("//" + tag + "[@value='" + text + "']");
+            return By.xpath("//" + tag + "[@value=" + escapeXpathValue(text) + "]");
         }
 
         if (StringUtils.isNotBlank(text)) {
-            return By.xpath("//" + tag + "[contains(text(), '" + text + "')]");
+            return By.xpath("//" + tag + "[contains(text(), " + escapeXpathValue(text) + ")]");
         }
 
         return By.tagName(tag);
+    }
+
+    private static void appendXpathAttribute(StringBuilder builder, String name, String value) {
+        if (StringUtils.isNotBlank(value)) {
+            builder.append("[@")
+                    .append(name)
+                    .append("=")
+                    .append(escapeXpathValue(value))
+                    .append("]");
+        }
+    }
+
+    private static String escapeXpathValue(String value) {
+        if (!value.contains("'")) {
+            return "'" + value + "'";
+        }
+        if (!value.contains("\"")) {
+            return "\"" + value + "\"";
+        }
+        StringBuilder result = new StringBuilder("concat(");
+        String[] parts = value.split("'", -1);
+        for (int i = 0; i < parts.length; i++) {
+            if (i > 0) {
+                result.append(", \"'\", ");
+            }
+            result.append("'").append(parts[i]).append("'");
+        }
+        result.append(")");
+        return result.toString();
     }
 
     public static boolean isSupported(Predicate<String> scopeChecker, Map<String, String> data) {
@@ -110,7 +177,25 @@ public class ClickElement extends BaseElementAction {
                 return "submit".equalsIgnoreCase(type) || "button".equalsIgnoreCase(type);
 
             default:
-                return false;
+                String role = data.get("role");
+                return StringUtils.isNotBlank(role)
+                        && INTERACTIVE_ARIA_ROLES.contains(role.toLowerCase());
         }
+    }
+
+    private static Map<String, String> parseAriaIdentification(String ariaString) {
+        Map<String, String> result = new HashMap<>();
+        if (ariaString == null || ariaString.isEmpty()) {
+            return result;
+        }
+        try {
+            JSONObject json = JSONObject.fromObject(ariaString);
+            for (Object key : json.keySet()) {
+                result.put(key.toString(), json.getString(key.toString()));
+            }
+        } catch (Exception e) {
+            LOGGER.debug("Failed to parse ariaIdentification: {}", ariaString, e);
+        }
+        return result;
     }
 }

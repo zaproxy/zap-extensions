@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>ZAP Test Server - ARIA Navigation</title>
+	<link href="/tutorial.css" rel="stylesheet" type="text/css" />
+	<style>
+		.aria-link {
+			color: #0066cc;
+			text-decoration: underline;
+			padding: 5px;
+		}
+		.aria-link:hover {
+			background-color: #eef;
+		}
+		.aria-button {
+			display: inline-block;
+			padding: 10px 20px;
+			margin: 10px;
+			background-color: #4CAF50;
+			color: white;
+			border-radius: 5px;
+		}
+		.aria-button:hover {
+			background-color: #45a049;
+		}
+		.nav-section {
+			margin: 20px 0;
+			padding: 15px;
+			border: 1px solid #ddd;
+			border-radius: 5px;
+		}
+	</style>
+</head>
+<body>
+<div class="roundContainer">
+	<h1>ZAP Test Server</h1>
+	<h2>ARIA Navigation Test</h2>
+	<p>This page contains navigation elements that use ARIA roles instead of standard HTML links and buttons.
+	   <strong>The client spider cannot crawl to the target pages without ARIA detection support.</strong></p>
+
+	<div class="nav-section">
+		<h3>ARIA Navigation Elements</h3>
+		<ul>
+			<li><span role="link" class="aria-link" 
+			          aria-label="Go to Page 1" 
+			          onclick="window.location.href='page1.html'">Page 1</span></li>
+			<li><div role="link" class="aria-link" 
+			         aria-label="It's a link to page 2" 
+			         onclick="window.location.href='page2.html'">Page 2</div></li>
+			<li><div role="button" class="aria-button" 
+			         aria-label="It's a &quot;link&quot; to page 3" 
+			         onclick="window.location.href='page3.html'">Page 3</div></li>
+		</ul>
+	</div>
+
+	<div class="buttonsDiv">
+		<a href="index.html"><button>Back to ARIA Tests</button></a>
+	</div>
+</div>
+
+</body>
+</html>
