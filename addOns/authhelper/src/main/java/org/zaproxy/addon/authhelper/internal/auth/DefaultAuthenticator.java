@@ -74,7 +74,7 @@ public class DefaultAuthenticator implements Authenticator {
         // Pre-generate TOTP code once so all 6 character fields use the same code,
         // avoiding clock-window drift if a 30s boundary crosses during step execution.
         String precomputedTotpCode =
-                splitTotpFields ? TotpSupport.getCode(credentials).toString() : null;
+                splitTotpFields ? TotpSupport.getCode(credentials) : null;
 
         Iterator<AuthenticationStep> it = steps.stream().sorted().iterator();
         while (it.hasNext()) {

@@ -27,11 +27,15 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -65,6 +69,7 @@ import org.hamcrest.Matcher;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestTemplate;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -75,6 +80,7 @@ import org.junit.jupiter.params.provider.EnumSource.Mode;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.Rectangle;
@@ -1538,6 +1544,71 @@ class AuthUtilsUnitTest extends TestUtils {
                     .setLoggedInIndicatorPattern("\\Q<a href='/logout'>Logout</a>\\E");
             verify(authenticationMethod)
                     .setLoggedOutIndicatorPattern("\\Q<a href='/login'>Login</a>\\E");
+        }
+    }
+
+    @Nested
+    class FillFieldWithEventsTest {
+
+        private interface JsWebDriver extends WebDriver, JavascriptExecutor {}
+
+        @Test
+        void shouldFillFieldWithValue() {
+            // Given
+            WebElement field = mock(WebElement.class);
+            given(field.getAttribute("value")).willReturn(null);
+            WebDriver driver = mock(WebDriver.class);
+
+            // When
+            AuthUtils.fillFieldWithEvents(field, "testValue", driver);
+
+            // Then
+            verify(field).sendKeys("testValue");
+            verify(field, never()).clear();
+        }
+
+        @Test
+        void shouldClearExistingValueBeforeFilling() {
+            // Given
+            WebElement field = mock(WebElement.class);
+            given(field.getAttribute("value")).willReturn("existing");
+            WebDriver driver = mock(WebDriver.class);
+
+            // When
+            AuthUtils.fillFieldWithEvents(field, "newValue", driver);
+
+            // Then
+            var ordered = inOrder(field);
+            ordered.verify(field).clear();
+            ordered.verify(field).sendKeys("newValue");
+        }
+
+        @Test
+        void shouldFireJsEventsWhenDriverIsJavascriptExecutor() {
+            // Given
+            WebElement field = mock(WebElement.class);
+            given(field.getAttribute("value")).willReturn(null);
+            JsWebDriver driver = mock(JsWebDriver.class);
+
+            // When
+            AuthUtils.fillFieldWithEvents(field, "testValue", driver);
+
+            // Then
+            verify(field).sendKeys("testValue");
+            verify(driver).executeScript(anyString(), eq(field));
+        }
+
+        @Test
+        void shouldNotFailWhenDriverIsNotJavascriptExecutor() {
+            // Given
+            WebElement field = mock(WebElement.class);
+            given(field.getAttribute("value")).willReturn(null);
+            WebDriver driver = mock(WebDriver.class);
+
+            // When / Then
+            assertDoesNotThrow(() -> AuthUtils.fillFieldWithEvents(field, "testValue", driver));
+            verify(field).sendKeys("testValue");
+            verifyNoInteractions(driver);
         }
     }
 

@@ -362,8 +362,8 @@ public final class MsLoginAuthenticator implements Authenticator {
 
                     WebElement proofTotpElement = wd.findElement(PROOF_TOTP_FIELD);
                     WebElement proofTotpVerifyElement = wd.findElement(PROOF_TOTP_VERIFY_FIELD);
-                    CharSequence totpCode = TotpSupport.getCode(credentials);
-                    AuthUtils.fillFieldWithEvents(proofTotpElement, totpCode.toString(), wd);
+                    proofTotpElement.clear();
+                    proofTotpElement.sendKeys(TotpSupport.getCode(credentials));
                     proofTotpVerifyElement.click();
                     diags.recordStep(
                             wd,
