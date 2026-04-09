@@ -392,8 +392,8 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
                                     inMemoryStats.getStat(
                                             hostname, AuthUtils.AUTH_NO_PASSWORD_FIELD_STATS);
 
-                            addSummaryItem(ard, "username", noUserCount != null);
-                            addSummaryItem(ard, "password", noPwdCount != null);
+                            addSummaryItem(ard, "username", noUserCount == null);
+                            addSummaryItem(ard, "password", noPwdCount == null);
                         }
                     } else {
                         addSummaryItem(

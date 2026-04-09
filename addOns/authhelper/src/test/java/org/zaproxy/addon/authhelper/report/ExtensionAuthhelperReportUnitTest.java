@@ -42,6 +42,7 @@ import net.sf.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.quality.Strictness;
 import org.parosproxy.paros.Constant;
@@ -606,8 +607,9 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
         assertThat(ard.getAfPlanErrors().size(), is(equalTo(0)));
     }
 
-    @Test
-    void shouldReportFailingBbaCase() {
+    @ParameterizedTest
+    @CsvSource(value = {"true, true", "false, false", "true, false", "false, true"})
+    void shouldReportFailingBbaCase(boolean usernameFound, boolean passwordFound) {
         // Given
         String site = "https://www.example.com";
         ExtensionAuthhelperReport.AuthReportDataHandler dataHandler =
@@ -634,6 +636,12 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
         given(extensionLoader.getExtension(ExtensionStats.class)).willReturn(extStats);
 
         InMemoryStats stats = new InMemoryStats();
+        if (!usernameFound) {
+            stats.counterInc(site, AuthUtils.AUTH_NO_USER_FIELD_STATS);
+        }
+        if (!passwordFound) {
+            stats.counterInc(site, AuthUtils.AUTH_NO_PASSWORD_FIELD_STATS);
+        }
         given(extStats.getInMemoryStats()).willReturn(stats);
 
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
@@ -651,10 +659,10 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
         assertThat(ard.getSummaryItems().get(0).passed(), is(equalTo(false)));
 
         assertThat(ard.getSummaryItems().get(1).key(), is(equalTo("auth.summary.username")));
-        assertThat(ard.getSummaryItems().get(1).passed(), is(equalTo(false)));
+        assertThat(ard.getSummaryItems().get(1).passed(), is(equalTo(usernameFound)));
 
         assertThat(ard.getSummaryItems().get(2).key(), is(equalTo("auth.summary.password")));
-        assertThat(ard.getSummaryItems().get(2).passed(), is(equalTo(false)));
+        assertThat(ard.getSummaryItems().get(2).passed(), is(equalTo(passwordFound)));
 
         assertThat(ard.getSummaryItems().get(3).key(), is(equalTo("auth.summary.session")));
         assertThat(ard.getSummaryItems().get(3).passed(), is(equalTo(false)));
