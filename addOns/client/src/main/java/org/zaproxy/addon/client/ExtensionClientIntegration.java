@@ -45,6 +45,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -875,6 +876,10 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
             spiderScanController.stopAllScans();
             spiderScanController.reset();
 
+            if (api != null) {
+                api.clear();
+            }
+
             if (hasView()) {
                 getClientSpiderPanel().reset();
                 if (spiderDialog != null) {
@@ -961,6 +966,10 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
      */
     public void unregisterClientCallBack(ClientCallBackImplementor callback) {
         this.api.unregisterClientCallBack(callback);
+    }
+
+    public void browserClosing(WebDriver wd) {
+        this.api.browserClosing(wd);
     }
 
     private class ClientPassiveScanRuleProvider implements PassiveScanRuleProvider {

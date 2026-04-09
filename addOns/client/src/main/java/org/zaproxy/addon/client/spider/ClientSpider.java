@@ -339,7 +339,11 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
                 try {
                     wdp =
                             new WebDriverProcess(
-                                    extensionNetwork, extSelenium, new ProxyHandler(), options);
+                                    extClient,
+                                    extensionNetwork,
+                                    extSelenium,
+                                    new ProxyHandler(),
+                                    options);
                 } catch (IOException e) {
                     throw new RuntimeException("Failed to create WebDriver process:", e);
                 }
@@ -803,13 +807,16 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
 
         private Server proxy;
         private WebDriver webDriver;
+        private ExtensionClientIntegration extClient;
 
         private WebDriverProcess(
+                ExtensionClientIntegration extensionClient,
                 ExtensionNetwork extensionNetwork,
                 ExtensionSelenium extensionSelenium,
                 ProxyHandler proxyHandler,
                 ClientOptions options)
                 throws IOException {
+            extClient = extensionClient;
             proxy =
                     extensionNetwork.createHttpServer(
                             HttpServerConfig.builder()
@@ -830,6 +837,7 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
         private void shutdown() {
             if (webDriver != null) {
                 try {
+                    extClient.browserClosing(webDriver);
                     webDriver.quit();
                 } catch (Exception e) {
                     LOGGER.debug("An error occurred while quitting the browser.", e);

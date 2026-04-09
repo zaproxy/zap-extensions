@@ -21,14 +21,20 @@ package org.zaproxy.addon.client;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
 
+import java.util.UUID;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.WebDriver;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.zap.extension.selenium.SeleniumScriptUtils;
 import org.zaproxy.zap.testutils.TestUtils;
 
 /** Unit test for {@link ClientIntegrationAPI}. */
@@ -145,11 +151,139 @@ class ClientIntegrationAPIUnitTest extends TestUtils {
         assertThat(resp4, is(""));
     }
 
+    @Test
+    void shouldCallBrowserLaunchedOnRegisteredCallbacks() {
+        // Given
+        BrowserEventCallBackImp callback = new BrowserEventCallBackImp("test");
+        api.registerClientCallBack(callback);
+        ClientCallBackUtils ccbu = createClientCallBackUtils();
+
+        // When
+        api.browserLaunched(ccbu);
+
+        // Then
+        assertThat(callback.launchedCcbu, is(sameInstance(ccbu)));
+    }
+
+    @Test
+    void shouldNotCallBrowserLaunchedOnUnregisteredCallbacks() {
+        // Given
+        BrowserEventCallBackImp callback = new BrowserEventCallBackImp("test");
+        api.registerClientCallBack(callback);
+        api.unregisterClientCallBack(callback);
+        ClientCallBackUtils ccbu = createClientCallBackUtils();
+
+        // When
+        api.browserLaunched(ccbu);
+
+        // Then
+        assertThat(callback.launchedCcbu, is(nullValue()));
+    }
+
+    @Test
+    void shouldCallBrowserClosingOnRegisteredCallbacksWithSameCcbu() {
+        // Given
+        BrowserEventCallBackImp callback = new BrowserEventCallBackImp("test");
+        api.registerClientCallBack(callback);
+        ClientCallBackUtils ccbu = createClientCallBackUtils();
+        api.browserLaunched(ccbu);
+
+        // When
+        api.browserClosing(ccbu.getWebDriver());
+
+        // Then
+        assertThat(callback.closingCcbu, is(sameInstance(ccbu)));
+    }
+
+    @Test
+    void shouldNotCallBrowserClosingForUnknownWebDriver() {
+        // Given
+        BrowserEventCallBackImp callback = new BrowserEventCallBackImp("test");
+        api.registerClientCallBack(callback);
+        WebDriver unknownWd = mock(WebDriver.class);
+
+        // When
+        api.browserClosing(unknownWd);
+
+        // Then
+        assertThat(callback.closingCcbu, is(nullValue()));
+    }
+
+    @Test
+    void shouldNotCallBrowserClosingTwiceForSameWebDriver() {
+        // Given
+        BrowserEventCallBackImp callback = new BrowserEventCallBackImp("test");
+        api.registerClientCallBack(callback);
+        ClientCallBackUtils ccbu = createClientCallBackUtils();
+        api.browserLaunched(ccbu);
+        api.browserClosing(ccbu.getWebDriver());
+        callback.closingCcbu = null;
+
+        // When
+        api.browserClosing(ccbu.getWebDriver());
+
+        // Then
+        assertThat(callback.closingCcbu, is(nullValue()));
+    }
+
+    @Test
+    void shouldNotCallBrowserClosingAfterClear() {
+        // Given
+        BrowserEventCallBackImp callback = new BrowserEventCallBackImp("test");
+        api.registerClientCallBack(callback);
+        ClientCallBackUtils ccbu = createClientCallBackUtils();
+        api.browserLaunched(ccbu);
+
+        // When
+        api.clear();
+        api.browserClosing(ccbu.getWebDriver());
+
+        // Then
+        assertThat(callback.closingCcbu, is(nullValue()));
+    }
+
+    private static ClientCallBackUtils createClientCallBackUtils() {
+        WebDriver wd = mock(WebDriver.class);
+        SeleniumScriptUtils ssu = new SeleniumScriptUtils(wd, 0, "firefox", "localhost", 8080);
+        return new ClientCallBackUtils(ssu, UUID.randomUUID());
+    }
+
     private HttpMessage getMsg(String method, String url) throws Exception {
         HttpMessage msg = new HttpMessage();
         URI uri = new URI(url, true);
         msg.setRequestHeader(new HttpRequestHeader(method, uri, HttpHeader.HTTP11));
         return msg;
+    }
+
+    static class BrowserEventCallBackImp implements ClientCallBackImplementor {
+
+        private final String name;
+        ClientCallBackUtils launchedCcbu;
+        ClientCallBackUtils closingCcbu;
+
+        BrowserEventCallBackImp(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String getImplementorName() {
+            return name;
+        }
+
+        @Override
+        public String handleCallBack(HttpMessage msg) {
+            return "";
+        }
+
+        @Override
+        public void browserLaunched(ClientCallBackUtils ccbu) {
+            this.launchedCcbu = ccbu;
+        }
+
+        @Override
+        public void browserClosing(ClientCallBackUtils ccbu) {
+            this.closingCcbu = ccbu;
+        }
     }
 
     static class CallBackImp implements ClientCallBackImplementor {
