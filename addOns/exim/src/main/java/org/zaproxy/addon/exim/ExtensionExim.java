@@ -207,6 +207,31 @@ public class ExtensionExim extends ExtensionAdaptor {
     }
 
     /**
+     * Registers a source exporter for the given source.
+     *
+     * <p>Only one exporter can be registered per source; a subsequent call replaces the previous
+     * registration.
+     *
+     * @param source the source the exporter handles.
+     * @param sourceExporter the exporter.
+     * @since 0.19.0
+     */
+    public void registerSourceExporter(
+            ExporterOptions.Source source, SourceExporter sourceExporter) {
+        Exporter.registerSourceExporter(source, sourceExporter);
+    }
+
+    /**
+     * Unregisters the source exporter for the given source.
+     *
+     * @param source the source whose exporter should be removed.
+     * @since 0.19.0
+     */
+    public void unregisterSourceExporter(ExporterOptions.Source source) {
+        Exporter.unregisterSourceExporter(source);
+    }
+
+    /**
      * Gets the importer.
      *
      * @return the importer, never {@code null}.

@@ -53,6 +53,9 @@ public class Exporter {
     private static final Map<String, ExporterType> REGISTERED_TYPES =
             Collections.synchronizedMap(new LinkedHashMap<>());
 
+    private static final Map<ExporterOptions.Source, SourceExporter> SOURCE_EXPORTERS =
+            Collections.synchronizedMap(new LinkedHashMap<>());
+
     private static final int[] ALL_HISTORY_TYPES = {};
     private static final int[] USER_HISTORY_TYPES = {
         HistoryReference.TYPE_PROXIED, HistoryReference.TYPE_ZAP_USER
@@ -75,6 +78,19 @@ public class Exporter {
     static void unregister(String typeId) {
         if (typeId != null) {
             REGISTERED_TYPES.remove(typeId.toLowerCase(Locale.ROOT));
+        }
+    }
+
+    static void registerSourceExporter(
+            ExporterOptions.Source source, SourceExporter sourceExporter) {
+        if (source != null && sourceExporter != null) {
+            SOURCE_EXPORTERS.put(source, sourceExporter);
+        }
+    }
+
+    static void unregisterSourceExporter(ExporterOptions.Source source) {
+        if (source != null) {
+            SOURCE_EXPORTERS.remove(source);
         }
     }
 
@@ -148,6 +164,22 @@ public class Exporter {
                                     "exim.exporter.error.type.sitestree", options.getType()));
                 } else {
                     SitesTreeHandler.exportSitesTree(writer, result, options);
+                }
+            } else if (Source.CLIENTMAP.equals(options.getSource())) {
+                if (!YamlExporter.isYamlExporter(options.getType())) {
+                    result.addError(
+                            Constant.messages.getString(
+                                    "exim.exporter.error.type.clientmap", options.getType()));
+                } else {
+                    SourceExporter sourceExporter = SOURCE_EXPORTERS.get(Source.CLIENTMAP);
+                    if (sourceExporter != null) {
+                        sourceExporter.export(writer, options);
+                        result.incrementCount();
+                    } else {
+                        result.addError(
+                                Constant.messages.getString(
+                                        "exim.exporter.error.source.clientmap.unavailable"));
+                    }
                 }
             } else {
                 if (optionsType != null && !optionsType.supportsMessageExport()) {

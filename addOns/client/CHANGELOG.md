@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Persist Client History entries in the session.
 - Add a button in the Client History tab to clear the history from both the GUI and session.
+- Support exporting the Client Map via the Automation Framework export job (requires the Import/Export add-on).
 
 ### Changed
 - Allow callback implementors to handle browsers closing.

@@ -952,6 +952,22 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
     }
 
     /**
+     * Exports the Client Map to the given writer, optionally filtering by context. Components are
+     * not included in this export.
+     *
+     * @param writer the writer to export to.
+     * @param context the context to filter by, or {@code null} to export all nodes.
+     * @throws IOException if an error occurs while exporting.
+     */
+    public void exportClientMap(Writer writer, Context context) throws IOException {
+        try {
+            ClientMapWriter.exportClientMap(writer, clientTree, context);
+        } catch (UncheckedIOException e) {
+            throw new IOException(e);
+        }
+    }
+
+    /**
      * Registers a client callback implementor. Any requests to the callback URL which have the
      * implementor name as the next element of the path will be passed over to that implementor.
      * Implementors should use their unique ZAP add-on ID to prevent any clashes.

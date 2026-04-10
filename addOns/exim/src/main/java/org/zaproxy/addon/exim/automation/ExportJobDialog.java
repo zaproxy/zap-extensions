@@ -83,6 +83,7 @@ public class ExportJobDialog extends StandardFieldsDialog {
     @Override
     public void save() {
         this.job.getData().setName(getStringValue(NAME_PARAM));
+        this.job.getParameters().setContext(getStringValue(CONTEXT_PARAM));
         this.job
                 .getParameters()
                 .setType(((ExporterType) typeOptionModel.getSelectedItem()).getId());
@@ -99,7 +100,12 @@ public class ExportJobDialog extends StandardFieldsDialog {
                 && !(typeOptionModel.getSelectedItem() instanceof YamlExporter)) {
             return Constant.messages.getString(
                     "exim.automation.export.dialog.error.sitestree.type");
+        } else if (ExporterOptions.Source.CLIENTMAP.equals(sourceOptionModel.getSelectedItem())
+                && !(typeOptionModel.getSelectedItem() instanceof YamlExporter)) {
+            return Constant.messages.getString(
+                    "exim.automation.export.dialog.error.clientmap.type");
         } else if (!ExporterOptions.Source.SITESTREE.equals(sourceOptionModel.getSelectedItem())
+                && !ExporterOptions.Source.CLIENTMAP.equals(sourceOptionModel.getSelectedItem())
                 && typeOptionModel.getSelectedItem() instanceof YamlExporter) {
             return Constant.messages.getString(
                     "exim.automation.export.dialog.error.messages.type",
