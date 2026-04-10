@@ -4,7 +4,12 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Persist Client History entries in the session.
+- Add a button in the Client History tab to clear the history from both the GUI and session.
 
+### Changed
+- Depend on Database add-on.
 
 ## [0.21.0] - 2026-03-31
 ### Added

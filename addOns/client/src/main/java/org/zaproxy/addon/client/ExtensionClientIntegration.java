@@ -50,6 +50,9 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
+import org.parosproxy.paros.db.Database;
+import org.parosproxy.paros.db.DatabaseException;
+import org.parosproxy.paros.db.DatabaseUnsupportedException;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
@@ -69,6 +72,8 @@ import org.zaproxy.addon.client.internal.ClientSideDetails;
 import org.zaproxy.addon.client.internal.ReportedElement;
 import org.zaproxy.addon.client.internal.ReportedEvent;
 import org.zaproxy.addon.client.internal.ReportedObject;
+import org.zaproxy.addon.client.internal.db.ClientHistoryDao;
+import org.zaproxy.addon.client.internal.db.TableJdo;
 import org.zaproxy.addon.client.pscan.ClientPassiveScanController;
 import org.zaproxy.addon.client.pscan.ClientPassiveScanHelper;
 import org.zaproxy.addon.client.pscan.ClientPassiveScanRule;
@@ -153,6 +158,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
     private EventConsumer eventConsumer;
     private Event lastAjaxSpiderStartEvent;
     private static ImageIcon icon;
+    private TableJdo tableJdo;
 
     private ClientSpiderDialog spiderDialog;
     private ZapMenuItem menuItemCustomScan;
@@ -407,6 +413,18 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
                         eventConsumer, "org.zaproxy.zap.extension.spiderAjax.SpiderEventPublisher");
     }
 
+    @Override
+    public void postInstall() {
+        loadClientHistory();
+    }
+
+    private void loadClientHistory() {
+        if (clientHistoryTableModel != null) {
+            clientHistoryTableModel.clear();
+            clientHistoryTableModel.addReportedObjects(ClientHistoryDao.loadAll());
+        }
+    }
+
     public ClientOptions getClientParam() {
         if (clientParam == null) {
             clientParam = new ClientOptions();
@@ -494,6 +512,23 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
     @Override
     public void destroy() {
         this.spiderScanController.stopAllScans();
+        if (tableJdo != null) {
+            tableJdo.unload();
+        }
+    }
+
+    @Override
+    public boolean supportsDb(String type) {
+        return true;
+    }
+
+    @Override
+    public void databaseOpen(Database db) throws DatabaseException, DatabaseUnsupportedException {
+        try {
+            tableJdo = new TableJdo(db);
+        } catch (Exception e) {
+            LOGGER.warn(e.getMessage(), e);
+        }
     }
 
     public ClientNode getOrAddClientNode(String url, boolean visited, boolean storage) {
@@ -615,6 +650,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
             }
         }
         this.clientHistoryTableModel.addReportedObject(obj);
+        ClientHistoryDao.persist(obj);
         incPscanCount();
         this.passiveScanController
                 .getEnabledScanRules()
@@ -855,9 +891,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
             if (clientDetailsPanel != null) {
                 clientDetailsPanel.clear();
             }
-            if (clientHistoryTableModel != null) {
-                clientHistoryTableModel.clear();
-            }
+            loadClientHistory();
             spiderScanController.reset();
 
             if (hasView()) {

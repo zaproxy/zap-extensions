@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.client.internal;
 
+import java.util.Date;
 import net.sf.json.JSONObject;
 
 public class ReportedEvent extends ReportedObject {
@@ -28,6 +29,21 @@ public class ReportedEvent extends ReportedObject {
     public ReportedEvent(JSONObject json) {
         super(json, json.getString("eventName"));
         this.count = json.getInt("count");
+    }
+
+    public ReportedEvent(
+            Date timestamp,
+            String type,
+            String tagName,
+            String id,
+            String nodeName,
+            String url,
+            String xpath,
+            String href,
+            String text,
+            int count) {
+        super(timestamp, type, tagName, id, nodeName, url, xpath, href, text);
+        this.count = count;
     }
 
     public int getCount() {

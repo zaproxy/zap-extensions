@@ -19,13 +19,15 @@
  */
 package org.zaproxy.addon.client.ui;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.GridBagLayout;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import javax.swing.JButton;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JToolBar;
 import javax.swing.table.TableRowSorter;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.renderer.DefaultTableRenderer;
@@ -35,8 +37,9 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.client.ClientHistoryTableModel;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.addon.client.internal.ReportedObject;
+import org.zaproxy.addon.client.internal.db.ClientHistoryDao;
+import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.FontUtils;
-import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zap.view.ZapTable;
 import org.zaproxy.zap.view.renderer.DateFormatStringValue;
 
@@ -53,12 +56,36 @@ public class ClientHistoryPanel extends AbstractPanel {
         setIcon(ExtensionClientIntegration.getIcon("calendar-browser.png"));
         this.clientHistoryTableModel = clientHistoryTableModel;
 
-        this.setLayout(new GridBagLayout());
+        setLayout(new BorderLayout(0, 0));
+
+        add(createToolBar(), BorderLayout.PAGE_START);
 
         JScrollPane jScrollPane = new JScrollPane();
         jScrollPane.setViewportView(getHistoryTable());
         jScrollPane.setFont(FontUtils.getFont("Dialog"));
-        this.add(jScrollPane, LayoutHelper.getGBC(0, 0, 1, 1.0, 1.0));
+        add(jScrollPane);
+    }
+
+    private JToolBar createToolBar() {
+        JToolBar toolBar = new JToolBar();
+        toolBar.setFloatable(false);
+        toolBar.setRollover(true);
+
+        JButton clearButton = new JButton();
+        clearButton.setToolTipText(
+                Constant.messages.getString(
+                        ExtensionClientIntegration.PREFIX + ".history.clear.button.tooltip"));
+        clearButton.setIcon(
+                DisplayUtils.getScaledIcon(
+                        ClientHistoryPanel.class.getResource("/resource/icon/fugue/broom.png")));
+        clearButton.addActionListener(
+                e -> {
+                    clientHistoryTableModel.clear();
+                    ClientHistoryDao.deleteAll();
+                });
+        toolBar.add(clearButton);
+
+        return toolBar;
     }
 
     public List<ReportedObject> getSelectedRows() {

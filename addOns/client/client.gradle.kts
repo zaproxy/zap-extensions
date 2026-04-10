@@ -1,3 +1,7 @@
+plugins {
+    id("org.zaproxy.gradle.jdo-enhance")
+}
+
 description = "Exposes client (browser) side information in ZAP using Firefox and Chrome extensions."
 
 zapAddOn {
@@ -43,6 +47,9 @@ zapAddOn {
                 register("commonlib") {
                     version.set(">=1.33.0")
                 }
+                register("database") {
+                    version.set(">=0.9.0 & < 1.0.0")
+                }
                 addOns {
                     register("pscan") {
                         version.set(">=0.4.0")
@@ -61,9 +68,16 @@ crowdin {
     }
 }
 
+jdoEnhance {
+    persistenceUnitName.set(zapAddOn.addOnId.get())
+}
+
 dependencies {
+    jdoEnhance(libs.database.datanucleusJdo)
+
     zapAddOn("automation")
     zapAddOn("commonlib")
+    zapAddOn("database")
     zapAddOn("selenium")
     zapAddOn("network")
     zapAddOn("pscan")
