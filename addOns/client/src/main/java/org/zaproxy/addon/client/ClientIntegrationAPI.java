@@ -33,6 +33,7 @@ import net.sf.json.JSONObject;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.WebDriver;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
@@ -46,7 +47,6 @@ import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.api.ApiResponse;
 import org.zaproxy.zap.extension.api.ApiResponseElement;
-import org.zaproxy.zap.extension.selenium.SeleniumScriptUtils;
 
 public class ClientIntegrationAPI extends ApiImplementor {
     private static final String PREFIX = "client";
@@ -70,6 +70,9 @@ public class ClientIntegrationAPI extends ApiImplementor {
     private String callbackUrl;
 
     private Map<String, ClientCallBackImplementor> clientCallBacks =
+            Collections.synchronizedMap(new HashMap<>());
+
+    private Map<WebDriver, ClientCallBackUtils> wdMap =
             Collections.synchronizedMap(new HashMap<>());
 
     public ClientIntegrationAPI(ExtensionClientIntegration extension) {
@@ -293,14 +296,34 @@ public class ClientIntegrationAPI extends ApiImplementor {
         this.clientCallBacks.remove(callback.getImplementorName());
     }
 
-    protected void browserLaunched(SeleniumScriptUtils ssutils) {
+    protected void browserLaunched(ClientCallBackUtils ccbu) {
+        wdMap.put(ccbu.getWebDriver(), ccbu);
         this.clientCallBacks.forEach(
                 (n, callback) -> {
                     try {
-                        callback.browserLaunched(ssutils);
+                        callback.browserLaunched(ccbu);
                     } catch (Exception e) {
                         LOGGER.error(e.getMessage(), e);
                     }
                 });
+    }
+
+    void browserClosing(WebDriver wd) {
+        if (!wdMap.containsKey(wd)) {
+            return;
+        }
+        ClientCallBackUtils ccbu = wdMap.remove(wd);
+        this.clientCallBacks.forEach(
+                (n, callback) -> {
+                    try {
+                        callback.browserClosing(ccbu);
+                    } catch (Exception e) {
+                        LOGGER.error(e.getMessage(), e);
+                    }
+                });
+    }
+
+    void clear() {
+        this.wdMap.clear();
     }
 }

@@ -19,6 +19,8 @@
  */
 package org.zaproxy.addon.client;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -78,6 +80,26 @@ class RedirectScriptUnitTest {
         verify(wd, times(2)).get(urlCaptor.capture());
         assertUrlsHavePrefixAndValidZapid(
                 urlCaptor, "callback-url?zapenable=true&zaprecord=true&zapid=");
+    }
+
+    @Test
+    void shouldPassMatchingUuidToUrlAndClientCallBackUtils() {
+        // Given
+        given(ssutils.getRequester()).willReturn(HttpSender.PROXY_INITIATOR);
+        ArgumentCaptor<String> urlCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<ClientCallBackUtils> ccbuCaptor =
+                ArgumentCaptor.forClass(ClientCallBackUtils.class);
+
+        // When
+        script.browserLaunched(ssutils);
+
+        // Then
+        verify(wd, times(2)).get(urlCaptor.capture());
+        verify(api).browserLaunched(ccbuCaptor.capture());
+
+        String url = urlCaptor.getAllValues().get(0);
+        String uuidInUrl = url.substring(url.indexOf("zapid=") + "zapid=".length());
+        assertThat(ccbuCaptor.getValue().getUuid().toString(), is(uuidInUrl));
     }
 
     private static void assertUrlsHavePrefixAndValidZapid(

@@ -19,33 +19,24 @@
  */
 package org.zaproxy.addon.client;
 
-import org.parosproxy.paros.network.HttpMessage;
+import java.util.UUID;
+import lombok.Getter;
 import org.zaproxy.zap.extension.selenium.SeleniumScriptUtils;
 
 /**
- * @since 0.21.0
+ * @since 0.22.0
  */
-public interface ClientCallBackImplementor {
+public class ClientCallBackUtils extends SeleniumScriptUtils {
 
-    String getImplementorName();
+    @Getter private final UUID uuid;
 
-    String handleCallBack(HttpMessage msg);
-
-    /**
-     * This method will be removed soon.
-     *
-     * @deprecated
-     */
-    @Deprecated
-    default void browserLaunched(SeleniumScriptUtils ssutils) {}
-
-    @SuppressWarnings("deprecation")
-    default void browserLaunched(ClientCallBackUtils ccbutils) {
-        browserLaunched((SeleniumScriptUtils) ccbutils);
+    public ClientCallBackUtils(SeleniumScriptUtils ssu, UUID uuid) {
+        super(
+                ssu.getWebDriver(),
+                ssu.getRequester(),
+                ssu.getBrowserId(),
+                ssu.getProxyAddress(),
+                ssu.getProxyPort());
+        this.uuid = uuid;
     }
-
-    /**
-     * @since 0.22.0
-     */
-    default void browserClosing(ClientCallBackUtils ccbutils) {}
 }

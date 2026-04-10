@@ -49,13 +49,14 @@ public class RedirectScript implements BrowserHook {
             sb.append("&zaprecord=true");
         }
         sb.append("&zapid=");
-        sb.append(UUID.randomUUID());
+        UUID uuid = UUID.randomUUID();
+        sb.append(uuid);
         String zapurl = sb.toString();
         ssutils.getWebDriver().get(zapurl);
         JavascriptExecutor jsExecutor = (JavascriptExecutor) ssutils.getWebDriver();
         jsExecutor.executeScript("localStorage.setItem('localzapurl', '" + apiurl + "')");
         // The second refresh seems to be needed sometimes - could be a browser timing issue?
         ssutils.getWebDriver().get(zapurl);
-        api.browserLaunched(ssutils);
+        api.browserLaunched(new ClientCallBackUtils(ssutils, uuid));
     }
 }
