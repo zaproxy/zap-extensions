@@ -151,18 +151,18 @@ public class DefaultAuthenticator implements Authenticator {
                     // Fix 4: userField/pwdField may be stale after YAML steps — swallow.
                     try {
                         AuthUtils.sendReturnAndSleep(diags, wd, userField, stepDelayInSecs);
-                    } catch (StaleElementReferenceException e) {
+                    } catch (StaleElementReferenceException staleEx) {
                         LOGGER.debug("User field stale, skipping sendReturnAndSleep");
                     }
                     AuthUtils.sleep(AuthUtils.TIME_TO_SLEEP_IN_MSECS);
                     try {
                         AuthUtils.fillPassword(diags, wd, password, pwdField, stepDelayInSecs);
-                    } catch (StaleElementReferenceException e) {
+                    } catch (StaleElementReferenceException staleEx) {
                         LOGGER.debug("Password field stale, skipping fillPassword in fallback");
                     }
                     try {
                         AuthUtils.sendReturnAndSleep(diags, wd, pwdField, stepDelayInSecs);
-                    } catch (StaleElementReferenceException e) {
+                    } catch (StaleElementReferenceException staleEx) {
                         LOGGER.debug("Password field stale, skipping sendReturnAndSleep in fallback");
                     }
                 }
