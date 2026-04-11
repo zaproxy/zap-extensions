@@ -919,6 +919,316 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
             // Then
             assertThat(alertsRaised, hasSize(1));
         }
+
+        // False positive case - https://github.com/zaproxy/zaproxy/issues/9289
+        // Page content varies between requests (e.g., CSRF tokens),
+        // causing AND FALSE to appear different from baseline when it's just instability.
+        // The control check re-sends the original value; if it also differs, report at low
+        // confidence.
+        @Test
+        void shouldAlertWithLowConfidenceIfControlRequestShowsPageIsUnstable() throws Exception {
+            // Given
+            String param = "param";
+            String normalValue = "payload";
+            String andTrueValue = normalValue + SqlInjectionScanRule.SQL_LOGIC_AND_TRUE[0];
+            String andFalseValue = normalValue + SqlInjectionScanRule.SQL_LOGIC_AND_FALSE[0];
+
+            // Custom handler: uses an incrementing counter for the original value
+            // so each request with the original value returns slightly different
+            // content (simulating CSRF token rotation).
+            // AND TRUE returns "normal response" (matching baseline after stripping).
+            // AND FALSE returns "different response" (triggering the alert path).
+            // The key: responseBodyHeuristic() strips param values from response
+            // bodies before comparing. After stripping, AND TRUE's body becomes
+            // "normal response" which matches the stripped baseline "normal response".
+            // But the control re-request gets a new counter value, making the
+            // stripped body "normal response counterN" differ from baseline.
+            nano.addHandler(
+                    new NanoServerHandler("/") {
+                        private int counter = 0;
+
+                        @Override
+                        protected NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
+                            String value = getFirstParamValue(session, param);
+                            if (normalValue.equals(value)) {
+                                counter++;
+                                // Content changes each time the original value is sent.
+                                // After stripping "payload", body is "normal response counterN"
+                                return newFixedLengthResponse(
+                                        NanoHTTPD.Response.Status.OK,
+                                        NanoHTTPD.MIME_HTML,
+                                        "normal response counter" + counter);
+                            } else if (andTrueValue.equals(value)) {
+                                // After stripping both "payload" and the AND TRUE payload,
+                                // the body is "normal response". But baseline body after
+                                // stripping "payload" is "normal response counterN".
+                                // These won't match either -- so AND TRUE won't match.
+                                // We need AND TRUE to match, so include the same counter
+                                // as the most recent baseline.
+                                return newFixedLengthResponse(
+                                        NanoHTTPD.Response.Status.OK,
+                                        NanoHTTPD.MIME_HTML,
+                                        "normal response counter" + counter);
+                            } else if (andFalseValue.equals(value)) {
+                                return newFixedLengthResponse(
+                                        NanoHTTPD.Response.Status.OK,
+                                        NanoHTTPD.MIME_HTML,
+                                        "different response");
+                            } else {
+                                return newFixedLengthResponse(
+                                        NanoHTTPD.Response.Status.OK,
+                                        NanoHTTPD.MIME_HTML,
+                                        "normal response counter" + counter);
+                            }
+                        }
+                    });
+
+            rule.init(getHttpMessage("/?" + param + "=" + normalValue), parent);
+
+            // When
+            rule.scan();
+
+            // Then - alert raised at low confidence because the control re-request shows
+            // page instability
+            assertThat(alertsRaised, hasSize(1));
+            assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_LOW)));
+            assertNoParams(alertsRaised.get(0));
+        }
+
+        // Positive case confirming the control check does not break real SQLi detection.
+        // When AND TRUE matches baseline, AND FALSE differs, and the control request
+        // returns the same response as baseline, the page is stable and the alert is valid.
+        @Test
+        void shouldAlertIfControlConfirmsStablePage() throws Exception {
+            // Given
+            String param = "id";
+            String normalValue = "2";
+            String andTrueValue = normalValue + SqlInjectionScanRule.SQL_LOGIC_AND_TRUE[0];
+            String andFalseValue = normalValue + SqlInjectionScanRule.SQL_LOGIC_AND_FALSE[0];
+
+            UrlParamValueHandler handler =
+                    UrlParamValueHandler.builder()
+                            .targetParam(param)
+                            .whenParamValueIs(normalValue)
+                            .thenReturnHtml("Results for ID 2: record found")
+                            .whenParamValueIs(andTrueValue)
+                            .thenReturnHtml("Results for ID 2: record found")
+                            .whenParamValueIs(andFalseValue)
+                            .thenReturnHtml("Results for ID 2: no records")
+                            .build();
+            nano.addHandler(handler);
+            rule.init(getHttpMessage("/?" + param + "=" + normalValue), parent);
+
+            // When
+            rule.scan();
+
+            // Then - alert raised because the control re-request of the original value
+            // returns the same response, confirming the page is stable
+            assertThat(alertsRaised, hasSize(1));
+            Alert actual = alertsRaised.get(0);
+            assertThat(actual.getParam(), is(equalTo(param)));
+            assertThat(actual.getAttack(), is(equalTo(andTrueValue)));
+            assertThat(actual.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+            assertNoParams(alertsRaised.get(0));
+        }
+
+        // Regression test for https://github.com/zaproxy/zaproxy/issues/9289
+        // App parses parameter as integer, ignoring non-numeric suffixes like " AND 1=1".
+        // All SQL payloads produce the same response as the original, so no alert.
+        @Test
+        void shouldNotAlertIfNumericParameterStripsNonNumericInput() throws Exception {
+            // Given
+            String param = "id";
+            String normalValue = "2";
+            String andTrueValue = normalValue + SqlInjectionScanRule.SQL_LOGIC_AND_TRUE[0];
+            String andFalseValue = normalValue + SqlInjectionScanRule.SQL_LOGIC_AND_FALSE[0];
+
+            // Handler that simulates parseInt behavior (like PHP intval() or MySQL implicit cast):
+            // extracts leading digits only, ignores everything after the first non-digit character.
+            // "2 AND 1=1 -- " -> leading "2" -> ID 2 (same as original)
+            // This means all payloads produce the same response as the original.
+            nano.addHandler(
+                    new NanoServerHandler("/") {
+                        @Override
+                        protected NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
+                            String value = getFirstParamValue(session, param);
+                            // Extract leading digits only (simulating intval behavior)
+                            int numericId = 0;
+                            if (value != null) {
+                                String digits = value.replaceAll("^(\\d+).*", "$1");
+                                if (!digits.isEmpty()) {
+                                    try {
+                                        numericId = Integer.parseInt(digits);
+                                    } catch (NumberFormatException e) {
+                                        numericId = 0;
+                                    }
+                                }
+                            }
+                            String body =
+                                    "<html><body>Results for ID " + numericId + "</body></html>";
+                            return newFixedLengthResponse(
+                                    NanoHTTPD.Response.Status.OK, NanoHTTPD.MIME_HTML, body);
+                        }
+                    });
+
+            rule.init(getHttpMessage("/?" + param + "=" + normalValue), parent);
+
+            // When
+            rule.scan();
+
+            // Then - no alert because all responses are identical (app ignores SQL suffixes)
+            assertThat(alertsRaised, hasSize(0));
+        }
+
+        @Test
+        void shouldAlertWithLowConfidenceIfOrTrueControlRequestShowsPageIsUnstable()
+                throws Exception {
+            // Given
+            String param = "param";
+            String normalValue = "payload";
+            String andTrueValue = normalValue + SqlInjectionScanRule.SQL_LOGIC_AND_TRUE[0];
+            String andFalseValue = normalValue + SqlInjectionScanRule.SQL_LOGIC_AND_FALSE[0];
+            String orTrueValue = normalValue + SqlInjectionScanRule.SQL_LOGIC_OR_TRUE[0];
+
+            // AND TRUE matches normal, AND FALSE also matches normal (enters OR TRUE path),
+            // OR TRUE differs from normal, but the control re-request shows page instability.
+            // The counter increments only on origParamValue requests, so AND TRUE and
+            // AND FALSE see the same counter as the most recent refresh, matching it.
+            // The control re-request increments the counter, making it differ from baseline.
+            nano.addHandler(
+                    new NanoServerHandler("/") {
+                        private int counter = 0;
+
+                        @Override
+                        protected NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
+                            String value = getFirstParamValue(session, param);
+                            if (andTrueValue.equals(value)) {
+                                return newFixedLengthResponse(
+                                        NanoHTTPD.Response.Status.OK,
+                                        NanoHTTPD.MIME_HTML,
+                                        "normal response counter" + counter);
+                            } else if (andFalseValue.equals(value)) {
+                                return newFixedLengthResponse(
+                                        NanoHTTPD.Response.Status.OK,
+                                        NanoHTTPD.MIME_HTML,
+                                        "normal response counter" + counter);
+                            } else if (orTrueValue.equals(value)) {
+                                return newFixedLengthResponse(
+                                        NanoHTTPD.Response.Status.OK,
+                                        NanoHTTPD.MIME_HTML,
+                                        "different response from or true");
+                            } else {
+                                // Original value: content changes each time (unstable page)
+                                counter++;
+                                return newFixedLengthResponse(
+                                        NanoHTTPD.Response.Status.OK,
+                                        NanoHTTPD.MIME_HTML,
+                                        "normal response counter" + counter);
+                            }
+                        }
+                    });
+
+            rule.init(getHttpMessage("/?" + param + "=" + normalValue), parent);
+
+            // When
+            rule.scan();
+
+            // Then - alert raised at low confidence because the control re-request shows
+            // page instability on the OR TRUE path
+            assertThat(alertsRaised, hasSize(1));
+            assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_LOW)));
+            assertNoParams(alertsRaised.get(0));
+        }
+
+        @Test
+        void shouldAlertWithLowConfidenceIfNoDataControlRequestShowsPageIsUnstable()
+                throws Exception {
+            // Given
+            String param = "param";
+            String normalValue = "payload";
+
+            // No-data path (check 2a): OR TRUE returns >20% more data than original,
+            // AND FALSE matches original, but the control re-request returns different
+            // content (unstable page).
+            // For check 2 to not trigger: AND TRUE returns different content from normal.
+            // Use HIGH strength to provide enough request budget for both check 2 and 2a.
+            rule.setAttackStrength(AttackStrength.HIGH);
+            String shortContent = "short content here";
+            // Must be >20% longer than shortContent (18 chars * 1.2 = ~22 chars minimum)
+            String longContent =
+                    "this is a much longer response body that significantly exceeds "
+                            + "the twenty percent threshold needed for the no-data path";
+
+            nano.addHandler(
+                    new NanoServerHandler("/") {
+                        private int normalCallCount = 0;
+
+                        @Override
+                        protected NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
+                            String value = getFirstParamValue(session, param);
+                            if (value == null) {
+                                return newFixedLengthResponse(
+                                        NanoHTTPD.Response.Status.OK,
+                                        NanoHTTPD.MIME_HTML,
+                                        shortContent);
+                            }
+                            if (value.contains(" OR ") || value.startsWith(normalValue + "%")) {
+                                // OR TRUE and LIKE variants return much longer content
+                                return newFixedLengthResponse(
+                                        NanoHTTPD.Response.Status.OK,
+                                        NanoHTTPD.MIME_HTML,
+                                        longContent);
+                            } else if (value.contains(" AND 1=1")
+                                    || value.contains("' AND '1'='1")
+                                    || value.contains("\" AND \"1\"=\"1")
+                                    || value.contains(SqlInjectionScanRule.SQL_LIKE)) {
+                                // AND TRUE and LIKE returns different so check 2 skips
+                                return newFixedLengthResponse(
+                                        NanoHTTPD.Response.Status.OK,
+                                        NanoHTTPD.MIME_HTML,
+                                        "completely different for and true");
+                            } else if (value.contains(" AND 1=2")
+                                    || value.contains("' AND '1'='2")
+                                    || value.contains("\" AND \"1\"=\"2")) {
+                                // AND FALSE returns same as baseline
+                                return newFixedLengthResponse(
+                                        NanoHTTPD.Response.Status.OK,
+                                        NanoHTTPD.MIME_HTML,
+                                        shortContent);
+                            } else if (normalValue.equals(value)) {
+                                // Original param value: returns stable content on first
+                                // calls (baseline/refresh), but later calls differ
+                                // (simulating page instability for the control check).
+                                normalCallCount++;
+                                if (normalCallCount <= 2) {
+                                    return newFixedLengthResponse(
+                                            NanoHTTPD.Response.Status.OK,
+                                            NanoHTTPD.MIME_HTML,
+                                            shortContent);
+                                }
+                                return newFixedLengthResponse(
+                                        NanoHTTPD.Response.Status.OK,
+                                        NanoHTTPD.MIME_HTML,
+                                        "different unstable content");
+                            }
+                            return newFixedLengthResponse(
+                                    NanoHTTPD.Response.Status.OK,
+                                    NanoHTTPD.MIME_HTML,
+                                    shortContent);
+                        }
+                    });
+
+            rule.init(getHttpMessage("/?" + param + "=" + normalValue), parent);
+
+            // When
+            rule.scan();
+
+            // Then - alert raised at low confidence because the control re-request shows
+            // page instability on the no-data path
+            assertThat(alertsRaised, hasSize(1));
+            assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_LOW)));
+            assertNoParams(alertsRaised.get(0));
+        }
     }
 
     @Nested
