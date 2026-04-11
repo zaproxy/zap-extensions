@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Maintenance changes.
 - The scan rules now have new tags for the OWASP Top 10 2025, and API Top 10 2023.
 - Depends on an updated version of the Common Library add-on.
+- The Possible Username Enumeration scan rule now includes example alert functionality for documentation generation purposes (Issue 6119).
 
 ## [64] - 2025-12-15
 ### Added
