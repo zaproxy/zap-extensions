@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - The scan rules now have new tags for the OWASP Top 10 2025.
 - The Charset Mismatch scan rule also now has tags for the Top 10 2021 and 2017.
 - Depends on an updated version of the Common Library add-on.
+- Add alert references to Hash Disclosure scan rule alerts (Issue 9144).
 
 ## [72] - 2026-03-31
 ### Added

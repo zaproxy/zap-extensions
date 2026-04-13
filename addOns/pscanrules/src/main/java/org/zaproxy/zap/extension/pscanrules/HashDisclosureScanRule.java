@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -47,9 +48,6 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 public class HashDisclosureScanRule extends PluginPassiveScanner
         implements CommonPassiveScanRuleInfo {
 
-    private static final HashAlert MD4_MD5_HASH_ALERT =
-            new HashAlert("MD4 / MD5", Alert.RISK_LOW, Alert.CONFIDENCE_LOW);
-
     /** a map of a regular expression pattern to details of the Hash type found */
     static Map<Pattern, HashAlert> hashPatterns = new LinkedHashMap<>();
 
@@ -61,32 +59,57 @@ public class HashDisclosureScanRule extends PluginPassiveScanner
 
         hashPatterns.put(
                 Pattern.compile("\\$LM\\$[a-f0-9]{16}", Pattern.CASE_INSENSITIVE),
-                new HashAlert("LanMan / DES", Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH));
+                new HashAlert(
+                        "LanMan / DES",
+                        Alert.RISK_HIGH,
+                        Alert.CONFIDENCE_HIGH,
+                        1,
+                        "$LM$299BD128C1101FD6"));
         hashPatterns.put(
                 Pattern.compile("\\$K4\\$[a-f0-9]{16},", Pattern.CASE_INSENSITIVE),
-                new HashAlert("Kerberos AFS DES", Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH));
+                new HashAlert(
+                        "Kerberos AFS DES",
+                        Alert.RISK_HIGH,
+                        Alert.CONFIDENCE_HIGH,
+                        2,
+                        "$K4$aabbccdd11223344,"));
         hashPatterns.put(
                 Pattern.compile("\\$2a\\$05\\$[a-z0-9\\+\\-_./=]{53}", Pattern.CASE_INSENSITIVE),
-                new HashAlert("OpenBSD Blowfish", Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH));
+                new HashAlert(
+                        "OpenBSD Blowfish",
+                        Alert.RISK_HIGH,
+                        Alert.CONFIDENCE_HIGH,
+                        3,
+                        "$2a$05$bvIG6Nmid91Mu9RcmmWZfO5HJIMCT8riNW0hEp8f6/FuA2/mHZFpe"));
         hashPatterns.put(
                 Pattern.compile("\\$2y\\$05\\$[a-z0-9\\+\\-_./=]{53}", Pattern.CASE_INSENSITIVE),
-                new HashAlert("OpenBSD Blowfish", Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH));
+                new HashAlert("OpenBSD Blowfish", Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH, 3, null));
 
         // MD5 Crypt
         // Example: $1$O3JMY.Tw$AdLnLjQ/5jXF9.MTp3gHv/
         hashPatterns.put(
                 Pattern.compile("\\$1\\$[./0-9A-Za-z]{0,8}\\$[./0-9A-Za-z]{22}"),
-                new HashAlert("MD5 Crypt", Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH));
+                new HashAlert(
+                        "MD5 Crypt",
+                        Alert.RISK_HIGH,
+                        Alert.CONFIDENCE_HIGH,
+                        4,
+                        "$1$O3JMY.Tw$AdLnLjQ/5jXF9.MTp3gHv/"));
 
         // SHA-256 Crypt
         // Example: $5$MnfsQ4iN$ZMTppKN16y/tIsUYs/obHlhdP.Os80yXhTurpBMUbA5
         // Example: $5$rounds=5000$usesomesillystri$KqJWpanXZHKq2BOB43TSaYhEWsQ1Lr5QNyPCDH/Tp.6
         hashPatterns.put(
                 Pattern.compile("\\$5\\$[./0-9A-Za-z]{0,16}\\$[./0-9A-Za-z]{43}"),
-                new HashAlert("SHA-256 Crypt", Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH));
+                new HashAlert(
+                        "SHA-256 Crypt",
+                        Alert.RISK_HIGH,
+                        Alert.CONFIDENCE_HIGH,
+                        5,
+                        "$5$MnfsQ4iN$ZMTppKN16y/tIsUYs/obHlhdP.Os80yXhTurpBMUbA5"));
         hashPatterns.put(
                 Pattern.compile("\\$5\\$rounds=[0-9]+\\$[./0-9A-Za-z]{0,16}\\$[./0-9A-Za-z]{43}"),
-                new HashAlert("SHA-256 Crypt", Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH));
+                new HashAlert("SHA-256 Crypt", Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH, 5, null));
 
         // SHA-512 Crypt
         // Example:
@@ -95,65 +118,120 @@ public class HashDisclosureScanRule extends PluginPassiveScanner
         // $6$rounds=5000$usesomesillystri$D4IrlXatmP7rx3P3InaxBeoomnAihCKRVQP22JZ6EY47Wc6BkroIuUUBOov1i.S5KPgErtP/EN5mcO.ChWQW21
         hashPatterns.put(
                 Pattern.compile("\\$6\\$[./0-9A-Za-z]{0,16}\\$[./0-9A-Za-z]{86}"),
-                new HashAlert("SHA-512 Crypt", Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH));
+                new HashAlert(
+                        "SHA-512 Crypt",
+                        Alert.RISK_HIGH,
+                        Alert.CONFIDENCE_HIGH,
+                        6,
+                        "$6$zWwwXKNj$gLAOoZCjcr8p/.VgV/FkGC3NX7BsXys3KHYePfuIGMNjY83dVxugPYlxVg/evpcVEJLT/rSwZcDMlVVf/bhf.1"));
         hashPatterns.put(
                 Pattern.compile("\\$6\\$rounds=[0-9]+\\$[./0-9A-Za-z]{0,16}\\$[./0-9A-Za-z]{86}"),
-                new HashAlert("SHA-512 Crypt", Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH));
+                new HashAlert("SHA-512 Crypt", Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH, 6, null));
 
         // BCrypt
         // Example: $2a$05$bvIG6Nmid91Mu9RcmmWZfO5HJIMCT8riNW0hEp8f6/FuA2/mHZFpe
         hashPatterns.put(
                 Pattern.compile("\\$2\\$[0-9]{2}\\$[./0-9A-Za-z]{53}"),
-                new HashAlert("BCrypt", Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH));
+                new HashAlert(
+                        "BCrypt",
+                        Alert.RISK_HIGH,
+                        Alert.CONFIDENCE_HIGH,
+                        7,
+                        "$2$05$bvIG6Nmid91Mu9RcmmWZfO5HJIMCT8riNW0hEp8f6/FuA2/mHZFpe"));
         hashPatterns.put(
                 Pattern.compile("\\$2a\\$[0-9]{2}\\$[./0-9A-Za-z]{53}"),
-                new HashAlert("BCrypt", Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH));
+                new HashAlert("BCrypt", Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH, 7, null));
 
         // NTLM
         // Example: $NT$7f8fe03093cc84b267b109625f6bbf4b
         hashPatterns.put(
                 Pattern.compile("\\$3\\$\\$[0-9a-f]{32}"),
-                new HashAlert("NTLM", Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH));
+                new HashAlert(
+                        "NTLM",
+                        Alert.RISK_HIGH,
+                        Alert.CONFIDENCE_HIGH,
+                        8,
+                        "$3$$7f8fe03093cc84b267b109625f6bbf4b"));
         hashPatterns.put(
                 Pattern.compile("\\$NT\\$[0-9a-f]{32}"),
-                new HashAlert("NTLM", Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH));
+                new HashAlert("NTLM", Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH, 8, null));
 
         // Salted SHA-1 - MacOS X, Oracle, Tiger-192, Haval-192
         // Example: 0E6A48F765D0FFFFF6247FA80D748E615F91DD0C7431E4D9
         hashPatterns.put(
                 Pattern.compile("\\b[0-9A-F]{48}\\b"),
-                new HashAlert("Salted SHA-1", Alert.RISK_LOW, Alert.CONFIDENCE_LOW));
+                new HashAlert(
+                        "Salted SHA-1",
+                        Alert.RISK_LOW,
+                        Alert.CONFIDENCE_LOW,
+                        9,
+                        "0E6A48F765D0FFFFF6247FA80D748E615F91DD0C7431E4D9"));
 
         // SHA hashes occur fairly frequently in various legitimate uses, and are not necessarily
         // indicative of an issue.
         hashPatterns.put(
                 Pattern.compile("\\b[0-9a-f]{128}\\b", Pattern.CASE_INSENSITIVE),
-                new HashAlert("SHA-512", Alert.RISK_LOW, Alert.CONFIDENCE_LOW));
+                new HashAlert(
+                        "SHA-512",
+                        Alert.RISK_LOW,
+                        Alert.CONFIDENCE_LOW,
+                        10,
+                        "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e"));
         hashPatterns.put(
                 Pattern.compile("\\b[0-9a-f]{96}\\b", Pattern.CASE_INSENSITIVE),
-                new HashAlert("SHA-384", Alert.RISK_LOW, Alert.CONFIDENCE_LOW));
+                new HashAlert(
+                        "SHA-384",
+                        Alert.RISK_LOW,
+                        Alert.CONFIDENCE_LOW,
+                        11,
+                        "38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b"));
         hashPatterns.put(
                 Pattern.compile("\\b[0-9a-f]{64}\\b", Pattern.CASE_INSENSITIVE),
-                new HashAlert("SHA-256", Alert.RISK_LOW, Alert.CONFIDENCE_LOW));
+                new HashAlert(
+                        "SHA-256",
+                        Alert.RISK_LOW,
+                        Alert.CONFIDENCE_LOW,
+                        12,
+                        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"));
         hashPatterns.put(
                 Pattern.compile("\\b[0-9a-f]{56}\\b", Pattern.CASE_INSENSITIVE),
-                new HashAlert("SHA-224", Alert.RISK_LOW, Alert.CONFIDENCE_LOW));
+                new HashAlert(
+                        "SHA-224",
+                        Alert.RISK_LOW,
+                        Alert.CONFIDENCE_LOW,
+                        13,
+                        "d14a028c2a3a2bc9476102bb288234c415a2b01f828ea62ac5b3e42f"));
         hashPatterns.put(
                 Pattern.compile("\\b[0-9a-f]{40}\\b", Pattern.CASE_INSENSITIVE),
-                new HashAlert("SHA-1", Alert.RISK_LOW, Alert.CONFIDENCE_LOW));
+                new HashAlert(
+                        "SHA-1",
+                        Alert.RISK_LOW,
+                        Alert.CONFIDENCE_LOW,
+                        14,
+                        "da39a3ee5e6b4b0d3255bfef95601890afd80709"));
 
         // LanMan (clashes with MD4/MD5) - note the case sensitivity here, however
         // Example: 855c3697d9979e78ac404c4ba2c66533)
         hashPatterns.put(
                 Pattern.compile("\\b\\[0-9a-f]{32}\\b"),
-                new HashAlert("LanMan", Alert.RISK_LOW, Alert.CONFIDENCE_LOW));
+                new HashAlert(
+                        "LanMan",
+                        Alert.RISK_LOW,
+                        Alert.CONFIDENCE_LOW,
+                        15,
+                        "855c3697d9979e78ac404c4ba2c66533"));
 
         // MD4/5 (clashes with LanMan)
         // MD4/5 hashes occur fairly frequently in various legitimate uses, and are not necessarily
         // indicative of an issue.
         hashPatterns.put(
                 Pattern.compile("(?<!jsessionid=)\\b[0-9a-f]{32}\\b", Pattern.CASE_INSENSITIVE),
-                MD4_MD5_HASH_ALERT);
+                new HashAlert(
+                        "MD4 / MD5",
+                        Alert.RISK_LOW,
+                        Alert.CONFIDENCE_LOW,
+                        16,
+                        "21232F297A57A5A743894A0E4A801FC3"));
 
         // TODO: for the main hash types, verify the value by hashing the parameters
         //  - if the hash value can be re-generated, then it is a "reflection" attack
@@ -286,7 +364,8 @@ public class HashDisclosureScanRule extends PluginPassiveScanner
                 // CWE-497: Exposure of Sensitive System Information to an Unauthorized Control
                 // Sphere
                 .setCweId(497)
-                .setWascId(13); // Information Leakage
+                .setWascId(13) // Information Leakage
+                .setAlertRef(getPluginId() + "-" + hashAlert.getAlertRef());
     }
 
     @Override
@@ -301,13 +380,21 @@ public class HashDisclosureScanRule extends PluginPassiveScanner
 
     @Override
     public List<Alert> getExampleAlerts() {
-        return List.of(buildAlert("21232F297A57A5A743894A0E4A801FC3", MD4_MD5_HASH_ALERT).build());
+        List<Alert> alerts = new ArrayList<>();
+        for (HashAlert hashAlert : hashPatterns.values()) {
+            if (hashAlert.getExampleEvidence() != null) {
+                alerts.add(buildAlert(hashAlert.getExampleEvidence(), hashAlert).build());
+            }
+        }
+        return alerts;
     }
 
     static class HashAlert {
         private String description;
         private int risk;
         private int confidence;
+        private int alertRef;
+        private String exampleEvidence;
 
         public String getDescription() {
             return description;
@@ -321,10 +408,25 @@ public class HashDisclosureScanRule extends PluginPassiveScanner
             return confidence;
         }
 
-        public HashAlert(String description, int risk, int confidence) {
+        public int getAlertRef() {
+            return alertRef;
+        }
+
+        public String getExampleEvidence() {
+            return exampleEvidence;
+        }
+
+        public HashAlert(
+                String description,
+                int risk,
+                int confidence,
+                int alertRef,
+                String exampleEvidence) {
             this.description = description;
             this.risk = risk;
             this.confidence = confidence;
+            this.alertRef = alertRef;
+            this.exampleEvidence = exampleEvidence;
         }
     }
 }
