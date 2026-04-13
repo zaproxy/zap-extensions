@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -73,17 +74,20 @@ public class HashDisclosureScanRule extends PluginPassiveScanner
                         Alert.CONFIDENCE_HIGH,
                         2,
                         "$K4$aabbccdd11223344,"));
-        hashPatterns.put(
-                Pattern.compile("\\$2a\\$05\\$[a-z0-9\\+\\-_./=]{53}", Pattern.CASE_INSENSITIVE),
+
+        HashAlert openBsdBlowfishAlert =
                 new HashAlert(
                         "OpenBSD Blowfish",
                         Alert.RISK_HIGH,
                         Alert.CONFIDENCE_HIGH,
                         3,
-                        "$2a$05$bvIG6Nmid91Mu9RcmmWZfO5HJIMCT8riNW0hEp8f6/FuA2/mHZFpe"));
+                        "$2a$05$bvIG6Nmid91Mu9RcmmWZfO5HJIMCT8riNW0hEp8f6/FuA2/mHZFpe");
+        hashPatterns.put(
+                Pattern.compile("\\$2a\\$05\\$[a-z0-9\\+\\-_./=]{53}", Pattern.CASE_INSENSITIVE),
+                openBsdBlowfishAlert);
         hashPatterns.put(
                 Pattern.compile("\\$2y\\$05\\$[a-z0-9\\+\\-_./=]{53}", Pattern.CASE_INSENSITIVE),
-                new HashAlert("OpenBSD Blowfish", Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH, 3, null));
+                openBsdBlowfishAlert);
 
         // MD5 Crypt
         // Example: $1$O3JMY.Tw$AdLnLjQ/5jXF9.MTp3gHv/
@@ -99,62 +103,62 @@ public class HashDisclosureScanRule extends PluginPassiveScanner
         // SHA-256 Crypt
         // Example: $5$MnfsQ4iN$ZMTppKN16y/tIsUYs/obHlhdP.Os80yXhTurpBMUbA5
         // Example: $5$rounds=5000$usesomesillystri$KqJWpanXZHKq2BOB43TSaYhEWsQ1Lr5QNyPCDH/Tp.6
-        hashPatterns.put(
-                Pattern.compile("\\$5\\$[./0-9A-Za-z]{0,16}\\$[./0-9A-Za-z]{43}"),
+        HashAlert sha256CryptAlert =
                 new HashAlert(
                         "SHA-256 Crypt",
                         Alert.RISK_HIGH,
                         Alert.CONFIDENCE_HIGH,
                         5,
-                        "$5$MnfsQ4iN$ZMTppKN16y/tIsUYs/obHlhdP.Os80yXhTurpBMUbA5"));
+                        "$5$MnfsQ4iN$ZMTppKN16y/tIsUYs/obHlhdP.Os80yXhTurpBMUbA5");
+        hashPatterns.put(
+                Pattern.compile("\\$5\\$[./0-9A-Za-z]{0,16}\\$[./0-9A-Za-z]{43}"),
+                sha256CryptAlert);
         hashPatterns.put(
                 Pattern.compile("\\$5\\$rounds=[0-9]+\\$[./0-9A-Za-z]{0,16}\\$[./0-9A-Za-z]{43}"),
-                new HashAlert("SHA-256 Crypt", Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH, 5, null));
+                sha256CryptAlert);
 
         // SHA-512 Crypt
         // Example:
         // $6$zWwwXKNj$gLAOoZCjcr8p/.VgV/FkGC3NX7BsXys3KHYePfuIGMNjY83dVxugPYlxVg/evpcVEJLT/rSwZcDMlVVf/bhf.1
         // Example:
         // $6$rounds=5000$usesomesillystri$D4IrlXatmP7rx3P3InaxBeoomnAihCKRVQP22JZ6EY47Wc6BkroIuUUBOov1i.S5KPgErtP/EN5mcO.ChWQW21
-        hashPatterns.put(
-                Pattern.compile("\\$6\\$[./0-9A-Za-z]{0,16}\\$[./0-9A-Za-z]{86}"),
+        HashAlert sha512CryptAlert =
                 new HashAlert(
                         "SHA-512 Crypt",
                         Alert.RISK_HIGH,
                         Alert.CONFIDENCE_HIGH,
                         6,
-                        "$6$zWwwXKNj$gLAOoZCjcr8p/.VgV/FkGC3NX7BsXys3KHYePfuIGMNjY83dVxugPYlxVg/evpcVEJLT/rSwZcDMlVVf/bhf.1"));
+                        "$6$zWwwXKNj$gLAOoZCjcr8p/.VgV/FkGC3NX7BsXys3KHYePfuIGMNjY83dVxugPYlxVg/evpcVEJLT/rSwZcDMlVVf/bhf.1");
+        hashPatterns.put(
+                Pattern.compile("\\$6\\$[./0-9A-Za-z]{0,16}\\$[./0-9A-Za-z]{86}"),
+                sha512CryptAlert);
         hashPatterns.put(
                 Pattern.compile("\\$6\\$rounds=[0-9]+\\$[./0-9A-Za-z]{0,16}\\$[./0-9A-Za-z]{86}"),
-                new HashAlert("SHA-512 Crypt", Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH, 6, null));
+                sha512CryptAlert);
 
         // BCrypt
         // Example: $2a$05$bvIG6Nmid91Mu9RcmmWZfO5HJIMCT8riNW0hEp8f6/FuA2/mHZFpe
-        hashPatterns.put(
-                Pattern.compile("\\$2\\$[0-9]{2}\\$[./0-9A-Za-z]{53}"),
+        HashAlert bcryptAlert =
                 new HashAlert(
                         "BCrypt",
                         Alert.RISK_HIGH,
                         Alert.CONFIDENCE_HIGH,
                         7,
-                        "$2$05$bvIG6Nmid91Mu9RcmmWZfO5HJIMCT8riNW0hEp8f6/FuA2/mHZFpe"));
-        hashPatterns.put(
-                Pattern.compile("\\$2a\\$[0-9]{2}\\$[./0-9A-Za-z]{53}"),
-                new HashAlert("BCrypt", Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH, 7, null));
+                        "$2$05$bvIG6Nmid91Mu9RcmmWZfO5HJIMCT8riNW0hEp8f6/FuA2/mHZFpe");
+        hashPatterns.put(Pattern.compile("\\$2\\$[0-9]{2}\\$[./0-9A-Za-z]{53}"), bcryptAlert);
+        hashPatterns.put(Pattern.compile("\\$2a\\$[0-9]{2}\\$[./0-9A-Za-z]{53}"), bcryptAlert);
 
         // NTLM
         // Example: $NT$7f8fe03093cc84b267b109625f6bbf4b
-        hashPatterns.put(
-                Pattern.compile("\\$3\\$\\$[0-9a-f]{32}"),
+        HashAlert ntlmAlert =
                 new HashAlert(
                         "NTLM",
                         Alert.RISK_HIGH,
                         Alert.CONFIDENCE_HIGH,
                         8,
-                        "$3$$7f8fe03093cc84b267b109625f6bbf4b"));
-        hashPatterns.put(
-                Pattern.compile("\\$NT\\$[0-9a-f]{32}"),
-                new HashAlert("NTLM", Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH, 8, null));
+                        "$3$$7f8fe03093cc84b267b109625f6bbf4b");
+        hashPatterns.put(Pattern.compile("\\$3\\$\\$[0-9a-f]{32}"), ntlmAlert);
+        hashPatterns.put(Pattern.compile("\\$NT\\$[0-9a-f]{32}"), ntlmAlert);
 
         // Salted SHA-1 - MacOS X, Oracle, Tiger-192, Haval-192
         // Example: 0E6A48F765D0FFFFF6247FA80D748E615F91DD0C7431E4D9
@@ -381,10 +385,8 @@ public class HashDisclosureScanRule extends PluginPassiveScanner
     @Override
     public List<Alert> getExampleAlerts() {
         List<Alert> alerts = new ArrayList<>();
-        for (HashAlert hashAlert : hashPatterns.values()) {
-            if (hashAlert.getExampleEvidence() != null) {
-                alerts.add(buildAlert(hashAlert.getExampleEvidence(), hashAlert).build());
-            }
+        for (HashAlert hashAlert : new LinkedHashSet<>(hashPatterns.values())) {
+            alerts.add(buildAlert(hashAlert.getExampleEvidence(), hashAlert).build());
         }
         return alerts;
     }
