@@ -41,6 +41,9 @@ public class PassiveScriptScanRule extends PassiveScriptHelper {
     private CachedScriptInterfaces cachedScriptInterfaces;
     private ScanRuleMetadata metadata;
 
+    // Prevents GraalJS ScriptEngineCleaner from GC'ing the engine. Issue #9297.
+    Object engineRef;
+
     public PassiveScriptScanRule(ScriptWrapper script, ScanRuleMetadata metadata) {
         this.script = script;
         cachedScriptInterfaces = new CachedScriptInterfaces(script);

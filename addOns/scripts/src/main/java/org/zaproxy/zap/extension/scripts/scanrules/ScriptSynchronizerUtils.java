@@ -34,14 +34,43 @@ class ScriptSynchronizerUtils {
 
     private static final Logger LOGGER = LogManager.getLogger(ScriptSynchronizerUtils.class);
 
-    static ScanRuleMetadata getMetadataForScript(ScriptWrapper script) throws Exception {
+    /**
+     * Bundles metadata with a strong reference to the provider proxy. The caller MUST store {@code
+     * providerRef} for as long as the scan rule is registered — if the proxy is GC'd, the GraalJS
+     * {@code ScriptEngineCleaner} closes the engine and permanently poisons {@code
+     * ScanRuleMetadata} class init for the JVM process.
+     *
+     * @see <a href="https://github.com/zaproxy/zaproxy/issues/9297">Issue 9297</a>
+     */
+    static class MetadataResult {
+        final ScanRuleMetadata metadata;
+        final Object providerRef;
+
+        MetadataResult(ScanRuleMetadata metadata, Object providerRef) {
+            this.metadata = metadata;
+            this.providerRef = providerRef;
+        }
+    }
+
+    /**
+     * Returns metadata and the provider proxy in a single result. These MUST be obtained from a
+     * single {@code getInterface()} call — splitting into two calls creates a window where the
+     * first proxy can be GC'd before the caller stores it.
+     */
+    static MetadataResult getMetadataForScript(ScriptWrapper script) throws Exception {
         var metadataProvider = getExtScript().getInterface(script, ScanRuleMetadataProvider.class);
         if (metadataProvider != null) {
-            return ScriptScanRuleUtils.callOptionalScriptMethod(metadataProvider::getMetadata);
+            var metadata =
+                    ScriptScanRuleUtils.callOptionalScriptMethod(metadataProvider::getMetadata);
+            if (metadata != null) {
+                return new MetadataResult(metadata, metadataProvider);
+            }
         }
         return null;
     }
 
+    // Unlike getMetadataForScript(), this intentionally does NOT retain the provider reference.
+    // It's only a probe — engine closure here does not affect scan rule registration.
     static boolean providesMetadata(ScriptWrapper script) {
         try {
             var metadataProvider =

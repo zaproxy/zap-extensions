@@ -39,8 +39,8 @@ public class ActiveScriptSynchronizer {
         try {
             ActiveScriptScanRule scanRule = scriptToScanRuleMap.get(script);
 
-            var metadata = ScriptSynchronizerUtils.getMetadataForScript(script);
-            if (metadata == null) {
+            var metadataResult = ScriptSynchronizerUtils.getMetadataForScript(script);
+            if (metadataResult == null) {
                 if (scanRule != null) {
                     // The metadata function was removed from the script
                     scriptRemoved(script);
@@ -48,9 +48,12 @@ public class ActiveScriptSynchronizer {
                 return;
             }
 
+            var metadata = metadataResult.metadata;
+
             if (scanRule != null) {
                 if (scanRule.getId() == metadata.getId()) {
                     scanRule.setMetadata(metadata);
+                    scanRule.engineRef = metadataResult.providerRef;
                     return;
                 }
                 if (unloadScanRule(scanRule)) {
@@ -69,6 +72,7 @@ public class ActiveScriptSynchronizer {
                 return;
             }
             scriptToScanRuleMap.put(script, scanRule);
+            scanRule.engineRef = metadataResult.providerRef;
         } catch (Exception e) {
             getExtScript().handleScriptException(script, e);
         }

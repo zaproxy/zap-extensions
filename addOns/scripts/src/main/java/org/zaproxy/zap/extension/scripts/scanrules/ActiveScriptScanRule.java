@@ -47,6 +47,9 @@ public class ActiveScriptScanRule extends ActiveScriptHelper {
     private CachedScriptInterfaces cachedScriptInterfaces;
     private ScanRuleMetadata metadata;
 
+    // Prevents GraalJS ScriptEngineCleaner from GC'ing the engine. Issue #9297.
+    Object engineRef;
+
     /** Used via reflection in {@link org.parosproxy.paros.core.scanner.PluginFactory} */
     public ActiveScriptScanRule() {}
 

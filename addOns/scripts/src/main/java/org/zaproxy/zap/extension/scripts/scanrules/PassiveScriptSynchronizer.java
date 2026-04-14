@@ -43,8 +43,8 @@ public class PassiveScriptSynchronizer {
         try {
             PassiveScriptScanRule scanRule = scriptToScanRuleMap.get(script);
 
-            var metadata = ScriptSynchronizerUtils.getMetadataForScript(script);
-            if (metadata == null) {
+            var metadataResult = ScriptSynchronizerUtils.getMetadataForScript(script);
+            if (metadataResult == null) {
                 if (scanRule != null) {
                     // The metadata function was removed from the script
                     scriptRemoved(script);
@@ -52,9 +52,12 @@ public class PassiveScriptSynchronizer {
                 return;
             }
 
+            var metadata = metadataResult.metadata;
+
             if (scanRule != null) {
                 if (scanRule.getPluginId() == metadata.getId()) {
                     scanRule.setMetadata(metadata);
+                    scanRule.engineRef = metadataResult.providerRef;
                     return;
                 }
                 if (unloadScanRule(scanRule)) {
@@ -84,6 +87,7 @@ public class PassiveScriptSynchronizer {
                 return;
             }
             scriptToScanRuleMap.put(script, scanRule);
+            scanRule.engineRef = metadataResult.providerRef;
         } catch (Exception e) {
             getExtScript().handleScriptException(script, e);
         }
