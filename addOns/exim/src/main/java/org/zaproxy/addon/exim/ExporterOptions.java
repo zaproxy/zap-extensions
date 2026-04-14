@@ -171,7 +171,14 @@ public class ExporterOptions {
         /** Exports all messages accessed, includes temporary messages. */
         ALL,
         /** Exports the Sites tree, only in yaml format */
-        SITESTREE;
+        SITESTREE,
+        /**
+         * Exports the Client Map (requires the Client Side Integration add-on), only in yaml
+         * format.
+         *
+         * @since 0.19.0
+         */
+        CLIENTMAP;
 
         private String id;
         private String name;
@@ -205,6 +212,9 @@ public class ExporterOptions {
             }
             if (SITESTREE.id.equalsIgnoreCase(value)) {
                 return SITESTREE;
+            }
+            if (CLIENTMAP.id.equalsIgnoreCase(value)) {
+                return CLIENTMAP;
             }
             return HISTORY;
         }

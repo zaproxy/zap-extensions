@@ -35,6 +35,18 @@ zapAddOn {
                     }
                 }
             }
+            register("org.zaproxy.addon.client.exim.ExtensionClientExim") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.addon.client.exim"))
+                }
+                dependencies {
+                    addOns {
+                        register("exim") {
+                            version.set(">=0.19.0")
+                        }
+                    }
+                }
+            }
         }
         dependencies {
             addOns {
@@ -78,6 +90,7 @@ dependencies {
     zapAddOn("automation")
     zapAddOn("commonlib")
     zapAddOn("database")
+    zapAddOn("exim")
     zapAddOn("selenium")
     zapAddOn("network")
     zapAddOn("pscan")

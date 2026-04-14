@@ -365,4 +365,58 @@ class ExporterUnitTest extends TestUtils {
                 is("Invalid type for " + sourceName + ", YAML is not supported"));
         assertThat(result.getCause(), is(nullValue()));
     }
+
+    @Test
+    void shouldExportClientMapWithYamlType() throws Exception {
+        // Given
+        String expectedOutput = "clientmap yaml output";
+        Exporter.registerSourceExporter(
+                Source.CLIENTMAP, (writer, opts) -> writer.write(expectedOutput));
+        try {
+            optionsWithType("yaml");
+            optionsWithSource(Source.CLIENTMAP);
+            // When
+            ExporterResult result = exporter.export(options);
+            // Then
+            assertCount(result, 1);
+            assertThat(result.getErrors(), is(empty()));
+            assertThat(result.getCause(), is(nullValue()));
+            assertThat(Files.readString(outputFile), is(equalTo(expectedOutput)));
+        } finally {
+            Exporter.unregisterSourceExporter(Source.CLIENTMAP);
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {HarExporter.ID, UrlExporter.ID})
+    void shouldFailClientMapExportWithNonYamlType(String type) throws Exception {
+        // Given
+        optionsWithType(type);
+        optionsWithSource(Source.CLIENTMAP);
+        // When
+        ExporterResult result = exporter.export(options);
+        // Then
+        assertCount(result, 0);
+        assertThat(result.getErrors().size(), is(1));
+        assertThat(
+                result.getErrors().get(0),
+                is("Invalid type for ClientMap, only YAML is supported: " + type));
+        assertThat(result.getCause(), is(nullValue()));
+    }
+
+    @Test
+    void shouldFailClientMapExportWhenNoSourceExporterRegistered() throws Exception {
+        // Given
+        optionsWithType("yaml");
+        optionsWithSource(Source.CLIENTMAP);
+        // When
+        ExporterResult result = exporter.export(options);
+        // Then
+        assertCount(result, 0);
+        assertThat(result.getErrors().size(), is(1));
+        assertThat(
+                result.getErrors().get(0),
+                containsString("No exporter available for ClientMap source"));
+        assertThat(result.getCause(), is(nullValue()));
+    }
 }
