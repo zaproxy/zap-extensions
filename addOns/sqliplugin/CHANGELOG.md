@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [17] - 2026-04-14
 ### Changed
 - Update minimum ZAP version to 2.17.0.
 - The scan rule now has the "TEST_TIMING" alert tag, as well as new tags for the OWASP Top 10 2025, and API Top 10 2023.
@@ -88,6 +88,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Added support for HyperSQL DB
 
+[17]: https://github.com/zaproxy/zap-extensions/releases/sqliplugin-v17
 [16]: https://github.com/zaproxy/zap-extensions/releases/sqliplugin-v16
 [15]: https://github.com/zaproxy/zap-extensions/releases/sqliplugin-v15
 [14]: https://github.com/zaproxy/zap-extensions/releases/sqliplugin-v14

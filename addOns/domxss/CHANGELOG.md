@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [24] - 2026-04-14
 ### Changed
 - The scan rule now has new tags for the OWASP Top 10 2025.
 - Depends on an updated version of the Common Library add-on.
@@ -154,6 +154,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## 1 - 2015-08-24
 
 
+[24]: https://github.com/zaproxy/zap-extensions/releases/domxss-v24
 [23]: https://github.com/zaproxy/zap-extensions/releases/domxss-v23
 [22]: https://github.com/zaproxy/zap-extensions/releases/domxss-v22
 [21]: https://github.com/zaproxy/zap-extensions/releases/domxss-v21
