@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [49] - 2026-04-14
 ### Changed
 - Maintenance changes.
 - The scan rules now have new tags for the OWASP Top 10 2025.
@@ -405,6 +405,7 @@ As well as Alert Refs where applicable (Issues 6119 & 7100).
 - Updated User Controlled Open Redirect, Cookie and Charset rules after testing with
 - http://www.testcases.org/watcher/ test pages.
 
+[49]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v49
 [48]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v48
 [47]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v47
 [46]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v46

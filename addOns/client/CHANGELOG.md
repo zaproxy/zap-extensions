@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.22.0] - 2026-04-14
 ### Added
 - Persist Client History entries in the session.
 - Add a button in the Client History tab to clear the history from both the GUI and session.
@@ -196,6 +196,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.22.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.22.0
 [0.21.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.21.0
 [0.20.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.20.0
 [0.19.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.19.0

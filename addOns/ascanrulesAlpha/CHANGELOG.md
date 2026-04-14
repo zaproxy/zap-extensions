@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [56] - 2026-04-14
 ### Changed
 - The SQL Injection - SQLite (Time Based) scan rule now includes example alert functionality for documentation generation purposes (Issue 6119).
 - The scan rules now have new tags for the OWASP Top 10 2025, and API Top 10 2023.
@@ -436,6 +436,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version, including persistent XSS tests
 
+[56]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v56
 [55]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v55
 [54]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v54
 [53]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v53

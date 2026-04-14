@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [12] - 2026-04-14
 ### Changed
 - Maintenance changes.
 - The alerts now have new tags for the OWASP Top 10 2025.
@@ -88,6 +88,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Initial version
 
+[12]: https://github.com/zaproxy/zap-extensions/releases/accessControl-v12
 [11]: https://github.com/zaproxy/zap-extensions/releases/accessControl-v11
 [10]: https://github.com/zaproxy/zap-extensions/releases/accessControl-v10
 [9]: https://github.com/zaproxy/zap-extensions/releases/accessControl-v9
