@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Updated with upstream retire.js pattern changes.
 - The scan rule now has new tags for the OWASP Top 10 2025, and API Top 10 2023.
 - Depends on an updated version of the Common Library add-on.
 
