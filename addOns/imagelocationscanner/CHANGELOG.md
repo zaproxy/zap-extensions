@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Update minimum ZAP version to 2.17.0.
 - The scan rule now has new tags for the OWASP Top 10 2025.
 - Depends on an updated version of the Common Library add-on.
+- Update dependency.
 
 ## [7] - 2025-09-18
 ### Changed
