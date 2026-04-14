@@ -44,9 +44,9 @@ class ScriptSynchronizerUtils {
      */
     static class MetadataResult {
         final ScanRuleMetadata metadata;
-        final Object providerRef;
+        final ScanRuleMetadataProvider providerRef;
 
-        MetadataResult(ScanRuleMetadata metadata, Object providerRef) {
+        MetadataResult(ScanRuleMetadata metadata, ScanRuleMetadataProvider providerRef) {
             this.metadata = metadata;
             this.providerRef = providerRef;
         }

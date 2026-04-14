@@ -28,6 +28,7 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadata;
+import org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadataProvider;
 import org.zaproxy.zap.control.AddOn;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.extension.script.ExtensionScript;
@@ -42,7 +43,7 @@ public class PassiveScriptScanRule extends PassiveScriptHelper {
     private ScanRuleMetadata metadata;
 
     // Prevents GraalJS ScriptEngineCleaner from GC'ing the engine. Issue #9297.
-    Object engineRef;
+    ScanRuleMetadataProvider engineRef;
 
     public PassiveScriptScanRule(ScriptWrapper script, ScanRuleMetadata metadata) {
         this.script = script;
