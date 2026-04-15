@@ -1392,6 +1392,66 @@ class AuthUtilsUnitTest extends TestUtils {
             verifyNoMoreInteractions(diags);
         }
 
+        @TestTemplate
+        void shouldFireInputAndChangeEventsWhenFillingField(WebDriver wd) {
+            // Given - a page with listeners that record when input/change events fire
+            pageContent =
+                    () ->
+                            """
+                                <input id="field" />
+                                <span id="inputValue"></span>
+                                <span id="changeValue"></span>
+                                <script>
+                                    var el = document.getElementById('field');
+                                    el.addEventListener('input', function(e) {
+                                        document.getElementById('inputValue').textContent = e.target.value;
+                                    });
+                                    el.addEventListener('change', function(e) {
+                                        document.getElementById('changeValue').textContent = e.target.value;
+                                    });
+                                </script>
+                            """;
+            wd.get(url);
+            WebElement field = wd.findElement(By.id("field"));
+
+            // When
+            AuthUtils.fillFieldWithEvents(field, "hello", wd);
+
+            // Then - both events were dispatched and the listeners received the value
+            assertThat(wd.findElement(By.id("inputValue")).getText(), is(equalTo("hello")));
+            assertThat(wd.findElement(By.id("changeValue")).getText(), is(equalTo("hello")));
+        }
+
+        @TestTemplate
+        void shouldFillSplitOtpFieldsFromFirstFieldInContainer(WebDriver wd) {
+            // Given - six single-character OTP input boxes inside a div container
+            pageContent =
+                    () ->
+                            """
+                                <div id="otp">
+                                    <input id="d1" maxlength="1" />
+                                    <input id="d2" maxlength="1" />
+                                    <input id="d3" maxlength="1" />
+                                    <input id="d4" maxlength="1" />
+                                    <input id="d5" maxlength="1" />
+                                    <input id="d6" maxlength="1" />
+                                </div>
+                            """;
+            wd.get(url);
+            WebElement firstField = wd.findElement(By.id("d1"));
+
+            // When - only the first field is passed; siblings are auto-detected
+            AuthUtils.fillSplitOtpFields(wd, firstField, "123456");
+
+            // Then - each box contains exactly one digit in order
+            assertThat(wd.findElement(By.id("d1")).getDomProperty("value"), is(equalTo("1")));
+            assertThat(wd.findElement(By.id("d2")).getDomProperty("value"), is(equalTo("2")));
+            assertThat(wd.findElement(By.id("d3")).getDomProperty("value"), is(equalTo("3")));
+            assertThat(wd.findElement(By.id("d4")).getDomProperty("value"), is(equalTo("4")));
+            assertThat(wd.findElement(By.id("d5")).getDomProperty("value"), is(equalTo("5")));
+            assertThat(wd.findElement(By.id("d6")).getDomProperty("value"), is(equalTo("6")));
+        }
+
         private static void assertId(WebElement element, String id) {
             assertThat(element.getAttribute("id"), is(equalTo(id)));
         }
@@ -1547,70 +1607,6 @@ class AuthUtilsUnitTest extends TestUtils {
         }
     }
 
-    @Nested
-    class FillFieldWithEventsTest {
-
-        private interface JsWebDriver extends WebDriver, JavascriptExecutor {}
-
-        @Test
-        void shouldFillFieldWithValue() {
-            // Given
-            WebElement field = mock(WebElement.class);
-            given(field.getAttribute("value")).willReturn(null);
-            WebDriver driver = mock(WebDriver.class);
-
-            // When
-            AuthUtils.fillFieldWithEvents(field, "testValue", driver);
-
-            // Then
-            verify(field).sendKeys("testValue");
-            verify(field, never()).clear();
-        }
-
-        @Test
-        void shouldClearExistingValueBeforeFilling() {
-            // Given
-            WebElement field = mock(WebElement.class);
-            given(field.getAttribute("value")).willReturn("existing");
-            WebDriver driver = mock(WebDriver.class);
-
-            // When
-            AuthUtils.fillFieldWithEvents(field, "newValue", driver);
-
-            // Then
-            var ordered = inOrder(field);
-            ordered.verify(field).clear();
-            ordered.verify(field).sendKeys("newValue");
-        }
-
-        @Test
-        void shouldFireJsEventsWhenDriverIsJavascriptExecutor() {
-            // Given
-            WebElement field = mock(WebElement.class);
-            given(field.getAttribute("value")).willReturn(null);
-            JsWebDriver driver = mock(JsWebDriver.class);
-
-            // When
-            AuthUtils.fillFieldWithEvents(field, "testValue", driver);
-
-            // Then
-            verify(field).sendKeys("testValue");
-            verify(driver).executeScript(anyString(), eq(field));
-        }
-
-        @Test
-        void shouldNotFailWhenDriverIsNotJavascriptExecutor() {
-            // Given
-            WebElement field = mock(WebElement.class);
-            given(field.getAttribute("value")).willReturn(null);
-            WebDriver driver = mock(WebDriver.class);
-
-            // When / Then
-            assertDoesNotThrow(() -> AuthUtils.fillFieldWithEvents(field, "testValue", driver));
-            verify(field).sendKeys("testValue");
-            verifyNoInteractions(driver);
-        }
-    }
 
     class TestWebElement implements WebElement {
 

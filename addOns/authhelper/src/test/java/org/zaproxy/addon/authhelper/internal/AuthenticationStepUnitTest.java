@@ -24,12 +24,10 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.MockedStatic;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -63,23 +61,6 @@ class AuthenticationStepUnitTest {
         return field;
     }
 
-    @ParameterizedTest
-    @CsvSource({"0,1", "1,2", "2,3", "3,4", "4,5", "5,6"})
-    void shouldSendSingleCharToEachSplitTotpField(int charIndex, String expectedChar) {
-        // Given
-        AuthenticationStep step = createTotpStep();
-        WebElement field = mockField();
-        WebDriver wd = mockWebDriver(field);
-        UsernamePasswordAuthenticationCredentials credentials =
-                mock(UsernamePasswordAuthenticationCredentials.class);
-
-        // When - precomputed code + charIndex selects the correct digit
-        step.execute(wd, credentials, charIndex, "123456");
-
-        // Then - only the single digit at charIndex is sent
-        verify(field).sendKeys(expectedChar);
-    }
-
     @Test
     void shouldSendFullCodeForSingleCombinedTotpField() {
         // Given
@@ -88,54 +69,59 @@ class AuthenticationStepUnitTest {
         WebDriver wd = mockWebDriver(field);
         UsernamePasswordAuthenticationCredentials credentials =
                 mock(UsernamePasswordAuthenticationCredentials.class);
+        AuthenticationContext ctx = new AuthenticationContext();
 
         try (MockedStatic<TotpSupport> totpMock = mockStatic(TotpSupport.class)) {
             totpMock.when(() -> TotpSupport.getCode(credentials)).thenReturn("654321");
 
-            // When - charIndex=-1 means single combined field, send full code
-            step.execute(wd, credentials, -1, null);
+            // When
+            step.execute(wd, credentials, ctx);
 
-            // Then - full TOTP code is sent
+            // Then - full TOTP code is sent to the single combined field
             verify(field).sendKeys("654321");
         }
     }
 
     @Test
-    void shouldUsePrecomputedCodeWithoutCallingTotpSupport() {
-        // Given - precomputedTotpCode is already available
+    void shouldCacheTotpCodeInContextAcrossStepExecutions() {
+        // Given - the same AuthenticationContext is reused across two execute calls
         AuthenticationStep step = createTotpStep();
         WebElement field = mockField();
         WebDriver wd = mockWebDriver(field);
         UsernamePasswordAuthenticationCredentials credentials =
                 mock(UsernamePasswordAuthenticationCredentials.class);
+        AuthenticationContext ctx = new AuthenticationContext();
 
         try (MockedStatic<TotpSupport> totpMock = mockStatic(TotpSupport.class)) {
-            // When - precomputedTotpCode is provided; TotpSupport should NOT be called
-            step.execute(wd, credentials, 0, "123456");
+            totpMock.when(() -> TotpSupport.getCode(credentials)).thenReturn("654321");
 
-            // Then
-            totpMock.verify(() -> TotpSupport.getCode(any()), never());
-            verify(field).sendKeys("1");
+            // When - execute twice with the same context
+            step.execute(wd, credentials, ctx);
+            step.execute(wd, credentials, ctx);
+
+            // Then - TotpSupport is only called once; the code is served from cache on the second call
+            totpMock.verify(() -> TotpSupport.getCode(credentials), times(1));
         }
     }
 
     @Test
-    void shouldFallbackToTotpSupportWhenNoPrecomputedCode() {
+    void shouldFallbackToStepGeneratorWhenTotpSupportReturnsNull() {
         // Given
         AuthenticationStep step = createTotpStep();
         WebElement field = mockField();
         WebDriver wd = mockWebDriver(field);
         UsernamePasswordAuthenticationCredentials credentials =
                 mock(UsernamePasswordAuthenticationCredentials.class);
+        AuthenticationContext ctx = new AuthenticationContext();
 
         try (MockedStatic<TotpSupport> totpMock = mockStatic(TotpSupport.class)) {
-            totpMock.when(() -> TotpSupport.getCode(credentials)).thenReturn("112233");
+            totpMock.when(() -> TotpSupport.getCode(credentials)).thenReturn(null);
 
-            // When - no precomputed code, charIndex=2 → use TotpSupport.getCode()
-            step.execute(wd, credentials, 2, null);
+            // When
+            step.execute(wd, credentials, ctx);
 
-            // Then - 3rd digit of "112233" is "2"
-            verify(field).sendKeys("2");
+            // Then - a code is still sent via the step's own TOTPGenerator
+            verify(field).sendKeys(anyString());
         }
     }
 }

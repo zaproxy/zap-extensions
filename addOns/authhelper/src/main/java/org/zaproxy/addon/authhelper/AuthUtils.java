@@ -835,6 +835,51 @@ public class AuthUtils {
         }
     }
 
+    /**
+     * Fills a set of single-character OTP input boxes with consecutive characters from {@code
+     * code}.
+     *
+     * <p>When the target TOTP field accepts only a single character ({@code maxlength="1"}), the
+     * site uses individual input boxes instead of one combined field. This method uses JavaScript
+     * to locate all {@code input[maxlength="1"]} elements within the same form or parent container
+     * as {@code firstField}, then sends one character of {@code code} to each box in DOM order.
+     *
+     * @param wd the WebDriver instance.
+     * @param firstField the first OTP input box, used to locate the container.
+     * @param code the full OTP code whose characters are distributed across the found inputs.
+     */
+    @SuppressWarnings("unchecked")
+    public static void fillSplitOtpFields(WebDriver wd, WebElement firstField, String code) {
+        List<WebElement> fields = Collections.singletonList(firstField);
+        if (wd instanceof JavascriptExecutor je) {
+            try {
+                Object result =
+                        je.executeScript(
+                                "var el = arguments[0];"
+                                        + "var container = el.closest('form') || el.parentElement;"
+                                        + "return container"
+                                        + "    ? Array.from(container.querySelectorAll('input[maxlength=\"1\"]'))"
+                                        + "    : [el];",
+                                firstField);
+                if (result instanceof List) {
+                    fields = (List<WebElement>) result;
+                }
+            } catch (Exception e) {
+                LOGGER.debug("Could not locate split OTP fields via JS: {}", e.getMessage());
+            }
+        }
+        if (fields.size() != code.length()) {
+            LOGGER.warn(
+                    "Split OTP field count ({}) differs from code length ({}); filling {} digit(s).",
+                    fields.size(),
+                    code.length(),
+                    Math.min(fields.size(), code.length()));
+        }
+        for (int i = 0; i < Math.min(fields.size(), code.length()); i++) {
+            fields.get(i).sendKeys(String.valueOf(code.charAt(i)));
+        }
+    }
+
     public static void fillUserName(
             AuthenticationDiagnostics diags,
             WebDriver wd,

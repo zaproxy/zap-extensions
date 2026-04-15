@@ -37,7 +37,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -183,31 +182,26 @@ public class AuthenticationStep
     }
 
     public WebElement execute(WebDriver wd, UsernamePasswordAuthenticationCredentials credentials) {
-        return execute(wd, credentials, -1);
+        return execute(wd, credentials, new AuthenticationContext());
     }
 
     /**
-     * Executes this step.
+     * Executes this step using the supplied {@code ctx} to share state across steps within a
+     * single authentication attempt.
+     *
+     * <p>For {@code TOTP_FIELD} steps the TOTP code is generated lazily through {@code ctx} so it
+     * is as fresh as possible. If the resolved element has {@code maxlength="1"} the step
+     * automatically locates all sibling single-character inputs and fills each with one digit.
      *
      * @param wd the WebDriver instance.
      * @param credentials the user credentials.
-     * @param totpCharIndex when &gt;= 0, only the character at this index of the TOTP code is
-     *     sent to the field. Used for pages with individual single-character OTP input boxes.
-     *     Pass -1 to send the full TOTP code (default behaviour for a single combined field).
+     * @param ctx the authentication context for this attempt.
      * @return the element interacted with, or {@code null} for WAIT steps.
      */
     public WebElement execute(
             WebDriver wd,
             UsernamePasswordAuthenticationCredentials credentials,
-            int totpCharIndex) {
-        return execute(wd, credentials, totpCharIndex, null);
-    }
-
-    public WebElement execute(
-            WebDriver wd,
-            UsernamePasswordAuthenticationCredentials credentials,
-            int totpCharIndex,
-            String precomputedTotpCode) {
+            AuthenticationContext ctx) {
         if (getType() == Type.WAIT) {
             try {
                 Thread.sleep(timeout);
@@ -247,14 +241,13 @@ public class AuthenticationStep
 
             case TOTP_FIELD:
                 String totpCode =
-                        (precomputedTotpCode != null)
-                                ? precomputedTotpCode
-                                : getTotpCode(credentials).toString();
-                String totpValue =
-                        (totpCharIndex >= 0 && totpCharIndex < totpCode.length())
-                                ? String.valueOf(totpCode.charAt(totpCharIndex))
-                                : totpCode;
-                AuthUtils.fillFieldWithEvents(element, totpValue, wd);
+                        ctx.getOrGenerateTotpCode(
+                                () -> getTotpCode(credentials).toString());
+                if ("1".equals(element.getDomAttribute("maxlength"))) {
+                    AuthUtils.fillSplitOtpFields(wd, element, totpCode);
+                } else {
+                    AuthUtils.fillFieldWithEvents(element, totpCode, wd);
+                }
                 break;
 
             case USERNAME:
