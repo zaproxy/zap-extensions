@@ -9,6 +9,7 @@
             <tocitem text="Common Library" target="commonlib">
                 <tocitem text="Tabbed Output Panel" target="commonlib.output.panel" />
                 <tocitem text="Alert Tags" target="commonlib.alert.tags" />
+                <tocitem text="Generate Fix Prompt" target="commonlib.alert.generatefixprompt" />
             </tocitem>
         </tocitem>
     </tocitem>
