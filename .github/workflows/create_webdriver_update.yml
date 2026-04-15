@@ -34,28 +34,53 @@ jobs:
         BRANCH="webdriver-update"
         export GITHUB_TOKEN=${{ secrets.ZAPBOT_TOKEN }}
         IS_UPDT=0
+        SUMMARY="$GITHUB_STEP_SUMMARY"
+        {
+          echo "## Webdriver update run"
+          echo "- **Event:** $GITHUB_EVENT_NAME"
+          echo "- **Branch:** \`$BRANCH\`"
+          echo ""
+        } >> "$SUMMARY"
         # Get ChromeDriver version
         CHROME_INPUT="${{ github.event.inputs.chrome_version }}"
         echo $CHROME_INPUT
         CHROME_INPUT=${CHROME_INPUT:-"cxx" }
         echo $CHROME_INPUT
-        if [ "$CHROME_INPUT" == "cxx" ]; then
+        if [ $CHROME_INPUT == "cxx" ]; then
           CHROME_VERS=$(curl -s "https://chromiumdash.appspot.com/fetch_releases?channel=Stable&platform=Linux&num=1"|jq -r '.[0].version')
+          CHROME_SOURCE=fetched
         else
           CHROME_VERS=${{ github.event.inputs.chrome_version }}
+          CHROME_SOURCE=workflow_dispatch
         fi
         echo $CHROME_VERS
+        if [ -n "$CHROME_VERS" ] && [ "$CHROME_VERS" != "null" ]; then CHROME_RETRIEVED=yes; else CHROME_RETRIEVED=no; fi
+        {
+          echo "### ChromeDriver version"
+          echo "- **Retrieved:** $CHROME_RETRIEVED (\`$CHROME_VERS\`)"
+          echo "- **Source:** $CHROME_SOURCE"
+          echo ""
+        } >> "$SUMMARY"
         # Get geckodriver version
         GECKO_INPUT="${{ github.event.inputs.gecko_version }}"
         echo $GECKO_INPUT
         GECKO_INPUT=${GECKO_INPUT:-"gxx" }
         echo $GECKO_INPUT
-        if [ "$GECKO_INPUT" == "gxx" ]; then
+        if [ $GECKO_INPUT == "gxx" ]; then
           GECKO_VERS=$(curl -s https://api.github.com/repos/mozilla/geckodriver/releases/latest|jq -r .name)
+          GECKO_SOURCE=fetched
         else
           GECKO_VERS=${{ github.event.inputs.gecko_version }}
+          GECKO_SOURCE=workflow_dispatch
         fi
         echo $GECKO_VERS
+        if [ -n "$GECKO_VERS" ] && [ "$GECKO_VERS" != "null" ]; then GECKO_RETRIEVED=yes; else GECKO_RETRIEVED=no; fi
+        {
+          echo "### geckodriver version"
+          echo "- **Retrieved:** $GECKO_RETRIEVED (\`$GECKO_VERS\`)"
+          echo "- **Source:** $GECKO_SOURCE"
+          echo ""
+        } >> "$SUMMARY"
         # Build the feature branch
         git checkout -b $BRANCH
         git remote set-url origin https://$GITHUB_USER:$GITHUB_TOKEN@github.com/$GITHUB_USER/zap-extensions.git
@@ -66,7 +91,9 @@ jobs:
         sed -i -e "s|Chrome - ChromeDriver [0-9\.]*</li>|Chrome - ChromeDriver $CHROME_VERS</li>|g" addOns/webdrivers/webdriverwindows/src/main/javahelp/org/zaproxy/zap/extension/webdriverwindows/resources/help/contents/webdriverwindows.html
         git update-index -q --refresh
         # If there are changes update changelog, and commit
+        CHROME_COMMIT=0
         if ! git diff-index --quiet HEAD --; then
+          CHROME_COMMIT=1
           IS_UPDT=1
          ./gradlew :addOn:webdrivers:webdriverlinux:updateChangelog --change="- Update ChromeDriver to $CHROME_VERS."
          ./gradlew :addOn:webdrivers:webdrivermacos:updateChangelog --change="- Update ChromeDriver to $CHROME_VERS."
@@ -74,6 +101,13 @@ jobs:
           git add .
           git commit -m "Webdriver Update" -m "ChromeDriver update to $CHROME_VERS" --signoff
         fi
+        if [ "$CHROME_COMMIT" -eq 1 ]; then CHROME_CHANGED=yes; else CHROME_CHANGED=no; fi
+        {
+          echo "### ChromeDriver vs repo"
+          echo "- **Files changed after sed:** $CHROME_CHANGED"
+          echo "- **Changelog commit:** $([ "$CHROME_COMMIT" -eq 1 ] && echo yes || echo no)"
+          echo ""
+        } >> "$SUMMARY"
         # Update geckodriver version strings in help and build file
         sed -i -e 's|zap.geckodriver.version = [0-9\.]*|zap.geckodriver.version = '"$GECKO_VERS"'|g' addOns/webdrivers/gradle.properties
         sed -i -e "s|Firefox - geckodriver [0-9\.]*</li>|Firefox - geckodriver $GECKO_VERS</li>|g" addOns/webdrivers/webdriverlinux/src/main/javahelp/org/zaproxy/zap/extension/webdriverlinux/resources/help/contents/webdriverlinux.html
@@ -81,7 +115,9 @@ jobs:
         sed -i -e "s|Firefox - geckodriver [0-9\.]*</li>|Firefox - geckodriver $GECKO_VERS</li>|g" addOns/webdrivers/webdriverwindows/src/main/javahelp/org/zaproxy/zap/extension/webdriverwindows/resources/help/contents/webdriverwindows.html
         git update-index -q --refresh
         # If there are changes update changelog, and commit
+        GECKO_COMMIT=0
         if ! git diff-index --quiet HEAD --; then
+          GECKO_COMMIT=1
           IS_UPDT=1
           ./gradlew :addOn:webdrivers:webdriverlinux:updateChangelog --change="- Update geckodriver to $GECKO_VERS."
           ./gradlew :addOn:webdrivers:webdrivermacos:updateChangelog --change="- Update geckodriver to $GECKO_VERS."
@@ -89,8 +125,20 @@ jobs:
           git add .
           git commit -m "Webdriver Update" -m "geckodriver update to $GECKO_VERS" --signoff
         fi
+        if [ "$GECKO_COMMIT" -eq 1 ]; then GECKO_CHANGED=yes; else GECKO_CHANGED=no; fi
+        {
+          echo "### geckodriver vs repo"
+          echo "- **Files changed after sed:** $GECKO_CHANGED"
+          echo "- **Changelog commit:** $([ "$GECKO_COMMIT" -eq 1 ] && echo yes || echo no)"
+          echo ""
+        } >> "$SUMMARY"
         if [ "$CHROME_VERS" == "null" ] || [ "$GECKO_VERS" == "null" ]; then
           echo "Could not retrieve one (or both) of the new version identifiers"
+          {
+            echo "### Stopped"
+            echo "- **Reason:** null version from upstream (Chrome=\`$CHROME_VERS\`, Gecko=\`$GECKO_VERS\`)"
+            echo ""
+          } >> "$SUMMARY"
           exit
         fi
         ## If there are changes: push and PR
@@ -101,5 +149,17 @@ jobs:
           git commit -a --amend --no-edit --signoff
           git push --set-upstream origin $BRANCH --force
           # Open the PR
-          gh pr create -f
+          PR_URL=$(gh pr create -f || true)
+          {
+            echo "### Pull request"
+            echo "- **Opened:** yes"
+            if [ -n "$PR_URL" ]; then echo "- **URL:** $PR_URL"; fi
+            echo ""
+          } >> "$SUMMARY"
+        else
+          {
+            echo "### Pull request"
+            echo "- **Opened:** no — no file/changelog commits (\`IS_UPDT=0\`; tree already matched target versions or sed had no effect)"
+            echo ""
+          } >> "$SUMMARY"
         fi
