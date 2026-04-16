@@ -408,63 +408,10 @@ public class SessionFixationScanRule extends AbstractAppPlugin implements Common
                     // If not, alert this fact
                     if ((!msg1Final.getRequestHeader().isSecure())
                             || (!containsIgnoreCase(cookieBack1.getFlags(), "secure"))) {
-                        // pass the original param value here, not the new value, since we're
-                        // displaying the session id exposed in the original message
-                        String extraInfo =
-                                Constant.messages.getString(
-                                        "ascanbeta.sessionidsentinsecurely.alert.extrainfo",
-                                        currentHtmlParameter.getType(),
-                                        currentHtmlParameter.getName(),
-                                        currentHtmlParameter.getValue());
-                        if (!cookieBack1.getFlags().contains("secure")) {
-                            extraInfo +=
-                                    ("\n"
-                                            + Constant.messages.getString(
-                                                    "ascanbeta.sessionidsentinsecurely.alert.extrainfo.secureflagnotset"));
-                        }
-
-                        // and figure out the risk, depending on whether it is a login page
-                        int risk = Alert.RISK_LOW;
-                        if (loginUrl) {
-                            extraInfo +=
-                                    ("\n"
-                                            + Constant.messages.getString(
-                                                    "ascanbeta.sessionidsentinsecurely.alert.extrainfo.loginpage"));
-                            // login page, so higher risk
-                            risk = Alert.RISK_MEDIUM;
-                        } else {
-                            // not a login page.. lower risk
-                            risk = Alert.RISK_LOW;
-                        }
-
-                        String attack =
-                                Constant.messages.getString(
-                                        "ascanbeta.sessionidsentinsecurely.alert.attack",
-                                        currentHtmlParameter.getType(),
-                                        currentHtmlParameter.getName());
-                        String vulnname =
-                                Constant.messages.getString(
-                                        "ascanbeta.sessionidsentinsecurely.name");
-                        String vulndesc =
-                                Constant.messages.getString(
-                                        "ascanbeta.sessionidsentinsecurely.desc");
-                        String vulnsoln =
-                                Constant.messages.getString(
-                                        "ascanbeta.sessionidsentinsecurely.soln");
-
-                        // raise alert with some extra info, indicating that the alert is
-                        // not specific to Session Fixation, but has its own title and description
-                        // (etc.)
-                        // the alert here is "Session id sent insecurely", or words to that effect.
-                        newAlert()
-                                .setRisk(risk)
-                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                                .setName(vulnname)
-                                .setDescription(vulndesc)
-                                .setParam(currentHtmlParameter.getName())
-                                .setAttack(attack)
-                                .setOtherInfo(extraInfo)
-                                .setSolution(vulnsoln)
+                        boolean secureFlagSet =
+                                containsIgnoreCase(cookieBack1.getFlags(), "secure");
+                        buildSessionIdSentInsecurelyAlert(
+                                        currentHtmlParameter, secureFlagSet, loginUrl)
                                 .setMessage(getBaseMsg())
                                 .raise();
 
@@ -482,48 +429,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin implements Common
                     // Check 2: is the session cookie that was set accessible to Javascript?
                     // If so, alert this fact too
                     if (!containsIgnoreCase(cookieBack1.getFlags(), "httponly") && loginUrl) {
-                        // pass the original param value here, not the new value, since we're
-                        // displaying the session id exposed in the original message
-                        String extraInfo =
-                                Constant.messages.getString(
-                                        "ascanbeta.sessionidaccessiblebyjavascript.alert.extrainfo",
-                                        currentHtmlParameter.getType(),
-                                        currentHtmlParameter.getName(),
-                                        currentHtmlParameter.getValue());
-                        String attack =
-                                Constant.messages.getString(
-                                        "ascanbeta.sessionidaccessiblebyjavascript.alert.attack",
-                                        currentHtmlParameter.getType(),
-                                        currentHtmlParameter.getName());
-                        String vulnname =
-                                Constant.messages.getString(
-                                        "ascanbeta.sessionidaccessiblebyjavascript.name");
-                        String vulndesc =
-                                Constant.messages.getString(
-                                        "ascanbeta.sessionidaccessiblebyjavascript.desc");
-                        String vulnsoln =
-                                Constant.messages.getString(
-                                        "ascanbeta.sessionidaccessiblebyjavascript.soln");
-
-                        extraInfo +=
-                                ("\n"
-                                        + Constant.messages.getString(
-                                                "ascanbeta.sessionidaccessiblebyjavascript.alert.extrainfo.loginpage"));
-
-                        // raise alert with some extra info, indicating that the alert is
-                        // not specific to Session Fixation, but has its own title and description
-                        // (etc.)
-                        // the alert here is "Session id accessible in Javascript", or words to that
-                        // effect.
-                        newAlert()
-                                .setRisk(Alert.RISK_LOW)
-                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                                .setName(vulnname)
-                                .setDescription(vulndesc)
-                                .setParam(currentHtmlParameter.getName())
-                                .setAttack(attack)
-                                .setOtherInfo(extraInfo)
-                                .setSolution(vulnsoln)
+                        buildSessionIdAccessibleByJavascriptAlert(currentHtmlParameter)
                                 .setMessage(getBaseMsg())
                                 .raise();
 
@@ -652,49 +558,14 @@ public class SessionFixationScanRule extends AbstractAppPlugin implements Common
 
                     // alert it if the default session expiry risk level is more than informational
                     if (sessionExpiryRiskLevel > Alert.RISK_INFO) {
-                        // pass the original param value here, not the new value
                         String cookieReceivedTime =
                                 HttpDateUtils.format(Instant.ofEpochMilli(cookieBack1TimeReceived));
-                        String extraInfo =
-                                Constant.messages.getString(
-                                        "ascanbeta.sessionidexpiry.alert.extrainfo",
-                                        currentHtmlParameter.getType(),
-                                        currentHtmlParameter.getName(),
-                                        currentHtmlParameter.getValue(),
+                        buildSessionIdExpiryAlert(
+                                        currentHtmlParameter,
+                                        sessionExpiryRiskLevel,
                                         sessionExpiryDescription,
-                                        cookieReceivedTime);
-                        String attack =
-                                Constant.messages.getString(
-                                        "ascanbeta.sessionidexpiry.alert.attack",
-                                        currentHtmlParameter.getType(),
-                                        currentHtmlParameter.getName());
-                        String vulnname =
-                                Constant.messages.getString("ascanbeta.sessionidexpiry.name");
-                        String vulndesc =
-                                Constant.messages.getString("ascanbeta.sessionidexpiry.desc");
-                        String vulnsoln =
-                                Constant.messages.getString("ascanbeta.sessionidexpiry.soln");
-                        if (loginUrl) {
-                            extraInfo +=
-                                    ("\n"
-                                            + Constant.messages.getString(
-                                                    "ascanbeta.sessionidexpiry.alert.extrainfo.loginpage"));
-                        }
-
-                        // raise alert with some extra info, indicating that the alert is
-                        // not specific to Session Fixation, but has its own title and description
-                        // (etc.)
-                        // the alert here is "Session Id Expiry Time is excessive", or words to that
-                        // effect.
-                        newAlert()
-                                .setRisk(sessionExpiryRiskLevel)
-                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                                .setName(vulnname)
-                                .setDescription(vulndesc)
-                                .setParam(currentHtmlParameter.getName())
-                                .setAttack(attack)
-                                .setOtherInfo(extraInfo)
-                                .setSolution(vulnsoln)
+                                        cookieReceivedTime,
+                                        loginUrl)
                                 .setMessage(getBaseMsg())
                                 .raise();
 
@@ -869,35 +740,11 @@ public class SessionFixationScanRule extends AbstractAppPlugin implements Common
                             || cookieBack2.getValue().equals(cookieBack1.getValue())) {
                         // no cookie back, when a borrowed cookie is in use.. suspicious!
 
-                        // use the cookie extrainfo message, which is specific to the case of
-                        // cookies
-                        // pretty much everything else is generic to all types of Session Fixation
-                        // vulnerabilities
-                        String extraInfo =
-                                Constant.messages.getString(
-                                        "ascanbeta.sessionfixation.alert.cookie.extrainfo",
-                                        currentHtmlParameter.getName(),
+                        buildSessionFixationCookieAlert(
+                                        currentHtmlParameter,
                                         cookieBack1.getValue(),
-                                        (cookieBack2 == null ? "NULL" : cookieBack2.getValue()));
-                        String attack =
-                                Constant.messages.getString(
-                                        "ascanbeta.sessionfixation.alert.attack",
-                                        currentHtmlParameter.getType(),
-                                        currentHtmlParameter.getName());
-
-                        if (loginUrl) {
-                            extraInfo +=
-                                    ("\n"
-                                            + Constant.messages.getString(
-                                                    "ascanbeta.sessionfixation.alert.cookie.extrainfo.loginpage"));
-                        }
-
-                        newAlert()
-                                .setRisk(Alert.RISK_INFO)
-                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                                .setParam(currentHtmlParameter.getName())
-                                .setAttack(attack)
-                                .setOtherInfo(extraInfo)
+                                        cookieBack2 == null ? "NULL" : cookieBack2.getValue(),
+                                        loginUrl)
                                 .setMessage(msg2Initial)
                                 .raise();
                         logSessionFixation(
@@ -1037,60 +884,8 @@ public class SessionFixationScanRule extends AbstractAppPlugin implements Common
                         if (possibleSessionIdIssuedForUrlParam.length() > 3) {
                             // raise an alert here on an exposed session id, even if it is not
                             // subject to a session fixation vulnerability
-                            // LOGGER.info("The URL parameter ["+ currentHtmlParameter.getName() +
-                            // "]
-                            // was set ["+
-                            // parametersInHTMLURls.get(possibleSessionIdIssuedForUrlParam)+ "]
-                            // times to ["+ possibleSessionIdIssuedForUrlParam + "] in links in the
-                            // response, when "+ (isPseudoUrlParameter?"pseudo/URL rewritten":"")+ "
-                            // URL param ["+ currentHtmlParameter.getName() + "] was set to NULL in
-                            // the request. This likely indicates it is a session id field.");
-
-                            // pass the original param value here, not the new value, since we're
-                            // displaying the session id exposed in the original message
-                            String extraInfo =
-                                    Constant.messages.getString(
-                                            "ascanbeta.sessionidexposedinurl.alert.extrainfo",
-                                            currentHtmlParameter.getType(),
-                                            currentHtmlParameter.getName(),
-                                            currentHtmlParameter.getValue());
-                            String attack =
-                                    Constant.messages.getString(
-                                            "ascanbeta.sessionidexposedinurl.alert.attack",
-                                            (isPseudoUrlParameter ? "pseudo/URL rewritten " : "")
-                                                    + currentHtmlParameter.getType(),
-                                            currentHtmlParameter.getName());
-                            String vulnname =
-                                    Constant.messages.getString(
-                                            "ascanbeta.sessionidexposedinurl.name");
-                            String vulndesc =
-                                    Constant.messages.getString(
-                                            "ascanbeta.sessionidexposedinurl.desc");
-                            String vulnsoln =
-                                    Constant.messages.getString(
-                                            "ascanbeta.sessionidexposedinurl.soln");
-
-                            if (loginUrl) {
-                                extraInfo +=
-                                        ("\n"
-                                                + Constant.messages.getString(
-                                                        "ascanbeta.sessionidexposedinurl.alert.extrainfo.loginpage"));
-                            }
-
-                            // call bingo with some extra info, indicating that the alert is
-                            // not specific to Session Fixation, but has its own title and
-                            // description (etc.)
-                            // the alert here is "Session id exposed in url", or words to that
-                            // effect.
-                            newAlert()
-                                    .setRisk(Alert.RISK_MEDIUM)
-                                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                                    .setName(vulnname)
-                                    .setDescription(vulndesc)
-                                    .setParam(currentHtmlParameter.getName())
-                                    .setAttack(attack)
-                                    .setOtherInfo(extraInfo)
-                                    .setSolution(vulnsoln)
+                            buildSessionIdExposedInUrlAlert(
+                                            currentHtmlParameter, isPseudoUrlParameter, loginUrl)
                                     .setMessage(getBaseMsg())
                                     .raise();
 
@@ -1233,42 +1028,12 @@ public class SessionFixationScanRule extends AbstractAppPlugin implements Common
                         // same sessionid used in the output.. so it is likely that we have a
                         // Session Fixation issue..
 
-                        // use the url param extrainfo message, which is specific to the case of url
-                        // parameters and url re-writing Session Fixation issue
-                        // pretty much everything else is generic to all types of Session Fixation
-                        // vulnerabilities
-                        String extraInfo =
-                                Constant.messages.getString(
-                                        "ascanbeta.sessionfixation.alert.url.extrainfo",
-                                        currentHtmlParameter.getName(),
+                        buildSessionFixationUrlAlert(
+                                        currentHtmlParameter,
+                                        isPseudoUrlParameter,
                                         possibleSessionIdIssuedForUrlParam,
-                                        possibleSessionIdIssuedForUrlParam2);
-                        String attack =
-                                Constant.messages.getString(
-                                        "ascanbeta.sessionfixation.alert.attack",
-                                        (isPseudoUrlParameter ? "pseudo/URL rewritten " : "")
-                                                + currentHtmlParameter.getType(),
-                                        currentHtmlParameter.getName());
-
-                        int risk = Alert.RISK_LOW;
-                        if (loginUrl) {
-                            extraInfo +=
-                                    ("\n"
-                                            + Constant.messages.getString(
-                                                    "ascanbeta.sessionfixation.alert.url.extrainfo.loginpage"));
-                            // login page, so higher risk
-                            risk = Alert.RISK_MEDIUM;
-                        } else {
-                            // not a login page.. lower risk
-                            risk = Alert.RISK_LOW;
-                        }
-
-                        newAlert()
-                                .setRisk(risk)
-                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                                .setParam(currentHtmlParameter.getName())
-                                .setAttack(attack)
-                                .setOtherInfo(extraInfo)
+                                        possibleSessionIdIssuedForUrlParam2,
+                                        loginUrl)
                                 .setMessage(getBaseMsg())
                                 .raise();
                         logSessionFixation(
@@ -1310,6 +1075,210 @@ public class SessionFixationScanRule extends AbstractAppPlugin implements Common
             return new Date(parsedDate.toInstant().toEpochMilli());
         }
         return null;
+    }
+
+    private AlertBuilder buildSessionIdSentInsecurelyAlert(
+            HtmlParameter param, boolean secureFlagSet, boolean loginPage) {
+        String extraInfo =
+                Constant.messages.getString(
+                        "ascanbeta.sessionidsentinsecurely.alert.extrainfo",
+                        param.getType(),
+                        param.getName(),
+                        param.getValue());
+        if (!secureFlagSet) {
+            extraInfo +=
+                    "\n"
+                            + Constant.messages.getString(
+                                    "ascanbeta.sessionidsentinsecurely.alert.extrainfo.secureflagnotset");
+        }
+        int risk;
+        if (loginPage) {
+            extraInfo +=
+                    "\n"
+                            + Constant.messages.getString(
+                                    "ascanbeta.sessionidsentinsecurely.alert.extrainfo.loginpage");
+            risk = Alert.RISK_MEDIUM;
+        } else {
+            risk = Alert.RISK_LOW;
+        }
+        return newAlert()
+                .setRisk(risk)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setName(Constant.messages.getString("ascanbeta.sessionidsentinsecurely.name"))
+                .setDescription(
+                        Constant.messages.getString("ascanbeta.sessionidsentinsecurely.desc"))
+                .setParam(param.getName())
+                .setAttack(
+                        Constant.messages.getString(
+                                "ascanbeta.sessionidsentinsecurely.alert.attack",
+                                param.getType(),
+                                param.getName()))
+                .setOtherInfo(extraInfo)
+                .setSolution(Constant.messages.getString("ascanbeta.sessionidsentinsecurely.soln"))
+                .setAlertRef(getId() + "-1");
+    }
+
+    private AlertBuilder buildSessionIdAccessibleByJavascriptAlert(HtmlParameter param) {
+        String extraInfo =
+                Constant.messages.getString(
+                                "ascanbeta.sessionidaccessiblebyjavascript.alert.extrainfo",
+                                param.getType(),
+                                param.getName(),
+                                param.getValue())
+                        + "\n"
+                        + Constant.messages.getString(
+                                "ascanbeta.sessionidaccessiblebyjavascript.alert.extrainfo.loginpage");
+        return newAlert()
+                .setRisk(Alert.RISK_LOW)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setName(
+                        Constant.messages.getString(
+                                "ascanbeta.sessionidaccessiblebyjavascript.name"))
+                .setDescription(
+                        Constant.messages.getString(
+                                "ascanbeta.sessionidaccessiblebyjavascript.desc"))
+                .setParam(param.getName())
+                .setAttack(
+                        Constant.messages.getString(
+                                "ascanbeta.sessionidaccessiblebyjavascript.alert.attack",
+                                param.getType(),
+                                param.getName()))
+                .setOtherInfo(extraInfo)
+                .setSolution(
+                        Constant.messages.getString(
+                                "ascanbeta.sessionidaccessiblebyjavascript.soln"))
+                .setAlertRef(getId() + "-2");
+    }
+
+    private AlertBuilder buildSessionIdExpiryAlert(
+            HtmlParameter param,
+            int risk,
+            String expiryDescription,
+            String cookieReceivedTime,
+            boolean loginPage) {
+        String extraInfo =
+                Constant.messages.getString(
+                        "ascanbeta.sessionidexpiry.alert.extrainfo",
+                        param.getType(),
+                        param.getName(),
+                        param.getValue(),
+                        expiryDescription,
+                        cookieReceivedTime);
+        if (loginPage) {
+            extraInfo +=
+                    "\n"
+                            + Constant.messages.getString(
+                                    "ascanbeta.sessionidexpiry.alert.extrainfo.loginpage");
+        }
+        return newAlert()
+                .setRisk(risk)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setName(Constant.messages.getString("ascanbeta.sessionidexpiry.name"))
+                .setDescription(Constant.messages.getString("ascanbeta.sessionidexpiry.desc"))
+                .setParam(param.getName())
+                .setAttack(
+                        Constant.messages.getString(
+                                "ascanbeta.sessionidexpiry.alert.attack",
+                                param.getType(),
+                                param.getName()))
+                .setOtherInfo(extraInfo)
+                .setSolution(Constant.messages.getString("ascanbeta.sessionidexpiry.soln"))
+                .setAlertRef(getId() + "-3");
+    }
+
+    private AlertBuilder buildSessionFixationCookieAlert(
+            HtmlParameter param,
+            String borrowedCookieValue,
+            String returnedCookieValue,
+            boolean loginPage) {
+        String extraInfo =
+                Constant.messages.getString(
+                        "ascanbeta.sessionfixation.alert.cookie.extrainfo",
+                        param.getName(),
+                        borrowedCookieValue,
+                        returnedCookieValue);
+        if (loginPage) {
+            extraInfo +=
+                    "\n"
+                            + Constant.messages.getString(
+                                    "ascanbeta.sessionfixation.alert.cookie.extrainfo.loginpage");
+        }
+        return newAlert()
+                .setRisk(Alert.RISK_INFO)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setParam(param.getName())
+                .setAttack(
+                        Constant.messages.getString(
+                                "ascanbeta.sessionfixation.alert.attack",
+                                param.getType(),
+                                param.getName()))
+                .setOtherInfo(extraInfo)
+                .setAlertRef(getId() + "-4");
+    }
+
+    private AlertBuilder buildSessionIdExposedInUrlAlert(
+            HtmlParameter param, boolean pseudoUrl, boolean loginPage) {
+        String extraInfo =
+                Constant.messages.getString(
+                        "ascanbeta.sessionidexposedinurl.alert.extrainfo",
+                        param.getType(),
+                        param.getName(),
+                        param.getValue());
+        if (loginPage) {
+            extraInfo +=
+                    "\n"
+                            + Constant.messages.getString(
+                                    "ascanbeta.sessionidexposedinurl.alert.extrainfo.loginpage");
+        }
+        return newAlert()
+                .setRisk(Alert.RISK_MEDIUM)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setName(Constant.messages.getString("ascanbeta.sessionidexposedinurl.name"))
+                .setDescription(Constant.messages.getString("ascanbeta.sessionidexposedinurl.desc"))
+                .setParam(param.getName())
+                .setAttack(
+                        Constant.messages.getString(
+                                "ascanbeta.sessionidexposedinurl.alert.attack",
+                                (pseudoUrl ? "pseudo/URL rewritten " : "") + param.getType(),
+                                param.getName()))
+                .setOtherInfo(extraInfo)
+                .setSolution(Constant.messages.getString("ascanbeta.sessionidexposedinurl.soln"))
+                .setAlertRef(getId() + "-5");
+    }
+
+    private AlertBuilder buildSessionFixationUrlAlert(
+            HtmlParameter param,
+            boolean pseudoUrl,
+            String borrowedSessionId,
+            String returnedSessionId,
+            boolean loginPage) {
+        String extraInfo =
+                Constant.messages.getString(
+                        "ascanbeta.sessionfixation.alert.url.extrainfo",
+                        param.getName(),
+                        borrowedSessionId,
+                        returnedSessionId);
+        int risk;
+        if (loginPage) {
+            extraInfo +=
+                    "\n"
+                            + Constant.messages.getString(
+                                    "ascanbeta.sessionfixation.alert.url.extrainfo.loginpage");
+            risk = Alert.RISK_MEDIUM;
+        } else {
+            risk = Alert.RISK_LOW;
+        }
+        return newAlert()
+                .setRisk(risk)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setParam(param.getName())
+                .setAttack(
+                        Constant.messages.getString(
+                                "ascanbeta.sessionfixation.alert.attack",
+                                (pseudoUrl ? "pseudo/URL rewritten " : "") + param.getType(),
+                                param.getName()))
+                .setOtherInfo(extraInfo)
+                .setAlertRef(getId() + "-6");
     }
 
     private static void logSessionFixation(
@@ -1491,5 +1460,26 @@ public class SessionFixationScanRule extends AbstractAppPlugin implements Common
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        HtmlParameter cookieParam =
+                new HtmlParameter(HtmlParameter.Type.cookie, "JSESSIONID", "valueA");
+        HtmlParameter urlParam = new HtmlParameter(HtmlParameter.Type.url, "jsessionid", "valueB");
+        String cookieReceivedTime = HttpDateUtils.format(Instant.ofEpochMilli(1L));
+        return List.of(
+                buildSessionIdSentInsecurelyAlert(cookieParam, false, true).build(),
+                buildSessionIdAccessibleByJavascriptAlert(cookieParam).build(),
+                buildSessionIdExpiryAlert(
+                                cookieParam,
+                                Alert.RISK_HIGH,
+                                HttpDateUtils.format(Instant.ofEpochMilli(1000L)),
+                                cookieReceivedTime,
+                                true)
+                        .build(),
+                buildSessionFixationCookieAlert(cookieParam, "valueC", "valueD", true).build(),
+                buildSessionIdExposedInUrlAlert(urlParam, false, true).build(),
+                buildSessionFixationUrlAlert(urlParam, false, "valueE", "valueF", true).build());
     }
 }
