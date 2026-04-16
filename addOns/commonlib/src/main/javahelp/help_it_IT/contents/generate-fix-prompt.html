@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>
+        Generate Fix Prompt
+    </title>
+</head>
+<body>
+<h1>Generate Fix Prompt</h1>
+
+The <strong>Generate Fix Prompt</strong> right-click menu option is available on alerts in the Alerts tab.
+It generates a prompt that you can paste into any Large Language Model (LLM) — such as ChatGPT, GitHub Copilot,
+or Claude — and ask it to fix the vulnerability in your codebase.
+
+<h2>Usage</h2>
+
+<ol>
+    <li>Right-click an alert in the Alerts tab.</li>
+    <li>Select <strong>Generate Fix Prompt</strong>.</li>
+    <li>The prompt is copied to your clipboard.</li>
+    <li>Paste it into your LLM of choice and review its suggested fix.</li>
+</ol>
+
+<h2>What the prompt contains</h2>
+
+The generated prompt includes all information ZAP has about the vulnerability:
+
+<ul>
+    <li><strong>Name</strong> — the alert name.</li>
+    <li><strong>Risk</strong> — Informational, Low, Medium, or High.</li>
+    <li><strong>Confidence</strong> — how confident ZAP is that the finding is a true positive.</li>
+    <li><strong>URL</strong> — the URL at which the vulnerability was found.</li>
+    <li><strong>Method</strong> — the HTTP method used (GET, POST, etc.).</li>
+    <li><strong>Parameter</strong> — the affected parameter, if applicable.</li>
+    <li><strong>Attack</strong> — the payload ZAP used to trigger the vulnerability, if applicable.</li>
+    <li><strong>Evidence</strong> — the string found in the response that confirmed the vulnerability, if applicable.</li>
+    <li><strong>Description</strong> — a full description of the vulnerability class.</li>
+    <li><strong>Solution</strong> — ZAP's recommended remediation guidance.</li>
+    <li><strong>References</strong> — links to further reading.</li>
+    <li><strong>Other Information</strong> — any additional context provided by the scan rule.</li>
+</ul>
+
+<h2>Systemic vulnerabilities</h2>
+
+Some scan rules raise <em>systemic</em> alerts — issues that tend to affect the whole application rather than a single
+endpoint, such as missing security headers or insecure cookie settings. When a systemic alert is detected the prompt
+includes a note telling the LLM that there may be multiple instances across the codebase that all need to be fixed.
+
+<h2>Confirmation dialog</h2>
+
+After the prompt is copied a confirmation dialog is shown. You can suppress this dialog in future by selecting
+<strong>Do not show this message again</strong> before dismissing it. This preference is saved in the ZAP
+configuration file and can be restored by resetting ZAP's options.
+
+<p>
+See also:
+<ul>
+    <li><a href="https://www.zaproxy.org/docs/desktop/ui/tabs/alerts/">Alerts tab</a></li>
+</ul>
+
+</body>
+</html>
