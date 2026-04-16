@@ -6,6 +6,7 @@
             <tocitem text="共通ライブラリ" target="commonlib">
                 <tocitem text="タブ付き出力パネル" target="commonlib.output.panel"/>
                 <tocitem text="アラートタグ" target="commonlib.alert.tags"/>
+                <tocitem text="Generate Fix Prompt" target="commonlib.alert.generatefixprompt"/>
             </tocitem>
         </tocitem>
     </tocitem>
