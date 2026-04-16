@@ -133,14 +133,16 @@ public class DefaultAuthenticator implements Authenticator {
                     try {
                         AuthUtils.fillPassword(diags, wd, password, pwdField, stepDelayInSecs);
                     } catch (StaleElementReferenceException e) {
-                        LOGGER.debug("Password field stale (page already navigated by steps), skipping fillPassword");
+                        LOGGER.debug(
+                                "Password field stale (page already navigated by steps), skipping fillPassword");
                     }
                 }
                 // Fix 3: after YAML Submit CLICK, pwdField is stale — swallow.
                 try {
                     AuthUtils.submit(diags, wd, pwdField, stepDelayInSecs, waitInSecs);
                 } catch (StaleElementReferenceException e) {
-                    LOGGER.debug("Password field stale (page already navigated by steps), skipping submit");
+                    LOGGER.debug(
+                            "Password field stale (page already navigated by steps), skipping submit");
                 }
             } catch (Exception e) {
                 diags.reportFlowException(e);
@@ -163,7 +165,8 @@ public class DefaultAuthenticator implements Authenticator {
                     try {
                         AuthUtils.sendReturnAndSleep(diags, wd, pwdField, stepDelayInSecs);
                     } catch (StaleElementReferenceException staleEx) {
-                        LOGGER.debug("Password field stale, skipping sendReturnAndSleep in fallback");
+                        LOGGER.debug(
+                                "Password field stale, skipping sendReturnAndSleep in fallback");
                     }
                 }
             }
