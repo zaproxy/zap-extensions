@@ -40,7 +40,6 @@ import org.zaproxy.zap.model.SessionStructure;
 import org.zaproxy.zap.model.StructuralNode;
 import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.users.User;
-import org.zaproxy.zap.utils.ThreadUtils;
 
 import javax.swing.DefaultListModel;
 import javax.swing.tree.TreeNode;
@@ -444,36 +443,24 @@ public class SpiderThread extends ScanThread implements SpiderListener {
     @Override
     public void foundURI(String uri, String method, FetchStatus status) {
         if (resultsModel != null) {
-            EventQueue.invokeLater(() -> addUriToResultsModel0(uri, method, status));
+            if (status == FetchStatus.VALID) {
+                resultsModel.addScanResult(uri, method, null, false);
+            } else {
+                resultsModel.addScanResult(
+                        uri, method, getStatusLabel(status), status != FetchStatus.SEED);
+            }
+            extension.getSpiderPanel().updateFoundCount();
         }
     }
 
-    private void addUriToResultsModel0(final String uri, final String method, final FetchStatus status) {
-
-        // Add the new result
-        if (status == FetchStatus.VALID) {
-            resultsModel.addScanResult(uri, method, null, false);
-        } else {
-            resultsModel.addScanResult(
-                    uri, method, getStatusLabel(status), status != FetchStatus.SEED);
-        }
-
-        // Update the count of found URIs
-        extension.getSpiderPanel().updateFoundCount();
-
-    }
 
     private void addUriToAddedNodesModel(final String uri, final String method) {
-        ThreadUtils.invokeLater(
-                () -> {
-                    // Add the new result
-                    addedNodesModel.addScanResult(uri, method, null, false);
 
-                    if (extension.getView() != null) {
-                        // Update the count of added nodes
-                        extension.getSpiderPanel().updateAddedCount();
-                    }
-                });
+        addedNodesModel.addScanResult(uri, method, null, false);
+
+        if (extension.getView() != null) {
+            extension.getSpiderPanel().updateAddedCount();
+        }
     }
 
     private String getStatusLabel(FetchStatus status) {
@@ -516,6 +503,7 @@ public class SpiderThread extends ScanThread implements SpiderListener {
      */
 
     private void addMessageToSitesTree0(final HistoryReference historyReference, final HttpMessage message) {
+        // addPath must be called on EDT for now.
         StructuralNode node =
                 SessionStructure.addPath(Model.getSingleton(), historyReference, message, true);
         if (node != null) {

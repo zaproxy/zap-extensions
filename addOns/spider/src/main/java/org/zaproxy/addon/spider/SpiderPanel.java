@@ -27,6 +27,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.lang.reflect.InvocationTargetException;
+import java.util.concurrent.Callable;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -173,16 +178,23 @@ public class SpiderPanel extends ScanPanel2<SpiderScan, ScanController<SpiderSca
 
     /** The found count value label. */
     private JLabel foundCountValueLabel;
+    private final FastUpdatingNumber foundCount = new FastUpdatingNumber(n -> {
+       getFoundCountValueLabel().setText(Integer.toString(n));
+    });
 
     /** The added count name label. */
     private JLabel addedCountNameLabel;
 
     /** The added count value label. */
     private JLabel addedCountValueLabel;
+    private final FastUpdatingNumber addedCount = new FastUpdatingNumber(n -> {
+        getAddedCountValueLabel().setText(Integer.toString(n));
+    });
+
 
     private TableExportButton<JXTable> exportButton;
 
-    private ExtensionSpider2 extension;
+    private final ExtensionSpider2 extension;
 
     /**
      * Instantiates a new spider panel.
@@ -454,23 +466,47 @@ public class SpiderPanel extends ScanPanel2<SpiderScan, ScanController<SpiderSca
         return exportButton;
     }
 
-    /** Update the count of found URIs. */
-    protected void updateFoundCount() {
-        SpiderScan sc = this.getSelectedScanner();
-        if (sc != null) {
-            this.getFoundCountValueLabel().setText(Integer.toString(sc.getNumberOfURIsFound()));
-        } else {
-            this.getFoundCountValueLabel().setText(ZERO_REQUESTS_LABEL_TEXT);
+    public static class FastUpdatingNumber {
+        private final AtomicInteger number = new AtomicInteger();
+        private final AtomicBoolean updateScheduled = new AtomicBoolean();
+
+        private final Consumer<Integer> action;
+
+        public FastUpdatingNumber(Consumer<Integer> actionOnEDT) {
+            this.action = actionOnEDT;
+        }
+
+        void setNumber(int n) {
+            number.set(n);
+
+            if (updateScheduled.compareAndSet(false, true)) {
+                EventQueue.invokeLater(() -> {
+                    action.accept(number.get());
+                    updateScheduled.set(false);
+                });
+            }
         }
     }
 
-    /** Update the count of added nodes. */
+
+    /** call on any thread **/
+    protected void updateFoundCount() {
+        SpiderScan sc = this.getSelectedScanner();
+
+        if (sc != null) {
+            foundCount.setNumber(sc.getNumberOfURIsFound());
+        } else {
+            foundCount.setNumber(0);
+        }
+    }
+
+    /** call on any thread */
     protected void updateAddedCount() {
         SpiderScan sc = this.getSelectedScanner();
         if (sc != null) {
-            this.getAddedCountValueLabel().setText(Integer.toString(sc.getNumberOfNodesAdded()));
+            addedCount.setNumber(sc.getNumberOfNodesAdded());
         } else {
-            this.getAddedCountValueLabel().setText(ZERO_REQUESTS_LABEL_TEXT);
+            addedCount.setNumber(0);
         }
     }
 
@@ -479,13 +515,7 @@ public class SpiderPanel extends ScanPanel2<SpiderScan, ScanController<SpiderSca
         if (View.isInitialised() && !EventQueue.isDispatchThread()) {
             try {
                 EventQueue.invokeAndWait(
-                        new Runnable() {
-
-                            @Override
-                            public void run() {
-                                switchView(scanner);
-                            }
-                        });
+                        (Runnable) () -> switchView(scanner));
             } catch (InvocationTargetException | InterruptedException e) {
                 LOGGER.error("Failed to switch view: {}", e.getMessage(), e);
             }
@@ -501,6 +531,7 @@ public class SpiderPanel extends ScanPanel2<SpiderScan, ScanController<SpiderSca
             getAddedNodesTable().setModel(EMPTY_URLS_TABLE_MODEL);
         }
         this.updateFoundCount();
+        this.getAddedCountValueLabel().setText(ZERO_REQUESTS_LABEL_TEXT);
         this.updateAddedCount();
     }
 
