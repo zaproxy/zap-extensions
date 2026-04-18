@@ -30,6 +30,8 @@ import org.zaproxy.addon.commonlib.AuthConstants;
 import org.zaproxy.addon.spider.DomainAlwaysInScopeMatcher;
 import org.zaproxy.zap.model.Context;
 
+import javax.annotation.Nullable;
+
 /**
  * The DefaultFetchFilter is an implementation of a FetchFilter that is default for spidering
  * process. Its filter rules are the following:
@@ -44,16 +46,21 @@ import org.zaproxy.zap.model.Context;
 public class DefaultFetchFilter extends FetchFilter {
 
     /** The scope. */
-    private Set<String> scopes = new LinkedHashSet<>();
+    private final Set<String> scopes = new LinkedHashSet<>();
 
-    private List<DomainAlwaysInScopeMatcher> domainsAlwaysInScope = Collections.emptyList();
+    private final List<DomainAlwaysInScopeMatcher> domainsAlwaysInScope;
 
     /** The exclude list. */
     private List<String> excludeList;
 
     private boolean logoutAvoidance;
 
-    private Context scanContext;
+    private final Context scanContext;
+
+    public DefaultFetchFilter(@Nullable Context scanContext, List<DomainAlwaysInScopeMatcher> domainsAlwaysInScope) {
+        this.scanContext = scanContext;
+        this.domainsAlwaysInScope = domainsAlwaysInScope;
+    }
 
     @Override
     public FetchStatus checkFilter(URI uri) {
@@ -168,19 +175,6 @@ public class DefaultFetchFilter extends FetchFilter {
     }
 
     /**
-     * Sets the domains that will be considered as always in scope.
-     *
-     * @param domainsAlwaysInScope the list containing all domains that are always in scope.
-     */
-    public void setDomainsAlwaysInScope(List<DomainAlwaysInScopeMatcher> domainsAlwaysInScope) {
-        if (domainsAlwaysInScope == null || domainsAlwaysInScope.isEmpty()) {
-            this.domainsAlwaysInScope = Collections.emptyList();
-        } else {
-            this.domainsAlwaysInScope = domainsAlwaysInScope;
-        }
-    }
-
-    /**
      * Sets the regexes which are used for checking if an uri should be skipped.
      *
      * @param excl the new exclude regexes
@@ -189,15 +183,6 @@ public class DefaultFetchFilter extends FetchFilter {
         excludeList = excl;
     }
 
-    /**
-     * Sets the scan context. If set, only uris that are part of the context are considered valid
-     * for fetching.
-     *
-     * @param scanContext the new scan context
-     */
-    public void setScanContext(Context scanContext) {
-        this.scanContext = scanContext;
-    }
 
     public void setLogoutAvoidance(boolean avoidLogout) {
         this.logoutAvoidance = avoidLogout;

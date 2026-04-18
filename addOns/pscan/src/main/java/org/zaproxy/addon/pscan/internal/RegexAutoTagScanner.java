@@ -103,22 +103,6 @@ public class RegexAutoTagScanner extends PluginPassiveScanner {
         return new RegexAutoTagScanner(this);
     }
 
-    public Pattern getRequestUrlPattern() {
-        return requestUrlPattern;
-    }
-
-    public Pattern getRequestHeaderPattern() {
-        return requestHeaderPattern;
-    }
-
-    public Pattern getResponseHeaderPattern() {
-        return responseHeaderPattern;
-    }
-
-    public Pattern getResponseBodyPattern() {
-        return responseBodyPattern;
-    }
-
     public TYPE getType() {
         return type;
     }
@@ -192,16 +176,16 @@ public class RegexAutoTagScanner extends PluginPassiveScanner {
         if (!this.isEnabled()) {
             return;
         }
-        if (getRequestHeaderPattern() != null) {
-            Matcher m = getRequestHeaderPattern().matcher(msg.getRequestHeader().toString());
+        if (requestHeaderPattern != null) {
+            Matcher m = requestHeaderPattern.matcher(msg.getRequestHeader().toString());
             if (m.find()) {
                 // Scanner matches, so do what it wants...
                 matched(m, msg, id);
                 return;
             }
         }
-        if (getRequestUrlPattern() != null) {
-            Matcher m = getRequestUrlPattern().matcher(msg.getRequestHeader().getURI().toString());
+        if (requestUrlPattern != null) {
+            Matcher m = requestUrlPattern.matcher(msg.getRequestHeader().getURI().toString());
             if (m.find()) {
                 // Scanner matches, so do what it wants...
                 matched(m, msg, id);
@@ -219,16 +203,16 @@ public class RegexAutoTagScanner extends PluginPassiveScanner {
         if (!this.isEnabled()) {
             return;
         }
-        if (getResponseHeaderPattern() != null) {
-            Matcher m = getResponseHeaderPattern().matcher(msg.getResponseHeader().toString());
+        if (responseHeaderPattern != null) {
+            Matcher m = responseHeaderPattern.matcher(msg.getResponseHeader().toString());
             if (m.find()) {
                 // Scanner matches, so do what it wants...
                 matched(m, msg, id);
                 return;
             }
         }
-        if (getResponseBodyPattern() != null) {
-            Matcher m = getResponseBodyPattern().matcher(msg.getResponseBody().toString());
+        if (responseBodyPattern != null) {
+            Matcher m = responseBodyPattern.matcher(msg.getResponseBody().toString());
             if (m.find()) {
                 // Scanner matches, so do what it wants...
                 matched(m, msg, id);

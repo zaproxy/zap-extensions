@@ -19,19 +19,6 @@
  */
 package org.zaproxy.addon.spider;
 
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.regex.Pattern;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
@@ -50,67 +37,122 @@ import org.zaproxy.addon.spider.parser.SpiderParser;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.users.User;
 
-/** The Class Spider. */
+import javax.annotation.Nullable;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.regex.Pattern;
+
+/**
+ * The Class Spider.
+ */
 public class Spider {
 
-    /** The spider parameters. */
-    private SpiderParam spiderParam;
+    /**
+     * The spider parameters.
+     */
+    private final SpiderParam spiderParam;
 
-    /** The model. */
-    private Model model;
+    /**
+     * The model.
+     */
+    private final Model model;
 
-    /** The listeners for Spider related events. */
-    private List<SpiderListener> listeners;
+    /**
+     * The listeners for Spider related events.
+     */
+    private final List<SpiderListener> listeners = new CopyOnWriteArrayList<>();
 
-    /** If the spider is currently paused. */
+    /**
+     * If the spider is currently paused.
+     */
     private volatile boolean paused;
 
-    /** The spider is currently stopped. */
+    /**
+     * The spider is currently stopped.
+     */
     private volatile boolean stopped;
 
-    /** The pause lock, used for locking access to the "paused" variable. */
-    private ReentrantLock pauseLock = new ReentrantLock();
+    /**
+     * The pause lock, used for locking access to the "paused" variable.
+     */
+    private final ReentrantLock pauseLock = new ReentrantLock();
 
-    /** The controller that manages the spidering process. */
-    private SpiderController controller;
+    /**
+     * The controller that manages the spidering process.
+     */
+    private final SpiderController controller;
 
     /**
      * The condition that is used for the threads in the pool to wait on, when the Spider crawling
      * is paused. When the Spider is resumed, all the waiting threads are awakened.
      */
-    private Condition pausedCondition = pauseLock.newCondition();
+    private final Condition pausedCondition = pauseLock.newCondition();
 
-    /** The thread pool for spider workers. */
+    /**
+     * The thread pool for spider workers.
+     */
     private ExecutorService threadPool;
 
-    /** The default fetch filter. */
-    private DefaultFetchFilter defaultFetchFilter;
+    // Add a default fetch filter and any custom ones
+    /**
+     * The default fetch filter.
+     */
+    private final DefaultFetchFilter defaultFetchFilter;
 
-    /** The seed list. */
-    private LinkedHashSet<Seed> seedList;
+    /**
+     * The seed list.
+     */
+    private final LinkedHashSet<Seed> seedList = new LinkedHashSet<>();
 
-    /** The extension. */
-    private ExtensionSpider2 extension;
+    /**
+     * The extension.
+     */
+    private final ExtensionSpider2 extension;
 
-    /** The Constant log. */
+    /**
+     * The Constant log.
+     */
     private static final Logger LOGGER = LogManager.getLogger(Spider.class);
 
-    /** The HTTP sender used to effectively send the data. */
+    /**
+     * The HTTP sender used to effectively send the data.
+     */
     private HttpSender httpSender;
 
-    /** The count of the tasks finished. */
-    private int tasksDoneCount;
+    /**
+     * The count of the tasks finished.
+     */
+    private final AtomicInteger tasksDoneCount = new AtomicInteger(0);
 
-    /** The total count of all the submitted tasks. */
-    private int tasksTotalCount;
+    /**
+     * The total count of all the submitted tasks.
+     */
+    private final AtomicInteger tasksTotalCount = new AtomicInteger(0);
 
-    /** The scan context. If null, the scan is not performed in a context. */
-    private Context scanContext;
+    /**
+     * The scan context. If null, the scan is not performed in a context.
+     */
+    private final Context scanContext;
 
-    /** The scan user. */
+    /**
+     * The scan user.
+     */
     private User scanUser;
 
-    /** The time the scan was started */
+    /**
+     * The time the scan was started
+     */
     private long timeStarted;
 
     /**
@@ -118,7 +160,7 @@ public class Spider {
      * when the first task is processed and the process is finished before the other seeds are
      * added.
      */
-    private boolean initialized;
+    private final AtomicBoolean initialized = new AtomicBoolean(false);
 
     /**
      * we do not want to recurse into an SVN folder, or a subfolder of an SVN folder, if one was
@@ -139,19 +181,19 @@ public class Spider {
     /**
      * Constructs a {@code Spider} with the given data.
      *
-     * @param id the ID of the spider, usually a unique integer
-     * @param extension the extension
+     * @param id          the ID of the spider, usually a unique integer
+     * @param extension   the extension
      * @param spiderParam the spider param
-     * @param model the model
+     * @param model       the model
      * @param scanContext if a scan context is set, only URIs within the context are fetched and
-     *     processed
+     *                    processed
      */
     public Spider(
             String id,
             ExtensionSpider2 extension,
             SpiderParam spiderParam,
             Model model,
-            Context scanContext) {
+            @Nullable Context scanContext) {
         super();
         LOGGER.info("Spider initializing...");
         this.id = id;
@@ -159,40 +201,36 @@ public class Spider {
         this.model = model;
         this.extension = extension;
         this.controller = new SpiderController(this, extension.getCustomParsers());
-        this.listeners = new LinkedList<>();
-        this.seedList = new LinkedHashSet<>();
         this.scanContext = scanContext;
 
-        init();
-    }
-
-    /** Initialize the spider. */
-    private void init() {
         this.paused = false;
         this.stopped = true;
-        this.tasksDoneCount = 0;
-        this.tasksTotalCount = 0;
-        this.initialized = false;
+        this.tasksDoneCount.set(0);
+        this.tasksTotalCount.set(0);
+        this.initialized.set(false);
 
-        // Add a default fetch filter and any custom ones
-        defaultFetchFilter = new DefaultFetchFilter();
+        defaultFetchFilter = new DefaultFetchFilter(
+                this.scanContext,
+                this.spiderParam.getDomainsAlwaysInScopeEnabled()
+        );
+
         this.addFetchFilter(defaultFetchFilter);
 
-        for (FetchFilter filter : extension.getCustomFetchFilters()) {
+        for (FetchFilter filter : this.extension.getCustomFetchFilters()) {
             this.addFetchFilter(filter);
         }
 
-        // Add a default parse filter and any custom ones
         controller.setDefaultParseFilter(
-                new DefaultParseFilter(spiderParam, extension.getMessages()));
-        for (ParseFilter filter : extension.getCustomParseFilters()) this.addParseFilter(filter);
+                new DefaultParseFilter(this.spiderParam, this.extension.getMessages())
+        );
 
-        // Add the scan context, if any
-        defaultFetchFilter.setScanContext(this.scanContext);
-        defaultFetchFilter.setDomainsAlwaysInScope(spiderParam.getDomainsAlwaysInScopeEnabled());
+        for (ParseFilter filter : this.extension.getCustomParseFilters()) {
+            this.addParseFilter(filter);
+        }
     }
 
     /* SPIDER Related */
+
     /**
      * Adds a new seed for the Spider.
      *
@@ -215,13 +253,13 @@ public class Spider {
     /**
      * Adds a new seed for the Spider.
      *
-     * @param uri the uri
+     * @param uri         the uri
      * @param httpVersion the HTTP version for the seed.
      * @since 0.2.0
      */
     public void addSeed(URI uri, String httpVersion) {
         // Update the scope of the spidering process
-        String host = null;
+        String host;
 
         try {
             host = uri.getHost();
@@ -234,25 +272,27 @@ public class Spider {
         // started
         this.seedList.add(new Seed(uri, httpVersion));
         // Add the appropriate 'robots.txt' as a seed
-        if (getSpiderParam().isParseRobotsTxt()) {
+        SpiderParam param = getSpiderParam();
+
+        if (param.isParseRobotsTxt()) {
             addRootFileSeed(uri, "robots.txt", httpVersion);
         }
         // Add the appropriate 'sitemap.xml' as a seed
-        if (getSpiderParam().isParseSitemapXml()) {
+        if (param.isParseSitemapXml()) {
             addRootFileSeed(uri, "sitemap.xml", httpVersion);
         }
         // And add '.svn/entries' as a seed, for SVN based spidering
-        if (getSpiderParam().isParseSVNEntries()) {
+        if (param.isParseSVNEntries()) {
             addFileSeed(uri, ".svn/entries", SVN_URL_PATTERN, httpVersion);
             addFileSeed(uri, ".svn/wc.db", SVN_URL_PATTERN, httpVersion);
         }
 
         // And add '.git/index' as a seed, for Git based spidering
-        if (getSpiderParam().isParseGit()) {
+        if (param.isParseGit()) {
             addFileSeed(uri, ".git/index", GIT_URL_PATTERN, httpVersion);
         }
 
-        if (getSpiderParam().isParseDsStore()) {
+        if (param.isParseDsStore()) {
             addFileSeed(uri, ".DS_Store", DS_STORE_URL_PATTERN, httpVersion);
         }
     }
@@ -263,8 +303,8 @@ public class Spider {
      * <p>For example, with base URI as {@code http://example.com/some/path/file.html} and file name
      * as {@code sitemap.xml} it's added the seed {@code http://example.com/sitemap.xml}.
      *
-     * @param baseUri the base URI.
-     * @param fileName the file name.
+     * @param baseUri     the base URI.
+     * @param fileName    the file name.
      * @param httpVersion the HTTP version for the seed.
      */
     private void addRootFileSeed(URI baseUri, String fileName, String httpVersion) {
@@ -286,9 +326,9 @@ public class Spider {
      * not the default for the given scheme.
      *
      * @param scheme the scheme, {@code http} or {@code https}.
-     * @param host the name of the host.
-     * @param port the port.
-     * @param path the path, should start with {@code /}.
+     * @param host   the name of the host.
+     * @param port   the port.
+     * @param path   the path, should start with {@code /}.
      * @return the URI with the provided components.
      */
     private static String buildUri(String scheme, char[] host, int port, String path) {
@@ -311,9 +351,9 @@ public class Spider {
      * <p>If the given condition matches the base URI's path without the file name, the file seed is
      * not added (this prevents adding the seed once again).
      *
-     * @param baseUri the base URI to construct the file seed.
-     * @param fileName the name of the file seed.
-     * @param condition the condition to add the file seed.
+     * @param baseUri     the base URI to construct the file seed.
+     * @param fileName    the name of the file seed.
+     * @param condition   the condition to add the file seed.
      * @param httpVersion the HTTP version for the seed.
      */
     private void addFileSeed(URI baseUri, String fileName, Pattern condition, String httpVersion) {
@@ -360,9 +400,9 @@ public class Spider {
      * <p>Only intended to be used with HTTP/S schemes.
      *
      * @param scheme the scheme.
-     * @param port the port.
+     * @param port   the port.
      * @return {@code true} if the given port is the default for the given scheme, {@code false}
-     *     otherwise.
+     * otherwise.
      */
     private static boolean isDefaultPort(String scheme, int port) {
         if (port == -1) {
@@ -450,7 +490,7 @@ public class Spider {
      *
      * @param task the task
      */
-    protected synchronized void submitTask(SpiderTask task) {
+    protected void submitTask(SpiderTask task) {
         if (isStopped()) {
             LOGGER.debug("Submitting task skipped ({}) as the Spider process is stopped.", task);
             return;
@@ -459,7 +499,7 @@ public class Spider {
             LOGGER.debug("Submitting task skipped ({}) as the Spider process is terminated.", task);
             return;
         }
-        this.tasksTotalCount++;
+        this.tasksTotalCount.incrementAndGet();
         try {
             this.threadPool.execute(task);
         } catch (RejectedExecutionException e) {
@@ -480,9 +520,9 @@ public class Spider {
         return this.extension;
     }
 
-    /* SPIDER PROCESS maintenance - pause, resume, shutdown, etc. */
-
-    /** Starts the Spider crawling. */
+    /**
+     * Starts the Spider crawling.
+     */
     public void start() {
 
         LOGGER.info("Starting spider...");
@@ -493,28 +533,28 @@ public class Spider {
 
         // Check if seeds are available, otherwise the Spider will start, but will not have any
         // seeds and will not stop.
-        if (seedList == null || seedList.isEmpty()) {
+        if (seedList.isEmpty()) {
             LOGGER.warn("No seeds available for the Spider. Cancelling scan...");
             notifyListenersSpiderComplete(false);
             notifyListenersSpiderProgress(100, 0, 0);
             return;
         }
 
-        if (scanUser != null)
-            LOGGER.info(
-                    "Scan will be performed from the point of view of User: {}",
-                    scanUser.getName());
+        if (scanUser != null) {
+            LOGGER.info("Scan will be performed from the point of view of User: {}", scanUser.getName());
+        }
 
         this.controller.init();
         this.stopped = false;
         this.paused = false;
-        this.initialized = false;
+        this.initialized.set(false);
 
         // Initialize the thread pool
         this.threadPool =
                 Executors.newFixedThreadPool(
                         spiderParam.getThreadCount(),
-                        new SpiderThreadFactory("ZAP-SpiderThreadPool-" + id + "-thread-"));
+                        new SpiderThreadFactory("ZAP-SpiderThreadPool-" + id + "-thread-")
+                );
 
         // Initialize the HTTP sender
         httpSender = new HttpSender(HttpSender.SPIDER_INITIATOR);
@@ -528,10 +568,10 @@ public class Spider {
         // Add the seeds
         for (Seed seed : seedList) {
             LOGGER.debug("Adding seed for spider: {}", seed);
-            controller.addSeed(seed.getUri(), HttpRequestHeader.GET, seed.getHttpVersion());
+            controller.addSeed(seed.uri(), HttpRequestHeader.GET, seed.httpVersion());
         }
         // Mark the process as completely initialized
-        initialized = true;
+        initialized.set(true);
     }
 
     /**
@@ -543,14 +583,14 @@ public class Spider {
      * @see SpiderController#getFetchFilters()
      */
     private void fetchFilterSeeds() {
-        if (seedList == null || seedList.isEmpty()) {
+        if (seedList.isEmpty()) {
             return;
         }
 
         for (Iterator<Seed> it = seedList.iterator(); it.hasNext(); ) {
             Seed seed = it.next();
             for (FetchFilter filter : controller.getFetchFilters()) {
-                FetchStatus filterReason = filter.checkFilter(seed.getUri());
+                FetchStatus filterReason = filter.checkFilter(seed.uri());
                 if (filterReason != FetchStatus.VALID) {
                     LOGGER.debug("Seed: {} was filtered with reason: {}", seed, filterReason);
                     it.remove();
@@ -560,7 +600,9 @@ public class Spider {
         }
     }
 
-    /** Stops the Spider crawling. Must not be called from any of the threads in the thread pool. */
+    /**
+     * Stops the Spider crawling. Must not be called from any of the threads in the thread pool.
+     */
     public void stop() {
         if (stopped) {
             return;
@@ -596,7 +638,9 @@ public class Spider {
         notifyListenersSpiderComplete(false);
     }
 
-    /** The Spidering process is complete. */
+    /**
+     * The Spidering process is complete.
+     */
     private void complete() {
         if (stopped) {
             return;
@@ -612,23 +656,22 @@ public class Spider {
         // Issue the shutdown command on a separate thread, as the current thread is most likely one
         // from the pool
         new Thread(
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                if (threadPool != null) {
-                                    threadPool.shutdown();
-                                }
-                                // Notify the listeners -- in the meanwhile
-                                notifyListenersSpiderComplete(true);
-                                controller.reset();
-                                threadPool = null;
-                            }
-                        },
-                        "ZAP-SpiderShutdownThread-" + id)
+                () -> {
+                    if (threadPool != null) {
+                        threadPool.shutdown();
+                    }
+                    // Notify the listeners -- in the meanwhile
+                    notifyListenersSpiderComplete(true);
+                    controller.reset();
+                    threadPool = null;
+                },
+                "ZAP-SpiderShutdownThread-" + id)
                 .start();
     }
 
-    /** Pauses the Spider crawling. */
+    /**
+     * Pauses the Spider crawling.
+     */
     public void pause() {
         pauseLock.lock();
         try {
@@ -638,7 +681,9 @@ public class Spider {
         }
     }
 
-    /** Resumes the Spider crawling. */
+    /**
+     * Resumes the Spider crawling.
+     */
     public void resume() {
         pauseLock.lock();
         try {
@@ -702,6 +747,7 @@ public class Spider {
                 pausedCondition.await();
             }
         } catch (InterruptedException e) {
+            // ignore
         } finally {
             pauseLock.unlock();
         }
@@ -712,32 +758,24 @@ public class Spider {
      * it notifies the listeners of the progress and checks if the scan is complete. Called from the
      * SpiderTask.
      */
-    protected synchronized void postTaskExecution() {
+    protected void postTaskExecution() {
         if (stopped) {
             // Stopped, so don't count the task(s) as done.
             // (worker threads call this method even if the task was not really executed.)
             return;
         }
-        tasksDoneCount++;
-        int percentageComplete = tasksDoneCount * 100 / tasksTotalCount;
+        int done = tasksDoneCount.incrementAndGet();
+        int total = tasksTotalCount.get();
+
+        int percentageComplete = done * 100 / total;
 
         // Compute the progress and notify the listeners
-        this.notifyListenersSpiderProgress(
-                percentageComplete, tasksDoneCount, tasksTotalCount - tasksDoneCount);
+        this.notifyListenersSpiderProgress(percentageComplete, done, total - done);
 
         // Check for ending conditions
-        if (tasksDoneCount == tasksTotalCount && initialized) {
+        if (done == total && initialized.get()) {
             this.complete();
         }
-    }
-
-    /**
-     * Checks if is paused.
-     *
-     * @return true, if is paused
-     */
-    public boolean isPaused() {
-        return this.paused;
     }
 
     /**
@@ -780,22 +818,13 @@ public class Spider {
     }
 
     /**
-     * Removes a spider listener.
-     *
-     * @param listener the listener
-     */
-    public void removeSpiderListener(SpiderListener listener) {
-        this.listeners.remove(listener);
-    }
-
-    /**
      * Notifies all the listeners regarding the spider progress.
      *
      * @param percentageComplete the percentage complete
-     * @param numberCrawled the number of pages crawled
-     * @param numberToCrawl the number of pages left to crawl
+     * @param numberCrawled      the number of pages crawled
+     * @param numberToCrawl      the number of pages left to crawl
      */
-    protected synchronized void notifyListenersSpiderProgress(
+    protected void notifyListenersSpiderProgress(
             int percentageComplete, int numberCrawled, int numberToCrawl) {
         for (SpiderListener l : listeners) {
             l.spiderProgress(percentageComplete, numberCrawled, numberToCrawl);
@@ -805,13 +834,12 @@ public class Spider {
     /**
      * Notifies the listeners regarding a found uri.
      *
-     * @param uri the uri
+     * @param uri    the uri
      * @param method the method used for fetching the resource
      * @param status the {@link FetchStatus} stating if this uri will be processed, and, if not,
-     *     stating the reason of the filtering
+     *               stating the reason of the filtering
      */
-    protected synchronized void notifyListenersFoundURI(
-            String uri, String method, FetchStatus status) {
+    protected void notifyListenersFoundURI(String uri, String method, FetchStatus status) {
         for (SpiderListener l : listeners) {
             l.foundURI(uri, method, status);
         }
@@ -822,7 +850,7 @@ public class Spider {
      *
      * @param result the result of a spider task.
      */
-    protected synchronized void notifyListenersSpiderTaskResult(SpiderTaskResult result) {
+    protected void notifyListenersSpiderTaskResult(SpiderTaskResult result) {
         for (SpiderListener l : listeners) {
             l.notifySpiderTaskResult(result);
         }
@@ -832,9 +860,9 @@ public class Spider {
      * Notifies the listeners that the spider is complete.
      *
      * @param successful {@code true} if the spider completed successfully (e.g. was not stopped),
-     *     {@code false} otherwise
+     *                   {@code false} otherwise
      */
-    protected synchronized void notifyListenersSpiderComplete(boolean successful) {
+    protected void notifyListenersSpiderComplete(boolean successful) {
         for (SpiderListener l : listeners) {
             l.spiderComplete(successful);
         }
@@ -846,46 +874,25 @@ public class Spider {
 
     private static class SpiderThreadFactory implements ThreadFactory {
 
+        private final ThreadGroup group = Thread.currentThread().getThreadGroup();
         private final AtomicInteger threadNumber;
         private final String namePrefix;
-        private final ThreadGroup group;
 
-        public SpiderThreadFactory(String namePrefix) {
+        public SpiderThreadFactory(String prefix) {
             threadNumber = new AtomicInteger(1);
-            this.namePrefix = namePrefix;
-            group = Thread.currentThread().getThreadGroup();
+            namePrefix = prefix;
         }
 
         @Override
         public Thread newThread(Runnable r) {
-            Thread t = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 0);
-            if (t.isDaemon()) {
-                t.setDaemon(false);
-            }
-            if (t.getPriority() != Thread.NORM_PRIORITY) {
-                t.setPriority(Thread.NORM_PRIORITY);
-            }
-            return t;
+            return new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 0) {{
+                setDaemon(false);
+                setPriority(Thread.NORM_PRIORITY);
+            }};
         }
     }
 
-    private static class Seed {
-        private final URI uri;
-        private final String httpVersion;
-
-        Seed(URI uri, String httpVersion) {
-            this.uri = uri;
-            this.httpVersion = httpVersion;
-        }
-
-        URI getUri() {
-            return uri;
-        }
-
-        String getHttpVersion() {
-            return httpVersion;
-        }
-
+    private record Seed(URI uri, String httpVersion) {
         @Override
         public String toString() {
             return uri.toString();
