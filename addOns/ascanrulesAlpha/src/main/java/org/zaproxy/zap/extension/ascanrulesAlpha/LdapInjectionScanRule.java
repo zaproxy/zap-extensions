@@ -395,17 +395,7 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin
                             appendTrueAttack);
                     LOGGER.debug("We found an LDAP injection");
 
-                    buildBooleanBasedAlert(
-                                    paramname,
-                                    getBaseMsg().getRequestHeader().getMethod(),
-                                    getBaseMsg().getRequestHeader().getURI().toString(),
-                                    appendTrueAttack,
-                                    randomparameterAttack)
-                            .setMessage(getBaseMsg())
-                            .raise();
-
-                    logBooleanInjection(
-                            getBaseMsg(), paramname, appendTrueAttack, randomparameterAttack);
+                    raiseBooleanBasedAlert(paramname, appendTrueAttack, randomparameterAttack);
 
                     // all done for this parameter. return.
                     return;
@@ -468,17 +458,7 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin
                             hopefullyTrueAttack);
                     LOGGER.debug("We found an LDAP injection");
 
-                    buildBooleanBasedAlert(
-                                    paramname,
-                                    getBaseMsg().getRequestHeader().getMethod(),
-                                    getBaseMsg().getRequestHeader().getURI().toString(),
-                                    hopefullyTrueAttack,
-                                    randomparameterAttack)
-                            .setMessage(getBaseMsg())
-                            .raise();
-
-                    logBooleanInjection(
-                            getBaseMsg(), paramname, hopefullyTrueAttack, randomparameterAttack);
+                    raiseBooleanBasedAlert(paramname, hopefullyTrueAttack, randomparameterAttack);
 
                     // all done for this parameter. return.
                     return;
@@ -639,6 +619,19 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin
                 .setOtherInfo(extraInfo)
                 .setEvidence("")
                 .setAlertRef(getId() + "-2");
+    }
+
+    private void raiseBooleanBasedAlert(String paramName, String trueAttack, String randomAttack) {
+        buildBooleanBasedAlert(
+                        paramName,
+                        getBaseMsg().getRequestHeader().getMethod(),
+                        getBaseMsg().getRequestHeader().getURI().toString(),
+                        trueAttack,
+                        randomAttack)
+                .setMessage(getBaseMsg())
+                .raise();
+
+        logBooleanInjection(getBaseMsg(), paramName, trueAttack, randomAttack);
     }
 
     @Override
