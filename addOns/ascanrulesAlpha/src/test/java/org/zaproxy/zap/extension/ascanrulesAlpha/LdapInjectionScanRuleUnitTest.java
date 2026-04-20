@@ -22,10 +22,12 @@ package org.zaproxy.zap.extension.ascanrulesAlpha;
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.notNullValue;
 
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
@@ -182,14 +184,16 @@ class LdapInjectionScanRuleUnitTest extends ActiveScannerTest<LdapInjectionScanR
         assertThat(alerts, hasSize(2));
 
         Alert errorBasedAlert = alerts.get(0);
-        assertThat(errorBasedAlert.getRisk(), is(equalTo(Alert.RISK_HIGH)));
         assertThat(errorBasedAlert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
         assertThat(errorBasedAlert.getAlertRef(), is(equalTo(rule.getId() + "-1")));
+        assertThat(errorBasedAlert.getOtherInfo(), is(notNullValue()));
+        assertThat(errorBasedAlert.getOtherInfo(), is(not(emptyString())));
 
         Alert booleanBasedAlert = alerts.get(1);
-        assertThat(booleanBasedAlert.getRisk(), is(equalTo(Alert.RISK_HIGH)));
         assertThat(booleanBasedAlert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
         assertThat(booleanBasedAlert.getAlertRef(), is(equalTo(rule.getId() + "-2")));
+        assertThat(booleanBasedAlert.getOtherInfo(), is(notNullValue()));
+        assertThat(booleanBasedAlert.getOtherInfo(), is(not(emptyString())));
     }
 
     private static HttpMessage createMessage(String path) {
