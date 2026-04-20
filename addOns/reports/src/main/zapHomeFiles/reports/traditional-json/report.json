@@ -42,7 +42,7 @@
 						}[/th:block]
 					],
 					"count": "[(${instances.size})]",
-					"systemic": [[${helper.isSystemic(alert)}]],
+					"systemic": [[${helper.isSystemic(alertTree, alert.name, alert.risk)}]],
 					"solution": "[(${helper.legacyEscapeParagraph(alert.solution, true)})]",
 					"otherinfo": "[(${helper.legacyEscapeParagraph(alert.otherinfo, true)})]",
 					"reference": "[(${helper.legacyEscapeParagraph(alert.reference, true)})]",

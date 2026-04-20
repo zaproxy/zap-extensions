@@ -35,7 +35,8 @@
 							</th:block>
 						</instances>
 						<count th:text="${instances.size()}"></count>
-						<systemic th:text="${helper.isSystemic(alert)}"></systemic>
+						<systemic
+							th:text="${helper.isSystemic(alertTree, alert.name, alert.risk)}"></systemic>
 						<solution
 							th:text="${helper.legacyEscapeParagraph(alert.solution)}"></solution>
 						<otherinfo

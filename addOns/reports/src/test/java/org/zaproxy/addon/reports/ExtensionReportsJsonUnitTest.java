@@ -758,4 +758,21 @@ class ExtensionReportsJsonUnitTest extends TestUtils {
         assertThat(tags.getJSONObject(0).getString("tag"), is(equalTo("tagkey")));
         assertThat(tags.getJSONObject(0).getString("link"), is(equalTo("tagvalue")));
     }
+
+    @Test
+    void shouldNotMarkSystemicWhenInstancesBelowThresholdEvenWithSystemicTag() throws Exception {
+        // Given
+        Template template = ReportTestUtils.getTemplateFromYamlFile("traditional-json");
+        File f = File.createTempFile("systemic-tag-json", template.getExtension());
+
+        // When
+        File r = ReportTestUtils.generateReportWithSystemicTaggedAlert(template, f);
+        String report = new String(Files.readAllBytes(r.toPath()));
+        JSONObject json = JSONObject.fromObject(report);
+        JSONArray site = json.getJSONArray("site");
+        JSONArray alerts = site.getJSONObject(0).getJSONArray("alerts");
+
+        // Then
+        assertThat(alerts.getJSONObject(0).getBoolean("systemic"), is(equalTo(false)));
+    }
 }
