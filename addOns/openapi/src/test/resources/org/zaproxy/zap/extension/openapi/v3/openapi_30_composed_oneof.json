@@ -1,0 +1,34 @@
+{
+  "openapi": "3.0.3",
+  "info": {"title": "repro", "version": "1.0.0"},
+  "paths": {
+    "/things": {
+      "post": {
+        "requestBody": {
+          "content": {"application/json": {"schema": {"$ref": "#/components/schemas/CreateRequest"}}}
+        },
+        "responses": {"200": {"description": "OK"}}
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CreateRequest": {
+        "type": "object",
+        "properties": {"props": {"$ref": "#/components/schemas/PropsMap"}}
+      },
+      "PropsMap": {
+        "type": "object",
+        "additionalProperties": {"$ref": "#/components/schemas/OneOfProp"}
+      },
+      "OneOfProp": {
+        "oneOf": [
+          {"$ref": "#/components/schemas/A"},
+          {"$ref": "#/components/schemas/B"}
+        ]
+      },
+      "A": {"type": "object", "properties": {"a": {"type": "string"}}},
+      "B": {"type": "object", "properties": {"b": {"type": "string"}}}
+    }
+  }
+}

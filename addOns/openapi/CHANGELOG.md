@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Dependency update.
 
+### Fixed
+- Address exception importing definition with indirect `additionalProperties` referencing an `oneOf` (Issue 9305).
+
 ## [54] - 2026-04-14
 ### Changed
 - Dependency update to fix stack overflows when importing the definitions.
