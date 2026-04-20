@@ -395,7 +395,17 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin
                             appendTrueAttack);
                     LOGGER.debug("We found an LDAP injection");
 
-                    raiseBooleanBasedAlert(paramname, appendTrueAttack, randomparameterAttack);
+                    buildBooleanBasedAlert(
+                                    paramname,
+                                    getBaseMsg().getRequestHeader().getMethod(),
+                                    getBaseMsg().getRequestHeader().getURI().toString(),
+                                    appendTrueAttack,
+                                    randomparameterAttack)
+                            .setMessage(getBaseMsg())
+                            .raise();
+
+                    logBooleanInjection(
+                            getBaseMsg(), paramname, appendTrueAttack, randomparameterAttack);
 
                     // all done for this parameter. return.
                     return;
@@ -458,7 +468,17 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin
                             hopefullyTrueAttack);
                     LOGGER.debug("We found an LDAP injection");
 
-                    raiseBooleanBasedAlert(paramname, hopefullyTrueAttack, randomparameterAttack);
+                    buildBooleanBasedAlert(
+                                    paramname,
+                                    getBaseMsg().getRequestHeader().getMethod(),
+                                    getBaseMsg().getRequestHeader().getURI().toString(),
+                                    hopefullyTrueAttack,
+                                    randomparameterAttack)
+                            .setMessage(getBaseMsg())
+                            .raise();
+
+                    logBooleanInjection(
+                            getBaseMsg(), paramname, hopefullyTrueAttack, randomparameterAttack);
 
                     // all done for this parameter. return.
                     return;
@@ -547,8 +567,7 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin
                                 parameterName,
                                 getBaseMsg().getRequestHeader().getMethod(),
                                 getBaseMsg().getRequestHeader().getURI().toString(),
-                                LDAP_ERRORS.get(errorPattern),
-                                errorPattern.toString())
+                                errorPattern)
                         .setMessage(attackMessage)
                         .raise();
 
@@ -574,11 +593,8 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin
     }
 
     private AlertBuilder buildErrorBasedAlert(
-            String param,
-            String method,
-            String uri,
-            String ldapImplementation,
-            String errorPattern) {
+            String param, String method, String uri, Pattern errorPattern) {
+        String ldapImplementation = LDAP_ERRORS.get(errorPattern);
         String attack =
                 Constant.messages.getString(
                         I18N_PREFIX + "ldapinjection.alert.attack", param, errorAttack);
@@ -590,14 +606,14 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin
                         uri,
                         errorAttack,
                         ldapImplementation,
-                        errorPattern);
+                        errorPattern.toString());
         return newAlert()
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setName(getName() + " - " + ldapImplementation)
                 .setParam(param)
                 .setAttack(attack)
                 .setOtherInfo(extraInfo)
-                .setEvidence(errorPattern)
+                .setEvidence(errorPattern.toString())
                 .setAlertRef(getId() + "-1");
     }
 
@@ -625,24 +641,21 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin
                 .setAlertRef(getId() + "-2");
     }
 
-    private void raiseBooleanBasedAlert(String paramName, String trueAttack, String randomAttack) {
-        buildBooleanBasedAlert(
-                        paramName,
-                        getBaseMsg().getRequestHeader().getMethod(),
-                        getBaseMsg().getRequestHeader().getURI().toString(),
-                        trueAttack,
-                        randomAttack)
-                .setMessage(getBaseMsg())
-                .raise();
-
-        logBooleanInjection(getBaseMsg(), paramName, trueAttack, randomAttack);
-    }
-
     @Override
     public List<Alert> getExampleAlerts() {
         return List.of(
-                buildErrorBasedAlert("param", "", "", "openldap", "Invalid credentials").build(),
-                buildBooleanBasedAlert("param", "", "", "test)(objectClass=*", "randomvalue")
+                buildErrorBasedAlert(
+                                "param",
+                                "GET",
+                                "https://example.com/",
+                                LDAP_ERRORS.keySet().iterator().next())
+                        .build(),
+                buildBooleanBasedAlert(
+                                "param",
+                                "GET",
+                                "https://example.com/",
+                                "test)(objectClass=*",
+                                "randomvalue")
                         .build());
     }
 
