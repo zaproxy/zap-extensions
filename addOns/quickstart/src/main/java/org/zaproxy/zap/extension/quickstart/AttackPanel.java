@@ -38,6 +38,7 @@ import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
+import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.search.SearchPanel;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.LayoutHelper;
@@ -52,6 +53,7 @@ public class AttackPanel extends QuickStartSubPanel {
     private ImageIcon icon;
     private JButton attackButton;
     private JButton stopButton;
+    private JComboBox<String> policyField;
     private JComboBox<String> urlField;
     private DefaultComboBoxModel<String> urlModel;
     private JButton selectButton;
@@ -149,6 +151,11 @@ public class AttackPanel extends QuickStartSubPanel {
             urlSelectPanel.add(this.getUrlField(), LayoutHelper.getGBC(0, 0, 1, 0.5D));
             urlSelectPanel.add(selectButton, LayoutHelper.getGBC(1, 0, 1, 0.0D));
             contentPanel.add(urlSelectPanel, LayoutHelper.getGBC(2, formPanelY, 3, 0.25D));
+            contentPanel.add(
+                    new JLabel(Constant.messages.getString("quickstart.label.policy")),
+                    LayoutHelper.getGBC(
+                            1, ++formPanelY, 1, 0.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
+            contentPanel.add(getPolicyField(), LayoutHelper.getGBC(2, formPanelY, 1, 0.25D));
 
             traditionalSpiderY = ++formPanelY;
             plugableSpiderY = ++formPanelY;
@@ -171,6 +178,30 @@ public class AttackPanel extends QuickStartSubPanel {
         }
 
         return contentPanel;
+    }
+
+    private JComboBox<String> getPolicyField() {
+        if (policyField == null) {
+            policyField = new JComboBox<>();
+            ExtensionActiveScan extAscan =
+                    (ExtensionActiveScan)
+                            Control.getSingleton()
+                                    .getExtensionLoader()
+                                    .getExtension(ExtensionActiveScan.NAME);
+            if (extAscan != null) {
+                List<String> policyNames = extAscan.getPolicyManager().getAllPolicyNames();
+                for (String name : policyNames) {
+                    policyField.addItem(name);
+                }
+            }
+        }
+        return policyField;
+    }
+
+    public String getSelectedPolicy() {
+        if (policyField == null) return null;
+        Object selected = policyField.getSelectedItem();
+        return selected != null ? selected.toString() : null;
     }
 
     private JLabel getProgressLabel() {
