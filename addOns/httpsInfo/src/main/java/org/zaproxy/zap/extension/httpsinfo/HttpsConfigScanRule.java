@@ -152,6 +152,11 @@ public class HttpsConfigScanRule extends AbstractHostPlugin {
                 buildFailureAlert(null, exampleUri, exampleFailureReport, Alert.RISK_HIGH).build());
     }
 
+    public String getCodeLink() {
+        // Needed because the add-on is called httpsInfo while the package is hpptsinfo
+        return "https://github.com/zaproxy/zap-extensions/blob/main/addOns/httpsInfo/src/main/java/org/zaproxy/zap/extension/httpsinfo/HttpsConfigScanRule.java";
+    }
+
     private AlertBuilder buildInfoAlert(HttpMessage message, String uri, String configReport) {
         var builder =
                 newAlert()
