@@ -190,7 +190,13 @@ public class OpenApiJob extends AutomationJob {
             } catch (Exception e) {
                 progress.error(
                         Constant.messages.getString(
-                                "openapi.automation.error.url", this.getName(), targetUrl, apiUrl));
+                                "openapi.automation.error.import",
+                                this.getName(),
+                                targetUrl,
+                                apiUrl,
+                                e.getMessage() == null
+                                        ? e.getClass().getSimpleName()
+                                        : e.getMessage()));
             }
         }
     }
