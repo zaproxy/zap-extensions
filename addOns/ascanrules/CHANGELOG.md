@@ -5,7 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
-- The Cross Site Scripting (Persistent) rule now includes example alert functionality for documentation generation purposes (Issue 6119) and alert references (Issue 7100).
+- The following scan rules now include example alert functionality for documentation generation purposes (Issue 6119):
+    - SQL Injection - Hypersonic SQL (Time Based)
+    - SQL Injection - MsSQL (Time Based)
+    - SQL Injection - MySQL (Time Based)
+    - SQL Injection - Oracle (Time Based)
+    - SQL Injection - PostgreSQL (Time Based)
+    - Cross Site Scripting (Persistent) (Also now includes alert references (Issue 7100))
 
 ## [81] - 2026-04-14
 ### Changed
