@@ -204,8 +204,7 @@ public class AttackThread extends Thread {
                     } catch (Exception ex) {
                         LOGGER.warn("Failed to load policy {}, using default", scanPolicyName);
                     }
-                }
-                if (scanPolicy == null) {
+                } else {
                     scanPolicy = extAscan.getPolicyManager().getDefaultScanPolicy();
                 }
                 scanId = extAscan.startScan(target, null, new Object[] {scanPolicy});

@@ -188,8 +188,7 @@ public class AttackPanel extends QuickStartSubPanel {
                             .getExtensionLoader()
                             .getExtension(ExtensionActiveScan.class);
             if (extAscan != null) {
-                List<String> policyNames = extAscan.getPolicyManager().getAllPolicyNames();
-                for (String name : policyNames) {
+                for (String name : extAscan.getPolicyManager().getAllPolicyNames()) {
                     policyField.addItem(name);
                 }
             }
