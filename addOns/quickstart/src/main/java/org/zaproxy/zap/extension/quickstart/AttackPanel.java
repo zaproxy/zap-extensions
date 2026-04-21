@@ -198,7 +198,9 @@ public class AttackPanel extends QuickStartSubPanel {
     }
 
     public String getSelectedPolicy() {
-        if (policyField == null) return null;
+        if (policyField == null) {
+            return null;
+        }
         Object selected = policyField.getSelectedItem();
         return selected != null ? selected.toString() : null;
     }
