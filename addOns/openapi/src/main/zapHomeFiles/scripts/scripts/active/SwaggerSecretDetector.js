@@ -220,25 +220,145 @@ function redactSecret(secret) {
 // 7. Detect Swagger UI version in HTML/JS
 // -------------------------------------------------------------------
 function detectSwaggerVersion(body) {
-  if (body.indexOf("SwaggerUIBundle") !== -1) return 3;
+  const lower = body.toLowerCase();
+
+  if (
+    lower.indexOf("swaggeruibundle") !== -1 ||
+    lower.indexOf("swaggeruistandalonepreset") !== -1 ||
+    lower.indexOf("swagger-ui-bundle.js") !== -1 ||
+    lower.indexOf("swagger-ui-standalone-preset.js") !== -1
+  ) {
+    return 3;
+  }
+
   if (
     body.indexOf("SwaggerUi") !== -1 ||
     body.indexOf("window.swaggerUi") !== -1 ||
     body.indexOf("swashbuckleConfig") !== -1
-  )
+  ) {
     return 2;
-  if (body.indexOf("NSwag") !== -1 || body.indexOf("nswagui") !== -1) return 4;
+  }
+
+  if (lower.indexOf("nswag") !== -1 || lower.indexOf("nswagui") !== -1) {
+    return 4;
+  }
+
   return 0;
 }
 
 function extractVersion(body) {
-  const versionRegex = /version\s*[:=]\s*["']?(\d+\.\d+\.\d+)["']?/i;
-  const match = body.match(versionRegex);
-  return match ? match[1] : null;
+  const patterns = [
+    /swagger-ui[\s\S]{0,150}?@version\s+v?(\d+\.\d+\.\d+)/i,
+    /swagger-ui(?:-bundle|-standalone-preset)?(?:\.min)?\.(?:js|css)[^"'\n\r]{0,120}?[?&](?:v|ver|version)=([\d.]+)/i,
+    /swagger-ui(?:-dist)?@(\d+\.\d+\.\d+)/i,
+    /swagger\s*ui[^\d]{0,50}v?(\d+\.\d+\.\d+)/i,
+  ];
+
+  for (let i = 0; i < patterns.length; i++) {
+    const match = patterns[i].exec(body);
+    if (match) return match[1];
+  }
+
+  return null;
+}
+function isLikelySwaggerUIContext(body) {
+  const lower = body.toLowerCase();
+
+  return (
+    lower.indexOf("swagger-ui") !== -1 ||
+    lower.indexOf("swaggeruibundle") !== -1 ||
+    lower.indexOf("swagger-ui-bundle.js") !== -1 ||
+    lower.indexOf("swaggeruistandalonepreset") !== -1 ||
+    lower.indexOf("swagger-ui-standalone-preset.js") !== -1
+  );
+}
+
+function isVersionNearSwagger(body, version) {
+  if (!version) return false;
+
+  const lower = body.toLowerCase();
+  let fromIndex = 0;
+
+  while (true) {
+    const idx = body.indexOf(version, fromIndex);
+    if (idx === -1) return false;
+
+    const start = Math.max(0, idx - 400);
+    const end = Math.min(body.length, idx + 400);
+    const window = lower.substring(start, end);
+
+    const hasSwaggerContext =
+      window.indexOf("swagger-ui") !== -1 ||
+      window.indexOf("swagger ui") !== -1 ||
+      window.indexOf("swaggeruibundle") !== -1 ||
+      window.indexOf("swaggeruistandalonepreset") !== -1 ||
+      window.indexOf("swaggerui") !== -1;
+
+    const hasNonSwaggerContext =
+      window.indexOf("dompurify") !== -1 ||
+      window.indexOf("jquery") !== -1 ||
+      window.indexOf("bootstrap") !== -1 ||
+      window.indexOf("react") !== -1 ||
+      window.indexOf("vue") !== -1 ||
+      window.indexOf("angular") !== -1 ||
+      window.indexOf("lodash") !== -1 ||
+      window.indexOf("core-js") !== -1 ||
+      window.indexOf("highlight.js") !== -1 ||
+      window.indexOf("redoc") !== -1 ||
+      window.indexOf("moment") !== -1;
+
+    if (hasSwaggerContext && !hasNonSwaggerContext) {
+      return true;
+    }
+
+    fromIndex = idx + version.length;
+  }
+}
+
+function isKnownNonSwaggerVersionContext(body, version) {
+  if (!version) return false;
+
+  const lower = body.toLowerCase();
+  let fromIndex = 0;
+
+  while (true) {
+    const idx = body.indexOf(version, fromIndex);
+    if (idx === -1) return false;
+
+    const start = Math.max(0, idx - 250);
+    const end = Math.min(body.length, idx + 250);
+    const window = lower.substring(start, end);
+
+    const nonSwaggerMarkers = [
+      "dompurify",
+      "jquery",
+      "bootstrap",
+      "react",
+      "vue",
+      "angular",
+      "lodash",
+      "core-js",
+      "highlight.js",
+      "redoc",
+      "raphael",
+      "backbone",
+      "moment",
+    ];
+
+    for (let i = 0; i < nonSwaggerMarkers.length; i++) {
+      if (window.indexOf(nonSwaggerMarkers[i]) !== -1) {
+        return true;
+      }
+    }
+
+    fromIndex = idx + version.length;
+  }
 }
 
 function versionToInt(v) {
   const parts = v.split(".");
+  if (parts.length !== 3) return 0;
+
   return (
     parseInt(parts[0], 10) * 10000 +
     parseInt(parts[1], 10) * 100 +
@@ -328,29 +448,38 @@ function scanPath(as, origMsg, scheme, host, port, pathOnly, fullPath) {
   } catch (err) {
     return;
   }
-
   const body = requestMsg.getResponseBody().toString();
+  detectSecrets(as, requestMsg, fullPath, body);
+try {
   const version = detectSwaggerVersion(body);
   const semver = extractVersion(body);
 
-  if (semver && (version === 2 || version === 3)) {
-    const vInt = versionToInt(semver);
-    if ((version === 2 && vInt < 20210) || (version === 3 && vInt < 32403)) {
-      const cveReference =
-        version === 2
-          ? "https://nvd.nist.gov/vuln/detail/CVE-2019-17495"
-          : "https://github.com/swagger-api/swagger-ui/releases/tag/v3.24.3";
+  if (
+  semver &&
+  (version === 2 || version === 3) &&
+  isLikelySwaggerUIContext(body) &&
+  isVersionNearSwagger(body, semver) &&
+  !isKnownNonSwaggerVersionContext(body, semver)
+) {
+  const vInt = versionToInt(semver);
 
-      as.newAlert("100043-1")
-        .setName("Vulnerable Swagger UI Version Detected (v" + semver + ")")
-        .setOtherInfo("Discovered at: " + fullPath)
-        .setReference(cveReference)
-        .setMessage(requestMsg)
-        .raise();
-    }
+  if ((version === 2 && vInt < 20210) || (version === 3 && vInt < 32403)) {
+    const cveReference =
+      version === 2
+        ? "https://nvd.nist.gov/vuln/detail/CVE-2019-17495"
+        : "https://github.com/swagger-api/swagger-ui/releases/tag/v3.24.3";
+
+    as.newAlert("1000043-1")
+      .setName("Vulnerable Swagger UI Version Detected (v" + semver + ")")
+      .setOtherInfo("Discovered at: " + fullPath)
+      .setReference(cveReference)
+      .setMessage(requestMsg)
+      .raise();
   }
+}
 
-  detectSecrets(as, requestMsg, fullPath, body);
+}catch (e) {
+
 }
 
 function detectSecrets(as, requestMsg, fullPath, body) {
@@ -374,11 +503,12 @@ function detectSecrets(as, requestMsg, fullPath, body) {
     /clientSecret|api_key|access_token|authorization/i.test(e),
   );
 
-  if (foundClientId && foundSecret) {
-    as.newAlert("100043-2")
+  if ((foundClientId && foundSecret) || foundSecret) {
+    as.newAlert("1000043-2")
       .setEvidence(redactedEvidence[0])
       .setOtherInfo("All secrets exposed:\n" + redactedEvidence.join("\n"))
       .setMessage(requestMsg)
       .raise();
   }
+}
 }
