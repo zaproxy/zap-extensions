@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [55] - 2026-04-21
 ### Changed
 - Dependency update.
 
@@ -396,6 +396,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First Version
 
+[55]: https://github.com/zaproxy/zap-extensions/releases/openapi-v55
 [54]: https://github.com/zaproxy/zap-extensions/releases/openapi-v54
 [53]: https://github.com/zaproxy/zap-extensions/releases/openapi-v53
 [52]: https://github.com/zaproxy/zap-extensions/releases/openapi-v52
