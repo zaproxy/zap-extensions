@@ -842,6 +842,24 @@ class BodyGeneratorUnitTest extends TestUtils {
         assertEquals("{\"items\":[[1.2]]}", request);
     }
 
+    @Test
+    void shouldGenerateBodyOfObjectWithAdditionalPropertiesAndOneOf() throws IOException {
+        // Given
+        OpenAPI openAPI = parseResource("openapi_30_composed_oneof.json");
+        // When
+        String request =
+                new RequestModelConverter()
+                        .convert(
+                                new OperationModel(
+                                        "/things",
+                                        openAPI.getPaths().get("/things").getPost(),
+                                        null),
+                                generators)
+                        .getBody();
+        // Then
+        assertEquals("{\"props\":{\"John Doe\":{\"a\":\"John Doe\"}}}", request);
+    }
+
     private OpenAPI parseResource(String fileName) throws IOException {
         ParseOptions options = new ParseOptions();
         options.setResolveFully(true);
