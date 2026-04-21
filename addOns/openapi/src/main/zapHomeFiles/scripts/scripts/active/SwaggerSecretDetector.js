@@ -469,7 +469,7 @@ try {
         ? "https://nvd.nist.gov/vuln/detail/CVE-2019-17495"
         : "https://github.com/swagger-api/swagger-ui/releases/tag/v3.24.3";
 
-    as.newAlert("1000043-1")
+    as.newAlert("100043-1")
       .setName("Vulnerable Swagger UI Version Detected (v" + semver + ")")
       .setOtherInfo("Discovered at: " + fullPath)
       .setReference(cveReference)
@@ -504,7 +504,7 @@ function detectSecrets(as, requestMsg, fullPath, body) {
   );
 
   if ((foundClientId && foundSecret) || foundSecret) {
-    as.newAlert("1000043-2")
+    as.newAlert("100043-2")
       .setEvidence(redactedEvidence[0])
       .setOtherInfo("All secrets exposed:\n" + redactedEvidence.join("\n"))
       .setMessage(requestMsg)
