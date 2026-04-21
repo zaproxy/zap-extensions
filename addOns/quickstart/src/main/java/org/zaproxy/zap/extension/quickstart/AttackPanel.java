@@ -184,10 +184,9 @@ public class AttackPanel extends QuickStartSubPanel {
         if (policyField == null) {
             policyField = new JComboBox<>();
             ExtensionActiveScan extAscan =
-                    (ExtensionActiveScan)
-                            Control.getSingleton()
-                                    .getExtensionLoader()
-                                    .getExtension(ExtensionActiveScan.class);
+                    Control.getSingleton()
+                            .getExtensionLoader()
+                            .getExtension(ExtensionActiveScan.class);
             if (extAscan != null) {
                 List<String> policyNames = extAscan.getPolicyManager().getAllPolicyNames();
                 for (String name : policyNames) {
