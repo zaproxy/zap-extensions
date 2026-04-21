@@ -25,11 +25,14 @@ import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import javax.script.ScriptEngine;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.HostProcess;
@@ -87,6 +90,10 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
     private ExtensionZest extension;
     private final ExtensionNetwork extensionNetwork;
     private ZestScriptWrapper wrapper = null;
+
+    /** Set when {@link #setWrapper} runs; provenance does not change during a run. */
+    private boolean chainedScriptRun;
+
     private HttpMessage target = null;
     private ZestResultWrapper lastResult = null;
     private HistoryReference lastHref = null;
@@ -107,7 +114,6 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
         LOGGER.debug("Constructor");
         this.extension = extension;
         this.extensionNetwork = extensionNetwork;
-        this.wrapper = wrapper;
         extensionScript = extension.getExtScript();
         this.scriptUI = extension.getExtScript().getScriptUI();
         this.setScriptEngineFactory(extension.getZestScriptEngineFactory());
@@ -118,6 +124,8 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
         // Always proxy via ZAP
         ServerInfo serverInfo = extensionNetwork.getMainProxyServerInfo();
         this.setProxy(serverInfo.getAddress(), serverInfo.getPort());
+
+        setWrapper(wrapper);
     }
 
     @Override
@@ -318,7 +326,17 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
         if (this.isStop) {
             return null;
         }
-        return super.runStatement(script, stmt, lastResponse);
+        try {
+            return super.runStatement(script, stmt, lastResponse);
+        } catch (ZestAssertFailException
+                | ZestActionFailException
+                | ZestInvalidCommonTestException
+                | IOException
+                | ZestAssignFailException
+                | ZestClientFailException e) {
+            recordStatementFailureContext(stmt, e);
+            throw e;
+        }
     }
 
     @Override
@@ -410,7 +428,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
         }
     }
 
-    protected String launchClient(ZestClientLaunch clientLaunch) {
+    protected String launchClient(ZestClientLaunch clientLaunch) throws ZestClientFailException {
         ExtensionSelenium extSel =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class);
         Browser browser = null;
@@ -473,6 +491,16 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
                         (ClientAuthenticator) user.getContext().getAuthenticationMethod();
                 boolean success = ca.authenticate(wd, user);
                 if (!success) {
+                    if (chainedScriptRun) {
+                        String msg =
+                                Constant.messages.getString(
+                                        "zest.runner.client.authfailed",
+                                        user.getName(),
+                                        user.getContext().getName());
+                        recordClientLaunchFailureContext(clientLaunch, msg);
+                        throw new ZestClientFailException(
+                                clientLaunch, new IllegalStateException(msg));
+                    }
                     LOGGER.warn("Failed to authenticate user {}", user.getName());
                     return null;
                 }
@@ -487,7 +515,87 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
                     clientLaunch.getWindowHandle());
             return clientLaunch.getWindowHandle();
         }
+        if (chainedScriptRun) {
+            String msg =
+                    Constant.messages.getString(
+                            "zest.runner.client.browserfailed", browser.getId());
+            recordClientLaunchFailureContext(clientLaunch, msg);
+            throw new ZestClientFailException(clientLaunch, new IllegalStateException(msg));
+        }
         return null;
+    }
+
+    private void recordStatementFailureContext(ZestStatement stmt, Throwable t) {
+        if (stmt == null) {
+            return;
+        }
+        String diagnostics = formatStatementDiagnostics(stmt);
+        String detail = formatStatementFailureDetail(t);
+        String existing = wrapper.getZestFailureContext();
+        if (t instanceof ZestClientFailException
+                && StringUtils.isNotBlank(existing)
+                && StringUtils.isNotBlank(diagnostics)
+                && existing.startsWith(diagnostics)) {
+            // launchClient already set context for this statement; do not replace — the caller
+            // surfaces the failure (e.g. via wrapper context / exception handling).
+            return;
+        }
+        wrapper.setZestFailureContext(diagnostics + " - " + detail);
+    }
+
+    /**
+     * Short headline for failure context. Selenium {@link WebDriverException} failures use {@link
+     * WebDriverException#getRawMessage()}; other throwables use {@link Throwable#getMessage()} when
+     * present.
+     */
+    private static String formatStatementFailureDetail(Throwable t) {
+        Throwable subject = t;
+        if (t instanceof ZestClientFailException) {
+            Throwable cause = t.getCause();
+            if (cause != null) {
+                subject = cause;
+            }
+        }
+        return formatFailureDetailForThrowable(subject);
+    }
+
+    private static String formatFailureDetailForThrowable(Throwable throwable) {
+        if (throwable instanceof WebDriverException ex) {
+            String raw = ex.getRawMessage();
+            if (StringUtils.isBlank(raw)) {
+                return ex.getClass().getSimpleName();
+            }
+            return raw;
+        }
+        String message = throwable.getMessage();
+        if (message == null || message.isBlank()) {
+            return throwable.getClass().getSimpleName();
+        }
+        return message;
+    }
+
+    /**
+     * Records launch failure on the wrapper. Chain scripts reset failure context in the {@link
+     * ZestZapRunner} constructor before the run.
+     */
+    private void recordClientLaunchFailureContext(ZestClientLaunch clientLaunch, String headline) {
+        String diagnostics = formatStatementDiagnostics(clientLaunch);
+        wrapper.setZestFailureContext(diagnostics + " - " + headline);
+    }
+
+    private String formatStatementDiagnostics(ZestStatement stmt) {
+        if (stmt == null) {
+            return "";
+        }
+        return wrapper.getChainProvenance()
+                .map(p -> p.describe(stmt.getIndex()))
+                .orElseGet(
+                        () ->
+                                Constant.messages.getString(
+                                        "zest.runner.failure.standalone",
+                                        wrapper.getName(),
+                                        Integer.toString(stmt.getIndex()),
+                                        stmt.getElementType()));
     }
 
     private ScanPolicy getDefaultScanPolicy() {
@@ -615,8 +723,15 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
         }
     }
 
+    /**
+     * Binds the script wrapper for this run and clears {@link
+     * ZestScriptWrapper#getZestFailureContext()} for a fresh diagnostic headline. Must not be
+     * {@code null}.
+     */
     public void setWrapper(ZestScriptWrapper wrapper) {
-        this.wrapper = wrapper;
+        this.wrapper = Objects.requireNonNull(wrapper, "wrapper");
+        chainedScriptRun = this.wrapper.getChainProvenance().isPresent();
+        this.wrapper.setZestFailureContext("");
     }
 
     @Override
