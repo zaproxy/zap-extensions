@@ -39,6 +39,7 @@ import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
+import org.zaproxy.zap.extension.ascan.PolicyManager;
 import org.zaproxy.zap.extension.search.SearchPanel;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.LayoutHelper;
@@ -49,6 +50,7 @@ public class AttackPanel extends QuickStartSubPanel {
     private static final long serialVersionUID = 1L;
 
     private static final String DEFAULT_VALUE_URL_FIELD = "http://";
+    private static final String DEFAULT_SCAN_POLICY = "Dev Standard";
 
     private ImageIcon icon;
     private JButton attackButton;
@@ -193,11 +195,11 @@ public class AttackPanel extends QuickStartSubPanel {
                 String defaultPolicy = null;
                 for (String name : extAscan.getPolicyManager().getAllPolicyNames()) {
                     policyField.addItem(name);
-                    if ("Dev Standard".equals(name)) {
+                    if (DEFAULT_SCAN_POLICY.equals(name)) {
                         defaultPolicy = name;
                     }
                 }
-                if (savedPolicy != null && !savedPolicy.isEmpty()) {
+                if (savedPolicy != null && PolicyManager.policyExists(savedPolicy)) {
                     policyField.setSelectedItem(savedPolicy);
                 } else if (defaultPolicy != null) {
                     policyField.setSelectedItem(defaultPolicy);

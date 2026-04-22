@@ -141,6 +141,11 @@ public class QuickStartParam extends VersionedAbstractParam {
         } catch (Exception e) {
             LOGGER.error("Failed to load the cleared news item configuration", e);
         }
+        try {
+            scanPolicyName = getConfig().getString(PARAM_SCAN_POLICY_NAME, "");
+        } catch (Exception e) {
+            LOGGER.error("Failed to load the cleared news item configuration", e);
+        }
     }
 
     @Override
