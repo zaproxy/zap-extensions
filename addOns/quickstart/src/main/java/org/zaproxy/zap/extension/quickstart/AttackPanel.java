@@ -433,6 +433,7 @@ public class AttackPanel extends QuickStartSubPanel {
             return false;
         }
         this.getExtensionQuickStart().getQuickStartParam().addRecentUrl(urlStr);
+        this.getExtensionQuickStart().getQuickStartParam().setScanPolicyName(getSelectedPolicy());
         getAttackButton().setEnabled(false);
         getStopButton().setEnabled(true);
 
