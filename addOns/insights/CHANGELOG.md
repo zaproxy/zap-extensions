@@ -4,7 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- Elevated insight.auth.failure from Medium to High severity so that exitAutoOnHigh can stop scans with persistent auth failures.
+- Reduced minimum auth request threshold from 10 to 5 to detect browser-based auth failures earlier.
 
 ## [0.3.0] - 2026-03-31
 ### Fixed

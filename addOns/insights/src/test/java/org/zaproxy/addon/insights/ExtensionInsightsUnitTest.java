@@ -237,7 +237,7 @@ class ExtensionInsightsUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldRecordWarningOnAuthMediumStats() {
+    void shouldRecordWarningOnAuthHighStats() {
         // Given
         Stats.incCounter(EXAMPLE_COM, "stats.auth.success", 1000);
         Stats.incCounter(EXAMPLE_COM, "stats.auth.failure", 3000);
@@ -249,7 +249,7 @@ class ExtensionInsightsUnitTest extends TestUtils {
         assertThat(ext.getInsights().size(), is(equalTo(1)));
         assertInsight(
                 0,
-                Insight.Level.MEDIUM,
+                Insight.Level.HIGH,
                 Insight.Reason.EXCEEDED_HIGH,
                 EXAMPLE_COM,
                 "insight.auth.failure",
