@@ -251,7 +251,10 @@ function extractVersion(body) {
     /swagger-ui[\s\S]{0,150}?@version\s+v?(\d+\.\d+\.\d+)/i,
     /swagger-ui(?:-bundle|-standalone-preset)?(?:\.min)?\.(?:js|css)[^"'\n\r]{0,120}?[?&](?:v|ver|version)=([\d.]+)/i,
     /swagger-ui(?:-dist)?@(\d+\.\d+\.\d+)/i,
+    /swashbuckleconfig[^\d]{0,50}(\d+\.\d+\.\d+)/i,
     /swagger\s*ui[^\d]{0,50}v?(\d+\.\d+\.\d+)/i,
+    /swaggerui[^\n\r]{0,80}?version\s*[:=]\s*["']?(\d+\.\d+\.\d+)/i,
+
   ];
 
   for (let i = 0; i < patterns.length; i++) {
@@ -263,14 +266,18 @@ function extractVersion(body) {
 }
 function isLikelySwaggerUIContext(body) {
   const lower = body.toLowerCase();
-
-  return (
-    lower.indexOf("swagger-ui") !== -1 ||
-    lower.indexOf("swaggeruibundle") !== -1 ||
-    lower.indexOf("swagger-ui-bundle.js") !== -1 ||
-    lower.indexOf("swaggeruistandalonepreset") !== -1 ||
-    lower.indexOf("swagger-ui-standalone-preset.js") !== -1
+return (
+    // v3 indicators
+    lower.includes("swagger-ui") ||
+    lower.includes("swaggeruibundle") ||
+    lower.includes("swagger-ui-bundle.js") ||
+    lower.includes("swaggeruistandalonepreset") ||
+    lower.includes("swagger-ui-standalone-preset.js") ||
+    lower.includes("swaggerui") ||           // matches SwaggerUi
+    lower.includes("window.swaggerui") ||
+    lower.includes("swashbuckleconfig")
   );
+
 }
 
 function isVersionNearSwagger(body, version) {
@@ -448,9 +455,7 @@ function scanPath(as, origMsg, scheme, host, port, pathOnly, fullPath) {
   } catch (err) {
     return;
   }
-  const body = requestMsg.getResponseBody().toString();
-  detectSecrets(as, requestMsg, fullPath, body);
-  
+  const body = requestMsg.getResponseBody().toString(); 
   try {
     const version = detectSwaggerVersion(body);
     const semver = extractVersion(body);
@@ -459,7 +464,6 @@ function scanPath(as, origMsg, scheme, host, port, pathOnly, fullPath) {
       semver &&
       (version === 2 || version === 3) &&
       isLikelySwaggerUIContext(body) &&
-      isVersionNearSwagger(body, semver) &&
       !isKnownNonSwaggerVersionContext(body, semver)
     ) {
       const vInt = versionToInt(semver);
@@ -481,7 +485,9 @@ function scanPath(as, origMsg, scheme, host, port, pathOnly, fullPath) {
   } catch (e) {
     // Error handling
   }
+detectSecrets(as, requestMsg, fullPath, body);
 }
+
 
 function detectSecrets(as, requestMsg, fullPath, body) {
   const matches = {};
