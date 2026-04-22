@@ -319,7 +319,12 @@ public class ExtensionQuickStart extends ExtensionAdaptor
         attackThread.setURL(url);
         attackThread.setTraditionalSpider(traditionalSpider);
         attackThread.setPlugableSpider(plugableSpider);
-        attackThread.setScanPolicyName(getQuickStartPanel().getAttackPanel().getSelectedPolicy());
+        if (hasView()) {
+            attackThread.setScanPolicyName(
+                    getQuickStartPanel().getAttackPanel().getSelectedPolicy());
+        } else {
+            attackThread.setScanPolicyName(getQuickStartParam().getScanPolicyName());
+        }
         attackThread.start();
     }
 
