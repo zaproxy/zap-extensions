@@ -450,36 +450,37 @@ function scanPath(as, origMsg, scheme, host, port, pathOnly, fullPath) {
   }
   const body = requestMsg.getResponseBody().toString();
   detectSecrets(as, requestMsg, fullPath, body);
-try {
-  const version = detectSwaggerVersion(body);
-  const semver = extractVersion(body);
+  
+  try {
+    const version = detectSwaggerVersion(body);
+    const semver = extractVersion(body);
 
-  if (
-  semver &&
-  (version === 2 || version === 3) &&
-  isLikelySwaggerUIContext(body) &&
-  isVersionNearSwagger(body, semver) &&
-  !isKnownNonSwaggerVersionContext(body, semver)
-) {
-  const vInt = versionToInt(semver);
+    if (
+      semver &&
+      (version === 2 || version === 3) &&
+      isLikelySwaggerUIContext(body) &&
+      isVersionNearSwagger(body, semver) &&
+      !isKnownNonSwaggerVersionContext(body, semver)
+    ) {
+      const vInt = versionToInt(semver);
 
-  if ((version === 2 && vInt < 20210) || (version === 3 && vInt < 32403)) {
-    const cveReference =
-      version === 2
-        ? "https://nvd.nist.gov/vuln/detail/CVE-2019-17495"
-        : "https://github.com/swagger-api/swagger-ui/releases/tag/v3.24.3";
+      if ((version === 2 && vInt < 20210) || (version === 3 && vInt < 32403)) {
+        const cveReference =
+          version === 2
+            ? "https://nvd.nist.gov/vuln/detail/CVE-2019-17495"
+            : "https://github.com/swagger-api/swagger-ui/releases/tag/v3.24.3";
 
-    as.newAlert("100043-1")
-      .setName("Vulnerable Swagger UI Version Detected (v" + semver + ")")
-      .setOtherInfo("Discovered at: " + fullPath)
-      .setReference(cveReference)
-      .setMessage(requestMsg)
-      .raise();
+        as.newAlert("100043-1")
+          .setName("Vulnerable Swagger UI Version Detected (v" + semver + ")")
+          .setOtherInfo("Discovered at: " + fullPath)
+          .setReference(cveReference)
+          .setMessage(requestMsg)
+          .raise();
+      }
+    }
+  } catch (e) {
+    // Error handling
   }
-}
-
-}catch (e) {
-
 }
 
 function detectSecrets(as, requestMsg, fullPath, body) {
@@ -510,5 +511,4 @@ function detectSecrets(as, requestMsg, fullPath, body) {
       .setMessage(requestMsg)
       .raise();
   }
-}
 }
