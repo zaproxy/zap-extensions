@@ -193,11 +193,9 @@ public class AttackPanel extends QuickStartSubPanel {
                 String savedPolicy =
                         getExtensionQuickStart().getQuickStartParam().getScanPolicyName();
                 String defaultPolicy = null;
-                for (String name : extAscan.getPolicyManager().getAllPolicyNames()) {
-                    policyField.addItem(name);
-                    if (DEFAULT_SCAN_POLICY.equals(name)) {
-                        defaultPolicy = name;
-                    }
+                extAscan.getPolicyManager().getAllPolicyNames().forEach(policyField::addItem);
+                if (PolicyManager.policyExists(DEFAULT_SCAN_POLICY)) {
+                    defaultPolicy = DEFAULT_SCAN_POLICY;
                 }
                 if (savedPolicy != null && PolicyManager.policyExists(savedPolicy)) {
                     policyField.setSelectedItem(savedPolicy);
