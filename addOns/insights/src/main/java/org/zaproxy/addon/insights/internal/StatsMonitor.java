@@ -63,7 +63,7 @@ public class StatsMonitor implements StatsListener, EventConsumer {
     private static final String STATS_RESPONSE_TIME_PREFIX = "stats.responseTime.";
 
     private static final int MIN_NUMBER_OF_REQS = 1000;
-    private static final int MIN_NUMBER_OF_AUTH = 10;
+    private static final int MIN_NUMBER_OF_AUTH = 5;
 
     private static final long MEM_GC_CHECK_MSEC = TimeUnit.MINUTES.toMillis(1);
 
@@ -328,7 +328,7 @@ public class StatsMonitor implements StatsListener, EventConsumer {
             }
             recordMessageInsightWithLimits(
                     Insight.Level.LOW,
-                    Insight.Level.MEDIUM,
+                    Insight.Level.HIGH,
                     site,
                     "insight.auth.failure",
                     MIN_NUMBER_OF_AUTH,

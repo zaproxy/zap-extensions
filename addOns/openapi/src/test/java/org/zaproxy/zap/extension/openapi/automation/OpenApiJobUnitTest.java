@@ -151,7 +151,7 @@ class OpenApiJobUnitTest extends TestUtils {
     @Test
     void shouldFailIfInvalidUrl() {
         // Given
-        Constant.messages = new I18N(Locale.ENGLISH);
+        mockMessages(new ExtensionOpenApi());
         AutomationProgress progress = new AutomationProgress();
         AutomationEnvironment env = mock(AutomationEnvironment.class);
         ContextWrapper contextWrapper = new ContextWrapper(mock(Context.class), env);
@@ -170,7 +170,11 @@ class OpenApiJobUnitTest extends TestUtils {
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.hasErrors(), is(equalTo(true)));
-        assertThat(progress.getErrors().get(0), is(equalTo("!openapi.automation.error.url!")));
+        assertThat(
+                progress.getErrors().get(0),
+                is(
+                        equalTo(
+                                "Job openapi target URL: null failed to import: null. Due to: URI-Reference required")));
     }
 
     @Test

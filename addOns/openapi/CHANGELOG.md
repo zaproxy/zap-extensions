@@ -5,6 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - Improved Swagger Secret Detector Script with false positive scenarios and ensuring correct Swagger version flagging.
+## Unreleased
+### Changed
+- Exceptions caught by the Automation Framework job now include the exception message.
+
+## [55] - 2026-04-21
+### Changed
+- Dependency update.
+
+### Fixed
+- Address exception importing definition with indirect `additionalProperties` referencing an `oneOf` (Issue 9305).
 
 ## [54] - 2026-04-14
 ### Changed
@@ -392,6 +402,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First Version
 
+[55]: https://github.com/zaproxy/zap-extensions/releases/openapi-v55
 [54]: https://github.com/zaproxy/zap-extensions/releases/openapi-v54
 [53]: https://github.com/zaproxy/zap-extensions/releases/openapi-v53
 [52]: https://github.com/zaproxy/zap-extensions/releases/openapi-v52

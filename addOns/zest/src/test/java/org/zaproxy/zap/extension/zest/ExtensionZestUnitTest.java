@@ -37,6 +37,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.withSettings;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
@@ -49,6 +50,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.mockito.ArgumentCaptor;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
@@ -57,13 +59,13 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
+import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 import org.zaproxy.zest.core.v1.ZestClientLaunch;
 import org.zaproxy.zest.core.v1.ZestComment;
 import org.zaproxy.zest.core.v1.ZestElement;
 import org.zaproxy.zest.core.v1.ZestJSON;
 import org.zaproxy.zest.core.v1.ZestScript;
-import org.zaproxy.zest.core.v1.ZestStatement;
 
 /** Unit test for {@link ExtensionZest}. */
 class ExtensionZestUnitTest {
@@ -294,11 +296,13 @@ class ExtensionZestUnitTest {
     }
 
     @Nested
-    class GetChainScript {
+    class GetChainScript extends TestUtils {
 
         @BeforeEach
         void setup() {
-            var extLoader = mock(ExtensionLoader.class);
+            mockMessages(new ExtensionZest());
+            var extLoader =
+                    mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
             Control.initSingletonForTesting(mock(Model.class), extLoader);
             given(extLoader.getExtension(ExtensionZest.NAME)).willReturn(extension);
             given(extLoader.getExtension(ExtensionZest.class)).willReturn(extension);
@@ -336,31 +340,23 @@ class ExtensionZestUnitTest {
         }
 
         @Test
-        void shouldReturnMergedWrapperForValidChain() {
+        void shouldReturnChainedWrapperForValidChain() {
             // Given (first script must have ZestClientLaunch when chain has 2+ scripts)
             ZestScriptWrapper wrapper1 = createZestWrapperWithClientLaunch("script1", 1);
             ZestScriptWrapper wrapper2 = createZestWrapper("script2", 2);
 
             // When
-            ScriptWrapper result = extension.getChainScript(List.of(wrapper1, wrapper2), "merged");
+            ScriptWrapper result = extension.getChainScript(List.of(wrapper1, wrapper2), "chain");
 
             // Then
             assertThat(result, is(notNullValue()));
             assertThat(result, is(instanceOf(ZestScriptWrapper.class)));
-            ZestScript merged = ((ZestScriptWrapper) result).getZestScript();
-            assertThat(merged.getTitle(), is(equalTo("merged")));
-            assertThat(merged.getDescription(), containsString("Merged chain of 2 scripts"));
-            List<ZestStatement> statements = merged.getStatements();
-            long sectionComments =
-                    statements.stream()
-                            .filter(
-                                    s ->
-                                            s instanceof ZestComment
-                                                    && ((ZestComment) s)
-                                                            .getComment()
-                                                            .contains("=== START:"))
-                            .count();
-            assertThat(sectionComments, is(equalTo(2L)));
+            assertThat(
+                    ((ZestScriptWrapper) result).getChainProvenance().isPresent(),
+                    is(equalTo(true)));
+            ZestScript chained = ((ZestScriptWrapper) result).getZestScript();
+            assertThat(chained.getTitle(), is(equalTo("chain")));
+            assertThat(chained.getDescription(), is(equalTo("")));
         }
 
         private ZestScriptWrapper createZestWrapper(String name, int statementCount) {
@@ -392,7 +388,8 @@ class ExtensionZestUnitTest {
             ScriptWrapper sw = new ScriptWrapper();
             sw.setName(name);
             sw.setContents(json);
-            ScriptType scriptType = mock(ScriptType.class);
+            ScriptType scriptType =
+                    mock(ScriptType.class, withSettings().strictness(Strictness.LENIENT));
             given(scriptType.getName()).willReturn(ExtensionScript.TYPE_STANDALONE);
             sw.setType(scriptType);
             return new ZestScriptWrapper(sw);

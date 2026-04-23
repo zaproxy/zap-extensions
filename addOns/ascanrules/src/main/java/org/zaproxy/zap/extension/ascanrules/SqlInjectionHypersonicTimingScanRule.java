@@ -298,13 +298,7 @@ public class SqlInjectionHypersonicTimingScanRule extends AbstractAppParamPlugin
                         message.compareAndSet(null, msg);
 
                         String finalPayload =
-                                sleepPayload
-                                        .replace(ORIG_VALUE_TOKEN, paramValue)
-                                        // Time in milliseconds for the SQL function.
-                                        .replace(
-                                                SLEEP_TOKEN,
-                                                String.valueOf(
-                                                        TimeUnit.SECONDS.toMillis((long) x)));
+                                assembleTimingPayload(sleepPayload, paramValue, (long) x);
 
                         setParameter(msg, paramName, finalPayload);
                         LOGGER.debug("Testing [{}] = [{}]", paramName, finalPayload);
@@ -329,18 +323,13 @@ public class SqlInjectionHypersonicTimingScanRule extends AbstractAppParamPlugin
                             paramName,
                             attack.get());
 
-                    newAlert()
-                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                            .setUri(getBaseMsg().getRequestHeader().getURI().toString())
-                            .setParam(paramName)
-                            .setAttack(attack.get())
-                            .setOtherInfo(
-                                    Constant.messages.getString(
-                                            "ascanrules.sqlinjection.alert.timebased.extrainfo",
-                                            attack.get(),
-                                            message.get().getTimeElapsedMillis(),
-                                            paramValue,
-                                            getBaseMsg().getTimeElapsedMillis()))
+                    buildAlert(
+                                    getBaseMsg().getRequestHeader().getURI().toString(),
+                                    paramName,
+                                    paramValue,
+                                    attack.get(),
+                                    message.get().getTimeElapsedMillis(),
+                                    getBaseMsg().getTimeElapsedMillis())
                             .setMessage(message.get())
                             .raise();
                     break;
@@ -359,6 +348,49 @@ public class SqlInjectionHypersonicTimingScanRule extends AbstractAppParamPlugin
                         ex);
             }
         }
+    }
+
+    private static String assembleTimingPayload(
+            String template, String paramValue, long sleepSeconds) {
+        return template.replace(ORIG_VALUE_TOKEN, paramValue)
+                .replace(SLEEP_TOKEN, String.valueOf(TimeUnit.SECONDS.toMillis(sleepSeconds)));
+    }
+
+    private AlertBuilder buildAlert(
+            String uri,
+            String paramName,
+            String paramValue,
+            String attackValue,
+            long attackElapsedMillis,
+            long originalElapsedMillis) {
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setUri(uri)
+                .setParam(paramName)
+                .setAttack(attackValue)
+                .setOtherInfo(
+                        Constant.messages.getString(
+                                "ascanrules.sqlinjection.alert.timebased.extrainfo",
+                                attackValue,
+                                attackElapsedMillis,
+                                paramValue,
+                                originalElapsedMillis));
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildAlert(
+                                "https://example.com/?name=test",
+                                "name",
+                                "test",
+                                assembleTimingPayload(
+                                        SQL_HYPERSONIC_TIME_REPLACEMENTS.get(3),
+                                        "test",
+                                        DEFAULT_SLEEP_TIME),
+                                TimeUnit.SECONDS.toMillis(DEFAULT_SLEEP_TIME),
+                                100L)
+                        .build());
     }
 
     void setTimeSleepSeconds(int timeSleepSeconds) {
