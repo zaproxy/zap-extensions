@@ -39,7 +39,7 @@
     about this can be found on the Access Control <a href="contextOptions.html">Context options</a> help page.</td>
 </p>
 
-<h2>Testing procedure</h2>
+<h2>Procédure de Test</h2>
 
 <p> As a whole, in order to fully perform access control testing for a web application, the next steps should be
     followed:</p>
@@ -60,9 +60,9 @@
         which users and marking the cases where the access rules where not followed.
     </li>
 </ul>
-<strong>Note:</strong> Access control testing is not allowed in <code>Safe</code> mode nor <code>Protected</code> if the context is not in scope.
+<strong>Remarque :</strong> Le test de contrôle d’accès n’est pas autorisé en mode <code>Safe</code> ni en mode <code>Protected</code> si le contexte n’est pas dans le périmètre.
 
-<h2 id="alerts">Alerts</h2>
+<h2 id="alerts">Alertes</h2>
 
 The following Alerts may be raised by the add-on:
 
@@ -97,31 +97,31 @@ The add-on exposes the following API endpoints:
 	Starts an Access Control scan with the given context ID and user ID (can be comma separated list of IDs). 
 	(Optional parameters: boolean identifying if an unauthenticated user should be included (default false), boolean 
 	identifying whether or not Alerts are raised (default true), and the Risk level for the Alerts (default High).) 
-	[<strong>Note:</strong>This assumes the Access Control rules were previously established via ZAP gui and the necessary Context exported/imported.]
+	[<strong>Remarque :</strong>This assumes the Access Control rules were previously established via ZAP gui and the necessary Context exported/imported.]
 
 	<h4>writeHTMLreport</h4>
 	Generates an Access Control report for the given context ID and saves it based on the provided filename (path).
 
 <h3>Views</h3>
 	<h4>getScanProgress</h4>
-	Gets the Access Control scan progress (percentage integer) for the given context ID.
+	Retourne la progression du scan de contrôle d’accès (pourcentage entier) pour l’identifiant de contexte donné.
 
 	<h4>getScanStatus</h4>
-	Gets the Access Control scan status (description string) for the given context ID.
+	Retourne le statut du scan du Contrôle d'Accès (chaîne de caractères)  pour l’identifiant de contexte donné.
 
-<h2>See also</h2>
+<h2>Voir aussi</h2>
 <table>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
         <td>
-            <a href="tab.html">Access Control Testing Tab</a></td>
-        <td>for a description of the status tab used by the add-on</td>
+            <a href="tab.html">Onglet Tests de Contrôle d’Accès</a></td>
+        <td>pour une description de l’onglet état utilisé par l’extension</td>
     </tr>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
         <td>
-            <a href="contextOptions.html">Access Control Context options</a></td>
-        <td>to learn about the related context options</td>
+            <a href="contextOptions.html">Options du Contexte de Contrôle d’Accès</a></td>
+        <td>pour en savoir plus sur les options de contexte associées</td>
     </tr>
 </table>
 
