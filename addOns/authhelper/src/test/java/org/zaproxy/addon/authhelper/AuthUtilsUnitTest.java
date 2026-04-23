@@ -398,6 +398,24 @@ class AuthUtilsUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldNotExtractJsonSessionTokensFromTooLargeBody() throws Exception {
+        // Given
+        HttpMessage msg = new HttpMessage(new URI("https://example.com/test", true));
+        msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "application/json");
+        msg.getResponseBody().setBody(getBigJsonBodyWithToken());
+
+        // When
+        Map<String, SessionToken> tokens = AuthUtils.getResponseSessionTokens(msg);
+
+        // Then
+        assertThat(tokens.size(), is(equalTo(0)));
+    }
+
+    private static String getBigJsonBodyWithToken() {
+        return "{\"accessToken\": \"%s\"}".formatted("a".repeat(2_000_000));
+    }
+
+    @Test
     void shouldExtractJsonSessionTokenInString() throws Exception {
         // Given
         HttpMessage msg = new HttpMessage(new URI("https://example.com/test", true));
@@ -556,6 +574,23 @@ class AuthUtilsUnitTest extends TestUtils {
         assertThat(
                 tokens.get("json:wrapper1.wrapper2.array[1].att4").getValue(), is(equalTo("val7")));
         assertThat(tokens.get("header:Content-Type").getValue(), is(equalTo("application/json")));
+    }
+
+    @Test
+    void shouldNotExtractJsonTokensFromTooLargeBody() throws Exception {
+        // Given
+        HttpMessage msg =
+                new HttpMessage(
+                        new HttpRequestHeader("GET / HTTP/1.1\r\nHost: example.com\r\n\r\n"),
+                        new HttpRequestBody("Request Body"),
+                        new HttpResponseHeader(
+                                "HTTP/1.1 200 OK\r\n" + "Content-Type: application/json"),
+                        new HttpResponseBody(getBigJsonBodyWithToken()));
+        // When
+        Map<String, SessionToken> tokens = AuthUtils.getAllTokens(msg, false);
+
+        // Then
+        assertThat(tokens.get("json:accessToken"), is(nullValue()));
     }
 
     @Test
