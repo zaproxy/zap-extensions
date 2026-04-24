@@ -6,8 +6,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Exceptions caught by the Automation Framework job now include the exception message.
-  
-### Changed
 - Improved Swagger Secret Detector Script with false positive scenarios and ensuring correct Swagger version flagging.
 
 ## [55] - 2026-04-21
