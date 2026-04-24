@@ -41,6 +41,9 @@ import java.security.cert.X509Certificate;
 import java.time.Duration;
 import java.util.Base64;
 import java.util.Date;
+import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier;
+import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.cert.jcajce.JcaX509ExtensionUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
@@ -147,6 +150,33 @@ class CertificateUtilsUnitTest {
         Date certExpiredDate =
                 new Date(System.currentTimeMillis() + validity.plusDays(1L).toMillis());
         assertThat(certNotAfter.before(certExpiredDate), is(equalTo(true)));
+    }
+
+    @Test
+    void shouldCreateServerCertificateWithAuthorityKeyIdentifier() throws Exception {
+        // Given
+        CertConfig config = new CertConfig(Duration.ofDays(60));
+        KeyStore rootCaKeyStore =
+                CertificateUtils.stringToKeystore(NetworkTestUtils.FISH_CERT_BASE64_STR);
+        X509Certificate rootCaCert = CertificateUtils.getCertificate(rootCaKeyStore);
+        PublicKey rootCaPublicKey = rootCaCert.getPublicKey();
+        PrivateKey rooCaPrivateKey = CertificateUtils.getPrivateKey(rootCaKeyStore);
+        CertData certData = new CertData("example.org");
+        // When
+        KeyStore keyStore =
+                CertificateUtils.createServerKeyStore(
+                        rootCaCert, rootCaPublicKey, rooCaPrivateKey, certData, 1L, config);
+        // Then
+        assertThat(keyStore, is(notNullValue()));
+        X509Certificate cert = CertificateUtils.getCertificate(keyStore);
+        byte[] actualExtensionValue =
+                cert.getExtensionValue(Extension.authorityKeyIdentifier.getId());
+        AuthorityKeyIdentifier actualAki =
+                AuthorityKeyIdentifier.getInstance(
+                        JcaX509ExtensionUtils.parseExtensionValue(actualExtensionValue));
+        AuthorityKeyIdentifier expectedAki =
+                new AuthorityKeyIdentifier(rootCaPublicKey.getEncoded());
+        assertThat(actualAki.getEncoded(), is(equalTo(expectedAki.getEncoded())));
     }
 
     @Test
