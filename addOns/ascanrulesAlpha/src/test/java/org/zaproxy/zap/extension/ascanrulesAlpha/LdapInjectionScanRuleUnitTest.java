@@ -22,7 +22,9 @@ package org.zaproxy.zap.extension.ascanrulesAlpha;
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
@@ -30,12 +32,14 @@ import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.ScannerParam;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
@@ -169,6 +173,24 @@ class LdapInjectionScanRuleUnitTest extends ActiveScannerTest<LdapInjectionScanR
         // Then
         assertThat(alertsRaised, is(empty()));
         assertThat(httpMessagesSent, is(not(empty())));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlerts() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts, hasSize(2));
+
+        Alert errorBasedAlert = alerts.get(0);
+        assertThat(errorBasedAlert.getRisk(), is(equalTo(Alert.RISK_HIGH)));
+        assertThat(errorBasedAlert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(errorBasedAlert.getOtherInfo(), is(not(emptyString())));
+
+        Alert booleanBasedAlert = alerts.get(1);
+        assertThat(booleanBasedAlert.getRisk(), is(equalTo(Alert.RISK_HIGH)));
+        assertThat(booleanBasedAlert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(booleanBasedAlert.getOtherInfo(), is(not(emptyString())));
     }
 
     private static HttpMessage createMessage(String path) {
