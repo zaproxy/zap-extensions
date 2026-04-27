@@ -12,6 +12,14 @@
 			"description": "[(${ins.description})]",
 			"statistic": "[(${ins.statistic})]"
 		}[/th:block]
+    ],[/th:block][#th:block th:if="${reportData.isIncludeSection('scriptautomationfailures') && reportData.reportObjects.get('scriptFailureList') != null}"]
+	"scriptAutomationFailures":[[#th:block th:each="sf, sfState: ${reportData.reportObjects.get('scriptFailureList')}"][#th:block th:if="${! sfState.first}"],[/th:block]
+		{
+			"scriptName": "[(${helper.legacyEscapeText(sf.scriptName, true)})]",
+			"scriptType": "[(${helper.legacyEscapeText(sf.scriptType, true)})]",
+			"message": "[(${helper.legacyEscapeText(sf.message, true)})]",
+			"createTimestamp": "[(${helper.legacyEscapeText(sf.createTimestamp, true)})]"
+		}[/th:block]
     ],[/th:block]
 	"site":[ [#th:block th:each="site, siteState: ${reportData.sites}"][#th:block th:if="${! siteState.first}"],[/th:block]
         {

@@ -29,15 +29,21 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
+import javax.jdo.PersistenceManager;
+import javax.jdo.PersistenceManagerFactory;
+import javax.jdo.Transaction;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.MockedStatic;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
@@ -56,6 +62,8 @@ import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.scripts.ExtensionScriptsUI;
 import org.zaproxy.zap.extension.scripts.automation.ScriptJobParameters;
+import org.zaproxy.zap.extension.scripts.internal.db.ScriptFailure;
+import org.zaproxy.zap.extension.scripts.internal.db.TableJdo;
 import org.zaproxy.zap.testutils.TestUtils;
 
 /** Unit test for {@link RunScriptAction}. */
@@ -603,6 +611,54 @@ class RunScriptActionUnitTest extends TestUtils {
                 contains(msg("scripts.automation.error.scriptTypeIsNull", JOB_NAME)));
         assertThat(issues, hasSize(1));
         assertThat(issues, hasItem(msg("scripts.automation.error.scriptTypeIsNull", JOB_NAME)));
+    }
+
+    @Test
+    void shouldNotPersistWhenSingleScriptNotFoundAtRunTime() {
+        given(extScript.getScript("nonExistent")).willReturn(null);
+        parameters.setName("nonExistent");
+
+        action.runJob(JOB_NAME, env, progress);
+
+        assertThat(progress.getErrors(), hasSize(1));
+    }
+
+    @Test
+    void shouldRecordSameMessageAsProgressWhenChainExecutionFails() throws Exception {
+        try (MockedStatic<TableJdo> tableJdo = mockStatic(TableJdo.class)) {
+            // Given
+            PersistenceManagerFactory pmf = mock(PersistenceManagerFactory.class);
+            PersistenceManager pm = mock(PersistenceManager.class);
+            Transaction tx = mock(Transaction.class);
+            tableJdo.when(TableJdo::getPmf).thenReturn(pmf);
+            given(pmf.getPersistenceManager()).willReturn(pm);
+            given(pm.currentTransaction()).willReturn(tx);
+            given(tx.isActive()).willReturn(false);
+
+            ScriptWrapper script1 = createMockZestWrapper("script1");
+            ScriptWrapper script2 = createMockZestWrapper("script2");
+            ScriptWrapper script3 = createMockZestWrapper("script3");
+            given(extScript.getScript("script1")).willReturn(script1);
+            given(extScript.getScript("script2")).willReturn(script2);
+            given(extScript.getScript("script3")).willReturn(script3);
+            when(extScript.invokeScript(CHAIN_SCRIPT))
+                    .thenThrow(new RuntimeException("Script failed"));
+            parameters.setChain(List.of("script1", "script2", "script3"));
+
+            // When
+            action.runJob(JOB_NAME, env, progress);
+
+            // Then
+            assertThat(progress.getErrors(), hasSize(1));
+            String expectedMessage = progress.getErrors().get(0);
+            ArgumentCaptor<ScriptFailure> captor = ArgumentCaptor.forClass(ScriptFailure.class);
+            verify(pm).makePersistent(captor.capture());
+            assertThat(captor.getValue().getMessage(), is(equalTo(expectedMessage)));
+            assertThat(captor.getValue().getScriptName(), is(equalTo("chain-script")));
+            assertThat(
+                    captor.getValue().getScriptType(),
+                    is(equalTo(ExtensionScript.TYPE_STANDALONE)));
+        }
     }
 
     private static final class ScriptWrapperWithZestFailureContext extends ScriptWrapper {

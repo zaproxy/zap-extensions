@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - The alert's systemic flag in JSON and XML reports now correctly reflects its state (Issue 9254).
 
+### Added
+- Optional `scriptAutomationFailures` section to the Traditional JSON Plus report (toggle via template section `scriptautomationfailures`; data supplied by the Script Console add-on when failures exist).
+
 ### Changed
 - Update dependency.
 

@@ -39,9 +39,11 @@ import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
+import org.zaproxy.zap.extension.scripts.automation.ScriptAutomationFailureRecords;
 import org.zaproxy.zap.extension.scripts.automation.ScriptJobOutputListener;
 import org.zaproxy.zap.extension.scripts.automation.ScriptJobParameters;
 import org.zaproxy.zap.extension.scripts.automation.ui.ScriptJobDialog;
+import org.zaproxy.zap.extension.scripts.internal.db.ScriptFailureRecorder;
 import org.zaproxy.zap.users.User;
 
 public class RunScriptAction extends ScriptAction {
@@ -99,7 +101,7 @@ public class RunScriptAction extends ScriptAction {
                             "scripts.automation.error.scriptNameIsNull", jobName);
             list.add(issue);
             if (progress != null) {
-                progress.error(issue);
+                reportScriptAutomationError(progress, params, issue);
             }
         }
 
@@ -109,7 +111,7 @@ public class RunScriptAction extends ScriptAction {
                             "scripts.automation.error.scriptTypeIsNull", jobName);
             list.add(issue);
             if (progress != null) {
-                progress.error(issue);
+                reportScriptAutomationError(progress, params, issue);
             }
         } else if (!this.isScriptTypeSupported()) {
             issue =
@@ -121,7 +123,7 @@ public class RunScriptAction extends ScriptAction {
                             String.join(", ", getSupportedScriptTypes()));
             list.add(issue);
             if (progress != null) {
-                progress.error(issue);
+                reportScriptAutomationError(progress, params, issue);
             }
         } else if (hasChain && !ExtensionScript.TYPE_STANDALONE.equals(scriptType)) {
             issue =
@@ -129,7 +131,7 @@ public class RunScriptAction extends ScriptAction {
                             "scripts.automation.error.chainRequiresStandalone", jobName);
             list.add(issue);
             if (progress != null) {
-                progress.error(issue);
+                reportScriptAutomationError(progress, params, issue);
             }
         }
         // Script/chain existence not validated here; chain validated at runtime in runScriptChain()
@@ -152,7 +154,7 @@ public class RunScriptAction extends ScriptAction {
                                 this.parameters.getEngine());
                 list.add(issue);
                 if (progress != null) {
-                    progress.error(issue);
+                    reportScriptAutomationError(progress, params, issue);
                 }
             }
 
@@ -162,7 +164,7 @@ public class RunScriptAction extends ScriptAction {
                                 "scripts.automation.error.scriptTargetIsNull", jobName);
                 list.add(issue);
                 if (progress != null) {
-                    progress.error(issue);
+                    reportScriptAutomationError(progress, params, issue);
                 }
             }
         }
@@ -207,7 +209,9 @@ public class RunScriptAction extends ScriptAction {
         if (StringUtils.isNotEmpty(this.parameters.getUser())) {
             user = env.getUser(this.parameters.getUser());
             if (user == null) {
-                progress.error(
+                reportScriptAutomationError(
+                        progress,
+                        parameters,
                         Constant.messages.getString(
                                 "automation.error.job.baduser",
                                 jobName,
@@ -221,7 +225,9 @@ public class RunScriptAction extends ScriptAction {
         } else {
             ScriptWrapper script = findScript();
             if (script == null) {
-                progress.error(
+                reportScriptAutomationError(
+                        progress,
+                        parameters,
                         Constant.messages.getString(
                                 "scripts.automation.error.scriptNameNotFound",
                                 jobName,
@@ -230,7 +236,9 @@ public class RunScriptAction extends ScriptAction {
             }
 
             if (!getSupportedScriptTypes().contains(script.getTypeName())) {
-                progress.error(
+                reportScriptAutomationError(
+                        progress,
+                        parameters,
                         Constant.messages.getString(
                                 "scripts.automation.error.scriptTypeNotSupported",
                                 jobName,
@@ -252,7 +260,9 @@ public class RunScriptAction extends ScriptAction {
                                             .getSiteTree()
                                             .findNode(targetUri);
                             if (siteNode == null) {
-                                progress.error(
+                                reportScriptAutomationError(
+                                        progress,
+                                        parameters,
                                         Constant.messages.getString(
                                                 "scripts.automation.error.scriptTargetNotFound",
                                                 jobName,
@@ -278,7 +288,9 @@ public class RunScriptAction extends ScriptAction {
 
     private void runScriptChain(String jobName, User user, AutomationProgress progress) {
         if (!ExtensionScript.TYPE_STANDALONE.equals(parameters.getType())) {
-            progress.error(
+            reportScriptAutomationError(
+                    progress,
+                    parameters,
                     Constant.messages.getString(
                             "scripts.automation.error.chainRequiresStandalone", jobName));
             return;
@@ -296,7 +308,9 @@ public class RunScriptAction extends ScriptAction {
         try {
             chainScript = getChainScriptViaReflection(scriptWrappers, runName);
         } catch (Exception e) {
-            progress.error(
+            reportScriptAutomationError(
+                    progress,
+                    parameters,
                     Constant.messages.getString(
                             "scripts.automation.error.chainPreparationFailed",
                             jobName,
@@ -304,7 +318,9 @@ public class RunScriptAction extends ScriptAction {
             return;
         }
         if (chainScript == null) {
-            progress.error(
+            reportScriptAutomationError(
+                    progress,
+                    parameters,
                     Constant.messages.getString(
                             "scripts.automation.error.chainReflectionFailed",
                             jobName,
@@ -374,12 +390,14 @@ public class RunScriptAction extends ScriptAction {
             String jobName,
             ScriptJobParameters parameters,
             Exception e) {
-        progress.error(
+        String message =
                 Constant.messages.getString(
                         "scripts.automation.error.scriptError",
                         jobName,
                         parameters.getName(),
-                        e.getMessage()));
+                        e.getMessage());
+        progress.error(message);
+        ScriptAutomationFailureRecords.recordFromParameters(parameters, message);
     }
 
     private void reportChainExecutionError(
@@ -390,12 +408,17 @@ public class RunScriptAction extends ScriptAction {
                 zestCtx.isEmpty()
                         ? (e.getMessage() != null ? e.getMessage() : e.getClass().getName())
                         : zestCtx;
-        progress.error(
+        String message =
                 Constant.messages.getString(
                         "scripts.automation.error.chainExecutionFailed",
                         jobName,
                         chainOrder,
-                        detail));
+                        detail);
+        progress.error(message);
+        ScriptFailureRecorder.record(
+                chainScript != null ? chainScript.getName() : "",
+                StringUtils.defaultString(parameters.getType()),
+                message);
     }
 
     /**
@@ -492,7 +515,9 @@ public class RunScriptAction extends ScriptAction {
         for (String scriptName : chain) {
             ScriptWrapper script = extScript.getScript(scriptName);
             if (script == null) {
-                progress.error(
+                reportScriptAutomationError(
+                        progress,
+                        parameters,
                         Constant.messages.getString(
                                 "scripts.automation.error.chainScriptNotFound",
                                 jobName,
@@ -502,7 +527,9 @@ public class RunScriptAction extends ScriptAction {
 
             if (!ExtensionScript.TYPE_STANDALONE.equals(script.getTypeName())
                     || !ZEST_ENGINE_NAME.equals(script.getEngineName())) {
-                progress.error(
+                reportScriptAutomationError(
+                        progress,
+                        parameters,
                         Constant.messages.getString(
                                 "scripts.automation.error.chainScriptNotZestStandalone",
                                 jobName,

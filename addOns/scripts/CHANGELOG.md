@@ -4,6 +4,12 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Optional `scriptAutomationFailures` array in the Traditional JSON Plus report when the `scriptautomationfailures` section is enabled and automation script job failures have been recorded in the session database.
+
+### Fixed
+- Initialize the script failure session database with an explicit JDO persistence manager factory so DataNucleus is found when the Database add-on is a dependency (ZAP add-on class loaders do not load `META-INF/services` for JDO the way the default bootstrap expects).
+
 ### Changed
 - Update dependency.
 - Revised error handling for chained scripts, output is now more detailed/specific.

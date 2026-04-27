@@ -1,5 +1,9 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
+plugins {
+    id("org.zaproxy.gradle.jdo-enhance")
+}
+
 description = "Supports all JSR 223 scripting languages"
 
 zapAddOn {
@@ -26,11 +30,26 @@ zapAddOn {
                     }
                 }
             }
+            register("org.zaproxy.zap.extension.scripts.report.ExtensionScriptsReport") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.zap.extension.scripts.report"))
+                }
+                dependencies {
+                    addOns {
+                        register("reports") {
+                            version.set(">=0.39.0")
+                        }
+                    }
+                }
+            }
         }
         dependencies {
             addOns {
                 register("commonlib") {
                     version.set(">=1.37.0")
+                }
+                register("database") {
+                    version.set(">=0.8.0 & < 1.0.0")
                 }
                 register("pscan") {
                     version.set(">= 0.1.0 & < 1.0.0")
@@ -63,10 +82,18 @@ spotless {
     }
 }
 
+jdoEnhance {
+    persistenceUnitName.set(zapAddOn.addOnId.get())
+}
+
 dependencies {
+    jdoEnhance(libs.database.datanucleusJdo)
+
     zapAddOn("automation")
     zapAddOn("commonlib")
+    zapAddOn("database")
     zapAddOn("pscan")
+    zapAddOn("reports")
 
     implementation(libs.scripts.byteBuddy)
 

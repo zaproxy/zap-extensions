@@ -36,6 +36,8 @@ import org.zaproxy.addon.insights.internal.Insight;
 import org.zaproxy.addon.insights.report.ExtensionInsightsReport;
 import org.zaproxy.zap.extension.alert.AlertNode;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+import org.zaproxy.zap.extension.scripts.report.ExtensionScriptsReport;
+import org.zaproxy.zap.extension.scripts.report.ScriptAutomationFailureRow;
 import org.zaproxy.zap.testutils.TestUtils;
 
 public class ReportTestUtils {
@@ -270,6 +272,40 @@ public class ReportTestUtils {
                                 30,
                                 true));
         reportData.addReportObjects(ExtensionInsightsReport.INSIGHTS_LIST, insightList);
+
+        return extRep.generateReport(reportData, template, f.getAbsolutePath(), false);
+    }
+
+    static File generateReportWithScriptAutomationFailures(Template template, File f)
+            throws IOException, DocumentException {
+        return generateReportWithScriptAutomationFailures(template, f, true);
+    }
+
+    static File generateReportWithScriptAutomationFailures(
+            Template template, File f, boolean includeScriptAutomationFailuresSection)
+            throws IOException, DocumentException {
+        ExtensionReports extRep = new ExtensionReports();
+        ReportData reportData = new ReportData("test");
+        reportData.setTitle("Test Title");
+        reportData.setDescription("Test Description");
+        reportData.setIncludeAllConfidences(true);
+        reportData.setIncludeAllRisks(true);
+        List<String> sections = new ArrayList<>(template.getSections());
+        if (!includeScriptAutomationFailuresSection) {
+            sections.remove("scriptautomationfailures");
+        }
+        reportData.setSections(sections);
+
+        AlertNode root = new AlertNode(0, "Test");
+        reportData.setAlertTreeRootNode(root);
+
+        List<ScriptAutomationFailureRow> failures =
+                List.of(
+                        new ScriptAutomationFailureRow(
+                                "my-script", "standalone", "boom", "2026-04-01T12:00:00Z"),
+                        new ScriptAutomationFailureRow(
+                                "chain-a", "standalone", "step failed", "2026-04-02T08:30:00Z"));
+        reportData.addReportObjects(ExtensionScriptsReport.SCRIPT_FAILURE_LIST, failures);
 
         return extRep.generateReport(reportData, template, f.getAbsolutePath(), false);
     }

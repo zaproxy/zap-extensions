@@ -775,4 +775,47 @@ class ExtensionReportsJsonUnitTest extends TestUtils {
         // Then
         assertThat(alerts.getJSONObject(0).getBoolean("systemic"), is(equalTo(false)));
     }
+
+    @Test
+    void shouldGenerateTraditionalJsonPlusWithScriptAutomationFailures() throws Exception {
+        // Given
+        Template template = ReportTestUtils.getTemplateFromYamlFile("traditional-json-plus");
+        String fileName = "traditional-json-plus-script-failures";
+        File f = File.createTempFile(fileName, template.getExtension());
+
+        // When
+        File r = ReportTestUtils.generateReportWithScriptAutomationFailures(template, f);
+        String report = new String(Files.readAllBytes(r.toPath()));
+
+        // Then
+        JSONObject json = JSONObject.fromObject(report);
+        JSONArray failures = json.getJSONArray("scriptAutomationFailures");
+        assertThat(failures.size(), is(equalTo(2)));
+        assertThat(failures.getJSONObject(0).getString("scriptName"), is(equalTo("my-script")));
+        assertThat(failures.getJSONObject(0).getString("scriptType"), is(equalTo("standalone")));
+        assertThat(failures.getJSONObject(0).getString("message"), is(equalTo("boom")));
+        assertThat(
+                failures.getJSONObject(0).getString("createTimestamp"),
+                is(equalTo("2026-04-01T12:00:00Z")));
+        assertThat(failures.getJSONObject(1).getString("scriptName"), is(equalTo("chain-a")));
+        assertThat(failures.getJSONObject(1).getString("message"), is(equalTo("step failed")));
+        assertThat(json.getJSONArray("site").size(), is(equalTo(0)));
+    }
+
+    @Test
+    void shouldOmitScriptAutomationFailuresWhenSectionDisabled() throws Exception {
+        // Given
+        Template template = ReportTestUtils.getTemplateFromYamlFile("traditional-json-plus");
+        String fileName = "traditional-json-plus-no-script-failures-section";
+        File f = File.createTempFile(fileName, template.getExtension());
+
+        // When
+        File r = ReportTestUtils.generateReportWithScriptAutomationFailures(template, f, false);
+        String report = new String(Files.readAllBytes(r.toPath()));
+
+        // Then
+        JSONObject json = JSONObject.fromObject(report);
+        assertThat(json.containsKey("scriptAutomationFailures"), is(equalTo(false)));
+        assertThat(json.getJSONArray("site").size(), is(equalTo(0)));
+    }
 }
