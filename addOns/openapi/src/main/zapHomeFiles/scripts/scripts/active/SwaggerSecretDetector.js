@@ -266,7 +266,7 @@ function extractVersion(body) {
 }
 function isLikelySwaggerUIContext(body) {
   const lower = body.toLowerCase();
-return (
+  return (
     // v3 indicators
     lower.includes("swagger-ui") ||
     lower.includes("swaggeruibundle") ||
@@ -420,10 +420,10 @@ function scanNode(as, msg) {
   const host = origUri.getHost();
   const port = origUri.getPort();
   const base =
-      scheme +
-      "://" +
-      host +
-      (port !== -1 && port !== 80 && port !== 443 ? ":" + port : "");
+    scheme +
+    "://" +
+    host +
+    (port !== -1 && port !== 80 && port !== 443 ? ":" + port : "");
 
   for (let r = 0; r < SWAGGER_REGEX_PATHS.length; r++) {
     if (as.isStop()) return;
@@ -455,7 +455,7 @@ function scanPath(as, origMsg, scheme, host, port, pathOnly, fullPath) {
   } catch (err) {
     return;
   }
-  const body = requestMsg.getResponseBody().toString(); 
+  const body = requestMsg.getResponseBody().toString();
   try {
     const version = detectSwaggerVersion(body);
     const semver = extractVersion(body);
@@ -485,7 +485,7 @@ function scanPath(as, origMsg, scheme, host, port, pathOnly, fullPath) {
   } catch (e) {
     // Error handling
   }
-detectSecrets(as, requestMsg, fullPath, body);
+  detectSecrets(as, requestMsg, fullPath, body);
 }
 
 
