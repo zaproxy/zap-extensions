@@ -17,15 +17,14 @@
     Comme mentionné sur la page <a href="concepts.html">concepts</a>, ZAP utilise une structure d’URL en arborescence. Ainsi, lors de la configuration des règles d’accès, une seule règle doit être définie explicitement pour un sous-arbre entier, tandis que pour les autres nœuds, les règles sont déduites. Trois valeurs possibles peuvent être définies pour n’importe quel nœud du contexte, pour chaque utilisateur
 </p>
 <ul>
-    <li><b>Allowed</b> - The rule for the node is <i>explicitly</i> set as Allowed</li>
-    <li><b>Denied</b> - The rule for the node is <i>explicitly</i> set as Denied</li>
-    <li><b>Inherited</b> - The rule for the node is inferred based on the closest parent with an explicitly set rule
+    <li><b>Autorisé</b> - La règle pour le nœud est <i>explicitement</i> définie à autorisé</li>
+    <li><b>Refusé</b> -  La règle pour le nœud est <i>explicitement</i> définie à refusé</li>
+    <li><b>Hérité</b> - La règle pour le nœud est inférée à partir du parent le plus proche disposant d’une règle définie explicitement
     </li>
 </ul>
 
-<p>By default, the rules for any node has an <i>Inherited</i> value and the root node has a value of <i>Unknown</i>.
-    Thus, for any node without a parent with an explicitly configured rule, the inferred rule will default to
-    <i>Unknown</i>.</p>
+<p>Par défaut, les règles de chaque nœud ont la valeur <i>Hérité</i> et le nœud racine à la valeur <i>Inconnu</i>.
+    Ainsi, pour tout nœud ne disposant pas d’un parent avec une règle explicitement définie, la règle inférée prendra par défaut la valeur <i>Inconnu</i>.</p>
 
 <h2>Voir aussi</h2>
 <table>
