@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Update dependencies.
+- Include the Authority Key Identifier in generated server certificates per RFC 5280 (Issue 9301).
 
 ## [0.26.0] - 2026-03-19
 ### Added

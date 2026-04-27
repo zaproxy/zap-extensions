@@ -59,6 +59,7 @@ import org.bouncycastle.asn1.DERIA5String;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.X500NameBuilder;
 import org.bouncycastle.asn1.x500.style.BCStyle;
+import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier;
 import org.bouncycastle.asn1.x509.BasicConstraints;
 import org.bouncycastle.asn1.x509.CRLDistPoint;
 import org.bouncycastle.asn1.x509.DistributionPoint;
@@ -302,6 +303,10 @@ public final class CertificateUtils {
                 Extension.subjectKeyIdentifier,
                 false,
                 new SubjectKeyIdentifier(publicKey.getEncoded()));
+        certGen.addExtension(
+                Extension.authorityKeyIdentifier,
+                false,
+                new AuthorityKeyIdentifier(rootCaPublicKey.getEncoded()));
         certGen.addExtension(Extension.basicConstraints, false, new BasicConstraints(false));
         certGen.addExtension(
                 Extension.extendedKeyUsage,
