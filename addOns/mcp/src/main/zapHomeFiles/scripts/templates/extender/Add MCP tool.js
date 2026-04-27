@@ -20,7 +20,7 @@ const ArrayList = Java.type("java.util.ArrayList");
 const NAME = "example-tool";
 
 function newTool() {
-  return new (Java.extend(McpTool)) {
+  return new (Java.extend(McpTool))({
     getName: function() {
       return NAME;
     },
@@ -44,7 +44,7 @@ function newTool() {
       }
       return McpToolResult.success("Echo: " + message);
     }
-  };
+  });
 }
 
 /**

@@ -6,13 +6,13 @@
 
 // Script variable to use when uninstalling
 var popupmenuitemtype = Java.extend(Java.type("org.zaproxy.zap.view.popup.PopupMenuItemHistoryReferenceContainer"));
-var menuitem = new popupmenuitemtype("Example history reference menu") {
+var menuitem = new popupmenuitemtype("Example history reference menu", {
       performAction: function(href) {
         print("Example menu called with " + href.getHttpMessage().getRequestHeader().getURI().toString());
         view.showMessageDialog(
           "Example menu called with " + href.getHttpMessage().getRequestHeader().getURI().toString());
       }
-    }
+    });
 
 // View to be used in the menu item (initialised when installing the script).
 var view;

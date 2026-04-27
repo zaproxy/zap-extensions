@@ -5,7 +5,7 @@
 
 // Script variable to use when uninstalling
 var popupmenuitemtype = Java.extend(Java.type("org.zaproxy.zap.view.popup.PopupMenuItemHistoryReferenceContainer"));
-var curlmenuitem = new popupmenuitemtype("Copy as curl Command") {
+var curlmenuitem = new popupmenuitemtype("Copy as curl Command", {
 	performAction: function(href) {
 		invokeWith(href.getHttpMessage());
 	},
@@ -15,7 +15,7 @@ var curlmenuitem = new popupmenuitemtype("Copy as curl Command") {
 	isSafe: function() {
 		return true;
 	}
-}
+});
 
 /**
  * This function is called when the script is enabled.
