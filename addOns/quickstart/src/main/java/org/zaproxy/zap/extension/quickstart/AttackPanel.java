@@ -191,24 +191,24 @@ public class AttackPanel extends QuickStartSubPanel {
                             .getExtension(ExtensionActiveScan.class);
             if (extAscan != null) {
                 extAscan.getPolicyManager().getAllPolicyNames().forEach(policyField::addItem);
-                if (PolicyManager.policyExists(
-                        getExtensionQuickStart().getQuickStartParam().getScanPolicyName())) {
-                    policyField.setSelectedItem(
-                            getExtensionQuickStart().getQuickStartParam().getScanPolicyName());
-                } else if (PolicyManager.policyExists(DEFAULT_SCAN_POLICY)) {
-                    policyField.setSelectedItem(DEFAULT_SCAN_POLICY);
-                }
             }
         }
         return policyField;
     }
 
-    public String getSelectedPolicy() {
-        if (policyField == null) {
-            return null;
+    private void selectScanPolicy() {
+        String savedPolicy = getExtensionQuickStart().getQuickStartParam().getScanPolicyName();
+        if (!setPolicy(savedPolicy)) {
+            setPolicy(DEFAULT_SCAN_POLICY);
         }
-        Object selected = policyField.getSelectedItem();
-        return selected != null ? selected.toString() : null;
+    }
+
+    private boolean setPolicy(String policyName) {
+        if (policyName != null && PolicyManager.policyExists(policyName)) {
+            policyField.setSelectedItem(policyName);
+            return true;
+        }
+        return false;
     }
 
     private JLabel getProgressLabel() {
@@ -439,13 +439,17 @@ public class AttackPanel extends QuickStartSubPanel {
             this.getUrlField().requestFocusInWindow();
             return false;
         }
+        String selectedPolicy = (String) policyField.getSelectedItem();
+        getExtensionQuickStart().getQuickStartParam().setScanPolicyName(selectedPolicy);
         this.getExtensionQuickStart().getQuickStartParam().addRecentUrl(urlStr);
-        this.getExtensionQuickStart().getQuickStartParam().setScanPolicyName(getSelectedPolicy());
         getAttackButton().setEnabled(false);
         getStopButton().setEnabled(true);
 
         getExtensionQuickStart()
-                .attack(url, traditionalSpider != null && traditionalSpider.isSelected());
+                .attack(
+                        url,
+                        traditionalSpider != null && traditionalSpider.isSelected(),
+                        selectedPolicy);
         setSpiderButtonsEnabled(false);
         return true;
     }
@@ -504,10 +508,11 @@ public class AttackPanel extends QuickStartSubPanel {
 
     public void optionsLoaded(QuickStartParam quickStartParam) {
         setRecentUrls();
+        selectScanPolicy();
     }
 
     public void optionsChanged(OptionsParam optionsParam) {
-        setRecentUrls();
+        optionsLoaded(optionsParam.getParamSet(QuickStartParam.class));
     }
 
     @Override
