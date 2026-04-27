@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Client spider to wait for all browsers to close before reporting it has finished.
+- Formatted JavaScript files for consistency.
 
 ## [0.22.0] - 2026-04-14
 ### Added

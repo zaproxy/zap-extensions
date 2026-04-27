@@ -15,49 +15,49 @@
 //					The credential values can be obtained via calls to the getParam(paramName) method. The param names are the ones
 //					returned by the getCredentialsParamsNames() below
 function authenticate(helper, paramsValues, credentials) {
-	print("Authenticating via JavaScript script...");
-	var msg = helper.prepareMessage();
-	
-	// TODO: Process message to match the authentication needs
+  print("Authenticating via JavaScript script...");
+  var msg = helper.prepareMessage();
 
-	// For example, add a request payload
-	// msg.setRequestBody("a payload with user credentials")
-	// And set/update the content-length header field accordingly.
-	// msg.getRequestHeader().setContentLength(msg.getRequestBody().length())
+  // TODO: Process message to match the authentication needs
 
-	// Configurations on how the messages are sent/handled:
-	// Set to follow redirects when sending messages (default is false).
-	// helper.getHttpSender().setFollowRedirect(true)
+  // For example, add a request payload
+  // msg.setRequestBody("a payload with user credentials")
+  // And set/update the content-length header field accordingly.
+  // msg.getRequestHeader().setContentLength(msg.getRequestBody().length())
 
-	// Send message without following redirects (overriding the option previously set).
-	// helper.sendAndReceive(msg, false)
+  // Configurations on how the messages are sent/handled:
+  // Set to follow redirects when sending messages (default is false).
+  // helper.getHttpSender().setFollowRedirect(true)
 
-	// Set the number of maximum redirects followed to 5 (default is 100). Main purpose is to prevent infinite loops.
-	// helper.getHttpSender().setMaxRedirects(5)
+  // Send message without following redirects (overriding the option previously set).
+  // helper.sendAndReceive(msg, false)
 
-	helper.sendAndReceive(msg);
+  // Set the number of maximum redirects followed to 5 (default is 100). Main purpose is to prevent infinite loops.
+  // helper.getHttpSender().setMaxRedirects(5)
 
-	return msg;
+  helper.sendAndReceive(msg);
+
+  return msg;
 }
 
 // This function is called during the script loading to obtain a list of the names of the required configuration parameters,
 // that will be shown in the Session Properties -> Authentication panel for configuration. They can be used
 // to input dynamic data into the script, from the user interface (e.g. a login URL, name of POST parameters etc.)
-function getRequiredParamsNames(){
-	return ["exampleTargetURL", "exampleField2"];
+function getRequiredParamsNames() {
+  return ["exampleTargetURL", "exampleField2"];
 }
 
 // This function is called during the script loading to obtain a list of the names of the optional configuration parameters,
 // that will be shown in the Session Properties -> Authentication panel for configuration. They can be used
 // to input dynamic data into the script, from the user interface (e.g. a login URL, name of POST parameters etc.)
-function getOptionalParamsNames(){
-	return ["exampleField3"];
+function getOptionalParamsNames() {
+  return ["exampleField3"];
 }
 
 // This function is called during the script loading to obtain a list of the names of the parameters that are required,
-// as credentials, for each User configured corresponding to an Authentication using this script 
-function getCredentialsParamsNames(){
-	return ["username", "password"];
+// as credentials, for each User configured corresponding to an Authentication using this script
+function getCredentialsParamsNames() {
+  return ["username", "password"];
 }
 
 // This optional function is called during the script loading to obtain the logged in indicator.

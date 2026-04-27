@@ -13,7 +13,9 @@ const McpTool = Java.type("org.zaproxy.addon.mcp.McpTool");
 const McpToolResult = Java.type("org.zaproxy.addon.mcp.McpToolResult");
 const McpToolException = Java.type("org.zaproxy.addon.mcp.McpToolException");
 const InputSchema = Java.type("org.zaproxy.addon.mcp.McpTool$InputSchema");
-const PropertyDef = Java.type("org.zaproxy.addon.mcp.McpTool$InputSchema$PropertyDef");
+const PropertyDef = Java.type(
+  "org.zaproxy.addon.mcp.McpTool$InputSchema$PropertyDef",
+);
 const HashMap = Java.type("java.util.HashMap");
 const ArrayList = Java.type("java.util.ArrayList");
 
@@ -21,15 +23,15 @@ const NAME = "example-tool";
 
 function newTool() {
   return new (Java.extend(McpTool))({
-    getName: function() {
+    getName: function () {
       return NAME;
     },
 
-    getDescription: function() {
+    getDescription: function () {
       return "An example MCP tool that echoes a message. Use this as a template for custom tools.";
     },
 
-    getInputSchema: function() {
+    getInputSchema: function () {
       var properties = new HashMap();
       properties.put("message", PropertyDef.ofString("The message to echo"));
       var required = new ArrayList();
@@ -37,13 +39,13 @@ function newTool() {
       return new InputSchema(properties, required);
     },
 
-    execute: function(arguments) {
+    execute: function (arguments) {
       var message = arguments.getString("message");
       if (message === null || message.trim() === "") {
         throw new McpToolException("The message parameter is required");
       }
       return McpToolResult.success("Echo: " + message);
-    }
+    },
   });
 }
 

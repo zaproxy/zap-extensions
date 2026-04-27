@@ -2,7 +2,7 @@
 // Extender scripts allow you to add completely new functionality to ZAP.
 // The install function is called when the script is enabled and the uninstall function when it is disabled.
 // Any functionality added in the install function should be removed in the uninstall method.
-// See the other templates for examples on how to do add different functionality. 
+// See the other templates for examples on how to do add different functionality.
 
 // Script variable to use when uninstalling
 var SwingConstants = Java.type("javax.swing.SwingConstants");
@@ -11,31 +11,36 @@ var button = new jbutton();
 
 /**
  * This function is called when the script is enabled.
- * 
+ *
  * @param helper - a helper class which provides 2 methods:
  *		getView() this returns a View object which provides an easy way to add graphical elements.
  *		It will be null is ZAP is running in daemon mode.
  *		getApi() this returns an API object which provides an easy way to add new API calls.
-  *	Links to any functionality added should be held in script variables so that they can be removed in uninstall.
+ *	Links to any functionality added should be held in script variables so that they can be removed in uninstall.
  */
 function install(helper) {
   if (helper.getView()) {
     var imageicon = Java.type("javax.swing.ImageIcon");
     // The icons bundled with ZAP are listed here https://github.com/zaproxy/zaproxy/tree/main/zap/src/main/resources/resource
-    button.setIcon(org.zaproxy.zap.utils.DisplayUtils.getScaledIcon(
-       new imageicon(org.zaproxy.zap.ZAP.class.getResource("/resource/icon/16/035.png"))));
+    button.setIcon(
+      org.zaproxy.zap.utils.DisplayUtils.getScaledIcon(
+        new imageicon(
+          org.zaproxy.zap.ZAP.class.getResource("/resource/icon/16/035.png"),
+        ),
+      ),
+    );
     button.setToolTipText("An example button");
-    button.addActionListener(function(event) {
+    button.addActionListener(function (event) {
       print("Example button pressed");
       create_window();
     });
-    helper.getView().addMainToolbarButton(button)
+    helper.getView().addMainToolbarButton(button);
   }
 }
 
 /**
  * This function is called when the script is disabled.
- * 
+ *
  * @param helper - a helper class which provides 2 methods:
  *		getView() this returns a View object which provides an easy way to add graphical elements.
  *		It will be null is ZAP is running in daemon mode.

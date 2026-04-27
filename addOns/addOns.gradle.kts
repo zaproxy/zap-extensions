@@ -123,6 +123,13 @@ subprojects {
 
     group = "org.zaproxy.addon"
 
+    spotless {
+        // Per add-on: set zap.spotless.js=false in that add-on's gradle.properties to skip (e.g. generated bundles).
+        if (project.findProperty("zap.spotless.js") != "false") {
+            configureZapAddOnSpotlessJs(project, rootProject.libs.versions.prettier.get())
+        }
+    }
+
     java {
         // Compile with appropriate Java version when building ZAP releases.
         if (System.getenv("ZAP_RELEASE") != null) {

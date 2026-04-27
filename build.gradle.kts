@@ -1,6 +1,20 @@
 import net.ltgt.gradle.errorprone.errorprone
 import org.zaproxy.gradle.spotless.ValidateImports
 
+// gradle-node-plugin 7.1.0 still pulls Jackson 2.14.x onto the buildscript/plugin classpath, where it
+// can clash with other Gradle plugins (e.g. ZAP add-on manifest generation) that expect a newer Jackson.
+// This BOM is only for that build-time classpath—not add-on compile/runtime dependencies. The node
+// plugin has not bumped Jackson yet, so we align Jackson modules here explicitly.
+buildscript {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath(platform("com.fasterxml.jackson:jackson-bom:2.17.2"))
+    }
+}
+
 plugins {
     alias(libs.plugins.spotless)
     alias(libs.plugins.zaproxy.common) apply false
@@ -8,6 +22,7 @@ plugins {
     alias(libs.plugins.sonarqube)
     alias(libs.plugins.errorprone)
     alias(libs.plugins.lombok)
+    id("com.github.node-gradle.node") version "7.1.0"
 }
 
 apply(from = "$rootDir/gradle/ci.gradle.kts")
@@ -23,6 +38,11 @@ val validateImports =
                 "Use java.util.HexFormat instead.",
         ),
     )
+
+node {
+    version = libs.versions.node.get()
+    download = true
+}
 
 allprojects {
     apply(plugin = "com.diffplug.spotless")
