@@ -9,6 +9,12 @@ zapAddOn {
     }
 }
 
+spotless {
+    format("js") {
+        targetExclude("**/zapHomeFiles/frontendscanner/**/*.js")
+    }
+}
+
 dependencies {
     testImplementation(project(":testutils"))
 }

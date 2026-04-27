@@ -84,6 +84,12 @@ jdoEnhance {
     persistenceUnitName.set(zapAddOn.addOnId.get())
 }
 
+spotless {
+    format("js") {
+        targetExclude("**/selenium/extensions/zap_browser_extension/js/*.bundle.js")
+    }
+}
+
 dependencies {
     jdoEnhance(libs.database.datanucleusJdo)
 
