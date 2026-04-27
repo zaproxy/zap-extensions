@@ -212,6 +212,13 @@ public class AuthenticationStep
             return null;
         }
 
+        // For TOTP_FIELD steps after the first, fillSplitOtpFields already filled all boxes.
+        // Skip element lookup entirely to avoid timeouts and OTP-component state corruption.
+        if (getType() == Type.TOTP_FIELD && ctx.peekSplitOtpCharIndex() > 0) {
+            ctx.nextSplitOtpCharIndex();
+            return null;
+        }
+
         By by = createtBy();
 
         WebElement element =
@@ -243,11 +250,23 @@ public class AuthenticationStep
                 String totpCode =
                         ctx.getOrGenerateTotpCode(
                                 () -> getTotpCode(credentials).toString());
-                if ("1".equals(element.getDomAttribute("maxlength"))) {
-                    AuthUtils.fillSplitOtpFields(wd, element, totpCode);
-                } else {
-                    AuthUtils.fillFieldWithEvents(element, totpCode, wd);
+                int charIndex = ctx.nextSplitOtpCharIndex();
+                if (charIndex == 0) {
+                    // First (or only) TOTP_FIELD step.
+                    // fillSplitOtpFields auto-detects all split boxes and fills each
+                    // with one digit, so a single step is enough for both single-step
+                    // and multi-step YAML configs.
+                    if ("1".equals(element.getDomAttribute("maxlength"))) {
+                        AuthUtils.fillSplitOtpFields(wd, element, totpCode);
+                    } else {
+                        // Combined input or app-managed OTP component: send the full
+                        // code and let the component distribute it.
+                        AuthUtils.fillFieldWithEvents(element, totpCode, wd);
+                    }
                 }
+                // charIndex > 0: all boxes were already filled in step 0 above.
+                // Doing nothing here prevents OTP-component shift/corruption bugs
+                // that occur when sendKeys is called on already-filled boxes.
                 break;
 
             case USERNAME:
