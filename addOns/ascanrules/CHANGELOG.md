@@ -19,6 +19,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - The scan rules now have new tags for the OWASP Top 10 2025, and API Top 10 2023.
 - Depends on an updated version of the Common Library add-on.
 
+### Fixed
+- Reduced false positives in SQL Injection boolean-based checks by adding a control request to detect page instability (Issue 9289).
+
 ## [80] - 2026-03-02
 ### Added
 - Checks for cloud metadata from IBM and OpenStack.
