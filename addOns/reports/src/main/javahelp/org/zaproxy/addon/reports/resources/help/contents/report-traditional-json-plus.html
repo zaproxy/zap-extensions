@@ -25,6 +25,10 @@
 			<td>Automation Framework State</td>
 			<td>afstate</td>
 		</tr>
+		<tr>
+			<td>Script Diagnostics</td>
+			<td>scriptdiagnostics</td>
+		</tr>
 	</table>
 
 	<H3>Sample</H3>
@@ -219,6 +223,57 @@
     ]
 }
 </pre>
+
+	<h4>Script Diagnostics Section</h4>
+	When the
+	<code>scriptdiagnostics</code>
+	section is enabled and the Script Console add-on has recorded runs in
+	the session database, the report can include a
+	<code>scriptDiagnostics</code>
+	object containing a
+	<code>runs</code>
+	array of script diagnostic records (for example failed automation
+	runs). For example:
+
+	<pre>
+        "scriptDiagnostics": {
+        "runs": [
+		{
+			"created": "2026-05-13T12:19:50.536360Z",
+			"outcome": "FAILED",
+			"summary": "Job: script Chain order: account_check -> nav failed.",
+			"scripts": [
+				{
+					"order": 1,
+					"scriptName": "account_check",
+					"scriptType": "standalone",
+					"steps": [
+					]
+				},
+				{
+					"order": 2,
+					"scriptName": "nav",
+					"scriptType": "standalone",
+					"steps": [
+						{
+							"sourceStepIndex": 13,
+							"line": "ZestClientElementClick",
+							"outputs": [
+								{
+									"kind": "ERROR",
+									"message": "ZestClientElementClick - Expected condition failed: waiting for element found by By.xpath: \/html\/body\/table\/tbody\/tr[2]\/td[2]\/div[13]\/h2[1]\/a to be clickable, but the element was not found: org.openqa.selenium.NoSuchElementException: Unable to locate element: \/html\/body\/table\/tbody\/tr[2]\/td[2]\/div[13]\/h2[1]\/a.\n(tried for 5 seconds with 500 milliseconds interval)"
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+        ]
+        },
+        ...
+    </pre>
+
 </BODY>
 </HTML>
 

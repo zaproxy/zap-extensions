@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.zest;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
@@ -40,6 +41,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.quality.Strictness;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
@@ -50,6 +52,7 @@ import org.parosproxy.paros.model.Model;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.zap.authentication.AuthenticationMethod;
 import org.zaproxy.zap.extension.script.ExtensionScript;
+import org.zaproxy.zap.extension.scripts.zest.ZestScriptDiagnosticSource.ZestScriptRunDiagnostic;
 import org.zaproxy.zap.extension.selenium.ClientAuthenticator;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.zest.internal.ZestScriptMerger;
@@ -194,7 +197,7 @@ class ZestZapRunnerUnitTest extends TestUtils {
         given(clientLaunch.getUrl()).willReturn(null);
 
         assertThat(runnerWithWrapper.launchClient(clientLaunch), is(nullValue()));
-        verify(wrapper, times(1)).setZestFailureContext("");
+        verify(wrapper, never()).setLastRunDiagnostic(any());
         verify(authMethod).authenticate(any(WebDriver.class), eq(user));
     }
 
@@ -233,7 +236,7 @@ class ZestZapRunnerUnitTest extends TestUtils {
 
         assertThrows(
                 ZestClientFailException.class, () -> runnerWithWrapper.launchClient(clientLaunch));
-        verify(wrapper, times(2)).setZestFailureContext(anyString());
+        verify(wrapper, times(1)).setLastRunDiagnostic(any());
     }
 
     @Test
@@ -262,7 +265,7 @@ class ZestZapRunnerUnitTest extends TestUtils {
         given(clientLaunch.getWindowHandle()).willReturn("win1");
 
         assertThat(runnerWithWrapper.launchClient(clientLaunch), is("win1"));
-        verify(wrapper, times(1)).setZestFailureContext("");
+        verify(wrapper, never()).setLastRunDiagnostic(any());
     }
 
     @Test
@@ -274,11 +277,11 @@ class ZestZapRunnerUnitTest extends TestUtils {
         clearInvocations(first, second);
         runner.setWrapper(second);
 
-        verify(second).setZestFailureContext("");
+        verify(second).setLastRunDiagnostic(null);
     }
 
     @Test
-    void shouldPreserveClientLaunchFailureContextWhenStatementRecordsClientFailException()
+    void shouldRefreshStructuredDetailAndContextWhenStatementRecordsAfterPriorLaunchContext()
             throws Exception {
         ZestScriptWrapper wrapper = mock(ZestScriptWrapper.class);
         given(wrapper.getChainProvenance()).willReturn(Optional.empty());
@@ -286,8 +289,6 @@ class ZestZapRunnerUnitTest extends TestUtils {
         String diagnostics =
                 Constant.messages.getString(
                         "zest.runner.failure.standalone", "zest-script", "2", "ZestClientLaunch");
-        String headline = "headline from launch path";
-        given(wrapper.getZestFailureContext()).willReturn(diagnostics + " - " + headline);
 
         ZestZapRunner runnerWithWrapper =
                 new ZestZapRunner(extensionZest, extensionNetwork, wrapper);
@@ -301,7 +302,15 @@ class ZestZapRunnerUnitTest extends TestUtils {
 
         invokeRecordStatementFailureContext(runnerWithWrapper, stmt, ex);
 
-        verify(wrapper, never()).setZestFailureContext(anyString());
+        ArgumentCaptor<ZestScriptRunDiagnostic> captor =
+                ArgumentCaptor.forClass(ZestScriptRunDiagnostic.class);
+        verify(wrapper).setLastRunDiagnostic(captor.capture());
+        ZestScriptRunDiagnostic diagnostic = captor.getValue();
+        assertThat(diagnostic.detailMessage(), is(equalTo("ZestClientLaunch - wrapped")));
+        assertThat(diagnostic.context(), is(equalTo(diagnostics + " - wrapped")));
+        assertThat(diagnostic.chainScriptOrder(), is(equalTo(1)));
+        assertThat(diagnostic.sourceStatementIndex(), is(equalTo(2)));
+        assertThat(diagnostic.elementType(), is(equalTo("ZestClientLaunch")));
     }
 
     @Test
@@ -309,7 +318,6 @@ class ZestZapRunnerUnitTest extends TestUtils {
         ZestScriptWrapper wrapper = mock(ZestScriptWrapper.class);
         given(wrapper.getChainProvenance()).willReturn(Optional.empty());
         given(wrapper.getName()).willReturn("zest-script");
-        given(wrapper.getZestFailureContext()).willReturn("");
 
         ZestZapRunner runnerWithWrapper =
                 new ZestZapRunner(extensionZest, extensionNetwork, wrapper);
@@ -327,7 +335,15 @@ class ZestZapRunnerUnitTest extends TestUtils {
         String diagnostics =
                 Constant.messages.getString(
                         "zest.runner.failure.standalone", "zest-script", "2", "ZestClientLaunch");
-        verify(wrapper).setZestFailureContext(diagnostics + " - " + causeMsg);
+        ArgumentCaptor<ZestScriptRunDiagnostic> captor =
+                ArgumentCaptor.forClass(ZestScriptRunDiagnostic.class);
+        verify(wrapper).setLastRunDiagnostic(captor.capture());
+        ZestScriptRunDiagnostic diagnostic = captor.getValue();
+        assertThat(diagnostic.detailMessage(), is(equalTo("ZestClientLaunch - " + causeMsg)));
+        assertThat(diagnostic.context(), is(equalTo(diagnostics + " - " + causeMsg)));
+        assertThat(diagnostic.chainScriptOrder(), is(equalTo(1)));
+        assertThat(diagnostic.sourceStatementIndex(), is(equalTo(2)));
+        assertThat(diagnostic.elementType(), is(equalTo("ZestClientLaunch")));
     }
 
     @Test

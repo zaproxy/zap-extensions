@@ -23,8 +23,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.zaproxy.addon.automation.AutomationEnvironment;
@@ -36,7 +34,6 @@ import org.zaproxy.zap.extension.scripts.automation.ScriptJobParameters;
 
 public abstract class ScriptAction {
 
-    protected final Logger LOGGER = LogManager.getLogger(this.getClass());
     protected final ExtensionScript extScript;
     protected final ScriptJobParameters parameters;
 

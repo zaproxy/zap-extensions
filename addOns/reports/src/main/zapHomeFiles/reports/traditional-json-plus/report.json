@@ -12,7 +12,35 @@
 			"description": "[(${ins.description})]",
 			"statistic": "[(${ins.statistic})]"
 		}[/th:block]
-    ],[/th:block]
+    ],[/th:block][#th:block th:if="${reportData.isIncludeSection('scriptdiagnostics') && reportData.reportObjects.get('scriptDiagnostics') != null}"]
+	"scriptDiagnostics": {
+		"runs": [[#th:block th:each="run, runState: ${reportData.reportObjects.get('scriptDiagnostics').runs}"][#th:block th:if="${! runState.first}"],[/th:block]
+		{
+			"created": [[${run.created}]],
+			"outcome": [[${run.outcome}]],
+			"summary": [[${run.summary}]],
+			"scripts": [[#th:block th:each="scr, scrState: ${run.scripts}"][#th:block th:if="${! scrState.first}"],[/th:block]
+				{
+					"order": [[${scr.order}]],
+					"scriptName": [[${scr.scriptName}]],
+					"scriptType": [[${scr.scriptType}]],
+					"steps": [[#th:block th:each="st, stState: ${scr.steps}"][#th:block th:if="${! stState.first}"],[/th:block]
+						{
+							"sourceStepIndex": [[${st.sourceStepIndex}]],
+							"line": [[${st.line}]],
+							"outputs": [[#th:block th:each="out, outState: ${st.outputs}"][#th:block th:if="${! outState.first}"],[/th:block]
+								{
+									"kind": [[${out.kind}]],
+									"message": [[${out.message}]]
+								}[/th:block]
+							]
+						}[/th:block]
+					]
+				}[/th:block]
+			]
+		}[/th:block]
+		]
+	},[/th:block]
 	"site":[ [#th:block th:each="site, siteState: ${reportData.sites}"][#th:block th:if="${! siteState.first}"],[/th:block]
         {
             "@name": "[(${helper.legacyEscapeText(site, true)})]",

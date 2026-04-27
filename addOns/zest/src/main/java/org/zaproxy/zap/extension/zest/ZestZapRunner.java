@@ -55,6 +55,7 @@ import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptUI;
 import org.zaproxy.zap.extension.script.ScriptVars;
+import org.zaproxy.zap.extension.scripts.zest.ZestScriptDiagnosticSource.ZestScriptRunDiagnostic;
 import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.ClientAuthenticator;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
@@ -156,6 +157,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
                     ZestAssignFailException,
                     ZestClientFailException {
         LOGGER.debug("Run script {}", script.getTitle());
+        resetFailureDiagnosticsForNewRun(wrapper);
         // Check for any missing parameters
         boolean missingParams = false;
         for (String[] vars : script.getParameters().getVariables()) {
@@ -201,6 +203,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
                     ZestAssignFailException,
                     ZestClientFailException {
         LOGGER.debug("Run script {}", script.getTitle());
+        resetFailureDiagnosticsForNewRun(wrapper);
         if (wrapper.getWriter() != null) {
             super.setOutputWriter(wrapper.getWriter());
         } else if (scriptUI != null && !hasOutputWriter()) {
@@ -333,7 +336,8 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
                 | ZestInvalidCommonTestException
                 | IOException
                 | ZestAssignFailException
-                | ZestClientFailException e) {
+                | ZestClientFailException
+                | RuntimeException e) {
             recordStatementFailureContext(stmt, e);
             throw e;
         }
@@ -422,8 +426,14 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
             }
             return super.handleClient(script, client);
         } catch (ZestClientFailException e) {
+            // Zest normally fails client statements with ZestClientFailException (often without
+            // going
+            // through runStatement); record using the statement from the exception when present.
+            ZestStatement stmt = e.getElement() instanceof ZestStatement zs ? zs : client;
+            recordStatementFailureContext(stmt, e);
             throw e;
         } catch (Exception e) {
+            recordStatementFailureContext(client, e);
             throw new ZestClientFailException(client, e);
         }
     }
@@ -531,16 +541,11 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
         }
         String diagnostics = formatStatementDiagnostics(stmt);
         String detail = formatStatementFailureDetail(t);
-        String existing = wrapper.getZestFailureContext();
-        if (t instanceof ZestClientFailException
-                && StringUtils.isNotBlank(existing)
-                && StringUtils.isNotBlank(diagnostics)
-                && existing.startsWith(diagnostics)) {
-            // launchClient already set context for this statement; do not replace — the caller
-            // surfaces the failure (e.g. via wrapper context / exception handling).
-            return;
-        }
-        wrapper.setZestFailureContext(diagnostics + " - " + detail);
+        wrapper.setLastRunDiagnostic(
+                buildFailureDiagnostic(
+                        stmt,
+                        diagnostics + " - " + detail,
+                        stmt.getElementType() + " - " + detail));
     }
 
     /**
@@ -575,12 +580,47 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
     }
 
     /**
-     * Records launch failure on the wrapper. Chain scripts reset failure context in the {@link
-     * ZestZapRunner} constructor before the run.
+     * Records launch failure on the wrapper. Failure diagnostics are cleared at the start of each
+     * {@link #run(ZestScript, Map)} / {@link #run(ZestScript, ZestRequest, Map)}; {@link
+     * #setWrapper} clears them on the incoming wrapper when rebinding to a different instance (so
+     * stale context is not carried over).
      */
     private void recordClientLaunchFailureContext(ZestClientLaunch clientLaunch, String headline) {
         String diagnostics = formatStatementDiagnostics(clientLaunch);
-        wrapper.setZestFailureContext(diagnostics + " - " + headline);
+        wrapper.setLastRunDiagnostic(
+                buildFailureDiagnostic(clientLaunch, diagnostics + " - " + headline, headline));
+    }
+
+    private ZestScriptRunDiagnostic buildFailureDiagnostic(
+            ZestStatement stmt, String context, String detailMessage) {
+        var chainProvOpt = wrapper.getChainProvenance();
+        if (chainProvOpt.isEmpty()) {
+            return new ZestScriptRunDiagnostic(
+                    context,
+                    detailMessage,
+                    1,
+                    stmt.getIndex(),
+                    StringUtils.defaultString(stmt.getElementType()));
+        }
+        return chainProvOpt
+                .get()
+                .originForExecutingStatement(wrapper.getZestScript(), stmt)
+                .map(
+                        origin ->
+                                new ZestScriptRunDiagnostic(
+                                        context,
+                                        detailMessage,
+                                        origin.segmentIndex() + 1,
+                                        origin.originalStatementIndex(),
+                                        StringUtils.defaultString(origin.elementType())))
+                .orElseGet(
+                        () ->
+                                new ZestScriptRunDiagnostic(
+                                        context,
+                                        detailMessage,
+                                        -1,
+                                        -1,
+                                        StringUtils.defaultString(stmt.getElementType())));
     }
 
     private String formatStatementDiagnostics(ZestStatement stmt) {
@@ -724,14 +764,24 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
     }
 
     /**
-     * Binds the script wrapper for this run and clears {@link
-     * ZestScriptWrapper#getZestFailureContext()} for a fresh diagnostic headline. Must not be
-     * {@code null}.
+     * Binds the script wrapper for this runner. Each {@link #run(ZestScript, Map)} / {@link
+     * #run(ZestScript, ZestRequest, Map)} clears failure diagnostics on the bound wrapper at the
+     * start of the run. When replacing a previously bound wrapper with a different instance, this
+     * method resets diagnostics on the <em>incoming</em> wrapper so it does not retain stale
+     * failure fields; the initial bind (e.g. from the constructor when there was no prior wrapper)
+     * does not perform that reset.
      */
     public void setWrapper(ZestScriptWrapper wrapper) {
-        this.wrapper = Objects.requireNonNull(wrapper, "wrapper");
+        Objects.requireNonNull(wrapper, "wrapper");
+        if (this.wrapper != null && this.wrapper != wrapper) {
+            resetFailureDiagnosticsForNewRun(wrapper);
+        }
+        this.wrapper = wrapper;
         chainedScriptRun = this.wrapper.getChainProvenance().isPresent();
-        this.wrapper.setZestFailureContext("");
+    }
+
+    private static void resetFailureDiagnosticsForNewRun(ZestScriptWrapper w) {
+        w.setLastRunDiagnostic(null);
     }
 
     @Override

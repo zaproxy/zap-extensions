@@ -41,6 +41,8 @@ dependencies {
     zapAddOn("commonlib")
     zapAddOn("exim")
     zapAddOn("network")
+    // Transitive compile-time dependency via zest (ZestScriptDiagnosticSource, etc.).
+    compileOnly(parent!!.childProjects.get("scripts")!!)
     zapAddOn("zest")
 
     testImplementation(project(":testutils"))
