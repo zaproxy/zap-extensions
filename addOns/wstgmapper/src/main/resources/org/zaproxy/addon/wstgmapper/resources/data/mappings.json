@@ -1,0 +1,1580 @@
+{
+  "pluginMappings": [
+    {
+      "pluginId": 10010,
+      "wstgIds": [
+        "WSTG-SESS-02"
+      ]
+    },
+    {
+      "pluginId": 10011,
+      "wstgIds": [
+        "WSTG-SESS-02"
+      ]
+    },
+    {
+      "pluginId": 10012,
+      "wstgIds": [
+        "WSTG-ATHN-06"
+      ]
+    },
+    {
+      "pluginId": 10015,
+      "wstgIds": [
+        "WSTG-ATHN-06"
+      ]
+    },
+    {
+      "pluginId": 10016,
+      "wstgIds": [
+        "WSTG-INPV-01"
+      ]
+    },
+    {
+      "pluginId": 10017,
+      "wstgIds": [
+        "WSTG-CLNT-13"
+      ]
+    },
+    {
+      "pluginId": 10019,
+      "wstgIds": [
+        "WSTG-CLNT-09"
+      ]
+    },
+    {
+      "pluginId": 10020,
+      "wstgIds": [
+        "WSTG-CLNT-09"
+      ]
+    },
+    {
+      "pluginId": 10021,
+      "wstgIds": [
+        "WSTG-CLNT-09"
+      ]
+    },
+    {
+      "pluginId": 10023,
+      "wstgIds": [
+        "WSTG-ERRH-01"
+      ]
+    },
+    {
+      "pluginId": 10024,
+      "wstgIds": [
+        "WSTG-INFO-05",
+        "WSTG-SESS-04"
+      ]
+    },
+    {
+      "pluginId": 10025,
+      "wstgIds": [
+        "WSTG-INFO-05"
+      ]
+    },
+    {
+      "pluginId": 10027,
+      "wstgIds": [
+        "WSTG-INFO-05"
+      ]
+    },
+    {
+      "pluginId": 10028,
+      "wstgIds": [
+        "WSTG-CLNT-04"
+      ]
+    },
+    {
+      "pluginId": 10029,
+      "wstgIds": [
+        "WSTG-SESS-02",
+        "WSTG-SESS-06"
+      ]
+    },
+    {
+      "pluginId": 10032,
+      "wstgIds": [
+        "WSTG-SESS-08"
+      ]
+    },
+    {
+      "pluginId": 10038,
+      "wstgIds": [
+        "WSTG-CONF-12"
+      ]
+    },
+    {
+      "pluginId": 10040,
+      "wstgIds": [
+        "WSTG-CRYP-01",
+        "WSTG-CRYP-03"
+      ]
+    },
+    {
+      "pluginId": 10041,
+      "wstgIds": [
+        "WSTG-CRYP-01",
+        "WSTG-ATHN-01"
+      ]
+    },
+    {
+      "pluginId": 10043,
+      "wstgIds": [
+        "WSTG-INPV-01",
+        "WSTG-CLNT-01"
+      ]
+    },
+    {
+      "pluginId": 10045,
+      "wstgIds": [
+        "WSTG-INFO-05",
+        "WSTG-CONF-04"
+      ]
+    },
+    {
+      "pluginId": 10048,
+      "wstgIds": [
+        "WSTG-INPV-11"
+      ]
+    },
+    {
+      "pluginId": 10055,
+      "wstgIds": [
+        "WSTG-CONF-12"
+      ]
+    },
+    {
+      "pluginId": 10096,
+      "wstgIds": [
+        "WSTG-INFO-05"
+      ]
+    },
+    {
+      "pluginId": 10097,
+      "wstgIds": [
+        "WSTG-CRYP-04"
+      ]
+    },
+    {
+      "pluginId": 10098,
+      "wstgIds": [
+        "WSTG-CONF-08",
+        "WSTG-CLNT-07"
+      ]
+    },
+    {
+      "pluginId": 10105,
+      "wstgIds": [
+        "WSTG-ATHN-01"
+      ]
+    },
+    {
+      "pluginId": 10202,
+      "wstgIds": [
+        "WSTG-SESS-05"
+      ]
+    },
+    {
+      "pluginId": 40012,
+      "wstgIds": [
+        "WSTG-INPV-01"
+      ]
+    },
+    {
+      "pluginId": 40014,
+      "wstgIds": [
+        "WSTG-INPV-02"
+      ]
+    },
+    {
+      "pluginId": 40016,
+      "wstgIds": [
+        "WSTG-INPV-02"
+      ]
+    },
+    {
+      "pluginId": 40017,
+      "wstgIds": [
+        "WSTG-INPV-02"
+      ]
+    },
+    {
+      "pluginId": 40018,
+      "wstgIds": [
+        "WSTG-INPV-05"
+      ]
+    },
+    {
+      "pluginId": 40019,
+      "wstgIds": [
+        "WSTG-INPV-05"
+      ]
+    },
+    {
+      "pluginId": 40020,
+      "wstgIds": [
+        "WSTG-INPV-05"
+      ]
+    },
+    {
+      "pluginId": 40021,
+      "wstgIds": [
+        "WSTG-INPV-05"
+      ]
+    },
+    {
+      "pluginId": 40022,
+      "wstgIds": [
+        "WSTG-INPV-05"
+      ]
+    },
+    {
+      "pluginId": 40023,
+      "wstgIds": [
+        "WSTG-IDNT-04"
+      ]
+    },
+    {
+      "pluginId": 40024,
+      "wstgIds": [
+        "WSTG-INPV-05"
+      ]
+    },
+    {
+      "pluginId": 40025,
+      "wstgIds": [
+        "WSTG-CONF-07",
+        "WSTG-INFO-10"
+      ]
+    },
+    {
+      "pluginId": 40026,
+      "wstgIds": [
+        "WSTG-CLNT-01"
+      ]
+    },
+    {
+      "pluginId": 40027,
+      "wstgIds": [
+        "WSTG-INPV-05"
+      ]
+    },
+    {
+      "pluginId": 40028,
+      "wstgIds": [
+        "WSTG-CLNT-07",
+        "WSTG-CONF-08"
+      ]
+    },
+    {
+      "pluginId": 40029,
+      "wstgIds": [
+        "WSTG-INPV-06"
+      ]
+    },
+    {
+      "pluginId": 40031,
+      "wstgIds": [
+        "WSTG-AUTHZ-01"
+      ]
+    },
+    {
+      "pluginId": 40032,
+      "wstgIds": [
+        "WSTG-INFO-05",
+        "WSTG-CONF-04"
+      ]
+    },
+    {
+      "pluginId": 40034,
+      "wstgIds": [
+        "WSTG-INFO-05",
+        "WSTG-CONF-04"
+      ]
+    },
+    {
+      "pluginId": 40035,
+      "wstgIds": [
+        "WSTG-INPV-09"
+      ]
+    },
+    {
+      "pluginId": 40037,
+      "wstgIds": [
+        "WSTG-INPV-05"
+      ]
+    },
+    {
+      "pluginId": 40040,
+      "wstgIds": [
+        "WSTG-INPV-08"
+      ]
+    },
+    {
+      "pluginId": 40041,
+      "wstgIds": [
+        "WSTG-INPV-18"
+      ]
+    },
+    {
+      "pluginId": 40042,
+      "wstgIds": [
+        "WSTG-INPV-18"
+      ]
+    },
+    {
+      "pluginId": 40043,
+      "wstgIds": [
+        "WSTG-INPV-07"
+      ]
+    },
+    {
+      "pluginId": 40044,
+      "wstgIds": [
+        "WSTG-INPV-11"
+      ]
+    },
+    {
+      "pluginId": 40045,
+      "wstgIds": [
+        "WSTG-INPV-19"
+      ]
+    },
+    {
+      "pluginId": 40046,
+      "wstgIds": [
+        "WSTG-INPV-15",
+        "WSTG-INPV-17"
+      ]
+    },
+    {
+      "pluginId": 40053,
+      "wstgIds": [
+        "WSTG-INPV-15"
+      ]
+    },
+    {
+      "pluginId": 60000,
+      "wstgIds": [
+        "WSTG-INPV-13"
+      ]
+    },
+    {
+      "pluginId": 60001,
+      "wstgIds": [
+        "WSTG-AUTHZ-01"
+      ]
+    },
+    {
+      "pluginId": 60100,
+      "wstgIds": [
+        "WSTG-INPV-12"
+      ]
+    },
+    {
+      "pluginId": 90020,
+      "wstgIds": [
+        "WSTG-INPV-12"
+      ]
+    },
+    {
+      "pluginId": 90022,
+      "wstgIds": [
+        "WSTG-ERRH-01",
+        "WSTG-ERRH-02"
+      ]
+    },
+    {
+      "pluginId": 90033,
+      "wstgIds": [
+        "WSTG-SESS-02"
+      ]
+    },
+    {
+      "pluginId": 90034,
+      "wstgIds": [
+        "WSTG-CONF-11"
+      ]
+    },
+    {
+      "pluginId": 6000007,
+      "wstgIds": [
+        "WSTG-INFO-05"
+      ]
+    },
+    {
+      "pluginId": 6000023,
+      "wstgIds": [
+        "WSTG-INFO-09"
+      ]
+    },
+    {
+      "pluginId": 6000025,
+      "wstgIds": [
+        "WSTG-ERRH-01"
+      ]
+    },
+    {
+      "pluginId": 6000037,
+      "wstgIds": [
+        "WSTG-INFO-05"
+      ]
+    },
+    {
+      "pluginId": 6000038,
+      "wstgIds": [
+        "WSTG-INFO-09"
+      ]
+    },
+    {
+      "pluginId": 6000046,
+      "wstgIds": [
+        "WSTG-CONF-04"
+      ]
+    },
+    {
+      "pluginId": 6000049,
+      "wstgIds": [
+        "WSTG-CLNT-01"
+      ]
+    },
+    {
+      "pluginId": 6000051,
+      "wstgIds": [
+        "WSTG-INFO-02"
+      ]
+    },
+    {
+      "pluginId": 6000052,
+      "wstgIds": [
+        "WSTG-INFO-05"
+      ]
+    },
+    {
+      "pluginId": 6000053,
+      "wstgIds": [
+        "WSTG-INPV-19"
+      ]
+    },
+    {
+      "pluginId": 6000054,
+      "wstgIds": [
+        "WSTG-ATHN-01"
+      ]
+    },
+    {
+      "pluginId": 6000055,
+      "wstgIds": [
+        "WSTG-CONF-05"
+      ]
+    },
+    {
+      "pluginId": 6000056,
+      "wstgIds": [
+        "WSTG-INPV-11"
+      ]
+    },
+    {
+      "pluginId": 6000057,
+      "wstgIds": [
+        "WSTG-INFO-02"
+      ]
+    },
+    {
+      "pluginId": 6000058,
+      "wstgIds": [
+        "WSTG-INFO-02"
+      ]
+    },
+    {
+      "pluginId": 6000059,
+      "wstgIds": [
+        "WSTG-ATHN-01"
+      ]
+    },
+    {
+      "pluginId": 6000060,
+      "wstgIds": [
+        "WSTG-INFO-08"
+      ]
+    },
+    {
+      "pluginId": 6000061,
+      "wstgIds": [
+        "WSTG-CONF-05"
+      ]
+    },
+    {
+      "pluginId": 6000067,
+      "wstgIds": [
+        "WSTG-INFO-05"
+      ]
+    },
+    {
+      "pluginId": 6000068,
+      "wstgIds": [
+        "WSTG-INPV-01"
+      ]
+    },
+    {
+      "pluginId": 6000152,
+      "wstgIds": [
+        "WSTG-CRYP-04"
+      ]
+    },
+    {
+      "pluginId": 6000153,
+      "wstgIds": [
+        "WSTG-SESS-04"
+      ]
+    },
+    {
+      "pluginId": 6000154,
+      "wstgIds": [
+        "WSTG-CONF-05",
+        "WSTG-ERRH-01",
+        "WSTG-ERRH-02",
+        "WSTG-INPV-07",
+        "WSTG-INPV-12",
+        "WSTG-INPV-18",
+        "WSTG-CRYP-02"
+      ]
+    },
+    {
+      "pluginId": 6000155,
+      "wstgIds": [
+        "WSTG-INPV-15"
+      ]
+    },
+    {
+      "pluginId": 6000156,
+      "wstgIds": [
+        "WSTG-CLNT-09"
+      ]
+    },
+    {
+      "pluginId": 6000157,
+      "wstgIds": [
+        "WSTG-SESS-02"
+      ]
+    },
+    {
+      "pluginId": 6000158,
+      "wstgIds": [
+        "WSTG-INFO-05"
+      ]
+    },
+    {
+      "pluginId": 6000159,
+      "wstgIds": [
+        "WSTG-CONF-07"
+      ]
+    },
+    {
+      "pluginId": 6000160,
+      "wstgIds": [
+        "WSTG-BUSL-05"
+      ]
+    },
+    {
+      "pluginId": 7000001,
+      "wstgIds": [
+        "WSTG-ATHN-04"
+      ]
+    },
+    {
+      "pluginId": 7000002,
+      "wstgIds": [
+        "WSTG-CONF-05"
+      ]
+    },
+    {
+      "pluginId": 7000009,
+      "wstgIds": [
+        "WSTG-CONF-05"
+      ]
+    },
+    {
+      "pluginId": 7000010,
+      "wstgIds": [
+        "WSTG-CONF-05"
+      ]
+    },
+    {
+      "pluginId": 7000011,
+      "wstgIds": [
+        "WSTG-ATHN-01"
+      ]
+    },
+    {
+      "pluginId": 7000012,
+      "wstgIds": [
+        "WSTG-CONF-05"
+      ]
+    },
+    {
+      "pluginId": 7000013,
+      "wstgIds": [
+        "WSTG-CLNT-04"
+      ]
+    },
+    {
+      "pluginId": 7000014,
+      "wstgIds": [
+        "WSTG-INPV-08"
+      ]
+    },
+    {
+      "pluginId": 7000015,
+      "wstgIds": [
+        "WSTG-INPV-19"
+      ]
+    },
+    {
+      "pluginId": 7000016,
+      "wstgIds": [
+        "WSTG-INPV-18"
+      ]
+    },
+    {
+      "pluginId": 7000017,
+      "wstgIds": [
+        "WSTG-CONF-05"
+      ]
+    },
+    {
+      "pluginId": 7000018,
+      "wstgIds": [
+        "WSTG-CONF-05"
+      ]
+    },
+    {
+      "pluginId": 7000020,
+      "wstgIds": [
+        "WSTG-INPV-04"
+      ]
+    },
+    {
+      "pluginId": 7000021,
+      "wstgIds": [
+        "WSTG-CONF-05"
+      ]
+    },
+    {
+      "pluginId": 7000022,
+      "wstgIds": [
+        "WSTG-INPV-07"
+      ]
+    },
+    {
+      "pluginId": 7000023,
+      "wstgIds": [
+        "WSTG-INPV-07"
+      ]
+    },
+    {
+      "pluginId": 7000024,
+      "wstgIds": [
+        "WSTG-INPV-11"
+      ]
+    },
+    {
+      "pluginId": 7000025,
+      "wstgIds": [
+        "WSTG-INPV-11"
+      ]
+    },
+    {
+      "pluginId": 7000026,
+      "wstgIds": [
+        "WSTG-CONF-05"
+      ]
+    },
+    {
+      "pluginId": 7000027,
+      "wstgIds": [
+        "WSTG-INPV-05"
+      ]
+    },
+    {
+      "pluginId": 7000029,
+      "wstgIds": [
+        "WSTG-INPV-04"
+      ]
+    },
+    {
+      "pluginId": 7000030,
+      "wstgIds": [
+        "WSTG-CONF-04"
+      ]
+    },
+    {
+      "pluginId": 7000031,
+      "wstgIds": [
+        "WSTG-CLNT-01"
+      ]
+    },
+    {
+      "pluginId": 7000033,
+      "wstgIds": [
+        "WSTG-INPV-19"
+      ]
+    },
+    {
+      "pluginId": 7000035,
+      "wstgIds": [
+        "WSTG-INPV-05"
+      ]
+    },
+    {
+      "pluginId": 7000036,
+      "wstgIds": [
+        "WSTG-INPV-19"
+      ]
+    },
+    {
+      "pluginId": 7000038,
+      "wstgIds": [
+        "WSTG-INPV-18"
+      ]
+    },
+    {
+      "pluginId": 7000039,
+      "wstgIds": [
+        "WSTG-INPV-05"
+      ]
+    },
+    {
+      "pluginId": 7000040,
+      "wstgIds": [
+        "WSTG-INPV-05"
+      ]
+    },
+    {
+      "pluginId": 7000042,
+      "wstgIds": [
+        "WSTG-CONF-04"
+      ]
+    },
+    {
+      "pluginId": 7000045,
+      "wstgIds": [
+        "WSTG-INPV-05"
+      ]
+    },
+    {
+      "pluginId": 7000047,
+      "wstgIds": [
+        "WSTG-CLNT-01"
+      ]
+    },
+    {
+      "pluginId": 7000058,
+      "wstgIds": [
+        "WSTG-INPV-08"
+      ]
+    },
+    {
+      "pluginId": 7000059,
+      "wstgIds": [
+        "WSTG-INPV-11"
+      ]
+    },
+    {
+      "pluginId": 7000060,
+      "wstgIds": [
+        "WSTG-SESS-02"
+      ]
+    },
+    {
+      "pluginId": 7000061,
+      "wstgIds": [
+        "WSTG-CLNT-01"
+      ]
+    },
+    {
+      "pluginId": 7000062,
+      "wstgIds": [
+        "WSTG-INPV-15"
+      ]
+    },
+    {
+      "pluginId": 7000063,
+      "wstgIds": [
+        "WSTG-INPV-11"
+      ]
+    },
+    {
+      "pluginId": 7000064,
+      "wstgIds": [
+        "WSTG-INPV-05"
+      ]
+    },
+    {
+      "pluginId": 7000065,
+      "wstgIds": [
+        "WSTG-BUSL-08"
+      ]
+    },
+    {
+      "pluginId": 7000066,
+      "wstgIds": [
+        "WSTG-IDNT-04"
+      ]
+    },
+    {
+      "pluginId": 7000067,
+      "wstgIds": [
+        "WSTG-CLNT-11"
+      ]
+    },
+    {
+      "pluginId": 7000100,
+      "wstgIds": [
+        "WSTG-ATHN-06"
+      ]
+    },
+    {
+      "pluginId": 7000101,
+      "wstgIds": [
+        "WSTG-CONF-04"
+      ]
+    },
+    {
+      "pluginId": 7000102,
+      "wstgIds": [
+        "WSTG-AUTHZ-02"
+      ]
+    },
+    {
+      "pluginId": 7000103,
+      "wstgIds": [
+        "WSTG-INPV-05"
+      ]
+    },
+    {
+      "pluginId": 7000104,
+      "wstgIds": [
+        "WSTG-INPV-05"
+      ]
+    },
+    {
+      "pluginId": 7000105,
+      "wstgIds": [
+        "WSTG-BUSL-04"
+      ]
+    },
+    {
+      "pluginId": 7000106,
+      "wstgIds": [
+        "WSTG-INPV-11"
+      ]
+    },
+    {
+      "pluginId": 7000107,
+      "wstgIds": [
+        "WSTG-INPV-05"
+      ]
+    },
+    {
+      "pluginId": 7000108,
+      "wstgIds": [
+        "WSTG-CLNT-01"
+      ]
+    },
+    {
+      "pluginId": 7000109,
+      "wstgIds": [
+        "WSTG-INPV-15"
+      ]
+    },
+    {
+      "pluginId": 7000110,
+      "wstgIds": [
+        "WSTG-INPV-03"
+      ]
+    },
+    {
+      "pluginId": 7000111,
+      "wstgIds": [
+        "WSTG-INPV-12"
+      ]
+    },
+    {
+      "pluginId": 7000112,
+      "wstgIds": [
+        "WSTG-INPV-15"
+      ]
+    },
+    {
+      "pluginId": 7000113,
+      "wstgIds": [
+        "WSTG-INPV-19"
+      ]
+    },
+    {
+      "pluginId": 7000114,
+      "wstgIds": [
+        "WSTG-INPV-07"
+      ]
+    },
+    {
+      "pluginId": 7000115,
+      "wstgIds": [
+        "WSTG-INPV-05"
+      ]
+    },
+    {
+      "pluginId": 7000116,
+      "wstgIds": [
+        "WSTG-INPV-05"
+      ]
+    },
+    {
+      "pluginId": 7000117,
+      "wstgIds": [
+        "WSTG-AUTHZ-02"
+      ]
+    },
+    {
+      "pluginId": 7000118,
+      "wstgIds": [
+        "WSTG-CONF-04"
+      ]
+    },
+    {
+      "pluginId": 7000119,
+      "wstgIds": [
+        "WSTG-ATHN-09"
+      ]
+    },
+    {
+      "pluginId": 7000120,
+      "wstgIds": [
+        "WSTG-INPV-05"
+      ]
+    },
+    {
+      "pluginId": 7000121,
+      "wstgIds": [
+        "WSTG-AUTHZ-04"
+      ]
+    },
+    {
+      "pluginId": 7000122,
+      "wstgIds": [
+        "WSTG-INPV-06"
+      ]
+    },
+    {
+      "pluginId": 7000123,
+      "wstgIds": [
+        "WSTG-INPV-09"
+      ]
+    },
+    {
+      "pluginId": 7000124,
+      "wstgIds": [
+        "WSTG-INPV-18"
+      ]
+    },
+    {
+      "pluginId": 7000125,
+      "wstgIds": [
+        "WSTG-INPV-18"
+      ]
+    },
+    {
+      "pluginId": 7000126,
+      "wstgIds": [
+        "WSTG-INPV-11"
+      ]
+    },
+    {
+      "pluginId": 7000127,
+      "wstgIds": [
+        "WSTG-INPV-14"
+      ]
+    },
+    {
+      "pluginId": 7000128,
+      "wstgIds": [
+        "WSTG-CLNT-05"
+      ]
+    },
+    {
+      "pluginId": 7000129,
+      "wstgIds": [
+        "WSTG-CLNT-03"
+      ]
+    },
+    {
+      "pluginId": 7000130,
+      "wstgIds": [
+        "WSTG-BUSL-04"
+      ]
+    },
+    {
+      "pluginId": 7000131,
+      "wstgIds": [
+        "WSTG-AUTHZ-01"
+      ]
+    },
+    {
+      "pluginId": 7000132,
+      "wstgIds": [
+        "WSTG-CLNT-01"
+      ]
+    },
+    {
+      "pluginId": 7000133,
+      "wstgIds": [
+        "WSTG-CLNT-01"
+      ]
+    },
+    {
+      "pluginId": 7000134,
+      "wstgIds": [
+        "WSTG-CLNT-01"
+      ]
+    },
+    {
+      "pluginId": 7000135,
+      "wstgIds": [
+        "WSTG-ATHN-03"
+      ]
+    },
+    {
+      "pluginId": 7000136,
+      "wstgIds": [
+        "WSTG-AUTHZ-01"
+      ]
+    },
+    {
+      "pluginId": 7000137,
+      "wstgIds": [
+        "WSTG-INFO-02",
+        "WSTG-CONF-05"
+      ]
+    },
+    {
+      "pluginId": 7000138,
+      "wstgIds": [
+        "WSTG-INFO-05",
+        "WSTG-CONF-04"
+      ]
+    },
+    {
+      "pluginId": 7000139,
+      "wstgIds": [
+        "WSTG-CONF-05",
+        "WSTG-INFO-10"
+      ]
+    },
+    {
+      "pluginId": 7000140,
+      "wstgIds": [
+        "WSTG-CONF-12",
+        "WSTG-CLNT-10"
+      ]
+    },
+    {
+      "pluginId": 7000141,
+      "wstgIds": [
+        "WSTG-CONF-05",
+        "WSTG-INPV-07"
+      ]
+    },
+    {
+      "pluginId": 7000142,
+      "wstgIds": [
+        "WSTG-CONF-05",
+        "WSTG-INFO-02"
+      ]
+    },
+    {
+      "pluginId": 7000143,
+      "wstgIds": [
+        "WSTG-ERRH-01",
+        "WSTG-INFO-05"
+      ]
+    },
+    {
+      "pluginId": 7000144,
+      "wstgIds": [
+        "WSTG-INFO-05",
+        "WSTG-CONF-04"
+      ]
+    },
+    {
+      "pluginId": 7000145,
+      "wstgIds": [
+        "WSTG-INPV-02",
+        "WSTG-INPV-05"
+      ]
+    },
+    {
+      "pluginId": 7000146,
+      "wstgIds": [
+        "WSTG-BUSL-01",
+        "WSTG-BUSL-04"
+      ]
+    },
+    {
+      "pluginId": 7000147,
+      "wstgIds": [
+        "WSTG-BUSL-08",
+        "WSTG-INPV-12"
+      ]
+    },
+    {
+      "pluginId": 7000148,
+      "wstgIds": [
+        "WSTG-INPV-18"
+      ]
+    },
+    {
+      "pluginId": 7000149,
+      "wstgIds": [
+        "WSTG-INPV-01"
+      ]
+    },
+    {
+      "pluginId": 7000150,
+      "wstgIds": [
+        "WSTG-INPV-15"
+      ]
+    },
+    {
+      "pluginId": 7000151,
+      "wstgIds": [
+        "WSTG-CLNT-01"
+      ]
+    },
+    {
+      "pluginId": 7000152,
+      "wstgIds": [
+        "WSTG-SESS-05"
+      ]
+    },
+    {
+      "pluginId": 7000153,
+      "wstgIds": [
+        "WSTG-CLNT-07"
+      ]
+    },
+    {
+      "pluginId": 7000154,
+      "wstgIds": [
+        "WSTG-INPV-05"
+      ]
+    },
+    {
+      "pluginId": 7000155,
+      "wstgIds": [
+        "WSTG-AUTHZ-01"
+      ]
+    },
+    {
+      "pluginId": 7000156,
+      "wstgIds": [
+        "WSTG-CLNT-01"
+      ]
+    },
+    {
+      "pluginId": 7000157,
+      "wstgIds": [
+        "WSTG-INPV-11"
+      ]
+    },
+    {
+      "pluginId": 7000158,
+      "wstgIds": [
+        "WSTG-INPV-18"
+      ]
+    },
+    {
+      "pluginId": 7000159,
+      "wstgIds": [
+        "WSTG-CLNT-01"
+      ]
+    },
+    {
+      "pluginId": 7000160,
+      "wstgIds": [
+        "WSTG-INPV-05"
+      ]
+    },
+    {
+      "pluginId": 7000161,
+      "wstgIds": [
+        "WSTG-CLNT-01"
+      ]
+    },
+    {
+      "pluginId": 7000162,
+      "wstgIds": [
+        "WSTG-CLNT-01"
+      ]
+    },
+    {
+      "pluginId": 7000231,
+      "wstgIds": [
+        "WSTG-INFO-05"
+      ]
+    },
+    {
+      "pluginId": 7001001,
+      "wstgIds": [
+        "WSTG-INFO-05"
+      ]
+    },
+    {
+      "pluginId": 7001002,
+      "wstgIds": [
+        "WSTG-INFO-05"
+      ]
+    },
+    {
+      "pluginId": 7001003,
+      "wstgIds": [
+        "WSTG-INFO-05"
+      ]
+    },
+    {
+      "pluginId": 7001004,
+      "wstgIds": [
+        "WSTG-INFO-05"
+      ]
+    },
+    {
+      "pluginId": 7001005,
+      "wstgIds": [
+        "WSTG-INFO-05"
+      ]
+    },
+    {
+      "pluginId": 7001006,
+      "wstgIds": [
+        "WSTG-INFO-05"
+      ]
+    },
+    {
+      "pluginId": 7001007,
+      "wstgIds": [
+        "WSTG-INFO-05"
+      ]
+    },
+    {
+      "pluginId": 7001008,
+      "wstgIds": [
+        "WSTG-INFO-05",
+        "WSTG-SESS-10"
+      ]
+    },
+    {
+      "pluginId": 7001009,
+      "wstgIds": [
+        "WSTG-INFO-05",
+        "WSTG-CRYP-01"
+      ]
+    },
+    {
+      "pluginId": 7001010,
+      "wstgIds": [
+        "WSTG-INFO-05",
+        "WSTG-CONF-02"
+      ]
+    },
+    {
+      "pluginId": 7001011,
+      "wstgIds": [
+        "WSTG-INFO-05"
+      ]
+    },
+    {
+      "pluginId": 9000100,
+      "wstgIds": [
+        "WSTG-SESS-01"
+      ]
+    },
+    {
+      "pluginId": 9000101,
+      "wstgIds": [
+        "WSTG-SESS-01"
+      ]
+    },
+    {
+      "pluginId": 9000102,
+      "wstgIds": [
+        "WSTG-SESS-01"
+      ]
+    },
+    {
+      "pluginId": 9000103,
+      "wstgIds": [
+        "WSTG-SESS-01"
+      ]
+    },
+    {
+      "pluginId": 9000104,
+      "wstgIds": [
+        "WSTG-CLNT-11"
+      ]
+    },
+    {
+      "pluginId": 9000105,
+      "wstgIds": [
+        "WSTG-CLNT-01"
+      ]
+    },
+    {
+      "pluginId": 9000106,
+      "wstgIds": [
+        "WSTG-AUTHZ-01"
+      ]
+    },
+    {
+      "pluginId": 9000107,
+      "wstgIds": [
+        "WSTG-CLNT-01"
+      ]
+    },
+    {
+      "pluginId": 9000108,
+      "wstgIds": [
+        "WSTG-CLNT-10"
+      ]
+    },
+    {
+      "pluginId": 9001003,
+      "wstgIds": [
+        "WSTG-INPV-05"
+      ]
+    },
+    {
+      "pluginId": 9001004,
+      "wstgIds": [
+        "WSTG-INPV-19"
+      ]
+    }
+  ],
+  "technologyMappings": [
+    {
+      "technology": "Apache Tomcat",
+      "wstgIds": [
+        "WSTG-INFO-02",
+        "WSTG-CONF-02",
+        "WSTG-CONF-05",
+        "WSTG-CONF-06",
+        "WSTG-ATHN-02"
+      ]
+    },
+    {
+      "technology": "Apache HTTP Server",
+      "wstgIds": [
+        "WSTG-INFO-02",
+        "WSTG-CONF-01",
+        "WSTG-CONF-02",
+        "WSTG-CONF-06"
+      ]
+    },
+    {
+      "technology": "Nginx",
+      "wstgIds": [
+        "WSTG-INFO-02",
+        "WSTG-CONF-01",
+        "WSTG-CONF-02",
+        "WSTG-CONF-06"
+      ]
+    },
+    {
+      "technology": "IIS",
+      "wstgIds": [
+        "WSTG-INFO-02",
+        "WSTG-CONF-01",
+        "WSTG-CONF-02",
+        "WSTG-CONF-06"
+      ]
+    },
+    {
+      "technology": "Microsoft IIS",
+      "wstgIds": [
+        "WSTG-INFO-02",
+        "WSTG-CONF-01",
+        "WSTG-CONF-02",
+        "WSTG-CONF-06",
+        "WSTG-SESS-08"
+      ]
+    },
+    {
+      "technology": "PHP",
+      "wstgIds": [
+        "WSTG-INFO-08",
+        "WSTG-CONF-02",
+        "WSTG-INPV-05",
+        "WSTG-ERRH-01"
+      ]
+    },
+    {
+      "technology": "WordPress",
+      "wstgIds": [
+        "WSTG-INFO-02",
+        "WSTG-INFO-04",
+        "WSTG-INFO-08",
+        "WSTG-INFO-09",
+        "WSTG-CONF-05",
+        "WSTG-ATHN-02"
+      ]
+    },
+    {
+      "technology": "Drupal",
+      "wstgIds": [
+        "WSTG-INFO-02",
+        "WSTG-INFO-04",
+        "WSTG-INFO-08",
+        "WSTG-INFO-09",
+        "WSTG-CONF-05"
+      ]
+    },
+    {
+      "technology": "Joomla",
+      "wstgIds": [
+        "WSTG-INFO-02",
+        "WSTG-INFO-04",
+        "WSTG-INFO-08",
+        "WSTG-INFO-09",
+        "WSTG-CONF-05"
+      ]
+    },
+    {
+      "technology": "jQuery",
+      "wstgIds": [
+        "WSTG-INFO-08",
+        "WSTG-CLNT-01",
+        "WSTG-CLNT-02"
+      ]
+    },
+    {
+      "technology": "React",
+      "wstgIds": [
+        "WSTG-INFO-08",
+        "WSTG-CLNT-01",
+        "WSTG-CLNT-02"
+      ]
+    },
+    {
+      "technology": "Angular",
+      "wstgIds": [
+        "WSTG-INFO-08",
+        "WSTG-CLNT-01",
+        "WSTG-CLNT-02"
+      ]
+    },
+    {
+      "technology": "Vue.js",
+      "wstgIds": [
+        "WSTG-INFO-08",
+        "WSTG-CLNT-01",
+        "WSTG-CLNT-02"
+      ]
+    },
+    {
+      "technology": "ASP.NET",
+      "wstgIds": [
+        "WSTG-INFO-08",
+        "WSTG-SESS-08",
+        "WSTG-CONF-02"
+      ]
+    },
+    {
+      "technology": "Spring Framework",
+      "wstgIds": [
+        "WSTG-INFO-08",
+        "WSTG-INPV-18"
+      ]
+    },
+    {
+      "technology": "Express",
+      "wstgIds": [
+        "WSTG-INFO-08",
+        "WSTG-CONF-02"
+      ]
+    },
+    {
+      "technology": "Bootstrap",
+      "wstgIds": [
+        "WSTG-INFO-08"
+      ]
+    },
+    {
+      "technology": "MySQL",
+      "wstgIds": [
+        "WSTG-INPV-05",
+        "WSTG-CONF-02"
+      ]
+    },
+    {
+      "technology": "PostgreSQL",
+      "wstgIds": [
+        "WSTG-INPV-05",
+        "WSTG-CONF-02"
+      ]
+    },
+    {
+      "technology": "MongoDB",
+      "wstgIds": [
+        "WSTG-INPV-05",
+        "WSTG-CONF-02"
+      ]
+    },
+    {
+      "technology": "Microsoft SQL Server",
+      "wstgIds": [
+        "WSTG-INPV-05",
+        "WSTG-CONF-02"
+      ]
+    },
+    {
+      "technology": "Redis",
+      "wstgIds": [
+        "WSTG-CONF-11",
+        "WSTG-CONF-02"
+      ]
+    },
+    {
+      "technology": "OpenSSL",
+      "wstgIds": [
+        "WSTG-CRYP-01"
+      ]
+    },
+    {
+      "technology": "jQuery UI",
+      "wstgIds": [
+        "WSTG-INFO-08",
+        "WSTG-CLNT-01"
+      ]
+    },
+    {
+      "technology": "Cloudflare",
+      "wstgIds": [
+        "WSTG-INFO-10",
+        "WSTG-CONF-01"
+      ]
+    },
+    {
+      "technology": "Amazon Web Services",
+      "wstgIds": [
+        "WSTG-CONF-11",
+        "WSTG-INPV-19"
+      ]
+    },
+    {
+      "technology": "Amazon S3",
+      "wstgIds": [
+        "WSTG-CONF-11"
+      ]
+    }
+  ]
+}

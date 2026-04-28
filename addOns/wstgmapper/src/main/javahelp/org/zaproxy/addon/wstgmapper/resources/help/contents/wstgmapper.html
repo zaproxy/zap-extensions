@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>WSTG Mapper</TITLE>
+</HEAD>
+<BODY>
+<H1>WSTG Mapper</H1>
+
+<p>
+WSTG Mapper provides a compliance dashboard that automatically maps ZAP alerts to the
+<a href="https://owasp.org/www-project-web-security-testing-guide/">OWASP Web Security Testing Guide (WSTG)</a>
+coverage, giving testers a persistent, session-backed view of their testing progress.
+</p>
+
+<H2>Status Panel</H2>
+<p>
+The WSTG Mapper panel appears in the ZAP status bar. It displays all WSTG test cases grouped by
+category, showing which tests have been triggered by ZAP alerts and allowing testers to manually
+track their status.
+</p>
+
+<H2>Coverage Tracking</H2>
+<p>
+ZAP alerts are automatically matched against the bundled alert-to-WSTG mapping. When an alert is
+raised, the corresponding WSTG test is marked as triggered. The coverage summary at the top of the
+panel shows the percentage of categories fully covered.
+</p>
+
+<H2>Test Statuses</H2>
+<p>Each WSTG test can be set to one of the following statuses:</p>
+<ul>
+  <li><b>Not Tested</b> - Default state; the test has not been assessed.</li>
+  <li><b>Passed</b> - The test was assessed and the application passed.</li>
+  <li><b>Failed</b> - The test was assessed and a vulnerability was found.</li>
+  <li><b>Manual Review</b> - The test requires manual review and cannot be automated.</li>
+  <li><b>Not Applicable</b> - The test does not apply to the target application.</li>
+</ul>
+
+<H2>Notes</H2>
+<p>
+Each test has a free-text notes field in the detail panel. Notes are saved automatically when you
+move to another test and are persisted with the ZAP session.
+</p>
+
+<H2>Filtering and Search</H2>
+<p>
+The panel toolbar provides filters by status, trigger state, and technology stack, as well as a
+free-text search across test IDs and names.
+</p>
+
+<H2>Export</H2>
+<p>
+Coverage reports can be exported as Markdown or CSV from the toolbar. Individual categories can
+also be exported via the right-click context menu.
+</p>
+
+<H2>Session Persistence</H2>
+<p>
+All statuses and notes are saved in a sidecar file alongside the ZAP session file
+(<code>.session.wstgmapper.xml</code>). When a saved session is opened, the checklist state is
+automatically restored.
+</p>
+
+</BODY>
+</HTML>
