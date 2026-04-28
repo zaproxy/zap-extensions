@@ -28,6 +28,7 @@ public class McpParam extends VersionedAbstractParam {
     private static final String MCP_KEY = "mcp";
 
     private static final String CONFIG_VERSION_KEY = MCP_KEY + VERSION_ATTRIBUTE;
+    private static final String ENABLED_KEY = MCP_KEY + ".enabled";
     private static final String PORT_KEY = MCP_KEY + ".port";
     private static final String SECURITY_KEY_ENABLED_KEY = MCP_KEY + ".securityKeyEnabled";
     private static final String SECURITY_KEY_KEY = MCP_KEY + ".securityKey";
@@ -44,6 +45,7 @@ public class McpParam extends VersionedAbstractParam {
     /** Default port for the MCP HTTP listener. */
     public static final int DEFAULT_PORT = 8282;
 
+    private boolean enabled = true;
     private int port = DEFAULT_PORT;
     private boolean securityKeyEnabled = true;
     private String securityKey;
@@ -69,6 +71,7 @@ public class McpParam extends VersionedAbstractParam {
 
     @Override
     protected void parseImpl() {
+        enabled = getBoolean(ENABLED_KEY, true);
         port = getInt(PORT_KEY, DEFAULT_PORT);
         securityKeyEnabled = getBoolean(SECURITY_KEY_ENABLED_KEY, true);
         securityKey = getString(SECURITY_KEY_KEY, null);
@@ -87,6 +90,15 @@ public class McpParam extends VersionedAbstractParam {
             sb.append(KEY_CHARS.charAt(random.nextInt(KEY_CHARS.length())));
         }
         return sb.toString();
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+        getConfig().setProperty(ENABLED_KEY, enabled);
     }
 
     public int getPort() {

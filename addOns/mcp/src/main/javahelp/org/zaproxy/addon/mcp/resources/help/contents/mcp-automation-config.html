@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+MCP Automation Framework - mcp-config Job
+</TITLE>
+</HEAD>
+<BODY>
+<H1>MCP Automation Framework - mcp-config Job</H1>
+
+The <code>mcp-config</code> job configures the MCP server as part of an Automation Framework plan.
+It runs in the <code>CONFIGS</code> phase, before any exploration or attack jobs.
+
+<p>
+Any parameter not specified in the YAML is left at its current value - you only need to include
+the options you want to change.
+
+<H2>Job: mcp-config</H2>
+
+<pre>
+  - type: mcp-config                   # Configure the MCP server
+    parameters:
+      enabled:                         # Bool: Enable the MCP server, default: true
+      port:                            # Int: Port for the MCP HTTP listener, default: 8282
+      securityKeyEnabled:              # Bool: Require a security key in the Authorization header, default: true
+      securityKey:                     # String: The security key value (leave blank to keep the current key)
+</pre>
+
+<H2>Parameters</H2>
+
+<H3>enabled</H3>
+Whether the MCP server should be running.
+Set to <code>false</code> to disable the server entirely.
+Default: <code>true</code>
+
+<H3>port</H3>
+The port the MCP HTTP listener runs on.
+Valid range: 1 to 65535.
+Default: <code>8282</code>
+
+<H3>securityKeyEnabled</H3>
+When <code>true</code>, all MCP requests must include the security key in the
+<code>Authorization</code> header.
+Default: <code>true</code>
+
+<H3>securityKey</H3>
+The value of the security key. Leave blank (or omit) to keep the currently configured key.
+
+<H2>See Also</H2>
+<ul>
+<li><a href="mcp-automation.html">MCP Automation</a> - Automation Framework support overview</li>
+<li><a href="mcp-automation-import.html">mcp-import Job</a> - Import an external MCP server</li>
+<li><a href="mcp-options.html">Options</a> - Configure MCP via the UI</li>
+</ul>
+
+</BODY>
+</HTML>

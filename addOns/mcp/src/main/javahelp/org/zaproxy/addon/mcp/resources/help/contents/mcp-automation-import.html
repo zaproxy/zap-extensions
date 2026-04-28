@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+MCP Automation Framework - mcp-import Job
+</TITLE>
+</HEAD>
+<BODY>
+<H1>MCP Automation Framework - mcp-import Job</H1>
+
+The <code>mcp-import</code> job probes an external MCP server and records all of its accessible
+endpoints (initialize, tools, resources, prompts) in the ZAP history and sites tree.
+It runs in the <code>EXPLORE</code> phase.
+
+<p>
+For each discovered tool, resource, and prompt the job sends a representative request so that
+ZAP captures the full JSON-RPC structure. This allows the requests to be scanned and fuzzed
+like any other traffic.
+
+<H2>Job: mcp-import</H2>
+
+<pre>
+  - type: mcp-import                   # Import an MCP server into ZAP history and sites tree
+    parameters:
+      serverUrl:                       # String: URL of the MCP server (e.g. http://localhost:8282), required
+      securityKey:                     # String: Optional security key sent in the Authorization header
+</pre>
+
+<H2>Parameters</H2>
+
+<H3>serverUrl</H3>
+The URL of the MCP server to import. Must be a valid <code>http://</code> or <code>https://</code>
+URL. This parameter is required.
+
+<H3>securityKey</H3>
+If the MCP server requires authentication, provide the full value to send as the
+<code>Authorization</code> header on every request. For servers that use Bearer tokens,
+include the <code>Bearer </code> prefix — for example, <code>Bearer abc123</code>. ZAP sends
+the value exactly as entered. Leave blank if the server does not require a key.
+
+<H2>See Also</H2>
+<ul>
+<li><a href="mcp-automation.html">MCP Automation</a> - Automation Framework support overview</li>
+<li><a href="mcp-automation-config.html">mcp-config Job</a> - Configure the MCP server</li>
+<li><a href="mcp.html">MCP Server</a> - Overview of the add-on</li>
+</ul>
+
+</BODY>
+</HTML>
