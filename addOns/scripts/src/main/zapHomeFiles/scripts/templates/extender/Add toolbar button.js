@@ -25,11 +25,9 @@ function install(helper) {
     button.setIcon(org.zaproxy.zap.utils.DisplayUtils.getScaledIcon(
        new imageicon(org.zaproxy.zap.ZAP.class.getResource("/resource/icon/16/035.png"))));
     button.setToolTipText("An example button");
-    button.addActionListener(new java.awt.event.ActionListener() {
-        actionPerformed: function(event) {
-            print("Example button pressed");
-            create_window();
-        }
+    button.addActionListener(function(event) {
+      print("Example button pressed");
+      create_window();
     });
     helper.getView().addMainToolbarButton(button)
   }

@@ -15,7 +15,7 @@ const RESOURCE_URI = "zap://example-resource";
 const NAME = "example-resource";
 
 function newResource() {
-  return new (Java.extend(McpResource)) {
+  return new (Java.extend(McpResource))({
     getUri: function() {
       return RESOURCE_URI;
     },
@@ -37,7 +37,7 @@ function newResource() {
       content.put("timestamp", new Date().toISOString());
       return content.toString();
     }
-  };
+  });
 }
 
 /**
