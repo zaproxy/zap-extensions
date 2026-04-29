@@ -190,6 +190,9 @@ public class ClientSpiderJob extends AutomationJob {
         if (parameters.getLogoutAvoidance() != null) {
             options.setLogoutAvoidance(parameters.getLogoutAvoidance());
         }
+        if (parameters.getActionWaitTime() != null) {
+            options.setActionWaitTimeInSecs(parameters.getActionWaitTime());
+        }
         return options;
     }
 
@@ -296,6 +299,7 @@ public class ClientSpiderJob extends AutomationJob {
         private Integer shutdownTime = ClientOptions.DEFAULT_SHUTDOWN_TIME;
         private String scopeCheck = ScopeCheck.getDefault().toString();
         private Boolean logoutAvoidance = ClientOptions.DEFAULT_LOGOUT_AVOIDANCE;
+        private Integer actionWaitTime = ClientOptions.DEFAULT_ACTION_WAIT_TIME;
 
         public Parameters() {}
     }
