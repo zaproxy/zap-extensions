@@ -2,10 +2,14 @@
  * Hat tip to https://github.com/albinowax/ActiveScanPlusPlus/blob/master/src/burp/SuspectTransform.java.
  */
 
-const ScanRuleMetadata = Java.type("org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadata");
+const ScanRuleMetadata = Java.type(
+  "org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadata",
+);
 const CommonAlertTag = Java.type("org.zaproxy.addon.commonlib.CommonAlertTag");
 const PolicyTag = Java.type("org.zaproxy.addon.commonlib.PolicyTag");
-const RandomStringUtils = Java.type("org.apache.commons.lang3.RandomStringUtils");
+const RandomStringUtils = Java.type(
+  "org.apache.commons.lang3.RandomStringUtils",
+);
 const RandomUtils = Java.type("org.apache.commons.lang3.RandomUtils");
 const CHECK_CONFIRM_COUNT = 2;
 const SCAN_RULE_ID = "100044";
@@ -98,7 +102,7 @@ const inputTransformationChecks = [
         attackPayload: leftAnchor + "''" + rightAnchor,
         expectedTransformedValues: [leftAnchor + "'" + rightAnchor],
       };
-    }
+    },
   },
   {
     // Arithmetic Evaluation
@@ -109,7 +113,7 @@ const inputTransformationChecks = [
         attackPayload: nums.x + "*" + nums.y,
         expectedTransformedValues: [nums.product.toString()],
       };
-    }
+    },
   },
   {
     // Expression Evaluation
@@ -120,7 +124,7 @@ const inputTransformationChecks = [
         attackPayload: "${" + nums.x + "*" + nums.y + "}",
         expectedTransformedValues: [nums.product.toString()],
       };
-    }
+    },
   },
   {
     // Template Evaluation
@@ -131,7 +135,7 @@ const inputTransformationChecks = [
         attackPayload: "@(" + nums.x + "*" + nums.y + ")",
         expectedTransformedValues: [nums.product.toString()],
       };
-    }
+    },
   },
   {
     // EL Evaluation
@@ -142,7 +146,7 @@ const inputTransformationChecks = [
         attackPayload: "%{" + nums.x + "*" + nums.y + "}",
         expectedTransformedValues: [nums.product.toString()],
       };
-    }
+    },
   },
   {
     // Unicode Normalisation
@@ -154,7 +158,7 @@ const inputTransformationChecks = [
         attackPayload: leftAnchor + "\u212a" + rightAnchor,
         expectedTransformedValues: [leftAnchor + "K" + rightAnchor],
       };
-    }
+    },
   },
   {
     // URL Decoding Error
@@ -166,7 +170,7 @@ const inputTransformationChecks = [
         attackPayload: leftAnchor + "\u0391" + rightAnchor,
         expectedTransformedValues: [leftAnchor + "N\u0011" + rightAnchor],
       };
-    }
+    },
   },
   {
     // Unicode Byte Truncation
@@ -178,7 +182,7 @@ const inputTransformationChecks = [
         attackPayload: leftAnchor + "\uCF7B" + rightAnchor,
         expectedTransformedValues: [leftAnchor + "{" + rightAnchor],
       };
-    }
+    },
   },
   {
     // Unicode Case Conversion
@@ -190,7 +194,7 @@ const inputTransformationChecks = [
         attackPayload: leftAnchor + "\u0131" + rightAnchor,
         expectedTransformedValues: [leftAnchor + "I" + rightAnchor],
       };
-    }
+    },
   },
   {
     // Unicode Combining Diacritic
@@ -201,7 +205,7 @@ const inputTransformationChecks = [
         attackPayload: "\u0338" + rightAnchor,
         expectedTransformedValues: ["\u226F" + rightAnchor],
       };
-    }
+    },
   },
 ];
 

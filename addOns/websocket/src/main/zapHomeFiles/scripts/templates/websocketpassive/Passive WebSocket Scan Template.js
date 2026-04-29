@@ -6,7 +6,7 @@ OPCODE_TEXT = 0x1;
 OPCODE_BINARY = 0x2;
 OPCODE_CLOSE = 0x8;
 OPCODE_PING = 0x9;
-OPCODE_PONG = 0xA;
+OPCODE_PONG = 0xa;
 
 RISK_INFO = 0;
 RISK_LOW = 1;
@@ -56,27 +56,26 @@ CONFIDENCE_HIGH = 3;
  * * channel.port       -> Port where the channel is connected at. Usually at 80 or 443.
  * * channel.url        -> URL used in HTTP handshake (String).
  */
-function scan(helper,msg) {
+function scan(helper, msg) {
+  if (msg.getOpcode() != OPCODE_TEXT || msg.isOutgoing()) {
+    return;
+  }
 
-    if(msg.getOpcode() != OPCODE_TEXT || msg.isOutgoing()){
-        return;
-    }
+  // Test the request or response here
+  print(msg.getReadablePayload());
 
-    // Test the request or response here
-    print(msg.getReadablePayload());
-
-    if(true){
-        helper.newAlert()
-            .setRiskConfidence(RISK_INFO, CONFIDENCE_LOW)
-            .setName("Name of the alert")
-            .setDescription("Description of the Alert.")
-            .setParam("Parameter of the Alert.")
-            .setSolution("Solution of the Alert.")
-            .setReference("Reference of the Alert.")
-            .setEvidence("Evidence of the Alert")
-            .setCweId(0)
-            .setWascId(0)
-            .raise();
-    }
+  if (true) {
+    helper
+      .newAlert()
+      .setRiskConfidence(RISK_INFO, CONFIDENCE_LOW)
+      .setName("Name of the alert")
+      .setDescription("Description of the Alert.")
+      .setParam("Parameter of the Alert.")
+      .setSolution("Solution of the Alert.")
+      .setReference("Reference of the Alert.")
+      .setEvidence("Evidence of the Alert")
+      .setCweId(0)
+      .setWascId(0)
+      .raise();
+  }
 }
-

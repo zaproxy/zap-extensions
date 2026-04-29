@@ -254,7 +254,6 @@ function extractVersion(body) {
     /swashbuckleconfig[^\d]{0,50}(\d+\.\d+\.\d+)/i,
     /swagger\s*ui[^\d]{0,50}v?(\d+\.\d+\.\d+)/i,
     /swaggerui[^\n\r]{0,80}?version\s*[:=]\s*["']?(\d+\.\d+\.\d+)/i,
-
   ];
 
   for (let i = 0; i < patterns.length; i++) {
@@ -273,11 +272,10 @@ function isLikelySwaggerUIContext(body) {
     lower.includes("swagger-ui-bundle.js") ||
     lower.includes("swaggeruistandalonepreset") ||
     lower.includes("swagger-ui-standalone-preset.js") ||
-    lower.includes("swaggerui") ||           // matches SwaggerUi
+    lower.includes("swaggerui") || // matches SwaggerUi
     lower.includes("window.swaggerui") ||
     lower.includes("swashbuckleconfig")
   );
-
 }
 
 function isVersionNearSwagger(body, version) {
@@ -487,7 +485,6 @@ function scanPath(as, origMsg, scheme, host, port, pathOnly, fullPath) {
   }
   detectSecrets(as, requestMsg, fullPath, body);
 }
-
 
 function detectSecrets(as, requestMsg, fullPath, body) {
   const matches = {};

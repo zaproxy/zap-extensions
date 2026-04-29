@@ -15,6 +15,10 @@ netty = "4.1.100.Final"
 re2j = "1.8"
 slf4j = "2.0.17"
 
+# JS formatting/runtime tooling (not Gradle/Maven dependencies)
+node = "24.15.0"
+prettier = "3.8.3"
+
 [libraries]
 ascanrules-procyonCompilerTools = "org.bitbucket.mstrobel:procyon-compilertools:0.6.0"
 ascanrules-rhino = "org.mozilla:rhino:1.9.1"

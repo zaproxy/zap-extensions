@@ -2,14 +2,14 @@
 // Extender scripts allow you to add completely new functionality to ZAP.
 // The install function is called when the script is enabled and the uninstall function when it is disabled.
 // Any functionality added in the install function should be removed in the uninstall method.
-// See the other templates for examples on how to do add different functionality. 
+// See the other templates for examples on how to do add different functionality.
 
 // Script variable to use when uninstalling
-var menuitem
+var menuitem;
 
 /**
  * This function is called when the script is enabled.
- * 
+ *
  * @param helper - a helper class which provides 2 methods:
  *		getView() this returns a View object which provides an easy way to add graphical elements.
  *		It will be null is ZAP is running in daemon mode.
@@ -20,24 +20,29 @@ function install(helper) {
   if (helper.getView()) {
     var jmenuitem = Java.type("javax.swing.JMenuItem");
     menuitem = new jmenuitem("A menu item");
-    menuitem.addActionListener(function(event) {
+    menuitem.addActionListener(function (event) {
       print("Example menu selected");
-      ans = helper.getView().showYesNoCancelDialog('Are you sure?')
+      ans = helper.getView().showYesNoCancelDialog("Are you sure?");
       if (ans == 0) {
-        print("Yes, they really mean it :)")
+        print("Yes, they really mean it :)");
       } else if (ans == 1) {
-        print("No, they're not sure :(")
+        print("No, they're not sure :(");
       } else if (ans == 2) {
-        print("They canceled :/")
+        print("They canceled :/");
       }
     });
-    helper.getView().getMainFrame().getMainMenuBar().getMenuTools().add(menuitem);
+    helper
+      .getView()
+      .getMainFrame()
+      .getMainMenuBar()
+      .getMenuTools()
+      .add(menuitem);
   }
 }
 
 /**
  * This function is called when the script is disabled.
- * 
+ *
  * @param helper - a helper class which provides 2 methods:
  *		getView() this returns a View object which provides an easy way to add graphical elements.
  *		It will be null is ZAP is running in daemon mode.
@@ -45,6 +50,11 @@ function install(helper) {
  */
 function uninstall(helper) {
   if (helper.getView()) {
-    helper.getView().getMainFrame().getMainMenuBar().getMenuTools().remove(menuitem);
+    helper
+      .getView()
+      .getMainFrame()
+      .getMainMenuBar()
+      .getMenuTools()
+      .remove(menuitem);
   }
 }

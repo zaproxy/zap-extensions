@@ -9,6 +9,6 @@
  * @param {String} value - The input value
  * @returns {EncodeDecodeResult} - The value that was encoded/decoded/hashed etc. easiest via helper.newResult(result).
  */
-function process(helper, value){
-	return helper.newResult(value);
+function process(helper, value) {
+  return helper.newResult(value);
 }
