@@ -21,10 +21,13 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.PolicyTag;
 
@@ -68,5 +71,19 @@ class ProxyDisclosureScanRuleUnitTest extends ActiveScannerTest<ProxyDisclosureS
         assertThat(
                 tags.get(CommonAlertTag.SYSTEMIC.getTag()),
                 is(equalTo(CommonAlertTag.SYSTEMIC.getValue())));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlerts() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts, hasSize(2));
+        Alert highRiskAlert = alerts.get(0);
+        assertThat(highRiskAlert.getRisk(), is(equalTo(Alert.RISK_HIGH)));
+        assertThat(highRiskAlert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        Alert mediumRiskAlert = alerts.get(1);
+        assertThat(mediumRiskAlert.getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
+        assertThat(mediumRiskAlert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
     }
 }

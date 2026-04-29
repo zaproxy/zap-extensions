@@ -39,6 +39,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
+import org.parosproxy.paros.core.scanner.AbstractPlugin.AlertBuilder;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HtmlParameter;
@@ -668,105 +669,9 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin implements Common
             // nodes.
             if (step2numberOfNodes > 1 || silentProxySet.size() > 0) {
                 // bingo with the list of nodes (proxies+origin web server) that we detected.
-                String unknown = Constant.messages.getString(MESSAGE_PREFIX + "extrainfo.unknown");
-                String proxyServerHeader =
-                        Constant.messages.getString(
-                                MESSAGE_PREFIX + "extrainfo.proxyserver.header");
-                String webServerHeader =
-                        Constant.messages.getString(MESSAGE_PREFIX + "extrainfo.webserver.header");
-                String silentProxyServerHeader =
-                        Constant.messages.getString(
-                                MESSAGE_PREFIX + "extrainfo.silentproxyserver.header");
-
-                // get the proxy server information (ie, all but the last node)
-                String proxyServerInfo = "";
-                if (step2numberOfNodes > 0) {
-                    StringBuilder sb = new StringBuilder();
-                    sb.append(proxyServerHeader);
-                    sb.append("\n");
-                    for (int nodei = 0; nodei < step2numberOfNodes - 1; nodei++) {
-                        String proxyServerNode =
-                                Constant.messages.getString(
-                                        MESSAGE_PREFIX + "extrainfo.proxyserver",
-                                        (!nodeServers[nodei].equals("")
-                                                ? nodeServers[nodei]
-                                                : unknown));
-                        sb.append(proxyServerNode);
-                        sb.append("\n");
-                    }
-                    proxyServerInfo = sb.toString();
-                }
-                // get the origin web server information (ie, the last node)
-                String webServerInfo = "";
-                if (step2numberOfNodes > 0) {
-                    StringBuilder sb = new StringBuilder();
-                    sb.append(webServerHeader);
-                    sb.append("\n");
-                    String webServerNode =
-                            Constant.messages.getString(
-                                    MESSAGE_PREFIX + "extrainfo.webserver",
-                                    (!nodeServers[step2numberOfNodes - 1].equals("")
-                                            ? nodeServers[step2numberOfNodes - 1]
-                                            : unknown));
-                    sb.append(webServerNode);
-                    sb.append("\n");
-                    webServerInfo = sb.toString();
-                }
-                // get the silent proxy information
-                String silentProxyServerInfo = "";
-                if (silentProxySet.size() > 0) {
-                    StringBuilder sb = new StringBuilder();
-                    sb.append(silentProxyServerHeader);
-                    sb.append("\n");
-                    for (String silentServer : silentProxySet) {
-                        // LOGGER.debug("Silent Proxy: {}",
-                        // (!silentServer.equals("")?silentServer:"Unknown"));
-                        String silentProxyServerNode =
-                                Constant.messages.getString(
-                                        MESSAGE_PREFIX + "extrainfo.silentproxyserver",
-                                        (!silentServer.equals("") ? silentServer : unknown));
-                        sb.append(silentProxyServerNode);
-                        sb.append("\n");
-                    }
-                    silentProxyServerInfo = sb.toString();
-                }
-                String traceInfo = "";
-                if (endToEndTraceEnabled || proxyTraceEnabled) {
-                    traceInfo =
-                            Constant.messages.getString(MESSAGE_PREFIX + "extrainfo.traceenabled");
-                }
-
-                // all the info is collated nicely. raise the alert.
-                String extraInfo = "";
-                if (!proxyServerInfo.equals("")) {
-                    extraInfo += proxyServerInfo;
-                }
-                if (!webServerInfo.equals("")) {
-                    extraInfo += webServerInfo;
-                }
-                if (!silentProxyServerInfo.equals("")) {
-                    extraInfo += silentProxyServerInfo;
-                }
-                if (!traceInfo.equals("")) {
-                    extraInfo += traceInfo;
-                }
-
-                // raise the alert on the original message
-                // there are multiple messages on which the issue could have been raised, but each
-                // individual attack message
-                // tells only a small part of the story. Explain it in the "extra info" instead.
-                newAlert()
-                        .setRisk(
-                                endToEndTraceEnabled || proxyTraceEnabled
-                                        ? Alert.RISK_HIGH
-                                        : getRisk())
-                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                        .setDescription(
-                                Constant.messages.getString(
-                                        MESSAGE_PREFIX + "desc",
-                                        step2numberOfNodes - 1 + silentProxySet.size()))
-                        .setAttack(getAttack())
-                        .setOtherInfo(extraInfo)
+                boolean traceEnabled = endToEndTraceEnabled || proxyTraceEnabled;
+                buildProxyDisclosureAlert(
+                                step2numberOfNodes, nodeServers, silentProxySet, traceEnabled)
                         .setMessage(getBaseMsg())
                         .raise();
             }
@@ -776,6 +681,84 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin implements Common
             // if it's in English, it's still better than not having it at all.
             LOGGER.debug("An error occurred checking for proxy disclosure", e);
         }
+    }
+
+    private AlertBuilder buildProxyDisclosureAlert(
+            int step2numberOfNodes,
+            String[] nodeServers,
+            Set<String> silentProxySet,
+            boolean traceEnabled) {
+        int proxyCountForDescription = step2numberOfNodes - 1 + silentProxySet.size();
+        String unknown = Constant.messages.getString(MESSAGE_PREFIX + "extrainfo.unknown");
+        StringBuilder otherInfo = new StringBuilder();
+        if (step2numberOfNodes > 0) {
+            otherInfo
+                    .append(
+                            Constant.messages.getString(
+                                    MESSAGE_PREFIX + "extrainfo.proxyserver.header"))
+                    .append('\n');
+            for (int nodei = 0; nodei < step2numberOfNodes - 1; nodei++) {
+                otherInfo
+                        .append(
+                                Constant.messages.getString(
+                                        MESSAGE_PREFIX + "extrainfo.proxyserver",
+                                        nodeServers[nodei].equals("")
+                                                ? unknown
+                                                : nodeServers[nodei]))
+                        .append('\n');
+            }
+            otherInfo
+                    .append(
+                            Constant.messages.getString(
+                                    MESSAGE_PREFIX + "extrainfo.webserver.header"))
+                    .append('\n')
+                    .append(
+                            Constant.messages.getString(
+                                    MESSAGE_PREFIX + "extrainfo.webserver",
+                                    nodeServers[step2numberOfNodes - 1].equals("")
+                                            ? unknown
+                                            : nodeServers[step2numberOfNodes - 1]))
+                    .append('\n');
+        }
+        if (silentProxySet.size() > 0) {
+            otherInfo
+                    .append(
+                            Constant.messages.getString(
+                                    MESSAGE_PREFIX + "extrainfo.silentproxyserver.header"))
+                    .append('\n');
+            for (String silentServer : silentProxySet) {
+                otherInfo
+                        .append(
+                                Constant.messages.getString(
+                                        MESSAGE_PREFIX + "extrainfo.silentproxyserver",
+                                        silentServer.equals("") ? unknown : silentServer))
+                        .append('\n');
+            }
+        }
+        if (traceEnabled) {
+            otherInfo.append(
+                    Constant.messages.getString(MESSAGE_PREFIX + "extrainfo.traceenabled"));
+        }
+        return newAlert()
+                .setAlertRef(getId() + (traceEnabled ? "-1" : "-2"))
+                .setRisk(traceEnabled ? Alert.RISK_HIGH : getRisk())
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(
+                        Constant.messages.getString(
+                                MESSAGE_PREFIX + "desc", proxyCountForDescription))
+                .setAttack(getAttack())
+                .setOtherInfo(otherInfo.toString());
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        String[] exampleNodeServers = new String[] {"nginx/1.22", "Apache/2.4.58"};
+        int exampleStep2Nodes = exampleNodeServers.length;
+        return List.of(
+                buildProxyDisclosureAlert(exampleStep2Nodes, exampleNodeServers, Set.of(), true)
+                        .build(),
+                buildProxyDisclosureAlert(exampleStep2Nodes, exampleNodeServers, Set.of(), false)
+                        .build());
     }
 
     private static String randomAlphanumeric(int count) {
