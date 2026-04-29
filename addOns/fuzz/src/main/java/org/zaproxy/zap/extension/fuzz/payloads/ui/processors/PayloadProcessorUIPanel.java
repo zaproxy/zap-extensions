@@ -20,22 +20,20 @@
 package org.zaproxy.zap.extension.fuzz.payloads.ui.processors;
 
 import javax.swing.JPanel;
-import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.PayloadProcessor;
 import org.zaproxy.zap.model.MessageLocation;
 
-public interface PayloadProcessorUIPanel<
-        T extends Payload, T2 extends PayloadProcessor<T>, T3 extends PayloadProcessorUI<T, T2>> {
+public interface PayloadProcessorUIPanel {
 
     JPanel getComponent();
 
     void init(MessageLocation messageLocation);
 
-    void setPayloadProcessorUI(T3 payloadProcessorUI);
+    void setPayloadProcessorUI(PayloadProcessorUI payloadProcessorUI);
 
-    T3 getPayloadProcessorUI();
+    PayloadProcessorUI getPayloadProcessorUI();
 
-    T2 getPayloadProcessor();
+    PayloadProcessor getPayloadProcessor();
 
     void clear();
 

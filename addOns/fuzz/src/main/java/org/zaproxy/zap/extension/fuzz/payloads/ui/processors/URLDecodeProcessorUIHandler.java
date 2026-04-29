@@ -22,14 +22,11 @@ package org.zaproxy.zap.extension.fuzz.payloads.ui.processors;
 import java.nio.charset.Charset;
 import javax.swing.JPanel;
 import org.parosproxy.paros.Constant;
-import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.URLDecodeProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.AbstractCharsetProcessorUIPanel.AbstractCharsetProcessorUI;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.URLDecodeProcessorUIHandler.URLDecodeProcessorUI;
 
-public class URLDecodeProcessorUIHandler
-        implements PayloadProcessorUIHandler<
-                DefaultPayload, URLDecodeProcessor, URLDecodeProcessorUI> {
+public class URLDecodeProcessorUIHandler implements PayloadProcessorUIHandler {
 
     private static final String PROCESSOR_NAME =
             Constant.messages.getString("fuzz.payload.processor.urlDecode.name");
@@ -54,16 +51,10 @@ public class URLDecodeProcessorUIHandler
         return new URLDecodeProcessorUIPanel();
     }
 
-    public static class URLDecodeProcessorUI
-            extends AbstractCharsetProcessorUI<DefaultPayload, URLDecodeProcessor> {
+    public static class URLDecodeProcessorUI extends AbstractCharsetProcessorUI {
 
         public URLDecodeProcessorUI(Charset charset) {
             super(charset);
-        }
-
-        @Override
-        public Class<URLDecodeProcessor> getPayloadProcessorClass() {
-            return URLDecodeProcessor.class;
         }
 
         @Override
@@ -93,9 +84,7 @@ public class URLDecodeProcessorUIHandler
         }
     }
 
-    public static class URLDecodeProcessorUIPanel
-            extends AbstractCharsetProcessorUIPanel<
-                    DefaultPayload, URLDecodeProcessor, URLDecodeProcessorUI> {
+    public static class URLDecodeProcessorUIPanel extends AbstractCharsetProcessorUIPanel {
 
         private JPanel fieldsPanel;
 

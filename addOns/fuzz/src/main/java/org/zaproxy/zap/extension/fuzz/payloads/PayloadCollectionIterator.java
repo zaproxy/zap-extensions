@@ -23,13 +23,12 @@ import java.util.Collection;
 import java.util.Iterator;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
-public class PayloadCollectionIterator<E extends Payload>
-        implements ResettableAutoCloseableIterator<E> {
+public class PayloadCollectionIterator implements ResettableAutoCloseableIterator<Payload> {
 
-    private final Collection<E> payloads;
-    private Iterator<E> payloadIterator;
+    private final Collection<Payload> payloads;
+    private Iterator<Payload> payloadIterator;
 
-    public PayloadCollectionIterator(Collection<E> payloads) {
+    public PayloadCollectionIterator(Collection<Payload> payloads) {
         this.payloads = payloads;
 
         initIterator();
@@ -45,7 +44,7 @@ public class PayloadCollectionIterator<E extends Payload>
     }
 
     @Override
-    public E next() {
+    public Payload next() {
         return payloadIterator.next();
     }
 

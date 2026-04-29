@@ -186,7 +186,7 @@ public class ExtensionFuzz extends ExtensionAdaptor {
         return new FuzzerPayloadCategory(
                 getMessages().getString("fuzz.category.custom"),
                 getMessages().getString("fuzz.category.custom"),
-                Collections.<FuzzerPayloadCategory>emptyList(),
+                Collections.emptyList(),
                 files);
     }
 
@@ -211,7 +211,7 @@ public class ExtensionFuzz extends ExtensionAdaptor {
                     new FuzzerPayloadCategory(
                             categoryName,
                             createSubCategoryFullName(subCategoryNames),
-                            Collections.<FuzzerPayloadCategory>emptyList(),
+                            Collections.emptyList(),
                             fuzzerSources));
             subCategoryNames.remove(subCategoryNames.size() - 1);
         }
@@ -220,7 +220,7 @@ public class ExtensionFuzz extends ExtensionAdaptor {
                 JBROFUZZ_CATEGORY_PREFIX,
                 JBROFUZZ_CATEGORY_PREFIX,
                 fuzzerCategories,
-                Collections.<FuzzerPayloadSource>emptyList());
+                Collections.emptyList());
     }
 
     @Override
@@ -458,7 +458,7 @@ public class ExtensionFuzz extends ExtensionAdaptor {
     private void readFuzzersDir() {
         Path fuzzerDirectory = Paths.get(Constant.getInstance().FUZZER_DIR);
         if (!Files.isDirectory(fuzzerDirectory)) {
-            fuzzersDir = new FuzzersDir(Collections.<FuzzerPayloadCategory>emptyList());
+            fuzzersDir = new FuzzersDir(Collections.emptyList());
             return;
         }
 

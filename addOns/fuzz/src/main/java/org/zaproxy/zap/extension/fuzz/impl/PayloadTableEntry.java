@@ -21,36 +21,27 @@ package org.zaproxy.zap.extension.fuzz.impl;
 
 import java.util.Collections;
 import java.util.List;
-import org.zaproxy.zap.extension.fuzz.payloads.Payload;
-import org.zaproxy.zap.extension.fuzz.payloads.generator.PayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUI;
 import org.zaproxy.zap.utils.Orderable;
 
 public class PayloadTableEntry implements Orderable {
 
     private int order;
-    private PayloadGeneratorUI<? extends Payload, ? extends PayloadGenerator<? extends Payload>>
-            payloadGeneratorUI;
+    private PayloadGeneratorUI payloadGeneratorUI;
     private List<PayloadProcessorTableEntry> payloadProcessors;
 
-    public PayloadTableEntry(
-            int order,
-            PayloadGeneratorUI<? extends Payload, ? extends PayloadGenerator<? extends Payload>>
-                    payloadGeneratorUI) {
+    public PayloadTableEntry(int order, PayloadGeneratorUI payloadGeneratorUI) {
         this.order = order;
 
         this.payloadGeneratorUI = payloadGeneratorUI;
         this.payloadProcessors = Collections.emptyList();
     }
 
-    public void setPayloadGeneratorUI(
-            PayloadGeneratorUI<? extends Payload, ? extends PayloadGenerator<? extends Payload>>
-                    payloadGeneratorUI) {
+    public void setPayloadGeneratorUI(PayloadGeneratorUI payloadGeneratorUI) {
         this.payloadGeneratorUI = payloadGeneratorUI;
     }
 
-    public PayloadGeneratorUI<? extends Payload, ? extends PayloadGenerator<? extends Payload>>
-            getPayloadGeneratorUI() {
+    public PayloadGeneratorUI getPayloadGeneratorUI() {
         return payloadGeneratorUI;
     }
 

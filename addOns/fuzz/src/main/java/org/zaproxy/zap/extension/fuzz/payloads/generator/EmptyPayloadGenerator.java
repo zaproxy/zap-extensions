@@ -22,12 +22,12 @@ package org.zaproxy.zap.extension.fuzz.payloads.generator;
 import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
-public class EmptyPayloadGenerator<T extends Payload> implements PayloadGenerator<T> {
+public class EmptyPayloadGenerator implements PayloadGenerator {
 
-    private final T value;
+    private final Payload value;
     private final int numberOfPayloads;
 
-    public EmptyPayloadGenerator(T value, int numberOfPayloads) {
+    public EmptyPayloadGenerator(Payload value, int numberOfPayloads) {
         if (value == null) {
             throw new IllegalArgumentException("Parameter value must not be null.");
         }
@@ -46,23 +46,22 @@ public class EmptyPayloadGenerator<T extends Payload> implements PayloadGenerato
     }
 
     @Override
-    public ResettableAutoCloseableIterator<T> iterator() {
-        return new ValueRepeaterIterator<>(value, numberOfPayloads);
+    public ResettableAutoCloseableIterator<Payload> iterator() {
+        return new ValueRepeaterIterator(value, numberOfPayloads);
     }
 
     @Override
-    public PayloadGenerator<T> copy() {
+    public PayloadGenerator copy() {
         return this;
     }
 
-    private static class ValueRepeaterIterator<E extends Payload>
-            implements ResettableAutoCloseableIterator<E> {
+    private static class ValueRepeaterIterator implements ResettableAutoCloseableIterator<Payload> {
 
-        private final E value;
+        private final Payload value;
         private final int repeat;
         private int current;
 
-        public ValueRepeaterIterator(E value, int repeat) {
+        public ValueRepeaterIterator(Payload value, int repeat) {
             this.repeat = repeat;
             this.value = value;
         }
@@ -73,7 +72,7 @@ public class EmptyPayloadGenerator<T extends Payload> implements PayloadGenerato
         }
 
         @Override
-        public E next() {
+        public Payload next() {
             current++;
             return value;
         }

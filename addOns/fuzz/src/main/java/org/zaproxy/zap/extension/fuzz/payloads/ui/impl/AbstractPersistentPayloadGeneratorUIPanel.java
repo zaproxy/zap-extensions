@@ -41,16 +41,11 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.fuzz.ExtensionFuzz;
 import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.PayloadGenerator;
-import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUI;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUIPanel;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
-public abstract class AbstractPersistentPayloadGeneratorUIPanel<
-                T extends Payload,
-                T2 extends PayloadGenerator<T>,
-                T3 extends PayloadGeneratorUI<T, T2>>
-        implements PayloadGeneratorUIPanel<T, T2, T3> {
+public abstract class AbstractPersistentPayloadGeneratorUIPanel implements PayloadGeneratorUIPanel {
 
     private static final Logger LOGGER =
             LogManager.getLogger(AbstractPersistentPayloadGeneratorUIPanel.class);
@@ -80,7 +75,7 @@ public abstract class AbstractPersistentPayloadGeneratorUIPanel<
                                         "/resource/icon/16/096.png"))));
         saveButton.addActionListener(
                 e -> {
-                    T2 payloadGenerator = getPayloadGenerator();
+                    PayloadGenerator payloadGenerator = getPayloadGenerator();
                     if (payloadGenerator != null) {
                         Path file = getFile();
                         if (file != null) {
@@ -99,14 +94,14 @@ public abstract class AbstractPersistentPayloadGeneratorUIPanel<
         return fileNameDialogue.getSelectedFile().toPath();
     }
 
-    private void saveToFile(T2 payloadGenerator, Path file) {
+    private void saveToFile(PayloadGenerator payloadGenerator, Path file) {
         try (BufferedWriter bw =
                         Files.newBufferedWriter(
                                 file,
                                 StandardCharsets.UTF_8,
                                 StandardOpenOption.CREATE,
                                 StandardOpenOption.TRUNCATE_EXISTING);
-                ResettableAutoCloseableIterator<T> it = payloadGenerator.iterator()) {
+                ResettableAutoCloseableIterator<Payload> it = payloadGenerator.iterator()) {
             while (it.hasNext()) {
                 bw.write(it.next().getValue());
                 if (it.hasNext()) {
@@ -136,7 +131,7 @@ public abstract class AbstractPersistentPayloadGeneratorUIPanel<
         return "addon.fuzzer.payloads";
     }
 
-    protected abstract T2 getPayloadGenerator();
+    protected abstract PayloadGenerator getPayloadGenerator();
 
     private static class FileChooser extends JFileChooser {
 

@@ -25,16 +25,14 @@ import org.zaproxy.zap.model.MessageLocation;
 /**
  * A {@code MessageLocationReplacement} with a {@code Payload}.
  *
- * @param <T> the type of payloads used during replacement
  * @see MessageLocationReplacement
  */
-public class PayloadMessageLocationReplacement<T extends Payload>
-        implements MessageLocationReplacement<T> {
+public class PayloadMessageLocationReplacement implements MessageLocationReplacement<Payload> {
 
     private final MessageLocation messageLocation;
-    private final T payload;
+    private final Payload payload;
 
-    public PayloadMessageLocationReplacement(MessageLocation messageLocation, T payload) {
+    public PayloadMessageLocationReplacement(MessageLocation messageLocation, Payload payload) {
         this.messageLocation = messageLocation;
         this.payload = payload;
     }
@@ -45,7 +43,7 @@ public class PayloadMessageLocationReplacement<T extends Payload>
     }
 
     @Override
-    public T getReplacement() {
+    public Payload getReplacement() {
         return payload;
     }
 
@@ -73,7 +71,7 @@ public class PayloadMessageLocationReplacement<T extends Payload>
         if (getClass() != obj.getClass()) {
             return false;
         }
-        PayloadMessageLocationReplacement<?> other = (PayloadMessageLocationReplacement<?>) obj;
+        PayloadMessageLocationReplacement other = (PayloadMessageLocationReplacement) obj;
         if (messageLocation == null) {
             if (other.messageLocation != null) {
                 return false;

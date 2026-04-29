@@ -19,12 +19,9 @@
  */
 package org.zaproxy.zap.extension.fuzz.payloads.ui;
 
-import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.PayloadGenerator;
 
-public interface PayloadGeneratorUI<T extends Payload, T2 extends PayloadGenerator<T>> {
-
-    Class<? extends T2> getPayloadGeneratorClass();
+public interface PayloadGeneratorUI {
 
     String getName();
 
@@ -32,12 +29,12 @@ public interface PayloadGeneratorUI<T extends Payload, T2 extends PayloadGenerat
 
     long getNumberOfPayloads();
 
-    T2 getPayloadGenerator();
+    PayloadGenerator getPayloadGenerator();
 
     /**
      * Returns a copy of this UI payload.
      *
      * @return a new {@code PayloadUI} whose contents are equal to this UI payload.
      */
-    PayloadGeneratorUI<T, T2> copy();
+    PayloadGeneratorUI copy();
 }

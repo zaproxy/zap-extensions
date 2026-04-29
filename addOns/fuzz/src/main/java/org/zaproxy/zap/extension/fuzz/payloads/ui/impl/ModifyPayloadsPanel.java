@@ -47,8 +47,7 @@ import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 import org.zaproxy.zap.utils.ZapTextArea;
 
-public abstract class ModifyPayloadsPanel<
-        T extends Payload, T2 extends PayloadGenerator<T>, T3 extends PayloadGeneratorUI<T, T2>> {
+public abstract class ModifyPayloadsPanel {
 
     private final Logger LOGGER = LogManager.getLogger(getClass());
 
@@ -67,7 +66,7 @@ public abstract class ModifyPayloadsPanel<
     private boolean createTempFile;
     private boolean externalEditor;
 
-    private T3 payloadGeneratorUI;
+    private PayloadGeneratorUI payloadGeneratorUI;
 
     public ModifyPayloadsPanel(JButton saveButton) {
         this.fieldsPanel = new JPanel();
@@ -107,9 +106,9 @@ public abstract class ModifyPayloadsPanel<
                         .addComponent(saveButton));
     }
 
-    public abstract T2 getPayloadGenerator();
+    public abstract PayloadGenerator getPayloadGenerator();
 
-    public T3 getFileStringPayloadGeneratorUI() {
+    public PayloadGeneratorUI getFileStringPayloadGeneratorUI() {
         int numberOfPayloads = 0;
         if (externalEditor) {
             if (createTempFile) {
@@ -129,7 +128,7 @@ public abstract class ModifyPayloadsPanel<
         return createPayloadGeneratorUI(numberOfPayloads);
     }
 
-    protected abstract T3 createPayloadGeneratorUI(int numberOfPayloads);
+    protected abstract PayloadGeneratorUI createPayloadGeneratorUI(int numberOfPayloads);
 
     public boolean isValidForPersistence() {
         return saveButton.isEnabled();
@@ -187,14 +186,14 @@ public abstract class ModifyPayloadsPanel<
         return false;
     }
 
-    private boolean writeToFile(T2 payloadGenerator, Path file) {
+    private boolean writeToFile(PayloadGenerator payloadGenerator, Path file) {
         try (BufferedWriter bw =
                         Files.newBufferedWriter(
                                 file,
                                 StandardCharsets.UTF_8,
                                 StandardOpenOption.CREATE,
                                 StandardOpenOption.TRUNCATE_EXISTING);
-                ResettableAutoCloseableIterator<T> it = payloadGenerator.iterator()) {
+                ResettableAutoCloseableIterator<Payload> it = payloadGenerator.iterator()) {
             while (it.hasNext()) {
                 bw.write(it.next().getValue());
                 if (it.hasNext()) {
@@ -220,7 +219,7 @@ public abstract class ModifyPayloadsPanel<
         return file;
     }
 
-    protected T3 getPayloadGeneratorUI() {
+    protected PayloadGeneratorUI getPayloadGeneratorUI() {
         return payloadGeneratorUI;
     }
 
@@ -233,7 +232,8 @@ public abstract class ModifyPayloadsPanel<
         return payloadsTextArea;
     }
 
-    public void setPayloadGeneratorUI(T3 payloadGeneratorUI, boolean temporary, Path file) {
+    public void setPayloadGeneratorUI(
+            PayloadGeneratorUI payloadGeneratorUI, boolean temporary, Path file) {
         this.payloadGeneratorUI = payloadGeneratorUI;
         createTempFile = temporary;
         this.file = file;
@@ -316,10 +316,10 @@ public abstract class ModifyPayloadsPanel<
                                 "fuzz.payloads.generator.generic.edit.warnTooBig"));
     }
 
-    private void updatePayloadsTextArea(T2 fileStringPayloadGenerator) {
+    private void updatePayloadsTextArea(PayloadGenerator fileStringPayloadGenerator) {
         StringBuilder contents = new StringBuilder(2500);
         try {
-            try (ResettableAutoCloseableIterator<T> payloads =
+            try (ResettableAutoCloseableIterator<Payload> payloads =
                     fileStringPayloadGenerator.iterator()) {
                 while (payloads.hasNext()) {
                     if (contents.length() > 0) {
@@ -353,7 +353,7 @@ public abstract class ModifyPayloadsPanel<
     }
 
     protected static class TextAreaPayloadIterator
-            implements ResettableAutoCloseableIterator<DefaultPayload> {
+            implements ResettableAutoCloseableIterator<Payload> {
 
         private final JTextArea payloadsTextArea;
         private final int numberOfPayloads;
@@ -371,7 +371,7 @@ public abstract class ModifyPayloadsPanel<
         public void remove() {}
 
         @Override
-        public DefaultPayload next() {
+        public Payload next() {
             try {
                 int offset = payloadsTextArea.getLineStartOffset(line);
                 int length = payloadsTextArea.getLineEndOffset(line) - offset;

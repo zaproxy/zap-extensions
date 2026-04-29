@@ -30,7 +30,6 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.zaproxy.zap.extension.fuzz.ScriptUIEntry;
-import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.ScriptStringPayloadProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.ScriptStringPayloadProcessorAdapter;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.ScriptStringPayloadProcessorAdapterUIHandler.ScriptStringPayloadProcessorAdapterUI;
@@ -38,11 +37,7 @@ import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.utils.SortedComboBoxModel;
 
-public class ScriptStringPayloadProcessorAdapterUIHandler
-        implements PayloadProcessorUIHandler<
-                DefaultPayload,
-                ScriptStringPayloadProcessorAdapter,
-                ScriptStringPayloadProcessorAdapterUI> {
+public class ScriptStringPayloadProcessorAdapterUIHandler implements PayloadProcessorUIHandler {
 
     private static final Logger LOGGER =
             LogManager.getLogger(ScriptStringPayloadProcessorAdapterUIHandler.class);
@@ -77,8 +72,7 @@ public class ScriptStringPayloadProcessorAdapterUIHandler
                 extensionScript.getScripts(ScriptStringPayloadProcessor.TYPE_NAME));
     }
 
-    public static class ScriptStringPayloadProcessorAdapterUI
-            implements PayloadProcessorUI<DefaultPayload, ScriptStringPayloadProcessorAdapter> {
+    public static class ScriptStringPayloadProcessorAdapterUI implements PayloadProcessorUI {
 
         private final ScriptWrapper scriptWrapper;
 
@@ -88,11 +82,6 @@ public class ScriptStringPayloadProcessorAdapterUIHandler
 
         public ScriptWrapper getScriptWrapper() {
             return scriptWrapper;
-        }
-
-        @Override
-        public Class<ScriptStringPayloadProcessorAdapter> getPayloadProcessorClass() {
-            return ScriptStringPayloadProcessorAdapter.class;
         }
 
         @Override
@@ -122,10 +111,7 @@ public class ScriptStringPayloadProcessorAdapterUIHandler
     }
 
     public static class ScriptStringPayloadProcessorAdapterUIPanel
-            extends AbstractProcessorUIPanel<
-                    DefaultPayload,
-                    ScriptStringPayloadProcessorAdapter,
-                    ScriptStringPayloadProcessorAdapterUI> {
+            extends AbstractProcessorUIPanel {
 
         private static final String SCRIPT_FIELD_LABEL =
                 Constant.messages.getString("fuzz.payload.processor.script.script.label");
@@ -167,10 +153,13 @@ public class ScriptStringPayloadProcessorAdapterUIHandler
         }
 
         @Override
-        public void setPayloadProcessorUI(
-                ScriptStringPayloadProcessorAdapterUI payloadProcessorUI) {
-            scriptComboBox.setSelectedItem(
-                    new ScriptUIEntry(payloadProcessorUI.getScriptWrapper()));
+        public void setPayloadProcessorUI(PayloadProcessorUI payloadProcessorUI) {
+            if (!(payloadProcessorUI instanceof ScriptStringPayloadProcessorAdapterUI ui)) {
+                throw new IllegalArgumentException(
+                        "Expected ScriptStringPayloadProcessorAdapterUI but got: "
+                                + payloadProcessorUI.getClass());
+            }
+            scriptComboBox.setSelectedItem(new ScriptUIEntry(ui.getScriptWrapper()));
         }
 
         @Override

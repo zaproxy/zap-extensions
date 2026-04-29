@@ -20,20 +20,17 @@
 package org.zaproxy.zap.extension.fuzz.payloads.ui;
 
 import javax.swing.JPanel;
-import org.zaproxy.zap.extension.fuzz.payloads.Payload;
-import org.zaproxy.zap.extension.fuzz.payloads.generator.PayloadGenerator;
 import org.zaproxy.zap.model.MessageLocation;
 
-public interface PayloadGeneratorUIPanel<
-        T extends Payload, T2 extends PayloadGenerator<T>, T3 extends PayloadGeneratorUI<T, T2>> {
+public interface PayloadGeneratorUIPanel {
 
     void init(MessageLocation messageLocation);
 
     JPanel getComponent();
 
-    void setPayloadGeneratorUI(T3 payloadGeneratorUI);
+    void setPayloadGeneratorUI(PayloadGeneratorUI payloadGeneratorUI);
 
-    T3 getPayloadGeneratorUI();
+    PayloadGeneratorUI getPayloadGeneratorUI();
 
     void clear();
 

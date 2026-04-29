@@ -24,14 +24,11 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import org.parosproxy.paros.Constant;
-import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.PostfixStringProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.PostfixStringProcessorUIHandler.PostfixStringProcessorUI;
 import org.zaproxy.zap.utils.ZapTextField;
 
-public class PostfixStringProcessorUIHandler
-        implements PayloadProcessorUIHandler<
-                DefaultPayload, PostfixStringProcessor, PostfixStringProcessorUI> {
+public class PostfixStringProcessorUIHandler implements PayloadProcessorUIHandler {
 
     private static final String PROCESSOR_NAME =
             Constant.messages.getString("fuzz.payload.processor.postfixString.name");
@@ -56,8 +53,7 @@ public class PostfixStringProcessorUIHandler
         return new PostfixStringProcessorUIPanel();
     }
 
-    public static class PostfixStringProcessorUI
-            implements PayloadProcessorUI<DefaultPayload, PostfixStringProcessor> {
+    public static class PostfixStringProcessorUI implements PayloadProcessorUI {
 
         private final String value;
 
@@ -67,11 +63,6 @@ public class PostfixStringProcessorUIHandler
 
         public String getValue() {
             return value;
-        }
-
-        @Override
-        public Class<PostfixStringProcessor> getPayloadProcessorClass() {
-            return PostfixStringProcessor.class;
         }
 
         @Override
@@ -100,9 +91,7 @@ public class PostfixStringProcessorUIHandler
         }
     }
 
-    public static class PostfixStringProcessorUIPanel
-            extends AbstractProcessorUIPanel<
-                    DefaultPayload, PostfixStringProcessor, PostfixStringProcessorUI> {
+    public static class PostfixStringProcessorUIPanel extends AbstractProcessorUIPanel {
 
         private static final String VALUE_FIELD_LABEL =
                 Constant.messages.getString("fuzz.payload.processor.postfixString.value.label");
@@ -151,8 +140,13 @@ public class PostfixStringProcessorUIHandler
         }
 
         @Override
-        public void setPayloadProcessorUI(PostfixStringProcessorUI payloadProcessorUI) {
-            getValueTextField().setText(payloadProcessorUI.getValue());
+        public void setPayloadProcessorUI(PayloadProcessorUI payloadProcessorUI) {
+            if (!(payloadProcessorUI instanceof PostfixStringProcessorUI ui)) {
+                throw new IllegalArgumentException(
+                        "Expected PostfixStringProcessorUI but got: "
+                                + payloadProcessorUI.getClass());
+            }
+            getValueTextField().setText(ui.getValue());
         }
 
         @Override

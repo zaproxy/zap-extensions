@@ -23,8 +23,8 @@ import org.owasp.jbrofuzz.core.Database;
 import org.owasp.jbrofuzz.core.Fuzzer;
 import org.owasp.jbrofuzz.core.NoSuchFuzzerException;
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.PayloadGenerator;
-import org.zaproxy.zap.extension.fuzz.payloads.generator.StringPayloadGenerator;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
 public class FuzzerPayloadJBroFuzzSource extends FuzzerPayloadSource {
@@ -39,16 +39,16 @@ public class FuzzerPayloadJBroFuzzSource extends FuzzerPayloadSource {
     }
 
     @Override
-    public StringPayloadGenerator getPayloadGenerator() {
+    public PayloadGenerator getPayloadGenerator() {
         return new JBroFuzzerPayloadGenerator(database, prototypeId);
     }
 
     @Override
-    public StringPayloadGenerator getPayloadGenerator(int limit) {
+    public PayloadGenerator getPayloadGenerator(int limit) {
         return new JBroFuzzerPayloadGenerator(database, prototypeId, limit);
     }
 
-    private static class JBroFuzzerPayloadGenerator implements StringPayloadGenerator {
+    private static class JBroFuzzerPayloadGenerator implements PayloadGenerator {
 
         private final Database database;
         private final String prototypeId;
@@ -93,7 +93,7 @@ public class FuzzerPayloadJBroFuzzSource extends FuzzerPayloadSource {
         }
 
         @Override
-        public ResettableAutoCloseableIterator<DefaultPayload> iterator() {
+        public ResettableAutoCloseableIterator<Payload> iterator() {
             try {
                 return new JBroFuzzerIterator(
                         database.createFuzzer(prototypeId, 1), numberOfPayloads);
@@ -104,12 +104,12 @@ public class FuzzerPayloadJBroFuzzSource extends FuzzerPayloadSource {
         }
 
         @Override
-        public PayloadGenerator<DefaultPayload> copy() {
+        public PayloadGenerator copy() {
             return this;
         }
 
         private static class JBroFuzzerIterator
-                implements ResettableAutoCloseableIterator<DefaultPayload> {
+                implements ResettableAutoCloseableIterator<Payload> {
 
             private final Fuzzer fuzzer;
             private final long limit;
@@ -130,7 +130,7 @@ public class FuzzerPayloadJBroFuzzSource extends FuzzerPayloadSource {
             }
 
             @Override
-            public DefaultPayload next() {
+            public Payload next() {
                 count++;
                 return new DefaultPayload(fuzzer.next());
             }

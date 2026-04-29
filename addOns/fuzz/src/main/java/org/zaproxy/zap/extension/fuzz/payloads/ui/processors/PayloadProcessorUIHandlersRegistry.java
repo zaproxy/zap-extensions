@@ -22,14 +22,13 @@ package org.zaproxy.zap.extension.fuzz.payloads.ui.processors;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.PayloadProcessor;
 
 public final class PayloadProcessorUIHandlersRegistry {
 
     private static PayloadProcessorUIHandlersRegistry instance;
 
-    private Map<Class<?>, PayloadProcessorUIHandler<?, ?, ?>> processorUIHandlers;
+    private Map<Class<?>, PayloadProcessorUIHandler> processorUIHandlers;
     private String nameDefaultPayloadProcessor;
 
     public static PayloadProcessorUIHandlersRegistry getInstance() {
@@ -49,38 +48,17 @@ public final class PayloadProcessorUIHandlersRegistry {
         processorUIHandlers = new HashMap<>();
     }
 
-    public <T extends Payload, T2 extends PayloadProcessor<T>, T3 extends PayloadProcessorUI<T, T2>>
-            void registerProcessorUIHandler(
-                    Class<T2> processorClass,
-                    PayloadProcessorUIHandler<T, T2, T3> processorHandler) {
+    public void registerProcessorUIHandler(
+            Class<? extends PayloadProcessor> processorClass,
+            PayloadProcessorUIHandler processorHandler) {
         processorUIHandlers.put(processorClass, processorHandler);
     }
 
-    public <
-                    T extends Payload,
-                    T2 extends PayloadProcessor<T>,
-                    T3 extends PayloadProcessorUI<T, T2>,
-                    T4 extends PayloadProcessorUIHandler<T, T2, T3>>
-            T4 getProcessorUIHandler(Class<T2> processorClass) {
-        Object object = processorUIHandlers.get(processorClass);
-        if (object == null) {
-            return null;
-        }
-        @SuppressWarnings("unchecked")
-        T4 handler = (T4) object;
-        return handler;
-    }
-
-    public Collection<PayloadProcessorUIHandler<?, ?, ?>> getProcessorUIHandlers() {
+    public Collection<PayloadProcessorUIHandler> getProcessorUIHandlers() {
         return processorUIHandlers.values();
     }
 
-    public <
-                    T extends Payload,
-                    T2 extends PayloadProcessor<T>,
-                    T3 extends PayloadProcessorUI<T, T2>,
-                    T4 extends PayloadProcessorUIHandler<T, T2, T3>>
-            void setDefaultPayloadProcessor(T4 uiHandler) {
+    public void setDefaultPayloadProcessor(PayloadProcessorUIHandler uiHandler) {
         if (processorUIHandlers.containsValue(uiHandler)) {
             nameDefaultPayloadProcessor = uiHandler.getName();
         }
