@@ -63,6 +63,8 @@ public class QuickStartParam extends VersionedAbstractParam {
 
     private static final String PARAM_CLEARED_NEWS_ITEM = PARAM_BASE_KEY + ".clearedNews";
 
+    private static final String PARAM_SCAN_POLICY_NAME = PARAM_BASE_KEY + ".scanPolicyName";
+
     /**
      * The current version of the configurations. Used to keep track of configuration changes
      * between releases, in case changes/updates are needed.
@@ -90,6 +92,7 @@ public class QuickStartParam extends VersionedAbstractParam {
     private String ajaxSpiderSelection;
     private String ajaxSpiderDefaultBrowser;
     private String clearedNewsItem;
+    private String scanPolicyName;
 
     @Override
     protected void parseImpl() {
@@ -135,6 +138,11 @@ public class QuickStartParam extends VersionedAbstractParam {
         }
         try {
             clearedNewsItem = getConfig().getString(PARAM_CLEARED_NEWS_ITEM, "");
+        } catch (Exception e) {
+            LOGGER.error("Failed to load the cleared news item configuration", e);
+        }
+        try {
+            scanPolicyName = getConfig().getString(PARAM_SCAN_POLICY_NAME, "");
         } catch (Exception e) {
             LOGGER.error("Failed to load the cleared news item configuration", e);
         }
@@ -248,6 +256,15 @@ public class QuickStartParam extends VersionedAbstractParam {
         }
         getConfig().setProperty(PARAM_RECENT_URLS, this.recentUrls);
         QuickStartHelper.raiseOptionsChangedEvent();
+    }
+
+    public String getScanPolicyName() {
+        return scanPolicyName;
+    }
+
+    public void setScanPolicyName(String scanPolicyName) {
+        this.scanPolicyName = scanPolicyName;
+        getConfig().setProperty(PARAM_SCAN_POLICY_NAME, scanPolicyName);
     }
 
     public String getClearedNewsItem() {
