@@ -45,4 +45,3 @@ updates:
       - dependency-name: "org.zaproxy:zap" # core versions are manually updated when targeting a new core
       - dependency-name: "com.google.errorprone:error_prone_core"
         versions: [ ">= 2.43.0" ] # versions 2.43.x and later require Java 21
-      - dependency-name: "io.swagger.parser.v3:swagger-parser" # Using snapshot with fix.
