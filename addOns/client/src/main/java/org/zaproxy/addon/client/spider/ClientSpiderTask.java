@@ -55,6 +55,7 @@ public class ClientSpiderTask implements Runnable {
     private ClientSpider clientSpider;
     private List<SpiderAction> actions;
     private int timeout;
+    private int actionWaitTimeInSecs;
     @Getter private Status status;
     @Getter private String error;
     private WebDriverProcess wdp;
@@ -64,6 +65,7 @@ public class ClientSpiderTask implements Runnable {
             ClientSpider clientSpider,
             List<SpiderAction> actions,
             int timeout,
+            int actionWaitTimeInSecs,
             String displayName,
             String detailsString) {
         this.id = id;
@@ -72,6 +74,7 @@ public class ClientSpiderTask implements Runnable {
         this.clientSpider = clientSpider;
         this.actions = actions;
         this.timeout = timeout;
+        this.actionWaitTimeInSecs = actionWaitTimeInSecs;
         this.status = Status.QUEUED;
     }
 
@@ -116,7 +119,17 @@ public class ClientSpiderTask implements Runnable {
             WebDriver wd = wdp.getWebDriver();
             startTime = System.currentTimeMillis();
             wd.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(this.timeout));
-            actions.forEach(e -> e.run(wd));
+            for (SpiderAction action : actions) {
+                action.run(wd);
+                if (actionWaitTimeInSecs > 0) {
+                    try {
+                        Thread.sleep(actionWaitTimeInSecs * 1000L);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        LOGGER.debug("Interrupted while waiting after action.", e);
+                    }
+                }
+            }
             ok = true;
             this.status = Status.FINISHED;
             this.clientSpider.taskStateChange(this);

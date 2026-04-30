@@ -51,6 +51,7 @@ class ClientParamUnitTest extends TestUtils {
         assertThat(clientParam.isPscanEnabled(), is(true));
         assertThat(clientParam.getPscanRulesDisabled().size(), is(0));
         assertThat(clientParam.isLogoutAvoidance(), is(true));
+        assertThat(clientParam.getActionWaitTimeInSecs(), is(0));
     }
 
     @Test
@@ -107,6 +108,7 @@ class ClientParamUnitTest extends TestUtils {
         clientParam.setShutdownTimeInSecs(10);
         clientParam.setThreadCount(32);
         clientParam.setLogoutAvoidance(false);
+        clientParam.setActionWaitTimeInSecs(2);
         // Then
         assertThat(config.getProperty("client.pscanEnabled"), is(false));
         assertThat(config.getProperty("client.browserId"), is("test-browser"));
@@ -118,6 +120,7 @@ class ClientParamUnitTest extends TestUtils {
         assertThat(config.getProperty("client.shutdownTime"), is(10));
         assertThat(config.getProperty("client.threads"), is(32));
         assertThat(config.getProperty("client.logoutAvoidance"), is(false));
+        assertThat(config.getProperty("client.actionWaitTime"), is(2));
 
         assertThat(clientParam.getPscanRulesDisabled().size(), is(0));
         assertThat(clientParam.getBrowserId(), is("test-browser"));
@@ -129,6 +132,7 @@ class ClientParamUnitTest extends TestUtils {
         assertThat(clientParam.getShutdownTimeInSecs(), is(10));
         assertThat(clientParam.getThreadCount(), is(32));
         assertThat(clientParam.isLogoutAvoidance(), is(false));
+        assertThat(clientParam.getActionWaitTimeInSecs(), is(2));
     }
 
     @Test

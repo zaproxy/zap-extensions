@@ -373,7 +373,13 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
         try {
             ClientSpiderTask task =
                     new ClientSpiderTask(
-                            id, this, actions, loadTimeInSecs, displayName, detailsString);
+                            id,
+                            this,
+                            actions,
+                            loadTimeInSecs,
+                            options.getActionWaitTimeInSecs(),
+                            displayName,
+                            detailsString);
             this.addTaskToTasksModel(task, url);
             if (paused) {
                 this.pausedTasks.add(task);

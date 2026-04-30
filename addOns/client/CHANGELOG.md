@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Client spider option "Action Wait Time".
+
 ### Changed
 - Client spider to wait for all browsers to close before reporting it has finished.
 
