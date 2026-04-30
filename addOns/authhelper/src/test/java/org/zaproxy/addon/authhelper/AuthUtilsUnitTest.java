@@ -27,11 +27,15 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -65,6 +69,7 @@ import org.hamcrest.Matcher;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestTemplate;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -75,6 +80,7 @@ import org.junit.jupiter.params.provider.EnumSource.Mode;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.Rectangle;
@@ -1421,6 +1427,66 @@ class AuthUtilsUnitTest extends TestUtils {
             verifyNoMoreInteractions(diags);
         }
 
+        @TestTemplate
+        void shouldFireInputAndChangeEventsWhenFillingField(WebDriver wd) {
+            // Given - a page with listeners that record when input/change events fire
+            pageContent =
+                    () ->
+                            """
+                                <input id="field" />
+                                <span id="inputValue"></span>
+                                <span id="changeValue"></span>
+                                <script>
+                                    var el = document.getElementById('field');
+                                    el.addEventListener('input', function(e) {
+                                        document.getElementById('inputValue').textContent = e.target.value;
+                                    });
+                                    el.addEventListener('change', function(e) {
+                                        document.getElementById('changeValue').textContent = e.target.value;
+                                    });
+                                </script>
+                            """;
+            wd.get(url);
+            WebElement field = wd.findElement(By.id("field"));
+
+            // When
+            AuthUtils.fillFieldWithEvents(field, "hello", wd);
+
+            // Then - both events were dispatched and the listeners received the value
+            assertThat(wd.findElement(By.id("inputValue")).getText(), is(equalTo("hello")));
+            assertThat(wd.findElement(By.id("changeValue")).getText(), is(equalTo("hello")));
+        }
+
+        @TestTemplate
+        void shouldFillSplitOtpFieldsFromFirstFieldInContainer(WebDriver wd) {
+            // Given - six single-character OTP input boxes inside a div container
+            pageContent =
+                    () ->
+                            """
+                                <div id="otp">
+                                    <input id="d1" maxlength="1" />
+                                    <input id="d2" maxlength="1" />
+                                    <input id="d3" maxlength="1" />
+                                    <input id="d4" maxlength="1" />
+                                    <input id="d5" maxlength="1" />
+                                    <input id="d6" maxlength="1" />
+                                </div>
+                            """;
+            wd.get(url);
+            WebElement firstField = wd.findElement(By.id("d1"));
+
+            // When - only the first field is passed; siblings are auto-detected
+            AuthUtils.fillSplitOtpFields(wd, firstField, "123456");
+
+            // Then - each box contains exactly one digit in order
+            assertThat(wd.findElement(By.id("d1")).getDomProperty("value"), is(equalTo("1")));
+            assertThat(wd.findElement(By.id("d2")).getDomProperty("value"), is(equalTo("2")));
+            assertThat(wd.findElement(By.id("d3")).getDomProperty("value"), is(equalTo("3")));
+            assertThat(wd.findElement(By.id("d4")).getDomProperty("value"), is(equalTo("4")));
+            assertThat(wd.findElement(By.id("d5")).getDomProperty("value"), is(equalTo("5")));
+            assertThat(wd.findElement(By.id("d6")).getDomProperty("value"), is(equalTo("6")));
+        }
+
         private static void assertId(WebElement element, String id) {
             assertThat(element.getAttribute("id"), is(equalTo(id)));
         }
@@ -1575,6 +1641,7 @@ class AuthUtilsUnitTest extends TestUtils {
                     .setLoggedOutIndicatorPattern("\\Q<a href='/login'>Login</a>\\E");
         }
     }
+
 
     class TestWebElement implements WebElement {
 

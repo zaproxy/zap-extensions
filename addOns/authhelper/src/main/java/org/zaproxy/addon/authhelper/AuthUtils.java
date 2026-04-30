@@ -795,13 +795,100 @@ public class AuthUtils {
         field.sendKeys(value);
     }
 
+    /**
+     * Fills a field with a value and fires input/change events to support any JavaScript
+     * framework (React, Angular, Vue, Svelte, Web Components, plain HTML with JS listeners).
+     *
+     * <p>This method performs the same field filling as {@link #fillField(WebElement, String)},
+     * but additionally fires 'input' and 'change' events via JavaScript. This ensures
+     * compatibility with frameworks that use synthetic or virtual event systems and may not
+     * respond to native browser events triggered by Selenium's sendKeys().
+     *
+     * <p>Events are fired with both {@code bubbles: true} and {@code composed: true} so they
+     * propagate correctly through Shadow DOM boundaries (Web Components).
+     *
+     * @param field the form field element
+     * @param value the value to fill into the field
+     * @param driver the WebDriver instance to execute JavaScript
+     */
+    public static void fillFieldWithEvents(WebElement field, String value, WebDriver driver) {
+        // Fill the field using native sendKeys
+        if (StringUtils.isNotEmpty(getAttribute(field, "value"))) {
+            field.clear();
+        }
+        field.sendKeys(value);
+
+        // Fire input and change events for framework compatibility.
+        // bubbles:true  — event travels up the DOM tree (React, Angular, Vue, jQuery)
+        // composed:true — event crosses Shadow DOM boundaries (Web Components)
+        try {
+            if (driver instanceof JavascriptExecutor je) {
+                je.executeScript(
+                        "var element = arguments[0];"
+                                + "var event = new Event('input', { bubbles: true, composed: true });"
+                                + "element.dispatchEvent(event);"
+                                + "event = new Event('change', { bubbles: true, composed: true });"
+                                + "element.dispatchEvent(event);",
+                        field);
+            }
+        } catch (Exception e) {
+            // Silently ignore JavaScript execution errors - field was still filled
+            LOGGER.debug("Failed to fire input/change events for field: {}", e.getMessage());
+        }
+    }
+
+    /**
+     * Fills a set of single-character OTP input boxes with consecutive characters from {@code
+     * code}.
+     *
+     * <p>When the target TOTP field accepts only a single character ({@code maxlength="1"}), the
+     * site uses individual input boxes instead of one combined field. This method uses JavaScript
+     * to locate all {@code input[maxlength="1"]} elements within the same form or parent container
+     * as {@code firstField}, then sends one character of {@code code} to each box in DOM order.
+     *
+     * @param wd the WebDriver instance.
+     * @param firstField the first OTP input box, used to locate the container.
+     * @param code the full OTP code whose characters are distributed across the found inputs.
+     */
+    @SuppressWarnings("unchecked")
+    public static void fillSplitOtpFields(WebDriver wd, WebElement firstField, String code) {
+        List<WebElement> fields = Collections.singletonList(firstField);
+        if (wd instanceof JavascriptExecutor je) {
+            try {
+                Object result =
+                        je.executeScript(
+                                "var el = arguments[0];"
+                                        + "var container = el.closest('form') || el.parentElement;"
+                                        + "return container"
+                                        + "    ? Array.from(container.querySelectorAll('input[maxlength=\"1\"]'))"
+                                        + "    : [el];",
+                                firstField);
+                if (result instanceof List) {
+                    fields = (List<WebElement>) result;
+                }
+            } catch (Exception e) {
+                LOGGER.debug("Could not locate split OTP fields via JS: {}", e.getMessage());
+            }
+        }
+        if (fields.size() != code.length()) {
+            LOGGER.warn(
+                    "Split OTP field count ({}) differs from code length ({}); filling {} digit(s).",
+                    fields.size(),
+                    code.length(),
+                    Math.min(fields.size(), code.length()));
+        }
+        for (int i = 0; i < Math.min(fields.size(), code.length()); i++) {
+            fields.get(i).sendKeys(String.valueOf(code.charAt(i)));
+        }
+    }
+
     public static void fillUserName(
             AuthenticationDiagnostics diags,
             WebDriver wd,
             String username,
             WebElement field,
             int stepDelayInSecs) {
-        fillField(field, username);
+        fillFieldWithEvents(field, username, wd);
         diags.recordStep(
                 wd,
                 Constant.messages.getString("authhelper.auth.method.diags.steps.username"),
@@ -815,7 +902,7 @@ public class AuthUtils {
             String password,
             WebElement field,
             int stepDelayInSecs) {
-        fillField(field, password);
+        fillFieldWithEvents(field, password, wd);
         diags.recordStep(
                 wd,
                 Constant.messages.getString("authhelper.auth.method.diags.steps.password"),
