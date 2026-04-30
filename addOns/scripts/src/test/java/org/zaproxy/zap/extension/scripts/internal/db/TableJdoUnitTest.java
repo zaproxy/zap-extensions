@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.client.internal.db;
+package org.zaproxy.zap.extension.scripts.internal.db;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -25,8 +25,6 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
@@ -34,6 +32,7 @@ import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
 
 import java.lang.reflect.Field;
+import java.util.Properties;
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManagerFactory;
 import org.flywaydb.core.Flyway;
@@ -44,7 +43,7 @@ import org.mockito.MockedStatic;
 import org.parosproxy.paros.db.Database;
 import org.parosproxy.paros.db.DatabaseServer;
 
-/** Unit tests for {@link TableJdo}. */
+/** Unit tests for {@link TableJdo} (same mocking pattern as the client add-on). */
 class TableJdoUnitTest {
 
     @AfterEach
@@ -64,14 +63,21 @@ class TableJdoUnitTest {
 
     @Test
     void shouldReturnNullPmfWhenNotInitialised() {
-        assertThat(TableJdo.getPmf(), is(nullValue()));
+        // Given
+        // No TableJdo has been constructed in this test (only @AfterEach may have cleared PMF).
+
+        // When
+        PersistenceManagerFactory pmf = TableJdo.getPmf();
+
+        // Then
+        assertThat(pmf, is(nullValue()));
     }
 
     @Test
     void shouldSetPmfOnDatabaseOpen() throws Exception {
-        // Given
         try (MockedStatic<Flyway> flywayStatic = mockStatic(Flyway.class);
                 MockedStatic<JDOHelper> jdoStatic = mockStatic(JDOHelper.class)) {
+            // Given
             PersistenceManagerFactory pmf = mock(PersistenceManagerFactory.class);
             setupStaticMocks(flywayStatic, jdoStatic, pmf);
 
@@ -85,9 +91,9 @@ class TableJdoUnitTest {
 
     @Test
     void shouldRegisterAsDatabaseListener() throws Exception {
-        // Given
         try (MockedStatic<Flyway> flywayStatic = mockStatic(Flyway.class);
                 MockedStatic<JDOHelper> jdoStatic = mockStatic(JDOHelper.class)) {
+            // Given
             setupStaticMocks(flywayStatic, jdoStatic);
 
             Database db = mock(Database.class);
@@ -104,9 +110,9 @@ class TableJdoUnitTest {
 
     @Test
     void shouldClosePmfOnClosing() throws Exception {
-        // Given
         try (MockedStatic<Flyway> flywayStatic = mockStatic(Flyway.class);
                 MockedStatic<JDOHelper> jdoStatic = mockStatic(JDOHelper.class)) {
+            // Given
             PersistenceManagerFactory pmf = mock(PersistenceManagerFactory.class);
             setupStaticMocks(flywayStatic, jdoStatic, pmf);
             TableJdo tableJdo = createTableJdo();
@@ -122,24 +128,26 @@ class TableJdoUnitTest {
 
     @Test
     void shouldNotThrowWhenClosingWithNullPmf() throws Exception {
-        // Given
         try (MockedStatic<Flyway> flywayStatic = mockStatic(Flyway.class);
                 MockedStatic<JDOHelper> jdoStatic = mockStatic(JDOHelper.class)) {
+            // Given
             setupStaticMocks(flywayStatic, jdoStatic);
             TableJdo tableJdo = createTableJdo();
             tableJdo.closing(mock(DatabaseServer.class));
 
-            // When / Then
+            // When
             assertDoesNotThrow(() -> tableJdo.closing(mock(DatabaseServer.class)));
+
+            // Then
             assertThat(TableJdo.getPmf(), is(nullValue()));
         }
     }
 
     @Test
     void shouldRemoveDatabaseListenerOnUnload() throws Exception {
-        // Given
         try (MockedStatic<Flyway> flywayStatic = mockStatic(Flyway.class);
                 MockedStatic<JDOHelper> jdoStatic = mockStatic(JDOHelper.class)) {
+            // Given
             setupStaticMocks(flywayStatic, jdoStatic);
 
             Database db = mock(Database.class);
@@ -156,10 +164,10 @@ class TableJdoUnitTest {
     }
 
     @Test
-    void shouldCreatePmfWithClientPersistenceUnit() throws Exception {
-        // Given
+    void shouldCreatePmfWithScriptsPersistenceUnit() throws Exception {
         try (MockedStatic<Flyway> flywayStatic = mockStatic(Flyway.class);
                 MockedStatic<JDOHelper> jdoStatic = mockStatic(JDOHelper.class)) {
+            // Given
             setupStaticMocks(flywayStatic, jdoStatic);
 
             // When
@@ -169,7 +177,7 @@ class TableJdoUnitTest {
             jdoStatic.verify(
                     () ->
                             JDOHelper.getPersistenceManagerFactory(
-                                    any(), eq("client"), any(ClassLoader.class)));
+                                    any(Properties.class), any(ClassLoader.class)));
         }
     }
 
@@ -203,7 +211,7 @@ class TableJdoUnitTest {
                 .when(
                         () ->
                                 JDOHelper.getPersistenceManagerFactory(
-                                        any(), anyString(), any(ClassLoader.class)))
+                                        any(Properties.class), any(ClassLoader.class)))
                 .thenReturn(pmf);
     }
 }

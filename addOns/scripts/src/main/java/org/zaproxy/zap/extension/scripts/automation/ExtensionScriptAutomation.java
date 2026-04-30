@@ -26,9 +26,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.db.Database;
+import org.parosproxy.paros.db.DatabaseException;
+import org.parosproxy.paros.db.DatabaseUnsupportedException;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
@@ -42,11 +47,14 @@ import org.zaproxy.zap.eventBus.EventConsumer;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptEventListener;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
+import org.zaproxy.zap.extension.scripts.internal.db.ScriptFailureRecorder;
+import org.zaproxy.zap.extension.scripts.internal.db.TableJdo;
 
 public class ExtensionScriptAutomation extends ExtensionAdaptor {
 
     public static final String NAME = "ExtensionScriptAutomation";
     private static final String RESOURCES_DIR = "/org/zaproxy/zap/extension/scripts/resources/";
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionScriptAutomation.class);
 
     private ScriptJob job;
 
@@ -56,6 +64,7 @@ public class ExtensionScriptAutomation extends ExtensionAdaptor {
     private ExtensionAutomation extAuto;
     private ExtensionScript extensionScript;
     private ScriptErrorHandler scriptErrorHandler;
+    private TableJdo tableJdo;
 
     public ExtensionScriptAutomation() {
         super(NAME);
@@ -64,6 +73,23 @@ public class ExtensionScriptAutomation extends ExtensionAdaptor {
     @Override
     public boolean supportsDb(String type) {
         return true;
+    }
+
+    @Override
+    public void databaseOpen(Database db) throws DatabaseException, DatabaseUnsupportedException {
+        try {
+            tableJdo = new TableJdo(db);
+        } catch (Exception e) {
+            LOGGER.warn(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void destroy() {
+        if (tableJdo != null) {
+            tableJdo.unload();
+            tableJdo = null;
+        }
     }
 
     @Override
@@ -100,6 +126,11 @@ public class ExtensionScriptAutomation extends ExtensionAdaptor {
 
         extensionScript.removeListener(scriptErrorHandler);
         ZAP.getEventBus().unregisterConsumer(scriptErrorHandler);
+
+        if (tableJdo != null) {
+            tableJdo.unload();
+            tableJdo = null;
+        }
     }
 
     @Override
@@ -173,13 +204,16 @@ public class ExtensionScriptAutomation extends ExtensionAdaptor {
 
             synchronized (runningPlans) {
                 runningPlans.forEach(
-                        plan ->
-                                plan.getProgress()
-                                        .error(
-                                                Constant.messages.getString(
-                                                        "scripts.automation.error.script",
-                                                        script.getName(),
-                                                        script.getLastErrorDetails())));
+                        plan -> {
+                            String message =
+                                    Constant.messages.getString(
+                                            "scripts.automation.error.script",
+                                            script.getName(),
+                                            script.getLastErrorDetails());
+                            plan.getProgress().error(message);
+                            ScriptFailureRecorder.record(
+                                    script.getName(), script.getTypeName(), message);
+                        });
             }
         }
 

@@ -25,6 +25,10 @@
 			<td>Automation Framework State</td>
 			<td>afstate</td>
 		</tr>
+		<tr>
+			<td>Script Automation Failures</td>
+			<td>scriptautomationfailures</td>
+		</tr>
 	</table>
 
 	<H3>Sample</H3>
@@ -219,6 +223,28 @@
     ]
 }
 </pre>
+
+	<h4>Script Automation Failures Section</h4>
+	<p>
+		When the
+		<code>scriptautomationfailures</code>
+		section is enabled and the Script Console add-on has recorded
+		automation script job failures, the report includes a
+		<code>scriptAutomationFailures</code>
+		array (after
+		<code>insights</code>
+		, before
+		<code>site</code>
+		). Each entry has
+		<code>scriptName</code>
+		,
+		<code>scriptType</code>
+		,
+		<code>message</code>
+		, and
+		<code>createTimestamp</code>
+		.
+	</p>
 </BODY>
 </HTML>
 

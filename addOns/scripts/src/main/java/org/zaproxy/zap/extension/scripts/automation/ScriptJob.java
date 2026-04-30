@@ -182,9 +182,10 @@ public class ScriptJob extends AutomationJob {
             ScriptJobParameters parameters, AutomationProgress progress) {
         if (parameters.getAction() == null) {
             if (progress != null) {
-                progress.error(
+                String message =
                         Constant.messages.getString(
-                                "scripts.automation.error.actionNull", validActionsAsString()));
+                                "scripts.automation.error.actionNull", validActionsAsString());
+                progress.error(message);
             }
             return null;
         }
@@ -196,11 +197,12 @@ public class ScriptJob extends AutomationJob {
         }
 
         if (progress != null) {
-            progress.error(
+            String message =
                     Constant.messages.getString(
                             "scripts.automation.error.actionNotDefined",
                             action,
-                            validActionsAsString()));
+                            validActionsAsString());
+            progress.error(message);
         }
 
         return null;

@@ -56,7 +56,9 @@ public abstract class ScriptAction {
 
     protected boolean verifyScriptType(AutomationProgress progress) {
         if (parameters.getType() == null) {
-            progress.error(
+            reportScriptAutomationError(
+                    progress,
+                    parameters,
                     Constant.messages.getString(
                             "scripts.automation.error.scriptTypeIsNull", parameters.getName()));
             return false;
@@ -64,7 +66,9 @@ public abstract class ScriptAction {
 
         String scriptType = parameters.getType().toLowerCase();
         if (getSupportedScriptTypes().stream().noneMatch(st -> Objects.equals(st, scriptType))) {
-            progress.error(
+            reportScriptAutomationError(
+                    progress,
+                    parameters,
                     Constant.messages.getString(
                             "scripts.automation.error.scriptTypeNotSupported",
                             parameters.getName(),
@@ -74,6 +78,24 @@ public abstract class ScriptAction {
             return false;
         }
         return true;
+    }
+
+    /**
+     * Reports an automation/plan error to progress (e.g. invalid parameters or job preconditions).
+     * Does not persist to the script failure session DB; persistence belongs only on script
+     * execution failure paths (see {@code RunScriptAction} invoke error handling and {@code
+     * ScriptAutomationFailureRecords}).
+     */
+    protected void reportScriptAutomationError(AutomationProgress progress, String message) {
+        reportScriptAutomationError(progress, parameters, message);
+    }
+
+    protected void reportScriptAutomationError(
+            AutomationProgress progress, ScriptJobParameters params, String message) {
+        if (progress == null || message == null) {
+            return;
+        }
+        progress.error(message);
     }
 
     public static ExtensionScript getExtScript() {
