@@ -34,7 +34,6 @@ dependencies {
 
     implementation(libs.commonlib.apache.commons.io)
     implementation(libs.commonlib.apache.commons.csv)
-    implementation(libs.commonlib.apache.commons.collections4)
 
     testImplementation(project(":testutils"))
 }
