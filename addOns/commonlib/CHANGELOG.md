@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Update dependencies.
 - Maintenance changes.
+- Updated Bank Identification Number data from a new source (https://github.com/venelinkochev/bin-list-data/).
+- Added help page documenting the BIN list data and how it is used by scan rules.
 
 ### Fixed
 - Prevent performance issues in the output tabs when showing lengthier messages.

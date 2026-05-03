@@ -298,10 +298,7 @@ Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10024/">10024</a>.
 Identifies the existence of sensitive details within the Referrer header field of HTTP requests
 (this may include parameters, document names, directory names, etc.).
 <p>
-Note: In the case of suspected credit card identifiers in the Referrer value, the potential credit card numbers are looked up against a Bank Identification
-Number List (BINList). If a match is found the alert is raised at High confidence and additional details are added to the 'Other Information' field in the alert,
-otherwise the alerts will have Medium confidence.
-See: <a href="https://github.com/iannuttall/binlist-data">binlist-data</a> for more information.
+Note: For suspected credit card values see the <a href="https://www.zaproxy.org/docs/desktop/addons/common-library/">Common Library</a> add-on help (BIN List).
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/InformationDisclosureReferrerScanRule.java">InformationDisclosureReferrerScanRule.java</a>
 <br>
@@ -389,10 +386,7 @@ At MEDIUM and HIGH threshold, the following content types are evaluated:
 Image and CSS files are always ignored.
 Every other content type is evaluated at LOW threshold. Additionally at LOW threshold the entire HTML response is evaluated.
 <p>
-Note: In the case of suspected credit card values, the potential credit card numbers are looked up against a Bank Identification Number List 
-(BINList). If a match is found the alert is raised at High confidence and additional details are added to the 'Other Information' field in the 
-alert, otherwise the alerts will have Medium confidence.
-See: <a href="https://github.com/iannuttall/binlist-data">binlist-data</a> for more information.
+Note: For suspected credit card values see the <a href="https://www.zaproxy.org/docs/desktop/addons/common-library/">Common Library</a> add-on help (BIN List).
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/PiiScanRule.java">PiiScanRule.java</a>
 <br>

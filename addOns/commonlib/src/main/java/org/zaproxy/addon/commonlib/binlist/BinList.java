@@ -84,12 +84,12 @@ public final class BinList {
 
         for (CSVRecord rec : records) {
             binMap.put(
-                    rec.get("bin"),
+                    rec.get("BIN"),
                     new BinRecord(
-                            rec.get("bin"),
-                            rec.get("brand"),
-                            rec.get("category"),
-                            rec.get("issuer")));
+                            rec.get("BIN"),
+                            rec.get("Brand"),
+                            rec.get("Category"),
+                            rec.get("Issuer")));
         }
         return binMap;
     }
@@ -101,22 +101,9 @@ public final class BinList {
      * @return the {@code BinRecord}, or {@code null} if no match found.
      */
     public BinRecord get(String candidate) {
-        BinRecord binRec = binMap.get(candidate);
-        // Per https://github.com/iannuttall/binlist-data the collection should have BINs 6-8 but
-        // based on my searching there are actually entries 5-8. The following are ordered based
-        // on count of occurrence
-        if (binRec == null) {
-            binRec = binMap.get(candidate.substring(0, 6));
+        if (candidate != null && candidate.length() >= 6) {
+            return binMap.get(candidate.substring(0, 6));
         }
-        if (binRec == null) {
-            binRec = binMap.get(candidate.substring(0, 8));
-        }
-        if (binRec == null) {
-            binRec = binMap.get(candidate.substring(0, 5));
-        }
-        if (binRec == null) {
-            binRec = binMap.get(candidate.substring(0, 7));
-        }
-        return binRec;
+        return null;
     }
 }

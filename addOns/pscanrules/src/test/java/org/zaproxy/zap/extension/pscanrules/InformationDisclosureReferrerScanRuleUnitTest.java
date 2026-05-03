@@ -302,7 +302,7 @@ class InformationDisclosureReferrerScanRuleUnitTest
                         + '\n'
                         + "Category: PLATINUM"
                         + '\n'
-                        + "Issuer: DISCOVER",
+                        + "Issuer: DISCOVER ISSUER",
                 alertsRaised.get(0).getOtherInfo());
     }
 
