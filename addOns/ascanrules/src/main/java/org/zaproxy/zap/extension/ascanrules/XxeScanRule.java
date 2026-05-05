@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -34,6 +35,8 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
+import org.parosproxy.paros.core.scanner.NameValuePair;
+import org.parosproxy.paros.core.scanner.VariantMultipartFormParameters;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.PolicyTag;
@@ -129,6 +132,8 @@ public class XxeScanRule extends AbstractAppPlugin implements CommonActiveScanRu
 
     // Logger instance
     private static final Logger LOGGER = LogManager.getLogger(XxeScanRule.class);
+    private VariantMultipartFormParameters multipartVariant;
+    private boolean alertRaised = false;
 
     @Override
     public int getId() {
@@ -180,47 +185,63 @@ public class XxeScanRule extends AbstractAppPlugin implements CommonActiveScanRu
         return Alert.RISK_HIGH;
     }
 
-    /**
-     * Scan rule to check for XXE vulnerabilities. It checks both for local and remote using the ZAP
-     * API and also a new model based on parameter substitution
-     */
     @Override
     public void scan() {
-        // Prepare the message
+        multipartVariant = null;
+        alertRaised = false;
+
         HttpMessage msg = getBaseMsg();
         String contentType = msg.getRequestHeader().getHeader(HttpFieldsNames.CONTENT_TYPE);
 
-        // first check if it's an XML otherwise it's useless...
         if ((contentType != null) && (contentType.contains("xml"))) {
+            scanForXxe(null);
+        } else if ((contentType != null) && (contentType.contains("multipart"))) {
+            multipartVariant = new VariantMultipartFormParameters();
+            multipartVariant.setMessage(getNewMsg());
+            List<String> xmlFileNames =
+                    multipartVariant.getParamList().stream()
+                            .filter(
+                                    p ->
+                                            (p.getType()
+                                                            == NameValuePair
+                                                                    .TYPE_MULTIPART_DATA_FILE_CONTENTTYPE
+                                                    && p.getValue().toLowerCase().contains("xml")))
+                            .map(NameValuePair::getName)
+                            .collect(Collectors.toList());
 
-            // Check #1 : XXE Remote File Inclusion Attack
-            remoteFileInclusionAttack();
-
-            // Check #2 : Out-of-band XXE Attack
-            outOfBandFileInclusionAttack();
-
-            // Check if we've to do only basic analysis (only remote should be done)...
-            if (this.getAttackStrength() == AttackStrength.LOW) {
-                return;
+            for (NameValuePair originalPair : multipartVariant.getParamList()) {
+                if (xmlFileNames.contains(originalPair.getName())
+                        && (originalPair.getType()
+                                == NameValuePair.TYPE_MULTIPART_DATA_FILE_PARAM)) {
+                    scanForXxe(originalPair);
+                }
+                if (alertRaised) {
+                    break;
+                }
             }
-
-            // Check #3 : XXE Local File Reflection Attack
-            localFileReflectionAttack(getNewMsg());
-
-            // Check if we've to do only medium sized analysis
-            // (only remote and reflected will be done)
-            if (this.getAttackStrength() == AttackStrength.MEDIUM) {
-                return;
-            }
-
-            // Exit if the scan has been stopped
-            if (isStop()) {
-                return;
-            }
-
-            // Check #4 : XXE Local File Inclusion Attack
-            localFileInclusionAttack(getNewMsg());
         }
+    }
+
+    private void scanForXxe(NameValuePair originalPair) {
+        remoteFileInclusionAttack(originalPair);
+
+        outOfBandFileInclusionAttack(originalPair);
+
+        if (this.getAttackStrength() == AttackStrength.LOW) {
+            return;
+        }
+
+        localFileReflectionAttack(getNewMsg(), originalPair);
+
+        if (this.getAttackStrength() == AttackStrength.MEDIUM) {
+            return;
+        }
+
+        if (isStop()) {
+            return;
+        }
+
+        localFileInclusionAttack(getNewMsg(), originalPair);
     }
 
     /**
@@ -229,7 +250,7 @@ public class XxeScanRule extends AbstractAppPlugin implements CommonActiveScanRu
      * external bouncing site, in this case we use the ZAP API as a server for the vulnerability
      * check using a challenge/response model based on a random string
      */
-    private void remoteFileInclusionAttack() {
+    private void remoteFileInclusionAttack(NameValuePair originalPair) {
         try {
             ExtensionOast extOast =
                     Control.getSingleton().getExtensionLoader().getExtension(ExtensionOast.class);
@@ -246,7 +267,12 @@ public class XxeScanRule extends AbstractAppPlugin implements CommonActiveScanRu
                                 alert, XxeScanRule.class.getSimpleName());
                 String payload = MessageFormat.format(ATTACK_MESSAGE, callbackPayload);
                 alert.setAttack(payload);
-                msg.setRequestBody(payload);
+                if (originalPair != null) {
+                    multipartVariant.setParameter(
+                            msg, originalPair, originalPair.getName(), payload);
+                } else {
+                    msg.setRequestBody(payload);
+                }
                 sendAndReceive(msg);
             }
         } catch (Exception e) {
@@ -254,7 +280,7 @@ public class XxeScanRule extends AbstractAppPlugin implements CommonActiveScanRu
         }
     }
 
-    private void outOfBandFileInclusionAttack() {
+    private void outOfBandFileInclusionAttack(NameValuePair originalPair) {
         try {
             ExtensionOast extOast =
                     Control.getSingleton().getExtensionLoader().getExtension(ExtensionOast.class);
@@ -269,12 +295,22 @@ public class XxeScanRule extends AbstractAppPlugin implements CommonActiveScanRu
                 String oastPayload = extOast.registerAlertAndGetPayload(alert);
                 String payload = MessageFormat.format(ATTACK_MESSAGE, "http://" + oastPayload);
                 alert.setAttack(payload);
-                msg.setRequestBody(payload);
+                if (originalPair != null) {
+                    multipartVariant.setParameter(
+                            msg, originalPair, originalPair.getName(), payload);
+                } else {
+                    msg.setRequestBody(payload);
+                }
                 sendAndReceive(msg);
                 // Try again with https
                 msg = getNewMsg();
                 payload = MessageFormat.format(ATTACK_MESSAGE, "https://" + oastPayload);
-                msg.setRequestBody(payload);
+                if (originalPair != null) {
+                    multipartVariant.setParameter(
+                            msg, originalPair, originalPair.getName(), payload);
+                } else {
+                    msg.setRequestBody(payload);
+                }
                 sendAndReceive(msg);
             }
         } catch (Exception e) {
@@ -282,29 +318,19 @@ public class XxeScanRule extends AbstractAppPlugin implements CommonActiveScanRu
         }
     }
 
-    /**
-     * Local File Reflection Attack initially substitutes every attribute in the original XML
-     * request with a fake entity which includes a sensitive local file. The attack is repeated for
-     * every file listed in the LOCAL_FILE_TARGETS. The response returned is pattern matched against
-     * LOCAL_FILE_PATTERNS. An alert is raised when a match is found. If no alert is raised, then
-     * the process is repeated by replacing one attribute at a time, for a fixed number of
-     * attributes depending on the strength of the rule.
-     *
-     * @param msg new HttpMessage with the same request as the base. This is used to build the
-     *     attack payload.
-     */
-    private void localFileReflectionAttack(HttpMessage msg) {
-        // First replace the values in all the Elements by the Attack Entity
-        String originalRequestBody = msg.getRequestBody().toString();
-        String requestBody = createLfrPayload(originalRequestBody);
-        if (localFileReflectionTest(msg, requestBody)) {
+    private void localFileReflectionAttack(HttpMessage msg, NameValuePair originalPair) {
+        String originalXml;
+        if (originalPair != null) {
+            originalXml = originalPair.getValue();
+        } else {
+            originalXml = msg.getRequestBody().toString();
+        }
+        String requestBody = createLfrPayload(originalXml);
+        if (localFileReflectionTest(requestBody, originalPair)) {
             return;
         }
-        // Now if no issue is found yet, then we replace the values one at a time. Do this for a
-        // fixed number of Elements, depending on the strength at which the rule is used.
 
-        // Remove original xml header
-        Matcher headerMatcher = xmlHeaderPattern.matcher(originalRequestBody);
+        Matcher headerMatcher = xmlHeaderPattern.matcher(originalXml);
         String headerlessRequestBody = headerMatcher.replaceAll("");
         int maxValuesChanged = 0;
 
@@ -318,46 +344,37 @@ public class XxeScanRule extends AbstractAppPlugin implements CommonActiveScanRu
         Matcher tagMatcher = tagPattern.matcher(headerlessRequestBody);
         for (int tagIdx = 1; (tagIdx <= maxValuesChanged) && tagMatcher.find(); tagIdx++) {
             requestBody = createTagSpecificLfrPayload(headerlessRequestBody, tagMatcher);
-            if (localFileReflectionTest(msg, requestBody)) {
+            if (localFileReflectionTest(requestBody, originalPair)) {
                 return;
             }
         }
     }
 
-    /**
-     * Local File Inclusion Attack is described in
-     * https://owasp.org/www-community/vulnerabilities/XML_External_Entity_(XXE)_Processing. The
-     * attack builds a payload for every file listed in LOCAL_FILE_TARGETS with the ATTACK_HEADER
-     * and the ATTACK_BODY. The response returned is pattern matched against LOCAL_FILE_PATTERNS. An
-     * alert is raised when a match is found.
-     *
-     * <p>This situation is very uncommon because it works only in case of a bare XML parser which
-     * execute the content and then returns the content almost untouched (maybe because it applies
-     * an XSLT or query it using XPath and give back the result)
-     *
-     * @param msg new HttpMessage with the same request as the base. This is used to build the
-     *     attack payload.
-     */
-    private void localFileInclusionAttack(HttpMessage msg) {
+    private void localFileInclusionAttack(HttpMessage msg, NameValuePair originalPair) {
         String payload = null;
         try {
             for (int idx = 0; idx < LOCAL_FILE_TARGETS.length; idx++) {
+                msg = getNewMsg();
                 String localFile = LOCAL_FILE_TARGETS[idx];
                 payload = MessageFormat.format(ATTACK_MESSAGE, localFile);
-                msg.setRequestBody(payload);
+                if (originalPair != null) {
+                    multipartVariant.setParameter(
+                            msg, originalPair, originalPair.getName(), payload);
+                } else {
+                    msg.setRequestBody(payload);
+                }
                 sendAndReceive(msg);
                 String response = msg.getResponseBody().toString();
                 Matcher matcher = LOCAL_FILE_PATTERNS[idx].matcher(response);
                 if (matcher.find()) {
                     createAlert(payload, matcher.group()).setMessage(msg).raise();
+                    alertRaised = true;
                 }
                 if (isStop()) {
                     return;
                 }
             }
         } catch (IOException ex) {
-            // Do not try to internationalise this.. we need an error message in any event..
-            // if it's in English, it's still better than not having it at all.
             LOGGER.warn(
                     "XXE Injection vulnerability check failed for payload [{}] due to an I/O error",
                     payload,
@@ -385,11 +402,16 @@ public class XxeScanRule extends AbstractAppPlugin implements CommonActiveScanRu
         return sb.toString();
     }
 
-    private boolean localFileReflectionTest(HttpMessage msg, String requestBody) {
+    private boolean localFileReflectionTest(String requestBody, NameValuePair originalPair) {
         for (int idx = 0; idx < LOCAL_FILE_TARGETS.length; idx++) {
+            HttpMessage msg = getNewMsg();
             String localFile = LOCAL_FILE_TARGETS[idx];
             String payload = MessageFormat.format(requestBody, localFile);
-            msg.setRequestBody(payload);
+            if (originalPair != null) {
+                multipartVariant.setParameter(msg, originalPair, originalPair.getName(), payload);
+            } else {
+                msg.setRequestBody(payload);
+            }
             try {
                 sendAndReceive(msg);
             } catch (IOException ex) {
@@ -403,6 +425,7 @@ public class XxeScanRule extends AbstractAppPlugin implements CommonActiveScanRu
             Matcher matcher = LOCAL_FILE_PATTERNS[idx].matcher(response);
             if (matcher.find()) {
                 createAlert(payload, matcher.group()).setMessage(msg).raise();
+                alertRaised = true;
                 return true;
             }
             if (isStop()) {
