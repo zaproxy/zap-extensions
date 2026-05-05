@@ -70,8 +70,6 @@ import org.zaproxy.addon.client.internal.ClientMapWriter;
 import org.zaproxy.addon.client.internal.ClientNode;
 import org.zaproxy.addon.client.internal.ClientSideComponent;
 import org.zaproxy.addon.client.internal.ClientSideDetails;
-import org.zaproxy.addon.client.internal.ReportedElement;
-import org.zaproxy.addon.client.internal.ReportedEvent;
 import org.zaproxy.addon.client.internal.ReportedObject;
 import org.zaproxy.addon.client.internal.db.ClientHistoryDao;
 import org.zaproxy.addon.client.internal.db.TableJdo;
@@ -105,7 +103,6 @@ import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.eventBus.Event;
 import org.zaproxy.zap.eventBus.EventConsumer;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
-import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.selenium.ProfileManager;
@@ -186,9 +183,11 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
                                 new ClientSideDetails(
                                         Constant.messages.getString("client.tree.title"), null),
                                 this.getModel().getSession()));
+        clientTree.setReportedObjectConsumer(this::addReportedObject);
         spiderScanController =
                 new SpiderScanController(
                         this,
+                        clientTree,
                         Control.getSingleton()
                                 .getExtensionLoader()
                                 .getExtension(ExtensionCommonlib.class)
@@ -208,7 +207,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
-        this.api = new ClientIntegrationAPI(this);
+        this.api = new ClientIntegrationAPI(this, clientTree);
 
         extensionHook.addSessionListener(new SessionChangedListenerImpl());
         extensionHook.addOptionsParamSet(getClientParam());
@@ -532,59 +531,8 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
         }
     }
 
-    public ClientNode getOrAddClientNode(String url, boolean visited, boolean storage) {
-        return this.clientTree.getOrAddNode(url, visited, storage);
-    }
-
-    public ClientNode getClientNode(String url, boolean visited, boolean storage) {
-        return this.clientTree.getNode(url, visited, storage);
-    }
-
     public void clientNodeSelected(ClientNode node) {
         getClientDetailsPanel().setClientNode(node);
-    }
-
-    private void clientNodeChanged(ClientNode node) {
-        if (!hasView()) {
-            return;
-        }
-
-        ThreadUtils.invokeAndWaitHandled(() -> clientTree.nodeChanged(node));
-    }
-
-    public boolean addComponentToNode(ClientNode node, ClientSideComponent component) {
-        if (this.clientTree.addComponentToNode(node, component)) {
-            this.clientNodeChanged(node);
-            return true;
-        }
-        return false;
-    }
-
-    public boolean setRedirect(String originalUrl, String redirectedUrl) {
-        ClientNode node = this.clientTree.setRedirect(originalUrl, redirectedUrl);
-        if (node != null) {
-            this.clientNodeChanged(node);
-            return true;
-        }
-        return false;
-    }
-
-    public boolean setVisited(String url) {
-        ClientNode node = this.clientTree.setVisited(url);
-        if (node != null) {
-            this.clientNodeChanged(node);
-            return true;
-        }
-        return false;
-    }
-
-    public boolean setContentLoaded(String url) {
-        ClientNode node = clientTree.setContentLoaded(url);
-        if (node != null) {
-            clientNodeChanged(node);
-            return true;
-        }
-        return false;
     }
 
     public void deleteNodes(List<ClientNode> nodes) {
@@ -634,22 +582,12 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
         }
     }
 
-    public void addReportedObject(ReportedObject obj) {
-        if (obj instanceof ReportedEvent) {
-            ReportedEvent ev = (ReportedEvent) obj;
-            String url = ev.getUrl();
-            if (url != null && isApiUrl(url)) {
-                // Don't record ZAP API calls
-                return;
-            }
-        } else if (obj instanceof ReportedElement) {
-            ReportedElement rn = (ReportedElement) obj;
-            String url = rn.getUrl();
-            if (url != null && isApiUrl(url)) {
-                // Don't record ZAP API calls
-                return;
-            }
+    private void addReportedObject(ReportedObject obj) {
+        if ("A".equals(obj.getNodeName())) {
+            // Dont add links - they flood the table
+            return;
         }
+
         this.clientHistoryTableModel.addReportedObject(obj);
         ClientHistoryDao.persist(obj);
         incPscanCount();
@@ -719,10 +657,6 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
 
     public ClientZestRecorder getClientRecorderHelper() {
         return clientHandler;
-    }
-
-    protected static boolean isApiUrl(String url) {
-        return url.startsWith(API.API_URL) || url.startsWith(API.API_URL_S);
     }
 
     @Override

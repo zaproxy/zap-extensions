@@ -100,7 +100,10 @@ class ClientSpiderUnitTest extends TestUtils {
     private ExtensionClientIntegration extClient;
     private ClientOptions clientOptions;
     private ClientMap map;
+    private String seedUrl;
     private WebDriver wd;
+
+    private ClientSpider spider;
 
     @BeforeAll
     static void setUpAll() {
@@ -131,10 +134,27 @@ class ClientSpiderUnitTest extends TestUtils {
         clientOptions = new ClientOptions();
         clientOptions.load(new ZapXmlConfiguration());
         clientOptions.setThreadCount(1);
+
+        seedUrl = "https://www.example.com/";
+        spider =
+                new ClientSpider(
+                        extClient,
+                        map,
+                        "",
+                        seedUrl,
+                        clientOptions,
+                        1,
+                        null,
+                        null,
+                        false,
+                        mock(ValueProvider.class));
     }
 
     @AfterEach
     void tearDown() throws Exception {
+        if (!spider.isStopped()) {
+            spider.stopScan();
+        }
         ZAP.getEventBus().unregisterPublisher(map);
         Configurator.reconfigure(getClass().getResource("/log4j2-test.properties").toURI());
     }
@@ -142,8 +162,6 @@ class ClientSpiderUnitTest extends TestUtils {
     @Test
     void shouldRequestInScopeUrls() {
         // Given
-        ClientSpider spider =
-                new ClientSpider(extClient, "", "https://www.example.com/", clientOptions, 1);
         Options options = mock(Options.class);
         Timeouts timeouts = mock(Timeouts.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         when(wd.manage()).thenReturn(options);
@@ -179,8 +197,6 @@ class ClientSpiderUnitTest extends TestUtils {
     void shouldIgnoreRequestAfterStopped() throws Exception {
         // Given
         CountDownLatch cdl = new CountDownLatch(1);
-        String seedUrl = "https://www.example.com/";
-        ClientSpider spider = new ClientSpider(extClient, "", seedUrl, clientOptions, 1);
         Options options = mock(Options.class);
         Timeouts timeouts = mock(Timeouts.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         when(wd.manage()).thenReturn(options);
@@ -209,8 +225,6 @@ class ClientSpiderUnitTest extends TestUtils {
     @Test
     void shouldStartPauseResumeStopSpider() {
         // Given
-        ClientSpider spider =
-                new ClientSpider(extClient, "", "https://www.example.com", clientOptions, 1);
         SpiderStatus statusPostStart;
         SpiderStatus statusPostPause;
         SpiderStatus statusPostResume;
@@ -248,8 +262,6 @@ class ClientSpiderUnitTest extends TestUtils {
     void shouldIgnoreUrlsTooDeep() {
         // Given
         clientOptions.setMaxDepth(5);
-        ClientSpider spider =
-                new ClientSpider(extClient, "", "https://www.example.com/", clientOptions, 1);
         Options options = mock(Options.class);
         Timeouts timeouts = mock(Timeouts.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         when(wd.manage()).thenReturn(options);
@@ -295,8 +307,6 @@ class ClientSpiderUnitTest extends TestUtils {
     void shouldIgnoreUrlsTooWide() {
         // Given
         clientOptions.setMaxChildren(4);
-        ClientSpider spider =
-                new ClientSpider(extClient, "", "https://www.example.com/", clientOptions, 1);
         Options options = mock(Options.class);
         Timeouts timeouts = mock(Timeouts.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         when(wd.manage()).thenReturn(options);
@@ -337,25 +347,17 @@ class ClientSpiderUnitTest extends TestUtils {
     @Test
     void shouldVisitKnownUnvisitedUrls() {
         // Given
-        ClientSpider spider =
-                new ClientSpider(extClient, "", "https://www.example.com/", clientOptions, 1);
         Options options = mock(Options.class);
         Timeouts timeouts = mock(Timeouts.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         when(wd.manage()).thenReturn(options);
         when(options.timeouts()).thenReturn(timeouts);
         ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
 
-        ClientNode exampleTopNode = getClientNode("https://www.example.com", false);
-        ClientNode exampleSlashNode = getClientNode("https://www.example.com/", false);
-        ClientNode exampleTest1Node = getClientNode("https://www.example.com/test#1", false);
-        ClientNode exampleTest2Node = getClientNode("https://www.example.com/test#2", false);
-        ClientNode exampleVisitedNode = getClientNode("https://www.example.com/visited", true);
-        exampleTopNode.add(exampleSlashNode);
-        exampleTopNode.add(exampleTest1Node);
-        exampleTopNode.add(exampleTest2Node);
-        exampleTopNode.add(exampleVisitedNode);
-        when(extClient.getClientNode("https://www.example.com/", false, false))
-                .thenReturn(exampleSlashNode);
+        map.getOrAddNode("https://www.example.com", false, false);
+        map.getOrAddNode("https://www.example.com/", false, false);
+        map.getOrAddNode("https://www.example.com/test#1", false, false);
+        map.getOrAddNode("https://www.example.com/test#2", false, false);
+        map.getOrAddNode("https://www.example.com/visited", true, false);
 
         // When
         spider.run();
@@ -377,6 +379,8 @@ class ClientSpiderUnitTest extends TestUtils {
                         "https://www.example.com/",
                         "https://www.example.com",
                         "https://www.example.com/",
+                        "https://www.example.com/test",
+                        "https://www.example.com/test#",
                         "https://www.example.com/test#1",
                         "https://www.example.com/test#2"));
     }
@@ -385,8 +389,6 @@ class ClientSpiderUnitTest extends TestUtils {
     void shouldHandleComponentHrefWithoutHostname() {
         // Given
         List<String> logEvents = registerLogEvents(Level.ERROR);
-        ClientSpider spider =
-                new ClientSpider(extClient, "", "https://www.example.com/", clientOptions, 1);
         Options options = mock(Options.class);
         Timeouts timeouts = mock(Timeouts.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         when(wd.manage()).thenReturn(options);
@@ -436,17 +438,6 @@ class ClientSpiderUnitTest extends TestUtils {
         String logoutText = "logout";
         clientOptions.setLogoutAvoidance(logoutAvoidance);
         String url = "https://www.example.com/";
-        ClientSpider spider =
-                new ClientSpider(
-                        extClient,
-                        "",
-                        url,
-                        clientOptions,
-                        1,
-                        null,
-                        null,
-                        false,
-                        mock(ValueProvider.class));
         Options options = mock(Options.class);
         Timeouts timeouts = mock(Timeouts.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         when(wd.manage()).thenReturn(options);

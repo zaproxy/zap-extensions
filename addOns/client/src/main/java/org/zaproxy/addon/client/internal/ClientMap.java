@@ -22,16 +22,22 @@ package org.zaproxy.addon.client.internal;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.function.Consumer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
+import net.sf.json.JSONObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.client.ClientUtils;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.eventBus.Event;
 import org.zaproxy.zap.eventBus.EventPublisher;
+import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.model.Target;
+import org.zaproxy.zap.utils.ThreadUtils;
 
 @SuppressWarnings("serial")
 public class ClientMap extends SortedTreeModel implements EventPublisher {
@@ -41,10 +47,12 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
     public static final String DEPTH_KEY = "depth";
     public static final String SIBLINGS_KEY = "siblings";
     public static final String URL_KEY = "url";
+    public static final String MESSAGE_UUID_KEY = "client.message.uuid";
 
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = LogManager.getLogger(ClientMap.class);
     private ClientNode root;
+    private Consumer<ReportedObject> reportedObjectConsumer;
 
     public ClientMap(ClientNode root) {
         super(root);
@@ -159,6 +167,22 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
         return this.getClass().getCanonicalName();
     }
 
+    private void notifyNodeChanged(ClientNode node) {
+        if (!View.isInitialised()) {
+            return;
+        }
+        ThreadUtils.invokeAndWaitHandled(() -> nodeChanged(node));
+    }
+
+    public void addComponent(String url, ClientSideComponent component) {
+        ClientNode node = getOrAddNode(url, false, false);
+        addComponentToNode(node, component);
+        if (component.isStorageEvent()) {
+            String storageUrl = node.getSite() + component.getTypeForDisplay();
+            addComponentToNode(getOrAddNode(storageUrl, false, true), component);
+        }
+    }
+
     public boolean addComponentToNode(ClientNode node, ClientSideComponent component) {
         ClientSideDetails details = node.getUserObject();
         boolean wasVisited = details.isVisited();
@@ -172,6 +196,7 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
             ZAP.getEventBus()
                     .publishSyncEvent(
                             this, new Event(this, MAP_COMPONENT_ADDED_EVENT, new Target(), map));
+            notifyNodeChanged(node);
         }
         return componentAdded;
     }
@@ -193,6 +218,7 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
                                     ClientSideComponent.Type.REDIRECT,
                                     null,
                                     -1));
+            notifyNodeChanged(node);
             return node;
         }
         LOGGER.debug("setRedirect, no node for URL {}", originalUrl);
@@ -203,6 +229,7 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
         ClientNode node = getNode(url, false, false);
         if (node != null && !node.getUserObject().isVisited()) {
             node.getUserObject().setVisited(true);
+            notifyNodeChanged(node);
             return node;
         }
         LOGGER.debug("setVisited, no node for URL or already visited {}", url);
@@ -228,8 +255,64 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
                                 ClientSideComponent.Type.CONTENT_LOADED,
                                 null,
                                 -1));
-
+        notifyNodeChanged(node);
         return node;
+    }
+
+    public void setReportedObjectConsumer(Consumer<ReportedObject> consumer) {
+        this.reportedObjectConsumer = consumer;
+    }
+
+    public void handleReportObject(String jsonStr) {
+        handleReportObject(jsonStr, 0);
+    }
+
+    public void handleReportObject(String jsonStr, int source) {
+        LOGGER.debug("Got object: {}", jsonStr);
+        JSONObject json = JSONObject.fromObject(jsonStr);
+        ReportedElement rnode = new ReportedElement(json);
+        notifyReportedObjectConsumer(rnode);
+        String url = rnode.getUrl();
+        if (url != null) {
+            if (!isApiUrl(url)) {
+                addComponent(url, new ClientSideComponent(json));
+            }
+        } else {
+            LOGGER.debug("Not got url:(: {}", url);
+        }
+        String href = rnode.getHref();
+        if (href != null && href.toLowerCase(Locale.ROOT).startsWith("http")) {
+            getOrAddNode(href, false, false);
+        }
+    }
+
+    public void handleReportEvent(String jsonStr) {
+        handleReportEvent(jsonStr, 0);
+    }
+
+    public void handleReportEvent(String jsonStr, int source) {
+        LOGGER.debug("Got event: {}", jsonStr);
+        JSONObject json = JSONObject.fromObject(jsonStr);
+        ReportedEvent event = new ReportedEvent(json);
+        notifyReportedObjectConsumer(event);
+        String url = event.getUrl();
+        if (url != null && !isApiUrl(url)) {
+            setVisited(url);
+        }
+    }
+
+    private void notifyReportedObjectConsumer(ReportedObject reportObject) {
+        if (isApiUrl(reportObject.getUrl())) {
+            return;
+        }
+
+        if (reportedObjectConsumer != null) {
+            reportedObjectConsumer.accept(reportObject);
+        }
+    }
+
+    private static boolean isApiUrl(String url) {
+        return url != null && (url.startsWith(API.API_URL) || url.startsWith(API.API_URL_S));
     }
 }
 
