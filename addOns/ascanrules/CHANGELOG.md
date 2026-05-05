@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [82] - 2026-05-06
 ### Changed
+- XML External Entity Attack scan rule extended to detect XXE attacks when XML is part of a multipart request (Issue 1190).
 - The following scan rules now include example alert functionality for documentation generation purposes (Issue 6119):
     - SQL Injection - Hypersonic SQL (Time Based)
     - SQL Injection - MsSQL (Time Based)
