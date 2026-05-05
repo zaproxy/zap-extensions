@@ -25,8 +25,13 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
+import java.net.InetSocketAddress;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
+import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,17 +39,22 @@ import org.openqa.selenium.WebDriver;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.addon.client.internal.ClientMap;
 import org.zaproxy.zap.extension.selenium.SeleniumScriptUtils;
 import org.zaproxy.zap.testutils.TestUtils;
 
 /** Unit test for {@link ClientIntegrationAPI}. */
 class ClientIntegrationAPIUnitTest extends TestUtils {
 
+    private ExtensionClientIntegration extension;
+    private ClientMap clientMap;
     private ClientIntegrationAPI api;
 
     @BeforeEach
     void setUp() {
-        api = new ClientIntegrationAPI(null);
+        extension = mock(ExtensionClientIntegration.class);
+        clientMap = mock(ClientMap.class);
+        api = new ClientIntegrationAPI(extension, clientMap);
     }
 
     @Test
@@ -242,16 +252,87 @@ class ClientIntegrationAPIUnitTest extends TestUtils {
         assertThat(callback.closingCcbu, is(nullValue()));
     }
 
+    @Test
+    void shouldDelegateReportObject() throws Exception {
+        // Given
+        String reportedObject = "ReportedObject";
+        JSONObject params = new JSONObject();
+        params.put("objectJson", reportedObject);
+
+        // When
+        api.handleApiAction("reportObject", params);
+
+        // Then
+        verify(clientMap).handleReportObject(reportedObject);
+    }
+
+    @Test
+    void shouldDelegateReportEvent() throws Exception {
+        // Given
+        String reportedEvent = "ReportedEvent";
+        JSONObject params = new JSONObject();
+        params.put("eventJson", reportedEvent);
+
+        // When
+        api.handleApiAction("reportEvent", params);
+
+        // Then
+        verify(clientMap).handleReportEvent(reportedEvent);
+    }
+
+    @Test
+    void shouldDelegateReportObjectViaCallback() throws Exception {
+        // Given
+        String reportedObject = "ReportedObject";
+        int localPort = 1234;
+        HttpMessage msg =
+                getPostMsg(
+                        api.getCallbackUrl(),
+                        "objectJson=" + URLEncoder.encode(reportedObject, StandardCharsets.UTF_8),
+                        localPort);
+
+        // When
+        api.handleCallBack(msg);
+
+        // Then
+        verify(clientMap).handleReportObject(reportedObject, localPort);
+    }
+
+    @Test
+    void shouldDelegateReportEventViaCallback() throws Exception {
+        // Given
+        String reportedEvent = "ReportedEvent";
+        int localPort = 4321;
+        HttpMessage msg =
+                getPostMsg(
+                        api.getCallbackUrl(),
+                        "eventJson=" + URLEncoder.encode(reportedEvent, StandardCharsets.UTF_8),
+                        localPort);
+
+        // When
+        api.handleCallBack(msg);
+
+        // Then
+        verify(clientMap).handleReportEvent(reportedEvent, localPort);
+    }
+
     private static ClientCallBackUtils createClientCallBackUtils() {
         WebDriver wd = mock(WebDriver.class);
         SeleniumScriptUtils ssu = new SeleniumScriptUtils(wd, 0, "firefox", "localhost", 8080);
         return new ClientCallBackUtils(ssu, UUID.randomUUID());
     }
 
-    private HttpMessage getMsg(String method, String url) throws Exception {
+    private static HttpMessage getMsg(String method, String url) throws Exception {
         HttpMessage msg = new HttpMessage();
         URI uri = new URI(url, true);
         msg.setRequestHeader(new HttpRequestHeader(method, uri, HttpHeader.HTTP11));
+        return msg;
+    }
+
+    private static HttpMessage getPostMsg(String url, String body, int localPort) throws Exception {
+        HttpMessage msg = getMsg(HttpRequestHeader.POST, url);
+        msg.getRequestHeader().setLocalAddress(new InetSocketAddress(localPort));
+        msg.setRequestBody(body);
         return msg;
     }
 

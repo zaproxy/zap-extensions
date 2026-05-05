@@ -31,6 +31,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zaproxy.addon.client.ClientOptions;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
+import org.zaproxy.addon.client.internal.ClientMap;
 import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.ScanController;
@@ -42,6 +43,8 @@ public class SpiderScanController implements ScanController<ClientSpider> {
     private static final Logger LOGGER = LogManager.getLogger(SpiderScanController.class);
 
     private ExtensionClientIntegration extension;
+
+    private final ClientMap clientMap;
 
     private final ValueProvider valueProvider;
 
@@ -85,9 +88,13 @@ public class SpiderScanController implements ScanController<ClientSpider> {
      */
     private List<ClientSpider> clientSpiderList;
 
-    public SpiderScanController(ExtensionClientIntegration extension, ValueProvider valueProvider) {
+    public SpiderScanController(
+            ExtensionClientIntegration extension,
+            ClientMap clientMap,
+            ValueProvider valueProvider) {
         this.clientSpidersLock = new ReentrantLock();
         this.extension = extension;
+        this.clientMap = clientMap;
         this.valueProvider = valueProvider;
         this.clientSpiderMap = new HashMap<>();
         this.clientSpiderList = new ArrayList<>();
@@ -130,6 +137,7 @@ public class SpiderScanController implements ScanController<ClientSpider> {
             ClientSpider scan =
                     new ClientSpider(
                             extension,
+                            clientMap,
                             name,
                             startUri.toString(),
                             clientOptions,
