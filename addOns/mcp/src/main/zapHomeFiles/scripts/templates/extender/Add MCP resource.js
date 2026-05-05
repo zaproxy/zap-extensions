@@ -16,27 +16,27 @@ const NAME = "example-resource";
 
 function newResource() {
   return new (Java.extend(McpResource))({
-    getUri: function() {
+    getUri: function () {
       return RESOURCE_URI;
     },
 
-    getName: function() {
+    getName: function () {
       return NAME;
     },
 
-    getDescription: function() {
+    getDescription: function () {
       return "An example MCP resource that returns sample data. Use this as a template for custom resources.";
     },
 
-    readContent: function() {
+    readContent: function () {
       var content = McpResource.OBJECT_MAPPER.createObjectNode();
       content.put("message", "This is an example MCP resource");
-	  content.put("uri", this.getUri());
-	  content.put("name", this.getName());
-	  content.put("description", this.getDescription());
+      content.put("uri", this.getUri());
+      content.put("name", this.getName());
+      content.put("description", this.getDescription());
       content.put("timestamp", new Date().toISOString());
       return content.toString();
-    }
+    },
   });
 }
 

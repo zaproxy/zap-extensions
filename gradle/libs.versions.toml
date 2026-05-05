@@ -15,6 +15,10 @@ netty = "4.1.100.Final"
 re2j = "1.8"
 slf4j = "2.0.17"
 
+# JS formatting/runtime tooling
+node = "24.15.0"
+prettier = "3.8.3"
+
 [libraries]
 ascanrules-procyonCompilerTools = "org.bitbucket.mstrobel:procyon-compilertools:0.6.0"
 ascanrules-rhino = "org.mozilla:rhino:1.9.1"
@@ -125,6 +129,7 @@ dependencyUpdates = "com.github.ben-manes.versions:0.54.0"
 errorprone = "net.ltgt.errorprone:5.1.0"
 japicmp = "me.champeau.gradle.japicmp:0.4.6"
 lombok = "io.freefair.lombok:9.5.0"
+node-gradle = "com.github.node-gradle.node:7.1.0"
 sonarqube = "org.sonarqube:7.3.0.8198"
 spotless.id = "com.diffplug.spotless"
 undercouch-download = "de.undercouch.download:5.7.0"

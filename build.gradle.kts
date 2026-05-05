@@ -1,6 +1,20 @@
 import net.ltgt.gradle.errorprone.errorprone
 import org.zaproxy.gradle.spotless.ValidateImports
 
+buildscript {
+    dependencies {
+        constraints {
+            classpath("com.fasterxml.jackson:jackson-bom") {
+                version {
+                    // Match org.zaproxy.add-on version.
+                    require("2.18.2")
+                }
+                because("prevents JAR hell between org.zaproxy.add-on and com.github.node-gradle.node")
+            }
+        }
+    }
+}
+
 plugins {
     alias(libs.plugins.spotless)
     alias(libs.plugins.zaproxy.common) apply false
@@ -8,6 +22,7 @@ plugins {
     alias(libs.plugins.sonarqube)
     alias(libs.plugins.errorprone)
     alias(libs.plugins.lombok)
+    alias(libs.plugins.node.gradle)
 }
 
 apply(from = "$rootDir/gradle/ci.gradle.kts")
@@ -23,6 +38,11 @@ val validateImports =
                 "Use java.util.HexFormat instead.",
         ),
     )
+
+node {
+    version = libs.versions.node.get()
+    download = true
+}
 
 allprojects {
     apply(plugin = "com.diffplug.spotless")

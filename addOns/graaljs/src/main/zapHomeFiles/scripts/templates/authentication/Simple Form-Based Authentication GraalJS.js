@@ -19,54 +19,74 @@
 //					returned by the getCredentialsParamsNames() below
 
 function authenticate(helper, paramsValues, credentials) {
-	print("Authenticating via JavaScript script...");
+  print("Authenticating via JavaScript script...");
 
-	// Make sure any Java classes used explicitly are imported
-	var HttpRequestHeader = Java.type("org.parosproxy.paros.network.HttpRequestHeader")
-	var HttpHeader = Java.type("org.parosproxy.paros.network.HttpHeader")
-	var URI = Java.type("org.apache.commons.httpclient.URI")
+  // Make sure any Java classes used explicitly are imported
+  var HttpRequestHeader = Java.type(
+    "org.parosproxy.paros.network.HttpRequestHeader",
+  );
+  var HttpHeader = Java.type("org.parosproxy.paros.network.HttpHeader");
+  var URI = Java.type("org.apache.commons.httpclient.URI");
 
-	// Prepare the login request details
-	var requestUri = new URI(paramsValues.get("Target URL"), false);
-	var requestMethod = HttpRequestHeader.POST;
-	
-	// Build the request body using the credentials values
-	var extraPostData = paramsValues.get("Extra POST data");
-	var requestBody = paramsValues.get("Username field") + "=" + encodeURIComponent(credentials.getParam("Username"));
-	requestBody+= "&" + paramsValues.get("Password field") + "=" + encodeURIComponent(credentials.getParam("Password"));
-	if(extraPostData.trim().length() > 0)
-		requestBody += "&" + extraPostData.trim();
+  // Prepare the login request details
+  var requestUri = new URI(paramsValues.get("Target URL"), false);
+  var requestMethod = HttpRequestHeader.POST;
 
-	// Build the actual message to be sent
-	print("Sending " + requestMethod + " request to " + requestUri + " with body: " + requestBody);
-	var msg = helper.prepareMessage();
-	msg.setRequestHeader(new HttpRequestHeader(requestMethod, requestUri, HttpHeader.HTTP10));
-	msg.setRequestBody(requestBody);
-	msg.getRequestHeader().setContentLength(msg.getRequestBody().length());
+  // Build the request body using the credentials values
+  var extraPostData = paramsValues.get("Extra POST data");
+  var requestBody =
+    paramsValues.get("Username field") +
+    "=" +
+    encodeURIComponent(credentials.getParam("Username"));
+  requestBody +=
+    "&" +
+    paramsValues.get("Password field") +
+    "=" +
+    encodeURIComponent(credentials.getParam("Password"));
+  if (extraPostData.trim().length() > 0)
+    requestBody += "&" + extraPostData.trim();
 
-	// Send the authentication message and return it
-	helper.sendAndReceive(msg);
-	print("Received response status code: " + msg.getResponseHeader().getStatusCode());
+  // Build the actual message to be sent
+  print(
+    "Sending " +
+      requestMethod +
+      " request to " +
+      requestUri +
+      " with body: " +
+      requestBody,
+  );
+  var msg = helper.prepareMessage();
+  msg.setRequestHeader(
+    new HttpRequestHeader(requestMethod, requestUri, HttpHeader.HTTP10),
+  );
+  msg.setRequestBody(requestBody);
+  msg.getRequestHeader().setContentLength(msg.getRequestBody().length());
 
-	return msg;
+  // Send the authentication message and return it
+  helper.sendAndReceive(msg);
+  print(
+    "Received response status code: " + msg.getResponseHeader().getStatusCode(),
+  );
+
+  return msg;
 }
 
 // This function is called during the script loading to obtain a list of the names of the required configuration parameters,
 // that will be shown in the Session Properties -> Authentication panel for configuration. They can be used
 // to input dynamic data into the script, from the user interface (e.g. a login URL, name of POST parameters etc.)
-function getRequiredParamsNames(){
-	return ["Target URL", "Username field", "Password field"];
+function getRequiredParamsNames() {
+  return ["Target URL", "Username field", "Password field"];
 }
 
 // This function is called during the script loading to obtain a list of the names of the optional configuration parameters,
 // that will be shown in the Session Properties -> Authentication panel for configuration. They can be used
 // to input dynamic data into the script, from the user interface (e.g. a login URL, name of POST parameters etc.)
-function getOptionalParamsNames(){
-	return ["Extra POST data"];
+function getOptionalParamsNames() {
+  return ["Extra POST data"];
 }
 
 // This function is called during the script loading to obtain a list of the names of the parameters that are required,
-// as credentials, for each User configured corresponding to an Authentication using this script 
-function getCredentialsParamsNames(){
-	return ["Username", "Password"];
+// as credentials, for each User configured corresponding to an Authentication using this script
+function getCredentialsParamsNames() {
+  return ["Username", "Password"];
 }

@@ -1,11 +1,13 @@
-var Hasher = Java.type("org.zaproxy.addon.encoder.processors.predefined.HashProcessor");
+var Hasher = Java.type(
+  "org.zaproxy.addon.encoder.processors.predefined.HashProcessor",
+);
 
 /**
  * Process the input value and return the encoded/decoded/hashed etc. value
  *
  * Use helper.newError("Error Description") to provide an error description
  * inside the result view.
- * 
+ *
  * The Hasher accepts MessageDigest algorithms as defined via:
  *     https://docs.oracle.com/en/java/javase/11/docs/specs/security/standard-names.html#messagedigest-algorithms
  *
@@ -14,7 +16,7 @@ var Hasher = Java.type("org.zaproxy.addon.encoder.processors.predefined.HashProc
  * @param {String} value - The input value
  * @returns {EncodeDecodeResult} - The value that was encoded/decoded/hashed etc. easiest via helper.newResult(result).
  */
-function process(helper, value){
-	var output = new Hasher("sha3-256").process(value).getResult();
-	return helper.newResult(output);
+function process(helper, value) {
+  var output = new Hasher("sha3-256").process(value).getResult();
+  return helper.newResult(output);
 }

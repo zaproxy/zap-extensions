@@ -2,10 +2,10 @@
  * When storage is written to, check if the written value is a JWT token.
  */
 
-frontEndScanner.mailbox.subscribe('storage', (_, storageEntry) => {
+frontEndScanner.mailbox.subscribe("storage", (_, storageEntry) => {
   // A storage entry has the following form:
   // {key: 'foo', value: 'bar', action: 'get|remove|set'}
-  if (storageEntry.action === 'set') {
+  if (storageEntry.action === "set") {
     verify(storageEntry);
     verifySubEntries(storageEntry);
   }
@@ -15,13 +15,15 @@ function verify(storageEntry) {
   const potentialToken = storageEntry.value;
   const tokenContent = _parseJwt(potentialToken);
 
-  if (!tokenContent) { return; }
+  if (!tokenContent) {
+    return;
+  }
 
   _reportJwtToken(storageEntry, tokenContent);
 
-  if (tokenContent.header.alg === 'HS256') {
+  if (tokenContent.header.alg === "HS256") {
     _reportWeakAlgorithm(storageEntry, tokenContent);
-  } else if (tokenContent.header.alg === 'none') {
+  } else if (tokenContent.header.alg === "none") {
     _reportNoneAlgorithm(storageEntry, tokenContent);
   }
 }
@@ -29,7 +31,7 @@ function verify(storageEntry) {
 // In case of nested entries (a storage entry having a stringified object as value)
 // scan the first level of depth for a token.
 function verifySubEntries(storageEntry) {
-  const storageEntryValue = (entryValue => {
+  const storageEntryValue = ((entryValue) => {
     try {
       return JSON.parse(entryValue);
     } catch (e) {
@@ -38,10 +40,10 @@ function verifySubEntries(storageEntry) {
   })(storageEntry.value);
 
   if (storageEntryValue) {
-    Object.keys(storageEntryValue).forEach(key => {
+    Object.keys(storageEntryValue).forEach((key) => {
       verify({
         key: key,
-        value: storageEntryValue[key]
+        value: storageEntryValue[key],
       });
     });
   }
@@ -50,9 +52,9 @@ function verifySubEntries(storageEntry) {
 function _parseJwt(token) {
   try {
     var result = token
-      .split('.')
-      .map(x => x.replace('-', '+'))
-      .map(x => x.replace('_', '/'))
+      .split(".")
+      .map((x) => x.replace("-", "+"))
+      .map((x) => x.replace("_", "/"))
       .map(window.atob);
 
     // Get rid of the last element: we will not check integrity.
@@ -60,8 +62,8 @@ function _parseJwt(token) {
 
     return {
       header: JSON.parse(result[0]),
-      payload: JSON.parse(result[1])
-    }
+      payload: JSON.parse(result[1]),
+    };
   } catch (e) {
     return false;
   }
@@ -70,10 +72,10 @@ function _parseJwt(token) {
 function _reportJwtToken(storageEntry, token) {
   _reportAlert(
     frontEndScanner.zapAlertConstants.CONFIDENCE_HIGH,
-    'A JWT token has been found in a storage.',
+    "A JWT token has been found in a storage.",
     `key: '${storageEntry.key}' has been set to value: '${storageEntry.value}', decrypting to ${JSON.stringify(token)}`,
-    'JWT token found.',
-    frontEndScanner.zapAlertConstants.RISK_INFO
+    "JWT token found.",
+    frontEndScanner.zapAlertConstants.RISK_INFO,
   );
 }
 
@@ -83,7 +85,7 @@ function _reportWeakAlgorithm(storageEntry, token) {
     "A JWT token is using the HS256 algorithm, considered insecure.",
     `token stored at key: '${storageEntry.key}' has the following header: ${JSON.stringify(token.header)}`,
     "JWT token uses a weak algorithm.",
-    frontEndScanner.zapAlertConstants.RISK_LOW
+    frontEndScanner.zapAlertConstants.RISK_LOW,
   );
 }
 
@@ -93,7 +95,7 @@ function _reportNoneAlgorithm(storageEntry, token) {
     "A JWT token is using the 'none' algorithm.",
     `token stored at key: '${storageEntry.key}' has the following header: ${JSON.stringify(token.header)}`,
     "JWT token uses 'none' algorithm.",
-    frontEndScanner.zapAlertConstants.RISK_HIGH
+    frontEndScanner.zapAlertConstants.RISK_HIGH,
   );
 }
 
@@ -109,6 +111,6 @@ class Alert {
 
 function _reportAlert(confidence, description, evidence, name, risk) {
   frontEndScanner.reportAlertToZap(
-    new Alert(confidence, description, evidence, name, risk)
+    new Alert(confidence, description, evidence, name, risk),
   );
 }
