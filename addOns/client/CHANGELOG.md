@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.23.0] - 2026-05-06
 ### Changed
 - Client spider to wait for all browsers to close before reporting it has finished.
 
@@ -200,6 +200,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.23.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.23.0
 [0.22.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.22.0
 [0.21.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.21.0
 [0.20.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.20.0

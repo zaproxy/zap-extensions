@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [57] - 2026-05-06
 ### Changed
 - The LDAP Injection scan rule now includes example alert functionality for documentation generation purposes (Issue 6119) and alert references (Issue 7100).
 - Formatted JavaScript files for consistency.
@@ -441,6 +441,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version, including persistent XSS tests
 
+[57]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v57
 [56]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v56
 [55]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v55
 [54]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v54
