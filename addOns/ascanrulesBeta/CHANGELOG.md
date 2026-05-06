@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [66] - 2026-05-06
 ### Changed
 - The following scan rules now include example alert functionality for documentation generation purposes (Issue 6119) and alert references (Issue 7100):
   - Insecure HTTP Method
@@ -637,6 +637,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[66]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v66
 [65]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v65
 [64]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v64
 [63]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v63

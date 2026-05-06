@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.39.0] - 2026-05-06
 ### Changed
 - Do not attempt to extract session tokens from big responses, to reduce memory usage, which are more likely to represent application data rather than having session tokens.
 
@@ -370,6 +370,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Support of authentication request identification and configuration.
 
+[0.39.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.39.0
 [0.38.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.38.0
 [0.37.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.37.0
 [0.36.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.36.0
