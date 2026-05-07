@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [37] - 2026-05-07
 ### Changed
 - Maintenance changes.
 - Formatted JavaScript files for consistency.
@@ -260,6 +260,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[37]: https://github.com/zaproxy/zap-extensions/releases/websocket-v37
 [36]: https://github.com/zaproxy/zap-extensions/releases/websocket-v36
 [35]: https://github.com/zaproxy/zap-extensions/releases/websocket-v35
 [34]: https://github.com/zaproxy/zap-extensions/releases/websocket-v34
