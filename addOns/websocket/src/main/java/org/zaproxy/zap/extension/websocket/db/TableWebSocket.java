@@ -230,7 +230,7 @@ public class TableWebSocket extends ParosAbstractTable {
      * @param criteria
      * @param opcodes Null when all opcodes should be retrieved.
      * @return number of message that fulfill given template
-     * @throws SQLException
+     * @throws DatabaseException
      */
     public synchronized int getMessageCount(WebSocketMessageDTO criteria, List<Integer> opcodes)
             throws DatabaseException {

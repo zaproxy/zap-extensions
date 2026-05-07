@@ -34,7 +34,9 @@ import org.zaproxy.zap.extension.websocket.ui.WebSocketMessagesViewModel;
  * WebSockets tab, as there are 2 more columns here.
  *
  * <p>Moreover it is not backed by the database but a {@link List}. You have to add messages
- * yourself via {@link WebSocketFuzzMessagesView#addFuzzResult(FuzzResult)}.
+ * yourself via {@link
+ * WebSocketFuzzMessagesViewModel#addResult(org.zaproxy.zap.extension.websocket.fuzz.WebSocketFuzzResult,
+ * int, boolean)}.
  */
 public class WebSocketFuzzMessagesView extends WebSocketMessagesView {
 

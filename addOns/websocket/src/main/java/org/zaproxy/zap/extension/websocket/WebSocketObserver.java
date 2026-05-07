@@ -19,7 +19,6 @@
  */
 package org.zaproxy.zap.extension.websocket;
 
-import org.parosproxy.paros.extension.ExtensionHook;
 import org.zaproxy.zap.extension.websocket.WebSocketProxy.State;
 
 /**
@@ -27,9 +26,8 @@ import org.zaproxy.zap.extension.websocket.WebSocketProxy.State;
  *
  * <p>You can add your observer to a specific channel via {@link
  * WebSocketProxy#addObserver(WebSocketObserver)}. Alternatively you can set up your observer for
- * all channels, that come into existence in the future. Call either {@link
- * ExtensionWebSocket#addAllChannelObserver(WebSocketObserver)} direct or use {@link
- * ExtensionHook#addWebSocketObserver(WebSocketObserver)}.
+ * all channels, that come into existence in the future through {@link
+ * ExtensionWebSocket#addAllChannelObserver(WebSocketObserver)}.
  */
 public interface WebSocketObserver {
 

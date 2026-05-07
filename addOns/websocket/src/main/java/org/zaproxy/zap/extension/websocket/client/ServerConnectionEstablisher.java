@@ -64,8 +64,8 @@ public class ServerConnectionEstablisher {
      * acts as a WebSocket Client.
      *
      * @return Either a new WebSocketProxy which is acts as a client or null if something went wrong
-     * @throws Exception Extensive description for the reason it is not able to establish the
-     *     connection
+     * @throws IOException if an I/O error occurs while establishing the connection
+     * @throws RequestOutOfScopeException if the request is out of scope
      */
     public WebSocketProxy send(HandshakeConfig handshakeConfig)
             throws IOException, RequestOutOfScopeException {
