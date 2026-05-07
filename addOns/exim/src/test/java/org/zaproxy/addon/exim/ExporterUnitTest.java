@@ -371,14 +371,18 @@ class ExporterUnitTest extends TestUtils {
         // Given
         String expectedOutput = "clientmap yaml output";
         Exporter.registerSourceExporter(
-                Source.CLIENTMAP, (writer, opts) -> writer.write(expectedOutput));
+                Source.CLIENTMAP,
+                (writer, opts) -> {
+                    writer.write(expectedOutput);
+                    return 3;
+                });
         try {
             optionsWithType("yaml");
             optionsWithSource(Source.CLIENTMAP);
             // When
             ExporterResult result = exporter.export(options);
             // Then
-            assertCount(result, 1);
+            assertCount(result, 3);
             assertThat(result.getErrors(), is(empty()));
             assertThat(result.getCause(), is(nullValue()));
             assertThat(Files.readString(outputFile), is(equalTo(expectedOutput)));

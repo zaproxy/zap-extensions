@@ -23,6 +23,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -35,6 +36,7 @@ import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.zap.ZAP;
+import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.testutils.TestUtils;
 
 class ClientMapWriterUnitTest extends TestUtils {
@@ -390,6 +392,39 @@ class ClientMapWriterUnitTest extends TestUtils {
                                       tagName: ""
                                       tagType: ""
                                       storageEvent: true
+                                """)));
+    }
+
+    @Test
+    void shouldExportContextFilteredNodesWhenParentUrlNotInScope() throws IOException {
+        // Given - context includes /test/ but not the parent https://example.com/
+        // This tests the fix where the parent node was skipped too early, preventing
+        // in-scope children from being exported.
+        map.getOrAddNode("https://example.com/test/", true, false);
+        Context context = mock(Context.class);
+        when(context.isInContext("https://example.com/")).thenReturn(false);
+        when(context.isInContext("https://example.com/test/")).thenReturn(true);
+        Writer stringWriter = new StringWriter();
+        // When
+        int count = ClientMapWriter.exportClientMap(stringWriter, map, context);
+        // Then
+        assertThat(count, is(equalTo(4)));
+        String output = stringWriter.toString();
+        assertThat(
+                output,
+                is(
+                        equalTo(
+                                """
+                                - node: "ClientMap"
+                                  children:
+                                  - node: "https://example.com"
+                                    children:
+                                    - node: "test"
+                                      url: "https://example.com/test/"
+                                      visited: false
+                                      children:
+                                      - node: "/"
+                                        url: "https://example.com/test/"
                                 """)));
     }
 }

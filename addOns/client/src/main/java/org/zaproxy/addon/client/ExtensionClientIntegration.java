@@ -959,9 +959,9 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
      * @param context the context to filter by, or {@code null} to export all nodes.
      * @throws IOException if an error occurs while exporting.
      */
-    public void exportClientMap(Writer writer, Context context) throws IOException {
+    public int exportClientMap(Writer writer, Context context) throws IOException {
         try {
-            ClientMapWriter.exportClientMap(writer, clientTree, context);
+            return ClientMapWriter.exportClientMap(writer, clientTree, context);
         } catch (UncheckedIOException e) {
             throw new IOException(e);
         }

@@ -173,8 +173,7 @@ public class Exporter {
                 } else {
                     SourceExporter sourceExporter = SOURCE_EXPORTERS.get(Source.CLIENTMAP);
                     if (sourceExporter != null) {
-                        sourceExporter.export(writer, options);
-                        result.incrementCount();
+                        result.addCount(sourceExporter.export(writer, options));
                     } else {
                         result.addError(
                                 Constant.messages.getString(
