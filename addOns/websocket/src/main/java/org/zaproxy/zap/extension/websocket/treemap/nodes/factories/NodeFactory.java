@@ -23,7 +23,6 @@ import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.zaproxy.zap.extension.websocket.WebSocketChannelDTO;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
-import org.zaproxy.zap.extension.websocket.treemap.nodes.contents.WebSocketContent;
 import org.zaproxy.zap.extension.websocket.treemap.nodes.structural.TreeNode;
 
 public interface NodeFactory {
@@ -32,7 +31,8 @@ public interface NodeFactory {
      * Adds WebSocket Message to the Tree Structure or updates the existing one.
      *
      * @param message is going to be inserted in the structure.
-     * @return the {@link TreeNode<WebSocketContent>} with the appropriate message content.
+     * @return the {@code TreeNode} with the appropriate message content {@link
+     *     org.zaproxy.zap.extension.websocket.treemap.nodes.contents.WebSocketContent}.
      */
     TreeNode getMessageTreeNode(WebSocketMessageDTO message);
 
@@ -40,9 +40,8 @@ public interface NodeFactory {
      * Adds the Host to the Tree Structure or just returns the existing one.
      *
      * @param channel is going to be inserted in the structure.
-     * @return the {@link
-     *     TreeNode<org.zaproxy.zap.extension.websocket.treemap.nodes.contents.HostFolderContent>}
-     *     either the created one or the existing one.
+     * @return the {@code TreeNode} either the created one or the existing one, with {@link
+     *     org.zaproxy.zap.extension.websocket.treemap.nodes.contents.HostFolderContent}.
      * @throws DatabaseException if can't get Handshake {@link
      *     org.parosproxy.paros.network.HttpMessage} from the {@link
      *     org.parosproxy.paros.model.HistoryReference}.
