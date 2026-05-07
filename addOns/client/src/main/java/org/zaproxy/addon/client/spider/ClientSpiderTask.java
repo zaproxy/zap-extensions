@@ -22,6 +22,7 @@ package org.zaproxy.addon.client.spider;
 import java.time.Duration;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -55,6 +56,7 @@ public class ClientSpiderTask implements Runnable {
     private ClientSpider clientSpider;
     private List<SpiderAction> actions;
     private int timeout;
+    private long actionWaitTimeInMsecs;
     @Getter private Status status;
     @Getter private String error;
     private WebDriverProcess wdp;
@@ -64,6 +66,7 @@ public class ClientSpiderTask implements Runnable {
             ClientSpider clientSpider,
             List<SpiderAction> actions,
             int timeout,
+            int actionWaitTimeInSecs,
             String displayName,
             String detailsString) {
         this.id = id;
@@ -72,6 +75,7 @@ public class ClientSpiderTask implements Runnable {
         this.clientSpider = clientSpider;
         this.actions = actions;
         this.timeout = timeout;
+        this.actionWaitTimeInMsecs = TimeUnit.SECONDS.toMillis(actionWaitTimeInSecs);
         this.status = Status.QUEUED;
     }
 
@@ -116,7 +120,18 @@ public class ClientSpiderTask implements Runnable {
             WebDriver wd = wdp.getWebDriver();
             startTime = System.currentTimeMillis();
             wd.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(this.timeout));
-            actions.forEach(e -> e.run(wd));
+            for (SpiderAction action : actions) {
+                action.run(wd);
+                if (actionWaitTimeInMsecs > 0) {
+                    try {
+                        Thread.sleep(actionWaitTimeInMsecs);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        LOGGER.debug("Interrupted while waiting after action.", e);
+                        break;
+                    }
+                }
+            }
             ok = true;
             this.status = Status.FINISHED;
             this.clientSpider.taskStateChange(this);

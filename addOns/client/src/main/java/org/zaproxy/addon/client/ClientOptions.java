@@ -43,6 +43,7 @@ public class ClientOptions extends VersionedAbstractParam {
     public static final int DEFAULT_INITIAL_LOAD_TIME = 5;
     public static final int DEFAULT_PAGE_LOAD_TIME = 1;
     public static final int DEFAULT_SHUTDOWN_TIME = 5;
+    public static final int DEFAULT_ACTION_WAIT_TIME = 0;
     public static final boolean DEFAULT_LOGOUT_AVOIDANCE = true;
 
     private static final String CONFIG_VERSION_KEY = CLIENT_BASE_KEY + VERSION_ATTRIBUTE;
@@ -60,6 +61,7 @@ public class ClientOptions extends VersionedAbstractParam {
     private static final String MAX_SCANS_IN_UI_KEY = CLIENT_BASE_KEY + ".maxScansInUI";
     private static final String SCOPE_CHECK_KEY = CLIENT_BASE_KEY + ".scopeCheck";
     private static final String LOGOUT_AVOIDANCE_KEY = CLIENT_BASE_KEY + ".logoutAvoidance";
+    private static final String ACTION_WAIT_TIME_KEY = CLIENT_BASE_KEY + ".actionWaitTime";
 
     public enum ScopeCheck {
         FLEXIBLE,
@@ -109,6 +111,7 @@ public class ClientOptions extends VersionedAbstractParam {
     private int maxScansInUi = 5;
     private ScopeCheck scopeCheck = ScopeCheck.getDefault();
     private boolean logoutAvoidance;
+    private int actionWaitTimeInSecs = DEFAULT_ACTION_WAIT_TIME;
 
     @Override
     public ClientOptions clone() {
@@ -129,6 +132,7 @@ public class ClientOptions extends VersionedAbstractParam {
         this.maxScansInUi = getInt(MAX_SCANS_IN_UI_KEY, 5);
         this.scopeCheck = getEnum(SCOPE_CHECK_KEY, ScopeCheck.getDefault());
         logoutAvoidance = getBoolean(LOGOUT_AVOIDANCE_KEY, DEFAULT_LOGOUT_AVOIDANCE);
+        this.actionWaitTimeInSecs = getInt(ACTION_WAIT_TIME_KEY, DEFAULT_ACTION_WAIT_TIME);
 
         try {
             pscanRulesDisabled =
@@ -299,5 +303,14 @@ public class ClientOptions extends VersionedAbstractParam {
     public void setLogoutAvoidance(boolean logoutAvoidance) {
         this.logoutAvoidance = logoutAvoidance;
         getConfig().setProperty(LOGOUT_AVOIDANCE_KEY, logoutAvoidance);
+    }
+
+    public int getActionWaitTimeInSecs() {
+        return actionWaitTimeInSecs;
+    }
+
+    public void setActionWaitTimeInSecs(int actionWaitTimeInSecs) {
+        this.actionWaitTimeInSecs = actionWaitTimeInSecs;
+        getConfig().setProperty(ACTION_WAIT_TIME_KEY, actionWaitTimeInSecs);
     }
 }

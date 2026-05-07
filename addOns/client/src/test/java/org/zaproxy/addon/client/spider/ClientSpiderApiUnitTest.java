@@ -27,6 +27,12 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.withSettings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,8 +43,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.ArgumentCaptor;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.extension.ExtensionLoader;
+import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.client.ClientOptions;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.api.API.RequestType;
@@ -47,17 +59,35 @@ import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.api.ApiParameter;
 import org.zaproxy.zap.testutils.TestUtils;
+import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 /** Unit test for {@link ClientSpiderApi}. */
 class ClientSpiderApiUnitTest extends TestUtils {
 
+    private static final String SCAN_URL = "http://example.com";
+
     private ClientSpiderApi clientSpiderAPI;
+    private ExtensionClientIntegration extClient;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
+        extClient =
+                mock(
+                        ExtensionClientIntegration.class,
+                        withSettings().strictness(Strictness.LENIENT));
+        given(extensionLoader.getExtension(ExtensionClientIntegration.class)).willReturn(extClient);
+        Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
+
         mockMessages(new ExtensionClientIntegration());
 
-        clientSpiderAPI = new ClientSpiderApi();
+        clientSpiderAPI = new ClientSpiderApi(extClient);
+
+        ClientOptions clientOptions = new ClientOptions();
+        clientOptions.load(new ZapXmlConfiguration());
+        given(extClient.getClientParam()).willReturn(clientOptions);
+        given(extClient.startScan(any(), any(), any(), any(), anyBoolean())).willReturn(1);
     }
 
     @AfterAll
@@ -152,6 +182,39 @@ class ClientSpiderApiUnitTest extends TestUtils {
                 missingDescriptions);
         assertThat(missingKeys, is(empty()));
         assertThat(missingDescriptions, is(empty()));
+    }
+
+    @Test
+    void shouldUseDefaultActionWaitTimeWhenParamNotProvided() throws Exception {
+        // Given
+        JSONObject params = new JSONObject();
+        params.put("url", SCAN_URL);
+        ArgumentCaptor<ClientOptions> optionsCaptor = ArgumentCaptor.forClass(ClientOptions.class);
+
+        // When
+        clientSpiderAPI.handleApiAction("scan", params);
+
+        // Then
+        verify(extClient).startScan(any(), optionsCaptor.capture(), any(), any(), anyBoolean());
+        assertThat(
+                optionsCaptor.getValue().getActionWaitTimeInSecs(),
+                is(ClientOptions.DEFAULT_ACTION_WAIT_TIME));
+    }
+
+    @Test
+    void shouldPassActionWaitTimeToScan() throws Exception {
+        // Given
+        JSONObject params = new JSONObject();
+        params.put("url", SCAN_URL);
+        params.put("actionWaitTime", 5);
+        ArgumentCaptor<ClientOptions> optionsCaptor = ArgumentCaptor.forClass(ClientOptions.class);
+
+        // When
+        clientSpiderAPI.handleApiAction("scan", params);
+
+        // Then
+        verify(extClient).startScan(any(), optionsCaptor.capture(), any(), any(), anyBoolean());
+        assertThat(optionsCaptor.getValue().getActionWaitTimeInSecs(), is(5));
     }
 
     private static void checkKey(String key, List<String> missingKeys, List<String> missingDescs) {

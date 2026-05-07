@@ -64,6 +64,7 @@ public class ClientSpiderApi extends ApiImplementor {
     private static final String PARAM_USER_NAME = "userName";
     private static final String PARAM_MAX_CRAWL_DEPTH = "maxCrawlDepth";
     private static final String PARAM_PAGE_LOAD_TIME = "pageLoadTime";
+    private static final String PARAM_ACTION_WAIT_TIME = "actionWaitTime";
     private static final String PARAM_LOGOUT_AVOIDANCE = "logoutAvoidance";
     private static final String PARAM_NUMBER_OF_BROWSERS = "numberOfBrowsers";
     private static final String PARAM_SCOPE_CHECK = "scopeCheck";
@@ -89,6 +90,7 @@ public class ClientSpiderApi extends ApiImplementor {
                                 PARAM_SUBTREE_ONLY,
                                 PARAM_MAX_CRAWL_DEPTH,
                                 PARAM_PAGE_LOAD_TIME,
+                                PARAM_ACTION_WAIT_TIME,
                                 PARAM_NUMBER_OF_BROWSERS,
                                 PARAM_SCOPE_CHECK,
                                 PARAM_LOGOUT_AVOIDANCE)));
@@ -158,6 +160,9 @@ public class ClientSpiderApi extends ApiImplementor {
         }
         if (params.containsKey(PARAM_PAGE_LOAD_TIME)) {
             options.setPageLoadTimeInSecs(ApiUtils.getIntParam(params, PARAM_PAGE_LOAD_TIME));
+        }
+        if (params.containsKey(PARAM_ACTION_WAIT_TIME)) {
+            options.setActionWaitTimeInSecs(ApiUtils.getIntParam(params, PARAM_ACTION_WAIT_TIME));
         }
         if (params.containsKey(PARAM_NUMBER_OF_BROWSERS)) {
             options.setThreadCount(ApiUtils.getIntParam(params, PARAM_NUMBER_OF_BROWSERS));

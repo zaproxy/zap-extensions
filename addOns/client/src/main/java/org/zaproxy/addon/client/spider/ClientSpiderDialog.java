@@ -74,6 +74,7 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
     private static final String FIELD_PAGE_LOAD_TIME = "client.options.label.pageloadtime";
     private static final String FIELD_SHUTDOWN_TIME = "client.options.label.shutdowntime";
     private static final String FIELD_LOGOUT_AVOIDANCE = "client.scandialog.label.logoutAvoidance";
+    private static final String FIELD_ACTION_WAIT_TIME = "client.options.label.actionwaittime";
 
     private static final Logger LOGGER = LogManager.getLogger(ClientSpiderDialog.class);
     private static final long serialVersionUID = 1L;
@@ -175,6 +176,8 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
                 params.getInitialLoadTimeInSecs());
         this.addNumberField(
                 1, FIELD_PAGE_LOAD_TIME, 0, Integer.MAX_VALUE, params.getPageLoadTimeInSecs());
+        this.addNumberField(
+                1, FIELD_ACTION_WAIT_TIME, 0, Integer.MAX_VALUE, params.getActionWaitTimeInSecs());
         this.addNumberField(
                 1, FIELD_SHUTDOWN_TIME, 0, Integer.MAX_VALUE, params.getShutdownTimeInSecs());
         this.addNumberField(1, FIELD_DURATION, 0, Integer.MAX_VALUE, params.getMaxDuration());
@@ -378,6 +381,7 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
             clientParams.setPageLoadTimeInSecs(this.getIntValue(FIELD_PAGE_LOAD_TIME));
             clientParams.setShutdownTimeInSecs(this.getIntValue(FIELD_SHUTDOWN_TIME));
             clientParams.setMaxDuration(this.getIntValue(FIELD_DURATION));
+            clientParams.setActionWaitTimeInSecs(this.getIntValue(FIELD_ACTION_WAIT_TIME));
             clientParams.setLogoutAvoidance(getBoolValue(FIELD_LOGOUT_AVOIDANCE));
         }
 
