@@ -42,7 +42,7 @@ zapAddOn {
                 dependencies {
                     addOns {
                         register("exim") {
-                            version.set(">=0.19.0")
+                            version.set(">=0.20.0")
                         }
                     }
                 }

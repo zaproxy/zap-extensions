@@ -40,7 +40,8 @@ public interface SourceExporter {
      *
      * @param writer to where to export the data.
      * @param options the exporter options (e.g. context for filtering).
+     * @return the number of items exported.
      * @throws IOException if an error occurs while exporting.
      */
-    void export(Writer writer, ExporterOptions options) throws IOException;
+    int export(Writer writer, ExporterOptions options) throws IOException;
 }

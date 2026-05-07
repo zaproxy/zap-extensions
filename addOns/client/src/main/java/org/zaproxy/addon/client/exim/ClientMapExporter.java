@@ -35,7 +35,7 @@ class ClientMapExporter implements SourceExporter {
     }
 
     @Override
-    public void export(Writer writer, ExporterOptions options) throws IOException {
-        extensionClient.exportClientMap(writer, options.getContext());
+    public int export(Writer writer, ExporterOptions options) throws IOException {
+        return extensionClient.exportClientMap(writer, options.getContext());
     }
 }

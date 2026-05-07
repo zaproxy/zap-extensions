@@ -48,6 +48,10 @@ public class ExporterResult {
         this.count++;
     }
 
+    void addCount(int n) {
+        this.count += n;
+    }
+
     /**
      * Gets the errors that happened while exporting, if any.
      *

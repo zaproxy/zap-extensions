@@ -29,7 +29,10 @@ import java.io.Writer;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.TreeSet;
+import java.util.stream.StreamSupport;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.utils.Stats;
@@ -72,21 +75,40 @@ public final class ClientMapWriter {
      * @param context the context to filter by, or {@code null} to export all nodes.
      * @throws IOException if an error occurs while exporting.
      */
-    public static void exportClientMap(Writer fw, ClientMap clientMap, Context context)
+    public static int exportClientMap(Writer fw, ClientMap clientMap, Context context)
             throws IOException {
-        outputNodeNoComponents(fw, clientMap.getRoot(), 0, context);
+        return outputNodeNoComponents(fw, clientMap.getRoot(), 0, context);
     }
 
-    private static void outputNodeNoComponents(
+    private static boolean isInScope(ClientNode node, Context context) {
+        if (context == null || node.isRoot()) {
+            return true;
+        }
+
+        return context.isInContext(node.getUserObject().getUrl());
+    }
+
+    private static boolean isAnyChildInScope(ClientNode node, Context context) {
+        if (context == null) {
+            return true;
+        }
+
+        return StreamSupport.stream(
+                        Spliterators.spliteratorUnknownSize(
+                                node.depthFirstEnumeration().asIterator(), Spliterator.ORDERED),
+                        false)
+                .map(ClientNode.class::cast)
+                .anyMatch(child -> isInScope(child, context));
+    }
+
+    private static int outputNodeNoComponents(
             Writer fw, ClientNode node, int level, Context context) throws IOException {
         if (node.isStorage()) {
-            return;
+            return 0;
         }
-        if (!node.isRoot() && context != null) {
-            String url = node.getUserObject().getUrl();
-            if (!context.isInContext(url)) {
-                return;
-            }
+        boolean isInScope = isInScope(node, context);
+        if (!isInScope && !isAnyChildInScope(node, context)) {
+            return 0;
         }
 
         String indent = " ".repeat(level * 2);
@@ -98,7 +120,7 @@ public final class ClientMapWriter {
                 NODE_KEY,
                 level == 0 ? ROOT_NODE_NAME : node.getUserObject().getName());
 
-        if (level > 0) {
+        if (level > 0 && isInScope) {
             outputKV(fw, indent, false, URL_KEY, node.getUserObject().getUrl());
             if (node.getUserObject().isStorage()) {
                 outputKV(fw, indent, false, STORAGE_KEY, node.getUserObject().isStorage());
@@ -110,23 +132,19 @@ public final class ClientMapWriter {
 
         Stats.incCounter(ExtensionClientIntegration.PREFIX + ".export.clientmap.node");
 
+        int count = 1;
         if (node.getChildCount() > 0) {
             fw.write(indent);
             fw.write("  ");
             fw.write(CHILDREN_KEY);
             fw.write(":");
             fw.write('\n');
-            node.children()
-                    .asIterator()
-                    .forEachRemaining(
-                            c -> {
-                                try {
-                                    outputNodeNoComponents(fw, (ClientNode) c, level + 1, context);
-                                } catch (IOException e) {
-                                    throw new UncheckedIOException(e);
-                                }
-                            });
+            var it = node.children().asIterator();
+            while (it.hasNext()) {
+                count += outputNodeNoComponents(fw, (ClientNode) it.next(), level + 1, context);
+            }
         }
+        return count;
     }
 
     private static boolean outputKV(
