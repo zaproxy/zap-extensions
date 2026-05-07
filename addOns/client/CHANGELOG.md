@@ -7,13 +7,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Client spider option "Action Wait Time".
 
-## [0.23.0] - 2026-05-06
 ### Changed
-- Client spider to wait for all browsers to close before reporting it has finished.
 - Client map export to report the number of items exported.
 
 ## Fixed
 - Client map export to export contexts defined with paths, e.g. like https://example.com/test/
+
+## [0.23.0] - 2026-05-06
+### Changed
+- Client spider to wait for all browsers to close before reporting it has finished.
 
 ## [0.22.0] - 2026-04-14
 ### Added
