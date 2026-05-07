@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.20.0] - 2026-05-07
 ### Changed
 - Source exporters to report the number of items exported.
 
@@ -153,6 +153,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release.
 
+[0.20.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.20.0
 [0.19.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.19.0
 [0.18.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.18.0
 [0.17.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.17.0
