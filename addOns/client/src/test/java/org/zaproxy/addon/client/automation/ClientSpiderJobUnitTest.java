@@ -158,6 +158,9 @@ public class ClientSpiderJobUnitTest extends TestUtils {
         assertThat(job.getParameters().getPageLoadTime(), is(ClientOptions.DEFAULT_PAGE_LOAD_TIME));
         assertThat(job.getParameters().getShutdownTime(), is(ClientOptions.DEFAULT_SHUTDOWN_TIME));
         assertThat(job.getParameters().getLogoutAvoidance(), is(true));
+        assertThat(
+                job.getParameters().getActionWaitTime(),
+                is(ClientOptions.DEFAULT_ACTION_WAIT_TIME));
     }
 
     @Test
@@ -180,6 +183,7 @@ public class ClientSpiderJobUnitTest extends TestUtils {
                   pageLoadTime:     13
                   shutdownTime:     14
                   logoutAvoidance: false
+                  actionWaitTime:  3
                 """;
         Yaml yaml = new Yaml();
         Object data = yaml.load(yamlStr);
@@ -203,6 +207,21 @@ public class ClientSpiderJobUnitTest extends TestUtils {
         assertThat(job.getParameters().getPageLoadTime(), is(equalTo(13)));
         assertThat(job.getParameters().getShutdownTime(), is(equalTo(14)));
         assertThat(job.getParameters().getLogoutAvoidance(), is(equalTo(false)));
+        assertThat(job.getParameters().getActionWaitTime(), is(equalTo(3)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {0, 1, 5})
+    void shouldApplyActionWaitTimeToOptions(int value) {
+        // Given
+        ClientSpiderJob job = new ClientSpiderJob();
+        job.getParameters().setActionWaitTime(value);
+
+        // When
+        ClientOptions options = job.paramsToOptions();
+
+        // Then
+        assertThat(options.getActionWaitTimeInSecs(), is(value));
     }
 
     @ParameterizedTest

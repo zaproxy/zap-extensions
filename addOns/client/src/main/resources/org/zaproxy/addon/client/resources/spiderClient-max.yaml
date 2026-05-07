@@ -10,6 +10,7 @@
       browserId:                       # String: Browser ID to use, default: firefox-headless
       initialLoadTime:                 # Int: The time in seconds to wait after the initial URL is loaded, default: 5
       pageLoadTime:                    # Int: The time in seconds to wait after a new URL is loaded, default: 1
+      actionWaitTime:                  # Int: The time in seconds to wait after performing an action (e.g. clicking a button), default: 0
       shutdownTime:                    # Int: The time in seconds to wait after no activity before shutting down, default: 5
       scopeCheck:                      # String: The scope check, either Flexible or Strict, default: Flexible
       logoutAvoidance:                 # Bool: When enabled, the spider will avoid clicking common logout elements, default: true
