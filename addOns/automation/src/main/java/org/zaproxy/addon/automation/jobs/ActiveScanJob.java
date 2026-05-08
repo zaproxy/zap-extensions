@@ -269,8 +269,6 @@ public class ActiveScanJob extends AutomationJob {
             // Wait for the active scan to finish
             while (true) {
                 this.sleep(500);
-                scan = this.getExtAScan().getScan(scanId);
-                currentScan = scan;
                 if (scan.isStopped() || forceStop) {
                     break;
                 }
@@ -283,7 +281,7 @@ public class ActiveScanJob extends AutomationJob {
                 this.getExtAScan().stopScan(scanId);
                 progress.info(Constant.messages.getString("automation.info.jobstopped", getType()));
             }
-            progress.addJobResultData(createJobResultData(scanId));
+            progress.addJobResultData(createJobResultData(scan));
         } finally {
             currentScan = null;
         }
@@ -319,14 +317,14 @@ public class ActiveScanJob extends AutomationJob {
     public List<JobResultData> getJobResultData() {
         ActiveScan lastScan = this.getExtAScan().getLastScan();
         if (lastScan != null) {
-            return createJobResultData(lastScan.getId());
+            return createJobResultData(lastScan);
         }
         return new ArrayList<>();
     }
 
-    private List<JobResultData> createJobResultData(int scanId) {
+    private List<JobResultData> createJobResultData(ActiveScan scan) {
         List<JobResultData> list = new ArrayList<>();
-        list.add(new ActiveScanJobResultData(this.getName(), this.getExtAScan().getScan(scanId)));
+        list.add(new ActiveScanJobResultData(this.getName(), scan));
         return list;
     }
 
