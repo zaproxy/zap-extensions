@@ -23,13 +23,17 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 import java.util.Map;
 import java.util.Set;
@@ -40,6 +44,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.InOrder;
 import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.zap.ZAP;
@@ -92,6 +97,8 @@ class ClientMapUnitTest extends TestUtils {
     private static final String BBB_DDD_URL = "https://bbb.com/ddd";
 
     private ClientNode root;
+    private ClientMapListener listener;
+
     ClientMap map;
 
     @BeforeEach
@@ -101,6 +108,8 @@ class ClientMapUnitTest extends TestUtils {
         lenient().when(session.getUrlParamParser(any(String.class))).thenReturn(ssp);
         root = new ClientNode(new ClientSideDetails("Root", ""), session);
         map = new ClientMap(root);
+        listener = mock(ClientMapListener.class);
+        map.addListener(listener);
     }
 
     @AfterEach
@@ -173,6 +182,57 @@ class ClientMapUnitTest extends TestUtils {
         assertThat(root.getChildAt(1).getChildAt(0).getUserObject().getName(), is("aaa"));
         assertThat(
                 root.getChildAt(1).getChildAt(0).getUserObject().getUrl(), is(BBB_AAA_URL + "/"));
+
+        InOrder inOrder = inOrder(listener);
+
+        inOrder.verify(listener).nodeAdded(CCC_URL + "/", 2, 1, 0);
+        inOrder.verify(listener).nodeAdded(BBB_DDD_URL + "/", 3, 1, 0);
+        inOrder.verify(listener).nodeAdded(DDD_URL + "/", 2, 1, 0);
+        inOrder.verify(listener).nodeAdded(BBB_CCC_URL + "/", 3, 1, 0);
+        inOrder.verify(listener).nodeAdded(AAA_URL + "/", 2, 1, 0);
+        inOrder.verify(listener).nodeAdded(BBB_BBB_URL + "/", 3, 1, 0);
+        inOrder.verify(listener).nodeAdded(BBB_AAA_URL + "/", 3, 1, 0);
+    }
+
+    @Test
+    void shouldNotifyAllListenersOnNodeAdded() {
+        // Given
+        ClientMapListener otherListener = mock(ClientMapListener.class);
+        map.addListener(otherListener);
+
+        // When
+        map.getOrAddNode(AAA_URL, false, false);
+
+        // Then
+        verify(listener).nodeAdded(AAA_URL, 1, 1, 0);
+        verify(otherListener).nodeAdded(AAA_URL, 1, 1, 0);
+    }
+
+    @Test
+    void shouldNotifyListenerOnceForSameNode() {
+        // Given
+        map.getOrAddNode(AAA_URL, false, false);
+        ClientMapListener otherListener = mock(ClientMapListener.class);
+        map.addListener(otherListener);
+
+        // When
+        map.getOrAddNode(AAA_URL, false, false);
+
+        // Then
+        verify(listener).nodeAdded(AAA_URL, 1, 1, 0);
+        verifyNoInteractions(otherListener);
+    }
+
+    @Test
+    void shouldNotNotifyRemovedListener() {
+        // Given
+        map.removeListener(listener);
+
+        // When
+        map.getOrAddNode(AAA_URL, false, false);
+
+        // Then
+        verifyNoInteractions(listener);
     }
 
     @Test
@@ -431,6 +491,8 @@ class ClientMapUnitTest extends TestUtils {
         assertThat(node, is(notNullValue()));
         assertThat(node.getUserObject().isVisited(), is(true));
         assertThat(node.getUserObject().getComponents(), is(Set.of(component)));
+        verify(listener).nodeAdded(BBB_URL, 1, 1, 0);
+        verify(listener).componentAdded(Map.of("siblings", "0", "depth", "1"), 0);
     }
 
     @Test
@@ -455,6 +517,8 @@ class ClientMapUnitTest extends TestUtils {
         // Then
         assertThat(map.getNode(BBB_URL, false, false), is(existing));
         assertThat(existing.getUserObject().getComponents(), is(Set.of(component)));
+        verify(listener).nodeAdded(BBB_URL, 1, 1, 0);
+        verify(listener).componentAdded(Map.of("siblings", "0", "depth", "1"), 0);
     }
 
     @Test
@@ -479,10 +543,12 @@ class ClientMapUnitTest extends TestUtils {
         ClientNode urlNode = map.getNode(BBB_URL, false, false);
         assertThat(urlNode, is(notNullValue()));
         assertThat(urlNode.getUserObject().getComponents(), is(Set.of(component)));
+        verify(listener).nodeAdded(BBB_URL, 1, 1, 0);
         String storageUrl = urlNode.getSite() + component.getTypeForDisplay();
         ClientNode storageNode = map.getNode(storageUrl, false, true);
         assertThat(storageNode, is(notNullValue()));
         assertThat(storageNode.getUserObject().getComponents(), is(Set.of(component)));
+        verify(listener, times(2)).componentAdded(Map.of("siblings", "0", "depth", "1"), 0);
     }
 
     @Test
@@ -496,6 +562,47 @@ class ClientMapUnitTest extends TestUtils {
 
         // Then
         assertThat(map.getNode(url, false, false), is(notNullValue()));
+        verify(listener).nodeAdded(url, 2, 1, 0);
+        verify(listener)
+                .componentAdded(
+                        Map.of(
+                                "nodeName", "INPUT",
+                                "siblings", "0",
+                                "depth", "2",
+                                "id", "",
+                                "href", "null",
+                                "tagName", "INPUT",
+                                "type", "input",
+                                "url", url,
+                                "timestamp", "0"),
+                        0);
+    }
+
+    @Test
+    void shouldNotifyListenerWithCorrectSourceOnReportObject() {
+        // Given
+        String url = "https://www.example.com/page";
+        String json = REPORTED_OBJECT_JSON.formatted(url, null);
+
+        // When
+        map.handleReportObject(json, 42);
+
+        // Then
+        assertThat(map.getNode(url, false, false), is(notNullValue()));
+        verify(listener).nodeAdded(url, 2, 1, 42);
+        verify(listener)
+                .componentAdded(
+                        Map.of(
+                                "nodeName", "INPUT",
+                                "siblings", "0",
+                                "depth", "2",
+                                "id", "",
+                                "href", "null",
+                                "tagName", "INPUT",
+                                "type", "input",
+                                "url", url,
+                                "timestamp", "0"),
+                        42);
     }
 
     @Test
@@ -509,6 +616,7 @@ class ClientMapUnitTest extends TestUtils {
 
         // Then
         assertThat(map.getRoot().getChildCount(), is(0));
+        verifyNoInteractions(listener);
     }
 
     @Test
@@ -523,6 +631,50 @@ class ClientMapUnitTest extends TestUtils {
 
         // Then
         assertThat(map.getNode(href, false, false), is(notNullValue()));
+        verify(listener).nodeAdded(url, 2, 1, 0);
+        verify(listener).nodeAdded(href, 2, 2, 0);
+        verify(listener)
+                .componentAdded(
+                        Map.of(
+                                "nodeName", "INPUT",
+                                "siblings", "0",
+                                "depth", "2",
+                                "id", "",
+                                "href", href,
+                                "tagName", "INPUT",
+                                "type", "input",
+                                "url", url,
+                                "timestamp", "0"),
+                        0);
+    }
+
+    @Test
+    void shouldNotifyListenerWithCorrectSourceOnNodeAddedViaHref() {
+        // Given
+        String url = "https://www.example.com/page";
+        String href = "https://www.example.com/linked";
+        String json = REPORTED_OBJECT_JSON.formatted(url, "\"" + href + "\"");
+
+        // When
+        map.handleReportObject(json, 42);
+
+        // Then
+        assertThat(map.getNode(href, false, false), is(notNullValue()));
+        verify(listener).nodeAdded(url, 2, 1, 42);
+        verify(listener).nodeAdded(href, 2, 2, 42);
+        verify(listener)
+                .componentAdded(
+                        Map.of(
+                                "nodeName", "INPUT",
+                                "siblings", "0",
+                                "depth", "2",
+                                "id", "",
+                                "href", href,
+                                "tagName", "INPUT",
+                                "type", "input",
+                                "url", url,
+                                "timestamp", "0"),
+                        42);
     }
 
     @ParameterizedTest
@@ -538,6 +690,7 @@ class ClientMapUnitTest extends TestUtils {
         // Then
         assertThat(root.getChildCount(), is(1));
         assertThat(root.getChildAt(0).getChildCount(), is(1));
+        verify(listener).nodeAdded(url, 2, 1, 0);
     }
 
     @Test
@@ -559,6 +712,7 @@ class ClientMapUnitTest extends TestUtils {
 
         // Then
         assertThat(map.getRoot().getChildCount(), is(0));
+        verifyNoInteractions(listener);
     }
 
     @Test
@@ -574,6 +728,7 @@ class ClientMapUnitTest extends TestUtils {
 
         // Then
         assertThat(map.getNode(url, false, false).getUserObject().isVisited(), is(true));
+        verify(listener).nodeAdded(url, 2, 1, 0);
     }
 
     @Test
@@ -587,6 +742,7 @@ class ClientMapUnitTest extends TestUtils {
 
         // Then
         assertThat(map.getRoot().getChildCount(), is(0));
+        verifyNoInteractions(listener);
     }
 
     @Test
@@ -602,6 +758,46 @@ class ClientMapUnitTest extends TestUtils {
 
         // Then
         verify(consumer).accept(any(ReportedElement.class));
+        verify(listener).nodeAdded(url, 2, 1, 0);
+        verify(listener)
+                .componentAdded(
+                        Map.of(
+                                "nodeName", "INPUT",
+                                "siblings", "0",
+                                "depth", "2",
+                                "id", "",
+                                "href", "null",
+                                "tagName", "INPUT",
+                                "type", "input",
+                                "url", url,
+                                "timestamp", "0"),
+                        0);
+    }
+
+    @Test
+    void shouldNotifyListenerWithCorrectSourceOnComponentAdded() {
+        // Given
+        String url = "https://www.example.com/page";
+        String json = REPORTED_OBJECT_JSON.formatted(url, null);
+
+        // When
+        map.handleReportObject(json, 42);
+
+        // Then
+        verify(listener).nodeAdded(url, 2, 1, 42);
+        verify(listener)
+                .componentAdded(
+                        Map.of(
+                                "nodeName", "INPUT",
+                                "siblings", "0",
+                                "depth", "2",
+                                "id", "",
+                                "href", "null",
+                                "tagName", "INPUT",
+                                "type", "input",
+                                "url", url,
+                                "timestamp", "0"),
+                        42);
     }
 
     @Test
@@ -617,6 +813,7 @@ class ClientMapUnitTest extends TestUtils {
 
         // Then
         verify(consumer, never()).accept(any());
+        verifyNoInteractions(listener);
     }
 
     @Test
@@ -633,6 +830,7 @@ class ClientMapUnitTest extends TestUtils {
 
         // Then
         verify(consumer).accept(any(ReportedEvent.class));
+        verify(listener).nodeAdded(url, 2, 1, 0);
     }
 
     @Test
@@ -648,6 +846,7 @@ class ClientMapUnitTest extends TestUtils {
 
         // Then
         verify(consumer).accept(any(ReportedEvent.class));
+        verifyNoInteractions(listener);
     }
 
     @Test
@@ -663,5 +862,42 @@ class ClientMapUnitTest extends TestUtils {
 
         // Then
         verify(consumer, never()).accept(any());
+        verifyNoInteractions(listener);
+    }
+
+    @Test
+    void shouldNotThrowWhenChangingListenersDuringNotification() {
+        // Given
+        ClientMapListener changingListener =
+                new ClientMapListener() {
+                    @Override
+                    public void nodeAdded(String url, int depth, int siblings, int source) {
+                        map.removeListener(listener);
+                    }
+
+                    @Override
+                    public void componentAdded(Map<String, String> parameters, int source) {
+                        map.addListener(mock(ClientMapListener.class));
+                    }
+                };
+        ClientSideComponent component =
+                new ClientSideComponent(
+                        Map.of(),
+                        "A",
+                        null,
+                        AAA_URL,
+                        BBB_URL,
+                        null,
+                        ClientSideComponent.Type.LINK,
+                        null,
+                        -1);
+        map.addListener(changingListener);
+
+        // When / Then
+        assertDoesNotThrow(
+                () -> {
+                    map.getOrAddNode(AAA_URL, false, false);
+                    map.addComponent(AAA_URL, component);
+                });
     }
 }

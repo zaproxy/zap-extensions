@@ -30,6 +30,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
@@ -37,6 +38,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.IntSupplier;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import javax.swing.table.TableModel;
@@ -62,6 +64,7 @@ import org.zaproxy.addon.client.ClientOptions;
 import org.zaproxy.addon.client.ClientOptions.ScopeCheck;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.addon.client.internal.ClientMap;
+import org.zaproxy.addon.client.internal.ClientMapListener;
 import org.zaproxy.addon.client.internal.ClientNode;
 import org.zaproxy.addon.client.internal.ClientSideDetails;
 import org.zaproxy.addon.client.spider.actions.ClickElement;
@@ -74,9 +77,6 @@ import org.zaproxy.addon.network.server.HttpMessageHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 import org.zaproxy.addon.network.server.HttpServerConfig;
 import org.zaproxy.addon.network.server.Server;
-import org.zaproxy.zap.ZAP;
-import org.zaproxy.zap.eventBus.Event;
-import org.zaproxy.zap.eventBus.EventConsumer;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.GenericScanner2;
@@ -86,7 +86,7 @@ import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.utils.ThreadUtils;
 
-public class ClientSpider implements EventConsumer, GenericScanner2 {
+public class ClientSpider implements GenericScanner2 {
 
     /*
      * Client Spider status - Work In Progress.
@@ -143,6 +143,8 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
 
     private List<WebDriverProcess> webDriverPool = new ArrayList<>();
     private Set<WebDriverProcess> webDriverActive = new HashSet<>();
+    private Set<Integer> proxyPorts = ConcurrentHashMap.newKeySet();
+    private ClientMapListener clientMapListener;
     private List<ClientSpiderTask> spiderTasks = new ArrayList<>();
     private List<ClientSpiderTask> pausedTasks = new ArrayList<>();
     private long startTime;
@@ -191,7 +193,8 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
         messagesTableModel = new MessagesTableModel();
         crawledUrls = Collections.synchronizedSet(new TreeSet<>());
 
-        ZAP.getEventBus().registerConsumer(this, ClientMap.class.getCanonicalName());
+        clientMapListener = new ClientMapListenerImpl();
+        clientMap.addListener(clientMapListener);
 
         extSelenium = getExtension(ExtensionSelenium.class);
         extensionNetwork = getExtension(ExtensionNetwork.class);
@@ -344,6 +347,7 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
                     throw new RuntimeException("Failed to create WebDriver process:", e);
                 }
             }
+            proxyPorts.add(wdp.getPort());
             this.webDriverActive.add(wdp);
         }
         return wdp;
@@ -405,54 +409,81 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
         }
     }
 
-    @Override
-    public void eventReceived(Event event) {
-        if (stopping.get() || stopped) {
-            return;
-        }
-        this.lastEventReceivedtime = System.currentTimeMillis();
-        if (maxTime > 0 && this.lastEventReceivedtime > maxTime) {
-            LOGGER.debug("Exceeded max time, stopping");
-            Stats.incCounter("stats.client.spider.event.max.time");
-            this.stopScan();
-            return;
+    private class ClientMapListenerImpl implements ClientMapListener {
+
+        private boolean shouldIgnore(
+                String url, int source, IntSupplier depthSupplier, IntSupplier childrenSupplier) {
+            if (stopping.get() || stopped || !proxyPorts.contains(source)) {
+                return true;
+            }
+
+            lastEventReceivedtime = System.currentTimeMillis();
+            if (maxTime > 0 && lastEventReceivedtime > maxTime) {
+                LOGGER.debug("Exceeded max time, stopping");
+                Stats.incCounter("stats.client.spider.event.max.time");
+                stopScan();
+                return true;
+            }
+
+            if (options.getMaxDepth() > 0) {
+                int depth = depthSupplier.getAsInt();
+                if (depth > options.getMaxDepth()) {
+                    LOGGER.debug(
+                            "Ignoring URL - too deep {} > {} : {}",
+                            depth,
+                            options.getMaxDepth(),
+                            url);
+                    Stats.incCounter("stats.client.spider.event.max.depth");
+                    return true;
+                }
+            }
+
+            if (options.getMaxChildren() > 0) {
+                int siblings = childrenSupplier.getAsInt();
+                if (siblings > options.getMaxChildren()) {
+                    LOGGER.debug(
+                            "Ignoring URL - too wide {} > {} : {}",
+                            siblings,
+                            options.getMaxChildren(),
+                            url);
+                    Stats.incCounter("stats.client.spider.event.max.children");
+                    return true;
+                }
+            }
+
+            if (!isUrlInScope(url)) {
+                Stats.incCounter("stats.client.spider.event.scope.out");
+                return true;
+            }
+
+            Stats.incCounter("stats.client.spider.event.scope.in");
+            addUriToAddedNodesModel(url);
+            return false;
         }
 
-        Map<String, String> parameters = event.getParameters();
-        String url = parameters.get(ClientMap.URL_KEY);
-        if (!isUrlInScope(url)) {
-            Stats.incCounter("stats.client.spider.event.scope.out");
-            return;
-        }
-
-        Stats.incCounter("stats.client.spider.event.scope.in");
-        addUriToAddedNodesModel(url);
-
-        if (options.getMaxDepth() > 0) {
-            int depth = Integer.parseInt(parameters.get(ClientMap.DEPTH_KEY));
-            if (depth > options.getMaxDepth()) {
-                LOGGER.debug(
-                        "Ignoring URL - too deep {} > {} : {}", depth, options.getMaxDepth(), url);
-                Stats.incCounter("stats.client.spider.event.max.depth");
+        @Override
+        public void nodeAdded(String url, int depth, int siblings, int source) {
+            if (shouldIgnore(url, source, () -> depth, () -> siblings)) {
                 return;
             }
-        }
-        if (options.getMaxChildren() > 0) {
-            int siblings = Integer.parseInt(parameters.get(ClientMap.SIBLINGS_KEY));
-            if (siblings > options.getMaxChildren()) {
-                LOGGER.debug(
-                        "Ignoring URL - too wide {} > {} : {}",
-                        siblings,
-                        options.getMaxChildren(),
-                        url);
-                Stats.incCounter("stats.client.spider.event.max.children");
-                return;
-            }
+
+            Stats.incCounter("stats.client.spider.event.url");
+            addOpenUrlTask(url, options.getPageLoadTimeInSecs());
         }
 
-        if (ClientMap.MAP_COMPONENT_ADDED_EVENT.equals(event.getEventType())) {
+        @Override
+        public void componentAdded(Map<String, String> parameters, int source) {
+            String url = parameters.get(ClientMap.URL_KEY);
+            if (shouldIgnore(
+                    url,
+                    source,
+                    () -> Integer.parseInt(parameters.get(ClientMap.DEPTH_KEY)),
+                    () -> Integer.parseInt(parameters.get(ClientMap.SIBLINGS_KEY)))) {
+                return;
+            }
+
             Stats.incCounter("stats.client.spider.event.component");
-            if (ClickElement.isSupported(this::isUrlInScope, parameters)
+            if (ClickElement.isSupported(ClientSpider.this::isUrlInScope, parameters)
                     && !(options.isLogoutAvoidance() && isLogoutElement(parameters))) {
                 Stats.incCounter("stats.client.spider.event.component.click");
                 addTask(
@@ -471,9 +502,6 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
                         Constant.messages.getString("client.spider.panel.table.action.submit"),
                         paramsToString(parameters));
             }
-        } else {
-            Stats.incCounter("stats.client.spider.event.url");
-            addOpenUrlTask(url, options.getPageLoadTimeInSecs());
         }
     }
 
@@ -606,7 +634,6 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
             this.paused = false;
         }
         finished();
-        ZAP.getEventBus().unregisterConsumer(this, ClientMap.class.getCanonicalName());
     }
 
     @Override
@@ -673,6 +700,7 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
             clear(webDriverActive);
         }
 
+        clientMap.removeListener(clientMapListener);
         finished = true;
 
         int contentLoaded = 0;
@@ -815,6 +843,8 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
         private WebDriver webDriver;
         private ExtensionClientIntegration extClient;
 
+        private int port;
+
         private WebDriverProcess(
                 ExtensionClientIntegration extensionClient,
                 ExtensionNetwork extensionNetwork,
@@ -830,7 +860,7 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
                                     .setHttpSender(new HttpSender(INITIATOR))
                                     .setServeZapApi(true)
                                     .build());
-            int port = proxy.start(Server.ANY_PORT);
+            port = proxy.start(Server.ANY_PORT);
 
             webDriver =
                     extensionSelenium.getWebDriver(

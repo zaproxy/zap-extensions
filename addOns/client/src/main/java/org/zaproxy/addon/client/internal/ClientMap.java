@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
@@ -53,6 +54,7 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
     private static final Logger LOGGER = LogManager.getLogger(ClientMap.class);
     private ClientNode root;
     private Consumer<ReportedObject> reportedObjectConsumer;
+    private final List<ClientMapListener> listeners = new CopyOnWriteArrayList<>();
 
     public ClientMap(ClientNode root) {
         super(root);
@@ -65,18 +67,36 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
         return root;
     }
 
+    public void addListener(ClientMapListener listener) {
+        listeners.add(listener);
+    }
+
+    public void removeListener(ClientMapListener listener) {
+        listeners.remove(listener);
+    }
+
     public ClientNode getOrAddNode(String url, boolean visited, boolean storage) {
         LOGGER.debug("getOrAddNode {}", url);
-        return this.getNode(url, visited, storage, true, true);
+        return this.getNode(url, visited, storage, true, true, 0);
     }
 
     public ClientNode getNode(String url, boolean visited, boolean storage) {
         LOGGER.debug("getNode {}", url);
-        return this.getNode(url, visited, storage, false, false);
+        return this.getNode(url, visited, storage, false, false, 0);
     }
 
     private synchronized ClientNode getNode(
             String url, boolean visited, boolean storage, boolean add, boolean publishEvent) {
+        return getNode(url, visited, storage, add, publishEvent, 0);
+    }
+
+    private synchronized ClientNode getNode(
+            String url,
+            boolean visited,
+            boolean storage,
+            boolean add,
+            boolean publishEvent,
+            int source) {
         if (url == null) {
             throw new IllegalArgumentException("The url parameter should not be null");
         }
@@ -100,15 +120,18 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
                                     new ClientSideDetails(nodeName, url, visited, storage),
                                     storage);
                     if (!storage && publishEvent) {
+                        int depth = parent.getLevel() + 1;
+                        int siblings = parent.getChildCount() + 1;
                         Map<String, String> map = new HashMap<>();
                         map.put(URL_KEY, url);
                         // Note we haven't added the child to the parent yet
-                        map.put(DEPTH_KEY, Integer.toString(parent.getLevel() + 1));
-                        map.put(SIBLINGS_KEY, Integer.toString(parent.getChildCount() + 1));
+                        map.put(DEPTH_KEY, Integer.toString(depth));
+                        map.put(SIBLINGS_KEY, Integer.toString(siblings));
                         ZAP.getEventBus()
                                 .publishSyncEvent(
                                         this,
                                         new Event(this, MAP_NODE_ADDED_EVENT, new Target(), map));
+                        listeners.forEach(l -> l.nodeAdded(url, depth, siblings, source));
                     }
                 } else {
                     // Create intermediate node with a suitable URL
@@ -175,15 +198,24 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
     }
 
     public void addComponent(String url, ClientSideComponent component) {
-        ClientNode node = getOrAddNode(url, false, false);
-        addComponentToNode(node, component);
+        addComponent(url, component, 0);
+    }
+
+    private void addComponent(String url, ClientSideComponent component, int source) {
+        ClientNode node = getNode(url, false, false, true, true, source);
+        addComponentToNode(node, component, source);
         if (component.isStorageEvent()) {
             String storageUrl = node.getSite() + component.getTypeForDisplay();
-            addComponentToNode(getOrAddNode(storageUrl, false, true), component);
+            addComponentToNode(
+                    getNode(storageUrl, false, true, true, false, source), component, source);
         }
     }
 
     public boolean addComponentToNode(ClientNode node, ClientSideComponent component) {
+        return addComponentToNode(node, component, 0);
+    }
+
+    private boolean addComponentToNode(ClientNode node, ClientSideComponent component, int source) {
         ClientSideDetails details = node.getUserObject();
         boolean wasVisited = details.isVisited();
         boolean componentAdded = details.addComponent(component);
@@ -196,6 +228,7 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
             ZAP.getEventBus()
                     .publishSyncEvent(
                             this, new Event(this, MAP_COMPONENT_ADDED_EVENT, new Target(), map));
+            listeners.forEach(l -> l.componentAdded(map, source));
             notifyNodeChanged(node);
         }
         return componentAdded;
@@ -275,14 +308,14 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
         String url = rnode.getUrl();
         if (url != null) {
             if (!isApiUrl(url)) {
-                addComponent(url, new ClientSideComponent(json));
+                addComponent(url, new ClientSideComponent(json), source);
             }
         } else {
             LOGGER.debug("Not got url:(: {}", url);
         }
         String href = rnode.getHref();
         if (href != null && href.toLowerCase(Locale.ROOT).startsWith("http")) {
-            getOrAddNode(href, false, false);
+            getNode(href, false, false, true, true, source);
         }
     }
 
