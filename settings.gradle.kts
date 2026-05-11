@@ -110,7 +110,6 @@ val addOns =
         "webdrivers:webdrivermacos",
         "webdrivers:webdriverwindows",
         "websocket",
-        "webuipoc",
         "zest",
     )
 

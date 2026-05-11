@@ -322,12 +322,7 @@ public class RunScriptAction extends ScriptAction {
                 chainScript,
                 progress,
                 () -> extScript.invokeScript(chainScript),
-                (e) ->
-                        progress.error(
-                                Constant.messages.getString(
-                                        "scripts.automation.error.chainExecutionFailed",
-                                        jobName,
-                                        e.getMessage())))) {
+                (e) -> reportChainExecutionError(progress, jobName, chainScript, e))) {
             progress.info(
                     Constant.messages.getString("scripts.automation.info.chainCompleted", jobName));
         }
@@ -360,7 +355,7 @@ public class RunScriptAction extends ScriptAction {
             }
             return true;
         } catch (Exception e) {
-            LOGGER.error(e, e);
+            LOGGER.debug("Script execution failed, reported via automation progress", e);
             errorHandler.accept(e);
             return false;
         } finally {
@@ -385,6 +380,44 @@ public class RunScriptAction extends ScriptAction {
                         jobName,
                         parameters.getName(),
                         e.getMessage()));
+    }
+
+    private void reportChainExecutionError(
+            AutomationProgress progress, String jobName, ScriptWrapper chainScript, Exception e) {
+        String chainOrder = String.join(" -> ", parameters.getChain());
+        String zestCtx = readZestFailureContext(chainScript);
+        String detail =
+                zestCtx.isEmpty()
+                        ? (e.getMessage() != null ? e.getMessage() : e.getClass().getName())
+                        : zestCtx;
+        progress.error(
+                Constant.messages.getString(
+                        "scripts.automation.error.chainExecutionFailed",
+                        jobName,
+                        chainOrder,
+                        detail));
+    }
+
+    /**
+     * Reads {@code getZestFailureContext()} when present (reflection avoids a compile dependency on
+     * the Zest add-on).
+     */
+    private String readZestFailureContext(ScriptWrapper script) {
+        if (script == null) {
+            return "";
+        }
+        try {
+            Method m = script.getClass().getMethod("getZestFailureContext");
+            Object v = m.invoke(script);
+            if (v instanceof String s && !s.isEmpty()) {
+                return s;
+            }
+        } catch (NoSuchMethodException e) {
+            // Not a Zest script wrapper
+        } catch (ReflectiveOperationException | SecurityException e) {
+            LOGGER.debug("Could not read Zest failure context", e);
+        }
+        return "";
     }
 
     private void setUserOnZestWrapper(ScriptWrapper script, User user) {

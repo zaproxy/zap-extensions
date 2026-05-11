@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.fuzz.payloads.generator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
 /**
@@ -30,7 +31,7 @@ import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
  * @author steven
  */
 public class NumberPayloadGenerator
-        implements StringPayloadGenerator, ResettableAutoCloseableIterator<DefaultPayload> {
+        implements PayloadGenerator, ResettableAutoCloseableIterator<Payload> {
 
     private static final Logger LOGGER = LogManager.getLogger(NumberPayloadGenerator.class);
     private final int fromNo;
@@ -54,12 +55,12 @@ public class NumberPayloadGenerator
     }
 
     @Override
-    public ResettableAutoCloseableIterator<DefaultPayload> iterator() {
+    public ResettableAutoCloseableIterator<Payload> iterator() {
         return this;
     }
 
     @Override
-    public PayloadGenerator<DefaultPayload> copy() {
+    public PayloadGenerator copy() {
         return new NumberPayloadGenerator(fromNo, toNo, steps);
     }
 
@@ -78,7 +79,7 @@ public class NumberPayloadGenerator
     }
 
     @Override
-    public DefaultPayload next() {
+    public Payload next() {
         DefaultPayload result = new DefaultPayload(Long.toString(pos));
         pos += steps;
         return result;

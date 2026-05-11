@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [56] - 2026-05-06
+### Added
+- Add Scan Policy option to the Automated Scan panel.
+
+
 ## [55] - 2026-03-09
 ### Fixed
 - Attacking domain level URLs with a trailing slash.
@@ -298,6 +303,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[56]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v56
 [55]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v55
 [54]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v54
 [53]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v53

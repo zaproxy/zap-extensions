@@ -32,6 +32,50 @@ This job supports monitor tests.
       scopeCheck:                      # String: The scope check, either Flexible or Strict, default: Flexible
 </pre>
 
+<H2>Job: export (Client Map)</H2>
+When the <a href="https://www.zaproxy.org/docs/desktop/addons/import-export/">Import/Export add-on</a> is installed, the Client Map can be exported via the standard <code>export</code> job using <code>source: clientmap</code> and <code>type: yaml</code>.
+The YAML produced by this job differs from the manual Client Map export, for example it includes <code>url</code> fields and omits <code>components</code>.
+
+<pre>
+  - type: export            # Exports the Client Map
+    parameters:
+      context:            # String: Name of the context from which to export. Default: first context
+      type: yaml            # YAML is the only supported format for the Client Map
+      source: clientmap     # Export the Client Map
+      fileName:             # String: Name/path of the output file
+</pre>
+
+An example of the YAML produced:
+
+<pre>
+- node: "ClientMap"
+  children:
+  - node: "http://localhost:3000"
+    url: "http://localhost:3000/"
+    children:
+    - node: "/"
+      url: "http://localhost:3000/"
+      visited: false
+    - node: "/#"
+      url: "http://localhost:3000/#"
+      visited: false
+      children:
+      - node: "/"
+        url: "http://localhost:3000/#/"
+      - node: "/about"
+        url: "http://localhost:3000/#/about"
+      - node: "/contact"
+        url: "http://localhost:3000/#/contact"
+      - node: "/forgot-password"
+        url: "http://localhost:3000/#/forgot-password"
+      - node: "/login"
+        url: "http://localhost:3000/#/login"
+      - node: "/photo-wall"
+        url: "http://localhost:3000/#/photo-wall"
+      - node: "/register"
+        url: "http://localhost:3000/#/register"
+</pre>
+
 <H2>Passive Scan Rules</H2>
 
 The Client <a href="pscan.html">Passive Scan Rules</a> can be set via the standard passiveScan-config job.

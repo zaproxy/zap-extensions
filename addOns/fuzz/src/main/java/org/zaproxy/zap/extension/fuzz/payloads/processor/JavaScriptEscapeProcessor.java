@@ -20,16 +20,16 @@
 package org.zaproxy.zap.extension.fuzz.payloads.processor;
 
 import org.apache.commons.text.StringEscapeUtils;
-import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 
-public class JavaScriptEscapeProcessor implements DefaultPayloadProcessor {
+public class JavaScriptEscapeProcessor implements PayloadProcessor {
 
     public static final JavaScriptEscapeProcessor INSTANCE = new JavaScriptEscapeProcessor();
 
     public JavaScriptEscapeProcessor() {}
 
     @Override
-    public DefaultPayload process(DefaultPayload payload) {
+    public Payload process(Payload payload) {
         payload.setValue(StringEscapeUtils.escapeEcmaScript(payload.getValue()));
         return payload;
     }

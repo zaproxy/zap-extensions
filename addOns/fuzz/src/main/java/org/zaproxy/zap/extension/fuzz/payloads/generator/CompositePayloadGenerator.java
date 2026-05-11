@@ -32,17 +32,17 @@ import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
  * A {@code PayloadGenerator} composed of several {@code PayloadGenerator}s, allowing them to be
  * viewed/handled as a single {@code PayloadGenerator}.
  */
-public class CompositePayloadGenerator<E extends Payload> implements PayloadGenerator<E> {
+public class CompositePayloadGenerator implements PayloadGenerator {
 
-    private final List<PayloadGenerator<E>> payloadGenerators;
+    private final List<PayloadGenerator> payloadGenerators;
 
-    public CompositePayloadGenerator(List<PayloadGenerator<E>> payloadGenerators) {
+    public CompositePayloadGenerator(List<PayloadGenerator> payloadGenerators) {
         if (payloadGenerators == null) {
             throw new IllegalArgumentException("Parameter payloadGenerators must not be null.");
         }
 
         this.payloadGenerators = new ArrayList<>(payloadGenerators.size());
-        for (PayloadGenerator<E> payloadGenerator : payloadGenerators) {
+        for (PayloadGenerator payloadGenerator : payloadGenerators) {
             this.payloadGenerators.add(payloadGenerator.copy());
         }
     }
@@ -54,27 +54,26 @@ public class CompositePayloadGenerator<E extends Payload> implements PayloadGene
     }
 
     @Override
-    public ResettableAutoCloseableIterator<E> iterator() {
+    public ResettableAutoCloseableIterator<Payload> iterator() {
         if (payloadGenerators.isEmpty()) {
             return EmptyResettableAutoCloseableIterator.emptyIterator();
         }
-        return new CompositeIterator<>(payloadGenerators);
+        return new CompositeIterator(payloadGenerators);
     }
 
     @Override
-    public PayloadGenerator<E> copy() {
-        return new CompositePayloadGenerator<>(payloadGenerators);
+    public PayloadGenerator copy() {
+        return new CompositePayloadGenerator(payloadGenerators);
     }
 
-    private static class CompositeIterator<E extends Payload>
-            implements ResettableAutoCloseableIterator<E> {
+    private static class CompositeIterator implements ResettableAutoCloseableIterator<Payload> {
 
-        private final List<ResettableAutoCloseableIterator<E>> allIterators;
-        private Iterator<E> iteratorChain;
+        private final List<ResettableAutoCloseableIterator<Payload>> allIterators;
+        private Iterator<Payload> iteratorChain;
 
-        public CompositeIterator(List<PayloadGenerator<E>> payloadGenerators) {
+        public CompositeIterator(List<PayloadGenerator> payloadGenerators) {
             allIterators = new ArrayList<>(payloadGenerators.size());
-            for (PayloadGenerator<E> payloadGenerator : payloadGenerators) {
+            for (PayloadGenerator payloadGenerator : payloadGenerators) {
                 allIterators.add(payloadGenerator.iterator());
             }
             initIteratorChain();
@@ -82,7 +81,7 @@ public class CompositePayloadGenerator<E extends Payload> implements PayloadGene
 
         private void initIteratorChain() {
             @SuppressWarnings("unchecked")
-            Iterator<E> iterators = new IteratorChain(allIterators);
+            Iterator<Payload> iterators = new IteratorChain(allIterators);
             iteratorChain = iterators;
         }
 
@@ -92,7 +91,7 @@ public class CompositePayloadGenerator<E extends Payload> implements PayloadGene
         }
 
         @Override
-        public E next() {
+        public Payload next() {
             return iteratorChain.next();
         }
 
@@ -101,7 +100,7 @@ public class CompositePayloadGenerator<E extends Payload> implements PayloadGene
 
         @Override
         public void reset() {
-            for (ResettableAutoCloseableIterator<E> iterator : allIterators) {
+            for (ResettableAutoCloseableIterator<Payload> iterator : allIterators) {
                 iterator.reset();
             }
             initIteratorChain();
@@ -109,7 +108,7 @@ public class CompositePayloadGenerator<E extends Payload> implements PayloadGene
 
         @Override
         public void close() {
-            for (ResettableAutoCloseableIterator<E> iterator : allIterators) {
+            for (ResettableAutoCloseableIterator<Payload> iterator : allIterators) {
                 iterator.close();
             }
         }

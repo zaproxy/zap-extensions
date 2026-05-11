@@ -26,18 +26,18 @@ import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 /**
  * A {@code MessageLocationReplacement} associated with a iterator of a {@code PayloadGenerator}.
  */
-public class PayloadGeneratorMessageLocation<E extends Payload>
-        implements MessageLocationReplacementGenerator<E, PayloadMessageLocationReplacement<E>> {
+public class PayloadGeneratorMessageLocation
+        implements MessageLocationReplacementGenerator<Payload, PayloadMessageLocationReplacement> {
 
     private final MessageLocation messageLocation;
     private final long numberOfPayloads;
-    private final ResettableAutoCloseableIterator<E> payloadIterator;
-    private E currentPayload;
+    private final ResettableAutoCloseableIterator<Payload> payloadIterator;
+    private Payload currentPayload;
 
     public PayloadGeneratorMessageLocation(
             MessageLocation messageLocation,
             long numberOfPayloads,
-            ResettableAutoCloseableIterator<E> payloadIterator) {
+            ResettableAutoCloseableIterator<Payload> payloadIterator) {
         this.messageLocation = messageLocation;
         this.numberOfPayloads = numberOfPayloads;
         this.payloadIterator = payloadIterator;
@@ -77,7 +77,7 @@ public class PayloadGeneratorMessageLocation<E extends Payload>
         if (getClass() != obj.getClass()) {
             return false;
         }
-        PayloadGeneratorMessageLocation<?> other = (PayloadGeneratorMessageLocation<?>) obj;
+        PayloadGeneratorMessageLocation other = (PayloadGeneratorMessageLocation) obj;
         if (messageLocation == null) {
             if (other.messageLocation != null) {
                 return false;
@@ -94,9 +94,9 @@ public class PayloadGeneratorMessageLocation<E extends Payload>
     }
 
     @Override
-    public PayloadMessageLocationReplacement<E> next() {
+    public PayloadMessageLocationReplacement next() {
         currentPayload = payloadIterator.next();
-        return new PayloadMessageLocationReplacement<>(messageLocation, currentPayload);
+        return new PayloadMessageLocationReplacement(messageLocation, currentPayload);
     }
 
     @Override

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE helpset PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp HelpSet Version 2.0//EN" "http://java.sun.com/products/javahelp/helpset_2_0.dtd">
 <helpset version="2.0" xml:lang="fr-FR">
-  <title>Call Graph</title>
+  <title>Graphe d’appel</title>
 
   <maps>
      <homeID>callgraph</homeID>
@@ -9,7 +9,7 @@
 
   <view>
     <name>TOC</name>
-    <label>Contents</label>
+    <label>Contenus</label>
     <type>org.zaproxy.zap.extension.help.ZapTocView</type>
     <data>toc.xml</data>
   </view>
@@ -23,7 +23,7 @@
 
   <view>
     <name>Search</name>
-    <label>Search</label>
+    <label>Rechercher</label>
     <type>javax.help.SearchView</type>
     <data engine="com.sun.java.help.search.DefaultSearchEngine">
       JavaHelpSearch
@@ -32,7 +32,7 @@
 
   <view>
     <name>Favorites</name>
-    <label>Favorites</label>
+    <label>Favoris</label>
     <type>javax.help.FavoritesView</type>
   </view>
 </helpset>

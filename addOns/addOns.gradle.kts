@@ -1,5 +1,6 @@
 import me.champeau.gradle.japicmp.JapicmpTask
 import org.cyclonedx.gradle.CycloneDxTask
+import org.gradle.api.internal.provider.TransformBackedProvider
 import org.zaproxy.gradle.addon.AddOnPlugin
 import org.zaproxy.gradle.addon.AddOnPluginExtension
 import org.zaproxy.gradle.addon.apigen.ApiClientGenExtension
@@ -122,6 +123,33 @@ subprojects {
     }
 
     group = "org.zaproxy.addon"
+
+    spotless {
+        format("js") {
+            target(
+                project.fileTree(project.projectDir) {
+                    include("src/**/*.js", "src/**/*.mjs", "src/**/*.cjs")
+                },
+            )
+            targetExclude("**/*.min.js")
+
+            val npmDir =
+                (project.rootProject.tasks.named("npmSetup").get().property("npmDir") as TransformBackedProvider<*, *>)
+                    .get()
+                    .toString()
+            val npmExecutable =
+                if (System.getProperty("os.name").lowercase().contains("windows")) {
+                    "/npm.cmd"
+                } else {
+                    "/bin/npm"
+                }
+            prettier(rootProject.libs.versions.prettier.get()).npmExecutable(npmDir + npmExecutable)
+        }
+
+        tasks.named("spotlessJs").configure {
+            dependsOn(rootProject.tasks.named("nodeSetup"), rootProject.tasks.named("npmSetup"))
+        }
+    }
 
     java {
         // Compile with appropriate Java version when building ZAP releases.

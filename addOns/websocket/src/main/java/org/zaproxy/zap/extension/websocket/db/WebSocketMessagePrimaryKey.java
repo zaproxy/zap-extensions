@@ -19,7 +19,7 @@
  */
 package org.zaproxy.zap.extension.websocket.db;
 
-/** Wraps id of message & channel together into one class. */
+/** Wraps id of message &amp; channel together into one class. */
 public class WebSocketMessagePrimaryKey implements Comparable<WebSocketMessagePrimaryKey> {
     private final Integer channelId;
     private final Integer messageId;

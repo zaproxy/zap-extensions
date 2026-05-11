@@ -4,10 +4,10 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Fixed
+- Example alert code link.
 
 ## [16] - 2026-03-31
-
 ### Added
 - HTTPS Configuration alerts now have tags for OWASP Top 10, WSTG, systemic, and policies.
 

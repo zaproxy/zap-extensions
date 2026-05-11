@@ -24,10 +24,9 @@ import java.nio.charset.Charset;
 import java.util.Base64;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 
-public class Base64EncodeProcessor extends AbstractCharsetProcessor<DefaultPayload>
-        implements DefaultPayloadProcessor {
+public class Base64EncodeProcessor extends AbstractCharsetProcessor {
 
     private static final Logger LOGGER = LogManager.getLogger(Base64EncodeProcessor.class);
 
@@ -62,7 +61,7 @@ public class Base64EncodeProcessor extends AbstractCharsetProcessor<DefaultPaylo
     }
 
     @Override
-    public DefaultPayload process(DefaultPayload payload) {
+    public Payload process(Payload payload) {
         try {
             Base64.Encoder encoder = breakLines ? Base64.getMimeEncoder() : Base64.getEncoder();
             payload.setValue(encoder.encodeToString(getBytes(payload.getValue())));

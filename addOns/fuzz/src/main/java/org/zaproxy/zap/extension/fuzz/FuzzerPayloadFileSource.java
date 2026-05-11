@@ -21,7 +21,7 @@ package org.zaproxy.zap.extension.fuzz;
 
 import java.nio.file.Path;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.FileStringPayloadGenerator;
-import org.zaproxy.zap.extension.fuzz.payloads.generator.StringPayloadGenerator;
+import org.zaproxy.zap.extension.fuzz.payloads.generator.PayloadGenerator;
 
 public class FuzzerPayloadFileSource extends FuzzerPayloadSource {
 
@@ -37,12 +37,12 @@ public class FuzzerPayloadFileSource extends FuzzerPayloadSource {
     }
 
     @Override
-    public StringPayloadGenerator getPayloadGenerator() {
+    public PayloadGenerator getPayloadGenerator() {
         return new FileStringPayloadGenerator(file);
     }
 
     @Override
-    public StringPayloadGenerator getPayloadGenerator(int limit) {
+    public PayloadGenerator getPayloadGenerator(int limit) {
         return new FileStringPayloadGenerator(file, limit);
     }
 }

@@ -45,7 +45,8 @@ public class MapGenerator {
      */
     public String generate(Map<String, String> types, Schema<?> property) {
         Schema<?> schema = (Schema<?>) property.getAdditionalProperties();
-        String type = types.get(OpenApiSchemaTypeUtils.getType(schema));
+        String schemaType = OpenApiSchemaTypeUtils.getType(schema);
+        String type = schemaType != null ? types.get(schemaType) : null;
         String value = type != null ? type : bodyGenerator.generate(schema);
         String defaultKey = types.get(OpenApiSchemaTypeUtils.TYPE_STRING);
         return OBJECT_BEGIN + defaultKey + INNER_SEPARATOR + value + OBJECT_END;

@@ -51,6 +51,7 @@ public final class MsLoginAuthenticator implements Authenticator {
 
     private static final Logger LOGGER = LogManager.getLogger(MsLoginAuthenticator.class);
 
+    private static final Duration NO_WAIT = Duration.ofSeconds(0);
     private static final Duration PAGE_LOAD_WAIT_UNTIL = Duration.ofSeconds(5);
     private static final Duration DEFAULT_WAIT_UNTIL = Duration.ofSeconds(10);
 
@@ -268,9 +269,7 @@ public final class MsLoginAuthenticator implements Authenticator {
 
                 case POST_PASSWORD:
                     if (!isMsLoginFlow(wd)) {
-                        LOGGER.debug(
-                                "URL no longer login after successfully completing all steps.");
-
+                        logFlowFinished();
                         successful = true;
                         break;
                     }
@@ -279,7 +278,10 @@ public final class MsLoginAuthenticator implements Authenticator {
                             Constant.messages.getString(
                                     "authhelper.auth.method.diags.steps.ms.stepchoice"));
 
-                    checkIfWindowClosed(wd, authHandle, targetHandle);
+                    if (isMsLoginFlowFinished(wd, authHandle, targetHandle)) {
+                        successful = true;
+                        break;
+                    }
 
                     try {
                         waitForElement(wd, PROOF_REDIRECT_FIELD);
@@ -289,7 +291,10 @@ public final class MsLoginAuthenticator implements Authenticator {
                         // Ignore, there's still the next step to check.
                     }
 
-                    checkIfWindowClosed(wd, authHandle, targetHandle);
+                    if (isMsLoginFlowFinished(wd, authHandle, targetHandle)) {
+                        successful = true;
+                        break;
+                    }
 
                     try {
                         WebElement proofTotpElement =
@@ -306,7 +311,10 @@ public final class MsLoginAuthenticator implements Authenticator {
                         // Ignore, there's still the next step to check.
                     }
 
-                    checkIfWindowClosed(wd, authHandle, targetHandle);
+                    if (isMsLoginFlowFinished(wd, authHandle, targetHandle)) {
+                        successful = true;
+                        break;
+                    }
 
                     try {
                         waitForElement(wd, KMSI_FIELD);
@@ -445,6 +453,21 @@ public final class MsLoginAuthenticator implements Authenticator {
 
     private WebElement waitForElement(WebDriver wd, ExpectedCondition<WebElement> condition) {
         return new WebDriverWait(wd, DEFAULT_WAIT_UNTIL).until(condition);
+    }
+
+    private static boolean isMsLoginFlowFinished(
+            WebDriver wd, String authHandle, String targetHandle) {
+        checkIfWindowClosed(wd, authHandle, targetHandle);
+
+        if (!isMsLoginFlow(wd, NO_WAIT)) {
+            logFlowFinished();
+            return true;
+        }
+        return false;
+    }
+
+    private static void logFlowFinished() {
+        LOGGER.debug("URL no longer login after successfully completing all steps.");
     }
 
     private static boolean isMsLoginFlow(WebDriver wd) {

@@ -21,22 +21,65 @@ package org.zaproxy.addon.client.internal;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.model.Session;
+import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.model.StandardParameterParser;
+import org.zaproxy.zap.testutils.TestUtils;
 
-class ClientMapUnitTest {
+class ClientMapUnitTest extends TestUtils {
+
+    private static final String REPORTED_OBJECT_JSON =
+            """
+            {
+              "tagName": "INPUT",
+              "id": "",
+              "type": "input",
+              "url": "%s",
+              "href": %s,
+              "nodeName": "INPUT",
+              "timestamp": 0
+            }""";
+
+    private static final String REPORTED_EVENT_JSON =
+            """
+            {
+              "eventName": "pageLoad",
+              "url": "%s",
+              "count": 1,
+              "id": "",
+              "tagName": "",
+              "nodeName": "",
+              "type": "",
+              "xpath": "",
+              "href": "",
+              "text": "",
+              "timestamp": 0
+            }""";
+
+    @BeforeAll
+    static void init() {
+        mockMessages(new ExtensionClientIntegration());
+    }
 
     private static final String AAA_URL = "https://aaa.com";
     private static final String BBB_URL = "https://bbb.com";
@@ -55,7 +98,7 @@ class ClientMapUnitTest {
     void setUp() {
         Session session = mock(Session.class);
         StandardParameterParser ssp = new StandardParameterParser();
-        given(session.getUrlParamParser(any(String.class))).willReturn(ssp);
+        lenient().when(session.getUrlParamParser(any(String.class))).thenReturn(ssp);
         root = new ClientNode(new ClientSideDetails("Root", ""), session);
         map = new ClientMap(root);
     }
@@ -363,5 +406,262 @@ class ClientMapUnitTest {
 
         // Then
         assertThat(node, is(nullValue()));
+    }
+
+    @Test
+    void shouldAddComponentCreatingNodeIfAbsent() {
+        // Given
+        ClientSideComponent component =
+                new ClientSideComponent(
+                        Map.of(),
+                        "A",
+                        null,
+                        BBB_URL,
+                        BBB_AAA_URL,
+                        null,
+                        ClientSideComponent.Type.LINK,
+                        null,
+                        -1);
+
+        // When
+        map.addComponent(BBB_URL, component);
+
+        // Then
+        ClientNode node = map.getNode(BBB_URL, false, false);
+        assertThat(node, is(notNullValue()));
+        assertThat(node.getUserObject().isVisited(), is(true));
+        assertThat(node.getUserObject().getComponents(), is(Set.of(component)));
+    }
+
+    @Test
+    void shouldAddComponentToExistingNode() {
+        // Given
+        ClientNode existing = map.getOrAddNode(BBB_URL, false, false);
+        ClientSideComponent component =
+                new ClientSideComponent(
+                        Map.of(),
+                        "A",
+                        null,
+                        BBB_URL,
+                        BBB_AAA_URL,
+                        null,
+                        ClientSideComponent.Type.LINK,
+                        null,
+                        -1);
+
+        // When
+        map.addComponent(BBB_URL, component);
+
+        // Then
+        assertThat(map.getNode(BBB_URL, false, false), is(existing));
+        assertThat(existing.getUserObject().getComponents(), is(Set.of(component)));
+    }
+
+    @Test
+    void shouldAddStorageComponentToStorageNode() {
+        // Given
+        ClientSideComponent component =
+                new ClientSideComponent(
+                        Map.of(),
+                        "",
+                        null,
+                        BBB_URL,
+                        null,
+                        null,
+                        ClientSideComponent.Type.LOCAL_STORAGE,
+                        null,
+                        -1);
+
+        // When
+        map.addComponent(BBB_URL, component);
+
+        // Then
+        ClientNode urlNode = map.getNode(BBB_URL, false, false);
+        assertThat(urlNode, is(notNullValue()));
+        assertThat(urlNode.getUserObject().getComponents(), is(Set.of(component)));
+        String storageUrl = urlNode.getSite() + component.getTypeForDisplay();
+        ClientNode storageNode = map.getNode(storageUrl, false, true);
+        assertThat(storageNode, is(notNullValue()));
+        assertThat(storageNode.getUserObject().getComponents(), is(Set.of(component)));
+    }
+
+    @Test
+    void shouldAddComponentToClientMapOnReportObject() {
+        // Given
+        String url = "https://www.example.com/page";
+        String json = REPORTED_OBJECT_JSON.formatted(url, null);
+
+        // When
+        map.handleReportObject(json);
+
+        // Then
+        assertThat(map.getNode(url, false, false), is(notNullValue()));
+    }
+
+    @Test
+    void shouldNotAddComponentForApiUrlOnReportObject() {
+        // Given
+        String apiUrl = "http://zap/JSON/core/view/version/";
+        String json = REPORTED_OBJECT_JSON.formatted(apiUrl, null);
+
+        // When
+        map.handleReportObject(json);
+
+        // Then
+        assertThat(map.getRoot().getChildCount(), is(0));
+    }
+
+    @Test
+    void shouldAddHrefNodeOnReportObject() {
+        // Given
+        String url = "https://www.example.com/page";
+        String href = "https://www.example.com/linked";
+        String json = REPORTED_OBJECT_JSON.formatted(url, "\"" + href + "\"");
+
+        // When
+        map.handleReportObject(json);
+
+        // Then
+        assertThat(map.getNode(href, false, false), is(notNullValue()));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"/relative/", "nothttp://www.example.com/"})
+    void shouldNotAddNodeForNonSupportedHrefOnReportObject(String href) {
+        // Given
+        String url = "https://www.example.com/page";
+        String json = REPORTED_OBJECT_JSON.formatted(url, "\"" + href + "\"");
+
+        // When
+        map.handleReportObject(json);
+
+        // Then
+        assertThat(root.getChildCount(), is(1));
+        assertThat(root.getChildAt(0).getChildCount(), is(1));
+    }
+
+    @Test
+    void shouldHandleReportObjectWithNoUrl() {
+        // Given
+        String json =
+                """
+                {
+                  "tagName": "INPUT",
+                  "id": "",
+                  "type": "input",
+                  "href": null,
+                  "nodeName": "INPUT",
+                  "timestamp": 0
+                }""";
+
+        // When
+        map.handleReportObject(json);
+
+        // Then
+        assertThat(map.getRoot().getChildCount(), is(0));
+    }
+
+    @Test
+    void shouldSetVisitedOnReportEvent() {
+        // Given
+        String url = "https://www.example.com/page";
+        String json = REPORTED_EVENT_JSON.formatted(url);
+
+        map.getOrAddNode(url, false, false);
+
+        // When
+        map.handleReportEvent(json);
+
+        // Then
+        assertThat(map.getNode(url, false, false).getUserObject().isVisited(), is(true));
+    }
+
+    @Test
+    void shouldNotModifyClientMapForApiUrlOnReportEvent() {
+        // Given
+        String apiUrl = "http://zap/JSON/core/view/version/";
+        String json = REPORTED_EVENT_JSON.formatted(apiUrl);
+
+        // When
+        map.handleReportEvent(json);
+
+        // Then
+        assertThat(map.getRoot().getChildCount(), is(0));
+    }
+
+    @Test
+    void shouldCallConsumerOnHandleReportObject() {
+        // Given
+        String url = "https://www.example.com/page";
+        String json = REPORTED_OBJECT_JSON.formatted(url, null);
+        Consumer<ReportedObject> consumer = mock();
+        map.setReportedObjectConsumer(consumer);
+
+        // When
+        map.handleReportObject(json);
+
+        // Then
+        verify(consumer).accept(any(ReportedElement.class));
+    }
+
+    @Test
+    void shouldNotCallConsumerForApiUrlOnHandleReportObject() {
+        // Given
+        String apiUrl = "http://zap/JSON/core/view/version/";
+        String json = REPORTED_OBJECT_JSON.formatted(apiUrl, null);
+        Consumer<ReportedObject> consumer = mock();
+        map.setReportedObjectConsumer(consumer);
+
+        // When
+        map.handleReportObject(json);
+
+        // Then
+        verify(consumer, never()).accept(any());
+    }
+
+    @Test
+    void shouldCallConsumerOnHandleReportEvent() {
+        // Given
+        String url = "https://www.example.com/page";
+        String json = REPORTED_EVENT_JSON.formatted(url);
+        map.getOrAddNode(url, false, false);
+        Consumer<ReportedObject> consumer = mock();
+        map.setReportedObjectConsumer(consumer);
+
+        // When
+        map.handleReportEvent(json);
+
+        // Then
+        verify(consumer).accept(any(ReportedEvent.class));
+    }
+
+    @Test
+    void shouldCallConsumerOnHandleReportEventWhenNodeAbsent() {
+        // Given
+        String url = "https://www.example.com/page";
+        String json = REPORTED_EVENT_JSON.formatted(url);
+        Consumer<ReportedObject> consumer = mock();
+        map.setReportedObjectConsumer(consumer);
+
+        // When
+        map.handleReportEvent(json);
+
+        // Then
+        verify(consumer).accept(any(ReportedEvent.class));
+    }
+
+    @Test
+    void shouldNotCallConsumerForApiUrlOnHandleReportEvent() {
+        // Given
+        String apiUrl = "http://zap/JSON/core/view/version/";
+        String json = REPORTED_EVENT_JSON.formatted(apiUrl);
+        Consumer<ReportedObject> consumer = mock();
+        map.setReportedObjectConsumer(consumer);
+
+        // When
+        map.handleReportEvent(json);
+
+        // Then
+        verify(consumer, never()).accept(any());
     }
 }

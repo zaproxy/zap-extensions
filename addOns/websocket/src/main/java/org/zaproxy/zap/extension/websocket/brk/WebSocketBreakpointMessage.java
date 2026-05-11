@@ -88,7 +88,7 @@ public class WebSocketBreakpointMessage extends AbstractBreakPointMessage {
     }
 
     /**
-     * Catch {@link PatternSyntaxException} in dialog & show warning. You can do this by <code>
+     * Catch {@link PatternSyntaxException} in dialog &amp; show warning. You can do this by <code>
      * View.getSingleton().showWarningDialog(message)</code>.
      *
      * @param payloadPattern

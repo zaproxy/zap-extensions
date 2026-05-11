@@ -415,6 +415,8 @@ class ActiveScanJobUnitTest {
 
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.hasErrors(), is(equalTo(false)));
+
+        verify(extAScan).getScan(1);
     }
 
     @Test

@@ -29,7 +29,7 @@ import javax.swing.JTextArea;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.NumberPayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.PayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUI;
@@ -40,11 +40,7 @@ import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 import org.zaproxy.zap.utils.ZapNumberSpinner;
 
-public class NumberPayloadGeneratorAdapterUIHandler
-        implements PayloadGeneratorUIHandler<
-                DefaultPayload,
-                NumberPayloadGenerator,
-                NumberPayloadGeneratorAdapterUIHandler.NumberPayloadGeneratorUI> {
+public class NumberPayloadGeneratorAdapterUIHandler implements PayloadGeneratorUIHandler {
 
     private static final Logger LOGGER =
             LogManager.getLogger(NumberPayloadGeneratorAdapterUIHandler.class);
@@ -72,26 +68,16 @@ public class NumberPayloadGeneratorAdapterUIHandler
     }
 
     @Override
-    public PayloadGeneratorUIPanel<
-                    DefaultPayload,
-                    NumberPayloadGenerator,
-                    NumberPayloadGeneratorAdapterUIHandler.NumberPayloadGeneratorUI>
-            createPanel() {
+    public PayloadGeneratorUIPanel createPanel() {
         return new NumberPayloadGeneratorUIPanel();
     }
 
-    public static class NumberPayloadGeneratorUI
-            implements PayloadGeneratorUI<DefaultPayload, NumberPayloadGenerator> {
+    public static class NumberPayloadGeneratorUI implements PayloadGeneratorUI {
 
         private final NumberPayloadGenerator numberPayloadGenerator;
 
         public NumberPayloadGeneratorUI(NumberPayloadGenerator generator) {
             this.numberPayloadGenerator = generator;
-        }
-
-        @Override
-        public Class<? extends NumberPayloadGenerator> getPayloadGeneratorClass() {
-            return NumberPayloadGenerator.class;
         }
 
         @Override
@@ -124,14 +110,13 @@ public class NumberPayloadGeneratorAdapterUIHandler
         }
 
         @Override
-        public PayloadGeneratorUI<DefaultPayload, NumberPayloadGenerator> copy() {
+        public PayloadGeneratorUI copy() {
             return this;
         }
     }
 
     public static class NumberPayloadGeneratorUIPanel
-            extends AbstractPersistentPayloadGeneratorUIPanel<
-                    DefaultPayload, NumberPayloadGenerator, NumberPayloadGeneratorUI> {
+            extends AbstractPersistentPayloadGeneratorUIPanel {
 
         private static final String PAYLOADS_PREVIEW_FIELD_LABEL =
                 Constant.messages.getString(
@@ -246,11 +231,16 @@ public class NumberPayloadGeneratorAdapterUIHandler
         }
 
         @Override
-        public void setPayloadGeneratorUI(NumberPayloadGeneratorUI payloadGeneratorUI) {
-            oldGenerator = payloadGeneratorUI;
-            fromField.setValue(payloadGeneratorUI.getPayloadGenerator().getFrom());
-            toField.setValue(payloadGeneratorUI.getPayloadGenerator().getTo());
-            stepField.setValue(payloadGeneratorUI.getPayloadGenerator().getStep());
+        public void setPayloadGeneratorUI(PayloadGeneratorUI payloadGeneratorUI) {
+            if (!(payloadGeneratorUI instanceof NumberPayloadGeneratorUI ui)) {
+                throw new IllegalArgumentException(
+                        "Expected NumberPayloadGeneratorUI but got: "
+                                + payloadGeneratorUI.getClass());
+            }
+            oldGenerator = ui;
+            fromField.setValue(ui.getPayloadGenerator().getFrom());
+            toField.setValue(ui.getPayloadGenerator().getTo());
+            stepField.setValue(ui.getPayloadGenerator().getStep());
         }
 
         @Override
@@ -319,8 +309,7 @@ public class NumberPayloadGeneratorAdapterUIHandler
                 return;
             }
             StringBuilder contents = new StringBuilder();
-            try (ResettableAutoCloseableIterator<DefaultPayload> payloads =
-                    payloadGenerator.iterator()) {
+            try (ResettableAutoCloseableIterator<Payload> payloads = payloadGenerator.iterator()) {
 
                 for (int i = 0; i < MAX_NUMBER_PAYLOADS_PREVIEW && payloads.hasNext(); i++) {
                     if (contents.length() > 0) {

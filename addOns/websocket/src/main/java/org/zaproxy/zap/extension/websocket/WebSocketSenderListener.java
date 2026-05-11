@@ -36,11 +36,12 @@ import org.zaproxy.zap.extension.websocket.WebSocketProxy.State;
  * which sent from WebSocket Fuzzer.
  *
  * <p>- {@link WebSocketObserver#onMessageFrame(int, WebSocketMessage)} can control message
- * forwarding, but {@link WebSocketSenderListener#onMessageFrame(int, WebSocketMessage, int)} can
- * not.
+ * forwarding, but {@link WebSocketSenderListener#onMessageFrame(int, WebSocketMessage, Initiator)}
+ * can not.
  *
- * <p>In other words, {@link WebSocketObserver} is similar to {@link ProxyListener} and {@link
- * WebSocketSenderListener} is similar to {@link HttpSenderListener}.
+ * <p>In other words, {@link WebSocketObserver} is similar to {@link
+ * org.parosproxy.paros.core.proxy.ProxyListener} and {@link WebSocketSenderListener} is similar to
+ * {@link org.zaproxy.zap.network.HttpSenderListener}.
  *
  * <p>You can add your listener to a specific channel via {@link
  * WebSocketProxy#addSenderListener(WebSocketSenderListener)}. Alternatively you can set up your

@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.zest;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
@@ -100,5 +101,15 @@ class ZestScriptWrapperUnitTest {
         // Then
         assertThat(clone, is(not(sameInstance(wrapper))));
         assertThat(clone.getUser(), is(nullValue()));
+    }
+
+    @Test
+    void shouldNotCopyZestFailureContextOntoClone() {
+        ZestScriptWrapper wrapper = new ZestScriptWrapper(createMockScriptWrapper());
+        wrapper.setZestFailureContext("stale diagnostics from a prior run");
+
+        ZestScriptWrapper clone = wrapper.clone();
+
+        assertThat(clone.getZestFailureContext(), is(emptyString()));
     }
 }

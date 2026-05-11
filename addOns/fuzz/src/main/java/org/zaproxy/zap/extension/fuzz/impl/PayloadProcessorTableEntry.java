@@ -19,17 +19,15 @@
  */
 package org.zaproxy.zap.extension.fuzz.impl;
 
-import org.zaproxy.zap.extension.fuzz.payloads.Payload;
-import org.zaproxy.zap.extension.fuzz.payloads.processor.PayloadProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.PayloadProcessorUI;
 import org.zaproxy.zap.utils.Orderable;
 
 public class PayloadProcessorTableEntry implements Orderable {
 
     private int order;
-    private PayloadProcessorUI<?, ?> payloadProcessorUI;
+    private PayloadProcessorUI payloadProcessorUI;
 
-    public PayloadProcessorTableEntry(int order, PayloadProcessorUI<?, ?> payloadProcessorUI) {
+    public PayloadProcessorTableEntry(int order, PayloadProcessorUI payloadProcessorUI) {
         this.order = order;
         this.payloadProcessorUI = payloadProcessorUI;
     }
@@ -44,12 +42,11 @@ public class PayloadProcessorTableEntry implements Orderable {
         this.order = order;
     }
 
-    public PayloadProcessorUI<? extends Payload, ? extends PayloadProcessor<? extends Payload>>
-            getPayloadProcessorUI() {
+    public PayloadProcessorUI getPayloadProcessorUI() {
         return payloadProcessorUI;
     }
 
-    public void setPayloadProcessorUI(PayloadProcessorUI<?, ?> payloadProcessorUI) {
+    public void setPayloadProcessorUI(PayloadProcessorUI payloadProcessorUI) {
         this.payloadProcessorUI = payloadProcessorUI;
     }
 

@@ -29,6 +29,11 @@ ZAP will crawl from the URL specified but will remove a trailing slash from the 
 This is because https://example.com/test/ is treated as a leaf node internally, which would mean that ZAP would not attack
 URLs like https://example.com/test/1 etc.
 
+<h3>Scan Policy</h3>
+
+The scan policy to use when performing the active scan.
+Note that the policies will not be shown dynamically, any added/removed policies will be missing until a restart is done.
+
 <h3>従来のスパイダーを使用</h3>
 
 従来のスパイダーは、HTMLページ内のリンクを見つけることによってアプリケーションを探索します。 非常に高速ですが、JavaScriptを多用するアプリケーションには対応できません。 

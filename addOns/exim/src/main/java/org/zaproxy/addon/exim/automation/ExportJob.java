@@ -85,17 +85,23 @@ public class ExportJob extends AutomationJob {
                 progress);
 
         // Check for invalid combinations
-        if (Source.SITESTREE.equals(this.parameters.getSource())
-                && !YamlExporter.ID.equalsIgnoreCase(this.parameters.getType())) {
-            String typeId =
-                    this.parameters.getType() != null
-                            ? this.parameters.getType().toLowerCase(Locale.ROOT)
-                            : HarExporter.ID;
+        boolean isSitesTree = Source.SITESTREE.equals(this.parameters.getSource());
+        boolean isClientMap = Source.CLIENTMAP.equals(this.parameters.getSource());
+        String typeId =
+                this.parameters.getType() != null
+                        ? this.parameters.getType().toLowerCase(Locale.ROOT)
+                        : HarExporter.ID;
+        boolean isYaml = YamlExporter.ID.equalsIgnoreCase(this.parameters.getType());
+
+        if (isSitesTree && !isYaml) {
             progress.error(
                     Constant.messages.getString(
                             "exim.automation.export.error.sitestree.type", this.getName(), typeId));
-        } else if (!Source.SITESTREE.equals(this.parameters.getSource())
-                && YamlExporter.ID.equalsIgnoreCase(this.parameters.getType())) {
+        } else if (isClientMap && !isYaml) {
+            progress.error(
+                    Constant.messages.getString(
+                            "exim.automation.export.error.clientmap.type", this.getName(), typeId));
+        } else if (!isSitesTree && !isClientMap && isYaml) {
             String sourceName =
                     Constant.messages.getString(
                             "exim.exporter.source." + this.parameters.getSource().getId());

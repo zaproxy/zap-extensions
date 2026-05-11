@@ -31,6 +31,7 @@ import org.apache.commons.httpclient.URIException;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.insights.internal.Insight;
 import org.zaproxy.addon.insights.report.ExtensionInsightsReport;
 import org.zaproxy.zap.extension.alert.AlertNode;
@@ -76,6 +77,31 @@ public class ReportTestUtils {
         AlertNode node = new AlertNode(risk, name);
         Alert alert1 = createAlertNode(name, desc, risk, confidence, "");
         Alert alert2 = createAlertNode(name, desc, risk, confidence, "Another ");
+        node.setUserObject(alert1);
+
+        AlertNode instance1 = new AlertNode(0, name);
+        instance1.setUserObject(alert1);
+
+        AlertNode instance2 = new AlertNode(0, name);
+        instance2.setUserObject(alert2);
+
+        node.add(instance1);
+        node.add(instance2);
+
+        return node;
+    }
+
+    static AlertNode getSystemicTaggedAlertNode(String name, String desc, int risk, int confidence)
+            throws URIException, HttpMalformedHeaderException {
+        AlertNode node = new AlertNode(risk, name);
+        Alert alert1 = createAlertNode(name, desc, risk, confidence, "");
+        Alert alert2 = createAlertNode(name, desc, risk, confidence, "Another ");
+
+        Map<String, String> systemicTags = new HashMap<>();
+        systemicTags.put(CommonAlertTag.SYSTEMIC.getTag(), CommonAlertTag.SYSTEMIC.getValue());
+        alert1.setTags(systemicTags);
+        alert2.setTags(systemicTags);
+
         node.setUserObject(alert1);
 
         AlertNode instance1 = new AlertNode(0, name);
@@ -181,6 +207,26 @@ public class ReportTestUtils {
         ExtensionReports extRep = new ExtensionReports();
         ReportData reportData = getTestReportDataWithAlerts();
         reportData.setSections(template.getSections());
+        return extRep.generateReport(reportData, template, f.getAbsolutePath(), false);
+    }
+
+    static File generateReportWithSystemicTaggedAlert(Template template, File f)
+            throws IOException, DocumentException, URIException, HttpMalformedHeaderException {
+        ExtensionReports extRep = new ExtensionReports();
+        ReportData reportData = new ReportData("test");
+        reportData.setTitle("Test Title");
+        reportData.setDescription("Test Description");
+        reportData.setIncludeAllConfidences(true);
+        reportData.setIncludeAllRisks(true);
+        reportData.setSections(template.getSections());
+
+        AlertNode root = new AlertNode(0, "Test");
+        root.add(
+                getSystemicTaggedAlertNode(
+                        "XSS", "XSS Description", Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM));
+        reportData.setAlertTreeRootNode(root);
+        addSites(reportData);
+
         return extRep.generateReport(reportData, template, f.getAbsolutePath(), false);
     }
 

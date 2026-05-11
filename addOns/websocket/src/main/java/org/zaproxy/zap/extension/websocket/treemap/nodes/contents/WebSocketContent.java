@@ -26,7 +26,7 @@ import org.zaproxy.zap.extension.websocket.treemap.nodes.structural.TreeNode;
 
 /**
  * This class and their sub-classes of it, stores the appropriate values, and perform the
- * appropriate functionality to be entries of a {@link TreeNode<WebSocketContent>}.
+ * appropriate functionality to be entries of a {@link TreeNode}.
  */
 public abstract class WebSocketContent implements NodeContent, Comparable<NodeContent> {
 

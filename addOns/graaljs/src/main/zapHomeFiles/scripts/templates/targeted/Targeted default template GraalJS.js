@@ -6,6 +6,8 @@
  * @param msg - the HTTP message being acted upon. This is an HttpMessage object.
  */
 function invokeWith(msg) {
-	// Debugging can be done using println like this
-	print('invokeWith called for url=' + msg.getRequestHeader().getURI().toString()); 
+  // Debugging can be done using println like this
+  print(
+    "invokeWith called for url=" + msg.getRequestHeader().getURI().toString(),
+  );
 }

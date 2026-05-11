@@ -24,6 +24,7 @@ import java.net.UnknownHostException;
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
@@ -394,44 +395,7 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin
                             appendTrueAttack);
                     LOGGER.debug("We found an LDAP injection");
 
-                    String extraInfo =
-                            Constant.messages.getString(
-                                    I18N_PREFIX + "ldapinjection.booleanbased.alert.extrainfo",
-                                    paramname,
-                                    getBaseMsg().getRequestHeader().getMethod(),
-                                    getBaseMsg().getRequestHeader().getURI(),
-                                    appendTrueAttack,
-                                    randomparameterAttack);
-
-                    String vulnevidence =
-                            ""; // there is no String to search for in the original output.  all
-                    // extra info is in extra info field. ahem!
-                    String attack =
-                            Constant.messages.getString(
-                                    I18N_PREFIX + "ldapinjection.booleanbased.alert.attack",
-                                    appendTrueAttack,
-                                    randomparameterAttack);
-                    String vulnname =
-                            Constant.messages.getString(I18N_PREFIX + "ldapinjection.name");
-                    String vulndesc =
-                            Constant.messages.getString(I18N_PREFIX + "ldapinjection.desc");
-                    String vulnsoln =
-                            Constant.messages.getString(I18N_PREFIX + "ldapinjection.soln");
-
-                    newAlert()
-                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                            .setName(vulnname)
-                            .setDescription(vulndesc)
-                            .setParam(paramname)
-                            .setAttack(attack)
-                            .setOtherInfo(extraInfo)
-                            .setSolution(vulnsoln)
-                            .setEvidence(vulnevidence)
-                            .setMessage(getBaseMsg())
-                            .raise();
-
-                    logBooleanInjection(
-                            getBaseMsg(), paramname, appendTrueAttack, randomparameterAttack);
+                    raiseBooleanBasedAlert(paramname, appendTrueAttack, randomparameterAttack);
 
                     // all done for this parameter. return.
                     return;
@@ -494,44 +458,7 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin
                             hopefullyTrueAttack);
                     LOGGER.debug("We found an LDAP injection");
 
-                    String extraInfo =
-                            Constant.messages.getString(
-                                    I18N_PREFIX + "ldapinjection.booleanbased.alert.extrainfo",
-                                    paramname,
-                                    getBaseMsg().getRequestHeader().getMethod(),
-                                    getBaseMsg().getRequestHeader().getURI(),
-                                    hopefullyTrueAttack,
-                                    randomparameterAttack);
-
-                    String vulnevidence =
-                            ""; // there is no String to search for in the original output.  all
-                    // extra info is in extra info field. ahem!
-                    String attack =
-                            Constant.messages.getString(
-                                    I18N_PREFIX + "ldapinjection.booleanbased.alert.attack",
-                                    hopefullyTrueAttack,
-                                    randomparameterAttack);
-                    String vulnname =
-                            Constant.messages.getString(I18N_PREFIX + "ldapinjection.name");
-                    String vulndesc =
-                            Constant.messages.getString(I18N_PREFIX + "ldapinjection.desc");
-                    String vulnsoln =
-                            Constant.messages.getString(I18N_PREFIX + "ldapinjection.soln");
-
-                    newAlert()
-                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                            .setName(vulnname)
-                            .setDescription(vulndesc)
-                            .setParam(paramname)
-                            .setAttack(attack)
-                            .setOtherInfo(extraInfo)
-                            .setSolution(vulnsoln)
-                            .setEvidence(vulnevidence)
-                            .setMessage(getBaseMsg())
-                            .raise();
-
-                    logBooleanInjection(
-                            getBaseMsg(), paramname, hopefullyTrueAttack, randomparameterAttack);
+                    raiseBooleanBasedAlert(paramname, hopefullyTrueAttack, randomparameterAttack);
 
                     // all done for this parameter. return.
                     return;
@@ -614,36 +541,13 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin
                 // does not trigger the same effect.
                 // so raise the error, and move on to the next parameter
 
-                String extraInfo =
-                        Constant.messages.getString(
-                                I18N_PREFIX + "ldapinjection.alert.extrainfo",
-                                parameterName,
-                                getBaseMsg().getRequestHeader().getMethod(),
-                                getBaseMsg().getRequestHeader().getURI(),
-                                errorAttack,
-                                LDAP_ERRORS.get(errorPattern),
-                                errorPattern);
-
-                String attack =
-                        Constant.messages.getString(
-                                I18N_PREFIX + "ldapinjection.alert.attack",
-                                parameterName,
-                                errorAttack);
-                String vulnname = Constant.messages.getString(I18N_PREFIX + "ldapinjection.name");
-                String vulndesc = Constant.messages.getString(I18N_PREFIX + "ldapinjection.desc");
-                String vulnsoln = Constant.messages.getString(I18N_PREFIX + "ldapinjection.soln");
-
                 // we know the LDAP implementation, so put it in the title, where it will be
                 // obvious.
-                newAlert()
-                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                        .setName(vulnname + " - " + LDAP_ERRORS.get(errorPattern))
-                        .setDescription(vulndesc)
-                        .setParam(parameterName)
-                        .setAttack(attack)
-                        .setOtherInfo(extraInfo)
-                        .setSolution(vulnsoln)
-                        .setEvidence(errorPattern.toString())
+                buildErrorBasedAlert(
+                                parameterName,
+                                getBaseMsg().getRequestHeader().getMethod(),
+                                getBaseMsg().getRequestHeader().getURI().toString(),
+                                errorPattern)
                         .setMessage(attackMessage)
                         .raise();
 
@@ -666,6 +570,86 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin
         } // for each error message for the given LDAP implementation
 
         return false; // did not throw an alert
+    }
+
+    private AlertBuilder buildErrorBasedAlert(
+            String param, String method, String uri, Pattern errorPattern) {
+        String ldapImplementation = LDAP_ERRORS.get(errorPattern);
+        String attack =
+                Constant.messages.getString(
+                        I18N_PREFIX + "ldapinjection.alert.attack", param, errorAttack);
+        String extraInfo =
+                Constant.messages.getString(
+                        I18N_PREFIX + "ldapinjection.alert.extrainfo",
+                        param,
+                        method,
+                        uri,
+                        errorAttack,
+                        ldapImplementation,
+                        errorPattern.toString());
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setName(getName() + " - " + ldapImplementation)
+                .setParam(param)
+                .setAttack(attack)
+                .setOtherInfo(extraInfo)
+                .setEvidence(errorPattern.toString())
+                .setAlertRef(getId() + "-1");
+    }
+
+    private AlertBuilder buildBooleanBasedAlert(
+            String param, String method, String uri, String trueAttack, String randomAttack) {
+        String attack =
+                Constant.messages.getString(
+                        I18N_PREFIX + "ldapinjection.booleanbased.alert.attack",
+                        trueAttack,
+                        randomAttack);
+        String extraInfo =
+                Constant.messages.getString(
+                        I18N_PREFIX + "ldapinjection.booleanbased.alert.extrainfo",
+                        param,
+                        method,
+                        uri,
+                        trueAttack,
+                        randomAttack);
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setParam(param)
+                .setAttack(attack)
+                .setOtherInfo(extraInfo)
+                .setEvidence("")
+                .setAlertRef(getId() + "-2");
+    }
+
+    private void raiseBooleanBasedAlert(String paramName, String trueAttack, String randomAttack) {
+        buildBooleanBasedAlert(
+                        paramName,
+                        getBaseMsg().getRequestHeader().getMethod(),
+                        getBaseMsg().getRequestHeader().getURI().toString(),
+                        trueAttack,
+                        randomAttack)
+                .setMessage(getBaseMsg())
+                .raise();
+
+        logBooleanInjection(getBaseMsg(), paramName, trueAttack, randomAttack);
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildErrorBasedAlert(
+                                "param",
+                                "GET",
+                                "https://example.com/",
+                                LDAP_ERRORS.keySet().iterator().next())
+                        .build(),
+                buildBooleanBasedAlert(
+                                "param",
+                                "GET",
+                                "https://example.com/",
+                                "test)(objectClass=*",
+                                "randomvalue")
+                        .build());
     }
 
     /**

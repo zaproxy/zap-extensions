@@ -4,7 +4,15 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [0.57.0] - 2026-05-06
 ### Changed
+- Updated with upstream retire.js pattern changes.
+
+## [0.56.0] - 2026-04-14
+### Changed
+- Updated with upstream retire.js pattern changes.
 - The scan rule now has new tags for the OWASP Top 10 2025, and API Top 10 2023.
 - Depends on an updated version of the Common Library add-on.
 
@@ -294,6 +302,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - First release.
 
+[0.57.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.57.0
+[0.56.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.56.0
 [0.55.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.55.0
 [0.54.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.54.0
 [0.53.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.53.0

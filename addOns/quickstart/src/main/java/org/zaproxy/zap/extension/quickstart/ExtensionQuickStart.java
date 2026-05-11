@@ -312,6 +312,10 @@ public class ExtensionQuickStart extends ExtensionAdaptor
     }
 
     public void attack(URL url, boolean useStdSpider) {
+        attack(url, useStdSpider, null);
+    }
+
+    public void attack(URL url, boolean useStdSpider, String policyName) {
         if (attackThread != null && attackThread.isAlive()) {
             return;
         }
@@ -319,6 +323,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor
         attackThread.setURL(url);
         attackThread.setTraditionalSpider(traditionalSpider);
         attackThread.setPlugableSpider(plugableSpider);
+        attackThread.setScanPolicyName(policyName);
         attackThread.start();
     }
 

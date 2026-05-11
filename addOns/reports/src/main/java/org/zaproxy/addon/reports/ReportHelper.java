@@ -195,23 +195,30 @@ public class ReportHelper {
     public static List<Alert> getAlertInstancesForSite(
             AlertNode rootNode, String site, String alertName, int alertRisk) {
         List<Alert> list = new ArrayList<>();
-
-        for (int alertIndex = 0; alertIndex < rootNode.getChildCount(); alertIndex++) {
-            AlertNode alertNode = rootNode.getChildAt(alertIndex);
-            // Only the instances have userObjects, not the top level nodes :/
-            if (alertNode.getChildAt(0) != null
-                    && alertNode.getRisk() == alertRisk
-                    && alertNode.getChildAt(0).getUserObject().getName().equals(alertName)) {
-                for (int instIndex = 0; instIndex < alertNode.getChildCount(); instIndex++) {
-                    AlertNode instanceNode = alertNode.getChildAt(instIndex);
-                    if (instanceNode.getUserObject().getUri().startsWith(site)) {
-                        list.add(instanceNode.getUserObject());
-                    }
+        AlertNode alertNode = findAlertNode(rootNode, alertName, alertRisk);
+        if (alertNode != null) {
+            for (int instIndex = 0; instIndex < alertNode.getChildCount(); instIndex++) {
+                AlertNode instanceNode = alertNode.getChildAt(instIndex);
+                if (instanceNode.getUserObject().getUri().startsWith(site)) {
+                    list.add(instanceNode.getUserObject());
                 }
-                break;
             }
         }
         return list;
+    }
+
+    private static AlertNode findAlertNode(AlertNode rootNode, String alertName, int alertRisk) {
+        for (int i = 0; i < rootNode.getChildCount(); i++) {
+            AlertNode alertNode = rootNode.getChildAt(i);
+            // Only the instances have userObjects, not the top level nodes :/
+            AlertNode firstChild = alertNode.getChildAt(0);
+            if (firstChild != null
+                    && alertNode.getRisk() == alertRisk
+                    && firstChild.getUserObject().getName().equals(alertName)) {
+                return alertNode;
+            }
+        }
+        return null;
     }
 
     public static List<AlertNode> getChildren(AlertNode node, boolean incLeaves) {
@@ -328,14 +335,15 @@ public class ReportHelper {
     }
 
     /**
-     * Returns whether the alert node is systemic.
+     * Returns whether the alert is systemic, by locating the matching {@link AlertNode} in the
+     * alert tree and checking the instance count against the systemic threshold.
      *
-     * @since 0.42.0
+     * @since 0.45.0
      */
-    public static boolean isSystemic(Alert alert) {
-        if (alert == null) {
+    public static boolean isSystemic(AlertNode rootNode, String alertName, int alertRisk) {
+        if (rootNode == null) {
             return false;
         }
-        return alert.isSystemic();
+        return isSystemic(findAlertNode(rootNode, alertName, alertRisk));
     }
 }

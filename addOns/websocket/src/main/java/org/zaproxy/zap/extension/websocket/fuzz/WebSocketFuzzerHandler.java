@@ -144,7 +144,7 @@ public class WebSocketFuzzerHandler implements FuzzerHandler<WebSocketMessageDTO
     @SuppressWarnings("unchecked")
     private WebSocketFuzzer createFuzzer(
             WebSocketMessageDTO message,
-            List<PayloadGeneratorMessageLocation<?>> fuzzLocations,
+            List<PayloadGeneratorMessageLocation> fuzzLocations,
             FuzzerOptions options,
             List<WebSocketFuzzerMessageProcessor> processors) {
         if (fuzzLocations.isEmpty()) {
@@ -167,7 +167,7 @@ public class WebSocketFuzzerHandler implements FuzzerHandler<WebSocketMessageDTO
         SortedSet<MessageLocationReplacementGenerator<?, ?>> messageLocationReplacementGenerators =
                 new TreeSet<>();
 
-        for (PayloadGeneratorMessageLocation<?> fuzzLocation : fuzzLocations) {
+        for (PayloadGeneratorMessageLocation fuzzLocation : fuzzLocations) {
             messageLocationReplacementGenerators.add(fuzzLocation);
         }
         multipleMessageLocationsReplacer.init(replacer, messageLocationReplacementGenerators);

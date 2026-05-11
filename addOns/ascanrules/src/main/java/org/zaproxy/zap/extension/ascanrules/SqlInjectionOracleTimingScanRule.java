@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.ascanrules;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -224,13 +225,13 @@ public class SqlInjectionOracleTimingScanRule extends AbstractAppParamPlugin
                 return;
             }
             AtomicReference<HttpMessage> message = new AtomicReference<>();
-            String payloadValue = PAYLOADS[payloadIndex].replace(ORIG_VALUE_TOKEN, paramValue);
+            String payloadTemplate = PAYLOADS[payloadIndex];
             TimingUtils.RequestSender requestSender =
                     x -> {
                         HttpMessage timedMsg = getNewMsg();
                         message.compareAndSet(null, timedMsg);
                         String finalPayload =
-                                payloadValue.replace(SLEEP_TOKEN, String.valueOf((int) x));
+                                assembleTimingPayload(payloadTemplate, paramValue, (int) x);
                         setParameter(timedMsg, paramName, finalPayload);
                         sendAndReceive(timedMsg, false); // do not follow redirects
                         return TimeUnit.MILLISECONDS.toSeconds(timedMsg.getTimeElapsedMillis());
@@ -256,29 +257,64 @@ public class SqlInjectionOracleTimingScanRule extends AbstractAppParamPlugin
 
             if (isInjectable) {
                 String finalPayloadValue =
-                        payloadValue.replace(SLEEP_TOKEN, String.valueOf(sleepInSeconds));
+                        assembleTimingPayload(payloadTemplate, paramValue, sleepInSeconds);
                 LOGGER.debug(
                         "Time Based Oracle SQL Injection - Found on parameter [{}] with value [{}]",
                         paramName,
                         paramValue);
 
-                newAlert()
-                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                        .setUri(getBaseMsg().getRequestHeader().getURI().toString())
-                        .setParam(paramName)
-                        .setAttack(finalPayloadValue)
+                buildAlert(
+                                getBaseMsg().getRequestHeader().getURI().toString(),
+                                paramName,
+                                paramValue,
+                                finalPayloadValue,
+                                message.get().getTimeElapsedMillis(),
+                                getBaseMsg().getTimeElapsedMillis())
                         .setMessage(message.get())
-                        .setOtherInfo(
-                                Constant.messages.getString(
-                                        "ascanrules.sqlinjection.alert.timebased.extrainfo",
-                                        finalPayloadValue,
-                                        message.get().getTimeElapsedMillis(),
-                                        paramValue,
-                                        getBaseMsg().getTimeElapsedMillis()))
                         .raise();
                 return;
             }
         }
+    }
+
+    private static String assembleTimingPayload(
+            String template, String paramValue, int sleepSeconds) {
+        return template.replace(ORIG_VALUE_TOKEN, paramValue)
+                .replace(SLEEP_TOKEN, String.valueOf(sleepSeconds));
+    }
+
+    private AlertBuilder buildAlert(
+            String uri,
+            String paramName,
+            String paramValue,
+            String attackValue,
+            long attackElapsedMillis,
+            long originalElapsedMillis) {
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setUri(uri)
+                .setParam(paramName)
+                .setAttack(attackValue)
+                .setOtherInfo(
+                        Constant.messages.getString(
+                                "ascanrules.sqlinjection.alert.timebased.extrainfo",
+                                attackValue,
+                                attackElapsedMillis,
+                                paramValue,
+                                originalElapsedMillis));
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildAlert(
+                                "https://example.com/?name=test",
+                                "name",
+                                "test",
+                                assembleTimingPayload(PAYLOADS[1], "test", DEFAULT_TIME_SLEEP_SEC),
+                                TimeUnit.SECONDS.toMillis(DEFAULT_TIME_SLEEP_SEC),
+                                100L)
+                        .build());
     }
 
     public void setSleepInSeconds(int sleep) {

@@ -24,18 +24,12 @@ import javax.swing.GroupLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import org.parosproxy.paros.Constant;
-import org.zaproxy.zap.extension.fuzz.payloads.Payload;
-import org.zaproxy.zap.extension.fuzz.payloads.generator.PayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUI;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUIPanel;
 import org.zaproxy.zap.view.AbstractFormDialog;
 
 @SuppressWarnings("serial")
-public class ModifyPayloadDialog<
-                T extends Payload,
-                T2 extends PayloadGenerator<T>,
-                T3 extends PayloadGeneratorUI<T, T2>>
-        extends AbstractFormDialog {
+public class ModifyPayloadDialog extends AbstractFormDialog {
 
     private static final long serialVersionUID = 8111848758566016134L;
 
@@ -47,12 +41,12 @@ public class ModifyPayloadDialog<
             Constant.messages.getString("fuzz.fuzzer.dialog.modify.payload.button.confirm");
 
     private final String nameType;
-    private T3 payloadGeneratorUI;
+    private PayloadGeneratorUI payloadGeneratorUI;
 
-    private PayloadGeneratorUIPanel<T, T2, T3> contentPanel;
+    private PayloadGeneratorUIPanel contentPanel;
 
     public ModifyPayloadDialog(
-            Window owner, PayloadGeneratorUIPanel<T, T2, T3> panel, T3 payloadGeneratorUI) {
+            Window owner, PayloadGeneratorUIPanel panel, PayloadGeneratorUI payloadGeneratorUI) {
         super(owner, DIALOG_TITLE, false);
 
         nameType = payloadGeneratorUI.getName();
@@ -132,7 +126,7 @@ public class ModifyPayloadDialog<
         payloadGeneratorUI = contentPanel.getPayloadGeneratorUI();
     }
 
-    public T3 getPayloadGeneratorUI() {
+    public PayloadGeneratorUI getPayloadGeneratorUI() {
         return payloadGeneratorUI;
     }
 }

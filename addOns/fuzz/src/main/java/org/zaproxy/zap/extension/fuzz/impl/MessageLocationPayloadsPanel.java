@@ -32,12 +32,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SortOrder;
 import org.parosproxy.paros.Constant;
-import org.zaproxy.zap.extension.fuzz.payloads.Payload;
-import org.zaproxy.zap.extension.fuzz.payloads.generator.PayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUI;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.PayloadProcessorUIHandlersRegistry;
 import org.zaproxy.zap.model.MessageLocation;
-import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 import org.zaproxy.zap.utils.StringUIUtils;
 import org.zaproxy.zap.view.AbstractMultipleOrderedOptionsBaseTablePanel;
 
@@ -219,11 +216,10 @@ public class MessageLocationPayloadsPanel extends JPanel {
                         processorsDialog.setPayloadProcessors(
                                 payloadTableEntry.getPayloadProcessors());
                         processorsDialog.setPayloads(
-                                (ResettableAutoCloseableIterator<Payload>)
-                                        payloadTableEntry
-                                                .getPayloadGeneratorUI()
-                                                .getPayloadGenerator()
-                                                .iterator());
+                                payloadTableEntry
+                                        .getPayloadGeneratorUI()
+                                        .getPayloadGenerator()
+                                        .iterator());
                         processorsDialog.setVisible(true);
 
                         payloadTableEntry.setPayloadProcessors(processorsDialog.getProcessors());
@@ -256,7 +252,7 @@ public class MessageLocationPayloadsPanel extends JPanel {
             addPayloadDialog.pack();
             addPayloadDialog.setVisible(true);
 
-            PayloadGeneratorUI<?, ?> payloadGeneratorUI = addPayloadDialog.getPayloadGeneratorUI();
+            PayloadGeneratorUI payloadGeneratorUI = addPayloadDialog.getPayloadGeneratorUI();
             if (payloadGeneratorUI == null) {
                 return null;
             }
@@ -275,9 +271,8 @@ public class MessageLocationPayloadsPanel extends JPanel {
 
         @Override
         public PayloadTableEntry showModifyDialogue(PayloadTableEntry e) {
-            @SuppressWarnings({"unchecked", "rawtypes"})
-            PayloadGeneratorUI<?, ?> payloadGeneratorUI =
-                    showModifyDialogueHelper((PayloadGeneratorUI) e.getPayloadGeneratorUI());
+            PayloadGeneratorUI payloadGeneratorUI =
+                    showModifyDialogueHelper(e.getPayloadGeneratorUI());
 
             if (payloadGeneratorUI != null) {
                 e.setPayloadGeneratorUI(payloadGeneratorUI);
@@ -286,13 +281,9 @@ public class MessageLocationPayloadsPanel extends JPanel {
             return null;
         }
 
-        private <
-                        T extends Payload,
-                        T2 extends PayloadGenerator<T>,
-                        T3 extends PayloadGeneratorUI<T, T2>>
-                T3 showModifyDialogueHelper(T3 payloadGeneratorUI) {
-            ModifyPayloadDialog<T, T2, T3> modifyPayloadDialog =
-                    new ModifyPayloadDialog<>(
+        private PayloadGeneratorUI showModifyDialogueHelper(PayloadGeneratorUI payloadGeneratorUI) {
+            ModifyPayloadDialog modifyPayloadDialog =
+                    new ModifyPayloadDialog(
                             parent,
                             payloadGeneratorsUIHandlers.getPanel(payloadGeneratorUI),
                             payloadGeneratorUI);

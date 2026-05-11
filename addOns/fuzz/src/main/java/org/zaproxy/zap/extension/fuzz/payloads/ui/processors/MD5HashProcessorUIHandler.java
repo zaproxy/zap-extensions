@@ -22,13 +22,11 @@ package org.zaproxy.zap.extension.fuzz.payloads.ui.processors;
 import java.nio.charset.Charset;
 import javax.swing.JPanel;
 import org.parosproxy.paros.Constant;
-import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.MD5HashProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.AbstractStringHashProcessorUIPanel.AbstractStringHashProcessorUI;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.MD5HashProcessorUIHandler.MD5HashProcessorUI;
 
-public class MD5HashProcessorUIHandler
-        implements PayloadProcessorUIHandler<DefaultPayload, MD5HashProcessor, MD5HashProcessorUI> {
+public class MD5HashProcessorUIHandler implements PayloadProcessorUIHandler {
 
     private static final String PROCESSOR_NAME =
             Constant.messages.getString("fuzz.payload.processor.md5Hash.name");
@@ -53,15 +51,10 @@ public class MD5HashProcessorUIHandler
         return new MD5HashProcessorUIPanel();
     }
 
-    public static class MD5HashProcessorUI extends AbstractStringHashProcessorUI<MD5HashProcessor> {
+    public static class MD5HashProcessorUI extends AbstractStringHashProcessorUI {
 
         public MD5HashProcessorUI(Charset charset, boolean upperCase) {
             super(charset, upperCase);
-        }
-
-        @Override
-        public Class<MD5HashProcessor> getPayloadProcessorClass() {
-            return MD5HashProcessor.class;
         }
 
         @Override
@@ -91,8 +84,7 @@ public class MD5HashProcessorUIHandler
         }
     }
 
-    public static class MD5HashProcessorUIPanel
-            extends AbstractStringHashProcessorUIPanel<MD5HashProcessor, MD5HashProcessorUI> {
+    public static class MD5HashProcessorUIPanel extends AbstractStringHashProcessorUIPanel {
 
         private final JPanel fieldsPanel;
 

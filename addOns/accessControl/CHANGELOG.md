@@ -5,9 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Formatted JavaScript files for consistency.
+
+## [12] - 2026-04-14
+### Changed
 - Maintenance changes.
 - The alerts now have new tags for the OWASP Top 10 2025.
 - Depends on an updated version of the Common Library add-on.
+
+### Fixed
+- Prevent GUI freeze on result selection.
 
 ## [11] - 2025-12-15
 ### Changed
@@ -85,6 +92,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Initial version
 
+[12]: https://github.com/zaproxy/zap-extensions/releases/accessControl-v12
 [11]: https://github.com/zaproxy/zap-extensions/releases/accessControl-v11
 [10]: https://github.com/zaproxy/zap-extensions/releases/accessControl-v10
 [9]: https://github.com/zaproxy/zap-extensions/releases/accessControl-v9

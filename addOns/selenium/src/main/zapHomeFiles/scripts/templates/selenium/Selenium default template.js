@@ -11,11 +11,11 @@
 		waitForUrl(timeoutInMsecs) Returns the current URL (once loaded) - waits up to timeoutInMsecs
 */
 function browserLaunched(utils) {
-	var url = utils.waitForURL(5000);
-	logger('browserLaunched ' + utils.getBrowserId() + ' url: ' + url);
+  var url = utils.waitForURL(5000);
+  logger("browserLaunched " + utils.getBrowserId() + " url: " + url);
 }
 
 // Logging with the script name is super helpful!
 function logger() {
-	print('[' + this['zap.script.name'] + '] ' + arguments[0]);
+  print("[" + this["zap.script.name"] + "] " + arguments[0]);
 }

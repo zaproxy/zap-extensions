@@ -35,6 +35,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -133,6 +134,7 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
     private final Context context;
     private final User user;
     private ExtensionClientIntegration extClient;
+    private final ClientMap clientMap;
     private final ExtensionSelenium extSelenium;
     private final ExtensionNetwork extensionNetwork;
 
@@ -147,7 +149,8 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
     private long lastEventReceivedtime;
     private long maxTime;
     private boolean paused;
-    private boolean finished;
+    private final AtomicBoolean stopping = new AtomicBoolean(false);
+    private volatile boolean finished;
     private boolean stopped;
 
     private int tasksDoneCount;
@@ -161,6 +164,7 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
 
     public ClientSpider(
             ExtensionClientIntegration extClient,
+            ClientMap clientMap,
             String displayName,
             String targetUrl,
             ClientOptions options,
@@ -170,6 +174,7 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
             boolean subtreeOnly,
             ValueProvider valueProvider) {
         this.extClient = extClient;
+        this.clientMap = clientMap;
         session = extClient.getModel().getSession();
         this.displayName = displayName;
         this.targetUrl = targetUrl;
@@ -235,15 +240,6 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
         outOfScopeResponseHeader = responseHeader;
     }
 
-    public ClientSpider(
-            ExtensionClientIntegration extClient,
-            String displayName,
-            String targetUrl,
-            ClientOptions options,
-            int id) {
-        this(extClient, displayName, targetUrl, options, id, null, null, false, null);
-    }
-
     @Override
     public void run() {
         startTime = System.currentTimeMillis();
@@ -307,7 +303,7 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
 
     private List<String> getUnvisitedUrls() {
         List<String> urls = new ArrayList<>();
-        ClientNode targetNode = extClient.getClientNode(targetUrl, false, false);
+        ClientNode targetNode = clientMap.getNode(targetUrl, false, false);
         if (targetUrl.endsWith("/") && targetNode != null) {
             // Start up one level as "/" will be a leaf node
             getUnvisitedUrls(targetNode.getParent(), urls);
@@ -371,7 +367,13 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
         try {
             ClientSpiderTask task =
                     new ClientSpiderTask(
-                            id, this, actions, loadTimeInSecs, displayName, detailsString);
+                            id,
+                            this,
+                            actions,
+                            loadTimeInSecs,
+                            options.getActionWaitTimeInSecs(),
+                            displayName,
+                            detailsString);
             this.addTaskToTasksModel(task, url);
             if (paused) {
                 this.pausedTasks.add(task);
@@ -397,7 +399,7 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
         if (listener != null) {
             listener.scanProgress(scanId, displayName, this.getProgress(), this.getMaximum());
         }
-        if (this.spiderTasks.isEmpty() && !paused) {
+        if (this.spiderTasks.isEmpty() && !paused && !stopping.get()) {
             LOGGER.debug("No running tasks, starting shutdown timer");
             new ShutdownThread(options.getShutdownTimeInSecs()).start();
         }
@@ -405,7 +407,7 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
 
     @Override
     public void eventReceived(Event event) {
-        if (finished || stopped) {
+        if (stopping.get() || stopped) {
             return;
         }
         this.lastEventReceivedtime = System.currentTimeMillis();
@@ -582,7 +584,7 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
     }
 
     protected void setRedirect(String originalUrl, String redirectedUrl) {
-        ThreadUtils.invokeLater(() -> extClient.setRedirect(originalUrl, redirectedUrl));
+        ThreadUtils.invokeLater(() -> clientMap.setRedirect(originalUrl, redirectedUrl));
     }
 
     @Override
@@ -638,7 +640,9 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
     }
 
     private void finished() {
-        finished = true;
+        if (!stopping.compareAndSet(false, true)) {
+            return;
+        }
         long timeTaken = System.currentTimeMillis() - startTime;
         LOGGER.debug(
                 "Spider finished {}", DurationFormatUtils.formatDuration(timeTaken, "HH:MM:SS"));
@@ -669,9 +673,11 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
             clear(webDriverActive);
         }
 
+        finished = true;
+
         int contentLoaded = 0;
         for (String url : crawledUrls) {
-            if (extClient.setContentLoaded(url)) {
+            if (clientMap.setContentLoaded(url) != null) {
                 contentLoaded++;
             }
         }

@@ -59,6 +59,7 @@ import org.zaproxy.zap.extension.sequence.automation.SequenceAScanJobResultData;
 import org.zaproxy.zap.extension.stats.ExtensionStats;
 import org.zaproxy.zap.extension.stats.InMemoryStats;
 import org.zaproxy.zap.testutils.TestUtils;
+import org.zaproxy.zap.utils.XmlUtils;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 class ExtensionReportsXmlUnitTest extends TestUtils {
@@ -496,5 +497,22 @@ class ExtensionReportsXmlUnitTest extends TestUtils {
 
         assertThat(insightNode.getChildNodes().item(11).getNodeName(), is(equalTo("statistic")));
         assertThat(insightNode.getChildNodes().item(11).getTextContent(), is(equalTo(stat)));
+    }
+
+    @Test
+    void shouldNotMarkSystemicWhenInstancesBelowThresholdEvenWithSystemicTag() throws Exception {
+        // Given
+        Template template = ReportTestUtils.getTemplateFromYamlFile("traditional-xml");
+        File f = File.createTempFile("systemic-tag-xml", template.getExtension());
+        DocumentBuilder db = XmlUtils.newXxeDisabledDocumentBuilderFactory().newDocumentBuilder();
+
+        // When
+        File r = ReportTestUtils.generateReportWithSystemicTaggedAlert(template, f);
+        Document doc = db.parse(r);
+
+        // Then
+        NodeList systemicNodes = doc.getElementsByTagName("systemic");
+        assertThat(systemicNodes.getLength(), is(equalTo(1)));
+        assertThat(systemicNodes.item(0).getTextContent(), is(equalTo("false")));
     }
 }

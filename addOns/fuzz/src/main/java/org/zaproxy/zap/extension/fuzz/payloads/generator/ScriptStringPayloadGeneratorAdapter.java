@@ -23,12 +23,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.control.Control;
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
 /** A {@code PayloadGenerator} that generates payloads using a script. */
-public class ScriptStringPayloadGeneratorAdapter implements StringPayloadGenerator {
+public class ScriptStringPayloadGeneratorAdapter implements PayloadGenerator {
 
     private static final Logger LOGGER =
             LogManager.getLogger(ScriptStringPayloadGeneratorAdapter.class);
@@ -102,7 +103,7 @@ public class ScriptStringPayloadGeneratorAdapter implements StringPayloadGenerat
     }
 
     @Override
-    public ResettableAutoCloseableIterator<DefaultPayload> iterator() {
+    public ResettableAutoCloseableIterator<Payload> iterator() {
         if (scriptPayloadGenerator != null) {
             ScriptPayloadGeneratorIterator iterator =
                     new ScriptPayloadGeneratorIterator(scriptWrapper, scriptPayloadGenerator);
@@ -120,7 +121,7 @@ public class ScriptStringPayloadGeneratorAdapter implements StringPayloadGenerat
     }
 
     private static class ScriptPayloadGeneratorIterator
-            implements ResettableAutoCloseableIterator<DefaultPayload> {
+            implements ResettableAutoCloseableIterator<Payload> {
 
         private final ScriptWrapper scriptWrapper;
         private boolean initialised;
@@ -166,7 +167,7 @@ public class ScriptStringPayloadGeneratorAdapter implements StringPayloadGenerat
         }
 
         @Override
-        public DefaultPayload next() {
+        public Payload next() {
             try {
                 return new DefaultPayload(scriptPayloadGenerator.next());
             } catch (Exception e) {

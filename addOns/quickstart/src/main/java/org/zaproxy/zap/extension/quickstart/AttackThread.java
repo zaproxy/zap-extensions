@@ -29,6 +29,7 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteNode;
 import org.zaproxy.zap.extension.ascan.ActiveScan;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
+import org.zaproxy.zap.extension.ascan.ScanPolicy;
 import org.zaproxy.zap.model.Target;
 import org.zaproxy.zap.network.HttpRequestConfig;
 import org.zaproxy.zap.utils.Stats;
@@ -52,6 +53,7 @@ public class AttackThread extends Thread {
     private PlugableSpider plugableSpider;
     private boolean stopAttack = false;
     private boolean useStdSpider;
+    private String scanPolicyName;
 
     private static final Logger LOGGER = LogManager.getLogger(AttackThread.class);
 
@@ -70,6 +72,10 @@ public class AttackThread extends Thread {
 
     public void setTraditionalSpider(TraditionalSpider traditionalSpider) {
         this.traditionalSpider = traditionalSpider;
+    }
+
+    public void setScanPolicyName(String scanPolicyName) {
+        this.scanPolicyName = scanPolicyName;
     }
 
     public void setPlugableSpider(PlugableSpider plugableSpider) {
@@ -191,7 +197,18 @@ public class AttackThread extends Thread {
                 return;
             } else {
                 extension.notifyProgress(Progress.ascan);
-                scanId = extAscan.startScan(target);
+                ScanPolicy scanPolicy = null;
+                if (scanPolicyName != null && !scanPolicyName.isEmpty()) {
+                    try {
+                        scanPolicy = extAscan.getPolicyManager().getPolicy(scanPolicyName);
+                    } catch (Exception ex) {
+                        LOGGER.warn("Failed to load policy {}, using default", scanPolicyName);
+                    }
+                }
+                if (scanPolicy == null) {
+                    scanPolicy = extAscan.getPolicyManager().getDefaultScanPolicy();
+                }
+                scanId = extAscan.startScan(target, null, new Object[] {scanPolicy});
             }
 
             try {

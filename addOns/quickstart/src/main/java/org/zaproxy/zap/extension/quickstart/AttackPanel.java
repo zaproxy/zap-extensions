@@ -38,6 +38,8 @@ import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
+import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
+import org.zaproxy.zap.extension.ascan.PolicyManager;
 import org.zaproxy.zap.extension.search.SearchPanel;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.LayoutHelper;
@@ -48,10 +50,12 @@ public class AttackPanel extends QuickStartSubPanel {
     private static final long serialVersionUID = 1L;
 
     private static final String DEFAULT_VALUE_URL_FIELD = "http://";
+    private static final String DEFAULT_SCAN_POLICY = "Dev Standard";
 
     private ImageIcon icon;
     private JButton attackButton;
     private JButton stopButton;
+    private JComboBox<String> policyField;
     private JComboBox<String> urlField;
     private DefaultComboBoxModel<String> urlModel;
     private JButton selectButton;
@@ -149,6 +153,11 @@ public class AttackPanel extends QuickStartSubPanel {
             urlSelectPanel.add(this.getUrlField(), LayoutHelper.getGBC(0, 0, 1, 0.5D));
             urlSelectPanel.add(selectButton, LayoutHelper.getGBC(1, 0, 1, 0.0D));
             contentPanel.add(urlSelectPanel, LayoutHelper.getGBC(2, formPanelY, 3, 0.25D));
+            contentPanel.add(
+                    new JLabel(Constant.messages.getString("quickstart.label.policy")),
+                    LayoutHelper.getGBC(
+                            1, ++formPanelY, 1, 0.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
+            contentPanel.add(getPolicyField(), LayoutHelper.getGBC(2, formPanelY, 1, 0.25D));
 
             traditionalSpiderY = ++formPanelY;
             plugableSpiderY = ++formPanelY;
@@ -171,6 +180,35 @@ public class AttackPanel extends QuickStartSubPanel {
         }
 
         return contentPanel;
+    }
+
+    private JComboBox<String> getPolicyField() {
+        if (policyField == null) {
+            policyField = new JComboBox<>();
+            ExtensionActiveScan extAscan =
+                    Control.getSingleton()
+                            .getExtensionLoader()
+                            .getExtension(ExtensionActiveScan.class);
+            if (extAscan != null) {
+                extAscan.getPolicyManager().getAllPolicyNames().forEach(policyField::addItem);
+            }
+        }
+        return policyField;
+    }
+
+    private void selectScanPolicy() {
+        String savedPolicy = getExtensionQuickStart().getQuickStartParam().getScanPolicyName();
+        if (!setPolicy(savedPolicy)) {
+            setPolicy(DEFAULT_SCAN_POLICY);
+        }
+    }
+
+    private boolean setPolicy(String policyName) {
+        if (policyName != null && PolicyManager.policyExists(policyName)) {
+            policyField.setSelectedItem(policyName);
+            return true;
+        }
+        return false;
     }
 
     private JLabel getProgressLabel() {
@@ -401,12 +439,17 @@ public class AttackPanel extends QuickStartSubPanel {
             this.getUrlField().requestFocusInWindow();
             return false;
         }
+        String selectedPolicy = (String) policyField.getSelectedItem();
+        getExtensionQuickStart().getQuickStartParam().setScanPolicyName(selectedPolicy);
         this.getExtensionQuickStart().getQuickStartParam().addRecentUrl(urlStr);
         getAttackButton().setEnabled(false);
         getStopButton().setEnabled(true);
 
         getExtensionQuickStart()
-                .attack(url, traditionalSpider != null && traditionalSpider.isSelected());
+                .attack(
+                        url,
+                        traditionalSpider != null && traditionalSpider.isSelected(),
+                        selectedPolicy);
         setSpiderButtonsEnabled(false);
         return true;
     }
@@ -465,10 +508,11 @@ public class AttackPanel extends QuickStartSubPanel {
 
     public void optionsLoaded(QuickStartParam quickStartParam) {
         setRecentUrls();
+        selectScanPolicy();
     }
 
     public void optionsChanged(OptionsParam optionsParam) {
-        setRecentUrls();
+        optionsLoaded(optionsParam.getParamSet(QuickStartParam.class));
     }
 
     @Override

@@ -23,14 +23,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.PayloadGenerator;
 
 public final class PayloadGeneratorUIHandlersRegistry {
 
     private static PayloadGeneratorUIHandlersRegistry instance;
 
-    private Map<Class<?>, PayloadGeneratorUIHandler<?, ?, ?>> payloadUIHandlers;
+    private Map<Class<?>, PayloadGeneratorUIHandler> payloadUIHandlers;
     private String nameDefaultPayloadGenerator;
 
     public static PayloadGeneratorUIHandlersRegistry getInstance() {
@@ -50,49 +49,17 @@ public final class PayloadGeneratorUIHandlersRegistry {
         payloadUIHandlers = new HashMap<>();
     }
 
-    public <
-                    T2 extends Payload,
-                    T3 extends PayloadGenerator<T2>,
-                    T4 extends PayloadGeneratorUI<T2, T3>,
-                    T5 extends PayloadGeneratorUIHandler<T2, T3, T4>>
-            void registerPayloadUI(Class<T3> payloadGeneratorClass, T5 uiHandler) {
+    public void registerPayloadUI(
+            Class<? extends PayloadGenerator> payloadGeneratorClass,
+            PayloadGeneratorUIHandler uiHandler) {
         payloadUIHandlers.put(payloadGeneratorClass, uiHandler);
     }
 
-    public <
-                    T2 extends Payload,
-                    T3 extends PayloadGenerator<T2>,
-                    T4 extends PayloadGeneratorUI<T2, T3>,
-                    T5 extends PayloadGeneratorUIHandler<T2, T3, T4>>
-            T5 getPayloadGeneratorUIHandler(Class<T3> payloadGeneratorClass) {
-        Object object = payloadUIHandlers.get(payloadGeneratorClass);
-        if (object == null) {
-            return null;
-        }
-        @SuppressWarnings("unchecked")
-        T5 handler = (T5) object;
-        return handler;
-    }
-
-    public Collection<PayloadGeneratorUIHandler<?, ?, ?>> getPayloadGeneratorUIHandlers() {
+    public Collection<PayloadGeneratorUIHandler> getPayloadGeneratorUIHandlers() {
         return Collections.unmodifiableCollection(payloadUIHandlers.values());
     }
 
-    public <
-                    T2 extends Payload,
-                    T3 extends PayloadGenerator<T2>,
-                    T4 extends PayloadGeneratorUI<T2, T3>,
-                    T5 extends PayloadGeneratorUIHandler<T2, T3, T4>>
-            void removePayloadGeneratorUIHandler(Class<T3> payloadClass) {
-        payloadUIHandlers.remove(payloadClass);
-    }
-
-    public <
-                    T2 extends Payload,
-                    T3 extends PayloadGenerator<T2>,
-                    T4 extends PayloadGeneratorUI<T2, T3>,
-                    T5 extends PayloadGeneratorUIHandler<T2, T3, T4>>
-            void setDefaultPayloadGenerator(T5 uiHandler) {
+    public void setDefaultPayloadGenerator(PayloadGeneratorUIHandler uiHandler) {
         if (payloadUIHandlers.containsValue(uiHandler)) {
             nameDefaultPayloadGenerator = uiHandler.getName();
         }

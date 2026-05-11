@@ -4,6 +4,23 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [56] - 2026-05-06
+### Changed
+- Dependency update.
+- Exceptions caught by the Automation Framework job now include the exception message.
+- Improved Swagger Secret Detector Script with false positive scenarios and ensuring correct Swagger version flagging.
+- Formatted JavaScript files for consistency.
+
+## [55] - 2026-04-21
+### Changed
+- Dependency update.
+
+### Fixed
+- Address exception importing definition with indirect `additionalProperties` referencing an `oneOf` (Issue 9305).
+
+## [54] - 2026-04-14
 ### Changed
 - Dependency update to fix stack overflows when importing the definitions.
 - The scan rule script now has new tags for the OWASP Top 10 2025, and API Top 10 2023.
@@ -389,6 +406,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First Version
 
+[56]: https://github.com/zaproxy/zap-extensions/releases/openapi-v56
+[55]: https://github.com/zaproxy/zap-extensions/releases/openapi-v55
+[54]: https://github.com/zaproxy/zap-extensions/releases/openapi-v54
 [53]: https://github.com/zaproxy/zap-extensions/releases/openapi-v53
 [52]: https://github.com/zaproxy/zap-extensions/releases/openapi-v52
 [51]: https://github.com/zaproxy/zap-extensions/releases/openapi-v51

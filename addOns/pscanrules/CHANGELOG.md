@@ -4,10 +4,14 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [73] - 2026-04-14
 ### Changed
 - The scan rules now have new tags for the OWASP Top 10 2025.
 - The Charset Mismatch scan rule also now has tags for the Top 10 2021 and 2017.
 - Depends on an updated version of the Common Library add-on.
+- Add alert references to Hash Disclosure scan rule alerts (Issue 9144).
 
 ## [72] - 2026-03-31
 ### Added
@@ -677,6 +681,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[73]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v73
 [72]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v72
 [71]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v71
 [70]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v70

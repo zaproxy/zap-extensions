@@ -22,14 +22,11 @@ package org.zaproxy.zap.extension.fuzz.payloads.ui.processors;
 import java.nio.charset.Charset;
 import javax.swing.JPanel;
 import org.parosproxy.paros.Constant;
-import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.SHA1HashProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.AbstractStringHashProcessorUIPanel.AbstractStringHashProcessorUI;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.SHA1HashProcessorUIHandler.SHA1HashProcessorUI;
 
-public class SHA1HashProcessorUIHandler
-        implements PayloadProcessorUIHandler<
-                DefaultPayload, SHA1HashProcessor, SHA1HashProcessorUI> {
+public class SHA1HashProcessorUIHandler implements PayloadProcessorUIHandler {
 
     private static final String PROCESSOR_NAME =
             Constant.messages.getString("fuzz.payload.processor.sha1Hash.name");
@@ -54,16 +51,10 @@ public class SHA1HashProcessorUIHandler
         return new SHA1HashProcessorUIPanel();
     }
 
-    public static class SHA1HashProcessorUI
-            extends AbstractStringHashProcessorUI<SHA1HashProcessor> {
+    public static class SHA1HashProcessorUI extends AbstractStringHashProcessorUI {
 
         public SHA1HashProcessorUI(Charset charset, boolean upperCase) {
             super(charset, upperCase);
-        }
-
-        @Override
-        public Class<SHA1HashProcessor> getPayloadProcessorClass() {
-            return SHA1HashProcessor.class;
         }
 
         @Override
@@ -93,8 +84,7 @@ public class SHA1HashProcessorUIHandler
         }
     }
 
-    public static class SHA1HashProcessorUIPanel
-            extends AbstractStringHashProcessorUIPanel<SHA1HashProcessor, SHA1HashProcessorUI> {
+    public static class SHA1HashProcessorUIPanel extends AbstractStringHashProcessorUIPanel {
 
         private final JPanel fieldsPanel;
 

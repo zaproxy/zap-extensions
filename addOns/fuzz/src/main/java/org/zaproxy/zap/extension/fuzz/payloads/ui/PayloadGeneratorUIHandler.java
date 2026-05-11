@@ -19,17 +19,13 @@
  */
 package org.zaproxy.zap.extension.fuzz.payloads.ui;
 
-import org.zaproxy.zap.extension.fuzz.payloads.Payload;
-import org.zaproxy.zap.extension.fuzz.payloads.generator.PayloadGenerator;
-
-public interface PayloadGeneratorUIHandler<
-        T extends Payload, T2 extends PayloadGenerator<T>, T3 extends PayloadGeneratorUI<T, T2>> {
+public interface PayloadGeneratorUIHandler {
 
     String getName();
 
-    Class<T3> getPayloadGeneratorUIClass();
+    Class<? extends PayloadGeneratorUI> getPayloadGeneratorUIClass();
 
-    Class<? extends PayloadGeneratorUIPanel<T, T2, T3>> getPayloadGeneratorUIPanelClass();
+    Class<? extends PayloadGeneratorUIPanel> getPayloadGeneratorUIPanelClass();
 
-    PayloadGeneratorUIPanel<T, T2, T3> createPanel();
+    PayloadGeneratorUIPanel createPanel();
 }

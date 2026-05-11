@@ -4,9 +4,27 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [0.24.0] - 2026-05-07
+### Added
+- Client spider option "Action Wait Time".
+
+### Changed
+- Client map export to report the number of items exported.
+
+## Fixed
+- Client map export to export contexts defined with paths, e.g. like https://example.com/test/
+
+## [0.23.0] - 2026-05-06
+### Changed
+- Client spider to wait for all browsers to close before reporting it has finished.
+
+## [0.22.0] - 2026-04-14
 ### Added
 - Persist Client History entries in the session.
 - Add a button in the Client History tab to clear the history from both the GUI and session.
+- Support exporting the Client Map via the Automation Framework export job (requires the Import/Export add-on).
 
 ### Changed
 - Allow callback implementors to handle browsers closing.
@@ -195,6 +213,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.24.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.24.0
+[0.23.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.23.0
+[0.22.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.22.0
 [0.21.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.21.0
 [0.20.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.20.0
 [0.19.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.19.0

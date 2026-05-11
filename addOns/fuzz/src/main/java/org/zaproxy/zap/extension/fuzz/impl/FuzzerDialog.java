@@ -68,7 +68,7 @@ public class FuzzerDialog<
     private JPanel messageFuzzLocationsPanel = null;
     private FuzzerOptionsPanel<FO> optionsPanel = null;
 
-    private List<PayloadGeneratorMessageLocation<?>> fuzzLocations;
+    private List<PayloadGeneratorMessageLocation> fuzzLocations;
     private FuzzerMessageProcessorsTablePanel<M, FMP> fuzzerMessageProcessorsTablePanel;
 
     private boolean isEditable;
@@ -300,7 +300,7 @@ public class FuzzerDialog<
         return null;
     }
 
-    public List<PayloadGeneratorMessageLocation<?>> getFuzzLocations() {
+    public List<PayloadGeneratorMessageLocation> getFuzzLocations() {
         return fuzzLocations;
     }
 

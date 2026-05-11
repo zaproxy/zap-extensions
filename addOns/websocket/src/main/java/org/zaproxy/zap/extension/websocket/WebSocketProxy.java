@@ -99,9 +99,9 @@ public abstract class WebSocketProxy {
     }
 
     /**
-     * In PROXY mode there is a connections: Browser <-> ZAP and ZAP <-> Server. In client mode
-     * there is no connection Browser <-> ZAP, but only ZAP <-> Server. In server mode there is no
-     * connection ZAP <-> Server, but only Browser <-> ZAP.
+     * In PROXY mode there is a connections: Browser &lt;-&gt; ZAP and ZAP &lt;-&gt; Server. In
+     * client mode there is no connection Browser &lt;-&gt; ZAP, but only ZAP &lt;-&gt; Server. In
+     * server mode there is no connection ZAP &lt;-&gt; Server, but only Browser &lt;-&gt; ZAP.
      */
     public enum Mode {
         PROXY,
@@ -139,10 +139,10 @@ public abstract class WebSocketProxy {
      */
     protected Map<InputStream, WebSocketMessage> unfinishedMessages;
 
-    /** Socket for connection: Browser <-> ZAP */
+    /** Socket for connection: Browser &lt;-&gt; ZAP */
     protected final Socket localSocket;
 
-    /** Socket for connection: ZAP <-> Server */
+    /** Socket for connection: ZAP &lt;-&gt; Server */
     protected final Socket remoteSocket;
 
     /** Listens for messages from the server. */
@@ -502,7 +502,7 @@ public abstract class WebSocketProxy {
         }
     }
 
-    /** Stop listening & close all resources, i.e.: threads, streams & sockets */
+    /** Stop listening &amp; close all resources, i.e.: threads, streams &amp; sockets */
     public void shutdown() {
         if (Mode.CLIENT.equals(mode)
                 && localListener.isFinished()
@@ -789,7 +789,7 @@ public abstract class WebSocketProxy {
     }
 
     /**
-     * Add observer that gets informed about in- & outgoing messages.
+     * Add observer that gets informed about in- &amp; outgoing messages.
      *
      * @param observer
      */
@@ -799,7 +799,7 @@ public abstract class WebSocketProxy {
     }
 
     /**
-     * Stop getting informed about in- & outgoing messages.
+     * Stop getting informed about in- &amp; outgoing messages.
      *
      * @param observer
      */
@@ -868,7 +868,7 @@ public abstract class WebSocketProxy {
     }
 
     /**
-     * Add sender listener that gets informed about in- & outgoing messages.
+     * Add sender listener that gets informed about in- &amp; outgoing messages.
      *
      * @param senderListener
      */
@@ -878,7 +878,7 @@ public abstract class WebSocketProxy {
     }
 
     /**
-     * Stop getting informed about in- & outgoing messages.
+     * Stop getting informed about in- &amp; outgoing messages.
      *
      * @param senderListener
      */

@@ -23,8 +23,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import org.apache.commons.collections4.Trie;
-import org.apache.commons.collections4.trie.PatriciaTrie;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.input.BOMInputStream;
@@ -43,10 +43,10 @@ public final class BinList {
 
     private static BinList singleton;
 
-    private Trie<String, BinRecord> trie;
+    private Map<String, BinRecord> binMap;
 
     private BinList() {
-        trie = createTrie();
+        binMap = binMap();
     }
 
     public static BinList getSingleton() {
@@ -62,8 +62,8 @@ public final class BinList {
         }
     }
 
-    private static Trie<String, BinRecord> createTrie() {
-        Trie<String, BinRecord> trie = new PatriciaTrie<>();
+    private static Map<String, BinRecord> binMap() {
+        Map<String, BinRecord> binMap = new HashMap<>();
         Iterable<CSVRecord> records;
         try (InputStream in = BinList.class.getResourceAsStream(BINLIST_FILE);
                 BOMInputStream bomStream = BOMInputStream.builder().setInputStream(in).get();
@@ -79,11 +79,11 @@ public final class BinList {
                             .getRecords();
         } catch (NullPointerException | IOException e) {
             LOGGER.warn("Exception while loading: {}", BINLIST_FILE, e);
-            return trie;
+            return binMap;
         }
 
         for (CSVRecord rec : records) {
-            trie.put(
+            binMap.put(
                     rec.get("bin"),
                     new BinRecord(
                             rec.get("bin"),
@@ -91,7 +91,7 @@ public final class BinList {
                             rec.get("category"),
                             rec.get("issuer")));
         }
-        return trie;
+        return binMap;
     }
 
     /**
@@ -101,21 +101,21 @@ public final class BinList {
      * @return the {@code BinRecord}, or {@code null} if no match found.
      */
     public BinRecord get(String candidate) {
-        BinRecord binRec = trie.get(candidate);
+        BinRecord binRec = binMap.get(candidate);
         // Per https://github.com/iannuttall/binlist-data the collection should have BINs 6-8 but
         // based on my searching there are actually entries 5-8. The following are ordered based
         // on count of occurrence
         if (binRec == null) {
-            binRec = trie.get(candidate.substring(0, 6));
+            binRec = binMap.get(candidate.substring(0, 6));
         }
         if (binRec == null) {
-            binRec = trie.get(candidate.substring(0, 8));
+            binRec = binMap.get(candidate.substring(0, 8));
         }
         if (binRec == null) {
-            binRec = trie.get(candidate.substring(0, 5));
+            binRec = binMap.get(candidate.substring(0, 5));
         }
         if (binRec == null) {
-            binRec = trie.get(candidate.substring(0, 7));
+            binRec = binMap.get(candidate.substring(0, 7));
         }
         return binRec;
     }

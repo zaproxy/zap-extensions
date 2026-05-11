@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [0.60.0] - 2026-05-08
+### Fixed
+- Fix exception during forced shutdown in the Active Scan job.
+
 ## [0.59.0] - 2026-04-02
 ### Added
 - Allow to load a plan from the contents of the clipboard.
@@ -593,6 +597,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.60.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.60.0
 [0.59.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.59.0
 [0.58.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.58.0
 [0.57.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.57.0

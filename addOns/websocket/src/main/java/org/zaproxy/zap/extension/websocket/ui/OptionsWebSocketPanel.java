@@ -39,8 +39,8 @@ import org.zaproxy.zap.utils.FontUtils;
  * <ul>
  *   <li>Forward Only - allows to avoid storing WebSocket communication.
  *   <li>Break on All - react on breakpoints set for all requests/responses.
- *   <li>Break on Ping/Pong - react on Ping & Pong messages that arrive while stepping or waiting
- *       for all requests/responses.
+ *   <li>Break on Ping/Pong - react on Ping &amp; Pong messages that arrive while stepping or
+ *       waiting for all requests/responses.
  *   <li>Remove header {@code Sec-WebSocket-Extensions} - when enabled it allows to properly process
  *       the WebSocket messages, as no further (and unsupported) transformation is done to them (for
  *       example, compression).

@@ -29,7 +29,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import org.parosproxy.paros.Constant;
-import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.DefaultStringPayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUI;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUIHandler;
@@ -39,9 +38,7 @@ import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.StringUIUtils;
 import org.zaproxy.zap.utils.ZapTextArea;
 
-public class DefaultStringPayloadGeneratorUIHandler
-        implements PayloadGeneratorUIHandler<
-                DefaultPayload, DefaultStringPayloadGenerator, DefaultStringPayloadGeneratorUI> {
+public class DefaultStringPayloadGeneratorUIHandler implements PayloadGeneratorUIHandler {
 
     private static final String PAYLOAD_GENERATOR_NAME =
             Constant.messages.getString("fuzz.payloads.generator.strings.name");
@@ -68,8 +65,7 @@ public class DefaultStringPayloadGeneratorUIHandler
         return new DefaultStringPayloadGeneratorUIPanel();
     }
 
-    public static class DefaultStringPayloadGeneratorUI
-            implements PayloadGeneratorUI<DefaultPayload, DefaultStringPayloadGenerator> {
+    public static class DefaultStringPayloadGeneratorUI implements PayloadGeneratorUI {
 
         private final boolean multiline;
         private final String value;
@@ -85,11 +81,6 @@ public class DefaultStringPayloadGeneratorUIHandler
 
         public boolean isMultiline() {
             return multiline;
-        }
-
-        @Override
-        public Class<DefaultStringPayloadGenerator> getPayloadGeneratorClass() {
-            return DefaultStringPayloadGenerator.class;
         }
 
         @Override
@@ -152,10 +143,7 @@ public class DefaultStringPayloadGeneratorUIHandler
     }
 
     public static class DefaultStringPayloadGeneratorUIPanel
-            extends AbstractPersistentPayloadGeneratorUIPanel<
-                    DefaultPayload,
-                    DefaultStringPayloadGenerator,
-                    DefaultStringPayloadGeneratorUI> {
+            extends AbstractPersistentPayloadGeneratorUIPanel {
 
         private static final String CONTENTS_FIELD_LABEL =
                 Constant.messages.getString("fuzz.payloads.generator.strings.contents.label");
@@ -240,9 +228,14 @@ public class DefaultStringPayloadGeneratorUIHandler
         }
 
         @Override
-        public void setPayloadGeneratorUI(DefaultStringPayloadGeneratorUI payloadGeneratorUI) {
-            getContentsTextArea().setText(payloadGeneratorUI.getValue());
-            getMultilineCheckBox().setSelected(payloadGeneratorUI.isMultiline());
+        public void setPayloadGeneratorUI(PayloadGeneratorUI payloadGeneratorUI) {
+            if (!(payloadGeneratorUI instanceof DefaultStringPayloadGeneratorUI ui)) {
+                throw new IllegalArgumentException(
+                        "Expected DefaultStringPayloadGeneratorUI but got: "
+                                + payloadGeneratorUI.getClass());
+            }
+            getContentsTextArea().setText(ui.getValue());
+            getMultilineCheckBox().setSelected(ui.isMultiline());
         }
 
         @Override

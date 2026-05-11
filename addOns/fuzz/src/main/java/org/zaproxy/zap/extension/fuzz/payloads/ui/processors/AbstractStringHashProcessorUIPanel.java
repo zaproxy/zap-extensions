@@ -25,14 +25,9 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import org.parosproxy.paros.Constant;
-import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
-import org.zaproxy.zap.extension.fuzz.payloads.processor.AbstractStringHashProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.AbstractStringHashProcessorUIPanel.AbstractStringHashProcessorUI;
 
-public abstract class AbstractStringHashProcessorUIPanel<
-                T1 extends AbstractStringHashProcessor,
-                T2 extends AbstractStringHashProcessorUI<T1>>
-        extends AbstractCharsetProcessorUIPanel<DefaultPayload, T1, T2> {
+public abstract class AbstractStringHashProcessorUIPanel extends AbstractCharsetProcessorUIPanel {
 
     protected static final String UPPER_CASE_FIELD_LABEL =
             Constant.messages.getString("fuzz.payload.processor.hash.upperCase.label");
@@ -64,9 +59,14 @@ public abstract class AbstractStringHashProcessorUIPanel<
     }
 
     @Override
-    public void setPayloadProcessorUI(T2 payloadProcessorUI) {
+    public void setPayloadProcessorUI(PayloadProcessorUI payloadProcessorUI) {
         super.setPayloadProcessorUI(payloadProcessorUI);
-        getUpperCaseCheckBox().setSelected(payloadProcessorUI.isUpperCase());
+        if (!(payloadProcessorUI instanceof AbstractStringHashProcessorUI ui)) {
+            throw new IllegalArgumentException(
+                    "Expected AbstractStringHashProcessorUI but got: "
+                            + payloadProcessorUI.getClass());
+        }
+        getUpperCaseCheckBox().setSelected(ui.isUpperCase());
     }
 
     @Override
@@ -102,9 +102,7 @@ public abstract class AbstractStringHashProcessorUIPanel<
         return fieldsPanel;
     }
 
-    public abstract static class AbstractStringHashProcessorUI<
-                    T extends AbstractStringHashProcessor>
-            extends AbstractCharsetProcessorUI<DefaultPayload, T> {
+    public abstract static class AbstractStringHashProcessorUI extends AbstractCharsetProcessorUI {
 
         private final boolean upperCase;
 

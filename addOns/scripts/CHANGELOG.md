@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Update dependency.
+- Revised error handling for chained scripts, output is now more detailed/specific.
+- Maintenance changes.
+- Formatted JavaScript files for consistency.
 
 ## [45.18.0] - 2026-03-31
 ### Changed
