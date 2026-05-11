@@ -108,6 +108,7 @@ abstract class BaseElementAction implements SpiderAction {
                         Map.of("Control Type", getControlType(type), "type", type));
 
         try {
+            input.clear();
             input.sendKeys(value);
             Stats.incCounter(statsPrefix + ".input." + type + ".sendkeys");
         } catch (Exception e) {
