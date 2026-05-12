@@ -72,6 +72,10 @@ public class TableJdo implements DatabaseListener {
 
     @Override
     public void closing(DatabaseServer db) {
+        closePmf();
+    }
+
+    static void closePmf() {
         if (pmf != null) {
             pmf.close();
             pmf = null;

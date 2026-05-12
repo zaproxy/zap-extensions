@@ -48,7 +48,7 @@ class TableJdoUnitTest {
 
     @AfterEach
     void cleanUp() throws Exception {
-        createTableJdo().closing(null);
+        TableJdo.closePmf();
     }
 
     @Test
