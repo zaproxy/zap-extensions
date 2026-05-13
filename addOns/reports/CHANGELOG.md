@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Added a new section to Traditional JSON Report with Requests and Responses for script diagnostics.
 
+### Fixed
+- Invalid alerts, ones without a corresponding message, are now excluded from generated reports. Previously these could break templates that reference message fields (e.g. SARIF, modern, `*-plus`) (Issue 6880).
+
 ## [0.45.0] - 2026-05-06
 ### Fixed
 - The alert's systemic flag in JSON and XML reports now correctly reflects its state (Issue 9254).

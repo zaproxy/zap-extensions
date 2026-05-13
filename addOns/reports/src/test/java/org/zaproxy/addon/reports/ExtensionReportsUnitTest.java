@@ -327,12 +327,15 @@ class ExtensionReportsUnitTest extends TestUtils {
         reportData.setContexts(Arrays.asList(context));
 
         Alert alert1 = new Alert(1);
+        alert1.setMessage(new HttpMessage());
         alert1.setUri("https://www.example.com/");
 
         Alert alert2 = new Alert(2);
+        alert2.setMessage(new HttpMessage());
         alert2.setUri("https://www.example.com/test/");
 
         Alert alert3 = new Alert(3);
+        alert3.setMessage(new HttpMessage());
         alert3.setUri("https://www.example.com2/test/");
 
         // When
@@ -359,12 +362,15 @@ class ExtensionReportsUnitTest extends TestUtils {
         reportData.setContexts(Arrays.asList(context));
 
         Alert alert1 = new Alert(1);
+        alert1.setMessage(new HttpMessage());
         alert1.setUri("https://www.example.org/");
 
         Alert alert2 = new Alert(2);
+        alert2.setMessage(new HttpMessage());
         alert2.setUri("http://www.example.com/test/");
 
         Alert alert3 = new Alert(3);
+        alert3.setMessage(new HttpMessage());
         alert3.setUri("https://www.example.com2/");
 
         // When
@@ -391,12 +397,15 @@ class ExtensionReportsUnitTest extends TestUtils {
         reportData.setSites(Arrays.asList(site1, site2));
 
         Alert alert1 = new Alert(1);
+        alert1.setMessage(new HttpMessage());
         alert1.setUri("https://www.example.com/");
 
         Alert alert2 = new Alert(2);
+        alert2.setMessage(new HttpMessage());
         alert2.setUri("https://www.example.com/test/");
 
         Alert alert3 = new Alert(3);
+        alert3.setMessage(new HttpMessage());
         alert3.setUri("https://www.example.com2/test/");
 
         // When
@@ -423,12 +432,15 @@ class ExtensionReportsUnitTest extends TestUtils {
         reportData.setSites(Arrays.asList(site1, site2));
 
         Alert alert1 = new Alert(1);
+        alert1.setMessage(new HttpMessage());
         alert1.setUri("https://www.example.org/");
 
         Alert alert2 = new Alert(2);
+        alert2.setMessage(new HttpMessage());
         alert2.setUri("http://www.example.com/test/");
 
         Alert alert3 = new Alert(3);
+        alert3.setMessage(new HttpMessage());
         alert3.setUri("https://www.example.com3/");
 
         // When
@@ -459,12 +471,15 @@ class ExtensionReportsUnitTest extends TestUtils {
         reportData.setContexts(Arrays.asList(context));
 
         Alert alert1 = new Alert(1);
+        alert1.setMessage(new HttpMessage());
         alert1.setUri("https://www.example.com/");
 
         Alert alert2 = new Alert(2);
+        alert2.setMessage(new HttpMessage());
         alert2.setUri("https://www.example.com/test/");
 
         Alert alert3 = new Alert(3);
+        alert3.setMessage(new HttpMessage());
         alert3.setUri("https://www.example.com2/test/");
 
         // When
@@ -496,14 +511,17 @@ class ExtensionReportsUnitTest extends TestUtils {
         reportData.setContexts(Arrays.asList(context));
 
         Alert alert1 = new Alert(1);
+        alert1.setMessage(new HttpMessage());
         // In sites but not in contexts
         alert1.setUri("https://www.example.org/");
 
         Alert alert2 = new Alert(2);
+        alert2.setMessage(new HttpMessage());
         // In sites but excluded from contexts
         alert2.setUri("https://www.example.com/test/");
 
         Alert alert3 = new Alert(3);
+        alert3.setMessage(new HttpMessage());
         // In context but not in sites
         alert3.setUri("https://www.example.com2/test/");
 
@@ -519,6 +537,37 @@ class ExtensionReportsUnitTest extends TestUtils {
         assertThat(ExtensionReports.isIncluded(reportData, alertNode1), is(equalTo(false)));
         assertThat(ExtensionReports.isIncluded(reportData, alertNode2), is(equalTo(false)));
         assertThat(ExtensionReports.isIncluded(reportData, alertNode3), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldExcludeAlertsWithoutHttpMessage() {
+        // Given
+        ReportData reportData = new ReportData(true, true);
+
+        Alert alertWithoutMessage = new Alert(1);
+        alertWithoutMessage.setUri("https://www.example.com/");
+        // intentionally no setMessage(...) - mirrors core ExtensionAlert#isInvalid
+
+        Alert alertWithEmptyUri = new Alert(2);
+        alertWithEmptyUri.setMessage(new HttpMessage());
+        alertWithEmptyUri.setUri("");
+
+        Alert validAlert = new Alert(3);
+        validAlert.setMessage(new HttpMessage());
+        validAlert.setUri("https://www.example.com/");
+
+        // When
+        AlertNode alertNode1 = new AlertNode(-1, "Alert 1");
+        alertNode1.setUserObject(alertWithoutMessage);
+        AlertNode alertNode2 = new AlertNode(-2, "Alert 2");
+        alertNode2.setUserObject(alertWithEmptyUri);
+        AlertNode alertNode3 = new AlertNode(-3, "Alert 3");
+        alertNode3.setUserObject(validAlert);
+
+        // Then
+        assertThat(ExtensionReports.isIncluded(reportData, alertNode1), is(equalTo(false)));
+        assertThat(ExtensionReports.isIncluded(reportData, alertNode2), is(equalTo(false)));
+        assertThat(ExtensionReports.isIncluded(reportData, alertNode3), is(equalTo(true)));
     }
 
     @ParameterizedTest
