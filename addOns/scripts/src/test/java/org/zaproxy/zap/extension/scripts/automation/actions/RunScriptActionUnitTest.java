@@ -142,6 +142,24 @@ class RunScriptActionUnitTest extends TestUtils {
         action = new RunScriptAction(parameters);
     }
 
+    @Test
+    void shouldSummarizeSingleRunWithScriptName() {
+        parameters.setName("my-script");
+
+        assertThat(
+                action.getSummary(),
+                is(equalTo(msg("scripts.automation.dialog.summary.run", "my-script"))));
+    }
+
+    @Test
+    void shouldSummarizeChainWithCommaSeparatedScriptNames() {
+        parameters.setChain(List.of("a", "b", "c"));
+
+        assertThat(
+                action.getSummary(),
+                is(equalTo(msg("scripts.automation.dialog.summary.run", "a, b, c"))));
+    }
+
     /** Zest standalone script wrapper for run-action tests. */
     private static ScriptWrapper createMockZestWrapper(String name) {
         ScriptWrapper wrapper = new ScriptWrapper();

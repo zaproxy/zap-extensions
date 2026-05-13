@@ -80,6 +80,11 @@ public class RunScriptAction extends ScriptAction {
 
     @Override
     public String getSummary() {
+        List<String> chain = parameters.getChain();
+        if (chain != null && !chain.isEmpty()) {
+            return Constant.messages.getString(
+                    "scripts.automation.dialog.summary.run", String.join(", ", chain));
+        }
         return Constant.messages.getString(
                 "scripts.automation.dialog.summary.run", parameters.getName());
     }
