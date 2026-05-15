@@ -99,6 +99,7 @@ class ClientSpiderUnitTest extends TestUtils {
     private String seedUrl;
     private CountDownLatch proxyCdl;
     private WebDriver wd;
+    private ExtensionSelenium extSel;
 
     private ClientSpider spider;
 
@@ -115,8 +116,7 @@ class ClientSpiderUnitTest extends TestUtils {
         ExtensionLoader extensionLoader = mock(ExtensionLoader.class);
         Control.initSingletonForTesting(model, extensionLoader);
         ExtensionClientIntegration extClient = mock(ExtensionClientIntegration.class);
-        ExtensionSelenium extSel =
-                mock(ExtensionSelenium.class, withSettings().strictness(Strictness.LENIENT));
+        extSel = mock(ExtensionSelenium.class, withSettings().strictness(Strictness.LENIENT));
         ExtensionHistory history = mock(ExtensionHistory.class);
         when(extensionLoader.getExtension(ExtensionHistory.class)).thenReturn(history);
         when(extensionLoader.getExtension(ExtensionSelenium.class)).thenReturn(extSel);
@@ -225,6 +225,32 @@ class ClientSpiderUnitTest extends TestUtils {
         assertThat(
                 argument.getAllValues(),
                 contains("https://www.example.com/", "https://www.example.com/test"));
+    }
+
+    @Test
+    void shouldRequestInScopeUrlFoundDuringBrowserStartup() throws Exception {
+        // Given
+        clientMapListener();
+        String urlFoundDuringStartup = "https://www.example.com/post-auth-page";
+        CountDownLatch getWebDriverCdl = new CountDownLatch(1);
+        when(extSel.getWebDriver(anyInt(), any(String.class), any(String.class), anyInt()))
+                .thenAnswer(
+                        invocation -> {
+                            mapListener.nodeAdded(urlFoundDuringStartup, 0, 0, PROXY_PORT);
+                            getWebDriverCdl.countDown();
+                            return wd;
+                        });
+
+        // When
+        spider.run();
+        getWebDriverCdl.await(2, TimeUnit.SECONDS);
+        sleep();
+
+        // Then
+        ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
+        verify(wd, atLeastOnce()).get(argument.capture());
+
+        assertThat(argument.getAllValues(), contains(seedUrl, urlFoundDuringStartup));
     }
 
     @Test

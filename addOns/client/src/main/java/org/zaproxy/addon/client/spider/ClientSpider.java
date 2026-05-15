@@ -336,18 +336,11 @@ public class ClientSpider implements GenericScanner2 {
                 wdp = this.webDriverPool.remove(0);
             } else {
                 try {
-                    wdp =
-                            new WebDriverProcess(
-                                    extClient,
-                                    extensionNetwork,
-                                    extSelenium,
-                                    new ProxyHandler(),
-                                    options);
+                    wdp = new WebDriverProcess(new ProxyHandler());
                 } catch (IOException e) {
                     throw new RuntimeException("Failed to create WebDriver process:", e);
                 }
             }
-            proxyPorts.add(wdp.getPort());
             this.webDriverActive.add(wdp);
         }
         return wdp;
@@ -834,25 +827,15 @@ public class ClientSpider implements GenericScanner2 {
     }
 
     @Getter
-    static class WebDriverProcess {
+    class WebDriverProcess {
 
         private static final String LOCAL_PROXY_IP = "127.0.0.1";
         private static final int INITIATOR = HttpSender.CLIENT_SPIDER_INITIATOR;
 
         private Server proxy;
         private WebDriver webDriver;
-        private ExtensionClientIntegration extClient;
 
-        private int port;
-
-        private WebDriverProcess(
-                ExtensionClientIntegration extensionClient,
-                ExtensionNetwork extensionNetwork,
-                ExtensionSelenium extensionSelenium,
-                ProxyHandler proxyHandler,
-                ClientOptions options)
-                throws IOException {
-            extClient = extensionClient;
+        private WebDriverProcess(ProxyHandler proxyHandler) throws IOException {
             proxy =
                     extensionNetwork.createHttpServer(
                             HttpServerConfig.builder()
@@ -860,10 +843,11 @@ public class ClientSpider implements GenericScanner2 {
                                     .setHttpSender(new HttpSender(INITIATOR))
                                     .setServeZapApi(true)
                                     .build());
-            port = proxy.start(Server.ANY_PORT);
+            int port = proxy.start(Server.ANY_PORT);
+            proxyPorts.add(port);
 
             webDriver =
-                    extensionSelenium.getWebDriver(
+                    extSelenium.getWebDriver(
                             INITIATOR, options.getBrowserId(), LOCAL_PROXY_IP, port);
             if (ScopeCheck.STRICT.equals(options.getScopeCheck())) {
                 proxyHandler.setAllowAll(false);
