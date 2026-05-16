@@ -75,6 +75,9 @@ dependencies {
     zapAddOn("spider")
     zapAddOn("wappalyzer")
 
+    // Expose missing annotation GwtCompatible during compilation.
+    compileOnly("com.google.guava:guava:33.6.0-jre")
+
     implementation(libs.graphql.graphqlJava)
 
     testImplementation(project(":testutils"))
