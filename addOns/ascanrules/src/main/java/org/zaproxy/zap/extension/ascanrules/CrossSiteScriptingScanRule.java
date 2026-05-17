@@ -281,6 +281,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
                             attackParam.toBuilder()
                                     .attack(mutatedAttack)
                                     .evidence(mutatedEvidence)
+                                    .mutateAttack(true)
                                     .build());
                 }
             }
