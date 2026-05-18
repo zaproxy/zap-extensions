@@ -1,0 +1,3 @@
+  - type: mcp-import                   # Import an MCP server into ZAP history and sites tree
+    parameters:
+      serverUrl:                       # String: URL of the MCP server (e.g. http://localhost:8282), required
