@@ -19,6 +19,11 @@
  */
 package org.zaproxy.addon.insights.report;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -75,6 +80,41 @@ public class ExtensionInsightsReportUnitTest {
                             originalInsights.add(mock(Insight.class));
                         }
                     });
+        }
+
+        @Test
+        void shouldReportNotStoppedWhenNoStoppingInsight() {
+            // Given
+            given(extensionInsights.getInsights()).willReturn(List.of());
+            given(extensionInsights.getStoppingInsight()).willReturn(null);
+            ReportData reportData = new ReportData("");
+            // When
+            handler.handle(reportData);
+            // Then
+            assertThat(
+                    reportData.getReportObject(ExtensionInsightsReport.STOPPED_BY_INSIGHTS),
+                    is(equalTo(false)));
+            assertThat(
+                    reportData.getReportObject(ExtensionInsightsReport.STOPPING_INSIGHT),
+                    is(nullValue()));
+        }
+
+        @Test
+        void shouldReportStoppingInsightWhenSet() {
+            // Given
+            Insight trigger = mock(Insight.class);
+            given(extensionInsights.getInsights()).willReturn(List.of());
+            given(extensionInsights.getStoppingInsight()).willReturn(trigger);
+            ReportData reportData = new ReportData("");
+            // When
+            handler.handle(reportData);
+            // Then
+            assertThat(
+                    reportData.getReportObject(ExtensionInsightsReport.STOPPED_BY_INSIGHTS),
+                    is(equalTo(true)));
+            assertThat(
+                    reportData.getReportObject(ExtensionInsightsReport.STOPPING_INSIGHT),
+                    is(sameInstance(trigger)));
         }
     }
 }
