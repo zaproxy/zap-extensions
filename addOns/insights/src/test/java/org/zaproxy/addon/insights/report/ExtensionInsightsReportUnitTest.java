@@ -20,7 +20,6 @@
 package org.zaproxy.addon.insights.report;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
@@ -83,7 +82,7 @@ public class ExtensionInsightsReportUnitTest {
         }
 
         @Test
-        void shouldReportNotStoppedWhenNoStoppingInsight() {
+        void shouldNotExposeStoppingInsightWhenAbsent() {
             // Given
             given(extensionInsights.getInsights()).willReturn(List.of());
             given(extensionInsights.getStoppingInsight()).willReturn(null);
@@ -92,15 +91,12 @@ public class ExtensionInsightsReportUnitTest {
             handler.handle(reportData);
             // Then
             assertThat(
-                    reportData.getReportObject(ExtensionInsightsReport.STOPPED_BY_INSIGHTS),
-                    is(equalTo(false)));
-            assertThat(
                     reportData.getReportObject(ExtensionInsightsReport.STOPPING_INSIGHT),
                     is(nullValue()));
         }
 
         @Test
-        void shouldReportStoppingInsightWhenSet() {
+        void shouldExposeStoppingInsightWhenSet() {
             // Given
             Insight trigger = mock(Insight.class);
             given(extensionInsights.getInsights()).willReturn(List.of());
@@ -109,9 +105,6 @@ public class ExtensionInsightsReportUnitTest {
             // When
             handler.handle(reportData);
             // Then
-            assertThat(
-                    reportData.getReportObject(ExtensionInsightsReport.STOPPED_BY_INSIGHTS),
-                    is(equalTo(true)));
             assertThat(
                     reportData.getReportObject(ExtensionInsightsReport.STOPPING_INSIGHT),
                     is(sameInstance(trigger)));

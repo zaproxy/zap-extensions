@@ -18,6 +18,8 @@ ZAP by [Checkmarx](https://checkmarx.com/).
 | --- | --- | --- | --- | --- |
 [#th:block th:each="ins : ${reportData.reportObjects.get('insightsList')}"]| [(${ins.level})] | [(${ins.reason})] | [(${ins.site})] | [(${ins.description})] | [(${ins.statisticStr})] |
 [/th:block]
+[#th:block th:if="${reportData.reportObjects.get('stoppingInsight') != null}" th:with="stopping=${reportData.reportObjects.get('stoppingInsight')}"][(#{report.insights.stoppedby(${stopping.key}, ${stopping.reason}, ${stopping.site}, ${stopping.statisticStr})})]
+[/th:block]
 [/th:block]
 
 [#th:block th:if="${reportData.isIncludeSection('instancecount')}"]

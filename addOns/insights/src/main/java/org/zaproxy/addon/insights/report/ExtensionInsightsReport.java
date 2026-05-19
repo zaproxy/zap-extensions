@@ -36,8 +36,6 @@ public class ExtensionInsightsReport extends ExtensionAdaptor {
 
     public static final String INSIGHTS_LIST = "insightsList";
 
-    public static final String STOPPED_BY_INSIGHTS = "stoppedByInsights";
-
     public static final String STOPPING_INSIGHT = "stoppingInsight";
 
     private static final List<Class<? extends Extension>> DEPENDENCIES =
@@ -100,7 +98,6 @@ public class ExtensionInsightsReport extends ExtensionAdaptor {
             ext.processStats();
             reportData.addReportObjects(INSIGHTS_LIST, new ArrayList<>(ext.getInsights()));
             Insight stopping = ext.getStoppingInsight();
-            reportData.addReportObjects(STOPPED_BY_INSIGHTS, stopping != null);
             if (stopping != null) {
                 reportData.addReportObjects(STOPPING_INSIGHT, stopping);
             }
