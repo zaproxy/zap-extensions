@@ -120,6 +120,14 @@ public class ClientMapPanel extends AbstractPanel {
         return (ClientNode) clientTree.getSelectionPath().getLastPathComponent();
     }
 
+    public void detachModel() {
+        clientTree.setModel(null);
+    }
+
+    public void attachModel() {
+        clientTree.setModel(clientMap);
+    }
+
     public ExtensionClientIntegration getExtension() {
         return extension;
     }

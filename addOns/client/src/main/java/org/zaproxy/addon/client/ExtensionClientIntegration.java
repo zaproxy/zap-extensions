@@ -36,7 +36,9 @@ import java.nio.file.StandardOpenOption;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 import org.apache.commons.httpclient.URI;
@@ -72,6 +74,7 @@ import org.zaproxy.addon.client.internal.ClientSideComponent;
 import org.zaproxy.addon.client.internal.ClientSideDetails;
 import org.zaproxy.addon.client.internal.ReportedObject;
 import org.zaproxy.addon.client.internal.db.ClientHistoryDao;
+import org.zaproxy.addon.client.internal.db.ClientMapDao;
 import org.zaproxy.addon.client.internal.db.TableJdo;
 import org.zaproxy.addon.client.pscan.ClientPassiveScanController;
 import org.zaproxy.addon.client.pscan.ClientPassiveScanHelper;
@@ -183,7 +186,28 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
                                 new ClientSideDetails(
                                         Constant.messages.getString("client.tree.title"), null),
                                 this.getModel().getSession()));
-        clientTree.setReportedObjectConsumer(this::addReportedObject);
+        clientTree.setPersistenceConsumer(
+                new ClientMap.PersistenceConsumer() {
+                    @Override
+                    public void onNodeAdded(ClientNode node) {
+                        node.setPersistenceId(ClientMapDao.persistNode(node));
+                    }
+
+                    @Override
+                    public void onNodeChanged(ClientNode node) {
+                        ClientMapDao.updateNode(node);
+                    }
+
+                    @Override
+                    public void onComponentAdded(ClientNode node, ClientSideComponent component) {
+                        component.setPersistenceId(ClientMapDao.persistComponent(node, component));
+                    }
+
+                    @Override
+                    public void onReportedObject(ReportedObject obj) {
+                        addReportedObject(obj);
+                    }
+                });
         spiderScanController =
                 new SpiderScanController(
                         this,
@@ -416,12 +440,43 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
     @Override
     public void postInstall() {
         loadClientHistory();
+        loadClientMap();
     }
 
     private void loadClientHistory() {
         if (clientHistoryTableModel != null) {
             clientHistoryTableModel.clear();
             clientHistoryTableModel.addReportedObjects(ClientHistoryDao.loadAll());
+        }
+    }
+
+    private void loadClientMap() {
+        clientTree.setPublishEvents(false);
+        if (clientMapPanel != null) {
+            clientMapPanel.detachModel();
+        }
+        try {
+            Map<Long, String> nodeUrlById = new HashMap<>();
+            ClientMapDao.forEachNode(
+                    entry -> {
+                        ClientNode node =
+                                clientTree.getOrAddNode(entry.getUrl(), entry.isVisited(), false);
+                        node.getUserObject().setContentLoaded(entry.isContentLoaded());
+                        node.getUserObject().setRedirect(entry.isRedirect());
+
+                        node.setPersistenceId(entry.getId());
+                        nodeUrlById.put(entry.getId(), entry.getUrl());
+                    });
+            ClientMapDao.forEachComponent(
+                    entry -> {
+                        String url = nodeUrlById.get(entry.getNodeId());
+                        clientTree.addComponent(url, ClientMapDao.toComponent(entry, url));
+                    });
+        } finally {
+            clientTree.setPublishEvents(true);
+            if (clientMapPanel != null) {
+                clientMapPanel.attachModel();
+            }
         }
     }
 
@@ -536,6 +591,11 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
     }
 
     public void deleteNodes(List<ClientNode> nodes) {
+        for (ClientNode node : nodes) {
+            if (!node.isRoot()) {
+                deleteNodeSubtreeFromDb(node);
+            }
+        }
         this.clientTree.deleteNodes(nodes);
         if (View.isInitialised()) {
             String displayedUrl = this.getClientDetailsPanel().getCurrentUrl();
@@ -544,6 +604,15 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
                             .anyMatch(n -> displayedUrl.equals(n.getUserObject().getUrl()))) {
                 this.getClientDetailsPanel().clear();
             }
+        }
+    }
+
+    private static void deleteNodeSubtreeFromDb(ClientNode node) {
+        if (!node.isStorage() && node.getPersistenceId() != -1) {
+            ClientMapDao.deleteNodeById(node.getPersistenceId());
+        }
+        for (int i = 0; i < node.getChildCount(); i++) {
+            deleteNodeSubtreeFromDb(node.getChildAt(i));
         }
     }
 
@@ -831,6 +900,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
                 clientDetailsPanel.clear();
             }
             loadClientHistory();
+            loadClientMap();
             spiderScanController.reset();
 
             if (hasView()) {

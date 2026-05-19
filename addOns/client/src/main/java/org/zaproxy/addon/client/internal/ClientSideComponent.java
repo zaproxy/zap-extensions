@@ -22,7 +22,6 @@ package org.zaproxy.addon.client.internal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
 import net.sf.json.JSONObject;
@@ -30,7 +29,6 @@ import org.parosproxy.paros.Constant;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
 
 @Getter
-@AllArgsConstructor
 public class ClientSideComponent implements Comparable<ClientSideComponent> {
 
     public static final String REDIRECT = "Redirect";
@@ -145,6 +143,32 @@ public class ClientSideComponent implements Comparable<ClientSideComponent> {
     @NonNull private Type type;
     private String tagType;
     private int formId = -1;
+    private long persistenceId = -1;
+
+    public ClientSideComponent(
+            Map<String, String> data,
+            String tagName,
+            String id,
+            String parentUrl,
+            String href,
+            String text,
+            @NonNull Type type,
+            String tagType,
+            int formId) {
+        this.data = data;
+        this.tagName = tagName;
+        this.id = id;
+        this.parentUrl = parentUrl;
+        this.href = href;
+        this.text = text;
+        this.type = type;
+        this.tagType = tagType;
+        this.formId = formId;
+    }
+
+    public void setPersistenceId(long persistenceId) {
+        this.persistenceId = persistenceId;
+    }
 
     public ClientSideComponent(JSONObject json) {
         data = new HashMap<>();

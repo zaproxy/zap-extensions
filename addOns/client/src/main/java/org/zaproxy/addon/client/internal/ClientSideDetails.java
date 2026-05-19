@@ -54,7 +54,7 @@ public class ClientSideDetails {
         this.visited = visited;
     }
 
-    protected void setContentLoaded(boolean contentLoaded) {
+    public void setContentLoaded(boolean contentLoaded) {
         this.contentLoaded = contentLoaded;
     }
 

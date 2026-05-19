@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
@@ -37,7 +38,6 @@ import static org.mockito.Mockito.verifyNoInteractions;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Consumer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -750,14 +750,14 @@ class ClientMapUnitTest extends TestUtils {
         // Given
         String url = "https://www.example.com/page";
         String json = REPORTED_OBJECT_JSON.formatted(url, null);
-        Consumer<ReportedObject> consumer = mock();
-        map.setReportedObjectConsumer(consumer);
+        ClientMap.PersistenceConsumer consumer = mock();
+        map.setPersistenceConsumer(consumer);
 
         // When
         map.handleReportObject(json);
 
         // Then
-        verify(consumer).accept(any(ReportedElement.class));
+        verify(consumer).onReportedObject(any(ReportedElement.class));
         verify(listener).nodeAdded(url, 2, 1, 0);
         verify(listener)
                 .componentAdded(
@@ -805,14 +805,14 @@ class ClientMapUnitTest extends TestUtils {
         // Given
         String apiUrl = "http://zap/JSON/core/view/version/";
         String json = REPORTED_OBJECT_JSON.formatted(apiUrl, null);
-        Consumer<ReportedObject> consumer = mock();
-        map.setReportedObjectConsumer(consumer);
+        ClientMap.PersistenceConsumer consumer = mock();
+        map.setPersistenceConsumer(consumer);
 
         // When
         map.handleReportObject(json);
 
         // Then
-        verify(consumer, never()).accept(any());
+        verify(consumer, never()).onReportedObject(any());
         verifyNoInteractions(listener);
     }
 
@@ -822,14 +822,14 @@ class ClientMapUnitTest extends TestUtils {
         String url = "https://www.example.com/page";
         String json = REPORTED_EVENT_JSON.formatted(url);
         map.getOrAddNode(url, false, false);
-        Consumer<ReportedObject> consumer = mock();
-        map.setReportedObjectConsumer(consumer);
+        ClientMap.PersistenceConsumer consumer = mock();
+        map.setPersistenceConsumer(consumer);
 
         // When
         map.handleReportEvent(json);
 
         // Then
-        verify(consumer).accept(any(ReportedEvent.class));
+        verify(consumer).onReportedObject(any(ReportedEvent.class));
         verify(listener).nodeAdded(url, 2, 1, 0);
     }
 
@@ -838,14 +838,14 @@ class ClientMapUnitTest extends TestUtils {
         // Given
         String url = "https://www.example.com/page";
         String json = REPORTED_EVENT_JSON.formatted(url);
-        Consumer<ReportedObject> consumer = mock();
-        map.setReportedObjectConsumer(consumer);
+        ClientMap.PersistenceConsumer consumer = mock();
+        map.setPersistenceConsumer(consumer);
 
         // When
         map.handleReportEvent(json);
 
         // Then
-        verify(consumer).accept(any(ReportedEvent.class));
+        verify(consumer).onReportedObject(any(ReportedEvent.class));
         verifyNoInteractions(listener);
     }
 
@@ -854,14 +854,14 @@ class ClientMapUnitTest extends TestUtils {
         // Given
         String apiUrl = "http://zap/JSON/core/view/version/";
         String json = REPORTED_EVENT_JSON.formatted(apiUrl);
-        Consumer<ReportedObject> consumer = mock();
-        map.setReportedObjectConsumer(consumer);
+        ClientMap.PersistenceConsumer consumer = mock();
+        map.setPersistenceConsumer(consumer);
 
         // When
         map.handleReportEvent(json);
 
         // Then
-        verify(consumer, never()).accept(any());
+        verify(consumer, never()).onReportedObject(any());
         verifyNoInteractions(listener);
     }
 
@@ -899,5 +899,120 @@ class ClientMapUnitTest extends TestUtils {
                     map.getOrAddNode(AAA_URL, false, false);
                     map.addComponent(AAA_URL, component);
                 });
+    }
+
+    @Test
+    void shouldCallPersistenceConsumerOnNodeChangedForRedirect() {
+        // Given
+        ClientMap.PersistenceConsumer consumer = mock(ClientMap.PersistenceConsumer.class);
+        map.setPersistenceConsumer(consumer);
+        map.getOrAddNode(AAA_URL, false, false);
+
+        // When
+        ClientNode node = map.setRedirect(AAA_URL, BBB_URL);
+
+        // Then
+        verify(consumer).onNodeChanged(node);
+    }
+
+    @Test
+    void shouldCallPersistenceConsumerOnNodeChangedForVisited() {
+        // Given
+        ClientMap.PersistenceConsumer consumer = mock(ClientMap.PersistenceConsumer.class);
+        map.setPersistenceConsumer(consumer);
+        map.getOrAddNode(AAA_URL, false, false);
+
+        // When
+        ClientNode node = map.setVisited(AAA_URL);
+
+        // Then
+        verify(consumer).onNodeChanged(node);
+    }
+
+    @Test
+    void shouldCallPersistenceConsumerOnNodeChangedForContentLoaded() {
+        // Given
+        ClientMap.PersistenceConsumer consumer = mock(ClientMap.PersistenceConsumer.class);
+        map.setPersistenceConsumer(consumer);
+
+        // When
+        ClientNode node = map.setContentLoaded(AAA_URL);
+
+        // Then
+        verify(consumer).onNodeChanged(node);
+    }
+
+    @Test
+    void shouldCallPersistenceConsumerOnNodeAdded() {
+        // Given
+        ClientMap.PersistenceConsumer consumer = mock(ClientMap.PersistenceConsumer.class);
+        map.setPersistenceConsumer(consumer);
+
+        // When
+        ClientNode node = map.getOrAddNode(AAA_URL, false, false);
+
+        // Then
+        verify(consumer).onNodeAdded(node);
+    }
+
+    @Test
+    void shouldCallPersistenceConsumerOnComponentAdded() {
+        // Given
+        ClientMap.PersistenceConsumer consumer = mock(ClientMap.PersistenceConsumer.class);
+        map.setPersistenceConsumer(consumer);
+        ClientNode node = map.getOrAddNode(AAA_URL, false, false);
+        ClientSideComponent component =
+                new ClientSideComponent(
+                        Map.of(),
+                        "A",
+                        null,
+                        AAA_URL,
+                        BBB_URL,
+                        null,
+                        ClientSideComponent.Type.LINK,
+                        null,
+                        -1);
+
+        // When
+        map.addComponent(AAA_URL, component);
+
+        // Then
+        verify(consumer).onComponentAdded(node, component);
+    }
+
+    @Test
+    void shouldNotCallListenerOnGetOrAddNodeWhenNotPublishingEvents() {
+        // Given
+        map.setPublishEvents(false);
+
+        // When
+        map.getOrAddNode(AAA_URL, false, false);
+
+        // Then
+        verifyNoInteractions(listener);
+    }
+
+    @Test
+    void shouldNotCallListenerOnAddComponentWhenNotPublishingEvents() {
+        // Given
+        map.getOrAddNode(AAA_URL, false, false);
+        map.setPublishEvents(false);
+        ClientSideComponent component =
+                new ClientSideComponent(
+                        Map.of(),
+                        "A",
+                        null,
+                        AAA_URL,
+                        BBB_URL,
+                        null,
+                        ClientSideComponent.Type.LINK,
+                        null,
+                        -1);
+
+        // When
+        map.addComponent(AAA_URL, component);
+
+        // Then
+        verify(listener, never()).componentAdded(any(), anyInt());
     }
 }
