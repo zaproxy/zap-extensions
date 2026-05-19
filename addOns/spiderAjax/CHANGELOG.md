@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Missing parameters from the spiderAjax help page.
 
+### Changed
+- Update dependency.
+
 ## [23.30.0] - 2026-04-02
 ### Changed
 - Update Crawljax to version 3.8.0 (Issues 3412 and 7138).
