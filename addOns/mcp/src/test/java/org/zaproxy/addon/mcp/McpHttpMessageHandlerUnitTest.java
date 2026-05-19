@@ -33,11 +33,12 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
+import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.I18N;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 /** Unit tests for {@link McpHttpMessageHandler}. */
-class McpHttpMessageHandlerUnitTest {
+class McpHttpMessageHandlerUnitTest extends TestUtils {
 
     private McpParam param;
     private McpToolRegistry toolRegistry;
@@ -48,6 +49,7 @@ class McpHttpMessageHandlerUnitTest {
 
     @BeforeEach
     void setUp() throws Exception {
+        setUpZap();
         Constant.messages = new I18N(Locale.ROOT);
         param = new McpParam();
         param.load(new ZapXmlConfiguration());
