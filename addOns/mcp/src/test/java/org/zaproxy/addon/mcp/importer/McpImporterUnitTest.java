@@ -50,10 +50,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.quality.Strictness;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.addon.mcp.importer.McpImporter.ImportConfig;
 import org.zaproxy.addon.mcp.importer.McpImporter.ImportResults;
+import org.zaproxy.addon.mcp.importer.McpImporter.NetworkClient;
 import org.zaproxy.zap.utils.I18N;
 
 /** Unit tests for {@link McpImporter}. */
@@ -67,13 +67,13 @@ class McpImporterUnitTest {
         Constant.messages = new I18N(Locale.ROOT);
     }
 
-    /** Per-method response bodies dispatched by the mock sender. */
+    /** Per-method response bodies dispatched by the mock client. */
     private Map<String, String> responses;
 
-    /** All messages passed to {@code sendAndReceive} during a test, in call order. */
+    /** All messages passed to {@code send} during a test, in call order. */
     private List<HttpMessage> capturedRequests;
 
-    private HttpSender sender;
+    private NetworkClient client;
     private McpImporter importer;
 
     @BeforeEach
@@ -84,18 +84,22 @@ class McpImporterUnitTest {
                 "initialize",
                 "{\"jsonrpc\":\"2.0\",\"id\":1,\"result\":{\"protocolVersion\":\"2024-11-05\",\"capabilities\":{}}}");
         responses.put("notifications/initialized", "");
-        responses.put("tools/list", "{\"jsonrpc\":\"2.0\",\"id\":2,\"result\":{\"tools\":[]}}");
+        responses.put("ping", "{\"jsonrpc\":\"2.0\",\"id\":2,\"result\":{}}");
+        responses.put("tools/list", "{\"jsonrpc\":\"2.0\",\"id\":3,\"result\":{\"tools\":[]}}");
         responses.put(
-                "resources/list", "{\"jsonrpc\":\"2.0\",\"id\":3,\"result\":{\"resources\":[]}}");
-        responses.put("prompts/list", "{\"jsonrpc\":\"2.0\",\"id\":4,\"result\":{\"prompts\":[]}}");
+                "resources/list", "{\"jsonrpc\":\"2.0\",\"id\":4,\"result\":{\"resources\":[]}}");
+        responses.put(
+                "resources/templates/list",
+                "{\"jsonrpc\":\"2.0\",\"id\":5,\"result\":{\"resourceTemplates\":[]}}");
+        responses.put("prompts/list", "{\"jsonrpc\":\"2.0\",\"id\":6,\"result\":{\"prompts\":[]}}");
 
-        sender = mock(HttpSender.class, withSettings().strictness(Strictness.LENIENT));
-        importer = new McpImporter(sender, null);
-        configureDefaultSender();
+        client = mock(NetworkClient.class, withSettings().strictness(Strictness.LENIENT));
+        importer = new McpImporter(client, null);
+        configureDefaultClient();
     }
 
-    /** Stubs {@code sendAndReceive} to capture messages and return per-method responses. */
-    private void configureDefaultSender() throws IOException {
+    /** Stubs {@code send} to capture messages and return per-method responses. */
+    private void configureDefaultClient() throws IOException {
         willAnswer(
                         inv -> {
                             HttpMessage msg = inv.getArgument(0);
@@ -111,8 +115,8 @@ class McpImporterUnitTest {
                             msg.setResponseBody(responseBody);
                             return null;
                         })
-                .given(sender)
-                .sendAndReceive(any(HttpMessage.class));
+                .given(client)
+                .send(any(HttpMessage.class));
     }
 
     // ---- invalid URL ----
@@ -128,7 +132,7 @@ class McpImporterUnitTest {
         assertThat(results.requestCount(), is(0));
         assertThat(results.errors(), hasSize(1));
         assertThat(results.errors().get(0), is("!mcp.importserver.error.nohttp!"));
-        verify(sender, never()).sendAndReceive(any(HttpMessage.class));
+        verify(client, never()).send(any(HttpMessage.class));
     }
 
     // ---- initialize failure — aborts immediately ----
@@ -136,9 +140,7 @@ class McpImporterUnitTest {
     @Test
     void shouldStopOnInitializeIoFailure() throws IOException {
         // Given
-        willThrow(new IOException("connection refused"))
-                .given(sender)
-                .sendAndReceive(any(HttpMessage.class));
+        willThrow(new IOException("connection refused")).given(client).send(any(HttpMessage.class));
 
         // When
         ImportResults results = importer.importServer(new ImportConfig(SERVER_URL, null));
@@ -159,8 +161,8 @@ class McpImporterUnitTest {
                             msg.setResponseBody("");
                             return null;
                         })
-                .given(sender)
-                .sendAndReceive(any(HttpMessage.class));
+                .given(client)
+                .send(any(HttpMessage.class));
 
         // When
         ImportResults results = importer.importServer(new ImportConfig(SERVER_URL, null));
@@ -226,20 +228,20 @@ class McpImporterUnitTest {
     // ---- happy path ----
 
     @Test
-    void shouldCountFiveRequestsForMinimalSuccessfulImport() throws IOException {
+    void shouldCountBaselineRequestsForMinimalSuccessfulImport() throws IOException {
         // Given
 
         // When
         ImportResults results = importer.importServer(new ImportConfig(SERVER_URL, null));
 
-        // Then - initialize + notifications/initialized + tools/list + resources/list +
-        // prompts/list
+        // Then - initialize + notifications/initialized + ping + tools/list + resources/list
+        // + resources/templates/list + prompts/list = 7
         assertThat(results.errors(), is(empty()));
-        assertThat(results.requestCount(), is(5));
+        assertThat(results.requestCount(), is(7));
     }
 
     @Test
-    void shouldIncludeAllFiveMethodsInMinimalImport() throws IOException {
+    void shouldIncludeAllBaselineMethodsInMinimalImport() throws IOException {
         // Given
 
         // When
@@ -248,8 +250,10 @@ class McpImporterUnitTest {
         // Then
         assertThat(findRequestByMethod("initialize"), is(notNullValue()));
         assertThat(findRequestByMethod("notifications/initialized"), is(notNullValue()));
+        assertThat(findRequestByMethod("ping"), is(notNullValue()));
         assertThat(findRequestByMethod("tools/list"), is(notNullValue()));
         assertThat(findRequestByMethod("resources/list"), is(notNullValue()));
+        assertThat(findRequestByMethod("resources/templates/list"), is(notNullValue()));
         assertThat(findRequestByMethod("prompts/list"), is(notNullValue()));
     }
 
@@ -294,6 +298,111 @@ class McpImporterUnitTest {
         JsonNode body = parseBody(findRequestByMethod("notifications/initialized"));
         assertThat(body.has("id"), is(false));
         assertThat(body.path("jsonrpc").asText(), equalTo("2.0"));
+    }
+
+    @Test
+    void shouldSetAcceptHeaderForJsonAndEventStreamOnAllRequests() throws IOException {
+        // Given / When
+        importer.importServer(new ImportConfig(SERVER_URL, null));
+
+        // Then
+        assertThat(capturedRequests, not(empty()));
+        for (HttpMessage msg : capturedRequests) {
+            String accept = msg.getRequestHeader().getHeader("Accept");
+            assertThat(accept, containsString("application/json"));
+            assertThat(accept, containsString("text/event-stream"));
+        }
+    }
+
+    @Test
+    void shouldEchoMcpSessionIdFromInitializeOnSubsequentRequests() throws IOException {
+        // Given
+        String sessionId = "session-abc-123";
+        willAnswer(
+                        inv -> {
+                            HttpMessage msg = inv.getArgument(0);
+                            capturedRequests.add(msg);
+                            String method =
+                                    MAPPER.readTree(msg.getRequestBody().toString())
+                                            .path("method")
+                                            .asText();
+                            String responseBody =
+                                    responses.getOrDefault(
+                                            method, "{\"jsonrpc\":\"2.0\",\"result\":{}}");
+                            String headers =
+                                    "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n";
+                            if ("initialize".equals(method)) {
+                                headers += "Mcp-Session-Id: " + sessionId + "\r\n";
+                            }
+                            msg.setResponseHeader(headers + "\r\n");
+                            msg.setResponseBody(responseBody);
+                            return null;
+                        })
+                .given(client)
+                .send(any(HttpMessage.class));
+
+        // When
+        importer.importServer(new ImportConfig(SERVER_URL, null));
+
+        // Then
+        HttpMessage initRequest = findRequestByMethod("initialize");
+        assertThat(initRequest.getRequestHeader().getHeader("Mcp-Session-Id"), is(nullValue()));
+        List<String> followups =
+                List.of(
+                        "notifications/initialized",
+                        "ping",
+                        "tools/list",
+                        "resources/list",
+                        "resources/templates/list",
+                        "prompts/list");
+        for (String method : followups) {
+            HttpMessage msg = findRequestByMethod(method);
+            assertThat(
+                    "expected session header on " + method,
+                    msg.getRequestHeader().getHeader("Mcp-Session-Id"),
+                    equalTo(sessionId));
+        }
+    }
+
+    @Test
+    void shouldNotSendMcpSessionIdWhenInitializeOmitsIt() throws IOException {
+        // Given / When
+        importer.importServer(new ImportConfig(SERVER_URL, null));
+
+        // Then
+        for (HttpMessage msg : capturedRequests) {
+            assertThat(msg.getRequestHeader().getHeader("Mcp-Session-Id"), is(nullValue()));
+        }
+    }
+
+    @Test
+    void shouldParseSseFramedInitializeResponse() throws IOException {
+        // Given
+        willAnswer(
+                        inv -> {
+                            HttpMessage msg = inv.getArgument(0);
+                            capturedRequests.add(msg);
+                            String method =
+                                    MAPPER.readTree(msg.getRequestBody().toString())
+                                            .path("method")
+                                            .asText();
+                            String json =
+                                    responses.getOrDefault(
+                                            method, "{\"jsonrpc\":\"2.0\",\"result\":{}}");
+                            msg.setResponseHeader(
+                                    "HTTP/1.1 200 OK\r\nContent-Type: text/event-stream\r\n\r\n");
+                            msg.setResponseBody("event: message\ndata: " + json + "\n\n");
+                            return null;
+                        })
+                .given(client)
+                .send(any(HttpMessage.class));
+
+        // When
+        ImportResults results = importer.importServer(new ImportConfig(SERVER_URL, null));
+
+        // Then
+        assertThat(results.errors(), is(empty()));
+        assertThat(results.requestCount(), is(7));
     }
 
     // ---- security key ----
@@ -353,7 +462,7 @@ class McpImporterUnitTest {
         ImportResults results = importer.importServer(new ImportConfig(SERVER_URL, null));
 
         // Then
-        assertThat(results.requestCount(), is(6)); // 5 base + 1 tools/call
+        assertThat(results.requestCount(), is(8)); // 7 base + 1 tools/call
         HttpMessage toolsCallMsg = findRequestByMethod("tools/call");
         assertThat(toolsCallMsg, is(notNullValue()));
         assertThat(
@@ -375,7 +484,7 @@ class McpImporterUnitTest {
         ImportResults results = importer.importServer(new ImportConfig(SERVER_URL, null));
 
         // Then
-        assertThat(results.requestCount(), is(7)); // 5 base + 2 tools/call
+        assertThat(results.requestCount(), is(9)); // 7 base + 2 tools/call
         assertThat(findAllRequestsByMethod("tools/call"), hasSize(2));
     }
 
@@ -410,7 +519,7 @@ class McpImporterUnitTest {
         willAnswer(inv -> "generated-" + inv.getArgument(2))
                 .given(valueProvider)
                 .getValue(any(), any(), any(), any(), any(), any(), any());
-        importer = new McpImporter(sender, valueProvider);
+        importer = new McpImporter(client, valueProvider);
         responses.put(
                 "tools/list",
                 toolsListResponse(
@@ -471,7 +580,7 @@ class McpImporterUnitTest {
         ImportResults results = importer.importServer(new ImportConfig(SERVER_URL, null));
 
         // Then
-        assertThat(results.requestCount(), is(6)); // 5 base + 1 resources/read
+        assertThat(results.requestCount(), is(8)); // 7 base + 1 resources/read
         HttpMessage readMsg = findRequestByMethod("resources/read");
         assertThat(readMsg, is(notNullValue()));
         assertThat(parseBody(readMsg).path("params").path("uri").asText(), equalTo("zap://alerts"));
@@ -491,7 +600,7 @@ class McpImporterUnitTest {
         ImportResults results = importer.importServer(new ImportConfig(SERVER_URL, null));
 
         // Then
-        assertThat(results.requestCount(), is(7)); // 5 base + 2 resources/read
+        assertThat(results.requestCount(), is(9)); // 7 base + 2 resources/read
         assertThat(findAllRequestsByMethod("resources/read"), hasSize(2));
     }
 
@@ -506,7 +615,7 @@ class McpImporterUnitTest {
         ImportResults results = importer.importServer(new ImportConfig(SERVER_URL, null));
 
         // Then
-        assertThat(results.requestCount(), is(6)); // 5 base + 1 prompts/get
+        assertThat(results.requestCount(), is(8)); // 7 base + 1 prompts/get
         HttpMessage getMsg = findRequestByMethod("prompts/get");
         assertThat(getMsg, is(notNullValue()));
         assertThat(
@@ -526,6 +635,104 @@ class McpImporterUnitTest {
                 parseBody(findRequestByMethod("prompts/get")).path("params").path("arguments");
         assertThat(args.path("target").asText(), equalTo("target"));
         assertThat(args.path("config").asText(), equalTo("config"));
+    }
+
+    // ---- pagination ----
+
+    @Test
+    void shouldFollowNextCursorOnPaginatedToolsList() throws IOException {
+        // Given
+        Map<String, String> pageQueue = new java.util.LinkedHashMap<>();
+        pageQueue.put(
+                "<noCursor>",
+                "{\"jsonrpc\":\"2.0\",\"id\":2,\"result\":{\"tools\":[{\"name\":\"t1\",\"inputSchema\":{}}],\"nextCursor\":\"page2\"}}");
+        pageQueue.put(
+                "page2",
+                "{\"jsonrpc\":\"2.0\",\"id\":2,\"result\":{\"tools\":[{\"name\":\"t2\",\"inputSchema\":{}}]}}");
+        willAnswer(
+                        inv -> {
+                            HttpMessage msg = inv.getArgument(0);
+                            capturedRequests.add(msg);
+                            JsonNode json = MAPPER.readTree(msg.getRequestBody().toString());
+                            String method = json.path("method").asText();
+                            String responseBody;
+                            if ("tools/list".equals(method)) {
+                                String cursor =
+                                        json.path("params").path("cursor").asText("<noCursor>");
+                                responseBody =
+                                        pageQueue.getOrDefault(
+                                                cursor,
+                                                "{\"jsonrpc\":\"2.0\",\"id\":2,\"result\":{\"tools\":[]}}");
+                            } else {
+                                responseBody =
+                                        responses.getOrDefault(
+                                                method, "{\"jsonrpc\":\"2.0\",\"result\":{}}");
+                            }
+                            msg.setResponseHeader(
+                                    "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n\r\n");
+                            msg.setResponseBody(responseBody);
+                            return null;
+                        })
+                .given(client)
+                .send(any(HttpMessage.class));
+
+        // When
+        importer.importServer(new ImportConfig(SERVER_URL, null));
+
+        // Then
+        List<HttpMessage> toolsListRequests = findAllRequestsByMethod("tools/list");
+        assertThat(toolsListRequests, hasSize(2));
+        assertThat(
+                parseBody(toolsListRequests.get(1)).path("params").path("cursor").asText(),
+                equalTo("page2"));
+        assertThat(findAllRequestsByMethod("tools/call"), hasSize(2));
+    }
+
+    // ---- ping / logging / resources/templates/list ----
+
+    @Test
+    void shouldNotSendLoggingSetLevelWhenCapabilityNotAdvertised() throws IOException {
+        // Given / When
+        importer.importServer(new ImportConfig(SERVER_URL, null));
+
+        // Then
+        assertThat(findRequestByMethod("logging/setLevel"), is(nullValue()));
+    }
+
+    @Test
+    void shouldSendLoggingSetLevelWhenCapabilityAdvertised() throws IOException {
+        // Given
+        responses.put(
+                "initialize",
+                "{\"jsonrpc\":\"2.0\",\"id\":1,\"result\":{\"protocolVersion\":\"2024-11-05\",\"capabilities\":{\"logging\":{}}}}");
+
+        // When
+        importer.importServer(new ImportConfig(SERVER_URL, null));
+
+        // Then
+        HttpMessage logMsg = findRequestByMethod("logging/setLevel");
+        assertThat(logMsg, is(notNullValue()));
+        assertThat(parseBody(logMsg).path("params").path("level").asText(), equalTo("info"));
+    }
+
+    @Test
+    void shouldResolveResourceTemplateVariablesAndReadEach() throws IOException {
+        // Given
+        responses.put(
+                "resources/templates/list",
+                "{\"jsonrpc\":\"2.0\",\"id\":5,\"result\":{\"resourceTemplates\":["
+                        + "{\"uriTemplate\":\"demo://resource/dynamic/{resourceId}\",\"name\":\"Dynamic\"}"
+                        + "]}}");
+
+        // When
+        importer.importServer(new ImportConfig(SERVER_URL, null));
+
+        // Then
+        HttpMessage readMsg = findRequestByMethod("resources/read");
+        assertThat(readMsg, is(notNullValue()));
+        assertThat(
+                parseBody(readMsg).path("params").path("uri").asText(),
+                equalTo("demo://resource/dynamic/resourceId"));
     }
 
     // ---- non-fatal failures in list calls ----
@@ -550,8 +757,8 @@ class McpImporterUnitTest {
                             msg.setResponseBody(responseBody);
                             return null;
                         })
-                .given(sender)
-                .sendAndReceive(any(HttpMessage.class));
+                .given(client)
+                .send(any(HttpMessage.class));
 
         // When
         ImportResults results = importer.importServer(new ImportConfig(SERVER_URL, null));
