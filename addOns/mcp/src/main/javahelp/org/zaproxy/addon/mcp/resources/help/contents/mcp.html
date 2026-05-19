@@ -11,7 +11,7 @@ MCP Integration Add-on
 This add-on implements an MCP (Model Context Protocol) server in ZAP, allowing AI assistants and other MCP clients to interact with ZAP through a standard HTTP-based protocol.
 <p>
 It also allows you to import MCP servers so that you can perform security tests on them, and provides
-Automation Framework support.
+ <a href="mcp-automation.html">Automation Framework</a> support.
 
 <H2>MCP Server</H2>
 
@@ -144,6 +144,10 @@ mirroring the structure of the resource URI:
 
 Template path segments (e.g. <code>{alertRef}</code>) are omitted from the tree path because they
 vary per request; their values are exposed as Input Vectors instead.
+
+<H2>Configuration</H2>
+
+The MCP server is configured via the <a href="mcp-options.html">Options</a> panel.
 
 </BODY>
 </HTML>

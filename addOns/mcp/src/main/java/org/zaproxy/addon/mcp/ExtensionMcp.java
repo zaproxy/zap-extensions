@@ -33,6 +33,8 @@ import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.automation.ExtensionAutomation;
 import org.zaproxy.addon.commonlib.ExtensionCommonlib;
+import org.zaproxy.addon.mcp.automation.ImportMcpServerJob;
+import org.zaproxy.addon.mcp.automation.McpConfigJob;
 import org.zaproxy.addon.mcp.importer.ImportMcpServerDialog;
 import org.zaproxy.addon.mcp.prompts.ZapBaselineScanPrompt;
 import org.zaproxy.addon.mcp.prompts.ZapFullScanPrompt;
@@ -85,6 +87,8 @@ public class ExtensionMcp extends ExtensionAdaptor {
     private static final Logger LOGGER = LogManager.getLogger(ExtensionMcp.class);
 
     private Server server;
+    private ImportMcpServerJob importMcpServerJob;
+    private McpConfigJob mcpConfigJob;
     private McpParam param;
     private McpToolRegistry toolRegistry;
     private McpResourceRegistry resourceRegistry;
@@ -117,6 +121,13 @@ public class ExtensionMcp extends ExtensionAdaptor {
         extensionHook.addOptionsParamSet(param);
         extensionHook.addOptionsChangedListener(this::optionsChanged);
         extensionHook.addVariant(org.zaproxy.addon.mcp.importer.VariantMcpJsonRpc.class);
+
+        ExtensionAutomation extAutomation =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionAutomation.class);
+        importMcpServerJob = new ImportMcpServerJob();
+        extAutomation.registerAutomationJob(importMcpServerJob);
+        mcpConfigJob = new McpConfigJob();
+        extAutomation.registerAutomationJob(mcpConfigJob);
 
         if (hasView()) {
             extensionHook.getHookView().addOptionPanel(new McpOptionsPanel());
@@ -260,6 +271,14 @@ public class ExtensionMcp extends ExtensionAdaptor {
     @Override
     public void unload() {
         stopServer();
+        ExtensionAutomation extAutomation =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionAutomation.class);
+        if (importMcpServerJob != null) {
+            extAutomation.unregisterAutomationJob(importMcpServerJob);
+        }
+        if (mcpConfigJob != null) {
+            extAutomation.unregisterAutomationJob(mcpConfigJob);
+        }
         if (dialog != null) {
             dialog.setVisible(false);
         }
