@@ -22,6 +22,7 @@ package org.zaproxy.addon.reports;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
@@ -44,6 +45,8 @@ import org.apache.logging.log4j.core.config.Configurator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.quality.Strictness;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -480,6 +483,137 @@ class ExtensionReportsXmlUnitTest extends TestUtils {
                 "2");
         validateInsight(
                 insights.item(0).getChildNodes().item(5), "", "insight.3", "Insight3 desc", "30");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"traditional-xml", "traditional-xml-plus"})
+    void shouldGenerateTraditionalXmlWithScriptDiagnostics(String templateName) throws Exception {
+        // Given
+        Template template = ReportTestUtils.getTemplateFromYamlFile(templateName);
+        File f = File.createTempFile("script-diagnostics-" + templateName, template.getExtension());
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        DocumentBuilder db = dbf.newDocumentBuilder();
+
+        // When
+        File r = ReportTestUtils.generateReportWithScriptDiagnostics(template, f);
+        Document doc = db.parse(r);
+
+        // Then
+        assertThat(doc.getDocumentElement().getNodeName(), is(equalTo("OWASPZAPReport")));
+        ReportTestUtils.ScriptDiagnosticsAssertions.assertXmlScriptDiagnostics(
+                doc.getElementsByTagName("scriptDiagnostics"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"traditional-xml", "traditional-xml-plus"})
+    void shouldEscapeQuotesAndSlashesInScriptDiagnosticsXml(String templateName) throws Exception {
+        // Given
+        Template template = ReportTestUtils.getTemplateFromYamlFile(templateName);
+        File f =
+                File.createTempFile(
+                        templateName + "-script-diagnostics-escape", template.getExtension());
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        DocumentBuilder db = dbf.newDocumentBuilder();
+
+        // When
+        File r =
+                ReportTestUtils.generateReportWithScriptDiagnostics(
+                        template, f, ReportTestUtils.ScriptDiagnosticsEscapeData.runs(true));
+        Document doc = db.parse(r);
+
+        // Then — must parse as XML and round-trip text values (th:text encoding)
+        assertThat(doc.getDocumentElement().getNodeName(), is(equalTo("OWASPZAPReport")));
+        Element scriptDiagnostics = (Element) doc.getElementsByTagName("scriptDiagnostics").item(0);
+        Element run = (Element) scriptDiagnostics.getElementsByTagName("run").item(0);
+        ReportTestUtils.ScriptDiagnosticsAssertions.assertXmlEscapedScriptDiagnostics(run);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"traditional-xml", "traditional-xml-plus"})
+    void shouldOmitScriptDiagnosticStdoutWhenOutputSectionDisabled(String templateName)
+            throws Exception {
+        Template template = ReportTestUtils.getTemplateFromYamlFile(templateName);
+        File f = File.createTempFile(templateName + "-no-script-stdout", template.getExtension());
+
+        File r =
+                ReportTestUtils.generateReportWithScriptDiagnostics(
+                        template,
+                        f,
+                        true,
+                        List.of(ReportTestUtils.defaultScriptDiagnosticRunWithStdoutAndError()),
+                        "scriptdiagnosticsoutput");
+        Document doc = parseReport(r);
+        Element step = firstXmlStep(doc, 0);
+        NodeList outputs = step.getElementsByTagName("output");
+        assertThat(outputs.getLength(), is(equalTo(1)));
+        assertThat(
+                ((Element) outputs.item(0)).getElementsByTagName("kind").item(0).getTextContent(),
+                is(equalTo("ERROR")));
+        assertThat(
+                ((Element) outputs.item(0))
+                        .getElementsByTagName("message")
+                        .item(0)
+                        .getTextContent(),
+                is(equalTo("boom")));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"traditional-xml", "traditional-xml-plus"})
+    void shouldOmitScriptDiagnosticScreenshotWhenScreenshotsSectionDisabled(String templateName)
+            throws Exception {
+        Template template = ReportTestUtils.getTemplateFromYamlFile(templateName);
+        File f =
+                File.createTempFile(
+                        templateName + "-no-script-screenshots", template.getExtension());
+
+        File r =
+                ReportTestUtils.generateReportWithScriptDiagnostics(
+                        template,
+                        f,
+                        true,
+                        List.of(ReportTestUtils.defaultScriptDiagnosticRunWithScreenshot()),
+                        "scriptdiagnosticsscreenshots");
+        Document doc = parseReport(r);
+        assertThat(firstXmlStep(doc, 0).getElementsByTagName("screenshot").getLength(), is(0));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"traditional-xml", "traditional-xml-plus"})
+    void shouldOmitScriptDiagnosticsWhenSectionDisabled(String templateName) throws Exception {
+        Template template = ReportTestUtils.getTemplateFromYamlFile(templateName);
+        File f =
+                File.createTempFile(
+                        templateName + "-no-script-diagnostics-section", template.getExtension());
+        List<String> sections = new ArrayList<>(template.getSections());
+        sections.remove("scriptdiagnostics");
+        assertThat(sections, hasItem("scriptdiagnosticsscreenshots"));
+        assertThat(sections, hasItem("scriptdiagnosticsoutput"));
+
+        File r =
+                ReportTestUtils.generateReportWithScriptDiagnostics(
+                        template,
+                        f,
+                        false,
+                        List.of(ReportTestUtils.defaultScriptDiagnosticRunWithScreenshot()));
+        Document doc = parseReport(r);
+        assertThat(doc.getElementsByTagName("scriptDiagnostics").getLength(), is(0));
+    }
+
+    private static Document parseReport(File reportFile) throws Exception {
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        DocumentBuilder db = dbf.newDocumentBuilder();
+        return db.parse(reportFile);
+    }
+
+    private static Element firstXmlStep(Document doc, int runIndex) {
+        Element run = (Element) doc.getElementsByTagName("run").item(runIndex);
+        return (Element)
+                ((Element) run.getElementsByTagName("script").item(0))
+                        .getElementsByTagName("step")
+                        .item(0);
     }
 
     private static void validateInsight(

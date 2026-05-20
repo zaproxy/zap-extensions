@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Added
-- Added new sections to Traditional JSON Report with Requests and Responses for script diagnostics information.
+- Added script diagnostics section to Traditional Reports.
 - Templates that include Insights now also identify the Insight that stopped the scan, if applicable.
 
 ### Fixed

@@ -232,27 +232,17 @@
 }
 </pre>
 
+	Section descriptions are documented in
+	<a href="report-traditional-script-diagnostics.html">Script
+		Diagnostics in Traditional Reports</a> . The JSON representation is shown
+	below.
+
 	<h4>Script Diagnostics Section</h4>
-	When the
-	<code>scriptdiagnostics</code>
-	section is enabled and the Script Console add-on has recorded runs in
-	the session database, the report can include a
+	When enabled, the report includes a
 	<code>scriptDiagnostics</code>
 	object containing a
 	<code>runs</code>
-	array of script diagnostic records. Each run has
-	<code>created</code>
-	,
-	<code>outcome</code>
-	(for example
-	<code>FAILED</code>
-	or
-	<code>SUCCESS</code>
-	),
-	<code>summary</code>
-	, and a
-	<code>scripts</code>
-	array.
+	array:
 
 	<pre>
 	"scriptDiagnostics": {
@@ -270,10 +260,11 @@
 </pre>
 	Each script in a run has an order, name, type, and
 	<code>steps</code>
-	array. Failure steps include the source statement index, line (element
-	type), and
+	array. Steps include the source statement index, line (element type),
+	and
 	<code>outputs</code>
-	(for example error messages).
+	:
+
 	<pre>
 	{
 		"sourceStepIndex": 13,
@@ -286,13 +277,9 @@
 		]
 	}
 </pre>
-	More data can be included on steps depending on the additional
-	diagnostics sections enabled for the report, as outlined below.
 
-	<H4>Output for Script Diagnostics</H4>
-	Steps can include print output lines with kind
-	<code>OUTPUT</code>
-	. For example:
+	<h4>Output for Script Diagnostics</h4>
+	For example:
 
 	<pre>
 	{
@@ -306,15 +293,10 @@
 		]
 	}
 </pre>
-	When this section is disabled, steps still include
-	<code>ERROR</code>
-	output lines; only
-	<code>OUTPUT</code>
-	lines are omitted.
 
-	<H4>Screenshots for Script Diagnostics</H4>
-	When this section is enabled the step can, optionally, include a
-	screenshot of the browser with the image data Base64 encoded.
+	<h4>Screenshots for Script Diagnostics</h4>
+	For example:
+
 	<pre>
 	"screenshot": "…"
 </pre>

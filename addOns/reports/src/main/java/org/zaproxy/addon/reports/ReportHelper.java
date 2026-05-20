@@ -19,13 +19,17 @@
  */
 package org.zaproxy.addon.reports;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
+import javax.imageio.ImageIO;
 import org.apache.commons.lang3.Strings;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
@@ -47,6 +51,14 @@ public class ReportHelper {
     private static final Logger LOGGER = LogManager.getLogger(ReportHelper.class);
 
     private static final String STATS_RESOURCE_PREFIX = ExtensionReports.PREFIX + ".report.";
+
+    /**
+     * Maximum display width in CSS pixels for script diagnostic screenshots in PDF reports. Flying
+     * Saucer does not honour {@code max-width} on {@code img} elements; an explicit {@code width}
+     * attribute is required. This value matches the printable width of an A4 page with default
+     * margins (~523pt).
+     */
+    private static final int PDF_SCRIPT_DIAGNOSTIC_SCREENSHOT_MAX_WIDTH = 523;
 
     public static String getRiskString(int risk) {
         return Constant.messages.getString(ExtensionReports.PREFIX + ".report.risk." + risk);
@@ -345,5 +357,34 @@ public class ReportHelper {
             return false;
         }
         return isSystemic(findAlertNode(rootNode, alertName, alertRisk));
+    }
+
+    /**
+     * Returns the display width in CSS pixels for a script diagnostic screenshot in a PDF report.
+     * Wide images are scaled down to fit the printable page width; smaller images are not enlarged.
+     */
+    public static int getPdfScriptDiagnosticScreenshotWidth(String base64Screenshot) {
+        int imageWidth = readPngWidth(base64Screenshot);
+        if (imageWidth <= 0) {
+            return PDF_SCRIPT_DIAGNOSTIC_SCREENSHOT_MAX_WIDTH;
+        }
+        return Math.min(imageWidth, PDF_SCRIPT_DIAGNOSTIC_SCREENSHOT_MAX_WIDTH);
+    }
+
+    private static int readPngWidth(String base64Screenshot) {
+        if (base64Screenshot == null || base64Screenshot.isBlank()) {
+            return -1;
+        }
+        try {
+            byte[] bytes = Base64.getDecoder().decode(base64Screenshot);
+            BufferedImage image = ImageIO.read(new ByteArrayInputStream(bytes));
+            if (image == null) {
+                return -1;
+            }
+            return image.getWidth();
+        } catch (Exception e) {
+            LOGGER.debug("Failed to read script diagnostic screenshot dimensions:", e);
+            return -1;
+        }
     }
 }

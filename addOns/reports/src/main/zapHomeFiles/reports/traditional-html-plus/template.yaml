@@ -6,12 +6,16 @@ sections:
  - chart
  - alertcount
  - insights
+ - scriptdiagnostics
+ - scriptdiagnosticsscreenshots
+ - scriptdiagnosticsoutput
+ - sequencedetails
  - instancecount
  - passingrules
  - alertdetails
  - statistics
  - params
- - sequencedetails
 themes:
  - light
  - dark
+ 
