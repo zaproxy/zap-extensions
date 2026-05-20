@@ -19,7 +19,7 @@ the options you want to change.
 <pre>
   - type: mcp-config                   # Configure the MCP server
     parameters:
-      enabled:                         # Bool: Enable the MCP server, default: true
+      enabled:                         # Bool: Enable the MCP server, default: false
       port:                            # Int: Port for the MCP HTTP listener, default: 8282
       securityKey:                     # String: The security key value (leave blank to use no key)
 </pre>
@@ -29,7 +29,7 @@ the options you want to change.
 <H3>enabled</H3>
 Whether the MCP server should be running.
 Set to <code>false</code> to disable the server entirely.
-Default: <code>true</code>
+Default: <code>false</code>
 
 <H3>port</H3>
 The port the MCP HTTP listener runs on.
