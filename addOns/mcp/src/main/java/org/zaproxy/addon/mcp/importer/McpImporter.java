@@ -43,6 +43,7 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.commonlib.ExtensionCommonlib;
 import org.zaproxy.addon.commonlib.ValueProvider;
+import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.utils.ThreadUtils;
 
 /**
@@ -84,11 +85,20 @@ public class McpImporter {
     private final ExtensionHistory extHistory;
     private final NetworkClient networkClient;
     private final ValueProvider valueProvider;
+    private final int initiator;
 
     public McpImporter() {
+        this(HttpSender.MANUAL_REQUEST_INITIATOR);
+    }
+
+    /**
+     * Creates an importer that sends requests using the given {@link HttpSender} initiator. Used by
+     * the spider integration to record requests with {@link HttpSender#SPIDER_INITIATOR}.
+     */
+    public McpImporter(int initiator) {
         this.extHistory =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionHistory.class);
-        HttpSender sender = new HttpSender(HttpSender.MANUAL_REQUEST_INITIATOR);
+        HttpSender sender = new HttpSender(initiator);
         this.networkClient =
                 msg -> {
                     sender.sendAndReceive(msg);
@@ -99,6 +109,7 @@ public class McpImporter {
                         .getExtensionLoader()
                         .getExtension(ExtensionCommonlib.class)
                         .getValueProvider();
+        this.initiator = initiator;
     }
 
     /**
@@ -109,6 +120,7 @@ public class McpImporter {
         this.extHistory = null;
         this.networkClient = networkClient;
         this.valueProvider = valueProvider;
+        this.initiator = 0;
     }
 
     /**
@@ -324,6 +336,9 @@ public class McpImporter {
                 requestCount++;
             }
         }
+        Stats.incCounter("stats.mcp.import." + initiator + ".server");
+        Stats.incCounter("stats.mcp.import.message", requestCount);
+        Stats.incCounter("stats.mcp.import.errors", errors.size());
 
         return new ImportResults(requestCount, errors);
     }

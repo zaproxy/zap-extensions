@@ -91,7 +91,6 @@ field name itself is used as the placeholder value.
 
 <H3>Security Key</H3>
 
-<p>
 If the external MCP server requires authentication, enter the full value to send as the
 <code>Authorization</code> header. For servers that use Bearer tokens, include the
 <code>Bearer </code> prefix — for example, <code>Bearer abc123</code>. ZAP sends the value
@@ -100,6 +99,16 @@ exactly as entered, without adding any prefix automatically.
 <p>
 Import an MCP server via the GUI using <b>Import &rarr; Import MCP Server</b>, or via the
 <a href="mcp-automation-import.html">mcp-import</a> Automation Framework job.
+
+<H3>Spider Integration</H3>
+
+The MCP add-on registers a custom spider parser with the traditional spider.
+Any response the spider fetches that looks like an MCP endpoint &mdash; either a
+<code>text/event-stream</code> response or a JSON response carrying MCP markers such as
+<code>protocolVersion</code> or JSON-RPC method names like <code>tools/list</code> &mdash;
+is automatically imported using the same logic as a manual import. No configuration is
+required; the discovered traffic appears in the history and sites tree alongside the rest
+of the spider's findings.
 
 <H2>Sites Tree Structure for MCP Requests</H2>
 

@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - MCP Import.
 - Automation framework support.
 - Support for SSE responses.
+- Automatically import MCP definitions discovered by the traditional spider.
 
 ### Changed
 - Maintenance changes.
