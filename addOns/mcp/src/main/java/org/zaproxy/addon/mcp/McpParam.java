@@ -45,7 +45,7 @@ public class McpParam extends VersionedAbstractParam {
     /** Default port for the MCP HTTP listener. */
     public static final int DEFAULT_PORT = 8282;
 
-    private boolean enabled = true;
+    private boolean enabled = false;
     private int port = DEFAULT_PORT;
     private boolean securityKeyEnabled = true;
     private String securityKey;
@@ -71,7 +71,7 @@ public class McpParam extends VersionedAbstractParam {
 
     @Override
     protected void parseImpl() {
-        enabled = getBoolean(ENABLED_KEY, true);
+        enabled = getBoolean(ENABLED_KEY, false);
         port = getInt(PORT_KEY, DEFAULT_PORT);
         securityKeyEnabled = getBoolean(SECURITY_KEY_ENABLED_KEY, true);
         securityKey = getString(SECURITY_KEY_KEY, null);
