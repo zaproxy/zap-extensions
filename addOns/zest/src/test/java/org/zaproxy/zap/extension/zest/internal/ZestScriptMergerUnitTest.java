@@ -38,6 +38,7 @@ import static org.mockito.Mockito.withSettings;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.OptionalInt;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -130,7 +131,7 @@ class ZestScriptMergerUnitTest extends TestUtils {
         // Then
         assertThat(merged, is(notNullValue()));
         assertThat(merged.getName(), is(equalTo("chain")));
-        assertThat(merged.getZestFailureContext(), is(equalTo("")));
+        assertThat(merged.getLastRunDiagnostic().isPresent(), is(false));
 
         ZestScript mergedScript = merged.getZestScript();
         assertThat(mergedScript.getTitle(), is(equalTo("chain")));
@@ -217,6 +218,75 @@ class ZestScriptMergerUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldResolveOriginForExecutingStatementConsistentWithMergedIndex() {
+        ZestScriptWrapper script1 = createMockZestWrapperWithClientLaunch("script1", 2, 1);
+        ZestScriptWrapper script2 = createMockZestWrapperWithClientLaunch("script2", 3, 1);
+
+        ZestScriptWrapper merged =
+                ZestScriptMerger.mergeScripts(
+                        List.of(script1, script2), "chain", ZestJSON::toString);
+
+        var prov = merged.getChainProvenance().orElseThrow();
+        ZestScript mergedScript = merged.getZestScript();
+        ZestStatement stmt = mergedScript.getStatements().get(2);
+        assertThat(
+                prov.originForExecutingStatement(mergedScript, stmt),
+                is(equalTo(prov.originForMergedIndex(stmt.getIndex()))));
+    }
+
+    @Test
+    void shouldResolveOriginByMergedStatementListPosition() {
+        ZestScriptWrapper script1 = createMockZestWrapperWithClientLaunch("script1", 2, 1);
+        ZestScriptWrapper script2 = createMockZestWrapperWithClientLaunch("script2", 3, 1);
+        ZestScriptWrapper merged =
+                ZestScriptMerger.mergeScripts(
+                        List.of(script1, script2), "chain", ZestJSON::toString);
+        var prov = merged.getChainProvenance().orElseThrow();
+        ZestScript mergedScript = merged.getZestScript();
+        ZestStatement stmt = mergedScript.getStatements().get(2);
+        assertThat(prov.originAtMergedStatementListPosition(2).isPresent(), is(equalTo(true)));
+        assertThat(
+                prov.originAtMergedStatementListPosition(2),
+                is(equalTo(prov.originForMergedIndex(stmt.getIndex()))));
+    }
+
+    @Test
+    void shouldExposeOriginForMergedIndex() {
+        ZestScriptWrapper script1 = createMockZestWrapperWithClientLaunch("script1", 2, 1);
+        ZestScriptWrapper script2 = createMockZestWrapperWithClientLaunch("script2", 3, 1);
+
+        ZestScriptWrapper merged =
+                ZestScriptMerger.mergeScripts(
+                        List.of(script1, script2), "chain", ZestJSON::toString);
+
+        var prov = merged.getChainProvenance().orElseThrow();
+        int idxFirst = merged.getZestScript().getStatements().get(0).getIndex();
+        var origin = prov.originForMergedIndex(idxFirst);
+        assertThat(origin.isPresent(), is(equalTo(true)));
+        assertThat(origin.get().segmentIndex(), is(equalTo(0)));
+    }
+
+    @Test
+    void shouldRoundTripMergedIndexViaSourcePosition() {
+        ZestScriptWrapper script1 = createMockZestWrapperWithClientLaunch("script1", 2, 1);
+        ZestScriptWrapper script2 = createMockZestWrapperWithClientLaunch("script2", 3, 1);
+
+        ZestScriptWrapper merged =
+                ZestScriptMerger.mergeScripts(
+                        List.of(script1, script2), "chain", ZestJSON::toString);
+
+        var prov = merged.getChainProvenance().orElseThrow();
+        int mergedIdx = merged.getZestScript().getStatements().get(2).getIndex();
+        var origin = prov.originForMergedIndex(mergedIdx).orElseThrow();
+
+        OptionalInt back =
+                prov.mergedIndexForSourcePosition(
+                        origin.segmentIndex(), origin.originalStatementIndex());
+        assertThat(back.isPresent(), is(equalTo(true)));
+        assertThat(back.getAsInt(), is(equalTo(mergedIdx)));
+    }
+
+    @Test
     void shouldMapDisabledClientLaunchInProvenance() {
         // Given
         ZestScriptWrapper script1 = createMockZestWrapperWithClientLaunch("script1", 2, 1);
@@ -242,7 +312,7 @@ class ZestScriptMergerUnitTest extends TestUtils {
 
     @Test
     void shouldUseOriginalZestIndexInProvenance() {
-        // Given: source statement indexes are non-sequential / not list-position based.
+        // Given: source step indexes are non-sequential / not list-position based.
         ZestScript script1 = new ZestScript();
         script1.setTitle("script1");
         script1.setType(ZestScript.Type.StandAlone);
@@ -290,11 +360,11 @@ class ZestScriptMergerUnitTest extends TestUtils {
                 String line = prov.describe(st.getIndex());
                 if ("source-idx-42".equals(c.getComment())) {
                     assertThat(line, containsString("script1"));
-                    assertThat(line, containsString("zest index 42"));
+                    assertThat(line, containsString("source step index 42"));
                     found42 = true;
                 } else if ("source-idx-77".equals(c.getComment())) {
                     assertThat(line, containsString("script2"));
-                    assertThat(line, containsString("zest index 77"));
+                    assertThat(line, containsString("source step index 77"));
                     found77 = true;
                 }
             }
@@ -321,7 +391,7 @@ class ZestScriptMergerUnitTest extends TestUtils {
             if (st instanceof ZestClientWindowClose) {
                 assertThat(prov.describe(st.getIndex()), containsString("ZestClientWindowClose"));
                 assertThat(prov.describe(st.getIndex()), containsString("source script \"-\""));
-                assertThat(prov.describe(st.getIndex()), containsString("zest index -"));
+                assertThat(prov.describe(st.getIndex()), containsString("source step index -"));
                 foundClose = true;
             }
         }

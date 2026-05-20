@@ -103,6 +103,8 @@ dependencies {
     zapAddOn("spiderAjax")
     zapAddOn("client")
     zapAddOn("reports")
+    // Transitive compile-time dependency via zest (ZestScriptDiagnosticSource, etc.).
+    compileOnly(parent!!.childProjects.get("scripts")!!)
     zapAddOn("zest")
 
     compileOnly(libs.log4j.core)

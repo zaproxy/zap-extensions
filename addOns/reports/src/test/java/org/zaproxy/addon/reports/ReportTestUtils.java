@@ -36,6 +36,9 @@ import org.zaproxy.addon.insights.internal.Insight;
 import org.zaproxy.addon.insights.report.ExtensionInsightsReport;
 import org.zaproxy.zap.extension.alert.AlertNode;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+import org.zaproxy.zap.extension.scripts.internal.db.ScriptRunRecorder;
+import org.zaproxy.zap.extension.scripts.report.ExtensionScriptsReport;
+import org.zaproxy.zap.extension.scripts.report.ScriptRunReportData;
 import org.zaproxy.zap.testutils.TestUtils;
 
 public class ReportTestUtils {
@@ -272,6 +275,141 @@ public class ReportTestUtils {
         reportData.addReportObjects(ExtensionInsightsReport.INSIGHTS_LIST, insightList);
 
         return extRep.generateReport(reportData, template, f.getAbsolutePath(), false);
+    }
+
+    static File generateReportWithScriptDiagnostics(Template template, File f)
+            throws IOException, DocumentException {
+        return generateReportWithScriptDiagnostics(template, f, true);
+    }
+
+    static File generateReportWithScriptDiagnostics(
+            Template template, File f, boolean includeScriptDiagnosticsSection)
+            throws IOException, DocumentException {
+        ExtensionReports extRep = new ExtensionReports();
+        ReportData reportData = new ReportData("test");
+        reportData.setTitle("Test Title");
+        reportData.setDescription("Test Description");
+        reportData.setIncludeAllConfidences(true);
+        reportData.setIncludeAllRisks(true);
+        List<String> sections = new ArrayList<>(template.getSections());
+        if (!includeScriptDiagnosticsSection) {
+            sections.remove("scriptdiagnostics");
+        }
+        reportData.setSections(sections);
+
+        AlertNode root = new AlertNode(0, "Test");
+        reportData.setAlertTreeRootNode(root);
+
+        return generateReportWithScriptDiagnostics(
+                template, f, includeScriptDiagnosticsSection, defaultScriptDiagnosticRuns());
+    }
+
+    static List<ScriptRunReportData.Run> defaultScriptDiagnosticRuns() {
+        return List.of(
+                scriptRunReport(
+                        "2026-04-01T12:00:00Z",
+                        1,
+                        "my-script",
+                        "standalone",
+                        -1,
+                        "",
+                        "Job: ... boom",
+                        "boom"),
+                scriptRunReport(
+                        "2026-04-02T08:30:00Z",
+                        1,
+                        "chain-a",
+                        "standalone",
+                        13,
+                        "ZestClientElementClick",
+                        "Job: ... step failed",
+                        "step failed"));
+    }
+
+    static File generateReportWithScriptDiagnostics(
+            Template template, File f, List<ScriptRunReportData.Run> runs)
+            throws IOException, DocumentException {
+        return generateReportWithScriptDiagnostics(template, f, true, runs);
+    }
+
+    private static File generateReportWithScriptDiagnostics(
+            Template template,
+            File f,
+            boolean includeScriptDiagnosticsSection,
+            List<ScriptRunReportData.Run> runs)
+            throws IOException, DocumentException {
+        ExtensionReports extRep = new ExtensionReports();
+        ReportData reportData = new ReportData("test");
+        reportData.setTitle("Test Title");
+        reportData.setDescription("Test Description");
+        reportData.setIncludeAllConfidences(true);
+        reportData.setIncludeAllRisks(true);
+        List<String> sections = new ArrayList<>(template.getSections());
+        if (!includeScriptDiagnosticsSection) {
+            sections.remove("scriptdiagnostics");
+        }
+        reportData.setSections(sections);
+
+        AlertNode root = new AlertNode(0, "Test");
+        reportData.setAlertTreeRootNode(root);
+
+        reportData.addReportObjects(
+                ExtensionScriptsReport.SCRIPT_DIAGNOSTICS,
+                new ScriptRunReportData.Diagnostics(runs));
+
+        return extRep.generateReport(reportData, template, f.getAbsolutePath(), false);
+    }
+
+    static ScriptRunReportData.Run scriptRunReport(
+            String created,
+            int scriptOrder,
+            String scriptName,
+            String scriptType,
+            int sourceStepIndex,
+            String line,
+            String summaryMessage,
+            String outputDetailMessage) {
+        return scriptRunReport(
+                created,
+                ScriptRunRecorder.OUTCOME_FAILED,
+                scriptOrder,
+                scriptName,
+                scriptType,
+                sourceStepIndex,
+                line,
+                ScriptRunRecorder.OUTPUT_KIND_ERROR,
+                summaryMessage,
+                outputDetailMessage);
+    }
+
+    static ScriptRunReportData.Run scriptRunReport(
+            String created,
+            String outcome,
+            int scriptOrder,
+            String scriptName,
+            String scriptType,
+            int sourceStepIndex,
+            String line,
+            String outputKind,
+            String summaryMessage,
+            String outputDetailMessage) {
+        return new ScriptRunReportData.Run(
+                created,
+                outcome,
+                summaryMessage,
+                List.of(
+                        new ScriptRunReportData.Script(
+                                scriptOrder,
+                                scriptName,
+                                scriptType,
+                                List.of(
+                                        new ScriptRunReportData.Step(
+                                                sourceStepIndex,
+                                                line,
+                                                List.of(
+                                                        new ScriptRunReportData.Output(
+                                                                outputKind,
+                                                                outputDetailMessage)))))));
     }
 
     static Template getTemplateFromYamlFile(String templateName) throws Exception {

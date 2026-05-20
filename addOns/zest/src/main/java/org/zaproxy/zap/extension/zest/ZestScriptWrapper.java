@@ -29,12 +29,14 @@ import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
+import org.zaproxy.zap.extension.scripts.zest.ZestScriptDiagnosticSource;
+import org.zaproxy.zap.extension.scripts.zest.ZestScriptDiagnosticSource.ZestScriptRunDiagnostic;
 import org.zaproxy.zap.extension.zest.internal.ZestScriptMerger;
 import org.zaproxy.zap.users.User;
 import org.zaproxy.zest.core.v1.ZestScript;
 import org.zaproxy.zest.core.v1.ZestScript.Type;
 
-public class ZestScriptWrapper extends ScriptWrapper {
+public class ZestScriptWrapper extends ScriptWrapper implements ZestScriptDiagnosticSource {
 
     public static final String ZAP_BREAK_VARIABLE_NAME = "zap.break";
     public static final String ZAP_BREAK_VARIABLE_VALUE = "set";
@@ -51,7 +53,9 @@ public class ZestScriptWrapper extends ScriptWrapper {
     private int zestModCount;
     private User user;
     private ZestScriptMerger.ChainProvenance chainProvenance;
-    private String zestFailureContext = "";
+
+    /** Last run failure diagnostics; cleared at run start and not copied by {@link #clone()}. */
+    private ZestScriptRunDiagnostic lastRunDiagnostic;
 
     public ZestScriptWrapper(ScriptWrapper script) {
         this.original = script;
@@ -270,18 +274,13 @@ public class ZestScriptWrapper extends ScriptWrapper {
         this.chainProvenance = chainProvenance;
     }
 
-    /**
-     * Human-readable diagnostic text for the most recent script failure (for example which chain
-     * segment or statement failed). Starts empty; callers replace it when a new failure is recorded
-     * or when resetting for a new run. {@link #setZestFailureContext(String)} stores the empty
-     * string when passed {@code null}. Clones do not copy this field.
-     */
-    public String getZestFailureContext() {
-        return zestFailureContext;
+    /** Replaces any prior failure diagnostics for this wrapper. {@code null} clears them. */
+    public void setLastRunDiagnostic(ZestScriptRunDiagnostic diagnostic) {
+        lastRunDiagnostic = diagnostic;
     }
 
-    /** Sets {@link #getZestFailureContext()}; {@code null} is stored as the empty string. */
-    public void setZestFailureContext(String zestFailureContext) {
-        this.zestFailureContext = zestFailureContext != null ? zestFailureContext : "";
+    @Override
+    public Optional<ZestScriptRunDiagnostic> getLastRunDiagnostic() {
+        return Optional.ofNullable(lastRunDiagnostic);
     }
 }

@@ -26,9 +26,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.function.Consumer;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.model.Model;
@@ -41,10 +44,16 @@ import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.scripts.automation.ScriptJobOutputListener;
 import org.zaproxy.zap.extension.scripts.automation.ScriptJobParameters;
+import org.zaproxy.zap.extension.scripts.automation.ScriptRunFailureDetail;
 import org.zaproxy.zap.extension.scripts.automation.ui.ScriptJobDialog;
+import org.zaproxy.zap.extension.scripts.internal.db.ScriptRunRecorder;
+import org.zaproxy.zap.extension.scripts.zest.ZestScriptDiagnosticSource;
+import org.zaproxy.zap.extension.scripts.zest.ZestScriptDiagnosticSource.ZestScriptRunDiagnostic;
 import org.zaproxy.zap.users.User;
 
 public class RunScriptAction extends ScriptAction {
+
+    private static final Logger LOGGER = LogManager.getLogger(RunScriptAction.class);
 
     public static final String NAME = "run";
     private static final String ZEST_ENGINE_NAME = "Mozilla Zest";
@@ -264,14 +273,14 @@ public class RunScriptAction extends ScriptAction {
                                     siteNode.getHistoryReference().getHttpMessage();
                             extScript.invokeTargetedScript(script, httpMessage);
                         },
-                        (e) -> reportScriptError(progress, jobName, parameters, e));
+                        (e) -> reportScriptError(progress, jobName, parameters, script, e));
             } else {
                 setUserOnZestWrapper(script, user);
                 executeScriptWithOutputListener(
                         script,
                         progress,
                         () -> extScript.invokeScript(script),
-                        (e) -> reportScriptError(progress, jobName, parameters, e));
+                        (e) -> reportScriptError(progress, jobName, parameters, script, e));
             }
         }
     }
@@ -322,7 +331,9 @@ public class RunScriptAction extends ScriptAction {
                 chainScript,
                 progress,
                 () -> extScript.invokeScript(chainScript),
-                (e) -> reportChainExecutionError(progress, jobName, chainScript, e))) {
+                (e) ->
+                        reportChainExecutionError(
+                                progress, jobName, chainScript, scriptWrappers, e))) {
             progress.info(
                     Constant.messages.getString("scripts.automation.info.chainCompleted", jobName));
         }
@@ -373,51 +384,77 @@ public class RunScriptAction extends ScriptAction {
             AutomationProgress progress,
             String jobName,
             ScriptJobParameters parameters,
+            ScriptWrapper script,
             Exception e) {
-        progress.error(
+        RunFailure failure = resolveRunFailure(script, e);
+        reportAndPersistFailure(
+                progress,
                 Constant.messages.getString(
                         "scripts.automation.error.scriptError",
                         jobName,
                         parameters.getName(),
-                        e.getMessage()));
+                        failure.progressDetail()),
+                Constant.messages.getString(
+                        "scripts.automation.persist.failedSummary.single",
+                        jobName,
+                        parameters.getName()),
+                List.of(
+                        new ScriptRunRecorder.RunScript(
+                                StringUtils.defaultString(parameters.getName()),
+                                StringUtils.defaultString(parameters.getType()),
+                                failure.failureStep())),
+                failure);
     }
 
     private void reportChainExecutionError(
-            AutomationProgress progress, String jobName, ScriptWrapper chainScript, Exception e) {
+            AutomationProgress progress,
+            String jobName,
+            ScriptWrapper chainScript,
+            List<ScriptWrapper> chainMembers,
+            Exception e) {
         String chainOrder = String.join(" -> ", parameters.getChain());
-        String zestCtx = readZestFailureContext(chainScript);
-        String detail =
-                zestCtx.isEmpty()
-                        ? (e.getMessage() != null ? e.getMessage() : e.getClass().getName())
-                        : zestCtx;
-        progress.error(
+        RunFailure failure = resolveRunFailure(chainScript, e);
+        reportAndPersistFailure(
+                progress,
                 Constant.messages.getString(
                         "scripts.automation.error.chainExecutionFailed",
                         jobName,
                         chainOrder,
-                        detail));
+                        failure.progressDetail()),
+                Constant.messages.getString(
+                        "scripts.automation.persist.failedSummary.chain", jobName, chainOrder),
+                toRunScripts(chainMembers, failure),
+                failure);
     }
 
-    /**
-     * Reads {@code getZestFailureContext()} when present (reflection avoids a compile dependency on
-     * the Zest add-on).
-     */
-    private String readZestFailureContext(ScriptWrapper script) {
-        if (script == null) {
-            return "";
-        }
-        try {
-            Method m = script.getClass().getMethod("getZestFailureContext");
-            Object v = m.invoke(script);
-            if (v instanceof String s && !s.isEmpty()) {
-                return s;
+    private static void reportAndPersistFailure(
+            AutomationProgress progress,
+            String progressMessage,
+            String persistSummary,
+            List<ScriptRunRecorder.RunScript> scripts,
+            RunFailure failure) {
+        progress.error(progressMessage);
+        ScriptRunRecorder.recordFailedRun(persistSummary, scripts, failure.outputDetail());
+    }
+
+    private static List<ScriptRunRecorder.RunScript> toRunScripts(
+            List<ScriptWrapper> chainMembers, RunFailure failure) {
+        int failingOrder = failure.failingScriptOrder();
+        List<ScriptRunRecorder.RunScript> scripts = new ArrayList<>(chainMembers.size());
+        for (int i = 0; i < chainMembers.size(); i++) {
+            int order = i + 1;
+            ScriptWrapper w = chainMembers.get(i);
+            ScriptRunRecorder.FailureStep step = null;
+            if (order == failingOrder || (failingOrder < 1 && order == 1)) {
+                step = failure.failureStep();
             }
-        } catch (NoSuchMethodException e) {
-            // Not a Zest script wrapper
-        } catch (ReflectiveOperationException | SecurityException e) {
-            LOGGER.debug("Could not read Zest failure context", e);
+            scripts.add(
+                    new ScriptRunRecorder.RunScript(
+                            StringUtils.defaultString(w.getName()),
+                            StringUtils.defaultString(w.getTypeName()),
+                            step));
         }
-        return "";
+        return scripts;
     }
 
     private void setUserOnZestWrapper(ScriptWrapper script, User user) {
@@ -514,5 +551,48 @@ public class RunScriptAction extends ScriptAction {
         }
 
         return scriptWrappers;
+    }
+
+    record RunFailure(
+            String progressDetail,
+            String outputDetail,
+            int failingScriptOrder,
+            ScriptRunRecorder.FailureStep failureStep) {}
+
+    static RunFailure resolveRunFailure(ScriptWrapper script, Exception e) {
+        Optional<ZestScriptRunDiagnostic> diagnostic = zestDiagnostic(script);
+        String zestCtx = diagnostic.map(ZestScriptRunDiagnostic::context).orElse("");
+        String progressDetail = zestCtx.isEmpty() ? exceptionSummary(e) : zestCtx;
+        String outputDetail = diagnostic.map(ZestScriptRunDiagnostic::detailMessage).orElse("");
+        if (StringUtils.isBlank(outputDetail)) {
+            outputDetail = ScriptRunFailureDetail.compactExceptionDetailForPersistence(e);
+        }
+        int failingScriptOrder =
+                diagnostic.map(ZestScriptRunDiagnostic::chainScriptOrder).orElse(-1);
+        return new RunFailure(
+                progressDetail, outputDetail, failingScriptOrder, failureStepFrom(diagnostic));
+    }
+
+    private static Optional<ZestScriptRunDiagnostic> zestDiagnostic(ScriptWrapper script) {
+        if (script instanceof ZestScriptDiagnosticSource source) {
+            return source.getLastRunDiagnostic();
+        }
+        return Optional.empty();
+    }
+
+    private static ScriptRunRecorder.FailureStep failureStepFrom(
+            Optional<ZestScriptRunDiagnostic> diagnostic) {
+        return diagnostic
+                .map(
+                        d ->
+                                new ScriptRunRecorder.FailureStep(
+                                        d.sourceStatementIndex(),
+                                        StringUtils.defaultString(d.elementType())))
+                .orElse(new ScriptRunRecorder.FailureStep(-1, ""));
+    }
+
+    private static String exceptionSummary(Exception e) {
+        String message = e.getMessage();
+        return message != null ? message : e.getClass().getName();
     }
 }

@@ -24,6 +24,8 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.Set;
 import java.util.function.Function;
 import org.parosproxy.paros.Constant;
@@ -156,16 +158,8 @@ public final class ZestScriptMerger {
         ChainProvenance provenance =
                 ChainProvenance.finalizeMapping(segments, orderedOrigins, parsed);
         zestWrapper.setChainProvenance(provenance);
-        prepareChainedWrapperForRun(zestWrapper);
+        zestWrapper.setLastRunDiagnostic(null);
         return zestWrapper;
-    }
-
-    /**
-     * Clears per-run failure diagnostics on a newly built chain wrapper (see {@link
-     * org.zaproxy.zap.extension.zest.ZestScriptWrapper#setZestFailureContext}).
-     */
-    private static void prepareChainedWrapperForRun(ZestScriptWrapper zestWrapper) {
-        zestWrapper.setZestFailureContext("");
     }
 
     /**
@@ -239,27 +233,45 @@ public final class ZestScriptMerger {
         private final List<ChainSegment> segments;
         private final Map<Integer, StatementOrigin> byZestStatementIndex;
 
+        /**
+         * Same order as {@code parsedChainScript.getStatements()} at {@link #finalizeMapping} time.
+         */
+        private final List<StatementOrigin> originsByMergedStatementOrder;
+
         private ChainProvenance(
-                List<ChainSegment> segments, Map<Integer, StatementOrigin> byZestStatementIndex) {
+                List<ChainSegment> segments,
+                Map<Integer, StatementOrigin> byZestStatementIndex,
+                List<StatementOrigin> originsByMergedStatementOrder) {
             this.segments = List.copyOf(segments);
             this.byZestStatementIndex = Map.copyOf(byZestStatementIndex);
+            this.originsByMergedStatementOrder = List.copyOf(originsByMergedStatementOrder);
+        }
+
+        /**
+         * Origin for the {@code position}-th statement in the merged script list (0-based), aligned
+         * with {@link #finalizeMapping}.
+         */
+        public Optional<StatementOrigin> originAtMergedStatementListPosition(int position) {
+            if (position < 0 || position >= originsByMergedStatementOrder.size()) {
+                return Optional.empty();
+            }
+            return Optional.of(originsByMergedStatementOrder.get(position));
         }
 
         /**
          * Human-readable context for a failing statement (i18n). Omits the synthetic chain run name
-         * so diagnostics refer only to real source scripts and indices.
+         * so diagnostics refer only to real source scripts and step indices (not merged-chain
+         * positions).
          *
          * @param zestStatementIndex Zest statement index in the <strong>merged chain</strong>
          *     script (from {@link ZestStatement#getIndex()} while that chain runs), used only to
-         *     look up provenance; the message shows {@link
-         *     StatementOrigin#originalStatementIndex()} from the source script (or "-" when that
-         *     index is not applicable, e.g. synthetic chain rows).
+         *     look up provenance; the message uses the originating script name, source step index,
+         *     and line (statement type).
          */
         public String describe(int zestStatementIndex) {
             StatementOrigin o = byZestStatementIndex.get(zestStatementIndex);
             if (o == null) {
-                return Constant.messages.getString(
-                        "zest.chainprovenance.unknown", Integer.toString(zestStatementIndex));
+                return Constant.messages.getString("zest.chainprovenance.unknown");
             }
             ChainSegment seg = segments.get(o.segmentIndex());
             int sourceIdx = o.originalStatementIndex();
@@ -269,6 +281,86 @@ public final class ZestScriptMerger {
                     indexForMessage,
                     seg.scriptName(),
                     o.elementType());
+        }
+
+        /**
+         * Structured origin for a merged-chain statement index, when known.
+         *
+         * @param zestStatementIndex index in the merged chain script ({@link
+         *     ZestStatement#getIndex()})
+         */
+        public Optional<StatementOrigin> originForMergedIndex(int zestStatementIndex) {
+            return Optional.ofNullable(byZestStatementIndex.get(zestStatementIndex));
+        }
+
+        /**
+         * Resolves provenance for a statement during merged-chain execution. Uses {@link
+         * #originForMergedIndex(int)} on {@code stmt.getIndex()}, then matches {@code stmt} by
+         * reference or index in {@code mergedScript}'s statement list so failure fields can be
+         * filled without duplicating lookup logic outside Zest.
+         */
+        public Optional<StatementOrigin> originForExecutingStatement(
+                ZestScript mergedScript, ZestStatement stmt) {
+            if (stmt == null || mergedScript == null) {
+                return Optional.empty();
+            }
+            List<ZestStatement> statements = mergedScript.getStatements();
+            if (statements == null) {
+                return Optional.empty();
+            }
+            int listPos = mergedStatementListPosition(statements, stmt);
+            if (listPos >= 0) {
+                Optional<StatementOrigin> byList = originAtMergedStatementListPosition(listPos);
+                if (byList.isPresent()) {
+                    return byList;
+                }
+            }
+            Optional<StatementOrigin> byDeclared = originForMergedIndex(stmt.getIndex());
+            if (byDeclared.isPresent()) {
+                return byDeclared;
+            }
+            for (ZestStatement s : statements) {
+                if (s == stmt) {
+                    return originForMergedIndex(s.getIndex());
+                }
+            }
+            for (ZestStatement s : statements) {
+                if (s.getIndex() == stmt.getIndex()) {
+                    return originForMergedIndex(s.getIndex());
+                }
+            }
+            return Optional.empty();
+        }
+
+        private static int mergedStatementListPosition(
+                List<ZestStatement> statements, ZestStatement stmt) {
+            for (int i = 0; i < statements.size(); i++) {
+                if (statements.get(i) == stmt) {
+                    return i;
+                }
+            }
+            for (int i = 0; i < statements.size(); i++) {
+                if (statements.get(i).getIndex() == stmt.getIndex()) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        /**
+         * Merged-chain statement index for a source segment and statement index, when that mapping
+         * exists (inverse of {@link #originForMergedIndex(int)}).
+         */
+        public OptionalInt mergedIndexForSourcePosition(
+                int segmentIndex, int originalStatementIndex) {
+            for (Map.Entry<Integer, StatementOrigin> e : byZestStatementIndex.entrySet()) {
+                StatementOrigin o = e.getValue();
+                if (o.segmentIndex() == segmentIndex
+                        && o.originalStatementIndex() == originalStatementIndex) {
+                    return OptionalInt.of(e.getKey());
+                }
+            }
+            return OptionalInt.empty();
         }
 
         /**
@@ -285,7 +377,11 @@ public final class ZestScriptMerger {
             for (int i = 0; i < n; i++) {
                 map.put(stmts.get(i).getIndex(), orderedOrigins.get(i));
             }
-            return new ChainProvenance(segments, map);
+            List<StatementOrigin> alignedOrigins = new ArrayList<>(n);
+            for (int i = 0; i < n; i++) {
+                alignedOrigins.add(orderedOrigins.get(i));
+            }
+            return new ChainProvenance(segments, map, alignedOrigins);
         }
     }
 }

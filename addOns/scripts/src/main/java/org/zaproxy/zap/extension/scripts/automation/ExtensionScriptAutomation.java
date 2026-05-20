@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -42,6 +43,8 @@ import org.zaproxy.zap.eventBus.EventConsumer;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptEventListener;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
+import org.zaproxy.zap.extension.scripts.ExtensionScriptsUI;
+import org.zaproxy.zap.extension.scripts.internal.db.ScriptRunRecorder;
 
 public class ExtensionScriptAutomation extends ExtensionAdaptor {
 
@@ -51,7 +54,7 @@ public class ExtensionScriptAutomation extends ExtensionAdaptor {
     private ScriptJob job;
 
     private static final List<Class<? extends Extension>> DEPENDENCIES =
-            List.of(ExtensionScript.class, ExtensionAutomation.class);
+            List.of(ExtensionScript.class, ExtensionScriptsUI.class, ExtensionAutomation.class);
 
     private ExtensionAutomation extAuto;
     private ExtensionScript extensionScript;
@@ -173,13 +176,22 @@ public class ExtensionScriptAutomation extends ExtensionAdaptor {
 
             synchronized (runningPlans) {
                 runningPlans.forEach(
-                        plan ->
-                                plan.getProgress()
-                                        .error(
-                                                Constant.messages.getString(
-                                                        "scripts.automation.error.script",
-                                                        script.getName(),
-                                                        script.getLastErrorDetails())));
+                        plan -> {
+                            String message =
+                                    Constant.messages.getString(
+                                            "scripts.automation.error.script",
+                                            script.getName(),
+                                            script.getLastErrorDetails());
+                            plan.getProgress().error(message);
+                            ScriptRunRecorder.recordSingleScriptFailure(
+                                    script.getName(),
+                                    script.getTypeName(),
+                                    message,
+                                    StringUtils.defaultString(
+                                            ScriptRunFailureDetail
+                                                    .compactScriptOutputDetailForPersistence(
+                                                            script)));
+                        });
             }
         }
 
