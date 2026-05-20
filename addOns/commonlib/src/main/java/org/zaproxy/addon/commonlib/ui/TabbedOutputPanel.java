@@ -21,6 +21,7 @@ package org.zaproxy.addon.commonlib.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.FlowLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.lang.reflect.Method;
@@ -34,6 +35,7 @@ import javax.swing.AbstractButton;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
@@ -41,6 +43,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.DefaultCaret;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
@@ -88,18 +91,28 @@ public class TabbedOutputPanel extends OutputPanel {
             getImageIcon("/org/zaproxy/addon/commonlib/resources/ui-scroll-lock-pane.png");
     private static final ImageIcon GREEN_BADGE_CORNER_ICON =
             getImageIcon("/org/zaproxy/addon/commonlib/resources/green-badge-corner.png");
+    private static final ImageIcon CROSS_SMALL_GREY_ICON =
+            getImageIcon("/resource/icon/fugue/cross-small-grey.png");
+    private static final ImageIcon WARN_ICON = getImageIcon("/resource/icon/16/050.png");
     private static final OverlayIcon UNREAD_DOC_ICON = new OverlayIcon(DOC_ICON);
 
     static {
         UNREAD_DOC_ICON.add(GREEN_BADGE_CORNER_ICON);
     }
 
+    private static final int MAX_APPEND_LENGTH = 25_000_000;
+    private static final int SPLIT_LINE_LENGTH = 15_000;
+    private static final char NEWLINE = '\n';
+
     private final TabbedPanel2 tabbedPanel;
 
-    private final Map<String, ZapTextArea> txtOutputs = new HashMap<>();
+    private final Map<String, OutputTabComponents> outputTabs = new HashMap<>();
     private final Map<String, OutputSource> registeredOutputSources = new HashMap<>();
     private final Map<String, ChangeListener> outputSourceChangeListeners = new HashMap<>();
     private final AtomicInteger unreadTabsCounter = new AtomicInteger(0);
+
+    private record OutputTabComponents(
+            ZapTextArea txtOutput, JPanel notificationPanel, JLabel notificationLabel) {}
 
     public TabbedOutputPanel() {
         setLayout(new BorderLayout());
@@ -129,14 +142,14 @@ public class TabbedOutputPanel extends OutputPanel {
 
     @Override
     public void unregisterOutputSource(OutputSource source) {
-        if (txtOutputs.containsKey(source.getName())) {
+        if (outputTabs.containsKey(source.getName())) {
             for (Component tab : tabbedPanel.getTabList()) {
                 if (tab.getName().equals(source.getName())) {
                     tabbedPanel.removeTab((AbstractPanel) tab);
                     break;
                 }
             }
-            txtOutputs.remove(source.getName());
+            outputTabs.remove(source.getName());
         }
         registeredOutputSources.remove(source.getName());
         ChangeListener listener = outputSourceChangeListeners.remove(source.getName());
@@ -146,7 +159,7 @@ public class TabbedOutputPanel extends OutputPanel {
     }
 
     private synchronized void addNewOutputSource(String name) {
-        if (txtOutputs.containsKey(name)) {
+        if (outputTabs.containsKey(name)) {
             return;
         }
         Map<String, Object> attributes =
@@ -175,7 +188,19 @@ public class TabbedOutputPanel extends OutputPanel {
         outputSourceChangeListeners.put(name, changeListener);
 
         ZapTextArea txtOutput = buildOutputTextArea(outputTab, icon);
-        JToolBar toolBar = buildToolbar(txtOutput, attributes);
+        JPanel notificationPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 2));
+        JLabel notificationLabel = new JLabel(WARN_ICON);
+        notificationLabel.setText(
+                Constant.messages.getString("commonlib.output.panel.output.modified"));
+        notificationLabel.setToolTipText(
+                Constant.messages.getString("commonlib.output.panel.output.modified.tooltip"));
+        notificationPanel.add(notificationLabel);
+        JButton dismissButton = new JButton(CROSS_SMALL_GREY_ICON);
+        dismissButton.addActionListener(e -> dismissNotification(notificationPanel));
+        notificationPanel.add(dismissButton);
+        notificationPanel.setVisible(false);
+
+        JToolBar toolBar = buildToolbar(txtOutput, notificationPanel, attributes);
         toolBar.addMouseListener(
                 new java.awt.event.MouseAdapter() {
                     @Override
@@ -187,12 +212,17 @@ public class TabbedOutputPanel extends OutputPanel {
         var jScrollPane = new JScrollPane();
         jScrollPane.setViewportView(txtOutput);
         jScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        outputTab.add(jScrollPane, BorderLayout.CENTER);
+
+        JPanel contentPanel = new JPanel(new BorderLayout());
+        contentPanel.add(notificationPanel, BorderLayout.PAGE_START);
+        contentPanel.add(jScrollPane, BorderLayout.CENTER);
+        outputTab.add(contentPanel, BorderLayout.CENTER);
 
         boolean hideable = !DEFAULT_OUTPUT_SOURCE_NAME.equals(name);
         boolean visible = tabbedPanel.getTabCount() < 8;
         tabbedPanel.addTab(name, outputTab.getIcon(), outputTab, hideable, visible, -1);
-        txtOutputs.put(name, txtOutput);
+        outputTabs.put(
+                name, new OutputTabComponents(txtOutput, notificationPanel, notificationLabel));
     }
 
     private ZapTextArea buildOutputTextArea(AbstractPanel outputTab, Icon icon) {
@@ -297,14 +327,19 @@ public class TabbedOutputPanel extends OutputPanel {
         }
     }
 
-    private static JToolBar buildToolbar(ZapTextArea txtOutput, Map<String, Object> attributes) {
+    private static JToolBar buildToolbar(
+            ZapTextArea txtOutput, JPanel notificationPanel, Map<String, Object> attributes) {
         List<AbstractButton> buttons = new ArrayList<>();
 
         JButton clearButton = new JButton();
         clearButton.setName("clearButton");
         clearButton.setToolTipText(CLEAR_BUTTON_TOOL_TIP);
         clearButton.setIcon(BROOM_ICON);
-        clearButton.addActionListener(e -> txtOutput.setText(""));
+        clearButton.addActionListener(
+                e -> {
+                    txtOutput.setText("");
+                    dismissNotification(notificationPanel);
+                });
         buttons.add(clearButton);
 
         ZapToggleButton scrollLockButton = new ZapToggleButton();
@@ -358,10 +393,10 @@ public class TabbedOutputPanel extends OutputPanel {
 
     @Override
     public void append(String msg, String sourceName) {
-        if (!txtOutputs.containsKey(sourceName)) {
+        if (!outputTabs.containsKey(sourceName)) {
             addNewOutputSource(sourceName);
         }
-        ThreadUtils.invokeAndWaitHandled(() -> doAppend(txtOutputs.get(sourceName), msg));
+        ThreadUtils.invokeAndWaitHandled(() -> doAppend(outputTabs.get(sourceName), msg));
     }
 
     @Override
@@ -384,7 +419,7 @@ public class TabbedOutputPanel extends OutputPanel {
         outputSourceChangeListeners.values().forEach(tabbedPanel::removeChangeListener);
         outputSourceChangeListeners.clear();
         tabbedPanel.removeAll();
-        txtOutputs.clear();
+        outputTabs.clear();
         addNewOutputSource(DEFAULT_OUTPUT_SOURCE_NAME);
         unreadTabsCounter.set(0);
         setOutputPanelIcon(DOC_ICON);
@@ -392,8 +427,10 @@ public class TabbedOutputPanel extends OutputPanel {
 
     @Override
     public void clear(String sourceName) {
-        if (txtOutputs.containsKey(sourceName)) {
-            txtOutputs.get(sourceName).setText("");
+        if (outputTabs.containsKey(sourceName)) {
+            OutputTabComponents components = outputTabs.get(sourceName);
+            components.txtOutput().setText("");
+            dismissNotification(components.notificationPanel());
         }
     }
 
@@ -414,21 +451,95 @@ public class TabbedOutputPanel extends OutputPanel {
                         });
     }
 
-    private void doAppend(ZapTextArea txtOutput, String message) {
+    private void doAppend(OutputTabComponents components, String message) {
+        String finalMessage =
+                message.length() > MAX_APPEND_LENGTH
+                        ? StringUtils.right(message, MAX_APPEND_LENGTH)
+                        : message;
         if (Model.getSingleton()
                 .getOptionsParam()
                 .getViewParam()
                 .isOutputTabTimeStampingEnabled()) {
-            txtOutput.append(
+            finalMessage =
                     TimeStampUtils.getTimeStampedMessage(
-                            message,
+                            finalMessage,
                             Model.getSingleton()
                                     .getOptionsParam()
                                     .getViewParam()
-                                    .getOutputTabTimeStampsFormat()));
-        } else {
-            txtOutput.append(message);
+                                    .getOutputTabTimeStampsFormat());
         }
+        finalMessage = splitLongLines(finalMessage);
+        components.txtOutput().append(finalMessage);
+
+        if (finalMessage.length() != message.length()) {
+            JPanel notificationPanel = components.notificationPanel();
+            if (!notificationPanel.isVisible()) {
+                notificationPanel.setVisible(true);
+            }
+            notificationPanel.getParent().revalidate();
+            notificationPanel.getParent().repaint();
+        }
+    }
+
+    private static void dismissNotification(JPanel notificationPanel) {
+        if (notificationPanel.isVisible()) {
+            notificationPanel.setVisible(false);
+            notificationPanel.getParent().revalidate();
+            notificationPanel.getParent().repaint();
+        }
+    }
+
+    private static String splitLongLines(String message) {
+        int length = message.length();
+        if (length <= SPLIT_LINE_LENGTH) {
+            return message;
+        }
+
+        int pos = message.indexOf(NEWLINE);
+        if (pos == -1) {
+            StringBuilder strBuilder = new StringBuilder(length);
+            appendSplitLine(message, strBuilder, 0, length);
+            return strBuilder.toString();
+        }
+
+        int curr = 0;
+        StringBuilder strBuilder = null;
+
+        do {
+            int lineLength = pos - curr;
+            if (lineLength > SPLIT_LINE_LENGTH) {
+                if (strBuilder == null) {
+                    strBuilder = new StringBuilder(length);
+                    strBuilder.append(message, 0, curr);
+                    if (message.charAt(curr) == NEWLINE) {
+                        curr++;
+                    }
+                }
+                appendSplitLine(message, strBuilder, curr, pos);
+            } else if (strBuilder != null) {
+                strBuilder.append(message, curr, pos);
+            }
+
+            curr = pos;
+            pos = message.indexOf(NEWLINE, curr + 1);
+            if (pos == -1) {
+                pos = length;
+            }
+        } while (curr < length);
+
+        return strBuilder != null ? strBuilder.toString() : message;
+    }
+
+    private static void appendSplitLine(String data, StringBuilder strBuilder, int start, int end) {
+        int pos = start;
+        do {
+            if (!strBuilder.isEmpty()) {
+                strBuilder.append(NEWLINE);
+            }
+            int splitEnd = Math.min(pos + SPLIT_LINE_LENGTH, end);
+            strBuilder.append(data, pos, splitEnd);
+            pos = splitEnd;
+        } while (pos < end);
     }
 
     private static ImageIcon getImageIcon(String resourceName) {
