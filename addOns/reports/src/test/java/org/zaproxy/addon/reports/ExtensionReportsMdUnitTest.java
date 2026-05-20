@@ -20,8 +20,10 @@
 package org.zaproxy.addon.reports;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.withSettings;
@@ -97,5 +99,47 @@ class ExtensionReportsMdUnitTest extends TestUtils {
                 |  |  |  | Insight3 desc |  |
                 """;
         assertThat(report.trim(), is(equalTo(expected.trim())));
+    }
+
+    @Test
+    void shouldGenerateTraditionalMdWithScriptDiagnostics() throws Exception {
+        // Given
+        Template template = ReportTestUtils.getTemplateFromYamlFile("traditional-md");
+        File reportOutputFile =
+                File.createTempFile("script-diagnostics-traditional-md", template.getExtension());
+
+        // When
+        File generatedReportFile =
+                ReportTestUtils.generateReportWithScriptDiagnostics(template, reportOutputFile);
+        String report = ReportTestUtils.readReportAsString(generatedReportFile);
+
+        // Then
+        assertThat(report, is(containsString("## Script Diagnostics")));
+        assertThat(report, is(containsString("### 2026-04-01T12:00:00Z (FAILED)")));
+        assertThat(report, is(containsString("Job: ... boom")));
+        assertThat(report, is(containsString("#### 1. my-script (standalone)")));
+        assertThat(report, is(containsString("| -1 |  | ERROR | boom |")));
+        assertThat(report, is(containsString("### 2026-04-02T08:30:00Z (FAILED)")));
+        assertThat(
+                report,
+                is(containsString("| 13 | ZestClientElementClick | ERROR | step failed |")));
+    }
+
+    @Test
+    void shouldOmitScriptDiagnosticsFromMdWhenSectionDisabled() throws Exception {
+        // Given
+        Template template = ReportTestUtils.getTemplateFromYamlFile("traditional-md");
+        File reportOutputFile =
+                File.createTempFile(
+                        "script-diagnostics-traditional-md-disabled", template.getExtension());
+
+        // When
+        File generatedReportFile =
+                ReportTestUtils.generateReportWithScriptDiagnostics(
+                        template, reportOutputFile, false);
+        String report = ReportTestUtils.readReportAsString(generatedReportFile);
+
+        // Then
+        assertThat(report, is(not(containsString("Script Diagnostics"))));
     }
 }

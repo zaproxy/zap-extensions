@@ -12,6 +12,7 @@ sections:
  - statistics
  - params
  - sequencedetails
+ - scriptdiagnostics
 themes:
  - light
  - dark

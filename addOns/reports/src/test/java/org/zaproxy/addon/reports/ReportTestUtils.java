@@ -19,18 +19,32 @@
  */
 package org.zaproxy.addon.reports;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
 import com.lowagie.text.DocumentException;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.insights.internal.Insight;
 import org.zaproxy.addon.insights.report.ExtensionInsightsReport;
@@ -418,5 +432,159 @@ public class ReportTestUtils {
                                 ExtensionReports.class,
                                 "/reports/" + templateName + "/template.yaml")
                         .toFile());
+    }
+
+    static String readReportAsString(File report) throws IOException {
+        return Files.readString(report.toPath(), StandardCharsets.UTF_8);
+    }
+
+    /** Shared assertions for script diagnostics content in traditional reports. */
+    static final class ScriptDiagnosticsAssertions {
+
+        private ScriptDiagnosticsAssertions() {}
+
+        static void assertJsonScriptDiagnostics(JSONObject json) {
+            JSONObject scriptDiagnostics = json.getJSONObject("scriptDiagnostics");
+            assertThat(scriptDiagnostics.containsKey("runs"), is(true));
+            JSONArray runs = scriptDiagnostics.getJSONArray("runs");
+            assertThat(runs.size(), is(equalTo(2)));
+
+            JSONObject run0 = runs.getJSONObject(0);
+            assertJsonRunStructure(run0);
+            assertThat(run0.getString("outcome"), is(equalTo("FAILED")));
+            assertThat(run0.getString("summary"), is(equalTo("Job: ... boom")));
+            assertThat(run0.getString("created"), is(equalTo("2026-04-01T12:00:00Z")));
+            JSONObject script0 = run0.getJSONArray("scripts").getJSONObject(0);
+            assertJsonScriptStructure(script0);
+            assertThat(script0.getInt("order"), is(equalTo(1)));
+            assertThat(script0.getString("scriptName"), is(equalTo("my-script")));
+            assertThat(script0.getString("scriptType"), is(equalTo("standalone")));
+            JSONObject step0 = script0.getJSONArray("steps").getJSONObject(0);
+            assertJsonStepStructure(step0);
+            assertThat(step0.getInt("sourceStepIndex"), is(equalTo(-1)));
+            assertThat(step0.getString("line"), is(equalTo("")));
+            JSONObject output0 = step0.getJSONArray("outputs").getJSONObject(0);
+            assertJsonOutputStructure(output0);
+            assertThat(output0.getString("kind"), is(equalTo("ERROR")));
+            assertThat(output0.getString("message"), is(equalTo("boom")));
+
+            JSONObject run1 = runs.getJSONObject(1);
+            assertJsonRunStructure(run1);
+            assertThat(run1.getString("summary"), is(equalTo("Job: ... step failed")));
+            JSONObject script1 = run1.getJSONArray("scripts").getJSONObject(0);
+            assertThat(script1.getString("scriptName"), is(equalTo("chain-a")));
+            assertThat(script1.getInt("order"), is(equalTo(1)));
+            JSONObject step1 = script1.getJSONArray("steps").getJSONObject(0);
+            assertThat(step1.getInt("sourceStepIndex"), is(equalTo(13)));
+            assertThat(step1.getString("line"), is(equalTo("ZestClientElementClick")));
+        }
+
+        static void assertJsonRunStructure(JSONObject run) {
+            assertFalse(run.containsKey("createTimestamp"));
+            assertThat(run.containsKey("created"), is(true));
+            assertThat(run.containsKey("outcome"), is(true));
+            assertThat(run.containsKey("summary"), is(true));
+            assertThat(run.get("scripts"), is(not(nullValue())));
+            assertThat(run.get("scripts"), is(instanceOf(JSONArray.class)));
+        }
+
+        static void assertJsonScriptStructure(JSONObject script) {
+            assertThat(script.containsKey("order"), is(true));
+            assertThat(script.containsKey("scriptName"), is(true));
+            assertThat(script.containsKey("scriptType"), is(true));
+            assertThat(script.get("steps"), is(not(nullValue())));
+            assertThat(script.get("steps"), is(instanceOf(JSONArray.class)));
+        }
+
+        static void assertJsonStepStructure(JSONObject step) {
+            assertThat(step.containsKey("sourceStepIndex"), is(true));
+            assertThat(step.containsKey("line"), is(true));
+            assertThat(step.get("outputs"), is(not(nullValue())));
+            assertThat(step.get("outputs"), is(instanceOf(JSONArray.class)));
+        }
+
+        static void assertJsonOutputStructure(JSONObject output) {
+            assertThat(output.containsKey("kind"), is(true));
+            assertThat(output.containsKey("message"), is(true));
+            assertThat(output.containsKey("detail"), is(false));
+        }
+
+        static void assertXmlScriptDiagnostics(NodeList scriptDiagnosticsNodes) {
+            assertThat(scriptDiagnosticsNodes.getLength(), is(equalTo(1)));
+            Element scriptDiagnostics = (Element) scriptDiagnosticsNodes.item(0);
+            NodeList runs = scriptDiagnostics.getElementsByTagName("run");
+            assertThat(runs.getLength(), is(equalTo(2)));
+
+            assertXmlRun(
+                    (Element) runs.item(0),
+                    "2026-04-01T12:00:00Z",
+                    "FAILED",
+                    "Job: ... boom",
+                    "my-script",
+                    "standalone",
+                    "-1",
+                    "",
+                    "ERROR",
+                    "boom");
+            assertXmlRun(
+                    (Element) runs.item(1),
+                    "2026-04-02T08:30:00Z",
+                    "FAILED",
+                    "Job: ... step failed",
+                    "chain-a",
+                    "standalone",
+                    "13",
+                    "ZestClientElementClick",
+                    "ERROR",
+                    "step failed");
+        }
+
+        private static void assertXmlRun(
+                Element run,
+                String created,
+                String outcome,
+                String summary,
+                String scriptName,
+                String scriptType,
+                String sourceStepIndex,
+                String line,
+                String outputKind,
+                String outputMessage) {
+            assertThat(
+                    run.getElementsByTagName("created").item(0).getTextContent(),
+                    is(equalTo(created)));
+            assertThat(
+                    run.getElementsByTagName("outcome").item(0).getTextContent(),
+                    is(equalTo(outcome)));
+            assertThat(
+                    run.getElementsByTagName("summary").item(0).getTextContent(),
+                    is(equalTo(summary)));
+
+            Element script = (Element) run.getElementsByTagName("script").item(0);
+            assertThat(
+                    script.getElementsByTagName("order").item(0).getTextContent(),
+                    is(equalTo("1")));
+            assertThat(
+                    script.getElementsByTagName("scriptName").item(0).getTextContent(),
+                    is(equalTo(scriptName)));
+            assertThat(
+                    script.getElementsByTagName("scriptType").item(0).getTextContent(),
+                    is(equalTo(scriptType)));
+
+            Element step = (Element) script.getElementsByTagName("step").item(0);
+            assertThat(
+                    step.getElementsByTagName("sourceStepIndex").item(0).getTextContent(),
+                    is(equalTo(sourceStepIndex)));
+            assertThat(
+                    step.getElementsByTagName("line").item(0).getTextContent(), is(equalTo(line)));
+
+            Element output = (Element) step.getElementsByTagName("output").item(0);
+            assertThat(
+                    output.getElementsByTagName("kind").item(0).getTextContent(),
+                    is(equalTo(outputKind)));
+            assertThat(
+                    output.getElementsByTagName("message").item(0).getTextContent(),
+                    is(equalTo(outputMessage)));
+        }
     }
 }

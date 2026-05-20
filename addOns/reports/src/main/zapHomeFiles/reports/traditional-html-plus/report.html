@@ -162,6 +162,37 @@
 		<div class="spacer-lg"></div>
 	</th:block>
 
+	<th:block
+		th:if="${reportData.isIncludeSection('scriptdiagnostics') &amp;&amp; reportData.reportObjects.get('scriptDiagnostics') != null}">
+		<h3 th:text="#{report.scriptdiagnostics.title}" class="left-header">Script Diagnostics</h3>
+		<th:block
+			th:each="run, runState: ${reportData.reportObjects.get('scriptDiagnostics').runs}">
+			<h4 th:text="${run.created + ' (' + run.outcome + ')'}">Run</h4>
+			<p th:text="${run.summary}">Summary</p>
+			<th:block th:each="scr: ${run.scripts}">
+				<h5
+					th:text="${scr.order + '. ' + scr.scriptName + ' (' + scr.scriptType + ')'}">Script</h5>
+				<table class="summary100">
+					<tr>
+						<th th:text="#{report.scriptdiagnostics.step}">Step</th>
+						<th th:text="#{report.scriptdiagnostics.line}">Line</th>
+						<th th:text="#{report.scriptdiagnostics.kind}">Kind</th>
+						<th th:text="#{report.scriptdiagnostics.message}">Message</th>
+					</tr>
+					<th:block th:each="st: ${scr.steps}">
+						<tr th:each="out: ${st.outputs}">
+							<td th:text="${st.sourceStepIndex}">Step</td>
+							<td th:text="${st.line}">Line</td>
+							<td th:text="${out.kind}">Kind</td>
+							<td th:text="${out.message}">Message</td>
+						</tr>
+					</th:block>
+				</table>
+			</th:block>
+			<div class="spacer-lg"></div>
+		</th:block>
+	</th:block>
+
 	<th:block th:if="${reportData.isIncludeSection('sequencedetails')}">
 		<th:block
 			th:if="${reportData.reportObjects.get('seqAScanData') != null}">

@@ -479,6 +479,46 @@ class ExtensionReportsXmlUnitTest extends TestUtils {
                 insights.item(0).getChildNodes().item(5), "", "insight.3", "Insight3 desc", "30");
     }
 
+    @Test
+    void shouldGenerateTraditionalXmlWithScriptDiagnostics() throws Exception {
+        // Given
+        Template template = ReportTestUtils.getTemplateFromYamlFile("traditional-xml");
+        File f = File.createTempFile("script-diagnostics-traditional-xml", template.getExtension());
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        DocumentBuilder db = dbf.newDocumentBuilder();
+
+        // When
+        File r = ReportTestUtils.generateReportWithScriptDiagnostics(template, f);
+        Document doc = db.parse(r);
+
+        // Then
+        assertThat(doc.getDocumentElement().getNodeName(), is(equalTo("OWASPZAPReport")));
+        ReportTestUtils.ScriptDiagnosticsAssertions.assertXmlScriptDiagnostics(
+                doc.getElementsByTagName("scriptDiagnostics"));
+    }
+
+    @Test
+    void shouldGenerateTraditionalXmlPlusWithScriptDiagnostics() throws Exception {
+        // Given
+        Template template = ReportTestUtils.getTemplateFromYamlFile("traditional-xml-plus");
+        File f =
+                File.createTempFile(
+                        "script-diagnostics-traditional-xml-plus", template.getExtension());
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        DocumentBuilder db = dbf.newDocumentBuilder();
+
+        // When
+        File r = ReportTestUtils.generateReportWithScriptDiagnostics(template, f);
+        Document doc = db.parse(r);
+
+        // Then
+        assertThat(doc.getDocumentElement().getNodeName(), is(equalTo("OWASPZAPReport")));
+        ReportTestUtils.ScriptDiagnosticsAssertions.assertXmlScriptDiagnostics(
+                doc.getElementsByTagName("scriptDiagnostics"));
+    }
+
     private static void validateInsight(
             Node insightNode, String site, String key, String desc, String stat) {
         assertThat(insightNode.getChildNodes().getLength(), is(equalTo(13)));

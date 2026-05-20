@@ -20,6 +20,7 @@
 package org.zaproxy.addon.reports;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
@@ -861,5 +862,57 @@ class ExtensionReportsUnitTest extends TestUtils {
         public void append(LogEvent event) {
             logConsumer.accept(((StringLayout) getLayout()).toSerializable(event));
         }
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"traditional-html", "traditional-html-plus"})
+    void shouldGenerateTraditionalHtmlReportsWithScriptDiagnostics(String templateName)
+            throws Exception {
+        // Given
+        Template template = ReportTestUtils.getTemplateFromYamlFile(templateName);
+        File f = File.createTempFile("script-diagnostics-" + templateName, template.getExtension());
+
+        // When
+        File r = ReportTestUtils.generateReportWithScriptDiagnostics(template, f);
+        String report = ReportTestUtils.readReportAsString(r);
+
+        // Then
+        assertThat(report, is(containsString("Script Diagnostics")));
+        assertThat(report, is(containsString("2026-04-01T12:00:00Z (FAILED)")));
+        assertThat(report, is(containsString("Job: ... boom")));
+        assertThat(report, is(containsString("my-script")));
+        assertThat(report, is(containsString("ZestClientElementClick")));
+        assertThat(report, is(containsString("step failed")));
+    }
+
+    @Test
+    void shouldGenerateTraditionalPdfWithScriptDiagnostics() throws Exception {
+        // Given
+        Template template = ReportTestUtils.getTemplateFromYamlFile("traditional-pdf");
+        File f = File.createTempFile("script-diagnostics-traditional-pdf", template.getExtension());
+
+        // When
+        File r = ReportTestUtils.generateReportWithScriptDiagnostics(template, f);
+
+        // Then
+        byte[] reportBytes = Files.readAllBytes(r.toPath());
+        assertThat(reportBytes.length, is(greaterThan(1000)));
+        assertThat(Arrays.copyOf(reportBytes, 4), is(equalTo(new byte[] {'%', 'P', 'D', 'F'})));
+    }
+
+    @Test
+    void shouldOmitScriptDiagnosticsFromHtmlWhenSectionDisabled() throws Exception {
+        // Given
+        Template template = ReportTestUtils.getTemplateFromYamlFile("traditional-html");
+        File f =
+                File.createTempFile(
+                        "script-diagnostics-traditional-html-disabled", template.getExtension());
+
+        // When
+        File r = ReportTestUtils.generateReportWithScriptDiagnostics(template, f, false);
+        String report = ReportTestUtils.readReportAsString(r);
+
+        // Then
+        assertThat(report, is(not(containsString("Script Diagnostics"))));
     }
 }

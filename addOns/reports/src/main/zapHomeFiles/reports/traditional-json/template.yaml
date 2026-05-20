@@ -2,3 +2,5 @@ name: Traditional JSON Report
 format: JSON
 mode: TEXT
 extension: json
+sections:
+ - scriptdiagnostics

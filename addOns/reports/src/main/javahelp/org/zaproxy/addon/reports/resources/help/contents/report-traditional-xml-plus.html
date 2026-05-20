@@ -6,6 +6,19 @@
 <BODY>
 	<H1>Traditional XML Report with Requests and Responses</H1>
 
+	<H3>Sections</H3>
+
+	<table>
+		<tr>
+			<th align="left">Section</th>
+			<th align="left">ID</th>
+		</tr>
+		<tr>
+			<td>Script Diagnostics</td>
+			<td>scriptdiagnostics</td>
+		</tr>
+	</table>
+
 	<H3>Sample</H3>
 
 	<pre>
@@ -210,6 +223,53 @@
                                 &lt;/statistic&gt;
                         &lt;/statistics&gt;
         &lt;/OWASPZAPReport&gt;                
+</pre>
+
+	<h4>Script Diagnostics Section</h4>
+	When the
+	<code>scriptdiagnostics</code>
+	section is enabled and the Script Console add-on has recorded runs in
+	the session database, the report can include a
+	<code>scriptDiagnostics</code>
+	element containing
+	<code>run</code>
+	elements with script diagnostic records (for example failed automation
+	runs). For example:
+
+	<pre>
+        &lt;scriptDiagnostics&gt;
+                &lt;run&gt;
+                        &lt;created&gt;2026-05-13T12:19:50.536360Z&lt;/created&gt;
+                        &lt;outcome&gt;FAILED&lt;/outcome&gt;
+                        &lt;summary&gt;Job: script Chain order: account_check -&gt; nav failed.&lt;/summary&gt;
+                        &lt;scripts&gt;
+                                &lt;script&gt;
+                                        &lt;order&gt;1&lt;/order&gt;
+                                        &lt;scriptName&gt;account_check&lt;/scriptName&gt;
+                                        &lt;scriptType&gt;standalone&lt;/scriptType&gt;
+                                        &lt;steps&gt;
+                                        &lt;/steps&gt;
+                                &lt;/script&gt;
+                                &lt;script&gt;
+                                        &lt;order&gt;2&lt;/order&gt;
+                                        &lt;scriptName&gt;nav&lt;/scriptName&gt;
+                                        &lt;scriptType&gt;standalone&lt;/scriptType&gt;
+                                        &lt;steps&gt;
+                                                &lt;step&gt;
+                                                        &lt;sourceStepIndex&gt;13&lt;/sourceStepIndex&gt;
+                                                        &lt;line&gt;ZestClientElementClick&lt;/line&gt;
+                                                        &lt;outputs&gt;
+                                                                &lt;output&gt;
+                                                                        &lt;kind&gt;ERROR&lt;/kind&gt;
+                                                                        &lt;message&gt;ZestClientElementClick - Expected condition failed...&lt;/message&gt;
+                                                                &lt;/output&gt;
+                                                        &lt;/outputs&gt;
+                                                &lt;/step&gt;
+                                        &lt;/steps&gt;
+                                &lt;/script&gt;
+                        &lt;/scripts&gt;
+                &lt;/run&gt;
+        &lt;/scriptDiagnostics&gt;
 </pre>
 
 </BODY>
