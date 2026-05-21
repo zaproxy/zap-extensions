@@ -72,6 +72,7 @@ val addOns =
         "packpentester",
         "packscanrules",
         "paramdigger",
+        "params",
         "plugnhack",
         "postman",
         "pscan",
