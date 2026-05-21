@@ -66,7 +66,6 @@ import org.zaproxy.addon.automation.jobs.ActiveScanJob;
 import org.zaproxy.addon.automation.jobs.ActiveScanPolicyJob;
 import org.zaproxy.addon.automation.jobs.DelayJob;
 import org.zaproxy.addon.automation.jobs.ExitStatusJob;
-import org.zaproxy.addon.automation.jobs.ParamsJob;
 import org.zaproxy.addon.automation.jobs.RequestorJob;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.stats.InMemoryStats;
@@ -130,7 +129,7 @@ class ExtensionAutomationUnitTest extends TestUtils {
         Map<String, AutomationJob> jobs = extAuto.getAutomationJobs();
 
         // Then
-        assertThat(jobs.size(), is(equalTo(8)));
+        assertThat(jobs.size(), is(equalTo(7)));
         assertThat(
                 jobs.containsKey(org.zaproxy.addon.automation.jobs.AddOnJob.JOB_NAME),
                 is(equalTo(true)));
@@ -138,7 +137,6 @@ class ExtensionAutomationUnitTest extends TestUtils {
         assertThat(jobs.containsKey(ActiveScanJob.JOB_NAME), is(equalTo(true)));
         assertThat(jobs.containsKey(ActiveScanConfigJob.JOB_NAME), is(equalTo(true)));
         assertThat(jobs.containsKey(ActiveScanPolicyJob.JOB_NAME), is(equalTo(true)));
-        assertThat(jobs.containsKey(ParamsJob.JOB_NAME), is(equalTo(true)));
         assertThat(jobs.containsKey(RequestorJob.JOB_NAME), is(equalTo(true)));
         assertThat(jobs.containsKey(ExitStatusJob.JOB_NAME), is(equalTo(true)));
     }

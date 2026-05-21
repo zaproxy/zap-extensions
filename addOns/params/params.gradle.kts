@@ -24,6 +24,21 @@ zapAddOn {
                 }
             }
         }
+
+        extensions {
+            register("org.zaproxy.addon.params.automation.ExtensionParamsAutomation") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.addon.params.automation"))
+                }
+                dependencies {
+                    addOns {
+                        register("automation") {
+                            version.set(">= 0.42.0 & < 1.0.0")
+                        }
+                    }
+                }
+            }
+        }
     }
 
     apiClientGen {
@@ -46,6 +61,7 @@ jdoEnhance {
 dependencies {
     jdoEnhance(libs.database.datanucleusJdo)
 
+    zapAddOn("automation")
     zapAddOn("database")
     zapAddOn("pscan")
 

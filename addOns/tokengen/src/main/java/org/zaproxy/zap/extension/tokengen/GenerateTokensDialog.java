@@ -40,7 +40,7 @@ import org.parosproxy.paros.extension.AbstractDialog;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.extension.params.HtmlParameterStats;
+import org.zaproxy.addon.params.HtmlParameterStats;
 
 @SuppressWarnings("serial")
 public class GenerateTokensDialog extends AbstractDialog {

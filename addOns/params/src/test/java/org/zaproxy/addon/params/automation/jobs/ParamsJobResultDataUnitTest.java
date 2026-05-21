@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.automation.jobs;
+package org.zaproxy.addon.params.automation.jobs;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -45,9 +45,9 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HtmlParameter;
-import org.zaproxy.zap.extension.params.ExtensionParams;
-import org.zaproxy.zap.extension.params.HtmlParameterStats;
-import org.zaproxy.zap.extension.params.SiteParameters;
+import org.zaproxy.addon.params.ExtensionParams2;
+import org.zaproxy.addon.params.HtmlParameterStats;
+import org.zaproxy.addon.params.SiteParameters;
 import org.zaproxy.zap.utils.I18N;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
@@ -58,7 +58,7 @@ class ParamsJobResultDataUnitTest {
     private static MockedStatic<CommandLine> mockedCmdLine;
 
     private ExtensionLoader extensionLoader;
-    private ExtensionParams extParams;
+    private ExtensionParams2 extParams;
 
     @BeforeAll
     static void init() {
@@ -79,8 +79,8 @@ class ParamsJobResultDataUnitTest {
 
         extensionLoader =
                 mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
-        extParams = mock(ExtensionParams.class);
-        given(extensionLoader.getExtension(ExtensionParams.class)).willReturn(extParams);
+        extParams = mock(ExtensionParams2.class);
+        given(extensionLoader.getExtension(ExtensionParams2.class)).willReturn(extParams);
 
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
         Model.getSingleton().getOptionsParam().load(new ZapXmlConfiguration());

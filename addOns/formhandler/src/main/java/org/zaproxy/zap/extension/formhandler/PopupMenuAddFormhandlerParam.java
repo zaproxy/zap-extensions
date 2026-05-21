@@ -24,9 +24,9 @@ import javax.swing.JTable;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.extension.params.HtmlParameterStats;
-import org.zaproxy.zap.extension.params.ParamsPanel;
-import org.zaproxy.zap.extension.params.ParamsTableModel;
+import org.zaproxy.addon.params.HtmlParameterStats;
+import org.zaproxy.addon.params.ParamsPanel;
+import org.zaproxy.addon.params.ParamsTableModel;
 
 public class PopupMenuAddFormhandlerParam extends ExtensionPopupMenuItem {
 
@@ -38,11 +38,12 @@ public class PopupMenuAddFormhandlerParam extends ExtensionPopupMenuItem {
         super(Constant.messages.getString("formhandler.popup.menu.params.add.label"));
         this.addActionListener(
                 e -> {
-                    PopupDialogAddField popupDialogAddField = null;
+                    if (!(paramTable.getModel() instanceof ParamsTableModel paramsModel)) {
+                        return;
+                    }
                     HtmlParameterStats hps =
-                            ((ParamsTableModel) paramTable.getModel())
-                                    .getHtmlParameterStatsAtRow(paramTable.getSelectedRow());
-                    popupDialogAddField =
+                            paramsModel.getHtmlParameterStatsAtRow(paramTable.getSelectedRow());
+                    PopupDialogAddField popupDialogAddField =
                             new PopupDialogAddField(
                                     View.getSingleton().getOptionsDialog(null),
                                     hps.getName(),
@@ -54,8 +55,12 @@ public class PopupMenuAddFormhandlerParam extends ExtensionPopupMenuItem {
     @Override
     public boolean isEnableForComponent(Component invoker) {
         if (invoker.getName() != null && invoker.getName().equals(ParamsPanel.PANEL_NAME)) {
-            this.paramTable = (JTable) invoker;
-            this.setEnabled(paramTable.getSelectedRowCount() == 1);
+            JTable table = (JTable) invoker;
+            if (!(table.getModel() instanceof ParamsTableModel)) {
+                return false;
+            }
+            this.paramTable = table;
+            this.setEnabled(table.getSelectedRowCount() == 1);
             return true;
         }
         return false;
