@@ -17,7 +17,7 @@ zapAddOn {
                     version.set(">=1.17.0")
                 }
                 register("network") {
-                    version.set(">=0.1.0")
+                    version.set(">=0.28.0")
                 }
                 register("pscan") {
                     version.set(">=0.6.0")
