@@ -102,7 +102,7 @@ public class TlsProtocolHandler extends ByteToMessageDecoder {
     }
 
     private boolean upgrade(ChannelHandlerContext ctx, ByteBuf in) throws Exception {
-        if (!SslHandler.isEncrypted(in)) {
+        if (!SslHandler.isEncrypted(in, false)) {
             return false;
         }
 

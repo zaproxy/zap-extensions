@@ -20,6 +20,7 @@
 package org.zaproxy.addon.network.internal.handlers;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -71,6 +72,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLHandshakeException;
@@ -520,6 +522,39 @@ class TlsProtocolHandlerUnitTest {
     }
 
     @Test
+    void shouldFireExceptionOnServerSideWhenHandshakeFails() throws Exception {
+        // Given
+        AtomicReference<Throwable> serverException = new AtomicReference<>();
+        CountDownLatch exceptionLatch = new CountDownLatch(1);
+        createServer(
+                ch -> {
+                    ch.attr(ChannelAttributes.CERTIFICATE_SERVICE).set(certificateService);
+                    ch.attr(ChannelAttributes.TLS_CONFIG).set(tlsConfig);
+                    ch.pipeline()
+                            .addLast(new TlsProtocolHandler())
+                            .addLast(
+                                    new ChannelInboundHandlerAdapter() {
+                                        @Override
+                                        public void exceptionCaught(
+                                                ChannelHandlerContext ctx, Throwable cause) {
+                                            serverException.set(cause);
+                                            exceptionLatch.countDown();
+                                            ctx.close();
+                                        }
+                                    });
+                });
+        int port = server.start(Server.ANY_PORT);
+        createClientTls(port, new AlpnTestHandler(), createAlpnConfig("h0"));
+        given(tlsConfig.isAlpnEnabled()).willReturn(true);
+        given(tlsConfig.getApplicationProtocols()).willReturn(List.of("different-protocol"));
+        // When
+        assertThrows(SSLHandshakeException.class, () -> clientTls.connect(port, ""));
+        // Then
+        assertThat(exceptionLatch.await(5, TimeUnit.SECONDS), is(true));
+        assertThat(serverException.get(), is(instanceOf(SSLException.class)));
+    }
+
+    @Test
     void shouldCallPipelineConfiguratorAfterProtocolNegotiation() throws Exception {
         // Given
         int port = server.start(Server.ANY_PORT);
@@ -561,6 +596,24 @@ class TlsProtocolHandlerUnitTest {
         assertThrows(SSLHandshakeException.class, () -> clientTls.connect(port, ""));
         // Then
         verify(pipelineConfigurator, times(0)).configure(any(), any());
+    }
+
+    @Test
+    void shouldCallPipelineConfiguratorWithH2Protocol() throws Exception {
+        // Given
+        int port = server.start(Server.ANY_PORT);
+        createClientTls(
+                port,
+                new AlpnTestHandler(),
+                createAlpnConfig(TlsUtils.APPLICATION_PROTOCOL_HTTP_2));
+        given(tlsConfig.isAlpnEnabled()).willReturn(true);
+        given(tlsConfig.getApplicationProtocols())
+                .willReturn(List.of(TlsUtils.APPLICATION_PROTOCOL_HTTP_2));
+        pipelineConfigurator = mock(PipelineConfigurator.class);
+        // When
+        clientTls.connect(port, "");
+        // Then
+        verify(pipelineConfigurator).configure(any(), eq(TlsUtils.APPLICATION_PROTOCOL_HTTP_2));
     }
 
     private void waitForServerChannel() throws InterruptedException {
