@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.1.0] - 2026-05-21
 ### Added
 - MCP Import.
 - Automation framework support.
@@ -19,4 +19,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version with initial resources, tools, and prompts.
 
+[0.1.0]: https://github.com/zaproxy/zap-extensions/releases/mcp-v0.1.0
 [0.0.1]: https://github.com/zaproxy/zap-extensions/releases/mcp-v0.0.1
