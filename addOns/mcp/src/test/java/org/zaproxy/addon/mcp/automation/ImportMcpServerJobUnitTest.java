@@ -185,6 +185,47 @@ class ImportMcpServerJobUnitTest extends TestUtils {
         assertThat(captor.getValue().securityKey(), is(equalTo("Bearer token123")));
     }
 
+    @Test
+    void shouldSubstituteEnvVarInServerUrl() {
+        // Given — serverUrl is a ${VAR} reference resolved from the plan's env vars
+        ImportMcpServerJob job = jobFromYaml("parameters:\n  serverUrl: '${MCP_TARGET}'");
+        AutomationPlan plan = new AutomationPlan();
+        plan.getEnv().getData().getVars().put("MCP_TARGET", "http://resolved.example.com");
+        job.verifyParameters(plan.getProgress());
+
+        // When
+        job.runJob(plan.getEnv(), plan.getProgress());
+
+        // Then
+        org.mockito.ArgumentCaptor<McpImporter.ImportConfig> captor =
+                org.mockito.ArgumentCaptor.forClass(McpImporter.ImportConfig.class);
+        org.mockito.Mockito.verify(importer).importServer(captor.capture());
+        assertThat(captor.getValue().serverUrl(), is(equalTo("http://resolved.example.com")));
+    }
+
+    @Test
+    void shouldSubstituteEnvVarInSecurityKey() {
+        // Given — securityKey is a ${VAR} reference resolved from the plan's env vars
+        ImportMcpServerJob job =
+                jobFromYaml(
+                        "parameters:\n"
+                                + "  serverUrl: 'http://mcp.example.com'\n"
+                                + "  securityKey: '${MCP_SECURITY_KEY}'");
+        AutomationPlan plan = new AutomationPlan();
+        plan.getEnv().getData().getVars().put("MCP_SECURITY_KEY", "Bearer secret-abc");
+        job.verifyParameters(plan.getProgress());
+
+        // When
+        job.runJob(plan.getEnv(), plan.getProgress());
+
+        // Then
+        org.mockito.ArgumentCaptor<McpImporter.ImportConfig> captor =
+                org.mockito.ArgumentCaptor.forClass(McpImporter.ImportConfig.class);
+        org.mockito.Mockito.verify(importer).importServer(captor.capture());
+        assertThat(captor.getValue().serverUrl(), is(equalTo("http://mcp.example.com")));
+        assertThat(captor.getValue().securityKey(), is(equalTo("Bearer secret-abc")));
+    }
+
     // ---- helpers ----
 
     private ImportMcpServerJob jobFromYaml(String yaml) {

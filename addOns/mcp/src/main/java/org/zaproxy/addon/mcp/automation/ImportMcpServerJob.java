@@ -90,7 +90,8 @@ public class ImportMcpServerJob extends AutomationJob {
         McpImporter.ImportResults results =
                 importer.importServer(
                         new McpImporter.ImportConfig(
-                                parameters.getServerUrl(), parameters.getSecurityKey()));
+                                env.replaceVars(parameters.getServerUrl()),
+                                env.replaceVars(parameters.getSecurityKey())));
 
         for (String error : results.errors()) {
             // Deliberately log errors as AF warnings
