@@ -99,7 +99,7 @@ public class HttpToHttp2ConnectionHandler extends Http2ConnectionHandler {
 
         Http2ConnectionDecoder decoder =
                 new DefaultHttp2ConnectionDecoder(
-                        connection, encoder, reader, ALWAYS_VERIFY, true, true);
+                        connection, encoder, reader, ALWAYS_VERIFY, true, true, true);
 
         decoder = new Http2EmptyDataFrameConnectionDecoder(decoder, 2);
         HttpToHttp2ConnectionHandler handler;
