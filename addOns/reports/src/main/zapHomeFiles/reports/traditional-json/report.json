@@ -5,21 +5,21 @@
 	"created": [[${created}]],[#th:block th:if="${reportData.reportObjects.get('insightsList') != null}"]
 	"insights":[[#th:block th:each="ins, insState: ${reportData.reportObjects.get('insightsList')}"][#th:block th:if="${! insState.first}"],[/th:block]
 		{
-			"level": "[(${ins.level})]",
-			"reason": "[(${ins.reason})]",
-			"site": "[(${ins.site})]",
-			"key": "[(${ins.key})]",
-			"description": "[(${ins.description})]",
-			"statistic": "[(${ins.statistic})]"
+			"level": [[${ins.level}]],
+			"reason": [[${ins.reason}]],
+			"site": [[${ins.site}]],
+			"key": [[${ins.key}]],
+			"description": [[${ins.description}]],
+			"statistic": [[${ins.statistic}]]
 		}[/th:block]
 	],[/th:block][#th:block th:if="${reportData.reportObjects.get('stoppingInsight') != null}" th:with="stopping=${reportData.reportObjects.get('stoppingInsight')}"]
 	"stoppingInsight":{
-		"level": "[(${stopping.level})]",
-		"reason": "[(${stopping.reason})]",
-		"site": "[(${stopping.site})]",
-		"key": "[(${stopping.key})]",
-		"description": "[(${stopping.description})]",
-		"statistic": "[(${stopping.statistic})]"
+		"level": [[${stopping.level}]],
+		"reason": [[${stopping.reason}]],
+		"site": [[${stopping.site}]],
+		"key": [[${stopping.key}]],
+		"description": [[${stopping.description}]],
+		"statistic": [[${stopping.statistic}]]
 	},[/th:block]
 	"site":[ [#th:block th:each="site, siteState: ${reportData.sites}"][#th:block th:if="${! siteState.first}"],[/th:block]
 		{

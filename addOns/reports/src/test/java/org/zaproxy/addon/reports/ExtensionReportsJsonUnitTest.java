@@ -787,7 +787,7 @@ class ExtensionReportsJsonUnitTest extends TestUtils {
         JSONObject stoppingInsight = json.getJSONObject("stoppingInsight");
         assertThat(stoppingInsight.getString("key"), is(equalTo("insight.auth.failure")));
         assertThat(stoppingInsight.getString("site"), is(equalTo("https://www.example.com")));
-        assertThat(stoppingInsight.getString("statistic"), is(equalTo("75")));
+        assertThat(stoppingInsight.getLong("statistic"), is(equalTo(75L)));
     }
 
     @Test
