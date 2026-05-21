@@ -5,6 +5,9 @@
 
 <map version="1.0">
     <mapID target="addon.mcp" url="contents/mcp.html" />
+    <mapID target="addon.mcp.automation" url="contents/mcp-automation.html" />
+    <mapID target="addon.mcp.automation.config" url="contents/mcp-automation-config.html" />
+    <mapID target="addon.mcp.automation.import" url="contents/mcp-automation-import.html" />
     <mapID target="addon.mcp.options" url="contents/mcp-options.html" />
     <mapID target="addon.mcp.tools" url="contents/mcp-tools.html" />
     <mapID target="addon.mcp.prompts" url="contents/mcp-prompts.html" />
