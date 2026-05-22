@@ -298,8 +298,8 @@ public enum Browser {
         return false;
     }
 
-    static void setZapHomeDir(Path path) {
-        zapHomeDir = path;
+    static void clearZapHomeDir() {
+        zapHomeDir = null;
     }
 
     private static Path getZapHomeDir() {

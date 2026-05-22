@@ -84,9 +84,5 @@ dependencies {
         setTransitive(false)
     }
 
-    testImplementation(libs.test.hamcrest)
-    testImplementation(libs.test.junit.jupiter)
-    testRuntimeOnly(libs.test.junit.platformLauncher)
-    testImplementation(libs.test.mockito.junit.jupiter)
     testImplementation(libs.log4j.core)
 }

@@ -35,12 +35,9 @@ import java.net.ServerSocket;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.text.MessageFormat;
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -56,7 +53,6 @@ import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
@@ -99,9 +95,6 @@ public abstract class TestUtils {
      * <p>Can be used for other temporary files/dirs.
      */
     @TempDir protected static Path tempDir;
-
-    private static String zapInstallDir;
-    private static String zapHomeDir;
 
     private static CloseableHttpSenderImpl<?> httpSender;
 
@@ -155,20 +148,6 @@ public abstract class TestUtils {
         }
     }
 
-    @BeforeAll
-    public static void beforeClass() throws Exception {
-        Path installDir = Files.createTempDirectory(tempDir, "install");
-        Path xmlDir = Files.createDirectory(installDir.resolve("xml"));
-        Files.createFile(xmlDir.resolve("log4j2.properties"));
-
-        zapInstallDir = installDir.toAbsolutePath().toString();
-        createHomeDirectory();
-    }
-
-    private static void createHomeDirectory() throws Exception {
-        zapHomeDir = Files.createTempDirectory(tempDir, "home").toAbsolutePath().toString();
-    }
-
     /**
      * Sets up ZAP, by initialising the home/installation dirs and core classes (for example, {@link
      * Constant}, {@link Control}, {@link Model}).
@@ -177,10 +156,6 @@ public abstract class TestUtils {
      * @see #setUpMessages()
      */
     protected void setUpZap() throws Exception {
-        Constant.setZapInstall(zapInstallDir);
-        createHomeDirectory();
-        Constant.setZapHome(zapHomeDir);
-
         Control control = mock(Control.class, withSettings().strictness(Strictness.LENIENT));
         when(control.getExtensionLoader()).thenReturn(mock(ExtensionLoader.class));
 
@@ -246,44 +221,6 @@ public abstract class TestUtils {
      * @see #mockMessages(Extension...)
      */
     protected void setUpMessages() {}
-
-    /**
-     * Deletes the ZAP's home directory.
-     *
-     * @throws Exception if an error occurred while deleting the home directory.
-     */
-    @AfterEach
-    public void shutDown() throws Exception {
-        deleteDir(Paths.get(zapHomeDir));
-    }
-
-    private static void deleteDir(Path dir) throws IOException {
-        if (Files.notExists(dir)) {
-            return;
-        }
-
-        Files.walkFileTree(
-                dir,
-                new SimpleFileVisitor<Path>() {
-
-                    @Override
-                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
-                            throws IOException {
-                        Files.delete(file);
-                        return FileVisitResult.CONTINUE;
-                    }
-
-                    @Override
-                    public FileVisitResult postVisitDirectory(Path dir, IOException e)
-                            throws IOException {
-                        if (e != null) {
-                            throw e;
-                        }
-                        Files.delete(dir);
-                        return FileVisitResult.CONTINUE;
-                    }
-                });
-    }
 
     /**
      * Creates a (GET) HTTP message with the given path, for the {@link #nano test server}.

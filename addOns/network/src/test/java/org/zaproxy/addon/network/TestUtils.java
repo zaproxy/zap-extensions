@@ -30,18 +30,11 @@ import static org.mockito.Mockito.withSettings;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.ResourceBundle;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.quality.Strictness;
 import org.parosproxy.paros.Constant;
@@ -55,30 +48,9 @@ public abstract class TestUtils {
 
     @TempDir protected static Path tempDir;
 
-    private static String zapInstallDir;
-    private static String zapHomeDir;
-
     protected static ResourceBundle extensionResourceBundle;
 
-    @BeforeAll
-    public static void beforeClass() throws Exception {
-        Path installDir = Files.createDirectory(tempDir.resolve("install"));
-        Path xmlDir = Files.createDirectory(installDir.resolve("xml"));
-        Files.createFile(xmlDir.resolve("log4j2.properties"));
-
-        zapInstallDir = installDir.toAbsolutePath().toString();
-        createHomeDirectory();
-    }
-
-    private static void createHomeDirectory() throws Exception {
-        zapHomeDir = Files.createTempDirectory(tempDir, "home").toAbsolutePath().toString();
-    }
-
     protected void setUpZap() throws Exception {
-        Constant.setZapInstall(zapInstallDir);
-        createHomeDirectory();
-        Constant.setZapHome(zapHomeDir);
-
         Control control = mock(Control.class, withSettings().strictness(Strictness.LENIENT));
         when(control.getExtensionLoader()).thenReturn(mock(ExtensionLoader.class));
 
@@ -92,39 +64,6 @@ public abstract class TestUtils {
         try (ServerSocket server = new ServerSocket(0)) {
             return server.getLocalPort();
         }
-    }
-
-    @AfterEach
-    public void shutDown() throws Exception {
-        deleteDir(Paths.get(zapHomeDir));
-    }
-
-    private static void deleteDir(Path dir) throws IOException {
-        if (Files.notExists(dir)) {
-            return;
-        }
-
-        Files.walkFileTree(
-                dir,
-                new SimpleFileVisitor<Path>() {
-
-                    @Override
-                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
-                            throws IOException {
-                        Files.delete(file);
-                        return FileVisitResult.CONTINUE;
-                    }
-
-                    @Override
-                    public FileVisitResult postVisitDirectory(Path dir, IOException e)
-                            throws IOException {
-                        if (e != null) {
-                            throw e;
-                        }
-                        Files.delete(dir);
-                        return FileVisitResult.CONTINUE;
-                    }
-                });
     }
 
     protected static void mockMessages(final Extension extension) {
