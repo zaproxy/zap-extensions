@@ -44,6 +44,7 @@ class ScriptRunRecorderUnitTest {
 
     @Test
     void shouldPersistFailedRunWithScriptMetadataAndMessages() {
+        // Given
         try (MockedStatic<TableJdo> tableJdo = mockStatic(TableJdo.class)) {
             PersistenceManagerFactory pmf = mock(PersistenceManagerFactory.class);
             PersistenceManager pm = mock(PersistenceManager.class);
@@ -53,9 +54,26 @@ class ScriptRunRecorderUnitTest {
             given(pm.currentTransaction()).willReturn(tx);
             given(tx.isActive()).willReturn(false);
 
-            ScriptRunRecorder.recordSingleScriptFailure(
-                    "my-script", "standalone", "script blew up", "raw error", null);
+            // When
+            ScriptRunRecorder.recordRun(
+                    "script blew up",
+                    ScriptRunRecorder.OUTCOME_FAILED,
+                    List.of(
+                            new ScriptRunRecorder.RunScript(
+                                    "my-script",
+                                    "standalone",
+                                    List.of(
+                                            new ScriptRunRecorder.RunStep(
+                                                    -1,
+                                                    "",
+                                                    List.of(
+                                                            new ScriptRunRecorder.StepOutput(
+                                                                    ScriptRunRecorder
+                                                                            .OUTPUT_KIND_ERROR,
+                                                                    "raw error")),
+                                                    null)))));
 
+            // Then
             @SuppressWarnings("rawtypes")
             ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class);
             verify(pm, times(1)).makePersistent(captor.capture());
@@ -86,6 +104,7 @@ class ScriptRunRecorderUnitTest {
 
     @Test
     void shouldPersistFailedRunWithStructuredFailureStep() {
+        // Given
         try (MockedStatic<TableJdo> tableJdo = mockStatic(TableJdo.class)) {
             PersistenceManagerFactory pmf = mock(PersistenceManagerFactory.class);
             PersistenceManager pm = mock(PersistenceManager.class);
@@ -95,16 +114,26 @@ class ScriptRunRecorderUnitTest {
             given(pm.currentTransaction()).willReturn(tx);
             given(tx.isActive()).willReturn(false);
 
-            ScriptRunRecorder.recordFailedRun(
+            // When
+            ScriptRunRecorder.recordRun(
                     "summary",
+                    ScriptRunRecorder.OUTCOME_FAILED,
                     List.of(
                             new ScriptRunRecorder.RunScript(
                                     "my-script",
                                     "standalone",
-                                    new ScriptRunRecorder.FailureStep(
-                                            13, "ZestClientElementClick"))),
-                    "detail line");
+                                    List.of(
+                                            new ScriptRunRecorder.RunStep(
+                                                    13,
+                                                    "ZestClientElementClick",
+                                                    List.of(
+                                                            new ScriptRunRecorder.StepOutput(
+                                                                    ScriptRunRecorder
+                                                                            .OUTPUT_KIND_ERROR,
+                                                                    "detail line")),
+                                                    null)))));
 
+            // Then
             @SuppressWarnings("rawtypes")
             ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class);
             verify(pm, times(1)).makePersistent(captor.capture());
@@ -123,6 +152,7 @@ class ScriptRunRecorderUnitTest {
             assertThat(step.getOrdinal(), is(0));
             assertThat(step.getSourceStepIndex(), is(equalTo(13)));
             assertThat(step.getLine(), is(equalTo("ZestClientElementClick")));
+            assertThat(step.getOutputs().get(0).getMessage(), is(equalTo("detail line")));
             assertThat(step.getOutputs().get(0).getOrdinal(), is(0));
             verify(tx).begin();
             verify(tx).commit();
@@ -131,7 +161,150 @@ class ScriptRunRecorderUnitTest {
     }
 
     @Test
-    void shouldPersistFailureOnlyOnScriptWithFailureSet() {
+    void shouldPersistSuccessfulRunWithCapturedOutputAsOutputSteps() {
+        try (MockedStatic<TableJdo> tableJdo = mockStatic(TableJdo.class)) {
+            // Given
+            PersistenceManagerFactory pmf = mock(PersistenceManagerFactory.class);
+            PersistenceManager pm = mock(PersistenceManager.class);
+            Transaction tx = mock(Transaction.class);
+            tableJdo.when(TableJdo::getPmf).thenReturn(pmf);
+            given(pmf.getPersistenceManager()).willReturn(pm);
+            given(pm.currentTransaction()).willReturn(tx);
+            given(tx.isActive()).willReturn(false);
+
+            // When
+            ScriptRunRecorder.recordRun(
+                    "Job: j Script: s completed.",
+                    ScriptRunRecorder.OUTCOME_SUCCESS,
+                    List.of(
+                            new ScriptRunRecorder.RunScript(
+                                    "s",
+                                    "standalone",
+                                    List.of(
+                                            new ScriptRunRecorder.RunStep(
+                                                    -1,
+                                                    "",
+                                                    List.of(
+                                                            new ScriptRunRecorder.StepOutput(
+                                                                    ScriptRunRecorder
+                                                                            .OUTPUT_KIND_OUTPUT,
+                                                                    "hello")),
+                                                    null),
+                                            new ScriptRunRecorder.RunStep(
+                                                    -1,
+                                                    "",
+                                                    List.of(
+                                                            new ScriptRunRecorder.StepOutput(
+                                                                    ScriptRunRecorder
+                                                                            .OUTPUT_KIND_OUTPUT,
+                                                                    "world")),
+                                                    null)))));
+
+            // Then
+            @SuppressWarnings("rawtypes")
+            ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class);
+            verify(pm, times(1)).makePersistent(captor.capture());
+            ScriptsRun run =
+                    captor.getAllValues().stream()
+                            .filter(ScriptsRun.class::isInstance)
+                            .map(ScriptsRun.class::cast)
+                            .findFirst()
+                            .orElseThrow();
+            assertThat(run.getOutcome(), is(equalTo(ScriptRunRecorder.OUTCOME_SUCCESS)));
+            assertThat(run.getScripts(), hasSize(1));
+            ScriptsRunScript script = run.getScripts().get(0);
+            assertThat(script.getSteps(), hasSize(2));
+            ScriptsRunStep firstStep = script.getSteps().get(0);
+            assertThat(firstStep.getOrdinal(), is(0));
+            assertThat(firstStep.getSourceStepIndex(), is(-1));
+            assertThat(firstStep.getLine(), is(equalTo("")));
+            assertThat(firstStep.getOutputs(), hasSize(1));
+            assertThat(
+                    firstStep.getOutputs().get(0).getKind(),
+                    is(equalTo(ScriptRunRecorder.OUTPUT_KIND_OUTPUT)));
+            assertThat(firstStep.getOutputs().get(0).getMessage(), is(equalTo("hello")));
+            ScriptsRunStep secondStep = script.getSteps().get(1);
+            assertThat(secondStep.getOrdinal(), is(1));
+            assertThat(secondStep.getSourceStepIndex(), is(-1));
+            assertThat(secondStep.getOutputs().get(0).getMessage(), is(equalTo("world")));
+        }
+    }
+
+    @Test
+    void shouldPersistOutputStepsBeforeFailureStepOnFailedRun() {
+        try (MockedStatic<TableJdo> tableJdo = mockStatic(TableJdo.class)) {
+            // Given
+            PersistenceManagerFactory pmf = mock(PersistenceManagerFactory.class);
+            PersistenceManager pm = mock(PersistenceManager.class);
+            Transaction tx = mock(Transaction.class);
+            tableJdo.when(TableJdo::getPmf).thenReturn(pmf);
+            given(pmf.getPersistenceManager()).willReturn(pm);
+            given(pm.currentTransaction()).willReturn(tx);
+            given(tx.isActive()).willReturn(false);
+
+            // When
+            ScriptRunRecorder.recordRun(
+                    "summary",
+                    ScriptRunRecorder.OUTCOME_FAILED,
+                    List.of(
+                            new ScriptRunRecorder.RunScript(
+                                    "s",
+                                    "standalone",
+                                    List.of(
+                                            new ScriptRunRecorder.RunStep(
+                                                    -1,
+                                                    "",
+                                                    List.of(
+                                                            new ScriptRunRecorder.StepOutput(
+                                                                    ScriptRunRecorder
+                                                                            .OUTPUT_KIND_OUTPUT,
+                                                                    "before")),
+                                                    null),
+                                            new ScriptRunRecorder.RunStep(
+                                                    2,
+                                                    "ZestClientElementClick",
+                                                    List.of(
+                                                            new ScriptRunRecorder.StepOutput(
+                                                                    ScriptRunRecorder
+                                                                            .OUTPUT_KIND_ERROR,
+                                                                    "boom")),
+                                                    null)))));
+
+            // Then
+            @SuppressWarnings("rawtypes")
+            ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class);
+            verify(pm, times(1)).makePersistent(captor.capture());
+            ScriptsRun run =
+                    captor.getAllValues().stream()
+                            .filter(ScriptsRun.class::isInstance)
+                            .map(ScriptsRun.class::cast)
+                            .findFirst()
+                            .orElseThrow();
+            assertThat(run.getOutcome(), is(equalTo(ScriptRunRecorder.OUTCOME_FAILED)));
+            ScriptsRunScript script = run.getScripts().get(0);
+            assertThat(script.getSteps(), hasSize(2));
+            ScriptsRunStep outputStep = script.getSteps().get(0);
+            assertThat(outputStep.getOrdinal(), is(0));
+            assertThat(outputStep.getSourceStepIndex(), is(-1));
+            assertThat(outputStep.getLine(), is(equalTo("")));
+            assertThat(
+                    outputStep.getOutputs().get(0).getKind(),
+                    is(equalTo(ScriptRunRecorder.OUTPUT_KIND_OUTPUT)));
+            assertThat(outputStep.getOutputs().get(0).getMessage(), is(equalTo("before")));
+            ScriptsRunStep failureStep = script.getSteps().get(1);
+            assertThat(failureStep.getOrdinal(), is(1));
+            assertThat(failureStep.getSourceStepIndex(), is(2));
+            assertThat(failureStep.getLine(), is(equalTo("ZestClientElementClick")));
+            assertThat(
+                    failureStep.getOutputs().get(0).getKind(),
+                    is(equalTo(ScriptRunRecorder.OUTPUT_KIND_ERROR)));
+            assertThat(failureStep.getOutputs().get(0).getMessage(), is(equalTo("boom")));
+        }
+    }
+
+    @Test
+    void shouldPersistFailureOnlyOnScriptWithFailureStep() {
+        // Given
         try (MockedStatic<TableJdo> tableJdo = mockStatic(TableJdo.class)) {
             PersistenceManagerFactory pmf = mock(PersistenceManagerFactory.class);
             PersistenceManager pm = mock(PersistenceManager.class);
@@ -141,17 +314,28 @@ class ScriptRunRecorderUnitTest {
             given(pm.currentTransaction()).willReturn(tx);
             given(tx.isActive()).willReturn(false);
 
-            ScriptRunRecorder.recordFailedRun(
+            // When
+            ScriptRunRecorder.recordRun(
                     "summary",
+                    ScriptRunRecorder.OUTCOME_FAILED,
                     List.of(
-                            new ScriptRunRecorder.RunScript("first", "standalone", null),
+                            new ScriptRunRecorder.RunScript("first", "standalone", List.of()),
                             new ScriptRunRecorder.RunScript(
                                     "second",
                                     "standalone",
-                                    new ScriptRunRecorder.FailureStep(5, "Click")),
-                            new ScriptRunRecorder.RunScript("third", "standalone", null)),
-                    "detail");
+                                    List.of(
+                                            new ScriptRunRecorder.RunStep(
+                                                    5,
+                                                    "Click",
+                                                    List.of(
+                                                            new ScriptRunRecorder.StepOutput(
+                                                                    ScriptRunRecorder
+                                                                            .OUTPUT_KIND_ERROR,
+                                                                    "detail")),
+                                                    null))),
+                            new ScriptRunRecorder.RunScript("third", "standalone", List.of())));
 
+            // Then
             @SuppressWarnings("rawtypes")
             ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class);
             verify(pm, times(1)).makePersistent(captor.capture());
@@ -177,6 +361,7 @@ class ScriptRunRecorderUnitTest {
 
     @Test
     void shouldPersistScreenshotOnFailureStepWhenProvided() {
+        // Given
         try (MockedStatic<TableJdo> tableJdo = mockStatic(TableJdo.class)) {
             PersistenceManagerFactory pmf = mock(PersistenceManagerFactory.class);
             PersistenceManager pm = mock(PersistenceManager.class);
@@ -186,20 +371,39 @@ class ScriptRunRecorderUnitTest {
             given(pm.currentTransaction()).willReturn(tx);
             given(tx.isActive()).willReturn(false);
 
-            ScriptRunRecorder.recordFailedRun(
+            // When
+            ScriptRunRecorder.recordRun(
                     "summary",
+                    ScriptRunRecorder.OUTCOME_FAILED,
                     List.of(
                             new ScriptRunRecorder.RunScript(
                                     "my-script",
                                     "standalone",
-                                    new ScriptRunRecorder.FailureStep(
-                                            3, "ZestClientClick", "base64png")),
+                                    List.of(
+                                            new ScriptRunRecorder.RunStep(
+                                                    3,
+                                                    "ZestClientClick",
+                                                    List.of(
+                                                            new ScriptRunRecorder.StepOutput(
+                                                                    ScriptRunRecorder
+                                                                            .OUTPUT_KIND_ERROR,
+                                                                    "detail")),
+                                                    "base64png"))),
                             new ScriptRunRecorder.RunScript(
                                     "other-script",
                                     "standalone",
-                                    new ScriptRunRecorder.FailureStep(4, "ZestClientClick", ""))),
-                    "detail");
+                                    List.of(
+                                            new ScriptRunRecorder.RunStep(
+                                                    4,
+                                                    "ZestClientClick",
+                                                    List.of(
+                                                            new ScriptRunRecorder.StepOutput(
+                                                                    ScriptRunRecorder
+                                                                            .OUTPUT_KIND_ERROR,
+                                                                    "detail")),
+                                                    "")))));
 
+            // Then
             @SuppressWarnings("rawtypes")
             ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class);
             verify(pm, times(1)).makePersistent(captor.capture());

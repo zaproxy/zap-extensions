@@ -19,55 +19,66 @@
  */
 package org.zaproxy.zap.extension.scripts.automation;
 
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.zap.extension.script.ScriptOutputListener;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 
 public class ScriptJobOutputListener implements ScriptOutputListener {
-    private AutomationProgress progress;
-    private String scriptName;
-    private StringBuilder stringBuilder;
+    private final AutomationProgress progress;
+    private final Map<String, StringBuilder> buffers = new HashMap<>();
+    private final Map<String, List<String>> capturedLinesByScriptName = new HashMap<>();
 
-    public ScriptJobOutputListener(AutomationProgress progress, String scriptName) {
+    public ScriptJobOutputListener(AutomationProgress progress) {
         this.progress = progress;
-        this.scriptName = scriptName;
-        this.stringBuilder = new StringBuilder();
+    }
+
+    public Map<String, List<String>> getCapturedLinesByScriptName() {
+        Map<String, List<String>> result = new HashMap<>();
+        capturedLinesByScriptName.forEach(
+                (name, lines) -> result.put(name, Collections.unmodifiableList(lines)));
+        return Collections.unmodifiableMap(result);
     }
 
     @Override
     public void output(ScriptWrapper script, String output) {
-        if (Objects.equals(script.getName(), scriptName)) {
-            stringBuilder.append(output);
-            flushLines();
-        }
+        String scriptName = script.getName();
+        buffers.computeIfAbsent(scriptName, k -> new StringBuilder()).append(output);
+        flushLines(scriptName);
     }
 
     public void flush() {
-        if (stringBuilder.length() > 0) {
-            stringBuilder.append("\n");
-            flushLines();
+        for (String scriptName : List.copyOf(buffers.keySet())) {
+            StringBuilder buffer = buffers.get(scriptName);
+            if (buffer != null && buffer.length() > 0) {
+                buffer.append("\n");
+                flushLines(scriptName);
+            }
         }
     }
 
-    private void flushLines() {
-        int index = nextLineEnd();
+    private void flushLines(String scriptName) {
+        StringBuilder buffer = buffers.get(scriptName);
+        if (buffer == null) {
+            return;
+        }
+        int index = buffer.indexOf("\n");
         while (index > -1) {
-            String line = stringBuilder.substring(0, index);
-            // With view the core script extension does not print to std out.
+            String line = buffer.substring(0, index);
             if (View.isInitialised()) {
                 progress.info(line);
             } else {
                 progress.infoNoStdout(line);
             }
+            capturedLinesByScriptName.computeIfAbsent(scriptName, k -> new ArrayList<>()).add(line);
 
-            stringBuilder.delete(0, index + 1);
-            index = nextLineEnd();
+            buffer.delete(0, index + 1);
+            index = buffer.indexOf("\n");
         }
-    }
-
-    private int nextLineEnd() {
-        return stringBuilder.indexOf("\n");
     }
 }

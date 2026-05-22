@@ -194,18 +194,28 @@ public class ExtensionScriptAutomation extends ExtensionAdaptor {
                                                                 ::screenshotBase64)
                                                 .orElse(null);
                             }
-                            ScriptRunRecorder.recordFailedRun(
+                            ScriptRunRecorder.recordRun(
                                     message,
+                                    ScriptRunRecorder.OUTCOME_FAILED,
                                     List.of(
                                             new ScriptRunRecorder.RunScript(
                                                     script.getName(),
                                                     script.getTypeName(),
-                                                    new ScriptRunRecorder.FailureStep(
-                                                            -1, "", screenshotBase64))),
-                                    StringUtils.defaultString(
-                                            ScriptRunFailureDetail
-                                                    .compactScriptOutputDetailForPersistence(
-                                                            script)));
+                                                    List.of(
+                                                            new ScriptRunRecorder.RunStep(
+                                                                    -1,
+                                                                    "",
+                                                                    List.of(
+                                                                            new ScriptRunRecorder
+                                                                                    .StepOutput(
+                                                                                    ScriptRunRecorder
+                                                                                            .OUTPUT_KIND_ERROR,
+                                                                                    StringUtils
+                                                                                            .defaultString(
+                                                                                                    ScriptRunFailureDetail
+                                                                                                            .compactScriptOutputDetailForPersistence(
+                                                                                                                    script)))),
+                                                                    screenshotBase64)))));
                         });
             }
         }

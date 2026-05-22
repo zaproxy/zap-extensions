@@ -7,4 +7,5 @@ sections:
  - sequencedetails
  - afstate
  - scriptdiagnostics
+ - scriptdiagnosticsoutput
  - scriptdiagnosticsscreenshots

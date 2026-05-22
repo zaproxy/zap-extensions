@@ -30,6 +30,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -110,7 +111,7 @@ class ZestScriptWrapperUnitTest {
         ZestScriptWrapper wrapper = new ZestScriptWrapper(createMockScriptWrapper());
         wrapper.setLastRunDiagnostic(
                 new ZestScriptRunDiagnostic(
-                        "stale diagnostics from a prior run", "", -1, -1, "", null));
+                        "stale diagnostics from a prior run", "", -1, -1, "", null, List.of()));
 
         ZestScriptWrapper clone = wrapper.clone();
 
@@ -129,7 +130,13 @@ class ZestScriptWrapperUnitTest {
         ZestScriptWrapper wrapper = new ZestScriptWrapper(createMockScriptWrapper());
         wrapper.setLastRunDiagnostic(
                 new ZestScriptRunDiagnostic(
-                        "chain ctx", "ZestFoo - detail", 2, 13, "ZestClientFoo", "b64png"));
+                        "chain ctx",
+                        "ZestFoo - detail",
+                        2,
+                        13,
+                        "ZestClientFoo",
+                        "b64png",
+                        List.of()));
 
         Optional<ZestScriptRunDiagnostic> diagnostic = wrapper.getLastRunDiagnostic();
 
@@ -146,7 +153,7 @@ class ZestScriptWrapperUnitTest {
     void shouldClearLastRunDiagnostic() {
         ZestScriptWrapper wrapper = new ZestScriptWrapper(createMockScriptWrapper());
         wrapper.setLastRunDiagnostic(
-                new ZestScriptRunDiagnostic("ctx", "detail", 1, 0, "ZestFoo", null));
+                new ZestScriptRunDiagnostic("ctx", "detail", 1, 0, "ZestFoo", null, List.of()));
 
         wrapper.setLastRunDiagnostic(null);
 

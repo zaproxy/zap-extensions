@@ -28,13 +28,16 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import javax.jdo.PersistenceManager;
@@ -60,13 +63,17 @@ import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
+import org.zaproxy.zap.extension.script.ScriptOutputListener;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.scripts.ExtensionScriptsUI;
 import org.zaproxy.zap.extension.scripts.automation.ScriptJobParameters;
+import org.zaproxy.zap.extension.scripts.internal.db.ScriptRunRecorder;
 import org.zaproxy.zap.extension.scripts.internal.db.ScriptsRun;
+import org.zaproxy.zap.extension.scripts.internal.db.ScriptsRunOutput;
 import org.zaproxy.zap.extension.scripts.internal.db.TableJdo;
 import org.zaproxy.zap.extension.scripts.zest.ZestScriptDiagnosticSource;
+import org.zaproxy.zap.extension.scripts.zest.ZestScriptDiagnosticSource.ZestScriptPrintCapture;
 import org.zaproxy.zap.extension.scripts.zest.ZestScriptDiagnosticSource.ZestScriptRunDiagnostic;
 import org.zaproxy.zap.testutils.TestUtils;
 
@@ -91,6 +98,11 @@ class RunScriptActionUnitTest extends TestUtils {
 
     private static String msg(String key, Object... args) {
         return Constant.messages.getString(key, args);
+    }
+
+    private static String persistSummary(
+            String jobName, String scriptName, List<String> chain, String outcome) {
+        return RunScriptAction.formatPersistSummary(jobName, scriptName, chain, outcome);
     }
 
     private static final ScriptWrapper CHAIN_SCRIPT = createMockZestWrapper("chain-script");
@@ -478,6 +490,334 @@ class RunScriptActionUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldNotPersistSuccessfulRunWhenSingleScriptProducesNoOutput() throws Exception {
+        // Given
+        try (MockedStatic<TableJdo> tableJdo = mockStatic(TableJdo.class)) {
+            PersistenceManagerFactory pmf = mock(PersistenceManagerFactory.class);
+            tableJdo.when(TableJdo::getPmf).thenReturn(pmf);
+
+            ScriptWrapper script = createMockZestWrapper("myScript");
+            given(extScript.getScript("myScript")).willReturn(script);
+            parameters.setName("myScript");
+
+            // When
+            action.runJob(JOB_NAME, env, progress);
+
+            // Then
+            assertThat(progress.hasErrors(), is(equalTo(false)));
+            verify(pmf, never()).getPersistenceManager();
+        }
+    }
+
+    @Test
+    void shouldPersistSuccessfulRunWhenNonZestScriptPrintsViaListener() throws Exception {
+        // Given
+        try (MockedStatic<TableJdo> tableJdo = mockStatic(TableJdo.class)) {
+            PersistenceManagerFactory pmf = mock(PersistenceManagerFactory.class);
+            PersistenceManager pm = mock(PersistenceManager.class);
+            Transaction tx = mock(Transaction.class);
+            tableJdo.when(TableJdo::getPmf).thenReturn(pmf);
+            given(pmf.getPersistenceManager()).willReturn(pm);
+            given(pm.currentTransaction()).willReturn(tx);
+            given(tx.isActive()).willReturn(false);
+
+            ScriptWrapper script = createMockZestWrapper("myScript");
+            given(extScript.getScript("myScript")).willReturn(script);
+            parameters.setName("myScript");
+
+            List<ScriptOutputListener> listeners = new ArrayList<>();
+            doAnswer(
+                            invocation -> {
+                                listeners.add(invocation.getArgument(0));
+                                return null;
+                            })
+                    .when(extScript)
+                    .addScriptOutputListener(any());
+            doAnswer(
+                            invocation -> {
+                                listeners.get(0).output(script, "hello\n");
+                                return null;
+                            })
+                    .when(extScript)
+                    .invokeScript(script);
+
+            // When
+            action.runJob(JOB_NAME, env, progress);
+
+            // Then
+            assertThat(progress.hasErrors(), is(equalTo(false)));
+            @SuppressWarnings("rawtypes")
+            ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class);
+            verify(pm, times(1)).makePersistent(captor.capture());
+            ScriptsRun run =
+                    captor.getAllValues().stream()
+                            .filter(ScriptsRun.class::isInstance)
+                            .map(ScriptsRun.class::cast)
+                            .findFirst()
+                            .orElseThrow();
+            assertThat(run.getOutcome(), is(equalTo(ScriptRunRecorder.OUTCOME_SUCCESS)));
+            assertThat(
+                    run.getSummary(),
+                    is(
+                            equalTo(
+                                    persistSummary(
+                                            JOB_NAME,
+                                            "myScript",
+                                            null,
+                                            ScriptRunRecorder.OUTCOME_SUCCESS))));
+            assertThat(run.getScripts(), hasSize(1));
+            assertThat(run.getScripts().get(0).getSteps(), hasSize(1));
+            ScriptsRunOutput output = run.getScripts().get(0).getSteps().get(0).getOutputs().get(0);
+            assertThat(output.getKind(), is(equalTo(ScriptRunRecorder.OUTPUT_KIND_OUTPUT)));
+            assertThat(output.getMessage(), is(equalTo("hello")));
+        }
+    }
+
+    @Test
+    void shouldPersistSuccessfulRunWhenZestScriptPrintCapturesOutput() throws Exception {
+        // Given
+        try (MockedStatic<TableJdo> tableJdo = mockStatic(TableJdo.class)) {
+            PersistenceManagerFactory pmf = mock(PersistenceManagerFactory.class);
+            PersistenceManager pm = mock(PersistenceManager.class);
+            Transaction tx = mock(Transaction.class);
+            tableJdo.when(TableJdo::getPmf).thenReturn(pmf);
+            given(pmf.getPersistenceManager()).willReturn(pm);
+            given(pm.currentTransaction()).willReturn(tx);
+            given(tx.isActive()).willReturn(false);
+
+            ScriptWrapper script =
+                    new ScriptWrapperWithZestDiagnostic(
+                            "myScript",
+                            new ZestScriptRunDiagnostic(
+                                    "",
+                                    "",
+                                    -1,
+                                    -1,
+                                    "",
+                                    null,
+                                    List.of(new ZestScriptPrintCapture(-1, "zest hello"))));
+            given(extScript.getScript("myScript")).willReturn(script);
+            parameters.setName("myScript");
+            when(extScript.invokeScript(script)).thenReturn(null);
+
+            // When
+            action.runJob(JOB_NAME, env, progress);
+
+            // Then
+            assertThat(progress.hasErrors(), is(equalTo(false)));
+            @SuppressWarnings("rawtypes")
+            ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class);
+            verify(pm, times(1)).makePersistent(captor.capture());
+            ScriptsRun run =
+                    captor.getAllValues().stream()
+                            .filter(ScriptsRun.class::isInstance)
+                            .map(ScriptsRun.class::cast)
+                            .findFirst()
+                            .orElseThrow();
+            assertThat(run.getOutcome(), is(equalTo(ScriptRunRecorder.OUTCOME_SUCCESS)));
+            assertThat(run.getScripts(), hasSize(1));
+            assertThat(run.getScripts().get(0).getSteps(), hasSize(1));
+            assertThat(
+                    run.getScripts().get(0).getSteps().get(0).getOutputs().get(0).getMessage(),
+                    is(equalTo("zest hello")));
+        }
+    }
+
+    @Test
+    void shouldNotPersistChainWrapperAsSeparateScriptWhenListenerAlsoCapturesOutput()
+            throws Exception {
+        // Given
+        try (MockedStatic<TableJdo> tableJdo = mockStatic(TableJdo.class)) {
+            PersistenceManagerFactory pmf = mock(PersistenceManagerFactory.class);
+            PersistenceManager pm = mock(PersistenceManager.class);
+            Transaction tx = mock(Transaction.class);
+            tableJdo.when(TableJdo::getPmf).thenReturn(pmf);
+            given(pmf.getPersistenceManager()).willReturn(pm);
+            given(pm.currentTransaction()).willReturn(tx);
+            given(tx.isActive()).willReturn(false);
+
+            ScriptWrapper script1 = createMockZestWrapper("script1");
+            ScriptWrapper script2 = createMockZestWrapper("script2");
+            given(extScript.getScript("script1")).willReturn(script1);
+            given(extScript.getScript("script2")).willReturn(script2);
+
+            ScriptWrapper chainScript =
+                    new ScriptWrapperWithZestDiagnostic(
+                            "chain_script1",
+                            new ZestScriptRunDiagnostic(
+                                    "",
+                                    "",
+                                    -1,
+                                    -1,
+                                    "",
+                                    null,
+                                    List.of(new ZestScriptPrintCapture(2, "from script2"))));
+            ExtensionAdaptor zestStub =
+                    new ExtensionAdaptor("ExtensionZest") {
+                        @SuppressWarnings("unused")
+                        public ScriptWrapper getChainScript(
+                                List<ScriptWrapper> scripts, String runName) {
+                            return chainScript;
+                        }
+                    };
+            lenient().when(extensionLoader.getExtension("ExtensionZest")).thenReturn(zestStub);
+
+            List<ScriptOutputListener> listeners = new ArrayList<>();
+            doAnswer(
+                            invocation -> {
+                                listeners.add(invocation.getArgument(0));
+                                return null;
+                            })
+                    .when(extScript)
+                    .addScriptOutputListener(any());
+            doAnswer(
+                            invocation -> {
+                                listeners.get(0).output(chainScript, "from script2\n");
+                                return null;
+                            })
+                    .when(extScript)
+                    .invokeScript(chainScript);
+
+            parameters.setChain(List.of("script1", "script2"));
+
+            // When
+            action.runJob(JOB_NAME, env, progress);
+
+            // Then
+            @SuppressWarnings("rawtypes")
+            ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class);
+            verify(pm, times(1)).makePersistent(captor.capture());
+            ScriptsRun run =
+                    captor.getAllValues().stream()
+                            .filter(ScriptsRun.class::isInstance)
+                            .map(ScriptsRun.class::cast)
+                            .findFirst()
+                            .orElseThrow();
+            assertThat(run.getScripts(), hasSize(2));
+            assertThat(run.getScripts().get(0).getScriptName(), is(equalTo("script1")));
+            assertThat(run.getScripts().get(0).getSteps(), hasSize(0));
+            assertThat(run.getScripts().get(1).getScriptName(), is(equalTo("script2")));
+            assertThat(run.getScripts().get(1).getSteps(), hasSize(1));
+            assertThat(
+                    run.getScripts().get(1).getSteps().get(0).getOutputs().get(0).getMessage(),
+                    is(equalTo("from script2")));
+        }
+    }
+
+    @Test
+    void shouldNotPersistSuccessfulRunWhenChainProducesNoPrintOutput() throws Exception {
+        // Given
+        try (MockedStatic<TableJdo> tableJdo = mockStatic(TableJdo.class)) {
+            PersistenceManagerFactory pmf = mock(PersistenceManagerFactory.class);
+            tableJdo.when(TableJdo::getPmf).thenReturn(pmf);
+
+            ScriptWrapper script1 = createMockZestWrapper("script1");
+            ScriptWrapper script2 = createMockZestWrapper("script2");
+            given(extScript.getScript("script1")).willReturn(script1);
+            given(extScript.getScript("script2")).willReturn(script2);
+
+            ScriptWrapper chainScript =
+                    new ScriptWrapperWithZestDiagnostic(
+                            "chain-script",
+                            new ZestScriptRunDiagnostic("", "", -1, -1, "", null, List.of()));
+            ExtensionAdaptor zestStub =
+                    new ExtensionAdaptor("ExtensionZest") {
+                        @SuppressWarnings("unused")
+                        public ScriptWrapper getChainScript(
+                                List<ScriptWrapper> scripts, String runName) {
+                            return chainScript;
+                        }
+                    };
+            lenient().when(extensionLoader.getExtension("ExtensionZest")).thenReturn(zestStub);
+            when(extScript.invokeScript(chainScript)).thenReturn(null);
+            parameters.setChain(List.of("script1", "script2"));
+
+            // When
+            action.runJob(JOB_NAME, env, progress);
+
+            // Then
+            assertThat(progress.hasErrors(), is(equalTo(false)));
+            verify(pmf, never()).getPersistenceManager();
+        }
+    }
+
+    @Test
+    void shouldPersistSuccessfulRunWhenChainProducesPrintOutput() throws Exception {
+        // Given
+        try (MockedStatic<TableJdo> tableJdo = mockStatic(TableJdo.class)) {
+            PersistenceManagerFactory pmf = mock(PersistenceManagerFactory.class);
+            PersistenceManager pm = mock(PersistenceManager.class);
+            Transaction tx = mock(Transaction.class);
+            tableJdo.when(TableJdo::getPmf).thenReturn(pmf);
+            given(pmf.getPersistenceManager()).willReturn(pm);
+            given(pm.currentTransaction()).willReturn(tx);
+            given(tx.isActive()).willReturn(false);
+
+            ScriptWrapper script1 = createMockZestWrapper("script1");
+            ScriptWrapper script2 = createMockZestWrapper("script2");
+            ScriptWrapper script3 = createMockZestWrapper("script3");
+            given(extScript.getScript("script1")).willReturn(script1);
+            given(extScript.getScript("script2")).willReturn(script2);
+            given(extScript.getScript("script3")).willReturn(script3);
+
+            ScriptWrapper chainScript =
+                    new ScriptWrapperWithZestDiagnostic(
+                            "chain-script",
+                            new ZestScriptRunDiagnostic(
+                                    "",
+                                    "",
+                                    -1,
+                                    -1,
+                                    "",
+                                    null,
+                                    List.of(new ZestScriptPrintCapture(2, "from script2"))));
+            ExtensionAdaptor zestStub =
+                    new ExtensionAdaptor("ExtensionZest") {
+                        @SuppressWarnings("unused")
+                        public ScriptWrapper getChainScript(
+                                List<ScriptWrapper> scripts, String runName) {
+                            return chainScript;
+                        }
+                    };
+            lenient().when(extensionLoader.getExtension("ExtensionZest")).thenReturn(zestStub);
+            when(extScript.invokeScript(chainScript)).thenReturn(null);
+            parameters.setChain(List.of("script1", "script2", "script3"));
+
+            // When
+            action.runJob(JOB_NAME, env, progress);
+
+            // Then
+            assertThat(progress.hasErrors(), is(equalTo(false)));
+            @SuppressWarnings("rawtypes")
+            ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class);
+            verify(pm, times(1)).makePersistent(captor.capture());
+            ScriptsRun run =
+                    captor.getAllValues().stream()
+                            .filter(ScriptsRun.class::isInstance)
+                            .map(ScriptsRun.class::cast)
+                            .findFirst()
+                            .orElseThrow();
+            assertThat(run.getOutcome(), is(equalTo(ScriptRunRecorder.OUTCOME_SUCCESS)));
+            assertThat(
+                    run.getSummary(),
+                    is(
+                            equalTo(
+                                    persistSummary(
+                                            JOB_NAME,
+                                            null,
+                                            List.of("script1", "script2", "script3"),
+                                            ScriptRunRecorder.OUTCOME_SUCCESS))));
+            assertThat(run.getScripts(), hasSize(3));
+            assertThat(run.getScripts().get(0).getSteps(), hasSize(0));
+            assertThat(run.getScripts().get(1).getSteps(), hasSize(1));
+            ScriptsRunOutput output = run.getScripts().get(1).getSteps().get(0).getOutputs().get(0);
+            assertThat(output.getKind(), is(equalTo(ScriptRunRecorder.OUTPUT_KIND_OUTPUT)));
+            assertThat(output.getMessage(), is(equalTo("from script2")));
+            assertThat(run.getScripts().get(2).getSteps(), hasSize(0));
+        }
+    }
+
+    @Test
     void shouldReportErrorIfSingleScriptNotFound() {
         // Given
         given(extScript.getScript("nonExistent")).willReturn(null);
@@ -646,16 +986,17 @@ class RunScriptActionUnitTest extends TestUtils {
                                 2,
                                 13,
                                 "ZestClientClick",
-                                "shot"));
+                                "shot",
+                                List.of()));
         RunScriptAction.RunFailure failure =
                 RunScriptAction.resolveRunFailure(script, new RuntimeException("ignored"));
 
         assertThat(failure.progressDetail(), is("zest context"));
         assertThat(failure.outputDetail(), is("compact detail"));
         assertThat(failure.failingScriptOrder(), is(2));
-        assertThat(failure.failureStep().sourceStepIndex(), is(13));
-        assertThat(failure.failureStep().line(), is("ZestClientClick"));
-        assertThat(failure.failureStep().screenshotBase64(), is("shot"));
+        assertThat(failure.sourceStepIndex(), is(13));
+        assertThat(failure.elementType(), is("ZestClientClick"));
+        assertThat(failure.screenshotBase64(), is("shot"));
     }
 
     @Test
@@ -669,8 +1010,8 @@ class RunScriptActionUnitTest extends TestUtils {
         assertThat(failure.progressDetail(), is("job failed"));
         assertThat(failure.outputDetail(), is("job failed"));
         assertThat(failure.failingScriptOrder(), is(-1));
-        assertThat(failure.failureStep().sourceStepIndex(), is(-1));
-        assertThat(failure.failureStep().line(), is(""));
+        assertThat(failure.sourceStepIndex(), is(-1));
+        assertThat(failure.elementType(), is(""));
     }
 
     @Test
@@ -688,7 +1029,8 @@ class RunScriptActionUnitTest extends TestUtils {
     void shouldResolveFailureOutputDetailFromExceptionWhenZestDetailBlank() {
         ScriptWrapper script =
                 new ScriptWrapperWithZestDiagnostic(
-                        "fake-zest", new ZestScriptRunDiagnostic("ctx", "  ", 1, 5, "Line", null));
+                        "fake-zest",
+                        new ZestScriptRunDiagnostic("ctx", "  ", 1, 5, "Line", null, List.of()));
         Exception ex = new RuntimeException("persist me");
 
         RunScriptAction.RunFailure failure = RunScriptAction.resolveRunFailure(script, ex);
@@ -755,10 +1097,11 @@ class RunScriptActionUnitTest extends TestUtils {
                     run.getSummary(),
                     is(
                             equalTo(
-                                    msg(
-                                            "scripts.automation.persist.failedSummary.chain",
+                                    persistSummary(
                                             JOB_NAME,
-                                            "script1 -> script2 -> script3"))));
+                                            null,
+                                            List.of("script1", "script2", "script3"),
+                                            ScriptRunRecorder.OUTCOME_FAILED))));
             assertThat(run.getScripts(), hasSize(3));
             assertThat(run.getScripts().get(0).getSteps(), hasSize(1));
             assertThat(run.getScripts().get(0).getSteps().get(0).getOutputs(), hasSize(1));
@@ -778,7 +1121,10 @@ class RunScriptActionUnitTest extends TestUtils {
         }
 
         ScriptWrapperWithZestDiagnostic(String name, String zestFailureContext) {
-            this(name, new ZestScriptRunDiagnostic(zestFailureContext, "", -1, -1, "", null));
+            this(
+                    name,
+                    new ZestScriptRunDiagnostic(
+                            zestFailureContext, "", -1, -1, "", null, List.of()));
         }
 
         @Override

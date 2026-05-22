@@ -19,6 +19,11 @@
  */
 package org.zaproxy.addon.reports;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
 import com.lowagie.text.DocumentException;
 import java.io.File;
 import java.io.IOException;
@@ -26,6 +31,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -307,21 +314,11 @@ public class ReportTestUtils {
             Template template,
             File f,
             boolean includeScriptDiagnosticsSection,
-            List<ScriptRunReportData.Run> runs)
-            throws IOException, DocumentException {
-        return generateReportWithScriptDiagnosticsInternal(
-                template, f, includeScriptDiagnosticsSection, runs, null);
-    }
-
-    static File generateReportWithScriptDiagnostics(
-            Template template,
-            File f,
-            boolean includeScriptDiagnosticsSection,
             List<ScriptRunReportData.Run> runs,
-            String excludedSection)
+            String... excludedSections)
             throws IOException, DocumentException {
         return generateReportWithScriptDiagnosticsInternal(
-                template, f, includeScriptDiagnosticsSection, runs, excludedSection);
+                template, f, includeScriptDiagnosticsSection, runs, excludedSections);
     }
 
     private static File generateReportWithScriptDiagnosticsInternal(
@@ -329,7 +326,7 @@ public class ReportTestUtils {
             File f,
             boolean includeScriptDiagnosticsSection,
             List<ScriptRunReportData.Run> runs,
-            String excludedSection)
+            String... excludedSections)
             throws IOException, DocumentException {
         ExtensionReports extRep = new ExtensionReports();
         ReportData reportData = new ReportData("test");
@@ -341,7 +338,7 @@ public class ReportTestUtils {
         if (!includeScriptDiagnosticsSection) {
             sections.remove("scriptdiagnostics");
         }
-        if (excludedSection != null) {
+        for (String excludedSection : excludedSections) {
             sections.remove(excludedSection);
         }
         reportData.setSections(sections);
@@ -383,6 +380,21 @@ public class ReportTestUtils {
 
     static ScriptRunReportData.Run defaultScriptDiagnosticRunWithScreenshot() {
         return defaultScriptDiagnosticRuns().get(1);
+    }
+
+    static ScriptRunReportData.Run defaultSuccessOutputRun() {
+        return scriptRunReport(
+                "2026-04-03T10:00:00Z",
+                ScriptRunRecorder.OUTCOME_SUCCESS,
+                1,
+                "my-script",
+                "standalone",
+                -1,
+                "",
+                ScriptRunRecorder.OUTPUT_KIND_OUTPUT,
+                "Job: TestJob Script: my-script completed.",
+                "hello from print",
+                null);
     }
 
     static ScriptRunReportData.Run scriptRunReport(
@@ -437,6 +449,68 @@ public class ReportTestUtils {
                                                         new ScriptRunReportData.Output(
                                                                 outputKind, outputDetailMessage)),
                                                 screenshot)))));
+    }
+
+    static void assertScriptDiagnosticRunsMatch(
+            JSONArray runsJson, List<ScriptRunReportData.Run> expectedRuns) {
+        assertThat(runsJson.size(), is(equalTo(expectedRuns.size())));
+        for (int i = 0; i < expectedRuns.size(); i++) {
+            assertScriptDiagnosticRunMatch(runsJson.getJSONObject(i), expectedRuns.get(i));
+        }
+    }
+
+    static void assertDefaultScriptDiagnosticRuns(JSONArray runsJson) {
+        assertScriptDiagnosticRunsMatch(runsJson, defaultScriptDiagnosticRuns());
+    }
+
+    private static void assertScriptDiagnosticRunMatch(
+            JSONObject runJson, ScriptRunReportData.Run expected) {
+        assertFalse(runJson.containsKey("createTimestamp"));
+        assertThat(runJson.getString("created"), is(equalTo(expected.created())));
+        assertThat(runJson.getString("outcome"), is(equalTo(expected.outcome())));
+        assertThat(runJson.getString("summary"), is(equalTo(expected.summary())));
+
+        JSONArray scriptsJson = runJson.getJSONArray("scripts");
+        assertThat(scriptsJson.size(), is(equalTo(expected.scripts().size())));
+        for (int i = 0; i < expected.scripts().size(); i++) {
+            assertScriptDiagnosticScriptMatch(
+                    scriptsJson.getJSONObject(i), expected.scripts().get(i));
+        }
+    }
+
+    private static void assertScriptDiagnosticScriptMatch(
+            JSONObject scriptJson, ScriptRunReportData.Script expected) {
+        assertThat(scriptJson.getInt("order"), is(equalTo(expected.order())));
+        assertThat(scriptJson.getString("scriptName"), is(equalTo(expected.scriptName())));
+        assertThat(scriptJson.getString("scriptType"), is(equalTo(expected.scriptType())));
+
+        JSONArray stepsJson = scriptJson.getJSONArray("steps");
+        assertThat(stepsJson.size(), is(equalTo(expected.steps().size())));
+        for (int i = 0; i < expected.steps().size(); i++) {
+            assertScriptDiagnosticStepMatch(stepsJson.getJSONObject(i), expected.steps().get(i));
+        }
+    }
+
+    private static void assertScriptDiagnosticStepMatch(
+            JSONObject stepJson, ScriptRunReportData.Step expected) {
+        assertThat(stepJson.getInt("sourceStepIndex"), is(equalTo(expected.sourceStepIndex())));
+        assertThat(stepJson.getString("line"), is(equalTo(expected.line())));
+
+        if (expected.screenshot() != null) {
+            assertThat(stepJson.getString("screenshot"), is(equalTo(expected.screenshot())));
+        } else {
+            assertThat(stepJson.containsKey("screenshot"), is(equalTo(false)));
+        }
+
+        JSONArray outputsJson = stepJson.getJSONArray("outputs");
+        assertThat(outputsJson.size(), is(equalTo(expected.outputs().size())));
+        for (int i = 0; i < expected.outputs().size(); i++) {
+            JSONObject outputJson = outputsJson.getJSONObject(i);
+            ScriptRunReportData.Output expectedOutput = expected.outputs().get(i);
+            assertThat(outputJson.getString("kind"), is(equalTo(expectedOutput.kind())));
+            assertThat(outputJson.getString("message"), is(equalTo(expectedOutput.message())));
+            assertThat(outputJson.containsKey("detail"), is(equalTo(false)));
+        }
     }
 
     static Template getTemplateFromYamlFile(String templateName) throws Exception {

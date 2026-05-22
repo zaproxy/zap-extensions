@@ -46,7 +46,7 @@ class ScriptJobOutputListenerUnitTest {
         progress = new AutomationProgress();
         script = mock(ScriptWrapper.class);
         when(script.getName()).thenReturn(SCRIPT_NAME);
-        listener = new ScriptJobOutputListener(progress, SCRIPT_NAME);
+        listener = new ScriptJobOutputListener(progress);
     }
 
     @Test
@@ -85,12 +85,24 @@ class ScriptJobOutputListenerUnitTest {
     }
 
     @Test
+    void shouldCaptureOutputPerScript() {
+        ScriptWrapper otherScript = mock(ScriptWrapper.class);
+        when(otherScript.getName()).thenReturn("OTHER");
+
+        listener.output(script, "from-test\n");
+        listener.output(otherScript, "from-other\n");
+
+        assertThat(listener.getCapturedLinesByScriptName().get(SCRIPT_NAME), contains("from-test"));
+        assertThat(listener.getCapturedLinesByScriptName().get("OTHER"), contains("from-other"));
+    }
+
+    @Test
     void shouldCallInfoOnOutputWithView() {
         String testString = "Hello World";
         try (MockedStatic<View> view = mockStatic(View.class)) {
             view.when(View::isInitialised).thenReturn(true);
             progress = mock(AutomationProgress.class);
-            listener = new ScriptJobOutputListener(progress, SCRIPT_NAME);
+            listener = new ScriptJobOutputListener(progress);
             listener.output(script, testString + "\n");
             verify(progress).info(testString);
         }
@@ -102,7 +114,7 @@ class ScriptJobOutputListenerUnitTest {
         try (MockedStatic<View> view = mockStatic(View.class)) {
             view.when(View::isInitialised).thenReturn(false);
             progress = mock(AutomationProgress.class);
-            listener = new ScriptJobOutputListener(progress, SCRIPT_NAME);
+            listener = new ScriptJobOutputListener(progress);
             listener.output(script, testString + "\n");
             verify(progress).infoNoStdout(testString);
         }
