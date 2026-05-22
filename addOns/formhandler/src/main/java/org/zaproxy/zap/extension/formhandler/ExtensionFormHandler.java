@@ -144,7 +144,9 @@ public class ExtensionFormHandler extends ExtensionAdaptor {
     }
 
     private static boolean isAddonParamsActive(ExtensionLoader extLoader) {
-        return extLoader.isExtensionEnabled(ExtensionParams2.NAME)
+        ExtensionParams2 params = extLoader.getExtension(ExtensionParams2.class);
+        return params != null
+                && !params.isDeferringToCore()
                 && !extLoader.isExtensionEnabled(ExtensionParams.NAME);
     }
 

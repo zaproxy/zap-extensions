@@ -38,12 +38,11 @@ public class PopupMenuAddFormhandlerParam extends ExtensionPopupMenuItem {
         super(Constant.messages.getString("formhandler.popup.menu.params.add.label"));
         this.addActionListener(
                 e -> {
-                    if (!(paramTable.getModel() instanceof ParamsTableModel paramsModel)) {
-                        return;
-                    }
+                    PopupDialogAddField popupDialogAddField = null;
                     HtmlParameterStats hps =
-                            paramsModel.getHtmlParameterStatsAtRow(paramTable.getSelectedRow());
-                    PopupDialogAddField popupDialogAddField =
+                            ((ParamsTableModel) paramTable.getModel())
+                                    .getHtmlParameterStatsAtRow(paramTable.getSelectedRow());
+                    popupDialogAddField =
                             new PopupDialogAddField(
                                     View.getSingleton().getOptionsDialog(null),
                                     hps.getName(),
@@ -55,12 +54,8 @@ public class PopupMenuAddFormhandlerParam extends ExtensionPopupMenuItem {
     @Override
     public boolean isEnableForComponent(Component invoker) {
         if (invoker.getName() != null && invoker.getName().equals(ParamsPanel.PANEL_NAME)) {
-            JTable table = (JTable) invoker;
-            if (!(table.getModel() instanceof ParamsTableModel)) {
-                return false;
-            }
-            this.paramTable = table;
-            this.setEnabled(table.getSelectedRowCount() == 1);
+            this.paramTable = (JTable) invoker;
+            this.setEnabled(paramTable.getSelectedRowCount() == 1);
             return true;
         }
         return false;

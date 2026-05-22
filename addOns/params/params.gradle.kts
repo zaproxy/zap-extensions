@@ -33,7 +33,7 @@ zapAddOn {
                 dependencies {
                     addOns {
                         register("automation") {
-                            version.set(">= 0.42.0 & < 1.0.0")
+                            version.set(">= 0.61.0 & < 1.0.0")
                         }
                     }
                 }

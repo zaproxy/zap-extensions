@@ -60,6 +60,10 @@ public class ExtensionParamsAutomation extends ExtensionAdaptor {
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
+        ExtensionParams2 params = getExtension(ExtensionParams2.class);
+        if (params.isDeferringToCore()) {
+            return;
+        }
         getExtension(ExtensionAutomation.class).registerAutomationJob(paramsJob);
     }
 

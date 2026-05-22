@@ -54,6 +54,7 @@ class ExtensionParams2UnitTest extends TestUtils {
 
     @BeforeEach
     void setUp() {
+        ExtensionParams2.resetCoreExtensionFactoryRemovalAttemptedForUnitTests();
         extension = new ExtensionParams2();
         mockMessages(extension);
     }
@@ -91,7 +92,7 @@ class ExtensionParams2UnitTest extends TestUtils {
                 mock(ExtensionPassiveScan2.class, withSettings().strictness(Strictness.LENIENT));
         given(extensionLoader.getExtension(ExtensionPassiveScan2.class)).willReturn(extPscan);
         given(extPscan.getPassiveScannersManager()).willReturn(mock(PassiveScannersManager.class));
-        given(extensionLoader.isExtensionEnabled(ExtensionParams.NAME)).willReturn(false);
+        given(extensionLoader.getExtension(ExtensionParams.class)).willReturn(null);
         ExtensionHook extensionHook = mock(ExtensionHook.class);
         // When
         extension.hook(extensionHook);
@@ -103,13 +104,29 @@ class ExtensionParams2UnitTest extends TestUtils {
     }
 
     @Test
-    void shouldNotHookWhenCoreParamsExtensionEnabled() {
+    void shouldDeferToCoreWhenCoreParamsAlreadyLoadedOnGetAddOn() {
         // Given
         Model model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
         ExtensionLoader extensionLoader =
                 mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
         Control.initSingletonForTesting(model, extensionLoader);
-        given(extensionLoader.isExtensionEnabled(ExtensionParams.NAME)).willReturn(true);
+        given(extensionLoader.getExtension(ExtensionParams.class))
+                .willReturn(mock(ExtensionParams.class));
+        // When
+        extension.getAddOn();
+        // Then
+        assertThat(extension.isDeferringToCore(), is(true));
+    }
+
+    @Test
+    void shouldNotHookWhenCoreParamsAlreadyLoaded() {
+        // Given
+        Model model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
+        Control.initSingletonForTesting(model, extensionLoader);
+        given(extensionLoader.getExtension(ExtensionParams.class))
+                .willReturn(mock(ExtensionParams.class));
         ExtensionHook extensionHook = mock(ExtensionHook.class);
         // When
         extension.hook(extensionHook);
