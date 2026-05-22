@@ -29,6 +29,10 @@
 			<td>Script Diagnostics</td>
 			<td>scriptdiagnostics</td>
 		</tr>
+		<tr>
+			<td>Output for Script Diagnostics</td>
+			<td>scriptdiagnosticsoutput</td>
+		</tr>
 	</table>
 
 	<H3>Sample</H3>
@@ -227,14 +231,27 @@
 	<h4>Script Diagnostics Section</h4>
 	When the
 	<code>scriptdiagnostics</code>
-	section is enabled and the Script Console add-on has recorded runs in
-	the session database, the report can include a
+	section is enabled, the report includes a
 	<code>scriptDiagnostics</code>
-	object containing a
+	object with a
 	<code>runs</code>
-	array of script diagnostic records (for example failed automation
-	runs). For example:
-
+	array of script runs from the session. By default only runs that
+	encountered errors are included. When the
+	<code>scriptdiagnosticsoutput</code>
+	section is also enabled, successful runs that produced print output are
+	included as well.
+	<p>
+		Each error step identifies where the failure occurred via
+		<code>sourceStepIndex</code>
+		and
+		<code>line</code>
+		. For Zest scripts these are the statement index and type; for other
+		script types, or for print output steps, these are
+		<code>-1</code>
+		and
+		<code>""</code>
+		respectively. For example:
+	</p>
 	<pre>
         "scriptDiagnostics": {
         "runs": [
@@ -262,6 +279,30 @@
 								{
 									"kind": "ERROR",
 									"message": "ZestClientElementClick - Expected condition failed: waiting for element found by By.xpath: \/html\/body\/table\/tbody\/tr[2]\/td[2]\/div[13]\/h2[1]\/a to be clickable, but the element was not found: org.openqa.selenium.NoSuchElementException: Unable to locate element: \/html\/body\/table\/tbody\/tr[2]\/td[2]\/div[13]\/h2[1]\/a.\n(tried for 5 seconds with 500 milliseconds interval)"
+								}
+							]
+						}
+					]
+				}
+			]
+		},
+		{
+			"created": "2026-05-13T12:19:50.536360Z",
+			"outcome": "SUCCESS",
+			"summary": "Job: script Script: example_script completed.",
+			"scripts": [
+				{
+					"order": 1,
+					"scriptName": "example_script",
+					"scriptType": "standalone",
+					"steps": [
+						{
+							"sourceStepIndex": -1,
+							"line": "",
+							"outputs": [
+								{
+									"kind": "OUTPUT",
+									"message": "In example_script"
 								}
 							]
 						}

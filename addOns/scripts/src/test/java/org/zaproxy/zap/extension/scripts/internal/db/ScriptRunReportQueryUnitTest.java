@@ -42,11 +42,11 @@ class ScriptRunReportQueryUnitTest {
 
     @Test
     void shouldUsePersistedOrdinalForReportOrder() {
+        // Given
         ScriptsRun run = new ScriptsRun();
         run.setCreateTimestamp(Instant.parse("2026-04-01T12:00:00Z"));
         run.setOutcome(ScriptRunRecorder.OUTCOME_FAILED);
         run.setSummary("summary");
-
         run.getScripts().add(scriptRow(run, 0, "first"));
         run.getScripts().add(scriptRow(run, 1, "second"));
 
@@ -60,8 +60,10 @@ class ScriptRunReportQueryUnitTest {
             given(pm.newQuery(ScriptsRun.class)).willReturn(query);
             given(query.executeList()).willReturn(List.of(run));
 
-            List<ScriptRunReportData.Run> rows = ScriptRunReportQuery.loadRunsForReport();
+            // When
+            List<ScriptRunReportData.Run> rows = ScriptRunReportQuery.loadRunsForReport(true);
 
+            // Then
             assertThat(rows, hasSize(1));
             List<ScriptRunReportData.Script> scripts = rows.get(0).scripts();
             assertThat(scripts, hasSize(2));

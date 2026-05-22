@@ -28,19 +28,34 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-/** Persists failed script runs; persistence errors are logged and not rethrown. */
+/** Persists script runs; persistence errors are logged and not rethrown. */
 public final class ScriptRunRecorder {
 
     private static final Logger LOGGER = LogManager.getLogger(ScriptRunRecorder.class);
 
     public static final String OUTCOME_FAILED = "FAILED";
+    public static final String OUTCOME_SUCCESS = "SUCCESS";
     public static final String OUTPUT_KIND_ERROR = "ERROR";
+    public static final String OUTPUT_KIND_OUTPUT = "OUTPUT";
 
     /**
-     * One script row in a recorded run, in chain order. {@link #failure()} is set on the script
-     * that owns the failure step, if any.
+     * One script row in a recorded run, in chain order. {@link #outputs()} lists captured print
+     * lines in execution order. {@link #failure()} is set on the script that owns the failure step,
+     * if any.
      */
-    public record RunScript(String scriptName, String scriptType, FailureStep failure) {}
+    public record RunScript(
+            String scriptName,
+            String scriptType,
+            List<CapturedOutput> outputs,
+            FailureStep failure) {
+        public RunScript {
+            outputs = outputs == null ? List.of() : List.copyOf(outputs);
+        }
+
+        public RunScript(String scriptName, String scriptType, FailureStep failure) {
+            this(scriptName, scriptType, List.of(), failure);
+        }
+    }
 
     /**
      * {@code sourceStepIndex}: statement index in the failing script, or {@code -1}. {@code line}:
@@ -48,14 +63,29 @@ public final class ScriptRunRecorder {
      */
     public record FailureStep(int sourceStepIndex, String line) {}
 
+    /** One captured line of script print output. */
+    public record CapturedOutput(String message) {}
+
     private ScriptRunRecorder() {}
 
     /** Persists one failed run; {@code scripts} must be non-empty and in chain order. */
     public static void recordFailedRun(
             String summary, List<RunScript> scripts, String outputDetailMessage) {
+        recordRun(summary, OUTCOME_FAILED, scripts, outputDetailMessage);
+    }
+
+    /**
+     * Persists a run. SUCCESS runs with no captured outputs across all scripts are not persisted —
+     * silence is not worth a row.
+     */
+    public static void recordRun(
+            String summary, String outcome, List<RunScript> scripts, String failureDetailMessage) {
         String summaryToStore = StringUtils.defaultString(summary);
-        String outputToStore = StringUtils.defaultString(outputDetailMessage);
+        String outputToStore = StringUtils.defaultString(failureDetailMessage);
         if (scripts == null || scripts.isEmpty()) {
+            return;
+        }
+        if (!OUTCOME_FAILED.equals(outcome) && allOutputsEmpty(scripts)) {
             return;
         }
         PersistenceManagerFactory pmf = TableJdo.getPmf();
@@ -65,7 +95,7 @@ public final class ScriptRunRecorder {
         try {
             ScriptsRun run = new ScriptsRun();
             run.setCreateTimestamp(Instant.now());
-            run.setOutcome(OUTCOME_FAILED);
+            run.setOutcome(outcome);
             run.setSummary(summaryToStore);
 
             PersistenceManager pm = pmf.getPersistenceManager();
@@ -81,6 +111,23 @@ public final class ScriptRunRecorder {
                     row.setScriptType(StringUtils.defaultString(runScript.scriptType()));
                     run.getScripts().add(row);
 
+                    int stepOrdinal = 0;
+                    for (CapturedOutput captured : runScript.outputs()) {
+                        ScriptsRunStep st = new ScriptsRunStep();
+                        st.setRunScript(row);
+                        st.setOrdinal(stepOrdinal++);
+                        st.setSourceStepIndex(-1);
+                        st.setLine("");
+                        row.getSteps().add(st);
+
+                        ScriptsRunOutput out = new ScriptsRunOutput();
+                        out.setRunStep(st);
+                        out.setOrdinal(0);
+                        out.setKind(OUTPUT_KIND_OUTPUT);
+                        out.setMessage(StringUtils.defaultString(captured.message()));
+                        st.getOutputs().add(out);
+                    }
+
                     FailureStep failure = runScript.failure();
                     if (failure == null) {
                         continue;
@@ -88,7 +135,7 @@ public final class ScriptRunRecorder {
 
                     ScriptsRunStep st = new ScriptsRunStep();
                     st.setRunScript(row);
-                    st.setOrdinal(0);
+                    st.setOrdinal(stepOrdinal++);
                     st.setSourceStepIndex(failure.sourceStepIndex());
                     st.setLine(StringUtils.defaultString(failure.line()));
                     row.getSteps().add(st);
@@ -125,5 +172,14 @@ public final class ScriptRunRecorder {
                 summaryMessage,
                 List.of(new RunScript(scriptName, scriptType, new FailureStep(-1, ""))),
                 outputDetailMessage);
+    }
+
+    private static boolean allOutputsEmpty(List<RunScript> scripts) {
+        for (RunScript s : scripts) {
+            if (!s.outputs().isEmpty()) {
+                return false;
+            }
+        }
+        return true;
     }
 }

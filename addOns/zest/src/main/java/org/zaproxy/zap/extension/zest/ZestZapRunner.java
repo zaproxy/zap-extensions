@@ -55,6 +55,7 @@ import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptUI;
 import org.zaproxy.zap.extension.script.ScriptVars;
+import org.zaproxy.zap.extension.scripts.zest.ZestScriptDiagnosticSource.ZestScriptPrintCapture;
 import org.zaproxy.zap.extension.scripts.zest.ZestScriptDiagnosticSource.ZestScriptRunDiagnostic;
 import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.ClientAuthenticator;
@@ -64,6 +65,7 @@ import org.zaproxy.zest.core.v1.ZestAction;
 import org.zaproxy.zest.core.v1.ZestActionFail;
 import org.zaproxy.zest.core.v1.ZestActionFailException;
 import org.zaproxy.zest.core.v1.ZestActionIntercept;
+import org.zaproxy.zest.core.v1.ZestActionPrint;
 import org.zaproxy.zest.core.v1.ZestActionScan;
 import org.zaproxy.zest.core.v1.ZestAssertFailException;
 import org.zaproxy.zest.core.v1.ZestAssertion;
@@ -171,7 +173,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
             return "";
         } else {
             this.target = null;
-            if (wrapper.getWriter() != null) {
+            if (wrapper.getWriter() != null && !hasOutputWriter()) {
                 super.setOutputWriter(wrapper.getWriter());
             } else if (scriptUI != null && !hasOutputWriter()) {
                 super.setOutputWriter(scriptUI.getOutputWriter());
@@ -204,7 +206,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
                     ZestClientFailException {
         LOGGER.debug("Run script {}", script.getTitle());
         resetFailureDiagnosticsForNewRun(wrapper);
-        if (wrapper.getWriter() != null) {
+        if (wrapper.getWriter() != null && !hasOutputWriter()) {
             super.setOutputWriter(wrapper.getWriter());
         } else if (scriptUI != null && !hasOutputWriter()) {
             super.setOutputWriter(scriptUI.getOutputWriter());
@@ -357,12 +359,30 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
                             ZestScriptWrapper.ZAP_BREAK_VARIABLE_VALUE);
         } else {
             try {
-                return super.handleAction(script, action, lastResponse);
+                String result = super.handleAction(script, action, lastResponse);
+                capturePrintOutput(action, result);
+                return result;
             } catch (ZestActionFailException e) {
                 notifyActionFailed(e);
             }
         }
         return null;
+    }
+
+    private void capturePrintOutput(ZestAction action, String invokeResult) {
+        if (!(action instanceof ZestActionPrint print) || wrapper == null || invokeResult == null) {
+            return;
+        }
+        String line = invokeResult;
+        int chainOrder = -1;
+        var provenance = wrapper.getChainProvenance();
+        if (provenance.isPresent()) {
+            var origin = provenance.get().originForMergedIndex(print.getIndex());
+            if (origin.isPresent()) {
+                chainOrder = origin.get().segmentIndex() + 1;
+            }
+        }
+        wrapper.appendPrintCapture(new ZestScriptPrintCapture(chainOrder, line));
     }
 
     @Override
@@ -780,8 +800,9 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
         chainedScriptRun = this.wrapper.getChainProvenance().isPresent();
     }
 
-    private static void resetFailureDiagnosticsForNewRun(ZestScriptWrapper w) {
+    static void resetFailureDiagnosticsForNewRun(ZestScriptWrapper w) {
         w.setLastRunDiagnostic(null);
+        w.clearLastRunPrintCaptures();
     }
 
     @Override

@@ -20,6 +20,9 @@
 package org.zaproxy.zap.extension.zest;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import javax.script.ScriptException;
 import org.parosproxy.paros.control.Control;
@@ -30,6 +33,7 @@ import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.scripts.zest.ZestScriptDiagnosticSource;
+import org.zaproxy.zap.extension.scripts.zest.ZestScriptDiagnosticSource.ZestScriptPrintCapture;
 import org.zaproxy.zap.extension.scripts.zest.ZestScriptDiagnosticSource.ZestScriptRunDiagnostic;
 import org.zaproxy.zap.extension.zest.internal.ZestScriptMerger;
 import org.zaproxy.zap.users.User;
@@ -56,6 +60,9 @@ public class ZestScriptWrapper extends ScriptWrapper implements ZestScriptDiagno
 
     /** Last run failure diagnostics; cleared at run start and not copied by {@link #clone()}. */
     private ZestScriptRunDiagnostic lastRunDiagnostic;
+
+    /** Captures from print statements in the last run; cleared at run start. */
+    private final List<ZestScriptPrintCapture> lastRunPrintCaptures = new ArrayList<>();
 
     public ZestScriptWrapper(ScriptWrapper script) {
         this.original = script;
@@ -282,5 +289,22 @@ public class ZestScriptWrapper extends ScriptWrapper implements ZestScriptDiagno
     @Override
     public Optional<ZestScriptRunDiagnostic> getLastRunDiagnostic() {
         return Optional.ofNullable(lastRunDiagnostic);
+    }
+
+    /** Appends a print capture from the current run, in execution order. */
+    public void appendPrintCapture(ZestScriptPrintCapture capture) {
+        if (capture != null) {
+            lastRunPrintCaptures.add(capture);
+        }
+    }
+
+    /** Discards captures accumulated from any prior run. */
+    public void clearLastRunPrintCaptures() {
+        lastRunPrintCaptures.clear();
+    }
+
+    @Override
+    public List<ZestScriptPrintCapture> getLastRunPrintCaptures() {
+        return Collections.unmodifiableList(lastRunPrintCaptures);
     }
 }

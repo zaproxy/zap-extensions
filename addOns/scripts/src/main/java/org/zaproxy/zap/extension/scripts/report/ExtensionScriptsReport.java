@@ -93,11 +93,14 @@ public class ExtensionScriptsReport extends ExtensionAdaptor {
             if (!reportData.isIncludeSection("scriptdiagnostics")) {
                 return;
             }
-            List<ScriptRunReportData.Run> rows = ScriptRunReportQuery.loadRunsForReport();
-            if (!rows.isEmpty()) {
-                reportData.addReportObjects(
-                        SCRIPT_DIAGNOSTICS, new ScriptRunReportData.Diagnostics(rows));
+            boolean includeOutputSteps = reportData.isIncludeSection("scriptdiagnosticsoutput");
+            List<ScriptRunReportData.Run> rows =
+                    ScriptRunReportQuery.loadRunsForReport(includeOutputSteps);
+            if (rows.isEmpty()) {
+                return;
             }
+            reportData.addReportObjects(
+                    SCRIPT_DIAGNOSTICS, new ScriptRunReportData.Diagnostics(rows));
         }
     }
 }

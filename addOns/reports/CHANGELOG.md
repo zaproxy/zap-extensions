@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Added
-- Added a new section to Traditional JSON Report with Requests and Responses for script diagnostics.
+- Added a new section to Traditional JSON Report with Requests and Responses for script diagnostics which includes errors and optionally printed output.
 
 ### Fixed
 - Invalid alerts, ones without a corresponding message, are now excluded from generated reports. Previously these could break templates that reference message fields (e.g. SARIF, modern, `*-plus`) (Issue 6880).

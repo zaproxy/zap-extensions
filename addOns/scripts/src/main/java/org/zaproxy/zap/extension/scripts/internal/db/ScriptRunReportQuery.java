@@ -36,7 +36,7 @@ public final class ScriptRunReportQuery {
     private ScriptRunReportQuery() {}
 
     @SuppressWarnings("try")
-    public static List<ScriptRunReportData.Run> loadRunsForReport() {
+    public static List<ScriptRunReportData.Run> loadRunsForReport(boolean includeOutputSteps) {
         PersistenceManagerFactory pmf = TableJdo.getPmf();
         if (pmf == null) {
             return List.of();
@@ -46,7 +46,12 @@ public final class ScriptRunReportQuery {
             try (Query<ScriptsRun> runQuery = pm.newQuery(ScriptsRun.class)) {
                 runQuery.setOrdering("id ascending");
                 return runQuery.executeList().stream()
-                        .map(ScriptRunReportQuery::materializeRun)
+                        .map(run -> materializeRun(run, includeOutputSteps))
+                        .filter(
+                                run ->
+                                        includeOutputSteps
+                                                || run.scripts().stream()
+                                                        .anyMatch(s -> !s.steps().isEmpty()))
                         .toList();
             }
         } catch (Exception e) {
@@ -57,18 +62,33 @@ public final class ScriptRunReportQuery {
         }
     }
 
-    private static ScriptRunReportData.Run materializeRun(ScriptsRun run) {
+    private static ScriptRunReportData.Run materializeRun(
+            ScriptsRun run, boolean includeOutputSteps) {
         List<ScriptRunReportData.Script> scripts = new ArrayList<>();
         for (ScriptsRunScript sr : run.getScripts()) {
-            scripts.add(materializeScript(sr));
+            scripts.add(materializeScript(sr, includeOutputSteps));
         }
         return new ScriptRunReportData.Run(
                 run.getCreateTimestamp().toString(), run.getOutcome(), run.getSummary(), scripts);
     }
 
-    private static ScriptRunReportData.Script materializeScript(ScriptsRunScript sr) {
+    private static ScriptRunReportData.Script materializeScript(
+            ScriptsRunScript sr, boolean includeOutputSteps) {
         List<ScriptRunReportData.Step> reportSteps =
-                sr.getSteps().stream().map(ScriptRunReportQuery::materializeStep).toList();
+                sr.getSteps().stream()
+                        .filter(
+                                st ->
+                                        includeOutputSteps
+                                                || st.getOutputs().stream()
+                                                        .anyMatch(
+                                                                o ->
+                                                                        ScriptRunRecorder
+                                                                                .OUTPUT_KIND_ERROR
+                                                                                .equals(
+                                                                                        o
+                                                                                                .getKind())))
+                        .map(ScriptRunReportQuery::materializeStep)
+                        .toList();
         return new ScriptRunReportData.Script(
                 sr.getOrdinal() + 1, sr.getScriptName(), sr.getScriptType(), reportSteps);
     }
