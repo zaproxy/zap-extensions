@@ -64,6 +64,23 @@ public final class MsLoginAuthenticator implements Authenticator {
     private static final By PROOF_TOTP_VERIFY_FIELD = By.id("idSubmit_SAOTCC_Continue");
     private static final By PROOF_DONE_FIELD = By.id("id__5");
 
+    private static final String PERMISSIONS_REQUESTED_TEXT = "Permissions requested";
+    private static final String ACCEPT_TEXT = "Accept";
+
+    private static final By PERMISSIONS_REQUESTED_HEADING =
+            By.xpath(
+                    "//*[@role='heading' and normalize-space(.)='"
+                            + PERMISSIONS_REQUESTED_TEXT
+                            + "']");
+
+    // Consent Accept button reuses the idSIButton9 name (not id) on the consent page.
+    private static final By CONSENT_PRIMARY_BUTTON =
+            By.cssSelector(
+                    "input#idSIButton9,"
+                            + "input[name='idSIButton9'],"
+                            + "button#idSIButton9,"
+                            + "button[name='idSIButton9']");
+
     private enum State {
         START,
 
@@ -79,6 +96,8 @@ public final class MsLoginAuthenticator implements Authenticator {
         PROOF_REDIRECT,
         PROOF_TOTP,
         PROOF,
+
+        PERMISSIONS_REQUESTED,
     }
 
     @Override
@@ -160,6 +179,11 @@ public final class MsLoginAuthenticator implements Authenticator {
                         userField = true;
                         pwdField = true;
                         states.add(State.PROOF_TOTP);
+                    } else if (findPermissionsAcceptButton(wd) != null) {
+                        // SSO already signed in; landed directly on consent screen.
+                        userField = true;
+                        pwdField = true;
+                        states.add(State.PERMISSIONS_REQUESTED);
                     } else {
                         diags.recordStep(
                                 wd,
@@ -321,12 +345,25 @@ public final class MsLoginAuthenticator implements Authenticator {
                         states.add(State.STAY_SIGNED_IN);
                         break;
                     } catch (TimeoutException e) {
+                        // KMSI not present; try consent before giving up.
+                    }
+
+                    if (isMsLoginFlowFinished(wd, authHandle, targetHandle)) {
+                        successful = true;
+                        break;
+                    }
+
+                    try {
+                        waitForElement(wd, new PermissionsRequestedAcceptButton());
+                        states.add(State.PERMISSIONS_REQUESTED);
+                        break;
+                    } catch (TimeoutException e) {
                         diags.recordStep(
                                 wd,
                                 Constant.messages.getString(
                                         "authhelper.auth.method.diags.steps.ms.stepunknown"));
                         LOGGER.debug(
-                                "Still in login URL but no keep me signed in field found, assuming unsuccessful login.");
+                                "Still in login URL but no known MS login step found, assuming unsuccessful login.");
                     }
 
                     break;
@@ -411,6 +448,19 @@ public final class MsLoginAuthenticator implements Authenticator {
                                 "Still in proof but no skip/done button found, assuming unsuccessful login.");
                         break;
                     }
+
+                case PERMISSIONS_REQUESTED:
+                    WebElement acceptElement =
+                            waitForElement(wd, new PermissionsRequestedAcceptButton());
+                    diags.recordStep(
+                            wd,
+                            Constant.messages.getString(
+                                    "authhelper.auth.method.diags.steps.ms.clickpermissionsaccept"),
+                            acceptElement);
+                    acceptElement.click();
+                    // Accept is itself the submit; just loop back to POST_PASSWORD.
+                    states.add(State.POST_PASSWORD);
+                    break;
             }
         } while (!states.isEmpty());
 
@@ -530,5 +580,58 @@ public final class MsLoginAuthenticator implements Authenticator {
         public String toString() {
             return String.format("element '%s' containing text '%s' is not present", locator, text);
         }
+    }
+
+    private static class PermissionsRequestedAcceptButton implements ExpectedCondition<WebElement> {
+
+        @Override
+        public WebElement apply(WebDriver driver) {
+            return findPermissionsAcceptButton(driver);
+        }
+
+        @Override
+        public String toString() {
+            return "Microsoft permissions requested page with enabled Accept button is not present";
+        }
+    }
+
+    private static WebElement findPermissionsAcceptButton(WebDriver wd) {
+        if (!hasDisplayedElement(wd, PERMISSIONS_REQUESTED_HEADING)) {
+            return null;
+        }
+        return wd.findElements(CONSENT_PRIMARY_BUTTON).stream()
+                .filter(MsLoginAuthenticator::isDisplayedAndEnabled)
+                .filter(MsLoginAuthenticator::isAcceptButton)
+                .findFirst()
+                .orElse(null);
+    }
+
+    private static boolean hasDisplayedElement(WebDriver wd, By by) {
+        return wd.findElements(by).stream().anyMatch(MsLoginAuthenticator::isDisplayed);
+    }
+
+    private static boolean isDisplayed(WebElement element) {
+        try {
+            return element.isDisplayed();
+        } catch (RuntimeException e) {
+            return false;
+        }
+    }
+
+    private static boolean isDisplayedAndEnabled(WebElement element) {
+        try {
+            return element.isDisplayed() && element.isEnabled();
+        } catch (RuntimeException e) {
+            return false;
+        }
+    }
+
+    private static boolean isAcceptButton(WebElement element) {
+        String value = element.getAttribute("value");
+        if (ACCEPT_TEXT.equalsIgnoreCase(value)) {
+            return true;
+        }
+        String text = element.getText();
+        return ACCEPT_TEXT.equalsIgnoreCase(text);
     }
 }
