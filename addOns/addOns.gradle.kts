@@ -204,6 +204,8 @@ subprojects {
     val zapGav = "org.zaproxy:zap:2.17.0"
     dependencies {
         "zap"(zapGav)
+
+        "testImplementation"(project(":testutilscore"))
     }
 
     val apiGenClasspath = configurations.detachedConfiguration(dependencies.create(zapGav))

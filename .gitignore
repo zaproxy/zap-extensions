@@ -10,7 +10,7 @@
 /buildSrc/.kotlin
 /addOns/**/build
 /testutils/build
-/sharedutils/build
+/testutilscore/build
 
 # IDEA
 # ----
@@ -26,7 +26,7 @@
 /out
 /addOns/**/out
 /testutils/out
-/sharedutils/out
+/testutilscore/out
 
 # Eclipse
 # -------
@@ -38,7 +38,7 @@
 /buildSrc/bin
 /addOns/**/bin
 /testutils/bin
-/sharedutils/bin
+/testutilscore/bin
 
 # NetBeans
 # --------

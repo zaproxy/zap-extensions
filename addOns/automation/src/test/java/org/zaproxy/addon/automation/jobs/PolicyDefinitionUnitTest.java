@@ -27,16 +27,12 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.MockedStatic;
@@ -65,14 +61,9 @@ class PolicyDefinitionUnitTest {
     private static MockedStatic<CommandLine> mockedCmdLine;
     private static AbstractPlugin plugin;
 
-    @TempDir static Path tempDir;
-
     @BeforeAll
-    static void init() throws IOException {
+    static void init() {
         mockedCmdLine = Mockito.mockStatic(CommandLine.class);
-
-        Constant.setZapHome(
-                Files.createDirectory(tempDir.resolve("home")).toAbsolutePath().toString());
 
         PluginFactoryTestHelper.init();
         plugin = new PluginTestHelper();

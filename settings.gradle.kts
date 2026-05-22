@@ -11,6 +11,7 @@ rootProject.name = "zap-extensions"
 val addOnsProjectName = "addOns"
 include(addOnsProjectName)
 include("testutils")
+include("testutilscore")
 
 // Keep the add-ons in alphabetic order.
 val addOns =

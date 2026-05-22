@@ -3,7 +3,7 @@ plugins {
     id("org.zaproxy.common")
 }
 
-description = "Common test utilities for the add-ons."
+description = "Core test utilities for the add-ons."
 
 configurations {
     "compileClasspath" {
@@ -19,10 +19,8 @@ tasks.withType<JavaCompile>().configureEach {
 dependencies {
     compileOnly(libs.testutils.zap)
 
-    implementation(project(":testutilscore"))
-    implementation(project(":addOns:network"))
-    implementation(libs.testutils.httpclient5)
-
-    api(libs.testutils.nanohttpd.webserver)
-    api(libs.testutils.nanohttpd.websocket)
+    api(libs.test.hamcrest)
+    api(libs.test.junit.jupiter)
+    runtimeOnly(libs.test.junit.platformLauncher)
+    api(libs.test.mockito.junit.jupiter)
 }
