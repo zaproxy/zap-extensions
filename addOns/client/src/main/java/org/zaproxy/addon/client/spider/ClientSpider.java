@@ -131,8 +131,7 @@ public class ClientSpider implements GenericScanner2 {
     private String targetUrl;
     private final String targetHost;
     private final HttpPrefixUriValidator httpPrefixUriValidator;
-    private final Context context;
-    private final User user;
+    private final ScanOptions scanOptions;
     private ExtensionClientIntegration extClient;
     private final ClientMap clientMap;
     private final ExtensionSelenium extSelenium;
@@ -175,6 +174,30 @@ public class ClientSpider implements GenericScanner2 {
             User user,
             boolean subtreeOnly,
             ValueProvider valueProvider) {
+        this(
+                extClient,
+                clientMap,
+                displayName,
+                targetUrl,
+                options,
+                ScanOptions.builder()
+                        .setContext(context)
+                        .setUser(user)
+                        .setSubtreeOnly(subtreeOnly)
+                        .build(),
+                valueProvider,
+                id);
+    }
+
+    public ClientSpider(
+            ExtensionClientIntegration extClient,
+            ClientMap clientMap,
+            String displayName,
+            String targetUrl,
+            ClientOptions options,
+            ScanOptions scanOptions,
+            ValueProvider valueProvider,
+            int id) {
         this.extClient = extClient;
         this.clientMap = clientMap;
         session = extClient.getModel().getSession();
@@ -185,9 +208,8 @@ public class ClientSpider implements GenericScanner2 {
         this.options = options;
         this.scanId = id;
         this.tasksTotalCount = new AtomicInteger();
-        this.context = context;
-        this.user = user;
         this.valueProvider = valueProvider;
+        this.scanOptions = scanOptions;
         this.addedNodesModel = new UrlTableModel();
         this.tasksModel = new TaskTableModel();
         messagesTableModel = new MessagesTableModel();
@@ -204,7 +226,7 @@ public class ClientSpider implements GenericScanner2 {
         exclusionList.addAll(session.getGlobalExcludeURLRegexs());
 
         HttpPrefixUriValidator validator =
-                subtreeOnly ? new HttpPrefixUriValidator(targetUri) : null;
+                scanOptions.isSubtreeOnly() ? new HttpPrefixUriValidator(targetUri) : null;
         this.httpPrefixUriValidator = validator;
         createOutOfScopeResponse(Constant.messages.getString("client.spider.outofscope.response"));
     }
@@ -251,12 +273,12 @@ public class ClientSpider implements GenericScanner2 {
             maxTime = startTime + TimeUnit.MINUTES.toMillis(options.getMaxDuration());
         }
         Stats.incCounter("stats.client.spider.started");
-        if (user != null) {
+        if (scanOptions.getUser() != null) {
             Stats.incCounter("stats.client.spider.started.user");
             synchronized (this.extClient.getAuthenticationHandlers()) {
                 this.extClient
                         .getAuthenticationHandlers()
-                        .forEach(handler -> handler.enableAuthentication(user));
+                        .forEach(handler -> handler.enableAuthentication(scanOptions.getUser()));
             }
         }
 
@@ -264,7 +286,7 @@ public class ClientSpider implements GenericScanner2 {
                 Executors.newFixedThreadPool(
                         options.getThreadCount(),
                         new ClientSpiderThreadFactory(
-                                "ZAP-ClientSpiderThreadPool-" + scanId + "-thread-"));
+                                scanOptions.getThreadPrefix() + scanId + "-thread-"));
 
         List<String> unvisitedUrls = getUnvisitedUrls();
 
@@ -393,7 +415,7 @@ public class ClientSpider implements GenericScanner2 {
         if (spiderTasks.remove(task)) {
             tasksDoneCount++;
         }
-        if (listener != null) {
+        if (listener != null && !isExternalControl()) {
             listener.scanProgress(scanId, displayName, this.getProgress(), this.getMaximum());
         }
         if (this.spiderTasks.isEmpty() && !paused && !stopping.get()) {
@@ -524,8 +546,8 @@ public class ClientSpider implements GenericScanner2 {
         if (httpPrefixUriValidator != null && !httpPrefixUriValidator.isValid(uri)) {
             LOGGER.debug("Excluding resource not under subtree: {}", uriString);
             state = ResourceState.OUT_OF_SUBTREE;
-        } else if (context != null) {
-            if (!context.isInContext(uriString)) {
+        } else if (scanOptions.getContext() != null) {
+            if (!scanOptions.getContext().isInContext(uriString)) {
                 LOGGER.debug("Excluding resource not in specified context: {}", uriString);
                 state = ResourceState.OUT_OF_CONTEXT;
             }
@@ -584,6 +606,9 @@ public class ClientSpider implements GenericScanner2 {
     }
 
     private void addUriToAddedNodesModel(final String uri) {
+        if (isExternalControl()) {
+            return;
+        }
         ThreadUtils.invokeLater(
                 () -> {
                     addedNodesModel.addScanResult(uri);
@@ -592,10 +617,16 @@ public class ClientSpider implements GenericScanner2 {
     }
 
     void taskStateChange(final ClientSpiderTask task) {
+        if (isExternalControl()) {
+            return;
+        }
         tasksModel.updateTaskState(task.getId(), task.getStatus().toString(), task.getError());
     }
 
     private void addTaskToTasksModel(final ClientSpiderTask task, String url) {
+        if (isExternalControl()) {
+            return;
+        }
         tasksModel.addTask(
                 task.getId(),
                 task.getDisplayName(),
@@ -659,6 +690,10 @@ public class ClientSpider implements GenericScanner2 {
         return targetUrl;
     }
 
+    public boolean isExternalControl() {
+        return scanOptions.isExternalControl();
+    }
+
     private void finished() {
         if (!stopping.compareAndSet(false, true)) {
             return;
@@ -666,11 +701,11 @@ public class ClientSpider implements GenericScanner2 {
         long timeTaken = System.currentTimeMillis() - startTime;
         LOGGER.debug(
                 "Spider finished {}", DurationFormatUtils.formatDuration(timeTaken, "HH:MM:SS"));
-        if (this.user != null) {
+        if (scanOptions.getUser() != null) {
             synchronized (extClient.getAuthenticationHandlers()) {
                 extClient
                         .getAuthenticationHandlers()
-                        .forEach(handler -> handler.disableAuthentication(user));
+                        .forEach(handler -> handler.disableAuthentication(scanOptions.getUser()));
             }
         }
 
@@ -703,7 +738,7 @@ public class ClientSpider implements GenericScanner2 {
             }
         }
 
-        if (listener != null) {
+        if (listener != null && !isExternalControl()) {
             listener.scanFinshed(scanId, displayName);
         }
 
@@ -886,9 +921,7 @@ public class ClientSpider implements GenericScanner2 {
         public void handleMessage(HttpMessageHandlerContext ctx, HttpMessage httpMessage) {
             if (!ctx.isFromClient()) {
                 notifyMessage(
-                        httpMessage,
-                        HistoryReference.TYPE_CLIENT_SPIDER,
-                        getResourceState(httpMessage));
+                        httpMessage, scanOptions.getHrefType(), getResourceState(httpMessage));
                 return;
             }
 
@@ -901,13 +934,13 @@ public class ClientSpider implements GenericScanner2 {
 
             if (state != ResourceState.ALLOWED && state != ResourceState.THIRD_PARTY) {
                 setOutOfScopeResponse(httpMessage);
-                notifyMessage(httpMessage, HistoryReference.TYPE_CLIENT_SPIDER_TEMPORARY, state);
+                notifyMessage(httpMessage, scanOptions.getTmpHrefType(), state);
                 ctx.overridden();
                 return;
             }
 
             if (extClient.getAuthenticationHandlers().isEmpty()) {
-                httpMessage.setRequestingUser(user);
+                httpMessage.setRequestingUser(scanOptions.getUser());
             }
         }
 
@@ -935,6 +968,12 @@ public class ClientSpider implements GenericScanner2 {
         }
 
         private void notifyMessage(HttpMessage httpMessage, int historyType, ResourceState state) {
+            if (isExternalControl()) {
+                if (state == ResourceState.ALLOWED || state == ResourceState.THIRD_PARTY) {
+                    crawledUrl(httpMessage.getRequestHeader().getURI().toString(), false);
+                }
+                return;
+            }
             try {
                 HistoryReference historyRef =
                         new HistoryReference(session, historyType, httpMessage);
@@ -942,7 +981,8 @@ public class ClientSpider implements GenericScanner2 {
                         () -> {
                             if (state == ResourceState.ALLOWED
                                     || state == ResourceState.THIRD_PARTY) {
-                                crawledUrl(httpMessage.getRequestHeader().getURI().toString());
+                                crawledUrl(
+                                        httpMessage.getRequestHeader().getURI().toString(), true);
                                 session.getSiteTree().addPath(historyRef, httpMessage);
                             }
 
@@ -955,7 +995,11 @@ public class ClientSpider implements GenericScanner2 {
     }
 
     private void crawledUrl(String url) {
-        if (crawledUrls.add(url)) {
+        crawledUrl(url, !isExternalControl());
+    }
+
+    private void crawledUrl(String url, boolean updateUi) {
+        if (crawledUrls.add(url) && updateUi) {
             extClient.updateAddedCount();
         }
     }

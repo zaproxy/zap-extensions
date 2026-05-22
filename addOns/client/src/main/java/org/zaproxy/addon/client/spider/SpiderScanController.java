@@ -102,36 +102,53 @@ public class SpiderScanController implements ScanController<ClientSpider> {
 
     @Override
     public int startScan(String name, Target target, User user, Object[] contextSpecificObjects) {
+        ClientOptions clientOptions = null;
+        String startUrl = null;
+
+        ScanOptions.Builder scanOptionsBuilder = ScanOptions.builder();
+
+        if (user != null) {
+            scanOptionsBuilder.setUser(user);
+        }
+
+        if (contextSpecificObjects != null) {
+            for (Object obj : contextSpecificObjects) {
+                if (obj == null) {
+                    continue;
+                }
+
+                if (obj instanceof ClientOptions) {
+                    LOGGER.debug("Setting custom spider params");
+                    clientOptions = (ClientOptions) obj;
+                } else if (obj instanceof URI uri) {
+                    startUrl = uri.toString();
+                } else if (obj instanceof Context ctx) {
+                    scanOptionsBuilder.setContext(ctx);
+                } else if (obj instanceof Boolean subtree) {
+                    scanOptionsBuilder.setSubtreeOnly(subtree);
+                } else {
+                    LOGGER.error(
+                            "Unexpected contextSpecificObject: {}",
+                            obj.getClass().getCanonicalName());
+                }
+            }
+        }
+
+        return startScan(name, target, startUrl, clientOptions, scanOptionsBuilder.build());
+    }
+
+    public int startScan(
+            String name,
+            Target target,
+            String startUrl,
+            ClientOptions clientOptions,
+            ScanOptions scanOptions) {
         clientSpidersLock.lock();
         try {
             int id = this.scanIdCounter++;
 
-            ClientOptions clientOptions = extension.getClientParam();
-            URI startUri = null;
-            boolean subtreeOnly = false;
-            Context context = null;
-
-            if (contextSpecificObjects != null) {
-                for (Object obj : contextSpecificObjects) {
-                    if (obj == null) {
-                        continue;
-                    }
-
-                    if (obj instanceof ClientOptions) {
-                        LOGGER.debug("Setting custom spider params");
-                        clientOptions = (ClientOptions) obj;
-                    } else if (obj instanceof URI) {
-                        startUri = (URI) obj;
-                    } else if (obj instanceof Context) {
-                        context = (Context) obj;
-                    } else if (obj instanceof Boolean) {
-                        subtreeOnly = (Boolean) obj;
-                    } else {
-                        LOGGER.error(
-                                "Unexpected contextSpecificObject: {}",
-                                obj.getClass().getCanonicalName());
-                    }
-                }
+            if (clientOptions == null) {
+                clientOptions = extension.getClientParam();
             }
 
             ClientSpider scan =
@@ -139,13 +156,11 @@ public class SpiderScanController implements ScanController<ClientSpider> {
                             extension,
                             clientMap,
                             name,
-                            startUri.toString(),
+                            startUrl,
                             clientOptions,
-                            id,
-                            context,
-                            user,
-                            subtreeOnly,
-                            valueProvider);
+                            scanOptions,
+                            valueProvider,
+                            id);
 
             this.clientSpiderMap.put(id, scan);
             this.clientSpiderList.add(scan);

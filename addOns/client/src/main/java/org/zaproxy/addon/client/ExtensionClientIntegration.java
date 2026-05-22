@@ -39,7 +39,6 @@ import java.util.Collections;
 import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
-import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -83,6 +82,7 @@ import org.zaproxy.addon.client.spider.ClientSpiderApi;
 import org.zaproxy.addon.client.spider.ClientSpiderDialog;
 import org.zaproxy.addon.client.spider.ClientSpiderPanel;
 import org.zaproxy.addon.client.spider.PopupMenuSpider;
+import org.zaproxy.addon.client.spider.ScanOptions;
 import org.zaproxy.addon.client.spider.SpiderScanController;
 import org.zaproxy.addon.client.ui.ClientDetailsPanel;
 import org.zaproxy.addon.client.ui.ClientHistoryPanel;
@@ -737,11 +737,19 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
     public int startScan(
             String url, ClientOptions options, Context context, User user, boolean subtreeOnly)
             throws URIException, NullPointerException {
-        return this.startScan(
-                abbreviateDisplayName(url),
-                null,
-                user,
-                new Object[] {new URI(url, true), options, context, subtreeOnly});
+        return startScan(
+                url,
+                options,
+                ScanOptions.builder()
+                        .setContext(context)
+                        .setUser(user)
+                        .setSubtreeOnly(subtreeOnly)
+                        .build());
+    }
+
+    public int startScan(String url, ClientOptions options, ScanOptions scanOptions)
+            throws URIException, NullPointerException {
+        return startScan(abbreviateDisplayName(url), null, url, options, scanOptions);
     }
 
     public int startScan(
@@ -749,7 +757,23 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
         int id =
                 this.spiderScanController.startScan(
                         displayName, target, user, contextSpecificObjects);
-        if (hasView()) {
+        ClientSpider scan = spiderScanController.getScan(id);
+        if (scan != null && hasView() && !scan.isExternalControl()) {
+            addScanToUi(scan);
+        }
+        return id;
+    }
+
+    public int startScan(
+            String displayName,
+            Target target,
+            String startUrl,
+            ClientOptions clientOptions,
+            ScanOptions scanOptions) {
+        int id =
+                this.spiderScanController.startScan(
+                        displayName, target, startUrl, clientOptions, scanOptions);
+        if (hasView() && !scanOptions.isExternalControl()) {
             addScanToUi(this.spiderScanController.getScan(id));
         }
         return id;
