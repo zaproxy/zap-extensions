@@ -45,6 +45,7 @@ import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.client.spider.ClientSpider;
+import org.zaproxy.addon.client.spider.ScanOptions;
 import org.zaproxy.addon.commonlib.ExtensionCommonlib;
 import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
 import org.zaproxy.zap.extension.selenium.Browser;
@@ -166,7 +167,7 @@ class ExtensionClientIntegrationUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldStartSpider() throws IOException {
+    void shouldStartSpiderWithLegacyApi() throws Exception {
         // Given
         ClientOptions options = new ClientOptions();
         options.load(new ZapXmlConfiguration());
@@ -180,5 +181,68 @@ class ExtensionClientIntegrationUnitTest extends TestUtils {
 
         // Then
         assertEquals(true, isRunning);
+    }
+
+    @Test
+    void shouldStartSpiderWithScanOptions() throws Exception {
+        // Given
+        ClientOptions options = new ClientOptions();
+        options.load(new ZapXmlConfiguration());
+        options.setThreadCount(1);
+        ScanOptions scanOptions = ScanOptions.builder().setSubtreeOnly(true).build();
+
+        // When
+        int spiderId = extClient.startScan("https://www.example.com", options, scanOptions);
+        ClientSpider spider = extClient.getScan(spiderId);
+        boolean isRunning = spider.isRunning();
+        spider.stopScan();
+
+        // Then
+        assertEquals(true, isRunning);
+        assertEquals(true, scanOptions.isSubtreeOnly());
+    }
+
+    @Test
+    void shouldStartSpiderWithNewStartScanMethod() throws Exception {
+        // Given
+        ClientOptions options = new ClientOptions();
+        options.load(new ZapXmlConfiguration());
+        options.setThreadCount(1);
+        String url = "https://www.example.com";
+
+        // When
+        int spiderId =
+                extClient.startScan(
+                        "https://www.example.com",
+                        null,
+                        url,
+                        options,
+                        ScanOptions.builder().build());
+        ClientSpider spider = extClient.getScan(spiderId);
+        boolean isRunning = spider.isRunning();
+        spider.stopScan();
+
+        // Then
+        assertEquals(true, isRunning);
+        assertEquals(url, spider.getTargetUrl());
+    }
+
+    @Test
+    void shouldStartSpiderWithExternalControl() throws Exception {
+        // Given
+        ClientOptions options = new ClientOptions();
+        options.load(new ZapXmlConfiguration());
+        options.setThreadCount(1);
+        ScanOptions scanOptions = ScanOptions.builder().setExternalControl(true).build();
+
+        // When
+        int spiderId = extClient.startScan("https://www.example.com", options, scanOptions);
+        ClientSpider spider = extClient.getScan(spiderId);
+        boolean isRunning = spider.isRunning();
+        spider.stopScan();
+
+        // Then
+        assertEquals(true, isRunning);
+        assertEquals(true, spider.isExternalControl());
     }
 }
