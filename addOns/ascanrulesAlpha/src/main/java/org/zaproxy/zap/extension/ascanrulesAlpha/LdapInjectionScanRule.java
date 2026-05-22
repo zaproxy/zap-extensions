@@ -24,6 +24,7 @@ import java.net.UnknownHostException;
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -67,7 +68,7 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin
     // LDAP errors for Injection testing
     // Use an inverse map to avoid multimap use
     // ----------------------------------------
-    private static final Map<Pattern, String> LDAP_ERRORS = new HashMap<>();
+    private static final Map<Pattern, String> LDAP_ERRORS = new LinkedHashMap<>();
     private static final Map<String, String> ALERT_TAGS;
 
     static {

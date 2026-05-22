@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.ascanrulesAlpha;
 
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.equalTo;
@@ -185,7 +186,7 @@ class LdapInjectionScanRuleUnitTest extends ActiveScannerTest<LdapInjectionScanR
         Alert errorBasedAlert = alerts.get(0);
         assertThat(errorBasedAlert.getRisk(), is(equalTo(Alert.RISK_HIGH)));
         assertThat(errorBasedAlert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
-        assertThat(errorBasedAlert.getOtherInfo(), is(not(emptyString())));
+        assertThat(errorBasedAlert.getOtherInfo(), containsString("0x00005011L"));
 
         Alert booleanBasedAlert = alerts.get(1);
         assertThat(booleanBasedAlert.getRisk(), is(equalTo(Alert.RISK_HIGH)));
