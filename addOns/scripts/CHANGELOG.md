@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Update dependency.
 - Revised error handling for chained scripts, output is now more detailed/specific.
+- The Run Script action display for chains in the Automation panel has been updated to display the names of scripts in the chain instead of being blank.
 - Maintenance changes.
 - Formatted JavaScript files for consistency.
 
