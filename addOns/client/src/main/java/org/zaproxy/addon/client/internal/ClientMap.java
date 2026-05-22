@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.Consumer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import net.sf.json.JSONObject;
@@ -53,7 +52,8 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = LogManager.getLogger(ClientMap.class);
     private ClientNode root;
-    private Consumer<ReportedObject> reportedObjectConsumer;
+    private PersistenceConsumer persistenceConsumer;
+    private boolean publishEvents = true;
     private final List<ClientMapListener> listeners = new CopyOnWriteArrayList<>();
 
     public ClientMap(ClientNode root) {
@@ -73,6 +73,10 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
 
     public void removeListener(ClientMapListener listener) {
         listeners.remove(listener);
+    }
+
+    public void setPublishEvents(boolean publishEvents) {
+        this.publishEvents = publishEvents;
     }
 
     public ClientNode getOrAddNode(String url, boolean visited, boolean storage) {
@@ -119,7 +123,7 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
                             new ClientNode(
                                     new ClientSideDetails(nodeName, url, visited, storage),
                                     storage);
-                    if (!storage && publishEvent) {
+                    if (!storage && publishEvent && publishEvents) {
                         int depth = parent.getLevel() + 1;
                         int siblings = parent.getChildCount() + 1;
                         Map<String, String> map = new HashMap<>();
@@ -163,6 +167,9 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
                     child =
                             new ClientNode(
                                     new ClientSideDetails(nodeName, nodeUrl, false, false), false);
+                }
+                if (publishEvents && !storage && persistenceConsumer != null) {
+                    persistenceConsumer.onNodeAdded(child);
                 }
                 this.insertNodeInto(child, parent);
                 this.nodeStructureChanged(parent);
@@ -222,14 +229,20 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
         if (!wasVisited || componentAdded) {
             details.setVisited(true);
 
-            Map<String, String> map = new HashMap<>(component.getData());
-            map.put(DEPTH_KEY, Integer.toString(node.getLevel()));
-            map.put(SIBLINGS_KEY, Integer.toString(node.getChildCount()));
-            ZAP.getEventBus()
-                    .publishSyncEvent(
-                            this, new Event(this, MAP_COMPONENT_ADDED_EVENT, new Target(), map));
-            listeners.forEach(l -> l.componentAdded(map, source));
+            if (publishEvents) {
+                Map<String, String> map = new HashMap<>(component.getData());
+                map.put(DEPTH_KEY, Integer.toString(node.getLevel()));
+                map.put(SIBLINGS_KEY, Integer.toString(node.getChildCount()));
+                ZAP.getEventBus()
+                        .publishSyncEvent(
+                                this,
+                                new Event(this, MAP_COMPONENT_ADDED_EVENT, new Target(), map));
+                listeners.forEach(l -> l.componentAdded(map, source));
+            }
             notifyNodeChanged(node);
+        }
+        if (publishEvents && componentAdded && !node.isStorage() && persistenceConsumer != null) {
+            persistenceConsumer.onComponentAdded(node, component);
         }
         return componentAdded;
     }
@@ -239,19 +252,25 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
         if (node != null) {
             node.getUserObject().setRedirect(true);
             node.getUserObject().setVisited(true);
-            node.getUserObject()
-                    .addComponent(
-                            new ClientSideComponent(
-                                    Map.of(),
-                                    ClientSideComponent.REDIRECT,
-                                    null,
-                                    originalUrl,
-                                    redirectedUrl,
-                                    ClientSideComponent.REDIRECT,
-                                    ClientSideComponent.Type.REDIRECT,
-                                    null,
-                                    -1));
+            ClientSideComponent redirectComponent =
+                    new ClientSideComponent(
+                            Map.of(),
+                            ClientSideComponent.REDIRECT,
+                            null,
+                            originalUrl,
+                            redirectedUrl,
+                            ClientSideComponent.REDIRECT,
+                            ClientSideComponent.Type.REDIRECT,
+                            null,
+                            -1);
+            boolean componentAdded = node.getUserObject().addComponent(redirectComponent);
             notifyNodeChanged(node);
+            if (publishEvents && persistenceConsumer != null) {
+                persistenceConsumer.onNodeChanged(node);
+                if (componentAdded) {
+                    persistenceConsumer.onComponentAdded(node, redirectComponent);
+                }
+            }
             return node;
         }
         LOGGER.debug("setRedirect, no node for URL {}", originalUrl);
@@ -263,6 +282,9 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
         if (node != null && !node.getUserObject().isVisited()) {
             node.getUserObject().setVisited(true);
             notifyNodeChanged(node);
+            if (publishEvents && persistenceConsumer != null) {
+                persistenceConsumer.onNodeChanged(node);
+            }
             return node;
         }
         LOGGER.debug("setVisited, no node for URL or already visited {}", url);
@@ -276,24 +298,30 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
         }
 
         node.getUserObject().setContentLoaded(true);
-        node.getUserObject()
-                .addComponent(
-                        new ClientSideComponent(
-                                Map.of(),
-                                ClientSideComponent.CONTENT_LOADED,
-                                null,
-                                null,
-                                null,
-                                ClientSideComponent.CONTENT_LOADED,
-                                ClientSideComponent.Type.CONTENT_LOADED,
-                                null,
-                                -1));
+        ClientSideComponent contentLoadedComponent =
+                new ClientSideComponent(
+                        Map.of(),
+                        ClientSideComponent.CONTENT_LOADED,
+                        null,
+                        null,
+                        null,
+                        ClientSideComponent.CONTENT_LOADED,
+                        ClientSideComponent.Type.CONTENT_LOADED,
+                        null,
+                        -1);
+        boolean componentAdded = node.getUserObject().addComponent(contentLoadedComponent);
         notifyNodeChanged(node);
+        if (publishEvents && persistenceConsumer != null) {
+            persistenceConsumer.onNodeChanged(node);
+            if (componentAdded) {
+                persistenceConsumer.onComponentAdded(node, contentLoadedComponent);
+            }
+        }
         return node;
     }
 
-    public void setReportedObjectConsumer(Consumer<ReportedObject> consumer) {
-        this.reportedObjectConsumer = consumer;
+    public void setPersistenceConsumer(PersistenceConsumer consumer) {
+        this.persistenceConsumer = consumer;
     }
 
     public void handleReportObject(String jsonStr) {
@@ -339,13 +367,24 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
             return;
         }
 
-        if (reportedObjectConsumer != null) {
-            reportedObjectConsumer.accept(reportObject);
+        if (publishEvents && persistenceConsumer != null) {
+            persistenceConsumer.onReportedObject(reportObject);
         }
     }
 
     private static boolean isApiUrl(String url) {
         return url != null && (url.startsWith(API.API_URL) || url.startsWith(API.API_URL_S));
+    }
+
+    public interface PersistenceConsumer {
+
+        void onNodeAdded(ClientNode node);
+
+        void onNodeChanged(ClientNode node);
+
+        void onComponentAdded(ClientNode node, ClientSideComponent component);
+
+        void onReportedObject(ReportedObject reportedObject);
     }
 }
 
