@@ -204,6 +204,11 @@ public class ExtensionReports extends ExtensionAdaptor {
         if (alert == null) {
             return false;
         }
+        // Mirrors core ExtensionAlert#isInvalid: alerts without an HttpMessage or URI are
+        // not well-formed and break templates that reference message fields directly.
+        if (alert.getMessage() == null || alert.getUri().isEmpty()) {
+            return false;
+        }
         String uri = alert.getUri();
         // Filter by contexts
         List<org.zaproxy.zap.model.Context> contexts = reportData.getContexts();
