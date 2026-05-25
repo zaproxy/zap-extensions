@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.treetools;
+package org.zaproxy.addon.commonlib.ui;
 
 import java.awt.Component;
 import java.util.Enumeration;
@@ -33,7 +33,7 @@ public class PopupMenuTreeTools extends ExtensionPopupMenuItem {
     private JTree sitesTree;
 
     public PopupMenuTreeTools() {
-        super(Constant.messages.getString("treetools.popup"));
+        super(Constant.messages.getString("commonlib.sitestree.expandcollapse"));
 
         this.addActionListener(
                 e -> {
