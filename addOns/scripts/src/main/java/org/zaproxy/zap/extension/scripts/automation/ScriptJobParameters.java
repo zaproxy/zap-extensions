@@ -56,4 +56,19 @@ public class ScriptJobParameters extends AutomationData {
     public void setFile(String file) {
         this.source = file;
     }
+
+    /**
+     * Copies dialog field values from {@code other}; does not update {@code source}, {@code chain},
+     * or {@code failureLevel}.
+     */
+    public void copyFrom(ScriptJobParameters other) {
+        this.action = other.action;
+        this.type = other.type;
+        this.engine = other.engine;
+        this.name = other.name;
+        this.target = other.target;
+        this.inline = other.inline;
+        this.context = other.context;
+        this.user = other.user;
+    }
 }
