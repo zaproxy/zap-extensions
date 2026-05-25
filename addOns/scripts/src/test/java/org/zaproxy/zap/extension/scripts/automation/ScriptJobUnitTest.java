@@ -85,6 +85,7 @@ import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
+import org.zaproxy.zap.extension.scripts.automation.actions.RunScriptAction;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.users.User;
@@ -231,7 +232,9 @@ class ScriptJobUnitTest extends TestUtils {
         assertThat(
                 progress.getErrors(),
                 contains(
-                        "!scripts.automation.error.scriptNameIsNull!",
+                        "Run".equalsIgnoreCase(action)
+                                ? "!scripts.automation.error.scriptNameOrChainRequired!"
+                                : "!scripts.automation.error.scriptNameIsNull!",
                         "!scripts.automation.error.scriptNameNotFound!"));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
     }
@@ -260,7 +263,9 @@ class ScriptJobUnitTest extends TestUtils {
         assertThat(
                 progress.getErrors(),
                 contains(
-                        "!scripts.automation.error.scriptNameIsNull!",
+                        "Run".equalsIgnoreCase(action)
+                                ? "!scripts.automation.error.scriptNameOrChainRequired!"
+                                : "!scripts.automation.error.scriptNameIsNull!",
                         "!scripts.automation.error.scriptNameNotFound!"));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
     }
@@ -1502,7 +1507,7 @@ class ScriptJobUnitTest extends TestUtils {
         }
 
         TestScriptWrapper testWrapper = new TestScriptWrapper();
-        testWrapper.setEngineName("Mozilla Zest");
+        testWrapper.setEngineName(RunScriptAction.ZEST_ENGINE_NAME);
         testWrapper.setType(new ScriptType(ExtensionScript.TYPE_STANDALONE, null, null, false));
         ScriptWrapper scriptWrapper = testWrapper;
         lenient().when(extScript.getScript("myScript")).thenReturn(scriptWrapper);

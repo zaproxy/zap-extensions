@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.scripts.automation;
 
+import org.parosproxy.paros.Constant;
 import org.zaproxy.addon.automation.AutomationProgress;
 
 public enum FailureLevel {
@@ -42,4 +43,10 @@ public enum FailureLevel {
     };
 
     public abstract void report(AutomationProgress progress, String message);
+
+    @Override
+    public String toString() {
+        return Constant.messages.getString(
+                "scripts.automation.failurelevel." + name().toLowerCase());
+    }
 }

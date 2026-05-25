@@ -53,7 +53,35 @@ public class RunScriptAction extends ScriptAction {
     private static final Logger LOGGER = LogManager.getLogger(RunScriptAction.class);
 
     public static final String NAME = "run";
-    private static final String ZEST_ENGINE_NAME = "Mozilla Zest";
+
+    /** Must match {@code org.zaproxy.zest.impl.ZestScriptEngineFactory#NAME}. */
+    public static final String ZEST_ENGINE_NAME = "Mozilla Zest";
+
+    private static final String ZEST_LANGUAGE_NAME = "Zest";
+
+    public static boolean isZestEngine(String engineParam) {
+        return ExtensionScript.isSameScriptEngine(
+                engineParam, ZEST_ENGINE_NAME, ZEST_LANGUAGE_NAME);
+    }
+
+    public static boolean isZestStandaloneChainScript(ScriptWrapper script) {
+        return script != null
+                && ExtensionScript.TYPE_STANDALONE.equals(script.getTypeName())
+                && ZEST_ENGINE_NAME.equals(script.getEngineName());
+    }
+
+    public static String inferEngineNameFromSource(ExtensionScript extScript, String source) {
+        if (StringUtils.isBlank(source) || !source.contains(".")) {
+            return null;
+        }
+        try {
+            return extScript.getEngineNameForExtension(
+                    source.substring(source.indexOf('.') + 1).toLowerCase(Locale.ROOT));
+        } catch (InvalidParameterException e) {
+            return null;
+        }
+    }
+
     private static final String EXTENSION_ZEST_NAME = "ExtensionZest";
     private static final String RUN_NAME_CHAIN_PREFIX = "chain_";
     private static final List<String> SCRIPT_TYPES =
@@ -110,7 +138,7 @@ public class RunScriptAction extends ScriptAction {
         } else if (!hasName && !hasChain) {
             issue =
                     Constant.messages.getString(
-                            "scripts.automation.error.scriptNameIsNull", jobName);
+                            "scripts.automation.error.scriptNameOrChainRequired", jobName);
             list.add(issue);
             if (progress != null) {
                 progress.error(issue);
@@ -199,14 +227,10 @@ public class RunScriptAction extends ScriptAction {
         try {
             se = extScript.getEngineWrapper(this.parameters.getEngine());
         } catch (Exception e) {
-            String filename = params.getSource();
-            if (filename != null && filename.contains(".")) {
+            String engineName = inferEngineNameFromSource(extScript, params.getSource());
+            if (engineName != null) {
                 try {
-                    se =
-                            extScript.getEngineWrapper(
-                                    extScript.getEngineNameForExtension(
-                                            filename.substring(filename.indexOf(".") + 1)
-                                                    .toLowerCase(Locale.ROOT)));
+                    se = extScript.getEngineWrapper(engineName);
                 } catch (InvalidParameterException e1) {
                     // Ignore - will return null below
                 }
@@ -505,8 +529,7 @@ public class RunScriptAction extends ScriptAction {
                 return null;
             }
 
-            if (!ExtensionScript.TYPE_STANDALONE.equals(script.getTypeName())
-                    || !ZEST_ENGINE_NAME.equals(script.getEngineName())) {
+            if (!isZestStandaloneChainScript(script)) {
                 progress.error(
                         Constant.messages.getString(
                                 "scripts.automation.error.chainScriptNotZestStandalone",
