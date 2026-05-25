@@ -46,7 +46,10 @@ import org.zaproxy.zap.extension.scripts.automation.ui.ScriptJobDialog;
 public class ScriptJob extends AutomationJob {
 
     public static final String JOB_NAME = "script";
+    public static final String PARAM_PARAMETERS = "parameters";
     public static final String PARAM_ACTION = "action";
+    public static final String PARAM_TYPE = "type";
+    public static final String PARAM_NAME = "name";
     protected static final Map<String, Function<ScriptJobParameters, ScriptAction>> ACTIONS =
             new HashMap<String, Function<ScriptJobParameters, ScriptAction>>() {
                 private static final long serialVersionUID = 1L;
@@ -79,7 +82,7 @@ public class ScriptJob extends AutomationJob {
         Map<?, ?> jobData = this.getJobData();
         if (jobData != null) {
             JobUtils.applyParamsToObject(
-                    (LinkedHashMap<?, ?>) jobData.get("parameters"),
+                    (LinkedHashMap<?, ?>) jobData.get(PARAM_PARAMETERS),
                     this.parameters,
                     this.getName(),
                     null,
