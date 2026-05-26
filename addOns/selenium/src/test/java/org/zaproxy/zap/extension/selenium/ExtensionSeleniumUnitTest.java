@@ -35,6 +35,8 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.withSettings;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -60,6 +62,25 @@ class ExtensionSeleniumUnitTest extends TestUtils {
     private static final int REQUESTER = 100;
     private static final String PROXY_ADDRESS = "127.0.0.1";
     private static final int PROXY_PORT = 8080;
+
+    private static DriverConfiguration testDriverConf(
+            String proxyAddress,
+            int proxyPort,
+            List<String> arguments,
+            Map<String, String> preferences) {
+        DriverConfiguration.DriverConfigurationBuilder builder =
+                DriverConfiguration.builder().requester(REQUESTER).proxyPort(proxyPort);
+        if (proxyAddress != null) {
+            builder.proxyAddress(proxyAddress);
+        }
+        if (arguments != null) {
+            builder.arguments(arguments);
+        }
+        if (preferences != null) {
+            builder.preferences(preferences);
+        }
+        return builder.build();
+    }
 
     private Model model;
     private SeleniumOptions seleniumOptions;
@@ -93,13 +114,7 @@ class ExtensionSeleniumUnitTest extends TestUtils {
             DriverConfiguration config =
                     ExtensionSelenium.buildConfigFromBrowser(
                             Browser.CHROME_HEADLESS,
-                            REQUESTER,
-                            PROXY_ADDRESS,
-                            PROXY_PORT,
-                            c -> {},
-                            false,
-                            null,
-                            null);
+                            testDriverConf(PROXY_ADDRESS, PROXY_PORT, null, null));
 
             assertThat(config.getRequester(), is(REQUESTER));
             assertThat(config.getProxyAddress(), is(PROXY_ADDRESS));
@@ -119,13 +134,7 @@ class ExtensionSeleniumUnitTest extends TestUtils {
             DriverConfiguration config =
                     ExtensionSelenium.buildConfigFromBrowser(
                             Browser.CHROME_HEADLESS,
-                            REQUESTER,
-                            null,
-                            PROXY_PORT,
-                            c -> {},
-                            false,
-                            extraArgs,
-                            null);
+                            testDriverConf(null, PROXY_PORT, extraArgs, null));
 
             assertThat(
                     config.getArguments(),
@@ -143,13 +152,7 @@ class ExtensionSeleniumUnitTest extends TestUtils {
             DriverConfiguration config =
                     ExtensionSelenium.buildConfigFromBrowser(
                             Browser.CHROME_HEADLESS,
-                            REQUESTER,
-                            PROXY_ADDRESS,
-                            PROXY_PORT,
-                            c -> {},
-                            false,
-                            null,
-                            extraPrefs);
+                            testDriverConf(PROXY_ADDRESS, PROXY_PORT, null, extraPrefs));
 
             assertThat(config.getPreferences(), hasEntry("options.pref", "from-options"));
             assertThat(config.getPreferences(), hasEntry("extra.pref", "extra-value"));
@@ -169,14 +172,7 @@ class ExtensionSeleniumUnitTest extends TestUtils {
 
             DriverConfiguration config =
                     ExtensionSelenium.buildConfigFromBrowser(
-                            Browser.CHROME_HEADLESS,
-                            REQUESTER,
-                            null,
-                            PROXY_PORT,
-                            c -> {},
-                            false,
-                            null,
-                            null);
+                            Browser.CHROME_HEADLESS, testDriverConf(null, PROXY_PORT, null, null));
 
             assertThat(config.getArguments(), contains("--enabled-arg"));
             assertThat(config.getPreferences(), hasEntry("enabled.pref", "v1"));
@@ -190,13 +186,7 @@ class ExtensionSeleniumUnitTest extends TestUtils {
             DriverConfiguration config =
                     ExtensionSelenium.buildConfigFromBrowser(
                             Browser.FIREFOX_HEADLESS,
-                            REQUESTER,
-                            PROXY_ADDRESS,
-                            PROXY_PORT,
-                            c -> {},
-                            false,
-                            null,
-                            null);
+                            testDriverConf(PROXY_ADDRESS, PROXY_PORT, null, null));
 
             assertThat(config.getType(), is(DriverConfiguration.DriverType.FIREFOX));
             assertThat(config.isHeadless(), is(true));
@@ -208,13 +198,7 @@ class ExtensionSeleniumUnitTest extends TestUtils {
             DriverConfiguration config =
                     ExtensionSelenium.buildConfigFromBrowser(
                             Browser.CHROME_HEADLESS,
-                            REQUESTER,
-                            PROXY_ADDRESS,
-                            PROXY_PORT,
-                            c -> {},
-                            false,
-                            null,
-                            null);
+                            testDriverConf(PROXY_ADDRESS, PROXY_PORT, null, null));
 
             assertThat(config.getArguments(), is(equalTo(Collections.emptyList())));
             assertThat(config.getPreferences(), is(equalTo(Collections.emptyMap())));
@@ -225,13 +209,11 @@ class ExtensionSeleniumUnitTest extends TestUtils {
             DriverConfiguration config =
                     ExtensionSelenium.buildConfigFromBrowser(
                             Browser.CHROME_HEADLESS,
-                            REQUESTER,
-                            PROXY_ADDRESS,
-                            PROXY_PORT,
-                            c -> {},
-                            false,
-                            Collections.emptyList(),
-                            Collections.emptyMap());
+                            testDriverConf(
+                                    PROXY_ADDRESS,
+                                    PROXY_PORT,
+                                    Collections.emptyList(),
+                                    Collections.emptyMap()));
 
             assertThat(config.getArguments(), is(equalTo(Collections.emptyList())));
             assertThat(config.getPreferences(), is(equalTo(Collections.emptyMap())));
@@ -259,14 +241,8 @@ class ExtensionSeleniumUnitTest extends TestUtils {
             DriverConfiguration config =
                     ExtensionSelenium.buildConfigFromCustomBrowser(
                             customBrowser,
-                            REQUESTER,
-                            PROXY_ADDRESS,
-                            PROXY_PORT,
                             true,
-                            c -> {},
-                            false,
-                            null,
-                            null);
+                            testDriverConf(PROXY_ADDRESS, PROXY_PORT, null, null));
 
             assertThat(config.getRequester(), is(REQUESTER));
             assertThat(config.getProxyAddress(), is(PROXY_ADDRESS));
@@ -295,14 +271,8 @@ class ExtensionSeleniumUnitTest extends TestUtils {
             DriverConfiguration config =
                     ExtensionSelenium.buildConfigFromCustomBrowser(
                             customBrowser,
-                            REQUESTER,
-                            null,
-                            PROXY_PORT,
                             false,
-                            c -> {},
-                            false,
-                            extraArgs,
-                            extraPrefs);
+                            testDriverConf(null, PROXY_PORT, extraArgs, extraPrefs));
 
             assertThat(config.getArguments(), containsInAnyOrder("--from-browser", "--extra-arg"));
             assertThat(config.getPreferences(), hasEntry("browser.pref", "browserVal"));
@@ -322,15 +292,7 @@ class ExtensionSeleniumUnitTest extends TestUtils {
 
             DriverConfiguration config =
                     ExtensionSelenium.buildConfigFromCustomBrowser(
-                            customBrowser,
-                            REQUESTER,
-                            null,
-                            PROXY_PORT,
-                            true,
-                            c -> {},
-                            false,
-                            null,
-                            null);
+                            customBrowser, true, testDriverConf(null, PROXY_PORT, null, null));
 
             assertThat(config.getArguments(), contains("--headless"));
             assertThat(config.getPreferences(), is(equalTo(Collections.emptyMap())));
@@ -563,6 +525,102 @@ class ExtensionSeleniumUnitTest extends TestUtils {
             } finally {
                 driver2.quit();
             }
+        }
+    }
+
+    @Nested
+    class BrowserExtensionFiltering {
+
+        private static BrowserExtension extension(String name, boolean enabled) {
+            Path path = Paths.get("extensions", name);
+            BrowserExtension ext = new BrowserExtension(path, enabled, Browser.CHROME);
+            return ext;
+        }
+
+        @Test
+        void shouldMatchExtensionByDirectoryName() {
+            Path path = Paths.get("extensions", "zap-browser-extension");
+            assertThat(
+                    ExtensionSelenium.matchesExtensionName(path, List.of("zap-browser-extension")),
+                    is(true));
+            assertThat(
+                    ExtensionSelenium.matchesExtensionName(path, List.of("other-extension")),
+                    is(false));
+        }
+
+        @Test
+        void shouldMatchExtensionNameCaseInsensitively() {
+            Path path = Paths.get("extensions", "My-Extension");
+            assertThat(
+                    ExtensionSelenium.matchesExtensionName(path, List.of("my-extension")),
+                    is(true));
+        }
+
+        @Test
+        void shouldIncludeDisabledExtensionWhenExplicitlyIncluded() {
+            BrowserExtension ext = extension("forced-ext", false);
+            assertThat(
+                    ExtensionSelenium.shouldInstallBrowserExtension(
+                            ext, List.of("forced-ext"), Collections.emptyList(), true),
+                    is(true));
+        }
+
+        @Test
+        void shouldExcludeEnabledExtensionWhenExplicitlyExcluded() {
+            BrowserExtension ext = extension("blocked-ext", true);
+            assertThat(
+                    ExtensionSelenium.shouldInstallBrowserExtension(
+                            ext, Collections.emptyList(), List.of("blocked-ext"), true),
+                    is(false));
+        }
+
+        @Test
+        void shouldUseEnabledStateWhenNotIncludedOrExcluded() {
+            assertThat(
+                    ExtensionSelenium.shouldInstallBrowserExtension(
+                            extension("enabled-ext", true),
+                            Collections.emptyList(),
+                            Collections.emptyList(),
+                            true),
+                    is(true));
+            assertThat(
+                    ExtensionSelenium.shouldInstallBrowserExtension(
+                            extension("disabled-ext", false),
+                            Collections.emptyList(),
+                            Collections.emptyList(),
+                            true),
+                    is(false));
+        }
+
+        @Test
+        void shouldNotInstallEnabledExtensionWhenExtensionsDisabledAndNotIncluded() {
+            assertThat(
+                    ExtensionSelenium.shouldInstallBrowserExtension(
+                            extension("enabled-ext", true),
+                            Collections.emptyList(),
+                            Collections.emptyList(),
+                            false),
+                    is(false));
+        }
+
+        @Test
+        void shouldInstallIncludedExtensionWhenExtensionsDisabled() {
+            assertThat(
+                    ExtensionSelenium.shouldInstallBrowserExtension(
+                            extension("forced-ext", false),
+                            List.of("forced-ext"),
+                            Collections.emptyList(),
+                            false),
+                    is(true));
+        }
+
+        @Test
+        void excludeShouldTakePrecedenceOverInclude() {
+            BrowserExtension ext = extension("conflict-ext", true);
+            assertThat(
+                    ExtensionSelenium.shouldInstallBrowserExtension(
+                            ext, List.of("conflict-ext"), List.of("conflict-ext"), true),
+                    is(false));
         }
     }
 

@@ -77,6 +77,8 @@ import org.zaproxy.addon.network.server.HttpMessageHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 import org.zaproxy.addon.network.server.HttpServerConfig;
 import org.zaproxy.addon.network.server.Server;
+import org.zaproxy.zap.extension.selenium.DriverConfiguration;
+import org.zaproxy.zap.extension.selenium.DriverConfiguration.DriverConfigurationBuilder;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.GenericScanner2;
@@ -865,27 +867,62 @@ public class ClientSpider implements GenericScanner2 {
     class WebDriverProcess {
 
         private static final String LOCAL_PROXY_IP = "127.0.0.1";
-        private static final int INITIATOR = HttpSender.CLIENT_SPIDER_INITIATOR;
 
         private Server proxy;
         private WebDriver webDriver;
+        private final int proxyPort;
 
         private WebDriverProcess(ProxyHandler proxyHandler) throws IOException {
+            int initiator = scanOptions.getInitiator();
+            HttpSender httpSender = scanOptions.getHttpSender();
+            if (httpSender == null) {
+                httpSender = new HttpSender(initiator);
+            }
             proxy =
                     extensionNetwork.createHttpServer(
                             HttpServerConfig.builder()
                                     .setHttpMessageHandler(proxyHandler)
-                                    .setHttpSender(new HttpSender(INITIATOR))
+                                    .setHttpSender(httpSender)
                                     .setServeZapApi(true)
                                     .build());
-            int port = proxy.start(Server.ANY_PORT);
-            proxyPorts.add(port);
+            proxyPort = proxy.start(Server.ANY_PORT);
+            proxyPorts.add(proxyPort);
+            extClient.registerPortInitiator(proxyPort, initiator);
 
-            webDriver =
-                    extSelenium.getWebDriver(
-                            INITIATOR, options.getBrowserId(), LOCAL_PROXY_IP, port);
-            if (ScopeCheck.STRICT.equals(options.getScopeCheck())) {
-                proxyHandler.setAllowAll(false);
+            DriverConfigurationBuilder driverConfBuilder =
+                    DriverConfiguration.builder()
+                            .requester(initiator)
+                            .proxyAddress(LOCAL_PROXY_IP)
+                            .proxyPort(proxyPort)
+                            .enableExtensions(true);
+            if (!scanOptions.getIncludeExtensions().isEmpty()) {
+                driverConfBuilder.includeExtensions(scanOptions.getIncludeExtensions());
+            }
+            if (!scanOptions.getExcludeExtensions().isEmpty()) {
+                driverConfBuilder.excludeExtensions(scanOptions.getExcludeExtensions());
+            }
+
+            try {
+                webDriver =
+                        extSelenium.getWebDriver(options.getBrowserId(), driverConfBuilder.build());
+                if (ScopeCheck.STRICT.equals(options.getScopeCheck())) {
+                    proxyHandler.setAllowAll(false);
+                }
+            } catch (Exception e) {
+                closeProxy();
+                throw e;
+            }
+        }
+
+        private void closeProxy() {
+            if (proxy != null) {
+                extClient.unregisterPortInitiator(proxyPort);
+                try {
+                    proxy.close();
+                } catch (IOException e) {
+                    LOGGER.debug("An error occurred while stopping the proxy.", e);
+                }
+                proxy = null;
             }
         }
 
@@ -899,13 +936,7 @@ public class ClientSpider implements GenericScanner2 {
                 }
             }
 
-            if (proxy != null) {
-                try {
-                    proxy.close();
-                } catch (IOException e) {
-                    LOGGER.debug("An error occurred while stopping the proxy.", e);
-                }
-            }
+            closeProxy();
         }
     }
 

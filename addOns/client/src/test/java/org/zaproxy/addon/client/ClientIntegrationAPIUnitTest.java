@@ -39,6 +39,7 @@ import org.openqa.selenium.WebDriver;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.client.internal.ClientMap;
 import org.zaproxy.zap.extension.selenium.SeleniumScriptUtils;
 import org.zaproxy.zap.testutils.TestUtils;
@@ -106,12 +107,15 @@ class ClientIntegrationAPIUnitTest extends TestUtils {
         // Given
         CallBackImp callback = new CallBackImp("test");
         api.registerClientCallBack(callback);
+        InetSocketAddress addr = new InetSocketAddress(9999);
 
         // When
-        String resp1 = api.handleCallBack(getMsg("GET", api.getCallbackUrl() + "/test"));
-        String resp2 = api.handleCallBack(getMsg("POST", api.getCallbackUrl() + "/test/1/2/3"));
+        String resp1 = api.handleCallBack(getMsg("GET", api.getCallbackUrl() + "/test", addr));
+        String resp2 =
+                api.handleCallBack(getMsg("POST", api.getCallbackUrl() + "/test/1/2/3", addr));
         String resp3 =
-                api.handleCallBack(getMsg("OPTIONS", api.getCallbackUrl() + "/test?querystring"));
+                api.handleCallBack(
+                        getMsg("OPTIONS", api.getCallbackUrl() + "/test?querystring", addr));
 
         // Then
         assertThat(callback.calls, is(3));
@@ -281,6 +285,56 @@ class ClientIntegrationAPIUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldPassInitiatorToClientCallBackWhenPortRegistered() throws Exception {
+        // Given
+        int proxyPort = 5678;
+        InitiatorCallBackImp callback = new InitiatorCallBackImp("test");
+        api.registerClientCallBack(callback);
+        api.registerPortInitiator(proxyPort, HttpSender.CLIENT_SPIDER_INITIATOR);
+        HttpMessage msg =
+                getMsg("GET", api.getCallbackUrl() + "/test", new InetSocketAddress(proxyPort));
+
+        // When
+        api.handleCallBack(msg);
+
+        // Then
+        assertThat(callback.initiator, is(HttpSender.CLIENT_SPIDER_INITIATOR));
+    }
+
+    @Test
+    void shouldPassUnknownInitiatorWhenPortUnknown() throws Exception {
+        // Given
+        InitiatorCallBackImp callback = new InitiatorCallBackImp("test");
+        api.registerClientCallBack(callback);
+        HttpMessage msg =
+                getMsg("GET", api.getCallbackUrl() + "/test", new InetSocketAddress(9999));
+
+        // When
+        api.handleCallBack(msg);
+
+        // Then
+        assertThat(callback.initiator, is(-1));
+    }
+
+    @Test
+    void shouldRemoveInitiatorMappingOnUnregisterPortInitiator() throws Exception {
+        // Given
+        int proxyPort = 5678;
+        api.registerPortInitiator(proxyPort, HttpSender.CLIENT_SPIDER_INITIATOR);
+        InitiatorCallBackImp callback = new InitiatorCallBackImp("test");
+        api.registerClientCallBack(callback);
+
+        // When
+        api.unregisterPortInitiator(proxyPort);
+        HttpMessage msg =
+                getMsg("GET", api.getCallbackUrl() + "/test", new InetSocketAddress(proxyPort));
+        api.handleCallBack(msg);
+
+        // Then
+        assertThat(callback.initiator, is(-1));
+    }
+
+    @Test
     void shouldDelegateReportObjectViaCallback() throws Exception {
         // Given
         String reportedObject = "ReportedObject";
@@ -317,15 +371,28 @@ class ClientIntegrationAPIUnitTest extends TestUtils {
     }
 
     private static ClientCallBackUtils createClientCallBackUtils() {
+        return createClientCallBackUtils(8080, 0);
+    }
+
+    private static ClientCallBackUtils createClientCallBackUtils(int proxyPort, int requester) {
         WebDriver wd = mock(WebDriver.class);
-        SeleniumScriptUtils ssu = new SeleniumScriptUtils(wd, 0, "firefox", "localhost", 8080);
+        SeleniumScriptUtils ssu =
+                new SeleniumScriptUtils(wd, requester, "firefox", "localhost", proxyPort);
         return new ClientCallBackUtils(ssu, UUID.randomUUID());
     }
 
     private static HttpMessage getMsg(String method, String url) throws Exception {
+        return getMsg(method, url, null);
+    }
+
+    private static HttpMessage getMsg(String method, String url, InetSocketAddress localAddress)
+            throws Exception {
         HttpMessage msg = new HttpMessage();
         URI uri = new URI(url, true);
         msg.setRequestHeader(new HttpRequestHeader(method, uri, HttpHeader.HTTP11));
+        if (localAddress != null) {
+            msg.getRequestHeader().setLocalAddress(localAddress);
+        }
         return msg;
     }
 
@@ -364,6 +431,33 @@ class ClientIntegrationAPIUnitTest extends TestUtils {
         @Override
         public void browserClosing(ClientCallBackUtils ccbu) {
             this.closingCcbu = ccbu;
+        }
+    }
+
+    static class InitiatorCallBackImp implements ClientCallBackImplementor {
+
+        private final String name;
+        int initiator = -1;
+
+        InitiatorCallBackImp(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String getImplementorName() {
+            return name;
+        }
+
+        @Override
+        public String handleCallBack(HttpMessage msg) {
+            return "";
+        }
+
+        @Override
+        public String handleCallBack(
+                HttpMessage msg, ClientCallBackImplementor.ClientCallBackContext context) {
+            this.initiator = context.initiator();
+            return "";
         }
     }
 

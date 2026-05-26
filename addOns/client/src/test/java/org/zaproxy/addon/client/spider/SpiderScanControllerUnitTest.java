@@ -55,6 +55,7 @@ import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.addon.network.server.HttpServerConfig;
 import org.zaproxy.addon.network.server.Server;
+import org.zaproxy.zap.extension.selenium.DriverConfiguration;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.ScanListenner2;
@@ -104,7 +105,7 @@ class SpiderScanControllerUnitTest extends TestUtils {
                                 withSettings()
                                         .defaultAnswer(CALLS_REAL_METHODS)
                                         .strictness(Strictness.LENIENT)));
-        when(extSelenium.getWebDriver(anyInt(), any(String.class), any(String.class), anyInt()))
+        when(extSelenium.getWebDriver(any(String.class), any(DriverConfiguration.class)))
                 .thenReturn(wd);
 
         extension = mock(ExtensionClientIntegration.class);

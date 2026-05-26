@@ -946,6 +946,29 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
         this.api.browserClosing(wd);
     }
 
+    /**
+     * Associates a browser proxy port with an {@link org.parosproxy.paros.network.HttpSender}
+     * initiator for client callback handling.
+     *
+     * <p>Should be called as soon as the proxy port is known, before the browser is launched, so
+     * that callbacks received during browser initialisation are associated correctly.
+     *
+     * @param port the browser proxy port
+     * @param initiator the HttpSender initiator
+     */
+    public void registerPortInitiator(int port, int initiator) {
+        this.api.registerPortInitiator(port, initiator);
+    }
+
+    /**
+     * Removes the initiator associated with the given browser proxy port.
+     *
+     * @param port the browser proxy port
+     */
+    public void unregisterPortInitiator(int port) {
+        this.api.unregisterPortInitiator(port);
+    }
+
     private class ClientPassiveScanRuleProvider implements PassiveScanRuleProvider {
 
         @Override
