@@ -6,8 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
-- A "Get Info" context menu item on the Sites tree that summarizes the selected node's subtree
-  (total node count, most-recent addition, breakdown by source type) (Issue 3738).
+- Add Sites tree context menus:
+  - A "Get Info" that summarizes the selected node's subtree (total node count, most-recent addition, breakdown by source type) (Issue 3738).
+  - An expand/collapse a node and all its children (previously provided by the TreeTools add-on).
 
 ### Changed
 - Update dependency.

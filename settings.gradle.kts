@@ -104,7 +104,6 @@ val addOns =
         "tips",
         "todo",
         "tokengen",
-        "treetools",
         "viewstate",
         "wappalyzer",
         "webdrivers",
