@@ -4,7 +4,10 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- Updated help entries for the following scan rules, clarifying the data used to supplement their alerts for credit card related findings:
+  - Information Disclosure: Referrer
+  - PII Disclosure
 
 ## [73] - 2026-04-14
 ### Changed

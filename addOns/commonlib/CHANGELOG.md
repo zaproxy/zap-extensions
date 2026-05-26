@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Update dependency.
 - Maintenance changes.
+- Updated Bank Identification Number data from a new source (https://github.com/venelinkochev/bin-list-data/).
 
 ## [1.41.0] - 2026-04-15
 ### Added

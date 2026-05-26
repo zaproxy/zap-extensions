@@ -41,6 +41,11 @@ public final class BinList {
     private static final Logger LOGGER = LogManager.getLogger(BinList.class);
     private static final String BINLIST_FILE = "binlist-data.csv";
 
+    private static final String COL_BIN = "BIN";
+    private static final String COL_BRAND = "Brand";
+    private static final String COL_CATEGORY = "Category";
+    private static final String COL_ISSUER = "Issuer";
+
     private static BinList singleton;
 
     private Map<String, BinRecord> binMap;
@@ -84,12 +89,12 @@ public final class BinList {
 
         for (CSVRecord rec : records) {
             binMap.put(
-                    rec.get("bin"),
+                    rec.get(COL_BIN),
                     new BinRecord(
-                            rec.get("bin"),
-                            rec.get("brand"),
-                            rec.get("category"),
-                            rec.get("issuer")));
+                            rec.get(COL_BIN),
+                            rec.get(COL_BRAND),
+                            rec.get(COL_CATEGORY),
+                            rec.get(COL_ISSUER)));
         }
         return binMap;
     }
@@ -101,21 +106,17 @@ public final class BinList {
      * @return the {@code BinRecord}, or {@code null} if no match found.
      */
     public BinRecord get(String candidate) {
-        BinRecord binRec = binMap.get(candidate);
-        // Per https://github.com/iannuttall/binlist-data the collection should have BINs 6-8 but
-        // based on my searching there are actually entries 5-8. The following are ordered based
-        // on count of occurrence
-        if (binRec == null) {
-            binRec = binMap.get(candidate.substring(0, 6));
-        }
-        if (binRec == null) {
-            binRec = binMap.get(candidate.substring(0, 8));
-        }
-        if (binRec == null) {
-            binRec = binMap.get(candidate.substring(0, 5));
-        }
-        if (binRec == null) {
-            binRec = binMap.get(candidate.substring(0, 7));
+        BinRecord binRec = null;
+        // Per https://github.com/venelinkochev/bin-list-data/ all Bins are 6 digits
+        // Future iterations of the collection may include 8 digits Bins.
+        if (candidate != null) {
+            // Uncomment in the future when 8 digit bins are introduced in the data file.
+            // if (candidate.length() >= 8) {
+            //     binRec = binMap.get(candidate.substring(0, 8));
+            // }
+            if (binRec == null && candidate.length() >= 6) {
+                binRec = binMap.get(candidate.substring(0, 6));
+            }
         }
         return binRec;
     }
