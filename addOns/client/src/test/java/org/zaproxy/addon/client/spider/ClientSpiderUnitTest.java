@@ -83,6 +83,7 @@ import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.addon.network.server.HttpServerConfig;
 import org.zaproxy.addon.network.server.Server;
+import org.zaproxy.zap.extension.selenium.DriverConfiguration;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
@@ -146,8 +147,7 @@ class ClientSpiderUnitTest extends TestUtils {
                                         .defaultAnswer(CALLS_REAL_METHODS)
                                         .strictness(Strictness.LENIENT)));
 
-        when(extSel.getWebDriver(anyInt(), any(String.class), any(String.class), anyInt()))
-                .thenReturn(wd);
+        when(extSel.getWebDriver(any(String.class), any(DriverConfiguration.class))).thenReturn(wd);
         given(extClient.getModel()).willReturn(model);
         Session session = mock(Session.class);
         given(model.getSession()).willReturn(session);
@@ -233,7 +233,7 @@ class ClientSpiderUnitTest extends TestUtils {
         clientMapListener();
         String urlFoundDuringStartup = "https://www.example.com/post-auth-page";
         CountDownLatch getWebDriverCdl = new CountDownLatch(1);
-        when(extSel.getWebDriver(anyInt(), any(String.class), any(String.class), anyInt()))
+        when(extSel.getWebDriver(any(String.class), any(DriverConfiguration.class)))
                 .thenAnswer(
                         invocation -> {
                             mapListener.nodeAdded(urlFoundDuringStartup, 0, 0, PROXY_PORT);

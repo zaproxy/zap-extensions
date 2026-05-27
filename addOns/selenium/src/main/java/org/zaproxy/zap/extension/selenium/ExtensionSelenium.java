@@ -39,6 +39,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -883,12 +884,9 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         if (provider == null) {
             throw new IllegalArgumentException("Unknown browser: " + browserId);
         }
-        Consumer<MutableCapabilities> consumer =
-                driverConf.getConsumer() != null ? driverConf.getConsumer() : c -> {};
         int requester = driverConf.getRequester();
         String proxyAddress = driverConf.getProxyAddress();
         int proxyPort = driverConf.getProxyPort();
-        boolean enableExtensions = driverConf.isEnableExtensions();
         WebDriver wd;
         DriverConfiguration config;
         String statsKey;
@@ -896,31 +894,12 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         if (provider instanceof BuiltInSingleWebDriverProvider builtinBrowserProv) {
             Browser browser = builtinBrowserProv.getBrowser();
             statsKey = "stats.selenium.launch." + requester + "." + browser.getId();
-            config =
-                    buildConfigFromBrowser(
-                            browser,
-                            requester,
-                            proxyAddress,
-                            proxyPort,
-                            consumer,
-                            enableExtensions,
-                            driverConf.getArguments(),
-                            driverConf.getPreferences());
+            config = buildConfigFromBrowser(browser, driverConf);
         } else if (provider instanceof CustomBrowserWebDriverProvider customBrowserProv) {
             CustomBrowserImpl customBrowser = customBrowserProv.getCustomBrowser();
             boolean headless = browserId.endsWith("-headless");
             statsKey = "stats.selenium.launch." + requester + ".custom." + customBrowser.getName();
-            config =
-                    buildConfigFromCustomBrowser(
-                            customBrowser,
-                            requester,
-                            proxyAddress,
-                            proxyPort,
-                            headless,
-                            consumer,
-                            enableExtensions,
-                            driverConf.getArguments(),
-                            driverConf.getPreferences());
+            config = buildConfigFromCustomBrowser(customBrowser, headless, driverConf);
         } else {
             throw new IllegalArgumentException(
                     "Unknown ProvidedBrowser: " + provided.getClass().getCanonicalName());
@@ -1164,9 +1143,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
 
                 if (isEdge) {
                     return configureDriver(
-                            Browser.EDGE,
-                            new EdgeDriver((EdgeOptions) chromiumOptions),
-                            conf.isEnableExtensions());
+                            Browser.EDGE, new EdgeDriver((EdgeOptions) chromiumOptions), conf);
                 }
                 ChromeDriver chromeDriver;
                 if (StringUtils.isNotEmpty(conf.getDriverPath())) {
@@ -1178,7 +1155,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                 } else {
                     chromeDriver = new ChromeDriver((ChromeOptions) chromiumOptions);
                 }
-                return configureDriver(Browser.CHROME, chromeDriver, conf.isEnableExtensions());
+                return configureDriver(Browser.CHROME, chromeDriver, conf);
 
             case FIREFOX:
                 FirefoxOptions firefoxOptions = new FirefoxOptions();
@@ -1215,7 +1192,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                 } else {
                     firefoxDriver = new FirefoxDriver(firefoxOptions);
                 }
-                return configureDriver(Browser.FIREFOX, firefoxDriver, conf.isEnableExtensions());
+                return configureDriver(Browser.FIREFOX, firefoxDriver, conf);
 
             case HTML_UNIT:
                 DesiredCapabilities htmlunitCapabilities = new DesiredCapabilities();
@@ -1251,14 +1228,12 @@ public class ExtensionSelenium extends ExtensionAdaptor {
     }
 
     protected static DriverConfiguration buildConfigFromBrowser(
-            Browser browser,
-            int requester,
-            String proxyAddress,
-            int proxyPort,
-            Consumer<MutableCapabilities> consumer,
-            boolean enableExtensions,
-            List<String> extraArguments,
-            Map<String, String> extraPreferences) {
+            Browser browser, DriverConfiguration driverConf) {
+        Consumer<MutableCapabilities> consumer =
+                driverConf.getConsumer() != null ? driverConf.getConsumer() : c -> {};
+        List<String> extraArguments = driverConf.getArguments();
+        Map<String, String> extraPreferences = driverConf.getPreferences();
+
         boolean headless;
         Browser baseBrowser;
         switch (browser) {
@@ -1310,30 +1285,29 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         }
 
         return DriverConfiguration.builder()
-                .requester(requester)
+                .requester(driverConf.getRequester())
                 .type(browserToType(browser))
-                .proxyAddress(proxyAddress)
-                .proxyPort(proxyPort)
+                .proxyAddress(driverConf.getProxyAddress())
+                .proxyPort(driverConf.getProxyPort())
                 .headless(headless)
                 .binaryPath(binaryPath)
                 .driverPath("")
                 .arguments(arguments)
                 .preferences(preferences)
                 .consumer(consumer)
-                .enableExtensions(enableExtensions)
+                .enableExtensions(driverConf.isEnableExtensions())
+                .includeExtensions(driverConf.getIncludeExtensions())
+                .excludeExtensions(driverConf.getExcludeExtensions())
                 .build();
     }
 
     protected static DriverConfiguration buildConfigFromCustomBrowser(
-            CustomBrowserImpl customBrowser,
-            int requester,
-            String proxyAddress,
-            int proxyPort,
-            boolean headless,
-            Consumer<MutableCapabilities> consumer,
-            boolean enableExtensions,
-            List<String> extraArguments,
-            Map<String, String> extraPreferences) {
+            CustomBrowserImpl customBrowser, boolean headless, DriverConfiguration driverConf) {
+        Consumer<MutableCapabilities> consumer =
+                driverConf.getConsumer() != null ? driverConf.getConsumer() : c -> {};
+        List<String> extraArguments = driverConf.getArguments();
+        Map<String, String> extraPreferences = driverConf.getPreferences();
+
         List<String> arguments = new ArrayList<>(getCustomBrowserArguments(customBrowser));
         if (extraArguments != null && !extraArguments.isEmpty()) {
             arguments.addAll(extraArguments);
@@ -1382,17 +1356,19 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         }
 
         return DriverConfiguration.builder()
-                .requester(requester)
+                .requester(driverConf.getRequester())
                 .type(type)
-                .proxyAddress(proxyAddress)
-                .proxyPort(proxyPort)
+                .proxyAddress(driverConf.getProxyAddress())
+                .proxyPort(driverConf.getProxyPort())
                 .headless(headless)
                 .binaryPath(binaryPath)
                 .driverPath(driverPath != null ? driverPath : "")
                 .arguments(arguments)
                 .preferences(preferences)
                 .consumer(consumer)
-                .enableExtensions(enableExtensions)
+                .enableExtensions(driverConf.isEnableExtensions())
+                .includeExtensions(driverConf.getIncludeExtensions())
+                .excludeExtensions(driverConf.getExcludeExtensions())
                 .build();
     }
 
@@ -1606,26 +1582,63 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         return path != null ? path : "";
     }
 
-    private static RemoteWebDriver configureDriver(
-            Browser browser, RemoteWebDriver driver, boolean enableExtensions) {
-        driver.script().addConsoleMessageHandler(e -> WEBDRIVER_LOGGER.debug(e.getText()));
-        if (enableExtensions) {
-            WebExtension webExt = new WebExtension(driver);
-            boolean isChromium =
-                    browser == Browser.CHROME
-                            || browser == Browser.CHROME_HEADLESS
-                            || browser == Browser.EDGE
-                            || browser == Browser.EDGE_HEADLESS;
-            getSeleniumOptions()
-                    .getEnabledBrowserExtensions(isChromium ? Browser.CHROME : browser)
-                    .stream()
-                    .map(BrowserExtension::getPath)
-                    .map(Path::toAbsolutePath)
-                    .map(Path::toString)
-                    .map(isChromium ? ExtensionPath::new : ExtensionArchivePath::new)
-                    .map(InstallExtensionParameters::new)
-                    .forEach(webExt::install);
+    private static boolean isChromiumBased(Browser browser) {
+        return switch (browser) {
+            case CHROME, CHROME_HEADLESS, EDGE, EDGE_HEADLESS -> true;
+            default -> false;
+        };
+    }
+
+    static boolean matchesExtensionName(Path path, List<String> names) {
+        if (names == null || names.isEmpty()) {
+            return false;
         }
+        return names.stream()
+                .anyMatch(name -> Strings.CI.equals(name, path.getFileName().toString()));
+    }
+
+    static boolean shouldInstallBrowserExtension(
+            BrowserExtension extension,
+            List<String> includeExtensions,
+            List<String> excludeExtensions,
+            boolean enableExtensions) {
+        Path path = extension.getPath();
+        if (matchesExtensionName(path, excludeExtensions)) {
+            return false;
+        }
+        if (matchesExtensionName(path, includeExtensions)) {
+            return true;
+        }
+        return enableExtensions && extension.isEnabled();
+    }
+
+    private static RemoteWebDriver configureDriver(
+            Browser browser, RemoteWebDriver driver, DriverConfiguration conf) {
+        driver.script().addConsoleMessageHandler(e -> WEBDRIVER_LOGGER.debug(e.getText()));
+
+        if (!conf.isEnableExtensions() && conf.getIncludeExtensions().isEmpty()) {
+            return driver;
+        }
+
+        boolean chromiumBased = isChromiumBased(browser);
+        Browser extensionsBrowser = chromiumBased ? Browser.CHROME : browser;
+        WebExtension webExt = new WebExtension(driver);
+
+        getSeleniumOptions().getBrowserExtensions().stream()
+                .filter(ext -> ext.getBrowser() == extensionsBrowser)
+                .filter(
+                        ext ->
+                                shouldInstallBrowserExtension(
+                                        ext,
+                                        conf.getIncludeExtensions(),
+                                        conf.getExcludeExtensions(),
+                                        conf.isEnableExtensions()))
+                .map(BrowserExtension::getPath)
+                .map(Path::toAbsolutePath)
+                .map(Path::toString)
+                .map(chromiumBased ? ExtensionPath::new : ExtensionArchivePath::new)
+                .map(InstallExtensionParameters::new)
+                .forEach(webExt::install);
 
         return driver;
     }

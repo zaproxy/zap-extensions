@@ -19,9 +19,12 @@
  */
 package org.zaproxy.addon.client.spider;
 
+import java.util.Collections;
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import org.parosproxy.paros.model.HistoryReference;
+import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.users.User;
 
@@ -40,11 +43,37 @@ public class ScanOptions {
      */
     @Builder.Default private final boolean externalControl = false;
 
+    @Builder.Default private final int initiator = HttpSender.CLIENT_SPIDER_INITIATOR;
+
+    /**
+     * The {@code HttpSender} to use for browser proxy traffic. If not set a new {@code HttpSender}
+     * is created using {@link #initiator}.
+     *
+     * @since 0.26.0
+     */
+    private final HttpSender httpSender;
+
     @Builder.Default private final int hrefType = HistoryReference.TYPE_CLIENT_SPIDER;
 
     @Builder.Default private final int tmpHrefType = HistoryReference.TYPE_CLIENT_SPIDER_TEMPORARY;
 
     @Builder.Default private final String threadPrefix = "ZAP-ClientSpiderThreadPool-";
+
+    /**
+     * Browser extension names to include when launching browsers, even if disabled in the Selenium
+     * options.
+     *
+     * @since 0.26.0
+     */
+    @Builder.Default private final List<String> includeExtensions = Collections.emptyList();
+
+    /**
+     * Browser extension names to exclude when launching browsers, even if enabled in the Selenium
+     * options.
+     *
+     * @since 0.26.0
+     */
+    @Builder.Default private final List<String> excludeExtensions = Collections.emptyList();
 
     /** A builder of options. */
     public static class Builder {

@@ -20,12 +20,16 @@
 package org.zaproxy.addon.client.spider;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.model.HistoryReference;
+import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.users.User;
 
@@ -33,28 +37,34 @@ import org.zaproxy.zap.users.User;
 class ScanOptionsUnitTest {
 
     @Test
-    void shouldHaveDefaultHrefType() {
-        assertThat(
-                ScanOptions.builder().build().getHrefType(),
-                is(HistoryReference.TYPE_CLIENT_SPIDER));
+    void shouldHaveDefaults() {
+        ScanOptions options = ScanOptions.builder().build();
+        assertThat(options.getHrefType(), is(HistoryReference.TYPE_CLIENT_SPIDER));
+        assertThat(options.getTmpHrefType(), is(HistoryReference.TYPE_CLIENT_SPIDER_TEMPORARY));
+        assertThat(options.getThreadPrefix(), is("ZAP-ClientSpiderThreadPool-"));
+        assertThat(options.isExternalControl(), is(false));
+        assertThat(options.getIncludeExtensions(), is(empty()));
+        assertThat(options.getExcludeExtensions(), is(empty()));
+        assertThat(options.getHttpSender(), is(nullValue()));
     }
 
     @Test
-    void shouldHaveDefaultTmpHrefType() {
+    void shouldAllowHttpSenderToBeSet() {
+        HttpSender httpSender = new HttpSender(HttpSender.CLIENT_SPIDER_INITIATOR);
         assertThat(
-                ScanOptions.builder().build().getTmpHrefType(),
-                is(HistoryReference.TYPE_CLIENT_SPIDER_TEMPORARY));
+                ScanOptions.builder().setHttpSender(httpSender).build().getHttpSender(),
+                is(httpSender));
     }
 
     @Test
-    void shouldHaveDefaultThreadPrefix() {
-        assertThat(
-                ScanOptions.builder().build().getThreadPrefix(), is("ZAP-ClientSpiderThreadPool-"));
-    }
-
-    @Test
-    void shouldHaveExternalControlDisabledByDefault() {
-        assertThat(ScanOptions.builder().build().isExternalControl(), is(false));
+    void shouldAllowExtensionListsToBeSet() {
+        ScanOptions options =
+                ScanOptions.builder()
+                        .setIncludeExtensions(List.of("zap-browser-extension"))
+                        .setExcludeExtensions(List.of("other-extension"))
+                        .build();
+        assertThat(options.getIncludeExtensions(), is(List.of("zap-browser-extension")));
+        assertThat(options.getExcludeExtensions(), is(List.of("other-extension")));
     }
 
     @Test
@@ -90,6 +100,9 @@ class ScanOptionsUnitTest {
                         .setHrefType(99)
                         .setTmpHrefType(100)
                         .setThreadPrefix("custom-prefix-")
+                        .setIncludeExtensions(List.of("included-ext"))
+                        .setExcludeExtensions(List.of("excluded-ext"))
+                        .setHttpSender(new HttpSender(99))
                         .build();
 
         // When
@@ -103,5 +116,8 @@ class ScanOptionsUnitTest {
         assertThat(copy.getHrefType(), is(99));
         assertThat(copy.getTmpHrefType(), is(100));
         assertThat(copy.getThreadPrefix(), is("custom-prefix-"));
+        assertThat(copy.getIncludeExtensions(), is(List.of("included-ext")));
+        assertThat(copy.getExcludeExtensions(), is(List.of("excluded-ext")));
+        assertThat(copy.getHttpSender(), is(original.getHttpSender()));
     }
 }

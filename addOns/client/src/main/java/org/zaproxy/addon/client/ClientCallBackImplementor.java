@@ -27,9 +27,33 @@ import org.zaproxy.zap.extension.selenium.SeleniumScriptUtils;
  */
 public interface ClientCallBackImplementor {
 
+    /**
+     * Context for a client callback request.
+     *
+     * @param initiator the {@link org.parosproxy.paros.network.HttpSender} initiator that launched
+     *     the browser, or {@code -1} if unknown
+     * @since 0.26.0
+     */
+    record ClientCallBackContext(int initiator) {}
+
     String getImplementorName();
 
     String handleCallBack(HttpMessage msg);
+
+    /**
+     * Handles a callback request from a browser connection.
+     *
+     * <p>The default implementation ignores {@link ClientCallBackContext} and delegates to {@link
+     * #handleCallBack(HttpMessage)} for backward compatibility. Implementors that need the context
+     * data must override this method.
+     *
+     * @param msg the callback request
+     * @param context the callback context
+     * @since 0.26.0
+     */
+    default String handleCallBack(HttpMessage msg, ClientCallBackContext context) {
+        return handleCallBack(msg);
+    }
 
     /**
      * This method will be removed soon.

@@ -72,6 +72,8 @@ public class ClientIntegrationAPI extends ApiImplementor {
     private Map<WebDriver, ClientCallBackUtils> wdMap =
             Collections.synchronizedMap(new HashMap<>());
 
+    private Map<Integer, Integer> portInitiators = Collections.synchronizedMap(new HashMap<>());
+
     public ClientIntegrationAPI(ExtensionClientIntegration extension, ClientMap clientMap) {
         this.extension = extension;
         this.clientMap = clientMap;
@@ -159,7 +161,11 @@ public class ClientIntegrationAPI extends ApiImplementor {
             ClientCallBackImplementor impl = this.clientCallBacks.get(paths[3]);
             if (impl != null) {
                 try {
-                    return impl.handleCallBack(msg);
+                    int initiator =
+                            portInitiators.getOrDefault(
+                                    msg.getRequestHeader().getLocalAddress().getPort(), -1);
+                    return impl.handleCallBack(
+                            msg, new ClientCallBackImplementor.ClientCallBackContext(initiator));
                 } catch (Exception e) {
                     LOGGER.error(
                             "Error in client callback implementation {}: {}",
@@ -253,8 +259,17 @@ public class ClientIntegrationAPI extends ApiImplementor {
         this.clientCallBacks.remove(callback.getImplementorName());
     }
 
+    void registerPortInitiator(int port, int initiator) {
+        portInitiators.put(port, initiator);
+    }
+
+    void unregisterPortInitiator(int port) {
+        portInitiators.remove(port);
+    }
+
     protected void browserLaunched(ClientCallBackUtils ccbu) {
         wdMap.put(ccbu.getWebDriver(), ccbu);
+        registerPortInitiator(ccbu.getProxyPort(), ccbu.getRequester());
         this.clientCallBacks.forEach(
                 (n, callback) -> {
                     try {
@@ -282,5 +297,6 @@ public class ClientIntegrationAPI extends ApiImplementor {
 
     void clear() {
         this.wdMap.clear();
+        this.portInitiators.clear();
     }
 }
