@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Maintenance changes.
 - Formatted JavaScript files for consistency.
 
+### Fixed
+- Correct breadth-first payload replacement order when fuzzing multiple locations.
+
 ## [13.16.0] - 2025-06-20
 ### Changed
 - Maintenance changes.
