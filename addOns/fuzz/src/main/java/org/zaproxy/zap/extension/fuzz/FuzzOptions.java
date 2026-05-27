@@ -110,7 +110,7 @@ public class FuzzOptions extends VersionedAbstractParam {
                 MessageLocationsReplacementStrategy.getValue(
                         getString(
                                 DEFAULT_PAYLOAD_REPLACEMENT_STRATEGY_KEY,
-                                MessageLocationsReplacementStrategy.DEPTH_FIRST.getConfigId()));
+                                MessageLocationsReplacementStrategy.CLUSTER_BOMB.getConfigId()));
         defaultThreadsPerFuzzer =
                 getInt(DEFAULT_THREADS_PER_FUZZER_KEY, Constants.getDefaultThreadCount());
         defaultFuzzDelayInMs = getInt(DEFAULT_FUZZ_DELAY_IN_MS_KEY, DEFAULT_FUZZ_DELAY_IN_MS);

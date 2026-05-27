@@ -38,13 +38,13 @@ import org.zaproxy.zap.model.MessageLocation;
 class MultipleMessageLocationsReplacerUnitTest {
 
     @Test
-    void depthFirstShouldIterateWithLastLocationChangingFastest()
+    void clusterBombShouldIterateWithLastLocationChangingFastest()
             throws InvalidMessageException, ReplacementException {
         // Given
         var replacer = createReplacer();
         var orders =
                 iterateAll(
-                        new MultipleMessageLocationsDepthFirstReplacer<>(),
+                        new MultipleMessageLocationsClusterBombReplacer<>(),
                         replacer,
                         "1",
                         "2",
@@ -55,13 +55,13 @@ class MultipleMessageLocationsReplacerUnitTest {
     }
 
     @Test
-    void breadthFirstShouldIterateInPitchforkOrder()
+    void pitchforkShouldIterateInLockstepOrder()
             throws InvalidMessageException, ReplacementException {
         // Given
         var replacer = createReplacer();
         var orders =
                 iterateAll(
-                        new MultipleMessageLocationsBreadthFirstReplacer<>(),
+                        new MultipleMessageLocationsPitchforkReplacer<>(),
                         replacer,
                         "1",
                         "2",
@@ -76,9 +76,9 @@ class MultipleMessageLocationsReplacerUnitTest {
             throws InvalidMessageException, ReplacementException {
         // Given
         var replacer = createReplacer();
-        var depth =
+        var clusterBomb =
                 iterateAll(
-                        new MultipleMessageLocationsDepthFirstReplacer<>(),
+                        new MultipleMessageLocationsClusterBombReplacer<>(),
                         replacer,
                         "1",
                         "2",
@@ -86,9 +86,9 @@ class MultipleMessageLocationsReplacerUnitTest {
                         "b",
                         "x",
                         "y");
-        var breadth =
+        var pitchfork =
                 iterateAll(
-                        new MultipleMessageLocationsBreadthFirstReplacer<>(),
+                        new MultipleMessageLocationsPitchforkReplacer<>(),
                         replacer,
                         "1",
                         "2",
@@ -97,8 +97,8 @@ class MultipleMessageLocationsReplacerUnitTest {
                         "x",
                         "y");
         // Then
-        assertThat(depth, contains("1ax", "1ay", "1bx", "1by", "2ax", "2ay", "2bx", "2by"));
-        assertThat(breadth, contains("1ax", "2by"));
+        assertThat(clusterBomb, contains("1ax", "1ay", "1bx", "1by", "2ax", "2ay", "2bx", "2by"));
+        assertThat(pitchfork, contains("1ax", "2by"));
     }
 
     @Test
@@ -106,26 +106,26 @@ class MultipleMessageLocationsReplacerUnitTest {
             throws InvalidMessageException, ReplacementException {
         // Given
         var replacer = createReplacer();
-        var depth =
+        var clusterBomb =
                 iterateAll(
-                        new MultipleMessageLocationsDepthFirstReplacer<>(),
+                        new MultipleMessageLocationsClusterBombReplacer<>(),
                         replacer,
                         List.of("1", "2", "3"));
-        var breadth =
+        var pitchfork =
                 iterateAll(
-                        new MultipleMessageLocationsBreadthFirstReplacer<>(),
+                        new MultipleMessageLocationsPitchforkReplacer<>(),
                         replacer,
                         List.of("1", "2", "3"));
         // Then
-        assertThat(depth, contains("1", "2", "3"));
-        assertThat(breadth, is(equalTo(depth)));
+        assertThat(clusterBomb, contains("1", "2", "3"));
+        assertThat(pitchfork, is(equalTo(clusterBomb)));
     }
 
     @Test
-    void depthFirstShouldReportCartesianProductSize() throws Exception {
+    void clusterBombShouldReportCartesianProductSize() throws Exception {
         // Given
         var messageReplacer = createReplacer();
-        var multipleReplacer = new MultipleMessageLocationsDepthFirstReplacer<Message>();
+        var multipleReplacer = new MultipleMessageLocationsClusterBombReplacer<Message>();
         SortedSet<MessageLocationReplacementGenerator<?, ?>> generators = new TreeSet<>();
         generators.add(new TestGenerator(new TestMessageLocation("loc0"), List.of("1", "2")));
         generators.add(new TestGenerator(new TestMessageLocation("loc1"), List.of("a", "b", "c")));
@@ -135,10 +135,10 @@ class MultipleMessageLocationsReplacerUnitTest {
     }
 
     @Test
-    void breadthFirstShouldReportMinListSize() throws Exception {
+    void pitchforkShouldReportMinListSize() throws Exception {
         // Given
         var messageReplacer = createReplacer();
-        var multipleReplacer = new MultipleMessageLocationsBreadthFirstReplacer<Message>();
+        var multipleReplacer = new MultipleMessageLocationsPitchforkReplacer<Message>();
         SortedSet<MessageLocationReplacementGenerator<?, ?>> generators = new TreeSet<>();
         generators.add(new TestGenerator(new TestMessageLocation("loc0"), List.of("1", "2")));
         generators.add(new TestGenerator(new TestMessageLocation("loc1"), List.of("a", "b", "c")));
