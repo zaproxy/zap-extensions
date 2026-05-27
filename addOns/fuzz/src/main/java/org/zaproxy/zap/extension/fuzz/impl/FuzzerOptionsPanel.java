@@ -46,8 +46,8 @@ public class FuzzerOptionsPanel<FO extends FuzzerOptions> extends JPanel {
     private final ZapNumberSpinner retriesOnIOErrorNumberSpinner;
     private final JCheckBox maxErrorsAllowedEnabledCheckBox;
     private final ZapNumberSpinner maxErrorsAllowedNumberSpinner;
-    private final JRadioButton depthFirstPayloadReplacementStrategyRadioButton;
-    private final JRadioButton breadthFirstPayloadReplacementStrategyRadioButton;
+    private final JRadioButton clusterBombPayloadReplacementStrategyRadioButton;
+    private final JRadioButton pitchforkPayloadReplacementStrategyRadioButton;
     private final ZapNumberSpinner defaultThreadsPerFuzzerSpinner;
     private final ZapNumberSpinner defaultFuzzDelayInMsSpinner;
 
@@ -101,27 +101,27 @@ public class FuzzerOptionsPanel<FO extends FuzzerOptions> extends JPanel {
         defaultFuzzDelayLabel.setLabelFor(defaultFuzzDelayInMsSpinner);
 
         ButtonGroup replacementStrategyButtonGroup = new ButtonGroup();
-        depthFirstPayloadReplacementStrategyRadioButton =
+        clusterBombPayloadReplacementStrategyRadioButton =
                 new JRadioButton(
                         resourceBundle.getString(
-                                "fuzz.options.label.payloadReplacementStrategy.depthFirst"));
-        replacementStrategyButtonGroup.add(depthFirstPayloadReplacementStrategyRadioButton);
-        breadthFirstPayloadReplacementStrategyRadioButton =
+                                "fuzz.options.label.payloadReplacementStrategy.clusterBomb"));
+        replacementStrategyButtonGroup.add(clusterBombPayloadReplacementStrategyRadioButton);
+        pitchforkPayloadReplacementStrategyRadioButton =
                 new JRadioButton(
                         resourceBundle.getString(
-                                "fuzz.options.label.payloadReplacementStrategy.breadthFirst"));
-        replacementStrategyButtonGroup.add(breadthFirstPayloadReplacementStrategyRadioButton);
+                                "fuzz.options.label.payloadReplacementStrategy.pitchfork"));
+        replacementStrategyButtonGroup.add(pitchforkPayloadReplacementStrategyRadioButton);
         JLabel payloadReplacementStrategyLabel =
                 new JLabel(
                         resourceBundle.getString("fuzz.options.label.payloadReplacementStrategy"));
         payloadReplacementStrategyLabel.setLabelFor(
-                depthFirstPayloadReplacementStrategyRadioButton);
+                clusterBombPayloadReplacementStrategyRadioButton);
 
-        if (MessageLocationsReplacementStrategy.DEPTH_FIRST
+        if (MessageLocationsReplacementStrategy.CLUSTER_BOMB
                 == defaultOptions.getPayloadsReplacementStrategy()) {
-            depthFirstPayloadReplacementStrategyRadioButton.setSelected(true);
+            clusterBombPayloadReplacementStrategyRadioButton.setSelected(true);
         } else {
-            breadthFirstPayloadReplacementStrategyRadioButton.setSelected(true);
+            pitchforkPayloadReplacementStrategyRadioButton.setSelected(true);
         }
 
         JPanel innerPanel = new JPanel();
@@ -177,20 +177,20 @@ public class FuzzerOptionsPanel<FO extends FuzzerOptions> extends JPanel {
                                                 layout.createSequentialGroup()
                                                         .addPreferredGap(
                                                                 payloadReplacementStrategyLabel,
-                                                                depthFirstPayloadReplacementStrategyRadioButton,
+                                                                clusterBombPayloadReplacementStrategyRadioButton,
                                                                 LayoutStyle.ComponentPlacement
                                                                         .INDENT)
                                                         .addComponent(
-                                                                depthFirstPayloadReplacementStrategyRadioButton))
+                                                                clusterBombPayloadReplacementStrategyRadioButton))
                                         .addGroup(
                                                 layout.createSequentialGroup()
                                                         .addPreferredGap(
                                                                 payloadReplacementStrategyLabel,
-                                                                breadthFirstPayloadReplacementStrategyRadioButton,
+                                                                pitchforkPayloadReplacementStrategyRadioButton,
                                                                 LayoutStyle.ComponentPlacement
                                                                         .INDENT)
                                                         .addComponent(
-                                                                breadthFirstPayloadReplacementStrategyRadioButton)))
+                                                                pitchforkPayloadReplacementStrategyRadioButton)))
                         .addGroup(
                                 layout.createSequentialGroup()
                                         .addComponent(defaultFuzzThreadsPerFuzzerLabel)
@@ -221,9 +221,9 @@ public class FuzzerOptionsPanel<FO extends FuzzerOptions> extends JPanel {
                                 layout.createSequentialGroup()
                                         .addComponent(payloadReplacementStrategyLabel)
                                         .addComponent(
-                                                depthFirstPayloadReplacementStrategyRadioButton)
+                                                clusterBombPayloadReplacementStrategyRadioButton)
                                         .addComponent(
-                                                breadthFirstPayloadReplacementStrategyRadioButton))
+                                                pitchforkPayloadReplacementStrategyRadioButton))
                         .addGroup(
                                 layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                         .addComponent(defaultFuzzThreadsPerFuzzerLabel)
@@ -265,10 +265,10 @@ public class FuzzerOptionsPanel<FO extends FuzzerOptions> extends JPanel {
 
     private MessageLocationsReplacementStrategy getSelectedStrategy() {
         MessageLocationsReplacementStrategy strategy;
-        if (depthFirstPayloadReplacementStrategyRadioButton.isSelected()) {
-            strategy = MessageLocationsReplacementStrategy.DEPTH_FIRST;
+        if (clusterBombPayloadReplacementStrategyRadioButton.isSelected()) {
+            strategy = MessageLocationsReplacementStrategy.CLUSTER_BOMB;
         } else {
-            strategy = MessageLocationsReplacementStrategy.BREADTH_FIRST;
+            strategy = MessageLocationsReplacementStrategy.PITCHFORK;
         }
         return strategy;
     }
@@ -292,8 +292,8 @@ public class FuzzerOptionsPanel<FO extends FuzzerOptions> extends JPanel {
         maxErrorsAllowedEnabledCheckBox.setSelected(true);
         maxErrorsAllowedNumberSpinner.setValue(defaultOptions.getMaxErrorsAllowed());
         defaultFuzzDelayInMsSpinner.setValue((int) defaultOptions.getSendMessageDelay());
-        depthFirstPayloadReplacementStrategyRadioButton.setSelected(
-                MessageLocationsReplacementStrategy.DEPTH_FIRST
+        clusterBombPayloadReplacementStrategyRadioButton.setSelected(
+                MessageLocationsReplacementStrategy.CLUSTER_BOMB
                         == defaultOptions.getPayloadsReplacementStrategy());
         fuzzerHandlerOptions.reset();
     }
