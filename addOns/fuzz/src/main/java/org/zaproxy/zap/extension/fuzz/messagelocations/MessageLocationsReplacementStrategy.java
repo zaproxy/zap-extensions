@@ -20,8 +20,8 @@
 package org.zaproxy.zap.extension.fuzz.messagelocations;
 
 public enum MessageLocationsReplacementStrategy {
-    DEPTH_FIRST("depth"),
-    BREADTH_FIRST("breadth");
+    CLUSTER_BOMB("clusterBomb"),
+    PITCHFORK("pitchfork");
 
     private final String configId;
 
@@ -34,11 +34,12 @@ public enum MessageLocationsReplacementStrategy {
     }
 
     public static MessageLocationsReplacementStrategy getValue(String configId) {
-        if (DEPTH_FIRST.configId.equals(configId)) {
-            return DEPTH_FIRST;
-        } else if (BREADTH_FIRST.configId.equals(configId)) {
-            return BREADTH_FIRST;
+        if (CLUSTER_BOMB.configId.equals(configId) || "depth".equals(configId)) {
+            return CLUSTER_BOMB;
         }
-        return DEPTH_FIRST;
+        if (PITCHFORK.configId.equals(configId) || "breadth".equals(configId)) {
+            return PITCHFORK;
+        }
+        return CLUSTER_BOMB;
     }
 }

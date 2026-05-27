@@ -35,8 +35,8 @@ Controls how multiple payload lists are combined when you fuzz more than one loc
 Locations are processed in <strong>message location sort order</strong>, not the order you added them in the Fuzz dialog.
 </p>
 <ul>
-<li><strong>Depth First</strong> - try every combination: change the <strong>last</strong> fuzzed field through all payloads before you change an earlier one.</li>
-<li><strong>Breadth First</strong> - pair payloads by position: 1st with 1st, 2nd with 2nd, and so on. The fuzzer stops when the <strong>shortest</strong> payload list is used up.</li>
+<li><strong>Cluster Bomb</strong> - try every combination: change the <strong>last</strong> fuzzed field through all payloads before you change an earlier one.</li>
+<li><strong>Pitchfork</strong> - pair payloads by position: 1st with 1st, 2nd with 2nd, and so on. The fuzzer stops when the <strong>shortest</strong> payload list is used up.</li>
 </ul>
 With a single fuzz location, both strategies produce the same order.
 
@@ -46,7 +46,7 @@ With a single fuzz location, both strategies produce the same order.
 <li><strong>Location B</strong> payloads: a, b</li>
 </ul>
 
-<H4>Depth First Example</H4>
+<H4>Cluster Bomb Example</H4>
 <p>
 The last location (B) changes on every request. Location A changes only after B has used every payload.
 </p>
@@ -63,7 +63,7 @@ Requests are sent in order:
 (<strong>4 requests</strong>).
 </p>
 
-<H4>Breadth First Example</H4>
+<H4>Pitchfork Example</H4>
 <p>
 The same payload position is used in every location on each request (1st with 1st, then 2nd with 2nd, and so on).
 </p>
