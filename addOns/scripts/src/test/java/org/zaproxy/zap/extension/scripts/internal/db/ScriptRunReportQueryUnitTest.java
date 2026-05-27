@@ -26,6 +26,8 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -39,6 +41,93 @@ import org.zaproxy.zap.extension.scripts.report.ScriptRunReportData;
 
 /** Unit tests for {@link ScriptRunReportQuery}. */
 class ScriptRunReportQueryUnitTest {
+
+    @Test
+    void shouldFilterRunsWithErrorsAtQueryWhenOutputStepsExcluded() {
+        try (MockedStatic<TableJdo> tableJdo = mockStatic(TableJdo.class)) {
+            PersistenceManagerFactory pmf = mock(PersistenceManagerFactory.class);
+            PersistenceManager pm = mock(PersistenceManager.class);
+            @SuppressWarnings("unchecked")
+            Query<ScriptsRun> query = mock(Query.class);
+            tableJdo.when(TableJdo::getPmf).thenReturn(pmf);
+            given(pmf.getPersistenceManager()).willReturn(pm);
+            given(pm.newQuery(ScriptsRun.class)).willReturn(query);
+            given(query.executeList()).willReturn(List.of());
+
+            ScriptRunReportQuery.loadRunsForReport(false);
+
+            verify(query)
+                    .setFilter(
+                            "this.scripts.contains(s) && s.steps.contains(st)"
+                                    + " && st.outputs.contains(o) && o.kind == :kind");
+            verify(query)
+                    .declareVariables(
+                            "org.zaproxy.zap.extension.scripts.internal.db.ScriptsRunScript s;"
+                                    + " org.zaproxy.zap.extension.scripts.internal.db.ScriptsRunStep st;"
+                                    + " org.zaproxy.zap.extension.scripts.internal.db.ScriptsRunOutput o");
+            verify(query)
+                    .setNamedParameters(
+                            java.util.Map.of("kind", ScriptRunRecorder.OUTPUT_KIND_ERROR));
+        }
+    }
+
+    @Test
+    void shouldNotFilterRunsAtQueryWhenOutputStepsIncluded() {
+        try (MockedStatic<TableJdo> tableJdo = mockStatic(TableJdo.class)) {
+            PersistenceManagerFactory pmf = mock(PersistenceManagerFactory.class);
+            PersistenceManager pm = mock(PersistenceManager.class);
+            @SuppressWarnings("unchecked")
+            Query<ScriptsRun> query = mock(Query.class);
+            tableJdo.when(TableJdo::getPmf).thenReturn(pmf);
+            given(pmf.getPersistenceManager()).willReturn(pm);
+            given(pm.newQuery(ScriptsRun.class)).willReturn(query);
+            given(query.executeList()).willReturn(List.of());
+
+            ScriptRunReportQuery.loadRunsForReport(true);
+
+            verify(query, never()).setFilter(org.mockito.ArgumentMatchers.anyString());
+            verify(query, never()).declareVariables(org.mockito.ArgumentMatchers.anyString());
+            verify(query, never()).setNamedParameters(org.mockito.ArgumentMatchers.any());
+        }
+    }
+
+    @Test
+    void shouldExcludeOutputOnlyStepsWhenOutputStepsExcluded() {
+        ScriptsRun run = new ScriptsRun();
+        run.setCreateTimestamp(Instant.parse("2026-04-01T12:00:00Z"));
+        run.setOutcome(ScriptRunRecorder.OUTCOME_SUCCESS);
+        run.setSummary("summary");
+        ScriptsRunScript script = scriptRow(run, 0, "print_only");
+        ScriptsRunStep outputStep = new ScriptsRunStep();
+        outputStep.setRunScript(script);
+        outputStep.setOrdinal(0);
+        outputStep.setSourceStepIndex(-1);
+        outputStep.setLine("");
+        ScriptsRunOutput output = new ScriptsRunOutput();
+        output.setRunStep(outputStep);
+        output.setOrdinal(0);
+        output.setKind(ScriptRunRecorder.OUTPUT_KIND_OUTPUT);
+        output.setMessage("hello");
+        outputStep.getOutputs().add(output);
+        script.getSteps().add(outputStep);
+        run.getScripts().add(script);
+
+        try (MockedStatic<TableJdo> tableJdo = mockStatic(TableJdo.class)) {
+            PersistenceManagerFactory pmf = mock(PersistenceManagerFactory.class);
+            PersistenceManager pm = mock(PersistenceManager.class);
+            @SuppressWarnings("unchecked")
+            Query<ScriptsRun> query = mock(Query.class);
+            tableJdo.when(TableJdo::getPmf).thenReturn(pmf);
+            given(pmf.getPersistenceManager()).willReturn(pm);
+            given(pm.newQuery(ScriptsRun.class)).willReturn(query);
+            given(query.executeList()).willReturn(List.of(run));
+
+            List<ScriptRunReportData.Run> rows = ScriptRunReportQuery.loadRunsForReport(false);
+
+            assertThat(rows, hasSize(1));
+            assertThat(rows.get(0).scripts().get(0).steps(), hasSize(0));
+        }
+    }
 
     @Test
     void shouldUsePersistedOrdinalForReportOrder() {

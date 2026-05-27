@@ -26,14 +26,20 @@ public interface ZestScriptDiagnosticSource {
 
     /**
      * {@code context}: full diagnostic text; {@code detailMessage}: single-line summary; unknown
-     * indices are {@code -1}.
+     * indices are {@code -1}. {@code printCaptures}: print output captured during the run, in
+     * execution order.
      */
     record ZestScriptRunDiagnostic(
             String context,
             String detailMessage,
             int chainScriptOrder,
             int sourceStatementIndex,
-            String elementType) {}
+            String elementType,
+            List<ZestScriptPrintCapture> printCaptures) {
+        public ZestScriptRunDiagnostic {
+            printCaptures = printCaptures == null ? List.of() : List.copyOf(printCaptures);
+        }
+    }
 
     /**
      * One line of output captured from a script's print statement. {@code chainScriptOrder} is the
@@ -43,11 +49,7 @@ public interface ZestScriptDiagnosticSource {
 
     Optional<ZestScriptRunDiagnostic> getLastRunDiagnostic();
 
-    /**
-     * Print outputs captured during the last run, in execution order. Empty when no prints
-     * occurred. Cleared at the start of each run.
-     */
     default List<ZestScriptPrintCapture> getLastRunPrintCaptures() {
-        return List.of();
+        return getLastRunDiagnostic().map(ZestScriptRunDiagnostic::printCaptures).orElse(List.of());
     }
 }

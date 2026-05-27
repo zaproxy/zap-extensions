@@ -74,18 +74,12 @@ public final class ScriptRunRecorder {
         recordRun(summary, OUTCOME_FAILED, scripts, outputDetailMessage);
     }
 
-    /**
-     * Persists a run. SUCCESS runs with no captured outputs across all scripts are not persisted —
-     * silence is not worth a row.
-     */
+    /** Persists a run. Callers decide whether a run is worth recording. */
     public static void recordRun(
             String summary, String outcome, List<RunScript> scripts, String failureDetailMessage) {
         String summaryToStore = StringUtils.defaultString(summary);
         String outputToStore = StringUtils.defaultString(failureDetailMessage);
         if (scripts == null || scripts.isEmpty()) {
-            return;
-        }
-        if (!OUTCOME_FAILED.equals(outcome) && allOutputsEmpty(scripts)) {
             return;
         }
         PersistenceManagerFactory pmf = TableJdo.getPmf();
@@ -172,14 +166,5 @@ public final class ScriptRunRecorder {
                 summaryMessage,
                 List.of(new RunScript(scriptName, scriptType, new FailureStep(-1, ""))),
                 outputDetailMessage);
-    }
-
-    private static boolean allOutputsEmpty(List<RunScript> scripts) {
-        for (RunScript s : scripts) {
-            if (!s.outputs().isEmpty()) {
-                return false;
-            }
-        }
-        return true;
     }
 }

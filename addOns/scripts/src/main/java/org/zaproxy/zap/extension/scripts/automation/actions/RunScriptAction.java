@@ -384,6 +384,7 @@ public class RunScriptAction extends ScriptAction {
             return true;
         } catch (Exception e) {
             LOGGER.debug("Script execution failed, reported via automation progress", e);
+            scriptJobOutputListener.flush();
             errorHandler.accept(e, scriptJobOutputListener);
             return false;
         } finally {
@@ -405,7 +406,7 @@ public class RunScriptAction extends ScriptAction {
             Exception e,
             ScriptJobOutputListener listener) {
         RunFailure failure = resolveRunFailure(script, e);
-        List<CapturedOutput> captured = linesToCapturedOutputs(listener.getCapturedLines());
+        List<CapturedOutput> captured = capturedOutputsForScript(script, listener);
         reportAndPersistFailure(
                 progress,
                 Constant.messages.getString(
@@ -459,9 +460,10 @@ public class RunScriptAction extends ScriptAction {
         ScriptRunRecorder.recordFailedRun(persistSummary, scripts, failure.outputDetail());
     }
 
+    /** Skips silent successes; {@link ScriptRunRecorder} only writes what it is given. */
     private static void persistSingleScriptSuccess(
             String jobName, ScriptWrapper script, ScriptJobOutputListener listener) {
-        List<CapturedOutput> outputs = linesToCapturedOutputs(listener.getCapturedLines());
+        List<CapturedOutput> outputs = capturedOutputsForScript(script, listener);
         if (outputs.isEmpty()) {
             return;
         }
@@ -510,6 +512,30 @@ public class RunScriptAction extends ScriptAction {
 
     private static List<CapturedOutput> linesToCapturedOutputs(List<String> lines) {
         return lines.stream().map(CapturedOutput::new).toList();
+    }
+
+    /**
+     * Listener lines (e.g. JS {@code print}) plus Zest {@code ZestActionPrint} captures from the
+     * last standalone run ({@code chainScriptOrder == -1}).
+     */
+    private static List<CapturedOutput> capturedOutputsForScript(
+            ScriptWrapper script, ScriptJobOutputListener listener) {
+        List<CapturedOutput> outputs =
+                new ArrayList<>(linesToCapturedOutputs(listener.getCapturedLines()));
+        if (!(script instanceof ZestScriptDiagnosticSource source)) {
+            return outputs;
+        }
+        for (ZestScriptPrintCapture capture : source.getLastRunPrintCaptures()) {
+            if (capture.chainScriptOrder() != -1) {
+                continue;
+            }
+            String message = StringUtils.defaultString(capture.line());
+            if (outputs.stream().anyMatch(o -> message.equals(o.message()))) {
+                continue;
+            }
+            outputs.add(new CapturedOutput(message));
+        }
+        return outputs;
     }
 
     private static Map<Integer, List<CapturedOutput>> bucketCapturesByChainOrder(

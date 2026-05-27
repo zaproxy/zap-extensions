@@ -28,7 +28,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -188,12 +187,16 @@ class ScriptRunRecorderUnitTest {
     }
 
     @Test
-    void shouldNotPersistSuccessfulRunWithoutCapturedOutput() {
+    void shouldPersistSuccessfulRunWhenInvokedEvenWithoutCapturedOutput() {
         try (MockedStatic<TableJdo> tableJdo = mockStatic(TableJdo.class)) {
             // Given
             PersistenceManagerFactory pmf = mock(PersistenceManagerFactory.class);
             PersistenceManager pm = mock(PersistenceManager.class);
+            Transaction tx = mock(Transaction.class);
             tableJdo.when(TableJdo::getPmf).thenReturn(pmf);
+            given(pmf.getPersistenceManager()).willReturn(pm);
+            given(pm.currentTransaction()).willReturn(tx);
+            given(tx.isActive()).willReturn(false);
 
             // When
             ScriptRunRecorder.recordRun(
@@ -203,8 +206,7 @@ class ScriptRunRecorderUnitTest {
                     null);
 
             // Then
-            verify(pmf, never()).getPersistenceManager();
-            verify(pm, never()).makePersistent(any());
+            verify(pm).makePersistent(any(ScriptsRun.class));
         }
     }
 
