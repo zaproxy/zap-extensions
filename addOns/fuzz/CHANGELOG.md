@@ -9,6 +9,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Update dependency.
 - Maintenance changes.
 - Formatted JavaScript files for consistency.
+- Rename payload replacement strategies to Cluster Bomb and Pitchfork in the UI and help (previously Depth First and Breadth First).
+
+### Fixed
+- Correct (breadth-first) Pitchfork payload replacement when fuzzing multiple locations.
 
 ## [13.16.0] - 2025-06-20
 ### Changed
