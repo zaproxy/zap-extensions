@@ -42,7 +42,6 @@ public class MultipleMessageLocationsPitchforkReplacer<T extends Message>
     private MessageLocationReplacement<?>[] listCurrentReplacements;
 
     private boolean initialised;
-    private boolean setup;
 
     private long numberOfReplacements;
 
@@ -81,7 +80,6 @@ public class MultipleMessageLocationsPitchforkReplacer<T extends Message>
         }
 
         initialised = true;
-        setup = true;
     }
 
     @Override
@@ -101,21 +99,12 @@ public class MultipleMessageLocationsPitchforkReplacer<T extends Message>
 
     @Override
     public T next() throws ReplacementException, InvalidMessageException {
-        if (setup) {
-            setup();
-            setup = false;
-        } else {
-            advanceAll();
-        }
+        advanceAll();
 
         currentReplacements.clear();
         currentReplacements.addAll(Arrays.asList(listCurrentReplacements));
 
         return replacer.replace(currentReplacements);
-    }
-
-    private void setup() {
-        advanceAll();
     }
 
     private void advanceAll() {

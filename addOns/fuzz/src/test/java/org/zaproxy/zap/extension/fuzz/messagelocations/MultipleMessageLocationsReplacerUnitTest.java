@@ -122,6 +122,21 @@ class MultipleMessageLocationsReplacerUnitTest {
     }
 
     @Test
+    void pitchforkShouldStopAtShortestList() throws InvalidMessageException, ReplacementException {
+        // Given
+        var replacer = createReplacer();
+        SortedSet<MessageLocationReplacementGenerator<?, ?>> generators = new TreeSet<>();
+        generators.add(new TestGenerator(new TestMessageLocation("loc0"), List.of("1", "2", "3")));
+        generators.add(new TestGenerator(new TestMessageLocation("loc1"), List.of("a", "b")));
+        // When
+        var orders =
+                iterateGenerators(
+                        new MultipleMessageLocationsPitchforkReplacer<>(), replacer, generators);
+        // Then
+        assertThat(orders, contains("1a", "2b"));
+    }
+
+    @Test
     void clusterBombShouldReportCartesianProductSize() throws Exception {
         // Given
         var messageReplacer = createReplacer();

@@ -292,9 +292,12 @@ public class FuzzerOptionsPanel<FO extends FuzzerOptions> extends JPanel {
         maxErrorsAllowedEnabledCheckBox.setSelected(true);
         maxErrorsAllowedNumberSpinner.setValue(defaultOptions.getMaxErrorsAllowed());
         defaultFuzzDelayInMsSpinner.setValue((int) defaultOptions.getSendMessageDelay());
-        clusterBombPayloadReplacementStrategyRadioButton.setSelected(
-                MessageLocationsReplacementStrategy.CLUSTER_BOMB
-                        == defaultOptions.getPayloadsReplacementStrategy());
+        if (MessageLocationsReplacementStrategy.CLUSTER_BOMB
+                == defaultOptions.getPayloadsReplacementStrategy()) {
+            clusterBombPayloadReplacementStrategyRadioButton.setSelected(true);
+        } else {
+            pitchforkPayloadReplacementStrategyRadioButton.setSelected(true);
+        }
         fuzzerHandlerOptions.reset();
     }
 }
