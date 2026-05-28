@@ -35,20 +35,14 @@ public final class ScriptRunReportQuery {
 
     private ScriptRunReportQuery() {}
 
-    @SuppressWarnings("try")
-    public static List<ScriptRunReportData.Run> loadRunsForReport() {
+    public static List<ScriptRunReportData.Run> loadRunsForReport(boolean includeScreenshots) {
         PersistenceManagerFactory pmf = TableJdo.getPmf();
         if (pmf == null) {
             return List.of();
         }
         PersistenceManager pm = pmf.getPersistenceManager();
         try {
-            try (Query<ScriptsRun> runQuery = pm.newQuery(ScriptsRun.class)) {
-                runQuery.setOrdering("id ascending");
-                return runQuery.executeList().stream()
-                        .map(ScriptRunReportQuery::materializeRun)
-                        .toList();
-            }
+            return queryRuns(pm, includeScreenshots);
         } catch (Exception e) {
             LOGGER.warn("Failed to load script runs for report.", e);
             return List.of();
@@ -57,27 +51,55 @@ public final class ScriptRunReportQuery {
         }
     }
 
-    private static ScriptRunReportData.Run materializeRun(ScriptsRun run) {
+    @SuppressWarnings("try")
+    private static List<ScriptRunReportData.Run> queryRuns(
+            PersistenceManager pm, boolean includeScreenshots) throws Exception {
+        try (Query<ScriptsRun> runQuery = pm.newQuery(ScriptsRun.class)) {
+            runQuery.setOrdering("id ascending");
+            return runQuery.executeList().stream()
+                    .map(run -> materializeRun(run, includeScreenshots))
+                    .toList();
+        }
+    }
+
+    private static ScriptRunReportData.Run materializeRun(
+            ScriptsRun run, boolean includeScreenshots) {
         List<ScriptRunReportData.Script> scripts = new ArrayList<>();
         for (ScriptsRunScript sr : run.getScripts()) {
-            scripts.add(materializeScript(sr));
+            scripts.add(materializeScript(sr, includeScreenshots));
         }
         return new ScriptRunReportData.Run(
                 run.getCreateTimestamp().toString(), run.getOutcome(), run.getSummary(), scripts);
     }
 
-    private static ScriptRunReportData.Script materializeScript(ScriptsRunScript sr) {
+    private static ScriptRunReportData.Script materializeScript(
+            ScriptsRunScript sr, boolean includeScreenshots) {
         List<ScriptRunReportData.Step> reportSteps =
-                sr.getSteps().stream().map(ScriptRunReportQuery::materializeStep).toList();
+                sr.getSteps().stream()
+                        .map(step -> materializeStep(step, includeScreenshots))
+                        .toList();
         return new ScriptRunReportData.Script(
                 sr.getOrdinal() + 1, sr.getScriptName(), sr.getScriptType(), reportSteps);
     }
 
-    private static ScriptRunReportData.Step materializeStep(ScriptsRunStep st) {
+    private static ScriptRunReportData.Step materializeStep(
+            ScriptsRunStep st, boolean includeScreenshots) {
         List<ScriptRunReportData.Output> reportOuts =
                 st.getOutputs().stream()
                         .map(o -> new ScriptRunReportData.Output(o.getKind(), o.getMessage()))
                         .toList();
-        return new ScriptRunReportData.Step(st.getSourceStepIndex(), st.getLine(), reportOuts);
+        return new ScriptRunReportData.Step(
+                st.getSourceStepIndex(),
+                st.getLine(),
+                reportOuts,
+                screenshotData(st, includeScreenshots));
+    }
+
+    private static String screenshotData(ScriptsRunStep st, boolean includeScreenshots) {
+        if (!includeScreenshots) {
+            return null;
+        }
+        ScriptsRunStepScreenshot screenshot = st.getScreenshot();
+        return screenshot != null ? screenshot.getData() : null;
     }
 }

@@ -46,7 +46,12 @@ public final class ScriptRunRecorder {
      * {@code sourceStepIndex}: statement index in the failing script, or {@code -1}. {@code line}:
      * failing element type name.
      */
-    public record FailureStep(int sourceStepIndex, String line) {}
+    public record FailureStep(int sourceStepIndex, String line, String screenshotBase64) {
+
+        public FailureStep(int sourceStepIndex, String line) {
+            this(sourceStepIndex, line, null);
+        }
+    }
 
     private ScriptRunRecorder() {}
 
@@ -100,6 +105,8 @@ public final class ScriptRunRecorder {
                     out.setMessage(
                             StringUtils.isNotBlank(outputToStore) ? outputToStore : summaryToStore);
                     st.getOutputs().add(out);
+
+                    attachScreenshot(st, failure.screenshotBase64());
                 }
 
                 pm.makePersistent(run);
@@ -120,10 +127,24 @@ public final class ScriptRunRecorder {
             String scriptName,
             String scriptType,
             String summaryMessage,
-            String outputDetailMessage) {
+            String outputDetailMessage,
+            String screenshotBase64) {
         recordFailedRun(
                 summaryMessage,
-                List.of(new RunScript(scriptName, scriptType, new FailureStep(-1, ""))),
+                List.of(
+                        new RunScript(
+                                scriptName, scriptType, new FailureStep(-1, "", screenshotBase64))),
                 outputDetailMessage);
+    }
+
+    private static void attachScreenshot(ScriptsRunStep step, String screenshotBase64) {
+        if (StringUtils.isBlank(screenshotBase64)) {
+            return;
+        }
+        ScriptsRunStepScreenshot screenshot = new ScriptsRunStepScreenshot();
+        screenshot.setRunStep(step);
+        screenshot.setCreateTimestamp(Instant.now());
+        screenshot.setData(screenshotBase64);
+        step.setScreenshot(screenshot);
     }
 }

@@ -293,6 +293,44 @@ public class ReportTestUtils {
     static File generateReportWithScriptDiagnostics(
             Template template, File f, boolean includeScriptDiagnosticsSection)
             throws IOException, DocumentException {
+        return generateReportWithScriptDiagnostics(
+                template, f, includeScriptDiagnosticsSection, defaultScriptDiagnosticRuns());
+    }
+
+    static File generateReportWithScriptDiagnostics(
+            Template template, File f, List<ScriptRunReportData.Run> runs)
+            throws IOException, DocumentException {
+        return generateReportWithScriptDiagnostics(template, f, true, runs);
+    }
+
+    static File generateReportWithScriptDiagnostics(
+            Template template,
+            File f,
+            boolean includeScriptDiagnosticsSection,
+            List<ScriptRunReportData.Run> runs)
+            throws IOException, DocumentException {
+        return generateReportWithScriptDiagnosticsInternal(
+                template, f, includeScriptDiagnosticsSection, runs, null);
+    }
+
+    static File generateReportWithScriptDiagnostics(
+            Template template,
+            File f,
+            boolean includeScriptDiagnosticsSection,
+            List<ScriptRunReportData.Run> runs,
+            String excludedSection)
+            throws IOException, DocumentException {
+        return generateReportWithScriptDiagnosticsInternal(
+                template, f, includeScriptDiagnosticsSection, runs, excludedSection);
+    }
+
+    private static File generateReportWithScriptDiagnosticsInternal(
+            Template template,
+            File f,
+            boolean includeScriptDiagnosticsSection,
+            List<ScriptRunReportData.Run> runs,
+            String excludedSection)
+            throws IOException, DocumentException {
         ExtensionReports extRep = new ExtensionReports();
         ReportData reportData = new ReportData("test");
         reportData.setTitle("Test Title");
@@ -303,13 +341,19 @@ public class ReportTestUtils {
         if (!includeScriptDiagnosticsSection) {
             sections.remove("scriptdiagnostics");
         }
+        if (excludedSection != null) {
+            sections.remove(excludedSection);
+        }
         reportData.setSections(sections);
 
         AlertNode root = new AlertNode(0, "Test");
         reportData.setAlertTreeRootNode(root);
 
-        return generateReportWithScriptDiagnostics(
-                template, f, includeScriptDiagnosticsSection, defaultScriptDiagnosticRuns());
+        reportData.addReportObjects(
+                ExtensionScriptsReport.SCRIPT_DIAGNOSTICS,
+                new ScriptRunReportData.Diagnostics(runs));
+
+        return extRep.generateReport(reportData, template, f.getAbsolutePath(), false);
     }
 
     static List<ScriptRunReportData.Run> defaultScriptDiagnosticRuns() {
@@ -325,47 +369,20 @@ public class ReportTestUtils {
                         "boom"),
                 scriptRunReport(
                         "2026-04-02T08:30:00Z",
+                        ScriptRunRecorder.OUTCOME_FAILED,
                         1,
                         "chain-a",
                         "standalone",
                         13,
                         "ZestClientElementClick",
+                        ScriptRunRecorder.OUTPUT_KIND_ERROR,
                         "Job: ... step failed",
-                        "step failed"));
+                        "step failed",
+                        "abc64png"));
     }
 
-    static File generateReportWithScriptDiagnostics(
-            Template template, File f, List<ScriptRunReportData.Run> runs)
-            throws IOException, DocumentException {
-        return generateReportWithScriptDiagnostics(template, f, true, runs);
-    }
-
-    private static File generateReportWithScriptDiagnostics(
-            Template template,
-            File f,
-            boolean includeScriptDiagnosticsSection,
-            List<ScriptRunReportData.Run> runs)
-            throws IOException, DocumentException {
-        ExtensionReports extRep = new ExtensionReports();
-        ReportData reportData = new ReportData("test");
-        reportData.setTitle("Test Title");
-        reportData.setDescription("Test Description");
-        reportData.setIncludeAllConfidences(true);
-        reportData.setIncludeAllRisks(true);
-        List<String> sections = new ArrayList<>(template.getSections());
-        if (!includeScriptDiagnosticsSection) {
-            sections.remove("scriptdiagnostics");
-        }
-        reportData.setSections(sections);
-
-        AlertNode root = new AlertNode(0, "Test");
-        reportData.setAlertTreeRootNode(root);
-
-        reportData.addReportObjects(
-                ExtensionScriptsReport.SCRIPT_DIAGNOSTICS,
-                new ScriptRunReportData.Diagnostics(runs));
-
-        return extRep.generateReport(reportData, template, f.getAbsolutePath(), false);
+    static ScriptRunReportData.Run defaultScriptDiagnosticRunWithScreenshot() {
+        return defaultScriptDiagnosticRuns().get(1);
     }
 
     static ScriptRunReportData.Run scriptRunReport(
@@ -387,7 +404,8 @@ public class ReportTestUtils {
                 line,
                 ScriptRunRecorder.OUTPUT_KIND_ERROR,
                 summaryMessage,
-                outputDetailMessage);
+                outputDetailMessage,
+                null);
     }
 
     static ScriptRunReportData.Run scriptRunReport(
@@ -400,7 +418,8 @@ public class ReportTestUtils {
             String line,
             String outputKind,
             String summaryMessage,
-            String outputDetailMessage) {
+            String outputDetailMessage,
+            String screenshot) {
         return new ScriptRunReportData.Run(
                 created,
                 outcome,
@@ -416,8 +435,8 @@ public class ReportTestUtils {
                                                 line,
                                                 List.of(
                                                         new ScriptRunReportData.Output(
-                                                                outputKind,
-                                                                outputDetailMessage)))))));
+                                                                outputKind, outputDetailMessage)),
+                                                screenshot)))));
     }
 
     static Template getTemplateFromYamlFile(String templateName) throws Exception {

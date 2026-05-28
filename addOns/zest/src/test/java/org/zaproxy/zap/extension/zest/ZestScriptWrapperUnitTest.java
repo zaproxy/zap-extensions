@@ -109,7 +109,8 @@ class ZestScriptWrapperUnitTest {
     void shouldNotCopyLastRunDiagnosticOntoClone() {
         ZestScriptWrapper wrapper = new ZestScriptWrapper(createMockScriptWrapper());
         wrapper.setLastRunDiagnostic(
-                new ZestScriptRunDiagnostic("stale diagnostics from a prior run", "", -1, -1, ""));
+                new ZestScriptRunDiagnostic(
+                        "stale diagnostics from a prior run", "", -1, -1, "", null));
 
         ZestScriptWrapper clone = wrapper.clone();
 
@@ -128,7 +129,7 @@ class ZestScriptWrapperUnitTest {
         ZestScriptWrapper wrapper = new ZestScriptWrapper(createMockScriptWrapper());
         wrapper.setLastRunDiagnostic(
                 new ZestScriptRunDiagnostic(
-                        "chain ctx", "ZestFoo - detail", 2, 13, "ZestClientFoo"));
+                        "chain ctx", "ZestFoo - detail", 2, 13, "ZestClientFoo", "b64png"));
 
         Optional<ZestScriptRunDiagnostic> diagnostic = wrapper.getLastRunDiagnostic();
 
@@ -138,12 +139,14 @@ class ZestScriptWrapperUnitTest {
         assertThat(diagnostic.get().chainScriptOrder(), is(equalTo(2)));
         assertThat(diagnostic.get().sourceStatementIndex(), is(equalTo(13)));
         assertThat(diagnostic.get().elementType(), is(equalTo("ZestClientFoo")));
+        assertThat(diagnostic.get().screenshotBase64(), is(equalTo("b64png")));
     }
 
     @Test
     void shouldClearLastRunDiagnostic() {
         ZestScriptWrapper wrapper = new ZestScriptWrapper(createMockScriptWrapper());
-        wrapper.setLastRunDiagnostic(new ZestScriptRunDiagnostic("ctx", "detail", 1, 0, "ZestFoo"));
+        wrapper.setLastRunDiagnostic(
+                new ZestScriptRunDiagnostic("ctx", "detail", 1, 0, "ZestFoo", null));
 
         wrapper.setLastRunDiagnostic(null);
 

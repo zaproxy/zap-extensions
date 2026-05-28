@@ -22,6 +22,7 @@ package org.zaproxy.addon.reports;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -822,10 +823,10 @@ class ExtensionReportsJsonUnitTest extends TestUtils {
         JSONObject json = JSONObject.fromObject(report);
         JSONObject scriptDiagnostics = json.getJSONObject("scriptDiagnostics");
         assertThat(scriptDiagnostics.containsKey("runs"), is(true));
-        JSONArray runs = scriptDiagnostics.getJSONArray("runs");
-        assertThat(runs.size(), is(equalTo(2)));
+        JSONArray runsJson = scriptDiagnostics.getJSONArray("runs");
+        assertThat(runsJson.size(), is(equalTo(2)));
 
-        JSONObject run0 = runs.getJSONObject(0);
+        JSONObject run0 = runsJson.getJSONObject(0);
         assertScriptDiagnosticRunStructure(run0);
         assertThat(run0.getString("outcome"), is(equalTo("FAILED")));
         assertThat(run0.getString("summary"), is(equalTo("Job: ... boom")));
@@ -839,12 +840,13 @@ class ExtensionReportsJsonUnitTest extends TestUtils {
         assertScriptDiagnosticStepStructure(step0);
         assertThat(step0.getInt("sourceStepIndex"), is(equalTo(-1)));
         assertThat(step0.getString("line"), is(equalTo("")));
+        assertThat(step0.containsKey("screenshot"), is(equalTo(false)));
         JSONObject output0 = step0.getJSONArray("outputs").getJSONObject(0);
         assertScriptDiagnosticOutputStructure(output0);
         assertThat(output0.getString("kind"), is(equalTo("ERROR")));
         assertThat(output0.getString("message"), is(equalTo("boom")));
 
-        JSONObject run1 = runs.getJSONObject(1);
+        JSONObject run1 = runsJson.getJSONObject(1);
         assertScriptDiagnosticRunStructure(run1);
         assertThat(run1.getString("summary"), is(equalTo("Job: ... step failed")));
         JSONObject script1 = run1.getJSONArray("scripts").getJSONObject(0);
@@ -853,6 +855,7 @@ class ExtensionReportsJsonUnitTest extends TestUtils {
         JSONObject step1 = script1.getJSONArray("steps").getJSONObject(0);
         assertThat(step1.getInt("sourceStepIndex"), is(equalTo(13)));
         assertThat(step1.getString("line"), is(equalTo("ZestClientElementClick")));
+        assertThat(step1.getString("screenshot"), is(equalTo("abc64png")));
         assertThat(json.getJSONArray("site").size(), is(equalTo(0)));
     }
 
@@ -871,6 +874,7 @@ class ExtensionReportsJsonUnitTest extends TestUtils {
         String line = "ZestClient\"Click\\";
         String kind = "ERR\"OR\\";
         String message = "detail \"msg\" \\ slash";
+        String screenshot = "abc\"64\\png";
         List<ScriptRunReportData.Run> runs =
                 List.of(
                         ReportTestUtils.scriptRunReport(
@@ -883,7 +887,8 @@ class ExtensionReportsJsonUnitTest extends TestUtils {
                                 line,
                                 kind,
                                 summary,
-                                message));
+                                message,
+                                screenshot));
 
         // When
         File r = ReportTestUtils.generateReportWithScriptDiagnostics(template, f, runs);
@@ -904,6 +909,7 @@ class ExtensionReportsJsonUnitTest extends TestUtils {
         assertThat(script.getString("scriptType"), is(equalTo(scriptType)));
         JSONObject step = script.getJSONArray("steps").getJSONObject(0);
         assertThat(step.getString("line"), is(equalTo(line)));
+        assertThat(step.getString("screenshot"), is(equalTo(screenshot)));
         JSONObject output = step.getJSONArray("outputs").getJSONObject(0);
         assertThat(output.getString("kind"), is(equalTo(kind)));
         assertThat(output.getString("message"), is(equalTo(message)));
@@ -940,14 +946,48 @@ class ExtensionReportsJsonUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldOmitScriptDiagnosticScreenshotWhenScreenshotsSectionDisabled() throws Exception {
+        Template template = ReportTestUtils.getTemplateFromYamlFile("traditional-json-plus");
+        File f =
+                File.createTempFile(
+                        "traditional-json-plus-no-script-screenshots", template.getExtension());
+
+        File r =
+                ReportTestUtils.generateReportWithScriptDiagnostics(
+                        template,
+                        f,
+                        true,
+                        List.of(ReportTestUtils.defaultScriptDiagnosticRunWithScreenshot()),
+                        "scriptdiagnosticsscreenshots");
+        JSONObject step =
+                JSONObject.fromObject(new String(Files.readAllBytes(r.toPath())))
+                        .getJSONObject("scriptDiagnostics")
+                        .getJSONArray("runs")
+                        .getJSONObject(0)
+                        .getJSONArray("scripts")
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(0);
+        assertThat(step.containsKey("screenshot"), is(equalTo(false)));
+    }
+
+    @Test
     void shouldOmitScriptDiagnosticsWhenSectionDisabled() throws Exception {
-        // Given
+        // Given — main section off; optional sections (e.g. screenshots) still enabled
         Template template = ReportTestUtils.getTemplateFromYamlFile("traditional-json-plus");
         String fileName = "traditional-json-plus-no-script-diagnostics-section";
         File f = File.createTempFile(fileName, template.getExtension());
+        List<String> sections = new ArrayList<>(template.getSections());
+        sections.remove("scriptdiagnostics");
+        assertThat(sections, hasItem("scriptdiagnosticsscreenshots"));
 
         // When
-        File r = ReportTestUtils.generateReportWithScriptDiagnostics(template, f, false);
+        File r =
+                ReportTestUtils.generateReportWithScriptDiagnostics(
+                        template,
+                        f,
+                        false,
+                        List.of(ReportTestUtils.defaultScriptDiagnosticRunWithScreenshot()));
         String report = new String(Files.readAllBytes(r.toPath()));
 
         // Then
