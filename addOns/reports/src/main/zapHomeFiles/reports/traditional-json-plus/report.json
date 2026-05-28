@@ -5,12 +5,12 @@
 	"created": [[${created}]],[#th:block th:if="${reportData.reportObjects.get('insightsList') != null}"]
 	"insights":[[#th:block th:each="ins, insState: ${reportData.reportObjects.get('insightsList')}"][#th:block th:if="${! insState.first}"],[/th:block]
 		{
-			"level": [[${ins.level}]],
-			"reason": [[${ins.reason}]],
-			"site": [[${ins.site}]],
-			"key": [[${ins.key}]],
-			"description": [[${ins.description}]],
-			"statistic": [[${ins.statistic}]]
+			"level": "[(${ins.level})]",
+			"reason": "[(${ins.reason})]",
+			"site": "[(${ins.site})]",
+			"key": "[(${ins.key})]",
+			"description": "[(${ins.description})]",
+			"statistic": "[(${ins.statistic})]"
 		}[/th:block]
     ],[/th:block][#th:block th:if="${reportData.isIncludeSection('scriptdiagnostics') && reportData.reportObjects.get('scriptDiagnostics') != null}"]
 	"scriptDiagnostics": {
