@@ -641,7 +641,12 @@ class RunScriptActionUnitTest extends TestUtils {
                 new ScriptWrapperWithZestDiagnostic(
                         "fake-zest",
                         new ZestScriptRunDiagnostic(
-                                "zest context", "compact detail", 2, 13, "ZestClientClick"));
+                                "zest context",
+                                "compact detail",
+                                2,
+                                13,
+                                "ZestClientClick",
+                                "shot"));
         RunScriptAction.RunFailure failure =
                 RunScriptAction.resolveRunFailure(script, new RuntimeException("ignored"));
 
@@ -650,6 +655,7 @@ class RunScriptActionUnitTest extends TestUtils {
         assertThat(failure.failingScriptOrder(), is(2));
         assertThat(failure.failureStep().sourceStepIndex(), is(13));
         assertThat(failure.failureStep().line(), is("ZestClientClick"));
+        assertThat(failure.failureStep().screenshotBase64(), is("shot"));
     }
 
     @Test
@@ -682,7 +688,7 @@ class RunScriptActionUnitTest extends TestUtils {
     void shouldResolveFailureOutputDetailFromExceptionWhenZestDetailBlank() {
         ScriptWrapper script =
                 new ScriptWrapperWithZestDiagnostic(
-                        "fake-zest", new ZestScriptRunDiagnostic("ctx", "  ", 1, 5, "Line"));
+                        "fake-zest", new ZestScriptRunDiagnostic("ctx", "  ", 1, 5, "Line", null));
         Exception ex = new RuntimeException("persist me");
 
         RunScriptAction.RunFailure failure = RunScriptAction.resolveRunFailure(script, ex);
@@ -772,7 +778,7 @@ class RunScriptActionUnitTest extends TestUtils {
         }
 
         ScriptWrapperWithZestDiagnostic(String name, String zestFailureContext) {
-            this(name, new ZestScriptRunDiagnostic(zestFailureContext, "", -1, -1, ""));
+            this(name, new ZestScriptRunDiagnostic(zestFailureContext, "", -1, -1, "", null));
         }
 
         @Override

@@ -19,13 +19,10 @@
  */
 package org.zaproxy.zap.extension.scripts.internal.db;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.Instant;
 import javax.jdo.annotations.Cacheable;
 import javax.jdo.annotations.Column;
-import javax.jdo.annotations.Element;
 import javax.jdo.annotations.IdGeneratorStrategy;
-import javax.jdo.annotations.Order;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
@@ -35,29 +32,18 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @Cacheable("false")
-@PersistenceCapable(table = "SCRIPTS_RUN_STEP", detachable = "true")
-public class ScriptsRunStep {
+@PersistenceCapable(table = "SCRIPTS_RUN_STEP_SCREENSHOT", detachable = "true")
+public class ScriptsRunStepScreenshot {
 
     @PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
     private long id;
 
-    @Column(name = "RUNSCRIPTID", allowsNull = "false")
-    private ScriptsRunScript runScript;
+    @Column(name = "RUNSTEPID", allowsNull = "false")
+    private ScriptsRunStep runStep;
 
-    @Column(name = "ORDINAL")
-    private int ordinal;
+    private Instant createTimestamp;
 
-    private int sourceStepIndex;
-
-    @Column(name = "LINETEXT", length = 1024)
-    private String line;
-
-    @Order(column = "ORDINAL", mappedBy = "ordinal")
-    @Element(dependent = "true")
-    @Persistent(mappedBy = "runStep")
-    private List<ScriptsRunOutput> outputs = new ArrayList<>();
-
-    @Persistent(mappedBy = "runStep", dependent = "true")
-    private ScriptsRunStepScreenshot screenshot;
+    @Column(length = 8388608)
+    private String data;
 }

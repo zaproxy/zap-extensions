@@ -54,6 +54,7 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.automation.JobResultData;
 import org.zaproxy.zap.extension.alert.AlertNode;
+import org.zaproxy.zap.extension.scripts.report.ExtensionScriptsReport;
 import org.zaproxy.zap.extension.scripts.report.ScriptRunReportData;
 import org.zaproxy.zap.extension.sequence.StdActiveScanRunner.SequenceStepData;
 import org.zaproxy.zap.extension.sequence.automation.SequenceAScanJobResultData;
@@ -909,6 +910,121 @@ class ExtensionReportsJsonUnitTest extends TestUtils {
         assertThat(output.containsKey("kind"), is(true));
         assertThat(output.containsKey("message"), is(true));
         assertThat(output.containsKey("detail"), is(false));
+    }
+
+    @Test
+    void shouldIncludeScriptDiagnosticScreenshotWhenScreenshotsSectionEnabled() throws Exception {
+        Template template = ReportTestUtils.getTemplateFromYamlFile("traditional-json-plus");
+        File f =
+                File.createTempFile(
+                        "traditional-json-plus-script-diagnostics-screenshot",
+                        template.getExtension());
+        List<ScriptRunReportData.Run> runs =
+                List.of(
+                        ReportTestUtils.scriptRunReport(
+                                "2026-04-01T12:00:00Z",
+                                1,
+                                "my-script",
+                                "standalone",
+                                5,
+                                "ZestClientClick",
+                                "summary",
+                                "detail",
+                                "abc64png"));
+
+        File r = ReportTestUtils.generateReportWithScriptDiagnostics(template, f, runs);
+        String report = new String(Files.readAllBytes(r.toPath()));
+        JSONObject step =
+                JSONObject.fromObject(report)
+                        .getJSONObject("scriptDiagnostics")
+                        .getJSONArray("runs")
+                        .getJSONObject(0)
+                        .getJSONArray("scripts")
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(0);
+        assertThat(step.getString("screenshot"), is(equalTo("abc64png")));
+    }
+
+    @Test
+    void shouldOmitScriptDiagnosticScreenshotWhenScreenshotsSectionDisabled() throws Exception {
+        Template template = ReportTestUtils.getTemplateFromYamlFile("traditional-json-plus");
+        File f =
+                File.createTempFile(
+                        "traditional-json-plus-no-script-screenshots", template.getExtension());
+        ExtensionReports extRep = new ExtensionReports();
+        ReportData reportData = new ReportData("test");
+        reportData.setTitle("Test Title");
+        reportData.setDescription("Test Description");
+        reportData.setIncludeAllConfidences(true);
+        reportData.setIncludeAllRisks(true);
+        List<String> sections = new ArrayList<>(template.getSections());
+        sections.remove("scriptdiagnosticsscreenshots");
+        reportData.setSections(sections);
+        reportData.setAlertTreeRootNode(new AlertNode(0, "Test"));
+        reportData.addReportObjects(
+                ExtensionScriptsReport.SCRIPT_DIAGNOSTICS,
+                new ScriptRunReportData.Diagnostics(
+                        List.of(
+                                ReportTestUtils.scriptRunReport(
+                                        "2026-04-01T12:00:00Z",
+                                        1,
+                                        "my-script",
+                                        "standalone",
+                                        5,
+                                        "ZestClientClick",
+                                        "summary",
+                                        "detail",
+                                        "abc64png"))));
+        File r = extRep.generateReport(reportData, template, f.getAbsolutePath(), false);
+        JSONObject step =
+                JSONObject.fromObject(new String(Files.readAllBytes(r.toPath())))
+                        .getJSONObject("scriptDiagnostics")
+                        .getJSONArray("runs")
+                        .getJSONObject(0)
+                        .getJSONArray("scripts")
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(0);
+        assertThat(step.containsKey("screenshot"), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldOmitScriptDiagnosticsWhenScreenshotsEnabledButDiagnosticsSectionDisabled()
+            throws Exception {
+        Template template = ReportTestUtils.getTemplateFromYamlFile("traditional-json-plus");
+        File f =
+                File.createTempFile(
+                        "traditional-json-plus-script-screenshots-no-diagnostics",
+                        template.getExtension());
+        ExtensionReports extRep = new ExtensionReports();
+        ReportData reportData = new ReportData("test");
+        reportData.setTitle("Test Title");
+        reportData.setDescription("Test Description");
+        reportData.setIncludeAllConfidences(true);
+        reportData.setIncludeAllRisks(true);
+        List<String> sections = new ArrayList<>(template.getSections());
+        sections.remove("scriptdiagnostics");
+        reportData.setSections(sections);
+        reportData.setAlertTreeRootNode(new AlertNode(0, "Test"));
+        reportData.addReportObjects(
+                ExtensionScriptsReport.SCRIPT_DIAGNOSTICS,
+                new ScriptRunReportData.Diagnostics(
+                        List.of(
+                                ReportTestUtils.scriptRunReport(
+                                        "2026-04-01T12:00:00Z",
+                                        1,
+                                        "my-script",
+                                        "standalone",
+                                        5,
+                                        "ZestClientClick",
+                                        "summary",
+                                        "detail",
+                                        "abc64png"))));
+
+        File r = extRep.generateReport(reportData, template, f.getAbsolutePath(), false);
+        JSONObject json = JSONObject.fromObject(new String(Files.readAllBytes(r.toPath())));
+        assertThat(json.containsKey("scriptDiagnostics"), is(equalTo(false)));
     }
 
     @Test

@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Added
 - Functionality to store script diagnostics and provides them to Reports. Depends on the database add-on.
+- Browser screenshots on Zest client script failures during automation, persisted with script diagnostics and included in reports (Traditional JSON+ `scriptdiagnosticsscreenshots` section).
 
 ### Changed
 - Update dependency.

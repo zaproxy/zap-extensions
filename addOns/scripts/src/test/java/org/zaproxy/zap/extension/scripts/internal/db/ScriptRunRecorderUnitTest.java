@@ -24,6 +24,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -171,6 +172,76 @@ class ScriptRunRecorderUnitTest {
             assertThat(run.getScripts().get(2).getOrdinal(), is(2));
             assertThat(run.getScripts().get(2).getScriptName(), is(equalTo("third")));
             assertThat(run.getScripts().get(2).getSteps(), hasSize(0));
+        }
+    }
+
+    @Test
+    void shouldPersistScreenshotOnFailureStepWhenProvided() {
+        try (MockedStatic<TableJdo> tableJdo = mockStatic(TableJdo.class)) {
+            PersistenceManagerFactory pmf = mock(PersistenceManagerFactory.class);
+            PersistenceManager pm = mock(PersistenceManager.class);
+            Transaction tx = mock(Transaction.class);
+            tableJdo.when(TableJdo::getPmf).thenReturn(pmf);
+            given(pmf.getPersistenceManager()).willReturn(pm);
+            given(pm.currentTransaction()).willReturn(tx);
+            given(tx.isActive()).willReturn(false);
+
+            ScriptRunRecorder.recordFailedRun(
+                    "summary",
+                    List.of(
+                            new ScriptRunRecorder.RunScript(
+                                    "my-script",
+                                    "standalone",
+                                    new ScriptRunRecorder.FailureStep(
+                                            3, "ZestClientClick", "base64png"))),
+                    "detail");
+
+            @SuppressWarnings("rawtypes")
+            ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class);
+            verify(pm, times(1)).makePersistent(captor.capture());
+            ScriptsRun run =
+                    captor.getAllValues().stream()
+                            .filter(ScriptsRun.class::isInstance)
+                            .map(ScriptsRun.class::cast)
+                            .findFirst()
+                            .orElseThrow();
+            ScriptsRunStep step = run.getScripts().get(0).getSteps().get(0);
+            assertThat(step.getScreenshot(), is(notNullValue()));
+            assertThat(step.getScreenshot().getData(), is(equalTo("base64png")));
+        }
+    }
+
+    @Test
+    void shouldNotPersistScreenshotWhenBlank() {
+        try (MockedStatic<TableJdo> tableJdo = mockStatic(TableJdo.class)) {
+            PersistenceManagerFactory pmf = mock(PersistenceManagerFactory.class);
+            PersistenceManager pm = mock(PersistenceManager.class);
+            Transaction tx = mock(Transaction.class);
+            tableJdo.when(TableJdo::getPmf).thenReturn(pmf);
+            given(pmf.getPersistenceManager()).willReturn(pm);
+            given(pm.currentTransaction()).willReturn(tx);
+            given(tx.isActive()).willReturn(false);
+
+            ScriptRunRecorder.recordFailedRun(
+                    "summary",
+                    List.of(
+                            new ScriptRunRecorder.RunScript(
+                                    "my-script",
+                                    "standalone",
+                                    new ScriptRunRecorder.FailureStep(3, "ZestClientClick", ""))),
+                    "detail");
+
+            @SuppressWarnings("rawtypes")
+            ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class);
+            verify(pm, times(1)).makePersistent(captor.capture());
+            ScriptsRun run =
+                    captor.getAllValues().stream()
+                            .filter(ScriptsRun.class::isInstance)
+                            .map(ScriptsRun.class::cast)
+                            .findFirst()
+                            .orElseThrow();
+            ScriptsRunStep step = run.getScripts().get(0).getSteps().get(0);
+            assertThat(step.getScreenshot(), is(nullValue()));
         }
     }
 }
