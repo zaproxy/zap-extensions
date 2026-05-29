@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### Fixed
+- Handling of Ionic input elements, which can appear to not be displayed until they are clicked on.
 
 ## [0.39.0] - 2026-05-06
 ### Changed

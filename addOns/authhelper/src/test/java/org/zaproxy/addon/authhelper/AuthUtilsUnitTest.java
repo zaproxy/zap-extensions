@@ -57,6 +57,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.httpclient.URI;
 import org.hamcrest.BaseMatcher;
@@ -220,6 +221,172 @@ class AuthUtilsUnitTest extends TestUtils {
         assertThat(field, is(notNullValue()));
         assertThat(field.getAttribute("type"), is(equalTo("customtype")));
         assertThat(field.isDisplayed(), is(equalTo(true)));
+    }
+
+    @Test
+    void shouldClickNonDisplayedInputWithoutTypeAttributeToMakeItVisibleWhenChoosingUserField() {
+        // Given - HTML inputs default to type text when the attribute is omitted
+        TestWebElement inputField = new TestWebElement("input", null);
+        inputField.setDisplayed(false);
+        inputField.setDisplayOnClick(true);
+        List<WebElement> inputElements = List.of(inputField);
+
+        // When
+        WebElement field = AuthUtils.getUserField(null, inputElements, null);
+
+        // Then
+        assertThat(inputField.isClicked(), is(true));
+        assertThat(field, is(notNullValue()));
+        assertThat(field.isDisplayed(), is(true));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"text, user", "email, user", "password, password"})
+    void shouldClickNonDisplayedInputToMakeItVisible(String inputType, String fieldLookup) {
+        // Given
+        TestWebElement inputField = new TestWebElement("input", inputType);
+        inputField.setDisplayed(false);
+        inputField.setDisplayOnClick(true);
+        List<WebElement> inputElements = List.of(inputField);
+
+        // When
+        WebElement field =
+                "user".equals(fieldLookup)
+                        ? AuthUtils.getUserField(null, inputElements, null)
+                        : AuthUtils.getPasswordField(inputElements);
+
+        // Then
+        assertThat(inputField.isClicked(), is(true));
+        assertThat(field, is(notNullValue()));
+        assertThat(field.isDisplayed(), is(true));
+    }
+
+    @Test
+    void shouldNotClickDisplayedInputWhenChoosingUserField() {
+        // Given
+        TestWebElement inputField = new TestWebElement("input", "text");
+        List<WebElement> inputElements = List.of(inputField);
+
+        // When
+        WebElement field = AuthUtils.getUserField(null, inputElements, null);
+
+        // Then
+        assertThat(inputField.isClicked(), is(false));
+        assertThat(field, is(notNullValue()));
+    }
+
+    @Test
+    void shouldNotClickNonInputElementsWhenChoosingUserField() {
+        // Given
+        TestWebElement nonDisplayedDiv = new TestWebElement("div", null);
+        nonDisplayedDiv.setDisplayed(false);
+        TestWebElement nonDisplayedInput = new TestWebElement("input", "text");
+        nonDisplayedInput.setDisplayed(false);
+        nonDisplayedInput.setDisplayOnClick(true);
+        List<WebElement> inputElements = List.of(nonDisplayedDiv, nonDisplayedInput);
+
+        // When
+        WebElement field = AuthUtils.getUserField(null, inputElements, null);
+
+        // Then
+        assertThat(nonDisplayedDiv.isClicked(), is(false));
+        assertThat(nonDisplayedInput.isClicked(), is(true));
+        assertThat(field, is(notNullValue()));
+    }
+
+    @Test
+    void shouldReturnUserFieldWhenIsDisplayedThrowsForAnotherElement() {
+        // Given
+        TestWebElement brokenElement = new TestWebElement("input", "text");
+        brokenElement.setDisplayedCheckThrows(true);
+        TestWebElement visibleText = new TestWebElement("input", "text");
+        List<WebElement> inputElements = List.of(brokenElement, visibleText);
+
+        // When
+        WebElement field = AuthUtils.getUserField(null, inputElements, null);
+
+        // Then
+        assertThat(brokenElement.isClicked(), is(false));
+        assertThat(field, is(notNullValue()));
+        assertThat(field, is(visibleText));
+    }
+
+    @Test
+    void shouldReturnUserFieldWhenIsDisplayedThrowsAfterClickOnNonDisplayedInput() {
+        // Given
+        TestWebElement nonDisplayedInput = new TestWebElement("input", "text");
+        nonDisplayedInput.setDisplayed(false);
+        nonDisplayedInput.setDisplayOnClick(true);
+        nonDisplayedInput.setDisplayedAfterClickThrows(true);
+        TestWebElement visibleEmail = new TestWebElement("input", "email");
+        List<WebElement> inputElements = List.of(nonDisplayedInput, visibleEmail);
+
+        // When
+        WebElement field = AuthUtils.getUserField(null, inputElements, null);
+
+        // Then
+        assertThat(nonDisplayedInput.isClicked(), is(true));
+        assertThat(field, is(notNullValue()));
+        assertThat(field, is(visibleEmail));
+    }
+
+    @Test
+    void shouldIgnoreClickExceptionOnNonDisplayedInputWhenChoosingUserField() {
+        // Given
+        TestWebElement nonDisplayedInput = new TestWebElement("input", "text");
+        nonDisplayedInput.setDisplayed(false);
+        nonDisplayedInput.setClickThrows(true);
+        List<WebElement> inputElements = new ArrayList<>();
+        inputElements.add(nonDisplayedInput);
+        inputElements.add(new TestWebElement("input", "text"));
+
+        // When
+        WebElement field = AuthUtils.getUserField(null, inputElements, null);
+
+        // Then
+        assertThat(nonDisplayedInput.isClicked(), is(true));
+        assertThat(field, is(notNullValue()));
+        assertThat(field.isDisplayed(), is(true));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"button, text", "checkbox, text", "radio, email"})
+    void shouldNotClickNonDisplayedSensitiveInputWhenChoosingUserField(
+            String nonDisplayedType, String visibleType) {
+        // Given
+        TestWebElement nonDisplayedInput = new TestWebElement("input", nonDisplayedType);
+        nonDisplayedInput.setDisplayed(false);
+        nonDisplayedInput.setDisplayOnClick(true);
+        TestWebElement visibleInput = new TestWebElement("input", visibleType);
+        List<WebElement> inputElements = List.of(nonDisplayedInput, visibleInput);
+
+        // When
+        WebElement field = AuthUtils.getUserField(null, inputElements, null);
+
+        // Then
+        assertThat(nonDisplayedInput.isClicked(), is(false));
+        assertThat(field, is(notNullValue()));
+        assertThat(field.getAttribute("type"), is(equalTo(visibleType)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"submit", "checkbox"})
+    void shouldNotClickNonDisplayedSensitiveInputWhenChoosingPasswordField(
+            String nonDisplayedType) {
+        // Given
+        TestWebElement nonDisplayedInput = new TestWebElement("input", nonDisplayedType);
+        nonDisplayedInput.setDisplayed(false);
+        nonDisplayedInput.setDisplayOnClick(true);
+        TestWebElement visiblePassword = new TestWebElement("input", "password");
+        List<WebElement> inputElements = List.of(nonDisplayedInput, visiblePassword);
+
+        // When
+        WebElement field = AuthUtils.getPasswordField(inputElements);
+
+        // Then
+        assertThat(nonDisplayedInput.isClicked(), is(false));
+        assertThat(field, is(notNullValue()));
+        assertThat(field.getAttribute("type"), is(equalTo("password")));
     }
 
     @Test
@@ -1583,6 +1750,12 @@ class AuthUtilsUnitTest extends TestUtils {
         private String id;
         private String name;
         @Setter private boolean displayed = true;
+        @Setter private boolean displayOnClick = false;
+        @Setter private boolean clickThrows = false;
+        @Setter private boolean displayedCheckThrows = false;
+        @Setter private boolean displayedAfterClickThrows = false;
+        @Getter private boolean clicked = false;
+        private boolean clickAttempted;
 
         TestWebElement(String tag, String type) {
             this.tag = tag;
@@ -1601,7 +1774,16 @@ class AuthUtilsUnitTest extends TestUtils {
         }
 
         @Override
-        public void click() {}
+        public void click() {
+            clicked = true;
+            clickAttempted = true;
+            if (clickThrows) {
+                throw new WebDriverException("click failed");
+            }
+            if (displayOnClick) {
+                displayed = true;
+            }
+        }
 
         @Override
         public void submit() {}
@@ -1658,6 +1840,12 @@ class AuthUtilsUnitTest extends TestUtils {
 
         @Override
         public boolean isDisplayed() {
+            if (displayedCheckThrows) {
+                throw new WebDriverException("isDisplayed failed");
+            }
+            if (displayedAfterClickThrows && clickAttempted) {
+                throw new WebDriverException("isDisplayed failed after click");
+            }
             return displayed;
         }
 
