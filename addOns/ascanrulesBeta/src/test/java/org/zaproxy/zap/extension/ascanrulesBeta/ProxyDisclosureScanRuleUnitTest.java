@@ -20,9 +20,12 @@
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.emptyOrNullString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 
 import java.util.List;
 import java.util.Map;
@@ -80,10 +83,32 @@ class ProxyDisclosureScanRuleUnitTest extends ActiveScannerTest<ProxyDisclosureS
         // Then
         assertThat(alerts, hasSize(2));
         Alert highRiskAlert = alerts.get(0);
+        assertThat(highRiskAlert.getAlertRef(), is(equalTo("40025-1")));
         assertThat(highRiskAlert.getRisk(), is(equalTo(Alert.RISK_HIGH)));
         assertThat(highRiskAlert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(highRiskAlert.getEvidence(), is(equalTo("X-Forwarded-For: 10.0.0.1")));
+        assertThat(highRiskAlert.getAttack(), is(emptyOrNullString()));
+        assertThat(
+                highRiskAlert.getDescription(),
+                containsString(
+                        "The presence of any proxy-based components that could detect, prevent,"
+                                + " or mitigate attacks against the application."));
+        assertThat(
+                highRiskAlert.getOtherInfo(),
+                containsString("Identified via proxy request header: X-Forwarded-For"));
+        assertThat(highRiskAlert.getOtherInfo(), containsString("- Unknown"));
+        assertThat(highRiskAlert.getOtherInfo(), containsString("- Apache/2.4.58"));
         Alert mediumRiskAlert = alerts.get(1);
+        assertThat(mediumRiskAlert.getAlertRef(), is(equalTo("40025-2")));
         assertThat(mediumRiskAlert.getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
         assertThat(mediumRiskAlert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(mediumRiskAlert.getEvidence(), is(equalTo("X-Forwarded-For: 10.0.0.1")));
+        assertThat(mediumRiskAlert.getAttack(), is(emptyOrNullString()));
+        assertThat(
+                mediumRiskAlert.getOtherInfo(),
+                containsString("Identified via proxy request header: X-Forwarded-For"));
+        assertThat(
+                mediumRiskAlert.getOtherInfo(),
+                not(containsString("The 'TRACE' method is enabled")));
     }
 }
