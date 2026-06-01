@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Chained scripts now have provenance information preserved for troubleshooting purposes.
+- Update Zest library to 0.36.0:
+  - Update dependencies.
+  - Restore JSON deserialization behaviour.
+  - Handle text (and similar) input elements which only become visible when interacted with.
+
 
 ## [48.13.0] - 2026-03-31
 ### Added
