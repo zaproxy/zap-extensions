@@ -95,4 +95,16 @@
 			</th:block>
 		</insights>
 	</th:block>
+	<th:block
+		th:if="${reportData.reportObjects.get('stoppingInsight') != null}"
+		th:with="stopping=${reportData.reportObjects.get('stoppingInsight')}">
+		<stoppingInsight>
+			<level th:text="${stopping.level}"></level>
+			<reason th:text="${stopping.reason}"></reason>
+			<site th:text="${stopping.site}"></site>
+			<key th:text="${stopping.key}"></key>
+			<description th:text="${stopping.description}"></description>
+			<statistic th:text="${stopping.statistic}"></statistic>
+		</stoppingInsight>
+	</th:block>
 </OWASPZAPReport>

@@ -4,7 +4,11 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Report data now exposes `stoppingInsight` to make it explicit which insight caused a stop. The built-in report templates render the stopping insight when present.
 
+### Changed
+- The Automation Framework stop message now identifies the triggering insight (key, reason, site, value) instead of a generic string. The same details are appended to the daemon-mode exit reason.
 
 ## [0.4.0] - 2026-04-23
 ### Changed
