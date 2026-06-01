@@ -7,3 +7,4 @@ sections:
  - insights
  - instancecount
  - alertdetails
+ - scriptdiagnostics
