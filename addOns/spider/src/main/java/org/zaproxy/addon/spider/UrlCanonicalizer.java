@@ -85,106 +85,124 @@ public final class UrlCanonicalizer {
      * @param baseURL the context in which this url was found
      * @return the canonical url
      */
+
     public static String getCanonicalUrl(ParseContext ctx, String url, String baseURL) {
-        if (Strings.CI.startsWith(url, "javascript:")
-                || Strings.CI.startsWith(url, "tel:")
-                || Strings.CI.startsWith(url, "mailto:")
-                || "//".equals(url)) {
+        if (url == null) return null;
+
+        // Fast scheme filtering (avoid repeated CI.startsWith calls)
+        String lower = url.toLowerCase();
+        if (lower.startsWith("javascript:")
+                || lower.startsWith("tel:")
+                || lower.startsWith("mailto:")
+                || url.equals("//")) {
             return null;
         }
 
         try {
-            /* Build the absolute URL, from the url and the baseURL */
-            String resolvedURL = UrlResolver.resolveUrl(baseURL == null ? "" : baseURL, url);
-            LOGGER.debug("Resolved URL: {}", resolvedURL);
-            URI canonicalURI;
+            // Resolve URL
+            String resolved = UrlResolver.resolveUrl(baseURL == null ? "" : baseURL, url);
+            LOGGER.debug("Resolved URL: {}", resolved);
+
+            URI uri;
             try {
-                canonicalURI = new URI(resolvedURL);
-            } catch (Exception e) {
-                canonicalURI = new URI(URIUtil.encodeQuery(resolvedURL));
+                uri = URI.create(resolved);
+            } catch (IllegalArgumentException e) {
+                // Fallback only when needed
+                uri = URI.create(URIUtil.encodeQuery(resolved));
             }
 
-            /* Some checking. */
-            if (canonicalURI.getScheme() == null) {
-                LOGGER.warn(
-                        "Protocol could not be reliably evaluated from uri: {} and base url: {}",
-                        canonicalURI,
-                        baseURL);
+            // Validate essential parts early
+            String scheme = uri.getScheme();
+            if (scheme == null) {
+                LOGGER.warn("Missing scheme: {} (base {})", uri, baseURL);
                 return null;
             }
 
-            if (canonicalURI.getRawAuthority() == null) {
-                LOGGER.debug(
-                        "Ignoring URI with no authority (host[\":\"port]): {} (on base {})",
-                        canonicalURI,
-                        baseURL);
+            String host = uri.getHost();
+            if (host == null) {
+                LOGGER.warn("Missing host: {} (base {})", uri, baseURL);
                 return null;
             }
 
-            if (canonicalURI.getHost() == null) {
-                LOGGER.warn(
-                        "Host could not be reliably evaluated from: {} (on base {})",
-                        canonicalURI,
-                        baseURL);
+            if (uri.getRawAuthority() == null) {
+                LOGGER.debug("Ignoring URI with no authority: {} (base {})", uri, baseURL);
                 return null;
             }
 
-            /*
-             * Normalize: no empty segments (i.e., "//"), no segments equal to ".", and no segments equal to
-             * ".." that are preceded by a segment not equal to "..".
-             */
-            String path = canonicalURI.normalize().getRawPath();
-
-            /* Convert '//' -> '/' */
-            int idx = path.indexOf("//");
-            while (idx >= 0) {
-                path = path.replace("//", "/");
-                idx = path.indexOf("//");
+            // Normalize path once
+            String path = uri.normalize().getRawPath();
+            if (path == null || path.isEmpty()) {
+                path = "/";
+            } else {
+                path = normalizeSlashes(path);
+                path = stripLeadingDotSegments(path);
+                path = path.trim();
             }
 
-            /* Drop starting '/../' */
-            while (path.startsWith("/../")) {
-                path = path.substring(3);
+            // Query canonicalization
+            String query = uri.getRawQuery();
+            String canonicalQuery = "";
+            if (query != null && !query.isEmpty()) {
+                SortedSet<QueryParameter> params = createSortedParameters(query);
+                String canonicalParams =
+                        canonicalize(params, ctx.getSpiderParam()::isIrrelevantUrlParameter);
+                if (!canonicalParams.isEmpty()) {
+                    canonicalQuery = "?" + canonicalParams;
+                }
             }
 
-            /* Trim */
-            path = path.trim();
-
-            /* Process parameters and sort them. */
-            final SortedSet<QueryParameter> params =
-                    createSortedParameters(canonicalURI.getRawQuery());
-            final String queryString;
-            String canonicalParams =
-                    canonicalize(params, ctx.getSpiderParam()::isIrrelevantUrlParameter);
-            queryString = (canonicalParams.isEmpty() ? "" : "?" + canonicalParams);
-
-            /* Add starting slash if needed */
-            if (path.length() == 0) {
-                path = "/" + path;
-            }
-
-            /* Drop default port: example.com:80 -> example.com */
-            int port = canonicalURI.getPort();
-            if (isDefaultPort(canonicalURI.getScheme(), port)) {
+            // Normalize port
+            int port = uri.getPort();
+            if (isDefaultPort(scheme, port)) {
                 port = -1;
             }
 
-            /* Lowercasing protocol and host */
-            String protocol = canonicalURI.getScheme().toLowerCase();
-            String host = canonicalURI.getHost().toLowerCase();
-            String pathAndQueryString = normalizePath(path) + queryString;
+            // Lowercase scheme + host
+            scheme = scheme.toLowerCase();
+            host = host.toLowerCase();
 
-            URL result = new URL(protocol, host, port, pathAndQueryString);
-            return result.toExternalForm();
+            // Rebuild URI directly (no URL)
+            return scheme + "://" + host +
+                    (port != -1 ? ":" + port : "") +
+                    normalizePath(path) +
+                    canonicalQuery;
 
         } catch (Exception ex) {
             LOGGER.warn(
-                    "Error while Processing URL [{}] in the spidering process (on base {}): {}",
+                    "Error processing URL [{}] (base {}): {}",
                     url,
                     baseURL,
                     ex.getMessage());
             return null;
         }
+    }
+
+    private static String normalizeSlashes(String path) {
+        StringBuilder sb = new StringBuilder(path.length());
+        boolean prevSlash = false;
+
+        for (int i = 0; i < path.length(); i++) {
+            char c = path.charAt(i);
+            if (c == '/') {
+                if (!prevSlash) {
+                    sb.append(c);
+                    prevSlash = true;
+                }
+            } else {
+                sb.append(c);
+                prevSlash = false;
+            }
+        }
+
+        return sb.toString();
+    }
+
+    private static String stripLeadingDotSegments(String path) {
+        int i = 0;
+        while (path.startsWith("/../", i)) {
+            i += 3;
+        }
+        return i == 0 ? path : path.substring(i);
     }
 
     /**
@@ -215,7 +233,7 @@ public final class UrlCanonicalizer {
      * Builds a String representation of the URI with cleaned parameters, that can be used when
      * checking if an URI was already visited. The URI provided as a parameter should be already
      * cleaned and canonicalized, so it should be build with a result from {@link
-     * #getCanonicalURL(String)}.
+     * #getCanonicalUrl(String)}.
      *
      * <p>When building the URI representation, the same format should be used for all the cases, as
      * it may affect the number of times the pages are visited and reported if the option

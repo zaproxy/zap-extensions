@@ -50,8 +50,7 @@ public class SAMLResender {
                                         .getExtensionLoader()
                                         .getExtension(ExtensionHistory.NAME);
 
-                final int finalType = HistoryReference.TYPE_ZAP_USER;
-                extension.addHistory(msg, finalType);
+                extension.addHistory(msg, HistoryReference.TYPE_ZAP_USER);
             }
 
         } catch (IOException e) {

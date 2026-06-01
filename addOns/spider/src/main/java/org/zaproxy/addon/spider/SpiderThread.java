@@ -19,15 +19,6 @@
  */
 package org.zaproxy.addon.spider;
 
-import java.awt.EventQueue;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.LinkedList;
-import java.util.List;
-import javax.swing.DefaultListModel;
-import javax.swing.tree.TreeNode;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
@@ -49,7 +40,16 @@ import org.zaproxy.zap.model.SessionStructure;
 import org.zaproxy.zap.model.StructuralNode;
 import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.users.User;
-import org.zaproxy.zap.utils.ThreadUtils;
+
+import javax.swing.DefaultListModel;
+import javax.swing.tree.TreeNode;
+import java.awt.EventQueue;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * The Class SpiderThread that controls the spidering process on a particular site. Being a
@@ -58,60 +58,91 @@ import org.zaproxy.zap.utils.ThreadUtils;
  */
 public class SpiderThread extends ScanThread implements SpiderListener {
 
-    /** Whether the scanning process has stopped (either completed, either by user request). */
+    /**
+     * Whether the scanning process has stopped (either completed, either by user request).
+     */
     private boolean stopScan;
 
-    /** Whether the scanning process is paused. */
+    /**
+     * Whether the scanning process is paused.
+     */
     private boolean isPaused;
 
-    /** Whether the scanning process is running. */
+    /**
+     * Whether the scanning process is running.
+     */
     private boolean isAlive;
 
-    /** The related extension. */
-    private ExtensionSpider2 extension;
+    /**
+     * The related extension.
+     */
+    private final ExtensionSpider2 extension;
 
-    /** The spider. */
+    /**
+     * The spider.
+     */
     private Spider spider;
 
-    /** The pending spider listeners which will be added to the Spider as soon at is initialized. */
-    private List<SpiderListener> pendingSpiderListeners;
+    /**
+     * The pending spider listeners which will be added to the Spider as soon at is initialized.
+     */
+    private final List<SpiderListener> pendingSpiderListeners = new LinkedList<>();
 
-    /** The spider done. */
+    /**
+     * The spider done.
+     */
     private int spiderDone;
 
-    /** The spider todo. It will be updated by the "spiderProgress()" method. */
+    /**
+     * The spider todo. It will be updated by the "spiderProgress()" method.
+     */
     private int spiderTodo = 1;
 
-    /** The Constant log used for logging. */
+    /**
+     * The Constant log used for logging.
+     */
     private static final Logger LOGGER = LogManager.getLogger(SpiderThread.class);
 
-    /** The just scan in scope. */
+    /**
+     * The just scan in scope.
+     */
     private boolean justScanInScope;
 
-    /** The scan children. */
+    /**
+     * The scan children.
+     */
     private boolean scanChildren;
 
-    /** The scan context. */
+    /**
+     * The scan context.
+     */
     private Context scanContext;
 
-    /** The scan user. */
+    /**
+     * The scan user.
+     */
     private User scanUser;
 
-    /** The results model. */
-    private SpiderPanelTableModel resultsModel;
+    /**
+     * The results model.
+     */
+    private final SpiderPanelTableModel resultsModel;
 
-    /** The added nodes model, i.e. the names of the nodes that were added to the sites tree. */
-    private SpiderPanelTableModel addedNodesModel;
+    /**
+     * The added nodes model, i.e. the names of the nodes that were added to the sites tree.
+     */
+    private final SpiderPanelTableModel addedNodesModel = new SpiderPanelTableModel(false);
 
-    /** The start uri. */
+    /**
+     * The start uri.
+     */
     private URI startURI;
 
-    private SpiderParam spiderParams;
+    private final SpiderParam spiderParams;
 
+    // custom lists are never null
     private List<SpiderParser> customSpiderParsers;
-
     private List<FetchFilter> customFetchFilters;
-
     private List<ParseFilter> customParseFilters;
 
     private final String id;
@@ -123,11 +154,11 @@ public class SpiderThread extends ScanThread implements SpiderListener {
     /**
      * Constructs a {@code SpiderThread} with the given data.
      *
-     * @param id the ID of the spider, usually a unique integer
-     * @param extension the extension to obtain configurations and notify the view
+     * @param id           the ID of the spider, usually a unique integer
+     * @param extension    the extension to obtain configurations and notify the view
      * @param spiderParams the spider options
-     * @param site the name that identifies the target site
-     * @param listenner the scan listener
+     * @param site         the name that identifies the target site
+     * @param listenner    the scan listener
      */
     public SpiderThread(
             String id,
@@ -140,10 +171,7 @@ public class SpiderThread extends ScanThread implements SpiderListener {
         this.id = id;
         this.extension = extension;
         this.site = site;
-        this.pendingSpiderListeners = new LinkedList<>();
         this.resultsModel = extension.getView() != null ? new SpiderPanelTableModel() : null;
-        // This can be used in daemon mode via the API
-        this.addedNodesModel = new SpiderPanelTableModel(false);
         this.spiderParams = spiderParams;
 
         setName("ZAP-SpiderInitThread-" + id);
@@ -159,7 +187,9 @@ public class SpiderThread extends ScanThread implements SpiderListener {
         }
     }
 
-    /** Runs the scan. */
+    /**
+     * Runs the scan.
+     */
     private void runScan() {
         // Do the scan
         spiderDone = 0;
@@ -221,7 +251,9 @@ public class SpiderThread extends ScanThread implements SpiderListener {
         return this.spiderDone + this.spiderTodo;
     }
 
-    /** Start spider. */
+    /**
+     * Start spider.
+     */
     private void startSpider() {
 
         spider = new Spider(id, extension, spiderParams, extension.getModel(), this.scanContext);
@@ -247,24 +279,16 @@ public class SpiderThread extends ScanThread implements SpiderListener {
 
         spider.setScanAsUser(scanUser);
 
-        // Add any custom parsers and filters specified
-        if (this.customSpiderParsers != null) {
-            for (SpiderParser sp : this.customSpiderParsers) {
-                spider.addCustomParser(sp);
-            }
+        for (SpiderParser sp : this.customSpiderParsers) {
+            spider.addCustomParser(sp);
         }
-        if (this.customFetchFilters != null) {
-            for (FetchFilter ff : this.customFetchFilters) {
-                spider.addFetchFilter(ff);
-            }
+        for (FetchFilter ff : this.customFetchFilters) {
+            spider.addFetchFilter(ff);
         }
-        if (this.customParseFilters != null) {
-            for (ParseFilter pf : this.customParseFilters) {
-                spider.addParseFilter(pf);
-            }
+        for (ParseFilter pf : this.customParseFilters) {
+            spider.addParseFilter(pf);
         }
 
-        // Start the spider
         spider.start();
     }
 
@@ -419,67 +443,36 @@ public class SpiderThread extends ScanThread implements SpiderListener {
     @Override
     public void foundURI(String uri, String method, FetchStatus status) {
         if (resultsModel != null) {
-            addUriToResultsModel(uri, method, status);
+            if (status == FetchStatus.VALID) {
+                resultsModel.addScanResult(uri, method, null, false);
+            } else {
+                resultsModel.addScanResult(
+                        uri, method, getStatusLabel(status), status != FetchStatus.SEED);
+            }
+            extension.getSpiderPanel().updateFoundCount();
         }
     }
 
-    private void addUriToResultsModel(
-            final String uri, final String method, final FetchStatus status) {
-        if (!EventQueue.isDispatchThread()) {
-            EventQueue.invokeLater(
-                    new Runnable() {
 
-                        @Override
-                        public void run() {
-                            addUriToResultsModel(uri, method, status);
-                        }
-                    });
-            return;
+    private void addUriToAddedNodesModel(final String uri, final String method) {
+
+        addedNodesModel.addScanResult(uri, method, null, false);
+
+        if (extension.getView() != null) {
+            extension.getSpiderPanel().updateAddedCount();
         }
-
-        // Add the new result
-        if (status == FetchStatus.VALID) {
-            resultsModel.addScanResult(uri, method, null, false);
-        } else {
-            resultsModel.addScanResult(
-                    uri, method, getStatusLabel(status), status != FetchStatus.SEED);
-        }
-
-        // Update the count of found URIs
-        extension.getSpiderPanel().updateFoundCount();
-    }
-
-    private void addUriToAddedNodesModel(
-            final String uri, final String method, final String params) {
-        ThreadUtils.invokeLater(
-                () -> {
-                    // Add the new result
-                    addedNodesModel.addScanResult(uri, method, null, false);
-
-                    if (extension.getView() != null) {
-                        // Update the count of added nodes
-                        extension.getSpiderPanel().updateAddedCount();
-                    }
-                });
     }
 
     private String getStatusLabel(FetchStatus status) {
-        switch (status) {
-            case SEED:
-                return Constant.messages.getString("spider.table.flags.seed");
-            case OUT_OF_CONTEXT:
-                return Constant.messages.getString("spider.table.flags.outofcontext");
-            case OUT_OF_SCOPE:
-                return Constant.messages.getString("spider.table.flags.outofscope");
-            case ILLEGAL_PROTOCOL:
-                return Constant.messages.getString("spider.table.flags.illegalprotocol");
-            case USER_RULES:
-                return Constant.messages.getString("spider.table.flags.userrules");
-            case LOGOUT_AVOIDANCE:
-                return Constant.messages.getString("spider.table.flags.logoutavoidance");
-            default:
-                return status.toString();
-        }
+        return switch (status) {
+            case SEED -> Constant.messages.getString("spider.table.flags.seed");
+            case OUT_OF_CONTEXT -> Constant.messages.getString("spider.table.flags.outofcontext");
+            case OUT_OF_SCOPE -> Constant.messages.getString("spider.table.flags.outofscope");
+            case ILLEGAL_PROTOCOL -> Constant.messages.getString("spider.table.flags.illegalprotocol");
+            case USER_RULES -> Constant.messages.getString("spider.table.flags.userrules");
+            case LOGOUT_AVOIDANCE -> Constant.messages.getString("spider.table.flags.logoutavoidance");
+            default -> status.toString();
+        };
     }
 
     @Override
@@ -506,33 +499,29 @@ public class SpiderThread extends ScanThread implements SpiderListener {
      * Adds the given message to the sites tree.
      *
      * @param historyReference the history reference of the message, must not be {@code null}
-     * @param message the actual message, must not be {@code null}
+     * @param message          the actual message, must not be {@code null}
      */
-    private void addMessageToSitesTree(
-            final HistoryReference historyReference, final HttpMessage message) {
-        if (View.isInitialised() && !EventQueue.isDispatchThread()) {
-            EventQueue.invokeLater(
-                    new Runnable() {
 
-                        @Override
-                        public void run() {
-                            addMessageToSitesTree(historyReference, message);
-                        }
-                    });
-            return;
-        }
-
+    private void addMessageToSitesTree0(final HistoryReference historyReference, final HttpMessage message) {
+        // addPath must be called on EDT for now.
         StructuralNode node =
                 SessionStructure.addPath(Model.getSingleton(), historyReference, message, true);
         if (node != null) {
             try {
                 addUriToAddedNodesModel(
                         SessionStructure.getNodeName(Model.getSingleton(), message),
-                        message.getRequestHeader().getMethod(),
-                        "");
+                        message.getRequestHeader().getMethod()
+                );
             } catch (URIException e) {
                 LOGGER.error("Error while adding node to added nodes model: {}", e.getMessage(), e);
             }
+        }
+    }
+
+    private void addMessageToSitesTree(
+            final HistoryReference historyReference, final HttpMessage message) {
+        if (View.isInitialised()) {
+            EventQueue.invokeLater(() -> addMessageToSitesTree0(historyReference, message));
         }
     }
 

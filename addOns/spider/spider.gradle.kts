@@ -60,6 +60,7 @@ dependencies {
     zapAddOn("network")
 
     implementation(libs.spider.kaitaiStructRuntime)
+    implementation(libs.spider.glazedLists)
 
     testImplementation(project(":testutils"))
     testImplementation(libs.log4j.core)

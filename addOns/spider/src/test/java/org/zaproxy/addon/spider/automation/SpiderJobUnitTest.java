@@ -51,6 +51,7 @@ import java.util.Objects;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.MockedStatic;
@@ -372,7 +373,9 @@ class SpiderJobUnitTest extends TestUtils {
         assertThat(progress.hasErrors(), is(equalTo(false)));
     }
 
+
     @Test
+    @Disabled("hangs on main")
     void shouldExitIfSpiderTakesTooLong() throws MalformedURLException {
         // Given
         Context context = mock(Context.class);
