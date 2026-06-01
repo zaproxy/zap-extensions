@@ -168,30 +168,35 @@ public class ExtensionAuthhelper extends ExtensionAdaptor {
 
     @Override
     public void optionsLoaded() {
-        ExtensionSessionManagement extSm = AuthUtils.getExtension(ExtensionSessionManagement.class);
+        final ExtensionSessionManagement extSm =
+                AuthUtils.getExtension(ExtensionSessionManagement.class);
         if (extSm != null) {
-            extSm.getSessionManagementMethodTypes().add(HEADER_BASED_SESSION_TYPE);
-            extSm.getSessionManagementMethodTypes().add(AUTO_DETECT_SESSION_TYPE);
+            extSm.addSessionManagementMethodType(
+                    HEADER_BASED_SESSION_TYPE, AUTO_DETECT_SESSION_TYPE);
         }
-        ExtensionAuthentication extAuth = AuthUtils.getExtension(ExtensionAuthentication.class);
+
+        final ExtensionAuthentication extAuth =
+                AuthUtils.getExtension(ExtensionAuthentication.class);
         if (extAuth != null) {
-            extAuth.getAuthenticationMethodTypes().add(BROWSER_BASED_AUTH_TYPE);
-            extAuth.getAuthenticationMethodTypes().add(AUTO_DETECT_AUTH_TYPE);
+            extAuth.addAuthenticationMethodTypes(BROWSER_BASED_AUTH_TYPE, AUTO_DETECT_AUTH_TYPE);
         }
     }
 
     @Override
     public void unload() {
-        ExtensionSessionManagement extSm = AuthUtils.getExtension(ExtensionSessionManagement.class);
+        final ExtensionSessionManagement extSm =
+                AuthUtils.getExtension(ExtensionSessionManagement.class);
         if (extSm != null) {
-            extSm.getSessionManagementMethodTypes().remove(HEADER_BASED_SESSION_TYPE);
-            extSm.getSessionManagementMethodTypes().remove(AUTO_DETECT_SESSION_TYPE);
+            extSm.removeSessionManagementMethodType(
+                    HEADER_BASED_SESSION_TYPE, AUTO_DETECT_SESSION_TYPE);
         }
-        ExtensionAuthentication extAuth = AuthUtils.getExtension(ExtensionAuthentication.class);
+
+        final ExtensionAuthentication extAuth =
+                AuthUtils.getExtension(ExtensionAuthentication.class);
         if (extAuth != null) {
-            extAuth.getAuthenticationMethodTypes().remove(BROWSER_BASED_AUTH_TYPE);
-            extAuth.getAuthenticationMethodTypes().remove(AUTO_DETECT_AUTH_TYPE);
+            extAuth.removeAuthenticationMethodTypes(BROWSER_BASED_AUTH_TYPE, AUTO_DETECT_AUTH_TYPE);
         }
+
         AuthUtils.disableBrowserAuthentication();
         BrowserBasedAuthenticationMethodType.stopProxies();
         AuthUtils.clean();
