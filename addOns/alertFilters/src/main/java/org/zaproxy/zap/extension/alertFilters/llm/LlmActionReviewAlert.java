@@ -145,7 +145,6 @@ public class LlmActionReviewAlert {
                         Constant.messages.getString("alertFilters.llm.reviewalert.output.tab"));
 
         ChatResponse resp = commsService.chat(chatRequest);
-        commsService.switchToOutputTab();
         AlertFeedback feedback = LlmCommunicationService.mapResponse(resp, AlertFeedback.class);
 
         if (feedback.level() == alert.getConfidence()) {
