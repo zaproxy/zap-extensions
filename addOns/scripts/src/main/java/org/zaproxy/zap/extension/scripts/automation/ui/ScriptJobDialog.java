@@ -20,17 +20,30 @@
 package org.zaproxy.zap.extension.scripts.automation.ui;
 
 import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
 import org.apache.commons.lang3.StringUtils;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
@@ -39,7 +52,10 @@ import org.zaproxy.zap.extension.scripts.automation.ScriptJobParameters;
 import org.zaproxy.zap.extension.scripts.automation.actions.RunScriptAction;
 import org.zaproxy.zap.extension.scripts.automation.actions.ScriptAction;
 import org.zaproxy.zap.utils.DisplayUtils;
+import org.zaproxy.zap.utils.FontUtils;
+import org.zaproxy.zap.utils.ZapHtmlLabel;
 import org.zaproxy.zap.utils.ZapTextArea;
+import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
 @SuppressWarnings("serial")
@@ -59,6 +75,11 @@ public class ScriptJobDialog extends StandardFieldsDialog {
     public static final String SCRIPT_INLINE_PARAM = "scripts.automation.dialog.inline";
     public static final String SCRIPT_CONTEXT_PARAM = "scripts.automation.dialog.context";
     public static final String SCRIPT_USER_PARAM = "scripts.automation.dialog.user";
+    private static final String SCRIPT_USE_CHAIN_LABEL = "scripts.automation.dialog.useChain";
+    private static final String SCRIPT_CHAIN_GROUP_LABEL = "scripts.automation.dialog.chain.group";
+    private static final String SCRIPT_CHAIN_HELP_LABEL = "scripts.automation.dialog.chain.help";
+    private static final String SCRIPT_FILL_CHAIN_LABEL =
+            "scripts.automation.dialog.chain.fillFromPlan";
 
     private static final String[] ALL_FIELDS = {
         NAME_PARAM,
@@ -81,6 +102,14 @@ public class ScriptJobDialog extends StandardFieldsDialog {
     private ScriptJob job;
 
     private Map<String, String> lastValues = new HashMap<>();
+
+    private JButton fillChainButton;
+
+    private JPanel chainGroupPanel;
+
+    private JCheckBox useChainCheckBox;
+
+    private ZapTextArea chainTextArea;
 
     public ScriptJobDialog(ScriptJob job) {
         super(
@@ -156,6 +185,12 @@ public class ScriptJobDialog extends StandardFieldsDialog {
                     .setText(this.job.getData().getParameters().getTarget());
         }
 
+        boolean useChainInitially = isChainConfigured(this.job.getData().getParameters());
+        addChainGroupPanel(
+                useChainInitially,
+                ScriptChainPlanSupport.formatChainText(
+                        this.job.getData().getParameters().getChain()));
+
         this.addPadding(0);
 
         this.addMultilineField(
@@ -163,6 +198,114 @@ public class ScriptJobDialog extends StandardFieldsDialog {
 
         onScriptActionChanged();
         onScriptTypeChanged();
+        if (useChainInitially) {
+            onUseChainChanged();
+        }
+
+        layoutDialog();
+    }
+
+    /**
+     * Scrollable tabs and {@link #pack()} for final size. Clears the bootstrap preferred size
+     * {@link StandardFieldsDialog} sets on the content pane (required by its constructor).
+     */
+    private void layoutDialog() {
+        for (String tabLabel : TAB_LABELS) {
+            setTabScrollable(tabLabel, true);
+        }
+
+        Component content = getContentPane();
+        if (content != null) {
+            content.setPreferredSize(null);
+            content.setMinimumSize(null);
+        }
+
+        setResizable(true);
+        pack();
+    }
+
+    private static String formatChainHelpHtml(String helpText) {
+        return "<html>" + helpText.replace("\n", "<br>") + "</html>";
+    }
+
+    private void addChainGroupPanel(boolean useChainInitially, String initialChainText) {
+        chainGroupPanel = new JPanel(new GridBagLayout());
+        chainGroupPanel.setBorder(
+                BorderFactory.createTitledBorder(
+                        null,
+                        Constant.messages.getString(SCRIPT_CHAIN_GROUP_LABEL),
+                        TitledBorder.DEFAULT_JUSTIFICATION,
+                        TitledBorder.DEFAULT_POSITION,
+                        FontUtils.getFont(FontUtils.Size.standard)));
+
+        useChainCheckBox =
+                new JCheckBox(
+                        Constant.messages.getString(SCRIPT_USE_CHAIN_LABEL), useChainInitially);
+        useChainCheckBox.addActionListener(e -> onUseChainChanged());
+        chainGroupPanel.add(
+                useChainCheckBox,
+                LayoutHelper.getGBC(
+                        0, 0, 2, 1.0, 0.0, GridBagConstraints.HORIZONTAL, new Insets(2, 4, 4, 4)));
+
+        chainTextArea = new ZapTextArea();
+        chainTextArea.setLineWrap(true);
+        chainTextArea.setText(initialChainText);
+        chainTextArea
+                .getDocument()
+                .addDocumentListener(
+                        new DocumentListener() {
+                            @Override
+                            public void insertUpdate(DocumentEvent e) {
+                                onChainTextChanged();
+                            }
+
+                            @Override
+                            public void removeUpdate(DocumentEvent e) {
+                                onChainTextChanged();
+                            }
+
+                            @Override
+                            public void changedUpdate(DocumentEvent e) {
+                                onChainTextChanged();
+                            }
+                        });
+        JScrollPane chainScrollPane = new JScrollPane(chainTextArea);
+        chainScrollPane.setVerticalScrollBarPolicy(
+                ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        chainGroupPanel.add(
+                chainScrollPane,
+                LayoutHelper.getGBC(
+                        0, 1, 2, 1.0, 1.0, GridBagConstraints.BOTH, new Insets(2, 4, 4, 4)));
+
+        ZapHtmlLabel chainHelpLabel =
+                new ZapHtmlLabel(
+                        formatChainHelpHtml(Constant.messages.getString(SCRIPT_CHAIN_HELP_LABEL)));
+        chainGroupPanel.add(
+                chainHelpLabel,
+                LayoutHelper.getGBC(
+                        0, 2, 2, 1.0, 0.0, GridBagConstraints.HORIZONTAL, new Insets(2, 4, 4, 4)));
+
+        fillChainButton = new JButton(Constant.messages.getString(SCRIPT_FILL_CHAIN_LABEL));
+        fillChainButton.addActionListener(e -> fillChainFromPriorAddJobs());
+        chainGroupPanel.add(
+                fillChainButton,
+                LayoutHelper.getGBC(
+                        0, 3, 2, 0.0, 0.0, GridBagConstraints.WEST, new Insets(2, 4, 4, 4)));
+
+        this.addCustomComponent(0, chainGroupPanel);
+    }
+
+    private String getChainText() {
+        return chainTextArea.getText();
+    }
+
+    private void setChainText(String text) {
+        chainTextArea.setText(text);
+    }
+
+    private static boolean isChainConfigured(ScriptJobParameters parameters) {
+        List<String> chain = parameters.getChain();
+        return chain != null && !chain.isEmpty();
     }
 
     private File getDefaultDirectory() {
@@ -174,6 +317,18 @@ public class ScriptJobDialog extends StandardFieldsDialog {
                 new ScriptJobParameters(this.getStringValue(SCRIPT_ACTION_PARAM)), null);
     }
 
+    private boolean isRunAction() {
+        return RunScriptAction.NAME.equalsIgnoreCase(this.getStringValue(SCRIPT_ACTION_PARAM));
+    }
+
+    private boolean isStandaloneType() {
+        return ExtensionScript.TYPE_STANDALONE.equals(this.getStringValue(SCRIPT_TYPE_PARAM));
+    }
+
+    private boolean isUseChainMode() {
+        return useChainCheckBox.isSelected();
+    }
+
     private void onScriptActionChanged() {
         ScriptAction sa = getScriptAction();
         List<String> scriptTypes = sa.getSupportedScriptTypes();
@@ -183,6 +338,9 @@ public class ScriptJobDialog extends StandardFieldsDialog {
         List<String> disabledFields = sa.getDisabledFields();
         for (String fieldName : ALL_FIELDS) {
             Component field = this.getField(fieldName);
+            if (field == null) {
+                continue;
+            }
             if (disabledFields.contains(fieldName)) {
                 saveFieldValue(fieldName);
                 if (field instanceof JTextComponent || field instanceof ZapTextArea) {
@@ -210,6 +368,81 @@ public class ScriptJobDialog extends StandardFieldsDialog {
         scripts.add(0, "");
         this.setComboFields(
                 SCRIPT_NAME_PARAM, scripts, this.job.getData().getParameters().getName());
+
+        updateChainFieldVisibility();
+    }
+
+    private void onUseChainChanged() {
+        if (isUseChainMode()) {
+            saveFieldValue(SCRIPT_NAME_PARAM);
+            this.setFieldValue(SCRIPT_NAME_PARAM, "");
+        } else {
+            restoreFieldValue(SCRIPT_NAME_PARAM);
+        }
+        updateChainFieldVisibility();
+    }
+
+    private void onChainTextChanged() {
+        if (!isRunAction() || !isStandaloneType()) {
+            return;
+        }
+        if (StringUtils.isNotBlank(getChainText()) && !isUseChainMode()) {
+            useChainCheckBox.setSelected(true);
+            onUseChainChanged();
+        }
+    }
+
+    private void updateChainFieldVisibility() {
+        boolean chainUiEnabled = isRunAction() && isStandaloneType();
+        if (chainGroupPanel != null) {
+            chainGroupPanel.setVisible(chainUiEnabled);
+        }
+        if (useChainCheckBox != null) {
+            useChainCheckBox.setEnabled(chainUiEnabled);
+            if (!chainUiEnabled) {
+                useChainCheckBox.setSelected(false);
+            }
+        }
+        if (chainTextArea != null) {
+            chainTextArea.setEnabled(chainUiEnabled);
+        }
+        if (fillChainButton != null) {
+            fillChainButton.setEnabled(chainUiEnabled);
+        }
+
+        boolean useChain = chainUiEnabled && isUseChainMode();
+        Component nameField = this.getField(SCRIPT_NAME_PARAM);
+        if (nameField != null) {
+            if (useChain) {
+                nameField.setEnabled(false);
+            } else {
+                nameField.setEnabled(
+                        !getScriptAction().getDisabledFields().contains(SCRIPT_NAME_PARAM));
+            }
+        }
+    }
+
+    private void fillChainFromPriorAddJobs() {
+        List<String> priorNames = ScriptChainPlanSupport.priorStandaloneAddScriptNames(job);
+        if (priorNames.isEmpty()) {
+            View.getSingleton()
+                    .showMessageDialog(
+                            this,
+                            Constant.messages.getString(
+                                    "scripts.automation.dialog.chain.noPriorAdds"));
+            return;
+        }
+        String existing = getChainText();
+        String filled = ScriptChainPlanSupport.formatChainText(priorNames);
+        if (StringUtils.isBlank(existing)) {
+            setChainText(filled);
+        } else {
+            setChainText(existing.trim() + "\n" + filled);
+        }
+        if (!isUseChainMode()) {
+            useChainCheckBox.setSelected(true);
+            onUseChainChanged();
+        }
     }
 
     private void onScriptNameChanged() {
@@ -257,6 +490,29 @@ public class ScriptJobDialog extends StandardFieldsDialog {
         }
     }
 
+    private ScriptJobParameters buildParametersFromFields() {
+        List<String> chain = null;
+        String scriptName = this.getStringValue(SCRIPT_NAME_PARAM);
+        String chainText = getChainText();
+        if (isRunAction()
+                && isStandaloneType()
+                && (isUseChainMode() || StringUtils.isNotBlank(chainText))) {
+            chain = ScriptChainPlanSupport.parseChainText(chainText);
+            scriptName = "";
+        }
+        return new ScriptJobParameters(
+                this.getStringValue(SCRIPT_ACTION_PARAM),
+                this.getStringValue(SCRIPT_TYPE_PARAM),
+                this.getStringValue(SCRIPT_ENGINE_PARAM),
+                scriptName,
+                this.getStringValue(SCRIPT_FILE_PARAM),
+                this.getStringValue(SCRIPT_TARGET_PARAM),
+                this.getStringValue(SCRIPT_INLINE_PARAM),
+                this.getStringValue(SCRIPT_CONTEXT_PARAM),
+                this.getStringValue(SCRIPT_USER_PARAM),
+                chain);
+    }
+
     @Override
     public void save() {
         this.job.getData().setName(this.getStringValue(NAME_PARAM));
@@ -265,9 +521,12 @@ public class ScriptJobDialog extends StandardFieldsDialog {
         this.job.getData().getParameters().setAction(this.getStringValue(SCRIPT_ACTION_PARAM));
         this.job.getData().getParameters().setType(this.getStringValue(SCRIPT_TYPE_PARAM));
         this.job.getData().getParameters().setEngine(this.getStringValue(SCRIPT_ENGINE_PARAM));
-        this.job.getData().getParameters().setName(this.getStringValue(SCRIPT_NAME_PARAM));
         this.job.getData().getParameters().setTarget(this.getStringValue(SCRIPT_TARGET_PARAM));
         this.job.getData().getParameters().setInline(this.getStringValue(SCRIPT_INLINE_PARAM));
+
+        ScriptJobParameters params = buildParametersFromFields();
+        this.job.getData().getParameters().setName(params.getName());
+        this.job.getData().getParameters().setChain(params.getChain());
 
         ScriptAction sa = getScriptAction();
         if (sa.getDisabledFields().contains(SCRIPT_FILE_PARAM)) {
@@ -291,18 +550,7 @@ public class ScriptJobDialog extends StandardFieldsDialog {
             // Always unset this as the text field cannot be edited
             this.setFieldValue(SCRIPT_FILE_PARAM, null);
         }
-        ScriptJobParameters params =
-                new ScriptJobParameters(
-                        this.getStringValue(SCRIPT_ACTION_PARAM),
-                        this.getStringValue(SCRIPT_TYPE_PARAM),
-                        this.getStringValue(SCRIPT_ENGINE_PARAM),
-                        this.getStringValue(SCRIPT_NAME_PARAM),
-                        this.getStringValue(SCRIPT_FILE_PARAM),
-                        this.getStringValue(SCRIPT_TARGET_PARAM),
-                        this.getStringValue(SCRIPT_INLINE_PARAM),
-                        this.getStringValue(SCRIPT_CONTEXT_PARAM),
-                        this.getStringValue(SCRIPT_USER_PARAM),
-                        null); // chain parameter - not currently supported in UI dialog
+        ScriptJobParameters params = buildParametersFromFields();
         sa = ScriptJob.createScriptAction(params, null);
         List<String> issues = sa.verifyParameters(this.getStringValue(NAME_PARAM), params, null);
         if (issues.isEmpty()) {
