@@ -26,7 +26,6 @@ import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.RequestBody;
 import java.util.List;
 import java.util.Map;
-import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpHeaderField;
 import org.zaproxy.zap.extension.openapi.generators.Generators;
 import org.zaproxy.zap.extension.openapi.generators.HeadersGenerator;
@@ -85,12 +84,34 @@ public class RequestModelConverter {
                 return generators.getBodyGenerator().generateMultiPart(schema, encoding);
             }
 
-            if (content.containsKey(CONTENT_APPLICATION_XML)) {
-                generators.addErrorMessage(
-                        Constant.messages.getString(
-                                "openapi.unsupportedcontent",
-                                operation.getOperationId(),
-                                CONTENT_APPLICATION_XML));
+            // handle XML media types (application/xml, text/xml, application/*+xml)
+            if (content.containsKey(CONTENT_APPLICATION_XML)
+                    || content.containsKey("text/xml")
+                    || content.keySet().stream().anyMatch(k -> k != null && k.contains("+xml"))) {
+                // prefer exact application/xml entry if present
+                io.swagger.v3.oas.models.media.MediaType mediaType = null;
+                if (content.containsKey(CONTENT_APPLICATION_XML)) {
+                    mediaType = content.get(CONTENT_APPLICATION_XML);
+                } else if (content.containsKey("text/xml")) {
+                    mediaType = content.get("text/xml");
+                } else {
+                    // pick the first +xml media type
+                    String key =
+                            content.keySet().stream()
+                                    .filter(k -> k != null && k.contains("+xml"))
+                                    .findFirst()
+                                    .orElse(null);
+                    if (key != null) {
+                        mediaType = content.get(key);
+                    }
+                }
+                if (mediaType != null) {
+                    String xml = generators.getBodyGenerator().generateXml(mediaType);
+                    if (xml == null) {
+                        return "";
+                    }
+                    return xml;
+                }
                 return "";
             }
 
