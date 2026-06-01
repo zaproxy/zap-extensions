@@ -29,11 +29,11 @@ import org.apache.logging.log4j.Logger;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.model.InvalidMessageException;
 
-public class MultipleMessageLocationsBreadthFirstReplacer<T extends Message>
+public class MultipleMessageLocationsClusterBombReplacer<T extends Message>
         implements MultipleMessageLocationsReplacer<T> {
 
     private static final Logger LOGGER =
-            LogManager.getLogger(MultipleMessageLocationsBreadthFirstReplacer.class);
+            LogManager.getLogger(MultipleMessageLocationsClusterBombReplacer.class);
 
     private MessageLocationReplacer<T> replacer;
     private List<MessageLocationReplacementGenerator<?, ?>> replacementGenerators;
@@ -65,6 +65,7 @@ public class MultipleMessageLocationsBreadthFirstReplacer<T extends Message>
         listCurrentReplacements =
                 new MessageLocationReplacement<?>[messageLocationReplacementGenerator.size()];
 
+        numberOfReplacements = 1;
         replacementGenerators = new ArrayList<>(messageLocationReplacementGenerator.size());
         for (MessageLocationReplacementGenerator<?, ?> mlr : messageLocationReplacementGenerator) {
             if (mlr.hasNext()) {
@@ -76,10 +77,11 @@ public class MultipleMessageLocationsBreadthFirstReplacer<T extends Message>
                 replacementGenerators.add(mlr);
             }
         }
-        numberOfReplacements = 0;
 
         tailIndex = replacementGenerators.size() - 1;
-        tail = replacementGenerators.get(tailIndex);
+        if (!replacementGenerators.isEmpty()) {
+            tail = replacementGenerators.get(tailIndex);
+        }
         initialised = true;
         setup = true;
     }
@@ -100,7 +102,7 @@ public class MultipleMessageLocationsBreadthFirstReplacer<T extends Message>
     }
 
     @Override
-    public T next() throws InvalidMessageException {
+    public T next() throws ReplacementException, InvalidMessageException {
         if (setup) {
             setup();
             setup = false;

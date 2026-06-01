@@ -29,11 +29,11 @@ import org.apache.logging.log4j.Logger;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.model.InvalidMessageException;
 
-public class MultipleMessageLocationsDepthFirstReplacer<T extends Message>
+public class MultipleMessageLocationsPitchforkReplacer<T extends Message>
         implements MultipleMessageLocationsReplacer<T> {
 
     private static final Logger LOGGER =
-            LogManager.getLogger(MultipleMessageLocationsDepthFirstReplacer.class);
+            LogManager.getLogger(MultipleMessageLocationsPitchforkReplacer.class);
 
     private MessageLocationReplacer<T> replacer;
     private List<MessageLocationReplacementGenerator<?, ?>> replacementGenerators;
@@ -43,9 +43,6 @@ public class MultipleMessageLocationsDepthFirstReplacer<T extends Message>
 
     private boolean initialised;
     private boolean setup;
-
-    private int tailIndex;
-    private MessageLocationReplacementGenerator<?, ?> tail;
 
     private long numberOfReplacements;
 
@@ -65,23 +62,24 @@ public class MultipleMessageLocationsDepthFirstReplacer<T extends Message>
         listCurrentReplacements =
                 new MessageLocationReplacement<?>[messageLocationReplacementGenerator.size()];
 
-        numberOfReplacements = 1;
+        numberOfReplacements = MessageLocationReplacementGenerator.UNKNOWN_NUMBER_OF_REPLACEMENTS;
         replacementGenerators = new ArrayList<>(messageLocationReplacementGenerator.size());
         for (MessageLocationReplacementGenerator<?, ?> mlr : messageLocationReplacementGenerator) {
             if (mlr.hasNext()) {
                 long replacements = mlr.getNumberOfReplacements();
                 if (replacements
                         != MessageLocationReplacementGenerator.UNKNOWN_NUMBER_OF_REPLACEMENTS) {
-                    numberOfReplacements *= replacements;
+                    if (numberOfReplacements
+                            == MessageLocationReplacementGenerator.UNKNOWN_NUMBER_OF_REPLACEMENTS) {
+                        numberOfReplacements = replacements;
+                    } else {
+                        numberOfReplacements = Math.min(numberOfReplacements, replacements);
+                    }
                 }
                 replacementGenerators.add(mlr);
             }
         }
 
-        tailIndex = replacementGenerators.size() - 1;
-        if (!replacementGenerators.isEmpty()) {
-            tail = replacementGenerators.get(tailIndex);
-        }
         initialised = true;
         setup = true;
     }
@@ -93,12 +91,12 @@ public class MultipleMessageLocationsDepthFirstReplacer<T extends Message>
 
     @Override
     public boolean hasNext() {
-        for (int i = tailIndex; i >= 0; i--) {
-            if (replacementGenerators.get(i).hasNext()) {
-                return true;
+        for (MessageLocationReplacementGenerator<?, ?> generator : replacementGenerators) {
+            if (!generator.hasNext()) {
+                return false;
             }
         }
-        return false;
+        return !replacementGenerators.isEmpty();
     }
 
     @Override
@@ -106,23 +104,9 @@ public class MultipleMessageLocationsDepthFirstReplacer<T extends Message>
         if (setup) {
             setup();
             setup = false;
+        } else {
+            advanceAll();
         }
-
-        if (!tail.hasNext()) {
-            tail.reset();
-
-            for (int i = tailIndex - 1; i >= 0; i--) {
-                if (replacementGenerators.get(i).hasNext()) {
-                    listCurrentReplacements[i] = replacementGenerators.get(i).next();
-                    break;
-                }
-
-                replacementGenerators.get(i).reset();
-                listCurrentReplacements[i] = replacementGenerators.get(i).next();
-            }
-        }
-
-        listCurrentReplacements[tailIndex] = tail.next();
 
         currentReplacements.clear();
         currentReplacements.addAll(Arrays.asList(listCurrentReplacements));
@@ -131,10 +115,12 @@ public class MultipleMessageLocationsDepthFirstReplacer<T extends Message>
     }
 
     private void setup() {
-        for (int i = 0; i < tailIndex; i++) {
-            if (replacementGenerators.get(i).hasNext()) {
-                listCurrentReplacements[i] = replacementGenerators.get(i).next();
-            }
+        advanceAll();
+    }
+
+    private void advanceAll() {
+        for (int i = 0; i < replacementGenerators.size(); i++) {
+            listCurrentReplacements[i] = replacementGenerators.get(i).next();
         }
     }
 

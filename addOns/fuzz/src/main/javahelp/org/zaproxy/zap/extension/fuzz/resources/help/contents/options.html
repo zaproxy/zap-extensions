@@ -30,7 +30,54 @@ The number of retries when an input/output error occurs sending a request to the
 If the number of errors exceed this limit, the fuzzer will stop its execution.
 
 <H3>Payload Replacement Strategy</H3>
-Rules defined to control the order that multiple payload lists are iterated.
+<p>
+Controls how multiple payload lists are combined when you fuzz more than one location.<br>
+Locations are processed in <strong>message location sort order</strong>, not the order you added them in the Fuzz dialog.
+</p>
+<ul>
+<li><strong>Cluster Bomb</strong> - try every combination: change the <strong>last</strong> fuzzed field through all payloads before you change an earlier one.</li>
+<li><strong>Pitchfork</strong> - pair payloads by position: 1st with 1st, 2nd with 2nd, and so on. The fuzzer stops when the <strong>shortest</strong> payload list is used up.</li>
+</ul>
+With a single fuzz location, both strategies produce the same order.
+
+<p>Example setup (two locations, two payloads each):</p>
+<ul>
+<li><strong>Location A</strong> payloads: 1, 2</li>
+<li><strong>Location B</strong> payloads: a, b</li>
+</ul>
+
+<H4>Cluster Bomb Example</H4>
+<p>
+The last location (B) changes on every request. Location A changes only after B has used every payload.
+</p>
+<table>
+<tr><th>Request</th><th>Location A</th><th>Location B</th></tr>
+<tr><td>1</td><td>1</td><td>a</td></tr>
+<tr><td>2</td><td>1</td><td>b</td></tr>
+<tr><td>3</td><td>2</td><td>a</td></tr>
+<tr><td>4</td><td>2</td><td>b</td></tr>
+</table>
+<p>
+Requests are sent in order:
+<code>1a</code> &rarr; <code>1b</code> &rarr; <code>2a</code> &rarr; <code>2b</code>
+(<strong>4 requests</strong>).
+</p>
+
+<H4>Pitchfork Example</H4>
+<p>
+The same payload position is used in every location on each request (1st with 1st, then 2nd with 2nd, and so on).
+</p>
+<table>
+<tr><th>Request</th><th>Location A</th><th>Location B</th></tr>
+<tr><td>1</td><td>1</td><td>a</td></tr>
+<tr><td>2</td><td>2</td><td>b</td></tr>
+</table>
+<p>
+Requests are sent in order: <code>1a</code> &rarr; <code>2b</code> (<strong>2 requests</strong>).
+</p>
+<p>
+If the lists are different lengths (for example, Location A has three payloads and Location B has two), only <strong>2 requests</strong> are sent: <code>1a</code>, then <code>2b</code>.
+</p>
 
 <H3>Concurrent Scanning Threads per Scan</H3>
 The number of threads the fuzzer will use per scan.<br>
