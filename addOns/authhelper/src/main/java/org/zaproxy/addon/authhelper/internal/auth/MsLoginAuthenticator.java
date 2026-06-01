@@ -65,7 +65,6 @@ public final class MsLoginAuthenticator implements Authenticator {
     private static final By PROOF_DONE_FIELD = By.id("id__5");
 
     private static final String PERMISSIONS_REQUESTED_TEXT = "Permissions requested";
-    private static final String ACCEPT_TEXT = "Accept";
 
     private static final By PERMISSIONS_REQUESTED_HEADING =
             By.xpath(
@@ -73,13 +72,7 @@ public final class MsLoginAuthenticator implements Authenticator {
                             + PERMISSIONS_REQUESTED_TEXT
                             + "']");
 
-    // Consent Accept button reuses the idSIButton9 name (not id) on the consent page.
-    private static final By CONSENT_PRIMARY_BUTTON =
-            By.cssSelector(
-                    "input#idSIButton9,"
-                            + "input[name='idSIButton9'],"
-                            + "button#idSIButton9,"
-                            + "button[name='idSIButton9']");
+    private static final By CONSENT_PRIMARY_BUTTON = By.cssSelector("input[name='idSIButton9']");
 
     private enum State {
         START,
@@ -179,8 +172,7 @@ public final class MsLoginAuthenticator implements Authenticator {
                         userField = true;
                         pwdField = true;
                         states.add(State.PROOF_TOTP);
-                    } else if (findPermissionsAcceptButton(wd) != null) {
-                        // SSO already signed in; landed directly on consent screen.
+                    } else if (findElement(wd, PERMISSIONS_REQUESTED_HEADING) != null) {
                         userField = true;
                         pwdField = true;
                         states.add(State.PERMISSIONS_REQUESTED);
@@ -345,7 +337,7 @@ public final class MsLoginAuthenticator implements Authenticator {
                         states.add(State.STAY_SIGNED_IN);
                         break;
                     } catch (TimeoutException e) {
-                        // KMSI not present; try consent before giving up.
+                        // Try next state.
                     }
 
                     if (isMsLoginFlowFinished(wd, authHandle, targetHandle)) {
@@ -354,7 +346,7 @@ public final class MsLoginAuthenticator implements Authenticator {
                     }
 
                     try {
-                        waitForElement(wd, new PermissionsRequestedAcceptButton());
+                        waitForElement(wd, PERMISSIONS_REQUESTED_HEADING);
                         states.add(State.PERMISSIONS_REQUESTED);
                         break;
                     } catch (TimeoutException e) {
@@ -450,15 +442,13 @@ public final class MsLoginAuthenticator implements Authenticator {
                     }
 
                 case PERMISSIONS_REQUESTED:
-                    WebElement acceptElement =
-                            waitForElement(wd, new PermissionsRequestedAcceptButton());
+                    WebElement acceptElement = wd.findElement(CONSENT_PRIMARY_BUTTON);
                     diags.recordStep(
                             wd,
                             Constant.messages.getString(
                                     "authhelper.auth.method.diags.steps.ms.clickpermissionsaccept"),
                             acceptElement);
                     acceptElement.click();
-                    // Accept is itself the submit; just loop back to POST_PASSWORD.
                     states.add(State.POST_PASSWORD);
                     break;
             }
@@ -580,58 +570,5 @@ public final class MsLoginAuthenticator implements Authenticator {
         public String toString() {
             return String.format("element '%s' containing text '%s' is not present", locator, text);
         }
-    }
-
-    private static class PermissionsRequestedAcceptButton implements ExpectedCondition<WebElement> {
-
-        @Override
-        public WebElement apply(WebDriver driver) {
-            return findPermissionsAcceptButton(driver);
-        }
-
-        @Override
-        public String toString() {
-            return "Microsoft permissions requested page with enabled Accept button is not present";
-        }
-    }
-
-    private static WebElement findPermissionsAcceptButton(WebDriver wd) {
-        if (!hasDisplayedElement(wd, PERMISSIONS_REQUESTED_HEADING)) {
-            return null;
-        }
-        return wd.findElements(CONSENT_PRIMARY_BUTTON).stream()
-                .filter(MsLoginAuthenticator::isDisplayedAndEnabled)
-                .filter(MsLoginAuthenticator::isAcceptButton)
-                .findFirst()
-                .orElse(null);
-    }
-
-    private static boolean hasDisplayedElement(WebDriver wd, By by) {
-        return wd.findElements(by).stream().anyMatch(MsLoginAuthenticator::isDisplayed);
-    }
-
-    private static boolean isDisplayed(WebElement element) {
-        try {
-            return element.isDisplayed();
-        } catch (RuntimeException e) {
-            return false;
-        }
-    }
-
-    private static boolean isDisplayedAndEnabled(WebElement element) {
-        try {
-            return element.isDisplayed() && element.isEnabled();
-        } catch (RuntimeException e) {
-            return false;
-        }
-    }
-
-    private static boolean isAcceptButton(WebElement element) {
-        String value = element.getAttribute("value");
-        if (ACCEPT_TEXT.equalsIgnoreCase(value)) {
-            return true;
-        }
-        String text = element.getText();
-        return ACCEPT_TEXT.equalsIgnoreCase(text);
     }
 }
