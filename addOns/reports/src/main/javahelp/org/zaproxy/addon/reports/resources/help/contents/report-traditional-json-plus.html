@@ -29,6 +29,10 @@
 			<td>Script Diagnostics</td>
 			<td>scriptdiagnostics</td>
 		</tr>
+		<tr>
+			<td>Screenshots for Script Diagnostics</td>
+			<td>scriptdiagnosticsscreenshots</td>
+		</tr>
 	</table>
 
 	<H3>Sample</H3>
@@ -273,6 +277,21 @@
         },
         ...
     </pre>
+
+	<p>
+		The
+		<code>scriptdiagnostics</code>
+		section must be enabled for any
+		<code>scriptDiagnostics</code>
+		data to be included in the report. More data can be included on
+		failure steps depending on the additional diagnostics sections enabled
+		for the report. When the
+		<code>scriptdiagnosticsscreenshots</code>
+		section is also enabled, failure steps that captured a browser
+		screenshot include a
+		<code>screenshot</code>
+		field containing a Base64-encoded PNG.
+	</p>
 
 </BODY>
 </HTML>

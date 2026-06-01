@@ -33,7 +33,9 @@
 									"kind": [[${out.kind}]],
 									"message": [[${out.message}]]
 								}[/th:block]
-							]
+							][#th:block th:if="${reportData.isIncludeSection('scriptdiagnosticsscreenshots') && st.screenshot != null}"]
+							,"screenshot": [[${st.screenshot}]]
+							[/th:block]
 						}[/th:block]
 					]
 				}[/th:block]

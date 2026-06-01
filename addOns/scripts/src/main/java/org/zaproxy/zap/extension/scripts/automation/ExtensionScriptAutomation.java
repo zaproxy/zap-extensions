@@ -45,6 +45,7 @@ import org.zaproxy.zap.extension.script.ScriptEventListener;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.scripts.ExtensionScriptsUI;
 import org.zaproxy.zap.extension.scripts.internal.db.ScriptRunRecorder;
+import org.zaproxy.zap.extension.scripts.zest.ZestScriptDiagnosticSource;
 
 public class ExtensionScriptAutomation extends ExtensionAdaptor {
 
@@ -183,6 +184,16 @@ public class ExtensionScriptAutomation extends ExtensionAdaptor {
                                             script.getName(),
                                             script.getLastErrorDetails());
                             plan.getProgress().error(message);
+                            String screenshotBase64 = null;
+                            if (script instanceof ZestScriptDiagnosticSource source) {
+                                screenshotBase64 =
+                                        source.getLastRunDiagnostic()
+                                                .map(
+                                                        ZestScriptDiagnosticSource
+                                                                        .ZestScriptRunDiagnostic
+                                                                ::screenshotBase64)
+                                                .orElse(null);
+                            }
                             ScriptRunRecorder.recordSingleScriptFailure(
                                     script.getName(),
                                     script.getTypeName(),
@@ -190,7 +201,8 @@ public class ExtensionScriptAutomation extends ExtensionAdaptor {
                                     StringUtils.defaultString(
                                             ScriptRunFailureDetail
                                                     .compactScriptOutputDetailForPersistence(
-                                                            script)));
+                                                            script)),
+                                    screenshotBase64);
                         });
             }
         }

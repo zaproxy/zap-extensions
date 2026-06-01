@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.zest;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
@@ -545,7 +546,8 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
                 buildFailureDiagnostic(
                         stmt,
                         diagnostics + " - " + detail,
-                        stmt.getElementType() + " - " + detail));
+                        stmt.getElementType() + " - " + detail,
+                        captureClientFailureScreenshot(stmt)));
     }
 
     /**
@@ -588,11 +590,60 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
     private void recordClientLaunchFailureContext(ZestClientLaunch clientLaunch, String headline) {
         String diagnostics = formatStatementDiagnostics(clientLaunch);
         wrapper.setLastRunDiagnostic(
-                buildFailureDiagnostic(clientLaunch, diagnostics + " - " + headline, headline));
+                buildFailureDiagnostic(
+                        clientLaunch,
+                        diagnostics + " - " + headline,
+                        headline,
+                        captureClientFailureScreenshot(clientLaunch)));
+    }
+
+    private String captureClientFailureScreenshot(ZestStatement stmt) {
+        if (!(stmt instanceof ZestClient)) {
+            return null;
+        }
+        WebDriver wd = resolveWebDriverForClientFailure(stmt);
+        return ZestFailureScreenshotCapture.captureBase64(wd);
+    }
+
+    /**
+     * Resolves the {@link WebDriver} for a failing client statement. The window handle is normally
+     * stored on the Zest script step; the runner maps that handle to a registered driver. When the
+     * handle is blank and exactly one driver is registered, that driver is used.
+     */
+    private WebDriver resolveWebDriverForClientFailure(ZestStatement stmt) {
+        String handle = resolveWindowHandle(stmt);
+        if (StringUtils.isNotBlank(handle)) {
+            return getWebDriver(handle);
+        }
+        if (getWebDrivers().size() == 1) {
+            return getWebDrivers().get(0);
+        }
+        return null;
+    }
+
+    private static String resolveWindowHandle(ZestStatement stmt) {
+        if (stmt instanceof ZestClientLaunch launch) {
+            return launch.getWindowHandle();
+        }
+        if (stmt instanceof ZestClient) {
+            try {
+                Method method = stmt.getClass().getMethod("getWindowHandle");
+                Object handle = method.invoke(stmt);
+                if (handle instanceof String s) {
+                    return s;
+                }
+            } catch (ReflectiveOperationException e) {
+                LOGGER.debug(
+                        "Could not resolve window handle for {}: {}",
+                        stmt.getElementType(),
+                        e.getMessage());
+            }
+        }
+        return null;
     }
 
     private ZestScriptRunDiagnostic buildFailureDiagnostic(
-            ZestStatement stmt, String context, String detailMessage) {
+            ZestStatement stmt, String context, String detailMessage, String screenshotBase64) {
         var chainProvOpt = wrapper.getChainProvenance();
         if (chainProvOpt.isEmpty()) {
             return new ZestScriptRunDiagnostic(
@@ -600,7 +651,8 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
                     detailMessage,
                     1,
                     stmt.getIndex(),
-                    StringUtils.defaultString(stmt.getElementType()));
+                    StringUtils.defaultString(stmt.getElementType()),
+                    screenshotBase64);
         }
         return chainProvOpt
                 .get()
@@ -612,7 +664,8 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
                                         detailMessage,
                                         origin.segmentIndex() + 1,
                                         origin.originalStatementIndex(),
-                                        StringUtils.defaultString(origin.elementType())))
+                                        StringUtils.defaultString(origin.elementType()),
+                                        screenshotBase64))
                 .orElseGet(
                         () ->
                                 new ZestScriptRunDiagnostic(
@@ -620,7 +673,8 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
                                         detailMessage,
                                         -1,
                                         -1,
-                                        StringUtils.defaultString(stmt.getElementType())));
+                                        StringUtils.defaultString(stmt.getElementType()),
+                                        screenshotBase64));
     }
 
     private String formatStatementDiagnostics(ZestStatement stmt) {

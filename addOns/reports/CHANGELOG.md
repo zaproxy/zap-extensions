@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Added
 - Added a new section to Traditional JSON Report with Requests and Responses for script diagnostics.
+- Optional `scriptdiagnosticsscreenshots` section for Base64 browser screenshots on failed Zest client script steps.
 
 ### Fixed
 - Invalid alerts, ones without a corresponding message, are now excluded from generated reports. Previously these could break templates that reference message fields (e.g. SARIF, modern, `*-plus`) (Issue 6880).

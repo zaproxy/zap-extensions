@@ -371,6 +371,28 @@ public class ReportTestUtils {
             String outputDetailMessage) {
         return scriptRunReport(
                 created,
+                scriptOrder,
+                scriptName,
+                scriptType,
+                sourceStepIndex,
+                line,
+                summaryMessage,
+                outputDetailMessage,
+                null);
+    }
+
+    static ScriptRunReportData.Run scriptRunReport(
+            String created,
+            int scriptOrder,
+            String scriptName,
+            String scriptType,
+            int sourceStepIndex,
+            String line,
+            String summaryMessage,
+            String outputDetailMessage,
+            String screenshot) {
+        return scriptRunReport(
+                created,
                 ScriptRunRecorder.OUTCOME_FAILED,
                 scriptOrder,
                 scriptName,
@@ -379,7 +401,8 @@ public class ReportTestUtils {
                 line,
                 ScriptRunRecorder.OUTPUT_KIND_ERROR,
                 summaryMessage,
-                outputDetailMessage);
+                outputDetailMessage,
+                screenshot);
     }
 
     static ScriptRunReportData.Run scriptRunReport(
@@ -393,6 +416,32 @@ public class ReportTestUtils {
             String outputKind,
             String summaryMessage,
             String outputDetailMessage) {
+        return scriptRunReport(
+                created,
+                outcome,
+                scriptOrder,
+                scriptName,
+                scriptType,
+                sourceStepIndex,
+                line,
+                outputKind,
+                summaryMessage,
+                outputDetailMessage,
+                null);
+    }
+
+    static ScriptRunReportData.Run scriptRunReport(
+            String created,
+            String outcome,
+            int scriptOrder,
+            String scriptName,
+            String scriptType,
+            int sourceStepIndex,
+            String line,
+            String outputKind,
+            String summaryMessage,
+            String outputDetailMessage,
+            String screenshot) {
         return new ScriptRunReportData.Run(
                 created,
                 outcome,
@@ -408,8 +457,8 @@ public class ReportTestUtils {
                                                 line,
                                                 List.of(
                                                         new ScriptRunReportData.Output(
-                                                                outputKind,
-                                                                outputDetailMessage)))))));
+                                                                outputKind, outputDetailMessage)),
+                                                screenshot)))));
     }
 
     static Template getTemplateFromYamlFile(String templateName) throws Exception {
