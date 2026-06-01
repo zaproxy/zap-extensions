@@ -4,7 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Added
+- Show the path of the loaded plan in the Automation panel.
+- Allow to reload a plan from the loaded file to pick changes done externally.
 
 ## [0.60.0] - 2026-05-08
 ### Fixed

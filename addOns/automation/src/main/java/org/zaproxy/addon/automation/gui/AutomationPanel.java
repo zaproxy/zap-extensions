@@ -21,6 +21,7 @@ package org.zaproxy.addon.automation.gui;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.awt.EventQueue;
+import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
@@ -40,6 +41,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
@@ -65,6 +67,7 @@ import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.eventBus.Event;
 import org.zaproxy.zap.eventBus.EventConsumer;
 import org.zaproxy.zap.utils.DisplayUtils;
+import org.zaproxy.zap.utils.ZapLabel;
 import org.zaproxy.zap.view.LayoutHelper;
 
 @SuppressWarnings("serial")
@@ -78,6 +81,9 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
     private static final ImageIcon LOAD_ICON =
             DisplayUtils.getScaledIcon(
                     AutomationPanel.class.getResource("/resource/icon/16/047.png"));
+    private static final ImageIcon RELOAD_ICON =
+            DisplayUtils.getScaledIcon(
+                    AutomationPanel.class.getResource("/resource/icon/16/126.png"));
     private static final ImageIcon SAVE_ICON =
             DisplayUtils.getScaledIcon(
                     AutomationPanel.class.getResource("/resource/icon/16/096.png"));
@@ -151,6 +157,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
     private JButton runPlanButton;
     private JButton savePlanButton;
     private JButton saveAsPlanButton;
+    private JButton reloadPlanButton;
     private JButton stopPlanButton;
     private JButton jobUpButton;
     private JButton jobDownButton;
@@ -159,6 +166,8 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
     private JButton addTestButton;
     private JButton removeTestButton;
     private JButton optionsButton;
+    private JPanel planFilePanel;
+    private ZapLabel planFileLabel;
     private JXTreeTable tree;
     private PlanTreeTableModel treeModel;
     private AutomationPlan currentPlan;
@@ -173,10 +182,27 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
         this.setLayout(new GridBagLayout());
 
         this.add(this.getToolbar(), LayoutHelper.getGBC(0, 0, 1, 1.0));
-        this.add(this.getPlanScrollpane(), LayoutHelper.getGBC(0, 1, 1, 1.0, 1.0));
+        this.add(this.getPlanFilePanel(), LayoutHelper.getGBC(0, 1, 1, 1.0));
+        this.add(this.getPlanScrollpane(), LayoutHelper.getGBC(0, 2, 1, 1.0, 1.0));
 
         ZAP.getEventBus()
                 .registerConsumer(this, AutomationEventPublisher.getPublisher().getPublisherName());
+    }
+
+    private JPanel getPlanFilePanel() {
+        if (planFilePanel == null) {
+            planFilePanel = new JPanel(new FlowLayout(FlowLayout.LEADING));
+            planFileLabel = new ZapLabel("");
+            planFilePanel.add(planFileLabel);
+        }
+        return planFilePanel;
+    }
+
+    private void updatePlanFileLabel() {
+        planFileLabel.setText(
+                currentPlan != null && currentPlan.getFile() != null
+                        ? currentPlan.getFile().getAbsolutePath()
+                        : "");
     }
 
     private JToolBar getToolbar() {
@@ -185,6 +211,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
             toolbar.setFloatable(false);
             toolbar.add(getAddPlanButton());
             toolbar.add(getLoadPlanButton());
+            toolbar.add(getReloadPlanButton());
             toolbar.add(getLoadFromClipboardButton());
             toolbar.add(getSavePlanButton());
             toolbar.add(getSaveAsPlanButton());
@@ -273,6 +300,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
                 }
             }
             currentPlan.save();
+            updatePlanFileLabel();
             ext.getParam().setLastPlanPath(currentPlan.getFile().getAbsolutePath());
         } catch (JsonProcessingException | FileNotFoundException e1) {
             LOGGER.error(e1.getMessage(), e1);
@@ -374,6 +402,29 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
                     });
         }
         return loadPlanButton;
+    }
+
+    private JButton getReloadPlanButton() {
+        if (reloadPlanButton == null) {
+            reloadPlanButton = new JButton();
+            reloadPlanButton.setIcon(RELOAD_ICON);
+            reloadPlanButton.setToolTipText(
+                    Constant.messages.getString("automation.dialog.plan.reload"));
+            reloadPlanButton.setEnabled(false);
+            reloadPlanButton.addActionListener(
+                    e -> {
+                        if (currentPlan == null) {
+                            return;
+                        }
+
+                        File fileToReload = currentPlan.getFile();
+                        if (fileToReload == null || refuseUnsavedChanges()) {
+                            return;
+                        }
+                        loadPlanWithErrorHandling(() -> loadPlan(ext.loadPlan(fileToReload)));
+                    });
+        }
+        return reloadPlanButton;
     }
 
     private boolean refuseUnsavedChanges() {
@@ -674,7 +725,9 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
         getAddJobButton().setEnabled(currentPlan != null);
         getSavePlanButton().setEnabled(false);
         getSaveAsPlanButton().setEnabled(currentPlan != null);
+        getReloadPlanButton().setEnabled(currentPlan != null && currentPlan.getFile() != null);
         getStopPlanButton().setEnabled(currentPlan != null && !getRunPlanButton().isEnabled());
+        updatePlanFileLabel();
     }
 
     public List<String> getUnsavedPlans() {
@@ -858,6 +911,12 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
                 break;
             case AutomationEventPublisher.PLAN_SAVED:
                 updateSaveButton(event, false);
+                AutomationPlan savedPlan = this.getPlan(event);
+                if (savedPlan != null
+                        && savedPlan.equals(this.currentPlan)
+                        && currentPlan.getFile() != null) {
+                    getReloadPlanButton().setEnabled(true);
+                }
                 break;
             case AutomationEventPublisher.JOB_STARTED:
                 updateJob(event);
