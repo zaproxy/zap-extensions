@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.automation.jobs;
+package org.zaproxy.addon.params.automation.jobs;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -25,16 +25,16 @@ import java.util.List;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.zaproxy.addon.automation.JobResultData;
-import org.zaproxy.zap.extension.params.ExtensionParams;
-import org.zaproxy.zap.extension.params.HtmlParameterStats;
-import org.zaproxy.zap.extension.params.SiteParameters;
+import org.zaproxy.addon.params.ExtensionParams2;
+import org.zaproxy.addon.params.HtmlParameterStats;
+import org.zaproxy.addon.params.SiteParameters;
 
 public class ParamsJobResultData extends JobResultData {
 
     public static final String DATA_KEY = "paramsData";
-    public static final String I18N_TYPE_PREFIX = "automation.params.type.";
+    public static final String I18N_TYPE_PREFIX = "params.type.";
 
-    private ExtensionParams extensionParams;
+    private ExtensionParams2 extensionParams;
 
     private static Comparator<HtmlParameterStats> BY_TYPE_AND_NAME =
             (HtmlParameterStats o1, HtmlParameterStats o2) ->
@@ -46,7 +46,7 @@ public class ParamsJobResultData extends JobResultData {
         super(jobName);
 
         extensionParams =
-                Control.getSingleton().getExtensionLoader().getExtension(ExtensionParams.class);
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionParams2.class);
     }
 
     public SiteParameters getSiteParameters(String site) {

@@ -24,9 +24,9 @@ import javax.swing.JTable;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.extension.params.HtmlParameterStats;
-import org.zaproxy.zap.extension.params.ParamsPanel;
-import org.zaproxy.zap.extension.params.ParamsTableModel;
+import org.zaproxy.addon.params.HtmlParameterStats;
+import org.zaproxy.addon.params.ParamsPanel;
+import org.zaproxy.addon.params.ParamsTableModel;
 
 public class PopupMenuAddFormhandlerParam extends ExtensionPopupMenuItem {
 

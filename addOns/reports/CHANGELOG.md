@@ -11,6 +11,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - Invalid alerts, ones without a corresponding message, are now excluded from generated reports. Previously these could break templates that reference message fields (e.g. SARIF, modern, `*-plus`) (Issue 6880).
 
+### Changed
+- Help content related to the params add-on was updated (Issue 9210).
+
 ## [0.45.0] - 2026-05-06
 ### Fixed
 - The alert's systemic flag in JSON and XML reports now correctly reflects its state (Issue 9254).

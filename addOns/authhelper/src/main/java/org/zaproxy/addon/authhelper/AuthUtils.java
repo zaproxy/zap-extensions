@@ -377,7 +377,39 @@ public class AuthUtils {
     }
 
     private static Stream<WebElement> displayed(List<WebElement> elements) {
-        return elements.stream().filter(WebElement::isDisplayed);
+        // Some frameworks (like Ionic) only make input elements visible when they are clicked on
+        return elements.stream().filter(AuthUtils::isDisplayedAfterRevealAttempt);
+    }
+
+    private static boolean isDisplayedAfterRevealAttempt(WebElement element) {
+        try {
+            if (!element.isDisplayed()) {
+                tryRevealNonDisplayedInput(element);
+            }
+            return element.isDisplayed();
+        } catch (WebDriverException e) {
+            LOGGER.debug("Failed to check if element is displayed: {}", e.getMessage(), e);
+            return false;
+        }
+    }
+
+    private static void tryRevealNonDisplayedInput(WebElement element) throws WebDriverException {
+        if (!INPUT_TAG.equalsIgnoreCase(element.getTagName())) {
+            return;
+        }
+        String type = getInputType(element);
+        if (!("text".equals(type) || "email".equals(type) || "password".equals(type))) {
+            return;
+        }
+        element.click();
+    }
+
+    private static String getInputType(WebElement element) {
+        String type = getAttribute(element, "type");
+        if (type == null || type.isEmpty()) {
+            return "text";
+        }
+        return type.toLowerCase(Locale.ROOT);
     }
 
     static boolean attributeContains(WebElement we, String attribute, List<String> strings) {

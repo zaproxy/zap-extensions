@@ -28,6 +28,7 @@ import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.zaproxy.addon.commonlib.ExtensionCommonlib;
 import org.zaproxy.addon.commonlib.ValueProvider;
+import org.zaproxy.addon.params.ExtensionParams2;
 import org.zaproxy.zap.extension.params.ExtensionParams;
 import org.zaproxy.zap.model.DefaultValueGenerator;
 import org.zaproxy.zap.model.ValueGenerator;
@@ -89,7 +90,7 @@ public class ExtensionFormHandler extends ExtensionAdaptor {
 
         if (hasView()) {
             extensionHook.getHookView().addOptionPanel(getOptionsFormHandlerPanel());
-            if (extLoader.isExtensionEnabled(ExtensionParams.NAME)) {
+            if (isAddonParamsActive(extLoader)) {
                 extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuAddFormhandlerParam());
             }
         }
@@ -140,6 +141,13 @@ public class ExtensionFormHandler extends ExtensionAdaptor {
 
     public void removeFormHandlerFieldName(String field) {
         this.getParam().removeField(field);
+    }
+
+    private static boolean isAddonParamsActive(ExtensionLoader extLoader) {
+        ExtensionParams2 params = extLoader.getExtension(ExtensionParams2.class);
+        return params != null
+                && !params.isDeferringToCore()
+                && !extLoader.isExtensionEnabled(ExtensionParams.NAME);
     }
 
     private PopupMenuAddFormhandlerParam getPopupMenuAddFormhandlerParam() {

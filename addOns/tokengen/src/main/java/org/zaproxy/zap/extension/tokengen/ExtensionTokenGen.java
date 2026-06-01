@@ -40,7 +40,7 @@ import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.params.HtmlParameterStats;
+import org.zaproxy.addon.params.HtmlParameterStats;
 
 /*
  * An example ZAP extension which adds a right click menu item to all of the main

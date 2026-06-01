@@ -41,6 +41,7 @@ import org.parosproxy.paros.db.Database;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.db.DatabaseUnsupportedException;
 import org.parosproxy.paros.db.RecordParam;
+import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionHookView;
@@ -55,6 +56,8 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.params.internal.db.ParamsDao;
 import org.zaproxy.addon.params.internal.db.ParamsTableJdo;
 import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
+import org.zaproxy.zap.control.AddOn;
+import org.zaproxy.zap.control.ExtensionFactory;
 import org.zaproxy.zap.extension.anticsrf.ExtensionAntiCSRF;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
 import org.zaproxy.zap.extension.httpsessions.ExtensionHttpSessions;
@@ -79,13 +82,28 @@ public class ExtensionParams2 extends ExtensionAdaptor {
 
     private static final Logger LOGGER = LogManager.getLogger(ExtensionParams2.class);
 
+    private static boolean attemptedCoreExtensionFactoryRemoval;
+
+    // TODO: Remove migration logic once targetting 2.18
+    private boolean deferToCore;
+
     private ExtensionHttpSessions extensionHttpSessions;
     private ParamScanner paramScanner;
     private ParamsTableJdo paramsTableJdo;
 
     public ExtensionParams2() {
         super(NAME);
-        this.setOrder(58);
+        this.setOrder(59);
+    }
+
+    @Override
+    public AddOn getAddOn() {
+        handleCoreParamsCoexistenceOnce();
+        return super.getAddOn();
+    }
+
+    public boolean isDeferringToCore() {
+        return deferToCore;
     }
 
     @Override
@@ -96,7 +114,7 @@ public class ExtensionParams2 extends ExtensionAdaptor {
     @Override
     public void databaseOpen(Database db) throws DatabaseException, DatabaseUnsupportedException {
         super.databaseOpen(db);
-        if (Control.getSingleton().getExtensionLoader().isExtensionEnabled(ExtensionParams.NAME)) {
+        if (deferToCore) {
             return;
         }
         try {
@@ -114,7 +132,10 @@ public class ExtensionParams2 extends ExtensionAdaptor {
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
-        if (Control.getSingleton().getExtensionLoader().isExtensionEnabled(ExtensionParams.NAME)) {
+        if (isCoreParamsInLoader()) {
+            deferToCore = true;
+        }
+        if (deferToCore) {
             return;
         }
 
@@ -603,6 +624,37 @@ public class ExtensionParams2 extends ExtensionAdaptor {
         @Override
         public void onReturnNodeRendererComponent(
                 SiteMapTreeCellRenderer component, boolean leaf, SiteNode value) {}
+    }
+
+    private static boolean isCoreParamsInLoader() {
+        Control control = Control.getSingleton();
+        return control != null
+                && control.getExtensionLoader().getExtension(ExtensionParams.class) != null;
+    }
+
+    private void handleCoreParamsCoexistenceOnce() {
+        if (attemptedCoreExtensionFactoryRemoval) {
+            return;
+        }
+        attemptedCoreExtensionFactoryRemoval = true;
+
+        if (isCoreParamsInLoader()) {
+            deferToCore = true;
+            return;
+        }
+
+        Extension core = ExtensionFactory.getExtension(ExtensionParams.NAME);
+        if (core == null) {
+            return;
+        }
+
+        LOGGER.debug("Replacing core params extension with add-on.");
+        ExtensionFactory.unloadAddOnExtension(core);
+    }
+
+    /** For unit tests only. */
+    static void resetCoreExtensionFactoryRemovalAttemptedForUnitTests() {
+        attemptedCoreExtensionFactoryRemoval = false;
     }
 
     private class SessionChangedListenerImpl implements SessionChangedListener {

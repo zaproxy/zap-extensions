@@ -77,7 +77,6 @@ import org.zaproxy.addon.automation.jobs.ActiveScanJob;
 import org.zaproxy.addon.automation.jobs.ActiveScanPolicyJob;
 import org.zaproxy.addon.automation.jobs.DelayJob;
 import org.zaproxy.addon.automation.jobs.ExitStatusJob;
-import org.zaproxy.addon.automation.jobs.ParamsJob;
 import org.zaproxy.addon.automation.jobs.RequestorJob;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.ZAP.ProcessType;
@@ -164,7 +163,6 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
                                 .getExtension(ExtensionActiveScan.class)));
         registerAutomationJob(new ActiveScanJob());
         registerAutomationJob(new ActiveScanPolicyJob());
-        registerAutomationJob(new ParamsJob());
     }
 
     @Override
