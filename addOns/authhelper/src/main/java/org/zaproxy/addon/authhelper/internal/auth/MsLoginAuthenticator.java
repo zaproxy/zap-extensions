@@ -64,6 +64,16 @@ public final class MsLoginAuthenticator implements Authenticator {
     private static final By PROOF_TOTP_VERIFY_FIELD = By.id("idSubmit_SAOTCC_Continue");
     private static final By PROOF_DONE_FIELD = By.id("id__5");
 
+    private static final String PERMISSIONS_REQUESTED_TEXT = "Permissions requested";
+
+    private static final By PERMISSIONS_REQUESTED_HEADING =
+            By.xpath(
+                    "//*[@role='heading' and normalize-space(.)='"
+                            + PERMISSIONS_REQUESTED_TEXT
+                            + "']");
+
+    private static final By CONSENT_PRIMARY_BUTTON = By.cssSelector("input[name='idSIButton9']");
+
     private enum State {
         START,
 
@@ -79,6 +89,8 @@ public final class MsLoginAuthenticator implements Authenticator {
         PROOF_REDIRECT,
         PROOF_TOTP,
         PROOF,
+
+        PERMISSIONS_REQUESTED,
     }
 
     @Override
@@ -160,6 +172,10 @@ public final class MsLoginAuthenticator implements Authenticator {
                         userField = true;
                         pwdField = true;
                         states.add(State.PROOF_TOTP);
+                    } else if (findElement(wd, PERMISSIONS_REQUESTED_HEADING) != null) {
+                        userField = true;
+                        pwdField = true;
+                        states.add(State.PERMISSIONS_REQUESTED);
                     } else {
                         diags.recordStep(
                                 wd,
@@ -321,12 +337,25 @@ public final class MsLoginAuthenticator implements Authenticator {
                         states.add(State.STAY_SIGNED_IN);
                         break;
                     } catch (TimeoutException e) {
+                        // Try next state.
+                    }
+
+                    if (isMsLoginFlowFinished(wd, authHandle, targetHandle)) {
+                        successful = true;
+                        break;
+                    }
+
+                    try {
+                        waitForElement(wd, PERMISSIONS_REQUESTED_HEADING);
+                        states.add(State.PERMISSIONS_REQUESTED);
+                        break;
+                    } catch (TimeoutException e) {
                         diags.recordStep(
                                 wd,
                                 Constant.messages.getString(
                                         "authhelper.auth.method.diags.steps.ms.stepunknown"));
                         LOGGER.debug(
-                                "Still in login URL but no keep me signed in field found, assuming unsuccessful login.");
+                                "Still in login URL but no known MS login step found, assuming unsuccessful login.");
                     }
 
                     break;
@@ -411,6 +440,17 @@ public final class MsLoginAuthenticator implements Authenticator {
                                 "Still in proof but no skip/done button found, assuming unsuccessful login.");
                         break;
                     }
+
+                case PERMISSIONS_REQUESTED:
+                    WebElement acceptElement = wd.findElement(CONSENT_PRIMARY_BUTTON);
+                    diags.recordStep(
+                            wd,
+                            Constant.messages.getString(
+                                    "authhelper.auth.method.diags.steps.ms.clickpermissionsaccept"),
+                            acceptElement);
+                    acceptElement.click();
+                    states.add(State.POST_PASSWORD);
+                    break;
             }
         } while (!states.isEmpty());
 
