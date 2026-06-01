@@ -375,7 +375,8 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
         scriptWrapper.setDebug(this.getBoolValue(FIELD_DEBUG));
 
         int stmtDelay = this.getIntValue(FIELD_STMT_DELAY);
-        if (scriptWrapper.getZestScript().getStatementDelay() != stmtDelay) {
+        if (ZestScript.Type.StandAlone.equals(this.type)
+                && scriptWrapper.getZestScript().getStatementDelay() != stmtDelay) {
             scriptWrapper
                     .getZestScript()
                     .setOptions(Map.of(ZestScript.STATEMENT_DELAY_MS, Integer.toString(stmtDelay)));
