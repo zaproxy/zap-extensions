@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.automation.jobs;
+package org.zaproxy.addon.params.automation.jobs;
 
 import java.util.Collections;
 import java.util.List;

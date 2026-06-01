@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Maintenance changes.
+- Now depends on the params add-on (Issue 9210).
 
 ## [16] - 2025-12-15
 ### Changed

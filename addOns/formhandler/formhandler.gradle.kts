@@ -18,6 +18,9 @@ zapAddOn {
                 register("commonlib") {
                     version.set(">= 1.29.0 & < 2.0.0")
                 }
+                register("params") {
+                    version.set(">= 0.1.0 & < 1.0.0")
+                }
             }
         }
     }
@@ -25,6 +28,7 @@ zapAddOn {
 
 dependencies {
     zapAddOn("commonlib")
+    zapAddOn("params")
 
     testImplementation(project(":testutils"))
 }

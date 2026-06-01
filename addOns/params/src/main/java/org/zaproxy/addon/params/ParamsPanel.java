@@ -47,7 +47,7 @@ public class ParamsPanel extends AbstractPanel {
 
     private static final long serialVersionUID = 1L;
 
-    public static final String PANEL_NAME = "params";
+    public static final String PANEL_NAME = "params.addon";
 
     private ExtensionParams2 extension = null;
     private JPanel panelCommand = null;

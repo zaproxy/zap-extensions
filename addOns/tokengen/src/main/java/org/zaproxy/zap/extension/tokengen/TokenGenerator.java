@@ -30,7 +30,7 @@ import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
-import org.zaproxy.zap.extension.params.HtmlParameterStats;
+import org.zaproxy.addon.params.HtmlParameterStats;
 
 public class TokenGenerator extends SwingWorker<Void, Void> {
 
