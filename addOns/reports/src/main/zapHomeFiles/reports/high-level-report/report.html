@@ -209,7 +209,7 @@
 			<p class="insights-stopped"
 				th:if="${reportData.reportObjects.get('stoppingInsight') != null}"
 				th:with="stopping=${reportData.reportObjects.get('stoppingInsight')}"
-				th:text="#{report.insights.stoppedby(${stopping.key}, ${stopping.reason}, ${stopping.site}, ${stopping.statisticStr})}">Scan
+				th:text="#{report.insights.stoppedby(${stopping.description}, ${stopping.site}, ${stopping.statisticStr})}">Scan
 				stopped by Insight</p>
 			<table
 				class="insights table table-hover table-bordered table-striped">

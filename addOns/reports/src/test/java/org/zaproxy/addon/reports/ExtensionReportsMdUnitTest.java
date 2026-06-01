@@ -121,7 +121,7 @@ class ExtensionReportsMdUnitTest extends TestUtils {
         String report = new String(Files.readAllBytes(r.toPath()));
 
         // Then
-        assertThat(report, containsString("insight.auth.failure"));
+        assertThat(report, containsString("Auth failure"));
         assertThat(report, containsString("https://www.example.com"));
     }
 }

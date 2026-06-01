@@ -20,6 +20,7 @@
 package org.zaproxy.addon.reports;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
@@ -588,9 +589,11 @@ class ExtensionReportsUnitTest extends TestUtils {
 
         // When
         File r = ReportTestUtils.generateReportWithInsights(template, f, stopping);
+        String report = new String(Files.readAllBytes(r.toPath()));
 
         // Then
-        assertThat(r.length(), greaterThan(0L));
+        assertThat(report, containsString("Auth failure"));
+        assertThat(report, containsString("https://www.example.com"));
     }
 
     @ParameterizedTest
