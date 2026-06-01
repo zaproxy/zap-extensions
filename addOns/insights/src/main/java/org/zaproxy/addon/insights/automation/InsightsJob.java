@@ -97,6 +97,7 @@ public class InsightsJob extends AutomationJob implements InsightListener {
     public void runJob(AutomationEnvironment env, AutomationProgress progress) {
         this.getExtInsights().addInsightListener(this);
         this.getExtInsights().setDisableExit(true);
+        this.getExtInsights().setStoppingInsight(null);
     }
 
     @Override
@@ -188,10 +189,21 @@ public class InsightsJob extends AutomationJob implements InsightListener {
     @Override
     public void recordInsight(Insight ins) {
         if (ins.getLevel().equals(Insight.Level.HIGH) && this.getParameters().isExitAutoOnHigh()) {
+            this.getExtInsights().setStoppingInsight(ins);
+            String site = ins.getSite();
+            if (site == null || site.isEmpty()) {
+                site = Constant.messages.getString("insights.automation.stopplan.site.global");
+            }
             this.getEnv()
                     .getPlan()
                     .getProgress()
-                    .warn(Constant.messages.getString("insights.automation.stopplan"));
+                    .warn(
+                            Constant.messages.getString(
+                                    "insights.automation.stopplan",
+                                    ins.getKey(),
+                                    ins.getReason(),
+                                    site,
+                                    ins.getStatisticStr()));
             this.getEnv().getPlan().stopPlan(false);
         }
     }

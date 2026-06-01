@@ -173,6 +173,11 @@ td {
 	<th:block
 		th:if="${reportData.isIncludeSection('insights') &amp;&amp; reportData.reportObjects.get('insightsList') != null}">
 		<h3 th:text="#{report.insights.title}" class="left-header">Insights</h3>
+		<p class="insights-stopped"
+			th:if="${reportData.reportObjects.get('stoppingInsight') != null}"
+			th:with="stopping=${reportData.reportObjects.get('stoppingInsight')}"
+			th:text="#{report.insights.stoppedby(${stopping.key}, ${stopping.reason}, ${stopping.site}, ${stopping.statisticStr})}">Scan
+			stopped by Insight</p>
 		<table class="summary">
 			<tr>
 				<th th:text="#{report.insights.level}" height="24">Level</th>

@@ -53,6 +53,7 @@ import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.automation.JobResultData;
+import org.zaproxy.addon.insights.internal.Insight;
 import org.zaproxy.zap.extension.alert.AlertNode;
 import org.zaproxy.zap.extension.scripts.report.ScriptRunReportData;
 import org.zaproxy.zap.extension.sequence.StdActiveScanRunner.SequenceStepData;
@@ -760,6 +761,33 @@ class ExtensionReportsJsonUnitTest extends TestUtils {
         assertThat(tags.size(), is(equalTo(1)));
         assertThat(tags.getJSONObject(0).getString("tag"), is(equalTo("tagkey")));
         assertThat(tags.getJSONObject(0).getString("link"), is(equalTo("tagvalue")));
+    }
+
+    @Test
+    void shouldRenderStoppingInsightInJsonReport() throws Exception {
+        // Given
+        Template template = ReportTestUtils.getTemplateFromYamlFile("traditional-json");
+        File f = File.createTempFile("insights-stop-traditional-json", template.getExtension());
+        Insight stopping =
+                new Insight(
+                        Insight.Level.HIGH,
+                        Insight.Reason.EXCEEDED_HIGH,
+                        "https://www.example.com",
+                        "insight.auth.failure",
+                        "Auth failure",
+                        75,
+                        true);
+
+        // When
+        File r = ReportTestUtils.generateReportWithInsights(template, f, stopping);
+        String report = new String(Files.readAllBytes(r.toPath()));
+        JSONObject json = JSONObject.fromObject(report);
+
+        // Then
+        JSONObject stoppingInsight = json.getJSONObject("stoppingInsight");
+        assertThat(stoppingInsight.getString("key"), is(equalTo("insight.auth.failure")));
+        assertThat(stoppingInsight.getString("site"), is(equalTo("https://www.example.com")));
+        assertThat(stoppingInsight.getLong("statistic"), is(equalTo(75L)));
     }
 
     @Test

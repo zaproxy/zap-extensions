@@ -235,6 +235,11 @@ public class ReportTestUtils {
 
     static File generateReportWithInsights(Template template, File f)
             throws IOException, DocumentException {
+        return generateReportWithInsights(template, f, null);
+    }
+
+    static File generateReportWithInsights(Template template, File f, Insight stoppingInsight)
+            throws IOException, DocumentException {
         ExtensionReports extRep = new ExtensionReports();
         ReportData reportData = new ReportData("test");
         reportData.setTitle("Test Title");
@@ -273,6 +278,9 @@ public class ReportTestUtils {
                                 30,
                                 true));
         reportData.addReportObjects(ExtensionInsightsReport.INSIGHTS_LIST, insightList);
+        if (stoppingInsight != null) {
+            reportData.addReportObjects(ExtensionInsightsReport.STOPPING_INSIGHT, stoppingInsight);
+        }
 
         return extRep.generateReport(reportData, template, f.getAbsolutePath(), false);
     }

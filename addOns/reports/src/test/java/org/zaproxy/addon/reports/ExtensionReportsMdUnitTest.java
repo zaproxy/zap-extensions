@@ -20,6 +20,7 @@
 package org.zaproxy.addon.reports;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
@@ -39,6 +40,7 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.addon.insights.internal.Insight;
 import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
@@ -97,5 +99,29 @@ class ExtensionReportsMdUnitTest extends TestUtils {
                 |  |  |  | Insight3 desc |  |
                 """;
         assertThat(report.trim(), is(equalTo(expected.trim())));
+    }
+
+    @Test
+    void shouldRenderStoppingInsightInMdReport() throws Exception {
+        // Given
+        Template template = ReportTestUtils.getTemplateFromYamlFile("traditional-md");
+        File f = File.createTempFile("insights-stop-traditional-md", template.getExtension());
+        Insight stopping =
+                new Insight(
+                        Insight.Level.HIGH,
+                        Insight.Reason.EXCEEDED_HIGH,
+                        "https://www.example.com",
+                        "insight.auth.failure",
+                        "Auth failure",
+                        75,
+                        true);
+
+        // When
+        File r = ReportTestUtils.generateReportWithInsights(template, f, stopping);
+        String report = new String(Files.readAllBytes(r.toPath()));
+
+        // Then
+        assertThat(report, containsString("insight.auth.failure"));
+        assertThat(report, containsString("https://www.example.com"));
     }
 }

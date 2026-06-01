@@ -64,6 +64,7 @@ import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.addon.insights.internal.Insight;
 import org.zaproxy.zap.extension.alert.AlertNode;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.testutils.TestUtils;
@@ -568,6 +569,28 @@ class ExtensionReportsUnitTest extends TestUtils {
         assertThat(ExtensionReports.isIncluded(reportData, alertNode1), is(equalTo(false)));
         assertThat(ExtensionReports.isIncluded(reportData, alertNode2), is(equalTo(false)));
         assertThat(ExtensionReports.isIncluded(reportData, alertNode3), is(equalTo(true)));
+    }
+
+    @Test
+    void shouldGenerateHtmlReportWithStoppingInsight() throws Exception {
+        // Given
+        Template template = ReportTestUtils.getTemplateFromYamlFile("traditional-html");
+        File f = File.createTempFile("insights-stop-traditional-html", template.getExtension());
+        Insight stopping =
+                new Insight(
+                        Insight.Level.HIGH,
+                        Insight.Reason.EXCEEDED_HIGH,
+                        "https://www.example.com",
+                        "insight.auth.failure",
+                        "Auth failure",
+                        75,
+                        true);
+
+        // When
+        File r = ReportTestUtils.generateReportWithInsights(template, f, stopping);
+
+        // Then
+        assertThat(r.length(), greaterThan(0L));
     }
 
     @ParameterizedTest

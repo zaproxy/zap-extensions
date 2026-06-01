@@ -56,6 +56,8 @@ public class ExtensionInsights extends ExtensionAdaptor {
 
     private boolean disableExit;
 
+    private volatile Insight stoppingInsight;
+
     public ExtensionInsights() {
         super(NAME);
         setI18nPrefix(PREFIX);
@@ -122,8 +124,9 @@ public class ExtensionInsights extends ExtensionAdaptor {
                 && this.getParam().isExitAutoOnHigh()
                 && !this.isDisableExit()
                 && ins.getLevel().equals(Insight.Level.HIGH)) {
+            setStoppingInsight(ins);
             Control control = Control.getSingleton();
-            control.setExitStatus(2, "Shutting down ZAP due to High Level Insight");
+            control.setExitStatus(2, "Shutting down ZAP due to High Level " + ins.toString());
             control.exit(true, null);
         }
     }
@@ -169,6 +172,21 @@ public class ExtensionInsights extends ExtensionAdaptor {
      */
     public void setDisableExit(boolean disableExit) {
         this.disableExit = disableExit;
+    }
+
+    /**
+     * Returns the insight that caused a stop via {@code exitAutoOnHigh}, or {@code null} if no stop
+     * has been triggered in the current run.
+     */
+    public Insight getStoppingInsight() {
+        return stoppingInsight;
+    }
+
+    /** First non-null wins so a later HIGH during shutdown doesn't relabel the trigger. */
+    public synchronized void setStoppingInsight(Insight stoppingInsight) {
+        if (stoppingInsight == null || this.stoppingInsight == null) {
+            this.stoppingInsight = stoppingInsight;
+        }
     }
 
     public static URL getResource(String resource) {
