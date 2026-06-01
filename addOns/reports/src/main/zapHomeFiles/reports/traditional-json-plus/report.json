@@ -12,7 +12,15 @@
 			"description": "[(${ins.description})]",
 			"statistic": "[(${ins.statistic})]"
 		}[/th:block]
-    ],[/th:block][#th:block th:if="${reportData.isIncludeSection('scriptdiagnostics') && reportData.reportObjects.get('scriptDiagnostics') != null}"]
+    ],[/th:block][#th:block th:if="${reportData.reportObjects.get('stoppingInsight') != null}" th:with="stopping=${reportData.reportObjects.get('stoppingInsight')}"]
+	"stoppingInsight":{
+		"level": [[${stopping.level}]],
+		"reason": [[${stopping.reason}]],
+		"site": [[${stopping.site}]],
+		"key": [[${stopping.key}]],
+		"description": [[${stopping.description}]],
+		"statistic": [[${stopping.statistic}]]
+	},[/th:block][#th:block th:if="${reportData.isIncludeSection('scriptdiagnostics') && reportData.reportObjects.get('scriptDiagnostics') != null}"]
 	"scriptDiagnostics": {
 		"runs": [[#th:block th:each="run, runState: ${reportData.reportObjects.get('scriptDiagnostics').runs}"][#th:block th:if="${! runState.first}"],[/th:block]
 		{
