@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.zest;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
@@ -59,9 +60,11 @@ import org.zaproxy.zap.extension.zest.internal.ZestScriptMerger;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.users.User;
+import org.zaproxy.zest.core.v1.ZestActionPrint;
 import org.zaproxy.zest.core.v1.ZestClient;
 import org.zaproxy.zest.core.v1.ZestClientFailException;
 import org.zaproxy.zest.core.v1.ZestClientLaunch;
+import org.zaproxy.zest.core.v1.ZestResponse;
 import org.zaproxy.zest.core.v1.ZestScript;
 import org.zaproxy.zest.core.v1.ZestStatement;
 
@@ -362,6 +365,116 @@ class ZestZapRunnerUnitTest extends TestUtils {
                         mock(ZestClientLaunch.class), new IllegalStateException("plain cause"));
 
         assertThat(invokeFormatStatementFailureDetail(ex), is("plain cause"));
+    }
+
+    @Test
+    void shouldAppendPrintCaptureWhenHandlingZestActionPrint() throws Exception {
+        // Given
+        ZestScriptWrapper wrapper = mock(ZestScriptWrapper.class);
+        given(wrapper.getChainProvenance()).willReturn(Optional.empty());
+        ZestZapRunner runnerWithWrapper =
+                new ZestZapRunner(extensionZest, extensionNetwork, wrapper);
+        clearInvocations(wrapper);
+
+        ZestScript script = mock(ZestScript.class);
+        ZestActionPrint print = mock(ZestActionPrint.class);
+        given(print.getIndex()).willReturn(4);
+        given(print.invoke(any(ZestResponse.class), any()))
+                .willAnswer(
+                        inv -> {
+                            inv.getArgument(1, org.zaproxy.zest.core.v1.ZestRuntime.class)
+                                    .output("hello world");
+                            return "hello world";
+                        });
+
+        given(wrapper.getLastRunDiagnostic()).willReturn(Optional.empty());
+
+        // When
+        runnerWithWrapper.handleAction(script, print, mock(ZestResponse.class));
+        invokeFinalizePrintCaptures(runnerWithWrapper);
+
+        // Then
+        ArgumentCaptor<ZestScriptRunDiagnostic> captor =
+                ArgumentCaptor.forClass(ZestScriptRunDiagnostic.class);
+        verify(wrapper).setLastRunDiagnostic(captor.capture());
+        assertThat(captor.getValue().printCaptures(), hasSize(1));
+        assertThat(captor.getValue().printCaptures().get(0).chainScriptOrder(), is(-1));
+        assertThat(captor.getValue().printCaptures().get(0).line(), is(equalTo("hello world")));
+    }
+
+    @Test
+    void shouldAttributePrintCaptureToChainMemberWhenProvenancePresent() throws Exception {
+        // Given
+        ZestScriptMerger.ChainProvenance provenance = mock(ZestScriptMerger.ChainProvenance.class);
+        given(provenance.originForMergedIndex(eq(11)))
+                .willReturn(
+                        Optional.of(
+                                new ZestScriptMerger.ChainProvenance.StatementOrigin(
+                                        1, 3, "ZestActionPrint")));
+        ZestScriptWrapper wrapper = mock(ZestScriptWrapper.class);
+        given(wrapper.getChainProvenance()).willReturn(Optional.of(provenance));
+        ZestZapRunner runnerWithWrapper =
+                new ZestZapRunner(extensionZest, extensionNetwork, wrapper);
+        clearInvocations(wrapper);
+
+        ZestActionPrint print = mock(ZestActionPrint.class);
+        given(print.getIndex()).willReturn(11);
+        given(print.invoke(any(), any()))
+                .willAnswer(
+                        inv -> {
+                            inv.getArgument(1, org.zaproxy.zest.core.v1.ZestRuntime.class)
+                                    .output("greetings from member 2");
+                            return "greetings from member 2";
+                        });
+
+        given(wrapper.getLastRunDiagnostic()).willReturn(Optional.empty());
+
+        // When
+        runnerWithWrapper.handleAction(mock(ZestScript.class), print, mock(ZestResponse.class));
+        invokeFinalizePrintCaptures(runnerWithWrapper);
+
+        // Then
+        ArgumentCaptor<ZestScriptRunDiagnostic> captor =
+                ArgumentCaptor.forClass(ZestScriptRunDiagnostic.class);
+        verify(wrapper).setLastRunDiagnostic(captor.capture());
+        assertThat(captor.getValue().printCaptures(), hasSize(1));
+        assertThat(captor.getValue().printCaptures().get(0).chainScriptOrder(), is(equalTo(2)));
+        assertThat(
+                captor.getValue().printCaptures().get(0).line(),
+                is(equalTo("greetings from member 2")));
+    }
+
+    @Test
+    void shouldResetDiagnosticsWhenResetCalled() {
+        // Given
+        ZestScriptWrapper wrapper = mock(ZestScriptWrapper.class);
+
+        // When
+        ZestZapRunner.resetFailureDiagnosticsForNewRun(wrapper);
+
+        // Then
+        verify(wrapper).setLastRunDiagnostic(null);
+    }
+
+    @Test
+    void shouldClearDiagnosticsWhenWrapperSetViaSetWrapper() {
+        // Given
+        ZestScriptWrapper first = mock(ZestScriptWrapper.class);
+        ZestScriptWrapper second = mock(ZestScriptWrapper.class);
+        ZestZapRunner runner = new ZestZapRunner(extensionZest, extensionNetwork, first);
+        clearInvocations(first, second);
+
+        // When
+        runner.setWrapper(second);
+
+        // Then
+        verify(second).setLastRunDiagnostic(null);
+    }
+
+    private static void invokeFinalizePrintCaptures(ZestZapRunner runner) throws Exception {
+        Method m = ZestZapRunner.class.getDeclaredMethod("finalizePrintCaptures");
+        m.setAccessible(true);
+        m.invoke(runner);
     }
 
     private static String invokeFormatStatementFailureDetail(Throwable t) throws Exception {

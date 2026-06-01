@@ -19,20 +19,37 @@
  */
 package org.zaproxy.zap.extension.scripts.zest;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ZestScriptDiagnosticSource {
 
     /**
      * {@code context}: full diagnostic text; {@code detailMessage}: single-line summary; unknown
-     * indices are {@code -1}.
+     * indices are {@code -1}. {@code printCaptures}: print output captured during the run, in
+     * execution order.
      */
     record ZestScriptRunDiagnostic(
             String context,
             String detailMessage,
             int chainScriptOrder,
             int sourceStatementIndex,
-            String elementType) {}
+            String elementType,
+            List<ZestScriptPrintCapture> printCaptures) {
+        public ZestScriptRunDiagnostic {
+            printCaptures = printCaptures == null ? List.of() : List.copyOf(printCaptures);
+        }
+    }
+
+    /**
+     * One line of output captured from a script's print statement. {@code chainScriptOrder} is the
+     * 1-based chain segment index for chain runs (or {@code -1} for single-script runs).
+     */
+    record ZestScriptPrintCapture(int chainScriptOrder, String line) {}
 
     Optional<ZestScriptRunDiagnostic> getLastRunDiagnostic();
+
+    default List<ZestScriptPrintCapture> getLastRunPrintCaptures() {
+        return getLastRunDiagnostic().map(ZestScriptRunDiagnostic::printCaptures).orElse(List.of());
+    }
 }

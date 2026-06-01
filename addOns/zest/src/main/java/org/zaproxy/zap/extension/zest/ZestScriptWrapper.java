@@ -54,7 +54,7 @@ public class ZestScriptWrapper extends ScriptWrapper implements ZestScriptDiagno
     private User user;
     private ZestScriptMerger.ChainProvenance chainProvenance;
 
-    /** Last run failure diagnostics; cleared at run start and not copied by {@link #clone()}. */
+    /** Last run diagnostics (failure context and print output); cleared at run start. */
     private ZestScriptRunDiagnostic lastRunDiagnostic;
 
     public ZestScriptWrapper(ScriptWrapper script) {
@@ -274,7 +274,7 @@ public class ZestScriptWrapper extends ScriptWrapper implements ZestScriptDiagno
         this.chainProvenance = chainProvenance;
     }
 
-    /** Replaces any prior failure diagnostics for this wrapper. {@code null} clears them. */
+    /** Replaces last-run diagnostics. {@code null} clears them. */
     public void setLastRunDiagnostic(ZestScriptRunDiagnostic diagnostic) {
         lastRunDiagnostic = diagnostic;
     }

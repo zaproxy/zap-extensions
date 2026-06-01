@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.scripts.internal.db;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
@@ -33,10 +34,19 @@ public final class ScriptRunReportQuery {
 
     private static final Logger LOGGER = LogManager.getLogger(ScriptRunReportQuery.class);
 
+    private static final String RUNS_WITH_ERROR_FILTER =
+            "this.scripts.contains(s) && s.steps.contains(st)"
+                    + " && st.outputs.contains(o) && o.kind == :kind";
+
+    private static final String RUNS_WITH_ERROR_VARIABLES =
+            "org.zaproxy.zap.extension.scripts.internal.db.ScriptsRunScript s;"
+                    + " org.zaproxy.zap.extension.scripts.internal.db.ScriptsRunStep st;"
+                    + " org.zaproxy.zap.extension.scripts.internal.db.ScriptsRunOutput o";
+
     private ScriptRunReportQuery() {}
 
     @SuppressWarnings("try")
-    public static List<ScriptRunReportData.Run> loadRunsForReport() {
+    public static List<ScriptRunReportData.Run> loadRunsForReport(boolean includeOutputSteps) {
         PersistenceManagerFactory pmf = TableJdo.getPmf();
         if (pmf == null) {
             return List.of();
@@ -45,8 +55,14 @@ public final class ScriptRunReportQuery {
         try {
             try (Query<ScriptsRun> runQuery = pm.newQuery(ScriptsRun.class)) {
                 runQuery.setOrdering("id ascending");
+                if (!includeOutputSteps) {
+                    runQuery.setFilter(RUNS_WITH_ERROR_FILTER);
+                    runQuery.declareVariables(RUNS_WITH_ERROR_VARIABLES);
+                    runQuery.setNamedParameters(
+                            Map.of("kind", ScriptRunRecorder.OUTPUT_KIND_ERROR));
+                }
                 return runQuery.executeList().stream()
-                        .map(ScriptRunReportQuery::materializeRun)
+                        .map(run -> materializeRun(run, includeOutputSteps))
                         .toList();
             }
         } catch (Exception e) {
@@ -57,20 +73,30 @@ public final class ScriptRunReportQuery {
         }
     }
 
-    private static ScriptRunReportData.Run materializeRun(ScriptsRun run) {
+    private static ScriptRunReportData.Run materializeRun(
+            ScriptsRun run, boolean includeOutputSteps) {
         List<ScriptRunReportData.Script> scripts = new ArrayList<>();
         for (ScriptsRunScript sr : run.getScripts()) {
-            scripts.add(materializeScript(sr));
+            scripts.add(materializeScript(sr, includeOutputSteps));
         }
         return new ScriptRunReportData.Run(
                 run.getCreateTimestamp().toString(), run.getOutcome(), run.getSummary(), scripts);
     }
 
-    private static ScriptRunReportData.Script materializeScript(ScriptsRunScript sr) {
+    private static ScriptRunReportData.Script materializeScript(
+            ScriptsRunScript sr, boolean includeOutputSteps) {
         List<ScriptRunReportData.Step> reportSteps =
-                sr.getSteps().stream().map(ScriptRunReportQuery::materializeStep).toList();
+                sr.getSteps().stream()
+                        .filter(st -> includeOutputSteps || hasErrorOutput(st))
+                        .map(ScriptRunReportQuery::materializeStep)
+                        .toList();
         return new ScriptRunReportData.Script(
                 sr.getOrdinal() + 1, sr.getScriptName(), sr.getScriptType(), reportSteps);
+    }
+
+    private static boolean hasErrorOutput(ScriptsRunStep st) {
+        return st.getOutputs().stream()
+                .anyMatch(o -> ScriptRunRecorder.OUTPUT_KIND_ERROR.equals(o.getKind()));
     }
 
     private static ScriptRunReportData.Step materializeStep(ScriptsRunStep st) {

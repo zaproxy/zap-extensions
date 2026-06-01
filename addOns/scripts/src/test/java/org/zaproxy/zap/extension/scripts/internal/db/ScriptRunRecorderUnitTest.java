@@ -24,6 +24,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -126,6 +127,143 @@ class ScriptRunRecorderUnitTest {
             verify(tx).begin();
             verify(tx).commit();
             verify(pm).close();
+        }
+    }
+
+    @Test
+    void shouldPersistSuccessfulRunWithCapturedOutputAsOutputSteps() {
+        try (MockedStatic<TableJdo> tableJdo = mockStatic(TableJdo.class)) {
+            // Given
+            PersistenceManagerFactory pmf = mock(PersistenceManagerFactory.class);
+            PersistenceManager pm = mock(PersistenceManager.class);
+            Transaction tx = mock(Transaction.class);
+            tableJdo.when(TableJdo::getPmf).thenReturn(pmf);
+            given(pmf.getPersistenceManager()).willReturn(pm);
+            given(pm.currentTransaction()).willReturn(tx);
+            given(tx.isActive()).willReturn(false);
+
+            // When
+            ScriptRunRecorder.recordRun(
+                    "Job: j Script: s completed.",
+                    ScriptRunRecorder.OUTCOME_SUCCESS,
+                    List.of(
+                            new ScriptRunRecorder.RunScript(
+                                    "s",
+                                    "standalone",
+                                    List.of(
+                                            new ScriptRunRecorder.CapturedOutput("hello"),
+                                            new ScriptRunRecorder.CapturedOutput("world")),
+                                    null)),
+                    null);
+
+            // Then
+            @SuppressWarnings("rawtypes")
+            ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class);
+            verify(pm, times(1)).makePersistent(captor.capture());
+            ScriptsRun run =
+                    captor.getAllValues().stream()
+                            .filter(ScriptsRun.class::isInstance)
+                            .map(ScriptsRun.class::cast)
+                            .findFirst()
+                            .orElseThrow();
+            assertThat(run.getOutcome(), is(equalTo(ScriptRunRecorder.OUTCOME_SUCCESS)));
+            assertThat(run.getScripts(), hasSize(1));
+            ScriptsRunScript script = run.getScripts().get(0);
+            assertThat(script.getSteps(), hasSize(2));
+            ScriptsRunStep firstStep = script.getSteps().get(0);
+            assertThat(firstStep.getOrdinal(), is(0));
+            assertThat(firstStep.getSourceStepIndex(), is(-1));
+            assertThat(firstStep.getLine(), is(equalTo("")));
+            assertThat(firstStep.getOutputs(), hasSize(1));
+            assertThat(
+                    firstStep.getOutputs().get(0).getKind(),
+                    is(equalTo(ScriptRunRecorder.OUTPUT_KIND_OUTPUT)));
+            assertThat(firstStep.getOutputs().get(0).getMessage(), is(equalTo("hello")));
+            ScriptsRunStep secondStep = script.getSteps().get(1);
+            assertThat(secondStep.getOrdinal(), is(1));
+            assertThat(secondStep.getSourceStepIndex(), is(-1));
+            assertThat(secondStep.getOutputs().get(0).getMessage(), is(equalTo("world")));
+        }
+    }
+
+    @Test
+    void shouldPersistSuccessfulRunWhenInvokedEvenWithoutCapturedOutput() {
+        try (MockedStatic<TableJdo> tableJdo = mockStatic(TableJdo.class)) {
+            // Given
+            PersistenceManagerFactory pmf = mock(PersistenceManagerFactory.class);
+            PersistenceManager pm = mock(PersistenceManager.class);
+            Transaction tx = mock(Transaction.class);
+            tableJdo.when(TableJdo::getPmf).thenReturn(pmf);
+            given(pmf.getPersistenceManager()).willReturn(pm);
+            given(pm.currentTransaction()).willReturn(tx);
+            given(tx.isActive()).willReturn(false);
+
+            // When
+            ScriptRunRecorder.recordRun(
+                    "Job: j Script: s completed.",
+                    ScriptRunRecorder.OUTCOME_SUCCESS,
+                    List.of(new ScriptRunRecorder.RunScript("s", "standalone", null)),
+                    null);
+
+            // Then
+            verify(pm).makePersistent(any(ScriptsRun.class));
+        }
+    }
+
+    @Test
+    void shouldPersistOutputStepsBeforeFailureStepOnFailedRun() {
+        try (MockedStatic<TableJdo> tableJdo = mockStatic(TableJdo.class)) {
+            // Given
+            PersistenceManagerFactory pmf = mock(PersistenceManagerFactory.class);
+            PersistenceManager pm = mock(PersistenceManager.class);
+            Transaction tx = mock(Transaction.class);
+            tableJdo.when(TableJdo::getPmf).thenReturn(pmf);
+            given(pmf.getPersistenceManager()).willReturn(pm);
+            given(pm.currentTransaction()).willReturn(tx);
+            given(tx.isActive()).willReturn(false);
+
+            // When
+            ScriptRunRecorder.recordRun(
+                    "summary",
+                    ScriptRunRecorder.OUTCOME_FAILED,
+                    List.of(
+                            new ScriptRunRecorder.RunScript(
+                                    "s",
+                                    "standalone",
+                                    List.of(new ScriptRunRecorder.CapturedOutput("before")),
+                                    new ScriptRunRecorder.FailureStep(
+                                            2, "ZestClientElementClick"))),
+                    "boom");
+
+            // Then
+            @SuppressWarnings("rawtypes")
+            ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class);
+            verify(pm, times(1)).makePersistent(captor.capture());
+            ScriptsRun run =
+                    captor.getAllValues().stream()
+                            .filter(ScriptsRun.class::isInstance)
+                            .map(ScriptsRun.class::cast)
+                            .findFirst()
+                            .orElseThrow();
+            assertThat(run.getOutcome(), is(equalTo(ScriptRunRecorder.OUTCOME_FAILED)));
+            ScriptsRunScript script = run.getScripts().get(0);
+            assertThat(script.getSteps(), hasSize(2));
+            ScriptsRunStep outputStep = script.getSteps().get(0);
+            assertThat(outputStep.getOrdinal(), is(0));
+            assertThat(outputStep.getSourceStepIndex(), is(-1));
+            assertThat(outputStep.getLine(), is(equalTo("")));
+            assertThat(
+                    outputStep.getOutputs().get(0).getKind(),
+                    is(equalTo(ScriptRunRecorder.OUTPUT_KIND_OUTPUT)));
+            assertThat(outputStep.getOutputs().get(0).getMessage(), is(equalTo("before")));
+            ScriptsRunStep failureStep = script.getSteps().get(1);
+            assertThat(failureStep.getOrdinal(), is(1));
+            assertThat(failureStep.getSourceStepIndex(), is(2));
+            assertThat(failureStep.getLine(), is(equalTo("ZestClientElementClick")));
+            assertThat(
+                    failureStep.getOutputs().get(0).getKind(),
+                    is(equalTo(ScriptRunRecorder.OUTPUT_KIND_ERROR)));
+            assertThat(failureStep.getOutputs().get(0).getMessage(), is(equalTo("boom")));
         }
     }
 

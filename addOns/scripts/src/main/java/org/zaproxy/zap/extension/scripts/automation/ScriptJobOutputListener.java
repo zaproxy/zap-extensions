@@ -19,6 +19,9 @@
  */
 package org.zaproxy.zap.extension.scripts.automation;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.automation.AutomationProgress;
@@ -29,11 +32,16 @@ public class ScriptJobOutputListener implements ScriptOutputListener {
     private AutomationProgress progress;
     private String scriptName;
     private StringBuilder stringBuilder;
+    private final List<String> capturedLines = new ArrayList<>();
 
     public ScriptJobOutputListener(AutomationProgress progress, String scriptName) {
         this.progress = progress;
         this.scriptName = scriptName;
         this.stringBuilder = new StringBuilder();
+    }
+
+    public List<String> getCapturedLines() {
+        return Collections.unmodifiableList(capturedLines);
     }
 
     @Override
@@ -61,6 +69,7 @@ public class ScriptJobOutputListener implements ScriptOutputListener {
             } else {
                 progress.infoNoStdout(line);
             }
+            capturedLines.add(line);
 
             stringBuilder.delete(0, index + 1);
             index = nextLineEnd();
