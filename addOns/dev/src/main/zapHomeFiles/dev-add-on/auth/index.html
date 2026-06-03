@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>ZAP Test Server - Auth</title>
+	<link href="/tutorial.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="roundContainer">
+	<h1>ZAP Test Server - Auth</H1>
+	<h2>Directories</h2>
+
+	<!-- SUBDIRS -->
+
+	<h3>Certificate Auth (HTTPS, port 9443)</h3>
+	<ul>
+		<li><a href="https://127.0.0.1:9443/">cert-auth</a> - requires a client certificate AND username/password</li>
+	</ul>
+	<p>
+		The client certificate is at:<br>
+		<code><!-- CLIENT_CERT_PATH --></code> (password: <code>zapdev</code>)<br>
+		The CA certificate that signed the test client certificate is at:<br>
+		<code><!-- CA_CERT_PATH --></code>
+	</p>
+
+	<div class="buttonsDiv">
+		<a href="/"><button>Index page</button></a>
+	</div>
+</div>
+
+</body>
+</html>

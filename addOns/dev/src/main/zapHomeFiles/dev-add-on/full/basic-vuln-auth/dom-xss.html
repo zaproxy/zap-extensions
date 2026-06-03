@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>ZAP Test Server - DOM XSS</title>
+	<link href="/tutorial.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="roundContainer">
+	<h1>DOM XSS</h1>
+	<form method="get" action="">
+	<label>Name: <input name="name" type="text"></label>
+	<button type="submit">Search</button>
+	</form>
+	<div id="output"></div>
+</div>
+<script>
+const params = new URLSearchParams(location.search);
+const name = params.get('name');
+if (name) {
+	// Intentionally vulnerable: user input written directly to innerHTML without encoding
+	document.getElementById('output').innerHTML = 'Hello, ' + name + '!';
+}
+</script>
+</body>
+</html>

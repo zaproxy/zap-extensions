@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.dev;
 
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -26,6 +27,7 @@ import java.util.TreeSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
@@ -138,6 +140,26 @@ public class TestDirectory implements HttpMessageHandler {
 
                     sb.append("</ul>\n");
                     body = body.replace("<!-- SUBDIRS -->", sb.toString());
+                    body =
+                            body.replace(
+                                    "<!-- CLIENT_CERT_PATH -->",
+                                    Path.of(
+                                                    Constant.getZapHome(),
+                                                    ExtensionDev.DIRECTORY_NAME,
+                                                    "auth",
+                                                    "cert-auth",
+                                                    "test-client.p12")
+                                            .toString());
+                    body =
+                            body.replace(
+                                    "<!-- CA_CERT_PATH -->",
+                                    Path.of(
+                                                    Constant.getZapHome(),
+                                                    ExtensionDev.DIRECTORY_NAME,
+                                                    "auth",
+                                                    "cert-auth",
+                                                    "ca.crt")
+                                            .toString());
                 }
 
                 boolean allowCache = false;

@@ -18,7 +18,7 @@ zapAddOn {
                     version.set(">=1.17.0")
                 }
                 register("network") {
-                    version.set(">=0.7.0")
+                    version.set(">=0.29.0")
                 }
             }
         }
@@ -30,6 +30,8 @@ dependencies {
     zapAddOn("commonlib")
 
     compileOnly(libs.log4j.core)
+    compileOnly(libs.network.bouncycastle.bcprov)
+    compileOnly(libs.network.bouncycastle.bcpkix)
 
     testImplementation(project(":testutils"))
     testImplementation(libs.log4j.core)
