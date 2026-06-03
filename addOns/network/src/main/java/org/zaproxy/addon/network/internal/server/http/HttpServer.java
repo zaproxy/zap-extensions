@@ -83,6 +83,7 @@ public class HttpServer extends BaseServer {
     private final ServerCertificateService certificateService;
     private Supplier<MainServerHandler> handler;
     private DefaultServerConfig serverConfig;
+    private TlsConfig tlsConfig;
 
     /**
      * Constructs a {@code HttpServer} with the given properties and no handler.
@@ -125,6 +126,26 @@ public class HttpServer extends BaseServer {
     }
 
     /**
+     * Constructs a {@code HttpServer} with the given properties and TLS configuration.
+     *
+     * @param group the event loop group.
+     * @param mainHandlerExecutor the event executor for the main handler.
+     * @param certificateService the certificate service.
+     * @param handler the main handler.
+     * @param tlsConfig the TLS configuration to use, or {@code null} to use the default.
+     */
+    public HttpServer(
+            NioEventLoopGroup group,
+            EventExecutorGroup mainHandlerExecutor,
+            ServerCertificateService certificateService,
+            Supplier<MainServerHandler> handler,
+            TlsConfig tlsConfig) {
+        this(group, mainHandlerExecutor, certificateService, handler);
+
+        this.tlsConfig = tlsConfig;
+    }
+
+    /**
      * Sets the main server handler.
      *
      * @param handler the main server handler.
@@ -137,7 +158,8 @@ public class HttpServer extends BaseServer {
     protected void initChannel(SocketChannel ch) {
         ch.attr(ChannelAttributes.CERTIFICATE_SERVICE).set(certificateService);
         ch.attr(ChannelAttributes.SERVER_CONFIG).set(serverConfig);
-        ch.attr(ChannelAttributes.TLS_CONFIG).set(DEFAULT_TLS_CONFIG);
+        ch.attr(ChannelAttributes.TLS_CONFIG)
+                .set(tlsConfig != null ? tlsConfig : DEFAULT_TLS_CONFIG);
         ch.attr(ChannelAttributes.PIPELINE_CONFIGURATOR).set(HttpServer::protocolConfiguration);
 
         ch.pipeline()
