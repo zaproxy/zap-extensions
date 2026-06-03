@@ -5,7 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Capture browser screenshots on Zest client step failures for script automation diagnostics.
+
 ### Changed
+- Update minimum `scripts` add-on version to 45.19.0.
 - Chained scripts now have provenance information preserved for troubleshooting purposes.
 - Update Zest library to 0.36.0:
   - Update dependencies.

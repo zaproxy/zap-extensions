@@ -31,7 +31,12 @@ public final class ScriptRunReportData {
 
     public record Script(int order, String scriptName, String scriptType, List<Step> steps) {}
 
-    public record Step(int sourceStepIndex, String line, List<Output> outputs) {}
+    public record Step(int sourceStepIndex, String line, List<Output> outputs, String screenshot) {
+
+        public Step(int sourceStepIndex, String line, List<Output> outputs) {
+            this(sourceStepIndex, line, outputs, null);
+        }
+    }
 
     public record Output(String kind, String message) {}
 }

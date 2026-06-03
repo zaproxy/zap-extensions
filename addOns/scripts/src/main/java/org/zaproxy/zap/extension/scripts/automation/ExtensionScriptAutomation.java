@@ -45,6 +45,7 @@ import org.zaproxy.zap.extension.script.ScriptEventListener;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.scripts.ExtensionScriptsUI;
 import org.zaproxy.zap.extension.scripts.internal.db.ScriptRunRecorder;
+import org.zaproxy.zap.extension.scripts.zest.ZestScriptDiagnosticSource;
 
 public class ExtensionScriptAutomation extends ExtensionAdaptor {
 
@@ -183,10 +184,24 @@ public class ExtensionScriptAutomation extends ExtensionAdaptor {
                                             script.getName(),
                                             script.getLastErrorDetails());
                             plan.getProgress().error(message);
-                            ScriptRunRecorder.recordSingleScriptFailure(
-                                    script.getName(),
-                                    script.getTypeName(),
+                            String screenshotBase64 = null;
+                            if (script instanceof ZestScriptDiagnosticSource source) {
+                                screenshotBase64 =
+                                        source.getLastRunDiagnostic()
+                                                .map(
+                                                        ZestScriptDiagnosticSource
+                                                                        .ZestScriptRunDiagnostic
+                                                                ::screenshotBase64)
+                                                .orElse(null);
+                            }
+                            ScriptRunRecorder.recordFailedRun(
                                     message,
+                                    List.of(
+                                            new ScriptRunRecorder.RunScript(
+                                                    script.getName(),
+                                                    script.getTypeName(),
+                                                    new ScriptRunRecorder.FailureStep(
+                                                            -1, "", screenshotBase64))),
                                     StringUtils.defaultString(
                                             ScriptRunFailureDetail
                                                     .compactScriptOutputDetailForPersistence(

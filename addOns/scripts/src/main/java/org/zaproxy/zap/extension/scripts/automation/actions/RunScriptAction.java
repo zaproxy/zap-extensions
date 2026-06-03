@@ -592,7 +592,8 @@ public class RunScriptAction extends ScriptAction {
                         d ->
                                 new ScriptRunRecorder.FailureStep(
                                         d.sourceStatementIndex(),
-                                        StringUtils.defaultString(d.elementType())))
+                                        StringUtils.defaultString(d.elementType()),
+                                        d.screenshotBase64()))
                 .orElse(new ScriptRunRecorder.FailureStep(-1, ""));
     }
 

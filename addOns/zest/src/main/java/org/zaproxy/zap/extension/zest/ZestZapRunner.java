@@ -70,6 +70,7 @@ import org.zaproxy.zest.core.v1.ZestAssertion;
 import org.zaproxy.zest.core.v1.ZestAssignFailException;
 import org.zaproxy.zest.core.v1.ZestAssignment;
 import org.zaproxy.zest.core.v1.ZestClient;
+import org.zaproxy.zest.core.v1.ZestClientElement;
 import org.zaproxy.zest.core.v1.ZestClientFailException;
 import org.zaproxy.zest.core.v1.ZestClientLaunch;
 import org.zaproxy.zest.core.v1.ZestInvalidCommonTestException;
@@ -545,7 +546,8 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
                 buildFailureDiagnostic(
                         stmt,
                         diagnostics + " - " + detail,
-                        stmt.getElementType() + " - " + detail));
+                        stmt.getElementType() + " - " + detail,
+                        captureClientFailureScreenshot(stmt)));
     }
 
     /**
@@ -588,11 +590,27 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
     private void recordClientLaunchFailureContext(ZestClientLaunch clientLaunch, String headline) {
         String diagnostics = formatStatementDiagnostics(clientLaunch);
         wrapper.setLastRunDiagnostic(
-                buildFailureDiagnostic(clientLaunch, diagnostics + " - " + headline, headline));
+                buildFailureDiagnostic(
+                        clientLaunch,
+                        diagnostics + " - " + headline,
+                        headline,
+                        captureClientFailureScreenshot(clientLaunch)));
+    }
+
+    private String captureClientFailureScreenshot(ZestStatement stmt) {
+        if (!(stmt instanceof ZestClientElement element)) {
+            return null;
+        }
+        String handle = element.getWindowHandle();
+        if (StringUtils.isBlank(handle)) {
+            return null;
+        }
+        WebDriver wd = getWebDriver(handle);
+        return wd != null ? ZestFailureScreenshotCapture.captureBase64(wd) : null;
     }
 
     private ZestScriptRunDiagnostic buildFailureDiagnostic(
-            ZestStatement stmt, String context, String detailMessage) {
+            ZestStatement stmt, String context, String detailMessage, String screenshotBase64) {
         var chainProvOpt = wrapper.getChainProvenance();
         if (chainProvOpt.isEmpty()) {
             return new ZestScriptRunDiagnostic(
@@ -600,7 +618,8 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
                     detailMessage,
                     1,
                     stmt.getIndex(),
-                    StringUtils.defaultString(stmt.getElementType()));
+                    StringUtils.defaultString(stmt.getElementType()),
+                    screenshotBase64);
         }
         return chainProvOpt
                 .get()
@@ -612,7 +631,8 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
                                         detailMessage,
                                         origin.segmentIndex() + 1,
                                         origin.originalStatementIndex(),
-                                        StringUtils.defaultString(origin.elementType())))
+                                        StringUtils.defaultString(origin.elementType()),
+                                        screenshotBase64))
                 .orElseGet(
                         () ->
                                 new ZestScriptRunDiagnostic(
@@ -620,7 +640,8 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
                                         detailMessage,
                                         -1,
                                         -1,
-                                        StringUtils.defaultString(stmt.getElementType())));
+                                        StringUtils.defaultString(stmt.getElementType()),
+                                        screenshotBase64));
     }
 
     private String formatStatementDiagnostics(ZestStatement stmt) {

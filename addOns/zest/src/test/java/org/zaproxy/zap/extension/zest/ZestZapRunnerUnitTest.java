@@ -43,7 +43,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.quality.Strictness;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriver.Timeouts;
 import org.openqa.selenium.WebDriverException;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -60,6 +63,7 @@ import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.users.User;
 import org.zaproxy.zest.core.v1.ZestClient;
+import org.zaproxy.zest.core.v1.ZestClientElementClick;
 import org.zaproxy.zest.core.v1.ZestClientFailException;
 import org.zaproxy.zest.core.v1.ZestClientLaunch;
 import org.zaproxy.zest.core.v1.ZestScript;
@@ -344,6 +348,48 @@ class ZestZapRunnerUnitTest extends TestUtils {
         assertThat(diagnostic.chainScriptOrder(), is(equalTo(1)));
         assertThat(diagnostic.sourceStatementIndex(), is(equalTo(2)));
         assertThat(diagnostic.elementType(), is(equalTo("ZestClientLaunch")));
+    }
+
+    @Test
+    void shouldCaptureScreenshotOnClientElementFailure() throws Exception {
+        ZestScriptWrapper wrapper = mock(ZestScriptWrapper.class);
+        given(wrapper.getChainProvenance()).willReturn(Optional.empty());
+        given(wrapper.getName()).willReturn("zest-script");
+
+        ZestZapRunner runnerWithWrapper =
+                new ZestZapRunner(extensionZest, extensionNetwork, wrapper);
+        clearInvocations(wrapper);
+        WebDriver wd = mock(WebDriver.class, withSettings().extraInterfaces(TakesScreenshot.class));
+        WebDriver.Options options = mock(WebDriver.Options.class);
+        Timeouts timeouts = mock(Timeouts.class);
+        given(wd.manage()).willReturn(options);
+        given(options.timeouts()).willReturn(timeouts);
+        TakesScreenshot screenshot = (TakesScreenshot) wd;
+        given(screenshot.getScreenshotAs(eq(OutputType.BASE64))).willReturn("pngb64");
+        runnerWithWrapper.addWebDriver("win1", wd);
+
+        ZestClientElementClick click = new ZestClientElementClick("win1", "xpath", "//a");
+        ZestClientFailException ex =
+                new ZestClientFailException(click, new IllegalStateException("fail"));
+
+        invokeRecordStatementFailureContext(runnerWithWrapper, click, ex);
+
+        ArgumentCaptor<ZestScriptRunDiagnostic> captor =
+                ArgumentCaptor.forClass(ZestScriptRunDiagnostic.class);
+        verify(wrapper).setLastRunDiagnostic(captor.capture());
+        assertThat(captor.getValue().screenshotBase64(), is(equalTo("pngb64")));
+        verify(screenshot, times(1)).getScreenshotAs(eq(OutputType.BASE64));
+
+        clearInvocations(wrapper, screenshot);
+        ZestClientElementClick clickWithoutHandle = new ZestClientElementClick("", "xpath", "//a");
+        invokeRecordStatementFailureContext(
+                runnerWithWrapper,
+                clickWithoutHandle,
+                new ZestClientFailException(clickWithoutHandle, new IllegalStateException("fail")));
+
+        verify(wrapper).setLastRunDiagnostic(captor.capture());
+        assertThat(captor.getValue().screenshotBase64(), is(nullValue()));
+        verify(screenshot, never()).getScreenshotAs(any());
     }
 
     @Test

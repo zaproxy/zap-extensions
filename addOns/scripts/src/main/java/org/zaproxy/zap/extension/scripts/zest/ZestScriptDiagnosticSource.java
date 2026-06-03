@@ -32,7 +32,8 @@ public interface ZestScriptDiagnosticSource {
             String detailMessage,
             int chainScriptOrder,
             int sourceStatementIndex,
-            String elementType) {}
+            String elementType,
+            String screenshotBase64) {}
 
     Optional<ZestScriptRunDiagnostic> getLastRunDiagnostic();
 }
