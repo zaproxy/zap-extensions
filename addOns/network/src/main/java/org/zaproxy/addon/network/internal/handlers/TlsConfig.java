@@ -19,9 +19,11 @@
  */
 package org.zaproxy.addon.network.internal.handlers;
 
+import io.netty.handler.ssl.ClientAuth;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import javax.net.ssl.X509TrustManager;
 import org.zaproxy.addon.network.internal.TlsUtils;
 
 /** The configuration for {@link TlsProtocolHandler}. */
@@ -41,6 +43,8 @@ public class TlsConfig {
     private List<String> tlsProtocols;
     private boolean alpnEnabled;
     private List<String> applicationProtocols;
+    private ClientAuth clientAuthMode;
+    private X509TrustManager trustManager;
 
     /**
      * Constructs a {@code TlsConfig} with all the SSL/TLS protocol versions supported, with ALPN
@@ -69,6 +73,23 @@ public class TlsConfig {
         this.alpnEnabled = alpnEnabled;
         this.applicationProtocols =
                 TlsUtils.filterUnsupportedApplicationProtocols(applicationProtocols);
+        this.clientAuthMode = ClientAuth.NONE;
+    }
+
+    /**
+     * Creates a {@code TlsConfig} that requires a client certificate validated against the given
+     * trust manager, using all default TLS protocol versions and ALPN.
+     *
+     * @param trustManager the trust manager to validate client certificates.
+     * @return a new {@code TlsConfig} with client authentication required.
+     * @throws NullPointerException if the given {@code trustManager} is {@code null}.
+     */
+    public static TlsConfig withClientAuth(X509TrustManager trustManager) {
+        Objects.requireNonNull(trustManager);
+        TlsConfig config = new TlsConfig();
+        config.clientAuthMode = ClientAuth.REQUIRE;
+        config.trustManager = trustManager;
+        return config;
     }
 
     /**
@@ -98,9 +119,33 @@ public class TlsConfig {
         return applicationProtocols;
     }
 
+    /**
+     * Gets the client authentication mode.
+     *
+     * @return the client auth mode, never {@code null}.
+     */
+    public ClientAuth getClientAuthMode() {
+        return clientAuthMode;
+    }
+
+    /**
+     * Gets the trust manager used to validate client certificates, or {@code null} to use the JVM
+     * default.
+     *
+     * @return the trust manager, or {@code null}.
+     */
+    public X509TrustManager getTrustManager() {
+        return trustManager;
+    }
+
     @Override
     public int hashCode() {
-        return Objects.hash(tlsProtocols, alpnEnabled, applicationProtocols);
+        return Objects.hash(
+                tlsProtocols,
+                alpnEnabled,
+                applicationProtocols,
+                clientAuthMode.ordinal(),
+                trustManager);
     }
 
     @Override
@@ -114,6 +159,8 @@ public class TlsConfig {
         TlsConfig other = (TlsConfig) object;
         return Objects.equals(tlsProtocols, other.tlsProtocols)
                 && alpnEnabled == other.alpnEnabled
-                && Objects.equals(applicationProtocols, other.applicationProtocols);
+                && Objects.equals(applicationProtocols, other.applicationProtocols)
+                && clientAuthMode == other.clientAuthMode
+                && Objects.equals(trustManager, other.trustManager);
     }
 }

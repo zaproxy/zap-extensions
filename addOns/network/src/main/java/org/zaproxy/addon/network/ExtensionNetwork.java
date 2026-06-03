@@ -57,6 +57,7 @@ import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import javax.net.ssl.X509TrustManager;
 import javax.swing.GroupLayout;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -106,6 +107,7 @@ import org.zaproxy.addon.network.internal.client.ZapAuthenticator;
 import org.zaproxy.addon.network.internal.client.ZapProxySelector;
 import org.zaproxy.addon.network.internal.client.apachev5.HttpSenderApache;
 import org.zaproxy.addon.network.internal.handlers.PassThroughHandler;
+import org.zaproxy.addon.network.internal.handlers.TlsConfig;
 import org.zaproxy.addon.network.internal.ratelimit.RateLimitExtensionHelper;
 import org.zaproxy.addon.network.internal.ratelimit.RateLimitOptions;
 import org.zaproxy.addon.network.internal.server.AliasChecker;
@@ -577,11 +579,18 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
             mainServerHandler = () -> new MainServerHandler(blockingServerExecutor, handlers);
         }
 
+        TlsConfig tlsConfig = null;
+        X509TrustManager trustManager = config.getTrustManager();
+        if (trustManager != null) {
+            tlsConfig = TlsConfig.withClientAuth(trustManager);
+        }
+
         return new HttpServer(
                 getMainEventLoopGroup(),
                 getMainEventExecutorGroup(),
                 serverCertificateService,
-                mainServerHandler);
+                mainServerHandler,
+                tlsConfig);
     }
 
     @Override

@@ -39,13 +39,3 @@ dependencies {
     testImplementation(libs.test.webdrivermanager)
     testImplementation(project(":testutils"))
 }
-
-tasks.withType<Test>().configureEach {
-    systemProperties.putAll(
-        mapOf(
-            "wdm.chromeDriverVersion" to "108.0.5359.71",
-            "wdm.geckoDriverVersion" to "0.32.0",
-            "wdm.forceCache" to "true",
-        ),
-    )
-}

@@ -23,10 +23,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
+import javax.net.ssl.X509TrustManager;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -114,5 +116,41 @@ class HttpServerConfigUnitTest {
         boolean retrievedServeZapApi = config.isServeZapApi();
         // Then
         assertThat(retrievedServeZapApi, is(equalTo(serve)));
+    }
+
+    @Test
+    void shouldDefaultToNullTrustManager() {
+        // Given
+        config = builderWithRequiredProperties().build();
+        // When
+        X509TrustManager trustManager = config.getTrustManager();
+        // Then
+        assertThat(trustManager, is(nullValue()));
+    }
+
+    @Test
+    void shouldRetrieveTrustManagerSet() {
+        // Given
+        X509TrustManager trustManager = mock(X509TrustManager.class);
+        config = builderWithRequiredProperties().setTrustManager(trustManager).build();
+        // When
+        X509TrustManager retrievedTrustManager = config.getTrustManager();
+        // Then
+        assertThat(retrievedTrustManager, is(equalTo(trustManager)));
+    }
+
+    @Test
+    void shouldClearTrustManagerWhenSetToNull() {
+        // Given
+        X509TrustManager trustManager = mock(X509TrustManager.class);
+        config =
+                builderWithRequiredProperties()
+                        .setTrustManager(trustManager)
+                        .setTrustManager(null)
+                        .build();
+        // When
+        X509TrustManager retrievedTrustManager = config.getTrustManager();
+        // Then
+        assertThat(retrievedTrustManager, is(nullValue()));
     }
 }
