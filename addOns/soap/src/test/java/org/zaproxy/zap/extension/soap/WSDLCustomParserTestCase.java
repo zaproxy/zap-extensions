@@ -21,7 +21,10 @@ package org.zaproxy.zap.extension.soap;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -57,6 +60,9 @@ import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.zap.testutils.TestUtils;
 
 class WSDLCustomParserTestCase extends TestUtils {
+
+    private static final String MOCK_FILL_VALUE = "mock-fill-value";
+    private static final String FILL_PARAMETERS_WSDL = "fill-parameters.wsdl";
 
     private ValueProvider valueProvider;
     private Supplier<Date> dateSupplier;
@@ -145,11 +151,28 @@ class WSDLCustomParserTestCase extends TestUtils {
             value = {
                 "string, paramValue",
                 "int, 0",
+                "integer, 0",
+                "decimal, 0",
+                "float, 0",
                 "double, 0",
                 "long, 0",
+                "short, 0",
+                "byte, 0",
+                "unsignedLong, 0",
+                "unsignedInt, 0",
+                "unsignedShort, 0",
+                "unsignedByte, 0",
+                "positiveInteger, 1",
+                "negativeInteger, -1",
+                "nonNegativeInteger, 0",
+                "nonPositiveInteger, 0",
+                "boolean, true",
+                "token, paramValue",
+                "normalizedString, paramValue",
+                "anyURI, paramValue",
                 "date, 2023-11-21",
                 "dateTime, 2023-11-21T05:16:40+0000",
-                "something, ''"
+                "something, paramValue"
             })
     void shouldGenerateAppropriateDefaultValueForValueProvider(
             String paramType, String expectedDefaultValue) {
@@ -164,5 +187,135 @@ class WSDLCustomParserTestCase extends TestUtils {
                 .getValue(
                         any(), any(), any(), defaultValueArgCaptor.capture(), any(), any(), any());
         assertThat(defaultValueArgCaptor.getValue(), is(equalTo(expectedDefaultValue)));
+    }
+
+    @Test
+    void shouldPopulateFieldsViaRefElement() throws Exception {
+        // Given / When
+        Map<String, String> params = parseWsdlParams();
+        // Then
+        assertThat(params, hasKey("xpath:/Request/refOuter/refBlock/leafField"));
+    }
+
+    @Test
+    void shouldPickFirstChoiceOption() throws Exception {
+        // Given / When
+        Map<String, String> params = parseWsdlParams();
+        // Then
+        assertThat(params, hasKey("xpath:/Request/branchBox/optA"));
+        assertThat(params, not(hasKey("xpath:/Request/branchBox/optB")));
+    }
+
+    @Test
+    void shouldUseFixedValueForAttribute() throws Exception {
+        // Given / When
+        Map<String, String> params = parseWsdlParams();
+        // Then
+        assertThat(params, hasEntry("xpath:/Request/attrBox/@fixedKey", "FIXED-VAL"));
+        assertThat(params.get("xpath:/Request/attrBox/@fixedKey"), is(not(MOCK_FILL_VALUE)));
+    }
+
+    @Test
+    void shouldUseEnumerationValueForElement() throws Exception {
+        // Given / When
+        Map<String, String> params = parseWsdlParams();
+        // Then
+        assertThat(params, hasEntry("xpath:/Request/enumField", "EL-1"));
+        assertThat(params.get("xpath:/Request/enumField"), is(not(MOCK_FILL_VALUE)));
+    }
+
+    @Test
+    void shouldPopulateAttributeFields() throws Exception {
+        // Given / When
+        Map<String, String> params = parseWsdlParams();
+        // Then
+        assertThat(params, hasKey("xpath:/Request/attrBox/@keyA"));
+        assertThat(params, hasKey("xpath:/Request/attrBox/@keyB"));
+    }
+
+    @Test
+    void shouldUseEnumerationValueForAttribute() throws Exception {
+        // Given / When
+        Map<String, String> params = parseWsdlParams();
+        // Then
+        assertThat(params, hasEntry("xpath:/Request/enumBox/@enumKey", "EV-1"));
+        assertThat(params.get("xpath:/Request/enumBox/@enumKey"), is(not(MOCK_FILL_VALUE)));
+    }
+
+    @Test
+    void shouldUseUnicodeEnumerationValue() throws Exception {
+        // Given / When
+        Map<String, String> params = parseWsdlParams();
+        // Then
+        assertThat(params, hasEntry("xpath:/Request/unicodeBox/@codeKey", "val-ää"));
+    }
+
+    @Test
+    void shouldEmitParamForBoundedSimpleType() throws Exception {
+        // Given / When
+        Map<String, String> params = parseWsdlParams();
+        // Then
+        assertThat(params, hasKey("xpath:/Request/boundedInt"));
+    }
+
+    @Test
+    void shouldEmitParamForTokenTypedElement() throws Exception {
+        // Given – 'tokenField' has type xs:token; must not be dropped and VP must receive a
+        // non-empty default so it can generate a value
+        // When
+        Map<String, String> params = parseWsdlParams();
+        // Then
+        assertThat(params, hasEntry("xpath:/Request/tokenField", MOCK_FILL_VALUE));
+    }
+
+    @Test
+    void shouldPopulateExtendedTypeFields() throws Exception {
+        // Given / When
+        Map<String, String> params = parseWsdlParams();
+        // Then
+        assertThat(params, hasKey("xpath:/Request/block/inherited"));
+        assertThat(params, hasKey("xpath:/Request/block/added"));
+    }
+
+    @Test
+    void shouldSkipAttrOnlyTypeAndProcessSibling() throws Exception {
+        // Given / When
+        Map<String, String> params = parseWsdlParams();
+        // Then
+        assertThat(params, hasKey("xpath:/Request/groupOuter/group/leafField"));
+        assertThat(params, hasKey("xpath:/Request/groupOuter/group/metaBlock/@idKey"));
+        assertThat(params, hasKey("xpath:/Request/groupOuter/group/metaBlock/@nameKey"));
+    }
+
+    @Test
+    void shouldAcceptUnicodeAttributeNames() throws Exception {
+        // Given / When
+        Map<String, String> params = parseWsdlParams();
+        // Then
+        assertThat(params, hasKey("xpath:/Request/attrWrapper/@plainKey"));
+        assertThat(params, hasKey("xpath:/Request/attrWrapper/@äKey"));
+    }
+
+    private Map<String, String> parseWsdlParams() throws Exception {
+        return parseWsdlParams(FILL_PARAMETERS_WSDL);
+    }
+
+    private Map<String, String> parseWsdlParams(String resourceName) throws Exception {
+        WSDLCustomParser p = createParserForWsdl(resourceName);
+        return p.getLastConfig().getParams();
+    }
+
+    private WSDLCustomParser createParserForWsdl(String resourceName) throws Exception {
+        Supplier<Date> dateSupplier = mock(withSettings().strictness(Strictness.LENIENT));
+        ValueProvider vp = mock(ValueProvider.class);
+        when(vp.getValue(any(), any(), any(), any(), any(), any(), any()))
+                .thenReturn(MOCK_FILL_VALUE);
+        WSDLCustomParser p = new WSDLCustomParser(() -> vp, null, dateSupplier);
+        String content =
+                new String(
+                        Files.readAllBytes(getResourcePath("resources/" + resourceName)),
+                        StandardCharsets.UTF_8);
+        p.extContentWSDLImport(content, false);
+        return p;
     }
 }
