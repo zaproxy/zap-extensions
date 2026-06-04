@@ -67,7 +67,7 @@ jobs:
         GECKO_INPUT=${GECKO_INPUT:-"gxx" }
         echo $GECKO_INPUT
         if [ $GECKO_INPUT == "gxx" ]; then
-          GECKO_VERS=$(curl -s https://api.github.com/repos/mozilla/geckodriver/releases/latest|jq -r .name)
+          GECKO_VERS=$(curl -s https://api.github.com/repos/mozilla/geckodriver/releases/latest|jq -r .tag_name | cut -c 2-)
           GECKO_SOURCE=fetched
         else
           GECKO_VERS=${{ github.event.inputs.gecko_version }}
