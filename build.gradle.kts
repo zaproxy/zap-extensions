@@ -72,9 +72,9 @@ allprojects {
             "errorprone"("com.google.errorprone:error_prone_core:2.42.0")
 
             // Include annotations used by Log4j2 Core library to avoid compiler warnings.
-            "compileOnly"("biz.aQute.bnd:biz.aQute.bnd.annotation:7.2.3")
+            "compileOnly"("biz.aQute.bnd:biz.aQute.bnd.annotation:7.3.0")
             "compileOnly"("com.google.code.findbugs:findbugs-annotations:3.0.1")
-            "testCompileOnly"("biz.aQute.bnd:biz.aQute.bnd.annotation:7.2.3")
+            "testCompileOnly"("biz.aQute.bnd:biz.aQute.bnd.annotation:7.3.0")
             "testCompileOnly"("com.google.code.findbugs:findbugs-annotations:3.0.1")
         }
 
