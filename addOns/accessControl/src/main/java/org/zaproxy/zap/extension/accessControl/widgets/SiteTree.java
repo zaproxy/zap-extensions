@@ -19,13 +19,10 @@
  */
 package org.zaproxy.zap.extension.accessControl.widgets;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
 import javax.swing.tree.TreeNode;
 import org.apache.commons.httpclient.URI;
-import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zaproxy.zap.model.Context;
@@ -49,24 +46,7 @@ public class SiteTree {
         return root;
     }
 
-    public SiteTreeNode addPath(Context context, URI uri, String method) {
-        Collection<String> urlParams = new ArrayList<>();
-        try {
-            context.getUrlParamParser()
-                    .parseParameters(uri.getQuery())
-                    .forEach(param -> urlParams.add(param.getName()));
-        } catch (URIException e) {
-        }
-        return addPath(context, uri, method, urlParams, null, null);
-    }
-
-    public SiteTreeNode addPath(
-            Context context,
-            URI uri,
-            String method,
-            Collection<String> urlParameters,
-            Collection<String> formParameters,
-            String contentType) {
+    public SiteTreeNode addPath(Context context, URI uri, String leafNodeName) {
         SiteTreeNode parent = this.root;
         SiteTreeNode leaf = null;
         String pathSegment = "";
@@ -86,14 +66,7 @@ public class SiteTree {
                 pathSegment = path.get(i);
                 if (pathSegment != null && !pathSegment.equals("")) {
                     if (i == path.size() - 1) {
-                        String leafName =
-                                UriUtils.getLeafNodeRepresentation(
-                                        pathSegment,
-                                        method,
-                                        urlParameters,
-                                        formParameters,
-                                        contentType);
-                        leaf = findOrAddPathSegmentNode(parent, leafName, uri);
+                        leaf = findOrAddPathSegmentNode(parent, leafNodeName, uri);
                     } else {
                         pathSegmentUri =
                                 new URI(hostUri, paramParser.getAncestorPath(uri, i + 1), false);
