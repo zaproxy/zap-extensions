@@ -16,6 +16,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
  - A mock MS online login.
  - Login using HTTP basic authentication.
  - A mock MS online login which uses a popup window.
+ - A login which requires a client certificate.
+- A "full" app section with a simple form-based authenticated app containing injection vulnerabilities.
 
 ### Changed
 - Update minimum ZAP version to 2.17.0.

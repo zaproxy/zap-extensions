@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>ZAP Test Server - Vulnerable App</title>
+	<link href="/tutorial.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="roundContainer">
+	<h1>Vulnerable App Home</h1>
+	<p>You are logged in. This app contains intentional vulnerabilities for testing ZAP.</p>
+	<h2>Vulnerable Pages</h2>
+	<ul>
+		<li><a href="reflected-xss?name=World">Reflected XSS</a></li>
+		<li><a href="dom-xss.html?name=World">DOM XSS</a></li>
+		<li><a href="sqli?search=test">SQL Injection</a></li>
+	</ul>
+</div>
+</body>
+</html>

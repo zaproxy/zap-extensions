@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>ZAP Test Server - Vulnerable App</title>
+	<link href="/tutorial.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="roundContainer">
+	<h1>Vulnerable App Login</h1>
+	<h2>Login</h2>
+
+	<div id="result"></div>
+
+	<form method="post" action="login">
+	<table style="border: none;">
+	<tr>
+		<td>Username:</td>
+		<td><input name="username" type="text"></td>
+	</tr>
+	<tr>
+		<td>Password:</td>
+		<td><input name="password" type="password"></td>
+	</tr>
+	<tr>
+		<td></td>
+		<td><button type="submit">Login</button></td>
+	</tr>
+	</table>
+	</form>
+	<p>
+	Test credentials:
+	<ul>
+		<li>username = test@test.com</li>
+		<li>password = password123</li>
+	</ul>
+	This app contains intentional vulnerabilities for testing ZAP scanning of authenticated pages.
+	</p>
+</div>
+<script>
+const params = new URLSearchParams(location.search);
+if (params.get('error')) {
+	document.getElementById('result').textContent = 'Login failed: invalid username or password';
+}
+</script>
+</body>
+</html>

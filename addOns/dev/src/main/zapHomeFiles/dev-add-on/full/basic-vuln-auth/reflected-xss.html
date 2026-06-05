@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>ZAP Test Server - Reflected XSS</title>
+	<link href="/tutorial.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="roundContainer">
+	<h1>Reflected XSS</h1>
+	<form method="get" action="">
+	<label>Name: <input name="name" type="text" value="<!-- VALUE -->"></label>
+	<button type="submit">Search</button>
+	</form>
+	<!-- RESULT -->
+</div>
+</body>
+</html>
