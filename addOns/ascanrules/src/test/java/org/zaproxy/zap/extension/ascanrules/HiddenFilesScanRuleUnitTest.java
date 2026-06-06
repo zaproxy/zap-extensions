@@ -450,7 +450,7 @@ class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesScanRule>
     }
 
     @Test
-    void shouldtRaiseAlertForMatchWith404As200() throws HttpMalformedHeaderException {
+    void shouldRaiseAlertForMatchWith404As200() throws HttpMalformedHeaderException {
         // Given
         String servePath = "/shouldAlert";
 
