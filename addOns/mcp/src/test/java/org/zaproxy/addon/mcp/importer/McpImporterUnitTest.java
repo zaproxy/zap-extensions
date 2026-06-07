@@ -47,6 +47,8 @@ import java.util.Map;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.quality.Strictness;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
@@ -301,6 +303,19 @@ class McpImporterUnitTest {
     }
 
     @Test
+    void shouldSetContentTypeApplicationJsonOnAllRequests() throws IOException {
+        // Given / When
+        importer.importServer(new ImportConfig(SERVER_URL, null));
+
+        // Then
+        assertThat(capturedRequests, not(empty()));
+        for (HttpMessage msg : capturedRequests) {
+            assertThat(
+                    msg.getRequestHeader().getHeader("Content-Type"), equalTo("application/json"));
+        }
+    }
+
+    @Test
     void shouldSetAcceptHeaderForJsonAndEventStreamOnAllRequests() throws IOException {
         // Given / When
         importer.importServer(new ImportConfig(SERVER_URL, null));
@@ -391,7 +406,7 @@ class McpImporterUnitTest {
                                             method, "{\"jsonrpc\":\"2.0\",\"result\":{}}");
                             msg.setResponseHeader(
                                     "HTTP/1.1 200 OK\r\nContent-Type: text/event-stream\r\n\r\n");
-                            msg.setResponseBody("event: message\ndata: " + json + "\n\n");
+                            msg.setResponseBody(sseEvent(json));
                             return null;
                         })
                 .given(client)
@@ -403,6 +418,74 @@ class McpImporterUnitTest {
         // Then
         assertThat(results.errors(), is(empty()));
         assertThat(results.requestCount(), is(7));
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {1, 2, 3})
+    void shouldSkipServerNotificationsBeforeResponseInSseStream(int notificationCount)
+            throws IOException {
+        // Given — server sends N notifications before the response (e.g. auth banners)
+        String notification =
+                """
+                {"jsonrpc":"2.0","method":"notifications/message",\
+                "params":{"level":"info","data":"Authentication successful"}}""";
+        willAnswer(
+                        inv -> {
+                            HttpMessage msg = inv.getArgument(0);
+                            capturedRequests.add(msg);
+                            String method =
+                                    MAPPER.readTree(msg.getRequestBody().toString())
+                                            .path("method")
+                                            .asText();
+                            String responseJson =
+                                    responses.getOrDefault(
+                                            method, "{\"jsonrpc\":\"2.0\",\"result\":{}}");
+                            msg.setResponseHeader(
+                                    "HTTP/1.1 200 OK\r\nContent-Type: text/event-stream\r\n\r\n");
+                            StringBuilder body = new StringBuilder();
+                            for (int i = 0; i < notificationCount; i++) {
+                                body.append(sseEvent(notification));
+                            }
+                            body.append(sseEvent(responseJson));
+                            msg.setResponseBody(body.toString());
+                            return null;
+                        })
+                .given(client)
+                .send(any(HttpMessage.class));
+
+        // When
+        ImportResults results = importer.importServer(new ImportConfig(SERVER_URL, null));
+
+        // Then — all notifications are skipped; the real response drives the handshake
+        assertThat(results.errors(), is(empty()));
+        assertThat(results.requestCount(), is(7));
+    }
+
+    @Test
+    void shouldFailHandshakeWhenSseStreamContainsOnlyNotifications() throws IOException {
+        // Given — server never sends a response, only notifications
+        willAnswer(
+                        inv -> {
+                            HttpMessage msg = inv.getArgument(0);
+                            capturedRequests.add(msg);
+                            msg.setResponseHeader(
+                                    "HTTP/1.1 200 OK\r\nContent-Type: text/event-stream\r\n\r\n");
+                            msg.setResponseBody(
+                                    sseEvent(
+                                            """
+                                            {"jsonrpc":"2.0","method":"notifications/message",\
+                                            "params":{}}"""));
+                            return null;
+                        })
+                .given(client)
+                .send(any(HttpMessage.class));
+
+        // When
+        ImportResults results = importer.importServer(new ImportConfig(SERVER_URL, null));
+
+        // Then — no response found, handshake fails
+        assertThat(results.errors(), hasSize(1));
+        assertThat(results.errors().get(0), containsString("handshakefailed"));
     }
 
     // ---- security key ----
@@ -796,6 +879,15 @@ class McpImporterUnitTest {
         } catch (Exception e) {
             throw new RuntimeException("Failed to parse request body", e);
         }
+    }
+
+    private static String sseEvent(String data) {
+        return """
+                event: message
+                data: %s
+
+                """
+                .formatted(data);
     }
 
     private static String toolsListResponse(String toolName, String inputSchema) {
