@@ -112,8 +112,12 @@ class ClientSpiderTaskUnitTest extends TestUtils {
                         w -> {
                             ran.add("first");
                             Thread.currentThread().interrupt();
+                            return true;
                         },
-                        w -> ran.add("second"));
+                        w -> {
+                            ran.add("second");
+                            return true;
+                        });
         ClientSpiderTask task = new ClientSpiderTask(1, clientSpider, actions, 5, 1, "test", "");
 
         // When

@@ -20,6 +20,7 @@
 package org.zaproxy.addon.client.spider.actions;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -31,6 +32,7 @@ import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 import java.io.IOException;
 import java.util.List;
@@ -75,23 +77,26 @@ class ClickElementUnitTest {
 
     @Test
     void shouldThrowIfElementDataIsNull() {
-        assertThrows(NullPointerException.class, () -> new ClickElement(valueProvider, uri, null));
+        assertThrows(
+                NullPointerException.class,
+                () -> new ClickElement(valueProvider, uri, null, false));
     }
 
     @Test
     void shouldClickElementOnRun() {
         // Given
         Map<String, String> elementData = Map.of("tagName", "A");
-        ClickElement action = new ClickElement(valueProvider, uri, elementData);
+        ClickElement action = new ClickElement(valueProvider, uri, elementData, false);
         WebDriver wd = mock(WebDriver.class);
         WebElement element = visibleElement();
         given(wd.findElement(any(By.class))).willReturn(element);
         given(wd.findElements(any(By.class))).willReturn(List.of());
 
         // When
-        action.run(wd);
+        boolean result = action.run(wd);
 
         // Then
+        assertThat(result, is(equalTo(true)));
         verify(element).click();
         assertThat(stats.getStat("stats.client.spider.action.click.tag.A"), is(1L));
         assertThat(stats.getStat("stats.client.spider.action.click.tag.A.clicked"), is(1L));
@@ -101,7 +106,7 @@ class ClickElementUnitTest {
     void shouldFillInputsBeforeClicking() {
         // Given
         Map<String, String> elementData = Map.of("tagName", "A");
-        ClickElement action = new ClickElement(valueProvider, uri, elementData);
+        ClickElement action = new ClickElement(valueProvider, uri, elementData, false);
         WebDriver wd = mock(WebDriver.class);
         WebElement element = visibleElement();
         given(wd.findElement(any(By.class))).willReturn(element);
@@ -114,9 +119,10 @@ class ClickElementUnitTest {
                 .willReturn("value2");
 
         // When
-        action.run(wd);
+        boolean result = action.run(wd);
 
         // Then
+        assertThat(result, is(equalTo(true)));
         InOrder inOrder = inOrder(input1, input2);
         inOrder.verify(input1).clear();
         inOrder.verify(input1).sendKeys("value1");
@@ -125,10 +131,35 @@ class ClickElementUnitTest {
     }
 
     @Test
+    void shouldNotFillInputsBeforeClickingWhenPassive() {
+        // Given
+        Map<String, String> elementData = Map.of("tagName", "A");
+        ClickElement action = new ClickElement(valueProvider, uri, elementData, true);
+        WebDriver wd = mock(WebDriver.class);
+        WebElement element = visibleElement();
+        given(wd.findElement(any(By.class))).willReturn(element);
+        WebElement input1 = visibleInput("inputA", "text");
+        WebElement input2 = visibleInput("inputB", "text");
+        given(wd.findElements(any(By.class))).willReturn(List.of(input1, input2));
+        given(valueProvider.getValue(any(), any(), eq("inputA"), any(), any(), any(), any()))
+                .willReturn("value1");
+        given(valueProvider.getValue(any(), any(), eq("inputB"), any(), any(), any(), any()))
+                .willReturn("value2");
+
+        // When
+        boolean result = action.run(wd);
+
+        // Then
+        assertThat(result, is(equalTo(true)));
+        verifyNoInteractions(input1);
+        verifyNoInteractions(input2);
+    }
+
+    @Test
     void shouldHandleClickExceptionGracefully() {
         // Given
         Map<String, String> elementData = Map.of("tagName", "A");
-        ClickElement action = new ClickElement(valueProvider, uri, elementData);
+        ClickElement action = new ClickElement(valueProvider, uri, elementData, false);
         WebDriver wd = mock(WebDriver.class);
         WebElement element = visibleElement();
         given(wd.findElement(any(By.class))).willReturn(element);
@@ -136,7 +167,8 @@ class ClickElementUnitTest {
         willThrow(RuntimeException.class).given(element).click();
 
         // When / Then
-        assertDoesNotThrow(() -> action.run(wd));
+        boolean result = assertDoesNotThrow(() -> action.run(wd));
+        assertThat(result, is(equalTo(false)));
         assertThat(stats.getStat("stats.client.spider.action.click.tag.A"), is(1L));
         assertThat(stats.getStat("stats.client.spider.action.click.tag.A.exception"), is(1L));
     }
@@ -145,14 +177,15 @@ class ClickElementUnitTest {
     void shouldIncrementStatsWhenElementNotFound() {
         // Given
         Map<String, String> elementData = Map.of("tagName", "A");
-        ClickElement action = new ClickElement(valueProvider, uri, elementData);
+        ClickElement action = new ClickElement(valueProvider, uri, elementData, false);
         WebDriver wd = mock(WebDriver.class);
         given(wd.findElement(any(By.class))).willThrow(RuntimeException.class);
 
         // When
-        action.run(wd);
+        boolean result = action.run(wd);
 
         // Then
+        assertThat(result, is(equalTo(false)));
         assertThat(stats.getStat("stats.client.spider.action.click.tag.A"), is(1L));
         assertThat(stats.getStat("stats.client.spider.action.click.tag.A.notfound"), is(1L));
     }
@@ -161,16 +194,17 @@ class ClickElementUnitTest {
     void shouldIncrementStatsWhenElementNotDisplayed() {
         // Given
         Map<String, String> elementData = Map.of("tagName", "A");
-        ClickElement action = new ClickElement(valueProvider, uri, elementData);
+        ClickElement action = new ClickElement(valueProvider, uri, elementData, false);
         WebDriver wd = mock(WebDriver.class);
         WebElement element = mock(WebElement.class);
         given(wd.findElement(any(By.class))).willReturn(element);
         given(element.isDisplayed()).willReturn(false);
 
         // When
-        action.run(wd);
+        boolean result = action.run(wd);
 
         // Then
+        assertThat(result, is(equalTo(false)));
         assertThat(stats.getStat("stats.client.spider.action.click.tag.A"), is(1L));
         assertThat(stats.getStat("stats.client.spider.action.click.tag.A.notdisplayed"), is(1L));
     }
@@ -180,7 +214,7 @@ class ClickElementUnitTest {
         // Given
         String id = "my-button";
         Map<String, String> elementData = Map.of("tagName", "BUTTON", "id", id);
-        ClickElement action = new ClickElement(valueProvider, uri, elementData);
+        ClickElement action = new ClickElement(valueProvider, uri, elementData, false);
         WebDriver wd = mock(WebDriver.class);
         WebElement visibleElement = visibleElement();
         ArgumentCaptor<By> byCaptor = ArgumentCaptor.forClass(By.class);
@@ -188,9 +222,10 @@ class ClickElementUnitTest {
         given(wd.findElements(any(By.class))).willReturn(List.of());
 
         // When
-        action.run(wd);
+        boolean result = action.run(wd);
 
         // Then
+        assertThat(result, is(equalTo(true)));
         assertThat(byCaptor.getValue(), is(By.id(id)));
     }
 
@@ -199,7 +234,7 @@ class ClickElementUnitTest {
         // Given
         String text = "Submit";
         Map<String, String> elementData = Map.of("tagName", "INPUT", "text", text);
-        ClickElement action = new ClickElement(valueProvider, uri, elementData);
+        ClickElement action = new ClickElement(valueProvider, uri, elementData, false);
         WebDriver wd = mock(WebDriver.class);
         WebElement visibleElement = visibleElement();
         ArgumentCaptor<By> byCaptor = ArgumentCaptor.forClass(By.class);
@@ -207,9 +242,10 @@ class ClickElementUnitTest {
         given(wd.findElements(any(By.class))).willReturn(List.of());
 
         // When
-        action.run(wd);
+        boolean result = action.run(wd);
 
         // Then
+        assertThat(result, is(equalTo(true)));
         assertThat(byCaptor.getValue(), is(By.xpath("//INPUT[@value='" + text + "']")));
     }
 
@@ -218,7 +254,7 @@ class ClickElementUnitTest {
         // Given
         String text = "Click me";
         Map<String, String> elementData = Map.of("tagName", "BUTTON", "text", text);
-        ClickElement action = new ClickElement(valueProvider, uri, elementData);
+        ClickElement action = new ClickElement(valueProvider, uri, elementData, false);
         WebDriver wd = mock(WebDriver.class);
         WebElement visibleElement = visibleElement();
         ArgumentCaptor<By> byCaptor = ArgumentCaptor.forClass(By.class);
@@ -226,9 +262,10 @@ class ClickElementUnitTest {
         given(wd.findElements(any(By.class))).willReturn(List.of());
 
         // When
-        action.run(wd);
+        boolean result = action.run(wd);
 
         // Then
+        assertThat(result, is(equalTo(true)));
         assertThat(byCaptor.getValue(), is(By.xpath("//BUTTON[contains(text(), '" + text + "')]")));
     }
 
@@ -236,7 +273,7 @@ class ClickElementUnitTest {
     void shouldUseByTagNameWhenNoText() {
         // Given
         Map<String, String> elementData = Map.of("tagName", "A");
-        ClickElement action = new ClickElement(valueProvider, uri, elementData);
+        ClickElement action = new ClickElement(valueProvider, uri, elementData, false);
         WebDriver wd = mock(WebDriver.class);
         WebElement visibleElement = visibleElement();
         ArgumentCaptor<By> byCaptor = ArgumentCaptor.forClass(By.class);
@@ -244,9 +281,10 @@ class ClickElementUnitTest {
         given(wd.findElements(any(By.class))).willReturn(List.of());
 
         // When
-        action.run(wd);
+        boolean result = action.run(wd);
 
         // Then
+        assertThat(result, is(equalTo(true)));
         assertThat(byCaptor.getValue(), is(By.tagName("A")));
     }
 

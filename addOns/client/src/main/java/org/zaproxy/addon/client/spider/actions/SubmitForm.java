@@ -47,17 +47,19 @@ public class SubmitForm extends BaseElementAction {
     }
 
     @Override
-    public void run(WebDriver wd, WebElement form, String statsPrefix) {
+    public boolean run(WebDriver wd, WebElement form, String statsPrefix) {
         String action = form.getDomAttribute("action");
         fillInputs(form.findElements(By.xpath("//input")), action, statsPrefix);
 
         try {
             form.submit();
             Stats.incCounter(statsPrefix + ".submitted");
+            return true;
         } catch (Exception e) {
             Stats.incCounter(statsPrefix + ".exception");
             LOGGER.debug("An error occurred while submitting the form:", e);
         }
+        return false;
     }
 
     @Override

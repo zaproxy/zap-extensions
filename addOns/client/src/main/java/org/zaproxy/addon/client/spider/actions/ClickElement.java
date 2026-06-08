@@ -39,26 +39,36 @@ public class ClickElement extends BaseElementAction {
     private static final String STATS_PREFIX = "stats.client.spider.action.click";
 
     private final Map<String, String> elementData;
+    private final boolean passive;
     private final String tagName;
 
-    public ClickElement(ValueProvider valueProvider, URI uri, Map<String, String> elementData) {
+    public ClickElement(
+            ValueProvider valueProvider,
+            URI uri,
+            Map<String, String> elementData,
+            boolean passive) {
         super(valueProvider, uri);
 
         this.elementData = Objects.requireNonNull(elementData);
+        this.passive = passive;
         tagName = getTagName(elementData);
     }
 
     @Override
-    public void run(WebDriver wd, WebElement element, String statsPrefix) {
-        fillInputs(wd.findElements(By.xpath("//input")), getUri().toString(), statsPrefix);
+    public boolean run(WebDriver wd, WebElement element, String statsPrefix) {
+        if (!passive) {
+            fillInputs(wd.findElements(By.xpath("//input")), getUri().toString(), statsPrefix);
+        }
 
         try {
             element.click();
             Stats.incCounter(statsPrefix + ".clicked");
+            return true;
         } catch (Exception e) {
             Stats.incCounter(statsPrefix + ".exception");
             LOGGER.debug("An error occurred while clicking the element:", e);
         }
+        return false;
     }
 
     @Override

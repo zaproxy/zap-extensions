@@ -47,6 +47,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InOrder;
 import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
+import org.zaproxy.addon.client.internal.graph.ClientGraphVertex;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.model.StandardParameterParser;
 import org.zaproxy.zap.testutils.TestUtils;
@@ -899,5 +900,186 @@ class ClientMapUnitTest extends TestUtils {
                     map.getOrAddNode(AAA_URL, false, false);
                     map.addComponent(AAA_URL, component);
                 });
+    }
+
+    @Test
+    void shouldAddGraphEdgeForLinkComponent() {
+        // Given
+        String url = "https://www.example.com/page";
+        String href = "https://www.example.com/linked";
+        String json =
+                """
+                {
+                  "tagName": "A",
+                  "id": "link1",
+                  "type": "link",
+                  "url": "%s",
+                  "href": "%s",
+                  "nodeName": "A",
+                  "text": "Click here",
+                  "timestamp": 0
+                }"""
+                        .formatted(url, href);
+
+        // When
+        map.handleReportObject(json);
+
+        // Then
+        var graph = map.getGraph();
+        var sourceVertex = new ClientGraphVertex.Url(url);
+        var targetVertex = new ClientGraphVertex.Url(href);
+        assertThat(graph.containsVertex(sourceVertex), is(true));
+        assertThat(graph.containsVertex(targetVertex), is(true));
+        assertThat(graph.vertexSet().size(), is(3));
+        assertThat(graph.edgeSet().size(), is(2));
+        assertThat(graph.containsEdge(sourceVertex, targetVertex), is(false));
+        long componentVertices =
+                graph.vertexSet().stream()
+                        .filter(ClientGraphVertex.Component.class::isInstance)
+                        .count();
+        assertThat(componentVertices, is(1L));
+    }
+
+    @Test
+    void shouldNotAddGraphEdgeForNonLinkComponent() {
+        // Given
+        String url = "https://www.example.com/page";
+        String json = REPORTED_OBJECT_JSON.formatted(url, null);
+
+        // When
+        map.handleReportObject(json);
+
+        // Then
+        assertThat(map.getGraph().edgeSet().size(), is(0));
+        assertThat(map.getGraph().vertexSet().size(), is(0));
+    }
+
+    @Test
+    void shouldNotAddGraphEdgeForNonHttpHref() {
+        // Given
+        String url = "https://www.example.com/page";
+        String json =
+                """
+                {
+                  "tagName": "A",
+                  "id": "",
+                  "type": "link",
+                  "url": "%s",
+                  "href": "/relative/path",
+                  "nodeName": "A",
+                  "timestamp": 0
+                }"""
+                        .formatted(url);
+
+        // When
+        map.handleReportObject(json);
+
+        // Then
+        assertThat(map.getGraph().edgeSet().size(), is(0));
+    }
+
+    @Test
+    void shouldAllowMultipleEdgesBetweenSameUrls() {
+        // Given
+        String url = "https://www.example.com/page";
+        String href = "https://www.example.com/linked";
+        String json1 =
+                """
+                {
+                  "tagName": "A",
+                  "id": "link1",
+                  "type": "link",
+                  "url": "%s",
+                  "href": "%s",
+                  "nodeName": "A",
+                  "text": "First link",
+                  "timestamp": 0
+                }"""
+                        .formatted(url, href);
+        String json2 =
+                """
+                {
+                  "tagName": "A",
+                  "id": "link2",
+                  "type": "link",
+                  "url": "%s",
+                  "href": "%s",
+                  "nodeName": "A",
+                  "text": "Second link",
+                  "timestamp": 0
+                }"""
+                        .formatted(url, href);
+
+        // When
+        map.handleReportObject(json1);
+        map.handleReportObject(json2);
+
+        // Then
+        var graph = map.getGraph();
+        assertThat(graph.vertexSet().size(), is(4));
+        assertThat(graph.edgeSet().size(), is(4));
+    }
+
+    @Test
+    void shouldClearGraph() {
+        // Given
+        String url = "https://www.example.com/page";
+        String href = "https://www.example.com/linked";
+        String json =
+                """
+                {
+                  "tagName": "A",
+                  "id": "",
+                  "type": "link",
+                  "url": "%s",
+                  "href": "%s",
+                  "nodeName": "A",
+                  "timestamp": 0
+                }"""
+                        .formatted(url, href);
+        map.handleReportObject(json);
+
+        // When
+        map.clear();
+
+        // Then
+        assertThat(map.getGraph().vertexSet().size(), is(0));
+        assertThat(map.getGraph().edgeSet().size(), is(0));
+    }
+
+    @Test
+    void shouldTraverseGraphFromUrlThroughComponentToUrl() {
+        // Given
+        String url = "https://www.example.com/page";
+        String href = "https://www.example.com/linked";
+        String json =
+                """
+                {
+                  "tagName": "A",
+                  "id": "nav",
+                  "type": "link",
+                  "url": "%s",
+                  "href": "%s",
+                  "nodeName": "A",
+                  "text": "Navigate",
+                  "timestamp": 0
+                }"""
+                        .formatted(url, href);
+        map.handleReportObject(json);
+
+        // When
+        var graph = map.getGraph();
+        var sourceVertex = new ClientGraphVertex.Url(url);
+        var outEdges = graph.outgoingEdgesOf(sourceVertex);
+
+        // Then
+        assertThat(outEdges.size(), is(1));
+        var componentVertex = graph.getEdgeTarget(outEdges.iterator().next());
+        assertThat(componentVertex, is(notNullValue()));
+        assertThat(componentVertex instanceof ClientGraphVertex.Component, is(true));
+        var componentOutEdges = graph.outgoingEdgesOf(componentVertex);
+        assertThat(componentOutEdges.size(), is(1));
+        var targetVertex = graph.getEdgeTarget(componentOutEdges.iterator().next());
+        assertThat(targetVertex, is(new ClientGraphVertex.Url(href)));
     }
 }

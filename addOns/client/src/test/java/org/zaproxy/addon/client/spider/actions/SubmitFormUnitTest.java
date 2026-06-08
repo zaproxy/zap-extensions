@@ -20,6 +20,7 @@
 package org.zaproxy.addon.client.spider.actions;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -88,9 +89,10 @@ class SubmitFormUnitTest {
         given(form.findElements(any(By.class))).willReturn(List.of());
 
         // When
-        action.run(wd);
+        boolean result = action.run(wd);
 
         // Then
+        assertThat(result, is(equalTo(true)));
         verify(form).submit();
         assertThat(stats.getStat("stats.client.spider.action.form.0"), is(1L));
     }
@@ -112,9 +114,10 @@ class SubmitFormUnitTest {
                 .willReturn("value2");
 
         // When
-        action.run(wd);
+        boolean result = action.run(wd);
 
         // Then
+        assertThat(result, is(equalTo(true)));
         InOrder inOrder = inOrder(input1, input2);
         inOrder.verify(input1).clear();
         inOrder.verify(input1).sendKeys("value1");
@@ -134,7 +137,8 @@ class SubmitFormUnitTest {
         willThrow(RuntimeException.class).given(form).submit();
 
         // When / Then
-        assertDoesNotThrow(() -> action.run(wd));
+        boolean result = assertDoesNotThrow(() -> action.run(wd));
+        assertThat(result, is(equalTo(false)));
         assertThat(stats.getStat("stats.client.spider.action.form.0"), is(1L));
         assertThat(stats.getStat("stats.client.spider.action.form.0.exception"), is(1L));
     }
@@ -148,9 +152,10 @@ class SubmitFormUnitTest {
         given(wd.findElement(any(By.class))).willThrow(RuntimeException.class);
 
         // When
-        action.run(wd);
+        boolean result = action.run(wd);
 
         // Then
+        assertThat(result, is(equalTo(false)));
         assertThat(stats.getStat("stats.client.spider.action.form.0"), is(1L));
         assertThat(stats.getStat("stats.client.spider.action.form.0.notfound"), is(1L));
     }
@@ -166,9 +171,10 @@ class SubmitFormUnitTest {
         given(form.isDisplayed()).willReturn(false);
 
         // When
-        action.run(wd);
+        boolean result = action.run(wd);
 
         // Then
+        assertThat(result, is(equalTo(false)));
         assertThat(stats.getStat("stats.client.spider.action.form.0"), is(1L));
         assertThat(stats.getStat("stats.client.spider.action.form.0.notdisplayed"), is(1L));
     }
@@ -185,9 +191,10 @@ class SubmitFormUnitTest {
         given(visibleForm.findElements(any(By.class))).willReturn(List.of());
 
         // When
-        action.run(wd);
+        boolean result = action.run(wd);
 
         // Then
+        assertThat(result, is(equalTo(true)));
         assertThat(byCaptor.getValue(), is(By.xpath("(//FORM)[2]")));
     }
 

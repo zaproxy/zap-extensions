@@ -47,6 +47,7 @@ import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.client.spider.ClientSpider;
 import org.zaproxy.addon.client.spider.ScanOptions;
 import org.zaproxy.addon.commonlib.ExtensionCommonlib;
+import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
 import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
@@ -74,8 +75,10 @@ class ExtensionClientIntegrationUnitTest extends TestUtils {
 
         ExtensionLoader extensionLoader =
                 mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
-        when(extensionLoader.getExtension(ExtensionCommonlib.class))
-                .thenReturn(mock(ExtensionCommonlib.class));
+        ExtensionCommonlib extCommonlib =
+                mock(ExtensionCommonlib.class, withSettings().strictness(Strictness.LENIENT));
+        when(extCommonlib.getValueProvider()).thenReturn(mock(ValueProvider.class));
+        when(extensionLoader.getExtension(ExtensionCommonlib.class)).thenReturn(extCommonlib);
         when(extensionLoader.getExtension(ExtensionPassiveScan2.class))
                 .thenReturn(mock(ExtensionPassiveScan2.class));
 

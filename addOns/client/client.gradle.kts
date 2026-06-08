@@ -93,6 +93,9 @@ spotless {
 dependencies {
     jdoEnhance(libs.database.datanucleusJdo)
 
+    implementation(libs.client.jgraphtCore)
+    implementation(libs.client.jgraphx)
+
     zapAddOn("automation")
     zapAddOn("commonlib")
     zapAddOn("database")

@@ -86,6 +86,7 @@ import org.zaproxy.addon.client.spider.ScanOptions;
 import org.zaproxy.addon.client.spider.SpiderScanController;
 import org.zaproxy.addon.client.ui.ClientDetailsPanel;
 import org.zaproxy.addon.client.ui.ClientHistoryPanel;
+import org.zaproxy.addon.client.ui.ClientMapGraphPanel;
 import org.zaproxy.addon.client.ui.ClientMapPanel;
 import org.zaproxy.addon.client.ui.PopupMenuClientAttack;
 import org.zaproxy.addon.client.ui.PopupMenuClientCopyUrls;
@@ -143,6 +144,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
     private ClientMap clientTree;
     private ClientMapPanel clientMapPanel;
     private ClientDetailsPanel clientDetailsPanel;
+    private ClientMapGraphPanel clientMapGraphPanel;
     private ClientHistoryPanel clientHistoryPanel;
     private ClientSpiderPanel clientSpiderPanel;
     private ClientHistoryTableModel clientHistoryTableModel;
@@ -217,6 +219,11 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
         if (hasView()) {
             extensionHook.getHookView().addSelectPanel(getClientMapPanel());
             extensionHook.getHookView().addWorkPanel(getClientDetailsPanel());
+
+            if (Constant.isDevMode()) {
+                clientMapGraphPanel = new ClientMapGraphPanel();
+                extensionHook.getHookView().addWorkPanel(clientMapGraphPanel);
+            }
             extensionHook.getHookView().addStatusPanel(getClientHistoryPanel());
 
             extensionHook.getHookMenu().addToolsMenuItem(getMenuItemCustomScan());
@@ -533,6 +540,9 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
 
     public void clientNodeSelected(ClientNode node) {
         getClientDetailsPanel().setClientNode(node);
+        if (clientMapGraphPanel != null) {
+            clientMapGraphPanel.refresh(clientTree.getGraph());
+        }
     }
 
     public void deleteNodes(List<ClientNode> nodes) {
@@ -853,6 +863,9 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
             }
             if (clientDetailsPanel != null) {
                 clientDetailsPanel.clear();
+            }
+            if (clientMapGraphPanel != null) {
+                clientMapGraphPanel.clear();
             }
             loadClientHistory();
             spiderScanController.reset();
