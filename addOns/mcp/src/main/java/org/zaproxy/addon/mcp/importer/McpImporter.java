@@ -55,7 +55,7 @@ public class McpImporter {
     private static final Logger LOGGER = LogManager.getLogger(McpImporter.class);
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private static final String PROTOCOL_VERSION = "2024-11-05";
-    private static final String CONTENT_TYPE = "application/json; charset=UTF-8";
+    private static final String CONTENT_TYPE = "application/json";
     private static final String ACCEPT = "application/json, text/event-stream";
     private static final String SESSION_HEADER = "Mcp-Session-Id";
     // Bounds how many pages of any paginated list (tools/list, resources/list, prompts/list,
@@ -529,10 +529,13 @@ public class McpImporter {
 
     /**
      * Parses the JSON-RPC payload from a response. The Streamable HTTP transport allows the server
-     * to reply either with a single JSON object or with an SSE stream carrying a single JSON-RPC
-     * message (possibly split across multiple {@code data:} lines, joined with {@code \n} per the
-     * SSE spec). Returns a {@link com.fasterxml.jackson.databind.node.MissingNode} if the body
-     * cannot be parsed.
+     * to reply either with a single JSON object or with an SSE stream. An SSE stream may carry
+     * multiple events (e.g. a server notification followed by the actual response). Each event is
+     * delimited by a blank line; within an event, multiple {@code data:} lines are joined with
+     * {@code \n} per the SSE spec. Notifications (objects with a {@code method} field but no {@code
+     * id}) are skipped; the first JSON-RPC response object (has an {@code id} field) is returned.
+     * Returns a {@link com.fasterxml.jackson.databind.node.MissingNode} if the body cannot be
+     * parsed or contains no response.
      */
     private JsonNode readJsonRpcPayload(HttpMessage msg) {
         String body = msg.getResponseBody().toString();
@@ -540,25 +543,57 @@ public class McpImporter {
         try {
             if (contentType != null
                     && contentType.toLowerCase(Locale.ROOT).contains("text/event-stream")) {
-                StringBuilder data = new StringBuilder();
-                for (String line : body.split("\\R")) {
-                    if (line.startsWith("data:")) {
-                        if (data.length() > 0) {
-                            data.append('\n');
+                // Split into individual SSE events (blank-line delimited) and return the first
+                // JSON-RPC response, skipping any server-sent notifications.
+                StringBuilder eventData = new StringBuilder();
+                for (String line : body.split("\\R", -1)) {
+                    if (line.isEmpty()) {
+                        if (eventData.length() > 0) {
+                            JsonNode node = parseSseEventData(eventData.toString());
+                            if (node != null) {
+                                return node;
+                            }
+                            eventData.setLength(0);
                         }
-                        data.append(line.substring(5).stripLeading());
+                    } else if (line.startsWith("data:")) {
+                        if (eventData.length() > 0) {
+                            eventData.append('\n');
+                        }
+                        eventData.append(line.substring(5).stripLeading());
                     }
                 }
-                if (data.length() == 0) {
-                    return MAPPER.missingNode();
+                // Handle trailing event with no final blank line.
+                if (eventData.length() > 0) {
+                    JsonNode node = parseSseEventData(eventData.toString());
+                    if (node != null) {
+                        return node;
+                    }
                 }
-                return MAPPER.readTree(data.toString());
+                return MAPPER.missingNode();
             }
             return MAPPER.readTree(body);
         } catch (Exception e) {
             LOGGER.warn("Failed to parse MCP response body: {}", e.getMessage());
             return MAPPER.missingNode();
         }
+    }
+
+    /**
+     * Parses one SSE event's accumulated data string. Returns the parsed node if it is a JSON-RPC
+     * response (has an {@code id} field), or {@code null} to indicate the caller should skip it
+     * (e.g. it is a notification).
+     */
+    private JsonNode parseSseEventData(String data) {
+        try {
+            JsonNode node = MAPPER.readTree(data);
+            // JSON-RPC responses have an "id"; notifications have "method" but no "id".
+            if (node.has("id")) {
+                return node;
+            }
+        } catch (Exception e) {
+            LOGGER.warn("Failed to parse SSE event data: {}", e.getMessage());
+        }
+        return null;
     }
 
     private boolean isValidMcpInitializeResult(HttpMessage msg) {
