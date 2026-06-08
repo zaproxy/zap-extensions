@@ -6,6 +6,8 @@
 
     <persistence-unit name="client">
         <class>org.zaproxy.addon.client.internal.db.ClientHistoryEntry</class>
+        <class>org.zaproxy.addon.client.internal.db.ClientMapNode</class>
+        <class>org.zaproxy.addon.client.internal.db.ClientMapComponent</class>
 
         <exclude-unlisted-classes/>
     </persistence-unit>

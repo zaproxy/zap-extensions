@@ -30,6 +30,7 @@ public class ClientNode extends DefaultMutableTreeNode {
     private static final long serialVersionUID = 1L;
     private boolean storage;
     private Session session;
+    private long persistenceId = -1;
 
     public ClientNode(ClientSideDetails userObject, Session session) {
         super(userObject);
@@ -68,6 +69,14 @@ public class ClientNode extends DefaultMutableTreeNode {
 
     public boolean isStorage() {
         return storage;
+    }
+
+    public long getPersistenceId() {
+        return persistenceId;
+    }
+
+    public void setPersistenceId(long persistenceId) {
+        this.persistenceId = persistenceId;
     }
 
     public String getSite() {
