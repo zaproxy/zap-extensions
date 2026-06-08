@@ -21,6 +21,7 @@ package org.zaproxy.addon.client.internal;
 
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -31,8 +32,12 @@ import javax.swing.tree.TreeNode;
 import net.sf.json.JSONObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.DirectedMultigraph;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.client.ClientUtils;
+import org.zaproxy.addon.client.internal.graph.ClientGraphVertex;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.eventBus.Event;
 import org.zaproxy.zap.eventBus.EventPublisher;
@@ -55,6 +60,8 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
     private ClientNode root;
     private Consumer<ReportedObject> reportedObjectConsumer;
     private final List<ClientMapListener> listeners = new CopyOnWriteArrayList<>();
+    private final Graph<ClientGraphVertex, DefaultEdge> graph =
+            new DirectedMultigraph<>(DefaultEdge.class);
 
     public ClientMap(ClientNode root) {
         super(root);
@@ -65,6 +72,10 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
     @Override
     public ClientNode getRoot() {
         return root;
+    }
+
+    public Graph<ClientGraphVertex, DefaultEdge> getGraph() {
+        return graph;
     }
 
     public void addListener(ClientMapListener listener) {
@@ -183,6 +194,9 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
     public void clear() {
         root.removeAllChildren();
         this.nodeStructureChanged(root);
+        synchronized (graph) {
+            graph.removeAllVertices(new HashSet<>(graph.vertexSet()));
+        }
     }
 
     @Override
@@ -306,16 +320,39 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
         ReportedElement rnode = new ReportedElement(json);
         notifyReportedObjectConsumer(rnode);
         String url = rnode.getUrl();
+        String href = rnode.getHref();
+        boolean http = href != null && href.toLowerCase(Locale.ROOT).startsWith("http");
         if (url != null) {
             if (!isApiUrl(url)) {
-                addComponent(url, new ClientSideComponent(json), source);
+                ClientSideComponent component = new ClientSideComponent(json);
+                addComponent(url, component, source);
+                if (http && isLinkComponent(component)) {
+                    addGraphEdge(url, href, component);
+                }
             }
         } else {
             LOGGER.debug("Not got url:(: {}", url);
         }
-        String href = rnode.getHref();
-        if (href != null && href.toLowerCase(Locale.ROOT).startsWith("http")) {
+        if (http) {
             getNode(href, false, false, true, true, source);
+        }
+    }
+
+    private static boolean isLinkComponent(ClientSideComponent component) {
+        return component.getType() == ClientSideComponent.Type.LINK
+                || "A".equals(component.getTagName());
+    }
+
+    private void addGraphEdge(String sourceUrl, String targetUrl, ClientSideComponent component) {
+        ClientGraphVertex source = new ClientGraphVertex.Url(sourceUrl);
+        ClientGraphVertex target = new ClientGraphVertex.Url(targetUrl);
+        ClientGraphVertex componentVertex = new ClientGraphVertex.Component(component);
+        synchronized (graph) {
+            graph.addVertex(source);
+            graph.addVertex(target);
+            graph.addVertex(componentVertex);
+            graph.addEdge(source, componentVertex);
+            graph.addEdge(componentVertex, target);
         }
     }
 

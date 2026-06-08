@@ -23,5 +23,5 @@ import org.openqa.selenium.WebDriver;
 
 public interface SpiderAction {
 
-    void run(WebDriver wd);
+    boolean run(WebDriver wd);
 }

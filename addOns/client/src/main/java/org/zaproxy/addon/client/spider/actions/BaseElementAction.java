@@ -49,14 +49,14 @@ abstract class BaseElementAction implements SpiderAction {
     }
 
     @Override
-    public final void run(WebDriver wd) {
+    public final boolean run(WebDriver wd) {
         String statsPrefix = getStatsPrefix();
         Stats.incCounter(statsPrefix);
 
         By by = getElementBy();
         if (by == null) {
             Stats.incCounter(statsPrefix + ".noby");
-            return;
+            return false;
         }
 
         WebElement element;
@@ -64,22 +64,22 @@ abstract class BaseElementAction implements SpiderAction {
             element = wd.findElement(by);
         } catch (Exception e) {
             Stats.incCounter(statsPrefix + ".notfound");
-            return;
+            return false;
         }
 
         if (!element.isDisplayed()) {
             Stats.incCounter(statsPrefix + ".notdisplayed");
-            return;
+            return false;
         }
 
-        run(wd, element, statsPrefix);
+        return run(wd, element, statsPrefix);
     }
 
     protected abstract String getStatsPrefix();
 
     protected abstract By getElementBy();
 
-    protected abstract void run(WebDriver wd, WebElement element, String statsPrefix);
+    protected abstract boolean run(WebDriver wd, WebElement element, String statsPrefix);
 
     protected void fillInputs(List<WebElement> inputs, String action, String statsPrefix) {
         inputs.forEach(input -> fillInput(input, action, statsPrefix));

@@ -54,6 +54,8 @@ import org.apache.logging.log4j.core.config.Configurator;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.apache.logging.log4j.core.config.Property;
 import org.apache.logging.log4j.core.layout.PatternLayout;
+import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.DirectedMultigraph;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -151,7 +153,8 @@ class ClientSpiderUnitTest extends TestUtils {
         given(extClient.getModel()).willReturn(model);
         Session session = mock(Session.class);
         given(model.getSession()).willReturn(session);
-        map = mock();
+        map = mock(withSettings().strictness(Strictness.LENIENT));
+        when(map.getGraph()).thenReturn(new DirectedMultigraph<>(DefaultEdge.class));
         clientOptions = new ClientOptions();
         clientOptions.load(new ZapXmlConfiguration());
         clientOptions.setThreadCount(1);

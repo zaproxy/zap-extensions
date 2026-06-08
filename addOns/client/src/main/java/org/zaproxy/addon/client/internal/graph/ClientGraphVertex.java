@@ -3,7 +3,7 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2024 The ZAP Development Team
+ * Copyright 2026 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,26 +17,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.client.spider.actions;
+package org.zaproxy.addon.client.internal.graph;
 
-import java.util.Objects;
-import org.openqa.selenium.WebDriver;
-import org.zaproxy.addon.client.spider.SpiderAction;
-import org.zaproxy.zap.utils.Stats;
+import org.zaproxy.addon.client.internal.ClientSideComponent;
 
-public class OpenUrl implements SpiderAction {
+public sealed interface ClientGraphVertex
+        permits ClientGraphVertex.Url, ClientGraphVertex.Component {
 
-    private static final String STATS_PREFIX = "stats.client.spider.action.url";
+    record Url(String url) implements ClientGraphVertex {}
 
-    private final String url;
-
-    public OpenUrl(String url) {
-        this.url = Objects.requireNonNull(url);
-    }
-
-    @Override
-    public void run(WebDriver wd) {
-        Stats.incCounter(STATS_PREFIX);
-        wd.get(url);
-    }
+    record Component(ClientSideComponent component) implements ClientGraphVertex {}
 }

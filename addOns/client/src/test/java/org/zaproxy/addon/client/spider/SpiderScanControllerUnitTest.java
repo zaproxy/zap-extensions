@@ -36,6 +36,8 @@ import static org.mockito.Mockito.withSettings;
 import java.lang.reflect.Field;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
+import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.DirectedMultigraph;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -121,6 +123,7 @@ class SpiderScanControllerUnitTest extends TestUtils {
         when(extension.getClientParam()).thenReturn(defaultOptions);
 
         clientMap = mock(ClientMap.class);
+        when(clientMap.getGraph()).thenReturn(new DirectedMultigraph<>(DefaultEdge.class));
         valueProvider = mock(ValueProvider.class);
 
         controller = new SpiderScanController(extension, clientMap, valueProvider);

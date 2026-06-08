@@ -21,6 +21,7 @@ package org.zaproxy.addon.client.spider;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -68,7 +69,7 @@ import org.zaproxy.addon.client.internal.ClientMapListener;
 import org.zaproxy.addon.client.internal.ClientNode;
 import org.zaproxy.addon.client.internal.ClientSideDetails;
 import org.zaproxy.addon.client.spider.actions.ClickElement;
-import org.zaproxy.addon.client.spider.actions.OpenUrl;
+import org.zaproxy.addon.client.spider.actions.FollowGraph;
 import org.zaproxy.addon.client.spider.actions.SubmitForm;
 import org.zaproxy.addon.commonlib.AuthConstants;
 import org.zaproxy.addon.commonlib.ValueProvider;
@@ -127,6 +128,7 @@ public class ClientSpider implements GenericScanner2 {
 
     private final ValueProvider valueProvider;
     private ClientOptions options;
+    private final Duration pageLoadTime;
     private int scanId;
     private String displayName;
 
@@ -208,6 +210,7 @@ public class ClientSpider implements GenericScanner2 {
         URI targetUri = createUri(targetUrl);
         targetHost = new String(targetUri.getRawHost());
         this.options = options;
+        this.pageLoadTime = Duration.ofSeconds(options.getPageLoadTimeInSecs());
         this.scanId = id;
         this.tasksTotalCount = new AtomicInteger();
         this.valueProvider = valueProvider;
@@ -290,35 +293,39 @@ public class ClientSpider implements GenericScanner2 {
                         new ClientSpiderThreadFactory(
                                 scanOptions.getThreadPrefix() + scanId + "-thread-"));
 
-        List<String> unvisitedUrls = getUnvisitedUrls();
-
-        addInitialOpenUrlTask(targetUrl);
-
-        // Add all of the known but unvisited URLs otherwise these will get ignored
-        unvisitedUrls.forEach(this::addInitialOpenUrlTask);
-    }
-
-    private ClientSpiderTask addInitialOpenUrlTask(String url) {
-        return addOpenUrlTask(url, options.getInitialLoadTimeInSecs());
-    }
-
-    private ClientSpiderTask addOpenUrlTask(String url, int loadTimeInSecs) {
-        return addTask(
-                url,
-                openAction(url),
-                loadTimeInSecs,
+        addTask(
+                targetUrl,
+                followGraphAction(targetUrl),
+                options.getInitialLoadTimeInSecs(),
                 Constant.messages.getString("client.spider.panel.table.action.get"),
                 "");
+
+        // Add all of the known but unvisited URLs otherwise these will get ignored
+        getUnvisitedUrls()
+                .forEach(url -> addFollowGraphTask(url, options.getInitialLoadTimeInSecs()));
     }
 
-    private List<SpiderAction> openAction(String url, SpiderAction... additionalActions) {
+    private List<SpiderAction> followGraphAction(String url, SpiderAction... additionalActions) {
         List<SpiderAction> actions = new ArrayList<>(5);
-        actions.add(new OpenUrl(url));
-        actions.add(wd -> checkRedirect(url, wd));
+        actions.add(new FollowGraph(clientMap.getGraph(), url, valueProvider, pageLoadTime));
+        actions.add(
+                wd -> {
+                    checkRedirect(url, wd);
+                    return true;
+                });
         if (additionalActions != null) {
             Stream.of(additionalActions).forEach(actions::add);
         }
         return actions;
+    }
+
+    private ClientSpiderTask addFollowGraphTask(String url, int loadTimeInSecs) {
+        return addTask(
+                url,
+                followGraphAction(url),
+                loadTimeInSecs,
+                Constant.messages.getString("client.spider.panel.table.action.follow"),
+                "");
     }
 
     private void checkRedirect(String url, WebDriver wd) {
@@ -485,7 +492,7 @@ public class ClientSpider implements GenericScanner2 {
             }
 
             Stats.incCounter("stats.client.spider.event.url");
-            addOpenUrlTask(url, options.getPageLoadTimeInSecs());
+            addFollowGraphTask(url, options.getPageLoadTimeInSecs());
         }
 
         @Override
@@ -505,8 +512,9 @@ public class ClientSpider implements GenericScanner2 {
                 Stats.incCounter("stats.client.spider.event.component.click");
                 addTask(
                         url,
-                        openAction(
-                                url, new ClickElement(valueProvider, createUri(url), parameters)),
+                        followGraphAction(
+                                url,
+                                new ClickElement(valueProvider, createUri(url), parameters, false)),
                         options.getPageLoadTimeInSecs(),
                         Constant.messages.getString("client.spider.panel.table.action.click"),
                         paramsToString(parameters));
@@ -514,7 +522,8 @@ public class ClientSpider implements GenericScanner2 {
                 Stats.incCounter("stats.client.spider.event.component.form");
                 addTask(
                         url,
-                        openAction(url, new SubmitForm(valueProvider, createUri(url), parameters)),
+                        followGraphAction(
+                                url, new SubmitForm(valueProvider, createUri(url), parameters)),
                         options.getPageLoadTimeInSecs(),
                         Constant.messages.getString("client.spider.panel.table.action.submit"),
                         paramsToString(parameters));

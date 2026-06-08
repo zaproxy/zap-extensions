@@ -55,8 +55,8 @@ class BaseElementActionUnitTest {
                 new BaseElementAction(valueProvider, uri) {
 
                     @Override
-                    protected void run(WebDriver wd, WebElement element, String statsPrefix) {
-                        // Nothing to do.
+                    protected boolean run(WebDriver wd, WebElement element, String statsPrefix) {
+                        return true;
                     }
 
                     @Override
