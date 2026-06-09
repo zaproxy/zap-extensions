@@ -1614,7 +1614,9 @@ public class ExtensionSelenium extends ExtensionAdaptor {
 
     private static RemoteWebDriver configureDriver(
             Browser browser, RemoteWebDriver driver, DriverConfiguration conf) {
-        driver.script().addConsoleMessageHandler(e -> WEBDRIVER_LOGGER.debug(e.getText()));
+        if (WEBDRIVER_LOGGER.isDebugEnabled()) {
+            driver.script().addConsoleMessageHandler(e -> WEBDRIVER_LOGGER.debug(e.getText()));
+        }
 
         if (!conf.isEnableExtensions() && conf.getIncludeExtensions().isEmpty()) {
             return driver;
