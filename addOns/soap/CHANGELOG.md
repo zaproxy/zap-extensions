@@ -4,7 +4,11 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
 - Update dependency.
+
+### Fixed
+- Fix SOAP requests generated from some WSDLs being incomplete. Requests now correctly include all fields defined in the schema, and requests are no longer broken by certain characters in element or attribute names and values.
 
 ## [30] - 2026-04-14
 ### Changed
