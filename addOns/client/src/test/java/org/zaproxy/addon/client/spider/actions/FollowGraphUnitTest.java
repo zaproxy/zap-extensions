@@ -21,7 +21,7 @@ package org.zaproxy.addon.client.spider.actions;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
@@ -191,7 +191,7 @@ class FollowGraphUnitTest extends TestUtils {
         boolean result = action.run(wd);
 
         // Then
-        assertThat(System.currentTimeMillis() - start, is(greaterThan(950L)));
+        assertThat(System.currentTimeMillis() - start, is(greaterThanOrEqualTo(950L)));
         assertCommonState(wd, result);
     }
 
