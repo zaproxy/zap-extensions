@@ -52,6 +52,7 @@ import org.zaproxy.addon.automation.AutomationJob.Order;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.ContextWrapper;
 import org.zaproxy.addon.client.ClientOptions;
+import org.zaproxy.addon.client.ClientOptions.ScopeCheck;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.addon.client.spider.ClientSpider;
 import org.zaproxy.addon.commonlib.Constants;
@@ -222,6 +223,20 @@ public class ClientSpiderJobUnitTest extends TestUtils {
 
         // Then
         assertThat(options.getActionWaitTimeInSecs(), is(value));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"FLEXIBLE", "STRICT"})
+    void shouldApplyScopeCheckToOptions(String value) {
+        // Given
+        ClientSpiderJob job = new ClientSpiderJob();
+        job.getParameters().setScopeCheck(value);
+
+        // When
+        ClientOptions options = job.paramsToOptions();
+
+        // Then
+        assertThat(options.getScopeCheck(), is(ScopeCheck.valueOf(value)));
     }
 
     @ParameterizedTest

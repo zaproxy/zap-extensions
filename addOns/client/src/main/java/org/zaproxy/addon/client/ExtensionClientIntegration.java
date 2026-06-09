@@ -81,6 +81,7 @@ import org.zaproxy.addon.client.spider.ClientSpider;
 import org.zaproxy.addon.client.spider.ClientSpiderApi;
 import org.zaproxy.addon.client.spider.ClientSpiderDialog;
 import org.zaproxy.addon.client.spider.ClientSpiderPanel;
+import org.zaproxy.addon.client.spider.OptionsClientSpider;
 import org.zaproxy.addon.client.spider.PopupMenuSpider;
 import org.zaproxy.addon.client.spider.ScanOptions;
 import org.zaproxy.addon.client.spider.SpiderScanController;
@@ -316,6 +317,11 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
             extensionHook
                     .getHookView()
                     .addOptionPanel(new OptionsPassiveScan(passiveScanController));
+            extensionHook
+                    .getHookView()
+                    .addOptionPanel(
+                            List.of(Constant.messages.getString("client.options.name")),
+                            new OptionsClientSpider());
 
             getView()
                     .getMainFrame()
@@ -686,7 +692,6 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
         if (spiderDialog == null) {
             spiderDialog = new ClientSpiderDialog(this, View.getSingleton().getMainFrame());
         }
-        spiderDialog.updateBrowsers();
     }
 
     public void showScanDialog(SiteNode node) {

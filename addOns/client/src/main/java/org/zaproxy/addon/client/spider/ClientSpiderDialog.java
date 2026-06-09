@@ -44,6 +44,7 @@ import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.addon.client.internal.ScopeCheckComponent;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.selenium.ProvidedBrowserUI;
+import org.zaproxy.zap.extension.selenium.ProvidedBrowsersComboBoxModel;
 import org.zaproxy.zap.extension.users.ExtensionUserManagement;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.users.User;
@@ -90,6 +91,7 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
     private ZapTextField urlStartField;
     private boolean subtreeOnlyPreviousCheckedState;
     private ScopeCheckComponent scopeCheckComponent;
+    private ProvidedBrowsersComboBoxModel browserModel;
 
     private ExtensionUserManagement extUserMgmt;
 
@@ -146,7 +148,9 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
         }
 
         this.addCheckBoxField(0, FIELD_SUBTREE_ONLY, subtreeOnlyPreviousCheckedState);
-        this.addComboField(0, FIELD_BROWSER, new ArrayList<>(), null);
+        this.browserModel = getExtSelenium().createProvidedBrowsersComboBoxModel();
+        this.addComboField(0, FIELD_BROWSER, browserModel);
+        browserModel.setSelectedBrowser(params.getBrowserId());
 
         getScopeCheckComponent().setScopeCheck(params.getScopeCheck());
         addCustomComponent(0, getScopeCheckComponent().getComponent());
@@ -186,8 +190,6 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
         this.addPadding(1);
 
         this.pack();
-
-        this.updateBrowsers();
     }
 
     private ScopeCheckComponent getScopeCheckComponent() {
@@ -298,26 +300,6 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
         return extSel;
     }
 
-    /**
-     * Updates the choices available in "Browser" combo box, based on the currently available
-     * browsers.
-     *
-     * @see ExtensionSelenium#getConfiguredBrowsers()
-     */
-    public void updateBrowsers() {
-        List<ProvidedBrowserUI> browserList = getExtSelenium().getProvidedBrowserUIList();
-        List<String> browserNames = new ArrayList<>();
-        String defaultBrowser = null;
-        for (ProvidedBrowserUI browser : browserList) {
-            browserNames.add(browser.getName());
-            if (browser.getBrowser().getId().equals(params.getBrowserId())) {
-                defaultBrowser = browser.getName();
-            }
-        }
-
-        setComboFields(FIELD_BROWSER, browserNames, defaultBrowser);
-    }
-
     private void setAdvancedOptions(boolean adv) {
         this.setTabsVisible(
                 new String[] {
@@ -404,21 +386,11 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
     /**
      * Gets the selected browser.
      *
-     * @return the selected browser, {@code null} if none selected
+     * @return the selected browser ID, {@code null} if none selected
      */
     private String getSelectedBrowser() {
-        if (isEmptyField(FIELD_BROWSER)) {
-            return null;
-        }
-
-        String browserName = this.getStringValue(FIELD_BROWSER);
-        List<ProvidedBrowserUI> browserList = getExtSelenium().getProvidedBrowserUIList();
-        for (ProvidedBrowserUI bui : browserList) {
-            if (browserName.equals(bui.getName())) {
-                return bui.getBrowser().getId();
-            }
-        }
-        return null;
+        ProvidedBrowserUI selected = browserModel.getSelectedItem();
+        return selected != null ? selected.getBrowser().getId() : null;
     }
 
     @Override

@@ -193,6 +193,9 @@ public class ClientSpiderJob extends AutomationJob {
         if (parameters.getActionWaitTime() != null) {
             options.setActionWaitTimeInSecs(parameters.getActionWaitTime());
         }
+        if (!StringUtils.isBlank(parameters.getScopeCheck())) {
+            options.setScopeCheck(parameters.getScopeCheck());
+        }
         return options;
     }
 
