@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Change the Client Spider to crawl through page components (e.g. links) to reduce full page reloads, improving support for SPAs.
 
+### Fixed
+- Change the Client Spider to track all redirects while crawling.
+
 ## [0.26.0] - 2026-05-27
 ### Added
 - More programmatic control of the spider.

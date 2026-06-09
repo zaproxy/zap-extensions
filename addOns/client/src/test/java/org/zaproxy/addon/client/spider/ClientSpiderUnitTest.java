@@ -26,6 +26,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.atLeastOnce;
@@ -45,6 +46,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
+import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.LoggerContext;
@@ -62,7 +64,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.quality.Strictness;
 import org.mockito.verification.VerificationMode;
@@ -75,6 +80,7 @@ import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
+import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.client.ClientOptions;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.addon.client.internal.ClientMap;
@@ -82,7 +88,10 @@ import org.zaproxy.addon.client.internal.ClientMapListener;
 import org.zaproxy.addon.client.internal.ClientNode;
 import org.zaproxy.addon.client.internal.ClientSideDetails;
 import org.zaproxy.addon.commonlib.ValueProvider;
+import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.addon.network.ExtensionNetwork;
+import org.zaproxy.addon.network.server.HttpMessageHandler;
+import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 import org.zaproxy.addon.network.server.HttpServerConfig;
 import org.zaproxy.addon.network.server.Server;
 import org.zaproxy.zap.extension.selenium.DriverConfiguration;
@@ -103,6 +112,8 @@ class ClientSpiderUnitTest extends TestUtils {
     private CountDownLatch proxyCdl;
     private WebDriver wd;
     private ExtensionSelenium extSel;
+    private ExtensionNetwork network;
+    private Server serverMock;
 
     private ClientSpider spider;
 
@@ -123,10 +134,9 @@ class ClientSpiderUnitTest extends TestUtils {
         ExtensionHistory history = mock(ExtensionHistory.class);
         when(extensionLoader.getExtension(ExtensionHistory.class)).thenReturn(history);
         when(extensionLoader.getExtension(ExtensionSelenium.class)).thenReturn(extSel);
-        ExtensionNetwork network =
-                mock(ExtensionNetwork.class, withSettings().strictness(Strictness.LENIENT));
+        network = mock(ExtensionNetwork.class, withSettings().strictness(Strictness.LENIENT));
         when(extensionLoader.getExtension(ExtensionNetwork.class)).thenReturn(network);
-        Server serverMock = mock(Server.class, withSettings().strictness(Strictness.LENIENT));
+        serverMock = mock(Server.class, withSettings().strictness(Strictness.LENIENT));
         proxyCdl = new CountDownLatch(1);
         given(serverMock.start(anyInt())).willReturn(PROXY_PORT);
         given(network.createHttpServer(any(HttpServerConfig.class))).willReturn(serverMock);
@@ -168,11 +178,9 @@ class ClientSpiderUnitTest extends TestUtils {
                         "",
                         seedUrl,
                         clientOptions,
-                        1,
-                        null,
-                        null,
-                        false,
-                        mock(ValueProvider.class));
+                        ScanOptions.builder().setExternalControl(true).build(),
+                        mock(ValueProvider.class),
+                        1);
     }
 
     @AfterEach
@@ -575,6 +583,66 @@ class ClientSpiderUnitTest extends TestUtils {
         // Then
         verify(wd, mode).findElement(By.xpath("//A[contains(text(), 'logout')]"));
     }
+
+    @ParameterizedTest
+    @CsvSource({
+        "https://www.example.org/new-path, https://www.example.org/new-path",
+        "/relative-path, https://www.example.com/relative-path",
+        "/path with spaces, https://www.example.com/path%20with%20spaces",
+        "  /path-trim-spaces  , https://www.example.com/path-trim-spaces"
+    })
+    void shouldTrackRedirectsAtNetworkLevel(String location, String expectedRedirectUrl)
+            throws Exception {
+        // Given
+        HttpMessageHandlerSetup setup = setUpRedirect(location);
+
+        // When
+        setup.handler().handleMessage(setup.ctx(), setup.redirectMessage());
+
+        // Then
+        verify(map).getOrAddNode("https://www.example.com/original", true, false);
+        verify(map).getOrAddNode(expectedRedirectUrl, false, false);
+        verify(map).setRedirect("https://www.example.com/original", expectedRedirectUrl);
+    }
+
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = {"  ", ""})
+    void shouldIgnoreInvalidRedirectsAtNetworkLevel(String location) throws Exception {
+        // Given
+        HttpMessageHandlerSetup setup = setUpRedirect(location);
+
+        // When
+        setup.handler().handleMessage(setup.ctx(), setup.redirectMessage());
+
+        // Then
+        verify(map, never()).setRedirect(anyString(), anyString());
+    }
+
+    private HttpMessageHandlerSetup setUpRedirect(String location) throws Exception {
+        HttpMessage redirectMessage = new HttpMessage();
+        redirectMessage
+                .getRequestHeader()
+                .setURI(new URI("https://www.example.com/original", true));
+        redirectMessage.setResponseHeader("HTTP/1.1 302 Found");
+        redirectMessage.getResponseHeader().setHeader(HttpFieldsNames.LOCATION, location);
+
+        ArgumentCaptor<HttpServerConfig> configCaptor = ArgumentCaptor.captor();
+        given(network.createHttpServer(configCaptor.capture())).willReturn(serverMock);
+        spider.run();
+        waitForProxy();
+
+        HttpMessageHandler handler = configCaptor.getValue().getHttpMessageHandler();
+        HttpMessageHandlerContext ctx = mock(HttpMessageHandlerContext.class);
+        given(ctx.isFromClient()).willReturn(false);
+
+        return new HttpMessageHandlerSetup(handler, ctx, redirectMessage);
+    }
+
+    private record HttpMessageHandlerSetup(
+            HttpMessageHandler handler,
+            HttpMessageHandlerContext ctx,
+            HttpMessage redirectMessage) {}
 
     class SpiderStatus {
         private boolean running;
