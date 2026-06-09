@@ -61,6 +61,7 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpSender;
+import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.client.ClientOptions;
 import org.zaproxy.addon.client.ClientOptions.ScopeCheck;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
@@ -647,7 +648,12 @@ public class ClientSpider implements GenericScanner2 {
     }
 
     protected void setRedirect(String originalUrl, String redirectedUrl) {
-        ThreadUtils.invokeLater(() -> clientMap.setRedirect(originalUrl, redirectedUrl));
+        ThreadUtils.invokeLater(
+                () -> {
+                    clientMap.getOrAddNode(originalUrl, true, false);
+                    clientMap.getOrAddNode(redirectedUrl, false, false);
+                    clientMap.setRedirect(originalUrl, redirectedUrl);
+                });
     }
 
     @Override
@@ -960,6 +966,8 @@ public class ClientSpider implements GenericScanner2 {
         @Override
         public void handleMessage(HttpMessageHandlerContext ctx, HttpMessage httpMessage) {
             if (!ctx.isFromClient()) {
+                handleRedirection(httpMessage);
+
                 notifyMessage(
                         httpMessage, scanOptions.getHrefType(), getResourceState(httpMessage));
                 return;
@@ -1032,6 +1040,37 @@ public class ClientSpider implements GenericScanner2 {
                 LOGGER.error(e, e);
             }
         }
+    }
+
+    private void handleRedirection(HttpMessage httpMessage) {
+        if (!HttpStatusCode.isRedirection(httpMessage.getResponseHeader().getStatusCode())) {
+            return;
+        }
+
+        String location = httpMessage.getResponseHeader().getHeader(HttpHeader.LOCATION);
+        if (location == null || location.isBlank()) {
+            return;
+        }
+
+        URI from = httpMessage.getRequestHeader().getURI();
+        URI to = resolveUri(from, location.trim());
+
+        if (to != null) {
+            setRedirect(from.toString(), to.toString());
+        }
+    }
+
+    private static URI resolveUri(URI base, String relative) {
+        try {
+            return new URI(base, relative, true);
+        } catch (URIException ex) {
+            try {
+                return new URI(base, relative, false);
+            } catch (URIException e) {
+                LOGGER.debug("Unable to resolve {} with base {}", relative, base, e);
+            }
+        }
+        return null;
     }
 
     private void crawledUrl(String url) {
