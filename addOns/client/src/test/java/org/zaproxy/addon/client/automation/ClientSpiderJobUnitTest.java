@@ -51,10 +51,10 @@ import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob.Order;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.ContextWrapper;
-import org.zaproxy.addon.client.ClientOptions;
-import org.zaproxy.addon.client.ClientOptions.ScopeCheck;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.addon.client.spider.ClientSpider;
+import org.zaproxy.addon.client.spider.ClientSpiderOptions;
+import org.zaproxy.addon.client.spider.ClientSpiderOptions.ScopeCheck;
 import org.zaproxy.addon.commonlib.Constants;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.testutils.TestUtils;
@@ -147,7 +147,8 @@ public class ClientSpiderJobUnitTest extends TestUtils {
         assertThat(job.getParameters().getUser(), is(equalTo("")));
         assertThat(job.getParameters().getUrl(), is(equalTo("")));
         assertThat(job.getParameters().getMaxDuration(), is(nullValue()));
-        assertThat(job.getParameters().getMaxCrawlDepth(), is(ClientOptions.DEFAULT_MAX_DEPTH));
+        assertThat(
+                job.getParameters().getMaxCrawlDepth(), is(ClientSpiderOptions.DEFAULT_MAX_DEPTH));
         assertThat(job.getParameters().getMaxChildren(), is(nullValue()));
         assertThat(
                 job.getParameters().getNumberOfBrowsers(),
@@ -155,13 +156,17 @@ public class ClientSpiderJobUnitTest extends TestUtils {
         assertThat(job.getParameters().getBrowserId(), is(nullValue()));
         assertThat(
                 job.getParameters().getInitialLoadTime(),
-                is(ClientOptions.DEFAULT_INITIAL_LOAD_TIME));
-        assertThat(job.getParameters().getPageLoadTime(), is(ClientOptions.DEFAULT_PAGE_LOAD_TIME));
-        assertThat(job.getParameters().getShutdownTime(), is(ClientOptions.DEFAULT_SHUTDOWN_TIME));
+                is(ClientSpiderOptions.DEFAULT_INITIAL_LOAD_TIME));
+        assertThat(
+                job.getParameters().getPageLoadTime(),
+                is(ClientSpiderOptions.DEFAULT_PAGE_LOAD_TIME));
+        assertThat(
+                job.getParameters().getShutdownTime(),
+                is(ClientSpiderOptions.DEFAULT_SHUTDOWN_TIME));
         assertThat(job.getParameters().getLogoutAvoidance(), is(true));
         assertThat(
                 job.getParameters().getActionWaitTime(),
-                is(ClientOptions.DEFAULT_ACTION_WAIT_TIME));
+                is(ClientSpiderOptions.DEFAULT_ACTION_WAIT_TIME));
     }
 
     @Test
@@ -219,7 +224,7 @@ public class ClientSpiderJobUnitTest extends TestUtils {
         job.getParameters().setActionWaitTime(value);
 
         // When
-        ClientOptions options = job.paramsToOptions();
+        ClientSpiderOptions options = job.paramsToOptions();
 
         // Then
         assertThat(options.getActionWaitTimeInSecs(), is(value));
@@ -233,7 +238,7 @@ public class ClientSpiderJobUnitTest extends TestUtils {
         job.getParameters().setScopeCheck(value);
 
         // When
-        ClientOptions options = job.paramsToOptions();
+        ClientSpiderOptions options = job.paramsToOptions();
 
         // Then
         assertThat(options.getScopeCheck(), is(ScopeCheck.valueOf(value)));
@@ -247,7 +252,7 @@ public class ClientSpiderJobUnitTest extends TestUtils {
         job.getParameters().setLogoutAvoidance(value);
 
         // When
-        ClientOptions options = job.paramsToOptions();
+        ClientSpiderOptions options = job.paramsToOptions();
 
         // Then
         assertThat(options.isLogoutAvoidance(), is(value));

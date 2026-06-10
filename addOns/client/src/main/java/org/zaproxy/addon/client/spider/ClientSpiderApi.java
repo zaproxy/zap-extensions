@@ -28,9 +28,8 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteNode;
-import org.zaproxy.addon.client.ClientOptions;
-import org.zaproxy.addon.client.ClientOptions.ScopeCheck;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
+import org.zaproxy.addon.client.spider.ClientSpiderOptions.ScopeCheck;
 import org.zaproxy.zap.extension.api.ApiAction;
 import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiException.Type;
@@ -98,6 +97,9 @@ public class ClientSpiderApi extends ApiImplementor {
         addApiAction(new ApiAction(ACTION_STOP_SCAN, List.of(PARAM_SCAN_ID)));
 
         addApiView(new ApiView(VIEW_STATUS, List.of(PARAM_SCAN_ID)));
+
+        addApiOptions(
+                extension != null ? extension.getClientSpiderParam() : new ClientSpiderOptions());
     }
 
     @Override
@@ -152,7 +154,7 @@ public class ClientSpiderApi extends ApiImplementor {
 
         validateMode(url, context, validateUrl);
 
-        ClientOptions options = extension.getClientParam().clone();
+        ClientSpiderOptions options = extension.getClientSpiderParam().clone();
         options.setBrowserId(getBrowser(params));
 
         if (params.containsKey(PARAM_MAX_CRAWL_DEPTH)) {
@@ -273,7 +275,6 @@ public class ClientSpiderApi extends ApiImplementor {
 
     @Override
     public ApiResponse handleApiView(String name, JSONObject params) throws ApiException {
-
         switch (name) {
             case VIEW_STATUS:
                 ClientSpider scan = getClientSpider(params);

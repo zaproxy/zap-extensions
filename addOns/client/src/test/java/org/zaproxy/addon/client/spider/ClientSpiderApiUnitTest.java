@@ -50,7 +50,6 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.addon.client.ClientOptions;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.api.API.RequestType;
@@ -82,12 +81,12 @@ class ClientSpiderApiUnitTest extends TestUtils {
 
         mockMessages(new ExtensionClientIntegration());
 
-        clientSpiderAPI = new ClientSpiderApi(extClient);
-
-        ClientOptions clientOptions = new ClientOptions();
+        ClientSpiderOptions clientOptions = new ClientSpiderOptions();
         clientOptions.load(new ZapXmlConfiguration());
-        given(extClient.getClientParam()).willReturn(clientOptions);
+        given(extClient.getClientSpiderParam()).willReturn(clientOptions);
         given(extClient.startScan(any(), any(), any(), any(), anyBoolean())).willReturn(1);
+
+        clientSpiderAPI = new ClientSpiderApi(extClient);
     }
 
     @AfterAll
@@ -108,8 +107,8 @@ class ClientSpiderApiUnitTest extends TestUtils {
         // Given / When
         clientSpiderAPI = new ClientSpiderApi();
         // Then
-        assertThat(clientSpiderAPI.getApiActions(), hasSize(2));
-        assertThat(clientSpiderAPI.getApiViews(), hasSize(1));
+        assertThat(clientSpiderAPI.getApiActions(), hasSize(14));
+        assertThat(clientSpiderAPI.getApiViews(), hasSize(13));
         assertThat(clientSpiderAPI.getApiOthers(), hasSize(0));
     }
 
@@ -189,7 +188,8 @@ class ClientSpiderApiUnitTest extends TestUtils {
         // Given
         JSONObject params = new JSONObject();
         params.put("url", SCAN_URL);
-        ArgumentCaptor<ClientOptions> optionsCaptor = ArgumentCaptor.forClass(ClientOptions.class);
+        ArgumentCaptor<ClientSpiderOptions> optionsCaptor =
+                ArgumentCaptor.forClass(ClientSpiderOptions.class);
 
         // When
         clientSpiderAPI.handleApiAction("scan", params);
@@ -198,7 +198,7 @@ class ClientSpiderApiUnitTest extends TestUtils {
         verify(extClient).startScan(any(), optionsCaptor.capture(), any(), any(), anyBoolean());
         assertThat(
                 optionsCaptor.getValue().getActionWaitTimeInSecs(),
-                is(ClientOptions.DEFAULT_ACTION_WAIT_TIME));
+                is(ClientSpiderOptions.DEFAULT_ACTION_WAIT_TIME));
     }
 
     @Test
@@ -207,7 +207,8 @@ class ClientSpiderApiUnitTest extends TestUtils {
         JSONObject params = new JSONObject();
         params.put("url", SCAN_URL);
         params.put("actionWaitTime", 5);
-        ArgumentCaptor<ClientOptions> optionsCaptor = ArgumentCaptor.forClass(ClientOptions.class);
+        ArgumentCaptor<ClientSpiderOptions> optionsCaptor =
+                ArgumentCaptor.forClass(ClientSpiderOptions.class);
 
         // When
         clientSpiderAPI.handleApiAction("scan", params);

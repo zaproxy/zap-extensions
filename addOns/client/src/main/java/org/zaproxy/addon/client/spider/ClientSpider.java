@@ -62,13 +62,12 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.network.HttpStatusCode;
-import org.zaproxy.addon.client.ClientOptions;
-import org.zaproxy.addon.client.ClientOptions.ScopeCheck;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.addon.client.internal.ClientMap;
 import org.zaproxy.addon.client.internal.ClientMapListener;
 import org.zaproxy.addon.client.internal.ClientNode;
 import org.zaproxy.addon.client.internal.ClientSideDetails;
+import org.zaproxy.addon.client.spider.ClientSpiderOptions.ScopeCheck;
 import org.zaproxy.addon.client.spider.actions.ClickElement;
 import org.zaproxy.addon.client.spider.actions.FollowGraph;
 import org.zaproxy.addon.client.spider.actions.SubmitForm;
@@ -117,7 +116,7 @@ public class ClientSpider implements GenericScanner2 {
     private ExecutorService threadPool;
 
     private final ValueProvider valueProvider;
-    private ClientOptions options;
+    private ClientSpiderOptions options;
     private final Duration pageLoadTime;
     private int scanId;
     private String displayName;
@@ -163,7 +162,7 @@ public class ClientSpider implements GenericScanner2 {
             ClientMap clientMap,
             String displayName,
             String targetUrl,
-            ClientOptions options,
+            ClientSpiderOptions options,
             int id,
             Context context,
             User user,
@@ -189,7 +188,7 @@ public class ClientSpider implements GenericScanner2 {
             ClientMap clientMap,
             String displayName,
             String targetUrl,
-            ClientOptions options,
+            ClientSpiderOptions options,
             ScanOptions scanOptions,
             ValueProvider valueProvider,
             int id) {

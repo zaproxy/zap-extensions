@@ -37,10 +37,10 @@ import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.ContextWrapper;
 import org.zaproxy.addon.automation.jobs.JobData;
 import org.zaproxy.addon.automation.jobs.JobUtils;
-import org.zaproxy.addon.client.ClientOptions;
-import org.zaproxy.addon.client.ClientOptions.ScopeCheck;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.addon.client.spider.ClientSpider;
+import org.zaproxy.addon.client.spider.ClientSpiderOptions;
+import org.zaproxy.addon.client.spider.ClientSpiderOptions.ScopeCheck;
 import org.zaproxy.addon.commonlib.Constants;
 import org.zaproxy.zap.users.User;
 
@@ -159,8 +159,8 @@ public class ClientSpiderJob extends AutomationJob {
         forceStop = true;
     }
 
-    protected ClientOptions paramsToOptions() {
-        ClientOptions options = new ClientOptions();
+    protected ClientSpiderOptions paramsToOptions() {
+        ClientSpiderOptions options = new ClientSpiderOptions();
         options.load(new XMLConfiguration());
 
         if (!StringUtils.isBlank(this.parameters.getBrowserId())) {
@@ -294,15 +294,15 @@ public class ClientSpiderJob extends AutomationJob {
         private String url = "";
         private Integer maxDuration;
         private Integer maxChildren;
-        private Integer maxCrawlDepth = ClientOptions.DEFAULT_MAX_DEPTH;
+        private Integer maxCrawlDepth = ClientSpiderOptions.DEFAULT_MAX_DEPTH;
         private Integer numberOfBrowsers = Constants.getDefaultThreadCount() / 2;
         private String browserId;
-        private Integer initialLoadTime = ClientOptions.DEFAULT_INITIAL_LOAD_TIME;
-        private Integer pageLoadTime = ClientOptions.DEFAULT_PAGE_LOAD_TIME;
-        private Integer shutdownTime = ClientOptions.DEFAULT_SHUTDOWN_TIME;
+        private Integer initialLoadTime = ClientSpiderOptions.DEFAULT_INITIAL_LOAD_TIME;
+        private Integer pageLoadTime = ClientSpiderOptions.DEFAULT_PAGE_LOAD_TIME;
+        private Integer shutdownTime = ClientSpiderOptions.DEFAULT_SHUTDOWN_TIME;
         private String scopeCheck = ScopeCheck.getDefault().toString();
-        private Boolean logoutAvoidance = ClientOptions.DEFAULT_LOGOUT_AVOIDANCE;
-        private Integer actionWaitTime = ClientOptions.DEFAULT_ACTION_WAIT_TIME;
+        private Boolean logoutAvoidance = ClientSpiderOptions.DEFAULT_LOGOUT_AVOIDANCE;
+        private Integer actionWaitTime = ClientSpiderOptions.DEFAULT_ACTION_WAIT_TIME;
 
         public Parameters() {}
     }
