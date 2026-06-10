@@ -23,20 +23,20 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
-import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
+import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.core.scanner.NameValuePair;
-import org.parosproxy.paros.core.scanner.VariantMultipartFormParameters;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.PolicyTag;
@@ -50,7 +50,7 @@ import org.zaproxy.addon.oast.ExtensionOast;
  *
  * @author yhawke (2104)
  */
-public class XxeScanRule extends AbstractAppPlugin implements CommonActiveScanRuleInfo {
+public class XxeScanRule extends AbstractAppParamPlugin implements CommonActiveScanRuleInfo {
 
     private static final String MESSAGE_PREFIX = "ascanrules.xxe.";
     private static final int PLUGIN_ID = 90023;
@@ -132,7 +132,7 @@ public class XxeScanRule extends AbstractAppPlugin implements CommonActiveScanRu
 
     // Logger instance
     private static final Logger LOGGER = LogManager.getLogger(XxeScanRule.class);
-    private VariantMultipartFormParameters multipartVariant;
+    private Set<String> xmlFileNames = Set.of();
     private boolean alertRaised = false;
 
     @Override
@@ -185,62 +185,86 @@ public class XxeScanRule extends AbstractAppPlugin implements CommonActiveScanRu
         return Alert.RISK_HIGH;
     }
 
+    /**
+     * Scan rule to check for XXE vulnerabilities. It checks both for local and remote using the ZAP
+     * API and also a new model based on parameter substitution.
+     *
+     * <p>For direct XML requests, the whole body is attacked. For multipart/form-data requests, the
+     * variant framework is used so that the user's input vector selection is respected.
+     */
     @Override
     public void scan() {
-        multipartVariant = null;
         alertRaised = false;
 
         HttpMessage msg = getBaseMsg();
         String contentType = msg.getRequestHeader().getHeader(HttpFieldsNames.CONTENT_TYPE);
 
         if ((contentType != null) && (contentType.contains("xml"))) {
+            // Direct XML body — attack the whole body
             scanForXxe(null);
-        } else if ((contentType != null) && (contentType.contains("multipart"))) {
-            multipartVariant = new VariantMultipartFormParameters();
-            multipartVariant.setMessage(getNewMsg());
-            List<String> xmlFileNames =
-                    multipartVariant.getParamList().stream()
-                            .filter(
-                                    p ->
-                                            (p.getType()
-                                                            == NameValuePair
-                                                                    .TYPE_MULTIPART_DATA_FILE_CONTENTTYPE
-                                                    && p.getValue().toLowerCase().contains("xml")))
-                            .map(NameValuePair::getName)
-                            .collect(Collectors.toList());
-
-            for (NameValuePair originalPair : multipartVariant.getParamList()) {
-                if (xmlFileNames.contains(originalPair.getName())
-                        && (originalPair.getType()
-                                == NameValuePair.TYPE_MULTIPART_DATA_FILE_PARAM)) {
-                    scanForXxe(originalPair);
-                }
-                if (alertRaised) {
-                    break;
-                }
-            }
+        } else {
+            // Let the framework iterate variants/parameters
+            super.scan();
         }
     }
 
+    @Override
+    protected void scan(List<NameValuePair> nameValuePairs) {
+        xmlFileNames = new HashSet<>();
+        for (NameValuePair p : nameValuePairs) {
+            if (p.getType() == NameValuePair.TYPE_MULTIPART_DATA_FILE_CONTENTTYPE
+                    && p.getValue() != null
+                    && p.getValue().toLowerCase().contains("xml")) {
+                xmlFileNames.add(p.getName());
+            }
+        }
+        super.scan(nameValuePairs);
+    }
+
+    @Override
+    public void scan(HttpMessage msg, NameValuePair originalParam) {
+        if (alertRaised || isStop()) {
+            return;
+        }
+        if (originalParam.getType() == NameValuePair.TYPE_MULTIPART_DATA_FILE_PARAM
+                && xmlFileNames.contains(originalParam.getName())) {
+            scanForXxe(originalParam);
+        }
+    }
+
+    @Override
+    public void scan(HttpMessage msg, String param, String value) {
+        // Not used — XXE is handled at body level in scan()
+        // or via NameValuePair for multipart parameters.
+    }
+
     private void scanForXxe(NameValuePair originalPair) {
+        // Check #1 : XXE Remote File Inclusion Attack
         remoteFileInclusionAttack(originalPair);
 
+        // Check #2 : Out-of-band XXE Attack
         outOfBandFileInclusionAttack(originalPair);
 
+        // Check if we've to do only basic analysis (only remote should be done)...
         if (this.getAttackStrength() == AttackStrength.LOW) {
             return;
         }
 
+        // Check #3 : XXE Local File Reflection Attack
         localFileReflectionAttack(getNewMsg(), originalPair);
 
+        // Check if we've to do only medium sized analysis
+        // (only remote and reflected will be done)
         if (this.getAttackStrength() == AttackStrength.MEDIUM) {
             return;
         }
 
+        // Exit if the scan has been stopped
         if (isStop()) {
             return;
         }
 
+        // Check #4 : XXE Local File Inclusion Attack
         localFileInclusionAttack(getNewMsg(), originalPair);
     }
 
@@ -268,8 +292,7 @@ public class XxeScanRule extends AbstractAppPlugin implements CommonActiveScanRu
                 String payload = MessageFormat.format(ATTACK_MESSAGE, callbackPayload);
                 alert.setAttack(payload);
                 if (originalPair != null) {
-                    multipartVariant.setParameter(
-                            msg, originalPair, originalPair.getName(), payload);
+                    setParameter(msg, originalPair.getName(), payload);
                 } else {
                     msg.setRequestBody(payload);
                 }
@@ -296,8 +319,7 @@ public class XxeScanRule extends AbstractAppPlugin implements CommonActiveScanRu
                 String payload = MessageFormat.format(ATTACK_MESSAGE, "http://" + oastPayload);
                 alert.setAttack(payload);
                 if (originalPair != null) {
-                    multipartVariant.setParameter(
-                            msg, originalPair, originalPair.getName(), payload);
+                    setParameter(msg, originalPair.getName(), payload);
                 } else {
                     msg.setRequestBody(payload);
                 }
@@ -306,8 +328,7 @@ public class XxeScanRule extends AbstractAppPlugin implements CommonActiveScanRu
                 msg = getNewMsg();
                 payload = MessageFormat.format(ATTACK_MESSAGE, "https://" + oastPayload);
                 if (originalPair != null) {
-                    multipartVariant.setParameter(
-                            msg, originalPair, originalPair.getName(), payload);
+                    setParameter(msg, originalPair.getName(), payload);
                 } else {
                     msg.setRequestBody(payload);
                 }
@@ -318,6 +339,18 @@ public class XxeScanRule extends AbstractAppPlugin implements CommonActiveScanRu
         }
     }
 
+    /**
+     * Local File Reflection Attack initially substitutes every attribute in the original XML
+     * request with a fake entity which includes a sensitive local file. The attack is repeated for
+     * every file listed in the LOCAL_FILE_TARGETS. The response returned is pattern matched against
+     * LOCAL_FILE_PATTERNS. An alert is raised when a match is found. If no alert is raised, then
+     * the process is repeated by replacing one attribute at a time, for a fixed number of
+     * attributes depending on the strength of the rule.
+     *
+     * @param msg new HttpMessage with the same request as the base. This is used to build the
+     *     attack payload.
+     * @param originalPair the multipart parameter to attack, or null for direct XML body
+     */
     private void localFileReflectionAttack(HttpMessage msg, NameValuePair originalPair) {
         String originalXml;
         if (originalPair != null) {
@@ -350,6 +383,21 @@ public class XxeScanRule extends AbstractAppPlugin implements CommonActiveScanRu
         }
     }
 
+    /**
+     * Local File Inclusion Attack is described in
+     * https://owasp.org/www-community/vulnerabilities/XML_External_Entity_(XXE)_Processing. The
+     * attack builds a payload for every file listed in LOCAL_FILE_TARGETS with the ATTACK_HEADER
+     * and the ATTACK_BODY. The response returned is pattern matched against LOCAL_FILE_PATTERNS. An
+     * alert is raised when a match is found.
+     *
+     * <p>This situation is very uncommon because it works only in case of a bare XML parser which
+     * execute the content and then returns the content almost untouched (maybe because it applies
+     * an XSLT or query it using XPath and give back the result)
+     *
+     * @param msg new HttpMessage with the same request as the base. This is used to build the
+     *     attack payload.
+     * @param originalPair the multipart parameter to attack, or null for direct XML body
+     */
     private void localFileInclusionAttack(HttpMessage msg, NameValuePair originalPair) {
         String payload = null;
         try {
@@ -358,8 +406,7 @@ public class XxeScanRule extends AbstractAppPlugin implements CommonActiveScanRu
                 String localFile = LOCAL_FILE_TARGETS[idx];
                 payload = MessageFormat.format(ATTACK_MESSAGE, localFile);
                 if (originalPair != null) {
-                    multipartVariant.setParameter(
-                            msg, originalPair, originalPair.getName(), payload);
+                    setParameter(msg, originalPair.getName(), payload);
                 } else {
                     msg.setRequestBody(payload);
                 }
@@ -408,7 +455,7 @@ public class XxeScanRule extends AbstractAppPlugin implements CommonActiveScanRu
             String localFile = LOCAL_FILE_TARGETS[idx];
             String payload = MessageFormat.format(requestBody, localFile);
             if (originalPair != null) {
-                multipartVariant.setParameter(msg, originalPair, originalPair.getName(), payload);
+                setParameter(msg, originalPair.getName(), payload);
             } else {
                 msg.setRequestBody(payload);
             }
