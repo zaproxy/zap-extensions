@@ -48,7 +48,9 @@ import org.openqa.selenium.WebDriver.Options;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
+import org.parosproxy.paros.extension.option.OptionsParamView;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.client.ClientOptions;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
@@ -81,9 +83,18 @@ class SpiderScanControllerUnitTest extends TestUtils {
     void setUp() throws Exception {
         mockMessages(new ExtensionClientIntegration());
 
-        Model model = mock(Model.class);
-        ExtensionLoader extensionLoader = mock(ExtensionLoader.class);
+        Model model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
         Control.initSingletonForTesting(model, extensionLoader);
+
+        OptionsParam optionsParam =
+                mock(OptionsParam.class, withSettings().strictness(Strictness.LENIENT));
+        OptionsParamView viewParam =
+                mock(OptionsParamView.class, withSettings().strictness(Strictness.LENIENT));
+        given(model.getOptionsParam()).willReturn(optionsParam);
+        given(optionsParam.getViewParam()).willReturn(viewParam);
+        given(viewParam.getMode()).willReturn(Control.Mode.standard.name());
 
         ExtensionSelenium extSelenium =
                 mock(ExtensionSelenium.class, withSettings().strictness(Strictness.LENIENT));

@@ -154,6 +154,9 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
 
         getScopeCheckComponent().setScopeCheck(params.getScopeCheck());
         addCustomComponent(0, getScopeCheckComponent().getComponent());
+        getScopeCheckComponent()
+                .getComponent()
+                .setEnabled(Control.getSingleton().getMode() != Control.Mode.protect);
 
         // This option is always read from the 'global' options
         this.addCheckBoxField(0, FIELD_ADVANCED, params.isShowAdvancedDialog());

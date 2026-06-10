@@ -78,7 +78,9 @@ import org.openqa.selenium.WebElement;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
+import org.parosproxy.paros.extension.option.OptionsParamView;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.client.ClientOptions;
@@ -112,6 +114,8 @@ class ClientSpiderUnitTest extends TestUtils {
     private CountDownLatch proxyCdl;
     private WebDriver wd;
     private ExtensionSelenium extSel;
+    private ExtensionClientIntegration extClient;
+    private Session session;
     private ExtensionNetwork network;
     private Server serverMock;
 
@@ -126,12 +130,26 @@ class ClientSpiderUnitTest extends TestUtils {
     void setUp() throws Exception {
         logEvents = registerLogEvents(Level.ERROR);
 
-        Model model = mock(Model.class);
-        ExtensionLoader extensionLoader = mock(ExtensionLoader.class);
+        Model model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
         Control.initSingletonForTesting(model, extensionLoader);
-        ExtensionClientIntegration extClient = mock(ExtensionClientIntegration.class);
+
+        OptionsParam optionsParam =
+                mock(OptionsParam.class, withSettings().strictness(Strictness.LENIENT));
+        OptionsParamView viewParam =
+                mock(OptionsParamView.class, withSettings().strictness(Strictness.LENIENT));
+        given(model.getOptionsParam()).willReturn(optionsParam);
+        given(optionsParam.getViewParam()).willReturn(viewParam);
+        given(viewParam.getMode()).willReturn(Control.Mode.standard.name());
+
+        extClient =
+                mock(
+                        ExtensionClientIntegration.class,
+                        withSettings().strictness(Strictness.LENIENT));
         extSel = mock(ExtensionSelenium.class, withSettings().strictness(Strictness.LENIENT));
-        ExtensionHistory history = mock(ExtensionHistory.class);
+        ExtensionHistory history =
+                mock(ExtensionHistory.class, withSettings().strictness(Strictness.LENIENT));
         when(extensionLoader.getExtension(ExtensionHistory.class)).thenReturn(history);
         when(extensionLoader.getExtension(ExtensionSelenium.class)).thenReturn(extSel);
         network = mock(ExtensionNetwork.class, withSettings().strictness(Strictness.LENIENT));
@@ -161,7 +179,7 @@ class ClientSpiderUnitTest extends TestUtils {
 
         when(extSel.getWebDriver(any(String.class), any(DriverConfiguration.class))).thenReturn(wd);
         given(extClient.getModel()).willReturn(model);
-        Session session = mock(Session.class);
+        session = mock(Session.class, withSettings().strictness(Strictness.LENIENT));
         given(model.getSession()).willReturn(session);
         map = mock(withSettings().strictness(Strictness.LENIENT));
         when(map.getGraph()).thenReturn(new DirectedMultigraph<>(DefaultEdge.class));
@@ -236,6 +254,48 @@ class ClientSpiderUnitTest extends TestUtils {
         assertThat(
                 argument.getAllValues(),
                 contains("https://www.example.com/", "https://www.example.com/test"));
+    }
+
+    @Test
+    void shouldOnlyRequestSessionScopeUrlsInProtectMode() throws Exception {
+        // Given
+        Control.getSingleton().setMode(Control.Mode.protect);
+        given(session.isInScope(seedUrl)).willReturn(true);
+        given(session.isInScope("https://www.example.com/inscope")).willReturn(true);
+        given(session.isInScope("https://www.example.com/outofscope")).willReturn(false);
+        given(session.isInScope("https://www.example.org/offsite")).willReturn(false);
+
+        proxyCdl = new CountDownLatch(1);
+        ClientSpider protectSpider =
+                new ClientSpider(
+                        extClient,
+                        map,
+                        "",
+                        seedUrl,
+                        clientOptions,
+                        2,
+                        null,
+                        null,
+                        false,
+                        mock(ValueProvider.class));
+
+        protectSpider.run();
+        waitForProxy();
+
+        ArgumentCaptor<ClientMapListener> listenerCaptor = ArgumentCaptor.captor();
+        verify(map, atLeastOnce()).addListener(listenerCaptor.capture());
+        ClientMapListener protectListener = listenerCaptor.getValue();
+
+        // When
+        protectListener.nodeAdded("https://www.example.com/inscope", 0, 0, PROXY_PORT);
+        protectListener.nodeAdded("https://www.example.com/outofscope", 0, 0, PROXY_PORT);
+        protectListener.nodeAdded("https://www.example.org/offsite", 0, 0, PROXY_PORT);
+        sleep();
+
+        // Then
+        ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
+        verify(wd, atLeastOnce()).get(argument.capture());
+        assertThat(argument.getAllValues(), contains(seedUrl, "https://www.example.com/inscope"));
     }
 
     @Test

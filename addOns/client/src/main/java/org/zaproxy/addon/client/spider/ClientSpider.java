@@ -92,17 +92,6 @@ import org.zaproxy.zap.utils.ThreadUtils;
 
 public class ClientSpider implements GenericScanner2 {
 
-    /*
-     * Client Spider status - Work In Progress.
-     * This functionality has not yet been officially released, so do not rely on any of the classes or methods for now.
-     *
-     * TODO The following features will need to be implemented before the first release:
-     * 		Support for modes
-     *
-     * The following features should be implemented in future releases:
-     * 		Clicking on likely navigation elements
-     * 		API support
-     */
     private static final Logger LOGGER = LogManager.getLogger(ClientSpider.class);
 
     private final List<Pattern> allowedResources =
@@ -167,6 +156,7 @@ public class ClientSpider implements GenericScanner2 {
     private final MessagesTableModel messagesTableModel;
     private final Set<String> crawledUrls;
     private ScanListenner2 listener;
+    private final Control.Mode mode;
 
     public ClientSpider(
             ExtensionClientIntegration extClient,
@@ -218,6 +208,8 @@ public class ClientSpider implements GenericScanner2 {
         this.scanOptions = scanOptions;
         this.addedNodesModel = new UrlTableModel();
         this.tasksModel = new TaskTableModel();
+        this.mode = Control.getSingleton().getMode();
+
         messagesTableModel = new MessagesTableModel();
         crawledUrls = Collections.synchronizedSet(new TreeSet<>());
 
@@ -563,6 +555,11 @@ public class ClientSpider implements GenericScanner2 {
                 LOGGER.debug("Excluding resource not in specified context: {}", uriString);
                 state = ResourceState.OUT_OF_CONTEXT;
             }
+        } else if (mode == Control.Mode.protect) {
+            if (!session.isInScope(uriString)) {
+                LOGGER.debug("Excluding resource not in scope in protected mode: {}", uriString);
+                state = ResourceState.OUT_OF_HOST;
+            }
         } else if (!targetHost.equalsIgnoreCase(hostName)) {
             LOGGER.debug("Excluding resource not on target host: {}", uriString);
             state = ResourceState.OUT_OF_HOST;
@@ -575,7 +572,7 @@ public class ClientSpider implements GenericScanner2 {
                 }
             }
         }
-        if (state != ResourceState.ALLOWED && allowAll) {
+        if (state != ResourceState.ALLOWED && allowAll && mode != Control.Mode.protect) {
             state = ResourceState.THIRD_PARTY;
         }
 
@@ -920,7 +917,8 @@ public class ClientSpider implements GenericScanner2 {
             try {
                 webDriver =
                         extSelenium.getWebDriver(options.getBrowserId(), driverConfBuilder.build());
-                if (ScopeCheck.STRICT.equals(options.getScopeCheck())) {
+                if (ScopeCheck.STRICT.equals(options.getScopeCheck())
+                        || mode == Control.Mode.protect) {
                     proxyHandler.setAllowAll(false);
                 }
             } catch (Exception e) {
