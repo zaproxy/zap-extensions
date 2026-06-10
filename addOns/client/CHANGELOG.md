@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Added
 - Client Spider Options panel.
+- Support for ZAP modes in the Client Spider.
 
 ### Changed
 - Change the Client Spider to crawl through page components (e.g. links) to reduce full page reloads, improving support for SPAs.

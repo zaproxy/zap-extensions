@@ -891,7 +891,8 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
         @Override
         public void sessionModeChanged(Mode mode) {
             if (Mode.safe.equals(mode)) {
-                spiderScanController.stopAllScans();
+                new Thread(() -> spiderScanController.stopAllScans(), "ZAP-ClientSpiderStopAll")
+                        .start();
             }
 
             if (hasView()) {
