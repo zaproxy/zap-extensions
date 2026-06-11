@@ -24,6 +24,7 @@ import java.util.List;
 import javax.swing.table.AbstractTableModel;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.addon.client.internal.ClientSideComponent;
+import org.zaproxy.addon.client.internal.InteractableState;
 
 public class ComponentTableModel extends AbstractTableModel {
 
@@ -32,6 +33,8 @@ public class ComponentTableModel extends AbstractTableModel {
     private static final String[] COLUMN_NAMES = {
         Constant.messages.getString(
                 ExtensionClientIntegration.PREFIX + ".components.table.header.type"),
+        Constant.messages.getString(
+                ExtensionClientIntegration.PREFIX + ".components.table.header.interactable"),
         Constant.messages.getString(
                 ExtensionClientIntegration.PREFIX + ".components.table.header.id"),
         Constant.messages.getString(
@@ -74,6 +77,9 @@ public class ComponentTableModel extends AbstractTableModel {
 
     @Override
     public Class<?> getColumnClass(int c) {
+        if (c == 1) {
+            return Boolean.class;
+        }
         return String.class;
     }
 
@@ -98,21 +104,24 @@ public class ComponentTableModel extends AbstractTableModel {
             case 0:
                 return component.getTypeForDisplay();
             case 1:
-                return component.getId();
+                InteractableState s = component.getInteractable();
+                return s == null || (s.isVisible() && s.isEnabled());
             case 2:
-                return component.getTagType();
+                return component.getId();
             case 3:
+                return component.getTagType();
+            case 4:
                 int formId = component.getFormId();
                 if (formId >= 0) {
                     return Integer.toString(formId);
                 }
                 return "";
-            case 4:
+            case 5:
                 if (component.isStorageEvent()) {
                     return component.getParentUrl();
                 }
                 return component.getHref();
-            case 5:
+            case 6:
                 return component.getText();
             default:
                 return null;

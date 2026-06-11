@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
@@ -64,6 +65,18 @@ class ClientMapUnitTest extends TestUtils {
               "href": %s,
               "nodeName": "INPUT",
               "timestamp": 0
+            }""";
+
+    private static final String NODE_CHANGED_JSON =
+            """
+            {
+              "tagName": "%s",
+              "id": "%s",
+              "type": "nodeChanged",
+              "url": "%s",
+              "nodeName": "%s",
+              "timestamp": 0,
+              "interactable": {"visible": %s, "enabled": %s, "pointer": %s}
             }""";
 
     private static final String REPORTED_EVENT_JSON =
@@ -1081,5 +1094,74 @@ class ClientMapUnitTest extends TestUtils {
         assertThat(componentOutEdges.size(), is(1));
         var targetVertex = graph.getEdgeTarget(componentOutEdges.iterator().next());
         assertThat(targetVertex, is(new ClientGraphVertex.Url(href)));
+    }
+
+    @Test
+    void shouldDoNothingOnNodeChangedForUnknownNode() {
+        // Given
+        String json =
+                NODE_CHANGED_JSON.formatted(
+                        "INPUT", "", "https://www.example.com/page", "INPUT", true, true, false);
+
+        // When
+        map.handleReportObject(json);
+
+        // Then
+        assertThat(map.getRoot().getChildCount(), is(0));
+        verifyNoInteractions(listener);
+    }
+
+    @Test
+    void shouldNotUpdateInteractableWhenNoMatchingComponentInNode() {
+        // Given
+        String url = "https://www.example.com/page";
+        map.handleReportObject(REPORTED_OBJECT_JSON.formatted(url, null));
+        ClientSideComponent existing =
+                map.getNode(url, false, false).getUserObject().getComponents().iterator().next();
+        String json =
+                NODE_CHANGED_JSON.formatted("BUTTON", "btn1", url, "BUTTON", true, true, true);
+
+        // When
+        map.handleReportObject(json);
+
+        // Then
+        assertThat(existing.getInteractable(), is(nullValue()));
+        verify(listener).componentAdded(any(), eq(0));
+    }
+
+    @Test
+    void shouldUpdateComponentInteractableOnNodeChanged() {
+        // Given
+        String url = "https://www.example.com/page";
+        map.handleReportObject(REPORTED_OBJECT_JSON.formatted(url, null));
+        ClientSideComponent existing =
+                map.getNode(url, false, false).getUserObject().getComponents().iterator().next();
+        String json = NODE_CHANGED_JSON.formatted("INPUT", "", url, "INPUT", true, true, false);
+
+        // When
+        map.handleReportObject(json);
+
+        // Then
+        assertThat(existing.getInteractable(), is(new InteractableState(true, true, false)));
+        verify(listener).componentAdded(any(), eq(0));
+    }
+
+    @Test
+    void shouldNotUpdateWhenInteractableAlreadySameState() {
+        // Given
+        InteractableState state = new InteractableState(true, false, true);
+        String url = "https://www.example.com/page";
+        map.handleReportObject(REPORTED_OBJECT_JSON.formatted(url, null));
+        ClientSideComponent existing =
+                map.getNode(url, false, false).getUserObject().getComponents().iterator().next();
+        existing.setInteractable(state);
+        String json = NODE_CHANGED_JSON.formatted("INPUT", "", url, "INPUT", true, false, true);
+
+        // When
+        map.handleReportObject(json);
+
+        // Then
+        assertThat(existing.getInteractable(), is(state));
+        verify(listener).componentAdded(any(), eq(0));
     }
 }

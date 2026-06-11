@@ -325,6 +325,11 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
         if (url != null) {
             if (!isApiUrl(url)) {
                 ClientSideComponent component = new ClientSideComponent(json);
+                if (ClientSideComponent.Type.NODE_CHANGED == component.getType()) {
+                    handleNodeChanged(component, source);
+                    return;
+                }
+
                 addComponent(url, component, source);
                 if (http && isLinkComponent(component)) {
                     addGraphEdge(url, href, component);
@@ -335,6 +340,23 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
         }
         if (http) {
             getNode(href, false, false, true, true, source);
+        }
+    }
+
+    private void handleNodeChanged(ClientSideComponent component, int source) {
+        ClientNode node = getNode(component.getParentUrl(), false, false);
+        if (node == null) {
+            return;
+        }
+
+        boolean changed =
+                node.getUserObject()
+                        .updateComponentInteractable(
+                                component.getId(),
+                                component.getTagName(),
+                                component.getInteractable());
+        if (changed) {
+            notifyNodeChanged(node);
         }
     }
 
