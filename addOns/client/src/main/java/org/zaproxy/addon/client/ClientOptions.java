@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.zaproxy.addon.client.spider.ClientSpiderOptions;
 import org.zaproxy.zap.common.VersionedAbstractParam;
 
 public class ClientOptions extends VersionedAbstractParam {
@@ -30,6 +31,14 @@ public class ClientOptions extends VersionedAbstractParam {
     private static final Logger LOGGER = LogManager.getLogger(ClientOptions.class);
 
     protected static final int CURRENT_CONFIG_VERSION = 1;
+
+    /**
+     * For backwards compatibility. Should use {@code ClientSpiderOptions.DEFAULT_BROWSER_ID}
+     *
+     * @deprecated
+     */
+    @Deprecated
+    public static final String DEFAULT_BROWSER_ID = ClientSpiderOptions.DEFAULT_BROWSER_ID;
 
     static final String CLIENT_BASE_KEY = "client";
 
