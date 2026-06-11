@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.client;
+package org.zaproxy.addon.client.spider;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -25,7 +25,7 @@ import static org.hamcrest.Matchers.nullValue;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.zaproxy.addon.client.spider.ClientSpiderOptions;
+import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.addon.commonlib.Constants;
 import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
