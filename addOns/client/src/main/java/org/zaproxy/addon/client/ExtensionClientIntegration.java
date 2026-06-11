@@ -80,8 +80,9 @@ import org.zaproxy.addon.client.spider.AuthenticationHandler;
 import org.zaproxy.addon.client.spider.ClientSpider;
 import org.zaproxy.addon.client.spider.ClientSpiderApi;
 import org.zaproxy.addon.client.spider.ClientSpiderDialog;
+import org.zaproxy.addon.client.spider.ClientSpiderOptions;
+import org.zaproxy.addon.client.spider.ClientSpiderOptionsDialog;
 import org.zaproxy.addon.client.spider.ClientSpiderPanel;
-import org.zaproxy.addon.client.spider.OptionsClientSpider;
 import org.zaproxy.addon.client.spider.PopupMenuSpider;
 import org.zaproxy.addon.client.spider.ScanOptions;
 import org.zaproxy.addon.client.spider.SpiderScanController;
@@ -155,6 +156,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
     private ClientPassiveScanController passiveScanController;
     private ClientPassiveScanHelper pscanHelper;
     private ClientOptions clientParam;
+    private ClientSpiderOptions clientSpiderParam;
     private ClientIntegrationAPI api;
     private EventConsumer eventConsumer;
     private Event lastAjaxSpiderStartEvent;
@@ -214,6 +216,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
 
         extensionHook.addSessionListener(new SessionChangedListenerImpl());
         extensionHook.addOptionsParamSet(getClientParam());
+        extensionHook.addOptionsParamSet(getClientSpiderParam());
         extensionHook.addApiImplementor(this.api);
         extensionHook.addApiImplementor(new ClientSpiderApi(this));
 
@@ -321,7 +324,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
                     .getHookView()
                     .addOptionPanel(
                             List.of(Constant.messages.getString("client.options.name")),
-                            new OptionsClientSpider());
+                            new ClientSpiderOptionsDialog());
 
             getView()
                     .getMainFrame()
@@ -443,6 +446,13 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
             clientParam = new ClientOptions();
         }
         return clientParam;
+    }
+
+    public ClientSpiderOptions getClientSpiderParam() {
+        if (clientSpiderParam == null) {
+            clientSpiderParam = new ClientSpiderOptions();
+        }
+        return clientSpiderParam;
     }
 
     protected void checkFirefoxProfilesFile(Path iniPath, Path profilePath) throws IOException {
@@ -587,7 +597,8 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
     private ClientSpiderPanel getClientSpiderPanel() {
         if (clientSpiderPanel == null) {
             clientSpiderPanel =
-                    new ClientSpiderPanel(this, this.spiderScanController, this.getClientParam());
+                    new ClientSpiderPanel(
+                            this, this.spiderScanController, this.getClientSpiderParam());
         }
         return clientSpiderPanel;
     }
@@ -750,7 +761,11 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
     }
 
     public int startScan(
-            String url, ClientOptions options, Context context, User user, boolean subtreeOnly)
+            String url,
+            ClientSpiderOptions options,
+            Context context,
+            User user,
+            boolean subtreeOnly)
             throws URIException, NullPointerException {
         return startScan(
                 url,
@@ -762,7 +777,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
                         .build());
     }
 
-    public int startScan(String url, ClientOptions options, ScanOptions scanOptions)
+    public int startScan(String url, ClientSpiderOptions options, ScanOptions scanOptions)
             throws URIException, NullPointerException {
         return startScan(abbreviateDisplayName(url), null, url, options, scanOptions);
     }
@@ -783,7 +798,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
             String displayName,
             Target target,
             String startUrl,
-            ClientOptions clientOptions,
+            ClientSpiderOptions clientOptions,
             ScanOptions scanOptions) {
         int id =
                 this.spiderScanController.startScan(

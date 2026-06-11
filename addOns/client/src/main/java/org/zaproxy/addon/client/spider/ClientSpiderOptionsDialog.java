@@ -28,7 +28,6 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
-import org.zaproxy.addon.client.ClientOptions;
 import org.zaproxy.addon.client.internal.ScopeCheckComponent;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.selenium.ProvidedBrowserUI;
@@ -37,7 +36,7 @@ import org.zaproxy.zap.utils.ZapNumberSpinner;
 import org.zaproxy.zap.view.LayoutHelper;
 
 @SuppressWarnings("serial")
-public class OptionsClientSpider extends AbstractParamPanel {
+public class ClientSpiderOptionsDialog extends AbstractParamPanel {
 
     private static final long serialVersionUID = 1L;
 
@@ -53,7 +52,7 @@ public class OptionsClientSpider extends AbstractParamPanel {
     private final JCheckBox logoutAvoidanceCheckbox;
     private final ScopeCheckComponent scopeCheckComponent;
 
-    public OptionsClientSpider() {
+    public ClientSpiderOptionsDialog() {
         setName(Constant.messages.getString("client.spider.options.panel.name"));
 
         ExtensionSelenium extSelenium =
@@ -61,16 +60,20 @@ public class OptionsClientSpider extends AbstractParamPanel {
         browserCombo = new JComboBox<>(extSelenium.createProvidedBrowsersComboBoxModel());
         numBrowsersSpinner = new ZapNumberSpinner(1, 1, 64);
         maxDepthSpinner =
-                new ZapNumberSpinner(0, ClientOptions.DEFAULT_MAX_DEPTH, Integer.MAX_VALUE);
+                new ZapNumberSpinner(0, ClientSpiderOptions.DEFAULT_MAX_DEPTH, Integer.MAX_VALUE);
         maxChildrenSpinner = new ZapNumberSpinner(0, 0, Integer.MAX_VALUE);
         initialLoadTimeSpinner =
-                new ZapNumberSpinner(0, ClientOptions.DEFAULT_INITIAL_LOAD_TIME, Integer.MAX_VALUE);
+                new ZapNumberSpinner(
+                        0, ClientSpiderOptions.DEFAULT_INITIAL_LOAD_TIME, Integer.MAX_VALUE);
         pageLoadTimeSpinner =
-                new ZapNumberSpinner(0, ClientOptions.DEFAULT_PAGE_LOAD_TIME, Integer.MAX_VALUE);
+                new ZapNumberSpinner(
+                        0, ClientSpiderOptions.DEFAULT_PAGE_LOAD_TIME, Integer.MAX_VALUE);
         actionWaitTimeSpinner =
-                new ZapNumberSpinner(0, ClientOptions.DEFAULT_ACTION_WAIT_TIME, Integer.MAX_VALUE);
+                new ZapNumberSpinner(
+                        0, ClientSpiderOptions.DEFAULT_ACTION_WAIT_TIME, Integer.MAX_VALUE);
         shutdownTimeSpinner =
-                new ZapNumberSpinner(0, ClientOptions.DEFAULT_SHUTDOWN_TIME, Integer.MAX_VALUE);
+                new ZapNumberSpinner(
+                        0, ClientSpiderOptions.DEFAULT_SHUTDOWN_TIME, Integer.MAX_VALUE);
         maxDurationSpinner = new ZapNumberSpinner(0, 0, Integer.MAX_VALUE);
         logoutAvoidanceCheckbox =
                 new JCheckBox(Constant.messages.getString("client.options.label.logoutAvoidance"));
@@ -156,7 +159,7 @@ public class OptionsClientSpider extends AbstractParamPanel {
     @Override
     public void initParam(Object obj) {
         OptionsParam optionsParam = (OptionsParam) obj;
-        ClientOptions clientOptions = optionsParam.getParamSet(ClientOptions.class);
+        ClientSpiderOptions clientOptions = optionsParam.getParamSet(ClientSpiderOptions.class);
 
         ((ProvidedBrowsersComboBoxModel) browserCombo.getModel())
                 .setSelectedBrowser(clientOptions.getBrowserId());
@@ -176,7 +179,7 @@ public class OptionsClientSpider extends AbstractParamPanel {
     @Override
     public void saveParam(Object obj) throws Exception {
         OptionsParam optionsParam = (OptionsParam) obj;
-        ClientOptions clientOptions = optionsParam.getParamSet(ClientOptions.class);
+        ClientSpiderOptions clientOptions = optionsParam.getParamSet(ClientSpiderOptions.class);
 
         ProvidedBrowserUI selectedBrowser = (ProvidedBrowserUI) browserCombo.getSelectedItem();
         if (selectedBrowser != null) {

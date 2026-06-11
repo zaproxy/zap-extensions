@@ -35,7 +35,6 @@ import org.jdesktop.swingx.JXTable;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.addon.client.ClientOptions;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.zap.model.ScanController;
 import org.zaproxy.zap.model.ScanListenner2;
@@ -77,12 +76,12 @@ public class ClientSpiderPanel extends ScanPanel2<ClientSpider, ScanController<C
     private JScrollPane tasksTableScrollPane;
 
     private ExtensionClientIntegration extension;
-    private ClientOptions clientOptions;
+    private ClientSpiderOptions clientOptions;
 
     public ClientSpiderPanel(
             ExtensionClientIntegration extension,
             SpiderScanController controller,
-            ClientOptions clientOptions) {
+            ClientSpiderOptions clientOptions) {
         super("client.spider", ExtensionClientIntegration.getIcon(), controller);
         this.extension = extension;
         this.clientOptions = clientOptions;

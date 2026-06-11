@@ -29,7 +29,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.zaproxy.addon.client.ClientOptions;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.addon.client.internal.ClientMap;
 import org.zaproxy.addon.commonlib.ValueProvider;
@@ -102,7 +101,7 @@ public class SpiderScanController implements ScanController<ClientSpider> {
 
     @Override
     public int startScan(String name, Target target, User user, Object[] contextSpecificObjects) {
-        ClientOptions clientOptions = null;
+        ClientSpiderOptions clientOptions = null;
         String startUrl = null;
 
         ScanOptions.Builder scanOptionsBuilder = ScanOptions.builder();
@@ -117,9 +116,9 @@ public class SpiderScanController implements ScanController<ClientSpider> {
                     continue;
                 }
 
-                if (obj instanceof ClientOptions) {
+                if (obj instanceof ClientSpiderOptions) {
                     LOGGER.debug("Setting custom spider params");
-                    clientOptions = (ClientOptions) obj;
+                    clientOptions = (ClientSpiderOptions) obj;
                 } else if (obj instanceof URI uri) {
                     startUrl = uri.toString();
                 } else if (obj instanceof Context ctx) {
@@ -141,14 +140,14 @@ public class SpiderScanController implements ScanController<ClientSpider> {
             String name,
             Target target,
             String startUrl,
-            ClientOptions clientOptions,
+            ClientSpiderOptions clientOptions,
             ScanOptions scanOptions) {
         clientSpidersLock.lock();
         try {
             int id = this.scanIdCounter++;
 
             if (clientOptions == null) {
-                clientOptions = extension.getClientParam();
+                clientOptions = extension.getClientSpiderParam();
             }
 
             ClientSpider scan =

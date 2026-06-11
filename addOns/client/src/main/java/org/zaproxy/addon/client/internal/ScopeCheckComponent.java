@@ -23,7 +23,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import org.jdesktop.swingx.JXRadioGroup;
 import org.parosproxy.paros.Constant;
-import org.zaproxy.addon.client.ClientOptions.ScopeCheck;
+import org.zaproxy.addon.client.spider.ClientSpiderOptions.ScopeCheck;
 
 public class ScopeCheckComponent {
 

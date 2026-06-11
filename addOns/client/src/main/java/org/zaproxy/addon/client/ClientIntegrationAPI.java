@@ -88,6 +88,8 @@ public class ClientIntegrationAPI extends ApiImplementor {
         this.addApiAction(
                 new ApiAction(ACTION_EXPORT_CLIENT_MAP, new String[] {PARAM_EXPORT_PATH}));
 
+        addApiOptions(extension.getClientParam());
+
         callbackUrl =
                 API.getInstance().getCallBackUrl(this, HttpHeader.SCHEME_HTTPS + API.API_DOMAIN);
         LOGGER.debug("Client API callback URL: {}", callbackUrl);
@@ -129,7 +131,9 @@ public class ClientIntegrationAPI extends ApiImplementor {
                                 "Failed to export client map: " + exportPath);
                     }
                 }
-                default -> throw new ApiException(ApiException.Type.BAD_ACTION);
+                default -> {
+                    throw new ApiException(ApiException.Type.BAD_ACTION);
+                }
             }
         } catch (ApiException e) {
             throw e;

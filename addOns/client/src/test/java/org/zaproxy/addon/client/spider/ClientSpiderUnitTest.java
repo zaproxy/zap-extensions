@@ -83,7 +83,6 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.addon.client.ClientOptions;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.addon.client.internal.ClientMap;
 import org.zaproxy.addon.client.internal.ClientMapListener;
@@ -107,7 +106,7 @@ class ClientSpiderUnitTest extends TestUtils {
 
     private List<String> logEvents;
 
-    private ClientOptions clientOptions;
+    private ClientSpiderOptions clientOptions;
     private ClientMapListener mapListener;
     private ClientMap map;
     private String seedUrl;
@@ -183,7 +182,7 @@ class ClientSpiderUnitTest extends TestUtils {
         given(model.getSession()).willReturn(session);
         map = mock(withSettings().strictness(Strictness.LENIENT));
         when(map.getGraph()).thenReturn(new DirectedMultigraph<>(DefaultEdge.class));
-        clientOptions = new ClientOptions();
+        clientOptions = new ClientSpiderOptions();
         clientOptions.load(new ZapXmlConfiguration());
         clientOptions.setThreadCount(1);
         clientOptions.setShutdownTimeInSecs(10);

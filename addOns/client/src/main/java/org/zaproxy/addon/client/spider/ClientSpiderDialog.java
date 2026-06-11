@@ -39,7 +39,6 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.addon.client.ClientOptions;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.addon.client.internal.ScopeCheckComponent;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
@@ -87,7 +86,7 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
 
     private SiteNode targetNode;
     private String targetUrl;
-    private ClientOptions params = null;
+    private ClientSpiderOptions params = null;
     private ZapTextField urlStartField;
     private boolean subtreeOnlyPreviousCheckedState;
     private ScopeCheckComponent scopeCheckComponent;
@@ -98,7 +97,7 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
     public ClientSpiderDialog(ExtensionClientIntegration ext, Frame owner) {
         super(owner, "client.scandialog.title", DisplayUtils.getScaledDimension(700, 350), LABELS);
         this.extension = ext;
-        params = this.extension.getClientParam();
+        params = this.extension.getClientSpiderParam();
         this.extUserMgmt =
                 Control.getSingleton()
                         .getExtensionLoader()
@@ -310,7 +309,7 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
                 },
                 adv);
         // Always save in the 'global' options
-        extension.getClientParam().setShowAdvancedDialog(adv);
+        extension.getClientSpiderParam().setShowAdvancedDialog(adv);
     }
 
     /** Resets the spider dialogue to its default state. */
@@ -349,7 +348,7 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
     /** Use the save method to launch a scan */
     @Override
     public void save() {
-        ClientOptions clientParams = this.extension.getClientParam();
+        ClientSpiderOptions clientParams = this.extension.getClientSpiderParam();
 
         String selectedBrowser = getSelectedBrowser();
         if (selectedBrowser != null) {

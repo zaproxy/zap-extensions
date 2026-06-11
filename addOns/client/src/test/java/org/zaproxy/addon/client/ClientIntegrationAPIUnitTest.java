@@ -24,6 +24,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -55,6 +56,7 @@ class ClientIntegrationAPIUnitTest extends TestUtils {
     void setUp() {
         extension = mock(ExtensionClientIntegration.class);
         clientMap = mock(ClientMap.class);
+        given(extension.getClientParam()).willReturn(new ClientOptions());
         api = new ClientIntegrationAPI(extension, clientMap);
     }
 

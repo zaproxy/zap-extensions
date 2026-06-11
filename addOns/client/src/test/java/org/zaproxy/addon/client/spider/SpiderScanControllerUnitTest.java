@@ -52,7 +52,6 @@ import org.parosproxy.paros.extension.option.OptionsParamView;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.model.Session;
-import org.zaproxy.addon.client.ClientOptions;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.addon.client.internal.ClientMap;
 import org.zaproxy.addon.commonlib.ValueProvider;
@@ -76,7 +75,7 @@ class SpiderScanControllerUnitTest extends TestUtils {
     private ExtensionClientIntegration extension;
     private ClientMap clientMap;
     private ValueProvider valueProvider;
-    private ClientOptions defaultOptions;
+    private ClientSpiderOptions defaultOptions;
     private SpiderScanController controller;
 
     @BeforeEach
@@ -127,11 +126,11 @@ class SpiderScanControllerUnitTest extends TestUtils {
         when(model.getSession()).thenReturn(session);
         lenient().when(extension.getAuthenticationHandlers()).thenReturn(java.util.List.of());
 
-        defaultOptions = new ClientOptions();
+        defaultOptions = new ClientSpiderOptions();
         defaultOptions.load(new ZapXmlConfiguration());
         defaultOptions.setThreadCount(1);
         defaultOptions.setShutdownTimeInSecs(10);
-        when(extension.getClientParam()).thenReturn(defaultOptions);
+        when(extension.getClientSpiderParam()).thenReturn(defaultOptions);
 
         clientMap = mock(ClientMap.class);
         when(clientMap.getGraph()).thenReturn(new DirectedMultigraph<>(DefaultEdge.class));
@@ -185,7 +184,7 @@ class SpiderScanControllerUnitTest extends TestUtils {
         // Given
         Context context = mock(Context.class);
         User user = mock(User.class);
-        ClientOptions customOptions = new ClientOptions();
+        ClientSpiderOptions customOptions = new ClientSpiderOptions();
         customOptions.load(new ZapXmlConfiguration());
         customOptions.setThreadCount(3);
 

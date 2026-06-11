@@ -47,6 +47,7 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.client.spider.ClientSpider;
+import org.zaproxy.addon.client.spider.ClientSpiderOptions;
 import org.zaproxy.addon.client.spider.ScanOptions;
 import org.zaproxy.addon.commonlib.ExtensionCommonlib;
 import org.zaproxy.addon.commonlib.ValueProvider;
@@ -182,7 +183,7 @@ class ExtensionClientIntegrationUnitTest extends TestUtils {
     @Test
     void shouldStartSpiderWithLegacyApi() throws Exception {
         // Given
-        ClientOptions options = new ClientOptions();
+        ClientSpiderOptions options = new ClientSpiderOptions();
         options.load(new ZapXmlConfiguration());
         options.setThreadCount(1);
 
@@ -199,7 +200,7 @@ class ExtensionClientIntegrationUnitTest extends TestUtils {
     @Test
     void shouldStartSpiderWithScanOptions() throws Exception {
         // Given
-        ClientOptions options = new ClientOptions();
+        ClientSpiderOptions options = new ClientSpiderOptions();
         options.load(new ZapXmlConfiguration());
         options.setThreadCount(1);
         ScanOptions scanOptions = ScanOptions.builder().setSubtreeOnly(true).build();
@@ -218,7 +219,7 @@ class ExtensionClientIntegrationUnitTest extends TestUtils {
     @Test
     void shouldStartSpiderWithNewStartScanMethod() throws Exception {
         // Given
-        ClientOptions options = new ClientOptions();
+        ClientSpiderOptions options = new ClientSpiderOptions();
         options.load(new ZapXmlConfiguration());
         options.setThreadCount(1);
         String url = "https://www.example.com";
@@ -243,7 +244,7 @@ class ExtensionClientIntegrationUnitTest extends TestUtils {
     @Test
     void shouldStartSpiderWithExternalControl() throws Exception {
         // Given
-        ClientOptions options = new ClientOptions();
+        ClientSpiderOptions options = new ClientSpiderOptions();
         options.load(new ZapXmlConfiguration());
         options.setThreadCount(1);
         ScanOptions scanOptions = ScanOptions.builder().setExternalControl(true).build();
