@@ -1028,6 +1028,9 @@ public class ClientSpider implements GenericScanner2 {
                                     || state == ResourceState.THIRD_PARTY) {
                                 crawledUrl(
                                         httpMessage.getRequestHeader().getURI().toString(), true);
+                                historyRef.setCustomIcon(
+                                        "org/zaproxy/addon/client/resources/spiderClient.png",
+                                        true);
                                 session.getSiteTree().addPath(historyRef, httpMessage);
                             }
 
