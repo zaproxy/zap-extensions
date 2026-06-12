@@ -21,6 +21,7 @@ package org.zaproxy.addon.client.internal;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import lombok.Getter;
 
@@ -60,6 +61,18 @@ public class ClientSideDetails {
 
     protected boolean addComponent(ClientSideComponent component) {
         return this.components.add(component);
+    }
+
+    public boolean updateComponentInteractable(
+            String id, String tagName, InteractableState interactable) {
+        for (ClientSideComponent c : components) {
+            if (Objects.equals(c.getId(), id) && Objects.equals(c.getTagName(), tagName)) {
+                boolean changed = !Objects.equals(c.getInteractable(), interactable);
+                c.setInteractable(interactable);
+                return changed;
+            }
+        }
+        return false;
     }
 
     protected void setStorage(boolean storage) {

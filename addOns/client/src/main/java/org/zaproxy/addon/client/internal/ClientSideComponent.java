@@ -25,6 +25,7 @@ import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
 import net.sf.json.JSONObject;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
@@ -85,6 +86,11 @@ public class ClientSideComponent implements Comparable<ClientSideComponent> {
                 "Node Added",
                 Constant.messages.getString(ExtensionClientIntegration.PREFIX + ".type.nodeAdded"),
                 "nodeAdded"),
+        NODE_CHANGED(
+                "Node Changed",
+                Constant.messages.getString(
+                        ExtensionClientIntegration.PREFIX + ".type.nodeChanged"),
+                "nodeChanged"),
         DOM_MUTATION(
                 "DOM Mutation",
                 Constant.messages.getString(
@@ -144,7 +150,21 @@ public class ClientSideComponent implements Comparable<ClientSideComponent> {
     private String text;
     @NonNull private Type type;
     private String tagType;
-    private int formId = -1;
+    private int formId;
+    @Setter private InteractableState interactable;
+
+    public ClientSideComponent(
+            Map<String, String> data,
+            String tagName,
+            String id,
+            String parentUrl,
+            String href,
+            String text,
+            Type type,
+            String tagType,
+            int formId) {
+        this(data, tagName, id, parentUrl, href, text, type, tagType, formId, null);
+    }
 
     public ClientSideComponent(JSONObject json) {
         data = new HashMap<>();
@@ -167,6 +187,14 @@ public class ClientSideComponent implements Comparable<ClientSideComponent> {
         }
         if (json.containsKey("formId")) {
             this.formId = json.getInt("formId");
+        }
+        if (json.containsKey("interactable") && !json.get("interactable").equals("null")) {
+            JSONObject s = json.getJSONObject("interactable");
+            this.interactable =
+                    new InteractableState(
+                            s.optBoolean("visible", false),
+                            s.optBoolean("enabled", false),
+                            s.optBoolean("pointer", false));
         }
     }
 

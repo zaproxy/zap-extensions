@@ -23,6 +23,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
@@ -31,6 +33,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.stream.Stream;
+import net.sf.json.JSONObject;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -459,5 +462,48 @@ class ClientSideComponentUnitTest extends TestUtils {
         int actual = one.compareTo(two);
         // Then
         assertThat(actual, is(equalTo(expected)));
+    }
+
+    @Test
+    void shouldDefaultInteractableToNullWhenConstructedWithMapArgs() {
+        // Given / When
+        ClientSideComponent component =
+                new ClientSideComponent(
+                        Map.of(), "BUTTON", "btn1", EXAMPLE_URL, null, "", Type.BUTTON, "", -1);
+        // Then
+        assertThat(component.getInteractable(), is(nullValue()));
+    }
+
+    @Test
+    void shouldDefaultInteractableToNullWhenParsedFromJsonWithoutField() {
+        // Given
+        JSONObject json =
+                JSONObject.fromObject(
+                        """
+                        {"tagName": "BUTTON", "id": "btn1", "type": "button", "url": "%s", "timestamp": 0}"""
+                                .formatted(EXAMPLE_URL));
+        // When
+        ClientSideComponent component = new ClientSideComponent(json);
+        // Then
+        assertThat(component.getInteractable(), is(nullValue()));
+    }
+
+    @Test
+    void shouldParseInteractableObjectFromJson() {
+        // Given
+        JSONObject json =
+                JSONObject.fromObject(
+                        """
+                        {"tagName": "BUTTON", "id": "btn1", "type": "button", "url": "%s", "timestamp": 0,
+                         "interactable": {"visible": true, "enabled": false, "pointer": true}}"""
+                                .formatted(EXAMPLE_URL));
+        // When
+        ClientSideComponent component = new ClientSideComponent(json);
+        // Then
+        InteractableState state = component.getInteractable();
+        assertThat(state, is(notNullValue()));
+        assertThat(state.isVisible(), is(true));
+        assertThat(state.isEnabled(), is(false));
+        assertThat(state.isPointer(), is(true));
     }
 }
