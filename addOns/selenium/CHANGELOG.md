@@ -4,7 +4,7 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## [15.50.0] - 2026-06-12
 ### Changed
 - Only collect browser's `console.log` when DEBUG level is set for `org.zaproxy.webdriver`, to avoid unnecessary work for common browser usage.
 
@@ -369,6 +369,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Updated to Selenium 2.45 and moved to release
 
+[15.50.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.50.0
 [15.49.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.49.0
 [15.48.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.48.0
 [15.47.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.47.0

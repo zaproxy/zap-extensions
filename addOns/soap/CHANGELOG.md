@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [31] - 2026-06-12
 ### Changed
 - Update dependency.
 
@@ -211,6 +211,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[31]: https://github.com/zaproxy/zap-extensions/releases/soap-v31
 [30]: https://github.com/zaproxy/zap-extensions/releases/soap-v30
 [29]: https://github.com/zaproxy/zap-extensions/releases/soap-v29
 [28]: https://github.com/zaproxy/zap-extensions/releases/soap-v28
