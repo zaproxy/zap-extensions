@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.scripts.automation;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,17 +30,9 @@ import org.zaproxy.zap.extension.script.ScriptWrapper;
 public class ScriptJobOutputListener implements ScriptOutputListener {
     private final AutomationProgress progress;
     private final Map<String, StringBuilder> buffers = new HashMap<>();
-    private final Map<String, List<String>> capturedLinesByScriptName = new HashMap<>();
 
     public ScriptJobOutputListener(AutomationProgress progress) {
         this.progress = progress;
-    }
-
-    public Map<String, List<String>> getCapturedLinesByScriptName() {
-        Map<String, List<String>> result = new HashMap<>();
-        capturedLinesByScriptName.forEach(
-                (name, lines) -> result.put(name, Collections.unmodifiableList(lines)));
-        return Collections.unmodifiableMap(result);
     }
 
     @Override
@@ -75,8 +65,6 @@ public class ScriptJobOutputListener implements ScriptOutputListener {
             } else {
                 progress.infoNoStdout(line);
             }
-            capturedLinesByScriptName.computeIfAbsent(scriptName, k -> new ArrayList<>()).add(line);
-
             buffer.delete(0, index + 1);
             index = buffer.indexOf("\n");
         }

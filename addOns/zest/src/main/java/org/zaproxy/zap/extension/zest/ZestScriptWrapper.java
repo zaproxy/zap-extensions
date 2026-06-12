@@ -31,6 +31,7 @@ import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.scripts.zest.ZestScriptDiagnosticSource;
 import org.zaproxy.zap.extension.scripts.zest.ZestScriptDiagnosticSource.ZestScriptRunDiagnostic;
+import org.zaproxy.zap.extension.scripts.zest.ZestScriptDiagnosticSource.ZestScriptRunSnapshot;
 import org.zaproxy.zap.extension.zest.internal.ZestScriptMerger;
 import org.zaproxy.zap.users.User;
 import org.zaproxy.zest.core.v1.ZestScript;
@@ -56,6 +57,8 @@ public class ZestScriptWrapper extends ScriptWrapper implements ZestScriptDiagno
 
     /** Last run diagnostics (failure context and print output); cleared at run start. */
     private ZestScriptRunDiagnostic lastRunDiagnostic;
+
+    private ZestScriptRunSnapshot lastRunSnapshot;
 
     public ZestScriptWrapper(ScriptWrapper script) {
         this.original = script;
@@ -279,8 +282,18 @@ public class ZestScriptWrapper extends ScriptWrapper implements ZestScriptDiagno
         lastRunDiagnostic = diagnostic;
     }
 
+    /** Replaces last-run snapshot. {@code null} clears it. */
+    public void setLastRunSnapshot(ZestScriptRunSnapshot snapshot) {
+        lastRunSnapshot = snapshot;
+    }
+
     @Override
     public Optional<ZestScriptRunDiagnostic> getLastRunDiagnostic() {
         return Optional.ofNullable(lastRunDiagnostic);
+    }
+
+    @Override
+    public Optional<ZestScriptRunSnapshot> getLastRunSnapshot() {
+        return Optional.ofNullable(lastRunSnapshot);
     }
 }

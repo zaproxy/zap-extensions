@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import javax.script.ScriptEngine;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -56,11 +57,16 @@ import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.MultipleWriters;
 import org.zaproxy.zap.extension.script.ScriptUI;
 import org.zaproxy.zap.extension.script.ScriptVars;
+import org.zaproxy.zap.extension.scripts.zest.ZestScriptDiagnosticSource.ZestFailureStep;
 import org.zaproxy.zap.extension.scripts.zest.ZestScriptDiagnosticSource.ZestScriptPrintCapture;
 import org.zaproxy.zap.extension.scripts.zest.ZestScriptDiagnosticSource.ZestScriptRunDiagnostic;
+import org.zaproxy.zap.extension.scripts.zest.ZestScriptDiagnosticSource.ZestScriptRunRow;
+import org.zaproxy.zap.extension.scripts.zest.ZestScriptDiagnosticSource.ZestScriptRunSnapshot;
 import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.ClientAuthenticator;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
+import org.zaproxy.zap.extension.zest.internal.ZestScriptMerger;
+import org.zaproxy.zap.extension.zest.internal.ZestScriptMerger.ChainProvenance;
 import org.zaproxy.zap.users.User;
 import org.zaproxy.zest.core.v1.ZestAction;
 import org.zaproxy.zest.core.v1.ZestActionFail;
@@ -677,47 +683,160 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
             ZestStatement stmt, String context, String detailMessage, String screenshotBase64) {
         var chainProvOpt = wrapper.getChainProvenance();
         List<ZestScriptPrintCapture> captures = List.copyOf(pendingCaptures);
+        ZestScriptRunDiagnostic diagnostic;
         if (chainProvOpt.isEmpty()) {
-            return new ZestScriptRunDiagnostic(
-                    context,
-                    detailMessage,
-                    1,
-                    stmt.getIndex(),
-                    StringUtils.defaultString(stmt.getElementType()),
-                    screenshotBase64,
-                    captures);
+            diagnostic =
+                    new ZestScriptRunDiagnostic(
+                            context,
+                            detailMessage,
+                            1,
+                            stmt.getIndex(),
+                            StringUtils.defaultString(stmt.getElementType()),
+                            screenshotBase64,
+                            captures);
+        } else {
+            diagnostic =
+                    chainProvOpt
+                            .get()
+                            .originForExecutingStatement(wrapper.getZestScript(), stmt)
+                            .map(
+                                    origin ->
+                                            new ZestScriptRunDiagnostic(
+                                                    context,
+                                                    detailMessage,
+                                                    origin.segmentIndex() + 1,
+                                                    origin.originalStatementIndex(),
+                                                    StringUtils.defaultString(origin.elementType()),
+                                                    screenshotBase64,
+                                                    captures))
+                            .orElseGet(
+                                    () ->
+                                            new ZestScriptRunDiagnostic(
+                                                    context,
+                                                    detailMessage,
+                                                    -1,
+                                                    -1,
+                                                    StringUtils.defaultString(
+                                                            stmt.getElementType()),
+                                                    screenshotBase64,
+                                                    captures));
         }
-        return chainProvOpt
-                .get()
-                .originForExecutingStatement(wrapper.getZestScript(), stmt)
-                .map(
-                        origin ->
-                                new ZestScriptRunDiagnostic(
-                                        context,
-                                        detailMessage,
-                                        origin.segmentIndex() + 1,
-                                        origin.originalStatementIndex(),
-                                        StringUtils.defaultString(origin.elementType()),
-                                        screenshotBase64,
-                                        captures))
-                .orElseGet(
-                        () ->
-                                new ZestScriptRunDiagnostic(
-                                        context,
-                                        detailMessage,
-                                        -1,
-                                        -1,
-                                        StringUtils.defaultString(stmt.getElementType()),
-                                        screenshotBase64,
-                                        captures));
+        setRunSnapshot(
+                diagnostic,
+                new ZestFailureStep(
+                        diagnostic.sourceStatementIndex(),
+                        diagnostic.elementType(),
+                        detailMessage,
+                        screenshotBase64));
+        return diagnostic;
     }
 
     private void finalizePrintCaptures() {
         if (!pendingCaptures.isEmpty() && wrapper.getLastRunDiagnostic().isEmpty()) {
-            wrapper.setLastRunDiagnostic(
+            ZestScriptRunDiagnostic diagnostic =
                     new ZestScriptRunDiagnostic(
-                            "", "", -1, -1, "", null, List.copyOf(pendingCaptures)));
+                            "", "", -1, -1, "", null, List.copyOf(pendingCaptures));
+            wrapper.setLastRunDiagnostic(diagnostic);
+            setRunSnapshot(diagnostic, Optional.empty());
         }
+    }
+
+    private void setRunSnapshot(
+            ZestScriptRunDiagnostic diagnostic, Optional<ZestFailureStep> failure) {
+        setRunSnapshot(
+                diagnostic.printCaptures(),
+                failure,
+                diagnostic.chainScriptOrder(),
+                failure.map(ZestFailureStep::sourceStepIndex).orElse(-1),
+                failure.map(ZestFailureStep::elementType).orElse(""),
+                failure.map(ZestFailureStep::errorMessage).orElse(""),
+                failure.map(ZestFailureStep::screenshotBase64).orElse(null));
+    }
+
+    private void setRunSnapshot(ZestScriptRunDiagnostic diagnostic, ZestFailureStep failure) {
+        setRunSnapshot(diagnostic, Optional.of(failure));
+    }
+
+    private void setRunSnapshot(
+            List<ZestScriptPrintCapture> captures,
+            Optional<ZestFailureStep> failure,
+            int failingOrder,
+            int failureSourceStepIndex,
+            String failureElementType,
+            String failureMessage,
+            String failureScreenshot) {
+        Optional<ZestScriptMerger.ChainProvenance> chainProvOpt = wrapper.getChainProvenance();
+        List<ZestScriptRunRow> rows = new ArrayList<>();
+        if (chainProvOpt.isEmpty()) {
+            rows.add(standaloneRow(captures, failure));
+        } else {
+            for (ChainProvenance.ChainSegment segment : chainProvOpt.get().segments()) {
+                if ("-".equals(segment.scriptName())) {
+                    continue;
+                }
+                int order = segment.segmentIndex() + 1;
+                rows.add(
+                        chainRow(
+                                segment.scriptName(),
+                                order,
+                                captures,
+                                failure,
+                                failingOrder,
+                                failureSourceStepIndex,
+                                failureElementType,
+                                failureMessage,
+                                failureScreenshot));
+            }
+        }
+        wrapper.setLastRunSnapshot(new ZestScriptRunSnapshot(rows));
+    }
+
+    private static ZestScriptRunRow chainRow(
+            String scriptName,
+            int order,
+            List<ZestScriptPrintCapture> captures,
+            Optional<ZestFailureStep> failure,
+            int failingOrder,
+            int failureSourceStepIndex,
+            String failureElementType,
+            String failureMessage,
+            String failureScreenshot) {
+        Optional<ZestFailureStep> rowFailure = Optional.empty();
+        if (failure.isPresent() && isFailingMember(order, failingOrder)) {
+            rowFailure =
+                    Optional.of(
+                            new ZestFailureStep(
+                                    failureSourceStepIndex,
+                                    failureElementType,
+                                    failureMessage,
+                                    failureScreenshot));
+        }
+        return new ZestScriptRunRow(
+                order, scriptName, outputLinesForOrder(captures, order), rowFailure);
+    }
+
+    private static List<String> outputLinesForOrder(
+            List<ZestScriptPrintCapture> captures, int order) {
+        List<String> lines = new ArrayList<>();
+        for (ZestScriptPrintCapture capture : captures) {
+            if (capture.chainScriptOrder() == order) {
+                lines.add(StringUtils.defaultString(capture.line()));
+            }
+        }
+        return lines;
+    }
+
+    private static boolean isFailingMember(int order, int failingOrder) {
+        return order == failingOrder || (failingOrder < 1 && order == 1);
+    }
+
+    private ZestScriptRunRow standaloneRow(
+            List<ZestScriptPrintCapture> captures, Optional<ZestFailureStep> failure) {
+        return new ZestScriptRunRow(
+                1,
+                StringUtils.defaultString(wrapper.getName()),
+                outputLinesForOrder(captures, -1),
+                failure);
     }
 
     private String formatStatementDiagnostics(ZestStatement stmt) {
@@ -881,10 +1000,12 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
     private void resetDiagnosticsForNewRun(ZestScriptWrapper w) {
         pendingCaptures.clear();
         w.setLastRunDiagnostic(null);
+        w.setLastRunSnapshot(null);
     }
 
     static void resetFailureDiagnosticsForNewRun(ZestScriptWrapper w) {
         w.setLastRunDiagnostic(null);
+        w.setLastRunSnapshot(null);
     }
 
     @Override

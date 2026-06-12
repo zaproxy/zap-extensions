@@ -247,6 +247,10 @@ public final class ZestScriptMerger {
             this.originsByMergedStatementOrder = List.copyOf(originsByMergedStatementOrder);
         }
 
+        public List<ChainSegment> segments() {
+            return segments;
+        }
+
         /**
          * Origin for the {@code position}-th statement in the merged script list (0-based), aligned
          * with {@link #finalizeMapping}.

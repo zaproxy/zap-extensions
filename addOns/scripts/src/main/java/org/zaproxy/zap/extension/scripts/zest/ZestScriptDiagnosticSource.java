@@ -48,7 +48,38 @@ public interface ZestScriptDiagnosticSource {
      */
     record ZestScriptPrintCapture(int chainScriptOrder, String line) {}
 
+    /** Failure metadata for one script row in a run snapshot. */
+    record ZestFailureStep(
+            int sourceStepIndex,
+            String elementType,
+            String errorMessage,
+            String screenshotBase64) {}
+
+    /**
+     * One script row in a run snapshot, aligned with persisted diagnostics. {@code order} is
+     * 1-based chain position (always {@code 1} for standalone runs).
+     */
+    record ZestScriptRunRow(
+            int order,
+            String scriptName,
+            List<String> outputLines,
+            Optional<ZestFailureStep> failure) {
+        public ZestScriptRunRow {
+            outputLines = outputLines == null ? List.of() : List.copyOf(outputLines);
+            failure = failure == null ? Optional.empty() : failure;
+        }
+    }
+
+    /** Storage-shaped view of a completed Zest run. */
+    record ZestScriptRunSnapshot(List<ZestScriptRunRow> rows) {
+        public ZestScriptRunSnapshot {
+            rows = rows == null ? List.of() : List.copyOf(rows);
+        }
+    }
+
     Optional<ZestScriptRunDiagnostic> getLastRunDiagnostic();
+
+    Optional<ZestScriptRunSnapshot> getLastRunSnapshot();
 
     default List<ZestScriptPrintCapture> getLastRunPrintCaptures() {
         return getLastRunDiagnostic().map(ZestScriptRunDiagnostic::printCaptures).orElse(List.of());

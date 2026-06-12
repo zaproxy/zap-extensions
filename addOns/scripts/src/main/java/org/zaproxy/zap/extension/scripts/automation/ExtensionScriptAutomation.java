@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -45,7 +44,7 @@ import org.zaproxy.zap.extension.script.ScriptEventListener;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.scripts.ExtensionScriptsUI;
 import org.zaproxy.zap.extension.scripts.internal.db.ScriptRunRecorder;
-import org.zaproxy.zap.extension.scripts.zest.ZestScriptDiagnosticSource;
+import org.zaproxy.zap.extension.scripts.run.ScriptRunFailureResolver;
 
 public class ExtensionScriptAutomation extends ExtensionAdaptor {
 
@@ -184,38 +183,10 @@ public class ExtensionScriptAutomation extends ExtensionAdaptor {
                                             script.getName(),
                                             script.getLastErrorDetails());
                             plan.getProgress().error(message);
-                            String screenshotBase64 = null;
-                            if (script instanceof ZestScriptDiagnosticSource source) {
-                                screenshotBase64 =
-                                        source.getLastRunDiagnostic()
-                                                .map(
-                                                        ZestScriptDiagnosticSource
-                                                                        .ZestScriptRunDiagnostic
-                                                                ::screenshotBase64)
-                                                .orElse(null);
-                            }
                             ScriptRunRecorder.recordRun(
                                     message,
                                     ScriptRunRecorder.OUTCOME_FAILED,
-                                    List.of(
-                                            new ScriptRunRecorder.RunScript(
-                                                    script.getName(),
-                                                    script.getTypeName(),
-                                                    List.of(
-                                                            new ScriptRunRecorder.RunStep(
-                                                                    -1,
-                                                                    "",
-                                                                    List.of(
-                                                                            new ScriptRunRecorder
-                                                                                    .StepOutput(
-                                                                                    ScriptRunRecorder
-                                                                                            .OUTPUT_KIND_ERROR,
-                                                                                    StringUtils
-                                                                                            .defaultString(
-                                                                                                    ScriptRunFailureDetail
-                                                                                                            .compactScriptOutputDetailForPersistence(
-                                                                                                                    script)))),
-                                                                    screenshotBase64)))));
+                                    ScriptRunFailureResolver.buildFailedScriptRun(script));
                         });
             }
         }

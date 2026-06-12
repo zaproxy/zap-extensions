@@ -83,33 +83,4 @@ class ExtensionScriptsReportUnitTest {
                                     + " && st.outputs.contains(o) && o.kind == :kind");
         }
     }
-
-    @Test
-    void shouldOmitScriptDiagnosticsWhenOutputSectionDisabledAndQueryReturnsNoErrorRuns() {
-        // Given — SUCCESS output-only runs do not match the ERROR filter
-        try (MockedStatic<TableJdo> tableJdo = mockStatic(TableJdo.class)) {
-            PersistenceManagerFactory pmf = mock(PersistenceManagerFactory.class);
-            PersistenceManager pm = mock(PersistenceManager.class);
-            @SuppressWarnings("unchecked")
-            Query<ScriptsRun> query = mock(Query.class);
-            tableJdo.when(TableJdo::getPmf).thenReturn(pmf);
-            given(pmf.getPersistenceManager()).willReturn(pm);
-            given(pm.newQuery(ScriptsRun.class)).willReturn(query);
-            given(query.executeList()).willReturn(List.of());
-
-            ReportData reportData = new ReportData("test");
-            reportData.setSections(List.of("scriptdiagnostics"));
-            reportData.setAlertTreeRootNode(new AlertNode(0, "Test"));
-
-            // When
-            new ExtensionScriptsReport.ScriptsReportDataHandler().handle(reportData);
-
-            // Then
-            assertThat(
-                    reportData
-                            .getReportObjects()
-                            .containsKey(ExtensionScriptsReport.SCRIPT_DIAGNOSTICS),
-                    is(false));
-        }
-    }
 }

@@ -85,18 +85,6 @@ class ScriptJobOutputListenerUnitTest {
     }
 
     @Test
-    void shouldCaptureOutputPerScript() {
-        ScriptWrapper otherScript = mock(ScriptWrapper.class);
-        when(otherScript.getName()).thenReturn("OTHER");
-
-        listener.output(script, "from-test\n");
-        listener.output(otherScript, "from-other\n");
-
-        assertThat(listener.getCapturedLinesByScriptName().get(SCRIPT_NAME), contains("from-test"));
-        assertThat(listener.getCapturedLinesByScriptName().get("OTHER"), contains("from-other"));
-    }
-
-    @Test
     void shouldCallInfoOnOutputWithView() {
         String testString = "Hello World";
         try (MockedStatic<View> view = mockStatic(View.class)) {
