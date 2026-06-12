@@ -3,6 +3,9 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+
+
 ## [0.5.0] - 2026-06-12
 ### Added
 - Report data now exposes `stoppingInsight` to make it explicit which insight caused a stop. The built-in report templates render the stopping insight when present.
