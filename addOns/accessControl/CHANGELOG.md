@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Formatted JavaScript files for consistency.
 
+### Fixed
+- Discrepancy between Sites tree node name & Access Control recomputed node name made check silently fail and fallback to parent rule.
+
 ## [12] - 2026-04-14
 ### Changed
 - Maintenance changes.
