@@ -41,6 +41,7 @@ public class ReportData {
     private boolean[] risks = new boolean[Alert.MSG_RISK.length];
     private List<String> sections = new ArrayList<>();
     private String theme;
+    private boolean zipReport;
 
     @Deprecated
     public ReportData() {}
@@ -186,5 +187,13 @@ public class ReportData {
 
     public void setTemplateName(String templateName) {
         this.templateName = templateName;
+    }
+
+    public boolean isZipReport() {
+        return zipReport;
+    }
+
+    public void setZipReport(boolean zipReport) {
+        this.zipReport = zipReport;
     }
 }
