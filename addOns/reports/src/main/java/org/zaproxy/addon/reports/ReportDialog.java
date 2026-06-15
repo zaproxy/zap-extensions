@@ -72,6 +72,7 @@ public class ReportDialog extends StandardFieldsDialog {
     private static final String FIELD_REPORT_NAME_PATTERN = "reports.dialog.field.namepattern";
     private static final String FIELD_CONFIDENCE_HEADER = "reports.dialog.field.confidence";
     private static final String FIELD_CONFIDENCE_0 = "reports.dialog.field.confidence.0";
+    private static final String FIELD_ZIP_REPORT = "reports.dialog.field.zip";
     private static final String FIELD_CONFIDENCE_1 = "reports.dialog.field.confidence.1";
     private static final String FIELD_CONFIDENCE_2 = "reports.dialog.field.confidence.2";
     private static final String FIELD_CONFIDENCE_3 = "reports.dialog.field.confidence.3";
@@ -230,7 +231,13 @@ public class ReportDialog extends StandardFieldsDialog {
         this.addCustomComponent(
                 TAB_SCOPE, FIELD_SITES, getNewJScrollPane(getSitesSelector(), 400, 100));
         this.addCheckBoxField(TAB_SCOPE, FIELD_GENERATE_ANYWAY, false);
-        this.addCheckBoxField(TAB_SCOPE, FIELD_DISPLAY_REPORT, reportParam.isDisplayReport());
+        boolean[] zipAndDisplay =
+                ReportOutputOptions.resolveInitialSelection(
+                        reportParam.isZipReport(), reportParam.isDisplayReport());
+        this.addCheckBoxField(TAB_SCOPE, FIELD_ZIP_REPORT, zipAndDisplay[0]);
+        this.addCheckBoxField(TAB_SCOPE, FIELD_DISPLAY_REPORT, zipAndDisplay[1]);
+        ReportOutputOptions.bindMutuallyExclusiveCheckBoxes(
+                this, FIELD_ZIP_REPORT, FIELD_DISPLAY_REPORT);
 
         Template defaultTemplate = extension.getTemplateByConfigName(reportParam.getTemplate());
         List<String> templates = extension.getTemplateNames();
@@ -457,6 +464,8 @@ public class ReportDialog extends StandardFieldsDialog {
             }
         }
 
+        reportData.setZipReport(this.getBoolValue(FIELD_ZIP_REPORT));
+
         // Always do this last as it depends on the other fields
         reportData.setAlertTreeRootNode(extension.getFilteredAlertTree(reportData));
         return reportData;
@@ -464,12 +473,16 @@ public class ReportDialog extends StandardFieldsDialog {
 
     @Override
     public void save() {
-        boolean displayReport = this.getBoolValue(FIELD_DISPLAY_REPORT);
+        boolean zipReport = this.getBoolValue(FIELD_ZIP_REPORT);
+        boolean displayReport =
+                ReportOutputOptions.resolveDisplay(
+                        zipReport, this.getBoolValue(FIELD_DISPLAY_REPORT));
         Template template = extension.getTemplateByDisplayName(getStringValue(FIELD_TEMPLATE));
         ReportData reportData = getReportData(template);
 
         // Always save all of the options
         ReportParam reportParam = extension.getReportParam();
+        reportParam.setZipReport(zipReport);
         reportParam.setDisplayReport(displayReport);
         reportParam.setTitle(reportData.getTitle());
         reportParam.setDescription(reportData.getDescription());

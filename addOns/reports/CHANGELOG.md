@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - Help content related to the params add-on was updated (Issue 9210).
+- Generation of reports now supports producing a ZIP containing the report file(s) (Issue 7821).
 
 ## [0.45.0] - 2026-05-06
 ### Fixed

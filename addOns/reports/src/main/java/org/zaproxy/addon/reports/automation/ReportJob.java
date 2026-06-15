@@ -40,6 +40,7 @@ import org.zaproxy.addon.automation.jobs.JobData;
 import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.addon.reports.ExtensionReports;
 import org.zaproxy.addon.reports.ReportData;
+import org.zaproxy.addon.reports.ReportOutputOptions;
 import org.zaproxy.addon.reports.ReportParam;
 import org.zaproxy.addon.reports.Template;
 
@@ -56,6 +57,7 @@ public class ReportJob extends AutomationJob {
     private static final String PARAM_REPORT_TITLE = "reportTitle";
     private static final String PARAM_REPORT_DESC = "reportDescription";
     private static final String PARAM_DISPLAY_REPORT = "displayReport";
+    private static final String PARAM_ZIP_REPORT = "zipReport";
 
     private ExtensionReports extReport;
 
@@ -259,6 +261,16 @@ public class ReportJob extends AutomationJob {
         }
 
         reportData.setAlertTreeRootNode(getExtReport().getFilteredAlertTree(reportData));
+        boolean zipReport = JobUtils.unBox(this.getParameters().getZipReport());
+        boolean displayReport = JobUtils.unBox(this.getParameters().getDisplayReport());
+        if (ReportOutputOptions.bothEnabled(zipReport, displayReport)) {
+            String message =
+                    Constant.messages.getString(
+                            "reports.automation.warn.zipanddisplay", this.getName());
+            progress.warn(message);
+            LOGGER.warn(message);
+        }
+        reportData.setZipReport(zipReport);
 
         try {
             file =
@@ -267,7 +279,7 @@ public class ReportJob extends AutomationJob {
                                     reportData,
                                     template,
                                     file.getAbsolutePath(),
-                                    JobUtils.unBox(this.getParameters().getDisplayReport()));
+                                    ReportOutputOptions.resolveDisplay(zipReport, displayReport));
             progress.info(
                     Constant.messages.getString(
                             "reports.automation.info.reportgen",
@@ -398,6 +410,9 @@ public class ReportJob extends AutomationJob {
         map.put(
                 PARAM_DISPLAY_REPORT,
                 Boolean.toString(JobUtils.unBox(this.getParameters().getDisplayReport())));
+        map.put(
+                PARAM_ZIP_REPORT,
+                Boolean.toString(JobUtils.unBox(this.getParameters().getZipReport())));
         return map;
     }
 
@@ -477,5 +492,6 @@ public class ReportJob extends AutomationJob {
         private String reportTitle = "";
         private String reportDescription = "";
         private Boolean displayReport = false;
+        private Boolean zipReport = false;
     }
 }

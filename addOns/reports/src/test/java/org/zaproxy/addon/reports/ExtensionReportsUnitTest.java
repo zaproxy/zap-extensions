@@ -20,6 +20,8 @@
 package org.zaproxy.addon.reports;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
@@ -32,9 +34,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.withSettings;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,6 +47,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.LoggerContext;
@@ -52,10 +61,13 @@ import org.apache.logging.log4j.core.config.Configurator;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.apache.logging.log4j.core.config.Property;
 import org.apache.logging.log4j.core.layout.PatternLayout;
+import org.hamcrest.Matcher;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.quality.Strictness;
 import org.parosproxy.paros.Constant;
@@ -816,6 +828,167 @@ class ExtensionReportsUnitTest extends TestUtils {
         assertThat(report.length(), greaterThan(0));
         assertThat(logEvents, not(hasItem(startsWith("WARN"))));
         assertThat(logEvents, not(hasItem(startsWith("ERROR"))));
+    }
+
+    @Test
+    void shouldGenerateZippedHtmlReportWithResources() throws Exception {
+        withZipWorkDir(
+                workDir -> {
+                    // Given / When
+                    File result =
+                            generateReport(workDir, "traditional-html-plus", "report.html", true);
+
+                    // Then
+                    assertZippedReport(result, workDir, "report.html");
+                    assertThat(result.getParentFile().toPath(), is(equalTo(workDir)));
+                    assertThat(Files.exists(workDir.resolve("report")), is(false));
+                    assertZipEntries(
+                            result, allOf(hasItem("report.html"), hasItem("report/common.css")));
+                });
+    }
+
+    @Test
+    void shouldNotZipWhenDisabled() throws Exception {
+        withZipWorkDir(
+                workDir -> {
+                    // Given / When
+                    File result =
+                            generateReport(workDir, "traditional-html-plus", "report.html", false);
+
+                    // Then
+                    assertNotZipped(result, workDir, "report.html");
+                });
+    }
+
+    @ParameterizedTest
+    @MethodSource("zippedSingleFileReportCases")
+    void shouldGenerateZippedReportWithSingleFile(
+            String templateName, String reportFileName, boolean withAlerts) throws Exception {
+        withZipWorkDir(
+                workDir -> {
+                    // Given / When
+                    File result =
+                            withAlerts
+                                    ? generateReport(
+                                            workDir,
+                                            templateName,
+                                            reportFileName,
+                                            true,
+                                            setupReportData())
+                                    : generateReport(workDir, templateName, reportFileName, true);
+
+                    // Then
+                    assertZippedReport(result, workDir, reportFileName);
+                    assertZipEntries(result, containsInAnyOrder(reportFileName));
+                });
+    }
+
+    static Stream<Arguments> zippedSingleFileReportCases() {
+        return Stream.of(
+                Arguments.of("traditional-md", "report.md", false),
+                Arguments.of("traditional-pdf", "report.pdf", true));
+    }
+
+    @Test
+    void shouldIgnoreStaleResourcesDirWhenWritingZip() throws Exception {
+        withZipWorkDir(
+                workDir -> {
+                    // Given
+                    Path staleResourcesDir = workDir.resolve("report");
+                    Files.createDirectories(staleResourcesDir);
+                    Files.writeString(staleResourcesDir.resolve("stale.txt"), "stale");
+
+                    // When
+                    File result =
+                            generateReport(workDir, "traditional-html-plus", "report.html", true);
+
+                    // Then
+                    assertThat(Files.exists(workDir.resolve("report.html")), is(false));
+                    assertThat(Files.exists(workDir.resolve("report")), is(true));
+                    assertZipEntries(
+                            result,
+                            allOf(hasItem("report/common.css"), not(hasItem("report/stale.txt"))));
+                });
+    }
+
+    @FunctionalInterface
+    private interface ZipWorkDirConsumer {
+        void accept(Path workDir) throws Exception;
+    }
+
+    private static void withZipWorkDir(ZipWorkDirConsumer consumer) throws Exception {
+        Path workDir = Files.createTempDirectory("zap-reports-zip-test");
+        try {
+            consumer.accept(workDir);
+        } finally {
+            deleteDirectory(workDir);
+        }
+    }
+
+    private static File generateReport(
+            Path workDir, String templateName, String reportFileName, boolean zipReport)
+            throws Exception {
+        return generateReport(
+                workDir,
+                templateName,
+                reportFileName,
+                zipReport,
+                ReportTestUtils.getTestReportData());
+    }
+
+    private static File generateReport(
+            Path workDir,
+            String templateName,
+            String reportFileName,
+            boolean zipReport,
+            ReportData reportData)
+            throws Exception {
+        ExtensionReports extRep = new ExtensionReports();
+        Template template = ReportTestUtils.getTemplateFromYamlFile(templateName);
+        reportData.setSections(template.getSections());
+        reportData.setZipReport(zipReport);
+        return extRep.generateReport(
+                reportData,
+                template,
+                workDir.resolve(reportFileName).toAbsolutePath().toString(),
+                false);
+    }
+
+    private static void assertZippedReport(File result, Path workDir, String reportFileName)
+            throws IOException {
+        assertThat(result.getName(), is(equalTo(zipFileName(reportFileName))));
+        assertThat(Files.exists(workDir.resolve(reportFileName)), is(false));
+    }
+
+    private static void assertNotZipped(File result, Path workDir, String reportFileName) {
+        assertThat(result.getName(), is(equalTo(reportFileName)));
+        assertThat(Files.exists(workDir.resolve(zipFileName(reportFileName))), is(false));
+        assertThat(Files.exists(workDir.resolve(reportFileName)), is(true));
+    }
+
+    private static void assertZipEntries(
+            File zipFile, Matcher<? super Iterable<? super String>> matcher) throws IOException {
+        assertThat(listZipEntryNames(zipFile), matcher);
+    }
+
+    private static String zipFileName(String reportFileName) {
+        int dotIndex = reportFileName.lastIndexOf('.');
+        if (dotIndex > 0) {
+            return reportFileName.substring(0, dotIndex) + ".zip";
+        }
+        return reportFileName + ".zip";
+    }
+
+    private static List<String> listZipEntryNames(File zipFile) throws IOException {
+        try (ZipFile zip = new ZipFile(zipFile)) {
+            return zip.stream().map(ZipEntry::getName).sorted().collect(Collectors.toList());
+        }
+    }
+
+    private static void deleteDirectory(Path dir) throws IOException {
+        if (dir != null && Files.exists(dir)) {
+            FileUtils.deleteDirectory(dir.toFile());
+        }
     }
 
     private static ReportData setupReportData() {
