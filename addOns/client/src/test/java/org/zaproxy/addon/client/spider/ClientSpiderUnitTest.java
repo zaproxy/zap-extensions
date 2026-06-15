@@ -644,6 +644,102 @@ class ClientSpiderUnitTest extends TestUtils {
     }
 
     @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "http://www.example.com/a",
+                "https://www.example.com/b",
+                "HTTP://www.example.com/c",
+                "HTTPS://www.example.com/d"
+            })
+    void shouldNotSkipClickForLinkComponentWithHref(String href) {
+        // Given
+        given(map.getNode(href, false, false)).willReturn(null);
+
+        spider.run();
+        waitForProxy();
+
+        // When
+        clientMapListener()
+                .componentAdded(
+                        Map.of(
+                                ClientMap.URL_KEY,
+                                seedUrl,
+                                "tagName",
+                                "A",
+                                "href",
+                                href,
+                                "text",
+                                "Unknown Link",
+                                "depth",
+                                "1"),
+                        PROXY_PORT);
+        sleep();
+
+        // Then
+        verify(wd).findElement(any());
+    }
+
+    @Test
+    void shouldSkipClickForLinkComponentWithAlreadyHandledHref() {
+        // Given
+        String href = "https://www.example.com/queued-once";
+        given(map.getNode(href, false, false)).willReturn(null);
+
+        spider.run();
+        waitForProxy();
+
+        Map<String, String> params =
+                Map.of(
+                        ClientMap.URL_KEY,
+                        seedUrl,
+                        "tagName",
+                        "A",
+                        "href",
+                        href,
+                        "text",
+                        "Some Link",
+                        "depth",
+                        "1");
+
+        // When
+        clientMapListener().componentAdded(params, PROXY_PORT);
+        clientMapListener().componentAdded(params, PROXY_PORT);
+        sleep();
+
+        // Then
+        verify(wd).findElement(any());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"#fragment", "relative-path", "http-page", "https-page"})
+    void shouldNotSkipClickForLinkComponentWithNonHttpHref(String href) {
+        // Given
+        spider.run();
+        waitForProxy();
+
+        Map<String, String> params =
+                Map.of(
+                        ClientMap.URL_KEY,
+                        seedUrl,
+                        "tagName",
+                        "A",
+                        "href",
+                        href,
+                        "text",
+                        "Some Link",
+                        "depth",
+                        "1");
+
+        // When
+        clientMapListener().componentAdded(params, PROXY_PORT);
+        clientMapListener().componentAdded(params, PROXY_PORT);
+        sleep();
+
+        // Then
+        verify(wd, times(2)).findElement(any());
+    }
+
+    @ParameterizedTest
     @CsvSource({
         "https://www.example.org/new-path, https://www.example.org/new-path",
         "/relative-path, https://www.example.com/relative-path",
