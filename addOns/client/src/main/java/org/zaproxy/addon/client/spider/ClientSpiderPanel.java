@@ -21,6 +21,7 @@ package org.zaproxy.addon.client.spider;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -66,6 +67,7 @@ public class ClientSpiderPanel extends ScanPanel2<ClientSpider, ScanController<C
     private JPanel mainPanel;
     private JTabbedPane tabbedPane;
     private JButton scanButton;
+    private JButton stopButton;
     private ZapTable addedNodesTable;
     private JScrollPane addedNodesTableScrollPane;
     private JLabel addedCountNameLabel;
@@ -237,6 +239,24 @@ public class ClientSpiderPanel extends ScanPanel2<ClientSpider, ScanController<C
             messagesTable.setModel(EMPTY_MESSAGES_TABLE_MODEL);
         }
         this.updateAddedCount();
+    }
+
+    @Override
+    protected JButton getStopScanButton() {
+        if (stopButton == null) {
+            stopButton = super.getStopScanButton();
+            for (ActionListener al : stopButton.getActionListeners()) {
+                stopButton.removeActionListener(al);
+            }
+            stopButton.addActionListener(
+                    e -> {
+                        ClientSpider scanner = getSelectedScanner();
+                        if (scanner != null) {
+                            new Thread(scanner::stopScan, "ZAP-ClientSpider-GUI-Stop").start();
+                        }
+                    });
+        }
+        return stopButton;
     }
 
     @Override
