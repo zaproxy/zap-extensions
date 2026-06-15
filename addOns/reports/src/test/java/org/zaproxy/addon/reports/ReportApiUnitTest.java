@@ -34,19 +34,25 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
+import java.io.File;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Locale;
+import java.util.stream.Stream;
 import net.sf.json.JSONObject;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.model.Model;
 import org.zaproxy.zap.extension.api.ApiException;
+import org.zaproxy.zap.extension.api.ApiResponseElement;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.utils.I18N;
 
@@ -74,6 +80,8 @@ class ReportApiUnitTest {
         params.put(ReportApi.PARAM_TEMPLATE, "traditional-html-plus");
         template = ReportTestUtils.getTemplateFromYamlFile("traditional-html-plus");
         when(extReports.getTemplateByConfigName(anyString())).thenReturn(template);
+        when(extReports.generateReport(any(), any(), anyString(), anyBoolean()))
+                .thenAnswer(invocation -> new File((String) invocation.getArgument(2)));
         reportDataCaptor = ArgumentCaptor.forClass(ReportData.class);
     }
 
@@ -292,6 +300,34 @@ class ReportApiUnitTest {
         assertThat(displayCaptor.getValue(), is(display));
     }
 
+    @ParameterizedTest
+    @MethodSource("zipReportCases")
+    void shouldHandleZipReportOptions(
+            boolean zip, boolean setDisplay, boolean expectedZip, boolean expectedDisplay)
+            throws Exception {
+        // Given
+        params.put(ReportApi.PARAM_ZIP, zip);
+        if (setDisplay) {
+            params.put(ReportApi.PARAM_DISPLAY, true);
+        }
+        ArgumentCaptor<Boolean> displayCaptor = ArgumentCaptor.forClass(boolean.class);
+
+        // When
+        reportApi.handleApiAction(ReportApi.ACTION_GENERATE, params);
+
+        // Then
+        verify(extReports)
+                .generateReport(
+                        reportDataCaptor.capture(), any(), anyString(), displayCaptor.capture());
+        assertThat(reportDataCaptor.getValue().isZipReport(), is(expectedZip));
+        assertThat(displayCaptor.getValue(), is(expectedDisplay));
+    }
+
+    static Stream<Arguments> zipReportCases() {
+        return Stream.of(
+                Arguments.of(true, false, true, false), Arguments.of(true, true, true, false));
+    }
+
     @Test
     void shouldPopulateOptionalParamsWithDefaultValues() throws Exception {
         // Given
@@ -336,7 +372,8 @@ class ReportApiUnitTest {
                 () -> assertThat(reportData.isIncludeRisk(Alert.RISK_MEDIUM), is(true)),
                 () -> assertThat(reportData.isIncludeRisk(Alert.RISK_HIGH), is(true)),
                 () -> assertThat(reportFilePathCaptor.getValue(), is(expectedReportFilePath)),
-                () -> assertThat(displayCaptor.getValue(), is(false)));
+                () -> assertThat(displayCaptor.getValue(), is(false)),
+                () -> assertThat(reportData.isZipReport(), is(false)));
     }
 
     @Test
@@ -483,5 +520,30 @@ class ReportApiUnitTest {
         assertAll(
                 () -> assertThat(reportFilePathCaptor.getValue(), is(fileNamePath)),
                 () -> assertThat(reportFilePathCaptor.getValue(), is(not(fileNamePatternPath))));
+    }
+
+    @Test
+    void shouldReturnGeneratedReportPath() throws Exception {
+        // Given
+        String reportDirectory = System.getProperty("java.io.tmpdir");
+        String reportFileName = "testrpt";
+        String htmlReportPath =
+                Paths.get(reportDirectory, reportFileName + '.' + template.getExtension())
+                        .toString();
+        File zipReport = new File(reportDirectory, reportFileName + ".zip");
+        params.put(ReportApi.PARAM_REPORT_DIRECTORY, reportDirectory);
+        params.put(ReportApi.PARAM_REPORT_FILE_NAME, reportFileName);
+        params.put(ReportApi.PARAM_ZIP, true);
+        when(extReports.generateReport(any(), any(), anyString(), anyBoolean()))
+                .thenReturn(zipReport);
+
+        // When
+        ApiResponseElement response =
+                (ApiResponseElement) reportApi.handleApiAction(ReportApi.ACTION_GENERATE, params);
+
+        // Then
+        assertAll(
+                () -> assertThat(response.getValue(), is(zipReport.getPath())),
+                () -> assertThat(response.getValue(), is(not(htmlReportPath))));
     }
 }
