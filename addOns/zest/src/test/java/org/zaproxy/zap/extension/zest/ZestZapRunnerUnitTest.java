@@ -427,6 +427,146 @@ class ZestZapRunnerUnitTest extends TestUtils {
         m.invoke(runner, stmt, t);
     }
 
+    @Test
+    void shouldRecordStdoutOutputWithStandaloneAttribution() {
+        ZestScriptWrapper wrapper = mock(ZestScriptWrapper.class);
+        given(wrapper.getChainProvenance()).willReturn(Optional.empty());
+        given(wrapper.getName()).willReturn("zest-script");
+        ZestZapRunner runner = new ZestZapRunner(extensionZest, extensionNetwork, wrapper);
+
+        runner.output("logged in");
+
+        verify(wrapper).appendRunOutput("zest-script", -1, "", "logged in");
+    }
+
+    @Test
+    void shouldRecordStdoutOutputWithChainAttribution() {
+        ZestScriptMerger.ChainProvenance provenance = mock(ZestScriptMerger.ChainProvenance.class);
+        ZestScriptMerger.ChainProvenance.StatementOrigin origin =
+                new ZestScriptMerger.ChainProvenance.StatementOrigin(1, 5, "ZestActionPrint");
+        ZestScript merged = mock(ZestScript.class);
+        ZestStatement stmt = mock(ZestStatement.class);
+        given(provenance.originForExecutingStatement(merged, stmt)).willReturn(Optional.of(origin));
+        given(provenance.segmentScriptName(1)).willReturn(Optional.of("nav-script"));
+
+        ZestScriptWrapper wrapper = mock(ZestScriptWrapper.class);
+        given(wrapper.getChainProvenance()).willReturn(Optional.of(provenance));
+        given(wrapper.getZestScript()).willReturn(merged);
+
+        ZestZapRunner runner = new ZestZapRunner(extensionZest, extensionNetwork, wrapper);
+        setExecutingStatement(runner, stmt);
+
+        runner.output("chain line");
+
+        verify(wrapper).appendRunOutput("nav-script", 5, "ZestActionPrint", "chain line");
+    }
+
+    @Test
+    void shouldRecordStdoutOutputWithChainAttributionWhenExecutingLookupMisses() {
+        ZestScriptMerger.ChainProvenance provenance = mock(ZestScriptMerger.ChainProvenance.class);
+        ZestScriptMerger.ChainProvenance.StatementOrigin origin =
+                new ZestScriptMerger.ChainProvenance.StatementOrigin(1, 5, "ZestActionPrint");
+        ZestScript merged = mock(ZestScript.class);
+        ZestStatement stmt = mock(ZestStatement.class);
+        given(stmt.getIndex()).willReturn(99);
+        given(provenance.originForExecutingStatement(merged, stmt)).willReturn(Optional.empty());
+        given(provenance.originForMergedIndex(99)).willReturn(Optional.of(origin));
+        given(provenance.segmentScriptName(1)).willReturn(Optional.of("nav-script"));
+
+        ZestScriptWrapper wrapper = mock(ZestScriptWrapper.class);
+        given(wrapper.getChainProvenance()).willReturn(Optional.of(provenance));
+        given(wrapper.getZestScript()).willReturn(merged);
+
+        ZestZapRunner runner = new ZestZapRunner(extensionZest, extensionNetwork, wrapper);
+        setExecutingStatement(runner, stmt);
+
+        runner.output("chain line");
+
+        verify(wrapper).appendRunOutput("nav-script", 5, "ZestActionPrint", "chain line");
+    }
+
+    @Test
+    void shouldRecordStdoutOutputUsingFirstSegmentWhenChainProvenanceUnknown() {
+        ZestScriptMerger.ChainProvenance provenance = mock(ZestScriptMerger.ChainProvenance.class);
+        ZestScript merged = mock(ZestScript.class);
+        ZestStatement stmt = mock(ZestStatement.class);
+        given(stmt.getIndex()).willReturn(99);
+        given(stmt.getElementType()).willReturn("ZestActionPrint");
+        given(provenance.originForExecutingStatement(merged, stmt)).willReturn(Optional.empty());
+        given(provenance.originForMergedIndex(99)).willReturn(Optional.empty());
+        given(provenance.segmentScriptName(0)).willReturn(Optional.of("account_check"));
+
+        ZestScriptWrapper wrapper = mock(ZestScriptWrapper.class);
+        given(wrapper.getChainProvenance()).willReturn(Optional.of(provenance));
+        given(wrapper.getZestScript()).willReturn(merged);
+
+        ZestZapRunner runner = new ZestZapRunner(extensionZest, extensionNetwork, wrapper);
+        setExecutingStatement(runner, stmt);
+
+        runner.output("chain line");
+
+        verify(wrapper).appendRunOutput("account_check", -1, "ZestActionPrint", "chain line");
+    }
+
+    @Test
+    void shouldRecordStdoutOutputUsingWrapperNameWhenSegmentNameMissing() {
+        ZestScriptMerger.ChainProvenance provenance = mock(ZestScriptMerger.ChainProvenance.class);
+        ZestScriptMerger.ChainProvenance.StatementOrigin origin =
+                new ZestScriptMerger.ChainProvenance.StatementOrigin(1, 5, "ZestActionPrint");
+        ZestScript merged = mock(ZestScript.class);
+        ZestStatement stmt = mock(ZestStatement.class);
+        given(provenance.originForExecutingStatement(merged, stmt)).willReturn(Optional.of(origin));
+        given(provenance.segmentScriptName(1)).willReturn(Optional.empty());
+
+        ZestScriptWrapper wrapper = mock(ZestScriptWrapper.class);
+        given(wrapper.getChainProvenance()).willReturn(Optional.of(provenance));
+        given(wrapper.getZestScript()).willReturn(merged);
+        given(wrapper.getName()).willReturn("merged-chain");
+
+        ZestZapRunner runner = new ZestZapRunner(extensionZest, extensionNetwork, wrapper);
+        setExecutingStatement(runner, stmt);
+
+        runner.output("chain line");
+
+        verify(wrapper).appendRunOutput("merged-chain", 5, "ZestActionPrint", "chain line");
+    }
+
+    @Test
+    void shouldReuseLastOutputAttributionWhenExecutingStatementCleared() throws Exception {
+        ZestScriptMerger.ChainProvenance provenance = mock(ZestScriptMerger.ChainProvenance.class);
+        ZestScriptMerger.ChainProvenance.StatementOrigin origin =
+                new ZestScriptMerger.ChainProvenance.StatementOrigin(1, 5, "ZestActionPrint");
+        ZestScript merged = mock(ZestScript.class);
+        ZestStatement stmt = mock(ZestStatement.class);
+        given(provenance.originForExecutingStatement(merged, stmt)).willReturn(Optional.of(origin));
+        given(provenance.segmentScriptName(1)).willReturn(Optional.of("nav-script"));
+
+        ZestScriptWrapper wrapper = mock(ZestScriptWrapper.class);
+        given(wrapper.getChainProvenance()).willReturn(Optional.of(provenance));
+        given(wrapper.getZestScript()).willReturn(merged);
+
+        ZestZapRunner runner = new ZestZapRunner(extensionZest, extensionNetwork, wrapper);
+        setExecutingStatement(runner, stmt);
+        runner.output("during statement");
+        setExecutingStatement(runner, null);
+
+        runner.output("between statements");
+
+        verify(wrapper).appendRunOutput("nav-script", 5, "ZestActionPrint", "during statement");
+        verify(wrapper).appendRunOutput("nav-script", 5, "ZestActionPrint", "between statements");
+    }
+
+    private static void setExecutingStatement(ZestZapRunner runner, ZestStatement stmt) {
+        try {
+            java.lang.reflect.Field field =
+                    ZestZapRunner.class.getDeclaredField("executingStatement");
+            field.setAccessible(true);
+            field.set(runner, stmt);
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     // Test implementation that implements both interfaces to ensure instanceof works
     private abstract static class TestClientAuthenticatorMethod extends AuthenticationMethod
             implements ClientAuthenticator {}

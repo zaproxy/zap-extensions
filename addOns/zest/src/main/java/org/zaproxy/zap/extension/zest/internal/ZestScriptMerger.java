@@ -293,6 +293,14 @@ public final class ZestScriptMerger {
             return Optional.ofNullable(byZestStatementIndex.get(zestStatementIndex));
         }
 
+        /** Script name for a chain segment index, when in range. */
+        public Optional<String> segmentScriptName(int segmentIndex) {
+            if (segmentIndex < 0 || segmentIndex >= segments.size()) {
+                return Optional.empty();
+            }
+            return Optional.of(segments.get(segmentIndex).scriptName());
+        }
+
         /**
          * Resolves provenance for a statement during merged-chain execution. Uses {@link
          * #originForMergedIndex(int)} on {@code stmt.getIndex()}, then matches {@code stmt} by
