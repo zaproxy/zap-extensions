@@ -59,6 +59,7 @@ import org.zaproxy.zap.extension.scripts.diagnostics.ScriptDiagnosticSource.RunF
 import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.ClientAuthenticator;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
+import org.zaproxy.zap.extension.zest.internal.ZestScriptMerger;
 import org.zaproxy.zap.users.User;
 import org.zaproxy.zest.core.v1.ZestAction;
 import org.zaproxy.zest.core.v1.ZestActionFail;
@@ -92,6 +93,10 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
     private ExtensionZest extension;
     private final ExtensionNetwork extensionNetwork;
     private ZestScriptWrapper wrapper = null;
+    private ZestStatement executingStatement;
+
+    /** Last resolved stdout attribution; used when output occurs outside a statement. */
+    private OutputAttribution lastOutputAttribution;
 
     /** Set when {@link #setWrapper} runs; provenance does not change during a run. */
     private boolean chainedScriptRun;
@@ -191,6 +196,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
             }
             return fieldOutputWriter.get(this) != null;
         } catch (IllegalAccessException | NoSuchFieldException e) {
+            LOGGER.debug("Failed to read ZestBasicRunner outputWriter field.", e);
             return false;
         }
     }
@@ -331,6 +337,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
             return null;
         }
         try {
+            executingStatement = stmt;
             return super.runStatement(script, stmt, lastResponse);
         } catch (ZestAssertFailException
                 | ZestActionFailException
@@ -341,6 +348,11 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
                 | RuntimeException e) {
             recordStatementFailureContext(stmt, e);
             throw e;
+        } finally {
+            if (stmt != null) {
+                lastOutputAttribution = outputAttribution(stmt);
+            }
+            executingStatement = null;
         }
     }
 
@@ -801,8 +813,85 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
         chainedScriptRun = this.wrapper.getChainProvenance().isPresent();
     }
 
-    private static void resetFailureDiagnosticsForNewRun(ZestScriptWrapper w) {
+    private void resetFailureDiagnosticsForNewRun(ZestScriptWrapper w) {
         w.clearRunDiagnostics();
+        lastOutputAttribution = null;
+    }
+
+    @Override
+    public void output(String str) {
+        super.output(str);
+        recordRunOutput(str);
+    }
+
+    @Override
+    public void debug(String str) {
+        super.debug(str);
+        if (this.wrapper.isDebug()) {
+            recordRunOutput("DEBUG: " + str);
+        }
+    }
+
+    private void recordRunOutput(String line) {
+        if (StringUtils.isEmpty(line)) {
+            return;
+        }
+        OutputAttribution attribution = outputAttribution(executingStatement);
+        if (executingStatement != null) {
+            lastOutputAttribution = attribution;
+        }
+        wrapper.appendRunOutput(
+                attribution.scriptName(),
+                attribution.sourceStatementIndex(),
+                attribution.elementType(),
+                line);
+    }
+
+    private record OutputAttribution(
+            String scriptName, int sourceStatementIndex, String elementType) {}
+
+    private OutputAttribution outputAttribution(ZestStatement stmt) {
+        if (stmt == null) {
+            if (lastOutputAttribution != null) {
+                return lastOutputAttribution;
+            }
+            return wrapper.getChainProvenance()
+                    .flatMap(provenance -> provenance.segmentScriptName(0))
+                    .map(name -> new OutputAttribution(name, -1, ""))
+                    .orElseGet(() -> new OutputAttribution(wrapper.getName(), -1, ""));
+        }
+        var chainProvOpt = wrapper.getChainProvenance();
+        if (chainProvOpt.isEmpty()) {
+            return new OutputAttribution(
+                    wrapper.getName(),
+                    stmt.getIndex(),
+                    StringUtils.defaultString(stmt.getElementType()));
+        }
+        ZestScriptMerger.ChainProvenance chainProv = chainProvOpt.get();
+        String fallbackScriptName = wrapper.getName();
+        return chainProv
+                .originForExecutingStatement(wrapper.getZestScript(), stmt)
+                .or(() -> chainProv.originForMergedIndex(stmt.getIndex()))
+                .map(origin -> attributionFromOrigin(chainProv, origin, fallbackScriptName))
+                .orElseGet(() -> chainOutputAttributionFallback(chainProv, stmt));
+    }
+
+    private static OutputAttribution attributionFromOrigin(
+            ZestScriptMerger.ChainProvenance chainProv,
+            ZestScriptMerger.ChainProvenance.StatementOrigin origin,
+            String fallbackScriptName) {
+        return new OutputAttribution(
+                chainProv.segmentScriptName(origin.segmentIndex()).orElse(fallbackScriptName),
+                origin.originalStatementIndex(),
+                StringUtils.defaultString(origin.elementType()));
+    }
+
+    private OutputAttribution chainOutputAttributionFallback(
+            ZestScriptMerger.ChainProvenance chainProv, ZestStatement stmt) {
+        return new OutputAttribution(
+                chainProv.segmentScriptName(0).orElse(wrapper.getName()),
+                -1,
+                StringUtils.defaultString(stmt.getElementType()));
     }
 
     @Override
