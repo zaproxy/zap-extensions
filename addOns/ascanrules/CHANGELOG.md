@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### Changed
+- Fixed XSS scanning to skip non-HTML content types (Issue #6617).
 
 ## [82] - 2026-05-06
 ### Changed

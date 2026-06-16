@@ -88,10 +88,8 @@ This rule starts by submitting a 'safe' value and analyzing all of the locations
 It then performs a series of attacks specifically targeted at the location in which each of the instances occurs, 
 including tag attributes, URL attributes, attributes in tags which support src attributes, html comments etc. <br>
 Note: <br>
-This rule only scans HTTP PUT requests at LOW threshold.<br>
-If the alert threshold is set to LOW, XSS injection located in a JSON response results in a LOW risk and LOW confidence alert is raised.
-For other response content-types a LOW confidence alert is raised.<br>
-If the alert threshold is set to either MEDIUM or HIGH, XSS injection located in non-HTML responses do not generate alerts.<br>
+This rule only scans HTTP PUT requests when the alert threshold is set to LOW. Non‑HTML responses (images, CSS, fonts, binary data) are skipped when the alert threshold is MEDIUM or HIGH, but are scanned at LOW threshold.<br>
+If the alert threshold is set to LOW, XSS injection located in a JSON response results in a LOW risk and LOW confidence alert is raised. For other response content-types a LOW confidence alert is raised.<br>
 <p>
 If specific characters are stripped out of a reflected payload then the attacks will be repeated with alternative characters that might have the same effect.
 <p>
