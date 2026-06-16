@@ -37,6 +37,7 @@ import org.zaproxy.addon.insights.report.ExtensionInsightsReport;
 import org.zaproxy.zap.extension.alert.AlertNode;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.extension.scripts.internal.db.ScriptRunRecorder;
+import org.zaproxy.zap.extension.scripts.internal.db.ScriptRunReportQuery;
 import org.zaproxy.zap.extension.scripts.report.ExtensionScriptsReport;
 import org.zaproxy.zap.extension.scripts.report.ScriptRunReportData;
 import org.zaproxy.zap.testutils.TestUtils;
@@ -351,7 +352,12 @@ public class ReportTestUtils {
 
         reportData.addReportObjects(
                 ExtensionScriptsReport.SCRIPT_DIAGNOSTICS,
-                new ScriptRunReportData.Diagnostics(runs));
+                new ScriptRunReportData.Diagnostics(
+                        ScriptRunReportQuery.filterRunsForReport(
+                                runs,
+                                new ScriptRunReportQuery.Options(
+                                        sections.contains("scriptdiagnosticsscreenshots"),
+                                        sections.contains("scriptdiagnosticsoutput")))));
 
         return extRep.generateReport(reportData, template, f.getAbsolutePath(), false);
     }
@@ -378,11 +384,54 @@ public class ReportTestUtils {
                         ScriptRunRecorder.OUTPUT_KIND_ERROR,
                         "Job: ... step failed",
                         "step failed",
-                        "abc64png"));
+                        "abc64png"),
+                new ScriptRunReportData.Run(
+                        "2026-04-03T10:00:00Z",
+                        ScriptRunRecorder.OUTCOME_SUCCESS,
+                        "Job: script completed",
+                        List.of(
+                                new ScriptRunReportData.Script(
+                                        1,
+                                        "zest-script",
+                                        "standalone",
+                                        List.of(
+                                                new ScriptRunReportData.Step(
+                                                        3,
+                                                        "ZestActionPrint",
+                                                        List.of(
+                                                                new ScriptRunReportData.Output(
+                                                                        ScriptRunRecorder
+                                                                                .OUTPUT_KIND_OUTPUT,
+                                                                        "logged in"))))))));
     }
 
     static ScriptRunReportData.Run defaultScriptDiagnosticRunWithScreenshot() {
         return defaultScriptDiagnosticRuns().get(1);
+    }
+
+    static ScriptRunReportData.Run defaultScriptDiagnosticRunWithStdoutAndError() {
+        return new ScriptRunReportData.Run(
+                "2026-04-03T10:00:00Z",
+                ScriptRunRecorder.OUTCOME_FAILED,
+                "Job: failed after log",
+                List.of(
+                        new ScriptRunReportData.Script(
+                                1,
+                                "zest-script",
+                                "standalone",
+                                List.of(
+                                        new ScriptRunReportData.Step(
+                                                3,
+                                                "ZestActionPrint",
+                                                List.of(
+                                                        new ScriptRunReportData.Output(
+                                                                ScriptRunRecorder
+                                                                        .OUTPUT_KIND_OUTPUT,
+                                                                "logged in"),
+                                                        new ScriptRunReportData.Output(
+                                                                ScriptRunRecorder.OUTPUT_KIND_ERROR,
+                                                                "boom")),
+                                                null)))));
     }
 
     static ScriptRunReportData.Run scriptRunReport(

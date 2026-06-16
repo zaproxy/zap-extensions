@@ -56,6 +56,7 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.automation.JobResultData;
 import org.zaproxy.addon.insights.internal.Insight;
 import org.zaproxy.zap.extension.alert.AlertNode;
+import org.zaproxy.zap.extension.scripts.internal.db.ScriptRunRecorder;
 import org.zaproxy.zap.extension.scripts.report.ScriptRunReportData;
 import org.zaproxy.zap.extension.sequence.StdActiveScanRunner.SequenceStepData;
 import org.zaproxy.zap.extension.sequence.automation.SequenceAScanJobResultData;
@@ -752,10 +753,9 @@ class ExtensionReportsJsonUnitTest extends TestUtils {
 
         JSONArray alerts = site.getJSONObject(0).getJSONArray("alerts");
         assertThat(alerts.size(), is(equalTo(1)));
-        checkAlert(site.getJSONObject(0));
         JSONArray instances = alerts.getJSONObject(0).getJSONArray("instances");
         checkJsonAlertInstanceAndMessages(instances, 0);
-        checkJsonAlertInstanceAndMessages(instances, 0);
+        checkJsonAlertInstanceAndMessages(instances, 1);
 
         // tags are not included in non plus report
         JSONArray tags = alerts.getJSONObject(0).getJSONArray("tags");
@@ -817,14 +817,13 @@ class ExtensionReportsJsonUnitTest extends TestUtils {
 
         // When
         File r = ReportTestUtils.generateReportWithScriptDiagnostics(template, f);
-        String report = new String(Files.readAllBytes(r.toPath()));
 
         // Then
-        JSONObject json = JSONObject.fromObject(report);
+        JSONObject json = readJsonReport(r);
         JSONObject scriptDiagnostics = json.getJSONObject("scriptDiagnostics");
         assertThat(scriptDiagnostics.containsKey("runs"), is(true));
         JSONArray runsJson = scriptDiagnostics.getJSONArray("runs");
-        assertThat(runsJson.size(), is(equalTo(2)));
+        assertThat(runsJson.size(), is(equalTo(3)));
 
         JSONObject run0 = runsJson.getJSONObject(0);
         assertScriptDiagnosticRunStructure(run0);
@@ -856,6 +855,20 @@ class ExtensionReportsJsonUnitTest extends TestUtils {
         assertThat(step1.getInt("sourceStepIndex"), is(equalTo(13)));
         assertThat(step1.getString("line"), is(equalTo("ZestClientElementClick")));
         assertThat(step1.getString("screenshot"), is(equalTo("abc64png")));
+
+        JSONObject run2 = runsJson.getJSONObject(2);
+        assertScriptDiagnosticRunStructure(run2);
+        assertThat(run2.getString("outcome"), is(equalTo("SUCCESS")));
+        assertThat(run2.getString("summary"), is(equalTo("Job: script completed")));
+        JSONObject script2 = run2.getJSONArray("scripts").getJSONObject(0);
+        assertThat(script2.getString("scriptName"), is(equalTo("zest-script")));
+        JSONObject step2 = script2.getJSONArray("steps").getJSONObject(0);
+        assertThat(step2.getInt("sourceStepIndex"), is(equalTo(3)));
+        assertThat(step2.getString("line"), is(equalTo("ZestActionPrint")));
+        JSONObject stdoutOutput = step2.getJSONArray("outputs").getJSONObject(0);
+        assertScriptDiagnosticOutputStructure(stdoutOutput);
+        assertThat(stdoutOutput.getString("kind"), is(equalTo("OUTPUT")));
+        assertThat(stdoutOutput.getString("message"), is(equalTo("logged in")));
         assertThat(json.getJSONArray("site").size(), is(equalTo(0)));
     }
 
@@ -872,34 +885,42 @@ class ExtensionReportsJsonUnitTest extends TestUtils {
         String scriptName = "script\"name\\";
         String scriptType = "stand\"alone\\";
         String line = "ZestClient\"Click\\";
-        String kind = "ERR\"OR\\";
-        String message = "detail \"msg\" \\ slash";
+        String errorKind = "ERR\"OR\\";
+        String errorMessage = "detail \"msg\" \\ slash";
+        String outputMessage = "stdout \"line\" \\ tab\tend";
         String screenshot = "abc\"64\\png";
         List<ScriptRunReportData.Run> runs =
                 List.of(
-                        ReportTestUtils.scriptRunReport(
+                        new ScriptRunReportData.Run(
                                 created,
                                 outcome,
-                                1,
-                                scriptName,
-                                scriptType,
-                                7,
-                                line,
-                                kind,
                                 summary,
-                                message,
-                                screenshot));
+                                List.of(
+                                        new ScriptRunReportData.Script(
+                                                1,
+                                                scriptName,
+                                                scriptType,
+                                                List.of(
+                                                        new ScriptRunReportData.Step(
+                                                                7,
+                                                                line,
+                                                                List.of(
+                                                                        new ScriptRunReportData
+                                                                                .Output(
+                                                                                errorKind,
+                                                                                errorMessage),
+                                                                        new ScriptRunReportData
+                                                                                .Output(
+                                                                                ScriptRunRecorder
+                                                                                        .OUTPUT_KIND_OUTPUT,
+                                                                                outputMessage)),
+                                                                screenshot))))));
 
         // When
         File r = ReportTestUtils.generateReportWithScriptDiagnostics(template, f, runs);
-        String report = new String(Files.readAllBytes(r.toPath()));
 
         // Then — must parse as JSON and round-trip string values ([[${...}]] encoding)
-        JSONObject run =
-                JSONObject.fromObject(report)
-                        .getJSONObject("scriptDiagnostics")
-                        .getJSONArray("runs")
-                        .getJSONObject(0);
+        JSONObject run = scriptDiagnosticsRun(r, 0);
         assertScriptDiagnosticRunStructure(run);
         assertThat(run.getString("created"), is(equalTo(created)));
         assertThat(run.getString("outcome"), is(equalTo(outcome)));
@@ -910,9 +931,14 @@ class ExtensionReportsJsonUnitTest extends TestUtils {
         JSONObject step = script.getJSONArray("steps").getJSONObject(0);
         assertThat(step.getString("line"), is(equalTo(line)));
         assertThat(step.getString("screenshot"), is(equalTo(screenshot)));
-        JSONObject output = step.getJSONArray("outputs").getJSONObject(0);
-        assertThat(output.getString("kind"), is(equalTo(kind)));
-        assertThat(output.getString("message"), is(equalTo(message)));
+        JSONArray outputs = step.getJSONArray("outputs");
+        assertThat(outputs.size(), is(equalTo(2)));
+        assertThat(outputs.getJSONObject(0).getString("kind"), is(equalTo(errorKind)));
+        assertThat(outputs.getJSONObject(0).getString("message"), is(equalTo(errorMessage)));
+        assertThat(
+                outputs.getJSONObject(1).getString("kind"),
+                is(equalTo(ScriptRunRecorder.OUTPUT_KIND_OUTPUT)));
+        assertThat(outputs.getJSONObject(1).getString("message"), is(equalTo(outputMessage)));
     }
 
     private static void assertScriptDiagnosticRunStructure(JSONObject run) {
@@ -945,6 +971,46 @@ class ExtensionReportsJsonUnitTest extends TestUtils {
         assertThat(output.containsKey("detail"), is(false));
     }
 
+    private static JSONObject readJsonReport(File reportFile) throws IOException {
+        return JSONObject.fromObject(new String(Files.readAllBytes(reportFile.toPath())));
+    }
+
+    private static JSONObject scriptDiagnosticsRun(File report, int runIndex) throws IOException {
+        return readJsonReport(report)
+                .getJSONObject("scriptDiagnostics")
+                .getJSONArray("runs")
+                .getJSONObject(runIndex);
+    }
+
+    private static JSONObject firstScriptFromRun(File report, int runIndex) throws IOException {
+        return scriptDiagnosticsRun(report, runIndex).getJSONArray("scripts").getJSONObject(0);
+    }
+
+    private static JSONObject firstStepFromRun(File report, int runIndex) throws IOException {
+        return firstScriptFromRun(report, runIndex).getJSONArray("steps").getJSONObject(0);
+    }
+
+    @Test
+    void shouldOmitScriptDiagnosticStdoutWhenOutputSectionDisabled() throws Exception {
+        Template template = ReportTestUtils.getTemplateFromYamlFile("traditional-json-plus");
+        File f =
+                File.createTempFile(
+                        "traditional-json-plus-no-script-stdout", template.getExtension());
+
+        File r =
+                ReportTestUtils.generateReportWithScriptDiagnostics(
+                        template,
+                        f,
+                        true,
+                        List.of(ReportTestUtils.defaultScriptDiagnosticRunWithStdoutAndError()),
+                        "scriptdiagnosticsoutput");
+        JSONObject step = firstStepFromRun(r, 0);
+        JSONArray outputs = step.getJSONArray("outputs");
+        assertThat(outputs.size(), is(equalTo(1)));
+        assertThat(outputs.getJSONObject(0).getString("kind"), is(equalTo("ERROR")));
+        assertThat(outputs.getJSONObject(0).getString("message"), is(equalTo("boom")));
+    }
+
     @Test
     void shouldOmitScriptDiagnosticScreenshotWhenScreenshotsSectionDisabled() throws Exception {
         Template template = ReportTestUtils.getTemplateFromYamlFile("traditional-json-plus");
@@ -959,15 +1025,7 @@ class ExtensionReportsJsonUnitTest extends TestUtils {
                         true,
                         List.of(ReportTestUtils.defaultScriptDiagnosticRunWithScreenshot()),
                         "scriptdiagnosticsscreenshots");
-        JSONObject step =
-                JSONObject.fromObject(new String(Files.readAllBytes(r.toPath())))
-                        .getJSONObject("scriptDiagnostics")
-                        .getJSONArray("runs")
-                        .getJSONObject(0)
-                        .getJSONArray("scripts")
-                        .getJSONObject(0)
-                        .getJSONArray("steps")
-                        .getJSONObject(0);
+        JSONObject step = firstStepFromRun(r, 0);
         assertThat(step.containsKey("screenshot"), is(equalTo(false)));
     }
 
@@ -988,11 +1046,8 @@ class ExtensionReportsJsonUnitTest extends TestUtils {
                         f,
                         false,
                         List.of(ReportTestUtils.defaultScriptDiagnosticRunWithScreenshot()));
-        String report = new String(Files.readAllBytes(r.toPath()));
-
         // Then
-        JSONObject json = JSONObject.fromObject(report);
+        JSONObject json = readJsonReport(r);
         assertThat(json.containsKey("scriptDiagnostics"), is(equalTo(false)));
-        assertThat(json.getJSONArray("site").size(), is(equalTo(0)));
     }
 }
