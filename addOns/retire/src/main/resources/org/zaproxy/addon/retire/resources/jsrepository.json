@@ -1574,6 +1574,66 @@
         ]
       },
       {
+        "atOrAbove": "0",
+        "below": "5.11.1",
+        "severity": "high",
+        "cwe": [
+          "CWE-79"
+        ],
+        "identifiers": {
+          "summary": "TinyMCE Cross-Site Scripting (XSS) vulnerability using through data-mce- prefixed src, href, style attributes",
+          "githubID": "GHSA-q742-qvgc-gc2f",
+          "CVE": [
+            "CVE-2026-47759"
+          ]
+        },
+        "info": [
+          "https://github.com/tinymce/tinymce/security/advisories/GHSA-q742-qvgc-gc2f",
+          "https://www.tiny.cloud/docs/tinymce/7/7.9.3-release-notes/#overview",
+          "https://www.tiny.cloud/docs/tinymce/8/8.5.1-release-notes/#overview"
+        ]
+      },
+      {
+        "atOrAbove": "0",
+        "below": "5.11.1",
+        "severity": "high",
+        "cwe": [
+          "CWE-79"
+        ],
+        "identifiers": {
+          "summary": "TinyMCE Cross-Site Scripting (XSS) vulnerability through `mce:protected` comments",
+          "githubID": "GHSA-v98h-vmpc-fpqv",
+          "CVE": [
+            "CVE-2026-47762"
+          ]
+        },
+        "info": [
+          "https://github.com/tinymce/tinymce/security/advisories/GHSA-v98h-vmpc-fpqv",
+          "https://www.tiny.cloud/docs/tinymce/7/7.9.3-release-notes/#overview",
+          "https://www.tiny.cloud/docs/tinymce/8/8.5.1-release-notes/#overview"
+        ]
+      },
+      {
+        "atOrAbove": "0",
+        "below": "5.11.1",
+        "severity": "high",
+        "cwe": [
+          "CWE-79"
+        ],
+        "identifiers": {
+          "summary": "TinyMCE Cross-Site Scripting (XSS) vulnerability using media plugin `data-mce-object` injection",
+          "githubID": "GHSA-vg35-5wq7-3x7w",
+          "CVE": [
+            "CVE-2026-47761"
+          ]
+        },
+        "info": [
+          "https://github.com/tinymce/tinymce/security/advisories/GHSA-vg35-5wq7-3x7w",
+          "https://www.tiny.cloud/docs/tinymce/7/7.9.3-release-notes/#overview",
+          "https://www.tiny.cloud/docs/tinymce/8/8.5.1-release-notes/#overview"
+        ]
+      },
+      {
         "atOrAbove": "6.0.0",
         "below": "6.3.1",
         "severity": "medium",
@@ -1758,6 +1818,24 @@
         ]
       },
       {
+        "atOrAbove": "6.8.0",
+        "below": "7.1.0",
+        "severity": "high",
+        "cwe": [
+          "CWE-79"
+        ],
+        "identifiers": {
+          "summary": "TinyMCE Cross-Site Scripting (XSS) vulnerability using sanitization bypass through nested SVGs",
+          "githubID": "GHSA-mh5m-5hw4-5c69",
+          "CVE": [
+            "CVE-2026-47760"
+          ]
+        },
+        "info": [
+          "https://github.com/tinymce/tinymce/security/advisories/GHSA-mh5m-5hw4-5c69"
+        ]
+      },
+      {
         "atOrAbove": "7.0.0",
         "below": "7.2.0",
         "cwe": [
@@ -1808,6 +1886,126 @@
           "https://owasp.org/www-community/attacks/xss",
           "https://www.tiny.cloud/docs/tinymce/6/6.8.4-release-notes/#overview",
           "https://www.tiny.cloud/docs/tinymce/7/7.2-release-notes/#overview"
+        ]
+      },
+      {
+        "atOrAbove": "6.0.0",
+        "below": "7.9.3",
+        "severity": "high",
+        "cwe": [
+          "CWE-79"
+        ],
+        "identifiers": {
+          "summary": "TinyMCE Cross-Site Scripting (XSS) vulnerability using through data-mce- prefixed src, href, style attributes",
+          "githubID": "GHSA-q742-qvgc-gc2f",
+          "CVE": [
+            "CVE-2026-47759"
+          ]
+        },
+        "info": [
+          "https://github.com/tinymce/tinymce/security/advisories/GHSA-q742-qvgc-gc2f",
+          "https://www.tiny.cloud/docs/tinymce/7/7.9.3-release-notes/#overview",
+          "https://www.tiny.cloud/docs/tinymce/8/8.5.1-release-notes/#overview"
+        ]
+      },
+      {
+        "atOrAbove": "6.0.0",
+        "below": "7.9.3",
+        "severity": "high",
+        "cwe": [
+          "CWE-79"
+        ],
+        "identifiers": {
+          "summary": "TinyMCE Cross-Site Scripting (XSS) vulnerability through `mce:protected` comments",
+          "githubID": "GHSA-v98h-vmpc-fpqv",
+          "CVE": [
+            "CVE-2026-47762"
+          ]
+        },
+        "info": [
+          "https://github.com/tinymce/tinymce/security/advisories/GHSA-v98h-vmpc-fpqv",
+          "https://www.tiny.cloud/docs/tinymce/7/7.9.3-release-notes/#overview",
+          "https://www.tiny.cloud/docs/tinymce/8/8.5.1-release-notes/#overview"
+        ]
+      },
+      {
+        "atOrAbove": "6.0.0",
+        "below": "7.9.3",
+        "severity": "high",
+        "cwe": [
+          "CWE-79"
+        ],
+        "identifiers": {
+          "summary": "TinyMCE Cross-Site Scripting (XSS) vulnerability using media plugin `data-mce-object` injection",
+          "githubID": "GHSA-vg35-5wq7-3x7w",
+          "CVE": [
+            "CVE-2026-47761"
+          ]
+        },
+        "info": [
+          "https://github.com/tinymce/tinymce/security/advisories/GHSA-vg35-5wq7-3x7w",
+          "https://www.tiny.cloud/docs/tinymce/7/7.9.3-release-notes/#overview",
+          "https://www.tiny.cloud/docs/tinymce/8/8.5.1-release-notes/#overview"
+        ]
+      },
+      {
+        "atOrAbove": "8.0.0",
+        "below": "8.5.1",
+        "severity": "high",
+        "cwe": [
+          "CWE-79"
+        ],
+        "identifiers": {
+          "summary": "TinyMCE Cross-Site Scripting (XSS) vulnerability using through data-mce- prefixed src, href, style attributes",
+          "githubID": "GHSA-q742-qvgc-gc2f",
+          "CVE": [
+            "CVE-2026-47759"
+          ]
+        },
+        "info": [
+          "https://github.com/tinymce/tinymce/security/advisories/GHSA-q742-qvgc-gc2f",
+          "https://www.tiny.cloud/docs/tinymce/7/7.9.3-release-notes/#overview",
+          "https://www.tiny.cloud/docs/tinymce/8/8.5.1-release-notes/#overview"
+        ]
+      },
+      {
+        "atOrAbove": "8.0.0",
+        "below": "8.5.1",
+        "severity": "high",
+        "cwe": [
+          "CWE-79"
+        ],
+        "identifiers": {
+          "summary": "TinyMCE Cross-Site Scripting (XSS) vulnerability through `mce:protected` comments",
+          "githubID": "GHSA-v98h-vmpc-fpqv",
+          "CVE": [
+            "CVE-2026-47762"
+          ]
+        },
+        "info": [
+          "https://github.com/tinymce/tinymce/security/advisories/GHSA-v98h-vmpc-fpqv",
+          "https://www.tiny.cloud/docs/tinymce/7/7.9.3-release-notes/#overview",
+          "https://www.tiny.cloud/docs/tinymce/8/8.5.1-release-notes/#overview"
+        ]
+      },
+      {
+        "atOrAbove": "8.0.0",
+        "below": "8.5.1",
+        "severity": "high",
+        "cwe": [
+          "CWE-79"
+        ],
+        "identifiers": {
+          "summary": "TinyMCE Cross-Site Scripting (XSS) vulnerability using media plugin `data-mce-object` injection",
+          "githubID": "GHSA-vg35-5wq7-3x7w",
+          "CVE": [
+            "CVE-2026-47761"
+          ]
+        },
+        "info": [
+          "https://github.com/tinymce/tinymce/security/advisories/GHSA-vg35-5wq7-3x7w",
+          "https://www.tiny.cloud/docs/tinymce/7/7.9.3-release-notes/#overview",
+          "https://www.tiny.cloud/docs/tinymce/8/8.5.1-release-notes/#overview"
         ]
       }
     ],
@@ -5163,6 +5361,24 @@
           "https://github.com/cure53/DOMPurify/security/advisories/GHSA-v9jr-rg53-9pgp",
           "https://github.com/cure53/DOMPurify/releases/tag/3.4.0"
         ]
+      },
+      {
+        "atOrAbove": "3.4.4",
+        "below": "3.4.5",
+        "severity": "high",
+        "cwe": [
+          "CWE-79"
+        ],
+        "identifiers": {
+          "summary": "DOMPurify XSS via selectedcontent re-clone",
+          "githubID": "GHSA-87xg-pxx2-7hvx",
+          "CVE": [
+            "CVE-2026-47423"
+          ]
+        },
+        "info": [
+          "https://github.com/cure53/DOMPurify/security/advisories/GHSA-87xg-pxx2-7hvx"
+        ]
       }
     ],
     "extractors": {
@@ -7400,6 +7616,69 @@
         "below": "0.32.0",
         "severity": "high",
         "cwe": [
+          "CWE-400",
+          "CWE-1333"
+        ],
+        "identifiers": {
+          "summary": "Axios: Regular Expression Denial of Service (ReDoS) via Cookie Name Injection",
+          "githubID": "GHSA-hfxv-24rg-xrqf",
+          "CVE": [
+            "CVE-2026-44496"
+          ]
+        },
+        "info": [
+          "https://github.com/axios/axios/security/advisories/GHSA-hfxv-24rg-xrqf",
+          "https://github.com/axios/axios/releases/tag/v0.32.0",
+          "https://github.com/axios/axios/releases/tag/v1.16.0"
+        ]
+      },
+      {
+        "atOrAbove": "0",
+        "below": "0.32.0",
+        "severity": "high",
+        "cwe": [
+          "CWE-200"
+        ],
+        "identifiers": {
+          "summary": "Axios: Proxy-Authorization header leaks to redirect target when proxy is re-evaluated to direct connection",
+          "githubID": "GHSA-j5f8-grm9-p9fc",
+          "CVE": [
+            "CVE-2026-44486"
+          ]
+        },
+        "info": [
+          "https://github.com/axios/axios/security/advisories/GHSA-j5f8-grm9-p9fc",
+          "https://github.com/axios/axios/pull/10794",
+          "https://github.com/axios/axios/commit/afca61a070728e717203c2bc21e7b589b59b858b",
+          "https://github.com/axios/axios/releases/tag/v0.32.0",
+          "https://github.com/axios/axios/releases/tag/v1.16.0"
+        ]
+      },
+      {
+        "atOrAbove": "0",
+        "below": "0.32.0",
+        "severity": "high",
+        "cwe": [
+          "CWE-201"
+        ],
+        "identifiers": {
+          "summary": "Axios: Proxy-Authorization Credential Leak to Origin Server Across HTTP-to-HTTPS Redirect in Axios Node.js HTTP Adapter",
+          "githubID": "GHSA-p92q-9vqr-4j8v",
+          "CVE": [
+            "CVE-2026-44487"
+          ]
+        },
+        "info": [
+          "https://github.com/axios/axios/security/advisories/GHSA-p92q-9vqr-4j8v",
+          "https://github.com/axios/axios/releases/tag/v0.32.0",
+          "https://github.com/axios/axios/releases/tag/v1.16.0"
+        ]
+      },
+      {
+        "atOrAbove": "0",
+        "below": "0.32.0",
+        "severity": "high",
+        "cwe": [
           "CWE-918"
         ],
         "identifiers": {
@@ -7917,6 +8196,69 @@
         "below": "1.16.0",
         "severity": "high",
         "cwe": [
+          "CWE-400",
+          "CWE-1333"
+        ],
+        "identifiers": {
+          "summary": "Axios: Regular Expression Denial of Service (ReDoS) via Cookie Name Injection",
+          "githubID": "GHSA-hfxv-24rg-xrqf",
+          "CVE": [
+            "CVE-2026-44496"
+          ]
+        },
+        "info": [
+          "https://github.com/axios/axios/security/advisories/GHSA-hfxv-24rg-xrqf",
+          "https://github.com/axios/axios/releases/tag/v0.32.0",
+          "https://github.com/axios/axios/releases/tag/v1.16.0"
+        ]
+      },
+      {
+        "atOrAbove": "1.0.0",
+        "below": "1.16.0",
+        "severity": "high",
+        "cwe": [
+          "CWE-200"
+        ],
+        "identifiers": {
+          "summary": "Axios: Proxy-Authorization header leaks to redirect target when proxy is re-evaluated to direct connection",
+          "githubID": "GHSA-j5f8-grm9-p9fc",
+          "CVE": [
+            "CVE-2026-44486"
+          ]
+        },
+        "info": [
+          "https://github.com/axios/axios/security/advisories/GHSA-j5f8-grm9-p9fc",
+          "https://github.com/axios/axios/pull/10794",
+          "https://github.com/axios/axios/commit/afca61a070728e717203c2bc21e7b589b59b858b",
+          "https://github.com/axios/axios/releases/tag/v0.32.0",
+          "https://github.com/axios/axios/releases/tag/v1.16.0"
+        ]
+      },
+      {
+        "atOrAbove": "1.0.0",
+        "below": "1.16.0",
+        "severity": "high",
+        "cwe": [
+          "CWE-201"
+        ],
+        "identifiers": {
+          "summary": "Axios: Proxy-Authorization Credential Leak to Origin Server Across HTTP-to-HTTPS Redirect in Axios Node.js HTTP Adapter",
+          "githubID": "GHSA-p92q-9vqr-4j8v",
+          "CVE": [
+            "CVE-2026-44487"
+          ]
+        },
+        "info": [
+          "https://github.com/axios/axios/security/advisories/GHSA-p92q-9vqr-4j8v",
+          "https://github.com/axios/axios/releases/tag/v0.32.0",
+          "https://github.com/axios/axios/releases/tag/v1.16.0"
+        ]
+      },
+      {
+        "atOrAbove": "1.0.0",
+        "below": "1.16.0",
+        "severity": "high",
+        "cwe": [
           "CWE-918"
         ],
         "identifiers": {
@@ -7928,6 +8270,27 @@
         },
         "info": [
           "https://github.com/axios/axios/security/advisories/GHSA-pjwm-pj3p-43mv"
+        ]
+      },
+      {
+        "atOrAbove": "1.7.0",
+        "below": "1.16.0",
+        "severity": "high",
+        "cwe": [
+          "CWE-770"
+        ],
+        "identifiers": {
+          "summary": "Allocation of Resources Without Limits or Throttling in Axios",
+          "githubID": "GHSA-777c-7fjr-54vf",
+          "CVE": [
+            "CVE-2026-44488"
+          ]
+        },
+        "info": [
+          "https://github.com/axios/axios/security/advisories/GHSA-777c-7fjr-54vf",
+          "https://github.com/axios/axios/pull/10795",
+          "https://github.com/axios/axios/pull/10796",
+          "https://github.com/axios/axios/releases/tag/v1.16.0"
         ]
       },
       {
