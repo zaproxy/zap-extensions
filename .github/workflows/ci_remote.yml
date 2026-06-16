@@ -24,3 +24,9 @@ jobs:
       - run: ./gradlew -Dorg.gradle.jvmargs=-Xmx4g --continue --no-parallel test
         env:
           ZAP_REMOTE_TESTS: 1
+      - name: Publish JUnit report
+        if: always()
+        uses: step-security/action-junit-report@6c33c83bbe7511864f70174ba8275e4ea1174e21 # v6.4.0
+        with:
+          report_paths: '**/build/test-results/test/TEST-*.xml'
+          detailed_summary: true
