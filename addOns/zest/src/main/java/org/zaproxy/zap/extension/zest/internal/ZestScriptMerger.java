@@ -158,7 +158,7 @@ public final class ZestScriptMerger {
         ChainProvenance provenance =
                 ChainProvenance.finalizeMapping(segments, orderedOrigins, parsed);
         zestWrapper.setChainProvenance(provenance);
-        zestWrapper.setLastRunDiagnostic(null);
+        zestWrapper.clearRunDiagnostics();
         return zestWrapper;
     }
 

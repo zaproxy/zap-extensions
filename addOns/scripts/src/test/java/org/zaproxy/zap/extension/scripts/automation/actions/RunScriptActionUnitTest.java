@@ -64,10 +64,12 @@ import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.scripts.ExtensionScriptsUI;
 import org.zaproxy.zap.extension.scripts.automation.ScriptJobParameters;
+import org.zaproxy.zap.extension.scripts.automation.diagnostics.ScriptRunRecordBuilder.RunFailure;
+import org.zaproxy.zap.extension.scripts.diagnostics.ScriptDiagnosticSource;
+import org.zaproxy.zap.extension.scripts.diagnostics.ScriptDiagnosticSource.RunDiagnostics;
+import org.zaproxy.zap.extension.scripts.diagnostics.ScriptDiagnosticSource.RunFailureDiagnostic;
 import org.zaproxy.zap.extension.scripts.internal.db.ScriptsRun;
 import org.zaproxy.zap.extension.scripts.internal.db.TableJdo;
-import org.zaproxy.zap.extension.scripts.zest.ZestScriptDiagnosticSource;
-import org.zaproxy.zap.extension.scripts.zest.ZestScriptDiagnosticSource.ZestScriptRunDiagnostic;
 import org.zaproxy.zap.testutils.TestUtils;
 
 /** Unit test for {@link RunScriptAction}. */
@@ -640,14 +642,14 @@ class RunScriptActionUnitTest extends TestUtils {
         ScriptWrapper script =
                 new ScriptWrapperWithZestDiagnostic(
                         "fake-zest",
-                        new ZestScriptRunDiagnostic(
+                        new RunFailureDiagnostic(
                                 "zest context",
                                 "compact detail",
                                 2,
                                 13,
                                 "ZestClientClick",
                                 "shot"));
-        RunScriptAction.RunFailure failure =
+        RunFailure failure =
                 RunScriptAction.resolveRunFailure(script, new RuntimeException("ignored"));
 
         assertThat(failure.progressDetail(), is("zest context"));
@@ -664,7 +666,7 @@ class RunScriptActionUnitTest extends TestUtils {
         script.setName("plain");
         Exception ex = new IllegalStateException("job failed");
 
-        RunScriptAction.RunFailure failure = RunScriptAction.resolveRunFailure(script, ex);
+        RunFailure failure = RunScriptAction.resolveRunFailure(script, ex);
 
         assertThat(failure.progressDetail(), is("job failed"));
         assertThat(failure.outputDetail(), is("job failed"));
@@ -678,7 +680,7 @@ class RunScriptActionUnitTest extends TestUtils {
         ScriptWrapper script = new ScriptWrapper();
         Exception ex = new IllegalStateException();
 
-        RunScriptAction.RunFailure failure = RunScriptAction.resolveRunFailure(script, ex);
+        RunFailure failure = RunScriptAction.resolveRunFailure(script, ex);
 
         assertThat(failure.progressDetail(), is(IllegalStateException.class.getName()));
         assertThat(failure.outputDetail(), is(IllegalStateException.class.getName()));
@@ -688,10 +690,10 @@ class RunScriptActionUnitTest extends TestUtils {
     void shouldResolveFailureOutputDetailFromExceptionWhenZestDetailBlank() {
         ScriptWrapper script =
                 new ScriptWrapperWithZestDiagnostic(
-                        "fake-zest", new ZestScriptRunDiagnostic("ctx", "  ", 1, 5, "Line", null));
+                        "fake-zest", new RunFailureDiagnostic("ctx", "  ", 1, 5, "Line", null));
         Exception ex = new RuntimeException("persist me");
 
-        RunScriptAction.RunFailure failure = RunScriptAction.resolveRunFailure(script, ex);
+        RunFailure failure = RunScriptAction.resolveRunFailure(script, ex);
 
         assertThat(failure.progressDetail(), is("ctx"));
         assertThat(failure.outputDetail(), is("persist me"));
@@ -766,11 +768,11 @@ class RunScriptActionUnitTest extends TestUtils {
     }
 
     private static final class ScriptWrapperWithZestDiagnostic extends ScriptWrapper
-            implements ZestScriptDiagnosticSource {
+            implements ScriptDiagnosticSource {
 
-        private final Optional<ZestScriptRunDiagnostic> diagnostic;
+        private final Optional<RunFailureDiagnostic> diagnostic;
 
-        ScriptWrapperWithZestDiagnostic(String name, ZestScriptRunDiagnostic diagnostic) {
+        ScriptWrapperWithZestDiagnostic(String name, RunFailureDiagnostic diagnostic) {
             setName(name);
             setEngineName(ZEST_ENGINE_NAME);
             setType(new ScriptType(ExtensionScript.TYPE_STANDALONE, null, null, false));
@@ -778,12 +780,16 @@ class RunScriptActionUnitTest extends TestUtils {
         }
 
         ScriptWrapperWithZestDiagnostic(String name, String zestFailureContext) {
-            this(name, new ZestScriptRunDiagnostic(zestFailureContext, "", -1, -1, "", null));
+            this(name, new RunFailureDiagnostic(zestFailureContext, "", -1, -1, "", null));
         }
 
         @Override
-        public Optional<ZestScriptRunDiagnostic> getLastRunDiagnostic() {
-            return diagnostic;
+        public RunDiagnostics getRunDiagnostics() {
+            return new RunDiagnostics(diagnostic, List.of());
         }
+
+        /** No-op for test stub. */
+        @Override
+        public void clearRunDiagnostics() {}
     }
 }
