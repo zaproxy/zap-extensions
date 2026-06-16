@@ -55,7 +55,7 @@ import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptUI;
 import org.zaproxy.zap.extension.script.ScriptVars;
-import org.zaproxy.zap.extension.scripts.zest.ZestScriptDiagnosticSource.ZestScriptRunDiagnostic;
+import org.zaproxy.zap.extension.scripts.diagnostics.ScriptDiagnosticSource.RunFailureDiagnostic;
 import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.ClientAuthenticator;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
@@ -542,7 +542,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
         }
         String diagnostics = formatStatementDiagnostics(stmt);
         String detail = formatStatementFailureDetail(t);
-        wrapper.setLastRunDiagnostic(
+        wrapper.setLastRunFailure(
                 buildFailureDiagnostic(
                         stmt,
                         diagnostics + " - " + detail,
@@ -589,7 +589,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
      */
     private void recordClientLaunchFailureContext(ZestClientLaunch clientLaunch, String headline) {
         String diagnostics = formatStatementDiagnostics(clientLaunch);
-        wrapper.setLastRunDiagnostic(
+        wrapper.setLastRunFailure(
                 buildFailureDiagnostic(
                         clientLaunch,
                         diagnostics + " - " + headline,
@@ -609,11 +609,11 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
         return wd != null ? ZestFailureScreenshotCapture.captureBase64(wd) : null;
     }
 
-    private ZestScriptRunDiagnostic buildFailureDiagnostic(
+    private RunFailureDiagnostic buildFailureDiagnostic(
             ZestStatement stmt, String context, String detailMessage, String screenshotBase64) {
         var chainProvOpt = wrapper.getChainProvenance();
         if (chainProvOpt.isEmpty()) {
-            return new ZestScriptRunDiagnostic(
+            return new RunFailureDiagnostic(
                     context,
                     detailMessage,
                     1,
@@ -626,7 +626,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
                 .originForExecutingStatement(wrapper.getZestScript(), stmt)
                 .map(
                         origin ->
-                                new ZestScriptRunDiagnostic(
+                                new RunFailureDiagnostic(
                                         context,
                                         detailMessage,
                                         origin.segmentIndex() + 1,
@@ -635,7 +635,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
                                         screenshotBase64))
                 .orElseGet(
                         () ->
-                                new ZestScriptRunDiagnostic(
+                                new RunFailureDiagnostic(
                                         context,
                                         detailMessage,
                                         -1,
@@ -802,7 +802,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
     }
 
     private static void resetFailureDiagnosticsForNewRun(ZestScriptWrapper w) {
-        w.setLastRunDiagnostic(null);
+        w.clearRunDiagnostics();
     }
 
     @Override

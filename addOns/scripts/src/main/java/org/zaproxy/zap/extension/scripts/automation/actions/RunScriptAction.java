@@ -26,8 +26,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
-import java.util.function.Consumer;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -42,13 +40,12 @@ import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
-import org.zaproxy.zap.extension.scripts.automation.ScriptJobOutputListener;
 import org.zaproxy.zap.extension.scripts.automation.ScriptJobParameters;
-import org.zaproxy.zap.extension.scripts.automation.ScriptRunFailureDetail;
+import org.zaproxy.zap.extension.scripts.automation.diagnostics.ScriptRunDiagnosticsSession;
+import org.zaproxy.zap.extension.scripts.automation.diagnostics.ScriptRunRecordBuilder;
+import org.zaproxy.zap.extension.scripts.automation.diagnostics.ScriptRunRecordBuilder.RunFailure;
+import org.zaproxy.zap.extension.scripts.automation.diagnostics.ScriptRunRecordBuilder.ScriptMember;
 import org.zaproxy.zap.extension.scripts.automation.ui.ScriptJobDialog;
-import org.zaproxy.zap.extension.scripts.internal.db.ScriptRunRecorder;
-import org.zaproxy.zap.extension.scripts.zest.ZestScriptDiagnosticSource;
-import org.zaproxy.zap.extension.scripts.zest.ZestScriptDiagnosticSource.ZestScriptRunDiagnostic;
 import org.zaproxy.zap.users.User;
 
 public class RunScriptAction extends ScriptAction {
@@ -69,8 +66,11 @@ public class RunScriptAction extends ScriptAction {
                     ScriptJobDialog.SCRIPT_FILE_PARAM,
                     ScriptJobDialog.SCRIPT_TARGET_PARAM);
 
+    private final ScriptRunDiagnosticsSession diagnosticsSession;
+
     public RunScriptAction(ScriptJobParameters parameters) {
         super(parameters);
+        this.diagnosticsSession = new ScriptRunDiagnosticsSession(extScript);
     }
 
     @Override
@@ -254,8 +254,24 @@ public class RunScriptAction extends ScriptAction {
                 return;
             }
 
+            ScriptRunDiagnosticsSession.RunContext context =
+                    new ScriptRunDiagnosticsSession.RunContext(
+                            jobName,
+                            Constant.messages.getString(
+                                    "scripts.automation.persist.successSummary.single",
+                                    jobName,
+                                    parameters.getName()),
+                            Constant.messages.getString(
+                                    "scripts.automation.persist.failedSummary.single",
+                                    jobName,
+                                    parameters.getName()),
+                            List.of(
+                                    new ScriptMember(
+                                            StringUtils.defaultString(parameters.getName()),
+                                            StringUtils.defaultString(parameters.getType()))));
+
             if (parameters.getType().equals(ExtensionScript.TYPE_TARGETED)) {
-                executeScriptWithOutputListener(
+                diagnosticsSession.execute(
                         script,
                         progress,
                         () -> {
@@ -278,14 +294,16 @@ public class RunScriptAction extends ScriptAction {
                                     siteNode.getHistoryReference().getHttpMessage();
                             extScript.invokeTargetedScript(script, httpMessage);
                         },
-                        (e) -> reportScriptError(progress, jobName, parameters, script, e));
+                        context,
+                        (e) -> reportScriptError(progress, jobName, script, context, e));
             } else {
                 setUserOnZestWrapper(script, user);
-                executeScriptWithOutputListener(
+                diagnosticsSession.execute(
                         script,
                         progress,
                         () -> extScript.invokeScript(script),
-                        (e) -> reportScriptError(progress, jobName, parameters, script, e));
+                        context,
+                        (e) -> reportScriptError(progress, jobName, script, context, e));
             }
         }
     }
@@ -332,134 +350,73 @@ public class RunScriptAction extends ScriptAction {
                 Constant.messages.getString(
                         "scripts.automation.info.chainExecuting", jobName, scriptWrappers.size()));
 
-        if (executeScriptWithOutputListener(
+        String chainOrder = String.join(" -> ", parameters.getChain());
+        ScriptRunDiagnosticsSession.RunContext context =
+                new ScriptRunDiagnosticsSession.RunContext(
+                        jobName,
+                        Constant.messages.getString(
+                                "scripts.automation.persist.successSummary.chain", jobName),
+                        Constant.messages.getString(
+                                "scripts.automation.persist.failedSummary.chain",
+                                jobName,
+                                chainOrder),
+                        toMembers(scriptWrappers));
+
+        if (diagnosticsSession.execute(
                 chainScript,
                 progress,
                 () -> extScript.invokeScript(chainScript),
-                (e) ->
-                        reportChainExecutionError(
-                                progress, jobName, chainScript, scriptWrappers, e))) {
+                context,
+                (e) -> reportChainExecutionError(progress, jobName, chainScript, context, e))) {
             progress.info(
                     Constant.messages.getString("scripts.automation.info.chainCompleted", jobName));
         }
     }
 
-    /**
-     * Runs the script with output listener setup/teardown and error handling.
-     *
-     * @param script the script to execute
-     * @param progress the automation progress for output
-     * @param executor the script execution logic
-     * @param errorHandler the error handler for exceptions
-     * @return true if execution succeeded, false otherwise
-     */
-    private boolean executeScriptWithOutputListener(
-            ScriptWrapper script,
-            AutomationProgress progress,
-            ScriptExecutor executor,
-            Consumer<Exception> errorHandler) {
-        ScriptJobOutputListener scriptJobOutputListener =
-                new ScriptJobOutputListener(progress, script.getName());
-        try {
-            extScript.addScriptOutputListener(scriptJobOutputListener);
-            executor.execute();
-            scriptJobOutputListener.flush();
-
-            if (script.getLastException() != null) {
-                errorHandler.accept(script.getLastException());
-                return false;
-            }
-            return true;
-        } catch (Exception e) {
-            LOGGER.debug("Script execution failed, reported via automation progress", e);
-            errorHandler.accept(e);
-            return false;
-        } finally {
-            extScript.removeScriptOutputListener(scriptJobOutputListener);
-        }
-    }
-
-    /** Script execution logic that may throw. */
-    @FunctionalInterface
-    private interface ScriptExecutor {
-        void execute() throws Exception;
-    }
-
-    private static void reportScriptError(
+    private void reportScriptError(
             AutomationProgress progress,
             String jobName,
-            ScriptJobParameters parameters,
             ScriptWrapper script,
+            ScriptRunDiagnosticsSession.RunContext context,
             Exception e) {
-        RunFailure failure = resolveRunFailure(script, e);
-        reportAndPersistFailure(
-                progress,
+        RunFailure failure = ScriptRunRecordBuilder.resolveFailure(script, e);
+        progress.error(
                 Constant.messages.getString(
                         "scripts.automation.error.scriptError",
                         jobName,
-                        parameters.getName(),
-                        failure.progressDetail()),
-                Constant.messages.getString(
-                        "scripts.automation.persist.failedSummary.single",
-                        jobName,
-                        parameters.getName()),
-                List.of(
-                        new ScriptRunRecorder.RunScript(
-                                StringUtils.defaultString(parameters.getName()),
-                                StringUtils.defaultString(parameters.getType()),
-                                failure.failureStep())),
-                failure);
+                        context.members().get(0).scriptName(),
+                        failure.progressDetail()));
+        diagnosticsSession.persistFailure(script, context, failure);
     }
 
     private void reportChainExecutionError(
             AutomationProgress progress,
             String jobName,
             ScriptWrapper chainScript,
-            List<ScriptWrapper> chainMembers,
+            ScriptRunDiagnosticsSession.RunContext context,
             Exception e) {
-        String chainOrder = String.join(" -> ", parameters.getChain());
-        RunFailure failure = resolveRunFailure(chainScript, e);
-        reportAndPersistFailure(
-                progress,
+        RunFailure failure = ScriptRunRecordBuilder.resolveFailure(chainScript, e);
+        progress.error(
                 Constant.messages.getString(
                         "scripts.automation.error.chainExecutionFailed",
                         jobName,
-                        chainOrder,
-                        failure.progressDetail()),
-                Constant.messages.getString(
-                        "scripts.automation.persist.failedSummary.chain", jobName, chainOrder),
-                toRunScripts(chainMembers, failure),
-                failure);
+                        String.join(" -> ", parameters.getChain()),
+                        failure.progressDetail()));
+        diagnosticsSession.persistFailure(chainScript, context, failure);
     }
 
-    private static void reportAndPersistFailure(
-            AutomationProgress progress,
-            String progressMessage,
-            String persistSummary,
-            List<ScriptRunRecorder.RunScript> scripts,
-            RunFailure failure) {
-        progress.error(progressMessage);
-        ScriptRunRecorder.recordFailedRun(persistSummary, scripts, failure.outputDetail());
+    static RunFailure resolveRunFailure(ScriptWrapper script, Exception e) {
+        return ScriptRunRecordBuilder.resolveFailure(script, e);
     }
 
-    private static List<ScriptRunRecorder.RunScript> toRunScripts(
-            List<ScriptWrapper> chainMembers, RunFailure failure) {
-        int failingOrder = failure.failingScriptOrder();
-        List<ScriptRunRecorder.RunScript> scripts = new ArrayList<>(chainMembers.size());
-        for (int i = 0; i < chainMembers.size(); i++) {
-            int order = i + 1;
-            ScriptWrapper w = chainMembers.get(i);
-            ScriptRunRecorder.FailureStep step = null;
-            if (order == failingOrder || (failingOrder < 1 && order == 1)) {
-                step = failure.failureStep();
-            }
-            scripts.add(
-                    new ScriptRunRecorder.RunScript(
-                            StringUtils.defaultString(w.getName()),
-                            StringUtils.defaultString(w.getTypeName()),
-                            step));
-        }
-        return scripts;
+    private static List<ScriptMember> toMembers(List<ScriptWrapper> chainMembers) {
+        return chainMembers.stream()
+                .map(
+                        w ->
+                                new ScriptMember(
+                                        StringUtils.defaultString(w.getName()),
+                                        StringUtils.defaultString(w.getTypeName())))
+                .toList();
     }
 
     private void setUserOnZestWrapper(ScriptWrapper script, User user) {
@@ -556,49 +513,5 @@ public class RunScriptAction extends ScriptAction {
         }
 
         return scriptWrappers;
-    }
-
-    record RunFailure(
-            String progressDetail,
-            String outputDetail,
-            int failingScriptOrder,
-            ScriptRunRecorder.FailureStep failureStep) {}
-
-    static RunFailure resolveRunFailure(ScriptWrapper script, Exception e) {
-        Optional<ZestScriptRunDiagnostic> diagnostic = zestDiagnostic(script);
-        String zestCtx = diagnostic.map(ZestScriptRunDiagnostic::context).orElse("");
-        String progressDetail = zestCtx.isEmpty() ? exceptionSummary(e) : zestCtx;
-        String outputDetail = diagnostic.map(ZestScriptRunDiagnostic::detailMessage).orElse("");
-        if (StringUtils.isBlank(outputDetail)) {
-            outputDetail = ScriptRunFailureDetail.compactExceptionDetailForPersistence(e);
-        }
-        int failingScriptOrder =
-                diagnostic.map(ZestScriptRunDiagnostic::chainScriptOrder).orElse(-1);
-        return new RunFailure(
-                progressDetail, outputDetail, failingScriptOrder, failureStepFrom(diagnostic));
-    }
-
-    private static Optional<ZestScriptRunDiagnostic> zestDiagnostic(ScriptWrapper script) {
-        if (script instanceof ZestScriptDiagnosticSource source) {
-            return source.getLastRunDiagnostic();
-        }
-        return Optional.empty();
-    }
-
-    private static ScriptRunRecorder.FailureStep failureStepFrom(
-            Optional<ZestScriptRunDiagnostic> diagnostic) {
-        return diagnostic
-                .map(
-                        d ->
-                                new ScriptRunRecorder.FailureStep(
-                                        d.sourceStatementIndex(),
-                                        StringUtils.defaultString(d.elementType()),
-                                        d.screenshotBase64()))
-                .orElse(new ScriptRunRecorder.FailureStep(-1, ""));
-    }
-
-    private static String exceptionSummary(Exception e) {
-        String message = e.getMessage();
-        return message != null ? message : e.getClass().getName();
     }
 }

@@ -44,8 +44,9 @@ import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptEventListener;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.scripts.ExtensionScriptsUI;
+import org.zaproxy.zap.extension.scripts.diagnostics.ScriptDiagnosticSource;
+import org.zaproxy.zap.extension.scripts.diagnostics.ScriptDiagnosticSource.RunFailureDiagnostic;
 import org.zaproxy.zap.extension.scripts.internal.db.ScriptRunRecorder;
-import org.zaproxy.zap.extension.scripts.zest.ZestScriptDiagnosticSource;
 
 public class ExtensionScriptAutomation extends ExtensionAdaptor {
 
@@ -185,27 +186,36 @@ public class ExtensionScriptAutomation extends ExtensionAdaptor {
                                             script.getLastErrorDetails());
                             plan.getProgress().error(message);
                             String screenshotBase64 = null;
-                            if (script instanceof ZestScriptDiagnosticSource source) {
+                            if (script instanceof ScriptDiagnosticSource source) {
                                 screenshotBase64 =
-                                        source.getLastRunDiagnostic()
-                                                .map(
-                                                        ZestScriptDiagnosticSource
-                                                                        .ZestScriptRunDiagnostic
-                                                                ::screenshotBase64)
+                                        source.getRunDiagnostics()
+                                                .failure()
+                                                .map(RunFailureDiagnostic::screenshotBase64)
                                                 .orElse(null);
                             }
+                            String outputDetail =
+                                    StringUtils.defaultString(
+                                            ScriptRunFailureDetail
+                                                    .compactScriptOutputDetailForPersistence(
+                                                            script));
                             ScriptRunRecorder.recordFailedRun(
                                     message,
                                     List.of(
                                             new ScriptRunRecorder.RunScript(
                                                     script.getName(),
                                                     script.getTypeName(),
-                                                    new ScriptRunRecorder.FailureStep(
-                                                            -1, "", screenshotBase64))),
-                                    StringUtils.defaultString(
-                                            ScriptRunFailureDetail
-                                                    .compactScriptOutputDetailForPersistence(
-                                                            script)));
+                                                    List.of(
+                                                            new ScriptRunRecorder.RunStep(
+                                                                    -1,
+                                                                    "",
+                                                                    List.of(
+                                                                            new ScriptRunRecorder
+                                                                                    .StepOutput(
+                                                                                    0,
+                                                                                    ScriptRunRecorder
+                                                                                            .OUTPUT_KIND_ERROR,
+                                                                                    outputDetail)),
+                                                                    screenshotBase64)))));
                         });
             }
         }

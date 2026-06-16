@@ -101,9 +101,16 @@ class ScriptRunRecorderUnitTest {
                             new ScriptRunRecorder.RunScript(
                                     "my-script",
                                     "standalone",
-                                    new ScriptRunRecorder.FailureStep(
-                                            13, "ZestClientElementClick"))),
-                    "detail line");
+                                    List.of(
+                                            new ScriptRunRecorder.RunStep(
+                                                    13,
+                                                    "ZestClientElementClick",
+                                                    List.of(
+                                                            new ScriptRunRecorder.StepOutput(
+                                                                    0,
+                                                                    ScriptRunRecorder
+                                                                            .OUTPUT_KIND_ERROR,
+                                                                    "detail line")))))));
 
             @SuppressWarnings("rawtypes")
             ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class);
@@ -144,13 +151,21 @@ class ScriptRunRecorderUnitTest {
             ScriptRunRecorder.recordFailedRun(
                     "summary",
                     List.of(
-                            new ScriptRunRecorder.RunScript("first", "standalone", null),
+                            new ScriptRunRecorder.RunScript("first", "standalone"),
                             new ScriptRunRecorder.RunScript(
                                     "second",
                                     "standalone",
-                                    new ScriptRunRecorder.FailureStep(5, "Click")),
-                            new ScriptRunRecorder.RunScript("third", "standalone", null)),
-                    "detail");
+                                    List.of(
+                                            new ScriptRunRecorder.RunStep(
+                                                    5,
+                                                    "Click",
+                                                    List.of(
+                                                            new ScriptRunRecorder.StepOutput(
+                                                                    0,
+                                                                    ScriptRunRecorder
+                                                                            .OUTPUT_KIND_ERROR,
+                                                                    "detail"))))),
+                            new ScriptRunRecorder.RunScript("third", "standalone")));
 
             @SuppressWarnings("rawtypes")
             ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class);
@@ -192,13 +207,31 @@ class ScriptRunRecorderUnitTest {
                             new ScriptRunRecorder.RunScript(
                                     "my-script",
                                     "standalone",
-                                    new ScriptRunRecorder.FailureStep(
-                                            3, "ZestClientClick", "base64png")),
+                                    List.of(
+                                            new ScriptRunRecorder.RunStep(
+                                                    3,
+                                                    "ZestClientClick",
+                                                    List.of(
+                                                            new ScriptRunRecorder.StepOutput(
+                                                                    0,
+                                                                    ScriptRunRecorder
+                                                                            .OUTPUT_KIND_ERROR,
+                                                                    "detail")),
+                                                    "base64png"))),
                             new ScriptRunRecorder.RunScript(
                                     "other-script",
                                     "standalone",
-                                    new ScriptRunRecorder.FailureStep(4, "ZestClientClick", ""))),
-                    "detail");
+                                    List.of(
+                                            new ScriptRunRecorder.RunStep(
+                                                    4,
+                                                    "ZestClientClick",
+                                                    List.of(
+                                                            new ScriptRunRecorder.StepOutput(
+                                                                    0,
+                                                                    ScriptRunRecorder
+                                                                            .OUTPUT_KIND_ERROR,
+                                                                    "detail")),
+                                                    "")))));
 
             @SuppressWarnings("rawtypes")
             ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class);

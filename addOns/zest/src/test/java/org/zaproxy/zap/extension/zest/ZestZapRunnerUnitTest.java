@@ -55,7 +55,7 @@ import org.parosproxy.paros.model.Model;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.zap.authentication.AuthenticationMethod;
 import org.zaproxy.zap.extension.script.ExtensionScript;
-import org.zaproxy.zap.extension.scripts.zest.ZestScriptDiagnosticSource.ZestScriptRunDiagnostic;
+import org.zaproxy.zap.extension.scripts.diagnostics.ScriptDiagnosticSource.RunFailureDiagnostic;
 import org.zaproxy.zap.extension.selenium.ClientAuthenticator;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.zest.internal.ZestScriptMerger;
@@ -201,7 +201,7 @@ class ZestZapRunnerUnitTest extends TestUtils {
         given(clientLaunch.getUrl()).willReturn(null);
 
         assertThat(runnerWithWrapper.launchClient(clientLaunch), is(nullValue()));
-        verify(wrapper, never()).setLastRunDiagnostic(any());
+        verify(wrapper, never()).setLastRunFailure(any());
         verify(authMethod).authenticate(any(WebDriver.class), eq(user));
     }
 
@@ -240,7 +240,7 @@ class ZestZapRunnerUnitTest extends TestUtils {
 
         assertThrows(
                 ZestClientFailException.class, () -> runnerWithWrapper.launchClient(clientLaunch));
-        verify(wrapper, times(1)).setLastRunDiagnostic(any());
+        verify(wrapper, times(1)).setLastRunFailure(any());
     }
 
     @Test
@@ -269,7 +269,7 @@ class ZestZapRunnerUnitTest extends TestUtils {
         given(clientLaunch.getWindowHandle()).willReturn("win1");
 
         assertThat(runnerWithWrapper.launchClient(clientLaunch), is("win1"));
-        verify(wrapper, never()).setLastRunDiagnostic(any());
+        verify(wrapper, never()).setLastRunFailure(any());
     }
 
     @Test
@@ -281,7 +281,7 @@ class ZestZapRunnerUnitTest extends TestUtils {
         clearInvocations(first, second);
         runner.setWrapper(second);
 
-        verify(second).setLastRunDiagnostic(null);
+        verify(second).clearRunDiagnostics();
     }
 
     @Test
@@ -306,10 +306,10 @@ class ZestZapRunnerUnitTest extends TestUtils {
 
         invokeRecordStatementFailureContext(runnerWithWrapper, stmt, ex);
 
-        ArgumentCaptor<ZestScriptRunDiagnostic> captor =
-                ArgumentCaptor.forClass(ZestScriptRunDiagnostic.class);
-        verify(wrapper).setLastRunDiagnostic(captor.capture());
-        ZestScriptRunDiagnostic diagnostic = captor.getValue();
+        ArgumentCaptor<RunFailureDiagnostic> captor =
+                ArgumentCaptor.forClass(RunFailureDiagnostic.class);
+        verify(wrapper).setLastRunFailure(captor.capture());
+        RunFailureDiagnostic diagnostic = captor.getValue();
         assertThat(diagnostic.detailMessage(), is(equalTo("ZestClientLaunch - wrapped")));
         assertThat(diagnostic.context(), is(equalTo(diagnostics + " - wrapped")));
         assertThat(diagnostic.chainScriptOrder(), is(equalTo(1)));
@@ -339,10 +339,10 @@ class ZestZapRunnerUnitTest extends TestUtils {
         String diagnostics =
                 Constant.messages.getString(
                         "zest.runner.failure.standalone", "zest-script", "2", "ZestClientLaunch");
-        ArgumentCaptor<ZestScriptRunDiagnostic> captor =
-                ArgumentCaptor.forClass(ZestScriptRunDiagnostic.class);
-        verify(wrapper).setLastRunDiagnostic(captor.capture());
-        ZestScriptRunDiagnostic diagnostic = captor.getValue();
+        ArgumentCaptor<RunFailureDiagnostic> captor =
+                ArgumentCaptor.forClass(RunFailureDiagnostic.class);
+        verify(wrapper).setLastRunFailure(captor.capture());
+        RunFailureDiagnostic diagnostic = captor.getValue();
         assertThat(diagnostic.detailMessage(), is(equalTo("ZestClientLaunch - " + causeMsg)));
         assertThat(diagnostic.context(), is(equalTo(diagnostics + " - " + causeMsg)));
         assertThat(diagnostic.chainScriptOrder(), is(equalTo(1)));
@@ -374,9 +374,9 @@ class ZestZapRunnerUnitTest extends TestUtils {
 
         invokeRecordStatementFailureContext(runnerWithWrapper, click, ex);
 
-        ArgumentCaptor<ZestScriptRunDiagnostic> captor =
-                ArgumentCaptor.forClass(ZestScriptRunDiagnostic.class);
-        verify(wrapper).setLastRunDiagnostic(captor.capture());
+        ArgumentCaptor<RunFailureDiagnostic> captor =
+                ArgumentCaptor.forClass(RunFailureDiagnostic.class);
+        verify(wrapper).setLastRunFailure(captor.capture());
         assertThat(captor.getValue().screenshotBase64(), is(equalTo("pngb64")));
         verify(screenshot, times(1)).getScreenshotAs(eq(OutputType.BASE64));
 
@@ -387,7 +387,7 @@ class ZestZapRunnerUnitTest extends TestUtils {
                 clickWithoutHandle,
                 new ZestClientFailException(clickWithoutHandle, new IllegalStateException("fail")));
 
-        verify(wrapper).setLastRunDiagnostic(captor.capture());
+        verify(wrapper).setLastRunFailure(captor.capture());
         assertThat(captor.getValue().screenshotBase64(), is(nullValue()));
         verify(screenshot, never()).getScreenshotAs(any());
     }

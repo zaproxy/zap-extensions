@@ -103,7 +103,7 @@ dependencies {
     zapAddOn("spiderAjax")
     zapAddOn("client")
     zapAddOn("reports")
-    // Transitive compile-time dependency via zest (ZestScriptDiagnosticSource, etc.).
+    // Transitive compile-time dependency via zest.
     compileOnly(parent!!.childProjects.get("scripts")!!)
     zapAddOn("zest")
 
