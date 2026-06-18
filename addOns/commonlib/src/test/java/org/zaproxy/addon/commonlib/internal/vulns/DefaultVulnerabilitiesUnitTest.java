@@ -62,6 +62,21 @@ class DefaultVulnerabilitiesUnitTest {
     }
 
     @Test
+    void shouldHaveSolutionsForAllDefaultVulnerabilities() {
+        // Given
+        DefaultVulnerabilities vulnerabilities = new DefaultVulnerabilities(Locale.ROOT);
+        // When / Then
+        vulnerabilities
+                .getAll()
+                .forEach(
+                        vulnerability ->
+                                assertThat(
+                                        "Missing solution for: " + vulnerability.getName(),
+                                        vulnerability.getSolution(),
+                                        is(not(emptyString()))));
+    }
+
+    @Test
     void shouldLoadDefaultVulnerabilitiesForUnknownLocale() {
         // Given
         Locale locale =
