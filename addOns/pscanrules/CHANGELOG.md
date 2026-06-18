@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Update dependency.
+- Updated a reference link for the Sub Resource Integrity Attribute Missing scan rule.
+- Remove reference link which is no longer available for the Script Served From Malicious Domain (polyfill) scan rule.
 
 ## [73] - 2026-04-14
 ### Changed
