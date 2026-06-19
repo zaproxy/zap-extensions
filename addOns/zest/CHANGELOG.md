@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
-- Capture browser screenshots on Zest client step failures for script automation diagnostics.
+- Browser screenshots are now automatically captured on Zest client step failures, and script print output is included in the diagnostics report. For chain runs, each output is clearly attributed to the specific script that produced it.
 
 ### Changed
 - Update minimum `scripts` add-on version to 45.19.0.

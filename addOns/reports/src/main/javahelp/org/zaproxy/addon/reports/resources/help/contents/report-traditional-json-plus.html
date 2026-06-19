@@ -33,6 +33,10 @@
 			<td>Screenshots for Script Diagnostics</td>
 			<td>scriptdiagnosticsscreenshots</td>
 		</tr>
+		<tr>
+			<td>Output for Script Diagnostics</td>
+			<td>scriptdiagnosticsoutput</td>
+		</tr>
 	</table>
 
 	<H3>Sample</H3>
@@ -236,8 +240,20 @@
 	<code>scriptDiagnostics</code>
 	object containing a
 	<code>runs</code>
-	array of script diagnostic records (for example failed automation
-	runs).
+	array of script diagnostic records. Each run has
+	<code>created</code>
+	,
+	<code>outcome</code>
+	(for example
+	<code>FAILED</code>
+	or
+	<code>SUCCESS</code>
+	),
+	<code>summary</code>
+	, and a
+	<code>scripts</code>
+	array.
+
 	<pre>
 	"scriptDiagnostics": {
 		"runs": [
@@ -270,8 +286,31 @@
 		]
 	}
 </pre>
-	More data can be included on failure steps depending on the additional
-	diagnostics sections enabled for the report.
+	More data can be included on steps depending on the additional
+	diagnostics sections enabled for the report, as outlined below.
+
+	<H4>Output for Script Diagnostics</H4>
+	Steps can include print output lines with kind
+	<code>OUTPUT</code>
+	. For example:
+
+	<pre>
+	{
+		"sourceStepIndex": 2,
+		"line": "ZestActionPrint",
+		"outputs": [
+			{
+				"kind": "OUTPUT",
+				"message": "In example_script"
+			}
+		]
+	}
+</pre>
+	When this section is disabled, steps still include
+	<code>ERROR</code>
+	output lines; only
+	<code>OUTPUT</code>
+	lines are omitted.
 
 	<H4>Screenshots for Script Diagnostics</H4>
 	When this section is enabled the step can, optionally, include a
@@ -282,4 +321,3 @@
 
 </BODY>
 </HTML>
-

@@ -131,7 +131,7 @@ class ZestScriptMergerUnitTest extends TestUtils {
         // Then
         assertThat(merged, is(notNullValue()));
         assertThat(merged.getName(), is(equalTo("chain")));
-        assertThat(merged.getLastRunDiagnostic().isPresent(), is(false));
+        assertThat(merged.getRunDiagnostics().failure().isPresent(), is(false));
 
         ZestScript mergedScript = merged.getZestScript();
         assertThat(mergedScript.getTitle(), is(equalTo("chain")));

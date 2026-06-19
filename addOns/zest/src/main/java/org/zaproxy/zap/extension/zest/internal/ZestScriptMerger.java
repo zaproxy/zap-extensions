@@ -158,7 +158,7 @@ public final class ZestScriptMerger {
         ChainProvenance provenance =
                 ChainProvenance.finalizeMapping(segments, orderedOrigins, parsed);
         zestWrapper.setChainProvenance(provenance);
-        zestWrapper.setLastRunDiagnostic(null);
+        zestWrapper.clearRunDiagnostics();
         return zestWrapper;
     }
 
@@ -291,6 +291,14 @@ public final class ZestScriptMerger {
          */
         public Optional<StatementOrigin> originForMergedIndex(int zestStatementIndex) {
             return Optional.ofNullable(byZestStatementIndex.get(zestStatementIndex));
+        }
+
+        /** Script name for a chain segment index, when in range. */
+        public Optional<String> segmentScriptName(int segmentIndex) {
+            if (segmentIndex < 0 || segmentIndex >= segments.size()) {
+                return Optional.empty();
+            }
+            return Optional.of(segments.get(segmentIndex).scriptName());
         }
 
         /**

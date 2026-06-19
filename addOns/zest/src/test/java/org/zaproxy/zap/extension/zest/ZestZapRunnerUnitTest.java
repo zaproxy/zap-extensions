@@ -55,7 +55,7 @@ import org.parosproxy.paros.model.Model;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.zap.authentication.AuthenticationMethod;
 import org.zaproxy.zap.extension.script.ExtensionScript;
-import org.zaproxy.zap.extension.scripts.zest.ZestScriptDiagnosticSource.ZestScriptRunDiagnostic;
+import org.zaproxy.zap.extension.scripts.diagnostics.ScriptDiagnosticSource.RunFailureDiagnostic;
 import org.zaproxy.zap.extension.selenium.ClientAuthenticator;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.zest.internal.ZestScriptMerger;
@@ -201,7 +201,7 @@ class ZestZapRunnerUnitTest extends TestUtils {
         given(clientLaunch.getUrl()).willReturn(null);
 
         assertThat(runnerWithWrapper.launchClient(clientLaunch), is(nullValue()));
-        verify(wrapper, never()).setLastRunDiagnostic(any());
+        verify(wrapper, never()).setLastRunFailure(any());
         verify(authMethod).authenticate(any(WebDriver.class), eq(user));
     }
 
@@ -240,7 +240,7 @@ class ZestZapRunnerUnitTest extends TestUtils {
 
         assertThrows(
                 ZestClientFailException.class, () -> runnerWithWrapper.launchClient(clientLaunch));
-        verify(wrapper, times(1)).setLastRunDiagnostic(any());
+        verify(wrapper, times(1)).setLastRunFailure(any());
     }
 
     @Test
@@ -269,7 +269,7 @@ class ZestZapRunnerUnitTest extends TestUtils {
         given(clientLaunch.getWindowHandle()).willReturn("win1");
 
         assertThat(runnerWithWrapper.launchClient(clientLaunch), is("win1"));
-        verify(wrapper, never()).setLastRunDiagnostic(any());
+        verify(wrapper, never()).setLastRunFailure(any());
     }
 
     @Test
@@ -281,7 +281,7 @@ class ZestZapRunnerUnitTest extends TestUtils {
         clearInvocations(first, second);
         runner.setWrapper(second);
 
-        verify(second).setLastRunDiagnostic(null);
+        verify(second).clearRunDiagnostics();
     }
 
     @Test
@@ -306,10 +306,10 @@ class ZestZapRunnerUnitTest extends TestUtils {
 
         invokeRecordStatementFailureContext(runnerWithWrapper, stmt, ex);
 
-        ArgumentCaptor<ZestScriptRunDiagnostic> captor =
-                ArgumentCaptor.forClass(ZestScriptRunDiagnostic.class);
-        verify(wrapper).setLastRunDiagnostic(captor.capture());
-        ZestScriptRunDiagnostic diagnostic = captor.getValue();
+        ArgumentCaptor<RunFailureDiagnostic> captor =
+                ArgumentCaptor.forClass(RunFailureDiagnostic.class);
+        verify(wrapper).setLastRunFailure(captor.capture());
+        RunFailureDiagnostic diagnostic = captor.getValue();
         assertThat(diagnostic.detailMessage(), is(equalTo("ZestClientLaunch - wrapped")));
         assertThat(diagnostic.context(), is(equalTo(diagnostics + " - wrapped")));
         assertThat(diagnostic.chainScriptOrder(), is(equalTo(1)));
@@ -339,10 +339,10 @@ class ZestZapRunnerUnitTest extends TestUtils {
         String diagnostics =
                 Constant.messages.getString(
                         "zest.runner.failure.standalone", "zest-script", "2", "ZestClientLaunch");
-        ArgumentCaptor<ZestScriptRunDiagnostic> captor =
-                ArgumentCaptor.forClass(ZestScriptRunDiagnostic.class);
-        verify(wrapper).setLastRunDiagnostic(captor.capture());
-        ZestScriptRunDiagnostic diagnostic = captor.getValue();
+        ArgumentCaptor<RunFailureDiagnostic> captor =
+                ArgumentCaptor.forClass(RunFailureDiagnostic.class);
+        verify(wrapper).setLastRunFailure(captor.capture());
+        RunFailureDiagnostic diagnostic = captor.getValue();
         assertThat(diagnostic.detailMessage(), is(equalTo("ZestClientLaunch - " + causeMsg)));
         assertThat(diagnostic.context(), is(equalTo(diagnostics + " - " + causeMsg)));
         assertThat(diagnostic.chainScriptOrder(), is(equalTo(1)));
@@ -374,9 +374,9 @@ class ZestZapRunnerUnitTest extends TestUtils {
 
         invokeRecordStatementFailureContext(runnerWithWrapper, click, ex);
 
-        ArgumentCaptor<ZestScriptRunDiagnostic> captor =
-                ArgumentCaptor.forClass(ZestScriptRunDiagnostic.class);
-        verify(wrapper).setLastRunDiagnostic(captor.capture());
+        ArgumentCaptor<RunFailureDiagnostic> captor =
+                ArgumentCaptor.forClass(RunFailureDiagnostic.class);
+        verify(wrapper).setLastRunFailure(captor.capture());
         assertThat(captor.getValue().screenshotBase64(), is(equalTo("pngb64")));
         verify(screenshot, times(1)).getScreenshotAs(eq(OutputType.BASE64));
 
@@ -387,7 +387,7 @@ class ZestZapRunnerUnitTest extends TestUtils {
                 clickWithoutHandle,
                 new ZestClientFailException(clickWithoutHandle, new IllegalStateException("fail")));
 
-        verify(wrapper).setLastRunDiagnostic(captor.capture());
+        verify(wrapper).setLastRunFailure(captor.capture());
         assertThat(captor.getValue().screenshotBase64(), is(nullValue()));
         verify(screenshot, never()).getScreenshotAs(any());
     }
@@ -425,6 +425,146 @@ class ZestZapRunnerUnitTest extends TestUtils {
                         "recordStatementFailureContext", ZestStatement.class, Throwable.class);
         m.setAccessible(true);
         m.invoke(runner, stmt, t);
+    }
+
+    @Test
+    void shouldRecordStdoutOutputWithStandaloneAttribution() {
+        ZestScriptWrapper wrapper = mock(ZestScriptWrapper.class);
+        given(wrapper.getChainProvenance()).willReturn(Optional.empty());
+        given(wrapper.getName()).willReturn("zest-script");
+        ZestZapRunner runner = new ZestZapRunner(extensionZest, extensionNetwork, wrapper);
+
+        runner.output("logged in");
+
+        verify(wrapper).appendRunOutput("zest-script", -1, "", "logged in");
+    }
+
+    @Test
+    void shouldRecordStdoutOutputWithChainAttribution() {
+        ZestScriptMerger.ChainProvenance provenance = mock(ZestScriptMerger.ChainProvenance.class);
+        ZestScriptMerger.ChainProvenance.StatementOrigin origin =
+                new ZestScriptMerger.ChainProvenance.StatementOrigin(1, 5, "ZestActionPrint");
+        ZestScript merged = mock(ZestScript.class);
+        ZestStatement stmt = mock(ZestStatement.class);
+        given(provenance.originForExecutingStatement(merged, stmt)).willReturn(Optional.of(origin));
+        given(provenance.segmentScriptName(1)).willReturn(Optional.of("nav-script"));
+
+        ZestScriptWrapper wrapper = mock(ZestScriptWrapper.class);
+        given(wrapper.getChainProvenance()).willReturn(Optional.of(provenance));
+        given(wrapper.getZestScript()).willReturn(merged);
+
+        ZestZapRunner runner = new ZestZapRunner(extensionZest, extensionNetwork, wrapper);
+        setExecutingStatement(runner, stmt);
+
+        runner.output("chain line");
+
+        verify(wrapper).appendRunOutput("nav-script", 5, "ZestActionPrint", "chain line");
+    }
+
+    @Test
+    void shouldRecordStdoutOutputWithChainAttributionWhenExecutingLookupMisses() {
+        ZestScriptMerger.ChainProvenance provenance = mock(ZestScriptMerger.ChainProvenance.class);
+        ZestScriptMerger.ChainProvenance.StatementOrigin origin =
+                new ZestScriptMerger.ChainProvenance.StatementOrigin(1, 5, "ZestActionPrint");
+        ZestScript merged = mock(ZestScript.class);
+        ZestStatement stmt = mock(ZestStatement.class);
+        given(stmt.getIndex()).willReturn(99);
+        given(provenance.originForExecutingStatement(merged, stmt)).willReturn(Optional.empty());
+        given(provenance.originForMergedIndex(99)).willReturn(Optional.of(origin));
+        given(provenance.segmentScriptName(1)).willReturn(Optional.of("nav-script"));
+
+        ZestScriptWrapper wrapper = mock(ZestScriptWrapper.class);
+        given(wrapper.getChainProvenance()).willReturn(Optional.of(provenance));
+        given(wrapper.getZestScript()).willReturn(merged);
+
+        ZestZapRunner runner = new ZestZapRunner(extensionZest, extensionNetwork, wrapper);
+        setExecutingStatement(runner, stmt);
+
+        runner.output("chain line");
+
+        verify(wrapper).appendRunOutput("nav-script", 5, "ZestActionPrint", "chain line");
+    }
+
+    @Test
+    void shouldRecordStdoutOutputUsingFirstSegmentWhenChainProvenanceUnknown() {
+        ZestScriptMerger.ChainProvenance provenance = mock(ZestScriptMerger.ChainProvenance.class);
+        ZestScript merged = mock(ZestScript.class);
+        ZestStatement stmt = mock(ZestStatement.class);
+        given(stmt.getIndex()).willReturn(99);
+        given(stmt.getElementType()).willReturn("ZestActionPrint");
+        given(provenance.originForExecutingStatement(merged, stmt)).willReturn(Optional.empty());
+        given(provenance.originForMergedIndex(99)).willReturn(Optional.empty());
+        given(provenance.segmentScriptName(0)).willReturn(Optional.of("account_check"));
+
+        ZestScriptWrapper wrapper = mock(ZestScriptWrapper.class);
+        given(wrapper.getChainProvenance()).willReturn(Optional.of(provenance));
+        given(wrapper.getZestScript()).willReturn(merged);
+
+        ZestZapRunner runner = new ZestZapRunner(extensionZest, extensionNetwork, wrapper);
+        setExecutingStatement(runner, stmt);
+
+        runner.output("chain line");
+
+        verify(wrapper).appendRunOutput("account_check", -1, "ZestActionPrint", "chain line");
+    }
+
+    @Test
+    void shouldRecordStdoutOutputUsingWrapperNameWhenSegmentNameMissing() {
+        ZestScriptMerger.ChainProvenance provenance = mock(ZestScriptMerger.ChainProvenance.class);
+        ZestScriptMerger.ChainProvenance.StatementOrigin origin =
+                new ZestScriptMerger.ChainProvenance.StatementOrigin(1, 5, "ZestActionPrint");
+        ZestScript merged = mock(ZestScript.class);
+        ZestStatement stmt = mock(ZestStatement.class);
+        given(provenance.originForExecutingStatement(merged, stmt)).willReturn(Optional.of(origin));
+        given(provenance.segmentScriptName(1)).willReturn(Optional.empty());
+
+        ZestScriptWrapper wrapper = mock(ZestScriptWrapper.class);
+        given(wrapper.getChainProvenance()).willReturn(Optional.of(provenance));
+        given(wrapper.getZestScript()).willReturn(merged);
+        given(wrapper.getName()).willReturn("merged-chain");
+
+        ZestZapRunner runner = new ZestZapRunner(extensionZest, extensionNetwork, wrapper);
+        setExecutingStatement(runner, stmt);
+
+        runner.output("chain line");
+
+        verify(wrapper).appendRunOutput("merged-chain", 5, "ZestActionPrint", "chain line");
+    }
+
+    @Test
+    void shouldReuseLastOutputAttributionWhenExecutingStatementCleared() throws Exception {
+        ZestScriptMerger.ChainProvenance provenance = mock(ZestScriptMerger.ChainProvenance.class);
+        ZestScriptMerger.ChainProvenance.StatementOrigin origin =
+                new ZestScriptMerger.ChainProvenance.StatementOrigin(1, 5, "ZestActionPrint");
+        ZestScript merged = mock(ZestScript.class);
+        ZestStatement stmt = mock(ZestStatement.class);
+        given(provenance.originForExecutingStatement(merged, stmt)).willReturn(Optional.of(origin));
+        given(provenance.segmentScriptName(1)).willReturn(Optional.of("nav-script"));
+
+        ZestScriptWrapper wrapper = mock(ZestScriptWrapper.class);
+        given(wrapper.getChainProvenance()).willReturn(Optional.of(provenance));
+        given(wrapper.getZestScript()).willReturn(merged);
+
+        ZestZapRunner runner = new ZestZapRunner(extensionZest, extensionNetwork, wrapper);
+        setExecutingStatement(runner, stmt);
+        runner.output("during statement");
+        setExecutingStatement(runner, null);
+
+        runner.output("between statements");
+
+        verify(wrapper).appendRunOutput("nav-script", 5, "ZestActionPrint", "during statement");
+        verify(wrapper).appendRunOutput("nav-script", 5, "ZestActionPrint", "between statements");
+    }
+
+    private static void setExecutingStatement(ZestZapRunner runner, ZestStatement stmt) {
+        try {
+            java.lang.reflect.Field field =
+                    ZestZapRunner.class.getDeclaredField("executingStatement");
+            field.setAccessible(true);
+            field.set(runner, stmt);
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     // Test implementation that implements both interfaces to ensure instanceof works

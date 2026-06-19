@@ -95,7 +95,9 @@ public class ExtensionScriptsReport extends ExtensionAdaptor {
             }
             List<ScriptRunReportData.Run> rows =
                     ScriptRunReportQuery.loadRunsForReport(
-                            reportData.isIncludeSection("scriptdiagnosticsscreenshots"));
+                            new ScriptRunReportQuery.Options(
+                                    reportData.isIncludeSection("scriptdiagnosticsscreenshots"),
+                                    reportData.isIncludeSection("scriptdiagnosticsoutput")));
             if (!rows.isEmpty()) {
                 reportData.addReportObjects(
                         SCRIPT_DIAGNOSTICS, new ScriptRunReportData.Diagnostics(rows));
