@@ -680,6 +680,33 @@ class ClientSpiderUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldSkipClickForLinkComponentForSamePage() {
+        // Given
+        spider.run();
+        waitForProxy();
+
+        // When
+        clientMapListener()
+                .componentAdded(
+                        Map.of(
+                                ClientMap.URL_KEY,
+                                seedUrl,
+                                "tagName",
+                                "A",
+                                "href",
+                                seedUrl,
+                                "text",
+                                "Same Page Link",
+                                "depth",
+                                "1"),
+                        PROXY_PORT);
+        sleep();
+
+        // Then
+        verify(wd, never()).findElement(any());
+    }
+
+    @Test
     void shouldSkipClickForLinkComponentWithAlreadyHandledHref() {
         // Given
         String href = "https://www.example.com/queued-once";

@@ -503,6 +503,10 @@ public class ClientSpider implements GenericScanner2 {
             }
 
             String sourceUrl = parameters.get(ClientMap.URL_KEY);
+            if (sourceUrl.equals(href)) {
+                return true;
+            }
+
             synchronized (crawledGraph) {
                 ClientGraphVertex target = new ClientGraphVertex.Url(href);
                 if (crawledGraph.containsVertex(target)) {
