@@ -19,7 +19,6 @@
  */
 package org.zaproxy.addon.client.spider.actions;
 
-import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -35,6 +34,7 @@ import org.jgrapht.graph.DefaultEdge;
 import org.openqa.selenium.WebDriver;
 import org.zaproxy.addon.client.internal.ClientSideComponent;
 import org.zaproxy.addon.client.internal.graph.ClientGraphVertex;
+import org.zaproxy.addon.client.spider.ActionWaitStrategy;
 import org.zaproxy.addon.client.spider.SpiderAction;
 import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.zap.utils.Stats;
@@ -48,37 +48,27 @@ public class FollowGraph implements SpiderAction {
     private final Graph<ClientGraphVertex, DefaultEdge> graph;
     private final String targetUrl;
     private final ValueProvider valueProvider;
-    private final BooleanSupplier waitAction;
 
     public FollowGraph(
             Graph<ClientGraphVertex, DefaultEdge> graph,
             String targetUrl,
-            ValueProvider valueProvider,
-            Duration waitDuration) {
+            ValueProvider valueProvider) {
         this.graph = Objects.requireNonNull(graph);
         this.targetUrl = Objects.requireNonNull(targetUrl);
         this.valueProvider = Objects.requireNonNull(valueProvider);
-        waitAction = createWaitAction(waitDuration.toMillis());
-    }
-
-    private static BooleanSupplier createWaitAction(long millis) {
-        if (millis <= 0) {
-            return () -> false;
-        }
-        return new WaitAction(millis);
     }
 
     @Override
-    public boolean run(WebDriver wd) {
+    public boolean run(ActionWaitStrategy waitStrategy, WebDriver wd) {
         Stats.incCounter(STATS_PREFIX);
 
         String currentUrl = wd.getCurrentUrl();
-        if (targetUrl.equals(currentUrl)) {
+        if (targetUrl.equals(currentUrl) || targetUrl.equals(currentUrl + "#")) {
             Stats.incCounter(STATS_PREFIX + ".current");
             return true;
         }
 
-        if (followPath(wd, currentUrl, targetUrl)) {
+        if (followPath(waitStrategy, wd, currentUrl, targetUrl)) {
             Stats.incCounter(STATS_PREFIX + ".path");
             return true;
         }
@@ -86,10 +76,11 @@ public class FollowGraph implements SpiderAction {
         Stats.incCounter(STATS_PREFIX + ".fallback");
         LOGGER.debug("No graph path to {}, falling back to direct navigation", targetUrl);
         wd.get(targetUrl);
-        return true;
+        return waitStrategy.waitAfterPageLoad(targetUrl);
     }
 
-    private boolean followPath(WebDriver wd, String fromUrl, String toUrl) {
+    private boolean followPath(
+            ActionWaitStrategy waitStrategy, WebDriver wd, String fromUrl, String toUrl) {
         ClientGraphVertex source = new ClientGraphVertex.Url(fromUrl);
         ClientGraphVertex target = new ClientGraphVertex.Url(toUrl);
 
@@ -105,6 +96,7 @@ public class FollowGraph implements SpiderAction {
             return false;
         }
 
+        BooleanSupplier waitAction = new WaitAction(waitStrategy);
         List<ClientGraphVertex> vertices = path.getVertexList();
         for (ClientGraphVertex vertex : vertices) {
             if (vertex instanceof ClientGraphVertex.Component componentVertex) {
@@ -115,7 +107,8 @@ public class FollowGraph implements SpiderAction {
                 ClientSideComponent component = componentVertex.component();
                 try {
                     URI uri = new URI(component.getParentUrl(), true);
-                    if (!new FollowClickElement(valueProvider, uri, component.getData()).run(wd)) {
+                    if (!new FollowClickElement(valueProvider, uri, component.getData())
+                            .run(waitStrategy, wd)) {
                         return false;
                     }
                 } catch (URIException e) {
@@ -124,7 +117,7 @@ public class FollowGraph implements SpiderAction {
                 }
             }
         }
-        return true;
+        return waitStrategy.waitAfterPageLoad(toUrl);
     }
 
     private static class FollowClickElement extends ClickElement {
@@ -147,11 +140,11 @@ public class FollowGraph implements SpiderAction {
 
     private static class WaitAction implements BooleanSupplier {
 
-        private final long millis;
+        private final ActionWaitStrategy waitStrategy;
         private boolean first;
 
-        WaitAction(long millis) {
-            this.millis = millis;
+        WaitAction(ActionWaitStrategy waitStrategy) {
+            this.waitStrategy = waitStrategy;
             first = true;
         }
 
@@ -162,13 +155,7 @@ public class FollowGraph implements SpiderAction {
                 return false;
             }
 
-            try {
-                Thread.sleep(millis);
-                return false;
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-            return true;
+            return !waitStrategy.waitAfterAction();
         }
     }
 }

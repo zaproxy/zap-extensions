@@ -3,7 +3,7 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2024 The ZAP Development Team
+ * Copyright 2026 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,25 @@
  */
 package org.zaproxy.addon.client.spider;
 
-import org.openqa.selenium.WebDriver;
+import java.util.Map;
+import org.zaproxy.addon.client.internal.ClientMapListener;
+import org.zaproxy.addon.client.spider.ClientSpider.WebDriverProcess;
 
-public interface SpiderAction {
+public interface ActionWaitStrategy extends ClientMapListener {
 
-    boolean run(ActionWaitStrategy waitStrategy, WebDriver wd);
+    void configure(WebDriverProcess wdp);
+
+    boolean waitAfterPageLoad(String url);
+
+    boolean waitAfterAction();
+
+    default void onRequestStarted(String url) {}
+
+    default void onRequestCompleted(String url) {}
+
+    @Override
+    default void nodeAdded(String url, int depth, int siblings, int source) {}
+
+    @Override
+    default void componentAdded(Map<String, String> parameters, int source) {}
 }

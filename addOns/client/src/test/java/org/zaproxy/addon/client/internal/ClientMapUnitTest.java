@@ -848,7 +848,7 @@ class ClientMapUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldCallConsumerOnHandleReportEventWhenNodeAbsent() {
+    void shouldCallConsumerAndPageLoadedListenerOnHandleReportEvent() {
         // Given
         String url = "https://www.example.com/page";
         String json = REPORTED_EVENT_JSON.formatted(url);
@@ -860,7 +860,7 @@ class ClientMapUnitTest extends TestUtils {
 
         // Then
         verify(consumer).accept(any(ReportedEvent.class));
-        verifyNoInteractions(listener);
+        verify(listener).pageLoaded(url, 0);
     }
 
     @Test

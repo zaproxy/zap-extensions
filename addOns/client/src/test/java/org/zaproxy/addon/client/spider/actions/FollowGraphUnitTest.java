@@ -21,7 +21,6 @@ package org.zaproxy.addon.client.spider.actions;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
@@ -32,8 +31,8 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.withSettings;
 
-import java.time.Duration;
 import java.util.Map;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
@@ -42,12 +41,14 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.quality.Strictness;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.addon.client.internal.ClientSideComponent;
 import org.zaproxy.addon.client.internal.graph.ClientGraphVertex;
+import org.zaproxy.addon.client.spider.ActionWaitStrategy;
 import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.zap.extension.stats.InMemoryStats;
 import org.zaproxy.zap.testutils.TestUtils;
@@ -63,7 +64,7 @@ class FollowGraphUnitTest extends TestUtils {
     private WebDriver wd;
     private Graph<ClientGraphVertex, DefaultEdge> graph;
     private ValueProvider valueProvider;
-    private Duration waitDuration;
+    private ActionWaitStrategy waitStrategy;
     private InMemoryStats stats;
 
     @BeforeAll
@@ -76,7 +77,9 @@ class FollowGraphUnitTest extends TestUtils {
         wd = mock();
         graph = new DirectedMultigraph<>(DefaultEdge.class);
         valueProvider = mock();
-        waitDuration = Duration.ofSeconds(0);
+        waitStrategy = mock(withSettings().strictness(Strictness.LENIENT));
+        given(waitStrategy.waitAfterPageLoad(any())).willReturn(true);
+        given(waitStrategy.waitAfterAction()).willReturn(true);
         stats = new InMemoryStats();
         Stats.addListener(stats);
     }
@@ -90,13 +93,30 @@ class FollowGraphUnitTest extends TestUtils {
     void shouldDoNothingWhenAlreadyAtTarget() {
         // Given
         given(wd.getCurrentUrl()).willReturn(URL_A);
-        FollowGraph action = new FollowGraph(graph, URL_A, valueProvider, waitDuration);
+        FollowGraph action = new FollowGraph(graph, URL_A, valueProvider);
 
         // When
-        boolean result = action.run(wd);
+        boolean result = action.run(waitStrategy, wd);
 
         // Then
         assertCommonState(wd, result);
+        verify(waitStrategy, never()).waitAfterPageLoad(any());
+        verify(wd, never()).get(any());
+        assertThat(stats.getStat("stats.client.spider.action.follow"), is(1L));
+    }
+
+    @Test
+    void shouldDoNothingWhenAlreadyAtTargetWithEmptyFragment() {
+        // Given
+        given(wd.getCurrentUrl()).willReturn(URL_A);
+        FollowGraph action = new FollowGraph(graph, URL_A + "#", valueProvider);
+
+        // When
+        boolean result = action.run(waitStrategy, wd);
+
+        // Then
+        assertCommonState(wd, result);
+        verify(waitStrategy, never()).waitAfterPageLoad(any());
         verify(wd, never()).get(any());
         assertThat(stats.getStat("stats.client.spider.action.follow"), is(1L));
     }
@@ -111,15 +131,16 @@ class FollowGraphUnitTest extends TestUtils {
         WebElement element = visibleElement();
         given(wd.findElement(any(By.class))).willReturn(element);
 
-        FollowGraph action = new FollowGraph(graph, URL_B, valueProvider, waitDuration);
+        FollowGraph action = new FollowGraph(graph, URL_B, valueProvider);
 
         // When
-        boolean result = action.run(wd);
+        boolean result = action.run(waitStrategy, wd);
 
         // Then
         assertCommonState(wd, result);
         verify(element).click();
         verify(wd, never()).get(any());
+        verify(waitStrategy).waitAfterPageLoad(URL_B);
         assertThat(stats.getStat("stats.client.spider.action.follow"), is(1L));
         assertThat(stats.getStat("stats.client.spider.action.follow.path"), is(1L));
     }
@@ -134,14 +155,15 @@ class FollowGraphUnitTest extends TestUtils {
 
         given(wd.getCurrentUrl()).willReturn(URL_A);
 
-        FollowGraph action = new FollowGraph(graph, URL_B, valueProvider, waitDuration);
+        FollowGraph action = new FollowGraph(graph, URL_B, valueProvider);
 
         // When
-        boolean result = action.run(wd);
+        boolean result = action.run(waitStrategy, wd);
 
         // Then
         assertCommonState(wd, result);
         verify(wd).get(URL_B);
+        verify(waitStrategy).waitAfterPageLoad(URL_B);
         assertThat(stats.getStat("stats.client.spider.action.follow"), is(1L));
         assertThat(stats.getStat("stats.client.spider.action.follow.fallback"), is(1L));
     }
@@ -158,15 +180,17 @@ class FollowGraphUnitTest extends TestUtils {
         WebElement element = visibleElement();
         given(wd.findElement(any())).willReturn(element);
 
-        FollowGraph action = new FollowGraph(graph, URL_C, valueProvider, waitDuration);
+        FollowGraph action = new FollowGraph(graph, URL_C, valueProvider);
 
         // When
-        boolean result = action.run(wd);
+        boolean result = action.run(waitStrategy, wd);
 
         // Then
         assertCommonState(wd, result);
         verify(element, times(2)).click();
         verify(wd, never()).get(any());
+        verify(waitStrategy).waitAfterAction();
+        verify(waitStrategy).waitAfterPageLoad(URL_C);
         assertThat(stats.getStat("stats.client.spider.action.follow"), is(1L));
         assertThat(stats.getStat("stats.client.spider.action.follow.path"), is(1L));
     }
@@ -178,21 +202,23 @@ class FollowGraphUnitTest extends TestUtils {
         ClientSideComponent link2 = createLinkComponent(URL_B, URL_C);
         addGraphEdge(URL_A, link1, URL_B);
         addGraphEdge(URL_B, link2, URL_C);
+        String urlD = "http://example.com/d";
+        ClientSideComponent link3 = createLinkComponent(URL_C, urlD);
+        addGraphEdge(URL_C, link3, urlD);
 
         given(wd.getCurrentUrl()).willReturn(URL_A);
         WebElement element = visibleElement();
         given(wd.findElement(any(By.class))).willReturn(element);
 
-        waitDuration = Duration.ofMillis(950);
-        FollowGraph action = new FollowGraph(graph, URL_C, valueProvider, waitDuration);
+        FollowGraph action = new FollowGraph(graph, urlD, valueProvider);
 
-        long start = System.currentTimeMillis();
         // When
-        boolean result = action.run(wd);
+        boolean result = action.run(waitStrategy, wd);
 
         // Then
-        assertThat(System.currentTimeMillis() - start, is(greaterThanOrEqualTo(950L)));
         assertCommonState(wd, result);
+        verify(waitStrategy, times(2)).waitAfterAction();
+        verify(waitStrategy).waitAfterPageLoad(urlD);
     }
 
     @Test
@@ -207,10 +233,10 @@ class FollowGraphUnitTest extends TestUtils {
 
         willThrow(RuntimeException.class).given(element).click();
 
-        FollowGraph action = new FollowGraph(graph, URL_B, valueProvider, waitDuration);
+        FollowGraph action = new FollowGraph(graph, URL_B, valueProvider);
 
         // When / Then
-        boolean result = assertDoesNotThrow(() -> action.run(wd));
+        boolean result = assertDoesNotThrow(() -> action.run(waitStrategy, wd));
         assertCommonState(wd, result);
         assertThat(stats.getStat("stats.client.spider.action.follow"), is(1L));
     }
@@ -220,10 +246,10 @@ class FollowGraphUnitTest extends TestUtils {
         // Given
         given(wd.getCurrentUrl()).willReturn(URL_A);
 
-        FollowGraph action = new FollowGraph(graph, URL_B, valueProvider, waitDuration);
+        FollowGraph action = new FollowGraph(graph, URL_B, valueProvider);
 
         // When
-        boolean result = action.run(wd);
+        boolean result = action.run(waitStrategy, wd);
 
         // Then
         assertCommonState(wd, result);

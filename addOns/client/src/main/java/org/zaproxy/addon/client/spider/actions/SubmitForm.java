@@ -27,6 +27,7 @@ import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.zaproxy.addon.client.spider.ActionWaitStrategy;
 import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.zap.utils.Stats;
 
@@ -47,7 +48,8 @@ public class SubmitForm extends BaseElementAction {
     }
 
     @Override
-    public boolean run(WebDriver wd, WebElement form, String statsPrefix) {
+    public boolean run(
+            ActionWaitStrategy waitStrategy, WebDriver wd, WebElement form, String statsPrefix) {
         String action = form.getDomAttribute("action");
         fillInputs(form.findElements(By.xpath("//input")), action, statsPrefix);
 

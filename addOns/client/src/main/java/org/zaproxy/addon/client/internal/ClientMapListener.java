@@ -43,4 +43,13 @@ public interface ClientMapListener {
      *     source is unknown.
      */
     void componentAdded(Map<String, String> parameters, int source);
+
+    /**
+     * Called when a page-load event is reported for a URL.
+     *
+     * @param url the URL of the page that loaded.
+     * @param source an identifier for the source that triggered the event, or {@code 0} if the
+     *     source is unknown.
+     */
+    default void pageLoaded(String url, int source) {}
 }
