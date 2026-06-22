@@ -49,15 +49,18 @@ class DefaultVulnerabilitiesUnitTest {
         assertVulnerability(vulnerabilities.get("wasc_1"), 1, 3);
         assertVulnerability(vulnerabilities.get("wasc_13"), 13, 3);
         assertVulnerability(vulnerabilities.get("wasc_49"), 49, 3);
+
+        for (Vulnerability vulnerability : vulnerabilities.getAll()) {
+            assertThat("Vulnerability " + vulnerability.getWascId() + " missing name", vulnerability.getName(), is(not(emptyString())));
+            assertThat("Vulnerability " + vulnerability.getWascId() + " missing description", vulnerability.getDescription(), is(not(emptyString())));
+            assertThat("Vulnerability " + vulnerability.getWascId() + " missing solution", vulnerability.getSolution(), is(not(emptyString())));
+        }
     }
 
     private static void assertVulnerability(
             Vulnerability vulnerability, int id, int numberOfReferences) {
         assertThat(vulnerability, is(notNullValue()));
         assertThat(vulnerability.getWascId(), is(equalTo(id)));
-        assertThat(vulnerability.getName(), is(not(emptyString())));
-        assertThat(vulnerability.getDescription(), is(not(emptyString())));
-        assertThat(vulnerability.getSolution(), is(not(emptyString())));
         assertThat(vulnerability.getReferences(), hasSize(numberOfReferences));
     }
 
