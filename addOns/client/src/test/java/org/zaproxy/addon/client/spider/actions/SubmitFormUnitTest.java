@@ -49,6 +49,7 @@ import org.mockito.InOrder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.zaproxy.addon.client.spider.ActionWaitStrategy;
 import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.zap.extension.stats.InMemoryStats;
 import org.zaproxy.zap.utils.Stats;
@@ -58,11 +59,13 @@ class SubmitFormUnitTest {
 
     private ValueProvider valueProvider;
     private URI uri;
+    private ActionWaitStrategy waitStrategy;
     private InMemoryStats stats;
 
     @BeforeEach
     void setUp() throws IOException {
         valueProvider = mock(ValueProvider.class);
+        waitStrategy = mock();
         uri = new URI("http://example.com/test", true);
         stats = new InMemoryStats();
         Stats.addListener(stats);
@@ -89,7 +92,7 @@ class SubmitFormUnitTest {
         given(form.findElements(any(By.class))).willReturn(List.of());
 
         // When
-        boolean result = action.run(wd);
+        boolean result = action.run(waitStrategy, wd);
 
         // Then
         assertThat(result, is(equalTo(true)));
@@ -114,7 +117,7 @@ class SubmitFormUnitTest {
                 .willReturn("value2");
 
         // When
-        boolean result = action.run(wd);
+        boolean result = action.run(waitStrategy, wd);
 
         // Then
         assertThat(result, is(equalTo(true)));
@@ -137,7 +140,7 @@ class SubmitFormUnitTest {
         willThrow(RuntimeException.class).given(form).submit();
 
         // When / Then
-        boolean result = assertDoesNotThrow(() -> action.run(wd));
+        boolean result = assertDoesNotThrow(() -> action.run(waitStrategy, wd));
         assertThat(result, is(equalTo(false)));
         assertThat(stats.getStat("stats.client.spider.action.form.0"), is(1L));
         assertThat(stats.getStat("stats.client.spider.action.form.0.exception"), is(1L));
@@ -152,7 +155,7 @@ class SubmitFormUnitTest {
         given(wd.findElement(any(By.class))).willThrow(RuntimeException.class);
 
         // When
-        boolean result = action.run(wd);
+        boolean result = action.run(waitStrategy, wd);
 
         // Then
         assertThat(result, is(equalTo(false)));
@@ -171,7 +174,7 @@ class SubmitFormUnitTest {
         given(form.isDisplayed()).willReturn(false);
 
         // When
-        boolean result = action.run(wd);
+        boolean result = action.run(waitStrategy, wd);
 
         // Then
         assertThat(result, is(equalTo(false)));
@@ -191,7 +194,7 @@ class SubmitFormUnitTest {
         given(visibleForm.findElements(any(By.class))).willReturn(List.of());
 
         // When
-        boolean result = action.run(wd);
+        boolean result = action.run(waitStrategy, wd);
 
         // Then
         assertThat(result, is(equalTo(true)));

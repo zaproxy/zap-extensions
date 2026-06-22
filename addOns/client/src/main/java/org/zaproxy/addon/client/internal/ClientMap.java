@@ -390,6 +390,9 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
         String url = event.getUrl();
         if (url != null && !isApiUrl(url)) {
             setVisited(url);
+            if (ClientSideComponent.Type.PAGE_LOAD.getTypeKey().equals(event.getType())) {
+                listeners.forEach(l -> l.pageLoaded(url, source));
+            }
         }
     }
 

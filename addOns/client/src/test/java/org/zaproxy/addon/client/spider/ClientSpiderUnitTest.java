@@ -186,6 +186,7 @@ class ClientSpiderUnitTest extends TestUtils {
         clientOptions.load(new ZapXmlConfiguration());
         clientOptions.setThreadCount(1);
         clientOptions.setShutdownTimeInSecs(10);
+        clientOptions.setPageLoadTimeInSecs(1);
 
         seedUrl = "https://www.example.com/";
         spider =
@@ -228,8 +229,8 @@ class ClientSpiderUnitTest extends TestUtils {
     private ClientMapListener clientMapListener() {
         if (mapListener == null) {
             ArgumentCaptor<ClientMapListener> captor = ArgumentCaptor.captor();
-            verify(map).addListener(captor.capture());
-            mapListener = captor.getValue();
+            verify(map, atLeastOnce()).addListener(captor.capture());
+            mapListener = captor.getAllValues().get(0);
         }
         return mapListener;
     }
@@ -283,7 +284,7 @@ class ClientSpiderUnitTest extends TestUtils {
 
         ArgumentCaptor<ClientMapListener> listenerCaptor = ArgumentCaptor.captor();
         verify(map, atLeastOnce()).addListener(listenerCaptor.capture());
-        ClientMapListener protectListener = listenerCaptor.getValue();
+        ClientMapListener protectListener = listenerCaptor.getAllValues().get(1);
 
         // When
         protectListener.nodeAdded("https://www.example.com/inscope", 0, 0, PROXY_PORT);

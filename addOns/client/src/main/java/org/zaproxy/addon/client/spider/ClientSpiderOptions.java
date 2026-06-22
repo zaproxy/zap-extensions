@@ -40,8 +40,8 @@ public class ClientSpiderOptions extends VersionedAbstractParam {
 
     public static final String DEFAULT_BROWSER_ID = Browser.FIREFOX_HEADLESS.getId();
     public static final int DEFAULT_MAX_DEPTH = 5;
-    public static final int DEFAULT_INITIAL_LOAD_TIME = 5;
-    public static final int DEFAULT_PAGE_LOAD_TIME = 1;
+    public static final int DEFAULT_INITIAL_LOAD_TIME = 0;
+    public static final int DEFAULT_PAGE_LOAD_TIME = 0;
     public static final int DEFAULT_SHUTDOWN_TIME = 5;
     public static final int DEFAULT_ACTION_WAIT_TIME = 0;
     public static final boolean DEFAULT_LOGOUT_AVOIDANCE = true;

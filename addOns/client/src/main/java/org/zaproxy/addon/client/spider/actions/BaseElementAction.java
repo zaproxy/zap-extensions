@@ -28,6 +28,7 @@ import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.zaproxy.addon.client.spider.ActionWaitStrategy;
 import org.zaproxy.addon.client.spider.SpiderAction;
 import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.zap.utils.Stats;
@@ -49,7 +50,7 @@ abstract class BaseElementAction implements SpiderAction {
     }
 
     @Override
-    public final boolean run(WebDriver wd) {
+    public final boolean run(ActionWaitStrategy waitStrategy, WebDriver wd) {
         String statsPrefix = getStatsPrefix();
         Stats.incCounter(statsPrefix);
 
@@ -72,14 +73,15 @@ abstract class BaseElementAction implements SpiderAction {
             return false;
         }
 
-        return run(wd, element, statsPrefix);
+        return run(waitStrategy, wd, element, statsPrefix);
     }
 
     protected abstract String getStatsPrefix();
 
     protected abstract By getElementBy();
 
-    protected abstract boolean run(WebDriver wd, WebElement element, String statsPrefix);
+    protected abstract boolean run(
+            ActionWaitStrategy waitStrategy, WebDriver wd, WebElement element, String statsPrefix);
 
     protected void fillInputs(List<WebElement> inputs, String action, String statsPrefix) {
         inputs.forEach(input -> fillInput(input, action, statsPrefix));

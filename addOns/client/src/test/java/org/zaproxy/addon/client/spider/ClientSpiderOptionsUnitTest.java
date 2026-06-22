@@ -68,19 +68,30 @@ class ClientSpiderOptionsUnitTest extends TestUtils {
     @Test
     void shouldUseTheRightValues() {
         // Given
-        config.addProperty("client.spider.browserId", "chrome");
-        config.addProperty("client.spider.logoutAvoidance", false);
+        config.setProperty("client.spider.browserId", "chrome");
+        config.setProperty("client.spider.initialLoadTime", 1);
+        config.setProperty("client.spider.maxChildren", 2);
+        config.setProperty("client.spider.maxDepth", 3);
+        config.setProperty("client.spider.maxDuration", 4);
+        config.setProperty("client.spider.pageLoadTime", 5);
+        config.setProperty("client.spider.shutdownTime", 6);
+        config.setProperty("client.spider.threads", 7);
+        config.setProperty(
+                "client.spider.logoutAvoidance", !ClientSpiderOptions.DEFAULT_LOGOUT_AVOIDANCE);
+        config.setProperty("client.spider.actionWaitTime", 9);
         // When
         options.load(config);
         // Then
-        assertThat(options.getInitialLoadTimeInSecs(), is(5));
-        assertThat(options.getMaxChildren(), is(0));
-        assertThat(options.getMaxDepth(), is(5));
-        assertThat(options.getMaxDuration(), is(0));
-        assertThat(options.getPageLoadTimeInSecs(), is(1));
-        assertThat(options.getShutdownTimeInSecs(), is(5));
-        assertThat(options.getThreadCount(), is(Constants.getDefaultThreadCount()));
-        assertThat(options.isLogoutAvoidance(), is(false));
+        assertThat(options.getBrowserId(), is("chrome"));
+        assertThat(options.getInitialLoadTimeInSecs(), is(1));
+        assertThat(options.getMaxChildren(), is(2));
+        assertThat(options.getMaxDepth(), is(3));
+        assertThat(options.getMaxDuration(), is(4));
+        assertThat(options.getPageLoadTimeInSecs(), is(5));
+        assertThat(options.getShutdownTimeInSecs(), is(6));
+        assertThat(options.getThreadCount(), is(7));
+        assertThat(options.isLogoutAvoidance(), is(!ClientSpiderOptions.DEFAULT_LOGOUT_AVOIDANCE));
+        assertThat(options.getActionWaitTimeInSecs(), is(9));
     }
 
     @Test

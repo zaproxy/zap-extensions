@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Reduce duplicated accesses while crawling.
+- Use adaptive wait by default for page load and action waits while crawling.
 
 ### Fixed
 - Prevent temporary GUI hang when stopping the Client Spider.

@@ -21,13 +21,11 @@ package org.zaproxy.addon.client.spider;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.withSettings;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +44,7 @@ class ClientSpiderTaskUnitTest extends TestUtils {
     private ClientSpider clientSpider;
     private WebDriverProcess wdp;
     private WebDriver wd;
+    private ActionWaitStrategy waitStrategy;
 
     @BeforeAll
     static void setUpAll() {
@@ -57,24 +56,37 @@ class ClientSpiderTaskUnitTest extends TestUtils {
         clientSpider = mock(ClientSpider.class);
         wdp = mock(WebDriverProcess.class);
         wd = mock(WebDriver.class);
-        WebDriver.Options wdOptions = mock(WebDriver.Options.class);
-        WebDriver.Timeouts timeouts =
-                mock(WebDriver.Timeouts.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
 
         given(clientSpider.isStopped()).willReturn(false);
         given(clientSpider.isPaused()).willReturn(false);
         given(clientSpider.getWebDriverProcess()).willReturn(wdp);
         given(wdp.getWebDriver()).willReturn(wd);
-        given(wd.manage()).willReturn(wdOptions);
-        given(wdOptions.timeouts()).willReturn(timeouts);
+        waitStrategy = mock();
+        given(waitStrategy.waitAfterAction()).willReturn(true);
+        given(wdp.getWaitStrategy()).willReturn(waitStrategy);
+    }
+
+    @Test
+    void shouldRunActionWithStateFromWebDriverProcess() {
+        // Given
+        SpiderAction action = mock();
+        ClientSpiderTask task = new ClientSpiderTask(1, clientSpider, List.of(action), "test", "");
+
+        // When
+        task.run();
+
+        // Then
+        verify(action).run(waitStrategy, wd);
+        assertThat(task.getStatus(), is(Status.FINISHED));
     }
 
     @Test
     void shouldRunAllActionsInOrder() {
         // Given
         List<String> ran = new ArrayList<>();
-        List<SpiderAction> actions = List.of(w -> ran.add("first"), w -> ran.add("second"));
-        ClientSpiderTask task = new ClientSpiderTask(1, clientSpider, actions, 5, 0, "test", "");
+        List<SpiderAction> actions =
+                List.of((ws, w) -> ran.add("first"), (ws, w) -> ran.add("second"));
+        ClientSpiderTask task = new ClientSpiderTask(1, clientSpider, actions, "test", "");
 
         // When
         task.run();
@@ -85,46 +97,31 @@ class ClientSpiderTaskUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldWaitAfterEachActionWhenActionWaitTimeIsSet() {
+    void shouldWaitAfterEachAction() {
         // Given
-        List<Long> timestamps = new ArrayList<>();
-        List<SpiderAction> actions =
-                List.of(
-                        w -> timestamps.add(System.currentTimeMillis()),
-                        w -> timestamps.add(System.currentTimeMillis()));
-        ClientSpiderTask task = new ClientSpiderTask(1, clientSpider, actions, 5, 1, "test", "");
+        List<SpiderAction> actions = List.of((ws, w) -> true, (ws, w) -> true);
+        ClientSpiderTask task = new ClientSpiderTask(1, clientSpider, actions, "test", "");
 
         // When
         task.run();
 
         // Then
+        verify(waitStrategy, times(2)).waitAfterAction();
         assertThat(task.getStatus(), is(Status.FINISHED));
-        assertThat(timestamps, hasSize(2));
-        assertThat(timestamps.get(1) - timestamps.get(0), greaterThanOrEqualTo(1000L));
     }
 
     @Test
-    void shouldStopRunningActionsWhenSleepIsInterrupted() {
+    void shouldStopRunningActionsWhenWaitStrategyReturnsFalse() {
         // Given
-        List<String> ran = new ArrayList<>();
-        List<SpiderAction> actions =
-                List.of(
-                        w -> {
-                            ran.add("first");
-                            Thread.currentThread().interrupt();
-                            return true;
-                        },
-                        w -> {
-                            ran.add("second");
-                            return true;
-                        });
-        ClientSpiderTask task = new ClientSpiderTask(1, clientSpider, actions, 5, 1, "test", "");
+        given(waitStrategy.waitAfterAction()).willReturn(false);
+        List<SpiderAction> actions = List.of((ws, w) -> true, (ws, w) -> true);
+        ClientSpiderTask task = new ClientSpiderTask(1, clientSpider, actions, "test", "");
 
         // When
         task.run();
 
         // Then
-        assertThat(ran, contains("first"));
+        verify(waitStrategy).waitAfterAction();
         assertThat(task.getStatus(), is(Status.FINISHED));
     }
 }

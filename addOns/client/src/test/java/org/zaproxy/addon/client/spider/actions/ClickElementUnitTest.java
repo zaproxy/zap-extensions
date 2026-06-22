@@ -51,6 +51,7 @@ import org.mockito.InOrder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.zaproxy.addon.client.spider.ActionWaitStrategy;
 import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.zap.extension.stats.InMemoryStats;
 import org.zaproxy.zap.utils.Stats;
@@ -60,11 +61,13 @@ class ClickElementUnitTest {
 
     private ValueProvider valueProvider;
     private URI uri;
+    private ActionWaitStrategy waitStrategy;
     private InMemoryStats stats;
 
     @BeforeEach
     void setUp() throws IOException {
         valueProvider = mock(ValueProvider.class);
+        waitStrategy = mock();
         uri = new URI("http://example.com/test", true);
         stats = new InMemoryStats();
         Stats.addListener(stats);
@@ -93,7 +96,7 @@ class ClickElementUnitTest {
         given(wd.findElements(any(By.class))).willReturn(List.of());
 
         // When
-        boolean result = action.run(wd);
+        boolean result = action.run(waitStrategy, wd);
 
         // Then
         assertThat(result, is(equalTo(true)));
@@ -119,7 +122,7 @@ class ClickElementUnitTest {
                 .willReturn("value2");
 
         // When
-        boolean result = action.run(wd);
+        boolean result = action.run(waitStrategy, wd);
 
         // Then
         assertThat(result, is(equalTo(true)));
@@ -147,7 +150,7 @@ class ClickElementUnitTest {
                 .willReturn("value2");
 
         // When
-        boolean result = action.run(wd);
+        boolean result = action.run(waitStrategy, wd);
 
         // Then
         assertThat(result, is(equalTo(true)));
@@ -167,7 +170,7 @@ class ClickElementUnitTest {
         willThrow(RuntimeException.class).given(element).click();
 
         // When / Then
-        boolean result = assertDoesNotThrow(() -> action.run(wd));
+        boolean result = assertDoesNotThrow(() -> action.run(waitStrategy, wd));
         assertThat(result, is(equalTo(false)));
         assertThat(stats.getStat("stats.client.spider.action.click.tag.A"), is(1L));
         assertThat(stats.getStat("stats.client.spider.action.click.tag.A.exception"), is(1L));
@@ -182,7 +185,7 @@ class ClickElementUnitTest {
         given(wd.findElement(any(By.class))).willThrow(RuntimeException.class);
 
         // When
-        boolean result = action.run(wd);
+        boolean result = action.run(waitStrategy, wd);
 
         // Then
         assertThat(result, is(equalTo(false)));
@@ -201,7 +204,7 @@ class ClickElementUnitTest {
         given(element.isDisplayed()).willReturn(false);
 
         // When
-        boolean result = action.run(wd);
+        boolean result = action.run(waitStrategy, wd);
 
         // Then
         assertThat(result, is(equalTo(false)));
@@ -222,7 +225,7 @@ class ClickElementUnitTest {
         given(wd.findElements(any(By.class))).willReturn(List.of());
 
         // When
-        boolean result = action.run(wd);
+        boolean result = action.run(waitStrategy, wd);
 
         // Then
         assertThat(result, is(equalTo(true)));
@@ -242,7 +245,7 @@ class ClickElementUnitTest {
         given(wd.findElements(any(By.class))).willReturn(List.of());
 
         // When
-        boolean result = action.run(wd);
+        boolean result = action.run(waitStrategy, wd);
 
         // Then
         assertThat(result, is(equalTo(true)));
@@ -262,7 +265,7 @@ class ClickElementUnitTest {
         given(wd.findElements(any(By.class))).willReturn(List.of());
 
         // When
-        boolean result = action.run(wd);
+        boolean result = action.run(waitStrategy, wd);
 
         // Then
         assertThat(result, is(equalTo(true)));
@@ -281,7 +284,7 @@ class ClickElementUnitTest {
         given(wd.findElements(any(By.class))).willReturn(List.of());
 
         // When
-        boolean result = action.run(wd);
+        boolean result = action.run(waitStrategy, wd);
 
         // Then
         assertThat(result, is(equalTo(true)));

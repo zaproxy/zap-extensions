@@ -121,7 +121,6 @@ public class ClientSpider implements GenericScanner2 {
 
     private final ValueProvider valueProvider;
     private ClientSpiderOptions options;
-    private final Duration pageLoadTime;
     private int scanId;
     private String displayName;
 
@@ -140,6 +139,7 @@ public class ClientSpider implements GenericScanner2 {
     private List<WebDriverProcess> webDriverPool = new ArrayList<>();
     private Set<WebDriverProcess> webDriverActive = new HashSet<>();
     private Set<Integer> proxyPorts = ConcurrentHashMap.newKeySet();
+    private Set<String> visitedUrls = ConcurrentHashMap.newKeySet();
     private ClientMapListener clientMapListener;
     private List<ClientSpiderTask> spiderTasks = new ArrayList<>();
     private List<ClientSpiderTask> pausedTasks = new ArrayList<>();
@@ -206,7 +206,6 @@ public class ClientSpider implements GenericScanner2 {
         URI targetUri = createUri(targetUrl);
         targetHost = new String(targetUri.getRawHost());
         this.options = options;
-        this.pageLoadTime = Duration.ofSeconds(options.getPageLoadTimeInSecs());
         this.scanId = id;
         this.tasksTotalCount = new AtomicInteger();
         this.valueProvider = valueProvider;
@@ -294,20 +293,18 @@ public class ClientSpider implements GenericScanner2 {
         addTask(
                 targetUrl,
                 followGraphAction(targetUrl),
-                options.getInitialLoadTimeInSecs(),
                 Constant.messages.getString("client.spider.panel.table.action.get"),
                 "");
 
         // Add all of the known but unvisited URLs otherwise these will get ignored
-        getUnvisitedUrls()
-                .forEach(url -> addFollowGraphTask(url, options.getInitialLoadTimeInSecs()));
+        getUnvisitedUrls().forEach(this::addFollowGraphTask);
     }
 
     private List<SpiderAction> followGraphAction(String url, SpiderAction... additionalActions) {
         List<SpiderAction> actions = new ArrayList<>(5);
-        actions.add(new FollowGraph(clientMap.getGraph(), url, valueProvider, pageLoadTime));
+        actions.add(new FollowGraph(clientMap.getGraph(), url, valueProvider));
         actions.add(
-                wd -> {
+                (ws, wd) -> {
                     checkRedirect(url, wd);
                     return true;
                 });
@@ -317,11 +314,10 @@ public class ClientSpider implements GenericScanner2 {
         return actions;
     }
 
-    private ClientSpiderTask addFollowGraphTask(String url, int loadTimeInSecs) {
+    private ClientSpiderTask addFollowGraphTask(String url) {
         return addTask(
                 url,
                 followGraphAction(url),
-                loadTimeInSecs,
                 Constant.messages.getString("client.spider.panel.table.action.follow"),
                 "");
     }
@@ -365,7 +361,7 @@ public class ClientSpider implements GenericScanner2 {
                 wdp = this.webDriverPool.remove(0);
             } else {
                 try {
-                    wdp = new WebDriverProcess(new ProxyHandler());
+                    wdp = new WebDriverProcess();
                 } catch (IOException e) {
                     throw new RuntimeException("Failed to create WebDriver process:", e);
                 }
@@ -384,22 +380,11 @@ public class ClientSpider implements GenericScanner2 {
     }
 
     private ClientSpiderTask addTask(
-            String url,
-            List<SpiderAction> actions,
-            int loadTimeInSecs,
-            String displayName,
-            String detailsString) {
+            String url, List<SpiderAction> actions, String displayName, String detailsString) {
         int id = tasksTotalCount.incrementAndGet();
         try {
             ClientSpiderTask task =
-                    new ClientSpiderTask(
-                            id,
-                            this,
-                            actions,
-                            loadTimeInSecs,
-                            options.getActionWaitTimeInSecs(),
-                            displayName,
-                            detailsString);
+                    new ClientSpiderTask(id, this, actions, displayName, detailsString);
             this.addTaskToTasksModel(task, url);
             if (paused) {
                 this.pausedTasks.add(task);
@@ -493,7 +478,7 @@ public class ClientSpider implements GenericScanner2 {
             }
 
             Stats.incCounter("stats.client.spider.event.url");
-            addFollowGraphTask(url, options.getPageLoadTimeInSecs());
+            addFollowGraphTask(url);
         }
 
         private boolean isHrefAlreadyHandled(Map<String, String> parameters) {
@@ -542,7 +527,6 @@ public class ClientSpider implements GenericScanner2 {
                         followGraphAction(
                                 url,
                                 new ClickElement(valueProvider, createUri(url), parameters, false)),
-                        options.getPageLoadTimeInSecs(),
                         Constant.messages.getString("client.spider.panel.table.action.click"),
                         paramsToString(parameters));
             } else if (SubmitForm.isSupported(parameters)) {
@@ -551,7 +535,6 @@ public class ClientSpider implements GenericScanner2 {
                         url,
                         followGraphAction(
                                 url, new SubmitForm(valueProvider, createUri(url), parameters)),
-                        options.getPageLoadTimeInSecs(),
                         Constant.messages.getString("client.spider.panel.table.action.submit"),
                         paramsToString(parameters));
             }
@@ -917,8 +900,12 @@ public class ClientSpider implements GenericScanner2 {
         private Server proxy;
         private WebDriver webDriver;
         private final int proxyPort;
+        private final ActionWaitStrategy waitStrategy;
+        private final ProxyHandler proxyHandler;
 
-        private WebDriverProcess(ProxyHandler proxyHandler) throws IOException {
+        private WebDriverProcess() throws IOException {
+            this.waitStrategy = createWaitStrategy();
+            this.proxyHandler = new ProxyHandler(waitStrategy);
             int initiator = scanOptions.getInitiator();
             HttpSender httpSender = scanOptions.getHttpSender();
             if (httpSender == null) {
@@ -934,6 +921,8 @@ public class ClientSpider implements GenericScanner2 {
             proxyPort = proxy.start(Server.ANY_PORT);
             proxyPorts.add(proxyPort);
             extClient.registerPortInitiator(proxyPort, initiator);
+
+            clientMap.addListener(waitStrategy);
 
             DriverConfigurationBuilder driverConfBuilder =
                     DriverConfiguration.builder()
@@ -959,11 +948,27 @@ public class ClientSpider implements GenericScanner2 {
                 closeProxy();
                 throw e;
             }
+
+            waitStrategy.configure(this);
+        }
+
+        private ActionWaitStrategy createWaitStrategy() {
+            if (options.getPageLoadTimeInSecs() == 0 && options.getActionWaitTimeInSecs() == 0) {
+                return new AdaptiveWaitStrategy(
+                        ClientSpider.this::isUrlInScope,
+                        visitedUrls,
+                        Duration.ofSeconds(options.getInitialLoadTimeInSecs()));
+            }
+            return new FixedWaitStrategy(
+                    Duration.ofSeconds(options.getInitialLoadTimeInSecs()),
+                    Duration.ofSeconds(options.getPageLoadTimeInSecs()),
+                    Duration.ofSeconds(options.getActionWaitTimeInSecs()));
         }
 
         private void closeProxy() {
             if (proxy != null) {
                 extClient.unregisterPortInitiator(proxyPort);
+                clientMap.removeListener(waitStrategy);
                 try {
                     proxy.close();
                 } catch (IOException e) {
@@ -989,7 +994,13 @@ public class ClientSpider implements GenericScanner2 {
 
     private class ProxyHandler implements HttpMessageHandler {
 
+        private final ActionWaitStrategy waitStrategy;
+
         private boolean allowAll = true;
+
+        ProxyHandler(ActionWaitStrategy waitStrategy) {
+            this.waitStrategy = waitStrategy;
+        }
 
         public void setAllowAll(boolean allowAll) {
             this.allowAll = allowAll;
@@ -997,6 +1008,13 @@ public class ClientSpider implements GenericScanner2 {
 
         @Override
         public void handleMessage(HttpMessageHandlerContext ctx, HttpMessage httpMessage) {
+            String uri = httpMessage.getRequestHeader().getURI().toString();
+            if (ctx.isFromClient()) {
+                waitStrategy.onRequestStarted(uri);
+            } else {
+                waitStrategy.onRequestCompleted(uri);
+            }
+
             if (!ctx.isFromClient()) {
                 handleRedirection(httpMessage);
 
