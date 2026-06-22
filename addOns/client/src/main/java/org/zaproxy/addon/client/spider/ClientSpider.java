@@ -49,6 +49,9 @@ import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.DirectedMultigraph;
 import org.openqa.selenium.WebDriver;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -67,6 +70,7 @@ import org.zaproxy.addon.client.internal.ClientMap;
 import org.zaproxy.addon.client.internal.ClientMapListener;
 import org.zaproxy.addon.client.internal.ClientNode;
 import org.zaproxy.addon.client.internal.ClientSideDetails;
+import org.zaproxy.addon.client.internal.graph.ClientGraphVertex;
 import org.zaproxy.addon.client.spider.ClientSpiderOptions.ScopeCheck;
 import org.zaproxy.addon.client.spider.actions.ClickElement;
 import org.zaproxy.addon.client.spider.actions.FollowGraph;
@@ -154,6 +158,8 @@ public class ClientSpider implements GenericScanner2 {
     private TaskTableModel tasksModel;
     private final MessagesTableModel messagesTableModel;
     private final Set<String> crawledUrls;
+    private final Graph<ClientGraphVertex, DefaultEdge> crawledGraph =
+            new DirectedMultigraph<>(DefaultEdge.class);
     private ScanListenner2 listener;
     private final Control.Mode mode;
 
@@ -427,6 +433,9 @@ public class ClientSpider implements GenericScanner2 {
 
     private class ClientMapListenerImpl implements ClientMapListener {
 
+        private static final Pattern SCHEME_PATTERN =
+                Pattern.compile("^https?://", Pattern.CASE_INSENSITIVE);
+
         private boolean shouldIgnore(
                 String url, int source, IntSupplier depthSupplier, IntSupplier childrenSupplier) {
             if (stopping.get() || stopped || !proxyPorts.contains(source)) {
@@ -487,6 +496,27 @@ public class ClientSpider implements GenericScanner2 {
             addFollowGraphTask(url, options.getPageLoadTimeInSecs());
         }
 
+        private boolean isHrefAlreadyHandled(Map<String, String> parameters) {
+            String href = parameters.get("href");
+            if (href == null || !SCHEME_PATTERN.matcher(href).find()) {
+                return false;
+            }
+
+            String sourceUrl = parameters.get(ClientMap.URL_KEY);
+            synchronized (crawledGraph) {
+                ClientGraphVertex target = new ClientGraphVertex.Url(href);
+                if (crawledGraph.containsVertex(target)) {
+                    return true;
+                }
+
+                ClientGraphVertex source = new ClientGraphVertex.Url(sourceUrl);
+                crawledGraph.addVertex(source);
+                crawledGraph.addVertex(target);
+                crawledGraph.addEdge(source, target);
+                return false;
+            }
+        }
+
         @Override
         public void componentAdded(Map<String, String> parameters, int source) {
             String url = parameters.get(ClientMap.URL_KEY);
@@ -500,7 +530,8 @@ public class ClientSpider implements GenericScanner2 {
 
             Stats.incCounter("stats.client.spider.event.component");
             if (ClickElement.isSupported(ClientSpider.this::isUrlInScope, parameters)
-                    && !(options.isLogoutAvoidance() && isLogoutElement(parameters))) {
+                    && !(options.isLogoutAvoidance() && isLogoutElement(parameters))
+                    && !isHrefAlreadyHandled(parameters)) {
                 Stats.incCounter("stats.client.spider.event.component.click");
                 addTask(
                         url,
