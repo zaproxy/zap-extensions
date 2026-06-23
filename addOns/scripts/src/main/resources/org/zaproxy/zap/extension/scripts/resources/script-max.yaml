@@ -10,3 +10,4 @@
       target:                    # String: The URL to be invoked for "targeted" script type
       context:                   # String: The name of the context to use when running the script (optional)
       user:                      # String: The name of the user to use when running the Zest standalone script or chain (optional, requires context)
+      failureLevel:              # String: Only for action 'run'. Automation Framework level at which script execution failures are reported: info, warning, error (default: error)

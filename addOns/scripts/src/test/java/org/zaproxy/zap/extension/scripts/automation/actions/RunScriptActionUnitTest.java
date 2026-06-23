@@ -37,6 +37,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Transaction;
@@ -44,6 +45,9 @@ import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 import org.parosproxy.paros.Constant;
@@ -63,10 +67,10 @@ import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.scripts.ExtensionScriptsUI;
+import org.zaproxy.zap.extension.scripts.automation.FailureLevel;
 import org.zaproxy.zap.extension.scripts.automation.ScriptJobParameters;
 import org.zaproxy.zap.extension.scripts.automation.diagnostics.ScriptRunRecordBuilder.RunFailure;
 import org.zaproxy.zap.extension.scripts.diagnostics.ScriptDiagnosticSource;
-import org.zaproxy.zap.extension.scripts.diagnostics.ScriptDiagnosticSource.RunDiagnostics;
 import org.zaproxy.zap.extension.scripts.diagnostics.ScriptDiagnosticSource.RunFailureDiagnostic;
 import org.zaproxy.zap.extension.scripts.internal.db.ScriptsRun;
 import org.zaproxy.zap.extension.scripts.internal.db.TableJdo;
@@ -140,6 +144,7 @@ class RunScriptActionUnitTest extends TestUtils {
                         "",
                         "",
                         "",
+                        null,
                         null);
         action = new RunScriptAction(parameters);
     }
@@ -601,6 +606,7 @@ class RunScriptActionUnitTest extends TestUtils {
                         "",
                         "",
                         "",
+                        null,
                         null);
         targetedParams.setChain(List.of("script1", "script2"));
         given(extScript.getEngineWrapper(ZEST_ENGINE_NAME))
@@ -621,7 +627,7 @@ class RunScriptActionUnitTest extends TestUtils {
         // Given
         ScriptJobParameters nullTypeParams =
                 new ScriptJobParameters(
-                        RunScriptAction.NAME, null, null, "", "", "", "", "", "", null);
+                        RunScriptAction.NAME, null, null, "", "", "", "", "", "", null, null);
         nullTypeParams.setChain(List.of("script1", "script2"));
         RunScriptAction nullTypeAction = new RunScriptAction(nullTypeParams);
 
@@ -765,6 +771,76 @@ class RunScriptActionUnitTest extends TestUtils {
             assertThat(run.getScripts().get(0).getSteps(), hasSize(1));
             assertThat(run.getScripts().get(0).getSteps().get(0).getOutputs(), hasSize(1));
         }
+    }
+
+    /** FailureLevel dispatch — single standalone script */
+    static Stream<Arguments> singleScriptFailureLevelCases() {
+        return Stream.of(
+                Arguments.of(null, 1, 0, 0),
+                Arguments.of(FailureLevel.ERROR, 1, 0, 0),
+                Arguments.of(FailureLevel.WARNING, 0, 1, 0),
+                Arguments.of(FailureLevel.INFO, 0, 0, 1));
+    }
+
+    @ParameterizedTest
+    @MethodSource("singleScriptFailureLevelCases")
+    void shouldDispatchSingleScriptFailureToCorrectProgressLevel(
+            FailureLevel failureLevel, int errors, int warnings, int infos) throws Exception {
+        // Given
+        ScriptWrapper script = createMockZestWrapper("myScript");
+        given(extScript.getScript("myScript")).willReturn(script);
+        parameters.setName("myScript");
+        parameters.setFailureLevel(failureLevel);
+        when(extScript.invokeScript(script)).thenThrow(new RuntimeException("script failed"));
+
+        // When
+        action.runJob(JOB_NAME, env, progress);
+
+        // Then
+        assertThat(progress.getErrors(), hasSize(errors));
+        assertThat(progress.getWarnings(), hasSize(warnings));
+        assertThat(progress.getInfos(), hasSize(infos));
+        List<String> target =
+                errors > 0
+                        ? progress.getErrors()
+                        : warnings > 0 ? progress.getWarnings() : progress.getInfos();
+        assertThat(target, hasItem(containsString("script failed")));
+    }
+
+    /** FailureLevel dispatch — chain execution (infos includes the "chainExecuting" message) */
+    static Stream<Arguments> chainFailureLevelCases() {
+        return Stream.of(
+                Arguments.of(null, 1, 0, 1),
+                Arguments.of(FailureLevel.ERROR, 1, 0, 1),
+                Arguments.of(FailureLevel.WARNING, 0, 1, 1),
+                Arguments.of(FailureLevel.INFO, 0, 0, 2));
+    }
+
+    @ParameterizedTest
+    @MethodSource("chainFailureLevelCases")
+    void shouldDispatchChainFailureToCorrectProgressLevel(
+            FailureLevel failureLevel, int errors, int warnings, int infos) throws Exception {
+        // Given
+        ScriptWrapper script1 = createMockZestWrapper("script1");
+        ScriptWrapper script2 = createMockZestWrapper("script2");
+        given(extScript.getScript("script1")).willReturn(script1);
+        given(extScript.getScript("script2")).willReturn(script2);
+        when(extScript.invokeScript(CHAIN_SCRIPT)).thenThrow(new RuntimeException("chain failed"));
+        parameters.setChain(List.of("script1", "script2"));
+        parameters.setFailureLevel(failureLevel);
+
+        // When
+        action.runJob(JOB_NAME, env, progress);
+
+        // Then
+        assertThat(progress.getErrors(), hasSize(errors));
+        assertThat(progress.getWarnings(), hasSize(warnings));
+        assertThat(progress.getInfos(), hasSize(infos));
+        List<String> target =
+                errors > 0
+                        ? progress.getErrors()
+                        : warnings > 0 ? progress.getWarnings() : progress.getInfos();
+        assertThat(target, hasItem(containsString("chain failed")));
     }
 
     private static final class ScriptWrapperWithZestDiagnostic extends ScriptWrapper

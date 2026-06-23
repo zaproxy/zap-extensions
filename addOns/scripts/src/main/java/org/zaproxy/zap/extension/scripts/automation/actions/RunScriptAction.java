@@ -373,6 +373,10 @@ public class RunScriptAction extends ScriptAction {
         }
     }
 
+    private void reportToProgress(AutomationProgress progress, String message) {
+        parameters.getFailureLevel().report(progress, message);
+    }
+
     private void reportScriptError(
             AutomationProgress progress,
             String jobName,
@@ -380,7 +384,8 @@ public class RunScriptAction extends ScriptAction {
             ScriptRunDiagnosticsSession.RunContext context,
             Exception e) {
         RunFailure failure = ScriptRunRecordBuilder.resolveFailure(script, e);
-        progress.error(
+        reportToProgress(
+                progress,
                 Constant.messages.getString(
                         "scripts.automation.error.scriptError",
                         jobName,
@@ -396,7 +401,8 @@ public class RunScriptAction extends ScriptAction {
             ScriptRunDiagnosticsSession.RunContext context,
             Exception e) {
         RunFailure failure = ScriptRunRecordBuilder.resolveFailure(chainScript, e);
-        progress.error(
+        reportToProgress(
+                progress,
                 Constant.messages.getString(
                         "scripts.automation.error.chainExecutionFailed",
                         jobName,

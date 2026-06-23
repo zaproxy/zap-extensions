@@ -31,6 +31,7 @@ import org.zaproxy.addon.automation.AutomationData;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ScriptJobParameters extends AutomationData {
+
     private String action;
     private String type;
     private String engine;
@@ -41,9 +42,14 @@ public class ScriptJobParameters extends AutomationData {
     private String context = "";
     private String user = "";
     private List<String> chain;
+    private FailureLevel failureLevel = FailureLevel.ERROR;
 
     public ScriptJobParameters(String action) {
         this.action = action;
+    }
+
+    public FailureLevel getFailureLevel() {
+        return failureLevel != null ? failureLevel : FailureLevel.ERROR;
     }
 
     // For backwards compatibility
