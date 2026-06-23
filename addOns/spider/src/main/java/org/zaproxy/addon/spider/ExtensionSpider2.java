@@ -568,25 +568,18 @@ public class ExtensionSpider2 extends ExtensionAdaptor implements ScanController
         return id;
     }
 
-    private void addScanToUi(final SpiderScan scan) {
-        if (!EventQueue.isDispatchThread()) {
-            EventQueue.invokeLater(
-                    new Runnable() {
-
-                        @Override
-                        public void run() {
-                            addScanToUi(scan);
-                        }
-                    });
-            return;
-        }
-
-        this.getSpiderPanel().scannerStarted(scan);
-        scan.setListener(getSpiderPanel()); // So the UI gets updated
-        this.getSpiderPanel().switchView(scan);
+    private void addScanToUi0(SpiderScan scan) {
+        SpiderPanel panel = this.getSpiderPanel();
+        panel.scannerStarted(scan);
+        scan.setListener(panel); // So the UI gets updated
+        panel.switchView(scan);
         if (isPanelSwitch()) {
-            this.getSpiderPanel().setTabFocus();
+            panel.setTabFocus();
         }
+    }
+
+    private void addScanToUi(final SpiderScan scan) {
+        EventQueue.invokeLater(() -> addScanToUi0(scan));
     }
 
     /** Returns true if the GUI will switch to the Spider panel when a scan is started. */
