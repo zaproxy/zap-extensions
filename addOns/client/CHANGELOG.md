@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Reduce duplicated accesses while crawling.
 - Use adaptive wait by default for page load and action waits while crawling.
+- Default threads to 1/2 number of cores, max 8.
 
 ### Fixed
 - Prevent temporary GUI hang when stopping the Client Spider.
