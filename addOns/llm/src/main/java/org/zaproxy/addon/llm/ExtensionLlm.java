@@ -19,9 +19,11 @@
  */
 package org.zaproxy.addon.llm;
 
+import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import javax.swing.ImageIcon;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,11 +33,15 @@ import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.OptionsChangedListener;
 import org.parosproxy.paros.model.OptionsParam;
 import org.zaproxy.addon.llm.services.LlmCommunicationService;
+import org.zaproxy.addon.llm.services.LlmGuiResponseHandler;
+import org.zaproxy.addon.llm.services.LlmLogResponseHandler;
 import org.zaproxy.addon.llm.ui.LlmAppendAlertMenu;
 import org.zaproxy.addon.llm.ui.LlmAppendHttpMessageMenu;
 import org.zaproxy.addon.llm.ui.LlmChatPanel;
+import org.zaproxy.addon.llm.ui.LlmChatTabPanel;
 import org.zaproxy.addon.llm.ui.LlmOptionsPanel;
 import org.zaproxy.addon.llm.ui.LlmSelectorButton;
+import org.zaproxy.zap.utils.DisplayUtils;
 
 /**
  * An extension for ZAP that enables researchers to leverage Large Language Models (LLMs) to augment
@@ -47,12 +53,22 @@ public class ExtensionLlm extends ExtensionAdaptor {
 
     protected static final String PREFIX = "llm";
 
+    private LlmChatPanel llmChatPanel;
     private LlmOptions options;
     private LlmOptions prevOptions;
     private Map<String, LlmCommunicationService> commsServices =
             Collections.synchronizedMap(new HashMap<>());
 
     private static final Logger LOGGER = LogManager.getLogger(ExtensionLlm.class);
+
+    public static ImageIcon createIcon(String resourcePath) {
+        URL url = ExtensionLlm.class.getResource(resourcePath);
+        if (url == null) {
+            LOGGER.error("Missing resource: {}", resourcePath);
+            return null;
+        }
+        return DisplayUtils.getScaledIcon(url);
+    }
 
     public ExtensionLlm() {
         super(NAME);
@@ -89,7 +105,7 @@ public class ExtensionLlm extends ExtensionAdaptor {
                 });
 
         if (hasView()) {
-            LlmChatPanel llmChatPanel = new LlmChatPanel(this);
+            llmChatPanel = new LlmChatPanel(this);
             extensionHook.getHookView().addOptionPanel(new LlmOptionsPanel());
             extensionHook
                     .getHookView()
@@ -151,6 +167,13 @@ public class ExtensionLlm extends ExtensionAdaptor {
         return this.options;
     }
 
+    private LlmChatTabPanel getChatTab(String commsKey, String panelName) {
+        if (this.llmChatPanel != null) {
+            return this.llmChatPanel.getTabbedPane().getTaggedTab(commsKey, panelName);
+        }
+        return null;
+    }
+
     @Override
     public void optionsLoaded() {
         this.prevOptions = this.options.clone();
@@ -171,7 +194,10 @@ public class ExtensionLlm extends ExtensionAdaptor {
                         new LlmCommunicationService(
                                 options.getDefaultProviderConfig(),
                                 options.getDefaultModelName(),
-                                outputTabName));
+                                this.hasView()
+                                        ? new LlmGuiResponseHandler(
+                                                getChatTab(commsKey, outputTabName))
+                                        : new LlmLogResponseHandler()));
     }
 
     public void setDefaultProvider(String name, String modelName) {
