@@ -23,7 +23,6 @@ import java.util.Locale;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.zaproxy.addon.commonlib.Constants;
 import org.zaproxy.zap.common.VersionedAbstractParam;
 import org.zaproxy.zap.extension.api.ZapApiIgnore;
 import org.zaproxy.zap.extension.selenium.Browser;
@@ -124,7 +123,7 @@ public class ClientSpiderOptions extends VersionedAbstractParam {
                     "Unknown browser [{}] using default [{}].", browserId, DEFAULT_BROWSER_ID, e);
             browserId = DEFAULT_BROWSER_ID;
         }
-        this.threadCount = Math.max(1, getInt(THREAD_COUNT_KEY, Constants.getDefaultThreadCount()));
+        this.threadCount = Math.max(1, getInt(THREAD_COUNT_KEY, getDefaultThreadCount()));
         this.initialLoadTimeInSecs = getInt(INITIAL_LOAD_TIME_KEY, DEFAULT_INITIAL_LOAD_TIME);
         this.pageLoadTimeInSecs = getInt(PAGE_LOAD_TIME_KEY, DEFAULT_PAGE_LOAD_TIME);
         this.shutdownTimeInSecs = getInt(SHUTDOWN_TIME_KEY, DEFAULT_SHUTDOWN_TIME);
@@ -136,6 +135,16 @@ public class ClientSpiderOptions extends VersionedAbstractParam {
         this.logoutAvoidance = getBoolean(LOGOUT_AVOIDANCE_KEY, DEFAULT_LOGOUT_AVOIDANCE);
         this.actionWaitTimeInSecs = getInt(ACTION_WAIT_TIME_KEY, DEFAULT_ACTION_WAIT_TIME);
         this.showAdvancedDialog = getBoolean(SHOW_ADV_OPTIONS_KEY, false);
+    }
+
+    /**
+     * Returns the default number of threads to use.
+     *
+     * @since 0.28.0
+     */
+    @ZapApiIgnore
+    public static int getDefaultThreadCount() {
+        return Math.min(Math.max(1, Runtime.getRuntime().availableProcessors() / 2), 8);
     }
 
     @Override
@@ -201,7 +210,7 @@ public class ClientSpiderOptions extends VersionedAbstractParam {
 
     public void setThreadCount(int threadCount) {
         if (threadCount <= 0) {
-            threadCount = Constant.getDefaultThreadCount();
+            threadCount = getDefaultThreadCount();
         }
         this.threadCount = threadCount;
         getConfig().setProperty(THREAD_COUNT_KEY, threadCount);

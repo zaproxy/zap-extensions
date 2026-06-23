@@ -26,7 +26,6 @@ import static org.hamcrest.Matchers.nullValue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
-import org.zaproxy.addon.commonlib.Constants;
 import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
@@ -57,7 +56,7 @@ class ClientSpiderOptionsUnitTest extends TestUtils {
         assertThat(options.getMaxDepth(), is(ClientSpiderOptions.DEFAULT_MAX_DEPTH));
         assertThat(options.getMaxChildren(), is(0));
         assertThat(options.getMaxDuration(), is(0));
-        assertThat(options.getThreadCount(), is(Constants.getDefaultThreadCount()));
+        assertThat(options.getThreadCount(), is(ClientSpiderOptions.getDefaultThreadCount()));
         assertThat(options.isLogoutAvoidance(), is(ClientSpiderOptions.DEFAULT_LOGOUT_AVOIDANCE));
         assertThat(
                 options.getActionWaitTimeInSecs(),

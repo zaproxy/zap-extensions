@@ -41,7 +41,6 @@ import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.addon.client.spider.ClientSpider;
 import org.zaproxy.addon.client.spider.ClientSpiderOptions;
 import org.zaproxy.addon.client.spider.ClientSpiderOptions.ScopeCheck;
-import org.zaproxy.addon.commonlib.Constants;
 import org.zaproxy.zap.users.User;
 
 public class ClientSpiderJob extends AutomationJob {
@@ -295,7 +294,7 @@ public class ClientSpiderJob extends AutomationJob {
         private Integer maxDuration;
         private Integer maxChildren;
         private Integer maxCrawlDepth = ClientSpiderOptions.DEFAULT_MAX_DEPTH;
-        private Integer numberOfBrowsers = Constants.getDefaultThreadCount() / 2;
+        private Integer numberOfBrowsers = ClientSpiderOptions.getDefaultThreadCount();
         private String browserId;
         private Integer initialLoadTime = ClientSpiderOptions.DEFAULT_INITIAL_LOAD_TIME;
         private Integer pageLoadTime = ClientSpiderOptions.DEFAULT_PAGE_LOAD_TIME;

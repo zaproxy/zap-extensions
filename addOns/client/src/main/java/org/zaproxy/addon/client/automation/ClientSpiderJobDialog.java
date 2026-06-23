@@ -28,7 +28,6 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.client.automation.ClientSpiderJob.Parameters;
 import org.zaproxy.addon.client.internal.ScopeCheckComponent;
 import org.zaproxy.addon.client.spider.ClientSpiderOptions;
-import org.zaproxy.addon.commonlib.Constants;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.selenium.ProvidedBrowserUI;
 import org.zaproxy.zap.utils.DisplayUtils;
@@ -123,7 +122,7 @@ public class ClientSpiderJobDialog extends StandardFieldsDialog {
                 Integer.MAX_VALUE,
                 getInt(
                         this.job.getParameters().getNumberOfBrowsers(),
-                        Constants.getDefaultThreadCount() / 2));
+                        ClientSpiderOptions.getDefaultThreadCount()));
 
         this.addNumberField(
                 1,
