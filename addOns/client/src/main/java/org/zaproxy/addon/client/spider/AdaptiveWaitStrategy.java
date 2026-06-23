@@ -19,8 +19,8 @@
  */
 package org.zaproxy.addon.client.spider;
 
-import java.time.Duration;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 import org.apache.logging.log4j.LogManager;
@@ -31,12 +31,13 @@ public class AdaptiveWaitStrategy implements ActionWaitStrategy {
 
     private static final Logger LOGGER = LogManager.getLogger(AdaptiveWaitStrategy.class);
 
-    static final long HARD_TIMEOUT_MS = 15_000;
     static final long POLL_INTERVAL_MS = 50;
-    static final long QUIESCE_THRESHOLD_FIRST_ACCESS_MS = 2_500;
+
     static final long QUIESCE_THRESHOLD_WITH_PAGE_LOAD_MS = 100;
     static final long QUIESCE_THRESHOLD_NO_PAGE_LOAD_MS = 50;
 
+    private final long timeoutMs;
+    private final long quiesceFirstAccessMs;
     private final long initialLoadTimeMs;
     private final Predicate<String> urlInScope;
     private final AtomicInteger inflightInScopeCount = new AtomicInteger();
@@ -47,11 +48,13 @@ public class AdaptiveWaitStrategy implements ActionWaitStrategy {
     private boolean firstAccess;
 
     public AdaptiveWaitStrategy(
-            Predicate<String> urlInScope, Set<String> visitedUrls, Duration initialLoadTime) {
+            ClientSpiderOptions options, Predicate<String> urlInScope, Set<String> visitedUrls) {
+        this.timeoutMs = options.getAdaptiveTimeout();
+        this.quiesceFirstAccessMs = options.getAdaptiveQuiesceFirstAccess();
         this.urlInScope = urlInScope;
         this.visitedUrls = visitedUrls;
-        this.initialLoadTimeMs = initialLoadTime.toMillis();
-        firstAccess = !initialLoadTime.isZero();
+        this.initialLoadTimeMs = TimeUnit.SECONDS.toMillis(options.getInitialLoadTimeInSecs());
+        firstAccess = initialLoadTimeMs > 0;
     }
 
     @Override
@@ -101,8 +104,8 @@ public class AdaptiveWaitStrategy implements ActionWaitStrategy {
 
         while (true) {
             long now = System.currentTimeMillis();
-            if (now - start >= HARD_TIMEOUT_MS) {
-                LOGGER.debug("Adaptive wait hard timeout reached after {}ms", HARD_TIMEOUT_MS);
+            if (now - start >= timeoutMs) {
+                LOGGER.debug("Adaptive wait timeout reached after {}ms", timeoutMs);
                 break;
             }
 
@@ -115,7 +118,7 @@ public class AdaptiveWaitStrategy implements ActionWaitStrategy {
                 if (instanceFirst) {
                     threshold = initialLoadTimeMs;
                 } else if (urlFirstAccess) {
-                    threshold = QUIESCE_THRESHOLD_FIRST_ACCESS_MS;
+                    threshold = quiesceFirstAccessMs;
                 } else {
                     threshold =
                             pageLoadReceived

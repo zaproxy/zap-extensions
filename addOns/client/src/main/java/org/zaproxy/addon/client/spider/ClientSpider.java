@@ -955,9 +955,7 @@ public class ClientSpider implements GenericScanner2 {
         private ActionWaitStrategy createWaitStrategy() {
             if (options.getPageLoadTimeInSecs() == 0 && options.getActionWaitTimeInSecs() == 0) {
                 return new AdaptiveWaitStrategy(
-                        ClientSpider.this::isUrlInScope,
-                        visitedUrls,
-                        Duration.ofSeconds(options.getInitialLoadTimeInSecs()));
+                        options, ClientSpider.this::isUrlInScope, visitedUrls);
             }
             return new FixedWaitStrategy(
                     Duration.ofSeconds(options.getInitialLoadTimeInSecs()),
