@@ -54,6 +54,7 @@ import org.zaproxy.addon.dev.auth.ssoMsPopup.SSOMSPopupRootDir;
 import org.zaproxy.addon.dev.auth.uuidLogin.UuidLoginRootDir;
 import org.zaproxy.addon.dev.csrf.basic.BasicCsrfDir;
 import org.zaproxy.addon.dev.full.basicVulnAuth.BasicVulnAuthDir;
+import org.zaproxy.addon.dev.rnd.SimpleDir;
 import org.zaproxy.addon.dev.seq.performance.PerformanceDir;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
@@ -134,11 +135,15 @@ public class TestProxyServer {
         TestDirectory fullDir = new TestDirectory(this, "full");
         fullDir.addDirectory(new BasicVulnAuthDir(this, "basic-vuln-auth"));
 
+        TestDirectory rndDir = new TestDirectory(this, "rnd");
+        rndDir.addDirectory(new SimpleDir(this));
+
         root.addDirectory(authDir);
         root.addDirectory(apiDir);
         root.addDirectory(csrfDir);
         root.addDirectory(fullDir);
         root.addDirectory(htmlDir);
+        root.addDirectory(rndDir);
         root.addDirectory(seqDir);
     }
 
