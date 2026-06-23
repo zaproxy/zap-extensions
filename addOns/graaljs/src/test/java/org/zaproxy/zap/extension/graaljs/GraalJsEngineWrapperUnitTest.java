@@ -21,8 +21,11 @@ package org.zaproxy.zap.extension.graaljs;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.oracle.truffle.js.scriptengine.GraalJSScriptEngine;
 import java.util.List;
 import java.util.Map;
 import javax.script.Compilable;
@@ -31,6 +34,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadataProvider;
 
 /** Unit tests for {@link GraalJsEngineWrapper}. */
 class GraalJsEngineWrapperUnitTest {
@@ -115,5 +119,75 @@ class GraalJsEngineWrapperUnitTest {
 
         // Then
         assertThrows(IllegalStateException.class, () -> engine.eval("x + 1"));
+    }
+
+    @Test
+    void shouldEnableCloseOnCleanupByDefault() {
+        // Given
+        ScriptEngine engine = engineWrapper.getEngine();
+        ScriptEngineCleaner cleaner = (ScriptEngineCleaner) engine;
+
+        // Then
+        assertTrue(cleaner.state.closeOnCleanup);
+    }
+
+    @Test
+    void shouldDisableCloseOnCleanupIfMetadataProviderInterfaceRequested() throws Exception {
+        // Given
+        ScriptEngine engine = engineWrapper.getEngine();
+        ScriptEngineCleaner cleaner = (ScriptEngineCleaner) engine;
+
+        // When
+        cleaner.eval("function getMetadata() { return null; }");
+        cleaner.getInterface(ScanRuleMetadataProvider.class);
+
+        // Then
+        assertFalse(cleaner.state.closeOnCleanup);
+    }
+
+    @Test
+    void shouldCloseEngineInCleanupActionIfEnabled() throws Exception {
+        // Given
+        ScriptEngine engine = engineWrapper.getEngine();
+        ScriptEngineCleaner cleaner = (ScriptEngineCleaner) engine;
+        GraalJSScriptEngine delegate = cleaner.delegate;
+        ScriptEngineCleaner.State state = cleaner.state;
+
+        // cleaner constructor registered it -> counter = 1
+        // CleanupAction constructor registers it -> counter = 2
+        ScriptEngineCleaner.CleanupAction action = new ScriptEngineCleaner.CleanupAction(delegate, state);
+
+        // When/Then
+        // First run decrements counter to 1, should not close the engine
+        action.run();
+        Object result = delegate.eval("1 + 1");
+        assertThat(result, instanceOf(Number.class));
+
+        // Second run decrements counter to 0, which should close the engine since closeOnCleanup is true
+        action.run();
+        assertThrows(IllegalStateException.class, () -> delegate.eval("1 + 1"));
+    }
+
+    @Test
+    void shouldNotCloseEngineInCleanupActionIfDisabled() throws Exception {
+        // Given
+        ScriptEngine engine = engineWrapper.getEngine();
+        ScriptEngineCleaner cleaner = (ScriptEngineCleaner) engine;
+        GraalJSScriptEngine delegate = cleaner.delegate;
+        ScriptEngineCleaner.State state = cleaner.state;
+        state.closeOnCleanup = false;
+
+        // cleaner constructor registered it -> counter = 1
+        // CleanupAction constructor registers it -> counter = 2
+        ScriptEngineCleaner.CleanupAction action = new ScriptEngineCleaner.CleanupAction(delegate, state);
+
+        // When
+        action.run(); // counter -> 1
+        action.run(); // counter -> 0
+
+        // Then
+        // The engine should still be open
+        Object result = delegate.eval("1 + 1");
+        assertThat(result, instanceOf(Number.class));
     }
 }

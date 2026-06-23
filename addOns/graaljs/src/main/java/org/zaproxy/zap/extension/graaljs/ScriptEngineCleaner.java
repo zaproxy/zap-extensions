@@ -33,6 +33,7 @@ import javax.script.ScriptEngineFactory;
 import javax.script.ScriptException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadataProvider;
 
 class ScriptEngineCleaner implements ScriptEngine, Compilable, Invocable, AutoCloseable {
 
@@ -40,18 +41,18 @@ class ScriptEngineCleaner implements ScriptEngine, Compilable, Invocable, AutoCl
 
     private static final Cleaner CLEANER = Cleaner.create();
 
-    private final GraalJSScriptEngine delegate;
-    private final AtomicInteger counter;
+    final GraalJSScriptEngine delegate;
+    final State state;
 
     ScriptEngineCleaner(GraalJSScriptEngine delegate) {
         this.delegate = delegate;
-        counter = new AtomicInteger();
+        state = new State();
 
         register(this);
     }
 
     private void register(Object object) {
-        CLEANER.register(object, new CleanupAction(delegate, counter));
+        CLEANER.register(object, new CleanupAction(delegate, state));
     }
 
     private <T> T track(T result) {
@@ -118,12 +119,20 @@ class ScriptEngineCleaner implements ScriptEngine, Compilable, Invocable, AutoCl
 
     @Override
     public <T> T getInterface(Class<T> clasz) {
+        checkInterface(clasz);
         return track(delegate.getInterface(clasz));
     }
 
     @Override
     public <T> T getInterface(Object thiz, Class<T> clasz) {
+        checkInterface(clasz);
         return track(delegate.getInterface(thiz, clasz));
+    }
+
+    private <T> void checkInterface(Class<T> clasz) {
+        if (clasz == ScanRuleMetadataProvider.class) {
+            state.closeOnCleanup = false;
+        }
     }
 
     @Override
@@ -176,28 +185,35 @@ class ScriptEngineCleaner implements ScriptEngine, Compilable, Invocable, AutoCl
         delegate.close();
     }
 
-    private static class CleanupAction implements Runnable {
+    static class CleanupAction implements Runnable {
 
         private final GraalJSScriptEngine scriptEngine;
-        private final AtomicInteger counter;
+        private final State state;
 
-        CleanupAction(GraalJSScriptEngine scriptEngine, AtomicInteger counter) {
+        CleanupAction(GraalJSScriptEngine scriptEngine, State state) {
             this.scriptEngine = scriptEngine;
-            this.counter = counter;
-            this.counter.incrementAndGet();
+            this.state = state;
+            this.state.counter.incrementAndGet();
         }
 
         @Override
         public void run() {
-            counter.decrementAndGet();
+            state.counter.decrementAndGet();
 
-            if (counter.compareAndSet(0, 0)) {
-                try {
-                    scriptEngine.close();
-                } catch (Exception e) {
-                    LOGGER.debug("Error closing engine:", e);
+            if (state.counter.compareAndSet(0, 0)) {
+                if (state.closeOnCleanup) {
+                    try {
+                        scriptEngine.close();
+                    } catch (Exception e) {
+                        LOGGER.debug("Error closing engine:", e);
+                    }
                 }
             }
         }
+    }
+
+    static class State {
+        final AtomicInteger counter = new AtomicInteger();
+        volatile boolean closeOnCleanup = true;
     }
 }
