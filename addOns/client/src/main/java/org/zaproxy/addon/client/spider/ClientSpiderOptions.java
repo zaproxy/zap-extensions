@@ -60,6 +60,11 @@ public class ClientSpiderOptions extends VersionedAbstractParam {
     private static final String LOGOUT_AVOIDANCE_KEY = CLIENT_SPIDER_BASE_KEY + ".logoutAvoidance";
     private static final String ACTION_WAIT_TIME_KEY = CLIENT_SPIDER_BASE_KEY + ".actionWaitTime";
 
+    private static final String ADAPTIVE_WAIT_BASE_KEY = CLIENT_SPIDER_BASE_KEY + ".adaptive.";
+    private static final String ADAPTIVE_WAIT_TIMEOUT_KEY = ADAPTIVE_WAIT_BASE_KEY + "timeout";
+    private static final String ADAPTIVE_WAIT_QUIESCE_FIRST_ACCESS_KEY =
+            ADAPTIVE_WAIT_BASE_KEY + "quiesceFirstAccess";
+
     public enum ScopeCheck {
         FLEXIBLE,
         STRICT;
@@ -108,6 +113,9 @@ public class ClientSpiderOptions extends VersionedAbstractParam {
     private boolean logoutAvoidance;
     private int actionWaitTimeInSecs = DEFAULT_ACTION_WAIT_TIME;
 
+    private int adaptiveTimeout;
+    private int adaptiveQuiesceFirstAccess;
+
     @Override
     public ClientSpiderOptions clone() {
         return (ClientSpiderOptions) super.clone();
@@ -135,6 +143,9 @@ public class ClientSpiderOptions extends VersionedAbstractParam {
         this.logoutAvoidance = getBoolean(LOGOUT_AVOIDANCE_KEY, DEFAULT_LOGOUT_AVOIDANCE);
         this.actionWaitTimeInSecs = getInt(ACTION_WAIT_TIME_KEY, DEFAULT_ACTION_WAIT_TIME);
         this.showAdvancedDialog = getBoolean(SHOW_ADV_OPTIONS_KEY, false);
+
+        this.adaptiveTimeout = getInt(ADAPTIVE_WAIT_TIMEOUT_KEY, 15_000);
+        this.adaptiveQuiesceFirstAccess = getInt(ADAPTIVE_WAIT_QUIESCE_FIRST_ACCESS_KEY, 2_500);
     }
 
     /**
@@ -308,5 +319,15 @@ public class ClientSpiderOptions extends VersionedAbstractParam {
     public void setActionWaitTimeInSecs(int actionWaitTimeInSecs) {
         this.actionWaitTimeInSecs = actionWaitTimeInSecs;
         getConfig().setProperty(ACTION_WAIT_TIME_KEY, actionWaitTimeInSecs);
+    }
+
+    @ZapApiIgnore
+    public int getAdaptiveTimeout() {
+        return adaptiveTimeout;
+    }
+
+    @ZapApiIgnore
+    public int getAdaptiveQuiesceFirstAccess() {
+        return adaptiveQuiesceFirstAccess;
     }
 }

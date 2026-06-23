@@ -62,6 +62,8 @@ class ClientSpiderOptionsUnitTest extends TestUtils {
                 options.getActionWaitTimeInSecs(),
                 is(ClientSpiderOptions.DEFAULT_ACTION_WAIT_TIME));
         assertThat(options.getScopeCheck(), is(ClientSpiderOptions.ScopeCheck.getDefault()));
+        assertThat(options.getAdaptiveTimeout(), is(15_000));
+        assertThat(options.getAdaptiveQuiesceFirstAccess(), is(2_500));
     }
 
     @Test
@@ -78,6 +80,8 @@ class ClientSpiderOptionsUnitTest extends TestUtils {
         config.setProperty(
                 "client.spider.logoutAvoidance", !ClientSpiderOptions.DEFAULT_LOGOUT_AVOIDANCE);
         config.setProperty("client.spider.actionWaitTime", 9);
+        config.setProperty("client.spider.adaptive.timeout", 10);
+        config.setProperty("client.spider.adaptive.quiesceFirstAccess", 11);
         // When
         options.load(config);
         // Then
@@ -91,6 +95,8 @@ class ClientSpiderOptionsUnitTest extends TestUtils {
         assertThat(options.getThreadCount(), is(7));
         assertThat(options.isLogoutAvoidance(), is(!ClientSpiderOptions.DEFAULT_LOGOUT_AVOIDANCE));
         assertThat(options.getActionWaitTimeInSecs(), is(9));
+        assertThat(options.getAdaptiveTimeout(), is(10));
+        assertThat(options.getAdaptiveQuiesceFirstAccess(), is(11));
     }
 
     @Test

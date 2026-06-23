@@ -26,7 +26,6 @@ import static org.hamcrest.Matchers.lessThan;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
-import java.time.Duration;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
@@ -44,20 +43,29 @@ class AdaptiveWaitStrategyUnitTest {
 
     private static final String IN_SCOPE_URL = "http://example.com/api";
     private static final String OUT_OF_SCOPE_URL = "http://other.example.org/resource";
-    private static final long INITIAL_PAGE_LOAD_TIME_MS =
-            AdaptiveWaitStrategy.QUIESCE_THRESHOLD_FIRST_ACCESS_MS + 1234L;
+    private static final long TIMEOUT_MS = 5000L;
+    private static final long QUIESCE_THRESHOLD_FIRST_ACCESS_MS = 1000L;
+    private static final long INITIAL_PAGE_LOAD_TIME_MS = QUIESCE_THRESHOLD_FIRST_ACCESS_MS + 1000L;
     private static final int PROXY_PORT = 8080;
 
+    private ClientSpiderOptions options;
     private AdaptiveWaitStrategy strategy;
     private ScheduledExecutorService scheduler;
 
     @BeforeEach
     void setUp() {
+        options = mock();
+        given(options.getInitialLoadTimeInSecs())
+                .willReturn((int) TimeUnit.MILLISECONDS.toSeconds(INITIAL_PAGE_LOAD_TIME_MS));
+        given(options.getAdaptiveTimeout()).willReturn((int) TIMEOUT_MS);
+        given(options.getAdaptiveQuiesceFirstAccess())
+                .willReturn((int) QUIESCE_THRESHOLD_FIRST_ACCESS_MS);
+
         strategy =
                 new AdaptiveWaitStrategy(
+                        options,
                         url -> url.startsWith("http://example.com"),
-                        ConcurrentHashMap.newKeySet(),
-                        Duration.ofMillis(INITIAL_PAGE_LOAD_TIME_MS));
+                        ConcurrentHashMap.newKeySet());
 
         WebDriverProcess wdp = mock();
         given(wdp.getProxyPort()).willReturn(PROXY_PORT);
@@ -101,7 +109,7 @@ class AdaptiveWaitStrategyUnitTest {
         assertThat(
                 elapsed,
                 greaterThanOrEqualTo(AdaptiveWaitStrategy.QUIESCE_THRESHOLD_WITH_PAGE_LOAD_MS));
-        assertThat(elapsed, lessThan(AdaptiveWaitStrategy.QUIESCE_THRESHOLD_FIRST_ACCESS_MS));
+        assertThat(elapsed, lessThan(QUIESCE_THRESHOLD_FIRST_ACCESS_MS));
     }
 
     @Test
@@ -134,7 +142,7 @@ class AdaptiveWaitStrategyUnitTest {
         // Then
         long elapsed = elapsed(start);
         assertThat(result, is(true));
-        assertThat(elapsed, lessThan(AdaptiveWaitStrategy.HARD_TIMEOUT_MS));
+        assertThat(elapsed, lessThan(TIMEOUT_MS));
     }
 
     @Test
@@ -202,7 +210,7 @@ class AdaptiveWaitStrategyUnitTest {
         assertThat(
                 elapsed,
                 greaterThanOrEqualTo(AdaptiveWaitStrategy.QUIESCE_THRESHOLD_WITH_PAGE_LOAD_MS));
-        assertThat(elapsed, lessThan(AdaptiveWaitStrategy.QUIESCE_THRESHOLD_FIRST_ACCESS_MS));
+        assertThat(elapsed, lessThan(QUIESCE_THRESHOLD_FIRST_ACCESS_MS));
     }
 
     @Test
@@ -210,9 +218,9 @@ class AdaptiveWaitStrategyUnitTest {
         // Given
         AdaptiveWaitStrategy uninitialised =
                 new AdaptiveWaitStrategy(
+                        options,
                         url -> url.startsWith("http://example.com"),
-                        ConcurrentHashMap.newKeySet(),
-                        Duration.ofMillis(INITIAL_PAGE_LOAD_TIME_MS));
+                        ConcurrentHashMap.newKeySet());
         uninitialised.pageLoaded(IN_SCOPE_URL, PROXY_PORT);
 
         // When
@@ -240,7 +248,7 @@ class AdaptiveWaitStrategyUnitTest {
         // Then
         long elapsed = elapsed(start);
         assertThat(result, is(true));
-        assertThat(elapsed, greaterThanOrEqualTo(AdaptiveWaitStrategy.HARD_TIMEOUT_MS));
+        assertThat(elapsed, greaterThanOrEqualTo(TIMEOUT_MS));
     }
 
     @Test
@@ -270,7 +278,7 @@ class AdaptiveWaitStrategyUnitTest {
         long elapsed = elapsed(start);
         assertThat(result, is(true));
         assertThat(elapsed, greaterThanOrEqualTo(INITIAL_PAGE_LOAD_TIME_MS));
-        assertThat(elapsed, lessThan(AdaptiveWaitStrategy.HARD_TIMEOUT_MS));
+        assertThat(elapsed, lessThan(TIMEOUT_MS));
     }
 
     @Test
@@ -288,7 +296,7 @@ class AdaptiveWaitStrategyUnitTest {
         assertThat(
                 elapsed,
                 greaterThanOrEqualTo(AdaptiveWaitStrategy.QUIESCE_THRESHOLD_NO_PAGE_LOAD_MS));
-        assertThat(elapsed, lessThan(AdaptiveWaitStrategy.QUIESCE_THRESHOLD_FIRST_ACCESS_MS));
+        assertThat(elapsed, lessThan(QUIESCE_THRESHOLD_FIRST_ACCESS_MS));
     }
 
     @Test
@@ -307,20 +315,17 @@ class AdaptiveWaitStrategyUnitTest {
         assertThat(
                 elapsed,
                 greaterThanOrEqualTo(AdaptiveWaitStrategy.QUIESCE_THRESHOLD_WITH_PAGE_LOAD_MS));
-        assertThat(elapsed, lessThan(AdaptiveWaitStrategy.QUIESCE_THRESHOLD_FIRST_ACCESS_MS));
+        assertThat(elapsed, lessThan(QUIESCE_THRESHOLD_FIRST_ACCESS_MS));
     }
 
     @Test
     void shouldUseInitialLoadTimeOnFirstCallEvenWhenUrlAlreadyVisitedByAnotherStrategy() {
         // Given
         Set<String> sharedVisitedUrls = ConcurrentHashMap.newKeySet();
-        Duration initialLoadTime = Duration.ofMillis(INITIAL_PAGE_LOAD_TIME_MS);
 
         AdaptiveWaitStrategy strategy1 =
                 new AdaptiveWaitStrategy(
-                        url -> url.startsWith("http://example.com"),
-                        sharedVisitedUrls,
-                        initialLoadTime);
+                        options, url -> url.startsWith("http://example.com"), sharedVisitedUrls);
         WebDriverProcess wdp = mock();
         given(wdp.getProxyPort()).willReturn(PROXY_PORT);
         strategy1.configure(wdp);
@@ -328,9 +333,7 @@ class AdaptiveWaitStrategyUnitTest {
 
         AdaptiveWaitStrategy strategy2 =
                 new AdaptiveWaitStrategy(
-                        url -> url.startsWith("http://example.com"),
-                        sharedVisitedUrls,
-                        initialLoadTime);
+                        options, url -> url.startsWith("http://example.com"), sharedVisitedUrls);
         strategy2.configure(wdp);
 
         // When
@@ -341,7 +344,7 @@ class AdaptiveWaitStrategyUnitTest {
         long elapsed = elapsed(start);
         assertThat(result, is(true));
         assertThat(elapsed, greaterThanOrEqualTo(INITIAL_PAGE_LOAD_TIME_MS));
-        assertThat(elapsed, lessThan(AdaptiveWaitStrategy.HARD_TIMEOUT_MS));
+        assertThat(elapsed, lessThan(TIMEOUT_MS));
     }
 
     @Test
@@ -379,7 +382,7 @@ class AdaptiveWaitStrategyUnitTest {
         assertThat(
                 elapsed,
                 greaterThanOrEqualTo(AdaptiveWaitStrategy.QUIESCE_THRESHOLD_WITH_PAGE_LOAD_MS));
-        assertThat(elapsed, lessThan(AdaptiveWaitStrategy.QUIESCE_THRESHOLD_FIRST_ACCESS_MS));
+        assertThat(elapsed, lessThan(QUIESCE_THRESHOLD_FIRST_ACCESS_MS));
     }
 
     @Test
@@ -417,20 +420,19 @@ class AdaptiveWaitStrategyUnitTest {
         // Then
         long elapsed = elapsed(start);
         assertThat(result, is(true));
-        assertThat(
-                elapsed,
-                greaterThanOrEqualTo(AdaptiveWaitStrategy.QUIESCE_THRESHOLD_FIRST_ACCESS_MS));
-        assertThat(elapsed, lessThan(AdaptiveWaitStrategy.HARD_TIMEOUT_MS));
+        assertThat(elapsed, greaterThanOrEqualTo(QUIESCE_THRESHOLD_FIRST_ACCESS_MS));
+        assertThat(elapsed, lessThan(TIMEOUT_MS));
     }
 
     @Test
     void shouldUseUrlFirstAccessThresholdWhenInitialLoadTimeIsZero() {
         // Given
+        given(options.getInitialLoadTimeInSecs()).willReturn(0);
         strategy =
                 new AdaptiveWaitStrategy(
+                        options,
                         url -> url.startsWith("http://example.com"),
-                        ConcurrentHashMap.newKeySet(),
-                        Duration.ofMillis(0L));
+                        ConcurrentHashMap.newKeySet());
         String secondUrl = "http://example.com/other";
         strategy.waitAfterPageLoad(IN_SCOPE_URL);
 
@@ -441,10 +443,8 @@ class AdaptiveWaitStrategyUnitTest {
         // Then
         long elapsed = elapsed(start);
         assertThat(result, is(true));
-        assertThat(
-                elapsed,
-                greaterThanOrEqualTo(AdaptiveWaitStrategy.QUIESCE_THRESHOLD_FIRST_ACCESS_MS));
-        assertThat(elapsed, lessThan(AdaptiveWaitStrategy.HARD_TIMEOUT_MS));
+        assertThat(elapsed, greaterThanOrEqualTo(QUIESCE_THRESHOLD_FIRST_ACCESS_MS));
+        assertThat(elapsed, lessThan(TIMEOUT_MS));
     }
 
     @Test
@@ -452,9 +452,9 @@ class AdaptiveWaitStrategyUnitTest {
         // Given
         AdaptiveWaitStrategy s =
                 new AdaptiveWaitStrategy(
+                        options,
                         url -> url.startsWith("http://example.com"),
-                        ConcurrentHashMap.newKeySet(),
-                        Duration.ofMillis(INITIAL_PAGE_LOAD_TIME_MS));
+                        ConcurrentHashMap.newKeySet());
         WebDriverProcess wdp = mock();
         given(wdp.getProxyPort()).willReturn(PROXY_PORT);
         s.configure(wdp);
