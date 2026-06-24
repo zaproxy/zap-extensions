@@ -59,7 +59,7 @@ public class ViewStateModel extends AbstractHttpByteHttpPanelViewModel {
         // For chunked ASP ViewStates
         viewstateParams.add(new ViewState(null, ASPViewState.KEY, "__VIEWSTATEFIELDCOUNT"));
         // For JSF ViewStates
-        viewstateParams.add(new ViewState(null, JSFViewState.KEY, "javax.faces.ViewState"));
+        // viewstateParams.add(new ViewState(null, JSFViewState.KEY, "javax.faces.ViewState"));
         // Set the action for the model (request/response)
         modelAction = action;
         // Set the ViewState listener
