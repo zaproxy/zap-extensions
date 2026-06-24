@@ -1,4 +1,4 @@
-description = "ASP/JSF ViewState Decoder and Editor"
+description = "ASP ViewState Decoder and Editor"
 
 zapAddOn {
     addOnName.set("ViewState")
