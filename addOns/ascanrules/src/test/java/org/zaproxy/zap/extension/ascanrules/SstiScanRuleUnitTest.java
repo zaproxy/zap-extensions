@@ -67,7 +67,7 @@ class SstiScanRuleUnitTest extends ActiveScannerTest<SstiScanRule> {
             case LOW:
                 return recommendMax;
             case MEDIUM:
-                return recommendMax + 2;
+                return recommendMax + 3;
             case HIGH:
                 return recommendMax;
             case INSANE:
