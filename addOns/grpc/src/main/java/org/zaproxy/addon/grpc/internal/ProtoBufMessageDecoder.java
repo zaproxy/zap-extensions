@@ -19,8 +19,8 @@
  */
 package org.zaproxy.addon.grpc.internal;
 
-import com.google.protobuf.CodedInputStream;
-import java.io.IOException;
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.UnknownFieldSet;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
@@ -31,10 +31,8 @@ public class ProtoBufMessageDecoder {
 
     private static final Logger LOGGER = LogManager.getLogger(ProtoBufMessageDecoder.class);
 
-    private byte[] inputData;
     private List<String> decodedToList;
     private StringBuilder decodedToString;
-    private CodedInputStream inputStream;
 
     public ProtoBufMessageDecoder() {
         this.decodedToList = new ArrayList<>();
@@ -47,30 +45,16 @@ public class ProtoBufMessageDecoder {
         if (inputEncodedData == null || inputEncodedData.length == 0) {
             return;
         }
-        this.inputData = inputEncodedData;
-        this.inputStream = CodedInputStream.newInstance(inputData);
-        while (true) {
-            try {
-                decodeField();
-                if (inputStream.isAtEnd()) {
-                    break;
-                }
-            } catch (IOException e) {
-                LOGGER.debug("Error decoding the message: {}", e.getMessage());
-                throw new IllegalArgumentException(
-                        Constant.messages.getString("grpc.decoder.error"));
+        try {
+            UnknownFieldSet fields = UnknownFieldSet.parseFrom(inputEncodedData);
+            decodedToList.addAll(ZapProtoTextCodec.formatToList(fields));
+            for (String line : decodedToList) {
+                decodedToString.append(line).append('\n');
             }
+        } catch (InvalidProtocolBufferException e) {
+            LOGGER.debug("Error decoding the message: {}", e.getMessage());
+            throw new IllegalArgumentException(Constant.messages.getString("grpc.decoder.error"));
         }
-    }
-
-    private void decodeField() throws IOException {
-
-        int tag = inputStream.readTag();
-
-        String decodedValue = DecoderUtils.decodeField(tag, inputStream);
-
-        decodedToList.add(decodedValue);
-        decodedToString.append(decodedValue).append('\n');
     }
 
     public String getDecodedOutput() {

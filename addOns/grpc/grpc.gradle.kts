@@ -32,7 +32,7 @@ crowdin {
 dependencies {
     zapAddOn("websocket")
     testImplementation(project(":testutils"))
-    implementation(libs.grpc.protobuf)
+    implementation(libs.protobuf.java)
 
     testImplementation(libs.log4j.core)
 }

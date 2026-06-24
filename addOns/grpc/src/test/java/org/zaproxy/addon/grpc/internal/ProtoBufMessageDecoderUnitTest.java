@@ -129,6 +129,6 @@ class ProtoBufMessageDecoderUnitTest extends TestUtils {
         String expectedExceptionMessage =
                 "Failed to decode protobuf message: The message format is invalid or corrupted";
         assertEquals(expectedExceptionMessage, exception.getMessage());
-        assertEquals(2, decoder.getDecodedToList().size());
+        assertEquals(0, decoder.getDecodedToList().size());
     }
 }
