@@ -21,7 +21,9 @@ package org.zaproxy.zap.extension.scripts.automation;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
@@ -1364,6 +1366,27 @@ class ScriptJobUnitTest extends TestUtils {
         assertThat(
                 progress.getWarnings(),
                 contains("!scripts.automation.warn.userParameterSetButActionNotRun!"));
+    }
+
+    @Test
+    void shouldErrorOnInvalidFailureLevelInYaml() {
+        // Given
+        ScriptJob job = new ScriptJob();
+        setJobData(
+                job,
+                """
+                parameters:
+                  action: run
+                  failureLevel: critical
+                """);
+
+        // When
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(
+                progress.getErrors(),
+                hasItem(containsString("!automation.error.options.badenum!")));
     }
 
     @Test

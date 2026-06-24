@@ -302,7 +302,9 @@ public class ScriptJobDialog extends StandardFieldsDialog {
                         this.getStringValue(SCRIPT_INLINE_PARAM),
                         this.getStringValue(SCRIPT_CONTEXT_PARAM),
                         this.getStringValue(SCRIPT_USER_PARAM),
-                        null); // chain parameter - not currently supported in UI dialog
+                        // not currently supported in UI dialog
+                        null,
+                        null);
         sa = ScriptJob.createScriptAction(params, null);
         List<String> issues = sa.verifyParameters(this.getStringValue(NAME_PARAM), params, null);
         if (issues.isEmpty()) {

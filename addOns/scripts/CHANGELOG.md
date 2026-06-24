@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Added
 - Functionality to store script diagnostics and provides them to Reports. Depends on the database add-on.
+- The Script Job Run action now supports a `failureLevel` parameter (`info`, `warning`, `error`) to control the Automation Framework progress level used when a script or chain execution fails (defaults to `error`).
 
 ### Changed
 - Update dependency.
