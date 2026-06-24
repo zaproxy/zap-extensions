@@ -17,9 +17,6 @@ zapAddOn {
                 }
                 dependencies {
                     addOns {
-                        register("selenium") {
-                            version.set(">= 15.6.0")
-                        }
                         register("spiderAjax") {
                             version.set("23.*")
                         }
@@ -62,12 +59,21 @@ zapAddOn {
                     }
                 }
             }
+            register("org.zaproxy.zap.extension.quickstart.clientspider.ExtensionQuickStartClientSpider") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.zap.extension.quickstart.clientspider"))
+                }
+                dependencies {
+                    addOns {
+                        register("client") {
+                            version.set(">= 0.27.0")
+                        }
+                    }
+                }
+            }
         }
         dependencies {
             addOns {
-                register("reports") {
-                    version.set(">= 0.4.0")
-                }
                 register("callhome") {
                     version.set(">= 0.0.1")
                 }
@@ -77,6 +83,12 @@ zapAddOn {
                 register("pscan") {
                     version.set(">= 0.1.0 & < 1.0.0")
                 }
+                register("reports") {
+                    version.set(">= 0.4.0")
+                }
+                register("selenium") {
+                    version.set(">= 15.6.0")
+                }
             }
         }
     }
@@ -84,6 +96,7 @@ zapAddOn {
 
 dependencies {
     zapAddOn("callhome")
+    zapAddOn("client")
     zapAddOn("network")
     zapAddOn("pscan")
     zapAddOn("reports")

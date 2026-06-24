@@ -25,16 +25,18 @@ import static org.hamcrest.Matchers.is;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 /** Unit test for {@link QuickStartParam}. */
-class QuickStartParamUnitTest {
+class QuickStartParamUnitTest extends TestUtils {
 
     private QuickStartParam param;
     private ZapXmlConfiguration configuration;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
+        setUpZap();
         param = new QuickStartParam();
         configuration = new ZapXmlConfiguration();
         param.load(configuration);
@@ -63,5 +65,83 @@ class QuickStartParamUnitTest {
         param.load(configuration);
         // Then
         assertThat(param.getScanPolicyName(), is(equalTo("My Policy")));
+    }
+
+    @Test
+    void shouldDefaultAjaxSpiderSelectionToModern() {
+        assertThat(
+                param.getAjaxSpiderSelection(),
+                is(equalTo(ModernSpiderPanel.Select.MODERN.name())));
+    }
+
+    @Test
+    void shouldSaveAjaxSpiderSelection() {
+        // Given
+        String selection = ModernSpiderPanel.Select.ALWAYS.name();
+        // When
+        param.setAjaxSpiderSelection(selection);
+        // Then
+        assertThat(param.getAjaxSpiderSelection(), is(equalTo(selection)));
+    }
+
+    @Test
+    void shouldLoadAjaxSpiderSelectionFromConfig() {
+        // Given
+        configuration.setProperty("quickstart.ajax.select", ModernSpiderPanel.Select.NEVER.name());
+        // When
+        param.load(configuration);
+        // Then
+        assertThat(
+                param.getAjaxSpiderSelection(), is(equalTo(ModernSpiderPanel.Select.NEVER.name())));
+    }
+
+    @Test
+    void shouldDefaultAjaxSpiderDefaultBrowserToFirefox() {
+        assertThat(param.getAjaxSpiderDefaultBrowser(), is(equalTo("Firefox")));
+    }
+
+    @Test
+    void shouldSaveAjaxSpiderDefaultBrowser() {
+        // Given
+        String browser = "Chrome";
+        // When
+        param.setAjaxSpiderDefaultBrowser(browser);
+        // Then
+        assertThat(param.getAjaxSpiderDefaultBrowser(), is(equalTo(browser)));
+    }
+
+    @Test
+    void shouldLoadAjaxSpiderDefaultBrowserFromConfig() {
+        // Given
+        configuration.setProperty("quickstart.ajax.browser", "Safari");
+        // When
+        param.load(configuration);
+        // Then
+        assertThat(param.getAjaxSpiderDefaultBrowser(), is(equalTo("Safari")));
+    }
+
+    @Test
+    void shouldDefaultModernSpiderTypeToEmpty() {
+        assertThat(param.getModernSpiderType(), is(equalTo("")));
+    }
+
+    @Test
+    void shouldSaveModernSpiderType() {
+        // Given
+        String type = "Ajax Spider";
+        // When
+        param.setModernSpiderType(type);
+        // Then
+        assertThat(param.getModernSpiderType(), is(equalTo(type)));
+    }
+
+    @Test
+    void shouldLoadModernSpiderTypeFromConfig() {
+        // Given
+        configuration.setProperty("quickstart.modern.type", "Client Spider");
+        // When
+        param.load(configuration);
+        // Then
+        assertThat(param.getModernSpiderType(), is(equalTo("Client Spider")));
     }
 }

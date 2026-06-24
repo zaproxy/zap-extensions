@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.quickstart;
 
+import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.net.URL;
 import java.util.List;
@@ -164,6 +165,7 @@ public class AttackPanel extends QuickStartSubPanel {
 
             JPanel buttonPanel = QuickStartHelper.getHorizontalPanel();
             buttonPanel.add(this.getAttackButton());
+            buttonPanel.add(Box.createRigidArea(new Dimension(5, 0)));
             buttonPanel.add(this.getStopButton());
             buttonPanel.add(Box.createHorizontalGlue());
             contentPanel.add(buttonPanel, LayoutHelper.getGBC(2, ++formPanelY, 1, 1.0D));
@@ -263,6 +265,8 @@ public class AttackPanel extends QuickStartSubPanel {
             contentPanel.remove(plugableSpiderLabel);
             contentPanel.remove(plugableSpider.getPanel());
             replacePadding();
+            contentPanel.revalidate();
+            contentPanel.repaint();
         }
         this.plugableSpider = null;
     }
@@ -279,6 +283,8 @@ public class AttackPanel extends QuickStartSubPanel {
                     this.plugableSpider.getPanel(),
                     LayoutHelper.getGBC(2, plugableSpiderY, 1, 1.0D));
             replacePadding();
+            contentPanel.revalidate();
+            contentPanel.repaint();
         }
     }
 
