@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Update dependency.
 - Updated a reference link for the Sub Resource Integrity Attribute Missing scan rule.
 - Remove reference link which is no longer available for the Script Served From Malicious Domain (polyfill) scan rule.
+- Remove OWASP Top 10 Security Misconfiguration tags from the Modern Web Application scan rule, it only informs about the likely type of the website.
 
 ## [73] - 2026-04-14
 ### Changed
