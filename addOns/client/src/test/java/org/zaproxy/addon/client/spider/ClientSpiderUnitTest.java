@@ -325,6 +325,40 @@ class ClientSpiderUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldDeferUrlsFoundDuringCrawlUntilTasksComplete() throws Exception {
+        // Given
+        String deferredUrl = "https://www.example.com/deferred";
+        CountDownLatch seedTaskRunningLatch = new CountDownLatch(1);
+        CountDownLatch releaseTaskLatch = new CountDownLatch(1);
+
+        doAnswer(
+                        invocation -> {
+                            proxyCdl.countDown();
+                            if (seedUrl.equals(invocation.getArgument(0))) {
+                                seedTaskRunningLatch.countDown();
+                                releaseTaskLatch.await(2, TimeUnit.SECONDS);
+                            }
+                            return null;
+                        })
+                .when(wd)
+                .get(any());
+
+        // When / Then
+        spider.run();
+        seedTaskRunningLatch.await(2, TimeUnit.SECONDS);
+        clientMapListener().nodeAdded(deferredUrl, 0, 0, PROXY_PORT);
+
+        verify(wd, never()).get(deferredUrl);
+
+        releaseTaskLatch.countDown();
+        sleep();
+
+        ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
+        verify(wd, atLeastOnce()).get(argument.capture());
+        assertThat(argument.getAllValues(), contains(seedUrl, deferredUrl));
+    }
+
+    @Test
     void shouldIgnoreRequestAfterStopped() throws Exception {
         // Given
         CountDownLatch cdl = new CountDownLatch(1);

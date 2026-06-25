@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -40,6 +41,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.IntSupplier;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import javax.swing.table.TableModel;
@@ -140,6 +142,7 @@ public class ClientSpider implements GenericScanner2 {
     private Set<WebDriverProcess> webDriverActive = new HashSet<>();
     private Set<Integer> proxyPorts = ConcurrentHashMap.newKeySet();
     private Set<String> visitedUrls = ConcurrentHashMap.newKeySet();
+    private Set<String> discoveredUrls = Collections.synchronizedSet(new LinkedHashSet<>());
     private ClientMapListener clientMapListener;
     private List<ClientSpiderTask> spiderTasks = new ArrayList<>();
     private List<ClientSpiderTask> pausedTasks = new ArrayList<>();
@@ -410,9 +413,41 @@ public class ClientSpider implements GenericScanner2 {
         if (listener != null && !isExternalControl()) {
             listener.scanProgress(scanId, displayName, this.getProgress(), this.getMaximum());
         }
-        if (this.spiderTasks.isEmpty() && !paused && !stopping.get()) {
+        if (isIdle()) {
+            if (processDiscoveredUrls()) {
+                return;
+            }
+
             LOGGER.debug("No running tasks, starting shutdown timer");
             new ShutdownThread(options.getShutdownTimeInSecs()).start();
+        }
+    }
+
+    private boolean isIdle() {
+        return spiderTasks.isEmpty() && !paused && !stopping.get();
+    }
+
+    private boolean processDiscoveredUrls() {
+        List<String> urlsToAdd = new ArrayList<>();
+
+        synchronized (crawledUrls) {
+            discoveredUrls.stream()
+                    .filter(Predicate.not(crawledUrls::contains))
+                    .forEach(urlsToAdd::add);
+        }
+        discoveredUrls.clear();
+
+        for (String url : urlsToAdd) {
+            addFollowGraphTask(url);
+        }
+
+        return !urlsToAdd.isEmpty();
+    }
+
+    private synchronized void addDiscoveredUrl(String url) {
+        discoveredUrls.add(url);
+        if (isIdle()) {
+            processDiscoveredUrls();
         }
     }
 
@@ -478,7 +513,7 @@ public class ClientSpider implements GenericScanner2 {
             }
 
             Stats.incCounter("stats.client.spider.event.url");
-            addFollowGraphTask(url);
+            addDiscoveredUrl(url);
         }
 
         private boolean isHrefAlreadyHandled(Map<String, String> parameters) {
