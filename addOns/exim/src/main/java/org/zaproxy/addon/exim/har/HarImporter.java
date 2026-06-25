@@ -21,6 +21,7 @@ package org.zaproxy.addon.exim.har;
 
 import de.sstoehr.harreader.HarReader;
 import de.sstoehr.harreader.HarReaderException;
+import de.sstoehr.harreader.model.Har;
 import de.sstoehr.harreader.model.HarEntry;
 import de.sstoehr.harreader.model.HarEntry.HarEntryBuilder;
 import de.sstoehr.harreader.model.HarLog;
@@ -47,9 +48,6 @@ import org.zaproxy.zap.utils.ThreadUtils;
 public class HarImporter {
 
     private static final Logger LOGGER = LogManager.getLogger(HarImporter.class);
-    private static final String STATS_HAR_FILE = "import.har.file";
-    private static final String STATS_HAR_FILE_MSG = "import.har.file.message";
-    private static final String STATS_HAR_FILE_MSG_ERROR = "import.har.file.message.errors";
     // The following list is ordered to hopefully match quickly
     private static final List<String> ACCEPTED_VERSIONS =
             List.of(
@@ -69,34 +67,75 @@ public class HarImporter {
                             || vers.equalsIgnoreCase("http/3")
                             || vers.equalsIgnoreCase("http/3.0");
 
-    protected static final String STATS_HAR_FILE_ERROR = "import.har.file.errors";
+    private static final String STATS_HAR = ExtensionExim.STATS_PREFIX + "import.har.%s";
+
+    enum DataSource {
+        FILE("file"),
+        STRING("string");
+
+        private final String type;
+
+        DataSource(String type) {
+            this.type = type;
+        }
+
+        void successful() {
+            incCounter(STATS_HAR);
+        }
+
+        void messageSuccessful() {
+            incCounter(STATS_HAR + ".message");
+        }
+
+        void messageError() {
+            incCounter(STATS_HAR + ".message.errors");
+        }
+
+        void error() {
+            incCounter(STATS_HAR + ".errors");
+        }
+
+        private void incCounter(String key) {
+            Stats.incCounter(key.formatted(type));
+        }
+    }
 
     private static ExtensionHistory extHistory;
 
+    private final DataSource dataSource;
     private ProgressPaneListener progressListener;
     private boolean success;
+
+    public HarImporter(String data) {
+        this.dataSource = DataSource.STRING;
+        importData(reader -> reader.readFromString(data));
+    }
 
     public HarImporter(File file) {
         this(file, null);
     }
 
     public HarImporter(File file, ProgressPaneListener listener) {
+        dataSource = DataSource.FILE;
         this.progressListener = listener;
-        HarLog log = null;
+        importData(reader -> reader.readFromFile(file));
+    }
+
+    private void importData(HarProvider provider) {
         try {
-            log = new HarReader().readFromFile(file).log();
+            HarLog log = provider.from(new HarReader()).log();
             importHarLog(log);
         } catch (HarReaderException e) {
-            LOGGER.warn("Failed to read HAR file: {}\n{}", file.getAbsolutePath(), e.getMessage());
-            Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_HAR_FILE_ERROR);
+            LOGGER.warn("Failed to read HAR data: {}", e.getMessage());
+            dataSource.error();
             success = false;
+        } finally {
             completed();
-            return;
         }
-        completed();
     }
 
     public HarImporter(HarLog harLog, ProgressPaneListener listener) {
+        dataSource = DataSource.FILE;
         this.progressListener = listener;
         importHarLog(harLog);
         completed();
@@ -104,7 +143,7 @@ public class HarImporter {
 
     private void importHarLog(HarLog log) {
         processMessages(log);
-        Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_HAR_FILE);
+        dataSource.successful();
         success = true;
     }
 
@@ -120,7 +159,7 @@ public class HarImporter {
         } catch (HttpMalformedHeaderException e) {
             LOGGER.warn("Failed to process HAR entries. {}", e.getMessage());
             LOGGER.debug(e, e);
-            Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_HAR_FILE_ERROR);
+            dataSource.error();
             completed();
             return;
         }
@@ -251,7 +290,7 @@ public class HarImporter {
         return false;
     }
 
-    private static void persistMessage(HttpMessage message) {
+    private void persistMessage(HttpMessage message) {
         HistoryReference historyRef;
 
         try {
@@ -260,10 +299,10 @@ public class HarImporter {
                             Model.getSingleton().getSession(),
                             HistoryReference.TYPE_ZAP_USER,
                             message);
-            Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_HAR_FILE_MSG);
+            dataSource.messageSuccessful();
         } catch (Exception e) {
             LOGGER.warn(e.getMessage());
-            Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_HAR_FILE_MSG_ERROR);
+            dataSource.messageError();
             return;
         }
 
@@ -303,5 +342,9 @@ public class HarImporter {
         if (progressListener != null) {
             progressListener.completed();
         }
+    }
+
+    private interface HarProvider {
+        Har from(HarReader data) throws HarReaderException;
     }
 }
