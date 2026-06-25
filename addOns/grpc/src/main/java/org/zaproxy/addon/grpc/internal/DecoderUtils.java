@@ -19,8 +19,6 @@
  */
 package org.zaproxy.addon.grpc.internal;
 
-import com.google.protobuf.CodedInputStream;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -38,11 +36,6 @@ public class DecoderUtils {
     public static final int FLOAT_MANTISSA_LEN = 23;
 
     public static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
-
-    public static final int VARINT_WIRE_TYPE = 0;
-    public static final int BIT64_WIRE_TYPE = 1;
-    public static final int LENGTH_DELIMITED_WIRE_TYPE = 2;
-    public static final int BIT32_WIRE_TYPE = 5;
 
     public enum DecodingMethod {
         BASE64_ENCODED,
@@ -89,83 +82,6 @@ public class DecoderUtils {
             return EMPTY_BYTE_ARRAY;
         }
         return Arrays.copyOfRange(input, PAYLOAD_HEADER_SIZE, input.length);
-    }
-
-    public static String decodeField(int tag, CodedInputStream inputStream) throws IOException {
-        StringBuilder decodedValueBuilder = new StringBuilder();
-        decodedValueBuilder.append(tag >> 3).append(":");
-        int wireType = (tag & 0x7);
-        switch (wireType) {
-            case VARINT_WIRE_TYPE:
-                long varintValue = inputStream.readRawVarint64();
-                decodedValueBuilder.append(wireType).append("::").append(varintValue);
-                break;
-
-            case BIT64_WIRE_TYPE:
-                long longValue = inputStream.readRawLittleEndian64();
-                decodedValueBuilder.append(wireType);
-                if (DecoderUtils.isDouble(longValue)) {
-                    decodedValueBuilder.append("D::").append(Double.longBitsToDouble(longValue));
-                } else {
-                    decodedValueBuilder.append("::").append(longValue);
-                }
-                break;
-
-            case BIT32_WIRE_TYPE:
-                decodedValueBuilder.append(wireType);
-                int intValue = inputStream.readRawLittleEndian32();
-                if (DecoderUtils.isFloat(intValue)) {
-                    decodedValueBuilder.append("F::").append(Float.intBitsToFloat(intValue));
-                } else {
-                    decodedValueBuilder.append("::").append(intValue);
-                }
-                break;
-
-            case LENGTH_DELIMITED_WIRE_TYPE:
-                decodedValueBuilder.append(wireType);
-                String decoded = inputStream.readStringRequireUtf8();
-                byte[] stringBytes = decoded.getBytes();
-                // assume wire type 2 as Nested Message
-                // child nested message , recursively check each nestedMessage field
-                // if not able to successfully decode as NestedMessage field, then consider it
-                // as string
-                // still need to check for packed repeated fields
-                String validMessage = checkNestedMessage(stringBytes);
-                if (validMessage.isEmpty()) {
-                    // not a nested message check for printable characters
-                    int unprintable = 0;
-                    int runes = stringBytes.length;
-                    for (byte stringByte : stringBytes) {
-                        if (!DecoderUtils.isGraphic(stringByte)) {
-                            unprintable++;
-                        }
-                    }
-
-                    // assume not a human readable string
-                    // decode it as hex values
-                    if ((double) unprintable / runes > 0.3) {
-                        decodedValueBuilder
-                                .append("B::")
-                                .append(DecoderUtils.toHexString(stringBytes));
-                    } else {
-                        decodedValueBuilder.append("::").append('"').append(decoded).append('"');
-                    }
-                } else {
-                    decodedValueBuilder.append("N::").append(validMessage);
-                }
-
-                break;
-
-            default:
-                return "";
-        }
-        return decodedValueBuilder.toString();
-    }
-
-    public static String checkNestedMessage(byte[] stringBytes) {
-        ProtoBufNestedMessageDecoder protobufNestedMessageDecoder =
-                new ProtoBufNestedMessageDecoder();
-        return protobufNestedMessageDecoder.decode(stringBytes);
     }
 
     static byte[] splitMessageBodyAndStatusCode(byte[] encodedText)
