@@ -172,3 +172,9 @@ th {
 .alwayswhite {
 	color: white
 }
+
+.script-diagnostic-screenshot {
+	display: block;
+	max-width: 100%;
+	height: auto;
+}

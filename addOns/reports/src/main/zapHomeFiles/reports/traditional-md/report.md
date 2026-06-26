@@ -22,6 +22,26 @@ ZAP by [Checkmarx](https://checkmarx.com/).
 [/th:block]
 [/th:block]
 
+[#th:block th:if="${reportData.isIncludeSection('scriptdiagnostics') && reportData.reportObjects.get('scriptDiagnostics') != null}"]
+## [(#{report.scriptdiagnostics.title})]
+
+[#th:block th:each="run : ${reportData.reportObjects.get('scriptDiagnostics').runs}"]
+### [(${run.created})] ([(${run.outcome})])
+
+[(${run.summary})]
+
+[#th:block th:each="scr : ${run.scripts}"]
+#### [(${scr.order})]. [(${scr.scriptName})] ([(${scr.scriptType})])
+
+| [(#{report.scriptdiagnostics.step})] | [(#{report.scriptdiagnostics.line})] | [(#{report.scriptdiagnostics.kind})] | [(#{report.scriptdiagnostics.message})] |
+| --- | --- | --- | --- |
+[#th:block th:each="st : ${scr.steps}"][#th:block th:each="out : ${st.outputs}"]| [(${st.sourceStepIndex})] | [(${st.line})] | [(${out.kind})] | [(${out.message})] |
+[/th:block][/th:block]
+
+[/th:block]
+[/th:block]
+[/th:block]
+
 [#th:block th:if="${reportData.isIncludeSection('instancecount')}"]
 ## [(#{report.alerts.list})]
 
