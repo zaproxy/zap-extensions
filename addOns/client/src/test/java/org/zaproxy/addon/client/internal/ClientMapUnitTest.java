@@ -20,6 +20,7 @@
 package org.zaproxy.addon.client.internal;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
@@ -27,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.lenient;
@@ -39,12 +41,14 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
+import net.sf.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
@@ -506,7 +510,7 @@ class ClientMapUnitTest extends TestUtils {
         assertThat(node.getUserObject().isVisited(), is(true));
         assertThat(node.getUserObject().getComponents(), is(Set.of(component)));
         verify(listener).nodeAdded(BBB_URL, 1, 1, 0);
-        verify(listener).componentAdded(Map.of("siblings", "0", "depth", "1"), 0);
+        verify(listener).componentAdded(component, 1, 0, 0);
     }
 
     @Test
@@ -532,7 +536,7 @@ class ClientMapUnitTest extends TestUtils {
         assertThat(map.getNode(BBB_URL, false, false), is(existing));
         assertThat(existing.getUserObject().getComponents(), is(Set.of(component)));
         verify(listener).nodeAdded(BBB_URL, 1, 1, 0);
-        verify(listener).componentAdded(Map.of("siblings", "0", "depth", "1"), 0);
+        verify(listener).componentAdded(component, 1, 0, 0);
     }
 
     @Test
@@ -562,7 +566,7 @@ class ClientMapUnitTest extends TestUtils {
         ClientNode storageNode = map.getNode(storageUrl, false, true);
         assertThat(storageNode, is(notNullValue()));
         assertThat(storageNode.getUserObject().getComponents(), is(Set.of(component)));
-        verify(listener, times(2)).componentAdded(Map.of("siblings", "0", "depth", "1"), 0);
+        verify(listener, times(2)).componentAdded(component, 1, 0, 0);
     }
 
     @Test
@@ -577,19 +581,7 @@ class ClientMapUnitTest extends TestUtils {
         // Then
         assertThat(map.getNode(url, false, false), is(notNullValue()));
         verify(listener).nodeAdded(url, 2, 1, 0);
-        verify(listener)
-                .componentAdded(
-                        Map.of(
-                                "nodeName", "INPUT",
-                                "siblings", "0",
-                                "depth", "2",
-                                "id", "",
-                                "href", "null",
-                                "tagName", "INPUT",
-                                "type", "input",
-                                "url", url,
-                                "timestamp", "0"),
-                        0);
+        verifyNotifiedAddedComponent(component(json), 2, 0, 0);
     }
 
     @Test
@@ -604,19 +596,7 @@ class ClientMapUnitTest extends TestUtils {
         // Then
         assertThat(map.getNode(url, false, false), is(notNullValue()));
         verify(listener).nodeAdded(url, 2, 1, 42);
-        verify(listener)
-                .componentAdded(
-                        Map.of(
-                                "nodeName", "INPUT",
-                                "siblings", "0",
-                                "depth", "2",
-                                "id", "",
-                                "href", "null",
-                                "tagName", "INPUT",
-                                "type", "input",
-                                "url", url,
-                                "timestamp", "0"),
-                        42);
+        verifyNotifiedAddedComponent(component(json), 2, 0, 42);
     }
 
     @Test
@@ -647,19 +627,7 @@ class ClientMapUnitTest extends TestUtils {
         assertThat(map.getNode(href, false, false), is(notNullValue()));
         verify(listener).nodeAdded(url, 2, 1, 0);
         verify(listener).nodeAdded(href, 2, 2, 0);
-        verify(listener)
-                .componentAdded(
-                        Map.of(
-                                "nodeName", "INPUT",
-                                "siblings", "0",
-                                "depth", "2",
-                                "id", "",
-                                "href", href,
-                                "tagName", "INPUT",
-                                "type", "input",
-                                "url", url,
-                                "timestamp", "0"),
-                        0);
+        verifyNotifiedAddedComponent(component(json), 2, 0, 0);
     }
 
     @Test
@@ -676,19 +644,7 @@ class ClientMapUnitTest extends TestUtils {
         assertThat(map.getNode(href, false, false), is(notNullValue()));
         verify(listener).nodeAdded(url, 2, 1, 42);
         verify(listener).nodeAdded(href, 2, 2, 42);
-        verify(listener)
-                .componentAdded(
-                        Map.of(
-                                "nodeName", "INPUT",
-                                "siblings", "0",
-                                "depth", "2",
-                                "id", "",
-                                "href", href,
-                                "tagName", "INPUT",
-                                "type", "input",
-                                "url", url,
-                                "timestamp", "0"),
-                        42);
+        verifyNotifiedAddedComponent(component(json), 2, 0, 42);
     }
 
     @ParameterizedTest
@@ -773,19 +729,7 @@ class ClientMapUnitTest extends TestUtils {
         // Then
         verify(consumer).accept(any(ReportedElement.class));
         verify(listener).nodeAdded(url, 2, 1, 0);
-        verify(listener)
-                .componentAdded(
-                        Map.of(
-                                "nodeName", "INPUT",
-                                "siblings", "0",
-                                "depth", "2",
-                                "id", "",
-                                "href", "null",
-                                "tagName", "INPUT",
-                                "type", "input",
-                                "url", url,
-                                "timestamp", "0"),
-                        0);
+        verify(listener).componentAdded(any(ClientSideComponent.class), eq(2), eq(0), eq(0));
     }
 
     @Test
@@ -799,19 +743,7 @@ class ClientMapUnitTest extends TestUtils {
 
         // Then
         verify(listener).nodeAdded(url, 2, 1, 42);
-        verify(listener)
-                .componentAdded(
-                        Map.of(
-                                "nodeName", "INPUT",
-                                "siblings", "0",
-                                "depth", "2",
-                                "id", "",
-                                "href", "null",
-                                "tagName", "INPUT",
-                                "type", "input",
-                                "url", url,
-                                "timestamp", "0"),
-                        42);
+        verify(listener).componentAdded(any(ClientSideComponent.class), eq(2), eq(0), eq(42));
     }
 
     @Test
@@ -890,7 +822,8 @@ class ClientMapUnitTest extends TestUtils {
                     }
 
                     @Override
-                    public void componentAdded(Map<String, String> parameters, int source) {
+                    public void componentAdded(
+                            ClientSideComponent component, int depth, int siblings, int source) {
                         map.addListener(mock(ClientMapListener.class));
                     }
                 };
@@ -1126,7 +1059,7 @@ class ClientMapUnitTest extends TestUtils {
 
         // Then
         assertThat(existing.getInteractable(), is(nullValue()));
-        verify(listener).componentAdded(any(), eq(0));
+        verify(listener).componentAdded(eq(existing), anyInt(), anyInt(), eq(0));
     }
 
     @Test
@@ -1143,7 +1076,7 @@ class ClientMapUnitTest extends TestUtils {
 
         // Then
         assertThat(existing.getInteractable(), is(new InteractableState(true, true, false)));
-        verify(listener).componentAdded(any(), eq(0));
+        verify(listener).componentAdded(eq(existing), anyInt(), anyInt(), eq(0));
     }
 
     @Test
@@ -1162,6 +1095,17 @@ class ClientMapUnitTest extends TestUtils {
 
         // Then
         assertThat(existing.getInteractable(), is(state));
-        verify(listener).componentAdded(any(), eq(0));
+        verify(listener).componentAdded(eq(existing), anyInt(), anyInt(), eq(0));
+    }
+
+    private void verifyNotifiedAddedComponent(
+            ClientSideComponent component, int depth, int siblings, int source) {
+        ArgumentCaptor<ClientSideComponent> captor = ArgumentCaptor.captor();
+        verify(listener).componentAdded(captor.capture(), eq(depth), eq(siblings), eq(source));
+        assertThat(captor.getValue(), is(equalTo(component)));
+    }
+
+    private static ClientSideComponent component(String json) {
+        return new ClientSideComponent(JSONObject.fromObject(json));
     }
 }

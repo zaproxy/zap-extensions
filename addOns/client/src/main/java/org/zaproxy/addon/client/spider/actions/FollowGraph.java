@@ -20,7 +20,6 @@
 package org.zaproxy.addon.client.spider.actions;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.function.BooleanSupplier;
 import org.apache.commons.httpclient.URI;
@@ -107,7 +106,7 @@ public class FollowGraph implements SpiderAction {
                 ClientSideComponent component = componentVertex.component();
                 try {
                     URI uri = new URI(component.getParentUrl(), true);
-                    if (!new FollowClickElement(valueProvider, uri, component.getData())
+                    if (!new FollowClickElement(valueProvider, uri, component)
                             .run(waitStrategy, wd)) {
                         return false;
                     }
@@ -124,17 +123,14 @@ public class FollowGraph implements SpiderAction {
 
         private static final String STATS_PREFIX = FollowGraph.STATS_PREFIX + ".click";
 
-        private final String tagName;
-
         public FollowClickElement(
-                ValueProvider valueProvider, URI uri, Map<String, String> elementData) {
-            super(valueProvider, uri, elementData, true);
-            tagName = getTagName(elementData);
+                ValueProvider valueProvider, URI uri, ClientSideComponent component) {
+            super(valueProvider, uri, component, true);
         }
 
         @Override
         protected String getStatsPrefix() {
-            return STATS_PREFIX + ".tag." + tagName;
+            return STATS_PREFIX + ".tag." + component.getTagName();
         }
     }
 

@@ -46,11 +46,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.zaproxy.addon.client.internal.ClientSideComponent;
+import org.zaproxy.addon.client.internal.ClientSideComponent.Type;
+import org.zaproxy.addon.client.internal.ElementLocator;
 import org.zaproxy.addon.client.spider.ActionWaitStrategy;
 import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.zap.extension.stats.InMemoryStats;
@@ -79,7 +81,7 @@ class ClickElementUnitTest {
     }
 
     @Test
-    void shouldThrowIfElementDataIsNull() {
+    void shouldThrowIfComponentIsNull() {
         assertThrows(
                 NullPointerException.class,
                 () -> new ClickElement(valueProvider, uri, null, false));
@@ -88,11 +90,11 @@ class ClickElementUnitTest {
     @Test
     void shouldClickElementOnRun() {
         // Given
-        Map<String, String> elementData = Map.of("tagName", "A");
-        ClickElement action = new ClickElement(valueProvider, uri, elementData, false);
+        ClientSideComponent component = componentWithLocator("A", "id", "btn");
+        ClickElement action = new ClickElement(valueProvider, uri, component, false);
         WebDriver wd = mock(WebDriver.class);
         WebElement element = visibleElement();
-        given(wd.findElement(any(By.class))).willReturn(element);
+        given(wd.findElement(By.id("btn"))).willReturn(element);
         given(wd.findElements(any(By.class))).willReturn(List.of());
 
         // When
@@ -108,8 +110,8 @@ class ClickElementUnitTest {
     @Test
     void shouldFillInputsBeforeClicking() {
         // Given
-        Map<String, String> elementData = Map.of("tagName", "A");
-        ClickElement action = new ClickElement(valueProvider, uri, elementData, false);
+        ClientSideComponent component = componentWithLocator("A", "id", "btn");
+        ClickElement action = new ClickElement(valueProvider, uri, component, false);
         WebDriver wd = mock(WebDriver.class);
         WebElement element = visibleElement();
         given(wd.findElement(any(By.class))).willReturn(element);
@@ -136,8 +138,8 @@ class ClickElementUnitTest {
     @Test
     void shouldNotFillInputsBeforeClickingWhenPassive() {
         // Given
-        Map<String, String> elementData = Map.of("tagName", "A");
-        ClickElement action = new ClickElement(valueProvider, uri, elementData, true);
+        ClientSideComponent component = componentWithLocator("A", "id", "btn");
+        ClickElement action = new ClickElement(valueProvider, uri, component, true);
         WebDriver wd = mock(WebDriver.class);
         WebElement element = visibleElement();
         given(wd.findElement(any(By.class))).willReturn(element);
@@ -161,8 +163,8 @@ class ClickElementUnitTest {
     @Test
     void shouldHandleClickExceptionGracefully() {
         // Given
-        Map<String, String> elementData = Map.of("tagName", "A");
-        ClickElement action = new ClickElement(valueProvider, uri, elementData, false);
+        ClientSideComponent component = componentWithLocator("A", "id", "btn");
+        ClickElement action = new ClickElement(valueProvider, uri, component, false);
         WebDriver wd = mock(WebDriver.class);
         WebElement element = visibleElement();
         given(wd.findElement(any(By.class))).willReturn(element);
@@ -179,8 +181,8 @@ class ClickElementUnitTest {
     @Test
     void shouldIncrementStatsWhenElementNotFound() {
         // Given
-        Map<String, String> elementData = Map.of("tagName", "A");
-        ClickElement action = new ClickElement(valueProvider, uri, elementData, false);
+        ClientSideComponent component = componentWithLocator("A", "id", "btn");
+        ClickElement action = new ClickElement(valueProvider, uri, component, false);
         WebDriver wd = mock(WebDriver.class);
         given(wd.findElement(any(By.class))).willThrow(RuntimeException.class);
 
@@ -196,8 +198,8 @@ class ClickElementUnitTest {
     @Test
     void shouldIncrementStatsWhenElementNotDisplayed() {
         // Given
-        Map<String, String> elementData = Map.of("tagName", "A");
-        ClickElement action = new ClickElement(valueProvider, uri, elementData, false);
+        ClientSideComponent component = componentWithLocator("A", "id", "btn");
+        ClickElement action = new ClickElement(valueProvider, uri, component, false);
         WebDriver wd = mock(WebDriver.class);
         WebElement element = mock(WebElement.class);
         given(wd.findElement(any(By.class))).willReturn(element);
@@ -213,92 +215,28 @@ class ClickElementUnitTest {
     }
 
     @Test
-    void shouldUseByIdWhenIdPresent() {
+    void shouldYieldNoByWhenNoElementLocator() {
         // Given
-        String id = "my-button";
-        Map<String, String> elementData = Map.of("tagName", "BUTTON", "id", id);
-        ClickElement action = new ClickElement(valueProvider, uri, elementData, false);
+        ClientSideComponent component = component("A", null);
+        ClickElement action = new ClickElement(valueProvider, uri, component, false);
         WebDriver wd = mock(WebDriver.class);
-        WebElement visibleElement = visibleElement();
-        ArgumentCaptor<By> byCaptor = ArgumentCaptor.forClass(By.class);
-        given(wd.findElement(byCaptor.capture())).willReturn(visibleElement);
-        given(wd.findElements(any(By.class))).willReturn(List.of());
 
         // When
         boolean result = action.run(waitStrategy, wd);
 
         // Then
-        assertThat(result, is(equalTo(true)));
-        assertThat(byCaptor.getValue(), is(By.id(id)));
-    }
-
-    @Test
-    void shouldUseXpathByValueForInputTag() {
-        // Given
-        String text = "Submit";
-        Map<String, String> elementData = Map.of("tagName", "INPUT", "text", text);
-        ClickElement action = new ClickElement(valueProvider, uri, elementData, false);
-        WebDriver wd = mock(WebDriver.class);
-        WebElement visibleElement = visibleElement();
-        ArgumentCaptor<By> byCaptor = ArgumentCaptor.forClass(By.class);
-        given(wd.findElement(byCaptor.capture())).willReturn(visibleElement);
-        given(wd.findElements(any(By.class))).willReturn(List.of());
-
-        // When
-        boolean result = action.run(waitStrategy, wd);
-
-        // Then
-        assertThat(result, is(equalTo(true)));
-        assertThat(byCaptor.getValue(), is(By.xpath("//INPUT[@value='" + text + "']")));
-    }
-
-    @Test
-    void shouldUseXpathContainsTextForOtherTag() {
-        // Given
-        String text = "Click me";
-        Map<String, String> elementData = Map.of("tagName", "BUTTON", "text", text);
-        ClickElement action = new ClickElement(valueProvider, uri, elementData, false);
-        WebDriver wd = mock(WebDriver.class);
-        WebElement visibleElement = visibleElement();
-        ArgumentCaptor<By> byCaptor = ArgumentCaptor.forClass(By.class);
-        given(wd.findElement(byCaptor.capture())).willReturn(visibleElement);
-        given(wd.findElements(any(By.class))).willReturn(List.of());
-
-        // When
-        boolean result = action.run(waitStrategy, wd);
-
-        // Then
-        assertThat(result, is(equalTo(true)));
-        assertThat(byCaptor.getValue(), is(By.xpath("//BUTTON[contains(text(), '" + text + "')]")));
-    }
-
-    @Test
-    void shouldUseByTagNameWhenNoText() {
-        // Given
-        Map<String, String> elementData = Map.of("tagName", "A");
-        ClickElement action = new ClickElement(valueProvider, uri, elementData, false);
-        WebDriver wd = mock(WebDriver.class);
-        WebElement visibleElement = visibleElement();
-        ArgumentCaptor<By> byCaptor = ArgumentCaptor.forClass(By.class);
-        given(wd.findElement(byCaptor.capture())).willReturn(visibleElement);
-        given(wd.findElements(any(By.class))).willReturn(List.of());
-
-        // When
-        boolean result = action.run(waitStrategy, wd);
-
-        // Then
-        assertThat(result, is(equalTo(true)));
-        assertThat(byCaptor.getValue(), is(By.tagName("A")));
+        assertThat(result, is(equalTo(false)));
+        assertThat(stats.getStat("stats.client.spider.action.click.tag.A.noby"), is(1L));
     }
 
     @ParameterizedTest
     @MethodSource("provideIsSupportedData")
-    void shouldReturnExpectedSupportedValue(Map<String, String> data, boolean expected) {
+    void shouldReturnExpectedSupportedValue(ClientSideComponent component, boolean expected) {
         // Given
         Predicate<String> scopeChecker = href -> true;
 
         // When
-        boolean supported = ClickElement.isSupported(scopeChecker, data);
+        boolean supported = ClickElement.isSupported(scopeChecker, component);
 
         // Then
         assertThat(supported, is(expected));
@@ -306,33 +244,73 @@ class ClickElementUnitTest {
 
     static Stream<Arguments> provideIsSupportedData() {
         return Stream.of(
-                arguments(Map.of(), false),
-                arguments(Map.of("tagName", "A"), true),
-                arguments(Map.of("tagName", "BUTTON"), true),
-                arguments(Map.of("tagName", "INPUT", "tagType", "submit"), true),
-                arguments(Map.of("tagName", "INPUT", "tagType", "button"), true),
-                arguments(Map.of("tagName", "INPUT", "tagType", "text"), false),
-                arguments(Map.of("tagName", "FORM"), false));
+                arguments(component(null, ""), false),
+                arguments(component("A", ""), true),
+                arguments(component("BUTTON", ""), true),
+                arguments(component("INPUT", "submit"), true),
+                arguments(component("INPUT", "button"), true),
+                arguments(component("INPUT", "text"), false),
+                arguments(component("FORM", ""), false));
     }
 
     @Test
     void shouldNotSupportWhenHrefOutOfScope() {
         // Given
-        Map<String, String> data = Map.of("tagName", "A", "href", "http://other.example.com/");
+        ClientSideComponent component =
+                new ClientSideComponent(
+                        Map.of(),
+                        "A",
+                        "",
+                        "http://example.com",
+                        "http://other.example.com/",
+                        "",
+                        Type.LINK,
+                        "",
+                        -1);
         Predicate<String> scopeChecker = href -> false;
 
         // When / Then
-        assertThat(ClickElement.isSupported(scopeChecker, data), is(false));
+        assertThat(ClickElement.isSupported(scopeChecker, component), is(false));
     }
 
     @Test
     void shouldSupportWhenHrefInScope() {
         // Given
-        Map<String, String> data = Map.of("tagName", "A", "href", "http://example.com/page");
+        ClientSideComponent component =
+                new ClientSideComponent(
+                        Map.of(),
+                        "A",
+                        "",
+                        "http://example.com",
+                        "http://example.com/page",
+                        "",
+                        Type.LINK,
+                        "",
+                        -1);
         Predicate<String> scopeChecker = href -> true;
 
         // When / Then
-        assertThat(ClickElement.isSupported(scopeChecker, data), is(true));
+        assertThat(ClickElement.isSupported(scopeChecker, component), is(true));
+    }
+
+    private static ClientSideComponent componentWithLocator(
+            String tagName, String locatorType, String locatorValue) {
+        ClientSideComponent c = component(tagName, "");
+        c.setElementLocator(new ElementLocator(locatorType, locatorValue));
+        return c;
+    }
+
+    private static ClientSideComponent component(String tagName, String tagType) {
+        return new ClientSideComponent(
+                Map.of(),
+                tagName,
+                "",
+                "http://example.com",
+                null,
+                "",
+                tagName != null ? Type.LINK : Type.UNKNOWN,
+                tagType,
+                -1);
     }
 
     private static WebElement visibleElement() {

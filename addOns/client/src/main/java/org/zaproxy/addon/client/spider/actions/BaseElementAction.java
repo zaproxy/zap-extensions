@@ -28,6 +28,7 @@ import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.zaproxy.addon.client.internal.ClientSideComponent;
 import org.zaproxy.addon.client.spider.ActionWaitStrategy;
 import org.zaproxy.addon.client.spider.SpiderAction;
 import org.zaproxy.addon.commonlib.ValueProvider;
@@ -39,10 +40,13 @@ abstract class BaseElementAction implements SpiderAction {
 
     private final ValueProvider valueProvider;
     private final URI uri;
+    protected final ClientSideComponent component;
 
-    protected BaseElementAction(ValueProvider valueProvider, URI uri) {
+    protected BaseElementAction(
+            ValueProvider valueProvider, URI uri, ClientSideComponent component) {
         this.valueProvider = Objects.requireNonNull(valueProvider);
         this.uri = Objects.requireNonNull(uri);
+        this.component = Objects.requireNonNull(component);
     }
 
     protected URI getUri() {
@@ -54,7 +58,7 @@ abstract class BaseElementAction implements SpiderAction {
         String statsPrefix = getStatsPrefix();
         Stats.incCounter(statsPrefix);
 
-        By by = getElementBy();
+        By by = component.getBy();
         if (by == null) {
             Stats.incCounter(statsPrefix + ".noby");
             return false;
@@ -77,8 +81,6 @@ abstract class BaseElementAction implements SpiderAction {
     }
 
     protected abstract String getStatsPrefix();
-
-    protected abstract By getElementBy();
 
     protected abstract boolean run(
             ActionWaitStrategy waitStrategy, WebDriver wd, WebElement element, String statsPrefix);

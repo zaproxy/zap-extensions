@@ -29,7 +29,6 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
@@ -40,7 +39,6 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.IntSupplier;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -371,9 +369,8 @@ public class ClientSpider implements GenericScanner2 {
                     && isUrlInScope(nodeUrl)) {
                 addFollowGraphTask(nodeUrl);
                 for (ClientSideComponent component : details.getComponents()) {
-                    Map<String, String> data = component.getData();
-                    if (SubmitForm.isSupported(data)) {
-                        addSubmitTask(nodeUrl, data);
+                    if (SubmitForm.isSupported(component)) {
+                        addSubmitTask(nodeUrl, component);
                     }
                 }
             }
@@ -408,12 +405,13 @@ public class ClientSpider implements GenericScanner2 {
         }
     }
 
-    private void addSubmitTask(String nodeUrl, Map<String, String> data) {
+    private void addSubmitTask(String nodeUrl, ClientSideComponent component) {
         addTask(
                 nodeUrl,
-                followGraphAction(nodeUrl, new SubmitForm(valueProvider, createUri(nodeUrl), data)),
+                followGraphAction(
+                        nodeUrl, new SubmitForm(valueProvider, createUri(nodeUrl), component)),
                 Constant.messages.getString("client.spider.panel.table.action.submit"),
-                paramsToString(data));
+                paramsToString(component));
     }
 
     private ClientSpiderTask addTask(
@@ -490,8 +488,7 @@ public class ClientSpider implements GenericScanner2 {
         private static final Pattern SCHEME_PATTERN =
                 Pattern.compile("^https?://", Pattern.CASE_INSENSITIVE);
 
-        private boolean shouldIgnore(
-                String url, int source, IntSupplier depthSupplier, IntSupplier childrenSupplier) {
+        private boolean shouldIgnore(String url, int source, int depth, int siblings) {
             if (stopping.get() || stopped || !proxyPorts.contains(source)) {
                 return true;
             }
@@ -505,7 +502,6 @@ public class ClientSpider implements GenericScanner2 {
             }
 
             if (options.getMaxDepth() > 0) {
-                int depth = depthSupplier.getAsInt();
                 if (depth > options.getMaxDepth()) {
                     LOGGER.debug(
                             "Ignoring URL - too deep {} > {} : {}",
@@ -518,7 +514,6 @@ public class ClientSpider implements GenericScanner2 {
             }
 
             if (options.getMaxChildren() > 0) {
-                int siblings = childrenSupplier.getAsInt();
                 if (siblings > options.getMaxChildren()) {
                     LOGGER.debug(
                             "Ignoring URL - too wide {} > {} : {}",
@@ -545,7 +540,7 @@ public class ClientSpider implements GenericScanner2 {
             if (scanOptions.isExistingOnly()) {
                 return;
             }
-            if (shouldIgnore(url, source, () -> depth, () -> siblings)) {
+            if (shouldIgnore(url, source, depth, siblings)) {
                 return;
             }
 
@@ -553,13 +548,13 @@ public class ClientSpider implements GenericScanner2 {
             addDiscoveredUrl(url);
         }
 
-        private boolean isHrefAlreadyHandled(Map<String, String> parameters) {
-            String href = parameters.get("href");
+        private boolean isHrefAlreadyHandled(ClientSideComponent component) {
+            String href = component.getHref();
             if (href == null || !SCHEME_PATTERN.matcher(href).find()) {
                 return false;
             }
 
-            String sourceUrl = parameters.get(ClientMap.URL_KEY);
+            String sourceUrl = component.getParentUrl();
             if (sourceUrl.equals(href)) {
                 return true;
             }
@@ -579,34 +574,31 @@ public class ClientSpider implements GenericScanner2 {
         }
 
         @Override
-        public void componentAdded(Map<String, String> parameters, int source) {
+        public void componentAdded(
+                ClientSideComponent component, int depth, int siblings, int source) {
             if (scanOptions.isExistingOnly()) {
                 return;
             }
-            String url = parameters.get(ClientMap.URL_KEY);
-            if (shouldIgnore(
-                    url,
-                    source,
-                    () -> Integer.parseInt(parameters.get(ClientMap.DEPTH_KEY)),
-                    () -> Integer.parseInt(parameters.get(ClientMap.SIBLINGS_KEY)))) {
+            String url = component.getParentUrl();
+            if (shouldIgnore(url, source, depth, siblings)) {
                 return;
             }
 
             Stats.incCounter("stats.client.spider.event.component");
-            if (ClickElement.isSupported(ClientSpider.this::isUrlInScope, parameters)
-                    && !(options.isLogoutAvoidance() && isLogoutElement(parameters))
-                    && !isHrefAlreadyHandled(parameters)) {
+            if (ClickElement.isSupported(ClientSpider.this::isUrlInScope, component)
+                    && !(options.isLogoutAvoidance() && isLogoutElement(component))
+                    && !isHrefAlreadyHandled(component)) {
                 Stats.incCounter("stats.client.spider.event.component.click");
                 addTask(
                         url,
                         followGraphAction(
                                 url,
-                                new ClickElement(valueProvider, createUri(url), parameters, false)),
+                                new ClickElement(valueProvider, createUri(url), component, false)),
                         Constant.messages.getString("client.spider.panel.table.action.click"),
-                        paramsToString(parameters));
-            } else if (SubmitForm.isSupported(parameters)) {
+                        paramsToString(component));
+            } else if (SubmitForm.isSupported(component)) {
                 Stats.incCounter("stats.client.spider.event.component.form");
-                addSubmitTask(url, parameters);
+                addSubmitTask(url, component);
             }
         }
     }
@@ -666,8 +658,8 @@ public class ClientSpider implements GenericScanner2 {
         return state;
     }
 
-    private static boolean isLogoutElement(Map<String, String> parameters) {
-        String text = parameters.get("text");
+    private static boolean isLogoutElement(ClientSideComponent component) {
+        String text = component.getText();
         if (text == null || text.isBlank()) {
             return false;
         }
@@ -675,21 +667,21 @@ public class ClientSpider implements GenericScanner2 {
         return AuthConstants.getLogoutIndicators().stream().anyMatch(normalized::contains);
     }
 
-    private static String paramsToString(Map<String, String> parameters) {
-        String tag = parameters.get("tagName");
+    private static String paramsToString(ClientSideComponent component) {
+        String tag = component.getTagName();
         if (tag != null) {
             switch (tag) {
                 case "A":
                     return Constant.messages.getString(
                             "client.spider.panel.table.details.link",
-                            parameters.get("href"),
-                            parameters.get("text"));
+                            component.getHref(),
+                            component.getText());
                 case "BUTTON":
                     return Constant.messages.getString(
-                            "client.spider.panel.table.details.button", parameters.get("text"));
+                            "client.spider.panel.table.details.button", component.getText());
             }
         }
-        return parameters.toString();
+        return component.getData().toString();
     }
 
     private static URI createUri(String value) {

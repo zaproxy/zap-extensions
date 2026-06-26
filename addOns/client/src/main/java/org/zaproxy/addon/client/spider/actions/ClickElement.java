@@ -19,16 +19,14 @@
  */
 package org.zaproxy.addon.client.spider.actions;
 
-import java.util.Map;
-import java.util.Objects;
 import java.util.function.Predicate;
 import org.apache.commons.httpclient.URI;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.zaproxy.addon.client.internal.ClientSideComponent;
 import org.zaproxy.addon.client.spider.ActionWaitStrategy;
 import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.zap.utils.Stats;
@@ -39,20 +37,13 @@ public class ClickElement extends BaseElementAction {
 
     private static final String STATS_PREFIX = "stats.client.spider.action.click";
 
-    private final Map<String, String> elementData;
     private final boolean passive;
-    private final String tagName;
 
     public ClickElement(
-            ValueProvider valueProvider,
-            URI uri,
-            Map<String, String> elementData,
-            boolean passive) {
-        super(valueProvider, uri);
+            ValueProvider valueProvider, URI uri, ClientSideComponent component, boolean passive) {
+        super(valueProvider, uri, component);
 
-        this.elementData = Objects.requireNonNull(elementData);
         this.passive = passive;
-        tagName = getTagName(elementData);
     }
 
     @Override
@@ -74,41 +65,18 @@ public class ClickElement extends BaseElementAction {
     }
 
     @Override
-    protected By getElementBy() {
-        return getBy(elementData);
-    }
-
-    @Override
     protected String getStatsPrefix() {
-        return STATS_PREFIX + ".tag." + tagName;
+        return STATS_PREFIX + ".tag." + component.getTagName();
     }
 
-    private static By getBy(Map<String, String> data) {
-        String id = data.get("id");
-        if (StringUtils.isNotBlank(id)) {
-            return By.id(id);
-        }
-
-        String tag = getTagName(data);
-        String text = data.get("text");
-        if ("INPUT".equalsIgnoreCase(tag)) {
-            return By.xpath("//" + tag + "[@value='" + text + "']");
-        }
-
-        if (StringUtils.isNotBlank(text)) {
-            return By.xpath("//" + tag + "[contains(text(), '" + text + "')]");
-        }
-
-        return By.tagName(tag);
-    }
-
-    public static boolean isSupported(Predicate<String> scopeChecker, Map<String, String> data) {
-        String tag = getTagName(data);
+    public static boolean isSupported(
+            Predicate<String> scopeChecker, ClientSideComponent component) {
+        String tag = component.getTagName();
         if (tag == null) {
             return false;
         }
 
-        String href = data.get("href");
+        String href = component.getHref();
         if (href != null && !scopeChecker.test(href)) {
             return false;
         }
@@ -118,7 +86,7 @@ public class ClickElement extends BaseElementAction {
                 return true;
 
             case "INPUT":
-                String type = data.get("tagType");
+                String type = component.getTagType();
                 return "submit".equalsIgnoreCase(type) || "button".equalsIgnoreCase(type);
 
             default:
