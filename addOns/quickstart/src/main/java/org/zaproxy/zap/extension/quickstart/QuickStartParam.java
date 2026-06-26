@@ -26,7 +26,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zaproxy.zap.common.VersionedAbstractParam;
 import org.zaproxy.zap.extension.api.ZapApiIgnore;
-import org.zaproxy.zap.extension.quickstart.ajaxspider.AjaxSpiderExplorer;
 
 public class QuickStartParam extends VersionedAbstractParam {
 
@@ -61,6 +60,10 @@ public class QuickStartParam extends VersionedAbstractParam {
     private static final String PARAM_AJAX_SPIDER_DEFAULT_BROWSER =
             PARAM_AJAX_BASE_KEY + ".browser";
 
+    private static final String PARAM_MODERN_BASE_KEY = PARAM_BASE_KEY + ".modern";
+
+    private static final String PARAM_MODERN_SPIDER_TYPE = PARAM_MODERN_BASE_KEY + ".type";
+
     private static final String PARAM_CLEARED_NEWS_ITEM = PARAM_BASE_KEY + ".clearedNews";
 
     private static final String PARAM_SCAN_POLICY_NAME = PARAM_BASE_KEY + ".scanPolicyName";
@@ -91,6 +94,7 @@ public class QuickStartParam extends VersionedAbstractParam {
 
     private String ajaxSpiderSelection;
     private String ajaxSpiderDefaultBrowser;
+    private String modernSpiderType;
     private String clearedNewsItem;
     private String scanPolicyName;
 
@@ -126,7 +130,7 @@ public class QuickStartParam extends VersionedAbstractParam {
                     getConfig()
                             .getString(
                                     PARAM_AJAX_SPIDER_SELECTION,
-                                    AjaxSpiderExplorer.Select.MODERN.name());
+                                    ModernSpiderPanel.Select.MODERN.name());
         } catch (Exception e) {
             LOGGER.error("Failed to load the ajax spider selection", e);
         }
@@ -135,6 +139,11 @@ public class QuickStartParam extends VersionedAbstractParam {
                     getConfig().getString(PARAM_AJAX_SPIDER_DEFAULT_BROWSER, DEFAULT_BROWSER);
         } catch (Exception e) {
             LOGGER.error("Failed to load the Ajax \"Default Browser\" configuration", e);
+        }
+        try {
+            modernSpiderType = getConfig().getString(PARAM_MODERN_SPIDER_TYPE, "");
+        } catch (Exception e) {
+            LOGGER.error("Failed to load the modern spider type configuration", e);
         }
         try {
             clearedNewsItem = getConfig().getString(PARAM_CLEARED_NEWS_ITEM, "");
@@ -240,6 +249,16 @@ public class QuickStartParam extends VersionedAbstractParam {
     public void setAjaxSpiderDefaultBrowser(String ajaxSpiderDefaultBrowser) {
         this.ajaxSpiderDefaultBrowser = ajaxSpiderDefaultBrowser;
         getConfig().setProperty(PARAM_AJAX_SPIDER_DEFAULT_BROWSER, ajaxSpiderDefaultBrowser);
+        QuickStartHelper.raiseOptionsChangedEvent();
+    }
+
+    public String getModernSpiderType() {
+        return modernSpiderType;
+    }
+
+    public void setModernSpiderType(String modernSpiderType) {
+        this.modernSpiderType = modernSpiderType;
+        getConfig().setProperty(PARAM_MODERN_SPIDER_TYPE, modernSpiderType);
         QuickStartHelper.raiseOptionsChangedEvent();
     }
 

@@ -40,7 +40,7 @@ public class AttackThread extends Thread {
         notstarted,
         started,
         spider,
-        ajaxspider,
+        modernspider,
         ascan,
         failed,
         complete,
@@ -151,20 +151,21 @@ public class AttackThread extends Thread {
                 return;
             }
 
-            // optionally invoke ajax spider here
+            // optionally invoke modern spider here
             if (plugableSpider != null && plugableSpider.isSelected()) {
                 plugableSpider.startScan(this.url.toURI());
                 sleep(1500);
 
                 try {
-                    // Wait for the ajax spider to complete
+                    // Wait for the modern spider to complete
                     while (plugableSpider.isRunning()) {
                         sleep(500);
                         if (this.stopAttack) {
                             plugableSpider.stopScan();
-                            break;
+                            extension.notifyProgress(Progress.stopped);
+                            return;
                         }
-                        extension.notifyProgress(Progress.ajaxspider);
+                        extension.notifyProgress(Progress.modernspider);
                     }
                 } catch (InterruptedException e) {
                     // Ignore
