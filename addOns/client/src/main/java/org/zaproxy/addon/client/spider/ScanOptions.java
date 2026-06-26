@@ -75,6 +75,13 @@ public class ScanOptions {
      */
     @Builder.Default private final List<String> excludeExtensions = Collections.emptyList();
 
+    /**
+     * When {@code true} the spider revisits all nodes already in the Client Map without discovering
+     * or queuing any new URLs or components. Use this when active scan rules need a live browser
+     * session for known pages without triggering further crawling.
+     */
+    @Builder.Default private final boolean existingOnly = false;
+
     /** A builder of options. */
     public static class Builder {
 

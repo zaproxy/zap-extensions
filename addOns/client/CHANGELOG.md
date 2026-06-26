@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Client Spider existingOnly option, e.g. for scan rules.
+ 
 ### Changed
 - Reduce duplicated accesses while crawling.
 - Use adaptive wait by default for page load and action waits while crawling.
