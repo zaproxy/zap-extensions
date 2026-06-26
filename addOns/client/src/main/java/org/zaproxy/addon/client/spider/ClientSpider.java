@@ -71,6 +71,7 @@ import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.addon.client.internal.ClientMap;
 import org.zaproxy.addon.client.internal.ClientMapListener;
 import org.zaproxy.addon.client.internal.ClientNode;
+import org.zaproxy.addon.client.internal.ClientSideComponent;
 import org.zaproxy.addon.client.internal.ClientSideDetails;
 import org.zaproxy.addon.client.internal.graph.ClientGraphVertex;
 import org.zaproxy.addon.client.spider.ClientSpiderOptions.ScopeCheck;
@@ -293,14 +294,18 @@ public class ClientSpider implements GenericScanner2 {
                         new ClientSpiderThreadFactory(
                                 scanOptions.getThreadPrefix() + scanId + "-thread-"));
 
-        addTask(
-                targetUrl,
-                followGraphAction(targetUrl),
-                Constant.messages.getString("client.spider.panel.table.action.get"),
-                "");
+        if (scanOptions.isExistingOnly()) {
+            addExistingTasks(clientMap.getRoot());
+        } else {
+            addTask(
+                    targetUrl,
+                    followGraphAction(targetUrl),
+                    Constant.messages.getString("client.spider.panel.table.action.get"),
+                    "");
 
-        // Add all of the known but unvisited URLs otherwise these will get ignored
-        getUnvisitedUrls().forEach(this::addFollowGraphTask);
+            // Add all of the known but unvisited URLs otherwise these will get ignored
+            getUnvisitedUrls().forEach(this::addFollowGraphTask);
+        }
     }
 
     private List<SpiderAction> followGraphAction(String url, SpiderAction... additionalActions) {
@@ -357,6 +362,27 @@ public class ClientSpider implements GenericScanner2 {
         }
     }
 
+    private void addExistingTasks(ClientNode node) {
+        if (!node.isRoot()) {
+            ClientSideDetails details = node.getUserObject();
+            String nodeUrl = details.getUrl();
+            if (!node.isStorage()
+                    && (details.isVisited() || details.isContentLoaded())
+                    && isUrlInScope(nodeUrl)) {
+                addFollowGraphTask(nodeUrl);
+                for (ClientSideComponent component : details.getComponents()) {
+                    Map<String, String> data = component.getData();
+                    if (SubmitForm.isSupported(data)) {
+                        addSubmitTask(nodeUrl, data);
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < node.getChildCount(); i++) {
+            addExistingTasks(node.getChildAt(i));
+        }
+    }
+
     public WebDriverProcess getWebDriverProcess() {
         WebDriverProcess wdp;
         synchronized (this.webDriverPool) {
@@ -380,6 +406,14 @@ public class ClientSpider implements GenericScanner2 {
             this.webDriverActive.remove(wdp);
             this.webDriverPool.add(wdp);
         }
+    }
+
+    private void addSubmitTask(String nodeUrl, Map<String, String> data) {
+        addTask(
+                nodeUrl,
+                followGraphAction(nodeUrl, new SubmitForm(valueProvider, createUri(nodeUrl), data)),
+                Constant.messages.getString("client.spider.panel.table.action.submit"),
+                paramsToString(data));
     }
 
     private ClientSpiderTask addTask(
@@ -508,6 +542,9 @@ public class ClientSpider implements GenericScanner2 {
 
         @Override
         public void nodeAdded(String url, int depth, int siblings, int source) {
+            if (scanOptions.isExistingOnly()) {
+                return;
+            }
             if (shouldIgnore(url, source, () -> depth, () -> siblings)) {
                 return;
             }
@@ -543,6 +580,9 @@ public class ClientSpider implements GenericScanner2 {
 
         @Override
         public void componentAdded(Map<String, String> parameters, int source) {
+            if (scanOptions.isExistingOnly()) {
+                return;
+            }
             String url = parameters.get(ClientMap.URL_KEY);
             if (shouldIgnore(
                     url,
@@ -566,12 +606,7 @@ public class ClientSpider implements GenericScanner2 {
                         paramsToString(parameters));
             } else if (SubmitForm.isSupported(parameters)) {
                 Stats.incCounter("stats.client.spider.event.component.form");
-                addTask(
-                        url,
-                        followGraphAction(
-                                url, new SubmitForm(valueProvider, createUri(url), parameters)),
-                        Constant.messages.getString("client.spider.panel.table.action.submit"),
-                        paramsToString(parameters));
+                addSubmitTask(url, parameters);
             }
         }
     }

@@ -30,6 +30,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -43,6 +44,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -88,6 +90,7 @@ import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.addon.client.internal.ClientMap;
 import org.zaproxy.addon.client.internal.ClientMapListener;
 import org.zaproxy.addon.client.internal.ClientNode;
+import org.zaproxy.addon.client.internal.ClientSideComponent;
 import org.zaproxy.addon.client.internal.ClientSideDetails;
 import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
@@ -863,6 +866,103 @@ class ClientSpiderUnitTest extends TestUtils {
             HttpMessageHandlerContext ctx,
             HttpMessage redirectMessage) {}
 
+    @Test
+    void shouldVisitVisitedAndContentLoadedNodesWhenExistingOnly() {
+        // Given
+        String visitedUrl = "https://www.example.com/visited";
+        String loadedUrl = "https://www.example.com/loaded";
+        String unvisitedUrl = "https://www.example.com/unvisited";
+
+        ClientNode root =
+                mockRootNode(
+                        mockClientNode(visitedUrl, false, true, false),
+                        mockClientNode(loadedUrl, false, false, true),
+                        mockClientNode(unvisitedUrl, false, false, false));
+        given(map.getRoot()).willReturn(root);
+        useExistingOnlySpider();
+
+        // When
+        spider.run();
+        sleep();
+
+        // Then
+        ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
+        verify(wd, atLeastOnce()).get(argument.capture());
+        assertThat(argument.getAllValues(), contains(visitedUrl, loadedUrl));
+    }
+
+    @Test
+    void shouldNotFollowNewUrlsDiscoveredDuringExistingOnlyScan() {
+        // Given
+        String existingUrl = "https://www.example.com/existing";
+        String newUrl = "https://www.example.com/new";
+
+        ClientNode root = mockRootNode(mockClientNode(existingUrl, false, true, false));
+        given(map.getRoot()).willReturn(root);
+        useExistingOnlySpider();
+        spider.run();
+        waitForProxy();
+
+        // When
+        clientMapListener().nodeAdded(newUrl, 0, 0, PROXY_PORT);
+        sleep();
+
+        // Then
+        verify(wd, never()).get(newUrl);
+    }
+
+    @Test
+    void shouldNotProcessComponentsDiscoveredDuringExistingOnlyScan() {
+        // Given
+        String existingUrl = "https://www.example.com/existing";
+
+        ClientNode root = mockRootNode(mockClientNode(existingUrl, false, true, false));
+        given(map.getRoot()).willReturn(root);
+        useExistingOnlySpider();
+        spider.run();
+        waitForProxy();
+
+        // When
+        clientMapListener()
+                .componentAdded(
+                        Map.of(
+                                ClientMap.URL_KEY,
+                                existingUrl,
+                                "tagName",
+                                "A",
+                                "text",
+                                "Some Link",
+                                "depth",
+                                "1"),
+                        PROXY_PORT);
+        sleep();
+
+        // Then
+        verify(wd, never()).findElement(any());
+    }
+
+    @Test
+    void shouldSubmitKnownFormComponentsWhenExistingOnly() {
+        // Given
+        String pageUrl = "https://www.example.com/form-page";
+
+        ClientNode pageNode = mockClientNode(pageUrl, false, true, false);
+        ClientSideComponent form = mockFormComponent(0);
+        ClientSideDetails pageDetails = pageNode.getUserObject();
+        given(pageDetails.getComponents()).willReturn(Set.of(form));
+
+        ClientNode root = mockRootNode(pageNode);
+        given(map.getRoot()).willReturn(root);
+        useExistingOnlySpider();
+
+        // When
+        spider.run();
+        sleep();
+
+        // Then - FollowGraph navigates to the page, then SubmitForm finds and submits the form
+        verify(wd).findElement(By.xpath("(//FORM)[1]"));
+    }
+
     class SpiderStatus {
         private boolean running;
         private boolean paused;
@@ -905,6 +1005,41 @@ class ClientSpiderUnitTest extends TestUtils {
 
     private static void mockChild(ClientNode parent, int index, ClientNode child) {
         given(parent.getChildAt(index)).willReturn(child);
+    }
+
+    private void useExistingOnlySpider() {
+        clearInvocations(map);
+        mapListener = null;
+        spider =
+                new ClientSpider(
+                        extClient,
+                        map,
+                        "",
+                        seedUrl,
+                        clientOptions,
+                        ScanOptions.builder()
+                                .setExistingOnly(true)
+                                .setExternalControl(true)
+                                .build(),
+                        mock(ValueProvider.class),
+                        1);
+    }
+
+    private static ClientNode mockRootNode(ClientNode... children) {
+        ClientNode root = mock(withSettings().strictness(Strictness.LENIENT));
+        given(root.isRoot()).willReturn(true);
+        given(root.getChildCount()).willReturn(children.length);
+        for (int i = 0; i < children.length; i++) {
+            given(root.getChildAt(i)).willReturn(children[i]);
+        }
+        return root;
+    }
+
+    private static ClientSideComponent mockFormComponent(int formId) {
+        ClientSideComponent component = mock(withSettings().strictness(Strictness.LENIENT));
+        given(component.getData())
+                .willReturn(Map.of("formId", String.valueOf(formId), "tagName", "FORM"));
+        return component;
     }
 
     private static void sleep() {
