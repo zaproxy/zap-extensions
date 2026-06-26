@@ -33,6 +33,7 @@ import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -223,7 +224,7 @@ class ClientSpiderUnitTest extends TestUtils {
         spider.stopScan();
 
         // Then
-        verify(map).removeListener(clientMapListener());
+        verify(map, timeout(5000)).removeListener(clientMapListener());
     }
 
     private ClientMapListener clientMapListener() {
@@ -399,6 +400,7 @@ class ClientSpiderUnitTest extends TestUtils {
         spider.resumeScan();
         statusPostResume = new SpiderStatus(spider);
         spider.stopScan();
+        sleep();
         statusPostStop = new SpiderStatus(spider);
 
         // Then

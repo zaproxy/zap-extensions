@@ -29,6 +29,7 @@ import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
@@ -256,7 +257,7 @@ class SpiderScanControllerUnitTest extends TestUtils {
 
         // Then
         assertThat(spider.isExternalControl(), is(false));
-        verify(listener).scanFinshed(anyInt(), any());
+        verify(listener, timeout(5000)).scanFinshed(anyInt(), any());
     }
 
     @Test
