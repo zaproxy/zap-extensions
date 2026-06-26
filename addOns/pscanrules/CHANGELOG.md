@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [74] - 2026-06-26
 ### Changed
 - Update dependency.
 - Updated a reference link for the Sub Resource Integrity Attribute Missing scan rule.
@@ -685,6 +685,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[74]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v74
 [73]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v73
 [72]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v72
 [71]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v71

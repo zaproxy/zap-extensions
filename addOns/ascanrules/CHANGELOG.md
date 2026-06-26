@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [83] - 2026-06-26
 ### Changed
 - Updated a reference link for the XSLT Injection scan rule.
 
@@ -695,6 +695,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[83]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v83
 [82]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v82
 [81]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v81
 [80]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v80
