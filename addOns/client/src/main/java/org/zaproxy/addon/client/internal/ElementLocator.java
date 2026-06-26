@@ -17,28 +17,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.client.spider;
+package org.zaproxy.addon.client.internal;
 
-import org.zaproxy.addon.client.internal.ClientMapListener;
-import org.zaproxy.addon.client.internal.ClientSideComponent;
-import org.zaproxy.addon.client.spider.ClientSpider.WebDriverProcess;
+import net.sf.json.JSONObject;
 
-public interface ActionWaitStrategy extends ClientMapListener {
+public record ElementLocator(String type, String element) {
 
-    void configure(WebDriverProcess wdp);
-
-    boolean waitAfterPageLoad(String url);
-
-    boolean waitAfterAction();
-
-    default void onRequestStarted(String url) {}
-
-    default void onRequestCompleted(String url) {}
-
-    @Override
-    default void nodeAdded(String url, int depth, int siblings, int source) {}
-
-    @Override
-    default void componentAdded(
-            ClientSideComponent component, int depth, int siblings, int source) {}
+    public static ElementLocator fromJson(JSONObject json) {
+        return new ElementLocator(json.getString("type"), json.getString("element"));
+    }
 }

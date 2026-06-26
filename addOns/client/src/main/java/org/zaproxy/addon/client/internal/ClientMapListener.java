@@ -19,8 +19,6 @@
  */
 package org.zaproxy.addon.client.internal;
 
-import java.util.Map;
-
 /** Listener notified when nodes or components are added to a {@link ClientMap}. */
 public interface ClientMapListener {
 
@@ -38,11 +36,13 @@ public interface ClientMapListener {
     /**
      * Called when a component is added to a node in the map.
      *
-     * @param parameters the component data parameters.
+     * @param component the component that was added.
+     * @param depth the depth of the node in the map.
+     * @param siblings the sibling count of the node (including itself) after insertion.
      * @param source an identifier for the source that triggered the addition, or {@code 0} if the
      *     source is unknown.
      */
-    void componentAdded(Map<String, String> parameters, int source);
+    void componentAdded(ClientSideComponent component, int depth, int siblings, int source);
 
     /**
      * Called when a page-load event is reported for a URL.

@@ -47,6 +47,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.addon.client.internal.ClientSideComponent;
+import org.zaproxy.addon.client.internal.ElementLocator;
 import org.zaproxy.addon.client.internal.graph.ClientGraphVertex;
 import org.zaproxy.addon.client.spider.ActionWaitStrategy;
 import org.zaproxy.addon.commonlib.ValueProvider;
@@ -264,9 +265,19 @@ class FollowGraphUnitTest extends TestUtils {
     }
 
     private static ClientSideComponent createLinkComponent(String parentUrl, String href) {
-        Map<String, String> data = Map.of("tagName", "A", "url", parentUrl, "href", href);
-        return new ClientSideComponent(
-                data, "A", null, parentUrl, href, null, ClientSideComponent.Type.LINK, null, -1);
+        ClientSideComponent component =
+                new ClientSideComponent(
+                        Map.of(),
+                        "A",
+                        null,
+                        parentUrl,
+                        href,
+                        null,
+                        ClientSideComponent.Type.LINK,
+                        null,
+                        -1);
+        component.setElementLocator(new ElementLocator("xpath", "//a[@href='" + href + "']"));
+        return component;
     }
 
     private void addGraphEdge(String sourceUrl, ClientSideComponent component, String targetUrl) {

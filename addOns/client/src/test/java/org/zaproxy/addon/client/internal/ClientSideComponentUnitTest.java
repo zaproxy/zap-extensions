@@ -25,6 +25,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
@@ -39,6 +40,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.openqa.selenium.By;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.addon.client.internal.ClientSideComponent.Type;
 import org.zaproxy.zap.testutils.TestUtils;
@@ -505,5 +507,84 @@ class ClientSideComponentUnitTest extends TestUtils {
         assertThat(state.isVisible(), is(true));
         assertThat(state.isEnabled(), is(false));
         assertThat(state.isPointer(), is(true));
+    }
+
+    @Test
+    void shouldReturnNullByWhenNoElementLocator() {
+        // Given
+        ClientSideComponent component =
+                new ClientSideComponent(
+                        Map.of(), "A", "", EXAMPLE_URL, EXAMPLE_URL, "", Type.LINK, "", -1);
+        // When / Then
+        assertThat(component.getBy(), is(nullValue()));
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideLocatorTypes")
+    void shouldReturnCorrectByForLocatorType(
+            String locatorType, String locatorValue, By expectedBy) {
+        // Given
+        ClientSideComponent component =
+                new ClientSideComponent(
+                        Map.of(), "A", "", EXAMPLE_URL, EXAMPLE_URL, "", Type.LINK, "", -1);
+        component.setElementLocator(new ElementLocator(locatorType, locatorValue));
+        // When
+        By by = component.getBy();
+        // Then
+        assertThat(by, is(equalTo(expectedBy)));
+    }
+
+    static Stream<Arguments> provideLocatorTypes() {
+        return Stream.of(
+                Arguments.of("id", "my-id", By.id("my-id")),
+                Arguments.of("className", "my-class", By.className("my-class")),
+                Arguments.of("cssSelector", "div > a", By.cssSelector("div > a")),
+                Arguments.of("xpath", "//div/a", By.xpath("//div/a")));
+    }
+
+    @Test
+    void shouldCacheByOnSubsequentCalls() {
+        // Given
+        ClientSideComponent component =
+                new ClientSideComponent(
+                        Map.of(), "A", "", EXAMPLE_URL, EXAMPLE_URL, "", Type.LINK, "", -1);
+        component.setElementLocator(new ElementLocator("id", "my-id"));
+        // When
+        By first = component.getBy();
+        By second = component.getBy();
+        // Then
+        assertThat(first, is(sameInstance(second)));
+    }
+
+    @Test
+    void shouldDefaultElementLocatorToNullFromJson() {
+        // Given
+        JSONObject json =
+                JSONObject.fromObject(
+                        """
+                        {"tagName": "A", "id": "", "type": "nodeAdded", "url": "%s", "timestamp": 0}"""
+                                .formatted(EXAMPLE_URL));
+        // When
+        ClientSideComponent component = new ClientSideComponent(json);
+        // Then
+        assertThat(component.getElementLocator(), is(nullValue()));
+    }
+
+    @Test
+    void shouldParseElementLocatorFromJson() {
+        // Given
+        JSONObject json =
+                JSONObject.fromObject(
+                        """
+                        {"tagName": "A", "id": "my-link", "type": "nodeAdded", "url": "%s", "timestamp": 0,
+                         "elementLocator": {"type": "id", "element": "my-link"}}"""
+                                .formatted(EXAMPLE_URL));
+        // When
+        ClientSideComponent component = new ClientSideComponent(json);
+        // Then
+        ElementLocator locator = component.getElementLocator();
+        assertThat(locator, is(notNullValue()));
+        assertThat(locator.type(), is("id"));
+        assertThat(locator.element(), is("my-link"));
     }
 }

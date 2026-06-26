@@ -49,6 +49,9 @@ import org.mockito.InOrder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.zaproxy.addon.client.internal.ClientSideComponent;
+import org.zaproxy.addon.client.internal.ClientSideComponent.Type;
+import org.zaproxy.addon.client.internal.ElementLocator;
 import org.zaproxy.addon.client.spider.ActionWaitStrategy;
 import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.zap.extension.stats.InMemoryStats;
@@ -77,15 +80,15 @@ class SubmitFormUnitTest {
     }
 
     @Test
-    void shouldThrowIfElementDataIsNull() {
+    void shouldThrowIfComponentIsNull() {
         assertThrows(NullPointerException.class, () -> new SubmitForm(valueProvider, uri, null));
     }
 
     @Test
     void shouldSubmitFormOnRun() {
         // Given
-        Map<String, String> elementData = Map.of("tagName", "FORM", "formId", "0");
-        SubmitForm action = new SubmitForm(valueProvider, uri, elementData);
+        ClientSideComponent component = formComponent(0, "xpath", "//FORM");
+        SubmitForm action = new SubmitForm(valueProvider, uri, component);
         WebDriver wd = mock(WebDriver.class);
         WebElement form = visibleElement();
         given(wd.findElement(any(By.class))).willReturn(form);
@@ -103,8 +106,8 @@ class SubmitFormUnitTest {
     @Test
     void shouldFillInputsFromFormBeforeSubmitting() {
         // Given
-        Map<String, String> elementData = Map.of("tagName", "FORM", "formId", "0");
-        SubmitForm action = new SubmitForm(valueProvider, uri, elementData);
+        ClientSideComponent component = formComponent(0, "xpath", "//FORM");
+        SubmitForm action = new SubmitForm(valueProvider, uri, component);
         WebDriver wd = mock(WebDriver.class);
         WebElement form = visibleElement();
         given(wd.findElement(any(By.class))).willReturn(form);
@@ -131,8 +134,8 @@ class SubmitFormUnitTest {
     @Test
     void shouldHandleSubmitExceptionGracefully() {
         // Given
-        Map<String, String> elementData = Map.of("tagName", "FORM", "formId", "0");
-        SubmitForm action = new SubmitForm(valueProvider, uri, elementData);
+        ClientSideComponent component = formComponent(0, "xpath", "//FORM");
+        SubmitForm action = new SubmitForm(valueProvider, uri, component);
         WebDriver wd = mock(WebDriver.class);
         WebElement form = visibleElement();
         given(wd.findElement(any(By.class))).willReturn(form);
@@ -149,8 +152,8 @@ class SubmitFormUnitTest {
     @Test
     void shouldIncrementStatsWhenFormNotFound() {
         // Given
-        Map<String, String> elementData = Map.of("tagName", "FORM", "formId", "0");
-        SubmitForm action = new SubmitForm(valueProvider, uri, elementData);
+        ClientSideComponent component = formComponent(0, "xpath", "//FORM");
+        SubmitForm action = new SubmitForm(valueProvider, uri, component);
         WebDriver wd = mock(WebDriver.class);
         given(wd.findElement(any(By.class))).willThrow(RuntimeException.class);
 
@@ -166,8 +169,8 @@ class SubmitFormUnitTest {
     @Test
     void shouldIncrementStatsWhenFormNotDisplayed() {
         // Given
-        Map<String, String> elementData = Map.of("tagName", "FORM", "formId", "0");
-        SubmitForm action = new SubmitForm(valueProvider, uri, elementData);
+        ClientSideComponent component = formComponent(0, "xpath", "//FORM");
+        SubmitForm action = new SubmitForm(valueProvider, uri, component);
         WebDriver wd = mock(WebDriver.class);
         WebElement form = mock(WebElement.class);
         given(wd.findElement(any(By.class))).willReturn(form);
@@ -183,10 +186,10 @@ class SubmitFormUnitTest {
     }
 
     @Test
-    void shouldUseXpathWithFormIndexAndTagName() {
+    void shouldUseByFromElementLocator() {
         // Given
-        Map<String, String> elementData = Map.of("tagName", "FORM", "formId", "1");
-        SubmitForm action = new SubmitForm(valueProvider, uri, elementData);
+        ClientSideComponent component = formComponent(1, "xpath", "(//FORM)[2]");
+        SubmitForm action = new SubmitForm(valueProvider, uri, component);
         WebDriver wd = mock(WebDriver.class);
         WebElement visibleForm = visibleElement();
         ArgumentCaptor<By> byCaptor = ArgumentCaptor.forClass(By.class);
@@ -199,13 +202,14 @@ class SubmitFormUnitTest {
         // Then
         assertThat(result, is(equalTo(true)));
         assertThat(byCaptor.getValue(), is(By.xpath("(//FORM)[2]")));
+        assertThat(stats.getStat("stats.client.spider.action.form.1"), is(1L));
     }
 
     @ParameterizedTest
     @MethodSource("provideIsSupportedData")
-    void shouldReturnExpectedSupportedValue(Map<String, String> data, boolean expected) {
+    void shouldReturnExpectedSupportedValue(ClientSideComponent component, boolean expected) {
         // When
-        boolean supported = SubmitForm.isSupported(data);
+        boolean supported = SubmitForm.isSupported(component);
 
         // Then
         assertThat(supported, is(expected));
@@ -213,10 +217,22 @@ class SubmitFormUnitTest {
 
     static Stream<Arguments> provideIsSupportedData() {
         return Stream.of(
-                arguments(Map.of("tagName", "FORM", "formId", "0"), true),
-                arguments(Map.of("tagName", "FORM"), false),
-                arguments(Map.of("tagName", "DIV", "formId", "0"), false),
-                arguments(Map.of(), false));
+                arguments(componentForTag("FORM", Type.FORM, -1), true),
+                arguments(componentForTag("FORM", Type.FORM, 1), true),
+                arguments(componentForTag("DIV", Type.BUTTON, 0), false),
+                arguments(componentForTag("A", Type.LINK, 0), false));
+    }
+
+    private static ClientSideComponent formComponent(
+            int formId, String locatorType, String locatorValue) {
+        ClientSideComponent c = componentForTag("FORM", Type.FORM, formId);
+        c.setElementLocator(new ElementLocator(locatorType, locatorValue));
+        return c;
+    }
+
+    private static ClientSideComponent componentForTag(String tagName, Type type, int formId) {
+        return new ClientSideComponent(
+                Map.of(), tagName, "", "http://example.com", null, "", type, "", formId);
     }
 
     private static WebElement visibleElement() {

@@ -92,6 +92,7 @@ import org.zaproxy.addon.client.internal.ClientMapListener;
 import org.zaproxy.addon.client.internal.ClientNode;
 import org.zaproxy.addon.client.internal.ClientSideComponent;
 import org.zaproxy.addon.client.internal.ClientSideDetails;
+import org.zaproxy.addon.client.internal.ElementLocator;
 import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.addon.network.ExtensionNetwork;
@@ -573,18 +574,9 @@ class ClientSpiderUnitTest extends TestUtils {
         waitForProxy();
 
         // When
-        clientMapListener()
-                .componentAdded(
-                        Map.of(
-                                ClientMap.URL_KEY,
-                                seedUrl,
-                                "tagName",
-                                "A",
-                                "text",
-                                "Click",
-                                "depth",
-                                "1"),
-                        PROXY_PORT);
+        ClientSideComponent component = linkComponent(seedUrl, "A", "Click");
+        component.setElementLocator(new ElementLocator("xpath", "//A[contains(text(), 'Click')]"));
+        clientMapListener().componentAdded(component, 1, 0, PROXY_PORT);
         sleep();
 
         // Then
@@ -598,18 +590,9 @@ class ClientSpiderUnitTest extends TestUtils {
         waitForProxy();
 
         // When
-        clientMapListener()
-                .componentAdded(
-                        Map.of(
-                                ClientMap.URL_KEY,
-                                seedUrl,
-                                "tagName",
-                                "A",
-                                "text",
-                                "Click",
-                                "depth",
-                                "1"),
-                        1234);
+        ClientSideComponent component = linkComponent(seedUrl, "A", "Click");
+        component.setElementLocator(new ElementLocator("xpath", "//A[contains(text(), 'Click')]"));
+        clientMapListener().componentAdded(component, 1, 0, 1234);
         sleep();
 
         // Then
@@ -627,18 +610,10 @@ class ClientSpiderUnitTest extends TestUtils {
         clientMapListener().nodeAdded(url, 0, 1, PROXY_PORT);
 
         // When
-        clientMapListener()
-                .componentAdded(
-                        Map.of(
-                                ClientMap.URL_KEY,
-                                url,
-                                "tagName",
-                                "area",
-                                "href",
-                                "#",
-                                "depth",
-                                "1"),
-                        PROXY_PORT);
+        ClientSideComponent component =
+                new ClientSideComponent(
+                        Map.of(), "area", "", url, "#", "", ClientSideComponent.Type.LINK, "", -1);
+        clientMapListener().componentAdded(component, 1, 0, PROXY_PORT);
         sleep();
 
         // Then
@@ -665,18 +640,9 @@ class ClientSpiderUnitTest extends TestUtils {
         waitForProxy();
 
         // When
-        clientMapListener()
-                .componentAdded(
-                        Map.of(
-                                ClientMap.URL_KEY,
-                                url,
-                                "tagName",
-                                "A",
-                                "text",
-                                logoutText,
-                                "depth",
-                                "1"),
-                        PROXY_PORT);
+        ClientSideComponent component = linkComponent(url, "A", logoutText);
+        component.setElementLocator(new ElementLocator("xpath", "//A[contains(text(), 'logout')]"));
+        clientMapListener().componentAdded(component, 1, 0, PROXY_PORT);
         sleep();
 
         // Then
@@ -698,21 +664,10 @@ class ClientSpiderUnitTest extends TestUtils {
         spider.run();
         waitForProxy();
 
+        ClientSideComponent component = linkAComponent(seedUrl, href, "Unknown Link");
+
         // When
-        clientMapListener()
-                .componentAdded(
-                        Map.of(
-                                ClientMap.URL_KEY,
-                                seedUrl,
-                                "tagName",
-                                "A",
-                                "href",
-                                href,
-                                "text",
-                                "Unknown Link",
-                                "depth",
-                                "1"),
-                        PROXY_PORT);
+        clientMapListener().componentAdded(component, 1, 0, PROXY_PORT);
         sleep();
 
         // Then
@@ -724,22 +679,10 @@ class ClientSpiderUnitTest extends TestUtils {
         // Given
         spider.run();
         waitForProxy();
+        ClientSideComponent component = linkAComponent(seedUrl, seedUrl, "Same Page Link");
 
         // When
-        clientMapListener()
-                .componentAdded(
-                        Map.of(
-                                ClientMap.URL_KEY,
-                                seedUrl,
-                                "tagName",
-                                "A",
-                                "href",
-                                seedUrl,
-                                "text",
-                                "Same Page Link",
-                                "depth",
-                                "1"),
-                        PROXY_PORT);
+        clientMapListener().componentAdded(component, 1, 0, PROXY_PORT);
         sleep();
 
         // Then
@@ -751,26 +694,14 @@ class ClientSpiderUnitTest extends TestUtils {
         // Given
         String href = "https://www.example.com/queued-once";
         given(map.getNode(href, false, false)).willReturn(null);
+        ClientSideComponent component = linkAComponent(seedUrl, href, "Same Link");
 
         spider.run();
         waitForProxy();
 
-        Map<String, String> params =
-                Map.of(
-                        ClientMap.URL_KEY,
-                        seedUrl,
-                        "tagName",
-                        "A",
-                        "href",
-                        href,
-                        "text",
-                        "Some Link",
-                        "depth",
-                        "1");
-
         // When
-        clientMapListener().componentAdded(params, PROXY_PORT);
-        clientMapListener().componentAdded(params, PROXY_PORT);
+        clientMapListener().componentAdded(component, 1, 0, PROXY_PORT);
+        clientMapListener().componentAdded(component, 1, 0, PROXY_PORT);
         sleep();
 
         // Then
@@ -783,23 +714,11 @@ class ClientSpiderUnitTest extends TestUtils {
         // Given
         spider.run();
         waitForProxy();
-
-        Map<String, String> params =
-                Map.of(
-                        ClientMap.URL_KEY,
-                        seedUrl,
-                        "tagName",
-                        "A",
-                        "href",
-                        href,
-                        "text",
-                        "Some Link",
-                        "depth",
-                        "1");
+        ClientSideComponent component = linkAComponent(seedUrl, href, "Some Link");
 
         // When
-        clientMapListener().componentAdded(params, PROXY_PORT);
-        clientMapListener().componentAdded(params, PROXY_PORT);
+        clientMapListener().componentAdded(component, 1, 0, PROXY_PORT);
+        clientMapListener().componentAdded(component, 1, 0, PROXY_PORT);
         sleep();
 
         // Then
@@ -925,16 +844,7 @@ class ClientSpiderUnitTest extends TestUtils {
         // When
         clientMapListener()
                 .componentAdded(
-                        Map.of(
-                                ClientMap.URL_KEY,
-                                existingUrl,
-                                "tagName",
-                                "A",
-                                "text",
-                                "Some Link",
-                                "depth",
-                                "1"),
-                        PROXY_PORT);
+                        linkAComponent(seedUrl, existingUrl, "Some Link"), 1, 0, PROXY_PORT);
         sleep();
 
         // Then
@@ -960,7 +870,7 @@ class ClientSpiderUnitTest extends TestUtils {
         sleep();
 
         // Then - FollowGraph navigates to the page, then SubmitForm finds and submits the form
-        verify(wd).findElement(By.xpath("(//FORM)[1]"));
+        verify(wd).findElement(By.xpath("//FORM[1]"));
     }
 
     class SpiderStatus {
@@ -985,6 +895,27 @@ class ClientSpiderUnitTest extends TestUtils {
         public boolean isStopped() {
             return stopped;
         }
+    }
+
+    private ClientSideComponent linkAComponent(String parentUrl, String href, String text) {
+        ClientSideComponent component =
+                new ClientSideComponent(
+                        Map.of(),
+                        "A",
+                        "",
+                        parentUrl,
+                        href,
+                        text,
+                        ClientSideComponent.Type.LINK,
+                        "",
+                        -1);
+        component.setElementLocator(new ElementLocator("xpath", "//A[contains(text(), 'logout')]"));
+        return component;
+    }
+
+    private static ClientSideComponent linkComponent(String url, String tagName, String text) {
+        return new ClientSideComponent(
+                Map.of(), tagName, "", url, null, text, ClientSideComponent.Type.LINK, "", -1);
     }
 
     private static ClientNode mockClientNode(
@@ -1037,8 +968,8 @@ class ClientSpiderUnitTest extends TestUtils {
 
     private static ClientSideComponent mockFormComponent(int formId) {
         ClientSideComponent component = mock(withSettings().strictness(Strictness.LENIENT));
-        given(component.getData())
-                .willReturn(Map.of("formId", String.valueOf(formId), "tagName", "FORM"));
+        given(component.getBy()).willReturn(By.xpath("//FORM[" + (formId + 1) + "]"));
+        given(component.getTagName()).willReturn("FORM");
         return component;
     }
 

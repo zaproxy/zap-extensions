@@ -19,14 +19,13 @@
  */
 package org.zaproxy.addon.client.spider.actions;
 
-import java.util.Map;
-import java.util.Objects;
 import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.zaproxy.addon.client.internal.ClientSideComponent;
 import org.zaproxy.addon.client.spider.ActionWaitStrategy;
 import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.zap.utils.Stats;
@@ -37,14 +36,11 @@ public class SubmitForm extends BaseElementAction {
 
     private static final String STATS_PREFIX = "stats.client.spider.action.form";
 
-    private final String tagName;
     private final int formIndex;
 
-    public SubmitForm(ValueProvider valueProvider, URI uri, Map<String, String> elementData) {
-        super(valueProvider, uri);
-        Objects.requireNonNull(elementData);
-        tagName = getTagName(elementData);
-        formIndex = Integer.valueOf(elementData.get("formId"));
+    public SubmitForm(ValueProvider valueProvider, URI uri, ClientSideComponent component) {
+        super(valueProvider, uri, component);
+        this.formIndex = component.getFormId();
     }
 
     @Override
@@ -65,16 +61,11 @@ public class SubmitForm extends BaseElementAction {
     }
 
     @Override
-    protected By getElementBy() {
-        return By.xpath("(//" + tagName + ")[" + (formIndex + 1) + "]");
-    }
-
-    @Override
     protected String getStatsPrefix() {
         return STATS_PREFIX + "." + formIndex;
     }
 
-    public static boolean isSupported(Map<String, String> data) {
-        return data.containsKey("formId") && "FORM".equalsIgnoreCase(getTagName(data));
+    public static boolean isSupported(ClientSideComponent component) {
+        return "FORM".equalsIgnoreCase(component.getTagName());
     }
 }

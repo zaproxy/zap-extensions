@@ -236,13 +236,15 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
         if (!wasVisited || componentAdded) {
             details.setVisited(true);
 
+            int depth = node.getLevel();
+            int siblings = node.getChildCount();
             Map<String, String> map = new HashMap<>(component.getData());
-            map.put(DEPTH_KEY, Integer.toString(node.getLevel()));
-            map.put(SIBLINGS_KEY, Integer.toString(node.getChildCount()));
+            map.put(DEPTH_KEY, Integer.toString(depth));
+            map.put(SIBLINGS_KEY, Integer.toString(siblings));
             ZAP.getEventBus()
                     .publishSyncEvent(
                             this, new Event(this, MAP_COMPONENT_ADDED_EVENT, new Target(), map));
-            listeners.forEach(l -> l.componentAdded(map, source));
+            listeners.forEach(l -> l.componentAdded(component, depth, siblings, source));
             notifyNodeChanged(node);
         }
         return componentAdded;

@@ -37,6 +37,7 @@ import org.openqa.selenium.Rectangle;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
+import org.zaproxy.addon.client.internal.ClientSideComponent;
 import org.zaproxy.addon.client.spider.ActionWaitStrategy;
 import org.zaproxy.addon.commonlib.ValueProvider;
 
@@ -51,9 +52,10 @@ class BaseElementActionUnitTest {
     void setupEach() throws IOException {
         valueProvider = mock(ValueProvider.class);
         uri = new URI("http://localhost:1234/test", true);
+        ClientSideComponent component = mock();
 
         action =
-                new BaseElementAction(valueProvider, uri) {
+                new BaseElementAction(valueProvider, uri, component) {
 
                     @Override
                     protected boolean run(
@@ -67,11 +69,6 @@ class BaseElementActionUnitTest {
                     @Override
                     protected String getStatsPrefix() {
                         return "prefix";
-                    }
-
-                    @Override
-                    protected By getElementBy() {
-                        return null;
                     }
                 };
     }
