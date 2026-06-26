@@ -723,7 +723,7 @@ public class ClientSpider implements GenericScanner2 {
             this.pausedTasks.clear();
             this.paused = false;
         }
-        finished();
+        new Thread(this::finished, "ZAP-ClientSpider-cleanup-" + scanId).start();
     }
 
     @Override
@@ -778,7 +778,7 @@ public class ClientSpider implements GenericScanner2 {
         threadPool.shutdown();
         try {
             if (!threadPool.awaitTermination(
-                    Math.max(1, options.getPageLoadTimeInSecs()) * 2, TimeUnit.SECONDS)) {
+                    Math.max(1, options.getShutdownTimeInSecs()) * 2, TimeUnit.SECONDS)) {
                 LOGGER.warn("Failed to await for all tasks to stop in the expected time.");
                 for (Runnable task : this.threadPool.shutdownNow()) {
                     ((ClientSpiderTask) task).cleanup();
@@ -837,7 +837,8 @@ public class ClientSpider implements GenericScanner2 {
                 try {
                     sleep(SHUTDOWN_SLEEP_INTERVAL);
                 } catch (InterruptedException e) {
-                    // Ignore
+                    Thread.currentThread().interrupt();
+                    break;
                 }
                 if (lastEventReceivedtime > starttime) {
                     LOGGER.debug("Spider not finished..");
@@ -1017,7 +1018,7 @@ public class ClientSpider implements GenericScanner2 {
                     extClient.browserClosing(webDriver);
                     webDriver.quit();
                 } catch (Exception e) {
-                    LOGGER.debug("An error occurred while quitting the browser.", e);
+                    LOGGER.warn("An error occurred while quitting the browser.", e);
                 }
             }
 

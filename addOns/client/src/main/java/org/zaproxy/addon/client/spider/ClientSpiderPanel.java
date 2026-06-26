@@ -21,7 +21,6 @@ package org.zaproxy.addon.client.spider;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
-import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -30,8 +29,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.JXTable;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.SiteNode;
@@ -50,8 +47,6 @@ public class ClientSpiderPanel extends ScanPanel2<ClientSpider, ScanController<C
 
     private static final long serialVersionUID = 1L;
 
-    private static final Logger LOGGER = LogManager.getLogger(ClientSpiderPanel.class);
-
     private static final String ZERO_REQUESTS_LABEL_TEXT = "0";
 
     private static final TaskTableModel EMPTY_ACTIONS_TABLE_MODEL = new TaskTableModel();
@@ -67,7 +62,6 @@ public class ClientSpiderPanel extends ScanPanel2<ClientSpider, ScanController<C
     private JPanel mainPanel;
     private JTabbedPane tabbedPane;
     private JButton scanButton;
-    private JButton stopButton;
     private ZapTable addedNodesTable;
     private JScrollPane addedNodesTableScrollPane;
     private JLabel addedCountNameLabel;
@@ -239,24 +233,6 @@ public class ClientSpiderPanel extends ScanPanel2<ClientSpider, ScanController<C
             messagesTable.setModel(EMPTY_MESSAGES_TABLE_MODEL);
         }
         this.updateAddedCount();
-    }
-
-    @Override
-    protected JButton getStopScanButton() {
-        if (stopButton == null) {
-            stopButton = super.getStopScanButton();
-            for (ActionListener al : stopButton.getActionListeners()) {
-                stopButton.removeActionListener(al);
-            }
-            stopButton.addActionListener(
-                    e -> {
-                        ClientSpider scanner = getSelectedScanner();
-                        if (scanner != null) {
-                            new Thread(scanner::stopScan, "ZAP-ClientSpider-GUI-Stop").start();
-                        }
-                    });
-        }
-        return stopButton;
     }
 
     @Override
