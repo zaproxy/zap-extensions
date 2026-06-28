@@ -9,6 +9,15 @@ Active Scan Rules - Alpha
 <H1>Active Scan Rules - Alpha</H1>
 The following alpha status active scan rules are included in this add-on:
 
+<H2 id="id-40049">JWT None Algorithm</H2>
+Detects servers that accept a JSON Web Token (JWT) with the algorithm set to "none" and an empty signature.
+This allows an attacker to forge arbitrary tokens without knowing the secret key, bypassing authentication and authorization controls.
+Only scans requests that contain a JWT in the <code>Authorization: Bearer</code> header or in a cookie, and only when the original response was successful (HTTP 2xx).
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/JwtScanRule.java">JwtScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40049/">40049</a>.
+
 <H2 id="id-40015">LDAP Injection</H2>
 LDAP Injection may be possible. It may be possible for an attacker to bypass authentication controls, and to view and modify arbitrary data in the LDAP directory.
 Skips messages which originally resulted in a client or server error response status code.

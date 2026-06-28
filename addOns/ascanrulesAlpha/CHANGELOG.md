@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- JWT None Algorithm scan rule (Issue 7100) to detect servers that accept JWTs with the algorithm set to "none" and an empty signature.
+
 ### Changed
 - Maintenance changes.
 
