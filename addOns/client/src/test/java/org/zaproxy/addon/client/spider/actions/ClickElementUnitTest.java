@@ -108,7 +108,7 @@ class ClickElementUnitTest {
     }
 
     @Test
-    void shouldFillInputsBeforeClicking() {
+    void shouldFillInputsAndTextAreasBeforeClicking() {
         // Given
         ClientSideComponent component = componentWithLocator("A", "id", "btn");
         ClickElement action = new ClickElement(valueProvider, uri, component, false);
@@ -117,22 +117,27 @@ class ClickElementUnitTest {
         given(wd.findElement(any(By.class))).willReturn(element);
         WebElement input1 = visibleInput("inputA", "text");
         WebElement input2 = visibleInput("inputB", "text");
-        given(wd.findElements(any(By.class))).willReturn(List.of(input1, input2));
+        WebElement textarea = visibleTextArea("textareaA");
+        given(wd.findElements(any(By.class))).willReturn(List.of(input1, input2, textarea));
         given(valueProvider.getValue(any(), any(), eq("inputA"), any(), any(), any(), any()))
                 .willReturn("value1");
         given(valueProvider.getValue(any(), any(), eq("inputB"), any(), any(), any(), any()))
                 .willReturn("value2");
+        given(valueProvider.getValue(any(), any(), eq("textareaA"), any(), any(), any(), any()))
+                .willReturn("value3");
 
         // When
         boolean result = action.run(waitStrategy, wd);
 
         // Then
         assertThat(result, is(equalTo(true)));
-        InOrder inOrder = inOrder(input1, input2);
+        InOrder inOrder = inOrder(input1, input2, textarea);
         inOrder.verify(input1).clear();
         inOrder.verify(input1).sendKeys("value1");
         inOrder.verify(input2).clear();
         inOrder.verify(input2).sendKeys("value2");
+        inOrder.verify(textarea).clear();
+        inOrder.verify(textarea).sendKeys("value3");
     }
 
     @Test
@@ -145,11 +150,8 @@ class ClickElementUnitTest {
         given(wd.findElement(any(By.class))).willReturn(element);
         WebElement input1 = visibleInput("inputA", "text");
         WebElement input2 = visibleInput("inputB", "text");
-        given(wd.findElements(any(By.class))).willReturn(List.of(input1, input2));
-        given(valueProvider.getValue(any(), any(), eq("inputA"), any(), any(), any(), any()))
-                .willReturn("value1");
-        given(valueProvider.getValue(any(), any(), eq("inputB"), any(), any(), any(), any()))
-                .willReturn("value2");
+        WebElement textarea = visibleTextArea("textareaA");
+        given(wd.findElements(any(By.class))).willReturn(List.of(input1, input2, textarea));
 
         // When
         boolean result = action.run(waitStrategy, wd);
@@ -158,6 +160,7 @@ class ClickElementUnitTest {
         assertThat(result, is(equalTo(true)));
         verifyNoInteractions(input1);
         verifyNoInteractions(input2);
+        verifyNoInteractions(textarea);
     }
 
     @Test
@@ -325,5 +328,13 @@ class ClickElementUnitTest {
         given(input.getDomAttribute("name")).willReturn(name);
         given(input.getDomAttribute("type")).willReturn(type);
         return input;
+    }
+
+    private static WebElement visibleTextArea(String name) {
+        WebElement textarea = mock(WebElement.class);
+        given(textarea.isDisplayed()).willReturn(true);
+        given(textarea.getTagName()).willReturn("textarea");
+        given(textarea.getDomAttribute("name")).willReturn(name);
+        return textarea;
     }
 }
