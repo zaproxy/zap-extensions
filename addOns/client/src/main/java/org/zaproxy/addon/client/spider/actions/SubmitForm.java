@@ -22,7 +22,6 @@ package org.zaproxy.addon.client.spider.actions;
 import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.zaproxy.addon.client.internal.ClientSideComponent;
@@ -47,7 +46,7 @@ public class SubmitForm extends BaseElementAction {
     public boolean run(
             ActionWaitStrategy waitStrategy, WebDriver wd, WebElement form, String statsPrefix) {
         String action = form.getDomAttribute("action");
-        fillInputs(form.findElements(By.xpath("//input")), action, statsPrefix);
+        fillComponents(wd, action, statsPrefix);
 
         try {
             form.submit();

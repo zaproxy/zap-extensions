@@ -23,7 +23,6 @@ import java.util.function.Predicate;
 import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.zaproxy.addon.client.internal.ClientSideComponent;
@@ -50,7 +49,7 @@ public class ClickElement extends BaseElementAction {
     public boolean run(
             ActionWaitStrategy waitStrategy, WebDriver wd, WebElement element, String statsPrefix) {
         if (!passive) {
-            fillInputs(wd.findElements(By.xpath("//input")), getUri().toString(), statsPrefix);
+            fillComponents(wd, getUri().toString(), statsPrefix);
         }
 
         try {

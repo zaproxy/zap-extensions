@@ -26,6 +26,7 @@ import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
+import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.zaproxy.addon.client.internal.ClientSideComponent;
@@ -85,6 +86,10 @@ abstract class BaseElementAction implements SpiderAction {
     protected abstract boolean run(
             ActionWaitStrategy waitStrategy, WebDriver wd, WebElement element, String statsPrefix);
 
+    protected void fillComponents(SearchContext context, String action, String statsPrefix) {
+        fillInputs(context.findElements(By.xpath("//input | //textarea")), action, statsPrefix);
+    }
+
     protected void fillInputs(List<WebElement> inputs, String action, String statsPrefix) {
         inputs.forEach(input -> fillInput(input, action, statsPrefix));
     }
@@ -95,10 +100,18 @@ abstract class BaseElementAction implements SpiderAction {
             return;
         }
 
-        String type = getAttribute(input, "type");
-        if (type == null) {
-            Stats.incCounter(statsPrefix + ".input.notype");
-            return;
+        String type;
+        String controlType;
+        if ("textarea".equalsIgnoreCase(input.getTagName())) {
+            type = "textarea";
+            controlType = "text";
+        } else {
+            type = getAttribute(input, "type");
+            if (type == null) {
+                Stats.incCounter(statsPrefix + ".input.notype");
+                return;
+            }
+            controlType = getControlType(type);
         }
 
         String value =
@@ -109,7 +122,7 @@ abstract class BaseElementAction implements SpiderAction {
                         getAttribute(input, "value"),
                         List.of(),
                         Map.of(),
-                        Map.of("Control Type", getControlType(type), "type", type));
+                        Map.of("Control Type", controlType, "type", type));
 
         try {
             input.clear();

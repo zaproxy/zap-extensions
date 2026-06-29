@@ -104,6 +104,28 @@ class BaseElementActionUnitTest {
                         Map.of("Control Type", controlType, "type", type));
     }
 
+    @ParameterizedTest
+    @CsvSource({"textarea-name, textarea-value"})
+    void shouldCallValueProviderWithExpectedValuesForTextArea(String name, String value) {
+        // Given
+        List<WebElement> elements = List.of(new TestWebElement("textarea", null, name, value));
+        String formAction = "formaction";
+
+        // When
+        action.fillInputs(elements, formAction, "statsprefix");
+
+        // Then
+        verify(valueProvider)
+                .getValue(
+                        uri,
+                        formAction,
+                        name,
+                        value,
+                        List.of(),
+                        Map.of(),
+                        Map.of("Control Type", "text", "type", "textarea"));
+    }
+
     class TestWebElement implements WebElement {
 
         private String tag;
