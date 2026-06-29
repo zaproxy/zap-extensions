@@ -22,11 +22,9 @@ package org.zaproxy.addon.client.spider.actions;
 import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.zaproxy.addon.client.internal.ClientSideComponent;
-import org.zaproxy.addon.client.spider.ActionWaitStrategy;
-import org.zaproxy.addon.commonlib.ValueProvider;
+import org.zaproxy.addon.client.spider.TaskContext;
 import org.zaproxy.zap.utils.Stats;
 
 public class SubmitForm extends BaseElementAction {
@@ -37,16 +35,15 @@ public class SubmitForm extends BaseElementAction {
 
     private final int formIndex;
 
-    public SubmitForm(ValueProvider valueProvider, URI uri, ClientSideComponent component) {
-        super(valueProvider, uri, component);
+    public SubmitForm(URI uri, ClientSideComponent component) {
+        super(uri, component);
         this.formIndex = component.getFormId();
     }
 
     @Override
-    public boolean run(
-            ActionWaitStrategy waitStrategy, WebDriver wd, WebElement form, String statsPrefix) {
+    public boolean run(TaskContext context, WebElement form, String statsPrefix) {
         String action = form.getDomAttribute("action");
-        fillComponents(wd, action, statsPrefix);
+        fillComponents(context, action, statsPrefix);
 
         try {
             form.submit();

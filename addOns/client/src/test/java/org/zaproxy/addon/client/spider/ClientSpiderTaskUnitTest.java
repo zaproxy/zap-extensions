@@ -32,7 +32,6 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.WebDriver;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.addon.client.spider.ClientSpider.WebDriverProcess;
 import org.zaproxy.addon.client.spider.ClientSpiderTask.Status;
@@ -42,9 +41,8 @@ import org.zaproxy.zap.testutils.TestUtils;
 class ClientSpiderTaskUnitTest extends TestUtils {
 
     private ClientSpider clientSpider;
-    private WebDriverProcess wdp;
-    private WebDriver wd;
     private ActionWaitStrategy waitStrategy;
+    private TaskContext context;
 
     @BeforeAll
     static void setUpAll() {
@@ -54,16 +52,15 @@ class ClientSpiderTaskUnitTest extends TestUtils {
     @BeforeEach
     void setUp() {
         clientSpider = mock(ClientSpider.class);
-        wdp = mock(WebDriverProcess.class);
-        wd = mock(WebDriver.class);
 
         given(clientSpider.isStopped()).willReturn(false);
         given(clientSpider.isPaused()).willReturn(false);
-        given(clientSpider.getWebDriverProcess()).willReturn(wdp);
-        given(wdp.getWebDriver()).willReturn(wd);
         waitStrategy = mock();
         given(waitStrategy.waitAfterAction()).willReturn(true);
+        WebDriverProcess wdp = mock(WebDriverProcess.class);
         given(wdp.getWaitStrategy()).willReturn(waitStrategy);
+        context = new TaskContext(wdp, null, null);
+        given(clientSpider.createTaskContext()).willReturn(context);
     }
 
     @Test
@@ -76,7 +73,7 @@ class ClientSpiderTaskUnitTest extends TestUtils {
         task.run();
 
         // Then
-        verify(action).run(waitStrategy, wd);
+        verify(action).run(context);
         assertThat(task.getStatus(), is(Status.FINISHED));
     }
 
@@ -84,8 +81,7 @@ class ClientSpiderTaskUnitTest extends TestUtils {
     void shouldRunAllActionsInOrder() {
         // Given
         List<String> ran = new ArrayList<>();
-        List<SpiderAction> actions =
-                List.of((ws, w) -> ran.add("first"), (ws, w) -> ran.add("second"));
+        List<SpiderAction> actions = List.of(ctx -> ran.add("first"), ctx -> ran.add("second"));
         ClientSpiderTask task = new ClientSpiderTask(1, clientSpider, actions, "test", "");
 
         // When
@@ -99,7 +95,7 @@ class ClientSpiderTaskUnitTest extends TestUtils {
     @Test
     void shouldWaitAfterEachAction() {
         // Given
-        List<SpiderAction> actions = List.of((ws, w) -> true, (ws, w) -> true);
+        List<SpiderAction> actions = List.of(ctx -> true, ctx -> true);
         ClientSpiderTask task = new ClientSpiderTask(1, clientSpider, actions, "test", "");
 
         // When
@@ -114,7 +110,7 @@ class ClientSpiderTaskUnitTest extends TestUtils {
     void shouldStopRunningActionsWhenWaitStrategyReturnsFalse() {
         // Given
         given(waitStrategy.waitAfterAction()).willReturn(false);
-        List<SpiderAction> actions = List.of((ws, w) -> true, (ws, w) -> true);
+        List<SpiderAction> actions = List.of(ctx -> true, ctx -> true);
         ClientSpiderTask task = new ClientSpiderTask(1, clientSpider, actions, "test", "");
 
         // When
