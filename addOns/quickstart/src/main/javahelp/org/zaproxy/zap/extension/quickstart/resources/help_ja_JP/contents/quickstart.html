@@ -38,12 +38,21 @@ Note that the policies will not be shown dynamically, any added/removed policies
 
 従来のスパイダーは、HTMLページ内のリンクを見つけることによってアプリケーションを探索します。 非常に高速ですが、JavaScriptを多用するアプリケーションには対応できません。 
 
-<h3>AJAXスパイダーを使用</h3>
+<h3>Use modern spider</h3>
 
-AJAXスパイダーは、選択したブラウザを起動し、見つけたリンクをクリックすることでアプリケーションを探索します。 トラディショナルスパイダーよりも低速ですが、JavaScriptを適切に処理します。<br>
-このオプションは、AJAXスパイダーアドオンがインストールされている場合にのみ表示されます。 利用できない場合は、ZAP マーケットプレイスから無料でダウンロードしてインストールできます。
+The modern spider explores the application by launching the browser you have chosen and clicking on the links it finds.
+It is slower than the traditional spider but handles JavaScript well.<br>
+This option is only shown if at least one modern spider add-on is installed.
 <br><br>
-利用可能なオプションは以下の通りです：
+Two modern spiders are available:
+<ul>
+<li><b>Ajax Spider</b>: available if the Ajax Spider add-on is installed.
+<li><b>Client Spider</b>: available if the Client Side Integration add-on is installed.
+</ul>
+When both are installed, a drop-down lets you choose which one to use.
+ZAP will remember the last spider and browser you chose when you restart it.
+<br><br>
+The conditional options available are:
 <ul>
 <li>しない: 従来のスパイダーを使用する必要があります
 <li>モダンの場合: ZAPがターゲットをモダンアプリとして識別した際に実行されます - この場合は従来のスパイダーを使用してください
