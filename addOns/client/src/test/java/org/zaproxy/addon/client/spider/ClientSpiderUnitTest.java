@@ -93,6 +93,7 @@ import org.zaproxy.addon.client.internal.ClientNode;
 import org.zaproxy.addon.client.internal.ClientSideComponent;
 import org.zaproxy.addon.client.internal.ClientSideDetails;
 import org.zaproxy.addon.client.internal.ElementLocator;
+import org.zaproxy.addon.client.internal.InteractableState;
 import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.addon.network.ExtensionNetwork;
@@ -725,6 +726,63 @@ class ClientSpiderUnitTest extends TestUtils {
         verify(wd, times(2)).findElement(any());
     }
 
+    @Test
+    void shouldHandleComponentAddedWhenEnabledAndVisible() {
+        // Given
+        spider.run();
+        waitForProxy();
+        ClientSideComponent component =
+                linkComponentWithInteractable(
+                        seedUrl, "A", "Click", new InteractableState(true, true, false));
+
+        // When
+        clientMapListener().componentAdded(component, 1, 0, PROXY_PORT);
+        sleep();
+
+        // Then
+        verify(wd).findElement(any());
+    }
+
+    @Test
+    void shouldHandleComponentAddedWhenInteractableIsNull() {
+        // Given
+        spider.run();
+        waitForProxy();
+        ClientSideComponent component = linkComponent(seedUrl, "A", "Click");
+        component.setElementLocator(new ElementLocator("xpath", "//A[contains(text(), 'Click')]"));
+
+        // When
+        clientMapListener().componentAdded(component, 1, 0, PROXY_PORT);
+        sleep();
+
+        // Then
+        verify(wd).findElement(any());
+    }
+
+    static Stream<Arguments> notInteractableStates() {
+        return Stream.of(
+                arguments(new InteractableState(false, true, false)),
+                arguments(new InteractableState(true, false, false)),
+                arguments(new InteractableState(false, false, false)));
+    }
+
+    @ParameterizedTest
+    @MethodSource("notInteractableStates")
+    void shouldIgnoreComponentAddedWhenNotInteractable(InteractableState interactable) {
+        // Given
+        spider.run();
+        waitForProxy();
+        ClientSideComponent component =
+                linkComponentWithInteractable(seedUrl, "A", "Click", interactable);
+
+        // When
+        clientMapListener().componentAdded(component, 1, 0, PROXY_PORT);
+        sleep();
+
+        // Then
+        verify(wd, never()).findElement(any());
+    }
+
     @ParameterizedTest
     @CsvSource({
         "https://www.example.org/new-path, https://www.example.org/new-path",
@@ -916,6 +974,14 @@ class ClientSpiderUnitTest extends TestUtils {
     private static ClientSideComponent linkComponent(String url, String tagName, String text) {
         return new ClientSideComponent(
                 Map.of(), tagName, "", url, null, text, ClientSideComponent.Type.LINK, "", -1);
+    }
+
+    private static ClientSideComponent linkComponentWithInteractable(
+            String url, String tagName, String text, InteractableState interactable) {
+        ClientSideComponent c = linkComponent(url, tagName, text);
+        c.setInteractable(interactable);
+        c.setElementLocator(new ElementLocator("xpath", "//A[contains(text(), '" + text + "')]"));
+        return c;
     }
 
     private static ClientNode mockClientNode(
