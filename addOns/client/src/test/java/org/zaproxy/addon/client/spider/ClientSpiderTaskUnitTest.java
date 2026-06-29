@@ -24,7 +24,7 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
@@ -56,7 +56,6 @@ class ClientSpiderTaskUnitTest extends TestUtils {
         given(clientSpider.isStopped()).willReturn(false);
         given(clientSpider.isPaused()).willReturn(false);
         waitStrategy = mock();
-        given(waitStrategy.waitAfterAction()).willReturn(true);
         WebDriverProcess wdp = mock(WebDriverProcess.class);
         given(wdp.getWaitStrategy()).willReturn(waitStrategy);
         context = new TaskContext(wdp, null, null);
@@ -93,7 +92,7 @@ class ClientSpiderTaskUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldWaitAfterEachAction() {
+    void shouldNotWaitAfterActions() {
         // Given
         List<SpiderAction> actions = List.of(ctx -> true, ctx -> true);
         ClientSpiderTask task = new ClientSpiderTask(1, clientSpider, actions, "test", "");
@@ -102,22 +101,7 @@ class ClientSpiderTaskUnitTest extends TestUtils {
         task.run();
 
         // Then
-        verify(waitStrategy, times(2)).waitAfterAction();
-        assertThat(task.getStatus(), is(Status.FINISHED));
-    }
-
-    @Test
-    void shouldStopRunningActionsWhenWaitStrategyReturnsFalse() {
-        // Given
-        given(waitStrategy.waitAfterAction()).willReturn(false);
-        List<SpiderAction> actions = List.of(ctx -> true, ctx -> true);
-        ClientSpiderTask task = new ClientSpiderTask(1, clientSpider, actions, "test", "");
-
-        // When
-        task.run();
-
-        // Then
-        verify(waitStrategy).waitAfterAction();
+        verify(waitStrategy, never()).waitAfterAction();
         assertThat(task.getStatus(), is(Status.FINISHED));
     }
 }

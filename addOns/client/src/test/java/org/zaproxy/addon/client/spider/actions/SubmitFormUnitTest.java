@@ -71,6 +71,7 @@ class SubmitFormUnitTest {
     void setUp() throws IOException {
         valueProvider = mock(ValueProvider.class);
         waitStrategy = mock();
+        given(waitStrategy.waitAfterAction()).willReturn(true);
         uri = new URI("http://example.com/test", true);
         stats = new InMemoryStats();
         Stats.addListener(stats);
@@ -95,6 +96,7 @@ class SubmitFormUnitTest {
         WebElement form = visibleElement();
         given(wd.findElement(any(By.class))).willReturn(form);
         given(wd.findElements(any(By.class))).willReturn(List.of());
+        given(wd.getCurrentUrl()).willReturn("http://example.com/test");
 
         // When
         boolean result = action.run(context(wd));
@@ -113,6 +115,7 @@ class SubmitFormUnitTest {
         WebDriver wd = mock(WebDriver.class);
         WebElement form = visibleElement();
         given(wd.findElement(any(By.class))).willReturn(form);
+        given(wd.getCurrentUrl()).willReturn("http://example.com/test");
         WebElement input1 = visibleInput("inputA", "text");
         WebElement input2 = visibleInput("inputB", "text");
         WebElement textarea = visibleTextArea("textareaA");
@@ -202,6 +205,7 @@ class SubmitFormUnitTest {
         ArgumentCaptor<By> byCaptor = ArgumentCaptor.forClass(By.class);
         given(wd.findElement(byCaptor.capture())).willReturn(visibleForm);
         given(wd.findElements(any(By.class))).willReturn(List.of());
+        given(wd.getCurrentUrl()).willReturn("http://example.com/test");
 
         // When
         boolean result = action.run(context(wd));

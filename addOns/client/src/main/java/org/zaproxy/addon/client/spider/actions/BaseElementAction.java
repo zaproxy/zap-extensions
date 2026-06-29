@@ -72,7 +72,17 @@ abstract class BaseElementAction implements SpiderAction {
             return false;
         }
 
-        return run(context, element, statsPrefix);
+        String urlBeforeAction = context.getWebDriver().getCurrentUrl();
+        if (!run(context, element, statsPrefix) || !context.getWaitStrategy().waitAfterAction()) {
+            return false;
+        }
+
+        String currentUrl = context.getWebDriver().getCurrentUrl();
+        if (!urlBeforeAction.equals(currentUrl)) {
+            return context.getWaitStrategy().waitAfterPageLoad(currentUrl);
+        }
+
+        return true;
     }
 
     protected abstract String getStatsPrefix();
