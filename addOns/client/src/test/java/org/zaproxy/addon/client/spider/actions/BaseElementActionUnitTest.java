@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.client.spider.actions;
 
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -38,7 +39,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.zaproxy.addon.client.internal.ClientSideComponent;
-import org.zaproxy.addon.client.spider.ActionWaitStrategy;
+import org.zaproxy.addon.client.spider.ClientSpider.WebDriverProcess;
+import org.zaproxy.addon.client.spider.TaskContext;
 import org.zaproxy.addon.commonlib.ValueProvider;
 
 /** Unit test for {@link BaseElementAction}. */
@@ -55,14 +57,11 @@ class BaseElementActionUnitTest {
         ClientSideComponent component = mock();
 
         action =
-                new BaseElementAction(valueProvider, uri, component) {
+                new BaseElementAction(uri, component) {
 
                     @Override
                     protected boolean run(
-                            ActionWaitStrategy waitStrategy,
-                            WebDriver wd,
-                            WebElement element,
-                            String statsPrefix) {
+                            TaskContext context, WebElement element, String statsPrefix) {
                         return true;
                     }
 
@@ -86,11 +85,11 @@ class BaseElementActionUnitTest {
         // Given
         String name = "input-name";
         String value = "input-value";
-        List<WebElement> inputElements = List.of(new TestWebElement("input", type, name, value));
+        TaskContext context = context(List.of(new TestWebElement("input", type, name, value)));
         String formAction = "formaction";
 
         // When
-        action.fillInputs(inputElements, formAction, "statsprefix");
+        action.fillComponents(context, formAction, "statsprefix");
 
         // Then
         verify(valueProvider)
@@ -108,11 +107,11 @@ class BaseElementActionUnitTest {
     @CsvSource({"textarea-name, textarea-value"})
     void shouldCallValueProviderWithExpectedValuesForTextArea(String name, String value) {
         // Given
-        List<WebElement> elements = List.of(new TestWebElement("textarea", null, name, value));
+        TaskContext context = context(List.of(new TestWebElement("textarea", null, name, value)));
         String formAction = "formaction";
 
         // When
-        action.fillInputs(elements, formAction, "statsprefix");
+        action.fillComponents(context, formAction, "statsprefix");
 
         // Then
         verify(valueProvider)
@@ -124,6 +123,14 @@ class BaseElementActionUnitTest {
                         List.of(),
                         Map.of(),
                         Map.of("Control Type", "text", "type", "textarea"));
+    }
+
+    private TaskContext context(List<WebElement> elements) {
+        WebDriverProcess wdp = mock(WebDriverProcess.class);
+        WebDriver wd = mock(WebDriver.class);
+        given(wd.findElements(By.xpath("//input | //textarea"))).willReturn(elements);
+        given(wdp.getWebDriver()).willReturn(wd);
+        return new TaskContext(wdp, valueProvider, null);
     }
 
     class TestWebElement implements WebElement {

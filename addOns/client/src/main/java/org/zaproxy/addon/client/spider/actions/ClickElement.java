@@ -23,12 +23,10 @@ import java.util.function.Predicate;
 import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.zaproxy.addon.client.internal.ClientSideComponent;
 import org.zaproxy.addon.client.internal.InteractableState;
-import org.zaproxy.addon.client.spider.ActionWaitStrategy;
-import org.zaproxy.addon.commonlib.ValueProvider;
+import org.zaproxy.addon.client.spider.TaskContext;
 import org.zaproxy.zap.utils.Stats;
 
 public class ClickElement extends BaseElementAction {
@@ -39,18 +37,16 @@ public class ClickElement extends BaseElementAction {
 
     private final boolean passive;
 
-    public ClickElement(
-            ValueProvider valueProvider, URI uri, ClientSideComponent component, boolean passive) {
-        super(valueProvider, uri, component);
+    public ClickElement(URI uri, ClientSideComponent component, boolean passive) {
+        super(uri, component);
 
         this.passive = passive;
     }
 
     @Override
-    public boolean run(
-            ActionWaitStrategy waitStrategy, WebDriver wd, WebElement element, String statsPrefix) {
+    public boolean run(TaskContext context, WebElement element, String statsPrefix) {
         if (!passive) {
-            fillComponents(wd, getUri().toString(), statsPrefix);
+            fillComponents(context, getUri().toString(), statsPrefix);
         }
 
         try {

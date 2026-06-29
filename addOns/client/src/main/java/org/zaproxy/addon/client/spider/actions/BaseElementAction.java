@@ -26,26 +26,20 @@ import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
-import org.openqa.selenium.SearchContext;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.zaproxy.addon.client.internal.ClientSideComponent;
-import org.zaproxy.addon.client.spider.ActionWaitStrategy;
 import org.zaproxy.addon.client.spider.SpiderAction;
-import org.zaproxy.addon.commonlib.ValueProvider;
+import org.zaproxy.addon.client.spider.TaskContext;
 import org.zaproxy.zap.utils.Stats;
 
 abstract class BaseElementAction implements SpiderAction {
 
     private static final Logger LOGGER = LogManager.getLogger(BaseElementAction.class);
 
-    private final ValueProvider valueProvider;
     private final URI uri;
     protected final ClientSideComponent component;
 
-    protected BaseElementAction(
-            ValueProvider valueProvider, URI uri, ClientSideComponent component) {
-        this.valueProvider = Objects.requireNonNull(valueProvider);
+    protected BaseElementAction(URI uri, ClientSideComponent component) {
         this.uri = Objects.requireNonNull(uri);
         this.component = Objects.requireNonNull(component);
     }
@@ -55,7 +49,7 @@ abstract class BaseElementAction implements SpiderAction {
     }
 
     @Override
-    public final boolean run(ActionWaitStrategy waitStrategy, WebDriver wd) {
+    public final boolean run(TaskContext context) {
         String statsPrefix = getStatsPrefix();
         Stats.incCounter(statsPrefix);
 
@@ -67,7 +61,7 @@ abstract class BaseElementAction implements SpiderAction {
 
         WebElement element;
         try {
-            element = wd.findElement(by);
+            element = context.getWebDriver().findElement(by);
         } catch (Exception e) {
             Stats.incCounter(statsPrefix + ".notfound");
             return false;
@@ -78,23 +72,21 @@ abstract class BaseElementAction implements SpiderAction {
             return false;
         }
 
-        return run(waitStrategy, wd, element, statsPrefix);
+        return run(context, element, statsPrefix);
     }
 
     protected abstract String getStatsPrefix();
 
-    protected abstract boolean run(
-            ActionWaitStrategy waitStrategy, WebDriver wd, WebElement element, String statsPrefix);
+    protected abstract boolean run(TaskContext context, WebElement element, String statsPrefix);
 
-    protected void fillComponents(SearchContext context, String action, String statsPrefix) {
-        fillInputs(context.findElements(By.xpath("//input | //textarea")), action, statsPrefix);
+    protected void fillComponents(TaskContext context, String action, String statsPrefix) {
+        context.getWebDriver()
+                .findElements(By.xpath("//input | //textarea"))
+                .forEach(input -> fillInput(context, input, action, statsPrefix));
     }
 
-    protected void fillInputs(List<WebElement> inputs, String action, String statsPrefix) {
-        inputs.forEach(input -> fillInput(input, action, statsPrefix));
-    }
-
-    protected void fillInput(WebElement input, String action, String statsPrefix) {
+    protected void fillInput(
+            TaskContext context, WebElement input, String action, String statsPrefix) {
         if (!input.isDisplayed()) {
             Stats.incCounter(statsPrefix + ".input.notdisplayed");
             return;
@@ -115,14 +107,15 @@ abstract class BaseElementAction implements SpiderAction {
         }
 
         String value =
-                valueProvider.getValue(
-                        uri,
-                        action,
-                        getAttribute(input, "name"),
-                        getAttribute(input, "value"),
-                        List.of(),
-                        Map.of(),
-                        Map.of("Control Type", controlType, "type", type));
+                context.getValueProvider()
+                        .getValue(
+                                uri,
+                                action,
+                                getAttribute(input, "name"),
+                                getAttribute(input, "value"),
+                                List.of(),
+                                Map.of(),
+                                Map.of("Control Type", controlType, "type", type));
 
         try {
             input.clear();
@@ -144,9 +137,5 @@ abstract class BaseElementAction implements SpiderAction {
 
     private static String getControlType(String type) {
         return !"password".equalsIgnoreCase(type) && !"file".equalsIgnoreCase(type) ? "text" : type;
-    }
-
-    protected static String getTagName(Map<String, String> data) {
-        return data.get("tagName");
     }
 }

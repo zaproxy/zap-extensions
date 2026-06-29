@@ -50,6 +50,8 @@ import org.zaproxy.addon.client.internal.ClientSideComponent;
 import org.zaproxy.addon.client.internal.ElementLocator;
 import org.zaproxy.addon.client.internal.graph.ClientGraphVertex;
 import org.zaproxy.addon.client.spider.ActionWaitStrategy;
+import org.zaproxy.addon.client.spider.ClientSpider.WebDriverProcess;
+import org.zaproxy.addon.client.spider.TaskContext;
 import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.zap.extension.stats.InMemoryStats;
 import org.zaproxy.zap.testutils.TestUtils;
@@ -66,6 +68,7 @@ class FollowGraphUnitTest extends TestUtils {
     private Graph<ClientGraphVertex, DefaultEdge> graph;
     private ValueProvider valueProvider;
     private ActionWaitStrategy waitStrategy;
+    private TaskContext context;
     private InMemoryStats stats;
 
     @BeforeAll
@@ -81,6 +84,10 @@ class FollowGraphUnitTest extends TestUtils {
         waitStrategy = mock(withSettings().strictness(Strictness.LENIENT));
         given(waitStrategy.waitAfterPageLoad(any())).willReturn(true);
         given(waitStrategy.waitAfterAction()).willReturn(true);
+        WebDriverProcess wdp = mock(withSettings().strictness(Strictness.LENIENT));
+        given(wdp.getWaitStrategy()).willReturn(waitStrategy);
+        given(wdp.getWebDriver()).willReturn(wd);
+        context = new TaskContext(wdp, valueProvider, graph);
         stats = new InMemoryStats();
         Stats.addListener(stats);
     }
@@ -94,10 +101,10 @@ class FollowGraphUnitTest extends TestUtils {
     void shouldDoNothingWhenAlreadyAtTarget() {
         // Given
         given(wd.getCurrentUrl()).willReturn(URL_A);
-        FollowGraph action = new FollowGraph(graph, URL_A, valueProvider);
+        FollowGraph action = new FollowGraph(URL_A);
 
         // When
-        boolean result = action.run(waitStrategy, wd);
+        boolean result = action.run(context);
 
         // Then
         assertCommonState(wd, result);
@@ -110,10 +117,10 @@ class FollowGraphUnitTest extends TestUtils {
     void shouldDoNothingWhenAlreadyAtTargetWithEmptyFragment() {
         // Given
         given(wd.getCurrentUrl()).willReturn(URL_A);
-        FollowGraph action = new FollowGraph(graph, URL_A + "#", valueProvider);
+        FollowGraph action = new FollowGraph(URL_A + "#");
 
         // When
-        boolean result = action.run(waitStrategy, wd);
+        boolean result = action.run(context);
 
         // Then
         assertCommonState(wd, result);
@@ -132,10 +139,10 @@ class FollowGraphUnitTest extends TestUtils {
         WebElement element = visibleElement();
         given(wd.findElement(any(By.class))).willReturn(element);
 
-        FollowGraph action = new FollowGraph(graph, URL_B, valueProvider);
+        FollowGraph action = new FollowGraph(URL_B);
 
         // When
-        boolean result = action.run(waitStrategy, wd);
+        boolean result = action.run(context);
 
         // Then
         assertCommonState(wd, result);
@@ -156,10 +163,10 @@ class FollowGraphUnitTest extends TestUtils {
 
         given(wd.getCurrentUrl()).willReturn(URL_A);
 
-        FollowGraph action = new FollowGraph(graph, URL_B, valueProvider);
+        FollowGraph action = new FollowGraph(URL_B);
 
         // When
-        boolean result = action.run(waitStrategy, wd);
+        boolean result = action.run(context);
 
         // Then
         assertCommonState(wd, result);
@@ -181,10 +188,10 @@ class FollowGraphUnitTest extends TestUtils {
         WebElement element = visibleElement();
         given(wd.findElement(any())).willReturn(element);
 
-        FollowGraph action = new FollowGraph(graph, URL_C, valueProvider);
+        FollowGraph action = new FollowGraph(URL_C);
 
         // When
-        boolean result = action.run(waitStrategy, wd);
+        boolean result = action.run(context);
 
         // Then
         assertCommonState(wd, result);
@@ -211,10 +218,10 @@ class FollowGraphUnitTest extends TestUtils {
         WebElement element = visibleElement();
         given(wd.findElement(any(By.class))).willReturn(element);
 
-        FollowGraph action = new FollowGraph(graph, urlD, valueProvider);
+        FollowGraph action = new FollowGraph(urlD);
 
         // When
-        boolean result = action.run(waitStrategy, wd);
+        boolean result = action.run(context);
 
         // Then
         assertCommonState(wd, result);
@@ -234,10 +241,10 @@ class FollowGraphUnitTest extends TestUtils {
 
         willThrow(RuntimeException.class).given(element).click();
 
-        FollowGraph action = new FollowGraph(graph, URL_B, valueProvider);
+        FollowGraph action = new FollowGraph(URL_B);
 
         // When / Then
-        boolean result = assertDoesNotThrow(() -> action.run(waitStrategy, wd));
+        boolean result = assertDoesNotThrow(() -> action.run(context));
         assertCommonState(wd, result);
         assertThat(stats.getStat("stats.client.spider.action.follow"), is(1L));
     }
@@ -247,10 +254,10 @@ class FollowGraphUnitTest extends TestUtils {
         // Given
         given(wd.getCurrentUrl()).willReturn(URL_A);
 
-        FollowGraph action = new FollowGraph(graph, URL_B, valueProvider);
+        FollowGraph action = new FollowGraph(URL_B);
 
         // When
-        boolean result = action.run(waitStrategy, wd);
+        boolean result = action.run(context);
 
         // Then
         assertCommonState(wd, result);

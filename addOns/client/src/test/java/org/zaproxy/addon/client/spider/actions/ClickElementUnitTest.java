@@ -55,6 +55,8 @@ import org.zaproxy.addon.client.internal.ClientSideComponent.Type;
 import org.zaproxy.addon.client.internal.ElementLocator;
 import org.zaproxy.addon.client.internal.InteractableState;
 import org.zaproxy.addon.client.spider.ActionWaitStrategy;
+import org.zaproxy.addon.client.spider.ClientSpider.WebDriverProcess;
+import org.zaproxy.addon.client.spider.TaskContext;
 import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.zap.extension.stats.InMemoryStats;
 import org.zaproxy.zap.utils.Stats;
@@ -83,23 +85,21 @@ class ClickElementUnitTest {
 
     @Test
     void shouldThrowIfComponentIsNull() {
-        assertThrows(
-                NullPointerException.class,
-                () -> new ClickElement(valueProvider, uri, null, false));
+        assertThrows(NullPointerException.class, () -> new ClickElement(uri, null, false));
     }
 
     @Test
     void shouldClickElementOnRun() {
         // Given
         ClientSideComponent component = componentWithLocator("A", "id", "btn");
-        ClickElement action = new ClickElement(valueProvider, uri, component, false);
+        ClickElement action = new ClickElement(uri, component, false);
         WebDriver wd = mock(WebDriver.class);
         WebElement element = visibleElement();
         given(wd.findElement(By.id("btn"))).willReturn(element);
         given(wd.findElements(any(By.class))).willReturn(List.of());
 
         // When
-        boolean result = action.run(waitStrategy, wd);
+        boolean result = action.run(context(wd));
 
         // Then
         assertThat(result, is(equalTo(true)));
@@ -112,7 +112,7 @@ class ClickElementUnitTest {
     void shouldFillInputsAndTextAreasBeforeClicking() {
         // Given
         ClientSideComponent component = componentWithLocator("A", "id", "btn");
-        ClickElement action = new ClickElement(valueProvider, uri, component, false);
+        ClickElement action = new ClickElement(uri, component, false);
         WebDriver wd = mock(WebDriver.class);
         WebElement element = visibleElement();
         given(wd.findElement(any(By.class))).willReturn(element);
@@ -128,7 +128,7 @@ class ClickElementUnitTest {
                 .willReturn("value3");
 
         // When
-        boolean result = action.run(waitStrategy, wd);
+        boolean result = action.run(context(wd));
 
         // Then
         assertThat(result, is(equalTo(true)));
@@ -145,7 +145,7 @@ class ClickElementUnitTest {
     void shouldNotFillInputsBeforeClickingWhenPassive() {
         // Given
         ClientSideComponent component = componentWithLocator("A", "id", "btn");
-        ClickElement action = new ClickElement(valueProvider, uri, component, true);
+        ClickElement action = new ClickElement(uri, component, true);
         WebDriver wd = mock(WebDriver.class);
         WebElement element = visibleElement();
         given(wd.findElement(any(By.class))).willReturn(element);
@@ -155,7 +155,7 @@ class ClickElementUnitTest {
         given(wd.findElements(any(By.class))).willReturn(List.of(input1, input2, textarea));
 
         // When
-        boolean result = action.run(waitStrategy, wd);
+        boolean result = action.run(context(wd));
 
         // Then
         assertThat(result, is(equalTo(true)));
@@ -168,7 +168,7 @@ class ClickElementUnitTest {
     void shouldHandleClickExceptionGracefully() {
         // Given
         ClientSideComponent component = componentWithLocator("A", "id", "btn");
-        ClickElement action = new ClickElement(valueProvider, uri, component, false);
+        ClickElement action = new ClickElement(uri, component, false);
         WebDriver wd = mock(WebDriver.class);
         WebElement element = visibleElement();
         given(wd.findElement(any(By.class))).willReturn(element);
@@ -176,7 +176,7 @@ class ClickElementUnitTest {
         willThrow(RuntimeException.class).given(element).click();
 
         // When / Then
-        boolean result = assertDoesNotThrow(() -> action.run(waitStrategy, wd));
+        boolean result = assertDoesNotThrow(() -> action.run(context(wd)));
         assertThat(result, is(equalTo(false)));
         assertThat(stats.getStat("stats.client.spider.action.click.tag.A"), is(1L));
         assertThat(stats.getStat("stats.client.spider.action.click.tag.A.exception"), is(1L));
@@ -186,12 +186,12 @@ class ClickElementUnitTest {
     void shouldIncrementStatsWhenElementNotFound() {
         // Given
         ClientSideComponent component = componentWithLocator("A", "id", "btn");
-        ClickElement action = new ClickElement(valueProvider, uri, component, false);
+        ClickElement action = new ClickElement(uri, component, false);
         WebDriver wd = mock(WebDriver.class);
         given(wd.findElement(any(By.class))).willThrow(RuntimeException.class);
 
         // When
-        boolean result = action.run(waitStrategy, wd);
+        boolean result = action.run(context(wd));
 
         // Then
         assertThat(result, is(equalTo(false)));
@@ -203,14 +203,14 @@ class ClickElementUnitTest {
     void shouldIncrementStatsWhenElementNotDisplayed() {
         // Given
         ClientSideComponent component = componentWithLocator("A", "id", "btn");
-        ClickElement action = new ClickElement(valueProvider, uri, component, false);
+        ClickElement action = new ClickElement(uri, component, false);
         WebDriver wd = mock(WebDriver.class);
         WebElement element = mock(WebElement.class);
         given(wd.findElement(any(By.class))).willReturn(element);
         given(element.isDisplayed()).willReturn(false);
 
         // When
-        boolean result = action.run(waitStrategy, wd);
+        boolean result = action.run(context(wd));
 
         // Then
         assertThat(result, is(equalTo(false)));
@@ -222,11 +222,11 @@ class ClickElementUnitTest {
     void shouldYieldNoByWhenNoElementLocator() {
         // Given
         ClientSideComponent component = component("A", null);
-        ClickElement action = new ClickElement(valueProvider, uri, component, false);
+        ClickElement action = new ClickElement(uri, component, false);
         WebDriver wd = mock(WebDriver.class);
 
         // When
-        boolean result = action.run(waitStrategy, wd);
+        boolean result = action.run(context(wd));
 
         // Then
         assertThat(result, is(equalTo(false)));
@@ -315,6 +315,13 @@ class ClickElementUnitTest {
         ClientSideComponent c = component(tagName, tagType);
         c.setInteractable(interactable);
         return c;
+    }
+
+    private TaskContext context(WebDriver wd) {
+        WebDriverProcess wdp = mock(WebDriverProcess.class);
+        given(wdp.getWaitStrategy()).willReturn(waitStrategy);
+        given(wdp.getWebDriver()).willReturn(wd);
+        return new TaskContext(wdp, valueProvider, null);
     }
 
     private static ClientSideComponent componentWithLocator(

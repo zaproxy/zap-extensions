@@ -53,6 +53,8 @@ import org.zaproxy.addon.client.internal.ClientSideComponent;
 import org.zaproxy.addon.client.internal.ClientSideComponent.Type;
 import org.zaproxy.addon.client.internal.ElementLocator;
 import org.zaproxy.addon.client.spider.ActionWaitStrategy;
+import org.zaproxy.addon.client.spider.ClientSpider.WebDriverProcess;
+import org.zaproxy.addon.client.spider.TaskContext;
 import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.zap.extension.stats.InMemoryStats;
 import org.zaproxy.zap.utils.Stats;
@@ -81,21 +83,21 @@ class SubmitFormUnitTest {
 
     @Test
     void shouldThrowIfComponentIsNull() {
-        assertThrows(NullPointerException.class, () -> new SubmitForm(valueProvider, uri, null));
+        assertThrows(NullPointerException.class, () -> new SubmitForm(uri, null));
     }
 
     @Test
     void shouldSubmitFormOnRun() {
         // Given
         ClientSideComponent component = formComponent(0, "xpath", "//FORM");
-        SubmitForm action = new SubmitForm(valueProvider, uri, component);
+        SubmitForm action = new SubmitForm(uri, component);
         WebDriver wd = mock(WebDriver.class);
         WebElement form = visibleElement();
         given(wd.findElement(any(By.class))).willReturn(form);
         given(wd.findElements(any(By.class))).willReturn(List.of());
 
         // When
-        boolean result = action.run(waitStrategy, wd);
+        boolean result = action.run(context(wd));
 
         // Then
         assertThat(result, is(equalTo(true)));
@@ -107,7 +109,7 @@ class SubmitFormUnitTest {
     void shouldFillInputsAndTextAreasFromFormBeforeSubmitting() {
         // Given
         ClientSideComponent component = formComponent(0, "xpath", "//FORM");
-        SubmitForm action = new SubmitForm(valueProvider, uri, component);
+        SubmitForm action = new SubmitForm(uri, component);
         WebDriver wd = mock(WebDriver.class);
         WebElement form = visibleElement();
         given(wd.findElement(any(By.class))).willReturn(form);
@@ -123,7 +125,7 @@ class SubmitFormUnitTest {
                 .willReturn("value3");
 
         // When
-        boolean result = action.run(waitStrategy, wd);
+        boolean result = action.run(context(wd));
 
         // Then
         assertThat(result, is(equalTo(true)));
@@ -140,7 +142,7 @@ class SubmitFormUnitTest {
     void shouldHandleSubmitExceptionGracefully() {
         // Given
         ClientSideComponent component = formComponent(0, "xpath", "//FORM");
-        SubmitForm action = new SubmitForm(valueProvider, uri, component);
+        SubmitForm action = new SubmitForm(uri, component);
         WebDriver wd = mock(WebDriver.class);
         WebElement form = visibleElement();
         given(wd.findElement(any(By.class))).willReturn(form);
@@ -148,7 +150,7 @@ class SubmitFormUnitTest {
         willThrow(RuntimeException.class).given(form).submit();
 
         // When / Then
-        boolean result = assertDoesNotThrow(() -> action.run(waitStrategy, wd));
+        boolean result = assertDoesNotThrow(() -> action.run(context(wd)));
         assertThat(result, is(equalTo(false)));
         assertThat(stats.getStat("stats.client.spider.action.form.0"), is(1L));
         assertThat(stats.getStat("stats.client.spider.action.form.0.exception"), is(1L));
@@ -158,12 +160,12 @@ class SubmitFormUnitTest {
     void shouldIncrementStatsWhenFormNotFound() {
         // Given
         ClientSideComponent component = formComponent(0, "xpath", "//FORM");
-        SubmitForm action = new SubmitForm(valueProvider, uri, component);
+        SubmitForm action = new SubmitForm(uri, component);
         WebDriver wd = mock(WebDriver.class);
         given(wd.findElement(any(By.class))).willThrow(RuntimeException.class);
 
         // When
-        boolean result = action.run(waitStrategy, wd);
+        boolean result = action.run(context(wd));
 
         // Then
         assertThat(result, is(equalTo(false)));
@@ -175,14 +177,14 @@ class SubmitFormUnitTest {
     void shouldIncrementStatsWhenFormNotDisplayed() {
         // Given
         ClientSideComponent component = formComponent(0, "xpath", "//FORM");
-        SubmitForm action = new SubmitForm(valueProvider, uri, component);
+        SubmitForm action = new SubmitForm(uri, component);
         WebDriver wd = mock(WebDriver.class);
         WebElement form = mock(WebElement.class);
         given(wd.findElement(any(By.class))).willReturn(form);
         given(form.isDisplayed()).willReturn(false);
 
         // When
-        boolean result = action.run(waitStrategy, wd);
+        boolean result = action.run(context(wd));
 
         // Then
         assertThat(result, is(equalTo(false)));
@@ -194,7 +196,7 @@ class SubmitFormUnitTest {
     void shouldUseByFromElementLocator() {
         // Given
         ClientSideComponent component = formComponent(1, "xpath", "(//FORM)[2]");
-        SubmitForm action = new SubmitForm(valueProvider, uri, component);
+        SubmitForm action = new SubmitForm(uri, component);
         WebDriver wd = mock(WebDriver.class);
         WebElement visibleForm = visibleElement();
         ArgumentCaptor<By> byCaptor = ArgumentCaptor.forClass(By.class);
@@ -202,7 +204,7 @@ class SubmitFormUnitTest {
         given(wd.findElements(any(By.class))).willReturn(List.of());
 
         // When
-        boolean result = action.run(waitStrategy, wd);
+        boolean result = action.run(context(wd));
 
         // Then
         assertThat(result, is(equalTo(true)));
@@ -226,6 +228,13 @@ class SubmitFormUnitTest {
                 arguments(componentForTag("FORM", Type.FORM, 1), true),
                 arguments(componentForTag("DIV", Type.BUTTON, 0), false),
                 arguments(componentForTag("A", Type.LINK, 0), false));
+    }
+
+    private TaskContext context(WebDriver wd) {
+        WebDriverProcess wdp = mock(WebDriverProcess.class);
+        given(wdp.getWaitStrategy()).willReturn(waitStrategy);
+        given(wdp.getWebDriver()).willReturn(wd);
+        return new TaskContext(wdp, valueProvider, null);
     }
 
     private static ClientSideComponent formComponent(

@@ -24,9 +24,7 @@ import java.util.Locale;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.WebDriver;
 import org.parosproxy.paros.Constant;
-import org.zaproxy.addon.client.spider.ClientSpider.WebDriverProcess;
 import org.zaproxy.zap.utils.Stats;
 
 public class ClientSpiderTask implements Runnable {
@@ -55,7 +53,7 @@ public class ClientSpiderTask implements Runnable {
     private List<SpiderAction> actions;
     @Getter private Status status;
     @Getter private String error;
-    private WebDriverProcess wdp;
+    private TaskContext context;
 
     public ClientSpiderTask(
             int id,
@@ -81,9 +79,9 @@ public class ClientSpiderTask implements Runnable {
     }
 
     void cleanup() {
-        if (wdp != null) {
-            clientSpider.returnWebDriverProcess(wdp);
-            wdp = null;
+        if (context != null) {
+            clientSpider.returnWebDriverProcess(context.getWebDriverProcess());
+            context = null;
         }
         clientSpider.postTaskExecution(this);
     }
@@ -108,13 +106,11 @@ public class ClientSpiderTask implements Runnable {
         this.status = Status.RUNNING;
         this.clientSpider.taskStateChange(this);
         try {
-            wdp = this.clientSpider.getWebDriverProcess();
-            WebDriver wd = wdp.getWebDriver();
-            ActionWaitStrategy waitStrategy = wdp.getWaitStrategy();
+            context = this.clientSpider.createTaskContext();
             startTime = System.currentTimeMillis();
             for (SpiderAction action : actions) {
-                action.run(waitStrategy, wd);
-                if (!waitStrategy.waitAfterAction()) {
+                action.run(context);
+                if (!context.getWaitStrategy().waitAfterAction()) {
                     break;
                 }
             }

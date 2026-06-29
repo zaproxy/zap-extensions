@@ -19,9 +19,7 @@
  */
 package org.zaproxy.addon.client.spider;
 
-import org.openqa.selenium.WebDriver;
-
 public interface SpiderAction {
 
-    boolean run(ActionWaitStrategy waitStrategy, WebDriver wd);
+    boolean run(TaskContext context);
 }

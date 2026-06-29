@@ -307,12 +307,16 @@ public class ClientSpider implements GenericScanner2 {
         }
     }
 
+    TaskContext createTaskContext() {
+        return new TaskContext(getWebDriverProcess(), valueProvider, clientMap.getGraph());
+    }
+
     private List<SpiderAction> followGraphAction(String url, SpiderAction... additionalActions) {
         List<SpiderAction> actions = new ArrayList<>(5);
-        actions.add(new FollowGraph(clientMap.getGraph(), url, valueProvider));
+        actions.add(new FollowGraph(url));
         actions.add(
-                (ws, wd) -> {
-                    checkRedirect(url, wd);
+                context -> {
+                    checkRedirect(url, context.getWebDriver());
                     return true;
                 });
         if (additionalActions != null) {
@@ -381,7 +385,7 @@ public class ClientSpider implements GenericScanner2 {
         }
     }
 
-    public WebDriverProcess getWebDriverProcess() {
+    private WebDriverProcess getWebDriverProcess() {
         WebDriverProcess wdp;
         synchronized (this.webDriverPool) {
             if (!this.webDriverPool.isEmpty()) {
@@ -409,8 +413,7 @@ public class ClientSpider implements GenericScanner2 {
     private void addSubmitTask(String nodeUrl, ClientSideComponent component) {
         addTask(
                 nodeUrl,
-                followGraphAction(
-                        nodeUrl, new SubmitForm(valueProvider, createUri(nodeUrl), component)),
+                followGraphAction(nodeUrl, new SubmitForm(createUri(nodeUrl), component)),
                 Constant.messages.getString("client.spider.panel.table.action.submit"),
                 paramsToString(component));
     }
@@ -597,9 +600,7 @@ public class ClientSpider implements GenericScanner2 {
                 Stats.incCounter("stats.client.spider.event.component.click");
                 addTask(
                         url,
-                        followGraphAction(
-                                url,
-                                new ClickElement(valueProvider, createUri(url), component, false)),
+                        followGraphAction(url, new ClickElement(createUri(url), component, false)),
                         Constant.messages.getString("client.spider.panel.table.action.click"),
                         paramsToString(component));
             } else if (SubmitForm.isSupported(component)) {
@@ -962,7 +963,7 @@ public class ClientSpider implements GenericScanner2 {
     }
 
     @Getter
-    class WebDriverProcess {
+    public class WebDriverProcess {
 
         private static final String LOCAL_PROXY_IP = "127.0.0.1";
 
