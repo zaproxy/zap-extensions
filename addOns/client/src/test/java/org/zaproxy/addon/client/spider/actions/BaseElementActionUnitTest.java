@@ -31,6 +31,7 @@ import static org.mockito.Mockito.verify;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BooleanSupplier;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -223,11 +224,55 @@ class BaseElementActionUnitTest {
         verify(waitStrategy, never()).waitAfterPageLoad(url);
     }
 
+    @Test
+    void shouldReturnFalseWhenStoppedAfterWaitAfterAction() throws IOException {
+        // Given
+        ActionWaitStrategy waitStrategy = mock();
+        given(waitStrategy.waitAfterAction()).willReturn(true);
+        String url = "http://localhost:1234/test";
+        TaskContext context = runContext(waitStrategy, url, url, true, () -> true);
+
+        // When
+        boolean result = action.run(context);
+
+        // Then
+        assertThat(result, is(equalTo(false)));
+        verify(waitStrategy).waitAfterAction();
+        verify(waitStrategy, never()).waitAfterPageLoad(url);
+    }
+
+    @Test
+    void shouldReturnFalseWhenStoppedBeforeWaitAfterPageLoad() throws IOException {
+        // Given
+        ActionWaitStrategy waitStrategy = mock();
+        given(waitStrategy.waitAfterAction()).willReturn(true);
+        String urlBefore = "http://localhost:1234/test";
+        String urlAfter = "http://localhost:1234/other";
+        TaskContext context = runContext(waitStrategy, urlBefore, urlAfter, true, () -> true);
+
+        // When
+        boolean result = action.run(context);
+
+        // Then
+        assertThat(result, is(equalTo(false)));
+        verify(waitStrategy, never()).waitAfterPageLoad(urlAfter);
+    }
+
     private TaskContext runContext(
             ActionWaitStrategy waitStrategy,
             String urlBefore,
             String urlAfter,
             boolean actionResult)
+            throws IOException {
+        return runContext(waitStrategy, urlBefore, urlAfter, actionResult, () -> false);
+    }
+
+    private TaskContext runContext(
+            ActionWaitStrategy waitStrategy,
+            String urlBefore,
+            String urlAfter,
+            boolean actionResult,
+            BooleanSupplier stopped)
             throws IOException {
         URI actionUri = new URI("http://localhost:1234/test", true);
         ClientSideComponent component = mock();
@@ -258,7 +303,7 @@ class BaseElementActionUnitTest {
 
         action = runAction;
 
-        return new TaskContext(wdp, valueProvider, null);
+        return new TaskContext(stopped, wdp, valueProvider, null);
     }
 
     private TaskContext context(List<WebElement> elements) {
@@ -266,7 +311,7 @@ class BaseElementActionUnitTest {
         WebDriver wd = mock(WebDriver.class);
         given(wd.findElements(By.xpath("//input | //textarea"))).willReturn(elements);
         given(wdp.getWebDriver()).willReturn(wd);
-        return new TaskContext(wdp, valueProvider, null);
+        return new TaskContext(() -> false, wdp, valueProvider, null);
     }
 
     class TestWebElement implements WebElement {

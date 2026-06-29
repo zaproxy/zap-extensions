@@ -325,7 +325,7 @@ class ClickElementUnitTest {
         WebDriverProcess wdp = mock(WebDriverProcess.class);
         given(wdp.getWaitStrategy()).willReturn(waitStrategy);
         given(wdp.getWebDriver()).willReturn(wd);
-        return new TaskContext(wdp, valueProvider, null);
+        return new TaskContext(() -> false, wdp, valueProvider, null);
     }
 
     private static ClientSideComponent componentWithLocator(

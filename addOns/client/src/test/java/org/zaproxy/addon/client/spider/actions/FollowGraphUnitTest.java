@@ -34,6 +34,8 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.withSettings;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BooleanSupplier;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.DirectedMultigraph;
@@ -87,7 +89,7 @@ class FollowGraphUnitTest extends TestUtils {
         WebDriverProcess wdp = mock(withSettings().strictness(Strictness.LENIENT));
         given(wdp.getWaitStrategy()).willReturn(waitStrategy);
         given(wdp.getWebDriver()).willReturn(wd);
-        context = new TaskContext(wdp, valueProvider, graph);
+        context = new TaskContext(() -> false, wdp, valueProvider, graph);
         stats = new InMemoryStats();
         Stats.addListener(stats);
     }
@@ -237,6 +239,67 @@ class FollowGraphUnitTest extends TestUtils {
         assertCommonState(wd, result);
         verify(wd).get(URL_B);
         assertThat(stats.getStat("stats.client.spider.action.follow.fallback"), is(1L));
+    }
+
+    @Test
+    void shouldReturnFalseWhenStoppedBeforeFallback() {
+        // Given
+        ClientGraphVertex.Url vertexA = new ClientGraphVertex.Url(URL_A);
+        ClientGraphVertex.Url vertexB = new ClientGraphVertex.Url(URL_B);
+        graph.addVertex(vertexA);
+        graph.addVertex(vertexB);
+
+        given(wd.getCurrentUrl()).willReturn(URL_A);
+
+        TaskContext stoppedContext = contextWithStopped(() -> true);
+        FollowGraph action = new FollowGraph(URL_B);
+
+        // When
+        boolean result = action.run(stoppedContext);
+
+        // Then
+        assertThat(result, is(false));
+        verify(wd, never()).get(any());
+    }
+
+    @Test
+    void shouldReturnFalseWhenStoppedDuringPathTraversal() {
+        // Given
+        ClientSideComponent link1 = createLinkComponent(URL_A, URL_B);
+        ClientSideComponent link2 = createLinkComponent(URL_B, URL_C);
+        addGraphEdge(URL_A, link1, URL_B);
+        addGraphEdge(URL_B, link2, URL_C);
+
+        given(wd.getCurrentUrl()).willReturn(URL_A);
+        WebElement element = visibleElement();
+        given(wd.findElement(any())).willReturn(element);
+
+        AtomicBoolean stopped = new AtomicBoolean(false);
+        TaskContext ctx = contextWithStopped(stopped::get);
+        FollowGraph action = new FollowGraph(URL_C);
+
+        // Stop after first click
+        org.mockito.Mockito.doAnswer(
+                        inv -> {
+                            stopped.set(true);
+                            return null;
+                        })
+                .when(element)
+                .click();
+
+        // When
+        boolean result = action.run(ctx);
+
+        // Then
+        assertThat(result, is(false));
+        verify(waitStrategy, never()).waitAfterPageLoad(URL_C);
+    }
+
+    private TaskContext contextWithStopped(BooleanSupplier stopped) {
+        WebDriverProcess wdp = mock(withSettings().strictness(Strictness.LENIENT));
+        given(wdp.getWaitStrategy()).willReturn(waitStrategy);
+        given(wdp.getWebDriver()).willReturn(wd);
+        return new TaskContext(stopped, wdp, valueProvider, graph);
     }
 
     private void assertCommonState(WebDriver wd, boolean result) {
