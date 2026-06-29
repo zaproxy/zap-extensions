@@ -71,6 +71,7 @@ import org.zaproxy.addon.client.internal.ClientMapListener;
 import org.zaproxy.addon.client.internal.ClientNode;
 import org.zaproxy.addon.client.internal.ClientSideComponent;
 import org.zaproxy.addon.client.internal.ClientSideDetails;
+import org.zaproxy.addon.client.internal.InteractableState;
 import org.zaproxy.addon.client.internal.graph.ClientGraphVertex;
 import org.zaproxy.addon.client.spider.ClientSpiderOptions.ScopeCheck;
 import org.zaproxy.addon.client.spider.actions.ClickElement;
@@ -581,6 +582,11 @@ public class ClientSpider implements GenericScanner2 {
             }
             String url = component.getParentUrl();
             if (shouldIgnore(url, source, depth, siblings)) {
+                return;
+            }
+
+            InteractableState interactable = component.getInteractable();
+            if (interactable != null && !(interactable.isEnabled() && interactable.isVisible())) {
                 return;
             }
 

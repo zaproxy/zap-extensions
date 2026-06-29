@@ -26,6 +26,7 @@ import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.zaproxy.addon.client.internal.ClientSideComponent;
+import org.zaproxy.addon.client.internal.InteractableState;
 import org.zaproxy.addon.client.spider.ActionWaitStrategy;
 import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.zap.utils.Stats;
@@ -89,7 +90,8 @@ public class ClickElement extends BaseElementAction {
                 return "submit".equalsIgnoreCase(type) || "button".equalsIgnoreCase(type);
 
             default:
-                return false;
+                InteractableState interactable = component.getInteractable();
+                return interactable != null && interactable.isPointer();
         }
     }
 }

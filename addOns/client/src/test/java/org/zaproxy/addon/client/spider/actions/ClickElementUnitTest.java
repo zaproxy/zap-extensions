@@ -53,6 +53,7 @@ import org.openqa.selenium.WebElement;
 import org.zaproxy.addon.client.internal.ClientSideComponent;
 import org.zaproxy.addon.client.internal.ClientSideComponent.Type;
 import org.zaproxy.addon.client.internal.ElementLocator;
+import org.zaproxy.addon.client.internal.InteractableState;
 import org.zaproxy.addon.client.spider.ActionWaitStrategy;
 import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.zap.extension.stats.InMemoryStats;
@@ -253,7 +254,20 @@ class ClickElementUnitTest {
                 arguments(component("INPUT", "submit"), true),
                 arguments(component("INPUT", "button"), true),
                 arguments(component("INPUT", "text"), false),
-                arguments(component("FORM", ""), false));
+                arguments(component("FORM", ""), false),
+                arguments(
+                        componentWithInteractable(
+                                "DIV", "", new InteractableState(true, true, true)),
+                        true),
+                arguments(
+                        componentWithInteractable(
+                                "DIV", "", new InteractableState(false, false, true)),
+                        true),
+                arguments(
+                        componentWithInteractable(
+                                "DIV", "", new InteractableState(false, false, false)),
+                        false),
+                arguments(componentWithInteractable("SPAN", "", null), false));
     }
 
     @Test
@@ -294,6 +308,13 @@ class ClickElementUnitTest {
 
         // When / Then
         assertThat(ClickElement.isSupported(scopeChecker, component), is(true));
+    }
+
+    private static ClientSideComponent componentWithInteractable(
+            String tagName, String tagType, InteractableState interactable) {
+        ClientSideComponent c = component(tagName, tagType);
+        c.setInteractable(interactable);
+        return c;
     }
 
     private static ClientSideComponent componentWithLocator(
