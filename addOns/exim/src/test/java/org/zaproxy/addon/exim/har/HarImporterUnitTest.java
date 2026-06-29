@@ -42,6 +42,7 @@ import de.sstoehr.harreader.model.HarLog.HarLogBuilder;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -85,6 +86,8 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.ui.ProgressPaneListener;
 import org.zaproxy.addon.exim.ExtensionExim;
 import org.zaproxy.zap.testutils.TestUtils;
+import org.zaproxy.zap.utils.Stats;
+import org.zaproxy.zap.utils.StatsListener;
 
 /** Unit test for {@link HarImporter}. */
 class HarImporterUnitTest extends TestUtils {
@@ -101,6 +104,7 @@ class HarImporterUnitTest extends TestUtils {
     private static ExtensionLoader extensionLoader;
     private static ExtensionHistory extHistory;
     private static SiteMap siteMap;
+    private StatsListener statsListener;
 
     private List<String> logMessages;
 
@@ -131,7 +135,10 @@ class HarImporterUnitTest extends TestUtils {
     }
 
     @BeforeEach
-    void initLogger() {
+    void beforeEach() {
+        statsListener = mock();
+        Stats.addListener(statsListener);
+
         logMessages = new ArrayList<>();
         LoggerConfig rootLogger = LoggerContext.getContext().getConfiguration().getRootLogger();
         rootLogger.addAppender(new TestAppender(logMessages::add), null, null);
@@ -147,6 +154,8 @@ class HarImporterUnitTest extends TestUtils {
 
     @AfterEach
     void reset() throws URISyntaxException {
+        Stats.removeListener(statsListener);
+
         Configurator.reconfigure(getClass().getResource("/log4j2-test.properties").toURI());
     }
 
@@ -227,6 +236,7 @@ class HarImporterUnitTest extends TestUtils {
         // Then
         assertThat(importer.isSuccess(), equalTo(false));
         verify(listener).completed();
+        verify(statsListener).counterInc("stats.exim.import.har.file.errors");
     }
 
     @Test
@@ -239,6 +249,27 @@ class HarImporterUnitTest extends TestUtils {
         // Then
         assertThat(importer.isSuccess(), equalTo(true));
         verify(listener).completed();
+        verify(statsListener).counterInc("stats.exim.import.har.file");
+        verify(statsListener).counterInc("stats.exim.import.har.file.message");
+    }
+
+    @Test
+    void shouldImportHarFromString() throws Exception {
+        // Given / When
+        HarImporter importer = new HarImporter(Files.readString(getResourcePath("noresponse.har")));
+        // Then
+        assertThat(importer.isSuccess(), equalTo(true));
+        verify(statsListener).counterInc("stats.exim.import.har.string");
+        verify(statsListener).counterInc("stats.exim.import.har.string.message");
+    }
+
+    @Test
+    void shouldNotImportNonHarFromString() {
+        // Given / When
+        HarImporter importer = new HarImporter("Not HAR");
+        // Then
+        assertThat(importer.isSuccess(), equalTo(false));
+        verify(statsListener).counterInc("stats.exim.import.har.string.errors");
     }
 
     @Test
