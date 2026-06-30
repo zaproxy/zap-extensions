@@ -31,6 +31,8 @@ import com.sittinglittleduck.DirBuster.SimpleHttpClient.HttpMethod;
 import com.sittinglittleduck.DirBuster.WorkUnit;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Vector;
 import java.util.concurrent.BlockingQueue;
@@ -95,7 +97,7 @@ public class BruteForceWorkGenerator implements Runnable {
 
         if (manager.getAuto()) {
             try {
-                URL headurl = new URL(firstPart);
+                URL headurl = new URI(firstPart).toURL();
 
                 int responceCode =
                         manager.getHttpClient()
@@ -108,7 +110,7 @@ public class BruteForceWorkGenerator implements Runnable {
                     // switch the mode to just GET requests
                     manager.setAuto(false);
                 }
-            } catch (IOException e) {
+            } catch (URISyntaxException | IOException e) {
                 LOGGER.error(e, e);
             }
         }
@@ -141,7 +143,7 @@ public class BruteForceWorkGenerator implements Runnable {
                     baseCaseObj =
                             GenBaseCase.genBaseCase(manager, firstPart + currentDir, true, null);
 
-                } catch (IOException e) {
+                } catch (URISyntaxException | IOException e) {
                     LOGGER.error(e, e);
                 }
 
@@ -177,7 +179,7 @@ public class BruteForceWorkGenerator implements Runnable {
                                     GenBaseCase.genBaseCase(
                                             manager, firstPart + currentDir, false, fileExtention);
 
-                        } catch (IOException e) {
+                        } catch (URISyntaxException | IOException e) {
                             LOGGER.error(e, e);
                         }
 
@@ -232,18 +234,18 @@ public class BruteForceWorkGenerator implements Runnable {
             }
 
             if (doingDirs) {
-                URL currentURL = new URL(firstPart + currentDir + temp + "/");
+                URL currentURL = new URI(firstPart + currentDir + temp + "/").toURL();
 
                 workQueue.put(new WorkUnit(currentURL, true, method, baseCaseObj, temp));
 
             } else {
-                URL currentURL = new URL(firstPart + currentDir + temp + fileExtention);
+                URL currentURL = new URI(firstPart + currentDir + temp + fileExtention).toURL();
 
                 workQueue.put(new WorkUnit(currentURL, false, method, baseCaseObj, temp));
             }
         } catch (InterruptedException e) {
             LOGGER.debug(e);
-        } catch (MalformedURLException e) {
+        } catch (URISyntaxException | MalformedURLException e) {
             LOGGER.debug("Bad URL", e);
         }
     }

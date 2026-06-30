@@ -1050,7 +1050,12 @@ public class ZestZapUtils {
     }
 
     public static ZestResponse toZestResponse(HttpMessage msg) throws MalformedURLException {
-        return toZestResponse(new URL(msg.getRequestHeader().getURI().toString()), msg);
+        try {
+            return toZestResponse(
+                    new java.net.URI(msg.getRequestHeader().getURI().toString()).toURL(), msg);
+        } catch (java.net.URISyntaxException e) {
+            throw new MalformedURLException(e.getMessage());
+        }
     }
 
     private static ZestResponse toZestResponse(URL url, HttpMessage msg) {
@@ -1077,7 +1082,11 @@ public class ZestZapUtils {
             throw new HttpMalformedHeaderException("The request header does not have a URI.");
         }
 
-        req.setUrl(new URL(uri.toString()));
+        try {
+            req.setUrl(new java.net.URI(uri.toString()).toURL());
+        } catch (java.net.URISyntaxException e) {
+            throw new MalformedURLException(e.getMessage());
+        }
         if (replaceTokens) {
             req.setUrlToken(correctTokens(uri.toString()));
             req.setData(correctTokens(msg.getRequestBody().toString()));

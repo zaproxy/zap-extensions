@@ -73,10 +73,10 @@ public class ZapItScan {
 
         URL targetURL;
         try {
-            targetURL = new URL(url);
+            targetURL = new java.net.URI(url).toURL();
             // Validate the actual request-uri of the HTTP message accessed.
             new URI(url, true);
-        } catch (MalformedURLException | URIException e) {
+        } catch (MalformedURLException | URIException | java.net.URISyntaxException e) {
             CommandLine.error(
                     Constant.messages.getString("quickstart.cmdline.quickurl.error.invalidUrl"));
             return false;

@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Update dependencies.
   - Restore JSON deserialization behaviour.
   - Handle text (and similar) input elements which only become visible when interacted with.
+- Maintenance changes.
 
 ### Fixed
 - Fix exception when adding/editing Zest non-standalone type scripts through the GUI.

@@ -22,7 +22,7 @@ package org.zaproxy.zap.extension.zest.dialogs;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -250,7 +250,7 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
         }
         if (!this.isEmptyField(FIELD_PREFIX)) {
             try {
-                new URL(this.getStringValue(FIELD_PREFIX));
+                new URI(this.getStringValue(FIELD_PREFIX)).toURL();
             } catch (Exception e) {
                 return Constant.messages.getString("zest.dialog.script.error.prefix");
             }

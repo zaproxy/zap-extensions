@@ -23,6 +23,7 @@ package com.sittinglittleduck.DirBuster;
 import com.sittinglittleduck.DirBuster.SimpleHttpClient.HttpMethod;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Vector;
 import net.htmlparser.jericho.Attribute;
@@ -284,7 +285,7 @@ public class HTMLparse extends Thread {
 
             return GenBaseCase.genBaseCase(
                     manager, manager.getFirstPartOfURL() + baseItem, isDir, fileExtention);
-        } catch (MalformedURLException ex) {
+        } catch (URISyntaxException | MalformedURLException ex) {
             LOGGER.debug("Bad URL", ex);
         } catch (IOException | InterruptedException ex) {
             LOGGER.debug(ex);

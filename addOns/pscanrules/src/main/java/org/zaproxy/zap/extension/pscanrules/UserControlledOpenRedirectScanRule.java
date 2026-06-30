@@ -118,8 +118,8 @@ public class UserControlledOpenRedirectScanRule extends PluginPassiveScanner
         if (responseLocation.indexOf("://") > 0) {
             URL responseURL;
             try {
-                responseURL = new URL(responseLocation);
-            } catch (MalformedURLException e) {
+                responseURL = new java.net.URI(responseLocation).toURL();
+            } catch (java.net.URISyntaxException | MalformedURLException e) {
                 return;
             }
 
