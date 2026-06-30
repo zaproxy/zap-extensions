@@ -83,6 +83,7 @@ abstract class BaseElementAction implements SpiderAction {
 
         String currentUrl = context.getWebDriver().getCurrentUrl();
         if (!urlBeforeAction.equals(currentUrl)) {
+            context.addNavigationEdge(urlBeforeAction, component, currentUrl);
             return !context.isStopped() && context.getWaitStrategy().waitAfterPageLoad(currentUrl);
         }
 

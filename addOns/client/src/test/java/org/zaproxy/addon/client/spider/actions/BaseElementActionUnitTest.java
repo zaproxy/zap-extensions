@@ -27,6 +27,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 import java.io.IOException;
 import java.util.List;
@@ -45,6 +46,7 @@ import org.openqa.selenium.Rectangle;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
+import org.zaproxy.addon.client.internal.ClientMap;
 import org.zaproxy.addon.client.internal.ClientSideComponent;
 import org.zaproxy.addon.client.spider.ActionWaitStrategy;
 import org.zaproxy.addon.client.spider.ClientSpider.WebDriverProcess;
@@ -258,6 +260,58 @@ class BaseElementActionUnitTest {
         verify(waitStrategy, never()).waitAfterPageLoad(urlAfter);
     }
 
+    @Test
+    void shouldNotAddNavigationEdgeWhenUrlUnchanged() throws IOException {
+        // Given
+        ActionWaitStrategy waitStrategy = mock();
+        given(waitStrategy.waitAfterAction()).willReturn(true);
+        String url = "http://localhost:1234/test";
+        ClientMap clientMap = mock(ClientMap.class);
+        TaskContext context = runContext(waitStrategy, url, url, true, () -> false, clientMap);
+
+        // When
+        action.run(context);
+
+        // Then
+        verifyNoInteractions(clientMap);
+    }
+
+    @Test
+    void shouldAddNavigationEdgeWhenUrlChanges() throws IOException {
+        // Given
+        ActionWaitStrategy waitStrategy = mock();
+        given(waitStrategy.waitAfterAction()).willReturn(true);
+        given(waitStrategy.waitAfterPageLoad(any())).willReturn(true);
+        String urlBefore = "http://localhost:1234/test";
+        String urlAfter = "http://localhost:1234/other";
+        ClientMap clientMap = mock(ClientMap.class);
+        TaskContext context =
+                runContext(waitStrategy, urlBefore, urlAfter, true, () -> false, clientMap);
+
+        // When
+        action.run(context);
+
+        // Then
+        verify(clientMap).addNavigationEdge(urlBefore, action.component, urlAfter);
+    }
+
+    @Test
+    void shouldNotAddNavigationEdgeWhenActionReturnsFalse() throws IOException {
+        // Given
+        ActionWaitStrategy waitStrategy = mock();
+        String urlBefore = "http://localhost:1234/test";
+        String urlAfter = "http://localhost:1234/other";
+        ClientMap clientMap = mock(ClientMap.class);
+        TaskContext context =
+                runContext(waitStrategy, urlBefore, urlAfter, false, () -> false, clientMap);
+
+        // When
+        action.run(context);
+
+        // Then
+        verifyNoInteractions(clientMap);
+    }
+
     private TaskContext runContext(
             ActionWaitStrategy waitStrategy,
             String urlBefore,
@@ -273,6 +327,17 @@ class BaseElementActionUnitTest {
             String urlAfter,
             boolean actionResult,
             BooleanSupplier stopped)
+            throws IOException {
+        return runContext(waitStrategy, urlBefore, urlAfter, actionResult, stopped, mock());
+    }
+
+    private TaskContext runContext(
+            ActionWaitStrategy waitStrategy,
+            String urlBefore,
+            String urlAfter,
+            boolean actionResult,
+            BooleanSupplier stopped,
+            ClientMap clientMap)
             throws IOException {
         URI actionUri = new URI("http://localhost:1234/test", true);
         ClientSideComponent component = mock();
@@ -303,7 +368,7 @@ class BaseElementActionUnitTest {
 
         action = runAction;
 
-        return new TaskContext(stopped, wdp, valueProvider, null);
+        return new TaskContext(stopped, wdp, valueProvider, clientMap);
     }
 
     private TaskContext context(List<WebElement> elements) {

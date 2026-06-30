@@ -24,6 +24,8 @@ import lombok.Getter;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.openqa.selenium.WebDriver;
+import org.zaproxy.addon.client.internal.ClientMap;
+import org.zaproxy.addon.client.internal.ClientSideComponent;
 import org.zaproxy.addon.client.internal.graph.ClientGraphVertex;
 import org.zaproxy.addon.client.spider.ClientSpider.WebDriverProcess;
 import org.zaproxy.addon.commonlib.ValueProvider;
@@ -35,23 +37,32 @@ public class TaskContext {
     private final ActionWaitStrategy waitStrategy;
     private final WebDriver webDriver;
     private final ValueProvider valueProvider;
-    private final Graph<ClientGraphVertex, DefaultEdge> graph;
+    private final ClientMap clientMap;
     private final WebDriverProcess webDriverProcess;
 
     public TaskContext(
             BooleanSupplier stopped,
             WebDriverProcess webDriverProcess,
             ValueProvider valueProvider,
-            Graph<ClientGraphVertex, DefaultEdge> graph) {
+            ClientMap clientMap) {
         this.stopped = stopped;
         this.webDriverProcess = webDriverProcess;
         this.waitStrategy = webDriverProcess.getWaitStrategy();
         this.webDriver = webDriverProcess.getWebDriver();
         this.valueProvider = valueProvider;
-        this.graph = graph;
+        this.clientMap = clientMap;
     }
 
     public boolean isStopped() {
         return stopped.getAsBoolean();
+    }
+
+    public Graph<ClientGraphVertex, DefaultEdge> getGraph() {
+        return clientMap.getGraph();
+    }
+
+    public void addNavigationEdge(
+            String urlBefore, ClientSideComponent component, String urlAfter) {
+        clientMap.addNavigationEdge(urlBefore, component, urlAfter);
     }
 }

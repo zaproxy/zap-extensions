@@ -997,6 +997,23 @@ class ClientMapUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldNotAddDuplicateNavigationEdgeForSameComponent() {
+        // Given
+        String urlBefore = "https://www.example.com/page";
+        String urlAfter = "https://www.example.com/other";
+        ClientSideComponent component = mock(ClientSideComponent.class);
+
+        // When
+        map.addNavigationEdge(urlBefore, component, urlAfter);
+        map.addNavigationEdge(urlBefore, component, urlAfter);
+
+        // Then
+        var graph = map.getGraph();
+        assertThat(graph.vertexSet().size(), is(3));
+        assertThat(graph.edgeSet().size(), is(2));
+    }
+
+    @Test
     void shouldClearGraph() {
         // Given
         String url = "https://www.example.com/page";
