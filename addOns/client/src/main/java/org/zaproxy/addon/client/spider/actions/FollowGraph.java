@@ -61,6 +61,10 @@ public class FollowGraph implements SpiderAction {
             return true;
         }
 
+        if (context.isStopped()) {
+            return false;
+        }
+
         Stats.incCounter(STATS_PREFIX + ".fallback");
         LOGGER.debug("No graph path to {}, falling back to direct navigation", targetUrl);
         context.getWebDriver().get(targetUrl);
@@ -86,6 +90,9 @@ public class FollowGraph implements SpiderAction {
 
         List<ClientGraphVertex> vertices = path.getVertexList();
         for (ClientGraphVertex vertex : vertices) {
+            if (context.isStopped()) {
+                return false;
+            }
             if (vertex instanceof ClientGraphVertex.Component componentVertex) {
                 ClientSideComponent component = componentVertex.component();
                 try {
@@ -99,7 +106,7 @@ public class FollowGraph implements SpiderAction {
                 }
             }
         }
-        return context.getWaitStrategy().waitAfterPageLoad(toUrl);
+        return !context.isStopped() && context.getWaitStrategy().waitAfterPageLoad(toUrl);
     }
 
     private static class FollowClickElement extends ClickElement {

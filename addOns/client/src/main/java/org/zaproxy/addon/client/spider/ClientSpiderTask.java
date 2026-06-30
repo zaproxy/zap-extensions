@@ -109,6 +109,11 @@ public class ClientSpiderTask implements Runnable {
             context = this.clientSpider.createTaskContext();
             startTime = System.currentTimeMillis();
             for (SpiderAction action : actions) {
+                if (clientSpider.isStopped()) {
+                    this.status = Status.STOPPED;
+                    this.clientSpider.taskStateChange(this);
+                    return;
+                }
                 action.run(context);
             }
             ok = true;

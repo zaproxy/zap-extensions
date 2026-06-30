@@ -29,6 +29,7 @@ import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -58,7 +59,7 @@ class ClientSpiderTaskUnitTest extends TestUtils {
         waitStrategy = mock();
         WebDriverProcess wdp = mock(WebDriverProcess.class);
         given(wdp.getWaitStrategy()).willReturn(waitStrategy);
-        context = new TaskContext(wdp, null, null);
+        context = new TaskContext(() -> false, wdp, null, null);
         given(clientSpider.createTaskContext()).willReturn(context);
     }
 
@@ -103,5 +104,36 @@ class ClientSpiderTaskUnitTest extends TestUtils {
         // Then
         verify(waitStrategy, never()).waitAfterAction();
         assertThat(task.getStatus(), is(Status.FINISHED));
+    }
+
+    @Test
+    void shouldStopBetweenActionsWhenSpiderIsStopped() {
+        // Given
+        AtomicBoolean stopped = new AtomicBoolean(false);
+        given(clientSpider.isStopped()).willAnswer(inv -> stopped.get());
+        WebDriverProcess wdp = mock(WebDriverProcess.class);
+        TaskContext stoppableContext = new TaskContext(stopped::get, wdp, null, null);
+        given(clientSpider.createTaskContext()).willReturn(stoppableContext);
+
+        List<String> ran = new ArrayList<>();
+        List<SpiderAction> actions =
+                List.of(
+                        ctx -> {
+                            ran.add("first");
+                            stopped.set(true);
+                            return true;
+                        },
+                        ctx -> {
+                            ran.add("second");
+                            return true;
+                        });
+        ClientSpiderTask task = new ClientSpiderTask(1, clientSpider, actions, "test", "");
+
+        // When
+        task.run();
+
+        // Then
+        assertThat(ran, contains("first"));
+        assertThat(task.getStatus(), is(Status.STOPPED));
     }
 }

@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.client.spider;
 
+import java.util.function.BooleanSupplier;
 import lombok.Getter;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
@@ -30,6 +31,7 @@ import org.zaproxy.addon.commonlib.ValueProvider;
 @Getter
 public class TaskContext {
 
+    private final BooleanSupplier stopped;
     private final ActionWaitStrategy waitStrategy;
     private final WebDriver webDriver;
     private final ValueProvider valueProvider;
@@ -37,13 +39,19 @@ public class TaskContext {
     private final WebDriverProcess webDriverProcess;
 
     public TaskContext(
+            BooleanSupplier stopped,
             WebDriverProcess webDriverProcess,
             ValueProvider valueProvider,
             Graph<ClientGraphVertex, DefaultEdge> graph) {
+        this.stopped = stopped;
         this.webDriverProcess = webDriverProcess;
         this.waitStrategy = webDriverProcess.getWaitStrategy();
         this.webDriver = webDriverProcess.getWebDriver();
         this.valueProvider = valueProvider;
         this.graph = graph;
+    }
+
+    public boolean isStopped() {
+        return stopped.getAsBoolean();
     }
 }
