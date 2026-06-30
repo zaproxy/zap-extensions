@@ -35,8 +35,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.BlockingQueue;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -121,7 +124,7 @@ public class WorkerGeneratorURLFuzz implements Runnable {
 
             if (manager.getAuto()) {
                 try {
-                    URL headurl = new URL(firstPart);
+                    URL headurl = new URI(firstPart).toURL();
                     int responceCode =
                             manager.getHttpClient()
                                     .send(HttpMethod.HEAD, headurl.toString())
@@ -134,7 +137,7 @@ public class WorkerGeneratorURLFuzz implements Runnable {
                                 "Changing to GET only HEAD test returned 501(method no implmented) or a 400");
                         manager.setAuto(false);
                     }
-                } catch (MalformedURLException e) {
+                } catch (URISyntaxException | MalformedURLException e) {
                     LOGGER.debug("Malformed URL", e);
                 } catch (IOException e) {
                     LOGGER.debug(e);
@@ -166,9 +169,9 @@ public class WorkerGeneratorURLFuzz implements Runnable {
                     }
 
                     // url encode all the items
-                    line = URLEncoder.encode(line, "UTF-8");
+                    line = URLEncoder.encode(line, StandardCharsets.UTF_8);
 
-                    URL currentURL = new URL(firstPart + urlFuzzStart + line + urlFuzzEnd);
+                    URL currentURL = new URI(firstPart + urlFuzzStart + line + urlFuzzEnd).toURL();
                     // BaseCase baseCaseObj = new BaseCase(currentURL, failcode, true, failurl,
                     // baseResponce);
                     // if the base case is null then we need to switch to content anylsis mode
@@ -179,7 +182,7 @@ public class WorkerGeneratorURLFuzz implements Runnable {
             }
         } catch (InterruptedException ex) {
             LOGGER.debug(ex.toString());
-        } catch (MalformedURLException ex) {
+        } catch (URISyntaxException | MalformedURLException ex) {
             LOGGER.warn("Failed to create the fuzzed URL:", ex);
         } catch (IOException ex) {
             LOGGER.warn("Failed to create the fuzzed URL:", ex);

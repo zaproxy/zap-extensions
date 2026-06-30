@@ -734,10 +734,10 @@ public class ExtensionQuickStart extends ExtensionAdaptor
         public boolean attack(String url) {
             URL targetURL;
             try {
-                targetURL = new URL(url);
+                targetURL = new java.net.URI(url).toURL();
                 // Validate the actual request-uri of the HTTP message accessed.
                 new URI(url, true);
-            } catch (MalformedURLException | URIException e) {
+            } catch (MalformedURLException | URIException | java.net.URISyntaxException e) {
                 reportError(
                         Constant.messages.getString(
                                 "quickstart.cmdline.quickurl.error.invalidUrl"));

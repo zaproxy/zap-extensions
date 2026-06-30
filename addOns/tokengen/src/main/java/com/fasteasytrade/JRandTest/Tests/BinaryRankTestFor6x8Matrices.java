@@ -175,7 +175,7 @@ public class BinaryRankTestFor6x8Matrices extends Base {
 					row[j] = uni();
 				else
 					row[j] = (uni() >>> rt);
-				row[j] &= mask;
+				row[j] &= (int) mask;
 			}
 
 			cls = rankBinaryMatrix();

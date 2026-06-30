@@ -24,6 +24,8 @@ package com.sittinglittleduck.DirBuster;
 import com.sittinglittleduck.DirBuster.SimpleHttpClient.HttpMethod;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Vector;
 import java.util.regex.Matcher;
@@ -56,7 +58,7 @@ public class GenBaseCase {
      */
     public static BaseCase genBaseCase(
             Manager manager, String url, boolean isDir, String fileExtention)
-            throws MalformedURLException, IOException {
+            throws URISyntaxException, MalformedURLException, IOException {
         String type;
         if (isDir) {
             type = "Dir";
@@ -84,16 +86,16 @@ public class GenBaseCase {
         String baseResponce = "";
         URL failurl = null;
         if (isDir) {
-            failurl = new URL(url + failString + "/");
+            failurl = new URI(url + failString + "/").toURL();
         } else {
             if (manager.isBlankExt()) {
                 fileExtention = "";
-                failurl = new URL(url + failString + fileExtention);
+                failurl = new URI(url + failString + fileExtention).toURL();
             } else {
                 if (!fileExtention.startsWith(".")) {
                     fileExtention = "." + fileExtention;
                 }
-                failurl = new URL(url + failString + fileExtention);
+                failurl = new URI(url + failString + fileExtention).toURL();
             }
         }
 
@@ -175,7 +177,7 @@ public class GenBaseCase {
 
         baseCase =
                 new BaseCase(
-                        new URL(url),
+                        new URI(url).toURL(),
                         failcode,
                         isDir,
                         failurl,
@@ -195,7 +197,7 @@ public class GenBaseCase {
      * Used to generate a basecase when we are URL fuzzing
      */
     public static BaseCase genURLFuzzBaseCase(Manager manager, String fuzzStart, String FuzzEnd)
-            throws MalformedURLException, IOException {
+            throws URISyntaxException, MalformedURLException, IOException {
         BaseCase baseCase = null;
         int failcode = 0;
         String failString = Config.failCaseString;
@@ -207,7 +209,7 @@ public class GenBaseCase {
         boolean useRegexInstead = false;
         String regex = null;
 
-        URL failurl = new URL(fuzzStart + failString + FuzzEnd);
+        URL failurl = new URI(fuzzStart + failString + FuzzEnd).toURL();
 
         HttpResponse response = manager.getHttpClient().send(HttpMethod.GET, failurl.toString());
 

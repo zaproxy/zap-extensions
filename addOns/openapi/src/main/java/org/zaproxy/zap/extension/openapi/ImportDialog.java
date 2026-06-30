@@ -24,8 +24,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.io.File;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
@@ -333,7 +331,7 @@ public class ImportDialog extends AbstractDialog {
         }
 
         try {
-            new URL(definitionLocation).toURI();
+            new java.net.URI(definitionLocation).toURL();
             var uri = new URI(definitionLocation, true);
             return extOpenApi.importOpenApiDefinition(
                             uri,
@@ -342,7 +340,7 @@ public class ImportDialog extends AbstractDialog {
                             getSelectedContextId(),
                             getSelectedUser())
                     == null;
-        } catch (URIException | MalformedURLException | URISyntaxException ignored) {
+        } catch (URIException | MalformedURLException | java.net.URISyntaxException ignored) {
             // Not a valid URI, try to import as a file
         } catch (InvalidUrlException e) {
             ThreadUtils.invokeAndWaitHandled(

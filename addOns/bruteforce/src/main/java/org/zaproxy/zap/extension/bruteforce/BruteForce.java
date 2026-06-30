@@ -132,7 +132,7 @@ public class BruteForce extends Thread implements BruteForceListenner {
             Stats.incCounter("stats.bruteforce.started");
             tableModel.clear();
 
-            URL targetURL = new URL(target.getURI().toString());
+            URL targetURL = new java.net.URI(target.getURI().toString()).toURL();
             manager.setTargetURL(targetURL);
 
             manager.setAuto(true);
@@ -202,7 +202,7 @@ public class BruteForce extends Thread implements BruteForceListenner {
                 } catch (InterruptedException e) {
                 }
             }
-        } catch (MalformedURLException ex) {
+        } catch (java.net.URISyntaxException | MalformedURLException ex) {
             LOGGER.error("Failed brute forcing site {}", target.getURI(), ex);
         }
 
