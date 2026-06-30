@@ -57,7 +57,7 @@ zapAddOn {
                     version.set(">=0.8.0")
                 }
                 register("commonlib") {
-                    version.set(">=1.33.0")
+                    version.set(">=1.43.0")
                 }
                 register("database") {
                     version.set(">=0.9.0 & < 1.0.0")

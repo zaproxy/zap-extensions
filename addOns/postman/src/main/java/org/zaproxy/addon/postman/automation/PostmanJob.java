@@ -21,14 +21,11 @@ package org.zaproxy.addon.postman.automation;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.commons.httpclient.URI;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.Constant;
@@ -38,6 +35,8 @@ import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.jobs.JobData;
 import org.zaproxy.addon.automation.jobs.JobUtils;
+import org.zaproxy.addon.commonlib.UriUtils;
+import org.zaproxy.addon.commonlib.ZapUriException;
 import org.zaproxy.addon.postman.PostmanParser;
 
 public class PostmanJob extends AutomationJob {
@@ -107,11 +106,10 @@ public class PostmanJob extends AutomationJob {
             String collectionUrl = env.replaceVars(collectionStr);
 
             try {
-                new URL(collectionUrl).toURI();
-                new URI(collectionUrl, true);
+                UriUtils.isValid(collectionUrl);
 
                 parser.importFromUrl(collectionUrl, variables, false);
-            } catch (IOException | URISyntaxException e) {
+            } catch (ZapUriException | IOException e) {
                 progress.error(
                         Constant.messages.getString("postman.automation.error", e.getMessage()));
             }

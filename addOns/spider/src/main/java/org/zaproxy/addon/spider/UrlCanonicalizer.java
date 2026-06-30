@@ -34,6 +34,7 @@ import org.apache.commons.httpclient.util.URIUtil;
 import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.zaproxy.addon.commonlib.UriUtils;
 import org.zaproxy.addon.spider.SpiderParam.HandleParametersOption;
 import org.zaproxy.addon.spider.parser.ParseContext;
 
@@ -174,7 +175,7 @@ public final class UrlCanonicalizer {
             String host = canonicalURI.getHost().toLowerCase();
             String pathAndQueryString = normalizePath(path) + queryString;
 
-            URL result = new URL(protocol, host, port, pathAndQueryString);
+            URL result = UriUtils.buildUrl(protocol, host, port, pathAndQueryString);
             return result.toExternalForm();
 
         } catch (Exception ex) {
