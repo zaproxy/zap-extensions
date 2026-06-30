@@ -844,6 +844,21 @@ class ClientSpiderUnitTest extends TestUtils {
             HttpMessage redirectMessage) {}
 
     @Test
+    void shouldFinishImmediatelyWhenExistingOnlyAndMapIsEmpty() {
+        // Given
+        ClientNode root = mockRootNode();
+        given(map.getRoot()).willReturn(root);
+        useExistingOnlySpider();
+
+        // When
+        spider.run();
+
+        // Then - spider completes without hanging
+        verify(wd, timeout(5000).times(0)).get(anyString());
+        assertThat(spider.isStopped(), is(true));
+    }
+
+    @Test
     void shouldVisitVisitedAndContentLoadedNodesWhenExistingOnly() {
         // Given
         String visitedUrl = "https://www.example.com/visited";

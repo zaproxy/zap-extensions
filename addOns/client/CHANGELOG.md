@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Use new functionality from the browser extension for crawling.
 - Fill text areas while crawling.
 
+### Fixed
+- Spider should finish when existingOnly option used with an empty Client Map. 
+
 ## [0.28.0] - 2026-06-26
 ### Added
 - Client Spider existingOnly option, e.g. for scan rules.

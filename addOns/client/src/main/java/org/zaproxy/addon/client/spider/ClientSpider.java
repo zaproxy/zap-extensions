@@ -295,6 +295,10 @@ public class ClientSpider implements GenericScanner2 {
 
         if (scanOptions.isExistingOnly()) {
             addExistingTasks(clientMap.getRoot());
+            if (spiderTasks.isEmpty()) {
+                finished();
+                return;
+            }
         } else {
             addTask(
                     targetUrl,
