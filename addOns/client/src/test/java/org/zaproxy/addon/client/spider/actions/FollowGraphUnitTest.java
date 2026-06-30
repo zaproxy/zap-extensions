@@ -197,36 +197,10 @@ class FollowGraphUnitTest extends TestUtils {
         assertCommonState(wd, result);
         verify(element, times(2)).click();
         verify(wd, never()).get(any());
-        verify(waitStrategy).waitAfterAction();
+        verify(waitStrategy, times(2)).waitAfterAction();
         verify(waitStrategy).waitAfterPageLoad(URL_C);
         assertThat(stats.getStat("stats.client.spider.action.follow"), is(1L));
         assertThat(stats.getStat("stats.client.spider.action.follow.path"), is(1L));
-    }
-
-    @Test
-    void shouldFollowMultiHopPathWaitingAfterFirstHop() {
-        // Given
-        ClientSideComponent link1 = createLinkComponent(URL_A, URL_B);
-        ClientSideComponent link2 = createLinkComponent(URL_B, URL_C);
-        addGraphEdge(URL_A, link1, URL_B);
-        addGraphEdge(URL_B, link2, URL_C);
-        String urlD = "http://example.com/d";
-        ClientSideComponent link3 = createLinkComponent(URL_C, urlD);
-        addGraphEdge(URL_C, link3, urlD);
-
-        given(wd.getCurrentUrl()).willReturn(URL_A);
-        WebElement element = visibleElement();
-        given(wd.findElement(any(By.class))).willReturn(element);
-
-        FollowGraph action = new FollowGraph(urlD);
-
-        // When
-        boolean result = action.run(context);
-
-        // Then
-        assertCommonState(wd, result);
-        verify(waitStrategy, times(2)).waitAfterAction();
-        verify(waitStrategy).waitAfterPageLoad(urlD);
     }
 
     @Test

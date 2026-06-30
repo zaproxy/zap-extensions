@@ -110,9 +110,6 @@ public class ClientSpiderTask implements Runnable {
             startTime = System.currentTimeMillis();
             for (SpiderAction action : actions) {
                 action.run(context);
-                if (!context.getWaitStrategy().waitAfterAction()) {
-                    break;
-                }
             }
             ok = true;
             this.status = Status.FINISHED;

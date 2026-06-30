@@ -73,6 +73,7 @@ class ClickElementUnitTest {
     void setUp() throws IOException {
         valueProvider = mock(ValueProvider.class);
         waitStrategy = mock();
+        given(waitStrategy.waitAfterAction()).willReturn(true);
         uri = new URI("http://example.com/test", true);
         stats = new InMemoryStats();
         Stats.addListener(stats);
@@ -97,6 +98,7 @@ class ClickElementUnitTest {
         WebElement element = visibleElement();
         given(wd.findElement(By.id("btn"))).willReturn(element);
         given(wd.findElements(any(By.class))).willReturn(List.of());
+        given(wd.getCurrentUrl()).willReturn("http://example.com/test");
 
         // When
         boolean result = action.run(context(wd));
@@ -116,6 +118,7 @@ class ClickElementUnitTest {
         WebDriver wd = mock(WebDriver.class);
         WebElement element = visibleElement();
         given(wd.findElement(any(By.class))).willReturn(element);
+        given(wd.getCurrentUrl()).willReturn("http://example.com/test");
         WebElement input1 = visibleInput("inputA", "text");
         WebElement input2 = visibleInput("inputB", "text");
         WebElement textarea = visibleTextArea("textareaA");
@@ -149,6 +152,7 @@ class ClickElementUnitTest {
         WebDriver wd = mock(WebDriver.class);
         WebElement element = visibleElement();
         given(wd.findElement(any(By.class))).willReturn(element);
+        given(wd.getCurrentUrl()).willReturn("http://example.com/test");
         WebElement input1 = visibleInput("inputA", "text");
         WebElement input2 = visibleInput("inputB", "text");
         WebElement textarea = visibleTextArea("textareaA");

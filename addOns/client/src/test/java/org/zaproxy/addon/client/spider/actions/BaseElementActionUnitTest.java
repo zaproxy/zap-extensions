@@ -19,8 +19,13 @@
  */
 package org.zaproxy.addon.client.spider.actions;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 import java.io.IOException;
@@ -28,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.openqa.selenium.By;
@@ -39,6 +45,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.zaproxy.addon.client.internal.ClientSideComponent;
+import org.zaproxy.addon.client.spider.ActionWaitStrategy;
 import org.zaproxy.addon.client.spider.ClientSpider.WebDriverProcess;
 import org.zaproxy.addon.client.spider.TaskContext;
 import org.zaproxy.addon.commonlib.ValueProvider;
@@ -123,6 +130,135 @@ class BaseElementActionUnitTest {
                         List.of(),
                         Map.of(),
                         Map.of("Control Type", "text", "type", "textarea"));
+    }
+
+    @Test
+    void shouldWaitAfterAction() throws IOException {
+        // Given
+        ActionWaitStrategy waitStrategy = mock();
+        given(waitStrategy.waitAfterAction()).willReturn(true);
+        String url = "http://localhost:1234/test";
+        TaskContext context = runContext(waitStrategy, url, url, true);
+
+        // When
+        boolean result = action.run(context);
+
+        // Then
+        assertThat(result, is(equalTo(true)));
+        verify(waitStrategy).waitAfterAction();
+        verify(waitStrategy, never()).waitAfterPageLoad(url);
+    }
+
+    @Test
+    void shouldWaitAfterPageLoadWhenUrlChanges() throws IOException {
+        // Given
+        ActionWaitStrategy waitStrategy = mock();
+        given(waitStrategy.waitAfterAction()).willReturn(true);
+        given(waitStrategy.waitAfterPageLoad("http://localhost:1234/other")).willReturn(true);
+        TaskContext context =
+                runContext(
+                        waitStrategy,
+                        "http://localhost:1234/test",
+                        "http://localhost:1234/other",
+                        true);
+
+        // When
+        boolean result = action.run(context);
+
+        // Then
+        assertThat(result, is(equalTo(true)));
+        verify(waitStrategy).waitAfterAction();
+        verify(waitStrategy).waitAfterPageLoad("http://localhost:1234/other");
+    }
+
+    @Test
+    void shouldNotWaitAfterPageLoadWhenUrlUnchanged() throws IOException {
+        // Given
+        ActionWaitStrategy waitStrategy = mock();
+        given(waitStrategy.waitAfterAction()).willReturn(true);
+        String url = "http://localhost:1234/test";
+        TaskContext context = runContext(waitStrategy, url, url, true);
+
+        // When
+        action.run(context);
+
+        // Then
+        verify(waitStrategy, never()).waitAfterPageLoad(url);
+    }
+
+    @Test
+    void shouldNotWaitWhenActionReturnsFalse() throws IOException {
+        // Given
+        ActionWaitStrategy waitStrategy = mock();
+        TaskContext context =
+                runContext(
+                        waitStrategy,
+                        "http://localhost:1234/test",
+                        "http://localhost:1234/test",
+                        false);
+
+        // When
+        boolean result = action.run(context);
+
+        // Then
+        assertThat(result, is(equalTo(false)));
+        verify(waitStrategy, never()).waitAfterAction();
+        verify(waitStrategy, never()).waitAfterPageLoad(any());
+    }
+
+    @Test
+    void shouldReturnFalseWhenWaitAfterActionInterrupted() throws IOException {
+        // Given
+        ActionWaitStrategy waitStrategy = mock();
+        given(waitStrategy.waitAfterAction()).willReturn(false);
+        String url = "http://localhost:1234/test";
+        TaskContext context = runContext(waitStrategy, url, url, true);
+
+        // When
+        boolean result = action.run(context);
+
+        // Then
+        assertThat(result, is(equalTo(false)));
+        verify(waitStrategy).waitAfterAction();
+        verify(waitStrategy, never()).waitAfterPageLoad(url);
+    }
+
+    private TaskContext runContext(
+            ActionWaitStrategy waitStrategy,
+            String urlBefore,
+            String urlAfter,
+            boolean actionResult)
+            throws IOException {
+        URI actionUri = new URI("http://localhost:1234/test", true);
+        ClientSideComponent component = mock();
+        given(component.getBy()).willReturn(By.id("elem"));
+
+        BaseElementAction runAction =
+                new BaseElementAction(actionUri, component) {
+                    @Override
+                    protected boolean run(
+                            TaskContext context, WebElement element, String statsPrefix) {
+                        return actionResult;
+                    }
+
+                    @Override
+                    protected String getStatsPrefix() {
+                        return "run.prefix";
+                    }
+                };
+
+        WebDriverProcess wdp = mock(WebDriverProcess.class);
+        WebDriver wd = mock(WebDriver.class);
+        WebElement element = mock(WebElement.class);
+        given(element.isDisplayed()).willReturn(true);
+        given(wd.findElement(By.id("elem"))).willReturn(element);
+        given(wd.getCurrentUrl()).willReturn(urlBefore, urlAfter);
+        given(wdp.getWebDriver()).willReturn(wd);
+        given(wdp.getWaitStrategy()).willReturn(waitStrategy);
+
+        action = runAction;
+
+        return new TaskContext(wdp, valueProvider, null);
     }
 
     private TaskContext context(List<WebElement> elements) {

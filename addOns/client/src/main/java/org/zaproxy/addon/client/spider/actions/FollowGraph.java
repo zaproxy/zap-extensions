@@ -21,7 +21,6 @@ package org.zaproxy.addon.client.spider.actions;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.function.BooleanSupplier;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
@@ -85,14 +84,9 @@ public class FollowGraph implements SpiderAction {
             return false;
         }
 
-        BooleanSupplier waitAction = new WaitAction(context);
         List<ClientGraphVertex> vertices = path.getVertexList();
         for (ClientGraphVertex vertex : vertices) {
             if (vertex instanceof ClientGraphVertex.Component componentVertex) {
-                if (waitAction.getAsBoolean()) {
-                    return false;
-                }
-
                 ClientSideComponent component = componentVertex.component();
                 try {
                     URI uri = new URI(component.getParentUrl(), true);
@@ -119,27 +113,6 @@ public class FollowGraph implements SpiderAction {
         @Override
         protected String getStatsPrefix() {
             return STATS_PREFIX + ".tag." + component.getTagName();
-        }
-    }
-
-    private static class WaitAction implements BooleanSupplier {
-
-        private final TaskContext context;
-        private boolean first;
-
-        WaitAction(TaskContext context) {
-            this.context = context;
-            first = true;
-        }
-
-        @Override
-        public boolean getAsBoolean() {
-            if (first) {
-                first = false;
-                return false;
-            }
-
-            return !context.getWaitStrategy().waitAfterAction();
         }
     }
 }
