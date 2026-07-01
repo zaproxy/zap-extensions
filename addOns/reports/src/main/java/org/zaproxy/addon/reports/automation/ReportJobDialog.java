@@ -46,6 +46,7 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.addon.reports.ExtensionReports;
 import org.zaproxy.addon.reports.ReflectionUtils;
+import org.zaproxy.addon.reports.ReportOutputOptions;
 import org.zaproxy.addon.reports.Template;
 import org.zaproxy.addon.reports.automation.ReportJob.Parameters;
 import org.zaproxy.zap.utils.DisplayUtils;
@@ -61,6 +62,7 @@ public class ReportJobDialog extends StandardFieldsDialog {
     private static final String FIELD_REPORT_NAME = "reports.dialog.field.reportname";
     private static final String FIELD_DESCRIPTION = "reports.dialog.field.description";
     private static final String FIELD_DISPLAY_REPORT = "reports.dialog.field.display";
+    private static final String FIELD_ZIP_REPORT = "reports.automation.dialog.field.zip";
     private static final String FIELD_CONFIDENCE_HEADER = "reports.dialog.field.confidence";
     private static final String FIELD_CONFIDENCE_0 = "reports.dialog.field.confidence.0";
     private static final String FIELD_CONFIDENCE_1 = "reports.dialog.field.confidence.1";
@@ -120,8 +122,14 @@ public class ReportJobDialog extends StandardFieldsDialog {
         this.addMultilineField(TAB_SCOPE, FIELD_DESCRIPTION, params.getReportDescription());
         this.addMultilineField(TAB_SCOPE, FIELD_SITES, listToString(job.getData().getSites()));
 
-        this.addCheckBoxField(
-                TAB_SCOPE, FIELD_DISPLAY_REPORT, JobUtils.unBox(params.getDisplayReport()));
+        boolean[] zipAndDisplay =
+                ReportOutputOptions.resolveInitialSelection(
+                        JobUtils.unBox(params.getZipReport()),
+                        JobUtils.unBox(params.getDisplayReport()));
+        this.addCheckBoxField(TAB_SCOPE, FIELD_ZIP_REPORT, zipAndDisplay[0]);
+        this.addCheckBoxField(TAB_SCOPE, FIELD_DISPLAY_REPORT, zipAndDisplay[1]);
+        ReportOutputOptions.bindMutuallyExclusiveCheckBoxes(
+                this, FIELD_ZIP_REPORT, FIELD_DISPLAY_REPORT);
 
         Template defaultTemplate = extension.getTemplateByConfigName(params.getTemplate());
         List<String> templates = extension.getTemplateNames();
@@ -280,7 +288,13 @@ public class ReportJobDialog extends StandardFieldsDialog {
         job.getData().getParameters().setReportFile(this.getStringValue(FIELD_REPORT_NAME));
         job.getData().getParameters().setReportDir(this.getStringValue(FIELD_REPORT_DIR));
         job.getData().getParameters().setReportDescription(this.getStringValue(FIELD_DESCRIPTION));
-        job.getData().getParameters().setDisplayReport(this.getBoolValue(FIELD_DISPLAY_REPORT));
+        boolean zipReport = this.getBoolValue(FIELD_ZIP_REPORT);
+        job.getData().getParameters().setZipReport(zipReport);
+        job.getData()
+                .getParameters()
+                .setDisplayReport(
+                        ReportOutputOptions.resolveDisplay(
+                                zipReport, this.getBoolValue(FIELD_DISPLAY_REPORT)));
         job.getData()
                 .getParameters()
                 .setTheme(template.getThemeForName(this.getStringValue(FIELD_THEME)));

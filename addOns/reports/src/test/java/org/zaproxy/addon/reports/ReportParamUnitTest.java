@@ -73,6 +73,7 @@ class ReportParamUnitTest {
                 reportParam.getTemplateDirectory(),
                 is(equalTo(Constant.getZapHome() + "/reports/")));
         assertThat(reportParam.isDisplayReport(), is(equalTo(true)));
+        assertThat(reportParam.isZipReport(), is(equalTo(false)));
     }
 
     @Test
@@ -87,6 +88,7 @@ class ReportParamUnitTest {
         config.addProperty("reports.reportDir", "/test/123/");
         config.addProperty("reports.templateDir", tempDir.getAbsolutePath());
         config.addProperty("reports.display", "false");
+        config.addProperty("reports.zip", "true");
 
         // When
         reportParam.load(config);
@@ -99,6 +101,7 @@ class ReportParamUnitTest {
         assertThat(reportParam.getReportDirectory(), is(equalTo("/test/123/")));
         assertThat(reportParam.getTemplateDirectory(), is(equalTo(tempDir.getAbsolutePath())));
         assertThat(reportParam.isDisplayReport(), is(equalTo(false)));
+        assertThat(reportParam.isZipReport(), is(equalTo(true)));
     }
 
     @Test
@@ -115,6 +118,7 @@ class ReportParamUnitTest {
         reportParam.setReportDirectory("/test/123/");
         reportParam.setTemplateDirectory("/test/123/");
         reportParam.setDisplayReport(false);
+        reportParam.setZipReport(true);
 
         // Then
         assertThat(config.getString("reports.title"), is(equalTo("Report title")));
@@ -124,5 +128,6 @@ class ReportParamUnitTest {
         assertThat(config.getString("reports.reportDir"), is(equalTo("/test/123/")));
         assertThat(config.getString("reports.templateDir"), is(equalTo("/test/123/")));
         assertThat(config.getBoolean("reports.display"), is(equalTo(false)));
+        assertThat(config.getBoolean("reports.zip"), is(equalTo(true)));
     }
 }

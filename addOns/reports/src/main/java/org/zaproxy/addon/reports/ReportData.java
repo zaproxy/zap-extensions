@@ -24,6 +24,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.Getter;
+import lombok.Setter;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.zap.extension.alert.AlertNode;
 import org.zaproxy.zap.model.Context;
@@ -41,6 +43,8 @@ public class ReportData {
     private boolean[] risks = new boolean[Alert.MSG_RISK.length];
     private List<String> sections = new ArrayList<>();
     private String theme;
+
+    @Getter @Setter private boolean zipReport;
 
     @Deprecated
     public ReportData() {}
