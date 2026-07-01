@@ -24,7 +24,6 @@ import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -40,7 +39,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -48,6 +46,8 @@ import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.commonlib.Constants;
+import org.zaproxy.addon.commonlib.UriUtils;
+import org.zaproxy.addon.commonlib.ZapUriException;
 import org.zaproxy.addon.paramdigger.ExtensionParamDigger;
 import org.zaproxy.addon.paramdigger.Method;
 import org.zaproxy.addon.paramdigger.ParamDiggerConfig;
@@ -510,9 +510,8 @@ public class ParamDiggerDialog extends StandardFieldsDialog {
             return Constant.messages.getString("paramdigger.dialog.error.url.empty");
         }
         try {
-            new URI(url, true);
-            new URL(url);
-        } catch (Exception e) {
+            UriUtils.isValid(url);
+        } catch (ZapUriException e) {
             return Constant.messages.getString("paramdigger.dialog.error.url.invalid");
         }
         String urlChoice = this.getStringValue(URLGUESS_WORDLIST);

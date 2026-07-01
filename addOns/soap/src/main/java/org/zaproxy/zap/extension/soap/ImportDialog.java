@@ -23,9 +23,6 @@ import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -36,12 +33,12 @@ import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import org.apache.commons.httpclient.URI;
-import org.apache.commons.httpclient.URIException;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractDialog;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.commonlib.UriUtils;
+import org.zaproxy.addon.commonlib.ZapUriException;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.ThreadUtils;
 import org.zaproxy.zap.utils.ZapHtmlLabel;
@@ -116,11 +113,10 @@ public class ImportDialog extends AbstractDialog {
         }
 
         try {
-            new URL(wsdlLocation).toURI();
-            new URI(wsdlLocation, true);
+            UriUtils.isValid(wsdlLocation);
             extSoap.extUrlWSDLImport(wsdlLocation);
             return true;
-        } catch (URIException | MalformedURLException | URISyntaxException e) {
+        } catch (ZapUriException e) {
             // Not a valid URI, try to import as a file
         }
 

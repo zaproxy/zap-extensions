@@ -23,9 +23,6 @@ import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -36,14 +33,14 @@ import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import org.apache.commons.httpclient.URI;
-import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.AbstractDialog;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.commonlib.UriUtils;
+import org.zaproxy.addon.commonlib.ZapUriException;
 import org.zaproxy.addon.llm.ExtensionLlm;
 import org.zaproxy.addon.llm.services.LlmCommunicationService;
 import org.zaproxy.zap.utils.FontUtils;
@@ -313,10 +310,8 @@ public class LlmOpenApiImportDialog extends AbstractDialog {
 
     private boolean isValidURL(String url) {
         try {
-            new URL(url).toURI();
-            new URI(url, true);
-        } catch (URIException | MalformedURLException | URISyntaxException e) {
-            // Not a valid URI
+            UriUtils.isValid(url);
+        } catch (ZapUriException e) {
             return false;
         }
         return true;
