@@ -40,6 +40,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.Constant;
+import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.zap.extension.openapi.ExtensionOpenApi;
 import org.zaproxy.zap.extension.openapi.converter.swagger.OperationModel;
 import org.zaproxy.zap.extension.openapi.converter.swagger.RequestModelConverter;
@@ -858,6 +859,88 @@ class BodyGeneratorUnitTest extends TestUtils {
                         .getBody();
         // Then
         assertEquals("{\"props\":{\"John Doe\":{\"a\":\"John Doe\"}}}", request);
+    }
+
+    @Test
+    void shouldRecurseIntoObjectFieldRatherThanAskValueGenerator() throws IOException {
+        // Given
+        ValueProvider incompatibleProvider =
+                (uri, url, fieldId, defaultValue, definedValues, envAttributes, fieldAttributes) ->
+                        "688 Zaproxy Ridge";
+        Generators gens = new Generators(incompatibleProvider);
+        OpenAPI openAPI = parseResource("OpenApi_defn_address_state.yaml");
+        // When
+        String requestBody =
+                new RequestModelConverter()
+                        .convert(
+                                new OperationModel(
+                                        null, openAPI.getPaths().get("/customer").getPost(), null),
+                                gens)
+                        .getBody();
+        // Then
+        assertEquals(
+                "{\"Name\":\"688 Zaproxy Ridge\",\"Address\":{\"AddressLine1\":\"688 Zaproxy Ridge\",\"City\":\"688 Zaproxy Ridge\",\"PostalCode\":\"688 Zaproxy Ridge\"}}",
+                requestBody);
+    }
+
+    @Test
+    void shouldNotUseIncompatibleStringValueForIntegerField() throws IOException {
+        // Given
+        ValueProvider incompatibleProvider =
+                (uri, url, fieldId, defaultValue, definedValues, envAttributes, fieldAttributes) ->
+                        "Oklahoma";
+        Generators gens = new Generators(incompatibleProvider);
+        OpenAPI openAPI = parseResource("OpenApi_defn_address_state.yaml");
+        // When
+        String requestBody =
+                new RequestModelConverter()
+                        .convert(
+                                new OperationModel(
+                                        null, openAPI.getPaths().get("/state").getPut(), null),
+                                gens)
+                        .getBody();
+        // Then
+        assertEquals("{\"Comment\":\"Oklahoma\",\"State\":4}", requestBody);
+    }
+
+    @Test
+    void shouldNotUseIncompatibleStringValueForNumberField() throws IOException {
+        // Given
+        ValueProvider incompatibleProvider =
+                (uri, url, fieldId, defaultValue, definedValues, envAttributes, fieldAttributes) ->
+                        "Oklahoma";
+        Generators gens = new Generators(incompatibleProvider);
+        OpenAPI openAPI = parseResource("OpenApi_defn_address_state.yaml");
+        // When
+        String requestBody =
+                new RequestModelConverter()
+                        .convert(
+                                new OperationModel(
+                                        null, openAPI.getPaths().get("/amount").getPut(), null),
+                                gens)
+                        .getBody();
+        // Then
+        assertEquals("{\"Comment\":\"Oklahoma\",\"Amount\":1.2}", requestBody);
+    }
+
+    @Test
+    void shouldNotUseIncompatibleStringValueForBooleanField() throws IOException {
+        // Given
+        ValueProvider incompatibleProvider =
+                (uri, url, fieldId, defaultValue, definedValues, envAttributes, fieldAttributes) ->
+                        "Oklahoma";
+        Generators gens = new Generators(incompatibleProvider);
+        OpenAPI openAPI = parseResource("OpenApi_defn_address_state.yaml");
+        // When
+        String requestBody =
+                new RequestModelConverter()
+                        .convert(
+                                new OperationModel(
+                                        null, openAPI.getPaths().get("/active").getPut(), null),
+                                gens)
+                        .getBody();
+        // Then
+        assertEquals("{\"Comment\":\"Oklahoma\",\"Active\":true}", requestBody);
     }
 
     private OpenAPI parseResource(String fileName) throws IOException {

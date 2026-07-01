@@ -79,7 +79,8 @@ public class OpenApiSchemaTypeUtils {
     }
 
     public static boolean isMap(Schema<?> schema) {
-        return isObject(schema) && schema.getAdditionalProperties() != null;
+        return isObject(schema)
+                && (schema.getProperties() != null || schema.getAdditionalProperties() != null);
     }
 
     public static boolean isObject(Schema<?> schema) {

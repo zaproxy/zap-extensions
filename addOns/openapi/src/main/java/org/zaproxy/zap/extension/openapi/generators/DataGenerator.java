@@ -160,6 +160,7 @@ public class DataGenerator {
         }
 
         String type = OpenApiSchemaTypeUtils.getType(schema);
+        String valueBeforeProvider = value;
         value = generators.getValueGenerator().getValue(name, type, value);
 
         if (value.isEmpty()) {
@@ -167,6 +168,11 @@ public class DataGenerator {
         } else {
             if (!isPath && OpenApiSchemaTypeUtils.TYPE_STRING.equalsIgnoreCase(type)) {
                 value = "\"" + value + "\"";
+            } else if (!isCompatibleWithType(value, type)) {
+                value =
+                        valueBeforeProvider.isEmpty()
+                                ? getExampleValue(isPath, type, name)
+                                : valueBeforeProvider;
             }
         }
         if (value == null || value.isEmpty()) {
@@ -207,6 +213,32 @@ public class DataGenerator {
 
     public boolean isPath(String type) {
         return "query".equals(type) || "path".equals(type);
+    }
+
+    private static boolean isCompatibleWithType(String value, String type) {
+        if (type == null || OpenApiSchemaTypeUtils.TYPE_STRING.equalsIgnoreCase(type)) {
+            return true;
+        }
+        if (OpenApiSchemaTypeUtils.TYPE_INTEGER.equalsIgnoreCase(type)) {
+            try {
+                Long.parseLong(value);
+                return true;
+            } catch (NumberFormatException e) {
+                return false;
+            }
+        }
+        if (OpenApiSchemaTypeUtils.TYPE_NUMBER.equalsIgnoreCase(type)) {
+            try {
+                Double.parseDouble(value);
+                return true;
+            } catch (NumberFormatException e) {
+                return false;
+            }
+        }
+        if (OpenApiSchemaTypeUtils.TYPE_BOOLEAN.equalsIgnoreCase(type)) {
+            return "true".equals(value) || "false".equals(value);
+        }
+        return true;
     }
 
     public Generators getGenerators() {
