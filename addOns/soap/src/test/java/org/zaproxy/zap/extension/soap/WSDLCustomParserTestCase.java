@@ -23,6 +23,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.hasKey;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,6 +40,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
+import com.predic8.schema.Attribute;
+import com.predic8.schema.ComplexType;
+import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -63,6 +67,7 @@ class WSDLCustomParserTestCase extends TestUtils {
 
     private static final String MOCK_FILL_VALUE = "mock-fill-value";
     private static final String FILL_PARAMETERS_WSDL = "fill-parameters.wsdl";
+    private static final String DEGRADED_PARAMETERS_WSDL = "degraded-parameters.wsdl";
 
     private ValueProvider valueProvider;
     private Supplier<Date> dateSupplier;
@@ -194,7 +199,7 @@ class WSDLCustomParserTestCase extends TestUtils {
         // Given / When
         Map<String, String> params = parseWsdlParams();
         // Then
-        assertThat(params, hasKey("xpath:/Request/refOuter/refBlock/leafField"));
+        assertThat(params, hasEntry("xpath:/Request/refOuter/refBlock/leafField", MOCK_FILL_VALUE));
     }
 
     @Test
@@ -202,7 +207,7 @@ class WSDLCustomParserTestCase extends TestUtils {
         // Given / When
         Map<String, String> params = parseWsdlParams();
         // Then
-        assertThat(params, hasKey("xpath:/Request/branchBox/optA"));
+        assertThat(params, hasEntry("xpath:/Request/branchBox/optA", MOCK_FILL_VALUE));
         assertThat(params, not(hasKey("xpath:/Request/branchBox/optB")));
     }
 
@@ -212,7 +217,6 @@ class WSDLCustomParserTestCase extends TestUtils {
         Map<String, String> params = parseWsdlParams();
         // Then
         assertThat(params, hasEntry("xpath:/Request/attrBox/@fixedKey", "FIXED-VAL"));
-        assertThat(params.get("xpath:/Request/attrBox/@fixedKey"), is(not(MOCK_FILL_VALUE)));
     }
 
     @Test
@@ -221,7 +225,6 @@ class WSDLCustomParserTestCase extends TestUtils {
         Map<String, String> params = parseWsdlParams();
         // Then
         assertThat(params, hasEntry("xpath:/Request/enumField", "EL-1"));
-        assertThat(params.get("xpath:/Request/enumField"), is(not(MOCK_FILL_VALUE)));
     }
 
     @Test
@@ -229,8 +232,8 @@ class WSDLCustomParserTestCase extends TestUtils {
         // Given / When
         Map<String, String> params = parseWsdlParams();
         // Then
-        assertThat(params, hasKey("xpath:/Request/attrBox/@keyA"));
-        assertThat(params, hasKey("xpath:/Request/attrBox/@keyB"));
+        assertThat(params, hasEntry("xpath:/Request/attrBox/@keyA", MOCK_FILL_VALUE));
+        assertThat(params, hasEntry("xpath:/Request/attrBox/@keyB", MOCK_FILL_VALUE));
     }
 
     @Test
@@ -239,7 +242,6 @@ class WSDLCustomParserTestCase extends TestUtils {
         Map<String, String> params = parseWsdlParams();
         // Then
         assertThat(params, hasEntry("xpath:/Request/enumBox/@enumKey", "EV-1"));
-        assertThat(params.get("xpath:/Request/enumBox/@enumKey"), is(not(MOCK_FILL_VALUE)));
     }
 
     @Test
@@ -253,9 +255,47 @@ class WSDLCustomParserTestCase extends TestUtils {
     @Test
     void shouldEmitParamForBoundedSimpleType() throws Exception {
         // Given / When
-        Map<String, String> params = parseWsdlParams();
+        WsdlParserSetup setup = createParserForWsdl(FILL_PARAMETERS_WSDL);
+        Map<String, String> params = setup.parser().getLastConfig().getParams();
         // Then
-        assertThat(params, hasKey("xpath:/Request/boundedInt"));
+        assertThat(params, hasEntry("xpath:/Request/boundedInt", MOCK_FILL_VALUE));
+        verify(setup.valueProvider())
+                .getValue(any(), any(), eq("boundedInt"), eq("0"), any(), any(), any());
+    }
+
+    @Test
+    void shouldPassIntegerDefaultsToValueProviderViaWsdlImport() throws Exception {
+        // Given / When
+        WsdlParserSetup setup = createParserForWsdl(FILL_PARAMETERS_WSDL);
+        Map<String, String> params = setup.parser().getLastConfig().getParams();
+
+        // Then
+        // Got the expected results from the value provider
+        assertThat(params, hasEntry("xpath:/Request/positiveIntField", MOCK_FILL_VALUE));
+        assertThat(params, hasEntry("xpath:/Request/negativeIntField", MOCK_FILL_VALUE));
+        assertThat(params, hasEntry("xpath:/Request/nonNegativeIntField", MOCK_FILL_VALUE));
+        assertThat(params, hasEntry("xpath:/Request/nonPositiveIntField", MOCK_FILL_VALUE));
+        // The value provider was called with the expected arguments
+        verify(setup.valueProvider())
+                .getValue(any(), any(), eq("positiveIntField"), eq("1"), any(), any(), any());
+        verify(setup.valueProvider())
+                .getValue(any(), any(), eq("negativeIntField"), eq("-1"), any(), any(), any());
+        verify(setup.valueProvider())
+                .getValue(any(), any(), eq("nonNegativeIntField"), eq("0"), any(), any(), any());
+        verify(setup.valueProvider())
+                .getValue(any(), any(), eq("nonPositiveIntField"), eq("0"), any(), any(), any());
+    }
+
+    @Test
+    void shouldFallbackToStringForPlainElementWithNoType() throws Exception {
+        // Given / When
+        WsdlParserSetup setup = createParserForWsdl(FILL_PARAMETERS_WSDL);
+        Map<String, String> params = setup.parser().getLastConfig().getParams();
+
+        // Then
+        assertThat(params, hasEntry("xpath:/Request/plainField", MOCK_FILL_VALUE));
+        verify(setup.valueProvider())
+                .getValue(any(), any(), eq("plainField"), eq("paramValue"), any(), any(), any());
     }
 
     @Test
@@ -269,12 +309,20 @@ class WSDLCustomParserTestCase extends TestUtils {
     }
 
     @Test
+    void shouldPopulateFieldsFromNamedComplexTypeReference() throws Exception {
+        // Given / When
+        Map<String, String> params = parseWsdlParams();
+        // Then
+        assertThat(params, hasEntry("xpath:/Request/namedBox/inner", MOCK_FILL_VALUE));
+    }
+
+    @Test
     void shouldPopulateExtendedTypeFields() throws Exception {
         // Given / When
         Map<String, String> params = parseWsdlParams();
         // Then
-        assertThat(params, hasKey("xpath:/Request/block/inherited"));
-        assertThat(params, hasKey("xpath:/Request/block/added"));
+        assertThat(params, hasEntry("xpath:/Request/block/inherited", MOCK_FILL_VALUE));
+        assertThat(params, hasEntry("xpath:/Request/block/added", MOCK_FILL_VALUE));
     }
 
     @Test
@@ -282,9 +330,13 @@ class WSDLCustomParserTestCase extends TestUtils {
         // Given / When
         Map<String, String> params = parseWsdlParams();
         // Then
-        assertThat(params, hasKey("xpath:/Request/groupOuter/group/leafField"));
-        assertThat(params, hasKey("xpath:/Request/groupOuter/group/metaBlock/@idKey"));
-        assertThat(params, hasKey("xpath:/Request/groupOuter/group/metaBlock/@nameKey"));
+        assertThat(params, hasEntry("xpath:/Request/groupOuter/group/leafField", MOCK_FILL_VALUE));
+        assertThat(
+                params,
+                hasEntry("xpath:/Request/groupOuter/group/metaBlock/@idKey", MOCK_FILL_VALUE));
+        assertThat(
+                params,
+                hasEntry("xpath:/Request/groupOuter/group/metaBlock/@nameKey", MOCK_FILL_VALUE));
     }
 
     @Test
@@ -292,8 +344,85 @@ class WSDLCustomParserTestCase extends TestUtils {
         // Given / When
         Map<String, String> params = parseWsdlParams();
         // Then
-        assertThat(params, hasKey("xpath:/Request/attrWrapper/@plainKey"));
-        assertThat(params, hasKey("xpath:/Request/attrWrapper/@äKey"));
+        assertThat(params, hasEntry("xpath:/Request/attrWrapper/@plainKey", MOCK_FILL_VALUE));
+        assertThat(params, hasEntry("xpath:/Request/attrWrapper/@äKey", MOCK_FILL_VALUE));
+    }
+
+    @Test
+    void shouldContinueWhenRefElementCannotBeResolved() throws Exception {
+        // Given / When
+        Map<String, String> params = parseWsdlParams(DEGRADED_PARAMETERS_WSDL);
+        // Then
+        assertThat(params, hasEntry("xpath:/Request/controlField", MOCK_FILL_VALUE));
+        assertThat(params, hasEntry("xpath:/Request/badRefOuter/siblingField", MOCK_FILL_VALUE));
+        assertThat(params, not(hasKey("xpath:/Request/badRefOuter/missingBlock")));
+    }
+
+    @Test
+    void shouldContinueWhenExtensionBaseTypeCannotBeResolved() throws Exception {
+        // Given / When
+        Map<String, String> params = parseWsdlParams(DEGRADED_PARAMETERS_WSDL);
+        // Then – import continues; predic8 omits the extension sequence when the base
+        // type is unresolvable, so neither inherited nor localField params are emitted
+        assertThat(params, hasEntry("xpath:/Request/controlField", MOCK_FILL_VALUE));
+        assertThat(params, not(hasKey("xpath:/Request/brokenBlock/localField")));
+        assertThat(params, not(hasKey("xpath:/Request/brokenBlock/inherited")));
+    }
+
+    @Test
+    void shouldContinueWhenExtensionBaseIsNotComplexType() throws Exception {
+        // Given / When
+        Map<String, String> params = parseWsdlParams(DEGRADED_PARAMETERS_WSDL);
+        // Then
+        assertThat(
+                params, hasEntry("xpath:/Request/simpleBaseBlock/derivedField", MOCK_FILL_VALUE));
+        assertThat(params, not(hasKey("xpath:/Request/simpleBaseBlock/value")));
+    }
+
+    @Test
+    void shouldContinueWhenElementTypeLookupFails() throws Exception {
+        // Given / When – type="tns:MissingNamedType" makes resolveComplexType throw
+        // ModelAccessException; fillParameters catches per-element and returns an empty map
+        // for badTypeField only, while siblings continue to be processed
+        Map<String, String> params = parseWsdlParams(DEGRADED_PARAMETERS_WSDL);
+        // Then
+        assertThat(params, hasEntry("xpath:/Request/controlField", MOCK_FILL_VALUE));
+        assertThat(
+                params, hasEntry("xpath:/Request/badTypeOuter/typeSiblingField", MOCK_FILL_VALUE));
+        assertThat(params, not(hasKey("xpath:/Request/badTypeOuter/badTypeField")));
+    }
+
+    @Test
+    void shouldCurrentlySkipAttributeDeclaredByRef() throws Exception {
+        // Given / When – valid XSD uses <xs:attribute ref="tns:globalRefKey"/>; predic8 leaves
+        // Attribute.getName() null until resolved, and fillFromComplexType currently skips it
+        Map<String, String> params = parseWsdlParams();
+        // Then
+        assertThat(params, hasEntry("xpath:/Request/attrRefWrapper/@inlineKey", MOCK_FILL_VALUE));
+        assertThat(params, not(hasKey("xpath:/Request/attrRefWrapper/@globalRefKey")));
+    }
+
+    @Test
+    void shouldSkipAttributeWithNullName() throws Exception {
+        // Given
+        when(valueProvider.getValue(any(), any(), any(), any(), any(), any(), any()))
+                .thenReturn(MOCK_FILL_VALUE);
+        Attribute nullNameAttr = mock(Attribute.class);
+        Attribute validAttr = mock(Attribute.class);
+        ComplexType ct = mock(ComplexType.class);
+        when(nullNameAttr.getName()).thenReturn(null);
+        when(validAttr.getName()).thenReturn("validKey");
+        when(validAttr.getType()).thenReturn(null);
+        when(ct.getAllAttributes()).thenReturn(List.of(nullNameAttr, validAttr));
+        when(ct.getSequence()).thenReturn(null);
+        when(ct.getModel()).thenReturn(null);
+
+        // When
+        Map<String, String> params = invokeFillFromComplexType(parser, ct, "Request/attrBox");
+
+        // Then
+        assertThat(params, hasEntry("xpath:/Request/attrBox/@validKey", MOCK_FILL_VALUE));
+        assertThat(params.values(), hasSize(1));
     }
 
     private Map<String, String> parseWsdlParams() throws Exception {
@@ -301,11 +430,10 @@ class WSDLCustomParserTestCase extends TestUtils {
     }
 
     private Map<String, String> parseWsdlParams(String resourceName) throws Exception {
-        WSDLCustomParser p = createParserForWsdl(resourceName);
-        return p.getLastConfig().getParams();
+        return createParserForWsdl(resourceName).parser().getLastConfig().getParams();
     }
 
-    private WSDLCustomParser createParserForWsdl(String resourceName) throws Exception {
+    private WsdlParserSetup createParserForWsdl(String resourceName) throws Exception {
         Supplier<Date> dateSupplier = mock(withSettings().strictness(Strictness.LENIENT));
         ValueProvider vp = mock(ValueProvider.class);
         when(vp.getValue(any(), any(), any(), any(), any(), any(), any()))
@@ -316,6 +444,18 @@ class WSDLCustomParserTestCase extends TestUtils {
                         Files.readAllBytes(getResourcePath("resources/" + resourceName)),
                         StandardCharsets.UTF_8);
         p.extContentWSDLImport(content, false);
-        return p;
+        return new WsdlParserSetup(p, vp);
+    }
+
+    private record WsdlParserSetup(WSDLCustomParser parser, ValueProvider valueProvider) {}
+
+    @SuppressWarnings("unchecked")
+    private static Map<String, String> invokeFillFromComplexType(
+            WSDLCustomParser parser, ComplexType ct, String xpath) throws Exception {
+        Method method =
+                WSDLCustomParser.class.getDeclaredMethod(
+                        "fillFromComplexType", ComplexType.class, String.class);
+        method.setAccessible(true);
+        return (Map<String, String>) method.invoke(parser, ct, xpath);
     }
 }

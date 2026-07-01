@@ -1,0 +1,122 @@
+<?xml version='1.0' encoding='utf-8'?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                  xmlns:tns="http://example.org/main"
+                  targetNamespace="http://example.org/main"
+                  name="DegradedParamsService">
+  <wsdl:types>
+
+    <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+               targetNamespace="http://example.org/main"
+               elementFormDefault="qualified">
+
+      <xs:element name="Request">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="controlField" type="xs:string" minOccurs="0" maxOccurs="1"/>
+
+            <xs:element name="badRefOuter" minOccurs="0" maxOccurs="1">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element xmlns:data="http://example.org/data"
+                              ref="data:missingBlock"
+                              minOccurs="0" maxOccurs="1"/>
+                  <xs:element name="siblingField" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+
+            <xs:element name="brokenBlock" minOccurs="0" maxOccurs="1">
+              <xs:complexType>
+                <xs:complexContent>
+                  <xs:extension base="other:MissingBase"
+                                xmlns:other="http://example.org/other">
+                    <xs:sequence>
+                      <xs:element name="localField" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                    </xs:sequence>
+                  </xs:extension>
+                </xs:complexContent>
+              </xs:complexType>
+            </xs:element>
+
+            <xs:element name="simpleBaseBlock" type="tns:SimpleBaseExtension" minOccurs="0" maxOccurs="1"/>
+
+            <xs:element name="badTypeOuter" minOccurs="0" maxOccurs="1">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="badTypeField" type="tns:MissingNamedType" minOccurs="0" maxOccurs="1"/>
+                  <xs:element name="typeSiblingField" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+
+      <xs:simpleType name="SimpleBase">
+        <xs:restriction base="xs:string"/>
+      </xs:simpleType>
+
+      <!--
+        Intentionally-invalid XSD construct for degradation-path tests:
+        This complexType uses complexContent extension where the base resolves to a simpleType,
+        to ensure the importer/code under test behaves gracefully with malformed schemas.
+      -->
+      <xs:complexType name="SimpleBaseExtension">
+        <xs:complexContent>
+          <xs:extension base="tns:SimpleBase">
+            <xs:sequence>
+              <xs:element name="derivedField" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:element name="RequestResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="ack" type="xs:string" minOccurs="0"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+
+    </xs:schema>
+
+    <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+               targetNamespace="http://example.org/data"
+               elementFormDefault="qualified">
+    </xs:schema>
+
+  </wsdl:types>
+
+  <wsdl:message name="RequestMsg">
+    <wsdl:part name="parameters" element="tns:Request"/>
+  </wsdl:message>
+  <wsdl:message name="RequestResponseMsg">
+    <wsdl:part name="parameters" element="tns:RequestResponse"/>
+  </wsdl:message>
+
+  <wsdl:portType name="DegradedParamsPortType">
+    <wsdl:operation name="Invoke">
+      <wsdl:input  message="tns:RequestMsg"/>
+      <wsdl:output message="tns:RequestResponseMsg"/>
+    </wsdl:operation>
+  </wsdl:portType>
+
+  <wsdl:binding name="DegradedParamsBinding" type="tns:DegradedParamsPortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="Invoke">
+      <soap:operation soapAction="Invoke"/>
+      <wsdl:input><soap:body use="literal"/></wsdl:input>
+      <wsdl:output><soap:body use="literal"/></wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+
+  <wsdl:service name="DegradedParamsService">
+    <wsdl:port name="DegradedParamsPort" binding="tns:DegradedParamsBinding">
+      <soap:address location="http://localhost:8080/degraded-params"/>
+    </wsdl:port>
+  </wsdl:service>
+
+</wsdl:definitions>
