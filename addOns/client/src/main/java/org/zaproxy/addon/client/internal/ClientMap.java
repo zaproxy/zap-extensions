@@ -372,6 +372,10 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
         ClientGraphVertex target = new ClientGraphVertex.Url(targetUrl);
         ClientGraphVertex componentVertex = new ClientGraphVertex.Component(component);
         synchronized (graph) {
+            if (graph.containsVertex(componentVertex)) {
+                return;
+            }
+
             graph.addVertex(source);
             graph.addVertex(target);
             graph.addVertex(componentVertex);

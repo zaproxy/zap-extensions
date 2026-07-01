@@ -925,7 +925,7 @@ class ClientMapUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldAllowMultipleEdgesBetweenSameUrls() {
+    void shouldAddEdgesForDistinctComponentsBetweenSameUrls() {
         // Given
         String url = "https://www.example.com/page";
         String href = "https://www.example.com/linked";
@@ -964,6 +964,36 @@ class ClientMapUnitTest extends TestUtils {
         var graph = map.getGraph();
         assertThat(graph.vertexSet().size(), is(4));
         assertThat(graph.edgeSet().size(), is(4));
+    }
+
+    @Test
+    void shouldNotAddDuplicateEdgesWhenSameComponentSeenMultipleTimes() {
+        // Given
+        String url = "https://www.example.com/page";
+        String href = "https://www.example.com/linked";
+        String json =
+                """
+             {
+               "tagName": "A",
+               "id": "link1",
+               "type": "link",
+               "url": "%s",
+               "href": "%s",
+               "nodeName": "A",
+               "text": "A link",
+               "timestamp": 0
+             }"""
+                        .formatted(url, href);
+
+        // When
+        map.handleReportObject(json);
+        map.handleReportObject(json);
+        map.handleReportObject(json);
+
+        // Then
+        var graph = map.getGraph();
+        assertThat(graph.vertexSet().size(), is(3));
+        assertThat(graph.edgeSet().size(), is(2));
     }
 
     @Test
