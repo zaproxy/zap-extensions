@@ -40,10 +40,22 @@ public abstract class PopupMenuItemClient extends ExtensionPopupMenuItem {
         if (invoker instanceof JTree) {
             JTree tree = (JTree) invoker;
             if (ClientMapPanel.CLIENT_TREE_NAME.equals(tree.getName())) {
+                setEnabled(isButtonEnabled());
                 return true;
             }
         }
         return false;
+    }
+
+    /**
+     * Tells whether or not the menu item should be enabled for the state of the client map.
+     *
+     * @return {@code true} if the menu item should be enabled, {@code false} otherwise.
+     * @see #isEnabled()
+     * @see #getClientMapPanel()
+     */
+    protected boolean isButtonEnabled() {
+        return true;
     }
 
     public ClientMapPanel getClientMapPanel() {
