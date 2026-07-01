@@ -48,6 +48,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
+import org.zaproxy.addon.client.internal.ClientMap;
 import org.zaproxy.addon.client.internal.ClientSideComponent;
 import org.zaproxy.addon.client.internal.ElementLocator;
 import org.zaproxy.addon.client.internal.graph.ClientGraphVertex;
@@ -89,7 +90,7 @@ class FollowGraphUnitTest extends TestUtils {
         WebDriverProcess wdp = mock(withSettings().strictness(Strictness.LENIENT));
         given(wdp.getWaitStrategy()).willReturn(waitStrategy);
         given(wdp.getWebDriver()).willReturn(wd);
-        context = new TaskContext(() -> false, wdp, valueProvider, graph);
+        context = new TaskContext(() -> false, wdp, valueProvider, mockClientMap());
         stats = new InMemoryStats();
         Stats.addListener(stats);
     }
@@ -299,7 +300,13 @@ class FollowGraphUnitTest extends TestUtils {
         WebDriverProcess wdp = mock(withSettings().strictness(Strictness.LENIENT));
         given(wdp.getWaitStrategy()).willReturn(waitStrategy);
         given(wdp.getWebDriver()).willReturn(wd);
-        return new TaskContext(stopped, wdp, valueProvider, graph);
+        return new TaskContext(stopped, wdp, valueProvider, mockClientMap());
+    }
+
+    private ClientMap mockClientMap() {
+        ClientMap clientMap = mock(withSettings().strictness(Strictness.LENIENT));
+        given(clientMap.getGraph()).willReturn(graph);
+        return clientMap;
     }
 
     private void assertCommonState(WebDriver wd, boolean result) {

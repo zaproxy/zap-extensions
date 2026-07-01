@@ -367,6 +367,17 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
                 || "A".equals(component.getTagName());
     }
 
+    public void addNavigationEdge(
+            String urlBefore, ClientSideComponent component, String urlAfter) {
+        ClientGraphVertex componentVertex = new ClientGraphVertex.Component(component);
+        synchronized (graph) {
+            if (graph.containsVertex(componentVertex)) {
+                return;
+            }
+            addGraphEdge(urlBefore, urlAfter, component);
+        }
+    }
+
     private void addGraphEdge(String sourceUrl, String targetUrl, ClientSideComponent component) {
         ClientGraphVertex source = new ClientGraphVertex.Url(sourceUrl);
         ClientGraphVertex target = new ClientGraphVertex.Url(targetUrl);

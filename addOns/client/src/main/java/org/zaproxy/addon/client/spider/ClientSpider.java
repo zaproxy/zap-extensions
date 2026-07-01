@@ -312,8 +312,7 @@ public class ClientSpider implements GenericScanner2 {
     }
 
     TaskContext createTaskContext() {
-        return new TaskContext(
-                this::isStopped, getWebDriverProcess(), valueProvider, clientMap.getGraph());
+        return new TaskContext(this::isStopped, getWebDriverProcess(), valueProvider, clientMap);
     }
 
     private List<SpiderAction> followGraphAction(String url, SpiderAction... additionalActions) {
