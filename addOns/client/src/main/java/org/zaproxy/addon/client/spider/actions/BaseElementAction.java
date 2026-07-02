@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.client.spider.actions;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -26,7 +27,10 @@ import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.zaproxy.addon.client.internal.ClientSideComponent;
 import org.zaproxy.addon.client.spider.SpiderAction;
 import org.zaproxy.addon.client.spider.TaskContext;
@@ -61,14 +65,20 @@ abstract class BaseElementAction implements SpiderAction {
 
         WebElement element;
         try {
-            element = context.getWebDriver().findElement(by);
+            element =
+                    new WebDriverWait(context.getWebDriver(), Duration.ofMillis(2_500))
+                            .until(getExpectedCondition(by));
         } catch (Exception e) {
+            if (e instanceof TimeoutException) {
+                try {
+                    context.getWebDriver().findElement(by);
+                    Stats.incCounter(statsPrefix + ".expectationmismatch");
+                    return false;
+                } catch (Exception ex) {
+                    // Ignore.
+                }
+            }
             Stats.incCounter(statsPrefix + ".notfound");
-            return false;
-        }
-
-        if (!element.isDisplayed()) {
-            Stats.incCounter(statsPrefix + ".notdisplayed");
             return false;
         }
 
@@ -93,6 +103,8 @@ abstract class BaseElementAction implements SpiderAction {
     protected abstract String getStatsPrefix();
 
     protected abstract boolean run(TaskContext context, WebElement element, String statsPrefix);
+
+    protected abstract ExpectedCondition<WebElement> getExpectedCondition(By by);
 
     protected void fillComponents(TaskContext context, String action, String statsPrefix) {
         context.getWebDriver()

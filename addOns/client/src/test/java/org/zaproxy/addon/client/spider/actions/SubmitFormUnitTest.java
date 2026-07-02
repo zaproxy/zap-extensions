@@ -47,6 +47,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.zaproxy.addon.client.internal.ClientSideComponent;
@@ -165,7 +166,7 @@ class SubmitFormUnitTest {
         ClientSideComponent component = formComponent(0, "xpath", "//FORM");
         SubmitForm action = new SubmitForm(uri, component);
         WebDriver wd = mock(WebDriver.class);
-        given(wd.findElement(any(By.class))).willThrow(RuntimeException.class);
+        given(wd.findElement(any(By.class))).willThrow(NoSuchElementException.class);
 
         // When
         boolean result = action.run(context(wd));
@@ -177,7 +178,7 @@ class SubmitFormUnitTest {
     }
 
     @Test
-    void shouldIncrementStatsWhenFormNotDisplayed() {
+    void shouldIncrementExpectationMismatchWhenFormNotVisible() {
         // Given
         ClientSideComponent component = formComponent(0, "xpath", "//FORM");
         SubmitForm action = new SubmitForm(uri, component);
@@ -192,7 +193,7 @@ class SubmitFormUnitTest {
         // Then
         assertThat(result, is(equalTo(false)));
         assertThat(stats.getStat("stats.client.spider.action.form.0"), is(1L));
-        assertThat(stats.getStat("stats.client.spider.action.form.0.notdisplayed"), is(1L));
+        assertThat(stats.getStat("stats.client.spider.action.form.0.expectationmismatch"), is(1L));
     }
 
     @Test
