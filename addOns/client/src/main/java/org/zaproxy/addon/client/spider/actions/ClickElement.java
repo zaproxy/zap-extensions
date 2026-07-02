@@ -23,7 +23,10 @@ import java.util.function.Predicate;
 import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.zaproxy.addon.client.internal.ClientSideComponent;
 import org.zaproxy.addon.client.internal.InteractableState;
 import org.zaproxy.addon.client.spider.TaskContext;
@@ -58,6 +61,11 @@ public class ClickElement extends BaseElementAction {
             LOGGER.debug("An error occurred while clicking the element:", e);
         }
         return false;
+    }
+
+    @Override
+    protected ExpectedCondition<WebElement> getExpectedCondition(By by) {
+        return ExpectedConditions.elementToBeClickable(by);
     }
 
     @Override

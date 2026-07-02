@@ -22,7 +22,10 @@ package org.zaproxy.addon.client.spider.actions;
 import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.zaproxy.addon.client.internal.ClientSideComponent;
 import org.zaproxy.addon.client.spider.TaskContext;
 import org.zaproxy.zap.utils.Stats;
@@ -54,6 +57,11 @@ public class SubmitForm extends BaseElementAction {
             LOGGER.debug("An error occurred while submitting the form:", e);
         }
         return false;
+    }
+
+    @Override
+    protected ExpectedCondition<WebElement> getExpectedCondition(By by) {
+        return ExpectedConditions.visibilityOfElementLocated(by);
     }
 
     @Override

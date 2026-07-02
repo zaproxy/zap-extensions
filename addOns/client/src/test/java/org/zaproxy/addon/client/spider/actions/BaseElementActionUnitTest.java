@@ -46,6 +46,8 @@ import org.openqa.selenium.Rectangle;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.zaproxy.addon.client.internal.ClientMap;
 import org.zaproxy.addon.client.internal.ClientSideComponent;
 import org.zaproxy.addon.client.spider.ActionWaitStrategy;
@@ -78,6 +80,11 @@ class BaseElementActionUnitTest {
                     @Override
                     protected String getStatsPrefix() {
                         return "prefix";
+                    }
+
+                    @Override
+                    protected ExpectedCondition<WebElement> getExpectedCondition(By by) {
+                        return ExpectedConditions.presenceOfElementLocated(by);
                     }
                 };
     }
@@ -354,6 +361,11 @@ class BaseElementActionUnitTest {
                     @Override
                     protected String getStatsPrefix() {
                         return "run.prefix";
+                    }
+
+                    @Override
+                    protected ExpectedCondition<WebElement> getExpectedCondition(By by) {
+                        return ExpectedConditions.presenceOfElementLocated(by);
                     }
                 };
 

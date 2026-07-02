@@ -165,7 +165,11 @@ class ClientSpiderUnitTest extends TestUtils {
         given(network.createHttpServer(any(HttpServerConfig.class))).willReturn(serverMock);
 
         wd = mock(withSettings().strictness(Strictness.LENIENT));
-        given(wd.findElement(any())).willReturn(mock(WebElement.class));
+        WebElement wdElement =
+                mock(WebElement.class, withSettings().strictness(Strictness.LENIENT));
+        given(wdElement.isDisplayed()).willReturn(true);
+        given(wdElement.isEnabled()).willReturn(true);
+        given(wd.findElement(any())).willReturn(wdElement);
         Options options = mock(withSettings().strictness(Strictness.LENIENT));
         doAnswer(
                         answer -> {
