@@ -337,7 +337,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
         // Convert zest scripts into "plain" scripts
         for (ScriptType type : this.getExtScript().getScriptTypes()) {
             for (ScriptWrapper script : this.getExtScript().getScripts(type)) {
-                if (script.getEngineName().equals(ZestScriptEngineFactory.NAME)) {
+                if (ZestScriptEngineFactory.NAME.equals(script.getEngineName())) {
                     ScriptNode node = this.getExtScript().getTreeModel().getNodeForScript(script);
                     if (script instanceof ZestScriptWrapper) {
                         ZestScriptWrapper zsw = (ZestScriptWrapper) script;
