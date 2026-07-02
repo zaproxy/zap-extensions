@@ -345,6 +345,7 @@ class FollowGraphUnitTest extends TestUtils {
     private static WebElement visibleElement() {
         WebElement element = mock(WebElement.class);
         given(element.isDisplayed()).willReturn(true);
+        given(element.isEnabled()).willReturn(true);
         return element;
     }
 }
