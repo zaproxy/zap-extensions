@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Maintenance changes.
 - Dependency update.
 
+### Fixed
+- Bug where values were used for objects, instead of just for primitives.
+
 ## [56] - 2026-05-06
 ### Changed
 - Dependency update.
