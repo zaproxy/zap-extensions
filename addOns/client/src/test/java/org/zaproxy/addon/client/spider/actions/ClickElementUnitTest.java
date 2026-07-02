@@ -48,6 +48,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InOrder;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.zaproxy.addon.client.internal.ClientSideComponent;
@@ -192,6 +193,23 @@ class ClickElementUnitTest {
         ClientSideComponent component = componentWithLocator("A", "id", "btn");
         ClickElement action = new ClickElement(uri, component, false);
         WebDriver wd = mock(WebDriver.class);
+        given(wd.findElement(any(By.class))).willThrow(NoSuchElementException.class);
+
+        // When
+        boolean result = action.run(context(wd));
+
+        // Then
+        assertThat(result, is(equalTo(false)));
+        assertThat(stats.getStat("stats.client.spider.action.click.tag.A"), is(1L));
+        assertThat(stats.getStat("stats.client.spider.action.click.tag.A.notfound"), is(1L));
+    }
+
+    @Test
+    void shouldIncrementNotFoundWhenExceptionThrownByFindElement() {
+        // Given
+        ClientSideComponent component = componentWithLocator("A", "id", "btn");
+        ClickElement action = new ClickElement(uri, component, false);
+        WebDriver wd = mock(WebDriver.class);
         given(wd.findElement(any(By.class))).willThrow(RuntimeException.class);
 
         // When
@@ -204,14 +222,15 @@ class ClickElementUnitTest {
     }
 
     @Test
-    void shouldIncrementStatsWhenElementNotDisplayed() {
+    void shouldIncrementExpectationMismatchWhenElementFoundButNotClickable() {
         // Given
         ClientSideComponent component = componentWithLocator("A", "id", "btn");
         ClickElement action = new ClickElement(uri, component, false);
         WebDriver wd = mock(WebDriver.class);
         WebElement element = mock(WebElement.class);
         given(wd.findElement(any(By.class))).willReturn(element);
-        given(element.isDisplayed()).willReturn(false);
+        given(element.isDisplayed()).willReturn(true);
+        given(element.isEnabled()).willReturn(false);
 
         // When
         boolean result = action.run(context(wd));
@@ -219,7 +238,9 @@ class ClickElementUnitTest {
         // Then
         assertThat(result, is(equalTo(false)));
         assertThat(stats.getStat("stats.client.spider.action.click.tag.A"), is(1L));
-        assertThat(stats.getStat("stats.client.spider.action.click.tag.A.notdisplayed"), is(1L));
+        assertThat(
+                stats.getStat("stats.client.spider.action.click.tag.A.expectationmismatch"),
+                is(1L));
     }
 
     @Test
@@ -351,6 +372,7 @@ class ClickElementUnitTest {
     private static WebElement visibleElement() {
         WebElement element = mock(WebElement.class);
         given(element.isDisplayed()).willReturn(true);
+        given(element.isEnabled()).willReturn(true);
         return element;
     }
 
