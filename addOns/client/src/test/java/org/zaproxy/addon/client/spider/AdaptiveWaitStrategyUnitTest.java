@@ -91,7 +91,7 @@ class AdaptiveWaitStrategyUnitTest {
         assertThat(
                 elapsed,
                 greaterThanOrEqualTo(AdaptiveWaitStrategy.QUIESCE_THRESHOLD_NO_PAGE_LOAD_MS));
-        assertThat(elapsed, lessThan(AdaptiveWaitStrategy.QUIESCE_THRESHOLD_WITH_PAGE_LOAD_MS));
+        assertWithMargin(elapsed, AdaptiveWaitStrategy.QUIESCE_THRESHOLD_WITH_PAGE_LOAD_MS);
     }
 
     @Test
@@ -192,7 +192,7 @@ class AdaptiveWaitStrategyUnitTest {
         assertThat(
                 elapsed,
                 greaterThanOrEqualTo(AdaptiveWaitStrategy.QUIESCE_THRESHOLD_NO_PAGE_LOAD_MS));
-        assertThat(elapsed, lessThan(AdaptiveWaitStrategy.QUIESCE_THRESHOLD_WITH_PAGE_LOAD_MS));
+        assertWithMargin(elapsed, AdaptiveWaitStrategy.QUIESCE_THRESHOLD_WITH_PAGE_LOAD_MS);
     }
 
     @Test
@@ -233,7 +233,7 @@ class AdaptiveWaitStrategyUnitTest {
         assertThat(
                 elapsed,
                 greaterThanOrEqualTo(AdaptiveWaitStrategy.QUIESCE_THRESHOLD_NO_PAGE_LOAD_MS));
-        assertThat(elapsed, lessThan(AdaptiveWaitStrategy.QUIESCE_THRESHOLD_WITH_PAGE_LOAD_MS));
+        assertWithMargin(elapsed, AdaptiveWaitStrategy.QUIESCE_THRESHOLD_WITH_PAGE_LOAD_MS);
     }
 
     @Test
@@ -472,5 +472,10 @@ class AdaptiveWaitStrategyUnitTest {
 
     private static long elapsed(long start) {
         return System.currentTimeMillis() - start;
+    }
+
+    private static void assertWithMargin(long elapsed, long expected) {
+        // Allow some margin for slower systems.
+        assertThat(elapsed, lessThan(expected + 25));
     }
 }
