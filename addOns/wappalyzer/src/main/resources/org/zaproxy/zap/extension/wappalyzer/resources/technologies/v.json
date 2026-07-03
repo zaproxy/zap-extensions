@@ -1145,6 +1145,80 @@
     "saas": true,
     "website": "https://www.verseone.com"
   },
+  "VertaFlow": {
+    "cats": [
+      5,
+      6,
+      32,
+      53,
+      108
+    ],
+    "description": "VertaFlow is a vertical CRM and commerce platform for small businesses, with client portals, payments, storefront widgets, online ordering, messaging, and industry-specific workflows.",
+    "dom": [
+      "script[src*=\"api.vertaflow.io/v1/pixel.js\"][data-site]"
+    ],
+    "html": [
+      "<script[^>]+src=[\"']https://api\\.vertaflow\\.io/v1/pixel\\.js[\"'][^>]*data-site=",
+      "window\\.__TENANT_CONFIG__=",
+      "Powered by VertaFlow"
+    ],
+    "icon": "VertaFlow.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "api\\.vertaflow\\.io/v1/pixel\\.js"
+    ],
+    "website": "https://vertaflow.io"
+  },
+  "VertaFlow Analytics": {
+    "cats": [
+      10
+    ],
+    "description": "VertaFlow Analytics is a lightweight, cookie-free, first-party analytics pixel that tracks pageviews, clicks, scroll depth, and UTM campaigns, sending events to VertaFlow CRM.",
+    "icon": "VertaFlow.svg",
+    "scriptSrc": [
+      "vertaflow\\.io/v1/pixel\\.js"
+    ],
+    "website": "https://vertaflow.io"
+  },
+  "VertaFlow Booking": {
+    "cats": [
+      72
+    ],
+    "description": "VertaFlow Booking is an embeddable appointment-scheduling widget that syncs bookings to VertaFlow CRM.",
+    "icon": "VertaFlow.svg",
+    "scriptSrc": [
+      "vertaflow\\.io/v1/book\\.js"
+    ],
+    "website": "https://vertaflow.io"
+  },
+  "VertaFlow Chat": {
+    "cats": [
+      52
+    ],
+    "description": "VertaFlow Chat is a lightweight embeddable chat widget that routes messages to VertaFlow CRM tickets.",
+    "icon": "VertaFlow.svg",
+    "scriptSrc": [
+      "vertaflow\\.io/v1/chat\\.js"
+    ],
+    "website": "https://vertaflow.io"
+  },
+  "VertaFlow Forms": {
+    "cats": [
+      110
+    ],
+    "description": "VertaFlow Forms is an embeddable lead-capture form widget that routes submissions to VertaFlow CRM.",
+    "icon": "VertaFlow.svg",
+    "scriptSrc": [
+      "vertaflow\\.io/v1/form\\.js"
+    ],
+    "website": "https://vertaflow.io"
+  },
   "Vertex": {
     "cats": [
       80
