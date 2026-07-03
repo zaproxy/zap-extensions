@@ -17,6 +17,34 @@
     ],
     "website": "https://n1ed.com"
   },
+  "n8n": {
+    "cats": [
+      47
+    ],
+    "cookies": {
+      "n8n-auth": ""
+    },
+    "description": "n8n is a source-available workflow automation tool that allows you to connect various services and build automated workflows with a visual node-based editor.",
+    "icon": "n8n.svg",
+    "implies": [
+      "Node.js"
+    ],
+    "meta": {
+      "n8n:config:rest-endpoint": "",
+      "n8n:config:sentry": ""
+    },
+    "oss": true,
+    "pricing": [
+      "freemium",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "N8N_DEBOUNCE_MULTIPLIER",
+      "N8N_PASSWORD_MIN_LENGTH"
+    ],
+    "website": "https://n8n.io"
+  },
   "Nabble": {
     "cats": [
       2
@@ -2358,6 +2386,11 @@
     ],
     "cpe": "cpe:2.3:a:notion:notion:*:*:*:*:*:*:*:*",
     "description": "Notion is a collaboration platform with modified Markdown support that integrates kanban boards, tasks, wikis, and database.",
+    "dns": {
+      "TXT": [
+        "notion-domain-verification="
+      ]
+    },
     "dom": [
       "html.notion-html"
     ],

@@ -2509,6 +2509,35 @@
     ],
     "website": "https://www.advin.cz"
   },
+  "Adwos CMS": {
+    "cats": [
+      1,
+      6
+    ],
+    "description": "Adwos CMS is a turnkey CMS for classified ads, marketplaces and rental services. Go 1.24 backend + Next.js 16 frontend, PostgreSQL 16, Redis. Self-hosted, one-time license per domain.",
+    "icon": "Adwos CMS.svg",
+    "website": "https://adwos.org",
+    "saas": false,
+    "oss": false,
+    "pricing": [
+      "onetime",
+      "low"
+    ],
+    "meta": {
+      "generator": "^Adwos CMS",
+      "application-name": "^Adwos CMS$"
+    },
+    "html": [
+      "<meta[^>]+property=\"og:site_name\"[^>]+content=\"Adwos CMS\"",
+      "<meta[^>]+name=\"adwos:powered-by\""
+    ],
+    "implies": [
+      "Next.js",
+      "Go",
+      "PostgreSQL",
+      "Redis"
+    ]
+  },
   "Adyen": {
     "cats": [
       41
@@ -5486,6 +5515,22 @@
     ],
     "website": "https://material.angularjs.org"
   },
+  "Angular Notitia": {
+    "cats": [
+      59,
+      66
+    ],
+    "description": "Easy, flexible toast notification library for Angular applications.",
+    "icon": "AngularNotitia.svg",
+    "oss": true,
+    "website": "https://ngx-notitia.vercel.app",
+    "js": {
+      "ngxNotitia": "(.+)\\;version:\\1"
+    },
+    "implies": [
+      "Angular"
+    ]
+  },
   "AngularDart": {
     "cats": [
       18
@@ -5850,6 +5895,24 @@
       "https.+\\.imodules\\.com/s/"
     ],
     "website": "https://www.anthology.com/products/lifecycle-engagement/alumni-and-advancement/anthology-encompass"
+  },
+  "Anthropic": {
+    "cats": [
+      112
+    ],
+    "description": "Anthropic is an AI safety company that develops Claude, a family of large language models, and provides an API for building AI-powered applications. The anthropic-domain-verification TXT record confirms domain ownership for Anthropic services.",
+    "dns": {
+      "TXT": [
+        "anthropic-domain-verification"
+      ]
+    },
+    "icon": "Anthropic.svg",
+    "pricing": [
+      "payg",
+      "freemium"
+    ],
+    "saas": true,
+    "website": "https://www.anthropic.com"
   },
   "AntiBot.Cloud": {
     "cats": [

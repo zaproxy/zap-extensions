@@ -217,6 +217,24 @@
     ],
     "website": "https://zanox.com"
   },
+  "Zapier": {
+    "cats": [
+      47
+    ],
+    "description": "Zapier is a workflow automation platform that connects apps and services to build automated workflows (Zaps) without code. The zapier-domain-verification-challenge TXT record confirms domain ownership for Zapier services.",
+    "dns": {
+      "TXT": [
+        "zapier-domain-verification-challenge="
+      ]
+    },
+    "icon": "Zapier.svg",
+    "pricing": [
+      "payg",
+      "freemium"
+    ],
+    "saas": true,
+    "website": "https://zapier.com"
+  },
   "Zapiet": {
     "cats": [
       6

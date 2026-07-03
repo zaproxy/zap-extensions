@@ -5308,6 +5308,20 @@
     "saas": true,
     "website": "https://www.cloudflare.com/products/turnstile"
   },
+  "Cloudflare Turnstile for WooCommerce": {
+    "cats": [
+      87
+    ],
+    "description": "Cloudflare Turnstile Integration Plugin for WooCommerce adds Cloudflare Turnstile support to WooCommerce forms.",
+    "icon": "CloudFlare.svg",
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "/wp-content/plugins/simple-cloudflare-turnstile/js/integrations/woocommerce\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1"
+    ],
+    "website": "https://wordpress.org/plugins/simple-cloudflare-turnstile/"
+  },
   "Cloudflare Workers": {
     "cats": [
       62
@@ -10271,6 +10285,24 @@
     "icon": "Curaytor.svg",
     "saas": true,
     "website": "https://www.curaytor.com"
+  },
+  "Cursor": {
+    "cats": [
+      112
+    ],
+    "description": "Cursor is an AI-powered code editor (IDE) that uses large language models to generate, edit, and explain code. The cursor-domain-verification TXT record confirms domain ownership for Cursor services.",
+    "dns": {
+      "TXT": [
+        "cursor-domain-verification"
+      ]
+    },
+    "icon": "Cursor.svg",
+    "pricing": [
+      "payg",
+      "freemium"
+    ],
+    "saas": true,
+    "website": "https://www.cursor.com"
   },
   "Custobar": {
     "cats": [

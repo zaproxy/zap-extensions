@@ -7083,6 +7083,27 @@
     "saas": true,
     "website": "https://www.mux.com"
   },
+  "MVD Studio": {
+    "cats": [
+      1,
+      6
+    ],
+    "description": "MVD Studio is a Laravel-based platform built by MVD Studio (Uruguay) for e-commerce stores and bespoke web applications.",
+    "icon": "MVD Studio.svg",
+    "implies": [
+      "Laravel",
+      "PHP"
+    ],
+    "headers": {
+      "X-Built-By": "MVD Studio",
+      "X-Generator": "MVD Studio",
+      "X-Powered-By": "MVD Studio"
+    },
+    "meta": {
+      "generator": "MVD Studio"
+    },
+    "website": "https://mvdstudio.com.uy"
+  },
   "My Agile Privacy": {
     "cats": [
       67

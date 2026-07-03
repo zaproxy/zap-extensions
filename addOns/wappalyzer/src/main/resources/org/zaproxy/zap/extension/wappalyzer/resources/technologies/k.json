@@ -189,6 +189,27 @@
     ],
     "website": "https://developers.kakao.com/product"
   },
+  "KaliCart Bridge": {
+    "cats": [
+      6
+    ],
+    "description": "KaliCart Bridge is a WooCommerce plugin that exposes a structured REST API and MCP server, making the store catalog readable by AI agents and MCP clients.",
+    "html": [
+      "<link[^>]+rel=[\"']kalicart-agent[\"'][^>]*>",
+      "wp-json\\/kalicart\\/v1\\/discovery"
+    ],
+    "implies": [
+      "WooCommerce"
+    ],
+    "pricing": [
+      "freemium"
+    ],
+    "saas": false,
+    "url": [
+      "\\.well-known\\/kalicart-bridge\\.json"
+    ],
+    "website": "https://bridge.kalicart.com"
+  },
   "Kalio": {
     "cats": [
       6
@@ -2644,6 +2665,25 @@
       "data\\.krossbooking\\.com/"
     ],
     "website": "https://www.krossbooking.com"
+  },
+  "KRT CDN": {
+    "cats": [
+      31
+    ],
+    "description": "KRT CDN is a Content Delivery Network used for delivering assets securely and quickly.",
+    "dom": [
+      "link[href*='cdn.krajtilak.in']",
+      "img[src*='cdn.krajtilak.in']"
+    ],
+    "icon": "KRT CDN.svg",
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.krajtilak\\.in"
+    ],
+    "website": "https://krajtilak.in",
+    "xhr": [
+      "cdn\\.krajtilak\\.in"
+    ]
   },
   "Kssib": {
     "cats": [
