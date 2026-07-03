@@ -340,7 +340,10 @@ public class ImportDialog extends AbstractDialog {
                             getSelectedContextId(),
                             getSelectedUser())
                     == null;
-        } catch (URIException | MalformedURLException | java.net.URISyntaxException ignored) {
+        } catch (URIException
+                | MalformedURLException
+                | IllegalArgumentException
+                | java.net.URISyntaxException ignored) {
             // Not a valid URI, try to import as a file
         } catch (InvalidUrlException e) {
             ThreadUtils.invokeAndWaitHandled(
