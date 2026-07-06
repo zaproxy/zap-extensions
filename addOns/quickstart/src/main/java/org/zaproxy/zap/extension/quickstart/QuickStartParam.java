@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.common.VersionedAbstractParam;
 import org.zaproxy.zap.extension.api.ZapApiIgnore;
 
@@ -77,7 +78,7 @@ public class QuickStartParam extends VersionedAbstractParam {
      * @see #CONFIG_VERSION_KEY
      * @see #updateConfigsImpl(int)
      */
-    private static final int CURRENT_CONFIG_VERSION = 1;
+    private static final int CURRENT_CONFIG_VERSION = 2;
 
     /**
      * The configuration key to read/write the version of the configurations.
@@ -141,7 +142,12 @@ public class QuickStartParam extends VersionedAbstractParam {
             LOGGER.error("Failed to load the Ajax \"Default Browser\" configuration", e);
         }
         try {
-            modernSpiderType = getConfig().getString(PARAM_MODERN_SPIDER_TYPE, "");
+            modernSpiderType =
+                    getConfig()
+                            .getString(
+                                    PARAM_MODERN_SPIDER_TYPE,
+                                    Constant.messages.getString(
+                                            "quickstart.modern.option.clientspider"));
         } catch (Exception e) {
             LOGGER.error("Failed to load the modern spider type configuration", e);
         }
@@ -175,6 +181,13 @@ public class QuickStartParam extends VersionedAbstractParam {
             case -1:
                 // Previously unversioned
                 getConfig().clearProperty(PARAM_AJAX_SPIDER_ENABLED);
+                break;
+            case 1:
+                getConfig()
+                        .setProperty(
+                                PARAM_MODERN_SPIDER_TYPE,
+                                Constant.messages.getString(
+                                        "quickstart.modern.option.clientspider"));
                 break;
             default:
         }
