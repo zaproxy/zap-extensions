@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.30.0] - 2026-07-06
 ### Changed
 - Wait always after component navigation while crawling.
 - Follow any navigation component while crawling.
@@ -267,6 +267,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.30.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.30.0
 [0.29.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.29.0
 [0.28.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.28.0
 [0.27.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.27.0
