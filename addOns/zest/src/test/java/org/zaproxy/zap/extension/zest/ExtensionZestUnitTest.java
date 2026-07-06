@@ -94,6 +94,29 @@ class ExtensionZestUnitTest {
         assertThat(element, is(nullValue()));
     }
 
+    @Test
+    void shouldHandleUnloadWithScriptWithNoEngineName() {
+        initWithScriptWithoutEngine();
+        assertDoesNotThrow(() -> extension.unload());
+    }
+
+    @Test
+    void shouldHandleOptionsLoadedWithScriptWithNoEngineName() {
+        initWithScriptWithoutEngine();
+        assertDoesNotThrow(() -> extension.optionsLoaded());
+    }
+
+    private void initWithScriptWithoutEngine() {
+        ExtensionScript extensionScript = mock();
+        ExtensionLoader extLoader = mock();
+        Control.initSingletonForTesting(any(), extLoader);
+        given(extLoader.getExtension(ExtensionScript.NAME)).willReturn(extensionScript);
+
+        ScriptType scriptType = mock();
+        given(extensionScript.getScriptTypes()).willReturn(List.of(scriptType));
+        given(extensionScript.getScripts(scriptType)).willReturn(List.of(new ScriptWrapper()));
+    }
+
     @Nested
     class ScriptCreation {
 

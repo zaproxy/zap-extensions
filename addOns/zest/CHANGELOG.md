@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Fix exception when adding/editing Zest non-standalone type scripts through the GUI.
+- Prevent exception with scripts when their engine isn't installed or present, which may be encountered when the zest add-on is uninstalled/updated.
 
 ## [48.13.0] - 2026-03-31
 ### Added
