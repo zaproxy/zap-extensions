@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Maintenance changes.
+- Default to Client Spider for modern apps.
 
 ## [57] - 2026-06-26
 ### Added

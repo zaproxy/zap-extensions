@@ -36,6 +36,7 @@ class QuickStartParamUnitTest extends TestUtils {
 
     @BeforeEach
     void setUp() throws Exception {
+        mockMessages(new ExtensionQuickStart());
         setUpZap();
         param = new QuickStartParam();
         configuration = new ZapXmlConfiguration();
@@ -121,8 +122,8 @@ class QuickStartParamUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldDefaultModernSpiderTypeToEmpty() {
-        assertThat(param.getModernSpiderType(), is(equalTo("")));
+    void shouldDefaultModernSpiderTypeToClient() {
+        assertThat(param.getModernSpiderType(), is(equalTo("Client Spider")));
     }
 
     @Test
@@ -139,6 +140,27 @@ class QuickStartParamUnitTest extends TestUtils {
     void shouldLoadModernSpiderTypeFromConfig() {
         // Given
         configuration.setProperty("quickstart.modern.type", "Client Spider");
+        // When
+        param.load(configuration);
+        // Then
+        assertThat(param.getModernSpiderType(), is(equalTo("Client Spider")));
+    }
+
+    @Test
+    void shouldSetModernSpiderTypeToClientWhenMigratingFromVersion1() {
+        // Given
+        configuration.setProperty("quickstart[@version]", 1);
+        // When
+        param.load(configuration);
+        // Then
+        assertThat(param.getModernSpiderType(), is(equalTo("Client Spider")));
+    }
+
+    @Test
+    void shouldOverwriteModernSpiderTypeToClientWhenMigratingFromVersion1() {
+        // Given
+        configuration.setProperty("quickstart[@version]", 1);
+        configuration.setProperty("quickstart.modern.type", "Ajax Spider");
         // When
         param.load(configuration);
         // Then

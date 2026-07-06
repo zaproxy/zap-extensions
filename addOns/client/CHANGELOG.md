@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Wait always after component navigation while crawling.
 - Follow any navigation component while crawling.
 - Crawl component state changes.
+- Help to show that the Client Spider is now the recommended option for modern apps.
 
 ### Fixed
 - Normalise behaviour of Delete context menu item.
