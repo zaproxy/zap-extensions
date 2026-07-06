@@ -20,11 +20,17 @@
 package org.zaproxy.addon.client.internal.graph;
 
 import org.zaproxy.addon.client.internal.ClientSideComponent;
+import org.zaproxy.addon.client.internal.InteractableState;
 
 public sealed interface ClientGraphVertex
         permits ClientGraphVertex.Url, ClientGraphVertex.Component {
 
     record Url(String url) implements ClientGraphVertex {}
 
-    record Component(ClientSideComponent component) implements ClientGraphVertex {}
+    record Component(ClientSideComponent component, InteractableState state)
+            implements ClientGraphVertex {
+        public Component(ClientSideComponent component) {
+            this(component, null);
+        }
+    }
 }

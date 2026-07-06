@@ -49,6 +49,7 @@ public class SubmitForm extends BaseElementAction {
         fillComponents(context, action, statsPrefix);
 
         try {
+            context.setLastActionedComponent(component);
             form.submit();
             Stats.incCounter(statsPrefix + ".submitted");
             return true;

@@ -359,6 +359,13 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
                                 component.getInteractable());
         if (changed) {
             notifyNodeChanged(node);
+            int depth = node.getLevel();
+            int siblings = node.getChildCount();
+            ClientSideComponent updated =
+                    node.getUserObject().findComponent(component.getId(), component.getTagName());
+            if (updated != null) {
+                listeners.forEach(l -> l.componentStateChanged(updated, depth, siblings, source));
+            }
         }
     }
 

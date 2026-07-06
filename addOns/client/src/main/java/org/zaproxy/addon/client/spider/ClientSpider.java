@@ -29,6 +29,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
@@ -141,6 +142,7 @@ public class ClientSpider implements GenericScanner2 {
     private List<WebDriverProcess> webDriverPool = new ArrayList<>();
     private Set<WebDriverProcess> webDriverActive = new HashSet<>();
     private Set<Integer> proxyPorts = ConcurrentHashMap.newKeySet();
+    private final Map<Integer, TaskContext> contextByPort = new ConcurrentHashMap<>();
     private Set<String> visitedUrls = ConcurrentHashMap.newKeySet();
     private Set<String> discoveredUrls = Collections.synchronizedSet(new LinkedHashSet<>());
     private ClientMapListener clientMapListener;
@@ -312,7 +314,10 @@ public class ClientSpider implements GenericScanner2 {
     }
 
     TaskContext createTaskContext() {
-        return new TaskContext(this::isStopped, getWebDriverProcess(), valueProvider, clientMap);
+        WebDriverProcess wdp = getWebDriverProcess();
+        TaskContext ctx = new TaskContext(this::isStopped, wdp, valueProvider, clientMap);
+        contextByPort.put(wdp.getProxyPort(), ctx);
+        return ctx;
     }
 
     private List<SpiderAction> followGraphAction(String url, SpiderAction... additionalActions) {
@@ -406,14 +411,6 @@ public class ClientSpider implements GenericScanner2 {
         return wdp;
     }
 
-    public void returnWebDriverProcess(WebDriverProcess wdp) {
-        // Deliberately synchronized on webDriverPool as they are modified together
-        synchronized (this.webDriverPool) {
-            this.webDriverActive.remove(wdp);
-            this.webDriverPool.add(wdp);
-        }
-    }
-
     private void addSubmitTask(String nodeUrl, ClientSideComponent component) {
         addTask(
                 nodeUrl,
@@ -446,7 +443,22 @@ public class ClientSpider implements GenericScanner2 {
         this.threadPool.execute(task);
     }
 
-    protected synchronized void postTaskExecution(ClientSpiderTask task) {
+    protected synchronized void postTaskExecution(ClientSpiderTask task, TaskContext context) {
+        if (context != null) {
+            if (!scanOptions.isExistingOnly()) {
+                processStateChangedComponents(context);
+            }
+
+            contextByPort.remove(context.getWebDriverProcess().getProxyPort());
+
+            WebDriverProcess wdp = context.getWebDriverProcess();
+            // Deliberately synchronized on webDriverPool as they are modified together
+            synchronized (this.webDriverPool) {
+                this.webDriverActive.remove(wdp);
+                this.webDriverPool.add(wdp);
+            }
+        }
+
         if (spiderTasks.remove(task)) {
             tasksDoneCount++;
         }
@@ -460,6 +472,89 @@ public class ClientSpider implements GenericScanner2 {
 
             LOGGER.debug("No running tasks, starting shutdown timer");
             new ShutdownThread(options.getShutdownTimeInSecs()).start();
+        }
+    }
+
+    private void processStateChangedComponents(TaskContext ctx) {
+        List<ClientGraphVertex.Component> changed = ctx.getAndClearStateChangedComponents();
+        if (changed.isEmpty()) {
+            return;
+        }
+        ClientSideComponent lastActioned = ctx.getLastActionedComponent();
+        ClientGraphVertex fromVertex =
+                lastActioned != null ? new ClientGraphVertex.Component(lastActioned) : null;
+
+        for (ClientGraphVertex.Component stateVertex : changed) {
+            InteractableState state = stateVertex.state();
+            if (state == null) {
+                continue;
+            }
+            ClientSideComponent component = stateVertex.component();
+
+            if (!markComponentStateAsHandled(stateVertex)) {
+                continue;
+            }
+
+            String url = component.getParentUrl();
+            if (!isUrlInScope(url)) {
+                continue;
+            }
+
+            Stats.incCounter("stats.client.spider.event.component.statechanged");
+            if (ClickElement.isSupported(ClientSpider.this::isUrlInScope, component)
+                    && !(options.isLogoutAvoidance() && isLogoutElement(component))) {
+                Stats.incCounter("stats.client.spider.event.component.statechanged.click");
+                addCausalEdge(fromVertex, stateVertex, lastActioned);
+                List<SpiderAction> actions = new ArrayList<>();
+                actions.add(new FollowGraph(stateVertex));
+                actions.add(new ClickElement(createUri(url), component, false));
+                addTask(
+                        url,
+                        actions,
+                        Constant.messages.getString("client.spider.panel.table.action.click"),
+                        paramsToString(component));
+            } else if (SubmitForm.isSupported(component)) {
+                Stats.incCounter("stats.client.spider.event.component.statechanged.form");
+                addCausalEdge(fromVertex, stateVertex, lastActioned);
+                List<SpiderAction> actions = new ArrayList<>();
+                actions.add(new FollowGraph(stateVertex));
+                actions.add(new SubmitForm(createUri(url), component));
+                addTask(
+                        url,
+                        actions,
+                        Constant.messages.getString("client.spider.panel.table.action.submit"),
+                        paramsToString(component));
+            }
+        }
+    }
+
+    private void addCausalEdge(
+            ClientGraphVertex fromVertex,
+            ClientGraphVertex.Component stateVertex,
+            ClientSideComponent lastActioned) {
+        synchronized (clientMap.getGraph()) {
+            clientMap.getGraph().addVertex(stateVertex);
+            if (fromVertex != null) {
+                boolean added = clientMap.getGraph().addVertex(fromVertex);
+                if (added) {
+                    ClientGraphVertex parentUrl =
+                            new ClientGraphVertex.Url(lastActioned.getParentUrl());
+                    if (clientMap.getGraph().containsVertex(parentUrl)) {
+                        clientMap.getGraph().addEdge(parentUrl, fromVertex);
+                    }
+                }
+                clientMap.getGraph().addEdge(fromVertex, stateVertex);
+            }
+        }
+    }
+
+    private boolean markComponentStateAsHandled(ClientGraphVertex.Component vertex) {
+        synchronized (crawledGraph) {
+            if (crawledGraph.containsVertex(vertex)) {
+                return false;
+            }
+            crawledGraph.addVertex(vertex);
+            return true;
         }
     }
 
@@ -579,6 +674,19 @@ public class ClientSpider implements GenericScanner2 {
                 crawledGraph.addEdge(source, target);
                 return false;
             }
+        }
+
+        @Override
+        public void componentStateChanged(
+                ClientSideComponent component, int depth, int siblings, int source) {
+            if (stopping.get() || stopped || !proxyPorts.contains(source)) {
+                return;
+            }
+            TaskContext ctx = contextByPort.get(source);
+            if (ctx == null) {
+                return;
+            }
+            ctx.addStateChangedComponent(component, component.getInteractable());
         }
 
         @Override

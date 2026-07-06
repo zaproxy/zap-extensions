@@ -32,6 +32,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.addon.client.internal.ClientSideComponent;
+import org.zaproxy.addon.client.internal.InteractableState;
 import org.zaproxy.addon.client.internal.graph.ClientGraphVertex;
 
 @SuppressWarnings("serial")
@@ -43,6 +44,10 @@ public class ClientMapGraphPanel extends AbstractPanel {
             "fillColor=#D4E6F1;strokeColor=#2E86C1;rounded=1;whiteSpace=wrap;";
     private static final String COMPONENT_STYLE =
             "fillColor=#D5F5E3;strokeColor=#28B463;rounded=1;whiteSpace=wrap;";
+    private static final String COMPONENT_STATE_INTERACTABLE_STYLE =
+            "fillColor=#F0B27A;strokeColor=#CA6F1E;rounded=1;whiteSpace=wrap;";
+    private static final String COMPONENT_STATE_NON_INTERACTABLE_STYLE =
+            "fillColor=#FDEBD0;strokeColor=#E59866;rounded=1;whiteSpace=wrap;";
 
     private static final int VERTEX_HEIGHT = 30;
     private static final int CHAR_WIDTH = 7;
@@ -104,7 +109,14 @@ public class ClientMapGraphPanel extends AbstractPanel {
                         if (text != null && !text.isEmpty()) {
                             label += ": " + text;
                         }
-                        style = COMPONENT_STYLE;
+                        InteractableState ws = compVertex.state();
+                        if (ws == null) {
+                            style = COMPONENT_STYLE;
+                        } else if (ws.isVisible() && ws.isEnabled()) {
+                            style = COMPONENT_STATE_INTERACTABLE_STYLE;
+                        } else {
+                            style = COMPONENT_STATE_NON_INTERACTABLE_STYLE;
+                        }
                     } else {
                         continue;
                     }

@@ -65,14 +65,23 @@ public class ClientSideDetails {
 
     public boolean updateComponentInteractable(
             String id, String tagName, InteractableState interactable) {
+        ClientSideComponent c = findComponent(id, tagName);
+        if (c == null) {
+            return false;
+        }
+
+        boolean changed = !Objects.equals(c.getInteractable(), interactable);
+        c.setInteractable(interactable);
+        return changed;
+    }
+
+    public ClientSideComponent findComponent(String id, String tagName) {
         for (ClientSideComponent c : components) {
             if (Objects.equals(c.getId(), id) && Objects.equals(c.getTagName(), tagName)) {
-                boolean changed = !Objects.equals(c.getInteractable(), interactable);
-                c.setInteractable(interactable);
-                return changed;
+                return c;
             }
         }
-        return false;
+        return null;
     }
 
     protected void setStorage(boolean storage) {
