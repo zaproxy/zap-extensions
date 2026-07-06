@@ -52,4 +52,16 @@ public interface ClientMapListener {
      *     source is unknown.
      */
     default void pageLoaded(String url, int source) {}
+
+    /**
+     * Called when a component's interactable state changes.
+     *
+     * @param component the component whose state changed (already updated to the new state).
+     * @param depth the depth of the owning node in the map.
+     * @param siblings the sibling count of the owning node.
+     * @param source an identifier for the source that triggered the change, or {@code 0} if
+     *     unknown.
+     */
+    default void componentStateChanged(
+            ClientSideComponent component, int depth, int siblings, int source) {}
 }

@@ -22,6 +22,7 @@ package org.zaproxy.addon.client.spider.actions;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
@@ -29,6 +30,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -37,6 +39,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 import org.apache.commons.httpclient.URI;
@@ -333,6 +336,53 @@ class ClickElementUnitTest {
 
         // When / Then
         assertThat(ClickElement.isSupported(scopeChecker, component), is(true));
+    }
+
+    @Test
+    void shouldSetLastActionedComponentBeforeClickForNonPassive() {
+        // Given
+        ClientSideComponent component = componentWithLocator("BUTTON", "id", "btn");
+        ClickElement action = new ClickElement(uri, component, false);
+        WebDriver wd = mock();
+        WebElement element = visibleElement();
+        given(wd.findElement(By.id("btn"))).willReturn(element);
+        given(wd.findElements(any(By.class))).willReturn(List.of());
+        given(wd.getCurrentUrl()).willReturn("http://example.com/test");
+
+        TaskContext ctx = context(wd);
+        AtomicReference<ClientSideComponent> capturedAtClick = new AtomicReference<>();
+        doAnswer(
+                        inv -> {
+                            capturedAtClick.set(ctx.getLastActionedComponent());
+                            return null;
+                        })
+                .when(element)
+                .click();
+
+        // When
+        action.run(ctx);
+
+        // Then
+        assertThat(capturedAtClick.get(), is(component));
+    }
+
+    @Test
+    void shouldNotSetLastActionedComponentForPassiveClick() {
+        // Given
+        ClientSideComponent component = componentWithLocator("BUTTON", "id", "btn");
+        ClickElement action = new ClickElement(uri, component, true);
+        WebDriver wd = mock();
+        WebElement element = visibleElement();
+        given(wd.findElement(By.id("btn"))).willReturn(element);
+        given(wd.getCurrentUrl()).willReturn("http://example.com/test");
+
+        TaskContext ctx = context(wd);
+
+        // When
+        action.run(ctx);
+
+        // Then
+        assertThat(ctx.getLastActionedComponent(), is(nullValue()));
     }
 
     private static ClientSideComponent componentWithInteractable(

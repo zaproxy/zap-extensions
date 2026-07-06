@@ -134,6 +134,33 @@ class ClientSideDetailsUnitTest {
         assertThat(component.getInteractable(), is(nullValue()));
     }
 
+    @Test
+    void shouldFindComponentByIdAndTagName() {
+        // Given
+        ClientSideDetails details = new ClientSideDetails("Page", EXAMPLE_URL);
+        ClientSideComponent btn = component("BUTTON", "btn1");
+        details.addComponent(btn);
+
+        // When
+        ClientSideComponent found = details.findComponent("btn1", "BUTTON");
+
+        // Then
+        assertThat(found, is(btn));
+    }
+
+    @Test
+    void shouldReturnNullFromFindComponentWhenNotFound() {
+        // Given
+        ClientSideDetails details = new ClientSideDetails("Page", EXAMPLE_URL);
+        details.addComponent(component("BUTTON", "btn1"));
+
+        // When
+        ClientSideComponent found = details.findComponent("btn2", "BUTTON");
+
+        // Then
+        assertThat(found, is(nullValue()));
+    }
+
     private static ClientSideComponent component(String tagName, String id) {
         return new ClientSideComponent(
                 Map.of(), tagName, id, EXAMPLE_URL, null, "", Type.BUTTON, "", -1);

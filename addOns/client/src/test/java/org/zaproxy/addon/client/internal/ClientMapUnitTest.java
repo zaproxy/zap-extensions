@@ -1145,6 +1145,65 @@ class ClientMapUnitTest extends TestUtils {
         verify(listener).componentAdded(eq(existing), anyInt(), anyInt(), eq(0));
     }
 
+    @Test
+    void shouldNotifyListenerWhenInteractableStateChanges() {
+        // Given
+        int source = 1234;
+        String url = "https://www.example.com/page";
+        map.handleReportObject(REPORTED_OBJECT_JSON.formatted(url, null));
+        ClientSideComponent existing =
+                map.getNode(url, false, false).getUserObject().getComponents().iterator().next();
+        String json = NODE_CHANGED_JSON.formatted("INPUT", "", url, "INPUT", true, true, false);
+
+        // When
+        map.handleReportObject(json, source);
+
+        // Then
+        ArgumentCaptor<ClientSideComponent> captor = ArgumentCaptor.captor();
+        verify(listener).componentStateChanged(captor.capture(), anyInt(), anyInt(), eq(source));
+        assertThat(captor.getValue().getId(), is(existing.getId()));
+        assertThat(
+                captor.getValue().getInteractable(), is(new InteractableState(true, true, false)));
+    }
+
+    @Test
+    void shouldNotNotifyListenerWhenInteractableStateUnchanged() {
+        // Given
+        InteractableState state = new InteractableState(true, true, false);
+        String url = "https://www.example.com/page";
+        map.handleReportObject(REPORTED_OBJECT_JSON.formatted(url, null));
+        ClientSideComponent existing =
+                map.getNode(url, false, false).getUserObject().getComponents().iterator().next();
+        existing.setInteractable(state);
+        String json = NODE_CHANGED_JSON.formatted("INPUT", "", url, "INPUT", true, true, false);
+
+        // When
+        map.handleReportObject(json);
+
+        // Then
+        verify(listener, never()).componentStateChanged(any(), anyInt(), anyInt(), anyInt());
+    }
+
+    @Test
+    void shouldNotNotifyListenerForUnknownNodeOnStateChange() {
+        // Given
+        String json =
+                NODE_CHANGED_JSON.formatted(
+                        "BUTTON",
+                        "btn1",
+                        "https://unknown.example.com/",
+                        "BUTTON",
+                        true,
+                        true,
+                        true);
+
+        // When
+        map.handleReportObject(json);
+
+        // Then
+        verify(listener, never()).componentStateChanged(any(), anyInt(), anyInt(), anyInt());
+    }
+
     private void verifyNotifiedAddedComponent(
             ClientSideComponent component, int depth, int siblings, int source) {
         ArgumentCaptor<ClientSideComponent> captor = ArgumentCaptor.captor();

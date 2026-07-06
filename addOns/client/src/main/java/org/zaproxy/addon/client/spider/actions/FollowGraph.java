@@ -29,6 +29,7 @@ import org.jgrapht.GraphPath;
 import org.jgrapht.alg.shortestpath.BFSShortestPath;
 import org.jgrapht.graph.DefaultEdge;
 import org.zaproxy.addon.client.internal.ClientSideComponent;
+import org.zaproxy.addon.client.internal.InteractableState;
 import org.zaproxy.addon.client.internal.graph.ClientGraphVertex;
 import org.zaproxy.addon.client.spider.SpiderAction;
 import org.zaproxy.addon.client.spider.TaskContext;
@@ -40,10 +41,14 @@ public class FollowGraph implements SpiderAction {
 
     private static final String STATS_PREFIX = "stats.client.spider.action.follow";
 
-    private final String targetUrl;
+    private final ClientGraphVertex target;
 
     public FollowGraph(String targetUrl) {
-        this.targetUrl = Objects.requireNonNull(targetUrl);
+        this.target = new ClientGraphVertex.Url(Objects.requireNonNull(targetUrl));
+    }
+
+    public FollowGraph(ClientGraphVertex.Component targetComponent) {
+        this.target = Objects.requireNonNull(targetComponent);
     }
 
     @Override
@@ -51,12 +56,16 @@ public class FollowGraph implements SpiderAction {
         Stats.incCounter(STATS_PREFIX);
 
         String currentUrl = context.getWebDriver().getCurrentUrl();
-        if (targetUrl.equals(currentUrl) || targetUrl.equals(currentUrl + "#")) {
-            Stats.incCounter(STATS_PREFIX + ".current");
-            return true;
+
+        if (target instanceof ClientGraphVertex.Url urlTarget) {
+            String url = urlTarget.url();
+            if (url.equals(currentUrl) || url.equals(currentUrl + "#")) {
+                Stats.incCounter(STATS_PREFIX + ".current");
+                return true;
+            }
         }
 
-        if (followPath(context, currentUrl, targetUrl)) {
+        if (followPath(context, currentUrl)) {
             Stats.incCounter(STATS_PREFIX + ".path");
             return true;
         }
@@ -65,15 +74,20 @@ public class FollowGraph implements SpiderAction {
             return false;
         }
 
-        Stats.incCounter(STATS_PREFIX + ".fallback");
-        LOGGER.debug("No graph path to {}, falling back to direct navigation", targetUrl);
-        context.getWebDriver().get(targetUrl);
-        return context.getWaitStrategy().waitAfterPageLoad(targetUrl);
+        if (target instanceof ClientGraphVertex.Url urlTarget) {
+            Stats.incCounter(STATS_PREFIX + ".fallback");
+            LOGGER.debug("No graph path to {}, falling back to direct navigation", urlTarget.url());
+            context.getWebDriver().get(urlTarget.url());
+            return context.getWaitStrategy().waitAfterPageLoad(urlTarget.url());
+        }
+
+        Stats.incCounter(STATS_PREFIX + ".fallback.nopath");
+        LOGGER.debug("No graph path to target component state");
+        return false;
     }
 
-    private boolean followPath(TaskContext context, String fromUrl, String toUrl) {
+    private boolean followPath(TaskContext context, String fromUrl) {
         ClientGraphVertex source = new ClientGraphVertex.Url(fromUrl);
-        ClientGraphVertex target = new ClientGraphVertex.Url(toUrl);
 
         GraphPath<ClientGraphVertex, DefaultEdge> path;
         synchronized (context.getGraph()) {
@@ -93,20 +107,47 @@ public class FollowGraph implements SpiderAction {
             if (context.isStopped()) {
                 return false;
             }
-            if (vertex instanceof ClientGraphVertex.Component componentVertex) {
-                ClientSideComponent component = componentVertex.component();
-                try {
-                    URI uri = new URI(component.getParentUrl(), true);
-                    if (!new FollowClickElement(uri, component).run(context)) {
-                        return false;
-                    }
-                } catch (URIException e) {
-                    LOGGER.debug("Failed to create URI for component click", e);
+            if (!(vertex instanceof ClientGraphVertex.Component componentVertex)) {
+                continue;
+            }
+
+            ClientSideComponent comp = componentVertex.component();
+            InteractableState state = componentVertex.state();
+            InteractableState currentState = comp.getInteractable();
+
+            if (state != null) {
+                if (!state.equals(currentState)) {
+                    LOGGER.debug("Component {} not in wanted state, aborting path", comp.getId());
+                    Stats.incCounter(STATS_PREFIX + ".skip.statemismatch");
                     return false;
                 }
+            } else if (currentState != null
+                    && !(currentState.isVisible() && currentState.isEnabled())) {
+                LOGGER.debug("Component {} not interactable, aborting path", comp.getId());
+                Stats.incCounter(STATS_PREFIX + ".skip.noninteractable");
+                return false;
+            }
+
+            if (vertex.equals(target)) {
+                return !context.isStopped();
+            }
+
+            try {
+                URI uri = new URI(comp.getParentUrl(), true);
+                if (!new FollowClickElement(uri, comp).run(context)) {
+                    return false;
+                }
+            } catch (URIException e) {
+                LOGGER.debug("Failed to create URI for intermediate component click", e);
+                return false;
             }
         }
-        return !context.isStopped() && context.getWaitStrategy().waitAfterPageLoad(toUrl);
+
+        if (target instanceof ClientGraphVertex.Url urlTarget) {
+            return !context.isStopped()
+                    && context.getWaitStrategy().waitAfterPageLoad(urlTarget.url());
+        }
+        return false;
     }
 
     private static class FollowClickElement extends ClickElement {

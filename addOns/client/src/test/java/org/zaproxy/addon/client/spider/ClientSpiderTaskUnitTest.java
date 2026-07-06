@@ -23,6 +23,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -54,13 +55,13 @@ class ClientSpiderTaskUnitTest extends TestUtils {
     void setUp() {
         clientSpider = mock(ClientSpider.class);
 
-        given(clientSpider.isStopped()).willReturn(false);
-        given(clientSpider.isPaused()).willReturn(false);
+        lenient().when(clientSpider.isStopped()).thenReturn(false);
+        lenient().when(clientSpider.isPaused()).thenReturn(false);
         waitStrategy = mock();
         WebDriverProcess wdp = mock(WebDriverProcess.class);
         given(wdp.getWaitStrategy()).willReturn(waitStrategy);
         context = new TaskContext(() -> false, wdp, null, null);
-        given(clientSpider.createTaskContext()).willReturn(context);
+        lenient().when(clientSpider.createTaskContext()).thenReturn(context);
     }
 
     @Test
@@ -135,5 +136,31 @@ class ClientSpiderTaskUnitTest extends TestUtils {
         // Then
         assertThat(ran, contains("first"));
         assertThat(task.getStatus(), is(Status.STOPPED));
+    }
+
+    @Test
+    void shouldPassContextToPostTaskExecution() {
+        // Given
+        SpiderAction action = mock();
+        ClientSpiderTask task = new ClientSpiderTask(1, clientSpider, List.of(action), "test", "");
+
+        // When
+        task.run();
+
+        // Then
+        verify(clientSpider).postTaskExecution(task, context);
+    }
+
+    @Test
+    void shouldPassNullContextToPostTaskExecutionWhenStoppedBeforeContextCreated() {
+        // Given
+        given(clientSpider.isStopped()).willReturn(true);
+        ClientSpiderTask task = new ClientSpiderTask(1, clientSpider, List.of(), "test", "");
+
+        // When
+        task.run();
+
+        // Then
+        verify(clientSpider).postTaskExecution(task, null);
     }
 }

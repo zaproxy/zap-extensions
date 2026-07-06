@@ -53,6 +53,9 @@ public class ClickElement extends BaseElementAction {
         }
 
         try {
+            if (!passive) {
+                context.setLastActionedComponent(component);
+            }
             element.click();
             Stats.incCounter(statsPrefix + ".clicked");
             return true;

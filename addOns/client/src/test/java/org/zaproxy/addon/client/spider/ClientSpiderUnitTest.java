@@ -59,6 +59,7 @@ import org.apache.logging.log4j.core.config.Configurator;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.apache.logging.log4j.core.config.Property;
 import org.apache.logging.log4j.core.layout.PatternLayout;
+import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.DirectedMultigraph;
 import org.junit.jupiter.api.AfterEach;
@@ -94,6 +95,7 @@ import org.zaproxy.addon.client.internal.ClientSideComponent;
 import org.zaproxy.addon.client.internal.ClientSideDetails;
 import org.zaproxy.addon.client.internal.ElementLocator;
 import org.zaproxy.addon.client.internal.InteractableState;
+import org.zaproxy.addon.client.internal.graph.ClientGraphVertex;
 import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.addon.network.ExtensionNetwork;
@@ -988,6 +990,232 @@ class ClientSpiderUnitTest extends TestUtils {
                         -1);
         component.setElementLocator(new ElementLocator("xpath", "//A[contains(text(), 'logout')]"));
         return component;
+    }
+
+    @Test
+    void shouldNotAddStateVertexToGraphWhenComponentIsNotActionable() {
+        // Given
+        spider.run();
+        waitForProxy();
+
+        ClientSideComponent trigger = buttonComponent(seedUrl, "trigger");
+        ClientSideComponent nonActionable =
+                new ClientSideComponent(
+                        Map.of(),
+                        "SPAN",
+                        "span1",
+                        seedUrl,
+                        null,
+                        "text",
+                        ClientSideComponent.Type.UNKNOWN,
+                        "",
+                        -1);
+        nonActionable.setInteractable(new InteractableState(true, true, false));
+
+        WebElement element = mock(withSettings().strictness(Strictness.LENIENT));
+        given(element.isDisplayed()).willReturn(true);
+        given(wd.findElement(trigger.getBy())).willReturn(element);
+        doAnswer(
+                        inv -> {
+                            clientMapListener()
+                                    .componentStateChanged(nonActionable, 1, 0, PROXY_PORT);
+                            return null;
+                        })
+                .when(element)
+                .click();
+
+        // When
+        clientMapListener().componentAdded(trigger, 1, 0, PROXY_PORT);
+        sleep();
+
+        // Then
+        ClientGraphVertex stateVertex =
+                new ClientGraphVertex.Component(nonActionable, nonActionable.getInteractable());
+        assertThat(map.getGraph().containsVertex(stateVertex), is(false));
+    }
+
+    @Test
+    void shouldNotAddHrefEdgeFromStateVertexToUrlVertex() {
+        // Given
+        spider.run();
+        waitForProxy();
+
+        ClientSideComponent trigger = buttonComponent(seedUrl, "trigger");
+        ClientSideComponent changedWithHref =
+                new ClientSideComponent(
+                        Map.of(),
+                        "BUTTON",
+                        "btn-href",
+                        seedUrl,
+                        "https://www.example.com/page",
+                        "Go",
+                        ClientSideComponent.Type.BUTTON,
+                        "",
+                        -1);
+        changedWithHref.setInteractable(new InteractableState(true, true, false));
+        changedWithHref.setElementLocator(new ElementLocator("id", "btn-href"));
+
+        WebElement element = mock(withSettings().strictness(Strictness.LENIENT));
+        given(element.isEnabled()).willReturn(true);
+        given(element.isDisplayed()).willReturn(true);
+        given(wd.findElement(trigger.getBy())).willReturn(element);
+        doAnswer(
+                        inv -> {
+                            clientMapListener()
+                                    .componentStateChanged(changedWithHref, 1, 0, PROXY_PORT);
+                            return null;
+                        })
+                .when(element)
+                .click();
+
+        // When
+        clientMapListener().componentAdded(trigger, 1, 0, PROXY_PORT);
+        sleep();
+
+        // Then
+        ClientGraphVertex stateVertex =
+                new ClientGraphVertex.Component(changedWithHref, changedWithHref.getInteractable());
+        ClientGraphVertex hrefVertex = new ClientGraphVertex.Url("https://www.example.com/page");
+
+        Graph<ClientGraphVertex, DefaultEdge> graph = map.getGraph();
+        assertThat(graph.containsVertex(stateVertex), is(true));
+        assertThat(graph.containsVertex(hrefVertex), is(false));
+    }
+
+    @Test
+    void shouldAddFromVertexToGraphWhenNotPreviouslyPresent() {
+        // Given
+        spider.run();
+        waitForProxy();
+
+        Graph<ClientGraphVertex, DefaultEdge> graph = map.getGraph();
+        ClientGraphVertex urlVertex = new ClientGraphVertex.Url(seedUrl);
+        graph.addVertex(urlVertex);
+
+        ClientSideComponent button = buttonComponent(seedUrl, "btn1");
+        ClientSideComponent changed = buttonComponent(seedUrl, "btn2");
+        changed.setInteractable(new InteractableState(true, true, false));
+
+        WebElement element = mock(withSettings().strictness(Strictness.LENIENT));
+        given(element.isEnabled()).willReturn(true);
+        given(element.isDisplayed()).willReturn(true);
+        given(wd.findElement(button.getBy())).willReturn(element);
+        doAnswer(
+                        inv -> {
+                            clientMapListener().componentStateChanged(changed, 1, 0, PROXY_PORT);
+                            return null;
+                        })
+                .when(element)
+                .click();
+
+        // When
+        clientMapListener().componentAdded(button, 1, 0, PROXY_PORT);
+        sleep();
+
+        // Then
+        ClientGraphVertex fromVertex = new ClientGraphVertex.Component(button);
+        ClientGraphVertex stateVertex =
+                new ClientGraphVertex.Component(changed, changed.getInteractable());
+        assertThat(graph.containsVertex(fromVertex), is(true));
+        assertThat(graph.containsVertex(stateVertex), is(true));
+        assertThat(graph.containsEdge(urlVertex, fromVertex), is(true));
+        assertThat(graph.containsEdge(fromVertex, stateVertex), is(true));
+    }
+
+    @Test
+    void shouldNotAddParentEdgeForFromVertexWhenParentUrlNotInGraph() {
+        // Given
+        spider.run();
+        waitForProxy();
+
+        ClientSideComponent button = buttonComponent(seedUrl, "btn1");
+        ClientSideComponent changed = buttonComponent(seedUrl, "btn2");
+        changed.setInteractable(new InteractableState(true, true, false));
+
+        WebElement element = mock(withSettings().strictness(Strictness.LENIENT));
+        given(element.isEnabled()).willReturn(true);
+        given(element.isDisplayed()).willReturn(true);
+        given(wd.findElement(button.getBy())).willReturn(element);
+        doAnswer(
+                        inv -> {
+                            clientMapListener().componentStateChanged(changed, 1, 0, PROXY_PORT);
+                            return null;
+                        })
+                .when(element)
+                .click();
+
+        // When
+        clientMapListener().componentAdded(button, 1, 0, PROXY_PORT);
+        sleep();
+
+        // Then
+        ClientGraphVertex fromVertex = new ClientGraphVertex.Component(button);
+        ClientGraphVertex stateVertex =
+                new ClientGraphVertex.Component(changed, changed.getInteractable());
+        ClientGraphVertex urlVertex = new ClientGraphVertex.Url(seedUrl);
+        Graph<ClientGraphVertex, DefaultEdge> graph = map.getGraph();
+        assertThat(graph.containsVertex(fromVertex), is(true));
+        assertThat(graph.containsVertex(stateVertex), is(true));
+        assertThat(graph.containsEdge(fromVertex, stateVertex), is(true));
+        assertThat(graph.containsEdge(urlVertex, fromVertex), is(false));
+    }
+
+    @Test
+    void shouldNotDuplicateFromVertexWhenAlreadyInGraph() {
+        // Given
+        spider.run();
+        waitForProxy();
+
+        Graph<ClientGraphVertex, DefaultEdge> graph = map.getGraph();
+        ClientSideComponent button = buttonComponent(seedUrl, "btn1");
+        ClientGraphVertex fromVertex = new ClientGraphVertex.Component(button);
+        ClientGraphVertex urlVertex = new ClientGraphVertex.Url(seedUrl);
+        graph.addVertex(urlVertex);
+        graph.addVertex(fromVertex);
+        graph.addEdge(urlVertex, fromVertex);
+
+        ClientSideComponent changed = buttonComponent(seedUrl, "btn2");
+        changed.setInteractable(new InteractableState(true, true, false));
+
+        WebElement element = mock(withSettings().strictness(Strictness.LENIENT));
+        given(element.isEnabled()).willReturn(true);
+        given(element.isDisplayed()).willReturn(true);
+        given(wd.findElement(button.getBy())).willReturn(element);
+        doAnswer(
+                        inv -> {
+                            clientMapListener().componentStateChanged(changed, 1, 0, PROXY_PORT);
+                            return null;
+                        })
+                .when(element)
+                .click();
+
+        // When
+        clientMapListener().componentAdded(button, 1, 0, PROXY_PORT);
+        sleep();
+
+        // Then
+        ClientGraphVertex stateVertex =
+                new ClientGraphVertex.Component(changed, changed.getInteractable());
+        long fromCount = graph.vertexSet().stream().filter(v -> v.equals(fromVertex)).count();
+        assertThat(fromCount, is(1L));
+        assertThat(graph.containsEdge(urlVertex, fromVertex), is(true));
+        assertThat(graph.containsEdge(fromVertex, stateVertex), is(true));
+    }
+
+    private static ClientSideComponent buttonComponent(String url, String id) {
+        ClientSideComponent c =
+                new ClientSideComponent(
+                        Map.of(),
+                        "BUTTON",
+                        id,
+                        url,
+                        null,
+                        "Button",
+                        ClientSideComponent.Type.BUTTON,
+                        "",
+                        -1);
+        c.setElementLocator(new ElementLocator("id", id));
+        return c;
     }
 
     private static ClientSideComponent linkComponent(String url, String tagName, String text) {

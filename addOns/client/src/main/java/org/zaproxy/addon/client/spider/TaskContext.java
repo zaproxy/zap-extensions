@@ -19,13 +19,18 @@
  */
 package org.zaproxy.addon.client.spider;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.BooleanSupplier;
 import lombok.Getter;
+import lombok.Setter;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.openqa.selenium.WebDriver;
 import org.zaproxy.addon.client.internal.ClientMap;
 import org.zaproxy.addon.client.internal.ClientSideComponent;
+import org.zaproxy.addon.client.internal.InteractableState;
 import org.zaproxy.addon.client.internal.graph.ClientGraphVertex;
 import org.zaproxy.addon.client.spider.ClientSpider.WebDriverProcess;
 import org.zaproxy.addon.commonlib.ValueProvider;
@@ -39,6 +44,11 @@ public class TaskContext {
     private final ValueProvider valueProvider;
     private final ClientMap clientMap;
     private final WebDriverProcess webDriverProcess;
+
+    @Getter @Setter private volatile ClientSideComponent lastActionedComponent;
+
+    private final List<ClientGraphVertex.Component> stateChangedComponents =
+            Collections.synchronizedList(new ArrayList<>());
 
     public TaskContext(
             BooleanSupplier stopped,
@@ -64,5 +74,19 @@ public class TaskContext {
     public void addNavigationEdge(
             String urlBefore, ClientSideComponent component, String urlAfter) {
         clientMap.addNavigationEdge(urlBefore, component, urlAfter);
+    }
+
+    public void addStateChangedComponent(ClientSideComponent component, InteractableState state) {
+        if (lastActionedComponent != null) {
+            stateChangedComponents.add(new ClientGraphVertex.Component(component, state));
+        }
+    }
+
+    public List<ClientGraphVertex.Component> getAndClearStateChangedComponents() {
+        synchronized (stateChangedComponents) {
+            List<ClientGraphVertex.Component> snapshot = new ArrayList<>(stateChangedComponents);
+            stateChangedComponents.clear();
+            return snapshot;
+        }
     }
 }

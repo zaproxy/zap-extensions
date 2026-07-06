@@ -79,11 +79,9 @@ public class ClientSpiderTask implements Runnable {
     }
 
     void cleanup() {
-        if (context != null) {
-            clientSpider.returnWebDriverProcess(context.getWebDriverProcess());
-            context = null;
-        }
-        clientSpider.postTaskExecution(this);
+        TaskContext ctx = this.context;
+        this.context = null;
+        clientSpider.postTaskExecution(this, ctx);
     }
 
     private void runImpl() {

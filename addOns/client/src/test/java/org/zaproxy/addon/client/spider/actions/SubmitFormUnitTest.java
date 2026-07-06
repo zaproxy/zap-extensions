@@ -29,6 +29,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -36,6 +37,7 @@ import static org.mockito.Mockito.verify;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.AfterEach;
@@ -233,6 +235,34 @@ class SubmitFormUnitTest {
                 arguments(componentForTag("FORM", Type.FORM, 1), true),
                 arguments(componentForTag("DIV", Type.BUTTON, 0), false),
                 arguments(componentForTag("A", Type.LINK, 0), false));
+    }
+
+    @Test
+    void shouldSetLastActionedComponentBeforeSubmit() {
+        // Given
+        ClientSideComponent component = formComponent(0, "xpath", "//FORM");
+        SubmitForm action = new SubmitForm(uri, component);
+        WebDriver wd = mock();
+        WebElement form = visibleElement();
+        given(wd.findElement(any(By.class))).willReturn(form);
+        given(wd.findElements(any(By.class))).willReturn(List.of());
+        given(wd.getCurrentUrl()).willReturn("http://example.com/test");
+
+        TaskContext ctx = context(wd);
+        AtomicReference<ClientSideComponent> capturedAtSubmit = new AtomicReference<>();
+        doAnswer(
+                        inv -> {
+                            capturedAtSubmit.set(ctx.getLastActionedComponent());
+                            return null;
+                        })
+                .when(form)
+                .submit();
+
+        // When
+        action.run(ctx);
+
+        // Then
+        assertThat(capturedAtSubmit.get(), is(component));
     }
 
     private TaskContext context(WebDriver wd) {

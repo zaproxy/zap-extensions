@@ -51,6 +51,7 @@ import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.addon.client.internal.ClientMap;
 import org.zaproxy.addon.client.internal.ClientSideComponent;
 import org.zaproxy.addon.client.internal.ElementLocator;
+import org.zaproxy.addon.client.internal.InteractableState;
 import org.zaproxy.addon.client.internal.graph.ClientGraphVertex;
 import org.zaproxy.addon.client.spider.ActionWaitStrategy;
 import org.zaproxy.addon.client.spider.ClientSpider.WebDriverProcess;
@@ -294,6 +295,157 @@ class FollowGraphUnitTest extends TestUtils {
         // Then
         assertThat(result, is(false));
         verify(waitStrategy, never()).waitAfterPageLoad(URL_C);
+    }
+
+    @Test
+    void shouldFallBackWhenComponentInPathIsNotVisible() {
+        // Given
+        ClientSideComponent comp = createButtonComponent(URL_A);
+        comp.setInteractable(new InteractableState(false, true, false));
+        addComponentToGraph(URL_A, comp);
+
+        given(wd.getCurrentUrl()).willReturn(URL_A);
+
+        FollowGraph action = new FollowGraph(new ClientGraphVertex.Component(comp));
+
+        // When
+        boolean result = action.run(context);
+
+        // Then
+        assertThat(result, is(false));
+        verify(wd, never()).get(any());
+        assertThat(stats.getStat("stats.client.spider.action.follow.skip.noninteractable"), is(1L));
+    }
+
+    @Test
+    void shouldFallBackWhenComponentInPathIsNotEnabled() {
+        // Given
+        ClientSideComponent comp = createButtonComponent(URL_A);
+        comp.setInteractable(new InteractableState(true, false, false));
+        addComponentToGraph(URL_A, comp);
+
+        given(wd.getCurrentUrl()).willReturn(URL_A);
+
+        FollowGraph action = new FollowGraph(new ClientGraphVertex.Component(comp));
+
+        // When
+        boolean result = action.run(context);
+
+        // Then
+        assertThat(result, is(false));
+        assertThat(stats.getStat("stats.client.spider.action.follow.skip.noninteractable"), is(1L));
+    }
+
+    @Test
+    void shouldFallBackWhenStateSnapshotVertexStateMismatches() {
+        // Given
+        InteractableState wantedState = new InteractableState(true, true, false);
+        InteractableState actualState = new InteractableState(false, false, false);
+
+        ClientSideComponent comp = createButtonComponent(URL_A);
+        comp.setInteractable(actualState);
+        ClientGraphVertex.Component stateVertex =
+                new ClientGraphVertex.Component(comp, wantedState);
+        ClientGraphVertex.Url urlVertex = new ClientGraphVertex.Url(URL_A);
+        graph.addVertex(urlVertex);
+        graph.addVertex(stateVertex);
+        graph.addEdge(urlVertex, stateVertex);
+
+        given(wd.getCurrentUrl()).willReturn(URL_A);
+
+        FollowGraph action = new FollowGraph(stateVertex);
+
+        // When
+        boolean result = action.run(context);
+
+        // Then
+        assertThat(result, is(false));
+        assertThat(stats.getStat("stats.client.spider.action.follow.skip.statemismatch"), is(1L));
+    }
+
+    @Test
+    void shouldVerifyStateAndReturnWithoutClickingTargetComponent() {
+        // Given
+        InteractableState state = new InteractableState(true, true, false);
+
+        ClientSideComponent comp = createButtonComponent(URL_A);
+        comp.setInteractable(state);
+        ClientGraphVertex.Component stateVertex = new ClientGraphVertex.Component(comp, state);
+        ClientGraphVertex.Url urlVertex = new ClientGraphVertex.Url(URL_A);
+        graph.addVertex(urlVertex);
+        graph.addVertex(stateVertex);
+        graph.addEdge(urlVertex, stateVertex);
+
+        given(wd.getCurrentUrl()).willReturn(URL_A);
+
+        FollowGraph action = new FollowGraph(stateVertex);
+
+        // When
+        boolean result = action.run(context);
+
+        // Then
+        assertThat(result, is(true));
+        verify(wd, never()).get(any());
+    }
+
+    @Test
+    void shouldClickIntermediateComponentsToReachTargetState() {
+        // Given
+        InteractableState state = new InteractableState(true, true, false);
+
+        ClientSideComponent intermediate = createLinkComponent(URL_A, URL_B);
+        ClientSideComponent target = createButtonComponent(URL_B);
+        target.setInteractable(state);
+
+        ClientGraphVertex.Url urlA = new ClientGraphVertex.Url(URL_A);
+        ClientGraphVertex.Component intermediateVertex =
+                new ClientGraphVertex.Component(intermediate);
+        ClientGraphVertex.Url urlB = new ClientGraphVertex.Url(URL_B);
+        ClientGraphVertex.Component stateVertex = new ClientGraphVertex.Component(target, state);
+        graph.addVertex(urlA);
+        graph.addVertex(intermediateVertex);
+        graph.addVertex(urlB);
+        graph.addVertex(stateVertex);
+        graph.addEdge(urlA, intermediateVertex);
+        graph.addEdge(intermediateVertex, urlB);
+        graph.addEdge(urlB, stateVertex);
+
+        given(wd.getCurrentUrl()).willReturn(URL_A);
+        WebElement element = visibleElement();
+        given(wd.findElement(any(By.class))).willReturn(element);
+
+        FollowGraph action = new FollowGraph(stateVertex);
+
+        // When
+        boolean result = action.run(context);
+
+        // Then
+        assertThat(result, is(true));
+        verify(element, times(1)).click();
+    }
+
+    private static ClientSideComponent createButtonComponent(String parentUrl) {
+        ClientSideComponent component =
+                new ClientSideComponent(
+                        Map.of(),
+                        "BUTTON",
+                        "btn",
+                        parentUrl,
+                        null,
+                        "Click me",
+                        ClientSideComponent.Type.BUTTON,
+                        null,
+                        -1);
+        component.setElementLocator(new ElementLocator("id", "btn"));
+        return component;
+    }
+
+    private void addComponentToGraph(String sourceUrl, ClientSideComponent component) {
+        ClientGraphVertex.Url source = new ClientGraphVertex.Url(sourceUrl);
+        ClientGraphVertex.Component comp = new ClientGraphVertex.Component(component);
+        graph.addVertex(source);
+        graph.addVertex(comp);
+        graph.addEdge(source, comp);
     }
 
     private TaskContext contextWithStopped(BooleanSupplier stopped) {
