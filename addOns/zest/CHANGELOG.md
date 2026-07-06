@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+
 ## [48.14.0] - 2026-07-06
 ### Added
 - Browser screenshots are now automatically captured on Zest client step failures, and script print output is included in the diagnostics report. For chain runs, each output is clearly attributed to the specific script that produced it.

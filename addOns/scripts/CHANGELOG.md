@@ -3,6 +3,9 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+
+
 ## [45.19.0] - 2026-07-06
 ### Added
 - Functionality to store script diagnostics and provides them to Reports. Depends on the database add-on.
