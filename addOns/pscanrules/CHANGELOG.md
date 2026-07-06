@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [75] - 2026-07-06
 ### Changed
 - Maintenance changes.
 - Modern scan rule to refer to the Client Spider.
@@ -690,6 +690,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[75]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v75
 [74]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v74
 [73]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v73
 [72]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v72

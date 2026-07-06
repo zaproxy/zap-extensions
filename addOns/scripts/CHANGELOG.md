@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [45.19.0] - 2026-07-06
 ### Added
 - Functionality to store script diagnostics and provides them to Reports. Depends on the database add-on.
 - The Script Job Run action now supports a `failureLevel` parameter (`info`, `warning`, `error`) to control the Automation Framework progress level used when a script or chain execution fails (defaults to `error`).
@@ -440,6 +440,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[45.19.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.19.0
 [45.18.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.18.0
 [45.17.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.17.0
 [45.16.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.16.0
