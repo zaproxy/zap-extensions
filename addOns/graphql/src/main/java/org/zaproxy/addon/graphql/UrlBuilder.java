@@ -19,10 +19,11 @@
  */
 package org.zaproxy.addon.graphql;
 
-import java.net.URL;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.parosproxy.paros.network.HttpHeader;
+import org.zaproxy.addon.commonlib.UriUtils;
+import org.zaproxy.addon.commonlib.ZapUriException;
 
 public final class UrlBuilder {
 
@@ -36,9 +37,9 @@ public final class UrlBuilder {
             throw new URIException("URL is incomplete.");
         }
         try {
-            new URL(urlStr).toURI();
+            UriUtils.isValid(urlStr);
             return new URI(urlStr, true);
-        } catch (Exception e) {
+        } catch (ZapUriException e) {
             throw new URIException(e.getMessage());
         }
     }
