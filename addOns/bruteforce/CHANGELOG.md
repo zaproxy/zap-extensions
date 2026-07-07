@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 
+### Fixed
+- Bug: tested the wrong condition when detecting "file not found" responses.
+
 ## [20] - 2025-12-15
 ### Changed
 - Update minimum ZAP version to 2.17.0.
