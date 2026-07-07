@@ -23,8 +23,6 @@ import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.ImageIcon;
@@ -41,6 +39,8 @@ import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.addon.client.internal.ScopeCheckComponent;
+import org.zaproxy.addon.commonlib.UriUtils;
+import org.zaproxy.addon.commonlib.ZapUriException;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.selenium.ProvidedBrowserUI;
 import org.zaproxy.zap.extension.selenium.ProvidedBrowsersComboBoxModel;
@@ -408,10 +408,8 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
             return Constant.messages.getString("client.scandialog.nostart.error");
         }
         try {
-            // Need both constructors as they catch slightly different issues ;)
-            new URI(startUrl);
-            new URL(startUrl);
-        } catch (Exception e) {
+            UriUtils.isValid(startUrl);
+        } catch (ZapUriException e) {
             return Constant.messages.getString("client.scandialog.nostart.error");
         }
 

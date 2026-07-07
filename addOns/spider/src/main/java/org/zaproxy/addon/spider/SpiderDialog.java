@@ -23,7 +23,6 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JButton;
@@ -34,6 +33,8 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
+import org.zaproxy.addon.commonlib.UriUtils;
+import org.zaproxy.addon.commonlib.ZapUriException;
 import org.zaproxy.addon.spider.filters.HttpPrefixFetchFilter;
 import org.zaproxy.zap.extension.users.ExtensionUserManagement;
 import org.zaproxy.zap.model.Context;
@@ -390,10 +391,8 @@ public class SpiderDialog extends StandardFieldsDialog {
         if (!getStringValue(FIELD_START).equals(getTargetText(target))) {
             String url = this.getStringValue(FIELD_START);
             try {
-                // Need both constructors as they catch slightly different issues ;)
-                new URI(url, true);
-                new URL(url);
-            } catch (Exception e) {
+                UriUtils.isValid(url);
+            } catch (ZapUriException e) {
                 return Constant.messages.getString("spider.custom.nostart.error");
             }
 
