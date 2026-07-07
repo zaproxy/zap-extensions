@@ -20,6 +20,7 @@
 package org.zaproxy.addon.commonlib.internal.vulns;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
@@ -28,6 +29,7 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 
 import java.util.Locale;
+import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 
@@ -42,6 +44,9 @@ class DefaultVulnerabilitiesUnitTest {
         DefaultVulnerabilities vulnerabilities = new DefaultVulnerabilities(locale);
         // Then
         assertDefaults(vulnerabilities);
+        vulnerabilities
+                .getAll()
+                .forEach(DefaultVulnerabilitiesUnitTest::assertDefaultVulnerabilityData);
     }
 
     private static void assertDefaults(DefaultVulnerabilities vulnerabilities) {
@@ -51,13 +56,24 @@ class DefaultVulnerabilitiesUnitTest {
         assertVulnerability(vulnerabilities.get("wasc_49"), 49, 3);
     }
 
+    private static void assertDefaultVulnerabilityData(Vulnerability vulnerability) {
+        assertThat(vulnerability, is(notNullValue()));
+        assertNonNullAndNot(vulnerability.getName(), emptyString());
+        assertNonNullAndNot(vulnerability.getDescription(), emptyString());
+        assertNonNullAndNot(vulnerability.getSolution(), emptyString());
+        assertNonNullAndNot(vulnerability.getReferences(), empty());
+    }
+
+    private static <T> void assertNonNullAndNot(T value, Matcher<T> matcher) {
+        assertThat(value, is(notNullValue()));
+        assertThat(value, is(not(matcher)));
+    }
+
     private static void assertVulnerability(
             Vulnerability vulnerability, int id, int numberOfReferences) {
-        assertThat(vulnerability, is(notNullValue()));
+        assertDefaultVulnerabilityData(vulnerability);
+
         assertThat(vulnerability.getWascId(), is(equalTo(id)));
-        assertThat(vulnerability.getName(), is(not(emptyString())));
-        assertThat(vulnerability.getDescription(), is(not(emptyString())));
-        assertThat(vulnerability.getSolution(), is(not(emptyString())));
         assertThat(vulnerability.getReferences(), hasSize(numberOfReferences));
     }
 
