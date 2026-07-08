@@ -123,7 +123,7 @@ class EventStreamListenerUnitTest {
     }
 
     @Test
-    void shouldFireProcessEventOnAnEmptyEvent() throws IOException {
+    void shouldNotFireProcessEventOnALeadingEmptyLine() throws IOException {
         // Given
         LinkedList<String> streamLines = new LinkedList<>();
         streamLines.add("");
@@ -137,7 +137,7 @@ class EventStreamListenerUnitTest {
         listener.run();
 
         // Then
-        verify(proxyMock, times(1)).processEvent("");
+        verify(proxyMock, never()).processEvent(anyString());
     }
 
     @Test
