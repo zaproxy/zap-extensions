@@ -27,6 +27,14 @@
         </xs:complexContent>
       </xs:complexType>
 
+      <xs:complexType name="NamedBox">
+        <xs:sequence>
+          <xs:element name="inner" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:attribute name="globalRefKey" type="xs:string"/>
+
       <xs:element name="Request">
         <xs:complexType>
           <xs:sequence>
@@ -103,8 +111,45 @@
               </xs:simpleType>
             </xs:element>
 
+            <xs:element name="positiveIntField" minOccurs="0" maxOccurs="1">
+              <xs:simpleType>
+                <xs:restriction base="xs:positiveInteger">
+                  <xs:maxInclusive value="100"/>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:element>
+
+            <xs:element name="negativeIntField" minOccurs="0" maxOccurs="1">
+              <xs:simpleType>
+                <xs:restriction base="xs:negativeInteger">
+                  <xs:minInclusive value="-100"/>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:element>
+
+            <xs:element name="nonNegativeIntField" minOccurs="0" maxOccurs="1">
+              <xs:simpleType>
+                <xs:restriction base="xs:nonNegativeInteger">
+                  <xs:maxInclusive value="100"/>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:element>
+
+            <xs:element name="nonPositiveIntField" minOccurs="0" maxOccurs="1">
+              <xs:simpleType>
+                <xs:restriction base="xs:nonPositiveInteger">
+                  <xs:minInclusive value="-100"/>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:element>
+
             <!-- xs:token is a string-derived built-in; must produce a param with a non-empty hint -->
             <xs:element name="tokenField" type="xs:token" minOccurs="0" maxOccurs="1"/>
+
+            <!-- No type attribute: parser falls back to xs:string / paramValue default -->
+            <xs:element name="plainField" minOccurs="0" maxOccurs="1"/>
+
+            <xs:element name="namedBox" type="tns:NamedBox" minOccurs="0" maxOccurs="1"/>
 
             <xs:element name="block" type="tns:TypeB" minOccurs="0" maxOccurs="1"/>
 
@@ -122,6 +167,13 @@
               <xs:complexType>
                 <xs:attribute name="plainKey" type="xs:string"/>
                 <xs:attribute name="äKey"     type="xs:string"/>
+              </xs:complexType>
+            </xs:element>
+
+            <xs:element name="attrRefWrapper" minOccurs="0" maxOccurs="1">
+              <xs:complexType>
+                <xs:attribute ref="tns:globalRefKey"/>
+                <xs:attribute name="inlineKey" type="xs:string"/>
               </xs:complexType>
             </xs:element>
 
