@@ -34,6 +34,7 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.zap.extension.sse.db.ServerSentEventStream;
+import org.zaproxy.zap.utils.Stats;
 
 public class EventStreamProxy {
 
@@ -96,7 +97,13 @@ public class EventStreamProxy {
         dataStreamObject.setHistoryId(message.getHistoryRef().getHistoryId());
     }
 
+    public int getId() {
+        return dataStreamObject.getId();
+    }
+
     public void start() {
+        Stats.incCounter("stats.sse.streams");
+
         // TODO use thread pool
         (new Thread(listener, "ZAP-SSE-Listener")).start();
         notifyStateObservers(State.OPEN);
@@ -197,6 +204,8 @@ public class EventStreamProxy {
         sse.finishData();
 
         LOGGER.debug("Processed Server-Sent Event {}", sse);
+
+        Stats.incCounter("stats.sse.events");
 
         boolean doForward = notifyObservers(sse);
         if (doForward) {

@@ -46,8 +46,8 @@ public class EventStreamListener implements Runnable {
             String line;
             while ((firstEventLine = reader.readLine()) != null) {
                 if (firstEventLine.equals("")) {
-                    // TODO: should we really fire an empty event?
-                    proxy.processEvent("");
+                    // blank line before any event data (e.g. keep-alive) - not an event
+                    continue;
                 }
 
                 StringBuilder rawEvent = new StringBuilder(firstEventLine);
