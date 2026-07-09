@@ -19,9 +19,18 @@
  */
 package org.zaproxy.zap.extension.quickstart.launch;
 
+import java.awt.Insets;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
-import javax.swing.ImageIcon;
+import javax.swing.AbstractButton;
+import javax.swing.ButtonGroup;
+import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
@@ -34,12 +43,12 @@ import org.parosproxy.paros.extension.OptionsChangedListener;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.AddOnInstallationStatusListener;
-import org.zaproxy.zap.extension.AddOnInstallationStatusListener.StatusUpdate;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.quickstart.ExtensionQuickStart;
 import org.zaproxy.zap.extension.quickstart.QuickStartParam;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
-import org.zaproxy.zap.utils.DisplayUtils;
+import org.zaproxy.zap.extension.selenium.ProvidedBrowserUI;
+import org.zaproxy.zap.extension.selenium.ProvidedBrowsersComboBoxModel;
 import org.zaproxy.zap.utils.Stats;
 
 public class ExtensionQuickStartLaunch extends ExtensionAdaptor
@@ -56,15 +65,11 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor
     private LaunchPanel launchPanel;
 
     private JButton launchToolbarButton;
+    private ButtonGroup browsersButtonGroup;
+    private JPopupMenu browserPopupMenu;
 
     private static final List<Class<? extends Extension>> DEPENDENCIES =
             List.of(ExtensionQuickStart.class, ExtensionSelenium.class);
-
-    private ImageIcon chromeIcon;
-    private ImageIcon edgeIcon;
-    private ImageIcon chromiumIcon;
-    private ImageIcon firefoxIcon;
-    private ImageIcon safariIcon;
 
     public ExtensionQuickStartLaunch() {
         super(NAME);
@@ -84,6 +89,19 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor
 
         if (hasView()) {
             extensionHook.getHookView().addMainToolBarComponent(getLaunchToolbarButton());
+
+            JButton launchDropdownButton = new JButton("▾");
+            launchDropdownButton.setToolTipText(
+                    Constant.messages.getString("quickstart.toolbar.button.tooltip.launch.select"));
+            launchDropdownButton.setMargin(new Insets(2, 0, 2, 2));
+            launchDropdownButton.addActionListener(
+                    e ->
+                            getBrowserPopupMenu()
+                                    .show(
+                                            launchDropdownButton,
+                                            0,
+                                            launchDropdownButton.getHeight()));
+            extensionHook.getHookView().addMainToolBarComponent(launchDropdownButton);
             extensionHook.getHookView().addOptionPanel(getOptionsPanel());
 
             this.launchPanel =
@@ -144,6 +162,7 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor
     private JButton getLaunchToolbarButton() {
         if (launchToolbarButton == null) {
             launchToolbarButton = new JButton();
+            launchToolbarButton.setMargin(new Insets(2, 2, 2, 0));
             launchToolbarButton.setToolTipText(
                     Constant.messages.getString("quickstart.toolbar.button.tooltip.launch"));
             launchToolbarButton.addActionListener(
@@ -155,39 +174,94 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor
         return launchToolbarButton;
     }
 
-    protected void setToolbarButtonIcon(String browser) {
-        initBrowserIcons();
+    private JPopupMenu getBrowserPopupMenu() {
+        if (browserPopupMenu != null) {
+            return browserPopupMenu;
+        }
 
-        if ("firefox".equalsIgnoreCase(browser)) {
-            launchToolbarButton.setIcon(firefoxIcon);
-        } else if ("chrome".equalsIgnoreCase(browser)) {
-            launchToolbarButton.setIcon(chromeIcon);
-        } else if ("edge".equalsIgnoreCase(browser)) {
-            launchToolbarButton.setIcon(edgeIcon);
-        } else if ("safari".equalsIgnoreCase(browser)) {
-            launchToolbarButton.setIcon(safariIcon);
-        } else {
-            launchToolbarButton.setIcon(chromiumIcon);
+        browserPopupMenu = new JPopupMenu();
+        browsersButtonGroup = new ButtonGroup();
+        populateBrowserMenuItems();
+
+        launchPanel
+                .getActiveBrowserModel()
+                .addListDataListener(
+                        new ListDataListener() {
+                            @Override
+                            public void intervalAdded(ListDataEvent e) {
+                                refreshBrowserMenuItems();
+                            }
+
+                            @Override
+                            public void intervalRemoved(ListDataEvent e) {
+                                refreshBrowserMenuItems();
+                            }
+
+                            @Override
+                            public void contentsChanged(ListDataEvent e) {
+                                refreshBrowserMenuItems();
+                            }
+                        });
+        return browserPopupMenu;
+    }
+
+    private void populateBrowserMenuItems() {
+        ProvidedBrowsersComboBoxModel model = launchPanel.getActiveBrowserModel();
+        ProvidedBrowserUI selected = model.getSelectedItem();
+
+        for (int i = 0; i < model.getSize(); i++) {
+            ProvidedBrowserUI browser = model.getElementAt(i);
+            String browserName = browser.getName();
+            JRadioButtonMenuItem item =
+                    new JRadioButtonMenuItem(browserName, browser.equals(selected));
+            item.setIcon(browser.getBrowser().getIcon());
+            item.addActionListener(
+                    e -> {
+                        launchPanel.selectBrowser(browserName);
+                        setToolbarButtonIcon(browserName);
+                        launchPanel.launchBrowser();
+                        Stats.incCounter(
+                                "stats.ui.maintoolbar.button.quickstart.browserlaunch.menu");
+                    });
+            browsersButtonGroup.add(item);
+            browserPopupMenu.add(item);
         }
     }
 
-    private void initBrowserIcons() {
-        chromeIcon =
-                DisplayUtils.getScaledIcon(
-                        new ImageIcon(getClass().getResource(RESOURCES + "/chrome.png")));
-        edgeIcon =
-                DisplayUtils.getScaledIcon(
-                        new ImageIcon(getClass().getResource(RESOURCES + "/edge.png")));
+    private void refreshBrowserMenuItems() {
+        browserPopupMenu.removeAll();
+        Collections.list(browsersButtonGroup.getElements()).forEach(browsersButtonGroup::remove);
+        populateBrowserMenuItems();
+    }
 
-        chromiumIcon =
-                DisplayUtils.getScaledIcon(
-                        new ImageIcon(getClass().getResource(RESOURCES + "/chromium.png")));
-        firefoxIcon =
-                DisplayUtils.getScaledIcon(
-                        new ImageIcon(getClass().getResource(RESOURCES + "/firefox.png")));
-        safariIcon =
-                DisplayUtils.getScaledIcon(
-                        new ImageIcon(getClass().getResource(RESOURCES + "/safari.png")));
+    protected void setToolbarButtonIcon(String browserName) {
+        launchToolbarButton.setIcon(getIconForBrowser(browserName));
+
+        if (browserPopupMenu != null) {
+            for (Iterator<AbstractButton> it = browsersButtonGroup.getElements().asIterator();
+                    it.hasNext(); ) {
+                AbstractButton button = it.next();
+                if (button.getText().equals(browserName)) {
+                    browsersButtonGroup.setSelected(button.getModel(), true);
+                    break;
+                }
+            }
+        }
+    }
+
+    private Icon getIconForBrowser(String browserName) {
+        if (launchPanel == null) {
+            return null;
+        }
+        ProvidedBrowsersComboBoxModel model = launchPanel.getActiveBrowserModel();
+        for (int i = 0; i < model.getSize(); i++) {
+            ProvidedBrowserUI bui = model.getElementAt(i);
+            if (bui.getName().equalsIgnoreCase(browserName)
+                    || bui.getBrowser().getId().equalsIgnoreCase(browserName)) {
+                return bui.getBrowser().getIcon();
+            }
+        }
+        return null;
     }
 
     @Override
