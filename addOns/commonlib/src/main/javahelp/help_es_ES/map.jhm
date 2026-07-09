@@ -8,4 +8,5 @@
     <mapID target="commonlib.output.panel" url="contents/output-panel.html" />
     <mapID target="commonlib.alert.tags" url="contents/alerttags.html" />
     <mapID target="commonlib.alert.generatefixprompt" url="contents/generate-fix-prompt.html" />
+    <mapID target="commonlib.binlist" url="contents/binlist.html" />
 </map>

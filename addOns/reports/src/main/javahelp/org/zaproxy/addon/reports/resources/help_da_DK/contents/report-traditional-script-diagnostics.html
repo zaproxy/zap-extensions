@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>Script Diagnostics in Traditional Reports</TITLE>
+</HEAD>
+<BODY>
+	<H1>Script Diagnostics in Traditional Reports</H1>
+
+	Several traditional report templates can include script diagnostics
+	recorded by the Script Console add-on.
+
+	<a name="Sections"></a>
+	<H3>Sections</H3>
+	Three optional sections are available, with IDs
+	<code>scriptdiagnostics</code>
+	,
+	<code>scriptdiagnosticsoutput</code>
+	, and
+	<code>scriptdiagnosticsscreenshots</code>
+	. Names and per-template availability are listed in the Sections table
+	on each traditional report template help page.
+
+	<H3>Script Diagnostics Section</H3>
+	When the
+	<code>scriptdiagnostics</code>
+	section is enabled and the Script Console add-on has recorded runs in
+	the session database, the report can include script diagnostic records
+	in run order. Each run has a created time,
+	<code>outcome</code>
+	(for example
+	<code>FAILED</code>
+	or
+	<code>SUCCESS</code>
+	), summary, and scripts. Each script has an order, name, type, and
+	steps. Steps include the source statement index, line (element type),
+	and outputs (for example error messages with kind
+	<code>ERROR</code>
+	). More data can be included on steps depending on the additional
+	diagnostics sections enabled for the report, as outlined below.
+
+	<H3>Output for Script Diagnostics</H3>
+	Steps can include print output lines with kind
+	<code>OUTPUT</code>
+	(for example from
+	<code>ZestActionPrint</code>
+	). When this section is disabled, steps still include
+	<code>ERROR</code>
+	output lines; only
+	<code>OUTPUT</code>
+	lines are omitted.
+
+	<H3>Screenshots for Script Diagnostics</H3>
+	When this section is enabled a step can, optionally, include a
+	screenshot of the browser embedded in the report with the image data
+	Base64 encoded.
+
+</BODY>
+</HTML>
