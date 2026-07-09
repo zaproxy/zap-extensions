@@ -199,15 +199,32 @@ public class SwaggerConverter implements Converter {
 
     @Override
     public List<RequestModel> getRequestModels(Context context) throws SwaggerException {
-        return convertToRequest(context, getOperationModels());
+        return getRequestModels(context, 0);
     }
 
-    private List<RequestModel> convertToRequest(Context context, List<OperationModel> operations) {
+    /**
+     * Gets the request models, optionally limiting how many are generated.
+     *
+     * @param context the context used to exclude URLs, might be {@code null}.
+     * @param maxMessages the maximum number of request models to generate, {@code 0} for no limit.
+     * @return the request models.
+     * @throws SwaggerException if an error occurred while converting the definition.
+     */
+    public List<RequestModel> getRequestModels(Context context, int maxMessages)
+            throws SwaggerException {
+        return convertToRequest(context, getOperationModels(), maxMessages);
+    }
+
+    private List<RequestModel> convertToRequest(
+            Context context, List<OperationModel> operations, int maxMessages) {
         List<RequestModel> requests = new LinkedList<>();
         for (OperationModel operation : operations) {
             var model = requestConverter.convert(operation, generators);
             if (context == null || !context.isExcluded(model.getUrl())) {
                 requests.add(model);
+                if (maxMessages > 0 && requests.size() >= maxMessages) {
+                    break;
+                }
             }
         }
         return requests;

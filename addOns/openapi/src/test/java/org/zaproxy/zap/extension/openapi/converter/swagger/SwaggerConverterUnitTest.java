@@ -1242,6 +1242,21 @@ class SwaggerConverterUnitTest extends AbstractOpenApiTest {
                         "http://server.localhost/path/c/2/"));
     }
 
+    @Test
+    void shouldLimitRequestModelsWhenMaxMessagesSet() throws Exception {
+        // Given
+        String definition = getHtml("openapi_paths_misc.yaml");
+        SwaggerConverter converter = new SwaggerConverter(definition, null);
+        // When
+        List<RequestModel> requests = converter.getRequestModels(null, 2);
+        // Then
+        assertThat(converter.getErrorMessages(), is(empty()));
+        assertThat(requests, hasSize(2));
+        assertThat(
+                urlsOf(requests),
+                contains("http://server.localhost/path/a/", "http://server.localhost/path/b/"));
+    }
+
     private static List<String> urlsOf(List<RequestModel> requests) {
         return requests.stream().map(RequestModel::getUrl).collect(Collectors.toList());
     }

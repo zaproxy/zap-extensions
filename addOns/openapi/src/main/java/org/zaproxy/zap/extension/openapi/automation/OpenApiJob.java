@@ -56,6 +56,8 @@ public class OpenApiJob extends AutomationJob {
     private static final String PARAM_CONTEXT = "context";
     private static final String PARAM_USER = "user";
 
+    private static final String PARAM_MAX_MESSAGES = "maxMessages";
+
     private ExtensionOpenApi extOpenApi;
 
     private Parameters parameters = new Parameters();
@@ -89,6 +91,13 @@ public class OpenApiJob extends AutomationJob {
                 progress);
 
         verifyUser(getParameters().getUser(), progress);
+        if (getParameters().getMaxMessages() < 0) {
+            progress.warn(
+                    Constant.messages.getString(
+                            "openapi.automation.warn.maxMessages",
+                            getName(),
+                            getParameters().getMaxMessages()));
+        }
     }
 
     @Override
@@ -104,6 +113,7 @@ public class OpenApiJob extends AutomationJob {
         map.put(PARAM_TARGET_URL, "");
         map.put(PARAM_CONTEXT, "");
         map.put(PARAM_USER, "");
+        map.put(PARAM_MAX_MESSAGES, "0");
         return map;
     }
 
@@ -129,6 +139,8 @@ public class OpenApiJob extends AutomationJob {
 
         User user = getUser(this.getParameters().getUser(), progress);
 
+        int maxMessages = getParameters().getMaxMessages();
+
         if (!StringUtils.isEmpty(apiFile)) {
             File file = JobUtils.getFile(apiFile, getPlan());
             if (file.exists() && file.canRead()) {
@@ -137,7 +149,7 @@ public class OpenApiJob extends AutomationJob {
                     results =
                             getExtOpenApi()
                                     .importOpenApiDefinitionV2(
-                                            file, targetUrl, false, contextId, user);
+                                            file, targetUrl, false, contextId, user, maxMessages);
                 } catch (EmptyDefinitionException | InvalidDefinitionException e) {
                     progress.error(e.getLocalizedMessage());
                     return;
@@ -170,7 +182,8 @@ public class OpenApiJob extends AutomationJob {
                 URI uri = new URI(apiUrl, true);
                 OpenApiResults results =
                         getExtOpenApi()
-                                .importOpenApiDefinitionV2(uri, targetUrl, false, contextId, user);
+                                .importOpenApiDefinitionV2(
+                                        uri, targetUrl, false, contextId, user, maxMessages);
                 List<String> errors = results.getErrors();
                 if (errors != null && errors.size() > 0) {
                     for (String error : errors) {
@@ -286,5 +299,6 @@ public class OpenApiJob extends AutomationJob {
         private String targetUrl = "";
         private String context = "";
         private String user = "";
+        private int maxMessages;
     }
 }
