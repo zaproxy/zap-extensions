@@ -38,6 +38,7 @@ This job supports monitor tests.
       reloadWait:                      # Int: The time in milliseconds to wait after the URL is loaded, default: 1000
       scopeCheck:                      # String: The scope check, either Flexible or Strict, default: Strict
       logoutAvoidance:                 # Bool: When enabled, the spider will avoid clicking common logout elements, default: false
+      cacheStaticResources:            # Bool: When enabled, repeated requests for static resources are served from a cache, default: true
       elements:                        # A list of HTML elements to click - will be ignored unless clickDefaultElems is false
       - "a"
       - "button"

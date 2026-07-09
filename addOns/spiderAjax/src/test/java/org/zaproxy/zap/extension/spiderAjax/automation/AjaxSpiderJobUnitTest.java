@@ -173,6 +173,7 @@ class AjaxSpiderJobUnitTest {
                   reloadWait: 3000
                   scopeCheck: Flexbile
                   logoutAvoidance: true
+                  cacheStaticResources: false
                 """;
         Yaml yaml = new Yaml();
         Object data = yaml.load(yamlStr);
@@ -202,6 +203,7 @@ class AjaxSpiderJobUnitTest {
         assertThat(job.getParameters().getReloadWait(), is(equalTo(3000)));
         assertThat(job.getParameters().getScopeCheck(), is(equalTo("Flexbile")));
         assertThat(job.getParameters().getLogoutAvoidance(), is(equalTo(Boolean.TRUE)));
+        assertThat(job.getParameters().getCacheStaticResources(), is(equalTo(Boolean.FALSE)));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.hasErrors(), is(equalTo(false)));
     }
@@ -216,7 +218,7 @@ class AjaxSpiderJobUnitTest {
                 job.getConfigParameters(new AjaxSpiderParamWrapper(), job.getParamMethodName());
 
         // Then
-        assertThat(params.size(), is(equalTo(12)));
+        assertThat(params.size(), is(equalTo(13)));
         assertThat(params.containsKey("maxDuration"), is(equalTo(true)));
         assertThat(params.containsKey("browserId"), is(equalTo(true)));
         assertThat(params.containsKey("clickDefaultElems"), is(equalTo(true)));

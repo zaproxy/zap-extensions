@@ -588,6 +588,7 @@ public class AjaxSpiderJob extends AutomationJob {
 
         private String scopeCheck = ScopeCheck.getDefault().toString();
         private Boolean logoutAvoidance = AjaxSpiderParam.DEFAULT_LOGOUT_AVOIDANCE;
+        private Boolean cacheStaticResources = AjaxSpiderParam.DEFAULT_CACHE_STATIC_RESOURCES;
 
         // These 2 fields are deprecated
         private Boolean failIfFoundUrlsLessThan;

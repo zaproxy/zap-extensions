@@ -105,6 +105,7 @@ public class SpiderThread implements Runnable {
 
     private ExtensionNetwork extensionNetwork;
     private List<WebDriverProcess> webDriverProcesses;
+    private final StaticResourceCache staticResourceCache;
 
     /**
      * Constructs a {@code SpiderThread} for the given target.
@@ -149,6 +150,8 @@ public class SpiderThread implements Runnable {
 
         this.extensionNetwork = extensionNetwork;
         webDriverProcesses = Collections.synchronizedList(new ArrayList<>());
+        staticResourceCache =
+                target.getOptions().isCacheStaticResources() ? new StaticResourceCache() : null;
 
         createOutOfScopeResponse(
                 extension.getMessages().getString("spiderajax.outofscope.response"));
@@ -453,6 +456,9 @@ public class SpiderThread implements Runnable {
                         target.getOptions().getScopeCheck() == ScopeCheck.STRICT
                                 ? getResourceState(httpMessage)
                                 : getResourceStateFlexible(httpMessage, state));
+                if (staticResourceCache != null && state == ResourceState.PROCESSED) {
+                    staticResourceCache.handleResponse(httpMessage);
+                }
                 return;
             }
 
@@ -462,6 +468,11 @@ public class SpiderThread implements Runnable {
                     notifyMessage(httpMessage, HistoryReference.TYPE_SPIDER_AJAX_TEMPORARY, state);
                     ctx.overridden();
                 }
+                return;
+            }
+
+            if (staticResourceCache != null && staticResourceCache.handleRequest(httpMessage)) {
+                ctx.overridden();
                 return;
             }
 

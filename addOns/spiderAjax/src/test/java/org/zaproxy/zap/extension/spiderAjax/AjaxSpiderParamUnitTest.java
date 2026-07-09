@@ -262,6 +262,37 @@ class AjaxSpiderParamUnitTest {
                 is(equalTo(logoutAvoidance)));
     }
 
+    @Test
+    void shouldHaveCacheStaticResourcesEnabledByDefault() {
+        // Given / When
+        param.load(new ZapXmlConfiguration());
+        // Then
+        assertThat(param.isCacheStaticResources(), is(equalTo(true)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void shouldLoadCacheStaticResourcesFromConfig(boolean cacheStaticResources) {
+        // Given
+        configuration.setProperty("ajaxSpider.cacheStaticResources", cacheStaticResources);
+        // When
+        param.load(configuration);
+        // Then
+        assertThat(param.isCacheStaticResources(), is(equalTo(cacheStaticResources)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void shouldSetAndPersistCacheStaticResources(boolean cacheStaticResources) throws Exception {
+        // Given / When
+        param.setCacheStaticResources(cacheStaticResources);
+        // Then
+        assertThat(param.isCacheStaticResources(), is(equalTo(cacheStaticResources)));
+        assertThat(
+                configuration.getBoolean("ajaxSpider.cacheStaticResources"),
+                is(equalTo(cacheStaticResources)));
+    }
+
     @ParameterizedTest
     @EnumSource(Browser.class)
     void shouldLoadKnownBrowserIds(Browser configBrowser) {

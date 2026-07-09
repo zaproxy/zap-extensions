@@ -92,6 +92,8 @@ public class AjaxSpiderJobDialog extends StandardFieldsDialog {
             "spiderajax.automation.dialog.ajaxspider.clickelems";
     private static final String LOGOUT_AVOIDANCE_PARAM =
             "spiderajax.scandialog.label.logoutAvoidance";
+    private static final String CACHE_STATIC_RESOURCES_PARAM =
+            "spiderajax.scandialog.label.cacheStaticResources";
 
     private AjaxSpiderMultipleOptionsPanel elemsOptionsPanel;
 
@@ -228,6 +230,13 @@ public class AjaxSpiderJobDialog extends StandardFieldsDialog {
                 getBool(
                         job.getParameters().getLogoutAvoidance(),
                         AjaxSpiderParam.DEFAULT_LOGOUT_AVOIDANCE));
+
+        addCheckBoxField(
+                2,
+                CACHE_STATIC_RESOURCES_PARAM,
+                getBool(
+                        job.getParameters().getCacheStaticResources(),
+                        AjaxSpiderParam.DEFAULT_CACHE_STATIC_RESOURCES));
 
         this.addNumberField(
                 2,
@@ -399,6 +408,7 @@ public class AjaxSpiderJobDialog extends StandardFieldsDialog {
         if (this.getBoolValue(FIELD_ADVANCED)) {
             job.getParameters().setScopeCheck(getScopeCheckComponent().getScopeCheck().toString());
             job.getParameters().setLogoutAvoidance(getBoolValue(LOGOUT_AVOIDANCE_PARAM));
+            job.getParameters().setCacheStaticResources(getBoolValue(CACHE_STATIC_RESOURCES_PARAM));
             this.job.getParameters().setMaxCrawlStates(this.getIntValue(MAX_CRAWL_STATES_PARAM));
             this.job.getParameters().setEventWait(this.getIntValue(EVENT_WAIT_PARAM));
             this.job.getParameters().setReloadWait(this.getIntValue(RELOAD_WAIT_PARAM));

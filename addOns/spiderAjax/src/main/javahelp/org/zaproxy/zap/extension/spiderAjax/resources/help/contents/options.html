@@ -102,6 +102,15 @@
 			<td align = "center">False</td>
 		</tr>
 		<tr>
+			<td>Cache Static Resources</td>
+			<td>When enabled, static resources (e.g. stylesheets, scripts, images, fonts) fetched during the crawl are cached and repeated requests
+				for them are served from the cache instead of being sent to the server again, which speeds up the crawl of sites that reuse the same
+				resources across pages. Only successful responses with clearly static content types are cached, responses that opt out of caching
+				(e.g. <code>Cache-Control: no-store</code>, <code>no-cache</code>, or <code>private</code>) are not. This does not change what is
+				crawled, only repeated fetches of identical static resources are avoided.</td>
+			<td align = "center">True</td>
+		</tr>
+		<tr>
 			<td>Allowed Resources (table)</td>
 			<td>The list of allowed resources. The allowed resources are always fetched even if out of scope, allowing to include necessary resources (e.g. scripts) from 3rd-parties.</td>
 			<td align = "center"></td>

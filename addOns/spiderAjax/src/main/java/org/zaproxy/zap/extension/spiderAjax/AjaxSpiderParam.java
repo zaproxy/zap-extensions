@@ -192,6 +192,8 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
 
     public static final boolean DEFAULT_LOGOUT_AVOIDANCE = false;
 
+    public static final boolean DEFAULT_CACHE_STATIC_RESOURCES = true;
+
     private static final String ALL_ALLOWED_RESOURCES_KEY =
             AJAX_SPIDER_BASE_KEY + ".allowedResources.allowedResource";
 
@@ -210,6 +212,9 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
                             AllowedResource.createDefaultPattern("^http.*\\.css(?:\\?.*)?$")));
 
     private static final String LOGOUT_AVOIDANCE_KEY = AJAX_SPIDER_BASE_KEY + ".logoutAvoidance";
+
+    private static final String CACHE_STATIC_RESOURCES_KEY =
+            AJAX_SPIDER_BASE_KEY + ".cacheStaticResources";
 
     private int numberOfBrowsers;
     private int maxCrawlDepth;
@@ -235,6 +240,7 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
 
     private ScopeCheck scopeCheck = ScopeCheck.getDefault();
     private boolean logoutAvoidance;
+    private boolean cacheStaticResources;
 
     @Override
     public AjaxSpiderParam clone() {
@@ -334,6 +340,8 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
 
         scopeCheck = getEnum(SCOPE_CHECK_KEY, ScopeCheck.getDefault());
         logoutAvoidance = getBoolean(LOGOUT_AVOIDANCE_KEY, DEFAULT_LOGOUT_AVOIDANCE);
+        cacheStaticResources =
+                getBoolean(CACHE_STATIC_RESOURCES_KEY, DEFAULT_CACHE_STATIC_RESOURCES);
     }
 
     private String readBrowserId(String defaultBrowser) {
@@ -638,5 +646,14 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
 
     public boolean isLogoutAvoidance() {
         return logoutAvoidance;
+    }
+
+    public void setCacheStaticResources(boolean value) {
+        this.cacheStaticResources = value;
+        getConfig().setProperty(CACHE_STATIC_RESOURCES_KEY, Boolean.valueOf(value));
+    }
+
+    public boolean isCacheStaticResources() {
+        return cacheStaticResources;
     }
 }
