@@ -20,15 +20,20 @@
 package org.zaproxy.addon.automation.tests;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.withSettings;
 
+import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
@@ -56,23 +61,25 @@ class UrlPresenceTestUnitTest extends TestUtils {
     @BeforeEach
     void setup() throws Exception {
         progress = new AutomationProgress();
-        job = mock(AutomationJob.class);
+        job = mock(withSettings().strictness(Strictness.LENIENT));
+        given(job.getName()).willReturn("JobName");
+        given(job.getType()).willReturn("JobType");
         AutomationEnvironment env = new AutomationEnvironment(progress);
         given(job.getEnv()).willReturn(env);
 
-        Model model = mock(Model.class);
+        Model model = mock(withSettings().strictness(Strictness.LENIENT));
         Model.setSingletonForTesting(model);
 
-        Session session = mock(Session.class);
+        Session session = mock(withSettings().strictness(Strictness.LENIENT));
         given(model.getSession()).willReturn(session);
 
-        SiteMap siteMap = mock(SiteMap.class);
+        SiteMap siteMap = mock(withSettings().strictness(Strictness.LENIENT));
         given(session.getSiteTree()).willReturn(siteMap);
 
-        SiteNode siteNode = mock(SiteNode.class);
+        SiteNode siteNode = mock(withSettings().strictness(Strictness.LENIENT));
         given(siteMap.findNode(any(URI.class))).willReturn(siteNode);
 
-        HistoryReference historyReference = mock(HistoryReference.class);
+        HistoryReference historyReference = mock(withSettings().strictness(Strictness.LENIENT));
         given(siteNode.getHistoryReference()).willReturn(historyReference);
 
         HttpMessage msg = new HttpMessage();
@@ -80,6 +87,20 @@ class UrlPresenceTestUnitTest extends TestUtils {
         msg.setResponseBody(
                 "<html><head><link href=\"https://site53.example.net/style.css\"></head><body></body></html>");
         given(historyReference.getHttpMessage()).willReturn(msg);
+    }
+
+    @Test
+    void shouldErrorOnMissingParameters() {
+        // Given / When
+        new UrlPresenceTest(Map.of("onFail", "info", "operator", "notoperator"), job, progress);
+
+        // Then
+        assertThat(
+                progress.getErrors(),
+                contains(
+                        "Job JobType test of type JobName/url: invalid operator notoperator. Allowed operators are \"and\" and \"or\".",
+                        "Job JobName/url test of type JobType: has no URL."));
+        assertThat(progress.getWarnings(), is(empty()));
     }
 
     @Test
